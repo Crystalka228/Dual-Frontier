@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.AI</AssemblyName>
+    <RootNamespace>DualFrontier.AI</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <ProjectReference Include="..\DualFrontier.Components\DualFrontier.Components.csproj" />
+  </ItemGroup>
+</Project>

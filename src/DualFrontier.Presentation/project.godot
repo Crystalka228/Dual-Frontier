@@ -1,0 +1,14 @@
+; Engine configuration file.
+; This is a placeholder — Godot 4.3+ will rewrite it when the scene is opened.
+; TODO: Фаза 3 — создать настоящий Godot проект. После этого файл регенерируется.
+
+config_version=5
+
+[application]
+
+config/name="Dual Frontier"
+config/features=PackedStringArray("4.3", "C#", "Forward Plus")
+
+[dotnet]
+
+project/assembly_name="DualFrontier.Presentation"

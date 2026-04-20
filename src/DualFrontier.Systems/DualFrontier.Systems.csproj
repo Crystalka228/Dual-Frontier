@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Systems</AssemblyName>
+    <RootNamespace>DualFrontier.Systems</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <ProjectReference Include="..\DualFrontier.Core\DualFrontier.Core.csproj" />
+    <ProjectReference Include="..\DualFrontier.Components\DualFrontier.Components.csproj" />
+    <ProjectReference Include="..\DualFrontier.Events\DualFrontier.Events.csproj" />
+  </ItemGroup>
+</Project>

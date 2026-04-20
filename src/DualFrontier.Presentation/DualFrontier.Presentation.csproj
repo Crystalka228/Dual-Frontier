@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Presentation</AssemblyName>
+    <RootNamespace>DualFrontier.Presentation</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Application\DualFrontier.Application.csproj" />
+  </ItemGroup>
+  <!-- TODO: Фаза 3 — добавить PackageReference на GodotSharp после интеграции с Godot 4.3+. Пока только код-стабы. -->
+</Project>

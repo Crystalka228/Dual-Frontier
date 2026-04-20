@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Core</AssemblyName>
+    <RootNamespace>DualFrontier.Core</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="DualFrontier.Systems" />
+    <InternalsVisibleTo Include="DualFrontier.Application" />
+    <InternalsVisibleTo Include="DualFrontier.Core.Tests" />
+  </ItemGroup>
+</Project>

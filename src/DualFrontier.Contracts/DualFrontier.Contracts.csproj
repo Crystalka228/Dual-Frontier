@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Contracts</AssemblyName>
+    <RootNamespace>DualFrontier.Contracts</RootNamespace>
+  </PropertyGroup>
+</Project>

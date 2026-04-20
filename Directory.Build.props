@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- CS1591: Missing XML comment for publicly visible type or member. -->
+    <!-- Отключаем на уровне всего решения — XML docs обязательны только для публичных контрактов. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <Company>DualFrontier</Company>
+    <Product>Dual Frontier</Product>
+  </PropertyGroup>
+</Project>

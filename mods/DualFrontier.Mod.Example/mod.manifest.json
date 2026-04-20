@@ -1,0 +1,10 @@
+{
+  "id": "dualfrontier.example",
+  "name": "Dual Frontier Example Mod",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "description": "Reference mod showing the IMod + IModApi pattern. See docs/MODDING.md.",
+  "entryAssembly": "DualFrontier.Mod.Example.dll",
+  "entryType": "DualFrontier.Mod.Example.ExampleMod",
+  "dependencies": []
+}

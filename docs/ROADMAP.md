@@ -1,0 +1,218 @@
+# Дорожная карта
+
+Реализация Dual Frontier разделена на восемь фаз. Каждая фаза имеет чёткий выходной артефакт, критерии приёмки и список систем, которые она разблокирует. Фазы не пересекаются по владению кодом: сначала один пласт, потом следующий. Это даёт возможность вести интеграционные тесты на каждом шаге и не накапливать риски.
+
+## Фаза 0 — Контракты
+
+Цель: зафиксировать все публичные интерфейсы и атрибуты в сборке `DualFrontier.Contracts`.
+
+### Что реализуем
+
+Файлы в `src/DualFrontier.Contracts/`:
+
+- `Core/IEntity.cs`, `Core/EntityId.cs`, `Core/IComponent.cs`, `Core/IEvent.cs`, `Core/IQuery.cs`, `Core/IQueryResult.cs`, `Core/ICommand.cs`.
+- `Bus/IEventBus.cs`, `Bus/IGameServices.cs`, `Bus/ICombatBus.cs`, `Bus/IInventoryBus.cs`, `Bus/IMagicBus.cs`, `Bus/IPawnBus.cs`, `Bus/IWorldBus.cs`.
+- `Modding/IMod.cs`, `Modding/IModApi.cs`, `Modding/IModContract.cs`, `Modding/ModManifest.cs`.
+- `Attributes/SystemAccessAttribute.cs`, `Attributes/DeferredAttribute.cs`, `Attributes/ImmediateAttribute.cs`, `Attributes/TickRateAttribute.cs`.
+
+### Критерии приёмки
+
+- `dotnet build src/DualFrontier.Contracts` проходит без ошибок и предупреждений.
+- Каждый публичный тип имеет XML-документацию на английском.
+- Зависимости: только `System.*`. Ни одного project reference.
+
+### Разблокирует
+
+Всё остальное — ни одна другая сборка без `Contracts` не собирается.
+
+## Фаза 1 — Ядро
+
+Цель: работающее ECS-ядро с многопоточным планировщиком и доменными шинами.
+
+### Что реализуем
+
+Файлы в `src/DualFrontier.Core/`:
+
+- `ECS/World.cs`, `ECS/ComponentStore.cs`, `ECS/SystemBase.cs`, `ECS/SystemExecutionContext.cs`, `ECS/IsolationViolationException.cs`.
+- `Scheduling/DependencyGraph.cs`, `Scheduling/ParallelSystemScheduler.cs`, `Scheduling/SystemPhase.cs`, `Scheduling/TickScheduler.cs`, `Scheduling/TickRates.cs`.
+- `Bus/DomainEventBus.cs`, `Bus/GameServices.cs`, `Bus/IntentBatcher.cs`.
+- `Math/GridVector.cs`, `Math/SpatialGrid.cs`.
+- `Registry/ComponentRegistry.cs`, `Registry/SystemRegistry.cs`.
+
+### Критерии приёмки
+
+- Unit-тесты ComponentStore, DependencyGraph, DomainEventBus проходят.
+- Тест планировщика на сценарии "3 системы, 2 фазы" с реальным параллелизмом.
+- `SystemExecutionContext` в DEBUG ловит обращение к незадекларированному компоненту.
+- `IntentBatcher` группирует события за фазу, доставляет батч в следующей.
+
+### Разблокирует
+
+Все игровые системы. Начиная с этой фазы `DualFrontier.Systems` собирается.
+
+## Фаза 2 — Верификация
+
+Цель: доказать, что архитектурные гарантии работают, а не только объявлены.
+
+### Что реализуем
+
+Тесты в `tests/`:
+
+- `DualFrontier.Core.Tests/Isolation/` — полный набор тестов сторожа: незадекларированный компонент, прямой доступ к системе, запрос `GetSystem`, async в `Update`, запись в чужую шину.
+- `DualFrontier.Core.Tests/Scheduling/` — параллельные системы без конфликтов действительно выполняются на разных потоках (проверка через `Thread.CurrentThread.ManagedThreadId`).
+- `DualFrontier.Modding.Tests/` — мод не грузит `DualFrontier.Core.dll` (проверка `ModLoadContext`).
+
+Плюс скриптовые fixture-моды в `tests/fixtures/` — как легальные, так и "злые" (пытаются нарушить).
+
+### Критерии приёмки
+
+- 100% тестов изоляции проходят как в DEBUG, так и в RELEASE (для критических).
+- Mod-тест: попытка загрузить сборку с `using DualFrontier.Core;` возвращает `ModIsolationException`.
+- Документированный отчёт о покрытии сторожа — какие типы нарушений протестированы.
+
+### Разблокирует
+
+Безопасную разработку всего последующего. Теперь любая регрессия в изоляции будет пойматься CI.
+
+## Фаза 3 — Пешки
+
+Цель: живая пешка, которая гуляет по карте, ест, спит и имеет задачи.
+
+### Что реализуем
+
+- `DualFrontier.Components/Shared/PositionComponent`, `FactionComponent`, `RaceComponent`.
+- `DualFrontier.Components/Pawn/NeedsComponent`, `MindComponent`, `JobComponent`, `SkillsComponent`.
+- `DualFrontier.Systems/Pawn/NeedsSystem` (SLOW), `JobSystem` (NORMAL).
+- `DualFrontier.AI/Pathfinding/IPathfindingService`, `AStarPathfinding`, `NavGrid`.
+- `DualFrontier.AI/Jobs/IJob`, `JobHaul`, `JobMeditate`.
+- `DualFrontier.AI/BehaviourTree/BTNode`, `Selector`, `Sequence`, `Leaf`.
+
+### Критерии приёмки
+
+- Симуляция на 30 пешек, 100×100 тайлов, 60 FPS без заиканий.
+- Пешка получает задачу через `JobComponent`, `JobSystem` выполняет её через behaviour tree.
+- `NeedsSystem` снижает голод/сон, пешка ищет еду через `JobSystem`.
+- Pathfinding работает, кэширует маршруты.
+
+### Разблокирует
+
+Производственную цепочку: без ходячей пешки нет крафта.
+
+## Фаза 4 — Экономика
+
+Цель: производство, склад, энергосеть.
+
+### Что реализуем
+
+- `DualFrontier.Components/Building/StorageComponent`, `WorkbenchComponent`, `PowerConsumerComponent`, `PowerProducerComponent`.
+- `DualFrontier.Systems/Inventory/InventorySystem` (кэш + батчинг), `HaulSystem`, `CraftSystem`.
+- `DualFrontier.Systems/Power/ElectricGridSystem`, `ConverterSystem` (КПД 30% по GDD 9).
+- `DualFrontier.Events/Inventory/*`, `Events/Power/*`.
+
+### Критерии приёмки
+
+- 100 пешек × 60 тиков × патрон-запрос: ≤100 сканов/сек (цель из 11.11).
+- Крафт цепочка: ресурс → верстак → продукт → склад.
+- Электросеть: генератор → провод → потребитель; overload на перегрузе.
+- Конвертор: 100W → 30 манны и обратно; работает точечно, невыгоден в масштабе.
+
+### Разблокирует
+
+Бой и магию — обеим системам нужен инвентарь (патроны, кристаллы).
+
+## Фаза 5 — Бой
+
+Цель: Combat Extended на базе шины.
+
+### Что реализуем
+
+- `DualFrontier.Components/Combat/WeaponComponent`, `ArmorComponent`, `AmmoComponent`, `ShieldComponent`, `HealthComponent`.
+- `DualFrontier.Systems/Combat/CombatSystem` (FAST, фаза 1), `ProjectileSystem` (REALTIME), `DamageSystem` (FAST, фаза 2), `StatusEffectSystem`, `ShieldSystem`.
+- `DualFrontier.Events/Combat/ShootAttemptEvent`, `AmmoIntent`, `AmmoGranted`, `AmmoRefused`, `DamageEvent`, `DeathEvent`, `StatusAppliedEvent`.
+
+### Критерии приёмки
+
+- Двухшаговая модель AmmoIntent → AmmoGranted работает через `IntentBatcher`.
+- Damage model: типы урона (Heat, Sharp, Blunt, EMP, Toxic, Psychic, Stagger) применяются с учётом брони.
+- Щиты: пул HP, регенерация, слабости.
+- `DeathEvent` помечен `[Deferred]` — `MoodSystem` и `SocialSystem` получают его в следующей фазе.
+
+### Разблокирует
+
+Магический бой: единая физика урона уже есть, магия будет просто использовать её.
+
+## Фаза 6 — Магия
+
+Цель: магическая колония с големами, ростом мага и эфирными срывами.
+
+### Что реализуем
+
+- `DualFrontier.Components/Magic/ManaComponent`, `SchoolComponent`, `EtherComponent`, `GolemBondComponent`.
+- `DualFrontier.Systems/Magic/ManaSystem` (NORMAL, фаза 1), `SpellSystem` (FAST), `GolemSystem` (NORMAL), `EtherGrowthSystem` (SLOW, фаза 2), `RitualSystem` (RARE).
+- `DualFrontier.Events/Magic/ManaIntent`, `ManaGranted`, `ManaRefused`, `SpellCastEvent`, `EtherSurgeEvent`, `GolemActivatedEvent`, `EtherLevelUpEvent`.
+- `DualFrontier.AI/Jobs/JobCast`, `JobGolemCommand`, `JobMeditate`.
+
+### Критерии приёмки
+
+- 8 школ магии (Огонь/Лёд/Гром/Земля/Ветер/Вода/Тьма/Свет) с разными профилями урона по GDD 6.1.
+- 5 уровней восприятия эфира по GDD 4.1, масштабирование урона по 6.2.
+- Големы 5 типов по 5.1, расход манны постоянный, истощение мага останавливает голема.
+- Эфирный срыв при работе с кристаллом выше уровня мага.
+- Комбо-механики: Лёд→Земля, Молния→Металл, Вода→Молния (по 6.3).
+
+### Разблокирует
+
+Финальный контент — мир, фракции, события.
+
+## Фаза 7 — Мир
+
+Цель: живой мир вокруг колонии.
+
+### Что реализуем
+
+- `DualFrontier.Components/World/TileComponent`, `BiomeComponent`, `EtherNodeComponent`.
+- `DualFrontier.Systems/World/BiomeSystem`, `WeatherSystem`, `MapSystem`.
+- `DualFrontier.Systems/Faction/RelationSystem` (RARE), `TradeSystem`, `RaidSystem` (RARE).
+- `DualFrontier.Events/World/EtherNodeChangedEvent`, `WeatherChangedEvent`, `RaidIncomingEvent`.
+
+### Критерии приёмки
+
+- Биомы влияют на ресурсы, погоду, проходимость.
+- Эфирные узлы формируют радиусы покрытия для магической энергосети.
+- Межфракционные отношения по матрице GDD 3.3; динамическое изменение через события.
+- Рейды приходят с разной периодичностью и составом по уровню колонии.
+- Торговля: караваны, обмен ресурсами, сезонность.
+
+### Разблокирует
+
+Полную игру. Дальнейшие итерации — контент-расширения через моды.
+
+## Phase 5 — Магия и Phase 6 — Мир: мост между фазами (v02 §12.6)
+
+### Проблема
+
+Фаза 5 (Бой) уже ссылается на магические компоненты: `CombatSystem` знает про `ManaComponent`, чтобы обрабатывать выстрелы с чарами через композитный запрос (см. [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md)). Но сама магия реализуется только в Фазе 6. Если ждать полной реализации магии, прежде чем тестировать магические стрелки — фаза 5 блокируется. Если частично вклинить магию в фазу 5 — нарушается принцип «фазы не пересекаются по владению кодом».
+
+### Решение: bridge-реализация
+
+В Фазе 5 подключается **bridge-реализация** магических систем — stub-granter, возвращающий успешный ответ без настоящей логики. `CombatSystem` видит полноценную `ManaSystem` через шину, успешно получает `ManaGranted` и проводит свои тесты магических стрелок. В Фазе 6 stub заменяется на полную реализацию без изменений в `CombatSystem`.
+
+- **`ManaSystem` (bridge).** Всегда возвращает `ManaGranted` (или `ManaLeaseOpened` с фиктивным `LeaseId`), считая уровень маны равным 100%. `ManaComponent` не обновляется.
+- **`GolemSystem` (bridge).** Возвращает бесконечный bond: любой `GolemOwnershipTransferRequest` принимается, `GolemBondComponent` не мутируется. Достаточно, чтобы `CombatSystem` корректно распознавал голема как союзника/противника.
+- **`EtherSystem` (bridge).** Статический уровень эфира 50% — стабильная константа, позволяющая `EtherSurgeEvent` корректно формироваться на грани допуска в тестах.
+
+Bridge-системы находятся в `DualFrontier.Systems/Magic/Bridge/` и помечены `[BridgeImplementation(Phase = 6)]` — анализатор предупреждает, если bridge-реализация остаётся в релизной сборке после Фазы 6.
+
+### Критерии закрытия bridge'а
+
+В Фазе 6 каждая bridge-система заменяется полной реализацией. Критерии:
+
+- Все тесты, проходящие на bridge-версии, продолжают проходить на полной реализации.
+- `[BridgeImplementation]`-пометка снимается, анализатор больше не предупреждает.
+- Ни один публичный контракт (`ManaGranted`, `GolemOwnershipChanged`, `EtherSurgeEvent`) не меняет сигнатуру — `CombatSystem` и прочие потребители не требуют правок.
+
+## См. также
+
+- [ARCHITECTURE](./ARCHITECTURE.md)
+- [TESTING_STRATEGY](./TESTING_STRATEGY.md)
+- [PERFORMANCE](./PERFORMANCE.md)
