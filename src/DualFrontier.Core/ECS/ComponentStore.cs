@@ -20,7 +20,7 @@ internal interface IComponentStore
 /// и cache-friendly итерацию по всем компонентам типа <typeparamref name="T"/>.
 /// </summary>
 /// <typeparam name="T">Тип хранимого компонента.</typeparam>
-internal sealed class ComponentStore<T> : IComponentStore where T : IComponent
+internal sealed class ComponentStore<T> : IComponentStore, IRemovable where T : IComponent
 {
     // SparseSet implementation fields
     private int[] _sparse;      // Indexed by EntityId.Id, stores position in dense array or -1 if absent.
