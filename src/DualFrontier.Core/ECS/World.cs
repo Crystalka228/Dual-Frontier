@@ -32,11 +32,13 @@ namespace DualFrontier.Core.ECS;
 /// </summary>
 internal sealed class World
 {
-    // TODO: Фаза 1 — private readonly ConcurrentDictionary<Type, IComponentStore> _stores = new();
-    // TODO: Фаза 1 — private int[] _versions = Array.Empty<int>();  // indexed by entity slot
-    // TODO: Фаза 1 — private int _nextIndex;
-    // TODO: Фаза 1 — private readonly Queue<int> _freeSlots = new();  // recycled indices
-    // TODO: Фаза 1 — private readonly List<EntityId> _pendingDestroy = new(); // flushed end-of-phase
+private const int InitialCapacity = 256;
+
+private readonly ConcurrentDictionary<Type, IComponentStore> _stores = new();
+private int[] _versions = Array.Empty<int>();          // slot version array, indexed by entity Index
+private int _nextIndex;           // next slot to allocate
+private readonly Queue<int> _freeSlots = new();           // recycled indices
+private readonly List<EntityId> _pendingDestroy = new();  // flushed end-of-phase
 
     /// <summary>
     /// Creates a new entity. Returns an <see cref="EntityId"/> with the slot index
