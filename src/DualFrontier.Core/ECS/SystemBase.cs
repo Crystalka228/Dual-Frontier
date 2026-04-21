@@ -1,45 +1,47 @@
 using System;
-using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Attributes;
 
 namespace DualFrontier.Core.ECS;
 
 /// <summary>
-/// Базовый класс для всех игровых систем. Наследники обязаны:
-///
-/// 1. Быть помечены <c>[SystemAccess(reads, writes, bus)]</c> — без атрибута
-///    планировщик считает систему "пишет во всё" и полностью сериализует.
-/// 2. Декларировать частоту через <c>[TickRate(TickRates.X)]</c>.
-/// 3. Обращаться к компонентам строго через <see cref="GetComponent{T}"/> —
-///    прямой доступ к <see cref="World"/> или другим системам = краш сторожа.
-/// 4. Не запускать async/await в <see cref="Update"/>: это сбрасывает
-///    ThreadLocal контекст сторожа и ломает проверки изоляции.
+/// Base class for all game systems in DualFrontier.
+/// Systems contain game logic and run every tick via ParallelSystemScheduler.
 /// </summary>
 public abstract class SystemBase
 {
     /// <summary>
-    /// TODO: Фаза 1 — вызывается один раз при регистрации системы.
-    /// Здесь система подписывается на события своей шины через
-    /// SystemExecutionContext. По умолчанию — no-op.
+    /// Gets the execution context, which provides system access to component data and event buses.
+    /// This property is set by ParallelSystemScheduler after construction.
+    /// Internal setter — only scheduler assigns this.
     /// </summary>
-    protected virtual void Subscribe()
-    {
-    }
+    public SystemExecutionContext Context { get; internal set; } = null!;
 
     /// <summary>
-    /// TODO: Фаза 1 — основной метод: игровая логика на один тик.
-    /// Вызывается планировщиком с частотой согласно <c>[TickRate]</c>.
+    /// Called once when system is registered. Use for bus subscriptions or initial setup logic.
+    /// Default implementation is empty and can be overridden by derived classes when needed.
     /// </summary>
-    /// <param name="delta">Сколько секунд игрового времени прошло с предыдущего Update.</param>
+    protected virtual void OnInitialize() { }
+
+    /// <summary>
+    /// The main game logic update loop, called by the scheduler every tick according to [TickRate].
+    /// All system-specific game logic must be implemented here.
+    /// </summary>
     public abstract void Update(float delta);
 
     /// <summary>
-    /// TODO: Фаза 1 — типобезопасный доступ к компоненту через сторожа изоляции.
-    /// В DEBUG — проверяет, что <typeparamref name="T"/> задекларирован в
-    /// <c>[SystemAccess(reads/writes)]</c>. Нарушение = <see cref="IsolationViolationException"/>.
+    /// Called once when system is unregistered or game shuts down. 
+    /// Use this for cleanup, unsubscriptions, and resource release.
+    /// Default implementation is empty and can be overridden by derived classes when needed.
     /// </summary>
-    protected T GetComponent<T>(EntityId id) where T : IComponent
-    {
-        // TODO: Фаза 1 — делегировать в SystemExecutionContext.Current.GetComponent<T>(id).
-        throw new NotImplementedException("TODO: Фаза 1 — через SystemExecutionContext");
-    }
+    protected virtual void OnDispose() { }
+
+    /// <summary>
+    /// Internal method called by the scheduler to initialize the system's lifecycle hooks.
+    /// </summary>
+    internal void Initialize() => OnInitialize();
+
+    /// <summary>
+    /// Internal method called by the scheduler to dispose of the system's resources and logic.
+    /// </summary>
+    internal void Dispose() => OnDispose();
 }
