@@ -131,7 +131,7 @@ internal sealed class ComponentStore<T> : IComponentStore where T : IComponent
         int idOfLastComponentIndex = _denseToIndex[lastDenseIndex];
 
         // If the component to remove IS the last element, we just clear its sparse slot.
-        if (id.Equals(new EntityId(idOfLastComponentIndex, id.Index))) // Simplified ID check for comparison purposes
+        if (id.Index == idOfLastComponentIndex) // Simplified ID check for comparison purposes
         {
             _sparse[id.Index] = -1;
             Count--;
@@ -146,7 +146,7 @@ internal sealed class ComponentStore<T> : IComponentStore where T : IComponent
         _sparse[idOfLastComponentIndex] = denseIndexToRemove;
 
         // Clear the last slot's sparse map entry, as it now contains data from the target slot.
-        _sparse[idOfLastComponentIndex] = -1; 
+        _sparse[id.Index] = -1;; 
             
         Count--;
     }
