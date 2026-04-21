@@ -1,35 +1,118 @@
+namespace DualFrontier.Core.Bus;
+
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Core;
 
-namespace DualFrontier.Core.Bus;
-
 /// <summary>
-/// Собирает intents (намерения) одного типа в пределах одной фазы и отдаёт
-/// их батчем в следующей фазе через <see cref="Drain"/>. Ключевая оптимизация
-/// двухшаговой модели Intent → Granted/Refused (TechArch 11.5): вместо N
-/// отдельных проходов по кэшу — один батч-проход.
+/// Collects Intent events published during a scheduler phase and delivers them as a batch 
+/// at the start of the next phase. This implements the two-step Intent→Granted/Refused pattern.
 /// </summary>
-/// <typeparam name="TIntent">Тип intent-события (обычно record : IEvent).</typeparam>
-internal sealed class IntentBatcher<TIntent> where TIntent : IEvent
+internal sealed class IntentBatcher
 {
-    // TODO: Фаза 1 — private readonly ConcurrentBag<TIntent> _buffer = new();
+    // Stores pending intents by event type.
+    private readonly ConcurrentDictionary<Type, List<IEvent>> _pending = new();
+    private readonly object _lock = new();
 
     /// <summary>
-    /// TODO: Фаза 1 — подписчик вызывает Collect при получении intent.
-    /// Intent копится в буфере до конца фазы.
+    /// Enqueues an intent for batch delivery in the next phase.
     /// </summary>
-    public void Collect(TIntent intent)
+    /// <typeparam name="TEvent">The type of the event (must inherit from IEvent).</typeparam>
+    /// <param name="intent">The event instance to enqueue.</param>
+    public void Enqueue<TEvent>(TEvent intent) where TEvent : IEvent
     {
-        throw new NotImplementedException("TODO: Фаза 1 — реализация IntentBatcher.Collect");
+        lock (_lock)
+        {
+            if (!_pending.ContainsKey(typeof(TEvent)))
+            {
+                _pending[typeof(TEvent)] = new List<IEvent>();
+            }
+            _pending[typeof(TEvent)].Add((IEvent)intent);
+        }
     }
 
     /// <summary>
-    /// TODO: Фаза 1 — вернуть все собранные intents и очистить буфер.
-    /// Вызывается планировщиком на границе фаз.
+    /// Dequeues all pending intents of a given type.
+    /// Returns snapshot list and clears the queue for that type.
     /// </summary>
-    public IReadOnlyList<TIntent> Drain()
+    /// <typeparam name="TEvent">The expected type of the event.</typeparam>
+    /// <returns>A list containing copies of all pending events of type {TEvent}. Returns an empty list if no intents are pending.</returns>
+    public List<TEvent> Flush<TEvent>() where TEvent : IEvent
     {
-        throw new NotImplementedException("TODO: Фаза 1 — реализация IntentBatcher.Drain");
+        lock (_lock)
+        {
+            if (!_pending.ContainsKey(typeof(TEvent)) || _pending[typeof(TEvent)].Count == 0)
+            {
+                return new List<TEvent>();
+            }
+
+            // Take a snapshot of the current list by iterating and casting.
+            List<IEvent> events = _pending[typeof(TEvent)];
+            List<TEvent> snapshot = new List<TEvent>();
+            foreach (IEvent item in events)
+            {
+                snapshot.Add((TEvent)item);
+            }
+            
+            // Clear the original queue for this type
+            events.Clear(); 
+            
+            return snapshot;
+        }
+    }
+
+    /// <summary>
+    /// Flushes all pending intents of all types.
+    /// Returns dictionary mapping event Type to list of events. Clears all queues.
+    /// </summary>
+    /// <returns>A dictionary containing snapshots of all pending intents, keyed by their type.</returns>
+    public Dictionary<Type, List<IEvent>> FlushAll()
+    {
+        lock (_lock)
+        {
+            var result = new Dictionary<Type, List<IEvent>>();
+
+            // Copy contents and clear the original dictionary structure
+            foreach (var kvp in _pending.ToList())
+            {
+                result[kvp.Key] = new List<IEvent>(kvp.Value); // Create snapshot copy
+                kvp.Value.Clear(); // Clear original list
+            }
+
+            // Note: We must clear the dictionary itself if we want to fully reset state, 
+            // but since we only modify the internal lists for now, let's just clear all underlying lists.
+            _pending.Clear(); 
+            
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Returns count of pending intents for a given type without flushing them.
+    /// </summary>
+    /// <typeparam name="TEvent">The expected type of the event.</typeparam>
+    /// <returns>The number of pending events of type {TEvent}. Returns 0 if no intents are pending.</returns>
+    public int PendingCount<TEvent>() where TEvent : IEvent
+    {
+        lock (_lock)
+        {
+            if (!_pending.ContainsKey(typeof(TEvent)))
+            {
+                return 0;
+            }
+            return _pending[typeof(TEvent)].Count;
+        }
+    }
+
+    /// <summary>
+    /// Clears all pending intents without delivering them or generating any output.
+    /// </summary>
+    public void Clear()
+    {
+        lock (_lock)
+        {
+            _pending.Clear();
+        }
     }
 }
