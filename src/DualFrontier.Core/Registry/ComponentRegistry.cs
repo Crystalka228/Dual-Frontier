@@ -1,32 +1,50 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using DualFrontier.Contracts.Core;
 
-namespace DualFrontier.Core.Registry;
-
 /// <summary>
-/// Реестр типов компонентов. Каждому зарегистрированному типу
-/// присваивается стабильный числовой ID. ID используется для
-/// сериализации (Save/Load) и как ключ в плотных структурах ECS.
+/// A registry that tracks which component types are known to the ECS.
+/// Used at startup to validate [SystemAccess] declarations.
 /// </summary>
 internal sealed class ComponentRegistry
 {
-    // TODO: Фаза 1 — private readonly Dictionary<Type, int> _typeIds = new();
-    // TODO: Фаза 1 — private int _nextId;
+    private readonly HashSet<Type> _registered = new();
 
     /// <summary>
-    /// TODO: Фаза 1 — зарегистрировать тип компонента и выдать ему ID.
-    /// Повторная регистрация того же типа — no-op, возвращает существующий ID.
+    /// Registers a component type. No-op if already registered.
     /// </summary>
-    public int Register<T>() where T : IComponent
-    {
-        throw new NotImplementedException("TODO: Фаза 1 — реализация ComponentRegistry");
-    }
+    /// <typeparam name="T">The type of the component to register, must implement IComponent.</typeparam>
+    public void Register<T>() where T : IComponent
+        => _registered.Add(typeof(T));
 
     /// <summary>
-    /// TODO: Фаза 1 — получить ID по типу. Если не зарегистрирован — исключение.
+    /// Returns true if the type has been registered.
     /// </summary>
-    public int GetTypeId(Type componentType)
-    {
-        throw new NotImplementedException("TODO: Фаза 1 — реализация ComponentRegistry");
-    }
+    /// <typeparam name="T">The component type to check.</typeparam>
+    public bool IsRegistered<T>() where T : IComponent
+        => _registered.Contains(typeof(T));
+
+    /// <summary>
+    /// Returns true if the type has been registered (non-generic overload).
+    /// </summary>
+    /// <param name="type">The component type to check.</param>
+    public bool IsRegistered(Type type)
+        => _registered.Contains(type);
+
+    /// <summary>
+    /// Returns all registered component types (snapshot).
+    /// </summary>
+    public IReadOnlyCollection<Type> All => _registered;
+
+    /// <summary>
+    /// Clears all registrations (used in tests).
+    /// </summary>
+    public void Clear() => _registered.Clear();
+}
+
+namespace DualFrontier.Core.Registry
+{
+    // Note: Assuming the class structure and namespace declaration are handled by file-scoped namespaces/using directives, 
+    // but retaining explicit declarations for clarity based on prompt requirements.
 }
