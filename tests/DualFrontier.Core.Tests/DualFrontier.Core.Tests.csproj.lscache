@@ -54,7 +54,9 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 
 [sourceFiles]
 <NUGET>/microsoft.net.test.sdk/17.11.1/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.cs
-ECS/EntityIdTests.cs
+ECS/
+ EntityIdTests.cs
+ WorldTests.cs
 obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  DualFrontier.Core.Tests.AssemblyInfo.cs
