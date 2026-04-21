@@ -1,49 +1,92 @@
-using System;
-using DualFrontier.Contracts.Bus;
-
 namespace DualFrontier.Core.Bus;
 
+using System;
+using DualFrontier.Contracts.Bus;
+using DualFrontier.Contracts.Core;
+
 /// <summary>
-/// Композиция пяти доменных шин событий. Реализация <see cref="IGameServices"/>.
-/// Каждая шина — отдельный экземпляр <see cref="DomainEventBus"/>, типизированный
-/// под конкретный доменный интерфейс через thin-обёртки (или через кастинг —
-/// детали реализации). Это точка входа для систем, модов и приложения ко всем шинам.
+/// Aggregates all domain event buses into a single service locator pattern, 
+/// implementing the IGameServices interface. This class provides access points 
+/// for various core game systems' event buses.
 /// </summary>
 internal sealed class GameServices : IGameServices
 {
-    // TODO: Фаза 1 — private readonly DomainEventBus _combat = new();
-    // TODO: Фаза 1 — private readonly DomainEventBus _inventory = new();
-    // TODO: Фаза 1 — private readonly DomainEventBus _magic = new();
-    // TODO: Фаза 1 — private readonly DomainEventBus _pawns = new();
-    // TODO: Фаза 1 — private readonly DomainEventBus _world = new();
+    private readonly CombatBus _combatBus = new();
+    private readonly InventoryBus _inventoryBus = new();
+    private readonly MagicBus _magicBus = new();
+    private readonly WorldBus _worldBus = new();
+    private readonly PawnBus _pawnBus = new();
 
-    /// <inheritdoc />
-    public ICombatBus Combat
-    {
-        get => throw new NotImplementedException("TODO: Фаза 1 — вернуть типизированную обёртку над _combat");
-    }
+    /// <inheritdoc/>
+    public ICombatBus Combat => _combatBus;
 
-    /// <inheritdoc />
-    public IInventoryBus Inventory
-    {
-        get => throw new NotImplementedException("TODO: Фаза 1 — вернуть типизированную обёртку над _inventory");
-    }
+    /// <inheritdoc/>
+    public IInventoryBus Inventory => _inventoryBus;
 
-    /// <inheritdoc />
-    public IMagicBus Magic
-    {
-        get => throw new NotImplementedException("TODO: Фаза 1 — вернуть типизированную обёртку над _magic");
-    }
+    /// <inheritdoc/>
+    public IMagicBus Magic => _magicBus;
 
-    /// <inheritdoc />
-    public IPawnBus Pawns
-    {
-        get => throw new NotImplementedException("TODO: Фаза 1 — вернуть типизированную обёртку над _pawns");
-    }
+    /// <inheritdoc/>
+    public IWorldBus World => _worldBus;
 
-    /// <inheritdoc />
-    public IWorldBus World
+    /// <inheritdoc/>
+    public IPawnBus Pawns => _pawnBus;
+
+    /// <summary>
+    /// Clears all underlying event buses. Should be called between scenes or during testing 
+    /// to prevent stale events from affecting subsequent game states.
+    /// </summary>
+    public void Clear()
     {
-        get => throw new NotImplementedException("TODO: Фаза 1 — вернуть типизированную обёртку над _world");
+        _combatBus.Clear();
+        _inventoryBus.Clear();
+        _magicBus.Clear();
+        _worldBus.Clear();
+        _pawnBus.Clear();
     }
+}
+
+internal sealed class CombatBus : ICombatBus
+{
+    private readonly DomainEventBus _bus = new();
+    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
+    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
+    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
+    public void Clear() => _bus.Clear();
+}
+
+internal sealed class InventoryBus : IInventoryBus
+{
+    private readonly DomainEventBus _bus = new();
+    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
+    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
+    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
+    public void Clear() => _bus.Clear();
+}
+
+internal sealed class MagicBus : IMagicBus
+{
+    private readonly DomainEventBus _bus = new();
+    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
+    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
+    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
+    public void Clear() => _bus.Clear();
+}
+
+internal sealed class WorldBus : IWorldBus
+{
+    private readonly DomainEventBus _bus = new();
+    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
+    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
+    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
+    public void Clear() => _bus.Clear();
+}
+
+internal sealed class PawnBus : IPawnBus
+{
+    private readonly DomainEventBus _bus = new();
+    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
+    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
+    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
+    public void Clear() => _bus.Clear();
 }
