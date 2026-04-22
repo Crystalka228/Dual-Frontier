@@ -86,8 +86,8 @@ Entity со старой версией — индикатор мёртвой с
 ```csharp
 public abstract class SystemBase
 {
-    // Вызывается один раз при регистрации. Подписки на шину.
-    protected virtual void Subscribe() { }
+    // Вызывается один раз при регистрации системы. Используется для подписок на шину или другого one-time setup.
+    protected virtual void OnInitialize() { }
 
     // Вызывается планировщиком с частотой, заданной [TickRate].
     public abstract void Update(float delta);

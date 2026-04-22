@@ -210,7 +210,7 @@ var inventory = GetSystem<InventorySystem>();
 3. Атрибут `[TickRate(TickRates.XXX)]` задан явно.
 4. В `reads`/`writes` перечислены ВСЕ используемые в `Update` компоненты.
 5. Bus соответствует реальной публикации внутри обработчиков.
-6. `Subscribe()` переопределён и отписывает в `OnDestroy`.
+6. `OnInitialize()` переопределён для подписок; `OnDispose()` отписывает при выгрузке.
 7. Нет `async`/`await`/`Task` в коде системы.
 8. Нет прямых ссылок на другие системы или `World`.
 9. Unit-тест на сторож: тест, в котором система намеренно нарушает декларацию, ожидает `IsolationViolationException`.
