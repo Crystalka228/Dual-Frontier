@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Core.Scheduling;
@@ -21,12 +23,11 @@ namespace DualFrontier.Core.Scheduling;
 ///   4. <c>SystemExecutionContext.PopContext</c> clears the guard — always,
 ///      even if <c>Update</c> throws.
 ///
-/// Exceptions from <c>SystemBase.Update</c> are not caught here — in Phase 1
-/// they propagate through <c>Parallel.ForEach</c> as an
-/// <c>AggregateException</c>. This is deliberate: during development we want
-/// system faults to surface immediately. Phase 2 introduces
-/// <c>ModFaultHandler</c>, which wraps mod-origin systems; Core systems
-/// continue to propagate.
+/// Exceptions from <c>SystemBase.Update</c> are not caught here — they
+/// propagate through <c>Parallel.ForEach</c> as an <c>AggregateException</c>.
+/// This is deliberate: during development we want system faults to surface
+/// immediately. Future phases introduce <c>ModFaultHandler</c>, which wraps
+/// mod-origin systems; Core systems continue to propagate.
 ///
 /// The <c>MaxDegreeOfParallelism</c> follows the documented N-2 rule —
 /// reserving one core for Godot's main thread and one for the OS and
@@ -36,23 +37,47 @@ internal sealed class ParallelSystemScheduler
 {
     private readonly IReadOnlyList<SystemPhase> _phases;
     private readonly TickScheduler _ticks;
+    private readonly World _world;
+    private readonly IModFaultSink _faultSink;
     private readonly ParallelOptions _parallelOptions;
+    private readonly Dictionary<SystemBase, SystemExecutionContext> _contextCache;
 
     /// <summary>
-    /// Creates a scheduler bound to the given phase list and tick clock.
-    /// The <c>MaxDegreeOfParallelism</c> is fixed at construction time to
-    /// <c>max(1, ProcessorCount - 2)</c>.
+    /// Creates a scheduler bound to the given phase list, tick clock, and
+    /// target world. The <c>MaxDegreeOfParallelism</c> is fixed at
+    /// construction time to <c>max(1, ProcessorCount - 2)</c>. Execution
+    /// contexts are pre-built for every registered system so the per-tick
+    /// hot path does no reflection or allocation.
     /// </summary>
+    /// <param name="phases">Phases in execution order as produced by <see cref="DependencyGraph"/>.</param>
+    /// <param name="ticks">Tick clock used to filter systems by <c>[TickRate]</c>.</param>
+    /// <param name="world">Target world the systems act upon.</param>
+    /// <param name="faultSink">Optional sink for mod-origin faults; defaults to a no-op sink.</param>
     public ParallelSystemScheduler(
         IReadOnlyList<SystemPhase> phases,
-        TickScheduler ticks)
+        TickScheduler ticks,
+        World world,
+        IModFaultSink? faultSink = null)
     {
         _phases = phases ?? throw new ArgumentNullException(nameof(phases));
         _ticks = ticks ?? throw new ArgumentNullException(nameof(ticks));
+        _world = world ?? throw new ArgumentNullException(nameof(world));
+        _faultSink = faultSink ?? new NullModFaultSink();
         _parallelOptions = new ParallelOptions
         {
             MaxDegreeOfParallelism = System.Math.Max(1, Environment.ProcessorCount - 2),
         };
+
+        _contextCache = new Dictionary<SystemBase, SystemExecutionContext>();
+        foreach (SystemPhase phase in _phases)
+        {
+            foreach (SystemBase system in phase.Systems)
+            {
+                if (_contextCache.ContainsKey(system))
+                    continue;
+                _contextCache[system] = BuildContext(system);
+            }
+        }
     }
 
     /// <summary>
@@ -71,7 +96,8 @@ internal sealed class ParallelSystemScheduler
             if (!_ticks.ShouldRun(system))
                 return;
 
-            SystemExecutionContext.PushContext(system);
+            SystemExecutionContext ctx = _contextCache[system];
+            SystemExecutionContext.PushContext(ctx);
             try
             {
                 system.Update(delta);
@@ -94,5 +120,25 @@ internal sealed class ParallelSystemScheduler
             ExecutePhase(phase, delta);
 
         _ticks.Advance();
+    }
+
+    private SystemExecutionContext BuildContext(SystemBase system)
+    {
+        Type systemType = system.GetType();
+        SystemAccessAttribute attr =
+            systemType.GetCustomAttribute<SystemAccessAttribute>(inherit: false)
+            ?? throw new InvalidOperationException(
+                $"System '{systemType.FullName}' is missing [SystemAccess]. " +
+                "The scheduler cannot build an execution context without a declaration.");
+
+        return new SystemExecutionContext(
+            _world,
+            systemType.FullName ?? systemType.Name,
+            attr.Reads,
+            attr.Writes,
+            attr.Buses,
+            SystemOrigin.Core,
+            modId: null,
+            _faultSink);
     }
 }
