@@ -155,6 +155,49 @@ internal sealed class World
         return GetOrCreateStore<T>().Get(id);
     }
 
+    /// <summary>
+    /// UNSAFE direct write — only for <see cref="SystemExecutionContext"/>.
+    /// Alias for <see cref="AddComponent{T}"/> used by the isolation guard
+    /// for write-side semantics.
+    /// </summary>
+    internal void SetComponent<T>(EntityId id, T component) where T : IComponent
+    {
+        GetOrCreateStore<T>().Add(id, component);
+    }
+
+    /// <summary>
+    /// Enumerates the live entities that currently carry a component of type {T}.
+    /// Used by <see cref="SystemExecutionContext"/> to implement
+    /// <c>Query&lt;T&gt;</c>. Iterates the matching <see cref="ComponentStore{T}"/>
+    /// and reconstructs each {EntityId} from the slot's current version.
+    /// Returns an empty sequence if no store of type {T} has ever been created.
+    /// </summary>
+    /// <returns>Lazy sequence of entity ids with a component of type {T}.</returns>
+    internal IEnumerable<EntityId> GetEntitiesWith<T>() where T : IComponent
+    {
+        if (!_stores.TryGetValue(typeof(T), out IComponentStore? store))
+            yield break;
+
+        foreach (int index in ((ComponentStore<T>)store).EnumerateIndices())
+        {
+            if (index > 0 && index < _versions.Length)
+                yield return new EntityId(index, _versions[index]);
+        }
+    }
+
+    /// <summary>
+    /// Returns the number of components of type {T} currently stored.
+    /// Used by <see cref="SystemExecutionContext.Query{T1, T2}"/> to pick
+    /// the smaller store to iterate. Returns 0 if no store of type {T} exists.
+    /// </summary>
+    /// <returns>Live count of components of type {T} in this world.</returns>
+    internal int GetComponentCount<T>() where T : IComponent
+    {
+        if (_stores.TryGetValue(typeof(T), out IComponentStore? store))
+            return ((ComponentStore<T>)store).Count;
+        return 0;
+    }
+
     // ── Helpers ─────────────────────────────────────────────────────────────
 
     private ComponentStore<T> GetOrCreateStore<T>() where T : IComponent

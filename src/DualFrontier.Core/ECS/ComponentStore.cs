@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Core.ECS;
@@ -196,12 +197,24 @@ internal sealed class ComponentStore<T> : IComponentStore, IRemovable where T : 
     }
 
     /// <summary>
-    /// Returns a read-only span over all component instances currently stored in the dense array. 
+    /// Returns a read-only span over all component instances currently stored in the dense array.
     /// This provides an efficient way to iterate over all components without allocation overhead (hot path).
     /// </summary>
 /// <returns>ReadOnlySpan{T} containing all active components.</returns>
     public ReadOnlySpan<T> All()
     {
         return new ReadOnlySpan<T>(_dense, 0, Count);
+    }
+
+    /// <summary>
+    /// Enumerates the entity indices that currently have a component of type {T}.
+    /// Used by <see cref="World.GetEntitiesWith{T}"/> to materialise {EntityId}
+    /// values. Iterates the dense array — O(Count), no allocations per element.
+    /// </summary>
+    /// <returns>Sequence of entity indices for all live slots in this store.</returns>
+    public IEnumerable<int> EnumerateIndices()
+    {
+        for (int i = 0; i < Count; i++)
+            yield return _denseToIndex[i];
     }
 }
