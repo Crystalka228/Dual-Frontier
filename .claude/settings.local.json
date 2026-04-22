@@ -6,7 +6,9 @@
       "PowerShell(Get-Command \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" -ErrorAction SilentlyContinue)",
       "PowerShell(gh --version 2>&1)",
       "Bash(dotnet build *)",
-      "Bash(dotnet test *)"
+      "Bash(dotnet test *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
