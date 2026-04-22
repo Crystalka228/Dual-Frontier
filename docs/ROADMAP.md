@@ -50,7 +50,7 @@
 
 Все игровые системы. Начиная с этой фазы `DualFrontier.Systems` собирается.
 
-## Фаза 2 — Верификация
+## ✅ Фаза 2 — Верификация
 
 Цель: доказать, что архитектурные гарантии работают, а не только объявлены.
 
@@ -67,7 +67,8 @@
 Исходники в `src/`:
 
 - `DualFrontier.Application/Modding/` — `ModIntegrationPipeline`,
-  `ContractValidator`, `ModRegistry`, `ModContractStore`, `RestrictedModApi` (полная реализация).
+  `ContractValidator`, `ModRegistry`, `ModContractStore`,
+  `RestrictedModApi` (полная реализация), `ModLoader` (полная реализация).
 
 ### Критерии приёмки
 

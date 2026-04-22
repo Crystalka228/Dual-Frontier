@@ -41,23 +41,29 @@ internal sealed class ParallelSystemScheduler
     private readonly IModFaultSink _faultSink;
     private readonly ParallelOptions _parallelOptions;
     private Dictionary<SystemBase, SystemExecutionContext> _contextCache;
+    private IReadOnlyDictionary<SystemBase, (SystemOrigin Origin, string? ModId)> _systemOrigins;
 
     /// <summary>
     /// Creates a scheduler bound to the given phase list, tick clock, and
     /// target world. The <c>MaxDegreeOfParallelism</c> is fixed at
     /// construction time to <c>max(1, ProcessorCount - 2)</c>. Execution
     /// contexts are pre-built for every registered system so the per-tick
-    /// hot path does no reflection or allocation.
+    /// hot path does no reflection or allocation. Systems default to
+    /// <see cref="SystemOrigin.Core"/>; pass <paramref name="systemOrigins"/>
+    /// to tag mod-origin systems so isolation faults route through
+    /// <see cref="IModFaultSink"/>.
     /// </summary>
     /// <param name="phases">Phases in execution order as produced by <see cref="DependencyGraph"/>.</param>
     /// <param name="ticks">Tick clock used to filter systems by <c>[TickRate]</c>.</param>
     /// <param name="world">Target world the systems act upon.</param>
     /// <param name="faultSink">Optional sink for mod-origin faults; defaults to a no-op sink.</param>
+    /// <param name="systemOrigins">Optional per-system origin+modId map; absent systems default to Core.</param>
     public ParallelSystemScheduler(
         IReadOnlyList<SystemPhase> phases,
         TickScheduler ticks,
         World world,
-        IModFaultSink? faultSink = null)
+        IModFaultSink? faultSink = null,
+        IReadOnlyDictionary<SystemBase, (SystemOrigin Origin, string? ModId)>? systemOrigins = null)
     {
         _phases = phases ?? throw new ArgumentNullException(nameof(phases));
         _ticks = ticks ?? throw new ArgumentNullException(nameof(ticks));
@@ -67,6 +73,8 @@ internal sealed class ParallelSystemScheduler
         {
             MaxDegreeOfParallelism = System.Math.Max(1, Environment.ProcessorCount - 2),
         };
+        _systemOrigins = systemOrigins
+            ?? new Dictionary<SystemBase, (SystemOrigin, string?)>();
 
         _contextCache = new Dictionary<SystemBase, SystemExecutionContext>();
         foreach (SystemPhase phase in _phases)
@@ -127,12 +135,22 @@ internal sealed class ParallelSystemScheduler
     /// integration. Must be called only from the menu (not during a game
     /// session). The per-system execution-context cache is rebuilt for the
     /// new system set using the same construction rules as the constructor.
+    /// Pass <paramref name="systemOrigins"/> so mod systems receive
+    /// <see cref="SystemOrigin.Mod"/>; absent entries default to Core.
     /// </summary>
     /// <param name="newPhases">Phases in execution order as produced by <see cref="DependencyGraph"/>.</param>
-    internal void Rebuild(IReadOnlyList<SystemPhase> newPhases)
+    /// <param name="systemOrigins">Optional per-system origin+modId map.</param>
+    internal void Rebuild(
+        IReadOnlyList<SystemPhase> newPhases,
+        IReadOnlyDictionary<SystemBase, (SystemOrigin Origin, string? ModId)>? systemOrigins = null)
     {
         if (newPhases is null)
             throw new ArgumentNullException(nameof(newPhases));
+
+        // Сначала сохраняем новую таблицу origins — BuildContext читает её при
+        // обходе фаз.
+        _systemOrigins = systemOrigins
+            ?? new Dictionary<SystemBase, (SystemOrigin, string?)>();
 
         // Сбор новой таблицы контекстов. Алгоритм тот же, что в конструкторе.
         var newCache = new Dictionary<SystemBase, SystemExecutionContext>();
@@ -166,14 +184,24 @@ internal sealed class ParallelSystemScheduler
                 $"System '{systemType.FullName}' is missing [SystemAccess]. " +
                 "The scheduler cannot build an execution context without a declaration.");
 
+        // Системы, не зарегистрированные в origin-map, считаются Core — это
+        // сохраняет поведение по умолчанию для Core-тестов без пайплайна.
+        SystemOrigin origin = SystemOrigin.Core;
+        string? modId = null;
+        if (_systemOrigins.TryGetValue(system, out (SystemOrigin Origin, string? ModId) entry))
+        {
+            origin = entry.Origin;
+            modId = entry.ModId;
+        }
+
         return new SystemExecutionContext(
             _world,
             systemType.FullName ?? systemType.Name,
             attr.Reads,
             attr.Writes,
             attr.Buses,
-            SystemOrigin.Core,
-            modId: null,
+            origin,
+            modId,
             _faultSink);
     }
 }

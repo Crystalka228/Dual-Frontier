@@ -174,8 +174,12 @@ internal sealed class ModIntegrationPipeline
                 FailedModIds: CollectModIds(loaded));
         }
 
-        // [7] Атомарная замена фаз планировщика. Предыдущий граф больше не нужен.
-        _scheduler.Rebuild(localGraph.GetPhases());
+        // [7] Атомарная замена фаз планировщика. Карта origin'ов нужна, чтобы
+        // сторож изоляции знал, какие системы принадлежат модам, и маршрутизировал
+        // их исключения в ModFaultSink (а не крашил игру).
+        IReadOnlyDictionary<SystemBase, (SystemOrigin Origin, string? ModId)> originMap =
+            BuildOriginMap();
+        _scheduler.Rebuild(localGraph.GetPhases(), originMap);
         _activeMods.AddRange(loaded);
 
         return new PipelineResult(
@@ -204,7 +208,15 @@ internal sealed class ModIntegrationPipeline
         foreach (SystemRegistration reg in _registry.GetAllSystems())
             localGraph.AddSystem(reg.Instance);
         localGraph.Build();
-        _scheduler.Rebuild(localGraph.GetPhases());
+        _scheduler.Rebuild(localGraph.GetPhases(), BuildOriginMap());
+    }
+
+    private IReadOnlyDictionary<SystemBase, (SystemOrigin Origin, string? ModId)> BuildOriginMap()
+    {
+        var map = new Dictionary<SystemBase, (SystemOrigin, string?)>();
+        foreach (SystemRegistration reg in _registry.GetAllSystems())
+            map[reg.Instance] = (reg.Origin, reg.ModId);
+        return map;
     }
 
     private IReadOnlyList<SystemBase> GetCoreSystemInstances()
