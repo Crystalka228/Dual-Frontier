@@ -11,6 +11,7 @@ namespace DualFrontier.AI.BehaviourTree;
 public class Selector : BTNode
 {
     private readonly BTNode[] _children;
+    private int _currentIndex;
 
     /// <summary>
     /// Создаёт селектор из упорядоченного списка детей.
@@ -23,8 +24,21 @@ public class Selector : BTNode
     /// <inheritdoc />
     public override BTStatus Tick(BTContext ctx)
     {
-        throw new NotImplementedException(
-            "TODO: Фаза 3 — реализация Selector.Tick с запоминанием текущего ребёнка"
-        );
+        for (int i = _currentIndex; i < _children.Length; i++)
+        {
+            BTStatus status = _children[i].Tick(ctx);
+            if (status == BTStatus.Success)
+            {
+                _currentIndex = 0;
+                return BTStatus.Success;
+            }
+            if (status == BTStatus.Running)
+            {
+                _currentIndex = i;
+                return BTStatus.Running;
+            }
+        }
+        _currentIndex = 0;
+        return BTStatus.Failure;
     }
 }
