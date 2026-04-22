@@ -78,6 +78,7 @@ Core/
 Enums/OwnershipMode.cs
 Math/GridVector.cs
 Modding/
+ ContractsVersion.cs
  IMod.cs
  IModApi.cs
  IModContract.cs

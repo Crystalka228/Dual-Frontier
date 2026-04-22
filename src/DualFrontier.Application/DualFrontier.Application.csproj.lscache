@@ -66,10 +66,19 @@ Loop/
  FrameClock.cs
  GameLoop.cs
 Modding/
+ ContractValidator.cs
+ IModContractStore.cs
+ LoadedMod.cs
+ ModContractStore.cs
+ ModIntegrationPipeline.cs
  ModIsolationException.cs
  ModLoadContext.cs
  ModLoader.cs
+ ModRegistry.cs
  RestrictedModApi.cs
+ SystemRegistration.cs
+ ValidationError.cs
+ ValidationReport.cs
 obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  DualFrontier.Application.AssemblyInfo.cs

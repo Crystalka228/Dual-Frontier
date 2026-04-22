@@ -54,10 +54,14 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 
 [sourceFiles]
 <NUGET>/microsoft.net.test.sdk/17.11.1/build/netcoreapp3.1/Microsoft.NET.Test.Sdk.Program.cs
+Fixtures/GoodMod/GoodMod.cs
 obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  DualFrontier.Modding.Tests.AssemblyInfo.cs
  DualFrontier.Modding.Tests.GlobalUsings.g.cs
+Pipeline/
+ ContractValidatorTests.cs
+ ModIntegrationPipelineTests.cs
 
 [metadataReferences]
 ../../src/
