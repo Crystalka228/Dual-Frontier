@@ -8,17 +8,15 @@
 через свои WRITE-компоненты.
 
 ## Зависимости
-- `DualFrontier.Contracts` — `EntityId`, базовые типы.
+- `DualFrontier.Contracts` — `EntityId`, `GridVector`, базовые типы.
 - `DualFrontier.Components` — для чтения данных пешки (навыки,
   позиция, инвентарь) — через `BTContext`/`IJob`.
 
 **НЕ зависит** от `DualFrontier.Core` (иначе закольцуем граф —
 Core содержит шедулер, который вызывает Systems, которые
-вызывают AI). Типы, живущие в `Core` (например `GridVector` в
-`DualFrontier.Core.Math`), принимаются как `object` с пометкой
-TODO — после того как они переедут в `Contracts` или когда
-появится отдельная сборка `DualFrontier.Primitives`, убрать
-`object` и поставить реальный тип.
+вызывают AI). Все примитивы, которые AI разделяет с Systems и
+Components (например `GridVector`), живут в `Contracts` — это
+тот же слой, от которого зависят моды.
 
 ## Что внутри
 - `BehaviourTree/` — универсальный BT (Selector / Sequence / Leaf).
@@ -47,8 +45,6 @@ if (job.Tick(delta) == JobStatus.Done) { /* ... */ }
 ```
 
 ## TODO
-- [ ] Заменить `object` на `GridVector` в `IPathfindingService`
-      после выноса `GridVector` в `Contracts`/`Primitives`.
 - [ ] Реализовать `AStarPathfinding` с лимитом итераций за тик.
 - [ ] Написать BT-парсер из JSON для модов.
 - [ ] Покрыть юнит-тестами `Selector` / `Sequence` / `Leaf`.

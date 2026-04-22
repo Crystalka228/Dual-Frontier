@@ -6,14 +6,13 @@
 изоляции систем (см. THREADING).
 
 ## Зависимости
-- `DualFrontier.Contracts` — `EntityId` (не используется напрямую сейчас).
+- `DualFrontier.Contracts` — `GridVector` (координаты пути), `EntityId`.
 - `DualFrontier.Components.World` — `TileComponent` (для постройки
   `NavGrid` из мира — это делает верхний слой, не сама AI).
 
-**НЕТ** зависимости на `DualFrontier.Core`, где живёт
-`GridVector` (`DualFrontier.Core.Math`). Пока `GridVector` не
-переедет в `Contracts`, сигнатуры интерфейсов используют
-`object` с TODO-пометкой.
+**НЕТ** зависимости на `DualFrontier.Core` — `SpatialGrid` живёт
+там, но это инфраструктура, а не примитив. `GridVector` —
+примитив, он живёт в `Contracts.Math`.
 
 ## Что внутри
 - `IPathfindingService.cs` — интерфейс с синхронным `TryFindPath`.
@@ -35,8 +34,6 @@ if (pf.TryFindPath(from, to, out var path)) { /* использовать */ }
 ```
 
 ## TODO
-- [ ] Заменить `object` на `GridVector`, когда тип переедет
-      в `Contracts` (или в новую сборку `DualFrontier.Primitives`).
 - [ ] Реализовать `AStarPathfinding` с бинарной кучей и лимитом итераций.
 - [ ] Реализовать `NavGrid` как bitset по тайлам.
 - [ ] Добавить hierarchical pathfinding для дальних целей.
