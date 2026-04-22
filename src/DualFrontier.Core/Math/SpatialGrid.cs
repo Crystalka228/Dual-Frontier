@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Math;
 
 namespace DualFrontier.Core.Math;
 

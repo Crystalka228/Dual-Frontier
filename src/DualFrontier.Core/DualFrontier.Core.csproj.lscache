@@ -66,9 +66,7 @@ ECS/
  SystemExecutionContext.cs
  SystemOrigin.cs
  World.cs
-Math/
- GridVector.cs
- SpatialGrid.cs
+Math/SpatialGrid.cs
 obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  DualFrontier.Core.AssemblyInfo.cs

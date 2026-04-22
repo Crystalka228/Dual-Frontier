@@ -17,7 +17,8 @@
 - `Scheduling/` — `DependencyGraph`, `ParallelSystemScheduler`, `SystemPhase`,
   `TickScheduler`, `TickRates`.
 - `Bus/` — `DomainEventBus`, `GameServices`, `IntentBatcher`.
-- `Math/` — `GridVector`, `SpatialGrid`.
+- `Math/` — `SpatialGrid` (инфраструктурное разбиение мира; `GridVector`-примитив
+  живёт в `DualFrontier.Contracts.Math`).
 - `Registry/` — `ComponentRegistry`, `SystemRegistry`.
 
 ## Правила

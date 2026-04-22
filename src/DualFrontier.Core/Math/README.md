@@ -9,13 +9,13 @@
 - `System` (BCL)
 
 ## Что внутри
-- `GridVector.cs` — `readonly record struct` координата тайла `(X, Y)` в int.
-  Имеет операторы +/-/равенства и утилиты Length/Manhattan.
 - `SpatialGrid.cs` — разбиение мира на ячейки для O(1) запроса "всё в радиусе R".
   Используется CombatSystem (поиск целей), RaidSystem, BiomeSystem.
 
+> `GridVector` живёт в `DualFrontier.Contracts.Math` — это общий примитив,
+> доступный всем слоям включая `AI` и моды, которые не зависят от `Core`.
+
 ## Правила
-- `GridVector` — value type: передача по значению, никаких boxing в горячих путях.
 - `SpatialGrid` НЕ потокобезопасный — защита через граф планировщика.
 - Godot `Vector2I` использовать нельзя — это Godot namespace. Конвертация
   происходит только в Presentation.
@@ -32,6 +32,5 @@ foreach (var near in grid.Query(position, radius: 5)) { /* ... */ }
 ```
 
 ## TODO
-- [ ] Фаза 1 — реализовать операторы и Length/Manhattan для `GridVector`.
 - [ ] Фаза 3 — реализовать `SpatialGrid.Insert/Remove/Update/Query`.
 - [ ] Фаза 3 — покрыть `SpatialGrid` бенчмарком (BenchmarkDotNet).
