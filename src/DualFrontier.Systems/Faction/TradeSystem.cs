@@ -24,7 +24,7 @@ public sealed class TradeSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на NewDayEvent — решить, придёт ли сегодня караван.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 7 — подписка на события торговли");
     }

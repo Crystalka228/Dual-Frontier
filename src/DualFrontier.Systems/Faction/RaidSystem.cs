@@ -23,7 +23,7 @@ public sealed class RaidSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на NewDayEvent, RelationBreakdownEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 7 — подписка на события рейдов");
     }

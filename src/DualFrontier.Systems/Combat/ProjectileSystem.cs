@@ -25,7 +25,7 @@ public sealed class ProjectileSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на ProjectileSpawnedEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 5 — подписка на появление снарядов");
     }

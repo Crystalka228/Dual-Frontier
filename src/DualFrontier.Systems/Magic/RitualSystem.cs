@@ -25,7 +25,7 @@ public sealed class RitualSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на RitualStartEvent, RitualAbortEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 4 — подписка на события ритуалов");
     }

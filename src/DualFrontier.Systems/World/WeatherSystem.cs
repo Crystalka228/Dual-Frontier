@@ -25,7 +25,7 @@ public sealed class WeatherSystem : SystemBase
     /// TODO: Подписаться на RitualCompletedEvent (ритуалы могут
     /// вызывать погоду) и NewDayEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 1 — подписка на события погоды");
     }

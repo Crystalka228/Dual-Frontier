@@ -34,7 +34,7 @@ public sealed class ManaSystem : SystemBase
     /// TODO: Подписаться на ManaIntent (списание), ManaLeaseOpenRequest
     /// (открытие непрерывной аренды), внутренний CloseRequest.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 1 — подписка на запросы маны");
     }

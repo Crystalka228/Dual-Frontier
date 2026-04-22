@@ -26,7 +26,7 @@ public sealed class RelationSystem : SystemBase
     /// TODO: Подписаться на DeathEvent (убийство чужого пешки → минус),
     /// TradeCompletedEvent (плюс), RaidIncomingEvent (минус).
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 7 — подписка на события отношений");
     }

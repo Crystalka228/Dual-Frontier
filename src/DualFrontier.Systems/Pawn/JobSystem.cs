@@ -25,7 +25,7 @@ public sealed class JobSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на JobCompletedEvent, JobAbortedEvent, MoodBreakEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 3 — подписка на события джобов");
     }

@@ -25,7 +25,7 @@ public sealed class SpellSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на SpellCastAttemptEvent, ManaGranted, ManaRefused.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 4 — подписка на события кастов");
     }

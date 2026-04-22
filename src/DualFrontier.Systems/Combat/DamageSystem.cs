@@ -26,7 +26,7 @@ public sealed class DamageSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на DamageEvent, ProjectileHitEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 2 — подписка на события урона");
     }

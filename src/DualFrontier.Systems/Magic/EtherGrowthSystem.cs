@@ -24,7 +24,7 @@ public sealed class EtherGrowthSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на EtherDrainedEvent (когда голем/заклинание тянут эфир из узла).
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 2 — подписка на события эфирных узлов");
     }

@@ -25,7 +25,7 @@ public sealed class CraftSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на CraftRequestEvent, CraftAbortedEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 6 — подписка на события крафта");
     }

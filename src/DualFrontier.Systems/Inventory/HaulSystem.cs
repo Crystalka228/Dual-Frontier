@@ -26,7 +26,7 @@ public sealed class HaulSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на HaulRequestEvent, StorageFilledEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 6 — подписка на события хаулов");
     }

@@ -24,7 +24,7 @@ public sealed class ConverterSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на ConverterInputEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 2 — подписка на события конвертеров");
     }

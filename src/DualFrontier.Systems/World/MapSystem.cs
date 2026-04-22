@@ -23,7 +23,7 @@ public sealed class MapSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на CameraMovedEvent, RegionRequestedEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 0 — подписка на события стриминга карты");
     }

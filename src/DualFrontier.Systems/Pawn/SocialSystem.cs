@@ -24,7 +24,7 @@ public sealed class SocialSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на ConversationEvent, GiftEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 3 — подписка на социальные события");
     }

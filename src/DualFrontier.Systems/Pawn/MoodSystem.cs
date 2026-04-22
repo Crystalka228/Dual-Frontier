@@ -25,7 +25,7 @@ public sealed class MoodSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на WitnessDeathEvent, GoodEventSeenEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 3 — подписка на события настроения");
     }

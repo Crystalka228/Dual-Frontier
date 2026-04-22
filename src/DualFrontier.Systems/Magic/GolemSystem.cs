@@ -29,7 +29,7 @@ public sealed class GolemSystem : SystemBase
     /// TODO: Подписаться на GolemCommandEvent, GolemOwnershipTransferRequest,
     /// ManaGranted, ManaRefused.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 4 — подписка на события големов");
     }

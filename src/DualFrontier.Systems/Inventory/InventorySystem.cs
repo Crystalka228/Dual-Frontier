@@ -26,7 +26,7 @@ public sealed class InventorySystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на AmmoIntent, CraftRequest, ItemDeposit, ItemWithdraw.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 6 — подписка на запросы склада");
     }

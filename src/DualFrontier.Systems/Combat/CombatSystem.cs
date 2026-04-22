@@ -32,7 +32,7 @@ public sealed class CombatSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на ShootAttemptEvent, ShootGranted, ShootRefused.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 5 — боевая система");
     }

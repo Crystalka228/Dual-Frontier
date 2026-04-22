@@ -25,7 +25,7 @@ public sealed class ElectricGridSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на BuildingPlacedEvent, BuildingDestroyedEvent, CablePlacedEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 2 — подписка на события построек/кабелей");
     }

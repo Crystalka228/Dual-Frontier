@@ -25,7 +25,7 @@ public sealed class StatusEffectSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на StatusAppliedEvent, StatusRemovedEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 5 — подписка на события статус-эффектов");
     }

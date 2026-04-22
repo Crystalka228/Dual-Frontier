@@ -24,7 +24,7 @@ public sealed class NeedsSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на FoodConsumedEvent, SleepEndedEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 3 — подписка на события нужд");
     }

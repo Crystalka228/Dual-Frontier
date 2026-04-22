@@ -24,7 +24,7 @@ public sealed class BiomeSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на WeatherChangedEvent, EtherSurgeEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 1 — подписка на события биомов");
     }

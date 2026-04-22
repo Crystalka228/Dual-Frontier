@@ -24,7 +24,7 @@ public sealed class ShieldSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на ShieldHitEvent, ShieldRechargeEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 5 — подписка на события щитов");
     }

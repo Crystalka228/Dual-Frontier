@@ -32,7 +32,7 @@ public sealed class CompositeResolutionSystem : SystemBase
     /// TODO: Фаза 4 — подписаться на CompoundShotIntent, AmmoGranted,
     /// AmmoRefused, ManaGranted, ManaRefused.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 4 — подписка на частичные ответы двухфазного коммита");
     }

@@ -30,7 +30,7 @@ public sealed class ComboResolutionSystem : SystemBase
     /// <summary>
     /// TODO: Фаза 4 — подписаться на DamageIntent из Combat и Magic шин.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 4 — подписка на DamageIntent из Combat и Magic шин");
     }

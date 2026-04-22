@@ -23,7 +23,7 @@ public sealed class SkillSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на SkillXpGainedEvent.
     /// </summary>
-    protected override void Subscribe()
+    protected override void OnInitialize()
     {
         throw new NotImplementedException("TODO: Фаза 3 — подписка на XP события");
     }
