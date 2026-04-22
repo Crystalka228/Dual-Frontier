@@ -36,7 +36,7 @@
 - `ECS/World.cs`, `ECS/ComponentStore.cs`, `ECS/SystemBase.cs`, `ECS/SystemExecutionContext.cs`, `ECS/IsolationViolationException.cs`.
 - `Scheduling/DependencyGraph.cs`, `Scheduling/ParallelSystemScheduler.cs`, `Scheduling/SystemPhase.cs`, `Scheduling/TickScheduler.cs`, `Scheduling/TickRates.cs`.
 - `Bus/DomainEventBus.cs`, `Bus/GameServices.cs`, `Bus/IntentBatcher.cs`.
-- `Math/GridVector.cs`, `Math/SpatialGrid.cs`.
+- `Math/SpatialGrid.cs` (инфраструктура; примитив `GridVector` живёт в `DualFrontier.Contracts.Math`).
 - `Registry/ComponentRegistry.cs`, `Registry/SystemRegistry.cs`.
 
 ### Критерии приёмки
