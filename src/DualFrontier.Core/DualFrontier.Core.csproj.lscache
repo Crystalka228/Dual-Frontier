@@ -60,9 +60,11 @@ Bus/
  IntentBatcher.cs
 ECS/
  ComponentStore.cs
+ IModFaultSink.cs
  IsolationViolationException.cs
  SystemBase.cs
  SystemExecutionContext.cs
+ SystemOrigin.cs
  World.cs
 Math/
  GridVector.cs

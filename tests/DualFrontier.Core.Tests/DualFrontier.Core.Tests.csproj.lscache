@@ -57,10 +57,14 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 ECS/
  EntityIdTests.cs
  WorldTests.cs
+Isolation/IsolationGuardTests.cs
 obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  DualFrontier.Core.Tests.AssemblyInfo.cs
  DualFrontier.Core.Tests.GlobalUsings.g.cs
+Scheduling/
+ DependencyGraphTests.cs
+ ParallelExecutionTests.cs
 
 [metadataReferences]
 ../../src/
