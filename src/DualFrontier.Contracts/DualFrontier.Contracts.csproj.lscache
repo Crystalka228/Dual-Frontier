@@ -76,6 +76,7 @@ Core/
  IQuery.cs
  IQueryResult.cs
 Enums/OwnershipMode.cs
+Math/GridVector.cs
 Modding/
  IMod.cs
  IModApi.cs
