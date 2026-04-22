@@ -1,5 +1,6 @@
-using DualFrontier.AI.BehaviourTree;
 using DualFrontier.Contracts.Core;
+
+namespace DualFrontier.AI.BehaviourTree;
 
 /// <summary>
 /// Passed to every BTNode.Tick call. Contains the entity being evaluated
