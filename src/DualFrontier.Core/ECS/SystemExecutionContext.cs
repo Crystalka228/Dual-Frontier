@@ -37,6 +37,27 @@ public sealed class SystemExecutionContext
     // TODO: Phase 2 (Opus) — private readonly string? _modId;
 
     /// <summary>
+    /// Pushes the execution context for the given system onto the current thread.
+    /// Called by <c>ParallelSystemScheduler</c> before <c>SystemBase.Update</c>.
+    /// Phase 1 stub — full ThreadLocal-based implementation lands in Phase 2.
+    /// </summary>
+    internal static void PushContext(SystemBase system)
+    {
+        // TODO: Phase 2 — push a SystemExecutionContext for `system` into the ThreadLocal slot.
+        _ = system;
+    }
+
+    /// <summary>
+    /// Pops the execution context from the current thread, restoring the previous value.
+    /// Called by <c>ParallelSystemScheduler</c> in a <c>finally</c> block after <c>SystemBase.Update</c>.
+    /// Phase 1 stub — full ThreadLocal-based implementation lands in Phase 2.
+    /// </summary>
+    internal static void PopContext()
+    {
+        // TODO: Phase 2 — pop the ThreadLocal slot set by PushContext.
+    }
+
+    /// <summary>
     /// Current execution context for the calling thread.
     /// Null if the thread does not belong to the scheduler
     /// (e.g. Godot main thread).
