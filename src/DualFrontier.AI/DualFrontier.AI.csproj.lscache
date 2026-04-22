@@ -55,6 +55,7 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 
 [sourceFiles]
 BehaviourTree/
+ BTBlackboard.cs
  BTContext.cs
  BTNode.cs
  Leaf.cs
