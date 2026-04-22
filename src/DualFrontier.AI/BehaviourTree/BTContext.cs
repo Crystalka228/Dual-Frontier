@@ -1,23 +1,37 @@
+using DualFrontier.AI.BehaviourTree;
 using DualFrontier.Contracts.Core;
 
-namespace DualFrontier.AI.BehaviourTree;
-
 /// <summary>
-/// Контекст одного тика BT: за какую пешку работаем, какие
-/// сервисы доступны. Передаётся в <see cref="BTNode.Tick"/>.
-///
-/// Система из <c>DualFrontier.Systems</c> собирает этот контекст
-/// на каждом тике пешки и прокидывает в корневой BT.
-///
-/// TODO: заменить <see cref="Services"/> с <c>object?</c> на
-/// реальный интерфейс сервисов AI, когда он появится
-/// (например, <c>IAIServices</c> в <c>Contracts</c>).
+/// Passed to every BTNode.Tick call. Contains the entity being evaluated
+/// and its blackboard. Nodes must not store a reference to BTContext
+/// between ticks — it may be recreated each tick.
 /// </summary>
-/// <param name="Entity">Пешка, для которой тикаем BT.</param>
-/// <param name="DeltaSeconds">Прошло реального времени с прошлого тика.</param>
-/// <param name="Services">Набор сервисов, доступных AI (pathfinding, blackboard).</param>
-public readonly record struct BTContext(
-    EntityId Entity,
-    float DeltaSeconds,
-    object? Services
-);
+public sealed class BTContext
+{
+    /// <summary>
+    /// The unique identifier of the entity this Behaviour Tree is currently evaluating.
+    /// </summary>
+    public EntityId PawnId { get; }
+
+    /// <summary>
+    /// Shared state for this pawn's Behaviour Tree across ticks.
+    /// </summary>
+    public BTBlackboard Blackboard { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BTContext"/> class.
+    /// </summary>
+    /// <param name="pawnId">The unique ID of the pawn.</param>
+    /// <param name="blackboard">The shared blackboard for this pawn's state.</param>
+    public BTContext(EntityId pawnId, BTBlackboard blackboard)
+    {
+        PawnId = pawnId;
+
+        // Null-check blackboard and store both.
+        if (blackboard == null)
+        {
+            throw new ArgumentNullException(nameof(blackboard), "The blackboard cannot be null.");
+        }
+        Blackboard = blackboard;
+    }
+}
