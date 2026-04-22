@@ -4,7 +4,8 @@
       "PowerShell($env:GITHUB_TOKEN)",
       "PowerShell(Get-Command gh -ErrorAction SilentlyContinue)",
       "PowerShell(Get-Command \"C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe\" -ErrorAction SilentlyContinue)",
-      "PowerShell(gh --version 2>&1)"
+      "PowerShell(gh --version 2>&1)",
+      "Bash(dotnet build *)"
     ]
   }
 }
