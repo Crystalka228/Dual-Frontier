@@ -75,8 +75,10 @@ obj/Debug/net8.0/
  DualFrontier.Components.GlobalUsings.g.cs
 Pawn/
  JobComponent.cs
+ JobKind.cs
  MindComponent.cs
  NeedsComponent.cs
+ SkillKind.cs
  SkillsComponent.cs
  SocialComponent.cs
 Shared/
