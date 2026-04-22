@@ -34,5 +34,4 @@ public sealed class SkillsComponent : IComponent
     /// <summary>
     /// Checks if the skill levels component has been populated with data.
     /// </summary>
-    public bool IsInitialized => Levels != null && Levels.Count > 0;
 }
