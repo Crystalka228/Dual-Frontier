@@ -41,4 +41,15 @@ public sealed class ModLoader
     {
         throw new NotImplementedException("TODO: Фаза 2 — реестр загруженных модов");
     }
+
+    /// <summary>
+    /// TODO: Фаза 2 — обрабатывает нарушение изоляции мод-системой.
+    /// Последовательность: лог → отписка систем от шин → удаление из
+    /// планировщика → IMod.Unload с таймаутом → выгрузка
+    /// AssemblyLoadContext → публикация ModDisabledEvent в UI.
+    /// </summary>
+    public void HandleModFault(string modId, ModIsolationException exception)
+    {
+        throw new NotImplementedException("TODO: Фаза 2 — ModFaultHandler");
+    }
 }
