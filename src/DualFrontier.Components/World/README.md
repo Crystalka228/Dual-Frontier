@@ -23,7 +23,7 @@
 ```csharp
 var node = world.CreateEntity();
 world.AddComponent(node, new EtherNodeComponent { /* Tier = 2, Radius = 5 */ });
-world.AddComponent(node, new PositionComponent { /* Position = new GridVector(42, 17) */ });
+world.AddComponent(node, new PositionComponent { Position = new GridVector(42, 17) });
 ```
 
 ## TODO

@@ -53,5 +53,6 @@ public class DeathReporterSystem : SystemBase
 - [ ] Заполнить TODO-поля в каждом компоненте (Фаза 1–2).
 - [ ] Определить enum-типы (`RaceKind`, `SkillKind`, `JobKind`, `MagicSchool`,
       `DamageType`, `ShieldKind`, `AmmoType`, `PowerType`, `WorkbenchKind`,
-      `TerrainKind`, `BiomeKind`, `GridVector`) — в соответствующих доменных папках.
+      `TerrainKind`, `BiomeKind`) — в соответствующих доменных папках.
+      (`GridVector` уже определён в `DualFrontier.Contracts.Math`.)
 - [ ] Написать unit-тесты на сериализацию компонентов (Фаза 3, для save/load).

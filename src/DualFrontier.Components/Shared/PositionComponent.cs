@@ -1,4 +1,5 @@
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Math;
 
 namespace DualFrontier.Components.Shared;
 
@@ -8,6 +9,6 @@ namespace DualFrontier.Components.Shared;
 /// </summary>
 public sealed class PositionComponent : IComponent
 {
-    // TODO: определить struct GridVector(int X, int Y) в DualFrontier.Components.Shared — Фаза 1
-    // TODO: public GridVector Position;
+    /// <summary>Координата в тайловой сетке.</summary>
+    public GridVector Position;
 }
