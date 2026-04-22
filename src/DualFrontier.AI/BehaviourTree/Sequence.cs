@@ -11,6 +11,7 @@ namespace DualFrontier.AI.BehaviourTree;
 public class Sequence : BTNode
 {
     private readonly BTNode[] _children;
+    private int _currentIndex;
 
     /// <summary>
     /// Создаёт последовательность из упорядоченного списка детей.
@@ -23,8 +24,21 @@ public class Sequence : BTNode
     /// <inheritdoc />
     public override BTStatus Tick(BTContext ctx)
     {
-        throw new NotImplementedException(
-            "TODO: Фаза 3 — реализация Sequence.Tick с запоминанием текущего ребёнка"
-        );
+        for (int i = _currentIndex; i < _children.Length; i++)
+        {
+            BTStatus status = _children[i].Tick(ctx);
+            if (status == BTStatus.Failure)
+            {
+                _currentIndex = 0;
+                return BTStatus.Failure;
+            }
+            if (status == BTStatus.Running)
+            {
+                _currentIndex = i;
+                return BTStatus.Running;
+            }
+        }
+        _currentIndex = 0;
+        return BTStatus.Success;
     }
 }
