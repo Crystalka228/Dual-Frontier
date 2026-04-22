@@ -28,10 +28,10 @@ public sealed class SkillsComponent : IComponent
     /// <summary>
     /// Accumulated XP toward next level per skill. Populated by systems upon pawn creation.
     /// </summary>
-    // Note: Dictionary fields are NOT initialized in the class body (null by default). Systems initialize them on pawn creation — this is the project rule for pooling. So declare as:
     public Dictionary<SkillKind, float>? Experience = null!;
 
     /// <summary>
     /// Checks if the skill levels component has been populated with data.
     /// </summary>
+    public bool IsInitialized => Levels?.Count > 0;
 }
