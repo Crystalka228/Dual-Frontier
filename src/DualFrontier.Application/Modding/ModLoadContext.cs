@@ -23,13 +23,16 @@ internal sealed class ModLoadContext : AssemblyLoadContext
     }
 
     /// <summary>
-    /// TODO: Фаза 2 — разрешение зависимостей мода.
-    /// Возврат <c>null</c> делегирует разрешение родителю; это позволяет
-    /// моду видеть только сборки, которые ядро считает «контрактами»
-    /// (например, <c>DualFrontier.Contracts</c>).
+    /// Resolves a mod dependency by delegating to the default context.
+    /// Returning <c>null</c> lets the parent load shared assemblies such as
+    /// <c>DualFrontier.Contracts</c>, while the private context still owns
+    /// the mod's own assemblies loaded via <c>LoadFromAssemblyPath</c> —
+    /// keeping them isolated and collectible. A follow-up phase can filter
+    /// the delegated set to harden isolation against accidental loads of
+    /// <c>DualFrontier.Core</c> and siblings.
     /// </summary>
     protected override Assembly? Load(AssemblyName assemblyName)
     {
-        throw new NotImplementedException("TODO: Фаза 2 — разрешение сборок мода");
+        return null;
     }
 }
