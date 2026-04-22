@@ -130,7 +130,7 @@ Reserve-then-consume гарантирует, что lease не сорвётся 
 
 ## Lifecycle подписок
 
-Подписка на шину требует отписки: обработчик держит ссылку на подписчика, и без `Unsubscribe` в `Dispose` возникает утечка памяти. Система вызывает `Subscribe` в своём `OnInitialize()`-переопределении и `Unsubscribe` в `OnDispose`. Планировщик гарантирует вызов обоих методов.
+Подписка на шину требует отписки: обработчик держит ссылку на подписчика, и без `Unsubscribe` в `Dispose` возникает утечка памяти. Система вызывает `Subscribe` в своём `OnInitialize()` и `Unsubscribe` в `OnDispose()`. Планировщик гарантирует вызов обоих методов.
 
 ```csharp
 protected override void OnInitialize()
@@ -139,7 +139,7 @@ protected override void OnInitialize()
     Bus.Combat.Subscribe<AmmoRefused>(OnAmmoRefused);
 }
 
-protected override void OnDestroy()
+protected override void OnDispose()
 {
     Bus.Combat.Unsubscribe<AmmoGranted>(OnAmmoGranted);
     Bus.Combat.Unsubscribe<AmmoRefused>(OnAmmoRefused);

@@ -86,17 +86,23 @@ Entity со старой версией — индикатор мёртвой с
 ```csharp
 public abstract class SystemBase
 {
-    // Вызывается один раз при регистрации системы. Используется для подписок на шину или другого one-time setup.
+    // Вызывается один раз при регистрации системы.
+    // Используется для подписок на шину или другого one-time setup.
     protected virtual void OnInitialize() { }
 
     // Вызывается планировщиком с частотой, заданной [TickRate].
     public abstract void Update(float delta);
 
+    // Вызывается при выгрузке системы. Отписка от шин, освобождение ресурсов.
+    protected virtual void OnDispose() { }
+
     // Безопасное чтение/запись через сторож.
     protected T GetComponent<T>(EntityId id) where T : IComponent;
     protected void SetComponent<T>(EntityId id, T value) where T : IComponent;
-    protected IEnumerable<EntityId> Query<T1>() where T1 : IComponent;
-    protected IEnumerable<EntityId> Query<T1, T2>() where T1 : IComponent where T2 : IComponent;
+    protected IEnumerable<EntityId> Query<T>() where T : IComponent;
+    protected IEnumerable<EntityId> Query<T1, T2>()
+        where T1 : IComponent where T2 : IComponent;
+    protected TSystem GetSystem<TSystem>() where TSystem : SystemBase; // всегда краш
 }
 ```
 
