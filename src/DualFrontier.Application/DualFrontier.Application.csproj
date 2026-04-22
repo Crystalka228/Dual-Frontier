@@ -11,4 +11,7 @@
     <ProjectReference Include="..\DualFrontier.Systems\DualFrontier.Systems.csproj" />
     <ProjectReference Include="..\DualFrontier.AI\DualFrontier.AI.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="DualFrontier.Modding.Tests" />
+  </ItemGroup>
 </Project>

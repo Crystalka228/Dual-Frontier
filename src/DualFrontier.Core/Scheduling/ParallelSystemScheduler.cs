@@ -35,12 +35,12 @@ namespace DualFrontier.Core.Scheduling;
 /// </summary>
 internal sealed class ParallelSystemScheduler
 {
-    private readonly IReadOnlyList<SystemPhase> _phases;
+    private IReadOnlyList<SystemPhase> _phases;
     private readonly TickScheduler _ticks;
     private readonly World _world;
     private readonly IModFaultSink _faultSink;
     private readonly ParallelOptions _parallelOptions;
-    private readonly Dictionary<SystemBase, SystemExecutionContext> _contextCache;
+    private Dictionary<SystemBase, SystemExecutionContext> _contextCache;
 
     /// <summary>
     /// Creates a scheduler bound to the given phase list, tick clock, and
@@ -121,6 +121,41 @@ internal sealed class ParallelSystemScheduler
 
         _ticks.Advance();
     }
+
+    /// <summary>
+    /// Replaces the active phase list with a new one produced after mod
+    /// integration. Must be called only from the menu (not during a game
+    /// session). The per-system execution-context cache is rebuilt for the
+    /// new system set using the same construction rules as the constructor.
+    /// </summary>
+    /// <param name="newPhases">Phases in execution order as produced by <see cref="DependencyGraph"/>.</param>
+    internal void Rebuild(IReadOnlyList<SystemPhase> newPhases)
+    {
+        if (newPhases is null)
+            throw new ArgumentNullException(nameof(newPhases));
+
+        // Сбор новой таблицы контекстов. Алгоритм тот же, что в конструкторе.
+        var newCache = new Dictionary<SystemBase, SystemExecutionContext>();
+        foreach (SystemPhase phase in newPhases)
+        {
+            foreach (SystemBase system in phase.Systems)
+            {
+                if (newCache.ContainsKey(system))
+                    continue;
+                newCache[system] = BuildContext(system);
+            }
+        }
+
+        _phases = newPhases;
+        _contextCache = newCache;
+    }
+
+    /// <summary>
+    /// Returns the currently installed phase list. Exposed for tests that
+    /// observe the atomic-rebuild contract: on failure the old list must
+    /// remain referentially identical.
+    /// </summary>
+    internal IReadOnlyList<SystemPhase> Phases => _phases;
 
     private SystemExecutionContext BuildContext(SystemBase system)
     {

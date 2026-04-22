@@ -64,11 +64,19 @@
 
 Плюс скриптовые fixture-моды в `tests/fixtures/` — как легальные, так и "злые" (пытаются нарушить).
 
+Исходники в `src/`:
+
+- `DualFrontier.Application/Modding/` — `ModIntegrationPipeline`,
+  `ContractValidator`, `ModRegistry`, `ModContractStore`, `RestrictedModApi` (полная реализация).
+
 ### Критерии приёмки
 
 - 100% тестов изоляции проходят как в DEBUG, так и в RELEASE (для критических).
 - Mod-тест: попытка загрузить сборку с `using DualFrontier.Core;` возвращает `ModIsolationException`.
 - Документированный отчёт о покрытии сторожа — какие типы нарушений протестированы.
+- `ModIntegrationPipeline.Apply` атомарна: ошибка на любом шаге не ломает текущий планировщик.
+- `ContractValidator` возвращает точное сообщение при write-write конфликте между модами.
+- WeakReference тест: `ModLoadContext.Unload` физически освобождает сборку.
 
 ### Разблокирует
 
