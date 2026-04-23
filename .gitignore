@@ -6,3 +6,10 @@ export_presets.cfg
 *.translation
 *.tmp
 *.uid
+
+# .NET build output
+bin/
+obj/
+*.lscache
+*.user
+.vs/

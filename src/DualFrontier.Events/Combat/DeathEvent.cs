@@ -1,21 +1,20 @@
-using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Сущность умерла (HP ≤ 0). Помечено <see cref="DeferredAttribute"/>:
-/// удаление entity и связанная очистка компонентов не должны прерывать
-/// текущую фазу — другие системы этой же фазы могут ещё ссылаться на
-/// entity (например, статистика, графика, аудио).
-///
-/// Эффекты смерти (реакции пешек — см. <c>DeathReactionEvent</c>, раздача
-/// лута и т.п.) подписываются уже на deferred-доставку.
+/// Published by DamageSystem when a pawn's health reaches zero.
+/// Marked [Deferred] — MoodSystem and SocialSystem receive it
+/// in the next scheduler phase, after the entity is already removed.
 /// </summary>
-[Deferred]
 public sealed record DeathEvent : IEvent
 {
-    // TODO: public required EntityId VictimId { get; init; }
-    // TODO: public EntityId? KillerId { get; init; }
-    // TODO: public DamageType LastDamageType { get; init; }
+    /// <summary>Entity that died.</summary>
+    public required EntityId Who { get; init; }
+
+    /// <summary>Grid position where death occurred.</summary>
+    public required int X { get; init; }
+
+    /// <summary>Grid position where death occurred.</summary>
+    public required int Y { get; init; }
 }
