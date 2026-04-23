@@ -21,8 +21,8 @@ public sealed record ProjectileSpawnedCommand(
     int ToY) : IRenderCommand
 {
     /// <inheritdoc />
-    public void Execute(object godotScene)
+    public void Execute(object renderContext)
     {
-        /* TODO Фаза 5 — создать визуал снаряда и анимировать траекторию. */
+        /* TODO Фаза 5 — apply via active IRenderer backend. */
     }
 }

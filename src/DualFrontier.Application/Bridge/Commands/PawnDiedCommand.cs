@@ -13,8 +13,8 @@ namespace DualFrontier.Application.Bridge.Commands;
 public sealed record PawnDiedCommand(EntityId PawnId, int X, int Y) : IRenderCommand
 {
     /// <inheritdoc />
-    public void Execute(object godotScene)
+    public void Execute(object renderContext)
     {
-        /* TODO Фаза 5 — проигрывание анимации смерти и обновление UI. */
+        /* TODO Фаза 5 — apply via active IRenderer backend. */
     }
 }

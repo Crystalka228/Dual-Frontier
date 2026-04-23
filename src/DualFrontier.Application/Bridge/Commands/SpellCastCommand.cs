@@ -18,8 +18,8 @@ public sealed record SpellCastCommand(
     int Y) : IRenderCommand
 {
     /// <inheritdoc />
-    public void Execute(object godotScene)
+    public void Execute(object renderContext)
     {
-        /* TODO Фаза 5 — проиграть VFX заклинания на сцене. */
+        /* TODO Фаза 5 — apply via active IRenderer backend. */
     }
 }
