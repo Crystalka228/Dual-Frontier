@@ -5,9 +5,9 @@ namespace DualFrontier.Application.Bridge;
 
 /// <summary>
 /// Мост Domain → Presentation. Домен из любого потока складывает
-/// <see cref="IRenderCommand"/> в очередь, главный поток Godot читает их
-/// через <see cref="DrainCommands"/> в своём <c>_Process</c>.
-/// Связь строго однонаправленная (TechArch 11.9).
+/// <see cref="IRenderCommand"/> в очередь, главный поток активного
+/// <see cref="Rendering.IRenderer"/> (Godot или Native) читает их через
+/// <see cref="DrainCommands"/>. Связь строго однонаправленная (TechArch 11.9).
 /// </summary>
 public sealed class PresentationBridge
 {
@@ -30,10 +30,10 @@ public sealed class PresentationBridge
 
     /// <summary>
     /// TODO: Фаза 3 — извлекает и выполняет все накопленные команды.
-    /// Вызывается ТОЛЬКО из главного потока Godot (в <c>_Process</c>).
+    /// Вызывается ТОЛЬКО из главного потока активного рендер-бэкенда.
     /// </summary>
     /// <param name="execute">
-    /// Делегат, выполняющий команду. Обычно <c>cmd =&gt; cmd.Execute(godotScene)</c>.
+    /// Делегат, выполняющий команду. Обычно <c>cmd =&gt; cmd.Execute(renderContext)</c>.
     /// </param>
     public void DrainCommands(Action<IRenderCommand> execute)
     {

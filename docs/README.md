@@ -15,6 +15,7 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 - [THREADING](./THREADING.md) — DependencyGraph, фазы, TickRates, запрет async.
 - [ISOLATION](./ISOLATION.md) — SystemExecutionContext, сторож, DEBUG vs RELEASE, типы нарушений.
 - [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) — PresentationBridge, IRenderCommand, InputRouter, main thread.
+- [VISUAL_ENGINE](./VISUAL_ENGINE.md) — DevKit vs Native, контракты IRenderer/ISceneLoader/IInputSource, формат .dfscene.
 
 ## Разработка
 
@@ -23,6 +24,7 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 - [MODDING](./MODDING.md) — IMod, IModApi, AssemblyLoadContext, IModContract, манифест.
 - [MOD_PIPELINE](./MOD_PIPELINE.md) — конвейер интеграции, ContractValidator, ModRegistry, атомарность.
 - [PERFORMANCE](./PERFORMANCE.md) — целевые метрики, профилирование, горячие пути, кэши.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — исследование compute shader для ProjectileSystem, порог переключения.
 - [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, порядок членов.
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
 
