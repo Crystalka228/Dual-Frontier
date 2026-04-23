@@ -3,6 +3,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Events.Pawn;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
+
 namespace DualFrontier.Systems.Pawn;
 
 /// <summary>
@@ -21,53 +22,38 @@ namespace DualFrontier.Systems.Pawn;
 [TickRate(TickRates.SLOW)]
 public sealed class NeedsSystem : SystemBase
 {
-    private readonly IGameServices _services;
-
-    public NeedsSystem(IGameServices services)
+    public override void Update(float delta)
     {
-        _services = services;
+        foreach (var entityId in Query<NeedsComponent>())
+        {
+            NeedsComponent needs = GetComponent<NeedsComponent>(entityId);
+
+            needs.Hunger += 0.005f * delta;
+            needs.Thirst += 0.008f * delta;
+            needs.Rest += 0.003f * delta;
+            needs.Comfort += 0.002f * delta;
+
+            needs.Hunger = Math.Min(1f, Math.Max(0f, needs.Hunger));
+            needs.Thirst = Math.Min(1f, Math.Max(0f, needs.Thirst));
+            needs.Rest = Math.Min(1f, Math.Max(0f, needs.Rest));
+            needs.Comfort = Math.Min(1f, Math.Max(0f, needs.Comfort));
+
+            if (needs.IsHungry)
+                Services.Pawns.Publish(new NeedsCriticalEvent
+                {
+                    PawnId = entityId,
+                    NeedName = "Hunger",
+                    Value = needs.Hunger
+                });
+            if (needs.IsExhausted)
+                Services.Pawns.Publish(new NeedsCriticalEvent
+                {
+                    PawnId = entityId,
+                    NeedName = "Rest",
+                    Value = needs.Rest
+                });
+
+            SetComponent(entityId, needs);
+        }
     }
-
-
-protected override void OnInitialize()
-{
-    // Currently empty as no events are subscribed.
-}
-
-public override void Update(float delta)
-{
-    foreach (var entityId in Query<NeedsComponent>())
-    {
-        NeedsComponent needs = GetComponent<NeedsComponent>(entityId);
-
-        // Apply decay rates multiplied by delta and clamp values to [0, 1]
-        needs.Hunger += 0.005f * delta;
-        needs.Thirst += 0.008f * delta;
-        needs.Rest += 0.003f * delta;
-        needs.Comfort += 0.002f * delta;
-
-// Clamp values to [0, 1] using standard math functions
-needs.Hunger = Math.Min(1f, Math.Max(0f, needs.Hunger));
-needs.Thirst = Math.Min(1f, Math.Max(0f, needs.Thirst));
-needs.Rest = Math.Min(1f, Math.Max(0f, needs.Rest));
-needs.Comfort = Math.Min(1f, Math.Max(0f, needs.Comfort));
-
-                if (needs.IsHungry)
-            _services.Pawns.Publish(new NeedsCriticalEvent
-            {
-                PawnId = entityId,
-                NeedName = "Hunger",
-                Value = needs.Hunger
-            });
-        if (needs.IsExhausted)
-            _services.Pawns.Publish(new NeedsCriticalEvent
-            {
-                PawnId = entityId,
-                NeedName = "Rest",
-                Value = needs.Rest
-            });
-
-        SetComponent(entityId, needs);
-    }
-}
 }
