@@ -49,6 +49,7 @@
 | `DualFrontier.AI` | Domain | Behavior Tree, Job-ы, Pathfinding. |
 | `DualFrontier.Application` | App | GameLoop, Save/Load, ModLoader, PresentationBridge. |
 | `DualFrontier.Presentation` | Godot | Godot-specific код. Единственная сборка, которой разрешён `using Godot`. |
+| `DualFrontier.WorldFields` | Infra | Изолированный модуль GPU/CPU pipeline для полей мира. Виден Domain только через `IWorldFieldCompute`. |
 
 ---
 
@@ -77,6 +78,8 @@
 - [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) — naming, комментарии, структура файлов.
 - [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md) — unit/integration/isolation/modding.
 - [docs/ROADMAP.md](docs/ROADMAP.md) — порядок реализации по фазам.
+- [docs/WORLDFIELDS.md](docs/WORLDFIELDS.md) — GPU pipeline полей мира, модуль `DualFrontier.WorldFields`.
+- [docs/GPU_COMPUTE.md](docs/GPU_COMPUTE.md) — массовая физика на GPU: снаряды, коллизии, flood-fill.
 
 ---
 

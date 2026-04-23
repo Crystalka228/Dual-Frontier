@@ -4,6 +4,7 @@
 
 ## История изменений
 
+- **v0.3 (2026-04):** Введён модуль `DualFrontier.WorldFields` — изолированный GPU/CPU pipeline для полей мира (эфир, температура, туман, погода) с double buffering и temporal upsampling ([WORLDFIELDS](./WORLDFIELDS.md)). Выделен отдельный интерфейс `IProjectileCompute` для массовой физики снарядов ([GPU_COMPUTE](./GPU_COMPUTE.md)).
 - **v0.2 (2026-04):** Добавлены модели Lease ([RESOURCE_MODELS](./RESOURCE_MODELS.md), [EVENT_BUS](./EVENT_BUS.md)), двухфазный commit для multi-bus запросов ([COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md)), feedback-loop resolution через tick lag ([FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md)), детерминированная резолюция урона ([COMBO_RESOLUTION](./COMBO_RESOLUTION.md)), состояния владения големом ([OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md)), bridge-pattern между фазами 5 и 6 ([ROADMAP](./ROADMAP.md)).
 - **v0.1 (2026-03):** Исходный каркас: четыре слоя, пять доменных шин, декларативная изоляция, параллельный планировщик.
 
@@ -81,6 +82,8 @@ Native — то, что запускают игроки. Работают тол
 - `Application` зависит от `Core` и `Systems`.
 - `Presentation` (Godot DevKit) зависит от `Application` и `Godot`.
 - `Presentation.Native` зависит от `Application` и `Silk.NET` (не от `Godot`).
+- `WorldFields` зависит только от `Contracts`. Не зависит от `Core`, `Components`, `Events`, `Systems`. Это обеспечивает полную изоляцию модуля.
+- `Systems` может использовать `WorldFields` только через публичный интерфейс `IWorldFieldCompute`. Прямая работа с compute shaders / GPU буферами из Domain запрещена.
 - Моды зависят **только** от `Contracts`. Ссылка на `Core` из мода блокируется `AssemblyLoadContext`.
 
 ## Зачем так: сценарии
@@ -120,6 +123,11 @@ Native — то, что запускают игроки. Работают тол
        │   Combat / Magic / Pawn / Inventory / Power / World / ...  │
        └──────────────────────────────┬──────────────────────────────┘
                                       │
+                                      │    ┌──────────────────────────────┐
+                                      │    │  DualFrontier.WorldFields     │
+                                      │ ──►│  (GPU/CPU field pipeline)     │
+                                      │    │  видима через IWorldFieldCompute│
+                                      │    └──────────────────────────────┘
                                       ▼
                          ┌────────────────────────────┐
                          │   DualFrontier.Application  │

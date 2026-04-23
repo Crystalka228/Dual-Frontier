@@ -169,6 +169,7 @@
 - `DualFrontier.Components/Combat/WeaponComponent`, `ArmorComponent`, `AmmoComponent`, `ShieldComponent`, `HealthComponent`.
 - `DualFrontier.Systems/Combat/CombatSystem` (FAST, фаза 1), `ProjectileSystem` (REALTIME), `DamageSystem` (FAST, фаза 2), `StatusEffectSystem`, `ShieldSystem`.
 - `DualFrontier.Events/Combat/ShootAttemptEvent`, `AmmoIntent`, `AmmoGranted`, `AmmoRefused`, `DamageEvent`, `DeathEvent`, `StatusAppliedEvent`.
+- `DualFrontier.Contracts/Infrastructure/IProjectileCompute.cs` — интерфейс массового расчёта позиций снарядов с реализациями `CpuProjectileCompute` (дефолт) и `GpuProjectileCompute` (активируется от 500+ снарядов).
 
 ### Критерии приёмки
 
@@ -176,6 +177,7 @@
 - Damage model: типы урона (Heat, Sharp, Blunt, EMP, Toxic, Psychic, Stagger) применяются с учётом брони.
 - Щиты: пул HP, регенерация, слабости.
 - `DeathEvent` помечен `[Deferred]` — `MoodSystem` и `SocialSystem` получают его в следующей фазе.
+- `ProjectileStressBenchmark`: CPU vs GPU результаты зафиксированы для 100 / 500 / 1000 / 5000 снарядов, порог переключения задокументирован в GPU_COMPUTE.md.
 
 ### Параллельно: Native Runtime Bootstrap
 
@@ -201,6 +203,8 @@
 - `DualFrontier.Systems/Magic/ManaSystem` (NORMAL, фаза 1), `SpellSystem` (FAST), `GolemSystem` (NORMAL), `EtherGrowthSystem` (SLOW, фаза 2), `RitualSystem` (RARE).
 - `DualFrontier.Events/Magic/ManaIntent`, `ManaGranted`, `ManaRefused`, `SpellCastEvent`, `EtherSurgeEvent`, `GolemActivatedEvent`, `EtherLevelUpEvent`.
 - `DualFrontier.AI/Jobs/JobCast`, `JobGolemCommand`, `JobMeditate`.
+- `DualFrontier.WorldFields` — новая сборка. `IWorldFieldCompute`, `WorldFieldSnapshot`, `WorldFieldPipeline`, `DoubleBuffer`, `EtherLayer`, `CpuWorldFieldBackend`. Domain-системы (`EtherGrowthSystem`, `EtherGridSystem`) получают сервис через инъекцию.
+- `DualFrontier.WorldFields/Backends/GpuWorldFieldBackend.cs` — Vulkan compute реализация для EtherLayer. Активируется при карте ≥ 200×200.
 
 ### Критерии приёмки
 
@@ -209,6 +213,9 @@
 - Големы 5 типов по 5.1, расход манны постоянный, истощение мага останавливает голема.
 - Эфирный срыв при работе с кристаллом выше уровня мага.
 - Комбо-механики: Лёд→Земля, Молния→Металл, Вода→Молния (по 6.3).
+- `EtherDiffuseBenchmark`: CPU vs GPU результаты зафиксированы для 10k / 90k / 250k тайлов, порог переключения задокументирован в WORLDFIELDS.md.
+- Контракт изоляции сохранён: `EtherGrowthSystem` / `EtherGridSystem` проходят все тесты сторожа без изменений.
+- `DualFrontier.WorldFields` не зависит ни от `DualFrontier.Systems`, ни от `DualFrontier.Core`. Проверка через `dotnet list package` и архитектурный тест.
 
 ### Разблокирует
 
@@ -224,6 +231,8 @@
 - `DualFrontier.Systems/World/BiomeSystem`, `WeatherSystem`, `MapSystem`.
 - `DualFrontier.Systems/Faction/RelationSystem` (RARE), `TradeSystem`, `RaidSystem` (RARE).
 - `DualFrontier.Events/World/EtherNodeChangedEvent`, `WeatherChangedEvent`, `RaidIncomingEvent`.
+- `DualFrontier.WorldFields/Layers/TemperatureLayer.cs`, `WeatherLayer.cs`, `FogLayer.cs` — остальные слои полей мира. Подключаются в `WorldFieldPipeline` с атрибутом `[FieldLayerOrder(N)]`.
+- `WeatherSystem`, `BiomeSystem` переведены на `IWorldFieldCompute` / `WorldFieldSnapshot`.
 
 ### Критерии приёмки
 
@@ -232,6 +241,8 @@
 - Межфракционные отношения по матрице GDD 3.3; динамическое изменение через события.
 - Рейды приходят с разной периодичностью и составом по уровню колонии.
 - Торговля: караваны, обмен ресурсами, сезонность.
+- Полный WorldFields pipeline (4 слоя) работает в одном compute pass. Бенчмарк подтверждает ≤0.3 мс/тик на карте 300×300 для GPU backend.
+- Temporal upsampling: визуально плавная отрисовка при 60 FPS без stall на readback.
 
 ### Разблокирует
 

@@ -24,9 +24,10 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 - [MODDING](./MODDING.md) — IMod, IModApi, AssemblyLoadContext, IModContract, манифест.
 - [MOD_PIPELINE](./MOD_PIPELINE.md) — конвейер интеграции, ContractValidator, ModRegistry, атомарность.
 - [PERFORMANCE](./PERFORMANCE.md) — целевые метрики, профилирование, горячие пути, кэши.
-- [GPU_COMPUTE](./GPU_COMPUTE.md) — исследование compute shader для ProjectileSystem, порог переключения.
 - [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, порядок членов.
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
+- [WORLDFIELDS](./WORLDFIELDS.md) — модуль `DualFrontier.WorldFields`: изолированный pipeline для расчёта полей мира (эфир, температура, туман, погода) с опциональным GPU backend.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — массовая физика за пределами полей мира: `IProjectileCompute`, исследования для SpatialGrid и Pathfinding.
 
 ## Процесс
 

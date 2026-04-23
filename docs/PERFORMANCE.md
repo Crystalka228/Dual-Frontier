@@ -14,6 +14,8 @@
 | Загрузка мода                     | Перезапуск           | Горячая загрузка      | AssemblyLoadContext                |
 | Нарушение изоляции                | Тихий баг            | Краш + диагностика    | SystemExecutionContext             |
 | Тик систем настроения             | Каждый тик           | 1 раз/сек             | TickScheduler SLOW                 |
+| Диффузия 4 полей, карта 300×300   | ~7 мс/тик (CPU)      | ≤0.3 мс/тик           | GPU WorldFields pipeline           |
+| 5 000 снарядов в стресс-тесте     | деградация CPU       | ≤3 мс/тик             | IProjectileCompute (GPU)           |
 
 Цели формулируются пер-операции. Итоговый таргет фрейма — 16.6 мс при 60 FPS на сцене из 30 пешек и 10 000 тайлов; 33 мс при 30 FPS на сцене из 100 пешек. Эти значения фиксируются в CI через `PerformanceGate` — тесты падают, если регрессия превышает 10%.
 
@@ -69,21 +71,27 @@ public class ComponentStoreBenchmark
 
 В DEBUG вся проверка декларации даёт +1-2 ns на вызов. В RELEASE проверка уходит.
 
-### PathfindingService
+### WorldFields Pipeline — GPU диффузия полей (стратегическое решение, Фаза 6–7)
 
-A\* через навигационный граф. Самая дорогая операция (1-5 мс на путь). Кэш путей между часто используемыми парами точек даёт 10x.
+Модуль `DualFrontier.WorldFields` считает диффузию эфира, температуры, тумана и погоды в одном GPU compute pipeline через double buffering и temporal upsampling. На CPU при карте 300×300 четыре поля суммарно отъедают ~7 мс из бюджета 16.6 мс. GPU pipeline держит ~0.2 мс независимо от размера карты.
+
+Реализуется в отдельной сборке `DualFrontier.WorldFields` с интерфейсом `IWorldFieldCompute` для Domain и `WorldFieldSnapshot` для Presentation. Domain-системы не знают о GPU. Подробности — [WORLDFIELDS](./WORLDFIELDS.md).
+
+TODO (Фаза 6): `EtherDiffuseBenchmark` с `[Params(10_000, 90_000, 250_000)]` по числу тайлов. Сравнить `CpuWorldFieldBackend` vs `GpuWorldFieldBackend` на EtherLayer. Зафиксировать порог переключения в WORLDFIELDS.md.
+
+TODO (Фаза 7): расширить бенчмарк до полного pipeline (все 4 слоя одновременно).
 
 ### ProjectileSystem — GPU compute (исследование, Фаза 5+)
 
-Stress-тест "Битва богов": 500 магов × спам заклинаниями = ~5 000 снарядов
-одновременно, ~50 000 коллизий/сек. Порог, при котором CPU-реализация деградирует,
-а GPU compute оправдывает roundtrip overhead.
+Stress-тест «Битва богов»: 500 магов × спам заклинаниями = ~5 000 снарядов одновременно, ~50 000 коллизий/сек. Порог, при котором CPU-реализация деградирует, а GPU compute оправдывает roundtrip overhead.
 
-Бенчмарк добавляется в Фазе 5 после реализации ProjectileSystem. До этого — TODO.
+Реализуется через `IProjectileCompute` в Infrastructure слое — отдельно от `IWorldFieldCompute` (снаряды не являются полем мира). Подробности — [GPU_COMPUTE](./GPU_COMPUTE.md).
 
-TODO (Фаза 5): BenchmarkDotNet-сценарий `ProjectileStressBenchmark` с параметром
-`[Params(100, 500, 1000, 5000)]` по числу снарядов. Сравнить CpuProjectileCompute
-vs GpuProjectileCompute. Зафиксировать порог переключения в GPU_COMPUTE.md.
+TODO (Фаза 5): `ProjectileStressBenchmark` с `[Params(100, 500, 1000, 5000)]` по числу снарядов.
+
+### PathfindingService
+
+A\* через навигационный граф. Самая дорогая операция (1-5 мс на путь). Кэш путей между часто используемыми парами точек даёт 10x.
 
 ## Кэши и инвалидация
 
