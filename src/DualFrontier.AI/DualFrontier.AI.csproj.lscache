@@ -59,6 +59,10 @@ BehaviourTree/
  BTContext.cs
  BTNode.cs
  Leaf.cs
+ Leaves/
+  IdleLeaf.cs
+  IsExhaustedLeaf.cs
+  IsHungryLeaf.cs
  Selector.cs
  Sequence.cs
 Jobs/
