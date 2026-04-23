@@ -1,156 +1,90 @@
+using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Math;
 
 namespace DualFrontier.AI.Pathfinding;
 
+/// <summary>
+/// Synchronous A* over NavGrid. No async — preserves ThreadLocal
+/// isolation guard. Long paths are capped at MaxIterations;
+/// caller retries next tick if TryFindPath returns false.
+/// </summary>
 public sealed class AStarPathfinding : IPathfindingService
 {
-    private readonly NavGrid _grid;
-    private const int MaxIterationsPerTick = 500;
+    private const int MaxIterations = 2000;
 
-    private static readonly GridVector[] Directions =
-    {
-        new(-1, 0), new(1, 0), new(0, -1), new(0, 1)
-    };
+    private readonly NavGrid _grid;
 
     public AStarPathfinding(NavGrid grid)
-    {
-        _grid = grid ?? throw new System.ArgumentNullException(nameof(grid));
-    }
+        => _grid = grid ?? throw new ArgumentNullException(nameof(grid));
 
-    public bool TryFindPath(GridVector from, GridVector to, out IReadOnlyList<GridVector> path)
+    public bool TryFindPath(GridVector from, GridVector to,
+                            out IReadOnlyList<GridVector> path)
     {
-        if (!_grid.IsInBounds(from.X, from.Y) || !_grid.IsPassable(from.X, from.Y) ||
-            !_grid.IsInBounds(to.X, to.Y) || !_grid.IsPassable(to.X, to.Y))
-        {
-            path = System.Array.Empty<GridVector>();
+        path = new List<GridVector>();
+
+        if (!_grid.IsPassable(to.X, to.Y))
             return false;
-        }
 
-        if (from == to)
-        {
-            path = new[] { from };
-            return true;
-        }
-
-        var openSet = new MinHeap();
+        // Note: PriorityQueue is assumed available (e.g., using a custom implementation or .NET 6+ feature)
+        var open   = new PriorityQueue<GridVector, float>();
         var cameFrom = new Dictionary<GridVector, GridVector>();
-        var gScore = new Dictionary<GridVector, int> { [from] = 0 };
+        var gScore   = new Dictionary<GridVector, float>();
 
-        openSet.Push(from.ManhattanDistance(to), from);
+        gScore[from] = 0f;
+        open.Enqueue(from, Heuristic(from, to));
 
         int iterations = 0;
-
-        while (!openSet.IsEmpty)
+        while (open.Count > 0 && iterations++ < MaxIterations)
         {
-            if (iterations++ >= MaxIterationsPerTick)
-            {
-                path = System.Array.Empty<GridVector>();
-                return false;
-            }
+            var current = open.Dequeue();
 
-            var (_, current) = openSet.Pop();
-
-            if (current == to)
+            if (current.Equals(to))
             {
-                path = ReconstructPath(cameFrom, current);
+                ReconstructPath(cameFrom, current, path);
                 return true;
             }
 
-            int currentG = gScore.TryGetValue(current, out int cg) ? cg : int.MaxValue;
-
-            foreach (var dir in Directions)
+            foreach (var neighbor in Neighbors(current))
             {
-                var neighbor = new GridVector(current.X + dir.X, current.Y + dir.Y);
+                float tentative = gScore.GetValueOrDefault(current, float.MaxValue)
+                                  + _grid.GetCost(neighbor.X, neighbor.Y);
 
-                if (!_grid.IsInBounds(neighbor.X, neighbor.Y) || !_grid.IsPassable(neighbor.X, neighbor.Y))
-                    continue;
-
-                int tentativeG = currentG + _grid.GetCost(neighbor.X, neighbor.Y);
-
-                if (gScore.TryGetValue(neighbor, out int existingG) && tentativeG >= existingG)
-                    continue;
-
-                cameFrom[neighbor] = current;
-                gScore[neighbor] = tentativeG;
-
-                int f = tentativeG + neighbor.ManhattanDistance(to);
-                openSet.Push(f, neighbor);
+                if (tentative < gScore.GetValueOrDefault(neighbor, float.MaxValue))
+                {
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor]   = tentative;
+                    float f = tentative + Heuristic(neighbor, to);
+                    open.Enqueue(neighbor, f);
+                }
             }
         }
 
-        path = System.Array.Empty<GridVector>();
         return false;
     }
 
-    private static IReadOnlyList<GridVector> ReconstructPath(Dictionary<GridVector, GridVector> cameFrom, GridVector current)
+    private IEnumerable<GridVector> Neighbors(GridVector v)
     {
-        var result = new List<GridVector> { current };
-        while (cameFrom.TryGetValue(current, out var prev))
-        {
-            result.Add(prev);
-            current = prev;
-        }
-        result.Reverse();
-        return result;
+        int x = v.X, y = v.Y;
+        if (_grid.IsPassable(x,   y-1)) yield return new GridVector(x,   y-1);
+        if (_grid.IsPassable(x,   y+1)) yield return new GridVector(x,   y+1);
+        if (_grid.IsPassable(x-1, y  )) yield return new GridVector(x-1, y  );
+        if (_grid.IsPassable(x+1, y  )) yield return new GridVector(x+1, y  );
     }
 
-    private sealed class MinHeap
+    private static float Heuristic(GridVector a, GridVector b) =>
+        Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+
+    private static void ReconstructPath(
+        Dictionary<GridVector, GridVector> cameFrom,
+        GridVector current,
+        List<GridVector> path)
     {
-        private readonly List<(int Priority, GridVector Node)> _items = new();
-
-        public int Count => _items.Count;
-        public bool IsEmpty => _items.Count == 0;
-
-        public void Push(int priority, GridVector node)
+        while (cameFrom.ContainsKey(current))
         {
-            _items.Add((priority, node));
-            BubbleUp(_items.Count - 1);
+            path.Add(current);
+            current = cameFrom[current];
         }
-
-        public (int Priority, GridVector Node) Pop()
-        {
-            var root = _items[0];
-            int last = _items.Count - 1;
-            _items[0] = _items[last];
-            _items.RemoveAt(last);
-            if (_items.Count > 0)
-                SinkDown(0);
-            return root;
-        }
-
-        private void BubbleUp(int index)
-        {
-            while (index > 0)
-            {
-                int parent = (index - 1) / 2;
-                if (_items[parent].Priority <= _items[index].Priority)
-                    break;
-                (_items[parent], _items[index]) = (_items[index], _items[parent]);
-                index = parent;
-            }
-        }
-
-        private void SinkDown(int index)
-        {
-            int count = _items.Count;
-            while (true)
-            {
-                int left = 2 * index + 1;
-                int right = 2 * index + 2;
-                int smallest = index;
-
-                if (left < count && _items[left].Priority < _items[smallest].Priority)
-                    smallest = left;
-                if (right < count && _items[right].Priority < _items[smallest].Priority)
-                    smallest = right;
-
-                if (smallest == index)
-                    break;
-
-                (_items[smallest], _items[index]) = (_items[index], _items[smallest]);
-                index = smallest;
-            }
-        }
+        path.Reverse();
     }
 }
