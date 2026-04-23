@@ -106,6 +106,38 @@
 
 Производственную цепочку: без ходячей пешки нет крафта.
 
+## Фаза 3.5 — Godot DevKit (короткая промежуточная)
+
+Цель: Godot полностью работает как редактор + временный рантайм для тестирования.
+Запускать игру можно через F5 в Godot и через `dotnet run` в Native — обе
+реализации потребляют один и тот же `.dfscene`.
+Архитектурный контекст: [VISUAL_ENGINE](./VISUAL_ENGINE.md).
+
+### Что реализуем
+
+- `src/DualFrontier.Presentation/addons/df_devkit/` — полноценный плагин:
+  `DfDevKitPlugin`, `DFEntityMeta` с UI в инспекторе, `SceneExporter` с реальным
+  обходом SceneTree, `TilemapExporter`, `EntityExporter`.
+- `src/DualFrontier.Presentation/GodotRenderer.cs` — реализация `IRenderer`
+  через стандартный Godot `_Process`.
+- `src/DualFrontier.Presentation/GodotSceneLoader.cs` — реализация `ISceneLoader`
+  через `FileAccess.Open(res://...)` и `System.Text.Json`.
+- `src/DualFrontier.Presentation/GodotInputRouter.cs` — реализация `IInputSource`.
+- Меню редактора: "Tools → Export .dfscene → выбрать путь".
+
+### Критерии приёмки
+
+- Godot Editor открывает `main.tscn`, редактирует, экспортирует в `.dfscene`.
+- `GodotSceneLoader.Load("sample.dfscene")` возвращает `SceneDef` с тайлмапом
+  и тремя сущностями (пешка + спаунер + маркер).
+- F5 в Godot запускает игру с загруженной сценой, пешка живёт.
+- `dotnet test` проходит все 43+ тестов плюс новые `SceneDefSerializationTests`.
+
+### Разблокирует
+
+Производственный пайплайн Godot → `.dfscene` → Native. Дальше Фаза 4
+работает с реальными сценами, а не с хардкодом.
+
 ## Фаза 4 — Экономика
 
 Цель: производство, склад, энергосеть.
@@ -144,6 +176,16 @@
 - Damage model: типы урона (Heat, Sharp, Blunt, EMP, Toxic, Psychic, Stagger) применяются с учётом брони.
 - Щиты: пул HP, регенерация, слабости.
 - `DeathEvent` помечен `[Deferred]` — `MoodSystem` и `SocialSystem` получают его в следующей фазе.
+
+### Параллельно: Native Runtime Bootstrap
+
+Начинается разработка `DualFrontier.Presentation.Native`:
+- `PackageReference` на Silk.NET.
+- `NativeRenderer.Initialize` создаёт окно и GL контекст.
+- `SpriteBatch`, `TilemapRenderer` — базовый рендер.
+- `NativeSceneLoader` парсит тот же `.dfscene`.
+
+Не блокирует основную работу Фазы 5 — Native живёт в отдельной сборке.
 
 ### Разблокирует
 

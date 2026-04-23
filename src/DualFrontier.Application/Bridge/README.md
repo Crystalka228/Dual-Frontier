@@ -17,8 +17,9 @@
 
 ## Правила
 - Никаких `using Godot;` в этой папке. Ссылок на Godot нет — команды
-  принимают `object godotScene`, который в реальном запуске будет
-  корневой сценой Godot.
+  принимают `object renderContext` — корневой объект активного
+  `IRenderer`. В Godot-сборке это `GameRoot`, в Native-сборке это
+  `NativeRenderer`.
 - Поток домена **только пишет**; главный поток **только читает и выполняет**.
 - Команды не должны содержать ссылок на компоненты ECS — только простые
   значения (`EntityId`, координаты, идентификаторы).
@@ -28,8 +29,8 @@
 // Domain-сторона (любой поток):
 bridge.Enqueue(new PawnDiedCommand(entityId, x, y));
 
-// Presentation-сторона (Godot _Process, главный поток):
-bridge.DrainCommands(cmd => cmd.Execute(godotScene));
+// Presentation-сторона (главный поток активного IRenderer):
+bridge.DrainCommands(cmd => cmd.Execute(renderContext));
 ```
 
 ## TODO

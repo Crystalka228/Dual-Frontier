@@ -10,8 +10,8 @@ namespace DualFrontier.Application.Bridge.Commands;
 public sealed record UIUpdateCommand(string WidgetId, string Payload) : IRenderCommand
 {
     /// <inheritdoc />
-    public void Execute(object godotScene)
+    public void Execute(object renderContext)
     {
-        /* TODO Фаза 5 — найти виджет по WidgetId и применить Payload. */
+        /* TODO Фаза 5 — apply via active IRenderer backend. */
     }
 }

@@ -19,8 +19,8 @@
 - Команды — **immutable** `record`-типы с простыми полями
   (`EntityId`, `int`, `float`, `string`). Никаких ссылок на `IComponent`
   или системы.
-- `Execute` работает через `object godotScene`; конкретный cast делает
-  вызывающий из Presentation (у него есть `using Godot;`).
+- `Execute` работает через `object renderContext`; конкретный cast делает
+  вызывающий из активной Presentation-сборки (Godot → `GameRoot`, Native → `NativeRenderer`).
 
 ## Примеры использования
 ```csharp
