@@ -1,37 +1,46 @@
+using System;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Components.Pawn;
-using DualFrontier.Components.Shared;
 using DualFrontier.Core.ECS;
+using DualFrontier.Events.Pawn;
 
-namespace DualFrontier.Systems.Pawn;
-
-/// <summary>
-/// Пересчитывает настроение пешки по её нуждам и здоровью.
-/// При падении ниже порога публикует <c>MoodBreakEvent</c> в
-/// <c>Pawns</c> шину.
-///
-/// Фаза: 3 (пешки).
-/// Тик: SLOW (60 фреймов) — настроение инертно.
-/// </summary>
-[SystemAccess(
-    reads:  new[] { typeof(NeedsComponent), typeof(HealthComponent) },
-    writes: new[] { typeof(MindComponent) },
-    bus:    nameof(IGameServices.Pawns)
-)]
-[TickRate(TickRates.SLOW)]
-public sealed class MoodSystem : SystemBase
+namespace DualFrontier.Systems.Pawn
 {
-    /// <summary>
-    /// TODO: Подписаться на WitnessDeathEvent, GoodEventSeenEvent.
-    /// </summary>
-    protected override void OnInitialize()
+    [SystemAccess(
+        reads:  new[] { typeof(NeedsComponent) },
+        writes: new[] { typeof(MindComponent) },
+        bus:    nameof(IGameServices.Pawns)
+    )]
+    [TickRate(TickRates.SLOW)]
+    public sealed class MoodSystem : SystemBase
     {
-        throw new NotImplementedException("TODO: Фаза 3 — подписка на события настроения");
-    }
+        protected override void OnInitialize() { }
 
-    public override void Update(float delta)
-    {
-        // TODO: Фаза 3 — mood = f(needs, health, недавние события).
+        public override void Update(float delta)
+        {
+            foreach (var entity in Query<NeedsComponent, MindComponent>())
+            {
+                var needs = GetComponent<NeedsComponent>(entity);
+                var mind  = GetComponent<MindComponent>(entity);
+
+                // Mood formula: average of inverted needs (0 = bad, 1 = good)
+                float mood = 1f
+                    - (needs.Hunger + needs.Thirst + needs.Rest + needs.Comfort)
+                    / 4f;
+
+                bool wasBreaking = mind.Mood < mind.MoodBreakThreshold;
+                mind.Mood = Math.Clamp(mood, 0f, 1f);
+                bool isBreaking = mind.Mood < mind.MoodBreakThreshold;
+
+                // Publish MoodBreakEvent on transition into break state
+                if (!wasBreaking && isBreaking)
+                {
+                 // TODO: публикация MoodBreakEvent через шину — подключить в Фазе 3 после разводки сервисов
+                }
+
+                SetComponent(entity, mind);
+            }
+        }
     }
 }
