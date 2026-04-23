@@ -11,5 +11,6 @@
     <InternalsVisibleTo Include="DualFrontier.Application" />
     <InternalsVisibleTo Include="DualFrontier.Core.Tests" />
     <InternalsVisibleTo Include="DualFrontier.Modding.Tests" />
+    <InternalsVisibleTo Include="DualFrontier.Systems.Tests" />
   </ItemGroup>
 </Project>

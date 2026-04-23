@@ -12,6 +12,10 @@
     <PackageReference Include="FluentAssertions" Version="6.12.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Components\DualFrontier.Components.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Events\DualFrontier.Events.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Systems\DualFrontier.Systems.csproj" />
   </ItemGroup>
 </Project>
