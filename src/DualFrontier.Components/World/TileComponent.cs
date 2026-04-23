@@ -1,15 +1,22 @@
-using DualFrontier.Contracts.Core;
-
-namespace DualFrontier.Components.World;
-
-/// <summary>
-/// Тайл карты: тип рельефа и признак проходимости.
-/// Проходимость используется PathfindingSystem; тип рельефа —
-/// средой визуализации и системами влажности/температуры.
-/// </summary>
-public sealed class TileComponent : IComponent
+namespace DualFrontier.Components.World
 {
-    // TODO: создать DualFrontier.Components.World.TerrainKind enum (Grass, Rock, Sand, Water, Ice, Swamp, Arcane …) — Фаза 2.
-    // TODO: public TerrainKind Terrain;
-    // TODO: public bool Passable;
+    using DualFrontier.Contracts.Core;
+
+    /// <summary>
+    /// Tile data: terrain type and passability flag.
+    /// One TileComponent per grid position. Passability is read by
+    /// PathfindingService; Terrain is read by BiomeSystem and Presentation.
+    /// </summary>
+    public sealed class TileComponent : IComponent
+    {
+        /// <summary>Type of terrain on this tile.</summary>
+        public TerrainKind Terrain;
+
+        /// <summary>Whether pawns and projectiles can pass through this tile.</summary>
+        public bool Passable;
+
+        /// <summary>Default grass tile used when spawning the initial map.</summary>
+        public static TileComponent Default =>
+            new TileComponent { Terrain = TerrainKind.Grass, Passable = true };
+    }
 }

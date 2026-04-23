@@ -1,3 +1,15 @@
 # Godot 4+ specific ignores
 .godot/
+.import/
 /android/
+export_presets.cfg
+*.translation
+*.tmp
+*.uid
+
+# .NET build output
+bin/
+obj/
+*.lscache
+*.user
+.vs/
