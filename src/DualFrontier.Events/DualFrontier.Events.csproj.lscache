@@ -96,7 +96,10 @@ obj/Debug/net8.0/
  DualFrontier.Events.GlobalUsings.g.cs
 Pawn/
  DeathReactionEvent.cs
+ JobAssignedEvent.cs
+ JobCompletedEvent.cs
  MoodBreakEvent.cs
+ NeedsCriticalEvent.cs
  SkillGainEvent.cs
 Power/
  GridOverloadEvent.cs
