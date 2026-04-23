@@ -1,69 +1,47 @@
+using System;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
-using DualFrontier.Events.Pawn;
 using DualFrontier.Components.Pawn;
+using DualFrontier.Components.Shared;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Systems.Pawn;
 
-/// <summary>
-/// Назначение джобов пешкам по приоритетам нужд. Единственная система,
-/// которая ПИШЕТ <see cref="JobComponent"/>. Phase 3 MVP реализует
-/// inline priority logic (Sleep > Eat > keep-current); интеграция с
-/// behaviour tree и целями жоба отложена до Phase 4.
-///
-/// Фаза: 3 (пешки).
-/// Тик: NORMAL (15 фреймов).
-/// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(NeedsComponent) },
+    reads:  new[] { typeof(NeedsComponent), typeof(SkillsComponent),
+                    typeof(PositionComponent) },
     writes: new[] { typeof(JobComponent) },
     bus:    nameof(IGameServices.Pawns)
 )]
 [TickRate(TickRates.NORMAL)]
 public sealed class JobSystem : SystemBase
 {
+    protected override void OnInitialize() { }
+
     public override void Update(float delta)
     {
-        foreach (var entityId in Query<JobComponent, NeedsComponent>())
+        foreach (var entity in Query<JobComponent>())
         {
-            var job = GetComponent<JobComponent>(entityId);
-            var needs = GetComponent<NeedsComponent>(entityId);
+            var needs = GetComponent<NeedsComponent>(entity);
+            var job   = GetComponent<JobComponent>(entity);
 
-            JobKind previous = job.Current;
+            if (job.Current != JobKind.Idle)
+                continue;
 
-            if (job.IsInterrupted)
-            {
-                job.Current = JobKind.Idle;
-                job.Target = null;
-                job.TicksAtJob = 0;
-                job.IsInterrupted = false;
-            }
-            else if (needs.IsExhausted)
-            {
-                job.Current = JobKind.Sleep;
-                job.Target = null;
-                job.TicksAtJob = 0;
-            }
-            else if (needs.IsHungry)
-            {
-                job.Current = JobKind.Eat;
-                job.Target = null;
-                job.TicksAtJob = 0;
-            }
-            else if (!job.IsIdle)
-            {
-                job.TicksAtJob++;
-            }
+            JobKind next = PickJob(needs);
+            if (next == job.Current)
+                continue;
 
-            SetComponent(entityId, job);
-
-            if (job.Current != previous)
-                Services.Pawns.Publish(new JobAssignedEvent
-                {
-                    PawnId = entityId,
-                    Job = job.Current
-                });
+            job.Current = next;
+            SetComponent(entity, job);
         }
+    }
+
+    private static JobKind PickJob(NeedsComponent needs)
+    {
+        if (needs.Hunger >= NeedsComponent.CriticalThreshold) return JobKind.Eat;
+        if (needs.Thirst >= NeedsComponent.CriticalThreshold) return JobKind.Eat;
+        if (needs.Rest   >= NeedsComponent.CriticalThreshold) return JobKind.Sleep;
+        return JobKind.Idle;
     }
 }
