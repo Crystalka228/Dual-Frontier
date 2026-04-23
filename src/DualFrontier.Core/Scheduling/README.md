@@ -29,14 +29,16 @@
 var graph = new DependencyGraph();
 graph.AddSystem(new CombatSystem());
 graph.AddSystem(new ManaSystem());
-var phases = graph.Build();
+graph.Build();
 
-var scheduler = new ParallelSystemScheduler(phases);
-scheduler.ExecuteTick(deltaSeconds: 0.016f);
+var ticks = new TickScheduler();
+var scheduler = new ParallelSystemScheduler(
+    graph.GetPhases(), ticks, world, faultSink: null, services: services);
+scheduler.ExecuteTick(delta: 1f / 30f);
 ```
 
 ## TODO
-- [ ] Фаза 1 — реализовать топологическую сортировку графа.
-- [ ] Фаза 1 — реализовать параллельное исполнение фазы.
-- [ ] Фаза 1 — реализовать TickScheduler с разными частотами.
-- [ ] Фаза 2 — добавить детекцию циклов в графе с диагностикой.
+- [x] Фаза 1 — реализовать топологическую сортировку графа.
+- [x] Фаза 1 — реализовать параллельное исполнение фазы.
+- [x] Фаза 1 — реализовать TickScheduler с разными частотами.
+- [x] Фаза 1 — добавить детекцию циклов в графе с диагностикой.

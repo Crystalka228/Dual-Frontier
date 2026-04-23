@@ -34,15 +34,23 @@
 ## Примеры использования
 ```csharp
 // Из DualFrontier.Application (через InternalsVisibleTo)
-var world = new World();
+var world    = new World();
 var services = new GameServices();
-var scheduler = new ParallelSystemScheduler(world, services);
-scheduler.ExecuteTick(deltaSeconds: 0.016f);
+var ticks    = new TickScheduler();
+
+var graph = new DependencyGraph();
+graph.AddSystem(new NeedsSystem());
+graph.AddSystem(new JobSystem());
+graph.Build();
+
+var scheduler = new ParallelSystemScheduler(
+    graph.GetPhases(), ticks, world, faultSink: null, services: services);
+scheduler.ExecuteTick(delta: 1f / 30f);
 ```
 
 ## TODO
-- [ ] Фаза 1 — реализовать `World`/`ComponentStore` со SparseSet.
-- [ ] Фаза 1 — реализовать `SystemExecutionContext` (ThreadLocal сторож).
-- [ ] Фаза 1 — реализовать `DependencyGraph` и `ParallelSystemScheduler`.
-- [ ] Фаза 1 — реализовать `DomainEventBus` и `GameServices`.
-- [ ] Фаза 2 — написать isolation-тесты, подтверждающие краш сторожа.
+- [x] Фаза 1 — реализовать `World`/`ComponentStore` со SparseSet.
+- [x] Фаза 1 — реализовать `SystemExecutionContext` (ThreadLocal сторож).
+- [x] Фаза 1 — реализовать `DependencyGraph` и `ParallelSystemScheduler`.
+- [x] Фаза 1 — реализовать `DomainEventBus` и `GameServices`.
+- [x] Фаза 2 — написать isolation-тесты, подтверждающие краш сторожа.

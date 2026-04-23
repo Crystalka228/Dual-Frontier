@@ -4,35 +4,35 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Contracts.Bus;
 
 /// <summary>
-/// Базовая шина событий одного домена.
-/// Каждый домен (Combat, Inventory, Magic, Pawn, World) имеет
-/// свою реализацию этой шины. Это снижает lock contention и
-/// упрощает профилирование.
+/// Event bus for a single domain (Combat, Inventory, Magic, Pawn, World).
+/// Per-domain buses reduce lock contention and simplify profiling.
 ///
-/// Публикация и подписка — потокобезопасные.
-/// Синхронная доставка — в текущей фазе планировщика.
-/// Для отложенной доставки — пометь событие [Deferred].
+/// Publish and Subscribe are thread-safe.
+/// Delivery is synchronous within the current scheduler phase by default;
+/// mark the event type with <c>[Deferred]</c> to queue for the next phase.
 /// </summary>
 public interface IEventBus
 {
     /// <summary>
-    /// TODO: Фаза 1 — Публикует событие всем подписчикам.
-    /// Если событие помечено [Deferred] — доставка в следующей фазе.
-    /// Если [Immediate] — прерывает текущую фазу для доставки.
-    /// По умолчанию — синхронная доставка в текущей фазе.
+    /// Publishes an event to all current subscribers.
+    /// Default delivery is synchronous within the current phase.
+    /// If the event type carries <c>[Deferred]</c>, delivery is queued for
+    /// the next phase. If it carries <c>[Immediate]</c>, delivery interrupts
+    /// the current phase.
     /// </summary>
     void Publish<T>(T evt) where T : IEvent;
 
     /// <summary>
-    /// TODO: Фаза 1 — Подписка на события типа T.
-    /// Обработчик вызывается синхронно при Publish.
-    /// Важно: не блокировать в обработчике — это блокирует всю фазу.
+    /// Subscribes a handler for events of type <typeparamref name="T"/>.
+    /// Handlers are invoked synchronously from <see cref="Publish{T}(T)"/>;
+    /// they must not block, since doing so stalls the entire phase.
     /// </summary>
     void Subscribe<T>(Action<T> handler) where T : IEvent;
 
     /// <summary>
-    /// TODO: Фаза 1 — Отписка. Обязательна при утилизации подписчика,
-    /// иначе утечка памяти (обработчик держит ссылку на подписчика).
+    /// Unsubscribes a previously registered handler. Mandatory when the
+    /// subscriber is disposed — otherwise the delegate keeps a reference to
+    /// the subscriber and leaks memory.
     /// </summary>
     void Unsubscribe<T>(Action<T> handler) where T : IEvent;
 }

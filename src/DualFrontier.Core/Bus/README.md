@@ -31,6 +31,6 @@ services.Inventory.Subscribe<AmmoIntent>(batcher.Collect);
 ```
 
 ## TODO
-- [ ] Фаза 1 — реализовать `DomainEventBus` с поддержкой `[Deferred]`/`[Immediate]`.
-- [ ] Фаза 1 — реализовать `IntentBatcher` с двухфазным сбором и drain.
+- [x] Фаза 1 — реализовать `DomainEventBus` с поддержкой `[Deferred]`/`[Immediate]`.
+- [x] Фаза 1 — реализовать `IntentBatcher` с двухфазным сбором и drain.
 - [ ] Фаза 2 — добавить телеметрию (счётчики событий/сек на шину).
