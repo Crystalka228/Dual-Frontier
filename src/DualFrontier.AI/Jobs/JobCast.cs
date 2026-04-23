@@ -1,4 +1,5 @@
 namespace DualFrontier.AI.Jobs;
+using DualFrontier.Contracts.Core;
 
 /// <summary>
 /// Джоб каста заклинания: подойти на дистанцию → начать каст →
@@ -9,6 +10,13 @@ namespace DualFrontier.AI.Jobs;
 /// </summary>
 public sealed class JobCast : IJob
 {
+    // Dependency properties required by the interface IJob
+    /// <summary>Pawn executing this job.</summary>
+    public EntityId PawnId { get; private set; }
+
+    /// <summary>Current execution status.</summary>
+    public JobStatus Status { get; private set; }
+
     /// <inheritdoc />
     public void Start()
     {

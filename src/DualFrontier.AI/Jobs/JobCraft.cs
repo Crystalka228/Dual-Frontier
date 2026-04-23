@@ -1,29 +1,24 @@
+using DualFrontier.Contracts.Core;
+
 namespace DualFrontier.AI.Jobs;
 
 /// <summary>
-/// Джоб работы на верстаке: дойти → проверить ингредиенты →
-/// стоять и тикать прогресс → при готовности отдать продукт
-/// через <c>CraftSystem</c>.
-///
-/// См. GDD "Ресурсы и производство".
+/// Job for crafting an item at a workbench. Phase 4 implementation.
 /// </summary>
 public sealed class JobCraft : IJob
 {
-    /// <inheritdoc />
-    public void Start()
-    {
-        throw new NotImplementedException("TODO: Фаза 6 — JobCraft.Start: зарезервировать верстак и рецепт");
-    }
+    /// <summary>Pawn executing this job.</summary>
+    public EntityId PawnId { get; private set; }
+
+    /// <summary>Current execution status.</summary>
+    public JobStatus Status { get; private set; }
 
     /// <inheritdoc />
-    public JobStatus Tick(float delta)
-    {
-        throw new NotImplementedException("TODO: Фаза 6 — JobCraft.Tick: продвижение прогресса с учётом навыка");
-    }
+    public void Start() => throw new System.NotImplementedException("TODO: Фаза 4");
 
     /// <inheritdoc />
-    public void Abort()
-    {
-        throw new NotImplementedException("TODO: Фаза 6 — JobCraft.Abort: отпустить верстак, вернуть ингредиенты");
-    }
+    public JobStatus Tick(float delta) => throw new System.NotImplementedException("TODO: Фаза 4");
+
+    /// <inheritdoc />
+    public void Abort() => throw new System.NotImplementedException("TODO: Фаза 4");
 }

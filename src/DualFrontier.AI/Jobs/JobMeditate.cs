@@ -28,7 +28,7 @@ namespace DualFrontier.AI.Jobs
         /// <param name="durationTicks">The number of ticks to meditate for (default is 120).</param>
         public JobMeditate(EntityId pawnId, int durationTicks = 120)
         {
-            PawnId = pawnId;
+            _pawnId = pawnId;
 
             if (durationTicks <= 0)
             {
