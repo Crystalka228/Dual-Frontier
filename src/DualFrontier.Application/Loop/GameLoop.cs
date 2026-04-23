@@ -1,43 +1,95 @@
 using System;
+using System.Threading;
+using DualFrontier.Core.Scheduling;
+using DualFrontier.Application.Bridge;
 
-namespace DualFrontier.Application.Loop;
-
-/// <summary>
-/// Главный цикл симуляции. Отвечает за старт/стоп мира и тик систем
-/// через планировщик ядра. Цикл работает на фиксированном шаге
-/// (simulation tick), независимо от FPS рендера.
-///
-/// Domain → Presentation связь строго однонаправленная: цикл
-/// складывает команды в <c>PresentationBridge</c>, Godot читает их
-/// из главного потока в <c>_Process</c>.
-/// </summary>
-public sealed class GameLoop
+namespace DualFrontier.Application.Loop
 {
     /// <summary>
-    /// TODO: Фаза 1 — стартует симуляцию. Создаёт рабочий поток(и),
-    /// инициализирует планировщик и начинает тикать.
+    /// Fixed-step simulation loop running on a dedicated background thread.
+    /// Ticks at TargetTps (30 Hz) independent of render FPS.
+    /// Communicates with Presentation only through PresentationBridge.
+    /// Internal — created by GameBootstrap, not exposed to Presentation.
     /// </summary>
-    public void Start()
+    internal sealed class GameLoop : IDisposable
     {
-        throw new NotImplementedException("TODO: Фаза 1 — главный цикл");
-    }
+        public const float TargetTps = 30f;
+        private const float FixedDelta = 1f / TargetTps;
+        private const float MaxAccumulator = FixedDelta * 5f;
 
-    /// <summary>
-    /// TODO: Фаза 1 — останавливает симуляцию. Ждёт завершения текущего
-    /// тика, сохраняет состояние при необходимости, освобождает ресурсы.
-    /// </summary>
-    public void Stop()
-    {
-        throw new NotImplementedException("TODO: Фаза 1 — главный цикл");
-    }
+        private readonly ParallelSystemScheduler _scheduler;
+        private readonly PresentationBridge _bridge;
+        private readonly CancellationTokenSource _cts = new();
+        private Thread? _thread;
+        private volatile float _speedMultiplier = 1f;
+        private volatile bool _paused = false;
 
-    /// <summary>
-    /// TODO: Фаза 1 — выполняет один тик симуляции. Вызывает
-    /// планировщик систем с заданным <paramref name="delta"/>.
-    /// </summary>
-    /// <param name="delta">Прошедшее время в секундах с последнего тика.</param>
-    public void Tick(float delta)
-    {
-        throw new NotImplementedException("TODO: Фаза 1 — главный цикл");
-    }
+        public GameLoop(ParallelSystemScheduler scheduler,
+                        PresentationBridge bridge)
+        {
+            _scheduler = scheduler
+                ?? throw new ArgumentNullException(nameof(scheduler));
+            _bridge = bridge
+                ?? throw new ArgumentNullException(nameof(bridge));
+        }
+
+        /// <summary>Start simulation on a background thread.</summary>
+        public void Start()
+        {
+            _thread = new Thread(RunLoop)
+            {
+                Name = "SimulationLoop",
+                IsBackground = true
+            };
+            _thread.Start();
+        }
+
+        /// <summary>Stop simulation and wait for thread to exit.</summary>
+        public void Stop()
+        {
+            _cts.Cancel();
+            _thread?.Join(2000);
+        }
+
+        /// <summary>Pause or resume simulation.</summary>
+        public void SetPaused(bool paused) => _paused = paused;
+
+        /// <summary>Set speed multiplier. Accepted values: 1, 2, 3.</summary>
+        public void SetSpeed(float multiplier) =>
+            _speedMultiplier = Math.Clamp(multiplier, 1f, 3f);
+
+        private void RunLoop()
+        {
+            var clock = new FrameClock();
+            float accumulator = 0f;
+
+            while (!_cts.Token.IsCancellationRequested)
+            {
+                float realDelta = clock.Update();
+
+                if (_paused)
+                {
+                    Thread.Sleep(TimeSpan.FromMilliseconds(16));
+                    continue;
+                }
+
+                accumulator += realDelta * _speedMultiplier;
+                accumulator = Math.Min(accumulator, MaxAccumulator);
+
+                while (accumulator >= FixedDelta)
+                {
+                    _scheduler.ExecuteTick(FixedDelta);
+                    accumulator -= FixedDelta;
+                }
+
+                float remaining = (FixedDelta - accumulator)
+                                  / _speedMultiplier;
+                int sleepMs = (int)(remaining * 1000f);
+                if (sleepMs > 1)
+                    Thread.Sleep(sleepMs);
+            }
+        }
+
+        public void Dispose() => Stop();
+     }
 }
