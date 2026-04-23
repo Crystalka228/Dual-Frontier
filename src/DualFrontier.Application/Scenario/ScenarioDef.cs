@@ -1,29 +1,31 @@
-namespace DualFrontier.Application.Scenario;
+using System.Collections.Generic;
 
-/// <summary>
-/// Неизменяемое описание стартового сценария. Читается
-/// <see cref="ScenarioLoader"/> с диска и потребляется инициализатором мира.
-/// </summary>
-public sealed class ScenarioDef
+namespace DualFrontier.Application.Scenario
 {
-    /// <summary>
-    /// TODO: Фаза 3 — человеко-читаемое имя сценария (UI список).
+    /// <summary>Immutable definition of a starting scenario.
+    /// Parsed from JSON by ScenarioLoader.
     /// </summary>
-    public string Name { get; init; } = string.Empty;
+    public sealed class ScenarioDef
+    {
+        /// <summary>Unique scenario identifier, e.g. "default".</summary>
+        public string Id { get; init; } = "default";
 
-    /// <summary>
-    /// TODO: Фаза 3 — зерно генератора псевдослучайных чисел.
-    /// Фиксированное зерно обеспечивает воспроизводимую генерацию мира.
-    /// </summary>
-    public int Seed { get; init; }
+        /// <summary>Display name shown in scenario selection UI.</summary>
+        public string Name { get; init; } = "Default Colony";
 
-    /// <summary>
-    /// TODO: Фаза 3 — идентификатор биома стартовой локации.
-    /// </summary>
-    public string Biome { get; init; } = string.Empty;
+        /// <summary>Starting pawn count.</summary>
+        public int StartingPawnCount { get; init; } = 3;
 
-    /// <summary>
-    /// TODO: Фаза 3 — количество пешек, с которых начинается колония.
-    /// </summary>
-    public int StartingPawns { get; init; }
+        /// <summary>World seed for terrain generation. 0 = random.</summary>
+        public int WorldSeed { get; init; } = 0;
+
+        /// <summary>Map width in tiles.</summary>
+        public int MapWidth { get; init; } = 100;
+
+        /// <summary>Map height in tiles.</summary>
+        public int MapHeight { get; init; } = 100;
+
+        /// <summary>Starting item definitions by item id and quantity.</summary>
+        public Dictionary<string, int> StartingItems { get; init; } = new();
+    }
 }
