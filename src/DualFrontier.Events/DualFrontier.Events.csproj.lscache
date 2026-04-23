@@ -111,7 +111,9 @@ World/
  WeatherChangedEvent.cs
 
 [metadataReferences]
-../DualFrontier.Contracts/obj/Debug/net8.0/ref/DualFrontier.Contracts.dll
+../
+ DualFrontier.Components/obj/Debug/net8.0/ref/DualFrontier.Components.dll
+ DualFrontier.Contracts/obj/Debug/net8.0/ref/DualFrontier.Contracts.dll
 <DOTNET>/packs/Microsoft.NETCore.App.Ref/8.0.25/ref/net8.0/
  Microsoft.CSharp.dll
  Microsoft.VisualBasic.Core.dll
