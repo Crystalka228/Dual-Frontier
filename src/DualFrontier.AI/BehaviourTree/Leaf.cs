@@ -7,13 +7,4 @@ namespace DualFrontier.AI.BehaviourTree;
 /// Листья НЕ вызывают друг друга — композиция идёт через
 /// <see cref="Selector"/> и <see cref="Sequence"/>.
 /// </summary>
-public class Leaf : BTNode
-{
-    /// <inheritdoc />
-    public override BTStatus Tick(BTContext ctx)
-    {
-        throw new NotImplementedException(
-            "TODO: Фаза 3 — конкретная логика листа переопределяется наследниками"
-        );
-    }
-}
+public abstract class Leaf : BTNode { }
