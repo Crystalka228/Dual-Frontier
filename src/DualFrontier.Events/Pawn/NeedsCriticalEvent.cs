@@ -1,25 +1,20 @@
+using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Events.Pawn;
 
 /// <summary>
-/// Published by NeedsSystem when a need crosses CriticalThreshold.
-/// JobSystem subscribes to assign Eat or Sleep jobs immediately.
+/// Published by NeedsSystem when a pawn's need crosses CriticalThreshold.
+/// JobSystem subscribes to prioritise the matching recovery job (Eat, Sleep).
 /// </summary>
 public sealed record NeedsCriticalEvent : IEvent
 {
-    /// <summary>
-    /// The ID of the pawn whose need reached critical level.
-    /// </summary>
+    /// <summary>The pawn whose need reached critical level.</summary>
     public required EntityId PawnId { get; init; }
 
-    /// <summary>
-    /// Name of the critical need: "Hunger", "Thirst", "Rest", "Comfort".
-    /// </summary>
-    public required string NeedName { get; init; }
+    /// <summary>Which need is critical.</summary>
+    public required NeedKind Need { get; init; }
 
-    /// <summary>
-    /// Current value of the need (0..1).
-    /// </summary>
+    /// <summary>Current value of the need in [0..1].</summary>
     public required float Value { get; init; }
 }
