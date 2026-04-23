@@ -6,6 +6,9 @@ using System;
 
 /// <summary>
 /// Condition leaf: returns Success if pawn is exhausted, Failure otherwise.
+///
+/// TODO(Phase 4): the blackboard key "Rest" is not yet populated by any
+/// producer — see note on <see cref="IsHungryLeaf"/> for the broader gap.
 /// </summary>
 public sealed class IsExhaustedLeaf : Leaf
 {
