@@ -1,27 +1,17 @@
 using DualFrontier.Contracts.Core;
-using DualFrontier.Contracts.Attributes;
 
 namespace DualFrontier.Events.Pawn;
 
 /// <summary>
-/// Published by MoodSystem when a pawn's mood drops below breakdown threshold.
-/// Decorated with [Deferred] — delivered in the next scheduler phase.
+/// Published by MoodSystem when a pawn mood drops below break threshold.
+/// Published once per transition — repeated breaks without recovery
+/// do not fire a new event.
 /// </summary>
-[Deferred]
 public sealed record MoodBreakEvent : IEvent
 {
-    /// <summary>
-    /// The ID of the pawn experiencing the mental breakdown.
-    /// </summary>
+    /// <summary>Pawn that suffered a mood break.</summary>
     public required EntityId PawnId { get; init; }
 
-    /// <summary>
-    /// Mood value at the time of breakdown trigger.
-    /// </summary>
-    public required float MoodAtBreak { get; init; }
-
-    /// <summary>
-    /// Estimated ticks the breakdown will last.
-    /// </summary>
-    public required int EstimatedDurationTicks { get; init; }
+    /// <summary>Mood value at the moment of break (0..1).</summary>
+    public required float MoodValue { get; init; }
 }

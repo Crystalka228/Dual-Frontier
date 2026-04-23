@@ -1,15 +1,23 @@
 using DualFrontier.Contracts.Core;
+using DualFrontier.Components.Pawn;
 
 namespace DualFrontier.Events.Pawn;
 
 /// <summary>
-/// Навык пешки получил прогресс. SkillSystem увеличивает уровень в
-/// <c>SkillsComponent</c> и публикует это событие для UI / истории.
+/// Published by SkillSystem when a pawn skill level increases.
+/// Used by UI and statistics — actual level is stored in SkillsComponent.
 /// </summary>
 public sealed record SkillGainEvent : IEvent
 {
-    // TODO: public required EntityId PawnId { get; init; }
-    // TODO: public required SkillKind Skill { get; init; }   // enum — см. Components/Pawn/SkillsComponent
-    // TODO: public required int NewLevel { get; init; }
-    // TODO: public int Delta { get; init; } = 1;
+    /// <summary>Pawn whose skill increased.</summary>
+    public required EntityId PawnId { get; init; }
+
+    /// <summary>Skill kind that improved.</summary>
+    public required SkillKind Skill { get; init; }
+
+    /// <summary>New skill level after gain.</summary>
+    public required int NewLevel { get; init; }
+
+    /// <summary>Amount gained (usually 1).</summary>
+    public int Delta { get; init; } = 1;
 }
