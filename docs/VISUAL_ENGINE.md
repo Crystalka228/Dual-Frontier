@@ -27,6 +27,56 @@ TileMap, инспектор, plugin API, scene tree.
 Каждая Presentation-сборка реализует все три. Application не импортирует ни
 Godot, ни Silk.NET — только использует контракты.
 
+## Tier split: production vs devkit
+
+Контракты делятся на два уровня:
+
+### Production-tier
+
+Минимальный набор, обязательный для любого бэкенда. Всё, что видит игрок в финальной
+игре. Реализуется и в Godot DevKit, и в Native.
+
+- `IRenderer` — главный цикл рендера.
+- `ISceneLoader` — загрузка `.dfscene`.
+- `IInputSource` — ввод в шины.
+
+### DevKit-tier
+
+Расширения для инструментов разработки. Реализуются **только** в Godot DevKit.
+Native о них не знает вообще — никаких ссылок, никаких stubs с `NotImplementedException`,
+ничего. Все типы помечены `[DevKitOnly]`.
+
+- `IDevKitRenderer : IRenderer` — debug gizmos, system profiler, entity highlighting.
+- *(будущее)* `ISceneEditor` — live-reload сцен, правка прямо в runtime.
+- *(будущее)* `IDebugTimeControl` — пауза, шаг тика, ускорение для воспроизведения багов.
+
+### Правило выбора тира
+
+Спрашивай себя: **нужно ли это игроку в финальной игре?**
+
+- Да, всегда → production-tier (`IRenderer`).
+- Только разработчикам или модерам → devkit-tier (`IDevKitRenderer`).
+- Сомневаешься → production-tier. Расширить контракт легче, чем сузить.
+
+### Почему не просто две сборки с одинаковым API
+
+Если бы `IRenderer` содержал `DrawDebugGizmo`, Native был бы вынужден либо
+реализовать его (тратя код и бинарь на то, что не нужно), либо кидать
+`NotImplementedException` (замусоривая контракт). Tier split решает это чисто:
+Native просто не знает о существовании debug-методов.
+
+### Promotion policy
+
+Если метод из devkit-tier начинает требоваться в production (например,
+`HighlightEntity` вдруг нужен для геймплейного tutorial), его можно **promote**:
+
+1. Переместить метод из `IDevKitRenderer` в `IRenderer`.
+2. Реализовать в Native.
+3. Обновить доку.
+
+Обратное движение — demotion — запрещено. Убрав метод из production-tier, ты
+ломаешь контракт для уже существующих Native-сборок.
+
 ## Формат .dfscene
 
 Человекочитаемый JSON, версионированный:
