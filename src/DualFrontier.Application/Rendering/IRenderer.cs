@@ -1,11 +1,18 @@
 namespace DualFrontier.Application.Rendering;
 
 /// <summary>
-/// The top-level rendering contract implemented by each presentation backend.
-/// Exactly one <see cref="IRenderer"/> is active per game session.
-/// Application code holds the contract; Godot and Native assemblies each
-/// provide a concrete implementation.
+/// The production-tier rendering contract implemented by every presentation
+/// backend. Exactly one <see cref="IRenderer"/> is active per game session.
+/// This interface carries only methods that the shipped Native runtime must
+/// support. Debug visualisations, inspectors, and authoring helpers live in
+/// the devkit-tier extension <see cref="IDevKitRenderer"/>, which only Godot
+/// DevKit implements.
 /// </summary>
+/// <remarks>
+/// Rule of thumb: if players see it in the final game, it belongs here. If
+/// only developers or modders ever see it, it belongs in
+/// <see cref="IDevKitRenderer"/>.
+/// </remarks>
 public interface IRenderer
 {
     /// <summary>
