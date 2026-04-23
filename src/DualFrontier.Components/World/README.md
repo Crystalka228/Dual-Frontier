@@ -27,7 +27,8 @@ world.AddComponent(node, new PositionComponent { Position = new GridVector(42, 1
 ```
 
 ## TODO
-- [ ] Определить `TerrainKind` enum (Grass, Rock, Sand, Water, Ice, Swamp, Arcane …).
+- [x] Определить `TerrainKind` enum (Grass, Rock, Sand, Water, Ice, Swamp,
+      Arcane, Unknown).
 - [ ] Определить `BiomeKind` enum (TemperateForest, Desert, Tundra, EtherWastes …).
 - [ ] Продумать слои (напольный / стеновой / декоративный) — возможно,
       через отдельные компоненты, а не через `TileComponent`.

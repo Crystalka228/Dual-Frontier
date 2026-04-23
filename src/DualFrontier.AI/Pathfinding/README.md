@@ -34,6 +34,9 @@ if (pf.TryFindPath(from, to, out var path)) { /* использовать */ }
 ```
 
 ## TODO
-- [ ] Реализовать `AStarPathfinding` с бинарной кучей и лимитом итераций.
-- [ ] Реализовать `NavGrid` как bitset по тайлам.
+- [x] Реализовать `AStarPathfinding` с лимитом итераций (2000 за вызов,
+      `PriorityQueue<GridVector, float>`).
+- [x] Реализовать `NavGrid` как bitmap (passability + cost map, `SetTile`).
 - [ ] Добавить hierarchical pathfinding для дальних целей.
+- [ ] Кэш путей между часто используемыми точками (инвалидация по
+      `BuildingPlacedEvent` / `TileChangedEvent`, см. PERFORMANCE).

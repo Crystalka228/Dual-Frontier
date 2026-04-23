@@ -26,5 +26,10 @@ ScenarioDef scenario = loader.Load("scenarios/default.json");
 ```
 
 ## TODO
-- [ ] Фаза 3 — выбрать формат (JSON через System.Text.Json?).
-- [ ] Фаза 3 — валидация схемы и понятные ошибки парсинга.
+- [x] Фаза 3 — `ScenarioLoader.Load(path)` парсит JSON через
+      `System.Text.Json`.
+- [x] Фаза 3 — `ScenarioDef` с полями `Id`, `Name`, `StartingPawnCount`,
+      `MapWidth`, `MapHeight`, `WorldSeed`, `StartingItems`.
+- [ ] Валидация схемы и понятные ошибки парсинга.
+- [ ] `LoadDefault()` используется при отсутствии файла сценария
+      (сейчас метод есть, но вызывающий код не делает fallback).

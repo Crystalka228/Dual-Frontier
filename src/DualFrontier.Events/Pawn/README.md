@@ -8,9 +8,15 @@
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`.
 
 ## Что внутри
-- `MoodBreakEvent.cs` — настроение пешки ушло ниже порога.
+- `MoodBreakEvent.cs` — настроение пешки ушло ниже порога
+  (`PawnId`, `MoodValue`).
 - `DeathReactionEvent.cs` — пешка увидела смерть сородича.
-- `SkillGainEvent.cs` — навык повышен.
+- `SkillGainEvent.cs` — навык повышен (`PawnId`, `Skill`, `NewLevel`,
+  `Delta`).
+- `PawnSpawnedEvent.cs` — появление пешки в мире (`PawnId`, `X`, `Y`).
+- `PawnMovedEvent.cs` — пешка сменила тайл (`PawnId`, `X`, `Y`).
+- `JobAssignedEvent.cs`, `JobCompletedEvent.cs` — жизненный цикл джоба.
+- `NeedsCriticalEvent.cs` — одна из нужд пешки в критической зоне.
 
 ## Правила
 - `MoodBreakEvent` публикуется MoodSystem один раз на переход — повторный

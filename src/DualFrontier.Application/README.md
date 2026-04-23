@@ -50,9 +50,12 @@ loop.Start();
 ```
 
 ## TODO
-- [ ] Фаза 1 — реализовать `GameLoop.Tick` с фиксированным шагом.
+- [x] Фаза 1 — `GameLoop` с accumulator-based фиксированным шагом
+      (30 Hz, пауза, speed x1/x2/x3).
 - [ ] Фаза 1 — `SaveSystem.Save/Load` (binary + header `SaveFormat`).
 - [ ] Фаза 2 — `ModLoader` (`AssemblyLoadContext`, реестр модов, горячая выгрузка).
 - [ ] Фаза 2 — `RestrictedModApi` проксирует вызовы в `Core.GameServices`.
-- [ ] Фаза 3 — подключить `PresentationBridge.DrainCommands` к Godot `_Process`.
-- [ ] Фаза 3 — `ScenarioLoader` парсит JSON/TOML.
+- [ ] Фаза 3 — подключить `PresentationBridge.DrainCommands` к Godot `_Process`
+      (`PresentationBridge.SetScene` / `EnqueueInput` пока не существует,
+      `GameBootstrap` не реализован).
+- [x] Фаза 3 — `ScenarioLoader` парсит JSON через `System.Text.Json`.

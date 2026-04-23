@@ -39,6 +39,11 @@
 - `Math/SpatialGrid.cs` (инфраструктура; примитив `GridVector` живёт в `DualFrontier.Contracts.Math`).
 - `Registry/ComponentRegistry.cs`, `Registry/SystemRegistry.cs`.
 
+Главный цикл симуляции (`src/DualFrontier.Application/Loop/`):
+
+- [x] `FrameClock` — источник `delta` на базе `Stopwatch`, метод `Update()`.
+- [x] `GameLoop` — accumulator-based tick (30 Hz), пауза, speed x1/x2/x3.
+
 ### Критерии приёмки
 
 - Unit-тесты ComponentStore, DependencyGraph, DomainEventBus проходят.
@@ -69,6 +74,16 @@
 - `DualFrontier.Application/Modding/` — `ModIntegrationPipeline`,
   `ContractValidator`, `ModRegistry`, `ModContractStore`, `RestrictedModApi` (полная реализация).
 
+Компоненты мира (`src/DualFrontier.Components/World/`):
+
+- [x] `TerrainKind` enum (Grass, Rock, Sand, Water, Ice, Swamp, Arcane, Unknown).
+- [x] `TileComponent` — `Terrain`, `Passable`, `Default`.
+
+### Технический долг
+
+- [ ] Modding-тесты `AssemblyLoadContext` (WeakReference unload, попытка
+      загрузить `DualFrontier.Core.dll`) — не реализованы.
+
 ### Критерии приёмки
 
 - 100% тестов изоляции проходят как в DEBUG, так и в RELEASE (для критических).
@@ -90,8 +105,20 @@
 
 - `DualFrontier.Components/Shared/PositionComponent`, `FactionComponent`, `RaceComponent`.
 - `DualFrontier.Components/Pawn/NeedsComponent`, `MindComponent`, `JobComponent`, `SkillsComponent`.
-- `DualFrontier.Systems/Pawn/NeedsSystem` (SLOW), `JobSystem` (NORMAL).
-- `DualFrontier.AI/Pathfinding/IPathfindingService`, `AStarPathfinding`, `NavGrid`.
+- [x] `DualFrontier.Systems/Pawn/NeedsSystem` (SLOW) — Hunger/Thirst/Rest/Comfort decay.
+- [x] `DualFrontier.Systems/Pawn/MoodSystem` — формула `mood = f(needs)`,
+      переход в MoodBreak.
+- [x] `DualFrontier.Systems/Pawn/JobSystem` (NORMAL) — приоритеты по нуждам,
+      `JobKind.Eat/Sleep/Idle`.
+- [ ] `DualFrontier.Systems/Pawn/SocialSystem` — стаб.
+- [ ] `DualFrontier.Systems/Pawn/SkillSystem` — стаб.
+- [x] `DualFrontier.AI/Pathfinding/IPathfindingService`, `AStarPathfinding`
+      (A* с лимитом 2000 итераций, без кэша), `NavGrid` (passability bitmap,
+      cost map, SetTile).
+- [x] `DualFrontier.Events/Pawn/DeathEvent`, `PawnSpawnedEvent`,
+      `PawnMovedEvent`, `MoodBreakEvent`, `SkillGainEvent`.
+- [x] `DualFrontier.Application/Scenario/ScenarioDef`, `ScenarioLoader`
+      (JSON + `LoadDefault()`).
 - `DualFrontier.AI/Jobs/IJob`, `JobHaul`, `JobMeditate`.
 - `DualFrontier.AI/BehaviourTree/BTNode`, `Selector`, `Sequence`, `Leaf`.
 
@@ -101,6 +128,16 @@
 - Пешка получает задачу через `JobComponent`, `JobSystem` выполняет её через behaviour tree.
 - `NeedsSystem` снижает голод/сон, пешка ищет еду через `JobSystem`.
 - Pathfinding работает, кэширует маршруты.
+
+### Открытые задачи
+
+- [ ] `SocialSystem` — полная реализация (сейчас стаб).
+- [ ] `SkillSystem` — полная реализация (сейчас стаб).
+- [ ] Доступ систем к `IGameServices` для публикации событий в шины
+      (`MoodSystem` сейчас содержит заглушку вместо публикации
+      `MoodBreakEvent`).
+- [ ] Godot-интеграция: `PresentationBridge.SetScene` / `EnqueueInput`,
+      `GameBootstrap`, сцены `.tscn` — не реализованы.
 
 ### Разблокирует
 

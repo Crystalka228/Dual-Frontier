@@ -45,7 +45,9 @@ if (job.Tick(delta) == JobStatus.Done) { /* ... */ }
 ```
 
 ## TODO
-- [ ] Реализовать `AStarPathfinding` с лимитом итераций за тик.
+- [x] Реализовать `AStarPathfinding` с лимитом итераций за тик
+      (2000 итераций за вызов, без кэша путей — см.
+      `Pathfinding/README.md`).
 - [ ] Написать BT-парсер из JSON для модов.
 - [ ] Покрыть юнит-тестами `Selector` / `Sequence` / `Leaf`.
 - [ ] Реализовать `JobCast` (интеграция со `SpellSystem` через шину).

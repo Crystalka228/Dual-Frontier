@@ -37,8 +37,13 @@ foreach (var pawn in Query<NeedsComponent, SkillsComponent, PositionComponent>()
 ```
 
 ## TODO
-- [ ] Реализовать `NeedsSystem`: падение сытости/сна во времени.
-- [ ] Реализовать `JobSystem`: приоритеты джобов по нуждам и навыкам.
-- [ ] Реализовать `MoodSystem`: формула mood = f(needs, health, events).
-- [ ] Реализовать `SocialSystem`: граф дружб/вражды.
-- [ ] Реализовать `SkillSystem`: кривая опыта и деградация.
+- [x] Реализовать `NeedsSystem`: падение сытости/сна во времени.
+- [x] Реализовать `JobSystem` (базовый): приоритеты джобов по нуждам,
+      `JobKind.Eat/Sleep/Idle`.
+- [x] Реализовать `MoodSystem`: формула mood = f(needs), переход в
+      MoodBreak.
+- [ ] Реализовать `SocialSystem`: граф дружб/вражды (сейчас стаб).
+- [ ] Реализовать `SkillSystem`: кривая опыта и деградация (сейчас стаб).
+- [ ] Подключить публикацию событий через `IGameServices` — сейчас
+      `MoodSystem` содержит заглушку вместо реальной публикации
+      `MoodBreakEvent`; системы не имеют доступа к шинам.
