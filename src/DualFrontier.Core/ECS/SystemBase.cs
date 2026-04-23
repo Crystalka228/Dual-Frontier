@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Core.ECS;
@@ -133,5 +134,28 @@ public abstract class SystemBase
             ?? throw new InvalidOperationException(
                 "SystemBase.GetSystem called outside an active scheduler context.");
         return ctx.GetSystem<TSystem>();
+    }
+
+    /// <summary>
+    /// Domain-bus aggregator supplied by the scheduler. Use for publishing
+    /// events (<c>Services.Pawns.Publish(...)</c>) and subscribing in
+    /// <see cref="OnInitialize"/>. Reads are routed through the active
+    /// <see cref="SystemExecutionContext"/> so that out-of-context calls
+    /// (e.g. from the Godot main thread) fail loudly, and tests that build
+    /// a context without supplying services receive a diagnostic instead of
+    /// a silent NullReferenceException.
+    /// </summary>
+    protected IGameServices Services
+    {
+        get
+        {
+            var ctx = SystemExecutionContext.Current
+                ?? throw new InvalidOperationException(
+                    "SystemBase.Services accessed outside an active scheduler context.");
+            return ctx.Services
+                ?? throw new InvalidOperationException(
+                    "SystemBase.Services requested but the scheduler did not supply an IGameServices instance. " +
+                    "Pass one to ParallelSystemScheduler's constructor.");
+        }
     }
 }

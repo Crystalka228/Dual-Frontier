@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Core.ECS;
@@ -44,6 +45,7 @@ public sealed class SystemExecutionContext
     private readonly SystemOrigin _origin;
     private readonly string? _modId;
     private readonly IModFaultSink _faultSink;
+    private readonly IGameServices? _services;
 
     /// <summary>
     /// Creates a guard for the given system. The scheduler (or a test)
@@ -51,7 +53,9 @@ public sealed class SystemExecutionContext
     /// <c>[SystemAccess]</c> declaration. {Origin} decides whether
     /// violations crash ({Core}) or route through {IModFaultSink} ({Mod}).
     /// {ModId} is only meaningful when <paramref name="origin"/> is
-    /// <see cref="SystemOrigin.Mod"/>.
+    /// <see cref="SystemOrigin.Mod"/>. {Services} is optional — when null,
+    /// systems that reach for <c>SystemBase.Services</c> receive an explicit
+    /// error instead of silently publishing into a no-op bus.
     /// </summary>
     /// <param name="world">Target world the guarded system may access.</param>
     /// <param name="systemName">Display name used in violation messages.</param>
@@ -61,6 +65,7 @@ public sealed class SystemExecutionContext
     /// <param name="origin">Core vs Mod provenance of the system.</param>
     /// <param name="modId">Mod identifier when <paramref name="origin"/> is Mod; otherwise null.</param>
     /// <param name="faultSink">Destination for mod-origin fault reports.</param>
+    /// <param name="services">Domain-bus aggregator exposed to the system via <c>SystemBase.Services</c>; null for tests that do not exercise publication.</param>
     internal SystemExecutionContext(
         World world,
         string systemName,
@@ -69,7 +74,8 @@ public sealed class SystemExecutionContext
         IEnumerable<string> allowedBuses,
         SystemOrigin origin,
         string? modId,
-        IModFaultSink faultSink)
+        IModFaultSink faultSink,
+        IGameServices? services = null)
     {
         _world = world ?? throw new ArgumentNullException(nameof(world));
         _systemName = systemName ?? throw new ArgumentNullException(nameof(systemName));
@@ -88,7 +94,15 @@ public sealed class SystemExecutionContext
 
         _origin = origin;
         _modId = modId;
+        _services = services;
     }
+
+    /// <summary>
+    /// Domain-bus aggregator supplied by the scheduler. Null when no
+    /// services were provided at construction time (isolated unit tests).
+    /// Exposed internally; systems reach it via <c>SystemBase.Services</c>.
+    /// </summary>
+    internal IGameServices? Services => _services;
 
     /// <summary>
     /// Current execution context for the calling thread. Null when the

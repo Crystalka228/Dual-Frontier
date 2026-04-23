@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using DualFrontier.Contracts.Attributes;
+using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Core.Scheduling;
@@ -39,6 +40,7 @@ internal sealed class ParallelSystemScheduler
     private readonly TickScheduler _ticks;
     private readonly World _world;
     private readonly IModFaultSink _faultSink;
+    private readonly IGameServices? _services;
     private readonly ParallelOptions _parallelOptions;
     private Dictionary<SystemBase, SystemExecutionContext> _contextCache;
 
@@ -53,16 +55,19 @@ internal sealed class ParallelSystemScheduler
     /// <param name="ticks">Tick clock used to filter systems by <c>[TickRate]</c>.</param>
     /// <param name="world">Target world the systems act upon.</param>
     /// <param name="faultSink">Optional sink for mod-origin faults; defaults to a no-op sink.</param>
+    /// <param name="services">Optional domain-bus aggregator surfaced to systems via <c>SystemBase.Services</c>; null for tests that never publish.</param>
     public ParallelSystemScheduler(
         IReadOnlyList<SystemPhase> phases,
         TickScheduler ticks,
         World world,
-        IModFaultSink? faultSink = null)
+        IModFaultSink? faultSink = null,
+        IGameServices? services = null)
     {
         _phases = phases ?? throw new ArgumentNullException(nameof(phases));
         _ticks = ticks ?? throw new ArgumentNullException(nameof(ticks));
         _world = world ?? throw new ArgumentNullException(nameof(world));
         _faultSink = faultSink ?? new NullModFaultSink();
+        _services = services;
         _parallelOptions = new ParallelOptions
         {
             MaxDegreeOfParallelism = System.Math.Max(1, Environment.ProcessorCount - 2),
@@ -174,6 +179,7 @@ internal sealed class ParallelSystemScheduler
             attr.Buses,
             SystemOrigin.Core,
             modId: null,
-            _faultSink);
+            _faultSink,
+            _services);
     }
 }
