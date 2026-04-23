@@ -2,6 +2,20 @@
 
 Godot — отличный движок для 2D-симуляции, но у него есть жёсткое ограничение: `SceneTree` и `Node` API работают только из главного потока. Domain-логика Dual Frontier многопоточная и не должна знать, что рядом вообще есть Godot. Связь между слоями строится на одностороннем мосте команд.
 
+## Статус: Godot как DevKit
+
+В v0.3 Godot используется как **инструмент разработки**, а не production-рантайм.
+Редактирование сцен, тест поведения систем, визуальная отладка — через Godot Editor
+и `DualFrontier.Presentation`. Production-сборка игры работает на
+`DualFrontier.Presentation.Native` (Silk.NET + OpenGL).
+
+Оба бэкенда реализуют контракты `IRenderer`, `ISceneLoader`, `IInputSource` из
+Application-слоя. Этот документ покрывает Godot-специфичные детали: main thread
+и `PresentationBridge`. Общая архитектура визуальной системы — в
+[VISUAL_ENGINE](./VISUAL_ENGINE.md).
+
+---
+
 ## Ограничение main thread
 
 Любая попытка вызвать `AddChild`, `QueueFree`, `SetPosition`, `EmitSignal` или `GetTree` из фонового потока в Godot приводит к неопределённому поведению: чаще всего — падение в рандомном месте через несколько кадров, гонка за очередь отложенных сообщений SceneTree. Повторить баг сложно, отлаживать невозможно.
@@ -45,9 +59,12 @@ public sealed class PresentationBridge
 ```csharp
 public interface IRenderCommand : ICommand
 {
-    void Execute(GodotScene scene);
+    void Execute(object renderContext);
 }
 ```
+
+Параметр `renderContext` — backend-specific root: для Godot это `GameRoot` node,
+для Native — инстанс `NativeRenderer`. Команды делают cast внутри `Execute`.
 
 | Команда                       | Кто создаёт                           | Что делает                                      |
 |-------------------------------|---------------------------------------|-------------------------------------------------|
