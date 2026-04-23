@@ -1,29 +1,27 @@
+using DualFrontier.Contracts.Core;
+
 namespace DualFrontier.AI.Jobs;
 
 /// <summary>
-/// Джоб приказа голему: хозяин отдаёт команду (идти сюда,
-/// атаковать это), голем исполняет. Работает через
-/// <c>GolemSystem</c> и <c>Magic</c> шину.
-///
-/// См. GDD "Големы".
+/// Issues a command to a golem. Phase 4 implementation.
 /// </summary>
 public sealed class JobGolemCommand : IJob
 {
-    /// <inheritdoc />
-    public void Start()
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — JobGolemCommand.Start: проверить связь хозяин-голем");
-    }
+    /// <summary>Pawn executing this job.</summary>
+    public EntityId PawnId { get; private set; }
+
+    /// <summary>Current execution status.</summary>
+    public JobStatus Status { get; private set; }
 
     /// <inheritdoc />
-    public JobStatus Tick(float delta)
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — JobGolemCommand.Tick: исполнить команду шагами");
-    }
+    public void Start() =>
+        throw new System.NotImplementedException("TODO: Фаза 6");
 
     /// <inheritdoc />
-    public void Abort()
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — JobGolemCommand.Abort: отменить команду, вернуть голема в idle");
-    }
+    public JobStatus Tick(float delta) =>
+        throw new System.NotImplementedException("TODO: Фаза 6");
+
+    /// <inheritdoc />
+    public void Abort() =>
+        throw new System.NotImplementedException("TODO: Фаза 6");
 }

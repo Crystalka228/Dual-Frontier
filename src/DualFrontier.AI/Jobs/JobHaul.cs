@@ -1,29 +1,27 @@
+using DualFrontier.Contracts.Core;
+
 namespace DualFrontier.AI.Jobs;
 
 /// <summary>
-/// Джоб переноски стака: дойти до источника → взять → дойти до
-/// цели → положить. Работает вместе с <c>HaulSystem</c> и
-/// <c>InventorySystem</c> через intent-события.
-///
-/// См. GDD разделы "Ресурсы и производство", "Пешки".
+/// Carries an item from source to destination. Phase 3 implementation.
 /// </summary>
 public sealed class JobHaul : IJob
 {
-    /// <inheritdoc />
-    public void Start()
-    {
-        throw new NotImplementedException("TODO: Фаза 3 — JobHaul.Start: взять цели источника и назначения");
-    }
+    /// <summary>Pawn executing this job.</summary>
+    public EntityId PawnId { get; private set; }
+
+    /// <summary>Current execution status.</summary>
+    public JobStatus Status { get; private set; }
 
     /// <inheritdoc />
-    public JobStatus Tick(float delta)
-    {
-        throw new NotImplementedException("TODO: Фаза 3 — JobHaul.Tick: шаги GoTo/Pickup/Carry/Drop");
-    }
+    public void Start() =>
+        throw new System.NotImplementedException("TODO: Фаза 3");
 
     /// <inheritdoc />
-    public void Abort()
-    {
-        throw new NotImplementedException("TODO: Фаза 3 — JobHaul.Abort: бросить стак, снять блокировку источника");
-    }
+    public JobStatus Tick(float delta) =>
+        throw new System.NotImplementedException("TODO: Фаза 3");
+
+    /// <inheritdoc />
+    public void Abort() =>
+        throw new System.NotImplementedException("TODO: Фаза 3");
 }
