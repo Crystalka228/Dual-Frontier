@@ -1,15 +1,27 @@
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Attributes;
 
 namespace DualFrontier.Events.Pawn;
 
 /// <summary>
-/// Настроение пешки упало ниже <c>MoodBreakThreshold</c>: психологический
-/// срыв. Конкретная реакция (побег, депрессия, берсерк) определяется
-/// BreakdownSystem в зависимости от черт характера и тяжести.
+/// Published by MoodSystem when a pawn's mood drops below breakdown threshold.
+/// Decorated with [Deferred] — delivered in the next scheduler phase.
 /// </summary>
+[Deferred]
 public sealed record MoodBreakEvent : IEvent
 {
-    // TODO: public required EntityId PawnId { get; init; }
-    // TODO: public required int Severity { get; init; }   // 1..3 — Фаза 3
-    // TODO: public float MoodAtBreak { get; init; }
+    /// <summary>
+    /// The ID of the pawn experiencing the mental breakdown.
+    /// </summary>
+    public required EntityId PawnId { get; init; }
+
+    /// <summary>
+    /// Mood value at the time of breakdown trigger.
+    /// </summary>
+    public required float MoodAtBreak { get; init; }
+
+    /// <summary>
+    /// Estimated ticks the breakdown will last.
+    /// </summary>
+    public required int EstimatedDurationTicks { get; init; }
 }
