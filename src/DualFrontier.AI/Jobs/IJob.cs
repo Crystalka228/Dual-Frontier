@@ -1,47 +1,46 @@
-namespace DualFrontier.AI.Jobs;
+using System;
+using DualFrontier.Contracts.Core;
 
-/// <summary>
-/// Жизненный цикл конкретного джоба.
-/// </summary>
-public enum JobStatus
+namespace DualFrontier.AI.Jobs
 {
-    /// <summary>Джоб создан, но <see cref="IJob.Start"/> ещё не вызван.</summary>
-    NotStarted,
-
-    /// <summary>Джоб исполняется — вернёт следующий шаг на следующем тике.</summary>
-    Running,
-
-    /// <summary>Джоб успешно завершился.</summary>
-    Done,
-
-    /// <summary>Джоб не смог завершиться (цель пропала, ресурсов нет).</summary>
-    Failed
-}
-
-/// <summary>
-/// Задача, которую выполняет пешка: хаул, крафт, каст,
-/// медитация, приказ голему и т. д. JobSystem тикает джоб до
-/// завершения, джоб сам не пишет компоненты.
-///
-/// Синхронный интерфейс — никакого async (см. THREADING и
-/// правила <c>DualFrontier.Systems</c>).
-/// </summary>
-public interface IJob
-{
-    /// <summary>
-    /// Однократная инициализация: взять цель, подписать блокировки.
-    /// </summary>
-    void Start();
+    /// <summary>Defines the execution status of a job.</summary>
+    public enum JobStatus
+    {
+        /// <summary>Job is still executing — call Tick again next frame.</summary>
+        Running,
+        /// <summary>Job completed successfully.</summary>
+        Done,
+        /// <summary>Job failed and cannot continue.</summary>
+        Failed,
+        /// <summary>Job was aborted by external request.</summary>
+        Aborted
+    }
 
     /// <summary>
-    /// Один шаг джоба. Возвращает <see cref="JobStatus"/>.
+    /// Defines the contract for an AI Job executed by a pawn.
     /// </summary>
-    /// <param name="delta">Прошло реального времени с прошлого тика.</param>
-    JobStatus Tick(float delta);
+    public interface IJob
+    {
+        /// <summary>Unique identifier of the pawn executing this job.</summary>
+        EntityId PawnId { get; }
 
-    /// <summary>
-    /// Принудительное прерывание: корректно откатить частично
-    /// выполненные действия (освободить предметы, снять блокировки).
-    /// </summary>
-    void Abort();
+        /// <summary>Current execution status.</summary>
+        JobStatus Status { get; }
+
+        /// <summary>
+        /// Initialises the job. Called once before the first Tick.
+        /// </summary>
+        void Start();
+
+        /// <summary>
+        /// Advances the job by one step. Returns current status.
+        /// </summary>
+        JobStatus Tick(float delta);
+
+        /// <summary>
+        /// Aborts the job, rolling back any reserved resources.
+        /// After Abort, Status must be Aborted.
+        /// </summary>
+        void Abort();
+    }
 }
