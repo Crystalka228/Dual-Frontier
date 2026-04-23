@@ -22,16 +22,44 @@ namespace DualFrontier.Systems.Pawn;
 [TickRate(TickRates.NORMAL)]
 public sealed class JobSystem : SystemBase
 {
-    /// <summary>
-    /// TODO: Подписаться на JobCompletedEvent, JobAbortedEvent, MoodBreakEvent.
-    /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 3 — подписка на события джобов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 3 — перебрать свободных пешек, выбрать лучший доступный джоб.
+        foreach (var entityId in Query<JobComponent, NeedsComponent>())
+        {
+            var job = GetComponent<JobComponent>(entityId);
+            var needs = GetComponent<NeedsComponent>(entityId);
+
+            if (job.IsInterrupted)
+            {
+                job.Current = JobKind.Idle;
+                job.Target = null;
+                job.TicksAtJob = 0;
+                job.IsInterrupted = false;
+            }
+            else if (needs.IsExhausted)
+            {
+                job.Current = JobKind.Sleep;
+                job.Target = null;
+                job.TicksAtJob = 0;
+            }
+            else if (needs.IsHungry)
+            {
+                job.Current = JobKind.Eat;
+                job.Target = null;
+                job.TicksAtJob = 0;
+            }
+            else if (job.IsIdle)
+            {
+                // no change needed
+            }
+            else
+            {
+                job.TicksAtJob++;
+            }
+
+            SetComponent(entityId, job);
+        }
     }
 }
