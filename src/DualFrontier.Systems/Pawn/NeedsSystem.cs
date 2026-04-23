@@ -1,59 +1,37 @@
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
-using DualFrontier.Events.Pawn;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
+using DualFrontier.Events.Pawn;
 
-namespace DualFrontier.Systems.Pawn;
-
-/// <summary>
-/// Деградация нужд пешки во времени: голод, жажда, сон, отдых.
-/// Публикует сигнал в <c>Pawns</c> шину, когда нужда пересекает
-/// критический порог.
-///
-/// Фаза: 3 (пешки).
-/// Тик: SLOW (60 фреймов) — нужды меняются медленно.
-/// </summary>
-[SystemAccess(
-    reads:  new[] { typeof(NeedsComponent) },
-    writes: new[] { typeof(NeedsComponent) },
-    bus:    nameof(IGameServices.Pawns)
-)]
-[TickRate(TickRates.SLOW)]
-public sealed class NeedsSystem : SystemBase
+namespace DualFrontier.Systems.Pawn
 {
-    public override void Update(float delta)
+    [SystemAccess(
+        reads:  new Type[0],
+        writes: new[] { typeof(NeedsComponent) },
+        bus:    nameof(IGameServices.Pawns)
+    )]
+    [TickRate(TickRates.SLOW)]
+    public sealed class NeedsSystem : SystemBase
     {
-        foreach (var entityId in Query<NeedsComponent>())
+        // Decay rates per second (tuned for 30Hz * 60 frames = SLOW tick)
+        private const float HungerDecayPerTick  = 0.002f;
+        private const float SleepDecayPerTick   = 0.001f;
+        private const float ComfortDecayPerTick = 0.0005f;
+
+        protected override void OnInitialize() { }
+
+        public override void Update(float delta)
         {
-            NeedsComponent needs = GetComponent<NeedsComponent>(entityId);
-
-            needs.Hunger += 0.005f * delta;
-            needs.Thirst += 0.008f * delta;
-            needs.Rest += 0.003f * delta;
-            needs.Comfort += 0.002f * delta;
-
-            needs.Hunger = Math.Min(1f, Math.Max(0f, needs.Hunger));
-            needs.Thirst = Math.Min(1f, Math.Max(0f, needs.Thirst));
-            needs.Rest = Math.Min(1f, Math.Max(0f, needs.Rest));
-            needs.Comfort = Math.Min(1f, Math.Max(0f, needs.Comfort));
-
-            if (needs.IsHungry)
-                Services.Pawns.Publish(new NeedsCriticalEvent
-                {
-                    PawnId = entityId,
-                    NeedName = "Hunger",
-                    Value = needs.Hunger
-                });
-            if (needs.IsExhausted)
-                Services.Pawns.Publish(new NeedsCriticalEvent
-                {
-                    PawnId = entityId,
-                    NeedName = "Rest",
-                    Value = needs.Rest
-                });
-
-            SetComponent(entityId, needs);
+            foreach (var entity in Query<NeedsComponent>())
+            {
+                var needs = GetComponent<NeedsComponent>(entity);
+                needs.Hunger  = Math.Clamp(needs.Hunger  - HungerDecayPerTick,  0f, 1f);
+                needs.Thirst  = Math.Clamp(needs.Thirst  - 0.0015f,             0f, 1f);
+                needs.Rest = Math.Clamp(needs.Rest - SleepDecayPerTick, 0f, 1f);
+                needs.Comfort = Math.Clamp(needs.Comfort - ComfortDecayPerTick, 0f, 1f);
+                SetComponent(entity, needs);
+            }
         }
     }
 }
