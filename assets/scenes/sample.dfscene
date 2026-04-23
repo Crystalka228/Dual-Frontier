@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "name": "sample_colony",
+  "tilemap": {
+    "width": 10,
+    "height": 10,
+    "tileSize": 32,
+    "layers": [
+      {
+        "id": "ground",
+        "tiles": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+      }
+    ]
+  },
+  "entities": [
+    {
+      "id": "pawn_01",
+      "prefab": "core:pawn",
+      "position": { "x": 5, "y": 5 },
+      "components": {
+        "HealthComponent":  { "max": 100 },
+        "FactionComponent": { "faction": "player" }
+      }
+    }
+  ],
+  "markers": [
+    { "id": "player_spawn", "position": { "x": 5, "y": 5 } }
+  ],
+  "metadata": {
+    "biome": "temperate",
+    "etherDensity": 0.4,
+    "createdBy": "hand-authored fixture",
+    "exportedAt": "2026-04-23T12:00:00Z"
+  }
+}
