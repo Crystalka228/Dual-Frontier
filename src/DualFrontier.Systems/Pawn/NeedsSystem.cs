@@ -1,5 +1,6 @@
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Events.Pawn;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Pawn;
@@ -20,9 +21,14 @@ namespace DualFrontier.Systems.Pawn;
 [TickRate(TickRates.SLOW)]
 public sealed class NeedsSystem : SystemBase
 {
-    /// <summary>
-    /// TODO: Подписаться на FoodConsumedEvent, SleepEndedEvent.
-    /// </summary>
+    private readonly IGameServices _services;
+
+    public NeedsSystem(IGameServices services)
+    {
+        _services = services;
+    }
+
+
 protected override void OnInitialize()
 {
     // Currently empty as no events are subscribed.
@@ -46,7 +52,20 @@ needs.Thirst = Math.Min(1f, Math.Max(0f, needs.Thirst));
 needs.Rest = Math.Min(1f, Math.Max(0f, needs.Rest));
 needs.Comfort = Math.Min(1f, Math.Max(0f, needs.Comfort));
 
-        // TODO comment: publish critical events when >= CriticalThreshold (e.g., eventBus.Publish(new NeedsCriticalEvent(entityId, needs.Hunger)))
+                if (needs.IsHungry)
+            _services.Pawns.Publish(new NeedsCriticalEvent
+            {
+                PawnId = entityId,
+                NeedName = "Hunger",
+                Value = needs.Hunger
+            });
+        if (needs.IsExhausted)
+            _services.Pawns.Publish(new NeedsCriticalEvent
+            {
+                PawnId = entityId,
+                NeedName = "Rest",
+                Value = needs.Rest
+            });
 
         SetComponent(entityId, needs);
     }

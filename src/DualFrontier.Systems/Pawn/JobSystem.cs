@@ -1,5 +1,6 @@
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Events.Pawn;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
 using DualFrontier.Core.ECS;
@@ -22,6 +23,12 @@ namespace DualFrontier.Systems.Pawn;
 [TickRate(TickRates.NORMAL)]
 public sealed class JobSystem : SystemBase
 {
+        private readonly IGameServices _services;
+
+    public JobSystem(IGameServices services)
+    {
+        _services = services;
+    }
     protected override void OnInitialize() { }
 
     public override void Update(float delta)
@@ -43,6 +50,12 @@ public sealed class JobSystem : SystemBase
                 job.Current = JobKind.Sleep;
                 job.Target = null;
                 job.TicksAtJob = 0;
+
+                _services.Pawns.Publish(new JobAssignedEvent
+                {
+                    PawnId = entityId,
+                    Job = job.Current
+                });
             }
             else if (needs.IsHungry)
             {
