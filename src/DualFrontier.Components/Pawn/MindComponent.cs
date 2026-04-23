@@ -9,21 +9,21 @@ public sealed class MindComponent : IComponent
 {
     // --- Constants ---
 
-    /// <summary>The default threshold for triggering a mental breakdown (-0.7f).</summary>
-    public const float DefaultBreakThreshold = -0.7f;
+    /// <summary>The default threshold for triggering a mental breakdown (0.3f).</summary>
+    public const float DefaultBreakThreshold = 0.3f;
 
     /// <summary>Mood level considered ecstatic (0.8f).</summary>
     public const float EcstaticThreshold = 0.8f;
 
-    /// <summary>Mood level considered content enough to avoid major stress (0.2f).</summary>
-    public const float ContentThreshold = 0.2f;
+    /// <summary>Mood level considered content enough to avoid major stress (0.6f).</summary>
+    public const float ContentThreshold = 0.6f;
 
     // --- Public Fields ---
 
-    /// <summary>The current mood value of the pawn, ranging from -1f (miserable) to 1f (ecstatic).</summary>
-    public float Mood { get; set; } = 0f;
+    /// <summary>The current mood value of the pawn, ranging from 0f (miserable) to 1f (ecstatic). Defaults to 0.5f (neutral).</summary>
+    public float Mood { get; set; } = 0.5f;
 
-    /// <summary>Mood level at which a breakdown triggers. Defaults to -0.7f.</summary>
+    /// <summary>Mood level at which a breakdown triggers. Defaults to 0.3f.</summary>
     public float MoodBreakThreshold { get; set; } = DefaultBreakThreshold;
 
     /// <summary>True when the pawn is currently experiencing a mental break.</summary>
