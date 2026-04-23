@@ -54,6 +54,7 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
+Attributes/DevKitOnlyAttribute.cs
 Bridge/Commands/
  PawnDiedCommand.cs
  ProjectileSpawnedCommand.cs
@@ -62,6 +63,7 @@ Bridge/Commands/
 Bridge/
  IRenderCommand.cs
  PresentationBridge.cs
+Input/IInputSource.cs
 Loop/
  FrameClock.cs
  GameLoop.cs
@@ -83,6 +85,9 @@ obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  DualFrontier.Application.AssemblyInfo.cs
  DualFrontier.Application.GlobalUsings.g.cs
+Rendering/
+ IDevKitRenderer.cs
+ IRenderer.cs
 Save/
  ISaveSystem.cs
  SaveFormat.cs
@@ -90,6 +95,15 @@ Save/
 Scenario/
  ScenarioDef.cs
  ScenarioLoader.cs
+Scene/
+ EntitySpawnDef.cs
+ ISceneLoader.cs
+ MarkerDef.cs
+ SceneDef.cs
+ SceneLoadException.cs
+ SceneMetadata.cs
+ TilemapDef.cs
+ UshortArrayBase64JsonConverter.cs
 
 [metadataReferences]
 ../
@@ -277,5 +291,6 @@ Scenario/
  Microsoft.CodeAnalysis.NetAnalyzers.dll
 
 [analyzerConfigFiles]
+../../.editorconfig
 <DOTNET>/sdk/10.0.201/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_8_default.globalconfig
 obj/Debug/net8.0/DualFrontier.Application.GeneratedMSBuildEditorConfig.editorconfig

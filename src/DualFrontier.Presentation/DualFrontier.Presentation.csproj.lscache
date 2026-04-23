@@ -54,6 +54,10 @@ TemporaryDependencyNodeTargetIdentifier=net8.0
 /warnaserror+:NU1605,SYSLIB0011
 
 [sourceFiles]
+addons/df_devkit/
+ DfDevKitPlugin.cs
+ export/SceneExporter.cs
+ meta/DFEntityMeta.cs
 Input/InputRouter.cs
 Nodes/
  GameRoot.cs
@@ -257,5 +261,6 @@ UI/
  Microsoft.CodeAnalysis.NetAnalyzers.dll
 
 [analyzerConfigFiles]
+../../.editorconfig
 <DOTNET>/sdk/10.0.201/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_8_default.globalconfig
 obj/Debug/net8.0/DualFrontier.Presentation.GeneratedMSBuildEditorConfig.editorconfig

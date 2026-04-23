@@ -1,0 +1,541 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DualFrontier.Components</name>
+    </assembly>
+    <members>
+        <member name="T:DualFrontier.Components.Building.PowerConsumerComponent">
+            <summary>
+            Постройка потребляет энергию заданного типа (электричество или эфир).
+            PowerSystem списывает <c>WattsPerTick</c> из соответствующей сети,
+            при нехватке публикует <c>GridOverloadEvent</c>.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Building.PowerProducerComponent">
+            <summary>
+            Постройка производит энергию заданного типа. Выработка добавляется
+            в баланс сети PowerSystem каждый тик.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Building.StorageComponent">
+            <summary>
+            Хранилище предметов. <c>Items</c> содержит EntityId каждого хранимого
+            предмета (предметы — отдельные сущности). Добавление/удаление —
+            только InventorySystem через события <c>ItemAddedEvent</c> / <c>ItemRemovedEvent</c>.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Building.WorkbenchComponent">
+            <summary>
+            Верстак для крафта. <c>Kind</c> определяет доступные рецепты,
+            <c>WorkSpeed</c> — множитель скорости относительно базовой
+            (1.0 — стандарт, 2.0 — улучшенный, и т. д.).
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Combat.AmmoComponent">
+            <summary>
+            Запас патронов (или аналогичных расходников — болты, заряды маны).
+            Расходуется CombatSystem; пополнение — InventorySystem по двухшаговой
+            модели AmmoIntent → AmmoGranted/AmmoRefused (см. TechArch 11.5).
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Combat.ArmorComponent">
+            <summary>
+            Броня entity. Три базовых сопротивления: острый (колюще-режущий),
+            тупой (дробящий), тепловой (огнестрел, огненные заклинания).
+            Магические школы могут добавлять дополнительные резисты отдельным
+            компонентом (`MagicResistComponent`, Фаза 6).
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Combat.ShieldComponent">
+            <summary>
+            Магический щит. Слой 2 защиты (GDD 6.4 «Магические Щиты»):
+            сначала поглощает урон пул <c>HpPool</c>, восстанавливается со скоростью
+            <c>Regen</c> (ед./тик). Тип щита (<c>Kind</c>) определяет модификаторы
+            поглощения для разных <c>DamageType</c>.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Combat.WeaponComponent">
+            <summary>
+            Характеристики оружия в стиле Combat Extended.
+            Урон, пробитие, тип урона, эффективная дистанция, точность.
+            См. GDD 6 «Боевая система».
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Magic.EtherComponent">
+            <summary>
+            Уровень восприятия эфира. См. GDD 4.1 «Уровни Восприятия Эфира» —
+            5 дискретных ступеней (1 — чувствует эфир, до 5 — архимаг).
+            Определяет максимум маны, доступные школы и сложность заклинаний.
+            Повышение — через <c>EtherLevelUpEvent</c> (deferred, медитация / опыт).
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Magic.GolemBondComponent">
+             <summary>
+             Связь голема с магом-хозяином. Без хозяина голем не функционирует
+             (см. GDD 5.2 «Уязвимости»: истощение/смерть мага → остановка големов).
+             <c>GolemTier</c> — уровень голема 1..5 (GDD 5.1 «Типы Големов по Уровням»).
+            
+             v02 Addendum (§12.5): добавлены поля режима владения и счётчика оспаривания
+             для реализации механики перехвата/покидания голема через события
+             <c>GolemOwnershipTransferRequest</c> / <c>GolemOwnershipChanged</c>.
+             </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Magic.GolemBondComponent.BondedMage">
+            <summary>
+            Текущий маг-хозяин. <c>null</c>, если голем в режиме
+            <see cref="F:DualFrontier.Contracts.Enums.OwnershipMode.Abandoned"/>. TODO: Фаза 6 — связать с
+            жизненным циклом мага (при смерти хозяина переводить в Abandoned).
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Magic.GolemBondComponent.Mode">
+            <summary>
+            Режим владения големом. По умолчанию <see cref="F:DualFrontier.Contracts.Enums.OwnershipMode.Bonded"/>.
+            TODO: Фаза 6 — машина состояний переходов через
+            <c>GolemOwnershipTransferRequest</c>.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Magic.GolemBondComponent.TicksSinceContested">
+            <summary>
+            Счётчик тиков, прошедших с момента начала оспаривания владения.
+            Используется <c>GolemBondSystem</c> для таймаута смены хозяина в
+            режиме <see cref="F:DualFrontier.Contracts.Enums.OwnershipMode.Contested"/>.
+            TODO: Фаза 6 — определить пороговое значение таймаута.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Magic.GolemBondComponent.BondStrength">
+            <summary>
+            Прочность связи с хозяином: чем выше, тем сложнее перехватить
+            управление големом. Участвует в разрешении споров (contest resolution).
+            TODO: Фаза 6 — формула зависимости от уровня мага/школы.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Magic.ManaComponent">
+            <summary>
+            Мана мага: текущее значение, максимум и скорость регенерации (ед./тик).
+            Стоимость заклинаний и содержания големов вычитается ManaSystem.
+            Максимум и регенерация зависят от уровня восприятия эфира
+            (см. <see cref="T:DualFrontier.Components.Magic.EtherComponent"/>, GDD 4.1 «Уровни Восприятия Эфира»).
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Magic.SchoolComponent">
+            <summary>
+            Уровни магии по школам. См. GDD 4.3 «Школы Магии» —
+            маг углубляется в школу, а не изучает всё подряд (глубина важнее ширины).
+            GDD 4.4 «Мультишкольность» описывает штрафы при распылении.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Pawn.JobComponent">
+            <summary>
+            Represents a job component defining the current assignment, target, and status of an entity's work.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.JobComponent.Current">
+            <inheritdoc />
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.JobComponent.Target">
+            <inheritdoc />
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.JobComponent.TicksAtJob">
+            <summary>
+            How many ticks the pawn has been working this job; reset to 0 on new assignment.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.JobComponent.IsInterrupted">
+            <summary>
+            True if the job was interrupted and needs reassignment next tick.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.JobComponent.IsIdle">
+            <inheritdoc />
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.JobComponent.NeedsTarget">
+            <inheritdoc />
+        </member>
+        <member name="T:DualFrontier.Components.Pawn.JobKind">
+            <summary>
+            Defines the possible job assignments a pawn can undertake in the colony.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Idle">
+            <summary>
+            The pawn has no assigned task or is resting/idle.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Haul">
+            <summary>
+            Pawn is carrying items from a source to a destination point.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Build">
+            <summary>
+            Constructing or repairing a building or structure in the colony.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Mine">
+            <summary>
+            Extracting resources (ore/stone) from designated terrain points.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Cook">
+            <summary>
+            Preparing food at a stove, campfire, or other culinary station.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Craft">
+            <summary>
+            Producing items using various tools and workbenches.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Research">
+            <summary>
+            Working specifically at an advanced research bench to advance technology.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Medicate">
+            <summary>
+            Treating an injured or sick pawn requiring medical attention.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Fight">
+            <summary>
+            Engaging a designated target in combat for direct conflict resolution.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Flee">
+            <summary>
+            Retreating from danger or moving away from immediate threat zones.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Meditate">
+            <summary>
+            Practicing arcane meditation to regenerate mana or ether reserves.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.GolemCommand">
+            <summary>
+            Managing, issuing commands to, or maintaining a golem construct.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Sleep">
+            <summary>
+            Resting at a designated bed or on the ground to recover stamina/health.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Eat">
+            <summary>
+            Consuming food items from inventory or designated tables for sustenance.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.JobKind.Social">
+            <summary>
+            Initiating social interaction (e.g., trade, conversation) with another pawn.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Pawn.MindComponent">
+            <summary>
+            Represents a component managing the pawn's mental state, including mood and breakdown status.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.MindComponent.DefaultBreakThreshold">
+            <summary>The default threshold for triggering a mental breakdown (-0.7f).</summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.MindComponent.EcstaticThreshold">
+            <summary>Mood level considered ecstatic (0.8f).</summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.MindComponent.ContentThreshold">
+            <summary>Mood level considered content enough to avoid major stress (0.2f).</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.MindComponent.Mood">
+            <summary>The current mood value of the pawn, ranging from -1f (miserable) to 1f (ecstatic).</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.MindComponent.MoodBreakThreshold">
+            <summary>Mood level at which a breakdown triggers. Defaults to -0.7f.</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.MindComponent.IsInBreakdown">
+            <summary>True when the pawn is currently experiencing a mental break.</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.MindComponent.BreakdownTicksRemaining">
+            <summary>Ticks remaining in current breakdown. 0 when not breaking.</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.MindComponent.IsHappy">
+            <summary>Gets true if the pawn's mood is above the content threshold.</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.MindComponent.IsEcstatic">
+            <summary>Gets true if the pawn's mood is ecstatic enough to be considered such.</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.MindComponent.IsAtRisk">
+            <summary>Gets true if the pawn's mood indicates it is at risk of a breakdown.</summary>
+        </member>
+        <member name="T:DualFrontier.Components.Pawn.NeedsComponent">
+            <summary>
+            Represents the core biological needs of a pawn, including hunger, thirst, rest, and comfort levels.
+            This component is designed as a Pure POCO to hold state data without internal logic.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.NeedsComponent.Hunger">
+            <summary>
+            The current hunger level (0 = full, 1 = starving).
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.NeedsComponent.Thirst">
+            <summary>
+            The current thirst level (0 = full, 1 = dehydrated).
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.NeedsComponent.Rest">
+            <summary>
+            The current rest/energy level (0 = fully rested, 1 = exhausted).
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.NeedsComponent.Comfort">
+            <summary>
+            The current comfort level (0 = comfortable, 1 = miserable).
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.NeedsComponent.CriticalThreshold">
+            <summary>
+            Value above which the NeedsSystem publishes a critical warning (e.g., 0.8f).
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.NeedsComponent.BreakThreshold">
+            <summary>
+            Value above which a mood break may trigger (e.g., 0.95f).
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.NeedsComponent.IsHungry">
+            <inheritdoc/>
+            <summary>Checks if the pawn is considered hungry based on critical thresholds.</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.NeedsComponent.IsThirsty">
+            <inheritdoc/>
+            <summary>Checks if the pawn is considered thirsty based on critical thresholds.</summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.NeedsComponent.IsExhausted">
+            <inheritdoc/>
+            <summary>Checks if the pawn is considered exhausted based on critical thresholds.</summary>
+        </member>
+        <member name="T:DualFrontier.Components.Pawn.SkillKind">
+            <summary>
+            Defines the core skill types for a pawn in the colony simulation.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Construction">
+            <summary>
+            Proficiency in building and repairing structures.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Mining">
+            <summary>
+            Efficiency in extracting ore, stone, and other raw resources from terrain.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Cooking">
+            <summary>
+            Skill related to preparing food, brewing consumables, and general culinary arts.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Crafting">
+            <summary>
+            General competence in crafting items using workbenches and specialized tools.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Medicine">
+            <summary>
+            Effectiveness in treating injuries, managing diseases, and performing medical procedures.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Combat">
+            <summary>
+            Proficiency in combat, covering both melee weaponry and ranged fighting effectiveness.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Shooting">
+            <summary>
+            Skill focused on ranged weapon accuracy, maintenance, and reload speed.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Magic">
+            <summary>
+            The ability to cast arcane spells, manage mana resources, and general magical power.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Research">
+            <summary>
+            Speed and proficiency in conducting industrial technology research.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Social">
+            <summary>
+            Skill related to trade, persuasion, diplomacy, and social interactions with other pawns or factions.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Animals">
+            <summary>
+            Aptitude for taming, breeding, and training various types of creatures.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Farming">
+            <summary>
+            Skill concerning growing crops, cultivating plants, and general agricultural practices.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillKind.Hauling">
+            <summary>
+            Measures carry capacity and the speed bonus when hauling resources or items.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Pawn.SkillsComponent">
+            <summary>
+            Defines the skill levels and experience points for an entity's pawn.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillsComponent.MaxLevel">
+            <constants>
+            The maximum attainable level for any skill.
+            </constants>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillsComponent.XpPerLevel">
+            <constants>
+            The amount of experience points required to advance one skill level.
+            </constants>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillsComponent.Levels">
+            <summary>
+            Current skill levels per skill. Populated by systems upon pawn creation.
+            Null-for-null initialization is used due to pooling rules.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Pawn.SkillsComponent.Experience">
+            <summary>
+            Accumulated XP toward next level per skill. Populated by systems upon pawn creation.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Pawn.SkillsComponent.IsInitialized">
+            <summary>
+            Checks if the skill levels component has been populated with data.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Pawn.SocialComponent">
+            <summary>
+            Социальные отношения пешки с другими. Ключ — EntityId другой пешки,
+            значение — числовой уровень симпатии (отрицательные = вражда).
+            Обновляется SocialSystem (RARE tick) при взаимодействиях.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Shared.FactionComponent">
+            <summary>
+            Represents the faction component for an entity, tracking its affiliation and hostility status.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Shared.FactionComponent.PlayerFactionId">
+            <summary>
+            The unique string identifier used for the player's colony faction.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Shared.FactionComponent.NeutralFactionId">
+            <summary>
+            The unique string identifier used for neutral factions.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.FactionComponent.FactionId">
+            <summary>
+            A unique string identifier of the faction this entity belongs to (e.g., "colony", "raiders", "neutral").
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.FactionComponent.IsHostile">
+            <summary>
+            Indicates whether this faction is currently hostile to the player colony.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.FactionComponent.IsPlayer">
+            <summary>
+            Indicates whether this faction is directly controlled by the player.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.FactionComponent.IsNeutral">
+            <inheritdoc />
+            <summary>
+            Checks if the entity's current faction status is neutral (not hostile and not the player).
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Shared.HealthComponent">
+            <summary>
+            Здоровье entity. Pure data — никакой логики.
+            Модификация только через DamageSystem / HealSystem.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Shared.PositionComponent">
+            <summary>
+            Позиция entity в тайловой сетке мира. Pure data.
+            Модификация — только через MovementSystem / TeleportSystem.
+            </summary>
+        </member>
+        <member name="F:DualFrontier.Components.Shared.PositionComponent.Position">
+            <summary>Координата в тайловой сетке.</summary>
+        </member>
+        <member name="T:DualFrontier.Components.Shared.RaceKind">
+            <summary>
+            Defines the possible races an entity can belong to.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.Shared.RaceComponent">
+            <summary>
+            Represents the racial component of an entity, defining its race and inherent traits.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.RaceComponent.Kind">
+            <summary>
+            The race of this entity; defaults to Human.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.RaceComponent.HasEtherChannels">
+            <summary>
+            Indicates whether this race can use arcane magic (set by systems at creation).
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.RaceComponent.HasIndustrialAffinity">
+            <summary>
+            Indicates whether this race has an industrial technology bonus.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.RaceComponent.IsOrganic">
+            <inheritdoc />
+            <summary>
+            Determines if the entity's race is considered organic (not Golem or Undead).
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.RaceComponent.NeedsFood">
+            <inheritdoc />
+            <summary>
+            Checks if the entity requires food to survive, based on its race.
+            </summary>
+        </member>
+        <member name="P:DualFrontier.Components.Shared.RaceComponent.NeedsSleep">
+            <inheritdoc />
+            <summary>
+            Checks if the entity requires sleep to survive, based on its race.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.World.BiomeComponent">
+            <summary>
+            Биом региона карты. Влияет на мудовые модификаторы пешек, доступную
+            флору/фауну, погодные эффекты и распределение ресурсов.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.World.EtherNodeComponent">
+            <summary>
+            Эфирный узел — источник усиленной регенерации маны в радиусе <c>Radius</c>.
+            См. GDD 4 «Магическая Колония»: медитация у узла ×2–3 к регену маны
+            (GDD 4.2, 5.3). <c>Tier</c> — уровень узла (1..N), влияет на силу.
+            Изменение свойств публикует <c>EtherNodeChangedEvent</c>.
+            </summary>
+        </member>
+        <member name="T:DualFrontier.Components.World.TileComponent">
+            <summary>
+            Тайл карты: тип рельефа и признак проходимости.
+            Проходимость используется PathfindingSystem; тип рельефа —
+            средой визуализации и системами влажности/температуры.
+            </summary>
+        </member>
+    </members>
+</doc>

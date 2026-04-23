@@ -1,0 +1,14 @@
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\bin\Debug\net8.0\DualFrontier.Contracts.deps.json
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\bin\Debug\net8.0\DualFrontier.Contracts.dll
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\bin\Debug\net8.0\DualFrontier.Contracts.pdb
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\bin\Debug\net8.0\DualFrontier.Contracts.xml
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.AssemblyInfoInputs.cache
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.AssemblyInfo.cs
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.csproj.CoreCompileInputs.cache
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.sourcelink.json
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.dll
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\refint\DualFrontier.Contracts.dll
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.xml
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\DualFrontier.Contracts.pdb
+D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\obj\Debug\net8.0\ref\DualFrontier.Contracts.dll

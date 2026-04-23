@@ -1,0 +1,56 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "DualFrontier.Events/1.0.0": {
+        "dependencies": {
+          "DualFrontier.Components": "1.0.0",
+          "DualFrontier.Contracts": "1.0.0"
+        },
+        "runtime": {
+          "DualFrontier.Events.dll": {}
+        }
+      },
+      "DualFrontier.Components/1.0.0": {
+        "dependencies": {
+          "DualFrontier.Contracts": "1.0.0"
+        },
+        "runtime": {
+          "DualFrontier.Components.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "DualFrontier.Contracts/1.0.0": {
+        "runtime": {
+          "DualFrontier.Contracts.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DualFrontier.Events/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DualFrontier.Components/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DualFrontier.Contracts/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

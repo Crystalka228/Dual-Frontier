@@ -62,14 +62,21 @@ obj/Debug/net8.0/
  .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
  DualFrontier.Core.Tests.AssemblyInfo.cs
  DualFrontier.Core.Tests.GlobalUsings.g.cs
+Rendering/DevKitRendererContractTests.cs
+Scene/SceneDefSerializationTests.cs
 Scheduling/
  DependencyGraphTests.cs
  ParallelExecutionTests.cs
 
 [metadataReferences]
 ../../src/
+ DualFrontier.AI/obj/Debug/net8.0/ref/DualFrontier.AI.dll
+ DualFrontier.Application/obj/Debug/net8.0/ref/DualFrontier.Application.dll
+ DualFrontier.Components/obj/Debug/net8.0/ref/DualFrontier.Components.dll
  DualFrontier.Contracts/obj/Debug/net8.0/ref/DualFrontier.Contracts.dll
  DualFrontier.Core/obj/Debug/net8.0/ref/DualFrontier.Core.dll
+ DualFrontier.Events/obj/Debug/net8.0/ref/DualFrontier.Events.dll
+ DualFrontier.Systems/obj/Debug/net8.0/ref/DualFrontier.Systems.dll
 <DOTNET>/packs/Microsoft.NETCore.App.Ref/8.0.25/ref/net8.0/
  Microsoft.CSharp.dll
  Microsoft.VisualBasic.Core.dll
@@ -269,5 +276,6 @@ Scheduling/
  xunit.analyzers.fixes.dll
 
 [analyzerConfigFiles]
+../../.editorconfig
 <DOTNET>/sdk/10.0.201/Sdks/Microsoft.NET.Sdk/analyzers/build/config/analysislevel_8_default.globalconfig
 obj/Debug/net8.0/DualFrontier.Core.Tests.GeneratedMSBuildEditorConfig.editorconfig
