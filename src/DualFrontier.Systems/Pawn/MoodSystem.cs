@@ -36,7 +36,11 @@ namespace DualFrontier.Systems.Pawn
                 // Publish MoodBreakEvent on transition into break state
                 if (!wasBreaking && isBreaking)
                 {
-                 // TODO: публикация MoodBreakEvent через шину — подключить в Фазе 3 после разводки сервисов
+                    Services.Pawns.Publish(new MoodBreakEvent
+                    {
+                        PawnId    = entity,
+                        MoodValue = mind.Mood
+                    });
                 }
 
                 SetComponent(entity, mind);
