@@ -21,13 +21,13 @@ public sealed class AStarPathfinding : IPathfindingService
     public bool TryFindPath(GridVector from, GridVector to,
                             out IReadOnlyList<GridVector> path)
     {
-        path = new List<GridVector>();
-
         if (!_grid.IsPassable(to.X, to.Y))
+        {
+            path = new List<GridVector>();
             return false;
+        }
 
-        // Note: PriorityQueue is assumed available (e.g., using a custom implementation or .NET 6+ feature)
-        var open   = new PriorityQueue<GridVector, float>();
+        var open     = new PriorityQueue<GridVector, float>();
         var cameFrom = new Dictionary<GridVector, GridVector>();
         var gScore   = new Dictionary<GridVector, float>();
 
@@ -41,7 +41,9 @@ public sealed class AStarPathfinding : IPathfindingService
 
             if (current.Equals(to))
             {
-                ReconstructPath(cameFrom, current, path);
+                var result = new List<GridVector>();
+                ReconstructPath(cameFrom, current, result);
+                path = result;
                 return true;
             }
 
@@ -60,16 +62,17 @@ public sealed class AStarPathfinding : IPathfindingService
             }
         }
 
+        path = new List<GridVector>();
         return false;
     }
 
     private IEnumerable<GridVector> Neighbors(GridVector v)
     {
         int x = v.X, y = v.Y;
-        if (_grid.IsPassable(x,   y-1)) yield return new GridVector(x,   y-1);
-        if (_grid.IsPassable(x,   y+1)) yield return new GridVector(x,   y+1);
-        if (_grid.IsPassable(x-1, y  )) yield return new GridVector(x-1, y  );
-        if (_grid.IsPassable(x+1, y  )) yield return new GridVector(x+1, y  );
+        if (_grid.IsPassable(x,   y - 1)) yield return new GridVector(x,   y - 1);
+        if (_grid.IsPassable(x,   y + 1)) yield return new GridVector(x,   y + 1);
+        if (_grid.IsPassable(x - 1, y  )) yield return new GridVector(x - 1, y  );
+        if (_grid.IsPassable(x + 1, y  )) yield return new GridVector(x + 1, y  );
     }
 
     private static float Heuristic(GridVector a, GridVector b) =>
