@@ -83,6 +83,36 @@ internal sealed class ParallelSystemScheduler
                 _contextCache[system] = BuildContext(system);
             }
         }
+
+        InitializeAllSystems();
+    }
+
+    /// <summary>
+    /// Invokes <see cref="SystemBase.Initialize"/> on every registered system
+    /// exactly once, with the isolation guard active. This is where systems
+    /// subscribe to domain buses via <c>Services</c>, so the execution context
+    /// must be pushed for each call — otherwise <c>SystemBase.Services</c>
+    /// would throw. Called at the end of the constructor and
+    /// <see cref="Rebuild"/>.
+    /// </summary>
+    private void InitializeAllSystems()
+    {
+        foreach (SystemPhase phase in _phases)
+        {
+            foreach (SystemBase system in phase.Systems)
+            {
+                SystemExecutionContext ctx = _contextCache[system];
+                SystemExecutionContext.PushContext(ctx);
+                try
+                {
+                    system.Initialize();
+                }
+                finally
+                {
+                    SystemExecutionContext.PopContext();
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -153,6 +183,8 @@ internal sealed class ParallelSystemScheduler
 
         _phases = newPhases;
         _contextCache = newCache;
+
+        InitializeAllSystems();
     }
 
     /// <summary>
