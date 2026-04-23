@@ -2,7 +2,6 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
-
 namespace DualFrontier.Systems.Pawn;
 
 /// <summary>
@@ -24,13 +23,32 @@ public sealed class NeedsSystem : SystemBase
     /// <summary>
     /// TODO: Подписаться на FoodConsumedEvent, SleepEndedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 3 — подписка на события нужд");
-    }
+protected override void OnInitialize()
+{
+    // Currently empty as no events are subscribed.
+}
 
-    public override void Update(float delta)
+public override void Update(float delta)
+{
+    foreach (var entityId in Query<NeedsComponent>())
     {
-        // TODO: Фаза 3 — итерация по всем пешкам, падение нужд, публикация порогов.
+        NeedsComponent needs = GetComponent<NeedsComponent>(entityId);
+
+        // Apply decay rates multiplied by delta and clamp values to [0, 1]
+        needs.Hunger += 0.005f * delta;
+        needs.Thirst += 0.008f * delta;
+        needs.Rest += 0.003f * delta;
+        needs.Comfort += 0.002f * delta;
+
+// Clamp values to [0, 1] using standard math functions
+needs.Hunger = Math.Min(1f, Math.Max(0f, needs.Hunger));
+needs.Thirst = Math.Min(1f, Math.Max(0f, needs.Thirst));
+needs.Rest = Math.Min(1f, Math.Max(0f, needs.Rest));
+needs.Comfort = Math.Min(1f, Math.Max(0f, needs.Comfort));
+
+        // TODO comment: publish critical events when >= CriticalThreshold (e.g., eventBus.Publish(new NeedsCriticalEvent(entityId, needs.Hunger)))
+
+        SetComponent(entityId, needs);
     }
+}
 }
