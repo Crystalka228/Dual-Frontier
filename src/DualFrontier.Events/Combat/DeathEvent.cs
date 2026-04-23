@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Events.Combat;
@@ -7,14 +8,15 @@ namespace DualFrontier.Events.Combat;
 /// Marked [Deferred] — MoodSystem and SocialSystem receive it
 /// in the next scheduler phase, after the entity is already removed.
 /// </summary>
+[Deferred]
 public sealed record DeathEvent : IEvent
 {
     /// <summary>Entity that died.</summary>
     public required EntityId Who { get; init; }
 
-    /// <summary>Grid position where death occurred.</summary>
+    /// <summary>Grid X position where death occurred.</summary>
     public required int X { get; init; }
 
-    /// <summary>Grid position where death occurred.</summary>
+    /// <summary>Grid Y position where death occurred.</summary>
     public required int Y { get; init; }
 }
