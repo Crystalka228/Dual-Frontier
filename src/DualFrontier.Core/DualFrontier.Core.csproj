@@ -12,5 +12,8 @@
     <InternalsVisibleTo Include="DualFrontier.Core.Tests" />
     <InternalsVisibleTo Include="DualFrontier.Modding.Tests" />
     <InternalsVisibleTo Include="DualFrontier.Systems.Tests" />
+    <!-- Experiment-only: lets the C++/C# comparison benchmark reach the
+         managed World on equal footing with the native NativeWorld. -->
+    <InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />
   </ItemGroup>
 </Project>
