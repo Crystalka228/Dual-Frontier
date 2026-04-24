@@ -8,5 +8,6 @@
     <ProjectReference Include="..\DualFrontier.Core\DualFrontier.Core.csproj" />
     <ProjectReference Include="..\DualFrontier.Components\DualFrontier.Components.csproj" />
     <ProjectReference Include="..\DualFrontier.Events\DualFrontier.Events.csproj" />
+    <ProjectReference Include="..\DualFrontier.AI\DualFrontier.AI.csproj" />
   </ItemGroup>
 </Project>
