@@ -54,11 +54,13 @@ internal sealed class ComponentStore<T> : IComponentStore, IRemovable where T : 
     {
         if (id.Index >= _sparse.Length)
         {
-            int newCapacity = System.Math.Max(_sparse.Length * 2, id.Index + 1);
+            int oldLength = _sparse.Length;
+            int newCapacity = System.Math.Max(oldLength * 2, id.Index + 1);
             var newSparse = new int[newCapacity];
 
-            // Copy existing values to the new array
-            Array.Copy(_sparse, newSparse, _sparse.Length);
+            Array.Copy(_sparse, newSparse, oldLength);
+            // New slots default to 0; absent sentinel is -1, so fill the tail.
+            Array.Fill(newSparse, -1, oldLength, newCapacity - oldLength);
             _sparse = newSparse;
         }
     }
