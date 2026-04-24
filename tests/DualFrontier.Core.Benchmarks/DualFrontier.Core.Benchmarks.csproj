@@ -17,4 +17,22 @@
     <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
   </ItemGroup>
+
+  <!--
+    BenchmarkDotNet spawns each benchmark in a child process inside a generated
+    project under a temp directory and copies our build output into it. The
+    native library is not a managed dependency, so it has to ride along as a
+    regular content file or the child process gets DllNotFoundException.
+    The condition guards against the pre-build state where the .dll hasn't been
+    produced yet — running the smoke benchmark from the IDE without first
+    building the native library would otherwise fail the project load instead
+    of the runtime call, which is harder to diagnose.
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+  </ItemGroup>
 </Project>

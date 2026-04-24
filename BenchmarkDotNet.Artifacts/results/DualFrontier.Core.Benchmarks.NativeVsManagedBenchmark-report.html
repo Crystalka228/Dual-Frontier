@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>DualFrontier.Core.Benchmarks.NativeVsManagedBenchmark-20260424-193220</title>
+<title>DualFrontier.Core.Benchmarks.NativeVsManagedBenchmark-20260424-194328</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -23,12 +23,12 @@ Unknown processor
 </code></pre>
 
 <table>
-<thead><tr><th>Method     </th><th>Mean</th><th>Error</th><th>Ratio</th><th>RatioSD</th><th>Alloc Ratio</th>
+<thead><tr><th>Method     </th><th>Mean</th><th>Error</th><th>StdDev</th><th>Median</th><th>Ratio</th><th>RatioSD</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
 </tr>
-</thead><tbody><tr><td>ManagedSumCurrent</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>NativeSumCurrent</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>ManagedAdd10k</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td>
-</tr><tr><td>NativeAdd10k</td><td>NA</td><td>NA</td><td>?</td><td>?</td><td>?</td>
+</thead><tbody><tr><td>ManagedSumCurrent</td><td>101.93 &mu;s</td><td>1.111 &mu;s</td><td>0.928 &mu;s</td><td>101.45 &mu;s</td><td>1.00</td><td>0.00</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>NativeSumCurrent</td><td>95.31 &mu;s</td><td>0.470 &mu;s</td><td>0.393 &mu;s</td><td>95.32 &mu;s</td><td>0.94</td><td>0.01</td><td>-</td><td>-</td><td>-</td><td>-</td><td>NA</td>
+</tr><tr><td>ManagedAdd10k</td><td>218.24 &mu;s</td><td>4.353 &mu;s</td><td>10.261 &mu;s</td><td>214.22 &mu;s</td><td>2.19</td><td>0.10</td><td>83.0078</td><td>41.5039</td><td>41.5039</td><td>655606 B</td><td>NA</td>
+</tr><tr><td>NativeAdd10k</td><td>399.83 &mu;s</td><td>7.951 &mu;s</td><td>19.653 &mu;s</td><td>401.88 &mu;s</td><td>3.92</td><td>0.13</td><td>-</td><td>-</td><td>-</td><td>24 B</td><td>NA</td>
 </tr></tbody></table>
 </body>
 </html>
