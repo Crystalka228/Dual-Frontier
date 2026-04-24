@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Core.Interop</AssemblyName>
+    <RootNamespace>DualFrontier.Core.Interop</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Description>
+      Experimental P/Invoke wrappers for the native DualFrontier.Core.Native
+      library. Kept as a separate assembly so the managed Core stays
+      untouched while the C++ experiment is being evaluated.
+    </Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />
+  </ItemGroup>
+</Project>
