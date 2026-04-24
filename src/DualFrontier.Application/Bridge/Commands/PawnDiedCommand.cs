@@ -3,14 +3,12 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Application.Bridge.Commands;
 
 /// <summary>
-/// Команда: пешка <paramref name="PawnId"/> умерла в клетке
-/// (<paramref name="X"/>, <paramref name="Y"/>). Presentation-слой показывает
-/// эффект смерти и обновляет зависящие от пешки UI-плашки.
+/// Команда: пешка <paramref name="PawnId"/> умерла. Presentation-слой
+/// находит её визуальную ноду, проигрывает анимацию смерти и удаляет
+/// ноду по её завершении.
 /// </summary>
 /// <param name="PawnId">Идентификатор погибшей пешки.</param>
-/// <param name="X">Координата X клетки.</param>
-/// <param name="Y">Координата Y клетки.</param>
-public sealed record PawnDiedCommand(EntityId PawnId, int X, int Y) : IRenderCommand
+public sealed record PawnDiedCommand(EntityId PawnId) : IRenderCommand
 {
     /// <inheritdoc />
     public void Execute(object renderContext)
