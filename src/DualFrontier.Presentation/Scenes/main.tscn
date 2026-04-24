@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://Nodes/GameRoot.cs" id="1_root"]
+[ext_resource type="Script" path="res://Nodes/TileMapRenderer.cs" id="2_tilemap"]
+[ext_resource type="Script" path="res://Nodes/PawnLayer.cs" id="3_pawns"]
+[ext_resource type="Script" path="res://Input/InputRouter.cs" id="4_input"]
+
+[node name="GameRoot" type="Node2D"]
+script = ExtResource("1_root")
+
+[node name="TileMapRenderer" type="Node2D" parent="."]
+script = ExtResource("2_tilemap")
+
+[node name="PawnLayer" type="Node2D" parent="."]
+script = ExtResource("3_pawns")
+
+[node name="InputRouter" type="Node" parent="."]
+script = ExtResource("4_input")

@@ -1,11 +1,17 @@
-// TODO: Фаза 3 — подключить Godot.InputEvent и пересылать события в EventBus.
+using Godot;
+
 namespace DualFrontier.Presentation.Input;
 
 /// <summary>
-/// Маршрутизатор ввода. В Фазе 3 будет принимать <c>Godot.InputEvent</c> и
-/// превращать их в доменные события (клик по пешке, нажатие клавиши
-/// строительства и т.п.), публикуемые в шину событий.
+/// Routes Godot input events to the simulation layer. Phase 3 implements
+/// only ESC-to-quit; full routing of clicks, build hotkeys and camera
+/// controls lands in Phase 5+.
 /// </summary>
-public sealed class InputRouter
+public partial class InputRouter : Node
 {
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (@event is InputEventKey { Pressed: true, Keycode: Key.Escape })
+            GetTree().Quit();
+    }
 }
