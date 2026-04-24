@@ -33,6 +33,5 @@ while (running)
 ## TODO
 - [x] Фаза 1 — фиксированный accumulator-based tick (30 Hz).
 - [x] Фаза 1 — пауза / speed-multiplier (x1/x2/x3).
-- [ ] Фаза 3 — pump `PresentationBridge.DrainCommands` из Godot, не отсюда
-      (сам `PresentationBridge.SetScene` / `EnqueueInput` пока не
-      существует).
+- [x] Фаза 3 — `GameBootstrap` реализован, `NavGrid` и
+      `MovementSystem` подключены.

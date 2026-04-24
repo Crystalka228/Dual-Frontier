@@ -101,6 +101,13 @@
 
 Цель: живая пешка, которая гуляет по карте, ест, спит и имеет задачи.
 
+### ✅ Фаза 3 — Живая колония (завершена)
+
+Результат: пешки ходят по карте через A* pathfinding,
+нужды деградируют, настроение пересчитывается,
+джобы назначаются по приоритетам через шины событий.
+61/61 тестов. Godot визуал подключён.
+
 ### Что реализуем
 
 - `DualFrontier.Components/Shared/PositionComponent`, `FactionComponent`, `RaceComponent`.
@@ -119,6 +126,11 @@
       `PawnMovedEvent`, `MoodBreakEvent`, `SkillGainEvent`.
 - [x] `DualFrontier.Application/Scenario/ScenarioDef`, `ScenarioLoader`
       (JSON + `LoadDefault()`).
+- [x] `MovementComponent` + `MovementSystem` — движение пешек по A*-маршруту,
+      публикация `PawnMovedEvent`.
+- [x] `NavGrid` инициализация из `GameBootstrap` (50×50, 50 препятствий).
+- [x] Godot визуал — пешки двигаются по карте, `PawnMovedEvent`
+      публикуется и обрабатывается.
 - `DualFrontier.AI/Jobs/IJob`, `JobHaul`, `JobMeditate`.
 - `DualFrontier.AI/BehaviourTree/BTNode`, `Selector`, `Sequence`, `Leaf`.
 
@@ -136,8 +148,6 @@
 - [ ] Доступ систем к `IGameServices` для публикации событий в шины
       (`MoodSystem` сейчас содержит заглушку вместо публикации
       `MoodBreakEvent`).
-- [ ] Godot-интеграция: `PresentationBridge.SetScene` / `EnqueueInput`,
-      `GameBootstrap`, сцены `.tscn` — не реализованы.
 
 ### Разблокирует
 
@@ -175,7 +185,7 @@
 Производственный пайплайн Godot → `.dfscene` → Native. Дальше Фаза 4
 работает с реальными сценами, а не с хардкодом.
 
-## Фаза 4 — Экономика
+## 🔨 Фаза 4 — Экономика (текущая)
 
 Цель: производство, склад, энергосеть.
 

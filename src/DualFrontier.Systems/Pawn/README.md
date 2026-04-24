@@ -17,6 +17,8 @@
 - `NeedsSystem.cs` — SLOW: деградация нужд во времени.
 - `JobSystem.cs` — NORMAL: выбор и назначение джобов пешкам.
 - `MoodSystem.cs` — SLOW: пересчёт настроения по нуждам и здоровью.
+- `MovementSystem.cs` — NORMAL: движение пешек через A*,
+  публикует `PawnMovedEvent`.
 - `SocialSystem.cs` — RARE: социальные связи и их влияние на mind.
 - `SkillSystem.cs` — NORMAL: рост навыков по опыту.
 
@@ -42,6 +44,8 @@ foreach (var pawn in Query<NeedsComponent, SkillsComponent, PositionComponent>()
       `JobKind.Eat/Sleep/Idle`.
 - [x] Реализовать `MoodSystem`: формула mood = f(needs), переход в
       MoodBreak.
+- [x] Реализовать `MovementSystem`: движение пешек по A*-маршруту,
+      публикация `PawnMovedEvent`.
 - [ ] Реализовать `SocialSystem`: граф дружб/вражды (сейчас стаб).
 - [ ] Реализовать `SkillSystem`: кривая опыта и деградация (сейчас стаб).
 - [ ] Подключить публикацию событий через `IGameServices` — сейчас
