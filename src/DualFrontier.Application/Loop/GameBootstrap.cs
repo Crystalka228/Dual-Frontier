@@ -1,3 +1,5 @@
+using System;
+using DualFrontier.AI.Pathfinding;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Components.Pawn;
@@ -48,10 +50,21 @@ internal static class GameBootstrap
 
         SpawnInitialPawns(world, services);
 
+        var navGrid = new NavGrid(50, 50);
+        var obstacleRng = new Random(42);
+        for (int i = 0; i < 50; i++)
+        {
+            int ox = obstacleRng.Next(0, 50);
+            int oy = obstacleRng.Next(0, 50);
+            navGrid.SetTile(ox, oy, passable: false);
+        }
+        var pathfinding = new AStarPathfinding(navGrid);
+
         var graph = new DependencyGraph();
         graph.AddSystem(new NeedsSystem());
         graph.AddSystem(new MoodSystem());
         graph.AddSystem(new JobSystem());
+        graph.AddSystem(new MovementSystem(pathfinding));
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
@@ -73,6 +86,7 @@ internal static class GameBootstrap
             world.AddComponent(id, new NeedsComponent { Hunger = 0.1f, Thirst = 0.1f, Rest = 0.1f });
             world.AddComponent(id, new MindComponent());
             world.AddComponent(id, new JobComponent { Current = JobKind.Idle });
+            world.AddComponent(id, new MovementComponent());
 
             services.Pawns.Publish(new PawnSpawnedEvent
             {
