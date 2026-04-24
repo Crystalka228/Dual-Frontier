@@ -308,6 +308,38 @@ Bridge-системы находятся в `DualFrontier.Systems/Magic/Bridge/`
 - `[BridgeImplementation]`-пометка снимается, анализатор больше не предупреждает.
 - Ни один публичный контракт (`ManaGranted`, `GolemOwnershipChanged`, `EtherSurgeEvent`) не меняет сигнатуру — `CombatSystem` и прочие потребители не требуют правок.
 
+## Фаза 9 — Native Runtime
+
+### Что реализуем
+
+- `DualFrontier.Runtime` — собственный entry point,
+  запускает GameLoop напрямую без Godot в цепочке.
+- `IRenderer` — абстрактный интерфейс рендера.
+- `IInputProvider` — абстрактный интерфейс ввода.
+- `GodotBackend` — реализация через Godot GDExtension
+  (рендер + ввод без Godot runtime в исполнении).
+- Godot плагин — читает `.tscn` файлы и транслирует
+  их в вызовы native runtime без Godot SceneTree.
+
+### Почему это возможно
+
+Архитектура уже готова к этому:
+- Domain полностью отвязан от Godot (нет using Godot)
+- GameLoop работает на чистом .NET потоке
+- PresentationBridge абстрагирует рендер за IRenderCommand
+- Simulation живёт без Godot — тесты это доказывают
+
+### Разблокирует
+
+- Полный контроль над runtime и производительностью
+- Возможность портирования на любой рендер бэкенд
+- Godot как инструмент контента, не как движок
+
+### Когда
+
+После завершения Фазы 7 и выхода в Steam.
+Это отдельный большой проект, не блокирует релиз.
+
 ## См. также
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
