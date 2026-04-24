@@ -1,11 +1,48 @@
-// TODO: Фаза 3 — унаследовать от Godot.Node2D после подключения GodotSharp.
+using DualFrontier.Application.Bridge;
+using DualFrontier.Application.Loop;
+using DualFrontier.Presentation.Rendering;
+using Godot;
+
 namespace DualFrontier.Presentation.Nodes;
 
 /// <summary>
-/// Корневая нода игровой сцены. В Фазе 3 будет наследоваться от
-/// <c>Godot.Node2D</c> и в <c>_Process</c> тикать
-/// <see cref="DualFrontier.Application.Bridge.PresentationBridge"/>.
+/// Root game scene node. On <c>_Ready</c> it wires the presentation bridge
+/// and starts the simulation loop; on every <c>_Process</c> it drains the
+/// bridge onto the Godot main thread via <see cref="RenderCommandDispatcher"/>.
+/// This is the only node that knows about <c>GameLoop</c> and
+/// <see cref="PresentationBridge"/>.
 /// </summary>
-public sealed class GameRoot
+public partial class GameRoot : Node2D
 {
+    private const int MapWidth  = 50;
+    private const int MapHeight = 50;
+
+    private PresentationBridge _bridge = null!;
+    private GameLoop _loop = null!;
+    private RenderCommandDispatcher _dispatcher = null!;
+
+    public override void _Ready()
+    {
+        _bridge = new PresentationBridge();
+
+        var tileMap   = GetNode<TileMapRenderer>("TileMapRenderer");
+        var pawnLayer = GetNode<PawnLayer>("PawnLayer");
+
+        _dispatcher = new RenderCommandDispatcher(pawnLayer);
+
+        tileMap.InitMap(MapWidth, MapHeight);
+
+        _loop = GameBootstrap.CreateLoop(_bridge);
+        _loop.Start();
+    }
+
+    public override void _Process(double delta)
+    {
+        _bridge.DrainCommands(_dispatcher.Dispatch);
+    }
+
+    public override void _ExitTree()
+    {
+        _loop.Stop();
+    }
 }
