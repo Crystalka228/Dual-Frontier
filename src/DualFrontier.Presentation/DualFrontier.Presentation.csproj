@@ -6,5 +6,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Application\DualFrontier.Application.csproj" />
   </ItemGroup>
-  <!-- TODO: Фаза 3 — добавить PackageReference на GodotSharp после интеграции с Godot 4.3+. Пока только код-стабы. -->
+  <ItemGroup>
+    <PackageReference Include="GodotSharp" Version="4.3.0" />
+  </ItemGroup>
 </Project>
