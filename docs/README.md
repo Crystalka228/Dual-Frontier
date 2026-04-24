@@ -27,6 +27,7 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 - [GPU_COMPUTE](./GPU_COMPUTE.md) — исследование compute shader для ProjectileSystem, порог переключения.
 - [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, порядок членов.
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
+- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — чек-лист гигиены на каждый PR, граница движок/игра, красные флаги.
 - [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — C++ ядро эксперимент, P/Invoke граница, результаты бенчмарка, план батчинг API для Фазы 9.
 
 ## Процесс
