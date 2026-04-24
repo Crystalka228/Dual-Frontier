@@ -1,9 +1,9 @@
 <Project Sdk="Godot.NET.Sdk/4.6.1">
   <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyName>DualFrontier.Presentation</AssemblyName>
     <RootNamespace>DualFrontier.Presentation</RootNamespace>
     <TargetFramework>net8.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Application\DualFrontier.Application.csproj" />
