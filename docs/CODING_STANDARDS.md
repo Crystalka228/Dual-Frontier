@@ -169,6 +169,50 @@ public sealed class DomainEventBus : IEventBus
 - Магические числа — `const` с именем, описывающим смысл. `4.2f` в коде без комментария — смертный грех.
 - Возврат `null` из публичного API — только когда это явная часть контракта (`TryGet` и `T? FindBy(...)`).
 
+## Сообщения коммитов
+
+Формат: `<scope>: <imperative summary>` в первой строке, опционально развёрнутое тело через пустую строку. Это не эстетика — это инструмент для будущего форка движка в отдельный продукт (см. [ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра)). По scope можно одной командой вытащить всю движковую историю (`git log --grep="^\(contracts\|core\|interop\|native\|modding\): "`) и отфильтровать доменные изменения.
+
+### Scope-префиксы
+
+Коммит, который трогает **движковые** сборки (см. ту же секцию):
+
+- `contracts:` — `DualFrontier.Contracts`
+- `core:` — `DualFrontier.Core`
+- `interop:` — `DualFrontier.Core.Interop`
+- `native:` — `native/DualFrontier.Core.Native/`
+- `modding:` — модинг-часть `DualFrontier.Application` (ModIntegrationPipeline, ContractValidator, ModRegistry, ModLoader, RestrictedModApi)
+- `presentation-native:` — `DualFrontier.Presentation.Native`
+- `experiment:` — исследовательские ветки до мёржа (ровно то, что используется в ветке `claude/cpp-core-experiment-cEsyH`)
+
+Коммит, который трогает **игровые** сборки:
+
+- `feat(pawn):`, `feat(combat):`, `feat(magic):`, `feat(world):`, `feat(inventory):`, `feat(ai):` — новая игровая механика
+- `fix(pawn):`, `fix(combat):`, … — баг-фиксы в той же области
+- `feat(presentation):` — Godot DevKit (`DualFrontier.Presentation`)
+- `feat(application):` — игровой цикл (`GameLoop`, `FrameClock`, `ScenarioLoader`)
+
+Меж-слойные коммиты:
+
+- `feat(bootstrap):` — проводка между слоями при появлении новой системы
+- `docs:`, `test:`, `chore:`, `build:`, `refactor:` — ортогональные
+
+### Правила
+
+- Если коммит затрагивает и движок, и игру — **разбей на два коммита**. Это стоит минуты рефлексии, но сохраняет чистоту `git log --grep` на момент форка.
+- Scope выбирается по **самой высокой** затронутой сборке. Правка в `Core/ECS/World.cs` + `Systems/Pawn/MovementSystem.cs` → два коммита: `core:` и `feat(pawn):`.
+- Summary — в повелительном наклонении на английском (как в текущей истории: `add`, `fix`, `update`), 70 символов максимум.
+- Доменные термины в теле коммита — на русском, как и комментарии в коде. Summary — на английском, чтобы проходил через стандартные git-инструменты.
+
+```
+core: add deferred destruction phase boundary
+fix(combat): clamp damage by ShieldComponent.Remaining
+feat(magic): implement EtherSurge trigger on crystal tier overflow
+modding: tighten ContractValidator on write-write conflicts
+docs: document native core experiment approach and results
+experiment: implement native World with C API
+```
+
 ## См. также
 
 - [ARCHITECTURE](./ARCHITECTURE.md)

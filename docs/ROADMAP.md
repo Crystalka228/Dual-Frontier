@@ -308,6 +308,55 @@ Bridge-системы находятся в `DualFrontier.Systems/Magic/Bridge/`
 - `[BridgeImplementation]`-пометка снимается, анализатор больше не предупреждает.
 - Ни один публичный контракт (`ManaGranted`, `GolemOwnershipChanged`, `EtherSurgeEvent`) не меняет сигнатуру — `CombatSystem` и прочие потребители не требуют правок.
 
+## Пост-релиз — развилка на движок
+
+После завершения Phase 7 и релиза Dual Frontier проект разветвляется. Игровая ветка продолжает жить контент-обновлениями и модами. Параллельно создаётся форк движковой части как самостоятельный продукт для внешнего использования. Эта развилка — не «возможно, когда-нибудь», а **запланированное** следствие того, как проект строился с Phase 0: граница движок/игра поддерживалась явно (см. [ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра)), scope-префиксы в коммитах (см. [CODING_STANDARDS §«Сообщения коммитов»](./CODING_STANDARDS.md#сообщения-коммитов)) позволяют одной командой выделить движковую историю.
+
+### Что уходит в движковый форк
+
+Исключительно движковые сборки:
+
+- `DualFrontier.Contracts`
+- `DualFrontier.Core`
+- `DualFrontier.Core.Interop` + `native/DualFrontier.Core.Native/`
+- `DualFrontier.Presentation.Native`
+- Модинг-секция `DualFrontier.Application` (`ModIntegrationPipeline`, `ContractValidator`, `ModRegistry`, `ModLoader`, `RestrictedModApi`, `PresentationBridge`)
+- Все тесты на эти сборки
+
+Переименование: `DualFrontier.*` → неймспейс форка (имя выбирается при развилке, не сейчас).
+
+### Что остаётся в игровой ветке
+
+- `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Systems`, `DualFrontier.AI`
+- Игровая часть `Application` (`GameLoop`, `FrameClock`, `ScenarioLoader`, сценарии)
+- `DualFrontier.Presentation` (Godot DevKit)
+- Весь контент Phase 4–7, ассеты, моды
+
+Игровая ветка после форка зависит от движкового форка как от внешнего пакета — тот же самый API, но через nuget/submodule, а не через `ProjectReference`.
+
+### Что нужно добавить в движок для «продукта»
+
+Анализ на текущей ветке показал пробелы, которые во время разработки игры закрывать нет смысла (они не нужны для релиза Dual Frontier), но которые обязательны для внешнего использования движка:
+
+- Asset pipeline (конвертеры sprite atlas / звука / анимации; `.dfscene` сейчас — вручную собранный JSON).
+- Build & packaging для Windows/Linux/macOS.
+- Hot-reload модов (сейчас `ModIntegrationPipeline` требует рестарта сессии).
+- Replay/determinism tools (упомянуты в [THREADING](./THREADING.md), но не реализованы).
+- Cross-platform CI для `DualFrontier.Core.Native` (сейчас CMake на одной платформе разработчика).
+- Документация «как сделать свою игру на этом движке» (есть [MODDING](./MODDING.md) для модера — это другое).
+
+Эти задачи — **не** часть текущего roadmap Dual Frontier. Они появляются только **после** форка, в движковом репозитории.
+
+### Критерий готовности к форку
+
+Форк имеет смысл делать тогда, когда:
+
+- Phase 7 закрыта, игра в релизе и прошла стадию «первых багфиксов» (1–3 месяца после релиза).
+- Движковая часть выдержала все Phase 4–7 без появления `using DualFrontier.{Components,Systems,Events,AI}` в `Core`/`Contracts`/`Interop`/модинге. Это проверяется на каждом PR как обычная архитектурная гигиена — см. [ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра).
+- Моддинг-инфраструктура (`ModIntegrationPipeline`, `ContractValidator`) имеет хотя бы 2–3 реальных мода на ней, а не только `mods/DualFrontier.Mod.Example`.
+
+До этого момента движковой ветки как отдельного репозитория не существует — параллельное обсуждение ведётся здесь, на ветке `claude/cpp-core-experiment-cEsyH`, и в документах, помеченных как движковые ([NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md), [VISUAL_ENGINE](./VISUAL_ENGINE.md), [MODDING](./MODDING.md), [MOD_PIPELINE](./MOD_PIPELINE.md)).
+
 ## См. также
 
 - [ARCHITECTURE](./ARCHITECTURE.md)

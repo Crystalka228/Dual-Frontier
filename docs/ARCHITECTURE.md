@@ -83,6 +83,33 @@ Native — то, что запускают игроки. Работают тол
 - `Presentation.Native` зависит от `Application` и `Silk.NET` (не от `Godot`).
 - Моды зависят **только** от `Contracts`. Ссылка на `Core` из мода блокируется `AssemblyLoadContext`.
 
+## Граница движок / игра
+
+Сборки проекта делятся на две непересекающиеся группы. Граница существует с первого коммита, но явно зафиксирована здесь, потому что после релиза Dual Frontier движковая часть форкается в отдельный продукт для внешнего использования. Чтобы форк прошёл дёшево, граница не должна мутнеть на протяжении разработки.
+
+### Движковые сборки (переиспользуемые между играми)
+
+- `DualFrontier.Contracts` — интерфейсы, атрибуты, примитивы.
+- `DualFrontier.Core` — ECS-ядро, планировщик, шины.
+- `DualFrontier.Core.Interop` + `native/DualFrontier.Core.Native/` — экспериментальное C++ ядро (см. [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md)).
+- `DualFrontier.Presentation.Native` — production-backend визуального слоя (Silk.NET).
+- Часть `DualFrontier.Application`, относящаяся к моддингу: `ModIntegrationPipeline`, `ContractValidator`, `ModRegistry`, `ModLoader`, `RestrictedModApi`, `PresentationBridge`.
+
+### Игровые сборки (специфичны для Dual Frontier)
+
+- `DualFrontier.Components` — POCO-компоненты домена (Pawn, Combat, Magic, Building, World).
+- `DualFrontier.Events` — доменные события и intents.
+- `DualFrontier.Systems` — игровые системы.
+- `DualFrontier.AI` — pathfinding и Job-реализации под конкретные игровые задачи.
+- Часть `DualFrontier.Application`, относящаяся к игровому циклу: `GameLoop`, `FrameClock`, `ScenarioLoader`.
+- `DualFrontier.Presentation` — Godot DevKit, SceneExporter, GodotRenderer.
+
+### Правило гигиены
+
+Движковые сборки **никогда** не получают `ProjectReference` на игровые. Ни одного `using DualFrontier.Components`, `using DualFrontier.Systems`, `using DualFrontier.Events` в `Contracts`, `Core`, `Core.Interop`, `Presentation.Native` и модинг-секции `Application`. Ссылка в обратную сторону (игра → движок) — норма. Проверка на PR: если в движковой сборке появляется `using DualFrontier.{Components,Systems,Events,AI}` — это блокер ревью, а не «подумать позже».
+
+Правило бюджетное по исполнению — движковые сборки уже чистые (аудит на текущей ветке не нашёл ни одного нарушения). Задача — не допустить деградации при добавлении Phase 4–7, когда соблазн «просто референснуть Components из Core» будет максимальным.
+
 ## Зачем так: сценарии
 
 ### Сценарий 1 — маг тратит манну
