@@ -1,5 +1,9 @@
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
+using DualFrontier.Components.Pawn;
+using DualFrontier.Components.Shared;
+using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
@@ -22,6 +26,13 @@ namespace DualFrontier.Application.Loop;
 /// </summary>
 internal static class GameBootstrap
 {
+    private static readonly GridVector[] InitialPawnPositions =
+    {
+        new(25, 25),
+        new(27, 25),
+        new(26, 27)
+    };
+
     public static GameLoop CreateLoop(PresentationBridge bridge)
     {
         var world    = new World();
@@ -34,6 +45,8 @@ internal static class GameBootstrap
             bridge.Enqueue(new PawnMovedCommand(e.PawnId, e.X, e.Y)));
         services.Combat.Subscribe<DeathEvent>(e =>
             bridge.Enqueue(new PawnDiedCommand(e.Who)));
+
+        SpawnInitialPawns(world, services);
 
         var graph = new DependencyGraph();
         graph.AddSystem(new NeedsSystem());
@@ -49,5 +62,24 @@ internal static class GameBootstrap
             services:  services);
 
         return new GameLoop(scheduler, bridge);
+    }
+
+    private static void SpawnInitialPawns(World world, GameServices services)
+    {
+        foreach (GridVector pos in InitialPawnPositions)
+        {
+            EntityId id = world.CreateEntity();
+            world.AddComponent(id, new PositionComponent { Position = pos });
+            world.AddComponent(id, new NeedsComponent { Hunger = 0.1f, Thirst = 0.1f, Rest = 0.1f });
+            world.AddComponent(id, new MindComponent());
+            world.AddComponent(id, new JobComponent { Current = JobKind.Idle });
+
+            services.Pawns.Publish(new PawnSpawnedEvent
+            {
+                PawnId = id,
+                X      = pos.X,
+                Y      = pos.Y
+            });
+        }
     }
 }
