@@ -6,6 +6,7 @@ export_presets.cfg
 *.translation
 *.tmp
 *.uid
+*.import
 
 # .NET build output
 bin/
