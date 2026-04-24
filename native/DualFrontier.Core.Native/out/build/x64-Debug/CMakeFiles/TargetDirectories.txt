@@ -1,0 +1,4 @@
+D:/Colony_Simulator/Colony_Simulator/native/DualFrontier.Core.Native/out/build/x64-Debug/CMakeFiles/DualFrontier.Core.Native.dir
+D:/Colony_Simulator/Colony_Simulator/native/DualFrontier.Core.Native/out/build/x64-Debug/CMakeFiles/df_native_selftest.dir
+D:/Colony_Simulator/Colony_Simulator/native/DualFrontier.Core.Native/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+D:/Colony_Simulator/Colony_Simulator/native/DualFrontier.Core.Native/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir

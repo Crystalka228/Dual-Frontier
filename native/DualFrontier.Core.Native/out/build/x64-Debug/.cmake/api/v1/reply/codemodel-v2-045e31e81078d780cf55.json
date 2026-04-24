@@ -1,0 +1,70 @@
+{
+	"configurations" : 
+	[
+		{
+			"abstractTargets" : [],
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-f6f22219c74102c3da70.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "DualFrontier.Core.Native",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "DualFrontier.Core.Native::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-DualFrontier.Core.Native-Debug-24f4fae71cb9a0b449f2.json",
+					"name" : "DualFrontier.Core.Native",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "df_native_selftest::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-df_native_selftest-Debug-aa2b6c1888e64d32046d.json",
+					"name" : "df_native_selftest",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/Colony_Simulator/Colony_Simulator/native/DualFrontier.Core.Native/out/build/x64-Debug",
+		"source" : "D:/Colony_Simulator/Colony_Simulator/native/DualFrontier.Core.Native"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 9
+	}
+}
