@@ -35,7 +35,14 @@ inventoryBus.Publish(new AmmoIntentEvent(shooter, weaponId, amount: 1));
 ```
 
 ## TODO
-- [ ] Реализовать `InventorySystem` с кэшем свободных слотов и
-      батчингом запросов за один тик.
-- [ ] Реализовать `HaulSystem`: поиск "откуда → куда" по предмету.
-- [ ] Реализовать `CraftSystem`: консуминг инградиентов, выдача продукта.
+- [x] Реализовать `InventorySystem` с кэшем свободных слотов
+      (`_freeSlotCache` + `_cacheDirty`).
+- [x] Реализовать `HaulSystem`: поиск "откуда → куда" по предмету
+      (Phase 4: телепорт без pathfinding, real haul — Phase 6).
+- [ ] Реализовать `CraftSystem` — Фаза 6 (сейчас стаб бросает
+      `NotImplementedException`).
+- [ ] Перевести `ItemAddedEvent`/`ItemRemovedEvent` на `[Deferred]`
+      доставку — иначе `InventorySystem.OnItemAdded.SetComponent`
+      исполняется в контексте публикующей системы и сорвёт DEBUG
+      isolation guard, как только появятся реальные `StorageComponent`
+      сущности.

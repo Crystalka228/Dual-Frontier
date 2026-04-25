@@ -31,7 +31,14 @@
 ```
 
 ## TODO
-- [ ] Реализовать `ElectricGridSystem`: union-find по кабелям.
+- [x] `ElectricGridSystem` — приоритетное распределение ватт
+      (sort consumers by Priority desc, allocate until supply exhausted,
+      publish `PowerGrantedEvent` per consumer и `GridOverloadEvent`
+      когда хотя бы один потребитель остался без питания).
+- [x] `ConverterSystem` — 30% КПД эфир↔электричество (зеркалит
+      `consumer.IsPowered` в `producer.CurrentWatts`).
+- [ ] Зарегистрировать `ConverterSystem` в `GameBootstrap` —
+      требует `[Deferred]` семантики в `DomainEventBus` (цикл
+      `ElectricGrid ↔ Converter` по `PowerConsumer/PowerProducer`).
 - [ ] Реализовать `EtherGridSystem`: плотность и передача по узлам.
-- [ ] Реализовать `ConverterSystem` с коэффициентом 0.3f.
 - [ ] Рассмотреть выделение отдельного `IPowerBus` при росте трафика.

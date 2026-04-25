@@ -154,6 +154,37 @@ public partial class PawnVisual : Node2D
 
 Обратная сторона: если в середине фазы Domain удалил entity, а команда на удаление ноды ещё в очереди — ничего страшного. Команда придёт в следующий `_Process`, нода скажет `QueueFree`, Godot уберёт. Рассинхрон безопасен, потому что направление всегда одно.
 
+## UI Development Cycle
+
+После каждой фазы — одна итерация UI:
+1. Новые компоненты → новые поля в `PawnStateCommand`.
+2. Новые секции в `PawnDetail` или новые панели.
+3. F5 → визуально подтвердить что фаза работает.
+
+UI является живым дашбордом симуляции — визуальные баги часто
+указывают на логические баги в Domain.
+
+### Текущий статус UI (Фаза 4)
+
+Реализовано:
+- `GameHUD` (CanvasLayer, layer=10).
+- `ColonyPanel` — список пешек с мини-полосками настроения.
+- `PawnDetail` — детали пешки (нужды, настроение, job, навыки).
+- `PawnStateReporterSystem` (SLOW) — публикует данные через шину `Pawns`.
+- `PawnStateCommand` — единственный способ передачи данных в HUD.
+
+Поток данных: `PawnStateReporterSystem.Update` → `PawnStateChangedEvent`
+на шине `Pawns` → подписчик в `GameBootstrap` → `bridge.Enqueue(PawnStateCommand)`
+→ `RenderCommandDispatcher` → `GameHUD.UpdatePawn` → панели.
+
+Стиль: Grimdark Warhammer — тёмный фон `#1a1814`, пергаментный текст
+`#c8b89a`, gothic-шрифты (системный serif fallback).
+
+### Следующая итерация UI (Фаза 5)
+- Добавить `HealthComponent` в `PawnStateCommand`.
+- Секция «Здоровье» в `PawnDetail`.
+- Визуальный индикатор урона на пешках в `PawnLayer`.
+
 ## См. также
 
 - [ARCHITECTURE](./ARCHITECTURE.md)

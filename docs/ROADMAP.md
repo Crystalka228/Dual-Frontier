@@ -185,21 +185,42 @@
 Производственный пайплайн Godot → `.dfscene` → Native. Дальше Фаза 4
 работает с реальными сценами, а не с хардкодом.
 
-## 🔨 Фаза 4 — Экономика (текущая)
+## ✅ Фаза 4 — Экономика (завершена)
 
-Цель: производство, склад, энергосеть.
+Результат: склады, крафт-верстаки, электросеть, конвертор.
+InventorySystem с кэшем, HaulSystem, ElectricGridSystem
+с приоритетным распределением, ConverterSystem 30% КПД.
+Grimdark HUD с панелями ColonyPanel и PawnDetail.
+61/61 тестов.
 
-### Что реализуем
+### Что реализовано
 
-- `DualFrontier.Components/Building/StorageComponent`, `WorkbenchComponent`, `PowerConsumerComponent`, `PowerProducerComponent`.
-- `DualFrontier.Systems/Inventory/InventorySystem` (кэш + батчинг), `HaulSystem`, `CraftSystem`.
-- `DualFrontier.Systems/Power/ElectricGridSystem`, `ConverterSystem` (КПД 30% по GDD 9).
-- `DualFrontier.Events/Inventory/*`, `Events/Power/*`.
+- [x] `StorageComponent`, `WorkbenchComponent`
+- [x] `PowerConsumerComponent`, `PowerProducerComponent`
+- [x] `InventorySystem` (кэш + батчинг через `_freeSlotCache`/`_cacheDirty`)
+- [x] `HaulSystem` — поиск source→dest по предмету (Phase 4: телепорт без pathfinding)
+- [x] `ElectricGridSystem` — приоритетное распределение ватт
+- [x] `ConverterSystem` (КПД 30%) — реализована, регистрация отложена (см. ниже)
+- [x] `Events/Inventory/*` — все четыре события (`ItemAdded`, `ItemRemoved`, `ItemReserved`, `CraftRequest`)
+- [x] `Events/Power/*` — все три события (`PowerRequest`, `PowerGranted`, `GridOverload`)
+- [x] Grimdark HUD — `GameHUD` (CanvasLayer), `ColonyPanel`, `PawnDetail`,
+      `PawnStateReporterSystem`, `PawnStateCommand`
+
+### Открытые задачи
+
+- [ ] `CraftSystem` — Фаза 6 (стаб бросает `NotImplementedException`)
+- [ ] `ConverterSystem` регистрация в `GameBootstrap` — требует `[Deferred]`
+      семантики в `DomainEventBus` (цикл `ElectricGrid ↔ Converter` по
+      компонентам `PowerConsumer/PowerProducer`)
+- [ ] `ItemAddedEvent`/`ItemRemovedEvent` перевести на `[Deferred]`
+      доставку — иначе `InventorySystem.OnItemAdded.SetComponent` отрабатывает
+      в контексте публикующей системы и сорвёт DEBUG isolation guard, как
+      только появятся реальные `StorageComponent` сущности
 
 ### Критерии приёмки
 
 - 100 пешек × 60 тиков × патрон-запрос: ≤100 сканов/сек (цель из 11.11).
-- Крафт цепочка: ресурс → верстак → продукт → склад.
+- Крафт цепочка: ресурс → верстак → продукт → склад. *(Фаза 6 — `CraftSystem`)*
 - Электросеть: генератор → провод → потребитель; overload на перегрузе.
 - Конвертор: 100W → 30 манны и обратно; работает точечно, невыгоден в масштабе.
 
@@ -207,7 +228,7 @@
 
 Бой и магию — обеим системам нужен инвентарь (патроны, кристаллы).
 
-## Фаза 5 — Бой
+## 🔨 Фаза 5 — Бой (текущая)
 
 Цель: Combat Extended на базе шины.
 
