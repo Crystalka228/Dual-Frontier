@@ -1,38 +1,81 @@
+using System;
+using System.Collections.Generic;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Contracts.Core;
 using DualFrontier.Components.Building;
 using DualFrontier.Core.ECS;
+using DualFrontier.Events.Inventory;
 
-namespace DualFrontier.Systems.Inventory;
-
-/// <summary>
-/// Обработчик запросов склада: пул <c>AmmoIntent</c>,
-/// <c>CraftRequest</c> и т. д. Кэш + батчинг per TechArch 11.5.
-///
-/// Фаза: 6 (после всего, что могло породить запросы склада).
-/// Тик: FAST (3 фрейма) — быстрый отклик на патроны/крафт.
-/// </summary>
-[SystemAccess(
-    reads:  new[] { typeof(StorageComponent) },
-    writes: new[] { typeof(StorageComponent) },
-    bus:    nameof(IGameServices.Inventory)
-)]
-[TickRate(TickRates.FAST)]
-public sealed class InventorySystem : SystemBase
+namespace DualFrontier.Systems.Inventory
 {
-    // Кэш + батчинг per TechArch 11.5: накапливаем все Intent'ы за тик,
-    // решаем одним проходом, один раз пересчитываем свободное место.
-
     /// <summary>
-    /// TODO: Подписаться на AmmoIntent, CraftRequest, ItemDeposit, ItemWithdraw.
+    /// Manages item storage. Caches free storage slots to avoid
+    /// full scan every tick. Cache invalidated on ItemAdded/Removed.
+    /// Single writer of StorageComponent — all inventory changes
+    /// go through this system's bus.
+    /// Phase: Фаза 4. Tick: FAST.
     /// </summary>
-    protected override void OnInitialize()
+    [SystemAccess(
+        reads:  new Type[0],
+        writes: new[] { typeof(StorageComponent) },
+        bus:    nameof(IGameServices.Inventory)
+    )]
+    [TickRate(TickRates.FAST)]
+    public sealed class InventorySystem : SystemBase
     {
-        throw new NotImplementedException("TODO: Фаза 6 — подписка на запросы склада");
-    }
+        private readonly Dictionary<int, List<string>> _freeSlotCache = new();
+        private bool _cacheDirty = true;
 
-    public override void Update(float delta)
-    {
-        // TODO: Фаза 6 — батчевая обработка накопленных запросов, публикация *Granted/*Refused.
+        protected override void OnInitialize()
+        {
+            Services.Inventory.Subscribe<ItemAddedEvent>(OnItemAdded);
+            Services.Inventory.Subscribe<ItemRemovedEvent>(OnItemRemoved);
+        }
+
+        public override void Update(float delta)
+        {
+            if (_cacheDirty)
+            {
+                RebuildCache();
+                _cacheDirty = false;
+            }
+        }
+
+        private void OnItemAdded(ItemAddedEvent e)
+        {
+            var storage = GetComponent<StorageComponent>(e.StorageId);
+            if (storage.Items.ContainsKey(e.ItemId))
+                storage.Items[e.ItemId] += e.Quantity;
+            else
+                storage.Items[e.ItemId] = e.Quantity;
+            SetComponent(e.StorageId, storage);
+            _cacheDirty = true;
+        }
+
+        private void OnItemRemoved(ItemRemovedEvent e)
+        {
+            var storage = GetComponent<StorageComponent>(e.StorageId);
+            if (!storage.Items.ContainsKey(e.ItemId)) return;
+            storage.Items[e.ItemId] -= e.Quantity;
+            if (storage.Items[e.ItemId] <= 0)
+                storage.Items.Remove(e.ItemId);
+            SetComponent(e.StorageId, storage);
+            _cacheDirty = true;
+        }
+
+        private void RebuildCache()
+        {
+            _freeSlotCache.Clear();
+            foreach (var entity in Query<StorageComponent>())
+            {
+                var storage = GetComponent<StorageComponent>(entity);
+                if (!storage.IsFull)
+                {
+                    _freeSlotCache[entity.Index] =
+                        new List<string>(storage.Items.Keys);
+                }
+            }
+        }
     }
 }
