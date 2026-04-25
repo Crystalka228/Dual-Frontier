@@ -3,14 +3,18 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Power;
 
 /// <summary>
-/// Постройка запрашивает мощность на текущий тик. PowerSystem агрегирует
-/// все запросы и отвечает <see cref="PowerGrantedEvent"/> при успехе,
-/// либо публикует <see cref="GridOverloadEvent"/> при дефиците.
+/// Published by a consumer building when it needs power.
+/// ElectricGridSystem responds with PowerGrantedEvent
+/// or leaves IsPowered=false if grid is overloaded.
 /// </summary>
 public sealed record PowerRequestEvent : IEvent
 {
-    // TODO: public required EntityId ConsumerId { get; init; }
-    // TODO: public required PowerType Type { get; init; }  // enum — см. Components/Building
-    // TODO: public required float Watts { get; init; }
-    // TODO: public int Priority { get; init; }             // для отключения при перегрузке
+    /// <summary>Consumer entity requesting power.</summary>
+    public required EntityId ConsumerId { get; init; }
+
+    /// <summary>Watts requested.</summary>
+    public required float WattsRequested { get; init; }
+
+    /// <summary>Priority. Higher = served first on overload.</summary>
+    public int Priority { get; init; } = 1;
 }

@@ -3,14 +3,17 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Power;
 
 /// <summary>
-/// Перегрузка сети: суммарное потребление превышает выработку. PowerSystem
-/// отключает потребителей в порядке приоритета; UI/звук воспроизводят
-/// предупреждение. Если перегрузка повторяется — предложение игроку
-/// построить ещё производителей.
+/// Published by ElectricGridSystem when total demand
+/// exceeds total supply. Low-priority consumers lose power.
 /// </summary>
 public sealed record GridOverloadEvent : IEvent
 {
-    // TODO: public required PowerType Type { get; init; }
-    // TODO: public required float Demand { get; init; }
-    // TODO: public required float Supply { get; init; }
+    /// <summary>Total watts demanded by all consumers.</summary>
+    public required float TotalDemand { get; init; }
+
+    /// <summary>Total watts available from all producers.</summary>
+    public required float TotalSupply { get; init; }
+
+    /// <summary>Number of consumers that lost power.</summary>
+    public required int UnpoweredCount { get; init; }
 }
