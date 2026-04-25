@@ -27,15 +27,14 @@ namespace DualFrontier.Systems.Combat;
     buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Magic) }
 )]
 [TickRate(TickRates.FAST)]
+[BridgeImplementation(Phase = 5)]
 public sealed class CombatSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на ShootAttemptEvent, ShootGranted, ShootRefused.
+    /// Bridge: Phase 5 will subscribe to ShootAttemptEvent /
+    /// ShootGranted / ShootRefused.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 5 — боевая система");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

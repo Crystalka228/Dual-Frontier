@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Core.Scheduling;
@@ -119,7 +120,10 @@ internal sealed class ParallelSystemScheduler
     /// Executes a single phase: every system whose <c>[TickRate]</c> is due
     /// on the current tick runs on a pool thread. <c>Parallel.ForEach</c>
     /// blocks until all systems in the phase have completed, which forms the
-    /// phase barrier.
+    /// phase barrier. After the barrier, deferred events queued during this
+    /// phase are dispatched via <see cref="IDeferredFlush.FlushDeferred"/> —
+    /// each handler runs with its captured <c>SystemExecutionContext</c>
+    /// re-pushed so isolation guarantees hold for cross-system mutations.
     /// </summary>
     public void ExecutePhase(SystemPhase phase, float delta)
     {
@@ -142,6 +146,9 @@ internal sealed class ParallelSystemScheduler
                 SystemExecutionContext.PopContext();
             }
         });
+
+        if (_services is IDeferredFlush flusher)
+            flusher.FlushDeferred();
     }
 
     /// <summary>

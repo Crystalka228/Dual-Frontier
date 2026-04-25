@@ -19,15 +19,13 @@ namespace DualFrontier.Systems.Magic;
     bus:    nameof(IGameServices.Magic)
 )]
 [TickRate(TickRates.SLOW)]
+[BridgeImplementation(Phase = 6)]
 public sealed class EtherGrowthSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на EtherDrainedEvent (когда голем/заклинание тянут эфир из узла).
+    /// Bridge: Phase 6 will subscribe to EtherDrainedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 2 — подписка на события эфирных узлов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

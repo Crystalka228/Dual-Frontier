@@ -19,15 +19,13 @@ namespace DualFrontier.Systems.Faction;
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 7)]
 public sealed class TradeSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на NewDayEvent — решить, придёт ли сегодня караван.
+    /// Bridge: Phase 7 will subscribe to NewDayEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 7 — подписка на события торговли");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

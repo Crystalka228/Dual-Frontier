@@ -19,15 +19,13 @@ namespace DualFrontier.Systems.Combat;
     bus:    nameof(IGameServices.Combat)
 )]
 [TickRate(TickRates.FAST)]
+[BridgeImplementation(Phase = 5)]
 public sealed class ShieldSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на ShieldHitEvent, ShieldRechargeEvent.
+    /// Bridge: Phase 5 will subscribe to ShieldHitEvent / ShieldRechargeEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 5 — подписка на события щитов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

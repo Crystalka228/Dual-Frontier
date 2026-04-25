@@ -20,15 +20,13 @@ namespace DualFrontier.Systems.Inventory;
     bus:    nameof(IGameServices.Inventory)
 )]
 [TickRate(TickRates.NORMAL)]
+[BridgeImplementation(Phase = 6)]
 public sealed class CraftSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на CraftRequestEvent, CraftAbortedEvent.
+    /// Bridge: Phase 6 will subscribe to CraftRequestEvent / CraftAbortedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 6 — подписка на события крафта");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

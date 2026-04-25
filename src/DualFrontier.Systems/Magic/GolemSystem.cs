@@ -23,16 +23,14 @@ namespace DualFrontier.Systems.Magic;
     bus:    nameof(IGameServices.Magic)
 )]
 [TickRate(TickRates.NORMAL)]
+[BridgeImplementation(Phase = 6)]
 public sealed class GolemSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на GolemCommandEvent, GolemOwnershipTransferRequest,
-    /// ManaGranted, ManaRefused.
+    /// Bridge: Phase 6 will subscribe to GolemCommandEvent /
+    /// GolemOwnershipTransferRequest / ManaGranted / ManaRefused.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — подписка на события големов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

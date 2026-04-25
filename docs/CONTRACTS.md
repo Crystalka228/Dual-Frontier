@@ -31,7 +31,7 @@ public sealed class HealthComponent : IComponent
 }
 ```
 
-## Пять доменных шин
+## Шесть доменных шин
 
 Одна шина на всё — узкое горло под нагрузкой. Lock contention при 100+ системах. Решение: отдельная шина на каждый домен. Меньше contention, проще дебажить, легче профилировать.
 
@@ -43,16 +43,18 @@ public interface IGameServices
     IMagicBus     Magic     { get; }
     IWorldBus     World     { get; }
     IPawnBus      Pawns     { get; }
+    IPowerBus     Power     { get; } // Введена в v0.3 §13.1
 }
 ```
 
 | Шина          | Кто пишет                        | Кто читает                           | Ключевые события                                  |
 |---------------|----------------------------------|--------------------------------------|---------------------------------------------------|
 | CombatBus     | CombatSystem, ProjectileSystem   | DamageSystem, StatusEffectSystem     | ShootAttempt, DamageEvent, DeathEvent             |
-| InventoryBus  | HaulSystem, CraftSystem          | InventorySystem, JobSystem           | AmmoIntent/Granted, ItemAdded/Removed             |
+| InventoryBus  | HaulSystem, CraftSystem          | InventorySystem, JobSystem           | AmmoIntent/Granted, ItemAdded/Removed/Reserved    |
 | MagicBus      | SpellSystem, GolemSystem         | ManaSystem, EtherGrowthSystem        | ManaIntent/Granted, SpellCast, EtherSurge         |
 | PawnBus       | NeedsSystem, MoodSystem          | JobSystem, SocialSystem              | MoodBreak, DeathReaction, SkillGain               |
 | WorldBus      | BiomeSystem, WeatherSystem       | EtherGridSystem, RaidSystem          | EtherNodeChanged, WeatherChanged, RaidIncoming    |
+| PowerBus      | ElectricGridSystem, ConverterSystem | ElectricGridSystem, потребители, UI | PowerRequest, PowerGranted, GridOverload, ConverterPowerOutput |
 
 Каждая шина — собственный `ConcurrentDictionary` подписчиков. `CombatSystem` пишет только в `Combat`, `InventorySystem` — только в `Inventory`. Нет общей точки блокировки. Система декларирует в `[SystemAccess]` имя используемой шины, и сторож проверяет, что публикация идёт только туда.
 

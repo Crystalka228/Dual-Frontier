@@ -20,16 +20,14 @@ namespace DualFrontier.Systems.Faction;
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 7)]
 public sealed class RelationSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на DeathEvent (убийство чужого пешки → минус),
-    /// TradeCompletedEvent (плюс), RaidIncomingEvent (минус).
+    /// Bridge: Phase 7 will subscribe to DeathEvent / TradeCompletedEvent /
+    /// RaidIncomingEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 7 — подписка на события отношений");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

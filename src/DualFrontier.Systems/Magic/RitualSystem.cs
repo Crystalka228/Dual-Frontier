@@ -20,15 +20,13 @@ namespace DualFrontier.Systems.Magic;
     bus:    nameof(IGameServices.Magic)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 6)]
 public sealed class RitualSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на RitualStartEvent, RitualAbortEvent.
+    /// Bridge: Phase 6 will subscribe to RitualStartEvent / RitualAbortEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — подписка на события ритуалов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

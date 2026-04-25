@@ -1,116 +1,209 @@
 using System;
-using DualFrontier.Contracts.Core;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
+using System.Reflection;
+using DualFrontier.Contracts.Attributes;
+using DualFrontier.Contracts.Core;
+using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Core.Bus;
 
 /// <summary>
-/// A thread-safe, generic event bus responsible for handling domain events within a specific game domain (e.g., Combat, Inventory).
+/// Thread-safe per-domain event bus. Supports three delivery modes resolved
+/// from event-type attributes (cached): synchronous (default), <see cref="DeferredAttribute"/>
+/// (queued for the next phase boundary), and <see cref="ImmediateAttribute"/>
+/// (synchronous, never queued).
+///
+/// Deferred handlers are dispatched by <c>ParallelSystemScheduler</c> after
+/// every phase via <see cref="FlushDeferred"/>. Each subscription captures the
+/// <see cref="SystemExecutionContext"/> active at <see cref="Subscribe"/> time;
+/// that context is re-pushed during deferred dispatch so handlers may mutate
+/// components within their own declared <c>[SystemAccess]</c> rights.
 /// </summary>
 internal sealed class DomainEventBus
 {
-    // Stores the list of delegates/handlers keyed by the type of the event they handle.
-    private readonly ConcurrentDictionary<Type, List<Delegate>> _handlers = new();
+    private static readonly ConcurrentDictionary<Type, DeliveryMode> ModeCache = new();
+
+    private readonly ConcurrentDictionary<Type, List<Subscription>> _handlers = new();
+    private readonly ConcurrentQueue<DeferredItem> _deferred = new();
 
     /// <summary>
-    /// Subscribes a handler action to a specific type of domain event.
+    /// Subscribes a handler for events of type <typeparamref name="TEvent"/>.
+    /// Captures the calling thread's <see cref="SystemExecutionContext"/> (if
+    /// any) so deferred dispatch can re-push the right guard. Duplicate
+    /// subscriptions (same handler reference) are ignored.
     /// </summary>
-    /// <typeparam name="TEvent">The type of the event that this bus handles.</typeparam>
-    /// <param name="handler">The action delegate to be called when an event of type TEvent is published.</param>
     public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
     {
-        var eventType = typeof(TEvent);
+        if (handler is null) throw new ArgumentNullException(nameof(handler));
+        Type eventType = typeof(TEvent);
 
-        // Get or create the list for this event type.
-        if (!_handlers.ContainsKey(eventType))
+        List<Subscription> list = _handlers.GetOrAdd(eventType, _ => new List<Subscription>());
+        SystemExecutionContext? captured = SystemExecutionContext.Current;
+        Action<IEvent> invoker = e => handler((TEvent)e);
+        var sub = new Subscription(handler, invoker, captured);
+
+        lock (list)
         {
-            _handlers[eventType] = new List<Delegate>();
-        }
-
-        // We must lock on the specific list instance to ensure thread safety during modification.
-        var handlersList = _handlers[eventType];
-
-        lock (handlersList)
-        {
-            if (!handlersList.Contains(handler))
+            for (int i = 0; i < list.Count; i++)
             {
-                handlersList.Add(handler);
+                if (ReferenceEquals(list[i].Original, handler))
+                    return;
+            }
+            list.Add(sub);
+        }
+    }
+
+    /// <summary>
+    /// Unsubscribes a previously registered handler by reference equality.
+    /// No-op if the handler was never registered.
+    /// </summary>
+    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
+    {
+        if (handler is null) throw new ArgumentNullException(nameof(handler));
+        if (!_handlers.TryGetValue(typeof(TEvent), out List<Subscription>? list))
+            return;
+
+        lock (list)
+        {
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(list[i].Original, handler))
+                {
+                    list.RemoveAt(i);
+                    return;
+                }
             }
         }
     }
 
     /// <summary>
-    /// Unsubscribes a specific handler action from a given domain event type.
+    /// Publishes an event. Default and <see cref="ImmediateAttribute"/> events
+    /// are delivered synchronously to current subscribers. <see cref="DeferredAttribute"/>
+    /// events are queued and dispatched at the next <see cref="FlushDeferred"/>
+    /// call (typically the next phase boundary).
     /// </summary>
-    /// <typeparam name="TEvent">The type of the event.</typeparam>
-    /// <param name="handler">The specific action delegate to remove.</param>
-    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
+    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent
     {
-        var eventType = typeof(TEvent);
+        if (evt is null) throw new ArgumentNullException(nameof(evt));
+        Type eventType = typeof(TEvent);
 
-        if (!_handlers.ContainsKey(eventType))
+        if (GetDeliveryMode(eventType) == DeliveryMode.Deferred)
         {
-            return; // No subscribers for this type.
+            _deferred.Enqueue(new DeferredItem(eventType, evt));
+            return;
         }
 
-        var handlersList = _handlers[eventType];
+        DeliverSync(eventType, evt);
+    }
 
-        lock (handlersList)
+    /// <summary>
+    /// Drains the deferred queue, dispatching every queued event to its current
+    /// subscribers. Each subscription's captured execution context is re-pushed
+    /// for the duration of the handler invocation so mutating handlers stay
+    /// within their declared <c>[SystemAccess]</c> rights.
+    ///
+    /// Snapshot-based: events queued by handlers during this drain go to the
+    /// queue and will be dispatched on the NEXT call, not the current one. This
+    /// keeps each phase boundary bounded and avoids re-entrant unbounded loops.
+    /// </summary>
+    public void FlushDeferred()
+    {
+        if (_deferred.IsEmpty) return;
+
+        var batch = new List<DeferredItem>();
+        while (_deferred.TryDequeue(out DeferredItem item))
+            batch.Add(item);
+
+        foreach (DeferredItem item in batch)
         {
-            // Attempt to remove the handler. No-op if not found.
-            handlersList.Remove(handler);
+            if (!_handlers.TryGetValue(item.EventType, out List<Subscription>? list))
+                continue;
+
+            Subscription[] snapshot;
+            lock (list)
+                snapshot = list.ToArray();
+
+            foreach (Subscription sub in snapshot)
+                InvokeDeferred(sub, item.Evt);
         }
     }
 
     /// <summary>
-    /// Publishes an event, notifying all subscribed handlers for that event type.
+    /// Clears all subscriptions and pending deferred events. Used by tests and
+    /// scene reloads.
     /// </summary>
-    /// <typeparam name="TEvent">The type of the event being published.</typeparam>
-    /// <param name="evt">The concrete instance of the domain event.</param>
-    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent
+    public void Clear()
     {
-        var eventType = typeof(TEvent);
+        _handlers.Clear();
+        while (_deferred.TryDequeue(out _)) { }
+    }
 
-        if (!_handlers.TryGetValue(eventType, out var handlersList))
-        {
-            return; // No subscribers for this event type.
-        }
+    private void DeliverSync(Type eventType, IEvent evt)
+    {
+        if (!_handlers.TryGetValue(eventType, out List<Subscription>? list))
+            return;
 
-        // Critical Step 1: Copy the list under lock to prevent deadlocks if a handler modifies subscriptions.
-        List<Delegate> handlersCopy;
-        lock (handlersList)
-        {
-            // Create a shallow copy of the delegate list.
-            handlersCopy = new List<Delegate>(handlersList);
-        }
+        Subscription[] snapshot;
+        lock (list)
+            snapshot = list.ToArray();
 
-        // Critical Step 2: Invoke handlers outside the lock.
-        foreach (var handler in handlersCopy)
+        foreach (Subscription sub in snapshot)
         {
             try
             {
-                // We must cast the generic event back to its concrete type before invoking,
-                // but since we know all handlers stored here are Action<TEvent>,
-                // we can invoke it directly with the casted argument.
-                ((Action<TEvent>)handler)?.Invoke(evt);
+                sub.Invoker(evt);
             }
             catch (Exception ex)
             {
-                // Log or handle exceptions thrown by individual handlers without stopping others.
                 Console.WriteLine($"Error publishing event {eventType.Name}: {ex.Message}");
             }
         }
     }
 
-    /// <summary>
-    /// Clears all subscriptions from the bus. Used for testing or scene reloads.
-    /// </summary>
-    public void Clear()
+    private static void InvokeDeferred(Subscription sub, IEvent evt)
     {
-        // Remove all entries in the dictionary under a lock if necessary,
-        // but since ConcurrentDictionary handles internal state well, we just clear it.
-        _handlers.Clear();
+        SystemExecutionContext? ctx = sub.CapturedContext;
+        bool pushed = false;
+        if (ctx is not null)
+        {
+            SystemExecutionContext.PushContext(ctx);
+            pushed = true;
+        }
+        try
+        {
+            sub.Invoker(evt);
+        }
+        finally
+        {
+            if (pushed)
+                SystemExecutionContext.PopContext();
+        }
     }
+
+    private static DeliveryMode GetDeliveryMode(Type eventType) =>
+        ModeCache.GetOrAdd(eventType, ResolveDeliveryMode);
+
+    private static DeliveryMode ResolveDeliveryMode(Type eventType)
+    {
+        if (eventType.GetCustomAttribute<DeferredAttribute>(inherit: false) is not null)
+            return DeliveryMode.Deferred;
+        if (eventType.GetCustomAttribute<ImmediateAttribute>(inherit: false) is not null)
+            return DeliveryMode.Immediate;
+        return DeliveryMode.Sync;
+    }
+
+    private enum DeliveryMode
+    {
+        Sync,
+        Deferred,
+        Immediate
+    }
+
+    private readonly record struct DeferredItem(Type EventType, IEvent Evt);
+
+    private sealed record Subscription(
+        Delegate Original,
+        Action<IEvent> Invoker,
+        SystemExecutionContext? CapturedContext);
 }

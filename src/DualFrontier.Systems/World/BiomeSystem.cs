@@ -19,15 +19,13 @@ namespace DualFrontier.Systems.World;
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 7)]
 public sealed class BiomeSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на WeatherChangedEvent, EtherSurgeEvent.
+    /// Bridge: Phase 7 will subscribe to WeatherChangedEvent / EtherSurgeEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 1 — подписка на события биомов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

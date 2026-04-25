@@ -25,15 +25,13 @@ namespace DualFrontier.Systems.Combat;
     buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Magic) }
 )]
 [TickRate(TickRates.NORMAL)]
+[BridgeImplementation(Phase = 5)]
 public sealed class ComboResolutionSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Фаза 4 — подписаться на DamageIntent из Combat и Magic шин.
+    /// Bridge: Phase 5 will subscribe to DamageIntent on Combat and Magic buses.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — подписка на DamageIntent из Combat и Magic шин");
-    }
+    protected override void OnInitialize() { }
 
     /// <summary>
     /// Основной тик: после сбора всех <see cref="DamageIntent"/> текущей фазы

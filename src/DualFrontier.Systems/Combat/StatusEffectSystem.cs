@@ -20,15 +20,13 @@ namespace DualFrontier.Systems.Combat;
     bus:    nameof(IGameServices.Combat)
 )]
 [TickRate(TickRates.FAST)]
+[BridgeImplementation(Phase = 5)]
 public sealed class StatusEffectSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на StatusAppliedEvent, StatusRemovedEvent.
+    /// Bridge: Phase 5 will subscribe to StatusAppliedEvent / StatusRemovedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 5 — подписка на события статус-эффектов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

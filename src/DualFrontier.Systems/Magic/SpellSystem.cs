@@ -20,15 +20,14 @@ namespace DualFrontier.Systems.Magic;
     bus:    nameof(IGameServices.Magic)
 )]
 [TickRate(TickRates.FAST)]
+[BridgeImplementation(Phase = 6)]
 public sealed class SpellSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на SpellCastAttemptEvent, ManaGranted, ManaRefused.
+    /// Bridge: Phase 6 will subscribe to SpellCastAttemptEvent /
+    /// ManaGranted / ManaRefused.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — подписка на события кастов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {
