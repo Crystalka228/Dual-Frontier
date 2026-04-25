@@ -29,6 +29,10 @@ namespace DualFrontier.Systems.Inventory
 
         protected override void OnInitialize()
         {
+            // TODO: Фаза 6 — после реализации [Deferred] семантики
+            // в DomainEventBus перевести ItemAddedEvent/ItemRemovedEvent
+            // на [Deferred] доставку чтобы избежать cross-context mutation.
+            // Сейчас безопасно пока нет реальных StorageComponent entity.
             Services.Inventory.Subscribe<ItemAddedEvent>(OnItemAdded);
             Services.Inventory.Subscribe<ItemRemovedEvent>(OnItemRemoved);
         }

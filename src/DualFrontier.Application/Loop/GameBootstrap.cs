@@ -11,7 +11,9 @@ using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Events.Combat;
 using DualFrontier.Events.Pawn;
+using DualFrontier.Systems.Inventory;
 using DualFrontier.Systems.Pawn;
+using DualFrontier.Systems.Power;
 
 namespace DualFrontier.Application.Loop;
 
@@ -70,6 +72,11 @@ internal static class GameBootstrap
         graph.AddSystem(new JobSystem());
         graph.AddSystem(new MovementSystem(pathfinding));
         graph.AddSystem(new PawnStateReporterSystem());
+        graph.AddSystem(new InventorySystem());
+        graph.AddSystem(new HaulSystem());
+        graph.AddSystem(new ElectricGridSystem());
+        // ConverterSystem registration deferred — see TODO in ROADMAP.md
+        // (cycle ElectricGrid ↔ Converter requires [Deferred] event coupling).
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
