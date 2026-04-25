@@ -1,3 +1,4 @@
+using DualFrontier.Application.Bridge.Commands;
 using Godot;
 
 namespace DualFrontier.Presentation.UI;
@@ -20,4 +21,14 @@ public partial class GameHUD : CanvasLayer
         _detail = GetNode<PawnDetail>("PawnDetail");
         _colony.PawnSelected += id => _detail.ShowPawn(id);
     }
+
+    public void UpdatePawn(PawnStateCommand cmd)
+    {
+        _colony.UpdatePawn(cmd.PawnId, cmd.Name, cmd.JobLabel, cmd.Mood);
+        _detail.UpdatePawn(
+            cmd.PawnId, cmd.Name, cmd.Hunger, cmd.Thirst, cmd.Rest,
+            cmd.Comfort, cmd.Mood, cmd.JobLabel, cmd.JobUrgent);
+    }
+
+    public void SetTick(int tick) => _colony.SetTick(tick);
 }

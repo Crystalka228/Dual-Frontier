@@ -1,6 +1,7 @@
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Presentation.Nodes;
+using DualFrontier.Presentation.UI;
 
 namespace DualFrontier.Presentation.Rendering;
 
@@ -13,10 +14,12 @@ namespace DualFrontier.Presentation.Rendering;
 public sealed class RenderCommandDispatcher
 {
     private readonly PawnLayer _pawnLayer;
+    private readonly GameHUD?  _hud;
 
-    public RenderCommandDispatcher(PawnLayer pawnLayer)
+    public RenderCommandDispatcher(PawnLayer pawnLayer, GameHUD? hud = null)
     {
         _pawnLayer = pawnLayer;
+        _hud       = hud;
     }
 
     public void Dispatch(IRenderCommand command)
@@ -31,6 +34,9 @@ public sealed class RenderCommandDispatcher
                 break;
             case PawnDiedCommand c:
                 _pawnLayer.RemovePawn(c.PawnId);
+                break;
+            case PawnStateCommand c:
+                _hud?.UpdatePawn(c);
                 break;
         }
     }

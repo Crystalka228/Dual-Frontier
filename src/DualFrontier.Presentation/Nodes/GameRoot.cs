@@ -31,7 +31,7 @@ public partial class GameRoot : Node2D
         var pawnLayer = GetNode<PawnLayer>("PawnLayer");
         _hud          = GetNode<GameHUD>("GameHUD");
 
-        _dispatcher = new RenderCommandDispatcher(pawnLayer);
+        _dispatcher = new RenderCommandDispatcher(pawnLayer, _hud);
 
         tileMap.InitMap(MapWidth, MapHeight);
 
