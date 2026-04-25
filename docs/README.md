@@ -29,6 +29,7 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — чек-лист гигиены на каждый PR, граница движок/игра, красные флаги.
 - [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — C++ ядро эксперимент, P/Invoke граница, результаты бенчмарка, план батчинг API для Фазы 9.
+- [PERSISTENCE](../src/DualFrontier.Persistence/README.md) — алгоритмы сжатия сохранений: RLE тайлов, квантизация компонентов, range encoding entity, StringPool.
 
 ## Процесс
 
