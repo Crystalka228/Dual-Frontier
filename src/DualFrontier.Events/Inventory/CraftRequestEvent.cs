@@ -1,16 +1,24 @@
 using DualFrontier.Contracts.Core;
 
-namespace DualFrontier.Events.Inventory;
-
-/// <summary>
-/// Запрос на крафт. Публикуется игроком (через UI) или AI-приоритизатором.
-/// Это **заявка**, а не начало работы: JobSystem назначает подходящую
-/// пешку и верстак, InventorySystem резервирует компоненты (<see cref="ItemReservedEvent"/>).
-/// </summary>
-public sealed record CraftRequestEvent : IEvent
+namespace DualFrontier.Events.Inventory
 {
-    // TODO: public required string RecipeId { get; init; } = string.Empty;
-    // TODO: public EntityId? RequesterId { get; init; }   // кто заказал (для UI/истории)
-    // TODO: public int Count { get; init; } = 1;
-    // TODO: public int Priority { get; init; }            // очередь приоритетов
+    /// <summary>
+    /// Published when a craft job is requested (by player or AI).
+    /// This is NOT the start of crafting — JobSystem will
+    /// prioritize and assign a pawn to execute it.
+    /// </summary>
+    public sealed record CraftRequestEvent : IEvent
+    {
+        /// <summary>Recipe identifier to craft.</summary>
+        public required string RecipeId { get; init; }
+
+        /// <summary>Target workbench entity. Null = any available.</summary>
+        public EntityId? WorkbenchId { get; init; }
+
+        /// <summary>Entity that requested the craft (player entity or pawn).</summary>
+        public required EntityId RequesterId { get; init; }
+
+        /// <summary>Priority. Higher = assigned sooner.</summary>
+        public int Priority { get; init; } = 1;
+    }
 }
