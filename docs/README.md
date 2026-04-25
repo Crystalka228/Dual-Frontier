@@ -19,8 +19,9 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 
 ## Разработка
 
-Документы для тех, кто пишет код: модинг, производительность, стиль, тесты.
+Документы для тех, кто пишет код: методика, модинг, производительность, стиль, тесты.
 
+- [METHODOLOGY](./METHODOLOGY.md) — четырёхагентный pipeline, контракты как IPC между агентами, цикл верификации, модель угроз, экономика, границы применимости.
 - [MODDING](./MODDING.md) — IMod, IModApi, AssemblyLoadContext, IModContract, манифест.
 - [MOD_PIPELINE](./MOD_PIPELINE.md) — конвейер интеграции, ContractValidator, ModRegistry, атомарность.
 - [PERFORMANCE](./PERFORMANCE.md) — целевые метрики, профилирование, горячие пути, кэши.
