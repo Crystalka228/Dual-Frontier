@@ -14,3 +14,16 @@ obj/
 *.lscache
 *.user
 .vs/
+
+# CMake build artifacts (native core experiment)
+native/DualFrontier.Core.Native/build/
+native/DualFrontier.Core.Native/out/
+
+# BenchmarkDotNet artifacts
+BenchmarkDotNet.Artifacts/
+
+# Stray native DLL copies next to projects (the .csproj <None Include> places
+# the canonical copy under bin/ at build time; these are leftovers from
+# manual post-build copies and must not be versioned)
+DualFrontier.Core.Native.dll
+tests/DualFrontier.Core.Benchmarks/DualFrontier.Core.Native.dll
