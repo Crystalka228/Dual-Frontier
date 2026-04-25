@@ -18,15 +18,13 @@ namespace DualFrontier.Systems.Faction;
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 7)]
 public sealed class RaidSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на NewDayEvent, RelationBreakdownEvent.
+    /// Bridge: Phase 7 will subscribe to NewDayEvent / RelationBreakdownEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 7 — подписка на события рейдов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

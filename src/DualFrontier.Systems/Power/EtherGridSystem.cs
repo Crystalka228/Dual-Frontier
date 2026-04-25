@@ -22,15 +22,13 @@ namespace DualFrontier.Systems.Power;
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.NORMAL)]
+[BridgeImplementation(Phase = 6)]
 public sealed class EtherGridSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на EtherNodeChangedEvent, EtherDrainedEvent.
+    /// Bridge: Phase 6 will subscribe to EtherNodeChangedEvent / EtherDrainedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 2 — подписка на события эфирной сети");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

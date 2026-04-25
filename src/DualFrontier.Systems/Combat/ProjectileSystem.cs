@@ -20,15 +20,13 @@ namespace DualFrontier.Systems.Combat;
     bus:    nameof(IGameServices.Combat)
 )]
 [TickRate(TickRates.REALTIME)]
+[BridgeImplementation(Phase = 5)]
 public sealed class ProjectileSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на ProjectileSpawnedEvent.
+    /// Bridge: Phase 5 will subscribe to ProjectileSpawnedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 5 — подписка на появление снарядов");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

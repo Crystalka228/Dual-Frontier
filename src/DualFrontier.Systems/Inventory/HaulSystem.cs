@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Components.Building;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
@@ -15,6 +16,14 @@ namespace DualFrontier.Systems.Inventory;
 /// storage with free space, and "teleports" one stack between them via
 /// Reserve/Remove/Add events. No pathfinding or per-tick travel yet —
 /// real multi-tick hauling arrives in a later phase.
+/// <para>
+/// Same-tick double-allocation is prevented by an in-call reservation set:
+/// once a pawn picks a (storage, item) pair this tick, subsequent pawns in
+/// the same <c>Update</c> skip it. The reservation set is local to a single
+/// <c>Update</c> invocation — across ticks the persistent reservation table
+/// lives in <c>InventorySystem</c>, populated via deferred
+/// <see cref="ItemReservedEvent"/>.
+/// </para>
 /// Phase: 4. Tick: NORMAL.
 /// </summary>
 [SystemAccess(
@@ -25,17 +34,23 @@ namespace DualFrontier.Systems.Inventory;
 [TickRate(TickRates.NORMAL)]
 public sealed class HaulSystem : SystemBase
 {
+    private readonly HashSet<(EntityId Storage, string ItemId)> _inCallReservations = new();
+
     protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {
+        _inCallReservations.Clear();
+
         foreach (var pawn in Query<JobComponent>())
         {
             var job = GetComponent<JobComponent>(pawn);
             if (job.Current != JobKind.Idle) continue;
 
             if (!TryFindHaul(out var sourceId, out var destId, out var itemId, out var quantity))
-                return;
+                continue;
+
+            _inCallReservations.Add((sourceId, itemId));
 
             Services.Inventory.Publish(new ItemReservedEvent
             {
@@ -83,6 +98,8 @@ public sealed class HaulSystem : SystemBase
             if (s.Items.Count == 0) continue;
             foreach (var kv in s.Items)
             {
+                if (_inCallReservations.Contains((storage, kv.Key)))
+                    continue;
                 src      = storage;
                 srcItem  = kv.Key;
                 srcQty   = kv.Value;

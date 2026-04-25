@@ -26,16 +26,14 @@ namespace DualFrontier.Systems.Combat;
     buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Inventory), nameof(IGameServices.Magic) }
 )]
 [TickRate(TickRates.FAST)]
+[BridgeImplementation(Phase = 5)]
 public sealed class CompositeResolutionSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Фаза 4 — подписаться на CompoundShotIntent, AmmoGranted,
-    /// AmmoRefused, ManaGranted, ManaRefused.
+    /// Bridge: Phase 5 will subscribe to CompoundShotIntent / AmmoGranted /
+    /// AmmoRefused / ManaGranted / ManaRefused.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 4 — подписка на частичные ответы двухфазного коммита");
-    }
+    protected override void OnInitialize() { }
 
     /// <summary>
     /// Основной тик: разрешение накопленных незавершённых транзакций.

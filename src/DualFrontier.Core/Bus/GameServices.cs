@@ -5,17 +5,20 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
-/// Aggregates all domain event buses into a single service locator pattern, 
-/// implementing the IGameServices interface. This class provides access points 
-/// for various core game systems' event buses.
+/// Aggregates all domain event buses into a single service locator pattern,
+/// implementing the IGameServices interface. This class provides access points
+/// for various core game systems' event buses. Also implements internal
+/// <see cref="IDeferredFlush"/> so the scheduler can drain deferred events
+/// per phase without downcasting.
 /// </summary>
-internal sealed class GameServices : IGameServices
+internal sealed class GameServices : IGameServices, IDeferredFlush
 {
     private readonly CombatBus _combatBus = new();
     private readonly InventoryBus _inventoryBus = new();
     private readonly MagicBus _magicBus = new();
     private readonly WorldBus _worldBus = new();
     private readonly PawnBus _pawnBus = new();
+    private readonly PowerBus _powerBus = new();
 
     /// <inheritdoc/>
     public ICombatBus Combat => _combatBus;
@@ -32,8 +35,11 @@ internal sealed class GameServices : IGameServices
     /// <inheritdoc/>
     public IPawnBus Pawns => _pawnBus;
 
+    /// <inheritdoc/>
+    public IPowerBus Power => _powerBus;
+
     /// <summary>
-    /// Clears all underlying event buses. Should be called between scenes or during testing 
+    /// Clears all underlying event buses. Should be called between scenes or during testing
     /// to prevent stale events from affecting subsequent game states.
     /// </summary>
     public void Clear()
@@ -43,6 +49,22 @@ internal sealed class GameServices : IGameServices
         _magicBus.Clear();
         _worldBus.Clear();
         _pawnBus.Clear();
+        _powerBus.Clear();
+    }
+
+    /// <summary>
+    /// Drains the deferred queue of every owned bus. Called by
+    /// <c>ParallelSystemScheduler.ExecutePhase</c> after the parallel barrier
+    /// of each phase. See <see cref="DomainEventBus.FlushDeferred"/>.
+    /// </summary>
+    public void FlushDeferred()
+    {
+        _combatBus.FlushDeferred();
+        _inventoryBus.FlushDeferred();
+        _magicBus.FlushDeferred();
+        _worldBus.FlushDeferred();
+        _pawnBus.FlushDeferred();
+        _powerBus.FlushDeferred();
     }
 }
 
@@ -53,6 +75,7 @@ internal sealed class CombatBus : ICombatBus
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
+    public void FlushDeferred() => _bus.FlushDeferred();
 }
 
 internal sealed class InventoryBus : IInventoryBus
@@ -62,6 +85,7 @@ internal sealed class InventoryBus : IInventoryBus
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
+    public void FlushDeferred() => _bus.FlushDeferred();
 }
 
 internal sealed class MagicBus : IMagicBus
@@ -71,6 +95,7 @@ internal sealed class MagicBus : IMagicBus
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
+    public void FlushDeferred() => _bus.FlushDeferred();
 }
 
 internal sealed class WorldBus : IWorldBus
@@ -80,6 +105,7 @@ internal sealed class WorldBus : IWorldBus
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
+    public void FlushDeferred() => _bus.FlushDeferred();
 }
 
 internal sealed class PawnBus : IPawnBus
@@ -89,4 +115,15 @@ internal sealed class PawnBus : IPawnBus
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
+    public void FlushDeferred() => _bus.FlushDeferred();
+}
+
+internal sealed class PowerBus : IPowerBus
+{
+    private readonly DomainEventBus _bus = new();
+    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
+    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
+    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
+    public void Clear() => _bus.Clear();
+    public void FlushDeferred() => _bus.FlushDeferred();
 }

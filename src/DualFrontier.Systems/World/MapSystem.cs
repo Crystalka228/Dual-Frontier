@@ -18,15 +18,13 @@ namespace DualFrontier.Systems.World;
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 7)]
 public sealed class MapSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на CameraMovedEvent, RegionRequestedEvent.
+    /// Bridge: Phase 7 will subscribe to CameraMovedEvent / RegionRequestedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 0 — подписка на события стриминга карты");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

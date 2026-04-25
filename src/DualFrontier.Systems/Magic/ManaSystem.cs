@@ -24,6 +24,7 @@ namespace DualFrontier.Systems.Magic;
     bus:    nameof(IGameServices.Magic)
 )]
 [TickRate(TickRates.NORMAL)]
+[BridgeImplementation(Phase = 6)]
 public sealed class ManaSystem : SystemBase
 {
     // TODO: Фаза 5 — заменить на поле, инжектируемое через DI-контейнер,
@@ -31,13 +32,10 @@ public sealed class ManaSystem : SystemBase
     private readonly ManaLeaseRegistry _registry = new();
 
     /// <summary>
-    /// TODO: Подписаться на ManaIntent (списание), ManaLeaseOpenRequest
-    /// (открытие непрерывной аренды), внутренний CloseRequest.
+    /// Bridge: Phase 6 will subscribe to ManaIntent / ManaLeaseOpenRequest /
+    /// internal CloseRequest.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 1 — подписка на запросы маны");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

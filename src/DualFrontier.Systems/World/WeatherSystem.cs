@@ -19,16 +19,13 @@ namespace DualFrontier.Systems.World;
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 7)]
 public sealed class WeatherSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на RitualCompletedEvent (ритуалы могут
-    /// вызывать погоду) и NewDayEvent.
+    /// Bridge: Phase 7 will subscribe to RitualCompletedEvent / NewDayEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 1 — подписка на события погоды");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

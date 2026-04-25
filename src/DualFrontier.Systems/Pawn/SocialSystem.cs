@@ -19,15 +19,14 @@ namespace DualFrontier.Systems.Pawn;
     bus:    nameof(IGameServices.Pawns)
 )]
 [TickRate(TickRates.RARE)]
+[BridgeImplementation(Phase = 3)]
 public sealed class SocialSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на ConversationEvent, GiftEvent.
+    /// Bridge: pending Phase 3 expansion — will subscribe to ConversationEvent /
+    /// GiftEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 3 — подписка на социальные события");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

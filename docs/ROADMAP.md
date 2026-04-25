@@ -29,6 +29,14 @@
 
 Цель: работающее ECS-ядро с многопоточным планировщиком и доменными шинами.
 
+> Дополнено в v0.3 (закрытие долга Phase 4):
+> `[Deferred]` и `[Immediate]` семантика реализованы в `DomainEventBus` —
+> `[Deferred]`-события накапливаются в per-bus очереди и доставляются
+> `ParallelSystemScheduler` на границе каждой фазы внутри захваченного
+> при Subscribe `SystemExecutionContext` подписчика;
+> `[Immediate]` гарантированно доставляется синхронно. См.
+> [EVENT_BUS](./EVENT_BUS.md).
+
 ### Что реализуем
 
 Файлы в `src/DualFrontier.Core/`:
@@ -189,44 +197,72 @@
 
 Результат: склады, крафт-верстаки, электросеть, конвертор.
 InventorySystem с кэшем, HaulSystem, ElectricGridSystem
-с приоритетным распределением, ConverterSystem 30% КПД.
+с приоритетным распределением, ConverterSystem 30% КПД (зарегистрирована
+в `GameBootstrap`, цикл с ElectricGrid разорван через `[Deferred]` событие).
 Grimdark HUD с панелями ColonyPanel и PawnDetail.
-61/61 тестов.
+82/82 тестов (включая Phase 4 покрытие).
 
 ### Что реализовано
 
 - [x] `StorageComponent`, `WorkbenchComponent`
 - [x] `PowerConsumerComponent`, `PowerProducerComponent`
-- [x] `InventorySystem` (кэш + батчинг через `_freeSlotCache`/`_cacheDirty`)
-- [x] `HaulSystem` — поиск source→dest по предмету (Phase 4: телепорт без pathfinding)
-- [x] `ElectricGridSystem` — приоритетное распределение ватт
-- [x] `ConverterSystem` (КПД 30%) — реализована, регистрация отложена (см. ниже)
-- [x] `Events/Inventory/*` — все четыре события (`ItemAdded`, `ItemRemoved`, `ItemReserved`, `CraftRequest`)
-- [x] `Events/Power/*` — все три события (`PowerRequest`, `PowerGranted`, `GridOverload`)
+- [x] `InventorySystem` (кэш + батчинг через `_freeSlotCache`/`_cacheDirty`,
+      резервации через `[Deferred] ItemReservedEvent`)
+- [x] `HaulSystem` — поиск source→dest по предмету (Phase 4: телепорт без
+      pathfinding); per-Update reservation set предотвращает same-tick
+      double-allocation
+- [x] `ElectricGridSystem` — приоритетное распределение ватт, шина `IPowerBus`
+- [x] `ConverterSystem` (КПД 30%) — зарегистрирована, публикует
+      `[Deferred] ConverterPowerOutputEvent` на `IPowerBus`, разрывая
+      компонентный цикл с ElectricGrid
+- [x] `Events/Inventory/*` — все четыре события (`ItemAdded`, `ItemRemoved`,
+      `ItemReserved`, `CraftRequest`); первые три помечены `[Deferred]`
+- [x] `Events/Power/*` — `PowerRequest`, `PowerGranted`, `GridOverload`,
+      `ConverterPowerOutputEvent` (`[Deferred]`)
 - [x] Grimdark HUD — `GameHUD` (CanvasLayer), `ColonyPanel`, `PawnDetail`,
       `PawnStateReporterSystem`, `PawnStateCommand`
+- [x] `IPowerBus` добавлена в `IGameServices` (non-breaking, см.
+      [CONTRACTS](./CONTRACTS.md) §«Не ломающее → Добавление новой шины»)
+- [x] `BridgeImplementationAttribute` введён в `DualFrontier.Contracts.Attributes`
+      и применён ко всем системам со стаб-`OnInitialize` — Phase 5+
+      регистрация теперь не падает
 
 ### Открытые задачи
 
-- [ ] `CraftSystem` — Фаза 6 (стаб бросает `NotImplementedException`)
-- [ ] `ConverterSystem` регистрация в `GameBootstrap` — требует `[Deferred]`
-      семантики в `DomainEventBus` (цикл `ElectricGrid ↔ Converter` по
-      компонентам `PowerConsumer/PowerProducer`)
-- [ ] `ItemAddedEvent`/`ItemRemovedEvent` перевести на `[Deferred]`
-      доставку — иначе `InventorySystem.OnItemAdded.SetComponent` отрабатывает
-      в контексте публикующей системы и сорвёт DEBUG isolation guard, как
-      только появятся реальные `StorageComponent` сущности
+Закрыто в v0.3 (см. истории коммитов раздела «Архитектурные правки v0.3» ниже).
 
 ### Критерии приёмки
 
 - 100 пешек × 60 тиков × патрон-запрос: ≤100 сканов/сек (цель из 11.11).
 - Крафт цепочка: ресурс → верстак → продукт → склад. *(Фаза 6 — `CraftSystem`)*
-- Электросеть: генератор → провод → потребитель; overload на перегрузе.
-- Конвертор: 100W → 30 манны и обратно; работает точечно, невыгоден в масштабе.
+- Электросеть: генератор → провод → потребитель; overload на перегрузе. ✅
+  (см. `tests/DualFrontier.Systems.Tests/Power/ElectricGridOverloadTests.cs`)
+- Конвертор: 100W → 30W (магическая ветка получит ману в Phase 6); работает
+  точечно, невыгоден в масштабе. ✅ (см.
+  `tests/DualFrontier.Systems.Tests/Power/ConverterEfficiencyTests.cs`)
+
+### Архитектурные правки v0.3 (закрытие технического долга)
+
+- `[Deferred]`/`[Immediate]` доставка реализована в `DomainEventBus` (Q1).
+- `IPowerBus` добавлена в `IGameServices`; `ElectricGridSystem` и
+  `ConverterSystem` переведены на эту шину (Q2).
+- `ItemAddedEvent`/`ItemRemovedEvent`/`ItemReservedEvent` помечены
+  `[Deferred]`; `InventorySystem` подписывается на все три, мутации
+  `StorageComponent` идут на следующей фазе через захваченный контекст —
+  изоляция HaulSystem.writes=`[]` сохранена (Q3, Q4).
+- `ConverterSystem.writes` ужат до `[]`; выход публикуется через
+  `[Deferred] ConverterPowerOutputEvent`, цикл DAG разорван (Q6).
+- Все стабы с `throw new NotImplementedException` в `OnInitialize` получили
+  пустое тело + `[BridgeImplementation(Phase = N)]` (Q5) — разблокирует
+  Phase 5/6/7 регистрацию.
+- `HaulSystem` `return` после неуспешного `TryFindHaul` заменён на `continue`;
+  `DomainEventBus.Subscribe` TOCTOU исправлен через `GetOrAdd`.
 
 ### Разблокирует
 
 Бой и магию — обеим системам нужен инвентарь (патроны, кристаллы).
+Phase 5 (бой) теперь имеет работающий `[Deferred] DeathEvent` и bridge-стабы
+для Magic-систем, не падающие при регистрации.
 
 ## 🔨 Фаза 5 — Бой (текущая)
 

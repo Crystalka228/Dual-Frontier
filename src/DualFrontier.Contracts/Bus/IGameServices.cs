@@ -46,4 +46,12 @@ public interface IGameServices
     /// Читают: <c>EtherGridSystem</c>, <c>RaidSystem</c>.
     /// </summary>
     IWorldBus World { get; }
+
+    /// <summary>
+    /// Шина промышленной энергосети: PowerRequest, PowerGranted, GridOverload,
+    /// ConverterPowerOutput. Пишут: <c>ElectricGridSystem</c>,
+    /// <c>ConverterSystem</c>. Читают: <c>ElectricGridSystem</c>, потребители,
+    /// UI. Введена TechArch v0.3 §13.1.
+    /// </summary>
+    IPowerBus Power { get; }
 }

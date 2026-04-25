@@ -10,28 +10,52 @@ using DualFrontier.Events.Power;
 namespace DualFrontier.Systems.Power;
 
 /// <summary>
-/// Phase 4 electric grid: each SLOW tick sums producer output, sorts
-/// consumers by priority (highest first), and allocates supply until
+/// Phase 4 electric grid: each SLOW tick sums producer output (real
+/// <see cref="PowerProducerComponent"/> entities + the previous tick's
+/// converter-output events accumulated via <see cref="OnConverterOutput"/>),
+/// sorts consumers by priority (highest first), and allocates supply until
 /// exhausted. Consumers above the supply line stay powered; the rest are
-/// switched off. Publishes PowerGrantedEvent per powered consumer and
-/// GridOverloadEvent when any consumer is unpowered this tick.
+/// switched off. Publishes <see cref="PowerGrantedEvent"/> per powered consumer
+/// and <see cref="GridOverloadEvent"/> when any consumer is unpowered this tick.
+/// <para>
+/// Converter output flows through the bus, not the component graph: that
+/// breaks the ElectricGrid↔Converter cycle that the dependency graph would
+/// otherwise reject. See <see cref="ConverterPowerOutputEvent"/>.
+/// </para>
 /// Phase: 4. Tick: SLOW.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(PowerProducerComponent) },
     writes: new[] { typeof(PowerConsumerComponent) },
-    bus:    nameof(IGameServices.Inventory)
+    bus:    nameof(IGameServices.Power)
 )]
 [TickRate(TickRates.SLOW)]
 public sealed class ElectricGridSystem : SystemBase
 {
     private readonly List<(EntityId Entity, PowerConsumerComponent Consumer)> _consumers = new();
+    private float _converterSupplyAccumulator;
 
-    protected override void OnInitialize() { }
+    /// <summary>
+    /// Subscribes to <see cref="ConverterPowerOutputEvent"/> on the
+    /// <see cref="IGameServices.Power"/> bus. Converter outputs from the
+    /// previous tick are summed in <see cref="_converterSupplyAccumulator"/>
+    /// and folded into the supply at the start of the next <see cref="Update"/>.
+    /// </summary>
+    protected override void OnInitialize()
+    {
+        Services.Power.Subscribe<ConverterPowerOutputEvent>(OnConverterOutput);
+    }
+
+    private void OnConverterOutput(ConverterPowerOutputEvent e)
+    {
+        _converterSupplyAccumulator += e.WattsOutput;
+    }
 
     public override void Update(float delta)
     {
-        float totalSupply = 0f;
+        float totalSupply = _converterSupplyAccumulator;
+        _converterSupplyAccumulator = 0f;
+
         foreach (var producerId in Query<PowerProducerComponent>())
         {
             var producer = GetComponent<PowerProducerComponent>(producerId);
@@ -60,7 +84,7 @@ public sealed class ElectricGridSystem : SystemBase
                 remaining -= consumer.RequiredWatts;
                 SetComponent(entity, consumer);
 
-                Services.Inventory.Publish(new PowerGrantedEvent
+                Services.Power.Publish(new PowerGrantedEvent
                 {
                     ConsumerId   = entity,
                     WattsGranted = consumer.RequiredWatts
@@ -76,7 +100,7 @@ public sealed class ElectricGridSystem : SystemBase
 
         if (unpoweredCount > 0)
         {
-            Services.Inventory.Publish(new GridOverloadEvent
+            Services.Power.Publish(new GridOverloadEvent
             {
                 TotalDemand    = totalDemand,
                 TotalSupply    = totalSupply,

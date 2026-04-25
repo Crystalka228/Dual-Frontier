@@ -18,15 +18,13 @@ namespace DualFrontier.Systems.Pawn;
     bus:    nameof(IGameServices.Pawns)
 )]
 [TickRate(TickRates.NORMAL)]
+[BridgeImplementation(Phase = 3)]
 public sealed class SkillSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на SkillXpGainedEvent.
+    /// Bridge: pending Phase 3 expansion — will subscribe to SkillXpGainedEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 3 — подписка на XP события");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

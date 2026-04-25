@@ -21,15 +21,13 @@ namespace DualFrontier.Systems.Combat;
     bus:    nameof(IGameServices.Combat)
 )]
 [TickRate(TickRates.FAST)]
+[BridgeImplementation(Phase = 5)]
 public sealed class DamageSystem : SystemBase
 {
     /// <summary>
-    /// TODO: Подписаться на DamageEvent, ProjectileHitEvent.
+    /// Bridge: Phase 5 will subscribe to DamageEvent / ProjectileHitEvent.
     /// </summary>
-    protected override void OnInitialize()
-    {
-        throw new NotImplementedException("TODO: Фаза 2 — подписка на события урона");
-    }
+    protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {

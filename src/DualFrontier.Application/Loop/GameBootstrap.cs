@@ -75,8 +75,7 @@ internal static class GameBootstrap
         graph.AddSystem(new InventorySystem());
         graph.AddSystem(new HaulSystem());
         graph.AddSystem(new ElectricGridSystem());
-        // ConverterSystem registration deferred — see TODO in ROADMAP.md
-        // (cycle ElectricGrid ↔ Converter requires [Deferred] event coupling).
+        graph.AddSystem(new ConverterSystem());
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(

@@ -4,6 +4,7 @@
 
 ## История изменений
 
+- **v0.3 (2026-04):** Закрытие архитектурного долга Phase 4. `[Deferred]`/`[Immediate]` доставка реализована в `DomainEventBus` (per-bus очередь, дренаж между фазами, захват `SystemExecutionContext` подписчика); добавлена шестая доменная шина `IPowerBus` для `ElectricGridSystem` + `ConverterSystem`; разорван компонентный цикл ElectricGrid↔Converter через `[Deferred] ConverterPowerOutputEvent`; `ItemAddedEvent`/`ItemRemovedEvent`/`ItemReservedEvent` помечены `[Deferred]` — мутация `StorageComponent` идёт в контексте `InventorySystem`, изоляция `HaulSystem.writes=[]` сохранена; введён `BridgeImplementationAttribute(Phase = N)` и применён ко всем системам со стаб-`OnInitialize`.
 - **v0.2 (2026-04):** Добавлены модели Lease ([RESOURCE_MODELS](./RESOURCE_MODELS.md), [EVENT_BUS](./EVENT_BUS.md)), двухфазный commit для multi-bus запросов ([COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md)), feedback-loop resolution через tick lag ([FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md)), детерминированная резолюция урона ([COMBO_RESOLUTION](./COMBO_RESOLUTION.md)), состояния владения големом ([OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md)), bridge-pattern между фазами 5 и 6 ([ROADMAP](./ROADMAP.md)).
 - **v0.1 (2026-03):** Исходный каркас: четыре слоя, пять доменных шин, декларативная изоляция, параллельный планировщик.
 
