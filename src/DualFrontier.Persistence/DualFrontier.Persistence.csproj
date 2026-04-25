@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Persistence</AssemblyName>
+    <RootNamespace>DualFrontier.Persistence</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <ProjectReference Include="..\DualFrontier.Components\DualFrontier.Components.csproj" />
+  </ItemGroup>
+</Project>
