@@ -47,6 +47,10 @@ internal static class GameBootstrap
             bridge.Enqueue(new PawnMovedCommand(e.PawnId, e.X, e.Y)));
         services.Combat.Subscribe<DeathEvent>(e =>
             bridge.Enqueue(new PawnDiedCommand(e.Who)));
+        services.Pawns.Subscribe<PawnStateChangedEvent>(e =>
+            bridge.Enqueue(new PawnStateCommand(
+                e.PawnId, e.Name, e.Hunger, e.Thirst, e.Rest, e.Comfort,
+                e.Mood, e.JobLabel, e.JobUrgent)));
 
         SpawnInitialPawns(world, services);
 
@@ -65,6 +69,7 @@ internal static class GameBootstrap
         graph.AddSystem(new MoodSystem());
         graph.AddSystem(new JobSystem());
         graph.AddSystem(new MovementSystem(pathfinding));
+        graph.AddSystem(new PawnStateReporterSystem());
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
