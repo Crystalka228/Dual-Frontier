@@ -1,6 +1,7 @@
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Loop;
 using DualFrontier.Presentation.Rendering;
+using DualFrontier.Presentation.UI;
 using Godot;
 
 namespace DualFrontier.Presentation.Nodes;
@@ -20,6 +21,7 @@ public partial class GameRoot : Node2D
     private PresentationBridge _bridge = null!;
     private GameLoop _loop = null!;
     private RenderCommandDispatcher _dispatcher = null!;
+    private GameHUD _hud = null!;
 
     public override void _Ready()
     {
@@ -27,6 +29,7 @@ public partial class GameRoot : Node2D
 
         var tileMap   = GetNode<TileMapRenderer>("TileMapRenderer");
         var pawnLayer = GetNode<PawnLayer>("PawnLayer");
+        _hud          = GetNode<GameHUD>("GameHUD");
 
         _dispatcher = new RenderCommandDispatcher(pawnLayer);
 

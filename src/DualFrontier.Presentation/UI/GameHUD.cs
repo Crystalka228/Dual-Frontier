@@ -1,0 +1,23 @@
+using Godot;
+
+namespace DualFrontier.Presentation.UI;
+
+/// <summary>
+/// Top-level HUD overlay (CanvasLayer 10). Hosts the colony roster on the
+/// left and the per-pawn detail panel on the right. Forwards updates from
+/// the render dispatcher to its child panels.
+/// Phase 4 — Grimdark Warhammer style.
+/// </summary>
+public partial class GameHUD : CanvasLayer
+{
+    private ColonyPanel _colony = null!;
+    private PawnDetail  _detail = null!;
+
+    public override void _Ready()
+    {
+        Layer = 10;
+        _colony = GetNode<ColonyPanel>("ColonyPanel");
+        _detail = GetNode<PawnDetail>("PawnDetail");
+        _colony.PawnSelected += id => _detail.ShowPawn(id);
+    }
+}
