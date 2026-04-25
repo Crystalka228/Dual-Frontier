@@ -1,5 +1,4 @@
 using DualFrontier.Contracts.Core;
-
 namespace DualFrontier.Events.Inventory
 {
     /// <summary>
