@@ -16,6 +16,7 @@ public interface IGameServices
     IMagicBus     Magic     { get; }
     IWorldBus     World     { get; }
     IPawnBus      Pawns     { get; }
+    IPowerBus     Power     { get; } // Введена в v0.3 §13.1
 }
 ```
 
@@ -144,7 +145,7 @@ void OnAmmoIntentBatch(IReadOnlyList<AmmoIntent> intents)
 
 `IntentBatcher` в `DualFrontier.Core/Bus` отвечает за сбор намерений: системы-обработчики подписываются не на отдельное событие, а на батч.
 
-## Модель Lease (v02 §12.1)
+## Модель Lease (v0.2 §12.1)
 
 Двухшаговая модель `Intent → Granted/Refused` рассчитана на дискретные запросы: один патрон, один заряд маны. Когда ресурс расходуется не один раз, а каждый тик (канал заклинания, поддержка щита, активный ritual) — цепочка Intent'ов каждый тик избыточна и плохо переживает срывы. Для таких сценариев v0.2 вводит модель **Lease** (аренда).
 

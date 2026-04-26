@@ -9,7 +9,7 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 Документы, описывающие фундамент: слои, контракты, ядро ECS, шины событий, многопоточность и изоляцию.
 
 - [ARCHITECTURE](./ARCHITECTURE.md) — четыре слоя, правила зависимостей, диаграмма сборок.
-- [CONTRACTS](./CONTRACTS.md) — маркер-интерфейсы, пять доменных шин, эволюция и версионирование.
+- [CONTRACTS](./CONTRACTS.md) — маркер-интерфейсы, шесть доменных шин, эволюция и версионирование.
 - [ECS](./ECS.md) — World, EntityId, Component, SparseSet, Query, SystemBase.
 - [EVENT_BUS](./EVENT_BUS.md) — доменные шины, двухшаговая модель Intent→Granted/Refused, батч-обработка.
 - [THREADING](./THREADING.md) — DependencyGraph, фазы, TickRates, запрет async.
@@ -50,7 +50,7 @@ Dual Frontier — колониальный симулятор на Godot 4 + C# 
 
 - [SESSION_PHASE_4_CLOSURE_REVIEW](./SESSION_PHASE_4_CLOSURE_REVIEW.md) — закрытие Phase 4 силами Opus 4.7: валидация диагностики, 6 архитектурных решений, 17 новых тестов, 7 атомарных коммитов.
 
-## v02 Addendum
+## v0.2 Addendum
 
 Дополнения второй ревизии архитектуры: модели ресурсов, composite-запросы, обратные связи через tick lag, детерминированная резолюция урона, переходы владения големом.
 
