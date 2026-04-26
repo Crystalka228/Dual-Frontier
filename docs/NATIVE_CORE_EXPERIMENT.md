@@ -84,7 +84,7 @@ IGameServices (шины)          ← не меняется
 
 > 📌 **Правило замены**
 > C++ ядро заменяет только то, что помечено `internal` в Core. Контракты не
-> трогаются. Системы не трогаются. 43 теста не трогаются.
+> трогаются. Системы не трогаются. Существующие тесты не трогаются.
 
 | Слой | Меняется? | Причина |
 |------|-----------|---------|
@@ -94,7 +94,7 @@ IGameServices (шины)          ← не меняется
 | `DualFrontier.Systems` | ❌ Нет | Системы работают через `SystemBase` — не знают о реализации |
 | `DualFrontier.Application` | ❌ Нет | Использует `IGameServices`, не `World` напрямую |
 | `DualFrontier.Presentation` | ❌ Нет | Только `PresentationBridge` — не знает о ECS |
-| Все 43 теста | ❌ Нет | Тестируют поведение через контракты, не реализацию |
+| Все существующие тесты | ❌ Нет | Тестируют поведение через контракты, не реализацию |
 
 ---
 
@@ -303,7 +303,7 @@ copy build\Release\DualFrontier.Core.Native.dll `
 ### Шаг 4 — Запустить бенчмарк
 
 ```powershell
-cd D:\Colony_Simulator\Colony_Simulator
+cd D:\Dual-Frontier\Dual-Frontier
 dotnet run --project tests\DualFrontier.Core.Benchmarks `
            -c Release -- --filter "*NativeVsManaged*"
 ```
@@ -424,7 +424,7 @@ jitter на длительной симуляции.
 
 ### Долгосрочная траектория
 
-**Сейчас (Фаза 3)**
+**Сейчас (Phase 5)**
 Godot Runtime → C# GameLoop → C# ECS ядро
 
 **После эксперимента (если успешен)**
