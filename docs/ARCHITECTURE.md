@@ -70,6 +70,26 @@ Native — то, что запускают игроки. Работают тол
 
 Сборка `DualFrontier.Core`. Инфраструктура ECS: `World`, `ComponentStore`, `DomainEventBus`, `ParallelSystemScheduler`, `DependencyGraph`, `SpatialGrid`. Всё `internal` — снаружи видны только контракты. Сборке `DualFrontier.Systems` открыт доступ через `InternalsVisibleTo`.
 
+## Состав решения
+
+Полный перечень сборок, входящих в `DualFrontier.sln`, плюс нативный
+side-car проект.
+
+| Сборка | Слой | Назначение |
+|---|---|---|
+| `DualFrontier.Contracts` | All | Публичные интерфейсы, атрибуты, маркер-типы. Единственное, что видит мод. |
+| `DualFrontier.Core` | Infrastructure | ECS-ядро, планировщик, доменные шины. `internal` — снаружи недоступно. |
+| `DualFrontier.Core.Interop` | Infrastructure | P/Invoke-обёртки над `native/DualFrontier.Core.Native/`. См. [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md). |
+| `native/DualFrontier.Core.Native/` | Infrastructure | C++-исследовательская реализация ECS-ядра. Решение по batch-API отложено до Phase 9. |
+| `DualFrontier.Components` | Domain | Чистые POCO-компоненты, никакой логики. |
+| `DualFrontier.Events` | Domain | `record`-события, запросы, команды, intents. |
+| `DualFrontier.Systems` | Domain | Игровые системы. `[SystemAccess]` декларирует R/W. |
+| `DualFrontier.AI` | Domain | Behavior Tree, Job-ы, Pathfinding. |
+| `DualFrontier.Persistence` | Infrastructure | Snapshot-кодеры, RLE, range encoding, StringPool. Не зависит от Godot. |
+| `DualFrontier.Application` | Application | GameLoop, Save/Load, ModLoader, PresentationBridge. |
+| `DualFrontier.Presentation` | Presentation | Godot DevKit: редактор сцен, визуальная отладка. Единственная сборка, которой разрешён `using Godot`. |
+| `DualFrontier.Presentation.Native` | Presentation | Production-рантайм на Silk.NET + OpenGL. Собирается без зависимости от Godot. |
+
 ## Правила зависимостей
 
 Направление стрелок зависимостей — строго сверху вниз. Нарушение = ошибка архитектурного ревью.
@@ -77,12 +97,35 @@ Native — то, что запускают игроки. Работают тол
 - `Contracts` не зависит ни от чего кроме `System.*`.
 - `Components`, `Events` зависят только от `Contracts`.
 - `Core` зависит от `Contracts`.
+- `Core.Interop` зависит от `Contracts` и от нативной библиотеки `DualFrontier.Core.Native` через P/Invoke. Не ссылается на игровые сборки.
+- `Persistence` зависит от `Contracts`. Не знает о Godot.
 - `Systems` зависит от `Contracts`, `Components`, `Events` и от `Core` через `InternalsVisibleTo`.
 - `AI` зависит от `Contracts` и `Components`.
 - `Application` зависит от `Core` и `Systems`.
 - `Presentation` (Godot DevKit) зависит от `Application` и `Godot`.
 - `Presentation.Native` зависит от `Application` и `Silk.NET` (не от `Godot`).
 - Моды зависят **только** от `Contracts`. Ссылка на `Core` из мода блокируется `AssemblyLoadContext`.
+
+## Граница движок / игра
+
+Кодовая база развивается двумя параллельными треками: **игра** Dual Frontier
+(Phase 0–7, основная ветка) и **движок** — обобщённое ECS-ядро, которое
+после релиза игры форкается в отдельный продукт. Граница между этими треками
+проходит по сборкам и проверяется на каждом PR.
+
+| Движковые (generic, переиспользуемые) | Игровые (специфичны для Dual Frontier) |
+|---------------------------------------|----------------------------------------|
+| `DualFrontier.Contracts` | `DualFrontier.Components` |
+| `DualFrontier.Core` | `DualFrontier.Events` |
+| `DualFrontier.Core.Interop` | `DualFrontier.Systems` |
+| `native/DualFrontier.Core.Native/` | `DualFrontier.AI` |
+| `DualFrontier.Presentation.Native` | `DualFrontier.Presentation` (Godot DevKit) |
+| Модинг-секция `DualFrontier.Application` | Игровой цикл `DualFrontier.Application` |
+
+Главный инвариант: **движковые сборки никогда не ссылаются на игровые**.
+Прикладной чек-лист на каждый PR, который этот инвариант проверяет, —
+в [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md). Развилка форка после
+релиза описана в [ROADMAP §«Пост-релиз — развилка на движок»](./ROADMAP.md#пост-релиз--развилка-на-движок).
 
 ## Зачем так: сценарии
 

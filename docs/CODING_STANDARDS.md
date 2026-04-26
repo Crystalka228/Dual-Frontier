@@ -169,8 +169,83 @@ public sealed class DomainEventBus : IEventBus
 - Магические числа — `const` с именем, описывающим смысл. `4.2f` в коде без комментария — смертный грех.
 - Возврат `null` из публичного API — только когда это явная часть контракта (`TryGet` и `T? FindBy(...)`).
 
+## Сообщения коммитов
+
+Каждый коммит начинается со scope-префикса. Префикс задаёт сторону границы
+движок / игра (см. [ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра))
+и одной командой `git log --grep` позволяет извлечь историю любой
+подсистемы. Это инвестиция в дешевизну форка движка после Phase 7.
+
+### Движковые префиксы
+
+Используются в коммитах, трогающих исключительно движковые сборки.
+После релиза эти коммиты уходят в форк движка.
+
+| Префикс | Где применяется |
+|---|---|
+| `contracts:` | `DualFrontier.Contracts` — публичные интерфейсы, атрибуты, маркер-типы. |
+| `core:` | `DualFrontier.Core` — ECS-ядро, планировщик, доменные шины. |
+| `interop:` | `DualFrontier.Core.Interop` — P/Invoke-обёртки. |
+| `native:` | `native/DualFrontier.Core.Native/` — C++-реализация ядра. |
+| `modding:` | Модинг-секция `DualFrontier.Application` — `ModLoader`, `ContractValidator` и пр. |
+| `presentation-native:` | `DualFrontier.Presentation.Native` — Silk.NET production-рантайм. |
+| `experiment:` | Исследовательские ветки до мёржа. После принятия эксперимент превращается в обычный движковый коммит. |
+
+### Игровые префиксы
+
+Используются в коммитах, трогающих исключительно игровые сборки.
+После релиза эти коммиты остаются в основном репозитории игры.
+
+| Префикс | Область |
+|---|---|
+| `feat(pawn):`, `fix(pawn):` | Пешки — нужды, настроение, jobs. |
+| `feat(combat):`, `fix(combat):` | Бой, оружие, броня, статусы. |
+| `feat(magic):`, `fix(magic):` | Магия, мана, голем, эфир. |
+| `feat(world):`, `fix(world):` | Мир, биомы, погода, рейды. |
+| `feat(inventory):`, `fix(inventory):` | Инвентарь, склады, крафт. |
+| `feat(ai):`, `fix(ai):` | Behavior Tree, jobs-система. |
+| `feat(application):`, `fix(application):` | Игровой цикл, ScenarioLoader, SaveSystem. |
+| `feat(presentation):`, `fix(presentation):` | Godot DevKit, UI, ноды. |
+| `feat(bootstrap):` | Проводка при появлении новой системы — регистрация в `GameBootstrap`. |
+
+### Нейтральные префиксы
+
+Не привязаны к стороне границы.
+
+- `docs:` — документация.
+- `test:` — тесты, не привязанные к одной области.
+- `chore:` — обслуживание (tooling, конфиги, форматтинг).
+- `build:` — сборка (`*.csproj`, `Directory.Build.props`, `CMakeLists.txt`).
+- `refactor:` — переорганизация без изменения поведения.
+
+### Машинно-проверяемое условие
+
+Список разрешённых префиксов фиксирован. Скрипт PR-чек-листа из
+[DEVELOPMENT_HYGIENE §«Чек-лист перед каждым PR»](./DEVELOPMENT_HYGIENE.md#чек-лист-перед-каждым-pr)
+отвергает любой коммит, не начинающийся ни с одного из них. Изменение
+списка — архитектурное решение, требующее одновременной правки этого
+документа и PR-чек-листа.
+
+### Тело сообщения
+
+После префикса — короткое описание (≤72 символа) в повелительном
+наклонении и нижнем регистре после двоеточия:
+
+```
+core: implement [Deferred]/[Immediate] event delivery
+feat(combat): add ShieldRefillIntent to combat bus
+fix(inventory): replace return with continue in HaulSystem
+docs: synchronize doc-set after v0.3 architectural shift
+```
+
+Развёрнутое описание (если нужно) — после пустой строки. Один коммит =
+одна логически завершённая правка; смешанные коммиты («core: ..., also
+feat(pawn): ...») разбиваются на два через `git rebase -i` (см. красный
+флаг в [DEVELOPMENT_HYGIENE §«Красные флаги»](./DEVELOPMENT_HYGIENE.md#красные-флаги)).
+
 ## См. также
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md)
 - [ISOLATION](./ISOLATION.md)
+- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md)
