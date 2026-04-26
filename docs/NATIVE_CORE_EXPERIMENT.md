@@ -459,3 +459,11 @@ Godot = только редактор сцен
 
 Производительность Unreal. Удобство разработки C#. Архитектура, которая не
 ломается при замене ядра.
+
+## См. также
+
+- [ARCHITECTURE](./ARCHITECTURE.md) — состав решения и правила зависимостей; запись о `DualFrontier.Core.Interop` и `native/DualFrontier.Core.Native/`.
+- [PERFORMANCE](./PERFORMANCE.md) — целевые метрики и горячие пути.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — родственный отложенный эксперимент по выносу горячего пути.
+- [ROADMAP](./ROADMAP.md) — Phase 9 (batch-API, Native Runtime).
+- [METHODOLOGY](./METHODOLOGY.md) §4.2 — асинхронная разработка ветки эксперимента.

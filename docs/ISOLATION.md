@@ -223,3 +223,7 @@ var inventory = GetSystem<InventorySystem>();
 - [ECS](./ECS.md)
 - [THREADING](./THREADING.md)
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md)
+- [EVENT_BUS](./EVENT_BUS.md) — захват контекста подписчика для `[Deferred]`-доставки.
+- [MODDING](./MODDING.md) — `ModIsolationException` со стороны автора мода.
+- [MOD_PIPELINE](./MOD_PIPELINE.md) — `ModFaultHandler` и жизненный цикл выгрузки.
+- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — PR-инварианты, защищающие границу.

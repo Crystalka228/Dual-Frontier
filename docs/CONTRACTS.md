@@ -129,3 +129,8 @@ public class ArtifactMod : IMod
 - [EVENT_BUS](./EVENT_BUS.md)
 - [MODDING](./MODDING.md)
 - [ECS](./ECS.md)
+- [ARCHITECTURE](./ARCHITECTURE.md) — состав решения, граница движок / игра.
+- [RESOURCE_MODELS](./RESOURCE_MODELS.md) — Intent vs Lease как контрактные модели.
+- [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — multi-bus запросы поверх контрактов.
+- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — детерминированная резолюция `DamageIntent`.
+- [OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md) — состояния `GolemBondComponent` и события перехода.

@@ -209,3 +209,5 @@ protected override void OnDispose()
 - [THREADING](./THREADING.md)
 - [CONTRACTS](./CONTRACTS.md)
 - [PERFORMANCE](./PERFORMANCE.md)
+- [ISOLATION](./ISOLATION.md) — захват `SystemExecutionContext` подписчика для `[Deferred]`-доставки.
+- [RESOURCE_MODELS](./RESOURCE_MODELS.md) — выбор между Intent и Lease.
