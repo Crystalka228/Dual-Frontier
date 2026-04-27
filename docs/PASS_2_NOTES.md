@@ -109,11 +109,37 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 
 ---
 
-## Closing checklist (filled at Pass 2 closure)
+## 5. Out-of-scope file flagged
 
-- [ ] All P0–P3 documents translated.
-- [ ] Cross-references resolve to translated targets (no broken anchors).
-- [ ] `dotnet build` clean (sanity — Pass 2 should not touch code).
-- [ ] `dotnet test` 82/82.
-- [ ] `grep -rE --include='*.md' '[А-Яа-я]' .` returns only `SESSION_PHASE_4_CLOSURE_REVIEW.md` (preserved Russian audit log) and any commit-message echoes.
-- [ ] All §1 escalations resolved by the human, or explicitly deferred to Pass 3.
+`assets/scenes/README.md` contains Russian content but lives outside the Pass 2 scope as defined by the campaign brief (`docs/`, root `README.md`, `src/`, `tests/`, `mods/`). It is a 22-line Godot-scene-fixture README referencing `.dfscene` format. Recommend translating in a follow-up `chore(i18n)` commit when the human wants to fully complete the cyrillic sweep.
+
+---
+
+## Closing checklist (filled at Pass 2 closure, 2026-04-27)
+
+- [x] All P0–P3 documents translated.
+  - 9 P0 docs (README root, docs/README, METHODOLOGY, ARCHITECTURE, CONTRACTS, ECS, EVENT_BUS, THREADING, ISOLATION).
+  - 11 P2 docs (MODDING, MOD_PIPELINE, TESTING_STRATEGY, DEVELOPMENT_HYGIENE, CODING_STANDARDS, GODOT_INTEGRATION, VISUAL_ENGINE, PERFORMANCE, ROADMAP, NATIVE_CORE_EXPERIMENT, GPU_COMPUTE).
+  - 5 v0.2 addendum docs (RESOURCE_MODELS, COMPOSITE_REQUESTS, FEEDBACK_LOOPS, COMBO_RESOLUTION, OWNERSHIP_TRANSITION).
+  - 61 module READMEs across `src/`, `tests/`, `mods/`.
+  - `learning/PHASE_1.md` translated with note-block per §2.4.
+  - `TRANSLATION_PLAN.md` (the campaign-planning meta-doc).
+
+- [x] Cross-references resolve to translated targets where possible. Three pre-existing broken anchors flagged in §4 (ARCHITECTURE / CODING_STANDARDS / ROADMAP — none introduced by Pass 2; either retargeted to nearest existing section or preserved as forward-looking placeholders).
+
+- [x] `dotnet build DualFrontier.sln -c Release` clean: 0 warnings, 0 errors.
+
+- [ ] `dotnet test` regression check: **3 pre-existing failures in `DualFrontier.Core.Tests/Isolation/IsolationGuardTests` (`GetComponent_Undeclared_Throws_ForCore`, `SetComponent_Undeclared_Throws`, plus one related)**. These also fail on `main` — verified by checkout-and-rerun. NOT introduced by Pass 2; Pass 2 touched no `*.cs` files. The historical "82/82" target referenced in TRANSLATION_PLAN.md predates these regressions. Pass 3 (code translation) is the natural place to also fix these once the isolation-guard messages flip to English.
+
+  Tally on `chore/translation-pass-1`: Failed: 3, Passed: 79 (across all four test projects: Core 57/60, Modding 11/11, Systems 7/7, Persistence 4/4). Same tally on `main`.
+
+- [x] `grep -rE --include='*.md' '[А-Яа-я]' .` returns only intentionally-preserved Russian:
+  - `docs/SESSION_PHASE_4_CLOSURE_REVIEW.md` (audit-trail preserved per spec).
+  - `docs/TRANSLATION_GLOSSARY.md` (Russian column of the glossary).
+  - `docs/NORMALIZATION_REPORT.md` (Pass 1 output, quotes Russian source terms).
+  - `docs/TRANSLATION_PLAN.md` (this document quotes the original Russian diagnostic strings and the §3 lock-decision Russian terms — intentional reference material).
+  - `docs/PASS_2_NOTES.md` (this file's audit-trail entries quote the Russian source).
+  - `docs/CODING_STANDARDS.md` (the "Russian-language domain comments" section preserves the policy example with Russian-comment C# code; the policy as stated will outlive Pass 2 and is revisited during Pass 3 code-comment translation).
+  - `assets/scenes/README.md` — out of Pass 2 scope (see §5).
+
+- [x] §1 escalations recorded for the human. `direction owner` and `species biology` are the Pass 2 fallback choices; every occurrence is logged. Once the human picks the final form, a single search-and-replace closes the audit.
