@@ -1,26 +1,29 @@
-# Input — Источник пользовательского ввода
+# Input — User input source
 
-## Назначение
-`IInputSource` — контракт для опроса ввода и публикации нормализованных
-доменных событий. Application не знает, откуда физически приходят нажатия;
-каждая Presentation-сборка реализует свой polling.
+## Purpose
+`IInputSource` is the contract for polling input and publishing normalized
+domain events. Application does not know where keystrokes physically come
+from; each Presentation assembly implements its own polling.
 
-## Зависимости
-- `DualFrontier.Contracts` — `IGameServices` для публикации событий в шины.
+## Dependencies
+- `DualFrontier.Contracts` — `IGameServices` for publishing events to the buses.
 
-## Что внутри
-- `IInputSource.cs` — единственный метод `Poll()`.
+## Contents
+- `IInputSource.cs` — single `Poll()` method.
 
-## Правила
-- Ни `Godot.InputEvent`, ни `Silk.NET.Input.*` не утекают в Application.
-- `Poll` не блокирует — читает и отправляет в шины, не ждёт реакции.
-- Маппинг "физический ввод → доменное событие" живёт в конкретной реализации.
+## Rules
+- Neither `Godot.InputEvent` nor `Silk.NET.Input.*` leaks into Application.
+- `Poll` does not block — it reads and dispatches to the buses, does not wait
+  for a response.
+- The "physical input → domain event" mapping lives in the concrete
+  implementation.
 
 ## TODO
-- [ ] Фаза 3.5 — `GodotInputRouter` в `DualFrontier.Presentation`.
-- [ ] Фаза 5+ — `NativeInputHandler` в `DualFrontier.Presentation.Native`
+- [ ] Phase 3.5 — `GodotInputRouter` in `DualFrontier.Presentation`.
+- [ ] Phase 5+ — `NativeInputHandler` in `DualFrontier.Presentation.Native`
       (Silk.NET input polling).
 
-## См. также
-- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — общая стратегия
-  DevKit vs Native, три контракта (`IRenderer`, `ISceneLoader`, `IInputSource`).
+## See also
+- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — overall
+  DevKit vs Native strategy and the three contracts (`IRenderer`,
+  `ISceneLoader`, `IInputSource`).

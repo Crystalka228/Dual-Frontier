@@ -1,25 +1,25 @@
-# Loop — Главный цикл игры
+# Loop — Main game loop
 
-## Назначение
-Главный цикл симуляции. `GameLoop` тикает систем через планировщик `Core`,
-поддерживает фиксированный шаг времени (simulation tick) независимо от FPS
-рендера. `FrameClock` — часовой таймер, источник `delta` и времени.
+## Purpose
+Main simulation loop. `GameLoop` ticks systems through the `Core` scheduler
+and maintains a fixed time step (simulation tick) independent of render FPS.
+`FrameClock` is the time source for `delta` and current time.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Core` — `World`, `ParallelSystemScheduler`, `GameServices`
 - `DualFrontier.Contracts` — `IGameServices`
 
-## Что внутри
-- `GameLoop.cs` — запуск/остановка/тик симуляции.
-- `FrameClock.cs` — источник времени (`Now`, `DeltaTime`).
+## Contents
+- `GameLoop.cs` — start/stop/tick the simulation.
+- `FrameClock.cs` — time source (`Now`, `DeltaTime`).
 
-## Правила
-- Симуляция тикает с **фиксированным** шагом (цель — 30 tps по TechArch).
-  Рендер и ввод живут на другой частоте — они не управляют `Tick`.
-- Цикл НЕ вызывает Godot. Вместо этого он складывает команды в
-  `PresentationBridge`, который Godot читает в своём `_Process`.
+## Rules
+- The simulation ticks at a **fixed** step (target — 30 tps per TechArch).
+  Render and input live at a different cadence — they do not drive `Tick`.
+- The loop does NOT call Godot. Instead it places commands into
+  `PresentationBridge`, which Godot reads in its `_Process`.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var clock = new FrameClock();
 var loop  = new GameLoop(services, bridge);
@@ -31,7 +31,7 @@ while (running)
 ```
 
 ## TODO
-- [x] Фаза 1 — фиксированный accumulator-based tick (30 Hz).
-- [x] Фаза 1 — пауза / speed-multiplier (x1/x2/x3).
-- [x] Фаза 3 — `GameBootstrap` реализован, `NavGrid` и
-      `MovementSystem` подключены.
+- [x] Phase 1 — fixed accumulator-based tick (30 Hz).
+- [x] Phase 1 — pause / speed multiplier (x1/x2/x3).
+- [x] Phase 3 — `GameBootstrap` implemented; `NavGrid` and
+      `MovementSystem` are wired in.

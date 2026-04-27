@@ -1,34 +1,35 @@
-# Commands — Команды рендера
+# Commands — Render commands
 
-## Назначение
-Конкретные реализации `IRenderCommand`. Каждый файл — одна команда:
-данные о событии из домена, плюс метод `Execute`, который в Фазе 5
-применит эффект к сцене Godot.
+## Purpose
+Concrete `IRenderCommand` implementations. Each file is a single command:
+event data from the domain plus an `Execute` method that, in Phase 5, applies
+the effect to the Godot scene.
 
-## Зависимости
-- `DualFrontier.Contracts.Core` — `EntityId` и базовые типы.
+## Dependencies
+- `DualFrontier.Contracts.Core` — `EntityId` and base types.
 - `DualFrontier.Application.Bridge` — `IRenderCommand`.
 
-## Что внутри
-- `PawnDiedCommand.cs` — смерть пешки (эффект, звук, обновление UI).
-- `ProjectileSpawnedCommand.cs` — появление снаряда (визуал траектории).
-- `SpellCastCommand.cs` — каст заклинания (VFX школы магии).
-- `UIUpdateCommand.cs` — обновление UI-элемента (счётчик/плашка).
+## Contents
+- `PawnDiedCommand.cs` — pawn death (effect, sound, UI update).
+- `ProjectileSpawnedCommand.cs` — projectile spawn (trajectory visuals).
+- `SpellCastCommand.cs` — spell casting (school-of-magic VFX).
+- `UIUpdateCommand.cs` — UI element update (counter / banner).
 
-## Правила
-- Команды — **immutable** `record`-типы с простыми полями
-  (`EntityId`, `int`, `float`, `string`). Никаких ссылок на `IComponent`
-  или системы.
-- `Execute` работает через `object renderContext`; конкретный cast делает
-  вызывающий из активной Presentation-сборки (Godot → `GameRoot`, Native → `NativeRenderer`).
+## Rules
+- Commands are **immutable** `record` types with simple fields
+  (`EntityId`, `int`, `float`, `string`). No references to `IComponent` or
+  systems.
+- `Execute` works through `object renderContext`; the concrete cast is done by
+  the caller from the active Presentation assembly (Godot → `GameRoot`,
+  Native → `NativeRenderer`).
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Domain публикует команду после обработки события.
+// Domain publishes the command after handling an event.
 bridge.Enqueue(new PawnDiedCommand(pawnId, x: 42, y: 17));
 ```
 
 ## TODO
-- [ ] Фаза 5 — наполнить `Execute` реальной Godot-логикой через
-      Presentation-хелперы.
-- [ ] Фаза 5 — добавить команды под остальные доменные события.
+- [ ] Phase 5 — fill `Execute` with real Godot logic through Presentation
+      helpers.
+- [ ] Phase 5 — add commands for the rest of the domain events.

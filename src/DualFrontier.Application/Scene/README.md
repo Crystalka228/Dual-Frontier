@@ -1,29 +1,29 @@
 # Scene — Engine-neutral scene format
 
-## Назначение
-DTO-иерархия `SceneDef` и контракт `ISceneLoader` для формата `.dfscene` —
-единого описания сцены для обоих рантаймов (Godot DevKit и Native).
-Плагин Godot экспортирует `.tscn` → `.dfscene`; оба `ISceneLoader` читают
-один и тот же файл.
+## Purpose
+The `SceneDef` DTO hierarchy and the `ISceneLoader` contract for the `.dfscene`
+format — a single scene description for both runtimes (Godot DevKit and Native).
+The Godot plugin exports `.tscn` → `.dfscene`; both `ISceneLoader` implementations
+read the same file.
 
-## Зависимости
-- `DualFrontier.Contracts.Math` — `GridVector` для координат.
-- `System.Text.Json` — `JsonElement` в overrides компонентов.
+## Dependencies
+- `DualFrontier.Contracts.Math` — `GridVector` for coordinates.
+- `System.Text.Json` — `JsonElement` in component overrides.
 
-## Что внутри
-- `SceneDef.cs` — корневой record + `CurrentVersion` константа.
-- `TilemapDef.cs` — тайлмап: размеры, слои, `TilemapLayerDef` с `ushort[]`.
-- `EntitySpawnDef.cs` — описание сущности: prefab + position + overrides.
-- `MarkerDef.cs` — именованная точка на карте без сущности.
-- `SceneMetadata.cs` — биом, плотность эфира, автор, время экспорта.
-- `ISceneLoader.cs` — контракт загрузчика.
-- `SceneLoadException.cs` — ошибки парсинга/версии.
+## Contents
+- `SceneDef.cs` — root record + the `CurrentVersion` constant.
+- `TilemapDef.cs` — tilemap: dimensions, layers, `TilemapLayerDef` with a `ushort[]`.
+- `EntitySpawnDef.cs` — entity description: prefab + position + overrides.
+- `MarkerDef.cs` — a named point on the map without an entity.
+- `SceneMetadata.cs` — biome, ether density, author, export time.
+- `ISceneLoader.cs` — loader contract.
+- `SceneLoadException.cs` — parse/version errors.
 
-## Формат .dfscene
+## .dfscene format
 
-Человекочитаемый JSON с версионированием. Тайлы хранятся per-layer как
-`base64(ushort[width*height])`, row-major. Сущности — prefab + опциональные
-overrides полей компонентов в виде `JsonElement`.
+Human-readable JSON with versioning. Tiles are stored per-layer as
+`base64(ushort[width*height])`, row-major. Entities are prefab + optional
+component-field overrides as `JsonElement`.
 
 ```json
 {
@@ -40,16 +40,16 @@ overrides полей компонентов в виде `JsonElement`.
 }
 ```
 
-Политика версий: при любом breaking-change инкрементируется
-`SceneDef.CurrentVersion`, старые файлы требуют миграции в
-реализациях `ISceneLoader`.
+Versioning policy: any breaking change increments
+`SceneDef.CurrentVersion`; old files require migration in
+`ISceneLoader` implementations.
 
-## Правила
-- `SceneDef` не содержит Godot-типов (нет `Vector2`, `NodePath`, `Node`).
-- Только примитивы, строки, `GridVector` и `JsonElement` для opaque overrides.
-- `ushort[]` — компактный массив тайлов; в JSON сериализуется как base64.
+## Rules
+- `SceneDef` contains no Godot types (no `Vector2`, `NodePath`, `Node`).
+- Only primitives, strings, `GridVector`, and `JsonElement` for opaque overrides.
+- `ushort[]` is the compact tile array; in JSON it serializes as base64.
 
-## См. также
-- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — полная
-  архитектура DevKit vs Native.
-- [../Rendering/README.md](../Rendering/README.md) — контракт `IRenderer`.
+## See also
+- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — full
+  DevKit vs Native architecture.
+- [../Rendering/README.md](../Rendering/README.md) — the `IRenderer` contract.

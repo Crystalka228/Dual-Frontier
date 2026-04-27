@@ -1,26 +1,26 @@
-# Rendering — Контракт рендер-бэкенда
+# Rendering — Render-backend contract
 
-## Назначение
-`IRenderer` — единая точка входа для любого visual-backend'а. Application
-держит только контракт; конкретные реализации живут в Presentation-сборках:
-Godot DevKit и Native (Silk.NET). В рантайме активен ровно один.
+## Purpose
+`IRenderer` is the single entry point for any visual backend. Application holds
+only the contract; the concrete implementations live in Presentation assemblies:
+Godot DevKit and Native (Silk.NET). At runtime exactly one is active.
 
-## Зависимости
-- `DualFrontier.Contracts` — базовые типы (через `PresentationBridge`).
+## Dependencies
+- `DualFrontier.Contracts` — base types (through `PresentationBridge`).
 
-## Что внутри
+## Contents
 - `IRenderer.cs` — `Initialize` / `RenderFrame` / `Shutdown` / `IsRunning`.
 
-## Правила
-- Никаких `using Godot;` или `using Silk.NET;` — только абстрактный контракт.
-- Реализация обязана дренировать `PresentationBridge` в своём `RenderFrame`.
-- Все GPU-ресурсы освобождаются в `Shutdown` — утечки недопустимы.
+## Rules
+- No `using Godot;` or `using Silk.NET;` — only the abstract contract.
+- The implementation MUST drain `PresentationBridge` inside its `RenderFrame`.
+- Every GPU resource is released in `Shutdown` — leaks are unacceptable.
 
 ## TODO
-- [ ] Фаза 3.5 — `GodotRenderer` в `DualFrontier.Presentation`.
-- [ ] Фаза 5+ — `NativeRenderer` в `DualFrontier.Presentation.Native`
+- [ ] Phase 3.5 — `GodotRenderer` in `DualFrontier.Presentation`.
+- [ ] Phase 5+ — `NativeRenderer` in `DualFrontier.Presentation.Native`
       (Silk.NET + OpenGL, SpriteBatch, TilemapRenderer).
 
-## См. также
-- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — общая стратегия
-  DevKit vs Native, формат `.dfscene`, пайплайн разработчика.
+## See also
+- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — overall
+  DevKit vs Native strategy, the `.dfscene` format, and the developer pipeline.
