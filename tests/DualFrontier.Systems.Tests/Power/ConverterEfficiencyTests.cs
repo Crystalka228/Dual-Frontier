@@ -13,9 +13,9 @@ using Xunit;
 namespace DualFrontier.IntegrationTests.PowerDomain;
 
 /// <summary>
-/// Closes Долг #6 + Phase 4 acceptance criterion «Конвертор: 100W → 30 манны
-/// и обратно; работает точечно». Verifies that ConverterSystem is now
-/// registered alongside ElectricGridSystem and emits the expected
+/// Closes backlog item #6 + Phase 4 acceptance criterion "Converter:
+/// 100W → 30 mana and back; works pointwise". Verifies that ConverterSystem
+/// is now registered alongside ElectricGridSystem and emits the expected
 /// 30%-efficient <see cref="ConverterPowerOutputEvent"/> when its consumer
 /// side is powered. The cycle is broken via deferred event coupling so the
 /// scheduler accepts the combined graph.

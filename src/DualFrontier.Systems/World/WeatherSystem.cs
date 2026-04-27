@@ -6,12 +6,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.World;
 
 /// <summary>
-/// Смена погоды: марковская цепь состояний (Clear, Rain,
-/// EtherStorm, Snow, …). Публикует <c>WeatherChangedEvent</c>;
-/// <c>BiomeSystem</c> реагирует, обновляя биомы.
+/// Weather transitions: Markov chain of states (Clear, Rain,
+/// EtherStorm, Snow, …). Publishes <c>WeatherChangedEvent</c>;
+/// <c>BiomeSystem</c> reacts and updates biomes accordingly.
 ///
-/// Фаза: 1 (параллельно с CombatSystem, ManaSystem).
-/// Тик: RARE (3600 фреймов).
+/// Phase: 1 (parallel with CombatSystem, ManaSystem).
+/// Tick: RARE (3600 frames).
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
@@ -29,6 +29,6 @@ public sealed class WeatherSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 1 — прошагать марковскую цепь, при смене состояния опубликовать WeatherChangedEvent.
+        // TODO: Phase 1 — step the Markov chain; on a state change publish WeatherChangedEvent.
     }
 }

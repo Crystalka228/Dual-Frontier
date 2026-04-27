@@ -3,12 +3,12 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Components.Magic;
 
 /// <summary>
-/// Уровень восприятия эфира. См. GDD 4.1 «Уровни Восприятия Эфира» —
-/// 5 дискретных ступеней (1 — чувствует эфир, до 5 — архимаг).
-/// Определяет максимум маны, доступные школы и сложность заклинаний.
-/// Повышение — через <c>EtherLevelUpEvent</c> (deferred, медитация / опыт).
+/// Ether-perception level. See GDD 4.1 "Ether Perception Tiers" —
+/// 5 discrete tiers (1 — senses the ether, up to 5 — archmage).
+/// Determines mana cap, accessible schools, and spell complexity.
+/// Raised via <c>EtherLevelUpEvent</c> (deferred, meditation / experience).
 /// </summary>
 public sealed class EtherComponent : IComponent
 {
-    // TODO: public int Level;  // диапазон 1..5 — см. GDD 4.1
+    // TODO: public int Level;  // range 1..5 — see GDD 4.1
 }

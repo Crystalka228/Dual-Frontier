@@ -7,12 +7,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Combat;
 
 /// <summary>
-/// Тики статус-эффектов (горение, отравление, страх и т. д.):
-/// накладывает урон на здоровье и/или влияет на настроение.
-/// Публикует <c>StatusAppliedEvent</c> / <c>StatusExpiredEvent</c>.
+/// Status effect ticks (burning, poison, fear, etc.): applies
+/// damage to health and/or affects mood. Publishes
+/// <c>StatusAppliedEvent</c> / <c>StatusExpiredEvent</c>.
 ///
-/// Фаза: 2.
-/// Тик: FAST (3 фрейма).
+/// Phase: 2.
+/// Tick: FAST (3 frames).
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
@@ -30,6 +30,6 @@ public sealed class StatusEffectSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 5 — продвинуть все активные эффекты, применить их урон/настроение, убрать истёкшие.
+        // TODO: Phase 5 — advance all active effects, apply their damage/mood, remove expired ones.
     }
 }

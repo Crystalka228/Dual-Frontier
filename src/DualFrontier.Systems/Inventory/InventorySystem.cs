@@ -23,7 +23,7 @@ namespace DualFrontier.Systems.Inventory
     /// so future Phase 5+ multi-tick haul / craft can deduct reserved
     /// quantities before allocating.
     /// </para>
-    /// Phase: Фаза 4. Tick: FAST.
+    /// Phase: Phase 4. Tick: FAST.
     /// </summary>
     [SystemAccess(
         reads:  new Type[0],

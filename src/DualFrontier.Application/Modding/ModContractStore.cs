@@ -24,8 +24,8 @@ internal sealed class ModContractStore : IModContractStore
         if (_entries.TryGetValue(key, out (string OwnerId, object _) existing)
             && existing.OwnerId != modId)
         {
-            // Один тип контракта — один владелец. Иначе потребители не знают,
-            // чью реализацию они получили.
+            // One contract type, one owner. Otherwise consumers cannot tell
+            // whose implementation they received.
             throw new InvalidOperationException(
                 $"[CONTRACT STORE ERROR] Contract '{key.FullName}' is already " +
                 $"published by mod '{existing.OwnerId}'. Mod '{modId}' cannot overwrite it.");

@@ -7,13 +7,13 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Combat;
 
 /// <summary>
-/// Применение урона: читает DamageEvent из шины <c>Combat</c>,
-/// учитывает броню и остаток щитов, пишет итог в
-/// <see cref="HealthComponent"/>. При обнулении HP публикует
-/// <c>DeathEvent</c>.
+/// Damage application: reads DamageEvent from the <c>Combat</c>
+/// bus, accounts for armour and remaining shields, and writes
+/// the result into <see cref="HealthComponent"/>. When HP reaches
+/// zero, publishes <c>DeathEvent</c>.
 ///
-/// Фаза: 2 (после CombatSystem и ProjectileSystem).
-/// Тик: FAST (3 фрейма).
+/// Phase: 2 (after CombatSystem and ProjectileSystem).
+/// Tick: FAST (3 frames).
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(ArmorComponent), typeof(ShieldComponent) },
@@ -31,6 +31,6 @@ public sealed class DamageSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 2 — обработать накопленные DamageEvent, применить формулу, опубликовать DeathEvent.
+        // TODO: Phase 2 — process accumulated DamageEvent, apply the formula, publish DeathEvent.
     }
 }

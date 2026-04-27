@@ -1,31 +1,31 @@
 namespace DualFrontier.AI.BehaviourTree;
 
 /// <summary>
-/// Результат одного тика ноды behaviour tree.
+/// Result of a single behaviour-tree node tick.
 /// </summary>
 public enum BTStatus
 {
-    /// <summary>Нода ещё работает — вернуться на следующем тике.</summary>
+    /// <summary>Node is still working — call again next tick.</summary>
     Running,
 
-    /// <summary>Нода выполнилась успешно.</summary>
+    /// <summary>Node completed successfully.</summary>
     Success,
 
-    /// <summary>Нода не смогла выполниться.</summary>
+    /// <summary>Node failed to complete.</summary>
     Failure
 }
 
 /// <summary>
-/// Базовый класс ноды behaviour tree. Все композиты (Selector,
-/// Sequence) и листья (Leaf) наследуются от него.
+/// Base class for behaviour-tree nodes. All composites (Selector, Sequence)
+/// and leaves (Leaf) inherit from it.
 ///
-/// Тикается синхронно из AI-слоя (см. GDD раздел "AI пешек").
+/// Ticked synchronously from the AI layer (see GDD section "Pawn AI").
 /// </summary>
 public abstract class BTNode
 {
     /// <summary>
-    /// Прогон одного шага ноды. Чистая функция по контексту —
-    /// никаких глобальных обращений к миру.
+    /// Runs a single step of the node. Pure function over the context —
+    /// no global access to the world.
     /// </summary>
     public abstract BTStatus Tick(BTContext ctx);
 }

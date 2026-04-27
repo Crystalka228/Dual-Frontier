@@ -231,7 +231,7 @@ internal sealed class DependencyGraph
           .Append(" writes ").Append(component.FullName).Append(Environment.NewLine);
         sb.Append("  ").Append(b.GetType().FullName)
           .Append(" writes ").Append(component.FullName).Append(Environment.NewLine);
-        sb.Append("Resolve: одна из систем должна читать, не писать, или разнести по фазам через [Deferred] событие.");
+        sb.Append("Resolve: one of the systems must read instead of write, or be moved to a separate phase via a [Deferred] event.");
         return new InvalidOperationException(sb.ToString());
     }
 
@@ -254,7 +254,7 @@ internal sealed class DependencyGraph
                   .Append(Environment.NewLine);
             }
         }
-        sb.Append("Resolve: разорви цикл через [Deferred] событие.");
+        sb.Append("Resolve: break the cycle via a [Deferred] event.");
         return new InvalidOperationException(sb.ToString());
     }
 }

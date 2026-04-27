@@ -22,7 +22,7 @@ public sealed class ContractValidatorTests
     public void Validator_rejects_mod_requiring_newer_contracts_version()
     {
         var validator = new ContractValidator();
-        // Требуется версия с мажорной бумкой — текущая 1.0.0 несовместима.
+        // The required version bumps the major component — current 1.0.0 is incompatible.
         LoadedMod mod = MakeMod("com.example.future", "2.0.0", Array.Empty<Type>());
 
         ValidationReport report = validator.Validate(new[] { mod }, Array.Empty<SystemBase>());
@@ -43,7 +43,7 @@ public sealed class ContractValidatorTests
         ValidationReport report = validator.Validate(new[] { modA, modB }, Array.Empty<SystemBase>());
 
         report.IsValid.Should().BeFalse();
-        // Оба мода помечаются как конфликтующие — UI сможет пометить обе карточки.
+        // Both mods are flagged as conflicting — the UI can highlight both cards.
         report.Errors.Should().Contain(e => e.ModId == "com.example.a" && e.ConflictingModId == "com.example.b");
         report.Errors.Should().Contain(e => e.ModId == "com.example.b" && e.ConflictingModId == "com.example.a");
         report.Errors.Should().OnlyContain(e =>
@@ -65,7 +65,7 @@ public sealed class ContractValidatorTests
         err.ModId.Should().Be("com.example.bad");
         err.Kind.Should().Be(ValidationErrorKind.WriteWriteConflict);
         err.ConflictingComponent.Should().Be(typeof(ComponentA));
-        err.ConflictingModId.Should().BeNull(); // core не имеет modId
+        err.ConflictingModId.Should().BeNull(); // core has no modId
         err.Message.Should().Contain("core system");
     }
 
@@ -91,7 +91,7 @@ public sealed class ContractValidatorTests
 
         ValidationReport report = validator.Validate(new[] { modA, modB }, Array.Empty<SystemBase>());
 
-        // Точное сообщение должно содержать FQN компонента — иначе UI не сможет показать деталь.
+        // The precise message must contain the component's FQN — otherwise the UI cannot show the detail.
         report.Errors.Should().OnlyContain(e =>
             e.Message.Contains(typeof(ComponentA).FullName!));
         report.Errors.Should().OnlyContain(e => e.Message.Contains("com.example.a"));
@@ -102,7 +102,7 @@ public sealed class ContractValidatorTests
     public void Validator_ok_for_compatible_older_patch_version()
     {
         var validator = new ContractValidator();
-        // Current = 1.0.0. Мод требует 1.0.0 — совпадает → валиден.
+        // Current = 1.0.0. The mod requires 1.0.0 — matches → valid.
         LoadedMod mod = MakeMod("com.example.compat", "1.0.0", Array.Empty<Type>());
 
         ValidationReport report = validator.Validate(new[] { mod }, Array.Empty<SystemBase>());

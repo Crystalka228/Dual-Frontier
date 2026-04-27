@@ -6,13 +6,13 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Magic;
 
 /// <summary>
-/// Длинные коллективные ритуалы: несколько пешек стоят в
-/// круге, накапливается общий пул маны, в конце выдают эффект
-/// (призыв, бафф, превращение узла). Публикует
+/// Long collective rituals: several pawns stand in a circle,
+/// accumulate a shared mana pool, and at the end produce an
+/// effect (summon, buff, node transformation). Publishes
 /// <c>RitualCompletedEvent</c>.
 ///
-/// Фаза: 4.
-/// Тик: RARE (3600 фреймов) — шаги ритуала длинные.
+/// Phase: 4.
+/// Tick: RARE (3600 frames) — ritual steps are long.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(SchoolComponent) },
@@ -30,6 +30,6 @@ public sealed class RitualSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 4 — продвижение шагов ритуала, сбор маны участников.
+        // TODO: Phase 4 — advance ritual steps, collect mana from participants.
     }
 }

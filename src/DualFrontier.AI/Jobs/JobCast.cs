@@ -2,11 +2,11 @@ namespace DualFrontier.AI.Jobs;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
-/// Джоб каста заклинания: подойти на дистанцию → начать каст →
-/// дождаться окончания каст-тайма → публикация события в
-/// <c>Magic</c> шину через <c>SpellSystem</c>.
+/// Spell-cast job: walk to range → start the cast → wait for the cast time
+/// to finish → publish the event on the <c>Magic</c> bus through
+/// <c>SpellSystem</c>.
 ///
-/// См. GDD "Магия", "Школы магии".
+/// See GDD "Magic", "Magic Schools".
 /// </summary>
 public sealed class JobCast : IJob
 {
@@ -20,18 +20,18 @@ public sealed class JobCast : IJob
     /// <inheritdoc />
     public void Start()
     {
-        throw new NotImplementedException("TODO: Фаза 4 — JobCast.Start: проверка маны и школы, резервирование цели");
+        throw new NotImplementedException("TODO: Phase 4 — JobCast.Start: check mana and school, reserve target");
     }
 
     /// <inheritdoc />
     public JobStatus Tick(float delta)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — JobCast.Tick: каст-тайм, прерывание при уроне");
+        throw new NotImplementedException("TODO: Phase 4 — JobCast.Tick: cast time, interrupt on damage");
     }
 
     /// <inheritdoc />
     public void Abort()
     {
-        throw new NotImplementedException("TODO: Фаза 4 — JobCast.Abort: прервать каст, вернуть ману");
+        throw new NotImplementedException("TODO: Phase 4 — JobCast.Abort: cancel the cast, refund mana");
     }
 }

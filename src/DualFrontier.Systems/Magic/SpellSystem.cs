@@ -6,13 +6,13 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Magic;
 
 /// <summary>
-/// Исполнение заклинаний: проверяет ресурс/школу, публикует
-/// <c>SpellCastEvent</c> и целевые эффекты (DamageEvent,
-/// StatusApplied) в соответствующие шины. САМА НЕ ПИШЕТ
-/// компоненты — только читает и публикует события.
+/// Spell execution: checks resource/school, publishes
+/// <c>SpellCastEvent</c> and target effects (DamageEvent,
+/// StatusApplied) on the corresponding buses. DOES NOT WRITE
+/// components — only reads and publishes events.
 ///
-/// Фаза: 4 (после ManaSystem).
-/// Тик: FAST (3 фрейма) — отзывчивость заклинаний.
+/// Phase: 4 (after ManaSystem).
+/// Tick: FAST (3 frames) — spell responsiveness.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(ManaComponent), typeof(SchoolComponent) },
@@ -31,6 +31,6 @@ public sealed class SpellSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 4 — продвижение активных кастов, публикация SpellCastEvent.
+        // TODO: Phase 4 — advance active casts, publish SpellCastEvent.
     }
 }

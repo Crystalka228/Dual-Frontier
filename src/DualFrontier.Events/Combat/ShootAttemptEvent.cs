@@ -3,9 +3,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Пешка пытается произвести выстрел. Публикуется AI или игроком.
-/// CombatSystem проверяет наличие оружия/патронов и публикует
-/// соответствующий <see cref="AmmoIntent"/>.
+/// A pawn is attempting to fire a shot. Published by AI or the player.
+/// CombatSystem checks the presence of weapon/ammo and publishes the
+/// corresponding <see cref="AmmoIntent"/>.
 /// </summary>
 public sealed record ShootAttemptEvent : IEvent
 {

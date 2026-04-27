@@ -5,18 +5,18 @@ using System.Runtime.Loader;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Собственный <see cref="AssemblyLoadContext"/> для одного мода.
-/// Создаётся с <c>isCollectible: true</c>, чтобы мод можно было выгрузить
-/// без перезапуска игры. Физически изолирует сборку мода от ядра
+/// Dedicated <see cref="AssemblyLoadContext"/> for a single mod. Created with
+/// <c>isCollectible: true</c> so the mod can be unloaded without restarting
+/// the game. Physically isolates the mod's assembly from the core
 /// (TechArch 11.8).
 /// </summary>
 internal sealed class ModLoadContext : AssemblyLoadContext
 {
     /// <summary>
-    /// TODO: Фаза 2 — создаёт контекст для мода с заданным именем.
-    /// Имя используется для диагностики и горячей выгрузки.
+    /// TODO: Phase 2 — creates a context for a mod with the given name.
+    /// The name is used for diagnostics and hot unload.
     /// </summary>
-    /// <param name="name">Уникальное имя контекста (обычно id мода).</param>
+    /// <param name="name">Unique context name (typically the mod id).</param>
     public ModLoadContext(string name)
         : base(name, isCollectible: true)
     {

@@ -1,35 +1,35 @@
 namespace DualFrontier.Events.Magic;
 
 /// <summary>
-/// Причина закрытия аренды маны (<c>ManaLeaseClosed</c>). Помогает
-/// подписчикам отличать штатное завершение от аварийного и корректно
-/// обновлять состояние (анимации, звуки, счётчики статистики).
+/// Reason for closing a mana lease (<c>ManaLeaseClosed</c>). Helps
+/// subscribers distinguish a normal completion from an abnormal one and
+/// correctly update state (animations, sounds, statistics counters).
 /// </summary>
 public enum CloseReason
 {
     /// <summary>
-    /// Аренда завершена штатно — заклинание/эффект отработали до конца.
+    /// Lease completed normally — the spell/effect ran to its end.
     /// </summary>
     Completed,
 
     /// <summary>
-    /// Каст прерван внешним воздействием (урон, оглушение, disruption).
+    /// Cast was interrupted by external influence (damage, stun, disruption).
     /// </summary>
     SpellInterrupted,
 
     /// <summary>
-    /// Голем-потребитель был деактивирован (см. <c>GolemBondComponent</c>,
+    /// The consumer golem was deactivated (see <c>GolemBondComponent</c>,
     /// GDD 5.2).
     /// </summary>
     GolemDeactivated,
 
     /// <summary>
-    /// Маг-кастер погиб — все его аренды принудительно закрываются.
+    /// The mage caster died — all of their leases are forcibly closed.
     /// </summary>
     PawnDied,
 
     /// <summary>
-    /// Мана кастера исчерпана до нуля, продолжать дренирование невозможно.
+    /// The caster's mana is exhausted to zero, draining can no longer continue.
     /// </summary>
     ManaExhausted,
 }

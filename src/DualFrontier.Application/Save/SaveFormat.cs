@@ -1,21 +1,20 @@
 namespace DualFrontier.Application.Save;
 
 /// <summary>
-/// Версия и заголовок формата сохранения. При несовместимом значении
-/// <see cref="Version"/> сохранение считается старым и должно проходить
-/// миграцию (TODO: Фаза 3).
+/// Save format version and header. When <see cref="Version"/> is incompatible,
+/// the save is considered old and must go through migration (TODO: Phase 3).
 /// </summary>
 public sealed class SaveFormat
 {
     /// <summary>
-    /// TODO: Фаза 1 — текущая версия формата. Увеличивается при любом
-    /// несовместимом изменении сериализации.
+    /// TODO: Phase 1 — current format version. Incremented on any
+    /// incompatible serialisation change.
     /// </summary>
     public int Version { get; init; }
 
     /// <summary>
-    /// TODO: Фаза 1 — магический заголовок файла (например, "DFSAVE\0"),
-    /// чтобы быстро отличить сохранение от произвольного бинарника.
+    /// TODO: Phase 1 — magic file header (e.g. "DFSAVE\0") so a save can be
+    /// quickly distinguished from an arbitrary binary.
     /// </summary>
     public string Header { get; init; } = "DFSAVE";
 }

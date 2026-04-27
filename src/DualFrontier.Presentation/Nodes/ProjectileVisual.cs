@@ -1,9 +1,9 @@
-// TODO: Фаза 3 — унаследовать от Godot.Node2D после подключения GodotSharp.
+// TODO: Phase 3 — derive from Godot.Node2D once GodotSharp is wired in.
 namespace DualFrontier.Presentation.Nodes;
 
 /// <summary>
-/// Визуал снаряда (спрайт + траектория). В Фазе 3 будет
-/// наследоваться от <c>Godot.Node2D</c>.
+/// Projectile visual (sprite + trajectory). In Phase 3 it will derive
+/// from <c>Godot.Node2D</c>.
 /// </summary>
 public sealed class ProjectileVisual
 {

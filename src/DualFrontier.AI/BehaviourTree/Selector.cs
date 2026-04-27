@@ -1,12 +1,11 @@
 namespace DualFrontier.AI.BehaviourTree;
 
 /// <summary>
-/// Композит "ИЛИ": пробует детей по порядку, возвращает
-/// первый Success / Running. Возвращает Failure, только если
-/// все дети вернули Failure.
+/// "OR" composite: tries children in order, returns the first Success or
+/// Running. Returns Failure only if every child returned Failure.
 ///
-/// Используется для fallback-поведения: "попытайся поесть,
-/// иначе поспи, иначе простаивай".
+/// Used for fallback behaviour: "try to eat, otherwise sleep, otherwise
+/// idle".
 /// </summary>
 public class Selector : BTNode
 {
@@ -14,7 +13,7 @@ public class Selector : BTNode
     private int _currentIndex;
 
     /// <summary>
-    /// Создаёт селектор из упорядоченного списка детей.
+    /// Creates a selector from an ordered list of children.
     /// </summary>
     public Selector(params BTNode[] children)
     {

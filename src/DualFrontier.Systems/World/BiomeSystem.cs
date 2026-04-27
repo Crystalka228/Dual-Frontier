@@ -6,12 +6,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.World;
 
 /// <summary>
-/// Медленные сдвиги биомов: под действием эфирных бурь и
-/// длительной погоды участки переходят из одного биома в
-/// другой. Публикует <c>BiomeShiftEvent</c>.
+/// Slow biome shifts: under the influence of ether storms and
+/// prolonged weather, regions transition from one biome to
+/// another. Publishes <c>BiomeShiftEvent</c>.
 ///
-/// Фаза: 1.
-/// Тик: RARE (3600 фреймов).
+/// Phase: 1.
+/// Tick: RARE (3600 frames).
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(BiomeComponent) },
@@ -29,6 +29,6 @@ public sealed class BiomeSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 1 — пройти по зонам, решить, сдвинулся ли биом, опубликовать BiomeShiftEvent.
+        // TODO: Phase 1 — walk the zones, decide whether the biome shifted, publish BiomeShiftEvent.
     }
 }

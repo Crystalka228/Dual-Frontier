@@ -6,18 +6,18 @@ using DualFrontier.Events.Combat;
 namespace DualFrontier.Systems.Combat;
 
 /// <summary>
-/// Объединяет несколько <see cref="DamageIntent"/> от разных систем
-/// (Physical, Magic, Status) в общий порядок применения урона в одном тике.
-/// Гарантирует детерминированную сортировку: по <c>(EntityId, DamageKind ordinal)</c>,
-/// после чего последовательно публикует <see cref="DamageEvent"/> для
-/// <c>DamageSystem</c>.
+/// Merges multiple <see cref="DamageIntent"/> from different systems
+/// (Physical, Magic, Status) into a unified damage application order
+/// within a single tick. Guarantees a deterministic sort by
+/// <c>(EntityId, DamageKind ordinal)</c>, then publishes
+/// <see cref="DamageEvent"/> sequentially to <c>DamageSystem</c>.
 ///
-/// Детерминизм критичен для мультиплеера/реплеев: один и тот же набор
-/// намерений в пределах тика должен давать один и тот же порядок
-/// применения урона независимо от порядка публикации (TechArch v0.2 §12.4).
+/// Determinism is critical for multiplayer/replays: the same set of
+/// intents within a tick must produce the same damage application
+/// order regardless of publication order (TechArch v0.2 §12.4).
 ///
-/// Фаза: 2 (после CombatSystem, SpellSystem, StatusEffectSystem).
-/// Тик: NORMAL (15 фреймов).
+/// Phase: 2 (after CombatSystem, SpellSystem, StatusEffectSystem).
+/// Tick: NORMAL (15 frames).
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(DamageIntent) },
@@ -34,34 +34,34 @@ public sealed class ComboResolutionSystem : SystemBase
     protected override void OnInitialize() { }
 
     /// <summary>
-    /// Основной тик: после сбора всех <see cref="DamageIntent"/> текущей фазы
-    /// вызывает <see cref="ResolvePending"/>, который сортирует и применяет
-    /// урон детерминированно.
+    /// Main tick: after all <see cref="DamageIntent"/> for the current phase
+    /// have been collected, calls <see cref="ResolvePending"/>, which sorts
+    /// and applies the damage deterministically.
     /// </summary>
     public override void Update(float delta)
     {
-        // TODO: Фаза 4 — вызвать ResolvePending() один раз за тик.
+        // TODO: Phase 4 — call ResolvePending() once per tick.
     }
 
     /// <summary>
-    /// Ставит <paramref name="intent"/> в очередь текущего тика. Применение
-    /// будет выполнено в <see cref="ResolvePending"/> после сбора всех
-    /// намерений.
+    /// Queues <paramref name="intent"/> for the current tick. Application
+    /// happens in <see cref="ResolvePending"/> once all intents have been
+    /// collected.
     /// </summary>
-    /// <param name="intent">Намерение нанести урон от любой системы-источника.</param>
+    /// <param name="intent">Intent to deal damage, from any source system.</param>
     public void OnDamageIntent(DamageIntent intent)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — постановка DamageIntent в очередь тика");
+        throw new NotImplementedException("TODO: Phase 4 — queue DamageIntent for the tick");
     }
 
     /// <summary>
-    /// Сортирует накопленные <see cref="DamageIntent"/> по
-    /// <c>(EntityId, DamageKind ordinal)</c>, применяет их в этом порядке и
-    /// публикует итоговые <see cref="DamageEvent"/> в <c>DamageSystem</c>.
-    /// После вызова очередь текущего тика очищается.
+    /// Sorts the accumulated <see cref="DamageIntent"/> entries by
+    /// <c>(EntityId, DamageKind ordinal)</c>, applies them in that order,
+    /// and publishes the resulting <see cref="DamageEvent"/> to
+    /// <c>DamageSystem</c>. The current tick's queue is cleared after the call.
     /// </summary>
     public void ResolvePending()
     {
-        throw new NotImplementedException("TODO: Фаза 4 — детерминированная сортировка и публикация DamageEvent");
+        throw new NotImplementedException("TODO: Phase 4 — deterministic sort and publication of DamageEvent");
     }
 }

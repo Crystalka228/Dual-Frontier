@@ -23,7 +23,7 @@ public sealed class GoodMod : IMod
     /// <inheritdoc />
     public void Unload()
     {
-        // Тестовый мод не удерживает ресурсов — очищать нечего.
+        // The test mod holds no resources — nothing to release.
     }
 }
 
@@ -42,6 +42,6 @@ public sealed class GoodSystem : SystemBase
     /// <inheritdoc />
     public override void Update(float delta)
     {
-        // Тестовый no-op: системе достаточно существовать в графе.
+        // Test no-op: the system only needs to exist in the graph.
     }
 }

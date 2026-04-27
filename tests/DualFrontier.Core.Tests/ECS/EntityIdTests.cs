@@ -103,7 +103,7 @@ public sealed class EntityIdTests
         const int slotVersionAfterDestroy = 1;
 
         bool isAlive = cachedBeforeDestroy.Version == slotVersionAfterDestroy;
-        isAlive.Should().BeFalse("стale reference должна быть невалидной после уничтожения entity");
+        isAlive.Should().BeFalse("a stale reference must be invalid after the entity is destroyed");
     }
 
     [Fact]

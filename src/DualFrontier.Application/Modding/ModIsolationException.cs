@@ -3,43 +3,44 @@ using System;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Бросается, когда мод попытался нарушить изоляцию — например,
-/// скастить <see cref="DualFrontier.Contracts.Modding.IModApi"/> к конкретной
-/// реализации <see cref="RestrictedModApi"/> или обратиться к внутренностям
-/// ядра минуя API.
+/// Thrown when a mod attempts to break isolation — for example, casting
+/// <see cref="DualFrontier.Contracts.Modding.IModApi"/> to the concrete
+/// <see cref="RestrictedModApi"/> implementation, or reaching into the
+/// core's internals bypassing the API.
 ///
-/// Также это исключение бросается из <c>SystemExecutionContext</c>, когда
-/// мод-система нарушает изоляцию: обращается к незадекларированному
-/// компоненту, публикует событие в чужую шину, лезет напрямую к
-/// <c>World</c>/<c>ComponentStore</c> или пытается получить ссылку на
-/// другую систему через <c>GetSystem</c>.
+/// This exception is also thrown by <c>SystemExecutionContext</c> when a
+/// mod system breaks isolation: accesses an undeclared component, publishes
+/// to a foreign bus, reaches into <c>World</c>/<c>ComponentStore</c>
+/// directly, or tries to obtain a reference to another system through
+/// <c>GetSystem</c>.
 ///
-/// По правилам TechArch 11.8 такой мод немедленно выгружается
-/// <c>ModFaultHandler</c> — ядро при этом не падает, игра продолжает работу.
+/// Per TechArch 11.8 such a mod is immediately unloaded by the
+/// <c>ModFaultHandler</c> — the core does not crash and the game continues
+/// running.
 /// </summary>
 public sealed class ModIsolationException : Exception
 {
     /// <summary>
-    /// Создаёт исключение без сообщения.
+    /// Creates the exception with no message.
     /// </summary>
     public ModIsolationException()
     {
     }
 
     /// <summary>
-    /// Создаёт исключение с диагностическим сообщением.
+    /// Creates the exception with a diagnostic message.
     /// </summary>
-    /// <param name="message">Описание нарушения.</param>
+    /// <param name="message">Description of the violation.</param>
     public ModIsolationException(string message)
         : base(message)
     {
     }
 
     /// <summary>
-    /// Создаёт исключение-обёртку над внутренним.
+    /// Creates the exception as a wrapper over an inner exception.
     /// </summary>
-    /// <param name="message">Описание нарушения.</param>
-    /// <param name="innerException">Исходное исключение.</param>
+    /// <param name="message">Description of the violation.</param>
+    /// <param name="innerException">Originating exception.</param>
     public ModIsolationException(string message, Exception innerException)
         : base(message, innerException)
     {

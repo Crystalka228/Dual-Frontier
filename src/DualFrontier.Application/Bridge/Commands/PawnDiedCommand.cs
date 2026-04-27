@@ -3,16 +3,16 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Application.Bridge.Commands;
 
 /// <summary>
-/// Команда: пешка <paramref name="PawnId"/> умерла. Presentation-слой
-/// находит её визуальную ноду, проигрывает анимацию смерти и удаляет
-/// ноду по её завершении.
+/// Command: pawn <paramref name="PawnId"/> has died. The presentation layer
+/// finds its visual node, plays the death animation, and removes the node
+/// once the animation completes.
 /// </summary>
-/// <param name="PawnId">Идентификатор погибшей пешки.</param>
+/// <param name="PawnId">Identifier of the deceased pawn.</param>
 public sealed record PawnDiedCommand(EntityId PawnId) : IRenderCommand
 {
     /// <inheritdoc />
     public void Execute(object renderContext)
     {
-        /* TODO Фаза 5 — apply via active IRenderer backend. */
+        /* TODO Phase 5 — apply via active IRenderer backend. */
     }
 }

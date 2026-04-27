@@ -3,26 +3,26 @@ using System;
 namespace DualFrontier.Core.Scheduling;
 
 /// <summary>
-/// Канонические значения частот тиков.
-/// Дублирует <c>DualFrontier.Contracts.Attributes.TickRates</c> —
-/// значения обязаны совпадать, иначе планировщик и атрибуты разойдутся.
-/// Дубль существует, чтобы системам Core не требовалось импортировать
-/// namespace атрибутов для рантайм-сравнений.
+/// Canonical tick-rate values.
+/// Duplicates <c>DualFrontier.Contracts.Attributes.TickRates</c> —
+/// values must match, otherwise the scheduler and attributes diverge.
+/// The duplicate exists so Core systems do not need to import the
+/// attributes namespace for runtime comparisons.
 /// </summary>
 public static class TickRates
 {
-    /// <summary>Каждый тик — физика снарядов, UI-реактивность.</summary>
+    /// <summary>Every tick — projectile physics, UI responsiveness.</summary>
     public const int REALTIME = 1;
 
-    /// <summary>Раз в 3 тика — бой, отзывчивые системы.</summary>
+    /// <summary>Every 3 ticks — combat, responsive systems.</summary>
     public const int FAST = 3;
 
-    /// <summary>Раз в 15 тиков — обычная логика: работы, навыки, мана.</summary>
+    /// <summary>Every 15 ticks — normal logic: jobs, skills, mana.</summary>
     public const int NORMAL = 15;
 
-    /// <summary>Раз в 60 тиков (~1 раз/сек) — нужды, настроение, рост эфира.</summary>
+    /// <summary>Every 60 ticks (~1/sec) — needs, mood, ether growth.</summary>
     public const int SLOW = 60;
 
-    /// <summary>Раз в 3600 тиков (~1 раз/мин) — социалка, рейды, торговля.</summary>
+    /// <summary>Every 3600 ticks (~1/min) — social, raids, trade.</summary>
     public const int RARE = 3600;
 }

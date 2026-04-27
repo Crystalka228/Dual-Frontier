@@ -3,8 +3,8 @@ using System;
 namespace DualFrontier.Contracts.Core;
 
 /// <summary>
-/// Маркер-интерфейс ответа на <see cref="IQuery"/>.
-/// Парный тип к запросу. Хранится как неизменяемый record.
+/// Marker interface for the response to <see cref="IQuery"/>.
+/// Paired with the query type. Stored as an immutable record.
 /// </summary>
 public interface IQueryResult
 {

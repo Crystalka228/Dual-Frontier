@@ -56,7 +56,7 @@ public readonly struct ContractsVersion : IEquatable<ContractsVersion>
             throw new ArgumentNullException(nameof(text));
 
         string trimmed = text.Trim();
-        // Caret/tilde префиксы не поддерживаются — сравнение строгое.
+        // Caret/tilde prefixes are not supported — comparison is strict.
         if (trimmed.Length > 0 && (trimmed[0] == '^' || trimmed[0] == '~'))
             trimmed = trimmed.Substring(1);
 
@@ -83,7 +83,7 @@ public readonly struct ContractsVersion : IEquatable<ContractsVersion>
     /// </summary>
     public static bool IsCompatible(ContractsVersion required, ContractsVersion available)
     {
-        // Мажорная версия должна совпадать — иначе контракты несовместимы.
+        // Major version must match — otherwise the contracts are incompatible.
         if (required.Major != available.Major)
             return false;
         if (required.Minor > available.Minor)

@@ -6,13 +6,13 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Combat;
 
 /// <summary>
-/// Движение снарядов по прямой, регистрация столкновений.
-/// При попадании публикует <c>ProjectileHitEvent</c> в
-/// <c>Combat</c> шину — <c>DamageSystem</c> конвертирует попадание
-/// в урон.
+/// Straight-line projectile motion and collision registration.
+/// On a hit, publishes <c>ProjectileHitEvent</c> on the
+/// <c>Combat</c> bus — <c>DamageSystem</c> converts the hit into
+/// damage.
 ///
-/// Фаза: 1 (параллельно с CombatSystem).
-/// Тик: REALTIME (1 фрейм) — визуально корректный полёт.
+/// Phase: 1 (parallel with CombatSystem).
+/// Tick: REALTIME (1 frame) — visually correct flight.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(PositionComponent) },
@@ -30,6 +30,6 @@ public sealed class ProjectileSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 5 — продвижение снарядов на delta, поиск коллизий.
+        // TODO: Phase 5 — advance projectiles by delta, look for collisions.
     }
 }

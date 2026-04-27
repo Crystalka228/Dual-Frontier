@@ -60,9 +60,9 @@ internal sealed class RestrictedModApi : IModApi
     public void Publish<T>(T evt) where T : IEvent
     {
         if (evt is null) throw new ArgumentNullException(nameof(evt));
-        // Маршрутизация событий по шинам вводится в следующей подфазе.
-        // До неё Publish остаётся легальным no-op, чтобы моды могли тестироваться
-        // без реального диспатчера.
+        // Per-bus event routing lands in the next sub-phase. Until then,
+        // Publish remains a legal no-op so mods can be exercised in tests
+        // without a real dispatcher behind them.
         _ = _services;
     }
 

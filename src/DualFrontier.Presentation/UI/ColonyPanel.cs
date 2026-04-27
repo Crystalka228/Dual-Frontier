@@ -37,7 +37,7 @@ public partial class ColonyPanel : Panel
         };
         AddChild(root);
 
-        var title = MakeLabel("КОЛОНИЯ", 11, Palette.Muted, bold: true);
+        var title = MakeLabel("COLONY", 11, Palette.Muted, bold: true);
         title.AddThemeConstantOverride("outline_size", 0);
         root.AddChild(title);
 
@@ -49,7 +49,7 @@ public partial class ColonyPanel : Panel
         _list.AddThemeConstantOverride("separation", 4);
         root.AddChild(_list);
 
-        _tickLabel = MakeLabel("ТИК: 0", 10, Palette.Muted);
+        _tickLabel = MakeLabel("TICK: 0", 10, Palette.Muted);
         _tickLabel.HorizontalAlignment = HorizontalAlignment.Center;
         root.AddChild(_tickLabel);
     }
@@ -81,7 +81,7 @@ public partial class ColonyPanel : Panel
         RefreshSelection();
     }
 
-    public void SetTick(int tick) => _tickLabel.Text = $"ТИК: {tick}";
+    public void SetTick(int tick) => _tickLabel.Text = $"TICK: {tick}";
 
     private void RefreshSelection()
     {

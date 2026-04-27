@@ -1,10 +1,10 @@
 namespace DualFrontier.AI.BehaviourTree;
 
 /// <summary>
-/// Базовый класс листа behaviour tree: конкретное действие
-/// (идти к точке, съесть еду) или условие (голоден ли пешка?).
+/// Base class for behaviour-tree leaves: a concrete action
+/// (walk to a point, eat food) or a condition (is the pawn hungry?).
 ///
-/// Листья НЕ вызывают друг друга — композиция идёт через
-/// <see cref="Selector"/> и <see cref="Sequence"/>.
+/// Leaves do NOT call each other — composition goes through
+/// <see cref="Selector"/> and <see cref="Sequence"/>.
 /// </summary>
 public abstract class Leaf : BTNode { }

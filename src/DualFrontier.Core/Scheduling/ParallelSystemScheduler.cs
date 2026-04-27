@@ -176,7 +176,7 @@ internal sealed class ParallelSystemScheduler
         if (newPhases is null)
             throw new ArgumentNullException(nameof(newPhases));
 
-        // Сбор новой таблицы контекстов. Алгоритм тот же, что в конструкторе.
+        // Build a fresh context table. Same algorithm as in the constructor.
         var newCache = new Dictionary<SystemBase, SystemExecutionContext>();
         foreach (SystemPhase phase in newPhases)
         {

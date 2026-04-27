@@ -14,11 +14,11 @@ public sealed class JobCraft : IJob
     public JobStatus Status { get; private set; }
 
     /// <inheritdoc />
-    public void Start() => throw new System.NotImplementedException("TODO: Фаза 4");
+    public void Start() => throw new System.NotImplementedException("TODO: Phase 4");
 
     /// <inheritdoc />
-    public JobStatus Tick(float delta) => throw new System.NotImplementedException("TODO: Фаза 4");
+    public JobStatus Tick(float delta) => throw new System.NotImplementedException("TODO: Phase 4");
 
     /// <inheritdoc />
-    public void Abort() => throw new System.NotImplementedException("TODO: Фаза 4");
+    public void Abort() => throw new System.NotImplementedException("TODO: Phase 4");
 }

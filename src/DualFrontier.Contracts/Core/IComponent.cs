@@ -3,9 +3,9 @@ using System;
 namespace DualFrontier.Contracts.Core;
 
 /// <summary>
-/// Маркер-интерфейс компонента ECS.
-/// Компонент — это POCO: только данные, никакой логики.
-/// Логика живёт в системах. См. <c>/docs/ECS.md</c> для правил.
+/// Marker interface for an ECS component.
+/// A component is a POCO: data only, no logic.
+/// Logic lives in systems. See <c>/docs/ECS.md</c> for the rules.
 /// </summary>
 public interface IComponent
 {

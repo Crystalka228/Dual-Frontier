@@ -3,16 +3,16 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Application.Bridge.Commands;
 
 /// <summary>
-/// Команда: заспавнился снаряд <paramref name="ProjectileId"/> из точки
-/// (<paramref name="FromX"/>,<paramref name="FromY"/>) в точку
-/// (<paramref name="ToX"/>,<paramref name="ToY"/>). Presentation
-/// создаёт визуал и запускает анимацию полёта.
+/// Command: a projectile <paramref name="ProjectileId"/> has spawned, flying
+/// from (<paramref name="FromX"/>,<paramref name="FromY"/>) to
+/// (<paramref name="ToX"/>,<paramref name="ToY"/>). Presentation creates the
+/// visual and starts the flight animation.
 /// </summary>
-/// <param name="ProjectileId">Идентификатор entity снаряда в домене.</param>
-/// <param name="FromX">Стартовая координата X.</param>
-/// <param name="FromY">Стартовая координата Y.</param>
-/// <param name="ToX">Целевая координата X.</param>
-/// <param name="ToY">Целевая координата Y.</param>
+/// <param name="ProjectileId">Identifier of the projectile entity in the domain.</param>
+/// <param name="FromX">Start X coordinate.</param>
+/// <param name="FromY">Start Y coordinate.</param>
+/// <param name="ToX">Target X coordinate.</param>
+/// <param name="ToY">Target Y coordinate.</param>
 public sealed record ProjectileSpawnedCommand(
     EntityId ProjectileId,
     int FromX,
@@ -23,6 +23,6 @@ public sealed record ProjectileSpawnedCommand(
     /// <inheritdoc />
     public void Execute(object renderContext)
     {
-        /* TODO Фаза 5 — apply via active IRenderer backend. */
+        /* TODO Phase 5 — apply via active IRenderer backend. */
     }
 }

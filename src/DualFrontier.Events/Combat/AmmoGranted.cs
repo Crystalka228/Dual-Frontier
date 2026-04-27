@@ -3,9 +3,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Шаг 2 двухшаговой модели (TechArch 11.5): InventorySystem подтверждает,
-/// что патрон выдан по ранее поступившему <see cref="AmmoIntent"/>.
-/// CombatSystem, получив это событие, завершает выстрел.
+/// Step 2 of the two-step model (TechArch 11.5): InventorySystem confirms
+/// that ammo has been issued in response to the prior <see cref="AmmoIntent"/>.
+/// CombatSystem, upon receiving this event, completes the shot.
 /// </summary>
 public sealed record AmmoGranted : IEvent
 {

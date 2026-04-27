@@ -40,8 +40,8 @@ internal sealed class ModRegistry
         _coreSystems.Clear();
         foreach (SystemBase system in coreSystems)
         {
-            // Каждая Core-система регистрируется как происходящая из ядра,
-            // modId не имеет смысла для Core — поэтому null.
+            // Every core system is registered as core-origin; modId is
+            // meaningless for core, hence null.
             _coreSystems.Add(new SystemRegistration(system, SystemOrigin.Core, ModId: null));
         }
     }
@@ -60,7 +60,7 @@ internal sealed class ModRegistry
 
         if (_componentOwners.TryGetValue(componentType, out string? existing))
         {
-            // Диагностика называет оба мода — автор нового мода сразу видит, с кем конфликт.
+            // The diagnostic names both mods — the new mod's author can see at a glance who they conflict with.
             throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] Component '{componentType.FullName}' " +
                 $"is already registered by mod '{existing}'. Mod '{modId}' cannot claim it.");
@@ -150,7 +150,7 @@ internal sealed class ModRegistry
     {
         if (modId is null) throw new ArgumentNullException(nameof(modId));
 
-        // Обратный проход — индексы не сдвигаются при удалении.
+        // Reverse pass — indices do not shift on removal.
         for (int i = _modSystems.Count - 1; i >= 0; i--)
         {
             if (_modSystems[i].ModId == modId)

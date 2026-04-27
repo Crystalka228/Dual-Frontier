@@ -72,7 +72,7 @@ internal sealed class ModIntegrationPipeline
     {
         if (modPaths is null) throw new ArgumentNullException(nameof(modPaths));
 
-        // [1] Загрузка всех манифестов и сборок через ModLoader.
+        // [1] Load every manifest and assembly through ModLoader.
         var loaded = new List<LoadedMod>();
         var failed = new List<string>();
         var loadErrors = new List<ValidationError>();
@@ -81,8 +81,8 @@ internal sealed class ModIntegrationPipeline
         {
             try
             {
-                // Если мод уже предварительно загружен (инъекция тестов или
-                // прогрессивная загрузка в меню), переиспользуем запись.
+                // If the mod is already preloaded (test injection or
+                // progressive loading from the menu), reuse the entry.
                 LoadedMod? preloaded = _loader.TryGetLoaded(path);
                 LoadedMod mod = preloaded ?? _loader.LoadMod(path);
                 loaded.Add(mod);
@@ -97,7 +97,7 @@ internal sealed class ModIntegrationPipeline
             }
         }
 
-        // [2] Валидация: версии контрактов + write-write конфликты.
+        // [2] Validation: contract versions + write-write conflicts.
         IReadOnlyList<SystemBase> coreSystems = GetCoreSystemInstances();
         ValidationReport report = _validator.Validate(loaded, coreSystems);
 
@@ -112,7 +112,7 @@ internal sealed class ModIntegrationPipeline
                 FailedModIds: CollectFailedIds(loaded, failed));
         }
 
-        // [3] IMod.Initialize — мод регистрирует компоненты/системы через IModApi.
+        // [3] IMod.Initialize — the mod registers components/systems through IModApi.
         var initFailed = new List<LoadedMod>();
         var initErrors = new List<ValidationError>();
         foreach (LoadedMod mod in loaded)
@@ -134,7 +134,7 @@ internal sealed class ModIntegrationPipeline
 
         if (initFailed.Count > 0)
         {
-            // Откат — отменяем всё, что успели сделать: реестр, контракты, загрузка.
+            // Rollback — undo every step that had succeeded: registry, contracts, loaded mods.
             _registry.ResetModSystems();
             foreach (LoadedMod mod in loaded)
                 _contractStore.RevokeAll(mod.ModId);
@@ -146,7 +146,7 @@ internal sealed class ModIntegrationPipeline
                 FailedModIds: CollectModIds(initFailed));
         }
 
-        // [4-6] Собираем граф в локальной переменной — только при успехе заменяем планировщик.
+        // [4-6] Build the graph in a local variable — replace the scheduler only on success.
         var localGraph = new DependencyGraph();
         try
         {
@@ -156,7 +156,7 @@ internal sealed class ModIntegrationPipeline
         }
         catch (Exception ex)
         {
-            // Build() провалился — текущий планировщик не тронут.
+            // Build() failed — the current scheduler is left untouched.
             _registry.ResetModSystems();
             foreach (LoadedMod mod in loaded)
                 _contractStore.RevokeAll(mod.ModId);
@@ -174,7 +174,7 @@ internal sealed class ModIntegrationPipeline
                 FailedModIds: CollectModIds(loaded));
         }
 
-        // [7] Атомарная замена фаз планировщика. Предыдущий граф больше не нужен.
+        // [7] Atomically swap the scheduler's phases. The previous graph is no longer needed.
         _scheduler.Rebuild(localGraph.GetPhases());
         _activeMods.AddRange(loaded);
 
@@ -220,11 +220,11 @@ internal sealed class ModIntegrationPipeline
 
     private void RollbackLoaded(List<LoadedMod> loaded)
     {
-        // Физически выгружаем ассембли модов, которые успели оказаться в памяти.
+        // Physically unload any mod assemblies that already made it into memory.
         foreach (LoadedMod mod in loaded)
         {
             try { _loader.UnloadMod(mod.ModId); }
-            catch { /* при откате проглатываем — важен факт отката, не дальнейшая точность */ }
+            catch { /* swallowed during rollback — what matters is the rollback itself, not further precision */ }
         }
     }
 

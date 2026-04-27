@@ -1,9 +1,9 @@
-// TODO: Фаза 3 — унаследовать от Godot.Control после подключения GodotSharp.
+// TODO: Phase 3 — derive from Godot.Control once GodotSharp is wired in.
 namespace DualFrontier.Presentation.UI;
 
 /// <summary>
-/// Полоска маны/эфира у мага. В Фазе 3 будет наследоваться
-/// от <c>Godot.Control</c> (например, <c>ProgressBar</c>).
+/// Mage's mana/ether bar. In Phase 3 it will derive from
+/// <c>Godot.Control</c> (e.g. <c>ProgressBar</c>).
 /// </summary>
 public sealed class ManaBar
 {

@@ -20,8 +20,8 @@ namespace DualFrontier.Application.Modding;
 /// </summary>
 internal sealed class ContractValidator
 {
-    // Маркер «ядро» в таблице владения системой-пишущим компонентом.
-    // Не может пересечься с легальным modId (идентификаторы имеют формат reverse-domain).
+    // Marker for "core" in the writer-ownership table.
+    // Cannot collide with a legal modId (mod ids use reverse-domain form).
     private const string CoreOwner = "<core>";
 
     /// <summary>
@@ -56,8 +56,8 @@ internal sealed class ContractValidator
 
         foreach (LoadedMod mod in mods)
         {
-            // Фаза A — версия контрактов. Битая строка версии считается
-            // несовместимостью с точным сообщением для UI.
+            // Phase A — contracts version. A malformed version string is
+            // treated as incompatible with a precise UI-facing message.
             ContractsVersion required;
             try
             {
@@ -124,15 +124,15 @@ internal sealed class ContractValidator
             }
         }
 
-        // Попарная проверка — тот же алгоритм, что в DependencyGraph, но с атрибуцией.
+        // Pairwise check — same algorithm as in DependencyGraph, but attributed.
         for (int i = 0; i < entries.Count; i++)
         {
             WriteEntry a = entries[i];
             for (int j = i + 1; j < entries.Count; j++)
             {
                 WriteEntry b = entries[j];
-                // Одна и та же система мода может встретиться дважды (через разные сборки) —
-                // запись о самой себе не является конфликтом.
+                // The same mod system may appear twice (e.g. via two assemblies) —
+                // a self-entry is not a conflict.
                 if (a.OwnerId == b.OwnerId && a.SystemType == b.SystemType)
                     continue;
 
@@ -162,8 +162,8 @@ internal sealed class ContractValidator
             $"Write-write conflict on '{component.FullName}': " +
             $"{aLabel} and {bLabel} both declare writes.";
 
-        // Каждая ValidationError атрибутирована конкретному моду (не ядру),
-        // чтобы UI мог пометить карточку этого мода как «конфликтующая».
+        // Each ValidationError is attributed to a specific mod (never to core)
+        // so the UI can flag that mod's card as "conflicting".
         if (!a.IsCore)
         {
             errors.Add(new ValidationError(
@@ -198,7 +198,7 @@ internal sealed class ContractValidator
 
     private static IEnumerable<Type> EnumerateDeclaredSystemTypes(LoadedMod mod)
     {
-        // Список собран загрузчиком до вызова Initialize — валидатор лишь читает.
+        // The list is assembled by the loader before Initialize is called — the validator only reads it.
         foreach (Type t in mod.DeclaredSystemTypes)
         {
             if (t is null) continue;

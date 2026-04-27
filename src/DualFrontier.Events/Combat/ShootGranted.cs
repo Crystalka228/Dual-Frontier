@@ -3,16 +3,16 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Подтверждение составного выстрела: и патрон, и мана списаны успешно.
-/// Публикуется <c>CombatSystem</c> после того, как обе шины
-/// (Inventory и Magic) ответили позитивно на <see cref="CompoundShotIntent"/>
-/// с тем же <paramref name="Id"/>.
+/// Confirmation of a compound shot: both ammo and mana were charged successfully.
+/// Published by <c>CombatSystem</c> after both buses
+/// (Inventory and Magic) responded positively to <see cref="CompoundShotIntent"/>
+/// with the same <paramref name="Id"/>.
 /// </summary>
-/// <param name="Id">Идентификатор транзакции (совпадает с исходным Intent).</param>
-/// <param name="Shooter">Стрелок.</param>
-/// <param name="Target">Цель.</param>
-/// <param name="AmmoType">Тип израсходованного патрона.</param>
-/// <param name="ManaCost">Списанная мана.</param>
+/// <param name="Id">Transaction identifier (matches the originating Intent).</param>
+/// <param name="Shooter">The shooter.</param>
+/// <param name="Target">The target.</param>
+/// <param name="AmmoType">Type of ammo consumed.</param>
+/// <param name="ManaCost">Mana charged.</param>
 public sealed record ShootGranted(
     TransactionId Id,
     EntityId Shooter,
