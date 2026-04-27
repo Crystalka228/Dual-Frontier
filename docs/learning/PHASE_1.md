@@ -1,55 +1,60 @@
-# Учебный материал: C# и многопоточность для Dual Frontier (Phase 1)
+# Learning artifact: C# and multithreading for Dual Frontier (Phase 1)
 
-*Артефакт self-teaching ритуала после закрытия Phase 1 (Core ECS).
-Полный курс, привязанный к реальным файлам проекта. Версия 1.0, 2026-04-25.*
+> **Note:** This document was originally written in Russian as a self-teaching
+> artifact after Phase 1. Translated to English on 2026-04-27 as part of the
+> i18n campaign. The original Russian version is preserved in git history at
+> commit `cf8ef86`.
 
-*Каждая тема — реальный файл `src/`, не абстрактный пример.
-Формат: 20–30 мин теории + 30–60 мин работа с кодом + практическая проверка.*
+*Self-teaching ritual artifact produced after Phase 1 closure (Core ECS).
+Full course tied to real project files. Version 1.0, 2026-04-25.*
 
-*Этот документ — referenced from [METHODOLOGY.md §4.5](./METHODOLOGY.md) как
-эмпирическое подтверждение self-teaching ритуала между фазами.*
+*Each topic is a real `src/` file, not an abstract example.
+Format: 20–30 min of theory + 30–60 min of work with the code + a practical check.*
+
+*This document is referenced from [METHODOLOGY.md §4.5](../METHODOLOGY.md) as
+empirical evidence for the between-phase self-teaching ritual.*
 
 ---
 
-# 1. Архитектурный фундамент проекта
+# 1. Project architectural foundation
 
-Прежде чем учить язык — нужно понять, как устроен проект. Dual Frontier состоит из строго разделённых слоёв. Нарушить зависимость между ними — архитектурная ошибка.
+Before learning the language — you need to understand how the project is laid out. Dual Frontier consists of strictly separated layers. Breaking a dependency between them is an architectural error.
 
-## 1.1 Четыре слоя (docs/ARCHITECTURE.md)
+## 1.1 Four layers (docs/ARCHITECTURE.md)
 
-| Слой | Сборка | Что делает | Правило |
+| Layer | Assembly | What it does | Rule |
 |---|---|---|---|
-| Contracts | DualFrontier.Contracts | Интерфейсы, атрибуты, EntityId, GridVector. Никакой реализации. | Только BCL-зависимости |
-| Core (Infrastructure) | DualFrontier.Core | World, ComponentStore, DependencyGraph, ParallelSystemScheduler, DomainEventBus. Всё internal. | internal-first, открыт Systems через InternalsVisibleTo |
-| Domain | DualFrontier.Systems, .Components, .Events, .AI | Вся игровая логика. Системы, компоненты, события. | Не знает о Godot, многопоточно |
-| Presentation / Application | DualFrontier.Presentation, .Application | Godot SceneTree, UI, GameLoop, SaveSystem, PresentationBridge. | Только main thread у Presentation |
+| Contracts | DualFrontier.Contracts | Interfaces, attributes, EntityId, GridVector. No implementation. | BCL dependencies only |
+| Core (Infrastructure) | DualFrontier.Core | World, ComponentStore, DependencyGraph, ParallelSystemScheduler, DomainEventBus. Everything internal. | internal-first; opened to Systems via InternalsVisibleTo |
+| Domain | DualFrontier.Systems, .Components, .Events, .AI | All game logic. Systems, components, events. | Knows nothing about Godot; multithreaded |
+| Presentation / Application | DualFrontier.Presentation, .Application | Godot SceneTree, UI, GameLoop, SaveSystem, PresentationBridge. | Presentation runs only on the main thread |
 
-> **📌 Правило** — Каждый слой знает только о слоях ниже себя. AI → Contracts + Components (не Core). Presentation → Application → Core. Нарушение = ошибка архревью.
+> **📌 Rule** — Each layer knows only the layers below it. AI → Contracts + Components (not Core). Presentation → Application → Core. A violation is an arch-review error.
 
-## 1.2 Направление зависимостей
+## 1.2 Dependency direction
 
 ```csharp
 Contracts ← Components ← Systems ← Application ← Presentation
 Contracts ← Events     ↗
-Contracts ← Core       ↗  (Core открыт Systems через InternalsVisibleTo)
-Contracts ← AI (зависит только от Contracts + Components)
+Contracts ← Core       ↗  (Core is opened to Systems via InternalsVisibleTo)
+Contracts ← AI (depends only on Contracts + Components)
 ```
 
-> **⚠ Запрет** — Мод видит ТОЛЬКО DualFrontier.Contracts — через AssemblyLoadContext. Прямая ссылка мода на Core физически заблокирована. Это защита, а не договорённость.
+> **⚠ Forbidden** — A mod sees ONLY DualFrontier.Contracts — through AssemblyLoadContext. A direct mod reference to Core is physically blocked. This is protection, not a convention.
 
-# 2. C# как язык контрактов
+# 2. C# as a language of contracts
 
-## 2.1 class vs struct — где что применяется
+## 2.1 class vs struct — where each is used
 
-В Dual Frontier это не академический вопрос — это архитектурное решение.
+In Dual Frontier this is not an academic question — it is an architectural decision.
 
-| Тип | Где в проекте | Почему | Ключевое правило |
+| Type | Where in the project | Why | Key rule |
 |---|---|---|---|
-| struct | EntityId, LeaseId, TransactionId, GridVector | Маленький, неизменяемый идентификатор. Копируется по значению — нет риска случайного шаринга. | readonly record struct — два int поля максимум |
-| class | World, SystemBase, DomainEventBus, ComponentStore<T> | Объект состояния или сервис. Передаётся по ссылке — один экземпляр у всех. | sealed везде, где нет наследования |
-| interface | IComponent, IEvent, IModApi, IGameServices, ICombatBus | Контракт формы взаимодействия без реализации. Всё модинг-API — интерфейсы. | Никаких методов в маркер-интерфейсах |
+| struct | EntityId, LeaseId, TransactionId, GridVector | Small, immutable identifier. Copied by value — no risk of accidental sharing. | readonly record struct — at most two int fields |
+| class | World, SystemBase, DomainEventBus, ComponentStore<T> | Stateful object or service. Passed by reference — one instance for everyone. | sealed wherever there is no inheritance |
+| interface | IComponent, IEvent, IModApi, IGameServices, ICombatBus | Contract for an interaction's shape, no implementation. The whole modding API consists of interfaces. | No methods on marker interfaces |
 
-### EntityId — эталонный пример struct
+### EntityId — the canonical struct example
 
 ```csharp
 public readonly record struct EntityId(int Index, int Version)
@@ -59,87 +64,87 @@ public readonly record struct EntityId(int Index, int Version)
 }
 ```
 
-> **💡 Понять** — EntityId.Version инкрементируется при удалении entity. Старая ссылка с version=1 на entity с version=2 — мёртвая ссылка. Система просто пропускает её, не крашится.
+> **💡 Understand** — EntityId.Version is incremented on entity destruction. An old reference with version=1 to an entity with version=2 is a dead reference. The system simply skips it; it does not crash.
 
-### Ссылка vs копия — ловушка со struct
+### Reference vs copy — the struct trap
 
-Это самая частая ошибка при работе со struct. Запомни два случая:
+This is the most common error when working with structs. Remember two cases:
 
 ```csharp
-// ✅ ПРАВИЛЬНО — работаем с оригиналом через GetComponent/SetComponent
+// ✅ CORRECT — work with the original through GetComponent/SetComponent
 var hp = GetComponent<HealthComponent>(id);
 hp.Current -= damage;
-SetComponent(id, hp);   // записали изменение
+SetComponent(id, hp);   // wrote the change back
 ```
 
 ```csharp
-// ❌ ЛОВУШКА — если HealthComponent это struct
-ref var hp2 = ref store.GetRef(id);  // нужна ref-семантика
-hp2.Current -= damage;  // иначе меняем КОПИЮ, оригинал не изменился
+// ❌ TRAP — if HealthComponent is a struct
+ref var hp2 = ref store.GetRef(id);  // need ref semantics
+hp2.Current -= damage;  // otherwise we modify a COPY; the original is unchanged
 ```
 
-> **⚠ Правило** — Если тип — class, изменение поля через ссылку меняет оригинал. Если struct — GetComponent возвращает КОПИЮ. Изменения нужно SetComponent обратно записать.
+> **⚠ Rule** — If the type is a class, mutating a field through a reference changes the original. If it is a struct, GetComponent returns a COPY. Changes must be written back via SetComponent.
 
-## 2.2 Generics — как читать сигнатуры
+## 2.2 Generics — how to read signatures
 
-В проекте generics везде. Нужно читать их без страха.
+Generics are everywhere in the project. You need to read them without fear.
 
-| Сигнатура | Что означает | Где в проекте |
+| Signature | What it means | Where in the project |
 |---|---|---|
-| ComponentStore<T> where T : IComponent | T — любой тип, реализующий IComponent. Одна реализация Store для всех компонентов. | DualFrontier.Core/ECS/ComponentStore.cs |
-| void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent | Подписка на конкретный тип события. Компилятор гарантирует типобезопасность. | DomainEventBus, IEventBus |
-| IEnumerable<EntityId> Query<T1, T2>() where T1, T2 : IComponent | Ленивый итератор по entity, у которых есть оба компонента. | SystemExecutionContext, SystemBase |
-| GetComponent<T>(EntityId id) where T : IComponent | Получить компонент строго типизированно. Ошибка типа — на этапе компиляции. | SystemBase (через контекст) |
+| ComponentStore<T> where T : IComponent | T — any type implementing IComponent. One Store implementation for every component. | DualFrontier.Core/ECS/ComponentStore.cs |
+| void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent | Subscribe to a specific event type. The compiler guarantees type safety. | DomainEventBus, IEventBus |
+| IEnumerable<EntityId> Query<T1, T2>() where T1, T2 : IComponent | Lazy iterator over entities that have both components. | SystemExecutionContext, SystemBase |
+| GetComponent<T>(EntityId id) where T : IComponent | Get a component in a strictly typed way. Type errors caught at compile time. | SystemBase (through the context) |
 
-### Как работает ComponentStore<T> внутри
+### How ComponentStore<T> works inside
 
 ```csharp
 internal sealed class ComponentStore<T> : IComponentStore where T : IComponent
 {
-    private int[]  _sparse;       // indexed by EntityId.Index → позиция в dense
-    private T[]    _dense;         // плотный массив компонентов
-    private int[]  _denseToIndex;  // dense[i] принадлежит entity с index denseToIndex[i]
+    private int[]  _sparse;       // indexed by EntityId.Index → position in dense
+    private T[]    _dense;         // dense array of components
+    private int[]  _denseToIndex;  // dense[i] belongs to the entity with index denseToIndex[i]
 }
 ```
 
-IComponentStore — маркер-интерфейс без методов. Нужен только чтобы хранить разные ComponentStore<T> в одной коллекции Dictionary<Type, IComponentStore>.
+IComponentStore is a marker interface with no methods. It exists only to store different ComponentStore<T> instances in a single Dictionary<Type, IComponentStore>.
 
-## 2.3 Интерфейсы — контракты проекта
+## 2.3 Interfaces — project contracts
 
-Интерфейс в Dual Frontier — это не просто C#-концепция. Это архитектурное обещание. Мод знает только об интерфейсах, не о реализации.
+An interface in Dual Frontier is not just a C# concept. It is an architectural promise. A mod knows only the interfaces, not the implementation.
 
-| Интерфейс | Смысл | Кто реализует |
+| Interface | Meaning | Implemented by |
 |---|---|---|
-| IComponent | Маркер: это чистые данные ECS. Никакой логики. | HealthComponent, PositionComponent, WeaponComponent... |
-| IEvent | Маркер: это событие доменной шины. Неизменяемый record. | DamageEvent, AmmoIntent, ManaGranted... |
-| IModApi | Контракт API для мода: RegisterComponent, RegisterSystem, Subscribe, Publish. | RestrictedModApi в Application |
-| IGameServices | Агрегатор 5 шин: Combat, Inventory, Magic, Pawns, World. | GameServices в Core |
-| ICombatBus, IMagicBus... | Контракт конкретной доменной шины. | CombatBus, MagicBus внутри Core |
+| IComponent | Marker: this is pure ECS data. No logic. | HealthComponent, PositionComponent, WeaponComponent... |
+| IEvent | Marker: this is a domain-bus event. Immutable record. | DamageEvent, AmmoIntent, ManaGranted... |
+| IModApi | Mod-API contract: RegisterComponent, RegisterSystem, Subscribe, Publish. | RestrictedModApi in Application |
+| IGameServices | Aggregator of 5 buses: Combat, Inventory, Magic, Pawns, World. | GameServices in Core |
+| ICombatBus, IMagicBus... | Contract of a specific domain bus. | CombatBus, MagicBus inside Core |
 
-> **💡 Принцип** — Мод регистрирует SystemBase-потомка через IModApi.RegisterSystem<T>(). Не знает о World, не знает о Scheduler. Знает только что его система будет вызвана с delta.
+> **💡 Principle** — A mod registers a SystemBase descendant via IModApi.RegisterSystem<T>(). It does not know about World, does not know about Scheduler. It only knows that its system will be called with delta.
 
-## 2.4 Атрибуты — декларативный язык системы
+## 2.4 Attributes — the system's declarative language
 
-Атрибуты в Dual Frontier — это не метаданные для читателя кода. Это декларации, которые DependencyGraph читает через Reflection при старте.
+Attributes in Dual Frontier are not metadata for code readers. They are declarations that DependencyGraph reads via reflection at startup.
 
 ```csharp
 [SystemAccess(
     reads:  new[] { typeof(PositionComponent), typeof(WeaponComponent) },
     writes: new[] { typeof(HealthComponent) },
-    bus:    nameof(IGameServices.Combat)   // не строка — nameof
+    bus:    nameof(IGameServices.Combat)   // not a string — nameof
 )]
 [TickRate(TickRates.FAST)]
 public sealed class CombatSystem : SystemBase { ... }
 ```
 
-| Атрибут | Что читает | Зачем |
+| Attribute | Read by | Why |
 |---|---|---|
-| [SystemAccess] | DependencyGraph.AddSystem() | Строит граф READ/WRITE конфликтов. Определяет порядок фаз. |
+| [SystemAccess] | DependencyGraph.AddSystem() | Builds the READ/WRITE conflict graph. Determines phase order. |
 | [TickRate] | TickScheduler.ShouldRun() | REALTIME=60Hz, FAST=30Hz, NORMAL=10Hz, SLOW=2Hz, RARE=0.2Hz |
-| [Deferred] | DomainEventBus.Publish() | Событие доставляется в следующей фазе, не мгновенно. |
-| [Immediate] | DomainEventBus.Publish() | Критическое прерывание — доставка раньше остальных. |
+| [Deferred] | DomainEventBus.Publish() | The event is delivered in the next phase, not instantly. |
+| [Immediate] | DomainEventBus.Publish() | A critical preempt — delivery ahead of others. |
 
-### Как читать атрибуты через Reflection
+### How to read attributes through reflection
 
 ```csharp
 SystemAccessAttribute? access =
@@ -148,26 +153,26 @@ if (access is null)
     throw new InvalidOperationException($"System '{systemType.Name}' has no [SystemAccess]");
 ```
 
-inherit: false — важный параметр. Атрибут ищется только на конкретном типе, не у родителей. Это гарантирует что каждая система явно декларирует свой доступ.
+inherit: false is an important parameter. The attribute is searched only on the concrete type, not on parents. This guarantees that every system explicitly declares its access.
 
-## 2.5 Nullable и исключения
+## 2.5 Nullable and exceptions
 
-Nullable-контекст должен быть включён. Это ранняя защита контракта — null на входе = нарушение.
+The nullable context MUST be enabled. It is an early contract guard — null on input = a violation.
 
 ```csharp
-// SystemExecutionContext — nullable везде правильно
+// SystemExecutionContext — nullable used correctly throughout
 public static SystemExecutionContext? Current => _current.Value;
-// null = поток не принадлежит планировщику (Godot main thread, тест без контекста)
+// null = the thread does not belong to the scheduler (Godot main thread, test without context)
 ```
 
 ```csharp
-// SystemBase использует null-check как guard
+// SystemBase uses a null-check as a guard
 var ctx = SystemExecutionContext.Current
     ?? throw new InvalidOperationException(
         "GetComponent called outside an active scheduler context.");
 ```
 
-> **📌 Правило finally** — PopContext обязан быть в finally. Если Update() бросит исключение — поток всё равно освободит контекст. Иначе следующая система на том же потоке получит nested push и упадёт с диагностикой о баге в планировщике.
+> **📌 The finally rule** — PopContext MUST be in finally. If Update() throws, the thread still releases the context. Otherwise the next system on the same thread will get a nested push and fail with a diagnostic about a scheduler bug.
 
 ```csharp
 SystemExecutionContext.PushContext(ctx);
@@ -175,92 +180,92 @@ try {
     system.Update(delta);
 }
 finally {
-    SystemExecutionContext.PopContext();  // всегда, даже при исключении
+    SystemExecutionContext.PopContext();  // always, even on exception
 }
 ```
 
-# 3. Коллекции — часть модели производительности
+# 3. Collections — part of the performance model
 
-В проекте коллекция — это не просто контейнер. Выбор типа коллекции влияет на производительность симулятора с 10-20 тысячами entity.
+In the project, a collection is not just a container. The collection-type choice affects simulator performance with 10–20 thousand entities.
 
-| Коллекция | Сложность | Где в проекте | Когда использовать |
+| Collection | Complexity | Where in the project | When to use |
 |---|---|---|---|
-| List<T> | O(1) append, O(n) search | Фазы SystemPhase.Systems, наборы систем, временные батчи | Нужен порядок, быстрый обход, lookup не нужен |
-| Dictionary<TKey,TValue> | O(1) lookup | _stores в World (Type→IComponentStore), _contextCache в Scheduler | Быстрый lookup по ключу. Порядок не важен. |
-| HashSet<T> | O(1) contains | _allowedReads, _allowedWrites в SystemExecutionContext | Проверка принадлежности, уникальность, пересечения |
-| ConcurrentDictionary<K,V> | O(1) потокобез. | _stores в World, _handlers в DomainEventBus | Доступ из нескольких потоков. Не заменяет архитектуру. |
-| int[] (SparseSet) | O(1) все операции | _sparse, _dense в ComponentStore<T> | Максимальная производительность ECS, cache-friendly |
+| List<T> | O(1) append, O(n) search | SystemPhase.Systems, system sets, temporary batches | Need order, fast traversal, no lookup needed |
+| Dictionary<TKey,TValue> | O(1) lookup | _stores in World (Type→IComponentStore), _contextCache in Scheduler | Fast lookup by key. Order does not matter. |
+| HashSet<T> | O(1) contains | _allowedReads, _allowedWrites in SystemExecutionContext | Membership check, uniqueness, intersections |
+| ConcurrentDictionary<K,V> | O(1) thread-safe | _stores in World, _handlers in DomainEventBus | Access from multiple threads. Does not replace architecture. |
+| int[] (SparseSet) | O(1) all operations | _sparse, _dense in ComponentStore<T> | Maximum ECS performance, cache-friendly |
 
-### SparseSet — детали реализации
+### SparseSet — implementation details
 
-ComponentStore<T> использует SparseSet. Понять его структуру важно для дебага.
+ComponentStore<T> uses a SparseSet. Understanding its structure matters for debugging.
 
 ```csharp
-private int[] _sparse;       // длина = maxEntityCount. sparse[EntityId.Index] → позиция в dense или -1
-private T[]   _dense;         // плотный массив: dense[0], dense[1]... без дыр
-private int[] _denseToIndex;  // параллельно dense: какой EntityId.Index в этом слоте
+private int[] _sparse;       // length = maxEntityCount. sparse[EntityId.Index] → position in dense or -1
+private T[]   _dense;         // dense array: dense[0], dense[1]... no holes
+private int[] _denseToIndex;  // parallel to dense: which EntityId.Index lives in this slot
 ```
 
-| Операция | Как работает | Сложность |
+| Operation | How it works | Complexity |
 |---|---|---|
 | Add(id, component) | sparse[id.Index] = Count; dense[Count] = component; Count++ | O(1) |
-| Remove(id) | Swap last element into removed slot. sparse[last.Index] = denseIdx. Count--. | O(1) через swap-with-last |
+| Remove(id) | Swap last element into removed slot. sparse[last.Index] = denseIdx. Count--. | O(1) via swap-with-last |
 | Get(id) | return dense[sparse[id.Index]] | O(1) |
-| Iterate all | Пробег по dense[0..Count-1] — плотный, cache-friendly | O(Count), без пропусков |
-| Query<T1,T2> | Берём меньший store, проверяем наличие T2 для каждого entity | O(min(N1,N2)) |
+| Iterate all | Walk dense[0..Count-1] — dense, cache-friendly | O(Count), no gaps |
+| Query<T1,T2> | Take the smaller store, check T2 presence for each entity | O(min(N1,N2)) |
 
-### Правило выбора коллекции (три вопроса)
+### Collection-choice rule (three questions)
 
-- 1. Нужен ли порядок? → Если да: List или sorted структура
-- 2. Нужен ли быстрый lookup по ключу? → Dictionary или HashSet
-- 3. Будет ли доступ из нескольких потоков? → ConcurrentDictionary или отдельная синхронизация
+- 1. Is order needed? → If yes: List or a sorted structure
+- 2. Is fast key lookup needed? → Dictionary or HashSet
+- 3. Will access come from multiple threads? → ConcurrentDictionary or separate synchronization
 
-> **⚡ Важно** — ConcurrentDictionary делает отдельные операции атомарными, но НЕ делает последовательность операций (read-modify-write) атомарной. Это не замена правильной фазовой модели.
+> **⚡ Important** — ConcurrentDictionary makes individual operations atomic, but does NOT make a sequence of operations (read-modify-write) atomic. It is not a replacement for the proper phase model.
 
-# 4. ECS-ядро: World, Entity, Component, System
+# 4. The ECS core: World, Entity, Component, System
 
-## 4.1 Жизненный цикл Entity
+## 4.1 Entity lifecycle
 
 ```csharp
-// 1. Создание
+// 1. Creation
 EntityId id = world.CreateEntity();
-// id.Index = уникальный индекс, id.Version = 1
+// id.Index = unique index, id.Version = 1
 ```
 
 ```csharp
-// 2. Добавление компонента
+// 2. Adding a component
 world.AddComponent(id, new HealthComponent { Current = 100, Maximum = 100 });
 ```
 
 ```csharp
-// 3. Доступ через систему (не напрямую к World!)
-// В Update() системы:
-var hp = GetComponent<HealthComponent>(id);   // через SystemExecutionContext
+// 3. Access through a system (not directly to World!)
+// Inside the system's Update():
+var hp = GetComponent<HealthComponent>(id);   // through SystemExecutionContext
 ```
 
 ```csharp
-// 4. Удаление — инкрементирует Version
+// 4. Destruction — increments Version
 world.DestroyEntity(id);
 // id.Version = 1, world.GetVersion(id.Index) = 2
-// Теперь старый id — мёртвая ссылка
+// The old id is now a dead reference
 ```
 
-> **✅ Мёртвые ссылки** — После DestroyEntity старый EntityId безопасно невалиден — его Version не совпадёт с текущей. Системы проверяют IsValid и пропускают мёртвые entity вместо краша.
+> **✅ Dead references** — After DestroyEntity the old EntityId is safely invalid — its Version no longer matches the current. Systems check IsValid and skip dead entities instead of crashing.
 
-## 4.2 Изоляция системы — главный инвариант
+## 4.2 System isolation — the core invariant
 
-Система в Dual Frontier НЕ обращается к World напрямую. Только через SystemExecutionContext, который проверяет декларацию [SystemAccess].
+A system in Dual Frontier does NOT touch World directly. Only through SystemExecutionContext, which checks the [SystemAccess] declaration.
 
-| Метод | Что проверяет контекст (DEBUG) | Ошибка при нарушении |
+| Method | What the context checks (DEBUG) | Error on violation |
 |---|---|---|
-| GetComponent<T>(id) | T должен быть в reads ИЛИ writes атрибута | IsolationViolationException: UndeclaredRead |
-| SetComponent<T>(id, v) | T должен быть в writes атрибута | IsolationViolationException: UndeclaredWrite |
-| Query<T>() | T должен быть в reads или writes | IsolationViolationException: UndeclaredRead |
-| GetSystem<TSystem>() | Всегда запрещено. Используй шину. | IsolationViolationException: DirectSystemAccess |
-| Publish<TEvent>(evt) | Имя шины должно быть в allowedBuses | IsolationViolationException: UnauthorizedBus |
+| GetComponent<T>(id) | T MUST be in the attribute's reads OR writes | IsolationViolationException: UndeclaredRead |
+| SetComponent<T>(id, v) | T MUST be in the attribute's writes | IsolationViolationException: UndeclaredWrite |
+| Query<T>() | T MUST be in reads or writes | IsolationViolationException: UndeclaredRead |
+| GetSystem<TSystem>() | Always forbidden. Use the bus. | IsolationViolationException: DirectSystemAccess |
+| Publish<TEvent>(evt) | The bus name MUST be in allowedBuses | IsolationViolationException: UnauthorizedBus |
 
 ```csharp
-// ✅ Правильная система
+// ✅ Correct system
 [SystemAccess(reads: new[]{ typeof(HealthComponent) }, writes: new Type[0], bus: nameof(IGameServices.Combat))]
 [TickRate(TickRates.FAST)]
 public sealed class DamageReporterSystem : SystemBase
@@ -276,38 +281,38 @@ public sealed class DamageReporterSystem : SystemBase
 }
 ```
 
-> **⚠ Нарушение изоляции Core-системы** — Краш немедленно — IsolationViolationException. Нарушение — баг разработчика. В RELEASE-сборке проверки отключены (#if DEBUG), накладных расходов нет.
+> **⚠ Core-system isolation violation** — Crashes immediately — IsolationViolationException. The violation is a developer bug. In a RELEASE build the checks are disabled (#if DEBUG); there is no overhead.
 
-> **📌 Нарушение изоляции мод-системы** — Не краш, а маршрут через IModFaultSink → ModFaultHandler в Application. Мод выгружается, игра продолжает работать.
+> **📌 Mod-system isolation violation** — Not a crash, but a route through IModFaultSink → ModFaultHandler in Application. The mod is unloaded; the game continues.
 
-# 5. Многопоточность симулятора
+# 5. Simulator multithreading
 
-## 5.1 DependencyGraph — как строятся фазы
+## 5.1 DependencyGraph — how phases are built
 
-DependencyGraph читает [SystemAccess] всех систем и строит граф конфликтов. W/W-конфликт на одном компоненте — ошибка при Build(). W/R-конфликт — ребро зависимости.
+DependencyGraph reads every system's [SystemAccess] and builds a conflict graph. A W/W conflict on one component is an error during Build(). A W/R conflict is a dependency edge.
 
 ```csharp
-// Пример конфликтов:
+// Conflict examples:
 // WriterASystem    writes: CompA
-// ReadAWriteB      reads: CompA, writes: CompB   → зависит от WriterA
-// ReaderBSystem    reads: CompB                  → зависит от ReadAWriteB
+// ReadAWriteB      reads: CompA, writes: CompB   → depends on WriterA
+// ReaderBSystem    reads: CompB                  → depends on ReadAWriteB
 ```
 
 ```csharp
-// Результат топологической сортировки (алгоритм Кана):
-// Фаза 0: [WriterASystem]          — нет зависимостей
-// Фаза 1: [ReadAWriteB]             — ждёт Фазу 0
-// Фаза 2: [ReaderBSystem]           — ждёт Фазу 1
+// Result of topological sort (Kahn's algorithm):
+// Phase 0: [WriterASystem]          — no dependencies
+// Phase 1: [ReadAWriteB]             — waits on Phase 0
+// Phase 2: [ReaderBSystem]           — waits on Phase 1
 ```
 
-| Тип конфликта | Что происходит | Результат |
+| Conflict type | What happens | Result |
 |---|---|---|
-| W/W (оба пишут CompA) | Два потока пишут в один ComponentStore → гонка → битый мир | Build() бросает InvalidOperationException: Write conflict |
-| W/R (один пишет, другой читает) | Читатель должен стартовать ПОСЛЕ писателя | Ребро в графе → разные фазы |
-| R/R (оба читают) | Безопасно — можно в одной фазе | В одной фазе, параллельно |
-| Цикл в графе | A зависит от B, B зависит от A — невозможно упорядочить | Build() бросает: Cyclic dependency |
+| W/W (both write CompA) | Two threads write into one ComponentStore → race → corrupted world | Build() throws InvalidOperationException: Write conflict |
+| W/R (one writes, the other reads) | The reader MUST start AFTER the writer | Edge in the graph → different phases |
+| R/R (both read) | Safe — they may share a phase | In one phase, in parallel |
+| Cycle in the graph | A depends on B, B depends on A — impossible to order | Build() throws: Cyclic dependency |
 
-## 5.2 Parallel.ForEach — как исполняются фазы
+## 5.2 Parallel.ForEach — how phases execute
 
 ```csharp
 // ParallelSystemScheduler.ExecutePhase()
@@ -322,55 +327,55 @@ Parallel.ForEach(phase.Systems, _parallelOptions, system =>
     try { system.Update(delta); }
     finally { SystemExecutionContext.PopContext(); }
 });
-// Parallel.ForEach блокирует до завершения всех систем фазы
-// Это и есть БАРЬЕР между фазами
+// Parallel.ForEach blocks until every system in the phase finishes
+// That IS the BARRIER between phases
 ```
 
-| Деталь | Значение |
+| Detail | Value |
 |---|---|
-| MaxDegreeOfParallelism | Environment.ProcessorCount - 2. Резервирует ядро для Godot main thread и ОС. |
-| Порядок внутри фазы | НЕ гарантирован. Системы одной фазы параллельны — не делай предположений. |
-| Барьер между фазами | Parallel.ForEach блокирует ExecutePhase до завершения всех. Следующая фаза стартует только после. |
-| Кэш контекстов | _contextCache строится один раз в конструкторе. Горячий путь — без Reflection, без аллокаций. |
+| MaxDegreeOfParallelism | Environment.ProcessorCount - 2. Reserves a core for the Godot main thread and the OS. |
+| Order within a phase | NOT guaranteed. Systems within one phase are parallel — make no assumptions. |
+| Barrier between phases | Parallel.ForEach blocks ExecutePhase until completion. The next phase starts only afterward. |
+| Context cache | _contextCache is built once in the constructor. The hot path runs without reflection and without allocations. |
 
-## 5.3 ThreadLocal — почему guard привязан к потоку
+## 5.3 ThreadLocal — why the guard is bound to the thread
 
 ```csharp
 private static readonly ThreadLocal<SystemExecutionContext?> _current = new();
 ```
 
-ThreadLocal<T> даёт каждому потоку независимое хранилище. Поток пула из Parallel.ForEach имеет свой _current. Godot main thread — свой (null, не в контексте планировщика).
+ThreadLocal<T> gives every thread its own independent storage. A pool thread from Parallel.ForEach has its own _current. The Godot main thread has its own (null, not in a scheduler context).
 
-| Поток | Значение _current | Что означает |
+| Thread | _current value | Meaning |
 |---|---|---|
-| Поток планировщика во время Update() | SystemExecutionContext конкретной системы | GetComponent/SetComponent разрешены согласно декларации |
-| Поток планировщика вне Update() | null (после PopContext) | Доступ к компонентам запрещён |
-| Godot main thread | null | Domain-код здесь не исполняется |
-| Тест без PushContext | null | Тест должен явно PushContext для проверки guard-а |
+| Scheduler thread inside Update() | The SystemExecutionContext of the specific system | GetComponent/SetComponent allowed per the declaration |
+| Scheduler thread outside Update() | null (after PopContext) | Component access forbidden |
+| Godot main thread | null | Domain code does not run here |
+| Test without PushContext | null | The test MUST PushContext explicitly to exercise the guard |
 
-> **🚫 async/await в системах — запрещено** — await переносит продолжение на другой поток. _current.Value на новом потоке = null. GetComponent() бросит исключение. Детерминизм нарушен. Фазовая семантика сломана. async/await в Domain — строго запрещено.
+> **🚫 async/await inside systems is forbidden** — await schedules the continuation on a different thread. _current.Value on the new thread is null. GetComponent() throws. Determinism is broken. Phase semantics are broken. async/await in Domain is strictly forbidden.
 
-## 5.4 Race condition — как распознать
+## 5.4 Race conditions — how to spot them
 
-Гонка данных = результат зависит от порядка одновременного доступа потоков. В симуляторе это смертельно: ошибка проявится через часы игры.
+A data race = the result depends on the simultaneous access order of threads. In a simulator this is fatal: the bug surfaces hours into play.
 
-| Сценарий | Почему опасно | Защита в проекте |
+| Scenario | Why dangerous | Project's defense |
 |---|---|---|
-| Два потока пишут один ComponentStore | Данные перетираются непредсказуемо | DependencyGraph запрещает W/W в одной фазе |
-| Один пишет, другой читает в одной фазе | Читатель видит частично обновлённое состояние | W/R тоже разносится по фазам |
-| Мод регистрирует систему во время тика | Нарушение инварианта _phases при чтении в Parallel.ForEach | Rebuild() только из меню, не во время сессии |
-| Обработчик шины подписывается во время Publish | ConcurrentModificationException | DomainEventBus копирует список перед итерацией |
+| Two threads write into one ComponentStore | Data is overwritten unpredictably | DependencyGraph forbids W/W in one phase |
+| One writes, another reads in the same phase | The reader sees a partially updated state | W/R is also split across phases |
+| A mod registers a system during a tick | Breaks the _phases invariant when read inside Parallel.ForEach | Rebuild() only from the menu, never during a session |
+| A bus handler subscribes during Publish | ConcurrentModificationException | DomainEventBus copies the list before iterating |
 
-> **✅ Критический принцип** — Для многопоточности в симуляторе лучше ранний краш, чем тихий баг. Если нарушен инвариант и миру нельзя доверять — игра должна остановиться до того, как испорченное состояние попадёт в save.
+> **✅ Critical principle** — For a simulator's multithreading, an early crash is better than a silent bug. If an invariant is broken and the world cannot be trusted, the game MUST stop before the corrupted state lands in a save.
 
-# 6. Event Bus — двухшаговая модель
+# 6. Event Bus — the two-step model
 
-## 6.1 Архитектура шин
+## 6.1 Bus architecture
 
-В Dual Frontier 5 доменных шин: Combat, Inventory, Magic, Pawns, World. Каждая — отдельный экземпляр DomainEventBus. Это снижает lock contention и упрощает профилирование.
+Dual Frontier has 5 domain buses: Combat, Inventory, Magic, Pawns, World. Each is a separate DomainEventBus instance. This reduces lock contention and simplifies profiling.
 
 ```csharp
-// GameServices — агрегатор шин (docs/CONTRACTS.md)
+// GameServices — bus aggregator (docs/CONTRACTS.md)
 public interface IGameServices
 {
     ICombatBus    Combat    { get; }
@@ -381,43 +386,43 @@ public interface IGameServices
 }
 ```
 
-### Как работает DomainEventBus.Publish()
+### How DomainEventBus.Publish() works
 
 ```csharp
-// 1. Получаем список обработчиков для типа события
+// 1. Get the handler list for the event type
 if (!_handlers.TryGetValue(eventType, out var handlersList)) return;
 ```
 
 ```csharp
-// 2. Копируем список под lock — защита от изменений во время итерации
+// 2. Copy the list under lock — protection against changes during iteration
 List<Delegate> handlersCopy;
 lock (handlersList) { handlersCopy = new List<Delegate>(handlersList); }
 ```
 
 ```csharp
-// 3. Вызываем обработчики вне lock — нет deadlock при Subscribe в handler
+// 3. Invoke handlers outside the lock — no deadlock if a handler subscribes
 foreach (var handler in handlersCopy)
     ((Action<TEvent>)handler)?.Invoke(evt);
 ```
 
-## 6.2 Intent → Granted/Refused (двухшаговая модель)
+## 6.2 Intent → Granted/Refused (two-step model)
 
-Ключевой паттерн для механик с ресурсами. Система не получает ресурс напрямую — она публикует намерение. Другая система отвечает в следующей фазе.
+The key pattern for resource mechanics. The system does not get the resource directly — it publishes an intent. Another system answers in the next phase.
 
-| Шаг | Кто | Что публикует | Фаза |
+| Step | Who | What is published | Phase |
 |---|---|---|---|
-| 1 | CombatSystem | AmmoIntent { RequesterId, AmmoType, Position } | Фаза N |
-| 2 | IntentBatcher | Собирает все AmmoIntent за фазу N | Фаза N |
-| 3 | InventorySystem | Flush AmmoIntent → AmmoGranted или AmmoRefused | Фаза N+1 |
-| 4 | CombatSystem | Подписан на AmmoGranted — исполняет выстрел | Фаза N+1 |
+| 1 | CombatSystem | AmmoIntent { RequesterId, AmmoType, Position } | Phase N |
+| 2 | IntentBatcher | Collects every AmmoIntent for phase N | Phase N |
+| 3 | InventorySystem | Flush AmmoIntent → AmmoGranted or AmmoRefused | Phase N+1 |
+| 4 | CombatSystem | Subscribed to AmmoGranted — fires the shot | Phase N+1 |
 
 ```csharp
-// CombatSystem — публикует намерение (не блокирует)
+// CombatSystem — publishes the intent (does not block)
 Services.Combat.Publish(new AmmoIntent { RequesterId = pawnId, AmmoType = AmmoType.Rifle });
 ```
 
 ```csharp
-// InventorySystem — обрабатывает пачку Intent в следующей фазе
+// InventorySystem — handles the batch of Intents in the next phase
 var intents = _batcher.Flush<AmmoIntent>();
 foreach (var intent in intents) {
     if (HasAmmo(intent.RequesterId, intent.AmmoType))
@@ -427,49 +432,49 @@ foreach (var intent in intents) {
 }
 ```
 
-> **💡 Принцип** — Двухшаговая модель исключает блокирующий request/response между системами. Каждая система остаётся независимой. Планировщик выстраивает их через граф зависимостей автоматически.
+> **💡 Principle** — The two-step model eliminates blocking request/response between systems. Each system stays independent. The scheduler arranges them via the dependency graph automatically.
 
-# 7. Дебаг — навыки для проекта
+# 7. Debugging — skills for the project
 
-## 7.1 Читать stack trace
+## 7.1 Reading stack traces
 
-Stack trace читается снизу вверх: сначала найди первый throw (источник), не место где исключение всплыло наружу.
+Read a stack trace from bottom to top: first locate the original throw (the source), not the spot where the exception bubbled out.
 
 ```csharp
 System.InvalidOperationException: SystemExecutionContext is already set on this thread
-   at DualFrontier.Core.ECS.SystemExecutionContext.PushContext(...)  ← ИСТОЧНИК
+   at DualFrontier.Core.ECS.SystemExecutionContext.PushContext(...)  ← SOURCE
    at DualFrontier.Core.Scheduling.ParallelSystemScheduler.ExecutePhase(...)
    at DualFrontier.Core.Scheduling.ParallelSystemScheduler.ExecuteTick(...)
 ```
 
-Этот краш означает: попытка вложенного PushContext — уже установленный контекст не был снят. Причина: PopContext не был в finally, и предыдущий Update() бросил исключение.
+This crash means: an attempt at a nested PushContext — the previously set context was not popped. Cause: PopContext was not in finally, and the previous Update() threw.
 
-## 7.2 Типы нарушений изоляции
+## 7.2 Types of isolation violations
 
-| Исключение / сообщение | Что нарушено | Как исправить |
+| Exception / message | What was violated | How to fix |
 |---|---|---|
-| UndeclaredRead: T not in reads | Система читает компонент, не задекларированный в [SystemAccess] | Добавить T в reads: массив атрибута |
-| UndeclaredWrite: T not in writes | Система пишет компонент без декларации | Добавить T в writes: массив атрибута |
-| DirectSystemAccess | Система вызвала GetSystem<T>() — прямая ссылка на другую систему | Заменить на Publish через шину |
-| UnauthorizedBus | Система публикует в шину, не задекларированную в bus: | Поправить bus: nameof(IGameServices.X) |
-| nested push detected | PushContext без предшествующего PopContext | Убедиться что PopContext в finally |
-| Write conflict in Build() | Две системы пишут один компонент — W/W конфликт | Разделить логику или объединить системы |
-| Cyclic dependency in Build() | Цикл зависимостей A→B→A | Пересмотреть reads/writes, разбить через события |
+| UndeclaredRead: T not in reads | The system reads a component not declared in [SystemAccess] | Add T to the reads: array of the attribute |
+| UndeclaredWrite: T not in writes | The system writes a component without a declaration | Add T to the writes: array of the attribute |
+| DirectSystemAccess | The system called GetSystem<T>() — a direct reference to another system | Replace with Publish through the bus |
+| UnauthorizedBus | The system publishes to a bus not declared in bus: | Fix bus: nameof(IGameServices.X) |
+| nested push detected | PushContext without a preceding PopContext | Make sure PopContext is in finally |
+| Write conflict in Build() | Two systems write the same component — W/W conflict | Split the logic or merge the systems |
+| Cyclic dependency in Build() | Cyclic dependency A→B→A | Reconsider reads/writes; break via events |
 
-## 7.3 Логическая vs архитектурная ошибка
+## 7.3 Logic vs architectural error
 
-| Тип ошибки | Признак | Где искать |
+| Error type | Symptom | Where to look |
 |---|---|---|
-| Логическая | Неверный расчёт урона, не та формула, ошибка в if-условии | В самом Update() системы, в компонентах |
-| Архитектурная | Исключение изоляции, W/W конфликт, краш планировщика, нарушение контракта | В атрибутах [SystemAccess], в фазовой модели, в ownership |
-| Конкурентная | Нестабильный краш — воспроизводится не всегда, зависит от порядка | В DependencyGraph: проверить что нет W/R в одной фазе |
+| Logic | Wrong damage calc, wrong formula, error in an if-condition | Inside the system's Update(), in components |
+| Architectural | Isolation exception, W/W conflict, scheduler crash, contract violation | In the [SystemAccess] attributes, in the phase model, in ownership |
+| Concurrency | Unstable crash — does not reproduce reliably, depends on order | In DependencyGraph: check that there is no W/R in one phase |
 
-## 7.4 Тесты как доказательство инварианта
+## 7.4 Tests as invariant proofs
 
-В Dual Frontier тест — это не галочка. Это доказательство что конкретный инвариант соблюдается. xUnit + FluentAssertions.
+In Dual Frontier a test is not a checkbox. It is a proof that a specific invariant holds. xUnit + FluentAssertions.
 
 ```csharp
-// Тест: guard ловит незадекларированное чтение
+// Test: the guard catches an undeclared read
 [Fact]
 public void GetComponent_UndeclaredRead_ThrowsIsolationViolation()
 {
@@ -495,73 +500,73 @@ public void GetComponent_UndeclaredRead_ThrowsIsolationViolation()
 }
 ```
 
-# 8. Учебный маршрут — 14 дней
+# 8. Study path — 14 days
 
-Каждый день: 20–30 мин теории по одной теме → 30–60 мин работа с реальными файлами проекта → 1 практическая проверка → короткая запись в заметках проекта.
+Each day: 20–30 min of theory on one topic → 30–60 min of work with real project files → one practical check → a short note in the project journal.
 
-## Дни 1–7: Язык и контракты
+## Days 1–7: Language and contracts
 
-| День | Тема | Файл в проекте | Практическая проверка |
+| Day | Topic | Project file | Practical check |
 |---|---|---|---|
-| 1 | class vs struct, readonly, nullable | EntityId.cs, ComponentStore.cs | Объяснить: почему EntityId — readonly struct, а не class. Где nullable защищает контракт. |
-| 2 | Ссылка vs копия значения | ComponentStore<T>.Get(), SetComponent() | Написать код: изменить HealthComponent через GetComponent/SetComponent. Убедиться что изменение сохранилось. |
-| 3 | Интерфейсы как контракт | IComponent, IEvent, IModApi, IGameServices | Ответить: что произойдёт если добавить метод в IComponent. Почему IGameServices — не класс. |
-| 4 | Generics: чтение сигнатур | ComponentStore<T>, Query<T1,T2>(), Subscribe<TEvent>() | Прочитать сигнатуру ComponentStore<T> вслух. Объяснить where T : IComponent. |
-| 5 | Атрибуты и Reflection | [SystemAccess], DependencyGraph.AddSystem() | Найти в коде где GetCustomAttribute читает атрибут. Добавить тестовую систему без атрибута — проверить краш. |
-| 6 | Исключения и finally | ParallelSystemScheduler, SystemExecutionContext | Убрать finally у PopContext в тестовом коде. Запустить тест. Понять что сломалось. |
-| 7 | Коллекции в проекте | World._stores, _contextCache, _allowedReads | Для каждого поля назвать: почему именно эта коллекция (порядок? lookup? потокобезопасность?). |
+| 1 | class vs struct, readonly, nullable | EntityId.cs, ComponentStore.cs | Explain: why is EntityId a readonly struct, not a class? Where does nullable guard the contract? |
+| 2 | Reference vs value copy | ComponentStore<T>.Get(), SetComponent() | Write code: change a HealthComponent through GetComponent/SetComponent. Confirm the change persists. |
+| 3 | Interfaces as a contract | IComponent, IEvent, IModApi, IGameServices | Answer: what happens if you add a method to IComponent? Why is IGameServices not a class? |
+| 4 | Generics: reading signatures | ComponentStore<T>, Query<T1,T2>(), Subscribe<TEvent>() | Read the ComponentStore<T> signature aloud. Explain where T : IComponent. |
+| 5 | Attributes and reflection | [SystemAccess], DependencyGraph.AddSystem() | Find in code where GetCustomAttribute reads the attribute. Add a test system without the attribute — verify the crash. |
+| 6 | Exceptions and finally | ParallelSystemScheduler, SystemExecutionContext | Remove the finally around PopContext in test code. Run the test. Understand what broke. |
+| 7 | Project collections | World._stores, _contextCache, _allowedReads | For each field, explain: why this collection (order? lookup? thread safety?). |
 
-## Дни 8–14: Многопоточность и дебаг
+## Days 8–14: Multithreading and debugging
 
-| День | Тема | Файл в проекте | Практическая проверка |
+| Day | Topic | Project file | Practical check |
 |---|---|---|---|
-| 8 | Race conditions: W/W и W/R | DependencyGraph.cs, DependencyGraphTests.cs | Найти тест Build_WriteWriteConflict_Throws. Запустить. Объяснить почему он существует. |
-| 9 | ThreadLocal — механика | SystemExecutionContext._current, PushContext/PopContext | Объяснить: почему _current — ThreadLocal, а не static поле. Что произошло бы без ThreadLocal. |
-| 10 | Parallel.ForEach и барьер | ParallelSystemScheduler.ExecutePhase(), ExecuteTick() | Нарисовать схему: фазы 0→1→2 и где находится барьер. Почему порядок систем внутри фазы не гарантирован. |
-| 11 | TickScheduler — частоты | TickScheduler.cs, TickRates.cs | Ответить: система с [TickRate(SLOW)] сколько раз выполнится за 10 секунд? А REALTIME? |
-| 12 | Чтение stack trace | IsolationViolationException в тестах | Запустить isolation-тест на умышленное нарушение. Найти в stack trace строку первого throw. |
-| 13 | Тесты как доказательство | DependencyGraphTests.cs, ComponentStoreTests.cs | Прочитать тест Build_LinearChain_OrderedPhases. Объяснить что именно он доказывает об архитектуре. |
-| 14 | Ревизия и документация | Все README модулей, ARCHITECTURE.md | Обновить свои заметки. Отметить что стало каноном. Написать один новый тест на понравившийся инвариант. |
+| 8 | Race conditions: W/W and W/R | DependencyGraph.cs, DependencyGraphTests.cs | Find the Build_WriteWriteConflict_Throws test. Run it. Explain why it exists. |
+| 9 | ThreadLocal — mechanics | SystemExecutionContext._current, PushContext/PopContext | Explain: why is _current ThreadLocal and not a static field? What would happen without ThreadLocal? |
+| 10 | Parallel.ForEach and the barrier | ParallelSystemScheduler.ExecutePhase(), ExecuteTick() | Sketch the diagram: phases 0→1→2 and where the barrier sits. Why is system order within a phase not guaranteed? |
+| 11 | TickScheduler — frequencies | TickScheduler.cs, TickRates.cs | Answer: a system with [TickRate(SLOW)] runs how many times in 10 seconds? And REALTIME? |
+| 12 | Reading stack traces | IsolationViolationException in tests | Run an isolation test for a deliberate violation. Find the first throw line in the stack trace. |
+| 13 | Tests as proof | DependencyGraphTests.cs, ComponentStoreTests.cs | Read the Build_LinearChain_OrderedPhases test. Explain exactly what it proves about the architecture. |
+| 14 | Review and documentation | All module READMEs, ARCHITECTURE.md | Update your notes. Mark what became canonical. Write one new test for a favorite invariant. |
 
-> **✅ Ежедневное правило** — Если прочитал код и не можешь объяснить почему он написан именно так — это сигнал для изучения. Не "что делает код", а "какой инвариант он защищает".
+> **✅ Daily rule** — If you read code and cannot explain why it is written that way, that is a signal to study. Not "what does the code do" but "what invariant does it protect".
 
-# 9. Быстрая шпаргалка — правила проекта
+# 9. Quick reference — project rules
 
-## Архитектурные запреты
+## Architectural prohibitions
 
-| Запрет | Почему | Альтернатива |
+| Prohibition | Why | Alternative |
 |---|---|---|
-| async/await в Domain | Продолжение — другой поток, ThreadLocal null, детерминизм сломан | Синхронный код, шины для коммуникации |
-| Прямой доступ к World из системы | Обходит guard изоляции, не декларированный доступ | GetComponent<T> через SystemBase (через контекст) |
-| GetSystem<TSystem>() в системе | Прямая связь систем — нарушение изоляции | Publish событие в шину |
-| Ссылка мода на Core | AssemblyLoadContext блокирует физически | Только DualFrontier.Contracts |
-| W/W на одном компоненте | Гонка данных — тихий баг в save | DependencyGraph запрещает при Build() |
-| Rebuild() планировщика во время тика | Нарушает _phases под Parallel.ForEach | Только из меню между сессиями |
+| async/await in Domain | The continuation is on another thread; ThreadLocal is null; determinism is broken | Synchronous code, buses for communication |
+| Direct access to World from a system | Bypasses the isolation guard, undeclared access | GetComponent<T> through SystemBase (through the context) |
+| GetSystem<TSystem>() inside a system | Direct system coupling — an isolation violation | Publish an event to a bus |
+| Mod reference to Core | AssemblyLoadContext blocks it physically | Only DualFrontier.Contracts |
+| W/W on one component | Data race — silent bug in the save | DependencyGraph forbids it during Build() |
+| Rebuild() of the scheduler during a tick | Breaks _phases under Parallel.ForEach | Only from the menu between sessions |
 
-## Ключевые гарантии ECS
+## Key ECS guarantees
 
-| Гарантия | Где обеспечена |
+| Guarantee | Where it is enforced |
 |---|---|
-| В одной фазе нет W/W и W/R на одном компоненте | DependencyGraph.Build() + топологическая сортировка |
-| Система видит только задекларированные компоненты (DEBUG) | SystemExecutionContext._allowedReads/_allowedWrites |
-| Каждый поток имеет свой независимый контекст | ThreadLocal<SystemExecutionContext?> _current |
-| PopContext всегда вызывается, даже при исключении | try/finally в ParallelSystemScheduler.ExecutePhase() |
-| Мод не может уронить игру нарушением изоляции | IModFaultSink → ModFaultHandler выгружает мод |
-| Следующая фаза стартует только после завершения текущей | Parallel.ForEach блокирует до завершения всех систем фазы |
+| No W/W or W/R on one component within a phase | DependencyGraph.Build() + topological sort |
+| A system sees only declared components (DEBUG) | SystemExecutionContext._allowedReads/_allowedWrites |
+| Each thread has its own independent context | ThreadLocal<SystemExecutionContext?> _current |
+| PopContext is always called, even on exceptions | try/finally in ParallelSystemScheduler.ExecutePhase() |
+| A mod cannot crash the game with an isolation violation | IModFaultSink → ModFaultHandler unloads the mod |
+| The next phase starts only after the current finishes | Parallel.ForEach blocks until every system in the phase completes |
 
-## Быстрый выбор
+## Quick choice
 
-| Ситуация | Решение |
+| Situation | Solution |
 |---|---|
-| Нужен маленький неизменяемый идентификатор | readonly record struct (EntityId, GridVector) |
-| Нужен объект состояния или сервис | class, sealed |
-| Нужна типобезопасная коллекция компонентов | ComponentStore<T> where T : IComponent |
-| Нужна связь между системами | Publish событие в шину, не GetSystem<T>() |
-| Нужен ресурс (патрон, мана, слот инвентаря) | AmmoIntent / ManaIntent → двухшаговая модель |
-| Нужно что-то сделать после удаления entity | [Deferred] на DeathEvent |
-| Нужно прервать фазу немедленно | [Immediate] — использовать крайне редко |
-| Нужен доступ к компоненту из теста без системы | Явный PushContext в тесте, явный PopContext в finally |
+| Need a small immutable identifier | readonly record struct (EntityId, GridVector) |
+| Need a stateful object or a service | class, sealed |
+| Need a type-safe collection of components | ComponentStore<T> where T : IComponent |
+| Need a link between systems | Publish an event to a bus, not GetSystem<T>() |
+| Need a resource (bullet, mana, inventory slot) | AmmoIntent / ManaIntent → two-step model |
+| Need to do something after entity destruction | [Deferred] on DeathEvent |
+| Need to preempt a phase immediately | [Immediate] — use extremely sparingly |
+| Need component access from a test without a system | Explicit PushContext in the test, explicit PopContext in finally |
 
-Контракты дают форму. Системы дают поведение. Планировщик защищает правила. Тесты доказывают что правила соблюдаются.
+Contracts give shape. Systems give behavior. The scheduler protects the rules. Tests prove that the rules hold.
 
-Dual Frontier · C# и многопоточность · Учебный материал проекта
+Dual Frontier · C# and multithreading · Project learning artifact
