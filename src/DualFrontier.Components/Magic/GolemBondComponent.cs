@@ -4,45 +4,45 @@ using DualFrontier.Contracts.Enums;
 namespace DualFrontier.Components.Magic;
 
 /// <summary>
-/// Связь голема с магом-хозяином. Без хозяина голем не функционирует
-/// (см. GDD 5.2 «Уязвимости»: истощение/смерть мага → остановка големов).
-/// <c>GolemTier</c> — уровень голема 1..5 (GDD 5.1 «Типы Големов по Уровням»).
+/// Bond between a golem and its mage owner. Without an owner the golem does
+/// not function (see GDD 5.2 "Vulnerabilities": mage exhaustion/death halts
+/// the golems). <c>GolemTier</c> — golem level 1..5 (GDD 5.1 "Golem Tiers").
 ///
-/// v02 Addendum (§12.5): добавлены поля режима владения и счётчика оспаривания
-/// для реализации механики перехвата/покидания голема через события
-/// <c>GolemOwnershipTransferRequest</c> / <c>GolemOwnershipChanged</c>.
+/// v0.2 Addendum (§12.5): added ownership-mode and contest-counter fields to
+/// implement the golem takeover/abandonment mechanic via the
+/// <c>GolemOwnershipTransferRequest</c> / <c>GolemOwnershipChanged</c> events.
 /// </summary>
 public sealed class GolemBondComponent : IComponent
 {
     // TODO: public EntityId? OwnerId;
-    // TODO: public int GolemTier;  // 1..5 — см. GDD 5.1
+    // TODO: public int GolemTier;  // 1..5 — see GDD 5.1
 
     /// <summary>
-    /// Текущий маг-хозяин. <c>null</c>, если голем в режиме
-    /// <see cref="OwnershipMode.Abandoned"/>. TODO: Фаза 6 — связать с
-    /// жизненным циклом мага (при смерти хозяина переводить в Abandoned).
+    /// Current mage owner. <c>null</c> when the golem is in
+    /// <see cref="OwnershipMode.Abandoned"/>. TODO: Phase 6 — couple with the
+    /// mage lifecycle (transition to Abandoned on owner death).
     /// </summary>
     public EntityId? BondedMage { get; init; }
 
     /// <summary>
-    /// Режим владения големом. По умолчанию <see cref="OwnershipMode.Bonded"/>.
-    /// TODO: Фаза 6 — машина состояний переходов через
+    /// Golem ownership mode. Defaults to <see cref="OwnershipMode.Bonded"/>.
+    /// TODO: Phase 6 — state machine for transitions via
     /// <c>GolemOwnershipTransferRequest</c>.
     /// </summary>
     public OwnershipMode Mode { get; init; } = OwnershipMode.Bonded;
 
     /// <summary>
-    /// Счётчик тиков, прошедших с момента начала оспаривания владения.
-    /// Используется <c>GolemBondSystem</c> для таймаута смены хозяина в
-    /// режиме <see cref="OwnershipMode.Contested"/>.
-    /// TODO: Фаза 6 — определить пороговое значение таймаута.
+    /// Counter of ticks elapsed since ownership contest began.
+    /// Used by <c>GolemBondSystem</c> to time out the owner change in
+    /// <see cref="OwnershipMode.Contested"/>.
+    /// TODO: Phase 6 — define the timeout threshold.
     /// </summary>
     public int TicksSinceContested { get; init; }
 
     /// <summary>
-    /// Прочность связи с хозяином: чем выше, тем сложнее перехватить
-    /// управление големом. Участвует в разрешении споров (contest resolution).
-    /// TODO: Фаза 6 — формула зависимости от уровня мага/школы.
+    /// Strength of the bond with the owner: the higher it is, the harder it
+    /// is to seize control of the golem. Participates in contest resolution.
+    /// TODO: Phase 6 — formula based on mage level/school.
     /// </summary>
     public int BondStrength { get; init; }
 }

@@ -3,9 +3,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Components.Pawn;
 
 /// <summary>
-/// Социальные отношения пешки с другими. Ключ — EntityId другой пешки,
-/// значение — числовой уровень симпатии (отрицательные = вражда).
-/// Обновляется SocialSystem (RARE tick) при взаимодействиях.
+/// A pawn's social relationships with others. Key — EntityId of the other
+/// pawn, value — numeric affinity level (negative = enmity).
+/// Updated by SocialSystem (RARE tick) on interactions.
 /// </summary>
 public sealed class SocialComponent : IComponent
 {

@@ -4,11 +4,11 @@ using DualFrontier.Contracts.Math;
 namespace DualFrontier.Components.Shared;
 
 /// <summary>
-/// Позиция entity в тайловой сетке мира. Pure data.
-/// Модификация — только через MovementSystem / TeleportSystem.
+/// Position of an entity on the world's tile grid. Pure data.
+/// Mutated only via MovementSystem / TeleportSystem.
 /// </summary>
 public sealed class PositionComponent : IComponent
 {
-    /// <summary>Координата в тайловой сетке.</summary>
+    /// <summary>Tile-grid coordinate.</summary>
     public GridVector Position;
 }

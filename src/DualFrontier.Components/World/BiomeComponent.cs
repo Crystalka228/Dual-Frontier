@@ -3,11 +3,11 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Components.World;
 
 /// <summary>
-/// Биом региона карты. Влияет на мудовые модификаторы пешек, доступную
-/// флору/фауну, погодные эффекты и распределение ресурсов.
+/// Biome of a map region. Affects pawn mood modifiers, available flora/fauna,
+/// weather effects, and resource distribution.
 /// </summary>
 public sealed class BiomeComponent : IComponent
 {
-    // TODO: создать DualFrontier.Components.World.BiomeKind enum (TemperateForest, Desert, Tundra, Swamp, EtherWastes …) — Фаза 2.
+    // TODO: introduce DualFrontier.Components.World.BiomeKind enum (TemperateForest, Desert, Tundra, Swamp, EtherWastes …) — Phase 2.
     // TODO: public BiomeKind Kind;
 }

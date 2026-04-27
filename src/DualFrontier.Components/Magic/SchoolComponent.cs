@@ -3,13 +3,13 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Components.Magic;
 
 /// <summary>
-/// Уровни магии по школам. См. GDD 4.3 «Школы Магии» —
-/// маг углубляется в школу, а не изучает всё подряд (глубина важнее ширины).
-/// GDD 4.4 «Мультишкольность» описывает штрафы при распылении.
+/// Magic levels per school. See GDD 4.3 "Magic Schools" — a mage goes deep
+/// into a school rather than sampling all of them (depth beats breadth).
+/// GDD 4.4 "Multi-school" describes the penalties for spreading thin.
 /// </summary>
 public sealed class SchoolComponent : IComponent
 {
-    // TODO: создать DualFrontier.Components.Magic.MagicSchool enum
-    //       (Fire, Ice, Storm, Earth, Wind, Water, Dark, Light, Mind, Void) — GDD 4.3, Фаза 6.
+    // TODO: introduce DualFrontier.Components.Magic.MagicSchool enum
+    //       (Fire, Ice, Storm, Earth, Wind, Water, Dark, Light, Mind, Void) — GDD 4.3, Phase 6.
     // TODO: public Dictionary<MagicSchool, int> SchoolLevels = new();
 }

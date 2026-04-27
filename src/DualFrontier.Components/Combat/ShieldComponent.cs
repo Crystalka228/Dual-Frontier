@@ -3,15 +3,15 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Components.Combat;
 
 /// <summary>
-/// Магический щит. Слой 2 защиты (GDD 6.4 «Магические Щиты»):
-/// сначала поглощает урон пул <c>HpPool</c>, восстанавливается со скоростью
-/// <c>Regen</c> (ед./тик). Тип щита (<c>Kind</c>) определяет модификаторы
-/// поглощения для разных <c>DamageType</c>.
+/// Magical shield. Defence layer 2 (GDD 6.4 "Magical Shields"):
+/// the <c>HpPool</c> absorbs damage first and recovers at <c>Regen</c>
+/// (units/tick). Shield kind (<c>Kind</c>) determines absorption modifiers
+/// for different <c>DamageType</c>s.
 /// </summary>
 public sealed class ShieldComponent : IComponent
 {
     // TODO: public float HpPool;
     // TODO: public float Regen;
-    // TODO: создать DualFrontier.Components.Combat.ShieldKind enum (Arcane, Kinetic, Void …) — GDD 6.4, Фаза 6.
+    // TODO: introduce DualFrontier.Components.Combat.ShieldKind enum (Arcane, Kinetic, Void …) — GDD 6.4, Phase 6.
     // TODO: public ShieldKind Kind;
 }

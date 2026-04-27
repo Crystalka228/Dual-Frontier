@@ -3,8 +3,8 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Components.Shared;
 
 /// <summary>
-/// Здоровье entity. Pure data — никакой логики.
-/// Модификация только через DamageSystem / HealSystem.
+/// Entity health. Pure data — no logic.
+/// Mutated only via DamageSystem / HealSystem.
 /// </summary>
 public sealed class HealthComponent : IComponent
 {
