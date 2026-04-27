@@ -3,14 +3,14 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Application.Bridge.Commands;
 
 /// <summary>
-/// Команда: маг <paramref name="CasterId"/> применил заклинание
-/// <paramref name="SpellId"/> в точке (<paramref name="X"/>,<paramref name="Y"/>).
-/// Presentation показывает VFX в зависимости от школы магии.
+/// Command: mage <paramref name="CasterId"/> cast spell
+/// <paramref name="SpellId"/> at point (<paramref name="X"/>,<paramref name="Y"/>).
+/// Presentation displays the VFX based on the magic school.
 /// </summary>
-/// <param name="CasterId">Идентификатор пешки-мага.</param>
-/// <param name="SpellId">Строковый идентификатор заклинания/школы.</param>
-/// <param name="X">Координата цели X.</param>
-/// <param name="Y">Координата цели Y.</param>
+/// <param name="CasterId">Identifier of the casting mage pawn.</param>
+/// <param name="SpellId">String identifier of the spell/school.</param>
+/// <param name="X">Target X coordinate.</param>
+/// <param name="Y">Target Y coordinate.</param>
 public sealed record SpellCastCommand(
     EntityId CasterId,
     string SpellId,
@@ -20,6 +20,6 @@ public sealed record SpellCastCommand(
     /// <inheritdoc />
     public void Execute(object renderContext)
     {
-        /* TODO Фаза 5 — apply via active IRenderer backend. */
+        /* TODO Phase 5 — apply via active IRenderer backend. */
     }
 }

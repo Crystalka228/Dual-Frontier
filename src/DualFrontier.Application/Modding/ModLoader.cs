@@ -76,8 +76,8 @@ public sealed class ModLoader
         }
         catch (ReflectionTypeLoadException ex)
         {
-            // Возвращаем только те типы, которые удалось загрузить —
-            // мод с битыми классами не сможет их зарегистрировать.
+            // Only the types that managed to load are returned —
+            // a mod with broken classes cannot register them.
             types = ex.Types as Type[] ?? Array.Empty<Type>();
         }
 
@@ -114,8 +114,8 @@ public sealed class ModLoader
         }
         catch
         {
-            // Ошибки мода при Unload не должны ломать весь pipeline —
-            // контекст всё равно необходимо освободить ниже.
+            // Mod errors during Unload must not break the whole pipeline —
+            // the context still needs to be released below.
         }
 
         mod.Context.Unload();
@@ -168,8 +168,8 @@ public sealed class ModLoader
     /// </summary>
     public void HandleModFault(string modId, ModIsolationException exception)
     {
-        // TODO: Фаза 2 (часть 2) — выносится в отдельный ModFaultHandler.
-        throw new NotImplementedException("TODO: Фаза 2 (часть 2) — ModFaultHandler");
+        // TODO: Phase 2 (part 2) — extracted into a dedicated ModFaultHandler.
+        throw new NotImplementedException("TODO: Phase 2 (part 2) — ModFaultHandler");
     }
 
     private static ModManifest ReadManifest(string path)
@@ -206,8 +206,8 @@ public sealed class ModLoader
         {
             if (t.IsAbstract) continue;
             if (!typeof(IMod).IsAssignableFrom(t)) continue;
-            // Несколько реализаций IMod в одной сборке — это ошибка манифеста;
-            // требуем явный EntryType, чтобы не гадать.
+            // Multiple IMod implementations in a single assembly are a manifest
+            // error; an explicit EntryType is required to avoid guessing.
             if (found is not null)
                 throw new InvalidOperationException(
                     $"Mod assembly '{asm.FullName}' contains multiple IMod implementations. " +

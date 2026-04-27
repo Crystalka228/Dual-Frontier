@@ -4,24 +4,24 @@ using System.Collections.Concurrent;
 namespace DualFrontier.Application.Bridge;
 
 /// <summary>
-/// Мост Domain → Presentation. Домен из любого потока складывает
-/// <see cref="IRenderCommand"/> в очередь, главный поток активного
-/// <see cref="Rendering.IRenderer"/> (Godot или Native) читает их через
-/// <see cref="DrainCommands"/>. Связь строго однонаправленная (TechArch 11.9).
+/// Domain → Presentation bridge. The domain enqueues
+/// <see cref="IRenderCommand"/> instances from any thread; the main thread of
+/// the active <see cref="Rendering.IRenderer"/> (Godot or Native) drains them
+/// via <see cref="DrainCommands"/>. The link is strictly one-way (TechArch 11.9).
 /// </summary>
 public sealed class PresentationBridge
 {
     /// <summary>
-    /// Внутренняя очередь команд рендера. <see cref="ConcurrentQueue{T}"/> —
-    /// потокобезопасный контейнер для сценария «много писателей — один читатель».
+    /// Internal queue of render commands. <see cref="ConcurrentQueue{T}"/> is
+    /// the thread-safe container for the "many writers, one reader" scenario.
     /// </summary>
     private readonly ConcurrentQueue<IRenderCommand> _commands = new();
 
     /// <summary>
-    /// TODO: Фаза 3 — добавляет команду в очередь. Вызывается из любого
-    /// потока домена.
+    /// TODO: Phase 3 — appends a command to the queue. Called from any
+    /// domain thread.
     /// </summary>
-    /// <param name="cmd">Команда рендера, которую нужно применить на главном потоке.</param>
+    /// <param name="cmd">Render command to apply on the main thread.</param>
     public void Enqueue(IRenderCommand cmd)
     {
         if (cmd is null) throw new ArgumentNullException(nameof(cmd));
@@ -29,11 +29,11 @@ public sealed class PresentationBridge
     }
 
     /// <summary>
-    /// TODO: Фаза 3 — извлекает и выполняет все накопленные команды.
-    /// Вызывается ТОЛЬКО из главного потока активного рендер-бэкенда.
+    /// TODO: Phase 3 — dequeues and executes every accumulated command.
+    /// Called ONLY from the main thread of the active render backend.
     /// </summary>
     /// <param name="execute">
-    /// Делегат, выполняющий команду. Обычно <c>cmd =&gt; cmd.Execute(renderContext)</c>.
+    /// Delegate that executes the command. Typically <c>cmd =&gt; cmd.Execute(renderContext)</c>.
     /// </param>
     public void DrainCommands(Action<IRenderCommand> execute)
     {

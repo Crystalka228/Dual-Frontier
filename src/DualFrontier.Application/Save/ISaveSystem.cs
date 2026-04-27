@@ -1,21 +1,21 @@
 namespace DualFrontier.Application.Save;
 
 /// <summary>
-/// Контракт системы сохранения/загрузки мира. Оба метода синхронные —
-/// асинхронность (прогресс, отмена) обязан обеспечить вышестоящий слой.
+/// Contract for the world save/load system. Both methods are synchronous —
+/// asynchrony (progress, cancellation) is the responsibility of the caller.
 /// </summary>
 public interface ISaveSystem
 {
     /// <summary>
-    /// TODO: Фаза 1 — сохраняет текущее состояние мира в файл по указанному пути.
+    /// TODO: Phase 1 — saves the current world state to a file at the given path.
     /// </summary>
-    /// <param name="path">Полный путь к файлу сохранения.</param>
+    /// <param name="path">Full path to the save file.</param>
     void Save(string path);
 
     /// <summary>
-    /// TODO: Фаза 1 — загружает состояние мира из файла. Текущее состояние мира
-    /// перезаписывается.
+    /// TODO: Phase 1 — loads the world state from a file. The current world
+    /// state is overwritten.
     /// </summary>
-    /// <param name="path">Полный путь к файлу сохранения.</param>
+    /// <param name="path">Full path to the save file.</param>
     void Load(string path);
 }
