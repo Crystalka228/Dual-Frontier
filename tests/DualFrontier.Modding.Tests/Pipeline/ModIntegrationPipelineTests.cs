@@ -33,9 +33,9 @@ public sealed class ModIntegrationPipelineTests
 
         result.Success.Should().BeTrue();
         result.LoadedModIds.Should().ContainSingle().Which.Should().Be("com.example.good");
-        // Планировщик пересобран: ссылка на список фаз поменялась.
+        // The scheduler has been rebuilt: the phase-list reference changed.
         h.Scheduler.Phases.Should().NotBeSameAs(before);
-        // Новая система из мода попала в фазы планировщика.
+        // The mod's new system is now part of the scheduler's phases.
         FindSystem<GoodSystem>(h.Scheduler).Should().NotBeNull();
     }
 
@@ -53,7 +53,7 @@ public sealed class ModIntegrationPipelineTests
         result.Success.Should().BeFalse();
         result.Errors.Should().Contain(e =>
             e.Kind == ValidationErrorKind.IncompatibleContractsVersion);
-        // Атомарность: старый список фаз планировщика не тронут.
+        // Atomicity: the scheduler's old phase list is left untouched.
         h.Scheduler.Phases.Should().BeSameAs(before);
     }
 
@@ -78,16 +78,17 @@ public sealed class ModIntegrationPipelineTests
         result.Errors.Should().Contain(e =>
             e.ModId == "com.example.b" &&
             e.ConflictingModId == "com.example.a");
-        // Планировщик не изменился.
+        // The scheduler has not changed.
         h.Scheduler.Phases.Should().BeSameAs(before);
     }
 
     [Fact]
     public void Pipeline_build_failure_leaves_old_scheduler_intact()
     {
-        // Конфигурация: мод регистрирует систему, которая создаёт цикл в графе
-        // через взаимный read/write с Core-системой. Валидация write-write её пропустит
-        // (нет прямого write-write), но Build() обнаружит цикл.
+        // Setup: the mod registers a system that introduces a cycle in the
+        // graph via mutual read/write with a core system. Write-write
+        // validation lets it through (no direct write-write), but Build()
+        // detects the cycle.
         Harness h = Harness.WithCore(new CoreReadsBWritesA());
         IReadOnlyList<SystemPhase> before = h.Scheduler.Phases;
 
@@ -96,7 +97,7 @@ public sealed class ModIntegrationPipelineTests
         PipelineResult result = h.Pipeline.Apply(new[] { mod.ModId });
 
         result.Success.Should().BeFalse();
-        // Должна остаться ссылка на старый список фаз — атомарность.
+        // The old phase-list reference must persist — atomicity.
         h.Scheduler.Phases.Should().BeSameAs(before);
     }
 
@@ -112,7 +113,7 @@ public sealed class ModIntegrationPipelineTests
 
         h.Pipeline.UnloadAll();
 
-        // После UnloadAll мод-системы исчезают, остаются только Core-системы.
+        // After UnloadAll the mod systems are gone; only the core systems remain.
         FindSystem<GoodSystem>(h.Scheduler).Should().BeNull();
         FindSystem<CoreSystemA>(h.Scheduler).Should().NotBeNull();
     }
@@ -156,7 +157,7 @@ public sealed class ModIntegrationPipelineTests
             var contractStore = new ModContractStore();
             var services = new GameServices();
 
-            // Стартовый планировщик — только Core. Pipeline позже вызовет Rebuild.
+            // Initial scheduler — core only. The pipeline will call Rebuild later.
             var world = new World();
             var ticks = new TickScheduler();
             var graph = new DependencyGraph();
@@ -219,9 +220,9 @@ public sealed class ModIntegrationPipelineTests
         public override void Update(float delta) { }
     }
 
-    // Для теста build failure: Core читает ComponentY и пишет ComponentX.
-    // Мод-система читает ComponentX и пишет ComponentY. Это создаёт цикл
-    // Core → Mod → Core в графе, который ловит Build().
+    // For the build-failure test: Core reads ComponentY and writes ComponentX.
+    // The mod system reads ComponentX and writes ComponentY. This creates a
+    // Core → Mod → Core cycle in the graph that Build() catches.
     [SystemAccess(reads: new[] { typeof(CycleModComponent) }, writes: new[] { typeof(CoreComponentX) }, bus: nameof(IGameServices.World))]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class CoreReadsBWritesA : SystemBase

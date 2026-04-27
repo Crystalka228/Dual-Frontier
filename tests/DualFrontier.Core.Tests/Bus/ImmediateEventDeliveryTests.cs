@@ -12,8 +12,8 @@ namespace DualFrontier.Core.Tests.Bus;
 /// <summary>
 /// Verifies that <c>[Immediate]</c>-marked events are delivered synchronously
 /// from <c>Publish</c> and never end up in the deferred queue. Documented
-/// behaviour: «крайне редкий режим — событие прерывает текущую фазу,
-/// немедленно доставляется всем подписчикам».
+/// behaviour: "extremely rare mode — the event interrupts the current phase
+/// and is delivered immediately to every subscriber".
 /// </summary>
 public sealed class ImmediateEventDeliveryTests : IDisposable
 {

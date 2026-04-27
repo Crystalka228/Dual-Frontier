@@ -16,7 +16,7 @@ using Xunit;
 namespace DualFrontier.IntegrationTests.InventoryDomain;
 
 /// <summary>
-/// Closes Долг #4 + Q3: <c>ItemReservedEvent</c> is delivered (deferred) and
+/// Closes backlog item #4 + Q3: <c>ItemReservedEvent</c> is delivered (deferred) and
 /// HaulSystem's per-Update reservation set prevents same-tick double
 /// allocation when multiple idle pawns compete for one stack.
 /// </summary>

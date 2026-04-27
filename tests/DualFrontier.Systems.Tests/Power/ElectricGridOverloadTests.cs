@@ -13,8 +13,8 @@ using Xunit;
 namespace DualFrontier.IntegrationTests.PowerDomain;
 
 /// <summary>
-/// Closes the Phase 4 acceptance criterion «Электросеть: генератор → провод
-/// → потребитель; overload на перегрузе» (ROADMAP §«✅ Фаза 4»). One
+/// Closes the Phase 4 acceptance criterion "Electric grid: generator → wire
+/// → consumer; overload on demand spike" (ROADMAP §"✅ Phase 4"). One
 /// generator, three consumers of mixed priority where total demand exceeds
 /// supply: high-priority consumers must stay powered, low-priority must be
 /// switched off, <see cref="GridOverloadEvent"/> must fire with the correct

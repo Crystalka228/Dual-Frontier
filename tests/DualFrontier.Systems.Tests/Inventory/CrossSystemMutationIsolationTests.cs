@@ -14,7 +14,7 @@ using Xunit;
 namespace DualFrontier.IntegrationTests.InventoryDomain;
 
 /// <summary>
-/// Closes Долг #3 + Q4: <c>HaulSystem</c> publishes <c>ItemRemovedEvent</c>
+/// Closes backlog item #3 + Q4: <c>HaulSystem</c> publishes <c>ItemRemovedEvent</c>
 /// and <c>ItemAddedEvent</c> while declaring <c>writes: []</c>;
 /// <c>InventorySystem</c> subscribes and applies the mutation. Pre-fix this
 /// would crash with <c>IsolationViolationException</c> because the handler

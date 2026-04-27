@@ -12,7 +12,7 @@ using Xunit;
 namespace DualFrontier.Core.Tests.Bus;
 
 /// <summary>
-/// Closes Долг #1: <c>[Deferred]</c> events must NOT be delivered synchronously
+/// Closes backlog item #1: <c>[Deferred]</c> events must NOT be delivered synchronously
 /// from <c>Publish</c>; they must be queued and dispatched at the next phase
 /// boundary by <c>ParallelSystemScheduler</c> via <see cref="IDeferredFlush"/>.
 /// </summary>
