@@ -8,14 +8,14 @@ using DualFrontier.Events.Magic;
 namespace DualFrontier.Systems.Magic;
 
 /// <summary>
-/// Управление связями "хозяин-голем": поддерживает активную
-/// связь за счёт маны хозяина, распадает связь при нехватке.
-/// Публикует <c>GolemActivatedEvent</c> / <c>GolemBondBrokenEvent</c>
-/// и обрабатывает <see cref="GolemOwnershipTransferRequest"/> (смена
-/// владельца) с итоговым отложенным <see cref="GolemOwnershipChanged"/>.
+/// Manages the owner-golem bond: sustains the active bond through the
+/// owner's mana and breaks the bond when mana is insufficient.
+/// Publishes <c>GolemActivatedEvent</c> / <c>GolemBondBrokenEvent</c>
+/// and handles <see cref="GolemOwnershipTransferRequest"/> (owner change)
+/// with the resulting deferred <see cref="GolemOwnershipChanged"/>.
 ///
-/// Фаза: 4 (после ManaSystem).
-/// Тик: NORMAL (15 фреймов).
+/// Phase: 4 (after ManaSystem).
+/// Tick: NORMAL (15 frames).
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(GolemBondComponent), typeof(ManaComponent) },
@@ -34,32 +34,32 @@ public sealed class GolemSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 4 — проверить активные связи, списать поддержку, распад при нехватке.
+        // TODO: Phase 4 — check active bonds, drain maintenance, break on shortage.
     }
 
     /// <summary>
-    /// Обрабатывает смену владельца голема: валидирует целевой режим
-    /// (<c>OwnershipMode</c>), обновляет <see cref="GolemBondComponent"/>
-    /// и публикует <see cref="GolemOwnershipChanged"/>. Событие помечено
-    /// <c>[Deferred]</c>, поэтому реальные мутации подписчиков произойдут
-    /// на следующем тике.
+    /// Handles a golem owner change: validates the target mode
+    /// (<c>OwnershipMode</c>), updates <see cref="GolemBondComponent"/>,
+    /// and publishes <see cref="GolemOwnershipChanged"/>. The event is
+    /// marked <c>[Deferred]</c>, so subscribers' actual mutations happen
+    /// on the next tick.
     /// </summary>
-    /// <param name="req">Запрос на передачу/смену владения големом.</param>
+    /// <param name="req">Request to transfer/change golem ownership.</param>
     public void OnGolemOwnershipTransferRequest(GolemOwnershipTransferRequest req)
     {
-        throw new NotImplementedException("TODO: Фаза 6 — обработка смены владельца голема и публикация GolemOwnershipChanged");
+        throw new NotImplementedException("TODO: Phase 6 — handle golem owner change and publish GolemOwnershipChanged");
     }
 
     /// <summary>
-    /// Чтобы избежать feedback loop (v02 §12.3): GolemSystem читает состояние
-    /// манны за ПРЕДЫДУЩИЙ тик, а не текущий. Реальная реализация —
-    /// <c>Mana[N-1]</c> snapshot (buffered-state), чтобы одновременно
-    /// работающая ManaSystem не видела изменений, сделанных текущим
-    /// тиком GolemSystem, и наоборот.
+    /// To avoid a feedback loop (v02 §12.3): GolemSystem reads the mana
+    /// state of the PREVIOUS tick rather than the current one. The real
+    /// implementation is a <c>Mana[N-1]</c> snapshot (buffered state) so
+    /// that ManaSystem running concurrently does not see changes made in
+    /// the current tick by GolemSystem, and vice versa.
     /// </summary>
-    /// <param name="mage">Маг-хозяин голема, чьё состояние манны читается.</param>
+    /// <param name="mage">Owner mage of the golem whose mana state is read.</param>
     private float ReadPreviousTickManaState(EntityId mage)
     {
-        throw new NotImplementedException("TODO: Фаза 6 — чтение Mana[N-1] snapshot для предотвращения feedback loop");
+        throw new NotImplementedException("TODO: Phase 6 — read Mana[N-1] snapshot to prevent the feedback loop");
     }
 }

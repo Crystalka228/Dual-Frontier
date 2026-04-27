@@ -5,79 +5,82 @@ using DualFrontier.Events.Magic;
 namespace DualFrontier.Systems.Magic.Internal;
 
 /// <summary>
-/// Внутренний реестр активных mana-lease. Доступен только ManaSystem и связанным
-/// системам Magic. Не экспортируется наружу сборки — тип помечен <c>internal</c>,
-/// а сам файл лежит в подкаталоге <c>Internal/</c>, чей границы соблюдаются
-/// соглашениями проекта (см. <c>Magic/Internal/README.md</c>).
+/// Internal registry of active mana leases. Accessible only to ManaSystem
+/// and related Magic systems. Not exported outside the assembly — the type
+/// is marked <c>internal</c> and the file lives in the <c>Internal/</c>
+/// subdirectory, whose boundaries are enforced by project conventions
+/// (see <c>Magic/Internal/README.md</c>).
 ///
-/// Реестр хранит список открытых аренд, отвечает за выдачу <see cref="LeaseId"/>,
-/// списание маны каждым тиком и поиск истекших аренд.
+/// The registry stores the list of open leases, issues <see cref="LeaseId"/>
+/// values, drains mana on each tick, and locates expired leases.
 /// </summary>
 internal sealed class ManaLeaseRegistry
 {
-    // TODO: Фаза 5 — private readonly Dictionary<LeaseId, ManaLease> _active = new();
-    // TODO: Фаза 5 — учёт аренд по кастеру (для ActiveCountForCaster).
+    // TODO: Phase 5 — private readonly Dictionary<LeaseId, ManaLease> _active = new();
+    // TODO: Phase 5 — track leases per caster (for ActiveCountForCaster).
 
     /// <summary>
-    /// Открывает новую аренду маны для кастера. Реальная реализация должна
-    /// проверить инварианты (<paramref name="drainPerTick"/> &gt; 0,
-    /// <paramref name="min"/> не больше <paramref name="max"/>), выдать новый
-    /// <see cref="LeaseId"/> через <see cref="LeaseId.New"/>, записать запись
-    /// <see cref="ManaLease"/> во внутреннюю коллекцию и вернуть идентификатор.
+    /// Opens a new mana lease for the caster. The real implementation must
+    /// validate invariants (<paramref name="drainPerTick"/> &gt; 0,
+    /// <paramref name="min"/> not greater than <paramref name="max"/>),
+    /// issue a new <see cref="LeaseId"/> via <see cref="LeaseId.New"/>,
+    /// record the <see cref="ManaLease"/> entry in the internal collection,
+    /// and return the identifier.
     /// </summary>
-    /// <param name="caster">Маг-кастер, у которого будет списываться мана.</param>
-    /// <param name="drainPerTick">Расход маны за тик.</param>
-    /// <param name="min">Минимальная длительность аренды в тиках.</param>
-    /// <param name="max">Максимальная длительность аренды в тиках.</param>
+    /// <param name="caster">Caster mage from whom mana will be drained.</param>
+    /// <param name="drainPerTick">Mana drain per tick.</param>
+    /// <param name="min">Minimum lease duration in ticks.</param>
+    /// <param name="max">Maximum lease duration in ticks.</param>
     public LeaseId Open(EntityId caster, float drainPerTick, int min, int max)
     {
-        throw new NotImplementedException("TODO: Фаза 5 — регистрация новой mana-lease и выдача LeaseId");
+        throw new NotImplementedException("TODO: Phase 5 — register a new mana lease and issue a LeaseId");
     }
 
     /// <summary>
-    /// Закрывает аренду по идентификатору. Удаляет запись из внутренней
-    /// коллекции и возвращает суммарное списанное количество маны
-    /// (<see cref="ManaLease.TotalDrained"/>), которое <c>ManaSystem</c>
-    /// использует при публикации <c>ManaLeaseClosed</c>.
+    /// Closes a lease by identifier. Removes the entry from the internal
+    /// collection and returns the total mana drained
+    /// (<see cref="ManaLease.TotalDrained"/>), which <c>ManaSystem</c> uses
+    /// when publishing <c>ManaLeaseClosed</c>.
     /// </summary>
-    /// <param name="id">Идентификатор закрываемой аренды.</param>
-    /// <param name="reason">Причина закрытия — прокидывается наружу в
-    /// соответствующее событие.</param>
+    /// <param name="id">Identifier of the lease to close.</param>
+    /// <param name="reason">Close reason — propagated outward into the
+    /// corresponding event.</param>
     public float Close(LeaseId id, CloseReason reason)
     {
-        throw new NotImplementedException("TODO: Фаза 5 — удаление lease и возврат TotalDrained");
+        throw new NotImplementedException("TODO: Phase 5 — remove the lease and return TotalDrained");
     }
 
     /// <summary>
-    /// Списывает <c>DrainPerTick</c> со всех активных аренд за один тик.
-    /// Возвращает список идентификаторов аренд, которые по итогам тика
-    /// истекли (достигли <c>MaxDurationTicks</c> или у кастера закончилась
-    /// мана) — <c>ManaSystem</c> публикует для них <c>ManaLeaseClosed</c>.
+    /// Drains <c>DrainPerTick</c> from every active lease for one tick.
+    /// Returns the list of identifiers of leases that have expired this
+    /// tick (reached <c>MaxDurationTicks</c> or the caster ran out of mana)
+    /// — <c>ManaSystem</c> publishes <c>ManaLeaseClosed</c> for each of them.
     /// </summary>
     public IReadOnlyList<LeaseId> DrainTick()
     {
-        throw new NotImplementedException("TODO: Фаза 5 — проход по всем активным lease, списание маны, выявление истекших");
+        throw new NotImplementedException("TODO: Phase 5 — iterate every active lease, drain mana, surface expired ones");
     }
 
     /// <summary>
-    /// Пытается получить запись об аренде по идентификатору. Возвращает
-    /// <c>true</c>, если аренда с таким <paramref name="id"/> открыта, иначе
-    /// <c>false</c> и <paramref name="lease"/> = <c>null</c>.
+    /// Tries to retrieve a lease record by identifier. Returns
+    /// <c>true</c> if a lease with the given <paramref name="id"/> is open;
+    /// otherwise <c>false</c> and <paramref name="lease"/> = <c>null</c>.
     /// </summary>
-    /// <param name="id">Идентификатор искомой аренды.</param>
-    /// <param name="lease">Запись об аренде, если найдена.</param>
+    /// <param name="id">Identifier of the lease to find.</param>
+    /// <param name="lease">Lease record, if found.</param>
     public bool TryGet(LeaseId id, out ManaLease? lease)
     {
-        throw new NotImplementedException("TODO: Фаза 5 — поиск lease во внутренней коллекции");
+        throw new NotImplementedException("TODO: Phase 5 — look up the lease in the internal collection");
     }
 
     /// <summary>
-    /// Возвращает количество активных аренд у данного кастера. Используется
-    /// <c>ManaSystem</c> для проверки лимита (<c>RefusalReason.LeaseCapExceeded</c>).
+    /// Returns the number of active leases for the given caster. Used by
+    /// <c>ManaSystem</c> to enforce the per-caster limit
+    /// (<c>RefusalReason.LeaseCapExceeded</c>).
     /// </summary>
-    /// <param name="caster">Маг-кастер.</param>
+    /// <param name="caster">Caster mage.</param>
     public int ActiveCountForCaster(EntityId caster)
     {
-        throw new NotImplementedException("TODO: Фаза 5 — подсчёт открытых lease на кастера");
+        throw new NotImplementedException("TODO: Phase 5 — count open leases for the caster");
     }
 }

@@ -7,12 +7,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Faction;
 
 /// <summary>
-/// Матрица отношений между фракциями [-100..100]: агрессия,
-/// нейтральность, союз. Меняется от событий (убийства,
-/// подарки, торговля) и просто времени.
+/// Faction relations matrix in [-100..100]: aggression,
+/// neutrality, alliance. Changes through events (kills, gifts,
+/// trade) and the simple passage of time.
 ///
-/// Фаза: 7 (метаигра, после основного мира).
-/// Тик: RARE (3600 фреймов).
+/// Phase: 7 (meta-game, after the core world).
+/// Tick: RARE (3600 frames).
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(FactionComponent), typeof(SocialComponent) },
@@ -31,6 +31,6 @@ public sealed class RelationSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 7 — применить накопленные изменения к матрице отношений.
+        // TODO: Phase 7 — apply accumulated changes to the relations matrix.
     }
 }

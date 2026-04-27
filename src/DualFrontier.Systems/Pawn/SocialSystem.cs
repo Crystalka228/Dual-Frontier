@@ -6,12 +6,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Pawn;
 
 /// <summary>
-/// Эволюция социального графа: дружбы, вражды, родственные связи.
-/// Влияет на <c>MindComponent</c> через публикацию
-/// <c>SocialAffectEvent</c> (не пишет mind напрямую).
+/// Evolution of the social graph: friendships, rivalries, kinship.
+/// Influences <c>MindComponent</c> by publishing
+/// <c>SocialAffectEvent</c> (does not write mind directly).
 ///
-/// Фаза: 3 (пешки).
-/// Тик: RARE (3600 фреймов) — социалка меняется медленно.
+/// Phase: 3 (pawns).
+/// Tick: RARE (3600 frames) — social ties change slowly.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(MindComponent) },
@@ -30,6 +30,6 @@ public sealed class SocialSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 3 — обновление графа социальных связей.
+        // TODO: Phase 3 — update the social graph.
     }
 }

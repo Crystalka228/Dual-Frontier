@@ -6,12 +6,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Combat;
 
 /// <summary>
-/// Магические и технические щиты: регенерация, перекрытие от
-/// урона (вместе с <c>DamageSystem</c>). Публикует
-/// <c>ShieldBrokenEvent</c> при пробитии.
+/// Magical and technological shields: regeneration and damage
+/// absorption (together with <c>DamageSystem</c>). Publishes
+/// <c>ShieldBrokenEvent</c> when broken.
 ///
-/// Фаза: 2.
-/// Тик: FAST (3 фрейма).
+/// Phase: 2.
+/// Tick: FAST (3 frames).
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(ShieldComponent) },
@@ -29,6 +29,6 @@ public sealed class ShieldSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 5 — регенерация щитов по тикам, поглощение входящего урона.
+        // TODO: Phase 5 — per-tick shield regeneration and absorption of incoming damage.
     }
 }

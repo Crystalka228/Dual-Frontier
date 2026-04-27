@@ -5,12 +5,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Faction;
 
 /// <summary>
-/// Спавн рейдов: формула силы по богатству колонии и
-/// отношениям с соседями. Публикует <c>RaidIncomingEvent</c> в
-/// <c>World</c> шину — остальные системы готовятся.
+/// Raid spawning: strength formula based on colony wealth and
+/// relations with neighbours. Publishes <c>RaidIncomingEvent</c>
+/// on the <c>World</c> bus — other systems prepare for it.
 ///
-/// Фаза: 7.
-/// Тик: RARE (3600 фреймов).
+/// Phase: 7.
+/// Tick: RARE (3600 frames).
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
@@ -28,6 +28,6 @@ public sealed class RaidSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 7 — решить, спавнить ли рейд, опубликовать RaidIncomingEvent.
+        // TODO: Phase 7 — decide whether to spawn a raid, publish RaidIncomingEvent.
     }
 }

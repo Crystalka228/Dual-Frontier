@@ -7,15 +7,15 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Power;
 
 /// <summary>
-/// Эфирная сеть: узлы связаны по пространственному радиусу,
-/// плотность эфира перетекает между соседними узлами.
-/// Кормит <c>ConverterSystem</c> и магические постройки.
+/// Ether grid: nodes are connected by spatial radius and ether
+/// density flows between neighbouring nodes. Feeds
+/// <c>ConverterSystem</c> and magical buildings.
 ///
-/// Фаза: 2.
-/// Тик: NORMAL (15 фреймов).
+/// Phase: 2.
+/// Tick: NORMAL (15 frames).
 /// </summary>
-// TODO: когда другой агент добавит EtherNodeComponent в Components.Building/World —
-// заменить здесь EtherComponent на EtherNodeComponent.
+// TODO: when another agent adds EtherNodeComponent to Components.Building/World,
+// replace EtherComponent here with EtherNodeComponent.
 [SystemAccess(
     reads:  new[] { typeof(EtherComponent), typeof(PowerConsumerComponent) },
     writes: new Type[0],
@@ -32,6 +32,6 @@ public sealed class EtherGridSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 2 — продвинуть перетекание плотностей, распределить потребителям.
+        // TODO: Phase 2 — advance density flow and distribute to consumers.
     }
 }

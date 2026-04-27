@@ -6,12 +6,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Faction;
 
 /// <summary>
-/// Прилёт/прибытие торговых караванов: спавн гостей с товаром,
-/// публикация <c>TradeCaravanEvent</c>. Цены и таблицы товаров
-/// зависят от отношений из <c>RelationSystem</c>.
+/// Arrival of trade caravans: spawning guests with goods and
+/// publishing <c>TradeCaravanEvent</c>. Prices and goods tables
+/// depend on relations from <c>RelationSystem</c>.
 ///
-/// Фаза: 7.
-/// Тик: RARE (3600 фреймов).
+/// Phase: 7.
+/// Tick: RARE (3600 frames).
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(FactionComponent) },
@@ -29,6 +29,6 @@ public sealed class TradeSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 7 — проверка расписания караванов, спавн гостей.
+        // TODO: Phase 7 — check the caravan schedule and spawn guests.
     }
 }

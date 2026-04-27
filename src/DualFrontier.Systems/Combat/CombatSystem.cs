@@ -9,17 +9,17 @@ using DualFrontier.Events.Combat;
 namespace DualFrontier.Systems.Combat;
 
 /// <summary>
-/// Инициация боевых действий. В модели TechArch v0.2 §12.4 делегирует
-/// проверку ресурсов через <see cref="CompoundShotIntent"/> —
-/// CompositeResolutionSystem опрашивает Inventory и Magic шины и отвечает
-/// <see cref="ShootGranted"/>/<see cref="ShootRefused"/>. CombatSystem
-/// больше не публикует <c>AmmoIntent</c> напрямую.
+/// Initiates combat actions. In the TechArch v0.2 §12.4 model it delegates
+/// resource checking through <see cref="CompoundShotIntent"/> —
+/// CompositeResolutionSystem queries the Inventory and Magic buses and
+/// responds with <see cref="ShootGranted"/>/<see cref="ShootRefused"/>.
+/// CombatSystem no longer publishes <c>AmmoIntent</c> directly.
 ///
-/// Работает одновременно с Combat и Magic шинами (манна стрелка — часть
-/// составного выстрела).
+/// Operates simultaneously on the Combat and Magic buses (the shooter's
+/// mana is part of the compound shot).
 ///
-/// Фаза: 1 (параллельно с ManaSystem, WeatherSystem).
-/// Тик: FAST (3 фрейма) — отзывчивость боя.
+/// Phase: 1 (parallel with ManaSystem, WeatherSystem).
+/// Tick: FAST (3 frames) — combat responsiveness.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(PositionComponent), typeof(WeaponComponent), typeof(ManaComponent) },
@@ -38,21 +38,21 @@ public sealed class CombatSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: обработка активных боевых действий
+        // TODO: process active combat actions
     }
 
     /// <summary>
-    /// Публикует <see cref="CompoundShotIntent"/> для двухфазного коммита
-    /// (вместо прямого <c>AmmoIntent</c>, как было в v0.1). Ответ придёт
-    /// от <c>CompositeResolutionSystem</c> в виде <see cref="ShootGranted"/>
-    /// или <see cref="ShootRefused"/>.
-    /// TODO: Фаза 4 — сформировать intent по текущему оружию/цели и
-    /// опубликовать в Combat шину.
+    /// Publishes <see cref="CompoundShotIntent"/> for the two-phase commit
+    /// (instead of the direct <c>AmmoIntent</c> used in v0.1). The response
+    /// arrives from <c>CompositeResolutionSystem</c> as
+    /// <see cref="ShootGranted"/> or <see cref="ShootRefused"/>.
+    /// TODO: Phase 4 — build the intent from the current weapon/target and
+    /// publish it on the Combat bus.
     /// </summary>
-    /// <param name="intent">Готовый intent для публикации (в будущем — параметры
-    /// выстрела, из которых intent собирается внутри).</param>
+    /// <param name="intent">Ready intent to publish (in the future — shot
+    /// parameters from which the intent is built internally).</param>
     public void OnCompoundShotIntent(CompoundShotIntent intent)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — делегирование выстрела через CompoundShotIntent");
+        throw new NotImplementedException("TODO: Phase 4 — delegate the shot via CompoundShotIntent");
     }
 }

@@ -6,11 +6,11 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Pawn;
 
 /// <summary>
-/// Рост навыков пешек по накопленному опыту. Публикует
-/// <c>SkillGainEvent</c> в <c>Pawns</c> шину при повышении уровня.
+/// Pawn skill growth from accumulated experience. Publishes
+/// <c>SkillGainEvent</c> on the <c>Pawns</c> bus when a level rises.
 ///
-/// Фаза: 3 (пешки).
-/// Тик: NORMAL (15 фреймов).
+/// Phase: 3 (pawns).
+/// Tick: NORMAL (15 frames).
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
@@ -28,6 +28,6 @@ public sealed class SkillSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 3 — применить накопленный XP, повысить уровни, опубликовать SkillGainEvent.
+        // TODO: Phase 3 — apply accumulated XP, raise levels, publish SkillGainEvent.
     }
 }

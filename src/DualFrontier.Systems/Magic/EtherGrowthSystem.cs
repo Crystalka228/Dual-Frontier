@@ -6,12 +6,12 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.Magic;
 
 /// <summary>
-/// Рост эфирных узлов в мире под влиянием доминирующей школы
-/// магии в округе. Публикует <c>EtherSurgeEvent</c> при
-/// пересечении порога плотности.
+/// Growth of ether nodes in the world, driven by the dominant
+/// magic school in the area. Publishes <c>EtherSurgeEvent</c>
+/// when a density threshold is crossed.
 ///
-/// Фаза: 2 (после MapSystem).
-/// Тик: SLOW (60 фреймов) — эфир растёт медленно.
+/// Phase: 2 (after MapSystem).
+/// Tick: SLOW (60 frames) — ether grows slowly.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(EtherComponent), typeof(SchoolComponent) },
@@ -29,6 +29,6 @@ public sealed class EtherGrowthSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 2 — диффузия/рост эфира по соседним узлам, проверка порогов.
+        // TODO: Phase 2 — diffuse/grow ether across neighbouring nodes, check thresholds.
     }
 }

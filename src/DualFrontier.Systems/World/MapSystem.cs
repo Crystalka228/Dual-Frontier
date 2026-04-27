@@ -6,11 +6,11 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Systems.World;
 
 /// <summary>
-/// Стриминг регионов карты: загрузка тайлов в зоне интереса,
-/// выгрузка далёких. Публикует <c>MapRegionLoadedEvent</c>.
+/// Streams map regions: loads tiles in the area of interest and
+/// unloads distant ones. Publishes <c>MapRegionLoadedEvent</c>.
 ///
-/// Фаза: 0 (раньше всех — остальные читают карту).
-/// Тик: RARE (3600 фреймов).
+/// Phase: 0 (earliest — other systems read the map).
+/// Tick: RARE (3600 frames).
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
@@ -28,6 +28,6 @@ public sealed class MapSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // TODO: Фаза 0 — определить зону интереса, подгрузить/выгрузить регионы.
+        // TODO: Phase 0 — determine the area of interest, load/unload regions.
     }
 }

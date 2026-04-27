@@ -7,18 +7,19 @@ using DualFrontier.Events.Magic;
 namespace DualFrontier.Systems.Combat;
 
 /// <summary>
-/// Обрабатывает <see cref="CompoundShotIntent"/>: собирает ответы от Inventory
-/// и Magic шин по <see cref="TransactionId"/>, публикует <see cref="ShootGranted"/>
-/// либо <see cref="ShootRefused"/>.
+/// Handles <see cref="CompoundShotIntent"/>: collects responses from the
+/// Inventory and Magic buses keyed by <see cref="TransactionId"/> and
+/// publishes either <see cref="ShootGranted"/> or <see cref="ShootRefused"/>.
 ///
-/// Двухфазный коммит: на один <c>CompoundShotIntent</c> должны прийти оба
-/// частичных ответа — <see cref="AmmoGranted"/>/<see cref="AmmoRefused"/> из
-/// Inventory шины и <see cref="ManaGranted"/>/<see cref="ManaRefused"/> из
-/// Magic шины. Только когда оба получены — система принимает решение и
-/// публикует итоговый <c>ShootGranted</c>/<c>ShootRefused</c> в Combat шину.
+/// Two-phase commit: a single <c>CompoundShotIntent</c> must receive both
+/// partial responses — <see cref="AmmoGranted"/>/<see cref="AmmoRefused"/>
+/// from the Inventory bus and <see cref="ManaGranted"/>/<see cref="ManaRefused"/>
+/// from the Magic bus. Only once both have arrived does the system make a
+/// decision and publish the final <c>ShootGranted</c>/<c>ShootRefused</c>
+/// on the Combat bus.
 ///
-/// Фаза: 2 (после CombatSystem, ManaSystem, InventorySystem).
-/// Тик: FAST (3 фрейма) — отзывчивость боя.
+/// Phase: 2 (after CombatSystem, ManaSystem, InventorySystem).
+/// Tick: FAST (3 frames) — combat responsiveness.
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(AmmoGranted), typeof(AmmoRefused), typeof(ManaGranted), typeof(ManaRefused) },
@@ -36,78 +37,78 @@ public sealed class CompositeResolutionSystem : SystemBase
     protected override void OnInitialize() { }
 
     /// <summary>
-    /// Основной тик: разрешение накопленных незавершённых транзакций.
-    /// Большинство работы выполняется реактивно в обработчиках ниже, этот
-    /// метод остаётся для периодических таймаут-проверок (см. §12.4).
+    /// Main tick: resolves accumulated unfinished transactions. Most of the
+    /// work happens reactively in the handlers below; this method remains
+    /// for periodic timeout checks (see §12.4).
     /// </summary>
     public override void Update(float delta)
     {
-        // TODO: Фаза 4 — очистка просроченных незавершённых транзакций, публикация ShootRefused(TimedOut).
+        // TODO: Phase 4 — clean up expired pending transactions, publish ShootRefused(TimedOut).
     }
 
     /// <summary>
-    /// Начинает двухфазный commit: сохраняет <paramref name="intent"/> в
-    /// таблице ожидания по его <see cref="TransactionId"/> и рассылает
-    /// частичные запросы в Inventory и Magic шины.
+    /// Begins the two-phase commit: stores <paramref name="intent"/> in the
+    /// pending table by its <see cref="TransactionId"/> and dispatches partial
+    /// requests on the Inventory and Magic buses.
     /// </summary>
-    /// <param name="intent">Намерение составного выстрела, полученное от
-    /// CombatSystem.</param>
+    /// <param name="intent">Compound shot intent received from CombatSystem.</param>
     public void OnCompoundShotIntent(CompoundShotIntent intent)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — инициация двухфазного коммита для CompoundShotIntent");
+        throw new NotImplementedException("TODO: Phase 4 — initiate two-phase commit for CompoundShotIntent");
     }
 
     /// <summary>
-    /// Частичный ответ «патрон выдан» по <see cref="TransactionId"/>.
-    /// Сохраняется в таблице ожидания; если второй частичный ответ уже
-    /// есть — вызывает <see cref="TryResolve"/>.
+    /// Partial "ammo granted" response keyed by <see cref="TransactionId"/>.
+    /// Stored in the pending table; if the second partial response is already
+    /// present, calls <see cref="TryResolve"/>.
     /// </summary>
-    /// <param name="evt">Подтверждение выдачи патрона от InventoryBus.</param>
+    /// <param name="evt">Ammo issuance confirmation from InventoryBus.</param>
     public void OnAmmoGranted(AmmoGranted evt)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — регистрация частичного AmmoGranted по TxId");
+        throw new NotImplementedException("TODO: Phase 4 — register partial AmmoGranted by TxId");
     }
 
     /// <summary>
-    /// Кэшируем отказ в выдаче патрона — итоговым результатом транзакции
-    /// будет <see cref="ShootRefused"/> с причиной <see cref="ShotRefusalReason.NoAmmo"/>.
+    /// Caches the ammo refusal — the final transaction outcome will be
+    /// <see cref="ShootRefused"/> with reason <see cref="ShotRefusalReason.NoAmmo"/>.
     /// </summary>
-    /// <param name="evt">Отказ InventoryBus.</param>
+    /// <param name="evt">Refusal from InventoryBus.</param>
     public void OnAmmoRefused(AmmoRefused evt)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — регистрация частичного AmmoRefused по TxId");
+        throw new NotImplementedException("TODO: Phase 4 — register partial AmmoRefused by TxId");
     }
 
     /// <summary>
-    /// Второй частичный ответ — списание маны подтверждено. Аналогично
-    /// <see cref="OnAmmoGranted"/>, при наличии обоих ответов — разрешаем
-    /// транзакцию через <see cref="TryResolve"/>.
+    /// Second partial response — mana drain confirmed. Like
+    /// <see cref="OnAmmoGranted"/>, when both responses are present the
+    /// transaction is resolved via <see cref="TryResolve"/>.
     /// </summary>
-    /// <param name="evt">Подтверждение списания маны от MagicBus.</param>
+    /// <param name="evt">Mana drain confirmation from MagicBus.</param>
     public void OnManaGranted(ManaGranted evt)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — регистрация частичного ManaGranted по TxId");
+        throw new NotImplementedException("TODO: Phase 4 — register partial ManaGranted by TxId");
     }
 
     /// <summary>
-    /// Кэшируем отказ в списании маны — итоговым результатом транзакции
-    /// будет <see cref="ShootRefused"/> с причиной <see cref="ShotRefusalReason.NoMana"/>.
+    /// Caches the mana refusal — the final transaction outcome will be
+    /// <see cref="ShootRefused"/> with reason <see cref="ShotRefusalReason.NoMana"/>.
     /// </summary>
-    /// <param name="evt">Отказ MagicBus.</param>
+    /// <param name="evt">Refusal from MagicBus.</param>
     public void OnManaRefused(ManaRefused evt)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — регистрация частичного ManaRefused по TxId");
+        throw new NotImplementedException("TODO: Phase 4 — register partial ManaRefused by TxId");
     }
 
     /// <summary>
-    /// Пытается разрешить транзакцию по <paramref name="id"/>: если оба
-    /// частичных ответа пришли — публикует <see cref="ShootGranted"/>
-    /// (оба Granted) либо <see cref="ShootRefused"/> (любой Refused) и
-    /// удаляет запись из таблицы ожидания. Если ответы ещё не оба — no-op.
+    /// Tries to resolve a transaction by <paramref name="id"/>: if both
+    /// partial responses have arrived, publishes <see cref="ShootGranted"/>
+    /// (both Granted) or <see cref="ShootRefused"/> (any Refused) and removes
+    /// the entry from the pending table. If both responses are not yet in,
+    /// it is a no-op.
     /// </summary>
-    /// <param name="id">Идентификатор транзакции для разрешения.</param>
+    /// <param name="id">Transaction identifier to resolve.</param>
     private void TryResolve(TransactionId id)
     {
-        throw new NotImplementedException("TODO: Фаза 4 — объединение Ammo* и Mana* ответов в итоговый ShootGranted/ShootRefused");
+        throw new NotImplementedException("TODO: Phase 4 — combine Ammo* and Mana* responses into the final ShootGranted/ShootRefused");
     }
 }

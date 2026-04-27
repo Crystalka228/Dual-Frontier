@@ -4,61 +4,62 @@ using DualFrontier.Events.Magic;
 namespace DualFrontier.Systems.Magic.Internal;
 
 /// <summary>
-/// Внутренняя запись об активной аренде маны. Хранит идентификатор,
-/// кастера, параметры дренажа и накопленную статистику (тики и суммарный
-/// расход маны). Инстанцируется исключительно <see cref="ManaLeaseRegistry"/>
-/// и не покидает сборки <c>DualFrontier.Systems</c>.
+/// Internal record for an active mana lease. Stores the identifier,
+/// caster, drain parameters, and accumulated statistics (ticks and
+/// total mana drained). Instantiated exclusively by
+/// <see cref="ManaLeaseRegistry"/> and never leaves the
+/// <c>DualFrontier.Systems</c> assembly.
 /// </summary>
 internal sealed class ManaLease
 {
     /// <summary>
-    /// Идентификатор аренды — совпадает с идентификатором, опубликованным
-    /// в <c>ManaLeaseOpened</c>.
+    /// Lease identifier — matches the identifier published in
+    /// <c>ManaLeaseOpened</c>.
     /// </summary>
     public LeaseId Id { get; }
 
     /// <summary>
-    /// Маг-кастер, у которого списывается мана на каждом тике.
+    /// The caster mage from whom mana is drained on every tick.
     /// </summary>
     public EntityId Caster { get; }
 
     /// <summary>
-    /// Количество маны, которое списывается у кастера за один тик.
+    /// Amount of mana drained from the caster per tick.
     /// </summary>
     public float DrainPerTick { get; }
 
     /// <summary>
-    /// Минимальная длительность аренды в тиках — до её истечения закрытие
-    /// <c>CloseReason.Completed</c> не допускается.
+    /// Minimum lease duration in ticks — closing with
+    /// <c>CloseReason.Completed</c> is not allowed before this expires.
     /// </summary>
     public int MinDurationTicks { get; }
 
     /// <summary>
-    /// Максимальная длительность аренды в тиках — по достижении реестр
-    /// принудительно закрывает аренду.
+    /// Maximum lease duration in ticks — once reached, the registry
+    /// force-closes the lease.
     /// </summary>
     public int MaxDurationTicks { get; }
 
     /// <summary>
-    /// Сколько тиков уже прошло с момента открытия аренды.
+    /// How many ticks have elapsed since the lease was opened.
     /// </summary>
     public int TicksElapsed { get; private set; }
 
     /// <summary>
-    /// Суммарное количество маны, списанное за всё время жизни аренды.
-    /// Используется при публикации <c>ManaLeaseClosed.TotalManaDrained</c>.
+    /// Total mana drained over the entire lifetime of the lease.
+    /// Used when publishing <c>ManaLeaseClosed.TotalManaDrained</c>.
     /// </summary>
     public float TotalDrained { get; private set; }
 
     /// <summary>
-    /// Создаёт запись об аренде. Вызывается только из
+    /// Creates a lease record. Called only from
     /// <see cref="ManaLeaseRegistry.Open"/>.
     /// </summary>
-    /// <param name="id">Идентификатор аренды.</param>
-    /// <param name="caster">Маг-кастер.</param>
-    /// <param name="drainPerTick">Расход маны за тик.</param>
-    /// <param name="minDurationTicks">Минимальная длительность аренды в тиках.</param>
-    /// <param name="maxDurationTicks">Максимальная длительность аренды в тиках.</param>
+    /// <param name="id">Lease identifier.</param>
+    /// <param name="caster">Caster mage.</param>
+    /// <param name="drainPerTick">Mana drain per tick.</param>
+    /// <param name="minDurationTicks">Minimum lease duration in ticks.</param>
+    /// <param name="maxDurationTicks">Maximum lease duration in ticks.</param>
     public ManaLease(LeaseId id, EntityId caster, float drainPerTick, int minDurationTicks, int maxDurationTicks)
     {
         Id = id;
@@ -71,15 +72,15 @@ internal sealed class ManaLease
     }
 
     /// <summary>
-    /// Продвигает аренду на один тик: списывает <paramref name="actualDrain"/>
-    /// в <see cref="TotalDrained"/> и инкрементирует <see cref="TicksElapsed"/>.
-    /// Возвращает <c>true</c>, если аренда достигла
-    /// <see cref="MaxDurationTicks"/> и должна быть закрыта.
+    /// Advances the lease by one tick: adds <paramref name="actualDrain"/>
+    /// to <see cref="TotalDrained"/> and increments <see cref="TicksElapsed"/>.
+    /// Returns <c>true</c> if the lease has reached
+    /// <see cref="MaxDurationTicks"/> and must be closed.
     /// </summary>
-    /// <param name="actualDrain">Фактически списанное количество маны за тик
-    /// (может отличаться от <see cref="DrainPerTick"/> при исчерпании пула).</param>
+    /// <param name="actualDrain">Mana actually drained this tick (may differ
+    /// from <see cref="DrainPerTick"/> when the pool is exhausted).</param>
     public bool AdvanceTick(float actualDrain)
     {
-        throw new NotImplementedException("TODO: Фаза 5 — списание маны и продвижение тика аренды");
+        throw new NotImplementedException("TODO: Phase 5 — drain mana and advance the lease tick");
     }
 }
