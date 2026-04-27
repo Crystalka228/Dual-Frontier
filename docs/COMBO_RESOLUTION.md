@@ -1,20 +1,20 @@
-# Резолюция комбо-урона
+# Combo damage resolution
 
-Один и тот же таргет в одном тике часто получает урон от нескольких систем: физический от `CombatSystem`, магический от `SpellSystem`, статусный от `StatusEffectSystem`. Если каждая система напрямую пишет `HealthComponent` в порядке публикации — исход боя зависит от планировщика потоков. v0.2 вводит детерминированное упорядочивание через `ComboResolutionSystem`.
+The same target in one tick often takes damage from several systems: physical from `CombatSystem`, magical from `SpellSystem`, status from `StatusEffectSystem`. If each system writes `HealthComponent` directly in publish order, the combat outcome depends on the thread scheduler. v0.2 introduces deterministic ordering through `ComboResolutionSystem`.
 
-## Проблема
+## Problem
 
-Прямое применение урона в порядке публикации событий даёт разный результат при одинаковом состоянии мира. Сценарий: по пешке одновременно попадает пуля, огненный шар и ядовитый дротик.
+Applying damage directly in event-publish order yields a different result for the same world state. Scenario: a pawn is hit at the same time by a bullet, a fireball, and a poisoned dart.
 
-- Если огонь применён первым — пешка может получить status `Burning`, увеличивающий уязвимость к физическому урону, и пуля нанесёт больше.
-- Если пуля применена первой — уязвимости нет, пуля нанесёт стандартный урон.
-- Если яд применён первым и пешка умерла от статуса — остальной урон «пропадает», а счётчик смерти уходит дротику, а не пуле.
+- If fire is applied first, the pawn may pick up a `Burning` status that increases physical-damage vulnerability, and the bullet hits harder.
+- If the bullet is applied first, there is no vulnerability and the bullet does standard damage.
+- If poison is applied first and the pawn dies from the status, the rest of the damage "vanishes" and the kill counter goes to the dart, not the bullet.
 
-Каждый из исходов допустим в правилах, но выбор между ними зависит от `Parallel.ForEach` и thread scheduling — то есть недетерминирован. Replay ломается. Интеграционные тесты становятся флаковыми.
+Each outcome is admissible by the rules, but the choice depends on `Parallel.ForEach` and thread scheduling — i.e. it is non-deterministic. Replay breaks. Integration tests become flaky.
 
-## Решение
+## Solution
 
-Все системы урона публикуют единый `DamageIntent` вместо прямой записи `HealthComponent`. `ComboResolutionSystem` собирает очередь намерений за тик, сортирует их по стабильному ключу и применяет строго по порядку, публикуя итоговые `DamageEvent`.
+Every damage system publishes a single `DamageIntent` instead of writing `HealthComponent` directly. `ComboResolutionSystem` collects the queue of intents for the tick, sorts it by a stable key, and applies them in strict order, publishing the resulting `DamageEvent`s.
 
 ```
 tick N, Phase 4 (Apply & Damage):
@@ -31,14 +31,14 @@ tick N, Phase 4 (Apply & Damage):
                                              publish DamageEvent (one per applied intent)
 ```
 
-### Ключ сортировки
+### Sort key
 
-Сортировка выполняется лексикографически по паре `(EntityId, DamageKind ordinal)`:
+The sort is lexicographic on the pair `(EntityId, DamageKind ordinal)`:
 
-1. Сначала все намерения группируются по `EntityId` — один таргет обрабатывается атомарно.
-2. Внутри группы порядок задаётся ординальным номером `DamageKind`.
+1. First, every intent is grouped by `EntityId` — one target is processed atomically.
+2. Within a group, the order is set by the `DamageKind` ordinal.
 
-Таблица ординалов фиксирована в `DamageKind.cs` (TODO Фаза 4):
+The ordinal table is fixed in `DamageKind.cs` (TODO Phase 4):
 
 | DamageKind | Ordinal |
 |------------|---------|
@@ -47,40 +47,40 @@ tick N, Phase 4 (Apply & Damage):
 | Arcane     | 2       |
 | Status     | 3       |
 
-Строковое поле `DamageKind` не участвует в сортировке напрямую — только через константную таблицу. Это важно для модов: мод, добавляющий новый тип урона, регистрирует его через `IModApi.RegisterDamageKind(name, ordinal)` и обязан выбрать ординал, не конфликтующий с существующими. Без регистрации мод-урон идёт в конец очереди.
+The string `DamageKind` field does not participate in the sort directly — only through the constant table. This matters for mods: a mod that adds a new damage type registers it via `IModApi.RegisterDamageKind(name, ordinal)` and MUST pick a non-conflicting ordinal. Without registration, a mod's damage goes to the end of the queue.
 
-### Гарантия детерминированности
+### Determinism guarantee
 
-При одинаковом входном состоянии мира и одинаковом наборе `DamageIntent`'ов итоговый `DamageEvent`-поток совпадает байт-в-байт между запусками. Это проверяется тестом replay в `DualFrontier.Systems.Tests/Combat/ComboResolutionTests` (TODO Фаза 5): один и тот же seed, одна и та же последовательность событий — одинаковый результат.
+Given identical input world state and an identical set of `DamageIntent`s, the resulting `DamageEvent` stream is byte-identical between runs. This is enforced by a replay test in `DualFrontier.Systems.Tests/Combat/ComboResolutionTests` (TODO Phase 5): the same seed and the same event sequence produce the same result.
 
-Следствия:
+Consequences:
 
-- Replay-система может воспроизвести бой из лога команд без сохранения промежуточных состояний.
-- Флаковых тестов боя нет: порядок применения фиксирован, а не определяется thread scheduler.
-- Сетевая синхронизация (если добавится в будущем) не требует репликации урон-событий — достаточно `DamageIntent`-потока.
+- A replay system can reproduce a fight from a command log without storing intermediate state.
+- No flaky combat tests: application order is fixed rather than determined by the thread scheduler.
+- Network synchronization (if added later) does not require replicating damage events — the `DamageIntent` stream is enough.
 
-## Почему сортировка, а не очередь
+## Why sort and not a queue
 
-Можно было бы применять уроны в порядке публикации через lock-free очередь. Но:
+One could apply damage in publish order through a lock-free queue. But:
 
-- Порядок публикации зависит от порядка обхода систем в фазе `Parallel.ForEach`.
-- `Parallel.ForEach` не гарантирует стабильный порядок внутри партиций.
-- Даже с упорядоченной очередью остаётся проблема: две системы, пишущие в очередь из разных потоков, могут чередоваться по-разному.
+- Publish order depends on the system traversal order in the `Parallel.ForEach` phase.
+- `Parallel.ForEach` does not guarantee a stable order inside partitions.
+- Even with an ordered queue, two systems writing into the queue from different threads can interleave differently.
 
-Сортировка по стабильному ключу снимает зависимость от того, кто первый успел опубликовать.
+Sorting on a stable key removes the dependency on whoever published first.
 
-## Связь с composite-запросами
+## Relationship to composite requests
 
-`ComboResolutionSystem` и `CompositeResolutionSystem` решают родственные, но разные задачи:
+`ComboResolutionSystem` and `CompositeResolutionSystem` solve related but different problems:
 
-- **Composite** собирает **разнородные** ответы с **разных шин** по одной транзакции (`TransactionId`) и выдаёт один итог — см. [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md).
-- **Combo** собирает **однородные** `DamageIntent` на одну цель и упорядочивает их для применения.
+- **Composite** collects **heterogeneous** responses from **different buses** for one transaction (`TransactionId`) and emits a single result — see [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md).
+- **Combo** collects **homogeneous** `DamageIntent`s on a single target and orders them for application.
 
-Обе системы живут в одном семействе фаз (Intent Collection / Apply & Damage), но работают с разными типами намерений и не конкурируют.
+Both systems live in the same family of phases (Intent Collection / Apply & Damage), but they work with different intent types and do not compete.
 
-## См. также
+## See also
 
-- [EVENT_BUS](./EVENT_BUS.md) — двухшаговая модель Intent → Granted, батч-обработка.
-- [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — multi-bus запросы.
+- [EVENT_BUS](./EVENT_BUS.md) — the two-step Intent → Granted model, batch processing.
+- [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — multi-bus requests.
 - [THREADING](./THREADING.md) — Phase 4 (Apply & Damage).
-- [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — почему детерминированность важнее latency.
+- [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — why determinism beats latency.

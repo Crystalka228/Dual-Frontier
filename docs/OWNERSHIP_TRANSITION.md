@@ -1,29 +1,29 @@
-# Переходы владения големом
+# Golem ownership transitions
 
-Голем принадлежит магу через `GolemBondComponent`. Связь не бинарная «есть/нет» — она проходит через несколько состояний: активная, оспариваемая, брошенная, передаваемая. v0.2 фиксирует полный список состояний, разрешённые переходы и правила их выполнения.
+A golem belongs to a mage through `GolemBondComponent`. The bond is not a binary "exists / does not exist" — it passes through several states: active, contested, abandoned, transferred. v0.2 pins the full list of states, the permitted transitions, and the rules for executing them.
 
-## Состояния
+## States
 
-- **Bonded** — нормальное состояние. У голема есть живой маг-владелец, мана капает из его пула, голем выполняет команды.
-- **Contested** — связь оспаривается: другой маг проводит ритуал перехвата. Владелец текущий, но таймер `TicksSinceContested` тикает.
-- **Abandoned** — владелец мёртв или снял связь намеренно. Голем стоит бездействующим и доступен для нового bond'а.
-- **Transferred** — промежуточное состояние в течение одного тика: связь уже разорвана с прежним владельцем, но новый ещё не принял её формально. Используется только для корректного порядка `[Deferred]` событий.
+- **Bonded** — normal state. The golem has a living mage owner, mana drips from their pool, and the golem follows orders.
+- **Contested** — the bond is being contested: another mage is running an interception ritual. The current owner remains, but the `TicksSinceContested` timer ticks.
+- **Abandoned** — the owner is dead or has released the bond intentionally. The golem stands inactive and is available for a new bond.
+- **Transferred** — an intermediate state spanning a single tick: the bond has already been broken from the previous owner, but the new one has not formally accepted it. Used only for the correct ordering of `[Deferred]` events.
 
-## Таблица переходов
+## Transition table
 
-| Из            | В             | Триггер                                                         |
+| From          | To            | Trigger                                                          |
 |---------------|---------------|------------------------------------------------------------------|
-| `Bonded`      | `Contested`   | Другой маг начал ритуал перехвата — атакует bond.               |
-| `Contested`   | `Bonded`      | Таймер `TicksSinceContested` истёк, исходный владелец удержал.  |
-| `Contested`   | `Transferred` | Атакующий маг довёл ритуал до конца, bond переходит к нему.      |
-| `Transferred` | `Bonded`      | Новый владелец принял bond (один тик на оформление).             |
-| `Bonded`      | `Abandoned`   | Владелец умер (`DeathEvent`) или добровольно разорвал связь.    |
-| `Contested`   | `Abandoned`   | Владелец умер во время оспаривания — bond освобождается.         |
-| `Abandoned`   | `Bonded`      | Новый маг выполнил ритуал привязки.                              |
+| `Bonded`      | `Contested`   | Another mage started an interception ritual — attacks the bond.  |
+| `Contested`   | `Bonded`      | The `TicksSinceContested` timer expired; the original owner held. |
+| `Contested`   | `Transferred` | The attacking mage finished the ritual; the bond passes to them. |
+| `Transferred` | `Bonded`      | The new owner accepts the bond (one tick to formalize).          |
+| `Bonded`      | `Abandoned`   | Owner dies (`DeathEvent`) or voluntarily breaks the bond.        |
+| `Contested`   | `Abandoned`   | Owner dies during contestation — the bond is released.           |
+| `Abandoned`   | `Bonded`      | A new mage performs the bond ritual.                             |
 
-Все остальные переходы запрещены — попытка выполнить такой переход кидает `InvalidOwnershipTransitionException` в DEBUG и тихо игнорируется в RELEASE (с инкрементом счётчика ошибок для диагностики).
+Every other transition is forbidden — attempting one throws `InvalidOwnershipTransitionException` in DEBUG and is silently ignored in RELEASE (with an error counter increment for diagnostics).
 
-## Диаграмма состояний
+## State diagram
 
 ```
                   ritual succeeds
@@ -49,35 +49,35 @@
      └───────────────► Bonded ◄────────────────┘
 ```
 
-## События
+## Events
 
-Любой переход публикует `GolemOwnershipChanged` (`[Deferred]`). Поля события:
+Every transition publishes `GolemOwnershipChanged` (`[Deferred]`). Event fields:
 
-- `GolemId` — `EntityId` голема.
-- `PreviousOwnerId` — `EntityId?` прежнего владельца (null, если из `Abandoned`).
-- `NewOwnerId` — `EntityId?` нового владельца (null, если в `Abandoned`).
-- `PreviousMode` — состояние до перехода (`OwnershipMode`).
-- `NewMode` — состояние после перехода (`OwnershipMode`).
+- `GolemId` — `EntityId` of the golem.
+- `PreviousOwnerId` — `EntityId?` of the previous owner (null when coming from `Abandoned`).
+- `NewOwnerId` — `EntityId?` of the new owner (null when going to `Abandoned`).
+- `PreviousMode` — state before the transition (`OwnershipMode`).
+- `NewMode` — state after the transition (`OwnershipMode`).
 
-Отдельно существует входящее событие `GolemOwnershipTransferRequest` — запрос на инициацию ритуала перехвата. Обработка: `GolemSystem` проверяет допустимость (голем не в `Transferred`, атакующий действительно маг, цель в радиусе) и либо переводит в `Contested`, либо отвечает отказом через `GolemOwnershipRefused` (TODO Фаза 6).
+A separate inbound event `GolemOwnershipTransferRequest` requests the start of an interception ritual. Handling: `GolemSystem` checks admissibility (the golem is not in `Transferred`, the attacker is actually a mage, the target is in range) and either moves it to `Contested` or replies with `GolemOwnershipRefused` (TODO Phase 6).
 
-## Компонент `GolemBondComponent`
+## The `GolemBondComponent` component
 
 ```csharp
 public sealed class GolemBondComponent : IComponent
 {
-    public EntityId? BondedMage;       // null, если Abandoned
+    public EntityId? BondedMage;       // null when Abandoned
     public OwnershipMode Mode;         // Bonded | Contested | Abandoned | Transferred
-    public int TicksSinceContested;    // счётчик таймера; 0, если не Contested
-    public float BondStrength;         // 0..1, учитывается в ритуале перехвата
+    public int TicksSinceContested;    // timer counter; 0 when not Contested
+    public float BondStrength;         // 0..1, used in the interception ritual
 }
 ```
 
-`BondStrength` растёт с временем привязки и успешными общими боями; уменьшается при длительном простое и после каждого оспаривания. Формула — в `DualFrontier.Systems/Magic/GolemBondStrength.cs` (TODO Фаза 6).
+`BondStrength` grows with bond duration and shared successful battles; it shrinks with long idleness and after every contestation. The formula is in `DualFrontier.Systems/Magic/GolemBondStrength.cs` (TODO Phase 6).
 
-## Правило мутации
+## Mutation rule
 
-**Только `GolemSystem` имеет право писать `GolemBondComponent`.** Другие системы наблюдают за событиями `GolemOwnershipChanged`, но не мутируют компонент напрямую. Декларация:
+**Only `GolemSystem` may write `GolemBondComponent`.** Other systems observe `GolemOwnershipChanged` events but do not mutate the component directly. The declaration:
 
 ```csharp
 [SystemAccess(
@@ -88,13 +88,13 @@ public sealed class GolemBondComponent : IComponent
 public sealed class GolemSystem : SystemBase { /* ... */ }
 ```
 
-Попытка другой системы декларировать `writes: GolemBondComponent` валит планировщик на старте — write-конфликт, см. [THREADING](./THREADING.md).
+An attempt by another system to declare `writes: GolemBondComponent` crashes the scheduler at startup — write conflict, see [THREADING](./THREADING.md).
 
-Чтение маны мага в `GolemSystem` идёт через снимок предыдущего тика — иначе возникает петля с `ManaSystem`. Подробности в [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md).
+The mage's mana is read inside `GolemSystem` through a previous-tick snapshot — otherwise a cycle with `ManaSystem` arises. Details in [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md).
 
-## См. также
+## See also
 
-- [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — почему `GolemSystem` читает `ManaSnapshot`.
-- [EVENT_BUS](./EVENT_BUS.md) — `[Deferred]`-режим для `GolemOwnershipChanged`.
-- [THREADING](./THREADING.md) — write-конфликты и декларация доступа.
-- [ROADMAP](./ROADMAP.md) — Фаза 6 (Магия) как место реализации.
+- [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — why `GolemSystem` reads `ManaSnapshot`.
+- [EVENT_BUS](./EVENT_BUS.md) — the `[Deferred]` mode for `GolemOwnershipChanged`.
+- [THREADING](./THREADING.md) — write conflicts and the access declaration.
+- [ROADMAP](./ROADMAP.md) — Phase 6 (Magic) as the implementation slot.
