@@ -49,9 +49,9 @@ public sealed class IsolationGuardTests : IDisposable
 
         act.Should().Throw<IsolationViolationException>()
             .Which.Message.Should().ContainAll(
-                "TestHealthComponent",
-                "без декларации",
-                "Добавь: [SystemAccess");
+                nameof(TestHealthComponent),
+                IsolationDiagnostics.UndeclaredAccessToken,
+                IsolationDiagnostics.HintToken);
     }
 
     [Fact]
@@ -81,9 +81,9 @@ public sealed class IsolationGuardTests : IDisposable
 
         act.Should().Throw<IsolationViolationException>()
             .Which.Message.Should().ContainAll(
-                "TestHealthComponent",
-                "модифицирует",
-                "Добавь: [SystemAccess");
+                nameof(TestHealthComponent),
+                IsolationDiagnostics.WriteVerbToken,
+                IsolationDiagnostics.HintToken);
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public sealed class IsolationGuardTests : IDisposable
         Action act = () => ctx.GetSystem<TestSystemStub>();
 
         act.Should().Throw<IsolationViolationException>()
-            .Which.Message.Should().Contain("Прямой доступ к системам запрещён");
+            .Which.Message.Should().Contain(IsolationDiagnostics.DirectSystemAccessToken);
     }
 
     [Fact]
@@ -120,7 +120,9 @@ public sealed class IsolationGuardTests : IDisposable
         act.Should().Throw<IsolationViolationException>();
         sink.Faults.Should().HaveCount(1);
         sink.Faults[0].modId.Should().Be("test.mod.id");
-        sink.Faults[0].message.Should().ContainAll("TestHealthComponent", "без декларации");
+        sink.Faults[0].message.Should().ContainAll(
+            nameof(TestHealthComponent),
+            IsolationDiagnostics.UndeclaredAccessToken);
     }
 
     [Fact]
