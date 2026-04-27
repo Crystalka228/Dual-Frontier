@@ -1,66 +1,66 @@
-# Документация Dual Frontier
+# Dual Frontier documentation
 
-Dual Frontier — колониальный симулятор на Godot 4 + C# с двумя параллельными ветками технологий (индустриальная и аркано-магическая). Архитектура проекта решает три проблемы RimWorld: производительность, многопоточность и модифицируемость.
+Dual Frontier is a colony simulator on Godot 4 + C# with two parallel tech branches (industrial and arcane). The project architecture solves three RimWorld pain points: performance, multithreading, and moddability.
 
-Данный каталог содержит всю техническую и процессную документацию. Перед погружением в код рекомендуется прочитать [ARCHITECTURE](./ARCHITECTURE.md) и [CONTRACTS](./CONTRACTS.md) — без них структура исходников выглядит избыточно.
+This directory contains all technical and process documentation. Before diving into code, read [ARCHITECTURE](./ARCHITECTURE.md) and [CONTRACTS](./CONTRACTS.md) — without them the source layout looks excessive.
 
-## Архитектура
+## Architecture
 
-Документы, описывающие фундамент: слои, контракты, ядро ECS, шины событий, многопоточность и изоляцию.
+Documents describing the foundation: layers, contracts, ECS core, event buses, multithreading, and isolation.
 
-- [ARCHITECTURE](./ARCHITECTURE.md) — четыре слоя, правила зависимостей, диаграмма сборок.
-- [CONTRACTS](./CONTRACTS.md) — маркер-интерфейсы, шесть доменных шин, эволюция и версионирование.
-- [ECS](./ECS.md) — World, EntityId, Component, SparseSet, Query, SystemBase.
-- [EVENT_BUS](./EVENT_BUS.md) — доменные шины, двухшаговая модель Intent→Granted/Refused, батч-обработка.
-- [THREADING](./THREADING.md) — DependencyGraph, фазы, TickRates, запрет async.
-- [ISOLATION](./ISOLATION.md) — SystemExecutionContext, сторож, DEBUG vs RELEASE, типы нарушений.
-- [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) — PresentationBridge, IRenderCommand, InputRouter, main thread.
-- [VISUAL_ENGINE](./VISUAL_ENGINE.md) — DevKit vs Native, контракты IRenderer/ISceneLoader/IInputSource, формат .dfscene.
+- [ARCHITECTURE](./ARCHITECTURE.md) — the four layers, dependency rules, assembly diagram.
+- [CONTRACTS](./CONTRACTS.md) — marker interfaces, six domain buses, evolution and versioning.
+- [ECS](./ECS.md) — `World`, `EntityId`, `Component`, `SparseSet`, `Query`, `SystemBase`.
+- [EVENT_BUS](./EVENT_BUS.md) — domain buses, the two-step Intent→Granted/Refused model, batch processing.
+- [THREADING](./THREADING.md) — `DependencyGraph`, phases, tick rates, the ban on `async`.
+- [ISOLATION](./ISOLATION.md) — `SystemExecutionContext`, the isolation guard, DEBUG vs RELEASE, types of violations.
+- [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) — `PresentationBridge`, `IRenderCommand`, `InputRouter`, the main thread.
+- [VISUAL_ENGINE](./VISUAL_ENGINE.md) — DevKit vs Native, the `IRenderer` / `ISceneLoader` / `IInputSource` contracts, the `.dfscene` format.
 
-## Разработка
+## Development
 
-Документы для тех, кто пишет код: методика, модинг, производительность, стиль, тесты.
+Documents for those who write code: methodology, modding, performance, style, tests.
 
-- [METHODOLOGY](./METHODOLOGY.md) — четырёхагентный pipeline, контракты как IPC между агентами, цикл верификации, модель угроз, экономика, границы применимости.
-- [MODDING](./MODDING.md) — IMod, IModApi, AssemblyLoadContext, IModContract, манифест.
-- [MOD_PIPELINE](./MOD_PIPELINE.md) — конвейер интеграции, ContractValidator, ModRegistry, атомарность.
-- [PERFORMANCE](./PERFORMANCE.md) — целевые метрики, профилирование, горячие пути, кэши.
-- [GPU_COMPUTE](./GPU_COMPUTE.md) — исследование compute shader для ProjectileSystem, порог переключения.
-- [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, порядок членов.
+- [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
+- [MODDING](./MODDING.md) — `IMod`, `IModApi`, `AssemblyLoadContext`, `IModContract`, the mod manifest.
+- [MOD_PIPELINE](./MOD_PIPELINE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity.
+- [PERFORMANCE](./PERFORMANCE.md) — target metrics, profiling, hot paths, caches.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — compute-shader investigation for `ProjectileSystem`, the switchover threshold.
+- [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order.
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
-- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — чек-лист гигиены на каждый PR, граница движок/игра, красные флаги.
-- [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — C++ ядро эксперимент, P/Invoke граница, результаты бенчмарка, план батчинг API для Фазы 9.
-- [PERSISTENCE](../src/DualFrontier.Persistence/README.md) — алгоритмы сжатия сохранений: RLE тайлов, квантизация компонентов, range encoding entity, StringPool.
+- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — the hygiene checklist for every PR, the engine/game boundary, red flags.
+- [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — the C++ core experiment, the P/Invoke boundary, benchmark results, plan for the batching API in Phase 9.
+- [PERSISTENCE](../src/DualFrontier.Persistence/README.md) — save-compression algorithms: tile RLE, component quantization, entity range encoding, StringPool.
 
-## Процесс
+## Process
 
-Организация работы: порядок фаз и критерии приёмки.
+Work organization: phase order and acceptance criteria.
 
-- [ROADMAP](./ROADMAP.md) — фазы 0–7 с составом файлов, критериями приёмки и разблокировкой следующих.
+- [ROADMAP](./ROADMAP.md) — phases 0–7 with file composition, acceptance criteria, and what each phase unlocks next.
 
-## Учебные материалы
+## Learning materials
 
-Артефакты self-teaching ритуала после закрытия каждой существенной фазы (см. [METHODOLOGY §4.5](./METHODOLOGY.md)).
+Self-teaching artifacts produced after each substantial phase closes (see [METHODOLOGY §4.5](./METHODOLOGY.md)).
 
-- [learning/PHASE_1](./learning/PHASE_1.md) — C# и многопоточность через призму Core ECS: class vs struct, generics, атрибуты через Reflection, nullable, ThreadLocal, race conditions, stack trace, тесты как доказательство инварианта. Включает 14-дневный учебный маршрут.
+- [learning/PHASE_1](./learning/PHASE_1.md) — C# and multithreading through the lens of Core ECS: class vs struct, generics, attributes via reflection, nullable, `ThreadLocal`, race conditions, stack traces, tests as invariant proof. Includes a 14-day study path.
 
-## Логи сессий
+## Session logs
 
-Точные логи фазовых ревью и других ключевых сессий pipeline. Не подлежат редактированию задним числом — служат аудитным следом.
+Verbatim logs of phase reviews and other key pipeline sessions. Not subject to post-hoc editing — they serve as an audit trail.
 
-- [SESSION_PHASE_4_CLOSURE_REVIEW](./SESSION_PHASE_4_CLOSURE_REVIEW.md) — закрытие Phase 4 силами Opus 4.7: валидация диагностики, 6 архитектурных решений, 17 новых тестов, 7 атомарных коммитов.
+- [SESSION_PHASE_4_CLOSURE_REVIEW](./SESSION_PHASE_4_CLOSURE_REVIEW.md) — Phase 4 closure conducted by Opus 4.7: diagnostic validation, 6 architectural decisions, 17 new tests, 7 atomic commits. *(Russian-language audit trail; preserved verbatim per the i18n campaign rules.)*
 
-## v0.2 Addendum
+## v0.2 addendum
 
-Дополнения второй ревизии архитектуры: модели ресурсов, composite-запросы, обратные связи через tick lag, детерминированная резолюция урона, переходы владения големом.
+Second-revision architecture additions: resource models, composite requests, feedback through tick lag, deterministic damage resolution, golem ownership transitions.
 
-- [RESOURCE_MODELS](./RESOURCE_MODELS.md) — Intent vs Lease, правило выбора, reserve-then-consume.
-- [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — двухфазный commit для multi-bus запросов, `CompositeResolutionSystem`.
-- [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — `Mana[N-1]`, снимки предыдущего тика.
-- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — `ComboResolutionSystem`, детерминированная сортировка `DamageIntent`.
-- [OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md) — состояния `GolemBondComponent`, таблица переходов.
+- [RESOURCE_MODELS](./RESOURCE_MODELS.md) — Intent vs Lease, the choice rule, reserve-then-consume.
+- [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — two-phase commit for multi-bus requests, `CompositeResolutionSystem`.
+- [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — `Mana[N-1]`, snapshots of the previous tick.
+- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — `ComboResolutionSystem`, deterministic sort of `DamageIntent`.
+- [OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md) — `GolemBondComponent` states, transition table.
 
-## См. также
+## See also
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
 - [ROADMAP](./ROADMAP.md)
