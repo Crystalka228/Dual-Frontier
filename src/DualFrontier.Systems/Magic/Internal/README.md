@@ -1,35 +1,35 @@
 # Magic / Internal
 
-## Назначение
+## Purpose
 
-Папка `Internal/` содержит вспомогательные типы подсистемы магии,
-которые **не должны пересекать границу сборки** `DualFrontier.Systems`.
-Это внутренние структуры данных, о существовании которых знают только
-ManaSystem, GolemSystem, SpellSystem и прочие системы этой же сборки.
+The `Internal/` folder holds helper types of the magic subsystem that **must
+not cross the assembly boundary** of `DualFrontier.Systems`. These are
+internal data structures known only to ManaSystem, GolemSystem, SpellSystem,
+and the other systems in this assembly.
 
-## Правила
+## Rules
 
-- Все типы в этой папке объявлены как `internal` (или `internal sealed`).
-- **Никакие** публичные события, контракты или компоненты здесь **не
-  размещаются** — они лежат в `DualFrontier.Events.Magic`,
-  `DualFrontier.Contracts`, `DualFrontier.Components.Magic` соответственно.
-- Типы из `Internal/` не должны фигурировать в сигнатурах публичных
-  методов систем. Если какая-то информация нужна снаружи — создаётся
-  публичное событие/компонент в соответствующей сборке.
-- `ManaLeaseRegistry` — единая точка владения активными mana-lease.
-  Владеет `ManaSystem` (будущее: через DI-контейнер, фаза 5).
-  Другие системы магии могут получать на него ссылку, но только в
-  пределах этой же сборки.
+- Every type in this folder is declared `internal` (or `internal sealed`).
+- **No** public events, contracts, or components live here — they belong in
+  `DualFrontier.Events.Magic`, `DualFrontier.Contracts`, and
+  `DualFrontier.Components.Magic` respectively.
+- Types from `Internal/` MUST NOT appear in the signatures of public system
+  methods. If some piece of information is needed from outside, a public event
+  or component is created in the appropriate assembly.
+- `ManaLeaseRegistry` is the single owner of active mana leases.
+  Owned by `ManaSystem` (future: through a DI container, Phase 5).
+  Other magic systems may receive a reference to it, but only within this
+  assembly.
 
-## Что внутри
+## Contents
 
-- `ManaLease.cs` — внутренняя запись об одной активной аренде маны
-  (идентификатор, кастер, расход, счётчики).
-- `ManaLeaseRegistry.cs` — коллекция активных аренд, выдача `LeaseId`,
-  тиковое списание, поиск истекших.
+- `ManaLease.cs` — internal record of one active mana lease (identifier,
+  caster, drain, counters).
+- `ManaLeaseRegistry.cs` — collection of active leases, `LeaseId` issuance,
+  per-tick drain, expiration lookup.
 
-## Связь с TechArch v0.2
+## Relation to TechArch v0.2
 
-См. §12.2 «Непрерывные аренды маны» — обоснование двухшаговой модели
-`ManaLeaseOpenRequest` / `ManaLeaseOpened` / `ManaLeaseClosed` и почему
-реестр живёт именно внутри ManaSystem, а не на публичной шине.
+See §12.2 "Continuous mana leases" — the rationale for the two-step
+`ManaLeaseOpenRequest` / `ManaLeaseOpened` / `ManaLeaseClosed` model and why
+the registry lives inside ManaSystem rather than on a public bus.

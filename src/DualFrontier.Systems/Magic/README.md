@@ -1,71 +1,72 @@
 # Magic Systems
 
-## Назначение
-Магическая подсистема Dual Frontier: регенерация маны, каст
-заклинаний, управление големами, рост эфирных узлов и
-ритуалы. См. GDD разделы "Магия", "Школы магии", "Големы".
+## Purpose
+Dual Frontier's magic subsystem: mana regeneration, spell casting, golem
+control, ether-node growth, and rituals. See the GDD sections "Magic",
+"Schools of magic", "Golems".
 
-## Зависимости
-- `DualFrontier.Contracts` — атрибуты, `IMagicBus`.
+## Dependencies
+- `DualFrontier.Contracts` — attributes, `IMagicBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.Magic` — `ManaComponent`, `SchoolComponent`,
   `GolemBondComponent`, `EtherComponent`.
 - `DualFrontier.Events.Magic` — `ManaRequest`, `SpellCastEvent`,
   `EtherSurgeEvent`, `GolemActivatedEvent`.
 
-## Что внутри
-- `ManaSystem.cs` — NORMAL: регенерация маны и её расход.
-- `SpellSystem.cs` — FAST: исполнение заклинаний (публикует результаты).
-- `GolemSystem.cs` — NORMAL: поддержание связи голема с хозяином.
-- `EtherGrowthSystem.cs` — SLOW: рост эфирных полей от школы.
-- `RitualSystem.cs` — RARE: долгие коллективные ритуалы.
+## Contents
+- `ManaSystem.cs` — NORMAL: mana regeneration and consumption.
+- `SpellSystem.cs` — FAST: spell execution (publishes results).
+- `GolemSystem.cs` — NORMAL: maintaining the golem-owner bond.
+- `EtherGrowthSystem.cs` — SLOW: ether-field growth from a school.
+- `RitualSystem.cs` — RARE: long collective rituals.
 
-## Правила
-- Шина домена — `nameof(IGameServices.Magic)`.
-- `SpellSystem` ничего не пишет в компоненты — только публикует
-  события; урон накладывает `DamageSystem` из `Combat/`.
-- `ManaSystem` — единственная система, которая пишет
-  `ManaComponent` (кроме ритуалов).
-- Эфир и мана — разные пулы: эфир в мире (узлы), мана у пешки.
+## Rules
+- Domain bus — `nameof(IGameServices.Magic)`.
+- `SpellSystem` does not write to components — it only publishes events;
+  damage is applied by `DamageSystem` from `Combat/`.
+- `ManaSystem` is the only system that writes `ManaComponent` (apart from
+  rituals).
+- Ether and mana are different pools: ether in the world (nodes), mana on the
+  pawn.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Внутри SpellSystem:
+// Inside SpellSystem:
 magicBus.Publish(new SpellCastEvent(casterId, spellId, target));
 ```
 
 ## TODO
-- [ ] Реализовать `ManaSystem`: формула регена от школы и стат.
-- [ ] Реализовать `SpellSystem`: пул активных кастов.
-- [ ] Реализовать `GolemSystem`: распад связи при нехватке маны.
-- [ ] Реализовать `EtherGrowthSystem`: диффузия эфира по сетке.
-- [ ] Реализовать `RitualSystem`: многопешечные ритуалы.
+- [ ] Implement `ManaSystem`: regen formula based on school and stats.
+- [ ] Implement `SpellSystem`: pool of active casts.
+- [ ] Implement `GolemSystem`: bond decay on mana shortage.
+- [ ] Implement `EtherGrowthSystem`: ether diffusion across the grid.
+- [ ] Implement `RitualSystem`: multi-pawn rituals.
 
 ## v02 Addendum (TechArch §12.2, §12.3, §12.5)
 
-### ManaSystem — mana-lease
+### ManaSystem — mana lease
 
-`ManaSystem` теперь обрабатывает непрерывные аренды маны (lease):
-- `OnManaLeaseOpenRequest(ManaLeaseOpenRequest)` — проверяет `Mana.Current[N-1]`,
-  открывает аренду через `Internal/ManaLeaseRegistry` и публикует
-  `ManaLeaseOpened` либо `ManaLeaseRefused` с соответствующим `RefusalReason`.
-- `DrainActiveLeases()` — тиковое списание маны со всех активных аренд,
-  публикует `ManaLeaseClosed` по истекшим.
-- `OnManaLeaseCloseRequest(LeaseId, CloseReason)` — явное закрытие аренды
-  (например, каст прерван извне).
+`ManaSystem` now handles continuous mana leases:
+- `OnManaLeaseOpenRequest(ManaLeaseOpenRequest)` — checks `Mana.Current[N-1]`,
+  opens the lease through `Internal/ManaLeaseRegistry`, and publishes
+  `ManaLeaseOpened` or `ManaLeaseRefused` with the appropriate `RefusalReason`.
+- `DrainActiveLeases()` — per-tick mana drain from every active lease;
+  publishes `ManaLeaseClosed` for any that have expired.
+- `OnManaLeaseCloseRequest(LeaseId, CloseReason)` — explicit lease closure
+  (for example, the cast was interrupted from outside).
 
-### GolemSystem — смена владения
+### GolemSystem — ownership transfer
 
-`GolemSystem` подписывается на `GolemOwnershipTransferRequest` и публикует
-отложенное (`[Deferred]`) событие `GolemOwnershipChanged`. Для
-предотвращения feedback loop (§12.3) чтение состояния манны хозяина идёт
-через `ReadPreviousTickManaState()` — `Mana[N-1]` snapshot.
+`GolemSystem` subscribes to `GolemOwnershipTransferRequest` and publishes the
+deferred (`[Deferred]`) `GolemOwnershipChanged` event. To prevent a
+feedback loop (§12.3), the owner's mana state is read via
+`ReadPreviousTickManaState()` — the `Mana[N-1]` snapshot.
 
-### Internal/ подкаталог
+### Internal/ subdirectory
 
-`Magic/Internal/` — приватные типы подсистемы магии, не пересекающие
-границу сборки:
-- `ManaLease.cs` — запись об одной активной аренде.
-- `ManaLeaseRegistry.cs` — коллекция активных аренд, выдача `LeaseId`,
-  тиковое списание.
-- `README.md` — правила пакета.
+`Magic/Internal/` — private types of the magic subsystem that do not cross
+the assembly boundary:
+- `ManaLease.cs` — record of one active lease.
+- `ManaLeaseRegistry.cs` — collection of active leases, `LeaseId` issuance,
+  per-tick drain.
+- `README.md` — package rules.

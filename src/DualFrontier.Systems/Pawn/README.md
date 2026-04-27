@@ -1,53 +1,53 @@
 # Pawn Systems
 
-## Назначение
-Системы жизненного цикла пешки: нужды (голод/сон/отдых), выбор
-текущей работы, настроение/ломки, социальные связи и рост
-навыков. См. GDD разделы "Пешки" и "Нужды".
+## Purpose
+Pawn lifecycle systems: needs (hunger/sleep/rest), current job selection,
+mood and breaks, social ties, and skill growth. See the GDD "Pawns" and
+"Needs" sections.
 
-## Зависимости
-- `DualFrontier.Contracts` — атрибуты, шина `IPawnBus`.
+## Dependencies
+- `DualFrontier.Contracts` — attributes, the `IPawnBus` bus.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.Pawn` — `NeedsComponent`, `MindComponent`,
   `JobComponent`, `SkillsComponent`, `SocialComponent`.
 - `DualFrontier.Components.Shared` — `PositionComponent`, `HealthComponent`.
 - `DualFrontier.Events.Pawn` — `MoodBreakEvent`, `SkillGainEvent`, ...
 
-## Что внутри
-- `NeedsSystem.cs` — SLOW: деградация нужд во времени.
-- `JobSystem.cs` — NORMAL: выбор и назначение джобов пешкам.
-- `MoodSystem.cs` — SLOW: пересчёт настроения по нуждам и здоровью.
-- `MovementSystem.cs` — NORMAL: движение пешек через A*,
-  публикует `PawnMovedEvent`.
-- `SocialSystem.cs` — RARE: социальные связи и их влияние на mind.
-- `SkillSystem.cs` — NORMAL: рост навыков по опыту.
+## Contents
+- `NeedsSystem.cs` — SLOW: needs decay over time.
+- `JobSystem.cs` — NORMAL: job selection and assignment to pawns.
+- `MoodSystem.cs` — SLOW: recomputes mood from needs and health.
+- `MovementSystem.cs` — NORMAL: pawn movement via A*,
+  publishes `PawnMovedEvent`.
+- `SocialSystem.cs` — RARE: social ties and their influence on the mind.
+- `SkillSystem.cs` — NORMAL: skill growth from experience.
 
-## Правила
-- Шина домена — `nameof(IGameServices.Pawns)`.
-- Writes / reads строго по декларации атрибута `SystemAccess`.
-- `JobSystem` — единственная система, которая ПИШЕТ `JobComponent`.
-- Ломка настроения публикуется `MoodBreakEvent` в `Pawns`-шину,
-  `JobSystem` реагирует на неё сменой задачи.
+## Rules
+- Domain bus — `nameof(IGameServices.Pawns)`.
+- Writes / reads strictly per the `SystemAccess` attribute declaration.
+- `JobSystem` is the only system that WRITES `JobComponent`.
+- A mood break publishes `MoodBreakEvent` to the `Pawns` bus;
+  `JobSystem` reacts by switching task.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Внутри JobSystem.Update:
+// Inside JobSystem.Update:
 foreach (var pawn in Query<NeedsComponent, SkillsComponent, PositionComponent>()) {
     ref var needs = ref GetComponent<NeedsComponent>(pawn);
-    // TODO: выбрать джоб по самой горящей потребности
+    // TODO: select a job for the most urgent need
 }
 ```
 
 ## TODO
-- [x] Реализовать `NeedsSystem`: падение сытости/сна во времени.
-- [x] Реализовать `JobSystem` (базовый): приоритеты джобов по нуждам,
+- [x] Implement `NeedsSystem`: hunger/sleep decay over time.
+- [x] Implement `JobSystem` (basic): job priority by need,
       `JobKind.Eat/Sleep/Idle`.
-- [x] Реализовать `MoodSystem`: формула mood = f(needs), переход в
+- [x] Implement `MoodSystem`: formula `mood = f(needs)`, transition into
       MoodBreak.
-- [x] Реализовать `MovementSystem`: движение пешек по A*-маршруту,
-      публикация `PawnMovedEvent`.
-- [ ] Реализовать `SocialSystem`: граф дружб/вражды (сейчас стаб).
-- [ ] Реализовать `SkillSystem`: кривая опыта и деградация (сейчас стаб).
-- [ ] Подключить публикацию событий через `IGameServices` — сейчас
-      `MoodSystem` содержит заглушку вместо реальной публикации
-      `MoodBreakEvent`; системы не имеют доступа к шинам.
+- [x] Implement `MovementSystem`: pawn movement along the A* route,
+      publishes `PawnMovedEvent`.
+- [ ] Implement `SocialSystem`: friendship/enmity graph (currently a stub).
+- [ ] Implement `SkillSystem`: experience curve and decay (currently a stub).
+- [ ] Wire event publication through `IGameServices` — `MoodSystem` currently
+      has a stub instead of actually publishing `MoodBreakEvent`; systems do
+      not yet have bus access.

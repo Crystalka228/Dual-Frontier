@@ -1,34 +1,34 @@
 # Faction Systems
 
-## Назначение
-Метаигровые отношения между фракциями: дипломатия, торговля и
-рейды. См. GDD раздел "Фракции".
+## Purpose
+Meta-game relations between factions: diplomacy, trade, and raids. See the
+GDD "Factions" section.
 
-## Зависимости
-- `DualFrontier.Contracts` — атрибуты, `IWorldBus`.
+## Dependencies
+- `DualFrontier.Contracts` — attributes, `IWorldBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.Shared` — `FactionComponent`.
-- `DualFrontier.Components.Pawn` — `SocialComponent` (для влияния отдельных пешек на репутацию).
+- `DualFrontier.Components.Pawn` — `SocialComponent` (for individual pawn influence on reputation).
 - `DualFrontier.Events.World` — `RaidIncomingEvent`, `TradeCaravanEvent`.
 
-## Что внутри
-- `RelationSystem.cs` — RARE: эволюция отношений между фракциями.
-- `TradeSystem.cs` — RARE: прилёт торговых караванов.
-- `RaidSystem.cs` — RARE: спавн рейдов, публикует `RaidIncomingEvent`.
+## Contents
+- `RelationSystem.cs` — RARE: evolution of inter-faction relations.
+- `TradeSystem.cs` — RARE: arrival of trade caravans.
+- `RaidSystem.cs` — RARE: raid spawning, publishes `RaidIncomingEvent`.
 
-## Правила
-- Шина домена — `nameof(IGameServices.World)`.
-- Все три системы — RARE, метаигра редкая.
-- `RaidSystem` единственная решает, когда идёт налёт; остальной
-  мир реагирует на `RaidIncomingEvent`.
+## Rules
+- Domain bus — `nameof(IGameServices.World)`.
+- All three systems are RARE; meta-game events are infrequent.
+- `RaidSystem` is the only system that decides when a raid happens; the rest
+  of the world reacts to `RaidIncomingEvent`.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Внутри RaidSystem:
+// Inside RaidSystem:
 worldBus.Publish(new RaidIncomingEvent(fromFaction: "raiders", strength: 12));
 ```
 
 ## TODO
-- [ ] Реализовать `RelationSystem`: матрица отношений [-100..100].
-- [ ] Реализовать `TradeSystem`: таблица товаров по фракциям.
-- [ ] Реализовать `RaidSystem`: формула силы рейда от богатства колонии.
+- [ ] Implement `RelationSystem`: relation matrix [-100..100].
+- [ ] Implement `TradeSystem`: per-faction goods table.
+- [ ] Implement `RaidSystem`: raid-strength formula derived from colony wealth.

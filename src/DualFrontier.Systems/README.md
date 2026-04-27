@@ -1,46 +1,45 @@
 # DualFrontier.Systems
 
-## Назначение
-Вся игровая логика Dual Frontier. Каждая система — это потомок
-`SystemBase`, декларирующий свои READ/WRITE зависимости через
-`[SystemAccess]` и частоту обновления через `[TickRate]`. Шедулер
-Core использует эти декларации для построения графа зависимостей и
-параллельного исполнения фаз (см. TechArch 11.4–11.6).
+## Purpose
+All Dual Frontier game logic. Each system is a `SystemBase` subclass that
+declares its READ/WRITE dependencies via `[SystemAccess]` and its update
+frequency via `[TickRate]`. The Core scheduler uses these declarations to
+build the dependency graph and execute phases in parallel (see TechArch
+11.4–11.6).
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `SystemAccessAttribute`, `TickRateAttribute`,
-  `IGameServices` и доменные шины (`ICombatBus`, `IMagicBus`, …),
+  `IGameServices` and the domain buses (`ICombatBus`, `IMagicBus`, …),
   `EntityId`, `IEvent`, `IComponent`.
-- `DualFrontier.Core` — `SystemBase`, `TickRates`, исполнительный
-  контекст и планировщик.
-- `DualFrontier.Components` — все доменные компоненты, которые
-  системы читают и пишут.
-- `DualFrontier.Events` — события, которые системы публикуют и
-  на которые подписываются.
+- `DualFrontier.Core` — `SystemBase`, `TickRates`, the execution context,
+  and the scheduler.
+- `DualFrontier.Components` — every domain component the systems read and
+  write.
+- `DualFrontier.Events` — the events the systems publish and subscribe to.
 
-## Что внутри
-- `Pawn/` — нужды, работа, настроение, социалка, навыки.
-- `Magic/` — мана, заклинания, големы, эфирные поля, ритуалы.
-- `Combat/` — инициация боя, снаряды, урон, щиты, эффекты.
-- `Inventory/` — склад, хаулы, крафт.
-- `Power/` — электросеть, эфирная сеть, конвертеры.
-- `World/` — карта, погода, биомы.
-- `Faction/` — отношения, торговля, рейды.
+## Contents
+- `Pawn/` — needs, jobs, mood, social, skills.
+- `Magic/` — mana, spells, golems, ether fields, rituals.
+- `Combat/` — combat initiation, projectiles, damage, shields, effects.
+- `Inventory/` — storage, hauling, crafting.
+- `Power/` — electric grid, ether grid, converters.
+- `World/` — map, weather, biomes.
+- `Faction/` — relations, trade, raids.
 
-## Правила
-- Каждая система — `public sealed class XSystem : SystemBase`.
-- Каждая система ОБЯЗАНА иметь `[SystemAccess(reads, writes, bus)]`
-  и `[TickRate(TickRates.X)]`.
-- Запрещено обращаться к `World` напрямую — только через
-  `SystemExecutionContext` в `SystemBase`.
-- Запрещено асинхронное API (`async`/`await`, `Task.Run`) —
-  ломает `ThreadLocal` сторож изоляции (см. THREADING).
-- Межсистемное общение — только через шины (`IGameServices.X`)
-  и запросы компонентов у своих READ/WRITE множеств.
-- Имя свойства шины в `bus:` задаётся через
-  `nameof(IGameServices.Combat)` — не строкой.
+## Rules
+- Each system is `public sealed class XSystem : SystemBase`.
+- Each system MUST have `[SystemAccess(reads, writes, bus)]` and
+  `[TickRate(TickRates.X)]`.
+- Direct access to `World` is forbidden — only through
+  `SystemExecutionContext` in `SystemBase`.
+- Async APIs (`async`/`await`, `Task.Run`) are forbidden — they break the
+  `ThreadLocal` isolation guard (see THREADING).
+- Inter-system communication only through buses (`IGameServices.X`)
+  and component access from the system's READ/WRITE sets.
+- The bus property name in `bus:` is set via `nameof(IGameServices.Combat)` —
+  not as a string literal.
 
-## Примеры использования
+## Usage examples
 ```csharp
 [SystemAccess(
     reads:  new[] { typeof(PositionComponent), typeof(WeaponComponent) },
@@ -52,8 +51,8 @@ public sealed class CombatSystem : SystemBase { /* ... */ }
 ```
 
 ## TODO
-- [ ] Реализовать тела `Update` во всех системах после того,
-      как `SystemBase` и `SystemExecutionContext` будут готовы.
-- [ ] Подписаться на нужные события в `OnInitialize()` каждой системы.
-- [ ] Покрыть тестами графы зависимостей (конфликт READ/WRITE → ошибка).
-- [ ] Добавить интеграционные тесты "одна фаза — один проход шины".
+- [ ] Implement `Update` bodies in every system once `SystemBase` and
+      `SystemExecutionContext` are ready.
+- [ ] Subscribe to relevant events in each system's `OnInitialize()`.
+- [ ] Cover dependency-graph tests (READ/WRITE conflicts → error).
+- [ ] Add integration tests for "one phase — one bus pass".

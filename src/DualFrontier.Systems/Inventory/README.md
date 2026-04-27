@@ -1,11 +1,11 @@
 # Inventory Systems
 
-## Назначение
-Склад, хаулы (переноска) и крафт. См. GDD раздел "Ресурсы и
-производство" и TechArch 11.5 (кэш/батчинг запросов склада).
+## Purpose
+Storage, hauling, and crafting. See the GDD "Resources and production" section
+and TechArch 11.5 (storage request cache/batching).
 
-## Зависимости
-- `DualFrontier.Contracts` — атрибуты, `IInventoryBus`.
+## Dependencies
+- `DualFrontier.Contracts` — attributes, `IInventoryBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.Building` — `StorageComponent`,
   `WorkbenchComponent`.
@@ -14,35 +14,34 @@
 - `DualFrontier.Events.Inventory` — `AmmoIntentEvent`,
   `AmmoGrantedEvent`, `AmmoRefusedEvent`, `ItemAddedEvent`.
 
-## Что внутри
-- `InventorySystem.cs` — FAST: обработчик запросов склада (кэш + батчинг).
-- `HaulSystem.cs` — NORMAL: пешки переносят стаки между складами.
-- `CraftSystem.cs` — NORMAL: выполнение рецептов на верстаках.
+## Contents
+- `InventorySystem.cs` — FAST: storage request handler (cache + batching).
+- `HaulSystem.cs` — NORMAL: pawns move stacks between storages.
+- `CraftSystem.cs` — NORMAL: recipe execution at workbenches.
 
-## Правила
-- Шина домена — `nameof(IGameServices.Inventory)`.
-- `InventorySystem` — единственная система, которая пишет
-  `StorageComponent`. Все изменения склада проходят через
-  запросы в её шину, иначе ломается батчинг (TechArch 11.5).
-- `HaulSystem` ничего не пишет напрямую в склад — только
-  публикует `ItemPickupEvent` / `ItemDropEvent`.
+## Rules
+- Domain bus — `nameof(IGameServices.Inventory)`.
+- `InventorySystem` is the only system that writes `StorageComponent`. Every
+  storage change goes through requests on its bus, otherwise batching breaks
+  (TechArch 11.5).
+- `HaulSystem` does not write to storage directly — it only publishes
+  `ItemPickupEvent` / `ItemDropEvent`.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Внутри CombatSystem:
+// Inside CombatSystem:
 inventoryBus.Publish(new AmmoIntentEvent(shooter, weaponId, amount: 1));
-// Позже InventorySystem ответит AmmoGranted или AmmoRefused.
+// Later InventorySystem responds with AmmoGranted or AmmoRefused.
 ```
 
 ## TODO
-- [x] Реализовать `InventorySystem` с кэшем свободных слотов
+- [x] Implement `InventorySystem` with a free-slot cache
       (`_freeSlotCache` + `_cacheDirty`).
-- [x] Реализовать `HaulSystem`: поиск "откуда → куда" по предмету
-      (Phase 4: телепорт без pathfinding, real haul — Phase 6).
-- [ ] Реализовать `CraftSystem` — Фаза 6 (сейчас стаб бросает
+- [x] Implement `HaulSystem`: "from → to" item lookup
+      (Phase 4: teleport without pathfinding, real haul — Phase 6).
+- [ ] Implement `CraftSystem` — Phase 6 (currently a stub that throws
       `NotImplementedException`).
-- [ ] Перевести `ItemAddedEvent`/`ItemRemovedEvent` на `[Deferred]`
-      доставку — иначе `InventorySystem.OnItemAdded.SetComponent`
-      исполняется в контексте публикующей системы и сорвёт DEBUG
-      isolation guard, как только появятся реальные `StorageComponent`
-      сущности.
+- [ ] Move `ItemAddedEvent` / `ItemRemovedEvent` to `[Deferred]` delivery —
+      otherwise `InventorySystem.OnItemAdded.SetComponent` runs in the
+      publisher's context and trips the DEBUG isolation guard as soon as
+      real `StorageComponent` entities appear.
