@@ -93,10 +93,12 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 - **Pass 2 action:** retargeted to the closest existing section: `[ARCHITECTURE §"Dependency rules"](./ARCHITECTURE.md#dependency-rules)`. The `## Dependency rules` heading exists in the translated ARCHITECTURE.md.
 - **Suggested follow-up (out of scope for Pass 2):** the human may want to add an explicit "Engine / game boundary" section to ARCHITECTURE.md that contains the engine vs game assembly table currently duplicated in DEVELOPMENT_HYGIENE.md.
 
-### 4.2 CODING_STANDARDS.md anchor — prediction
+### 4.2 CODING_STANDARDS.md anchor — section missing in source
 
 - **Predicted heading in translated CODING_STANDARDS.md:** `## Commit messages` → anchor `#commit-messages`.
-- **Pass 2 commitment:** when CODING_STANDARDS.md is translated, the heading `## Сообщения коммитов` MUST be rendered as exactly `## Commit messages` to keep DEVELOPMENT_HYGIENE.md's three anchor references resolvable.
+- **Issue discovered during Pass 2:** the Russian source `docs/CODING_STANDARDS.md` does not actually contain a `«Сообщения коммитов»` section. The DEVELOPMENT_HYGIENE.md links to a section that was never written. The anchor will remain broken in both Russian and English versions until someone adds the section.
+- **Pass 2 action:** preserved the predicted English anchor `#commit-messages` in DEVELOPMENT_HYGIENE.md, anticipating that the missing section will eventually be added with that exact heading.
+- **Suggested follow-up (out of scope for Pass 2):** add a `## Commit messages` section to CODING_STANDARDS.md that documents the commit-prefix taxonomy already enumerated in DEVELOPMENT_HYGIENE.md §"Quick reference — commit scope prefixes".
 
 ### 4.3 ROADMAP.md anchor — prediction
 
