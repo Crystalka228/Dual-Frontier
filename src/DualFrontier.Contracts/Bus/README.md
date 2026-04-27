@@ -1,8 +1,8 @@
 # Bus — Доменные шины событий
 
 ## Назначение
-Определяет контракт базовой шины событий `IEventBus` и пять доменных шин
-(Combat, Inventory, Magic, Pawn, World), собранных в агрегатор `IGameServices`.
+Определяет контракт базовой шины событий `IEventBus` и шесть доменных шин
+(Combat, Inventory, Magic, Pawn, Power, World), собранных в агрегатор `IGameServices`.
 Разделение на домены снижает lock contention, упрощает дебаг и профилирование
 нагрузки на конкретный домен.
 
@@ -16,7 +16,8 @@
 - `IInventoryBus.cs` — шина склада: AmmoRequest/Result, ItemAdded/Removed.
 - `IMagicBus.cs` — шина магии: ManaRequest/Result, SpellCast, EtherSurge.
 - `IPawnBus.cs` — шина пешек: MoodBreak, DeathReaction, SkillGain.
-- `IWorldBus.cs` — шина мира: EtherNodeChanged, WeatherChanged.
+- `IPowerBus.cs` — шина энергосети: ConverterPowerOutput.
+- `IWorldBus.cs` — шина мира: EtherNodeChanged, WeatherChanged, RaidIncoming.
 
 ## Правила
 - Каждая доменная шина — отдельный экземпляр со своим набором подписок.
@@ -39,6 +40,6 @@ public sealed class CombatSystem
 ```
 
 ## TODO
-- [ ] Фаза 1 — реализовать `DomainEventBus` с ConcurrentDictionary подписок.
-- [ ] Фаза 1 — реализовать `GameServices` — композицию пяти шин.
+- [x] Фаза 1 — реализован `DomainEventBus` с ConcurrentDictionary подписок.
+- [x] Фаза 1 — реализован `GameServices` — композиция шести шин.
 - [ ] Фаза 2 — добавить метрики (счётчик событий/сек на шину) для профайлера.
