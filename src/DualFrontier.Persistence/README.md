@@ -1,117 +1,117 @@
 # DualFrontier.Persistence
 
-## Назначение
+## Purpose
 
-Алгоритмы сжатия для сохранений. Сборка движкового слоя — **не зависит**
-от `Core`, `Systems` или `Application`; знает только `Contracts`
-(для `EntityId`) и `Components` (для `TerrainKind`, `TileComponent` и т.п.).
+Compression algorithms for save files. An engine-layer assembly — it does
+**not** depend on `Core`, `Systems`, or `Application`; it knows only
+`Contracts` (for `EntityId`) and `Components` (for `TerrainKind`,
+`TileComponent`, etc.).
 
-Никакого ввода-вывода. Вся работа — `byte[] → byte[]` в памяти. Файловую
-запись и интеграцию с `GameLoop` подключает `SaveSystem` в `Application` —
-этот пакет даёт ему лежащие в основе кодеки.
+No I/O. All work is `byte[] → byte[]` in memory. File writes and integration
+with `GameLoop` are wired by `SaveSystem` in `Application` — this package
+gives it the underlying codecs.
 
-## Слои внутри
+## Internal layers
 
 ```
-Snapshots/      ← read-only снимки мира (data only, без логики)
-  ├── SaveMeta            — заголовок: версия, тик, размер карты
+Snapshots/      ← read-only world snapshots (data only, no logic)
+  ├── SaveMeta            — header: version, tick, map size
   ├── TileMapSnapshot     — flat row-major TerrainKind[]
-  ├── PawnSnapshot        — позиция + 5 нужд + job
-  ├── StorageSnapshot     — capacity + dictionary стаков
-  └── WorldSnapshot       — композиция всего перечисленного
+  ├── PawnSnapshot        — position + 5 needs + job
+  ├── StorageSnapshot     — capacity + dictionary of stacks
+  └── WorldSnapshot       — composition of everything above
 
-Compression/    ← кодеки, по одному файлу на алгоритм
-  ├── TileEncoder         — RLE по тайловой карте
-  ├── ComponentEncoder    — квантизация float [0..1] в byte
-  ├── EntityEncoder       — range encoding по EntityId.Index
-  ├── StringPool          — дедупликация строковых тегов
-  └── DfCompressor        — фасад/точка входа
+Compression/    ← codecs, one file per algorithm
+  ├── TileEncoder         — RLE over the tile map
+  ├── ComponentEncoder    — quantize float [0..1] to byte
+  ├── EntityEncoder       — range encoding over EntityId.Index
+  ├── StringPool          — string-tag deduplication
+  └── DfCompressor        — facade / entry point
 ```
 
-## Алгоритмы
+## Algorithms
 
 ### TileEncoder — RLE
 
-Карта 100×100 = 10000 тайлов. Naïve байтовое кодирование = 10000 байт.
+A 100×100 map = 10,000 tiles. Naive byte encoding = 10,000 bytes.
 
-Формат: пары `(count: ushort)(kind: byte)`. Прогон длиннее `ushort.MaxValue`
-(65 535) разбивается на части. Если 95% тайлов — `Grass`, размер падает
-до единиц десятков байт.
+Format: `(count: ushort)(kind: byte)` pairs. A run longer than `ushort.MaxValue`
+(65,535) splits into chunks. If 95% of tiles are `Grass`, the size drops to a
+few dozen bytes.
 
 ```csharp
-var bytes = TileEncoder.Encode(snapshot);    // ~30 байт для homogenous биома
-var back  = TileEncoder.Decode(bytes, w, h); // round-trip восстанавливает оригинал
+var bytes = TileEncoder.Encode(snapshot);    // ~30 bytes for a homogeneous biome
+var back  = TileEncoder.Decode(bytes, w, h); // round trip restores the original
 ```
 
-### ComponentEncoder — квантизация
+### ComponentEncoder — quantization
 
-`NeedsComponent.Hunger` и подобные float-поля живут в `[0, 1]`. Quantisation
-в `byte`:
+`NeedsComponent.Hunger` and similar float fields live in `[0, 1]`.
+Quantization into a `byte`:
 
 ```csharp
 byte q = ComponentEncoder.QuantizeFloat(0.75f);     // 191
 float v = ComponentEncoder.DequantizeFloat(q);      // 0.7490..
 ```
 
-Худшая ошибка round-trip — `1/255 ≈ 0.004`, ниже разрешения, на которое
-смотрит любая из систем нужд/настроения.
+The worst round-trip error is `1/255 ≈ 0.004`, below the resolution any
+needs/mood system actually inspects.
 
-Delta-encoding между сохранениями (запись только изменённых полей с
-`fieldMask: byte` и списком значений) запланирован как часть полной
-интеграции `DfCompressor.Compress(WorldSnapshot)` в более поздней фазе.
+Delta encoding between saves (writing only the changed fields with a
+`fieldMask: byte` and a value list) is planned as part of the full
+`DfCompressor.Compress(WorldSnapshot)` integration in a later phase.
 
 ### EntityEncoder — range encoding
 
-`EntityId.Index` монотонно растёт; живые сущности образуют редкие
-плотные диапазоны. Вместо «один int на сущность» — пары
-`(start: int)(count: ushort)`:
+`EntityId.Index` grows monotonically; live entities form sparse dense
+ranges. Instead of "one int per entity", pairs `(start: int)(count: ushort)`:
 
 ```
 [1, 2, 3, 4, 5, 10, 11, 12]
   → (start=1, count=5), (start=10, count=3)
-  → 12 байт вместо 32
+  → 12 bytes instead of 32
 ```
 
-`Version` теряется — сохранения снимают момент, при загрузке у каждой
-восстановленной сущности будет свежая версия. Внутренние ссылки в саве
-работают по `Index`, а не по полному `EntityId`.
+`Version` is lost — saves freeze a moment, and on load every restored entity
+gets a fresh version. Internal references inside the save work by `Index`,
+not by full `EntityId`.
 
-### StringPool — дедупликация
+### StringPool — deduplication
 
-`StorageComponent.Items` использует строки `iron_ore`, `wood`, `cloth`
-как ключи; в крупной колонии одни и те же строки повторяются десятки
-тысяч раз. Пул интернирует строку при первом обращении и возвращает
-16-битный `ushort` handle.
+`StorageComponent.Items` uses strings like `iron_ore`, `wood`, `cloth` as
+keys; in a large colony the same strings repeat tens of thousands of times.
+The pool interns a string on first access and returns a 16-bit `ushort`
+handle.
 
-Формат сериализации: `[count: ushort]` затем по каждой строке
-`[len: ushort][bytes: utf8]`. Емкость пула ограничена `ushort.MaxValue`
-(65 535) уникальных строк — при переполнении кодек кричит, а не теряет
-данные молча.
+Serialization format: `[count: ushort]` then per string
+`[len: ushort][bytes: utf8]`. The pool's capacity is bounded by
+`ushort.MaxValue` (65,535) unique strings — on overflow the codec screams
+rather than silently losing data.
 
-## Граница
+## Boundary
 
 ```
 DualFrontier.Persistence
-  ├── зависит от: Contracts, Components
-  └── НЕ зависит от: Core, Systems, AI, Application, Presentation
+  ├── depends on: Contracts, Components
+  └── does NOT depend on: Core, Systems, AI, Application, Presentation
 ```
 
-Это даёт три гарантии:
-1. Алгоритмы тестируются без ECS-инфраструктуры.
-2. Persistence можно загрузить как часть мод-API без подтаскивания всего
-   движка.
-3. Пакет реюзаем в инструментах вне основной сборки (mod editor,
-   save-inspector).
+This gives three guarantees:
+1. Algorithms are tested without the ECS infrastructure.
+2. Persistence can be loaded as part of the mod API without dragging in the
+   whole engine.
+3. The package is reusable in tools outside the main assembly (mod editor,
+   save inspector).
 
-## Тесты
+## Tests
 
-`tests/DualFrontier.Persistence.Tests/` — четыре round-trip-теста:
+`tests/DualFrontier.Persistence.Tests/` — four round-trip tests:
 
-- `TileEncoder_RLE_roundtrip` — 100×100 95% Grass + 5% Rock; проверка
-  идентичности и `encoded.Length < 100`.
-- `ComponentEncoder_quantize_roundtrip` — `0.75f → byte → float`,
-  ошибка `< 0.005f`.
-- `EntityEncoder_range_roundtrip` — индексы `{1..5, 10..12}`, проверка
-  идентичности и `encoded.Length < 32`.
-- `StringPool_intern_dedup` — повторный `Intern` возвращает тот же
-  handle и не растит пул.
+- `TileEncoder_RLE_roundtrip` — 100×100 95% Grass + 5% Rock; checks identity
+  and `encoded.Length < 100`.
+- `ComponentEncoder_quantize_roundtrip` — `0.75f → byte → float`, error
+  `< 0.005f`.
+- `EntityEncoder_range_roundtrip` — indices `{1..5, 10..12}`; checks identity
+  and `encoded.Length < 32`.
+- `StringPool_intern_dedup` — a repeated `Intern` returns the same handle
+  and does not grow the pool.
