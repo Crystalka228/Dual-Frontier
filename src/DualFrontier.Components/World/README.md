@@ -1,25 +1,25 @@
 # World
 
-## Назначение
-Компоненты для сущностей, представляющих мир: тайлы, эфирные узлы, биомы.
-Тайл-сетка — основа карты; эфирные узлы — источники повышенной регенерации
-маны (GDD 4).
+## Purpose
+Components for entities that represent the world: tiles, ether nodes, biomes.
+The tile grid is the basis of the map; ether nodes are sources of accelerated
+mana regeneration (GDD 4).
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IComponent`.
 
-## Что внутри
-- `TileComponent.cs` — тип рельефа + проходимость.
-- `EtherNodeComponent.cs` — уровень узла + радиус влияния.
-- `BiomeComponent.cs` — тип биома (лес, пустыня, туманное плато и т. п.).
+## Contents
+- `TileComponent.cs` — terrain kind + passability.
+- `EtherNodeComponent.cs` — node tier + influence radius.
+- `BiomeComponent.cs` — biome kind (forest, desert, foggy plateau, etc.).
 
-## Правила
-- В одной точке сетки живёт только одна entity с `TileComponent`.
-- `EtherNodeComponent.Radius` — в тайлах. Перекрывающиеся радиусы
-  складываются EtherFieldSystem.
-- Биомы влияют на мудовые модификаторы пешек и доступную флору/фауну.
+## Rules
+- Only one entity with `TileComponent` lives at any single grid position.
+- `EtherNodeComponent.Radius` is in tiles. Overlapping radii are summed by
+  EtherFieldSystem.
+- Biomes affect pawn mood modifiers and the available flora/fauna.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var node = world.CreateEntity();
 world.AddComponent(node, new EtherNodeComponent { /* Tier = 2, Radius = 5 */ });
@@ -27,8 +27,8 @@ world.AddComponent(node, new PositionComponent { Position = new GridVector(42, 1
 ```
 
 ## TODO
-- [x] Определить `TerrainKind` enum (Grass, Rock, Sand, Water, Ice, Swamp,
+- [x] Define the `TerrainKind` enum (Grass, Rock, Sand, Water, Ice, Swamp,
       Arcane, Unknown).
-- [ ] Определить `BiomeKind` enum (TemperateForest, Desert, Tundra, EtherWastes …).
-- [ ] Продумать слои (напольный / стеновой / декоративный) — возможно,
-      через отдельные компоненты, а не через `TileComponent`.
+- [ ] Define the `BiomeKind` enum (TemperateForest, Desert, Tundra, EtherWastes …).
+- [ ] Plan layers (floor / wall / decorative) — possibly through separate
+      components rather than through `TileComponent`.

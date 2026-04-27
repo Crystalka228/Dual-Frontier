@@ -1,27 +1,27 @@
 # Combat
 
-## Назначение
-Компоненты боевой подсистемы в духе Combat Extended: характеристики оружия,
-брони, магических щитов и боеприпасов. См. GDD 6 «Боевая Система».
+## Purpose
+Components of the combat subsystem in the spirit of Combat Extended: weapon
+characteristics, armor, magic shields, and ammunition. See GDD 6 "Combat System".
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IComponent`.
 
-## Что внутри
-- `WeaponComponent.cs` — урон, пробитие, тип урона, дистанция, точность.
-- `ArmorComponent.cs` — сопротивления (острый / тупой / тепловой).
-- `ShieldComponent.cs` — магический щит, пул HP + регенерация (GDD 6.4).
-- `AmmoComponent.cs` — тип патрона и количество.
+## Contents
+- `WeaponComponent.cs` — damage, penetration, damage type, range, accuracy.
+- `ArmorComponent.cs` — resistances (sharp / blunt / heat).
+- `ShieldComponent.cs` — magic shield, HP pool + regeneration (GDD 6.4).
+- `AmmoComponent.cs` — ammo type and count.
 
-## Правила
-- `WeaponComponent.Penetration` и `ArmorComponent.*Resist` — единая шкала
-  (будет описана в `/docs/COMBAT.md`). Проверка происходит в DamageSystem.
-- Магические щиты — отдельный слой защиты ПОВЕРХ брони (GDD 6.4).
-  Сначала расходуется `HpPool` щита, затем броня, затем HP.
-- `AmmoComponent` обычно живёт на сущности-оружии (магазин) или на пешке
-  (запас патронов); конкретика — в InventorySystem.
+## Rules
+- `WeaponComponent.Penetration` and `ArmorComponent.*Resist` use a single scale
+  (to be documented in `/docs/COMBAT.md`). The check happens in DamageSystem.
+- Magic shields are a separate defense layer ON TOP of armor (GDD 6.4).
+  The shield's `HpPool` is consumed first, then armor, then HP.
+- `AmmoComponent` typically lives on a weapon entity (the magazine) or on the
+  pawn (ammo reserve); specifics are settled in InventorySystem.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var rifle = world.CreateEntity();
 world.AddComponent(rifle, new WeaponComponent { /* Damage = 18, Range = 25, ... */ });
@@ -29,7 +29,7 @@ world.AddComponent(rifle, new AmmoComponent { /* Type = AmmoType.Rifle, Count = 
 ```
 
 ## TODO
-- [ ] Определить `DamageType` enum (Sharp, Blunt, Heat, Frost, Arcane …) по GDD 6.1.
-- [ ] Определить `ShieldKind` enum (Arcane, Kinetic, Void …) по GDD 6.4.
-- [ ] Определить `AmmoType` enum (Rifle, Pistol, Shotgun, Mana, Bolt …).
-- [ ] Решить, где хранить прочность оружия — в `WeaponComponent` или отдельно.
+- [ ] Define the `DamageType` enum (Sharp, Blunt, Heat, Frost, Arcane …) per GDD 6.1.
+- [ ] Define the `ShieldKind` enum (Arcane, Kinetic, Void …) per GDD 6.4.
+- [ ] Define the `AmmoType` enum (Rifle, Pistol, Shotgun, Mana, Bolt …).
+- [ ] Decide where to store weapon durability — in `WeaponComponent` or separately.

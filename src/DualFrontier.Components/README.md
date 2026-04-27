@@ -1,40 +1,40 @@
 # DualFrontier.Components
 
-## Назначение
-Сборка компонентов ECS. Чистые POCO-данные, без логики. Каждый компонент
-реализует `IComponent` из `DualFrontier.Contracts.Core`. Логика, изменяющая
-эти данные, живёт в `DualFrontier.Systems`.
+## Purpose
+The ECS components assembly. Pure POCO data, no logic. Every component
+implements `IComponent` from `DualFrontier.Contracts.Core`. Logic that mutates
+this data lives in `DualFrontier.Systems`.
 
-Компоненты описывают все игровые сущности: пешек, здания, магические узлы,
-оружие и боеприпасы, энергосеть и т. д. Разбиты по доменам (Shared / Pawn /
-Magic / Combat / Building / World), по одной папке на домен.
+Components describe every game entity: pawns, buildings, magic nodes, weapons
+and ammunition, the power grid, and so on. They are split by domain (Shared /
+Pawn / Magic / Combat / Building / World), one folder per domain.
 
-## Зависимости
-- `DualFrontier.Contracts` — маркер `IComponent`, `EntityId`.
+## Dependencies
+- `DualFrontier.Contracts` — the `IComponent` marker, `EntityId`.
 
-Компоненты НЕ зависят от `Systems`, `Events`, `Core`, движка Godot или любой
-другой сборки проекта. Это обеспечивает изоляцию данных от логики.
+Components do NOT depend on `Systems`, `Events`, `Core`, the Godot engine, or
+any other project assembly. This isolates data from logic.
 
-## Что внутри
-- `Shared/` — базовые компоненты для любой entity (позиция, здоровье, фракция, раса).
-- `Pawn/` — специфично для разумных пешек (нужды, навыки, настроение, работа, соц. связи).
-- `Magic/` — мана, школы магии, уровень эфира, связь с големом (GDD 4–5).
-- `Combat/` — оружие, броня, щиты, боеприпасы (GDD 6, Combat Extended).
-- `Building/` — потребители/производители энергии, хранилища, верстаки.
-- `World/` — тайлы, эфирные узлы, биомы.
+## Contents
+- `Shared/` — base components for any entity (position, health, faction, race).
+- `Pawn/` — specific to sapient pawns (needs, skills, mood, work, social ties).
+- `Magic/` — mana, schools of magic, ether level, golem bond (GDD 4–5).
+- `Combat/` — weapons, armor, shields, ammunition (GDD 6, Combat Extended).
+- `Building/` — power consumers/producers, storages, workbenches.
+- `World/` — tiles, ether nodes, biomes.
 
-## Правила
-- Только POCO — поля `public`, без методов (кроме expression-bodied, как
+## Rules
+- POCO only — `public` fields, no methods (except expression-bodied ones like
   `IsDead => Current <= 0`).
-- Никаких ссылок на другие сборки кроме `Contracts`.
-- Именование: `XxxComponent.cs`, класс `public sealed class XxxComponent : IComponent`.
-- Коллекции инициализируются лениво или системами — не в ctor компонента.
-- Любое изменение состояния компонента — только через систему с
+- No references to other assemblies besides `Contracts`.
+- Naming: `XxxComponent.cs`, class `public sealed class XxxComponent : IComponent`.
+- Collections are initialized lazily or by systems — not in the component's ctor.
+- Any component-state change happens only through a system with
   `[SystemAccess(writes: ...)]`.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Система читает и изменяет компоненты, но сам компонент — просто данные.
+// A system reads and mutates components, but the component itself is just data.
 [SystemAccess(reads: new[] { typeof(HealthComponent) })]
 public class DeathReporterSystem : SystemBase
 {
@@ -50,9 +50,9 @@ public class DeathReporterSystem : SystemBase
 ```
 
 ## TODO
-- [ ] Заполнить TODO-поля в каждом компоненте (Фаза 1–2).
-- [ ] Определить enum-типы (`RaceKind`, `SkillKind`, `JobKind`, `MagicSchool`,
+- [ ] Fill the TODO fields in every component (Phase 1–2).
+- [ ] Define enum types (`RaceKind`, `SkillKind`, `JobKind`, `MagicSchool`,
       `DamageType`, `ShieldKind`, `AmmoType`, `PowerType`, `WorkbenchKind`,
-      `TerrainKind`, `BiomeKind`) — в соответствующих доменных папках.
-      (`GridVector` уже определён в `DualFrontier.Contracts.Math`.)
-- [ ] Написать unit-тесты на сериализацию компонентов (Фаза 3, для save/load).
+      `TerrainKind`, `BiomeKind`) — in their respective domain folders.
+      (`GridVector` is already defined in `DualFrontier.Contracts.Math`.)
+- [ ] Write unit tests for component serialization (Phase 3, for save/load).
