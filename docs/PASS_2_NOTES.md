@@ -100,10 +100,12 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 - **Pass 2 action:** preserved the predicted English anchor `#commit-messages` in DEVELOPMENT_HYGIENE.md, anticipating that the missing section will eventually be added with that exact heading.
 - **Suggested follow-up (out of scope for Pass 2):** add a `## Commit messages` section to CODING_STANDARDS.md that documents the commit-prefix taxonomy already enumerated in DEVELOPMENT_HYGIENE.md §"Quick reference — commit scope prefixes".
 
-### 4.3 ROADMAP.md anchor — prediction
+### 4.3 ROADMAP.md anchor — retargeted
 
-- **Predicted heading in translated ROADMAP.md:** `## Post-release — engine fork` → anchor `#post-release--engine-fork` (em-dash with surrounding spaces collapses to a double hyphen in GitHub's anchor algorithm).
-- **Pass 2 commitment:** when ROADMAP.md is translated, the heading `## Пост-релиз — развилка на движок` MUST be rendered as exactly `## Post-release — engine fork` (with the em-dash preserved) to keep DEVELOPMENT_HYGIENE.md's two anchor references resolvable.
+- **Russian source link:** `[ROADMAP §«Пост-релиз — развилка на движок»](./ROADMAP.md#пост-релиз--развилка-на-движок)`
+- **Issue:** the `«Пост-релиз — развилка на движок»` section does not exist in `docs/ROADMAP.md` (Russian or English). The link was already broken before Pass 2.
+- **Pass 2 action:** retargeted both DEVELOPMENT_HYGIENE.md references to `[ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)`, which is the existing section that describes the post-release engine work (own entry point, abstract `IRenderer`, port to any backend, "after Phase 7 closure and Steam launch").
+- **Suggested follow-up (out of scope for Pass 2):** the human may want to rename Phase 9 to "Post-release — engine fork" if that framing better matches the project's communication, or add an explicit "Post-release" subsection within Phase 9.
 
 ---
 
