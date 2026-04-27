@@ -1,42 +1,41 @@
 # Pathfinding
 
-## Назначение
-Поиск пути A* по сетке проходимости. Сугубо синхронный:
-никакого `async/await`, иначе ломается `ThreadLocal` сторож
-изоляции систем (см. THREADING).
+## Purpose
+A* pathfinding over the passability grid. Strictly synchronous: no
+`async/await`, otherwise the `ThreadLocal` system isolation guard breaks
+(see THREADING).
 
-## Зависимости
-- `DualFrontier.Contracts` — `GridVector` (координаты пути), `EntityId`.
-- `DualFrontier.Components.World` — `TileComponent` (для постройки
-  `NavGrid` из мира — это делает верхний слой, не сама AI).
+## Dependencies
+- `DualFrontier.Contracts` — `GridVector` (path coordinates), `EntityId`.
+- `DualFrontier.Components.World` — `TileComponent` (used by the upper layer
+  to build `NavGrid` from the world — not by the AI itself).
 
-**НЕТ** зависимости на `DualFrontier.Core` — `SpatialGrid` живёт
-там, но это инфраструктура, а не примитив. `GridVector` —
-примитив, он живёт в `Contracts.Math`.
+There is **NO** dependency on `DualFrontier.Core` — `SpatialGrid` lives there,
+but it is infrastructure, not a primitive. `GridVector` is a primitive and
+lives in `Contracts.Math`.
 
-## Что внутри
-- `IPathfindingService.cs` — интерфейс с синхронным `TryFindPath`.
-- `AStarPathfinding.cs` — реализация A*.
-- `NavGrid.cs` — битмап проходимости для запросов.
+## Contents
+- `IPathfindingService.cs` — interface with the synchronous `TryFindPath`.
+- `AStarPathfinding.cs` — A* implementation.
+- `NavGrid.cs` — passability bitmap for queries.
 
-## Правила
-- Синхронный API. Длинный A* бьём на лимит итераций за тик и
-  возвращаем False при превышении (пешка попробует на
-  следующем тике).
-- `NavGrid` — иммутабельна для одного запроса; обновляется
-  снаружи батчами, когда в мире что-то построили/снесли.
-- Никаких статических синглтонов — сервис инъектируется.
+## Rules
+- Synchronous API. Long A* is sliced into a per-tick iteration cap and returns
+  False on overflow (the pawn retries on the next tick).
+- `NavGrid` is immutable for one query; updates from the outside happen in
+  batches whenever something is built or destroyed in the world.
+- No static singletons — the service is injected.
 
-## Примеры использования
+## Usage examples
 ```csharp
 IPathfindingService pf = /* resolve */;
-if (pf.TryFindPath(from, to, out var path)) { /* использовать */ }
+if (pf.TryFindPath(from, to, out var path)) { /* use it */ }
 ```
 
 ## TODO
-- [x] Реализовать `AStarPathfinding` с лимитом итераций (2000 за вызов,
+- [x] Implement `AStarPathfinding` with an iteration cap (2000 per call,
       `PriorityQueue<GridVector, float>`).
-- [x] Реализовать `NavGrid` как bitmap (passability + cost map, `SetTile`).
-- [ ] Добавить hierarchical pathfinding для дальних целей.
-- [ ] Кэш путей между часто используемыми точками (инвалидация по
-      `BuildingPlacedEvent` / `TileChangedEvent`, см. PERFORMANCE).
+- [x] Implement `NavGrid` as a bitmap (passability + cost map, `SetTile`).
+- [ ] Add hierarchical pathfinding for distant goals.
+- [ ] Path cache between frequently used pairs of points (invalidation on
+      `BuildingPlacedEvent` / `TileChangedEvent`, see PERFORMANCE).
