@@ -127,13 +127,13 @@ public partial class PawnDetail : Panel
         _nameLabel = ColonyPanel.MakeLabel("—", 14, Palette.Text);
         titleBox.AddChild(_nameLabel);
 
-        _roleLabel = ColonyPanel.MakeLabel("инквизитор", 11, Palette.Muted);
+        _roleLabel = ColonyPanel.MakeLabel("inquisitor", 11, Palette.Muted);
         titleBox.AddChild(_roleLabel);
     }
 
     private void BuildMood()
     {
-        AddSectionTitle("НАСТРОЕНИЕ");
+        AddSectionTitle("MOOD");
 
         var row = new HBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         row.AddThemeConstantOverride("separation", 12);
@@ -159,20 +159,20 @@ public partial class PawnDetail : Panel
 
     private void BuildNeeds()
     {
-        AddSectionTitle("НУЖДЫ");
+        AddSectionTitle("NEEDS");
         var box = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         box.AddThemeConstantOverride("separation", 6);
         _root.AddChild(box);
 
-        _hunger  = new NeedRow("Голод");    box.AddChild(_hunger);
-        _thirst  = new NeedRow("Жажда");    box.AddChild(_thirst);
-        _rest    = new NeedRow("Усталость"); box.AddChild(_rest);
-        _comfort = new NeedRow("Комфорт");  box.AddChild(_comfort);
+        _hunger  = new NeedRow("Hunger");  box.AddChild(_hunger);
+        _thirst  = new NeedRow("Thirst");  box.AddChild(_thirst);
+        _rest    = new NeedRow("Rest");    box.AddChild(_rest);
+        _comfort = new NeedRow("Comfort"); box.AddChild(_comfort);
     }
 
     private void BuildJob()
     {
-        AddSectionTitle("ЗАДАЧА");
+        AddSectionTitle("JOB");
         var pill = new HBoxContainer();
         pill.AddThemeConstantOverride("separation", 8);
         _root.AddChild(pill);
@@ -190,7 +190,7 @@ public partial class PawnDetail : Panel
 
     private void BuildSkills()
     {
-        AddSectionTitle("НАВЫКИ");
+        AddSectionTitle("SKILLS");
         _skillsBox = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         _skillsBox.AddThemeConstantOverride("separation", 4);
         _root.AddChild(_skillsBox);
@@ -241,17 +241,17 @@ public partial class PawnDetail : Panel
 
     private static string MakeRole(EntityId id)
     {
-        string[] roles = { "инквизитор", "сержант", "техно-жрец", "магус", "санитар" };
+        string[] roles = { "inquisitor", "sergeant", "tech-priest", "magus", "medic" };
         return roles[Math.Abs(id.Index) % roles.Length];
     }
 
     private static string MoodLabel(float mood)
     {
-        if (mood < 0.26f) return "На грани срыва";
-        if (mood < 0.46f) return "Подавлен";
-        if (mood < 0.66f) return "Сносно";
-        if (mood < 0.81f) return "Доволен";
-        return "Воодушевлён";
+        if (mood < 0.26f) return "On the brink";
+        if (mood < 0.46f) return "Despondent";
+        if (mood < 0.66f) return "Tolerable";
+        if (mood < 0.81f) return "Content";
+        return "Inspired";
     }
 
     private static Color StatusColor(float v)
@@ -265,7 +265,7 @@ public partial class PawnDetail : Panel
     private static Color JobDotColor(string jobLabel, bool urgent)
     {
         if (urgent) return Palette.Critical;
-        if (string.Equals(jobLabel, "Бездействие", StringComparison.Ordinal))
+        if (string.Equals(jobLabel, "Idle", StringComparison.Ordinal))
             return Palette.Neutral;
         return Palette.Good;
     }

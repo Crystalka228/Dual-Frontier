@@ -60,21 +60,21 @@ public sealed class PawnStateReporterSystem : SystemBase
 
     private static string TranslateJob(JobKind kind) => kind switch
     {
-        JobKind.Idle         => "Бездействие",
-        JobKind.Haul         => "Переноска",
-        JobKind.Build        => "Строительство",
-        JobKind.Mine         => "Добыча",
-        JobKind.Cook         => "Готовка",
-        JobKind.Craft        => "Ремесло",
-        JobKind.Research     => "Исследование",
-        JobKind.Medicate     => "Лечение",
-        JobKind.Fight        => "Бой",
-        JobKind.Flee         => "Отступление",
-        JobKind.Meditate     => "Медитация",
-        JobKind.GolemCommand => "Управление големом",
-        JobKind.Sleep        => "Сон",
-        JobKind.Eat          => "В поисках пищи",
-        JobKind.Social       => "Беседа",
+        JobKind.Idle         => "Idle",
+        JobKind.Haul         => "Hauling",
+        JobKind.Build        => "Building",
+        JobKind.Mine         => "Mining",
+        JobKind.Cook         => "Cooking",
+        JobKind.Craft        => "Crafting",
+        JobKind.Research     => "Researching",
+        JobKind.Medicate     => "Medicating",
+        JobKind.Fight        => "Fighting",
+        JobKind.Flee         => "Fleeing",
+        JobKind.Meditate     => "Meditating",
+        JobKind.GolemCommand => "Commanding golem",
+        JobKind.Sleep        => "Sleeping",
+        JobKind.Eat          => "Foraging",
+        JobKind.Social       => "Socialising",
         _                    => "—"
     };
 }
