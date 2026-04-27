@@ -1,41 +1,41 @@
 # GPU Compute
 
-Исследовательский документ по переносу массовых расчётов `ProjectileSystem` на GPU compute shader. Фиксирует решение, принятое в Фазе 3: на текущих нагрузках CPU-реализация покрывает все сценарии, а порог, при котором GPU оправдывает себя, выносится в Фазу 5 вместе со stress-тестом.
+Research document on moving `ProjectileSystem`'s bulk computation to a GPU compute shader. Pins the decision made in Phase 3: at current loads the CPU implementation covers every scenario, and the threshold at which GPU pays off is deferred to Phase 5 alongside its stress test.
 
-## Контекст
+## Context
 
-`ProjectileSystem` помечена `REALTIME` и работает на CPU. При типичной игровой нагрузке (10–20 пешек, ~100 снарядов одновременно) процессор полностью справляется: обновление позиций, проверка коллизий и списание урона укладываются в бюджет кадра без заметной доли от 16.6 мс.
+`ProjectileSystem` is marked `REALTIME` and runs on the CPU. At typical play load (10–20 pawns, ~100 simultaneous projectiles) the CPU fully copes: position updates, collision checks, and damage application fit within the frame budget without a noticeable share of the 16.6 ms.
 
-GPU compute оправдывает себя, когда число одновременных снарядов стабильно превышает ~500. До этой отметки overhead диспатча и синхронизации съедает выигрыш от параллелизма.
+GPU compute pays off when the number of simultaneous projectiles steadily exceeds ~500. Below that mark, dispatch and synchronization overhead eats the parallelism gain.
 
-## Почему не сейчас
+## Why not now
 
-CPU→GPU→CPU roundtrip при 60 FPS стоит 0.5–2 мс на кадр: загрузка данных в буфер, dispatch шейдера, асинхронный readback результата. При числе снарядов <500 этот фиксированный overhead больше, чем вся CPU-работа, которую он должен был заменить.
+A CPU→GPU→CPU roundtrip at 60 FPS costs 0.5–2 ms per frame: uploading data into the buffer, dispatching the shader, asynchronous readback of the result. With fewer than 500 projectiles, this fixed overhead is larger than all the CPU work it would have replaced.
 
-Бюджет кадра — 16.6 мс при 60 FPS. Выделять из него 0.5–2 мс на dispatch ради расчёта сотни объектов — худший размен, чем оставить работу на CPU. Решение откладывается до того момента, когда профилировка покажет реальную деградацию на CPU-реализации.
+The frame budget is 16.6 ms at 60 FPS. Spending 0.5–2 ms of it on dispatch to compute a hundred objects is a worse trade than leaving the work on the CPU. The decision is deferred until profiling shows real degradation in the CPU implementation.
 
-## Архитектурный паттерн (когда придёт время)
+## Architectural pattern (when the time comes)
 
-`ProjectileSystem` остаётся в слое Domain как обычная система, подчиняющаяся контрактам изоляции и правилам планировщика. Массовый расчёт позиций и коллизий делегируется через интерфейс `IProjectileCompute`, объявленный в Infrastructure слое.
+`ProjectileSystem` stays in the Domain layer as an ordinary system, subject to the isolation contracts and the scheduler's rules. The bulk computation of positions and collisions is delegated through the `IProjectileCompute` interface, declared in the Infrastructure layer.
 
-Две реализации:
+Two implementations:
 
-- `CpuProjectileCompute` — дефолт, прямой расчёт в managed-коде.
-- `GpuProjectileCompute` — compute shader + асинхронный readback с буферизацией на 1 тик.
+- `CpuProjectileCompute` — the default; direct computation in managed code.
+- `GpuProjectileCompute` — compute shader + asynchronous readback with one-tick buffering.
 
-Domain не знает, какая реализация активна: выбор происходит на старте через DI-регистрацию. Контракт изоляции не рвётся — `ProjectileSystem` работает только с `IProjectileCompute`, не с конкретным бэкендом.
+Domain does not know which implementation is active: selection happens at startup via DI registration. The isolation contract is not broken — `ProjectileSystem` operates only against `IProjectileCompute`, not against a concrete backend.
 
-## Порог переключения
+## Switchover threshold
 
-Порог фиксируется экспериментально в stress-тесте **"Битва богов"**: 500 магов × спам заклинаниями → ~5 000 одновременных снарядов и ~50 000 коллизий/сек. Этот сценарий подбирается так, чтобы CPU-реализация заведомо деградировала, а GPU roundtrip окупался.
+The threshold is pinned experimentally in the **"Battle of the Gods"** stress test: 500 mages × spell spam → ~5,000 simultaneous projectiles and ~50,000 collisions/sec. This scenario is chosen so that the CPU implementation reliably degrades and the GPU roundtrip pays off.
 
-Переход на `GpuProjectileCompute` оправдан при стабильном превышении 500 снарядов на сцене. Точное число уточняется по результатам бенчмарка в Фазе 5 (см. [PERFORMANCE.md](./PERFORMANCE.md)).
+Migration to `GpuProjectileCompute` is justified when the scene steadily exceeds 500 projectiles. The exact number is refined by the Phase 5 benchmark results (see [PERFORMANCE.md](./PERFORMANCE.md)).
 
-## Ограничение
+## Constraint
 
-GPU-реализация вводит lag на 1 тик между логикой и визуальным представлением снарядов — это плата за асинхронный readback. Для колониального симулятора при 60 FPS (16.6 мс на тик) такая задержка незаметна и приемлема. На пошаговых или хитбокс-критичных проектах это ограничение стало бы блокером.
+The GPU implementation introduces a 1-tick lag between logic and the visual representation of projectiles — the price of asynchronous readback. For a colony simulator at 60 FPS (16.6 ms per tick) this delay is invisible and acceptable. On a turn-based or hitbox-critical project the constraint would be a blocker.
 
-## См. также
+## See also
 
 - [PERFORMANCE](./PERFORMANCE.md)
 - [THREADING](./THREADING.md)

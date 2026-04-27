@@ -1,160 +1,160 @@
 # DUAL FRONTIER — Native Core Experiment
 
-C++ ядро для ECS симулятора
-Ветка: `claude/cpp-core-experiment`
+C++ core for the ECS simulator
+Branch: `claude/cpp-core-experiment`
 
-## Вопрос
+## Question
 
-Можно ли вынести ECS ядро на C++ не разрушив архитектуру?
+Can we move the ECS core to C++ without breaking the architecture?
 
-## Статус
+## Status
 
-Эксперимент — ждёт результатов бенчмарка (p99, GC-pause count, 2-core
-throughput). Решение об инвестиции принимается по профилю целевого
-железа, а не по mean latency на разработческой машине.
+Experiment — awaiting benchmark results (p99, GC-pause count, 2-core
+throughput). The investment decision is made on the target hardware
+profile, not on mean latency on a developer machine.
 
 ## Self-test
 
-~4.6 мс / 100k операций (sandbox VM Opus) — нативный потолок.
+~4.6 ms / 100k operations (sandbox VM Opus) — the native ceiling.
 
-## Критерий
+## Criterion
 
-Колониальные симуляторы играют на среднем и слабом железе (2015–2018
-годов, часто 2–4 ядра, 8 ГБ RAM). Первоначальная формулировка «≥20% по
-mean latency» была сформулирована без учёта жанра — на такой машине
-ценность не в средней задержке, а в **предсказуемости**:
+Colony simulators are played on mid-range and weak hardware (2015–2018,
+often 2–4 cores, 8 GB RAM). The original framing "≥20% on mean latency"
+was formulated without accounting for the genre — on that hardware the
+value is not in average latency but in **predictability**:
 
-| Метрика | Почему важнее mean |
-|---------|--------------------|
-| GC pause count / длительность | Один stop-the-world на 50 мс — видимый рывок камеры |
-| p99 / worst-case tick | Тик, который «вылетает» за 33 мс, ощущается как фриз |
-| Throughput на 2–4 ядрах | На целевом железе parallel scheduler конкурирует с ОС за CPU |
-| Поведение через 2–4 часа | Long-running simulation — тут управляемая память выигрывает |
+| Metric | Why it matters more than mean |
+|--------|-------------------------------|
+| GC pause count / duration | One stop-the-world for 50 ms is a visible camera jitter |
+| p99 / worst-case tick | A tick that "spikes" past 33 ms feels like a freeze |
+| Throughput on 2–4 cores | On the target hardware, the parallel scheduler competes with the OS for CPU |
+| Behavior over 2–4 hours | Long-running simulation — managed memory loses here |
 
-Обновлённое правило решения — §8.
-
----
-
-## 1. Контекст и мотивация
-
-DualFrontier строится как движок, а не просто игра. После того как Фаза 3
-заработала — пешки двигаются, симуляция живёт, 61 тест зелёный — встал
-естественный вопрос: можно ли вынести самое горячее ядро на C++ не разрушив
-архитектуру?
-
-Ответ определяет долгосрочную траекторию проекта:
-
-**Путь A — C# ядро навсегда**
-Простота разработки, .NET оптимизации, единая кодовая база.
-Ограничение: JIT, GC паузы, managed overhead на горячем пути.
-
-**Путь B — C++ ядро + C# снаружи ← эксперимент проверяет этот путь**
-ECS и планировщик на нативном коде.
-C# системы, шины, Application, Presentation — без изменений.
-Результат: **предсказуемая** производительность без GC jitter на слабом
-железе, DX разработки на C#.
-
-> ⭐ **Главная ставка**
-> Не «производительность Unreal» на разработческой машине, а стабильность
-> на машине игрока. Колониальные симуляторы играют десятки часов на
-> железе 2015–2018 годов — там один Gen2 GC на 50 мс превращается в
-> видимый рывок камеры. C++ ядро = нет managed heap на горячем пути =
-> нет GC pause = плавный тик даже через 4 часа симуляции.
+The updated decision rule is in §8.
 
 ---
 
-## 2. Почему это возможно без разрушения архитектуры
+## 1. Context and motivation
 
-Архитектура DualFrontier уже заточена под эту замену. Все слои изолированы
-от реализации ядра через контракты:
+DualFrontier is built as an engine, not just a game. Once Phase 3 came
+online — pawns moving, the simulation alive, 61 tests green — the
+natural question arose: can we move the hottest core to C++ without
+breaking the architecture?
 
-```
-DualFrontier.Systems      — не знают о World напрямую
-DualFrontier.Application  — не знает о ComponentStore
-DualFrontier.Presentation — не знает о Scheduler
-```
+The answer determines the long-term trajectory of the project:
 
-Все слои общаются через:
+**Path A — C# core forever**
+Development simplicity, .NET optimizations, single codebase.
+Limitation: JIT, GC pauses, managed overhead on the hot path.
 
-```
-IComponent    (Contracts)    ← не меняется
-SystemBase    (публичный API) ← не меняется
-IGameServices (шины)          ← не меняется
-```
+**Path B — C++ core + C# outside ← the experiment tests this path**
+ECS and scheduler in native code.
+C# systems, buses, Application, Presentation — unchanged.
+Result: **predictable** performance with no GC jitter on weak
+hardware, plus C# DX during development.
 
-> 📌 **Правило замены**
-> C++ ядро заменяет только то, что помечено `internal` в Core. Контракты не
-> трогаются. Системы не трогаются. Существующие тесты не трогаются.
-
-| Слой | Меняется? | Причина |
-|------|-----------|---------|
-| `DualFrontier.Contracts` | ❌ Нет | Контракты — граница, не реализация |
-| `DualFrontier.Core` (internal) | ✅ Заменяется | ECS, Scheduler — именно это переносится на C++ |
-| `DualFrontier.Core.Interop` (новый) | ✅ Добавляется | P/Invoke обёртки для C# → C++ вызовов |
-| `DualFrontier.Systems` | ❌ Нет | Системы работают через `SystemBase` — не знают о реализации |
-| `DualFrontier.Application` | ❌ Нет | Использует `IGameServices`, не `World` напрямую |
-| `DualFrontier.Presentation` | ❌ Нет | Только `PresentationBridge` — не знает о ECS |
-| Все существующие тесты | ❌ Нет | Тестируют поведение через контракты, не реализацию |
+> ⭐ **The main bet**
+> Not "Unreal performance" on a developer machine, but stability on
+> the player's machine. Colony simulators are played for tens of hours
+> on 2015–2018 hardware — there a single Gen2 GC of 50 ms turns into a
+> visible camera jitter. C++ core = no managed heap on the hot path =
+> no GC pause = a smooth tick even after 4 hours of simulation.
 
 ---
 
-## 3. Что переносится на C++
+## 2. Why this is possible without breaking the architecture
 
-### 3.1 `SparseSet<T>` — фундамент производительности
+DualFrontier's architecture is already shaped for this replacement. Every
+layer is isolated from the core's implementation through contracts:
 
-Самое горячее место ECS — итерация компонентов. В C#: `int[] sparse`,
-`T[] dense`, `int[] denseToIndex`. На C++ это `template<typename T>` —
-компилятор генерирует специализацию для каждого типа компонента.
+```
+DualFrontier.Systems      — does not know World directly
+DualFrontier.Application  — does not know ComponentStore
+DualFrontier.Presentation — does not know Scheduler
+```
 
-| Характеристика | C# (managed) | C++ (native) |
-|----------------|--------------|--------------|
-| Тип хранилища | Managed heap, GC давление | stack/heap, нет GC |
-| Виртуальные вызовы | Virtual dispatch через интерфейс | Нет — template специализация |
-| Boxing | Есть при object cast | Нет — прямая память |
-| Итерация `dense[]` | Cache-friendly, но managed overhead | Cache-friendly, нулевой overhead |
-| Аллокация | `new T[]` — GC managed | `std::vector<T>` — RAII |
+All layers communicate through:
+
+```
+IComponent    (Contracts)    ← does not change
+SystemBase    (public API)   ← does not change
+IGameServices (buses)        ← does not change
+```
+
+> 📌 **Replacement rule**
+> The C++ core replaces only what is marked `internal` in Core. Contracts
+> are not touched. Systems are not touched. Existing tests are not touched.
+
+| Layer | Changes? | Reason |
+|-------|----------|--------|
+| `DualFrontier.Contracts` | ❌ No | Contracts are the boundary, not the implementation |
+| `DualFrontier.Core` (internal) | ✅ Replaced | ECS, Scheduler — exactly what moves to C++ |
+| `DualFrontier.Core.Interop` (new) | ✅ Added | P/Invoke wrappers for C# → C++ calls |
+| `DualFrontier.Systems` | ❌ No | Systems work through `SystemBase` — they do not know the implementation |
+| `DualFrontier.Application` | ❌ No | Uses `IGameServices`, not `World` directly |
+| `DualFrontier.Presentation` | ❌ No | Only `PresentationBridge` — does not know the ECS |
+| All existing tests | ❌ No | They test behavior through contracts, not the implementation |
+
+---
+
+## 3. What moves to C++
+
+### 3.1 `SparseSet<T>` — performance foundation
+
+The hottest spot in the ECS is component iteration. In C#: `int[] sparse`,
+`T[] dense`, `int[] denseToIndex`. In C++ this becomes `template<typename T>` —
+the compiler generates a specialization for each component type.
+
+| Property | C# (managed) | C++ (native) |
+|----------|--------------|--------------|
+| Storage type | Managed heap, GC pressure | stack/heap, no GC |
+| Virtual calls | Virtual dispatch through interface | None — template specialization |
+| Boxing | Possible on object cast | None — direct memory |
+| `dense[]` iteration | Cache-friendly, but managed overhead | Cache-friendly, zero overhead |
+| Allocation | `new T[]` — GC managed | `std::vector<T>` — RAII |
 
 ### 3.2 `ComponentStore` / `World`
 
-Реестр entities и компонентов. В C++ использует `std::unordered_map` с
-FNV-1a хешем от `AssemblyQualifiedName` типа компонента как ключом.
+Registry of entities and components. In C++ uses `std::unordered_map` with
+an FNV-1a hash of the component's `AssemblyQualifiedName` as the key.
 
 ```cpp
-// EntityId — тот же алгоритм что в C#
+// EntityId — same algorithm as in C#
 uint64_t entity_id = ((uint64_t)version << 32) | (uint32_t)index;
 
-// ComponentStore — type-erased хранилище
+// ComponentStore — type-erased storage
 std::unordered_map<uint32_t,
     std::unique_ptr<IComponentStore>> _stores;
-// ключ = FNV-1a(AssemblyQualifiedName)
+// key = FNV-1a(AssemblyQualifiedName)
 ```
 
 ### 3.3 `DependencyGraph`
 
-Алгоритм Кана — чистая теория графов без зависимостей на runtime. Принимает
-массивы `type_id` через C API, возвращает упорядоченные фазы. Полностью
-переносимый код.
+Kahn's algorithm — pure graph theory with no runtime dependencies. Takes
+arrays of `type_id` through a C API, returns ordered phases. Fully
+portable code.
 
-### 3.4 `EventBus` (следующий шаг)
+### 3.4 `EventBus` (next step)
 
-`std::vector<std::function>` под `std::shared_mutex`. Публикация синхронная.
-Ключевая задача: как C++ шина вызывает C# подписчики через function pointer.
+`std::vector<std::function>` under `std::shared_mutex`. Synchronous publication.
+Key task: how does the C++ bus call C# subscribers through a function pointer.
 
-### 3.5 Что остаётся на C#
+### 3.5 What stays in C#
 
-| Компонент | Почему остаётся на C# |
-|-----------|-----------------------|
-| `SystemBase` + `Update(float delta)` | Системы пишут люди на C#. Это главный DX проекта — менять нельзя. |
-| `SystemExecutionContext` (guard) | DEBUG-time проверка. Не на горячем пути в Release. Нет смысла переносить. |
-| `IGameServices` и `DomainEventBus` | Интерфейсы в Contracts. Можно перенести позже если бенчмарк покажет что шины узкое место. |
-| `IComponent` компоненты | POCO классы на C#. C++ хранит их как blittable structs (PoC) или через `GCHandle` (production). |
+| Component | Why it stays in C# |
+|-----------|--------------------|
+| `SystemBase` + `Update(float delta)` | Systems are written by humans in C#. This is the project's main DX — must not change. |
+| `SystemExecutionContext` (guard) | DEBUG-time check. Not on the hot path in Release. No reason to migrate. |
+| `IGameServices` and `DomainEventBus` | Interfaces in Contracts. Can be migrated later if a benchmark shows the buses are the bottleneck. |
+| `IComponent` components | POCO classes in C#. C++ stores them as blittable structs (PoC) or via `GCHandle` (production). |
 
 ---
 
-## 4. Граница P/Invoke — C API
+## 4. The P/Invoke boundary — C API
 
-C++ экспортирует чистый C API (`extern "C"`) — обязательное требование для
-надёжного P/Invoke на всех платформах:
+C++ exports a clean C API (`extern "C"`) — a mandatory requirement for
+reliable P/Invoke on every platform:
 
 ```cpp
 // world.h — C API (extern "C")
@@ -170,7 +170,7 @@ bool     df_world_has_component(void* world, uint64_t id,
              uint32_t type_id);
 ```
 
-C# обёртка в `DualFrontier.Core.Interop`:
+C# wrapper in `DualFrontier.Core.Interop`:
 
 ```csharp
 internal static class NativeMethods
@@ -189,35 +189,35 @@ internal static class NativeMethods
 }
 ```
 
-### 4.1 Кросс-платформенность
+### 4.1 Cross-platform support
 
-| Платформа | Файл библиотеки | Сборка |
-|-----------|-----------------|--------|
+| Platform | Library file | Build |
+|----------|--------------|-------|
 | Windows | `DualFrontier.Core.Native.dll` | CMake + Visual Studio 2022 |
 | Linux | `libDualFrontier.Core.Native.so` | CMake + GCC/Clang |
 | macOS | `libDualFrontier.Core.Native.dylib` | CMake + Clang |
 
-> 📌 **Автовыбор платформы**
-> `[DllImport("DualFrontier.Core.Native")]` подхватывает нужный файл
-> автоматически — P/Invoke знает о расширениях платформы. Тот же подход,
-> что используют Godot нативные плагины.
+> 📌 **Automatic platform selection**
+> `[DllImport("DualFrontier.Core.Native")]` picks up the right file
+> automatically — P/Invoke knows about platform extensions. The same approach
+> Godot's native plugins use.
 
 ---
 
-## 5. Маршаллинг компонентов — три варианта
+## 5. Component marshalling — three options
 
-Главная техническая сложность эксперимента — передача managed C# объектов в
-нативный C++ код. В эксперименте выбран Вариант 1 как минимально сложный
-для PoC.
+The main technical complication of the experiment is passing managed C#
+objects into native C++ code. The experiment chose Option 1 as the
+minimally complex PoC.
 
-| Вариант | Механизм | Плюсы | Минусы | Применение |
-|---------|----------|-------|--------|------------|
-| 1 — Blittable structs | `[StructLayout(Sequential)]` | Нет GC pressure, прямая передача через pointer | Production компоненты — классы, нужна конвертация | **PoC ✅ выбранный** |
-| 2 — `GCHandle` | `GCHandle.Alloc(Pinned)` → `AddrOfPinnedObject` | Работает с классами, нет копирования | Управление временем жизни handle | Production — лучший баланс |
-| 3 — Serialization | Сериализовать в `byte[]` при передаче | Максимальная гибкость | Самый медленный | Крайний случай |
+| Option | Mechanism | Pros | Cons | Use |
+|--------|-----------|------|------|-----|
+| 1 — Blittable structs | `[StructLayout(Sequential)]` | No GC pressure, direct passing through pointer | Production components are classes, conversion needed | **PoC ✅ chosen** |
+| 2 — `GCHandle` | `GCHandle.Alloc(Pinned)` → `AddrOfPinnedObject` | Works with classes, no copy | Handle lifetime management | Production — best balance |
+| 3 — Serialization | Serialize to `byte[]` on transfer | Maximum flexibility | The slowest | Edge case |
 
 ```csharp
-// Вариант 1 — Blittable struct (PoC)
+// Option 1 — Blittable struct (PoC)
 [StructLayout(LayoutKind.Sequential)]
 public struct BenchHealthComponent
 {
@@ -225,60 +225,60 @@ public struct BenchHealthComponent
     public int Maximum;
 }
 
-// Вариант 2 — GCHandle (production)
+// Option 2 — GCHandle (production)
 var handle = GCHandle.Alloc(component, GCHandleType.Pinned);
 IntPtr ptr = handle.AddrOfPinnedObject();
 NativeMethods.df_world_add_component(world, id, typeId, ptr, size);
-// handle.Free() — когда компонент больше не нужен в C++
+// handle.Free() — when the component is no longer needed in C++
 ```
 
 ---
 
-## 6. Структура эксперимента
+## 6. Experiment structure
 
 ```
 native/DualFrontier.Core.Native/
   ├── CMakeLists.txt
-  ├── build.md                    ← инструкция сборки
+  ├── build.md                    ← build instructions
   ├── include/
   │   ├── sparse_set.h            ← template SparseSet<T>
   │   ├── component_store.h       ← type-erased IComponentStore
   │   ├── world.h                 ← World + C API
-  │   └── df_native.h             ← единый публичный заголовок
+  │   └── df_native.h             ← unified public header
   └── src/
       ├── world.cpp
-      └── df_native_selftest.cpp  ← standalone тест без dotnet
+      └── df_native_selftest.cpp  ← standalone test without dotnet
 
 src/DualFrontier.Core.Interop/
   ├── DualFrontier.Core.Interop.csproj
-  ├── NativeMethods.cs            ← все P/Invoke декларации
-  ├── NativeWorld.cs              ← C# обёртка над df_world_*
+  ├── NativeMethods.cs            ← all P/Invoke declarations
+  ├── NativeWorld.cs              ← C# wrapper around df_world_*
   └── Marshalling/
       └── ComponentMarshaller.cs  ← blittable struct ↔ IComponent
 
 tests/DualFrontier.Core.Benchmarks/
-  └── NativeVsManagedBenchmark.cs ← BenchmarkDotNet сравнение
+  └── NativeVsManagedBenchmark.cs ← BenchmarkDotNet comparison
 ```
 
-### 6.1 Self-test нативной библиотеки
+### 6.1 Native library self-test
 
-`df_native_selftest.exe` — standalone C++ тест без зависимости на dotnet.
-Четыре сценария:
+`df_native_selftest.exe` — a standalone C++ test with no dotnet dependency.
+Four scenarios:
 
-| Сценарий | Что проверяет | Ожидаемый результат |
-|----------|---------------|---------------------|
-| CRUD | Создание entity, добавление компонента, чтение, удаление | Все операции O(1) |
-| deferred destroy | Entity помечается для удаления, реально удаляется после итерации | Нет инвалидных указателей |
-| swap-with-last | Удаление из середины dense массива — O(1) swap | Порядок dense корректен |
-| 100k throughput | 100 000 сущностей Create/Add/Get | ~4.6 мс (sandbox VM) — нативный потолок |
+| Scenario | What it checks | Expected result |
+|----------|---------------|------------------|
+| CRUD | Create entity, add component, read, remove | All operations O(1) |
+| deferred destroy | Entity is marked for removal, actually removed after iteration | No invalid pointers |
+| swap-with-last | Removal from the middle of the dense array — O(1) swap | Dense order is correct |
+| 100k throughput | 100,000 entities Create/Add/Get | ~4.6 ms (sandbox VM) — the native ceiling |
 
 ---
 
-## 7. Как запустить бенчмарк
+## 7. How to run the benchmark
 
-### Шаг 1 — Собрать C++ библиотеку
+### Step 1 — Build the C++ library
 
-Открыть Developer PowerShell for VS 2022:
+Open Developer PowerShell for VS 2022:
 
 ```powershell
 cd native\DualFrontier.Core.Native
@@ -286,21 +286,21 @@ cmake -S . -B build -G "Visual Studio 17 2022" -A x64
 cmake --build build --config Release
 ```
 
-### Шаг 2 — Self-test
+### Step 2 — Self-test
 
 ```powershell
 .\build\Release\df_native_selftest.exe
-# Ожидаемо: All tests passed.
+# Expected: All tests passed.
 ```
 
-### Шаг 3 — Скопировать .dll
+### Step 3 — Copy the .dll
 
 ```powershell
 copy build\Release\DualFrontier.Core.Native.dll `
      ..\..\tests\DualFrontier.Core.Benchmarks\
 ```
 
-### Шаг 4 — Запустить бенчмарк
+### Step 4 — Run the benchmark
 
 ```powershell
 cd D:\Dual-Frontier\Dual-Frontier
@@ -308,12 +308,12 @@ dotnet run --project tests\DualFrontier.Core.Benchmarks `
            -c Release -- --filter "*NativeVsManaged*"
 ```
 
-### Таблица результатов
+### Results table
 
 BenchmarkDotNet, .NET 8.0, Windows 11, Release, 10k entities, full warmup.
 Native side built with MSVC `/O2`, blittable `BenchHealthComponent (int, int)`.
-`ManagedSumCurrent` помечен `[Benchmark(Baseline = true)]` — поэтому колонка
-`Ratio` сравнивает всё с ним, а не «Add с Add».
+`ManagedSumCurrent` is marked `[Benchmark(Baseline = true)]` — so the `Ratio`
+column compares everything to it, not "Add to Add".
 
 | Method              | Mean       | Ratio (vs baseline) | Allocated  |
 |---------------------|------------|---------------------|------------|
@@ -322,140 +322,140 @@ Native side built with MSVC `/O2`, blittable `BenchHealthComponent (int, int)`.
 | `ManagedAdd10k`     | 218.24 µs  | 2.19                | 655 606 B  |
 | `NativeAdd10k`      | 399.83 µs  | 3.92                | 24 B       |
 
-Same-operation сравнения (то, что обычно интересует):
+Same-operation comparisons (what one usually wants to see):
 
-| Операция     | Native / Managed | Allocated Native / Managed |
+| Operation    | Native / Managed | Allocated Native / Managed |
 |--------------|------------------|----------------------------|
 | `SumCurrent` | 0.94×            | 0 B / 0 B                  |
 | `Add10k`     | 1.83×            | 24 B / 655 606 B           |
 
-#### Что показывает бенчмарк
+#### What the benchmark shows
 
-- **`NativeSumCurrent`: 0.94× managed.** P/Invoke overhead почти полностью
-  съедает C++ выигрыш на per-element вызовах — `df_world_get_component` за
-  тик 10k раз кросс-границы стоит почти столько же, сколько весь
-  managed `TryGetComponent`.
-- **`NativeAdd10k`: 3.92× колонка Ratio (vs baseline), 1.83× same-operation.**
-  Native аллоцирует 24 B против 655 KB у managed. .NET аллокатор на горячем
-  пути быстрее за счёт bump allocation в gen0, JIT inlining и escape-анализа;
-  native сторона каждый раз идёт через P/Invoke + `std::vector` геометрический
-  рост.
-- **Smoke test показывал ~2.7× прирост на Add** — это однократный прогрев
-  без статистики. BenchmarkDotNet (тысячи итераций с warmup) показывает
-  реальную картину: per-element граница убивает.
+- **`NativeSumCurrent`: 0.94× managed.** P/Invoke overhead almost fully
+  eats the C++ gain on per-element calls — `df_world_get_component` crossing
+  the boundary 10k times per tick costs about as much as the entire managed
+  `TryGetComponent`.
+- **`NativeAdd10k`: 3.92× in the Ratio column (vs baseline), 1.83× same-operation.**
+  Native allocates 24 B against managed's 655 KB. The .NET allocator on the
+  hot path is faster thanks to gen0 bump allocation, JIT inlining, and escape
+  analysis; the native side goes through P/Invoke + `std::vector` geometric
+  growth on every call.
+- **Smoke test showed ~2.7× speedup on Add** — that was a one-shot warmup
+  with no statistics. BenchmarkDotNet (thousands of iterations with warmup)
+  shows the real picture: the per-element boundary kills it.
 
-#### Вывод
+#### Conclusion
 
-Per-element P/Invoke вызовы съедают нативный выигрыш на размерах
-10k entities. Mean latency сама по себе **не** оправдывает миграцию —
-смысл, заявленный в §8, остаётся в плоскости GC pause / p99 / long-run
-drift, и эти метрики ещё не измерены здесь.
+Per-element P/Invoke calls eat the native gain at 10k entities. Mean
+latency by itself does **not** justify the migration — the rationale stated
+in §8 still lies in GC pause / p99 / long-run drift, and these metrics have
+not been measured here yet.
 
-#### Следующий шаг — батч-API
+#### Next step — batch API
 
-Заменить per-element P/Invoke на батчевые вызовы:
+Replace per-element P/Invoke with batched calls:
 
-| Сейчас                              | После                                |
+| Now                                 | After                                |
 |-------------------------------------|--------------------------------------|
-| 10 000 × `df_world_add_component`   | 1 × `df_world_add_components_batch`  |
-| 10 000 × `df_world_get_component`   | 1 × `df_world_fill_buffer`           |
+| 10,000 × `df_world_add_component`   | 1 × `df_world_add_components_batch`  |
+| 10,000 × `df_world_get_component`   | 1 × `df_world_fill_buffer`           |
 
-Один P/Invoke + один `memcpy` по непрерывной памяти — это режим, в котором
-C++ ядро может реально оторваться от managed на cache-friendly итерациях,
-без 10k cross-границ. Реализация — **задача Фазы 9**.
+One P/Invoke + one `memcpy` over contiguous memory — that is the regime in
+which the C++ core can actually pull ahead of managed on cache-friendly
+iterations, without 10k cross-boundary calls. Implementation — **a Phase 9 task**.
 
 ---
 
-## 8. Критерий принятия решения
+## 8. Decision criterion
 
-Первоначальный критерий (`Native быстрее на ≥20% по mean`) построен на
-допущении, что целевой игрок сидит за dev-машиной. Это неверное допущение:
-колониальные симуляторы играют на среднем и слабом железе — машины
-2015–2018 годов, 2–4 ядра, 8 ГБ RAM, часто с IGP. На таком железе mean
-latency — не та метрика, которую чувствует игрок.
+The original criterion (`Native is faster by ≥20% on mean`) was built on
+the assumption that the target player sits at a dev machine. That is a wrong
+assumption: colony simulators are played on mid-range and weak hardware —
+2015–2018 machines, 2–4 cores, 8 GB RAM, often with an IGP. On such hardware
+mean latency is not the metric the player feels.
 
-**Пересмотренный вывод: перенос ядра на C++ оправдан независимо от mean
-latency бенчмарка.** Основная ценность — предсказуемость и отсутствие GC
-jitter на длительной симуляции.
+**Revised conclusion: porting the core to C++ is justified independent of
+the mean latency benchmark.** The main value is predictability and the
+absence of GC jitter under long simulation.
 
-### Что измеряем теперь
+### What we now measure
 
-| Метрика | Что считает | Порог «идём дальше» |
-|---------|-------------|---------------------|
-| **GC pause events / мин** (Gen2) | `dotnet-counters` на `System.Runtime` во время 10-минутной симуляции | У native: 0. У managed: любое ненулевое значение — уже профит C++ |
-| **p99 tick duration** | `ParallelSystemScheduler` на 4-ядерной VM, 60 тиков/с, 2000 пешек | Native улучшает p99 при равном mean — решающий сигнал |
-| **p99.9 / max tick** | Тот же прогон | Native ограничивает хвост — GC rolls не бьют |
-| **Throughput на 2 ядрах** | То же, но с `--cpu-affinity 0,1` | Native должен держать tick rate; managed может деградировать из-за GC thread |
-| **Long-run drift** | 2 часа симуляции, замерить tick latency каждые 10 мин | Native должен оставаться плоским, managed обычно растёт |
-| **Mean latency (смотрим, но не решаем по нему)** | BenchmarkDotNet `NativeVsManagedBenchmark` | Для истории; решение — не здесь |
+| Metric | What it counts | "Keep going" threshold |
+|--------|----------------|------------------------|
+| **GC pause events / min** (Gen2) | `dotnet-counters` on `System.Runtime` during a 10-minute simulation | Native: 0. Managed: any non-zero value — already a C++ win |
+| **p99 tick duration** | `ParallelSystemScheduler` on a 4-core VM, 60 ticks/s, 2000 pawns | Native improves p99 at equal mean — the deciding signal |
+| **p99.9 / max tick** | Same run | Native bounds the tail — GC rolls do not strike |
+| **Throughput on 2 cores** | Same, with `--cpu-affinity 0,1` | Native should hold tick rate; managed may degrade due to the GC thread |
+| **Long-run drift** | 2-hour simulation, measure tick latency every 10 min | Native should stay flat; managed usually grows |
+| **Mean latency (looked at, not decisive)** | BenchmarkDotNet `NativeVsManagedBenchmark` | For the record; the decision is not here |
 
-### Правило решения
+### Decision rule
 
-| Картина | Решение | Следующий шаг |
-|---------|---------|---------------|
-| Native срезает GC pauses **и** улучшает p99 на 2-ядре | ✅ Продолжать | `DependencyGraph` + Scheduler на C++ |
-| Native даёт плоский long-run (нет drift), но mean паритет | ✅ Продолжать | То же — jitter > mean для жанра |
-| Native хуже на mean, но GC pauses ушли в ноль | ✅ Продолжать, **если** GC паузы >1/мин на целевой конфигурации | GC стоимость > cost of C++ complexity |
-| Паритет по всем метрикам, включая GC | ❌ Закрыть | Сложность C++ не оправдана — остаёмся на C# |
-| Managed быстрее везде (включая p99) | ❌ Закрыть | Очень маловероятно на горячем ECS, но формально возможно |
+| Picture | Decision | Next step |
+|---------|----------|-----------|
+| Native cuts GC pauses **and** improves p99 on 2 cores | ✅ Continue | `DependencyGraph` + Scheduler in C++ |
+| Native gives flat long-run (no drift), but mean parity | ✅ Continue | Same — jitter > mean for the genre |
+| Native is worse on mean, but GC pauses dropped to zero | ✅ Continue, **if** GC pauses >1/min on the target configuration | GC cost > cost of C++ complexity |
+| Parity on every metric, including GC | ❌ Close | C++ complexity is unjustified — stay on C# |
+| Managed is faster everywhere (including p99) | ❌ Close | Very unlikely on a hot ECS, but formally possible |
 
 > ⚡ **P/Invoke overhead**
-> Один вызов P/Invoke: ~10–50 нс. Для мелких компонентов marshalling может
-> съесть весь прирост по mean. Но P/Invoke **не вызывает GC pause** — то
-> есть даже там, где C++ проигрывает по mean, он обычно выигрывает по p99.
-> Это и есть суть пересмотренного критерия.
+> One P/Invoke call: ~10–50 ns. For small components, marshalling can eat
+> the entire mean gain. But P/Invoke **does not cause a GC pause** — that
+> is, even where C++ loses on mean it usually wins on p99. That is the
+> essence of the revised criterion.
 
-> 🎯 **Чего не делаем**
-> Не оптимизируем под dev-машину. Не сравниваем на 12-ядерном 32 ГБ DDR5
-> рабочем железе — такие результаты не репрезентативны для игрока жанра.
-> Целевой рабочий прогон — 4-ядерная VM с ограниченной памятью.
-
----
-
-## 9. Следующие шаги если эксперимент успешен
-
-| Шаг | Задача | Сложность |
-|-----|--------|-----------|
-| 1 | `DependencyGraph` на C++ — алгоритм Кана, входные данные из C# через массивы `type_id` | Средняя |
-| 2 | `NativeScheduler` — параллельное исполнение фаз через `std::thread` pool. Вызов C# `Update()` через function pointer | Высокая |
-| 3 | `EventBus` на C++ — синхронная доставка, C# подписчики через делегаты | Высокая |
-| 4 | `GCHandle` маршаллинг — переход от blittable structs к реальным production компонентам | Средняя |
-| 5 | CI pipeline — сборка трёх платформ (Win/Linux/macOS) в одном workflow | Средняя |
-
-### Долгосрочная траектория
-
-**Сейчас (Phase 5)**
-Godot Runtime → C# GameLoop → C# ECS ядро
-
-**После эксперимента (если успешен)**
-Godot Runtime → C# GameLoop → C++ ECS ядро через P/Invoke
-
-**Фаза 9 — Native Runtime (долгосрочно)**
-Собственный Runtime → C# GameLoop → C++ ECS ядро
-Godot = только редактор сцен
-
-> ⭐ **Долгосрочная ставка**
-> Собственный runtime — это уже не инди-игра, это движок. Godot как редактор
-> сцен + нативное ядро + C# логика = редкая комбинация на рынке.
+> 🎯 **What we do not do**
+> We do not optimize for the dev machine. We do not benchmark on a 12-core
+> 32 GB DDR5 workstation — those results are not representative for the
+> genre's player. The target run is a 4-core VM with bounded memory.
 
 ---
 
-## 10. Риски
+## 9. Next steps if the experiment succeeds
 
-| Риск | Вероятность | Митигация |
-|------|-------------|-----------|
-| P/Invoke overhead съедает выигрыш для мелких компонентов | Высокая | Батчинг операций, blittable structs, измерить до решения |
-| Сложность отладки (C++ + C# смешанный стек) | Средняя | `lldb`/WinDbg + managed debugger, изолировать границу |
-| Cross-platform сборка в CI | Средняя | CMake + GitHub Actions matrix build |
-| Маршаллинг managed объектов через границу | Высокая сложность | `GCHandle`, чёткий ownership, не смешивать heap |
-| Десинхронизация C# и C++ версий API | Средняя | Версионирование C API, тесты на совместимость |
+| Step | Task | Difficulty |
+|------|------|------------|
+| 1 | `DependencyGraph` in C++ — Kahn's algorithm, input data from C# through `type_id` arrays | Medium |
+| 2 | `NativeScheduler` — parallel phase execution through `std::thread` pool. Call C# `Update()` through a function pointer | High |
+| 3 | `EventBus` in C++ — synchronous delivery, C# subscribers via delegates | High |
+| 4 | `GCHandle` marshalling — transition from blittable structs to real production components | Medium |
+| 5 | CI pipeline — build for three platforms (Win/Linux/macOS) in one workflow | Medium |
 
-> ⚠ **Главный риск**
-> Marshalling complexity. Blittable structs — просто. `GCHandle` managed
-> классов — сложно и требует явного управления временем жизни. Недооценка
-> этого риска ломает production.
+### Long-term trajectory
+
+**Now (Phase 5)**
+Godot Runtime → C# GameLoop → C# ECS core
+
+**After the experiment (if successful)**
+Godot Runtime → C# GameLoop → C++ ECS core via P/Invoke
+
+**Phase 9 — Native Runtime (long-term)**
+Own Runtime → C# GameLoop → C++ ECS core
+Godot = scene editor only
+
+> ⭐ **Long-term bet**
+> An own runtime is no longer an indie game; it is an engine. Godot as a
+> scene editor + native core + C# logic is a rare combination on the market.
 
 ---
 
-Производительность Unreal. Удобство разработки C#. Архитектура, которая не
-ломается при замене ядра.
+## 10. Risks
+
+| Risk | Likelihood | Mitigation |
+|------|------------|------------|
+| P/Invoke overhead eats the gain for small components | High | Operation batching, blittable structs, measure before deciding |
+| Debugging complexity (mixed C++ + C# stack) | Medium | `lldb` / WinDbg + managed debugger, isolate the boundary |
+| Cross-platform build in CI | Medium | CMake + GitHub Actions matrix build |
+| Marshalling managed objects across the boundary | High complexity | `GCHandle`, clear ownership, do not mix heaps |
+| Drift between the C# and C++ versions of the API | Medium | Versioning of the C API, compatibility tests |
+
+> ⚠ **Main risk**
+> Marshalling complexity. Blittable structs are simple. `GCHandle` of
+> managed classes is hard and requires explicit lifetime management.
+> Underestimating this risk breaks production.
+
+---
+
+Unreal performance. C# development convenience. An architecture that does
+not break when the core is replaced.
