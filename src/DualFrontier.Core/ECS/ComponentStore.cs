@@ -5,22 +5,22 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Core.ECS;
 
 /// <summary>
-/// Не-дженерик маркер для хранения всех ComponentStore{T}
-/// в одной коллекции (обычно <c>ConcurrentDictionary{Type, IComponentStore}</c>
-/// внутри <see cref="World"/>). Никаких методов сюда добавлять нельзя —
-/// иначе теряется типобезопасность конкретных store-ов.
+/// Non-generic marker for storing all ComponentStore{T} in a single collection
+/// (typically <c>ConcurrentDictionary{Type, IComponentStore}</c> inside
+/// <see cref="World"/>). No methods may be added here — doing so would break
+/// the type safety of the concrete stores.
 /// </summary>
 internal interface IComponentStore
 {
 }
 
 /// <summary>
-/// Типизированный storage для компонентов одного типа.
-/// Реализован с использованием паттерна SparseSet: плотный массив значений +
-/// разреженный массив индексов по EntityId. Это даёт O(1) Add/Remove/Get
-/// и cache-friendly итерацию по всем компонентам типа <typeparamref name="T"/>.
+/// Typed storage for components of a single type.
+/// Implemented with the SparseSet pattern: a dense array of values plus a
+/// sparse index array keyed by EntityId. Yields O(1) Add/Remove/Get and
+/// cache-friendly iteration over every component of type <typeparamref name="T"/>.
 /// </summary>
-/// <typeparam name="T">Тип хранимого компонента.</typeparam>
+/// <typeparam name="T">Type of the stored component.</typeparam>
 internal sealed class ComponentStore<T> : IComponentStore, IRemovable where T : IComponent
 {
     // SparseSet implementation fields

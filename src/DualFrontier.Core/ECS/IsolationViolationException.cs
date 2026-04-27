@@ -3,16 +3,17 @@ using System;
 namespace DualFrontier.Core.ECS;
 
 /// <summary>
-/// Исключение, бросаемое <c>SystemExecutionContext</c> при нарушении изоляции:
-/// обращение к незадекларированному компоненту, прямой доступ к другой системе,
-/// использование World в обход сторожа. Сообщение содержит имя нарушающей
-/// системы, имя нарушенного типа и подсказку, как исправить декларацию.
+/// Exception thrown by <c>SystemExecutionContext</c> on an isolation violation:
+/// access to an undeclared component, direct reference to another system, or
+/// use of <c>World</c> bypassing the isolation guard. The message contains the
+/// violating system's name, the violated type's name, and a hint on how to fix
+/// the declaration.
 /// </summary>
 public sealed class IsolationViolationException : Exception
 {
     /// <summary>
-    /// Создаёт исключение с диагностическим сообщением. Формат сообщения
-    /// фиксирован и используется тестами — не менять без согласования.
+    /// Creates the exception with a diagnostic message. The message format is
+    /// fixed and asserted by tests — do not change without coordination.
     /// </summary>
     public IsolationViolationException(string message) : base(message)
     {
