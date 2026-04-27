@@ -1,26 +1,25 @@
-# Math — Математика сетки
+# Math — Grid math
 
-## Назначение
-Математические примитивы для работы с сеткой тайлов и пространственным
-индексированием. Используется почти всеми системами: путь, поиск соседей,
-спавн снарядов, размещение зданий.
+## Purpose
+Math primitives for tile-grid work and spatial indexing. Used by almost every
+system: pathfinding, neighbor lookup, projectile spawning, building placement.
 
-## Зависимости
+## Dependencies
 - `System` (BCL)
 
-## Что внутри
-- `SpatialGrid.cs` — разбиение мира на ячейки для O(1) запроса "всё в радиусе R".
-  Используется CombatSystem (поиск целей), RaidSystem, BiomeSystem.
+## Contents
+- `SpatialGrid.cs` — partitioning the world into cells for O(1) "everything in
+  radius R" queries. Used by CombatSystem (target search), RaidSystem, BiomeSystem.
 
-> `GridVector` живёт в `DualFrontier.Contracts.Math` — это общий примитив,
-> доступный всем слоям включая `AI` и моды, которые не зависят от `Core`.
+> `GridVector` lives in `DualFrontier.Contracts.Math` — a shared primitive
+> available to every layer including `AI` and mods that do not depend on `Core`.
 
-## Правила
-- `SpatialGrid` НЕ потокобезопасный — защита через граф планировщика.
-- Godot `Vector2I` использовать нельзя — это Godot namespace. Конвертация
-  происходит только в Presentation.
+## Rules
+- `SpatialGrid` is NOT thread-safe — protection comes through the scheduler graph.
+- Godot's `Vector2I` is forbidden — that is a Godot namespace. Conversion
+  happens only in Presentation.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var a = new GridVector(3, 4);
 var b = new GridVector(0, 0);
@@ -32,5 +31,5 @@ foreach (var near in grid.Query(position, radius: 5)) { /* ... */ }
 ```
 
 ## TODO
-- [ ] Фаза 3 — реализовать `SpatialGrid.Insert/Remove/Update/Query`.
-- [ ] Фаза 3 — покрыть `SpatialGrid` бенчмарком (BenchmarkDotNet).
+- [ ] Phase 3 — implement `SpatialGrid.Insert/Remove/Update/Query`.
+- [ ] Phase 3 — cover `SpatialGrid` with a benchmark (BenchmarkDotNet).

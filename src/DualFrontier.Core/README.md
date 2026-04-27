@@ -1,39 +1,39 @@
 # DualFrontier.Core
 
-## Назначение
-Ядро проекта: ECS (World + ComponentStore + SystemBase + сторож изоляции),
-параллельный планировщик (граф READ/WRITE зависимостей, фазы, tick rates),
-реализации доменных шин событий, математика сетки и реестры компонентов и
-систем. Вся сборка — `internal`-first: снаружи доступны только типы явно
-помеченные `public`, и то через `InternalsVisibleTo` для `Systems`,
-`Application` и `Core.Tests`.
+## Purpose
+The project's core: ECS (World + ComponentStore + SystemBase + isolation guard),
+the parallel scheduler (READ/WRITE dependency graph, phases, tick rates),
+domain-event-bus implementations, grid math, and component/system registries.
+The whole assembly is `internal`-first: only types explicitly marked `public` are
+visible from outside, and even those reach `Systems`, `Application`, and
+`Core.Tests` only through `InternalsVisibleTo`.
 
-## Зависимости
-- `DualFrontier.Contracts` — контракты ECS, шин, атрибуты.
+## Dependencies
+- `DualFrontier.Contracts` — ECS contracts, bus contracts, attributes.
 
-## Что внутри
+## Contents
 - `ECS/` — `World`, `ComponentStore`, `SystemBase`, `SystemExecutionContext`
-  (сторож), `IsolationViolationException`.
+  (the isolation guard), `IsolationViolationException`.
 - `Scheduling/` — `DependencyGraph`, `ParallelSystemScheduler`, `SystemPhase`,
   `TickScheduler`, `TickRates`.
 - `Bus/` — `DomainEventBus`, `GameServices`, `IntentBatcher`.
-- `Math/` — `SpatialGrid` (инфраструктурное разбиение мира; `GridVector`-примитив
-  живёт в `DualFrontier.Contracts.Math`).
+- `Math/` — `SpatialGrid` (infrastructure-level world partitioning; the
+  `GridVector` primitive lives in `DualFrontier.Contracts.Math`).
 - `Registry/` — `ComponentRegistry`, `SystemRegistry`.
 
-## Правила
-- Никаких ссылок на Godot.
-- Никакой игровой логики — она живёт в `DualFrontier.Systems`.
-- Все типы сделаны `internal` кроме `SystemBase` и публичных контрактов
-  (которые на самом деле определены в `Contracts`) — системам Core даётся
-  через `InternalsVisibleTo`.
-- Параллельность обеспечивается планировщиком, не самими структурами. Если
-  тип предполагается использовать напрямую из множества потоков — он обязан
-  быть потокобезопасным и документировать это.
+## Rules
+- No references to Godot.
+- No game logic — that lives in `DualFrontier.Systems`.
+- Every type is `internal` except `SystemBase` and the public contracts (which
+  are actually defined in `Contracts`); Core systems get access through
+  `InternalsVisibleTo`.
+- Parallelism is provided by the scheduler, not by the data structures themselves.
+  If a type is intended to be used directly from many threads, it MUST be
+  thread-safe and document that.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Из DualFrontier.Application (через InternalsVisibleTo)
+// From DualFrontier.Application (via InternalsVisibleTo)
 var world    = new World();
 var services = new GameServices();
 var ticks    = new TickScheduler();
@@ -49,8 +49,8 @@ scheduler.ExecuteTick(delta: 1f / 30f);
 ```
 
 ## TODO
-- [x] Фаза 1 — реализовать `World`/`ComponentStore` со SparseSet.
-- [x] Фаза 1 — реализовать `SystemExecutionContext` (ThreadLocal сторож).
-- [x] Фаза 1 — реализовать `DependencyGraph` и `ParallelSystemScheduler`.
-- [x] Фаза 1 — реализовать `DomainEventBus` и `GameServices`.
-- [x] Фаза 2 — написать isolation-тесты, подтверждающие краш сторожа.
+- [x] Phase 1 — implement `World` / `ComponentStore` on top of SparseSet.
+- [x] Phase 1 — implement `SystemExecutionContext` (`ThreadLocal` guard).
+- [x] Phase 1 — implement `DependencyGraph` and `ParallelSystemScheduler`.
+- [x] Phase 1 — implement `DomainEventBus` and `GameServices`.
+- [x] Phase 2 — write isolation tests confirming the guard crashes.
