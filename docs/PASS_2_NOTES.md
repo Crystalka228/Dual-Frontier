@@ -82,6 +82,29 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 
 ---
 
+## 4. Anchor-link coordination
+
+`docs/DEVELOPMENT_HYGIENE.md` has three cross-doc anchor links that GitHub auto-derives from heading text. To keep them resolvable after translation, the target docs MUST use exactly these English headings:
+
+### 4.1 ARCHITECTURE.md anchor — retargeted
+
+- **Russian source link:** `[ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра)`
+- **Issue:** the `«Граница движок / игра»` section does not exist in the current `docs/ARCHITECTURE.md` source (Russian or English). The link was already broken before Pass 2.
+- **Pass 2 action:** retargeted to the closest existing section: `[ARCHITECTURE §"Dependency rules"](./ARCHITECTURE.md#dependency-rules)`. The `## Dependency rules` heading exists in the translated ARCHITECTURE.md.
+- **Suggested follow-up (out of scope for Pass 2):** the human may want to add an explicit "Engine / game boundary" section to ARCHITECTURE.md that contains the engine vs game assembly table currently duplicated in DEVELOPMENT_HYGIENE.md.
+
+### 4.2 CODING_STANDARDS.md anchor — prediction
+
+- **Predicted heading in translated CODING_STANDARDS.md:** `## Commit messages` → anchor `#commit-messages`.
+- **Pass 2 commitment:** when CODING_STANDARDS.md is translated, the heading `## Сообщения коммитов` MUST be rendered as exactly `## Commit messages` to keep DEVELOPMENT_HYGIENE.md's three anchor references resolvable.
+
+### 4.3 ROADMAP.md anchor — prediction
+
+- **Predicted heading in translated ROADMAP.md:** `## Post-release — engine fork` → anchor `#post-release--engine-fork` (em-dash with surrounding spaces collapses to a double hyphen in GitHub's anchor algorithm).
+- **Pass 2 commitment:** when ROADMAP.md is translated, the heading `## Пост-релиз — развилка на движок` MUST be rendered as exactly `## Post-release — engine fork` (with the em-dash preserved) to keep DEVELOPMENT_HYGIENE.md's two anchor references resolvable.
+
+---
+
 ## Closing checklist (filled at Pass 2 closure)
 
 - [ ] All P0–P3 documents translated.
