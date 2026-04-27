@@ -256,9 +256,9 @@ public sealed class SystemExecutionContext
     public TSystem GetSystem<TSystem>() where TSystem : SystemBase
     {
         throw new IsolationViolationException(
-            "[IsolationViolationException]" + Environment.NewLine +
-            "Прямой доступ к системам запрещён." + Environment.NewLine +
-            "Используй EventBus вместо прямой ссылки на систему.");
+            IsolationDiagnostics.GetSystemHeader + Environment.NewLine +
+            IsolationDiagnostics.GetSystemBody + Environment.NewLine +
+            IsolationDiagnostics.GetSystemHint);
     }
 
     private bool IsReadAllowed(Type componentType)
@@ -282,24 +282,32 @@ public sealed class SystemExecutionContext
     private string BuildReadViolationMessage(Type componentType)
     {
         var sb = new StringBuilder();
-        sb.Append("[ИЗОЛЯЦИЯ НАРУШЕНА]").Append(Environment.NewLine);
-        sb.Append("Система '").Append(_systemName).Append("'").Append(Environment.NewLine);
-        sb.Append("обратилась к '").Append(componentType.Name).Append("'").Append(Environment.NewLine);
-        sb.Append("без декларации доступа.").Append(Environment.NewLine);
-        sb.Append("Добавь: [SystemAccess(reads: new[]{typeof(")
-          .Append(componentType.Name).Append(")})]");
+        sb.Append(IsolationDiagnostics.ViolationHeader).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.SystemPrefix).Append(_systemName)
+          .Append(IsolationDiagnostics.SystemSuffix).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.ReadVerb).Append(componentType.Name)
+          .Append(IsolationDiagnostics.ComponentSuffix).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.ReadReason).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.HintPrefix)
+          .Append(IsolationDiagnostics.ReadHintArgPrefix)
+          .Append(componentType.Name)
+          .Append(IsolationDiagnostics.HintArgSuffix);
         return sb.ToString();
     }
 
     private string BuildWriteViolationMessage(Type componentType)
     {
         var sb = new StringBuilder();
-        sb.Append("[ИЗОЛЯЦИЯ НАРУШЕНА]").Append(Environment.NewLine);
-        sb.Append("Система '").Append(_systemName).Append("'").Append(Environment.NewLine);
-        sb.Append("модифицирует '").Append(componentType.Name).Append("'").Append(Environment.NewLine);
-        sb.Append("без декларации записи.").Append(Environment.NewLine);
-        sb.Append("Добавь: [SystemAccess(writes: new[]{typeof(")
-          .Append(componentType.Name).Append(")})]");
+        sb.Append(IsolationDiagnostics.ViolationHeader).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.SystemPrefix).Append(_systemName)
+          .Append(IsolationDiagnostics.SystemSuffix).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.WriteVerb).Append(componentType.Name)
+          .Append(IsolationDiagnostics.ComponentSuffix).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.WriteReason).Append(Environment.NewLine);
+        sb.Append(IsolationDiagnostics.HintPrefix)
+          .Append(IsolationDiagnostics.WriteHintArgPrefix)
+          .Append(componentType.Name)
+          .Append(IsolationDiagnostics.HintArgSuffix);
         return sb.ToString();
     }
 
