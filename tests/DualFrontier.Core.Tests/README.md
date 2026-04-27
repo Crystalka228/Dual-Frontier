@@ -1,29 +1,29 @@
 # DualFrontier.Core.Tests
 
-## Назначение
-Юнит-тесты ядра: ECS (`World`, `ComponentStore`), планировщик
-(`ParallelSystemScheduler`, `DependencyGraph`), шина событий
-(`DomainEventBus`) и сторож изоляции (`SystemExecutionContext`).
+## Purpose
+Core unit tests: ECS (`World`, `ComponentStore`), scheduler
+(`ParallelSystemScheduler`, `DependencyGraph`), event bus
+(`DomainEventBus`), and the isolation guard (`SystemExecutionContext`).
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Core`
 - xUnit 2.9+, FluentAssertions 6.12+
 
-## Что внутри
-- `ECS/` — тесты `World`, `ComponentStore`, `EntityId` (версии, удаление, переиспользование).
-- `Scheduling/` — тесты `DependencyGraph`, `ParallelSystemScheduler`.
-- `Bus/` — тесты `DomainEventBus` и публикации/подписки.
-- `Isolation/` — тесты сторожа (`IsolationViolationException` при нелегальном доступе).
+## Contents
+- `ECS/` — tests for `World`, `ComponentStore`, `EntityId` (versions, destruction, reuse).
+- `Scheduling/` — tests for `DependencyGraph`, `ParallelSystemScheduler`.
+- `Bus/` — tests for `DomainEventBus` and publish/subscribe.
+- `Isolation/` — guard tests (`IsolationViolationException` on illegal access).
 
-## Правила
-- Один тестовый класс — одна тема. Имя файла совпадает с темой.
-- Тесты — чистые: никаких статических состояний, никаких файлов.
-- FluentAssertions стиль: `actual.Should().Be(expected);`.
+## Rules
+- One test class — one topic. The file name matches the topic.
+- Tests are pure: no static state, no files.
+- FluentAssertions style: `actual.Should().Be(expected);`.
 
-## Примеры использования
-Запуск: `dotnet test tests/DualFrontier.Core.Tests/DualFrontier.Core.Tests.csproj`.
+## Usage examples
+Run: `dotnet test tests/DualFrontier.Core.Tests/DualFrontier.Core.Tests.csproj`.
 
 ## TODO
-- [ ] Фаза 2 — наполнить `Isolation/` тестами на `[SystemAccess]`.
-- [ ] Фаза 2 — `Scheduling/` с графом зависимостей.
-- [ ] Фаза 1 — `ECS/` с базовым жизненным циклом entity.
+- [ ] Phase 2 — fill `Isolation/` with `[SystemAccess]` tests.
+- [ ] Phase 2 — `Scheduling/` with the dependency graph.
+- [ ] Phase 1 — `ECS/` with the basic entity lifecycle.

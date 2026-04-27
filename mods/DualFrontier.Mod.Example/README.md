@@ -1,40 +1,39 @@
 # DualFrontier.Mod.Example
 
-## Назначение
-Референсный пример мода: минимальная сборка, демонстрирующая правильный
-паттерн интеграции. Показывает, как работает `IMod` + `IModApi` и как
-описывается `mod.manifest.json`. Используется как живой образец в
-документации и как основа для шаблона новых модов.
+## Purpose
+Reference example mod: a minimal assembly demonstrating the correct
+integration pattern. Shows how `IMod` + `IModApi` work and how
+`mod.manifest.json` is described. Used as a living example in the
+documentation and as the basis for new-mod templates.
 
-## Зависимости
-- `DualFrontier.Contracts` (и только она).
+## Dependencies
+- `DualFrontier.Contracts` (and only that one).
 
-## Что внутри
-- `DualFrontier.Mod.Example.csproj` — сборка; единственный `ProjectReference`
-  — на `DualFrontier.Contracts`.
-- `ExampleMod.cs` — реализация `IMod`: `Initialize(IModApi)` / `Unload()`.
-- `mod.manifest.json` — манифест мода (id, version, entry-assembly, entry-type).
+## Contents
+- `DualFrontier.Mod.Example.csproj` — assembly; the only `ProjectReference`
+  is on `DualFrontier.Contracts`.
+- `ExampleMod.cs` — `IMod` implementation: `Initialize(IModApi)` / `Unload()`.
+- `mod.manifest.json` — mod manifest (id, version, entry-assembly, entry-type).
 
-## Правила
-- Никаких зависимостей на `Core`, `Systems`, `Components`, `Events`, `AI`,
-  `Application`. Только `Contracts`. Это — правило изоляции модов (TechArch 11.8).
-- Нельзя кастить `IModApi` к конкретному типу — `ModLoader` обнаружит
-  нарушение и выгрузит мод.
-- Блокирующих операций в `Initialize` быть не должно — загрузка других
-  модов ждёт.
+## Rules
+- No dependencies on `Core`, `Systems`, `Components`, `Events`, `AI`,
+  `Application`. Only `Contracts`. This is the mod-isolation rule (TechArch 11.8).
+- Casting `IModApi` to a concrete type is forbidden — `ModLoader` detects the
+  violation and unloads the mod.
+- No blocking operations in `Initialize` — other mods' loading waits on it.
 
-## Примеры использования
+## Usage examples
 ```csharp
 public sealed class ExampleMod : IMod
 {
-    public void Initialize(IModApi api) { /* регистрация */ }
-    public void Unload() { /* отписка */ }
+    public void Initialize(IModApi api) { /* registration */ }
+    public void Unload() { /* unsubscription */ }
 }
 ```
 
-Сборка мода попадает в `mods/DualFrontier.Mod.Example/bin/.../net8.0/`;
-рядом кладётся `mod.manifest.json`.
+The mod assembly is built into `mods/DualFrontier.Mod.Example/bin/.../net8.0/`;
+`mod.manifest.json` sits alongside it.
 
 ## TODO
-- [ ] Фаза 2 — добавить пример регистрации компонента и подписки на событие.
-- [ ] Фаза 2 — пример `PublishContract<T>` / `TryGetContract<T>`.
+- [ ] Phase 2 — add an example of registering a component and subscribing to an event.
+- [ ] Phase 2 — example of `PublishContract<T>` / `TryGetContract<T>`.
