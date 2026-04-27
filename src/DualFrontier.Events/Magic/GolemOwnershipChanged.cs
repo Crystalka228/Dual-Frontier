@@ -5,16 +5,16 @@ using DualFrontier.Contracts.Enums;
 namespace DualFrontier.Events.Magic;
 
 /// <summary>
-/// Владение големом изменилось. Помечено <see cref="DeferredAttribute"/>:
-/// подписчики (AI, UI, аудит) обновляют своё состояние на следующем тике,
-/// чтобы не гонять мутации в фазе, где работают другие системы магии.
+/// Golem ownership has changed. Marked with <see cref="DeferredAttribute"/>:
+/// subscribers (AI, UI, audit) update their state on the next tick,
+/// to avoid forcing mutations during a phase where other magic systems are running.
 /// </summary>
-/// <param name="Golem">Сущность голема.</param>
-/// <param name="PreviousMage">Прежний маг-хозяин (или <c>null</c>, если
-/// голем был в <see cref="OwnershipMode.Abandoned"/>).</param>
-/// <param name="NewMage">Новый маг-хозяин (или <c>null</c>, если голем
-/// становится покинутым).</param>
-/// <param name="Mode">Итоговый режим владения.</param>
+/// <param name="Golem">The golem entity.</param>
+/// <param name="PreviousMage">Previous mage-owner (or <c>null</c> if the
+/// golem was in <see cref="OwnershipMode.Abandoned"/>).</param>
+/// <param name="NewMage">New mage-owner (or <c>null</c> if the golem
+/// becomes abandoned).</param>
+/// <param name="Mode">Resulting ownership mode.</param>
 [Deferred]
 public sealed record GolemOwnershipChanged(
     EntityId Golem,

@@ -3,18 +3,18 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Намерение произвести «составной» выстрел (патрон + магический компонент)
-/// в рамках двухфазного коммита: <c>CombatSystem</c> сначала опрашивает
-/// <c>InventoryBus</c> (есть ли патрон) и <c>MagicBus</c> (хватает ли маны),
-/// и только затем публикует итог. Ответ — <see cref="ShootGranted"/> или
-/// <see cref="ShootRefused"/> с тем же <paramref name="Id"/>.
+/// Intent to perform a "compound" shot (ammo + magical component)
+/// as part of a two-phase commit: <c>CombatSystem</c> first asks
+/// <c>InventoryBus</c> (is ammo available) and <c>MagicBus</c> (is there enough mana),
+/// and only then publishes the result. The response is <see cref="ShootGranted"/> or
+/// <see cref="ShootRefused"/> with the same <paramref name="Id"/>.
 /// </summary>
-/// <param name="Id">Идентификатор транзакции для связывания запроса и ответа.</param>
-/// <param name="Shooter">Стрелок.</param>
-/// <param name="Target">Цель.</param>
-/// <param name="AmmoType">Строковый идентификатор типа патрона
-/// (TODO: Фаза 4 — заменить на <c>AmmoType</c> enum).</param>
-/// <param name="ManaCost">Стоимость магической составляющей выстрела в мане.</param>
+/// <param name="Id">Transaction identifier used to correlate request and response.</param>
+/// <param name="Shooter">The shooter.</param>
+/// <param name="Target">The target.</param>
+/// <param name="AmmoType">String identifier of the ammo type
+/// (TODO: Phase 4 — replace with the <c>AmmoType</c> enum).</param>
+/// <param name="ManaCost">Mana cost of the magical component of the shot.</param>
 public sealed record CompoundShotIntent(
     TransactionId Id,
     EntityId Shooter,

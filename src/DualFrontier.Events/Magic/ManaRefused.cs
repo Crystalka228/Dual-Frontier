@@ -3,9 +3,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Magic;
 
 /// <summary>
-/// Шаг 2 двухшаговой модели: ManaSystem отказывает в списании — маны
-/// недостаточно. Получатель отменяет действие (каст, активацию голема).
-/// Долгое истощение → цепная реакция на големов (см. GDD 5.2).
+/// Step 2 of the two-step model: ManaSystem refuses the charge — there is
+/// not enough mana. The recipient cancels the action (cast, golem activation).
+/// Prolonged exhaustion -> chain reaction on golems (see GDD 5.2).
 /// </summary>
 public sealed record ManaRefused : IEvent
 {

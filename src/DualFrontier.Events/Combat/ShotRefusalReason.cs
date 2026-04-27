@@ -1,36 +1,36 @@
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Причина отказа в проведении составного выстрела (<c>ShootRefused</c>).
-/// Позволяет AI/UI различать типы отказа: искать патрон, ждать регена маны,
-/// сменить цель и т. п.
+/// Reason for refusing to perform a compound shot (<c>ShootRefused</c>).
+/// Lets AI/UI distinguish refusal types: search for ammo, wait for mana regen,
+/// switch target, etc.
 /// </summary>
 public enum ShotRefusalReason
 {
     /// <summary>
-    /// В инвентаре стрелка нет подходящего патрона — <c>InventoryBus</c>
-    /// ответил <c>AmmoRefused</c>.
+    /// The shooter's inventory has no suitable ammo — <c>InventoryBus</c>
+    /// responded with <c>AmmoRefused</c>.
     /// </summary>
     NoAmmo,
 
     /// <summary>
-    /// У стрелка недостаточно маны для магической составляющей выстрела —
-    /// <c>MagicBus</c> ответил <c>ManaRefused</c>.
+    /// The shooter does not have enough mana for the magical component of the shot —
+    /// <c>MagicBus</c> responded with <c>ManaRefused</c>.
     /// </summary>
     NoMana,
 
     /// <summary>
-    /// Оружие на кулдауне (время перезарядки ещё не истекло).
+    /// The weapon is on cooldown (the reload time has not yet elapsed).
     /// </summary>
     WeaponOnCooldown,
 
     /// <summary>
-    /// Цель вне дальности оружия.
+    /// Target is out of weapon range.
     /// </summary>
     OutOfRange,
 
     /// <summary>
-    /// Цель невалидна (уничтожена, покинула сцену, friendly-fire запрещён).
+    /// Target is invalid (destroyed, left the scene, friendly-fire forbidden).
     /// </summary>
     TargetInvalid,
 }

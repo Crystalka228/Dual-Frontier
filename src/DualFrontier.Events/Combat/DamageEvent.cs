@@ -3,9 +3,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Нанесение урона. Публикуется CombatSystem после расчёта попадания
-/// и пробития. DamageSystem применяет урон: сначала к щиту (GDD 6.4),
-/// затем к броне, затем к HP.
+/// Damage application. Published by CombatSystem after hit and penetration
+/// calculations. DamageSystem applies damage: first to the shield (GDD 6.4),
+/// then to armour, then to HP.
 /// </summary>
 public sealed record DamageEvent : IEvent
 {

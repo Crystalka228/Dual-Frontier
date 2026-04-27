@@ -1,17 +1,17 @@
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Идентификатор составной транзакции выстрела (двухфазный коммит между
-/// <c>InventoryBus</c> и <c>MagicBus</c>). Используется для связывания
-/// <c>CompoundShotIntent</c> с ответами <c>ShootGranted</c> / <c>ShootRefused</c>.
-/// Монотонно возрастающее значение, уникально в пределах процесса.
+/// Identifier of a compound shot transaction (two-phase commit between
+/// <c>InventoryBus</c> and <c>MagicBus</c>). Used to correlate
+/// <c>CompoundShotIntent</c> with the <c>ShootGranted</c> / <c>ShootRefused</c> responses.
+/// Monotonically increasing value, unique within the process.
 /// </summary>
 public readonly record struct TransactionId(ulong Value)
 {
     /// <summary>
-    /// Фабричный метод для выдачи нового монотонно возрастающего идентификатора.
-    /// TODO: Фаза 4 — реализовать счётчик (Interlocked.Increment по приватному
-    /// полю), пока выбрасывается <see cref="NotImplementedException"/>.
+    /// Factory method that issues a new monotonically increasing identifier.
+    /// TODO: Phase 4 — implement the counter (Interlocked.Increment on a private
+    /// field); for now <see cref="NotImplementedException"/> is thrown.
     /// </summary>
-    public static TransactionId New() => throw new NotImplementedException("TODO: Фаза 4 — реализовать монотонный счётчик TransactionId.");
+    public static TransactionId New() => throw new NotImplementedException("TODO: Phase 4 — implement the monotonic TransactionId counter.");
 }

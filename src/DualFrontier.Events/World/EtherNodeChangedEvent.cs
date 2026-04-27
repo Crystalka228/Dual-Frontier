@@ -3,9 +3,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.World;
 
 /// <summary>
-/// Параметры эфирного узла изменились (уровень, радиус, разрушен).
-/// ManaSystem пересчитывает регенерацию маны у пешек в зоне влияния,
-/// UI обновляет мини-карту.
+/// Ether node parameters have changed (level, radius, destroyed).
+/// ManaSystem recalculates mana regeneration for pawns in the area of influence,
+/// UI updates the minimap.
 /// </summary>
 public sealed record EtherNodeChangedEvent : IEvent
 {

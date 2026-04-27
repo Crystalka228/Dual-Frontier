@@ -3,16 +3,16 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
-/// Шаг 1 двухшаговой модели (TechArch 11.5): CombatSystem публикует
-/// намерение получить патрон. InventorySystem собирает все AmmoIntent
-/// в фазе сбора и разрешает батчем в следующей фазе.
+/// Step 1 of the two-step model (TechArch 11.5): CombatSystem publishes
+/// the intent to obtain ammo. InventorySystem collects all AmmoIntents
+/// in the gather phase and resolves them in batch in the next phase.
 ///
-/// НЕ путать с блокирующим Request — этот event не ждёт ответа.
-/// Ответ придёт в виде <see cref="AmmoGranted"/> или <see cref="AmmoRefused"/> позже.
+/// Do NOT confuse with a blocking Request — this event does not wait for a reply.
+/// The reply will arrive later as <see cref="AmmoGranted"/> or <see cref="AmmoRefused"/>.
 /// </summary>
 public sealed record AmmoIntent : IEvent
 {
     // TODO: public required EntityId RequesterId { get; init; }
-    // TODO: public required AmmoType AmmoType { get; init; }   // см. Components/Combat/AmmoComponent
-    // TODO: public required GridVector Position { get; init; } // см. Components/Shared/PositionComponent
+    // TODO: public required AmmoType AmmoType { get; init; }   // see Components/Combat/AmmoComponent
+    // TODO: public required GridVector Position { get; init; } // see Components/Shared/PositionComponent
 }

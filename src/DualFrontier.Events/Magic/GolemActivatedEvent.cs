@@ -3,9 +3,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Magic;
 
 /// <summary>
-/// Маг активировал своего голема. С этого момента PowerSystem начинает
-/// списывать ману у мага-хозяина на содержание голема (GDD 5.3 «Экономика
-/// Манны»). При истощении мага публикуется событие деактивации (Фаза 5).
+/// A mage has activated their golem. From this point on PowerSystem starts
+/// charging mana from the mage-owner to sustain the golem (GDD 5.3 "Mana
+/// Economy"). When the mage is exhausted a deactivation event is published (Phase 5).
 /// </summary>
 public sealed record GolemActivatedEvent : IEvent
 {
