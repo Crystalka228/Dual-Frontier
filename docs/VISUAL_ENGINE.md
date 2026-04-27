@@ -1,85 +1,86 @@
-# Визуальный движок — DevKit и Native
+# Visual engine — DevKit and Native
 
-Dual Frontier использует два параллельных visual-backend'а. Godot — **DevKit**:
-редактор сцен, визуальный тест-стенд, среда быстрой итерации. Native — **Production**:
-собственный рантайм на Silk.NET + OpenGL, который поставляется игрокам. Оба бэкенда
-реализуют одинаковый контракт и потребляют одинаковый формат сцен.
+Dual Frontier uses two parallel visual backends. Godot is the **DevKit**:
+scene editor, visual test bench, rapid-iteration environment. Native is **Production**:
+a custom runtime on Silk.NET + OpenGL that ships to players. Both backends
+implement the same contract and consume the same scene format.
 
-## Почему два бэкенда
+## Why two backends
 
-Godot как production — это lock-in. Его сцены `.tscn` привязаны к конкретному
-рендеру, его `SceneTree` — к main thread, его UI требует `Control`-нод. Для игры
-на 500+ пешек с глубокой магией это потолок. Но **как редактор** Godot незаменим:
-TileMap, инспектор, plugin API, scene tree.
+Godot as production is lock-in. Its `.tscn` scenes are tied to a specific
+renderer, its `SceneTree` is tied to the main thread, its UI requires `Control`
+nodes. For a game with 500+ pawns and deep magic, that is a ceiling. But **as
+an editor** Godot is irreplaceable: TileMap, inspector, plugin API, scene tree.
 
-Решение: Godot живёт как инструмент разработки. Дизайнер открывает `.tscn`,
-расставляет ноды с `DFEntityMeta`, экспортирует в `.dfscene`. Дальше — всё
-одинаково для обоих бэкендов.
+The solution: Godot lives as a development tool. The designer opens a `.tscn`,
+places nodes with `DFEntityMeta`, exports to `.dfscene`. From there, everything
+is identical for both backends.
 
-## Контракты
+## Contracts
 
-Три контракта в `DualFrontier.Application`:
+Three contracts in `DualFrontier.Application`:
 
-- `IRenderer` — главный цикл рендера (`Initialize`, `RenderFrame`, `Shutdown`).
-- `ISceneLoader` — парсит `.dfscene`, возвращает `SceneDef`.
-- `IInputSource` — источник ввода, публикует события в шины.
+- `IRenderer` — the main render loop (`Initialize`, `RenderFrame`, `Shutdown`).
+- `ISceneLoader` — parses `.dfscene`, returns `SceneDef`.
+- `IInputSource` — input source, publishes events to the buses.
 
-Каждая Presentation-сборка реализует все три. Application не импортирует ни
-Godot, ни Silk.NET — только использует контракты.
+Every Presentation assembly implements all three. Application imports neither
+Godot nor Silk.NET — it only uses the contracts.
 
 ## Tier split: production vs devkit
 
-Контракты делятся на два уровня:
+The contracts split across two tiers:
 
 ### Production-tier
 
-Минимальный набор, обязательный для любого бэкенда. Всё, что видит игрок в финальной
-игре. Реализуется и в Godot DevKit, и в Native.
+The minimum set required for any backend. Everything the player sees in the
+finished game. Implemented in both Godot DevKit and Native.
 
-- `IRenderer` — главный цикл рендера.
-- `ISceneLoader` — загрузка `.dfscene`.
-- `IInputSource` — ввод в шины.
+- `IRenderer` — main render loop.
+- `ISceneLoader` — `.dfscene` loading.
+- `IInputSource` — input into the buses.
 
 ### DevKit-tier
 
-Расширения для инструментов разработки. Реализуются **только** в Godot DevKit.
-Native о них не знает вообще — никаких ссылок, никаких stubs с `NotImplementedException`,
-ничего. Все типы помечены `[DevKitOnly]`.
+Extensions for development tooling. Implemented **only** in Godot DevKit.
+Native does not know about them at all — no references, no `NotImplementedException`
+stubs, nothing. All types are marked `[DevKitOnly]`.
 
 - `IDevKitRenderer : IRenderer` — debug gizmos, system profiler, entity highlighting.
-- *(будущее)* `ISceneEditor` — live-reload сцен, правка прямо в runtime.
-- *(будущее)* `IDebugTimeControl` — пауза, шаг тика, ускорение для воспроизведения багов.
+- *(future)* `ISceneEditor` — live-reload of scenes, editing directly at runtime.
+- *(future)* `IDebugTimeControl` — pause, single-tick step, fast-forward for bug reproduction.
 
-### Правило выбора тира
+### Tier-selection rule
 
-Спрашивай себя: **нужно ли это игроку в финальной игре?**
+Ask yourself: **does the player need this in the finished game?**
 
-- Да, всегда → production-tier (`IRenderer`).
-- Только разработчикам или модерам → devkit-tier (`IDevKitRenderer`).
-- Сомневаешься → production-tier. Расширить контракт легче, чем сузить.
+- Yes, always → production-tier (`IRenderer`).
+- Only for developers or modders → devkit-tier (`IDevKitRenderer`).
+- Unsure → production-tier. Expanding a contract is easier than narrowing it.
 
-### Почему не просто две сборки с одинаковым API
+### Why not just two assemblies with the same API
 
-Если бы `IRenderer` содержал `DrawDebugGizmo`, Native был бы вынужден либо
-реализовать его (тратя код и бинарь на то, что не нужно), либо кидать
-`NotImplementedException` (замусоривая контракт). Tier split решает это чисто:
-Native просто не знает о существовании debug-методов.
+If `IRenderer` contained `DrawDebugGizmo`, Native would be forced either to
+implement it (spending code and binary on something not needed) or to throw
+`NotImplementedException` (cluttering the contract). The tier split resolves
+this cleanly: Native simply does not know debug methods exist.
 
 ### Promotion policy
 
-Если метод из devkit-tier начинает требоваться в production (например,
-`HighlightEntity` вдруг нужен для геймплейного tutorial), его можно **promote**:
+If a method from the devkit-tier turns out to be needed in production (for
+example, `HighlightEntity` becomes required for an in-game tutorial), it can
+be **promoted**:
 
-1. Переместить метод из `IDevKitRenderer` в `IRenderer`.
-2. Реализовать в Native.
-3. Обновить доку.
+1. Move the method from `IDevKitRenderer` to `IRenderer`.
+2. Implement it in Native.
+3. Update the docs.
 
-Обратное движение — demotion — запрещено. Убрав метод из production-tier, ты
-ломаешь контракт для уже существующих Native-сборок.
+The reverse direction — demotion — is forbidden. Removing a method from the
+production tier breaks the contract for existing Native builds.
 
-## Формат .dfscene
+## .dfscene format
 
-Человекочитаемый JSON, версионированный:
+Human-readable JSON, versioned:
 
 ```json
 {
@@ -92,67 +93,67 @@ Native просто не знает о существовании debug-мето
 }
 ```
 
-Tilemap хранит тайлы per-layer как base64-encoded `ushort[]` длиной `width * height`.
-Entity описывает prefab + position + component overrides. Marker — именованная
-точка без сущности.
+Tilemap stores tiles per-layer as a base64-encoded `ushort[]` of length `width * height`.
+Entity describes a prefab + position + component overrides. Marker is a named
+point without an entity.
 
-Подробная схема — `src/DualFrontier.Application/Scene/README.md`.
+Detailed schema: `src/DualFrontier.Application/Scene/README.md`.
 
 ## Godot DevKit plugin
 
-Живёт в `src/DualFrontier.Presentation/addons/df_devkit/`. Флаг `#if TOOLS`
-гарантирует что плагин не попадает в production-сборку Godot.
+Lives in `src/DualFrontier.Presentation/addons/df_devkit/`. The `#if TOOLS`
+flag guarantees the plugin does not end up in a production Godot build.
 
-Возможности:
+Features:
 
-- `DFEntityMeta` Resource — привязывается к нодам, задаёт prefab и overrides.
-- `SceneExporter` — обходит SceneTree, сериализует в `.dfscene`.
-- Меню "Tools → Export .dfscene" — кнопка экспорта для разработчика.
+- `DFEntityMeta` Resource — attaches to nodes, defines prefab and overrides.
+- `SceneExporter` — walks the SceneTree, serializes to `.dfscene`.
+- Menu "Tools → Export .dfscene" — developer-facing export button.
 
-Полная реализация — Фаза 3.5.
+Full implementation: Phase 3.5.
 
 ## Native runtime
 
-Сборка `DualFrontier.Presentation.Native`. Зависит только от `Contracts` и
-`Application`. Стек технологий:
+The `DualFrontier.Presentation.Native` assembly. Depends only on `Contracts` and
+`Application`. Technology stack:
 
-| Слой               | Библиотека                                |
+| Layer              | Library                                   |
 |--------------------|-------------------------------------------|
-| Окно + GL контекст | Silk.NET.Windowing                        |
-| Ввод               | Silk.NET.Input                            |
-| 2D рендер          | Silk.NET.OpenGL + собственный SpriteBatch |
+| Window + GL context | Silk.NET.Windowing                       |
+| Input              | Silk.NET.Input                            |
+| 2D rendering       | Silk.NET.OpenGL + a custom SpriteBatch    |
 | UI                 | ImGui.NET                                 |
-| Аудио              | OpenAL-CS                                 |
+| Audio              | OpenAL-CS                                 |
 
-Сейчас это stub'ы с `throw new NotImplementedException`. Реализация — Фаза 5+.
+Currently these are stubs with `throw new NotImplementedException`. Implementation: Phase 5+.
 
-## Правила
+## Rules
 
-- Domain и Application никогда не импортируют `Godot;` и никогда не импортируют
-  `Silk.NET;`. Только контракты.
-- `[DevKitOnly]` помечает весь Godot-специфичный код, который не должен
-  переехать в Native.
-- Оба бэкенда должны давать одинаковый результат на одних и тех же `.dfscene`.
-  Если поведение расходится — баг в bridge-командах.
-- `.dfscene` — единственный формат сцен. `.tscn` только для Godot Editor,
-  не читается в рантайме.
+- Domain and Application never import `Godot;` and never import
+  `Silk.NET;`. Contracts only.
+- `[DevKitOnly]` marks every Godot-specific piece of code that must not
+  migrate to Native.
+- Both backends MUST produce the same result on the same `.dfscene`.
+  If behavior diverges, the bug is in the bridge commands.
+- `.dfscene` is the only scene format. `.tscn` is for Godot Editor only and
+  is not read at runtime.
 
-## Пайплайн разработчика
+## Developer pipeline
 
 ```
-Godot Editor (автор сцены)
+Godot Editor (scene author)
     ↓  Tools → Export .dfscene
 assets/scenes/colony.dfscene
-    ↓  (одинаковый файл)
-    ├─ GodotRenderer + GodotSceneLoader   ← F5 в Godot, быстрая итерация
-    └─ NativeRenderer + NativeSceneLoader ← dotnet run, production-проверка
+    ↓  (identical file)
+    ├─ GodotRenderer + GodotSceneLoader   ← F5 in Godot, rapid iteration
+    └─ NativeRenderer + NativeSceneLoader ← dotnet run, production check
 ```
 
-CI прогоняет обе реализации на одной фикстуре `sample.dfscene` — поведение
-должно быть идентично.
+CI runs both implementations on the same `sample.dfscene` fixture — behavior
+MUST be identical.
 
-## См. также
+## See also
 
-- [ARCHITECTURE](./ARCHITECTURE.md) — четыре слоя, правила зависимостей.
-- [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) — PresentationBridge, main thread.
-- [ROADMAP](./ROADMAP.md) — Фаза 3.5 (DevKit plugin), Фаза 5+ (Native).
+- [ARCHITECTURE](./ARCHITECTURE.md) — four layers, dependency rules.
+- [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) — `PresentationBridge`, main thread.
+- [ROADMAP](./ROADMAP.md) — Phase 3.5 (DevKit plugin), Phase 5+ (Native).
