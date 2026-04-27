@@ -3,11 +3,11 @@ using System;
 namespace DualFrontier.Contracts.Modding;
 
 /// <summary>
-/// Маркер-интерфейс контракта между модами. Один мод публикует реализацию
-/// через <c>IModApi.PublishContract</c>, другие — получают через
-/// <c>IModApi.TryGetContract</c>. Это единственный легальный способ
-/// коммуникации между модами: прямая ссылка на сборку другого мода
-/// невозможна (разные AssemblyLoadContext).
+/// Marker interface for an inter-mod contract. One mod publishes the
+/// implementation through <c>IModApi.PublishContract</c>; others retrieve it
+/// through <c>IModApi.TryGetContract</c>. This is the only legal channel for
+/// mod-to-mod communication: a direct reference to another mod's assembly is
+/// impossible (different AssemblyLoadContexts).
 /// </summary>
 public interface IModContract
 {

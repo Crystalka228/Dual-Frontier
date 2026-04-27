@@ -3,10 +3,11 @@ using System;
 namespace DualFrontier.Contracts.Attributes;
 
 /// <summary>
-/// Помечает событие как "отложенное". Шина накапливает такие события в
-/// текущей фазе и доставляет их подписчикам в следующей фазе планировщика.
-/// Это безопасный режим для событий, меняющих состояние мира (смерти,
-/// удаления сущностей), — чтобы не нарушить инварианты выполняющихся систем.
+/// Marks an event as "deferred". The bus accumulates such events during the
+/// current phase and delivers them to subscribers in the next scheduler
+/// phase. This is the safe mode for events that change world state (deaths,
+/// entity removals) — they do not violate the invariants of the running
+/// systems.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
 public sealed class DeferredAttribute : Attribute

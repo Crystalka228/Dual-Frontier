@@ -3,22 +3,23 @@ using System;
 namespace DualFrontier.Contracts.Attributes;
 
 /// <summary>
-/// Частота вызова метода <c>Update</c> системы в тиках.
-/// Значение — "один вызов на N тиков игрового времени".
-/// Константы см. в <see cref="TickRates"/>.
-/// Планировщик группирует системы с одинаковым tick rate для лучшего кэш-поведения.
+/// How often a system's <c>Update</c> method runs, in ticks.
+/// Value semantics: "one call every N game-time ticks".
+/// See <see cref="TickRates"/> for the canonical constants.
+/// The scheduler groups systems with the same tick rate for better cache
+/// behaviour.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
 public sealed class TickRateAttribute : Attribute
 {
     /// <summary>
-    /// Сколько тиков игрового времени должно пройти между двумя
-    /// последовательными <c>Update</c> этой системы.
+    /// How many game-time ticks must pass between two consecutive
+    /// <c>Update</c> calls of this system.
     /// </summary>
     public int TicksPerUpdate { get; }
 
     /// <summary>
-    /// Создаёт атрибут с указанной частотой (см. <see cref="TickRates"/>).
+    /// Creates the attribute with the given rate (see <see cref="TickRates"/>).
     /// </summary>
     public TickRateAttribute(int ticksPerUpdate)
     {
@@ -27,25 +28,26 @@ public sealed class TickRateAttribute : Attribute
 }
 
 /// <summary>
-/// Каноничные значения частот тиков для <see cref="TickRateAttribute"/>.
-/// Определены здесь, чтобы атрибут можно было применять из любого места без
-/// зависимости на <c>DualFrontier.Core.Scheduling</c>. Константы дублируются
-/// в <c>DualFrontier.Core.Scheduling.TickRates</c> — значения обязаны совпадать.
+/// Canonical tick-rate constants for <see cref="TickRateAttribute"/>.
+/// Defined here so the attribute can be applied from anywhere without taking
+/// a dependency on <c>DualFrontier.Core.Scheduling</c>. The constants are
+/// duplicated in <c>DualFrontier.Core.Scheduling.TickRates</c> — values must
+/// match.
 /// </summary>
 public static class TickRates
 {
-    /// <summary>Каждый тик — физика снарядов, UI-реактивность.</summary>
+    /// <summary>Every tick — projectile physics, UI responsiveness.</summary>
     public const int REALTIME = 1;
 
-    /// <summary>Раз в 3 тика — бой, отзывчивые системы.</summary>
+    /// <summary>Every 3 ticks — combat, responsive systems.</summary>
     public const int FAST = 3;
 
-    /// <summary>Раз в 15 тиков — обычная логика: работы, навыки, мана.</summary>
+    /// <summary>Every 15 ticks — normal logic: jobs, skills, mana.</summary>
     public const int NORMAL = 15;
 
-    /// <summary>Раз в 60 тиков (~1 раз/сек) — нужды, настроение, рост эфира.</summary>
+    /// <summary>Every 60 ticks (~1/sec) — needs, mood, ether growth.</summary>
     public const int SLOW = 60;
 
-    /// <summary>Раз в 3600 тиков (~1 раз/мин) — социалка, рейды, торговля.</summary>
+    /// <summary>Every 3600 ticks (~1/min) — social, raids, trade.</summary>
     public const int RARE = 3600;
 }

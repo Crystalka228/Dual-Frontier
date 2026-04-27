@@ -3,10 +3,10 @@ using System;
 namespace DualFrontier.Contracts.Bus;
 
 /// <summary>
-/// Шина боевого домена. События: попытка выстрела, нанесение урона, смерть,
-/// применение статус-эффекта.
-/// Пишут: <c>CombatSystem</c>, <c>ProjectileSystem</c>.
-/// Читают: <c>DamageSystem</c>, <c>StatusEffectSystem</c>.
+/// Combat-domain bus. Events: shoot attempt, damage dealt, death, status
+/// effect applied.
+/// Writers: <c>CombatSystem</c>, <c>ProjectileSystem</c>.
+/// Readers: <c>DamageSystem</c>, <c>StatusEffectSystem</c>.
 /// </summary>
 public interface ICombatBus : IEventBus
 {
