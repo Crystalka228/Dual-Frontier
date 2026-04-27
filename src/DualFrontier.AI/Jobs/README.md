@@ -1,41 +1,39 @@
 # Jobs
 
-## Назначение
-Джоб — это "задача", которую пешка выполняет шагами: дойти,
-взять, обработать, положить. JobSystem из
-`DualFrontier.Systems/Pawn/` создаёт джоб и тикает его до
-завершения. Джоб сам не пишет в компоненты — он возвращает
-статус, а изменения компонентов и событий делает система.
+## Purpose
+A job is a "task" the pawn executes step by step: walk, pick up, process, drop.
+JobSystem from `DualFrontier.Systems/Pawn/` creates a job and ticks it to
+completion. The job itself does not write components — it returns a status,
+and the system applies component changes and event publication.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `EntityId`.
-- `DualFrontier.Components` — читает данные пешки через аргументы
-  `Tick` (например, позицию).
+- `DualFrontier.Components` — reads pawn data through `Tick` arguments
+  (e.g., position).
 
-## Что внутри
-- `IJob.cs` — интерфейс джоба + enum `JobStatus`.
-- `JobHaul.cs` — переноска стака между складами.
-- `JobCraft.cs` — работа на верстаке.
-- `JobCast.cs` — каст заклинания.
-- `JobMeditate.cs` — рост мага в медитации.
-- `JobGolemCommand.cs` — выполнение приказа голему.
+## Contents
+- `IJob.cs` — job interface + the `JobStatus` enum.
+- `JobHaul.cs` — moves a stack between storages.
+- `JobCraft.cs` — work at a workbench.
+- `JobCast.cs` — spell casting.
+- `JobMeditate.cs` — mage progression through meditation.
+- `JobGolemCommand.cs` — execution of a golem order.
 
-## Правила
-- Джоб — stateful: внутри живёт прогресс, текущий шаг.
-- Джоб синхронный: `Tick` возвращает статус за O(1) расчёта,
-  никакого async.
-- Джоб НЕ пишет компоненты напрямую — он возвращает результат
-  или публикует intent (ammo, craft, spell) через аргументы.
-- Джоб можно Abort: он обязан корректно откатить начатое.
+## Rules
+- Jobs are stateful: progress and the current step live inside.
+- Jobs are synchronous: `Tick` returns a status in O(1) compute, no async.
+- Jobs MUST NOT write components directly — they return a result or publish
+  an intent (ammo, craft, spell) through arguments.
+- Jobs can be aborted: they MUST cleanly roll back what they started.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var job = new JobHaul(/* args */);
 job.Start();
-while (job.Tick(delta) == JobStatus.Running) { /* следующий кадр */ }
+while (job.Tick(delta) == JobStatus.Running) { /* next frame */ }
 ```
 
 ## TODO
-- [ ] Реализовать все джобы.
-- [ ] Добавить сериализацию джоба для сейвов (через `Application`).
-- [ ] Написать юнит-тесты на Abort каждого джоба.
+- [ ] Implement every job.
+- [ ] Add job serialization for save files (through `Application`).
+- [ ] Write Abort unit tests for every job.

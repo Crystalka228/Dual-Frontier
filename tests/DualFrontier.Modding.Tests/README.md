@@ -1,27 +1,28 @@
 # DualFrontier.Modding.Tests
 
-## Назначение
-Тесты загрузчика модов (`ModLoader`) и изоляции `AssemblyLoadContext`:
-что мод физически не видит внутренностей ядра, что `Unload` выгружает
-сборку, что попытка скастить `IModApi` ловится и приводит к выгрузке.
+## Purpose
+Tests for the mod loader (`ModLoader`) and `AssemblyLoadContext` isolation:
+that a mod physically cannot see the core's internals, that `Unload` releases
+the assembly, and that an attempt to cast `IModApi` is caught and triggers
+unload.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Application`
 - xUnit 2.9+, FluentAssertions 6.12+
 
-## Что внутри
-- `.gitkeep` — плейсхолдер. Реальные тесты придут в Фазе 2.
+## Contents
+- `.gitkeep` — placeholder. Real tests will arrive in Phase 2.
 
-## Правила
-- Тесты изоляции используют специально собранные тестовые mod-сборки
-  (в `Fixtures/`). Фикстуры собираются отдельно от основных тестов.
-- Каждый тест горячей перезагрузки убирает за собой: проверяет, что
-  `AssemblyLoadContext` реально освобождён.
+## Rules
+- Isolation tests use specially built test mod assemblies (in `Fixtures/`).
+  Fixtures are built separately from the main tests.
+- Each hot-reload test cleans up after itself: it confirms that the
+  `AssemblyLoadContext` was actually released.
 
-## Примеры использования
-Запуск: `dotnet test tests/DualFrontier.Modding.Tests/DualFrontier.Modding.Tests.csproj`.
+## Usage examples
+Run: `dotnet test tests/DualFrontier.Modding.Tests/DualFrontier.Modding.Tests.csproj`.
 
 ## TODO
-- [ ] Фаза 2 — тест: мод не может загрузить `DualFrontier.Core`.
-- [ ] Фаза 2 — тест: cast `IModApi` к `RestrictedModApi` ловится.
-- [ ] Фаза 3 — тест горячей перезагрузки мода.
+- [ ] Phase 2 — test: a mod cannot load `DualFrontier.Core`.
+- [ ] Phase 2 — test: casting `IModApi` to `RestrictedModApi` is caught.
+- [ ] Phase 3 — mod hot-reload test.

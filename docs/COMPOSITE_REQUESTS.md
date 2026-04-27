@@ -1,18 +1,18 @@
-# Композитные запросы
+# Composite requests
 
-Одношаговый Intent решает задачу, когда требуется ровно один ресурс с одной шины. Но уже выстрел манной стрелкой требует двух подтверждений сразу: патрон на `IInventoryBus` и мана на `IMagicBus`. Прямой ask «получи оба ответа и действуй» порождает race conditions в многопоточной фазе. v0.2 вводит двухфазный commit через одного посредника.
+A one-step Intent solves the problem when exactly one resource on one bus is required. But even a "mana arrow" shot needs two confirmations at once: a bullet on `IInventoryBus` and mana on `IMagicBus`. A direct "get both responses and act" approach produces race conditions inside a multithreaded phase. v0.2 introduces two-phase commit through a single mediator.
 
-## Проблема
+## Problem
 
-Инициатор (например, `CombatSystem`) публикует два независимых намерения: `AmmoIntent` и `ManaIntent`. Оба обрабатываются батч-системами в одной фазе параллельно. Возможны четыре исхода: (granted, granted), (granted, refused), (refused, granted), (refused, refused). В трёх из четырёх случаев действие невозможно, но частично потраченные ресурсы уже списаны — патрон зарезервирован, а маны нет, и откатывать нужно руками на стороне каждой шины. Любая ошибка — постоянная утечка.
+The initiator (e.g., `CombatSystem`) publishes two independent intents: `AmmoIntent` and `ManaIntent`. Both are processed by batch systems within one phase in parallel. Four outcomes are possible: (granted, granted), (granted, refused), (refused, granted), (refused, refused). In three of four cases the action is impossible, but the partially debited resources have already been spent — the bullet is reserved, mana is gone, and the rollback has to be done manually on each bus's side. Any error is a permanent leak.
 
-Плюс сторона: инициатор должен сам собрать два ответа и понять, что они про одно действие. В батчах с сотнями намерений корреляция по `RequesterId` ломается — один пешке за тик приходит и ammo, и mana от совсем разных событий.
+On top of that: the initiator must collect both responses and figure out that they are about the same action. In batches with hundreds of intents the `RequesterId` correlation breaks down — one pawn within a tick may receive ammo and mana from completely unrelated events.
 
-## Решение
+## Solution
 
-Запрос, задевающий N шин, публикуется **один раз** как `CompoundShotIntent` (или другой композитный тип) с общим `TransactionId`. Специальная система-посредник `CompositeResolutionSystem` подписана на все задействованные шины, собирает по `TransactionId` частичные ответы и публикует итоговый `ShootGranted` либо `ShootRefused` (с `ShotRefusalReason`).
+A request that touches N buses is published **once** as `CompoundShotIntent` (or another composite type) with a shared `TransactionId`. A dedicated mediator system, `CompositeResolutionSystem`, subscribed to every involved bus, collects partial responses by `TransactionId` and publishes the final `ShootGranted` or `ShootRefused` (with `ShotRefusalReason`).
 
-### Последовательность
+### Sequence
 
 ```
  Shooter                 Combat              Inventory           Magic           CompositeResolution
@@ -38,38 +38,38 @@
     │                       │                                                              │
 ```
 
-`CompositeResolutionSystem` живёт в отдельной фазе между сбором намерений и применением — см. [THREADING](./THREADING.md), Phase 2 (Intent Collection).
+`CompositeResolutionSystem` lives in a separate phase between intent collection and application — see [THREADING](./THREADING.md), Phase 2 (Intent Collection).
 
-### Правила определённости
+### Determinism rules
 
-- `TransactionId` монотонен в рамках одного тика: генератор — атомарный счётчик, хранящийся в `CompositeResolutionSystem`.
-- Все частичные ответы помечаются своим `TransactionId`. Без него ответ считается частью обычного Intent/Granted и не участвует в composite-резолюции.
-- `CompositeResolutionSystem` хранит словарь `TransactionId → PartialState` с числом ожидаемых ответов. Как только все ответы собраны, публикуется итог и запись удаляется.
-- Если ответов меньше ожидаемого к концу фазы — транзакция помечается как провисшая, публикуется `ShootRefused` с причиной `PartialTimeout`.
+- `TransactionId` is monotonic within one tick: the generator is an atomic counter held by `CompositeResolutionSystem`.
+- Every partial response carries its `TransactionId`. Without one, a response is treated as part of an ordinary Intent/Granted exchange and does not enter composite resolution.
+- `CompositeResolutionSystem` keeps a `TransactionId → PartialState` dictionary with the expected response count. As soon as every response is collected, the final result is published and the entry is removed.
+- If fewer responses than expected arrive by the end of the phase, the transaction is marked as stranded and `ShootRefused` is published with reason `PartialTimeout`.
 
-### Откат при частичном отказе
+### Rollback on partial refusal
 
-Если одна шина ответила Granted, а вторая — Refused, уже списанный ресурс возвращается Refund-событием на соответствующей шине. Например, `AmmoGranted` означает, что патрон уже зарезервирован в `InventorySystem`. При итоговом `ShootRefused` `CompositeResolutionSystem` публикует `AmmoRefunded` (TODO Фаза 4), и `InventorySystem` отдаёт патрон обратно в склад.
+If one bus answered Granted and the other Refused, the already debited resource is returned via a Refund event on the corresponding bus. For example, `AmmoGranted` means the bullet is already reserved in `InventorySystem`. On final `ShootRefused`, `CompositeResolutionSystem` publishes `AmmoRefunded` (TODO Phase 4), and `InventorySystem` returns the bullet to storage.
 
-Refund-события помечаются `[Deferred]` — их доставка не должна конкурировать с новыми намерениями в той же фазе. Шина, получающая Refund, обрабатывает его в следующей фазе вместе с новыми Intent'ами.
+Refund events are marked `[Deferred]` — their delivery must not compete with new intents in the same phase. The bus receiving a Refund processes it in the next phase alongside new Intents.
 
-## Обобщение
+## Generalization
 
-Любой запрос, затрагивающий более одной шины, идёт через `CompositeResolutionSystem`. Список поддерживаемых композитных намерений:
+Any request that touches more than one bus goes through `CompositeResolutionSystem`. The list of supported composite intents:
 
-- `CompoundShotIntent` — патрон + мана (стрелка с чарами).
-- `CompoundCraftIntent` — материалы + энергия + рабочее место (TODO Фаза 4).
-- `CompoundRitualIntent` — эфир + мана + предмет-якорь (TODO Фаза 6).
+- `CompoundShotIntent` — bullet + mana (enchanted shot).
+- `CompoundCraftIntent` — materials + power + workbench (TODO Phase 4).
+- `CompoundRitualIntent` — ether + mana + anchor item (TODO Phase 6).
 
-Каждое из них описывается своей парой `...Granted`/`...Refused` с соответствующим Refusal-enum'ом.
+Each is described by its own pair of `...Granted` / `...Refused` with a corresponding Refusal enum.
 
-## Родственная задача: объединение урона
+## Related task: damage merging
 
-Тот же паттерн «собрать множество намерений и выдать один детерминированный результат» используется для урона — но с другим посредником: `ComboResolutionSystem`. См. [COMBO_RESOLUTION](./COMBO_RESOLUTION.md). Разница: composite ждёт ответы с разных шин по одной транзакции, combo собирает однородные `DamageIntent` на одну цель и упорядочивает их.
+The same pattern of "collect many intents and emit one deterministic result" is used for damage — but with a different mediator: `ComboResolutionSystem`. See [COMBO_RESOLUTION](./COMBO_RESOLUTION.md). The difference: composite waits for responses from different buses for one transaction; combo collects homogeneous `DamageIntent`s on a single target and orders them.
 
-## См. также
+## See also
 
-- [EVENT_BUS](./EVENT_BUS.md) — двухшаговая модель Intent → Granted.
-- [RESOURCE_MODELS](./RESOURCE_MODELS.md) — выбор между Intent и Lease.
-- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — `ComboResolutionSystem` для урона.
-- [THREADING](./THREADING.md) — фаза Intent Collection.
+- [EVENT_BUS](./EVENT_BUS.md) — the two-step Intent → Granted model.
+- [RESOURCE_MODELS](./RESOURCE_MODELS.md) — choosing between Intent and Lease.
+- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — `ComboResolutionSystem` for damage.
+- [THREADING](./THREADING.md) — the Intent Collection phase.

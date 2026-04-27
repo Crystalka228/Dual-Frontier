@@ -1,61 +1,61 @@
 # DualFrontier.Application
 
-## Назначение
-Связующий слой между доменом (`Core`, `Systems`, `Components`, `Events`, `AI`) и
-презентацией (`Presentation`). Здесь живёт главный цикл (`GameLoop`), сохранения
-(`SaveSystem`), загрузка сценариев (`ScenarioLoader`), загрузчик модов (`ModLoader`)
-и мост в Godot-слой (`PresentationBridge`). Application — единственная сборка,
-которая знает и о домене, и о том, что есть «вышестоящий» слой рендеринга.
+## Purpose
+The glue layer between the domain (`Core`, `Systems`, `Components`, `Events`, `AI`)
+and presentation (`Presentation`). Home of the main loop (`GameLoop`), saving
+(`SaveSystem`), scenario loading (`ScenarioLoader`), the mod loader (`ModLoader`),
+and the bridge into the Godot layer (`PresentationBridge`). Application is the
+only assembly that knows both the domain and the existence of an "upstream"
+rendering layer.
 
-## Зависимости
-- `DualFrontier.Contracts` — интерфейсы (`IMod`, `IModApi`, `IEvent`, `EntityId`, ...)
+## Dependencies
+- `DualFrontier.Contracts` — interfaces (`IMod`, `IModApi`, `IEvent`, `EntityId`, ...)
 - `DualFrontier.Core` — `World`, `SystemBase`, `DomainEventBus`, `GameServices`
-- `DualFrontier.Components` — стандартные компоненты
-- `DualFrontier.Events` — доменные события
-- `DualFrontier.Systems` — игровые системы
-- `DualFrontier.AI` — поведенческие деревья / утилиты для AI
+- `DualFrontier.Components` — standard components
+- `DualFrontier.Events` — domain events
+- `DualFrontier.Systems` — game systems
+- `DualFrontier.AI` — behaviour trees / AI utilities
 
-## Что внутри
-- `Loop/` — главный цикл игры (`GameLoop`, `FrameClock`).
-- `Save/` — сериализация мира (`ISaveSystem`, `SaveSystem`, `SaveFormat`).
-- `Scenario/` — загрузка стартовых сценариев (`ScenarioLoader`, `ScenarioDef`).
-- `Modding/` — загрузчик модов и изолированный `IModApi`
+## Contents
+- `Loop/` — main game loop (`GameLoop`, `FrameClock`).
+- `Save/` — world serialization (`ISaveSystem`, `SaveSystem`, `SaveFormat`).
+- `Scenario/` — start-scenario loading (`ScenarioLoader`, `ScenarioDef`).
+- `Modding/` — mod loader and the isolated `IModApi`
   (`ModLoader`, `ModLoadContext`, `RestrictedModApi`, `ModIsolationException`).
-- `Bridge/` — мост Domain → Presentation через очередь команд
+- `Bridge/` — Domain → Presentation bridge through a command queue
   (`PresentationBridge`, `IRenderCommand`, `Commands/`).
 
-## Правила
-- Application **может** знать о `Core` и `Systems` — это его работа склеивать.
-- Application **не должен** знать о Godot или напрямую вызывать `Presentation`.
-  Связь строго однонаправленная: Domain/Application → `PresentationBridge`
-  (очередь команд) → Presentation читает в главном потоке.
-- Загрузка мода **всегда** идёт через собственный `AssemblyLoadContext`
-  (`ModLoadContext`) с `isCollectible: true`, чтобы обеспечить горячую выгрузку
-  (TechArch 11.8).
-- `SaveSystem.Save/Load` — синхронные. Асинхронные операции I/O выполняет
-  вышестоящий уровень, передающий готовый путь/поток. Это правило из
-  THREADING (см. `docs/THREADING.md`).
+## Rules
+- Application **may** know about `Core` and `Systems` — gluing them is its job.
+- Application **must not** know about Godot or call `Presentation` directly.
+  The link is strictly one-way: Domain/Application → `PresentationBridge`
+  (command queue) → Presentation reads in the main thread.
+- A mod **always** loads through its own `AssemblyLoadContext` (`ModLoadContext`)
+  with `isCollectible: true` to enable hot reload (TechArch 11.8).
+- `SaveSystem.Save/Load` are synchronous. Async I/O is performed by the upstream
+  layer that hands a ready path/stream. This rule comes from THREADING (see
+  `docs/THREADING.md`).
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Обычный старт игры: сценарий + цикл + мост.
-var services = new GameServices(); // из Core
+// A normal game start: scenario + loop + bridge.
+var services = new GameServices(); // from Core
 var bridge   = new PresentationBridge();
 var loop     = new GameLoop(services, bridge);
 
 var scenario = new ScenarioLoader().Load("scenarios/default.json");
-// TODO: создать World по ScenarioDef.
+// TODO: build World from ScenarioDef.
 
 loop.Start();
 ```
 
 ## TODO
-- [x] Фаза 1 — `GameLoop` с accumulator-based фиксированным шагом
-      (30 Hz, пауза, speed x1/x2/x3).
-- [ ] Фаза 1 — `SaveSystem.Save/Load` (binary + header `SaveFormat`).
-- [ ] Фаза 2 — `ModLoader` (`AssemblyLoadContext`, реестр модов, горячая выгрузка).
-- [ ] Фаза 2 — `RestrictedModApi` проксирует вызовы в `Core.GameServices`.
-- [ ] Фаза 3 — подключить `PresentationBridge.DrainCommands` к Godot `_Process`
-      (`PresentationBridge.SetScene` / `EnqueueInput` пока не существует,
-      `GameBootstrap` не реализован).
-- [x] Фаза 3 — `ScenarioLoader` парсит JSON через `System.Text.Json`.
+- [x] Phase 1 — `GameLoop` with accumulator-based fixed step
+      (30 Hz, pause, speed x1/x2/x3).
+- [ ] Phase 1 — `SaveSystem.Save/Load` (binary + `SaveFormat` header).
+- [ ] Phase 2 — `ModLoader` (`AssemblyLoadContext`, mod registry, hot reload).
+- [ ] Phase 2 — `RestrictedModApi` proxies calls into `Core.GameServices`.
+- [ ] Phase 3 — wire `PresentationBridge.DrainCommands` into Godot `_Process`
+      (`PresentationBridge.SetScene` / `EnqueueInput` do not yet exist;
+      `GameBootstrap` is not implemented).
+- [x] Phase 3 — `ScenarioLoader` parses JSON via `System.Text.Json`.

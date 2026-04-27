@@ -1,26 +1,26 @@
 # World Events
 
-## Назначение
-События мирового уровня: изменение эфирных узлов, смена погоды, входящий
-рейд. Широковещательные — подписчиков много (AI, MoodSystem, UI, аудио).
+## Purpose
+World-level events: ether-node changes, weather changes, incoming raids.
+Broadcast events with many subscribers (AI, MoodSystem, UI, audio).
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`.
 
-## Что внутри
-- `EtherNodeChangedEvent.cs` — параметры эфирного узла изменились (уровень/радиус).
-- `WeatherChangedEvent.cs` — сменилась погода.
-- `RaidIncomingEvent.cs` — к колонии приближается рейд.
+## Contents
+- `EtherNodeChangedEvent.cs` — an ether node's parameters changed (level/radius).
+- `WeatherChangedEvent.cs` — the weather changed.
+- `RaidIncomingEvent.cs` — a raid is approaching the colony.
 
-## Правила
-- `EtherNodeChangedEvent` публикуется EtherFieldSystem после пересчёта
-  поля; ManaSystem использует его для пересчёта регенерации маны.
-- `RaidIncomingEvent` — с запасом по времени (фаза подготовки);
-  конкретное столкновение триггерит уже `ShootAttemptEvent` и т. п.
+## Rules
+- `EtherNodeChangedEvent` is published by EtherFieldSystem after a field
+  recompute; ManaSystem uses it to recompute mana regeneration.
+- `RaidIncomingEvent` arrives with lead time (the preparation phase); the
+  actual engagement is then driven by `ShootAttemptEvent` and the like.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// MoodSystem на плохую погоду добавляет штраф:
+// MoodSystem applies a penalty on bad weather:
 _bus.Subscribe<WeatherChangedEvent>(evt =>
 {
     // if (evt.Kind == WeatherKind.Storm) { ... }
@@ -28,5 +28,5 @@ _bus.Subscribe<WeatherChangedEvent>(evt =>
 ```
 
 ## TODO
-- [ ] Определить `WeatherKind` enum (Clear, Rain, Storm, EtherStorm …) — Фаза 4.
-- [ ] Добавить `SeasonChangedEvent` — если будут сезоны, Фаза 6.
+- [ ] Define the `WeatherKind` enum (Clear, Rain, Storm, EtherStorm …) — Phase 4.
+- [ ] Add `SeasonChangedEvent` — if seasons exist, Phase 6.

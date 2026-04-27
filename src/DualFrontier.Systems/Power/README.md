@@ -1,44 +1,43 @@
 # Power Systems
 
-## Назначение
-Сети энергопитания: электрическая сеть, эфирная сеть и
-конвертеры между ними. См. GDD раздел 9 "Энергосистемы".
+## Purpose
+Power-supply networks: the electric grid, the ether grid, and converters
+between them. See GDD section 9 "Power systems".
 
-## Зависимости
-- `DualFrontier.Contracts` — атрибуты, `IWorldBus`.
+## Dependencies
+- `DualFrontier.Contracts` — attributes, `IWorldBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.Building` — `PowerConsumerComponent`,
   `PowerProducerComponent`, `EtherNodeComponent`.
 - `DualFrontier.Events.Power` — `PowerOnlineEvent`,
   `PowerOutageEvent`, `EtherNodeChangedEvent`.
 
-## Что внутри
-- `ElectricGridSystem.cs` — NORMAL: баланс генерации/потребления.
-- `EtherGridSystem.cs` — NORMAL: сеть эфирных узлов.
-- `ConverterSystem.cs` — NORMAL: эфир→электричество (КПД 30% per GDD 9).
+## Contents
+- `ElectricGridSystem.cs` — NORMAL: balance of generation/consumption.
+- `EtherGridSystem.cs` — NORMAL: ether-node network.
+- `ConverterSystem.cs` — NORMAL: ether → electricity (30% efficiency per GDD 9).
 
-## Правила
-- Шина домена — `nameof(IGameServices.World)` (электрика и эфир
-  идут через "мир", пока нет отдельной шины Power).
-- Конвертер — КПД 30% per GDD 9: 10 эфира → 3 электричества.
-- При сбое публикуем `PowerOutageEvent`, чтобы Presentation мог
-  мигнуть лампочками.
+## Rules
+- Domain bus — `nameof(IGameServices.World)` (electricity and ether
+  go through "world" until a dedicated Power bus exists).
+- Converter — 30% efficiency per GDD 9: 10 ether → 3 electricity.
+- On a fault publish `PowerOutageEvent` so Presentation can blink the lights.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Внутри ConverterSystem:
-// produced = incomingEther * 0.3f; // КПД 30% per GDD 9
+// Inside ConverterSystem:
+// produced = incomingEther * 0.3f; // 30% efficiency per GDD 9
 ```
 
 ## TODO
-- [x] `ElectricGridSystem` — приоритетное распределение ватт
-      (sort consumers by Priority desc, allocate until supply exhausted,
-      publish `PowerGrantedEvent` per consumer и `GridOverloadEvent`
-      когда хотя бы один потребитель остался без питания).
-- [x] `ConverterSystem` — 30% КПД эфир↔электричество (зеркалит
-      `consumer.IsPowered` в `producer.CurrentWatts`).
-- [ ] Зарегистрировать `ConverterSystem` в `GameBootstrap` —
-      требует `[Deferred]` семантики в `DomainEventBus` (цикл
-      `ElectricGrid ↔ Converter` по `PowerConsumer/PowerProducer`).
-- [ ] Реализовать `EtherGridSystem`: плотность и передача по узлам.
-- [ ] Рассмотреть выделение отдельного `IPowerBus` при росте трафика.
+- [x] `ElectricGridSystem` — priority watt distribution
+      (sort consumers by Priority desc, allocate until supply is exhausted,
+      publish `PowerGrantedEvent` per consumer and `GridOverloadEvent`
+      whenever any consumer ends up unpowered).
+- [x] `ConverterSystem` — 30% efficiency ether ↔ electricity (mirrors
+      `consumer.IsPowered` into `producer.CurrentWatts`).
+- [ ] Register `ConverterSystem` in `GameBootstrap` —
+      requires `[Deferred]` semantics in `DomainEventBus` (cycle
+      `ElectricGrid ↔ Converter` via `PowerConsumer/PowerProducer`).
+- [ ] Implement `EtherGridSystem`: node density and transfer.
+- [ ] Consider splitting out a dedicated `IPowerBus` once traffic grows.

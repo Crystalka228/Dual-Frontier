@@ -1,10 +1,10 @@
-# Стандарты кода
+# Coding standards
 
-Единый стиль кода — это не эстетика, а инструмент навигации: читая чужой файл, разработчик не тратит внимание на расшифровку чужих привычек. В Dual Frontier стандарты формализованы и проверяются анализатором; отклонения ловятся на `dotnet build` с `TreatWarningsAsErrors`.
+A single code style is not aesthetics — it is a navigation tool: when reading another file, a developer does not spend attention decoding someone else's habits. In Dual Frontier the standards are formalized and checked by the analyzer; deviations are caught by `dotnet build` with `TreatWarningsAsErrors`.
 
 ## Naming
 
-### Публичные и protected члены — PascalCase
+### Public and protected members — PascalCase
 
 ```csharp
 public sealed class HealthComponent : IComponent
@@ -15,75 +15,75 @@ public sealed class HealthComponent : IComponent
 }
 ```
 
-### Приватные поля — _camelCase
+### Private fields — `_camelCase`
 
 ```csharp
 private readonly Dictionary<Type, IComponentStore> _stores = new();
 private int _nextEntityId;
 ```
 
-Подчёркивание отличает приватное поле от параметра метода и локальной переменной в один взгляд. IDE подсвечивает иначе, но код всё равно должен читаться в `git diff` и `github review`.
+The underscore tells a private field apart from a method parameter or a local variable at a glance. The IDE highlights them differently, but the code still must be readable in `git diff` and `github review`.
 
-### Константы — PascalCase
+### Constants — PascalCase
 
 ```csharp
 public const int MaxPawnsPerColony = 100;
 ```
 
-### Интерфейсы — префикс `I`
+### Interfaces — `I` prefix
 
 ```csharp
 public interface IEventBus { /* ... */ }
 public interface IComponent { }
 ```
 
-### Generic-параметры — `T` или `TContext`-стиль
+### Generic parameters — `T` or `TContext`-style
 
 ```csharp
 public interface IComponentStore<T> where T : IComponent { /* ... */ }
 ```
 
-### Файлы и namespace совпадают с путём
+### Files and namespaces match the path
 
-Файл `src/DualFrontier.Core/ECS/World.cs` содержит `namespace DualFrontier.Core.ECS;` и один тип `World`. Обратное тоже верно: namespace всегда отражает физическую структуру каталогов.
+The file `src/DualFrontier.Core/ECS/World.cs` contains `namespace DualFrontier.Core.ECS;` and a single `World` type. The reverse holds too: a namespace always mirrors the physical directory structure.
 
 ## File-scoped namespaces
 
-Используется только file-scoped синтаксис (C# 10+):
+Only the file-scoped syntax (C# 10+) is used:
 
 ```csharp
-// ПРАВИЛЬНО
+// CORRECT
 namespace DualFrontier.Core.ECS;
 
 public sealed class World { /* ... */ }
 
-// НЕПРАВИЛЬНО — лишний уровень вложенности
+// WRONG — an extra nesting level
 namespace DualFrontier.Core.ECS
 {
     public sealed class World { /* ... */ }
 }
 ```
 
-Меньше отступов → больше полезного кода на экран. Проверяется анализатором IDE0161.
+Less indentation → more useful code on screen. Checked by analyzer IDE0161.
 
 ## Nullable enabled
 
-Все проекты собираются с `<Nullable>enable</Nullable>` в `Directory.Build.props`. Никаких `#nullable disable`, никаких `!` без обоснования.
+Every project is built with `<Nullable>enable</Nullable>` in `Directory.Build.props`. No `#nullable disable`; no `!` without justification.
 
 ```csharp
-// ПРАВИЛЬНО
+// CORRECT
 public string? OptionalName { get; init; }
 public string RequiredName { get; init; } = "";
 
-// ПЛОХО
-public string SomeName { get; init; } = null!;  // только в DTO с required и init-only.
+// BAD
+public string SomeName { get; init; } = null!;  // only in a DTO with required and init-only.
 ```
 
-Если API должен возвращать `null`, он возвращает `T?`. Если не должен — возвращает `T`. `null` в непометенном поле — повод для баг-репорта.
+If an API must return `null`, it returns `T?`. If it must not, it returns `T`. A `null` in an unmarked field is grounds for a bug report.
 
-## Комментарии на русском — доменная логика
+## Russian-language domain comments
 
-Внутренняя доменная логика прокомментирована на русском. Это язык проекта: GDD, тех-архитектура, issues, ревью. Мешать русский и английский в одном файле комментарии не нужно.
+Internal domain logic is commented in Russian. That is the project's working language: GDD, tech architecture, issues, reviews. Mixing Russian and English in one file's comments is unnecessary.
 
 ```csharp
 // Эфирный срыв: маг работает с кристаллом выше своего уровня.
@@ -95,11 +95,11 @@ if (crystal.Tier > mage.EtherLevel)
 }
 ```
 
-Доменные термины фиксируются на русском: "пешка", "голем", "эфирный узел", "ритуал", "кристалл-боеприпас".
+Domain terms stay in Russian inside comments: "пешка" (pawn), "голем" (golem), "эфирный узел" (ether node), "ритуал" (ritual), "кристалл-боеприпас" (ammo crystal).
 
-## XML docs на английском — публичный API
+## English XML docs — public API
 
-Публичный API — всё, что видно за пределами сборки. Для него XML-документация пишется по-английски: документация генерируется в `bin/` и поставляется вместе с nuget-пакетом, её может читать любой сторонний разработчик, в том числе не говорящий по-русски.
+The public API is everything visible outside the assembly. Its XML documentation is written in English: docs are generated into `bin/` and shipped with the NuGet package, where any third-party developer (including non-Russian speakers) may read them.
 
 ```csharp
 /// <summary>
@@ -112,31 +112,31 @@ if (crystal.Tier > mage.EtherLevel)
 public void Publish<T>(T evt) where T : IEvent;
 ```
 
-Правило разделения: `/// <summary>` + `<remarks>` на английском; `//` inline-комментарий про конкретную формулу или геймдизайн — на русском.
+Split rule: `/// <summary>` + `<remarks>` are in English; `//` inline comments about a specific formula or game-design point are in Russian.
 
-## Один класс — один файл
+## One class per file
 
-Принцип навигации: открыл IDE → ввёл имя класса → увидел файл. Исключения очень узкие:
+Navigation principle: open the IDE → type the class name → see the file. The exceptions are very narrow:
 
-- Enum или `readonly struct` длиной до 10 строк, логически парные основному классу (например, `HealthComponent` и связанный с ним `HealthStatus` enum).
-- Private вложенный класс, логически неотрывный от owner (state machine sub-classes).
+- An enum or `readonly struct` up to 10 lines, logically paired with the main class (for example, `HealthComponent` and its related `HealthStatus` enum).
+- A private nested class logically inseparable from its owner (state-machine sub-classes).
 
-Никаких файлов с 5+ классами. Никаких "утилитных" свалок `Helpers.cs` на 500 строк.
+No files with 5+ classes. No "utility" dumping grounds like a 500-line `Helpers.cs`.
 
-## Порядок членов класса
+## Class member order
 
-Единый порядок снизу вверх: чем ближе к верху — тем раньше нужно при чтении.
+A single order, top-down by what the reader needs first:
 
-1. `const`-поля.
-2. `static readonly` поля.
-3. `private readonly` поля.
-4. `private` мутабельные поля.
-5. Конструкторы.
-6. `public` свойства.
-7. `public` методы.
-8. `protected` методы.
-9. `private` методы.
-10. Вложенные типы.
+1. `const` fields.
+2. `static readonly` fields.
+3. `private readonly` fields.
+4. `private` mutable fields.
+5. Constructors.
+6. `public` properties.
+7. `public` methods.
+8. `protected` methods.
+9. `private` methods.
+10. Nested types.
 
 ```csharp
 public sealed class DomainEventBus : IEventBus
@@ -159,17 +159,17 @@ public sealed class DomainEventBus : IEventBus
 }
 ```
 
-Ревьюер видит сразу — какие поля, какой ctor, какой публичный API. Не надо скроллить.
+The reviewer sees at once — which fields, which constructor, which public API. No need to scroll.
 
-## Дополнительные правила
+## Additional rules
 
-- `using` — sorted, сначала `System.*`, потом `DualFrontier.*`, потом прочие. Автоформат IDE.
-- `var` — когда тип очевиден из RHS (`new`, cast, factory). Иначе — явный тип.
-- `async` запрещён в Domain (см. [THREADING](./THREADING.md)). Разрешён в Application и Presentation.
-- Магические числа — `const` с именем, описывающим смысл. `4.2f` в коде без комментария — смертный грех.
-- Возврат `null` из публичного API — только когда это явная часть контракта (`TryGet` и `T? FindBy(...)`).
+- `using` — sorted: `System.*` first, then `DualFrontier.*`, then the rest. IDE auto-format.
+- `var` — when the type is obvious from the RHS (`new`, cast, factory). Otherwise an explicit type.
+- `async` is forbidden in Domain (see [THREADING](./THREADING.md)). Allowed in Application and Presentation.
+- Magic numbers go into a `const` with a name that describes the meaning. `4.2f` in code without a comment is a mortal sin.
+- Returning `null` from a public API only when it is an explicit part of the contract (`TryGet` and `T? FindBy(...)`).
 
-## См. также
+## See also
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md)

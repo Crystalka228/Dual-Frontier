@@ -1,26 +1,26 @@
-# Контрактная система
+# Contract system
 
-Сборка `DualFrontier.Contracts` — единственный модуль, который видят все слои: ядро, системы, моды, внешние инструменты. Контракт — это публичный интерфейс, декларирующий намерение (что можно сделать), без подсказок о реализации. Контракт не меняется ради удобства: либо новое событие, либо новая версия интерфейса.
+The `DualFrontier.Contracts` assembly is the only module visible to every layer: the core, the systems, the mods, and external tools. A contract is a public interface that declares intent (what can be done) with no hints about implementation. A contract does not change for convenience: either add a new event, or cut a new interface version.
 
-## Маркер-интерфейсы
+## Marker interfaces
 
-Четыре базовых маркер-интерфейса не имеют методов и служат лишь для типизации. Они позволяют планировщику и шине событий работать обобщённо, не завися от конкретных игровых типов.
+Four base marker interfaces have no methods and serve only for typing. They let the scheduler and the event bus operate generically, without depending on concrete game types.
 
 ### IEvent
 
-Маркер для любого сообщения, летящего по шине. События — `record`-ы с `init`-свойствами, неизменяемые. Примеры: `ShootAttemptEvent`, `AmmoIntent`, `ManaGranted`, `DeathEvent`.
+Marker for any message traveling on a bus. Events are `record`s with `init` properties, immutable. Examples: `ShootAttemptEvent`, `AmmoIntent`, `ManaGranted`, `DeathEvent`.
 
-### IQuery и IQueryResult
+### IQuery and IQueryResult
 
-Синхронный запрос в шину с типизированным ответом. Используется редко — только для чтения агрегированных данных (например, `GetPawnsInRadiusQuery`). Большая часть взаимодействия проходит через двухшаговую модель Intent→Granted.
+A synchronous bus request with a typed response. Used sparingly — only for reading aggregated data (for example, `GetPawnsInRadiusQuery`). Most interactions go through the two-step Intent→Granted model.
 
 ### ICommand
 
-Императивное намерение изменить состояние. В отличие от события `ICommand` адресный — у него есть ожидаемый обработчик. В Dual Frontier команды в основном живут в слое Application для `IRenderCommand` (Domain → Presentation). Доменная логика предпочитает события.
+An imperative intent to change state. Unlike an event, an `ICommand` is addressed — it has an expected handler. In Dual Frontier, commands live mostly in the Application layer for `IRenderCommand` (Domain → Presentation). Domain logic prefers events.
 
 ### IComponent
 
-Маркер для чистых данных, прикреплённых к `EntityId`. Никакой логики в компонентах. Пример объявления:
+Marker for pure data attached to an `EntityId`. No logic in components. Example declaration:
 
 ```csharp
 public sealed class HealthComponent : IComponent
@@ -31,9 +31,9 @@ public sealed class HealthComponent : IComponent
 }
 ```
 
-## Шесть доменных шин
+## Six domain buses
 
-Одна шина на всё — узкое горло под нагрузкой. Lock contention при 100+ системах. Решение: отдельная шина на каждый домен. Меньше contention, проще дебажить, легче профилировать.
+A single bus for everything is a bottleneck under load. Lock contention at 100+ systems. The solution: a separate bus per domain. Less contention, easier to debug, easier to profile.
 
 ```csharp
 public interface IGameServices
@@ -43,24 +43,24 @@ public interface IGameServices
     IMagicBus     Magic     { get; }
     IWorldBus     World     { get; }
     IPawnBus      Pawns     { get; }
-    IPowerBus     Power     { get; } // Введена в v0.3 §13.1
+    IPowerBus     Power     { get; } // Introduced in v0.3 §13.1
 }
 ```
 
-| Шина          | Кто пишет                        | Кто читает                           | Ключевые события                                  |
+| Bus           | Writers                          | Readers                              | Key events                                        |
 |---------------|----------------------------------|--------------------------------------|---------------------------------------------------|
 | CombatBus     | CombatSystem, ProjectileSystem   | DamageSystem, StatusEffectSystem     | ShootAttempt, DamageEvent, DeathEvent             |
 | InventoryBus  | HaulSystem, CraftSystem          | InventorySystem, JobSystem           | AmmoIntent/Granted, ItemAdded/Removed/Reserved    |
 | MagicBus      | SpellSystem, GolemSystem         | ManaSystem, EtherGrowthSystem        | ManaIntent/Granted, SpellCast, EtherSurge         |
 | PawnBus       | NeedsSystem, MoodSystem          | JobSystem, SocialSystem              | MoodBreak, DeathReaction, SkillGain               |
 | WorldBus      | BiomeSystem, WeatherSystem       | EtherGridSystem, RaidSystem          | EtherNodeChanged, WeatherChanged, RaidIncoming    |
-| PowerBus      | ElectricGridSystem, ConverterSystem | ElectricGridSystem, потребители, UI | PowerRequest, PowerGranted, GridOverload, ConverterPowerOutput |
+| PowerBus      | ElectricGridSystem, ConverterSystem | ElectricGridSystem, consumers, UI | PowerRequest, PowerGranted, GridOverload, ConverterPowerOutput |
 
-Каждая шина — собственный `ConcurrentDictionary` подписчиков. `CombatSystem` пишет только в `Combat`, `InventorySystem` — только в `Inventory`. Нет общей точки блокировки. Система декларирует в `[SystemAccess]` имя используемой шины, и сторож проверяет, что публикация идёт только туда.
+Each bus is its own `ConcurrentDictionary` of subscribers. `CombatSystem` writes only to `Combat`; `InventorySystem` writes only to `Inventory`. There is no shared lock point. A system declares the bus it uses inside `[SystemAccess]`, and the isolation guard verifies that publication targets only that bus.
 
-## IModContract — API между модами
+## IModContract — API between mods
 
-Моды не должны ссылаться друг на друга напрямую: это создаёт цикл загрузки и жёсткие зависимости. Вместо этого мод может опубликовать интерфейс-контракт, реализующий `IModContract`. Другой мод запрашивает контракт по типу:
+Mods MUST NOT reference each other directly: that creates a loading cycle and hard dependencies. Instead, a mod can publish a contract interface that implements `IModContract`. Another mod requests the contract by type:
 
 ```csharp
 public interface IVoidMagicContract : IModContract
@@ -77,43 +77,43 @@ public class ArtifactMod : IMod
         {
             api.Subscribe<VoidSpellCastEvent>(OnVoidMagicDetected);
         }
-        // Мод VoidMagic не загружен — просто не подписываемся.
-        // Нет краша, нет жёсткой зависимости.
+        // VoidMagic mod is not loaded — simply do not subscribe.
+        // No crash, no hard dependency.
     }
 }
 ```
 
-Контракт — это тот же публичный интерфейс, но размещённый в сборке, которую оба мода знают. Обычно это отдельная сборка `ModName.Contracts`, опубликованная как nuget или лежащая рядом в каталоге `mods/`.
+A contract is the same public interface, but housed in an assembly both mods know. Typically this is a separate `ModName.Contracts` assembly, published as a NuGet package or sitting alongside in the `mods/` directory.
 
-## Эволюция контрактов
+## Contract evolution
 
-Контракты — долгожители. Любое изменение делится на ломающее и не ломающее.
+Contracts are long-lived. Every change is either breaking or non-breaking.
 
-### Не ломающее (разрешено всегда)
+### Non-breaking (always allowed)
 
-- Добавление нового `IEvent`, `IQuery`, `ICommand`, `IComponent`.
-- Добавление нового поля с `init` в `record` (старые `record`-ы не упомянут — не сломаются).
-- Добавление метода в интерфейс с `default` реализацией (C# 8+).
-- Добавление новой доменной шины (новое свойство в `IGameServices`).
+- Adding a new `IEvent`, `IQuery`, `ICommand`, or `IComponent`.
+- Adding a new `init` field to a `record` (old `record`s that do not mention it do not break).
+- Adding a method to an interface with a `default` implementation (C# 8+).
+- Adding a new domain bus (a new property on `IGameServices`).
 
-### Ломающее (только с мажорной версией)
+### Breaking (only with a major version bump)
 
-- Удаление или переименование поля в `IEvent`.
-- Удаление метода из интерфейса.
-- Изменение типа параметра в существующем методе.
-- Изменение семантики фазы (было `[Deferred]`, стало синхронным).
+- Removing or renaming a field on an `IEvent`.
+- Removing a method from an interface.
+- Changing the type of a parameter on an existing method.
+- Changing phase semantics (was `[Deferred]`, became synchronous).
 
-Ломающие изменения требуют поднять мажорную версию сборки и обновить документ миграции.
+Breaking changes require bumping the assembly's major version and updating the migration document.
 
-## Версионирование
+## Versioning
 
-`DualFrontier.Contracts` использует семантическое версионирование `MAJOR.MINOR.PATCH`.
+`DualFrontier.Contracts` uses semantic versioning `MAJOR.MINOR.PATCH`.
 
-- `MAJOR` — ломающие изменения. Старые моды требуют пересборки.
-- `MINOR` — добавление контрактов. Старые моды работают.
-- `PATCH` — документация, XML-комментарии, внутренние правки.
+- `MAJOR` — breaking changes. Old mods require rebuilding.
+- `MINOR` — added contracts. Old mods continue to work.
+- `PATCH` — documentation, XML comments, internal fixes.
 
-Манифест мода (`mod.manifest.json`) декларирует минимально требуемую версию контрактов. Загрузчик отказывается грузить мод, построенный против более новой мажорной версии, чем у ядра.
+A mod manifest (`mod.manifest.json`) declares the minimum required contracts version. The loader refuses to load a mod built against a major version newer than the core.
 
 ```json
 {
@@ -124,7 +124,7 @@ public class ArtifactMod : IMod
 }
 ```
 
-## См. также
+## See also
 
 - [EVENT_BUS](./EVENT_BUS.md)
 - [MODDING](./MODDING.md)

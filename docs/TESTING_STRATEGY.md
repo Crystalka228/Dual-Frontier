@@ -1,10 +1,10 @@
-# Стратегия тестирования
+# Testing strategy
 
-Тесты в Dual Frontier — первая линия защиты архитектурных гарантий. Сторож изоляции, граф зависимостей, шина событий — всё это бесполезно, если нет тестов, которые при регрессии падают. В проекте используется xUnit + FluentAssertions; моки — только там, где нельзя подставить реальный компонент. Тестовые проекты сгруппированы по сборкам, которые проверяют.
+Tests in Dual Frontier are the first line of defense for architectural guarantees. The isolation guard, the dependency graph, the event bus — all of these are useless without tests that fail on regression. The project uses xUnit + FluentAssertions; mocks appear only where a real component cannot be substituted. Test projects are grouped by the assemblies they verify.
 
-## Unit тесты
+## Unit tests
 
-Уровень: один класс или одна пара классов в изоляции. Цель: поймать логические ошибки на минимальной поверхности.
+Scope: one class, or one pair of classes, in isolation. Goal: catch logic errors on the minimum surface.
 
 ### ComponentStore
 
@@ -37,26 +37,26 @@ public class ComponentStoreTests
 }
 ```
 
-Покрытие: Add, Remove, Get, Has, Count, iteration, SparseSet growth, version mismatch.
+Coverage: Add, Remove, Get, Has, Count, iteration, SparseSet growth, version mismatch.
 
 ### EventBus
 
-- `Publish` доставляет событие всем подписчикам.
-- `Unsubscribe` удаляет обработчик, следующий `Publish` его не вызывает.
-- `Subscribe` во время `Publish` не ломает итерацию.
-- `[Deferred]` событие не доставляется синхронно — только после `FlushDeferred`.
-- `[Immediate]` событие прерывает обработку и доставляется раньше остальных.
+- `Publish` delivers the event to every subscriber.
+- `Unsubscribe` removes the handler; the next `Publish` does not call it.
+- `Subscribe` during `Publish` does not break iteration.
+- A `[Deferred]` event is not delivered synchronously — only after `FlushDeferred`.
+- An `[Immediate]` event preempts processing and is delivered ahead of others.
 
 ### DependencyGraph
 
-- Две системы без общих WRITE попадают в одну фазу.
-- Система-писатель и система-читатель одного компонента — в разных фазах.
-- Цикл в графе обнаруживается и кидает `CyclicDependencyException`.
-- Конфликт записи двумя системами в одну фазу — ошибка.
+- Two systems without shared WRITES land in the same phase.
+- A writer and a reader of the same component land in different phases.
+- A cycle in the graph is detected and throws `CyclicDependencyException`.
+- A write conflict between two systems in one phase is an error.
 
-## Integration тесты через шину
+## Bus-driven integration tests
 
-Уровень: несколько систем работают вместе через шину, без мока шины. Цель: убедиться, что декларация доступа и порядок фаз действительно производят ожидаемый сценарий.
+Scope: several systems work together through the bus, without mocking the bus. Goal: confirm that the access declaration and the phase order genuinely produce the expected scenario.
 
 ```csharp
 [Fact]
@@ -71,16 +71,16 @@ public void CombatSystem_publishes_AmmoIntent_InventorySystem_responds_with_Gran
     fixture.World.AddComponent(shooter, new WeaponComponent { RequiredAmmo = AmmoType.Rifle });
     fixture.World.AddComponent(shooter, new PositionComponent { Position = new GridVector(0, 0) });
 
-    fixture.Tick(3); // 3 фазы: Intent → Granted → ShootAttempt
+    fixture.Tick(3); // 3 phases: Intent → Granted → ShootAttempt
     fixture.PublishedEvents<AmmoGranted>().Should().ContainSingle(e => e.RequesterId == shooter);
 }
 ```
 
-`SchedulerFixture` собирает мини-планировщик из реального `ParallelSystemScheduler` и реального `World`. Моков нет. Это тяжелее unit-теста, но покрывает реальное взаимодействие.
+`SchedulerFixture` builds a mini scheduler from the real `ParallelSystemScheduler` and the real `World`. No mocks. This is heavier than a unit test, but it covers real interaction.
 
-## Isolation тесты — сторож ловит
+## Isolation tests — the guard catches
 
-Критически важный класс тестов: подтверждают, что `SystemExecutionContext` действительно крашит нарушителей.
+A critically important test class: it confirms that `SystemExecutionContext` actually crashes violators.
 
 ```csharp
 [Fact]
@@ -92,13 +92,13 @@ public void System_reading_undeclared_component_throws_IsolationViolation()
     action.Should()
           .Throw<IsolationViolationException>()
           .WithMessage("*WrongSystem*HealthComponent*")
-          .Which.Message.Should().Contain("Добавь: [SystemAccess");
+          .Which.Message.Should().Contain("Add: [SystemAccess");
 }
 
 [Fact]
 public void System_requesting_GetSystem_throws_in_Release_too()
 {
-    // Даже с DEBUG_SYMBOLS_OFF тест должен падать.
+    // Even with DEBUG_SYMBOLS_OFF the test must fail.
 }
 
 [Fact]
@@ -108,11 +108,11 @@ public void System_publishing_to_wrong_bus_throws()
 }
 ```
 
-Список всех нарушений из [ISOLATION](./ISOLATION.md) должен иметь парный тест. Без этих тестов архитектурная гарантия остаётся маркетингом.
+Every violation listed in [ISOLATION](./ISOLATION.md) MUST have a paired test. Without these tests the architectural guarantee remains marketing.
 
-## Modding тесты — мод не видит internals
+## Modding tests — the mod sees no internals
 
-Проверяют, что `AssemblyLoadContext` физически блокирует доступ к ядру.
+These verify that `AssemblyLoadContext` physically blocks access to the core.
 
 ```csharp
 [Fact]
@@ -149,17 +149,17 @@ public void Mod_Unload_releases_AssemblyLoadContext()
 }
 ```
 
-Тестовые fixture-моды живут в `tests/fixtures/*` и собираются в CI перед основным test-run.
+Fixture mods live in `tests/fixtures/*` and are built in CI before the main test run.
 
-## Performance тесты
+## Performance tests
 
-Бенчмарки (BenchmarkDotNet) в отдельном проекте `tests/DualFrontier.Core.Benchmarks`. Нулевой оверхед на обычный test-run: бенчмарки не запускаются через `dotnet test`, только через `dotnet run -c Release`.
+Benchmarks (BenchmarkDotNet) live in a separate `tests/DualFrontier.Core.Benchmarks` project. Zero overhead on a regular test run: benchmarks are not invoked through `dotnet test`, only through `dotnet run -c Release`.
 
-Regression gates в CI: `PerformanceGates.cs` сравнивает результаты с baseline и падает при ухудшении больше чем на 10%. Подробности — [PERFORMANCE](./PERFORMANCE.md).
+Regression gates in CI: `PerformanceGates.cs` compares results to the baseline and fails when degradation exceeds 10%. Details: [PERFORMANCE](./PERFORMANCE.md).
 
 ## dotnet test
 
-Структура:
+Layout:
 
 ```
 tests/
@@ -186,17 +186,17 @@ tests/
   DualFrontier.Core.Benchmarks/       # BenchmarkDotNet
 ```
 
-Локальный прогон:
+Local run:
 
 ```
-dotnet test                          # все тесты
+dotnet test                          # all tests
 dotnet test tests/DualFrontier.Core.Tests
 dotnet test --filter "FullyQualifiedName~Isolation"
 ```
 
-CI gate: красная сборка при падении любого теста или при нарушении performance-порога. Пропускать тесты флагом `[Skip]` нельзя без задокументированной issue.
+CI gate: red build on any test failure or any performance-threshold violation. Skipping tests with `[Skip]` is not allowed without a documented issue.
 
-## См. также
+## See also
 
 - [ISOLATION](./ISOLATION.md)
 - [PERFORMANCE](./PERFORMANCE.md)

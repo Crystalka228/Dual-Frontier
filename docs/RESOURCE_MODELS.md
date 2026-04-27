@@ -1,73 +1,73 @@
-# Модели управления ресурсами
+# Resource models
 
-Ресурс в Dual Frontier — это любая величина, которую одна система расходует, а другая учитывает: патроны в инвентаре, мана мага, прочность щита, слоты ритуала. Раньше каждая система выбирала способ запроса по ощущениям, и в итоге один и тот же сценарий в разных местах писался по-разному. v0.2 фиксирует две модели и правило выбора между ними.
+A resource in Dual Frontier is any quantity that one system spends and another tracks: ammunition in inventory, a mage's mana, shield durability, ritual slots. Previously every system picked a request style by feel, and the same scenario ended up written differently in different places. v0.2 pins two models and a rule for choosing between them.
 
-## Две модели
+## Two models
 
-Модель выбирается по одному вопросу: расходуется ресурс один раз или непрерывно.
+The model is chosen by a single question: is the resource consumed once or continuously?
 
-### Intent → Granted/Refused — дискретный запрос
+### Intent → Granted/Refused — discrete request
 
-Используется для одноразового расхода. Шаг — атомарен: либо ресурс выдан и списан, либо отказано. Примеры:
+Used for one-shot consumption. The step is atomic: either the resource is granted and debited, or refused. Examples:
 
-- Один патрон для выстрела (`AmmoIntent` → `AmmoGranted` / `AmmoRefused`).
-- Одиночный заряд маны на мгновенное заклинание (`ManaIntent` → `ManaGranted` / `ManaRefused`).
-- Одноразовая цель для задачи (`TargetIntent` → `TargetGranted` / `TargetRefused`).
+- One bullet for a shot (`AmmoIntent` → `AmmoGranted` / `AmmoRefused`).
+- A single mana charge for an instant spell (`ManaIntent` → `ManaGranted` / `ManaRefused`).
+- A one-shot target for a job (`TargetIntent` → `TargetGranted` / `TargetRefused`).
 
-Двухшаговый хендшейк описан в [EVENT_BUS](./EVENT_BUS.md): публикация намерения в одной фазе, батч-ответ в следующей.
+The two-step handshake is described in [EVENT_BUS](./EVENT_BUS.md): publish the intent in one phase, batch response in the next.
 
-### Lease (аренда) — непрерывный расход
+### Lease — continuous consumption
 
-Используется, когда ресурс утекает каждый тик, пока действие длится. Примеры:
+Used when the resource drains every tick while the action lasts. Examples:
 
-- Концентрация заклинания (канал): мана списывается каждый тик, пока маг держит канал.
-- Поддержка щита: прочность или мана щита уменьшается, пока щит поднят.
-- Активный ritual: эфир дренится, пока ритуал идёт.
+- Spell concentration (channel): mana drains every tick while the mage holds the channel.
+- Shield maintenance: shield durability or mana decreases while the shield is up.
+- Active ritual: ether drains while the ritual runs.
 
-Lease — reserve-then-consume. При открытии сразу резервируется `MinDurationTicks * DrainPerTick`: это гарантирует, что lease не сорвётся на первом же тике из-за расхода параллельным намерением. После резерва дренаж идёт по факту.
+Lease is reserve-then-consume. On open, `MinDurationTicks * DrainPerTick` is reserved immediately: this guarantees that the lease will not abort on the very first tick due to a parallel intent's spend. After the reservation, drain proceeds as the action plays out.
 
 ```
 Open → Active (drain per tick) → Closed
 ```
 
-Жизненный цикл и события описаны в разделе «Модель Lease» документа [EVENT_BUS](./EVENT_BUS.md).
+The lifecycle and events are described in the "Lease model" section of [EVENT_BUS](./EVENT_BUS.md).
 
-## Таблица выбора
+## Choice table
 
-| Сценарий                              | Модель           | Пример события                                  |
+| Scenario                              | Model            | Example event                                    |
 |---------------------------------------|------------------|--------------------------------------------------|
-| Выстрел, один патрон                  | Intent           | `AmmoIntent` → `AmmoGranted`                    |
-| Мгновенное заклинание, фикс. мана     | Intent           | `ManaIntent` → `ManaGranted`                    |
-| Запрос цели для задачи                | Intent           | `TargetIntent` → `TargetGranted`                 |
-| Канал заклинания, дрен маны/тик       | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
-| Поддержка щита                        | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
-| Активный ritual                        | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
+| Shot, single bullet                   | Intent           | `AmmoIntent` → `AmmoGranted`                     |
+| Instant spell, fixed mana             | Intent           | `ManaIntent` → `ManaGranted`                     |
+| Target request for a job              | Intent           | `TargetIntent` → `TargetGranted`                 |
+| Spell channel, mana drain per tick    | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
+| Shield maintenance                    | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
+| Active ritual                         | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
 
-## Правило выбора
+## Choice rule
 
-- Если ресурс расходуется **один раз** за действие — Intent.
-- Если ресурс расходуется **каждый тик** — Lease.
+- If the resource is spent **once** per action — Intent.
+- If the resource is spent **every tick** — Lease.
 
-Спорные случаи решаются в пользу Lease, если длительность не ограничена одним тиком: проще закрыть lease явным событием, чем эмулировать непрерывность цепочкой Intent'ов каждый тик.
+Edge cases resolve in favor of Lease when the duration is not bounded to a single tick: it is simpler to close a lease with an explicit event than to emulate continuity through a chain of per-tick Intents.
 
-## Reserve-then-consume в деталях
+## Reserve-then-consume in detail
 
-При `ManaLeaseOpenRequest` регистратор аренды (`ManaLeaseRegistry`) проверяет наличие `MinDurationTicks * DrainPerTick` маны. Если не хватает — `ManaLeaseRefused` с `RefusalReason`. Если хватает — резерв снимается с `ManaComponent` немедленно, lease получает `LeaseId` и публикуется `ManaLeaseOpened`. Далее каждый тик `ManaSystem` дренит `DrainPerTick` из уже зарезервированного запаса; при истощении резерва lease продлевается либо закрывается.
+On `ManaLeaseOpenRequest` the lease registry (`ManaLeaseRegistry`) checks for `MinDurationTicks * DrainPerTick` of mana. If insufficient — `ManaLeaseRefused` with `RefusalReason`. If sufficient — the reserve is debited from `ManaComponent` immediately, the lease receives a `LeaseId`, and `ManaLeaseOpened` is published. From there each tick `ManaSystem` drains `DrainPerTick` from the already reserved pool; on reserve exhaustion the lease either extends or closes.
 
-Это отличается от наивной схемы «проверить на старте, списывать каждый тик»: при наивной схеме параллельное намерение может съесть ману до первого дрена и lease сорвётся, хотя игрок уже увидел анимацию старта.
+This differs from the naive scheme of "check at start, debit per tick": under the naive scheme a parallel intent can eat the mana before the first drain and the lease aborts even though the player has already seen the start animation.
 
-Закрытие lease:
+Lease closure:
 
-- Явное событие `ManaLeaseClosed` (`[Deferred]`) по инициативе владельца.
-- Истечение `MaxDurationTicks`.
-- Срыв — недостаток маны даже после продления.
-- Смерть владельца (`DeathEvent`).
+- Explicit `ManaLeaseClosed` (`[Deferred]`) event by the owner's choice.
+- `MaxDurationTicks` expiration.
+- Abort — mana shortage even after extension.
+- Owner death (`DeathEvent`).
 
-Во всех случаях `CloseReason` в событии указывает причину — это нужно UI и журналу.
+In every case, `CloseReason` in the event names the cause — needed by the UI and the log.
 
-## См. также
+## See also
 
-- [EVENT_BUS](./EVENT_BUS.md) — раздел «Модель Lease».
-- [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — Intent, задевающий несколько шин.
-- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — объединение множественных урон-намерений.
-- [THREADING](./THREADING.md) — фазы, в которых Intent и Lease обрабатываются.
+- [EVENT_BUS](./EVENT_BUS.md) — the "Lease model" section.
+- [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — Intent that spans multiple buses.
+- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — combining multiple damage intents.
+- [THREADING](./THREADING.md) — phases in which Intent and Lease are processed.

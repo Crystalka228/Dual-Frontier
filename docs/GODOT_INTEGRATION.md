@@ -1,54 +1,54 @@
-# Интеграция с Godot
+# Godot integration
 
-Godot — отличный движок для 2D-симуляции, но у него есть жёсткое ограничение: `SceneTree` и `Node` API работают только из главного потока. Domain-логика Dual Frontier многопоточная и не должна знать, что рядом вообще есть Godot. Связь между слоями строится на одностороннем мосте команд.
+Godot is an excellent engine for 2D simulation, but it has a hard limitation: the `SceneTree` and `Node` APIs work only from the main thread. Dual Frontier's Domain logic is multithreaded and must not know that Godot is even nearby. The link between the layers is built on a unidirectional command bridge.
 
-## Статус: Godot как DevKit
+## Status: Godot as DevKit
 
-В v0.3 Godot используется как **инструмент разработки**, а не production-рантайм.
-Редактирование сцен, тест поведения систем, визуальная отладка — через Godot Editor
-и `DualFrontier.Presentation`. Production-сборка игры работает на
+In v0.3 Godot is used as a **development tool**, not as the production runtime.
+Scene editing, system-behavior testing, and visual debugging — all through Godot
+Editor and `DualFrontier.Presentation`. The production game build runs on
 `DualFrontier.Presentation.Native` (Silk.NET + OpenGL).
 
-Оба бэкенда реализуют контракты `IRenderer`, `ISceneLoader`, `IInputSource` из
-Application-слоя. Этот документ покрывает Godot-специфичные детали: main thread
-и `PresentationBridge`. Общая архитектура визуальной системы — в
-[VISUAL_ENGINE](./VISUAL_ENGINE.md).
+Both backends implement the `IRenderer`, `ISceneLoader`, and `IInputSource`
+contracts from the Application layer. This document covers Godot-specific
+details: the main thread and `PresentationBridge`. The general architecture of
+the visual system lives in [VISUAL_ENGINE](./VISUAL_ENGINE.md).
 
-## Статус подключения
+## Integration status
 
-- GodotSharp 4.6.1 подключён через `Godot.NET.Sdk`.
-- `DualFrontier.Presentation` убран из `DualFrontier.sln` — Godot управляет
-  своим `csproj` самостоятельно.
-- `GenerateAssemblyInfo=false`, `GenerateTargetFrameworkAttribute=false` —
-  обязательные флаги в `DualFrontier.Presentation.csproj` для избежания
-  дублирования атрибутов.
-- `main.tscn` загружается как главная сцена.
-- `PawnVisual`, `TileMapRenderer`, `PawnLayer` — реализованы.
-- `RenderCommandDispatcher` — реализован.
+- GodotSharp 4.6.1 is wired in through `Godot.NET.Sdk`.
+- `DualFrontier.Presentation` is removed from `DualFrontier.sln` — Godot manages
+  its own `csproj` independently.
+- `GenerateAssemblyInfo=false` and `GenerateTargetFrameworkAttribute=false` are
+  mandatory flags in `DualFrontier.Presentation.csproj` to avoid duplicate
+  attributes.
+- `main.tscn` loads as the main scene.
+- `PawnVisual`, `TileMapRenderer`, `PawnLayer` — implemented.
+- `RenderCommandDispatcher` — implemented.
 
 ---
 
-## Ограничение main thread
+## Main-thread limitation
 
-Любая попытка вызвать `AddChild`, `QueueFree`, `SetPosition`, `EmitSignal` или `GetTree` из фонового потока в Godot приводит к неопределённому поведению: чаще всего — падение в рандомном месте через несколько кадров, гонка за очередь отложенных сообщений SceneTree. Повторить баг сложно, отлаживать невозможно.
+Any attempt to call `AddChild`, `QueueFree`, `SetPosition`, `EmitSignal`, or `GetTree` from a background thread in Godot produces undefined behavior: typically a crash in a random place a few frames later, a race against the SceneTree's deferred-message queue. The bug is hard to reproduce and impossible to debug.
 
-Решение: Domain и Application запускаются в собственных потоках, Presentation живёт исключительно в главном потоке Godot. Коммуникация Domain → Presentation — через `PresentationBridge`. Коммуникация Presentation → Domain — через `InputRouter` и шины.
+The solution: Domain and Application run in their own threads; Presentation lives exclusively in Godot's main thread. Domain → Presentation communication goes through `PresentationBridge`. Presentation → Domain communication goes through `InputRouter` and the buses.
 
-## PresentationBridge — однонаправленная очередь
+## PresentationBridge — a unidirectional queue
 
-`PresentationBridge` принадлежит Application слою. Он хранит `ConcurrentQueue<IRenderCommand>`. Domain пишет в очередь из любого потока; Presentation дренирует очередь в `_Process()` главного потока.
+`PresentationBridge` belongs to the Application layer. It holds a `ConcurrentQueue<IRenderCommand>`. Domain writes to the queue from any thread; Presentation drains the queue in `_Process()` on the main thread.
 
 ```csharp
 public sealed class PresentationBridge
 {
-    // Domain пишет сюда из любого потока
+    // Domain writes here from any thread
     private readonly ConcurrentQueue<IRenderCommand> _commands = new();
 
-    // Domain: сообщить о смерти пешки
+    // Domain: report a pawn death
     public void EnqueuePawnDied(EntityId id, Vector2 position)
         => _commands.Enqueue(new PawnDiedCommand(id, position));
 
-    // Godot _Process() — только main thread
+    // Godot _Process() — main thread only
     public void DrainCommands()
     {
         while (_commands.TryDequeue(out var cmd))
@@ -57,16 +57,16 @@ public sealed class PresentationBridge
 }
 ```
 
-Ключевые свойства:
+Key properties:
 
-- **Однонаправленность.** Presentation пишет в очередь ввода, Domain пишет в очередь render-команд. Но Presentation не читает Domain напрямую никогда.
-- **Потокобезопасность.** `ConcurrentQueue` достаточно: пишущих потоков много, читающий — один (main thread).
-- **Отсутствие lock contention у Domain.** `Enqueue` — lock-free на всех современных .NET runtime.
-- **Backpressure контролируется.** Если Presentation отстаёт, очередь растёт и это видно на графике `_commands.Count`. Разбирать причины — задача PERFORMANCE пайплайна.
+- **One-way.** Presentation writes to the input queue, Domain writes to the render-command queue. But Presentation never reads Domain directly.
+- **Thread safety.** `ConcurrentQueue` is enough: many writer threads, a single reader (the main thread).
+- **No lock contention in Domain.** `Enqueue` is lock-free on every modern .NET runtime.
+- **Backpressure is observable.** If Presentation falls behind, the queue grows and the `_commands.Count` graph shows it. Investigating the cause is a PERFORMANCE pipeline task.
 
-## IRenderCommand — список команд
+## IRenderCommand — command list
 
-Набор команд Domain → Presentation расширяется по мере разработки, но ядро фиксировано.
+The set of Domain → Presentation commands grows over time, but the core is fixed.
 
 ```csharp
 public interface IRenderCommand : ICommand
@@ -75,33 +75,34 @@ public interface IRenderCommand : ICommand
 }
 ```
 
-Параметр `renderContext` — backend-specific root: для Godot это `GameRoot` node,
-для Native — инстанс `NativeRenderer`. Команды делают cast внутри `Execute`.
+The `renderContext` parameter is the backend-specific root: for Godot it is the
+`GameRoot` node, for Native it is the `NativeRenderer` instance. Commands cast
+inside `Execute`.
 
-| Команда                       | Кто создаёт                           | Что делает                                      |
+| Command                       | Created by                            | Does                                            |
 |-------------------------------|---------------------------------------|-------------------------------------------------|
-| `PawnDiedCommand`             | `DamageSystem` → через `Application`  | Анимация смерти, удаление `PawnVisual`          |
-| `ProjectileSpawnedCommand`    | `ProjectileSystem`                    | Создание `ProjectileVisual` ноды                |
-| `SpellCastCommand`            | `SpellSystem`                         | VFX каста, звук, анимация                       |
-| `UIUpdateCommand`             | `MoodSystem`, `NeedsSystem` и др.     | Обновление панели пешки, иконок алертов         |
-| `PawnMovedCommand`            | `JobSystem` / movement                | Обновление позиции `PawnVisual`                 |
-| `BuildingPlacedCommand`       | `CraftSystem`                         | Спавн ноды здания                               |
+| `PawnDiedCommand`             | `DamageSystem` → via `Application`    | Death animation, removal of `PawnVisual`        |
+| `ProjectileSpawnedCommand`    | `ProjectileSystem`                    | Creates a `ProjectileVisual` node               |
+| `SpellCastCommand`            | `SpellSystem`                         | Cast VFX, sound, animation                      |
+| `UIUpdateCommand`             | `MoodSystem`, `NeedsSystem`, etc.     | Updates the pawn panel, alert icons             |
+| `PawnMovedCommand`            | `JobSystem` / movement                | Updates `PawnVisual` position                   |
+| `BuildingPlacedCommand`       | `CraftSystem`                         | Spawns a building node                          |
 
-Systems не создают команды напрямую — они публикуют доменные события, Application-мост слушает и кладёт команды. Это сохраняет чистоту Domain-слоя: ни одной ссылки на Godot-тип.
+Systems do not create commands directly — they publish domain events, and the Application bridge listens and enqueues the commands. This keeps the Domain layer clean: no reference to a Godot type at all.
 
-## Почему Presentation не зовёт Domain
+## Why Presentation does not call Domain
 
-Прямой вызов из Presentation в Domain сломал бы всё:
+A direct call from Presentation into Domain would break everything:
 
-1. **Блокировка main thread.** Systems многопоточны; их вызов потребует синхронизации, и main thread будет ждать результат, роняя FPS.
-2. **Ломает сторож изоляции.** Presentation не зарегистрирован в `SystemExecutionContext`, вызов `world.GetComponent` через обходной путь обнулит декларации.
-3. **Ломает модифицируемость.** Моды расширяют Domain; если Presentation звонит Domain через конкретные имена классов, любая правка мода требует перекомпиляции Presentation.
+1. **Main-thread blocking.** Systems are multithreaded; calling them would require synchronization, and the main thread would wait for the result, tanking FPS.
+2. **Breaks the isolation guard.** Presentation is not registered in `SystemExecutionContext`; a back-door call to `world.GetComponent` would void the declarations.
+3. **Breaks moddability.** Mods extend Domain; if Presentation calls Domain through concrete class names, every mod edit would require recompiling Presentation.
 
-Правильный поток ввода: `InputRouter` публикует событие в шину, Domain-система это событие обрабатывает, по результату публикует другое событие или кладёт команду в мост.
+The correct input flow: `InputRouter` publishes an event to the bus, a Domain system processes the event, and based on the result publishes another event or enqueues a command to the bridge.
 
 ## InputRouter
 
-`InputRouter` — единственная точка, где Godot-ввод превращается в доменные события. Живёт в `DualFrontier.Presentation/Input`.
+`InputRouter` is the single point where Godot input becomes domain events. It lives in `DualFrontier.Presentation/Input`.
 
 ```csharp
 public partial class InputRouter : Node
@@ -124,19 +125,19 @@ public partial class InputRouter : Node
 }
 ```
 
-`InputEvent` не утекает в Domain — маппинг клавиши/кнопки в доменное событие происходит в роутере. Это даёт гибкость (новое управление = правки только в роутере) и чистоту (Domain не знает о Godot).
+`InputEvent` does not leak into Domain — the key/button-to-domain-event mapping happens in the router. This gives flexibility (new controls = edits only in the router) and cleanliness (Domain knows nothing about Godot).
 
-## Жизненный цикл Godot-нод vs Entity
+## Godot node vs Entity lifecycle
 
-Entity и Godot-нода — два разных объекта с разной продолжительностью жизни.
+An entity and a Godot node are two different objects with different lifetimes.
 
-| Сущность          | Живёт пока                                    | Кто создаёт                           |
+| Object            | Lives while                                   | Created by                            |
 |-------------------|-----------------------------------------------|---------------------------------------|
-| `EntityId`        | Не вызван `world.DestroyEntity`               | `Application` / системы               |
-| Компонент         | Прикреплён к живой entity                     | `Application` / системы               |
-| Godot `Node`      | Не вызван `QueueFree`                         | Presentation по команде из моста      |
+| `EntityId`        | `world.DestroyEntity` has not been called     | `Application` / systems               |
+| Component         | Attached to a living entity                   | `Application` / systems               |
+| Godot `Node`      | `QueueFree` has not been called               | Presentation, on a command from the bridge |
 
-Правило: ноде нужна entity, но entity может существовать без ноды (например, серверная симуляция, headless-тесты). Нода — визуальная тень entity. Связь — через `EntityId`, хранящийся в ноде как поле.
+Rule: a node needs an entity, but an entity can exist without a node (for example, server simulation or headless tests). The node is the visual shadow of the entity. The link is through the `EntityId` stored as a field on the node.
 
 ```csharp
 public partial class PawnVisual : Node2D
@@ -145,47 +146,47 @@ public partial class PawnVisual : Node2D
 
     public override void _Process(double delta)
     {
-        // Только чтение PresentationBridge — прямого доступа к World нет.
+        // Read PresentationBridge only — there is no direct access to World.
     }
 }
 ```
 
-При получении `PawnDiedCommand` Presentation находит ноду по `EntityId`, играет анимацию смерти, по завершении — `QueueFree`. Entity к тому моменту уже давно удалена в Domain.
+On receiving `PawnDiedCommand`, Presentation finds the node by `EntityId`, plays the death animation, and on completion calls `QueueFree`. The entity has long been destroyed in Domain by then.
 
-Обратная сторона: если в середине фазы Domain удалил entity, а команда на удаление ноды ещё в очереди — ничего страшного. Команда придёт в следующий `_Process`, нода скажет `QueueFree`, Godot уберёт. Рассинхрон безопасен, потому что направление всегда одно.
+The flip side: if Domain destroys an entity mid-phase while the node-removal command is still in the queue, nothing breaks. The command arrives in the next `_Process`, the node calls `QueueFree`, Godot removes it. Desynchronization is safe because the direction is always one-way.
 
 ## UI Development Cycle
 
-После каждой фазы — одна итерация UI:
-1. Новые компоненты → новые поля в `PawnStateCommand`.
-2. Новые секции в `PawnDetail` или новые панели.
-3. F5 → визуально подтвердить что фаза работает.
+One UI iteration after each phase:
+1. New components → new fields in `PawnStateCommand`.
+2. New sections in `PawnDetail` or new panels.
+3. F5 → visually confirm the phase works.
 
-UI является живым дашбордом симуляции — визуальные баги часто
-указывают на логические баги в Domain.
+The UI is a live dashboard for the simulation — visual bugs often
+point to logic bugs in Domain.
 
-### Текущий статус UI (Фаза 4)
+### Current UI status (Phase 4)
 
-Реализовано:
+Implemented:
 - `GameHUD` (CanvasLayer, layer=10).
-- `ColonyPanel` — список пешек с мини-полосками настроения.
-- `PawnDetail` — детали пешки (нужды, настроение, job, навыки).
-- `PawnStateReporterSystem` (SLOW) — публикует данные через шину `Pawns`.
-- `PawnStateCommand` — единственный способ передачи данных в HUD.
+- `ColonyPanel` — pawn list with mini mood bars.
+- `PawnDetail` — pawn details (needs, mood, job, skills).
+- `PawnStateReporterSystem` (SLOW) — publishes data through the `Pawns` bus.
+- `PawnStateCommand` — the only way to feed data into the HUD.
 
-Поток данных: `PawnStateReporterSystem.Update` → `PawnStateChangedEvent`
-на шине `Pawns` → подписчик в `GameBootstrap` → `bridge.Enqueue(PawnStateCommand)`
-→ `RenderCommandDispatcher` → `GameHUD.UpdatePawn` → панели.
+Data flow: `PawnStateReporterSystem.Update` → `PawnStateChangedEvent`
+on the `Pawns` bus → subscriber in `GameBootstrap` → `bridge.Enqueue(PawnStateCommand)`
+→ `RenderCommandDispatcher` → `GameHUD.UpdatePawn` → panels.
 
-Стиль: Grimdark Warhammer — тёмный фон `#1a1814`, пергаментный текст
-`#c8b89a`, gothic-шрифты (системный serif fallback).
+Style: Grimdark Warhammer — dark background `#1a1814`, parchment text
+`#c8b89a`, gothic fonts (system serif fallback).
 
-### Следующая итерация UI (Фаза 5)
-- Добавить `HealthComponent` в `PawnStateCommand`.
-- Секция «Здоровье» в `PawnDetail`.
-- Визуальный индикатор урона на пешках в `PawnLayer`.
+### Next UI iteration (Phase 5)
+- Add `HealthComponent` to `PawnStateCommand`.
+- Add a "Health" section to `PawnDetail`.
+- Add a visual damage indicator on pawns in `PawnLayer`.
 
-## См. также
+## See also
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
 - [THREADING](./THREADING.md)

@@ -1,25 +1,25 @@
-# Разрешение обратных связей
+# Feedback-loop resolution
 
-Граф зависимостей систем не допускает циклов по тем же компонентам — иначе планировщик не может построить фазы. Но игровая логика регулярно требует обратной связи: одна система пишет ресурс, другая читает его же для принятия решения. v0.2 разрешает такие петли единым приёмом — чтением снимка предыдущего тика.
+The system dependency graph does not allow cycles over the same components — otherwise the scheduler cannot build phases. But game logic regularly demands feedback: one system writes a resource and another reads that same resource to make a decision. v0.2 resolves such loops with a single technique — reading a snapshot of the previous tick.
 
-## Проблема
+## Problem
 
-Классический пример — голем и мана мага.
+The classic example is a golem and a mage's mana.
 
-- `ManaSystem` пишет `ManaComponent` (дренит ману на поддержку голема).
-- `GolemSystem` читает `ManaComponent` (чтобы понять, хватит ли маны на следующий тик; если нет — голем отключается).
+- `ManaSystem` writes `ManaComponent` (drains mana to maintain the golem).
+- `GolemSystem` reads `ManaComponent` (to decide whether there is enough mana for the next tick; if not, the golem deactivates).
 
-Если обе системы стоят в одной фазе — конфликт записи/чтения, планировщик ругается. Если в разных фазах одного тика — исход зависит от порядка: прочитает `GolemSystem` ману _до_ дрена или _после_? Оба варианта «правильные», но даже небольшая перестановка фаз меняет результат — и это убивает детерминированность.
+If both systems live in one phase — read/write conflict, the scheduler complains. If they live in different phases of the same tick, the outcome depends on order: does `GolemSystem` read mana _before_ the drain or _after_? Both options are "right", but even a small phase rearrangement changes the result — and that kills determinism.
 
-Явный порядок систем выглядит простым решением, но хрупок: любая новая система, пишущая ману (ритуалы, зелья, эфир-конвертеры), должна быть вручную вставлена в правильное место. Мьютекс на компоненте блокирует весь параллелизм фазы — неприемлемо.
+An explicit system order looks like a simple fix but is fragile: every new system that writes mana (rituals, potions, ether converters) must be hand-inserted in the right spot. A mutex on the component blocks the entire phase's parallelism — unacceptable.
 
-## Решение: Mana[N-1]
+## Solution: Mana[N-1]
 
-Любое чтение, замыкающее цикл, идёт **через снимок предыдущего тика**. На тике N работа выглядит так:
+Any read that closes a cycle goes **through a snapshot of the previous tick**. On tick N the work looks like this:
 
-1. `ManaSystem` выполняет свой дрен и пишет актуальный `ManaComponent` — это `Mana[N]`.
-2. На границе тика (Phase 5 — Feedback snapshot, см. [THREADING](./THREADING.md)) планировщик копирует `ManaComponent` в `ManaSnapshot` — это `ManaSnapshot[N]`.
-3. На тике N+1 `GolemSystem` читает через `ReadPreviousTickManaState()` — получает `ManaSnapshot[N]`, то есть состояние, зафиксированное _после_ дрена предыдущего тика.
+1. `ManaSystem` performs its drain and writes the actual `ManaComponent` — this is `Mana[N]`.
+2. At the tick boundary (Phase 5 — Feedback snapshot, see [THREADING](./THREADING.md)), the scheduler copies `ManaComponent` into `ManaSnapshot` — that is `ManaSnapshot[N]`.
+3. On tick N+1 `GolemSystem` reads through `ReadPreviousTickManaState()` — it gets `ManaSnapshot[N]`, the state captured _after_ the previous tick's drain.
 
 ```
 tick N-1:                       tick N:                         tick N+1:
@@ -28,38 +28,38 @@ tick N-1:                       tick N:                         tick N+1:
   snapshot: ManaSnapshot[N-1]     snapshot: ManaSnapshot[N]        snapshot: ManaSnapshot[N+1]
 ```
 
-`GolemSystem` видит стабильный снимок: чтение не пересекается с записью ни в одной фазе, планировщик не видит конфликта.
+`GolemSystem` sees a stable snapshot: the read does not intersect a write in any phase, and the scheduler sees no conflict.
 
-## Цена
+## Cost
 
-- **+1 tick latency.** Голем реагирует на истощение маны с задержкой в один тик. При `TickRates.NORMAL` (15 кадров, ~250 мс) это незаметно игроку и не ломает баланс.
-- **+1 проход копирования** на каждом тике для каждой компоненты, участвующей в петле. Снимок — flat-копия структуры данных, O(N) по числу entity с этим компонентом. На реальном профиле — десятки микросекунд, меньше погрешности фрейма.
+- **+1 tick latency.** The golem reacts to mana exhaustion with a one-tick delay. At `TickRates.NORMAL` (15 frames, ~250 ms) this is invisible to the player and does not break balance.
+- **+1 copy pass** per tick for each component participating in the loop. The snapshot is a flat copy of the data structure, O(N) in the entity count for that component. On a real profile — tens of microseconds, smaller than the frame-time noise floor.
 
-Детерминированность >> latency: один тик задержки — цена, которую мы платим за воспроизводимые бои, корректный replay и стабильные тесты.
+Determinism >> latency: a single tick of delay is the price we pay for reproducible combat, correct replay, and stable tests.
 
-## Рассмотренные альтернативы
+## Alternatives considered
 
-1. **Явный порядок систем в одной фазе.** Отклонено: любая новая система, пишущая ману, ломает порядок; граф становится хрупким и неявным. Рано или поздно мод добавит `PotionSystem`, и голем начнёт вести себя иначе в зависимости от того, в какое место цепочки вставилась система.
-2. **Мьютекс на компоненте.** Отклонено: блокирует параллелизм фазы, возвращает нас к однопоточному режиму RimWorld. Также конфликтует с декларацией `[SystemAccess]` — сторож не знает про мьютексы.
-3. **Event-based pull через `[Deferred]`.** Частично используется (разрыв цикла в графе через отложенное событие), но не решает исходную задачу: `GolemSystem` нужно **значение** маны, а не уведомление об изменении. Событие отвечало бы на вопрос «когда», а не «сколько».
+1. **Explicit system order in one phase.** Rejected: any new system that writes mana breaks the order; the graph becomes fragile and implicit. Sooner or later a mod adds `PotionSystem`, and the golem starts behaving differently depending on where in the chain the system slots in.
+2. **Mutex on the component.** Rejected: it blocks phase parallelism and returns us to RimWorld's single-threaded mode. It also conflicts with the `[SystemAccess]` declaration — the isolation guard knows nothing about mutexes.
+3. **Event-based pull through `[Deferred]`.** Used in part (cycle-breaking in the graph through a deferred event), but it does not solve the original problem: `GolemSystem` needs the **value** of mana, not a notification that it changed. The event would answer "when", not "how much".
 
-## Правило
+## Rule
 
-> Любой read, замыкающий цикл в графе зависимостей, должен идти через `_Previous`-снимок предыдущего тика.
+> Any read that closes a cycle in the dependency graph must go through a `_Previous` snapshot of the previous tick.
 
-Правило проверяется тестом в `DualFrontier.Core.Tests/Scheduling/`: `DependencyGraph` при старте помечает все петли и требует, чтобы хотя бы одна из сторон петли использовала `*Snapshot`-компонент. Если декларация `[SystemAccess]` содержит `reads: ManaComponent` в системе, участвующей в петле через `ManaSystem`, — `IsolationViolationException` при регистрации.
+The rule is enforced by a test in `DualFrontier.Core.Tests/Scheduling/`: `DependencyGraph` at startup marks every cycle and requires that at least one side of the cycle uses a `*Snapshot` component. If a `[SystemAccess]` declaration contains `reads: ManaComponent` in a system participating in a cycle through `ManaSystem`, an `IsolationViolationException` is thrown at registration.
 
-## Применимость
+## Applicability
 
-- `GolemSystem` читает `ManaSnapshot` (предыдущий тик).
-- `EtherSurgeSystem` читает `EtherSnapshot` при решении о срыве, пока `EtherGrowthSystem` обновляет эфир.
-- `ShieldBreakSystem` читает `ManaSnapshot` для щитов, питающихся от маны.
+- `GolemSystem` reads `ManaSnapshot` (previous tick).
+- `EtherSurgeSystem` reads `EtherSnapshot` when deciding on a surge while `EtherGrowthSystem` updates ether.
+- `ShieldBreakSystem` reads `ManaSnapshot` for shields powered by mana.
 
-Не каждая читающая система обязана использовать снимок — только те, что участвуют в петле. `DamageSystem` читает `HealthComponent` напрямую, потому что цикла «Health → Damage → Health» нет: `DamageSystem` сам и пишет.
+Not every reading system is required to use a snapshot — only those that participate in a cycle. `DamageSystem` reads `HealthComponent` directly because there is no "Health → Damage → Health" cycle: `DamageSystem` is the writer itself.
 
-## См. также
+## See also
 
 - [THREADING](./THREADING.md) — Phase 5 (Feedback snapshot).
-- [EVENT_BUS](./EVENT_BUS.md) — `[Deferred]` как альтернатива для разрыва цикла по записи.
-- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — детерминированность применения урона.
-- [OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md) — `GolemSystem` и его чтение снимка маны.
+- [EVENT_BUS](./EVENT_BUS.md) — `[Deferred]` as an alternative for breaking a write cycle.
+- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — determinism in damage application.
+- [OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md) — `GolemSystem` and its mana-snapshot read.

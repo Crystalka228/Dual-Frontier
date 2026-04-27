@@ -1,30 +1,29 @@
-# Modding — API модификаций
+# Modding — Mod API
 
-## Назначение
-Публичный API модов. Каждый мод реализует `IMod`, получает `IModApi` и
-работает с ядром только через него. AssemblyLoadContext физически блокирует
-моду доступ к внутренностям `DualFrontier.Core` — единственная ссылка, которую
-мод имеет — эта сборка (Contracts).
+## Purpose
+The public mod API. Every mod implements `IMod`, receives an `IModApi`, and
+interacts with the core only through it. `AssemblyLoadContext` physically blocks
+the mod's access to the internals of `DualFrontier.Core` — the only reference a
+mod has is this assembly (Contracts).
 
-## Зависимости
-- `DualFrontier.Contracts.Core` (маркеры `IEvent`, `IComponent`).
+## Dependencies
+- `DualFrontier.Contracts.Core` (the `IEvent` and `IComponent` markers).
 
-## Что внутри
-- `IMod.cs` — точка входа мода: `Initialize(api)` и `Unload()`.
-- `IModApi.cs` — методы, которые мод может вызвать: регистрация компонентов
-  и систем, публикация/подписка на события, публикация и получение
-  межмодовых контрактов.
-- `IModContract.cs` — маркер-интерфейс публичного контракта между модами.
-- `ModManifest.cs` — метаданные мода: id, имя, версия, автор, зависимости.
+## Contents
+- `IMod.cs` — the mod's entry point: `Initialize(api)` and `Unload()`.
+- `IModApi.cs` — methods the mod can call: register components and systems,
+  publish/subscribe to events, publish and retrieve inter-mod contracts.
+- `IModContract.cs` — marker interface for a public contract between mods.
+- `ModManifest.cs` — mod metadata: id, name, version, author, dependencies.
 
-## Правила
-- Мод НЕ имеет права приводить `IModApi` к конкретному типу — это попытка
-  обойти изоляцию.
-- Мод взаимодействует с другими модами только через `IModContract`.
-- Жёсткие зависимости между модами запрещены: используй
-  `TryGetContract<T>` и gracefully degrade если контракт не найден.
+## Rules
+- A mod MUST NOT cast `IModApi` to a concrete type — that is an attempt to bypass
+  isolation.
+- A mod interacts with other mods only through `IModContract`.
+- Hard inter-mod dependencies are forbidden: use `TryGetContract<T>` and gracefully
+  degrade if the contract is not found.
 
-## Примеры использования
+## Usage examples
 ```csharp
 public sealed class ExampleMod : IMod
 {
@@ -41,6 +40,6 @@ public sealed class ExampleMod : IMod
 ```
 
 ## TODO
-- [ ] Фаза 2 — описать структуру `mod.manifest.json` и маппинг на `ModManifest`.
-- [ ] Фаза 2 — определить политику версий `ModManifest.Version` (SemVer).
-- [ ] Фаза 2 — реализовать `RestrictedModApi` в `DualFrontier.Application`.
+- [ ] Phase 2 — describe the `mod.manifest.json` structure and the mapping to `ModManifest`.
+- [ ] Phase 2 — settle the SemVer policy for `ModManifest.Version`.
+- [ ] Phase 2 — implement `RestrictedModApi` in `DualFrontier.Application`.

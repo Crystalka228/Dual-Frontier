@@ -1,29 +1,29 @@
-# Гигиена разработки
+# Development hygiene
 
-Проект сознательно развивается двумя параллельными треками: **игра** Dual Frontier (Phase 0–7, основная ветка) и **движок** — обобщённое ECS-ядро, которое после релиза игры форкается в отдельный продукт (см. [ROADMAP §«Пост-релиз»](./ROADMAP.md#пост-релиз--развилка-на-движок)). Чтобы форк прошёл дёшево, граница движок/игра должна оставаться чистой на протяжении Phase 4–7, когда соблазн «срезать угол» будет максимальным.
+The project is deliberately developed along two parallel tracks: the **game** Dual Frontier (Phases 0–7, main branch) and the **engine** — a generic ECS core that forks into a separate product after the game ships (see [ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)). To make the fork cheap, the engine/game boundary must stay clean through Phases 4–7, when the temptation to "cut corners" is at its highest.
 
-Этот документ — не архитектурная теория (она в [ARCHITECTURE](./ARCHITECTURE.md) и [CODING_STANDARDS](./CODING_STANDARDS.md)), а **прикладной чек-лист на каждый PR**. Если все пункты зелёные — граница не деградирует. Если что-то красное — это останавливает merge, а не «поправим потом».
+This document is not architectural theory (that lives in [ARCHITECTURE](./ARCHITECTURE.md) and [CODING_STANDARDS](./CODING_STANDARDS.md)) — it is an **applied checklist for every PR**. If every item is green, the boundary does not degrade. If anything is red, it stops the merge — not "we'll fix it later."
 
-## Главный инвариант
+## Core invariant
 
-Движковые сборки никогда не ссылаются на игровые. Всё остальное в этом документе — способы проверить, что инвариант не нарушен случайно.
+Engine assemblies never reference game assemblies. Everything else in this document is a way to verify that the invariant has not been broken by accident.
 
-| Движковые (generic, переиспользуемые) | Игровые (специфичны для Dual Frontier) |
-|---------------------------------------|----------------------------------------|
-| `DualFrontier.Contracts` | `DualFrontier.Components` |
-| `DualFrontier.Core` | `DualFrontier.Events` |
-| `DualFrontier.Core.Interop` | `DualFrontier.Systems` |
-| `native/DualFrontier.Core.Native/` | `DualFrontier.AI` |
-| `DualFrontier.Presentation.Native` | `DualFrontier.Presentation` (Godot DevKit) |
-| Модинг-секция `DualFrontier.Application` | Игровой цикл `DualFrontier.Application` |
+| Engine (generic, reusable)              | Game (specific to Dual Frontier)            |
+|-----------------------------------------|---------------------------------------------|
+| `DualFrontier.Contracts`                | `DualFrontier.Components`                   |
+| `DualFrontier.Core`                     | `DualFrontier.Events`                       |
+| `DualFrontier.Core.Interop`             | `DualFrontier.Systems`                      |
+| `native/DualFrontier.Core.Native/`      | `DualFrontier.AI`                           |
+| `DualFrontier.Presentation.Native`      | `DualFrontier.Presentation` (Godot DevKit)  |
+| Modding section of `DualFrontier.Application` | Game-loop part of `DualFrontier.Application` |
 
-Полный список и обоснование — в [ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра).
+Full list and rationale: [ARCHITECTURE §"Dependency rules"](./ARCHITECTURE.md#dependency-rules).
 
-## Чек-лист перед каждым PR
+## Checklist for every PR
 
-Пять проверок. Выполняются последовательно, одна красная — PR не уходит.
+Five checks. They run sequentially; one red one and the PR does not ship.
 
-### 1. Движок не импортирует игру
+### 1. The engine does not import the game
 
 ```bash
 grep -rn "using DualFrontier\.\(Components\|Systems\|Events\|AI\)" \
@@ -34,25 +34,25 @@ grep -rn "using DualFrontier\.\(Components\|Systems\|Events\|AI\)" \
     src/DualFrontier.Application/Modding/
 ```
 
-Ожидаемый вывод: пусто. Одна строка — PR не мержится.
+Expected output: empty. A single line and the PR does not merge.
 
-### 2. `dotnet build` зелёный
+### 2. `dotnet build` is green
 
 ```bash
 dotnet build DualFrontier.sln -c Release
 ```
 
-`TreatWarningsAsErrors=true` в [Directory.Build.props](../Directory.Build.props). Любое предупреждение = блокер. Nullable warnings, CS-предупреждения — всё считается.
+`TreatWarningsAsErrors=true` in [Directory.Build.props](../Directory.Build.props). Any warning is a blocker. Nullable warnings, CS warnings — they all count.
 
-### 3. Все тесты проходят
+### 3. All tests pass
 
 ```bash
 dotnet test DualFrontier.sln -c Release
 ```
 
-Числа растут, не падают. Если на main было 82/82, на ветке ожидается ≥82/82. Регрессия — блокер.
+Numbers grow, they do not shrink. If main was at 82/82, the branch is expected at ≥82/82. A regression is a blocker.
 
-### 4. Коммиты имеют scope-префиксы
+### 4. Commits carry scope prefixes
 
 ```bash
 git fetch origin main
@@ -60,97 +60,95 @@ git log origin/main..HEAD --no-merges --format='%s' \
     | grep -v '^\(contracts\|core\|interop\|native\|modding\|presentation-native\|experiment\|feat\|fix\|docs\|test\|chore\|build\|refactor\)[(:]'
 ```
 
-Ожидаемый вывод: пусто. Любая строка — коммит без scope, его нужно переписать через `git rebase -i`. Префиксы описаны в [CODING_STANDARDS §«Сообщения коммитов»](./CODING_STANDARDS.md#сообщения-коммитов).
+Expected output: empty. Any line means a commit without a scope; rewrite it via `git rebase -i`. The prefixes are documented in [CODING_STANDARDS §"Commit messages"](./CODING_STANDARDS.md#commit-messages).
 
-`--no-merges` нужен, чтобы merge-коммиты (`Merge pull request #…`) не считались нарушением. `origin/main..HEAD` после `git fetch` гарантирует, что сравнение идёт с актуальным main, а не со стейлом локального бранча.
+`--no-merges` is needed so that merge commits (`Merge pull request #…`) do not count as violations. `origin/main..HEAD` after `git fetch` guarantees the comparison runs against the current main, not against a stale local branch.
 
-### 5. Коммиты не смешивают движок и игру
+### 5. Commits do not mix engine and game
 
-Просмотр руками: каждый коммит в ветке должен трогать либо только движковые сборки (префикс `core:`, `contracts:`, `interop:`, `native:`, `modding:`, `presentation-native:`), либо только игровые (`feat(pawn):`, `feat(combat):`, `feat(presentation):`, …). Смешанный коммит — разбить на два:
+Manual review: every commit on the branch must touch either only engine assemblies (prefix `core:`, `contracts:`, `interop:`, `native:`, `modding:`, `presentation-native:`) or only game assemblies (`feat(pawn):`, `feat(combat):`, `feat(presentation):`, …). A mixed commit must be split in two:
 
 ```bash
 git log origin/main..HEAD --no-merges --stat | less
-# визуально проверить, что каждый commit трогает одну сторону границы
+# visually verify each commit touches one side of the boundary
 ```
 
-Это стоит минуты. После форка эта минута возвращается как возможность `git log --grep "^\(core\|contracts\|interop\|native\|modding\): "` вытащить всю движковую историю одной командой.
+This costs a minute. After the fork, that minute pays back as the ability to pull the entire engine history with one command: `git log --grep "^\(core\|contracts\|interop\|native\|modding\): "`.
 
-## Типичные ситуации
+## Typical situations
 
-### Добавляю новую игровую систему (Phase 4–7)
+### Adding a new game system (Phases 4–7)
 
-Пример: `HaulSystem` в Phase 4.
+Example: `HaulSystem` in Phase 4.
 
-- Файлы создаются **только** в игровых сборках: `DualFrontier.Systems/`, при необходимости — новые компоненты в `DualFrontier.Components/`, события в `DualFrontier.Events/`.
-- Система наследуется от `SystemBase` (движковый API). Никаких изменений в `SystemBase` ради этой системы быть не должно. Если SystemBase чего-то не хватает — это сигнал из §«Красные флаги» ниже.
-- Декларация доступа через `[SystemAccess(reads: …, writes: …, buses: …)]` (движковый атрибут, в `Contracts.Attributes`).
-- Коммит: `feat(inventory): add HaulSystem`.
+- Files go **only** in game assemblies: `DualFrontier.Systems/`, with new components in `DualFrontier.Components/` and events in `DualFrontier.Events/` as needed.
+- The system inherits from `SystemBase` (engine API). No changes to `SystemBase` for the sake of this system. If `SystemBase` is missing something, it is a signal from §"Red flags" below.
+- Access declaration through `[SystemAccess(reads: …, writes: …, buses: …)]` (engine attribute, in `Contracts.Attributes`).
+- Commit: `feat(inventory): add HaulSystem`.
 
-### Расширяю ECS API
+### Extending the ECS API
 
-Пример: понадобился новый метод на `SystemExecutionContext`.
+Example: a new method is needed on `SystemExecutionContext`.
 
-- Метод должен быть **generic** — никаких упоминаний `HealthComponent`, `PawnComponent` и т.д.
-- Добавлять в `DualFrontier.Core/ECS/SystemExecutionContext.cs`.
-- Если нужен новый атрибут — он идёт в `DualFrontier.Contracts/Attributes/`.
-- Коммит: `core: add <что-то>` или `contracts: add <что-то>`.
+- The method MUST be **generic** — no mention of `HealthComponent`, `PawnComponent`, etc.
+- Add it to `DualFrontier.Core/ECS/SystemExecutionContext.cs`.
+- If a new attribute is needed, it lives in `DualFrontier.Contracts/Attributes/`.
+- Commit: `core: add <something>` or `contracts: add <something>`.
 
-### Добавляю Intent/Granted/Refused в существующую шину
+### Adding Intent/Granted/Refused to an existing bus
 
-- Записи (`record struct`) идут в `DualFrontier.Events/` (игровая сборка). Это нормально — события уже игровые.
-- Шина в `DualFrontier.Contracts/Bus/` **не** расширяется, если только это не generic инфраструктура (например, `IDeferredBus<T>`). Конкретные Intent-ы не попадают в Contracts.
-- Коммит: `feat(combat): add ShieldRefillIntent to combat bus`.
+- Records (`record struct`) go in `DualFrontier.Events/` (game assembly). That is fine — events are already game-side.
+- The bus in `DualFrontier.Contracts/Bus/` is **not** extended, unless this is generic infrastructure (for example, `IDeferredBus<T>`). Concrete Intents do not land in Contracts.
+- Commit: `feat(combat): add ShieldRefillIntent to combat bus`.
 
-### Нужно добавить новый компонент
+### Adding a new component
 
-- Файл идёт в `DualFrontier.Components/<Area>/<Name>Component.cs`.
-- POCO, никакой логики.
-- Если компонент потенциально generic (условно — `PositionComponent`, `FactionComponent`) — всё равно остаётся в `Components`. Движку компоненты не принадлежат; движку принадлежит `IComponent` маркер.
+- The file goes in `DualFrontier.Components/<Area>/<Name>Component.cs`.
+- POCO, no logic.
+- If a component is potentially generic (e.g., `PositionComponent`, `FactionComponent`), it still lives in `Components`. Components do not belong to the engine; only the `IComponent` marker does.
 
-### Соблазн: «просто один раз импортну `Components` в `Core`»
+### Temptation: "I'll just import `Components` into `Core` this once"
 
-Это **всегда** блокер. Примеры того, как правильно решить задачу, которая толкает к такому импорту:
+This is **always** a blocker. Examples of how to properly solve a task that pushes toward this import:
 
-- **«`Core` должен знать формат `HealthComponent`, чтобы X».** Нет, не должен. Если нужна операция над произвольным компонентом — она выражается через `IComponent` + reflection/generic. Если нужна операция только над конкретным — она живёт в системе, не в `Core`.
-- **«Мне нужен `DamageEvent` в `Core` для логирования».** Логирование идёт через движковый `IEventBus.Subscribe<T>` — `T` параметризируется в Systems, а не в Core.
-- **«Производительность: generic — медленно, хочу конкретный тип».** Измерить. В 95% случаев JIT снимает overhead. Если оставшиеся 5% реально критичны — это повод для обсуждения, а не для нарушения границы.
+- **"`Core` must know the format of `HealthComponent` to do X."** No, it must not. If an operation over an arbitrary component is needed, express it through `IComponent` + reflection/generics. If the operation is only over one concrete type, it lives in a system, not in `Core`.
+- **"I need `DamageEvent` in `Core` for logging."** Logging goes through the engine's `IEventBus.Subscribe<T>` — `T` is parameterized in Systems, not in Core.
+- **"Performance: generics are slow, I want a concrete type."** Measure it. In 95% of cases the JIT removes the overhead. If the remaining 5% really is critical, that is a reason to discuss, not a reason to break the boundary.
 
-## Красные флаги
+## Red flags
 
-Ранние симптомы, что архитектура начинает деградировать. Каждый сам по себе — не катастрофа, но сигнал остановиться и обсудить.
+Early symptoms that the architecture is starting to degrade. Each is not a disaster on its own, but a signal to stop and discuss.
 
-| Симптом | Что значит | Что делать |
-|---------|------------|------------|
-| `SystemBase` обрастает методами под конкретные сценарии | Игровые паттерны переезжают в движок | Вытащить паттерн в helper в `Systems/Shared/`, оставить `SystemBase` generic |
-| В `Core` появляется `switch` по `Type` конкретного компонента | Движок начал знать доменные типы | Перевести логику в систему, или обобщить через `IComponent` + атрибут-маркер |
-| `Contracts` растёт быстрее, чем `Systems` | Контракты публикуются под задачи, которых ещё нет | Откатить, добавить контракт только когда он реально нужен второму потребителю |
-| Моды-примеры не обновляются месяцами | Модинг-инфра эволюционирует в вакууме | Либо добавить хотя бы один реальный мод как second customer, либо заморозить развитие модинга |
-| `native/` отстаёт от `Core` | C++ эксперимент мёртв, но всё ещё в репо | Либо догнать, либо закрыть эксперимент и вынести в отдельную ветку-артефакт |
-| Коммиты «core: fix X, also feat(pawn): Y» в одном | Граница стирается в голове автора | Требовать разделения на ревью, даже если это стоит `git rebase -i` |
-| `DualFrontier.Presentation` содержит бизнес-логику | Игра лезет в Godot-слой с геймплейными решениями | Бизнес-логика идёт в `Systems`, `Presentation` только переводит команды в Godot-вызовы |
+| Symptom                                                                  | Meaning                                                | What to do                                                                                       |
+|--------------------------------------------------------------------------|--------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| `SystemBase` accumulates methods for specific scenarios                  | Game patterns are migrating into the engine            | Extract the pattern into a helper under `Systems/Shared/`; keep `SystemBase` generic             |
+| A `switch` over the `Type` of a concrete component appears in `Core`     | The engine has started to know domain types            | Move the logic into a system, or generalize through `IComponent` + a marker attribute            |
+| `Contracts` is growing faster than `Systems`                             | Contracts are being published for tasks that do not yet exist | Roll it back; add the contract only when a second consumer actually needs it              |
+| Example mods are not updated for months                                  | Modding infrastructure evolves in a vacuum             | Either add at least one real mod as a second customer, or freeze modding development             |
+| `native/` lags behind `Core`                                             | The C++ experiment is dead but still in the repo       | Either catch it up, or close the experiment and split it into a separate artifact branch         |
+| Commits like "core: fix X, also feat(pawn): Y" in one                    | The boundary is blurring in the author's head          | Demand splitting at review time, even if it costs a `git rebase -i`                              |
+| `DualFrontier.Presentation` contains business logic                      | The game is reaching into the Godot layer with gameplay decisions | Business logic goes in `Systems`; `Presentation` only translates commands into Godot calls |
 
-## Quick reference — scope-префиксы коммитов
+## Quick reference — commit scope prefixes
 
-Полный список и примеры — в [CODING_STANDARDS §«Сообщения коммитов»](./CODING_STANDARDS.md#сообщения-коммитов).
+Full list with examples: [CODING_STANDARDS §"Commit messages"](./CODING_STANDARDS.md#commit-messages).
 
-**Движковые** (уйдут в форк после релиза):
+**Engine** (will move to the fork after release):
 - `contracts:`, `core:`, `interop:`, `native:`, `modding:`, `presentation-native:`
-- `experiment:` — исследовательские ветки до мёржа
+- `experiment:` — research branches before merge
 
-**Игровые** (останутся в игре после форка):
+**Game** (stay with the game after the fork):
 - `feat(pawn):`, `feat(combat):`, `feat(magic):`, `feat(world):`, `feat(inventory):`, `feat(ai):`
-- `fix(…):` — баг-фиксы в тех же областях
-- `feat(application):` — игровой цикл, `feat(presentation):` — Godot DevKit
-- `feat(bootstrap):` — проводка при появлении новой системы
+- `fix(…):` — bug fixes in the same areas
+- `feat(application):` — game loop; `feat(presentation):` — Godot DevKit
+- `feat(bootstrap):` — wiring when a new system appears
 
-**Нейтральные**: `docs:`, `test:`, `chore:`, `build:`, `refactor:`.
+**Neutral**: `docs:`, `test:`, `chore:`, `build:`, `refactor:`.
 
-## Применение в чистую ветку
+## See also
 
-## См. также
-
-- [ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра)
-- [CODING_STANDARDS §«Сообщения коммитов»](./CODING_STANDARDS.md#сообщения-коммитов)
-- [ROADMAP §«Пост-релиз — развилка на движок»](./ROADMAP.md#пост-релиз--развилка-на-движок)
+- [ARCHITECTURE §"Dependency rules"](./ARCHITECTURE.md#dependency-rules)
+- [CODING_STANDARDS §"Commit messages"](./CODING_STANDARDS.md#commit-messages)
+- [ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)
 - [ISOLATION](./ISOLATION.md)
 - [MODDING](./MODDING.md)

@@ -1,36 +1,36 @@
 # World Systems
 
-## Назначение
-Глобальные системы мира: карта (тайлы, декорации), погода и
-биомы. Они редко тикают и редко меняются — но их события
-(`WeatherChangedEvent`, `BiomeShiftEvent`) читают почти все.
+## Purpose
+Global world systems: map (tiles, decorations), weather, and biomes. They
+tick rarely and change rarely — but their events
+(`WeatherChangedEvent`, `BiomeShiftEvent`) are read by almost everyone.
 
-## Зависимости
-- `DualFrontier.Contracts` — атрибуты, `IWorldBus`.
+## Dependencies
+- `DualFrontier.Contracts` — attributes, `IWorldBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.World` — `TileComponent`, `BiomeComponent`.
 - `DualFrontier.Events.World` — `WeatherChangedEvent`,
   `BiomeShiftEvent`, `MapRegionLoadedEvent`.
 
-## Что внутри
-- `MapSystem.cs` — RARE: подгрузка/выгрузка регионов карты.
-- `WeatherSystem.cs` — RARE: смена погоды, публикация события.
-- `BiomeSystem.cs` — RARE: ползучие сдвиги биомов (например, эфир).
+## Contents
+- `MapSystem.cs` — RARE: load/unload of map regions.
+- `WeatherSystem.cs` — RARE: weather change, publishes the event.
+- `BiomeSystem.cs` — RARE: gradual biome shifts (e.g., from ether).
 
-## Правила
-- Шина домена — `nameof(IGameServices.World)`.
-- Все три системы — RARE (3600 фреймов ≈ раз в минуту реального времени),
-  чтобы не нагружать основной цикл.
-- `WeatherSystem` не пишет в `BiomeComponent` напрямую — только
-  через публикацию события; `BiomeSystem` реагирует.
+## Rules
+- Domain bus — `nameof(IGameServices.World)`.
+- All three systems are RARE (3600 frames ≈ once per real-time minute), so
+  they do not weigh on the main loop.
+- `WeatherSystem` does not write `BiomeComponent` directly — only via event
+  publication; `BiomeSystem` reacts.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Внутри WeatherSystem:
+// Inside WeatherSystem:
 worldBus.Publish(new WeatherChangedEvent(from: Clear, to: EtherStorm));
 ```
 
 ## TODO
-- [ ] Реализовать `MapSystem`: стриминг регионов по центру камеры.
-- [ ] Реализовать `WeatherSystem`: марковская цепь погоды.
-- [ ] Реализовать `BiomeSystem`: влияние эфира на тип биома.
+- [ ] Implement `MapSystem`: region streaming based on the camera center.
+- [ ] Implement `WeatherSystem`: a Markov chain of weather.
+- [ ] Implement `BiomeSystem`: ether's influence on biome type.

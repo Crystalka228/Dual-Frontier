@@ -1,53 +1,48 @@
 # DualFrontier.AI
 
-## Назначение
-Поведенческая прослойка пешек и юнитов: behaviour trees, джобы
-(задачи, которые пешка исполняет по шагам) и поиск пути A*.
-Системы из `DualFrontier.Systems` вызывают AI как чистые
-утилиты (без состояния на мир) — а сами эффекты прикладывают
-через свои WRITE-компоненты.
+## Purpose
+The behavioral layer for pawns and units: behaviour trees, jobs (tasks the pawn
+executes step by step), and A* pathfinding. Systems from `DualFrontier.Systems`
+call AI as pure utilities (no world state of their own) — and apply effects
+through their own WRITE components.
 
-## Зависимости
-- `DualFrontier.Contracts` — `EntityId`, `GridVector`, базовые типы.
-- `DualFrontier.Components` — для чтения данных пешки (навыки,
-  позиция, инвентарь) — через `BTContext`/`IJob`.
+## Dependencies
+- `DualFrontier.Contracts` — `EntityId`, `GridVector`, base types.
+- `DualFrontier.Components` — for reading pawn data (skills, position,
+  inventory) — through `BTContext` / `IJob`.
 
-**НЕ зависит** от `DualFrontier.Core` (иначе закольцуем граф —
-Core содержит шедулер, который вызывает Systems, которые
-вызывают AI). Все примитивы, которые AI разделяет с Systems и
-Components (например `GridVector`), живут в `Contracts` — это
-тот же слой, от которого зависят моды.
+**Does NOT depend** on `DualFrontier.Core` (otherwise the graph cycles —
+Core contains the scheduler, which calls Systems, which call AI). Every
+primitive AI shares with Systems and Components (e.g., `GridVector`)
+lives in `Contracts` — the same layer mods depend on.
 
-## Что внутри
-- `BehaviourTree/` — универсальный BT (Selector / Sequence / Leaf).
-- `Jobs/` — `IJob` + конкретные джобы (хаул, крафт, каст, медитация,
-  приказ голему).
-- `Pathfinding/` — `IPathfindingService`, A*-реализация, сетка
-  проходимости.
+## Contents
+- `BehaviourTree/` — generic BT (Selector / Sequence / Leaf).
+- `Jobs/` — `IJob` + concrete jobs (haul, craft, cast, meditate,
+  golem-command).
+- `Pathfinding/` — `IPathfindingService`, A* implementation, passability grid.
 
-## Правила
-- AI НЕ имеет доступа к `World` и шинам — ему скармливают данные
-  через `BTContext` / аргументы `IJob.Tick`.
-- AI НЕ должен кешировать состояние между тиками системы, если
-  джоб не помечен как stateful (stateful джоб хранит локальный
-  прогресс в своих полях).
-- Никакого `async`/`await` — поиск пути синхронный (см. THREADING).
-  Длинный A* режем на кадры через `TryFindPath` с лимитом итераций.
-- BT-ноды — чистые функции по `BTContext`, никаких глобальных
-  синглтонов.
+## Rules
+- AI has NO access to `World` or to the buses — data is fed to it through
+  `BTContext` / `IJob.Tick` arguments.
+- AI MUST NOT cache state between system ticks unless the job is marked
+  stateful (a stateful job stores local progress in its own fields).
+- No `async` / `await` — pathfinding is synchronous (see THREADING).
+  Long A* is sliced across frames via `TryFindPath` with an iteration cap.
+- BT nodes are pure functions over `BTContext`, no global singletons.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// В системе Pawn/JobSystem:
+// In Pawn/JobSystem:
 var job = new JobHaul(/* args */);
 job.Start();
 if (job.Tick(delta) == JobStatus.Done) { /* ... */ }
 ```
 
 ## TODO
-- [x] Реализовать `AStarPathfinding` с лимитом итераций за тик
-      (2000 итераций за вызов, без кэша путей — см.
+- [x] Implement `AStarPathfinding` with a per-tick iteration cap
+      (2000 iterations per call, no path cache — see
       `Pathfinding/README.md`).
-- [ ] Написать BT-парсер из JSON для модов.
-- [ ] Покрыть юнит-тестами `Selector` / `Sequence` / `Leaf`.
-- [ ] Реализовать `JobCast` (интеграция со `SpellSystem` через шину).
+- [ ] Write a BT JSON parser for mods.
+- [ ] Cover `Selector` / `Sequence` / `Leaf` with unit tests.
+- [ ] Implement `JobCast` (integration with `SpellSystem` through the bus).

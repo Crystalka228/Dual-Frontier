@@ -1,18 +1,18 @@
 # mods/
 
-Примеры модов. Каждый — отдельная сборка, видит ТОЛЬКО `DualFrontier.Contracts`.
-См. [docs/MODDING.md](../docs/MODDING.md).
+Example mods. Each is a separate assembly that sees ONLY `DualFrontier.Contracts`.
+See [docs/MODDING.md](../docs/MODDING.md).
 
-## Что внутри
+## Contents
 
-- `DualFrontier.Mod.Example/` — референсный минимальный мод.
-  Демонстрирует правильный паттерн: `IMod` + `mod.manifest.json`,
-  зависимость только от `DualFrontier.Contracts`.
+- `DualFrontier.Mod.Example/` — reference minimal mod.
+  Demonstrates the correct pattern: `IMod` + `mod.manifest.json`,
+  with a dependency only on `DualFrontier.Contracts`.
 
-## Правила
+## Rules
 
-- Сборка мода НЕ должна ссылаться на `Core`, `Systems`, `Components`,
-  `Events`, `AI` или `Application`. Только `Contracts`.
-- `AssemblyLoadContext` ядра гарантирует это физически — любой
-  дополнительный reference приведёт к ошибке загрузки.
-- Каждый мод обязан поставляться с `mod.manifest.json` рядом с dll.
+- A mod assembly MUST NOT reference `Core`, `Systems`, `Components`,
+  `Events`, `AI`, or `Application`. Only `Contracts`.
+- The core's `AssemblyLoadContext` enforces this physically — any
+  additional reference produces a load error.
+- Every mod MUST ship with `mod.manifest.json` next to the dll.

@@ -1,32 +1,33 @@
 # Pawn Events
 
-## Назначение
-События, относящиеся к пешкам как личностям: психологический срыв, реакция
-на чужую смерть, прокачка навыка.
+## Purpose
+Events relating to pawns as personalities: psychological breaks, reactions to
+the death of others, skill gains.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`.
 
-## Что внутри
-- `MoodBreakEvent.cs` — настроение пешки ушло ниже порога
+## Contents
+- `MoodBreakEvent.cs` — a pawn's mood dropped below threshold
   (`PawnId`, `MoodValue`).
-- `DeathReactionEvent.cs` — пешка увидела смерть сородича.
-- `SkillGainEvent.cs` — навык повышен (`PawnId`, `Skill`, `NewLevel`,
+- `DeathReactionEvent.cs` — a pawn witnessed the death of another.
+- `SkillGainEvent.cs` — a skill leveled up (`PawnId`, `Skill`, `NewLevel`,
   `Delta`).
-- `PawnSpawnedEvent.cs` — появление пешки в мире (`PawnId`, `X`, `Y`).
-- `PawnMovedEvent.cs` — пешка сменила тайл (`PawnId`, `X`, `Y`).
-- `JobAssignedEvent.cs`, `JobCompletedEvent.cs` — жизненный цикл джоба.
-- `NeedsCriticalEvent.cs` — одна из нужд пешки в критической зоне.
+- `PawnSpawnedEvent.cs` — a pawn appeared in the world (`PawnId`, `X`, `Y`).
+- `PawnMovedEvent.cs` — a pawn changed tile (`PawnId`, `X`, `Y`).
+- `JobAssignedEvent.cs`, `JobCompletedEvent.cs` — job lifecycle.
+- `NeedsCriticalEvent.cs` — one of a pawn's needs is in the critical zone.
 
-## Правила
-- `MoodBreakEvent` публикуется MoodSystem один раз на переход — повторный
-  срыв без восстановления не считается новым событием.
-- `DeathReactionEvent` подписывается на deferred `DeathEvent` из Combat:
-  реакция происходит в следующей фазе, когда тело уже удалено из сцены.
-- `SkillGainEvent` — для UI/статистики; сам уровень хранится в
-  `SkillsComponent`, событие несёт delta.
+## Rules
+- `MoodBreakEvent` is published by MoodSystem once per transition — a repeat
+  break without recovery is not counted as a new event.
+- `DeathReactionEvent` subscribes to the deferred `DeathEvent` from Combat:
+  the reaction happens in the next phase, by which time the body is already
+  removed from the scene.
+- `SkillGainEvent` is for UI/statistics; the level itself is stored in
+  `SkillsComponent` — the event carries the delta.
 
-## Примеры использования
+## Usage examples
 ```csharp
 // MoodSystem (SLOW tick):
 if (mind.Mood < mind.MoodBreakThreshold && !already)
@@ -34,5 +35,5 @@ if (mind.Mood < mind.MoodBreakThreshold && !already)
 ```
 
 ## TODO
-- [ ] Уточнить градацию срывов (minor / major / berserk) — GDD психологии.
-- [ ] Добавить `RelationshipChangedEvent` — для SocialSystem, Фаза 3.
+- [ ] Settle the break severity scale (minor / major / berserk) — psychology GDD.
+- [ ] Add `RelationshipChangedEvent` — for SocialSystem, Phase 3.

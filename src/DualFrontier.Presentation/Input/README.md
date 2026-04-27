@@ -1,25 +1,25 @@
-# Input — Маршрутизация ввода
+# Input — Input routing
 
-## Назначение
-Единая точка обработки ввода пользователя. `InputRouter` ловит события от
-Godot (клики, клавиши, драги) и транслирует их в команды домена через
+## Purpose
+Single point for handling user input. `InputRouter` catches Godot events
+(clicks, keys, drags) and translates them into domain commands through the
 `EventBus` / `PresentationBridge`.
 
-## Зависимости
-- `DualFrontier.Application` — шина событий / bridge.
-- `GodotSharp` (Фаза 3).
+## Dependencies
+- `DualFrontier.Application` — event bus / bridge.
+- `GodotSharp` (Phase 3).
 
-## Что внутри
-- `InputRouter.cs` — диспетчер ввода.
+## Contents
+- `InputRouter.cs` — input dispatcher.
 
-## Правила
-- Presentation НИКОГДА не меняет состояние мира напрямую. Любое действие
-  пользователя превращается в событие/команду, которое идёт в домен.
-- Ввод обрабатывается только в главном потоке Godot.
+## Rules
+- Presentation NEVER mutates world state directly. Any user action becomes
+  an event/command that flows into the domain.
+- Input is processed only on Godot's main thread.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Фаза 3+:
+// Phase 3+:
 public override void _UnhandledInput(InputEvent @event)
 {
     _router.Route(@event);
@@ -27,5 +27,5 @@ public override void _UnhandledInput(InputEvent @event)
 ```
 
 ## TODO
-- [ ] Фаза 3 — реализовать `InputRouter.Route` для мыши/клавиатуры.
-- [ ] Фаза 3 — конфигурируемые биндинги.
+- [ ] Phase 3 — implement `InputRouter.Route` for mouse/keyboard.
+- [ ] Phase 3 — configurable bindings.

@@ -1,34 +1,33 @@
-# Modding — Загрузчик модов
+# Modding — Mod loader
 
-## Назначение
-Инфраструктура загрузки, выгрузки и изоляции модов. Каждый мод
-живёт в отдельном `AssemblyLoadContext` (`ModLoadContext`) с
-`isCollectible: true` — это физически препятствует моду дотянуться
-до внутренностей ядра и позволяет горячую перезагрузку
-(см. TechArch 11.8).
+## Purpose
+Infrastructure for loading, unloading, and isolating mods. Each mod lives in
+its own `AssemblyLoadContext` (`ModLoadContext`) with `isCollectible: true`
+— this physically prevents the mod from reaching into the core's internals
+and enables hot reload (see TechArch 11.8).
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IMod`, `IModApi`, `IModContract`, `ModManifest`
-- `DualFrontier.Core` — `GameServices` (через прокси)
+- `DualFrontier.Core` — `GameServices` (through a proxy)
 
-## Что внутри
-- `ModLoader.cs` — API загрузки/выгрузки и реестр активных модов.
-- `ModLoadContext.cs` — свой `AssemblyLoadContext` на каждый мод.
-- `RestrictedModApi.cs` — реализация `IModApi`, проксирует вызовы в ядро
-  с дополнительными проверками прав и квот.
-- `ModIsolationException.cs` — бросается, если мод попытался достучаться
-  до внутренностей ядра (обход `IModApi`).
+## Contents
+- `ModLoader.cs` — load/unload API and the active-mod registry.
+- `ModLoadContext.cs` — per-mod `AssemblyLoadContext`.
+- `RestrictedModApi.cs` — `IModApi` implementation; proxies calls into the core
+  with extra rights and quota checks.
+- `ModIsolationException.cs` — thrown when a mod tries to reach into core
+  internals (bypassing `IModApi`).
 
-## Правила
-- Мод **видит** только сборку `DualFrontier.Contracts`. Всё остальное —
-  через `IModApi`.
-- Кастить `IModApi` к `RestrictedModApi` запрещено, детектируется.
-- Ни одной ссылки на `DualFrontier.Core` из сборки мода напрямую —
-  `AssemblyLoadContext` это гарантирует физически.
-- `ModLoader.Unload` обязан дождаться завершения всех колбэков мода
-  перед выгрузкой его контекста.
+## Rules
+- A mod **sees** only the `DualFrontier.Contracts` assembly. Everything else —
+  through `IModApi`.
+- Casting `IModApi` to `RestrictedModApi` is forbidden and detected.
+- Not a single reference to `DualFrontier.Core` from a mod assembly — the
+  `AssemblyLoadContext` guarantees this physically.
+- `ModLoader.Unload` MUST wait for every mod callback to complete before
+  unloading its context.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var loader = new ModLoader(services);
 loader.LoadMod("mods/DualFrontier.Mod.Example/bin/Debug/net8.0/");
@@ -40,7 +39,7 @@ loader.UnloadMod("dualfrontier.example");
 ```
 
 ## TODO
-- [ ] Фаза 2 — `ModLoader.LoadMod` (Manifest → Assembly → reflection `IMod`).
-- [ ] Фаза 2 — `RestrictedModApi` проксирует в `GameServices`.
-- [ ] Фаза 2 — тесты изоляции (`tests/DualFrontier.Modding.Tests`).
-- [ ] Фаза 3 — горячая перезагрузка (Unload + повторный LoadMod).
+- [ ] Phase 2 — `ModLoader.LoadMod` (Manifest → Assembly → reflection `IMod`).
+- [ ] Phase 2 — `RestrictedModApi` proxies into `GameServices`.
+- [ ] Phase 2 — isolation tests (`tests/DualFrontier.Modding.Tests`).
+- [ ] Phase 3 — hot reload (Unload + repeat LoadMod).

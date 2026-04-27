@@ -1,35 +1,37 @@
-# Scenario — Загрузка сценариев
+# Scenario — Scenario loading
 
-## Назначение
-Стартовые сценарии описывают начальное состояние мира: биом, зерно генерации,
-количество и параметры начальных пешек, стартовый инвентарь и т.п.
-`ScenarioLoader` парсит файлы сценариев с диска, `ScenarioDef` — DTO-описание.
+## Purpose
+Start scenarios describe the initial world state: biome, generation seed,
+the count and parameters of starting pawns, the starting inventory, and so on.
+`ScenarioLoader` parses scenario files from disk; `ScenarioDef` is the DTO
+description.
 
-## Зависимости
-- `DualFrontier.Core` — для создания `World` на основе дефиниции.
+## Dependencies
+- `DualFrontier.Core` — for building `World` from the definition.
 
-## Что внутри
-- `ScenarioLoader.cs` — парсер файлов сценариев (JSON/TOML, TBD).
-- `ScenarioDef.cs` — неизменяемая дефиниция сценария.
+## Contents
+- `ScenarioLoader.cs` — scenario-file parser (JSON/TOML, TBD).
+- `ScenarioDef.cs` — immutable scenario definition.
 
-## Правила
-- `ScenarioDef` — чистый DTO, без логики.
-- Парсинг синхронный; асинхронный прогресс — ответственность вышестоящего слоя.
-- Сценарий НЕ должен ссылаться на конкретные мод-типы по имени C# — только по
-  зарегистрированному идентификатору.
+## Rules
+- `ScenarioDef` is a pure DTO with no logic.
+- Parsing is synchronous; asynchronous progress is the upstream layer's
+  responsibility.
+- A scenario MUST NOT reference concrete mod types by C# name — only by
+  registered identifier.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var loader   = new ScenarioLoader();
 ScenarioDef scenario = loader.Load("scenarios/default.json");
-// Дальше — создать World по scenario.
+// Next — build World from scenario.
 ```
 
 ## TODO
-- [x] Фаза 3 — `ScenarioLoader.Load(path)` парсит JSON через
+- [x] Phase 3 — `ScenarioLoader.Load(path)` parses JSON via
       `System.Text.Json`.
-- [x] Фаза 3 — `ScenarioDef` с полями `Id`, `Name`, `StartingPawnCount`,
-      `MapWidth`, `MapHeight`, `WorldSeed`, `StartingItems`.
-- [ ] Валидация схемы и понятные ошибки парсинга.
-- [ ] `LoadDefault()` используется при отсутствии файла сценария
-      (сейчас метод есть, но вызывающий код не делает fallback).
+- [x] Phase 3 — `ScenarioDef` with `Id`, `Name`, `StartingPawnCount`,
+      `MapWidth`, `MapHeight`, `WorldSeed`, `StartingItems` fields.
+- [ ] Schema validation and clear parse-error messages.
+- [ ] `LoadDefault()` is used when the scenario file is missing
+      (the method exists, but the caller does not yet fall back).

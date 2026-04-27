@@ -1,27 +1,28 @@
-# Registry — Реестры типов
+# Registry — Type registries
 
-## Назначение
-Реестры типов компонентов и систем. Нужны для:
-1. Присвоения стабильных числовых ID компонентам (для Save/Load и сетевого
-   протокола модов).
-2. Динамической регистрации компонентов/систем модами через `IModApi`.
-3. Итерации по всем зарегистрированным системам планировщиком при построении графа.
+## Purpose
+Registries for component and system types. They are needed for:
+1. Assigning stable numeric IDs to components (for Save/Load and the mod
+   network protocol).
+2. Dynamic registration of components/systems by mods through `IModApi`.
+3. Iterating over every registered system from the scheduler when the graph
+   is built.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts.Core` (`IComponent`).
 - `DualFrontier.Core.ECS` (`SystemBase`).
 
-## Что внутри
-- `ComponentRegistry.cs` — маппинг `Type ↔ int ComponentTypeId`.
-- `SystemRegistry.cs` — хранилище зарегистрированных систем, итератор для планировщика.
+## Contents
+- `ComponentRegistry.cs` — `Type ↔ int ComponentTypeId` mapping.
+- `SystemRegistry.cs` — storage of registered systems, iterator for the scheduler.
 
-## Правила
-- Регистрация — операция старта игры или загрузки мода. В рантайме не вызывается.
-- ID компонента стабилен между запусками (важно для Save/Load). Для модов —
-  ID выдаются после базовых типов и зависят от порядка загрузки модов.
-- SystemRegistry не гарантирует стабильность порядка итерации.
+## Rules
+- Registration happens at game startup or mod load. It is not called at runtime.
+- A component's ID is stable across runs (important for Save/Load). For mods,
+  IDs are assigned after the base types and depend on mod load order.
+- `SystemRegistry` does not guarantee a stable iteration order.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var components = new ComponentRegistry();
 components.Register<HealthComponent>();
@@ -33,6 +34,6 @@ foreach (var system in systems.GetAll()) { /* build graph */ }
 ```
 
 ## TODO
-- [ ] Фаза 1 — реализовать ComponentRegistry со стабильными ID.
-- [ ] Фаза 1 — реализовать SystemRegistry.
-- [ ] Фаза 2 — добавить сериализацию соответствия Type ↔ ID в save-файл.
+- [ ] Phase 1 — implement `ComponentRegistry` with stable IDs.
+- [ ] Phase 1 — implement `SystemRegistry`.
+- [ ] Phase 2 — add Type ↔ ID mapping serialization to the save file.

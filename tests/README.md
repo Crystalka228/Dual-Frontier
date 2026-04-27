@@ -1,14 +1,14 @@
 # tests/
 
-xUnit + FluentAssertions. См. [docs/TESTING_STRATEGY.md](../docs/TESTING_STRATEGY.md).
+xUnit + FluentAssertions. See [docs/TESTING_STRATEGY.md](../docs/TESTING_STRATEGY.md).
 
-## Что внутри
+## Contents
 
-- `DualFrontier.Core.Tests/` — юнит-тесты ядра: ECS, планировщик, шина, сторож изоляции.
-- `DualFrontier.Systems.Tests/` — тесты игровых систем (Pathfinding, Jobs, Inventory и т.п.).
-- `DualFrontier.Modding.Tests/` — тесты загрузчика модов и изоляции `AssemblyLoadContext`.
+- `DualFrontier.Core.Tests/` — core unit tests: ECS, scheduler, bus, isolation guard.
+- `DualFrontier.Systems.Tests/` — game-system tests (Pathfinding, Jobs, Inventory, etc.).
+- `DualFrontier.Modding.Tests/` — mod loader and `AssemblyLoadContext` isolation tests.
 
-## Запуск
+## Running
 
 ```bash
 dotnet test

@@ -1,30 +1,30 @@
-# Scheduling — Параллельный планировщик
+# Scheduling — Parallel scheduler
 
-## Назначение
-Строит граф READ/WRITE зависимостей между системами на основе декларации
-`[SystemAccess]`, топологически сортирует его в фазы и параллельно исполняет
-системы одной фазы. `TickScheduler` поверх этого управляет разными частотами
-тиков: REALTIME/FAST/NORMAL/SLOW/RARE.
+## Purpose
+Builds the READ/WRITE dependency graph between systems based on `[SystemAccess]`
+declarations, topologically sorts it into phases, and runs the systems of a
+single phase in parallel. `TickScheduler` on top of this manages different tick
+frequencies: REALTIME / FAST / NORMAL / SLOW / RARE.
 
-## Зависимости
-- `DualFrontier.Contracts` (атрибуты `SystemAccessAttribute`, `TickRateAttribute`).
+## Dependencies
+- `DualFrontier.Contracts` (the `SystemAccessAttribute`, `TickRateAttribute` attributes).
 - `DualFrontier.Core.ECS` (`SystemBase`).
 
-## Что внутри
-- `DependencyGraph.cs` — построение графа конфликтов по декларациям систем.
-- `ParallelSystemScheduler.cs` — исполнение фаз через `Parallel.ForEach` или
-  пул задач.
-- `SystemPhase.cs` — неизменяемый список систем одной фазы.
-- `TickScheduler.cs` — решает, на каких тиках запускать какую систему.
-- `TickRates.cs` — константы частот (дублирует `DualFrontier.Contracts.Attributes.TickRates`).
+## Contents
+- `DependencyGraph.cs` — builds the conflict graph from system declarations.
+- `ParallelSystemScheduler.cs` — runs phases through `Parallel.ForEach` or a
+  task pool.
+- `SystemPhase.cs` — immutable list of systems in one phase.
+- `TickScheduler.cs` — decides which systems to run on which ticks.
+- `TickRates.cs` — frequency constants (duplicates `DualFrontier.Contracts.Attributes.TickRates`).
 
-## Правила
-- Граф строится один раз при старте, после загрузки всех модов. Поздняя
-  регистрация системы => перестройка графа (дорого).
-- Система не может быть в нескольких фазах одновременно.
-- Два потока не пишут в один `ComponentStore`: это инвариант графа.
+## Rules
+- The graph is built once at startup, after every mod has loaded. Late system
+  registration ⇒ graph rebuild (expensive).
+- A system cannot live in multiple phases at once.
+- Two threads never write to the same `ComponentStore`: this is the graph's invariant.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var graph = new DependencyGraph();
 graph.AddSystem(new CombatSystem());
@@ -38,7 +38,7 @@ scheduler.ExecuteTick(delta: 1f / 30f);
 ```
 
 ## TODO
-- [x] Фаза 1 — реализовать топологическую сортировку графа.
-- [x] Фаза 1 — реализовать параллельное исполнение фазы.
-- [x] Фаза 1 — реализовать TickScheduler с разными частотами.
-- [x] Фаза 1 — добавить детекцию циклов в графе с диагностикой.
+- [x] Phase 1 — implement topological sort of the graph.
+- [x] Phase 1 — implement parallel phase execution.
+- [x] Phase 1 — implement `TickScheduler` with multiple frequencies.
+- [x] Phase 1 — add cycle detection in the graph with diagnostics.

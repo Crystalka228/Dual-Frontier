@@ -1,29 +1,30 @@
-# Bus — Реализация доменных шин
+# Bus — Domain bus implementations
 
-## Назначение
-Реализация контрактов `IEventBus` и `IGameServices` из
-`DualFrontier.Contracts.Bus`. Каждая доменная шина — отдельный экземпляр
-`DomainEventBus` со своим набором подписок. `IntentBatcher` используется
-системами для реализации двухшаговой модели Intent → Granted/Refused.
+## Purpose
+Implements the `IEventBus` and `IGameServices` contracts from
+`DualFrontier.Contracts.Bus`. Each domain bus is a separate `DomainEventBus`
+instance with its own subscription set. `IntentBatcher` is used by systems to
+implement the two-step Intent → Granted/Refused model.
 
-## Зависимости
-- `DualFrontier.Contracts.Bus` — контракты шин.
-- `DualFrontier.Contracts.Core` — маркер `IEvent`.
+## Dependencies
+- `DualFrontier.Contracts.Bus` — bus contracts.
+- `DualFrontier.Contracts.Core` — the `IEvent` marker.
 
-## Что внутри
-- `DomainEventBus.cs` — реализация одной доменной шины с `ConcurrentDictionary`
-  подписок для потокобезопасной работы.
-- `GameServices.cs` — композиция шести доменных шин (Combat, Inventory, Magic, Pawn, Power, World), реализует `IGameServices`.
-- `IntentBatcher.cs` — собирает intents в пределах фазы и отдаёт батчем
-  обработчику в следующей фазе.
+## Contents
+- `DomainEventBus.cs` — single-domain bus implementation with a
+  `ConcurrentDictionary` of subscriptions for thread-safe operation.
+- `GameServices.cs` — composition of the six domain buses (Combat, Inventory, Magic, Pawn, Power, World); implements `IGameServices`.
+- `IntentBatcher.cs` — collects intents within a phase and hands a batch to the
+  handler in the next phase.
 
-## Правила
-- Шина не держит ссылок на сами системы: только на делегаты `Action<T>`.
-- Подписка и отписка — потокобезопасные операции (ConcurrentDictionary).
-- Обработчики вызываются синхронно. Для длительной работы обработчик обязан
-  переложить задачу на IntentBatcher.
+## Rules
+- The bus does not hold references to the systems themselves — only to
+  `Action<T>` delegates.
+- Subscribe and unsubscribe are thread-safe operations (`ConcurrentDictionary`).
+- Handlers are invoked synchronously. For long-running work, the handler MUST
+  hand off the task to `IntentBatcher`.
 
-## Примеры использования
+## Usage examples
 ```csharp
 var services = new GameServices();
 services.Combat.Publish(new ShootAttemptEvent(shooterId));
@@ -31,6 +32,6 @@ services.Inventory.Subscribe<AmmoIntent>(batcher.Collect);
 ```
 
 ## TODO
-- [x] Фаза 1 — реализовать `DomainEventBus` с поддержкой `[Deferred]`/`[Immediate]`.
-- [x] Фаза 1 — реализовать `IntentBatcher` с двухфазным сбором и drain.
-- [ ] Фаза 2 — добавить телеметрию (счётчики событий/сек на шину).
+- [x] Phase 1 — implement `DomainEventBus` with `[Deferred]` / `[Immediate]` support.
+- [x] Phase 1 — implement `IntentBatcher` with two-phase collection and drain.
+- [ ] Phase 2 — add telemetry (events/sec counters per bus).

@@ -1,27 +1,27 @@
 # Building
 
-## Назначение
-Компоненты для построек и их инфраструктуры: потребители и производители
-энергии (электричество и эфир), хранилища, верстаки.
+## Purpose
+Components for buildings and their infrastructure: power consumers and producers
+(electricity and ether), storages, workbenches.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IComponent`, `EntityId`.
 
-## Что внутри
-- `PowerConsumerComponent.cs` — потребитель энергии (тип + расход в тик).
-- `PowerProducerComponent.cs` — производитель энергии (тип + выработка).
-- `StorageComponent.cs` — хранилище (capacity + список items).
-- `WorkbenchComponent.cs` — верстак (тип + скорость работы).
+## Contents
+- `PowerConsumerComponent.cs` — power consumer (type + per-tick draw).
+- `PowerProducerComponent.cs` — power producer (type + output).
+- `StorageComponent.cs` — storage (capacity + item list).
+- `WorkbenchComponent.cs` — workbench (kind + work speed).
 
-## Правила
-- Две независимые сети энергии: электричество и эфир. Поле
-  `PowerType` указывает, в какую сеть подключена постройка.
-  Смешение в одной сети запрещено валидатором PowerSystem.
-- Перегрузка сети публикует `GridOverloadEvent`.
-- `StorageComponent.Items` — это entity-IDs предметов в мире
-  (предметы — отдельные сущности со своими компонентами).
+## Rules
+- Two independent power networks: electricity and ether. The `PowerType` field
+  indicates which network the building is connected to. Mixing within a single
+  network is forbidden by the PowerSystem validator.
+- Network overload publishes `GridOverloadEvent`.
+- `StorageComponent.Items` is a list of entity IDs of items in the world (items
+  are separate entities with their own components).
 
-## Примеры использования
+## Usage examples
 ```csharp
 var reactor = world.CreateEntity();
 world.AddComponent(reactor, new PowerProducerComponent { /* Type = PowerType.Electric, Output = 1000 */ });
@@ -31,6 +31,6 @@ world.AddComponent(golemForge, new PowerConsumerComponent { /* Type = PowerType.
 ```
 
 ## TODO
-- [ ] Определить `PowerType` enum (Electric, Ether).
-- [ ] Определить `WorkbenchKind` enum (Cooking, Smithing, Research, GolemForge …).
-- [ ] Продумать дерадацию/поломку оборудования — отдельный `DurabilityComponent`.
+- [ ] Define the `PowerType` enum (Electric, Ether).
+- [ ] Define the `WorkbenchKind` enum (Cooking, Smithing, Research, GolemForge …).
+- [ ] Plan equipment degradation/breakage — a separate `DurabilityComponent`.
