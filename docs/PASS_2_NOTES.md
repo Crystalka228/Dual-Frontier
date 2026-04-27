@@ -30,8 +30,11 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 | File | Line (RU) | Context |
 |---|---|---|
 | `README.md` | 20 | Agent role table, fourth row: «Человек / Владелец смысла / — / Выбор контрактов, архитектурные решения, формулировка целей фаз» |
+| `docs/METHODOLOGY.md` | 13 | §0 abstract: «человек как владелец смысла» (in the four-agent role list) |
+| `docs/METHODOLOGY.md` | 43 | §2.1 role distribution: «**Человек.** Владелец смысла.» |
+| `docs/METHODOLOGY.md` (link description in `README.md`) | — | The README's METHODOLOGY bullet was rephrased to "the human as direction owner" using the same fallback. |
 
-(Additional occurrences in `docs/METHODOLOGY.md` and elsewhere will be appended as Pass 2 reaches them.)
+(Further occurrences in lore docs and any remaining methodology cross-links will be appended as Pass 2 reaches them.)
 
 ### 1.2 Race vs species (`биология рас`) — fallback `species biology`
 
