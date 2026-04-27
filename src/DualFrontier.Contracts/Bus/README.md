@@ -1,32 +1,32 @@
-# Bus — Доменные шины событий
+# Bus — Domain event buses
 
-## Назначение
-Определяет контракт базовой шины событий `IEventBus` и шесть доменных шин
-(Combat, Inventory, Magic, Pawn, Power, World), собранных в агрегатор `IGameServices`.
-Разделение на домены снижает lock contention, упрощает дебаг и профилирование
-нагрузки на конкретный домен.
+## Purpose
+Defines the base event-bus contract `IEventBus` and the six domain buses
+(Combat, Inventory, Magic, Pawn, Power, World), aggregated under `IGameServices`.
+Splitting buses by domain reduces lock contention, simplifies debugging, and
+makes per-domain load profiling possible.
 
-## Зависимости
-- `DualFrontier.Contracts.Core` (маркер `IEvent`).
+## Dependencies
+- `DualFrontier.Contracts.Core` (the `IEvent` marker).
 
-## Что внутри
-- `IEventBus.cs` — базовый контракт шины одного домена (Publish/Subscribe/Unsubscribe).
-- `IGameServices.cs` — агрегатор всех доменных шин, точка доступа для систем.
-- `ICombatBus.cs` — шина боя: ShootAttempt, DamageEvent, DeathEvent.
-- `IInventoryBus.cs` — шина склада: AmmoRequest/Result, ItemAdded/Removed.
-- `IMagicBus.cs` — шина магии: ManaRequest/Result, SpellCast, EtherSurge.
-- `IPawnBus.cs` — шина пешек: MoodBreak, DeathReaction, SkillGain.
-- `IPowerBus.cs` — шина энергосети: ConverterPowerOutput.
-- `IWorldBus.cs` — шина мира: EtherNodeChanged, WeatherChanged, RaidIncoming.
+## Contents
+- `IEventBus.cs` — the base contract for a single-domain bus (Publish/Subscribe/Unsubscribe).
+- `IGameServices.cs` — aggregator of every domain bus, the access point for systems.
+- `ICombatBus.cs` — combat bus: ShootAttempt, DamageEvent, DeathEvent.
+- `IInventoryBus.cs` — inventory bus: AmmoRequest/Result, ItemAdded/Removed.
+- `IMagicBus.cs` — magic bus: ManaRequest/Result, SpellCast, EtherSurge.
+- `IPawnBus.cs` — pawn bus: MoodBreak, DeathReaction, SkillGain.
+- `IPowerBus.cs` — power-grid bus: ConverterPowerOutput.
+- `IWorldBus.cs` — world bus: EtherNodeChanged, WeatherChanged, RaidIncoming.
 
-## Правила
-- Каждая доменная шина — отдельный экземпляр со своим набором подписок.
-- Система пишет только в "свою" шину (декларируется в `[SystemAccess(bus: ...)]`).
-- Подписка обязана отписываться при утилизации — иначе утечка памяти.
-- Обработчики вызываются синхронно. Не блокировать в обработчике — это
-  блокирует всю фазу планировщика.
+## Rules
+- Each domain bus is a separate instance with its own subscription set.
+- A system writes only to "its" bus (declared via `[SystemAccess(bus: ...)]`).
+- A subscription MUST be removed on disposal — otherwise it leaks memory.
+- Handlers are invoked synchronously. A handler MUST NOT block — that stalls the
+  entire scheduler phase.
 
-## Примеры использования
+## Usage examples
 ```csharp
 public sealed class CombatSystem
 {
@@ -40,6 +40,6 @@ public sealed class CombatSystem
 ```
 
 ## TODO
-- [x] Фаза 1 — реализован `DomainEventBus` с ConcurrentDictionary подписок.
-- [x] Фаза 1 — реализован `GameServices` — композиция шести шин.
-- [ ] Фаза 2 — добавить метрики (счётчик событий/сек на шину) для профайлера.
+- [x] Phase 1 — `DomainEventBus` implemented with a `ConcurrentDictionary` of subscriptions.
+- [x] Phase 1 — `GameServices` implemented as the composition of the six buses.
+- [ ] Phase 2 — add metrics (events/sec per bus) for the profiler.

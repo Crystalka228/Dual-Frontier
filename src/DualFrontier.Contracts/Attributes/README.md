@@ -1,28 +1,28 @@
-# Attributes — Декларативные атрибуты
+# Attributes — Declarative attributes
 
-## Назначение
-Атрибуты, которыми системы декларируют свои зависимости и поведение во
-время исполнения. Планировщик строит граф параллелизма и тиков, читая эти
-атрибуты рефлексией при старте.
+## Purpose
+Attributes that systems use to declare their dependencies and runtime behavior.
+The scheduler builds the parallelism and tick-rate graphs by reading these
+attributes through reflection at startup.
 
-## Зависимости
+## Dependencies
 - `System` (BCL)
 
-## Что внутри
-- `SystemAccessAttribute.cs` — декларация READ/WRITE компонентов и имени шины.
-  Основа графа зависимостей и сторожа изоляции.
-- `DeferredAttribute.cs` — событие доставляется в следующей фазе планировщика.
-- `ImmediateAttribute.cs` — событие прерывает текущую фазу ради мгновенной доставки.
-- `TickRateAttribute.cs` — частота вызова `Update` системы (REALTIME/FAST/NORMAL/SLOW/RARE).
+## Contents
+- `SystemAccessAttribute.cs` — declares READ/WRITE components and the bus name.
+  The basis of the dependency graph and the isolation guard.
+- `DeferredAttribute.cs` — the event is delivered in the next scheduler phase.
+- `ImmediateAttribute.cs` — the event preempts the current phase for instant delivery.
+- `TickRateAttribute.cs` — the call frequency for a system's `Update` (REALTIME / FAST / NORMAL / SLOW / RARE).
 
-## Правила
-- Если на системе нет `[SystemAccess]` — планировщик поднимает её как
-  "пишет во все" и блокирует параллелизм. Это намеренный fail-safe.
-- `[Deferred]` и `[Immediate]` — взаимоисключающие. Если не указан ни один —
-  событие доставляется синхронно в текущей фазе.
-- `TickRateAttribute` применяется только к системам (не к компонентам или событиям).
+## Rules
+- If a system has no `[SystemAccess]`, the scheduler treats it as "writes to
+  everything" and blocks parallelism. This is a deliberate fail-safe.
+- `[Deferred]` and `[Immediate]` are mutually exclusive. If neither is set, the
+  event is delivered synchronously in the current phase.
+- `TickRateAttribute` applies only to systems (not to components or events).
 
-## Примеры использования
+## Usage examples
 ```csharp
 [SystemAccess(
     reads:  new[] { typeof(PositionComponent), typeof(WeaponComponent) },
@@ -36,7 +36,6 @@ public sealed record DeathEvent(EntityId Who) : IEvent;
 ```
 
 ## TODO
-- [ ] Фаза 1 — добавить анализатор Roslyn, кидающий CS-warning если у системы
-      нет `[SystemAccess]`.
-- [ ] Фаза 2 — добавить `[Phase(int)]` для ручного оверрайда фазы в
-      диагностических целях.
+- [ ] Phase 1 — add a Roslyn analyzer that emits a CS warning when a system
+      lacks `[SystemAccess]`.
+- [ ] Phase 2 — add `[Phase(int)]` for manually overriding a phase for diagnostics.

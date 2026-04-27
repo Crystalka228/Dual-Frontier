@@ -1,33 +1,34 @@
 # DualFrontier.Contracts
 
-## Назначение
-Публичные контракты проекта Dual Frontier — маркер-интерфейсы ECS, базовые
-типы идентификаторов, доменные шины событий, API модов и атрибуты декларации
-доступа систем. Это единственная сборка, на которую могут и должны ссылаться
-моды, внешние инструменты и все остальные сборки решения. Никакой логики —
-только типы и сигнатуры.
+## Purpose
+Public contracts of the Dual Frontier project — ECS marker interfaces, base
+identifier types, domain event buses, the mod API, and system access-declaration
+attributes. This is the only assembly that mods, external tools, and every
+other assembly in the solution may and should reference. No logic — only types
+and signatures.
 
-## Зависимости
-- `System` (BCL) — больше никаких ссылок не допускается.
+## Dependencies
+- `System` (BCL) — no other references allowed.
 
-## Что внутри
-- `Core/` — маркер-интерфейсы ECS (`IEntity`, `IComponent`, `IEvent`, `IQuery`,
-  `IQueryResult`, `ICommand`) и идентификатор `EntityId`.
-- `Bus/` — базовая шина `IEventBus`, агрегатор `IGameServices`, доменные шины
-  (`ICombatBus`, `IInventoryBus`, `IMagicBus`, `IPawnBus`, `IWorldBus`).
-- `Modding/` — API модов: `IMod`, `IModApi`, `IModContract`, `ModManifest`.
-- `Attributes/` — декларативные атрибуты: `SystemAccessAttribute`,
+## Contents
+- `Core/` — ECS marker interfaces (`IEntity`, `IComponent`, `IEvent`, `IQuery`,
+  `IQueryResult`, `ICommand`) and the `EntityId` identifier.
+- `Bus/` — the base `IEventBus`, the `IGameServices` aggregator, and the domain
+  buses (`ICombatBus`, `IInventoryBus`, `IMagicBus`, `IPawnBus`, `IWorldBus`).
+- `Modding/` — mod API: `IMod`, `IModApi`, `IModContract`, `ModManifest`.
+- `Attributes/` — declarative attributes: `SystemAccessAttribute`,
   `DeferredAttribute`, `ImmediateAttribute`, `TickRateAttribute`.
 
-## Правила
-- Здесь **только** интерфейсы, атрибуты и простые `record struct` / `sealed class`
-  манифесты. Никакой реализации и никаких приватных полей.
-- Запрещены ссылки на Godot, на `DualFrontier.Core` и на любые сборки кроме BCL.
-- Изменение сигнатуры = ломающее изменение для всех модов. Меняй осознанно и
-  бампай major версию контрактов.
-- XML `<summary>` обязателен для каждого публичного типа и члена.
+## Rules
+- This folder contains **only** interfaces, attributes, and simple `record struct` /
+  `sealed class` manifests. No implementation and no private fields.
+- References to Godot, to `DualFrontier.Core`, or to any assembly outside the BCL
+  are forbidden.
+- A signature change is a breaking change for every mod. Make changes deliberately
+  and bump the contracts' major version.
+- An XML `<summary>` is mandatory for every public type and member.
 
-## Примеры использования
+## Usage examples
 ```csharp
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
@@ -38,7 +39,7 @@ public sealed class ExampleSystem { }
 ```
 
 ## TODO
-- [ ] Фаза 0 — зафиксировать финальный набор маркер-интерфейсов ECS.
-- [ ] Фаза 0 — согласовать сигнатуры `IModApi` с системой загрузки модов.
-- [ ] Фаза 2 — добавить версионирование контрактов (атрибут `[ContractVersion]`).
-- [ ] Фаза 2 — документировать SemVer политику ломающих изменений.
+- [ ] Phase 0 — pin the final set of ECS marker interfaces.
+- [ ] Phase 0 — align `IModApi` signatures with the mod loading subsystem.
+- [ ] Phase 2 — add contract versioning (`[ContractVersion]` attribute).
+- [ ] Phase 2 — document the SemVer policy for breaking changes.

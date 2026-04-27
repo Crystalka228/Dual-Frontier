@@ -1,30 +1,30 @@
-# Core — Маркер-интерфейсы ECS
+# Core — ECS marker interfaces
 
-## Назначение
-Определяет базовые типы ECS, на которых строится вся доменная модель:
-идентификатор сущности `EntityId` и маркер-интерфейсы компонентов, событий,
-запросов и команд. Это фундамент — все остальные сборки используют эти типы
-как словарь для общения.
+## Purpose
+Defines the base ECS types on which the entire domain model is built: the
+`EntityId` identifier and marker interfaces for components, events, queries,
+and commands. This is the foundation — every other assembly uses these types
+as the vocabulary for communication.
 
-## Зависимости
+## Dependencies
 - `System` (BCL)
 
-## Что внутри
-- `IEntity.cs` — маркер сущности (используется редко, больше для ADT-полноты).
-- `EntityId.cs` — `readonly record struct` идентификатор с версией для
-  обнаружения мёртвых ссылок после удаления entity.
-- `IComponent.cs` — маркер компонента (чистые данные).
-- `IEvent.cs` — маркер события доменной шины.
-- `IQuery.cs` — маркер синхронного запроса (вопрос к шине).
-- `IQueryResult.cs` — маркер ответа на запрос.
-- `ICommand.cs` — маркер команды (императивное действие).
+## Contents
+- `IEntity.cs` — entity marker (used rarely, mostly for ADT completeness).
+- `EntityId.cs` — `readonly record struct` identifier with a version field for
+  detecting dead references after an entity is destroyed.
+- `IComponent.cs` — component marker (pure data).
+- `IEvent.cs` — domain-bus event marker.
+- `IQuery.cs` — synchronous query marker (a question to a bus).
+- `IQueryResult.cs` — query-response marker.
+- `ICommand.cs` — command marker (an imperative action).
 
-## Правила
-- Все типы здесь — маркеры либо неизменяемые value-types.
-- Никогда не добавляй методы в маркер-интерфейсы: это сломает существующие реализации.
-- Изменение `EntityId` = ломающее изменение для Save/Load формата.
+## Rules
+- All types here are markers or immutable value types.
+- Never add methods to a marker interface: it breaks every existing implementation.
+- A change to `EntityId` is a breaking change for the Save/Load format.
 
-## Примеры использования
+## Usage examples
 ```csharp
 public sealed record DamageEvent(EntityId Target, float Amount) : IEvent;
 
@@ -34,10 +34,10 @@ public sealed class HealthComponent : IComponent
     public float Maximum;
 }
 
-EntityId id = EntityId.Invalid; // проверка "нет сущности"
+EntityId id = EntityId.Invalid; // "no entity" check
 ```
 
 ## TODO
-- [ ] Фаза 0 — утвердить формат версий `EntityId` (int vs ushort).
-- [ ] Фаза 2 — добавить `IQuery<TResult>` для типобезопасных запросов.
-- [ ] Фаза 2 — покрыть `EntityId` тестами равенства и hashcode.
+- [ ] Phase 0 — settle the `EntityId` version-field format (int vs ushort).
+- [ ] Phase 2 — add `IQuery<TResult>` for type-safe queries.
+- [ ] Phase 2 — cover `EntityId` with equality and hash-code tests.
