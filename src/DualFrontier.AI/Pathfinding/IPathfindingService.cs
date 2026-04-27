@@ -3,20 +3,19 @@ using DualFrontier.Contracts.Math;
 namespace DualFrontier.AI.Pathfinding;
 
 /// <summary>
-/// Сервис поиска пути A* по сетке проходимости.
+/// A* pathfinding service over the walkability grid.
 ///
-/// Синхронный метод — async в системах запрещён, ломает
-/// ThreadLocal сторожа изоляции.
+/// Synchronous method — async is forbidden in systems; it would break the
+/// ThreadLocal isolation guard.
 /// </summary>
 public interface IPathfindingService
 {
     /// <summary>
-    /// Попытка найти путь. Возвращает <c>false</c>, если путь не
-    /// найден или превышен лимит итераций за тик (пешка
-    /// попробует ещё раз).
+    /// Attempts to find a path. Returns <c>false</c> if a path was not found
+    /// or the per-tick iteration budget was exceeded (the pawn will retry).
     /// </summary>
-    /// <param name="from">Старт.</param>
-    /// <param name="to">Финиш.</param>
-    /// <param name="path">Последовательность тайлов.</param>
+    /// <param name="from">Start.</param>
+    /// <param name="to">Goal.</param>
+    /// <param name="path">Sequence of tiles.</param>
     bool TryFindPath(GridVector from, GridVector to, out IReadOnlyList<GridVector> path);
 }

@@ -15,13 +15,13 @@ public sealed class JobHaul : IJob
 
     /// <inheritdoc />
     public void Start() =>
-        throw new System.NotImplementedException("TODO: Фаза 3");
+        throw new System.NotImplementedException("TODO: Phase 3");
 
     /// <inheritdoc />
     public JobStatus Tick(float delta) =>
-        throw new System.NotImplementedException("TODO: Фаза 3");
+        throw new System.NotImplementedException("TODO: Phase 3");
 
     /// <inheritdoc />
     public void Abort() =>
-        throw new System.NotImplementedException("TODO: Фаза 3");
+        throw new System.NotImplementedException("TODO: Phase 3");
 }

@@ -1,12 +1,12 @@
 namespace DualFrontier.AI.BehaviourTree;
 
 /// <summary>
-/// Композит "И": выполняет детей по порядку, пока все не
-/// вернут Success. Если любой вернул Failure — возвращает
-/// Failure. Если ребёнок Running — возвращает Running.
+/// "AND" composite: ticks children in order until all return Success.
+/// If any child returns Failure — returns Failure. If a child returns
+/// Running — returns Running.
 ///
-/// Используется для последовательных планов: "подойти к
-/// складу, взять предмет, отнести на стройку".
+/// Used for sequential plans: "walk to the warehouse, pick up an item,
+/// deliver it to the construction site".
 /// </summary>
 public class Sequence : BTNode
 {
@@ -14,7 +14,7 @@ public class Sequence : BTNode
     private int _currentIndex;
 
     /// <summary>
-    /// Создаёт последовательность из упорядоченного списка детей.
+    /// Creates a sequence from an ordered list of children.
     /// </summary>
     public Sequence(params BTNode[] children)
     {
