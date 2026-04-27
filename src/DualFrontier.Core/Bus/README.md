@@ -13,7 +13,7 @@
 ## Что внутри
 - `DomainEventBus.cs` — реализация одной доменной шины с `ConcurrentDictionary`
   подписок для потокобезопасной работы.
-- `GameServices.cs` — композиция пяти доменных шин, реализует `IGameServices`.
+- `GameServices.cs` — композиция шести доменных шин (Combat, Inventory, Magic, Pawn, Power, World), реализует `IGameServices`.
 - `IntentBatcher.cs` — собирает intents в пределах фазы и отдаёт батчем
   обработчику в следующей фазе.
 
