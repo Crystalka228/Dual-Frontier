@@ -1,45 +1,45 @@
 # DualFrontier.Presentation
 
-## Назначение
-Godot-слой: ноды, UI-контролы, ввод. Единственная сборка, которой
-разрешено иметь `using Godot;`. Работает ТОЛЬКО в главном потоке Godot
-(ограничение `SceneTree`/`Node` API), читает команды из `PresentationBridge`
-и применяет их к сцене. См. TechArch 11.9.
+## Purpose
+The Godot layer: nodes, UI controls, input. The only assembly allowed to use
+`using Godot;`. Runs ONLY in the Godot main thread (the `SceneTree` / `Node`
+API constraint), reads commands from `PresentationBridge`, and applies them
+to the scene. See TechArch 11.9.
 
-> **TODO — GodotSharp nuget package будет подключён на Фазе 3**, когда мы
-> интегрируем настоящий Godot-проект. Сейчас все классы — **стабы без
-> `using Godot;`**: они не наследуются от `Node`/`Control` и содержат
-> заголовочный комментарий «после подключения GodotSharp унаследовать от
-> Godot.Node2D/Control». Фаза 0 создаёт только структуру и контракт.
+> **TODO — the GodotSharp NuGet package will be wired in during Phase 3**, when
+> the actual Godot project is integrated. For now every class is a **stub
+> without `using Godot;`**: classes do not inherit from `Node` / `Control` and
+> carry a header comment "after wiring up GodotSharp, inherit from
+> Godot.Node2D / Control". Phase 0 only creates the structure and the contract.
 
 ## Tier
 
-DevKit-tier. Реализует и `IRenderer` (production-minimum), и `IDevKitRenderer`
-(debug surface: gizmos, profiler, entity highlighting). Всё debug-специфичное
-помечено `[DevKitOnly]` — production-аналитика (Phase 5+ Roslyn analyser)
-гарантирует что такой код не утечёт в Native.
+DevKit tier. Implements both `IRenderer` (production minimum) and
+`IDevKitRenderer` (debug surface: gizmos, profiler, entity highlighting).
+Everything debug-specific is marked `[DevKitOnly]` — production analytics
+(Phase 5+ Roslyn analyzer) guarantees that such code does not leak into Native.
 
-## Зависимости
-- `DualFrontier.Application` — `PresentationBridge`, команды рендера.
-- `GodotSharp` (будет добавлен в Фазе 3).
+## Dependencies
+- `DualFrontier.Application` — `PresentationBridge`, render commands.
+- `GodotSharp` (will be added in Phase 3).
 
-## Что внутри
-- `Nodes/` — корневые ноды сцены (`GameRoot`, `PawnVisual`, `TileMapRenderer`, `ProjectileVisual`).
-- `UI/` — контролы интерфейса (`PawnInspector`, `ManaBar`, `BuildMenu`, `AlertPanel`).
-- `Input/` — маршрутизация ввода (`InputRouter`).
-- `Scenes/` — `.tscn` файлы, добавляются через Godot editor позднее.
-- `project.godot` — плейсхолдер, будет перезаписан Godot при открытии проекта.
+## Contents
+- `Nodes/` — root scene nodes (`GameRoot`, `PawnVisual`, `TileMapRenderer`, `ProjectileVisual`).
+- `UI/` — interface controls (`PawnInspector`, `ManaBar`, `BuildMenu`, `AlertPanel`).
+- `Input/` — input routing (`InputRouter`).
+- `Scenes/` — `.tscn` files, added through the Godot editor later.
+- `project.godot` — placeholder; will be overwritten by Godot when the project is opened.
 
-## Правила
-- Любой `using Godot;` ДОЛЖЕН находиться ТОЛЬКО в этой сборке.
-- Presentation НИКОГДА не вызывает `DualFrontier.Core` или `Systems` напрямую —
-  общение только через `PresentationBridge`.
-- Весь код Presentation выполняется в главном потоке. Никаких тасков и
-  `async void` в ноды.
+## Rules
+- Any `using Godot;` MUST live ONLY in this assembly.
+- Presentation NEVER calls `DualFrontier.Core` or `Systems` directly —
+  communication only through `PresentationBridge`.
+- All Presentation code runs on the main thread. No tasks, no `async void` in
+  nodes.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// В Godot-слое (Фаза 3+):
+// Inside the Godot layer (Phase 3+):
 public override void _Process(double delta)
 {
     _bridge.DrainCommands(cmd => cmd.Execute(this));
@@ -47,7 +47,7 @@ public override void _Process(double delta)
 ```
 
 ## TODO
-- [ ] Фаза 3 — подключить `PackageReference Include="GodotSharp"` в `.csproj`.
-- [ ] Фаза 3 — унаследовать ноды от соответствующих базовых Godot-классов.
-- [ ] Фаза 3 — создать настоящий Godot-проект и заменить `project.godot`.
-- [ ] Фаза 3.5 — реализовать GodotRenderer через IDevKitRenderer (наследует IRenderer + debug surface).
+- [ ] Phase 3 — add `PackageReference Include="GodotSharp"` in the `.csproj`.
+- [ ] Phase 3 — make nodes inherit from the corresponding base Godot classes.
+- [ ] Phase 3 — create the real Godot project and replace `project.godot`.
+- [ ] Phase 3.5 — implement GodotRenderer through IDevKitRenderer (inherits IRenderer + debug surface).

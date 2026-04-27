@@ -1,28 +1,29 @@
-# Nodes — Godot ноды игровой сцены
+# Nodes — Godot game-scene nodes
 
-## Назначение
-Визуальные ноды сцены: корневая (`GameRoot`) и её дочерние
-(`PawnVisual`, `TileMapRenderer`, `ProjectileVisual`). Читают команды
-из `PresentationBridge` и применяют к сцене.
+## Purpose
+Visual scene nodes: the root (`GameRoot`) and its children
+(`PawnVisual`, `TileMapRenderer`, `ProjectileVisual`). They read commands
+from `PresentationBridge` and apply them to the scene.
 
-## Зависимости
-- `DualFrontier.Application` — `PresentationBridge`, команды рендера.
-- `GodotSharp` (Фаза 3).
+## Dependencies
+- `DualFrontier.Application` — `PresentationBridge`, render commands.
+- `GodotSharp` (Phase 3).
 
-## Что внутри
-- `GameRoot.cs` — корневая нода сцены (будущий `Node2D`). Тикает `PresentationBridge`.
-- `PawnVisual.cs` — визуал отдельной пешки (будущий `Node2D`).
-- `TileMapRenderer.cs` — карта тайлов (будущий `TileMap`).
-- `ProjectileVisual.cs` — визуал летящего снаряда (будущий `Node2D`).
+## Contents
+- `GameRoot.cs` — root scene node (future `Node2D`). Ticks `PresentationBridge`.
+- `PawnVisual.cs` — visual for a single pawn (future `Node2D`).
+- `TileMapRenderer.cs` — tile map (future `TileMap`).
+- `ProjectileVisual.cs` — visual for a flying projectile (future `Node2D`).
 
-## Правила
-- Фаза 0: классы объявлены как `public sealed class X` **без** наследования
-  от `Godot.Node*`, и без `using Godot;`. Фаза 3 поменяет наследование.
-- Ноды не ходят в Domain/Application за данными — только читают команды.
+## Rules
+- Phase 0: classes are declared as `public sealed class X` **without**
+  inheriting from `Godot.Node*` and without `using Godot;`. Phase 3 will
+  change the inheritance.
+- Nodes do not reach into Domain/Application for data — they only read commands.
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Фаза 3+ (после подключения GodotSharp):
+// Phase 3+ (after wiring up GodotSharp):
 public override void _Process(double delta)
 {
     _bridge.DrainCommands(cmd => cmd.Execute(this));
@@ -30,5 +31,5 @@ public override void _Process(double delta)
 ```
 
 ## TODO
-- [ ] Фаза 3 — унаследовать от соответствующих Godot-типов.
-- [ ] Фаза 3 — связать с `.tscn` сценами из `Scenes/`.
+- [ ] Phase 3 — inherit from the corresponding Godot types.
+- [ ] Phase 3 — wire up to `.tscn` scenes from `Scenes/`.

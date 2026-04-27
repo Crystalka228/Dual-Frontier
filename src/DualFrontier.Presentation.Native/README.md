@@ -1,37 +1,37 @@
 # DualFrontier.Presentation.Native — Production Runtime Stub
 
-## Назначение
-Production-рантайм на Silk.NET + OpenGL. Реализует контракты
-`IRenderer`, `ISceneLoader`, `IInputSource` из Application без
-единой ссылки на Godot. Это та сборка, которая поставляется игрокам.
+## Purpose
+A production runtime on Silk.NET + OpenGL. Implements the `IRenderer`,
+`ISceneLoader`, and `IInputSource` contracts from Application without a single
+reference to Godot. This is the assembly that ships to players.
 
-Сейчас — только stub'ы с правильной структурой классов и XML-документацией.
-Реальная реализация начинается в Фазе 5.
+For now — only stubs with the right class structure and XML documentation.
+The real implementation begins in Phase 5.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts`
 - `DualFrontier.Application`
 
-Ни `Core`, ни `Systems`, ни `Godot`.
+Neither `Core`, nor `Systems`, nor `Godot`.
 
-## Что внутри
-- `NativeRenderer.cs` — stub реализации `IRenderer`.
+## Contents
+- `NativeRenderer.cs` — stub `IRenderer` implementation.
 - `NativeSceneLoader.cs` — stub `ISceneLoader` (System.IO + System.Text.Json).
 - `NativeInputHandler.cs` — stub `IInputSource`.
 
-## Правила
-- Native **никогда** не референсит `IDevKitRenderer` или любой другой тип,
-  помеченный `[DevKitOnly]`. CI-проверка (grep сейчас, Roslyn analyser позже)
-  падает, если такой reference появляется.
-- Ни одной строки `using Godot;` в этой сборке — CI проверяет grep.
-- Ни одного `DualFrontier.Presentation` reference — это peer-сборка, не дочка.
-- Все типы помечаются `[DevKitOnly]` только если они **НЕ** переживут переход
-  в production. Здесь таких быть не должно.
+## Rules
+- Native **never** references `IDevKitRenderer` or any other type marked
+  `[DevKitOnly]`. The CI check (`grep` today, a Roslyn analyzer later) fails
+  if such a reference appears.
+- Not a single line of `using Godot;` in this assembly — CI grep enforces it.
+- No `DualFrontier.Presentation` reference — that is a peer assembly, not a parent.
+- Types are marked `[DevKitOnly]` only when they will **NOT** survive the
+  transition to production. Nothing here should be marked.
 
 ## TODO
-- [ ] Фаза 5 — добавить `PackageReference` на Silk.NET.
-- [ ] Фаза 5 — реализовать `Initialize`/`RenderFrame`/`Shutdown` в NativeRenderer.
-- [ ] Фаза 5 — реализовать JSON-парсинг в NativeSceneLoader.
-- [ ] Фаза 5 — реализовать Silk.NET input polling в NativeInputHandler.
-- [ ] Фаза 6 — добавить SpriteBatch + TilemapRenderer + ShaderProgram.
-- [ ] Фаза 6 — добавить ImGui.NET для HUD.
+- [ ] Phase 5 — add a `PackageReference` to Silk.NET.
+- [ ] Phase 5 — implement `Initialize` / `RenderFrame` / `Shutdown` in NativeRenderer.
+- [ ] Phase 5 — implement JSON parsing in NativeSceneLoader.
+- [ ] Phase 5 — implement Silk.NET input polling in NativeInputHandler.
+- [ ] Phase 6 — add SpriteBatch + TilemapRenderer + ShaderProgram.
+- [ ] Phase 6 — add ImGui.NET for the HUD.

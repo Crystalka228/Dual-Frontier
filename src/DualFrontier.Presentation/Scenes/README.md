@@ -1,23 +1,24 @@
-# Scenes — Godot-сцены
+# Scenes — Godot scenes
 
-## Назначение
-`.tscn` файлы сцен Godot (главное меню, игровая сцена, UI-оверлеи).
-Сейчас каталог пустой: сцены будут добавлены через Godot editor в Фазе 3.
+## Purpose
+Godot scene `.tscn` files (main menu, game scene, UI overlays).
+The folder is currently empty: scenes will be added through the Godot editor
+in Phase 3.
 
-## Зависимости
-- Godot 4.3+ (редактор).
+## Dependencies
+- Godot 4.3+ (the editor).
 
-## Что внутри
-- Пока только `.gitkeep`, чтобы каталог существовал в git.
-- В Фазе 3 появятся `main.tscn`, `ui_root.tscn` и т.п.
+## Contents
+- For now only `.gitkeep`, so the folder exists in git.
+- In Phase 3 `main.tscn`, `ui_root.tscn`, etc. will appear.
 
-## Правила
-- `.tscn` хранятся как plain text — можно ревьюить в diff.
-- В сценах НЕ прописываем абсолютные пути к ресурсам вне `res://`.
+## Rules
+- `.tscn` files are stored as plain text — reviewable in diffs.
+- Scenes MUST NOT contain absolute paths to resources outside `res://`.
 
-## Примеры использования
-Редактирование через Godot editor; программный доступ через
-`GD.Load<PackedScene>("res://Scenes/main.tscn")` в Фазе 3.
+## Usage examples
+Editing through the Godot editor; programmatic access via
+`GD.Load<PackedScene>("res://Scenes/main.tscn")` in Phase 3.
 
 ## TODO
-- [ ] Фаза 3 — создать базовые сцены (`main.tscn`, `ui_root.tscn`).
+- [ ] Phase 3 — create the base scenes (`main.tscn`, `ui_root.tscn`).
