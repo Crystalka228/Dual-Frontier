@@ -1,51 +1,50 @@
 # Magic Events
 
-## Назначение
-События магической подсистемы: запросы маны (двухшаговая модель),
-заклинания, эфирные срывы, активация големов, повышение уровня эфира.
+## Purpose
+Events of the magic subsystem: mana requests (the two-step model), spells,
+ether breaks, golem activation, ether-level-up.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`, `[Deferred]`.
 
-## Что внутри
-- `ManaIntent.cs` — шаг 1: намерение потратить ману.
-- `ManaGranted.cs` — шаг 2: мана списана, можно кастовать.
-- `ManaRefused.cs` — шаг 2: маны не хватает, каст отменяется.
-- `SpellCastEvent.cs` — заклинание успешно произнесено.
-- `EtherSurgeEvent.cs` — «эфирный срыв» при работе с кристаллом / перегрузке (GDD 4.2).
-- `GolemActivatedEvent.cs` — маг активировал своего голема.
-- `EtherLevelUpEvent.cs` — `[Deferred]`: уровень восприятия эфира повышен.
+## Contents
+- `ManaIntent.cs` — step 1: intent to spend mana.
+- `ManaGranted.cs` — step 2: mana is debited; casting may proceed.
+- `ManaRefused.cs` — step 2: insufficient mana; the cast is canceled.
+- `SpellCastEvent.cs` — a spell was successfully cast.
+- `EtherSurgeEvent.cs` — an "ether break" while working with a crystal / on overload (GDD 4.2).
+- `GolemActivatedEvent.cs` — a mage activated their golem.
+- `EtherLevelUpEvent.cs` — `[Deferred]`: ether perception level increased.
 
-## Правила
-- Стоимость заклинания и содержание голема всегда идут через
-  `ManaIntent` — никогда не вычитать ману напрямую из компонента.
-- `EtherLevelUpEvent` — `[Deferred]`: повышение уровня влияет на максимум
-  маны и другие производные, обработка в следующей фазе избегает гонок.
-- `EtherSurgeEvent` может опубликовать StatusApplied (горение, оглушение и т. п.)
-  — см. GDD 4.2.
+## Rules
+- Spell cost and golem upkeep always go through `ManaIntent` — never debit
+  mana directly from the component.
+- `EtherLevelUpEvent` is `[Deferred]`: a level-up affects max mana and other
+  derived values, so deferring to the next phase avoids races.
+- `EtherSurgeEvent` may publish StatusApplied (burning, stun, etc.) — see GDD 4.2.
 
-## Примеры использования
+## Usage examples
 ```csharp
 _bus.Publish(new ManaIntent { /* CasterId = mage, Amount = spell.Cost */ });
-// → ManaSystem публикует ManaGranted → SpellCastSystem публикует SpellCastEvent
-//   (или ManaRefused — каст отменён, AI выбирает другое действие)
+// → ManaSystem publishes ManaGranted → SpellCastSystem publishes SpellCastEvent
+//   (or ManaRefused — the cast is canceled, the AI chooses another action)
 ```
 
 ## TODO
-- [ ] Заполнить поля, когда появятся `MagicSchool`, `SpellId`, `GolemId`.
-- [ ] Добавить `SpellInterruptedEvent` — если каст прерван (урон, дизель, и т.п.).
+- [ ] Fill the fields once `MagicSchool`, `SpellId`, `GolemId` exist.
+- [ ] Add `SpellInterruptedEvent` — if a cast is interrupted (damage, dispel, etc.).
 
 ## v02 Addendum additions
-Расширение подсистемы магии: непрерывная аренда маны (mana lease) и смена владения големом.
+Magic-subsystem extension: continuous mana lease and golem ownership transfer.
 
-- `LeaseId.cs` — идентификатор аренды маны (`readonly record struct`), фабрика `New()` — TODO Фаза 5.
-- `RefusalReason.cs` — причины отказа в открытии аренды (`InsufficientMana`, `LeaseCapExceeded`, `NoActiveBond`, `SchoolMismatch`).
-- `CloseReason.cs` — причины закрытия аренды (`Completed`, `SpellInterrupted`, `GolemDeactivated`, `PawnDied`, `ManaExhausted`).
-- `ManaLeaseOpenRequest.cs` — `ICommand`: открыть аренду маны на кастера с указанным дренажом и окном длительности.
-- `ManaLeaseOpened.cs` — `IEvent`: подтверждение, что аренда открыта и первый тик списан.
-- `ManaLeaseRefused.cs` — `IEvent`: в открытии аренды отказано с причиной и доступной маной.
-- `ManaLeaseClosed.cs` — `[Deferred]` `IEvent`: терминальное событие жизненного цикла аренды.
-- `GolemOwnershipTransferRequest.cs` — `ICommand`: передать/оспорить/покинуть владение големом.
-- `GolemOwnershipChanged.cs` — `[Deferred]` `IEvent`: владение големом изменено.
+- `LeaseId.cs` — mana-lease identifier (`readonly record struct`); `New()` factory — TODO Phase 5.
+- `RefusalReason.cs` — refusal reasons for opening a lease (`InsufficientMana`, `LeaseCapExceeded`, `NoActiveBond`, `SchoolMismatch`).
+- `CloseReason.cs` — lease-closure reasons (`Completed`, `SpellInterrupted`, `GolemDeactivated`, `PawnDied`, `ManaExhausted`).
+- `ManaLeaseOpenRequest.cs` — `ICommand`: open a mana lease on the caster with the specified drain and duration window.
+- `ManaLeaseOpened.cs` — `IEvent`: confirmation that the lease is open and the first tick has been debited.
+- `ManaLeaseRefused.cs` — `IEvent`: lease opening refused with a reason and available mana.
+- `ManaLeaseClosed.cs` — `[Deferred]` `IEvent`: terminal lease-lifecycle event.
+- `GolemOwnershipTransferRequest.cs` — `ICommand`: transfer / contest / abandon golem ownership.
+- `GolemOwnershipChanged.cs` — `[Deferred]` `IEvent`: golem ownership changed.
 
-Примечание: `OwnershipMode` живёт в `DualFrontier.Contracts.Enums`, так как используется и компонентами (`GolemBondComponent`), и событиями магии.
+Note: `OwnershipMode` lives in `DualFrontier.Contracts.Enums`, since it is used both by components (`GolemBondComponent`) and by magic events.

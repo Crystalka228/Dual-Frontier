@@ -1,32 +1,32 @@
 # Power Events
 
-## Назначение
-События энергосети (электричество и эфир): запросы мощности, выдача,
-перегрузка. Тот же двухшаговый Intent-паттерн, что и для маны/патронов,
-но на уровне построек.
+## Purpose
+Power-grid events (electricity and ether): power requests, grants, overload.
+The same two-step Intent pattern used for mana / ammunition, applied at the
+building level.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`.
 
-## Что внутри
-- `PowerRequestEvent.cs` — постройка запрашивает мощность на тик.
-- `PowerGrantedEvent.cs` — PowerSystem подтверждает выдачу.
-- `GridOverloadEvent.cs` — перегрузка сети: потребление превышает выработку.
+## Contents
+- `PowerRequestEvent.cs` — a building requests wattage for the tick.
+- `PowerGrantedEvent.cs` — PowerSystem confirms the grant.
+- `GridOverloadEvent.cs` — grid overload: consumption exceeds production.
 
-## Правила
-- Две независимые сети: Electric и Ether. События содержат `PowerType`,
-  чтобы PowerSystem разводила потоки.
-- При `GridOverloadEvent` потребители с низким приоритетом отключаются;
-  порядок отключения — в PowerSystem.
-- Отсутствие `PowerGrantedEvent` в течение тика = постройка не работала;
-  производные системы (WorkbenchSystem) обязаны это учитывать.
+## Rules
+- Two independent networks: Electric and Ether. The events carry a `PowerType`
+  so PowerSystem can route the flows.
+- On `GridOverloadEvent`, low-priority consumers shut down; the shutdown order
+  lives in PowerSystem.
+- Absence of `PowerGrantedEvent` for the tick = the building did not run;
+  derived systems (WorkbenchSystem) MUST account for that.
 
-## Примеры использования
+## Usage examples
 ```csharp
 _bus.Publish(new PowerRequestEvent { /* ConsumerId = forge, Type = PowerType.Ether, Watts = 50 */ });
-// → PowerSystem при успехе публикует PowerGrantedEvent, при дефиците — GridOverloadEvent
+// → PowerSystem publishes PowerGrantedEvent on success, GridOverloadEvent on shortfall
 ```
 
 ## TODO
-- [ ] Решить: отдельные `GridOverload` для Electric и Ether или общий enum в теле.
-- [ ] Добавить `PowerShutdownEvent` для принудительного отключения (Фаза 4).
+- [ ] Decide: separate `GridOverload` events for Electric and Ether, or a shared event with the kind in the body.
+- [ ] Add `PowerShutdownEvent` for forced shutdown (Phase 4).

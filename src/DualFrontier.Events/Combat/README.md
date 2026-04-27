@@ -1,47 +1,47 @@
 # Combat Events
 
-## Назначение
-События боевой подсистемы: попытки выстрела, запросы патронов по
-двухшаговой модели, события урона, смерти и наложения статусов.
+## Purpose
+Events of the combat subsystem: shot attempts, ammunition requests via the
+two-step model, damage events, deaths, and status-effect application.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`, `[Deferred]`.
 
-## Что внутри
-- `ShootAttemptEvent.cs` — пешка пытается произвести выстрел.
-- `AmmoIntent.cs` — **шаг 1** двухшаговой модели: намерение получить патрон (TechArch 11.5).
-- `AmmoGranted.cs` — **шаг 2**: патрон выдан, можно стрелять.
-- `AmmoRefused.cs` — **шаг 2**: патрона нет, выстрел отменяется.
-- `DamageEvent.cs` — нанесение урона рассчитано DamageSystem.
-- `DeathEvent.cs` — `[Deferred]`: сущность умерла, обработка в следующей фазе.
-- `StatusAppliedEvent.cs` — на сущность наложен статус-эффект.
+## Contents
+- `ShootAttemptEvent.cs` — a pawn attempts a shot.
+- `AmmoIntent.cs` — **step 1** of the two-step model: intent to acquire ammunition (TechArch 11.5).
+- `AmmoGranted.cs` — **step 2**: ammunition granted, the shot can proceed.
+- `AmmoRefused.cs` — **step 2**: no ammunition, the shot is canceled.
+- `DamageEvent.cs` — damage application computed by DamageSystem.
+- `DeathEvent.cs` — `[Deferred]`: the entity died; processing happens in the next phase.
+- `StatusAppliedEvent.cs` — a status effect was applied to the entity.
 
-## Правила
-- `AmmoIntent` НЕ блокирует — ответ приходит отдельным событием.
-- `DeathEvent` помечен `[Deferred]`: удаление entity не должно прерывать
-  текущую фазу (ссылки на entity ещё используются другими системами).
-- `ShootAttemptEvent` публикуется AI/игроком; CombatSystem решает,
-  возможен ли выстрел (достаёт `WeaponComponent`/`AmmoComponent`).
+## Rules
+- `AmmoIntent` does NOT block — the response arrives as a separate event.
+- `DeathEvent` is marked `[Deferred]`: entity destruction must not preempt the
+  current phase (entity references are still in use by other systems).
+- `ShootAttemptEvent` is published by AI/the player; CombatSystem decides
+  whether the shot is possible (it inspects `WeaponComponent`/`AmmoComponent`).
 
-## Примеры использования
+## Usage examples
 ```csharp
 _bus.Publish(new ShootAttemptEvent { /* AttackerId = pawn, TargetId = enemy */ });
-// → CombatSystem публикует AmmoIntent
-// → InventorySystem отвечает AmmoGranted или AmmoRefused
-// → CombatSystem, получив AmmoGranted, публикует DamageEvent
-// → DamageSystem при HP ≤ 0 публикует DeathEvent ([Deferred])
+// → CombatSystem publishes AmmoIntent
+// → InventorySystem responds with AmmoGranted or AmmoRefused
+// → CombatSystem, on AmmoGranted, publishes DamageEvent
+// → DamageSystem publishes DeathEvent ([Deferred]) when HP ≤ 0
 ```
 
 ## TODO
-- [ ] Заполнить поля, когда появятся `AmmoType`, `DamageType`, `GridVector`, `StatusKind`.
-- [ ] Добавить `MissEvent` / `CritEvent` — опционально, Фаза 6.
+- [ ] Fill the fields once `AmmoType`, `DamageType`, `GridVector`, `StatusKind` exist.
+- [ ] Add `MissEvent` / `CritEvent` — optional, Phase 6.
 
 ## v02 Addendum additions
-Расширение боевой подсистемы: двухфазный коммит «составного выстрела» (патрон + мана) и явная команда на урон.
+Combat-subsystem extension: two-phase commit for the "compound shot" (ammo + mana) and an explicit damage command.
 
-- `TransactionId.cs` — идентификатор составной транзакции выстрела (`readonly record struct`), фабрика `New()` — TODO Фаза 4.
-- `ShotRefusalReason.cs` — причины отказа (`NoAmmo`, `NoMana`, `WeaponOnCooldown`, `OutOfRange`, `TargetInvalid`).
-- `CompoundShotIntent.cs` — `IQuery`: намерение произвести составной выстрел (опрос Inventory + Magic).
-- `ShootGranted.cs` — `IEvent`: обе шины подтвердили, выстрел разрешён.
-- `ShootRefused.cs` — `IEvent`: хотя бы одна шина отказала, выстрел отменён.
-- `DamageIntent.cs` — `ICommand`: запрос на нанесение урона для `DamageSystem` (перед публикацией `DamageEvent`).
+- `TransactionId.cs` — composite shot transaction identifier (`readonly record struct`); `New()` factory — TODO Phase 4.
+- `ShotRefusalReason.cs` — refusal reasons (`NoAmmo`, `NoMana`, `WeaponOnCooldown`, `OutOfRange`, `TargetInvalid`).
+- `CompoundShotIntent.cs` — `IQuery`: intent to execute a compound shot (polls Inventory + Magic).
+- `ShootGranted.cs` — `IEvent`: both buses confirmed; the shot is permitted.
+- `ShootRefused.cs` — `IEvent`: at least one bus refused; the shot is canceled.
+- `DamageIntent.cs` — `ICommand`: damage-application request for `DamageSystem` (before publishing `DamageEvent`).

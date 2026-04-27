@@ -1,33 +1,32 @@
 # Inventory Events
 
-## Назначение
-События инвентаря и крафта: добавление/удаление/резервирование
-предметов и запросы на крафт.
+## Purpose
+Inventory and crafting events: adding/removing/reserving items and crafting requests.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`.
 
-## Что внутри
-- `ItemAddedEvent.cs` — предмет положен в хранилище / в руки пешке.
-- `ItemRemovedEvent.cs` — предмет изъят из хранилища.
-- `ItemReservedEvent.cs` — предмет зарезервирован под работу (крафт, постройку, перенос).
-- `CraftRequestEvent.cs` — пешка запросила крафт (AI или игрок).
+## Contents
+- `ItemAddedEvent.cs` — an item was placed into a storage / into a pawn's hands.
+- `ItemRemovedEvent.cs` — an item was removed from a storage.
+- `ItemReservedEvent.cs` — an item was reserved for a job (crafting, building, hauling).
+- `CraftRequestEvent.cs` — a pawn requested a craft (AI or player).
 
-## Правила
-- Все изменения `StorageComponent.Items` проходят через эти события,
-  чтобы остальные системы могли отреагировать (UI, сигналы, лог).
-- `ItemReservedEvent` предотвращает двойное использование: пока предмет
-  зарезервирован, другой haul-запрос его не возьмёт.
-- `CraftRequestEvent` — **не** начало крафта, а заявка: JobSystem
-  приоритизирует и назначает пешку.
+## Rules
+- Every change to `StorageComponent.Items` goes through these events so that
+  the rest of the systems can react (UI, signals, log).
+- `ItemReservedEvent` prevents double allocation: while an item is reserved,
+  another haul request will not pick it up.
+- `CraftRequestEvent` is **not** the start of crafting but a request: JobSystem
+  prioritizes and assigns a pawn.
 
-## Примеры использования
+## Usage examples
 ```csharp
 _bus.Publish(new CraftRequestEvent { /* RecipeId = "rifle", RequesterId = player */ });
-// → JobSystem назначает пешку → ItemReservedEvent для компонентов → WorkbenchSystem крафтит
-// → ItemRemovedEvent (компоненты) + ItemAddedEvent (готовое оружие)
+// → JobSystem assigns a pawn → ItemReservedEvent for the components → WorkbenchSystem crafts
+// → ItemRemovedEvent (components) + ItemAddedEvent (finished weapon)
 ```
 
 ## TODO
-- [ ] Добавить `CraftCompletedEvent` / `CraftFailedEvent` — Фаза 4.
-- [ ] Решить, хранить ли `ItemTemplateId` в событии или брать из компонента предмета.
+- [ ] Add `CraftCompletedEvent` / `CraftFailedEvent` — Phase 4.
+- [ ] Decide whether to store `ItemTemplateId` in the event or pull it from the item's component.

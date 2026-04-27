@@ -1,25 +1,25 @@
 # DualFrontier.Events
 
-## Назначение
-Сборка всех доменных событий, интентов и запросов. Каждое событие —
-неизменяемый `record`, реализующий `IEvent` из `DualFrontier.Contracts.Core`.
-Разбиты по доменам (Combat / Magic / Inventory / Power / Pawn / World),
-по одной папке на домен — под каждую доменную `IEventBus`.
+## Purpose
+The assembly of all domain events, intents, and queries. Each event is an
+immutable `record` that implements `IEvent` from `DualFrontier.Contracts.Core`.
+They are split by domain (Combat / Magic / Inventory / Power / Pawn / World),
+one folder per domain — one for each domain `IEventBus`.
 
-Сборка реализует два ключевых паттерна архитектуры (TechArch 11):
-- **Intent vs Event**: двухшаговые механики (AmmoIntent → AmmoGranted/Refused,
-  ManaIntent → ManaGranted/Refused) вместо блокирующего request/response.
-- **Deferred**: события, отложенные до следующей фазы планировщика
-  (`DeathEvent`, `EtherLevelUpEvent`) — помечены атрибутом `[Deferred]`.
+The assembly implements two key architectural patterns (TechArch 11):
+- **Intent vs Event**: two-step mechanics (AmmoIntent → AmmoGranted/Refused,
+  ManaIntent → ManaGranted/Refused) instead of a blocking request/response.
+- **Deferred**: events deferred to the next scheduler phase
+  (`DeathEvent`, `EtherLevelUpEvent`) — marked with the `[Deferred]` attribute.
 
-## Зависимости
+## Dependencies
 - `DualFrontier.Contracts` — `IEvent`, `EntityId`, `[Deferred]`, `[Immediate]`.
 
-События НЕ зависят от `Components` (общие типы — `EntityId`, перечисления —
-должны жить либо в `Contracts`, либо в `Components`; в этом scaffold
-типы полей оставлены в TODO).
+Events do NOT depend on `Components` (shared types — `EntityId`, enums — must
+live either in `Contracts` or in `Components`; field types in this scaffold are
+left as TODO).
 
-## Что внутри
+## Contents
 - `Combat/` — ShootAttempt, Ammo Intent/Granted/Refused, Damage, Death, StatusApplied.
 - `Magic/` — Mana Intent/Granted/Refused, SpellCast, EtherSurge, GolemActivated, EtherLevelUp.
 - `Inventory/` — ItemAdded, ItemRemoved, ItemReserved, CraftRequest.
@@ -27,26 +27,26 @@
 - `Pawn/` — MoodBreak, DeathReaction, SkillGain.
 - `World/` — EtherNodeChanged, WeatherChanged, RaidIncoming.
 
-## Правила
-- Только `public sealed record XxxEvent : IEvent` — никаких классов.
-- Все поля через `init` или `required init` — события неизменяемы после создания.
-- `[Deferred]` для событий, на которые нельзя реагировать мгновенно
-  (напр. удаление сущности — `DeathEvent`).
-- `[Immediate]` — только для критичных прерываний фазы (крайне редко).
+## Rules
+- `public sealed record XxxEvent : IEvent` only — no classes.
+- All fields use `init` or `required init` — events are immutable after creation.
+- `[Deferred]` for events that cannot be reacted to instantly (e.g., entity
+  destruction — `DeathEvent`).
+- `[Immediate]` only for critical phase preemptions (extremely rare).
 
-## Примеры использования
+## Usage examples
 ```csharp
-// Шаг 1 двухшаговой модели — CombatSystem публикует намерение.
+// Step 1 of the two-step model — CombatSystem publishes the intent.
 _bus.Publish(new AmmoIntent { /* RequesterId = pawn, AmmoType = ..., Position = ... */ });
 
-// InventorySystem собирает пачку AmmoIntent, в следующей фазе публикует
-// AmmoGranted / AmmoRefused по каждому запросу.
+// InventorySystem collects a batch of AmmoIntents and in the next phase publishes
+// AmmoGranted / AmmoRefused per request.
 ```
 
 ## TODO
-- [ ] Заполнить поля событий, когда появятся базовые типы
+- [ ] Fill in event fields once the base types appear
       (`GridVector`, `AmmoType`, `DamageType`, `MagicSchool`, `PowerType`).
-- [ ] Проверить корректность `[Deferred]` разметки после того, как
-      EventBus реализует обработку отложенной доставки (Фаза 1).
-- [ ] Написать генератор диаграмм "кто publish / кто subscribe" по
-      атрибутам и именам событий (Фаза 3, инструментарий).
+- [ ] Verify `[Deferred]` markup once EventBus implements deferred-delivery
+      handling (Phase 1).
+- [ ] Write a generator for "who publishes / who subscribes" diagrams from
+      attributes and event names (Phase 3, tooling).
