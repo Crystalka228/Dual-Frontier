@@ -1,12 +1,12 @@
 # Entity Component System
 
-Dual Frontier использует классический подход ECS: entity — это идентификатор, компоненты — чистые данные, системы — логика. Ядро ECS живёт в сборке `DualFrontier.Core` и помечено `internal` — снаружи видны только контракты `IComponent`, `EntityId` и базовый класс `SystemBase`.
+Dual Frontier uses the classical ECS approach: an entity is an identifier, components are pure data, systems are logic. The ECS core lives in the `DualFrontier.Core` assembly and is marked `internal` — only the `IComponent` and `EntityId` contracts plus the `SystemBase` base class are visible from outside.
 
 ## World, EntityId, Component
 
 ### World
 
-`World` — реестр всех entities. Для каждого типа компонента хранится свой `ComponentStore<T>`. Мир единственный на игру, создаётся в `GameLoop` и передаётся `ParallelSystemScheduler`. Системы не трогают `World` напрямую — доступ идёт через `SystemExecutionContext`.
+`World` is the registry of all entities. A separate `ComponentStore<T>` is kept for each component type. There is one world per game; it is created in `GameLoop` and handed to `ParallelSystemScheduler`. Systems do not touch `World` directly — access goes through `SystemExecutionContext`.
 
 ```csharp
 internal sealed class World
@@ -17,35 +17,35 @@ internal sealed class World
     public EntityId CreateEntity() { /* ... */ }
     public void DestroyEntity(EntityId id) { /* ... */ }
 
-    // Небезопасный доступ — только для SystemExecutionContext.
+    // Unsafe access — only for SystemExecutionContext.
     internal T GetComponentUnsafe<T>(EntityId id) where T : IComponent { /* ... */ }
 }
 ```
 
 ### EntityId
 
-`EntityId` — `readonly struct` с двумя полями: `int Index` и `int Version`. Версия инкрементируется при удалении entity, что делает старые ссылки безопасно невалидными. Сравнение `id.Version == world.GetVersion(id.Index)` возвращает `false` для мёртвой ссылки — система спокойно пропускает её, а не крашится.
+`EntityId` is a `readonly struct` with two fields: `int Index` and `int Version`. The version is incremented when an entity is destroyed, which makes old references safely invalid. The comparison `id.Version == world.GetVersion(id.Index)` returns `false` for a dead reference — the system simply skips it rather than crashing.
 
 ### Component
 
-Компонент — класс (или `struct`), реализующий `IComponent`. Никакой логики, только данные. Валидация, арифметика, проверки — всё в системах. Это даёт два выигрыша: компоненты свободно сериализуются как POCO, и их можно безопасно читать из нескольких систем одновременно, пока никто не пишет.
+A component is a class (or `struct`) that implements `IComponent`. No logic, only data. Validation, arithmetic, and checks all live in systems. This yields two wins: components serialize freely as POCOs, and they can be safely read by several systems simultaneously as long as no one writes.
 
-## SparseSet — почему не массив
+## SparseSet — why not an array
 
-Наивный массив `T[]` для компонентов тратит память: большинство entity не имеют данного компонента. Плотный массив `List<T>` требует бинарного поиска по `EntityId` — O(log n). SparseSet решает обе проблемы.
+A naive `T[]` array for components wastes memory: most entities do not have a given component. A dense `List<T>` requires binary search by `EntityId` — O(log n). SparseSet solves both problems.
 
-SparseSet хранит две структуры:
+SparseSet keeps two structures:
 
-- `sparse[index]` — массив длиной `maxEntityCount`, хранит позицию компонента в dense-массиве или `-1`.
-- `dense[]` — плотный массив компонентов и параллельный массив `EntityId`-ов.
+- `sparse[index]` — an array of length `maxEntityCount` that stores the component's position in the dense array, or `-1`.
+- `dense[]` — the dense array of components and a parallel array of `EntityId`s.
 
-Вставка — O(1), удаление — O(1) через swap-with-last, итерация — O(N) по плотному массиву без пропусков. Этот паттерн принят всеми современными ECS-движками (EnTT, bevy_ecs, flecs).
+Insertion is O(1), removal is O(1) via swap-with-last, iteration is O(N) over the dense array with no gaps. This pattern is adopted by every modern ECS engine (EnTT, bevy_ecs, flecs).
 
-Для Dual Frontier важна именно итерация: системы в `Update` пробегают все entity с нужным набором компонентов. Плотный массив даёт хороший cache locality — существенный выигрыш на 10–20 тысячах entity.
+Iteration is what matters for Dual Frontier: systems walk every entity with the required component set inside `Update`. The dense array gives good cache locality — a substantial win at 10–20 thousand entities.
 
 ## Query<T1, T2, ...>
 
-Запрос `Query<HealthComponent, PositionComponent>()` возвращает итератор по entity, у которых есть оба компонента. Алгоритм — пересечение sparse-множеств: берётся самый маленький `ComponentStore` и проверяется наличие у каждой entity остальных компонентов.
+The `Query<HealthComponent, PositionComponent>()` query returns an iterator over entities that have both components. The algorithm is a sparse-set intersection: take the smallest `ComponentStore` and check each of its entities for the remaining components.
 
 ```csharp
 [SystemAccess(reads: new[] { typeof(HealthComponent), typeof(PositionComponent) })]
@@ -57,63 +57,63 @@ public class HealthReporterSystem : SystemBase
         {
             var health = GetComponent<HealthComponent>(entity);
             var pos = GetComponent<PositionComponent>(entity);
-            // Доступ разрешён — оба компонента задекларированы в reads.
+            // Access is permitted — both components are declared in reads.
         }
     }
 }
 ```
 
-Query не материализует список — он генерирует entity лениво. Это важно, потому что в `Update` список может измениться (другая система параллельно удалит entity), а генератор просто пропустит устаревшую версию.
+`Query` does not materialize a list — it yields entities lazily. This matters because the list can change during `Update` (another system in parallel may destroy an entity), and the generator simply skips a stale version.
 
-## Жизненный цикл entity
+## Entity lifecycle
 
-### Создание
+### Creation
 
-`world.CreateEntity()` возвращает новый `EntityId` с индексом и версией. Компоненты прикрепляются отдельно: `world.AddComponent(id, new HealthComponent { Maximum = 100 })`. Создавать entity может только `Application` или система через специальный метод `SystemBase.CreateEntity` (регистрируется в `SystemExecutionContext` как write-all).
+`world.CreateEntity()` returns a new `EntityId` with an index and a version. Components are attached separately: `world.AddComponent(id, new HealthComponent { Maximum = 100 })`. Only `Application` or a system can create entities; a system does so through the dedicated `SystemBase.CreateEntity` method (registered in `SystemExecutionContext` as write-all).
 
-### Удаление
+### Destruction
 
-`world.DestroyEntity(id)` не освобождает индекс сразу — удаление компонентов происходит в конце текущей фазы планировщика, чтобы параллельные системы завершили обход без NullReferenceException. Версия entity инкрементируется. Все последующие `GetComponent<T>(oldId)` возвращают `null` или кидают `IsolationViolationException` при попытке записать.
+`world.DestroyEntity(id)` does not free the index immediately — component removal happens at the end of the current scheduler phase so that parallel systems finish their walk without a `NullReferenceException`. The entity version is incremented. All subsequent `GetComponent<T>(oldId)` calls return `null`, or throw `IsolationViolationException` on an attempted write.
 
-### Версионирование
+### Versioning
 
-Entity со старой версией — индикатор мёртвой ссылки. Системы проверяют валидность через `world.IsAlive(id)`. Никаких `null`-паник: неизменяемые записи события носят `EntityId`, и если к моменту обработки entity уже удалена, обработчик просто выходит. Это делает шину событий устойчивой к гонкам.
+An entity with an old version is the indicator of a dead reference. Systems check validity through `world.IsAlive(id)`. No `null` panics: immutable event records carry an `EntityId`, and if the entity has already been destroyed by the time the handler runs, the handler simply returns. This makes the event bus resilient to races.
 
 ## SystemBase
 
-`SystemBase` — базовый класс всех игровых систем. Определяет три точки расширения:
+`SystemBase` is the base class for every game system. It defines three extension points:
 
 ```csharp
 public abstract class SystemBase
 {
-    // Вызывается один раз при регистрации системы.
-    // Используется для подписок на шину или другого one-time setup.
+    // Called once when the system is registered.
+    // Use for bus subscriptions or other one-time setup.
     protected virtual void OnInitialize() { }
 
-    // Вызывается планировщиком с частотой, заданной [TickRate].
+    // Called by the scheduler at the rate set by [TickRate].
     public abstract void Update(float delta);
 
-    // Вызывается при выгрузке системы. Отписка от шин, освобождение ресурсов.
+    // Called when the system is unloaded. Unsubscribe from buses, release resources.
     protected virtual void OnDispose() { }
 
-    // Безопасное чтение/запись через сторож.
+    // Safe read/write via the isolation guard.
     protected T GetComponent<T>(EntityId id) where T : IComponent;
     protected void SetComponent<T>(EntityId id, T value) where T : IComponent;
     protected IEnumerable<EntityId> Query<T>() where T : IComponent;
     protected IEnumerable<EntityId> Query<T1, T2>()
         where T1 : IComponent where T2 : IComponent;
-    protected TSystem GetSystem<TSystem>() where TSystem : SystemBase; // всегда краш
+    protected TSystem GetSystem<TSystem>() where TSystem : SystemBase; // always crashes
 }
 ```
 
-Декларация доступа обязательна: `[SystemAccess(reads: [...], writes: [...], bus: nameof(IGameServices.Combat))]`. Планировщик читает атрибут один раз при старте и строит граф зависимостей.
+An access declaration is mandatory: `[SystemAccess(reads: [...], writes: [...], bus: nameof(IGameServices.Combat))]`. The scheduler reads the attribute once at startup and builds the dependency graph.
 
 ## Anti-patterns
 
-### Хранить ссылку на World в системе
+### Keeping a `World` reference in a system
 
 ```csharp
-// ПЛОХО — обходит сторож, ломает параллелизм.
+// BAD — bypasses the isolation guard, breaks parallelism.
 public class BadSystem : SystemBase
 {
     private World _world;
@@ -121,42 +121,42 @@ public class BadSystem : SystemBase
 }
 ```
 
-Системы получают `World` только через `SystemExecutionContext` — и не хранят его. Пересборка графа или hot-reload мода сломает кешированную ссылку.
+Systems receive `World` only through `SystemExecutionContext` — and do not store it. A graph rebuild or a mod hot-reload breaks any cached reference.
 
-### Прямой вызов другой системы
+### Direct call to another system
 
 ```csharp
-// ПЛОХО — обходит шину, создаёт неявную зависимость.
+// BAD — bypasses the bus, creates an implicit dependency.
 var inventory = GetSystem<InventorySystem>();
 inventory.ReserveAmmo(...);
 ```
 
-Сторож всегда (даже в Release) кидает `IsolationViolationException` на `GetSystem`. Вместо этого — `bus.Inventory.Publish(new AmmoIntent { ... })`.
+The isolation guard always (even in Release) throws `IsolationViolationException` on `GetSystem`. Use `bus.Inventory.Publish(new AmmoIntent { ... })` instead.
 
-### Логика в компоненте
+### Logic in a component
 
 ```csharp
-// ПЛОХО — компонент не чистые данные.
+// BAD — the component is not pure data.
 public sealed class HealthComponent : IComponent
 {
     public float Current;
-    public void TakeDamage(float amount) { Current -= amount; }  // нет.
+    public void TakeDamage(float amount) { Current -= amount; }  // no.
 }
 ```
 
-Логика урона живёт в `DamageSystem`. Компонент остаётся POCO.
+Damage logic lives in `DamageSystem`. The component stays a POCO.
 
-### Создание entity в `Update` с немедленным `GetComponent`
+### Creating an entity in `Update` with an immediate `GetComponent`
 
 ```csharp
-// ПЛОХО — другая система в этой же фазе не увидит новой entity.
+// BAD — another system in the same phase will not see the new entity.
 var id = CreateEntity();
-var health = GetComponent<HealthComponent>(id);  // гонка.
+var health = GetComponent<HealthComponent>(id);  // race condition.
 ```
 
-Новые entity становятся видимы в следующей фазе. Логику дробят: создание в этой фазе, работа с компонентами — в следующей.
+New entities become visible in the next phase. Split the logic: create in this phase, work with components in the next.
 
-## См. также
+## See also
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
 - [ISOLATION](./ISOLATION.md)
