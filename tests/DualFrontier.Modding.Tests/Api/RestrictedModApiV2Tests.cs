@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
+using DualFrontier.Core.ECS;
 using FluentAssertions;
 using Xunit;
 
@@ -218,6 +219,111 @@ public sealed class RestrictedModApiV2Tests
         {
             Console.SetOut(originalOut);
         }
+    }
+
+    // --- Subscribe handler wrapping (MOD_OS_ARCHITECTURE §4.3) -----------
+
+    // 19
+    [Fact]
+    public void Subscribe_with_active_context_invokes_handler_with_same_context()
+    {
+        var (api, _) = BuildApi(V2Caps());
+        SystemExecutionContext ctx = BuildTestContext();
+        SystemExecutionContext? observed = null;
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            api.Subscribe<TestCombatEvent>(_ =>
+                observed = SystemExecutionContext.Current);
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+
+        api.Publish(new TestCombatEvent(1));
+
+        observed.Should().BeSameAs(ctx);
+    }
+
+    // 20
+    [Fact]
+    public void Subscribe_without_active_context_invokes_handler_with_null_context()
+    {
+        var (api, _) = BuildApi(V2Caps());
+        SystemExecutionContext? observed = null;
+        bool handlerRan = false;
+
+        api.Subscribe<TestCombatEvent>(_ =>
+        {
+            observed = SystemExecutionContext.Current;
+            handlerRan = true;
+        });
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().NotThrow();
+        handlerRan.Should().BeTrue();
+        observed.Should().BeNull();
+    }
+
+    // 21
+    [Fact]
+    public void Subscribe_handler_context_is_popped_after_handler_returns()
+    {
+        var (api, _) = BuildApi(V2Caps());
+        SystemExecutionContext ctx = BuildTestContext();
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            api.Subscribe<TestCombatEvent>(_ => { });
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+
+        api.Publish(new TestCombatEvent(1));
+
+        SystemExecutionContext.Current.Should().BeNull();
+    }
+
+    // 22
+    [Fact]
+    public void Subscribe_handler_context_is_popped_when_handler_throws()
+    {
+        var (api, _) = BuildApi(V2Caps());
+        SystemExecutionContext ctx = BuildTestContext();
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            api.Subscribe<TestCombatEvent>(_ =>
+                throw new InvalidOperationException("test handler failure"));
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+
+        try { api.Publish(new TestCombatEvent(1)); }
+        catch (InvalidOperationException) { /* propagated from handler — ignore */ }
+
+        SystemExecutionContext.Current.Should().BeNull();
+    }
+
+    private static SystemExecutionContext BuildTestContext(string name = "TestSystem")
+    {
+        return new SystemExecutionContext(
+            new World(),
+            name,
+            Array.Empty<Type>(),
+            Array.Empty<Type>(),
+            new[] { "TestBus" },
+            SystemOrigin.Core,
+            modId: null,
+            faultSink: new NullModFaultSink());
     }
 
     private static (RestrictedModApi api, GameServices services) BuildApi(ManifestCapabilities caps)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Application.Modding;
 
@@ -96,8 +97,18 @@ internal sealed class RestrictedModApi : IModApi
         if (ModBusRouter.Resolve(typeof(T), _services) is not IEventBus bus)
             return;
 
-        bus.Subscribe(handler);
-        _subscriptions.Add((bus, () => bus.Unsubscribe(handler)));
+        SystemExecutionContext? captured = SystemExecutionContext.Current;
+        Action<T> wrapped = captured is null
+            ? handler
+            : evt =>
+            {
+                SystemExecutionContext.PushContext(captured);
+                try { handler(evt); }
+                finally { SystemExecutionContext.PopContext(); }
+            };
+
+        bus.Subscribe(wrapped);
+        _subscriptions.Add((bus, () => bus.Unsubscribe(wrapped)));
     }
 
     /// <inheritdoc />
@@ -141,7 +152,8 @@ internal sealed class RestrictedModApi : IModApi
         {
             Console.WriteLine(
                 $"[WARNING][{_modId}] v1 manifest {verb}ing '{eventType.FullName}' " +
-                "without capability declaration (deprecated, will be required in M3).");
+                "without capability declaration (v1 manifests are accepted in a grace period; " +
+                "v2 manifests must declare every kernel.publish/subscribe in capabilities.required).");
             return;
         }
 
