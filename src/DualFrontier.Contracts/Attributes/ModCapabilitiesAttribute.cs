@@ -15,8 +15,8 @@ namespace DualFrontier.Contracts.Attributes;
 /// Example:
 /// <code>
 /// [ModCapabilities(
-///     "kernel.publish:[DualFrontier.Events](http://DualFrontier.Events).Combat.DamageEvent",
-///     "[kernel.read](http://kernel.read):DualFrontier.Components.Combat.WeaponComponent")]
+///     "kernel.publish:DualFrontier.Events.Combat.DamageEvent",
+///     "kernel.read:DualFrontier.Components.Combat.WeaponComponent")]
 /// public sealed class MyCombatSystem : SystemBase { ... }
 /// </code>
 /// </summary>

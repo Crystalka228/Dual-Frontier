@@ -9,7 +9,7 @@ namespace DualFrontier.Contracts.Attributes;
 /// all others are invisible to mods.
 ///
 /// A mod requests access by declaring
-/// <c>[kernel.read](http://kernel.read):{FQN}</c> or <c>kernel.write:{FQN}</c> in its manifest's
+/// <c>kernel.read:{FQN}</c> or <c>kernel.write:{FQN}</c> in its manifest's
 /// <c>capabilities.required</c> list (§3, D-1 LOCKED).
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
@@ -17,7 +17,7 @@ public sealed class ModAccessibleAttribute : Attribute
 {
     /// <summary>
     /// When <see langword="true"/>, mods may read this component via
-    /// <c>[kernel.read](http://kernel.read):{FQN}</c> capability.
+    /// <c>kernel.read:{FQN}</c> capability.
     /// </summary>
     public bool Read { get; set; }
 
