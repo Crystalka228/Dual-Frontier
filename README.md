@@ -108,21 +108,32 @@ Each layer knows only the layer below it. `Presentation` receives data only via 
 
 ## Experiment status
 
-*Updated: 2026-04-25*
+*Updated: 2026-04-27 (M3 in progress; M3.1 closed, M3.2 current).*
+
+After the closure of Phase 4, the original Phase 5 (Combat) and Phase 6/7 (Magic, World) have been reorganised as part of a **Mod-OS Migration** (M1–M10). Gameplay content ships as vanilla mods rather than as kernel systems; this turns every gameplay feature into a structural test of the modding architecture. Architectural specification is locked at v1.0 (see `MOD_OS_ARCHITECTURE`).
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
 | Core ECS | ✅ Done | 60/60 | SparseSet, parallel scheduler, `[Deferred]` / `[Immediate]` bus |
 | Verification | ✅ Done | 11/11 | Isolation guard, ContractValidator |
-| Pawns | ✅ Done | 1/1 | A* pathfinding, Godot bridge |
+| Pawns | ✅ Done | 1/1 | A* pathfinding, Godot bridge, `MoodSystem` publishing |
 | Economy + HUD | ✅ Done | 6/6 | Inventory deferred mutation, ElectricGrid overload, Converter 30% |
-| Persistence (scaffold) | 🔨 Phase 5 | 4/4 | TileEncoder/RLE, ComponentEncoder, EntityEncoder, StringPool |
-| Combat | ⏭ Phase 5 | — | Next up |
-| Magic + world | ⏭ Phases 6–7 | — | Planned |
+| Persistence (scaffold) | ✅ Done | 4/4 | TileEncoder/RLE, ComponentEncoder, EntityEncoder, StringPool |
+| Mod-OS architecture (M0) | ✅ Done | — | `MOD_OS_ARCHITECTURE` v1.0 LOCKED, all 12 decisions resolved |
+| Manifest v2 (M1) | ✅ Done | added | `kind`, `apiVersion`, `replaces`, `capabilities`, caret-syntax deps |
+| IModApi v2 (M2) | ✅ Done | added | Real `Publish`/`Subscribe` via `ModBusRouter`, capability accessors |
+| Capability model (M3) | 🔨 Current | added | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` — closed; M3.2 enforcement — in progress |
+| Shared ALC (M4) | ⏭ Pending | — | Cross-mod type sharing |
+| Version constraints (M5) | ⏭ Pending | — | Caret-syntax inter-mod dependency resolution |
+| Bridge replacement (M6) | ⏭ Pending | — | Explicit `replaces`, conflict surfacing |
+| Hot reload (M7) | ⏭ Pending | — | Menu-driven, paused-only, WeakReference unload |
+| Vanilla skeletons (M8) | ⏭ Pending | — | Five empty mod assemblies |
+| Vanilla.Combat (M9) | ⏭ Pending | — | Absorbs original Phase 5 scope |
+| Vanilla.Magic / Inventory / Pawn / World (M10) | ⏭ Pending | — | Incremental, any order |
 
-**Engine snapshot:** 82/82 tests pass, 0 known production bugs. Phase 4 is effectively closed: `[Deferred]` event semantics live in the bus, `IPowerBus` is split off from Inventory, the ElectricGrid↔Converter cycle is broken via a deferred event, `ConverterSystem` is registered in `GameBootstrap`, and `HaulSystem.writes=[]` isolation is preserved through subscriber context capture. Phase 5/6/7 stub systems are tagged `[BridgeImplementation(Phase=N)]` and no longer crash on registration. The bulk of the code is generated for free by the local Gemma 4 E4B; architectural work via Sonnet plus occasional Opus calls fits inside the Claude Max 5× subscription ($100/month) without spilling into pay-as-you-go.
+**Engine snapshot:** Phases 0–4 closed at 82/82 tests, 0 known production bugs. M1–M3.1 added Manifest, Parser, ApiV2, and CapabilityRegistry test suites; total count grows per closed M-phase (verify with `dotnet test`). Phase 4 closed in v0.3 with all architectural fixes applied: `[Deferred]` event semantics in the bus, `IPowerBus` split off from Inventory, ElectricGrid↔Converter cycle broken via deferred event, `HaulSystem.writes=[]` isolation preserved through subscriber context capture. Phase 5/6/7 stub systems are tagged `[BridgeImplementation(Phase=N)]` and remain in place as bridges that vanilla mods will replace via the explicit `replaces` mechanism (M6). The bulk of the code is generated for free by the local Gemma 4 E4B; architectural work via Sonnet plus occasional Opus calls fits inside the Claude Max 5× subscription ($100/month) without spilling into pay-as-you-go.
 
-Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md).
+Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md). Mod-OS architecture: [docs/MOD_OS_ARCHITECTURE.md](docs/MOD_OS_ARCHITECTURE.md).
 
 ---
 
@@ -138,11 +149,12 @@ Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md).
 ### Architecture (positive results)
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — layers, principles, dependency rules.
+- [docs/MOD_OS_ARCHITECTURE.md](docs/MOD_OS_ARCHITECTURE.md) — **v1.0 LOCKED.** Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model, M1–M10 migration plan.
 - [docs/ECS.md](docs/ECS.md) — World, Entity, Component, System.
 - [docs/EVENT_BUS.md](docs/EVENT_BUS.md) — synchronous / `[Deferred]` / `[Immediate]` delivery, Intent → Granted/Refused.
 - [docs/THREADING.md](docs/THREADING.md) — dependency graph, phases, tick rates.
 - [docs/ISOLATION.md](docs/ISOLATION.md) — `SystemExecutionContext`, the isolation guard, types of violations.
-- [docs/MODDING.md](docs/MODDING.md) — `IMod`, `AssemblyLoadContext`, `IModContract`.
+- [docs/MODDING.md](docs/MODDING.md) — `IMod`, `AssemblyLoadContext`, `IModContract` (v1 author guide; superseded by `MOD_OS_ARCHITECTURE` for v2 specifics).
 - [docs/MOD_PIPELINE.md](docs/MOD_PIPELINE.md) — two-phase validation, atomic graph rebuild.
 - [docs/CONTRACTS.md](docs/CONTRACTS.md) — event buses, marker interfaces, contract evolution.
 - [docs/GODOT_INTEGRATION.md](docs/GODOT_INTEGRATION.md) — `PresentationBridge`, main-thread rules.

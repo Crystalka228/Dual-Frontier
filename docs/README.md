@@ -9,6 +9,7 @@ This directory contains all technical and process documentation. Before diving i
 Documents describing the foundation: layers, contracts, ECS core, event buses, multithreading, and isolation.
 
 - [ARCHITECTURE](./ARCHITECTURE.md) — the four layers, dependency rules, assembly diagram.
+- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — **v1.0 LOCKED.** Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model. Drives the M1–M10 migration plan in ROADMAP.
 - [CONTRACTS](./CONTRACTS.md) — marker interfaces, six domain buses, evolution and versioning.
 - [ECS](./ECS.md) — `World`, `EntityId`, `Component`, `SparseSet`, `Query`, `SystemBase`.
 - [EVENT_BUS](./EVENT_BUS.md) — domain buses, the two-step Intent→Granted/Refused model, batch processing.
@@ -36,7 +37,7 @@ Documents for those who write code: methodology, modding, performance, style, te
 
 Work organization: phase order and acceptance criteria.
 
-- [ROADMAP](./ROADMAP.md) — phases 0–7 with file composition, acceptance criteria, and what each phase unlocks next.
+- [ROADMAP](./ROADMAP.md) — closed phases 0–4 plus the Mod-OS Migration (M0–M10), with acceptance criteria and what each phase unlocks next.
 
 ## Learning materials
 
