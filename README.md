@@ -110,7 +110,7 @@ Each layer knows only the layer below it. `Presentation` receives data only via 
 
 *Updated: 2026-04-27 (M3 in progress; M3.1 closed, M3.2 current).*
 
-After the closure of Phase 4, the original Phase 5 (Combat) and Phase 6/7 (Magic, World) have been reorganised as part of a **Mod-OS Migration** (M1–M10). Gameplay content ships as vanilla mods rather than as kernel systems; this turns every gameplay feature into a structural test of the modding architecture. Architectural specification is locked at v1.0 (see `MOD_OS_ARCHITECTURE`).
+After the closure of Phase 4, the original Phase 5 (Combat) and Phase 6/7 (Magic, World) have been reorganised as part of a **Mod-OS Migration** (M1–M10). Gameplay content ships as vanilla mods rather than as kernel systems; this turns every gameplay feature into a structural test of the modding architecture. Architectural specification is locked at v1.0 (see [MOD_OS_ARCHITECTURE](docs/MOD_OS_ARCHITECTURE.md)).
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -119,7 +119,7 @@ After the closure of Phase 4, the original Phase 5 (Combat) and Phase 6/7 (Magic
 | Pawns | ✅ Done | 1/1 | A* pathfinding, Godot bridge, `MoodSystem` publishing |
 | Economy + HUD | ✅ Done | 6/6 | Inventory deferred mutation, ElectricGrid overload, Converter 30% |
 | Persistence (scaffold) | ✅ Done | 4/4 | TileEncoder/RLE, ComponentEncoder, EntityEncoder, StringPool |
-| Mod-OS architecture (M0) | ✅ Done | — | `MOD_OS_ARCHITECTURE` v1.0 LOCKED, all 12 decisions resolved |
+| Mod-OS architecture (M0) | ✅ Done | — | [MOD_OS_ARCHITECTURE](docs/MOD_OS_ARCHITECTURE.md) v1.0 LOCKED, all 12 decisions resolved |
 | Manifest v2 (M1) | ✅ Done | added | `kind`, `apiVersion`, `replaces`, `capabilities`, caret-syntax deps |
 | IModApi v2 (M2) | ✅ Done | added | Real `Publish`/`Subscribe` via `ModBusRouter`, capability accessors |
 | Capability model (M3) | 🔨 Current | added | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` — closed; M3.2 enforcement — in progress |
@@ -154,7 +154,7 @@ Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md). Mod-OS architecture: [docs/MOD
 - [docs/EVENT_BUS.md](docs/EVENT_BUS.md) — synchronous / `[Deferred]` / `[Immediate]` delivery, Intent → Granted/Refused.
 - [docs/THREADING.md](docs/THREADING.md) — dependency graph, phases, tick rates.
 - [docs/ISOLATION.md](docs/ISOLATION.md) — `SystemExecutionContext`, the isolation guard, types of violations.
-- [docs/MODDING.md](docs/MODDING.md) — `IMod`, `AssemblyLoadContext`, `IModContract` (v1 author guide; superseded by `MOD_OS_ARCHITECTURE` for v2 specifics).
+- [docs/MODDING.md](docs/MODDING.md) — `IMod`, `AssemblyLoadContext`, `IModContract` (v1 author guide; superseded by [MOD_OS_ARCHITECTURE](docs/MOD_OS_ARCHITECTURE.md) for v2 specifics).
 - [docs/MOD_PIPELINE.md](docs/MOD_PIPELINE.md) — two-phase validation, atomic graph rebuild.
 - [docs/CONTRACTS.md](docs/CONTRACTS.md) — event buses, marker interfaces, contract evolution.
 - [docs/GODOT_INTEGRATION.md](docs/GODOT_INTEGRATION.md) — `PresentationBridge`, main-thread rules.

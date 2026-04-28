@@ -19,7 +19,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | Phase 3.5 — Godot DevKit | ✅ Closed | — | DevKit plugin, `.dfscene` export, F5 launch |
 | Phase 4 — Economy | ✅ Closed | 6/6 | Inventory, ElectricGrid, Converter at 30%, HUD |
 | Persistence (scaffold) | ✅ Closed | 4/4 | TileEncoder/RLE, ComponentEncoder, EntityEncoder, StringPool |
-| **M0 — Mod-OS Phase 0** | ✅ Closed | — | `MOD_OS_ARCHITECTURE` v1.0 LOCKED |
+| **M0 — Mod-OS Phase 0** | ✅ Closed | — | [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.0 LOCKED |
 | **M1 — Manifest v2** | ✅ Closed | added | `VersionConstraint`, `ModDependency`, `ManifestCapabilities`, `ModManifest` v2, `ManifestParser`, full `ValidationErrorKind` set |
 | **M2 — IModApi v2** | ✅ Closed | added | Real `Publish`/`Subscribe`, `GetKernelCapabilities`, `GetOwnManifest`, `Log`, `RestrictedModApi` v2 |
 | **M3 — Capability model** | 🔨 Current | added | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` opt-in — closed; M3.2 capability-enforcing `RestrictedModApi` — in progress |
@@ -99,7 +99,7 @@ The save-game compatibility policy when a mod is missing (mod-OS decision D-6) t
 
 ## 🔨 Mod-OS Migration (M0–M10)
 
-The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.0 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
+The migration sequence is derived from [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.0 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
 
 ### ✅ M0 — Mod-OS Phase 0 (closed)
 
@@ -113,7 +113,7 @@ Goal achieved: architectural specification produced, reviewed, and locked.
 
 ### ✅ M1 — Manifest v2 schema and parser (closed)
 
-Goal achieved: `ModManifest` extended to the v2 schema specified in `MOD_OS_ARCHITECTURE` §2, with a backward-compatible JSON parser that accepts existing v1 manifests unchanged.
+Goal achieved: `ModManifest` extended to the v2 schema specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §2, with a backward-compatible JSON parser that accepts existing v1 manifests unchanged.
 
 **Consumes decisions:** structural locks 1–5 (manifest fields for `replaces`, `hotReload`, three-tier versioning).
 
@@ -226,7 +226,7 @@ Goal: implement the shared `AssemblyLoadContext`, allowing mods to define common
 
 ### M5 — Inter-mod dependency resolution with caret syntax
 
-Goal: extend `ModIntegrationPipeline` to resolve mod dependencies using the three-tier SemVer model from `MOD_OS_ARCHITECTURE` §8.
+Goal: extend `ModIntegrationPipeline` to resolve mod dependencies using the three-tier SemVer model from [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §8.
 
 **Consumes decisions:** strategic lock 5 (caret syntax for inter-mod deps).
 
