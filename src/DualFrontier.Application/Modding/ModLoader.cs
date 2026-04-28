@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text.Json;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
 
@@ -180,20 +179,7 @@ public sealed class ModLoader
                 $"mod.manifest.json not found in '{path}'.", manifestPath);
 
         string json = File.ReadAllText(manifestPath);
-        ModManifest? manifest = JsonSerializer.Deserialize<ModManifest>(
-            json,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                ReadCommentHandling = JsonCommentHandling.Skip,
-                AllowTrailingCommas = true,
-            });
-
-        if (manifest is null)
-            throw new InvalidOperationException(
-                $"Failed to parse mod manifest at '{manifestPath}'.");
-
-        return manifest;
+        return ManifestParser.Parse(json, manifestPath);
     }
 
     private static Type? ResolveModType(Assembly asm, ModManifest manifest)
