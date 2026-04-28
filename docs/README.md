@@ -23,6 +23,7 @@ Documents describing the foundation: layers, contracts, ECS core, event buses, m
 Documents for those who write code: methodology, modding, performance, style, tests.
 
 - [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
+- [PIPELINE_METRICS](./PIPELINE_METRICS.md) — pipeline configuration, empirical metrics, throughput, subscription headroom, reproducibility requirements. Companion to METHODOLOGY.
 - [MODDING](./MODDING.md) — `IMod`, `IModApi`, `AssemblyLoadContext`, `IModContract`, the mod manifest.
 - [MOD_PIPELINE](./MOD_PIPELINE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity.
 - [PERFORMANCE](./PERFORMANCE.md) — target metrics, profiling, hot paths, caches.
