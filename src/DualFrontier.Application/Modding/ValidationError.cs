@@ -30,6 +30,56 @@ public enum ValidationErrorKind
     /// The mod requires another mod id that is not present in the load set.
     /// </summary>
     MissingDependency,
+
+    /// <summary>
+    /// The mod's <c>apiVersion</c> constraint or an inter-mod
+    /// <c>dependencies[i].version</c> constraint is not satisfied by the
+    /// available version. Replaces ad-hoc string messages currently used
+    /// for <c>apiVersion</c> failures.
+    /// </summary>
+    IncompatibleVersion,
+
+    /// <summary>
+    /// The mod declares a <c>capabilities.required</c> entry that is not
+    /// present in the kernel's provided set or in any dependency's
+    /// <c>capabilities.provided</c>.
+    /// </summary>
+    MissingCapability,
+
+    /// <summary>
+    /// A mod with <c>kind: "shared"</c> has a non-empty <c>entryAssembly</c>
+    /// or <c>entryType</c>, or its assembly contains an <c>IMod</c>
+    /// implementation. Shared mods are pure type vendors and must have no
+    /// entry point.
+    /// </summary>
+    SharedModWithEntryPoint,
+
+    /// <summary>
+    /// A regular mod's assembly exports a type that implements
+    /// <c>IModContract</c> or <c>IEvent</c>. Contract and event types must
+    /// live in shared mods only.
+    /// </summary>
+    ContractTypeInRegularMod,
+
+    /// <summary>
+    /// Two or more mods in the same load batch both declare the same
+    /// fully-qualified system type in their <c>replaces</c> list. Only one
+    /// mod may replace a given system.
+    /// </summary>
+    BridgeReplacementConflict,
+
+    /// <summary>
+    /// A mod's <c>replaces</c> list names a system type that has not been
+    /// annotated <c>[BridgeImplementation(Replaceable = true)]</c> — the
+    /// system is not marked as replaceable by the engine team.
+    /// </summary>
+    ProtectedSystemReplacement,
+
+    /// <summary>
+    /// A mod's <c>replaces</c> list names a fully-qualified type that cannot
+    /// be found in any loaded assembly.
+    /// </summary>
+    UnknownSystemReplacement,
 }
 
 /// <summary>
