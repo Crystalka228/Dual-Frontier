@@ -8,12 +8,17 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Two-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
+/// Four-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
 /// registration. Phase A checks that every loaded mod is compatible with the
 /// current <see cref="ContractsVersion"/>. Phase B inspects every mod system
 /// alongside the provided core systems and reports any write-write collision
 /// on a component type — producing a precise per-mod diagnostic the scheduler
 /// would otherwise surface only as an opaque <c>write conflict detected</c>.
+/// Phase C verifies every <c>capabilities.required</c> token is provided by
+/// the kernel or by an explicitly listed dependency. Phase D cross-checks
+/// each mod system's <see cref="ModCapabilitiesAttribute"/> against the
+/// owning manifest. Phases C and D run only when a
+/// <see cref="KernelCapabilityRegistry"/> is supplied to <see cref="Validate"/>.
 ///
 /// Non-throwing by design: the pipeline decides whether to abort or surface
 /// warnings in the UI.
@@ -25,15 +30,24 @@ internal sealed class ContractValidator
     private const string CoreOwner = "<core>";
 
     /// <summary>
-    /// Runs both validation phases and returns a report. A mod-system that
-    /// lacks <see cref="SystemAccessAttribute"/> is skipped silently here —
-    /// registration itself throws a clearer diagnostic at that point.
+    /// Runs every applicable validation phase and returns a report. A
+    /// mod-system that lacks <see cref="SystemAccessAttribute"/> is skipped
+    /// silently here — registration itself throws a clearer diagnostic at
+    /// that point. Phases C and D run only when
+    /// <paramref name="kernelCapabilities"/> is non-null; legacy callers that
+    /// omit the registry continue to exercise just Phases A and B.
     /// </summary>
     /// <param name="mods">Mods returned by <see cref="ModLoader"/>.</param>
     /// <param name="coreSystems">Core systems included in the rebuild.</param>
+    /// <param name="kernelCapabilities">
+    /// Kernel-provided capability tokens. <see langword="null"/> opts out of
+    /// Phases C and D entirely (used by tests that predate capability
+    /// validation).
+    /// </param>
     public ValidationReport Validate(
         IReadOnlyList<LoadedMod> mods,
-        IReadOnlyList<SystemBase> coreSystems)
+        IReadOnlyList<SystemBase> coreSystems,
+        KernelCapabilityRegistry? kernelCapabilities = null)
     {
         if (mods is null) throw new ArgumentNullException(nameof(mods));
         if (coreSystems is null) throw new ArgumentNullException(nameof(coreSystems));
@@ -43,6 +57,12 @@ internal sealed class ContractValidator
 
         ValidateContractsVersions(mods, errors);
         ValidateWriteWriteConflicts(mods, coreSystems, errors);
+
+        if (kernelCapabilities is not null)
+        {
+            ValidateCapabilitySatisfiability(mods, kernelCapabilities, errors);
+            ValidateModCapabilitiesAttributes(mods, errors);
+        }
 
         bool isValid = errors.Count == 0;
         return new ValidationReport(isValid, errors, warnings);
@@ -216,6 +236,96 @@ internal sealed class ContractValidator
         {
             if (larger.Contains(t))
                 return t;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Phase C — every <c>capabilities.required</c> token must be provided
+    /// by the kernel or by a mod that is explicitly listed in this mod's
+    /// <c>dependencies</c>. Implicit satisfaction (a loaded mod that happens
+    /// to provide the token but is not listed) is rejected per
+    /// MOD_OS_ARCHITECTURE §3.4.
+    /// </summary>
+    private static void ValidateCapabilitySatisfiability(
+        IReadOnlyList<LoadedMod> mods,
+        KernelCapabilityRegistry kernelCapabilities,
+        List<ValidationError> errors)
+    {
+        foreach (LoadedMod mod in mods)
+        {
+            foreach (string token in mod.Manifest.Capabilities.Required)
+            {
+                if (kernelCapabilities.Provides(token))
+                    continue;
+
+                bool satisfied = false;
+                foreach (ModDependency dep in mod.Manifest.Dependencies)
+                {
+                    LoadedMod? provider = FindMod(mods, dep.ModId);
+                    if (provider is null)
+                        continue;
+                    if (provider.Manifest.Capabilities.ProvidesCapability(token))
+                    {
+                        satisfied = true;
+                        break;
+                    }
+                }
+
+                if (!satisfied)
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.MissingCapability,
+                        $"Mod '{mod.ModId}' requires capability '{token}' " +
+                        "which is not provided by the kernel or any listed dependency."));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Phase D — every token declared by a mod system's
+    /// <see cref="ModCapabilitiesAttribute"/> must also appear in the owning
+    /// mod's <c>capabilities.required</c> list. Closes the loophole where a
+    /// system silently demands kernel access without declaring it in the
+    /// manifest (MOD_OS_ARCHITECTURE §3.7–3.8).
+    /// </summary>
+    private static void ValidateModCapabilitiesAttributes(
+        IReadOnlyList<LoadedMod> mods,
+        List<ValidationError> errors)
+    {
+        foreach (LoadedMod mod in mods)
+        {
+            foreach (Type systemType in EnumerateDeclaredSystemTypes(mod))
+            {
+                ModCapabilitiesAttribute? attr =
+                    systemType.GetCustomAttribute<ModCapabilitiesAttribute>(inherit: false);
+                if (attr is null)
+                    continue;
+
+                foreach (string token in attr.Tokens)
+                {
+                    if (mod.Manifest.Capabilities.RequiresCapability(token))
+                        continue;
+
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.MissingCapability,
+                        $"System '{systemType.FullName}' in mod '{mod.ModId}' " +
+                        $"declares [ModCapabilities(\"{token}\")] but the " +
+                        $"manifest does not list '{token}' in capabilities.required."));
+                }
+            }
+        }
+    }
+
+    private static LoadedMod? FindMod(IReadOnlyList<LoadedMod> mods, string modId)
+    {
+        foreach (LoadedMod m in mods)
+        {
+            if (m.ModId == modId)
+                return m;
         }
         return null;
     }

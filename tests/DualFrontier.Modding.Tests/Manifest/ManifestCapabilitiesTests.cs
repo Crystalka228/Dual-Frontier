@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using DualFrontier.Contracts.Modding;
 using FluentAssertions;
 using Xunit;
@@ -14,41 +13,60 @@ public sealed class ManifestCapabilitiesTests
     // --- Parse (valid) -------------------------------------------------------
 
     [Fact]
-    public void Parse_two_distinct_tokens_count_is_two()
+    public void Parse_required_one_provided_null_counts_correct()
     {
-        var caps = ManifestCapabilities.Parse(["ecs.systems", "contracts.publish"]);
+        var caps = ManifestCapabilities.Parse(["kernel.publish:A.B.C"], null);
 
-        caps.Tokens.Count.Should().Be(2);
+        caps.Required.Count.Should().Be(1);
+        caps.Provided.Count.Should().Be(0);
     }
 
     [Fact]
-    public void Parse_duplicate_token_deduplicates_to_one()
+    public void Parse_required_null_provided_one_counts_correct()
     {
-        var caps = ManifestCapabilities.Parse(["ecs.systems", "ecs.systems"]);
+        var caps = ManifestCapabilities.Parse(null, ["mod.x.y.publish:E.F.G"]);
 
-        caps.Tokens.Count.Should().Be(1);
+        caps.Required.Count.Should().Be(0);
+        caps.Provided.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void Parse_both_sides_one_each_counts_correct()
+    {
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], ["mod.x.y.write:C.D"]);
+
+        caps.Required.Count.Should().Be(1);
+        caps.Provided.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void Parse_duplicate_required_token_deduplicates_to_one()
+    {
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B", "kernel.read:A.B"], null);
+
+        caps.Required.Count.Should().Be(1);
     }
 
     [Fact]
     public void Parse_token_with_surrounding_whitespace_trimmed_and_accepted()
     {
-        var act = () => ManifestCapabilities.Parse([" ecs.systems "]);
+        Action act = () => ManifestCapabilities.Parse([" kernel.read:A.B "], null);
 
         act.Should().NotThrow();
     }
 
     [Fact]
-    public void Parse_empty_enumerable_is_empty()
+    public void Parse_both_null_is_empty()
     {
-        var caps = ManifestCapabilities.Parse([]);
+        var caps = ManifestCapabilities.Parse(null, null);
 
         caps.IsEmpty.Should().BeTrue();
     }
 
     [Fact]
-    public void Parse_null_enumerable_is_empty()
+    public void Parse_both_empty_enumerables_is_empty()
     {
-        var caps = ManifestCapabilities.Parse(null);
+        var caps = ManifestCapabilities.Parse([], []);
 
         caps.IsEmpty.Should().BeTrue();
     }
@@ -62,110 +80,175 @@ public sealed class ManifestCapabilitiesTests
     // --- Parse (invalid) -----------------------------------------------------
 
     [Fact]
-    public void Parse_single_segment_throws_ArgumentException()
+    public void Parse_wrong_format_entirely_throws_with_token_in_message()
     {
-        Action act = () => ManifestCapabilities.Parse(["ecs"]);
+        Action act = () => ManifestCapabilities.Parse(["ecs.systems"], null);
 
-        act.Should().Throw<ArgumentException>().WithMessage("*ecs*");
+        act.Should().Throw<ArgumentException>().WithMessage("*ecs.systems*");
     }
 
     [Fact]
-    public void Parse_uppercase_token_throws_ArgumentException()
+    public void Parse_missing_colon_and_fqn_throws_with_token_in_message()
     {
-        Action act = () => ManifestCapabilities.Parse(["Ecs.Systems"]);
+        Action act = () => ManifestCapabilities.Parse(["kernel.publish"], null);
 
-        act.Should().Throw<ArgumentException>().WithMessage("*Ecs.Systems*");
+        act.Should().Throw<ArgumentException>().WithMessage("*kernel.publish*");
     }
 
     [Fact]
-    public void Parse_trailing_dot_throws_ArgumentException()
+    public void Parse_empty_fqn_after_colon_throws_with_token_in_message()
     {
-        Action act = () => ManifestCapabilities.Parse(["ecs."]);
+        Action act = () => ManifestCapabilities.Parse(["kernel.read:"], null);
 
-        act.Should().Throw<ArgumentException>().WithMessage("*ecs.*");
+        act.Should().Throw<ArgumentException>().WithMessage("*kernel.read:*");
     }
 
     [Fact]
-    public void Parse_leading_dot_throws_ArgumentException()
+    public void Parse_uppercase_provider_throws_with_token_in_message()
     {
-        Action act = () => ManifestCapabilities.Parse([".ecs.systems"]);
+        Action act = () => ManifestCapabilities.Parse(["Kernel.publish:A.B"], null);
 
-        act.Should().Throw<ArgumentException>().WithMessage("*.ecs.systems*");
+        act.Should().Throw<ArgumentException>().WithMessage("*Kernel.publish:A.B*");
     }
 
     [Fact]
-    public void Parse_empty_segment_in_middle_throws_ArgumentException()
+    public void Parse_unknown_verb_throws_with_token_in_message()
     {
-        Action act = () => ManifestCapabilities.Parse(["ecs..systems"]);
+        Action act = () => ManifestCapabilities.Parse(["kernel.delete:A.B"], null);
 
-        act.Should().Throw<ArgumentException>().WithMessage("*ecs..systems*");
+        act.Should().Throw<ArgumentException>().WithMessage("*kernel.delete:A.B*");
+    }
+
+    [Fact]
+    public void Parse_mod_without_modId_segment_throws_with_token_in_message()
+    {
+        Action act = () => ManifestCapabilities.Parse(["mod.publish:A.B"], null);
+
+        act.Should().Throw<ArgumentException>().WithMessage("*mod.publish:A.B*");
+    }
+
+    [Fact]
+    public void Parse_fqn_starting_with_digit_throws_with_token_in_message()
+    {
+        Action act = () => ManifestCapabilities.Parse(["kernel.publish:1Bad.Type"], null);
+
+        act.Should().Throw<ArgumentException>().WithMessage("*kernel.publish:1Bad.Type*");
     }
 
     [Fact]
     public void Parse_empty_string_throws_ArgumentException()
     {
-        Action act = () => ManifestCapabilities.Parse([""]);
+        Action act = () => ManifestCapabilities.Parse([""], null);
 
         act.Should().Throw<ArgumentException>();
     }
 
-    // --- Contains ------------------------------------------------------------
+    [Fact]
+    public void Parse_invalid_token_in_provided_side_throws_ArgumentException()
+    {
+        Action act = () => ManifestCapabilities.Parse(null, ["bad"]);
+
+        act.Should().Throw<ArgumentException>().WithMessage("*bad*");
+    }
+
+    // --- RequiresCapability / ProvidesCapability -----------------------------
 
     [Fact]
-    public void Contains_present_token_returns_true()
+    public void RequiresCapability_present_token_returns_true()
     {
-        var caps = ManifestCapabilities.Parse(["ecs.systems"]);
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], ["mod.x.y.publish:C.D"]);
 
-        caps.Contains("ecs.systems").Should().BeTrue();
+        caps.RequiresCapability("kernel.read:A.B").Should().BeTrue();
     }
 
     [Fact]
-    public void Contains_absent_token_returns_false()
+    public void RequiresCapability_absent_token_returns_false()
     {
-        var caps = ManifestCapabilities.Parse(["ecs.systems"]);
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], ["mod.x.y.publish:C.D"]);
 
-        caps.Contains("ecs.components").Should().BeFalse();
+        caps.RequiresCapability("kernel.write:A.B").Should().BeFalse();
     }
 
     [Fact]
-    public void Contains_null_returns_false()
+    public void ProvidesCapability_present_token_returns_true()
     {
-        var caps = ManifestCapabilities.Parse(["ecs.systems"]);
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], ["mod.x.y.publish:C.D"]);
 
-        caps.Contains(null!).Should().BeFalse();
+        caps.ProvidesCapability("mod.x.y.publish:C.D").Should().BeTrue();
     }
 
     [Fact]
-    public void Contains_empty_string_returns_false()
+    public void ProvidesCapability_token_from_required_returns_false()
     {
-        var caps = ManifestCapabilities.Parse(["ecs.systems"]);
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], ["mod.x.y.publish:C.D"]);
 
-        caps.Contains("").Should().BeFalse();
+        caps.ProvidesCapability("kernel.read:A.B").Should().BeFalse();
+    }
+
+    [Fact]
+    public void RequiresCapability_null_returns_false()
+    {
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], null);
+
+        caps.RequiresCapability(null!).Should().BeFalse();
+    }
+
+    [Fact]
+    public void RequiresCapability_empty_string_returns_false()
+    {
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], null);
+
+        caps.RequiresCapability("").Should().BeFalse();
     }
 
     // --- ToString ------------------------------------------------------------
 
     [Fact]
-    public void ToString_empty_capabilities_returns_none()
+    public void ToString_empty_returns_none()
     {
-        ManifestCapabilities.Parse([]).ToString().Should().Be("(none)");
+        ManifestCapabilities.Parse(null, null).ToString().Should().Be("(none)");
     }
 
     [Fact]
-    public void ToString_multiple_tokens_returns_sorted_comma_joined()
+    public void ToString_required_only_omits_provided_label()
     {
-        var caps = ManifestCapabilities.Parse(["ecs.systems", "contracts.publish"]);
+        var caps = ManifestCapabilities.Parse(["kernel.publish:A.B"], null);
 
-        caps.ToString().Should().Be("contracts.publish, ecs.systems");
+        caps.ToString().Should().Be("required: kernel.publish:A.B");
+    }
+
+    [Fact]
+    public void ToString_provided_only_omits_required_label()
+    {
+        var caps = ManifestCapabilities.Parse(null, ["mod.x.y.publish:C.D"]);
+
+        caps.ToString().Should().Be("provided: mod.x.y.publish:C.D");
+    }
+
+    [Fact]
+    public void ToString_both_sides_separated_by_semicolon()
+    {
+        var caps = ManifestCapabilities.Parse(["kernel.read:A.B"], ["mod.x.y.write:C.D"]);
+
+        caps.ToString().Should().Be("required: kernel.read:A.B; provided: mod.x.y.write:C.D");
+    }
+
+    [Fact]
+    public void ToString_multiple_required_tokens_are_sorted()
+    {
+        var caps = ManifestCapabilities.Parse(
+            ["kernel.write:B.B", "kernel.publish:A.A"], null);
+
+        caps.ToString().Should().Be("required: kernel.publish:A.A, kernel.write:B.B");
     }
 
     // --- Equality ------------------------------------------------------------
 
     [Fact]
-    public void Equality_different_insertion_order_are_equal()
+    public void Equality_different_insertion_order_required_are_equal()
     {
-        var a = ManifestCapabilities.Parse(["b.b", "a.a"]);
-        var b = ManifestCapabilities.Parse(["a.a", "b.b"]);
+        var a = ManifestCapabilities.Parse(["kernel.read:A.B", "kernel.write:C.D"], null);
+        var b = ManifestCapabilities.Parse(["kernel.write:C.D", "kernel.read:A.B"], null);
 
         (a == b).Should().BeTrue();
     }
@@ -173,16 +256,16 @@ public sealed class ManifestCapabilitiesTests
     [Fact]
     public void Equality_different_tokens_are_not_equal()
     {
-        var a = ManifestCapabilities.Parse(["a.a"]);
-        var b = ManifestCapabilities.Parse(["b.b"]);
+        var a = ManifestCapabilities.Parse(["kernel.read:A.B"], null);
+        var b = ManifestCapabilities.Parse(["kernel.write:C.D"], null);
 
         (a == b).Should().BeFalse();
     }
 
     [Fact]
-    public void Equality_empty_and_empty_instance_are_equal()
+    public void Equality_two_empty_instances_are_equal()
     {
-        var empty = ManifestCapabilities.Parse([]);
+        var empty = ManifestCapabilities.Parse(null, null);
 
         (empty == ManifestCapabilities.Empty).Should().BeTrue();
     }

@@ -24,4 +24,13 @@ public sealed class BridgeImplementationAttribute : Attribute
     /// implementation (per the phase numbering in <c>docs/ROADMAP.md</c>).
     /// </summary>
     public int Phase { get; set; }
+
+    /// <summary>
+    /// When <see langword="true"/>, a mod may list this system's FQN in its
+    /// <c>replaces</c> manifest field to supersede this bridge at load time.
+    /// When <see langword="false"/> (default), the system is protected and
+    /// replacement attempts are rejected with
+    /// <c>ValidationErrorKind.ProtectedSystemReplacement</c>.
+    /// </summary>
+    public bool Replaceable { get; set; }
 }

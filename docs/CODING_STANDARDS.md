@@ -81,13 +81,15 @@ public string SomeName { get; init; } = null!;  // only in a DTO with required a
 
 If an API must return `null`, it returns `T?`. If it must not, it returns `T`. A `null` in an unmarked field is grounds for a bug report.
 
-## Russian-language domain comments
+## Code comments are English
 
-Internal domain logic is commented in Russian. That is the project's working language: GDD, tech architecture, issues, reviews. Mixing Russian and English in one file's comments is unnecessary.
+All code comments — inline, block, and XML doc — are in English. This applies uniformly to public API, internal implementation, domain logic, and game-design notes. The i18n campaign that closed in v0.3 made this a hard rule: no Russian in source files except inside `SESSION_PHASE_4_CLOSURE_REVIEW.md`, which is preserved verbatim as audit trail.
+
+Domain terminology that has a Russian origin (pawn, golem, ether node, ritual, ammo crystal) is referenced by its English name everywhere in code; the canonical Russian↔English mapping lives in `TRANSLATION_GLOSSARY.md`.
 
 ```csharp
-// Эфирный срыв: маг работает с кристаллом выше своего уровня.
-// По формуле из GDD 4.2: шанс провала = (кристаллТир - магУровень) × 0.25.
+// Ether breakdown: a mage works a crystal above their tier.
+// Formula from GDD 4.2: fail chance = (crystalTier - mageLevel) × 0.25.
 if (crystal.Tier > mage.EtherLevel)
 {
     var failChance = (crystal.Tier - mage.EtherLevel) * 0.25f;
@@ -95,11 +97,9 @@ if (crystal.Tier > mage.EtherLevel)
 }
 ```
 
-Domain terms stay in Russian inside comments: "пешка" (pawn), "голем" (golem), "эфирный узел" (ether node), "ритуал" (ritual), "кристалл-боеприпас" (ammo crystal).
-
 ## English XML docs — public API
 
-The public API is everything visible outside the assembly. Its XML documentation is written in English: docs are generated into `bin/` and shipped with the NuGet package, where any third-party developer (including non-Russian speakers) may read them.
+The public API is everything visible outside the assembly. Its XML documentation is written in English: docs are generated into `bin/` and shipped with the NuGet package, where any third-party developer may read them.
 
 ```csharp
 /// <summary>
@@ -112,7 +112,7 @@ The public API is everything visible outside the assembly. Its XML documentation
 public void Publish<T>(T evt) where T : IEvent;
 ```
 
-Split rule: `/// <summary>` + `<remarks>` are in English; `//` inline comments about a specific formula or game-design point are in Russian.
+XML docs use the `<summary>` / `<remarks>` / `<param>` / `<returns>` / `<exception>` set; inline `//` comments cover formulas, game-design notes, and reasoning that does not belong in the public contract. Both stay English.
 
 ## One class per file
 
