@@ -8,24 +8,24 @@
 
 Public discourse on LLM-driven development swings between two poles: "vibe coding for prototypes" and "AI will replace senior engineers." This project tests a third model: **the human as contract architect, the LLM as executor inside strict contract boundaries**.
 
-### Конфигурация pipeline
+### Pipeline configuration
 
-Эксперимент использует четыре агента, разделённых **по уровню абстракции**, а не по фазам разработки. Между агентами нет прямой коммуникации — координация происходит через LOCKED-документы в репозитории и через человека как маршрутизатора сессий.
+The experiment uses four agents separated **by level of abstraction**, not by development phase. The agents do not communicate directly — coordination happens through LOCKED documents in the repository and through the human as session router.
 
-- **Gemma 4 E4B** (локально, через LM Studio + Cline в VS Code) — исполнитель синтаксиса. 1 промт → 1–2 файла.
-- **Claude Sonnet 4.6** (Claude Max 5×) — генератор промтов и средний-сложности исполнитель.
-- **Claude Opus 4.7** (Claude Max 5×) — архитектор и QA. Phase 0 lock, аудиты, фазовые ревью.
-- **Человек** — владелец смысла, маршрутизатор между сессиями.
+- **Gemma 4 E4B** (locally, through LM Studio + Cline in VS Code) — syntax-tier executor. 1 prompt → 1–2 files.
+- **Claude Sonnet 4.6** (Claude Max 5×) — prompt generator and mid-complexity executor.
+- **Claude Opus 4.7** (Claude Max 5×) — architect and QA. Phase 0 lock, audits, phase reviews.
+- **Human** — owner of intent, router between sessions.
 
-**Полная конфигурация, эмпирические метрики, данные о throughput и headroom подписки** — в [docs/PIPELINE_METRICS.md](docs/PIPELINE_METRICS.md).
+**Full configuration, empirical metrics, throughput data, and subscription headroom** — in [docs/PIPELINE_METRICS.md](docs/PIPELINE_METRICS.md).
 
-**Структурная сила контрактов.** Если контракт достаточно жёсткий, чтобы 4-битная квантизованная локальная модель производила качественный код, он выдержит любую модель сверху. Изоляция от галлюцинаций — структурная, не зависящая от мощности исполнителя.
+**Structural strength of contracts.** If a contract is rigid enough that a 4-bit quantized local model produces quality code, it will hold up under any stronger model. Isolation from hallucinations is structural — independent of the executor's capacity.
 
-### Falsifiable утверждение
+### Falsifiable claim
 
-**Рабочая игра**, построенная соло через эту методику, с измеренной производительностью pipeline, частотой дефектов и архитектурной целостностью на длинной дистанции.
+**A working game** built solo through this methodology, with measured pipeline performance, defect rate, and architectural integrity over the long haul.
 
-Полное описание подхода — в [docs/METHODOLOGY.md](docs/METHODOLOGY.md).
+Full description of the approach: [docs/METHODOLOGY.md](docs/METHODOLOGY.md).
 
 ---
 
