@@ -34,25 +34,31 @@ internal sealed class RestrictedModApi : IModApi
     private readonly ModRegistry _registry;
     private readonly IModContractStore _contractStore;
     private readonly IGameServices _services;
+    private readonly KernelCapabilityRegistry _kernelCapabilities;
     private readonly List<(IEventBus Bus, Action Unsubscribe)> _subscriptions = new();
 
     /// <summary>
     /// Creates an API instance bound to the given mod id, manifest, backing
     /// registry and contract store. <paramref name="services"/> is the bus
     /// aggregator used by <see cref="Publish{T}"/>/<see cref="Subscribe{T}"/>.
+    /// <paramref name="kernelCapabilities"/> is the catalogue returned to the
+    /// mod by <see cref="GetKernelCapabilities"/> so it can inspect which
+    /// kernel capabilities are available before declaring them.
     /// </summary>
     internal RestrictedModApi(
         string modId,
         ModManifest manifest,
         ModRegistry registry,
         IModContractStore contractStore,
-        IGameServices services)
+        IGameServices services,
+        KernelCapabilityRegistry kernelCapabilities)
     {
         _modId = modId ?? throw new ArgumentNullException(nameof(modId));
         _manifest = manifest ?? throw new ArgumentNullException(nameof(manifest));
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _contractStore = contractStore ?? throw new ArgumentNullException(nameof(contractStore));
         _services = services ?? throw new ArgumentNullException(nameof(services));
+        _kernelCapabilities = kernelCapabilities ?? throw new ArgumentNullException(nameof(kernelCapabilities));
     }
 
     /// <summary>
@@ -106,7 +112,7 @@ internal sealed class RestrictedModApi : IModApi
         => _contractStore.TryGet<T>(out contract);
 
     /// <inheritdoc />
-    public IReadOnlySet<string> GetKernelCapabilities() => new HashSet<string>();
+    public IReadOnlySet<string> GetKernelCapabilities() => _kernelCapabilities.Capabilities;
 
     /// <inheritdoc />
     public ModManifest GetOwnManifest() => _manifest;

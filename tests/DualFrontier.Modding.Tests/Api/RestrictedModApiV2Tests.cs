@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Bus;
@@ -179,16 +180,23 @@ public sealed class RestrictedModApiV2Tests
     {
         var manifest = new ModManifest { Id = TestModId };
         var api = new RestrictedModApi(
-            TestModId, manifest, new ModRegistry(), new ModContractStore(), new GameServices());
+            TestModId,
+            manifest,
+            new ModRegistry(),
+            new ModContractStore(),
+            new GameServices(),
+            KernelCapabilityRegistry.BuildFromKernelAssemblies());
         api.GetOwnManifest().Should().BeSameAs(manifest);
     }
 
     // 17
     [Fact]
-    public void GetKernelCapabilities_M2Stub_ReturnsEmptySet()
+    public void GetKernelCapabilities_ReturnsRegistryCapabilities_SameInstanceAcrossCalls()
     {
         var (api, _) = BuildApi(ManifestCapabilities.Empty);
-        api.GetKernelCapabilities().Should().BeEmpty();
+        IReadOnlySet<string> first = api.GetKernelCapabilities();
+        IReadOnlySet<string> second = api.GetKernelCapabilities();
+        second.Should().BeSameAs(first);
     }
 
     // 18
@@ -217,7 +225,12 @@ public sealed class RestrictedModApiV2Tests
         var manifest = new ModManifest { Id = TestModId, Capabilities = caps };
         var services = new GameServices();
         var api = new RestrictedModApi(
-            TestModId, manifest, new ModRegistry(), new ModContractStore(), services);
+            TestModId,
+            manifest,
+            new ModRegistry(),
+            new ModContractStore(),
+            services,
+            KernelCapabilityRegistry.BuildFromKernelAssemblies());
         return (api, services);
     }
 
