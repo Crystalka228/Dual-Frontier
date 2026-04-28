@@ -3,6 +3,19 @@ using System.Collections.Generic;
 
 namespace DualFrontier.Contracts.Modding;
 
+/// <summary>Identifies the structural role of a mod in the load graph.</summary>
+public enum ModKind
+{
+    /// <summary>Default. Has an IMod entry point, registers systems and components.</summary>
+    Regular,
+
+    /// <summary>
+    /// Pure type vendor. No IMod entry point. Assembly is loaded into the
+    /// shared AssemblyLoadContext so all regular mods see identical Type instances.
+    /// </summary>
+    Shared,
+}
+
 /// <summary>
 /// Metadata of a mod. Populated from <c>mod.manifest.json</c> at load time.
 /// Used by <c>ModLoader</c> to resolve dependencies and by the UI to present
@@ -33,17 +46,13 @@ public sealed class ModManifest
     public string Author { get; init; } = string.Empty;
 
     /// <summary>
-    /// Minimum required version of <c>DualFrontier.Contracts</c>.
-    /// Format: <c>MAJOR.MINOR.PATCH</c>. Loader rejects the mod if current
-    /// Contracts version is lower than this value.
+    /// v1 field — minimum required <c>DualFrontier.Contracts</c> version in
+    /// <c>MAJOR.MINOR.PATCH</c> format. Kept for backward compatibility; v2
+    /// manifests should populate <see cref="ApiVersion"/> instead. Read by
+    /// <see cref="EffectiveApiVersion"/> as a fallback when
+    /// <see cref="ApiVersion"/> is <see langword="null"/>.
     /// </summary>
     public string RequiresContractsVersion { get; init; } = "1.0.0";
-
-    /// <summary>
-    /// List of mod ids the mod depends on. Absence of any dependency blocks
-    /// loading of the mod.
-    /// </summary>
-    public IReadOnlyList<string> Dependencies { get; init; } = Array.Empty<string>();
 
     /// <summary>
     /// File name of the entry assembly inside the mod package (e.g.
@@ -58,4 +67,55 @@ public sealed class ModManifest
     /// implementation by scanning the assembly for a single <c>IMod</c>.
     /// </summary>
     public string EntryType { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Mod dependencies with optional version constraints and an optional
+    /// flag. Absence of any required dependency blocks loading of the mod.
+    /// </summary>
+    public IReadOnlyList<ModDependency> Dependencies { get; init; } = Array.Empty<ModDependency>();
+
+    /// <summary>
+    /// Structural role of the mod. <see cref="ModKind.Regular"/> mods have an
+    /// <c>IMod</c> entry point; <see cref="ModKind.Shared"/> assemblies act as
+    /// pure type vendors loaded into the shared assembly load context.
+    /// </summary>
+    public ModKind Kind { get; init; } = ModKind.Regular;
+
+    /// <summary>
+    /// v2 API-version constraint against <c>DualFrontier.Contracts</c>. When
+    /// <see langword="null"/> (v1 compatibility), the loader falls back to
+    /// parsing <see cref="RequiresContractsVersion"/>.
+    /// </summary>
+    public VersionConstraint? ApiVersion { get; init; }
+
+    /// <summary>
+    /// When <see langword="true"/>, the mod opts in to mid-session reload.
+    /// When <see langword="false"/> (default), the mod cannot be reloaded
+    /// without a full session restart.
+    /// </summary>
+    public bool HotReload { get; init; }
+
+    /// <summary>
+    /// Fully-qualified type names of kernel bridge systems that this mod
+    /// supersedes. Each target system must be marked
+    /// <c>[BridgeImplementation(Replaceable = true)]</c>; otherwise the
+    /// loader rejects the manifest with
+    /// <c>ValidationErrorKind.ProtectedSystemReplacement</c>.
+    /// </summary>
+    public IReadOnlyList<string> Replaces { get; init; } = Array.Empty<string>();
+
+    /// <summary>
+    /// Required and provided capabilities declared by the manifest. Defaults
+    /// to <see cref="ManifestCapabilities.Empty"/> for v1 manifests that do
+    /// not declare any capabilities.
+    /// </summary>
+    public ManifestCapabilities Capabilities { get; init; } = ManifestCapabilities.Empty;
+
+    /// <summary>
+    /// Returns the effective API version constraint for this manifest.
+    /// Prefers <see cref="ApiVersion"/> when set; falls back to parsing
+    /// <see cref="RequiresContractsVersion"/> for v1 manifests.
+    /// </summary>
+    public VersionConstraint EffectiveApiVersion =>
+        ApiVersion ?? VersionConstraint.Parse(RequiresContractsVersion);
 }
