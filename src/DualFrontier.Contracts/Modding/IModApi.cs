@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Contracts.Modding;
@@ -54,4 +55,21 @@ public interface IModApi
     /// dependent mod must gracefully degrade.
     /// </summary>
     bool TryGetContract<T>(out T? contract) where T : class, IModContract;
+
+    /// <summary>
+    /// Returns the set of capability strings the current kernel build
+    /// provides to mods. Used by a mod to inspect what it may declare in
+    /// its manifest. Returns an empty set in M2; populated in M3.
+    /// </summary>
+    IReadOnlySet<string> GetKernelCapabilities();
+
+    /// <summary>
+    /// Returns the manifest of the mod making this call.
+    /// </summary>
+    ModManifest GetOwnManifest();
+
+    /// <summary>
+    /// Logs a structured message prefixed with the mod's id.
+    /// </summary>
+    void Log(ModLogLevel level, string message);
 }

@@ -9,44 +9,57 @@ namespace DualFrontier.Application.Modding;
 /// <summary>
 /// Implementation of <see cref="IModApi"/> that <see cref="ModLoader"/> hands
 /// to each mod in <c>IMod.Initialize</c>. Proxies calls into the core
-/// through <see cref="ModRegistry"/> and <see cref="IModContractStore"/>.
+/// through <see cref="ModRegistry"/> and <see cref="IModContractStore"/>,
+/// and routes <see cref="Publish{T}"/>/<see cref="Subscribe{T}"/> through
+/// <see cref="ModBusRouter"/> to the correct domain bus.
 ///
 /// A mod MUST NOT cast <see cref="IModApi"/> to this concrete type;
 /// <see cref="ModLoader"/> detects such attempts and unloads the mod with a
 /// <see cref="ModIsolationException"/>.
 ///
+/// Capability gates are enforced from the v2 manifest: a mod must declare
+/// <c>kernel.publish:&lt;FQN&gt;</c> / <c>kernel.subscribe:&lt;FQN&gt;</c> in
+/// <see cref="ManifestCapabilities.Required"/> for every event type it
+/// publishes or subscribes. v1 manifests (empty <see cref="ManifestCapabilities"/>)
+/// bypass the gate with a deprecation warning to <see cref="Console"/>.
+///
 /// Subscriptions registered through <see cref="Subscribe{T}"/> are tracked
 /// per instance so <see cref="UnsubscribeAll"/> can release them when the
-/// mod is unloaded. Publish/Subscribe routing between concrete domain buses
-/// is deferred to a later phase — this class currently records subscriptions
-/// without touching live buses, which is sufficient for registration and
-/// contract flows.
+/// mod is unloaded.
 /// </summary>
 internal sealed class RestrictedModApi : IModApi
 {
     private readonly string _modId;
+    private readonly ModManifest _manifest;
     private readonly ModRegistry _registry;
     private readonly IModContractStore _contractStore;
     private readonly IGameServices _services;
-    private readonly List<(Type EventType, Delegate Handler)> _subscriptions = new();
+    private readonly List<(IEventBus Bus, Action Unsubscribe)> _subscriptions = new();
 
     /// <summary>
-    /// Creates an API instance bound to the given mod id, backing registry
-    /// and contract store. <paramref name="services"/> is kept for the later
-    /// wire-up of <see cref="Publish{T}"/>/<see cref="Subscribe{T}"/> into
-    /// concrete domain buses.
+    /// Creates an API instance bound to the given mod id, manifest, backing
+    /// registry and contract store. <paramref name="services"/> is the bus
+    /// aggregator used by <see cref="Publish{T}"/>/<see cref="Subscribe{T}"/>.
     /// </summary>
     internal RestrictedModApi(
         string modId,
+        ModManifest manifest,
         ModRegistry registry,
         IModContractStore contractStore,
         IGameServices services)
     {
         _modId = modId ?? throw new ArgumentNullException(nameof(modId));
+        _manifest = manifest ?? throw new ArgumentNullException(nameof(manifest));
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
         _contractStore = contractStore ?? throw new ArgumentNullException(nameof(contractStore));
         _services = services ?? throw new ArgumentNullException(nameof(services));
     }
+
+    /// <summary>
+    /// Returns the number of active subscriptions — intended for tests and
+    /// for the unload chain to assert the cleanup invariant.
+    /// </summary>
+    internal int SubscriptionCount => _subscriptions.Count;
 
     /// <inheritdoc />
     public void RegisterComponent<T>() where T : IComponent
@@ -60,17 +73,25 @@ internal sealed class RestrictedModApi : IModApi
     public void Publish<T>(T evt) where T : IEvent
     {
         if (evt is null) throw new ArgumentNullException(nameof(evt));
-        // Per-bus event routing lands in the next sub-phase. Until then,
-        // Publish remains a legal no-op so mods can be exercised in tests
-        // without a real dispatcher behind them.
-        _ = _services;
+
+        EnforceCapability("publish", typeof(T));
+
+        if (ModBusRouter.Resolve(typeof(T), _services) is IEventBus bus)
+            bus.Publish(evt);
     }
 
     /// <inheritdoc />
     public void Subscribe<T>(Action<T> handler) where T : IEvent
     {
         if (handler is null) throw new ArgumentNullException(nameof(handler));
-        _subscriptions.Add((typeof(T), handler));
+
+        EnforceCapability("subscribe", typeof(T));
+
+        if (ModBusRouter.Resolve(typeof(T), _services) is not IEventBus bus)
+            return;
+
+        bus.Subscribe(handler);
+        _subscriptions.Add((bus, () => bus.Unsubscribe(handler)));
     }
 
     /// <inheritdoc />
@@ -84,18 +105,43 @@ internal sealed class RestrictedModApi : IModApi
     public bool TryGetContract<T>(out T? contract) where T : class, IModContract
         => _contractStore.TryGet<T>(out contract);
 
+    /// <inheritdoc />
+    public IReadOnlySet<string> GetKernelCapabilities() => new HashSet<string>();
+
+    /// <inheritdoc />
+    public ModManifest GetOwnManifest() => _manifest;
+
+    /// <inheritdoc />
+    public void Log(ModLogLevel level, string message)
+        => Console.WriteLine($"[{level.ToString().ToUpperInvariant()}][{_modId}] {message}");
+
     /// <summary>
     /// Removes every subscription the mod had registered through
-    /// <see cref="Subscribe{T}"/>. Called from the unload chain.
+    /// <see cref="Subscribe{T}"/> from the underlying buses, then clears the
+    /// tracking list. Called from the unload chain.
     /// </summary>
     internal void UnsubscribeAll()
     {
+        foreach ((IEventBus _, Action unsubscribe) in _subscriptions)
+            unsubscribe();
         _subscriptions.Clear();
     }
 
-    /// <summary>
-    /// Returns the number of active subscriptions — intended for tests and
-    /// for the unload chain to assert the cleanup invariant.
-    /// </summary>
-    internal int SubscriptionCount => _subscriptions.Count;
+    private void EnforceCapability(string verb, Type eventType)
+    {
+        string token = $"kernel.{verb}:{eventType.FullName}";
+
+        if (_manifest.Capabilities.IsEmpty)
+        {
+            Console.WriteLine(
+                $"[WARNING][{_modId}] v1 manifest {verb}ing '{eventType.FullName}' " +
+                "without capability declaration (deprecated, will be required in M3).");
+            return;
+        }
+
+        if (!_manifest.Capabilities.RequiresCapability(token))
+            throw new CapabilityViolationException(
+                $"Mod '{_modId}' attempted to {verb} '{eventType.FullName}' " +
+                $"without declaring capability '{token}'.");
+    }
 }

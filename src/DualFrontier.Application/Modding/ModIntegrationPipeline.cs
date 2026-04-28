@@ -117,7 +117,7 @@ internal sealed class ModIntegrationPipeline
         var initErrors = new List<ValidationError>();
         foreach (LoadedMod mod in loaded)
         {
-            var api = new RestrictedModApi(mod.ModId, _registry, _contractStore, _services);
+            var api = new RestrictedModApi(mod.ModId, mod.Manifest, _registry, _contractStore, _services);
             try
             {
                 mod.Instance.Initialize(api);
