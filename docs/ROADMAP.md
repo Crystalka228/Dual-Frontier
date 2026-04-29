@@ -1,6 +1,6 @@
 # Roadmap
 
-The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.0 LOCKED; this roadmap is the execution sequence derived from it.
+The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.2 LOCKED; this roadmap is the execution sequence derived from it.
 
 The reorganisation follows the project's central methodological claim: **engine and methodology are the main research result, the game is a test case for the hypothesis** ([METHODOLOGY](./METHODOLOGY.md)). By implementing combat, magic, and world content through the modding system rather than alongside it, we make every gameplay feature also a test of the modding architecture. A combat system that ships as a vanilla mod is the strongest possible falsifiable claim that the contract surface for mods is complete.
 
@@ -8,7 +8,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 
 ## Status overview
 
-*Updated: 2026-04-27 (M3 in progress; M3.1 closed, M3.2 current).*
+*Updated: 2026-04-29 (M3 closed — M3.1, M3.2, M3.3 done; M3.4 deferred; M4 next).*
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -22,7 +22,8 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | **M0 — Mod-OS Phase 0** | ✅ Closed | — | `MOD_OS_ARCHITECTURE` v1.0 LOCKED |
 | **M1 — Manifest v2** | ✅ Closed | added | `VersionConstraint`, `ModDependency`, `ManifestCapabilities`, `ModManifest` v2, `ManifestParser`, full `ValidationErrorKind` set |
 | **M2 — IModApi v2** | ✅ Closed | added | Real `Publish`/`Subscribe`, `GetKernelCapabilities`, `GetOwnManifest`, `Log`, `RestrictedModApi` v2 |
-| **M3 — Capability model** | 🔨 Current | added | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` opt-in — closed; M3.2 capability-enforcing `RestrictedModApi` — in progress |
+| **M3 — Capability model** | ✅ Closed | added (`KernelCapabilityRegistryTests`, `RestrictedModApiV2Tests`, `CapabilityValidationTests`, `ProductionComponentCapabilityTests`) | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` opt-in; M3.2 capability-enforcing `RestrictedModApi` (Publish/Subscribe runtime check, hybrid per `MOD_OS_ARCHITECTURE` §3.6 v1.2); M3.3 `[ModCapabilities]` + load-time cross-check (`ContractValidator` Phases C+D); M3.4 deferred |
+| M3.4 — CI capability analyzer | ⏸ Deferred | — | Roslyn analyzer for `[ModCapabilities]` honesty (D-2 hybrid completion); unblocked when first external mod author appears |
 | M4 — Shared ALC | ⏭ Pending | — | Type sharing across mods |
 | M5 — Version constraints | ⏭ Pending | — | Caret-syntax inter-mod deps |
 | M6 — Bridge replacement | ⏭ Pending | — | Explicit `replaces` |
@@ -32,7 +33,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | M10 — Remaining vanilla | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental |
 | Phase 9 — Native Runtime | ⏭ Post-launch | — | Separate large project |
 
-**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3.1 added `KernelCapabilityRegistryTests`. Total test count grows per closed M-phase; verify with `dotnet test` against the current solution. The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
+**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests`. **Total at M3 closure: 260/260 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
 
 ---
 
@@ -99,7 +100,7 @@ The save-game compatibility policy when a mod is missing (mod-OS decision D-6) t
 
 ## 🔨 Mod-OS Migration (M0–M10)
 
-The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.0 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
+The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.2 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
 
 ### ✅ M0 — Mod-OS Phase 0 (closed)
 
@@ -164,15 +165,16 @@ Goal achieved: replaced the no-op semantics of `RestrictedModApi.Publish` and `S
 
 ---
 
-### 🔨 M3 — Capability model (current)
+### ✅ M3 — Capability model (closed)
 
 Goal: implement the capability registry, the `[ModAccessible]` and `[ModCapabilities]` attributes, and the load-time cross-check between manifest, code, and kernel-provided capabilities.
 
 **Sub-phase status:**
 
-- **M3.1 — `KernelCapabilityRegistry` + `[ModAccessible]` opt-in.** ✅ Closed. Reflection-based scan of kernel assemblies builds the authoritative `kernel.publish:*`, `kernel.subscribe:*`, `kernel.read:*`, `kernel.write:*` token set. Per D-1: `read`/`write` capabilities apply only to components annotated `[ModAccessible(Read = ..., Write = ...)]`.
-- **M3.2 — capability-enforcing `RestrictedModApi`.** 🔨 In progress. Per-mod capability set assembled from manifest + dependencies' provided sets; runtime checks at `Publish`/`Subscribe`/`RegisterSystem` raise `CapabilityViolationException` on mismatch.
-- **M3.3 — `[ModCapabilities]` attribute + load-time cross-check.** ⏭ Pending. Per D-2 hybrid: per-system attribute checked at load time; CI Roslyn analyzer verifies attribute matches actual call sites in the assembly.
+- **M3.1 ✅ Closed.** Acceptance: `KernelCapabilityRegistry` scans `DualFrontier.Components` + `DualFrontier.Events` assemblies (commit `a73669f`); production components annotated `[ModAccessible]` per D-1 (commit `f91f065`); `KernelCapabilityRegistryTests` + `ProductionComponentCapabilityTests` (commit `b92fa66`) verify both registry mechanics and the §2.1 example manifest token resolution.
+- **M3.2 ✅ Closed.** Acceptance: `RestrictedModApi.EnforceCapability` raises `CapabilityViolationException` on `Publish<T>` / `Subscribe<T>` when the manifest does not declare the capability; per `MOD_OS_ARCHITECTURE` §4.2 / §4.3 v1.2 hybrid enforcement (ratified in v1.2 §3.6). `RegisterSystem` is locked as v1 semantics unchanged per §4.1 — no capability check applies.
+- **M3.3 ✅ Closed.** Acceptance: `ContractValidator` Phase C (capability satisfiability via kernel + listed dependencies) and Phase D (`[ModCapabilities]` × manifest cross-check) implemented; `CapabilityValidationTests` covers both phases.
+- **M3.4 ⏸ Deferred.** CI Roslyn analyzer for `[ModCapabilities]` honesty (D-2 hybrid completion, see `MOD_OS_ARCHITECTURE` §3.8). Unblocked when the first external (non-vanilla) mod author appears. Rationale: runtime `CapabilityViolationException` already catches dishonest attribute declarations; the analyzer is developer-experience tooling for early feedback before publication, not a runtime safety boundary.
 
 **Consumes decisions:** D-1 (curated opt-in `[ModAccessible]`), D-2 (hybrid attribute + CI static analysis).
 
@@ -182,7 +184,7 @@ Goal: implement the capability registry, the `[ModAccessible]` and `[ModCapabili
 - `[ModCapabilities("publish:DualFrontier.Events.Combat.DamageEvent", "subscribe:..." )]` attribute on mod-supplied systems. Per D-2, this is the load-time declaration; the loader cross-checks it against the manifest's `capabilities.required`.
 - `KernelCapabilityRegistry` — built at startup by reflecting over `[ModAccessible]` types and over `IEvent` types in `DualFrontier.Events.*`. Frozen after build; exposed via `IModApi.GetKernelCapabilities`.
 - Capability-enforcing `RestrictedModApi`: `Publish` and `Subscribe` consult a per-mod capability set (built from manifest + provided-capabilities of dependency mods) and throw `CapabilityViolationException` on mismatch.
-- CI-level static analyzer (Roslyn, separate package): scans mod assemblies for actual `Publish`/`Subscribe` call sites and verifies `[ModCapabilities]` declarations are honest. Runs in mod-publication CI, not at game load time.
+- CI-level static analyzer (Roslyn, separate package): scans mod assemblies for actual `Publish`/`Subscribe` call sites and verifies `[ModCapabilities]` declarations are honest. Runs in mod-publication CI, not at game load time. **(Deferred — see M3.4 above.)**
 
 **Acceptance criteria**
 
@@ -190,7 +192,7 @@ Goal: implement the capability registry, the `[ModAccessible]` and `[ModCapabili
 - A mod declares `kernel.read:MindComponent` in manifest; MindComponent is **not** annotated; load fails with `MissingCapability` naming the component.
 - A mod's system has `[ModCapabilities("publish:DamageEvent")]` but the manifest does not list `kernel.publish:DualFrontier.Events.Combat.DamageEvent` in `capabilities.required`; load fails with `MissingCapability`.
 - A mod's system publishes an event for which the system declares `[ModCapabilities]` but the manifest is correctly populated; load succeeds, publish reaches the bus.
-- The CI analyzer detects a `Services.Combat.Publish<DamageEvent>` call in code that has `[ModCapabilities]` not listing `publish:DamageEvent`; CI fails.
+- *(M3.4 deferred)* The CI analyzer detects a `Services.Combat.Publish<DamageEvent>` call in code that has `[ModCapabilities]` not listing `publish:DamageEvent`; CI fails.
 
 **Unblocks:** M6 (bridge replacement validates capability of replacing system), M9, M10 (vanilla mods declare capabilities honestly).
 
@@ -410,7 +412,7 @@ Unchanged from the original plan. Goal: own entry point bypassing Godot's runtim
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.0 LOCKED specification driving M1–M10.
+- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.2 LOCKED specification driving M1–M10.
 - [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline; M1–M10 are exercised through it.
 - [ARCHITECTURE](./ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
 - [CONTRACTS](./CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
