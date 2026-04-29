@@ -22,7 +22,7 @@ looks excessive.
 
 ## Architecture
 
-Documents describing the foundation: layers, contracts, ECS core, event buses, multithreading, and isolation.
+Technical documents describing the engine that stress-tests the methodology: layers, contracts, ECS core, event buses, multithreading, and isolation.
 
 - [ARCHITECTURE](./ARCHITECTURE.md) — the four layers, dependency rules, assembly diagram.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — **v1.0 LOCKED.** Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model. Drives the M1–M10 migration plan in ROADMAP.
@@ -36,7 +36,7 @@ Documents describing the foundation: layers, contracts, ECS core, event buses, m
 
 ## Development
 
-Documents for those who write code: methodology, modding, performance, style, tests.
+Documents required to reproduce the work or contribute to it: methodology, modding, performance, coding standards, and tests.
 
 - [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
 - [PIPELINE_METRICS](./PIPELINE_METRICS.md) — pipeline configuration, empirical metrics, throughput, subscription headroom, reproducibility requirements. Companion to METHODOLOGY.
