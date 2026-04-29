@@ -5,16 +5,21 @@ nav_order: 25
 
 # Mod OS Architecture — Dual Frontier
 
-**Status:** LOCKED v1.1 — Phase 0 closed; minor documentation corrections from M1–M3.1 audit applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
+**Status:** LOCKED v1.2 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1) and M3 closure review (v1.2) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
 
 **Version history:**
 
 - v0.1 (initial draft) — initial specification of the mod-as-process model. Five strategic decisions locked; seven detail decisions (D-1 through D-7) collected in §12 as ⚠ DECISION pending human resolution.
 - v1.0 — Phase 0 closed. All seven open decisions resolved and locked. Implementation phases M1–M10 may begin.
-- v1.1 (this version) — non-semantic corrections from the first independent audit (M1–M3.1):
+- v1.1 — non-semantic corrections from the first independent audit (M1–M3.1):
   - §4.1: `Log()` parameter type is `ModLogLevel`, not `LogLevel`. The original name collided with `Microsoft.Extensions.Logging.LogLevel`; the implementation correctly chose a kernel-namespaced enum, and the spec is brought in line.
   - §2.2: `dependencies[i].optional` (bool, default `false`) documented as a recognised optional flag on inter-mod dependencies. Discovered as `ModDependency.IsOptional` in the M1 implementation, kept on the strength of utility, and now ratified.
   - No semantic changes. No locked decision is altered. M1–M3.1 implementations continue to comply.
+- v1.2 (this version) — non-semantic corrections from the M3 closure review:
+  - §3.6: hybrid enforcement formulation. The v1.0/v1.1 wording described capability checks as load-time only and the hot path as "free of permission lookups." The M2 implementation (commits `35dc5b2`, `0d5b32f`) added a runtime per-call check inside `RestrictedModApi.EnforceCapability` — a hash-set lookup measured negligible on the hot path — which is exactly what §4.2 and §4.3 already specify. v1.2 brings §3.6 in line with §4.2/§4.3 and the implementation: enforcement is hybrid, load-time as primary gate plus runtime as second-layer defence.
+  - §3.5 + §2.1: production components consumed by the §2.1 example manifest (`WeaponComponent`, `ArmorComponent`, `AmmoComponent`, `ShieldComponent`, `HealthComponent`) annotated with `[ModAccessible]` per D-1 LOCKED. The §2.1 example itself was expanded to include `kernel.read:AmmoComponent` and `kernel.read:ShieldComponent` — Vanilla.Combat requires both (ammo accounting per §11 of the original Phase 5 spec, shield damage routing per §6.4 of the GDD), but the v1.0/v1.1 example listed only three components as a sketch. v1.2 brings the example in line with what a real combat mod actually needs. Without these annotations the §2.1 example manifest would fail Phase C with `MissingCapability` — the spec example is now end-to-end loadable.
+  - §11.1: M3.4 added as deferred milestone (CI Roslyn analyzer per D-2 hybrid completion). M3.1, M3.2, M3.3 closed by M3 closure review; M3.4 unblocked when the first external (non-vanilla) mod author appears — runtime `CapabilityViolationException` already catches dishonest `[ModCapabilities]` attributes, so the analyzer is developer-experience tooling for early feedback before publication, not a runtime safety boundary.
+  - No semantic changes. No locked decision (D-1 through D-7) is altered. M3 implementations continue to comply.
 
 ---
 
@@ -182,6 +187,8 @@ The current `ModManifest` (v1) carries `Id`, `Name`, `Version`, `Author`, `Requi
       "kernel.subscribe:DualFrontier.Events.Combat.ShootGranted",
       "kernel.read:DualFrontier.Components.Combat.WeaponComponent",
       "kernel.read:DualFrontier.Components.Combat.ArmorComponent",
+      "kernel.read:DualFrontier.Components.Combat.AmmoComponent",
+      "kernel.read:DualFrontier.Components.Combat.ShieldComponent",
       "kernel.write:DualFrontier.Components.Shared.HealthComponent"
     ],
     "provided": [
@@ -273,9 +280,28 @@ The kernel exposes a fixed list of capabilities derived from public types in `Du
 
 > **✓ LOCKED (D-1).** `read` and `write` capabilities apply only to a **curated, opt-in subset** of public components. A component is reachable from a mod only when annotated with `[ModAccessible(Read = true, Write = false)]`. The component author actively decides what mods can touch; everything else is invisible to the capability resolver and produces a `MissingCapability` error if requested. Aligns with the project's structural-isolation philosophy: tighter blast radius, falsifiable surface.
 
-### 3.6 Runtime enforcement
+### 3.6 Hybrid enforcement — load-time + runtime
 
-Capability checks are static — they happen at load time, not at every `Publish` call. Enforcement at runtime is delegated to the existing `SystemExecutionContext` (`[SystemAccess]` reads/writes) and to subscription routing (the bus delivers an event only to subscribers whose mod declared `subscribe:` on that type). This keeps the hot path free of permission lookups.
+Capability enforcement operates on two layers.
+
+**Load-time** (primary gate, before the mod reaches `Active` state §9.1):
+
+- §3.4 — every `capabilities.required` token must be provided by the kernel or by a listed dependency. Failure: `MissingCapability`.
+- §3.7 — every registered system's `[SystemAccess]` declarations must be a subset of the mod's `capabilities.required`.
+- §3.8 / D-2 — every registered system's `[ModCapabilities]` tokens must appear in the manifest's `capabilities.required`.
+
+**Runtime** (second-layer defence inside `RestrictedModApi`):
+
+- §4.2 — `Publish<T>` checks the per-mod required set; mismatch raises `CapabilityViolationException`. Hash-set lookup, `O(1)`, measured negligible on the hot path.
+- §4.3 — `Subscribe<T>` checks the same set at subscribe time. Same exception, same cost.
+
+Enforcement on isolated component access (`SystemExecutionContext` reads/writes via `[SystemAccess]`) and on bus delivery (subscribers receive only events for types they declared) operates independently of the capability layer and continues to function as in v1.
+
+The runtime layer covers three cases the load-time gate cannot reach:
+
+1. Reflection-based bypass of `[ModCapabilities]` declarations (deliberate violation rather than accident).
+2. Event types constructed at runtime via generics or reflection.
+3. v1 manifest grace period (§4.5) — v1 mods bypass load-time `MissingCapability` because their `capabilities.required` is empty, but the per-call runtime check still catches actual violations and emits a deprecation warning directing the author to the v2 manifest.
 
 ### 3.7 Cross-check with `[SystemAccess]`
 
@@ -801,7 +827,8 @@ The current state of the codebase is ~30% of the target. The migration is staged
 | **M0** | This document at v1.0 | All ⚠ DECISION items closed | — |
 | **M1** | Manifest v2 schema + parser, backward compatible | `ModManifest` extended, JSON loader handles v2 | Manifest validation tests |
 | **M2** | `IModApi.Publish`/`Subscribe` real implementation | `RestrictedModApi` no longer no-ops | Publish/subscribe round-trip tests |
-| **M3** | Capability model: parser, kernel-provided set, load-time check | `CapabilityRegistry`, `[ModAccessible]` attribute | Capability violation tests |
+| **M3** | Capability model: parser, kernel-provided set, load-time + runtime check | `CapabilityRegistry`, `[ModAccessible]` attribute, `[ModCapabilities]` attribute, `RestrictedModApi.EnforceCapability` | `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, capability violation tests |
+| **M3.4** *(deferred)* | CI Roslyn analyzer for `[ModCapabilities]` honesty (D-2 hybrid completion) | Standalone analyzer package; runs in mod-publication CI, not at game load | Static-analysis integration tests; unblocked when first external mod author appears |
 | **M4** | Shared ALC + shared mod kind | `SharedModLoadContext`, manifest `kind` field | Type-sharing test (shared-mod event published from one regular mod, received in another) |
 | **M5** | Inter-mod dependency resolution with caret syntax | `VersionConstraint` parser, dependency graph in `ModIntegrationPipeline` | Version constraint tests |
 | **M6** | Bridge replacement via `replaces` | `[BridgeImplementation(Replaceable=true)]`, loader skip logic | Bridge replacement tests (all of §7.5) |
