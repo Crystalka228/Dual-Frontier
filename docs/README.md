@@ -1,8 +1,24 @@
 # Dual Frontier documentation
 
-Dual Frontier is a colony simulator on Godot 4 + C# with two parallel tech branches (industrial and arcane). The project architecture solves three RimWorld pain points: performance, multithreading, and moddability.
+This directory documents a research artifact: a falsifiable test of
+LLM-augmented systems engineering at one-person scale, operationalized
+as a moddable simulation engine with declared invariants. The full
+research framing is in the [root README](../README.md); the engine
+exists to stress-test the methodology under non-trivial workload.
 
-This directory contains all technical and process documentation. Before diving into code, read [ARCHITECTURE](./ARCHITECTURE.md) and [CONTRACTS](./CONTRACTS.md) — without them the source layout looks excessive.
+Three documents carry the primary research weight:
+[METHODOLOGY](./METHODOLOGY.md) describes the four-agent pipeline as
+designed; [PIPELINE_METRICS](./PIPELINE_METRICS.md) records the
+operational data measured while running it;
+[MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) describes the
+capability-based mod isolation as an OS-style architecture;
+[NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) records a
+measured negative result with criterion reformulation. The remaining
+documents below describe the engine that supports the claim.
+
+Before reading the source layout, read [ARCHITECTURE](./ARCHITECTURE.md)
+and [CONTRACTS](./CONTRACTS.md). Without them the assembly structure
+looks excessive.
 
 ## Architecture
 

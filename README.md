@@ -1,193 +1,132 @@
-# Dual Frontier — a research project
+# Dual Frontier
 
-**Dual Frontier** is a methodology experiment: a test of the hypothesis that one developer can build a complex game engine — multithreaded ECS, modding through formal contracts, native interop — through structured work with an LLM. The artifact takes the form of a colony simulator with two parallel tech branches — industrial and arcane — driven by species biology rather than ideological player choice. The **engine and methodology** are the main research result. The game is a test case for the hypothesis.
-
----
-
-## Experimental hypothesis
-
-Public discourse on LLM-driven development swings between two poles: "vibe coding for prototypes" and "AI will replace senior engineers." This project tests a third model: **the human as contract architect, the LLM as executor inside strict contract boundaries**.
-
-### Pipeline configuration
-
-The experiment uses four agents separated **by level of abstraction**, not by development phase. The agents do not communicate directly — coordination happens through LOCKED documents in the repository and through the human as session router.
-
-- **Gemma 4 E4B** (locally, through LM Studio + Cline in VS Code) — syntax-tier executor. 1 prompt → 1–2 files.
-- **Claude Sonnet 4.6** (Claude Max 5×) — prompt generator and mid-complexity executor.
-- **Claude Opus 4.7** (Claude Max 5×) — architect and QA. Phase 0 lock, audits, phase reviews.
-- **Human** — owner of intent, router between sessions.
-
-**Full configuration, empirical metrics, throughput data, and subscription headroom** — in [docs/PIPELINE_METRICS.md](docs/PIPELINE_METRICS.md).
-
-**Structural strength of contracts.** If a contract is rigid enough that a 4-bit quantized local model produces quality code, it will hold up under any stronger model. Isolation from hallucinations is structural — independent of the executor's capacity.
-
-### Falsifiable claim
-
-**A working game** built solo through this methodology, with measured pipeline performance, defect rate, and architectural integrity over the long haul.
-
-Full description of the approach: [docs/METHODOLOGY.md](docs/METHODOLOGY.md).
+A falsifiable test of LLM-augmented systems engineering at one-person scale.
 
 ---
 
-## Three architectural principles
+## Claim under test
 
-1. **Domain buses.** A system never touches another system's data directly — only through marker events (`IEvent`, `IQuery`, `ICommand`) on domain buses. Searching for "ammo in storage" is an `AmmoIntent` published to `InventoryBus`, not an `O(n)` inventory scan.
-2. **Declarative multithreading.** Every system declares `[SystemAccess(reads, writes, bus)]`. The scheduler builds the dependency graph once and runs unrelated systems in parallel within a single phase.
-3. **Mod isolation.** Each mod loads into its own `AssemblyLoadContext`. A mod physically has no access to `DualFrontier.Core` — only to `DualFrontier.Contracts`. Mods interact by publishing `IModContract` instances.
+The hypothesis is that a single developer, in the role of contract architect,
+can build a non-trivial systems-software artifact through structured work with
+a tiered LLM pipeline, where the LLMs operate as executors inside contract
+boundaries rather than as substitutes for engineering judgement.
 
-The cardinal rule: **an isolation violation produces an immediate crash with diagnostics**, not silent state corruption.
+The claim is operationalized as the production of a moddable simulation engine
+with declared invariants — a multithreaded ECS, capability-based mod isolation,
+and a replaceable native core — built solo, with measured pipeline throughput
+and a recorded defect rate. The colony-simulator content sits on top of the
+engine as a realistic load; the engine exists to stress-test the methodology
+under non-trivial workload.
 
----
+## Falsifiability conditions
 
-## Layers
+The claim is rejected if any of the following hold over a sustained
+development window:
 
-```
-┌─────────────────────────────────────────────────────┐
-│ PRESENTATION    Godot SceneTree, UI, input          │
-│                 main thread ONLY                    │
-├─────────────────────────────────────────────────────┤
-│ APPLICATION     GameLoop, Save, ScenarioLoader      │
-│                 Command queue Domain → Presentation │
-├─────────────────────────────────────────────────────┤
-│ DOMAIN          Systems / Components / Entities     │
-│                 Multithreaded. Godot-agnostic.      │
-├─────────────────────────────────────────────────────┤
-│ INFRASTRUCTURE  EventBus, Scheduler, SpatialGrid    │
-└─────────────────────────────────────────────────────┘
-```
+1. **Defect rate.** The shipped artifact accumulates production-class defects
+   that the contract-and-test infrastructure was supposed to prevent.
+   Current state: 0 known production bugs across the closed phases; full test
+   counts and acceptance criteria are recorded in
+   [docs/ROADMAP.md](./docs/ROADMAP.md).
+2. **Architectural integrity.** The architecture drifts under sustained
+   activity — locked specifications stop reflecting the code, contracts
+   weaken to accommodate executor limitations, or isolation guarantees erode.
+   Current state: architectural decisions and their rejected alternatives are
+   recorded in [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md),
+   [docs/MOD_OS_ARCHITECTURE.md](./docs/MOD_OS_ARCHITECTURE.md), and the
+   normalization audit in [docs/NORMALIZATION_REPORT.md](./docs/NORMALIZATION_REPORT.md).
+3. **Pipeline economics.** The pipeline cannot sustain its own throughput
+   under a fixed monthly subscription and spills into pay-as-you-go API
+   consumption to keep moving. Current state: two consecutive weekly windows
+   under different operational profiles converge on the same headroom band;
+   measurements are recorded in
+   [docs/PIPELINE_METRICS.md §3](./docs/PIPELINE_METRICS.md#3-subscription-headroom).
 
-Each layer knows only the layer below it. `Presentation` receives data only via the queue from `Application` and never calls `Systems` directly.
+Each condition has a documented source of truth; the present README does not
+restate the numbers.
 
----
+## Pipeline
 
-## Assemblies
+The pipeline uses four agents separated by level of abstraction, not by
+development phase. The agents do not communicate directly; coordination
+happens through LOCKED documents in the repository and through the human as
+session router.
 
-| Assembly | Layer | Purpose |
-|---|---|---|
-| `DualFrontier.Contracts` | All | Public interfaces, attributes, marker types. The only assembly a mod sees. |
-| `DualFrontier.Core` | Infra/Domain | ECS core, scheduler, domain buses. `internal` — not visible from outside. |
-| `DualFrontier.Components` | Domain | Pure POCO components, no logic. |
-| `DualFrontier.Events` | Domain | `record` events, queries, commands, intents. |
-| `DualFrontier.Systems` | Domain | Game systems. `[SystemAccess]` declares R/W. |
-| `DualFrontier.AI` | Domain | Behavior Tree, Jobs, pathfinding. |
-| `DualFrontier.Application` | App | GameLoop, Save/Load, ModLoader, PresentationBridge. |
-| `DualFrontier.Presentation` | Godot | Godot-specific code. The only assembly allowed to use `using Godot`. |
-| `DualFrontier.Persistence` | Infra | Snapshot encoders, RLE, range encoding, StringPool. No Godot dependency. |
+- **Syntax-tier executor.** A local quantized model in the 4–8B parameter
+  class, hosted through a local OpenAI-compatible backend and orchestrated by
+  an editor extension. Receives a self-contained prompt and produces 1–2
+  files of code against a contract. Makes no architectural decisions.
+- **Prompt-generation tier.** A mid-tier hosted model. Turns a task plus its
+  contract into a self-contained prompt for the syntax-tier executor; handles
+  routine tasks directly.
+- **Architect-tier executor.** A top-tier hosted model with a large context
+  window. Used sparingly, on hard architectural tasks and on full reviews at
+  phase closure.
+- **Direction owner.** The human. Selects contracts, makes architectural
+  decisions, frames phase goals, routes between sessions.
 
----
+Full configuration, empirical task metrics, subscription headroom data, and
+reproducibility requirements are documented in
+[docs/PIPELINE_METRICS.md](./docs/PIPELINE_METRICS.md):
 
-## Experiment status
+- [§1 Pipeline configuration](./docs/PIPELINE_METRICS.md#1-pipeline-configuration) —
+  agent assignments, workflow, hardware, and software stack.
+- [§3 Subscription headroom](./docs/PIPELINE_METRICS.md#3-subscription-headroom) —
+  empirical measurements across two consecutive weekly windows.
+- [§5 Reproducibility requirements](./docs/PIPELINE_METRICS.md#5-reproducibility-requirements) —
+  what is required to reproduce these measurements and what these
+  measurements do not show.
 
-*Updated: 2026-04-27 (M3 in progress; M3.1 closed, M3.2 current).*
+If a contract is rigid enough that a 4-bit quantized local model produces
+correct code under it, the contract will hold under any stronger executor.
+Isolation from hallucinations is a structural property of the contract, not
+of the executor's capacity.
 
-After the closure of Phase 4, the original Phase 5 (Combat) and Phase 6/7 (Magic, World) have been reorganised as part of a **Mod-OS Migration** (M1–M10). Gameplay content ships as vanilla mods rather than as kernel systems; this turns every gameplay feature into a structural test of the modding architecture. Architectural specification is locked at v1.0 (see `MOD_OS_ARCHITECTURE`).
+## What the engine demonstrates
 
-| Phase | Status | Tests | Notes |
-|---|---|---|---|
-| Core ECS | ✅ Done | 60/60 | SparseSet, parallel scheduler, `[Deferred]` / `[Immediate]` bus |
-| Verification | ✅ Done | 11/11 | Isolation guard, ContractValidator |
-| Pawns | ✅ Done | 1/1 | A* pathfinding, Godot bridge, `MoodSystem` publishing |
-| Economy + HUD | ✅ Done | 6/6 | Inventory deferred mutation, ElectricGrid overload, Converter 30% |
-| Persistence (scaffold) | ✅ Done | 4/4 | TileEncoder/RLE, ComponentEncoder, EntityEncoder, StringPool |
-| Mod-OS architecture (M0) | ✅ Done | — | `MOD_OS_ARCHITECTURE` v1.0 LOCKED, all 12 decisions resolved |
-| Manifest v2 (M1) | ✅ Done | added | `kind`, `apiVersion`, `replaces`, `capabilities`, caret-syntax deps |
-| IModApi v2 (M2) | ✅ Done | added | Real `Publish`/`Subscribe` via `ModBusRouter`, capability accessors |
-| Capability model (M3) | 🔨 Current | added | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` — closed; M3.2 enforcement — in progress |
-| Shared ALC (M4) | ⏭ Pending | — | Cross-mod type sharing |
-| Version constraints (M5) | ⏭ Pending | — | Caret-syntax inter-mod dependency resolution |
-| Bridge replacement (M6) | ⏭ Pending | — | Explicit `replaces`, conflict surfacing |
-| Hot reload (M7) | ⏭ Pending | — | Menu-driven, paused-only, WeakReference unload |
-| Vanilla skeletons (M8) | ⏭ Pending | — | Five empty mod assemblies |
-| Vanilla.Combat (M9) | ⏭ Pending | — | Absorbs original Phase 5 scope |
-| Vanilla.Magic / Inventory / Pawn / World (M10) | ⏭ Pending | — | Incremental, any order |
+The engine is the stress test. Without a non-trivial workload, the pipeline
+claim reduces to a statement about toy problems. The engine carries three
+properties that make the workload non-trivial:
 
-**Engine snapshot:** Phases 0–4 closed at 82/82 tests, 0 known production bugs. M1–M3.1 added Manifest, Parser, ApiV2, and CapabilityRegistry test suites; total count grows per closed M-phase (verify with `dotnet test`). Phase 4 closed in v0.3 with all architectural fixes applied: `[Deferred]` event semantics in the bus, `IPowerBus` split off from Inventory, ElectricGrid↔Converter cycle broken via deferred event, `HaulSystem.writes=[]` isolation preserved through subscriber context capture. Phase 5/6/7 stub systems are tagged `[BridgeImplementation(Phase=N)]` and remain in place as bridges that vanilla mods will replace via the explicit `replaces` mechanism (M6). The bulk of the code is generated for free by the local Gemma 4 E4B; architectural work via Sonnet plus occasional Opus calls fits inside the Claude Max 5× subscription ($100/month) without spilling into pay-as-you-go.
+- A multithreaded ECS with declarative system access (`[SystemAccess]`),
+  a Kahn-sorted dependency graph, and a runtime isolation guard that crashes
+  immediately on any access violation.
+- Capability-based mod isolation: each mod loads into its own
+  `AssemblyLoadContext`, sees only `DualFrontier.Contracts`, and interacts
+  with the kernel through reflection-scanned capabilities. The architecture
+  is documented as an OS-style design in
+  [docs/MOD_OS_ARCHITECTURE.md](./docs/MOD_OS_ARCHITECTURE.md).
+- A replaceable native core, treated as an experimental boundary rather than
+  a load-bearing assumption. One negative result against this boundary is
+  recorded with criterion reformulation in
+  [docs/NATIVE_CORE_EXPERIMENT.md](./docs/NATIVE_CORE_EXPERIMENT.md).
 
-Full roadmap: [docs/ROADMAP.md](docs/ROADMAP.md). Mod-OS architecture: [docs/MOD_OS_ARCHITECTURE.md](docs/MOD_OS_ARCHITECTURE.md).
+## What this is not
 
----
+This repository is not a game release, a competitor to Bevy or Unity DOTS,
+or a claim that LLM pipelines can replace software engineers. It is also not
+a claim about generalizability beyond systems software with formal,
+machine-checkable contracts. The boundaries of applicability are recorded
+in [docs/METHODOLOGY.md §6](./docs/METHODOLOGY.md).
 
-## Published research artifacts
+## Three primary documents
 
-### Methodology
+- [docs/METHODOLOGY.md](./docs/METHODOLOGY.md) — the methodology as designed:
+  pipeline architecture, contracts as inter-agent IPC, verification cycle,
+  threat model, boundaries of applicability.
+- [docs/MOD_OS_ARCHITECTURE.md](./docs/MOD_OS_ARCHITECTURE.md) — the
+  capability-based mod isolation as an OS-style architecture; v1.0 LOCKED.
+- [docs/NATIVE_CORE_EXPERIMENT.md](./docs/NATIVE_CORE_EXPERIMENT.md) — a
+  measured negative result with explicit criterion reformulation.
 
-- [docs/METHODOLOGY.md](docs/METHODOLOGY.md) — the four-agent pipeline (Gemma locally through Cline + LM Studio, Sonnet as prompt generator and mid-complexity executor, Opus as architect and QA, the human as direction owner), contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
-- [docs/DEVELOPMENT_HYGIENE.md](docs/DEVELOPMENT_HYGIENE.md) — discipline rules and machine-checkable invariants.
-- [docs/CODING_STANDARDS.md](docs/CODING_STANDARDS.md) — naming, comments, file structure, commit scope prefixes.
-- [docs/TESTING_STRATEGY.md](docs/TESTING_STRATEGY.md) — unit / integration / isolation / modding.
+## Repository layout
 
-### Architecture (positive results)
-
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — layers, principles, dependency rules.
-- [docs/MOD_OS_ARCHITECTURE.md](docs/MOD_OS_ARCHITECTURE.md) — **v1.0 LOCKED.** Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model, M1–M10 migration plan.
-- [docs/ECS.md](docs/ECS.md) — World, Entity, Component, System.
-- [docs/EVENT_BUS.md](docs/EVENT_BUS.md) — synchronous / `[Deferred]` / `[Immediate]` delivery, Intent → Granted/Refused.
-- [docs/THREADING.md](docs/THREADING.md) — dependency graph, phases, tick rates.
-- [docs/ISOLATION.md](docs/ISOLATION.md) — `SystemExecutionContext`, the isolation guard, types of violations.
-- [docs/MODDING.md](docs/MODDING.md) — `IMod`, `AssemblyLoadContext`, `IModContract` (v1 author guide; superseded by `MOD_OS_ARCHITECTURE` for v2 specifics).
-- [docs/MOD_PIPELINE.md](docs/MOD_PIPELINE.md) — two-phase validation, atomic graph rebuild.
-- [docs/CONTRACTS.md](docs/CONTRACTS.md) — event buses, marker interfaces, contract evolution.
-- [docs/GODOT_INTEGRATION.md](docs/GODOT_INTEGRATION.md) — `PresentationBridge`, main-thread rules.
-- [docs/PERFORMANCE.md](docs/PERFORMANCE.md) — target metrics, profiling.
-
-### Experiments (with honestly recorded outcomes)
-
-- [docs/NATIVE_CORE_EXPERIMENT.md](docs/NATIVE_CORE_EXPERIMENT.md) — **negative result:** the native C++ core via per-element P/Invoke lost to the managed implementation (NativeAdd10k: ratio 3.92×). The benchmark criterion is reframed from mean latency to p99 / GC pause / long-run drift; the batch-API decision is deferred to Phase 9.
-- [docs/GPU_COMPUTE.md](docs/GPU_COMPUTE.md) — **deferred decision:** the CPU implementation of `ProjectileSystem` handles current loads; the GPU switchover threshold is locked at the "Battle of the Gods" stress scenario (5,000 simultaneous projectiles).
-
-### v0.2 extensions (combat and magic contracts)
-
-- [docs/RESOURCE_MODELS.md](docs/RESOURCE_MODELS.md) — Intent vs Lease.
-- [docs/COMPOSITE_REQUESTS.md](docs/COMPOSITE_REQUESTS.md) — two-phase commit for composite requests.
-- [docs/FEEDBACK_LOOPS.md](docs/FEEDBACK_LOOPS.md) — Mana[N-1] snapshot to break cycles.
-- [docs/COMBO_RESOLUTION.md](docs/COMBO_RESOLUTION.md) — deterministic sort by EntityId + DamageKind ordinal.
-- [docs/OWNERSHIP_TRANSITION.md](docs/OWNERSHIP_TRANSITION.md) — golem states, ownership transitions.
-
----
-
-## Requirements
-
-### Building the engine
-
-- **.NET 8.0 SDK** (C# 12, `Nullable` enabled, `ImplicitUsings`, `TreatWarningsAsErrors`).
-- **Godot 4.3+** with C# support (mono / .NET build).
-- **JetBrains Rider** 2024.1+ or **Visual Studio 2022** 17.8+.
-
-### Reproducing the pipeline (optional)
-
-If you want to reproduce the methodology rather than just look at the result:
-
-- **VS Code** with the **[Cline](https://github.com/cline/cline)** extension — orchestrator for the local model.
-- **LM Studio** — backend for the local model via an OpenAI-compatible API on `localhost`.
-- Local model: **Gemma 4 E4B** (Q4_K_M, 6.33 GB) or comparable Qwen 2.5 Coder / Llama 3.1 8B alternatives. Minimum 8 GB VRAM or unified memory.
-- **Claude Max 5×** subscription ($100/month) and the **Claude desktop app** for architectural work through Sonnet 4.6 and Opus 4.7.
-
-Minimum hardware for reproducing the setup: a machine with a discrete GPU and 8 GB VRAM, or Apple Silicon with 16 GB unified memory. The experiment is conducted on an ASUS TUF A16 (Ryzen 7 7435HS, RX 7600S 8GB, 32GB RAM).
-
----
-
-## Build
-
-```bash
-dotnet restore
-dotnet build DualFrontier.sln
-```
-
-The Godot project opens via `src/DualFrontier.Presentation/project.godot` once all referenced assemblies build successfully.
-
----
+The full documentation index is in [docs/README.md](./docs/README.md).
+Source layout is described in [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md);
+without it the assembly structure looks excessive.
 
 ## License
 
-This project is distributed under the **[PolyForm Noncommercial 1.0.0](LICENSE)** license.
-
-In practice:
-
-- ✅ **Studying, forking, experimenting, personal use** — freely permitted.
-- ✅ **Writing and distributing mods** — freely permitted.
-- ✅ **Research, educational, and non-commercial use** — freely permitted.
-- ❌ **Commercial use of the engine code** in your own products — requires a separate agreement with the author.
-
-Game content (gameplay systems, balance, narrative, art) built on top of the engine is not part of this public repository and is distributed separately.
-
-For commercial licensing or partnership inquiries, open an issue in this repository.
+This project is distributed under the
+[PolyForm Noncommercial 1.0.0](./LICENSE) license. Commercial use of the
+engine code requires a separate agreement.
