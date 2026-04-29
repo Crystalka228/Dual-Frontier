@@ -12,7 +12,7 @@ This document describes a methodology for developing complex software solo throu
 
 The configuration is four agents with explicitly distributed roles: a local quantized model in the 4–8B parameter class as code executor, a mid-tier cloud model as prompt generator, a top-tier cloud model as architect and QA, the human as direction owner. There is no direct coordination between agents — formal contracts in code and documentation in the repository tie them together, acting as inter-process communication.
 
-The methodology's main falsifiable claim: a working production-quality game, built by one developer through this methodology in 6–12 months, with measured pipeline performance, defect rate, and architectural integrity over the long haul. The empirical base at publication is 5 days of development, 188 commits, 82/82 tests passing, 0 production bugs, and one formalized phase review session. Additional falsifiable claims appear in §2.2, §3.1, §4.5, and §5.3.
+The methodology's main falsifiable claim: a working production-quality game, built by one developer through this methodology in 6–12 months, with measured pipeline performance, defect rate, and architectural integrity over the long haul. Empirical measurements of the pipeline operating against this methodology are recorded in [PIPELINE_METRICS](./PIPELINE_METRICS.md) — see particularly [§2 task-level metrics](./PIPELINE_METRICS.md#2-empirical-task-level-metrics) and [§4 sustained throughput](./PIPELINE_METRICS.md#4-sustained-throughput). Additional falsifiable claims appear in §2.2, §3.1, §4.5, and §5.3.
 
 The methodology is not universal. Boundaries of applicability are recorded in §6.
 
@@ -350,7 +350,8 @@ The document is updated after each substantial phase closes. Substantial methodo
 
 ## 10. See also
 
-- [README.md](../README.md) — project overview, pipeline configuration, empirical data.
+- [README.md](../README.md) — research framing, falsifiability conditions, and pointers to operational data.
+- [PIPELINE_METRICS.md](./PIPELINE_METRICS.md) — empirical configuration, throughput data, and subscription economics measured while running this methodology.
 - [learning/PHASE_1.md](./learning/PHASE_1.md) — self-teaching ritual artifact after Phase 1; direct empirical referent for §4.5.
 - [SESSION_PHASE_4_CLOSURE_REVIEW.md](./SESSION_PHASE_4_CLOSURE_REVIEW.md) — Phase 4 closure review session log; direct empirical referent for §4.4. *(Russian-language audit trail; preserved verbatim per the i18n campaign rules.)*
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — layers, dependency rules, scenarios.
