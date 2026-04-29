@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Components.Shared;
@@ -6,6 +7,7 @@ namespace DualFrontier.Components.Shared;
 /// Entity health. Pure data — no logic.
 /// Mutated only via DamageSystem / HealSystem.
 /// </summary>
+[ModAccessible(Read = true, Write = true)]
 public sealed class HealthComponent : IComponent
 {
     // TODO: public float Current;

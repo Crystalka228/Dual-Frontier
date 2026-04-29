@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Components.Combat;
@@ -8,6 +9,7 @@ namespace DualFrontier.Components.Combat;
 /// Magic schools may add extra resistances via a separate component
 /// (`MagicResistComponent`, Phase 6).
 /// </summary>
+[ModAccessible(Read = true)]
 public sealed class ArmorComponent : IComponent
 {
     // TODO: public float SharpResist;

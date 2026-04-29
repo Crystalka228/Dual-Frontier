@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Components.Combat;
@@ -7,6 +8,7 @@ namespace DualFrontier.Components.Combat;
 /// Damage, penetration, damage type, effective range, accuracy.
 /// See GDD 6 "Combat system".
 /// </summary>
+[ModAccessible(Read = true)]
 public sealed class WeaponComponent : IComponent
 {
     // TODO: public float Damage;

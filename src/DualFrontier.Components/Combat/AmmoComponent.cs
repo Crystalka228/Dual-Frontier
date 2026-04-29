@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Components.Combat;
@@ -7,6 +8,7 @@ namespace DualFrontier.Components.Combat;
 /// Consumed by CombatSystem; replenished by InventorySystem via the
 /// two-step AmmoIntent → AmmoGranted/AmmoRefused model (see TechArch 11.5).
 /// </summary>
+[ModAccessible(Read = true)]
 public sealed class AmmoComponent : IComponent
 {
     // TODO: introduce DualFrontier.Components.Combat.AmmoType enum (Rifle, Pistol, Shotgun, Bolt, Mana …) — Phase 6.
