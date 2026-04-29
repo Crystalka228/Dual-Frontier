@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Application.Modding;
 
@@ -64,13 +66,25 @@ internal sealed class KernelCapabilityRegistry
     public bool Provides(string token) => _capabilities.Contains(token);
 
     /// <summary>
-    /// Builds a registry from the assemblies that contain
-    /// <c>DualFrontier.Contracts</c> and <c>DualFrontier.Components</c> types.
-    /// When both marker types currently resolve to the same assembly, the
-    /// constructor's deduplication keeps the scan single-pass.
+    /// Builds a registry from the three kernel-surface assemblies whose public
+    /// types may resolve to capability tokens: <c>DualFrontier.Contracts</c>
+    /// (host of <see cref="IEvent"/> and <see cref="IComponent"/> markers and
+    /// any cross-cutting types that may live alongside them),
+    /// <c>DualFrontier.Components</c> (production component types annotated
+    /// with <see cref="ModAccessibleAttribute"/>) and <c>DualFrontier.Events</c>
+    /// (production event types). The constructor's deduplication keeps the
+    /// scan single-pass — passing two markers that resolve to the same
+    /// assembly (e.g. <see cref="IEvent"/> and <see cref="IComponent"/> both
+    /// currently live in <c>DualFrontier.Contracts</c>) does not double-count.
     /// </summary>
     internal static KernelCapabilityRegistry BuildFromKernelAssemblies()
-        => new(new[] { typeof(IEvent).Assembly, typeof(IComponent).Assembly });
+        => new(new[]
+        {
+            typeof(IEvent).Assembly,           // DualFrontier.Contracts
+            typeof(IComponent).Assembly,       // DualFrontier.Contracts (deduped against IEvent)
+            typeof(HealthComponent).Assembly,  // DualFrontier.Components
+            typeof(PawnSpawnedEvent).Assembly, // DualFrontier.Events
+        });
 
     private static void ScanAssembly(Assembly assembly, HashSet<string> capabilities)
     {
