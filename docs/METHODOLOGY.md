@@ -26,6 +26,20 @@ On the other side is the "AI will replace senior engineers" narrative: the LLM t
 
 Between these poles sits a third model: **the human as contract architect, the LLM as executor inside strict contract boundaries**. Architectural decisions, contract choice, and direction of development stay with the human. Implementation against precisely formulated contracts is delegated to the LLM. Between these two layers runs a formal verification infrastructure — types, tests, static analysis — that catches divergences between intent and result. The idea itself is not new; what is new is a concrete production configuration that makes the approach economically sustainable for a solo developer.
 
+### Experimental control
+
+The author has no formal computer science education and no
+software engineering job history prior to this project. This is
+not a disclaimer — it is a methodological control. If the author
+held a CS background, the methodology's apparent success could
+be attributed to unstated transferred expertise: the engine
+would compile because the author already knew how to make
+engines compile. Without that background, the methodology has
+to do the work, or nothing does.
+
+Author profile and prior work history: linked from the
+[GitHub profile](https://github.com/Crystalka228).
+
 ---
 
 ## 2. Pipeline architecture
