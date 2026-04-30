@@ -10,7 +10,7 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Five-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
+/// Six-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
 /// registration. Phase A checks that every loaded mod is compatible with the
 /// current <see cref="ContractsVersion"/>. Phase B inspects every mod system
 /// alongside the provided core systems and reports any write-write collision
@@ -22,9 +22,15 @@ namespace DualFrontier.Application.Modding;
 /// (MOD_OS_ARCHITECTURE §5, §6.5 D-4). Phase C verifies every
 /// <c>capabilities.required</c> token is provided by the kernel or by an
 /// explicitly listed dependency. Phase D cross-checks each mod system's
-/// <see cref="ModCapabilitiesAttribute"/> against the owning manifest. Phases
-/// A, B and E run unconditionally; phases C and D run only when a
-/// <see cref="KernelCapabilityRegistry"/> is supplied to <see cref="Validate"/>.
+/// <see cref="ModCapabilitiesAttribute"/> against the owning manifest.
+/// Phase F validates each <see cref="LoadedSharedMod"/> against the
+/// shared-mod compliance rules of MOD_OS_ARCHITECTURE §5.2: manifest must
+/// have empty <c>entryAssembly</c>, <c>entryType</c>, and <c>replaces</c>
+/// fields, and the loaded assembly must contain no <see cref="IMod"/>
+/// implementation. Phases A, B and E run unconditionally; phases C and D
+/// run only when a <see cref="KernelCapabilityRegistry"/> is supplied;
+/// phase F runs only when a shared-mod list is supplied to
+/// <see cref="Validate"/>.
 ///
 /// Non-throwing by design: the pipeline decides whether to abort or surface
 /// warnings in the UI.
@@ -40,8 +46,9 @@ internal sealed class ContractValidator
     /// mod-system that lacks <see cref="SystemAccessAttribute"/> is skipped
     /// silently here — registration itself throws a clearer diagnostic at
     /// that point. Phases C and D run only when
-    /// <paramref name="kernelCapabilities"/> is non-null; legacy callers that
-    /// omit the registry continue to exercise Phases A, B and E.
+    /// <paramref name="kernelCapabilities"/> is non-null; phase F runs only
+    /// when <paramref name="sharedMods"/> is non-null; legacy callers that
+    /// omit either continue to exercise Phases A, B and E.
     /// </summary>
     /// <param name="mods">Mods returned by <see cref="ModLoader"/>.</param>
     /// <param name="coreSystems">Core systems included in the rebuild.</param>
@@ -50,10 +57,16 @@ internal sealed class ContractValidator
     /// Phases C and D entirely (used by tests that predate capability
     /// validation).
     /// </param>
+    /// <param name="sharedMods">
+    /// Shared mods loaded into the shared ALC. <see langword="null"/> opts
+    /// out of Phase F entirely (used by tests that predate shared-mod
+    /// compliance validation).
+    /// </param>
     public ValidationReport Validate(
         IReadOnlyList<LoadedMod> mods,
         IReadOnlyList<SystemBase> coreSystems,
-        KernelCapabilityRegistry? kernelCapabilities = null)
+        KernelCapabilityRegistry? kernelCapabilities = null,
+        IReadOnlyList<LoadedSharedMod>? sharedMods = null)
     {
         if (mods is null) throw new ArgumentNullException(nameof(mods));
         if (coreSystems is null) throw new ArgumentNullException(nameof(coreSystems));
@@ -69,6 +82,11 @@ internal sealed class ContractValidator
         {
             ValidateCapabilitySatisfiability(mods, kernelCapabilities, errors);
             ValidateModCapabilitiesAttributes(mods, errors);
+        }
+
+        if (sharedMods is not null)
+        {
+            ValidateSharedModCompliance(sharedMods, errors);
         }
 
         bool isValid = errors.Count == 0;
@@ -409,5 +427,96 @@ internal sealed class ContractValidator
                 return m;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Phase F — every <see cref="LoadedSharedMod"/> is verified against
+    /// MOD_OS_ARCHITECTURE §5.2: shared mods are pure type vendors, so the
+    /// manifest's <c>entryAssembly</c>, <c>entryType</c>, and <c>replaces</c>
+    /// fields must be empty, and the loaded assembly must contain no type
+    /// implementing <see cref="IMod"/>. Each violation produces a typed
+    /// <see cref="ValidationErrorKind.SharedModWithEntryPoint"/> error
+    /// naming the offending field or type. Phase F is the single source of
+    /// truth for shared-mod compliance — <see cref="ModLoader.LoadSharedMod"/>
+    /// no longer guards against IMod-bearing shared assemblies (M4.3).
+    /// </summary>
+    private static void ValidateSharedModCompliance(
+        IReadOnlyList<LoadedSharedMod> sharedMods,
+        List<ValidationError> errors)
+    {
+        foreach (LoadedSharedMod mod in sharedMods)
+        {
+            if (!string.IsNullOrEmpty(mod.Manifest.EntryAssembly))
+            {
+                errors.Add(new ValidationError(
+                    mod.ModId,
+                    ValidationErrorKind.SharedModWithEntryPoint,
+                    $"Shared mod '{mod.ModId}' has non-empty entryAssembly " +
+                    $"('{mod.Manifest.EntryAssembly}'). Shared mods are pure " +
+                    "type vendors per MOD_OS_ARCHITECTURE §5.2 — remove the " +
+                    "entryAssembly field from the manifest."));
+            }
+
+            if (!string.IsNullOrEmpty(mod.Manifest.EntryType))
+            {
+                errors.Add(new ValidationError(
+                    mod.ModId,
+                    ValidationErrorKind.SharedModWithEntryPoint,
+                    $"Shared mod '{mod.ModId}' has non-empty entryType " +
+                    $"('{mod.Manifest.EntryType}'). Shared mods are pure type " +
+                    "vendors per MOD_OS_ARCHITECTURE §5.2 — remove the " +
+                    "entryType field from the manifest."));
+            }
+
+            if (mod.Manifest.Replaces.Count > 0)
+            {
+                errors.Add(new ValidationError(
+                    mod.ModId,
+                    ValidationErrorKind.SharedModWithEntryPoint,
+                    $"Shared mod '{mod.ModId}' has non-empty replaces. Shared " +
+                    "mods cannot replace systems — they have no executable " +
+                    "code per MOD_OS_ARCHITECTURE §5.2. Remove the replaces " +
+                    "field from the manifest."));
+            }
+
+            foreach (Assembly asm in mod.Context.Assemblies)
+            {
+                // Defensive: only scan assemblies physically owned by this
+                // shared ALC. Anything resolved via SharedModLoadContext.Load
+                // for the default ALC (e.g. DualFrontier.Contracts) belongs
+                // to the kernel and is not a shared-mod assembly.
+                if (AssemblyLoadContext.GetLoadContext(asm) != mod.Context)
+                    continue;
+
+                Type[] exported;
+                try
+                {
+                    exported = asm.GetExportedTypes();
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    exported = ex.Types as Type[] ?? Array.Empty<Type>();
+                }
+
+                foreach (Type t in exported)
+                {
+                    if (t is null) continue;
+                    if (t.IsAbstract || t.IsInterface) continue;
+                    if (typeof(IMod).IsAssignableFrom(t))
+                    {
+                        string asmName = asm.GetName().Name ?? asm.FullName ?? "<unknown>";
+                        errors.Add(new ValidationError(
+                            mod.ModId,
+                            ValidationErrorKind.SharedModWithEntryPoint,
+                            $"Shared mod '{mod.ModId}' assembly '{asmName}' " +
+                            $"contains type '{t.FullName}' implementing IMod. " +
+                            "Shared mods are pure type vendors and cannot have " +
+                            "entry points per MOD_OS_ARCHITECTURE §5.2. Move " +
+                            "the IMod implementation to a separate regular " +
+                            "mod, or change this manifest's kind to \"regular\"."));
+                    }
+                }
+            }
+        }
     }
 }

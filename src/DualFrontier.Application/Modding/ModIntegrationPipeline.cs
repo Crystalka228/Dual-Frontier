@@ -189,9 +189,14 @@ internal sealed class ModIntegrationPipeline
             }
         }
 
-        // [3] Validation: contract versions + write-write conflicts.
+        // [3] Validation: contract versions + write-write conflicts +
+        // regular-mod contract scan + shared-mod compliance (Phase F).
         IReadOnlyList<SystemBase> coreSystems = GetCoreSystemInstances();
-        ValidationReport report = _validator.Validate(loaded, coreSystems);
+        ValidationReport report = _validator.Validate(
+            loaded,
+            coreSystems,
+            kernelCapabilities: null,
+            sharedMods: sharedLoaded);
 
         if (!report.IsValid || loadErrors.Count > 0)
         {
