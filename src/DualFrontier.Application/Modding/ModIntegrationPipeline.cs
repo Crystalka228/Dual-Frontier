@@ -90,12 +90,14 @@ internal sealed class ModIntegrationPipeline
         if (modPaths is null) throw new ArgumentNullException(nameof(modPaths));
 
         // [0] Classify: pre-injected mods are taken as regular; on-disk
-        // manifests are parsed and split by ModKind.
-        var sharedPaths = new List<string>();
+        // manifests are parsed and split by ModKind. Manifests are kept so the
+        // shared-mod cycle detector (D-5) can run before any assembly load.
+        var sharedEntries = new List<(string Path, ModManifest Manifest)>();
         var regularPaths = new List<string>();
         var preloadedRegulars = new List<LoadedMod>();
         var loadErrors = new List<ValidationError>();
         var failed = new List<string>();
+        var manifestsById = new Dictionary<string, ModManifest>(StringComparer.Ordinal);
 
         foreach (string path in modPaths)
         {
@@ -103,14 +105,16 @@ internal sealed class ModIntegrationPipeline
             if (preloaded is not null)
             {
                 preloadedRegulars.Add(preloaded);
+                manifestsById[preloaded.ModId] = preloaded.Manifest;
                 continue;
             }
 
             try
             {
                 ModManifest manifest = ModLoader.ReadManifestFromDirectory(path);
+                manifestsById[manifest.Id] = manifest;
                 if (manifest.Kind == ModKind.Shared)
-                    sharedPaths.Add(path);
+                    sharedEntries.Add((path, manifest));
                 else
                     regularPaths.Add(path);
             }
@@ -124,12 +128,32 @@ internal sealed class ModIntegrationPipeline
             }
         }
 
-        // [1] Pass 1 — shared mods. Each LoadSharedMod call places its
-        // assembly in the singleton shared ALC and returns the parsed mod.
-        // M4.3 will add topological ordering; for M4.1 the input order is used.
-        var sharedLoaded = new List<LoadedSharedMod>();
-        foreach (string path in sharedPaths)
+        // [0.5] D-5 LOCKED — shared-mod cycle detection. Runs after manifest
+        // parsing and before any assembly load: cyclic shared mods do not
+        // reach pass 1. Manifests not part of any cycle proceed in
+        // topological order (per MOD_OS_ARCHITECTURE §1.4).
+        var sharedManifestList = new List<ModManifest>(sharedEntries.Count);
+        foreach ((string _, ModManifest m) in sharedEntries)
+            sharedManifestList.Add(m);
+        (IReadOnlyList<ModManifest> sortedShared, IReadOnlyList<ValidationError> cycleErrors) =
+            TopoSortSharedMods(sharedManifestList, manifestsById);
+        foreach (ValidationError e in cycleErrors)
         {
+            loadErrors.Add(e);
+            failed.Add(e.ModId);
+        }
+
+        var pathByModId = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach ((string p, ModManifest m) in sharedEntries)
+            pathByModId[m.Id] = p;
+
+        // [1] Pass 1 — shared mods in topological order. Each LoadSharedMod
+        // call places its assembly in the singleton shared ALC and returns
+        // the parsed mod. Cycle members from [0.5] are excluded.
+        var sharedLoaded = new List<LoadedSharedMod>();
+        foreach (ModManifest m in sortedShared)
+        {
+            string path = pathByModId[m.Id];
             try
             {
                 sharedLoaded.Add(_loader.LoadSharedMod(path, _sharedAlc));
@@ -327,5 +351,112 @@ internal sealed class ModIntegrationPipeline
         foreach (ValidationError e in a) merged.Add(e);
         foreach (ValidationError e in b) merged.Add(e);
         return merged;
+    }
+
+    /// <summary>
+    /// Topologically orders the given shared mod manifests by their inter-shared
+    /// dependency graph (Kahn's algorithm). Edges are drawn only between
+    /// shared mods present in the load batch — a shared mod's dependency on a
+    /// regular mod or on a missing mod does not feed the cycle graph, since
+    /// D-5 LOCKED applies specifically to the shared-mod dependency graph
+    /// (MOD_OS_ARCHITECTURE §1.4).
+    /// </summary>
+    /// <returns>
+    /// A tuple of (sortedShared, cycleErrors). When the graph is acyclic,
+    /// <c>sortedShared</c> is a topological ordering of every input manifest
+    /// and <c>cycleErrors</c> is empty. When a cycle exists, the unprocessable
+    /// manifests are excluded from <c>sortedShared</c> and surfaced in
+    /// <c>cycleErrors</c> as one <see cref="ValidationErrorKind.CyclicDependency"/>
+    /// per affected mod.
+    /// </returns>
+    internal static (IReadOnlyList<ModManifest> SortedShared, IReadOnlyList<ValidationError> CycleErrors)
+        TopoSortSharedMods(
+            IReadOnlyList<ModManifest> sharedManifests,
+            IReadOnlyDictionary<string, ModManifest> manifestsById)
+    {
+        if (sharedManifests is null) throw new ArgumentNullException(nameof(sharedManifests));
+        if (manifestsById is null) throw new ArgumentNullException(nameof(manifestsById));
+
+        var inDegree = new Dictionary<string, int>(StringComparer.Ordinal);
+        var dependents = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        var sharedById = new Dictionary<string, ModManifest>(StringComparer.Ordinal);
+
+        foreach (ModManifest m in sharedManifests)
+        {
+            inDegree[m.Id] = 0;
+            dependents[m.Id] = new List<string>();
+            sharedById[m.Id] = m;
+        }
+
+        foreach (ModManifest m in sharedManifests)
+        {
+            foreach (ModDependency dep in m.Dependencies)
+            {
+                if (!manifestsById.TryGetValue(dep.ModId, out ModManifest? depManifest))
+                    continue;
+                if (depManifest.Kind != ModKind.Shared)
+                    continue;
+                if (!inDegree.ContainsKey(dep.ModId))
+                    continue;
+                if (StringComparer.Ordinal.Equals(dep.ModId, m.Id))
+                    continue;
+                dependents[dep.ModId].Add(m.Id);
+                inDegree[m.Id]++;
+            }
+        }
+
+        var queue = new Queue<string>();
+        foreach (KeyValuePair<string, int> kvp in inDegree)
+        {
+            if (kvp.Value == 0) queue.Enqueue(kvp.Key);
+        }
+
+        var sortedIds = new List<string>(sharedManifests.Count);
+        while (queue.Count > 0)
+        {
+            string id = queue.Dequeue();
+            sortedIds.Add(id);
+            foreach (string dependent in dependents[id])
+            {
+                inDegree[dependent]--;
+                if (inDegree[dependent] == 0)
+                    queue.Enqueue(dependent);
+            }
+        }
+
+        var sortedManifests = new List<ModManifest>(sortedIds.Count);
+        foreach (string id in sortedIds)
+            sortedManifests.Add(sharedById[id]);
+
+        if (sortedIds.Count == sharedManifests.Count)
+            return (sortedManifests, Array.Empty<ValidationError>());
+
+        var sortedSet = new HashSet<string>(sortedIds, StringComparer.Ordinal);
+        var unprocessed = new List<string>();
+        foreach (ModManifest m in sharedManifests)
+        {
+            if (!sortedSet.Contains(m.Id)) unprocessed.Add(m.Id);
+        }
+
+        var errors = new List<ValidationError>(unprocessed.Count);
+        foreach (string memberId in unprocessed)
+        {
+            var others = new List<string>(unprocessed.Count - 1);
+            foreach (string otherId in unprocessed)
+            {
+                if (!StringComparer.Ordinal.Equals(otherId, memberId))
+                    others.Add(otherId);
+            }
+            string otherList = others.Count == 0 ? "<none>" : string.Join(", ", others);
+            errors.Add(new ValidationError(
+                memberId,
+                ValidationErrorKind.CyclicDependency,
+                $"Shared mod '{memberId}' participates in a dependency cycle with: " +
+                $"{otherList}. Cycles in the shared-mod dependency graph are forbidden " +
+                $"per MOD_OS_ARCHITECTURE §1.4 / D-5 LOCKED. Resolve by removing one " +
+                $"of the dependency edges."));
+        }
+
+        return (sortedManifests, errors);
     }
 }
