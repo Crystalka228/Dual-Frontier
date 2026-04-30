@@ -8,25 +8,45 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Loads and unloads mods. Each mod lives in its own
-/// <see cref="System.Runtime.Loader.AssemblyLoadContext"/> (via
-/// <see cref="ModLoadContext"/>) — per TechArch 11.8. The context is created
-/// with <c>isCollectible: true</c>, which enables hot unload and physically
-/// isolates the mod assembly from the core.
+/// Loads and unloads mods. Regular mods (with an <see cref="IMod"/> entry
+/// point) are loaded through <see cref="LoadRegularMod"/>; each lives in its
+/// own collectible <see cref="ModLoadContext"/> per TechArch 11.8 — the
+/// context is created with <c>isCollectible: true</c> so the mod can be
+/// unloaded without restarting the game. Shared mods (pure type vendors per
+/// MOD_OS_ARCHITECTURE §1.2/§5) are loaded through <see cref="LoadSharedMod"/>
+/// into a single non-collectible <see cref="SharedModLoadContext"/>.
 /// </summary>
 public sealed class ModLoader
 {
     private readonly Dictionary<string, LoadedMod> _loaded = new();
+    private readonly Dictionary<string, LoadedSharedMod> _sharedLoaded = new();
 
     /// <summary>
-    /// Loads the mod at the given directory. Reads <c>mod.manifest.json</c>,
-    /// creates a <see cref="ModLoadContext"/>, loads the entry assembly,
-    /// resolves the <see cref="IMod"/> type via reflection and returns the
-    /// resulting <see cref="LoadedMod"/>. The mod's <c>Initialize</c> is NOT
-    /// called here — the pipeline runs it after validation.
+    /// Backward-compatible alias for <see cref="LoadRegularMod"/>. Equivalent
+    /// to calling <c>LoadRegularMod(path, sharedAlc: null)</c>: no shared ALC
+    /// is wired in, so the resulting <see cref="ModLoadContext"/> resolves
+    /// only its own assemblies and the default ALC. Retained because tests
+    /// and ad-hoc callers still target the original signature.
     /// </summary>
     /// <param name="path">Mod directory containing manifest and assembly.</param>
-    internal LoadedMod LoadMod(string path)
+    internal LoadedMod LoadMod(string path) => LoadRegularMod(path, sharedAlc: null);
+
+    /// <summary>
+    /// Loads a regular mod from the given directory. Reads
+    /// <c>mod.manifest.json</c>, creates a <see cref="ModLoadContext"/>,
+    /// loads the entry assembly, resolves the <see cref="IMod"/> type via
+    /// reflection and returns the resulting <see cref="LoadedMod"/>. The
+    /// mod's <c>Initialize</c> is NOT called here — the pipeline runs it
+    /// after validation.
+    /// </summary>
+    /// <param name="path">Mod directory containing manifest and assembly.</param>
+    /// <param name="sharedAlc">
+    /// Singleton shared ALC the regular mod's <see cref="ModLoadContext"/>
+    /// should delegate to for cross-mod type references. Pass
+    /// <see langword="null"/> when no shared mods participate (single-mod
+    /// tests, ad-hoc usage).
+    /// </param>
+    internal LoadedMod LoadRegularMod(string path, SharedModLoadContext? sharedAlc)
     {
         if (path is null) throw new ArgumentNullException(nameof(path));
         if (!Directory.Exists(path))
@@ -42,6 +62,9 @@ public sealed class ModLoader
                 $"Mod '{manifest.Id}' is already loaded.");
 
         var context = new ModLoadContext(manifest.Id);
+        // sharedAlc will be wired into the context's resolver in a follow-up
+        // commit (M4.1 step 4); accepted now so the public surface is stable.
+        _ = sharedAlc;
 
         string assemblyName = string.IsNullOrWhiteSpace(manifest.EntryAssembly)
             ? manifest.Id + ".dll"
@@ -63,6 +86,82 @@ public sealed class ModLoader
 
         var loaded = new LoadedMod(manifest.Id, manifest, instance, context, declared);
         _loaded[manifest.Id] = loaded;
+        return loaded;
+    }
+
+    /// <summary>
+    /// Loads a shared mod from the given directory into the shared ALC.
+    /// Per MOD_OS_ARCHITECTURE §5.2: validates kind, rejects manifests that
+    /// declare an <see cref="IMod"/> entry point, loads the assembly through
+    /// <see cref="SharedModLoadContext.LoadSharedAssembly"/>, scans the
+    /// exported types and rejects any type that implements
+    /// <see cref="IMod"/>.
+    /// </summary>
+    /// <param name="path">Shared mod directory containing manifest and assembly.</param>
+    /// <param name="sharedAlc">
+    /// Singleton shared ALC owned by the pipeline. Same instance is reused
+    /// across every <c>LoadSharedMod</c> call in the session (§5.1).
+    /// </param>
+    internal LoadedSharedMod LoadSharedMod(string path, SharedModLoadContext sharedAlc)
+    {
+        if (path is null) throw new ArgumentNullException(nameof(path));
+        if (sharedAlc is null) throw new ArgumentNullException(nameof(sharedAlc));
+        if (!Directory.Exists(path))
+            throw new DirectoryNotFoundException($"Mod directory not found: {path}");
+
+        ModManifest manifest = ReadManifest(path);
+        if (string.IsNullOrWhiteSpace(manifest.Id))
+            throw new InvalidOperationException(
+                $"Mod manifest at '{path}' has empty id.");
+
+        // Defensive guard: caller (the pipeline) is expected to branch by
+        // ModKind, but a shared-only loader still rejects regular manifests.
+        // M4.3 will replace this with a typed ValidationError surfaced before
+        // load is attempted.
+        if (manifest.Kind != ModKind.Shared)
+            throw new InvalidOperationException(
+                $"Mod '{manifest.Id}' at '{path}' is not declared as 'shared' " +
+                $"(kind={manifest.Kind}); shared mods are required for LoadSharedMod.");
+
+        if (_sharedLoaded.ContainsKey(manifest.Id))
+            throw new InvalidOperationException(
+                $"Shared mod '{manifest.Id}' is already loaded.");
+
+        string assemblyName = string.IsNullOrWhiteSpace(manifest.EntryAssembly)
+            ? manifest.Id + ".dll"
+            : manifest.EntryAssembly;
+        string assemblyPath = Path.Combine(path, assemblyName);
+        if (!File.Exists(assemblyPath))
+            throw new FileNotFoundException(
+                $"Shared mod '{manifest.Id}' assembly not found: {assemblyPath}");
+
+        Assembly asm = sharedAlc.LoadSharedAssembly(Path.GetFullPath(assemblyPath));
+
+        Type[] exported;
+        try
+        {
+            exported = asm.GetExportedTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            // Any unloadable type prevents reasoning about IMod presence;
+            // surface as a load failure (§5.2 step 4).
+            throw new InvalidOperationException(
+                $"Shared mod '{manifest.Id}' assembly '{assemblyName}' " +
+                $"failed to enumerate exported types: {ex.Message}", ex);
+        }
+
+        foreach (Type t in exported)
+        {
+            if (t.IsAbstract) continue;
+            if (typeof(IMod).IsAssignableFrom(t))
+                throw new InvalidOperationException(
+                    $"Shared mod '{manifest.Id}' must not declare IMod implementations; " +
+                    $"found '{t.FullName}'.");
+        }
+
+        var loaded = new LoadedSharedMod(manifest.Id, manifest, sharedAlc, asm, exported);
+        _sharedLoaded[manifest.Id] = loaded;
         return loaded;
     }
 
@@ -140,6 +239,16 @@ public sealed class ModLoader
     internal LoadedMod? TryGetLoaded(string id)
     {
         _loaded.TryGetValue(id, out LoadedMod? mod);
+        return mod;
+    }
+
+    /// <summary>
+    /// Returns the <see cref="LoadedSharedMod"/> entry for the given id or
+    /// null if no shared mod with this id is currently loaded.
+    /// </summary>
+    internal LoadedSharedMod? TryGetLoadedShared(string id)
+    {
+        _sharedLoaded.TryGetValue(id, out LoadedSharedMod? mod);
         return mod;
     }
 
