@@ -14,4 +14,34 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
   </ItemGroup>
+  <!--
+    The fixture mods are built solely so their assemblies and manifests
+    end up in this project's bin/<config>/<tfm>/Fixtures/<assembly>/.
+    ReferenceOutputAssembly=false keeps their types out of the test
+    compilation so the test process never loads them into the default
+    AssemblyLoadContext — that is critical for cross-ALC tests, which
+    need to load each fixture into a freshly created context.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\Fixture.SharedEvents\Fixture.SharedEvents.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.PublisherMod\Fixture.PublisherMod.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.SubscriberMod\Fixture.SubscriberMod.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.BadRegularMod\Fixture.BadRegularMod.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.BadSharedMod_WithIMod\Fixture.BadSharedMod_WithIMod.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

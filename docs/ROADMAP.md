@@ -1,6 +1,6 @@
 # Roadmap
 
-The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.2 LOCKED; this roadmap is the execution sequence derived from it.
+The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.3 LOCKED; this roadmap is the execution sequence derived from it.
 
 The reorganisation follows the project's central methodological claim: **engine and methodology are the main research result, the game is a test case for the hypothesis** ([METHODOLOGY](./METHODOLOGY.md)). By implementing combat, magic, and world content through the modding system rather than alongside it, we make every gameplay feature also a test of the modding architecture. A combat system that ships as a vanilla mod is the strongest possible falsifiable claim that the contract surface for mods is complete.
 
@@ -8,7 +8,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 
 ## Status overview
 
-*Updated: 2026-04-29 (M3 closed — M3.1, M3.2, M3.3 done; M3.4 deferred; M4 next).*
+*Updated: 2026-04-29 (M4 closed — M4.1, M4.2, M4.3 done; M5 next).*
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -24,7 +24,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | **M2 — IModApi v2** | ✅ Closed | added | Real `Publish`/`Subscribe`, `GetKernelCapabilities`, `GetOwnManifest`, `Log`, `RestrictedModApi` v2 |
 | **M3 — Capability model** | ✅ Closed | added (`KernelCapabilityRegistryTests`, `RestrictedModApiV2Tests`, `CapabilityValidationTests`, `ProductionComponentCapabilityTests`) | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` opt-in; M3.2 capability-enforcing `RestrictedModApi` (Publish/Subscribe runtime check, hybrid per `MOD_OS_ARCHITECTURE` §3.6 v1.2); M3.3 `[ModCapabilities]` + load-time cross-check (`ContractValidator` Phases C+D); M3.4 deferred |
 | M3.4 — CI capability analyzer | ⏸ Deferred | — | Roslyn analyzer for `[ModCapabilities]` honesty (D-2 hybrid completion); unblocked when first external mod author appears |
-| M4 — Shared ALC | ⏭ Pending | — | Type sharing across mods |
+| **M4 — Shared ALC** | ✅ Closed | added (`CrossAlcTypeIdentityTests`, `SharedAssemblyResolutionTests`, `ContractTypeInRegularModTests`, `SharedModComplianceTests`) | M4.1 `SharedModLoadContext` + two-pass loader + cross-ALC type identity; M4.2 `ContractValidator` Phase E enforces D-4 (no contract types in regular mods); M4.3 D-5 LOCKED shared-mod cycle detection + Phase F enforces §5.2 shared-mod compliance |
 | M5 — Version constraints | ⏭ Pending | — | Caret-syntax inter-mod deps |
 | M6 — Bridge replacement | ⏭ Pending | — | Explicit `replaces` |
 | M7 — Hot reload | ⏭ Pending | — | Menu-driven, paused-only |
@@ -33,7 +33,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | M10 — Remaining vanilla | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental |
 | Phase 9 — Native Runtime | ⏭ Post-launch | — | Separate large project |
 
-**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests`. **Total at M3 closure: 260/260 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
+**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). **Total at M4 closure: 281/281 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
 
 ---
 
@@ -100,7 +100,7 @@ The save-game compatibility policy when a mod is missing (mod-OS decision D-6) t
 
 ## 🔨 Mod-OS Migration (M0–M10)
 
-The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.2 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
+The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.3 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
 
 ### ✅ M0 — Mod-OS Phase 0 (closed)
 
@@ -198,29 +198,26 @@ Goal: implement the capability registry, the `[ModAccessible]` and `[ModCapabili
 
 ---
 
-### M4 — Shared ALC and shared mod kind
+### ✅ M4 — Shared ALC and shared mod kind (closed)
 
-Goal: implement the shared `AssemblyLoadContext`, allowing mods to define common types reachable across regular-mod ALCs.
+Goal achieved: shared `AssemblyLoadContext`, two-pass mod loading, cross-ALC type identity, and the three M4 enforcement points (D-4 contract types in regular mods, D-5 shared-mod cycles, §5.2 shared-mod compliance) are operational. Migration unblocked through M5.
 
-**Consumes decisions:** D-4 (active scan, reject contract types in regular mods), D-5 (forbid shared-mod cycles).
+**Sub-phase status:**
 
-**What we implement**
+- **M4.1 ✅ Closed.** Acceptance: `SharedModLoadContext` (singleton, non-collectible, `Resolving` delegates `DualFrontier.*` to default ALC) and the two-pass loader (shared mods first into the shared ALC, then regular mods whose `ModLoadContext` delegates to that shared ALC for cross-mod type references) implemented. Cross-ALC type identity verified by `CrossAlcTypeIdentityTests`; assembly resolution semantics verified by `SharedAssemblyResolutionTests` (commits `0a3a858`, `cf14edb`, `56772fc`, `e5e0e30`, `1ec1354`, `cdb48f0`).
+- **M4.2 ✅ Closed.** Acceptance: `ContractValidator` Phase E enforces D-4 — every regular mod's assemblies are scanned, and any exported type implementing `IEvent` or `IModContract` produces a typed `ContractTypeInRegularMod` error before `IMod.Initialize` runs (commits `68cb693`, `14e1dd0`, `c410add`); covered by `ContractTypeInRegularModTests`.
+- **M4.3 ✅ Closed.** Acceptance: `ModIntegrationPipeline.TopoSortSharedMods` (Kahn's algorithm) detects D-5 LOCKED shared-mod cycles between manifest parse and shared-mod load — cyclic mods never reach assembly load and surface as `CyclicDependency` errors naming the affected mod set. `ContractValidator` Phase F enforces §5.2 shared-mod compliance — non-empty `entryAssembly`/`entryType`/`replaces` and any `IMod` implementation in the assembly each produce a typed `SharedModWithEntryPoint` error; `ModLoader.LoadSharedMod`'s M4.1 defensive IMod throw is removed in favour of the validator's typed accumulation (commits `df582d3`, `e0151d8`, `d628692`, `b71e9e2`, `90f8012`); covered by `SharedModComplianceTests`.
 
-- `SharedModLoadContext : AssemblyLoadContext` — singleton, `IsCollectible = false`. Resolves `DualFrontier.*` to the kernel's default ALC; resolves other shared assemblies from its own cache.
-- `ModLoader` branch on `ModManifest.Kind`:
-  - `shared`: load assembly into shared ALC, verify no `IMod` implementation present, enumerate exported types, register provided capabilities.
-  - `regular`: create new collectible ALC, configure `Resolving` to delegate to shared ALC for declared shared dependencies, load entry assembly.
-- Loader scan (per D-4): for every `regular` mod assembly, reflect over public types and reject the mod with `ContractTypeInRegularMod` if any type implements `IModContract` or `IEvent`.
-- Shared-dependency cycle check (per D-5): topological sort of shared mods at load time; cycle raises `CyclicDependency`.
-- Manifest validation: shared mod must have empty `EntryAssembly` and `EntryType`; rejection with `SharedModWithEntryPoint`.
+**Consumes decisions:** D-4 (active scan, reject contract types in regular mods — M4.2), D-5 (forbid shared-mod cycles — M4.3), §5.2 shared-mod compliance (M4.3).
 
-**Acceptance criteria**
+**Acceptance criteria met (per `MOD_OS_ARCHITECTURE` §11.1):**
 
-- A shared mod with `record FooEvent : IEvent` loads into the shared ALC.
-- A regular mod (different ALC) `Subscribe<FooEvent>(handler)`; another regular mod `Publish(new FooEvent(...))`; the subscriber's handler runs. Cross-ALC type identity preserved.
-- A regular mod containing `record BadEvent : IEvent` is rejected at load with `ContractTypeInRegularMod`.
-- A shared mod with circular dependency on another shared mod is rejected with `CyclicDependency`.
-- A shared mod manifest with non-empty `EntryAssembly` is rejected with `SharedModWithEntryPoint`.
+- A shared mod with `record FooEvent : IEvent` loads into the shared ALC (M4.1).
+- A regular mod (different ALC) `Subscribe<FooEvent>(handler)`; another regular mod `Publish(new FooEvent(...))`; the subscriber's handler runs — cross-ALC type identity preserved (M4.1).
+- A regular mod containing `record BadEvent : IEvent` is rejected at load with `ContractTypeInRegularMod` (M4.2).
+- A shared mod with circular dependency on another shared mod is rejected with `CyclicDependency` (M4.3).
+- A shared mod manifest with non-empty `EntryAssembly` is rejected with `SharedModWithEntryPoint` (M4.3).
+- A shared mod assembly containing an `IMod` implementation is rejected with `SharedModWithEntryPoint` (M4.3).
 
 **Unblocks:** M5 (dependency resolution with versions needs the shared/regular distinction), M9, M10 (vanilla.core shared mod precedes the slice mods).
 
@@ -412,7 +409,7 @@ Unchanged from the original plan. Goal: own entry point bypassing Godot's runtim
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.2 LOCKED specification driving M1–M10.
+- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.3 LOCKED specification driving M1–M10.
 - [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline; M1–M10 are exercised through it.
 - [ARCHITECTURE](./ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
 - [CONTRACTS](./CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.

@@ -1,0 +1,9 @@
+{
+  "id": "tests.publisher",
+  "name": "Publisher Test Mod",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.PublisherMod.dll",
+  "entryType": "Fixture.PublisherMod.Publisher"
+}

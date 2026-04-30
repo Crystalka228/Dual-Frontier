@@ -5,10 +5,12 @@ using DualFrontier.Contracts.Modding;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Result of loading a single mod package — the manifest, the instantiated
-/// <see cref="IMod"/>, the isolated <see cref="ModLoadContext"/> and the
-/// discovered list of system types the mod declares. Produced by
-/// <see cref="ModLoader"/> before the mod is registered with the scheduler.
+/// Result of loading a single regular mod package — the manifest, the
+/// instantiated <see cref="IMod"/>, the isolated <see cref="ModLoadContext"/>
+/// and the discovered list of system types the mod declares. Produced by
+/// <see cref="ModLoader.LoadRegularMod"/> before the mod is registered with
+/// the scheduler. Shared mods (no entry point) use
+/// <see cref="LoadedSharedMod"/> instead.
 /// </summary>
 /// <param name="ModId">Unique identifier taken from <see cref="ModManifest.Id"/>.</param>
 /// <param name="Manifest">Parsed manifest metadata.</param>

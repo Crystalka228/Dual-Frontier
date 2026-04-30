@@ -1,0 +1,7 @@
+{
+  "id": "tests.bad-shared-imod",
+  "name": "Bad Shared Mod with IMod (D-? compliance fixture)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "shared"
+}

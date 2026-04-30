@@ -5,7 +5,7 @@ nav_order: 25
 
 # Mod OS Architecture — Dual Frontier
 
-**Status:** LOCKED v1.2 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1) and M3 closure review (v1.2) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
+**Status:** LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
 
 **Version history:**
 
@@ -15,11 +15,14 @@ nav_order: 25
   - §4.1: `Log()` parameter type is `ModLogLevel`, not `LogLevel`. The original name collided with `Microsoft.Extensions.Logging.LogLevel`; the implementation correctly chose a kernel-namespaced enum, and the spec is brought in line.
   - §2.2: `dependencies[i].optional` (bool, default `false`) documented as a recognised optional flag on inter-mod dependencies. Discovered as `ModDependency.IsOptional` in the M1 implementation, kept on the strength of utility, and now ratified.
   - No semantic changes. No locked decision is altered. M1–M3.1 implementations continue to comply.
-- v1.2 (this version) — non-semantic corrections from the M3 closure review:
+- v1.2 — non-semantic corrections from the M3 closure review:
   - §3.6: hybrid enforcement formulation. The v1.0/v1.1 wording described capability checks as load-time only and the hot path as "free of permission lookups." The M2 implementation (commits `35dc5b2`, `0d5b32f`) added a runtime per-call check inside `RestrictedModApi.EnforceCapability` — a hash-set lookup measured negligible on the hot path — which is exactly what §4.2 and §4.3 already specify. v1.2 brings §3.6 in line with §4.2/§4.3 and the implementation: enforcement is hybrid, load-time as primary gate plus runtime as second-layer defence.
   - §3.5 + §2.1: production components consumed by the §2.1 example manifest (`WeaponComponent`, `ArmorComponent`, `AmmoComponent`, `ShieldComponent`, `HealthComponent`) annotated with `[ModAccessible]` per D-1 LOCKED. The §2.1 example itself was expanded to include `kernel.read:AmmoComponent` and `kernel.read:ShieldComponent` — Vanilla.Combat requires both (ammo accounting per §11 of the original Phase 5 spec, shield damage routing per §6.4 of the GDD), but the v1.0/v1.1 example listed only three components as a sketch. v1.2 brings the example in line with what a real combat mod actually needs. Without these annotations the §2.1 example manifest would fail Phase C with `MissingCapability` — the spec example is now end-to-end loadable.
   - §11.1: M3.4 added as deferred milestone (CI Roslyn analyzer per D-2 hybrid completion). M3.1, M3.2, M3.3 closed by M3 closure review; M3.4 unblocked when the first external (non-vanilla) mod author appears — runtime `CapabilityViolationException` already catches dishonest `[ModCapabilities]` attributes, so the analyzer is developer-experience tooling for early feedback before publication, not a runtime safety boundary.
   - No semantic changes. No locked decision (D-1 through D-7) is altered. M3 implementations continue to comply.
+- v1.3 (this version) — non-semantic correction from the M4.3 implementation review:
+  - §2.2: `entryAssembly` and `entryType` rows in the manifest field reference table reworded from "ignored for `kind=shared`" to "must be empty for `kind=shared`". The v1.0–v1.2 wording contradicted §5.2 step 1, which explicitly requires these fields to be empty for shared mods. The M4.3 implementation (`ContractValidator` Phase F, commit `e0151d8`) enforces §5.2 wording — non-empty `entryAssembly` or `entryType` on a shared mod manifest produces `ValidationErrorKind.SharedModWithEntryPoint`. v1.3 brings §2.2 in line with §5.2 and the implementation.
+  - No semantic changes. No locked decision (D-1 through D-7) is altered. M4 implementations continue to comply.
 
 ---
 
@@ -208,8 +211,8 @@ The current `ModManifest` (v1) carries `Id`, `Name`, `Version`, `Author`, `Requi
 | `author` | string | no | `""` | Free-form. |
 | `kind` | enum | no | `"regular"` | One of `regular`, `shared`. |
 | `apiVersion` | string (SemVer with caret) | yes | — | Compatibility against `ContractsVersion.Current`. |
-| `entryAssembly` | string | conditional | `"{id}.dll"` | Required for `kind=regular`; ignored for `kind=shared`. |
-| `entryType` | string | conditional | scan-for-IMod | Required for `kind=regular`; ignored for `kind=shared`. |
+| `entryAssembly` | string | conditional | `"{id}.dll"` | Required for `kind=regular`; **must be empty for `kind=shared`** (per §5.2 step 1). |
+| `entryType` | string | conditional | scan-for-IMod | Required for `kind=regular`; **must be empty for `kind=shared`** (per §5.2 step 1). |
 | `hotReload` | bool | no | `false` | When `false`, mod loads only at session start; menu refuses to reload it. |
 | `dependencies` | array of `{id, version, optional}` | no | `[]` | Each `version` is a SemVer constraint (§8). The optional `optional` boolean (default `false`) marks a dependency that the loader may treat as soft: when the named mod is absent, an optional dependency emits a warning rather than a `MissingDependency` error. Required (default) dependencies still hard-fail. |
 | `replaces` | array of string (FQN) | no | `[]` | Fully-qualified type names of systems this mod replaces. Only meaningful for `kind=regular`. |
