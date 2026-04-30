@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>Fixture.SharedEvents</AssemblyName>
+    <AssemblyName>tests.shared.events</AssemblyName>
     <RootNamespace>Fixture.SharedEvents</RootNamespace>
     <IsPackable>false</IsPackable>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

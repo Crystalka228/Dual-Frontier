@@ -16,7 +16,7 @@ internal static class TestModPaths
         Path.Combine(AppContext.BaseDirectory, "Fixtures");
 
     /// <summary>Path to the shared mod fixture defining <c>SharedTestEvent</c>.</summary>
-    public static string SharedEvents => Path.Combine(FixturesRoot, "Fixture.SharedEvents");
+    public static string SharedEvents => Path.Combine(FixturesRoot, "tests.shared.events");
 
     /// <summary>Path to the regular mod fixture that publishes <c>SharedTestEvent</c>.</summary>
     public static string PublisherMod => Path.Combine(FixturesRoot, "Fixture.PublisherMod");

@@ -34,7 +34,7 @@ public sealed class SharedAssemblyResolutionTests
     {
         var ctx = new ModLoadContext("regular-no-shared", sharedAlc: null);
 
-        Assembly? result = InvokeLoad(ctx, new AssemblyName("Fixture.SharedEvents"));
+        Assembly? result = InvokeLoad(ctx, new AssemblyName("tests.shared.events"));
 
         result.Should().BeNull(
             "with no shared ALC supplied, the override must defer all resolution to the default context");
