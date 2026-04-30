@@ -52,7 +52,7 @@ public sealed class ModLoader
         if (!Directory.Exists(path))
             throw new DirectoryNotFoundException($"Mod directory not found: {path}");
 
-        ModManifest manifest = ReadManifest(path);
+        ModManifest manifest = ReadManifestFromDirectory(path);
         if (string.IsNullOrWhiteSpace(manifest.Id))
             throw new InvalidOperationException(
                 $"Mod manifest at '{path}' has empty id.");
@@ -106,7 +106,7 @@ public sealed class ModLoader
         if (!Directory.Exists(path))
             throw new DirectoryNotFoundException($"Mod directory not found: {path}");
 
-        ModManifest manifest = ReadManifest(path);
+        ModManifest manifest = ReadManifestFromDirectory(path);
         if (string.IsNullOrWhiteSpace(manifest.Id))
             throw new InvalidOperationException(
                 $"Mod manifest at '{path}' has empty id.");
@@ -277,7 +277,13 @@ public sealed class ModLoader
         throw new NotImplementedException("TODO: Phase 2 (part 2) — ModFaultHandler");
     }
 
-    private static ModManifest ReadManifest(string path)
+    /// <summary>
+    /// Reads <c>mod.manifest.json</c> from the given mod directory and parses
+    /// it. No assembly is loaded — used by the pipeline to classify mods by
+    /// <see cref="ModManifest.Kind"/> before deciding which load path to take.
+    /// </summary>
+    /// <param name="path">Mod directory containing <c>mod.manifest.json</c>.</param>
+    internal static ModManifest ReadManifestFromDirectory(string path)
     {
         string manifestPath = Path.Combine(path, "mod.manifest.json");
         if (!File.Exists(manifestPath))

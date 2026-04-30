@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
 
@@ -28,10 +29,17 @@ public sealed record PipelineResult(
 /// simulation must be stopped before the call — by contract the scheduler is
 /// immutable while a session is alive.
 ///
+/// Loading runs in two passes per MOD_OS_ARCHITECTURE §5.2/§5.3: shared
+/// mods first (into the singleton <see cref="SharedModLoadContext"/> the
+/// pipeline owns), then regular mods whose <see cref="ModLoadContext"/>
+/// delegates to that shared ALC for cross-mod type identity. The shared
+/// ALC is created once per pipeline instance and never unloaded (§5.1).
+///
 /// Atomicity: <see cref="DependencyGraph.Build"/> runs on a locally created
 /// graph. The scheduler's phase list is replaced only after a successful
-/// build. Any exception earlier in the chain rolls back mod registration and
-/// leaves the scheduler untouched.
+/// build. Any exception earlier in the chain rolls back regular-mod
+/// registration and leaves the scheduler untouched. Shared mods, once
+/// loaded, persist for the session.
 /// </summary>
 internal sealed class ModIntegrationPipeline
 {
@@ -42,11 +50,16 @@ internal sealed class ModIntegrationPipeline
     private readonly IGameServices _services;
     private readonly ParallelSystemScheduler _scheduler;
     private readonly KernelCapabilityRegistry _kernelCapabilities = KernelCapabilityRegistry.BuildFromKernelAssemblies();
+    private readonly SharedModLoadContext _sharedAlc = new();
     private readonly List<LoadedMod> _activeMods = new();
+    private readonly List<LoadedSharedMod> _activeShared = new();
 
     /// <summary>
     /// Creates a pipeline bound to the given collaborators. The scheduler is
-    /// the one whose phase list the pipeline rebuilds on success.
+    /// the one whose phase list the pipeline rebuilds on success. The
+    /// pipeline also owns a singleton <see cref="SharedModLoadContext"/>
+    /// reused across every <see cref="Apply"/> invocation per
+    /// MOD_OS_ARCHITECTURE §5.1.
     /// </summary>
     public ModIntegrationPipeline(
         ModLoader loader,
@@ -65,28 +78,82 @@ internal sealed class ModIntegrationPipeline
     }
 
     /// <summary>
-    /// Applies the given mod paths: loads, validates, registers, rebuilds
-    /// the dependency graph and replaces the scheduler's phase list.
-    /// See <see cref="ModIntegrationPipeline"/> for atomicity guarantees.
+    /// Applies the given mod paths: classifies them by manifest kind, loads
+    /// shared mods into the shared ALC, then loads regular mods (each into
+    /// its own ALC delegating to the shared one), validates, registers,
+    /// rebuilds the dependency graph and replaces the scheduler's phase
+    /// list. See <see cref="ModIntegrationPipeline"/> for atomicity
+    /// guarantees.
     /// </summary>
     public PipelineResult Apply(IReadOnlyList<string> modPaths)
     {
         if (modPaths is null) throw new ArgumentNullException(nameof(modPaths));
 
-        // [1] Load every manifest and assembly through ModLoader.
-        var loaded = new List<LoadedMod>();
-        var failed = new List<string>();
+        // [0] Classify: pre-injected mods are taken as regular; on-disk
+        // manifests are parsed and split by ModKind.
+        var sharedPaths = new List<string>();
+        var regularPaths = new List<string>();
+        var preloadedRegulars = new List<LoadedMod>();
         var loadErrors = new List<ValidationError>();
+        var failed = new List<string>();
 
         foreach (string path in modPaths)
         {
+            LoadedMod? preloaded = _loader.TryGetLoaded(path);
+            if (preloaded is not null)
+            {
+                preloadedRegulars.Add(preloaded);
+                continue;
+            }
+
             try
             {
-                // If the mod is already preloaded (test injection or
-                // progressive loading from the menu), reuse the entry.
-                LoadedMod? preloaded = _loader.TryGetLoaded(path);
-                LoadedMod mod = preloaded ?? _loader.LoadMod(path);
-                loaded.Add(mod);
+                ModManifest manifest = ModLoader.ReadManifestFromDirectory(path);
+                if (manifest.Kind == ModKind.Shared)
+                    sharedPaths.Add(path);
+                else
+                    regularPaths.Add(path);
+            }
+            catch (Exception ex)
+            {
+                failed.Add(path);
+                loadErrors.Add(new ValidationError(
+                    ModId: path,
+                    Kind: ValidationErrorKind.MissingDependency,
+                    Message: $"Failed to read manifest for '{path}': {ex.Message}"));
+            }
+        }
+
+        // [1] Pass 1 — shared mods. Each LoadSharedMod call places its
+        // assembly in the singleton shared ALC and returns the parsed mod.
+        // M4.3 will add topological ordering; for M4.1 the input order is used.
+        var sharedLoaded = new List<LoadedSharedMod>();
+        foreach (string path in sharedPaths)
+        {
+            try
+            {
+                sharedLoaded.Add(_loader.LoadSharedMod(path, _sharedAlc));
+            }
+            catch (Exception ex)
+            {
+                failed.Add(path);
+                loadErrors.Add(new ValidationError(
+                    ModId: path,
+                    Kind: ValidationErrorKind.MissingDependency,
+                    Message: $"Failed to load shared mod from '{path}': {ex.Message}"));
+            }
+        }
+
+        // [2] Pass 2 — regular mods. Each ModLoadContext is wired to the
+        // shared ALC so types defined by shared mods resolve to the same
+        // Type instance across regular mods (MOD_OS_ARCHITECTURE §5.3).
+        var loaded = new List<LoadedMod>();
+        loaded.AddRange(preloadedRegulars);
+        foreach (string path in regularPaths)
+        {
+            try
+            {
+                loaded.Add(_loader.LoadRegularMod(path, _sharedAlc));
             }
             catch (Exception ex)
             {
@@ -98,7 +165,7 @@ internal sealed class ModIntegrationPipeline
             }
         }
 
-        // [2] Validation: contract versions + write-write conflicts.
+        // [3] Validation: contract versions + write-write conflicts.
         IReadOnlyList<SystemBase> coreSystems = GetCoreSystemInstances();
         ValidationReport report = _validator.Validate(loaded, coreSystems);
 
@@ -113,7 +180,7 @@ internal sealed class ModIntegrationPipeline
                 FailedModIds: CollectFailedIds(loaded, failed));
         }
 
-        // [3] IMod.Initialize — the mod registers components/systems through IModApi.
+        // [4] IMod.Initialize — the mod registers components/systems through IModApi.
         var initFailed = new List<LoadedMod>();
         var initErrors = new List<ValidationError>();
         foreach (LoadedMod mod in loaded)
@@ -147,7 +214,7 @@ internal sealed class ModIntegrationPipeline
                 FailedModIds: CollectModIds(initFailed));
         }
 
-        // [4-6] Build the graph in a local variable — replace the scheduler only on success.
+        // [5-7] Build the graph in a local variable — replace the scheduler only on success.
         var localGraph = new DependencyGraph();
         try
         {
@@ -175,9 +242,10 @@ internal sealed class ModIntegrationPipeline
                 FailedModIds: CollectModIds(loaded));
         }
 
-        // [7] Atomically swap the scheduler's phases. The previous graph is no longer needed.
+        // [8] Atomically swap the scheduler's phases. The previous graph is no longer needed.
         _scheduler.Rebuild(localGraph.GetPhases());
         _activeMods.AddRange(loaded);
+        _activeShared.AddRange(sharedLoaded);
 
         return new PipelineResult(
             Success: true,
@@ -187,9 +255,11 @@ internal sealed class ModIntegrationPipeline
     }
 
     /// <summary>
-    /// Unloads every mod currently managed by the pipeline and rebuilds the
-    /// scheduler with only the core systems. Safe to call even when no mod
-    /// is active — in that case only the scheduler is rebuilt.
+    /// Unloads every regular mod currently managed by the pipeline and
+    /// rebuilds the scheduler with only the core systems. Safe to call even
+    /// when no mod is active — in that case only the scheduler is rebuilt.
+    /// Shared mods are not unloaded: the shared ALC is non-collectible per
+    /// MOD_OS_ARCHITECTURE §5.1.
     /// </summary>
     public void UnloadAll()
     {
