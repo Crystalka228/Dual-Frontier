@@ -1,23 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Loader;
 using DualFrontier.Contracts.Attributes;
+using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Four-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
+/// Five-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
 /// registration. Phase A checks that every loaded mod is compatible with the
 /// current <see cref="ContractsVersion"/>. Phase B inspects every mod system
 /// alongside the provided core systems and reports any write-write collision
 /// on a component type — producing a precise per-mod diagnostic the scheduler
 /// would otherwise surface only as an opaque <c>write conflict detected</c>.
-/// Phase C verifies every <c>capabilities.required</c> token is provided by
-/// the kernel or by an explicitly listed dependency. Phase D cross-checks
-/// each mod system's <see cref="ModCapabilitiesAttribute"/> against the
-/// owning manifest. Phases C and D run only when a
+/// Phase E rejects regular mods whose assemblies export a type implementing
+/// <see cref="IEvent"/> or <see cref="IModContract"/> — those marker
+/// interfaces define cross-mod identities and must live in shared mods
+/// (MOD_OS_ARCHITECTURE §5, §6.5 D-4). Phase C verifies every
+/// <c>capabilities.required</c> token is provided by the kernel or by an
+/// explicitly listed dependency. Phase D cross-checks each mod system's
+/// <see cref="ModCapabilitiesAttribute"/> against the owning manifest. Phases
+/// A, B and E run unconditionally; phases C and D run only when a
 /// <see cref="KernelCapabilityRegistry"/> is supplied to <see cref="Validate"/>.
 ///
 /// Non-throwing by design: the pipeline decides whether to abort or surface
@@ -35,7 +41,7 @@ internal sealed class ContractValidator
     /// silently here — registration itself throws a clearer diagnostic at
     /// that point. Phases C and D run only when
     /// <paramref name="kernelCapabilities"/> is non-null; legacy callers that
-    /// omit the registry continue to exercise just Phases A and B.
+    /// omit the registry continue to exercise Phases A, B and E.
     /// </summary>
     /// <param name="mods">Mods returned by <see cref="ModLoader"/>.</param>
     /// <param name="coreSystems">Core systems included in the rebuild.</param>
@@ -57,6 +63,7 @@ internal sealed class ContractValidator
 
         ValidateContractsVersions(mods, errors);
         ValidateWriteWriteConflicts(mods, coreSystems, errors);
+        ValidateRegularModContractTypes(mods, errors);
 
         if (kernelCapabilities is not null)
         {
@@ -238,6 +245,80 @@ internal sealed class ContractValidator
                 return t;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Phase E — every regular mod's assemblies are scanned and any exported
+    /// type implementing <see cref="IEvent"/> or <see cref="IModContract"/>
+    /// is reported. Per MOD_OS_ARCHITECTURE §5/§6.5 D-4 those marker
+    /// interfaces define cross-mod identities: a type defined inside a regular
+    /// mod's collectible <see cref="ModLoadContext"/> is invisible to other
+    /// mods because each lives in its own ALC. Such types must be vended by a
+    /// shared mod so all regular mods resolve to the same <see cref="Type"/>
+    /// instance through the shared ALC. <see cref="LoadedSharedMod"/>s never
+    /// reach this validator; the manifest <c>Kind</c> guard below is defensive
+    /// against synthetic <see cref="LoadedMod"/>s with <see cref="ModKind.Shared"/>.
+    /// </summary>
+    private static void ValidateRegularModContractTypes(
+        IReadOnlyList<LoadedMod> mods,
+        List<ValidationError> errors)
+    {
+        foreach (LoadedMod mod in mods)
+        {
+            if (mod.Manifest.Kind != ModKind.Regular)
+                continue;
+
+            foreach (Assembly asm in mod.Context.Assemblies)
+            {
+                // Defensive: only scan assemblies physically owned by this
+                // mod's ALC. A delegated shared assembly returned via
+                // ModLoadContext.Load belongs to the shared ALC and was
+                // already vetted at the source.
+                if (AssemblyLoadContext.GetLoadContext(asm) != mod.Context)
+                    continue;
+
+                Type[] exported;
+                try
+                {
+                    exported = asm.GetExportedTypes();
+                }
+                catch (ReflectionTypeLoadException ex)
+                {
+                    exported = ex.Types as Type[] ?? Array.Empty<Type>();
+                }
+
+                foreach (Type t in exported)
+                {
+                    if (t is null) continue;
+                    // The marker interfaces themselves live in
+                    // DualFrontier.Contracts (default ALC) and never appear
+                    // here — guarded only as a paranoid no-op.
+                    if (t == typeof(IEvent) || t == typeof(IModContract))
+                        continue;
+
+                    if (typeof(IEvent).IsAssignableFrom(t))
+                        errors.Add(BuildContractTypeError(mod, asm, t, nameof(IEvent)));
+
+                    if (typeof(IModContract).IsAssignableFrom(t))
+                        errors.Add(BuildContractTypeError(mod, asm, t, nameof(IModContract)));
+                }
+            }
+        }
+    }
+
+    private static ValidationError BuildContractTypeError(
+        LoadedMod mod, Assembly asm, Type type, string interfaceName)
+    {
+        string asmName = asm.GetName().Name ?? asm.FullName ?? "<unknown>";
+        return new ValidationError(
+            mod.ModId,
+            ValidationErrorKind.ContractTypeInRegularMod,
+            $"Mod '{mod.ModId}' assembly '{asmName}' exports type " +
+            $"'{type.FullName}' which implements '{interfaceName}'. Contract " +
+            "and event types must live in shared mods so every regular mod " +
+            "resolves to the same Type instance through the shared ALC — " +
+            "move it to a separate mod with kind=\"shared\" " +
+            "(MOD_OS_ARCHITECTURE §5, §6.5 D-4).");
     }
 
     /// <summary>
