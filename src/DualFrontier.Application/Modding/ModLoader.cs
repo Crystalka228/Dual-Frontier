@@ -88,11 +88,16 @@ public sealed class ModLoader
 
     /// <summary>
     /// Loads a shared mod from the given directory into the shared ALC.
-    /// Per MOD_OS_ARCHITECTURE §5.2: validates kind, rejects manifests that
-    /// declare an <see cref="IMod"/> entry point, loads the assembly through
-    /// <see cref="SharedModLoadContext.LoadSharedAssembly"/>, scans the
-    /// exported types and rejects any type that implements
-    /// <see cref="IMod"/>.
+    /// Per MOD_OS_ARCHITECTURE §5.2: defensively asserts <c>kind=shared</c>
+    /// and loads the assembly through
+    /// <see cref="SharedModLoadContext.LoadSharedAssembly"/>. Architectural
+    /// compliance — that the assembly does not contain an <see cref="IMod"/>
+    /// implementation and that the manifest's <c>entryAssembly</c>,
+    /// <c>entryType</c> and <c>replaces</c> fields are empty — is enforced
+    /// post-load by <c>ContractValidator</c> Phase F, which surfaces typed
+    /// <see cref="ValidationErrorKind.SharedModWithEntryPoint"/> errors. The
+    /// loader's kind check remains because a mismatched kind reflects a
+    /// pipeline programming error, not a mod-author mistake.
     /// </summary>
     /// <param name="path">Shared mod directory containing manifest and assembly.</param>
     /// <param name="sharedAlc">
@@ -111,10 +116,12 @@ public sealed class ModLoader
             throw new InvalidOperationException(
                 $"Mod manifest at '{path}' has empty id.");
 
-        // Defensive guard: caller (the pipeline) is expected to branch by
-        // ModKind, but a shared-only loader still rejects regular manifests.
-        // M4.3 will replace this with a typed ValidationError surfaced before
-        // load is attempted.
+        // Caller (the pipeline) is expected to branch by ModKind; the
+        // loader still rejects regular manifests defensively because a
+        // mismatched kind here means the pipeline routed the wrong mod
+        // path to LoadSharedMod — a programming error, not a mod-author
+        // mistake. ValidationError surfacing of architectural rules lives
+        // in ContractValidator Phase F (M4.3).
         if (manifest.Kind != ModKind.Shared)
             throw new InvalidOperationException(
                 $"Mod '{manifest.Id}' at '{path}' is not declared as 'shared' " +
@@ -141,20 +148,11 @@ public sealed class ModLoader
         }
         catch (ReflectionTypeLoadException ex)
         {
-            // Any unloadable type prevents reasoning about IMod presence;
-            // surface as a load failure (§5.2 step 4).
+            // Any unloadable type prevents reasoning about the assembly's
+            // public surface; surface as a load failure (§5.2 step 4).
             throw new InvalidOperationException(
                 $"Shared mod '{manifest.Id}' assembly '{assemblyName}' " +
                 $"failed to enumerate exported types: {ex.Message}", ex);
-        }
-
-        foreach (Type t in exported)
-        {
-            if (t.IsAbstract) continue;
-            if (typeof(IMod).IsAssignableFrom(t))
-                throw new InvalidOperationException(
-                    $"Shared mod '{manifest.Id}' must not declare IMod implementations; " +
-                    $"found '{t.FullName}'.");
         }
 
         var loaded = new LoadedSharedMod(manifest.Id, manifest, sharedAlc, asm, exported);
