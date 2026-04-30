@@ -31,4 +31,14 @@ internal static class TestModPaths
     /// <c>ContractTypeInRegularModTests</c>.
     /// </summary>
     public static string BadRegularMod => Path.Combine(FixturesRoot, "Fixture.BadRegularMod");
+
+    /// <summary>
+    /// Path to the shared mod fixture whose assembly contains an
+    /// <c>IMod</c> implementation — the precise §5.2 violation Phase F
+    /// catches. The deployed folder name matches the assembly's
+    /// <c>AssemblyName</c> (which equals the manifest id so the loader's
+    /// default <c>{id}.dll</c> lookup works without an
+    /// <c>entryAssembly</c> field).
+    /// </summary>
+    public static string BadSharedModWithIMod => Path.Combine(FixturesRoot, "tests.bad-shared-imod");
 }
