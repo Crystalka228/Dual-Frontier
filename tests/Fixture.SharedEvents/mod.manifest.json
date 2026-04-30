@@ -1,0 +1,8 @@
+{
+  "id": "tests.shared.events",
+  "name": "Shared Events Test Fixture",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "shared",
+  "entryAssembly": "Fixture.SharedEvents.dll"
+}

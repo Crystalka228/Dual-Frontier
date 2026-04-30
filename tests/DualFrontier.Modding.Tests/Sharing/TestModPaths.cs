@@ -1,0 +1,26 @@
+using System;
+using System.IO;
+
+namespace DualFrontier.Modding.Tests.Sharing;
+
+/// <summary>
+/// Resolves the on-disk paths to the cross-ALC test fixture mods. Each
+/// fixture project deploys its built assembly together with its
+/// <c>mod.manifest.json</c> into <c>Fixtures/&lt;assemblyName&gt;/</c> under
+/// the test project's output directory; this helper hides that layout from
+/// the tests so they can request fixtures by purpose, not by path.
+/// </summary>
+internal static class TestModPaths
+{
+    private static readonly string FixturesRoot =
+        Path.Combine(AppContext.BaseDirectory, "Fixtures");
+
+    /// <summary>Path to the shared mod fixture defining <c>SharedTestEvent</c>.</summary>
+    public static string SharedEvents => Path.Combine(FixturesRoot, "Fixture.SharedEvents");
+
+    /// <summary>Path to the regular mod fixture that publishes <c>SharedTestEvent</c>.</summary>
+    public static string PublisherMod => Path.Combine(FixturesRoot, "Fixture.PublisherMod");
+
+    /// <summary>Path to the regular mod fixture that subscribes to <c>SharedTestEvent</c>.</summary>
+    public static string SubscriberMod => Path.Combine(FixturesRoot, "Fixture.SubscriberMod");
+}

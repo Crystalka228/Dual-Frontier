@@ -1,0 +1,9 @@
+{
+  "id": "tests.subscriber",
+  "name": "Subscriber Test Mod",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.SubscriberMod.dll",
+  "entryType": "Fixture.SubscriberMod.Subscriber"
+}
