@@ -61,10 +61,7 @@ public sealed class ModLoader
             throw new InvalidOperationException(
                 $"Mod '{manifest.Id}' is already loaded.");
 
-        var context = new ModLoadContext(manifest.Id);
-        // sharedAlc will be wired into the context's resolver in a follow-up
-        // commit (M4.1 step 4); accepted now so the public surface is stable.
-        _ = sharedAlc;
+        var context = new ModLoadContext(manifest.Id, sharedAlc);
 
         string assemblyName = string.IsNullOrWhiteSpace(manifest.EntryAssembly)
             ? manifest.Id + ".dll"
