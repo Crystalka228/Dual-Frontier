@@ -1,0 +1,9 @@
+{
+  "id": "tests.bad-regular",
+  "name": "Bad Regular Mod (D-4 violation fixture)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.BadRegularMod.dll",
+  "entryType": "Fixture.BadRegularMod.BadMod"
+}

@@ -23,4 +23,12 @@ internal static class TestModPaths
 
     /// <summary>Path to the regular mod fixture that subscribes to <c>SharedTestEvent</c>.</summary>
     public static string SubscriberMod => Path.Combine(FixturesRoot, "Fixture.SubscriberMod");
+
+    /// <summary>
+    /// Path to the regular mod fixture that exports <c>IEvent</c> and
+    /// <c>IModContract</c> types — the precise §6.5 D-4 violation Phase E
+    /// catches. Used as the negative case in
+    /// <c>ContractTypeInRegularModTests</c>.
+    /// </summary>
+    public static string BadRegularMod => Path.Combine(FixturesRoot, "Fixture.BadRegularMod");
 }
