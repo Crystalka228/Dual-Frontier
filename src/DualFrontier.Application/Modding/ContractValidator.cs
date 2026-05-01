@@ -10,7 +10,7 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Seven-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
+/// Eight-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
 /// registration. Phase A checks that every loaded mod is compatible with the
 /// current <see cref="ContractsVersion"/>. Phase B inspects every mod system
 /// alongside the provided core systems and reports any write-write collision
@@ -32,7 +32,13 @@ namespace DualFrontier.Application.Modding;
 /// satisfied by the declared version of the providing mod in the load batch.
 /// Missing providers are skipped silently;
 /// <see cref="ModIntegrationPipeline.CheckDependencyPresence"/> catches that
-/// case at M5.1 pipeline level. Phases A, B, E and G run unconditionally;
+/// case at M5.1 pipeline level.
+/// Phase H validates bridge replacement declarations from mods'
+/// <see cref="ModManifest.Replaces"/> lists — each FQN must resolve to a
+/// <c>[BridgeImplementation(Replaceable = true)]</c> system, no two mods
+/// may replace the same FQN, and the target type must exist in some loaded
+/// assembly. Per MOD_OS_ARCHITECTURE §7 LOCKED.
+/// Phases A, B, E, G and H run unconditionally;
 /// phases C and D run only when a <see cref="KernelCapabilityRegistry"/> is
 /// supplied; phase F runs only when a shared-mod list is supplied to
 /// <see cref="Validate"/>.
@@ -83,6 +89,7 @@ internal sealed class ContractValidator
         ValidateWriteWriteConflicts(mods, coreSystems, errors);
         ValidateRegularModContractTypes(mods, errors);
         ValidateInterModDependencyVersions(mods, errors);
+        ValidateBridgeReplacements(mods, errors);
 
         if (kernelCapabilities is not null)
         {
@@ -532,6 +539,149 @@ internal sealed class ContractValidator
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Phase H — bridge replacement validation. For every mod in the batch with
+    /// a non-empty <see cref="ModManifest.Replaces"/> list, validates that:
+    /// (1) no two mods declare the same FQN in their <c>replaces</c> lists
+    /// (<see cref="ValidationErrorKind.BridgeReplacementConflict"/>);
+    /// (2) each FQN resolves to a <see cref="Type"/> annotated
+    /// <c>[BridgeImplementation(Replaceable = true)]</c>
+    /// (<see cref="ValidationErrorKind.ProtectedSystemReplacement"/> when the
+    /// flag is false or the attribute is missing entirely — non-bridge kernel
+    /// systems are authoritative);
+    /// (3) each FQN resolves to a real <see cref="Type"/> in some currently
+    /// loaded assembly
+    /// (<see cref="ValidationErrorKind.UnknownSystemReplacement"/> when no
+    /// match is found).
+    ///
+    /// Per MOD_OS_ARCHITECTURE §7 LOCKED — explicit replaces with no automatic
+    /// priority; two mods replacing the same system is a user-resolvable
+    /// conflict. Phase H sweeps every assembly in
+    /// <see cref="AppDomain.CurrentDomain"/> because FQN strings carry no
+    /// assembly hint, so kernel default-ALC types and types vended through the
+    /// shared / collectible ALCs are all reachable.
+    /// </summary>
+    private static void ValidateBridgeReplacements(
+        IReadOnlyList<LoadedMod> mods,
+        List<ValidationError> errors)
+    {
+        // Early-out: if no mod declares any replacement, the full sweep is
+        // pure overhead. Common case for typical load batches.
+        bool anyReplacements = false;
+        foreach (LoadedMod mod in mods)
+        {
+            if (mod.Manifest.Replaces.Count > 0)
+            {
+                anyReplacements = true;
+                break;
+            }
+        }
+        if (!anyReplacements) return;
+
+        // Step 1 — collect (modId, fqn) pairs and detect same-batch duplicates.
+        var fqnToMod = new Dictionary<string, string>(StringComparer.Ordinal);
+        var conflictedFqns = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (LoadedMod mod in mods)
+        {
+            foreach (string fqn in mod.Manifest.Replaces)
+            {
+                if (fqnToMod.TryGetValue(fqn, out string? existingModId))
+                {
+                    conflictedFqns.Add(fqn);
+
+                    // Symmetric reporting — both mods get an error so the UI
+                    // can flag both cards as conflicting.
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.BridgeReplacementConflict,
+                        $"Mod '{mod.ModId}' replaces system '{fqn}' which is " +
+                        $"also replaced by mod '{existingModId}'. Per " +
+                        "MOD_OS_ARCHITECTURE §7.2, two mods may not replace " +
+                        "the same system in the same load batch — disable one " +
+                        "of the conflicting mods.",
+                        ConflictingModId: existingModId));
+
+                    errors.Add(new ValidationError(
+                        existingModId,
+                        ValidationErrorKind.BridgeReplacementConflict,
+                        $"Mod '{existingModId}' replaces system '{fqn}' which " +
+                        $"is also replaced by mod '{mod.ModId}'. Per " +
+                        "MOD_OS_ARCHITECTURE §7.2, two mods may not replace " +
+                        "the same system in the same load batch — disable one " +
+                        "of the conflicting mods.",
+                        ConflictingModId: mod.ModId));
+                }
+                else
+                {
+                    fqnToMod[fqn] = mod.ModId;
+                }
+            }
+        }
+
+        // Steps 2-3 — for each non-conflicted FQN, verify the target type
+        // exists and is annotated Replaceable=true.
+        foreach (KeyValuePair<string, string> kv in fqnToMod)
+        {
+            string fqn = kv.Key;
+            string modId = kv.Value;
+
+            // Conflicting FQNs already errored in step 1; secondary checks
+            // would just produce duplicate diagnostics.
+            if (conflictedFqns.Contains(fqn))
+                continue;
+
+            Type? targetType = ResolveTypeAcrossAssemblies(fqn);
+            if (targetType is null)
+            {
+                errors.Add(new ValidationError(
+                    modId,
+                    ValidationErrorKind.UnknownSystemReplacement,
+                    $"Mod '{modId}' replaces system '{fqn}' but no type with " +
+                    "this fully-qualified name exists in any loaded assembly. " +
+                    "Verify the FQN spelling and that the target assembly is " +
+                    "loaded. Per MOD_OS_ARCHITECTURE §7.2."));
+                continue;
+            }
+
+            BridgeImplementationAttribute? bridge =
+                targetType.GetCustomAttribute<BridgeImplementationAttribute>(inherit: false);
+            if (bridge is null || !bridge.Replaceable)
+            {
+                string reason = bridge is null
+                    ? "is not marked as a bridge ([BridgeImplementation] attribute missing)"
+                    : $"is marked [BridgeImplementation(Phase = {bridge.Phase})] but Replaceable=false";
+
+                errors.Add(new ValidationError(
+                    modId,
+                    ValidationErrorKind.ProtectedSystemReplacement,
+                    $"Mod '{modId}' replaces system '{fqn}' but the target " +
+                    $"{reason}. Per MOD_OS_ARCHITECTURE §7.4, only systems " +
+                    "with [BridgeImplementation(Replaceable = true)] may be " +
+                    "superseded by mods. Contact the engine team if this " +
+                    "system should become replaceable."));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resolves a fully-qualified type name across every assembly currently
+    /// loaded into <see cref="AppDomain.CurrentDomain"/>. Returns
+    /// <see langword="null"/> when no match is found. The full sweep is
+    /// required because <see cref="ModManifest.Replaces"/> carries only
+    /// FQN strings, not assembly-qualified names.
+    /// </summary>
+    private static Type? ResolveTypeAcrossAssemblies(string fqn)
+    {
+        foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type? t = asm.GetType(fqn, throwOnError: false, ignoreCase: false);
+            if (t is not null)
+                return t;
+        }
+        return null;
     }
 
     /// <summary>
