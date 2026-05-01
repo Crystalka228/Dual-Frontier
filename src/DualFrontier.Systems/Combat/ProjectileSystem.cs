@@ -20,7 +20,7 @@ namespace DualFrontier.Systems.Combat;
     bus:    nameof(IGameServices.Combat)
 )]
 [TickRate(TickRates.REALTIME)]
-[BridgeImplementation(Phase = 5)]
+[BridgeImplementation(Phase = 5, Replaceable = true)]
 public sealed class ProjectileSystem : SystemBase
 {
     /// <summary>

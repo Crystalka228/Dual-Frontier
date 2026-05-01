@@ -27,7 +27,7 @@ namespace DualFrontier.Systems.Combat;
     buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Inventory), nameof(IGameServices.Magic) }
 )]
 [TickRate(TickRates.FAST)]
-[BridgeImplementation(Phase = 5)]
+[BridgeImplementation(Phase = 5, Replaceable = true)]
 public sealed class CompositeResolutionSystem : SystemBase
 {
     /// <summary>

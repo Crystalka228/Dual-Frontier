@@ -25,7 +25,7 @@ namespace DualFrontier.Systems.Combat;
     buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Magic) }
 )]
 [TickRate(TickRates.NORMAL)]
-[BridgeImplementation(Phase = 5)]
+[BridgeImplementation(Phase = 5, Replaceable = true)]
 public sealed class ComboResolutionSystem : SystemBase
 {
     /// <summary>
