@@ -93,6 +93,21 @@ internal sealed class ContractValidator
         return new ValidationReport(isValid, errors, warnings);
     }
 
+    /// <summary>
+    /// Phase A — kernel API version compatibility. Dual-path for backward
+    /// compat: when <see cref="ModManifest.ApiVersion"/> is <see langword="null"/>
+    /// (v1 manifest), the legacy path parses
+    /// <see cref="ModManifest.RequiresContractsVersion"/> as a
+    /// <see cref="ContractsVersion"/> and uses
+    /// <see cref="ContractsVersion.IsCompatible"/>; failures surface as
+    /// <see cref="ValidationErrorKind.IncompatibleContractsVersion"/>. When
+    /// <see cref="ModManifest.ApiVersion"/> is non-null (v2 manifest), the
+    /// typed <see cref="VersionConstraint"/> pipeline checks
+    /// <see cref="VersionConstraint.IsSatisfiedBy"/> against
+    /// <see cref="ContractsVersion.Current"/> and surfaces failures as
+    /// <see cref="ValidationErrorKind.IncompatibleVersion"/> per
+    /// MOD_OS_ARCHITECTURE §11.2 M5 spec.
+    /// </summary>
     private static void ValidateContractsVersions(
         IReadOnlyList<LoadedMod> mods,
         List<ValidationError> errors)
@@ -101,29 +116,50 @@ internal sealed class ContractValidator
 
         foreach (LoadedMod mod in mods)
         {
-            // Phase A — contracts version. A malformed version string is
-            // treated as incompatible with a precise UI-facing message.
-            ContractsVersion required;
-            try
+            if (mod.Manifest.ApiVersion is null)
             {
-                required = ContractsVersion.Parse(mod.Manifest.RequiresContractsVersion);
-            }
-            catch (FormatException ex)
-            {
-                errors.Add(new ValidationError(
-                    mod.ModId,
-                    ValidationErrorKind.IncompatibleContractsVersion,
-                    $"Mod '{mod.ModId}' has invalid requiresContracts: {ex.Message}"));
-                continue;
-            }
+                // v1 manifest — preserve legacy behavior: parse
+                // RequiresContractsVersion as ContractsVersion, check via
+                // ContractsVersion.IsCompatible. Failure mode is legacy
+                // IncompatibleContractsVersion error kind.
+                ContractsVersion required;
+                try
+                {
+                    required = ContractsVersion.Parse(mod.Manifest.RequiresContractsVersion);
+                }
+                catch (FormatException ex)
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleContractsVersion,
+                        $"Mod '{mod.ModId}' has invalid requiresContracts: {ex.Message}"));
+                    continue;
+                }
 
-            if (!ContractsVersion.IsCompatible(required, current))
+                if (!ContractsVersion.IsCompatible(required, current))
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleContractsVersion,
+                        $"Mod '{mod.ModId}' requires DualFrontier.Contracts {required} " +
+                        $"but the current build provides {current}."));
+                }
+            }
+            else
             {
-                errors.Add(new ValidationError(
-                    mod.ModId,
-                    ValidationErrorKind.IncompatibleContractsVersion,
-                    $"Mod '{mod.ModId}' requires DualFrontier.Contracts {required} " +
-                    $"but the current build provides {current}."));
+                // v2 manifest — typed VersionConstraint pipeline.
+                // Failure mode is IncompatibleVersion (per §11.2 M5 spec).
+                VersionConstraint constraint = mod.Manifest.ApiVersion.Value;
+                if (!constraint.IsSatisfiedBy(current))
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleVersion,
+                        $"Mod '{mod.ModId}' requires DualFrontier.Contracts " +
+                        $"{constraint} but the current build provides {current}. " +
+                        "Per MOD_OS_ARCHITECTURE §8.1, kernel API constraint must " +
+                        "be satisfied at load time."));
+                }
             }
         }
     }
