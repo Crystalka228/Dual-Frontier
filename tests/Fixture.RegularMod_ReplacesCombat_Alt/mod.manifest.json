@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.replacescombat.alt",
+  "name": "Regular Mod (also replaces CombatSystem — conflict probe)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_ReplacesCombat_Alt.dll",
+  "entryType": "Fixture.RegularMod_ReplacesCombat_Alt.ReplacesCombatAltMod",
+  "replaces": [
+    "DualFrontier.Systems.Combat.CombatSystem"
+  ]
+}

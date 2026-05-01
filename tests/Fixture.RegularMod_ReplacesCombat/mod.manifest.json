@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.replacescombat",
+  "name": "Regular Mod (replaces kernel CombatSystem)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_ReplacesCombat.dll",
+  "entryType": "Fixture.RegularMod_ReplacesCombat.ReplacesCombatMod",
+  "replaces": [
+    "DualFrontier.Systems.Combat.CombatSystem"
+  ]
+}

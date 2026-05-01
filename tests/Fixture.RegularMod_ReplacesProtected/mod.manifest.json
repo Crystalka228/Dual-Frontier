@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.replacesprotected",
+  "name": "Regular Mod (replaces non-Replaceable SocialSystem)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_ReplacesProtected.dll",
+  "entryType": "Fixture.RegularMod_ReplacesProtected.ReplacesProtectedMod",
+  "replaces": [
+    "DualFrontier.Systems.Pawn.SocialSystem"
+  ]
+}
