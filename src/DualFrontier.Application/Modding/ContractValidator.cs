@@ -10,7 +10,7 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Six-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
+/// Seven-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
 /// registration. Phase A checks that every loaded mod is compatible with the
 /// current <see cref="ContractsVersion"/>. Phase B inspects every mod system
 /// alongside the provided core systems and reports any write-write collision
@@ -27,9 +27,14 @@ namespace DualFrontier.Application.Modding;
 /// shared-mod compliance rules of MOD_OS_ARCHITECTURE §5.2: manifest must
 /// have empty <c>entryAssembly</c>, <c>entryType</c>, and <c>replaces</c>
 /// fields, and the loaded assembly must contain no <see cref="IMod"/>
-/// implementation. Phases A, B and E run unconditionally; phases C and D
-/// run only when a <see cref="KernelCapabilityRegistry"/> is supplied;
-/// phase F runs only when a shared-mod list is supplied to
+/// implementation. Phase G validates inter-mod dependency version
+/// constraints — every non-null <see cref="ModDependency.Version"/> must be
+/// satisfied by the declared version of the providing mod in the load batch.
+/// Missing providers are skipped silently;
+/// <see cref="ModIntegrationPipeline.CheckDependencyPresence"/> catches that
+/// case at M5.1 pipeline level. Phases A, B, E and G run unconditionally;
+/// phases C and D run only when a <see cref="KernelCapabilityRegistry"/> is
+/// supplied; phase F runs only when a shared-mod list is supplied to
 /// <see cref="Validate"/>.
 ///
 /// Non-throwing by design: the pipeline decides whether to abort or surface
@@ -77,6 +82,7 @@ internal sealed class ContractValidator
         ValidateContractsVersions(mods, errors);
         ValidateWriteWriteConflicts(mods, coreSystems, errors);
         ValidateRegularModContractTypes(mods, errors);
+        ValidateInterModDependencyVersions(mods, errors);
 
         if (kernelCapabilities is not null)
         {
@@ -463,6 +469,69 @@ internal sealed class ContractValidator
                 return m;
         }
         return null;
+    }
+
+    /// <summary>
+    /// Phase G — inter-mod dependency version check. For every
+    /// <see cref="ModDependency"/> with a non-null <c>Version</c> constraint,
+    /// finds the provider mod in the load batch and verifies the constraint
+    /// is satisfied by the provider's <see cref="ModManifest.Version"/>.
+    /// Missing provider mods are skipped silently — that case is
+    /// <see cref="ModIntegrationPipeline.CheckDependencyPresence"/>'s
+    /// responsibility (M5.1). A malformed provider version string surfaces
+    /// as <see cref="ValidationErrorKind.IncompatibleVersion"/> attributed
+    /// to the provider (the mod author's mistake).
+    ///
+    /// Cascade-failure semantics: errors accumulate; no mod is silently
+    /// dropped if its provider fails its own validation. Per
+    /// MOD_OS_ARCHITECTURE §8.7 and existing pipeline accumulation pattern.
+    /// </summary>
+    private static void ValidateInterModDependencyVersions(
+        IReadOnlyList<LoadedMod> mods,
+        List<ValidationError> errors)
+    {
+        foreach (LoadedMod mod in mods)
+        {
+            foreach (ModDependency dep in mod.Manifest.Dependencies)
+            {
+                if (!dep.Version.HasValue)
+                    continue;  // No version constraint — presence-only dep.
+
+                LoadedMod? provider = FindMod(mods, dep.ModId);
+                if (provider is null)
+                    continue;  // Missing provider — M5.1's CheckDependencyPresence handled it.
+
+                ContractsVersion providerVersion;
+                try
+                {
+                    providerVersion = ContractsVersion.Parse(provider.Manifest.Version);
+                }
+                catch (FormatException ex)
+                {
+                    errors.Add(new ValidationError(
+                        provider.ModId,
+                        ValidationErrorKind.IncompatibleVersion,
+                        $"Mod '{provider.ModId}' has invalid version " +
+                        $"'{provider.Manifest.Version}': {ex.Message}. " +
+                        "Per MOD_OS_ARCHITECTURE §2.2, the version field must " +
+                        "be a valid SemVer MAJOR.MINOR.PATCH."));
+                    continue;
+                }
+
+                if (!dep.Version.Value.IsSatisfiedBy(providerVersion))
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleVersion,
+                        $"Mod '{mod.ModId}' requires '{dep.ModId}' version " +
+                        $"{dep.Version.Value} but the loaded version is " +
+                        $"{providerVersion}. Per MOD_OS_ARCHITECTURE §8.7, " +
+                        "inter-mod dependency version constraints must be " +
+                        "satisfied. Update one or both mods, or remove the " +
+                        "dependency."));
+                }
+            }
+        }
     }
 
     /// <summary>
