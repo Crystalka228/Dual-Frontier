@@ -8,7 +8,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 
 ## Status overview
 
-*Updated: 2026-04-30 (M5 closed — M5.1, M5.2 done; M6 next).*
+*Updated: 2026-05-01 (M6 closed — M6.1, M6.2 done; M7 next).*
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -26,14 +26,14 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | M3.4 — CI capability analyzer | ⏸ Deferred | — | Roslyn analyzer for `[ModCapabilities]` honesty (D-2 hybrid completion); unblocked when first external mod author appears |
 | **M4 — Shared ALC** | ✅ Closed | added (`CrossAlcTypeIdentityTests`, `SharedAssemblyResolutionTests`, `ContractTypeInRegularModTests`, `SharedModComplianceTests`) | M4.1 `SharedModLoadContext` + two-pass loader + cross-ALC type identity; M4.2 `ContractValidator` Phase E enforces D-4 (no contract types in regular mods); M4.3 D-5 LOCKED shared-mod cycle detection + Phase F enforces §5.2 shared-mod compliance |
 | **M5 — Version constraints** | ✅ Closed | added (`RegularModTopologicalSortTests`, `DependencyPresenceTests`, `M51PipelineIntegrationTests`, `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, `M52IntegrationTests`) | M5.1 pipeline regular-mod toposort + dependency presence (`MissingDependency` / optional warning); M5.2 `ContractValidator` Phase A v1/v2 dual-path modernization + Phase G inter-mod version check; cascade-failure semantics ratified as deliberate accumulation (per §8.7) |
-| M6 — Bridge replacement | ⏭ Pending | — | Explicit `replaces` |
+| **M6 — Bridge replacement** | ✅ Closed | added (`PhaseHBridgeReplacementTests`, `Phase5BridgeAnnotationsTests`, `CollectReplacedFqnsTests`, `M62IntegrationTests`) | M6.1 `[BridgeImplementation(Replaceable)]` + Phase 5 combat stubs annotated + `ContractValidator` Phase H bridge replacement validation; M6.2 `ModIntegrationPipeline` skip-on-replace graph build + integration tests across all §7.5 scenarios |
 | M7 — Hot reload | ⏭ Pending | — | Menu-driven, paused-only |
 | M8 — Vanilla skeletons | ⏭ Pending | — | Five empty mod assemblies |
 | M9 — Vanilla.Combat | ⏭ Pending | — | Absorbs original Phase 5 scope |
 | M10 — Remaining vanilla | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental |
 | Phase 9 — Native Runtime | ⏭ Post-launch | — | Separate large project |
 
-**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). M5 added `RegularModTopologicalSortTests`, `DependencyPresenceTests`, and `M51PipelineIntegrationTests` (M5.1) plus `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, and `M52IntegrationTests` (M5.2). **Total at M5 closure: 311/311 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
+**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). M5 added `RegularModTopologicalSortTests`, `DependencyPresenceTests`, and `M51PipelineIntegrationTests` (M5.1) plus `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, and `M52IntegrationTests` (M5.2). M6 added `PhaseHBridgeReplacementTests` and `Phase5BridgeAnnotationsTests` (M6.1) plus `CollectReplacedFqnsTests` and `M62IntegrationTests` (M6.2). **Total at M6 closure: 338/338 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
 
 ---
 
@@ -255,33 +255,27 @@ This is a deliberate interpretation of §8.7 wording "cascade-fail," registered 
 
 ---
 
-### M6 — Bridge replacement via `replaces`
+### ✅ M6 — Bridge replacement via `replaces` (closed)
 
-Goal: implement explicit bridge replacement so vanilla mods can supersede `[BridgeImplementation]` kernel systems without write-write conflict.
+Goal achieved: explicit bridge replacement is operational. Vanilla mods can now supersede `[BridgeImplementation]` kernel systems without write-write conflict; the validator catches every §7.5 misuse before assembly load; the pipeline graph build skips replaced kernel systems while still registering mod-supplied replacements.
 
-**Consumes decisions:** strategic lock 2 (explicit `replaces`), D-2 (capability cross-check).
+**Sub-phase status:**
 
-**What we implement**
+- **M6.1 ✅ Closed.** Acceptance: `[BridgeImplementation]` extended with `Replaceable` bool (per `MOD_OS_ARCHITECTURE` §7.4); Phase 5 combat stubs annotated `[BridgeImplementation(Phase = 5, Replaceable = true)]` (`CombatSystem`, `DamageSystem`, `ProjectileSystem`, `ShieldSystem`, `StatusEffectSystem`, `ComboResolutionSystem`, `CompositeResolutionSystem`); `ContractValidator` Phase H bridge replacement validation emits `BridgeReplacementConflict` (two mods replace same FQN), `ProtectedSystemReplacement` (mod replaces `Replaceable = false` system), and `UnknownSystemReplacement` (mod replaces non-existent FQN); class XML-doc updated to "eight-phase validator" (Phases A–H). Phase 3 carry-over stubs (`SocialSystem`, `SkillSystem`) explicitly verified to remain `Replaceable = false` until M10.C — `Phase5BridgeAnnotationsTests` includes two protected-guard tests that lock this until the Phase 3 carry-over migrates. Commits: `1af73ad` (Phase 5 annotations), `a408f44` (Phase H), `b0f1ee5` (tests). Tests: `PhaseHBridgeReplacementTests` (8), `Phase5BridgeAnnotationsTests` (9 — 7 Replaceable bridges + 2 protected-system guards).
 
-- `[BridgeImplementation]` attribute extended with `Replaceable` bool (default `true` for new bridges; existing bridges grandfathered to `true` since they are intended to be replaced).
-- `ModIntegrationPipeline.Apply` collects every `replaces` entry from the load batch; result is the `replacedSystems` set.
-- During scheduler rebuild: kernel systems whose FQN appears in `replacedSystems` are skipped during graph construction. Their bridge code remains compiled but never registered for the active mod set.
-- Conflict checks run after batch collection:
-  - Two mods replace the same FQN → `BridgeReplacementConflict` (whole batch rejected; user resolves by disabling one).
-  - Mod replaces a `Replaceable = false` system → `ProtectedSystemReplacement`.
-  - Mod replaces a non-existent FQN → `UnknownSystemReplacement`.
-- On unload, `replacedSystems` recomputed from the surviving mod set; the kernel bridge re-registers if no longer replaced.
+- **M6.2 ✅ Closed.** Acceptance: `ModIntegrationPipeline.CollectReplacedFqns` helper builds the set of replaced kernel-system FQNs from all loaded mods' `Manifest.Replaces` lists; pipeline graph build skips kernel `SystemOrigin.Core` systems whose FQN is in the replaced set; mod-supplied replacement systems register normally per the existing flow (no special path); integration tests cover all four §7.5 scenarios end-to-end at the pipeline level (Replaceable success, Protected reject, Unknown reject, Conflict reject). Commits: `23f2933` (pipeline skip wiring), `602a84e` (helper unit tests), `adad506` (integration scenarios + replacement fixtures). Tests: `CollectReplacedFqnsTests` (5), `M62IntegrationTests` (5).
 
-**Acceptance criteria**
+**Consumes decisions:** strategic lock 2 (explicit `replaces`), D-2 (capability cross-check — Phase H reuses M3 capability resolution semantics for replacement systems).
 
-- A mod replacing a `Replaceable = true` bridge: bridge skipped, mod system runs.
-- Two mods replace the same bridge: batch rejected with `BridgeReplacementConflict`.
-- A mod replaces a `Replaceable = false` system: rejected with `ProtectedSystemReplacement`.
-- A mod replaces a non-existent FQN: rejected with `UnknownSystemReplacement`.
-- A mod is unloaded: replacement skip reverts; kernel bridge re-registers; dependency graph rebuilds without errors.
-- Replacement system passes capability cross-check from M3 (if it writes `HealthComponent`, the manifest declares `kernel.write:HealthComponent`).
+**Acceptance criteria met (per `MOD_OS_ARCHITECTURE` §11.1):**
 
-**Unblocks:** M9, M10 (vanilla mods declare `replaces` for their slice).
+- A mod replacing a `Replaceable = true` bridge: bridge skipped at graph build, mod system runs (M6.1 + M6.2).
+- Two mods replace the same bridge: batch rejected with `BridgeReplacementConflict` (M6.1 validator-level; M6.2 pipeline-level).
+- A mod replaces a `Replaceable = false` system: rejected with `ProtectedSystemReplacement` (M6.1 validator-level; M6.2 pipeline-level).
+- A mod replaces a non-existent FQN: rejected with `UnknownSystemReplacement` (M6.1 validator-level; M6.2 pipeline-level).
+- Replacement system passes the M3 capability cross-check unchanged (M6 introduces no capability-layer change; replacement systems flow through Phase C/D as ordinary mod systems).
+
+**Unblocks:** M9, M10 (vanilla mods declare `replaces` for their slice). On-unload re-registration of skipped kernel bridges is handled by M7's hot-reload path — at M6 closure, `Apply` rebuilds the graph from the surviving mod set on every call, so the unload case reduces to "re-`Apply` without the unloaded mod" once M7 lands.
 
 ---
 
