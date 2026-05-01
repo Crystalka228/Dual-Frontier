@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.donbadapi",
+  "name": "Regular Mod (depends on tests.regular.badapi with mismatched ^99.0.0 constraint, for cascade-failure scenario)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_DependsOnBadApi.dll",
+  "entryType": "Fixture.RegularMod_DependsOnBadApi.DependsOnBadApiMod",
+  "dependencies": [
+    { "id": "tests.regular.badapi", "version": "^99.0.0" }
+  ]
+}

@@ -67,5 +67,17 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <Private>false</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_BadApiVersion\Fixture.RegularMod_BadApiVersion.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_DepsBadVersion\Fixture.RegularMod_DepsBadVersion.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_DependsOnBadApi\Fixture.RegularMod_DependsOnBadApi.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>
