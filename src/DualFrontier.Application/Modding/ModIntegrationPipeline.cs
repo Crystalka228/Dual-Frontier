@@ -360,46 +360,87 @@ internal sealed class ModIntegrationPipeline
 
     /// <summary>
     /// Topologically orders the given shared mod manifests by their inter-shared
-    /// dependency graph (Kahn's algorithm). Edges are drawn only between
-    /// shared mods present in the load batch — a shared mod's dependency on a
-    /// regular mod or on a missing mod does not feed the cycle graph, since
-    /// D-5 LOCKED applies specifically to the shared-mod dependency graph
-    /// (MOD_OS_ARCHITECTURE §1.4).
+    /// dependency graph. Thin wrapper over <see cref="TopoSortByPredicate"/>:
+    /// only edges whose target is itself a shared mod participate in the cycle
+    /// graph, since D-5 LOCKED applies specifically to the shared-mod
+    /// dependency graph (MOD_OS_ARCHITECTURE §1.4).
     /// </summary>
-    /// <returns>
-    /// A tuple of (sortedShared, cycleErrors). When the graph is acyclic,
-    /// <c>sortedShared</c> is a topological ordering of every input manifest
-    /// and <c>cycleErrors</c> is empty. When a cycle exists, the unprocessable
-    /// manifests are excluded from <c>sortedShared</c> and surfaced in
-    /// <c>cycleErrors</c> as one <see cref="ValidationErrorKind.CyclicDependency"/>
-    /// per affected mod.
-    /// </returns>
     internal static (IReadOnlyList<ModManifest> SortedShared, IReadOnlyList<ValidationError> CycleErrors)
         TopoSortSharedMods(
             IReadOnlyList<ModManifest> sharedManifests,
             IReadOnlyDictionary<string, ModManifest> manifestsById)
+        => TopoSortByPredicate(
+            sharedManifests,
+            manifestsById,
+            (_, dep) => dep.Kind == ModKind.Shared,
+            "MOD_OS_ARCHITECTURE §1.4 / D-5 LOCKED");
+
+    /// <summary>
+    /// Generalized topological sort over a subset of mod manifests using
+    /// Kahn's algorithm. Self-dependencies and dependencies on manifests
+    /// outside <paramref name="manifestsToSort"/> are skipped;
+    /// <paramref name="shouldIncludeEdge"/> further filters which edges feed
+    /// the cycle graph (e.g. only shared→shared edges for D-5).
+    /// </summary>
+    /// <param name="manifestsToSort">
+    /// Subset of manifests to topologically order. Edges are formed from each
+    /// manifest's <c>Dependencies</c> to other manifests in this set.
+    /// </param>
+    /// <param name="allManifestsById">
+    /// Full manifest dictionary used to look up <c>ModDependency.ModId</c>
+    /// targets. Manifests outside <paramref name="manifestsToSort"/> are
+    /// queryable here only so the predicate can inspect them; they do not
+    /// become nodes in the graph.
+    /// </param>
+    /// <param name="shouldIncludeEdge">
+    /// Predicate <c>(from, to)</c> deciding whether the edge participates in
+    /// cycle detection. The shared-mod sort gates on
+    /// <c>to.Kind == ModKind.Shared</c>; the regular-mod sort gates on
+    /// <c>to.Kind == ModKind.Regular</c>.
+    /// </param>
+    /// <param name="cycleMessageContext">
+    /// Spec section cited in cycle error messages — e.g.
+    /// <c>"MOD_OS_ARCHITECTURE §1.4 / D-5 LOCKED"</c> for shared,
+    /// <c>"MOD_OS_ARCHITECTURE §1.4 / §8.7"</c> for regular.
+    /// </param>
+    /// <returns>
+    /// A tuple of (sorted, cycleErrors). When the graph is acyclic,
+    /// <c>sorted</c> is a topological ordering of every input manifest and
+    /// <c>cycleErrors</c> is empty. When a cycle exists, the unprocessable
+    /// manifests are excluded from <c>sorted</c> and surfaced in
+    /// <c>cycleErrors</c> as one <see cref="ValidationErrorKind.CyclicDependency"/>
+    /// per affected mod.
+    /// </returns>
+    internal static (IReadOnlyList<ModManifest> Sorted, IReadOnlyList<ValidationError> CycleErrors)
+        TopoSortByPredicate(
+            IReadOnlyList<ModManifest> manifestsToSort,
+            IReadOnlyDictionary<string, ModManifest> allManifestsById,
+            Func<ModManifest, ModManifest, bool> shouldIncludeEdge,
+            string cycleMessageContext)
     {
-        if (sharedManifests is null) throw new ArgumentNullException(nameof(sharedManifests));
-        if (manifestsById is null) throw new ArgumentNullException(nameof(manifestsById));
+        if (manifestsToSort is null) throw new ArgumentNullException(nameof(manifestsToSort));
+        if (allManifestsById is null) throw new ArgumentNullException(nameof(allManifestsById));
+        if (shouldIncludeEdge is null) throw new ArgumentNullException(nameof(shouldIncludeEdge));
+        if (cycleMessageContext is null) throw new ArgumentNullException(nameof(cycleMessageContext));
 
         var inDegree = new Dictionary<string, int>(StringComparer.Ordinal);
         var dependents = new Dictionary<string, List<string>>(StringComparer.Ordinal);
-        var sharedById = new Dictionary<string, ModManifest>(StringComparer.Ordinal);
+        var byId = new Dictionary<string, ModManifest>(StringComparer.Ordinal);
 
-        foreach (ModManifest m in sharedManifests)
+        foreach (ModManifest m in manifestsToSort)
         {
             inDegree[m.Id] = 0;
             dependents[m.Id] = new List<string>();
-            sharedById[m.Id] = m;
+            byId[m.Id] = m;
         }
 
-        foreach (ModManifest m in sharedManifests)
+        foreach (ModManifest m in manifestsToSort)
         {
             foreach (ModDependency dep in m.Dependencies)
             {
-                if (!manifestsById.TryGetValue(dep.ModId, out ModManifest? depManifest))
+                if (!allManifestsById.TryGetValue(dep.ModId, out ModManifest? depManifest))
                     continue;
-                if (depManifest.Kind != ModKind.Shared)
+                if (!shouldIncludeEdge(m, depManifest))
                     continue;
                 if (!inDegree.ContainsKey(dep.ModId))
                     continue;
@@ -416,7 +457,7 @@ internal sealed class ModIntegrationPipeline
             if (kvp.Value == 0) queue.Enqueue(kvp.Key);
         }
 
-        var sortedIds = new List<string>(sharedManifests.Count);
+        var sortedIds = new List<string>(manifestsToSort.Count);
         while (queue.Count > 0)
         {
             string id = queue.Dequeue();
@@ -431,14 +472,14 @@ internal sealed class ModIntegrationPipeline
 
         var sortedManifests = new List<ModManifest>(sortedIds.Count);
         foreach (string id in sortedIds)
-            sortedManifests.Add(sharedById[id]);
+            sortedManifests.Add(byId[id]);
 
-        if (sortedIds.Count == sharedManifests.Count)
+        if (sortedIds.Count == manifestsToSort.Count)
             return (sortedManifests, Array.Empty<ValidationError>());
 
         var sortedSet = new HashSet<string>(sortedIds, StringComparer.Ordinal);
         var unprocessed = new List<string>();
-        foreach (ModManifest m in sharedManifests)
+        foreach (ModManifest m in manifestsToSort)
         {
             if (!sortedSet.Contains(m.Id)) unprocessed.Add(m.Id);
         }
@@ -456,10 +497,9 @@ internal sealed class ModIntegrationPipeline
             errors.Add(new ValidationError(
                 memberId,
                 ValidationErrorKind.CyclicDependency,
-                $"Shared mod '{memberId}' participates in a dependency cycle with: " +
-                $"{otherList}. Cycles in the shared-mod dependency graph are forbidden " +
-                $"per MOD_OS_ARCHITECTURE §1.4 / D-5 LOCKED. Resolve by removing one " +
-                $"of the dependency edges."));
+                $"Mod '{memberId}' participates in a dependency cycle with: " +
+                $"{otherList}. Cycles are forbidden per {cycleMessageContext}. " +
+                $"Resolve by removing one of the dependency edges."));
         }
 
         return (sortedManifests, errors);
