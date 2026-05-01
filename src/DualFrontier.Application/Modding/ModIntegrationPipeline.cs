@@ -66,6 +66,28 @@ internal sealed class ModIntegrationPipeline
     private readonly List<LoadedSharedMod> _activeShared = new();
 
     /// <summary>
+    /// Pipeline-mediated proxy for the run flag described by
+    /// MOD_OS_ARCHITECTURE §9.2 / §9.3. Per the spec, hot reload requires the
+    /// scheduler to be paused before <see cref="Apply"/>; per §9.3 the guard
+    /// "is enforced by ModIntegrationPipeline checking the scheduler's run
+    /// flag." The flag itself lives here rather than on
+    /// <see cref="ParallelSystemScheduler"/> as a deliberate interpretation
+    /// registered in ROADMAP M7.1: putting it on the pipeline keeps every
+    /// M-phase change inside <c>DualFrontier.Application</c> /
+    /// <c>DualFrontier.Modding.Tests</c> and preserves the M3–M6 boundary
+    /// discipline of leaving <c>DualFrontier.Core</c> untouched. If a future
+    /// closure review finds the wording is materially incompatible with
+    /// pipeline-mediated state, the resolution is a v1.5 ratification — not
+    /// a silent move into the scheduler.
+    ///
+    /// Default <c>false</c> ("paused") is load-bearing: every M0–M6 test
+    /// constructs a fresh pipeline and calls <see cref="Apply"/> without ever
+    /// touching <see cref="Pause"/> or <see cref="Resume"/>, so the default
+    /// must let those existing flows through unchanged.
+    /// </summary>
+    private bool _isRunning;
+
+    /// <summary>
     /// Creates a pipeline bound to the given collaborators. The scheduler is
     /// the one whose phase list the pipeline rebuilds on success. The
     /// pipeline also owns a singleton <see cref="SharedModLoadContext"/>
@@ -89,6 +111,31 @@ internal sealed class ModIntegrationPipeline
     }
 
     /// <summary>
+    /// True iff the pipeline is currently in the running state surfaced by
+    /// MOD_OS_ARCHITECTURE §9.3. While running, <see cref="Apply"/> and
+    /// <see cref="UnloadAll"/> reject mutation attempts: the spec forbids
+    /// reloading a mod during a tick, so callers must <see cref="Pause"/>
+    /// the simulation first.
+    /// </summary>
+    public bool IsRunning => _isRunning;
+
+    /// <summary>
+    /// Drops the run flag to <c>false</c> (the §9.2 step 1 "menu pauses the
+    /// scheduler" entry point). Idempotent: calling twice is a no-op and
+    /// must not throw, since the menu can re-enter the paused state from
+    /// either Resume or fresh construction.
+    /// </summary>
+    public void Pause() => _isRunning = false;
+
+    /// <summary>
+    /// Raises the run flag to <c>true</c> (the §9.2 step 4 "menu resumes the
+    /// scheduler" entry point). Idempotent: the simulation loop may call
+    /// <c>Resume</c> on an already-running pipeline as a defensive no-op,
+    /// e.g. on a reentry from a UI dialog that did not actually pause.
+    /// </summary>
+    public void Resume() => _isRunning = true;
+
+    /// <summary>
     /// Applies the given mod paths: classifies them by manifest kind, loads
     /// shared mods into the shared ALC, then loads regular mods (each into
     /// its own ALC delegating to the shared one), validates, registers,
@@ -99,6 +146,9 @@ internal sealed class ModIntegrationPipeline
     public PipelineResult Apply(IReadOnlyList<string> modPaths)
     {
         if (modPaths is null) throw new ArgumentNullException(nameof(modPaths));
+        if (_isRunning)
+            throw new InvalidOperationException(
+                "Pause the scheduler before applying mods");
 
         // [0] Classify: pre-injected mods are taken as regular; on-disk
         // manifests are parsed and split by ModKind. Manifests are kept so the
@@ -371,6 +421,10 @@ internal sealed class ModIntegrationPipeline
     /// </summary>
     public void UnloadAll()
     {
+        if (_isRunning)
+            throw new InvalidOperationException(
+                "Pause the scheduler before unloading mods");
+
         foreach (LoadedMod mod in _activeMods)
         {
             _contractStore.RevokeAll(mod.ModId);
