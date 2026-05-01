@@ -376,6 +376,80 @@ internal sealed class ModIntegrationPipeline
             "MOD_OS_ARCHITECTURE §1.4 / D-5 LOCKED");
 
     /// <summary>
+    /// Topologically orders the given regular mod manifests by their
+    /// inter-regular dependency graph. Thin wrapper over
+    /// <see cref="TopoSortByPredicate"/>: only edges whose target is itself a
+    /// regular mod participate in the cycle graph (a regular mod's dependency
+    /// on a shared mod, or on a mod outside the load batch, does not feed
+    /// regular-mod cycle detection — those flow through other layers per
+    /// MOD_OS_ARCHITECTURE §1.4 / §8.7).
+    /// </summary>
+    internal static (IReadOnlyList<ModManifest> Sorted, IReadOnlyList<ValidationError> CycleErrors)
+        TopoSortRegularMods(
+            IReadOnlyList<ModManifest> regularManifests,
+            IReadOnlyDictionary<string, ModManifest> allManifestsById)
+        => TopoSortByPredicate(
+            regularManifests,
+            allManifestsById,
+            (_, dep) => dep.Kind == ModKind.Regular,
+            "MOD_OS_ARCHITECTURE §1.4 / §8.7");
+
+    /// <summary>
+    /// Walks every manifest in the batch and verifies that each declared
+    /// dependency is present. A missing required dependency produces a
+    /// <see cref="ValidationErrorKind.MissingDependency"/> error attributed to
+    /// the dependent mod; a missing optional dependency produces a
+    /// non-blocking <see cref="ValidationWarning"/>. Presence is a structural
+    /// check only — version compatibility is verified separately by
+    /// <c>ContractValidator</c> per MOD_OS_ARCHITECTURE §8.7 / §11.2.
+    /// </summary>
+    /// <param name="allManifestsById">
+    /// Full manifest dictionary representing the load batch. A dependency is
+    /// "present" iff its <c>ModId</c> appears as a key here.
+    /// </param>
+    /// <returns>
+    /// Tuple of (errors, warnings). Errors are empty when every required
+    /// dependency is present; warnings are empty when every optional
+    /// dependency is present.
+    /// </returns>
+    internal static (IReadOnlyList<ValidationError> MissingErrors, IReadOnlyList<ValidationWarning> MissingOptionalWarnings)
+        CheckDependencyPresence(IReadOnlyDictionary<string, ModManifest> allManifestsById)
+    {
+        if (allManifestsById is null) throw new ArgumentNullException(nameof(allManifestsById));
+
+        var errors = new List<ValidationError>();
+        var warnings = new List<ValidationWarning>();
+
+        foreach (KeyValuePair<string, ModManifest> kvp in allManifestsById)
+        {
+            ModManifest manifest = kvp.Value;
+            foreach (ModDependency dep in manifest.Dependencies)
+            {
+                if (allManifestsById.ContainsKey(dep.ModId))
+                    continue;
+
+                if (dep.IsOptional)
+                {
+                    warnings.Add(new ValidationWarning(
+                        manifest.Id,
+                        $"Optional dependency '{dep.ModId}' for mod '{manifest.Id}' " +
+                        "is not present in the load batch; behavior may degrade."));
+                }
+                else
+                {
+                    errors.Add(new ValidationError(
+                        manifest.Id,
+                        ValidationErrorKind.MissingDependency,
+                        $"Mod '{manifest.Id}' requires dependency '{dep.ModId}' " +
+                        "which is not present in the load batch."));
+                }
+            }
+        }
+
+        return (errors, warnings);
+    }
+
+    /// <summary>
     /// Generalized topological sort over a subset of mod manifests using
     /// Kahn's algorithm. Self-dependencies and dependencies on manifests
     /// outside <paramref name="manifestsToSort"/> are skipped;
