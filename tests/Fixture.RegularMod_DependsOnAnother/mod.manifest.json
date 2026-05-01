@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.dependson",
+  "name": "Regular Mod (depends on tests.regular.dependedon)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_DependsOnAnother.dll",
+  "entryType": "Fixture.RegularMod_DependsOnAnother.DependsOnAnotherMod",
+  "dependencies": [
+    { "id": "tests.regular.dependedon" }
+  ]
+}

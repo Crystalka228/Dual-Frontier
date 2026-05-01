@@ -1,0 +1,10 @@
+{
+  "id": "tests.regular.badapi",
+  "name": "Regular Mod (incompatible apiVersion ^99.0.0)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "apiVersion": "^99.0.0",
+  "entryAssembly": "Fixture.RegularMod_BadApiVersion.dll",
+  "entryType": "Fixture.RegularMod_BadApiVersion.BadApiVersionMod"
+}

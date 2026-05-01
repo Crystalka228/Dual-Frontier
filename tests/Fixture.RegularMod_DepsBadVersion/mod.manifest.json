@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.depsbadver",
+  "name": "Regular Mod (depends on tests.regular.dependedon with mismatched ^99.0.0 constraint)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_DepsBadVersion.dll",
+  "entryType": "Fixture.RegularMod_DepsBadVersion.DepsBadVersionMod",
+  "dependencies": [
+    { "id": "tests.regular.dependedon", "version": "^99.0.0" }
+  ]
+}

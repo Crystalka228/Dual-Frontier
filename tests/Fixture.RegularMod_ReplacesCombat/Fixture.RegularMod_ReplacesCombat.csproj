@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Fixture.RegularMod_ReplacesCombat</AssemblyName>
+    <RootNamespace>Fixture.RegularMod_ReplacesCombat</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mod.manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Target Name="DeployToTestFixtures" AfterTargets="Build">
+    <ItemGroup>
+      <FixtureFiles Include="$(TargetPath)" />
+      <FixtureFiles Include="$(MSBuildThisFileDirectory)mod.manifest.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FixtureFiles)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\DualFrontier.Modding.Tests\bin\$(Configuration)\$(TargetFramework)\Fixtures\$(AssemblyName)\"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

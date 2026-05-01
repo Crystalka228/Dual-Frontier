@@ -10,7 +10,7 @@ using DualFrontier.Core.ECS;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Six-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
+/// Eight-phase validator executed before <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
 /// registration. Phase A checks that every loaded mod is compatible with the
 /// current <see cref="ContractsVersion"/>. Phase B inspects every mod system
 /// alongside the provided core systems and reports any write-write collision
@@ -27,9 +27,20 @@ namespace DualFrontier.Application.Modding;
 /// shared-mod compliance rules of MOD_OS_ARCHITECTURE §5.2: manifest must
 /// have empty <c>entryAssembly</c>, <c>entryType</c>, and <c>replaces</c>
 /// fields, and the loaded assembly must contain no <see cref="IMod"/>
-/// implementation. Phases A, B and E run unconditionally; phases C and D
-/// run only when a <see cref="KernelCapabilityRegistry"/> is supplied;
-/// phase F runs only when a shared-mod list is supplied to
+/// implementation. Phase G validates inter-mod dependency version
+/// constraints — every non-null <see cref="ModDependency.Version"/> must be
+/// satisfied by the declared version of the providing mod in the load batch.
+/// Missing providers are skipped silently;
+/// <see cref="ModIntegrationPipeline.CheckDependencyPresence"/> catches that
+/// case at M5.1 pipeline level.
+/// Phase H validates bridge replacement declarations from mods'
+/// <see cref="ModManifest.Replaces"/> lists — each FQN must resolve to a
+/// <c>[BridgeImplementation(Replaceable = true)]</c> system, no two mods
+/// may replace the same FQN, and the target type must exist in some loaded
+/// assembly. Per MOD_OS_ARCHITECTURE §7 LOCKED.
+/// Phases A, B, E, G and H run unconditionally;
+/// phases C and D run only when a <see cref="KernelCapabilityRegistry"/> is
+/// supplied; phase F runs only when a shared-mod list is supplied to
 /// <see cref="Validate"/>.
 ///
 /// Non-throwing by design: the pipeline decides whether to abort or surface
@@ -77,6 +88,8 @@ internal sealed class ContractValidator
         ValidateContractsVersions(mods, errors);
         ValidateWriteWriteConflicts(mods, coreSystems, errors);
         ValidateRegularModContractTypes(mods, errors);
+        ValidateInterModDependencyVersions(mods, errors);
+        ValidateBridgeReplacements(mods, errors);
 
         if (kernelCapabilities is not null)
         {
@@ -93,6 +106,21 @@ internal sealed class ContractValidator
         return new ValidationReport(isValid, errors, warnings);
     }
 
+    /// <summary>
+    /// Phase A — kernel API version compatibility. Dual-path for backward
+    /// compat: when <see cref="ModManifest.ApiVersion"/> is <see langword="null"/>
+    /// (v1 manifest), the legacy path parses
+    /// <see cref="ModManifest.RequiresContractsVersion"/> as a
+    /// <see cref="ContractsVersion"/> and uses
+    /// <see cref="ContractsVersion.IsCompatible"/>; failures surface as
+    /// <see cref="ValidationErrorKind.IncompatibleContractsVersion"/>. When
+    /// <see cref="ModManifest.ApiVersion"/> is non-null (v2 manifest), the
+    /// typed <see cref="VersionConstraint"/> pipeline checks
+    /// <see cref="VersionConstraint.IsSatisfiedBy"/> against
+    /// <see cref="ContractsVersion.Current"/> and surfaces failures as
+    /// <see cref="ValidationErrorKind.IncompatibleVersion"/> per
+    /// MOD_OS_ARCHITECTURE §11.2 M5 spec.
+    /// </summary>
     private static void ValidateContractsVersions(
         IReadOnlyList<LoadedMod> mods,
         List<ValidationError> errors)
@@ -101,29 +129,50 @@ internal sealed class ContractValidator
 
         foreach (LoadedMod mod in mods)
         {
-            // Phase A — contracts version. A malformed version string is
-            // treated as incompatible with a precise UI-facing message.
-            ContractsVersion required;
-            try
+            if (mod.Manifest.ApiVersion is null)
             {
-                required = ContractsVersion.Parse(mod.Manifest.RequiresContractsVersion);
-            }
-            catch (FormatException ex)
-            {
-                errors.Add(new ValidationError(
-                    mod.ModId,
-                    ValidationErrorKind.IncompatibleContractsVersion,
-                    $"Mod '{mod.ModId}' has invalid requiresContracts: {ex.Message}"));
-                continue;
-            }
+                // v1 manifest — preserve legacy behavior: parse
+                // RequiresContractsVersion as ContractsVersion, check via
+                // ContractsVersion.IsCompatible. Failure mode is legacy
+                // IncompatibleContractsVersion error kind.
+                ContractsVersion required;
+                try
+                {
+                    required = ContractsVersion.Parse(mod.Manifest.RequiresContractsVersion);
+                }
+                catch (FormatException ex)
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleContractsVersion,
+                        $"Mod '{mod.ModId}' has invalid requiresContracts: {ex.Message}"));
+                    continue;
+                }
 
-            if (!ContractsVersion.IsCompatible(required, current))
+                if (!ContractsVersion.IsCompatible(required, current))
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleContractsVersion,
+                        $"Mod '{mod.ModId}' requires DualFrontier.Contracts {required} " +
+                        $"but the current build provides {current}."));
+                }
+            }
+            else
             {
-                errors.Add(new ValidationError(
-                    mod.ModId,
-                    ValidationErrorKind.IncompatibleContractsVersion,
-                    $"Mod '{mod.ModId}' requires DualFrontier.Contracts {required} " +
-                    $"but the current build provides {current}."));
+                // v2 manifest — typed VersionConstraint pipeline.
+                // Failure mode is IncompatibleVersion (per §11.2 M5 spec).
+                VersionConstraint constraint = mod.Manifest.ApiVersion.Value;
+                if (!constraint.IsSatisfiedBy(current))
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleVersion,
+                        $"Mod '{mod.ModId}' requires DualFrontier.Contracts " +
+                        $"{constraint} but the current build provides {current}. " +
+                        "Per MOD_OS_ARCHITECTURE §8.1, kernel API constraint must " +
+                        "be satisfied at load time."));
+                }
             }
         }
     }
@@ -425,6 +474,212 @@ internal sealed class ContractValidator
         {
             if (m.ModId == modId)
                 return m;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Phase G — inter-mod dependency version check. For every
+    /// <see cref="ModDependency"/> with a non-null <c>Version</c> constraint,
+    /// finds the provider mod in the load batch and verifies the constraint
+    /// is satisfied by the provider's <see cref="ModManifest.Version"/>.
+    /// Missing provider mods are skipped silently — that case is
+    /// <see cref="ModIntegrationPipeline.CheckDependencyPresence"/>'s
+    /// responsibility (M5.1). A malformed provider version string surfaces
+    /// as <see cref="ValidationErrorKind.IncompatibleVersion"/> attributed
+    /// to the provider (the mod author's mistake).
+    ///
+    /// Cascade-failure semantics: errors accumulate; no mod is silently
+    /// dropped if its provider fails its own validation. Per
+    /// MOD_OS_ARCHITECTURE §8.7 and existing pipeline accumulation pattern.
+    /// </summary>
+    private static void ValidateInterModDependencyVersions(
+        IReadOnlyList<LoadedMod> mods,
+        List<ValidationError> errors)
+    {
+        foreach (LoadedMod mod in mods)
+        {
+            foreach (ModDependency dep in mod.Manifest.Dependencies)
+            {
+                if (!dep.Version.HasValue)
+                    continue;  // No version constraint — presence-only dep.
+
+                LoadedMod? provider = FindMod(mods, dep.ModId);
+                if (provider is null)
+                    continue;  // Missing provider — M5.1's CheckDependencyPresence handled it.
+
+                ContractsVersion providerVersion;
+                try
+                {
+                    providerVersion = ContractsVersion.Parse(provider.Manifest.Version);
+                }
+                catch (FormatException ex)
+                {
+                    errors.Add(new ValidationError(
+                        provider.ModId,
+                        ValidationErrorKind.IncompatibleVersion,
+                        $"Mod '{provider.ModId}' has invalid version " +
+                        $"'{provider.Manifest.Version}': {ex.Message}. " +
+                        "Per MOD_OS_ARCHITECTURE §2.2, the version field must " +
+                        "be a valid SemVer MAJOR.MINOR.PATCH."));
+                    continue;
+                }
+
+                if (!dep.Version.Value.IsSatisfiedBy(providerVersion))
+                {
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.IncompatibleVersion,
+                        $"Mod '{mod.ModId}' requires '{dep.ModId}' version " +
+                        $"{dep.Version.Value} but the loaded version is " +
+                        $"{providerVersion}. Per MOD_OS_ARCHITECTURE §8.7, " +
+                        "inter-mod dependency version constraints must be " +
+                        "satisfied. Update one or both mods, or remove the " +
+                        "dependency."));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Phase H — bridge replacement validation. For every mod in the batch with
+    /// a non-empty <see cref="ModManifest.Replaces"/> list, validates that:
+    /// (1) no two mods declare the same FQN in their <c>replaces</c> lists
+    /// (<see cref="ValidationErrorKind.BridgeReplacementConflict"/>);
+    /// (2) each FQN resolves to a <see cref="Type"/> annotated
+    /// <c>[BridgeImplementation(Replaceable = true)]</c>
+    /// (<see cref="ValidationErrorKind.ProtectedSystemReplacement"/> when the
+    /// flag is false or the attribute is missing entirely — non-bridge kernel
+    /// systems are authoritative);
+    /// (3) each FQN resolves to a real <see cref="Type"/> in some currently
+    /// loaded assembly
+    /// (<see cref="ValidationErrorKind.UnknownSystemReplacement"/> when no
+    /// match is found).
+    ///
+    /// Per MOD_OS_ARCHITECTURE §7 LOCKED — explicit replaces with no automatic
+    /// priority; two mods replacing the same system is a user-resolvable
+    /// conflict. Phase H sweeps every assembly in
+    /// <see cref="AppDomain.CurrentDomain"/> because FQN strings carry no
+    /// assembly hint, so kernel default-ALC types and types vended through the
+    /// shared / collectible ALCs are all reachable.
+    /// </summary>
+    private static void ValidateBridgeReplacements(
+        IReadOnlyList<LoadedMod> mods,
+        List<ValidationError> errors)
+    {
+        // Early-out: if no mod declares any replacement, the full sweep is
+        // pure overhead. Common case for typical load batches.
+        bool anyReplacements = false;
+        foreach (LoadedMod mod in mods)
+        {
+            if (mod.Manifest.Replaces.Count > 0)
+            {
+                anyReplacements = true;
+                break;
+            }
+        }
+        if (!anyReplacements) return;
+
+        // Step 1 — collect (modId, fqn) pairs and detect same-batch duplicates.
+        var fqnToMod = new Dictionary<string, string>(StringComparer.Ordinal);
+        var conflictedFqns = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (LoadedMod mod in mods)
+        {
+            foreach (string fqn in mod.Manifest.Replaces)
+            {
+                if (fqnToMod.TryGetValue(fqn, out string? existingModId))
+                {
+                    conflictedFqns.Add(fqn);
+
+                    // Symmetric reporting — both mods get an error so the UI
+                    // can flag both cards as conflicting.
+                    errors.Add(new ValidationError(
+                        mod.ModId,
+                        ValidationErrorKind.BridgeReplacementConflict,
+                        $"Mod '{mod.ModId}' replaces system '{fqn}' which is " +
+                        $"also replaced by mod '{existingModId}'. Per " +
+                        "MOD_OS_ARCHITECTURE §7.2, two mods may not replace " +
+                        "the same system in the same load batch — disable one " +
+                        "of the conflicting mods.",
+                        ConflictingModId: existingModId));
+
+                    errors.Add(new ValidationError(
+                        existingModId,
+                        ValidationErrorKind.BridgeReplacementConflict,
+                        $"Mod '{existingModId}' replaces system '{fqn}' which " +
+                        $"is also replaced by mod '{mod.ModId}'. Per " +
+                        "MOD_OS_ARCHITECTURE §7.2, two mods may not replace " +
+                        "the same system in the same load batch — disable one " +
+                        "of the conflicting mods.",
+                        ConflictingModId: mod.ModId));
+                }
+                else
+                {
+                    fqnToMod[fqn] = mod.ModId;
+                }
+            }
+        }
+
+        // Steps 2-3 — for each non-conflicted FQN, verify the target type
+        // exists and is annotated Replaceable=true.
+        foreach (KeyValuePair<string, string> kv in fqnToMod)
+        {
+            string fqn = kv.Key;
+            string modId = kv.Value;
+
+            // Conflicting FQNs already errored in step 1; secondary checks
+            // would just produce duplicate diagnostics.
+            if (conflictedFqns.Contains(fqn))
+                continue;
+
+            Type? targetType = ResolveTypeAcrossAssemblies(fqn);
+            if (targetType is null)
+            {
+                errors.Add(new ValidationError(
+                    modId,
+                    ValidationErrorKind.UnknownSystemReplacement,
+                    $"Mod '{modId}' replaces system '{fqn}' but no type with " +
+                    "this fully-qualified name exists in any loaded assembly. " +
+                    "Verify the FQN spelling and that the target assembly is " +
+                    "loaded. Per MOD_OS_ARCHITECTURE §7.2."));
+                continue;
+            }
+
+            BridgeImplementationAttribute? bridge =
+                targetType.GetCustomAttribute<BridgeImplementationAttribute>(inherit: false);
+            if (bridge is null || !bridge.Replaceable)
+            {
+                string reason = bridge is null
+                    ? "is not marked as a bridge ([BridgeImplementation] attribute missing)"
+                    : $"is marked [BridgeImplementation(Phase = {bridge.Phase})] but Replaceable=false";
+
+                errors.Add(new ValidationError(
+                    modId,
+                    ValidationErrorKind.ProtectedSystemReplacement,
+                    $"Mod '{modId}' replaces system '{fqn}' but the target " +
+                    $"{reason}. Per MOD_OS_ARCHITECTURE §7.4, only systems " +
+                    "with [BridgeImplementation(Replaceable = true)] may be " +
+                    "superseded by mods. Contact the engine team if this " +
+                    "system should become replaceable."));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Resolves a fully-qualified type name across every assembly currently
+    /// loaded into <see cref="AppDomain.CurrentDomain"/>. Returns
+    /// <see langword="null"/> when no match is found. The full sweep is
+    /// required because <see cref="ModManifest.Replaces"/> carries only
+    /// FQN strings, not assembly-qualified names.
+    /// </summary>
+    private static Type? ResolveTypeAcrossAssemblies(string fqn)
+    {
+        foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            Type? t = asm.GetType(fqn, throwOnError: false, ignoreCase: false);
+            if (t is not null)
+                return t;
         }
         return null;
     }
