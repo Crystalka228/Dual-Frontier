@@ -18,7 +18,18 @@ public sealed record PipelineResult(
     bool Success,
     IReadOnlyList<ValidationError> Errors,
     IReadOnlyList<string> LoadedModIds,
-    IReadOnlyList<string> FailedModIds);
+    IReadOnlyList<string> FailedModIds)
+{
+    /// <summary>
+    /// Non-blocking advisories produced during the apply — e.g. an optional
+    /// dependency missing from the load batch (M5.1). Populated on both the
+    /// success and failure paths so the UI can surface advisories regardless
+    /// of outcome. Always non-null; defaults to empty for backward
+    /// compatibility with callers that only consume the four positional
+    /// fields.
+    /// </summary>
+    public IReadOnlyList<ValidationWarning> Warnings { get; init; } = Array.Empty<ValidationWarning>();
+}
 
 /// <summary>
 /// Orchestrator for mod integration. Wires <see cref="ModLoader"/>,
@@ -93,9 +104,10 @@ internal sealed class ModIntegrationPipeline
         // manifests are parsed and split by ModKind. Manifests are kept so the
         // shared-mod cycle detector (D-5) can run before any assembly load.
         var sharedEntries = new List<(string Path, ModManifest Manifest)>();
-        var regularPaths = new List<string>();
+        var regularEntries = new List<(string Path, ModManifest Manifest)>();
         var preloadedRegulars = new List<LoadedMod>();
         var loadErrors = new List<ValidationError>();
+        var loadWarnings = new List<ValidationWarning>();
         var failed = new List<string>();
         var manifestsById = new Dictionary<string, ModManifest>(StringComparer.Ordinal);
 
@@ -116,7 +128,7 @@ internal sealed class ModIntegrationPipeline
                 if (manifest.Kind == ModKind.Shared)
                     sharedEntries.Add((path, manifest));
                 else
-                    regularPaths.Add(path);
+                    regularEntries.Add((path, manifest));
             }
             catch (Exception ex)
             {
@@ -135,9 +147,9 @@ internal sealed class ModIntegrationPipeline
         var sharedManifestList = new List<ModManifest>(sharedEntries.Count);
         foreach ((string _, ModManifest m) in sharedEntries)
             sharedManifestList.Add(m);
-        (IReadOnlyList<ModManifest> sortedShared, IReadOnlyList<ValidationError> cycleErrors) =
+        (IReadOnlyList<ModManifest> sortedShared, IReadOnlyList<ValidationError> sharedCycleErrors) =
             TopoSortSharedMods(sharedManifestList, manifestsById);
-        foreach (ValidationError e in cycleErrors)
+        foreach (ValidationError e in sharedCycleErrors)
         {
             loadErrors.Add(e);
             failed.Add(e.ModId);
@@ -146,6 +158,37 @@ internal sealed class ModIntegrationPipeline
         var pathByModId = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach ((string p, ModManifest m) in sharedEntries)
             pathByModId[m.Id] = p;
+        foreach ((string p, ModManifest m) in regularEntries)
+            pathByModId[m.Id] = p;
+
+        // [0.6] M5.1 — Regular-mod topological sort + dependency presence
+        // check. Cyclic regular mods produce CyclicDependency errors per
+        // MOD_OS_ARCHITECTURE §1.4 / §8.7 and are excluded from pass 2.
+        // Missing required deps produce MissingDependency errors; missing
+        // optional deps produce non-blocking ValidationWarnings. Pre-injected
+        // mods are not topologically sorted here (their dependencies were
+        // resolved on a prior Apply), but their dependencies do participate
+        // in the presence check so other mods' deps on them are recognized.
+        // Cascade-failure semantics: errors accumulate; no mod is silently
+        // skipped, the whole batch rolls back if any error fires.
+        var regularManifestList = new List<ModManifest>(regularEntries.Count);
+        foreach ((string _, ModManifest m) in regularEntries)
+            regularManifestList.Add(m);
+        (IReadOnlyList<ModManifest> sortedRegular, IReadOnlyList<ValidationError> regularCycleErrors) =
+            TopoSortRegularMods(regularManifestList, manifestsById);
+        foreach (ValidationError e in regularCycleErrors)
+        {
+            loadErrors.Add(e);
+            failed.Add(e.ModId);
+        }
+
+        (IReadOnlyList<ValidationError> missingErrors,
+         IReadOnlyList<ValidationWarning> missingOptionalWarnings) =
+            CheckDependencyPresence(manifestsById);
+        foreach (ValidationError e in missingErrors)
+            loadErrors.Add(e);
+        foreach (ValidationWarning w in missingOptionalWarnings)
+            loadWarnings.Add(w);
 
         // [1] Pass 1 — shared mods in topological order. Each LoadSharedMod
         // call places its assembly in the singleton shared ALC and returns
@@ -168,13 +211,15 @@ internal sealed class ModIntegrationPipeline
             }
         }
 
-        // [2] Pass 2 — regular mods. Each ModLoadContext is wired to the
-        // shared ALC so types defined by shared mods resolve to the same
-        // Type instance across regular mods (MOD_OS_ARCHITECTURE §5.3).
+        // [2] Pass 2 — regular mods in topological order from [0.6]. Cyclic
+        // regulars are excluded (not in sortedRegular). Each ModLoadContext
+        // is wired to the shared ALC so types defined by shared mods resolve
+        // to the same Type instance across regular mods (§5.3).
         var loaded = new List<LoadedMod>();
         loaded.AddRange(preloadedRegulars);
-        foreach (string path in regularPaths)
+        foreach (ModManifest m in sortedRegular)
         {
+            string path = pathByModId[m.Id];
             try
             {
                 loaded.Add(_loader.LoadRegularMod(path, _sharedAlc));
@@ -198,6 +243,9 @@ internal sealed class ModIntegrationPipeline
             kernelCapabilities: null,
             sharedMods: sharedLoaded);
 
+        IReadOnlyList<ValidationWarning> mergedWarnings =
+            MergeWarnings(loadWarnings, report.Warnings);
+
         if (!report.IsValid || loadErrors.Count > 0)
         {
             RollbackLoaded(loaded);
@@ -206,7 +254,10 @@ internal sealed class ModIntegrationPipeline
                 Success: false,
                 Errors: errors,
                 LoadedModIds: Array.Empty<string>(),
-                FailedModIds: CollectFailedIds(loaded, failed));
+                FailedModIds: CollectFailedIds(loaded, failed))
+            {
+                Warnings = mergedWarnings,
+            };
         }
 
         // [4] IMod.Initialize — the mod registers components/systems through IModApi.
@@ -240,7 +291,10 @@ internal sealed class ModIntegrationPipeline
                 Success: false,
                 Errors: initErrors,
                 LoadedModIds: Array.Empty<string>(),
-                FailedModIds: CollectModIds(initFailed));
+                FailedModIds: CollectModIds(initFailed))
+            {
+                Warnings = mergedWarnings,
+            };
         }
 
         // [5-7] Build the graph in a local variable — replace the scheduler only on success.
@@ -268,7 +322,10 @@ internal sealed class ModIntegrationPipeline
                         Message: $"Dependency graph build failed: {ex.Message}"),
                 },
                 LoadedModIds: Array.Empty<string>(),
-                FailedModIds: CollectModIds(loaded));
+                FailedModIds: CollectModIds(loaded))
+            {
+                Warnings = mergedWarnings,
+            };
         }
 
         // [8] Atomically swap the scheduler's phases. The previous graph is no longer needed.
@@ -280,7 +337,10 @@ internal sealed class ModIntegrationPipeline
             Success: true,
             Errors: Array.Empty<ValidationError>(),
             LoadedModIds: CollectModIds(loaded),
-            FailedModIds: failed);
+            FailedModIds: failed)
+        {
+            Warnings = mergedWarnings,
+        };
     }
 
     /// <summary>
@@ -355,6 +415,18 @@ internal sealed class ModIntegrationPipeline
         var merged = new List<ValidationError>(a.Count + b.Count);
         foreach (ValidationError e in a) merged.Add(e);
         foreach (ValidationError e in b) merged.Add(e);
+        return merged;
+    }
+
+    private static IReadOnlyList<ValidationWarning> MergeWarnings(
+        IReadOnlyList<ValidationWarning> a,
+        IReadOnlyList<ValidationWarning> b)
+    {
+        if (a.Count + b.Count == 0)
+            return Array.Empty<ValidationWarning>();
+        var merged = new List<ValidationWarning>(a.Count + b.Count);
+        foreach (ValidationWarning w in a) merged.Add(w);
+        foreach (ValidationWarning w in b) merged.Add(w);
         return merged;
     }
 
