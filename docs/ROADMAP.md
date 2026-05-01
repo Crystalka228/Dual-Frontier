@@ -8,7 +8,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 
 ## Status overview
 
-*Updated: 2026-04-29 (M4 closed — M4.1, M4.2, M4.3 done; M5 next).*
+*Updated: 2026-04-30 (M5 closed — M5.1, M5.2 done; M6 next).*
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -25,7 +25,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | **M3 — Capability model** | ✅ Closed | added (`KernelCapabilityRegistryTests`, `RestrictedModApiV2Tests`, `CapabilityValidationTests`, `ProductionComponentCapabilityTests`) | M3.1 `KernelCapabilityRegistry` + `[ModAccessible]` opt-in; M3.2 capability-enforcing `RestrictedModApi` (Publish/Subscribe runtime check, hybrid per `MOD_OS_ARCHITECTURE` §3.6 v1.2); M3.3 `[ModCapabilities]` + load-time cross-check (`ContractValidator` Phases C+D); M3.4 deferred |
 | M3.4 — CI capability analyzer | ⏸ Deferred | — | Roslyn analyzer for `[ModCapabilities]` honesty (D-2 hybrid completion); unblocked when first external mod author appears |
 | **M4 — Shared ALC** | ✅ Closed | added (`CrossAlcTypeIdentityTests`, `SharedAssemblyResolutionTests`, `ContractTypeInRegularModTests`, `SharedModComplianceTests`) | M4.1 `SharedModLoadContext` + two-pass loader + cross-ALC type identity; M4.2 `ContractValidator` Phase E enforces D-4 (no contract types in regular mods); M4.3 D-5 LOCKED shared-mod cycle detection + Phase F enforces §5.2 shared-mod compliance |
-| M5 — Version constraints | ⏭ Pending | — | Caret-syntax inter-mod deps |
+| **M5 — Version constraints** | ✅ Closed | added (`RegularModTopologicalSortTests`, `DependencyPresenceTests`, `M51PipelineIntegrationTests`, `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, `M52IntegrationTests`) | M5.1 pipeline regular-mod toposort + dependency presence (`MissingDependency` / optional warning); M5.2 `ContractValidator` Phase A v1/v2 dual-path modernization + Phase G inter-mod version check; cascade-failure semantics ratified as deliberate accumulation (per §8.7) |
 | M6 — Bridge replacement | ⏭ Pending | — | Explicit `replaces` |
 | M7 — Hot reload | ⏭ Pending | — | Menu-driven, paused-only |
 | M8 — Vanilla skeletons | ⏭ Pending | — | Five empty mod assemblies |
@@ -33,7 +33,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | M10 — Remaining vanilla | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental |
 | Phase 9 — Native Runtime | ⏭ Post-launch | — | Separate large project |
 
-**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). **Total at M4 closure: 281/281 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
+**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). M5 added `RegularModTopologicalSortTests`, `DependencyPresenceTests`, and `M51PipelineIntegrationTests` (M5.1) plus `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, and `M52IntegrationTests` (M5.2). **Total at M5 closure: 311/311 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
 
 ---
 
@@ -223,26 +223,26 @@ Goal achieved: shared `AssemblyLoadContext`, two-pass mod loading, cross-ALC typ
 
 ---
 
-### M5 — Inter-mod dependency resolution with caret syntax
+### ✅ M5 — Inter-mod dependency resolution with caret syntax (closed)
 
-Goal: extend `ModIntegrationPipeline` to resolve mod dependencies using the three-tier SemVer model from `MOD_OS_ARCHITECTURE` §8.
+Goal achieved: `ModIntegrationPipeline` resolves regular-mod dependencies using the three-tier SemVer model from `MOD_OS_ARCHITECTURE` §8. Regular-mod topological sort, dependency presence check, and validator-level inter-mod version check are operational; cascade-failure semantics ratified as deliberate accumulation per §8.7.
+
+**Sub-phase status:**
+
+- **M5.1 ✅ Closed.** Acceptance: regular-mod topological sort via `TopoSortByPredicate` (extracted from `TopoSortSharedMods`) detects regular-mod cycles before assembly load; dependency presence check produces `MissingDependency` for required deps and a `ValidationWarning` for optional deps; pass `[0.6]` in `ModIntegrationPipeline.Apply` runs between shared-mod cycle detection and shared-mod load; `PipelineResult.Warnings` field flows through every return path. Commits: `fffd785` (extract `TopoSortByPredicate` from `TopoSortSharedMods`), `13400bb` (add `TopoSortRegularMods` + `CheckDependencyPresence` helpers), `a3968f4` (wire regular-mod toposort and dep presence into pipeline), `bab4d85` (integration tests). Tests: `RegularModTopologicalSortTests` (6), `DependencyPresenceTests` (4), `M51PipelineIntegrationTests` (4).
+
+- **M5.2 ✅ Closed.** Acceptance: `ContractValidator` Phase A modernized for v1/v2 dual-path — legacy `IncompatibleContractsVersion` retained for v1 manifests, new `IncompatibleVersion` emitted for v2 manifests through the full `VersionConstraint` pipeline; `ContractValidator` Phase G inter-mod dependency version check produces `IncompatibleVersion` when a regular mod's `dependencies[i].version` constraint is unsatisfied by the depended-on mod's actual version; `ContractValidator` class XML-doc updated to "seven-phase validator" (Phases A–G). Commits: `50efe9d` (Phase A modernization for v2 manifests via `VersionConstraint` pipeline), `f8f18ee` (Phase G inter-mod dependency version check), `376be7e` (integration tests). Tests: `PhaseAModernizationTests` (6), `PhaseGInterModVersionTests` (7), `M52IntegrationTests` (3).
+
+**Cascade-failure semantics — accumulation, not skip.** Per §8.7 of [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), "the failed set is presented to the user; the success set proceeds to load." M5 implementation interprets this as: when mod A depends on mod B and B fails its own validation (any phase), A is **not** silently dropped — A's own validation runs to completion, and any independent errors A produces also surface. Both errors appear in `result.Errors`. This matches the existing pipeline accumulation pattern (Phases B / C / D / E / F / G all accumulate without short-circuit) and gives mod authors maximum diagnostic information per `Apply` call. Demonstrated by:
+
+- Validator-level: `Mod_WithCascadeFailure_BothErrorsReportedNotSkipped` (`PhaseGInterModVersionTests`).
+- Pipeline-level: `Apply_WithCascadeFailure_SurfacesBothErrors` (`M52IntegrationTests`).
+
+This is a deliberate interpretation of §8.7 wording "cascade-fail," registered here per [METHODOLOGY](./METHODOLOGY.md)'s "no improvisation" rule. If the interpretation needs revision, escalate via §12 ratification process.
 
 **Consumes decisions:** strategic lock 5 (caret syntax for inter-mod deps).
 
-**What we implement**
-
-- `VersionConstraint` struct with `Kind` (`Exact`, `Caret`) and `IsSatisfiedBy(ContractsVersion)`.
-- `VersionConstraint.Parse` accepts `"1.2.3"` (Exact) and `"^1.2.3"` (Caret); rejects tilde and ranges with a clear `FormatException`.
-- `ModDependency.Version` is a `VersionConstraint`.
-- `ModIntegrationPipeline.Apply` resolution order:
-  1. Parse all manifests, collect into a load batch.
-  2. Topological sort by `dependencies` (cycle ⇒ `CyclicDependency`).
-  3. For each mod in topological order: verify `apiVersion` against `ContractsVersion.Current`, then verify each dependency's version against the loaded mod's `version` field.
-  4. Cascade failures: a mod that depends on a failed mod is added to the failed set.
-- New `ValidationErrorKind.IncompatibleVersion` replacing ad-hoc string errors currently used for `apiVersion` failures.
-- No backtracking solver. Manifests are taken at face value; unsatisfied constraints surface as user-resolvable errors.
-
-**Acceptance criteria**
+**Acceptance criteria met (per `MOD_OS_ARCHITECTURE` §11.1):**
 
 - Mod A v1.0.0, Mod B requires `^1.0.0` of A: load succeeds.
 - Mod A v2.0.0, Mod B requires `^1.0.0` of A: Mod B rejected with `IncompatibleVersion`.
