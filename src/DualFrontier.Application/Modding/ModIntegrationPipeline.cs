@@ -298,11 +298,30 @@ internal sealed class ModIntegrationPipeline
         }
 
         // [5-7] Build the graph in a local variable — replace the scheduler only on success.
+        // Per MOD_OS_ARCHITECTURE §7.1 step 3, every kernel system whose FQN
+        // appears in any mod's manifest.Replaces list is skipped here: the
+        // bridge stays compiled but is never registered with the scheduler.
+        // The mod's replacement system was registered through
+        // IModApi.RegisterSystem during step [4] above and lives in
+        // _registry as SystemOrigin.Mod, so it is added by the loop below
+        // along with all other mod systems. Phase H (M6.1) has already
+        // verified each FQN points at a [BridgeImplementation(Replaceable=true)]
+        // type and that no two mods replace the same FQN — by the time we
+        // reach this step, replacedFqns contains only valid skip targets.
+        HashSet<string> replacedFqns = CollectReplacedFqns(loaded);
         var localGraph = new DependencyGraph();
         try
         {
             foreach (SystemRegistration reg in _registry.GetAllSystems())
+            {
+                if (reg.Origin == SystemOrigin.Core)
+                {
+                    string? fqn = reg.Instance.GetType().FullName;
+                    if (fqn is not null && replacedFqns.Contains(fqn))
+                        continue;
+                }
                 localGraph.AddSystem(reg.Instance);
+            }
             localGraph.Build();
         }
         catch (Exception ex)
@@ -429,6 +448,54 @@ internal sealed class ModIntegrationPipeline
         foreach (ValidationWarning w in b) merged.Add(w);
         return merged;
     }
+
+    /// <summary>
+    /// Collects every fully-qualified system type name declared in any mod's
+    /// <see cref="ModManifest.Replaces"/> across the load batch. The pipeline
+    /// uses this set in step [5-7] to skip kernel bridge systems superseded
+    /// by mod replacements during dependency-graph construction
+    /// (MOD_OS_ARCHITECTURE §7.1 step 3).
+    ///
+    /// Pre-conditions: Phase H validation has already been run by
+    /// <see cref="ContractValidator"/> in step [3] and produced no errors.
+    /// That means duplicates across mods (BridgeReplacementConflict),
+    /// non-Replaceable targets (ProtectedSystemReplacement) and unknown
+    /// FQNs (UnknownSystemReplacement) have all been rejected before this
+    /// helper is reached. The helper itself is dedup-safe: an
+    /// <see cref="StringComparer.Ordinal"/>-keyed
+    /// <see cref="HashSet{T}"/> swallows accidental duplicates.
+    ///
+    /// Iterates regular mods only — shared mods cannot meaningfully populate
+    /// <see cref="ModManifest.Replaces"/>; <see cref="ContractValidator"/>
+    /// Phase F (M4.3) already rejects shared mods that try, so the field is
+    /// effectively empty for them and the iteration cost is dominated by the
+    /// regular-mod set.
+    /// </summary>
+    /// <param name="loaded">Regular mods successfully loaded by step [2].</param>
+    /// <returns>
+    /// Set of FQN strings the graph build must skip. Empty when no mod in
+    /// the batch declared any replacement.
+    /// </returns>
+    private static HashSet<string> CollectReplacedFqns(IReadOnlyList<LoadedMod> loaded)
+    {
+        var result = new HashSet<string>(StringComparer.Ordinal);
+        foreach (LoadedMod mod in loaded)
+        {
+            foreach (string fqn in mod.Manifest.Replaces)
+                result.Add(fqn);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Test seam over <see cref="CollectReplacedFqns"/> — the production
+    /// helper is private static, this exposes it through
+    /// <c>InternalsVisibleTo</c> for helper-level coverage of the skip-set
+    /// construction logic without forcing tests through the full
+    /// <see cref="Apply"/> orchestration.
+    /// </summary>
+    internal static HashSet<string> CollectReplacedFqnsForTests(IReadOnlyList<LoadedMod> loaded)
+        => CollectReplacedFqns(loaded);
 
     /// <summary>
     /// Topologically orders the given shared mod manifests by their inter-shared
