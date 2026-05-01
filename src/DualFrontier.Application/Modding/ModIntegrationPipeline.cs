@@ -51,6 +51,16 @@ public sealed record PipelineResult(
 /// build. Any exception earlier in the chain rolls back regular-mod
 /// registration and leaves the scheduler untouched. Shared mods, once
 /// loaded, persist for the session.
+///
+/// Per-mod unload discipline (M7.2, per MOD_OS_ARCHITECTURE v1.4 §9.5):
+/// <see cref="UnloadMod"/> implements steps 1–6 of the unload chain
+/// (UnsubscribeAll → RevokeAll → RemoveMod → graph rebuild → scheduler
+/// swap → ALC.Unload). Each step is wrapped in best-effort try/catch per
+/// §9.5.1; failures surface as <see cref="ValidationWarning"/> entries in
+/// the returned list and the chain continues. Step 7 (WeakReference
+/// verification with GC pump per §9.5 step 7) lands in M7.3.
+/// <see cref="UnloadAll"/> now delegates to <see cref="UnloadMod"/> per
+/// mod and returns the accumulated warnings.
 /// </summary>
 internal sealed class ModIntegrationPipeline
 {
@@ -316,6 +326,7 @@ internal sealed class ModIntegrationPipeline
         foreach (LoadedMod mod in loaded)
         {
             var api = new RestrictedModApi(mod.ModId, mod.Manifest, _registry, _contractStore, _services, _kernelCapabilities);
+            mod.Api = api;  // M7.2 — retain for unload chain step 1 per §9.5.
             try
             {
                 mod.Instance.Initialize(api);
@@ -413,31 +424,194 @@ internal sealed class ModIntegrationPipeline
     }
 
     /// <summary>
-    /// Unloads every regular mod currently managed by the pipeline and
-    /// rebuilds the scheduler with only the core systems. Safe to call even
-    /// when no mod is active — in that case only the scheduler is rebuilt.
-    /// Shared mods are not unloaded: the shared ALC is non-collectible per
-    /// MOD_OS_ARCHITECTURE §5.1.
+    /// Unloads a single mod by id per MOD_OS_ARCHITECTURE v1.4 §9.5 steps
+    /// 1–6 + §9.5.1 best-effort failure discipline. Each step is wrapped
+    /// in a try/catch; on exception a non-blocking
+    /// <see cref="ValidationWarning"/> is recorded with
+    /// <c>(modId, stepNumber)</c> and the chain continues to the next
+    /// step. There is no atomic-unload guarantee — <c>Unload</c> is
+    /// conceptually irreversible (subscriptions removed in step 1 cannot
+    /// be re-attached without re-running <see cref="IModApi.Subscribe{T}"/>),
+    /// and the chain is structured so each step is a no-op if its
+    /// predecessor failed (e.g. <see cref="ModRegistry.RemoveMod"/> on a
+    /// mod with no registered systems is harmless).
+    ///
+    /// Step 7 (<c>WeakReference</c> spin loop with GC pump per v1.4 §9.5
+    /// step 7) is NOT performed here — that lands in M7.3 alongside the
+    /// Phase 2 carried debt unload tests. M7.2's chain stops at step 6
+    /// (<c>ALC.Unload</c>) and leaves verification of actual assembly
+    /// release to M7.3.
+    ///
+    /// Idempotent: calling <see cref="UnloadMod"/> for a
+    /// <paramref name="modId"/> not currently in <c>_activeMods</c>
+    /// returns an empty warning list and does not throw.
     /// </summary>
-    public void UnloadAll()
+    /// <param name="modId">Identifier from <see cref="ModManifest.Id"/>.</param>
+    /// <returns>
+    /// Warnings collected during best-effort step execution. Empty list
+    /// when every step succeeded or when the mod was not active.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">
+    /// If <see cref="IsRunning"/> is true. Per v1.4 §9.3, mods cannot be
+    /// unloaded while the scheduler is ticking.
+    /// </exception>
+    public IReadOnlyList<ValidationWarning> UnloadMod(string modId)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (_isRunning)
+            throw new InvalidOperationException(
+                "Pause the scheduler before unloading mods");
+
+        LoadedMod? mod = null;
+        foreach (LoadedMod m in _activeMods)
+        {
+            if (StringComparer.Ordinal.Equals(m.ModId, modId))
+            {
+                mod = m;
+                break;
+            }
+        }
+        if (mod is null)
+            return Array.Empty<ValidationWarning>();
+
+        var warnings = new List<ValidationWarning>();
+
+        // Step 1 — drop bus subscriptions. RestrictedModApi.UnsubscribeAll
+        // iterates _subscriptions and calls each captured Unsubscribe action.
+        TryUnloadStep(1, modId, warnings, () =>
+        {
+            mod.Api?.UnsubscribeAll();
+        });
+
+        // Step 2 — drop contract registrations. ModContractStore.RevokeAll
+        // is the existing primitive used by validation-failure rollback (M2).
+        TryUnloadStep(2, modId, warnings, () =>
+        {
+            _contractStore.RevokeAll(modId);
+        });
+
+        // Step 3 — drop system instances. ModRegistry.RemoveMod is the
+        // per-mod surface (bulk variant ResetModSystems is what UnloadAll
+        // historically used; M7.2 introduces per-mod cleanup precisely so
+        // hot-reload of a single mod doesn't disturb the others).
+        TryUnloadStep(3, modId, warnings, () =>
+        {
+            _registry.RemoveMod(modId);
+        });
+
+        // Steps 4 + 5 — rebuild graph without the mod's systems and swap
+        // the scheduler. Coupled atomically: the rebuilt graph must reach
+        // the scheduler before step 6 (ALC.Unload) drops the assembly,
+        // otherwise the scheduler would briefly reference systems whose
+        // types are being collected.
+        TryUnloadStep(4, modId, warnings, () =>
+        {
+            var localGraph = new DependencyGraph();
+            foreach (SystemRegistration reg in _registry.GetAllSystems())
+                localGraph.AddSystem(reg.Instance);
+            localGraph.Build();
+            _scheduler.Rebuild(localGraph.GetPhases());
+        });
+
+        // Step 6 — ALC.Unload. ModLoader.UnloadMod also calls
+        // mod.Instance.Unload (IMod cleanup hook) and removes from
+        // ModLoader._loaded. The IMod.Unload call is consistent with
+        // §9.5.1 best-effort: ModLoader's existing swallowed try/catch
+        // around it is the canonical example of the discipline.
+        TryUnloadStep(6, modId, warnings, () =>
+        {
+            _loader.UnloadMod(modId);
+        });
+
+        // Remove from _activeMods regardless of any step's success — per
+        // §9.5.1, the mod is removed from the active set even if the
+        // assembly didn't actually unload.
+        _activeMods.Remove(mod);
+
+        return warnings;
+    }
+
+    /// <summary>
+    /// Unloads every regular mod currently managed by the pipeline by
+    /// calling <see cref="UnloadMod"/> for each in turn, then forces a
+    /// final scheduler rebuild to ensure the kernel-only graph is
+    /// installed even when the active list was empty. Safe to call when
+    /// no mod is active — only the scheduler rebuild runs in that case.
+    /// Shared mods are not unloaded: the shared ALC is non-collectible
+    /// per MOD_OS_ARCHITECTURE §5.1.
+    ///
+    /// Per v1.4 §9.5.1, best-effort: warnings from individual
+    /// <see cref="UnloadMod"/> calls are accumulated and returned. The
+    /// bulk-unload semantics are preserved (every active mod is removed
+    /// from <c>_activeMods</c> regardless of step-level failures).
+    /// </summary>
+    /// <returns>
+    /// Warnings accumulated across every per-mod unload chain. Empty
+    /// when every mod unloaded cleanly or no mods were active.
+    /// </returns>
+    public IReadOnlyList<ValidationWarning> UnloadAll()
     {
         if (_isRunning)
             throw new InvalidOperationException(
                 "Pause the scheduler before unloading mods");
 
-        foreach (LoadedMod mod in _activeMods)
-        {
-            _contractStore.RevokeAll(mod.ModId);
-            _loader.UnloadMod(mod.ModId);
-        }
-        _activeMods.Clear();
-        _registry.ResetModSystems();
+        var warnings = new List<ValidationWarning>();
 
-        var localGraph = new DependencyGraph();
-        foreach (SystemRegistration reg in _registry.GetAllSystems())
-            localGraph.AddSystem(reg.Instance);
-        localGraph.Build();
-        _scheduler.Rebuild(localGraph.GetPhases());
+        // Snapshot _activeMods before iterating — UnloadMod mutates the list.
+        var modIds = new List<string>(_activeMods.Count);
+        foreach (LoadedMod mod in _activeMods)
+            modIds.Add(mod.ModId);
+
+        foreach (string modId in modIds)
+        {
+            IReadOnlyList<ValidationWarning> perModWarnings = UnloadMod(modId);
+            foreach (ValidationWarning w in perModWarnings)
+                warnings.Add(w);
+        }
+
+        // Final scheduler rebuild for the empty-active-set case. UnloadMod
+        // has already rebuilt the scheduler per mod above; for the
+        // no-mods-active path we still want the kernel-only graph
+        // reinstalled — same semantics as the v1 UnloadAll.
+        if (modIds.Count == 0)
+        {
+            var localGraph = new DependencyGraph();
+            foreach (SystemRegistration reg in _registry.GetAllSystems())
+                localGraph.AddSystem(reg.Instance);
+            localGraph.Build();
+            _scheduler.Rebuild(localGraph.GetPhases());
+        }
+
+        return warnings;
+    }
+
+    /// <summary>
+    /// Wraps a single unload-chain step in best-effort try/catch per
+    /// MOD_OS_ARCHITECTURE v1.4 §9.5.1. On exception, records a
+    /// <see cref="ValidationWarning"/> attributed to <paramref name="modId"/>
+    /// with the failing step number and message, then returns so the next
+    /// step in <see cref="UnloadMod"/> can run. The mod is removed from
+    /// the active set regardless of any step's outcome.
+    /// </summary>
+    private static void TryUnloadStep(
+        int stepNumber,
+        string modId,
+        List<ValidationWarning> warnings,
+        Action action)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception ex)
+        {
+            warnings.Add(new ValidationWarning(
+                modId,
+                $"Unload step {stepNumber} failed for mod '{modId}': {ex.Message}. " +
+                "Per MOD_OS_ARCHITECTURE v1.4 §9.5.1, unload is best-effort; " +
+                "subsequent steps continue. The mod has been removed from the " +
+                "active set regardless."));
+        }
     }
 
     private IReadOnlyList<SystemBase> GetCoreSystemInstances()

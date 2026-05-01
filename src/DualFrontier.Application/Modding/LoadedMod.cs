@@ -26,4 +26,22 @@ internal sealed record LoadedMod(
     ModManifest Manifest,
     IMod Instance,
     ModLoadContext Context,
-    IReadOnlyList<Type> DeclaredSystemTypes);
+    IReadOnlyList<Type> DeclaredSystemTypes)
+{
+    /// <summary>
+    /// The <see cref="RestrictedModApi"/> instance issued to this mod by
+    /// <see cref="ModIntegrationPipeline.Apply"/> step [4]. Retained on the
+    /// mod so the unload chain (MOD_OS_ARCHITECTURE v1.4 §9.5 step 1) can
+    /// invoke <see cref="RestrictedModApi.UnsubscribeAll"/> to drop bus
+    /// subscriptions before the assembly is released.
+    ///
+    /// Null until the pipeline assigns it during <c>Apply</c>; remains
+    /// non-null for the lifetime of the loaded mod. Settable internally
+    /// only — mods themselves cannot reach <see cref="LoadedMod"/> through
+    /// <see cref="IModApi"/> per the §4.4 cast-prevention rule. Adding the
+    /// field as an out-of-header member rather than a positional record
+    /// parameter preserves every existing <c>new LoadedMod(...)</c> call
+    /// site from M0–M6.
+    /// </summary>
+    public RestrictedModApi? Api { get; internal set; }
+}
