@@ -100,7 +100,7 @@ The save-game compatibility policy when a mod is missing (mod-OS decision D-6) t
 
 ## 🔨 Mod-OS Migration (M0–M10)
 
-The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.3 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
+The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.4 §11. Each M-phase has a clear output artifact, acceptance criteria, and the set of architectural decisions (D-N) it consumes. Phases run in strict order — M(N+1) depends on M(N) — except where noted.
 
 ### ✅ M0 — Mod-OS Phase 0 (closed)
 
