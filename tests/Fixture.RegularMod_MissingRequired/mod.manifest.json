@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.missreq",
+  "name": "Regular Mod (missing required dep)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_MissingRequired.dll",
+  "entryType": "Fixture.RegularMod_MissingRequired.MissingRequiredMod",
+  "dependencies": [
+    { "id": "tests.regular.absent" }
+  ]
+}

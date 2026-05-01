@@ -43,5 +43,29 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <Private>false</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_DependsOnAnother\Fixture.RegularMod_DependsOnAnother.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_DependedOn\Fixture.RegularMod_DependedOn.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_CyclicA\Fixture.RegularMod_CyclicA.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_CyclicB\Fixture.RegularMod_CyclicB.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_MissingRequired\Fixture.RegularMod_MissingRequired.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.RegularMod_MissingOptional\Fixture.RegularMod_MissingOptional.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

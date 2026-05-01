@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.cycb",
+  "name": "Regular Mod CyclicB (depends on tests.regular.cyca)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_CyclicB.dll",
+  "entryType": "Fixture.RegularMod_CyclicB.CyclicBMod",
+  "dependencies": [
+    { "id": "tests.regular.cyca" }
+  ]
+}

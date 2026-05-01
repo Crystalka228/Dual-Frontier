@@ -1,0 +1,12 @@
+{
+  "id": "tests.regular.missopt",
+  "name": "Regular Mod (missing optional dep)",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "entryAssembly": "Fixture.RegularMod_MissingOptional.dll",
+  "entryType": "Fixture.RegularMod_MissingOptional.MissingOptionalMod",
+  "dependencies": [
+    { "id": "tests.regular.absent", "optional": true }
+  ]
+}
