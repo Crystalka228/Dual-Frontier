@@ -5,7 +5,7 @@ nav_order: 25
 
 # Mod OS Architecture — Dual Frontier
 
-**Status:** LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
+**Status:** LOCKED v1.4 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), and M7 pre-flight readiness review (v1.4) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
 
 **Version history:**
 
@@ -20,9 +20,13 @@ nav_order: 25
   - §3.5 + §2.1: production components consumed by the §2.1 example manifest (`WeaponComponent`, `ArmorComponent`, `AmmoComponent`, `ShieldComponent`, `HealthComponent`) annotated with `[ModAccessible]` per D-1 LOCKED. The §2.1 example itself was expanded to include `kernel.read:AmmoComponent` and `kernel.read:ShieldComponent` — Vanilla.Combat requires both (ammo accounting per §11 of the original Phase 5 spec, shield damage routing per §6.4 of the GDD), but the v1.0/v1.1 example listed only three components as a sketch. v1.2 brings the example in line with what a real combat mod actually needs. Without these annotations the §2.1 example manifest would fail Phase C with `MissingCapability` — the spec example is now end-to-end loadable.
   - §11.1: M3.4 added as deferred milestone (CI Roslyn analyzer per D-2 hybrid completion). M3.1, M3.2, M3.3 closed by M3 closure review; M3.4 unblocked when the first external (non-vanilla) mod author appears — runtime `CapabilityViolationException` already catches dishonest `[ModCapabilities]` attributes, so the analyzer is developer-experience tooling for early feedback before publication, not a runtime safety boundary.
   - No semantic changes. No locked decision (D-1 through D-7) is altered. M3 implementations continue to comply.
-- v1.3 (this version) — non-semantic correction from the M4.3 implementation review:
+- v1.3 — non-semantic correction from the M4.3 implementation review:
   - §2.2: `entryAssembly` and `entryType` rows in the manifest field reference table reworded from "ignored for `kind=shared`" to "must be empty for `kind=shared`". The v1.0–v1.2 wording contradicted §5.2 step 1, which explicitly requires these fields to be empty for shared mods. The M4.3 implementation (`ContractValidator` Phase F, commit `e0151d8`) enforces §5.2 wording — non-empty `entryAssembly` or `entryType` on a shared mod manifest produces `ValidationErrorKind.SharedModWithEntryPoint`. v1.3 brings §2.2 in line with §5.2 and the implementation.
   - No semantic changes. No locked decision (D-1 through D-7) is altered. M4 implementations continue to comply.
+- v1.4 (this version) — non-semantic clarifications from the M7 pre-flight readiness review:
+  - §9.5 step 7: explicit GC pump protocol added. Each iteration of the `WeakReference` spin loop performs `GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect()` before re-checking `WeakReference.IsAlive`. The double-collect bracket is required because `WaitForPendingFinalizers` can resurrect finalizable graph nodes the first collect would have removed; the second collect picks those up, restoring monotonic progress. Default cadence: 100 iterations × 100 ms = 10 s timeout (matches the §9.5 step 7 v1.0 wording). The cadence is implementation-tunable; the GC pump bracket is mandatory. Without this clarification the v1.0 wording «spins on `WeakReference`» admits flaky implementations, and the §11.4 stop condition («WeakReference unload tests are flaky — any failure rate above 0%») would trigger spuriously. v1.4 brings §9.5 step 7 in line with the only stable implementation pattern.
+  - §9.5: new sub-section §9.5.1 «Failure semantics» added, locking the best-effort discipline already implicit in the chain. Steps 1–6 are sequential and best-effort: if any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. The `ModLoader.UnloadMod` swallowed `try/catch` around `mod.Instance.Unload()` (in place since M0) is consistent with this discipline. After step 6, if step 7 times out, the existing `ModUnloadTimeout` warning fires; the mod is removed from the active set regardless. There is no atomic-unload guarantee — `Unload` is conceptually irreversible (subscriptions removed cannot be re-attached without re-running `Subscribe`); the chain is structured so each step is a no-op if its predecessor failed (e.g. `RemoveSystems` on a mod with no registered systems is harmless). This formalises a discipline the M0–M6 implementation already follows; no new state is introduced to §9.1.
+  - No semantic changes. No locked decision (D-1 through D-7) is altered. No state added to §9.1. M0–M6 implementations continue to comply.
 
 ---
 
@@ -758,9 +762,15 @@ The fine-grained handling of component data from missing mods is delegated to th
 4. The dependency graph is rebuilt without this mod's systems.
 5. The scheduler swaps to the new phase list.
 6. `ALC.Unload()` is called.
-7. The loader spins on `WeakReference` checking that the assembly is unloaded before declaring success. A timeout (default 10 seconds) escalates to a `ModUnloadTimeout` warning; the mod is marked as a leaked reference and the user is advised to restart.
+7. The loader spins on `WeakReference.IsAlive`, polling each iteration. Before every poll the loader performs `GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect()` — the double-collect bracket is required because `WaitForPendingFinalizers` can resurrect finalizable graph nodes the first collect would have removed; the second collect picks those up, restoring monotonic progress. Default cadence: 100 iterations × 100 ms = 10 s timeout. On timeout, a `ModUnloadTimeout` warning fires; the mod is marked as a leaked reference and the user is advised to restart.
 
 WeakReference-based unload tests are mandatory for every regular mod (§10.4).
+
+### 9.5.1 Failure semantics
+
+Steps 1–6 of the unload protocol (§9.5) are sequential and best-effort. If any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. After step 6, if step 7 times out, the `ModUnloadTimeout` warning per §9.5 fires; the mod is removed from the active set regardless of whether the assembly actually unloaded.
+
+There is no atomic-unload guarantee. `Unload` is conceptually irreversible: subscriptions removed in step 1 cannot be re-attached without re-running `Subscribe`. The chain is structured so each step is a no-op if its predecessor failed (e.g. `RemoveSystems` on a mod with no registered systems is harmless), making best-effort progression safe. The `ModLoader.UnloadMod` swallowed `try/catch` around `mod.Instance.Unload()` is the canonical example of this discipline, in place since M0.
 
 ### 9.6 Hot-reload disabled mods
 
