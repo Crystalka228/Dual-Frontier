@@ -8,7 +8,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 
 ## Status overview
 
-*Updated: 2026-05-01 (M6 closed — M6.1, M6.2 done; M7 next).*
+*Updated: 2026-05-01 (M7.1 closed — Pause/Resume + IsRunning state on `ModIntegrationPipeline`; M7.2–M7.5 + M7-closure pending).*
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -27,13 +27,13 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | **M4 — Shared ALC** | ✅ Closed | added (`CrossAlcTypeIdentityTests`, `SharedAssemblyResolutionTests`, `ContractTypeInRegularModTests`, `SharedModComplianceTests`) | M4.1 `SharedModLoadContext` + two-pass loader + cross-ALC type identity; M4.2 `ContractValidator` Phase E enforces D-4 (no contract types in regular mods); M4.3 D-5 LOCKED shared-mod cycle detection + Phase F enforces §5.2 shared-mod compliance |
 | **M5 — Version constraints** | ✅ Closed | added (`RegularModTopologicalSortTests`, `DependencyPresenceTests`, `M51PipelineIntegrationTests`, `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, `M52IntegrationTests`) | M5.1 pipeline regular-mod toposort + dependency presence (`MissingDependency` / optional warning); M5.2 `ContractValidator` Phase A v1/v2 dual-path modernization + Phase G inter-mod version check; cascade-failure semantics ratified as deliberate accumulation (per §8.7) |
 | **M6 — Bridge replacement** | ✅ Closed | added (`PhaseHBridgeReplacementTests`, `Phase5BridgeAnnotationsTests`, `CollectReplacedFqnsTests`, `M62IntegrationTests`) | M6.1 `[BridgeImplementation(Replaceable)]` + Phase 5 combat stubs annotated + `ContractValidator` Phase H bridge replacement validation; M6.2 `ModIntegrationPipeline` skip-on-replace graph build + integration tests across all §7.5 scenarios |
-| M7 — Hot reload | ⏭ Pending | — | Menu-driven, paused-only |
+| M7 — Hot reload | 🔨 In progress | M7.1 added (`M71PauseResumeTests`) | M7.1 ✅ Pause/Resume + `IsRunning` on `ModIntegrationPipeline`; M7.2–M7.5 + M7-closure pending |
 | M8 — Vanilla skeletons | ⏭ Pending | — | Five empty mod assemblies |
 | M9 — Vanilla.Combat | ⏭ Pending | — | Absorbs original Phase 5 scope |
 | M10 — Remaining vanilla | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental |
 | Phase 9 — Native Runtime | ⏭ Post-launch | — | Separate large project |
 
-**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). M5 added `RegularModTopologicalSortTests`, `DependencyPresenceTests`, and `M51PipelineIntegrationTests` (M5.1) plus `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, and `M52IntegrationTests` (M5.2). M6 added `PhaseHBridgeReplacementTests` and `Phase5BridgeAnnotationsTests` (M6.1) plus `CollectReplacedFqnsTests` and `M62IntegrationTests` (M6.2). **Total at M6 closure: 338/338 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
+**Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). M5 added `RegularModTopologicalSortTests`, `DependencyPresenceTests`, and `M51PipelineIntegrationTests` (M5.1) plus `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, and `M52IntegrationTests` (M5.2). M6 added `PhaseHBridgeReplacementTests` and `Phase5BridgeAnnotationsTests` (M6.1) plus `CollectReplacedFqnsTests` and `M62IntegrationTests` (M6.2). M7.1 added `M71PauseResumeTests` (11 — default-state, idempotent setters, Apply/UnloadAll guards with verbatim §9.3 messages, default-paused regression guard). **Total at M7.1 closure: 349/349 passed** (verify with `dotnet test` against the current solution). The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
 
 ---
 
@@ -279,15 +279,31 @@ Goal achieved: explicit bridge replacement is operational. Vanilla mods can now 
 
 ---
 
-### M7 — Hot reload from menu
+### 🔨 M7 — Hot reload from menu (in progress)
 
-Goal: complete the hot-reload path through `ModIntegrationPipeline`, including `AssemblyLoadContext` unload with WeakReference verification.
+Goal: complete the hot-reload path through `ModIntegrationPipeline`, including `AssemblyLoadContext` unload with WeakReference verification. Decomposed per [METHODOLOGY](./METHODOLOGY.md) §2.4 into five implementation sub-phases (M7.1 – M7.5) plus a closure session.
+
+**Sub-phase status:**
+
+- **M7.1 ✅ Closed.** Acceptance: `ModIntegrationPipeline._isRunning` private bool (default `false`, "paused"); public `IsRunning` getter; idempotent `Pause()` and `Resume()` setters; `Apply` and `UnloadAll` guard against running invocation by throwing `InvalidOperationException` with the canonical §9.3 messages "Pause the scheduler before applying mods" / "Pause the scheduler before unloading mods" (verbatim — asserted as exact-string matches at the test level so any paraphrase trips the suite). Default-paused construction is load-bearing: every M0–M6 test constructs a fresh pipeline and calls `Apply` without ever touching `Pause`/`Resume`, and the new guard must be a no-op for that pre-existing path. Commits: `a2ab761` (pipeline state additions + guards + class XML-doc paragraph), `c964475` (`M71PauseResumeTests` × 11). Tests: `M71PauseResumeTests` (11 — default state, Pause/Resume transitions, idempotency, Apply guard with verbatim canonical message, UnloadAll guard with verbatim canonical message, paused-Apply / paused-UnloadAll happy paths, Resume→Pause→Apply round-trip, default-paused regression guard).
+
+- **M7.2 ⏭ Pending.** ALC unload chain steps 1–6 per `MOD_OS_ARCHITECTURE` v1.4 §9.5: `RestrictedModApi.UnsubscribeAll` wiring, `RestrictedModApi` retention in `LoadedMod`, `IModContractStore.RevokeAll(modId)`, `ModRegistry.RemoveSystems(modId)`, dependency-graph rebuild without the unloaded mod, scheduler swap, `ALC.Unload()`.
+
+- **M7.3 ⏭ Pending.** `WeakReference` spin loop + GC pump protocol per `MOD_OS_ARCHITECTURE` v1.4 §9.5 step 7 (clarified in pre-flight ratification) plus Phase 2 carried debt: every regular mod under test passes the `WeakReference.IsAlive == false` check within the 10-second timeout; failures surface `ModUnloadTimeout` per §9.5.1.
+
+- **M7.4 ⏭ Pending.** Build-pipeline override per D-7: build-time tool rewrites `hotReload: true` → `hotReload: false` for every vanilla manifest in shipped builds. Single flag in build script; no code branching.
+
+- **M7.5 ⏭ Pending.** Mod-menu UI integration — list active mods, toggle, version display, "Apply" button; menu code drives the Pause-Apply-Resume sequence on `ModIntegrationPipeline`; hot-reload button disabled for mods with `hotReload: false`.
+
+- **M7-closure ⏭ Pending.** Sub-phase closure session — ROADMAP M7 row update to ✅ Closed, engine snapshot bump, M7 closure verification report (separate post-closure session per the M5/M6 precedent).
+
+**Deliberate interpretation of §9.2 / §9.3 — flag location on the pipeline, not the scheduler.** §9.2 step 1 reads "menu sets the scheduler's run flag to false"; §9.3 reads "enforced by `ModIntegrationPipeline` checking the scheduler's run flag." M7.1 locates the flag itself on `ModIntegrationPipeline` (private `_isRunning` bool) rather than introducing one inside `ParallelSystemScheduler`. Adding a flag to the scheduler would require modifying `DualFrontier.Core`, which would break the M-phase boundary discipline that M3–M6 maintained (no `DualFrontier.Core` touched by any Mod-OS Migration phase) and which the [M6 closure review](./M6_CLOSURE_REVIEW.md) §8 footer explicitly carries forward to M7. The pipeline-mediated reading is consistent with §9.3's "`ModIntegrationPipeline` checking" wording and treats §9.2's "scheduler's run flag" as the run state observable to the scheduler from the outside (via the pipeline), rather than as state the scheduler itself owns. This is a deliberate interpretation registered here per [METHODOLOGY](./METHODOLOGY.md)'s "no improvisation" rule and the M5.2 cascade-failure precedent above. If a future M7 closure review finds this materially incompatible with §9 wording, the resolution is a v1.5 ratification rather than relocating the flag into the scheduler.
 
 **Consumes decisions:** strategic lock 3 (menu-driven, paused-only), D-7 (vanilla `hotReload` flag, build-pipeline override).
 
-**What we implement**
+**What we implement (M7 in full — landed across M7.1–M7.5)**
 
-- `ModIntegrationPipeline.Pause()` and `Resume()` setting the scheduler's run flag. `Apply` checks the flag and throws `InvalidOperationException("Pause the scheduler before applying mods")` if invoked while running.
+- `ModIntegrationPipeline.Pause()` and `Resume()` setting the pipeline-mediated run flag (M7.1 ✅). `Apply` checks the flag and throws `InvalidOperationException("Pause the scheduler before applying mods")` if invoked while running (M7.1 ✅); `UnloadAll` mirrors the guard with the parallel "Pause the scheduler before unloading mods" message (M7.1 ✅).
 - ALC unload chain:
   1. `RestrictedModApi.UnsubscribeAll` (drops bus subscriptions).
   2. `IModContractStore.RevokeAll(modId)`.
