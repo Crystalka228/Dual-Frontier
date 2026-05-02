@@ -169,8 +169,85 @@ The reviewer sees at once — which fields, which constructor, which public API.
 - Magic numbers go into a `const` with a name that describes the meaning. `4.2f` in code without a comment is a mortal sin.
 - Returning `null` from a public API only when it is an explicit part of the contract (`TryGet` and `T? FindBy(...)`).
 
+## Stack-frame retention for collected resources
+
+Some code paths must give the GC an opportunity to collect a resource — `AssemblyLoadContext` unload, finalizer-based cleanup, weak-reference-based cache eviction. These paths run after every strong reference to the resource has been dropped from the executing thread's stack frames. Two C# constructs silently retain strong refs in ways that defeat such code paths if not handled with discipline: the iteration variable of a `foreach` loop (in DEBUG builds, until the enclosing method returns) and **lambda closure display classes** (always, in any build).
+
+A lambda capturing a local variable causes the C# compiler to synthesize a heap `<>c__DisplayClass` object containing that variable as a field. The display class is allocated on entry to the enclosing method and rooted from that method's stack frame for the entire method scope. Any local captured by even one lambda is strongly reachable until the enclosing method returns, regardless of how out-of-scope the local appears textually.
+
+```csharp
+// BAD — the display class for the step lambdas is allocated in this
+// method's frame and keeps `mod` (and thereby mod.Context) alive
+// through the spin. WR.IsAlive never flips to false on real mods;
+// the spin times out on every invocation and emits ModUnloadTimeout.
+public IReadOnlyList<ValidationWarning> UnloadMod(string modId)
+{
+    if (!_activeMods.TryGetValue(modId, out LoadedMod? mod)) return [];
+
+    var warnings = new List<ValidationWarning>();
+    TryUnloadStep(1, modId, warnings, () => mod.Api?.UnsubscribeAll());
+    // ... more lambdas capturing mod ...
+
+    var alcRef = new WeakReference(mod.Context);
+    _activeMods.Remove(mod);
+
+    // Display class still rooted by this frame; mod.Context still strongly reachable.
+    for (int i = 0; i < 100; i++)
+    {
+        GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect();
+        if (!alcRef.IsAlive) return warnings;
+        Thread.Sleep(100);
+    }
+    warnings.Add(new ValidationWarning(modId, "ModUnloadTimeout: ..."));
+    return warnings;
+}
+```
+
+```csharp
+// CORRECT — the work-with-refs phase is isolated in a non-inlined
+// helper that returns only the WeakReference. The caller's frame
+// holds nothing strong, so the spin can observe the release.
+public IReadOnlyList<ValidationWarning> UnloadMod(string modId)
+{
+    if (!_activeMods.TryGetValue(modId, out LoadedMod? mod)) return [];
+
+    var warnings = new List<ValidationWarning>();
+    WeakReference alcRef = RunUnloadSteps1Through6AndCaptureAlc(modId, mod, warnings);
+
+    // mod is no longer referenced here; the display class lives only
+    // in the helper's frame, which has returned. Frame is clean.
+    TryStep7AlcVerification(modId, alcRef, warnings);
+    return warnings;
+}
+
+[MethodImpl(MethodImplOptions.NoInlining)]
+private WeakReference RunUnloadSteps1Through6AndCaptureAlc(
+    string modId, LoadedMod mod, List<ValidationWarning> warnings)
+{
+    TryUnloadStep(1, modId, warnings, () => mod.Api?.UnsubscribeAll());
+    // Lambdas captured here are confined to THIS frame's display class.
+    var alcRef = new WeakReference(mod.Context);
+    _activeMods.Remove(mod);
+    return alcRef;
+}
+
+[MethodImpl(MethodImplOptions.NoInlining)]
+private static void TryStep7AlcVerification(
+    string modId, WeakReference alcRef, List<ValidationWarning> warnings)
+{ /* spin with the GC pump bracket; signature carries no resource ref */ }
+```
+
+The pattern surfaced empirically in M7.3 (commit `9bed1a4`): an initial implementation kept `mod` as a local in `UnloadMod`, and three of the M7.2 regression tests started emitting `ModUnloadTimeout` warnings the assertions were not expecting. The root cause was not the JIT retaining the explicit local — it was the C# compiler's display-class hoisting for the lambdas passed to `TryUnloadStep`. Step 1's lambda captures `mod` (`mod.Api?.UnsubscribeAll()`), so the compiler synthesized a heap `<>c__DisplayClass` holding `mod` as a field, allocated on entry to `UnloadMod` and rooted from `UnloadMod`'s stack frame for the entire method scope. The same pathology surfaced in `UnloadAll`'s `foreach (LoadedMod mod in _activeMods)` snapshot loop: the iteration variable's last value persisted in the DEBUG stack slot through the rest of the method (fixed by extracting `SnapshotActiveModIds`).
+
+Rule of thumb: if a method needs to give the GC a chance to collect a resource it referenced, that method's body must split into **(a)** a non-inlined helper that captures, works with, and releases its strong refs to the resource, returning only a `WeakReference` (or nothing at all), and **(b)** the caller, which invokes the wait/spin phase with no resource-holding locals or lambdas in its frame.
+
+The `[MethodImpl(MethodImplOptions.NoInlining)]` attribute is non-negotiable on both helpers — without it the JIT may inline the helper back into the caller, recreating the display class in the caller's frame and defeating the discipline. The attribute MUST sit on every helper that exists for the sole purpose of containing strong refs to a resource that subsequently must be released.
+
+Reuse this pattern for any future code path with similar shape: ALC unload (M7.x), finalizer-driven cleanup, weak-reference-based caches, or any GC-dependent test assertion. Test-side helpers (e.g. `ModUnloadAssertions.AssertAlcReleasedWithin`) follow the same discipline as production-side helpers (`TryStep7AlcVerification`).
+
 ## See also
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md)
 - [ISOLATION](./ISOLATION.md)
+- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)
