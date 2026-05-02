@@ -144,6 +144,26 @@ internal sealed class ModIntegrationPipeline
     public bool IsRunning => _isRunning;
 
     /// <summary>
+    /// Snapshot of every regular mod currently in the active set. Returned
+    /// as <see cref="ActiveModInfo"/> records carrying only public fields
+    /// (modId + manifest) — <see cref="LoadedMod"/> stays internal so callers
+    /// outside <c>DualFrontier.Application</c> cannot reach the
+    /// <see cref="ModLoadContext"/> or other implementation surfaces.
+    /// Returned list is a fresh allocation; callers may iterate without
+    /// concern for concurrent mutation, but the list itself is not live —
+    /// a subsequent <see cref="Apply"/> or <see cref="UnloadMod"/> won't be
+    /// reflected. Used by <see cref="ModMenuController"/> (M7.5.A) to build
+    /// the editing-session snapshot per §9.2.
+    /// </summary>
+    public IReadOnlyList<ActiveModInfo> GetActiveMods()
+    {
+        var result = new List<ActiveModInfo>(_activeMods.Count);
+        foreach (LoadedMod mod in _activeMods)
+            result.Add(new ActiveModInfo(mod.ModId, mod.Manifest));
+        return result;
+    }
+
+    /// <summary>
     /// Drops the run flag to <c>false</c> (the §9.2 step 1 "menu pauses the
     /// scheduler" entry point). Idempotent: calling twice is a no-op and
     /// must not throw, since the menu can re-enter the paused state from
