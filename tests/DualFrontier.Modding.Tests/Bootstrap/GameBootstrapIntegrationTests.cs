@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using DualFrontier.Application.Bridge;
+using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Loop;
 using DualFrontier.Application.Modding;
 using FluentAssertions;
@@ -173,6 +175,51 @@ public sealed class GameBootstrapIntegrationTests
         };
 
         roundTrip.Should().NotThrow();
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public void CreateLoop_RunningLoop_PublishesTickAdvancedCommandsThroughBridge()
+    {
+        // TICK display housekeeping — locks the production publishing
+        // path GameLoop → PresentationBridge → (RenderCommandDispatcher
+        // → GameHUD.SetTick on the Godot main thread). Construct the
+        // production context, run the loop briefly, then drain the
+        // bridge and assert at least two TickAdvancedCommand publishes
+        // observed with strictly monotonic Tick values. The window is
+        // generous (250 ms targets ~6 ticks at 30 TPS) but the
+        // assertion floor is just >= 2 so slow-CI does not flake.
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+
+        try
+        {
+            context.Loop.Start();
+            Thread.Sleep(250);
+        }
+        finally
+        {
+            context.Loop.Stop();
+        }
+
+        int tickCommandCount = 0;
+        int lastTickValue = -1;
+        bridge.DrainCommands(cmd =>
+        {
+            if (cmd is TickAdvancedCommand tac)
+            {
+                tickCommandCount++;
+                lastTickValue = tac.Tick;
+            }
+        });
+
+        tickCommandCount.Should().BeGreaterThanOrEqualTo(2,
+            $"expected at least 2 TickAdvancedCommand publishes, observed {tickCommandCount}");
+        // _ticks.CurrentTick advances exactly once per ExecuteTick, so the
+        // last published value must be at least count - 1 (allowing for
+        // tick 0 to be the first publish).
+        lastTickValue.Should().BeGreaterThanOrEqualTo(tickCommandCount - 1,
+            $"expected monotonic tick values, last={lastTickValue}, count={tickCommandCount}");
     }
 
     private static void WriteValidManifest(string dir, string id)
