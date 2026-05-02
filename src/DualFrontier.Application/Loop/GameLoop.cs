@@ -2,13 +2,17 @@ using System;
 using System.Threading;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Application.Bridge;
+using DualFrontier.Application.Bridge.Commands;
 
 namespace DualFrontier.Application.Loop
 {
     /// <summary>
     /// Fixed-step simulation loop running on a dedicated background thread.
     /// Ticks at TargetTps (30 Hz) independent of render FPS.
-    /// Communicates with Presentation only through PresentationBridge.
+    /// Communicates with Presentation only through PresentationBridge: per
+    /// fixed-step tick the loop enqueues a <see cref="TickAdvancedCommand"/>
+    /// carrying the current <c>TickScheduler.CurrentTick</c> value so the
+    /// HUD's tick label can update on the Godot main thread.
     /// Internal — created by GameBootstrap, not exposed to Presentation.
     /// </summary>
     internal sealed class GameLoop : IDisposable
@@ -18,6 +22,7 @@ namespace DualFrontier.Application.Loop
         private const float MaxAccumulator = FixedDelta * 5f;
 
         private readonly ParallelSystemScheduler _scheduler;
+        private readonly TickScheduler _ticks;
         private readonly PresentationBridge _bridge;
         private readonly CancellationTokenSource _cts = new();
         private Thread? _thread;
@@ -25,10 +30,13 @@ namespace DualFrontier.Application.Loop
         private volatile bool _paused = false;
 
         public GameLoop(ParallelSystemScheduler scheduler,
+                        TickScheduler ticks,
                         PresentationBridge bridge)
         {
             _scheduler = scheduler
                 ?? throw new ArgumentNullException(nameof(scheduler));
+            _ticks = ticks
+                ?? throw new ArgumentNullException(nameof(ticks));
             _bridge = bridge
                 ?? throw new ArgumentNullException(nameof(bridge));
         }
@@ -79,6 +87,7 @@ namespace DualFrontier.Application.Loop
                 while (accumulator >= FixedDelta)
                 {
                     _scheduler.ExecuteTick(FixedDelta);
+                    _bridge.Enqueue(new TickAdvancedCommand((int)_ticks.CurrentTick));
                     accumulator -= FixedDelta;
                 }
 

@@ -38,6 +38,9 @@ public sealed class RenderCommandDispatcher
             case PawnStateCommand c:
                 _hud?.UpdatePawn(c);
                 break;
+            case TickAdvancedCommand c:
+                _hud?.SetTick(c.Tick);
+                break;
         }
     }
 }

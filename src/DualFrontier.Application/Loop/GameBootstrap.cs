@@ -45,7 +45,11 @@ internal static class GameBootstrap
     /// Builds the full production simulation context: domain world,
     /// kernel scheduler with the hard-coded ECS systems, modding
     /// pipeline owning the shared ALC, and the menu controller wired to
-    /// that pipeline. Returns both via <see cref="GameContext"/>.
+    /// that pipeline. The <c>TickScheduler</c> constructed here is also
+    /// threaded into <see cref="GameLoop"/> so the loop publishes one
+    /// <c>TickAdvancedCommand</c> per fixed-step tick onto the presentation
+    /// bridge for HUD tick-label rendering. Returns both via
+    /// <see cref="GameContext"/>.
     /// </summary>
     /// <param name="bridge">
     /// Presentation bridge the loop publishes render commands onto.
@@ -144,7 +148,10 @@ internal static class GameBootstrap
         var discoverer = new DefaultModDiscoverer(modsRoot);
         var controller = new ModMenuController(pipeline, discoverer);
 
-        var loop = new GameLoop(scheduler, bridge);
+        // Pass the TickScheduler into GameLoop so its accumulator can publish
+        // a TickAdvancedCommand carrying CurrentTick after every ExecuteTick;
+        // RenderCommandDispatcher routes the command to the HUD tick label.
+        var loop = new GameLoop(scheduler, ticks, bridge);
         return new GameContext(loop, controller);
     }
 
