@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Reflection;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Core.ECS;
@@ -16,13 +16,18 @@ namespace DualFrontier.Core.Scheduling;
 /// concrete system type so the hot path of <see cref="ShouldRun"/> does no
 /// reflection or allocation after the first call for each type.
 ///
-/// Not thread-safe: accessed only from the scheduler's driver thread before
-/// parallel dispatch of a phase.
+/// Thread-safety: the type-rate cache uses <see cref="ConcurrentDictionary{TKey,TValue}"/>
+/// so parallel system dispatch (which queries <see cref="ShouldRun"/> from
+/// inside <c>Parallel.ForEach</c> over a phase's systems) does not race on
+/// cache population. The mutable scalar field <c>_currentTick</c> is written
+/// only by the scheduler's driver thread between phases via <see cref="Advance"/>
+/// and read by <see cref="ShouldRun"/> callers within a phase; that field's
+/// single-writer pattern is preserved.
 /// </summary>
 internal sealed class TickScheduler
 {
     private long _currentTick;
-    private readonly Dictionary<Type, int> _tickRateCache = new();
+    private readonly ConcurrentDictionary<Type, int> _tickRateCache = new();
 
     /// <summary>
     /// The current tick number. Starts at 0 and is incremented by
@@ -52,11 +57,7 @@ internal sealed class TickScheduler
             throw new ArgumentNullException(nameof(system));
 
         Type systemType = system.GetType();
-        if (!_tickRateCache.TryGetValue(systemType, out int ticksPerUpdate))
-        {
-            ticksPerUpdate = ResolveTicksPerUpdate(systemType);
-            _tickRateCache[systemType] = ticksPerUpdate;
-        }
+        int ticksPerUpdate = _tickRateCache.GetOrAdd(systemType, ResolveTicksPerUpdate);
 
         return _currentTick % ticksPerUpdate == 0;
     }
