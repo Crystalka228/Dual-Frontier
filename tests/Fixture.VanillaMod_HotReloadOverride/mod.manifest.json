@@ -1,0 +1,11 @@
+{
+  "id": "tests.fixture.vanillamod.hotreloadoverride",
+  "name": "Vanilla Mod HotReload Override Fixture",
+  "version": "1.0.0",
+  "author": "Test Suite",
+  "kind": "regular",
+  "apiVersion": "^1.0.0",
+  "entryAssembly": "Fixture.VanillaMod_HotReloadOverride.dll",
+  "entryType": "Fixture.VanillaMod_HotReloadOverride.VanillaModFixture",
+  "hotReload": true
+}

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Fixture.VanillaMod_HotReloadOverride</AssemblyName>
+    <RootNamespace>Fixture.VanillaMod_HotReloadOverride</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <!--
+      M7.4 — D-7 vanilla-mod opt-in. The build-pipeline override target
+      in `mods/Directory.Build.targets` keys on this property.
+    -->
+    <IsVanillaMod>true</IsVanillaMod>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <!--
+      Force the rewriter tool to build before this fixture's Release
+      output runs the `RewriteHotReloadForRelease` target. The
+      ReferenceOutputAssembly=false flag prevents the tool dll from
+      being copied into the fixture's bin so the fixture stays a
+      vanilla-mod-shaped artifact (no leak of build-tool assemblies).
+    -->
+    <ProjectReference Include="..\..\tools\DualFrontier.Mod.ManifestRewriter\DualFrontier.Mod.ManifestRewriter.csproj"
+                      ReferenceOutputAssembly="false"
+                      Private="false" />
+  </ItemGroup>
+  <Import Project="..\..\mods\Directory.Build.targets" />
+</Project>
