@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
@@ -52,15 +54,20 @@ public sealed record PipelineResult(
 /// registration and leaves the scheduler untouched. Shared mods, once
 /// loaded, persist for the session.
 ///
-/// Per-mod unload discipline (M7.2, per MOD_OS_ARCHITECTURE v1.4 §9.5):
-/// <see cref="UnloadMod"/> implements steps 1–6 of the unload chain
+/// Per-mod unload discipline (M7.2 + M7.3, per MOD_OS_ARCHITECTURE v1.4 §9.5):
+/// <see cref="UnloadMod"/> implements the full §9.5 chain. Steps 1–6
 /// (UnsubscribeAll → RevokeAll → RemoveMod → graph rebuild → scheduler
-/// swap → ALC.Unload). Each step is wrapped in best-effort try/catch per
+/// swap → ALC.Unload, M7.2) are each wrapped in best-effort try/catch per
 /// §9.5.1; failures surface as <see cref="ValidationWarning"/> entries in
-/// the returned list and the chain continues. Step 7 (WeakReference
-/// verification with GC pump per §9.5 step 7) lands in M7.3.
-/// <see cref="UnloadAll"/> now delegates to <see cref="UnloadMod"/> per
-/// mod and returns the accumulated warnings.
+/// the returned list and the chain continues. Step 7 (M7.3) captures a
+/// <see cref="WeakReference"/> to the mod's <see cref="ModLoadContext"/>
+/// before <c>_activeMods.Remove</c>, then spins on
+/// <see cref="WeakReference.IsAlive"/> with the mandatory
+/// <c>GC.Collect → WaitForPendingFinalizers → Collect</c> bracket each
+/// iteration (default 100 × 100 ms = 10 s). On timeout a
+/// <c>ModUnloadTimeout</c> warning is appended; the mod is removed from
+/// the active set regardless. <see cref="UnloadAll"/> delegates to
+/// <see cref="UnloadMod"/> per mod and returns the accumulated warnings.
 /// </summary>
 internal sealed class ModIntegrationPipeline
 {
@@ -96,6 +103,13 @@ internal sealed class ModIntegrationPipeline
     /// must let those existing flows through unchanged.
     /// </summary>
     private bool _isRunning;
+
+    // M7.3 step 7 (MOD_OS_ARCHITECTURE v1.4 §9.5 step 7) — default cadence
+    // for the WeakReference spin loop after ALC.Unload. 100 iterations of
+    // 100 ms = 10 s timeout, the value the spec calls out verbatim.
+    private const int Step7TimeoutMs = 10_000;
+    private const int Step7PollIntervalMs = 100;
+    private const int Step7MaxIterations = Step7TimeoutMs / Step7PollIntervalMs;
 
     /// <summary>
     /// Creates a pipeline bound to the given collaborators. The scheduler is
@@ -425,8 +439,8 @@ internal sealed class ModIntegrationPipeline
 
     /// <summary>
     /// Unloads a single mod by id per MOD_OS_ARCHITECTURE v1.4 §9.5 steps
-    /// 1–6 + §9.5.1 best-effort failure discipline. Each step is wrapped
-    /// in a try/catch; on exception a non-blocking
+    /// 1–7 + §9.5.1 best-effort failure discipline. Steps 1–6 are wrapped
+    /// in <see cref="TryUnloadStep"/>; on exception a non-blocking
     /// <see cref="ValidationWarning"/> is recorded with
     /// <c>(modId, stepNumber)</c> and the chain continues to the next
     /// step. There is no atomic-unload guarantee — <c>Unload</c> is
@@ -436,11 +450,35 @@ internal sealed class ModIntegrationPipeline
     /// predecessor failed (e.g. <see cref="ModRegistry.RemoveMod"/> on a
     /// mod with no registered systems is harmless).
     ///
-    /// Step 7 (<c>WeakReference</c> spin loop with GC pump per v1.4 §9.5
-    /// step 7) is NOT performed here — that lands in M7.3 alongside the
-    /// Phase 2 carried debt unload tests. M7.2's chain stops at step 6
-    /// (<c>ALC.Unload</c>) and leaves verification of actual assembly
-    /// release to M7.3.
+    /// Step 7 (M7.3, MOD_OS_ARCHITECTURE v1.4 §9.5 step 7) is timeout-
+    /// based, not exception-based, so it lives in a dedicated helper
+    /// (<see cref="TryStep7AlcVerification"/>) rather than the
+    /// <see cref="TryUnloadStep"/> wrapper. The order is:
+    /// <list type="number">
+    ///   <item><see cref="CaptureAlcWeakReference"/> — captures a
+    ///   <see cref="WeakReference"/> to <c>mod.Context</c> in a
+    ///   non-inlined frame so the JIT cannot retain a stack-frame strong
+    ///   ref into <see cref="UnloadMod"/>.</item>
+    ///   <item><c>_activeMods.Remove(mod)</c> per §9.5.1 — the mod leaves
+    ///   the active set regardless of whether step 7 will time out.</item>
+    ///   <item><see cref="TryStep7AlcVerification"/> — non-inlined; takes
+    ///   only the WR + warnings list, never <see cref="LoadedMod"/>, so
+    ///   the spin loop has no stack-frame strong reference to
+    ///   <c>mod.Context</c>. Spins up to 10 s (100 × 100 ms) running the
+    ///   <c>GC.Collect → WaitForPendingFinalizers → Collect</c> double-
+    ///   collect bracket each iteration. On timeout appends a
+    ///   <c>ModUnloadTimeout</c> warning whose text contains the modId,
+    ///   <c>"§9.5 step 7"</c>, and <c>"10000 ms"</c> for menu UI to surface
+    ///   "leaked reference — restart recommended."</item>
+    /// </list>
+    /// Per AD #2 of the M7.3 prompt, the ordering "capture WR → remove
+    /// from active set → spin" is a deliberate interpretation registered
+    /// in ROADMAP M7.3 closure (parallel to the M7.1 §9.2/§9.3 footer
+    /// interpretation): §9.5.1's "mod removed from active set regardless"
+    /// supports it, and §9.5 step 7 spins on a captured WR with no
+    /// requirement to keep the mod in the active set. Step 7 also runs
+    /// after a step-6 failure (per AD #7); both warnings accumulate in
+    /// the returned list when that happens.
     ///
     /// Idempotent: calling <see cref="UnloadMod"/> for a
     /// <paramref name="modId"/> not currently in <c>_activeMods</c>
@@ -462,6 +500,54 @@ internal sealed class ModIntegrationPipeline
             throw new InvalidOperationException(
                 "Pause the scheduler before unloading mods");
 
+        var warnings = new List<ValidationWarning>();
+
+        // Steps 1–6 + WR capture + _activeMods.Remove run inside a
+        // separate non-inlined method so the LoadedMod strong reference
+        // (and the compiler-generated closure display class hoisting it
+        // for the step lambdas) lives only in that helper's stack frame.
+        // When this method enters the step 7 spin below, no local in
+        // UnloadMod's frame holds mod or mod.Context — the WR is the
+        // only handle. Without this split, in DEBUG the lifted display
+        // class persists until UnloadMod returns and the spin times out
+        // on real mods (verified empirically against the M7.2 step-2-
+        // throws seam: the closure for `mod.Api?.UnsubscribeAll()` would
+        // root mod throughout the spin).
+        WeakReference? alcRef = RunUnloadSteps1Through6AndCaptureAlc(modId, warnings);
+        if (alcRef is null)
+            return Array.Empty<ValidationWarning>();
+
+        // M7.3 step 7 — spin on WR.IsAlive with the GC pump bracket
+        // until the assembly releases or the 10 s timeout expires. The
+        // helper takes only (modId, WR, warnings) — never LoadedMod —
+        // for the same JIT-stack-frame reason as CaptureAlcWeakReference.
+        TryStep7AlcVerification(modId, alcRef, warnings);
+
+        return warnings;
+    }
+
+    /// <summary>
+    /// Runs MOD_OS_ARCHITECTURE v1.4 §9.5 steps 1–6 + captures a
+    /// <see cref="WeakReference"/> to the mod's
+    /// <see cref="ModLoadContext"/> + removes the mod from
+    /// <c>_activeMods</c>. Returns the captured WR, or
+    /// <see langword="null"/> when no mod with the given id is active
+    /// (idempotent no-op path for <see cref="UnloadMod"/>).
+    ///
+    /// Marked <see cref="MethodImplOptions.NoInlining"/> so the
+    /// <see cref="LoadedMod"/> local — and the compiler-generated
+    /// display class that hoists it for the step-1 lambda's
+    /// <c>mod.Api?.UnsubscribeAll()</c> capture — live only in this
+    /// method's stack frame. When the caller
+    /// (<see cref="UnloadMod"/>) enters the step 7 spin, neither its
+    /// own frame nor any closure rooted on its frame can keep the
+    /// <see cref="ModLoadContext"/> alive.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private WeakReference? RunUnloadSteps1Through6AndCaptureAlc(
+        string modId,
+        List<ValidationWarning> warnings)
+    {
         LoadedMod? mod = null;
         foreach (LoadedMod m in _activeMods)
         {
@@ -472,9 +558,7 @@ internal sealed class ModIntegrationPipeline
             }
         }
         if (mod is null)
-            return Array.Empty<ValidationWarning>();
-
-        var warnings = new List<ValidationWarning>();
+            return null;
 
         // Step 1 — drop bus subscriptions. RestrictedModApi.UnsubscribeAll
         // iterates _subscriptions and calls each captured Unsubscribe action.
@@ -523,12 +607,17 @@ internal sealed class ModIntegrationPipeline
             _loader.UnloadMod(modId);
         });
 
-        // Remove from _activeMods regardless of any step's success — per
-        // §9.5.1, the mod is removed from the active set even if the
-        // assembly didn't actually unload.
+        // M7.3 step 7 prep — capture a WeakReference to the mod's
+        // ModLoadContext in a non-inlined helper so the JIT cannot fold
+        // a strong stack-frame reference into this method either.
+        WeakReference alcRef = CaptureAlcWeakReference(mod);
+
+        // §9.5.1 — mod removed from active set regardless of step
+        // outcomes. Drops the last strong reference UnloadMod itself
+        // holds via _activeMods, so the spin's GC pumps can collect.
         _activeMods.Remove(mod);
 
-        return warnings;
+        return alcRef;
     }
 
     /// <summary>
@@ -557,10 +646,15 @@ internal sealed class ModIntegrationPipeline
 
         var warnings = new List<ValidationWarning>();
 
-        // Snapshot _activeMods before iterating — UnloadMod mutates the list.
-        var modIds = new List<string>(_activeMods.Count);
-        foreach (LoadedMod mod in _activeMods)
-            modIds.Add(mod.ModId);
+        // Snapshot the active mod ids in a non-inlined helper so the
+        // foreach iteration variable that holds each LoadedMod cannot
+        // linger as a stack-frame strong reference in UnloadAll's frame.
+        // In DEBUG, the JIT retains the last iterated value through the
+        // remainder of the method's lexical scope (verified empirically:
+        // without this split, the second per-mod step 7 spin always
+        // times out because UnloadAll's foreach var is still rooting the
+        // last LoadedMod's ModLoadContext).
+        IReadOnlyList<string> modIds = SnapshotActiveModIds();
 
         foreach (string modId in modIds)
         {
@@ -583,6 +677,25 @@ internal sealed class ModIntegrationPipeline
         }
 
         return warnings;
+    }
+
+    /// <summary>
+    /// Snapshots <c>_activeMods</c> by id for
+    /// <see cref="UnloadAll"/>. Marked
+    /// <see cref="MethodImplOptions.NoInlining"/> so the foreach loop
+    /// variable that holds each <see cref="LoadedMod"/> cannot linger as
+    /// a stack-frame strong reference in <see cref="UnloadAll"/>'s frame
+    /// — without this, the last iterated <see cref="ModLoadContext"/>
+    /// stays rooted through every per-mod step 7 spin and the bulk
+    /// unload always times out on the final mod.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private List<string> SnapshotActiveModIds()
+    {
+        var ids = new List<string>(_activeMods.Count);
+        foreach (LoadedMod mod in _activeMods)
+            ids.Add(mod.ModId);
+        return ids;
     }
 
     /// <summary>
@@ -612,6 +725,92 @@ internal sealed class ModIntegrationPipeline
                 "subsequent steps continue. The mod has been removed from the " +
                 "active set regardless."));
         }
+    }
+
+    /// <summary>
+    /// Captures a <see cref="WeakReference"/> to the given mod's
+    /// <see cref="ModLoadContext"/>. Marked
+    /// <see cref="MethodImplOptions.NoInlining"/> so the JIT cannot fold
+    /// the <c>mod.Context</c> strong reference into the
+    /// <see cref="UnloadMod"/> stack frame — without this, the spin in
+    /// <see cref="TryStep7AlcVerification"/> can keep the assembly alive
+    /// indefinitely on real mods (Microsoft's "Use collectible assembly
+    /// load contexts" pattern, MOD_OS_ARCHITECTURE v1.4 §9.5 step 7).
+    /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference CaptureAlcWeakReference(LoadedMod mod)
+        => new WeakReference(mod.Context);
+
+    /// <summary>
+    /// MOD_OS_ARCHITECTURE v1.4 §9.5 step 7 — spins on
+    /// <see cref="WeakReference.IsAlive"/> with the mandatory double-
+    /// collect GC pump bracket each iteration. Cadence per spec:
+    /// 100 iterations × 100 ms = 10 s timeout. On timeout appends a
+    /// <c>ModUnloadTimeout</c> warning to <paramref name="warnings"/>
+    /// whose text contains the modId, <c>"§9.5 step 7"</c>, and
+    /// <c>"10000 ms"</c> for menu UI substring matching.
+    ///
+    /// The double-collect bracket
+    /// (<c>Collect → WaitForPendingFinalizers → Collect</c>) is required
+    /// because <see cref="GC.WaitForPendingFinalizers"/> can resurrect
+    /// finalizable graph nodes that the first
+    /// <see cref="GC.Collect()"/> would have removed; the second
+    /// <see cref="GC.Collect()"/> picks them up, restoring monotonic
+    /// progress.
+    ///
+    /// Marked <see cref="MethodImplOptions.NoInlining"/> and accepts only
+    /// <c>(modId, alcRef, warnings)</c> — never <see cref="LoadedMod"/>
+    /// — for the same JIT-stack-frame reason as
+    /// <see cref="CaptureAlcWeakReference"/>: a parameter typed as
+    /// <see cref="LoadedMod"/> would carry a strong ref to the very
+    /// <see cref="ModLoadContext"/> the spin is waiting to release.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static void TryStep7AlcVerification(
+        string modId,
+        WeakReference alcRef,
+        List<ValidationWarning> warnings)
+    {
+        for (int i = 0; i < Step7MaxIterations; i++)
+        {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+
+            if (!alcRef.IsAlive) return;
+
+            Thread.Sleep(Step7PollIntervalMs);
+        }
+
+        warnings.Add(new ValidationWarning(
+            modId,
+            $"ModUnloadTimeout: mod '{modId}' assembly load context did not " +
+            $"release within {Step7TimeoutMs} ms after Unload (§9.5 step 7). " +
+            "The mod has been removed from the active set; restart the game " +
+            "to fully reclaim memory."));
+    }
+
+    /// <summary>
+    /// Test seam — returns the <see cref="LoadedMod"/> currently in
+    /// <c>_activeMods</c> with the matching <paramref name="modId"/>, or
+    /// <see langword="null"/> if no such mod is active. M7.3 uses this
+    /// from the Phase 2 carried-debt closure tests to capture a
+    /// <see cref="WeakReference"/> to the mod's
+    /// <see cref="ModLoadContext"/> before invoking
+    /// <see cref="UnloadMod"/>, mirroring
+    /// <see cref="CollectReplacedFqnsForTests"/> as the precedent for
+    /// internal-only test helpers exposed via
+    /// <c>InternalsVisibleTo("DualFrontier.Modding.Tests")</c>.
+    /// </summary>
+    internal LoadedMod? GetActiveModForTests(string modId)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        foreach (LoadedMod m in _activeMods)
+        {
+            if (StringComparer.Ordinal.Equals(m.ModId, modId))
+                return m;
+        }
+        return null;
     }
 
     private IReadOnlyList<SystemBase> GetCoreSystemInstances()
