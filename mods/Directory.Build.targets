@@ -1,0 +1,46 @@
+<Project>
+  <!--
+    M7.4 — D-7 build-pipeline override for the vanilla mods'
+    `hotReload` flag (MOD_OS_ARCHITECTURE v1.5).
+    Vanilla mods declare `hotReload: true` in source so dev gets free
+    hot-reload testing of vanilla mechanics; this targets file ensures
+    the shipping build pipeline rewrites the bin manifest to
+    `hotReload: false` for `<IsVanillaMod>true</IsVanillaMod>` projects
+    on `$(Configuration)=='Release'`. Source manifest is never touched.
+    Default `<IsVanillaMod>` is false, so existing non-vanilla mods
+    (e.g. ExampleMod) are unaffected.
+  -->
+  <PropertyGroup>
+    <IsVanillaMod Condition="'$(IsVanillaMod)' == ''">false</IsVanillaMod>
+  </PropertyGroup>
+
+  <!--
+    Vanilla mods deploy `mod.manifest.json` into bin so the rewriter
+    target has something to operate on. Non-vanilla mods are not
+    affected by this ItemGroup (default opt-out preserves M0-M6
+    behaviour for ExampleMod).
+  -->
+  <ItemGroup Condition="'$(IsVanillaMod)' == 'true'">
+    <None Include="$(MSBuildProjectDirectory)\mod.manifest.json"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!--
+    Shipping override: after Build, run the rewriter against the
+    output manifest. Only fires for vanilla mods on Release builds;
+    Debug builds keep `hotReload: true` for hot-reload testing.
+    The rewriter tool's path is resolved relative to this targets file
+    so the import works for projects under `mods/` and for the
+    `tests/Fixture.VanillaMod_HotReloadOverride/` test fixture alike.
+  -->
+  <Target Name="RewriteHotReloadForRelease"
+          AfterTargets="Build"
+          Condition="'$(IsVanillaMod)' == 'true' AND '$(Configuration)' == 'Release'">
+    <PropertyGroup>
+      <ManifestRewriterDll>$(MSBuildThisFileDirectory)..\tools\DualFrontier.Mod.ManifestRewriter\bin\$(Configuration)\$(TargetFramework)\DualFrontier.Mod.ManifestRewriter.dll</ManifestRewriterDll>
+      <OutputManifestPath>$(OutDir)mod.manifest.json</OutputManifestPath>
+    </PropertyGroup>
+    <Exec Command="dotnet &quot;$(ManifestRewriterDll)&quot; --path &quot;$(OutputManifestPath)&quot;"
+          ConsoleToMSBuild="true" />
+  </Target>
+</Project>

@@ -47,6 +47,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fixture.BadRegularMod", "te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fixture.BadSharedMod_WithIMod", "tests\Fixture.BadSharedMod_WithIMod\Fixture.BadSharedMod_WithIMod.csproj", "{B17C9C1B-5E2D-4D47-9A53-CFE1B5A3BAD0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{07C2787E-EAC7-C090-1BA3-A61EC2A24D84}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Mod.ManifestRewriter", "tools\DualFrontier.Mod.ManifestRewriter\DualFrontier.Mod.ManifestRewriter.csproj", "{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -285,6 +289,18 @@ Global
 		{B17C9C1B-5E2D-4D47-9A53-CFE1B5A3BAD0}.Release|x64.Build.0 = Release|Any CPU
 		{B17C9C1B-5E2D-4D47-9A53-CFE1B5A3BAD0}.Release|x86.ActiveCfg = Release|Any CPU
 		{B17C9C1B-5E2D-4D47-9A53-CFE1B5A3BAD0}.Release|x86.Build.0 = Release|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Debug|x64.Build.0 = Debug|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Debug|x86.Build.0 = Debug|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Release|x64.ActiveCfg = Release|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Release|x64.Build.0 = Release|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Release|x86.ActiveCfg = Release|Any CPU
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -309,5 +325,6 @@ Global
 		{9D1BA051-107B-4757-91C5-FF733F8B60D8} = {22222222-2222-2222-2222-222222222222}
 		{0E692614-CE4C-4D39-A361-18BFD3A38641} = {22222222-2222-2222-2222-222222222222}
 		{B17C9C1B-5E2D-4D47-9A53-CFE1B5A3BAD0} = {22222222-2222-2222-2222-222222222222}
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31} = {07C2787E-EAC7-C090-1BA3-A61EC2A24D84}
 	EndGlobalSection
 EndGlobal
