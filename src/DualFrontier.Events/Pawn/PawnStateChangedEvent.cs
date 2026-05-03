@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Events.Pawn;
@@ -20,4 +22,12 @@ public sealed record PawnStateChangedEvent : IEvent
     public required float    Mood      { get; init; }
     public required string   JobLabel  { get; init; }
     public required bool     JobUrgent { get; init; }
+
+    /// <summary>
+    /// Top 3 skills by descending level. Each entry is the SkillKind and
+    /// the integer level (0..SkillsComponent.MaxLevel). May be empty if
+    /// the pawn has no SkillsComponent or its Levels dictionary is null.
+    /// Order: highest level first; ties broken by SkillKind enum order.
+    /// </summary>
+    public required IReadOnlyList<(SkillKind Kind, int Level)> TopSkills { get; init; }
 }

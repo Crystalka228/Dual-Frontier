@@ -1,61 +1,123 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Contracts.Core;
 using DualFrontier.Core.ECS;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
 
 /// <summary>
-/// Phase 4 HUD bridge: each SLOW tick, emits a PawnStateChangedEvent per
-/// pawn so GameBootstrap can forward the data as a PawnStateCommand to
-/// the presentation HUD. Read-only on pawn components; only publishes on
+/// HUD bridge: each SLOW tick, emits a PawnStateChangedEvent per pawn so
+/// GameBootstrap can forward the data as a PawnStateCommand to the
+/// presentation HUD. Read-only on pawn components; only publishes on
 /// the Pawns bus.
+///
+/// Operating principle "data exists or it doesn't": Name comes from
+/// IdentityComponent (empty string if absent), TopSkills from
+/// SkillsComponent.Levels (empty list if absent or uninitialized). No
+/// hardcoded placeholder names, no hash-derived fallback values.
 /// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(NeedsComponent), typeof(MindComponent), typeof(JobComponent) },
+    reads:  new[] { typeof(NeedsComponent), typeof(MindComponent), typeof(JobComponent),
+                    typeof(IdentityComponent), typeof(SkillsComponent) },
     writes: new Type[0],
     bus:    nameof(IGameServices.Pawns)
 )]
 [TickRate(TickRates.SLOW)]
 public sealed class PawnStateReporterSystem : SystemBase
 {
-    private static readonly string[] Names =
-    {
-        "Brother Cassian", "Sister Maria",   "Magus Ferro",
-        "Vexillus Korvin", "Inquisitor Vex", "Acolyte Veneris"
-    };
+    private const int TopSkillCount = 3;
 
     protected override void OnInitialize() { }
 
     public override void Update(float delta)
     {
+        // Pre-materialise membership sets so per-pawn reads stay branch-free
+        // and avoid try/catch in the hot loop. The [SystemAccess] reads
+        // declaration above keeps these Query calls inside the isolation
+        // guard. Allocation: two short-lived HashSets per SLOW tick — at
+        // 10 pawns and SLOW rate this is negligible.
+        var identitySet = new HashSet<EntityId>();
+        foreach (var e in Query<IdentityComponent>()) identitySet.Add(e);
+
+        var skillsSet = new HashSet<EntityId>();
+        foreach (var e in Query<SkillsComponent>()) skillsSet.Add(e);
+
         foreach (var pawn in Query<NeedsComponent, JobComponent>())
         {
             var needs = GetComponent<NeedsComponent>(pawn);
             var mind  = GetComponent<MindComponent>(pawn);
             var job   = GetComponent<JobComponent>(pawn);
 
+            string name = identitySet.Contains(pawn)
+                ? GetComponent<IdentityComponent>(pawn).Name
+                : string.Empty;
+
+            IReadOnlyList<(SkillKind Kind, int Level)> topSkills =
+                skillsSet.Contains(pawn)
+                    ? ComputeTopSkills(GetComponent<SkillsComponent>(pawn))
+                    : Array.Empty<(SkillKind, int)>();
+
             Services.Pawns.Publish(new PawnStateChangedEvent
             {
                 PawnId    = pawn,
-                Name      = ResolveName(pawn.Index),
+                Name      = name,
                 Hunger    = 1f - needs.Hunger,
                 Thirst    = 1f - needs.Thirst,
                 Rest      = 1f - needs.Rest,
                 Comfort   = 1f - needs.Comfort,
                 Mood      = mind.Mood,
                 JobLabel  = TranslateJob(job.Current),
-                JobUrgent = job.Current == JobKind.Eat || job.Current == JobKind.Sleep
+                JobUrgent = job.Current == JobKind.Eat || job.Current == JobKind.Sleep,
+                TopSkills = topSkills,
             });
         }
     }
 
-    private static string ResolveName(int index)
+    private static IReadOnlyList<(SkillKind Kind, int Level)> ComputeTopSkills(SkillsComponent skills)
     {
-        int i = Math.Abs(index) % Names.Length;
-        return Names[i];
+        if (skills.Levels is null || skills.Levels.Count == 0)
+            return Array.Empty<(SkillKind, int)>();
+
+        // Build a working array of all (kind, level) pairs, sort by level
+        // descending (ties broken by enum order), take top N.
+        var pairs = new (SkillKind Kind, int Level)[skills.Levels.Count];
+        int idx = 0;
+        foreach (var kv in skills.Levels)
+            pairs[idx++] = (kv.Key, kv.Value);
+
+        // Insertion sort — fixed size 13, allocation-free, O(n^2) trivial.
+        for (int a = 1; a < pairs.Length; a++)
+        {
+            var cur = pairs[a];
+            int b = a - 1;
+            while (b >= 0 && CompareDesc(pairs[b], cur) > 0)
+            {
+                pairs[b + 1] = pairs[b];
+                b--;
+            }
+            pairs[b + 1] = cur;
+        }
+
+        int take = Math.Min(TopSkillCount, pairs.Length);
+        var result = new (SkillKind, int)[take];
+        Array.Copy(pairs, result, take);
+        return result;
+    }
+
+    /// <summary>
+    /// Comparer: descending by level, ascending by SkillKind enum value
+    /// for ties. Returns negative if <paramref name="a"/> should come
+    /// BEFORE <paramref name="b"/> in the sorted (top-first) order;
+    /// positive otherwise.
+    /// </summary>
+    private static int CompareDesc((SkillKind Kind, int Level) a, (SkillKind Kind, int Level) b)
+    {
+        if (a.Level != b.Level) return b.Level - a.Level;
+        return (int)a.Kind - (int)b.Kind;
     }
 
     private static string TranslateJob(JobKind kind) => kind switch

@@ -1,31 +1,24 @@
 # UI — Interface controls
 
 ## Purpose
-User-interface elements layered on top of the game scene. They react to
-`UIUpdateCommand` from `PresentationBridge` and to user input.
+User-interface widgets that react to render commands from
+`PresentationBridge` and to user input.
 
 ## Dependencies
 - `DualFrontier.Application` — commands and data.
-- `GodotSharp` (Phase 3).
+- `GodotSharp`.
 
 ## Contents
-- `PawnInspector.cs` — panel with the selected pawn's stats.
-- `ManaBar.cs` — mana / ether bar.
-- `BuildMenu.cs` — building menu.
-- `AlertPanel.cs` — alert banners.
+- `GameHUD.cs` — top-level HUD overlay (CanvasLayer 10).
+- `ColonyPanel.cs` — left-edge colony roster + tick label.
+- `PawnDetail.cs` — right-edge per-pawn detail (header, mood, needs, job, top skills).
+- `Palette.cs` — shared color tokens.
+
+Phase 5 stubs (BuildMenu, AlertPanel, ManaBar, PawnInspector) were deleted as
+unused scaffolding; they will be re-created with real implementations when the
+corresponding gameplay systems land (build mode, alert/notification system,
+magic, expanded pawn inspector).
 
 ## Rules
-- Phase 0: classes are plain `public sealed class` without inheritance.
-  Phase 3 will add inheritance from `Godot.Control` / `CanvasLayer`.
 - The UI does not mutate the simulation directly: user actions become domain
   commands through `InputRouter`.
-
-## Usage examples
-```csharp
-// Phase 3+: react to UIUpdateCommand.
-public void ApplyUpdate(string payload) { /* update text/value */ }
-```
-
-## TODO
-- [ ] Phase 3 — inherit from `Godot.Control`.
-- [ ] Phase 3 — wire up to UI scenes (`.tscn`).

@@ -3,10 +3,7 @@ using DualFrontier.AI.Pathfinding;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Modding;
-using DualFrontier.Components.Pawn;
-using DualFrontier.Components.Shared;
-using DualFrontier.Contracts.Core;
-using DualFrontier.Contracts.Math;
+using DualFrontier.Application.Scenario;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
@@ -34,12 +31,12 @@ namespace DualFrontier.Application.Loop;
 /// </summary>
 internal static class GameBootstrap
 {
-    private static readonly GridVector[] InitialPawnPositions =
-    {
-        new(25, 25),
-        new(27, 25),
-        new(26, 27)
-    };
+    private const int MapWidth = 50;
+    private const int MapHeight = 50;
+    private const int InitialPawnCount = 10;
+    private const int FactorySeed = 42;
+    private const int ObstacleSeed = 42;
+    private const int ObstacleCount = 50;
 
     /// <summary>
     /// Builds the full production simulation context: domain world,
@@ -86,19 +83,20 @@ internal static class GameBootstrap
         services.Pawns.Subscribe<PawnStateChangedEvent>(e =>
             bridge.Enqueue(new PawnStateCommand(
                 e.PawnId, e.Name, e.Hunger, e.Thirst, e.Rest, e.Comfort,
-                e.Mood, e.JobLabel, e.JobUrgent)));
+                e.Mood, e.JobLabel, e.JobUrgent, e.TopSkills)));
 
-        SpawnInitialPawns(world, services);
-
-        var navGrid = new NavGrid(50, 50);
-        var obstacleRng = new Random(42);
-        for (int i = 0; i < 50; i++)
+        var navGrid = new NavGrid(MapWidth, MapHeight);
+        var obstacleRng = new Random(ObstacleSeed);
+        for (int i = 0; i < ObstacleCount; i++)
         {
-            int ox = obstacleRng.Next(0, 50);
-            int oy = obstacleRng.Next(0, 50);
+            int ox = obstacleRng.Next(0, MapWidth);
+            int oy = obstacleRng.Next(0, MapHeight);
             navGrid.SetTile(ox, oy, passable: false);
         }
         var pathfinding = new AStarPathfinding(navGrid);
+
+        var pawnFactory = new RandomPawnFactory(FactorySeed, navGrid, MapWidth, MapHeight);
+        pawnFactory.Spawn(world, services, InitialPawnCount);
 
         // Hard-coded kernel systems live in a local array so the same
         // instances flow into both the dependency graph (kernel
@@ -153,25 +151,5 @@ internal static class GameBootstrap
         // RenderCommandDispatcher routes the command to the HUD tick label.
         var loop = new GameLoop(scheduler, ticks, bridge);
         return new GameContext(loop, controller);
-    }
-
-    private static void SpawnInitialPawns(World world, GameServices services)
-    {
-        foreach (GridVector pos in InitialPawnPositions)
-        {
-            EntityId id = world.CreateEntity();
-            world.AddComponent(id, new PositionComponent { Position = pos });
-            world.AddComponent(id, new NeedsComponent { Hunger = 0.1f, Thirst = 0.1f, Rest = 0.1f });
-            world.AddComponent(id, new MindComponent());
-            world.AddComponent(id, new JobComponent { Current = JobKind.Idle });
-            world.AddComponent(id, new MovementComponent());
-
-            services.Pawns.Publish(new PawnSpawnedEvent
-            {
-                PawnId = id,
-                X      = pos.X,
-                Y      = pos.Y
-            });
-        }
     }
 }

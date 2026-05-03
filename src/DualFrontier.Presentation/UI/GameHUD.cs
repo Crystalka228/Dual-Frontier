@@ -27,7 +27,8 @@ public partial class GameHUD : CanvasLayer
         _colony.UpdatePawn(cmd.PawnId, cmd.Name, cmd.JobLabel, cmd.Mood);
         _detail.UpdatePawn(
             cmd.PawnId, cmd.Name, cmd.Hunger, cmd.Thirst, cmd.Rest,
-            cmd.Comfort, cmd.Mood, cmd.JobLabel, cmd.JobUrgent);
+            cmd.Comfort, cmd.Mood, cmd.JobLabel, cmd.JobUrgent,
+            cmd.TopSkills);
     }
 
     public void SetTick(int tick) => _colony.SetTick(tick);

@@ -24,11 +24,12 @@ Everything debug-specific is marked `[DevKitOnly]` — production analytics
 - `GodotSharp` (will be added in Phase 3).
 
 ## Contents
-- `Nodes/` — root scene nodes (`GameRoot`, `PawnVisual`, `TileMapRenderer`, `ProjectileVisual`).
-- `UI/` — interface controls (`PawnInspector`, `ManaBar`, `BuildMenu`, `AlertPanel`).
+- `Nodes/` — root scene nodes (`GameRoot`, `PawnLayer`, `PawnVisual`, `TileMapRenderer`).
+- `UI/` — HUD widgets (`GameHUD`, `ColonyPanel`, `PawnDetail`, `Palette`).
 - `Input/` — input routing (`InputRouter`).
-- `Scenes/` — `.tscn` files, added through the Godot editor later.
-- `project.godot` — placeholder; will be overwritten by Godot when the project is opened.
+- `Rendering/` — render command dispatch (`RenderCommandDispatcher`).
+- `Scenes/` — `.tscn` files authored in the Godot editor.
+- `project.godot` — Godot project file.
 
 ## Rules
 - Any `using Godot;` MUST live ONLY in this assembly.

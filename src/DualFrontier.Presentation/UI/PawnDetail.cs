@@ -1,21 +1,23 @@
 using System;
 using System.Collections.Generic;
+using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 using Godot;
 
 namespace DualFrontier.Presentation.UI;
 
 /// <summary>
-/// Right-edge per-pawn detail card. Sections: header, mood, needs (4 bars),
-/// current job pill, skills (3 demo skills with pip cells), bottom ornament.
-/// Renders the most recent state for the currently selected pawn.
+/// Right-edge per-pawn detail card. Sections: header (avatar + name),
+/// mood, needs (4 bars), current job pill, skills (top 3 by level), and
+/// bottom ornament. All values are sourced from real components — no
+/// hash-derived placeholders. Empty SKILLS rows mean the pawn has no
+/// skill data attached.
 /// </summary>
 public partial class PawnDetail : Panel
 {
     private VBoxContainer _root      = null!;
     private Label         _initials  = null!;
     private Label         _nameLabel = null!;
-    private Label         _roleLabel = null!;
     private Label         _moodValue = null!;
     private Label         _moodMood  = null!;
     private ColorRect     _moodBar   = null!;
@@ -57,26 +59,27 @@ public partial class PawnDetail : Panel
 
     public void UpdatePawn(
         EntityId id, string name, float hunger, float thirst, float rest,
-        float comfort, float mood, string jobLabel, bool jobUrgent)
+        float comfort, float mood, string jobLabel, bool jobUrgent,
+        IReadOnlyList<(SkillKind Kind, int Level)> topSkills)
     {
-        _states[id] = new PawnState(name, hunger, thirst, rest, comfort, mood, jobLabel, jobUrgent);
+        _states[id] = new PawnState(name, hunger, thirst, rest, comfort, mood,
+            jobLabel, jobUrgent, topSkills);
         if (_shown is null) _shown = id;
         if (_shown.HasValue && _shown.Value.Equals(id))
-            Render(_states[id], id);
+            Render(_states[id]);
     }
 
     public void ShowPawn(EntityId id)
     {
         _shown = id;
         if (_states.TryGetValue(id, out var s))
-            Render(s, id);
+            Render(s);
     }
 
-    private void Render(PawnState s, EntityId id)
+    private void Render(PawnState s)
     {
         _initials.Text  = MakeInitials(s.Name);
         _nameLabel.Text = s.Name.ToUpperInvariant();
-        _roleLabel.Text = MakeRole(id);
 
         int moodPct = (int)MathF.Round(s.Mood * 100f);
         _moodValue.Text = moodPct.ToString();
@@ -92,7 +95,7 @@ public partial class PawnDetail : Panel
         _jobDot.Color  = JobDotColor(s.JobLabel, s.JobUrgent);
         _jobLabel.Text = s.JobLabel;
 
-        RenderSkills(id);
+        RenderSkills(s.TopSkills);
     }
 
     private void BuildHeader()
@@ -126,9 +129,6 @@ public partial class PawnDetail : Panel
 
         _nameLabel = ColonyPanel.MakeLabel("—", 14, Palette.Text);
         titleBox.AddChild(_nameLabel);
-
-        _roleLabel = ColonyPanel.MakeLabel("inquisitor", 11, Palette.Muted);
-        titleBox.AddChild(_roleLabel);
     }
 
     private void BuildMood()
@@ -209,25 +209,13 @@ public partial class PawnDetail : Panel
         _root.AddChild(l);
     }
 
-    private void RenderSkills(EntityId id)
+    private void RenderSkills(IReadOnlyList<(SkillKind Kind, int Level)> topSkills)
     {
         foreach (var child in _skillsBox.GetChildren())
             child.QueueFree();
 
-        var demo = DemoSkills(id);
-        foreach (var (name, level) in demo)
-            _skillsBox.AddChild(new SkillRow(name, level));
-    }
-
-    private static (string Name, int Level)[] DemoSkills(EntityId id)
-    {
-        int seed = Math.Abs(id.Index);
-        return new (string, int)[]
-        {
-            ("Construction", 4 + (seed       % 8)),
-            ("Combat",       6 + ((seed * 3) % 9)),
-            ("Crafting",     2 + ((seed * 7) % 11))
-        };
+        foreach (var (kind, level) in topSkills)
+            _skillsBox.AddChild(new SkillRow(kind.ToString(), level));
     }
 
     private static string MakeInitials(string name)
@@ -237,12 +225,6 @@ public partial class PawnDetail : Panel
         if (parts.Length == 0) return "??";
         if (parts.Length == 1) return parts[0].Substring(0, Math.Min(2, parts[0].Length)).ToUpperInvariant();
         return $"{parts[0][0]}{parts[1][0]}".ToUpperInvariant();
-    }
-
-    private static string MakeRole(EntityId id)
-    {
-        string[] roles = { "inquisitor", "sergeant", "tech-priest", "magus", "medic" };
-        return roles[Math.Abs(id.Index) % roles.Length];
     }
 
     private static string MoodLabel(float mood)
@@ -281,7 +263,8 @@ public partial class PawnDetail : Panel
 
     private readonly record struct PawnState(
         string Name, float Hunger, float Thirst, float Rest, float Comfort,
-        float Mood, string JobLabel, bool JobUrgent);
+        float Mood, string JobLabel, bool JobUrgent,
+        IReadOnlyList<(SkillKind Kind, int Level)> TopSkills);
 }
 
 internal partial class NeedRow : HBoxContainer
