@@ -27,3 +27,4 @@ BenchmarkDotNet.Artifacts/
 # manual post-build copies and must not be versioned)
 DualFrontier.Core.Native.dll
 tests/DualFrontier.Core.Benchmarks/DualFrontier.Core.Native.dll
+*.zip
