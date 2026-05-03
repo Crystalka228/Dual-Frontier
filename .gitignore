@@ -28,3 +28,11 @@ BenchmarkDotNet.Artifacts/
 DualFrontier.Core.Native.dll
 tests/DualFrontier.Core.Benchmarks/DualFrontier.Core.Native.dll
 *.zip
+
+# Extracted Kenney asset packs and Cinzel font — local-only derived state.
+# The source .zip files committed at repo root are the SoT; extractions are
+# performed by the contributor locally and must not pollute git history.
+/assets/cinzel/
+/assets/Cinzel/
+/assets/kenney_*/
+/assets/Kenney_*/
