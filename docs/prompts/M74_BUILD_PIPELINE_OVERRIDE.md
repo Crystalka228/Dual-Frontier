@@ -368,7 +368,7 @@ If during execution an architectural fork is encountered not foreseen here — S
 
 **Hypothesis-falsification clause:**
 
-Datapoints (per [M6 closure review §10](./M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0. M7.4 closure pending = potentially eighth consecutive zero.
+Datapoints (per [M6 closure review §10](../audit/M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0. M7.4 closure pending = potentially eighth consecutive zero.
 
 M7.4 exercises D-7 + §9.6 + §2.2 — narrow surface in v1.5. The implementation surface is build-system tooling (MSBuild target wiring, JSON manipulation, subprocess test infrastructure) — closer to .NET tooling contracts than to mod-OS spec wording. **If implementation surfaces a §9 / D-7 contradiction requiring v1.6 ratification → hypothesis falsified. Report immediately.**
 

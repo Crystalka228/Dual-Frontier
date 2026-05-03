@@ -18,7 +18,7 @@ M7.5.B.2 closes the M7 cycle's core implementation by binding the `ModMenuContro
 
 ## Out of scope
 
-- M7-closure session — separate post-M7.5.B.2 session. Produces `docs/M7_CLOSURE_REVIEW.md` parallel to existing M3–M6 closure reviews; marks M7 row → ✅ Closed in ROADMAP; updates contradiction-discovery datapoint sequence with final tally.
+- M7-closure session — separate post-M7.5.B.2 session. Produces `docs/audit/M7_CLOSURE_REVIEW.md` parallel to existing M3–M6 closure reviews; marks M7 row → ✅ Closed in ROADMAP; updates contradiction-discovery datapoint sequence with final tally.
 - M8 vanilla mod skeletons — needed for the menu to actually have something to toggle; until then the menu shows "No mods found" empty state, which is the honest state.
 - Any change to `src/DualFrontier.Core` or `src/DualFrontier.Contracts`. M-phase boundary preserved through M3–M7.5.B.1 + 4 housekeeping commits. Verified by `git diff <baseline>..HEAD --stat -- src/DualFrontier.Core src/DualFrontier.Contracts` returning empty.
 - Any change to `ModMenuController`, `IModDiscoverer`, `DefaultModDiscoverer`, `ModIntegrationPipeline`, or related M7.5.A surface. The controller's contract is final; M7.5.B.2 only consumes it.
@@ -535,7 +535,7 @@ If during execution an architectural fork is encountered not foreseen here — S
 
 **Hypothesis-falsification clause:**
 
-Datapoints (per [M6 closure review §10](./M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0, M7.4=0, M7.5.A=0, M7.5.B.1=0. **M7.5.B.2 closure pending = potentially eleventh consecutive zero post-M4.**
+Datapoints (per [M6 closure review §10](../audit/M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0, M7.4=0, M7.5.A=0, M7.5.B.1=0. **M7.5.B.2 closure pending = potentially eleventh consecutive zero post-M4.**
 
 M7.5.B.2 exercises §9.2 (menu flow surface) + §9.6 (hot-reload disabled UI semantics). Implementation surface is Godot UI presentation layer — entirely below the spec layer in technical contract sense. **If implementation surfaces a §9 contradiction requiring v1.6 ratification → hypothesis falsified. Report immediately.**
 

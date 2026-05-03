@@ -279,7 +279,7 @@ If during execution an architectural fork is encountered not foreseen here — S
 
 **Hypothesis-falsification clause:**
 
-Datapoints (per [M6 closure review §10](./M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0, M7.4=0, M7.5.A=0, M7.5.B.1=0. **This commit does not increment the datapoint sequence** — it's a Phase 4 housekeeping bugfix, not an M-cycle phase. The sequence resumes at M7.5.B.2.
+Datapoints (per [M6 closure review §10](../audit/M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0, M7.4=0, M7.5.A=0, M7.5.B.1=0. **This commit does not increment the datapoint sequence** — it's a Phase 4 housekeeping bugfix, not an M-cycle phase. The sequence resumes at M7.5.B.2.
 
 This commit exercises only Application + Presentation layers (no spec-driven design). The `MOD_OS_ARCHITECTURE` spec doesn't speak to TICK display. No §-anchored ratification candidate is plausible. **If something §-anchored does surface, report immediately.**
 

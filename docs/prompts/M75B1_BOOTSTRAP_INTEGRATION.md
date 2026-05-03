@@ -245,7 +245,7 @@ If during execution an architectural fork is encountered not foreseen here — S
 
 **Hypothesis-falsification clause:**
 
-Datapoints (per [M6 closure review §10](./M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0, M7.4=0, M7.5.A=0. M7.5.B.1 closure pending = potentially **tenth consecutive zero** post-M4.
+Datapoints (per [M6 closure review §10](../audit/M6_CLOSURE_REVIEW.md)): M3=1, M4=1, M5=0, M6=0, M7.1=0, M7.2=0, M7.3=0, M7.4=0, M7.5.A=0. M7.5.B.1 closure pending = potentially **tenth consecutive zero** post-M4.
 
 M7.5.B.1 exercises §1.4 (load graph — discovery root resolves to where mods live) and §9.2 (the bootstrap produces the controller that drives the menu flow). The implementation surface — bootstrap-level wiring, record type, parameter default — sits on standard C# composition patterns and existing M-phase contracts. **If implementation surfaces a §1 or §9 contradiction requiring v1.6 ratification → hypothesis falsified. Report immediately.**
 

@@ -5,7 +5,7 @@ nav_order: 102
 
 # План аудиторской кампании Dual Frontier — 2026-05-01
 
-*Сопровождающий документ к семейству [`M3..M6_CLOSURE_REVIEW.md`](../M6_CLOSURE_REVIEW.md). Описывает сквозной аудит проекта против `MOD_OS_ARCHITECTURE` v1.4 LOCKED + `ROADMAP` + actual implementation. Кампания производит артефакты класса `AUDIT_PASS_*.md` и финальный `AUDIT_REPORT.md` в формате closure review.*
+*Сопровождающий документ к семейству [`M3..M6_CLOSURE_REVIEW.md`](./M6_CLOSURE_REVIEW.md). Описывает сквозной аудит проекта против `MOD_OS_ARCHITECTURE` v1.4 LOCKED + `ROADMAP` + actual implementation. Кампания производит артефакты класса `AUDIT_PASS_*.md` и финальный `AUDIT_REPORT.md` в формате closure review.*
 
 **Status:** LOCKED v1.0 — Phase 0 кампании закрыт; шесть открытых решений §7 ratified 2026-05-01. Промты для Pass 1–5 пишутся опираясь на этот документ как контракт.
 
@@ -465,7 +465,7 @@ Tier 1+ копятся до Pass 5 final report.
 
 - [TRANSLATION_PLAN](../TRANSLATION_PLAN.md) — прецедент multipass campaign по этому же проекту; шаблон для structure §2.
 - [NORMALIZATION_REPORT](../NORMALIZATION_REPORT.md) — пример Pass 1 артефакта (translation campaign Pass 1).
-- [M6_CLOSURE_REVIEW](../M6_CLOSURE_REVIEW.md) — образец 8-section closure review формата для всех пяти проходов кампании (per §7.2 LOCKED).
+- [M6_CLOSURE_REVIEW](./M6_CLOSURE_REVIEW.md) — образец 8-section closure review формата для всех пяти проходов кампании (per §7.2 LOCKED).
 - [METHODOLOGY](../METHODOLOGY.md) — §2.4 atomic phase review, §7.3 process discipline; принципы кампании.
 - [MOD_OS_ARCHITECTURE](../MOD_OS_ARCHITECTURE.md) v1.4 LOCKED — основная цель аудита.
 - [ROADMAP](../ROADMAP.md) — вторая основная цель аудита.
