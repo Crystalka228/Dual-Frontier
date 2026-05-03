@@ -178,6 +178,105 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
+    public void CreateLoop_Spawns10PawnsByDefault()
+    {
+        // Real-pawn-data housekeeping — the production factory emits a
+        // PawnSpawnedCommand per colonist via the Pawns bus → bridge
+        // subscription wired in CreateLoop. Locks the new 10-pawn
+        // baseline (was 3 before housekeeping) at the bridge surface.
+        var bridge = new PresentationBridge();
+        var observedSpawns = new List<PawnSpawnedCommand>();
+
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+        bridge.DrainCommands(c =>
+        {
+            if (c is PawnSpawnedCommand sp) observedSpawns.Add(sp);
+        });
+
+        observedSpawns.Should().HaveCount(10);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public void CreateLoop_RunningLoop_PawnStateCommandCarriesRealName()
+    {
+        // PawnStateReporterSystem reads IdentityComponent.Name; the
+        // RandomPawnFactory always populates that field with a forename
+        // + surname pair, so the published PawnStateCommand must carry
+        // a non-empty space-separated name. Locks the end-to-end name
+        // wiring (component → reporter → event → bridge → command).
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+
+        try
+        {
+            context.Loop.Start();
+            Thread.Sleep(500);
+        }
+        finally
+        {
+            context.Loop.Stop();
+        }
+
+        var stateCommands = new List<PawnStateCommand>();
+        bridge.DrainCommands(c =>
+        {
+            if (c is PawnStateCommand ps) stateCommands.Add(ps);
+        });
+
+        stateCommands.Should().NotBeEmpty(
+            "expected at least one PawnStateCommand publish during the loop window");
+        foreach (var ps in stateCommands)
+        {
+            ps.Name.Should().NotBeNullOrWhiteSpace(
+                "PawnStateCommand carries empty Name — IdentityComponent not wired correctly");
+            ps.Name.Should().Contain(" ", "names follow forename + surname format");
+        }
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public void CreateLoop_RunningLoop_PawnStateCommandCarriesTopSkills()
+    {
+        // PawnStateReporterSystem computes top-3 skills from
+        // SkillsComponent.Levels. The RandomPawnFactory populates all
+        // 13 SkillKind values, so every PawnStateCommand must carry
+        // exactly 3 entries in descending level order.
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+
+        try
+        {
+            context.Loop.Start();
+            Thread.Sleep(500);
+        }
+        finally
+        {
+            context.Loop.Stop();
+        }
+
+        var stateCommands = new List<PawnStateCommand>();
+        bridge.DrainCommands(c =>
+        {
+            if (c is PawnStateCommand ps) stateCommands.Add(ps);
+        });
+
+        stateCommands.Should().NotBeEmpty(
+            "expected at least one PawnStateCommand publish during the loop window");
+        foreach (var ps in stateCommands)
+        {
+            ps.TopSkills.Should().NotBeNull();
+            ps.TopSkills.Should().HaveCount(3);
+            for (int i = 0; i < ps.TopSkills.Count - 1; i++)
+            {
+                ps.TopSkills[i].Level.Should().BeGreaterThanOrEqualTo(
+                    ps.TopSkills[i + 1].Level,
+                    "TopSkills must be sorted descending by Level");
+            }
+        }
+    }
+
+    [Fact]
     [Trait("Category", "Integration")]
     public void CreateLoop_RunningLoop_PublishesTickAdvancedCommandsThroughBridge()
     {
