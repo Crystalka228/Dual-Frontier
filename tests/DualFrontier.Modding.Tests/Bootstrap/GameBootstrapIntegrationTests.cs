@@ -375,6 +375,68 @@ public sealed class GameBootstrapIntegrationTests
         context.Controller.IsEditing.Should().BeTrue();
     }
 
+    [Fact]
+    public void MenuFlow_BeginEditing_PausesGameLoop()
+    {
+        // Second-housekeeping wiring (MOD_OS_ARCHITECTURE §9.2 step 1) —
+        // GameBootstrap.CreateLoop wires controller.OnEditingBegan to
+        // loop.SetPaused(true). Locks the controller-driven simulation
+        // pause: the user-visible behavior the F5 verification surfaced
+        // as missing (TICK counter kept advancing with the menu open).
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+
+        context.Loop.IsPaused.Should().BeFalse(
+            "loop is unpaused at construction");
+
+        context.Controller.BeginEditing();
+
+        context.Loop.IsPaused.Should().BeTrue(
+            "BeginEditing fires OnEditingBegan which calls loop.SetPaused(true) " +
+            "per MOD_OS_ARCHITECTURE §9.2 step 1");
+    }
+
+    [Fact]
+    public void MenuFlow_Cancel_ResumesGameLoop()
+    {
+        // Cancel path — symmetric counterpart to the BeginEditing pause.
+        // Locks loop.IsPaused flipping back to false on Cancel so closing
+        // the menu without Apply restores tick advance.
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+        context.Controller.BeginEditing();
+        context.Loop.IsPaused.Should().BeTrue(
+            "loop should be paused after BeginEditing (precondition for this test)");
+
+        context.Controller.Cancel();
+
+        context.Loop.IsPaused.Should().BeFalse(
+            "Cancel fires OnEditingEnded which calls loop.SetPaused(false)");
+    }
+
+    [Fact]
+    public void MenuFlow_CommitSuccess_ResumesGameLoop()
+    {
+        // Apply success path — Commit on a clean session is a no-op
+        // success per M7.5.A test 16; OnEditingEnded must fire on the
+        // success branch only (failed-commit-stays-paused is covered
+        // by M7.5.A's Commit_ValidationFailure_LeavesSessionOpen plus
+        // the controller's success-only RaiseHook placement).
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+        context.Controller.BeginEditing();
+        context.Loop.IsPaused.Should().BeTrue(
+            "loop should be paused after BeginEditing (precondition for this test)");
+
+        CommitResult result = context.Controller.Commit();
+
+        result.Success.Should().BeTrue(
+            "no toggles applied — Commit on a clean session is a no-op success " +
+            "per M7.5.A test 16");
+        context.Loop.IsPaused.Should().BeFalse(
+            "successful Commit fires OnEditingEnded which calls loop.SetPaused(false)");
+    }
+
     private static void WriteValidManifest(string dir, string id)
     {
         Directory.CreateDirectory(dir);
