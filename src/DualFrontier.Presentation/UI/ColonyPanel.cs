@@ -7,7 +7,9 @@ namespace DualFrontier.Presentation.UI;
 
 /// <summary>
 /// Left-edge colony roster: title, list of clickable pawn rows, and a
-/// bottom tick counter. Grimdark Warhammer palette via inline StyleBoxFlat.
+/// bottom tick counter. Kenney textured panel + Cinzel display fonts for
+/// title and pawn names; numerical content (TICK counter) keeps default
+/// sans for legibility.
 /// </summary>
 public partial class ColonyPanel : Panel
 {
@@ -37,8 +39,7 @@ public partial class ColonyPanel : Panel
         };
         AddChild(root);
 
-        var title = MakeLabel("COLONY", 11, Palette.Muted, bold: true);
-        title.AddThemeConstantOverride("outline_size", 0);
+        var title = MakeLabel("COLONY", 14, Palette.Muted, font: Fonts.CinzelBold);
         root.AddChild(title);
 
         var ornament = MakeLabel("✦   ✦   ✦", 9, Palette.Border);
@@ -89,18 +90,15 @@ public partial class ColonyPanel : Panel
             kv.Value.SetSelected(_selected.HasValue && _selected.Value.Equals(kv.Key));
     }
 
-    private static StyleBoxFlat MakePanelStyle() => new()
-    {
-        BgColor          = Palette.PanelBg,
-        BorderWidthRight = 1,
-        BorderColor      = Palette.Border
-    };
+    private static StyleBoxTexture MakePanelStyle() => UiTheme.MakeMainPanelBox();
 
-    internal static Label MakeLabel(string text, int size, Color color, bool bold = false)
+    internal static Label MakeLabel(string text, int size, Color color, FontFile? font = null, bool bold = false)
     {
         var label = new Label { Text = text };
         label.AddThemeColorOverride("font_color", color);
         label.AddThemeFontSizeOverride("font_size", size);
+        if (font is not null)
+            label.AddThemeFontOverride("font", font);
         if (bold)
             label.AddThemeConstantOverride("outline_size", 0);
         return label;
@@ -150,7 +148,7 @@ internal partial class PawnRow : Button
         _initials.VerticalAlignment   = VerticalAlignment.Center;
         _avatar.AddChild(_initials);
 
-        _name = ColonyPanel.MakeLabel("", 11, Palette.Text);
+        _name = ColonyPanel.MakeLabel("", 12, Palette.Text, font: Fonts.CinzelRegular);
         _name.OffsetLeft  = 38; _name.OffsetTop = 4;
         _name.OffsetRight = -4;
         AddChild(_name);
@@ -214,13 +212,7 @@ internal partial class PawnRow : Button
         };
     }
 
-    private static StyleBoxFlat MakeAvatarStyle() => new()
-    {
-        BgColor          = Palette.CardBg,
-        BorderWidthLeft   = 1, BorderWidthRight = 1,
-        BorderWidthTop    = 1, BorderWidthBottom = 1,
-        BorderColor      = Palette.Border
-    };
+    private static StyleBoxTexture MakeAvatarStyle() => UiTheme.MakeInsetBox();
 }
 
 internal static class Palette

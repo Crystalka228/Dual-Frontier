@@ -108,13 +108,7 @@ public partial class PawnDetail : Panel
         {
             CustomMinimumSize = new Vector2(48, 48)
         };
-        avatar.AddThemeStyleboxOverride("panel", new StyleBoxFlat
-        {
-            BgColor          = Palette.CardBg,
-            BorderWidthLeft   = 1, BorderWidthRight = 1,
-            BorderWidthTop    = 1, BorderWidthBottom = 1,
-            BorderColor      = Palette.Border
-        });
+        avatar.AddThemeStyleboxOverride("panel", UiTheme.MakeInsetBox());
         headerBox.AddChild(avatar);
 
         _initials = ColonyPanel.MakeLabel("??", 18, Palette.Text);
@@ -127,7 +121,7 @@ public partial class PawnDetail : Panel
         var titleBox = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         headerBox.AddChild(titleBox);
 
-        _nameLabel = ColonyPanel.MakeLabel("—", 14, Palette.Text);
+        _nameLabel = ColonyPanel.MakeLabel("—", 16, Palette.Text, font: Fonts.CinzelBold);
         titleBox.AddChild(_nameLabel);
     }
 
@@ -145,7 +139,7 @@ public partial class PawnDetail : Panel
         var col = new VBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
         row.AddChild(col);
 
-        _moodMood = ColonyPanel.MakeLabel("—", 11, Palette.Muted);
+        _moodMood = ColonyPanel.MakeLabel("—", 12, Palette.Muted, font: Fonts.CinzelRegular);
         col.AddChild(_moodMood);
 
         _moodBar = new ColorRect
@@ -205,7 +199,7 @@ public partial class PawnDetail : Panel
 
     private void AddSectionTitle(string text)
     {
-        var l = ColonyPanel.MakeLabel(text, 9, Palette.Muted);
+        var l = ColonyPanel.MakeLabel(text, 11, Palette.Muted, font: Fonts.CinzelRegular);
         _root.AddChild(l);
     }
 
@@ -254,12 +248,7 @@ public partial class PawnDetail : Panel
 
     private static float BarWidth(float v) => Math.Clamp(v, 0f, 1f);
 
-    private static StyleBoxFlat MakePanelStyle() => new()
-    {
-        BgColor          = Palette.PanelBg,
-        BorderWidthLeft  = 1,
-        BorderColor      = Palette.Border
-    };
+    private static StyleBoxTexture MakePanelStyle() => UiTheme.MakeMainPanelBox();
 
     private readonly record struct PawnState(
         string Name, float Satiety, float Hydration, float Energy, float Comfort,
@@ -273,7 +262,7 @@ internal partial class NeedRow : HBoxContainer
     private readonly string _name;
 
     private Label     _label = null!;
-    private ColorRect _track = null!;
+    private Panel     _track = null!;
     private ColorRect _fill  = null!;
     private Label     _pct   = null!;
 
@@ -297,12 +286,12 @@ internal partial class NeedRow : HBoxContainer
         };
         AddChild(bar);
 
-        _track = new ColorRect
+        _track = new Panel
         {
             AnchorLeft = 0, AnchorRight = 1,
             AnchorTop  = 0, AnchorBottom = 1,
-            Color      = Palette.CardBg
         };
+        _track.AddThemeStyleboxOverride("panel", UiTheme.MakeBarBackBox());
         bar.AddChild(_track);
 
         _fill = new ColorRect

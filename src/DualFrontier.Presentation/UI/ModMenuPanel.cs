@@ -92,7 +92,7 @@ public partial class ModMenuPanel : CanvasLayer
 		panel.AddChild(content);
 
 		// Title.
-		var title = ColonyPanel.MakeLabel("MOD MENU", 13, Palette.Muted, bold: true);
+		var title = ColonyPanel.MakeLabel("MOD MENU", 16, Palette.Muted, font: Fonts.CinzelBold);
 		title.HorizontalAlignment = HorizontalAlignment.Center;
 		content.AddChild(title);
 
@@ -129,13 +129,24 @@ public partial class ModMenuPanel : CanvasLayer
 		var spacerL = new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
 		buttonRow.AddChild(spacerL);
 
-		var cancelButton = new Button { Text = "Cancel", CustomMinimumSize = new Vector2(96, 28) };
+		var cancelButton = new Button { Text = "Cancel", CustomMinimumSize = new Vector2(96, 32) };
 		cancelButton.Pressed += OnCancelPressed;
+		StyleButton(cancelButton);
 		buttonRow.AddChild(cancelButton);
 
-		var applyButton = new Button { Text = "Apply", CustomMinimumSize = new Vector2(96, 28) };
+		var applyButton = new Button { Text = "Apply", CustomMinimumSize = new Vector2(96, 32) };
 		applyButton.Pressed += OnApplyPressed;
+		StyleButton(applyButton);
 		buttonRow.AddChild(applyButton);
+	}
+
+	private static void StyleButton(Button btn)
+	{
+		btn.AddThemeStyleboxOverride("normal",  UiTheme.MakeButtonNormalBox());
+		btn.AddThemeStyleboxOverride("hover",   UiTheme.MakeButtonNormalBox());
+		btn.AddThemeStyleboxOverride("pressed", UiTheme.MakeButtonPressedBox());
+		btn.AddThemeStyleboxOverride("focus",   new StyleBoxEmpty());
+		btn.AddThemeColorOverride("font_color", Palette.Text);
 	}
 
 	/// <summary>
@@ -214,6 +225,8 @@ public partial class ModMenuPanel : CanvasLayer
 		row.AddChild(label);
 
 		var check = new CheckBox { ToggleMode = true, ButtonPressed = info.IsPendingActive };
+		check.AddThemeIconOverride("checked",   KenneyTextures.IconCheckBeige);
+		check.AddThemeIconOverride("unchecked", KenneyTextures.IconCheckGrey);
 		if (!info.CanToggle)
 		{
 			check.Disabled = true;
@@ -281,11 +294,5 @@ public partial class ModMenuPanel : CanvasLayer
 		CloseAndCancel();
 	}
 
-	private static StyleBoxFlat MakePanelStyle() => new()
-	{
-		BgColor          = Palette.PanelBg,
-		BorderWidthLeft   = 1, BorderWidthRight = 1,
-		BorderWidthTop    = 1, BorderWidthBottom = 1,
-		BorderColor      = Palette.Border,
-	};
+	private static StyleBoxTexture MakePanelStyle() => UiTheme.MakeModalPanelBox();
 }
