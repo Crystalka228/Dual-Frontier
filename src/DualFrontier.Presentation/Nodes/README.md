@@ -26,7 +26,7 @@ from `PresentationBridge` and apply them to the scene.
 // Phase 3+ (after wiring up GodotSharp):
 public override void _Process(double delta)
 {
-    _bridge.DrainCommands(cmd => cmd.Execute(this));
+	_bridge.DrainCommands(cmd => cmd.Execute(this));
 }
 ```
 
