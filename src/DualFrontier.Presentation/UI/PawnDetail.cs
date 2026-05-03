@@ -21,9 +21,9 @@ public partial class PawnDetail : Panel
     private Label         _moodValue = null!;
     private Label         _moodMood  = null!;
     private ColorRect     _moodBar   = null!;
-    private NeedRow       _hunger    = null!;
-    private NeedRow       _thirst    = null!;
-    private NeedRow       _rest      = null!;
+    private NeedRow       _satiety   = null!;
+    private NeedRow       _hydration = null!;
+    private NeedRow       _energy    = null!;
     private NeedRow       _comfort   = null!;
     private ColorRect     _jobDot    = null!;
     private Label         _jobLabel  = null!;
@@ -58,11 +58,11 @@ public partial class PawnDetail : Panel
     }
 
     public void UpdatePawn(
-        EntityId id, string name, float hunger, float thirst, float rest,
+        EntityId id, string name, float satiety, float hydration, float energy,
         float comfort, float mood, string jobLabel, bool jobUrgent,
         IReadOnlyList<(SkillKind Kind, int Level)> topSkills)
     {
-        _states[id] = new PawnState(name, hunger, thirst, rest, comfort, mood,
+        _states[id] = new PawnState(name, satiety, hydration, energy, comfort, mood,
             jobLabel, jobUrgent, topSkills);
         if (_shown is null) _shown = id;
         if (_shown.HasValue && _shown.Value.Equals(id))
@@ -87,9 +87,9 @@ public partial class PawnDetail : Panel
         _moodBar.Color  = StatusColor(s.Mood);
         _moodBar.CustomMinimumSize = new Vector2(BarWidth(s.Mood), 4);
 
-        _hunger.Set(s.Hunger);
-        _thirst.Set(s.Thirst);
-        _rest.Set(s.Rest);
+        _satiety.Set(s.Satiety);
+        _hydration.Set(s.Hydration);
+        _energy.Set(s.Energy);
         _comfort.Set(s.Comfort);
 
         _jobDot.Color  = JobDotColor(s.JobLabel, s.JobUrgent);
@@ -164,10 +164,10 @@ public partial class PawnDetail : Panel
         box.AddThemeConstantOverride("separation", 6);
         _root.AddChild(box);
 
-        _hunger  = new NeedRow("Hunger");  box.AddChild(_hunger);
-        _thirst  = new NeedRow("Thirst");  box.AddChild(_thirst);
-        _rest    = new NeedRow("Rest");    box.AddChild(_rest);
-        _comfort = new NeedRow("Comfort"); box.AddChild(_comfort);
+        _satiety   = new NeedRow("Satiety");   box.AddChild(_satiety);
+        _hydration = new NeedRow("Hydration"); box.AddChild(_hydration);
+        _energy    = new NeedRow("Energy");    box.AddChild(_energy);
+        _comfort   = new NeedRow("Comfort");   box.AddChild(_comfort);
     }
 
     private void BuildJob()
@@ -262,7 +262,7 @@ public partial class PawnDetail : Panel
     };
 
     private readonly record struct PawnState(
-        string Name, float Hunger, float Thirst, float Rest, float Comfort,
+        string Name, float Satiety, float Hydration, float Energy, float Comfort,
         float Mood, string JobLabel, bool JobUrgent,
         IReadOnlyList<(SkillKind Kind, int Level)> TopSkills);
 }

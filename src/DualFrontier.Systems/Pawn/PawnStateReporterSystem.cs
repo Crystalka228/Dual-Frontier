@@ -13,7 +13,8 @@ namespace DualFrontier.Systems.Pawn;
 /// HUD bridge: each SLOW tick, emits a PawnStateChangedEvent per pawn so
 /// GameBootstrap can forward the data as a PawnStateCommand to the
 /// presentation HUD. Read-only on pawn components; only publishes on
-/// the Pawns bus.
+/// the Pawns bus. Need values pass through directly from NeedsComponent
+/// (already wellness 0..1, 1 = best) — no translation layer.
 ///
 /// Operating principle "data exists or it doesn't": Name comes from
 /// IdentityComponent (empty string if absent), TopSkills from
@@ -65,10 +66,10 @@ public sealed class PawnStateReporterSystem : SystemBase
             {
                 PawnId    = pawn,
                 Name      = name,
-                Hunger    = 1f - needs.Hunger,
-                Thirst    = 1f - needs.Thirst,
-                Rest      = 1f - needs.Rest,
-                Comfort   = 1f - needs.Comfort,
+                Satiety   = needs.Satiety,
+                Hydration = needs.Hydration,
+                Energy    = needs.Energy,
+                Comfort   = needs.Comfort,
                 Mood      = mind.Mood,
                 JobLabel  = TranslateJob(job.Current),
                 JobUrgent = job.Current == JobKind.Eat || job.Current == JobKind.Sleep,

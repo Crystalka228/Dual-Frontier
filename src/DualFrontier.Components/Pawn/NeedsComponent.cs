@@ -3,52 +3,54 @@ namespace DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
-/// Represents the core biological needs of a pawn, including hunger, thirst, rest, and comfort levels.
-/// This component is designed as a Pure POCO to hold state data without internal logic.
+/// Wellness pool for a pawn: satiety, hydration, energy, and comfort. Each
+/// value is normalised to [0..1] where 1 = best (fully fed / hydrated /
+/// rested / comfortable) and 0 = worst (starving / dehydrated / exhausted /
+/// miserable). Pure POCO — no internal logic beyond the threshold queries.
 /// </summary>
 public sealed class NeedsComponent : IComponent
 {
     /// <summary>
-    /// The current hunger level (0 = full, 1 = starving).
+    /// The current satiety level (0 = starving, 1 = full).
     /// </summary>
-    public float Hunger { get; set; }
+    public float Satiety { get; set; }
 
     /// <summary>
-    /// The current thirst level (0 = full, 1 = dehydrated).
+    /// The current hydration level (0 = dehydrated, 1 = full).
     /// </summary>
-    public float Thirst { get; set; }
+    public float Hydration { get; set; }
 
     /// <summary>
-    /// The current rest/energy level (0 = fully rested, 1 = exhausted).
+    /// The current energy level (0 = exhausted, 1 = fully rested).
     /// </summary>
-    public float Rest { get; set; }
+    public float Energy { get; set; }
 
     /// <summary>
-    /// The current comfort level (0 = comfortable, 1 = miserable).
+    /// The current comfort level (0 = miserable, 1 = comfortable).
     /// </summary>
     public float Comfort { get; set; }
 
     // Constants defining critical thresholds for needs warnings.
-    
-    /// <summary>
-    /// Value above which the NeedsSystem publishes a critical warning (e.g., 0.8f).
-    /// </summary>
-    public const float CriticalThreshold = 0.8f;
 
     /// <summary>
-    /// Value above which a mood break may trigger (e.g., 0.95f).
+    /// Value at or below which the NeedsSystem publishes a critical warning (e.g., 0.2f).
     /// </summary>
-    public const float BreakThreshold = 0.95f;
+    public const float CriticalThreshold = 0.2f;
+
+    /// <summary>
+    /// Value at or below which a mood break may trigger (e.g., 0.05f).
+    /// </summary>
+    public const float BreakThreshold = 0.05f;
 
     /// <inheritdoc/>
     /// <summary>Checks if the pawn is considered hungry based on critical thresholds.</summary>
-    public bool IsHungry => Hunger >= CriticalThreshold;
+    public bool IsHungry => Satiety <= CriticalThreshold;
 
     /// <inheritdoc/>
     /// <summary>Checks if the pawn is considered thirsty based on critical thresholds.</summary>
-    public bool IsThirsty => Thirst >= CriticalThreshold;
+    public bool IsThirsty => Hydration <= CriticalThreshold;
 
     /// <inheritdoc/>
     /// <summary>Checks if the pawn is considered exhausted based on critical thresholds.</summary>
-    public bool IsExhausted => Rest >= CriticalThreshold;
+    public bool IsExhausted => Energy <= CriticalThreshold;
 }

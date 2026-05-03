@@ -4,8 +4,9 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Pawn;
 
 /// <summary>
-/// Published by NeedsSystem when a pawn's need crosses CriticalThreshold.
-/// JobSystem subscribes to prioritise the matching recovery job (Eat, Sleep).
+/// Published by NeedsSystem when a pawn's wellness drops to or below
+/// CriticalThreshold. JobSystem subscribes to prioritise the matching
+/// recovery job (Eat, Sleep).
 /// </summary>
 public sealed record NeedsCriticalEvent : IEvent
 {

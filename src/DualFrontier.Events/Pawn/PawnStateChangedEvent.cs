@@ -8,16 +8,16 @@ namespace DualFrontier.Events.Pawn;
 /// Periodic snapshot of one pawn's HUD-relevant state. Emitted by
 /// PawnStateReporterSystem on its SLOW tick; GameBootstrap subscribes and
 /// forwards as PawnStateCommand to the presentation bridge.
-/// All need values are wellness 0..1 (1 = best), already inverted from
-/// NeedsComponent deficit semantics.
+/// All need values are wellness 0..1 (1 = best), passed through directly
+/// from NeedsComponent.
 /// </summary>
 public sealed record PawnStateChangedEvent : IEvent
 {
     public required EntityId PawnId    { get; init; }
     public required string   Name      { get; init; }
-    public required float    Hunger    { get; init; }
-    public required float    Thirst    { get; init; }
-    public required float    Rest      { get; init; }
+    public required float    Satiety   { get; init; }
+    public required float    Hydration { get; init; }
+    public required float    Energy    { get; init; }
     public required float    Comfort   { get; init; }
     public required float    Mood      { get; init; }
     public required string   JobLabel  { get; init; }

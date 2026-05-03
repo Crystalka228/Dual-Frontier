@@ -65,9 +65,9 @@ public sealed class JobSystem : SystemBase
 
     private static JobKind PickJob(NeedsComponent needs)
     {
-        if (needs.Hunger >= NeedsComponent.CriticalThreshold) return JobKind.Eat;
-        if (needs.Thirst >= NeedsComponent.CriticalThreshold) return JobKind.Eat;
-        if (needs.Rest   >= NeedsComponent.CriticalThreshold) return JobKind.Sleep;
+        if (needs.Satiety   <= NeedsComponent.CriticalThreshold) return JobKind.Eat;
+        if (needs.Hydration <= NeedsComponent.CriticalThreshold) return JobKind.Eat;
+        if (needs.Energy    <= NeedsComponent.CriticalThreshold) return JobKind.Sleep;
         return JobKind.Idle;
     }
 }

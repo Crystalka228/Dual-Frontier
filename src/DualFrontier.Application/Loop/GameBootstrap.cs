@@ -82,7 +82,7 @@ internal static class GameBootstrap
             bridge.Enqueue(new PawnDiedCommand(e.Who)));
         services.Pawns.Subscribe<PawnStateChangedEvent>(e =>
             bridge.Enqueue(new PawnStateCommand(
-                e.PawnId, e.Name, e.Hunger, e.Thirst, e.Rest, e.Comfort,
+                e.PawnId, e.Name, e.Satiety, e.Hydration, e.Energy, e.Comfort,
                 e.Mood, e.JobLabel, e.JobUrgent, e.TopSkills)));
 
         var navGrid = new NavGrid(MapWidth, MapHeight);

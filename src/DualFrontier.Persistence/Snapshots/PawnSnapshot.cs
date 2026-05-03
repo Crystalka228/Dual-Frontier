@@ -15,16 +15,16 @@ public sealed record PawnSnapshot
     /// <summary>Tile-grid Y coordinate.</summary>
     public required int Y { get; init; }
 
-    /// <summary>Hunger 0..1 (deficit semantics from <c>NeedsComponent</c>).</summary>
-    public required float Hunger { get; init; }
+    /// <summary>Satiety 0..1 (wellness semantics from <c>NeedsComponent</c>; 1 = full).</summary>
+    public required float Satiety { get; init; }
 
-    /// <summary>Thirst 0..1.</summary>
-    public required float Thirst { get; init; }
+    /// <summary>Hydration 0..1 (1 = full).</summary>
+    public required float Hydration { get; init; }
 
-    /// <summary>Rest deficit 0..1.</summary>
-    public required float Rest { get; init; }
+    /// <summary>Energy 0..1 (1 = fully rested).</summary>
+    public required float Energy { get; init; }
 
-    /// <summary>Comfort deficit 0..1.</summary>
+    /// <summary>Comfort 0..1 (1 = comfortable).</summary>
     public required float Comfort { get; init; }
 
     /// <summary>Mood 0..1 from <c>MindComponent</c> (1 = ecstatic).</summary>

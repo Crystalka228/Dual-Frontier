@@ -1,21 +1,21 @@
 namespace DualFrontier.Components.Pawn;
 
 /// <summary>
-/// Identifies one of a pawn's core biological needs. Used by
+/// Identifies one of a pawn's wellness pools. Used by
 /// <c>NeedsCriticalEvent</c> to tell subscribers which need crossed the
 /// critical threshold without a string comparison.
 /// </summary>
 public enum NeedKind
 {
-    /// <summary>Hunger — resolved by eating.</summary>
-    Hunger,
+    /// <summary>Satiety — depletes over time; restored by eating.</summary>
+    Satiety,
 
-    /// <summary>Thirst — resolved by drinking.</summary>
-    Thirst,
+    /// <summary>Hydration — depletes over time; restored by drinking.</summary>
+    Hydration,
 
-    /// <summary>Rest/energy — resolved by sleeping.</summary>
-    Rest,
+    /// <summary>Energy — depletes over time; restored by sleeping.</summary>
+    Energy,
 
-    /// <summary>Comfort — resolved by environmental improvements or rest.</summary>
+    /// <summary>Comfort — depletes over time; restored by environmental improvements or rest.</summary>
     Comfort
 }

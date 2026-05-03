@@ -13,60 +13,62 @@ using Xunit;
 namespace DualFrontier.IntegrationTests.PawnDomain;
 
 /// <summary>
-/// Locks the post-honesty-pass decay-direction contract: needs grow
-/// over time, representing accumulating deficit. The previous (incorrect)
-/// direction was decay-toward-0, which falsely implied automatic
-/// recovery. See HOUSEKEEPING_NEEDS_DECAY_DIRECTION.md for context.
+/// Locks the wellness-pool depletion contract: needs deplete over time,
+/// no recovery exists yet. The earlier (incorrect) direction was decay-
+/// toward-0 of a deficit accumulator, which falsely implied automatic
+/// recovery; HOUSEKEEPING_NEEDS_DECAY_DIRECTION.md flipped the sign,
+/// and TD-3.1 then flipped the storage semantics so the value's name
+/// matches its meaning (Satiety = wellness, depletes downward).
 /// </summary>
 public sealed class NeedsAccumulationTests
 {
     [Fact]
-    public void Hunger_GrowsOverTime_WhenNoRecoveryExists()
+    public void Satiety_DepletesOverTime_WhenNoRecoveryExists()
     {
         var (world, scheduler) = BuildOneNeedsSystem();
-        EntityId pawn = SpawnIdleNeedsPawn(world, hunger: 0.5f);
+        EntityId pawn = SpawnIdleNeedsPawn(world, satiety: 0.5f);
 
         // Run several SLOW ticks. Each tick, NeedsSystem should
-        // increment Hunger by HungerDecayPerTick (0.002).
+        // decrement Satiety by SatietyDepletionPerTick (0.002).
         for (int i = 0; i < 10; i++)
             scheduler.ExecuteTick(1f / 30f);
 
         world.TryGetComponent<NeedsComponent>(pawn, out NeedsComponent needs)
              .Should().BeTrue();
-        needs.Hunger.Should().BeGreaterThan(0.5f,
-            "deficit must accumulate without recovery — no module closes needs yet");
+        needs.Satiety.Should().BeLessThan(0.5f,
+            "wellness must deplete without recovery — no module restores needs yet");
     }
 
     [Fact]
-    public void AllFourNeeds_GrowOverTime_WhenNoRecoveryExists()
+    public void AllFourNeeds_DepleteOverTime_WhenNoRecoveryExists()
     {
         var (world, scheduler) = BuildOneNeedsSystem();
         EntityId pawn = SpawnIdleNeedsPawn(
-            world, hunger: 0.3f, thirst: 0.3f, rest: 0.3f, comfort: 0.3f);
+            world, satiety: 0.3f, hydration: 0.3f, energy: 0.3f, comfort: 0.3f);
 
         for (int i = 0; i < 10; i++)
             scheduler.ExecuteTick(1f / 30f);
 
         world.TryGetComponent<NeedsComponent>(pawn, out NeedsComponent needs)
              .Should().BeTrue();
-        needs.Hunger.Should().BeGreaterThan(0.3f);
-        needs.Thirst.Should().BeGreaterThan(0.3f);
-        needs.Rest.Should().BeGreaterThan(0.3f);
-        needs.Comfort.Should().BeGreaterThan(0.3f);
+        needs.Satiety.Should().BeLessThan(0.3f);
+        needs.Hydration.Should().BeLessThan(0.3f);
+        needs.Energy.Should().BeLessThan(0.3f);
+        needs.Comfort.Should().BeLessThan(0.3f);
     }
 
     [Fact]
-    public void Hunger_ClampsAt1_WhenAlreadyAtCeiling()
+    public void Satiety_ClampsAt0_WhenAlreadyAtFloor()
     {
         var (world, scheduler) = BuildOneNeedsSystem();
-        EntityId pawn = SpawnIdleNeedsPawn(world, hunger: 1.0f);
+        EntityId pawn = SpawnIdleNeedsPawn(world, satiety: 0.0f);
 
         for (int i = 0; i < 5; i++)
             scheduler.ExecuteTick(1f / 30f);
 
         world.TryGetComponent<NeedsComponent>(pawn, out NeedsComponent needs)
              .Should().BeTrue();
-        needs.Hunger.Should().Be(1.0f, "ceiling clamp must hold at 1.0");
+        needs.Satiety.Should().Be(0.0f, "floor clamp must hold at 0.0");
     }
 
     private static (World world, ParallelSystemScheduler scheduler) BuildOneNeedsSystem()
@@ -87,15 +89,15 @@ public sealed class NeedsAccumulationTests
 
     private static EntityId SpawnIdleNeedsPawn(
         World world,
-        float hunger  = 0f,
-        float thirst  = 0f,
-        float rest    = 0f,
-        float comfort = 0f)
+        float satiety   = 1f,
+        float hydration = 1f,
+        float energy    = 1f,
+        float comfort   = 1f)
     {
         EntityId id = world.CreateEntity();
         world.AddComponent(id, new NeedsComponent
         {
-            Hunger = hunger, Thirst = thirst, Rest = rest, Comfort = comfort,
+            Satiety = satiety, Hydration = hydration, Energy = energy, Comfort = comfort,
         });
         return id;
     }

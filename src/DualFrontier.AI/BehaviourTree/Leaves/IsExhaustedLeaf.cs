@@ -7,15 +7,15 @@ using System;
 /// <summary>
 /// Condition leaf: returns Success if pawn is exhausted, Failure otherwise.
 ///
-/// TODO(Phase 4): the blackboard key "Rest" is not yet populated by any
+/// TODO(Phase 4): the blackboard key "Energy" is not yet populated by any
 /// producer — see note on <see cref="IsHungryLeaf"/> for the broader gap.
 /// </summary>
 public sealed class IsExhaustedLeaf : Leaf
 {
     public override BTStatus Tick(BTContext ctx)
     {
-        var rest = ctx.Blackboard.Get<float>("Rest");
-        return rest >= NeedsComponent.CriticalThreshold
+        var energy = ctx.Blackboard.Get<float>("Energy");
+        return energy <= NeedsComponent.CriticalThreshold
             ? BTStatus.Success
             : BTStatus.Failure;
     }

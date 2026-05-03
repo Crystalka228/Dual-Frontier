@@ -34,7 +34,7 @@ public sealed class NeedsJobIntegrationTests
             services:  services);
 
         EntityId pawn = world.CreateEntity();
-        world.AddComponent(pawn, new NeedsComponent { Hunger = 0.9f });
+        world.AddComponent(pawn, new NeedsComponent { Satiety = 0.1f });
         world.AddComponent(pawn, new JobComponent  { Current = JobKind.Idle });
 
         // One tick is enough: NeedsSystem (SLOW) fires on tick 0, publishes

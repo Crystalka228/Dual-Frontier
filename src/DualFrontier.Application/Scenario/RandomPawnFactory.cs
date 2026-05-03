@@ -137,10 +137,10 @@ internal sealed class RandomPawnFactory
 
         world.AddComponent(id, new NeedsComponent
         {
-            Hunger = 0.1f,
-            Thirst = 0.1f,
-            Rest = 0.1f,
-            Comfort = 0f
+            Satiety   = 0.9f,
+            Hydration = 0.9f,
+            Energy    = 0.9f,
+            Comfort   = 1.0f
         });
         world.AddComponent(id, new MindComponent());
         world.AddComponent(id, new JobComponent { Current = JobKind.Idle });

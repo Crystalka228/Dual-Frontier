@@ -24,9 +24,9 @@ namespace DualFrontier.Systems.Pawn
                 var needs = GetComponent<NeedsComponent>(entity);
                 var mind  = GetComponent<MindComponent>(entity);
 
-                // Mood formula: average of inverted needs (0 = bad, 1 = good)
-                float mood = 1f
-                    - (needs.Hunger + needs.Thirst + needs.Rest + needs.Comfort)
+                // Mood formula: average of wellness needs (0 = bad, 1 = good)
+                float mood =
+                    (needs.Satiety + needs.Hydration + needs.Energy + needs.Comfort)
                     / 4f;
 
                 bool wasBreaking = mind.Mood < mind.MoodBreakThreshold;
