@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Mod.Vanilla.Combat</AssemblyName>
+    <RootNamespace>DualFrontier.Mod.Vanilla.Combat</RootNamespace>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsVanillaMod>true</IsVanillaMod>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+  </ItemGroup>
+</Project>

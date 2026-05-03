@@ -1,0 +1,22 @@
+{
+  "id": "dualfrontier.vanilla.world",
+  "name": "Vanilla World",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "kind": "regular",
+  "apiVersion": "^1.0.0",
+  "entryAssembly": "DualFrontier.Mod.Vanilla.World.dll",
+  "entryType": "DualFrontier.Mod.Vanilla.World.WorldMod",
+  "hotReload": true,
+
+  "dependencies": [
+    { "id": "dualfrontier.vanilla.core", "version": "^0.1.0" }
+  ],
+
+  "replaces": [],
+
+  "capabilities": {
+    "required": [],
+    "provided": []
+  }
+}

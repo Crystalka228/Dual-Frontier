@@ -1,0 +1,20 @@
+{
+  "id": "dualfrontier.vanilla.core",
+  "name": "Vanilla Core",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "kind": "shared",
+  "apiVersion": "^1.0.0",
+  "entryAssembly": "",
+  "entryType": "",
+  "hotReload": false,
+
+  "dependencies": [],
+
+  "replaces": [],
+
+  "capabilities": {
+    "required": [],
+    "provided": []
+  }
+}

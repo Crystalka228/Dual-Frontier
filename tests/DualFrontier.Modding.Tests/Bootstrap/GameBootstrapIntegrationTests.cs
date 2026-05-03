@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Loop;
 using DualFrontier.Application.Modding;
+using DualFrontier.Contracts.Modding;
 using FluentAssertions;
 using Xunit;
 
@@ -435,6 +437,74 @@ public sealed class GameBootstrapIntegrationTests
             "per M7.5.A test 16");
         context.Loop.IsPaused.Should().BeFalse(
             "successful Commit fires OnEditingEnded which calls loop.SetPaused(false)");
+    }
+
+    [Fact]
+    public void DefaultModDiscoverer_FindsAll6VanillaSkeletonsInProductionModsRoot()
+    {
+        // M8.1 — vanilla mod skeletons are discoverable from the
+        // production mods/ directory. Locks the 6-mod set as an
+        // architectural invariant per MOD_OS_ARCHITECTURE v1.5 §1.3:
+        // 5 regular slices (Combat, Magic, Inventory, Pawn, World) +
+        // 1 shared (Vanilla.Core), alongside the preserved ExampleMod.
+        // Test resolves the production mods/ directory via repo-root
+        // walk so the result is independent of the test runner cwd.
+        string modsRoot = Path.Combine(FindRepoRoot(), "mods");
+        var discoverer = new DefaultModDiscoverer(modsRoot);
+
+        IReadOnlyList<DiscoveredModInfo> discovered = discoverer.Discover();
+
+        discovered.Should().HaveCount(7,
+            "ExampleMod + 6 vanilla skeletons (5 regular + 1 shared) per §1.3");
+
+        List<string> ids = discovered.Select(d => d.Manifest.Id).ToList();
+        ids.Should().Contain("dualfrontier.example");
+        ids.Should().Contain("dualfrontier.vanilla.core");
+        ids.Should().Contain("dualfrontier.vanilla.combat");
+        ids.Should().Contain("dualfrontier.vanilla.magic");
+        ids.Should().Contain("dualfrontier.vanilla.inventory");
+        ids.Should().Contain("dualfrontier.vanilla.pawn");
+        ids.Should().Contain("dualfrontier.vanilla.world");
+
+        // Vanilla.Core is the shared mod with no IMod entry point.
+        DiscoveredModInfo core = discovered.Single(
+            d => d.Manifest.Id == "dualfrontier.vanilla.core");
+        core.Manifest.Kind.Should().Be(ModKind.Shared,
+            "Vanilla.Core is the pure type vendor per §1.2");
+        core.Manifest.EntryAssembly.Should().BeEmpty(
+            "shared mods must have empty entryAssembly per §2.2");
+        core.Manifest.EntryType.Should().BeEmpty(
+            "shared mods must have empty entryType per §2.2");
+
+        // Each regular vanilla mod is regular kind and depends on Vanilla.Core.
+        foreach (string slice in new[] { "combat", "magic", "inventory", "pawn", "world" })
+        {
+            string id = $"dualfrontier.vanilla.{slice}";
+            DiscoveredModInfo mod = discovered.Single(d => d.Manifest.Id == id);
+            mod.Manifest.Kind.Should().Be(ModKind.Regular,
+                $"vanilla.{slice} is a regular mod per §1.3");
+            mod.Manifest.Dependencies.Should().ContainSingle(
+                $"vanilla.{slice} declares only the shared-Core dependency in M8.1");
+            mod.Manifest.Dependencies[0].ModId.Should().Be("dualfrontier.vanilla.core",
+                $"vanilla.{slice} depends on the shared Vanilla.Core");
+        }
+    }
+
+    private static string FindRepoRoot()
+    {
+        // Walks up from the test assembly's runtime directory until
+        // a directory containing DualFrontier.sln is found. The sentinel
+        // file pins the repo root unambiguously regardless of where
+        // bin/ is configured. Same pattern as M74BuildPipelineTests.
+        DirectoryInfo? dir = new(AppContext.BaseDirectory);
+        while (dir is not null)
+        {
+            if (File.Exists(Path.Combine(dir.FullName, "DualFrontier.sln")))
+                return dir.FullName;
+            dir = dir.Parent;
+        }
+        throw new InvalidOperationException(
+            $"Could not locate DualFrontier.sln walking up from {AppContext.BaseDirectory}");
     }
 
     private static void WriteValidManifest(string dir, string id)

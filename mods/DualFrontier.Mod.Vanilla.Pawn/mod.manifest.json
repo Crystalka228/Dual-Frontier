@@ -1,0 +1,22 @@
+{
+  "id": "dualfrontier.vanilla.pawn",
+  "name": "Vanilla Pawn",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "kind": "regular",
+  "apiVersion": "^1.0.0",
+  "entryAssembly": "DualFrontier.Mod.Vanilla.Pawn.dll",
+  "entryType": "DualFrontier.Mod.Vanilla.Pawn.PawnMod",
+  "hotReload": true,
+
+  "dependencies": [
+    { "id": "dualfrontier.vanilla.core", "version": "^0.1.0" }
+  ],
+
+  "replaces": [],
+
+  "capabilities": {
+    "required": [],
+    "provided": []
+  }
+}

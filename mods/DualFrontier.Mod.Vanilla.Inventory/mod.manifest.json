@@ -1,0 +1,22 @@
+{
+  "id": "dualfrontier.vanilla.inventory",
+  "name": "Vanilla Inventory",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "kind": "regular",
+  "apiVersion": "^1.0.0",
+  "entryAssembly": "DualFrontier.Mod.Vanilla.Inventory.dll",
+  "entryType": "DualFrontier.Mod.Vanilla.Inventory.InventoryMod",
+  "hotReload": true,
+
+  "dependencies": [
+    { "id": "dualfrontier.vanilla.core", "version": "^0.1.0" }
+  ],
+
+  "replaces": [],
+
+  "capabilities": {
+    "required": [],
+    "provided": []
+  }
+}
