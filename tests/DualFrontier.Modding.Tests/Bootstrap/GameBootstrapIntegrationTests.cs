@@ -321,6 +321,60 @@ public sealed class GameBootstrapIntegrationTests
             $"expected monotonic tick values, last={lastTickValue}, count={tickCommandCount}");
     }
 
+    [Fact]
+    public void MenuFlow_OpenCommitClose_LeavesEditingFalse()
+    {
+        // Apply button success path — Commit closes the session. M7.5.B.2's
+        // ModMenuPanel.OnApplyPressed sets Visible = false on the success
+        // branch; this test locks the controller-level invariant the UI
+        // relies on (IsEditing flips from true → false on Commit success).
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+
+        context.Controller.BeginEditing();
+        context.Controller.IsEditing.Should().BeTrue();
+
+        CommitResult commit = context.Controller.Commit();
+        commit.Success.Should().BeTrue();
+        context.Controller.IsEditing.Should().BeFalse();
+    }
+
+    [Fact]
+    public void MenuFlow_OpenCancelClose_LeavesEditingFalse()
+    {
+        // Cancel button path — Cancel closes the session. M7.5.B.2's
+        // ModMenuPanel.CloseAndCancel calls controller.Cancel and then
+        // sets Visible = false; this test locks the controller-level
+        // invariant (IsEditing flips from true → false on Cancel).
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+
+        context.Controller.BeginEditing();
+        context.Controller.IsEditing.Should().BeTrue();
+
+        context.Controller.Cancel();
+        context.Controller.IsEditing.Should().BeFalse();
+    }
+
+    [Fact]
+    public void MenuFlow_OpenWithoutCommitOrCancel_StaysEditing()
+    {
+        // User keeps menu open without applying — session must persist
+        // so the UI continues to allow Toggle calls and re-renders of
+        // GetEditableState across user interactions. Locks the
+        // editing-stays-live invariant M7.5.B.2's panel relies on
+        // between OpenAndBegin and the next Apply/Cancel.
+        var bridge = new PresentationBridge();
+        GameContext context = GameBootstrap.CreateLoop(bridge);
+
+        context.Controller.BeginEditing();
+        context.Controller.IsEditing.Should().BeTrue();
+
+        IReadOnlyList<EditableModInfo> rows = context.Controller.GetEditableState();
+        rows.Should().NotBeNull();
+        context.Controller.IsEditing.Should().BeTrue();
+    }
+
     private static void WriteValidManifest(string dir, string id)
     {
         Directory.CreateDirectory(dir);
