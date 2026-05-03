@@ -39,10 +39,29 @@ Expected output: empty. A single line and the PR does not merge.
 ### 2. `dotnet build` is green
 
 ```bash
-dotnet build DualFrontier.sln -c Release
+./tools/build-all.sh --config Release          # Linux / WSL / macOS
+.\tools\build-all.ps1 -Configuration Release   # Windows
 ```
 
+These wrappers run two builds back-to-back: `dotnet build DualFrontier.sln` and `dotnet build src/DualFrontier.Presentation/DualFrontier.Presentation.csproj`. The Godot project is deliberately not in `.sln` — the `Godot.NET.Sdk` reference is dev-machine-specific and would break a `dotnet build DualFrontier.sln` on any machine without Godot installed (CI runners included). Top-level `.sln` build silently skips `Presentation`; the wrapper scripts close that gap.
+
 `TreatWarningsAsErrors=true` in [Directory.Build.props](../Directory.Build.props). Any warning is a blocker. Nullable warnings, CS warnings — they all count.
+
+Manual invocation without the wrapper is two commands:
+
+```bash
+dotnet build DualFrontier.sln -c Release
+dotnet build src/DualFrontier.Presentation/DualFrontier.Presentation.csproj -c Release
+```
+
+Full build (both surfaces) is **mandatory** before:
+
+- Any commit touching `src/DualFrontier.Presentation/` directly.
+- Any commit touching kernel surface that `Presentation` depends on (`DualFrontier.Application` public API; `DualFrontier.Contracts` types referenced by the bridge).
+- Closure review of any M-phase that exercised `Presentation` (M7.5.B.2 onwards).
+- F5 manual verification handoff.
+
+The split was registered in [docs/audit/M7_CLOSURE_REVIEW.md §10.3](./audit/M7_CLOSURE_REVIEW.md) and resolved by the TD-2 housekeeping commit that introduced the wrapper scripts. Adding `Presentation` to `.sln` was rejected to keep the solution CI-portable on machines without Godot SDK.
 
 ### 3. All tests pass
 
