@@ -34,6 +34,10 @@ public partial class GameRoot : Node2D
     /// </summary>
     private ModMenuController _modMenuController = null!;
 
+    // M7.5.B.2 — modal mod menu overlay; constructed and wired here in
+    // _Ready, toggled by F10 via _UnhandledInput.
+    private ModMenuPanel _modMenuPanel = null!;
+
     public override void _Ready()
     {
         _bridge = new PresentationBridge();
@@ -49,12 +53,29 @@ public partial class GameRoot : Node2D
         GameContext context = GameBootstrap.CreateLoop(_bridge);
         _loop = context.Loop;
         _modMenuController = context.Controller;
+
+        _modMenuPanel = new ModMenuPanel();
+        AddChild(_modMenuPanel);
+        _modMenuPanel.Setup(_modMenuController);
+
         _loop.Start();
     }
 
     public override void _Process(double delta)
     {
         _bridge.DrainCommands(_dispatcher.Dispatch);
+    }
+
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        if (@event is InputEventKey { Pressed: true, Keycode: Key.F10 })
+        {
+            if (_modMenuPanel.Visible)
+                _modMenuPanel.CloseAndCancel();
+            else
+                _modMenuPanel.OpenAndBegin();
+            GetViewport().SetInputAsHandled();
+        }
     }
 
     public override void _ExitTree()
