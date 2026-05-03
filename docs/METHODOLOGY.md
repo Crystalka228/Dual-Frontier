@@ -2,7 +2,7 @@
 
 *The project's central methodology document. Describes the four-agent LLM pipeline, contracts as IPC between agents, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
 
-*Version: 1.0 (2026-04-25). The document describes the methodology in its state after Phase 4 closure.*
+*Version: 1.1 (2026-05-03). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7.*
 
 ---
 
@@ -284,9 +284,35 @@ Concrete system classes: compilers, engines, frameworks, libraries, infrastructu
 
 ---
 
-## 7. Reproducibility
+## 7. Operating principles
 
-### 7.1 Minimal configuration
+### 7.1 Data exists or it doesn't
+
+The project's central operating principle, applied at every layer: **state and data either have a real grounding artifact in the codebase, or they are removed.** There is no third option of "we will add the artifact later, and the placeholder represents what it will become." Placeholder state is a lie about what the system actually is, and lies in code compound across LLM-driven cycles.
+
+The principle has been formally invoked at least six times during the M7 batch and the pre-M8 technical-debt closure:
+
+1. **Real pawn data** ([9141bd6](https://github.com/Crystalka228/Dual-Frontier/commit/9141bd6), M7 H3). Hardcoded Warhammer-flavored pawn names, hash-derived role labels, and hash-derived skill bars were removed in favor of `IdentityComponent`, `RandomPawnFactory`, and real `SkillsComponent` data. Eight dead files were deleted alongside the replacement (four stub UI components, one stub node, three undispatched bridge commands).
+
+2. **Needs decay direction** ([ee12108](https://github.com/Crystalka228/Dual-Frontier/commit/ee12108), M7 H4). Decay-toward-zero was a placeholder lie implying automatic recovery while no module actually closed needs. The sign was flipped to deficit accumulation; the XML doc was rewritten to honestly describe ungrounded depletion.
+
+3. **ModMenuPanel position** ([5f0b4f5](https://github.com/Crystalka228/Dual-Frontier/commit/5f0b4f5), M7 H5). The modal misposition surfaced during F5 — the centered modal was visually unreachable. The fix converted Control to CanvasLayer per the Phase 4 UI pattern; this was a structural correction, not a tweak to coordinates.
+
+4. **Asset gitignore companion** ([805b882](https://github.com/Crystalka228/Dual-Frontier/commit/805b882), M7 H5). Extracted Kenney + Cinzel folders are derived state; the source `.zip` files are the in-git source of truth. Tracking both extracted folders and source archives would have been redundancy masquerading as honesty.
+
+5. **Menu pauses simulation** ([9f87536](https://github.com/Crystalka228/Dual-Frontier/commit/9f87536), M7 H6). Two independent pause flags (`_isRunning` for Apply safety, `_paused` for tick advance) where `BeginEditing` only toggled the former. The orchestration layer was made to wire both lockstep; F5 verification confirmed.
+
+6. **Needs semantic flip** ([f4a5839](https://github.com/Crystalka228/Dual-Frontier/commit/f4a5839), TD-3.1). The storage convention "0 = full, 1 = starving" combined with consumer expectations of wellness ("1 = best") forced a translation layer (`1f -` inversions in `MoodSystem` and `PawnStateReporterSystem`) that hid the mismatch. After the flip, the inversion logic disappeared naturally, because storage now matched consumer semantics. The principle did the work it is supposed to do.
+
+The principle constrains all four agents in the pipeline (§2.1). The prompt generator cannot specify data sources that do not exist on disk; the local executor cannot synthesize fields whose backing data is absent from the brief; the architect's QA cycle requires that every artifact be auditable against real existence; the human cannot hide behind "we will fill it later" because the next agent in the pipeline will refuse to operate against a stub. Each application of the principle is a moment where one agent's output would have introduced a placeholder lie if not constrained.
+
+**Falsifiable claim.** The track record across cycles is the falsifiable signal of whether the principle is load-bearing. As of M7 closure: six applications, zero counter-examples — no case where a placeholder was deliberately preserved as a "we will fill it later" stub. Forward target: the count continues to grow without counter-examples through M8–M10. A counter-example — a placeholder that survives a closure review — would falsify the principle's load-bearing role and would force a methodological retraction.
+
+---
+
+## 8. Reproducibility
+
+### 8.1 Minimal configuration
 
 To reproduce the pipeline:
 
@@ -295,7 +321,7 @@ To reproduce the pipeline:
 - Local model: **Gemma 4 E4B** (Q4_K_M) or comparable Qwen 2.5 Coder, Llama 3.1 8B, Mistral Nemo 12B alternatives. Minimum 8 GB VRAM or 16 GB unified memory (Apple Silicon).
 - **Claude Max 5×** subscription ($100/month) and the Claude desktop app for architectural work through Sonnet 4.6 and Opus 4.7.
 
-### 7.2 Confirmed configuration
+### 8.2 Confirmed configuration
 
 The pipeline runs stably under sustained development (4–5 hours per evening after a work shift) on the following hardware:
 
@@ -305,7 +331,7 @@ The pipeline runs stably under sustained development (4–5 hours per evening af
 - 32 GB DDR5 4800 MT/s
 - Windows 11 Home 25H2
 
-### 7.3 Process discipline
+### 8.3 Process discipline
 
 Beyond tools, the methodology requires the following discipline:
 
@@ -320,7 +346,7 @@ Without this discipline, the tools yield a worse result than without them.
 
 ---
 
-## 8. Open questions
+## 9. Open questions
 
 The methodology has been tested on a 5-day horizon with one formalized phase-review session. Several questions need further investigation.
 
@@ -338,17 +364,18 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 
 ---
 
-## 9. Change history
+## 10. Change history
 
 | Version | Date | Change |
 |---|---|---|
 | 1.0 | 2026-04-25 | First public version of the document after Phase 4 closure. |
+| 1.1 | 2026-05-03 | Added §7 Operating principles, with §7.1 stating the "data exists or it doesn't" principle and its empirical record. Subsequent sections renumbered (§8 Reproducibility, §9 Open questions, §10 Change history, §11 See also). |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
 ---
 
-## 10. See also
+## 11. See also
 
 - [README.md](../README.md) — research framing, falsifiability conditions, and pointers to operational data.
 - [PIPELINE_METRICS.md](./PIPELINE_METRICS.md) — empirical configuration, throughput data, and subscription economics measured while running this methodology.
