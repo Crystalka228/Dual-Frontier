@@ -9,8 +9,16 @@ namespace DualFrontier.Presentation.UI;
 
 /// <summary>
 /// Modal mod-menu overlay bound to <see cref="ModMenuController"/>.
-/// Rendered as a full-screen <see cref="Control"/> sibling under
-/// <c>GameRoot</c>; toggled via F10 (handled by <c>GameRoot._UnhandledInput</c>).
+/// Rendered as a <see cref="CanvasLayer"/> at Layer 20 (above <c>GameHUD</c>'s
+/// Layer 10) so the modal sits on top of the regular HUD. Toggled via F10
+/// (handled by <c>GameRoot._UnhandledInput</c>).
+///
+/// CanvasLayer parentage chosen over plain Control because Control's anchor
+/// system requires a Viewport-relative parent; <c>GameRoot</c> is a
+/// <see cref="Node2D"/> and does not provide that. Mirrors the
+/// <c>GameHUD</c> pattern: CanvasLayer wrapper + Control children with
+/// full-screen anchors. The internal <c>_root</c> Control hosts the dim
+/// overlay, centered panel, and all interactive widgets.
 ///
 /// Lifecycle (per MOD_OS_ARCHITECTURE §9.2):
 /// 1. F10 → <see cref="OpenAndBegin"/> calls <c>controller.BeginEditing</c>
@@ -27,35 +35,42 @@ namespace DualFrontier.Presentation.UI;
 /// Empty mods/ directory → "No mods found" label. Hot-reload disabled
 /// (§9.6) → checkbox disabled with explicit tooltip. No fabricated data.
 /// </summary>
-public partial class ModMenuPanel : Control
+public partial class ModMenuPanel : CanvasLayer
 {
     private const int PanelWidth  = 500;
     private const int PanelHeight = 420;
 
     private ModMenuController? _controller;
+    private Control _root = null!;
     private VBoxContainer _list = null!;
     private Label _statusLabel = null!;
     private readonly Dictionary<string, CheckBox> _rowCheckBoxes = new();
 
     public override void _Ready()
     {
-        // Full-screen overlay anchors.
-        AnchorLeft = 0; AnchorRight = 1; AnchorTop = 0; AnchorBottom = 1;
-        OffsetLeft = 0; OffsetRight = 0; OffsetTop = 0; OffsetBottom = 0;
-        MouseFilter = MouseFilterEnum.Stop;
+        Layer = 20;
         Visible = false;
-        ZIndex = 100;
 
-        // Dim background.
+        // Full-viewport Control wrapper. Anchors map relative to Viewport
+        // when the parent is a CanvasLayer.
+        _root = new Control
+        {
+            AnchorLeft = 0, AnchorRight = 1, AnchorTop = 0, AnchorBottom = 1,
+            OffsetLeft = 0, OffsetRight = 0, OffsetTop = 0, OffsetBottom = 0,
+            MouseFilter = Control.MouseFilterEnum.Stop,
+        };
+        AddChild(_root);
+
+        // Dim background covers the entire viewport.
         var dim = new ColorRect
         {
             AnchorLeft = 0, AnchorRight = 1, AnchorTop = 0, AnchorBottom = 1,
             Color = new Color(0f, 0f, 0f, 0.6f),
-            MouseFilter = MouseFilterEnum.Stop,
+            MouseFilter = Control.MouseFilterEnum.Stop,
         };
-        AddChild(dim);
+        _root.AddChild(dim);
 
-        // Centered panel.
+        // Centered fixed-size panel.
         var panel = new Panel
         {
             AnchorLeft = 0.5f, AnchorRight = 0.5f,
@@ -66,48 +81,52 @@ public partial class ModMenuPanel : Control
             OffsetBottom =  PanelHeight / 2f,
         };
         panel.AddThemeStyleboxOverride("panel", MakePanelStyle());
-        AddChild(panel);
+        _root.AddChild(panel);
 
-        var root = new VBoxContainer
+        var content = new VBoxContainer
         {
             AnchorLeft = 0, AnchorRight = 1, AnchorTop = 0, AnchorBottom = 1,
             OffsetLeft = 16, OffsetRight = -16, OffsetTop = 16, OffsetBottom = -16,
         };
-        root.AddThemeConstantOverride("separation", 12);
-        panel.AddChild(root);
+        content.AddThemeConstantOverride("separation", 12);
+        panel.AddChild(content);
 
+        // Title.
         var title = ColonyPanel.MakeLabel("MOD MENU", 13, Palette.Muted, bold: true);
         title.HorizontalAlignment = HorizontalAlignment.Center;
-        root.AddChild(title);
+        content.AddChild(title);
 
         var ornament = ColonyPanel.MakeLabel("✦   ✦   ✦", 9, Palette.Border);
         ornament.HorizontalAlignment = HorizontalAlignment.Center;
-        root.AddChild(ornament);
+        content.AddChild(ornament);
 
+        // Mod list (scroll).
         var scroll = new ScrollContainer
         {
-            SizeFlagsVertical = SizeFlags.ExpandFill,
+            SizeFlagsVertical = Control.SizeFlags.ExpandFill,
             HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
         };
-        root.AddChild(scroll);
+        content.AddChild(scroll);
 
         _list = new VBoxContainer
         {
-            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+            SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
         };
         _list.AddThemeConstantOverride("separation", 4);
         scroll.AddChild(_list);
 
+        // Status label.
         _statusLabel = ColonyPanel.MakeLabel("", 10, Palette.Critical);
         _statusLabel.HorizontalAlignment = HorizontalAlignment.Center;
         _statusLabel.AutowrapMode = TextServer.AutowrapMode.WordSmart;
-        root.AddChild(_statusLabel);
+        content.AddChild(_statusLabel);
 
-        var buttonRow = new HBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        // Buttons row.
+        var buttonRow = new HBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         buttonRow.AddThemeConstantOverride("separation", 8);
-        root.AddChild(buttonRow);
+        content.AddChild(buttonRow);
 
-        var spacerL = new Control { SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        var spacerL = new Control { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         buttonRow.AddChild(spacerL);
 
         var cancelButton = new Button { Text = "Cancel", CustomMinimumSize = new Vector2(96, 28) };
@@ -185,13 +204,13 @@ public partial class ModMenuPanel : Control
 
     private Control BuildRow(EditableModInfo info)
     {
-        var row = new HBoxContainer { SizeFlagsHorizontal = SizeFlags.ExpandFill };
+        var row = new HBoxContainer { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
         row.AddThemeConstantOverride("separation", 8);
 
         ModManifest manifest = info.Manifest;
         var label = ColonyPanel.MakeLabel(
             $"{manifest.Name} v{manifest.Version}", 11, Palette.Text);
-        label.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+        label.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
         row.AddChild(label);
 
         var check = new CheckBox { ToggleMode = true, ButtonPressed = info.IsPendingActive };
