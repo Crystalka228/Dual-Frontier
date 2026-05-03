@@ -62,6 +62,14 @@ namespace DualFrontier.Application.Loop
         /// <summary>Pause or resume simulation.</summary>
         public void SetPaused(bool paused) => _paused = paused;
 
+        /// <summary>
+        /// True iff the simulation thread is currently sleeping the tick
+        /// advance per <see cref="SetPaused"/>. Read-only observation
+        /// surface for tests and diagnostics; production code mutates
+        /// state via <see cref="SetPaused"/>.
+        /// </summary>
+        public bool IsPaused => _paused;
+
         /// <summary>Set speed multiplier. Accepted values: 1, 2, 3.</summary>
         public void SetSpeed(float multiplier) =>
             _speedMultiplier = Math.Clamp(multiplier, 1f, 3f);

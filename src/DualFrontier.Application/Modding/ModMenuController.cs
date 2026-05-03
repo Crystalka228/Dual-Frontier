@@ -42,6 +42,40 @@ internal sealed class ModMenuController
     private Dictionary<string, ActiveModInfo>? _sessionStartActive;
     private Dictionary<string, DiscoveredModInfo>? _sessionDiscovered;
 
+    /// <summary>
+    /// Optional hook fired by <see cref="BeginEditing"/> AFTER the pipeline
+    /// is paused, on the transition from "not editing" to "editing".
+    /// Idempotent re-entry (a second BeginEditing call while already
+    /// editing) does NOT re-fire the hook — the no-op early return path
+    /// skips both the pipeline call and the hook.
+    ///
+    /// Wired by <see cref="Loop.GameBootstrap.CreateLoop"/> to also pause
+    /// the background simulation thread (<c>GameLoop.SetPaused(true)</c>)
+    /// per MOD_OS_ARCHITECTURE §9.2 step 1, since
+    /// <see cref="ModIntegrationPipeline.Pause"/> only gates the
+    /// Apply-mutation safety flag and does not affect tick advance.
+    ///
+    /// Hook exceptions are caught and swallowed inside the controller —
+    /// hook failures must not prevent the menu lifecycle from completing.
+    /// Tests not exercising the simulation pause leave the field
+    /// <see langword="null"/>; the null path is a no-op.
+    /// </summary>
+    internal Action? OnEditingBegan { get; set; }
+
+    /// <summary>
+    /// Optional hook fired by <see cref="Cancel"/> and by the
+    /// success-path branch of <see cref="Commit"/>, AFTER the pipeline is
+    /// resumed, on the transition from "editing" to "not editing". The
+    /// failure-path branch of <see cref="Commit"/> does NOT fire this
+    /// hook — failed commit leaves the session open per AD #4 of M7.5.A,
+    /// and the simulation must stay paused so the user can fix the
+    /// pending state and retry.
+    ///
+    /// Symmetric counterpart to <see cref="OnEditingBegan"/>; same
+    /// swallow-exceptions discipline.
+    /// </summary>
+    internal Action? OnEditingEnded { get; set; }
+
     public ModMenuController(
         ModIntegrationPipeline pipeline,
         IModDiscoverer discoverer)
@@ -82,6 +116,7 @@ internal sealed class ModMenuController
 
         _pendingActiveIds = new HashSet<string>(_sessionStartActive.Keys, StringComparer.Ordinal);
         _isEditing = true;
+        RaiseHook(OnEditingBegan);
     }
 
     /// <summary>
@@ -100,6 +135,7 @@ internal sealed class ModMenuController
         _sessionDiscovered = null;
         _isEditing = false;
         _pipeline.Resume();
+        RaiseHook(OnEditingEnded);
     }
 
     /// <summary>
@@ -248,6 +284,7 @@ internal sealed class ModMenuController
             _sessionDiscovered = null;
             _isEditing = false;
             _pipeline.Resume();
+            RaiseHook(OnEditingEnded);
             return new CommitResult(
                 Success: true,
                 Errors: Array.Empty<ValidationError>(),
@@ -272,5 +309,12 @@ internal sealed class ModMenuController
         bool canToggle = !(currentlyActive && !manifest.HotReload);
         return new EditableModInfo(
             modId, manifest, currentlyActive, pendingActive, canToggle);
+    }
+
+    private static void RaiseHook(Action? hook)
+    {
+        if (hook is null) return;
+        try { hook(); }
+        catch { /* §9.5.1-style swallow: lifecycle cannot be derailed by hook callbacks. */ }
     }
 }

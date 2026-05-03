@@ -150,6 +150,15 @@ internal static class GameBootstrap
         // a TickAdvancedCommand carrying CurrentTick after every ExecuteTick;
         // RenderCommandDispatcher routes the command to the HUD tick label.
         var loop = new GameLoop(scheduler, ticks, bridge);
+
+        // MOD_OS_ARCHITECTURE §9.2 step 1 — menu opens => simulation pauses.
+        // Pipeline.Pause() (already called by controller.BeginEditing) only
+        // gates the Apply-mutation safety flag; the tick-advance gate is
+        // GameLoop._paused. Wire both surfaces here at the orchestration
+        // layer that owns both the loop and the controller.
+        controller.OnEditingBegan = () => loop.SetPaused(true);
+        controller.OnEditingEnded = () => loop.SetPaused(false);
+
         return new GameContext(loop, controller);
     }
 }
