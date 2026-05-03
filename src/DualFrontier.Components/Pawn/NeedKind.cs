@@ -13,8 +13,8 @@ public enum NeedKind
     /// <summary>Hydration — depletes over time; restored by drinking.</summary>
     Hydration,
 
-    /// <summary>Energy — depletes over time; restored by sleeping.</summary>
-    Energy,
+    /// <summary>Sleep — depletes over time; restored by sleeping in bed.</summary>
+    Sleep,
 
     /// <summary>Comfort — depletes over time; restored by environmental improvements or rest.</summary>
     Comfort

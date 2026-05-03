@@ -26,7 +26,7 @@ namespace DualFrontier.Systems.Pawn
 
                 // Mood formula: average of wellness needs (0 = bad, 1 = good)
                 float mood =
-                    (needs.Satiety + needs.Hydration + needs.Energy + needs.Comfort)
+                    (needs.Satiety + needs.Hydration + needs.Sleep + needs.Comfort)
                     / 4f;
 
                 bool wasBreaking = mind.Mood < mind.MoodBreakThreshold;

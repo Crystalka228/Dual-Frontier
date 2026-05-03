@@ -44,7 +44,7 @@ public sealed class NeedsAccumulationTests
     {
         var (world, scheduler) = BuildOneNeedsSystem();
         EntityId pawn = SpawnIdleNeedsPawn(
-            world, satiety: 0.3f, hydration: 0.3f, energy: 0.3f, comfort: 0.3f);
+            world, satiety: 0.3f, hydration: 0.3f, sleep: 0.3f, comfort: 0.3f);
 
         for (int i = 0; i < 10; i++)
             scheduler.ExecuteTick(1f / 30f);
@@ -53,7 +53,7 @@ public sealed class NeedsAccumulationTests
              .Should().BeTrue();
         needs.Satiety.Should().BeLessThan(0.3f);
         needs.Hydration.Should().BeLessThan(0.3f);
-        needs.Energy.Should().BeLessThan(0.3f);
+        needs.Sleep.Should().BeLessThan(0.3f);
         needs.Comfort.Should().BeLessThan(0.3f);
     }
 
@@ -91,13 +91,13 @@ public sealed class NeedsAccumulationTests
         World world,
         float satiety   = 1f,
         float hydration = 1f,
-        float energy    = 1f,
+        float sleep     = 1f,
         float comfort   = 1f)
     {
         EntityId id = world.CreateEntity();
         world.AddComponent(id, new NeedsComponent
         {
-            Satiety = satiety, Hydration = hydration, Energy = energy, Comfort = comfort,
+            Satiety = satiety, Hydration = hydration, Sleep = sleep, Comfort = comfort,
         });
         return id;
     }

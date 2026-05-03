@@ -139,7 +139,7 @@ internal sealed class RandomPawnFactory
         {
             Satiety   = 0.9f,
             Hydration = 0.9f,
-            Energy    = 0.9f,
+            Sleep     = 0.9f,
             Comfort   = 1.0f
         });
         world.AddComponent(id, new MindComponent());

@@ -3,7 +3,7 @@ namespace DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
-/// Wellness pool for a pawn: satiety, hydration, energy, and comfort. Each
+/// Wellness pool for a pawn: satiety, hydration, sleep, and comfort. Each
 /// value is normalised to [0..1] where 1 = best (fully fed / hydrated /
 /// rested / comfortable) and 0 = worst (starving / dehydrated / exhausted /
 /// miserable). Pure POCO — no internal logic beyond the threshold queries.
@@ -21,9 +21,9 @@ public sealed class NeedsComponent : IComponent
     public float Hydration { get; set; }
 
     /// <summary>
-    /// The current energy level (0 = exhausted, 1 = fully rested).
+    /// The current sleep level (0 = sleep-deprived, 1 = fully rested).
     /// </summary>
-    public float Energy { get; set; }
+    public float Sleep { get; set; }
 
     /// <summary>
     /// The current comfort level (0 = miserable, 1 = comfortable).
@@ -52,5 +52,5 @@ public sealed class NeedsComponent : IComponent
 
     /// <inheritdoc/>
     /// <summary>Checks if the pawn is considered exhausted based on critical thresholds.</summary>
-    public bool IsExhausted => Energy <= CriticalThreshold;
+    public bool IsExhausted => Sleep <= CriticalThreshold;
 }

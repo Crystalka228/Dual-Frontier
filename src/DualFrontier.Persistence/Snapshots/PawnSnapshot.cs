@@ -21,8 +21,8 @@ public sealed record PawnSnapshot
     /// <summary>Hydration 0..1 (1 = full).</summary>
     public required float Hydration { get; init; }
 
-    /// <summary>Energy 0..1 (1 = fully rested).</summary>
-    public required float Energy { get; init; }
+    /// <summary>Sleep 0..1 (1 = fully rested).</summary>
+    public required float Sleep { get; init; }
 
     /// <summary>Comfort 0..1 (1 = comfortable).</summary>
     public required float Comfort { get; init; }

@@ -23,7 +23,7 @@ public partial class PawnDetail : Panel
     private ColorRect     _moodBar   = null!;
     private NeedRow       _satiety   = null!;
     private NeedRow       _hydration = null!;
-    private NeedRow       _energy    = null!;
+    private NeedRow       _sleep     = null!;
     private NeedRow       _comfort   = null!;
     private ColorRect     _jobDot    = null!;
     private Label         _jobLabel  = null!;
@@ -58,11 +58,11 @@ public partial class PawnDetail : Panel
     }
 
     public void UpdatePawn(
-        EntityId id, string name, float satiety, float hydration, float energy,
+        EntityId id, string name, float satiety, float hydration, float sleep,
         float comfort, float mood, string jobLabel, bool jobUrgent,
         IReadOnlyList<(SkillKind Kind, int Level)> topSkills)
     {
-        _states[id] = new PawnState(name, satiety, hydration, energy, comfort, mood,
+        _states[id] = new PawnState(name, satiety, hydration, sleep, comfort, mood,
             jobLabel, jobUrgent, topSkills);
         if (_shown is null) _shown = id;
         if (_shown.HasValue && _shown.Value.Equals(id))
@@ -89,7 +89,7 @@ public partial class PawnDetail : Panel
 
         _satiety.Set(s.Satiety);
         _hydration.Set(s.Hydration);
-        _energy.Set(s.Energy);
+        _sleep.Set(s.Sleep);
         _comfort.Set(s.Comfort);
 
         _jobDot.Color  = JobDotColor(s.JobLabel, s.JobUrgent);
@@ -160,7 +160,7 @@ public partial class PawnDetail : Panel
 
         _satiety   = new NeedRow("Satiety");   box.AddChild(_satiety);
         _hydration = new NeedRow("Hydration"); box.AddChild(_hydration);
-        _energy    = new NeedRow("Energy");    box.AddChild(_energy);
+        _sleep     = new NeedRow("Sleep");     box.AddChild(_sleep);
         _comfort   = new NeedRow("Comfort");   box.AddChild(_comfort);
     }
 
@@ -251,7 +251,7 @@ public partial class PawnDetail : Panel
     private static StyleBoxTexture MakePanelStyle() => UiTheme.MakeMainPanelBox();
 
     private readonly record struct PawnState(
-        string Name, float Satiety, float Hydration, float Energy, float Comfort,
+        string Name, float Satiety, float Hydration, float Sleep, float Comfort,
         float Mood, string JobLabel, bool JobUrgent,
         IReadOnlyList<(SkillKind Kind, int Level)> TopSkills);
 }

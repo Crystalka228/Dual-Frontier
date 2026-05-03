@@ -68,7 +68,7 @@ public sealed class PawnStateReporterSystem : SystemBase
                 Name      = name,
                 Satiety   = needs.Satiety,
                 Hydration = needs.Hydration,
-                Energy    = needs.Energy,
+                Sleep     = needs.Sleep,
                 Comfort   = needs.Comfort,
                 Mood      = mind.Mood,
                 JobLabel  = TranslateJob(job.Current),

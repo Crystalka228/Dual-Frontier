@@ -23,7 +23,7 @@ namespace DualFrontier.Systems.Pawn
     /// No recovery mechanism exists yet — neither food entities, nor an
     /// EatSystem that consumes food and restores
     /// <see cref="NeedsComponent.Satiety"/>, nor parallel systems for
-    /// hydration / energy / comfort. Pawns therefore deplete indefinitely
+    /// hydration / sleep / comfort. Pawns therefore deplete indefinitely
     /// once spawned. Phase 5 introduces those systems; until then, the
     /// displayed need bars truthfully reflect ungrounded depletion. By the
     /// project's operating principle: state either exists or it does not —
@@ -40,7 +40,7 @@ namespace DualFrontier.Systems.Pawn
         // Depletion rates per SLOW tick.
         private const float SatietyDepletionPerTick   = 0.002f;
         private const float HydrationDepletionPerTick = 0.0015f;
-        private const float EnergyDepletionPerTick    = 0.001f;
+        private const float SleepDepletionPerTick     = 0.001f;
         private const float ComfortDepletionPerTick   = 0.0005f;
 
         // Per-entity edge state: remembers which needs were critical on the
@@ -58,13 +58,13 @@ namespace DualFrontier.Systems.Pawn
                 var needs = GetComponent<NeedsComponent>(entity);
                 needs.Satiety   = Math.Clamp(needs.Satiety   - SatietyDepletionPerTick,   0f, 1f);
                 needs.Hydration = Math.Clamp(needs.Hydration - HydrationDepletionPerTick, 0f, 1f);
-                needs.Energy    = Math.Clamp(needs.Energy    - EnergyDepletionPerTick,    0f, 1f);
+                needs.Sleep     = Math.Clamp(needs.Sleep     - SleepDepletionPerTick,     0f, 1f);
                 needs.Comfort   = Math.Clamp(needs.Comfort   - ComfortDepletionPerTick,   0f, 1f);
                 SetComponent(entity, needs);
 
                 CheckCritical(entity, NeedKind.Satiety,   needs.Satiety);
                 CheckCritical(entity, NeedKind.Hydration, needs.Hydration);
-                CheckCritical(entity, NeedKind.Energy,    needs.Energy);
+                CheckCritical(entity, NeedKind.Sleep,     needs.Sleep);
                 CheckCritical(entity, NeedKind.Comfort,   needs.Comfort);
             }
         }

@@ -18,7 +18,7 @@ public sealed record PawnStateCommand(
     string Name,
     float Satiety,
     float Hydration,
-    float Energy,
+    float Sleep,
     float Comfort,
     float Mood,
     string JobLabel,
