@@ -16,8 +16,8 @@ namespace DualFrontier.Presentation.Nodes;
 /// </summary>
 public partial class GameRoot : Node2D
 {
-    private const int MapWidth  = 50;
-    private const int MapHeight = 50;
+    private const int MapWidth  = 200;
+    private const int MapHeight = 200;
 
     private PresentationBridge _bridge = null!;
     private GameLoop _loop = null!;

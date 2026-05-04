@@ -26,8 +26,8 @@ namespace DualFrontier.Systems.Pawn;
 public sealed class MovementSystem : SystemBase
 {
     private const int StepCooldownTicks = 3;
-    private const int MapWidth  = 50;
-    private const int MapHeight = 50;
+    private const int MapWidth  = 200;
+    private const int MapHeight = 200;
 
     private readonly IPathfindingService _pathfinding;
     private readonly Random _rng = new(42);

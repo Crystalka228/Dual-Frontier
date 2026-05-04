@@ -31,12 +31,12 @@ namespace DualFrontier.Application.Loop;
 /// </summary>
 internal static class GameBootstrap
 {
-    private const int MapWidth = 50;
-    private const int MapHeight = 50;
-    private const int InitialPawnCount = 10;
+    private const int MapWidth = 200;
+    private const int MapHeight = 200;
+    private const int InitialPawnCount = 50;
     private const int FactorySeed = 42;
     private const int ObstacleSeed = 42;
-    private const int ObstacleCount = 50;
+    private const int ObstacleCount = 800;
 
     /// <summary>
     /// Builds the full production simulation context: domain world,

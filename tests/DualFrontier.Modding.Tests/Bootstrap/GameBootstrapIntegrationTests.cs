@@ -180,12 +180,13 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_Spawns10PawnsByDefault()
+    public void CreateLoop_Spawns50PawnsByDefault()
     {
-        // Real-pawn-data housekeeping — the production factory emits a
-        // PawnSpawnedCommand per colonist via the Pawns bus → bridge
-        // subscription wired in CreateLoop. Locks the new 10-pawn
-        // baseline (was 3 before housekeeping) at the bridge surface.
+        // M8.2 — production factory emits a PawnSpawnedCommand per
+        // colonist via the Pawns bus → bridge subscription wired in
+        // CreateLoop. Locks the 50-pawn baseline (scaled from 10 to
+        // stress-test the scheduler under bigger pawn counts on the
+        // 200×200 map per AD-6) at the bridge surface.
         var bridge = new PresentationBridge();
         var observedSpawns = new List<PawnSpawnedCommand>();
 
@@ -195,7 +196,7 @@ public sealed class GameBootstrapIntegrationTests
             if (c is PawnSpawnedCommand sp) observedSpawns.Add(sp);
         });
 
-        observedSpawns.Should().HaveCount(10);
+        observedSpawns.Should().HaveCount(50);
     }
 
     [Fact]
