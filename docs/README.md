@@ -55,6 +55,7 @@ Documents required to reproduce the work or contribute to it: methodology, moddi
 Work organization: phase order and acceptance criteria.
 
 - [ROADMAP](./ROADMAP.md) — closed phases 0–4 plus the Mod-OS Migration (M0–M10), with acceptance criteria and what each phase unlocks next.
+- [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) — **v1.0 RATIFIED.** Three-track discipline escalation brief: formal verification (Track A), type-theoretic architecture (Track B), methodology replication kit (Track C). Activation deferred per-track; each track requires its own brief at activation time.
 
 ## Learning materials
 

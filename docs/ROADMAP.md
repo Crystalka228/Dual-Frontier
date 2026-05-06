@@ -89,6 +89,26 @@ Phase 3.5 / Phase 4 / Phase 5 carry-forward items surfaced during housekeeping p
 
 - **UI lies removed via real pawn data (housekeeping `9141bd6` feat + `659a64a` test).** Pawn names were a hardcoded Warhammer-flavoured array indexed by `EntityId.Index` in `PawnStateReporterSystem`; the role label was a hash-derived fabrication in `PawnDetail.MakeRole` against a 5-element role array (no role component existed); the skill bars were hash-derived placeholders in `PawnDetail.DemoSkills` while `SkillsComponent` was completely ignored at the display surface. Resolved by introducing `IdentityComponent` (single `Name` field) and `RandomPawnFactory` (deterministic seed-42 generation, 10 colonists, all 13 `SkillKind` values populated per pawn), extending `PawnStateChangedEvent` / `PawnStateCommand` with `TopSkills: IReadOnlyList<(SkillKind Kind, int Level)>`, rewriting `PawnStateReporterSystem` to read the real components, and re-driving `PawnDetail`'s SKILLS section from real top-3 data while removing the role label entirely. Eight dead files deleted in the same pass: `BuildMenu.cs`, `AlertPanel.cs`, `ManaBar.cs`, `PawnInspector.cs`, `ProjectileVisual.cs`, `ProjectileSpawnedCommand.cs`, `SpellCastCommand.cs`, `UIUpdateCommand.cs` (all confirmed unused by `grep -r` before deletion). Test count: 417 → 428 (+11). M-phase boundary preserved: `git diff <baseline>..HEAD --stat -- src/DualFrontier.Core src/DualFrontier.Contracts` empty.
 
+### Maximum engineering refactor (parallel track)
+
+A three-track discipline escalation proposed and ratified in
+[MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) v1.0.
+Tracks adopt incrementally as Phase 6+ sidecar work, parallel to the
+M0–M10 sequence and the post-shipping reservoir entries.
+
+- **Track A — Formal verification.** F* proof of one isolation guard
+  property. Pilot scope; falsifiable via 2-week effort budget.
+  See brief §2 for property selection (Candidate A2 recommended pilot).
+- **Track B — Type-theoretic architecture.** Roslyn analyzers enforcing
+  architectural invariants currently expressed in prose. Pilot scope;
+  B1 layer dependency analyzer recommended first. See brief §3.
+- **Track C — Methodology replication kit.** Executable replication
+  protocol enabling external developers to reproduce the methodology
+  measurements. Post-Phase-7 (requires stable baseline). See brief §4.
+
+Adoption is opt-in per track. Tracks do not block shipping path.
+Per-track briefs authored at activation time, not now.
+
 ---
 
 ## Closed phases
@@ -545,3 +565,4 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — PR hygiene; the Mod-OS migration is exercised through the same checklist.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — post-release ideas reservoir; populated, not scheduled. Read after Phase 7 closure.
 - [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) — architectural contract for fully homomorphic encryption multiplayer; ratified at v1.0, activation deferred per its §D1.
+- [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) — three-track discipline escalation; ratified v1.0, activation deferred per-track.
