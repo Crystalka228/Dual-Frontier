@@ -46,9 +46,19 @@ public partial class ColonyPanel : Panel
         ornament.HorizontalAlignment = HorizontalAlignment.Center;
         root.AddChild(ornament);
 
-        _list = new VBoxContainer { SizeFlagsVertical = SizeFlags.ExpandFill };
+        var scroll = new ScrollContainer
+        {
+            SizeFlagsVertical    = SizeFlags.ExpandFill,
+            HorizontalScrollMode = ScrollContainer.ScrollMode.Disabled,
+        };
+        root.AddChild(scroll);
+
+        _list = new VBoxContainer
+        {
+            SizeFlagsHorizontal = SizeFlags.ExpandFill,
+        };
         _list.AddThemeConstantOverride("separation", 4);
-        root.AddChild(_list);
+        scroll.AddChild(_list);
 
         _tickLabel = MakeLabel("TICK: 0", 10, Palette.Muted);
         _tickLabel.HorizontalAlignment = HorizontalAlignment.Center;

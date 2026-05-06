@@ -1,6 +1,7 @@
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Loop;
 using DualFrontier.Application.Modding;
+using DualFrontier.Presentation.Input;
 using DualFrontier.Presentation.Rendering;
 using DualFrontier.Presentation.UI;
 using Godot;
@@ -49,6 +50,23 @@ public partial class GameRoot : Node2D
         _dispatcher = new RenderCommandDispatcher(pawnLayer, _hud);
 
         tileMap.InitMap(MapWidth, MapHeight);
+
+        // M8.2.A — add Camera2D centered on map. Without a Camera2D, the
+        // 2D viewport defaults to world coordinates (0,0)..(viewport_size),
+        // so a 200×200×16 = 3200px map is only ~36% visible. Centering the
+        // camera on (mapPixelW/2, mapPixelH/2) gives the user a sensible
+        // initial viewpoint; InputRouter handles middle-mouse drag to pan.
+        var camera = new Camera2D
+        {
+            Position = new Vector2(MapWidth * TileMapRenderer.TileSize / 2f,
+                                   MapHeight * TileMapRenderer.TileSize / 2f),
+            Enabled = true,
+        };
+        AddChild(camera);
+        camera.MakeCurrent();
+
+        var inputRouter = GetNode<InputRouter>("InputRouter");
+        inputRouter.SetCamera(camera);
 
         GameContext context = GameBootstrap.CreateLoop(_bridge);
         _loop = context.Loop;
