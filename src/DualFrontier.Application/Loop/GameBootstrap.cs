@@ -137,6 +137,7 @@ internal static class GameBootstrap
             new NeedsSystem(),
             new MoodSystem(),
             new JobSystem(),
+            new ConsumeSystem(),       // M8.5 — eats food, drinks water on arrival
             new MovementSystem(pathfinding),
             new PawnStateReporterSystem(),
             new InventorySystem(),

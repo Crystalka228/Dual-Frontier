@@ -35,7 +35,33 @@ public sealed class MovementSystem : SystemBase
     public MovementSystem(IPathfindingService pathfinding)
         => _pathfinding = pathfinding ?? throw new ArgumentNullException(nameof(pathfinding));
 
-    protected override void OnInitialize() { }
+    protected override void OnInitialize()
+    {
+        // M8.5 — ConsumeSystem decides where the pawn must travel for
+        // food / water but cannot write MovementComponent (single-writer
+        // invariant). Both events are dispatched at the phase boundary
+        // with this system's captured context, which permits the writes.
+        Services.Pawns.Subscribe<PawnConsumeTargetEvent>(OnConsumeTarget);
+        Services.Pawns.Subscribe<PawnConsumeFinishedEvent>(OnConsumeFinished);
+    }
+
+    private void OnConsumeTarget(PawnConsumeTargetEvent evt)
+    {
+        var move = GetComponent<MovementComponent>(evt.PawnId);
+        move.Target = evt.TargetTile;
+        // Drop any stale wander path so the next Update repaths toward the
+        // newly assigned consume target instead of finishing the old route.
+        move.Path.Clear();
+        SetComponent(evt.PawnId, move);
+    }
+
+    private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
+    {
+        var move = GetComponent<MovementComponent>(evt.PawnId);
+        move.Target = null;
+        move.Path.Clear();
+        SetComponent(evt.PawnId, move);
+    }
 
     public override void Update(float delta)
     {
@@ -53,9 +79,31 @@ public sealed class MovementSystem : SystemBase
 
             if (move.Path.Count == 0)
             {
-                var target = new GridVector(
-                    _rng.Next(0, MapWidth),
-                    _rng.Next(0, MapHeight));
+                GridVector target;
+                bool isExternalTarget;
+
+                if (move.Target.HasValue)
+                {
+                    target = move.Target.Value;
+                    isExternalTarget = true;
+
+                    // If pawn is already at target, do nothing — wait for an
+                    // arrival-handler system (M8.5 ConsumeSystem) to clear
+                    // Target on this tick. Pathfinding from start==end returns
+                    // an empty path which would otherwise loop indefinitely.
+                    if (target.X == pos.Position.X && target.Y == pos.Position.Y)
+                    {
+                        SetComponent(entity, move);
+                        continue;
+                    }
+                }
+                else
+                {
+                    target = new GridVector(
+                        _rng.Next(0, MapWidth),
+                        _rng.Next(0, MapHeight));
+                    isExternalTarget = false;
+                }
 
                 if (_pathfinding.TryFindPath(pos.Position, target, out var path)
                     && path.Count > 0)
@@ -63,6 +111,14 @@ public sealed class MovementSystem : SystemBase
                     move.Target = target;
                     move.Path   = new List<GridVector>(path);
                 }
+                else if (isExternalTarget)
+                {
+                    // External target unreachable — clear so caller (e.g.
+                    // ConsumeSystem) can retarget on a later tick instead of
+                    // the pawn freezing in place.
+                    move.Target = null;
+                }
+
                 SetComponent(entity, move);
                 continue;
             }

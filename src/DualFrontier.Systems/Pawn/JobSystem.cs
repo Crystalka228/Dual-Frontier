@@ -27,11 +27,33 @@ public sealed class JobSystem : SystemBase
     protected override void OnInitialize()
     {
         Services.Pawns.Subscribe<NeedsCriticalEvent>(OnNeedsCritical);
+
+        // M8.5 — ConsumeSystem owns the consume decision but cannot write
+        // JobComponent (single-writer invariant). Both events are dispatched
+        // at the phase boundary with this system's captured context, which
+        // permits the JobComponent write.
+        Services.Pawns.Subscribe<PawnConsumeTargetEvent>(OnConsumeTarget);
+        Services.Pawns.Subscribe<PawnConsumeFinishedEvent>(OnConsumeFinished);
     }
 
     private void OnNeedsCritical(NeedsCriticalEvent evt)
     {
         _urgentPawns.Add(evt.PawnId);
+    }
+
+    private void OnConsumeTarget(PawnConsumeTargetEvent evt)
+    {
+        var job = GetComponent<JobComponent>(evt.PawnId);
+        job.Target = evt.Target;
+        SetComponent(evt.PawnId, job);
+    }
+
+    private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
+    {
+        var job = GetComponent<JobComponent>(evt.PawnId);
+        job.Current = JobKind.Idle;
+        job.Target  = null;
+        SetComponent(evt.PawnId, job);
     }
 
     public override void Update(float delta)

@@ -49,7 +49,35 @@ namespace DualFrontier.Systems.Pawn
         private readonly Dictionary<(EntityId Entity, NeedKind Kind), bool> _critical
             = new();
 
-        protected override void OnInitialize() { }
+        protected override void OnInitialize()
+        {
+            // M8.5 — ConsumeSystem publishes NeedsRestoredEvent when a pawn
+            // finishes consuming food / drinking water. The handler runs at
+            // the phase boundary with this system's captured context, which
+            // owns the single declared write to NeedsComponent.
+            Services.Pawns.Subscribe<NeedsRestoredEvent>(OnNeedsRestored);
+        }
+
+        private void OnNeedsRestored(NeedsRestoredEvent evt)
+        {
+            var needs = GetComponent<NeedsComponent>(evt.PawnId);
+            switch (evt.Need)
+            {
+                case NeedKind.Satiety:
+                    needs.Satiety   = Math.Clamp(needs.Satiety   + evt.Amount, 0f, 1f);
+                    break;
+                case NeedKind.Hydration:
+                    needs.Hydration = Math.Clamp(needs.Hydration + evt.Amount, 0f, 1f);
+                    break;
+                case NeedKind.Sleep:
+                    needs.Sleep     = Math.Clamp(needs.Sleep     + evt.Amount, 0f, 1f);
+                    break;
+                case NeedKind.Comfort:
+                    needs.Comfort   = Math.Clamp(needs.Comfort   + evt.Amount, 0f, 1f);
+                    break;
+            }
+            SetComponent(evt.PawnId, needs);
+        }
 
         public override void Update(float delta)
         {
