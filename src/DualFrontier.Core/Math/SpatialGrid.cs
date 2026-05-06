@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 
@@ -106,12 +107,13 @@ internal sealed class SpatialGrid
             return Array.Empty<EntityId>();
 
         int index = CalculateIndex(position, _width);
-        // Return a defensive copy or view of the HashSet to prevent external modification from breaking encapsulation.
-        // Since we are returning IReadOnlyCollection, converting the internal set is sufficient for safety.
-        return new HashSet<EntityId>(Array.Empty<EntityId>()); // Placeholder for actual snapshot logic if needed; just returns empty for now based on constraint type.
-        /* Actual return: 
-         * return new ReadOnlyCollection<EntityId>(this._cells[index]); 
-         */
+        // Snapshot copy: caller mutations don't affect the grid; future grid
+        // mutations don't affect the returned collection. ToList() returns
+        // List<EntityId> which implements IReadOnlyCollection<EntityId>.
+        // O(N) per call where N = entities at this tile. Per the XML doc,
+        // this is non-hot-path use; hot-path callers should hold their own
+        // indices.
+        return _cells[index].ToList();
     }
 
     /// <summary>
@@ -173,12 +175,12 @@ internal sealed class SpatialGrid
     }
 
     /// <summary>
-    /// Gets the total width of the grid.
+    /// Gets the total width of the grid (number of columns).
     /// </summary>
-    public int Width { get; }
+    public int Width => _width;
 
     /// <summary>
-    /// Gets the total height of the grid.
+    /// Gets the total height of the grid (number of rows).
     /// </summary>
-    public int Height { get; }
+    public int Height => _height;
 }
