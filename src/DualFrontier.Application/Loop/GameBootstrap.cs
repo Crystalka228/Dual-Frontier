@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.AI.Pathfinding;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Modding;
 using DualFrontier.Application.Scenario;
+using DualFrontier.Components.Shared;
+using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
@@ -37,6 +41,11 @@ internal static class GameBootstrap
     private const int FactorySeed = 42;
     private const int ObstacleSeed = 42;
     private const int ObstacleCount = 800;
+    private const int InitialFoodCount       = 150;
+    private const int InitialWaterCount      = 50;
+    private const int InitialBedCount        = 30;
+    private const int InitialDecorationCount = 25;
+    private const int ItemFactorySeed        = 43;
 
     /// <summary>
     /// Builds the full production simulation context: domain world,
@@ -96,7 +105,26 @@ internal static class GameBootstrap
         var pathfinding = new AStarPathfinding(navGrid);
 
         var pawnFactory = new RandomPawnFactory(FactorySeed, navGrid, MapWidth, MapHeight);
-        pawnFactory.Spawn(world, services, InitialPawnCount);
+        IReadOnlyList<EntityId> pawnIds = pawnFactory.Spawn(world, services, InitialPawnCount);
+
+        // ItemFactory must not place items on pawn tiles — collect pawn
+        // positions and pass as the excluded set. RandomPawnFactory always
+        // adds PositionComponent, so TryGetComponent succeeds for every id.
+        var excludedPositions = new List<GridVector>(pawnIds.Count);
+        foreach (EntityId pid in pawnIds)
+        {
+            if (world.TryGetComponent<PositionComponent>(pid, out var pawnPos))
+                excludedPositions.Add(pawnPos.Position);
+        }
+
+        var itemFactory = new ItemFactory(ItemFactorySeed, navGrid, MapWidth, MapHeight);
+        itemFactory.Spawn(
+            world,
+            excludedPositions,
+            InitialFoodCount,
+            InitialWaterCount,
+            InitialBedCount,
+            InitialDecorationCount);
 
         // Hard-coded kernel systems live in a local array so the same
         // instances flow into both the dependency graph (kernel
