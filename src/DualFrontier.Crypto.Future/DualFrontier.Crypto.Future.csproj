@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Crypto.Future</AssemblyName>
+    <RootNamespace>DualFrontier.Crypto.Future</RootNamespace>
+  </PropertyGroup>
+</Project>
