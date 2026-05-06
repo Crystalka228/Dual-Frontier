@@ -511,6 +511,28 @@ Unchanged from the original plan. Goal: own entry point bypassing Godot's runtim
 
 ---
 
+## Beyond ship
+
+After Phase 7 closure — game shipped, baseline performance measured, full vanilla mod set live — development continues in the form of post-release updates. These updates are **not** part of the M0–M10 milestone sequence and do not have a formal plan inside this roadmap. The active scope through Phase 7 is the Mod-OS Migration plus dynamic map expansion (tracked in [Backlog](#backlog)); everything else is deferred.
+
+Candidate ideas for post-release updates live in a dedicated reservoir document: [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md). The reservoir holds entries that are architecturally compatible with the foundation laid by M0–M10 but are deliberately not scheduled. Inclusion is not a commitment; the reservoir's discipline is intentionally lighter than this roadmap's. Among the entries currently recorded:
+
+- AI mod assistant (local LLM generates mods validated through the existing capability system).
+- Voronoi-driven faction borders (computed from weighted geometry, GPU-determinism dependent).
+- Topological data analysis for social dynamics (persistence homology over the colony's social network).
+- Symbolic regression on simulation data (the game discovers its own laws and mod effects).
+- Causal inference for player decision analysis (counterfactual replay made cheap by determinism).
+- AI opponents through behavior cloning (challenging-but-legible adversaries from anonymized replays).
+- Lambda calculus REPL for power users (minimal Turing-complete scripting under the capability system).
+- Player model for adaptive personalization (local-only, transparent, player-controlled).
+- FHE integration (architectural commitment ratified separately as [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) v1.0; activation deferred per its §D1).
+
+The reservoir is read after Phase 7 closure, not before. Reading it during the active M-cycle introduces decision fatigue: every idea there looks plausible, and the temptation to begin "just one" before shipping is real. The roadmap is the active surface; the reservoir is dormant context.
+
+The single exception is FHE: because its contract is already ratified, [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) v1.0 is binding from now even though activation is conditional. The contract specifies architectural boundaries that the multiplayer-related code in M0–M10 does not currently produce — this is the contract's specified resting state, not a defect.
+
+---
+
 ## See also
 
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.
@@ -521,3 +543,5 @@ Unchanged from the original plan. Goal: own entry point bypassing Godot's runtim
 - [MOD_PIPELINE](./MOD_PIPELINE.md) — `ModIntegrationPipeline` mechanics; M2, M5, M6, M7 extend it.
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — test discipline; M-phase acceptance criteria slot into the existing isolation/modding/integration tiers.
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — PR hygiene; the Mod-OS migration is exercised through the same checklist.
+- [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — post-release ideas reservoir; populated, not scheduled. Read after Phase 7 closure.
+- [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) — architectural contract for fully homomorphic encryption multiplayer; ratified at v1.0, activation deferred per its §D1.
