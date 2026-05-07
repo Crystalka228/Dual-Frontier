@@ -760,3 +760,20 @@ This document is **v1.0**, authoritative until amended via explicit decision. Am
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — test pyramid; §1.8 slots Runtime tests into the existing structure.
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — pre-commit checklist; §7 adds the validation-layer-clean check.
 - [PERFORMANCE](./PERFORMANCE.md) — target metrics; sprite/tile budgets adopted in M9.2 / M9.3.
+
+## Part 9: Relationship к KERNEL_ARCHITECTURE.md
+
+RUNTIME_ARCHITECTURE.md (this) и KERNEL_ARCHITECTURE.md describe two halves of single architectural vision: native foundation под managed Application layer.
+
+**Symmetric architecture**:
+- This document (RUNTIME): Vulkan rendering layer, M-series milestones (M9.0-M9.8)
+- KERNEL_ARCHITECTURE.md: ECS kernel layer, K-series milestones (K0-K8)
+- Both: pure P/Invoke к native (vulkan-1.dll | DualFrontier.Core.Native.dll)
+- Both: managed thin adapter layer
+- Both: single ownership boundary, direction-disciplined (managed → native)
+
+**Independent layers**: rendering знает nothing about ECS storage; ECS kernel знает nothing about Vulkan. Both reachable от managed Application layer through respective bridges.
+
+**Combined timeline**: see KERNEL_ARCHITECTURE.md Part 8 для sequencing options (β3, β5, β6) и recommended approach.
+
+**Cross-document invariants**: «без компромиссов», operating principle (data exists/doesn't), single ownership boundary, direction-discipline, long-horizon planning. See KERNEL_ARCHITECTURE.md Part 8 для full invariant list.

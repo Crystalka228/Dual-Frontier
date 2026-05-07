@@ -388,3 +388,15 @@ The document is updated after each substantial phase closes. Substantial methodo
 - [NATIVE_CORE_EXPERIMENT.md](./NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
 - [GPU_COMPUTE.md](./GPU_COMPUTE.md) — deferred decision, switchover threshold.
 - [ROADMAP.md](./ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
+
+## Native layer methodology adjustments
+
+Kernel и runtime native layers introduce specific methodology adjustments documented в:
+- `KERNEL_ARCHITECTURE.md` Part 7 (kernel-specific adjustments)
+- `RUNTIME_ARCHITECTURE.md` Part 7 (runtime-specific adjustments)
+
+Common adjustments (apply к both):
+- C++ build verification mandatory pre-commit (CMake clean + selftest passing)
+- P/Invoke marshalling check на every new `[DllImport]` declaration
+- Cross-language commits acceptable when C++ + C# changes coupled
+- Single ownership boundary preserved across managed/native communication

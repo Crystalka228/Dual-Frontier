@@ -130,3 +130,12 @@ without it the assembly structure looks excessive.
 This project is distributed under the
 [PolyForm Noncommercial 1.0.0](./LICENSE) license. Commercial use of the
 engine code requires a separate agreement.
+
+### Architecture documents
+
+- `docs/METHODOLOGY.md` — pipeline и methodology
+- `docs/CODING_STANDARDS.md` — coding conventions
+- `docs/MOD_OS_ARCHITECTURE.md` — modding architecture
+- `docs/RUNTIME_ARCHITECTURE.md` — Vulkan rendering layer (M9.x)
+- `docs/KERNEL_ARCHITECTURE.md` — native ECS kernel layer (K0-K8)
+- `docs/CPP_KERNEL_BRANCH_REPORT.md` — Discovery report (experimental branch)
