@@ -2,7 +2,7 @@
 
 *The project's central methodology document. Describes the four-agent LLM pipeline, contracts as IPC between agents, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
 
-*Version: 1.1 (2026-05-03). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7.*
+*Version: 1.2 (2026-05-07). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7 and the post-K0 descriptive-pre-flight-checks principle appended to the native-layer adjustments section.*
 
 ---
 
@@ -370,6 +370,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 |---|---|---|
 | 1.0 | 2026-04-25 | First public version of the document after Phase 4 closure. |
 | 1.1 | 2026-05-03 | Added §7 Operating principles, with §7.1 stating the "data exists or it doesn't" principle and its empirical record. Subsequent sections renumbered (§8 Reproducibility, §9 Open questions, §10 Change history, §11 See also). |
+| 1.2 | 2026-05-07 | Expanded "Native layer methodology adjustments" section with descriptive vs prescriptive pre-flight principle, derived from K0 closure lesson. Brief-authoring checklist added. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -395,8 +396,61 @@ Kernel и runtime native layers introduce specific methodology adjustments docum
 - `KERNEL_ARCHITECTURE.md` Part 7 (kernel-specific adjustments)
 - `RUNTIME_ARCHITECTURE.md` Part 7 (runtime-specific adjustments)
 
-Common adjustments (apply к both):
+Common adjustments (apply к both, plus any subsequent native artifact per `MIGRATION_PROGRESS.md` D3 Lvl 1 pattern):
 - C++ build verification mandatory pre-commit (CMake clean + selftest passing)
 - P/Invoke marshalling check на every new `[DllImport]` declaration
 - Cross-language commits acceptable when C++ + C# changes coupled
 - Single ownership boundary preserved across managed/native communication
+
+### Pre-flight checks: descriptive over prescriptive
+
+Briefs для milestone execution include pre-flight checks — verifications agents выполняют before touching code. The temptation is to write these prescriptively: «выполни команду X, **должна вернуть Y, иначе STOP**». This pattern fails when the brief's expectation diverges from reality on the ground.
+
+**Failure mode (observed at K0 closure, 2026-05-07).** K0 brief gated execution on:
+
+```
+git merge-base origin/main claude/cpp-core-experiment-cEsyH
+Ожидаем: NO OUTPUT, exit code 1 — disjoint histories
+Если выдаёт SHA — STOP
+```
+
+The expectation was based on `CPP_KERNEL_BRANCH_REPORT.md` Discovery (~2 weeks old at brief authoring). Reality: the experimental branch shared a base with main at commit `3e9a001`. A strict agent following the brief would have STOPPED on a false signal — the cherry-pick procedure works identically whether histories are disjoint or share a base, so the gate was protecting nothing.
+
+**Principle: pre-flight checks describe state, не prescribe outcome.** Agents выполняют the command, **record what they see**, and only STOP on **destructive divergence** (working tree dirty, target paths already populated с unexpected content, baseline tests failing). Informational checks (history shape, branch topology, recent commit metadata) are recorded но never block execution alone.
+
+**Two categories of pre-flight check** in any future brief:
+
+1. **Hard gates** (STOP-eligible) — failure indicates the workspace would be corrupted by proceeding:
+   - Working tree dirty (uncommitted changes would be lost)
+   - Baseline tests failing (regression source not yet identified)
+   - Required tooling absent (CMake / dotnet / compiler)
+   - Target paths already contain unexpected content (collision risk)
+   - Permissions or filesystem write failures
+
+2. **Informational checks** (record-only) — describe environment for the audit trail:
+   - History shape (merge-base existence, branch topology)
+   - Commit metadata (HEAD SHAs, commit counts, author dates)
+   - Discovery-report-derived facts that may have aged
+   - Architecture-document-derived facts that may have evolved
+
+When a brief's prediction diverges from observed reality:
+- If it's an **informational check** — record the divergence, continue.
+- If it's a **hard gate** — STOP, escalate to human, await guidance.
+
+**Rationale**: brief authoring happens at one point in time; brief execution happens later. Reality between those moments shifts (commits land, branches move, Discovery reports age). Hard-gating on every observed state ties brief correctness to instantaneous knowledge — a fragile coupling. Informational checks decouple the two: brief stays useful even when its expectations age.
+
+**Falsifiable claim**: Briefs authored under the descriptive principle complete с fewer false-stop interruptions than briefs with prescriptive gates. The measurement: count brief-execution sessions that STOP on informational-check divergence, before и after this principle adoption. Target: zero false stops on informational divergences from K1 onward.
+
+### Brief authoring checklist (post-K0 update)
+
+When authoring a milestone brief, separate pre-flight checks по category:
+
+- [ ] Hard gates listed explicitly с STOP language
+- [ ] Informational checks listed с «record и continue» language
+- [ ] Discovery-report-derived facts marked как informational
+- [ ] No prescriptive gate based на architecture document state alone (architecture LOCKs are not pre-flight checks; они are brief inputs)
+- [ ] Defensive `Test-Path` / existence checks used over assumed-state assertions (K0 cleanup commit 3 precedent — `NATIVE_CORE.md` may or may not exist; brief covers both)
+
+### Reference: K0 lessons learned
+
+Concrete K0 closure lessons live в `docs/MIGRATION_PROGRESS.md` K0 entry (5 items). The descriptive-pre-flight principle in this section generalizes from those lessons; it is не a complete account of K0 — that lives в the migration tracker.
