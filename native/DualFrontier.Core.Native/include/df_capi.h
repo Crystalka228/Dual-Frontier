@@ -78,6 +78,53 @@ DF_API int32_t         df_world_component_count(
                            df_world_handle world,
                            uint32_t type_id);
 
+/*
+ * K1 batching primitives (added 2026-05-07).
+ *
+ * Bulk operations eliminate per-entity P/Invoke overhead by transmitting
+ * arrays of entities + components in a single crossing.
+ *
+ * Span access provides direct read-only view into native dense storage.
+ * The span pointer is valid until df_world_release_span is called OR
+ * until any mutation (add/remove/destroy) is attempted (which will fail
+ * while spans are active).
+ *
+ * Span lifetime contract:
+ *   1. Caller calls df_world_acquire_span -> receives dense ptr + indices ptr + count.
+ *   2. Caller iterates without further P/Invokes.
+ *   3. Caller MUST call df_world_release_span before any mutation.
+ *   4. Multiple concurrent spans (different type_ids OR same type_id) allowed.
+ *   5. Mutation attempt while any span is active throws (caught at boundary,
+ *      function returns 0 / no-op).
+ */
+
+DF_API void            df_world_add_components_bulk(
+                           df_world_handle world,
+                           const uint64_t* entities,
+                           uint32_t type_id,
+                           const void* component_data,
+                           int32_t component_size,
+                           int32_t count);
+
+DF_API int32_t         df_world_get_components_bulk(
+                           df_world_handle world,
+                           const uint64_t* entities,
+                           uint32_t type_id,
+                           void* out_data,
+                           int32_t component_size,
+                           int32_t count);
+
+DF_API int32_t         df_world_acquire_span(
+                           df_world_handle world,
+                           uint32_t type_id,
+                           const void** out_dense_ptr,
+                           const int32_t** out_indices_ptr,
+                           int32_t* out_count);
+
+DF_API void            df_world_release_span(
+                           df_world_handle world,
+                           uint32_t type_id);
+
 #ifdef __cplusplus
 }
 #endif

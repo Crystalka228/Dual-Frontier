@@ -1,5 +1,6 @@
 #pragma once
 
+#include <atomic>
 #include <cstdint>
 #include <memory>
 #include <unordered_map>
@@ -38,6 +39,24 @@ public:
     void remove_component(EntityId id, uint32_t type_id);
     [[nodiscard]] int32_t component_count(uint32_t type_id) const noexcept;
 
+    // K1 batching primitives.
+    void add_components_bulk(const EntityId* entities, uint32_t type_id,
+                             const void* component_data, int32_t component_size,
+                             int32_t count);
+
+    int32_t get_components_bulk(const EntityId* entities, uint32_t type_id,
+                                void* out_data, int32_t component_size,
+                                int32_t count) const noexcept;
+
+    bool acquire_span(uint32_t type_id, const void** out_dense_ptr,
+                      const int32_t** out_indices_ptr, int32_t* out_count) noexcept;
+
+    void release_span(uint32_t type_id) noexcept;
+
+    [[nodiscard]] int32_t active_spans_count() const noexcept {
+        return active_spans_.load(std::memory_order_acquire);
+    }
+
 private:
     static constexpr std::size_t kInitialCapacity = 256;
 
@@ -50,6 +69,7 @@ private:
     std::vector<int32_t> free_slots_;
     std::vector<EntityId> pending_destroy_;
     std::unordered_map<uint32_t, std::unique_ptr<RawComponentStore>> stores_;
+    std::atomic<int32_t> active_spans_{0};
 };
 
 } // namespace dualfrontier

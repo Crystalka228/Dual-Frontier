@@ -120,6 +120,10 @@ public:
         return dense_to_index_;
     }
 
+    [[nodiscard]] const void* dense_data() const noexcept {
+        return dense_bytes_.data();
+    }
+
 private:
     uint8_t* slot_ptr(int32_t dense_index) noexcept {
         return dense_bytes_.data() +
