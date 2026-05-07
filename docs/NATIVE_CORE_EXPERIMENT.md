@@ -1,3 +1,9 @@
+> **SUPERSEDED v2026-05-07** — заменён `KERNEL_ARCHITECTURE.md` (v1.0 LOCKED).
+> Сохраняется для исторического контекста. §8 decision rule из этого документа
+> признан authoritative и зафиксирован как K-L10 в `KERNEL_ARCHITECTURE.md`.
+
+---
+
 # DUAL FRONTIER — Native Core Experiment
 
 C++ core for the ECS simulator
