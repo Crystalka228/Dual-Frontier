@@ -138,6 +138,7 @@ internal static class GameBootstrap
             new MoodSystem(),
             new JobSystem(),
             new ConsumeSystem(),       // M8.5 — eats food, drinks water on arrival
+            new SleepSystem(),         // M8.6 — sleeps on a bed, restores Sleep + Comfort
             new MovementSystem(pathfinding),
             new PawnStateReporterSystem(),
             new InventorySystem(),

@@ -43,6 +43,10 @@ public sealed class MovementSystem : SystemBase
         // with this system's captured context, which permits the writes.
         Services.Pawns.Subscribe<PawnConsumeTargetEvent>(OnConsumeTarget);
         Services.Pawns.Subscribe<PawnConsumeFinishedEvent>(OnConsumeFinished);
+
+        // M8.6 — SleepSystem mirrors the same pattern for the sleep loop.
+        Services.Pawns.Subscribe<PawnSleepTargetEvent>(OnSleepTarget);
+        Services.Pawns.Subscribe<PawnSleepFinishedEvent>(OnSleepFinished);
     }
 
     private void OnConsumeTarget(PawnConsumeTargetEvent evt)
@@ -56,6 +60,22 @@ public sealed class MovementSystem : SystemBase
     }
 
     private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
+    {
+        var move = GetComponent<MovementComponent>(evt.PawnId);
+        move.Target = null;
+        move.Path.Clear();
+        SetComponent(evt.PawnId, move);
+    }
+
+    private void OnSleepTarget(PawnSleepTargetEvent evt)
+    {
+        var move = GetComponent<MovementComponent>(evt.PawnId);
+        move.Target = evt.TargetTile;
+        move.Path.Clear();
+        SetComponent(evt.PawnId, move);
+    }
+
+    private void OnSleepFinished(PawnSleepFinishedEvent evt)
     {
         var move = GetComponent<MovementComponent>(evt.PawnId);
         move.Target = null;

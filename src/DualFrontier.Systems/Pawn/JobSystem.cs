@@ -34,6 +34,10 @@ public sealed class JobSystem : SystemBase
         // permits the JobComponent write.
         Services.Pawns.Subscribe<PawnConsumeTargetEvent>(OnConsumeTarget);
         Services.Pawns.Subscribe<PawnConsumeFinishedEvent>(OnConsumeFinished);
+
+        // M8.6 — SleepSystem mirrors the same pattern for the sleep loop.
+        Services.Pawns.Subscribe<PawnSleepTargetEvent>(OnSleepTarget);
+        Services.Pawns.Subscribe<PawnSleepFinishedEvent>(OnSleepFinished);
     }
 
     private void OnNeedsCritical(NeedsCriticalEvent evt)
@@ -49,6 +53,21 @@ public sealed class JobSystem : SystemBase
     }
 
     private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
+    {
+        var job = GetComponent<JobComponent>(evt.PawnId);
+        job.Current = JobKind.Idle;
+        job.Target  = null;
+        SetComponent(evt.PawnId, job);
+    }
+
+    private void OnSleepTarget(PawnSleepTargetEvent evt)
+    {
+        var job = GetComponent<JobComponent>(evt.PawnId);
+        job.Target = evt.Target;
+        SetComponent(evt.PawnId, job);
+    }
+
+    private void OnSleepFinished(PawnSleepFinishedEvent evt)
     {
         var job = GetComponent<JobComponent>(evt.PawnId);
         job.Current = JobKind.Idle;
