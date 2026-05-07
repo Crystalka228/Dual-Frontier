@@ -2,12 +2,26 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
-**Status**: READY FOR EXECUTION
+**Status**: EXECUTED
 **Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K1, §1.6 (P/Invoke patterns), §1.7 (Span protocol), `docs/MIGRATION_PROGRESS.md` (K0 closure context)
 **Predecessor**: K0 (`89a4b24`) — cherry-pick + cleanup, merged to main
 **Target**: fresh feature branch `feat/k1-batching-primitive` от `main`
 **Estimated time**: 3–5 days at hobby pace
 **Estimated LOC delta**: +500–800
+
+---
+
+## Status: EXECUTED
+
+**Date**: 2026-05-07
+**Branch**: `feat/k1-batching-primitive`
+**Closure SHA**: `e2c50b8` (last K1-substantive commit — `NativeBulkAddBenchmark`)
+
+Full executable brief authored and executed. See git log on
+`feat/k1-batching-primitive` for the atomic commit sequence
+(`92a90de` native ABI → `e8aa42e` managed bridge → `74e51ef` selftest →
+`e2c50b8` benchmark) and `docs/MIGRATION_PROGRESS.md` K1 entry for the
+closure record (lessons learned, scope deltas).
 
 ---
 
