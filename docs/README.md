@@ -26,6 +26,7 @@ Technical documents describing the engine that stress-tests the methodology: lay
 
 - [ARCHITECTURE](./ARCHITECTURE.md) — the four layers, dependency rules, assembly diagram.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — **v1.5 LOCKED.** Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model. Drives the M1–M10 migration plan in ROADMAP.
+- [RUNTIME_ARCHITECTURE](./RUNTIME_ARCHITECTURE.md) — **v1.0 LOCKED.** Pure-Vulkan + pure-Win32 2D runtime to replace the Godot DevKit production path. Ten foundation decisions (L1–L10), nine migration milestones (M9.0–M9.8), parallel-development cutover at M9.5, Godot deletion at M9.8. Domain layer preserved verbatim.
 - [CONTRACTS](./CONTRACTS.md) — marker interfaces, six domain buses, evolution and versioning.
 - [ECS](./ECS.md) — `World`, `EntityId`, `Component`, `SparseSet`, `Query`, `SystemBase`.
 - [EVENT_BUS](./EVENT_BUS.md) — domain buses, the two-step Intent→Granted/Refused model, batch processing.
