@@ -983,3 +983,13 @@ These items were unresolved in v0.1 and were locked during Phase 0 closure (v1.0
 - [ISOLATION](./ISOLATION.md) — `SystemExecutionContext`; capability enforcement at runtime delegates here.
 - [ROADMAP](./ROADMAP.md) — phase order; the migration plan in §11 is the new authoritative sequence for the mod-OS work.
 - `src/DualFrontier.Contracts/Modding/` — the source-of-truth surface for `IMod`, `IModApi`, `IModContract`, `ContractsVersion`, `ModManifest`.
+
+## Modding с native ECS kernel
+
+When kernel migration к native completes (K-series, see `KERNEL_ARCHITECTURE.md`):
+- Mod component types must be `unmanaged` structs (Path α)
+- Class-based component storage prohibited (через ECS — mod state classes acceptable outside ECS)
+- Vanilla mods register components и systems through same IModApi as third-party (vanilla = mods principle preserved)
+- Mod replacement triggers second-graph rebuild (managed) — native side untouched
+
+See `KERNEL_ARCHITECTURE.md` §1.9 (mod system registration) и §1.10 (component type registry) для full detail.
