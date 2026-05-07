@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-07 (K0 closure)
+**Last updated**: 2026-05-07 (K1 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,9 +31,9 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K1 (planned) — kernel batching primitive |
-| **Last completed milestone** | K0 (cherry-pick + cleanup) — `89a4b24` 2026-05-07 |
-| **Next milestone (recommended)** | K1 (batching primitive: bulk Add/Get + Span<T>) |
+| **Active phase** | K2 (planned) — type-id registry + bridge tests |
+| **Last completed milestone** | K1 (batching primitive) — `e2c50b8` 2026-05-07 |
+| **Next milestone (recommended)** | K2 (type-id registry + bridge tests) |
 | **Sequencing strategy** | Open — decision deferred к after K2 measurement (см. §«Sequencing decision») |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
 | **Tests passing** | 472 (managed Domain) — preserved invariant throughout migration |
@@ -67,7 +67,7 @@
 | Milestone | Title | Status | Estimate | Commit | Date closed |
 |---|---|---|---|---|---|
 | K0 | Cherry-pick + cleanup от experimental branch | DONE | 1–2 days | `89a4b24` | 2026-05-07 |
-| K1 | Batching primitive (bulk Add/Get + Span<T>) | NOT STARTED | 3–5 days | — | — |
+| K1 | Batching primitive (bulk Add/Get + Span<T>) | DONE | 3–5 days | `e2c50b8` | 2026-05-07 |
 | K2 | Type-id registry + bridge tests | NOT STARTED | 2–3 days | — | — |
 | K3 | Native bootstrap graph + thread pool | NOT STARTED | 5–7 days | — | — |
 | K4 | Component struct refactor (Path α) | NOT STARTED | 2–3 weeks | — | — |
@@ -95,9 +95,23 @@
   - `NATIVE_CORE.md` was absent on this branch (only `NATIVE_CORE_EXPERIMENT.md` existed); brief's defensive Test-Path check correctly handled this.
 - **Blockers (resolved)**: none unresolved
 
-### K1 — K8
+### K1 — Batching primitive (bulk Add/Get + Span<T>)
 
-Detailed entries будут добавлены при подходе к каждому milestone (full brief authoring + execution + closure recording).
+- **Status**: DONE (`e2c50b8`, 2026-05-07)
+- **Brief**: `tools/briefs/K1_BATCHING_BRIEF.md` (FULL EXECUTED)
+- **C ABI extension**: 4 new functions — `df_world_add_components_bulk`, `df_world_get_components_bulk`, `df_world_acquire_span`, `df_world_release_span` (12 → 16 total)
+- **Native side**: `active_spans_` atomic counter в `World`; mutation rejection при active spans (`std::logic_error` thrown from `add_component` / `remove_component` / `destroy_entity` / `flush_destroyed`, caught at C ABI boundary so ABI stays noexcept-equivalent); `dense_data()` accessor в `RawComponentStore`
+- **Managed bridge**: `NativeWorld.AddComponents` / `GetComponents` / `AcquireSpan`; `SpanLease<T>` skeleton с `ReadOnlySpan<T>` + `ReadOnlySpan<int>` access
+- **Selftest scenarios**: 4 → 6 (added `scenario_bulk_operations`, `scenario_span_lifetime`)
+- **Benchmark**: `NativeBulkAddBenchmark` added (execution deferred к K7)
+- **Managed tests**: 472 passing (preserved baseline)
+- **Lessons learned**:
+  - Brief Step 2.5 specified try/catch only on the new bulk/span ABI functions, but the new throw paths added to `add_component` / `remove_component` / `destroy_entity` / `flush_destroyed` propagate through their existing capi wrappers. The wrappers without try/catch would have leaked C++ exceptions across the DLL boundary (UB). Wrapped them defensively — completeness требование, что brief implicitly предполагал но not stated.
+  - Pre-flight HG-1 (working tree clean) failed because the brief itself had been authored as an unstaged modification on `main` (skeleton → 1223-line full brief). Resolved by committing «brief authoring» on `main` as a prerequisite step (`8fee2b1`) before creating the K1 branch. Future briefs in similar self-bootstrapping scenarios should call out this pattern explicitly.
+
+### K2 — K8
+
+Detailed entries будут добавлены при подходе к каждому milestone.
 
 ---
 
