@@ -1,5 +1,11 @@
 #pragma once
 
+// NOTE (K0 cleanup, 2026-05-07): This template is currently used only for
+// SparseSet<int>::kAbsent sentinel by RawComponentStore. The full template
+// is retained for the typed-store path planned in K1+ (typed component
+// access without type-erasure overhead). Do not delete — see KERNEL_ARCHITECTURE.md
+// §1.2.
+
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
