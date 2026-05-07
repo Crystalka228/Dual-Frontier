@@ -1,0 +1,34 @@
+Kenney CC0 Terrain Sprite Pack — License & Attribution
+======================================================
+
+Source: Roguelike RPG Pack by Kenney (kenney.nl)
+URL: https://www.kenney.nl/assets/roguelike-rpg-pack
+License: CC0 1.0 Universal (Public Domain Dedication)
+        https://creativecommons.org/publicdomain/zero/1.0/
+
+CC0 license:
+- No attribution required
+- May be used for any purpose, including commercial
+- May be modified, redistributed, or remixed without permission
+
+Customary attribution (used here as good practice):
+- Sprite assets (c) Kenney, released under CC0
+- Source: kenney.nl
+- Pack credit: Kenney Vleugels, with help from Lynn Evers
+
+Date downloaded: 2026-05-06
+Used in: TileMapRenderer.cs (terrain rendering)
+
+Spritesheet metadata:
+- File: roguelikeSheet_transparent.png
+- Size: 968 x 526 px
+- Tile size: 16 x 16 px
+- Margin between tiles: 1 px (stride = 17 px)
+
+Atlas regions selected for M8.8 terrain rendering:
+- Grass — col 5, row 0  → Rect2(85, 0, 16, 16)   solid green floor tile
+- Rock  — col 6, row 2  → Rect2(102, 34, 16, 16) grey stone brick tile
+
+Note: TD-3.3 commit added Kenney UI assets (panels, buttons, bars,
+icons) under same license. M8.8 extends Kenney usage to terrain tiles.
+Both asset sets share this license rationale.

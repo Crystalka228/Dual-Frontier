@@ -4,21 +4,49 @@ using Godot;
 namespace DualFrontier.Presentation.Nodes;
 
 /// <summary>
-/// Renders the terrain grid as coloured rectangles. Phase 3 placeholder
-/// that paints a deterministic grass/rock pattern seeded by <see cref="Seed"/>.
-/// Phase 7+ replaces this with a Godot TileSet driven by real terrain data
-/// from <c>TileComponent</c>.
+/// Renders the terrain grid using a Kenney CC0 sprite atlas. M8.8 replaced
+/// the prior DrawRect placeholder with DrawTextureRectRegion calls into the
+/// pre-loaded atlas texture. Grass + Rock are mapped to specific 16x16
+/// regions identified manually by image-editor inspection.
+///
+/// Atlas pack: Roguelike RPG Pack by Kenney (kenney.nl), CC0 1.0 Universal.
+/// See assets/kenney/terrain/LICENSE.txt for full attribution. The pack uses
+/// 16x16 tiles with a 1px margin between them (stride = 17px).
+///
+/// TerrainKind values not present in the atlas (Water/Sand/Ice/Swamp/Arcane)
+/// fall back to KindToColor flat-fill. InitMap currently uses only Grass +
+/// Rock, so the fallback is defensive — present for future biome expansion.
 /// </summary>
 public partial class TileMapRenderer : Node2D
 {
 	public const int TileSize = 16;
 	private const int DefaultSeed = 42;
 
+	// Atlas sub-regions verified by inspection of roguelikeSheet_transparent.png.
+	// Pack stride = 17px (16 tile + 1 margin), so col*17, row*17 gives top-left.
+	//   Grass = col 5,  row 0 → (85, 0)    — solid green floor tile.
+	//   Rock  = col 6,  row 2 → (102, 34)  — grey stone-brick floor tile.
+	private static readonly Rect2 GrassRegion = new Rect2(85, 0, TileSize, TileSize);
+	private static readonly Rect2 RockRegion  = new Rect2(102, 34, TileSize, TileSize);
+
+	private const string AtlasPath =
+		"res://assets/kenney/terrain/roguelikeSheet_transparent.png";
+
 	private int _width;
 	private int _height;
 	private TerrainKind[] _tiles = System.Array.Empty<TerrainKind>();
+	private Texture2D? _atlas;
 
 	public int Seed { get; set; } = DefaultSeed;
+
+	public override void _Ready()
+	{
+		_atlas = GD.Load<Texture2D>(AtlasPath);
+		if (_atlas is null)
+		{
+			GD.PrintErr($"TileMapRenderer: failed to load atlas at {AtlasPath}");
+		}
+	}
 
 	/// <summary>
 	/// Initialises the tile map with a procedural grass/rock pattern.
@@ -43,9 +71,37 @@ public partial class TileMapRenderer : Node2D
 		{
 			for (int x = 0; x < _width; x++)
 			{
-				Color color = KindToColor(_tiles[y * _width + x]);
-				DrawRect(new Rect2(x * TileSize, y * TileSize, TileSize, TileSize), color);
+				TerrainKind kind = _tiles[y * _width + x];
+				Rect2 dstRect = new Rect2(x * TileSize, y * TileSize, TileSize, TileSize);
+
+				if (_atlas != null && TryGetAtlasRegion(kind, out Rect2 srcRegion))
+				{
+					DrawTextureRectRegion(_atlas, dstRect, srcRegion);
+				}
+				else
+				{
+					// Fallback for unmapped TerrainKind values or missing atlas
+					// (defensive — InitMap uses only Grass + Rock, but other
+					// biomes may join in future commits).
+					DrawRect(dstRect, KindToColor(kind));
+				}
 			}
+		}
+	}
+
+	private static bool TryGetAtlasRegion(TerrainKind kind, out Rect2 region)
+	{
+		switch (kind)
+		{
+			case TerrainKind.Grass:
+				region = GrassRegion;
+				return true;
+			case TerrainKind.Rock:
+				region = RockRegion;
+				return true;
+			default:
+				region = default;
+				return false;
 		}
 	}
 
