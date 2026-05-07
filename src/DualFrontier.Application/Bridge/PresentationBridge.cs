@@ -43,4 +43,14 @@ public sealed class PresentationBridge
             execute(cmd);
         }
     }
+
+    /// <summary>
+    /// Diagnostic surface — current queue depth (number of commands pending
+    /// drainage). Read-only. Used by DebugOverlay to surface any backpressure
+    /// between simulation production rate and render drainage rate.
+    /// <see cref="ConcurrentQueue{T}.Count"/> is thread-safe but eventually
+    /// consistent (may show stale value briefly). Acceptable for diagnostic
+    /// display.
+    /// </summary>
+    public int QueueDepth => _commands.Count;
 }

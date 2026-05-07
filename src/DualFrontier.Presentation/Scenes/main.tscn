@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://Nodes/GameRoot.cs" id="1_root"]
 [ext_resource type="Script" path="res://Nodes/TileMapRenderer.cs" id="2_tilemap"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://UI/GameHUD.cs" id="6_hud"]
 [ext_resource type="Script" path="res://UI/ColonyPanel.cs" id="7_colony"]
 [ext_resource type="Script" path="res://UI/PawnDetail.cs" id="8_detail"]
+[ext_resource type="Script" path="res://Nodes/DebugOverlay.cs" id="9_debug"]
 
 [node name="GameRoot" type="Node2D"]
 script = ExtResource("1_root")
@@ -33,3 +34,6 @@ script = ExtResource("7_colony")
 
 [node name="PawnDetail" type="Panel" parent="GameHUD"]
 script = ExtResource("8_detail")
+
+[node name="DebugOverlay" type="Label" parent="GameHUD"]
+script = ExtResource("9_debug")

@@ -50,6 +50,8 @@ public partial class GameRoot : Node2D
 
         _dispatcher = new RenderCommandDispatcher(pawnLayer, itemLayer, _hud);
 
+        _hud.SetupDebugOverlay(_bridge);
+
         tileMap.InitMap(MapWidth, MapHeight);
 
         // M8.2.A — add Camera2D centered on map. Without a Camera2D, the
@@ -94,6 +96,34 @@ public partial class GameRoot : Node2D
             else
                 _modMenuPanel.OpenAndBegin();
             GetViewport().SetInputAsHandled();
+        }
+    }
+
+    /// <summary>
+    /// M8.10 — couples Godot focus loss to <see cref="GameLoop.SetPaused"/>.
+    /// GameLoop runs on a dedicated background thread decoupled from
+    /// Godot's pause semantics; without this hook, alt-tab / window focus
+    /// loss stops the main thread <c>_Process</c> (which drains the bridge)
+    /// while the simulation thread keeps producing events at 30 TPS,
+    /// causing <see cref="PresentationBridge"/> queue accumulation and
+    /// frame stutter on resume. Null-conditional guards against
+    /// pre-_Ready notifications during scene initialization.
+    /// </summary>
+    public override void _Notification(int what)
+    {
+        // Godot 4.6.1 inconsistency: parameter is int, but constants like
+        // NotificationApplicationFocusOut are typed long. Use if-else with
+        // == (int implicitly promotes to long) instead of switch (which
+        // requires narrowing the long constants to int and emits CS0266).
+        if (what == NotificationApplicationFocusOut ||
+            what == NotificationWMWindowFocusOut)
+        {
+            _loop?.SetPaused(true);
+        }
+        else if (what == NotificationApplicationFocusIn ||
+                 what == NotificationWMWindowFocusIn)
+        {
+            _loop?.SetPaused(false);
         }
     }
 
