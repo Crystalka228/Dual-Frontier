@@ -125,6 +125,33 @@ DF_API void            df_world_release_span(
                            df_world_handle world,
                            uint32_t type_id);
 
+/*
+ * K2 explicit type registration (added 2026-05-07).
+ *
+ * Replaces implicit FNV-1a hash-based type identification (K0 inheritance)
+ * with explicit deterministic registry. Caller assigns sequential type_ids
+ * (1, 2, 3, ...) and declares the byte size for each type.
+ *
+ * Native side:
+ * - Records (type_id, size) mapping at registration time.
+ * - Re-registration with same (type_id, size) is idempotent (no-op).
+ * - Re-registration with same type_id but DIFFERENT size throws invalid_argument
+ *   (caught at boundary, returns 0).
+ * - type_id == 0 is reserved for "invalid" sentinel; registration with 0 fails.
+ *
+ * Migration note: existing functions (df_world_add_component, df_world_get_component,
+ * df_world_acquire_span, etc.) accept type_ids whether or not they were
+ * pre-registered. Pre-registration enables the registry-based path; legacy
+ * FNV-1a-derived ids continue to work for backward compat with K0/K1 callers.
+ *
+ * Returns 1 on success, 0 on failure (invalid type_id, size mismatch, or
+ * world disposed).
+ */
+DF_API int32_t         df_world_register_component_type(
+                           df_world_handle world,
+                           uint32_t type_id,
+                           int32_t component_size);
+
 #ifdef __cplusplus
 }
 #endif

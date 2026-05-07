@@ -185,4 +185,19 @@ DF_API void df_world_release_span(df_world_handle world, uint32_t type_id) {
     as_world(world)->release_span(type_id);
 }
 
+DF_API int32_t df_world_register_component_type(df_world_handle world,
+                                                uint32_t type_id,
+                                                int32_t component_size) {
+    if (!world) return 0;
+    try {
+        return as_world(world)->register_component_type(type_id, component_size)
+                   ? 1
+                   : 0;
+    } catch (...) {
+        // K2: register_component_type throws on type_id 0, non-positive size,
+        // or size mismatch with existing registration. Swallow per ABI convention.
+        return 0;
+    }
+}
+
 } // extern "C"

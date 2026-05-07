@@ -53,6 +53,11 @@ public:
 
     void release_span(uint32_t type_id) noexcept;
 
+    // K2 explicit type registration. Pre-creates an empty store for the
+    // (type_id, component_size) pair. Idempotent for matching size; throws
+    // std::invalid_argument on size mismatch or type_id == 0.
+    bool register_component_type(uint32_t type_id, int32_t component_size);
+
     [[nodiscard]] int32_t active_spans_count() const noexcept {
         return active_spans_.load(std::memory_order_acquire);
     }

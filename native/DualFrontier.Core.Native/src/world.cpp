@@ -186,6 +186,25 @@ void World::release_span(uint32_t type_id) noexcept {
     }
 }
 
+bool World::register_component_type(uint32_t type_id, int32_t component_size) {
+    if (type_id == 0) {
+        throw std::invalid_argument("type_id 0 is reserved");
+    }
+    if (component_size <= 0) {
+        throw std::invalid_argument("component_size must be > 0");
+    }
+    auto it = stores_.find(type_id);
+    if (it != stores_.end()) {
+        if (it->second->component_size() != component_size) {
+            throw std::invalid_argument(
+                "type_id already registered with different component_size");
+        }
+        return true;  // idempotent
+    }
+    stores_.emplace(type_id, std::make_unique<RawComponentStore>(component_size));
+    return true;
+}
+
 RawComponentStore* World::get_or_create_store(uint32_t type_id, int32_t size) {
     auto it = stores_.find(type_id);
     if (it != stores_.end()) {
