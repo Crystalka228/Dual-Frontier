@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-07 (K1 closure)
+**Last updated**: 2026-05-07 (K2 closure + sequencing decision β6)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,32 +31,37 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K2 (planned) — type-id registry + bridge tests |
-| **Last completed milestone** | K1 (batching primitive) — `e2c50b8` 2026-05-07 |
-| **Next milestone (recommended)** | K2 (type-id registry + bridge tests) |
-| **Sequencing strategy** | Open — decision deferred к after K2 measurement (см. §«Sequencing decision») |
+| **Active phase** | K3 (planned) — native bootstrap graph + thread pool |
+| **Last completed milestone** | K2 (type-id registry + bridge tests) — `129a0a0` 2026-05-07 |
+| **Next milestone (recommended)** | K3 (native bootstrap graph + thread pool) |
+| **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 472 (managed Domain) — preserved invariant throughout migration |
+| **Tests passing** | 511 (472 managed Domain baseline + 39 K2 Interop bridge tests) |
 
 ---
 
 ## Sequencing decision
 
-**Status**: OPEN, deferred к after K2
+**Status**: RESOLVED 2026-05-07 per K2 closure
+**Decision**: β6 — kernel-first sequential (K0–K8 → M9.0–M9.8)
 
-Три валидных опции зафиксированы в `KERNEL_ARCHITECTURE.md` Part 8:
+**Rationale**:
+- K2 closure provides bridge-maturity evidence — `ComponentTypeRegistry` lands K-L4 verbatim, 39 Interop tests cover entity packing, registry semantics, NativeWorld CRUD, span lifetime, and bulk operations, native selftest extended to 7 scenarios. P/Invoke patterns validated end-to-end.
+- K3–K8 kernel work has no dependencies on M9.x runtime (см. cross-series coupling table). Deferring runtime does not block any kernel milestone.
+- Single architectural focus per period preserves cleanness — Crystalka philosophy «cleanness > expediency». Switching to runtime mid-kernel would split mental context between two native stacks.
+- M9.0–M9.8 runtime sprint deferred к after K8 cutover decision; if K8 Outcome 1 (native + batching wins decisively), runtime starts directly against `NativeWorld`.
+
+**Alternatives rejected**:
+- **β5** (kernel fast-track) — would require context-switching mid-kernel for 4–7 weeks of runtime work before returning to K3–K8. Bridge maturity is already sufficient; the «validate bridge early» motivation is satisfied by K2 itself.
+- **β3** (interleaved) — context-switching cost across two native stacks with no compensating speedup. Rejected per Crystalka philosophy.
+
+**Original three-option matrix retained for historical reference**:
 
 | Option | Sequence | Total time | Trade-off |
 |---|---|---|---|
 | **β5 — kernel fast-track** | K0–K2 → M9.0–M9.8 → K3–K8 | 10–16w | Validates bridge early, then visible runtime progress, kernel completion last |
 | **β6 — kernel-first sequential** | K0–K8 → M9.0–M9.8 | 10–15w | Single architectural focus per period, max cleanness, no visible game progress for 5–8w |
 | **β3 — interleaved** | K0 → M9.0–M9.5 → K1–K2 → M9.6–M9.8 → K3–K8 | 11–15w | Earlier visible progress, но context-switching между native стеками |
-
-**Recommendation per Crystalka philosophy «cleanness > expediency»**: β5 или β6 over β3.
-
-**Decision trigger**: K2 closure provides bridge-maturity evidence. Если бридж стабилен и P/Invoke patterns подтверждены — β5 valid (kernel pause + runtime sprint). Если K2 показал необходимость более глубокой kernel work до runtime integration — β6.
-
-**Decision will be recorded в этом документе при K2 closure**.
 
 ---
 
@@ -68,7 +73,7 @@
 |---|---|---|---|---|---|
 | K0 | Cherry-pick + cleanup от experimental branch | DONE | 1–2 days | `89a4b24` | 2026-05-07 |
 | K1 | Batching primitive (bulk Add/Get + Span<T>) | DONE | 3–5 days | `e2c50b8` | 2026-05-07 |
-| K2 | Type-id registry + bridge tests | NOT STARTED | 2–3 days | — | — |
+| K2 | Type-id registry + bridge tests | DONE | 2–3 days | `129a0a0` | 2026-05-07 |
 | K3 | Native bootstrap graph + thread pool | NOT STARTED | 5–7 days | — | — |
 | K4 | Component struct refactor (Path α) | NOT STARTED | 2–3 weeks | — | — |
 | K5 | Span<T> protocol + write command batching | NOT STARTED | 1 week | — | — |
@@ -109,7 +114,27 @@
   - Brief Step 2.5 specified try/catch only on the new bulk/span ABI functions, but the new throw paths added to `add_component` / `remove_component` / `destroy_entity` / `flush_destroyed` propagate through their existing capi wrappers. The wrappers without try/catch would have leaked C++ exceptions across the DLL boundary (UB). Wrapped them defensively — completeness требование, что brief implicitly предполагал но not stated.
   - Pre-flight HG-1 (working tree clean) failed because the brief itself had been authored as an unstaged modification on `main` (skeleton → 1223-line full brief). Resolved by committing «brief authoring» on `main` as a prerequisite step (`8fee2b1`) before creating the K1 branch. Future briefs in similar self-bootstrapping scenarios should call out this pattern explicitly.
 
-### K2 — K8
+### K2 — Type-id registry + bridge tests project
+
+- **Status**: DONE (`129a0a0`, 2026-05-07)
+- **Brief**: `tools/briefs/K2_REGISTRY_TESTS_BRIEF.md` (FULL EXECUTED)
+- **C ABI extension**: 1 new function — `df_world_register_component_type` (16 → 17 total)
+- **Native side**: `World::register_component_type` с idempotent + size-conflict handling (throws `std::invalid_argument` on type_id 0, non-positive size, or size mismatch with existing registration; caught at C ABI boundary so the wrapper returns 0)
+- **Managed bridge**: `ComponentTypeRegistry` instance-per-NativeWorld с sequential ids (1, 2, 3, ...); `NativeWorld(ComponentTypeRegistry?)` overload для opt-in explicit registration; internal `ResolveTypeId<T>()` centralizes the registry-vs-FNV-fallback dispatch (auto-registers on first use in registry mode)
+- **Legacy compat**: `NativeComponentType<T>` + `NativeComponentTypeRegistry` marked `[Obsolete]` (warning, not error) — retained для backward compat. Will be removed at K8 cutover if Outcome 1 (native + batching wins decisively) materializes.
+- **Selftest scenarios**: 6 → 7 (added `scenario_explicit_registration` covering first-registration, idempotent re-registration, size conflict rejection, type_id 0 reservation, and round-trip Add/Get against a pre-registered type)
+- **Test project**: NEW `DualFrontier.Core.Interop.Tests` (xUnit + FluentAssertions) с 5 test classes / 39 tests:
+  - `EntityIdPackingTests` (4 facts + 4 theory rows = 8 cases): bit-level pack/unpack invariants, capi.h spec match
+  - `ComponentTypeRegistryTests` (9): sequential ids, idempotency, lookup, Count/IsRegistered semantics
+  - `NativeWorldTests` (10): CRUD round-trip, multi-component coexistence, deferred-destroy semantics, Dispose throws, EntityCount tracking
+  - `SpanLeaseTests` (7): acquisition/release lifetime, span access, mutation rejection, multiple concurrent leases
+  - `BulkOperationsTests` (6): bulk add/get correctness, length validation, empty spans, bulk-then-span consistency
+- **Managed tests**: 472 → 511 passing (+39 new)
+- **Sequencing decision**: β6 chosen (см. «Sequencing decision» section). D2 in Decisions log marked RESOLVED.
+- **Lessons learned**:
+  - `TreatWarningsAsErrors=true` solution-wide (Directory.Build.props) caught CS0649 «field never assigned» on the placeholder test types in `ComponentTypeRegistryTests` (TypeA/B/C are used by reflection/identity only, never read). Resolved with a localized `#pragma warning disable CS0649` block. A future test-utilities pattern could centralize «empty-marker struct» helpers.
+
+### K3 — K8
 
 Detailed entries будут добавлены при подходе к каждому milestone.
 
@@ -165,11 +190,12 @@ Detailed entries будут добавлены при подходе к кажд
 - **Rationale**: sequencing β3/β5/β6 — это решение про взаимосвязь стеков. Раздельные файлы потеряют это видение. Cross-series coupling table требует обоих списков рядом.
 - **Reversal trigger**: если документ превысит ~50KB или K и M прогресс начнут существенно расходиться по темпу — рассмотреть split.
 
-### D2 — Sequencing decision deferred к after K2
-- **Date**: 2026-05-07
-- **Decision**: β3/β5/β6 не выбирается заранее. K0–K2 выполняются first как preservation + bridge maturity (общий шаг для всех вариантов).
-- **Rationale**: K2 closure даёт evidence о зрелости bridge layer. Choice без evidence — speculation.
-- **Recording trigger**: при K2 closure — фиксируется выбор β-variant в этом документе.
+### D2 — Sequencing decision deferred к after K2 (RESOLVED 2026-05-07)
+- **Original date**: 2026-05-07
+- **Original decision**: β3/β5/β6 не выбирается заранее. K0–K2 выполняются first как preservation + bridge maturity (общий шаг для всех вариантов).
+- **Resolution date**: 2026-05-07 (per K2 closure)
+- **Resolved decision**: **β6 — kernel-first sequential** (K0–K8 → M9.0–M9.8). См. «Sequencing decision» section выше для full rationale + rejected alternatives.
+- **Rationale (resolved)**: K2 closure provided sufficient bridge-maturity evidence (39 tests + selftest 7/7 + verified P/Invoke patterns). Single architectural focus per period preserves cleanness; K3–K8 kernel work has no runtime dependencies, so deferring M9.x is non-blocking.
 
 ### D3 — Native organicity Lvl 1 как foundational pattern для всего native слоя
 - **Date**: 2026-05-07
