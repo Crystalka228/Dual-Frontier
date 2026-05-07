@@ -18,12 +18,13 @@ Cherry-pick 7 substantive C++ commits от experimental branch onto current main
 - Cleanup commits (`.gitignore`, dead code, `.vscode`, doc reconciliation)
 - Single atomic commit chain ending с «native: kernel branch resumption + cleanup»
 
-## TODO
+## Status: EXECUTED
 
-- [ ] Author full brief (similar к M8.5/M8.6 brief structure)
-- [ ] Include cherry-pick command sequence
-- [ ] Include cleanup commit specifications
-- [ ] Include verification protocol
-- [ ] Include acceptance criteria
+**Date**: 2026-05-07
+**Branch**: `feat/k0-kernel-cherry-pick`
+**Closure SHA**: `89a4b24` (last K0-substantive commit — SparseSet retention annotation)
 
-**Brief authoring trigger**: when ready к execute K0 (likely tomorrow или next session).
+Full executable brief was authored separately by Opus and consumed in-session
+to drive this milestone. See git log on `feat/k0-kernel-cherry-pick` for the
+full cherry-pick + cleanup sequence and `docs/MIGRATION_PROGRESS.md` K0 entry
+for the closure record (cherry-pick SHAs, cleanup commits, lessons learned).
