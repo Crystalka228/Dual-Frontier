@@ -16,5 +16,6 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />
+    <InternalsVisibleTo Include="DualFrontier.Core.Interop.Tests" />
   </ItemGroup>
 </Project>
