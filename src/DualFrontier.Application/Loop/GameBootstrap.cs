@@ -5,6 +5,7 @@ using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Modding;
 using DualFrontier.Application.Scenario;
+using DualFrontier.Components.Items;
 using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
@@ -85,6 +86,8 @@ internal static class GameBootstrap
 
         services.Pawns.Subscribe<PawnSpawnedEvent>(e =>
             bridge.Enqueue(new PawnSpawnedCommand(e.PawnId, e.X, e.Y)));
+        services.Pawns.Subscribe<ItemSpawnedEvent>(e =>
+            bridge.Enqueue(new ItemSpawnedCommand(e.ItemId, e.X, e.Y, e.Kind)));
         services.Pawns.Subscribe<PawnMovedEvent>(e =>
             bridge.Enqueue(new PawnMovedCommand(e.PawnId, e.X, e.Y)));
         services.Combat.Subscribe<DeathEvent>(e =>
@@ -125,6 +128,16 @@ internal static class GameBootstrap
             InitialWaterCount,
             InitialBedCount,
             InitialDecorationCount);
+
+        // M8.9 — emit ItemSpawnedEvent per item the factory just placed so
+        // the bridge wiring above can hand each one to ItemLayer. Iteration
+        // happens here (not inside ItemFactory) so the factory stays a pure
+        // data creator; GameBootstrap is the only place that owns both the
+        // World and the IGameServices aggregator. Subscriptions are wired
+        // before this call (synchronous pub-sub on the same thread), so the
+        // events are queued onto the presentation bridge in deterministic
+        // order.
+        PublishItemSpawnedEvents(world, services);
 
         // Hard-coded kernel systems live in a local array so the same
         // instances flow into both the dependency graph (kernel
@@ -191,5 +204,37 @@ internal static class GameBootstrap
         controller.OnEditingEnded = () => loop.SetPaused(false);
 
         return new GameContext(loop, controller);
+    }
+
+    /// <summary>
+    /// Iterates every item ItemFactory just placed and publishes an
+    /// <see cref="ItemSpawnedEvent"/> on the Pawns bus per item. ItemKind
+    /// is determined by component family (presentation hint, not domain
+    /// truth — domain still classifies items by component presence).
+    /// Reads <c>World.GetEntitiesWith&lt;T&gt;</c> via the InternalsVisibleTo
+    /// grant from DualFrontier.Core to DualFrontier.Application.
+    /// </summary>
+    private static void PublishItemSpawnedEvents(World world, GameServices services)
+    {
+        foreach (EntityId id in world.GetEntitiesWith<ConsumableComponent>())
+            PublishOne(world, services, id, ItemKind.Food);
+        foreach (EntityId id in world.GetEntitiesWith<WaterSourceComponent>())
+            PublishOne(world, services, id, ItemKind.Water);
+        foreach (EntityId id in world.GetEntitiesWith<BedComponent>())
+            PublishOne(world, services, id, ItemKind.Bed);
+        foreach (EntityId id in world.GetEntitiesWith<DecorativeAuraComponent>())
+            PublishOne(world, services, id, ItemKind.Decoration);
+    }
+
+    private static void PublishOne(World world, GameServices services, EntityId id, ItemKind kind)
+    {
+        if (!world.TryGetComponent<PositionComponent>(id, out var pos)) return;
+        services.Pawns.Publish(new ItemSpawnedEvent
+        {
+            ItemId = id,
+            X      = pos.Position.X,
+            Y      = pos.Position.Y,
+            Kind   = kind,
+        });
     }
 }

@@ -17,7 +17,9 @@ Customary attribution (used here as good practice):
 - Pack credit: Kenney Vleugels, with help from Lynn Evers
 
 Date downloaded: 2026-05-06
-Used in: TileMapRenderer.cs (terrain rendering)
+Used in: TileMapRenderer.cs (terrain rendering — M8.8)
+         ItemVisual.cs (item rendering — M8.9)
+         PawnVisual.cs (pawn rendering — M8.9)
 
 Spritesheet metadata:
 - File: roguelikeSheet_transparent.png
@@ -29,6 +31,14 @@ Atlas regions selected for M8.8 terrain rendering:
 - Grass — col 5, row 0  → Rect2(85, 0, 16, 16)   solid green floor tile
 - Rock  — col 6, row 2  → Rect2(102, 34, 16, 16) grey stone brick tile
 
+Atlas regions selected for M8.9 item + pawn rendering:
+- Pawn       — col 52, row 16 → Rect2(884, 272, 16, 16) hooded humanoid figure
+- Food       — col 54, row 15 → Rect2(918, 255, 16, 16) roast meat on plate
+- Water      — col  0, row  0 → Rect2(  0,   0, 16, 16) solid water tile
+- Bed        — col 25, row  2 → Rect2(425,  34, 16, 16) bedroll with pillow
+- Decoration — col  0, row  6 → Rect2(  0, 102, 16, 16) orange flowers on grass
+
 Note: TD-3.3 commit added Kenney UI assets (panels, buttons, bars,
-icons) under same license. M8.8 extends Kenney usage to terrain tiles.
-Both asset sets share this license rationale.
+icons) under same license. M8.8 extended Kenney usage to terrain tiles;
+M8.9 extends usage to items + pawns drawn from the same atlas file.
+All asset sets share this license rationale (CC0).

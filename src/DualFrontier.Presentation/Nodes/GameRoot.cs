@@ -44,10 +44,11 @@ public partial class GameRoot : Node2D
         _bridge = new PresentationBridge();
 
         var tileMap   = GetNode<TileMapRenderer>("TileMapRenderer");
+        var itemLayer = GetNode<ItemLayer>("ItemLayer");
         var pawnLayer = GetNode<PawnLayer>("PawnLayer");
         _hud          = GetNode<GameHUD>("GameHUD");
 
-        _dispatcher = new RenderCommandDispatcher(pawnLayer, _hud);
+        _dispatcher = new RenderCommandDispatcher(pawnLayer, itemLayer, _hud);
 
         tileMap.InitMap(MapWidth, MapHeight);
 

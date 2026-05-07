@@ -1,12 +1,13 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://Nodes/GameRoot.cs" id="1_root"]
 [ext_resource type="Script" path="res://Nodes/TileMapRenderer.cs" id="2_tilemap"]
-[ext_resource type="Script" path="res://Nodes/PawnLayer.cs" id="3_pawns"]
-[ext_resource type="Script" path="res://Input/InputRouter.cs" id="4_input"]
-[ext_resource type="Script" path="res://UI/GameHUD.cs" id="5_hud"]
-[ext_resource type="Script" path="res://UI/ColonyPanel.cs" id="6_colony"]
-[ext_resource type="Script" path="res://UI/PawnDetail.cs" id="7_detail"]
+[ext_resource type="Script" path="res://Nodes/ItemLayer.cs" id="3_items"]
+[ext_resource type="Script" path="res://Nodes/PawnLayer.cs" id="4_pawns"]
+[ext_resource type="Script" path="res://Input/InputRouter.cs" id="5_input"]
+[ext_resource type="Script" path="res://UI/GameHUD.cs" id="6_hud"]
+[ext_resource type="Script" path="res://UI/ColonyPanel.cs" id="7_colony"]
+[ext_resource type="Script" path="res://UI/PawnDetail.cs" id="8_detail"]
 
 [node name="GameRoot" type="Node2D"]
 script = ExtResource("1_root")
@@ -14,18 +15,21 @@ script = ExtResource("1_root")
 [node name="TileMapRenderer" type="Node2D" parent="."]
 script = ExtResource("2_tilemap")
 
+[node name="ItemLayer" type="Node2D" parent="."]
+script = ExtResource("3_items")
+
 [node name="PawnLayer" type="Node2D" parent="."]
-script = ExtResource("3_pawns")
+script = ExtResource("4_pawns")
 
 [node name="InputRouter" type="Node" parent="."]
-script = ExtResource("4_input")
+script = ExtResource("5_input")
 
 [node name="GameHUD" type="CanvasLayer" parent="."]
 layer = 10
-script = ExtResource("5_hud")
+script = ExtResource("6_hud")
 
 [node name="ColonyPanel" type="Panel" parent="GameHUD"]
-script = ExtResource("6_colony")
+script = ExtResource("7_colony")
 
 [node name="PawnDetail" type="Panel" parent="GameHUD"]
-script = ExtResource("7_detail")
+script = ExtResource("8_detail")

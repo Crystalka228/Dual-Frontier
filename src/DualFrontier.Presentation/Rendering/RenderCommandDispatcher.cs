@@ -14,11 +14,13 @@ namespace DualFrontier.Presentation.Rendering;
 public sealed class RenderCommandDispatcher
 {
 	private readonly PawnLayer _pawnLayer;
+	private readonly ItemLayer _itemLayer;
 	private readonly GameHUD?  _hud;
 
-	public RenderCommandDispatcher(PawnLayer pawnLayer, GameHUD? hud = null)
+	public RenderCommandDispatcher(PawnLayer pawnLayer, ItemLayer itemLayer, GameHUD? hud = null)
 	{
 		_pawnLayer = pawnLayer;
+		_itemLayer = itemLayer;
 		_hud       = hud;
 	}
 
@@ -40,6 +42,9 @@ public sealed class RenderCommandDispatcher
 				break;
 			case TickAdvancedCommand c:
 				_hud?.SetTick(c.Tick);
+				break;
+			case ItemSpawnedCommand c:
+				_itemLayer.SpawnItem(c.ItemId, c.X, c.Y, c.Kind);
 				break;
 		}
 	}
