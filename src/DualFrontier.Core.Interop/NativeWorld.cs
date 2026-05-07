@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop.Marshalling;
 
@@ -25,6 +26,7 @@ namespace DualFrontier.Core.Interop;
 public sealed class NativeWorld : IDisposable
 {
     private IntPtr _handle;
+    private readonly ComponentTypeRegistry? _registry;
 
     /// <summary>
     /// Internal handle access for <see cref="SpanLease{T}"/> lifetime
@@ -33,7 +35,35 @@ public sealed class NativeWorld : IDisposable
     /// </summary>
     internal IntPtr HandleForInternalUse => _handle;
 
-    public NativeWorld()
+    /// <summary>
+    /// Test-only accessor (visible via InternalsVisibleTo to the test project).
+    /// Same handle as <see cref="HandleForInternalUse"/>; named distinctly so
+    /// the intended consumer (cross-assembly tests) is obvious at the call site.
+    /// </summary>
+    internal IntPtr HandleForInternalUseTest => _handle;
+
+    /// <summary>
+    /// The component type registry bound to this world, if any. Null when the
+    /// world was constructed without a registry (legacy FNV-1a path).
+    /// </summary>
+    public ComponentTypeRegistry? Registry => _registry;
+
+    /// <summary>
+    /// Creates a NativeWorld with FNV-1a fallback type ids (legacy path).
+    /// Equivalent to passing <c>null</c> for the registry. Retained for
+    /// backward compatibility — new code should pass an explicit registry.
+    /// </summary>
+    public NativeWorld() : this(null) { }
+
+    /// <summary>
+    /// Creates a NativeWorld with an explicit <see cref="ComponentTypeRegistry"/>
+    /// (K2 recommended path).
+    /// </summary>
+    /// <param name="registry">
+    /// If null, uses FNV-1a hash ids (legacy). If provided, uses deterministic
+    /// sequential ids per K-L4. The registry binds to this world's handle.
+    /// </param>
+    public NativeWorld(ComponentTypeRegistry? registry)
     {
         _handle = NativeMethods.df_world_create();
         if (_handle == IntPtr.Zero)
@@ -41,6 +71,7 @@ public sealed class NativeWorld : IDisposable
             throw new InvalidOperationException(
                 "df_world_create returned null — native library failed to allocate a World.");
         }
+        _registry = registry;
     }
 
     public EntityId CreateEntity()
@@ -80,14 +111,13 @@ public sealed class NativeWorld : IDisposable
     public unsafe void AddComponent<T>(EntityId id, T value) where T : unmanaged
     {
         ThrowIfDisposed();
-        uint typeId = NativeComponentType<T>.TypeId;
-        NativeComponentTypeRegistry.Register(typeId, typeof(T));
+        uint typeId = ResolveTypeId<T>();
         NativeMethods.df_world_add_component(
             _handle,
             EntityIdPacking.Pack(id),
             typeId,
             &value,
-            NativeComponentType<T>.Size);
+            ResolveTypeSize<T>());
     }
 
     public unsafe bool TryGetComponent<T>(EntityId id, out T value) where T : unmanaged
@@ -97,9 +127,9 @@ public sealed class NativeWorld : IDisposable
         int ok = NativeMethods.df_world_get_component(
             _handle,
             EntityIdPacking.Pack(id),
-            NativeComponentType<T>.TypeId,
+            ResolveTypeId<T>(),
             &tmp,
-            NativeComponentType<T>.Size);
+            ResolveTypeSize<T>());
         value = tmp;
         return ok != 0;
     }
@@ -120,7 +150,7 @@ public sealed class NativeWorld : IDisposable
         return NativeMethods.df_world_has_component(
             _handle,
             EntityIdPacking.Pack(id),
-            NativeComponentType<T>.TypeId) != 0;
+            ResolveTypeId<T>()) != 0;
     }
 
     public void RemoveComponent<T>(EntityId id) where T : unmanaged
@@ -129,7 +159,7 @@ public sealed class NativeWorld : IDisposable
         NativeMethods.df_world_remove_component(
             _handle,
             EntityIdPacking.Pack(id),
-            NativeComponentType<T>.TypeId);
+            ResolveTypeId<T>());
     }
 
     public int GetComponentCount<T>() where T : unmanaged
@@ -137,7 +167,7 @@ public sealed class NativeWorld : IDisposable
         ThrowIfDisposed();
         return NativeMethods.df_world_component_count(
             _handle,
-            NativeComponentType<T>.TypeId);
+            ResolveTypeId<T>());
     }
 
     /// <summary>
@@ -160,9 +190,8 @@ public sealed class NativeWorld : IDisposable
         }
         if (entities.Length == 0) return;
 
-        uint typeId = NativeComponentType<T>.TypeId;
-        NativeComponentTypeRegistry.Register(typeId, typeof(T));
-        int size = NativeComponentType<T>.Size;
+        uint typeId = ResolveTypeId<T>();
+        int size = ResolveTypeSize<T>();
 
         // Pack EntityId span to ulong span. Stack-allocate for small batches;
         // fall back to heap for large ones to avoid stack overflow risk.
@@ -199,8 +228,8 @@ public sealed class NativeWorld : IDisposable
         }
         if (entities.Length == 0) return 0;
 
-        uint typeId = NativeComponentType<T>.TypeId;
-        int size = NativeComponentType<T>.Size;
+        uint typeId = ResolveTypeId<T>();
+        int size = ResolveTypeSize<T>();
 
         Span<ulong> packed = entities.Length <= 256
             ? stackalloc ulong[entities.Length]
@@ -235,7 +264,7 @@ public sealed class NativeWorld : IDisposable
     {
         ThrowIfDisposed();
 
-        uint typeId = NativeComponentType<T>.TypeId;
+        uint typeId = ResolveTypeId<T>();
         void* densePtr;
         int* indicesPtr;
         int count;
@@ -277,5 +306,32 @@ public sealed class NativeWorld : IDisposable
         {
             throw new ObjectDisposedException(nameof(NativeWorld));
         }
+    }
+
+    /// <summary>
+    /// Resolves the type id for <typeparamref name="T"/> using the registry if
+    /// one is bound, else falling back to FNV-1a. Centralizes the
+    /// registry-vs-fallback decision so component methods stay terse.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private uint ResolveTypeId<T>() where T : unmanaged
+    {
+        if (_registry != null)
+        {
+            // Auto-register on first use in registry mode. Idempotent — a
+            // re-call returns the existing id.
+            return _registry.Register<T>();
+        }
+#pragma warning disable CS0618 // NativeComponentType<T> is obsolete (legacy fallback path).
+        uint typeId = NativeComponentType<T>.TypeId;
+        NativeComponentTypeRegistry.Register(typeId, typeof(T));
+        return typeId;
+#pragma warning restore CS0618
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int ResolveTypeSize<T>() where T : unmanaged
+    {
+        return Unsafe.SizeOf<T>();
     }
 }

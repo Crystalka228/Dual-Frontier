@@ -104,4 +104,12 @@ internal static class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void df_world_release_span(IntPtr world, uint typeId);
+
+    // K2 explicit type registration.
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_world_register_component_type(
+        IntPtr world,
+        uint typeId,
+        int componentSize);
 }

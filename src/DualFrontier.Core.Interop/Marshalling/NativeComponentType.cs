@@ -5,17 +5,21 @@ using System.Runtime.CompilerServices;
 namespace DualFrontier.Core.Interop.Marshalling;
 
 /// <summary>
-/// Assigns a stable <c>uint</c> type id to each blittable component type on
-/// the managed side so the native world can key its type-erased stores
-/// without knowing anything about CLR metadata.
+/// LEGACY: FNV-1a hash-based type identification.
 ///
-/// The id is derived from a hash of the type's assembly-qualified name. For
-/// the PoC this is fine: collisions across the small number of benchmark
-/// types are vanishingly unlikely and a collision would be caught by the
-/// native Add contract (size mismatch on first insert into an existing
-/// store). A production port should replace this with an explicit registry
-/// populated at game startup to make the mapping auditable.
+/// Superseded by <see cref="ComponentTypeRegistry"/> (K2, 2026-05-07) which
+/// provides explicit deterministic ids per K-L4 of KERNEL_ARCHITECTURE.md.
+///
+/// Retained for backward compatibility with pre-K2 code paths. A
+/// <see cref="NativeWorld"/> constructed without an explicit registry uses
+/// this fallback. New code should always provide a
+/// <see cref="ComponentTypeRegistry"/> instance.
+///
+/// Will likely be removed at K8 cutover if Outcome 1 (native + batching wins
+/// decisively) materializes — no production path will use FNV-1a after that.
 /// </summary>
+[Obsolete("Use ComponentTypeRegistry for explicit deterministic ids. " +
+          "FNV-1a hash collision-prone — see K-L4 rationale.", error: false)]
 internal static class NativeComponentType<T> where T : unmanaged
 {
     internal static readonly uint TypeId = ComputeTypeId(typeof(T));
@@ -39,9 +43,13 @@ internal static class NativeComponentType<T> where T : unmanaged
 }
 
 /// <summary>
-/// Diagnostic registry so a benchmark or test can inspect which ids have
-/// been minted. Not on the hot path — only used from debug tooling.
+/// LEGACY: diagnostic registry for FNV-1a ids.
+/// Superseded by <see cref="ComponentTypeRegistry"/>. Retained for backward
+/// compat with pre-K2 callers.
 /// </summary>
+[Obsolete("Use ComponentTypeRegistry. NativeComponentTypeRegistry will be " +
+          "removed when NativeComponentType<T> is removed (K8 cutover).",
+          error: false)]
 internal static class NativeComponentTypeRegistry
 {
     private static readonly ConcurrentDictionary<uint, Type> _byId = new();
