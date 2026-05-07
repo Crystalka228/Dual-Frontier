@@ -73,4 +73,35 @@ internal static class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern int df_world_component_count(IntPtr world, uint typeId);
+
+    // K1 batching primitives.
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe void df_world_add_components_bulk(
+        IntPtr world,
+        ulong* entities,
+        uint typeId,
+        void* componentData,
+        int componentSize,
+        int count);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_world_get_components_bulk(
+        IntPtr world,
+        ulong* entities,
+        uint typeId,
+        void* outData,
+        int componentSize,
+        int count);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_world_acquire_span(
+        IntPtr world,
+        uint typeId,
+        void** outDensePtr,
+        int** outIndicesPtr,
+        int* outCount);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_world_release_span(IntPtr world, uint typeId);
 }

@@ -26,6 +26,13 @@ public sealed class NativeWorld : IDisposable
 {
     private IntPtr _handle;
 
+    /// <summary>
+    /// Internal handle access for <see cref="SpanLease{T}"/> lifetime
+    /// management. Not for public consumption — use
+    /// <see cref="AcquireSpan{T}"/> instead.
+    /// </summary>
+    internal IntPtr HandleForInternalUse => _handle;
+
     public NativeWorld()
     {
         _handle = NativeMethods.df_world_create();
@@ -131,6 +138,118 @@ public sealed class NativeWorld : IDisposable
         return NativeMethods.df_world_component_count(
             _handle,
             NativeComponentType<T>.TypeId);
+    }
+
+    /// <summary>
+    /// Bulk add: transmits an array of entities and components in a single
+    /// P/Invoke crossing, eliminating per-entity overhead for batch
+    /// initialization scenarios.
+    /// </summary>
+    /// <typeparam name="T">Unmanaged component type.</typeparam>
+    /// <param name="entities">Entities to add components to. Length must match <paramref name="components"/>.</param>
+    /// <param name="components">Component values. Length must match <paramref name="entities"/>.</param>
+    /// <exception cref="ArgumentException">If the spans have different lengths.</exception>
+    public unsafe void AddComponents<T>(ReadOnlySpan<EntityId> entities,
+                                        ReadOnlySpan<T> components) where T : unmanaged
+    {
+        ThrowIfDisposed();
+        if (entities.Length != components.Length)
+        {
+            throw new ArgumentException(
+                $"Mismatched lengths: {entities.Length} entities, {components.Length} components");
+        }
+        if (entities.Length == 0) return;
+
+        uint typeId = NativeComponentType<T>.TypeId;
+        NativeComponentTypeRegistry.Register(typeId, typeof(T));
+        int size = NativeComponentType<T>.Size;
+
+        // Pack EntityId span to ulong span. Stack-allocate for small batches;
+        // fall back to heap for large ones to avoid stack overflow risk.
+        Span<ulong> packed = entities.Length <= 256
+            ? stackalloc ulong[entities.Length]
+            : new ulong[entities.Length];
+        for (int i = 0; i < entities.Length; i++)
+        {
+            packed[i] = EntityIdPacking.Pack(entities[i]);
+        }
+
+        fixed (ulong* entitiesPtr = packed)
+        fixed (T* componentsPtr = components)
+        {
+            NativeMethods.df_world_add_components_bulk(
+                _handle, entitiesPtr, typeId, componentsPtr, size, entities.Length);
+        }
+    }
+
+    /// <summary>
+    /// Bulk get: reads components for an array of entities in a single
+    /// P/Invoke crossing. Returns the count of successfully read components.
+    /// Absent entities/components produce zero-filled output slots, so the
+    /// output buffer is fully written regardless of return value.
+    /// </summary>
+    public unsafe int GetComponents<T>(ReadOnlySpan<EntityId> entities,
+                                       Span<T> output) where T : unmanaged
+    {
+        ThrowIfDisposed();
+        if (entities.Length != output.Length)
+        {
+            throw new ArgumentException(
+                $"Mismatched lengths: {entities.Length} entities, {output.Length} output");
+        }
+        if (entities.Length == 0) return 0;
+
+        uint typeId = NativeComponentType<T>.TypeId;
+        int size = NativeComponentType<T>.Size;
+
+        Span<ulong> packed = entities.Length <= 256
+            ? stackalloc ulong[entities.Length]
+            : new ulong[entities.Length];
+        for (int i = 0; i < entities.Length; i++)
+        {
+            packed[i] = EntityIdPacking.Pack(entities[i]);
+        }
+
+        fixed (ulong* entitiesPtr = packed)
+        fixed (T* outputPtr = output)
+        {
+            return NativeMethods.df_world_get_components_bulk(
+                _handle, entitiesPtr, typeId, outputPtr, size, entities.Length);
+        }
+    }
+
+    /// <summary>
+    /// Acquires a read-only span lease over native dense component storage
+    /// for type <typeparamref name="T"/>.
+    ///
+    /// While ANY active <see cref="SpanLease{T}"/> exists, mutations
+    /// (Add/Remove/Destroy/Flush) are silently rejected by the native side.
+    /// The caller MUST <see cref="SpanLease{T}.Dispose"/> the lease before
+    /// resuming mutations. Multiple concurrent leases are allowed.
+    ///
+    /// K1 SKELETON: provides <see cref="SpanLease{T}.Span"/> and
+    /// <see cref="SpanLease{T}.Indices"/>. K5 will extend with paired
+    /// iteration helpers and lease pooling.
+    /// </summary>
+    public unsafe SpanLease<T> AcquireSpan<T>() where T : unmanaged
+    {
+        ThrowIfDisposed();
+
+        uint typeId = NativeComponentType<T>.TypeId;
+        void* densePtr;
+        int* indicesPtr;
+        int count;
+
+        int result = NativeMethods.df_world_acquire_span(
+            _handle, typeId, &densePtr, &indicesPtr, &count);
+
+        if (result == 0)
+        {
+            throw new InvalidOperationException(
+                $"Failed to acquire span for component type {typeof(T).Name}");
+        }
+
+        return new SpanLease<T>(this, typeId, densePtr, indicesPtr, count);
     }
 
     public void Dispose()
