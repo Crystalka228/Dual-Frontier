@@ -2,12 +2,27 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
-**Status**: READY FOR EXECUTION
+**Status**: EXECUTED
 **Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K2, §1.10 (component type registry), §1.11 (testing strategy), `docs/MIGRATION_PROGRESS.md` (K1 closure context), `docs/METHODOLOGY.md` v1.3
 **Predecessor**: K1 (`e2c50b8`) — batching primitive, merged to main
 **Target**: fresh feature branch `feat/k2-registry-and-tests` от `main`
 **Estimated time**: 2–3 days at hobby pace
 **Estimated LOC delta**: +400–600
+
+---
+
+## Status: EXECUTED
+
+**Date**: 2026-05-07
+**Branch**: `feat/k2-registry-and-tests`
+**Closure SHA**: `129a0a0` (last K2-substantive commit — bridge test project с 39 tests)
+
+Full executable brief authored and executed. See git log on
+`feat/k2-registry-and-tests` for the atomic commit sequence
+(`c9ee0bc` native ABI → `254e4a5` managed registry → `3b61c41` selftest
+→ `129a0a0` Interop test project → `ce6f9cc` migration progress closure)
+and `docs/MIGRATION_PROGRESS.md` K2 entry for the closure record
+(lessons learned, sequencing decision β6).
 
 ---
 
