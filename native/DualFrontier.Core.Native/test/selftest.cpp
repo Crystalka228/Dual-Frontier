@@ -225,6 +225,43 @@ void scenario_span_lifetime() {
     df_world_destroy(w);
 }
 
+void scenario_explicit_registration() {
+    std::printf("scenario_explicit_registration\n");
+    df_world_handle w = df_world_create();
+
+    constexpr uint32_t kCustomTypeId = 42;
+    constexpr int32_t kSize = sizeof(BenchHealth);
+
+    // First registration succeeds.
+    int32_t reg1 = df_world_register_component_type(w, kCustomTypeId, kSize);
+    DF_CHECK(reg1 == 1, "first registration succeeded");
+
+    // Idempotent — re-register same (id, size).
+    int32_t reg2 = df_world_register_component_type(w, kCustomTypeId, kSize);
+    DF_CHECK(reg2 == 1, "idempotent re-registration succeeded");
+
+    // Conflict — re-register with different size fails (boundary swallows
+    // the std::invalid_argument and returns 0).
+    int32_t reg3 = df_world_register_component_type(w, kCustomTypeId, kSize * 2);
+    DF_CHECK(reg3 == 0, "size conflict rejected");
+
+    // type_id 0 reserved.
+    int32_t reg4 = df_world_register_component_type(w, 0, kSize);
+    DF_CHECK(reg4 == 0, "type_id 0 rejected");
+
+    // Pre-registered type usable for Add/Get.
+    uint64_t e = df_world_create_entity(w);
+    BenchHealth h{50, 100};
+    df_world_add_component(w, e, kCustomTypeId, &h, kSize);
+
+    BenchHealth h_read{};
+    int32_t got = df_world_get_component(w, e, kCustomTypeId, &h_read, kSize);
+    DF_CHECK(got == 1, "get from pre-registered type succeeded");
+    DF_CHECK(h_read.current == 50, "value preserved through pre-registered type");
+
+    df_world_destroy(w);
+}
+
 void scenario_throughput() {
     std::printf("scenario_throughput\n");
     constexpr int N = 100000;
@@ -272,6 +309,7 @@ int main() {
     scenario_sparse_set_swap_remove();
     scenario_bulk_operations();
     scenario_span_lifetime();
+    scenario_explicit_registration();
     scenario_throughput();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
