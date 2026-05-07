@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-07
+**Last updated**: 2026-05-07 (K0 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,9 +31,9 @@
 
 | | Value |
 |---|---|
-| **Active phase** | Pre-K0 (planning + scaffolding done, execution не начато) |
-| **Last completed milestone** | M8.10 (coupled pause + DebugOverlay) — `7514e38` 2026-05-07 |
-| **Next milestone (recommended)** | K0 (cherry-pick + cleanup от experimental branch) |
+| **Active phase** | K1 (planned) — kernel batching primitive |
+| **Last completed milestone** | K0 (cherry-pick + cleanup) — `89a4b24` 2026-05-07 |
+| **Next milestone (recommended)** | K1 (batching primitive: bulk Add/Get + Span<T>) |
 | **Sequencing strategy** | Open — decision deferred к after K2 measurement (см. §«Sequencing decision») |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
 | **Tests passing** | 472 (managed Domain) — preserved invariant throughout migration |
@@ -66,7 +66,7 @@
 
 | Milestone | Title | Status | Estimate | Commit | Date closed |
 |---|---|---|---|---|---|
-| K0 | Cherry-pick + cleanup от experimental branch | NOT STARTED | 1–2 days | — | — |
+| K0 | Cherry-pick + cleanup от experimental branch | DONE | 1–2 days | `89a4b24` | 2026-05-07 |
 | K1 | Batching primitive (bulk Add/Get + Span<T>) | NOT STARTED | 3–5 days | — | — |
 | K2 | Type-id registry + bridge tests | NOT STARTED | 2–3 days | — | — |
 | K3 | Native bootstrap graph + thread pool | NOT STARTED | 5–7 days | — | — |
@@ -80,19 +80,20 @@
 
 ### K0 — Cherry-pick + cleanup от experimental branch
 
-- **Status**: NOT STARTED
-- **Brief**: `tools/briefs/K0_CHERRY_PICK_BRIEF.md` (SKELETON — full brief authoring required before execution)
+- **Status**: DONE (`89a4b24`, 2026-05-07)
+- **Brief**: `tools/briefs/K0_CHERRY_PICK_BRIEF.md` (FULL EXECUTED)
 - **Source branch**: `claude/cpp-core-experiment-cEsyH` (HEAD `e2bc2d9`)
-- **Sequence**: 7 cherry-picks + cleanup commits
-- **Acceptance criteria** (high-level):
-  - All 7 substantive commits cherry-picked onto fresh branch от `origin/main`
-  - `.gitignore` widening applied
-  - Dead code removed или wired
-  - `NATIVE_CORE.md` + `NATIVE_CORE_EXPERIMENT.md` marked как superseded
-  - Native selftest passing
-  - 472 managed tests still passing
-- **Blockers**: none
-- **Open questions**: none yet
+- **Cherry-picks completed**: 7 commits — `7b5cf78`, `a8d235e`, `cf0eed3`, `6eac732`, `80178c2`, `f59492a`, `e2bc2d9`
+- **Cleanup commits**: 3 — vscode portable path (`1236827`), NATIVE_CORE_EXPERIMENT superseded marker (`adc640e`), SparseSet retention annotation (`89a4b24`)
+- **Native selftest**: ALL PASSED (Release x64 build)
+- **Managed tests**: 472 passing (preserved baseline: 7 + 4 + 38 + 76 + 347)
+- **Lessons learned**:
+  - Brief's pre-flight check «verify disjoint histories» was incorrect: experimental branch was rooted off main at `3e9a001` («Phase 3 complete»). Histories share a base, but cherry-pick algorithm is unaffected by merge-base relationship — procedure works identically. Future briefs should not gate on disjoint-history assumption.
+  - Brief expected `.sln` + `Core.csproj` conflicts to arise on cherry-pick 4 (Interop project), but they actually arose on cherry-pick 5 (NativeVsManaged benchmark) where the wiring was added. End-state identical, but documentation granularity was off-by-one.
+  - Brief expected `entity_id.h` to arrive in cherry-pick 3, but it actually came in cherry-pick 2 (SparseSet template). Minor documentation drift, no procedural impact.
+  - `BenchmarkDotNet.Artifacts` files committed in pick 7 had to be deleted via second amend after pick 6 amend already removed them — modify/delete conflict resolved trivially in favor of delete (gitignored).
+  - `NATIVE_CORE.md` was absent on this branch (only `NATIVE_CORE_EXPERIMENT.md` existed); brief's defensive Test-Path check correctly handled this.
+- **Blockers (resolved)**: none unresolved
 
 ### K1 — K8
 
