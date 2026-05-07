@@ -4,7 +4,7 @@
 **Created**: 2026-05-07
 **Last updated**: 2026-05-07
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
-**Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference)
+**Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
 ---
 
@@ -156,19 +156,87 @@ Detailed entries будут добавлены при подходе к кажд
 - **Rationale**: K2 closure даёт evidence о зрелости bridge layer. Choice без evidence — speculation.
 - **Recording trigger**: при K2 closure — фиксируется выбор β-variant в этом документе.
 
-### D3 — Native organicity level: Lvl 1 (independent projects, contract-based)
+### D3 — Native organicity Lvl 1 как foundational pattern для всего native слоя
 - **Date**: 2026-05-07
-- **Decision**: Kernel и Runtime остаются двумя **независимыми** native проектами. Каждый — отдельный `.dll`, отдельный CMake build, отдельный Interop bridge. Никакого shared native code (общий thread pool / allocator / logger), никакого объединения в single DLL.
-- **Rationale**:
-  - Consistency с операционным принципом проекта «никто никуда не лезет» — на уровне mods (ALC), Domain↔Presentation (PresentationBridge), system scheduling (SystemExecutionContext), Native↔Managed (single ownership boundary). Native↔Native теперь следует тому же правилу.
-  - Сохраняет «kernel could be open-sourced separately» property (KERNEL_ARCHITECTURE.md §1.2) и аналогичное для runtime.
-  - Характеристики работы фундаментально разные: kernel thread pool idle после bootstrap, runtime Vulkan thread активен per-frame. Shared infrastructure = premature optimization без выигрыша.
-  - Conceptual integrity: ECS storage и Vulkan rendering не имеют общего concern. Объединять их = семантическая ошибка.
-- **Rejected alternatives**:
-  - **Lvl 2** (shared native infrastructure — общий thread pool / allocator): premature, no evidence of need
-  - **Lvl 3** (single native DLL): ломает open-source-separately property, ломает headless dedicated server use-case для модов
-- **Reversal trigger**: только если через 12+ месяцев profiling на weak hardware покажет что thread oversubscription / fragmentation реальная боль. Тогда — отдельный архитектурный milestone с amendment к KERNEL_ARCHITECTURE/RUNTIME_ARCHITECTURE.
-- **Implication для cross-series coupling table**: остаётся как есть — координация только в cutover-точках (K8, M9.5, M9.8), никаких shared native artifacts.
+- **Scope**: Не разовое решение для kernel + runtime, а **архитектурный паттерн проекта** для любого native артефакта — текущего или будущего.
+
+#### Decision
+
+Каждый native артефакт в Dual Frontier — **независимый проект**:
+- Отдельный `.dll` (свой build target)
+- Отдельный CMake build
+- Отдельный узкий C ABI
+- Отдельный Interop bridge на managed стороне
+- Свой selftest, свои тесты
+- Не знает о существовании других native артефактов
+
+**Никакого shared native code между артефактами**: общий thread pool, общий allocator, общий logger, единый монолитный DLL — всё это **отвергается** как foundational rule.
+
+**Координация артефактов** происходит **только** на managed стороне — через interfaces (`IProjectileCompute`, `INativeWorld`, `IRenderer` и т.д.) с DI-регистрацией. Domain не знает какой backend активен.
+
+#### Артефакты, к которым применяется паттерн
+
+**Подтверждённые** (зафиксированы в LOCKED architectural docs):
+- `DualFrontier.Core.Native.dll` — ECS kernel (KERNEL_ARCHITECTURE.md)
+- `DualFrontier.Runtime.Native.dll` — Vulkan rendering (RUNTIME_ARCHITECTURE.md)
+
+**Запланированные** (зафиксированы в research/roadmap docs):
+- GPU Compute pipeline для `ProjectileSystem` — Phase 5 «Battle of the Gods» threshold (GPU_COMPUTE.md). Уже спроектирован через `IProjectileCompute` interface — готовый к Lvl 1 паттерну без переделки.
+
+**Потенциальные** (могут возникнуть в будущем):
+- Audio engine, если решит уйти от managed
+- AI inference (нейросети для пешек/животных), если потребует native
+- Networking layer для multiplayer
+- Physics engine, если custom потребуется
+- Любой другой compute-heavy domain
+
+Каждый из них автоматически получает Lvl 1 контракт — без необходимости заново открывать архитектурную дискуссию.
+
+#### Rationale
+
+1. **Consistency с операционным принципом проекта «никто никуда не лезет»**:
+   - Mods isolated через AssemblyLoadContext + IModApi
+   - Domain isolated от Presentation через PresentationBridge
+   - Systems isolated через SystemExecutionContext (crash в DEBUG при undeclared access)
+   - Native↔Managed isolated через single ownership boundary
+   - Native↔Native теперь следует тому же правилу — паттерн распространяется тотально
+
+2. **Open-source-separately property сохраняется per-артефакт**: kernel может стать standalone «sparse-set ECS in C++». Runtime — standalone «2D Vulkan runtime». Compute — standalone «Vulkan compute pipeline для projectile-style workloads». Каждый artifact имеет ценность независимо.
+
+3. **Independent failure domains**: bug в compute pipeline не затрагивает kernel storage. Crash в Vulkan не убивает ECS. Отладка локализована per-артефакт.
+
+4. **Independent build/test cycles**: при работе над kernel не нужно компилировать runtime. CTest selftest каждого артефакта standalone. Pipeline metrics локальны.
+
+5. **Mod-friendly extensibility**: моды могут зарегистрировать свой `IProjectileCompute` или другую compute backend через тот же DI mechanism. Lvl 2/Lvl 3 это бы заблокировали — мод не может встроиться в shared internals.
+
+6. **Use-case flexibility**:
+   - Headless dedicated server: kernel + compute, без runtime → работает (Lvl 3 невозможно)
+   - Migration period: kernel + Godot, без native runtime → работает (Lvl 2 ломает)
+   - Compute disabled на слабом железе: kernel + runtime, без compute → работает
+   - Любая комбинация артефактов валидна
+
+#### Rejected alternatives
+
+- **Lvl 2** (shared native infrastructure — общий thread pool, allocator, logger между артефактами): premature optimization. Артефакты имеют фундаментально разные work characteristics (kernel thread pool idle после bootstrap, runtime Vulkan thread per-frame, compute thread в момент dispatch). Shared infrastructure создаст coupling без выигрыша.
+- **Lvl 3** (один монолитный native DLL): ломает open-source-separately, ломает headless server use-case, ломает mod extensibility, нарушает conceptual integrity (ECS storage + Vulkan rendering + compute pipeline не имеют общего concern).
+
+#### Reversal trigger
+
+**Per-артефакт основание требуется**, не глобальное. Конкретный pair артефактов (например, runtime + compute) может быть рассмотрен на shared infrastructure **только при наличии всех трёх условий**:
+
+1. Profiling на weak hardware показывает измеримую боль (thread oversubscription, allocator fragmentation, etc.)
+2. Боль не решается оптимизацией внутри артефакта
+3. Прошло минимум 12 месяцев с production использования обоих артефактов (evidence base достаточен)
+
+Decision на shared infrastructure требует **отдельного architectural milestone** с amendment к LOCKED docs обоих артефактов и явным трейдоффом против выгод Lvl 1 паттерна.
+
+#### Implication для cross-series coupling table
+
+Остаётся как есть — координация K-серии и M-серии только в cutover-точках (K8, M9.5, M9.8). Никаких shared native artifacts. При появлении третьего артефакта (например, GPU Compute) — добавляется свой столбец без изменения существующих coupling правил.
+
+#### Implication для open questions
+
+OQ3 («Cross-document drift между KERNEL_ARCHITECTURE и RUNTIME_ARCHITECTURE») расширяется: при добавлении третьего native артефакта (например, COMPUTE_ARCHITECTURE.md) — drift-prevention требуется тройной cross-reference. Currently не активно (compute artifact не существует), но при подходе к Phase 5 — переоткрыть.
 
 ---
 
