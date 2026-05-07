@@ -2,7 +2,7 @@
 
 *The project's central methodology document. Describes the four-agent LLM pipeline, contracts as IPC between agents, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
 
-*Version: 1.2 (2026-05-07). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7 and the post-K0 descriptive-pre-flight-checks principle appended to the native-layer adjustments section.*
+*Version: 1.3 (2026-05-07). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7 and the post-K0 / post-K1 native-layer adjustments appended to the native-layer adjustments section (descriptive pre-flight checks, ABI boundary exception completeness, brief authoring as prerequisite step).*
 
 ---
 
@@ -371,6 +371,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.0 | 2026-04-25 | First public version of the document after Phase 4 closure. |
 | 1.1 | 2026-05-03 | Added §7 Operating principles, with §7.1 stating the "data exists or it doesn't" principle and its empirical record. Subsequent sections renumbered (§8 Reproducibility, §9 Open questions, §10 Change history, §11 See also). |
 | 1.2 | 2026-05-07 | Expanded "Native layer methodology adjustments" section with descriptive vs prescriptive pre-flight principle, derived from K0 closure lesson. Brief-authoring checklist added. |
+| 1.3 | 2026-05-07 | Post-K1 lessons added to «Native layer methodology adjustments»: ABI boundary exception completeness (throws и their boundary catches are inseparable; brief must enumerate explicitly) and brief authoring as prerequisite step (brief is its own commit, performed before execution begins). |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -450,6 +451,52 @@ When authoring a milestone brief, separate pre-flight checks по category:
 - [ ] Discovery-report-derived facts marked как informational
 - [ ] No prescriptive gate based на architecture document state alone (architecture LOCKs are not pre-flight checks; они are brief inputs)
 - [ ] Defensive `Test-Path` / existence checks used over assumed-state assertions (K0 cleanup commit 3 precedent — `NATIVE_CORE.md` may or may not exist; brief covers both)
+
+### ABI boundary exception completeness
+
+When a brief introduces new throws into native code, the brief MUST explicitly enumerate ALL `extern "C"` boundary points through which those throws can propagate, и require each to be wrapped в try/catch. This is не optional cleanup — uncaught C++ exceptions across DLL boundaries are undefined behavior, manifesting as process termination, silent corruption, or platform-specific miscompiles depending on toolchain.
+
+**Failure mode (observed at K1 closure, 2026-05-07).** K1 brief instructed adding `throw std::logic_error(...)` in `World::add_component`, `remove_component`, `destroy_entity`, `flush_destroyed` when spans active. The brief specified try/catch only for the **new** ABI functions (`df_world_add_components_bulk`, etc.). The **existing** wrappers — `df_world_add_component`, `df_world_remove_component`, `df_world_destroy_entity`, `df_world_flush_destroyed` — also propagate these new throws, but their try/catch was implicit, not explicit in brief.
+
+The executing agent (Claude Code) caught the gap autonomously and wrapped the existing wrappers defensively. Without that catch, K1 would have shipped UB landmines в production code.
+
+**Principle: throws и their boundary catches are inseparable.** Adding a throw to a function в native code requires identifying every `extern "C"` function that can call it directly или indirectly, и ensuring all of them have try/catch. The brief MUST state this explicitly — implicit safety expectations fail when briefs are executed by agents following instructions literally.
+
+**Brief authoring requirement** (mandatory checklist item для any brief modifying native code):
+
+- [ ] **Throw inventory**: list every `throw` или exception-throwing operation introduced or modified by this brief
+- [ ] **Boundary trace**: для each throw, identify every `extern "C"` function that may propagate it (direct callers и indirect callers через native call chains)
+- [ ] **Wrap inventory**: list every existing `extern "C"` function that needs try/catch added or verified
+- [ ] **Default catch behavior**: specify what each catch site returns (typically: ABI failure code 0, void no-op, or sentinel value matching existing convention)
+
+**Rationale**: native code review must check exception flow на all boundaries, не just newly-added ones. A throw introduced 100 lines deep в an existing function cascades через every wrapper that ever called that function. Existing wrappers без try/catch were safe before the throw was added; they are unsafe after. Brief must close this gap explicitly.
+
+**Falsifiable claim**: Briefs that follow the throw inventory checklist will encounter zero «agent caught UB risk autonomously» deviations on native-code milestones from K2 onward. Counter-example would force checklist refinement.
+
+### Brief authoring as prerequisite step
+
+When a brief is authored на main (typically as expansion of a skeleton in `tools/briefs/`), the brief file itself becomes an unstaged modification. If the brief subsequently instructs the executor to verify clean working tree (pre-flight HG-1), the check fails on the brief's own presence.
+
+**Failure mode (observed at K1 closure, 2026-05-07).** K1 brief skeleton (~31 lines) was expanded to full executable form (~1223 lines) on main. Pre-flight HG-1 («working tree clean») failed on the brief itself. Executing agent resolved by committing «brief authoring» on main as separate prerequisite step (`8fee2b1`) before creating the K1 feature branch.
+
+This was correct resolution but not specified by the brief — agent improvised. Future briefs should specify this pattern explicitly to avoid relying on agent improvisation.
+
+**Principle: brief authoring is a separate workflow step с its own commit, performed BEFORE any execution work begins.**
+
+**Workflow (mandatory для any brief authored on main)**:
+
+1. Author brief skeleton → full brief expansion on main
+2. Commit brief: `git commit -m "docs(briefs): K{N} brief authored — full executable {scope}"`
+3. (Push optional — brief commit can ride along with eventual feature branch merge)
+4. **Now** execution can begin — pre-flight HG-1 will pass on clean tree
+5. Execution creates `feat/k{N}-{scope}` branch off main
+6. Brief authoring commit будет ancestor of the feature branch automatically
+
+**Why this matters**: pre-flight HG-1 is a hard gate (workspace corruption signal). It cannot be relaxed для brief-itself exception case без weakening the gate's value. Separating brief authoring into its own commit preserves the gate's invariant («clean tree» means clean tree, no exceptions).
+
+**Brief structure note**: Future briefs SHOULD include explicit «Step 0 — Brief authoring commit» before pre-flight checks, calling out this prerequisite. Without it, executing agents face self-bootstrapping problem and either improvise (best case) or fail HG-1 incorrectly (worst case).
+
+**Falsifiable claim**: Briefs that include explicit «Step 0 — brief authoring commit» step will encounter zero «agent improvised brief-vs-clean-tree resolution» deviations from K2 onward.
 
 ### Reference: K0 lessons learned
 
