@@ -2,7 +2,7 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-08
-**Status**: READY FOR EXECUTION
+**Status**: EXECUTED (2026-05-08, branch `feat/k5-write-batching`, closure `547c919`). See `docs/MIGRATION_PROGRESS.md` §K5 for closure record and lessons learned.
 **Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K5, `docs/MIGRATION_PROGRESS.md` (K4 closure context), `docs/METHODOLOGY.md` v1.4, `docs/PERFORMANCE_REPORT_K3.md` (80 KB allocation discovery), `docs/CODING_STANDARDS.md`
 **Predecessor**: K4 (`2fc59d1`) — component struct refactor (Hybrid Path), merged to main
 **Target**: fresh feature branch `feat/k5-write-batching` от `main`
