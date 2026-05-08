@@ -9,7 +9,7 @@ namespace DualFrontier.Components.Combat;
 /// See GDD 6 "Combat system".
 /// </summary>
 [ModAccessible(Read = true)]
-public sealed class WeaponComponent : IComponent
+public struct WeaponComponent : IComponent
 {
     // TODO: public float Damage;
     // TODO: public float Penetration;
