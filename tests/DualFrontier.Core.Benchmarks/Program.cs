@@ -25,10 +25,14 @@ public static class Program
     public static int Main(string[] args)
     {
         if (Array.Exists(args, a => a == "--full"))
-        {
-            BenchmarkRunner.Run<NativeVsManagedBenchmark>();
-            return 0;
-        }
+{
+    BenchmarkRunner.Run(new[]
+    {
+        typeof(NativeVsManagedBenchmark),
+        typeof(NativeBulkAddBenchmark),
+    });
+    return 0;
+}
 
         RunSmoke();
         return 0;
