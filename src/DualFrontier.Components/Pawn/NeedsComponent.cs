@@ -8,27 +8,27 @@ using DualFrontier.Contracts.Core;
 /// rested / comfortable) and 0 = worst (starving / dehydrated / exhausted /
 /// miserable). Pure POCO — no internal logic beyond the threshold queries.
 /// </summary>
-public sealed class NeedsComponent : IComponent
+public struct NeedsComponent : IComponent
 {
     /// <summary>
     /// The current satiety level (0 = starving, 1 = full).
     /// </summary>
-    public float Satiety { get; set; }
+    public float Satiety;
 
     /// <summary>
     /// The current hydration level (0 = dehydrated, 1 = full).
     /// </summary>
-    public float Hydration { get; set; }
+    public float Hydration;
 
     /// <summary>
     /// The current sleep level (0 = sleep-deprived, 1 = fully rested).
     /// </summary>
-    public float Sleep { get; set; }
+    public float Sleep;
 
     /// <summary>
     /// The current comfort level (0 = miserable, 1 = comfortable).
     /// </summary>
-    public float Comfort { get; set; }
+    public float Comfort;
 
     // Constants defining critical thresholds for needs warnings.
 
