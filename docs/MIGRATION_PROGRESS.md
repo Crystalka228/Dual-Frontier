@@ -32,7 +32,7 @@
 | | Value |
 |---|---|
 | **Active phase** | K5 (planned) — Span<T> protocol + write command batching |
-| **Last completed milestone** | K4 (component struct refactor — Hybrid path) — `<sha>` 2026-05-08 |
+| **Last completed milestone** | K4 (component struct refactor — Hybrid path) — `2fc59d1` 2026-05-08 |
 | **Next milestone (recommended)** | K5 (Span<T> protocol + ArrayPool fix) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
@@ -75,7 +75,7 @@
 | K1 | Batching primitive (bulk Add/Get + Span<T>) | DONE | 3–5 days | `e2c50b8` | 2026-05-07 |
 | K2 | Type-id registry + bridge tests | DONE | 2–3 days | `129a0a0` | 2026-05-07 |
 | K3 | Native bootstrap graph + thread pool | DONE | 5–7 days | `7629f57` | 2026-05-07 |
-| K4 | Component struct refactor (Hybrid Path) | DONE | 3-5 hours auto-mode (3-4 days hobby pace) | `<sha>` | 2026-05-08 |
+| K4 | Component struct refactor (Hybrid Path) | DONE | 3-5 hours auto-mode (3-4 days hobby pace) | `2fc59d1` | 2026-05-08 |
 | K5 | Span<T> protocol + write command batching | NOT STARTED | 1 week | — | — |
 | K6 | Second-graph rebuild on mod change | NOT STARTED | 3–5 days | — | — |
 | K7 | Performance measurement (tick-loop) | NOT STARTED | 3–5 days | — | — |
@@ -158,7 +158,7 @@
 
 ### K4 — Component struct refactor (Hybrid Path)
 
-- **Status**: DONE (`<sha>`, 2026-05-08)
+- **Status**: DONE (`2fc59d1`, 2026-05-08)
 - **Brief**: `tools/briefs/K4_STRUCT_REFACTOR_BRIEF.md` (FULL EXECUTED)
 - **Architectural decisions implemented** (per 2026-05-07 K4 design discussion):
   - Q1 — **Hybrid Path**: Trivial POCO components → struct (native batching path), components с reference types (Dictionary/List/HashSet/string) stay as class (managed path). Cleanness > expediency.
