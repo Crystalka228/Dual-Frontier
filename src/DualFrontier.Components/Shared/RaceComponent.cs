@@ -26,20 +26,20 @@ public enum RaceKind
 /// <summary>
 /// Represents the racial component of an entity, defining its race and inherent traits.
 /// </summary>
-public sealed class RaceComponent : IComponent
+public struct RaceComponent : IComponent
 {
     // Fields
-    
+
     /// <summary>
     /// The race of this entity; defaults to Human.
     /// </summary>
-    public RaceKind Kind { get; init; } = RaceKind.Human;
+    public RaceKind Kind { get; init; }
 
     /// <summary>
     /// Indicates whether this race can use arcane magic (set by systems at creation).
     /// </summary>
     public bool HasEtherChannels { get; init; }
-    
+
     /// <summary>
     /// Indicates whether this race has an industrial technology bonus.
     /// </summary>
