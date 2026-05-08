@@ -74,6 +74,26 @@ public sealed class NativeWorld : IDisposable
         _registry = registry;
     }
 
+    /// <summary>
+    /// Adopts a handle previously obtained from <c>df_engine_bootstrap</c>.
+    /// Used by <see cref="Bootstrap.Run"/> — not for public consumption.
+    /// </summary>
+    internal static NativeWorld AdoptBootstrappedHandle(IntPtr handle,
+                                                       ComponentTypeRegistry? registry)
+    {
+        if (handle == IntPtr.Zero)
+        {
+            throw new ArgumentException("Cannot adopt null handle", nameof(handle));
+        }
+        return new NativeWorld(handle, registry);
+    }
+
+    private NativeWorld(IntPtr existingHandle, ComponentTypeRegistry? registry)
+    {
+        _handle = existingHandle;
+        _registry = registry;
+    }
+
     public EntityId CreateEntity()
     {
         ThrowIfDisposed();

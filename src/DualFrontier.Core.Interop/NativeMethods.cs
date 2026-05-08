@@ -112,4 +112,9 @@ internal static class NativeMethods
         IntPtr world,
         uint typeId,
         int componentSize);
+
+    // K3 engine bootstrap.
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern IntPtr df_engine_bootstrap();
 }
