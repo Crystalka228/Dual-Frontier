@@ -177,6 +177,69 @@ DF_API int32_t         df_world_register_component_type(
  */
 DF_API df_world_handle df_engine_bootstrap(void);
 
+/*
+ * K5 Command Buffer write batching (added 2026-05-08).
+ *
+ * Replaces direct in-place mutation rejected by Q2 architectural decision.
+ * Managed code records mutations as commands; native side validates and
+ * applies atomically at flush time.
+ *
+ * Lifecycle:
+ *   1. Caller calls df_world_begin_batch -> opaque batch handle.
+ *   2. Caller records updates/adds/removes via df_batch_record_*.
+ *      Each record is validated immediately (data not null), returns 1/0.
+ *   3. Caller calls df_batch_flush -> all commands applied atomically.
+ *      Returns count of successful commands (entities still alive at flush time).
+ *   4. Caller calls df_batch_destroy -> releases batch handle.
+ *
+ * Auto-flush: df_batch_destroy on a non-flushed, non-cancelled batch
+ * implicitly flushes (matches managed `using var batch` Dispose semantics).
+ *
+ * Cancellation: df_batch_cancel discards all recorded commands without
+ * applying. Subsequent df_batch_destroy is no-op.
+ *
+ * Mutation rejection contract:
+ *   While ANY active batch exists, direct mutations (df_world_add_component,
+ *   df_world_remove_component, df_world_destroy_entity, df_world_flush_destroyed,
+ *   df_world_add_components_bulk) are rejected. Multiple concurrent batches
+ *   (same OR different type_id) are allowed. Spans and batches coexist
+ *   (independent counters).
+ *
+ * Returns:
+ *   df_world_begin_batch: batch handle on success, nullptr on failure.
+ *   df_batch_record_*: 1 on success (recorded), 0 on failure (validation).
+ *   df_batch_flush: count of successful commands (>=0), -1 on logic error.
+ *   df_batch_destroy: void (failures absorbed).
+ *   df_batch_cancel: void.
+ */
+
+typedef void* df_batch_handle;
+
+DF_API df_batch_handle df_world_begin_batch(
+                           df_world_handle world,
+                           uint32_t type_id,
+                           int32_t component_size);
+
+DF_API int32_t         df_batch_record_update(
+                           df_batch_handle batch,
+                           uint64_t entity,
+                           const void* data);
+
+DF_API int32_t         df_batch_record_add(
+                           df_batch_handle batch,
+                           uint64_t entity,
+                           const void* data);
+
+DF_API int32_t         df_batch_record_remove(
+                           df_batch_handle batch,
+                           uint64_t entity);
+
+DF_API int32_t         df_batch_flush(df_batch_handle batch);
+
+DF_API void            df_batch_cancel(df_batch_handle batch);
+
+DF_API void            df_batch_destroy(df_batch_handle batch);
+
 #ifdef __cplusplus
 }
 #endif

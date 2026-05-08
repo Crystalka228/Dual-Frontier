@@ -15,6 +15,7 @@ using dualfrontier::pack_entity;
 using dualfrontier::ThreadPool;
 using dualfrontier::unpack_entity;
 using dualfrontier::World;
+using dualfrontier::WriteBatch;
 
 namespace {
 
@@ -310,6 +311,85 @@ DF_API df_world_handle df_engine_bootstrap(void) {
     } catch (...) {
         // RAII via unique_ptr destructors cleans up partial state.
         return nullptr;
+    }
+}
+
+// =============================================================================
+// K5 Command Buffer C ABI (added 2026-05-08).
+// =============================================================================
+
+DF_API df_batch_handle df_world_begin_batch(df_world_handle world,
+                                            uint32_t type_id,
+                                            int32_t component_size) {
+    if (!world) return nullptr;
+    try {
+        return new WriteBatch(as_world(world), type_id, component_size);
+    } catch (...) {
+        // K5: ctor throws on null world (already guarded), type_id 0, or
+        // non-positive component_size. Boundary returns null sentinel.
+        return nullptr;
+    }
+}
+
+DF_API int32_t df_batch_record_update(df_batch_handle batch,
+                                      uint64_t entity,
+                                      const void* data) {
+    if (!batch) return 0;
+    try {
+        return static_cast<WriteBatch*>(batch)->record_update(entity, data);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_batch_record_add(df_batch_handle batch,
+                                   uint64_t entity,
+                                   const void* data) {
+    if (!batch) return 0;
+    try {
+        return static_cast<WriteBatch*>(batch)->record_add(entity, data);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_batch_record_remove(df_batch_handle batch,
+                                      uint64_t entity) {
+    if (!batch) return 0;
+    try {
+        return static_cast<WriteBatch*>(batch)->record_remove(entity);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_batch_flush(df_batch_handle batch) {
+    if (!batch) return -1;
+    try {
+        return static_cast<WriteBatch*>(batch)->flush();
+    } catch (const std::logic_error&) {
+        // Double-flush or post-cancel flush.
+        return -1;
+    } catch (...) {
+        return -1;
+    }
+}
+
+DF_API void df_batch_cancel(df_batch_handle batch) {
+    if (!batch) return;
+    try {
+        static_cast<WriteBatch*>(batch)->cancel();
+    } catch (...) {
+        // Suppress.
+    }
+}
+
+DF_API void df_batch_destroy(df_batch_handle batch) {
+    if (!batch) return;
+    try {
+        delete static_cast<WriteBatch*>(batch);
+    } catch (...) {
+        // Suppress — destructor must not throw.
     }
 }
 
