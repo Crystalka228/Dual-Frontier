@@ -33,6 +33,7 @@ struct BenchHealth {
 };
 
 constexpr uint32_t kHealthTypeId = 0xC0FFEE01u;
+constexpr uint32_t kBatchTypeId  = 0xBA7CF001u;  // K5 batch scenarios
 
 void scenario_basic_crud() {
     std::printf("scenario_basic_crud\n");
@@ -404,6 +405,184 @@ void scenario_bootstrap_graph_parallel() {
              "B and C executed concurrently (parallelism evidence)");
 }
 
+// =============================================================================
+// K5 Command Buffer scenarios (added 2026-05-08).
+// =============================================================================
+
+void scenario_batch_basic() {
+    std::printf("scenario_batch_basic\n");
+    df_world_handle w = df_world_create();
+
+    uint64_t e1 = df_world_create_entity(w);
+    uint64_t e2 = df_world_create_entity(w);
+
+    int32_t initial_a = 10;
+    int32_t initial_b = 20;
+    df_world_add_component(w, e1, kBatchTypeId, &initial_a, sizeof(int32_t));
+    df_world_add_component(w, e2, kBatchTypeId, &initial_b, sizeof(int32_t));
+
+    df_batch_handle batch =
+        df_world_begin_batch(w, kBatchTypeId, sizeof(int32_t));
+    DF_CHECK(batch != nullptr, "batch handle non-null");
+
+    int32_t new_a = 100;
+    int32_t new_b = 200;
+    DF_CHECK(df_batch_record_update(batch, e1, &new_a) == 1,
+             "record_update e1 succeeded");
+    DF_CHECK(df_batch_record_update(batch, e2, &new_b) == 1,
+             "record_update e2 succeeded");
+
+    int32_t applied = df_batch_flush(batch);
+    DF_CHECK(applied == 2, "flush applied 2 commands");
+
+    df_batch_destroy(batch);
+
+    int32_t out_a = 0;
+    int32_t out_b = 0;
+    DF_CHECK(df_world_get_component(w, e1, kBatchTypeId, &out_a,
+                                    sizeof(int32_t)) == 1,
+             "e1 component readable post-flush");
+    DF_CHECK(df_world_get_component(w, e2, kBatchTypeId, &out_b,
+                                    sizeof(int32_t)) == 1,
+             "e2 component readable post-flush");
+    DF_CHECK(out_a == 100 && out_b == 200, "values updated atomically");
+
+    df_world_destroy(w);
+}
+
+void scenario_batch_mixed_commands() {
+    std::printf("scenario_batch_mixed_commands\n");
+    df_world_handle w = df_world_create();
+
+    uint64_t e1 = df_world_create_entity(w);
+    uint64_t e2 = df_world_create_entity(w);
+    uint64_t e3 = df_world_create_entity(w);
+
+    int32_t v = 42;
+    df_world_add_component(w, e1, kBatchTypeId, &v, sizeof(int32_t));
+    df_world_add_component(w, e3, kBatchTypeId, &v, sizeof(int32_t));
+    // e2 has no component — will be Added via batch.
+
+    df_batch_handle batch =
+        df_world_begin_batch(w, kBatchTypeId, sizeof(int32_t));
+
+    int32_t new_v = 99;
+    DF_CHECK(df_batch_record_update(batch, e1, &new_v) == 1, "update e1");
+    DF_CHECK(df_batch_record_add(batch, e2, &new_v) == 1, "add e2");
+    DF_CHECK(df_batch_record_remove(batch, e3) == 1, "remove e3");
+
+    int32_t applied = df_batch_flush(batch);
+    DF_CHECK(applied == 3, "all 3 mixed commands applied");
+
+    df_batch_destroy(batch);
+
+    int32_t out = 0;
+    DF_CHECK(df_world_get_component(w, e1, kBatchTypeId, &out,
+                                    sizeof(int32_t)) == 1 && out == 99,
+             "e1 updated to 99");
+    DF_CHECK(df_world_get_component(w, e2, kBatchTypeId, &out,
+                                    sizeof(int32_t)) == 1 && out == 99,
+             "e2 added with value 99");
+    DF_CHECK(df_world_has_component(w, e3, kBatchTypeId) == 0,
+             "e3 component removed");
+
+    df_world_destroy(w);
+}
+
+void scenario_batch_cancel() {
+    std::printf("scenario_batch_cancel\n");
+    df_world_handle w = df_world_create();
+
+    uint64_t e = df_world_create_entity(w);
+    int32_t initial = 10;
+    df_world_add_component(w, e, kBatchTypeId, &initial, sizeof(int32_t));
+
+    df_batch_handle batch =
+        df_world_begin_batch(w, kBatchTypeId, sizeof(int32_t));
+
+    int32_t modified = 999;
+    df_batch_record_update(batch, e, &modified);
+    df_batch_cancel(batch);
+
+    // Subsequent destroy is no-op for commands; counter still decremented.
+    df_batch_destroy(batch);
+
+    int32_t out = 0;
+    df_world_get_component(w, e, kBatchTypeId, &out, sizeof(int32_t));
+    DF_CHECK(out == 10, "value unchanged after cancel");
+
+    df_world_destroy(w);
+}
+
+void scenario_batch_dead_entity_skipped() {
+    std::printf("scenario_batch_dead_entity_skipped\n");
+    df_world_handle w = df_world_create();
+
+    uint64_t alive = df_world_create_entity(w);
+    uint64_t soon_dead = df_world_create_entity(w);
+
+    int32_t v = 1;
+    df_world_add_component(w, alive, kBatchTypeId, &v, sizeof(int32_t));
+    df_world_add_component(w, soon_dead, kBatchTypeId, &v, sizeof(int32_t));
+
+    // Capture stale handle before destroy.
+    uint64_t stale = soon_dead;
+    df_world_destroy_entity(w, soon_dead);
+    df_world_flush_destroyed(w);
+
+    df_batch_handle batch =
+        df_world_begin_batch(w, kBatchTypeId, sizeof(int32_t));
+
+    int32_t new_v = 100;
+    DF_CHECK(df_batch_record_update(batch, alive, &new_v) == 1,
+             "record alive entity");
+    DF_CHECK(df_batch_record_update(batch, stale, &new_v) == 1,
+             "record (stale) destroyed entity — accepted at record, skipped at flush");
+
+    int32_t applied = df_batch_flush(batch);
+    DF_CHECK(applied == 1, "only the live entity's command applied");
+
+    df_batch_destroy(batch);
+
+    int32_t out = 0;
+    df_world_get_component(w, alive, kBatchTypeId, &out, sizeof(int32_t));
+    DF_CHECK(out == 100, "alive entity updated");
+
+    df_world_destroy(w);
+}
+
+void scenario_batch_mutation_rejection() {
+    std::printf("scenario_batch_mutation_rejection\n");
+    df_world_handle w = df_world_create();
+
+    uint64_t e = df_world_create_entity(w);
+    int32_t v = 10;
+    df_world_add_component(w, e, kBatchTypeId, &v, sizeof(int32_t));
+
+    df_batch_handle batch =
+        df_world_begin_batch(w, kBatchTypeId, sizeof(int32_t));
+
+    // While batch is active, direct mutations are rejected. The C ABI
+    // catches the std::logic_error and silently returns; the value remains
+    // unchanged.
+    int32_t direct_v = 999;
+    df_world_add_component(w, e, kBatchTypeId, &direct_v, sizeof(int32_t));
+
+    int32_t out = 0;
+    df_world_get_component(w, e, kBatchTypeId, &out, sizeof(int32_t));
+    DF_CHECK(out == 10, "direct mutation rejected while batch active");
+
+    df_batch_cancel(batch);
+    df_batch_destroy(batch);
+
+    // After batch destruction, mutation succeeds.
+    df_world_add_component(w, e, kBatchTypeId, &direct_v, sizeof(int32_t));
+    df_world_get_component(w, e, kBatchTypeId, &out, sizeof(int32_t));
+    DF_CHECK(out == 999, "direct mutation succeeds after batch destroyed");
+
+    df_world_destroy(w);
+}
+
 void scenario_bootstrap_rollback_on_failure() {
     std::printf("scenario_bootstrap_rollback_on_failure\n");
     using namespace dualfrontier;
@@ -447,6 +626,11 @@ int main() {
     scenario_bootstrap_graph_topological();
     scenario_bootstrap_graph_parallel();
     scenario_bootstrap_rollback_on_failure();
+    scenario_batch_basic();
+    scenario_batch_mixed_commands();
+    scenario_batch_cancel();
+    scenario_batch_dead_entity_skipped();
+    scenario_batch_mutation_rejection();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
