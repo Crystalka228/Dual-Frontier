@@ -14,12 +14,12 @@ using DualFrontier.Contracts.Core;
 /// deplete.
 /// </summary>
 [ModAccessible(Read = true)]
-public sealed class WaterSourceComponent : IComponent
+public struct WaterSourceComponent : IComponent
 {
     /// <summary>
     /// Fraction of <see cref="DualFrontier.Components.Pawn.NeedKind.Hydration"/>
     /// restored per drink action ([0..1]). E.g., 0.6 restores 60% of
     /// hydration per drink.
     /// </summary>
-    public float RestorationAmount { get; set; }
+    public float RestorationAmount;
 }
