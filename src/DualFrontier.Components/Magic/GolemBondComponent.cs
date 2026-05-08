@@ -12,7 +12,7 @@ namespace DualFrontier.Components.Magic;
 /// implement the golem takeover/abandonment mechanic via the
 /// <c>GolemOwnershipTransferRequest</c> / <c>GolemOwnershipChanged</c> events.
 /// </summary>
-public sealed class GolemBondComponent : IComponent
+public struct GolemBondComponent : IComponent
 {
     // TODO: public EntityId? OwnerId;
     // TODO: public int GolemTier;  // 1..5 — see GDD 5.1
@@ -29,7 +29,7 @@ public sealed class GolemBondComponent : IComponent
     /// TODO: Phase 6 — state machine for transitions via
     /// <c>GolemOwnershipTransferRequest</c>.
     /// </summary>
-    public OwnershipMode Mode { get; init; } = OwnershipMode.Bonded;
+    public OwnershipMode Mode { get; init; }
 
     /// <summary>
     /// Counter of ticks elapsed since ownership contest began.
