@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-08 (K4 closure)
+**Last updated**: 2026-05-08 (K5 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K5 (planned) — Span<T> protocol + write command batching |
-| **Last completed milestone** | K4 (component struct refactor — Hybrid path) — `2fc59d1` 2026-05-08 |
-| **Next milestone (recommended)** | K5 (Span<T> protocol + ArrayPool fix) |
+| **Active phase** | K6 (planned) — second-graph rebuild on mod change |
+| **Last completed milestone** | K5 (Span<T> protocol + Command Buffer write batching) — `<sha>` 2026-05-08 |
+| **Next milestone (recommended)** | K6 (mod-driven graph rebuild) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 524 (76 Core + 4 Persistence + 52 Interop + 38 Systems + 347 Modding + 7 Mod.ManifestRewriter) |
+| **Tests passing** | 538 (76 Core + 4 Persistence + 66 Interop + 38 Systems + 347 Modding + 7 Mod.ManifestRewriter) |
 
 ---
 
@@ -76,7 +76,7 @@
 | K2 | Type-id registry + bridge tests | DONE | 2–3 days | `129a0a0` | 2026-05-07 |
 | K3 | Native bootstrap graph + thread pool | DONE | 5–7 days | `7629f57` | 2026-05-07 |
 | K4 | Component struct refactor (Hybrid Path) | DONE | 3-5 hours auto-mode (3-4 days hobby pace) | `2fc59d1` | 2026-05-08 |
-| K5 | Span<T> protocol + write command batching | NOT STARTED | 1 week | — | — |
+| K5 | Span<T> protocol + Command Buffer write batching | DONE | 6-8 hours auto-mode (2-3 weeks hobby pace) | `<sha>` | 2026-05-08 |
 | K6 | Second-graph rebuild on mod change | NOT STARTED | 3–5 days | — | — |
 | K7 | Performance measurement (tick-loop) | NOT STARTED | 3–5 days | — | — |
 | K8 | Decision step + production cutover | NOT STARTED | 1 week | — | — |
@@ -185,6 +185,28 @@
   - `[ModAccessible]` attribute had `AttributeTargets.Class` only. Widened к `Class | Struct` as a K4 prerequisite commit before component conversions.
   - Brief expected baseline 472 tests (45 outdated count) but actual was 517 — extra tests added between K3 and K4. Final delta +7 still matched exactly.
   - DualFrontier.Application project did not previously reference DualFrontier.Core.Interop (registry symbol owner). Reference added as part of the VanillaComponentRegistration commit.
+
+### K5 — Span<T> protocol + Command Buffer write batching
+
+- **Status**: DONE (`<sha>`, 2026-05-08)
+- **Brief**: `tools/briefs/K5_SPAN_PROTOCOL_BRIEF.md` (FULL EXECUTED)
+- **C ABI extension**: 6 new functions (18 → 24 total): `df_world_begin_batch`, `df_batch_record_update`, `df_batch_record_add`, `df_batch_record_remove`, `df_batch_flush`, `df_batch_cancel`, `df_batch_destroy`
+- **Native files extended**: `world.h/cpp` — added WriteBatch class, CommandKind enum, WriteCommand struct, `World::active_batches_` atomic counter; private `add_component_unchecked` / `remove_component_unchecked` (friend access from WriteBatch) for in-flush mutations that skip the active_batches gate but still honour active_spans.
+- **Architectural decisions implemented** (per 2026-05-08 K5 design discussion):
+  - Q1 — **ArrayPool fix scope**: Both `AddComponents` and `GetComponents` fixed (`System.Buffers.ArrayPool<ulong>.Shared.Rent/Return` for batches > 256). Eliminates 80 KB heap allocation observed in K3 PERFORMANCE_REPORT Measurement 2. Stackalloc path for ≤ 256 unchanged.
+  - Q2 — **Command Buffer pattern**: System code never directly mutates native memory. Mutations recorded as commands (Update / Add / Remove), validated native-side (entity liveness via stored version), applied atomically at flush time. Preserves native sovereignty + managed safety + mod safety + audit observability.
+  - Q3 — **Scope additions**: `SpanLease<T>.Pairs` iteration helper resolves K1 skeleton's deferred 'paired iteration helpers' comment. NOT included: lease pooling, WriteBatch pooling, SIMD command application — defer to K7 evidence.
+  - Q4 — **Comprehensive tests**: 14 new tests (11 WriteBatch + 2 ArrayPool + 1 Pairs).
+- **Throw inventory** (METHODOLOGY v1.3): 5 new throw points в WriteBatch (ctor invalid_argument на null world / type_id 0 / non-positive size, flush logic_error на double-flush or post-cancel flush, record bad_alloc on vector growth). All caught at C ABI boundary returning sentinel values (nullptr / 0 / -1).
+- **Mutation rejection extended**: `World::add_component` / `remove_component` / `destroy_entity` / `flush_destroyed` / `add_components_bulk` now also reject if `active_batches_ > 0` (parallel to existing `active_spans_` check).
+- **Multi-batch concurrency**: brief's flush() counter-manipulation pattern would deadlock with two concurrent batches (each batch sees the other's contribution). Replaced with `friend class WriteBatch` + private `*_unchecked` mutation paths — flush bypasses the `active_batches_` gate entirely while still honouring the `active_spans_` contract. Counter now adjusted only by ctor/dtor.
+- **Selftest scenarios**: 12 → 17 (+5: batch_basic, batch_mixed_commands, batch_cancel, batch_dead_entity_skipped, batch_mutation_rejection)
+- **Bridge tests**: 524 → 538 (+14 K5)
+- **System code changes**: NONE — K5 is purely infrastructure. K8 cutover will migrate systems to WriteBatch usage.
+- **Lessons learned**:
+  - The brief's flush() design temporarily decremented `active_batches_` before applying commands and re-incremented after. With a single batch this works, но в "MultipleConcurrentBatches" test the counter stays > 0 after a batch decrements its own contribution (the peer batch's contribution remains), so the in-flush mutation still throws. Replaced with friend-access internal `*_unchecked` methods — far cleaner и safer.
+  - `Span<ulong>` variable that may be either `stackalloc` или a pool-rented array fails C# escape analysis (CS9081). Adding the `scoped` modifier на the local resolves it; the same issue would trip up any future "either-stack-or-rent" pattern in this codebase.
+  - `SpanLease<T>.Pairs` returns `EntityId` with `Version=1` placeholder — flagged in code/doc comments as a K7 follow-up. Acceptable for K5 since flush validates entity version при apply (stale ids silently skipped).
 
 ---
 
