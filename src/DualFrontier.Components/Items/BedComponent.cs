@@ -16,18 +16,18 @@ using DualFrontier.Contracts.Core;
 /// to future content commits.
 /// </summary>
 [ModAccessible(Read = true, Write = true)]
-public sealed class BedComponent : IComponent
+public struct BedComponent : IComponent
 {
     /// <summary>
     /// Current sleeping pawn entity, or null when bed is unoccupied.
     /// SleepSystem assigns on bed-claim, clears on wake or interrupt.
     /// </summary>
-    public EntityId? Occupant { get; set; }
+    public EntityId? Occupant;
 
     /// <summary>
     /// Fraction of <see cref="DualFrontier.Components.Pawn.NeedKind.Sleep"/>
     /// restored per simulation tick while occupied ([0..1]). Calibrated by
     /// M8.4 ItemFactory per bed quality tier.
     /// </summary>
-    public float SleepRestorationPerTick { get; set; }
+    public float SleepRestorationPerTick;
 }
