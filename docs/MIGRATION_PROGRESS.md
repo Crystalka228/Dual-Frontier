@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-07 (K3 closure)
+**Last updated**: 2026-05-08 (K4 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K4 (planned) — component struct refactor (Path α) |
-| **Last completed milestone** | K3 (bootstrap graph + thread pool) — `7629f57` 2026-05-07 |
-| **Next milestone (recommended)** | K4 (component struct refactor) |
+| **Active phase** | K5 (planned) — Span<T> protocol + write command batching |
+| **Last completed milestone** | K4 (component struct refactor — Hybrid path) — `<sha>` 2026-05-08 |
+| **Next milestone (recommended)** | K5 (Span<T> protocol + ArrayPool fix) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 472 (76 Core + 4 Persistence + 45 Interop + 347 Modding) |
+| **Tests passing** | 524 (76 Core + 4 Persistence + 52 Interop + 38 Systems + 347 Modding + 7 Mod.ManifestRewriter) |
 
 ---
 
@@ -75,7 +75,7 @@
 | K1 | Batching primitive (bulk Add/Get + Span<T>) | DONE | 3–5 days | `e2c50b8` | 2026-05-07 |
 | K2 | Type-id registry + bridge tests | DONE | 2–3 days | `129a0a0` | 2026-05-07 |
 | K3 | Native bootstrap graph + thread pool | DONE | 5–7 days | `7629f57` | 2026-05-07 |
-| K4 | Component struct refactor (Path α) | NOT STARTED | 2–3 weeks | — | — |
+| K4 | Component struct refactor (Hybrid Path) | DONE | 3-5 hours auto-mode (3-4 days hobby pace) | `<sha>` | 2026-05-08 |
 | K5 | Span<T> protocol + write command batching | NOT STARTED | 1 week | — | — |
 | K6 | Second-graph rebuild on mod change | NOT STARTED | 3–5 days | — | — |
 | K7 | Performance measurement (tick-loop) | NOT STARTED | 3–5 days | — | — |
@@ -156,9 +156,35 @@
   - Brief's selftest scenario code used `dualfrontier::BootstrapGraph` and `dualfrontier::ThreadPool` directly. These are intentionally NOT `__declspec(dllexport)`-marked per Q1, so linking the selftest against the DLL fails on MSVC. Resolved by changing the selftest target to compile the source files directly (see CMakeLists update). A future option would be to introduce a `DF_API_INTERNAL` macro that exports under `DF_NATIVE_BUILDING_DLL` only, but the source-compile approach is simpler and matches the test's standalone nature.
   - Pre-flight HG-1 (working tree clean) failed because the K3 brief itself was an unstaged modification on `main` (skeleton → 1700-line full brief). Resolved by committing "brief authoring" on `main` as Step 0 (`3b18cb0`). Methodology v1.3 already calls this out — Step 0 worked as designed.
 
-### K4 — K8
+### K4 — Component struct refactor (Hybrid Path)
 
-Detailed entries будут добавлены при подходе к каждому milestone.
+- **Status**: DONE (`<sha>`, 2026-05-08)
+- **Brief**: `tools/briefs/K4_STRUCT_REFACTOR_BRIEF.md` (FULL EXECUTED)
+- **Architectural decisions implemented** (per 2026-05-07 K4 design discussion):
+  - Q1 — **Hybrid Path**: Trivial POCO components → struct (native batching path), components с reference types (Dictionary/List/HashSet/string) stay as class (managed path). Cleanness > expediency.
+  - Q2 — **Per-component atomic commits**: 24 components = 24 commits across 7 batches. Bisect-friendly.
+  - Q3 — **Explicit registration at Application bootstrap**: VanillaComponentRegistration.RegisterAll(registry) called once. Sequential type IDs 1..24.
+  - Q4 — **Smoke + tricky-case tests**: 7 new tests. Existing tests cover behavior через consumer systems.
+- **Components converted** (24 in Категория A):
+  - Shared (3): Health, Position, Race
+  - Pawn trivial (3): Needs, Mind, Job
+  - Items (5): Bed, Consumable, DecorativeAura, Reservation, WaterSource
+  - World (3): Tile, Biome, EtherNode
+  - Magic (4): Ether, GolemBond, Mana, School
+  - Combat (4): Ammo, Armor, Shield, Weapon
+  - Building trivial (2): PowerConsumer, PowerProducer
+- **Components staying as class** (7 in Категории B+C):
+  - Collections (5): Movement (List), Skills/Social (Dictionary), Storage (Dictionary+HashSet), Workbench (string?)
+  - Strings (2): Identity, Faction
+- **VanillaComponentRegistration.cs**: Application/Bootstrap helper, registers all 24 на Application init
+- **Test count**: 517 → 524 (+7 K4 roundtrip tests)
+- **System code changes**: ONE — ElectricGridSystem foreach with tuple deconstruction needed a mutable local copy (CS1654). All other systems' get/modify/set patterns worked unchanged со struct copy semantics.
+- **Lessons learned**:
+  - C# CS8983: structs with field initializers require an explicit parameterless constructor. The brief's «keep default initializers» guidance had to be qualified — keep them only где default value differs from `default(T)` (e.g. MindComponent.Mood = 0.5f); drop them где the initializer matches the type's natural default (e.g. RaceKind.Human = 0, JobKind.Idle = 0, OwnershipMode.Bonded = 0). Saves an explicit ctor on most components.
+  - C# CS1654: tuple-deconstructed foreach variables (`foreach (var (e, c) in pairs)`) are read-only locals; mutating struct members fails. Workaround: iterate with single variable (`foreach (var pair in pairs)`) then copy to a mutable local. Caught by ElectricGridSystem build failure after PowerConsumerComponent → struct.
+  - `[ModAccessible]` attribute had `AttributeTargets.Class` only. Widened к `Class | Struct` as a K4 prerequisite commit before component conversions.
+  - Brief expected baseline 472 tests (45 outdated count) but actual was 517 — extra tests added between K3 and K4. Final delta +7 still matched exactly.
+  - DualFrontier.Application project did not previously reference DualFrontier.Core.Interop (registry symbol owner). Reference added as part of the VanillaComponentRegistration commit.
 
 ---
 
