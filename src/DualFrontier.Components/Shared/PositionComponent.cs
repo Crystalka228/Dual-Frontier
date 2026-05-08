@@ -7,7 +7,7 @@ namespace DualFrontier.Components.Shared;
 /// Position of an entity on the world's tile grid. Pure data.
 /// Mutated only via MovementSystem / TeleportSystem.
 /// </summary>
-public sealed class PositionComponent : IComponent
+public struct PositionComponent : IComponent
 {
     /// <summary>Tile-grid coordinate.</summary>
     public GridVector Position;
