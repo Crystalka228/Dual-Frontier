@@ -421,6 +421,140 @@ A mod is forbidden from casting `IModApi` to a concrete type. The `RestrictedMod
 
 All v1 mods (using `Publish`/`Subscribe` with no-op semantics) continue to load and run, but log a v1-API warning. The mod author updates capability declarations in the manifest to migrate to functional v2 semantics. This grace period closes at kernel API version `2.0.0`.
 
+### 4.6 IModApi v3 — Fields and Compute Pipelines (NEW in v1.6)
+
+v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) capabilities per [GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 LOCKED. Both sub-APIs are additive: v2 mods that do not reference `Fields` or `ComputePipelines` continue to load unchanged.
+
+### 4.6.1 Surface
+
+```csharp
+public interface IModApi // v3 — extends v2
+{
+    // ── v1 + v2 surface (preserved verbatim) ──────────────────────────────
+    // RegisterComponent, RegisterSystem, Publish, Subscribe,
+    // PublishContract, TryGetContract, GetKernelCapabilities,
+    // GetOwnManifest, Log
+
+    // ── New in v3 ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Field-storage sub-API. Null when the kernel does not support fields
+    /// (e.g. K9 not yet landed, or the build runs in CPU-only fallback mode).
+    /// Mods checking this for null degrade gracefully.
+    /// </summary>
+    IModFieldApi? Fields { get; }
+
+    /// <summary>
+    /// Compute-pipeline sub-API. Null when the kernel does not support GPU
+    /// compute (e.g. G0 not yet landed, or Vulkan 1.3 compute unavailable on
+    /// the host machine). Mods checking this for null fall back to CPU
+    /// reference implementations.
+    /// </summary>
+    IModComputePipelineApi? ComputePipelines { get; }
+}
+
+public interface IModFieldApi
+{
+    /// <summary>
+    /// Register a new field of type T with the given dimensions. The field id
+    /// must be namespaced under the calling mod's id (e.g.
+    /// "vanilla.magic.mana"). Returns a typed handle for subsequent reads,
+    /// writes, and compute dispatches.
+    /// </summary>
+    /// <exception cref="FieldRegistrationConflictException">
+    /// Thrown if another mod has already registered a field with the same id.
+    /// </exception>
+    /// <exception cref="InvalidFieldDimensionsException">
+    /// Thrown if width or height is non-positive or exceeds kernel limits.
+    /// </exception>
+    /// <exception cref="CapabilityViolationException">
+    /// Thrown if the calling mod did not declare
+    /// "mod.{id}.field.read:{fieldId}" or equivalent in its manifest.
+    /// </exception>
+    FieldHandle<T> RegisterField<T>(string id, int width, int height) where T : unmanaged;
+
+    /// <summary>
+    /// Acquire a handle to a field registered by another mod (typically a
+    /// shared mod or a regular mod listed in dependencies).
+    /// </summary>
+    FieldHandle<T> GetField<T>(string id) where T : unmanaged;
+}
+
+public interface IModComputePipelineApi
+{
+    /// <summary>
+    /// Register a compute pipeline from compiled SPIR-V bytecode. The pipeline
+    /// id must be namespaced under the calling mod's id (e.g.
+    /// "vanilla.magic.mana_diffusion"). The SPIR-V is validated at registration
+    /// time; invalid bytecode raises ComputePipelineCompilationFailed.
+    /// </summary>
+    ComputePipelineHandle RegisterPipeline(string id, byte[] spirvBytes);
+
+    /// <summary>
+    /// Acquire a handle to a pipeline registered by another mod.
+    /// </summary>
+    ComputePipelineHandle GetPipeline(string id);
+}
+
+public sealed class FieldHandle<T> where T : unmanaged
+{
+    public string Id { get; }
+    public int Width { get; }
+    public int Height { get; }
+
+    public T ReadCell(int x, int y);
+    public void WriteCell(int x, int y, T value);
+    public ReadOnlySpan<T> AcquireSpan(out int width, out int height);
+
+    public void SetConductivity(int x, int y, float value);
+    public void SetStorageFlag(int x, int y, bool enabled);
+
+    public void DispatchCompute(
+        ComputePipelineHandle pipeline,
+        ReadOnlySpan<byte> pushConstants,
+        int iterations);
+}
+
+public sealed class ComputePipelineHandle
+{
+    public string Id { get; }
+}
+```
+
+### 4.6.2 Capability cross-check
+
+Every operation on `IModFieldApi` and `IModComputePipelineApi` is gated by a manifest capability declaration per §3.2 and §3.7. The cross-check is performed at load time (every `[FieldAccess]` and `[ComputePipelineAccess]` attribute on a registered system must be subset of the mod's `capabilities.required`) and again at runtime (every API call hits a hash-set lookup, mismatch raises `CapabilityViolationException`). Hybrid enforcement matches §3.6 (load-time primary, runtime second-layer).
+
+### 4.6.3 Backward compatibility
+
+A v2 mod that does not reference `Fields` or `ComputePipelines` continues to compile and load against v3 unchanged. The v3 properties default to null on builds that do not include K9/G-series support; v2 mods never observe them. v1 mods (no-op `Publish`/`Subscribe`) continue under the §4.5 grace period.
+
+### 4.6.4 Mod startup example
+
+```csharp
+public class MagicMod : IMod
+{
+    public void Register(IModApi api)
+    {
+        if (api.Fields is null || api.ComputePipelines is null)
+        {
+            // CPU fallback or pre-K9 build — degrade gracefully
+            api.Log(ModLogLevel.Warning, "Field API unavailable; mana mechanics disabled");
+            return;
+        }
+
+        var manaField = api.Fields.RegisterField<float>("vanilla.magic.mana", 200, 200);
+        var diffusionPipeline = api.ComputePipelines.RegisterPipeline(
+            "vanilla.magic.mana_diffusion",
+            EmbeddedResource.Load("shaders/mana_diffusion.spv"));
+
+        api.RegisterSystem<ManaFieldUpdateSystem>(); // system uses [FieldAccess]
+    }
+}
+```
+
+The full motivation for the field abstraction, Domain A vs Domain B distinction, and shader registration model is in [GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 — "Architectural integration" and "Mod-driven shader registration" sections.
+
 ---
 
 ## 5. Type-sharing protocol
