@@ -8,8 +8,8 @@ namespace DualFrontier.Components.World;
 /// (GDD 4.2, 5.3). <c>Tier</c> — node tier (1..N), affects strength.
 /// Property changes publish <c>EtherNodeChangedEvent</c>.
 /// </summary>
-public sealed class EtherNodeComponent : IComponent
+public struct EtherNodeComponent : IComponent
 {
-    // TODO: public int Tier;
-    // TODO: public float Radius;
+    public int Tier;
+    public float Radius;
 }
