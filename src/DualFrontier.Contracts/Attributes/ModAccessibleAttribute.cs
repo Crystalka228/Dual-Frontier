@@ -12,7 +12,7 @@ namespace DualFrontier.Contracts.Attributes;
 /// <c>kernel.read:{FQN}</c> or <c>kernel.write:{FQN}</c> in its manifest's
 /// <c>capabilities.required</c> list (§3, D-1 LOCKED).
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false, AllowMultiple = false)]
 public sealed class ModAccessibleAttribute : Attribute
 {
     /// <summary>
