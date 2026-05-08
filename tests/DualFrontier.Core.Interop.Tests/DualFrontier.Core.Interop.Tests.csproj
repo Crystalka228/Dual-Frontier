@@ -17,6 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Components\DualFrontier.Components.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
   </ItemGroup>
 
   <!--
