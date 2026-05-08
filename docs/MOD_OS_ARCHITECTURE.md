@@ -271,10 +271,19 @@ The cost is verbose manifests for content-rich mods. The benefit is that a `git 
 - `provider`:
   - `kernel` — provided by `DualFrontier.Contracts` itself.
   - `mod.<modId>` — provided by another loaded mod (typically a shared mod publishing event types).
-- `verb`: one of `publish`, `subscribe`, `read`, `write`.
-- `fully-qualified-type-name`: the C# FQN of the event or component type.
+- `verb`: one of `publish`, `subscribe`, `read`, `write`, `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch`, `pipeline.register`.
+- `fully-qualified-type-name`: the C# FQN of the event or component type, or the namespaced field/pipeline id for the `field.*` and `pipeline.*` verbs.
 
-The `read` and `write` verbs apply to components (`IComponent`). The `publish` and `subscribe` verbs apply to events (`IEvent`).
+The `read` and `write` verbs apply to entity-keyed components (`IComponent`). The `publish` and `subscribe` verbs apply to events (`IEvent`). The `field.*` verbs apply to spatial fields (`RawTileField<T>` per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) K9 — dense 2D grids with conductivity map and storage flags). The `pipeline.register` verb applies to mod-owned compute pipelines registered via `IModApi.ComputePipelines` (§4.6).
+
+Field verb semantics:
+
+- `field.read:<id>` — point query (`ReadCell(x, y)`) returning a single cell value.
+- `field.write:<id>` — single cell mutation (`WriteCell(x, y, value)`).
+- `field.acquire:<id>` — dense span access (`AcquireSpan()`) for bulk reads or batch updates.
+- `field.conductivity:<id>` — modify the conductivity map (per-cell diffusion coefficient `D`); used by mods that own the field to wire physical infrastructure (wires, pipes).
+- `field.storage:<id>` — modify the per-cell storage flag (capacitance marker); used to designate batteries, tanks, thermal mass cells.
+- `field.dispatch:<id>` — issue a compute dispatch on the field via a registered pipeline. The pipeline itself does not require a separate `pipeline.dispatch` capability — the field-side dispatch verb covers it. Pipelines registered by other mods are reachable through the dependency chain (§3.4).
 
 ### 3.3 Reserved namespaces
 
