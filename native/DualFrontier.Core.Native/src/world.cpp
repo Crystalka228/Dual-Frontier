@@ -220,4 +220,12 @@ const RawComponentStore* World::find_store(uint32_t type_id) const noexcept {
     return it == stores_.end() ? nullptr : it->second.get();
 }
 
+void World::mark_bootstrapped() {
+    bool expected = false;
+    if (!bootstrapped_.compare_exchange_strong(
+            expected, true, std::memory_order_acq_rel)) {
+        throw std::logic_error("World: double bootstrap detected");
+    }
+}
+
 } // namespace dualfrontier

@@ -152,6 +152,31 @@ DF_API int32_t         df_world_register_component_type(
                            uint32_t type_id,
                            int32_t component_size);
 
+/*
+ * K3 engine bootstrap (added 2026-05-07).
+ *
+ * Single entry point that performs all native-side initialization:
+ *   1. Allocate memory pools (placeholder — currently no-op, reserved).
+ *   2. Construct the World instance (parallel with thread pool init).
+ *   3. Initialize an internal thread pool (parallel with World init).
+ *   4. Mark engine as ready.
+ *
+ * On success: returns an opaque World handle. Caller must call
+ * df_world_destroy when done.
+ *
+ * On failure: returns nullptr. All partial state is rolled back via the
+ * graph's per-task cleanup functions before returning. Managed-side caller
+ * should treat IntPtr.Zero as a hard failure.
+ *
+ * Atomic: либо fully bootstrapped либо nullptr. No partial visibility.
+ *
+ * Calling df_engine_bootstrap on a process that already has a bootstrapped
+ * engine creates a SECOND independent engine — handles are isolated. Multiple
+ * concurrent engines are supported (each has its own World; the bootstrap
+ * thread pool is an ephemeral construct, not retained).
+ */
+DF_API df_world_handle df_engine_bootstrap(void);
+
 #ifdef __cplusplus
 }
 #endif

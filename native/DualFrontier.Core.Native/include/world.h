@@ -62,6 +62,18 @@ public:
         return active_spans_.load(std::memory_order_acquire);
     }
 
+    // K3 bootstrap state. is_bootstrapped() returns true after a successful
+    // df_engine_bootstrap() has marked this World as ready. The flag is
+    // not consulted by World's own methods; it exists so external bootstrap
+    // logic can detect double-bootstrap attempts on the same handle.
+    [[nodiscard]] bool is_bootstrapped() const noexcept {
+        return bootstrapped_.load(std::memory_order_acquire);
+    }
+
+    // Marks engine as bootstrapped. Called by SignalEngineReady.
+    // Throws std::logic_error if already bootstrapped.
+    void mark_bootstrapped();
+
 private:
     static constexpr std::size_t kInitialCapacity = 256;
 
@@ -75,6 +87,7 @@ private:
     std::vector<EntityId> pending_destroy_;
     std::unordered_map<uint32_t, std::unique_ptr<RawComponentStore>> stores_;
     std::atomic<int32_t> active_spans_{0};
+    std::atomic<bool> bootstrapped_{false};
 };
 
 } // namespace dualfrontier
