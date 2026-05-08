@@ -76,8 +76,10 @@ public sealed class ElectricGridSystem : SystemBase
 
         float remaining      = totalSupply;
         int   unpoweredCount = 0;
-        foreach (var (entity, consumer) in _consumers)
+        foreach (var pair in _consumers)
         {
+            var entity   = pair.Entity;
+            var consumer = pair.Consumer;
             if (remaining >= consumer.RequiredWatts)
             {
                 consumer.IsPowered = true;
