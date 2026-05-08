@@ -2,7 +2,7 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
-**Status**: READY FOR EXECUTION
+**Status**: EXECUTED 2026-05-08 on `feat/k4-struct-refactor` (final commit `5c2995f`). See `MIGRATION_PROGRESS.md` K4 entry for closure record.
 **Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K4, `docs/MIGRATION_PROGRESS.md` (K3 closure context), `docs/METHODOLOGY.md` v1.4, `docs/PERFORMANCE_REPORT_K3.md` (motivation evidence)
 **Predecessor**: K3 (`7629f57`) — bootstrap graph + thread pool, merged to main
 **Target**: fresh feature branch `feat/k4-struct-refactor` от `main`
@@ -1079,7 +1079,19 @@ git revert <commit-sha>
 
 ## Open issues / lessons learned (заполнить при closure)
 
-<empty — заполнить если что-то нетривиальное всплыло>
+Filled at closure 2026-05-08:
+
+1. **CS8983 — struct field initializers require explicit ctor**. Brief's «keep default initializers as-is» rule had to be qualified. Approach taken: drop initializers где default value matches `default(T)` (e.g. RaceKind.Human, JobKind.Idle, OwnershipMode.Bonded все = 0; bool defaults к false; int defaults к 0). Add explicit parameterless ctor only где default differs (MindComponent.Mood = 0.5f). All other components avoided the explicit-ctor boilerplate.
+
+2. **CS1654 — tuple-deconstructed foreach variables are read-only locals**. Discovered via ElectricGridSystem build break after PowerConsumerComponent → struct. The pattern `foreach (var (entity, consumer) in pairs) { consumer.Field = ... }` fails when consumer is a struct. Fix: iterate single var (`foreach (var pair in pairs)`) then copy to mutable local. Brief's «system code unchanged» claim was almost true — exactly one system needed adjustment, and the fix preserved behavior identically.
+
+3. **`[ModAccessible]` attribute target widening** required as K4 prerequisite. Originally `AttributeTargets.Class`; widened to `Class | Struct` so the 10 components carrying it could convert. Committed before any component conversions to keep the conversion commits clean.
+
+4. **DualFrontier.Application project lacked DualFrontier.Core.Interop reference** (registry symbol owner). Added as part of the VanillaComponentRegistration commit. Test project also needed both Components and Application references — added in the test commit.
+
+5. **Brief baseline test count was 472, actual was 517** (45 extra tests added between K3 closure and K4 start). Final delta +7 K4 tests still matched exactly: 524 total. METHODOLOGY v1.4 calibrated time format applied: estimated 3-5h auto-mode, actual ~one session.
+
+6. **Standalone `ComponentTypeRegistry` does not bind retroactively к `Bootstrap.Run()` world**. The world keeps null `_registry` field if Bootstrap was called without registry; subsequent `world.AddComponent<T>` uses FNV-1a fallback even when a separately-constructed registry has reserved sequential ids on the same world handle. Tests still work because both the registry's reservation and FNV-1a's auto-creation produce valid native storage slots — they just use different ids. K6 (mod registration) will need to confirm whether this dual-id-mode coexistence is intentional or whether Bootstrap's API should accept a registry-factory к bind atomically.
 
 ---
 
