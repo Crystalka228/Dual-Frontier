@@ -21,9 +21,11 @@ DualFrontier ECS kernel migrates от managed C# к pure C++ via P/Invoke. Domai
 
 **Source of truth для existing experimental work**: `claude/cpp-core-experiment-cEsyH` branch + `docs/CPP_KERNEL_BRANCH_REPORT.md` (Discovery report). 11 substantive C++ commits + 1637 LOC delta + clean self-test passing.
 
-**Estimated scope**: 5-8 weeks at hobby pace (~1h/day) для full kernel completion (K0-K8).
+**Estimated scope**: 5-8 weeks at hobby pace (~1h/day) для full kernel completion (K0-K8) + **1-2 weeks** для К9 (field storage abstraction).
 
-**Combined с RUNTIME_ARCHITECTURE.md (M9.0-M9.8)**: **9-15 weeks** для both pivots fully shipped.
+**Status snapshot** (live, обновляется по closure milestone): K0–K5 closed (`547c919`, 2026-05-08); 538 tests passing; K6 next per β6 sequencing. См. `MIGRATION_PROGRESS.md` для current state.
+
+**Combined с RUNTIME_ARCHITECTURE.md (M9.0-M9.8) + GPU_COMPUTE.md (К9 + G0–G9)**: **15-25 weeks** для full architectural foundation. См. `ROADMAP.md` "Native foundation tracks" section для master sequencing.
 
 ---
 
