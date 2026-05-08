@@ -5,7 +5,7 @@ nav_order: 25
 
 # Mod OS Architecture — Dual Frontier
 
-**Status:** LOCKED v1.5 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), M7 pre-flight readiness review (v1.4), and Audit Campaign Pass 2 (v1.5) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
+**Status:** LOCKED v1.6 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), M7 pre-flight readiness review (v1.4), Audit Campaign Pass 2 (v1.5), and GPU compute integration ratification (v1.6) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, K9, G0–G9, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
 
 **Version history:**
 
