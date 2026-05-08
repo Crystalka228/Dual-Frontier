@@ -983,6 +983,7 @@ These items were unresolved in v0.1 and were locked during Phase 0 closure (v1.0
 - [ISOLATION](./ISOLATION.md) — `SystemExecutionContext`; capability enforcement at runtime delegates here.
 - [ROADMAP](./ROADMAP.md) — phase order; the migration plan in §11 is the new authoritative sequence for the mod-OS work.
 - `src/DualFrontier.Contracts/Modding/` — the source-of-truth surface for `IMod`, `IModApi`, `IModContract`, `ContractsVersion`, `ModManifest`.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability. Per K-L9, vanilla and third-party mods register fields and compute pipelines through the same `IModApi` (see "Mod-driven shader registration" and "Mod parity (KERNEL K-L9)").
 
 ## Modding с native ECS kernel
 
@@ -991,5 +992,6 @@ When kernel migration к native completes (K-series, see `KERNEL_ARCHITECTURE.md
 - Class-based component storage prohibited (через ECS — mod state classes acceptable outside ECS)
 - Vanilla mods register components и systems through same IModApi as third-party (vanilla = mods principle preserved)
 - Mod replacement triggers second-graph rebuild (managed) — native side untouched
+- Mod fields (`RawTileField<T>`) и compute pipelines registered through same `IModApi` extension (`api.Fields` / `api.ComputePipelines`); see [GPU_COMPUTE](./GPU_COMPUTE.md) "Architectural integration → Mod-driven shader registration"
 
-See `KERNEL_ARCHITECTURE.md` §1.9 (mod system registration) и §1.10 (component type registry) для full detail.
+See `KERNEL_ARCHITECTURE.md` §1.9 (mod system registration) и §1.10 (component type registry) для full detail. See [GPU_COMPUTE](./GPU_COMPUTE.md) "Architectural integration with existing systems → Mod parity (KERNEL K-L9)" для GPU compute mod-parity invariant.

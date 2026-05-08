@@ -44,7 +44,7 @@ Documents required to reproduce the work or contribute to it: methodology, moddi
 - [MODDING](./MODDING.md) — `IMod`, `IModApi`, `AssemblyLoadContext`, `IModContract`, the mod manifest.
 - [MOD_PIPELINE](./MOD_PIPELINE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity.
 - [PERFORMANCE](./PERFORMANCE.md) — target metrics, profiling, hot paths, caches.
-- [GPU_COMPUTE](./GPU_COMPUTE.md) — compute-shader investigation for `ProjectileSystem`, the switchover threshold.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability (Domain A: mana / electricity / water / heat / sound / scent), with `ProjectileSystem` preserved as Domain B (entity-keyed bulk compute). K9 field storage abstraction + G0–G5 Vulkan compute roadmap.
 - [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order.
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — the hygiene checklist for every PR, the engine/game boundary, red flags.

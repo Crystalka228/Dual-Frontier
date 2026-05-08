@@ -760,6 +760,7 @@ This document is **v1.0**, authoritative until amended via explicit decision. Am
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — test pyramid; §1.8 slots Runtime tests into the existing structure.
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — pre-commit checklist; §7 adds the validation-layer-clean check.
 - [PERFORMANCE](./PERFORMANCE.md) — target metrics; sprite/tile budgets adopted in M9.2 / M9.3.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute (Domain A) + entity-keyed bulk compute (Domain B). The G-series builds on the same `VkInstance`/`VkDevice`/`vulkan-1.dll` linkage M9.x establishes for rendering; SPIR-V toolchain reused per §1.7.
 
 ## Part 9: Relationship к KERNEL_ARCHITECTURE.md
 

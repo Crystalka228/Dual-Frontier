@@ -161,3 +161,4 @@ The fix: either one system becomes a reader, or one of them moves to a later pha
 - [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — Phase 5 and reading `Mana[N-1]`.
 - [COMPOSITE_REQUESTS](./COMPOSITE_REQUESTS.md) — Phase 2, waiting for multi-bus responses.
 - [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — Phase 4, ordering `DamageIntent`.
+- [GPU_COMPUTE](./GPU_COMPUTE.md) — async fence-based sync between CPU tick loop and GPU compute dispatch; see "Architectural integration → Two-phase model fit" and "Failure modes → Async sync hazards".

@@ -571,10 +571,12 @@ Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
 | K6 | Second-graph rebuild on mod change | 3-5 days | +200-400 |
 | K7 | Performance measurement (tick-loop) | 3-5 days | +200-400 |
 | K8 | Decision step + production cutover | 1 week | +/- (refactor) |
+| K9 | Field storage abstraction (`RawTileField<T>`) | 1-2 weeks | +600-900 |
 
-**Cumulative**: 5-8 weeks at hobby pace.
+**Cumulative K0-K8**: 5-8 weeks at hobby pace.
+**Cumulative K0-K9**: 6-10 weeks at hobby pace (K9 prerequisite for G-series GPU compute).
 
-**Combined с RUNTIME_ARCHITECTURE.md M9.0-M9.8**: 9-15 weeks total для both pivots. See §8 для combined timeline visualization.
+**Combined с RUNTIME_ARCHITECTURE.md M9.0-M9.8 + GPU_COMPUTE.md G0-G9**: 16-25 weeks total для full architectural foundation. K-series gates K9; K9 gates G-series. See [GPU_COMPUTE](./GPU_COMPUTE.md) Roadmap for G0-G9 detail и combined timeline.
 
 ### K0 — Cherry-pick + cleanup от branch
 
@@ -744,6 +746,26 @@ e2bc2d9 — DLL loading fix
 - Document lessons learned
 
 **Time**: 1 week (depending on outcome — production cutover most work).
+
+### K9 — Field storage abstraction
+
+**Goal**: native `RawTileField<T>` storage as a parallel abstraction alongside `RawComponentStore`. Prerequisite for the G-series GPU compute roadmap ([GPU_COMPUTE](./GPU_COMPUTE.md) v2.0). Ships CPU functional path first; no Vulkan compute dependency.
+
+**Authoritative spec**: [GPU_COMPUTE.md](./GPU_COMPUTE.md) "Architectural integration → Native kernel (KERNEL_ARCHITECTURE.md K9)" + "Roadmap → K9 — Field storage abstraction".
+
+**Deliverables**:
+- `RawTileField<T>` C++ class (data + back buffer + conductivity map + storage flags)
+- C ABI: `df_world_register_field`, `df_world_field_read_cell`, `df_world_field_acquire_span`, `df_world_field_set_conductivity`, `df_world_field_set_storage_flag`
+- Managed bridge: `FieldRegistry`, `FieldHandle<T>` в `DualFrontier.Core.Interop`
+- CPU-side reference implementation of basic diffusion (also serves as G1+ shader equivalence oracle and as CPU fallback per [GPU_COMPUTE](./GPU_COMPUTE.md) "Failure modes → CPU fallback")
+- Selftest: round-trip, span access, mutation, conductivity update, storage flag toggle
+
+**Success criteria**:
+- Any field type registrable / readable / writeable from managed
+- CPU diffusion produces correct results on test grids
+- No GPU dependency (G-series can take over later without API churn)
+
+**Time**: 1-2 weeks. **LOC**: +600-900.
 
 ---
 
@@ -993,4 +1015,4 @@ This document is **v1.0**, authoritative until amended via explicit decision. Am
 
 Next document update expected при K8 closure (decision step results recorded), then per K-milestone (decisions log + risk register updates).
 
-**Document end. Companion: METHODOLOGY.md, CODING_STANDARDS.md, MOD_OS_ARCHITECTURE.md, RUNTIME_ARCHITECTURE.md.**
+**Document end. Companion: METHODOLOGY.md, CODING_STANDARDS.md, MOD_OS_ARCHITECTURE.md, RUNTIME_ARCHITECTURE.md, [GPU_COMPUTE.md](./GPU_COMPUTE.md) (v2.0 LOCKED — K9 field storage + G-series Vulkan compute).**

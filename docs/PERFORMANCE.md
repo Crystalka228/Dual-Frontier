@@ -78,17 +78,35 @@ The current implementation (`AStarPathfinding`) is synchronous A* with a
 the pawn re-requests on the next tick. A path cache between frequently used
 pairs of points is not yet implemented (TODO — would give 10×).
 
-### ProjectileSystem — GPU compute (research, Phase 5+)
+Long-term: pathfinding migrates to GPU flow fields under the K9 + G6/G7
+roadmap ([GPU_COMPUTE](./GPU_COMPUTE.md) Domain A extension). Per-pawn cost
+collapses to one field read + arithmetic; pathfinding cost decouples from
+pawn count. A\* preserved as fallback for unique destinations only.
 
-"Battle of the Gods" stress test: 500 mages × spell-spam = ~5,000 simultaneous projectiles,
-~50,000 collisions/sec. The threshold at which the CPU implementation degrades and
-GPU compute justifies the roundtrip overhead.
+### GPU compute — Domain A (fields) and Domain B (entity-keyed bulk)
 
-The benchmark is added in Phase 5 after `ProjectileSystem` is implemented. Until then — TODO.
+GPU compute is now a foundational architectural capability with two workload domains
+([GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 LOCKED).
 
-TODO (Phase 5): BenchmarkDotNet scenario `ProjectileStressBenchmark` with parameter
+**Domain A — fields** (mana, electricity, water, heat, sound, scent). Dense 2D grids
+updated by 4-neighbor stencil compute shaders. No CPU/GPU crossover threshold — field
+math is GPU-suitable from the first cell. Per-tick budget for 3 fields × 200×200 ×
+5–10 iterations: <1 ms on mid-range GPU vs several ms CPU. Performance benchmarks
+land per G-milestone (G1 mana, G2 electricity, G3 storage, G4 multi-field) and pin
+CPU-fallback ratios for environments without Vulkan 1.3 compute.
+
+**Domain B — entity-keyed bulk compute** (`ProjectileSystem` and similar). Phase 3
+deferral preserved as a special case: still threshold-driven, still benchmarked
+against CPU baseline. "Battle of the Gods" stress test (500 mages × spell-spam =
+~5,000 simultaneous projectiles, ~50,000 collisions/sec) remains the calibration
+scenario, but native kernel + Vulkan rendering layer pivots collapse the dispatch
+overhead from 0.5–2 ms (managed) to microseconds (native), so the threshold may
+shift downward in practice.
+
+TODO (G5+): BenchmarkDotNet scenario `ProjectileStressBenchmark` with parameter
 `[Params(100, 500, 1000, 5000)]` for projectile count. Compare `CpuProjectileCompute`
-vs `GpuProjectileCompute`. Pin the switchover threshold in GPU_COMPUTE.md.
+vs `GpuProjectileCompute` on the post-pivot architecture. Pin the switchover
+threshold in [GPU_COMPUTE](./GPU_COMPUTE.md) Domain B timing budget.
 
 ## Caches and invalidation
 

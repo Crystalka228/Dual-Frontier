@@ -389,7 +389,7 @@ The document is updated after each substantial phase closes. Substantial methodo
 - [DEVELOPMENT_HYGIENE.md](./DEVELOPMENT_HYGIENE.md) — hygiene checklist for every PR, the engine/game boundary.
 - [ISOLATION.md](./ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
 - [NATIVE_CORE_EXPERIMENT.md](./NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
-- [GPU_COMPUTE.md](./GPU_COMPUTE.md) — deferred decision, switchover threshold.
+- [GPU_COMPUTE.md](./GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
 - [ROADMAP.md](./ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
 
 ## Native layer methodology adjustments
