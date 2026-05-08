@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Runtime.CompilerServices;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop.Marshalling;
@@ -214,20 +215,40 @@ public sealed class NativeWorld : IDisposable
         int size = ResolveTypeSize<T>();
 
         // Pack EntityId span to ulong span. Stack-allocate for small batches;
-        // fall back to heap for large ones to avoid stack overflow risk.
-        Span<ulong> packed = entities.Length <= 256
-            ? stackalloc ulong[entities.Length]
-            : new ulong[entities.Length];
-        for (int i = 0; i < entities.Length; i++)
+        // for large ones, rent from ArrayPool to avoid GC pressure (the
+        // `new ulong[]` fallback was the source of an 80 KB allocation per
+        // tick observed in K3 PERFORMANCE_REPORT Measurement 2).
+        ulong[]? rentedBuffer = null;
+        try
         {
-            packed[i] = EntityIdPacking.Pack(entities[i]);
-        }
+            scoped Span<ulong> packed;
+            if (entities.Length <= 256)
+            {
+                packed = stackalloc ulong[entities.Length];
+            }
+            else
+            {
+                rentedBuffer = ArrayPool<ulong>.Shared.Rent(entities.Length);
+                packed = rentedBuffer.AsSpan(0, entities.Length);
+            }
+            for (int i = 0; i < entities.Length; i++)
+            {
+                packed[i] = EntityIdPacking.Pack(entities[i]);
+            }
 
-        fixed (ulong* entitiesPtr = packed)
-        fixed (T* componentsPtr = components)
+            fixed (ulong* entitiesPtr = packed)
+            fixed (T* componentsPtr = components)
+            {
+                NativeMethods.df_world_add_components_bulk(
+                    _handle, entitiesPtr, typeId, componentsPtr, size, entities.Length);
+            }
+        }
+        finally
         {
-            NativeMethods.df_world_add_components_bulk(
-                _handle, entitiesPtr, typeId, componentsPtr, size, entities.Length);
+            if (rentedBuffer != null)
+            {
+                ArrayPool<ulong>.Shared.Return(rentedBuffer);
+            }
         }
     }
 
@@ -251,19 +272,38 @@ public sealed class NativeWorld : IDisposable
         uint typeId = ResolveTypeId<T>();
         int size = ResolveTypeSize<T>();
 
-        Span<ulong> packed = entities.Length <= 256
-            ? stackalloc ulong[entities.Length]
-            : new ulong[entities.Length];
-        for (int i = 0; i < entities.Length; i++)
+        // Mirrors AddComponents — see that method for the ArrayPool rationale.
+        ulong[]? rentedBuffer = null;
+        try
         {
-            packed[i] = EntityIdPacking.Pack(entities[i]);
-        }
+            scoped Span<ulong> packed;
+            if (entities.Length <= 256)
+            {
+                packed = stackalloc ulong[entities.Length];
+            }
+            else
+            {
+                rentedBuffer = ArrayPool<ulong>.Shared.Rent(entities.Length);
+                packed = rentedBuffer.AsSpan(0, entities.Length);
+            }
+            for (int i = 0; i < entities.Length; i++)
+            {
+                packed[i] = EntityIdPacking.Pack(entities[i]);
+            }
 
-        fixed (ulong* entitiesPtr = packed)
-        fixed (T* outputPtr = output)
+            fixed (ulong* entitiesPtr = packed)
+            fixed (T* outputPtr = output)
+            {
+                return NativeMethods.df_world_get_components_bulk(
+                    _handle, entitiesPtr, typeId, outputPtr, size, entities.Length);
+            }
+        }
+        finally
         {
-            return NativeMethods.df_world_get_components_bulk(
-                _handle, entitiesPtr, typeId, outputPtr, size, entities.Length);
+            if (rentedBuffer != null)
+            {
+                ArrayPool<ulong>.Shared.Return(rentedBuffer);
+            }
         }
     }
 
