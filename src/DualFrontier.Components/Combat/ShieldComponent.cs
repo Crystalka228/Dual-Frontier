@@ -10,7 +10,7 @@ namespace DualFrontier.Components.Combat;
 /// for different <c>DamageType</c>s.
 /// </summary>
 [ModAccessible(Read = true)]
-public sealed class ShieldComponent : IComponent
+public struct ShieldComponent : IComponent
 {
     // TODO: public float HpPool;
     // TODO: public float Regen;
