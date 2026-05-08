@@ -5,7 +5,7 @@ using DualFrontier.Contracts.Core;
 /// <summary>
 /// Represents a component managing the pawn's mental state, including mood and breakdown status.
 /// </summary>
-public sealed class MindComponent : IComponent
+public struct MindComponent : IComponent
 {
     // --- Constants ---
 
@@ -21,16 +21,19 @@ public sealed class MindComponent : IComponent
     // --- Public Fields ---
 
     /// <summary>The current mood value of the pawn, ranging from 0f (miserable) to 1f (ecstatic). Defaults to 0.5f (neutral).</summary>
-    public float Mood { get; set; } = 0.5f;
+    public float Mood = 0.5f;
 
     /// <summary>Mood level at which a breakdown triggers. Defaults to 0.3f.</summary>
-    public float MoodBreakThreshold { get; set; } = DefaultBreakThreshold;
+    public float MoodBreakThreshold = DefaultBreakThreshold;
 
     /// <summary>True when the pawn is currently experiencing a mental break.</summary>
-    public bool IsInBreakdown { get; set; } = false;
+    public bool IsInBreakdown;
 
     /// <summary>Ticks remaining in current breakdown. 0 when not breaking.</summary>
-    public int BreakdownTicksRemaining { get; set; } = 0;
+    public int BreakdownTicksRemaining;
+
+    /// <summary>Parameterless ctor required so field initializers run on `new MindComponent()`.</summary>
+    public MindComponent() { }
 
 
     // --- Expression-bodied Properties ---
