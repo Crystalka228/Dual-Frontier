@@ -1017,6 +1017,12 @@ The current enum has `IncompatibleContractsVersion`, `WriteWriteConflict`, `Miss
 - `SharedModWithEntryPoint` (M4)
 - `ContractTypeInRegularMod` (M4) — when a regular mod exports `IModContract` types
 - `CapabilityViolation` (M3) — runtime, raised as `CapabilityViolationException` (not part of the validation set, but listed here for completeness)
+- `FieldRegistrationConflict` (K9) — two mods register a field with the same id
+- `InvalidFieldDimensions` (K9) — field width or height is non-positive or exceeds kernel limits
+- `FieldCapabilityMismatch` (K9) — mod accesses a field without the corresponding `field.*` capability declared in its manifest
+- `ComputePipelineCompilationFailed` (G0) — SPIR-V bytecode failed validation at pipeline registration
+- `ComputePipelineRegistrationConflict` (G0) — two mods register a compute pipeline with the same id
+- `ComputeUnsupportedWarning` (G0) — non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [GPU_COMPUTE](./GPU_COMPUTE.md) "Failure modes → CPU fallback"
 
 ### 11.3 Closing `ROADMAP` debt incidentally
 
