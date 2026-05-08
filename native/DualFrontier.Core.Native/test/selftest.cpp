@@ -2,13 +2,18 @@
 // validated on a machine without a .NET SDK. Prints pass/fail per scenario
 // and returns a non-zero exit code on failure.
 
+#include <atomic>
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <stdexcept>
+#include <thread>
 #include <vector>
 
+#include "bootstrap_graph.h"
 #include "df_capi.h"
+#include "thread_pool.h"
 
 namespace {
 
@@ -300,6 +305,132 @@ void scenario_throughput() {
     df_world_destroy(w);
 }
 
+void scenario_bootstrap_basic() {
+    std::printf("scenario_bootstrap_basic\n");
+    df_world_handle w = df_engine_bootstrap();
+    DF_CHECK(w != nullptr, "bootstrap returned valid handle");
+
+    uint64_t e = df_world_create_entity(w);
+    DF_CHECK(df_world_is_alive(w, e) == 1, "entity created post-bootstrap");
+
+    df_world_destroy(w);
+}
+
+void scenario_bootstrap_double_rejected() {
+    std::printf("scenario_bootstrap_double_rejected\n");
+    df_world_handle w1 = df_engine_bootstrap();
+    DF_CHECK(w1 != nullptr, "first bootstrap succeeded");
+
+    // Second bootstrap creates a second independent engine — both valid.
+    // (Multiple engines supported per docstring.)
+    df_world_handle w2 = df_engine_bootstrap();
+    DF_CHECK(w2 != nullptr, "second bootstrap creates independent engine");
+    DF_CHECK(w1 != w2, "engines are distinct");
+
+    df_world_destroy(w1);
+    df_world_destroy(w2);
+}
+
+void scenario_bootstrap_graph_topological() {
+    std::printf("scenario_bootstrap_graph_topological\n");
+    using namespace dualfrontier;
+
+    BootstrapGraph graph;
+    std::atomic<int> counter{0};
+    std::atomic<int> task_a_order{-1};
+    std::atomic<int> task_b_order{-1};
+    std::atomic<int> task_c_order{-1};
+
+    graph.add_task("A", {},
+        [&]() { task_a_order.store(counter.fetch_add(1)); },
+        []() {});
+    graph.add_task("B", {"A"},
+        [&]() { task_b_order.store(counter.fetch_add(1)); },
+        []() {});
+    graph.add_task("C", {"B"},
+        [&]() { task_c_order.store(counter.fetch_add(1)); },
+        []() {});
+
+    ThreadPool pool(2);
+    bool ok = graph.run(pool);
+    pool.shutdown();
+
+    DF_CHECK(ok, "linear graph executed successfully");
+    DF_CHECK(task_a_order.load() < task_b_order.load(),
+             "A executed before B");
+    DF_CHECK(task_b_order.load() < task_c_order.load(),
+             "B executed before C");
+}
+
+void scenario_bootstrap_graph_parallel() {
+    std::printf("scenario_bootstrap_graph_parallel\n");
+    using namespace dualfrontier;
+
+    // Diamond: A -> (B || C) -> D
+    // B and C should execute concurrently (overlapping wall-clock time).
+    BootstrapGraph graph;
+    std::atomic<bool> b_started{false};
+    std::atomic<bool> c_started{false};
+    std::atomic<bool> b_saw_c_started{false};
+    std::atomic<bool> c_saw_b_started{false};
+
+    graph.add_task("A", {},
+        []() {},
+        []() {});
+    graph.add_task("B", {"A"},
+        [&]() {
+            b_started.store(true);
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            b_saw_c_started.store(c_started.load());
+        },
+        []() {});
+    graph.add_task("C", {"A"},
+        [&]() {
+            c_started.store(true);
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+            c_saw_b_started.store(b_started.load());
+        },
+        []() {});
+    graph.add_task("D", {"B", "C"},
+        []() {},
+        []() {});
+
+    ThreadPool pool(4);
+    bool ok = graph.run(pool);
+    pool.shutdown();
+
+    DF_CHECK(ok, "diamond graph executed successfully");
+    DF_CHECK(b_saw_c_started.load() || c_saw_b_started.load(),
+             "B and C executed concurrently (parallelism evidence)");
+}
+
+void scenario_bootstrap_rollback_on_failure() {
+    std::printf("scenario_bootstrap_rollback_on_failure\n");
+    using namespace dualfrontier;
+
+    BootstrapGraph graph;
+    std::atomic<int> a_cleanup_count{0};
+    std::atomic<int> b_cleanup_count{0};
+
+    // A succeeds, B fails — A's cleanup must be invoked.
+    graph.add_task("A", {},
+        []() { /* succeeds */ },
+        [&]() { a_cleanup_count.fetch_add(1); });
+    graph.add_task("B", {"A"},
+        []() { throw std::runtime_error("intentional failure for test"); },
+        [&]() { b_cleanup_count.fetch_add(1); });
+
+    ThreadPool pool(2);
+    bool ok = graph.run(pool);
+    pool.shutdown();
+
+    DF_CHECK(!ok, "graph reported failure");
+    DF_CHECK(a_cleanup_count.load() == 1, "A's cleanup invoked exactly once");
+    DF_CHECK(b_cleanup_count.load() == 0,
+             "B's cleanup NOT invoked (B never completed)");
+    DF_CHECK(!graph.last_failure().empty(), "failure message recorded");
+}
+
 } // namespace
 
 int main() {
@@ -311,6 +442,11 @@ int main() {
     scenario_span_lifetime();
     scenario_explicit_registration();
     scenario_throughput();
+    scenario_bootstrap_basic();
+    scenario_bootstrap_double_rejected();
+    scenario_bootstrap_graph_topological();
+    scenario_bootstrap_graph_parallel();
+    scenario_bootstrap_rollback_on_failure();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

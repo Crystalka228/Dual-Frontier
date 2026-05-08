@@ -51,7 +51,15 @@ set_target_properties(DualFrontier.Core.Native PROPERTIES
 
 option(DF_NATIVE_BUILD_SELFTEST "Build the native self-test executable" ON)
 if(DF_NATIVE_BUILD_SELFTEST)
-    add_executable(df_native_selftest test/selftest.cpp)
-    target_link_libraries(df_native_selftest PRIVATE DualFrontier.Core.Native)
+    # The selftest exercises C++ internals (BootstrapGraph, ThreadPool) that
+    # are intentionally NOT exported via DF_API. Compile the sources directly
+    # into the executable so it can link to non-exported symbols. This is
+    # equivalent to a static-link but bypasses the need for an extra static
+    # library target.
+    add_executable(df_native_selftest test/selftest.cpp ${DF_NATIVE_SOURCES})
     target_include_directories(df_native_selftest PRIVATE include)
+    # DF_NATIVE_BUILDING_DLL makes DF_API resolve to dllexport — harmless on
+    # an .exe (the symbols are simply marked externally visible) and avoids
+    # the dllimport stub that would otherwise expect a DLL.
+    target_compile_definitions(df_native_selftest PRIVATE DF_NATIVE_BUILDING_DLL)
 endif()
