@@ -19,14 +19,14 @@ using DualFrontier.Contracts.Core;
 /// reservation / pathfinding / interaction systems.
 /// </summary>
 [ModAccessible(Read = true, Write = true)]
-public sealed class ConsumableComponent : IComponent
+public struct ConsumableComponent : IComponent
 {
     /// <summary>
     /// Which need this consumable closes when consumed. Typically
     /// <see cref="NeedKind.Satiety"/> for food, <see cref="NeedKind.Hydration"/>
     /// for drinks.
     /// </summary>
-    public NeedKind RestoresKind { get; set; }
+    public NeedKind RestoresKind;
 
     /// <summary>
     /// Fraction of the target need restored per consume action ([0..1]).
@@ -34,7 +34,7 @@ public sealed class ConsumableComponent : IComponent
     /// current value, clamped to 1.0. Calibrated per content commit
     /// (M8.4 ItemFactory).
     /// </summary>
-    public float RestorationAmount { get; set; }
+    public float RestorationAmount;
 
     /// <summary>
     /// Remaining consume actions before the entity is destroyed.
@@ -43,5 +43,5 @@ public sealed class ConsumableComponent : IComponent
     /// food; values &gt; 1 model multi-bite items (e.g. a loaf of bread with
     /// 4 portions).
     /// </summary>
-    public int Charges { get; set; } = 1;
+    public int Charges;
 }
