@@ -7,7 +7,7 @@ namespace DualFrontier.Components.Magic;
 /// into a school rather than sampling all of them (depth beats breadth).
 /// GDD 4.4 "Multi-school" describes the penalties for spreading thin.
 /// </summary>
-public sealed class SchoolComponent : IComponent
+public struct SchoolComponent : IComponent
 {
     // TODO: introduce DualFrontier.Components.Magic.MagicSchool enum
     //       (Fire, Ice, Storm, Earth, Wind, Water, Dark, Light, Mind, Void) — GDD 4.3, Phase 6.
