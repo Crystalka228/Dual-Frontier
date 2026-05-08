@@ -10,9 +10,9 @@ namespace DualFrontier.Components.Combat;
 /// (`MagicResistComponent`, Phase 6).
 /// </summary>
 [ModAccessible(Read = true)]
-public sealed class ArmorComponent : IComponent
+public struct ArmorComponent : IComponent
 {
-    // TODO: public float SharpResist;
-    // TODO: public float BluntResist;
-    // TODO: public float HeatResist;
+    public float SharpResist;
+    public float BluntResist;
+    public float HeatResist;
 }
