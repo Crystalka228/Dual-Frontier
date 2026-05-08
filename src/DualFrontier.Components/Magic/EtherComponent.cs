@@ -8,7 +8,8 @@ namespace DualFrontier.Components.Magic;
 /// Determines mana cap, accessible schools, and spell complexity.
 /// Raised via <c>EtherLevelUpEvent</c> (deferred, meditation / experience).
 /// </summary>
-public sealed class EtherComponent : IComponent
+public struct EtherComponent : IComponent
 {
-    // TODO: public int Level;  // range 1..5 — see GDD 4.1
+    /// <summary>Ether-perception tier (1..5). See GDD 4.1.</summary>
+    public int Level;
 }
