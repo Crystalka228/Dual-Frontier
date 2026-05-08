@@ -7,6 +7,7 @@
     <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
     <ProjectReference Include="..\DualFrontier.Core\DualFrontier.Core.csproj" />
     <ProjectReference Include="..\DualFrontier.Components\DualFrontier.Components.csproj" />
+    <ProjectReference Include="..\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
     <ProjectReference Include="..\DualFrontier.Events\DualFrontier.Events.csproj" />
     <ProjectReference Include="..\DualFrontier.Systems\DualFrontier.Systems.csproj" />
     <ProjectReference Include="..\DualFrontier.AI\DualFrontier.AI.csproj" />
