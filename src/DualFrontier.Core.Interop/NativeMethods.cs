@@ -117,4 +117,38 @@ internal static class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern IntPtr df_engine_bootstrap();
+
+    // K5 Command Buffer write batching.
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern IntPtr df_world_begin_batch(
+        IntPtr world,
+        uint typeId,
+        int componentSize);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_batch_record_update(
+        IntPtr batch,
+        ulong entity,
+        void* data);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_batch_record_add(
+        IntPtr batch,
+        ulong entity,
+        void* data);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_batch_record_remove(
+        IntPtr batch,
+        ulong entity);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_batch_flush(IntPtr batch);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_batch_cancel(IntPtr batch);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_batch_destroy(IntPtr batch);
 }

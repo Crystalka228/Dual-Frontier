@@ -276,9 +276,9 @@ public sealed class NativeWorld : IDisposable
     /// The caller MUST <see cref="SpanLease{T}.Dispose"/> the lease before
     /// resuming mutations. Multiple concurrent leases are allowed.
     ///
-    /// K1 SKELETON: provides <see cref="SpanLease{T}.Span"/> and
-    /// <see cref="SpanLease{T}.Indices"/>. K5 will extend with paired
-    /// iteration helpers and lease pooling.
+    /// Provides <see cref="SpanLease{T}.Span"/>, <see cref="SpanLease{T}.Indices"/>,
+    /// and <see cref="SpanLease{T}.Pairs"/> (added in K5). Lease pooling
+    /// remains deferred — K7 measurements determine if it is needed.
     /// </summary>
     public unsafe SpanLease<T> AcquireSpan<T>() where T : unmanaged
     {
@@ -299,6 +299,33 @@ public sealed class NativeWorld : IDisposable
         }
 
         return new SpanLease<T>(this, typeId, densePtr, indicesPtr, count);
+    }
+
+    /// <summary>
+    /// Open a write batch for component type <typeparamref name="T"/>.
+    /// Recorded commands are applied atomically when the batch is
+    /// <see cref="WriteBatch{T}.Flush"/>ed (or auto-flushed on Dispose).
+    ///
+    /// While any batch is active on this world, direct mutations
+    /// (Add/Remove/Destroy/FlushDestroyed/AddComponents) are silently
+    /// rejected by the native side. Multiple concurrent batches are
+    /// allowed (different OR same component type).
+    /// </summary>
+    public WriteBatch<T> BeginBatch<T>() where T : unmanaged
+    {
+        ThrowIfDisposed();
+
+        uint typeId = ResolveTypeId<T>();
+        int size = ResolveTypeSize<T>();
+
+        IntPtr batchHandle = NativeMethods.df_world_begin_batch(_handle, typeId, size);
+        if (batchHandle == IntPtr.Zero)
+        {
+            throw new InvalidOperationException(
+                $"Failed to begin batch for component type {typeof(T).Name}");
+        }
+
+        return new WriteBatch<T>(this, typeId, batchHandle);
     }
 
     public void Dispose()

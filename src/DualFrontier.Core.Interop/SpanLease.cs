@@ -1,4 +1,5 @@
 using System;
+using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Core.Interop;
 
@@ -7,9 +8,10 @@ namespace DualFrontier.Core.Interop;
 /// Disposing the lease releases the span back to the native side, allowing
 /// mutation again.
 ///
-/// K1 SKELETON: provides ReadOnlySpan&lt;T&gt; over the dense data and
-/// ReadOnlySpan&lt;int&gt; over the parallel entity-index array. K5 will
-/// extend with paired iteration helpers and lease pooling.
+/// Provides ReadOnlySpan&lt;T&gt; over the dense data, ReadOnlySpan&lt;int&gt;
+/// over the parallel entity-index array, and (since K5)
+/// <see cref="Pairs"/> for (EntityId, T) iteration. Lease pooling remains
+/// deferred — K7 will measure first.
 ///
 /// Lifetime contract (mirrors df_capi.h):
 ///   * While ANY SpanLease is active on the owning <see cref="NativeWorld"/>,
@@ -64,6 +66,51 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
         {
             if (_released) throw new ObjectDisposedException(nameof(SpanLease<T>));
             return new ReadOnlySpan<int>(_indicesPtr, _count);
+        }
+    }
+
+    /// <summary>
+    /// Iterate (EntityId, T) pairs over the span. Resolves K1 skeleton's
+    /// deferred paired-iteration helper.
+    ///
+    /// Caveat: <see cref="EntityId"/> is reconstructed with <c>Version=1</c>
+    /// because <see cref="SpanLease{T}"/> does not currently track per-entity
+    /// versions. Suitable for fresh entities (test scenarios) and for
+    /// snapshot-then-record flows (the recorded command is validated by
+    /// version at flush time, so stale ids are rejected). Production-grade
+    /// version reconstruction would require either a per-pair P/Invoke or
+    /// extending the span ABI to return parallel version arrays — deferred
+    /// to K7 once a measurement shows correctness pressure.
+    /// </summary>
+    public PairsEnumerable Pairs => new PairsEnumerable(this);
+
+    public readonly struct PairsEnumerable
+    {
+        private readonly SpanLease<T> _lease;
+        internal PairsEnumerable(SpanLease<T> lease) => _lease = lease;
+        public PairsEnumerator GetEnumerator() => new PairsEnumerator(_lease);
+    }
+
+    public ref struct PairsEnumerator
+    {
+        private readonly SpanLease<T> _lease;
+        private int _index;
+
+        internal PairsEnumerator(SpanLease<T> lease)
+        {
+            _lease = lease;
+            _index = -1;
+        }
+
+        public bool MoveNext() => ++_index < _lease.Count;
+
+        public (EntityId Entity, T Component) Current
+        {
+            get
+            {
+                int entityIndex = _lease.Indices[_index];
+                return (new EntityId(entityIndex, 1), _lease.Span[_index]);
+            }
         }
     }
 
