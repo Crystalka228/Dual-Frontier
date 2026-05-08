@@ -2,7 +2,7 @@
 
 *The project's central methodology document. Describes the four-agent LLM pipeline, contracts as IPC between agents, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
 
-*Version: 1.3 (2026-05-07). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7 and the post-K0 / post-K1 native-layer adjustments appended to the native-layer adjustments section (descriptive pre-flight checks, ABI boundary exception completeness, brief authoring as prerequisite step).*
+*Version: 1.4 (2026-05-07). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7 and the post-K0 / post-K1 / post-K3 native-layer adjustments appended to the native-layer adjustments section (descriptive pre-flight checks, ABI boundary exception completeness, brief authoring as prerequisite step, calibrated time estimates).*
 
 ---
 
@@ -372,6 +372,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.1 | 2026-05-03 | Added §7 Operating principles, with §7.1 stating the "data exists or it doesn't" principle and its empirical record. Subsequent sections renumbered (§8 Reproducibility, §9 Open questions, §10 Change history, §11 See also). |
 | 1.2 | 2026-05-07 | Expanded "Native layer methodology adjustments" section with descriptive vs prescriptive pre-flight principle, derived from K0 closure lesson. Brief-authoring checklist added. |
 | 1.3 | 2026-05-07 | Post-K1 lessons added to «Native layer methodology adjustments»: ABI boundary exception completeness (throws и their boundary catches are inseparable; brief must enumerate explicitly) and brief authoring as prerequisite step (brief is its own commit, performed before execution begins). |
+| 1.4 | 2026-05-07 | Post-K3 calibration lesson added к «Native layer methodology adjustments»: brief time estimates from architectural docs assume hobby pace (~1h/day manual typing); auto-mode execution actual time is 5-10x faster. Future briefs must state both hobby-pace и auto-mode estimates explicitly. K0-K3 measured data: 11-17 days hobby estimate vs ~6 hours actual auto-mode. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -497,6 +498,63 @@ This was correct resolution but not specified by the brief — agent improvised.
 **Brief structure note**: Future briefs SHOULD include explicit «Step 0 — Brief authoring commit» before pre-flight checks, calling out this prerequisite. Without it, executing agents face self-bootstrapping problem and either improvise (best case) or fail HG-1 incorrectly (worst case).
 
 **Falsifiable claim**: Briefs that include explicit «Step 0 — brief authoring commit» step will encounter zero «agent improvised brief-vs-clean-tree resolution» deviations from K2 onward.
+
+### Calibrated time estimates
+
+Time estimates in architectural documents (`KERNEL_ARCHITECTURE.md` Part 2, `RUNTIME_ARCHITECTURE.md` Part 2, brief skeletons in `tools/briefs/`) are written assuming **hobby solo developer pace — approximately one hour per day of manual typing**. This was the working assumption when those documents were authored.
+
+**Auto-mode execution is fundamentally faster.** When briefs are executed by Claude Code agent в auto mode, three multipliers apply:
+
+1. **No human typing limit** — agent generates code at LLM inference speed
+2. **No re-thinking during execution** — architectural decisions and design discussions happen during brief authoring, executor performs implementation only
+3. **No waiting between steps** — atomic commits chain immediately, build/test cycles minimize idle time
+
+**Observed multiplier**: 5-10x faster than hobby-pace estimates (measured across K0-K3, 2026-05-07).
+
+**Concrete K0-K3 data**:
+
+| Milestone | Brief estimate (hobby pace) | Actual execution time |
+|---|---|---|
+| K0 | 1-2 days | ~20 min |
+| K1 | 3-5 days | ~1 hour |
+| K2 | 2-3 days | ~1.5 hours |
+| K3 | 5-7 days | ~3.5 hours |
+| **Total K0-K3** | **11-17 days** | **~6 hours** |
+
+This is not exaggeration or one-time speed-up — it is the steady-state pace когда:
+- Brief is authored carefully с full design decisions resolved upfront
+- Execution is delegated к Claude Code agent в auto mode
+- Crystalka acts as architectural reviewer, не keystroke producer
+
+**Brief authoring requirement** (mandatory checklist item для any brief from K4 onward):
+
+- [ ] **Estimate clarity**: brief states explicitly which pace it assumes
+- [ ] **Both estimates**: provide hobby-pace estimate (matches roadmap docs) AND auto-mode estimate (calibrated к actual execution)
+
+**Recommended phrasing**:
+
+```
+**Estimated time**: X hours auto-mode (Y days at hobby pace, ~1h/day manual typing).
+```
+
+Example: «**Estimated time**: 4-6 hours auto-mode (5-7 days at hobby pace).»
+
+**Why this matters**:
+
+- **Calibrated expectations**: when Crystalka asks «how long?», the answer should match reality, не roadmap fiction. False expectations lead к over-pessimistic sequencing decisions.
+- **Sequencing decisions affected**: D2 sequencing decision (β5/β6/β3) was framed assuming hobby-pace estimates. Real timeline для β6 kernel-first = 1-2 calendar weeks, не 5-8 weeks. M9.x runtime sprint can start sooner than original plan implied.
+- **Brief scope decisions affected**: a milestone estimated 2-3 weeks may seem too large to bundle additional concerns into; same milestone at 4-8 hours is comfortable scope для bundling related fixes.
+- **Pipeline economics**: agent execution costs (compute, tokens, time) are proportional к real execution time, не fictional days. Tracking real time enables proper accounting.
+
+**Falsifiable claim**: From K4 onward, brief estimates that follow the «X hours auto-mode (Y days hobby pace)» format will match actual execution time within 2x. Counter-example would force re-calibration of the multiplier.
+
+**Caveat — what auto-mode does NOT speed up**:
+
+- **Brief authoring itself** — design discussions, architectural decisions, throw inventory analysis, careful prose. These remain at human pace + LLM dialogue (~1-3 hours for a 1500-line brief). This is correct — quality of brief determines quality of execution.
+- **Architectural design discussions** — Q1-Q4 style decision sessions before brief authoring. Crystalka must engage thoughtfully; cannot be auto-mode'd.
+- **Closure review and lessons learned** — analysis of deviations, methodology updates. Requires human judgment.
+
+**The pattern is**: think slowly, decide carefully, execute fast. Auto-mode multiplier applies only к execution phase.
 
 ### Reference: K0 lessons learned
 
