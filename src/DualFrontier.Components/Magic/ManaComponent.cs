@@ -8,9 +8,9 @@ namespace DualFrontier.Components.Magic;
 /// Maximum and regeneration depend on the ether-perception level
 /// (see <see cref="EtherComponent"/>, GDD 4.1 "Ether Perception Tiers").
 /// </summary>
-public sealed class ManaComponent : IComponent
+public struct ManaComponent : IComponent
 {
-    // TODO: public float Current;
-    // TODO: public float Maximum;
-    // TODO: public float RegenerationRate;
+    public float Current;
+    public float Maximum;
+    public float RegenerationRate;
 }
