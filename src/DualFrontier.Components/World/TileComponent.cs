@@ -7,7 +7,7 @@ namespace DualFrontier.Components.World
     /// One TileComponent per grid position. Passability is read by
     /// PathfindingService; Terrain is read by BiomeSystem and Presentation.
     /// </summary>
-    public sealed class TileComponent : IComponent
+    public struct TileComponent : IComponent
     {
         /// <summary>Type of terrain on this tile.</summary>
         public TerrainKind Terrain;
