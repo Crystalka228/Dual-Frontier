@@ -18,19 +18,19 @@ using DualFrontier.Contracts.Core;
 /// timeout cleanup (e.g. orphan reservations from dead pawns).
 /// </summary>
 [ModAccessible(Read = true, Write = true)]
-public sealed class ReservationComponent : IComponent
+public struct ReservationComponent : IComponent
 {
     /// <summary>
     /// Pawn entity holding the reservation. Component existence implies
     /// the reservation is active — null is not a valid state (component
     /// is removed on release).
     /// </summary>
-    public EntityId ReservedBy { get; set; }
+    public EntityId ReservedBy;
 
     /// <summary>
     /// Simulation tick when reservation was created. Used by timeout
     /// cleanup if the reserving pawn dies, gets stuck, or otherwise
     /// fails to follow through.
     /// </summary>
-    public long ReservedAtTick { get; set; }
+    public long ReservedAtTick;
 }
