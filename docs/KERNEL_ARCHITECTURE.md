@@ -994,7 +994,36 @@ K0 (1-2d preservation)
 Total: 11-15 weeks
 ````
 
-**Recommendation** (per Crystalka philosophy): **β5 или β6 over β3** — single architectural focus per period preserves cleanness. Decision deferred к after K2 measurement (evidence-based choice).
+**Recommendation** (per Crystalka philosophy): **β5 или β6 over β3** — single architectural focus per period preserves cleanness. Decision deferred к after K2 measurement (evidence-based choice). **Sequencing decision RESOLVED 2026-05-07** per K2 closure: **β6 selected**. См. `MIGRATION_PROGRESS.md` "Sequencing decision" section.
+
+### Sequencing options including К9 + G-series
+
+After K8 closure, two prerequisites unlock G-series:
+
+- К9 (field storage CPU functional first, 1-2 weeks)
+- M9.0–M9.4 (Vulkan instance/device live, 2-3 weeks within M-series)
+
+Three valid sequencing options для post-K8 work:
+
+**Option β6+G-sequential** (recommended baseline — single architectural focus per period):
+````
+K0-K8 (5-8w) → К9 (1-2w) → M9.0-M9.8 (4-7w) → G0-G9 (5-8w)
+Total: 15-25 weeks
+````
+
+**Option β6+G-overlap** (К9 + early G-series concurrent с runtime, if hobby pace permits):
+````
+K0-K8 (5-8w) → split: { K9 + G0-G5 } parallel { M9.0-M9.8 } → G6-G9
+Total: 13-22 weeks
+````
+
+**Option β6+G-runtime-first** (М9 ready first, then К9 + G-series sequentially):
+````
+K0-K8 (5-8w) → M9.0-M9.8 (4-7w) → К9 (1-2w) → G0-G9 (5-8w)
+Total: 15-25 weeks
+````
+
+**Recommendation**: **β6+G-sequential** aligns с «cleanness > expediency» philosophy. Decision deferred к after K8 closure (evidence-based choice based on K8 metrics).
 
 ### Cross-document invariants
 
