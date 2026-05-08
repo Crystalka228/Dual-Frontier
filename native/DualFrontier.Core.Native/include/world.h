@@ -11,6 +11,8 @@
 
 namespace dualfrontier {
 
+class WriteBatch;  // forward declaration for friend access
+
 // Native mirror of src/DualFrontier.Core/ECS/World.cs.
 //
 // Intentional simplifications for the PoC:
@@ -62,6 +64,12 @@ public:
         return active_spans_.load(std::memory_order_acquire);
     }
 
+    // K5 Command Buffer — count of active write batches. Direct mutations
+    // (add/remove/destroy/flush_destroyed) are rejected while > 0.
+    [[nodiscard]] int32_t active_batches_count() const noexcept {
+        return active_batches_.load(std::memory_order_acquire);
+    }
+
     // K3 bootstrap state. is_bootstrapped() returns true after a successful
     // df_engine_bootstrap() has marked this World as ready. The flag is
     // not consulted by World's own methods; it exists so external bootstrap
@@ -80,6 +88,20 @@ private:
     RawComponentStore* get_or_create_store(uint32_t type_id, int32_t size);
     const RawComponentStore* find_store(uint32_t type_id) const noexcept;
 
+    // K5 — internal mutation paths called from WriteBatch::flush(). Skip the
+    // active_batches_ check (the calling batch is itself one) but still
+    // honour the active_spans_ contract.
+    friend class WriteBatch;
+    void increment_active_batches() noexcept {
+        active_batches_.fetch_add(1, std::memory_order_acq_rel);
+    }
+    void decrement_active_batches() noexcept {
+        active_batches_.fetch_sub(1, std::memory_order_acq_rel);
+    }
+    void add_component_unchecked(EntityId id, uint32_t type_id,
+                                  const void* data, int32_t size);
+    void remove_component_unchecked(EntityId id, uint32_t type_id);
+
     std::vector<int32_t> versions_;
     int32_t next_index_ = 1; // Index 0 reserved for Invalid.
     int32_t live_count_ = 0;
@@ -87,7 +109,73 @@ private:
     std::vector<EntityId> pending_destroy_;
     std::unordered_map<uint32_t, std::unique_ptr<RawComponentStore>> stores_;
     std::atomic<int32_t> active_spans_{0};
+    std::atomic<int32_t> active_batches_{0};
     std::atomic<bool> bootstrapped_{false};
+};
+
+// K5 Command Buffer pattern — write batching protocol.
+//
+// Managed code never directly mutates native memory. Mutations are recorded
+// as commands, validated native-side, applied atomically at flush time.
+//
+// Lifecycle:
+//   * ctor increments the owning World's active_batches_ counter.
+//   * record_* methods append к command/data vectors (managed-side scratch
+//     equivalent transmits one record per P/Invoke в K5; bulk transmit
+//     deferred to K7+).
+//   * flush() validates each command (entity liveness via stored version),
+//     applies in record order, returns count of successful commands.
+//   * cancel() discards commands without applying.
+//   * dtor auto-flushes if not explicitly flushed/cancelled. Always
+//     decrements active_batches_ counter.
+//
+// While ANY active batch exists, direct mutations (add/remove/destroy/flush_destroyed)
+// throw std::logic_error (caught at C ABI). Multiple concurrent batches
+// allowed; flush goes through internal *_unchecked paths so it does not
+// deadlock against its own contribution или peer batches.
+
+enum class CommandKind : uint8_t {
+    Update = 1,
+    Add = 2,
+    Remove = 3,
+};
+
+struct WriteCommand {
+    CommandKind kind;
+    uint32_t entity_index;
+    uint32_t entity_version;
+};
+
+class WriteBatch {
+public:
+    WriteBatch(World* world, uint32_t type_id, int32_t component_size);
+    ~WriteBatch();
+
+    WriteBatch(const WriteBatch&) = delete;
+    WriteBatch& operator=(const WriteBatch&) = delete;
+    WriteBatch(WriteBatch&&) = delete;
+    WriteBatch& operator=(WriteBatch&&) = delete;
+
+    int32_t record_update(uint64_t entity, const void* data);
+    int32_t record_add(uint64_t entity, const void* data);
+    int32_t record_remove(uint64_t entity);
+
+    int32_t flush();
+    void cancel();
+
+    bool is_active() const noexcept { return !cancelled_ && !flushed_; }
+    int32_t command_count() const noexcept {
+        return static_cast<int32_t>(commands_.size());
+    }
+
+private:
+    World* world_;
+    uint32_t type_id_;
+    int32_t component_size_;
+    std::vector<WriteCommand> commands_;
+    std::vector<uint8_t> command_data_;
+    bool cancelled_;
+    bool flushed_;
 };
 
 } // namespace dualfrontier

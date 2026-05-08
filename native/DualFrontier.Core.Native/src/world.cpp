@@ -37,8 +37,9 @@ int32_t World::entity_count() const noexcept {
 }
 
 void World::destroy_entity(EntityId id) {
-    if (active_spans_.load(std::memory_order_acquire) > 0) {
-        throw std::logic_error("Cannot mutate while spans are active");
+    if (active_spans_.load(std::memory_order_acquire) > 0 ||
+        active_batches_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while spans or batches are active");
     }
     if (!is_alive(id)) return;
     ++versions_[id.index];
@@ -47,8 +48,9 @@ void World::destroy_entity(EntityId id) {
 }
 
 void World::flush_destroyed() {
-    if (active_spans_.load(std::memory_order_acquire) > 0) {
-        throw std::logic_error("Cannot mutate while spans are active");
+    if (active_spans_.load(std::memory_order_acquire) > 0 ||
+        active_batches_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while spans or batches are active");
     }
     for (const EntityId id : pending_destroy_) {
         for (auto& [type_id, store] : stores_) {
@@ -62,6 +64,21 @@ void World::flush_destroyed() {
 
 void World::add_component(EntityId id, uint32_t type_id, const void* data,
                           int32_t size) {
+    if (active_spans_.load(std::memory_order_acquire) > 0 ||
+        active_batches_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while spans or batches are active");
+    }
+    if (!is_alive(id)) return;
+    RawComponentStore* store = get_or_create_store(type_id, size);
+    store->add(id.index, data, size);
+}
+
+void World::add_component_unchecked(EntityId id, uint32_t type_id,
+                                     const void* data, int32_t size) {
+    // K5 — internal path used by WriteBatch::flush(). The active_batches_
+    // count is intentionally NOT consulted (the calling batch is itself one).
+    // The active_spans_ contract still applies — flushing while a span is
+    // outstanding violates the read-only-snapshot invariant.
     if (active_spans_.load(std::memory_order_acquire) > 0) {
         throw std::logic_error("Cannot mutate while spans are active");
     }
@@ -86,6 +103,18 @@ bool World::get_component(EntityId id, uint32_t type_id, void* out_data,
 }
 
 void World::remove_component(EntityId id, uint32_t type_id) {
+    if (active_spans_.load(std::memory_order_acquire) > 0 ||
+        active_batches_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while spans or batches are active");
+    }
+    if (!is_alive(id)) return;
+    auto it = stores_.find(type_id);
+    if (it == stores_.end()) return;
+    it->second->remove(id.index);
+}
+
+void World::remove_component_unchecked(EntityId id, uint32_t type_id) {
+    // K5 — internal path used by WriteBatch::flush(). See add_component_unchecked.
     if (active_spans_.load(std::memory_order_acquire) > 0) {
         throw std::logic_error("Cannot mutate while spans are active");
     }
@@ -103,8 +132,9 @@ int32_t World::component_count(uint32_t type_id) const noexcept {
 void World::add_components_bulk(const EntityId* entities, uint32_t type_id,
                                 const void* component_data,
                                 int32_t component_size, int32_t count) {
-    if (active_spans_.load(std::memory_order_acquire) > 0) {
-        throw std::logic_error("Cannot mutate while spans are active");
+    if (active_spans_.load(std::memory_order_acquire) > 0 ||
+        active_batches_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while spans or batches are active");
     }
     if (!entities || !component_data || component_size <= 0 || count <= 0) {
         return;
@@ -226,6 +256,206 @@ void World::mark_bootstrapped() {
             expected, true, std::memory_order_acq_rel)) {
         throw std::logic_error("World: double bootstrap detected");
     }
+}
+
+// =============================================================================
+// K5 WriteBatch implementation — Command Buffer pattern.
+// =============================================================================
+
+WriteBatch::WriteBatch(World* world, uint32_t type_id, int32_t component_size)
+    : world_(world)
+    , type_id_(type_id)
+    , component_size_(component_size)
+    , cancelled_(false)
+    , flushed_(false) {
+    if (!world_) {
+        throw std::invalid_argument("world is null");
+    }
+    if (type_id_ == 0) {
+        throw std::invalid_argument("type_id 0 is reserved");
+    }
+    if (component_size_ <= 0) {
+        throw std::invalid_argument("component_size must be positive");
+    }
+    world_->increment_active_batches();
+}
+
+WriteBatch::~WriteBatch() {
+    if (!flushed_ && !cancelled_) {
+        // Auto-flush — caller treated Dispose as "I'm done, apply" rather
+        // than "abort". Mirrors managed-side `using var batch` semantics.
+        try {
+            // Inline flush body — calling flush() here would re-check
+            // flushed_/cancelled_ which is fine, but we want the destructor
+            // to remain noexcept-equivalent.
+            flushed_ = true;
+            std::size_t data_offset = 0;
+            for (const WriteCommand& cmd : commands_) {
+                EntityId id{static_cast<int32_t>(cmd.entity_index),
+                            static_cast<int32_t>(cmd.entity_version)};
+                if (!world_->is_alive(id)) {
+                    if (cmd.kind == CommandKind::Update ||
+                        cmd.kind == CommandKind::Add) {
+                        data_offset += static_cast<std::size_t>(component_size_);
+                    }
+                    continue;
+                }
+                switch (cmd.kind) {
+                    case CommandKind::Update:
+                        if (world_->has_component(id, type_id_)) {
+                            world_->add_component_unchecked(
+                                id, type_id_,
+                                command_data_.data() + data_offset,
+                                component_size_);
+                        }
+                        data_offset += static_cast<std::size_t>(component_size_);
+                        break;
+                    case CommandKind::Add:
+                        world_->add_component_unchecked(
+                            id, type_id_,
+                            command_data_.data() + data_offset,
+                            component_size_);
+                        data_offset += static_cast<std::size_t>(component_size_);
+                        break;
+                    case CommandKind::Remove:
+                        if (world_->has_component(id, type_id_)) {
+                            world_->remove_component_unchecked(id, type_id_);
+                        }
+                        break;
+                }
+            }
+        } catch (...) {
+            // Suppress — destructor must not throw.
+        }
+    }
+    world_->decrement_active_batches();
+}
+
+int32_t WriteBatch::record_update(uint64_t entity, const void* data) {
+    if (cancelled_ || flushed_) return 0;
+    if (!data) return 0;
+
+    EntityId id = unpack_entity(entity);
+    try {
+        commands_.push_back(WriteCommand{
+            CommandKind::Update,
+            static_cast<uint32_t>(id.index),
+            static_cast<uint32_t>(id.version)});
+        const std::size_t old_size = command_data_.size();
+        command_data_.resize(old_size +
+                             static_cast<std::size_t>(component_size_));
+        std::memcpy(command_data_.data() + old_size, data,
+                    static_cast<std::size_t>(component_size_));
+        return 1;
+    } catch (const std::bad_alloc&) {
+        return 0;
+    }
+}
+
+int32_t WriteBatch::record_add(uint64_t entity, const void* data) {
+    if (cancelled_ || flushed_) return 0;
+    if (!data) return 0;
+
+    EntityId id = unpack_entity(entity);
+    try {
+        commands_.push_back(WriteCommand{
+            CommandKind::Add,
+            static_cast<uint32_t>(id.index),
+            static_cast<uint32_t>(id.version)});
+        const std::size_t old_size = command_data_.size();
+        command_data_.resize(old_size +
+                             static_cast<std::size_t>(component_size_));
+        std::memcpy(command_data_.data() + old_size, data,
+                    static_cast<std::size_t>(component_size_));
+        return 1;
+    } catch (const std::bad_alloc&) {
+        return 0;
+    }
+}
+
+int32_t WriteBatch::record_remove(uint64_t entity) {
+    if (cancelled_ || flushed_) return 0;
+
+    EntityId id = unpack_entity(entity);
+    try {
+        commands_.push_back(WriteCommand{
+            CommandKind::Remove,
+            static_cast<uint32_t>(id.index),
+            static_cast<uint32_t>(id.version)});
+        return 1;
+    } catch (const std::bad_alloc&) {
+        return 0;
+    }
+}
+
+int32_t WriteBatch::flush() {
+    if (cancelled_) {
+        throw std::logic_error("Cannot flush cancelled batch");
+    }
+    if (flushed_) {
+        throw std::logic_error("Batch already flushed");
+    }
+
+    flushed_ = true;
+
+    int32_t successful = 0;
+    std::size_t data_offset = 0;
+
+    for (const WriteCommand& cmd : commands_) {
+        EntityId id{static_cast<int32_t>(cmd.entity_index),
+                    static_cast<int32_t>(cmd.entity_version)};
+
+        // Liveness check uses stored version, so an entity destroyed
+        // between record и flush is detected here.
+        if (!world_->is_alive(id)) {
+            if (cmd.kind == CommandKind::Update ||
+                cmd.kind == CommandKind::Add) {
+                data_offset += static_cast<std::size_t>(component_size_);
+            }
+            continue;
+        }
+
+        switch (cmd.kind) {
+            case CommandKind::Update: {
+                // Update is "set if exists". Skip if component absent.
+                if (world_->has_component(id, type_id_)) {
+                    world_->add_component_unchecked(
+                        id, type_id_,
+                        command_data_.data() + data_offset,
+                        component_size_);
+                    ++successful;
+                }
+                data_offset += static_cast<std::size_t>(component_size_);
+                break;
+            }
+            case CommandKind::Add: {
+                // Add is "set unconditionally" — overwrite if present.
+                world_->add_component_unchecked(
+                    id, type_id_,
+                    command_data_.data() + data_offset,
+                    component_size_);
+                ++successful;
+                data_offset += static_cast<std::size_t>(component_size_);
+                break;
+            }
+            case CommandKind::Remove: {
+                if (world_->has_component(id, type_id_)) {
+                    world_->remove_component_unchecked(id, type_id_);
+                    ++successful;
+                }
+                break;
+            }
+        }
+    }
+
+    return successful;
+}
+
+void WriteBatch::cancel() {
+    if (flushed_) return;  // Already flushed — cancel is no-op.
+    cancelled_ = true;
+    commands_.clear();
+    command_data_.clear();
 }
 
 } // namespace dualfrontier
