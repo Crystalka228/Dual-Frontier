@@ -19,14 +19,14 @@ using DualFrontier.Contracts.Core;
 /// formula (ΔComfort = ΔSleep × 0.3 per master plan AD-3).
 /// </summary>
 [ModAccessible(Read = true)]
-public sealed class DecorativeAuraComponent : IComponent
+public struct DecorativeAuraComponent : IComponent
 {
     /// <summary>
     /// Chebyshev radius (in tiles) of comfort emission. Matches semantics
     /// of <c>DualFrontier.Core.Math.SpatialGrid.GetInRadius</c> —
     /// distance is max(|Δx|, |Δy|), so radius=2 forms a 5×5 square area.
     /// </summary>
-    public int Radius { get; set; }
+    public int Radius;
 
     /// <summary>
     /// Fraction of <see cref="DualFrontier.Components.Pawn.NeedKind.Comfort"/>
@@ -34,5 +34,5 @@ public sealed class DecorativeAuraComponent : IComponent
     /// <see cref="Radius"/> ([0..1]). Calibrated by M8.4 ItemFactory per
     /// decoration tier (rug = small, statue = large).
     /// </summary>
-    public float ComfortPerTick { get; set; }
+    public float ComfortPerTick;
 }
