@@ -9,7 +9,7 @@ namespace DualFrontier.Components.Combat;
 /// two-step AmmoIntent → AmmoGranted/AmmoRefused model (see TechArch 11.5).
 /// </summary>
 [ModAccessible(Read = true)]
-public sealed class AmmoComponent : IComponent
+public struct AmmoComponent : IComponent
 {
     // TODO: introduce DualFrontier.Components.Combat.AmmoType enum (Rifle, Pistol, Shotgun, Bolt, Mana …) — Phase 6.
     // TODO: public AmmoType Type;
