@@ -2,12 +2,38 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
-**Status**: READY FOR EXECUTION
+**Status**: EXECUTED
 **Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K3, §1.3 (two-phase model), §1.4 (threading model), `docs/MIGRATION_PROGRESS.md` (K2 closure context), `docs/METHODOLOGY.md` v1.3
 **Predecessor**: K2 (`129a0a0`) — registry + bridge tests, merged to main
 **Target**: fresh feature branch `feat/k3-bootstrap-graph` от `main`
 **Estimated time**: 5–7 days at hobby pace (largest K-milestone in scope)
 **Estimated LOC delta**: +750–900
+
+---
+
+## Status: EXECUTED
+
+**Date**: 2026-05-07
+**Branch**: `feat/k3-bootstrap-graph`
+**Closure SHA**: `7629f57` (last K3-substantive commit — BootstrapTimeBenchmark)
+
+Full executable brief authored and executed. See git log on
+`feat/k3-bootstrap-graph` branch for the atomic commit sequence
+(8 commits: native, CMakeLists, selftest, interop, tests, benchmark,
+MIGRATION_PROGRESS, this skeleton mark). See `MIGRATION_PROGRESS.md`
+for the closure record (Q1-Q4 decisions, throw inventory boundary
+trace, lessons learned).
+
+Notable execution-time deviations from the brief, captured in
+MIGRATION_PROGRESS.md K3 entry:
+- Selftest target switched from "link DLL" to "compile sources
+  directly" so non-DF_API-exported `BootstrapGraph` / `ThreadPool`
+  resolve without exposing them on the C ABI surface.
+- Managed entry point renamed from `Bootstrap.Bootstrap()` to
+  `Bootstrap.Run()` because C# rejects a static method with the same
+  name as its enclosing static class (CS0542).
+- Test count baseline corrected (466 actual vs 511 in the brief
+  preamble). Final count: 472 (76 + 4 + 45 + 347).
 
 ---
 
