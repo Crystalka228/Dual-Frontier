@@ -32,7 +32,7 @@
 | | Value |
 |---|---|
 | **Active phase** | K6 (planned) — second-graph rebuild on mod change |
-| **Last completed milestone** | K5 (Span<T> protocol + Command Buffer write batching) — `<sha>` 2026-05-08 |
+| **Last completed milestone** | K5 (Span<T> protocol + Command Buffer write batching) — `547c919` 2026-05-08 |
 | **Next milestone (recommended)** | K6 (mod-driven graph rebuild) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
@@ -76,7 +76,7 @@
 | K2 | Type-id registry + bridge tests | DONE | 2–3 days | `129a0a0` | 2026-05-07 |
 | K3 | Native bootstrap graph + thread pool | DONE | 5–7 days | `7629f57` | 2026-05-07 |
 | K4 | Component struct refactor (Hybrid Path) | DONE | 3-5 hours auto-mode (3-4 days hobby pace) | `2fc59d1` | 2026-05-08 |
-| K5 | Span<T> protocol + Command Buffer write batching | DONE | 6-8 hours auto-mode (2-3 weeks hobby pace) | `<sha>` | 2026-05-08 |
+| K5 | Span<T> protocol + Command Buffer write batching | DONE | 6-8 hours auto-mode (2-3 weeks hobby pace) | `547c919` | 2026-05-08 |
 | K6 | Second-graph rebuild on mod change | NOT STARTED | 3–5 days | — | — |
 | K7 | Performance measurement (tick-loop) | NOT STARTED | 3–5 days | — | — |
 | K8 | Decision step + production cutover | NOT STARTED | 1 week | — | — |
@@ -188,7 +188,7 @@
 
 ### K5 — Span<T> protocol + Command Buffer write batching
 
-- **Status**: DONE (`<sha>`, 2026-05-08)
+- **Status**: DONE (`547c919`, 2026-05-08)
 - **Brief**: `tools/briefs/K5_SPAN_PROTOCOL_BRIEF.md` (FULL EXECUTED)
 - **C ABI extension**: 6 new functions (18 → 24 total): `df_world_begin_batch`, `df_batch_record_update`, `df_batch_record_add`, `df_batch_record_remove`, `df_batch_flush`, `df_batch_cancel`, `df_batch_destroy`
 - **Native files extended**: `world.h/cpp` — added WriteBatch class, CommandKind enum, WriteCommand struct, `World::active_batches_` atomic counter; private `add_component_unchecked` / `remove_component_unchecked` (friend access from WriteBatch) for in-flush mutations that skip the active_batches gate but still honour active_spans.
