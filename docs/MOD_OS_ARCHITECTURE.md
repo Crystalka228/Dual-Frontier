@@ -241,7 +241,7 @@ The current `ModManifest` (v1) carries `Id`, `Name`, `Version`, `Author`, `Requi
 3. `apiVersion` parses as SemVer with optional caret prefix.
 4. No duplicate ids in `dependencies`.
 5. No type listed in `replaces` is also listed by another mod's `replaces` in the current load batch (cross-batch check at §7).
-6. Every capability string matches the regex `^(kernel|mod\.[a-z0-9.]+)\.(publish|subscribe|read|write):[A-Za-z][A-Za-z0-9_.]+$`.
+6. Every capability string matches the regex `^(kernel|mod\.[a-z0-9.]+)\.(publish|subscribe|read|write|field\.(read|write|acquire|conductivity|storage|dispatch)|pipeline\.register):[A-Za-z][A-Za-z0-9_.]+$`.
 
 A failure at any step rejects the mod with a typed `ValidationError` (extending the existing `ValidationErrorKind` enum — see §11.2).
 
