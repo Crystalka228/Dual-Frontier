@@ -140,4 +140,61 @@ public class BulkOperationsTests
         }
         sum.Should().Be(190);  // 0..19
     }
+
+    [Fact]
+    public void AddComponents_LargeBatch_DoesNotAllocateAfterWarmup()
+    {
+        using var world = new NativeWorld();
+        const int count = 1000;  // > 256 threshold — exercises the ArrayPool path
+
+        var entities = new EntityId[count];
+        var components = new HealthComponent[count];
+        for (int i = 0; i < count; i++)
+        {
+            entities[i] = world.CreateEntity();
+            components[i] = new HealthComponent { Current = i, Maximum = 100 };
+        }
+
+        // Warmup — the first call may allocate while populating ArrayPool.
+        world.AddComponents<HealthComponent>(entities, components);
+
+        long allocBefore = GC.GetAllocatedBytesForCurrentThread();
+        world.AddComponents<HealthComponent>(entities, components);
+        long allocAfter = GC.GetAllocatedBytesForCurrentThread();
+        long delta = allocAfter - allocBefore;
+
+        // Tolerance for unrelated managed overhead. Pre-fix this delta was
+        // ~8 KB (count * sizeof(ulong)) per call.
+        delta.Should().BeLessThan(1024,
+            because: "ArrayPool should eliminate per-call heap allocation for batches > 256.");
+    }
+
+    [Fact]
+    public void GetComponents_LargeBatch_DoesNotAllocateAfterWarmup()
+    {
+        using var world = new NativeWorld();
+        const int count = 1000;
+
+        var entities = new EntityId[count];
+        var components = new HealthComponent[count];
+        for (int i = 0; i < count; i++)
+        {
+            entities[i] = world.CreateEntity();
+            components[i] = new HealthComponent { Current = i, Maximum = 100 };
+        }
+        world.AddComponents<HealthComponent>(entities, components);
+
+        var output = new HealthComponent[count];
+
+        // Warmup.
+        world.GetComponents<HealthComponent>(entities, output);
+
+        long allocBefore = GC.GetAllocatedBytesForCurrentThread();
+        world.GetComponents<HealthComponent>(entities, output);
+        long allocAfter = GC.GetAllocatedBytesForCurrentThread();
+        long delta = allocAfter - allocBefore;
+
+        delta.Should().BeLessThan(1024,
+            because: "ArrayPool should eliminate per-call heap allocation for batches > 256.");
+    }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop;
 using FluentAssertions;
@@ -134,5 +135,31 @@ public class SpanLeaseTests
 
         lease1.Count.Should().Be(1);
         lease2.Count.Should().Be(1);
+    }
+
+    [Fact]
+    public void Pairs_yields_entity_component_tuples()
+    {
+        using var world = new NativeWorld();
+        EntityId e1 = world.CreateEntity();
+        EntityId e2 = world.CreateEntity();
+        EntityId e3 = world.CreateEntity();
+
+        world.AddComponent(e1, new HealthComponent { Current = 10, Maximum = 100 });
+        world.AddComponent(e2, new HealthComponent { Current = 20, Maximum = 100 });
+        world.AddComponent(e3, new HealthComponent { Current = 30, Maximum = 100 });
+
+        using var lease = world.AcquireSpan<HealthComponent>();
+
+        var collected = new List<(int index, int value)>();
+        foreach (var (entity, component) in lease.Pairs)
+        {
+            collected.Add((entity.Index, component.Current));
+        }
+
+        collected.Should().HaveCount(3);
+        collected.Should().Contain((e1.Index, 10));
+        collected.Should().Contain((e2.Index, 20));
+        collected.Should().Contain((e3.Index, 30));
     }
 }
