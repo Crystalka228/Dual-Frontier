@@ -8,9 +8,9 @@ namespace DualFrontier.Components.Shared;
 /// Mutated only via DamageSystem / HealSystem.
 /// </summary>
 [ModAccessible(Read = true, Write = true)]
-public sealed class HealthComponent : IComponent
+public struct HealthComponent : IComponent
 {
-    // TODO: public float Current;
-    // TODO: public float Maximum;
-    // TODO: public bool IsDead => Current <= 0;
+    public float Current;
+    public float Maximum;
+    public bool IsDead => Current <= 0;
 }
