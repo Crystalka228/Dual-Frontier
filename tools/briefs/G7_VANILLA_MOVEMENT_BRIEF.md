@@ -1,0 +1,31 @@
+# G7 — `Vanilla.Movement` integration
+
+**Status**: SKELETON — full brief authored when ready к execute
+**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G7
+**Prerequisites**: G6 closed
+
+## Goal
+
+Pathfinding ships through a vanilla mod, replacing per-pawn A* on common destinations. Flow field lifecycle management (creation, refresh, eviction); per-target field assignment logic; movement system reads direction field, applies к velocity; hybrid A* fallback для unique destinations (preserves `PathfindingService` для residual case).
+
+## Time estimate
+
+~1 week
+
+## Deliverables (high-level)
+
+- `Vanilla.Movement` mod
+- Flow field lifecycle management (LRU eviction, max 32 active)
+- Per-target field assignment
+- Movement system reads direction field
+- Hybrid A* fallback wiring
+- Tests: pawn navigates к work zone via flow field; pawn navigates к specific entity via A*; correct handoff between modes
+
+## Success criteria
+
+- 50+ pawns navigating shared work zones consume O(K) field updates regardless of pawn count
+- A* exercised only on unique-destination paths
+
+## Status: NOT STARTED
+
+Awaiting G6 closed.
