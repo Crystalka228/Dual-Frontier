@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-07 (K2 closure + sequencing decision β6)
+**Last updated**: 2026-05-07 (K3 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K3 (planned) — native bootstrap graph + thread pool |
-| **Last completed milestone** | K2 (type-id registry + bridge tests) — `129a0a0` 2026-05-07 |
-| **Next milestone (recommended)** | K3 (native bootstrap graph + thread pool) |
+| **Active phase** | K4 (planned) — component struct refactor (Path α) |
+| **Last completed milestone** | K3 (bootstrap graph + thread pool) — `7629f57` 2026-05-07 |
+| **Next milestone (recommended)** | K4 (component struct refactor) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 511 (472 managed Domain baseline + 39 K2 Interop bridge tests) |
+| **Tests passing** | 472 (76 Core + 4 Persistence + 45 Interop + 347 Modding) |
 
 ---
 
@@ -74,7 +74,7 @@
 | K0 | Cherry-pick + cleanup от experimental branch | DONE | 1–2 days | `89a4b24` | 2026-05-07 |
 | K1 | Batching primitive (bulk Add/Get + Span<T>) | DONE | 3–5 days | `e2c50b8` | 2026-05-07 |
 | K2 | Type-id registry + bridge tests | DONE | 2–3 days | `129a0a0` | 2026-05-07 |
-| K3 | Native bootstrap graph + thread pool | NOT STARTED | 5–7 days | — | — |
+| K3 | Native bootstrap graph + thread pool | DONE | 5–7 days | `7629f57` | 2026-05-07 |
 | K4 | Component struct refactor (Path α) | NOT STARTED | 2–3 weeks | — | — |
 | K5 | Span<T> protocol + write command batching | NOT STARTED | 1 week | — | — |
 | K6 | Second-graph rebuild on mod change | NOT STARTED | 3–5 days | — | — |
@@ -134,7 +134,29 @@
 - **Lessons learned**:
   - `TreatWarningsAsErrors=true` solution-wide (Directory.Build.props) caught CS0649 «field never assigned» on the placeholder test types in `ComponentTypeRegistryTests` (TypeA/B/C are used by reflection/identity only, never read). Resolved with a localized `#pragma warning disable CS0649` block. A future test-utilities pattern could centralize «empty-marker struct» helpers.
 
-### K3 — K8
+### K3 — Native bootstrap graph + thread pool
+
+- **Status**: DONE (`7629f57`, 2026-05-07)
+- **Brief**: `tools/briefs/K3_BOOTSTRAP_GRAPH_BRIEF.md` (FULL EXECUTED)
+- **C ABI extension**: 1 new function — `df_engine_bootstrap` (17 → 18 total)
+- **Native files added**: `bootstrap_graph.h/cpp` (~210 LOC), `thread_pool.h/cpp` (~150 LOC)
+- **Architectural decisions implemented** (per 2026-05-07 K3 design discussion):
+  - Q1 — **Thread pool scope**: Minimal (internal-only, NOT exposed via C ABI). Pool destroyed immediately after bootstrap completes; future native artifacts that need a pool create their own (D3 Lvl 1 pattern).
+  - Q2 — **Tasks inventory**: 4 tasks (no placeholders) — `AllocateMemoryPools` → (`InitWorldStructure` ‖ `InitThreadPool`) → `SignalEngineReady`. `AllocateMemoryPools` is currently a no-op reserved for K7 measurements; kept as a graph node so the diamond shape exercises Kahn's parallel branches.
+  - Q3 — **Topological sort**: Full Kahn's algorithm (cycle detection via processed-count comparison; generic mechanism, no hand-coded ordering).
+  - Q4 — **Failure handling**: All-or-nothing with deterministic rollback (per-task cleanup invoked in reverse completion order via `BootstrapGraph::rollback`). First failure wins via atomic `compare_exchange_strong`; subsequent tasks at the same level skip their work but still flip their promise to keep the executor unblocked.
+- **Throw inventory** (METHODOLOGY v1.3): 7 throw sites in C++; one new ABI function (`df_engine_bootstrap`) catches everything broadly and returns `nullptr`. RAII via `unique_ptr` in `df_engine_bootstrap` cleans up partial state on any exception path. `BootstrapGraph::run` itself catches the cycle-detection `std::logic_error` internally and reports via `last_failure()` instead of propagating.
+- **Selftest scenarios**: 7 → 12 (added `scenario_bootstrap_basic`, `scenario_bootstrap_double_rejected`, `scenario_bootstrap_graph_topological`, `scenario_bootstrap_graph_parallel`, `scenario_bootstrap_rollback_on_failure`)
+- **Selftest build adjustment**: switched `df_native_selftest` from "link against the DLL" to "compile sources directly into the executable" so non-`DF_API`-exported C++ classes (`BootstrapGraph`, `ThreadPool`) resolve. The DLL build target itself is unchanged.
+- **Bridge tests**: 39 → 45 (+6 K3 BootstrapTests)
+- **Benchmark**: `BootstrapTimeBenchmark` added (execution deferred to K7)
+- **Managed bridge naming**: brief proposed `Bootstrap.Bootstrap()` but C# rejects a static method with the same name as its enclosing static class (CS0542). Renamed to `Bootstrap.Run(registry)` — semantically reads as "run bootstrap".
+- **Lessons learned**:
+  - Brief's expected `dotnet test` baseline was 511 but actual baseline was 466 (76 + 4 + 39 + 347). Brief author miscounted; actual K3 closure numbers used in this entry.
+  - Brief's selftest scenario code used `dualfrontier::BootstrapGraph` and `dualfrontier::ThreadPool` directly. These are intentionally NOT `__declspec(dllexport)`-marked per Q1, so linking the selftest against the DLL fails on MSVC. Resolved by changing the selftest target to compile the source files directly (see CMakeLists update). A future option would be to introduce a `DF_API_INTERNAL` macro that exports under `DF_NATIVE_BUILDING_DLL` only, but the source-compile approach is simpler and matches the test's standalone nature.
+  - Pre-flight HG-1 (working tree clean) failed because the K3 brief itself was an unstaged modification on `main` (skeleton → 1700-line full brief). Resolved by committing "brief authoring" on `main` as Step 0 (`3b18cb0`). Methodology v1.3 already calls this out — Step 0 worked as designed.
+
+### K4 — K8
 
 Detailed entries будут добавлены при подходе к каждому milestone.
 
