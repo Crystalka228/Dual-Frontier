@@ -21,6 +21,8 @@ set(DF_NATIVE_SOURCES
     src/world.cpp
     src/component_store.cpp
     src/capi.cpp
+    src/bootstrap_graph.cpp
+    src/thread_pool.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -29,6 +31,8 @@ set(DF_NATIVE_HEADERS
     include/component_store.h
     include/world.h
     include/entity_id.h
+    include/bootstrap_graph.h
+    include/thread_pool.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})
