@@ -25,6 +25,7 @@ set(DF_NATIVE_SOURCES
     src/thread_pool.cpp
     src/string_pool.cpp
     src/keyed_map.cpp
+    src/composite.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -37,6 +38,7 @@ set(DF_NATIVE_HEADERS
     include/thread_pool.h
     include/string_pool.h
     include/keyed_map.h
+    include/composite.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})
