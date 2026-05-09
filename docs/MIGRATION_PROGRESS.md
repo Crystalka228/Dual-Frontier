@@ -471,6 +471,17 @@ OQ3 («Cross-document drift между KERNEL_ARCHITECTURE и RUNTIME_ARCHITECTU
 - **Why both spec amendment AND decision log** (Option C of brief Phase 2): the spec amendment fixes the immediate reading; this entry preserves *why* the wording changed for future audit. Spec-only would lose the rationale; log-only would leave readers of KERNEL §K6 alone with stale wording.
 - **No future trigger**: this drift is closed. Future K-series milestones may exhibit similar overlap with M-series work; the closure-shaped brief methodology (per K6 brief Methodology note §) is the established response, not a new D-entry per occurrence.
 
+### D5 — Solution A (single NativeWorld backbone) chosen for K8 series
+
+- **Date**: 2026-05-09
+- **Decision**: Solution A — NativeWorld single source of truth for production storage. ManagedWorld retained as test fixture only.
+- **Alternatives rejected**:
+  - Solution B (storage abstraction `IComponentStore`): permanent runtime polymorphism layer; defers a decision the project is committed to making; "structural костыль".
+  - Solution C (explicit hybrid: struct components on Native, class components on Managed): bifurcated storage; permanent mental overhead for every mod author; cross-storage queries become friction.
+- **Rationale**: K7 evidence (V3 dominates V2 by 4-32× across §8 metrics) + Crystalka commitment («архитектура на десятилетия без костылей») + K-L11 codification.
+- **Reversal trigger**: only if K8.1 native-side reference primitives prove fundamentally infeasible (e.g., cannot match managed Dictionary semantics within reasonable performance budget). Reversal would re-open Solution C as fallback, with explicit re-architecture milestone.
+- **Implementation roadmap**: K8.0 (this milestone) → K8.1 → K9 → K8.2 → K8.3 → K8.4 → K8.5.
+
 ---
 
 ## Open questions
