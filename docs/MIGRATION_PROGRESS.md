@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-08 (K5 closure)
+**Last updated**: 2026-05-09 (D4 — K6 wording vs M7 implementation drift acknowledged)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -348,6 +348,17 @@ Decision на shared infrastructure требует **отдельного archit
 #### Implication для open questions
 
 OQ3 («Cross-document drift между KERNEL_ARCHITECTURE и RUNTIME_ARCHITECTURE») расширяется: при добавлении третьего native артефакта (например, COMPUTE_ARCHITECTURE.md) — drift-prevention требуется тройной cross-reference. Currently не активно (compute artifact не существует), но при подходе к Phase 5 — переоткрыть.
+
+### D4 — K6 deliverables fulfilled differently than KERNEL §K6 v1.0 wording suggested
+- **Date**: 2026-05-09
+- **Decision**: KERNEL_ARCHITECTURE.md §K6 v1.0 wording is acknowledged as speculative pre-implementation; the M7-era realization is authoritative going forward. Recorded as Option C of K6 brief Phase 2 reconciliation: KERNEL spec wording was amended (commits `cb3d6cf` v1.1 status bump, `ab581cb` §K6 reconciliation) AND this decision-log entry captures the rationale for the audit trail.
+- **Drift inventory** (per `tools/briefs/K6_MOD_REBUILD_BRIEF.md` §2.1):
+  - `SystemGraph.Rebuild(modRegistry)` (skeleton wording) → `DependencyGraph.Reset() + AddSystem + Build()` inline in `ModIntegrationPipeline.UnloadMod` step 4 and `Apply` steps [5-7]. No standalone Rebuild method exists; the operation is inline and atomic per call site.
+  - `ModLoader.UnloadMod + ReloadMod` (skeleton wording) → `ModLoader.UnloadMod(modId)` exists; `ReloadMod` is composed at the pipeline level as `Pause + UnloadMod + Apply([newPath]) + Resume` rather than offered as a single primitive.
+  - `PhaseCoordinator.OnModChanged()` event handler (skeleton wording) → no `PhaseCoordinator` class exists. The pause-rebuild-resume contract is composed across `GameLoop.SetPaused(true)` + `ModIntegrationPipeline.Apply(...)` + `GameLoop.SetPaused(false)`, gated by `ModIntegrationPipeline.IsRunning` per MOD_OS_ARCHITECTURE §9.3.
+- **Rationale**: Functional contract met everywhere — pause-then-rebuild-then-resume is operational, ALC unload chain is per §9.5, graph rebuilds correctly. The drift is purely about wording and decomposition. Pre-implementation specs cannot accurately predict the realized API surface; the closure-shaped K6 brief format (verify-then-fill rather than build-from-scratch) exists precisely because parallel migration tracks (M-series) had already produced the deliverables.
+- **Why both spec amendment AND decision log** (Option C of brief Phase 2): the spec amendment fixes the immediate reading; this entry preserves *why* the wording changed for future audit. Spec-only would lose the rationale; log-only would leave readers of KERNEL §K6 alone with stale wording.
+- **No future trigger**: this drift is closed. Future K-series milestones may exhibit similar overlap with M-series work; the closure-shaped brief methodology (per K6 brief Methodology note §) is the established response, not a new D-entry per occurrence.
 
 ---
 
