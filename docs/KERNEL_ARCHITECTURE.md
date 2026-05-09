@@ -774,14 +774,16 @@ e2bc2d9 — DLL loading fix
 
 ## Part 3: Migration strategy
 
-**Approach: parallel development.**
+**Approach: parallel development through K7; LOCKED commitment from K8.0 onward.**
 
-Keep managed `World` functional throughout K0-K7. K8 decision determines whether:
-- Replace managed `World` с `NativeWorld` (Outcome 1)
-- Keep both, native optional (Outcome 2)
-- Park native (Outcome 3)
+Managed `World` stayed functional throughout K0-K7. K8.0 closure (2026-05-09) recorded the architectural decision per K-L11: **Solution A — single NativeWorld backbone**. Migration executes via the K8.1-K8.5 sub-milestone series:
+- K8.1 — native-side reference handling primitives (string interning, keyed maps, composite components)
+- K8.2 — 7 class components redesigned to unmanaged structs using K8.1 primitives
+- K8.3 — 12 vanilla systems migrated to `SpanLease<T>` reads + `WriteBatch<T>` writes
+- K8.4 — managed `World` retired as production path; Mod API v3 ships
+- K8.5 — mod ecosystem migration prep (documentation + migration guide)
 
-**Operating principle**: «honest state always available» — managed World stays working, native World matures alongside, decision made с evidence not speculation.
+**Operating principle**: «honest state always available» — managed World stayed working through K0-K7 so the K7 evidence base could be collected; the K-L11 commitment then settles the decision permanently. Reversal trigger documented in `docs/MIGRATION_PROGRESS.md` D5 (Solution A rationale and reversal trigger).
 
 Mirrors RUNTIME_ARCHITECTURE.md migration approach (parallel Godot + Vulkan until M9.5 cutover).
 
