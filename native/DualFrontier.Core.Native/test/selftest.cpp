@@ -610,6 +610,215 @@ void scenario_bootstrap_rollback_on_failure() {
     DF_CHECK(!graph.last_failure().empty(), "failure message recorded");
 }
 
+// ---- K8.1 reference primitives selftest -----------------------------------
+
+void scenario_string_pool() {
+    std::printf("scenario_string_pool\n");
+    df_world_handle w = df_world_create();
+    DF_CHECK(w != nullptr, "world created");
+
+    // 1. Round-trip: intern, resolve.
+    const char foo[] = "Foo";
+    uint32_t id_foo = df_world_intern_string(w, foo, sizeof(foo) - 1);
+    DF_CHECK(id_foo != 0, "intern returned non-zero id");
+    uint32_t gen_foo = df_world_string_generation(w, id_foo);
+    DF_CHECK(gen_foo != 0, "generation non-zero after intern");
+
+    char out[16] = {0};
+    int32_t written = df_world_resolve_string(w, id_foo, gen_foo, out, sizeof(out));
+    DF_CHECK(written == 3, "resolve wrote 3 bytes");
+    DF_CHECK(std::memcmp(out, "Foo", 3) == 0, "resolved content matches");
+
+    // 2. Dedup: intern same string returns same id.
+    uint32_t id_foo2 = df_world_intern_string(w, foo, sizeof(foo) - 1);
+    DF_CHECK(id_foo2 == id_foo, "second intern of same content returns same id");
+
+    // 3. Cross-mod sharing: ModA interns Foo, ModB also interns Foo.
+    df_world_begin_mod_scope(w, "ModA");
+    uint32_t id_a_only = df_world_intern_string(w, "ModAExclusive", 13);
+    uint32_t id_shared_a = df_world_intern_string(w, foo, 3);
+    df_world_end_mod_scope(w, "ModA");
+    DF_CHECK(id_shared_a == id_foo, "ModA's intern of Foo returns shared id");
+
+    df_world_begin_mod_scope(w, "ModB");
+    uint32_t id_shared_b = df_world_intern_string(w, foo, 3);
+    uint32_t id_b_only = df_world_intern_string(w, "ModBExclusive", 13);
+    df_world_end_mod_scope(w, "ModB");
+    DF_CHECK(id_shared_b == id_foo, "ModB's intern of Foo returns shared id");
+    DF_CHECK(id_b_only != id_foo && id_b_only != id_a_only,
+             "ModB-exclusive id distinct from shared and from ModA-exclusive");
+
+    // 4. Mod scope clear with retained reference.
+    uint32_t gen_before_clear = df_world_string_pool_current_generation(w);
+    df_world_clear_mod_scope(w, "ModA");
+    // id_foo (shared with ModB and core) must still resolve at the SAME
+    // generation tag — no reclaim happened on a co-owned id.
+    DF_CHECK(df_world_string_generation(w, id_foo) == gen_foo,
+             "shared id retains generation after mod-A clear");
+    written = df_world_resolve_string(w, id_foo, gen_foo, out, sizeof(out));
+    DF_CHECK(written == 3, "shared id still resolvable after mod-A clear");
+
+    // ModA-exclusive id must be reclaimed; the SLOT may stay alive but its
+    // generation must have advanced, so the old (id, gen) no longer resolves.
+    uint32_t gen_a_after = df_world_string_generation(w, id_a_only);
+    DF_CHECK(gen_a_after != gen_foo,
+             "ModA-exclusive id generation advanced after clear");
+    char tmp[32] = {0};
+    int32_t reclaim_check = df_world_resolve_string(
+        w, id_a_only, gen_foo, tmp, sizeof(tmp));
+    DF_CHECK(reclaim_check == 0,
+             "stale reference to reclaimed id resolves to not-found");
+
+    // 5. Mod scope clear bumps current_generation when something is reclaimed.
+    DF_CHECK(df_world_string_pool_current_generation(w) > gen_before_clear,
+             "current_generation advanced after reclaim");
+
+    df_world_destroy(w);
+}
+
+void scenario_keyed_map() {
+    std::printf("scenario_keyed_map\n");
+    df_world_handle w = df_world_create();
+    DF_CHECK(w != nullptr, "world created");
+
+    df_keyed_map_handle map = df_world_get_keyed_map(
+        w, /*map_id=*/0xA1u, sizeof(uint32_t), sizeof(int32_t));
+    DF_CHECK(map != nullptr, "map handle non-null");
+
+    // 1. Round-trip.
+    uint32_t k1 = 1, k2 = 2;
+    int32_t v100 = 100, v200 = 200;
+    DF_CHECK(df_keyed_map_set(map, &k1, &v100) == 1, "first set inserted");
+    DF_CHECK(df_keyed_map_set(map, &k2, &v200) == 1, "second set inserted");
+    int32_t out_v = 0;
+    DF_CHECK(df_keyed_map_get(map, &k1, &out_v) == 1 && out_v == 100, "get k1");
+    DF_CHECK(df_keyed_map_get(map, &k2, &out_v) == 1 && out_v == 200, "get k2");
+
+    // 2. Sorted iteration.
+    df_keyed_map_clear(map);
+    uint32_t k5 = 5, k1b = 1, k3 = 3;
+    int32_t a = 50, b = 10, c = 30;
+    df_keyed_map_set(map, &k5, &a);
+    df_keyed_map_set(map, &k1b, &b);
+    df_keyed_map_set(map, &k3, &c);
+    uint32_t keys_out[8] = {0};
+    int32_t values_out[8] = {0};
+    int32_t n = df_keyed_map_iterate(map, keys_out, values_out, 8);
+    DF_CHECK(n == 3, "iterate count == 3");
+    DF_CHECK(keys_out[0] == 1 && keys_out[1] == 3 && keys_out[2] == 5,
+             "keys in sorted order");
+    DF_CHECK(values_out[0] == 10 && values_out[1] == 30 && values_out[2] == 50,
+             "values aligned with sorted keys");
+
+    // 3. Update overwrites.
+    int32_t v999 = 999;
+    DF_CHECK(df_keyed_map_set(map, &k1b, &v999) == 0, "update returns 0");
+    df_keyed_map_get(map, &k1b, &out_v);
+    DF_CHECK(out_v == 999, "value overwritten");
+    DF_CHECK(df_keyed_map_count(map) == 3, "count unchanged after update");
+
+    // 4. Remove + iterate.
+    DF_CHECK(df_keyed_map_remove(map, &k3) == 1, "remove k3");
+    DF_CHECK(df_keyed_map_count(map) == 2, "count == 2 after remove");
+    n = df_keyed_map_iterate(map, keys_out, values_out, 8);
+    DF_CHECK(n == 2, "iterate count == 2");
+    DF_CHECK(keys_out[0] == 1 && keys_out[1] == 5, "remaining keys still sorted");
+
+    df_world_destroy(w);
+}
+
+void scenario_composite() {
+    std::printf("scenario_composite\n");
+    df_world_handle w = df_world_create();
+    DF_CHECK(w != nullptr, "world created");
+
+    df_composite_handle comp = df_world_get_composite(
+        w, /*composite_id=*/0xC1u, sizeof(int32_t));
+    DF_CHECK(comp != nullptr, "composite handle non-null");
+
+    // 1. Round-trip.
+    int32_t e1 = 11;
+    DF_CHECK(df_composite_add(comp, /*parent=*/42, &e1) == 1, "add to entity 42");
+    DF_CHECK(df_composite_get_count(comp, 42) == 1, "count for 42 == 1");
+    int32_t out_e = 0;
+    DF_CHECK(df_composite_get_at(comp, 42, 0, &out_e) == 1 && out_e == 11,
+             "get_at 0 returns 11");
+
+    // 2. Multi-element insertion order.
+    int32_t e2 = 22, e3 = 33;
+    df_composite_add(comp, 42, &e2);
+    df_composite_add(comp, 42, &e3);
+    int32_t buf[8] = {0};
+    int32_t n = df_composite_iterate(comp, 42, buf, 8);
+    DF_CHECK(n == 3, "iterate count == 3");
+    DF_CHECK(buf[0] == 11 && buf[1] == 22 && buf[2] == 33,
+             "iterate preserves insertion order");
+
+    // 3. remove_at(0) swaps with last.
+    DF_CHECK(df_composite_remove_at(comp, 42, 0) == 1, "remove_at 0");
+    DF_CHECK(df_composite_get_count(comp, 42) == 2, "count == 2 after remove");
+    n = df_composite_iterate(comp, 42, buf, 8);
+    DF_CHECK(n == 2, "iterate count == 2 after remove");
+    DF_CHECK(buf[0] == 33 && buf[1] == 22,
+             "swap-with-last places former tail at removed index");
+
+    // 4. Multi-entity isolation.
+    int32_t e_other = 99;
+    df_composite_add(comp, /*parent=*/99, &e_other);
+    DF_CHECK(df_composite_get_count(comp, 99) == 1, "entity 99 has its own slot");
+    DF_CHECK(df_composite_get_count(comp, 42) == 2, "entity 42 unaffected by entity 99");
+
+    df_world_destroy(w);
+}
+
+void scenario_set_primitive() {
+    std::printf("scenario_set_primitive\n");
+    df_world_handle w = df_world_create();
+    DF_CHECK(w != nullptr, "world created");
+
+    df_set_handle set = df_world_get_set(
+        w, /*set_id=*/0xD1u, sizeof(int32_t));
+    DF_CHECK(set != nullptr, "set handle non-null");
+
+    // 1. Round-trip + contains.
+    int32_t five = 5, three = 3, seven = 7;
+    DF_CHECK(df_set_add(set, &five) == 1, "add 5 inserted");
+    DF_CHECK(df_set_add(set, &three) == 1, "add 3 inserted");
+    DF_CHECK(df_set_contains(set, &five) == 1, "contains 5");
+    DF_CHECK(df_set_contains(set, &three) == 1, "contains 3");
+    DF_CHECK(df_set_contains(set, &seven) == 0, "does not contain 7");
+
+    // 2. Dedup.
+    DF_CHECK(df_set_add(set, &five) == 0, "duplicate add returns 0");
+    DF_CHECK(df_set_count(set) == 2, "count unchanged after duplicate add");
+
+    // 3. Sorted iteration.
+    df_set_handle set2 = df_world_get_set(w, /*set_id=*/0xD2u, sizeof(int32_t));
+    int32_t a5 = 5, a1 = 1, a3 = 3;
+    df_set_add(set2, &a5);
+    df_set_add(set2, &a1);
+    df_set_add(set2, &a3);
+    int32_t buf[8] = {0};
+    int32_t n = df_set_iterate(set2, buf, 8);
+    DF_CHECK(n == 3, "iterate count == 3");
+    DF_CHECK(buf[0] == 1 && buf[1] == 3 && buf[2] == 5, "sorted iteration order");
+
+    // 4. Remove + iterate.
+    df_set_handle set3 = df_world_get_set(w, /*set_id=*/0xD3u, sizeof(int32_t));
+    int32_t b1 = 1, b2 = 2, b3 = 3, b4 = 4;
+    df_set_add(set3, &b1);
+    df_set_add(set3, &b2);
+    df_set_add(set3, &b3);
+    df_set_add(set3, &b4);
+    DF_CHECK(df_set_remove(set3, &b2) == 1, "remove 2 succeeded");
+    n = df_set_iterate(set3, buf, 8);
+    DF_CHECK(n == 3, "iterate count == 3 after remove");
+    DF_CHECK(buf[0] == 1 && buf[1] == 3 && buf[2] == 4,
+             "remaining elements still sorted");
+
+    df_world_destroy(w);
+}
+
 } // namespace
 
 int main() {
@@ -631,6 +840,10 @@ int main() {
     scenario_batch_cancel();
     scenario_batch_dead_entity_skipped();
     scenario_batch_mutation_rejection();
+    scenario_string_pool();
+    scenario_keyed_map();
+    scenario_composite();
+    scenario_set_primitive();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
