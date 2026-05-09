@@ -77,6 +77,7 @@ internal sealed class ModIntegrationPipeline
     private readonly IModContractStore _contractStore;
     private readonly IGameServices _services;
     private readonly ParallelSystemScheduler _scheduler;
+    private readonly ModFaultHandler _faultHandler;
     private readonly KernelCapabilityRegistry _kernelCapabilities = KernelCapabilityRegistry.BuildFromKernelAssemblies();
     private readonly SharedModLoadContext _sharedAlc = new();
     private readonly List<LoadedMod> _activeMods = new();
@@ -132,6 +133,14 @@ internal sealed class ModIntegrationPipeline
         _contractStore = contractStore ?? throw new ArgumentNullException(nameof(contractStore));
         _services = services ?? throw new ArgumentNullException(nameof(services));
         _scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
+
+        // K6 Phase 3.3 — install the Application-side fault handler. The
+        // pipeline owns the handler; ModLoader.HandleModFault routes
+        // faults through it via the loader's SetFaultHandler hook. Apply
+        // drains the handler's faulted-set at the start of each menu open
+        // and unloads each queued mod through the standard §9.5 chain.
+        _faultHandler = new ModFaultHandler(this);
+        _loader.SetFaultHandler(_faultHandler);
     }
 
     /// <summary>
@@ -194,6 +203,20 @@ internal sealed class ModIntegrationPipeline
             throw new InvalidOperationException(
                 "Pause the scheduler before applying mods");
 
+        // [-1] K6 Phase 3.3 — drain mods queued by ModFaultHandler since the
+        // last Apply. Each queued mod is unloaded through the standard §9.5
+        // chain (which itself runs under the !_isRunning guard already
+        // verified above). Per-mod warnings are accumulated and folded into
+        // loadWarnings below so they reach every PipelineResult return path
+        // via the existing MergeWarnings call.
+        var faultedWarnings = new List<ValidationWarning>();
+        foreach (string faultedId in _faultHandler.GetFaultedMods())
+        {
+            IReadOnlyList<ValidationWarning> ws = UnloadMod(faultedId);
+            foreach (ValidationWarning w in ws) faultedWarnings.Add(w);
+            _faultHandler.ClearFault(faultedId);
+        }
+
         // [0] Classify: pre-injected mods are taken as regular; on-disk
         // manifests are parsed and split by ModKind. Manifests are kept so the
         // shared-mod cycle detector (D-5) can run before any assembly load.
@@ -201,7 +224,7 @@ internal sealed class ModIntegrationPipeline
         var regularEntries = new List<(string Path, ModManifest Manifest)>();
         var preloadedRegulars = new List<LoadedMod>();
         var loadErrors = new List<ValidationError>();
-        var loadWarnings = new List<ValidationWarning>();
+        var loadWarnings = new List<ValidationWarning>(faultedWarnings);
         var failed = new List<string>();
         var manifestsById = new Dictionary<string, ModManifest>(StringComparer.Ordinal);
 
@@ -809,6 +832,19 @@ internal sealed class ModIntegrationPipeline
             "The mod has been removed from the active set; restart the game " +
             "to fully reclaim memory."));
     }
+
+    /// <summary>
+    /// Test seam — returns the <see cref="ModFaultHandler"/> instance the
+    /// pipeline constructed at startup. K6 Phase 3.5 uses this from
+    /// <c>ModFaultHandlerTests</c> to manually call
+    /// <see cref="ModFaultHandler.ReportFault"/> before invoking
+    /// <see cref="Apply"/>, simulating the deferred-drain path without
+    /// having to provoke a real isolation violation in a worker thread.
+    /// Mirrors <see cref="GetActiveModForTests"/> as the precedent for
+    /// internal-only test helpers exposed via
+    /// <c>InternalsVisibleTo("DualFrontier.Modding.Tests")</c>.
+    /// </summary>
+    internal ModFaultHandler GetFaultHandlerForTests() => _faultHandler;
 
     /// <summary>
     /// Test seam — returns the <see cref="LoadedMod"/> currently in
