@@ -1,17 +1,27 @@
 #include "df_capi.h"
 
+#include <cstring>
 #include <memory>
+#include <string>
 #include <thread>
 #include <vector>
 
 #include "bootstrap_graph.h"
+#include "composite.h"
 #include "entity_id.h"
+#include "keyed_map.h"
+#include "set_primitive.h"
+#include "string_pool.h"
 #include "thread_pool.h"
 #include "world.h"
 
 using dualfrontier::BootstrapGraph;
+using dualfrontier::Composite;
 using dualfrontier::EntityId;
+using dualfrontier::KeyedMap;
 using dualfrontier::pack_entity;
+using dualfrontier::SetPrimitive;
+using dualfrontier::StringPool;
 using dualfrontier::ThreadPool;
 using dualfrontier::unpack_entity;
 using dualfrontier::World;
@@ -390,6 +400,323 @@ DF_API void df_batch_destroy(df_batch_handle batch) {
         delete static_cast<WriteBatch*>(batch);
     } catch (...) {
         // Suppress — destructor must not throw.
+    }
+}
+
+// ---- K8.1 reference primitives --------------------------------------------
+
+DF_API uint32_t df_world_intern_string(df_world_handle world,
+                                        const char* utf8_data,
+                                        int32_t utf8_length) {
+    if (!world || !utf8_data || utf8_length < 0) return 0;
+    try {
+        std::string content(utf8_data, static_cast<size_t>(utf8_length));
+        return as_world(world)->string_pool().intern(content);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_resolve_string(df_world_handle world,
+                                        uint32_t string_id,
+                                        uint32_t generation,
+                                        char* out_buffer,
+                                        int32_t out_buffer_size) {
+    if (!world || !out_buffer || out_buffer_size <= 0) return 0;
+    try {
+        const std::string* content =
+            as_world(world)->string_pool().resolve(string_id, generation);
+        if (!content) {
+            return 0;
+        }
+        const int32_t to_copy =
+            (static_cast<int32_t>(content->size()) < out_buffer_size)
+                ? static_cast<int32_t>(content->size())
+                : out_buffer_size;
+        std::memcpy(out_buffer, content->data(), static_cast<size_t>(to_copy));
+        return to_copy;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API uint32_t df_world_string_generation(df_world_handle world,
+                                            uint32_t string_id) {
+    if (!world) return 0;
+    try {
+        return as_world(world)->string_pool().generation_for(string_id);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API void df_world_begin_mod_scope(df_world_handle world,
+                                      const char* mod_id) {
+    if (!world || !mod_id) return;
+    try {
+        as_world(world)->begin_mod_scope(std::string(mod_id));
+    } catch (...) {
+        // Swallow — same convention as other void C ABI entries.
+    }
+}
+
+DF_API void df_world_end_mod_scope(df_world_handle world,
+                                    const char* mod_id) {
+    if (!world || !mod_id) return;
+    try {
+        as_world(world)->end_mod_scope(std::string(mod_id));
+    } catch (...) {
+        // Swallow — mismatched scope is a programmer error; absorbed at the
+        // boundary (same pattern as begin/end pairing on other ABI entries).
+    }
+}
+
+DF_API void df_world_clear_mod_scope(df_world_handle world,
+                                      const char* mod_id) {
+    if (!world || !mod_id) return;
+    try {
+        as_world(world)->clear_mod_scope(std::string(mod_id));
+    } catch (...) {
+    }
+}
+
+DF_API int32_t df_world_string_pool_count(df_world_handle world) {
+    if (!world) return 0;
+    try {
+        return as_world(world)->string_pool().count();
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API uint32_t df_world_string_pool_current_generation(df_world_handle world) {
+    if (!world) return 0;
+    try {
+        return as_world(world)->string_pool().current_generation();
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API df_keyed_map_handle df_world_get_keyed_map(df_world_handle world,
+                                                   uint32_t map_id,
+                                                   int32_t key_size,
+                                                   int32_t value_size) {
+    if (!world || map_id == 0 || key_size <= 0 || value_size <= 0) {
+        return nullptr;
+    }
+    try {
+        return as_world(world)->get_or_create_keyed_map(map_id, key_size, value_size);
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+DF_API int32_t df_keyed_map_set(df_keyed_map_handle map,
+                                 const void* key,
+                                 const void* value) {
+    if (!map || !key || !value) return 0;
+    try {
+        return static_cast<KeyedMap*>(map)->set(key, value);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_keyed_map_get(df_keyed_map_handle map,
+                                 const void* key,
+                                 void* out_value) {
+    if (!map || !key || !out_value) return 0;
+    try {
+        return static_cast<const KeyedMap*>(map)->get(key, out_value);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_keyed_map_remove(df_keyed_map_handle map, const void* key) {
+    if (!map || !key) return 0;
+    try {
+        return static_cast<KeyedMap*>(map)->remove(key);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_keyed_map_count(df_keyed_map_handle map) {
+    if (!map) return 0;
+    try {
+        return static_cast<const KeyedMap*>(map)->count();
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_keyed_map_iterate(df_keyed_map_handle map,
+                                     void* out_keys_buffer,
+                                     void* out_values_buffer,
+                                     int32_t buffer_capacity) {
+    if (!map || !out_keys_buffer || !out_values_buffer || buffer_capacity < 0) {
+        return 0;
+    }
+    try {
+        return static_cast<const KeyedMap*>(map)->iterate(
+            out_keys_buffer, out_values_buffer, buffer_capacity);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_keyed_map_clear(df_keyed_map_handle map) {
+    if (!map) return 0;
+    try {
+        return static_cast<KeyedMap*>(map)->clear();
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API df_composite_handle df_world_get_composite(df_world_handle world,
+                                                    uint32_t composite_id,
+                                                    int32_t element_size) {
+    if (!world || composite_id == 0 || element_size <= 0) {
+        return nullptr;
+    }
+    try {
+        return as_world(world)->get_or_create_composite(composite_id, element_size);
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+DF_API int32_t df_composite_add(df_composite_handle composite,
+                                 uint64_t parent_entity,
+                                 const void* element) {
+    if (!composite || !element) return 0;
+    try {
+        return static_cast<Composite*>(composite)->add(parent_entity, element);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_composite_get_count(df_composite_handle composite,
+                                       uint64_t parent_entity) {
+    if (!composite) return 0;
+    try {
+        return static_cast<const Composite*>(composite)->get_count(parent_entity);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_composite_get_at(df_composite_handle composite,
+                                    uint64_t parent_entity,
+                                    int32_t index,
+                                    void* out_element) {
+    if (!composite || !out_element || index < 0) return 0;
+    try {
+        return static_cast<const Composite*>(composite)
+            ->get_at(parent_entity, index, out_element);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_composite_remove_at(df_composite_handle composite,
+                                       uint64_t parent_entity,
+                                       int32_t index) {
+    if (!composite || index < 0) return 0;
+    try {
+        return static_cast<Composite*>(composite)->remove_at(parent_entity, index);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_composite_clear_for(df_composite_handle composite,
+                                       uint64_t parent_entity) {
+    if (!composite) return 0;
+    try {
+        return static_cast<Composite*>(composite)->clear_for(parent_entity);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_composite_iterate(df_composite_handle composite,
+                                     uint64_t parent_entity,
+                                     void* out_elements_buffer,
+                                     int32_t buffer_capacity) {
+    if (!composite || !out_elements_buffer || buffer_capacity < 0) {
+        return 0;
+    }
+    try {
+        return static_cast<const Composite*>(composite)
+            ->iterate(parent_entity, out_elements_buffer, buffer_capacity);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API df_set_handle df_world_get_set(df_world_handle world,
+                                        uint32_t set_id,
+                                        int32_t element_size) {
+    if (!world || set_id == 0 || element_size <= 0) {
+        return nullptr;
+    }
+    try {
+        return as_world(world)->get_or_create_set(set_id, element_size);
+    } catch (...) {
+        return nullptr;
+    }
+}
+
+DF_API int32_t df_set_add(df_set_handle set, const void* element) {
+    if (!set || !element) return 0;
+    try {
+        return static_cast<SetPrimitive*>(set)->add(element);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_set_contains(df_set_handle set, const void* element) {
+    if (!set || !element) return 0;
+    try {
+        return static_cast<const SetPrimitive*>(set)->contains(element);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_set_remove(df_set_handle set, const void* element) {
+    if (!set || !element) return 0;
+    try {
+        return static_cast<SetPrimitive*>(set)->remove(element);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_set_count(df_set_handle set) {
+    if (!set) return 0;
+    try {
+        return static_cast<const SetPrimitive*>(set)->count();
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_set_iterate(df_set_handle set,
+                               void* out_elements_buffer,
+                               int32_t buffer_capacity) {
+    if (!set || !out_elements_buffer || buffer_capacity < 0) return 0;
+    try {
+        return static_cast<const SetPrimitive*>(set)
+            ->iterate(out_elements_buffer, buffer_capacity);
+    } catch (...) {
+        return 0;
     }
 }
 

@@ -240,6 +240,180 @@ DF_API void            df_batch_cancel(df_batch_handle batch);
 
 DF_API void            df_batch_destroy(df_batch_handle batch);
 
+/*
+ * K8.1 reference primitives (added 2026-05-09).
+ *
+ * Four native-side primitives expose reference-style operations that
+ * future K8.2 component redesigns will consume:
+ *   * String pool — generational, mod-scoped interning.
+ *   * Keyed map  — type-erased, sorted-by-key dictionary.
+ *   * Composite  — per-entity variable-length data (swap-with-last erase).
+ *   * Set        — type-erased, sorted-by-element set.
+ *
+ * Lifetime ownership: World owns the primitives. Caller never frees the
+ * returned df_keyed_map_handle / df_composite_handle / df_set_handle —
+ * they're owned by the World and outlive the function call only as long
+ * as the World does. Same convention as the existing K0-K7 raw store
+ * pointers.
+ *
+ * Mod scope:
+ *   begin/end_mod_scope wrap a window during which intern() calls record
+ *   the current mod as a co-owner of the resulting id. clear_mod_scope
+ *   drops the window's IDs that aren't co-owned by another mod and bumps
+ *   their generation tag so any stale {id, gen} reference resolves to
+ *   "not found" instead of silently aliasing a reused slot.
+ *
+ * String pool save/load semantics (LOCKED): callers serialise CONTENT,
+ * not IDs. On reload they re-intern; a fresh {id, generation} pair is
+ * issued. The generation tag is the safety net for any path that did
+ * persist an id (e.g., in-memory snapshots taken across a mod reload).
+ *
+ * Iteration buffers: out_keys / out_values / out_elements buffers must be
+ * sized for buffer_capacity * (key_size | value_size | element_size)
+ * bytes. The function returns the count actually written, clipped to
+ * buffer_capacity.
+ *
+ * Return codes follow existing conventions:
+ *   0 — failure / not found / not inserted (already present)
+ *   1 — success / present / newly inserted
+ * Out-of-range or null inputs return 0.
+ */
+
+/* String pool — 8 functions */
+
+DF_API uint32_t        df_world_intern_string(
+                           df_world_handle world,
+                           const char* utf8_data,
+                           int32_t utf8_length);
+
+DF_API int32_t         df_world_resolve_string(
+                           df_world_handle world,
+                           uint32_t string_id,
+                           uint32_t generation,
+                           char* out_buffer,
+                           int32_t out_buffer_size);
+
+DF_API uint32_t        df_world_string_generation(
+                           df_world_handle world,
+                           uint32_t string_id);
+
+DF_API void            df_world_begin_mod_scope(
+                           df_world_handle world,
+                           const char* mod_id);
+
+DF_API void            df_world_end_mod_scope(
+                           df_world_handle world,
+                           const char* mod_id);
+
+DF_API void            df_world_clear_mod_scope(
+                           df_world_handle world,
+                           const char* mod_id);
+
+DF_API int32_t         df_world_string_pool_count(df_world_handle world);
+
+DF_API uint32_t        df_world_string_pool_current_generation(df_world_handle world);
+
+/* Keyed map — 7 functions */
+
+typedef void* df_keyed_map_handle;
+
+DF_API df_keyed_map_handle df_world_get_keyed_map(
+                           df_world_handle world,
+                           uint32_t map_id,
+                           int32_t key_size,
+                           int32_t value_size);
+
+DF_API int32_t         df_keyed_map_set(
+                           df_keyed_map_handle map,
+                           const void* key,
+                           const void* value);
+
+DF_API int32_t         df_keyed_map_get(
+                           df_keyed_map_handle map,
+                           const void* key,
+                           void* out_value);
+
+DF_API int32_t         df_keyed_map_remove(
+                           df_keyed_map_handle map,
+                           const void* key);
+
+DF_API int32_t         df_keyed_map_count(df_keyed_map_handle map);
+
+DF_API int32_t         df_keyed_map_iterate(
+                           df_keyed_map_handle map,
+                           void* out_keys_buffer,
+                           void* out_values_buffer,
+                           int32_t buffer_capacity);
+
+DF_API int32_t         df_keyed_map_clear(df_keyed_map_handle map);
+
+/* Composite — 7 functions */
+
+typedef void* df_composite_handle;
+
+DF_API df_composite_handle df_world_get_composite(
+                           df_world_handle world,
+                           uint32_t composite_id,
+                           int32_t element_size);
+
+DF_API int32_t         df_composite_add(
+                           df_composite_handle composite,
+                           uint64_t parent_entity,
+                           const void* element);
+
+DF_API int32_t         df_composite_get_count(
+                           df_composite_handle composite,
+                           uint64_t parent_entity);
+
+DF_API int32_t         df_composite_get_at(
+                           df_composite_handle composite,
+                           uint64_t parent_entity,
+                           int32_t index,
+                           void* out_element);
+
+DF_API int32_t         df_composite_remove_at(
+                           df_composite_handle composite,
+                           uint64_t parent_entity,
+                           int32_t index);
+
+DF_API int32_t         df_composite_clear_for(
+                           df_composite_handle composite,
+                           uint64_t parent_entity);
+
+DF_API int32_t         df_composite_iterate(
+                           df_composite_handle composite,
+                           uint64_t parent_entity,
+                           void* out_elements_buffer,
+                           int32_t buffer_capacity);
+
+/* Set — 6 functions */
+
+typedef void* df_set_handle;
+
+DF_API df_set_handle   df_world_get_set(
+                           df_world_handle world,
+                           uint32_t set_id,
+                           int32_t element_size);
+
+DF_API int32_t         df_set_add(
+                           df_set_handle set,
+                           const void* element);
+
+DF_API int32_t         df_set_contains(
+                           df_set_handle set,
+                           const void* element);
+
+DF_API int32_t         df_set_remove(
+                           df_set_handle set,
+                           const void* element);
+
+DF_API int32_t         df_set_count(df_set_handle set);
+
+DF_API int32_t         df_set_iterate(
+                           df_set_handle set,
+                           void* out_elements_buffer,
+                           int32_t buffer_capacity);
+
 #ifdef __cplusplus
 }
 #endif
