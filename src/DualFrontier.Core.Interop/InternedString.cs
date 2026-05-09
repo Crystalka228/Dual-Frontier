@@ -53,6 +53,47 @@ public readonly struct InternedString : IEquatable<InternedString>
         return world.ResolveInternedString(this);
     }
 
+    /// <summary>
+    /// Compares this <see cref="InternedString"/> with <paramref name="other"/>
+    /// by resolved content rather than by <c>(Id, Generation)</c>. Use this for
+    /// cross-pool comparisons where the two values were issued by different
+    /// <see cref="NativeWorld"/> instances; <c>==</c> and
+    /// <see cref="Equals(InternedString)"/> compare only the id pair and may
+    /// return false positives or false negatives across pools.
+    ///
+    /// Empty values compare equal to each other regardless of world. If both
+    /// sides resolve successfully, content is compared via ordinal string
+    /// equality. If either resolution returns <c>null</c> (stale generation,
+    /// wrong world), the method returns <c>false</c>.
+    ///
+    /// Fast path: when <paramref name="thisWorld"/> and
+    /// <paramref name="otherWorld"/> are the same instance and the
+    /// <c>(Id, Generation)</c> pairs are equal, returns <c>true</c> without
+    /// resolving. Same-pool callers pay no resolution cost on equal ids.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when either world is <c>null</c>. Cross-pool semantics requires
+    /// both worlds to be supplied — the method cannot infer issuer.
+    /// </exception>
+    public bool EqualsByContent(InternedString other, NativeWorld thisWorld, NativeWorld otherWorld)
+    {
+        if (thisWorld is null) throw new ArgumentNullException(nameof(thisWorld));
+        if (otherWorld is null) throw new ArgumentNullException(nameof(otherWorld));
+
+        if (IsEmpty && other.IsEmpty) return true;
+        if (IsEmpty || other.IsEmpty) return false;
+
+        if (ReferenceEquals(thisWorld, otherWorld) && Equals(other))
+        {
+            return true;
+        }
+
+        string? thisContent = Resolve(thisWorld);
+        string? otherContent = other.Resolve(otherWorld);
+        if (thisContent is null || otherContent is null) return false;
+        return string.Equals(thisContent, otherContent, StringComparison.Ordinal);
+    }
+
     public bool Equals(InternedString other) =>
         Id == other.Id && Generation == other.Generation;
 
