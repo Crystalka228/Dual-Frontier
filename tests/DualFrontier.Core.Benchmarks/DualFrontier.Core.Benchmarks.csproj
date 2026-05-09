@@ -16,6 +16,14 @@
     <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
+    <!-- K7 — V2/V3 scenarios run the production system set on the production
+         component shapes; the long chain of references is required so the
+         benchmark project sees NeedsSystem / RandomPawnFactory / NavGrid etc. -->
+    <ProjectReference Include="..\..\src\DualFrontier.Components\DualFrontier.Components.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Events\DualFrontier.Events.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.AI\DualFrontier.AI.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Systems\DualFrontier.Systems.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
   </ItemGroup>
 
   <!--
