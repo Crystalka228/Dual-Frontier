@@ -1,8 +1,8 @@
 # DualFrontier Kernel — Architecture & Roadmap
 
-**Version**: 1.2
+**Version**: 1.3
 **Date**: 2026-05-09
-**Status**: AUTHORITATIVE LOCKED — operational reference document, Solution A architectural commitment recorded (K-L11 added, K-L3/K-L8 implications extended)
+**Status**: AUTHORITATIVE LOCKED — operational reference document, Solution A architectural commitment recorded (K-L11 added in v1.2, K-L3/K-L8 implications extended); Interop error semantics convention formalized in Part 7 (v1.3)
 **Companion documents**: `METHODOLOGY.md`, `CODING_STANDARDS.md`, `MOD_OS_ARCHITECTURE.md`, `RUNTIME_ARCHITECTURE.md`
 **Scope**: Full architectural specification + milestone roadmap для native ECS kernel (C++ via pure P/Invoke). Companion к `RUNTIME_ARCHITECTURE.md` (Vulkan rendering layer) — together describing complete native foundation under managed Application layer.
 
@@ -928,6 +928,34 @@ Existing methodology (METHODOLOGY.md) carries forward с adjustments:
 - «Data exists or it doesn't» applies к component stores и span availability
 - New corollary: «Native owns or managed holds opaque IntPtr — no in-between» — single ownership boundary
 - Mirrors RUNTIME_ARCHITECTURE.md §1.9 «State exists или driver crashes»
+
+### Error semantics convention for Interop layer
+
+The Interop layer has two surfaces: the C ABI (C-level functions in `df_capi.h` / `capi.cpp`) and the managed bridge wrappers (C# classes in `DualFrontier.Core.Interop`). The C ABI surface follows a single convention; the managed bridge surface follows a four-category rule.
+
+**C ABI surface (immutable)**: every `extern "C"` function returns a status code (or sentinel — null pointer, zero count, default value) and swallows all exceptions via `catch (...)` at the boundary. The ABI never propagates C++ exceptions across the DLL boundary; the managed side never relies on native exception propagation. This convention is established through K0-K8.1 and is non-negotiable for cross-DLL safety: uncaught C++ exceptions across the boundary are undefined behaviour (process termination, silent corruption, or platform-specific miscompiles depending on toolchain).
+
+**Managed bridge surface (four-category rule)**: error semantics on the managed wrapper depends on the nature of the abstraction the wrapper exposes. Four categories:
+
+1. **Sparse abstractions** (lookup, contains, search; e.g. `NativeMap<K,V>.TryGet`, `NativeSet<T>.Contains`): return `bool` or `bool TryX(...)` patterns. Rationale: the caller normally branches on whether the lookup found a value; "not found" is an expected runtime case, not an exception. Throwing on miss would be unergonomic for the common iteration shape.
+
+2. **Dense abstractions** (indexed access, position-bound, capacity-bound; e.g. K9 `FieldHandle<T>.ReadCell`, future `RawTileField` access): throw on failure. Rationale: out-of-bounds access on a dense indexed structure is a programmer error (the caller asserted a valid index), not an expected miss. Returning `bool` would force a `TryReadCell` boilerplate at every call site, which silently degrades performance-critical iteration.
+
+3. **Lifecycle operations** (Begin/End, Acquire/Release; e.g. `NativeWorld.AcquireSpan`, `WriteBatch` lifecycle): throw on misuse. Rationale: lifecycle violations (acquire after dispose, release without acquire, double-release) are always programmer errors. Recovery is impossible from the caller's perspective; the throw signals the bug rather than silently masking it.
+
+4. **Construction operations** (Register, Create; e.g. `NativeWorld(registry)`, `NativeWorld.GetKeyedMap`): return the constructed handle, or throw `InvalidOperationException` if construction fails. Rationale: failure to construct is irrecoverable for the caller — a `null` handle would propagate through every subsequent method call as a NullReferenceException at the wrong level. Throwing at construction time fails fast with the right diagnostic.
+
+**Failure mode the rule prevents (observed during K9 brief authoring, 2026-05-09).** K9 brief Phase 5.2 specified `FieldHandle<T>.ReadCell` to throw `FieldOperationFailedException` on out-of-bounds. K8.1 wrappers (`NativeMap<K,V>.TryGet`, `NativeSet<T>.Remove`) return `bool`. A naive reading of the difference is "K9 disagrees with K8.1." Closer inspection shows the difference is intentional — `NativeMap` is sparse (lookup miss expected), `FieldHandle` is dense (out-of-bounds is bug). Without an explicit convention, future primitive designers (G-series, K10/K11, third-party mod authors) face guesswork: should `FoobarHandle.GetX` throw or return `bool`? The convention removes the guesswork by tying the choice to the abstraction's nature.
+
+**Brief authoring requirement** (mandatory checklist item for any brief introducing new managed Interop wrappers):
+
+- [ ] **Category classification**: each new wrapper method is classified as sparse / dense / lifecycle / construction in the brief's Phase 1 architectural design section.
+- [ ] **Convention compliance**: the method's error semantics (throw or bool return) matches the category.
+- [ ] **Deviation rationale**: any departure from the convention requires explicit rationale in the brief, recorded as a milestone-specific architectural decision (not a silent override).
+
+**Falsifiable claim**: from K9 onward, briefs that classify new Interop wrappers by category will produce wrappers whose error semantics is consistent with the convention. The measurement: count wrapper additions across K9, K10, K11, G-series that depart from the four-category rule without explicit rationale. Target: zero unexplained departures. A counter-example — a wrapper whose semantics fits no category cleanly — would force the convention to grow a fifth category or be re-examined.
+
+**Cross-reference**: the convention applies to all Interop layer additions from K9 onward. K8.1 wrappers (`NativeMap`, `NativeSet`, `NativeComposite`) are already convention-compliant (sparse). K9 brief drift findings note `FieldHandle<T>` as convention-compliant (dense) but recommend the brief surface this categorization explicitly during K9 execution.
 
 **AD numbering continues**:
 - M-series ADs от RUNTIME_ARCHITECTURE.md continue
