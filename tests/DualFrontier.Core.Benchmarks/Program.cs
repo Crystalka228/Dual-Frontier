@@ -67,10 +67,11 @@ public static class Program
         // filter pattern matches the variant suffix.
         string filter = variant switch
         {
-            "V1" => "*TickV1*",
-            "V2" => "*TickV2*",
-            "V3" => "*TickV3*",
-            _    => throw new ArgumentException($"Unknown variant '{variant}'."),
+            "V1"  => "*TickV1*",
+            "V2"  => "*TickV2*",
+            "V3"  => "*TickV3*",
+            "all" => "*Tick*",
+            _     => throw new ArgumentException($"Unknown variant '{variant}'."),
         };
 
         BenchmarkRunner.Run<TickLoopBenchmark>(args: new[] { "--filter", filter });

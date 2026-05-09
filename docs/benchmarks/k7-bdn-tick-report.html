@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>DualFrontier.Core.Benchmarks.TickLoop.TickLoopBenchmark-20260509-132459</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.13.12, Windows 11 (10.0.26200.8246)
+Unknown processor
+.NET SDK 10.0.202
+  [Host]   : .NET 8.0.26 (8.0.2626.16921), X64 RyuJIT AVX2
+  ShortRun : .NET 8.0.26 (8.0.2626.16921), X64 RyuJIT AVX2
+</code></pre>
+<pre><code>Job=ShortRun  IterationCount=3  LaunchCount=1  
+WarmupCount=3  
+</code></pre>
+
+<table>
+<thead><tr><th>Method         </th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Completed Work Items</th><th>Lock Contentions</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>TickV2_ManagedStructs</td><td>19.905 &mu;s</td><td>71.801 &mu;s</td><td>3.9357 &mu;s</td><td>0.7935</td><td>5.1911</td><td>0.0006</td><td>6985 B</td>
+</tr><tr><td>TickV3_NativeBatched</td><td>5.224 &mu;s</td><td>5.138 &mu;s</td><td>0.2816 &mu;s</td><td>0.0420</td><td>-</td><td>-</td><td>360 B</td>
+</tr></tbody></table>
+</body>
+</html>
