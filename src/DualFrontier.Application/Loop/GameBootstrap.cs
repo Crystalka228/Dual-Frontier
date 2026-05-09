@@ -166,12 +166,37 @@ internal static class GameBootstrap
             graph.AddSystem(s);
         graph.Build();
 
+        // K6.1 — modding stack is constructed BEFORE the scheduler so the
+        // fault handler can be wired into the scheduler ctor as an
+        // immutable reference. The handler is owned by the bootstrap layer
+        // (session-scoped singleton); the scheduler holds it as a read-only
+        // sink, the pipeline receives it for query at Apply time, and the
+        // loader is wired to it directly via SetFaultHandler. Construction
+        // order matters: regressing to "scheduler first, handler later"
+        // would silently undo K6.1 and reintroduce the silent NullModFaultSink
+        // default. ModRegistry knows core systems already (via
+        // SetCoreSystems below) so the metadata lookup is correct from
+        // tick 0.
+        var modLoader = new ModLoader();
+        var modRegistry = new ModRegistry();
+        modRegistry.SetCoreSystems(coreSystems);
+        var faultHandler = new ModFaultHandler();
+        modLoader.SetFaultHandler(faultHandler);
+
+        // Initial metadata lookup reflects the core-only registry state at
+        // bootstrap. Mod systems arrive later through ModIntegrationPipeline.Apply,
+        // which calls scheduler.Rebuild with a fresh metadata snapshot
+        // built from the post-Apply ModRegistry.
+        IReadOnlyDictionary<SystemBase, SystemMetadata> initialMetadata =
+            SystemMetadataBuilder.Build(modRegistry);
+
         var scheduler = new ParallelSystemScheduler(
             graph.GetPhases(),
             ticks,
             world,
-            faultSink: null,
-            services:  services);
+            initialMetadata,
+            faultHandler,
+            services);
 
         // M7.5.B.1 — modding stack. Pipeline starts in its default
         // paused state (M7.1 load-bearing default); bootstrap does not
@@ -180,13 +205,10 @@ internal static class GameBootstrap
         // Cancel/Commit. The same `services` aggregator is threaded
         // through both the kernel scheduler and the pipeline so mod-
         // published events route through the existing M2 wiring.
-        var modLoader = new ModLoader();
-        var modRegistry = new ModRegistry();
-        modRegistry.SetCoreSystems(coreSystems);
         var modValidator = new ContractValidator();
         var modContractStore = new ModContractStore();
         var pipeline = new ModIntegrationPipeline(
-            modLoader, modRegistry, modValidator, modContractStore, services, scheduler);
+            modLoader, modRegistry, modValidator, modContractStore, services, scheduler, faultHandler);
         var discoverer = new DefaultModDiscoverer(modsRoot);
         var controller = new ModMenuController(pipeline, discoverer);
 
