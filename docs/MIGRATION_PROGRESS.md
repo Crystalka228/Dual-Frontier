@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (K6 closure)
+**Last updated**: 2026-05-09 (K6.1 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -32,11 +32,11 @@
 | | Value |
 |---|---|
 | **Active phase** | K7 (planned) — performance measurement (tick-loop) |
-| **Last completed milestone** | K6 (second-graph rebuild on mod change + closure-shaped brief executed) — 2026-05-09 |
+| **Last completed milestone** | K6.1 (mod fault wiring end-to-end — closes K6 deferred scope) — 2026-05-09 |
 | **Next milestone (recommended)** | K7 (TickLoopBenchmark + §8 metrics) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 547 (76 Core + 4 Persistence + 66 Interop + 38 Systems + 356 Modding + 7 Mod.ManifestRewriter) |
+| **Tests passing** | 553 (76 Core + 4 Persistence + 66 Interop + 38 Systems + 362 Modding + 7 Mod.ManifestRewriter) |
 
 ---
 
@@ -78,6 +78,7 @@
 | K4 | Component struct refactor (Hybrid Path) | DONE | 3-5 hours auto-mode (3-4 days hobby pace) | `2fc59d1` | 2026-05-08 |
 | K5 | Span<T> protocol + Command Buffer write batching | DONE | 6-8 hours auto-mode (2-3 weeks hobby pace) | `547c919` | 2026-05-08 |
 | K6 | Second-graph rebuild on mod change | DONE | 1-2 days hobby pace (~3-5h auto-mode for the as-found closure-shaped path) | `cb3d6cf`..`af2b572` | 2026-05-09 |
+| K6.1 | Mod fault wiring end-to-end | DONE | 3-5 days hobby pace (~3-5h auto-mode) | `fe03ed3`..`a642d65` | 2026-05-09 |
 | K7 | Performance measurement (tick-loop) | NOT STARTED | 3–5 days | — | — |
 | K8 | Decision step + production cutover | NOT STARTED | 1 week | — | — |
 
@@ -219,12 +220,40 @@
   4. **Phase 3 adjacent debt fill** — `ModFaultHandler` implementation closing the «Phase 2 part 2» TODO in `ModLoader.HandleModFault`. Files: `ModFaultHandler.cs` new (`a6664cf`); `ModLoader.HandleModFault` rewired (`208e9e7`); `ModIntegrationPipeline` ctor + Apply drain (`4999926`); `ModFaultHandlerTests.cs` 9 tests (`af2b572`).
   5. **Phase 4 coverage audit** — verified existing `Pipeline_build_failure_leaves_old_scheduler_intact` covers the cyclic-graph-build rollback path; `UnloadMod_OnNonActiveMod_ReturnsEmptyWarnings_NoThrow` and `UnloadAll_OnEmptyActiveSet_RebuildsKernelOnlyScheduler` cover the other Phase 4 candidates. No gap-fill commit needed.
 - **Test count**: 538 baseline → **547 passing** (+9 ModFaultHandler tests). Distribution: 76 Core + 4 Persistence + 66 Interop + 38 Systems + 356 Modding + 7 Mod.ManifestRewriter.
-- **Out of K6 scope (deferred)**: Full `ParallelSystemScheduler`/`SystemExecutionContext` rewiring to install the real `ModFaultHandler` in place of the `NullModFaultSink` default. The K6 brief Phase 3.3 example only wired `ModLoader.HandleModFault` (a defensive entry-point for callers holding a `ModLoader` ref but not a `ModFaultHandler` ref); the actual fault routing path (`SystemExecutionContext.RouteAndThrow` → `_faultSink.ReportFault`) still uses the null sink, so a real isolation violation surfaces only via `IsolationViolationException` and does not yet drive the deferred-unload queue. Full wiring requires construction-order changes (handler must exist before the scheduler that needs it) and is left for a future ticket — flagged here so the gap is visible.
+- **Out of K6 scope (deferred → resolved by K6.1)**: Full `ParallelSystemScheduler`/`SystemExecutionContext` rewiring to install the real `ModFaultHandler` in place of the `NullModFaultSink` default. The K6 brief Phase 3.3 example only wired `ModLoader.HandleModFault` (a defensive entry-point for callers holding a `ModLoader` ref but not a `ModFaultHandler` ref); the actual fault routing path (`SystemExecutionContext.RouteAndThrow` → `_faultSink.ReportFault`) still uses the null sink, so a real isolation violation surfaces only via `IsolationViolationException` and does not yet drive the deferred-unload queue. Full wiring requires construction-order changes (handler must exist before the scheduler that needs it) and is left for a future ticket — flagged here so the gap is visible. **Resolved by K6.1 (`fe03ed3`..`a642d65`, 2026-05-09) — see K6.1 closure section below.**
 - **Lessons learned**:
   - M-series (mod migration) and K-series (kernel migration) have meaningful overlap. Future skeleton briefs should cross-check overlapping migration phases before being authored as full implementation briefs — the K6 case shows that a deliverable nominally in the kernel track may already be fulfilled by mod-track work.
   - «Closure-shaped implementation brief» is a third brief type alongside «implementation» and «skeleton». Used when the milestone's deliverables exist but verification, drift reconciliation, and adjacent debt are needed for closure. The format is documented in K6_MOD_REBUILD_BRIEF.md «Methodology note on closure-shaped briefs».
   - `IModFaultSink` interface (Core-side) was authored during M3-era work but the Application-side `ModFaultHandler` was deferred. K6 closure exposed the deferred work as a real gap (mod isolation violations would crash with `NotImplementedException` if `HandleModFault` was ever reached). The fix lands as part of K6 because K6 closure semantically requires the fault → unload path infrastructure to exist; the upstream wiring to make it active end-to-end remains as a future ticket per the «out of K6 scope» note above.
   - Pre-flight verification revealed only one substantive drift (`ParallelSystemScheduler.Rebuild` is `internal` not `public` per spec wording — class itself is `internal sealed`, so the access modifier is the right visibility for the rebuild surface). All other M7-era deliverables matched the K6 contract verbatim. The closure-shaped brief format with explicit verification log is what surfaced this — a non-closure-shaped brief might have re-implemented existing infrastructure from scratch.
+
+### K6.1 — Mod fault wiring end-to-end
+
+- **Status**: DONE (`fe03ed3`..`a642d65`, 2026-05-09)
+- **Brief**: `tools/briefs/K6_1_FAULT_WIRING_BRIEF.md` (FULL EXECUTED)
+- **Goal**: close the wiring gap explicitly flagged in K6 closure ("Out of K6 scope (deferred)"). After K6, `ModFaultHandler` existed as infrastructure but `ParallelSystemScheduler` defaulted to `NullModFaultSink` and `BuildContext` hardcoded `SystemOrigin.Core`/`modId: null` for every system. K6.1 makes the fault path active end-to-end: a mod system that commits an isolation violation routes through `RouteAndThrow` → real `ModFaultHandler.ReportFault`, and the next `ModIntegrationPipeline.Apply` drains the faulted mod from the active set.
+- **Architectural change**: ownership of `ModFaultHandler` inverted from `ModIntegrationPipeline` to `GameBootstrap`. Handler created before scheduler; passed as immutable reference into scheduler ctor; pipeline receives reference for query at Apply time; loader wired via `SetFaultHandler` directly by the bootstrap. This eliminates the circular construction dependency that K6 worked around with a setter-after-construction pattern (cross-cutting design constraint #1 of the K6.1 brief).
+- **Per-system origin propagation**: introduced `SystemMetadata` record (Core-side) and `SystemMetadataBuilder` (Application-side projection from `ModRegistry.GetAllSystems()`). Scheduler accepts metadata dictionary at construction and at every `Rebuild` call; `BuildContext` reads each system's actual origin/modId from the table instead of hardcoding `Core`/`null`. Layer discipline preserved per Option C of the K6.1 brief §1.3 — Core gets a minimal projection, `SystemRegistration` stays in Application.
+- **Non-optional faultSink**: scheduler ctor's `faultSink` parameter is now required (no silent `?? new NullModFaultSink()` default). Tests that don't exercise faults pass `new NullModFaultSink()` explicitly, so the silent-default bug K6.1 fixes can never re-emerge unnoticed.
+- **Deliverables**:
+  - `SystemMetadata.cs` new (Core)
+  - `ParallelSystemScheduler` ctor + Rebuild + BuildContext rewritten to propagate metadata + non-optional fault sink
+  - `ModFaultHandler` ctor parameter removed (no more pipeline dependency); handler is now a self-contained fault accumulator
+  - `SystemMetadataBuilder.cs` new (Application) — single projection helper called from both bootstrap and pipeline
+  - `GameBootstrap.CreateLoop` bootstrap order restructured (handler before scheduler; loader wired before any mods can fault)
+  - `ModIntegrationPipeline` ctor + Apply [step 8] + UnloadMod [step 4] + UnloadAll empty-set path updated to propagate metadata
+  - `K6_1_AFFECTED_TESTS.md` (operational artifact, lists test files touched)
+  - `SchedulerTestFixture.cs` helper for non-fault test scenarios (Modding.Tests-side; Core/Systems tests use inline construction)
+  - `K6_1_FaultRoutingEndToEndTests.cs` 6 new end-to-end fault tests covering: mod-isolation-violation reports fault, next Apply drains, core violations don't route, multiple mods recorded, only-faulting-mod recorded, fault during Initialize captured before ctor throws
+  - K6 `ModFaultHandlerTests.BuildPipeline` updated for new ctor signatures with shared handler across loader/scheduler/pipeline (folded into the Modding.Tests update commit since the helper sits inline with the rest of the file's pipeline construction)
+  - 11 affected non-fault tests in Modding.Tests + 3 in Core.Tests + 9 in Systems.Tests updated for the new scheduler ctor signature
+- **Test count**: 547 baseline → **553 passing** (+6 new K6.1 end-to-end tests, no regressions). Distribution: 76 Core + 4 Persistence + 66 Interop + 38 Systems + 362 Modding + 7 Mod.ManifestRewriter.
+- **Lessons learned**:
+  - Setter-after-construction was the K6 workaround; K6.1 confirms restructuring ownership at the orchestrator layer is the right shape. The cost (touching `GameBootstrap` + ctor signatures across ~24 test files) is bounded; the benefit (immutable scheduler, no temporal coupling around "is the sink wired yet?") is structural and persists for the lifetime of the project.
+  - `SystemRegistration` already carried `Origin` + `ModId` since K4-era work, but the data was unused at the scheduler boundary because the scheduler is in Core (no access to `SystemRegistration` which is in Application). The Core-side `SystemMetadata` projection bridges this without the layer violation that putting `SystemRegistration` itself in Core would cause. Cross-layer projection via a minimal record is the correct shape; an `ISystemMetadata` interface for two fields would be over-engineered (rejected per brief §1.3).
+  - The K6 closure-shaped brief format successfully flagged the wiring gap in MIGRATION_PROGRESS.md. K6.1 is the validation: an explicitly-flagged deferred gap turned into a focused follow-up milestone with bounded scope. The pattern — closure-shaped brief surfaces a deferred gap → focused follow-up milestone closes it — is now an established methodology, not a one-off.
+  - Test design subtlety: `Parallel.ForEach` may stop dispatching new partitions when one item throws, so a test that expects two parallel mod systems to both fault in a single phase is sensitive to host parallelism. K6.1's `MultipleModSystems_BothFault_AllIdsRecorded` was originally written with both systems in one phase and was flaky on low-core machines; rewritten to use one phase per system + `ExecutePhase` per phase with a per-phase try/catch for deterministic coverage of the fault-routing path.
+  - `SystemBase.Context` is vestigial — never assigned by the scheduler. The K6.1 test fixtures originally tried to use `Context.SetComponent(...)` and would have NPE'd; the working pattern is `SystemExecutionContext.Current!.SetComponent(...)` (the thread-local is what the scheduler actually pushes). The vestigial `Context` property is a latent footgun that should probably be removed in a future cleanup commit, but K6.1 stayed scope-disciplined and only documented the issue here.
 
 ---
 
