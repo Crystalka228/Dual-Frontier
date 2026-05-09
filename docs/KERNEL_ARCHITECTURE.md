@@ -702,12 +702,12 @@ e2bc2d9 — DLL loading fix
 
 **Goal**: managed dependency graph rebuilds when mods load/unload. AssemblyLoadContext integration.
 
-**Deliverables**:
-- `SystemGraph.Rebuild(modRegistry)` method
-- `ModLoader.UnloadMod(modId)` с ALC unload + GC.Collect
-- `ModLoader.ReloadMod(modId)` reloads assembly + re-registers components/systems
-- `PhaseCoordinator.OnModChanged()` event handler (pause tick, rebuild graph, resume)
-- Tests: rebuild correctness, unload + reload cycle, graph topological invariants
+**Deliverables** (v1.1 — reconciled with M7-era implementation; pre-M7 wording kept in git history under v1.0):
+- Graph rebuild primitive: `DependencyGraph.Reset() + AddSystem + Build()` invoked from `ModIntegrationPipeline.UnloadMod` step 4 and `Apply` steps [5-7]
+- `ModLoader.UnloadMod(modId)` per `MOD_OS_ARCHITECTURE.md` §9.5 step 6; reload composition: `Pause + UnloadMod + Apply([newPath]) + Resume`
+- Pause-rebuild-resume pattern composed across `GameLoop.SetPaused` and `ModIntegrationPipeline.Pause/Resume/Apply`; gate via `ModIntegrationPipeline.IsRunning` per `MOD_OS_ARCHITECTURE.md` §9.3
+- Tests: `M71PauseResumeTests`, `M72UnloadChainTests`, `M73Step7Tests`, `M73Phase2DebtTests`, `RegularModTopologicalSortTests`, plus `M51`/`M52`/`M62` integration tests
+- Adjacent debt closed during K6: `ModFaultHandler` implementing `IModFaultSink` (Application-side), wired through `ModLoader.HandleModFault` and `ModIntegrationPipeline` deferred drain
 
 **Time**: 3-5 days. **LOC**: +200-400.
 
