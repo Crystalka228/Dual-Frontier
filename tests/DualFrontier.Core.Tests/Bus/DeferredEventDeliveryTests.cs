@@ -95,7 +95,10 @@ public sealed class DeferredEventDeliveryTests : IDisposable
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world, faultSink: null, services: services);
+            graph.GetPhases(), ticks, world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
 
         scheduler.ExecuteTick(0.016f);
 
@@ -132,7 +135,10 @@ public sealed class DeferredEventDeliveryTests : IDisposable
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world, faultSink: null, services: services);
+            graph.GetPhases(), ticks, world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
 
         Action act = () => scheduler.ExecuteTick(0.016f);
         act.Should().NotThrow(

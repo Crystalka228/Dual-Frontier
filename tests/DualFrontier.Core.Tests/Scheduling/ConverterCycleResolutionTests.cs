@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Components.Building;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
@@ -96,7 +97,10 @@ public sealed class ConverterCycleResolutionTests : IDisposable
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world, faultSink: null, services: services);
+            graph.GetPhases(), ticks, world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
 
         Action act = () => scheduler.ExecuteTick(0.016f);
 

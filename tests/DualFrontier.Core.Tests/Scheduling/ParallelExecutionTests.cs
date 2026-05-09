@@ -28,7 +28,10 @@ public sealed class ParallelExecutionTests
         {
             new SystemPhase(new SystemBase[] { a, b, c }),
         };
-        var scheduler = new ParallelSystemScheduler(phases, new TickScheduler(), world);
+        var scheduler = new ParallelSystemScheduler(
+            phases, new TickScheduler(), world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink());
 
         for (int i = 0; i < 50; i++)
             scheduler.ExecuteTick(0.016f);
@@ -54,7 +57,10 @@ public sealed class ParallelExecutionTests
             new SystemPhase(new SystemBase[] { producer }),
             new SystemPhase(new SystemBase[] { consumer }),
         };
-        var scheduler = new ParallelSystemScheduler(phases, new TickScheduler(), world);
+        var scheduler = new ParallelSystemScheduler(
+            phases, new TickScheduler(), world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink());
 
         scheduler.ExecuteTick(0.016f);
 
@@ -75,7 +81,10 @@ public sealed class ParallelExecutionTests
         {
             new SystemPhase(new SystemBase[] { fast, slow }),
         };
-        var scheduler = new ParallelSystemScheduler(phases, new TickScheduler(), world);
+        var scheduler = new ParallelSystemScheduler(
+            phases, new TickScheduler(), world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink());
 
         scheduler.ExecutePhase(phases[0], 0.016f);
 
