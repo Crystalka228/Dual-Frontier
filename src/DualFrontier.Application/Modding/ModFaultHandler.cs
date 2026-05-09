@@ -11,12 +11,18 @@ namespace DualFrontier.Application.Modding;
 /// caught) and TechArch 11.8 (the documented "core does not crash; the
 /// offending mod is unloaded" behaviour).
 ///
-/// Owned by <see cref="ModIntegrationPipeline"/>; constructed during pipeline
-/// startup. Faults arrive on simulation tick threads (via the isolation
-/// guard or the public <see cref="ModLoader.HandleModFault"/> entry point);
-/// reads happen on the menu thread when <see cref="ModIntegrationPipeline.Apply"/>
-/// drains the faulted set. All access is gated through <c>lock (_lock)</c>
-/// to keep the handler thread-safe across that boundary.
+/// Owned by <see cref="GameBootstrap"/>; constructed before the scheduler
+/// so the scheduler ctor can take it as an immutable reference (K6.1
+/// ownership inversion). Consumers
+/// (<see cref="ModIntegrationPipeline.Apply"/>,
+/// <see cref="ModLoader.HandleModFault"/>) hold a reference to the handler
+/// and query <see cref="GetFaultedMods"/> / <see cref="ClearFault"/> on
+/// demand — the handler itself depends on nothing. Faults arrive on
+/// simulation tick threads (via the isolation guard or the public
+/// <see cref="ModLoader.HandleModFault"/> entry point); reads happen on
+/// the menu thread when <see cref="ModIntegrationPipeline.Apply"/> drains
+/// the faulted set. All access is gated through <c>lock (_lock)</c> to
+/// keep the handler thread-safe across that boundary.
 ///
 /// The handler does NOT rebuild the dependency graph synchronously. Per
 /// TechArch 11.8 and the comment retained from the original
@@ -34,18 +40,16 @@ namespace DualFrontier.Application.Modding;
 /// </summary>
 internal sealed class ModFaultHandler : IModFaultSink
 {
-    // Owner reference per the K6 brief Phase 3.1 design. Currently unused
-    // by handler methods (the deferred-drain model means the pipeline
-    // pulls from the handler, not the reverse), retained for the
-    // documented future hook where a fault might trigger a synchronous
-    // pipeline notification before the next menu open.
-    private readonly ModIntegrationPipeline _pipeline;
     private readonly object _lock = new();
     private readonly HashSet<string> _faultedMods = new(StringComparer.Ordinal);
 
-    public ModFaultHandler(ModIntegrationPipeline pipeline)
+    public ModFaultHandler()
     {
-        _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
+        // No dependencies. Handler is a self-contained fault accumulator;
+        // consumers (ModIntegrationPipeline.Apply, ModLoader.HandleModFault)
+        // query GetFaultedMods / ClearFault on demand. Owned by GameBootstrap
+        // as a session-scoped singleton wired into the scheduler before
+        // mods are loaded.
     }
 
     /// <summary>
