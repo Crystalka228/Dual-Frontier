@@ -556,6 +556,32 @@ Example: «**Estimated time**: 4-6 hours auto-mode (5-7 days at hobby pace).»
 
 **The pattern is**: think slowly, decide carefully, execute fast. Auto-mode multiplier applies only к execution phase.
 
+### Pipeline closure lessons (K-series, post-K8.1)
+
+Pipeline behaviour matures across closures. Lessons surfaced from K8.1 onward concern dependency-cycle commit shapes, drift between brief authoring time and execution time, and test isolation in mature multi-mod fixtures. They differ in character from the K0-K3 era foundation lessons recorded above (descriptive pre-flight, ABI boundary catches, brief-as-step, calibrated estimates) and are recorded here as a distinct section so future readers can trace methodology evolution chronologically.
+
+#### Atomic commit as compilable unit
+
+The pipeline's atomic-commit discipline is normally read as "small commits with focused scope." The intuitive proxy for "small" is "few files." This proxy works in the common case; it fails when types in different files form a dependency cycle that compiles only together.
+
+**Failure mode (observed at K8.1 closure, 2026-05-09).** K8.1 brief Phase 5 specified five separate commits, one per managed bridge wrapper file (`InternedString.cs`, `NativeMap.cs`, `NativeComposite.cs`, `NativeSet.cs`, plus the wiring change in `NativeWorld.cs`). At execution time, Cloud Code discovered that `InternedString.Resolve` calls `NativeWorld.ResolveInternedString`, which in turn requires `InternedString` to be already defined. The wrappers and the World wiring formed a small dependency cycle that did not factor into independently-buildable per-file commits — any subset of the five would either fail to compile or require stub methods that would be deleted in the next commit (and stub-and-delete is the textbook structural костыль).
+
+The brief's five-commit shape was abandoned in favour of a single atomic commit bundling all five files. The deviation was recorded in the K8.1 closure report and ratified post-hoc — splitting would have produced either broken-build commits or temporary stubs, both worse than bundling.
+
+**Principle: atomic = minimum unit that compiles and passes tests, not minimum unit by file count.**
+
+The pipeline's atomic-commit discipline is structural, not aesthetic. Each commit should leave the project in a working state — compilable, tests passing — so that any later `git checkout` lands on a coherent codebase. When type definitions cross files in a way that requires them to land together, the file-count proxy lies: "five separate commits" produces five broken intermediate states. The compilable-unit definition is robust against this; the file-count proxy is not.
+
+In practice, most commits remain single-file or two-file because most type definitions don't form cycles. The compilable-unit rule is a reformulation that preserves the common case and handles the cycle case without temporary scaffolding.
+
+**Brief authoring requirement** (mandatory checklist item for any brief introducing new types across multiple files):
+
+- [ ] **Cycle inventory**: identify any cross-file type dependencies (calls, returns, generic parameters) introduced by the brief.
+- [ ] **Commit-shape decision**: for cycles, specify the bundled commit explicitly rather than mandating per-file commits the executor must override.
+- [ ] **Stub-and-delete prohibition**: never specify a per-file commit shape that requires temporary stub methods later removed; that is a structural костыль regardless of how clean each commit looks in isolation.
+
+**Falsifiable claim**: from K8.2 onward, briefs that include the cycle inventory checklist will encounter zero "executor bundled commits the brief specified to split" deviations on milestones introducing new cross-file types. A counter-example would force the rule to be re-examined for missing cycle classes.
+
 ### Reference: K0 lessons learned
 
 Concrete K0 closure lessons live в `docs/MIGRATION_PROGRESS.md` K0 entry (5 items). The descriptive-pre-flight principle in this section generalizes from those lessons; it is не a complete account of K0 — that lives в the migration tracker.
