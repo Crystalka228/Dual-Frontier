@@ -869,9 +869,9 @@ K-L1 through K-L10 above.
 - Mitigation: extensive testing, accept some leakage в development workflow
 
 **R5 — Performance regression на weak hardware**
-- Probability: Low (allocation reduction structural)
-- Impact: K7 measurement shows native не faster than managed-with-structs
-- Mitigation: К8 Outcome 2 already planned for this case (managed-with-structs valid path)
+- Probability: Low (allocation reduction structural; refuted by K7 evidence on Skarlet hardware — V3 dominates V2 by 4-32× across §8 metrics)
+- Impact: hypothetical K7+ measurement on weaker hardware shows native не faster than managed-with-structs
+- Mitigation: K-L11 Solution A LOCKED (per K8.0 closure 2026-05-09) commits to NativeWorld production backbone. If a future weaker-hardware measurement surfaces a regression post-K8.4, K-L11 reversal trigger applies (re-open Solution C as fallback per `MIGRATION_PROGRESS.md` D5; explicit re-architecture milestone required).
 
 **R6 — Cross-document drift (KERNEL ↔ RUNTIME)**
 - Probability: Medium (two evolving docs)
