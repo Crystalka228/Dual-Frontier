@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (K8.1 closure — native-side reference primitives ready for K8.2)
+**Last updated**: 2026-05-09 (K8.1.1 closure — InternedString cross-pool equality + doc semantics + empty-string coverage)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K9 (next per K8.0 sequencing decision Option c — K9 runs between K8.1 and K8.2) |
-| **Last completed milestone** | K8.1 (native-side reference primitives) — 2026-05-09 |
+| **Active phase** | K9 (next per K8.0 sequencing decision Option c — K9 runs between K8.1 and K8.2; K8.1.1 closed as in-place follow-up amendment to K8.1) |
+| **Last completed milestone** | K8.1.1 (InternedString closure follow-up — cross-pool equality + doc semantics + empty-string coverage) — 2026-05-09 |
 | **Next milestone (recommended)** | K9 (RawTileField; consumes K8.1 primitives where applicable) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 583 (553 baseline + 30 K8.1 bridge tests; native selftest extended with 17 K8.1 sub-scenarios across 4 functions) |
+| **Tests passing** | 592 (583 post-K8.1 + 9 K8.1.1 bridge tests; native selftest still 21 scenarios with 3 added sub-checks inside scenario_string_pool) |
 
 ---
 
@@ -82,6 +82,7 @@
 | K7 | Performance measurement (tick-loop) | DONE | 3–5 days hobby pace (~4-6h auto-mode) | `72ea8b5`..`e917220` | 2026-05-09 |
 | K8.0 | Architectural decision recording (Solution A) | DONE | 1-2 days | `9f9dc05`..`5fa3f1d` | 2026-05-09 |
 | K8.1 | Native-side reference handling primitives | DONE | 8-14 hours auto-mode | `a62c1f3`..`812df98` | 2026-05-09 |
+| K8.1.1 | InternedString closure follow-up (cross-pool equality, doc semantics, empty-string coverage) | DONE | 1-3 hours auto-mode | `f8273ca`..`16afdf3` | 2026-05-09 |
 | K8.2 | 7 class components redesigned to structs | NOT STARTED | 1-2 weeks | — | — |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
@@ -327,6 +328,40 @@
   - Sorted-by-key iteration for `KeyedMap` and `SetPrimitive` provides save/load determinism out of the box; insertion-order or hash-order alternatives would have created roundtrip drift across machines or across save/load cycles. Memcmp-byte ordering is sufficient for the blittable POD key types K8.2 will use.
   - CMakeLists.txt was updated **incrementally** (one entry per primitive commit) rather than as a single Phase 8 commit. Reason: explicit-listing CMakeLists rejects sources that aren't yet declared, and "build verification per primitive" is meaningless without the source being compiled. The brief's Phase 8 step became verification-only (no edit needed at closure).
   - The native selftest's `id_b_only` fixture initially raised a /W4 unused-variable warning; the right fix was an additional invariant assertion (verifying the ModB-exclusive id is distinct from both the shared id and the ModA-exclusive id), not a `(void)` cast. Dropped warnings should usually become tests.
+
+### K8.1.1 — InternedString closure follow-up: cross-pool equality, doc semantics, empty-string coverage
+
+- **Status**: DONE (`f8273ca`..`16afdf3` on `feat/k8-1-1-interned-string-followup`, fast-forward merged to main, 2026-05-09)
+- **Brief**: `tools/briefs/K8_1_1_INTERNED_STRING_FOLLOWUP_BRIEF.md` (FULL EXECUTED) — authored on main as commit `fc4400d` before branch creation
+- **Goal**: Close three observations surfaced by Opus closure verification of K8.1: (1) cross-pool equality had no explicit API surface despite K8.1 LOCKED #5 specifying dual semantics; (2) the `InternedString` doc-comment elided the multi-world failure mode of `==`; (3) the empty-string sentinel path had no test coverage on either side of the bridge.
+- **Deliverables**:
+  - `InternedString.EqualsByContent(InternedString, NativeWorld, NativeWorld)` — explicit cross-pool comparison method with two-world signature. Same-pool fast path preserved via reference-equality short-circuit when `(Id, Generation)` pairs are equal. Empty-on-both-sides returns true regardless of which worlds are supplied. Stale-generation resolution (or wrong-world resolution) returns false.
+  - `InternedString` struct-level XML doc-comment expanded into five paragraphs: same-pool fast path, cross-pool failure mode of `==`, Solution A applicability (single-world production), stale ids (generation tag and wrong-world resolution), save/load contract restated with `EqualsByContent` as the cross-snapshot reconciliation path.
+  - Empty-string sentinel coverage: native selftest sub-scenario 6 in `scenario_string_pool` (intern of empty content returns id 0; `df_world_string_pool_count` unchanged; resolve of id 0 returns 0 bytes regardless of generation tag passed in). Managed bridge test `EmptyString_RoundTrip_YieldsEmptySentinel` covers the same contract on the managed side, plus value-equality of empty values to `default(InternedString)`.
+  - Eight `EqualsByContent_*` bridge tests covering: both-empty across worlds, one-side-empty in either order, same-pool fast-path agreement with `==`, same-pool different content, cross-pool identical content, cross-pool different content, null-world `ArgumentNullException` with the correct parameter name on each side, and stale-generation post-`ClearModScope`.
+- **Test count**: 583 → 592 (+9 managed: 8 `EqualsByContent_*` scenarios + 1 empty-string round-trip; native selftest scenario count unchanged at 21 with 3 new sub-checks inside `scenario_string_pool`)
+- **Atomic commit log** (8 commits total — 1 on main + 7 on feature branch):
+  1. `fc4400d docs(briefs): author K8.1.1 InternedString follow-up brief` (on main, pre-branch)
+  2. `f8273ca feat(interop): add InternedString.EqualsByContent for cross-pool comparison`
+  3. `e365da3 docs(interop): expand InternedString doc-comment with multi-world semantics`
+  4. `2c9f7ce test(native): cover string pool empty-string sentinel in selftest`
+  5. `6c0d8c4 test(interop): cover InternedString empty-string sentinel round-trip`
+  6. `16afdf3 test(interop): cover InternedString.EqualsByContent across same-pool and cross-pool scenarios`
+  7. `docs(progress): record K8.1.1 closure (InternedString follow-up)` — this commit
+  8. `docs(briefs): mark K8.1.1 brief EXECUTED` — pending
+- **Brief deviations**:
+  - Brief description text says "+9: 7 EqualsByContent scenarios + 2 empty-string round-trip" but the brief's own Phase 5 code listing defines 8 `EqualsByContent_*` methods + 1 empty-string round-trip = 9 total. Recorded honestly here as 8 + 1 = 9. The 592 total matches the brief's projection.
+  - `EqualsByContent_StaleGeneration_ReturnsFalse` test setup as specified in the brief re-interned the same content **after** `EndModScope("ModA")` and **before** `ClearModScope("ModA")`. That re-intern adds the id to the empty/core scope's reference list (`current_mod_scope_ == ""` between mod scopes), which causes `clear_mod_scope` to see the id as «referenced elsewhere» and skip reclaim. The pre-clear and post-clear `(Id, Generation)` pairs then stay identical and the test fails its `Equals(...).Should().BeFalse()` assertion. Per Stop condition #3, the K8.1 reclaim semantics in `string_pool.cpp::clear_mod_scope` are correct as written; the test setup needed to keep the id uniquely owned by ModA. Fix: moved the fresh-lookup sanity assertion **inside** the `BeginModScope`/`EndModScope` pair, where it confirms the same-pool dedup invariant without polluting the empty-scope reference list. The brief's intended assertion (stale generation makes resolution null and `EqualsByContent` returns false) is preserved end-to-end.
+- **Architectural decisions LOCKED in this milestone**:
+  - Two-world signature for cross-pool comparison (no single-world overload). Misuse becomes structurally impossible at the API surface; same-pool callers pay zero extra cost via reference-equality short-circuit on equal `(Id, Generation)` pairs.
+  - Empty values are equal to each other by content irrespective of which worlds they were issued by. Mixed empty/non-empty returns false. These two clauses are part of the `EqualsByContent` contract, not a fast-path optimisation, so they are documented in the method XML doc.
+- **Cross-cutting impact**:
+  - K8.2 component conversion may use `EqualsByContent` where cross-pool semantics applies. K8.1.1 only adds the surface; K8.2 onward is the consumer.
+  - The expanded XML doc-comment is the user-facing source of truth for `InternedString` multi-world semantics; K8.2 component authors should treat it as authoritative when deciding between `==` and `EqualsByContent`.
+- **Lessons learned**:
+  - "Closure follow-up" briefs (precedent: K6.1 fault wiring follow-up) work well for tightening API surface and test coverage of one already-shipped deliverable without redesigning it. Scope discipline is enforced by the brief's "K8.1.1 does not" list (no native changes, no ABI additions, no production migration). The boundary held end-to-end.
+  - Test setup for generational reclaim is sensitive to which scope holds the reference. The `string_pool.cpp` invariant «id stays alive as long as any scope refers to it» means even an "innocent" re-lookup between mod scopes anchors the id to the empty scope. Future mod-scope tests should isolate the reference to the scope under test or document the cross-scope intent explicitly.
+  - The brief's "Halt and reconcile" Stop condition (#3) for reclaim semantics worked as designed: the failing test surfaced the assumption mismatch, the executor read `clear_mod_scope`, identified the cause (re-intern in empty scope), and adjusted the test rather than the implementation. The reclaim implementation is correct as shipped in K8.1.
 
 ### K8.2-K8.5 — Sub-milestones
 
