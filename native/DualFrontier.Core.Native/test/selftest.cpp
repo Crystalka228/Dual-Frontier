@@ -673,6 +673,30 @@ void scenario_string_pool() {
     DF_CHECK(df_world_string_pool_current_generation(w) > gen_before_clear,
              "current_generation advanced after reclaim");
 
+    // 6. Empty-string sentinel: intern returns 0, resolve returns 0 bytes,
+    //    pool count unchanged. The sentinel path is hand-written in
+    //    string_pool.cpp::intern; this scenario guards against accidental
+    //    refactors of that branch.
+    const int32_t count_before_empty = df_world_string_pool_count(w);
+    uint32_t id_empty = df_world_intern_string(w, "", 0);
+    DF_CHECK(id_empty == 0, "intern of empty content returns id 0 sentinel");
+    DF_CHECK(df_world_string_pool_count(w) == count_before_empty,
+             "string pool count unchanged after intern of empty content");
+
+    char empty_buf[8] = {0};
+    int32_t empty_written = df_world_resolve_string(
+        w, /*id=*/0, /*generation=*/0, empty_buf, sizeof(empty_buf));
+    DF_CHECK(empty_written == 0,
+             "resolve of empty sentinel id returns 0 bytes (treated as not-found)");
+
+    // Cross-check: also resolve with a non-zero generation (any value).
+    // Empty sentinel id 0 is shaped as "always not-found" for resolve,
+    // independent of the generation tag passed in.
+    empty_written = df_world_resolve_string(
+        w, /*id=*/0, /*generation=*/12345, empty_buf, sizeof(empty_buf));
+    DF_CHECK(empty_written == 0,
+             "resolve of empty sentinel id is generation-independent");
+
     df_world_destroy(w);
 }
 
