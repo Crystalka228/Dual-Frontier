@@ -469,9 +469,17 @@ internal sealed class ModIntegrationPipeline
         }
 
         // [8] Atomically swap the scheduler's phases. The previous graph is no longer needed.
-        _scheduler.Rebuild(localGraph.GetPhases());
+        // K6.1 — _activeMods.AddRange MUST run before SystemMetadataBuilder.Build
+        // is unaffected by it (the registry already holds mod systems via the
+        // Phase [4] RegisterSystem calls), but the order is preserved here so
+        // the metadata snapshot reflects the same registry state the scheduler
+        // is about to consume — single source of truth for both phase order
+        // and per-system origin/modId.
         _activeMods.AddRange(loaded);
         _activeShared.AddRange(sharedLoaded);
+        IReadOnlyDictionary<SystemBase, SystemMetadata> newMetadata =
+            SystemMetadataBuilder.Build(_registry);
+        _scheduler.Rebuild(localGraph.GetPhases(), newMetadata);
 
         return new PipelineResult(
             Success: true,
@@ -640,7 +648,13 @@ internal sealed class ModIntegrationPipeline
             foreach (SystemRegistration reg in _registry.GetAllSystems())
                 localGraph.AddSystem(reg.Instance);
             localGraph.Build();
-            _scheduler.Rebuild(localGraph.GetPhases());
+            // K6.1 — registry has already had RemoveMod called in step 3,
+            // so the metadata snapshot reflects the post-unload state and
+            // the scheduler stops treating the unloaded mod's systems as
+            // mod-origin in any future BuildContext invocation.
+            IReadOnlyDictionary<SystemBase, SystemMetadata> newMetadata =
+                SystemMetadataBuilder.Build(_registry);
+            _scheduler.Rebuild(localGraph.GetPhases(), newMetadata);
         });
 
         // Step 6 — ALC.Unload. ModLoader.UnloadMod also calls
@@ -719,7 +733,12 @@ internal sealed class ModIntegrationPipeline
             foreach (SystemRegistration reg in _registry.GetAllSystems())
                 localGraph.AddSystem(reg.Instance);
             localGraph.Build();
-            _scheduler.Rebuild(localGraph.GetPhases());
+            // K6.1 — empty-active-set path still propagates fresh metadata
+            // so the scheduler's metadata table matches the kernel-only
+            // registry state.
+            IReadOnlyDictionary<SystemBase, SystemMetadata> newMetadata =
+                SystemMetadataBuilder.Build(_registry);
+            _scheduler.Rebuild(localGraph.GetPhases(), newMetadata);
         }
 
         return warnings;
