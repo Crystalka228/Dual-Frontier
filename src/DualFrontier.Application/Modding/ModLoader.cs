@@ -20,6 +20,21 @@ public sealed class ModLoader
 {
     private readonly Dictionary<string, LoadedMod> _loaded = new();
     private readonly Dictionary<string, LoadedSharedMod> _sharedLoaded = new();
+    private ModFaultHandler? _faultHandler;
+
+    /// <summary>
+    /// Installs the Application-side fault handler. Called once during
+    /// <see cref="ModIntegrationPipeline"/> startup; subsequent calls
+    /// overwrite the reference so test fixtures can swap a stub handler
+    /// in. Null is allowed and disables fault routing —
+    /// <see cref="HandleModFault"/> becomes a no-op except for the
+    /// argument null-checks.
+    /// </summary>
+    /// <param name="handler">Handler to receive fault reports, or null to disable routing.</param>
+    internal void SetFaultHandler(ModFaultHandler? handler)
+    {
+        _faultHandler = handler;
+    }
 
     /// <summary>
     /// Backward-compatible alias for <see cref="LoadRegularMod"/>. Equivalent
@@ -263,16 +278,33 @@ public sealed class ModLoader
 
     /// <summary>
     /// Handles an isolation violation surfaced by the runtime guard.
-    /// Implemented in the follow-up of Phase 2 — the pipeline hands the
-    /// exception to <c>ModFaultHandler</c>, which unloads the offending mod
-    /// without reshaping the graph (graph rebuild is deferred to the next
-    /// menu open). See <see cref="ModIsolationException"/> and
+    /// Per MOD_OS_ARCHITECTURE §10.3 + TechArch 11.8: the core does not
+    /// crash on a mod isolation violation. The fault is reported through
+    /// <see cref="ModFaultHandler"/> (an <see cref="IModFaultSink"/>
+    /// implementation owned by <see cref="ModIntegrationPipeline"/>); the
+    /// offending mod is queued for deferred unload at the next menu open
+    /// per the design comment retained from the original Phase 2 (part 2)
+    /// plan.
+    ///
+    /// This method is the public-surface entry point for callers that hold
+    /// a <see cref="ModLoader"/> reference but not a
+    /// <see cref="ModFaultHandler"/> reference. New code routes faults
+    /// through <see cref="IModFaultSink"/> directly via
+    /// <see cref="DualFrontier.Core.ECS.SystemExecutionContext"/>'s
+    /// installed sink. See <see cref="ModIsolationException"/> and
     /// <c>docs/MOD_PIPELINE.md</c>.
+    ///
+    /// Idempotent: handling the same fault twice is harmless; the handler
+    /// deduplicates internally. When no handler is installed
+    /// (<see cref="SetFaultHandler"/> was not called or was called with
+    /// null), the routing is a silent no-op after the argument checks.
     /// </summary>
     public void HandleModFault(string modId, ModIsolationException exception)
     {
-        // TODO: Phase 2 (part 2) — extracted into a dedicated ModFaultHandler.
-        throw new NotImplementedException("TODO: Phase 2 (part 2) — ModFaultHandler");
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (exception is null) throw new ArgumentNullException(nameof(exception));
+
+        _faultHandler?.ReportFault(modId, exception.Message);
     }
 
     /// <summary>
