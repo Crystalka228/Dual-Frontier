@@ -2,7 +2,7 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09 (post-K8.1.1 closure)
-**Status**: AUTHORED, awaits Cloud Code execution
+**Status**: EXECUTED (2026-05-09, branch `feat/k-lessons-formalization`, closure `9df2709..071ae11`). See `docs/MIGRATION_PROGRESS.md` § "K-Lessons — Pipeline closure lessons formalization" for closure record.
 **Reference docs**: `docs/METHODOLOGY.md` v1.4 (target for 3 lessons + version bump to v1.5), `docs/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (target for 1 lesson + version bump to v1.3), `docs/MIGRATION_PROGRESS.md` (closure tracker — K-Lessons row authored as part of this brief)
 **Companion**: closure records in `MIGRATION_PROGRESS.md` for K8.0 (`9f9dc05..28498f9`), K8.1 (`a62c1f3..059f712`), K8.1.1 (`fc4400d..63777ef`)
 **Methodology lineage**: this brief is itself an instance of the brief-authoring discipline (`MOD_OS_V16_AMENDMENT_CLOSURE.md`) and is target-document-only — no source code or tests are touched

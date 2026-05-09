@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (K8.1.1 closure — InternedString cross-pool equality + doc semantics + empty-string coverage)
+**Last updated**: 2026-05-09 (K-Lessons closure — 4 pipeline-execution lessons formalized in METHODOLOGY.md v1.5 and KERNEL_ARCHITECTURE.md v1.3)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,8 +31,8 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K9 (next per K8.0 sequencing decision Option c — K9 runs between K8.1 and K8.2; K8.1.1 closed as in-place follow-up amendment to K8.1) |
-| **Last completed milestone** | K8.1.1 (InternedString closure follow-up — cross-pool equality + doc semantics + empty-string coverage) — 2026-05-09 |
+| **Active phase** | K9 (next per K8.0 sequencing decision Option c — K9 runs between K8.1 and K8.2; K8.1.1 closed as in-place follow-up amendment to K8.1; K-Lessons closed as methodology-formalization batch post-K8.1.1) |
+| **Last completed milestone** | K-Lessons (4 pipeline-execution lessons formalized: atomic commit as compilable unit, Phase 0.4 inventory as hypothesis, mod-scope test isolation, Interop error semantics convention) — 2026-05-09 |
 | **Next milestone (recommended)** | K9 (RawTileField; consumes K8.1 primitives where applicable) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
@@ -83,6 +83,7 @@
 | K8.0 | Architectural decision recording (Solution A) | DONE | 1-2 days | `9f9dc05`..`5fa3f1d` | 2026-05-09 |
 | K8.1 | Native-side reference handling primitives | DONE | 8-14 hours auto-mode | `a62c1f3`..`812df98` | 2026-05-09 |
 | K8.1.1 | InternedString closure follow-up (cross-pool equality, doc semantics, empty-string coverage) | DONE | 1-3 hours auto-mode | `f8273ca`..`16afdf3` | 2026-05-09 |
+| K-Lessons | Pipeline closure lessons formalization (METHODOLOGY v1.5 + KERNEL v1.3) | DONE | 30-60 min auto-mode | `9df2709`..`071ae11` | 2026-05-09 |
 | K8.2 | 7 class components redesigned to structs | NOT STARTED | 1-2 weeks | — | — |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
@@ -362,6 +363,46 @@
   - "Closure follow-up" briefs (precedent: K6.1 fault wiring follow-up) work well for tightening API surface and test coverage of one already-shipped deliverable without redesigning it. Scope discipline is enforced by the brief's "K8.1.1 does not" list (no native changes, no ABI additions, no production migration). The boundary held end-to-end.
   - Test setup for generational reclaim is sensitive to which scope holds the reference. The `string_pool.cpp` invariant «id stays alive as long as any scope refers to it» means even an "innocent" re-lookup between mod scopes anchors the id to the empty scope. Future mod-scope tests should isolate the reference to the scope under test or document the cross-scope intent explicitly.
   - The brief's "Halt and reconcile" Stop condition (#3) for reclaim semantics worked as designed: the failing test surfaced the assumption mismatch, the executor read `clear_mod_scope`, identified the cause (re-intern in empty scope), and adjusted the test rather than the implementation. The reclaim implementation is correct as shipped in K8.1.
+
+### K-Lessons — Pipeline closure lessons formalization (post-K8.1.1, methodology batch)
+
+**Status**: DONE
+**Closure**: `9df2709..071ae11` on `feat/k-lessons-formalization` (fast-forward merged to main)
+**Brief**: `tools/briefs/K_LESSONS_BATCH_BRIEF.md`
+**Test count**: 592 (unchanged — documentation-only milestone)
+
+**Deliverables**:
+
+- `METHODOLOGY.md` v1.4 → v1.5: new sub-section "Pipeline closure lessons (K-series, post-K8.1)" under "Native layer methodology adjustments" with three lessons:
+  - Atomic commit as compilable unit, not file-count unit (sourced from K8.1 Phase 5 bundled commit)
+  - Phase 0.4 inventory as hypothesis, not authority (sourced from K8.1 `Marshalling/` reconciliation)
+  - Mod-scope test isolation (sourced from K8.1.1 Stop condition #3 fix)
+- `KERNEL_ARCHITECTURE.md` v1.2 → v1.3: new sub-section "Error semantics convention for Interop layer" in Part 7, codifying the four-category rule (sparse / dense / lifecycle / construction) practiced through K8.1 and K9 brief authoring.
+- Change history entries in METHODOLOGY.md §10 and Status line update in KERNEL_ARCHITECTURE.md.
+
+**Atomic commit log** (6 commits total — 1 on main + 5 on feature branch):
+1. `3b242ba docs(briefs): author K-Lessons batch brief (4 pipeline lessons formalization)` (on main, pre-branch)
+2. `9df2709 docs(methodology): formalize atomic-commit-as-compilable-unit lesson`
+3. `b78441f docs(methodology): formalize Phase 0.4 inventory-as-hypothesis lesson`
+4. `f1a4b34 docs(methodology): formalize mod-scope test isolation lesson` (includes METHODOLOGY.md v1.4 → v1.5 bump and §10 change history entry)
+5. `071ae11 docs(kernel): formalize Interop error semantics convention; bump to v1.3` (includes KERNEL_ARCHITECTURE.md v1.2 → v1.3 bump)
+6. `docs(progress): record K-Lessons closure (4 pipeline lessons formalized)` — this commit (also marks brief EXECUTED)
+
+**Brief deviations**: zero structural deviations. Phase 1 design was implemented as written: 3 METHODOLOGY lessons + 1 KERNEL lesson, version bumps bundled into final lesson commits per Phase 1.5 atomic commit shape decision. Documentation-only milestone; no test count delta, no source code changes.
+
+**Architectural decisions LOCKED in this milestone**: none new. The lessons formalize existing practice and existing convention; no foundational decision is added or modified. K-L1..K-L11 in `KERNEL_ARCHITECTURE.md` Part 0 unchanged.
+
+**Cross-cutting impact**:
+
+- K8.2 brief authoring (next milestone) cites the four lessons by name in its own Phase 1 design section.
+- K9 brief drift findings (deferred Stage 4 work) cite the error semantics convention as the resolution of Drift #4.
+- Future Cloud Code execution sessions on K-series milestones can reference the four lessons by section heading rather than by closure-narrative recall.
+
+**Lessons learned**:
+
+- Methodology-formalization batches (precedent: K-Lessons here, K8.0 architectural decision brief earlier) work cleanly as documentation-only milestones with their own atomic-commit log. Scope discipline is enforced by the brief's "K-Lessons does not" list (no source code, no tests, no native build, no new K-Lxx LOCKED decisions). Skipping the build/test gate is acceptable when the brief proves it touches no source paths; the closure verification (still running `dotnet test` and grepping for new debt markers) substitutes for it.
+- Per-lesson commits (one `####` sub-section per commit) preserve readability of the document history without adding overhead, because each lesson is self-contained.
+- Bundling the version bump into the final-lesson commit (rather than a separate "version bump" commit) avoids a tax commit that would not leave the document in a coherent reviewable state on its own. This generalizes the atomic-commit-as-compilable-unit principle to documentation: each commit should leave the doc reviewable.
 
 ### K8.2-K8.5 — Sub-milestones
 
