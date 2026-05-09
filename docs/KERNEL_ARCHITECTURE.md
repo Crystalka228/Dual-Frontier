@@ -45,12 +45,15 @@ The following decisions are committed как architectural foundation. Departure
 | K-L8 | Component lifetime | Native owns storage, managed holds opaque `IntPtr` | Single ownership boundary; managed holds handle only |
 | K-L9 | Mod parity | Vanilla mods register components и systems through same IModApi as third-party | «Vanilla = mods» enforced at architecture level |
 | K-L10 | Decision rule | §8 metrics (GC pause / p99 / long-run drift on weak hardware) | §6 «20% mean speed» superseded; §8 captures actual project value |
+| K-L11 | Production storage backbone | NativeWorld single source of truth (Solution A); ManagedWorld retained as test fixture and research artifact only | K7 evidence (V3 dominates V2 by 4-32× across §8 metrics) + «no compromises» commitment; single ownership boundary, single mental model |
 
 **Implication of K-L3**: All managed components must convert от class к struct (Phase 7 effort, 50-80 components). Mod components subject к same constraint.
 
 **Implication of K-L6**: There is NO «native scheduler» для game tick. Native scheduler exists only для bootstrap orchestration. All system code (vanilla mods + third-party mods) executes managed.
 
 **Implication of K-L9**: No vanilla privilege. Vanilla.{Core,Combat,Magic,Inventory,Pawn,World} mods register components и systems via same API as third-party would.
+
+**Implication of K-L11**: All production storage is NativeWorld. After K8.4 closure, no production code path constructs `World` directly. `World` class is retained for tests and research reference only. K8.1-K8.5 sub-milestones execute the migration; see Part 2 §K8.
 
 ---
 
