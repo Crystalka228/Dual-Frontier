@@ -8,6 +8,7 @@ using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
+using DualFrontier.Modding.Tests.Fixtures;
 using FluentAssertions;
 using Xunit;
 
@@ -344,9 +345,9 @@ public sealed class M72UnloadChainTests
             foreach (SystemBase s in coreSystems)
                 graph.AddSystem(s);
             graph.Build();
-            var scheduler = new ParallelSystemScheduler(graph.GetPhases(), ticks, world);
+            var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, world);
             var pipeline = new ModIntegrationPipeline(
-                loader, registry, validator, contractStore, services, scheduler);
+                loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler());
             return new Harness(loader, registry, contractStore, services, scheduler, pipeline);
         }
     }

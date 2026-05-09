@@ -5,6 +5,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
+using DualFrontier.Modding.Tests.Fixtures;
 using DualFrontier.Systems.Combat;
 using FluentAssertions;
 using Xunit;
@@ -122,8 +123,8 @@ public sealed class M73Phase2DebtTests
         foreach (SystemBase s in coreSystems)
             graph.AddSystem(s);
         graph.Build();
-        var scheduler = new ParallelSystemScheduler(graph.GetPhases(), ticks, world);
+        var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, world);
         return new ModIntegrationPipeline(
-            loader, registry, validator, contractStore, services, scheduler);
+            loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler());
     }
 }

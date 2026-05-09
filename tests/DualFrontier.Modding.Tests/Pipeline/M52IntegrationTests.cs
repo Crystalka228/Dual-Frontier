@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
+using DualFrontier.Modding.Tests.Fixtures;
 using FluentAssertions;
 using Xunit;
 
@@ -116,9 +117,9 @@ public sealed class M52IntegrationTests
         var ticks = new TickScheduler();
         var graph = new DependencyGraph();
         graph.Build();
-        var scheduler = new ParallelSystemScheduler(graph.GetPhases(), ticks, world);
+        var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, world);
         return new ModIntegrationPipeline(
-            loader, registry, validator, contractStore, services, scheduler);
+            loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler());
     }
 }
 

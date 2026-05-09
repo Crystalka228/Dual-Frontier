@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
+using DualFrontier.Modding.Tests.Fixtures;
 using FluentAssertions;
 using Xunit;
 
@@ -187,8 +188,14 @@ public sealed class ModFaultHandlerTests
     /// Minimal pipeline construction mirroring
     /// <see cref="M71PauseResumeTests"/>. Empty kernel-system set, default
     /// <see cref="DependencyGraph"/>, freshly constructed
-    /// <see cref="ParallelSystemScheduler"/>. The pipeline's ctor wires
-    /// the new <see cref="ModFaultHandler"/> automatically per K6 Phase 3.3.
+    /// <see cref="ParallelSystemScheduler"/>. K6.1 — the
+    /// <see cref="ModFaultHandler"/> is constructed here (no longer
+    /// inside the pipeline ctor) and shared between the scheduler
+    /// (as <c>IModFaultSink</c>), the loader (via <c>SetFaultHandler</c>),
+    /// and the pipeline (as the trailing ctor parameter), so the
+    /// <see cref="ModLoader_HandleModFault_RoutesToHandler"/> and
+    /// <see cref="ApplyAfterFault_DrainsFaultedMods"/> tests exercise
+    /// a single handler instance end-to-end.
     /// </summary>
     private static ModIntegrationPipeline BuildPipeline()
     {
@@ -202,9 +209,12 @@ public sealed class ModFaultHandlerTests
         var ticks = new TickScheduler();
         var graph = new DependencyGraph();
         graph.Build();
-        var scheduler = new ParallelSystemScheduler(graph.GetPhases(), ticks, world);
+        var faultHandler = new ModFaultHandler();
+        loader.SetFaultHandler(faultHandler);
+        var scheduler = SchedulerTestFixture.BuildIsolated(
+            graph.GetPhases(), ticks, world, faultSink: faultHandler);
         return new ModIntegrationPipeline(
-            loader, registry, validator, contractStore, services, scheduler);
+            loader, registry, validator, contractStore, services, scheduler, faultHandler);
     }
 
     /// <summary>
