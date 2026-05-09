@@ -53,6 +53,8 @@ The following decisions are committed как architectural foundation. Departure
 
 **Implication of K-L9**: No vanilla privilege. Vanilla.{Core,Combat,Magic,Inventory,Pawn,World} mods register components и systems via same API as third-party would.
 
+**Implication of K-L8 in production**: Post-K8.4 closure, NativeWorld is the only production storage path. World class retained as test fixture and research reference (per K-L11). Production code constructs NativeWorld via Bootstrap two-phase model; no production code path constructs World directly.
+
 **Implication of K-L11**: All production storage is NativeWorld. After K8.4 closure, no production code path constructs `World` directly. `World` class is retained for tests and research reference only. K8.1-K8.5 sub-milestones execute the migration; see Part 2 §K8.
 
 ---
