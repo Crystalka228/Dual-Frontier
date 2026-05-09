@@ -1,8 +1,8 @@
 # DualFrontier Kernel — Architecture & Roadmap
 
-**Version**: 1.0
+**Version**: 1.1
 **Date**: 2026-05-07
-**Status**: AUTHORITATIVE LOCKED — operational reference document
+**Status**: AUTHORITATIVE LOCKED — operational reference document, K6 wording reconciled with implementation reality
 **Companion documents**: `METHODOLOGY.md`, `CODING_STANDARDS.md`, `MOD_OS_ARCHITECTURE.md`, `RUNTIME_ARCHITECTURE.md`
 **Scope**: Full architectural specification + milestone roadmap для native ECS kernel (C++ via pure P/Invoke). Companion к `RUNTIME_ARCHITECTURE.md` (Vulkan rendering layer) — together describing complete native foundation under managed Application layer.
 
