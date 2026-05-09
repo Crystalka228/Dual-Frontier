@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (K6.1 closure)
+**Last updated**: 2026-05-09 (K7 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K7 (planned) — performance measurement (tick-loop) |
-| **Last completed milestone** | K6.1 (mod fault wiring end-to-end — closes K6 deferred scope) — 2026-05-09 |
-| **Next milestone (recommended)** | K7 (TickLoopBenchmark + §8 metrics) |
+| **Active phase** | K8 (pending Crystalka decision per K7 report) — production cutover |
+| **Last completed milestone** | K7 (tick-loop performance measurement — V1/V2/V3 + report) — 2026-05-09 |
+| **Next milestone (recommended)** | K8 (decision call by Crystalka against K7 report's recommended-direction range) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 553 (76 Core + 4 Persistence + 66 Interop + 38 Systems + 362 Modding + 7 Mod.ManifestRewriter) |
+| **Tests passing** | 553 (unchanged — K7 is benchmarks-only, no test count delta) |
 
 ---
 
@@ -79,7 +79,7 @@
 | K5 | Span<T> protocol + Command Buffer write batching | DONE | 6-8 hours auto-mode (2-3 weeks hobby pace) | `547c919` | 2026-05-08 |
 | K6 | Second-graph rebuild on mod change | DONE | 1-2 days hobby pace (~3-5h auto-mode for the as-found closure-shaped path) | `cb3d6cf`..`af2b572` | 2026-05-09 |
 | K6.1 | Mod fault wiring end-to-end | DONE | 3-5 days hobby pace (~3-5h auto-mode) | `fe03ed3`..`a642d65` | 2026-05-09 |
-| K7 | Performance measurement (tick-loop) | NOT STARTED | 3–5 days | — | — |
+| K7 | Performance measurement (tick-loop) | DONE | 3–5 days hobby pace (~4-6h auto-mode) | `72ea8b5`..`e917220` | 2026-05-09 |
 | K8 | Decision step + production cutover | NOT STARTED | 1 week | — | — |
 
 **Cumulative estimate**: 5–8 weeks at hobby pace (~1h/day).
@@ -254,6 +254,36 @@
   - The K6 closure-shaped brief format successfully flagged the wiring gap in MIGRATION_PROGRESS.md. K6.1 is the validation: an explicitly-flagged deferred gap turned into a focused follow-up milestone with bounded scope. The pattern — closure-shaped brief surfaces a deferred gap → focused follow-up milestone closes it — is now an established methodology, not a one-off.
   - Test design subtlety: `Parallel.ForEach` may stop dispatching new partitions when one item throws, so a test that expects two parallel mod systems to both fault in a single phase is sensitive to host parallelism. K6.1's `MultipleModSystems_BothFault_AllIdsRecorded` was originally written with both systems in one phase and was flaky on low-core machines; rewritten to use one phase per system + `ExecutePhase` per phase with a per-phase try/catch for deterministic coverage of the fault-routing path.
   - `SystemBase.Context` is vestigial — never assigned by the scheduler. The K6.1 test fixtures originally tried to use `Context.SetComponent(...)` and would have NPE'd; the working pattern is `SystemExecutionContext.Current!.SetComponent(...)` (the thread-local is what the scheduler actually pushes). The vestigial `Context` property is a latent footgun that should probably be removed in a future cleanup commit, but K6.1 stayed scope-disciplined and only documented the issue here.
+
+### K7 — Performance measurement (tick-loop)
+
+- **Status**: DONE (`72ea8b5`..`e917220`, 2026-05-09)
+- **Brief**: `tools/briefs/K7_PERFORMANCE_MEASUREMENT_BRIEF.md` (FULL EXECUTED)
+- **Hardware**: AMD Ryzen 7 7435HS, 32 GB DDR5-4800, Win11 25H2 ("Skarlet" — Crystalka's primary dev machine, treated as median target audience hardware per K7 brief Phase 1)
+- **Variants measured**:
+  - V1 managed-current (pre-K4 worktree at `9227a577`) — simplified depletion-only loop on 50 entities × 2 systems per K7 brief stop condition #6 (full pre-K4 vanilla pipeline would have required IGameServices bus wiring out of scope)
+  - V2 managed-with-structs (post-K6.1 main) — full 12-system production pipeline + factories, no presentation bridge
+  - V3 native-with-batching (post-K6.1 main) — `NativeWorld` + 3 purpose-written V3 systems mirroring V2 read/write patterns through `SpanLease<T>` + `WriteBatch<T>`
+- **Workload**: 50 pawns × full vanilla component set + 255 items (150 food + 50 water + 30 beds + 25 decorations) on a 200×200 grid with 800 obstacles. Fixed seeds (42 nav/pawns, 43 items). 10,000 ticks @ 30 TPS (333.3 simulated seconds target).
+- **Frameworks**: BenchmarkDotNet 0.13.12 ShortRunJob (3w×5m, MemoryDiagnoser + ThreadingDiagnoser) for per-tick mean / allocations / gen0; custom `LongRunDriftRunner` for 10k-tick percentiles + GC count/duration + drift + process memory.
+- **Key results** (V2 vs V3 — the apples-to-apples comparison):
+  - BDN mean tick: V2 19.9 μs → V3 5.2 μs (3.81× faster)
+  - BDN allocated/op: V2 6985 B → V3 360 B (19.4× less)
+  - Long-run mean: V2 34.5 μs → V3 8.0 μs (4.33× faster)
+  - Long-run p99: V2 480.1 μs → V3 15.0 μs (32.0× faster)
+  - Long-run max: V2 88,000 μs (gen2 spike) → V3 43.7 μs (2,013× faster)
+  - GC pause total over 10k ticks: V2 3.4 ms → V3 0.0 ms (V3 had zero collections of any generation)
+  - Both variants comfortably meet 30 TPS / 60 FPS budget in absolute terms on Skarlet
+- **Report**: `docs/PERFORMANCE_REPORT_K7.md`
+- **Raw data**: `docs/benchmarks/k7-bdn-tick.csv`, `docs/benchmarks/k7-bdn-tick-report.html`, `docs/benchmarks/k7-bdn-tick-report.md`, `docs/benchmarks/k7-long-run-V{1,2,3}.csv`
+- **Recommended K8 outcome direction** (per report's executive summary): **Outcome 1 OR Outcome 2 depending on Crystalka's weighting of relative-improvement vs cutover-cost**. Outcome 1 (native + batching wins decisively) is favoured by relative-improvement axis (V3 4-32× margin across §8 metrics — exactly the "decisively" definition). Outcome 2 (managed-with-structs alone wins) is favoured by absolute-budget axis (V2 already meets target with 100×+ margin on Skarlet — K8 cutover cost may not be justified). Outcome 3 is excluded (V2 vs V3 not within 10%; gap is 4-32×). Crystalka makes the K8 decision call.
+- **Lessons learned**:
+  - K7 is the first measurement-only K-series milestone; brief format adapted from K-series implementation briefs (Phase 3 = "run benchmarks", Phase 4 = "analyze + report", no production source changes). Format worked — measurement runs were uneventful, the engineering challenge was V3 system harness design (purpose-written ≠ production-equivalent, an honest divergence the brief authorized).
+  - Pre-K4 worktree V1 reconstruction was simpler than the brief feared: `git worktree add` + copy benchmark project tree + write a focused V1 scenario + drop V2/V3 from the worktree's TickLoopBenchmark + simplify Program.cs CLI. Total: ~30 minutes. The fragility the brief anticipated (substantive API drift) didn't materialize because pre-K4 already had K1/K2/K3 + K6 work landed; only the component shapes differed (class vs struct).
+  - The brief's `2fc59d1^` reference for "pre-K4 baseline" was wrong: `2fc59d1` is the K4 closure DOC commit, and its parent is itself a K4 commit. The true pre-K4 baseline is `75a8ac7^` = `9227a577` (one commit before the first component-conversion). Drift recorded here so future closure-shaped briefs cross-check the closure SHA against the actual code-change SHAs, not the docs-update SHA.
+  - V3's no-allocation property (zero gen0/1/2 over 10k ticks) is the K1 + K5 combined design landing cleanly. The 3.4 MB total allocation in V3 is per-tick `WriteBatch<T>` + `SpanLease<T>` managed wrappers; pooling them (deferred per K1/K5 closure notes) would drop V3 allocation closer to zero, but the K7 numbers already show no GC impact at the current allocation rate.
+  - V3's 32× p99 advantage over V2 is the K8-relevant number. Mean-vs-mean comparison (4× faster) underestimates the value because mean is sensitive to the few-percent of GC-spike outliers V2 has and V3 doesn't. For fixed-step simulation (30 TPS), tail-latency dominates frame-budget violations; V3's tighter distribution is the qualitative win even before the mean speedup.
+  - V2's 88 ms max single-tick (likely the first gen2 collection during measurement warmup) is the worst-case to budget against. Measured average across 10k ticks is 35 μs but a 88 ms spike is a missed-frame at any reasonable budget. Production V2 would ship with mitigations (server GC mode, gen2-tuning) that the benchmark didn't apply; full benchmark isolation reproduces the worst-case more aggressively than production runtime would, so the 88 ms is conservative.
 
 ---
 

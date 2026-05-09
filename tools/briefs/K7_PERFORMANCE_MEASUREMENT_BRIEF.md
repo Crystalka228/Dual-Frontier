@@ -2,7 +2,7 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09
-**Status**: AUTHORED — implementation brief, executes after K6.1 closure
+**Status**: EXECUTED 2026-05-09 — closed at `72ea8b5..e917220`. See `docs/PERFORMANCE_REPORT_K7.md` for measurements + analysis and `docs/MIGRATION_PROGRESS.md` K7 closure section for closure record.
 **Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K7, `docs/MIGRATION_PROGRESS.md` (K6.1 closure context), `docs/METHODOLOGY.md`, `docs/CODING_STANDARDS.md`
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K7 row promotes from NOT STARTED → DONE on closure)
 **Methodology lineage**: `tools/briefs/K6_1_FAULT_WIRING_BRIEF.md` (read-first/brief-second/execute-third pivot, Anthropic `Edit` literal-mode semantics)
