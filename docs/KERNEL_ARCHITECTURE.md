@@ -824,6 +824,15 @@ K-L1 through K-L10 above.
 - Single entry/exit per phase
 - Boundaries explicit
 
+**Solution A — single NativeWorld backbone (resolved 2026-05-09 per K8.0)**:
+- K7 evidence: V3 (NativeWorld) dominates V2 (managed-with-structs) by 4× mean tick / 32× p99 / 27× total allocation / 0 vs 13 GC collections across 10k ticks
+- Two alternatives considered:
+  - Solution B (storage abstraction `IComponentStore` with managed and native impls): rejected — adds permanent runtime polymorphism layer, defers a decision the project is now committed to making, "structural костыль"
+  - Solution C (explicit hybrid: struct components on Native, class components on Managed): rejected — bifurcated storage, permanent mental overhead for every mod author, cross-storage queries become friction
+- **Solution A chosen**: single source of truth, K-L3 fully realized via K8.1 native-side reference primitives, K-L11 codifies commitment
+- Crystalka commitment per chat session (2026-05-09): «игра это стресс тест, тут всё чистая инженирия и исследование, так что можно развивать максимально сложную архитектуру которая будет работать десятилетиями без костылей»
+- Migration roadmap: K8.0 (decision) → K8.1 (primitives) → K8.2 (components) → K8.3 (systems) → K8.4 (retire managed) → K8.5 (mod ecosystem)
+
 ### Open (deferred)
 
 | Decision | Trigger to resolve |
