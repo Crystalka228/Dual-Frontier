@@ -80,7 +80,7 @@
 | K6 | Second-graph rebuild on mod change | DONE | 1-2 days hobby pace (~3-5h auto-mode for the as-found closure-shaped path) | `cb3d6cf`..`af2b572` | 2026-05-09 |
 | K6.1 | Mod fault wiring end-to-end | DONE | 3-5 days hobby pace (~3-5h auto-mode) | `fe03ed3`..`a642d65` | 2026-05-09 |
 | K7 | Performance measurement (tick-loop) | DONE | 3–5 days hobby pace (~4-6h auto-mode) | `72ea8b5`..`e917220` | 2026-05-09 |
-| K8.0 | Architectural decision recording (Solution A) | DONE | 1-2 days | `9f9dc05`..`df03205` | 2026-05-09 |
+| K8.0 | Architectural decision recording (Solution A) | DONE | 1-2 days | `9f9dc05`..`5fa3f1d` | 2026-05-09 |
 | K8.1 | Native-side reference handling primitives | NOT STARTED | 1-2 weeks | — | — |
 | K8.2 | 7 class components redesigned to structs | NOT STARTED | 1-2 weeks | — | — |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
@@ -292,7 +292,7 @@
 
 ### K8.0 — Architectural decision recording (Solution A: NativeWorld backbone)
 
-- **Status**: DONE (`9f9dc05`..`df03205`, 2026-05-09)
+- **Status**: DONE (`9f9dc05`..`5fa3f1d`, 2026-05-09)
 - **Brief**: `tools/briefs/K8_0_SOLUTION_A_RECORDING_BRIEF.md` (FULL EXECUTED)
 - **Brief type**: Architectural decision brief (fourth brief type — see brief §1.8)
 - **Decision recorded**: Solution A — single NativeWorld backbone for production storage. ManagedWorld retained as test fixture and research reference only. K-L11 added to LOCKED foundational decisions; K-L3 and K-L8 implications extended; §K8 reconciled to K8.0-K8.5 sub-milestone series.
