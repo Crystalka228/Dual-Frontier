@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
@@ -30,8 +31,9 @@ public sealed class NeedsJobIntegrationTests
             graph.GetPhases(),
             ticks,
             world,
-            faultSink: null,
-            services:  services);
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
 
         EntityId pawn = world.CreateEntity();
         world.AddComponent(pawn, new NeedsComponent { Satiety = 0.1f });

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
@@ -82,7 +83,10 @@ public sealed class NeedsAccumulationTests
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world, faultSink: null, services: services);
+            graph.GetPhases(), ticks, world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
 
         return (world, scheduler);
     }

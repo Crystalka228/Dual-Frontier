@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using DualFrontier.Components.Items;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
@@ -135,7 +136,10 @@ public sealed class ComfortAuraSystemTests
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world, faultSink: null, services: services);
+            graph.GetPhases(), ticks, world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
         return (world, scheduler);
     }
 

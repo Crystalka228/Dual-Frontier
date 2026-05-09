@@ -66,7 +66,10 @@ public sealed class ElectricGridOverloadTests : IDisposable
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world, faultSink: null, services: services);
+            graph.GetPhases(), ticks, world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
 
         scheduler.ExecuteTick(1f / 30f);
 

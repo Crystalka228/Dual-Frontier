@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Components.Building;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
@@ -62,7 +63,10 @@ public sealed class CrossSystemMutationIsolationTests : IDisposable
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world, faultSink: null, services: services);
+            graph.GetPhases(), ticks, world,
+            new Dictionary<SystemBase, SystemMetadata>(),
+            new NullModFaultSink(),
+            services);
 
         // Single tick: HaulSystem (NORMAL=15) fires at tick 0 and the
         // deferred events drain at the phase boundary inside
