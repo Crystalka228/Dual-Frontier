@@ -458,4 +458,74 @@ void WriteBatch::cancel() {
     command_data_.clear();
 }
 
+// ---- K8.1 reference primitives ---------------------------------------------
+
+KeyedMap* World::get_or_create_keyed_map(uint32_t map_id,
+                                          int32_t key_size,
+                                          int32_t value_size) {
+    if (map_id == 0) {
+        return nullptr;
+    }
+    auto it = keyed_maps_.find(map_id);
+    if (it != keyed_maps_.end()) {
+        if (it->second->key_size() != key_size ||
+            it->second->value_size() != value_size) {
+            throw std::invalid_argument(
+                "World::get_or_create_keyed_map: size mismatch on existing id");
+        }
+        return it->second.get();
+    }
+    auto inserted = keyed_maps_.emplace(
+        map_id, std::make_unique<KeyedMap>(key_size, value_size));
+    return inserted.first->second.get();
+}
+
+Composite* World::get_or_create_composite(uint32_t composite_id,
+                                            int32_t element_size) {
+    if (composite_id == 0) {
+        return nullptr;
+    }
+    auto it = composites_.find(composite_id);
+    if (it != composites_.end()) {
+        if (it->second->element_size() != element_size) {
+            throw std::invalid_argument(
+                "World::get_or_create_composite: size mismatch on existing id");
+        }
+        return it->second.get();
+    }
+    auto inserted = composites_.emplace(
+        composite_id, std::make_unique<Composite>(element_size));
+    return inserted.first->second.get();
+}
+
+SetPrimitive* World::get_or_create_set(uint32_t set_id,
+                                        int32_t element_size) {
+    if (set_id == 0) {
+        return nullptr;
+    }
+    auto it = sets_.find(set_id);
+    if (it != sets_.end()) {
+        if (it->second->element_size() != element_size) {
+            throw std::invalid_argument(
+                "World::get_or_create_set: size mismatch on existing id");
+        }
+        return it->second.get();
+    }
+    auto inserted = sets_.emplace(
+        set_id, std::make_unique<SetPrimitive>(element_size));
+    return inserted.first->second.get();
+}
+
+void World::begin_mod_scope(const std::string& mod_id) {
+    string_pool_.begin_mod_scope(mod_id);
+}
+
+void World::end_mod_scope(const std::string& mod_id) {
+    string_pool_.end_mod_scope(mod_id);
+}
+
+void World::clear_mod_scope(const std::string& mod_id) {
+    string_pool_.clear_mod_scope(mod_id);
+}
+
 } // namespace dualfrontier

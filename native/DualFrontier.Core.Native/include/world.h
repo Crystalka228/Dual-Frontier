@@ -3,11 +3,16 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
+#include <string>
 #include <unordered_map>
 #include <vector>
 
 #include "component_store.h"
+#include "composite.h"
 #include "entity_id.h"
+#include "keyed_map.h"
+#include "set_primitive.h"
+#include "string_pool.h"
 
 namespace dualfrontier {
 
@@ -82,6 +87,23 @@ public:
     // Throws std::logic_error if already bootstrapped.
     void mark_bootstrapped();
 
+    // K8.1 — primitive accessors. Each get_or_create_* either returns an
+    // existing primitive bound to the given (id, size) tuple or constructs
+    // a fresh one. Returns nullptr if id == 0. Mismatched size on a
+    // pre-existing id throws std::invalid_argument (same convention as
+    // K2's register_component_type).
+    StringPool& string_pool() noexcept { return string_pool_; }
+    [[nodiscard]] const StringPool& string_pool() const noexcept { return string_pool_; }
+    KeyedMap*     get_or_create_keyed_map(uint32_t map_id, int32_t key_size, int32_t value_size);
+    Composite*    get_or_create_composite(uint32_t composite_id, int32_t element_size);
+    SetPrimitive* get_or_create_set(uint32_t set_id, int32_t element_size);
+
+    // K8.1 — mod scope orchestration (currently delegates to string_pool_;
+    // future K8.x milestones may extend scope tracking to other primitives).
+    void begin_mod_scope(const std::string& mod_id);
+    void end_mod_scope(const std::string& mod_id);
+    void clear_mod_scope(const std::string& mod_id);
+
 private:
     static constexpr std::size_t kInitialCapacity = 256;
 
@@ -111,6 +133,14 @@ private:
     std::atomic<int32_t> active_spans_{0};
     std::atomic<int32_t> active_batches_{0};
     std::atomic<bool> bootstrapped_{false};
+
+    // K8.1 — primitives owned by this World. string_pool_ is value-typed
+    // (single instance per World); the others are id-keyed maps so each
+    // logical map/composite/set can be looked up by stable uint32_t id.
+    StringPool string_pool_;
+    std::unordered_map<uint32_t, std::unique_ptr<KeyedMap>> keyed_maps_;
+    std::unordered_map<uint32_t, std::unique_ptr<Composite>> composites_;
+    std::unordered_map<uint32_t, std::unique_ptr<SetPrimitive>> sets_;
 };
 
 // K5 Command Buffer pattern — write batching protocol.
