@@ -729,30 +729,21 @@ e2bc2d9 — DLL loading fix
 
 **Time**: 3-5 days. **LOC**: +200-400 (mostly benchmark code).
 
-### K8 — Decision step + production cutover
+### K8 — Production storage cutover (Solution A: NativeWorld backbone)
 
-**Goal**: apply §8 rule к K7 numbers, decide path forward, execute decision.
+**Decision** (recorded by K8.0 closure, 2026-05-09; see `docs/MIGRATION_PROGRESS.md` K8.0 closure section): Solution A — single NativeWorld backbone (per K-L11). Choice rationale in Part 4 Decisions log.
 
-**Three outcomes**:
+**Sub-milestone series**:
+- **K8.0** — Architectural decision recording (this milestone; LOCKED v1.2)
+- **K8.1** — Native-side reference handling primitives (string interning, keyed maps, composite components)
+- **K8.2** — Per-component redesign for 7 class components (Movement, Identity, Skills, Social, Storage, Workbench, Faction)
+- **K8.3** — Production system migration (12 vanilla systems → SpanLease/WriteBatch)
+- **K8.4** — ManagedWorld retired as production; Mod API v3 ships
+- **K8.5** — Mod ecosystem migration prep (documentation + migration guide)
 
-**Outcome 1: Native + batching wins decisively**
-- Replace managed `World` с `NativeWorld` в production tick loop
-- Migrate Application bootstrap к use `Bootstrap.Bootstrap()` two-phase model
-- Deprecate managed `World`, retain as test reference только
-- Update modding API к v3 (sub-phase support, unified registration)
+**Cumulative time**: 4-8 weeks at hobby pace.
 
-**Outcome 2: Managed-with-structs alone wins**
-- Native kernel becomes optional optimization
-- Convert components к structs (already done в K7)
-- Keep native as research artifact, не production
-- Document «native available но не required»
-
-**Outcome 3: All paths equivalent**
-- Native kernel solved problem (proven viable, not urgent)
-- Park kernel work, continue с managed
-- Document lessons learned
-
-**Time**: 1 week (depending on outcome — production cutover most work).
+**LOC delta**: substantial — K8.1 adds ~600-1000 LOC (native + bridge); K8.2 modifies 7 component files plus their consumers; K8.3 modifies 12 system files plus tests; K8.4 deletes managed World production path; K8.5 adds documentation.
 
 ### K9 — Field storage abstraction
 
