@@ -582,6 +582,30 @@ In practice, most commits remain single-file or two-file because most type defin
 
 **Falsifiable claim**: from K8.2 onward, briefs that include the cycle inventory checklist will encounter zero "executor bundled commits the brief specified to split" deviations on milestones introducing new cross-file types. A counter-example would force the rule to be re-examined for missing cycle classes.
 
+#### Phase 0.4 inventory as hypothesis, not authority
+
+Briefs include Phase 0.4 inventory listing files and directories the brief expects to find on disk. The intuitive reading is "expected layout — verify and STOP if wrong." Closer inspection shows the inventory is brief-authoring-time hypothesis, not execution-time authority: code layout drifts between brief authoring and execution, and the executor sees the truth on disk that the brief author saw second-hand or remembered from earlier sessions.
+
+**Failure mode (observed at K8.1 closure, 2026-05-09).** K8.1 brief Phase 0.4 expected the managed bridge wrappers to live under `src/DualFrontier.Core.Interop/Marshalling/`. At execution time, Cloud Code listed the actual `Marshalling/` directory and found it contained ID/registry helpers (`ComponentTypeRegistry.cs`, `EntityIdPacking.cs`, `NativeComponentType.cs`) — not primary handle wrappers. The actual project convention placed primary handles top-level (`NativeWorld.cs`, `SpanLease.cs`, `WriteBatch.cs`).
+
+A strict reading of Phase 0.4 as authority would have triggered a STOP. Cloud Code instead recognized the inventory as hypothesis, recorded the divergence, and placed the new wrappers (`InternedString.cs`, `NativeMap.cs`, `NativeComposite.cs`, `NativeSet.cs`) top-level matching the convention. The decision was recorded in the K8.1 closure report and ratified.
+
+This pattern recurs across milestones. Briefs author against a model of the codebase that the brief author held in their head at authoring time; the codebase moves between then and execution. The inventory documents what the brief author thought was true, not what is true.
+
+**Principle: Phase 0.4 inventory is a hypothesis under test, not a hard gate.**
+
+Hard gates from Phase 0 (working tree clean, baseline tests passing, prerequisite milestone closed) protect the executor from corrupting workspace state — those remain STOP-eligible. The inventory is a separate category: it documents the brief author's expectation for the audit trail. Mismatches between expectation and reality are recorded as deviations, not stops.
+
+This separation is consistent with the descriptive-pre-flight principle established at K0 closure (see "Pre-flight checks: descriptive over prescriptive" above) and extends it: descriptive principle handles informational *checks*; this lesson extends the same logic to informational *inventories*.
+
+**Brief authoring requirement** (mandatory checklist item for any brief introducing new files):
+
+- [ ] **Inventory marked as hypothesis**: Phase 0.4 wording uses "Expected layout (brief-authoring-time hypothesis; record divergences and proceed)" rather than "Expected layout (STOP if mismatched)."
+- [ ] **Convention reference**: where the brief proposes a placement, cite the convention being followed (e.g., "matches NativeWorld.cs / SpanLease.cs top-level convention") rather than asserting placement absolutely.
+- [ ] **Halt category clarity**: separate hard gates (workspace state) from informational inventories (file layout) explicitly in the brief's Phase 0 sub-section ordering.
+
+**Falsifiable claim**: from K8.2 onward, briefs that mark Phase 0.4 as hypothesis will encounter fewer false-stop interruptions on layout mismatches than briefs that mark it as authority. The measurement: count execution sessions where the executor halts on Phase 0.4 layout divergence vs. proceeds with recorded deviation. Target: zero false stops on layout-only divergences from K8.2 onward.
+
 ### Reference: K0 lessons learned
 
 Concrete K0 closure lessons live в `docs/MIGRATION_PROGRESS.md` K0 entry (5 items). The descriptive-pre-flight principle in this section generalizes from those lessons; it is не a complete account of K0 — that lives в the migration tracker.
