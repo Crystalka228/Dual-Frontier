@@ -11,7 +11,7 @@ namespace DualFrontier.Application.Modding;
 /// caught) and TechArch 11.8 (the documented "core does not crash; the
 /// offending mod is unloaded" behaviour).
 ///
-/// Owned by <see cref="GameBootstrap"/>; constructed before the scheduler
+/// Owned by <see cref="DualFrontier.Application.Loop.GameBootstrap"/>; constructed before the scheduler
 /// so the scheduler ctor can take it as an immutable reference (K6.1
 /// ownership inversion). Consumers
 /// (<see cref="ModIntegrationPipeline.Apply"/>,
