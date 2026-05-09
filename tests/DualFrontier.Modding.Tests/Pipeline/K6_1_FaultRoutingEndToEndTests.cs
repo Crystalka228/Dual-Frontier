@@ -93,9 +93,14 @@ public sealed class K6_1_FaultRoutingEndToEndTests
     [Fact]
     public void MultipleModSystems_BothFault_AllIdsRecorded()
     {
-        // K6.1 — two mod-origin systems with different modIds both
-        // commit isolation violations within the same tick. The
-        // handler's set deduplicates by id, so each modId appears once.
+        // K6.1 — two mod-origin systems with different modIds each
+        // commit isolation violations. Each runs in its own phase so
+        // the test does not depend on Parallel.ForEach scheduling
+        // both items past a thrown exception (Parallel may stop
+        // dispatching new partitions when MaxDegreeOfParallelism is 1
+        // on low-core hosts). Per-phase ExecutePhase catches the
+        // AggregateException independently, then the handler is
+        // inspected.
         var systemA = new ModFaultingSystem();
         var systemB = new ModFaultingSystem();
         var handler = new ModFaultHandler();
@@ -103,7 +108,8 @@ public sealed class K6_1_FaultRoutingEndToEndTests
         var ticks = new TickScheduler();
         var phases = new[]
         {
-            new SystemPhase(new SystemBase[] { systemA, systemB }),
+            new SystemPhase(new SystemBase[] { systemA }),
+            new SystemPhase(new SystemBase[] { systemB }),
         };
         var metadata = new Dictionary<SystemBase, SystemMetadata>
         {
@@ -112,7 +118,11 @@ public sealed class K6_1_FaultRoutingEndToEndTests
         };
         var scheduler = new ParallelSystemScheduler(phases, ticks, world, metadata, handler);
 
-        try { scheduler.ExecuteTick(0.016f); } catch (AggregateException) { /* expected */ }
+        foreach (SystemPhase phase in scheduler.Phases)
+        {
+            try { scheduler.ExecutePhase(phase, 0.016f); }
+            catch (AggregateException) { /* expected */ }
+        }
 
         IReadOnlyList<string> faulted = handler.GetFaultedMods();
         faulted.Should().HaveCount(2);
