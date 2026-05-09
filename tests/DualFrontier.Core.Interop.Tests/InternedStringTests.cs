@@ -1,3 +1,4 @@
+using System;
 using DualFrontier.Core.Interop;
 using FluentAssertions;
 using Xunit;
@@ -85,5 +86,24 @@ public class InternedStringTests
         world.ClearModScope("ModX");
 
         staleId.Resolve(world).Should().BeNull();
+    }
+
+    [Fact]
+    public void EmptyString_RoundTrip_YieldsEmptySentinel()
+    {
+        using var world = new NativeWorld();
+
+        InternedString empty = world.InternString("");
+        empty.IsEmpty.Should().BeTrue("intern of empty content yields the empty sentinel");
+        empty.Id.Should().Be(0u);
+        empty.Generation.Should().Be(0u);
+
+        empty.Should().Be(default(InternedString));
+        (empty == default).Should().BeTrue();
+
+        empty.Resolve(world).Should().BeNull("empty sentinel has no content to resolve");
+
+        int countAfterEmpty = world.StringPoolCount;
+        countAfterEmpty.Should().Be(0, "string pool count is unchanged after empty intern");
     }
 }
