@@ -33,7 +33,10 @@ graph.Build();
 
 var ticks = new TickScheduler();
 var scheduler = new ParallelSystemScheduler(
-    graph.GetPhases(), ticks, world, faultSink: null, services: services);
+    graph.GetPhases(), ticks, world,
+    new Dictionary<SystemBase, SystemMetadata>(),
+    new NullModFaultSink(),
+    services);
 scheduler.ExecuteTick(delta: 1f / 30f);
 ```
 
