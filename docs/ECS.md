@@ -159,5 +159,6 @@ New entities become visible in the next phase. Split the logic: create in this p
 ## See also
 
 - [ARCHITECTURE](./ARCHITECTURE.md)
+- [FIELDS](./FIELDS.md) — the orthogonal storage system; spatial scalar/vector grids alongside per-entity components. Same kernel, separate access model.
 - [ISOLATION](./ISOLATION.md)
 - [THREADING](./THREADING.md)
