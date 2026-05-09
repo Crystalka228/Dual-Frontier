@@ -2,7 +2,7 @@
 
 *The project's central methodology document. Describes the four-agent LLM pipeline, contracts as IPC between agents, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
 
-*Version: 1.4 (2026-05-07). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7 and the post-K0 / post-K1 / post-K3 native-layer adjustments appended to the native-layer adjustments section (descriptive pre-flight checks, ABI boundary exception completeness, brief authoring as prerequisite step, calibrated time estimates).*
+*Version: 1.5 (2026-05-09). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7, the post-K0 / post-K1 / post-K3 native-layer adjustments appended to the native-layer adjustments section (descriptive pre-flight checks, ABI boundary exception completeness, brief authoring as prerequisite step, calibrated time estimates), and the post-K8.1 / post-K8.1.1 pipeline closure lessons sub-section (atomic commit as compilable unit, Phase 0.4 inventory as hypothesis, mod-scope test isolation).*
 
 ---
 
@@ -373,6 +373,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.2 | 2026-05-07 | Expanded "Native layer methodology adjustments" section with descriptive vs prescriptive pre-flight principle, derived from K0 closure lesson. Brief-authoring checklist added. |
 | 1.3 | 2026-05-07 | Post-K1 lessons added to «Native layer methodology adjustments»: ABI boundary exception completeness (throws и their boundary catches are inseparable; brief must enumerate explicitly) and brief authoring as prerequisite step (brief is its own commit, performed before execution begins). |
 | 1.4 | 2026-05-07 | Post-K3 calibration lesson added к «Native layer methodology adjustments»: brief time estimates from architectural docs assume hobby pace (~1h/day manual typing); auto-mode execution actual time is 5-10x faster. Future briefs must state both hobby-pace и auto-mode estimates explicitly. K0-K3 measured data: 11-17 days hobby estimate vs ~6 hours actual auto-mode. |
+| 1.5 | 2026-05-09 | Added "Pipeline closure lessons (K-series, post-K8.1)" sub-section under "Native layer methodology adjustments" with three lessons formalized from K8.1 and K8.1.1 closures: atomic commit as compilable unit (per K8.1 Phase 5 dependency-cycle bundling, `a62c1f3..059f712`), Phase 0.4 inventory as hypothesis (per K8.1 `Marshalling/` layout reconciliation), mod-scope test isolation (per K8.1.1 Stop condition #3 fix on `EqualsByContent_StaleGeneration_ReturnsFalse`, `fc4400d..63777ef`). |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -605,6 +606,32 @@ This separation is consistent with the descriptive-pre-flight principle establis
 - [ ] **Halt category clarity**: separate hard gates (workspace state) from informational inventories (file layout) explicitly in the brief's Phase 0 sub-section ordering.
 
 **Falsifiable claim**: from K8.2 onward, briefs that mark Phase 0.4 as hypothesis will encounter fewer false-stop interruptions on layout mismatches than briefs that mark it as authority. The measurement: count execution sessions where the executor halts on Phase 0.4 layout divergence vs. proceeds with recorded deviation. Target: zero false stops on layout-only divergences from K8.2 onward.
+
+#### Mod-scope test isolation
+
+Tests that exercise per-mod resource reclaim semantics (string-pool clear, ALC unload, mod-scoped registry teardown) must isolate every reference to the resource within the scope under test. Any reference taken outside the scope — including reads that look like read-only assertions — anchors the resource to a co-owning scope and prevents the test from observing reclaim.
+
+**Failure mode (observed at K8.1.1 closure, 2026-05-09).** K8.1.1 brief Phase 5 included a test `EqualsByContent_StaleGeneration_ReturnsFalse` whose specified setup interned content under `BeginModScope("ModA") / EndModScope("ModA")`, then re-interned the same content from outside any scope as a "fresh-lookup sanity check," then called `ClearModScope("ModA")` and asserted the original handle resolved to null.
+
+At execution, the test failed: the original handle still resolved successfully after `ClearModScope`. Per K8.1.1 brief Stop condition #3, Cloud Code read `string_pool.cpp::clear_mod_scope` and found that the brief-author-induced re-intern outside the scope had added the id to `ids_by_mod_[""]` (the empty/core scope's ownership list). `clear_mod_scope("ModA")` correctly skipped reclaim because the id was co-owned by core. The K8.1 implementation was correct; the brief's test setup had inadvertently anchored the id to a second scope.
+
+The fix moved the fresh-lookup re-intern **inside** the `BeginModScope / EndModScope` pair, keeping the id uniquely owned by `ModA`. The test then observed the expected reclaim. The deviation was recorded in the K8.1.1 closure report.
+
+This is a Stop-condition #3 success: the methodology caught the test-shape error before it shipped. But the underlying lesson is general — any test that asserts per-mod reclaim must keep all referencing inside the scope under test. The pattern recurs across mod-scoped resources beyond string interning (component-type registries, system-graph entries, ALC-loaded assemblies).
+
+**Principle: tests asserting per-mod resource reclaim must hold all references to that resource inside the scope under test, including read-side references taken for assertion purposes.**
+
+The architectural reason is structural: per-mod cleanup is implemented as "reclaim resources owned only by the scope being torn down." A reference taken from outside that scope creates co-ownership, which the cleanup correctly preserves. The test that intends to observe reclaim must therefore avoid creating that co-ownership. Read-side ergonomics (taking a handle outside a scope to "check" something inside the scope) silently changes ownership and breaks the test's intent.
+
+This generalizes beyond string interning. K8.2 component conversion will produce tests that assert mod-scoped component-type teardown; M7-era ALC tests assert assembly unload; future mod-OS work will assert similar reclaim. All are subject to this rule.
+
+**Brief authoring requirement** (mandatory checklist item for any brief authoring tests on per-mod reclaim):
+
+- [ ] **Reclaim test isolation**: tests that assert reclaim of mod-owned resources must take all references — both for setup and for assertion — inside the `BeginModScope / EndModScope` pair (or equivalent for non-string mod-scoped resources).
+- [ ] **Anchor warning**: the brief explicitly notes the anchoring failure mode for the test author, with a reference to this lesson.
+- [ ] **Scope-leak proof obligation**: if the test must take a reference outside the scope (rare, but possible for cross-scope semantics), the test asserts that reclaim does not occur, and that intent is the test's documented purpose.
+
+**Falsifiable claim**: from K8.2 onward, tests that follow the reclaim-test-isolation rule will assert reclaim correctly on the first build, without the executor needing to invoke Stop condition #3 to debug per-mod reclaim semantics. Counter-examples — Stop condition #3 invocations on reclaim assertions where the test setup was the cause — would force re-examination of the rule's coverage.
 
 ### Reference: K0 lessons learned
 
