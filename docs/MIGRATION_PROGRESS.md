@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (K7 closure)
+**Last updated**: 2026-05-09 (K8.0 closure — Solution A architectural commitment recorded)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K8 (pending Crystalka decision per K7 report) — production cutover |
-| **Last completed milestone** | K7 (tick-loop performance measurement — V1/V2/V3 + report) — 2026-05-09 |
-| **Next milestone (recommended)** | K8 (decision call by Crystalka against K7 report's recommended-direction range) |
-| **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
+| **Active phase** | K8.1 (next per K8.0 closure roadmap) — native-side reference handling primitives |
+| **Last completed milestone** | K8.0 (architectural decision recording — Solution A LOCKED) — 2026-05-09 |
+| **Next milestone (recommended)** | K8.1 (native-side reference primitives; full brief authoring trigger after K8.0 closure) |
+| **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 553 (unchanged — K7 is benchmarks-only, no test count delta) |
+| **Tests passing** | 553 (unchanged — K8.0 is documentation-only, no source touched) |
 
 ---
 
@@ -80,7 +80,12 @@
 | K6 | Second-graph rebuild on mod change | DONE | 1-2 days hobby pace (~3-5h auto-mode for the as-found closure-shaped path) | `cb3d6cf`..`af2b572` | 2026-05-09 |
 | K6.1 | Mod fault wiring end-to-end | DONE | 3-5 days hobby pace (~3-5h auto-mode) | `fe03ed3`..`a642d65` | 2026-05-09 |
 | K7 | Performance measurement (tick-loop) | DONE | 3–5 days hobby pace (~4-6h auto-mode) | `72ea8b5`..`e917220` | 2026-05-09 |
-| K8 | Decision step + production cutover | NOT STARTED | 1 week | — | — |
+| K8.0 | Architectural decision recording (Solution A) | DONE | 1-2 days | `9f9dc05`..`df03205` | 2026-05-09 |
+| K8.1 | Native-side reference handling primitives | NOT STARTED | 1-2 weeks | — | — |
+| K8.2 | 7 class components redesigned to structs | NOT STARTED | 1-2 weeks | — | — |
+| K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
+| K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
+| K8.5 | Mod ecosystem migration prep | NOT STARTED | 3-5 days | — | — |
 
 **Cumulative estimate**: 5–8 weeks at hobby pace (~1h/day).
 
@@ -285,6 +290,33 @@
   - V3's 32× p99 advantage over V2 is the K8-relevant number. Mean-vs-mean comparison (4× faster) underestimates the value because mean is sensitive to the few-percent of GC-spike outliers V2 has and V3 doesn't. For fixed-step simulation (30 TPS), tail-latency dominates frame-budget violations; V3's tighter distribution is the qualitative win even before the mean speedup.
   - V2's 88 ms max single-tick (likely the first gen2 collection during measurement warmup) is the worst-case to budget against. Measured average across 10k ticks is 35 μs but a 88 ms spike is a missed-frame at any reasonable budget. Production V2 would ship with mitigations (server GC mode, gen2-tuning) that the benchmark didn't apply; full benchmark isolation reproduces the worst-case more aggressively than production runtime would, so the 88 ms is conservative.
 
+### K8.0 — Architectural decision recording (Solution A: NativeWorld backbone)
+
+- **Status**: DONE (`9f9dc05`..`df03205`, 2026-05-09)
+- **Brief**: `tools/briefs/K8_0_SOLUTION_A_RECORDING_BRIEF.md` (FULL EXECUTED)
+- **Brief type**: Architectural decision brief (fourth brief type — see brief §1.8)
+- **Decision recorded**: Solution A — single NativeWorld backbone for production storage. ManagedWorld retained as test fixture and research reference only. K-L11 added to LOCKED foundational decisions; K-L3 and K-L8 implications extended; §K8 reconciled to K8.0-K8.5 sub-milestone series.
+- **Context**:
+  - K7 evidence (`docs/PERFORMANCE_REPORT_K7.md`): V3 (NativeWorld) dominates V2 (managed-with-structs) by 4× mean tick / 32× p99 / 27× total allocation / 0 vs 13 GC collections across 10k ticks on Skarlet hardware
+  - Crystalka commitment (chat session 2026-05-09): «игра это стресс тест, тут всё чистая инженирия и исследование, так что можно развивать максимально сложную архитектуру которая будет работать десятилетиями без костылей»
+  - Solution B (storage abstraction layer) and Solution C (explicit hybrid) rejected — both are "structural costlines" relative to long-horizon cleanness
+- **Migration roadmap**: K8.0 → K8.1 (primitives) → K9 (RawTileField; sequencing decision per brief §1.7) → K8.2 (component redesigns) → K8.3 (system migrations) → K8.4 (ManagedWorld retirement, Mod API v3) → K8.5 (mod ecosystem prep)
+- **Test count**: 553 (unchanged — K8.0 is documentation-only)
+- **Lessons learned**:
+  - Architectural decision briefs (fourth brief type) are appropriate when a major directional choice needs LOCKED-spec recording. K8.0 establishes the pattern; future architectural inflection points may use the same shape.
+  - Solution A's cost is bounded (4-8 weeks across K8.1-K8.5) but yields decade-scale cleanness. The «no compromises» commitment makes the trade calculation explicit: shorter-term pragmatism (Solutions B/C) creates structural costlines that propagate through every future system author and mod author. The decision is recorded, not deferred.
+  - K9 sequencing decision (Option c — K9 between K8.1 and K8.2) was made in this brief. This unblocks G-series earlier without disrupting K8 series flow. Recorded in brief §1.7.
+
+### K8.1-K8.5 — Sub-milestones
+
+Each sub-milestone has a SKELETON brief in `tools/briefs/`. Full brief authoring is triggered sequentially after each predecessor closure. See K8.0 closure migration roadmap above for the order.
+
+- **K8.1**: `tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md` (skeleton)
+- **K8.2**: `tools/briefs/K8_2_CLASS_COMPONENT_REDESIGN_BRIEF.md` (skeleton)
+- **K8.3**: `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md` (skeleton)
+- **K8.4**: `tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md` (skeleton)
+- **K8.5**: `tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md` (skeleton)
+
 ---
 
 ## M9-series progress (runtime)
@@ -324,6 +356,8 @@ Detailed entries будут добавлены при подходе к кажд
 | Все K | M9.8 (Godot deletion) | Godot deletion это точка невозврата ТОЛЬКО для runtime. Kernel decision (K8) независим — managed World остаётся fallback. |
 
 **Invariant**: Kernel и runtime — два независимых стека под managed Application layer. Координация требуется только при cutover-точках (K8, M9.5, M9.8).
+
+**K9 sequencing post-K8.0**: K9 prerequisite changes from "K6 complete" to "K8.1 closure" per K8.0 brief §1.7 sequencing decision (Option c). Rationale: K9 reuses K8.1 native-side reference primitives where applicable; K9 doesn't depend on K8.2/3/4. K9 runs between K8.1 and K8.2 for natural pause in K-series progression.
 
 ---
 
