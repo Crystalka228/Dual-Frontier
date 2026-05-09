@@ -5,23 +5,55 @@ namespace DualFrontier.Core.Interop;
 /// <summary>
 /// Managed handle over a string interned in <c>dualfrontier::StringPool</c>.
 ///
-/// Equality is by (Id, Generation) — both halves must match for two
-/// <see cref="InternedString"/> values to compare equal. This is the
-/// fast path: same-pool comparisons are a single 64-bit equality test.
+/// <para>
+/// <b>Same-pool equality (fast path).</b> <c>==</c>,
+/// <see cref="Equals(InternedString)"/>, and <see cref="GetHashCode"/>
+/// compare by <c>(Id, Generation)</c>. Within a single
+/// <see cref="NativeWorld"/>, equal pairs always refer to identical content
+/// and unequal pairs to distinct content; comparison is a single 64-bit
+/// equality test.
+/// </para>
 ///
-/// To recover the underlying content, call <see cref="Resolve"/> with
-/// the <see cref="NativeWorld"/> the id was issued by. Resolution may
-/// return <c>null</c> if the generation tag is stale (the id was
-/// reclaimed during a <see cref="NativeWorld.ClearModScope(string)"/>
-/// and possibly reissued for different content). Callers that hold
-/// stale IDs should re-intern from the original content rather than
-/// guess at recovery.
+/// <para>
+/// <b>Cross-pool equality.</b> If two <see cref="InternedString"/> values
+/// were issued by <i>different</i> <see cref="NativeWorld"/> instances,
+/// <c>==</c> may return <c>true</c> for unrelated content (false positive,
+/// when the two pools happen to issue the same id for different strings)
+/// or <c>false</c> for identical content (false negative, when the same
+/// content received different ids in each pool). Use
+/// <see cref="EqualsByContent"/> for cross-pool comparisons; it resolves
+/// both sides and compares string content.
+/// </para>
 ///
-/// Save/load (LOCKED, per K8.1 brief §1.2): components serialise the
-/// resolved string, not the (Id, Generation) pair. On reload the
-/// content is re-interned and a fresh pair is issued. The generation
-/// tag is the safety net for any path that did persist an id (in-memory
-/// snapshots, diagnostic dumps).
+/// <para>
+/// <b>Solution A applicability.</b> Per K-L11 (production storage backbone),
+/// production code uses one <see cref="NativeWorld"/> and the same-pool
+/// fast path is sufficient. Multi-world scenarios are limited to test
+/// fixtures, research code, and any future relaxation of K-L11; the
+/// cross-pool method exists for those scenarios and for future-proofing
+/// the API surface.
+/// </para>
+///
+/// <para>
+/// <b>Stale ids.</b> Resolution may return <c>null</c> if the generation
+/// tag is stale (the id was reclaimed during a
+/// <see cref="NativeWorld.ClearModScope(string)"/> and possibly reissued
+/// for different content) or if the id was issued by a world other than
+/// the one supplied to <see cref="Resolve"/>. Callers that hold stale ids
+/// should re-intern from the original content rather than guess at
+/// recovery.
+/// </para>
+///
+/// <para>
+/// <b>Save/load (LOCKED, per K8.1 brief §1.2).</b> Components serialise
+/// resolved string content, not the <c>(Id, Generation)</c> pair. On
+/// reload the content is re-interned and a fresh pair is issued. The
+/// generation tag is the safety net for any path that did persist an id
+/// (in-memory snapshots, diagnostic dumps); it is not the primary
+/// persistence mechanism. Cross-snapshot reconciliation that needs to
+/// compare interned values uses <see cref="EqualsByContent"/>, since
+/// snapshots may have been written by different worlds.
+/// </para>
 /// </summary>
 public readonly struct InternedString : IEquatable<InternedString>
 {
