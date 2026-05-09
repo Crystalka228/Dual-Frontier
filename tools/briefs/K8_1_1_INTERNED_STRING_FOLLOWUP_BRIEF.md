@@ -2,7 +2,7 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09 (post-K8.1 closure, pre-K8.2 authoring)
-**Status**: AUTHORED, awaits Cloud Code execution
+**Status**: EXECUTED (2026-05-09, branch `feat/k8-1-1-interned-string-followup`, closure `f8273ca`..`16afdf3`). See `docs/MIGRATION_PROGRESS.md` § "K8.1.1 — InternedString closure follow-up" for closure record.
 **Reference docs**: `docs/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (K-L11), `docs/MIGRATION_PROGRESS.md` (K8.1 closure record), `tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md` §1.2 (LOCKED #5 InternedString equality semantics — current authority for this brief)
 **Companion**: `docs/MIGRATION_PROGRESS.md` (K8.1.1 row authored as part of this brief execution)
 **Methodology lineage**: `tools/briefs/K6_1_FAULT_WIRING_BRIEF.md` (focused follow-up brief precedent), `tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md` (K8.1 baseline this brief amends)
