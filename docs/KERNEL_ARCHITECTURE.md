@@ -577,7 +577,12 @@ Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
 | K5 | Span<T> protocol + write command batching | 1 week | +500-700 |
 | K6 | Second-graph rebuild on mod change | 3-5 days | +200-400 |
 | K7 | Performance measurement (tick-loop) | 3-5 days | +200-400 |
-| K8 | Decision step + production cutover | 1 week | +/- (refactor) |
+| K8.0 | Architectural decision recording (Solution A) | 1-2 days | +/- (docs only) |
+| K8.1 | Native-side reference handling primitives | 1-2 weeks | +600-1000 |
+| K8.2 | 7 class components redesigned to structs | 1-2 weeks | -200/+300 |
+| K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | 2-3 weeks | -400/+600 |
+| K8.4 | ManagedWorld retired; Mod API v3 ships | 1 week | -2000/+200 |
+| K8.5 | Mod ecosystem migration prep | 3-5 days | +500 (docs) |
 | K9 | Field storage abstraction (`RawTileField<T>`) | 1-2 weeks | +600-900 |
 
 **Cumulative K0-K8**: 5-8 weeks at hobby pace.
