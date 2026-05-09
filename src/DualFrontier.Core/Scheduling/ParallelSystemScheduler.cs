@@ -44,6 +44,7 @@ internal sealed class ParallelSystemScheduler
     private readonly IGameServices? _services;
     private readonly ParallelOptions _parallelOptions;
     private Dictionary<SystemBase, SystemExecutionContext> _contextCache;
+    private IReadOnlyDictionary<SystemBase, SystemMetadata> _systemMetadata;
 
     /// <summary>
     /// Creates a scheduler bound to the given phase list, tick clock, and
@@ -55,19 +56,22 @@ internal sealed class ParallelSystemScheduler
     /// <param name="phases">Phases in execution order as produced by <see cref="DependencyGraph"/>.</param>
     /// <param name="ticks">Tick clock used to filter systems by <c>[TickRate]</c>.</param>
     /// <param name="world">Target world the systems act upon.</param>
-    /// <param name="faultSink">Optional sink for mod-origin faults; defaults to a no-op sink.</param>
+    /// <param name="systemMetadata">Per-system <see cref="SystemMetadata"/> table the scheduler reads in <c>BuildContext</c> for origin/modId propagation. Systems absent from the table fall through to <c>Core/null</c> defaults — covers core systems registered via local arrays in tests where the table is empty.</param>
+    /// <param name="faultSink">Sink for mod-origin faults; required (no silent default). Tests that never produce faults pass <c>new NullModFaultSink()</c> explicitly.</param>
     /// <param name="services">Optional domain-bus aggregator surfaced to systems via <c>SystemBase.Services</c>; null for tests that never publish.</param>
     public ParallelSystemScheduler(
         IReadOnlyList<SystemPhase> phases,
         TickScheduler ticks,
         World world,
-        IModFaultSink? faultSink = null,
+        IReadOnlyDictionary<SystemBase, SystemMetadata> systemMetadata,
+        IModFaultSink faultSink,
         IGameServices? services = null)
     {
         _phases = phases ?? throw new ArgumentNullException(nameof(phases));
         _ticks = ticks ?? throw new ArgumentNullException(nameof(ticks));
         _world = world ?? throw new ArgumentNullException(nameof(world));
-        _faultSink = faultSink ?? new NullModFaultSink();
+        _systemMetadata = systemMetadata ?? throw new ArgumentNullException(nameof(systemMetadata));
+        _faultSink = faultSink ?? throw new ArgumentNullException(nameof(faultSink));
         _services = services;
         _parallelOptions = new ParallelOptions
         {
@@ -171,10 +175,21 @@ internal sealed class ParallelSystemScheduler
     /// new system set using the same construction rules as the constructor.
     /// </summary>
     /// <param name="newPhases">Phases in execution order as produced by <see cref="DependencyGraph"/>.</param>
-    internal void Rebuild(IReadOnlyList<SystemPhase> newPhases)
+    /// <param name="newSystemMetadata">Per-system metadata snapshot reflecting the post-mod-load registry state. Swaps in lockstep with the new phase list so context construction reads the correct origin/modId from tick 0 of the new graph.</param>
+    internal void Rebuild(
+        IReadOnlyList<SystemPhase> newPhases,
+        IReadOnlyDictionary<SystemBase, SystemMetadata> newSystemMetadata)
     {
         if (newPhases is null)
             throw new ArgumentNullException(nameof(newPhases));
+        if (newSystemMetadata is null)
+            throw new ArgumentNullException(nameof(newSystemMetadata));
+
+        // K6.1 — install the new metadata before BuildContext runs so the
+        // freshly constructed contexts read each mod system's actual origin
+        // and modId. The phase list and context cache swap at the bottom of
+        // this method, atomically with metadata.
+        _systemMetadata = newSystemMetadata;
 
         // Build a fresh context table. Same algorithm as in the constructor.
         var newCache = new Dictionary<SystemBase, SystemExecutionContext>();
@@ -210,14 +225,28 @@ internal sealed class ParallelSystemScheduler
                 $"System '{systemType.FullName}' is missing [SystemAccess]. " +
                 "The scheduler cannot build an execution context without a declaration.");
 
+        // K6.1 — read origin and modId from the metadata table provided at
+        // construction. Systems not present in the table default to Core/null
+        // (covers core systems registered via local arrays in tests, and any
+        // future system path that doesn't go through ModRegistry). Mod systems
+        // registered through ModRegistry carry their owning modId so
+        // SystemExecutionContext.RouteAndThrow routes faults correctly.
+        SystemOrigin origin = SystemOrigin.Core;
+        string? modId = null;
+        if (_systemMetadata.TryGetValue(system, out SystemMetadata? meta))
+        {
+            origin = meta.Origin;
+            modId = meta.ModId;
+        }
+
         return new SystemExecutionContext(
             _world,
             systemType.FullName ?? systemType.Name,
             attr.Reads,
             attr.Writes,
             attr.Buses,
-            SystemOrigin.Core,
-            modId: null,
+            origin,
+            modId,
             _faultSink,
             _services);
     }
