@@ -47,7 +47,7 @@ The following decisions are committed как architectural foundation. Departure
 | K-L10 | Decision rule | §8 metrics (GC pause / p99 / long-run drift on weak hardware) | §6 «20% mean speed» superseded; §8 captures actual project value |
 | K-L11 | Production storage backbone | NativeWorld single source of truth (Solution A); ManagedWorld retained as test fixture and research artifact only | K7 evidence (V3 dominates V2 by 4-32× across §8 metrics) + «no compromises» commitment; single ownership boundary, single mental model |
 
-**Implication of K-L3**: All managed components must convert от class к struct (Phase 7 effort, 50-80 components). Mod components subject к same constraint.
+**Implication of K-L3**: All managed components must convert от class к struct (K4 closed 24 of 31; K8.2 closes the remaining 7 via native-side reference primitives from K8.1). Mod components subject к same constraint. **K4's "Hybrid Path" softening retired in K8.2** — after K8.2 closure, K-L3 holds without exception across vanilla and mod components alike.
 
 **Implication of K-L6**: There is NO «native scheduler» для game tick. Native scheduler exists only для bootstrap orchestration. All system code (vanilla mods + third-party mods) executes managed.
 
