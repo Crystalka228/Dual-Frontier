@@ -421,4 +421,195 @@ public sealed class NativeWorld : IDisposable
     {
         return Unsafe.SizeOf<T>();
     }
+
+    // ---- K8.1 reference primitives ----------------------------------------
+
+    /// <summary>
+    /// Interns <paramref name="content"/> in this world's string pool. The
+    /// returned <see cref="InternedString"/> captures the issued id and
+    /// the current generation tag; resolve back to content via
+    /// <see cref="InternedString.Resolve"/> or <see cref="ResolveInternedString"/>.
+    /// Empty input is mapped to the empty sentinel without allocating.
+    /// </summary>
+    public unsafe InternedString InternString(string content)
+    {
+        ThrowIfDisposed();
+        if (content is null) throw new ArgumentNullException(nameof(content));
+        if (content.Length == 0)
+        {
+            return new InternedString(0, 0);
+        }
+
+        int byteCount = System.Text.Encoding.UTF8.GetByteCount(content);
+        Span<byte> buffer = byteCount <= 256
+            ? stackalloc byte[byteCount]
+            : new byte[byteCount];
+        System.Text.Encoding.UTF8.GetBytes(content, buffer);
+
+        uint id;
+        fixed (byte* ptr = buffer)
+        {
+            id = NativeMethods.df_world_intern_string(_handle, ptr, byteCount);
+        }
+        if (id == 0)
+        {
+            return new InternedString(0, 0);
+        }
+        uint generation = NativeMethods.df_world_string_generation(_handle, id);
+        return new InternedString(id, generation);
+    }
+
+    /// <summary>
+    /// Resolves an <see cref="InternedString"/> back to its UTF-8 content.
+    /// Returns <c>null</c> if the id is the empty sentinel, the generation
+    /// tag is stale, or the id was issued by a different world.
+    /// </summary>
+    public unsafe string? ResolveInternedString(InternedString interned)
+    {
+        ThrowIfDisposed();
+        if (interned.IsEmpty) return null;
+
+        // Two-pass: first call sizes the buffer, second copies. Most strings
+        // fit in a 256-byte stack buffer; growth path remains zero-cost on
+        // the common case.
+        const int InitialCapacity = 256;
+        byte[]? rented = null;
+        Span<byte> buffer = stackalloc byte[InitialCapacity];
+
+        int written;
+        while (true)
+        {
+            fixed (byte* ptr = buffer)
+            {
+                written = NativeMethods.df_world_resolve_string(
+                    _handle, interned.Id, interned.Generation,
+                    ptr, buffer.Length);
+            }
+            if (written == 0)
+            {
+                if (rented is not null) System.Buffers.ArrayPool<byte>.Shared.Return(rented);
+                return null;
+            }
+            if (written < buffer.Length)
+            {
+                break;
+            }
+            // The native side fills exactly buffer.Length bytes when the
+            // string is at least that long; we can't tell whether the
+            // content was truncated. Grow and retry.
+            if (rented is not null)
+            {
+                System.Buffers.ArrayPool<byte>.Shared.Return(rented);
+            }
+            rented = System.Buffers.ArrayPool<byte>.Shared.Rent(buffer.Length * 2);
+            buffer = rented;
+        }
+
+        string result = System.Text.Encoding.UTF8.GetString(buffer.Slice(0, written));
+        if (rented is not null) System.Buffers.ArrayPool<byte>.Shared.Return(rented);
+        return result;
+    }
+
+    /// <summary>
+    /// Returns a managed wrapper for the keyed map identified by
+    /// <paramref name="mapId"/>. Allocates the map on first use; subsequent
+    /// calls with the same id return a wrapper over the same backing
+    /// storage.
+    /// </summary>
+    public NativeMap<TKey, TValue> GetKeyedMap<TKey, TValue>(uint mapId)
+        where TKey : unmanaged, IComparable<TKey>
+        where TValue : unmanaged
+    {
+        ThrowIfDisposed();
+        if (mapId == 0) throw new ArgumentOutOfRangeException(nameof(mapId), "Map id 0 reserved as empty sentinel.");
+
+        IntPtr handle = NativeMethods.df_world_get_keyed_map(
+            _handle, mapId,
+            Unsafe.SizeOf<TKey>(), Unsafe.SizeOf<TValue>());
+        if (handle == IntPtr.Zero)
+        {
+            throw new InvalidOperationException(
+                $"df_world_get_keyed_map returned null for map_id={mapId}, " +
+                $"key_size={Unsafe.SizeOf<TKey>()}, value_size={Unsafe.SizeOf<TValue>()}.");
+        }
+        return new NativeMap<TKey, TValue>(this, mapId, handle);
+    }
+
+    public NativeComposite<T> GetComposite<T>(uint compositeId) where T : unmanaged
+    {
+        ThrowIfDisposed();
+        if (compositeId == 0) throw new ArgumentOutOfRangeException(nameof(compositeId), "Composite id 0 reserved as empty sentinel.");
+
+        IntPtr handle = NativeMethods.df_world_get_composite(
+            _handle, compositeId, Unsafe.SizeOf<T>());
+        if (handle == IntPtr.Zero)
+        {
+            throw new InvalidOperationException(
+                $"df_world_get_composite returned null for composite_id={compositeId}, " +
+                $"element_size={Unsafe.SizeOf<T>()}.");
+        }
+        return new NativeComposite<T>(this, compositeId, handle);
+    }
+
+    public NativeSet<T> GetSet<T>(uint setId) where T : unmanaged, IComparable<T>
+    {
+        ThrowIfDisposed();
+        if (setId == 0) throw new ArgumentOutOfRangeException(nameof(setId), "Set id 0 reserved as empty sentinel.");
+
+        IntPtr handle = NativeMethods.df_world_get_set(
+            _handle, setId, Unsafe.SizeOf<T>());
+        if (handle == IntPtr.Zero)
+        {
+            throw new InvalidOperationException(
+                $"df_world_get_set returned null for set_id={setId}, element_size={Unsafe.SizeOf<T>()}.");
+        }
+        return new NativeSet<T>(this, setId, handle);
+    }
+
+    public unsafe void BeginModScope(string modId)
+    {
+        ThrowIfDisposed();
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        WithUtf8(modId, ptr => NativeMethods.df_world_begin_mod_scope(_handle, ptr));
+    }
+
+    public unsafe void EndModScope(string modId)
+    {
+        ThrowIfDisposed();
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        WithUtf8(modId, ptr => NativeMethods.df_world_end_mod_scope(_handle, ptr));
+    }
+
+    public unsafe void ClearModScope(string modId)
+    {
+        ThrowIfDisposed();
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        WithUtf8(modId, ptr => NativeMethods.df_world_clear_mod_scope(_handle, ptr));
+    }
+
+    /// <summary>Number of currently-allocated string ids in the pool.</summary>
+    public int StringPoolCount => NativeMethods.df_world_string_pool_count(_handle);
+
+    /// <summary>Current pool generation tag — bumps on each id reclaim.</summary>
+    public uint StringPoolCurrentGeneration =>
+        NativeMethods.df_world_string_pool_current_generation(_handle);
+
+    private unsafe delegate void Utf8Action(byte* ptr);
+
+    private unsafe void WithUtf8(string text, Utf8Action action)
+    {
+        // C ABI expects a null-terminated UTF-8 string. The encoded payload
+        // is small (mod ids are short identifiers); stackalloc is the right
+        // shape here.
+        int byteCount = System.Text.Encoding.UTF8.GetByteCount(text);
+        Span<byte> buffer = byteCount + 1 <= 256
+            ? stackalloc byte[byteCount + 1]
+            : new byte[byteCount + 1];
+        System.Text.Encoding.UTF8.GetBytes(text, buffer.Slice(0, byteCount));
+        buffer[byteCount] = 0;
+        fixed (byte* ptr = buffer)
+        {
+            action(ptr);
+        }
+    }
 }

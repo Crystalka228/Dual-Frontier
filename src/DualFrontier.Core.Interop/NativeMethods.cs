@@ -151,4 +151,126 @@ internal static class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void df_batch_destroy(IntPtr batch);
+
+    // K8.1 reference primitives.
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe uint df_world_intern_string(
+        IntPtr world,
+        byte* utf8Data,
+        int utf8Length);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_world_resolve_string(
+        IntPtr world,
+        uint stringId,
+        uint generation,
+        byte* outBuffer,
+        int outBufferSize);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern uint df_world_string_generation(IntPtr world, uint stringId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe void df_world_begin_mod_scope(IntPtr world, byte* modId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe void df_world_end_mod_scope(IntPtr world, byte* modId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe void df_world_clear_mod_scope(IntPtr world, byte* modId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_world_string_pool_count(IntPtr world);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern uint df_world_string_pool_current_generation(IntPtr world);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern IntPtr df_world_get_keyed_map(
+        IntPtr world,
+        uint mapId,
+        int keySize,
+        int valueSize);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_keyed_map_set(IntPtr map, void* key, void* value);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_keyed_map_get(IntPtr map, void* key, void* outValue);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_keyed_map_remove(IntPtr map, void* key);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_keyed_map_count(IntPtr map);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_keyed_map_iterate(
+        IntPtr map,
+        void* outKeysBuffer,
+        void* outValuesBuffer,
+        int bufferCapacity);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_keyed_map_clear(IntPtr map);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern IntPtr df_world_get_composite(
+        IntPtr world,
+        uint compositeId,
+        int elementSize);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_composite_add(
+        IntPtr composite,
+        ulong parentEntity,
+        void* element);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_composite_get_count(IntPtr composite, ulong parentEntity);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_composite_get_at(
+        IntPtr composite,
+        ulong parentEntity,
+        int index,
+        void* outElement);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_composite_remove_at(
+        IntPtr composite,
+        ulong parentEntity,
+        int index);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_composite_clear_for(IntPtr composite, ulong parentEntity);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_composite_iterate(
+        IntPtr composite,
+        ulong parentEntity,
+        void* outElementsBuffer,
+        int bufferCapacity);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern IntPtr df_world_get_set(IntPtr world, uint setId, int elementSize);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_set_add(IntPtr set, void* element);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_set_contains(IntPtr set, void* element);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_set_remove(IntPtr set, void* element);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_set_count(IntPtr set);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_set_iterate(
+        IntPtr set,
+        void* outElementsBuffer,
+        int bufferCapacity);
 }
