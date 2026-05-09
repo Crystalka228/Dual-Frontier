@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (D4 — K6 wording vs M7 implementation drift acknowledged)
+**Last updated**: 2026-05-09 (K6 closure)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K6 (planned) — second-graph rebuild on mod change |
-| **Last completed milestone** | K5 (Span<T> protocol + Command Buffer write batching) — `547c919` 2026-05-08 |
-| **Next milestone (recommended)** | K6 (mod-driven graph rebuild) |
+| **Active phase** | K7 (planned) — performance measurement (tick-loop) |
+| **Last completed milestone** | K6 (second-graph rebuild on mod change + closure-shaped brief executed) — 2026-05-09 |
+| **Next milestone (recommended)** | K7 (TickLoopBenchmark + §8 metrics) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 538 (76 Core + 4 Persistence + 66 Interop + 38 Systems + 347 Modding + 7 Mod.ManifestRewriter) |
+| **Tests passing** | 547 (76 Core + 4 Persistence + 66 Interop + 38 Systems + 356 Modding + 7 Mod.ManifestRewriter) |
 
 ---
 
@@ -77,7 +77,7 @@
 | K3 | Native bootstrap graph + thread pool | DONE | 5–7 days | `7629f57` | 2026-05-07 |
 | K4 | Component struct refactor (Hybrid Path) | DONE | 3-5 hours auto-mode (3-4 days hobby pace) | `2fc59d1` | 2026-05-08 |
 | K5 | Span<T> protocol + Command Buffer write batching | DONE | 6-8 hours auto-mode (2-3 weeks hobby pace) | `547c919` | 2026-05-08 |
-| K6 | Second-graph rebuild on mod change | NOT STARTED | 3–5 days | — | — |
+| K6 | Second-graph rebuild on mod change | DONE | 1-2 days hobby pace (~3-5h auto-mode for the as-found closure-shaped path) | `cb3d6cf`..`af2b572` | 2026-05-09 |
 | K7 | Performance measurement (tick-loop) | NOT STARTED | 3–5 days | — | — |
 | K8 | Decision step + production cutover | NOT STARTED | 1 week | — | — |
 
@@ -207,6 +207,24 @@
   - The brief's flush() design temporarily decremented `active_batches_` before applying commands and re-incremented after. With a single batch this works, но в "MultipleConcurrentBatches" test the counter stays > 0 after a batch decrements its own contribution (the peer batch's contribution remains), so the in-flush mutation still throws. Replaced with friend-access internal `*_unchecked` methods — far cleaner и safer.
   - `Span<ulong>` variable that may be either `stackalloc` или a pool-rented array fails C# escape analysis (CS9081). Adding the `scoped` modifier на the local resolves it; the same issue would trip up any future "either-stack-or-rent" pattern in this codebase.
   - `SpanLease<T>.Pairs` returns `EntityId` with `Version=1` placeholder — flagged in code/doc comments as a K7 follow-up. Acceptable for K5 since flush validates entity version при apply (stale ids silently skipped).
+
+### K6 — Second-graph rebuild on mod change
+
+- **Status**: DONE (`cb3d6cf`..`af2b572`, 2026-05-09)
+- **Brief**: `tools/briefs/K6_MOD_REBUILD_BRIEF.md` (FULL EXECUTED as closure-shaped implementation brief — third brief type alongside «implementation» and «skeleton»)
+- **Closure shape**: Most K6 deliverables were already fulfilled by parallel MOD_OS migration M7.1–M7.3 work (pause/resume primitives `0606c43`, full §9.5 unload chain `c3f5251`, ALC verification + Phase 2 carried debt `1d43858`). The K6 brief executed five additional phases:
+  1. **Phase 0 pre-flight + 0.4 inventory** — every K6 deliverable verified present on disk, one expected gap (ModFaultHandler) confirmed.
+  2. **Phase 1 verification** of M7-era code against K6 contract — log at `tools/briefs/K6_VERIFICATION_LOG.md` (commit `62ff956`).
+  3. **Phase 2 drift reconciliation (Option C)** — KERNEL_ARCHITECTURE.md amended to v1.1 (`cb3d6cf` status bump, `ab581cb` §K6 wording reconciliation) AND D4 decision-log entry added here (`30b982b`) for the audit trail.
+  4. **Phase 3 adjacent debt fill** — `ModFaultHandler` implementation closing the «Phase 2 part 2» TODO in `ModLoader.HandleModFault`. Files: `ModFaultHandler.cs` new (`a6664cf`); `ModLoader.HandleModFault` rewired (`208e9e7`); `ModIntegrationPipeline` ctor + Apply drain (`4999926`); `ModFaultHandlerTests.cs` 9 tests (`af2b572`).
+  5. **Phase 4 coverage audit** — verified existing `Pipeline_build_failure_leaves_old_scheduler_intact` covers the cyclic-graph-build rollback path; `UnloadMod_OnNonActiveMod_ReturnsEmptyWarnings_NoThrow` and `UnloadAll_OnEmptyActiveSet_RebuildsKernelOnlyScheduler` cover the other Phase 4 candidates. No gap-fill commit needed.
+- **Test count**: 538 baseline → **547 passing** (+9 ModFaultHandler tests). Distribution: 76 Core + 4 Persistence + 66 Interop + 38 Systems + 356 Modding + 7 Mod.ManifestRewriter.
+- **Out of K6 scope (deferred)**: Full `ParallelSystemScheduler`/`SystemExecutionContext` rewiring to install the real `ModFaultHandler` in place of the `NullModFaultSink` default. The K6 brief Phase 3.3 example only wired `ModLoader.HandleModFault` (a defensive entry-point for callers holding a `ModLoader` ref but not a `ModFaultHandler` ref); the actual fault routing path (`SystemExecutionContext.RouteAndThrow` → `_faultSink.ReportFault`) still uses the null sink, so a real isolation violation surfaces only via `IsolationViolationException` and does not yet drive the deferred-unload queue. Full wiring requires construction-order changes (handler must exist before the scheduler that needs it) and is left for a future ticket — flagged here so the gap is visible.
+- **Lessons learned**:
+  - M-series (mod migration) and K-series (kernel migration) have meaningful overlap. Future skeleton briefs should cross-check overlapping migration phases before being authored as full implementation briefs — the K6 case shows that a deliverable nominally in the kernel track may already be fulfilled by mod-track work.
+  - «Closure-shaped implementation brief» is a third brief type alongside «implementation» and «skeleton». Used when the milestone's deliverables exist but verification, drift reconciliation, and adjacent debt are needed for closure. The format is documented in K6_MOD_REBUILD_BRIEF.md «Methodology note on closure-shaped briefs».
+  - `IModFaultSink` interface (Core-side) was authored during M3-era work but the Application-side `ModFaultHandler` was deferred. K6 closure exposed the deferred work as a real gap (mod isolation violations would crash with `NotImplementedException` if `HandleModFault` was ever reached). The fix lands as part of K6 because K6 closure semantically requires the fault → unload path infrastructure to exist; the upstream wiring to make it active end-to-end remains as a future ticket per the «out of K6 scope» note above.
+  - Pre-flight verification revealed only one substantive drift (`ParallelSystemScheduler.Rebuild` is `internal` not `public` per spec wording — class itself is `internal sealed`, so the access modifier is the right visibility for the rebuild surface). All other M7-era deliverables matched the K6 contract verbatim. The closure-shaped brief format with explicit verification log is what surfaced this — a non-closure-shaped brief might have re-implemented existing infrastructure from scratch.
 
 ---
 
