@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (K8.0 closure — Solution A architectural commitment recorded)
+**Last updated**: 2026-05-09 (K8.1 closure — native-side reference primitives ready for K8.2)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K8.1 (next per K8.0 closure roadmap) — native-side reference handling primitives |
-| **Last completed milestone** | K8.0 (architectural decision recording — Solution A LOCKED) — 2026-05-09 |
-| **Next milestone (recommended)** | K8.1 (native-side reference primitives; full brief authoring trigger after K8.0 closure) |
+| **Active phase** | K9 (next per K8.0 sequencing decision Option c — K9 runs between K8.1 and K8.2) |
+| **Last completed milestone** | K8.1 (native-side reference primitives) — 2026-05-09 |
+| **Next milestone (recommended)** | K9 (RawTileField; consumes K8.1 primitives where applicable) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09) |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 553 (unchanged — K8.0 is documentation-only, no source touched) |
+| **Tests passing** | 583 (553 baseline + 30 K8.1 bridge tests; native selftest extended with 17 K8.1 sub-scenarios across 4 functions) |
 
 ---
 
@@ -81,7 +81,7 @@
 | K6.1 | Mod fault wiring end-to-end | DONE | 3-5 days hobby pace (~3-5h auto-mode) | `fe03ed3`..`a642d65` | 2026-05-09 |
 | K7 | Performance measurement (tick-loop) | DONE | 3–5 days hobby pace (~4-6h auto-mode) | `72ea8b5`..`e917220` | 2026-05-09 |
 | K8.0 | Architectural decision recording (Solution A) | DONE | 1-2 days | `9f9dc05`..`5fa3f1d` | 2026-05-09 |
-| K8.1 | Native-side reference handling primitives | NOT STARTED | 1-2 weeks | — | — |
+| K8.1 | Native-side reference handling primitives | DONE | 8-14 hours auto-mode | `a62c1f3`..`812df98` | 2026-05-09 |
 | K8.2 | 7 class components redesigned to structs | NOT STARTED | 1-2 weeks | — | — |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
@@ -307,11 +307,32 @@
   - Solution A's cost is bounded (4-8 weeks across K8.1-K8.5) but yields decade-scale cleanness. The «no compromises» commitment makes the trade calculation explicit: shorter-term pragmatism (Solutions B/C) creates structural costlines that propagate through every future system author and mod author. The decision is recorded, not deferred.
   - K9 sequencing decision (Option c — K9 between K8.1 and K8.2) was made in this brief. This unblocks G-series earlier without disrupting K8 series flow. Recorded in brief §1.7.
 
-### K8.1-K8.5 — Sub-milestones
+### K8.1 — Native-side reference handling primitives
+
+- **Status**: DONE (`a62c1f3`..`812df98`, 2026-05-09)
+- **Brief**: `tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md` (FULL EXECUTED)
+- **Goal**: Foundation primitives for K8.2 component redesigns. Four reference primitives now available on the native side: `StringPool` (generational mod-scoped interning), `KeyedMap` (sorted-by-key map), `Composite` (per-entity variable-length data), `SetPrimitive` (sorted-by-element set).
+- **Deliverables**:
+  - Native: `string_pool.h/cpp`, `keyed_map.h/cpp`, `composite.h/cpp`, `set_primitive.h/cpp`
+  - World integration: per-mod scope orchestration delegated to `StringPool`; id-keyed maps of `unique_ptr` for the other three primitives, sized at first `get_or_create_*` call
+  - C ABI: 28 new functions (`df_world_intern_string`, `df_keyed_map_*`, `df_composite_*`, `df_set_*`, plus mod scope and pool-introspection entries)
+  - Managed bridge (top-level at `src/DualFrontier.Core.Interop/`, mirroring `NativeWorld`/`SpanLease`/`WriteBatch` placement): `InternedString`, `NativeMap<TKey,TValue>`, `NativeComposite<T>`, `NativeSet<T>`; `NativeWorld` accessors `InternString` / `ResolveInternedString` / `GetKeyedMap` / `GetComposite` / `GetSet` / `Begin`|`End`|`ClearModScope` / `StringPoolCount` / `StringPoolCurrentGeneration`
+  - 17 native selftest sub-scenarios across 4 functions (`scenario_string_pool`, `scenario_keyed_map`, `scenario_composite`, `scenario_set_primitive`)
+  - 30 managed bridge equivalence tests (7 + 10 + 7 + 6) in `tests/DualFrontier.Core.Interop.Tests/`
+- **Test count**: 553 → 583 (+30, exact match to brief §1.12 projection)
+- **Lessons learned**:
+  - The brief's "atomic commit per managed wrapper" Phase 5 split assumed the wrappers were independent. They are not — `InternedString.Resolve` calls `NativeWorld.ResolveInternedString`, so the types only compile together. Bundled into one logical commit; the brief's discipline holds for native primitives (where the dependencies are forward-only) but breaks down at the bridge layer.
+  - Brief Phase 0.4 expected `Marshalling/RawComponentStore.cs` and `Marshalling/{WriteBatch,SpanLease}.cs`. Actual project layout is **top-level** for primary handles and `Marshalling/` only for ID/registry helpers (`EntityIdPacking`, `ComponentTypeRegistry`, `NativeComponentType`). New K8.1 wrappers placed top-level to match — confirmed against existing convention rather than the brief's mistaken inventory. Future briefs in K-series should grep the actual file tree at authoring time, not memory of layout.
+  - Generational mod-scope tracking handles the K-L9 «vanilla = mods» principle natively — strings owned by core stay alive across mod loads/unloads, but mod-specific strings reclaim deterministically when the owning mod's scope is cleared. Co-ownership across mods is recorded as set-membership in `ids_by_mod_`, so an id ceases to be reclaimable as soon as more than one scope uses it.
+  - Sorted-by-key iteration for `KeyedMap` and `SetPrimitive` provides save/load determinism out of the box; insertion-order or hash-order alternatives would have created roundtrip drift across machines or across save/load cycles. Memcmp-byte ordering is sufficient for the blittable POD key types K8.2 will use.
+  - CMakeLists.txt was updated **incrementally** (one entry per primitive commit) rather than as a single Phase 8 commit. Reason: explicit-listing CMakeLists rejects sources that aren't yet declared, and "build verification per primitive" is meaningless without the source being compiled. The brief's Phase 8 step became verification-only (no edit needed at closure).
+  - The native selftest's `id_b_only` fixture initially raised a /W4 unused-variable warning; the right fix was an additional invariant assertion (verifying the ModB-exclusive id is distinct from both the shared id and the ModA-exclusive id), not a `(void)` cast. Dropped warnings should usually become tests.
+
+### K8.2-K8.5 — Sub-milestones
 
 Each sub-milestone has a SKELETON brief in `tools/briefs/`. Full brief authoring is triggered sequentially after each predecessor closure. See K8.0 closure migration roadmap above for the order.
 
-- **K8.1**: `tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md` (skeleton)
+- **K8.1**: `tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md` (FULL EXECUTED)
 - **K8.2**: `tools/briefs/K8_2_CLASS_COMPONENT_REDESIGN_BRIEF.md` (skeleton)
 - **K8.3**: `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md` (skeleton)
 - **K8.4**: `tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md` (skeleton)
