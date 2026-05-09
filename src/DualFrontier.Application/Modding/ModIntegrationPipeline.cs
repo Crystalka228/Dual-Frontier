@@ -118,6 +118,15 @@ internal sealed class ModIntegrationPipeline
     /// pipeline also owns a singleton <see cref="SharedModLoadContext"/>
     /// reused across every <see cref="Apply"/> invocation per
     /// MOD_OS_ARCHITECTURE §5.1.
+    ///
+    /// K6.1 — <paramref name="faultHandler"/> is provided by the orchestrator
+    /// (<see cref="DualFrontier.Application.Loop.GameBootstrap"/>) which
+    /// constructs the handler before the scheduler so the scheduler ctor
+    /// can take it as an immutable sink. The pipeline does NOT own the
+    /// handler; it holds a reference to query <see cref="ModFaultHandler.GetFaultedMods"/>
+    /// and <see cref="ModFaultHandler.ClearFault"/> at <see cref="Apply"/>
+    /// time. The loader's <see cref="ModLoader.SetFaultHandler"/> wiring is
+    /// also performed by the orchestrator, not the pipeline ctor.
     /// </summary>
     public ModIntegrationPipeline(
         ModLoader loader,
@@ -125,7 +134,8 @@ internal sealed class ModIntegrationPipeline
         ContractValidator validator,
         IModContractStore contractStore,
         IGameServices services,
-        ParallelSystemScheduler scheduler)
+        ParallelSystemScheduler scheduler,
+        ModFaultHandler faultHandler)
     {
         _loader = loader ?? throw new ArgumentNullException(nameof(loader));
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
@@ -133,14 +143,7 @@ internal sealed class ModIntegrationPipeline
         _contractStore = contractStore ?? throw new ArgumentNullException(nameof(contractStore));
         _services = services ?? throw new ArgumentNullException(nameof(services));
         _scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
-
-        // K6 Phase 3.3 — install the Application-side fault handler. The
-        // pipeline owns the handler; ModLoader.HandleModFault routes
-        // faults through it via the loader's SetFaultHandler hook. Apply
-        // drains the handler's faulted-set at the start of each menu open
-        // and unloads each queued mod through the standard §9.5 chain.
-        _faultHandler = new ModFaultHandler(this);
-        _loader.SetFaultHandler(_faultHandler);
+        _faultHandler = faultHandler ?? throw new ArgumentNullException(nameof(faultHandler));
     }
 
     /// <summary>
