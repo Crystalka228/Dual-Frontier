@@ -47,6 +47,8 @@ restate the numbers.
 
 ## Pipeline
 
+<!-- TODO: A'.0.7 — pipeline restructure to 2-agent (Crystalka + unified Claude Desktop session); current section describes pre-restructure 4-agent shape and is preserved verbatim as historical state until A'.0.7 substantive rewrite lands -->
+
 The pipeline uses four agents separated by level of abstraction, not by
 development phase. The agents do not communicate directly; coordination
 happens through LOCKED documents in the repository and through the human as

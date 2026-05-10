@@ -715,7 +715,7 @@ The scaffolding generator `tools/scaffold-runtime.ps1` is committed and idempote
 
 ## 7. Methodology adjustments для M9.x
 
-The existing methodology ([METHODOLOGY](/docs/methodology/METHODOLOGY.md)) carries forward с the following adjustments. None of these adjustments alter the four-agent pipeline shape; they extend its pre-flight + verification stages для the Vulkan-specific failure modes.
+The existing methodology ([METHODOLOGY](/docs/methodology/METHODOLOGY.md)) carries forward с the following adjustments. None of these adjustments alter the pipeline shape; they extend its pre-flight + verification stages для the Vulkan-specific failure modes.
 
 **Pre-flight checks adapted:**
 

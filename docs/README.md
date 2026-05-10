@@ -7,7 +7,7 @@ research framing is in the [root README](../README.md); the engine
 exists to stress-test the methodology under non-trivial workload.
 
 Three documents carry the primary research weight:
-[METHODOLOGY](/docs/methodology/METHODOLOGY.md) describes the four-agent pipeline as
+[METHODOLOGY](/docs/methodology/METHODOLOGY.md) describes the pipeline as
 designed; [PIPELINE_METRICS](/docs/methodology/PIPELINE_METRICS.md) records the
 operational data measured while running it;
 [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) describes the
@@ -39,7 +39,7 @@ Technical documents describing the engine that stress-tests the methodology: lay
 
 Documents required to reproduce the work or contribute to it: methodology, modding, performance, coding standards, and tests.
 
-- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the four-agent pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
 - [PIPELINE_METRICS](/docs/methodology/PIPELINE_METRICS.md) — pipeline configuration, empirical metrics, throughput, subscription headroom, reproducibility requirements. Companion to METHODOLOGY.
 - [MODDING](/docs/architecture/MODDING.md) — `IMod`, `IModApi`, `AssemblyLoadContext`, `IModContract`, the mod manifest.
 - [MOD_PIPELINE](/docs/architecture/MOD_PIPELINE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity.

@@ -611,7 +611,7 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 ## See also
 
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.
-- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the four-agent pipeline; M1–M10 are exercised through it.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the pipeline; M1–M10 are exercised through it.
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
 - [CONTRACTS](/docs/architecture/CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
 - [MODDING](/docs/architecture/MODDING.md) — v1 mod-author guide; M-phase outputs supersede this document for v2.
