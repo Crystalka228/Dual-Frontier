@@ -8,21 +8,17 @@ tick rarely and change rarely — but their events
 ## Dependencies
 - `DualFrontier.Contracts` — attributes, `IWorldBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
-- `DualFrontier.Components.World` — `TileComponent`, `BiomeComponent`.
-- `DualFrontier.Events.World` — `WeatherChangedEvent`,
-  `BiomeShiftEvent`, `MapRegionLoadedEvent`.
+- `DualFrontier.Components.World` — `TileComponent`.
+- `DualFrontier.Events.World` — `WeatherChangedEvent`.
 
 ## Contents
 - `MapSystem.cs` — RARE: load/unload of map regions.
 - `WeatherSystem.cs` — RARE: weather change, publishes the event.
-- `BiomeSystem.cs` — RARE: gradual biome shifts (e.g., from ether).
 
 ## Rules
 - Domain bus — `nameof(IGameServices.World)`.
-- All three systems are RARE (3600 frames ≈ once per real-time minute), so
+- Both systems are RARE (3600 frames ≈ once per real-time minute), so
   they do not weigh on the main loop.
-- `WeatherSystem` does not write `BiomeComponent` directly — only via event
-  publication; `BiomeSystem` reacts.
 
 ## Usage examples
 ```csharp
@@ -33,4 +29,3 @@ worldBus.Publish(new WeatherChangedEvent(from: Clear, to: EtherStorm));
 ## TODO
 - [ ] Implement `MapSystem`: region streaming based on the camera center.
 - [ ] Implement `WeatherSystem`: a Markov chain of weather.
-- [ ] Implement `BiomeSystem`: ether's influence on biome type.

@@ -18,12 +18,12 @@ build the dependency graph and execute phases in parallel (see TechArch
 - `DualFrontier.Events` — the events the systems publish and subscribe to.
 
 ## Contents
-- `Pawn/` — needs, jobs, mood, social, skills.
+- `Pawn/` — needs, jobs, mood, skills, movement, sleep, consume, comfort.
 - `Magic/` — mana, spells, golems, ether fields, rituals.
-- `Combat/` — combat initiation, projectiles, damage, shields, effects.
+- `Combat/` — combat initiation, projectiles, damage, effects.
 - `Inventory/` — storage, hauling, crafting.
 - `Power/` — electric grid, ether grid, converters.
-- `World/` — map, weather, biomes.
+- `World/` — map, weather.
 - `Faction/` — relations, trade, raids.
 
 ## Rules
@@ -42,7 +42,7 @@ build the dependency graph and execute phases in parallel (see TechArch
 ## Usage examples
 ```csharp
 [SystemAccess(
-    reads:  new[] { typeof(PositionComponent), typeof(WeaponComponent) },
+    reads:  new[] { typeof(PositionComponent), typeof(ArmorComponent) },
     writes: new[] { typeof(HealthComponent) },
     bus:    nameof(IGameServices.Combat)
 )]

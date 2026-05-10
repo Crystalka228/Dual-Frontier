@@ -8,8 +8,8 @@ control, ether-node growth, and rituals. See the GDD sections "Magic",
 ## Dependencies
 - `DualFrontier.Contracts` — attributes, `IMagicBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
-- `DualFrontier.Components.Magic` — `ManaComponent`, `SchoolComponent`,
-  `GolemBondComponent`, `EtherComponent`.
+- `DualFrontier.Components.Magic` — `ManaComponent`, `GolemBondComponent`,
+  `EtherComponent`.
 - `DualFrontier.Events.Magic` — `ManaRequest`, `SpellCastEvent`,
   `EtherSurgeEvent`, `GolemActivatedEvent`.
 

@@ -8,8 +8,7 @@ GDD "Factions" section.
 - `DualFrontier.Contracts` — attributes, `IWorldBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.Shared` — `FactionComponent`.
-- `DualFrontier.Components.Pawn` — `SocialComponent` (for individual pawn influence on reputation).
-- `DualFrontier.Events.World` — `RaidIncomingEvent`, `TradeCaravanEvent`.
+- `DualFrontier.Events.World` — `RaidIncomingEvent`.
 
 ## Contents
 - `RelationSystem.cs` — RARE: evolution of inter-faction relations.

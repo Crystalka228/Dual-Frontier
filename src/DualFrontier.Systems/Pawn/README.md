@@ -9,7 +9,7 @@ mood and breaks, social ties, and skill growth. See the GDD "Pawns" and
 - `DualFrontier.Contracts` — attributes, the `IPawnBus` bus.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
 - `DualFrontier.Components.Pawn` — `NeedsComponent`, `MindComponent`,
-  `JobComponent`, `SkillsComponent`, `SocialComponent`.
+  `JobComponent`, `SkillsComponent`.
 - `DualFrontier.Components.Shared` — `PositionComponent`, `HealthComponent`.
 - `DualFrontier.Events.Pawn` — `MoodBreakEvent`, `SkillGainEvent`, ...
 
@@ -19,7 +19,6 @@ mood and breaks, social ties, and skill growth. See the GDD "Pawns" and
 - `MoodSystem.cs` — SLOW: recomputes mood from needs and health.
 - `MovementSystem.cs` — NORMAL: pawn movement via A*,
   publishes `PawnMovedEvent`.
-- `SocialSystem.cs` — RARE: social ties and their influence on the mind.
 - `SkillSystem.cs` — NORMAL: skill growth from experience.
 
 ## Rules
@@ -46,7 +45,6 @@ foreach (var pawn in Query<NeedsComponent, SkillsComponent, PositionComponent>()
       MoodBreak.
 - [x] Implement `MovementSystem`: pawn movement along the A* route,
       publishes `PawnMovedEvent`.
-- [ ] Implement `SocialSystem`: friendship/enmity graph (currently a stub).
 - [ ] Implement `SkillSystem`: experience curve and decay (currently a stub).
 - [ ] Wire event publication through `IGameServices` — `MoodSystem` currently
       has a stub instead of actually publishing `MoodBreakEvent`; systems do

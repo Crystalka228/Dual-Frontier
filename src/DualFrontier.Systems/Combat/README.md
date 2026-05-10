@@ -7,8 +7,7 @@ status effects. See the GDD "Combat" section.
 ## Dependencies
 - `DualFrontier.Contracts` — attributes, `ICombatBus`.
 - `DualFrontier.Core` — `SystemBase`, `TickRates`.
-- `DualFrontier.Components.Combat` — `WeaponComponent`,
-  `ArmorComponent`, `ShieldComponent`, `ProjectileComponent`.
+- `DualFrontier.Components.Combat` — `ArmorComponent`.
 - `DualFrontier.Components.Shared` — `HealthComponent`, `PositionComponent`.
 - `DualFrontier.Events.Combat` — `ShootAttemptEvent`, `DamageEvent`,
   `DeathEvent`, `StatusAppliedEvent`.
@@ -16,8 +15,7 @@ status effects. See the GDD "Combat" section.
 ## Contents
 - `CombatSystem.cs` — FAST: initiates attacks, requests ammunition (AmmoIntent).
 - `ProjectileSystem.cs` — REALTIME: projectile flight, collisions.
-- `DamageSystem.cs` — FAST: damage application accounting for armor and shields.
-- `ShieldSystem.cs` — FAST: shield regeneration / absorption.
+- `DamageSystem.cs` — FAST: damage application accounting for armor.
 - `StatusEffectSystem.cs` — FAST: status-effect ticks (burning, poison).
 
 ## Rules
@@ -40,7 +38,6 @@ combatBus.Publish(new ShootAttemptEvent(shooterId, targetId));
 - [ ] Implement `CombatSystem`: shot state machine.
 - [ ] Implement `ProjectileSystem`: linear projectile motion.
 - [ ] Implement `DamageSystem`: damage formula = atk - armor + crit.
-- [ ] Implement `ShieldSystem`: magical absorption.
 - [ ] Implement `StatusEffectSystem`: queue of active effects.
 
 ## v02 Addendum (TechArch §12.4)
