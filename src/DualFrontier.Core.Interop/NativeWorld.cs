@@ -29,6 +29,17 @@ public sealed class NativeWorld : IDisposable
     private IntPtr _handle;
     private readonly ComponentTypeRegistry? _registry;
 
+    // K8.2 v2 — per-instance id counters for component-owned NativeMap/NativeSet/
+    // NativeComposite handles. Monotonic, starts at 0; first AllocateXxxId returns
+    // 1 (id 0 is reserved as the «invalid» sentinel matching wrapper IsValid). Managed-side
+    // allocation is sufficient because each NativeWorld owns its native handle exclusively
+    // and the lazy get_or_create_* native pattern accepts any non-zero uint without
+    // requiring native-side bookkeeping. Interlocked for future thread-safety even though
+    // current K-series is single-threaded (per K-L-7 PoC scope).
+    private int _nextMapId;
+    private int _nextSetId;
+    private int _nextCompositeId;
+
     /// <summary>
     /// Internal handle access for <see cref="SpanLease{T}"/> lifetime
     /// management. Not for public consumption — use
@@ -564,6 +575,65 @@ public sealed class NativeWorld : IDisposable
                 $"df_world_get_set returned null for set_id={setId}, element_size={Unsafe.SizeOf<T>()}.");
         }
         return new NativeSet<T>(this, setId, handle);
+    }
+
+    /// <summary>
+    /// K8.2 v2 — allocates a fresh, monotonic map id from this world's counter.
+    /// Returns a uint in <c>[1, uint.MaxValue]</c>; 0 is reserved as the invalid
+    /// sentinel. Use with <see cref="GetKeyedMap{TKey,TValue}(uint)"/> when an
+    /// explicit id is needed; prefer <see cref="CreateMap{TKey,TValue}"/> for
+    /// the common factory case.
+    /// </summary>
+    public uint AllocateMapId()
+    {
+        ThrowIfDisposed();
+        return (uint)System.Threading.Interlocked.Increment(ref _nextMapId);
+    }
+
+    /// <summary>
+    /// K8.2 v2 — allocates a fresh, monotonic set id. See <see cref="AllocateMapId"/>.
+    /// </summary>
+    public uint AllocateSetId()
+    {
+        ThrowIfDisposed();
+        return (uint)System.Threading.Interlocked.Increment(ref _nextSetId);
+    }
+
+    /// <summary>
+    /// K8.2 v2 — allocates a fresh, monotonic composite id. See <see cref="AllocateMapId"/>.
+    /// </summary>
+    public uint AllocateCompositeId()
+    {
+        ThrowIfDisposed();
+        return (uint)System.Threading.Interlocked.Increment(ref _nextCompositeId);
+    }
+
+    /// <summary>
+    /// K8.2 v2 — factory: allocates a fresh map id and returns the wrapper.
+    /// Equivalent to <c>GetKeyedMap&lt;TKey, TValue&gt;(AllocateMapId())</c>.
+    /// Each call returns a wrapper over distinct backing storage.
+    /// </summary>
+    public NativeMap<TKey, TValue> CreateMap<TKey, TValue>()
+        where TKey : unmanaged, IComparable<TKey>
+        where TValue : unmanaged
+    {
+        return GetKeyedMap<TKey, TValue>(AllocateMapId());
+    }
+
+    /// <summary>
+    /// K8.2 v2 — factory: allocates a fresh set id and returns the wrapper.
+    /// </summary>
+    public NativeSet<T> CreateSet<T>() where T : unmanaged, IComparable<T>
+    {
+        return GetSet<T>(AllocateSetId());
+    }
+
+    /// <summary>
+    /// K8.2 v2 — factory: allocates a fresh composite id and returns the wrapper.
+    /// </summary>
+    public NativeComposite<T> CreateComposite<T>() where T : unmanaged
+    {
+        return GetComposite<T>(AllocateCompositeId());
     }
 
     public unsafe void BeginModScope(string modId)
