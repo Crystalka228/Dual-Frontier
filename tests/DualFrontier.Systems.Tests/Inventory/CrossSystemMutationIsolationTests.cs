@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Systems.Inventory;
 using FluentAssertions;
@@ -42,16 +43,30 @@ public sealed class CrossSystemMutationIsolationTests : IDisposable
         var world = new World();
         var services = new GameServices();
         var ticks = new TickScheduler();
+        var nativeWorld = new NativeWorld();
+        InternedString woodKey = nativeWorld.InternString("wood");
 
         // Two real StorageComponent entities — pre-fix this would have been
         // enough to surface the cross-context isolation violation.
         EntityId src = world.CreateEntity();
-        var srcStore = new StorageComponent { Capacity = 5 };
-        srcStore.Items["wood"] = 7;
+        var srcStore = new StorageComponent
+        {
+            Capacity = 5,
+            Items = nativeWorld.CreateMap<InternedString, int>(),
+            AcceptAll = true,
+            AllowedItems = nativeWorld.CreateSet<InternedString>(),
+        };
+        srcStore.Items.Set(woodKey, 7);
         world.AddComponent(src, srcStore);
 
         EntityId dst = world.CreateEntity();
-        world.AddComponent(dst, new StorageComponent { Capacity = 5 });
+        world.AddComponent(dst, new StorageComponent
+        {
+            Capacity = 5,
+            Items = nativeWorld.CreateMap<InternedString, int>(),
+            AcceptAll = true,
+            AllowedItems = nativeWorld.CreateSet<InternedString>(),
+        });
 
         EntityId pawn = world.CreateEntity();
         world.AddComponent(pawn, new PositionComponent { Position = new GridVector(0, 0) });
@@ -66,7 +81,8 @@ public sealed class CrossSystemMutationIsolationTests : IDisposable
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services);
+            services,
+            nativeWorld);
 
         // Single tick: HaulSystem (NORMAL=15) fires at tick 0 and the
         // deferred events drain at the phase boundary inside
@@ -82,9 +98,9 @@ public sealed class CrossSystemMutationIsolationTests : IDisposable
         world.TryGetComponent<StorageComponent>(src, out var srcAfter).Should().BeTrue();
         world.TryGetComponent<StorageComponent>(dst, out var dstAfter).Should().BeTrue();
 
-        srcAfter.Items.ContainsKey("wood").Should().BeFalse(
+        srcAfter.Items.TryGet(woodKey, out _).Should().BeFalse(
             "the entire wood stack moved out of the source storage");
-        dstAfter.Items.TryGetValue("wood", out int dstQty).Should().BeTrue();
+        dstAfter.Items.TryGet(woodKey, out int dstQty).Should().BeTrue();
         dstQty.Should().Be(7);
     }
 }

@@ -5,6 +5,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Components.Building;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Inventory;
 
 namespace DualFrontier.Systems.Inventory
@@ -64,10 +65,10 @@ namespace DualFrontier.Systems.Inventory
         private void OnItemAdded(ItemAddedEvent e)
         {
             var storage = GetComponent<StorageComponent>(e.StorageId);
-            if (storage.Items.ContainsKey(e.ItemId))
-                storage.Items[e.ItemId] += e.Quantity;
-            else
-                storage.Items[e.ItemId] = e.Quantity;
+            InternedString itemKey = NativeWorld.InternString(e.ItemId);
+            int existing = 0;
+            storage.Items.TryGet(itemKey, out existing);
+            storage.Items.Set(itemKey, existing + e.Quantity);
             SetComponent(e.StorageId, storage);
             _cacheDirty = true;
         }
@@ -75,19 +76,22 @@ namespace DualFrontier.Systems.Inventory
         private void OnItemRemoved(ItemRemovedEvent e)
         {
             var storage = GetComponent<StorageComponent>(e.StorageId);
-            if (!storage.Items.ContainsKey(e.ItemId)) return;
-            storage.Items[e.ItemId] -= e.Quantity;
-            if (storage.Items[e.ItemId] <= 0)
-                storage.Items.Remove(e.ItemId);
+            InternedString itemKey = NativeWorld.InternString(e.ItemId);
+            if (!storage.Items.TryGet(itemKey, out int currentQty)) return;
+            int remaining = currentQty - e.Quantity;
+            if (remaining <= 0)
+                storage.Items.Remove(itemKey);
+            else
+                storage.Items.Set(itemKey, remaining);
             SetComponent(e.StorageId, storage);
             _cacheDirty = true;
 
             var key = (e.StorageId, e.ItemId);
             if (_reservedQuantities.TryGetValue(key, out int reserved))
             {
-                int remaining = reserved - e.Quantity;
-                if (remaining <= 0) _reservedQuantities.Remove(key);
-                else _reservedQuantities[key] = remaining;
+                int remainingReserve = reserved - e.Quantity;
+                if (remainingReserve <= 0) _reservedQuantities.Remove(key);
+                else _reservedQuantities[key] = remainingReserve;
             }
         }
 
@@ -105,10 +109,20 @@ namespace DualFrontier.Systems.Inventory
             foreach (var entity in Query<StorageComponent>())
             {
                 var storage = GetComponent<StorageComponent>(entity);
-                if (!storage.IsFull)
+                if (!storage.IsFull && storage.Items.IsValid)
                 {
-                    _freeSlotCache[entity.Index] =
-                        new List<string>(storage.Items.Keys);
+                    int count = storage.Items.Count;
+                    var keysBuf = new InternedString[count];
+                    var valuesBuf = new int[count];
+                    storage.Items.Iterate(keysBuf, valuesBuf);
+
+                    var keyStrings = new List<string>(count);
+                    for (int i = 0; i < count; i++)
+                    {
+                        string? resolved = keysBuf[i].Resolve(NativeWorld);
+                        if (resolved is not null) keyStrings.Add(resolved);
+                    }
+                    _freeSlotCache[entity.Index] = keyStrings;
                 }
             }
         }

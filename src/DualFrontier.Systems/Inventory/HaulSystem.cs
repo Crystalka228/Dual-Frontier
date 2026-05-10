@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Inventory;
 
 namespace DualFrontier.Systems.Inventory;
@@ -95,14 +96,22 @@ public sealed class HaulSystem : SystemBase
         foreach (var storage in Query<StorageComponent>())
         {
             var s = GetComponent<StorageComponent>(storage);
-            if (s.Items.Count == 0) continue;
-            foreach (var kv in s.Items)
+            if (!s.Items.IsValid || s.Items.Count == 0) continue;
+
+            int count = s.Items.Count;
+            var keysBuf = new InternedString[count];
+            var valuesBuf = new int[count];
+            s.Items.Iterate(keysBuf, valuesBuf);
+
+            for (int i = 0; i < count; i++)
             {
-                if (_inCallReservations.Contains((storage, kv.Key)))
+                string? resolved = keysBuf[i].Resolve(NativeWorld);
+                if (resolved is null) continue;
+                if (_inCallReservations.Contains((storage, resolved)))
                     continue;
                 src      = storage;
-                srcItem  = kv.Key;
-                srcQty   = kv.Value;
+                srcItem  = resolved;
+                srcQty   = valuesBuf[i];
                 srcFound = true;
                 break;
             }
@@ -117,7 +126,7 @@ public sealed class HaulSystem : SystemBase
         {
             if (storage.Equals(src)) continue;
             var s = GetComponent<StorageComponent>(storage);
-            if (s.IsFull) continue;
+            if (!s.Items.IsValid || s.IsFull) continue;
             dst      = storage;
             dstFound = true;
             break;

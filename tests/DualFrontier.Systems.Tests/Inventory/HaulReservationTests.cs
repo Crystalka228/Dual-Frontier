@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Events.Inventory;
 using DualFrontier.Systems.Inventory;
@@ -38,14 +39,27 @@ public sealed class HaulReservationTests : IDisposable
         var world = new World();
         var services = new GameServices();
         var ticks = new TickScheduler();
+        var nativeWorld = new NativeWorld();
 
         EntityId src = world.CreateEntity();
-        var srcStore = new StorageComponent { Capacity = 5 };
-        srcStore.Items["wood"] = 5;
+        var srcStore = new StorageComponent
+        {
+            Capacity = 5,
+            Items = nativeWorld.CreateMap<InternedString, int>(),
+            AcceptAll = true,
+            AllowedItems = nativeWorld.CreateSet<InternedString>(),
+        };
+        srcStore.Items.Set(nativeWorld.InternString("wood"), 5);
         world.AddComponent(src, srcStore);
 
         EntityId dst = world.CreateEntity();
-        world.AddComponent(dst, new StorageComponent { Capacity = 5 });
+        world.AddComponent(dst, new StorageComponent
+        {
+            Capacity = 5,
+            Items = nativeWorld.CreateMap<InternedString, int>(),
+            AcceptAll = true,
+            AllowedItems = nativeWorld.CreateSet<InternedString>(),
+        });
 
         EntityId pawn1 = world.CreateEntity();
         world.AddComponent(pawn1, new PositionComponent { Position = new GridVector(0, 0) });
@@ -67,7 +81,8 @@ public sealed class HaulReservationTests : IDisposable
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services);
+            services,
+            nativeWorld);
 
         // First HaulSystem.Update runs at tick 0 (NORMAL = 15: 0 % 15 == 0).
         scheduler.ExecuteTick(1f / 30f);

@@ -18,4 +18,16 @@
     <ProjectReference Include="..\..\src\DualFrontier.Events\DualFrontier.Events.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Systems\DualFrontier.Systems.csproj" />
   </ItemGroup>
+  <!--
+    K8.2 v2 — native DLL must ride along: integration tests now construct
+    NativeWorld for InternedString interning on struct components. Mirrors
+    the Core.Interop.Tests + Modding.Tests + Benchmarks pattern.
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+  </ItemGroup>
 </Project>
