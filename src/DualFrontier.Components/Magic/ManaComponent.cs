@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Components.Magic;
@@ -8,6 +9,7 @@ namespace DualFrontier.Components.Magic;
 /// Maximum and regeneration depend on the ether-perception level
 /// (see <see cref="EtherComponent"/>, GDD 4.1 "Ether Perception Tiers").
 /// </summary>
+[ModAccessible(Read = true, Write = true)]
 public struct ManaComponent : IComponent
 {
     public float Current;

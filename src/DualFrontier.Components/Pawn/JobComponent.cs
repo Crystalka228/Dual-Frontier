@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Components.Pawn;
@@ -5,6 +6,7 @@ namespace DualFrontier.Components.Pawn;
 /// <summary>
 /// Represents a job component defining the current assignment, target, and status of an entity's work.
 /// </summary>
+[ModAccessible(Read = true, Write = true)]
 public struct JobComponent : IComponent
 {
     /// <inheritdoc />

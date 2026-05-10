@@ -1,5 +1,6 @@
 namespace DualFrontier.Components.World
 {
+    using DualFrontier.Contracts.Attributes;
     using DualFrontier.Contracts.Core;
 
     /// <summary>
@@ -7,6 +8,7 @@ namespace DualFrontier.Components.World
     /// One TileComponent per grid position. Passability is read by
     /// PathfindingService; Terrain is read by BiomeSystem and Presentation.
     /// </summary>
+    [ModAccessible(Read = true)]
     public struct TileComponent : IComponent
     {
         /// <summary>Type of terrain on this tile.</summary>

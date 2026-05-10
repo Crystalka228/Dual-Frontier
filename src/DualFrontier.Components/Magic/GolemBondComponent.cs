@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Enums;
 
@@ -12,6 +13,7 @@ namespace DualFrontier.Components.Magic;
 /// implement the golem takeover/abandonment mechanic via the
 /// <c>GolemOwnershipTransferRequest</c> / <c>GolemOwnershipChanged</c> events.
 /// </summary>
+[ModAccessible(Read = true, Write = true)]
 public struct GolemBondComponent : IComponent
 {
     // TODO: public EntityId? OwnerId;

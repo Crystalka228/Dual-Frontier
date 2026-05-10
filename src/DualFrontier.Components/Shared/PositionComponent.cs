@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 
@@ -7,6 +8,7 @@ namespace DualFrontier.Components.Shared;
 /// Position of an entity on the world's tile grid. Pure data.
 /// Mutated only via MovementSystem / TeleportSystem.
 /// </summary>
+[ModAccessible(Read = true, Write = true)]
 public struct PositionComponent : IComponent
 {
     /// <summary>Tile-grid coordinate.</summary>

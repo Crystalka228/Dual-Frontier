@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 namespace DualFrontier.Components.Building
@@ -6,6 +7,7 @@ namespace DualFrontier.Components.Building
     /// Power producer. Generates watts for the electric grid each tick.
     /// Written exclusively by ElectricGridSystem.
     /// </summary>
+    [ModAccessible(Read = true, Write = true)]
     public struct PowerProducerComponent : IComponent
     {
         /// <summary>Maximum watts this producer can output.</summary>

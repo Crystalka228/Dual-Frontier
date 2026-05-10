@@ -1,5 +1,6 @@
 namespace DualFrontier.Components.Shared;
 
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
@@ -26,6 +27,7 @@ public enum RaceKind
 /// <summary>
 /// Represents the racial component of an entity, defining its race and inherent traits.
 /// </summary>
+[ModAccessible(Read = true)]
 public struct RaceComponent : IComponent
 {
     // Fields

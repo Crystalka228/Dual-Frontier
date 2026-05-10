@@ -1,5 +1,6 @@
 namespace DualFrontier.Components.Pawn;
 
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
@@ -8,6 +9,7 @@ using DualFrontier.Contracts.Core;
 /// rested / comfortable) and 0 = worst (starving / dehydrated / exhausted /
 /// miserable). Pure POCO — no internal logic beyond the threshold queries.
 /// </summary>
+[ModAccessible(Read = true, Write = true)]
 public struct NeedsComponent : IComponent
 {
     /// <summary>

@@ -1,10 +1,12 @@
 namespace DualFrontier.Components.Pawn;
 
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
 /// Represents a component managing the pawn's mental state, including mood and breakdown status.
 /// </summary>
+[ModAccessible(Read = true, Write = true)]
 public struct MindComponent : IComponent
 {
     // --- Constants ---
