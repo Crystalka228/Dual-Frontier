@@ -54,26 +54,16 @@ public sealed class Phase5BridgeAnnotationsTests
     }
 
     [Fact]
-    public void SocialSystem_RemainsProtected()
+    public void SkillSystem_RemainsProtected()
     {
         // Phase 3 stub — annotation must NOT yet flip to Replaceable=true.
         // M10.C will reopen this when the Vanilla.Pawn replacement lands.
-        BridgeImplementationAttribute attr = RequireBridge(typeof(SocialSystem));
-        attr.Phase.Should().Be(3);
-        attr.Replaceable.Should().BeFalse(
-            "SocialSystem belongs to the M10.C boundary, not M6.1; flipping " +
-            "this without coordinating with the Pawn replacement plan would " +
-            "let mods supersede a system whose contract is not yet stable");
-    }
-
-    [Fact]
-    public void SkillSystem_RemainsProtected()
-    {
-        // Phase 3 stub — same constraint as SocialSystem above.
         BridgeImplementationAttribute attr = RequireBridge(typeof(SkillSystem));
         attr.Phase.Should().Be(3);
         attr.Replaceable.Should().BeFalse(
-            "SkillSystem belongs to the M10.C boundary, not M6.1");
+            "SkillSystem belongs to the M10.C boundary, not M6.1; flipping " +
+            "this without coordinating with the Pawn replacement plan would " +
+            "let mods supersede a system whose contract is not yet stable");
     }
 
     private static void AssertReplaceablePhase5(System.Type systemType)

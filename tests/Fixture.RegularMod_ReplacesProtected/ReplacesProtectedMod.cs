@@ -4,12 +4,15 @@ namespace Fixture.RegularMod_ReplacesProtected;
 
 /// <summary>
 /// M6.2 fixture — regular mod attempting to replace
-/// <c>DualFrontier.Systems.Pawn.SocialSystem</c>, which is annotated
+/// <c>DualFrontier.Systems.Pawn.SkillSystem</c>, which is annotated
 /// <c>[BridgeImplementation(Phase = 3)]</c> with the default
 /// <c>Replaceable=false</c>. Phase H must reject the batch with
 /// <c>ProtectedSystemReplacement</c>; <see cref="Initialize"/> is never
 /// reached, hence the throw — accidental invocation must fail loudly so
 /// the integration test catches an order-of-operations regression.
+/// (Pre-K8.2 v2 this fixture targeted SocialSystem; SocialSystem was
+/// deleted alongside SocialComponent and the target was redirected to
+/// SkillSystem, which has the same protected-bridge annotation.)
 /// </summary>
 public sealed class ReplacesProtectedMod : IMod
 {

@@ -1,7 +1,6 @@
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Components.Shared;
-using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Systems.Faction;
@@ -15,7 +14,7 @@ namespace DualFrontier.Systems.Faction;
 /// Tick: RARE (3600 frames).
 /// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(FactionComponent), typeof(SocialComponent) },
+    reads:  new[] { typeof(FactionComponent) },
     writes: new Type[0],
     bus:    nameof(IGameServices.World)
 )]

@@ -11,5 +11,5 @@ public sealed record DeathReactionEvent : IEvent
 {
     // TODO: public required EntityId ObserverId { get; init; }
     // TODO: public required EntityId VictimId { get; init; }
-    // TODO: public required int Relationship { get; init; }  // from SocialComponent — for effect strength
+    // TODO: public required int Relationship { get; init; }  // from vanilla pawn social mod content (M-series)
 }

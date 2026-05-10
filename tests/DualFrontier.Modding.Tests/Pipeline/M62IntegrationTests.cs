@@ -68,7 +68,7 @@ public sealed class M62IntegrationTests
     [Fact]
     public void Apply_WithProtectedSystemReplacement_RejectsBatch()
     {
-        // ReplacesProtectedMod targets DualFrontier.Systems.Pawn.SocialSystem,
+        // ReplacesProtectedMod targets DualFrontier.Systems.Pawn.SkillSystem,
         // which is annotated [BridgeImplementation(Phase = 3)] with the
         // default Replaceable=false. Phase H must reject the batch with
         // ProtectedSystemReplacement; the scheduler's old phase list must
@@ -84,7 +84,7 @@ public sealed class M62IntegrationTests
         ValidationError err = result.Errors.Should().ContainSingle(e =>
             e.Kind == ValidationErrorKind.ProtectedSystemReplacement &&
             e.ModId == "tests.regular.replacesprotected").Subject;
-        err.Message.Should().Contain("DualFrontier.Systems.Pawn.SocialSystem",
+        err.Message.Should().Contain("DualFrontier.Systems.Pawn.SkillSystem",
             "the diagnostic must echo the offending FQN");
         err.Message.Should().Contain("Replaceable=false",
             "Phase H must explain why the target is protected");
