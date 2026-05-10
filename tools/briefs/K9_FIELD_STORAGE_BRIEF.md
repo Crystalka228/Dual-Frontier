@@ -63,8 +63,8 @@ head -10 docs/architecture/FIELDS.md
 **Expected**:
 
 - `GPU_COMPUTE.md` LOCKED v2.0
-- `KERNEL_ARCHITECTURE.md` AUTHORITATIVE LOCKED v1.0
-- `MOD_OS_ARCHITECTURE.md` LOCKED v1.6
+- `KERNEL_ARCHITECTURE.md` AUTHORITATIVE LOCKED v1.5+ (per K-L3.1 bridge formalization 2026-05-10)
+- `MOD_OS_ARCHITECTURE.md` LOCKED v1.7+ (per K-L3.1 bridge formalization 2026-05-10)
 - `FIELDS.md` Status: Draft
 
 **Halt condition**: any spec at unexpected version. K9 implements against these specs verbatim; version mismatch means the spec contract has shifted under the brief.
@@ -96,7 +96,7 @@ cmake --build . --config Release
 dotnet test
 ```
 
-**Expected**: 538 tests passing (post-K5; K6–K8 closure may have added more — record the actual baseline before continuing).
+**Expected**: 631+ tests passing (post-K8.2 v2 baseline; K-L3.1 amendment brief is docs-only and does not affect test count — record the actual baseline before continuing).
 
 **Halt condition**: any test fails. Same reasoning as 0.5.
 
