@@ -10,9 +10,12 @@ namespace DualFrontier.Core.Interop;
 /// Both <typeparamref name="TKey"/> and <typeparamref name="TValue"/>
 /// must be <c>unmanaged</c> — values are copied across the C ABI
 /// boundary as raw bytes. The native side uses <c>memcmp</c> for key
-/// ordering; <see cref="IComparable{T}"/> on the managed side is
-/// surfaced for managed-only use (e.g. to validate ordering in tests
-/// and to satisfy K8.1 generic constraints), not for native lookup.
+/// ordering; managed-side comparison helpers are not required (an
+/// earlier <see cref="IComparable{T}"/> constraint was relaxed in
+/// K8.2 v2 because C# enums do not satisfy <see cref="IComparable{T}"/>
+/// by default and forcing every key type to implement it precluded
+/// idiomatic <c>NativeMap&lt;EnumType, V&gt;</c> usage on struct
+/// components).
 ///
 /// <para>
 /// <b>Value-type wrapper (K8.2 v2).</b> Refactored from <c>sealed unsafe class</c>
@@ -26,7 +29,7 @@ namespace DualFrontier.Core.Interop;
 /// </para>
 /// </summary>
 public readonly unsafe struct NativeMap<TKey, TValue>
-    where TKey : unmanaged, IComparable<TKey>
+    where TKey : unmanaged
     where TValue : unmanaged
 {
     private readonly uint _mapId;

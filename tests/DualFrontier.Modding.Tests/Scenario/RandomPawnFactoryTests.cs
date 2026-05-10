@@ -115,11 +115,11 @@ public sealed class RandomPawnFactoryTests
         foreach (var id in ids)
         {
             var skills = fx.world.GetComponentForTest<SkillsComponent>(id);
-            skills.Levels.Should().NotBeNull();
+            skills.Levels.IsValid.Should().BeTrue();
             foreach (var kind in allKinds)
             {
-                skills.Levels!.ContainsKey(kind).Should().BeTrue($"skill {kind} must be populated");
-                skills.Levels[kind].Should().BeInRange(0, SkillsComponent.MaxLevel);
+                skills.Levels.TryGet(kind, out int level).Should().BeTrue($"skill {kind} must be populated");
+                level.Should().BeInRange(0, SkillsComponent.MaxLevel);
             }
         }
     }

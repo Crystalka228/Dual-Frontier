@@ -21,7 +21,7 @@ namespace DualFrontier.Core.Interop;
 /// <see cref="NativeWorld.GetSet{T}(uint)"/> (re-binds to explicit id).
 /// </para>
 /// </summary>
-public readonly unsafe struct NativeSet<T> where T : unmanaged, IComparable<T>
+public readonly unsafe struct NativeSet<T> where T : unmanaged
 {
     private readonly uint _setId;
     private readonly IntPtr _handle;

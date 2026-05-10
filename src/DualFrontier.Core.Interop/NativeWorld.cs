@@ -528,7 +528,7 @@ public sealed class NativeWorld : IDisposable
     /// storage.
     /// </summary>
     public NativeMap<TKey, TValue> GetKeyedMap<TKey, TValue>(uint mapId)
-        where TKey : unmanaged, IComparable<TKey>
+        where TKey : unmanaged
         where TValue : unmanaged
     {
         ThrowIfDisposed();
@@ -562,7 +562,7 @@ public sealed class NativeWorld : IDisposable
         return new NativeComposite<T>(compositeId, handle);
     }
 
-    public NativeSet<T> GetSet<T>(uint setId) where T : unmanaged, IComparable<T>
+    public NativeSet<T> GetSet<T>(uint setId) where T : unmanaged
     {
         ThrowIfDisposed();
         if (setId == 0) throw new ArgumentOutOfRangeException(nameof(setId), "Set id 0 reserved as empty sentinel.");
@@ -614,7 +614,7 @@ public sealed class NativeWorld : IDisposable
     /// Each call returns a wrapper over distinct backing storage.
     /// </summary>
     public NativeMap<TKey, TValue> CreateMap<TKey, TValue>()
-        where TKey : unmanaged, IComparable<TKey>
+        where TKey : unmanaged
         where TValue : unmanaged
     {
         return GetKeyedMap<TKey, TValue>(AllocateMapId());
@@ -623,7 +623,7 @@ public sealed class NativeWorld : IDisposable
     /// <summary>
     /// K8.2 v2 — factory: allocates a fresh set id and returns the wrapper.
     /// </summary>
-    public NativeSet<T> CreateSet<T>() where T : unmanaged, IComparable<T>
+    public NativeSet<T> CreateSet<T>() where T : unmanaged
     {
         return GetSet<T>(AllocateSetId());
     }

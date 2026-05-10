@@ -1,36 +1,39 @@
-using System.Collections.Generic;
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Components.Pawn;
 
 /// <summary>
 /// Defines the skill levels and experience points for an entity's pawn.
 /// </summary>
-public sealed class SkillsComponent : IComponent
+[ModAccessible(Read = true, Write = true)]
+public struct SkillsComponent : IComponent
 {
-    /// <constants>
-    /// The maximum attainable level for any skill.
-    /// </constants>
+    /// <summary>The maximum attainable level for any skill.</summary>
     public const int MaxLevel = 20;
 
-    /// <constants>
-    /// The amount of experience points required to advance one skill level.
-    /// </constants>
+    /// <summary>The amount of experience points required to advance one skill level.</summary>
     public const float XpPerLevel = 1000f;
 
     /// <summary>
-    /// Current skill levels per skill. Populated by systems upon pawn creation.
-    /// Null-for-null initialization is used due to pooling rules.
+    /// Current skill levels per skill. Native-backed map handle; default
+    /// (<see cref="NativeMap{TKey,TValue}"/>.IsValid == false) for un-initialised
+    /// pawns. Populated by the scenario factory or SkillSystem at pawn creation
+    /// via <c>NativeWorld.CreateMap&lt;SkillKind, int&gt;()</c>.
     /// </summary>
-    public Dictionary<SkillKind, int>? Levels = null!;
+    public NativeMap<SkillKind, int> Levels;
 
     /// <summary>
-    /// Accumulated XP toward next level per skill. Populated by systems upon pawn creation.
+    /// Accumulated XP toward next level per skill. Same NativeMap shape as
+    /// <see cref="Levels"/>; populated alongside it.
     /// </summary>
-    public Dictionary<SkillKind, float>? Experience = null!;
+    public NativeMap<SkillKind, float> Experience;
 
     /// <summary>
     /// Checks if the skill levels component has been populated with data.
+    /// True when the underlying NativeMap is bound (Levels.IsValid) and
+    /// holds at least one entry.
     /// </summary>
-    public bool IsInitialized => Levels?.Count > 0;
+    public bool IsInitialized => Levels.IsValid && Levels.Count > 0;
 }

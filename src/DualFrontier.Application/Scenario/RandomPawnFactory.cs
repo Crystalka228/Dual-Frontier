@@ -126,17 +126,17 @@ internal sealed class RandomPawnFactory
             Name = _nativeWorld.InternString(fullName)
         });
 
-        var levels = new Dictionary<SkillKind, int>();
-        var experience = new Dictionary<SkillKind, float>();
+        NativeMap<SkillKind, int> levels = _nativeWorld.CreateMap<SkillKind, int>();
+        NativeMap<SkillKind, float> experience = _nativeWorld.CreateMap<SkillKind, float>();
         foreach (SkillKind kind in (SkillKind[])Enum.GetValues(typeof(SkillKind)))
         {
-            levels[kind] = _rng.Next(0, SkillsComponent.MaxLevel + 1);
-            experience[kind] = 0f;
+            levels.Set(kind, _rng.Next(0, SkillsComponent.MaxLevel + 1));
+            experience.Set(kind, 0f);
         }
         world.AddComponent(id, new SkillsComponent
         {
             Levels = levels,
-            Experience = experience
+            Experience = experience,
         });
 
         world.AddComponent(id, new NeedsComponent

@@ -80,15 +80,22 @@ public sealed class PawnStateReporterSystem : SystemBase
 
     private static IReadOnlyList<(SkillKind Kind, int Level)> ComputeTopSkills(SkillsComponent skills)
     {
-        if (skills.Levels is null || skills.Levels.Count == 0)
+        if (!skills.Levels.IsValid || skills.Levels.Count == 0)
             return Array.Empty<(SkillKind, int)>();
 
         // Build a working array of all (kind, level) pairs, sort by level
         // descending (ties broken by enum order), take top N.
-        var pairs = new (SkillKind Kind, int Level)[skills.Levels.Count];
-        int idx = 0;
-        foreach (var kv in skills.Levels)
-            pairs[idx++] = (kv.Key, kv.Value);
+        // NativeMap.Iterate yields entries in sorted-by-key (memcmp) order,
+        // not insertion order. Allocates two temp buffers — typical pawn
+        // skill count is 13 (one per SkillKind), so heap pressure is low.
+        int count = skills.Levels.Count;
+        var keysBuf = new SkillKind[count];
+        var valuesBuf = new int[count];
+        skills.Levels.Iterate(keysBuf, valuesBuf);
+
+        var pairs = new (SkillKind Kind, int Level)[count];
+        for (int i = 0; i < count; i++)
+            pairs[i] = (keysBuf[i], valuesBuf[i]);
 
         // Insertion sort — fixed size 13, allocation-free, O(n^2) trivial.
         for (int a = 1; a < pairs.Length; a++)
