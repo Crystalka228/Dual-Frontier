@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-10 (К-L3.1 bridge formalization amendment landed via A'.1.K; 10 atomic commits per К-L3.1 amendment plan §6.2 + 2 closure commits; KERNEL v1.5 + MOD_OS v1.7 + MIGRATION_PLAN v1.1 + MIGRATION_PROGRESS sync + 4 skeleton brief surgical edits; A'.1 amendment milestone complete — A'.1.M (A'.0.7 amendment) + A'.1.K (К-L3.1 amendment) both landed 2026-05-10)
+**Last updated**: 2026-05-10 (A'.3 push к origin/main complete — 20 commits pushed `4e332bb..0789bd4`; main and origin/main fully synchronized; Phase A' deliberation foundation + amendment landing complete; K-series execution next via A'.4 K9)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,7 +31,7 @@
 
 | | Value |
 |---|---|
-| **Active phase** | A'.3 push к origin → A'.4 K9 / A'.5 K8.3 / A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (К-L3.1 + A'.0.5 + A'.0.7 + A'.1.M + A'.1.K closed as Phase A' foundation; K-series execution begins at A'.4) |
+| **Active phase** | A'.4 K9 (RawTileField field storage) → A'.5 K8.3 / A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (К-L3.1 + A'.0.5 + A'.0.7 + A'.1.M + A'.1.K + A'.3 push closed; K-series execution next via K9 full-authored brief) |
 | **Last completed milestone** | A'.1.K (К-L3.1 architecture amendment landing; KERNEL v1.5 + MOD_OS v1.7 + MIGRATION_PLAN v1.1 + 4 skeleton brief surgical edits) — 2026-05-10. Previous: A'.1.M (A'.0.7 methodology amendment landing; METHODOLOGY v1.6 + PIPELINE_METRICS v0.2 + MAXIMUM_ENGINEERING_REFACTOR v1.1 + README Pipeline rewrite) — 2026-05-10; A'.0.7 (methodology pipeline restructure deliberation) — 2026-05-10; A'.0.5 (documentation reorganization + cross-ref refresh + cleanup) — 2026-05-10; К-L3.1 (bridge formalization deliberation) — 2026-05-10. |
 | **Next milestone (recommended)** | K9 (RawTileField) if not yet closed; otherwise K8.3 (system migration to SpanLease/WriteBatch) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09); K8.2 reformulated as v2 single-milestone foundation closure per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED |
