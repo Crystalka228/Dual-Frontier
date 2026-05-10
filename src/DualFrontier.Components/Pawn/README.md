@@ -13,15 +13,12 @@ of this data.
 - `SkillsComponent.cs` — skill levels keyed by `SkillKind`.
 - `MindComponent.cs` — mood and break threshold.
 - `JobComponent.cs` — current job and its goal.
-- `SocialComponent.cs` — relationships with other pawns.
 
 ## Rules
 - `Dictionary` fields are initialized by systems when a pawn is created, not in
   the component's constructor (we want pooling without extra allocations).
 - `Mood` and `MoodBreakThreshold` live in one structure so MoodSystem reads
   them atomically.
-- Direct mutation of `Relations` from a non-social system is forbidden — only
-  through `[SystemAccess(writes: SocialComponent)]` on SocialSystem.
 
 ## Usage examples
 ```csharp

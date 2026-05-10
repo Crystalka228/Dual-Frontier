@@ -5,9 +5,9 @@ The ECS components assembly. Pure POCO data, no logic. Every component
 implements `IComponent` from `DualFrontier.Contracts.Core`. Logic that mutates
 this data lives in `DualFrontier.Systems`.
 
-Components describe every game entity: pawns, buildings, magic nodes, weapons
-and ammunition, the power grid, and so on. They are split by domain (Shared /
-Pawn / Magic / Combat / Building / World), one folder per domain.
+Components describe every game entity: pawns, buildings, magic nodes, the
+power grid, and so on. They are split by domain (Shared / Pawn / Magic /
+Combat / Building / World), one folder per domain.
 
 ## Dependencies
 - `DualFrontier.Contracts` — the `IComponent` marker, `EntityId`.
@@ -18,10 +18,10 @@ any other project assembly. This isolates data from logic.
 ## Contents
 - `Shared/` — base components for any entity (position, health, faction, race).
 - `Pawn/` — specific to sapient pawns (needs, skills, mood, work, social ties).
-- `Magic/` — mana, schools of magic, ether level, golem bond (GDD 4–5).
-- `Combat/` — weapons, armor, shields, ammunition (GDD 6, Combat Extended).
+- `Magic/` — mana, ether level, golem bond (GDD 4–5).
+- `Combat/` — armor (GDD 6, Combat Extended).
 - `Building/` — power consumers/producers, storages, workbenches.
-- `World/` — tiles, ether nodes, biomes.
+- `World/` — tiles, ether nodes.
 
 ## Rules
 - POCO only — `public` fields, no methods (except expression-bodied ones like
@@ -51,8 +51,8 @@ public class DeathReporterSystem : SystemBase
 
 ## TODO
 - [ ] Fill the TODO fields in every component (Phase 1–2).
-- [ ] Define enum types (`RaceKind`, `SkillKind`, `JobKind`, `MagicSchool`,
-      `DamageType`, `ShieldKind`, `AmmoType`, `PowerType`, `WorkbenchKind`,
-      `TerrainKind`, `BiomeKind`) — in their respective domain folders.
+- [ ] Define enum types (`RaceKind`, `SkillKind`, `JobKind`, `DamageType`,
+      `PowerType`, `WorkbenchKind`, `TerrainKind`) — in their respective
+      domain folders.
       (`GridVector` is already defined in `DualFrontier.Contracts.Math`.)
 - [ ] Write unit tests for component serialization (Phase 3, for save/load).

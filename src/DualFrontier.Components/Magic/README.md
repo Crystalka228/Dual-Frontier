@@ -10,7 +10,6 @@ and GDD 5 ("Golem system").
 
 ## Contents
 - `ManaComponent.cs` — current/maximum mana + regeneration.
-- `SchoolComponent.cs` — magic levels per school (`Dictionary<MagicSchool,int>`).
 - `EtherComponent.cs` — ether perception level (1–5, GDD 4.1).
 - `GolemBondComponent.cs` — bond between a golem and its owning mage, golem level (1–5).
 
@@ -23,13 +22,11 @@ and GDD 5 ("Golem system").
 
 ## Usage examples
 ```csharp
-[SystemAccess(reads: new[] { typeof(ManaComponent), typeof(SchoolComponent) })]
+[SystemAccess(reads: new[] { typeof(ManaComponent) })]
 public class SpellCastSystem : SystemBase { /* ... */ }
 ```
 
 ## TODO
-- [ ] Define the `MagicSchool` enum (Fire, Ice, Storm, Earth, Wind, Water,
-      Dark, Light, Mind, Void) — GDD 4.3.
 - [ ] Add `ManaRegenModifierComponent` for environmental effects (nodes,
       potions, rituals) — Phase 6.
 - [ ] `GolemTier` 1..5 — validator in Phase 5.

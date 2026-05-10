@@ -11,13 +11,11 @@ mana regeneration (GDD 4).
 ## Contents
 - `TileComponent.cs` — terrain kind + passability.
 - `EtherNodeComponent.cs` — node tier + influence radius.
-- `BiomeComponent.cs` — biome kind (forest, desert, foggy plateau, etc.).
 
 ## Rules
 - Only one entity with `TileComponent` lives at any single grid position.
 - `EtherNodeComponent.Radius` is in tiles. Overlapping radii are summed by
   EtherFieldSystem.
-- Biomes affect pawn mood modifiers and the available flora/fauna.
 
 ## Usage examples
 ```csharp
@@ -29,6 +27,5 @@ world.AddComponent(node, new PositionComponent { Position = new GridVector(42, 1
 ## TODO
 - [x] Define the `TerrainKind` enum (Grass, Rock, Sand, Water, Ice, Swamp,
       Arcane, Unknown).
-- [ ] Define the `BiomeKind` enum (TemperateForest, Desert, Tundra, EtherWastes …).
 - [ ] Plan layers (floor / wall / decorative) — possibly through separate
       components rather than through `TileComponent`.
