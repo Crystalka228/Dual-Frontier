@@ -1,7 +1,7 @@
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)
 
-**Version**: 1.0 LOCKED
-**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`)
+**Version**: 1.1 LOCKED (v1.1 = non-semantic correction post-K-L3.1 amendment 2026-05-10)
+**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`); amended 2026-05-10 (K-L3.1 bridge formalization, Decision #9 added, line 62 reframed, K8.3-K8.5 sub-section extensions)
 **Locked**: 2026-05-09 (Crystalka acceptance during K8.2 v2 session)
 **Status**: AUTHORITATIVE LOCKED — architectural roadmap for K-series and M-series
 **Strategy**: Option (II) "Struct-first sequential" — kernel-track closes completely before mod-OS-track mass migration begins
@@ -22,26 +22,42 @@
 
 ## Section 0 — Executive summary and strategy lock
 
-### 0.1 — Strategy: Option (II) "Struct-first sequential"
+### 0.1 — Strategy: Option (II) "Struct-first sequential" + Phase A' bridge
 
-K-series (kernel migration: components class→struct, systems → SpanLease/WriteBatch, managed retire, ecosystem prep) executes **completely** before M-series (mod-OS migration: vanilla mod content population) begins mass migration.
+K-series (kernel migration: components class→struct, systems → SpanLease/WriteBatch, managed retire, ecosystem prep) executes **completely** before M-series (mod-OS migration: vanilla mod content population) begins mass migration. Phase A' (added per K-L3.1 amendment 2026-05-10) inserts a structural bridge between K-series kernel completion and M-series mass migration: bridge formalization + remaining K-series execution + K-closure report + architectural analyzer. Companion sequencing reference: `docs/architecture/PHASE_A_PRIME_SEQUENCING.md`.
 
 ```
-Phase A: K-series kernel completion       (4-8 weeks at hobby pace)
-  K8.2 → K8.3 → K8.4 → K8.5
-       └──────────────────────┘
+Phase A: K-series kernel foundation       (post-K8.2 v2, partial — K8.3-K8.5 deferred to Phase A')
+  K8.2 v2 [DONE 2026-05-09]
                     │
                     ▼
-Phase B: M-series mod-OS migration         (5-10 weeks at hobby pace)
+Phase A': Bridge formalization + closure + analyzer  (10-16 weeks at hobby pace)
+  A'.0 K-L3.1 deliberation [DONE 2026-05-10]
+  A'.1 Amendment brief execution
+  A'.2 README cleanup
+  A'.3 Push to origin
+  A'.4 K9 execution (full authored brief, awaiting)
+  A'.5 K8.3 execution (skeleton → full brief → execute)
+  A'.6 K8.4 execution (skeleton → full brief → execute)
+  A'.7 K8.5 execution (skeleton → full brief → execute)
+  A'.8 K-closure report (NEW — historical record + analyzer rule specification surface)
+  A'.9 Architectural analyzer milestone (NEW — Roslyn analyzer encoding K-Lxx invariants;
+       dual purpose: M-series migration verifier + architectural debugger)
+       └─────────────────────────────────────────────────────────────────────────────────┘
+                    │
+                    ▼
+Phase B: M-series mod-OS migration         (5-10 weeks at hobby pace; runs under analyzer protection)
   M8.4 → M8.5 → M8.6 → M8.7 → M9 → M10.x
        └──────────────────────────────┘
                     │
                     ▼
-Phase C: Post-migration kernel work        (per existing roadmap)
-  K9 (field abstraction) → G-series (GPU compute)
+Phase C: Post-migration GPU compute        (per existing roadmap)
+  G-series (Vulkan compute, per docs/architecture/GPU_COMPUTE.md v2.0)
 ```
 
-The single arrow between phases A and B is the **architectural handoff**: K8.5 closure delivers a fully-K-completed `src/` codebase as the input substrate for M-series. M-series migrates that substrate from `src/` into `mods/Vanilla.*/` assemblies, **without re-doing K-series work**. Each component is converted class→struct **once**, in `src/`. Each system is migrated to SpanLease/WriteBatch **once**, in `src/`. The migration into vanilla mods is a code-relocation operation, not a re-architecture.
+(K9 moved from Phase C to Phase A'.4 per K8.0 closure Option c sequencing 2026-05-09; K9 is kernel-side independent of K8.3–K8.5 except in IModApi v3 surface which K8.4 ships.)
+
+Phase A' is the **architectural bridge** between Phase A foundation (K8.2 v2) and Phase B mass migration (M8.4 onward): K8.5 closure (via A'.7) delivers a fully-K-completed `src/` codebase as the input substrate for M-series. M-series migrates that substrate from `src/` into `mods/Vanilla.*/` assemblies, **without re-doing K-series work**. Each component is converted class→struct (Path α) or annotated `[ManagedStorage]` (Path β) **once**, in `src/`. Each system is migrated to SpanLease/WriteBatch **once**, in `src/`. The migration into vanilla mods is a code-relocation operation, not a re-architecture.
 
 ### 0.2 — Why this strategy (decision rationale)
 
@@ -59,7 +75,7 @@ The framing is structurally important: existing `src/DualFrontier.Components/*` 
 
 After K-series closure on this codebase, the legacy content has accomplished its job. M-series then re-houses the closed content into vanilla mod assemblies. **No architectural work happens in two places** — kernel work in `src/`, mod-OS work in `mods/`, sequential.
 
-Option (I) was rejected because it would put the mass migration work in front of the kernel work — vanilla mods would temporarily contain class components (K-L3 violation period of weeks-months), then K8.2 would convert them later. That's a second pass over the same code; under "без костылей" (Crystalka, repeated 2026-05-09), the second pass is structural cost without architectural benefit.
+Option (I) was rejected because it would put the mass migration work in front of the kernel work — vanilla mods would temporarily contain class components without `[ManagedStorage]` opt-in (K-L3 path-declaration ambiguity period of weeks-months), then K8.2 would convert/annotate them later. That's a second pass over the same code; under "без костылей" (Crystalka, repeated 2026-05-09), the second pass is structural cost without architectural benefit. Note (post-K-L3.1, 2026-05-10): post-amendment, class components carrying `[ManagedStorage]` are first-class Path β peers — the original «K-L3 violation» framing applied to undeclared class components only, not to managed-path components per se.
 
 Option (III) was rejected because it would dissolve the K-series milestone structure mid-stream — KERNEL_ARCHITECTURE Part 2 K8.2/K8.3 rows would become subsumed into M-series, and the kernel completion gate would no longer have a clean closure milestone. Single architectural focus per period (Crystalka philosophy "cleanness > expediency", encoded in β6 sequencing decision 2026-05-07) is preserved by Option (II).
 
@@ -88,6 +104,8 @@ The following 8 decisions are committed by this plan and cannot be revisited ins
  - Vanilla.Core → **M10 incremental** (shared types as cross-slice need surfaces)
 
 8. **Phased delete LOCKED**: after each M-milestone closes, the corresponding `src/DualFrontier.Components/<Slice>/` and `src/DualFrontier.Systems/<Slice>/` directories are **deleted** in the same milestone's atomic commit set. No "delete legacy first, migrate later" — always "migrate then delete migrated source." Foundation never loses functionality between milestones (commits can be reverted; tests can be run at any commit). See §5 for full strategy.
+
+9. **Bridge formalization LOCKED (K-L3.1, 2026-05-10)**: Path α (`unmanaged struct`, kernel-side `NativeWorld`) and Path β (managed `class` via `[ManagedStorage]`, mod-side per-mod `ManagedStore<T>`) are first-class peers per K-L3.1 amendment to `KERNEL_ARCHITECTURE.md` Part 0 K-L3. Decision criterion: per-component architectural fit; default Path α; Path β opt-in via attribute. K8.2 v2 closure framing «K-L3 «без exception»» reframed as «K-L3 selective per-component application» (closure delivered selective judgment, not universal mandate). M-series vanilla mod content milestones author per-component on appropriate path. K8.3 system migration extends to dual-path access (`SystemBase.NativeWorld` + `SystemBase.ManagedStore<T>`); per-system access pattern decision in K8.3 brief. K8.4 ships `IModApi.RegisterManagedComponent<T>` as part of v3 surface alongside `Fields` and `ComputePipelines`. K8.5 mod authoring guide documents per-component path choice criterion. Save system out of scope (Q4.b runtime-only managed-path). Authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`; bridge brief at `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md`.
 
 ### 0.4 — What this plan deliberately does not decide
 
@@ -127,7 +145,7 @@ The "remaining 7" wording in the old Part 2 row was authored against an out-of-d
 
 **Architectural design constraints that K8.2 brief must inherit from this plan**:
 
-- Conversion target: `unmanaged` struct (Path α, K-L3 LOCKED, no exception post-K8.2).
+- Conversion target: default Path α (`unmanaged struct`, K-L3 LOCKED). Per-component Path β (managed `class` via `[ManagedStorage]`) opt-in per K-L3.1 (2026-05-10) when conversion forces structural compromise; K8.2 v2 closure delivered selective per-component application (not universal mandate). See `KERNEL_ARCHITECTURE.md` Part 0 K-L3 implication post-K-L3.1 for the decision criterion.
 - K8.1 primitives applied where component shape requires reference data:
  - `string` field → `InternedString` (e.g., `IdentityComponent.Name`, `FactionComponent.FactionId`)
  - `Dictionary<K,V>` field → `NativeMap<K,V>` (e.g., `SkillsComponent.Levels`)
@@ -171,6 +189,7 @@ The "12 vanilla systems" in the old wording was either a slice-count approximati
 - Mutation rejection: any system that holds a span and attempts to write the same component type without releasing first triggers `IsolationViolationException` per K5 invariant. K8.3 brief must verify each system's read/write pattern is consistent.
 - System dependencies on K8.2 closure: every system reads at least one component, so K8.3 cannot start until K8.2 closes (all components are already struct).
 - Tests: each system gets equivalence tests against pre-migration behavior. New baseline.
+- **Dual access pattern (post-K-L3.1)**: each system accesses Path α components via existing `SystemBase.NativeWorld.AcquireSpan<T>()` + `WriteBatch<T>` (K8.2 v2 plumbing); Path β components (when present in same mod) via new `SystemBase.ManagedStore<T>()` (K8.4 plumbing). Per-system access-pattern audit (which components each system reads/writes and on which path) is K8.3 brief authoring concern; this plan locks only the dual-API mechanism per K-L3.1 Q3.i. Cross-mod managed-path direct access is structurally impossible (ALC isolation per K-L9); cross-mod data flow uses events/intents per `MOD_OS_ARCHITECTURE.md` §6.
 
 **Estimated time**: 4-6 weeks at hobby pace, ~12-20 hours auto-mode. Brief will calibrate.
 
@@ -185,6 +204,8 @@ The "12 vanilla systems" in the old wording was either a slice-count approximati
 - **Managed `World` class deletion** as production path. `World` retained as test fixture and research reference per K-L11. All production code constructs `NativeWorld` via Bootstrap two-phase model (per K-L8 implication post-K8.4 closure: «Post-K8.4 closure, NativeWorld is the only production storage path»).
 
 - **Mod API v3 ship** per `MOD_OS_ARCHITECTURE.md` §4.6 v1.6 LOCKED. Adds `Fields` and `ComputePipelines` sub-APIs to `IModApi` (gating K9 + G-series). Backward compatibility with v2 mods preserved (default-null sub-APIs).
+
+- **Mod API v3 `RegisterManagedComponent<T>` ships** per K-L3.1 Q2.β-i lock. Surface added to `IModApi` v3 alongside existing `RegisterComponent<T>` (Path α), `Fields`, and `ComputePipelines` (v1.6 additions). `RestrictedModApi.RegisterManagedComponent<T>` creates per-mod `ManagedStore<T>` instance held in the RestrictedModApi instance; storage decentralized per-mod, reclaimed on `AssemblyLoadContext.Unload` per `MOD_OS_ARCHITECTURE.md` §9.5. `SystemBase.ManagedStore<T>()` accessor resolves via `SystemExecutionContext.Current.ModId` to owning mod's store. Loader registers Path α via existing `RegisterComponent<T>` (NativeWorld), Path β via new `RegisterManagedComponent<T>` (per-mod ManagedStore). Path β is runtime-only (Q4.b lock); save system reconstructs on load post-G-series.
 
 - **`[ModAccessible]` annotation pass on `src/Components/*`** — every production component opts in to mod-readable/writable access per D-1 LOCKED. This is the foundation for M-series: vanilla mods must declare `kernel.read:DualFrontier.Components.X.YComponent` capabilities, and those capabilities only resolve if the component carries the annotation.
 
@@ -229,6 +250,8 @@ After K8.5 closes:
 - `[ModAccessible]` annotation pass complete
 - M-series migration guide published
 - `MIGRATION_PROGRESS.md` carries closure entries for K8.2, K8.3, K8.4, K8.5
+- Both Path α (`unmanaged struct` via `RegisterComponent<T>` → NativeWorld) and Path β (managed `class` via `[ManagedStorage]` + `RegisterManagedComponent<T>` → per-mod ManagedStore) registration paths active in `IModApi` v3 (K-L3.1 Q2.β-i)
+- `SystemBase.ManagedStore<T>()` accessor available alongside existing `SystemBase.NativeWorld` (K-L3.1 Q3.i dual API)
 
 The codebase is then in a **clean Phase B-ready state**: legacy (now correctly K-shaped) production code lives in `src/`, M-series will relocate it to `mods/Vanilla.*/` per slice.
 
@@ -488,6 +511,19 @@ This plan requires amendments to authoritative documents. Each amendment is a do
 **Trigger**: K8.5 brief execution (kernel-side stale refs), each M-milestone brief execution (slice-specific stale refs).
 **Change**: any document referencing the old "7 components / 12 systems" wording, or referencing `src/DualFrontier.Components/<Slice>/` after that slice migrates, is updated.
 **Authority**: each affected brief; this plan is the global change-rationale anchor.
+
+### 6.6 — K-L3.1 amendment execution (deferred to follow-up brief)
+
+**Trigger**: K-L3.1 amendment plan execution (separate Cloud Code amendment brief, post-K-L3.1 closure 2026-05-10).
+**Change**: per-document edits enumerated in `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` (this plan's authoring deliverable):
+- KERNEL_ARCHITECTURE.md `v1.3 → v1.5` (Part 0 K-L3 row + implication paragraph + Part 4 Decisions log + Part 2 K8.2 row + status line + closing v1.0 sediment)
+- MOD_OS_ARCHITECTURE.md `v1.6 → v1.7` (lines 1149–1150 + §3.5 D-1 path orthogonality + §4.6 IModApi v3 + §11.1 M3.5 + §11.2 new ValidationErrorKind)
+- MIGRATION_PLAN_KERNEL_TO_VANILLA.md `v1.0 → v1.1` (this document — header + §0.1 Phase A' integration + §0.3 Decision #9 + §1.2/§1.3/§1.5 extensions + §6.6 self-reference)
+- MIGRATION_PROGRESS.md content sync (lines 35/407/443/457 «без exception» reframing) + new K-L3.1 closure entry
+- Forward-track brief dispositions per addendum §A5.6 (K9 surgical [full authored brief], K8.3 surgical-to-scope [skeleton], K8.4 in-place rewrite [skeleton], K8.5 surgical [skeleton])
+
+**Authority**: K-L3.1 session lock 2026-05-10 (Crystalka + Opus deliberation; Q1–Q6 + synthesis form §4.A locked); Phase A' sequencing companion at `docs/architecture/PHASE_A_PRIME_SEQUENCING.md`.
+**Estimated execution**: 30–60 min auto-mode; per-document atomic commit shape; test count delta zero.
 
 ---
 
