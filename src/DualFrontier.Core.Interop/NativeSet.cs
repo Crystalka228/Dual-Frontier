@@ -11,23 +11,34 @@ namespace DualFrontier.Core.Interop;
 /// reservation tracking on storage components with deterministic
 /// iteration.
 ///
+/// <para>
+/// <b>Value-type wrapper (K8.2 v2).</b> Refactored from <c>sealed unsafe class</c>
+/// to <c>readonly unsafe struct</c> so component structs can carry
+/// <see cref="NativeSet{T}"/> fields without breaking K-L3 «unmanaged».
 /// Lifetime: the native set is owned by the <see cref="NativeWorld"/>;
-/// this wrapper is a thin facade.
+/// this wrapper is a thin facade. Construct via
+/// <see cref="NativeWorld.CreateSet{T}"/> (allocates fresh id) or
+/// <see cref="NativeWorld.GetSet{T}(uint)"/> (re-binds to explicit id).
+/// </para>
 /// </summary>
-public sealed unsafe class NativeSet<T> where T : unmanaged, IComparable<T>
+public readonly unsafe struct NativeSet<T> where T : unmanaged, IComparable<T>
 {
-    private readonly NativeWorld _world;
     private readonly uint _setId;
     private readonly IntPtr _handle;
 
-    internal NativeSet(NativeWorld world, uint setId, IntPtr handle)
+    internal NativeSet(uint setId, IntPtr handle)
     {
-        _world = world;
         _setId = setId;
         _handle = handle;
     }
 
     public uint SetId => _setId;
+
+    /// <summary>
+    /// True when the wrapper refers to a real native set. False for
+    /// <c>default(NativeSet&lt;T&gt;)</c> — the invalid sentinel.
+    /// </summary>
+    public bool IsValid => _setId != 0 && _handle != IntPtr.Zero;
 
     public int Count => NativeMethods.df_set_count(_handle);
 

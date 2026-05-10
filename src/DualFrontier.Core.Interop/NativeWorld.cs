@@ -574,7 +574,7 @@ public sealed class NativeWorld : IDisposable
             throw new InvalidOperationException(
                 $"df_world_get_set returned null for set_id={setId}, element_size={Unsafe.SizeOf<T>()}.");
         }
-        return new NativeSet<T>(this, setId, handle);
+        return new NativeSet<T>(setId, handle);
     }
 
     /// <summary>
