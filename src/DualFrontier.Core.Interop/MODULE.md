@@ -17,10 +17,17 @@
 
 **Layering**: bridge layer — Domain calls Interop, Interop calls Native. Domain не calls Native directly.
 
-**TODO list**:
-- K0: cherry-pick existing project from experimental branch
-- K1: bulk operations + Span<T> primitives
-- K2: ComponentTypeRegistry replaces FNV-1a hash
-- K5: WriteCommandBuffer + SpanLease<T> production version
+**TODO list** (post-K8.2v2 closure 2026-05-09):
+- [x] K0: cherry-pick existing project from experimental branch
+- [x] K1: bulk operations + Span<T> primitives
+- [x] K2: ComponentTypeRegistry replaces FNV-1a hash
+- [x] K5: WriteCommandBuffer + SpanLease<T> production version
+- [x] K8.1: NativeMap<K,V> / NativeComposite / NativeSet wrapper value types
+- [x] K8.1.1: InternedString refactor + mod-scope test isolation
+- [x] K8.2 v2: kernel-side foundation closure (component conversions + ModAccessible pass)
+- [ ] K8.3: production system migration to SpanLease/WriteBatch (pending)
+- [ ] K8.4: managed World retired; Path β `ManagedStore<T>` plumbing for K-L3.1 bridge (pending)
+- [ ] K8.5: mod-ecosystem migration prep (pending)
+- [ ] K9: RawTileField field-storage abstraction (pending; runs before K8.3 per Option c sequencing)
 
-**Status**: scaffolding only. Implementation lives in cherry-picked branch contents (K0) и subsequent K-series milestones.
+**Status**: production wrappers operational post-K8.2v2 (NativeWorld + WriteCommandBuffer + SpanLease<T> + ComponentTypeRegistry + InternedString + NativeMap/NativeComposite/NativeSet). K8.3 / K8.4 / K8.5 / K9 pending per `docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md`.

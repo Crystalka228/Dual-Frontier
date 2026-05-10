@@ -9,7 +9,7 @@ system: pathfinding, neighbor lookup, projectile spawning, building placement.
 
 ## Contents
 - `SpatialGrid.cs` — partitioning the world into cells for O(1) "everything in
-  radius R" queries. Used by CombatSystem (target search), RaidSystem, BiomeSystem.
+  radius R" queries. Used by CombatSystem (target search), RaidSystem.
 
 > `GridVector` lives in `DualFrontier.Contracts.Math` — a shared primitive
 > available to every layer including `AI` and mods that do not depend on `Core`.
