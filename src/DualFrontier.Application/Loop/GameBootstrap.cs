@@ -11,6 +11,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Events.Combat;
 using DualFrontier.Events.Pawn;
@@ -80,7 +81,15 @@ internal static class GameBootstrap
     /// </returns>
     public static GameContext CreateLoop(PresentationBridge bridge, string modsRoot = "mods")
     {
-        var world    = new World();
+        var world        = new World();
+        // K8.2 v2 — NativeWorld owned alongside the managed World until K8.4
+        // retires the latter. Production uses NativeWorld only for K8.1
+        // primitives (string interning, native maps/sets/composites bound to
+        // struct components); component storage stays on the managed World
+        // through K8.3. Bootstrap path uses FNV-1a fallback type ids; the
+        // registry-based path lights up at K8.4 when component storage moves.
+        var nativeWorld  = new NativeWorld();
+
         var services = new GameServices();
         var ticks    = new TickScheduler();
 
@@ -107,7 +116,7 @@ internal static class GameBootstrap
         }
         var pathfinding = new AStarPathfinding(navGrid);
 
-        var pawnFactory = new RandomPawnFactory(FactorySeed, navGrid, MapWidth, MapHeight);
+        var pawnFactory = new RandomPawnFactory(FactorySeed, navGrid, MapWidth, MapHeight, nativeWorld);
         IReadOnlyList<EntityId> pawnIds = pawnFactory.Spawn(world, services, InitialPawnCount);
 
         // ItemFactory must not place items on pawn tiles — collect pawn
@@ -196,7 +205,8 @@ internal static class GameBootstrap
             world,
             initialMetadata,
             faultHandler,
-            services);
+            services,
+            nativeWorld);
 
         // M7.5.B.1 — modding stack. Pipeline starts in its default
         // paused state (M7.1 load-bearing default); bootstrap does not

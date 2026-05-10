@@ -5,6 +5,12 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <!-- K8.2 v2 — SystemBase exposes NativeWorld so systems converted to
+         struct components with InternedString/NativeMap/NativeSet/NativeComposite
+         fields can resolve and intern at use site. Per migration plan §1.3,
+         this dependency precedes K8.4 «managed World retired» — the production
+         path now owns one NativeWorld alongside the legacy managed World. -->
+    <ProjectReference Include="..\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="DualFrontier.Systems" />

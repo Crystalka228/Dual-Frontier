@@ -8,6 +8,7 @@ using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 using FluentAssertions;
 using Xunit;
@@ -31,50 +32,56 @@ public sealed class RandomPawnFactoryTests
     [Fact]
     public void Spawn_RequestedCount_ReturnsExactCount()
     {
-        var (factory, world, services) = BuildFixture(seed: 1);
-        var ids = factory.Spawn(world, services, 10);
+        var fx = BuildFixture(seed: 1);
+        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
         ids.Count.Should().Be(10);
     }
 
     [Fact]
     public void Spawn_DeterministicBySeed_ProducesIdenticalOutput()
     {
-        var (factoryA, worldA, servicesA) = BuildFixture(seed: 42);
-        var (factoryB, worldB, servicesB) = BuildFixture(seed: 42);
+        var fxA = BuildFixture(seed: 42);
+        var fxB = BuildFixture(seed: 42);
 
-        var idsA = factoryA.Spawn(worldA, servicesA, 10);
-        var idsB = factoryB.Spawn(worldB, servicesB, 10);
+        var idsA = fxA.factory.Spawn(fxA.world, fxA.services, 10);
+        var idsB = fxB.factory.Spawn(fxB.world, fxB.services, 10);
 
-        // Compare names per pawn — these come straight from the RNG draws
-        // against fixed pools, so identical seeds must produce identical
-        // names in identical order.
-        var namesA = idsA.Select(id => worldA.GetComponentForTest<IdentityComponent>(id).Name).ToList();
-        var namesB = idsB.Select(id => worldB.GetComponentForTest<IdentityComponent>(id).Name).ToList();
+        // Compare resolved name strings per pawn — these come straight from
+        // the RNG draws against fixed pools, so identical seeds must produce
+        // identical names in identical order. After K8.2 v2 conversion the
+        // component carries an InternedString handle; resolve via each
+        // fixture's own NativeWorld to get back the canonical content.
+        var namesA = idsA.Select(id =>
+            fxA.world.GetComponentForTest<IdentityComponent>(id).Name.Resolve(fxA.nativeWorld)).ToList();
+        var namesB = idsB.Select(id =>
+            fxB.world.GetComponentForTest<IdentityComponent>(id).Name.Resolve(fxB.nativeWorld)).ToList();
         namesA.Should().Equal(namesB);
     }
 
     [Fact]
     public void Spawn_NamesAreNonEmpty()
     {
-        var (factory, world, services) = BuildFixture(seed: 7);
-        var ids = factory.Spawn(world, services, 10);
+        var fx = BuildFixture(seed: 7);
+        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
 
         foreach (var id in ids)
         {
-            var ident = world.GetComponentForTest<IdentityComponent>(id);
-            ident.Name.Should().NotBeNullOrWhiteSpace();
-            ident.Name.Should().Contain(" ", "names follow forename + surname pattern");
+            var ident = fx.world.GetComponentForTest<IdentityComponent>(id);
+            ident.Name.IsEmpty.Should().BeFalse();
+            string? resolved = ident.Name.Resolve(fx.nativeWorld);
+            resolved.Should().NotBeNullOrWhiteSpace();
+            resolved!.Should().Contain(" ", "names follow forename + surname pattern");
         }
     }
 
     [Fact]
     public void Spawn_PositionsAreUnique()
     {
-        var (factory, world, services) = BuildFixture(seed: 7);
-        var ids = factory.Spawn(world, services, 10);
+        var fx = BuildFixture(seed: 7);
+        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
 
         var positions = ids
-            .Select(id => world.GetComponentForTest<PositionComponent>(id).Position)
+            .Select(id => fx.world.GetComponentForTest<PositionComponent>(id).Position)
             .ToList();
         positions.Distinct().Count().Should().Be(positions.Count);
     }
@@ -83,7 +90,8 @@ public sealed class RandomPawnFactoryTests
     public void Spawn_PositionsArePassable()
     {
         var navGrid = BuildNavGrid();
-        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH);
+        var nativeWorld = new NativeWorld();
+        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH, nativeWorld);
         var world = new World();
         var services = new GameServices();
 
@@ -99,14 +107,14 @@ public sealed class RandomPawnFactoryTests
     [Fact]
     public void Spawn_EveryPawnHasAllSkillKindsPopulated()
     {
-        var (factory, world, services) = BuildFixture(seed: 7);
-        var ids = factory.Spawn(world, services, 10);
+        var fx = BuildFixture(seed: 7);
+        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
 
         var allKinds = (SkillKind[])Enum.GetValues(typeof(SkillKind));
 
         foreach (var id in ids)
         {
-            var skills = world.GetComponentForTest<SkillsComponent>(id);
+            var skills = fx.world.GetComponentForTest<SkillsComponent>(id);
             skills.Levels.Should().NotBeNull();
             foreach (var kind in allKinds)
             {
@@ -119,12 +127,12 @@ public sealed class RandomPawnFactoryTests
     [Fact]
     public void Spawn_PublishesPawnSpawnedEventPerPawn()
     {
-        var (factory, world, services) = BuildFixture(seed: 7);
+        var fx = BuildFixture(seed: 7);
 
         var observed = new List<PawnSpawnedEvent>();
-        services.Pawns.Subscribe<PawnSpawnedEvent>(e => observed.Add(e));
+        fx.services.Pawns.Subscribe<PawnSpawnedEvent>(e => observed.Add(e));
 
-        factory.Spawn(world, services, 10);
+        fx.factory.Spawn(fx.world, fx.services, 10);
 
         observed.Count.Should().Be(10);
     }
@@ -139,7 +147,8 @@ public sealed class RandomPawnFactoryTests
                 if (!(x < 3 && y < 3))
                     navGrid.SetTile(x, y, passable: false);
 
-        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH);
+        var nativeWorld = new NativeWorld();
+        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH, nativeWorld);
         var world = new World();
         var services = new GameServices();
 
@@ -156,14 +165,15 @@ public sealed class RandomPawnFactoryTests
         return nav;
     }
 
-    private static (RandomPawnFactory factory, World world, GameServices services)
+    private static (RandomPawnFactory factory, World world, GameServices services, NativeWorld nativeWorld)
         BuildFixture(int seed)
     {
         var navGrid = BuildNavGrid();
-        var factory = new RandomPawnFactory(seed, navGrid, MapW, MapH);
+        var nativeWorld = new NativeWorld();
+        var factory = new RandomPawnFactory(seed, navGrid, MapW, MapH, nativeWorld);
         var world = new World();
         var services = new GameServices();
-        return (factory, world, services);
+        return (factory, world, services, nativeWorld);
     }
 }
 

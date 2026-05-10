@@ -5,5 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <!-- K8.2 v2 — components carry InternedString / NativeMap / NativeSet /
+         NativeComposite fields per Phase 2.B conversions; the wrappers live
+         in DualFrontier.Core.Interop. -->
+    <ProjectReference Include="..\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
   </ItemGroup>
 </Project>

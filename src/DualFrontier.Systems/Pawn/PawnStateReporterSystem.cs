@@ -54,7 +54,7 @@ public sealed class PawnStateReporterSystem : SystemBase
             var job   = GetComponent<JobComponent>(pawn);
 
             string name = identitySet.Contains(pawn)
-                ? GetComponent<IdentityComponent>(pawn).Name
+                ? GetComponent<IdentityComponent>(pawn).Name.Resolve(NativeWorld) ?? string.Empty
                 : string.Empty;
 
             IReadOnlyList<(SkillKind Kind, int Level)> topSkills =

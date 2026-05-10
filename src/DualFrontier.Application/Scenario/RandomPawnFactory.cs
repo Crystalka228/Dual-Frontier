@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Application.Scenario;
@@ -55,13 +56,15 @@ internal sealed class RandomPawnFactory
     private readonly NavGrid _navGrid;
     private readonly int _mapWidth;
     private readonly int _mapHeight;
+    private readonly NativeWorld _nativeWorld;
 
-    public RandomPawnFactory(int seed, NavGrid navGrid, int mapWidth, int mapHeight)
+    public RandomPawnFactory(int seed, NavGrid navGrid, int mapWidth, int mapHeight, NativeWorld nativeWorld)
     {
         _rng = new Random(seed);
         _navGrid = navGrid ?? throw new ArgumentNullException(nameof(navGrid));
         _mapWidth = mapWidth;
         _mapHeight = mapHeight;
+        _nativeWorld = nativeWorld ?? throw new ArgumentNullException(nameof(nativeWorld));
     }
 
     /// <summary>
@@ -117,9 +120,10 @@ internal sealed class RandomPawnFactory
 
         world.AddComponent(id, new PositionComponent { Position = pos });
 
+        string fullName = $"{Forenames[_rng.Next(Forenames.Length)]} {Surnames[_rng.Next(Surnames.Length)]}";
         world.AddComponent(id, new IdentityComponent
         {
-            Name = $"{Forenames[_rng.Next(Forenames.Length)]} {Surnames[_rng.Next(Surnames.Length)]}"
+            Name = _nativeWorld.InternString(fullName)
         });
 
         var levels = new Dictionary<SkillKind, int>();

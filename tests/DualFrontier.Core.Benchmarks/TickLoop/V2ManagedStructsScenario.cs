@@ -8,6 +8,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Events.Pawn;
 using DualFrontier.Systems.Inventory;
@@ -70,7 +71,8 @@ internal sealed class V2ManagedStructsScenario : TickLoopScenarioBase
         // omitted so the V2 scenario isolates simulation cost from
         // rendering cost.
 
-        var pawnFactory = new RandomPawnFactory(seed, navGrid, MapWidth, MapHeight);
+        var nativeWorld = new NativeWorld();
+        var pawnFactory = new RandomPawnFactory(seed, navGrid, MapWidth, MapHeight, nativeWorld);
         IReadOnlyList<EntityId> pawnIds = pawnFactory.Spawn(_world, _services, pawnCount);
 
         var excludedPositions = new List<GridVector>(pawnIds.Count);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Core.ECS;
 
@@ -155,6 +156,33 @@ public abstract class SystemBase
             return ctx.Services
                 ?? throw new InvalidOperationException(
                     "SystemBase.Services requested but the scheduler did not supply an IGameServices instance. " +
+                    "Pass one to ParallelSystemScheduler's constructor.");
+        }
+    }
+
+    /// <summary>
+    /// K8.2 v2 — native world handle supplied by the scheduler. Use to intern
+    /// strings (<c>NativeWorld.InternString</c>) and resolve <see cref="InternedString"/>
+    /// fields on struct components, and to construct per-component-instance
+    /// <see cref="NativeMap{TKey,TValue}"/>/<see cref="NativeSet{T}"/>/<see cref="NativeComposite{T}"/>
+    /// handles via the world's <c>Create*</c> factory methods. Reads route
+    /// through the active <see cref="SystemExecutionContext"/> so that
+    /// out-of-context calls (e.g. from the Godot main thread) fail loudly,
+    /// and tests that build a context without supplying a NativeWorld receive
+    /// a diagnostic instead of a silent null. Per migration plan §1.3 K8.4
+    /// preview, the production path now owns one NativeWorld alongside the
+    /// legacy managed World.
+    /// </summary>
+    protected NativeWorld NativeWorld
+    {
+        get
+        {
+            var ctx = SystemExecutionContext.Current
+                ?? throw new InvalidOperationException(
+                    "SystemBase.NativeWorld accessed outside an active scheduler context.");
+            return ctx.NativeWorld
+                ?? throw new InvalidOperationException(
+                    "SystemBase.NativeWorld requested but the scheduler did not supply a NativeWorld instance. " +
                     "Pass one to ParallelSystemScheduler's constructor.");
         }
     }

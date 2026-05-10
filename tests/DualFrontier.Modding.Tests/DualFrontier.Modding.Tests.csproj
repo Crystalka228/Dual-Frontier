@@ -15,6 +15,20 @@
     <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
   </ItemGroup>
   <!--
+    K8.2 v2 — native DLL must ride along into test output: tests now exercise
+    GameBootstrap.CreateLoop and RandomPawnFactory, both of which construct a
+    NativeWorld for InternedString interning on struct components. Without
+    this, P/Invoke fails with DllNotFoundException. Mirrors the
+    DualFrontier.Core.Interop.Tests + DualFrontier.Core.Benchmarks pattern.
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+  </ItemGroup>
+  <!--
     The fixture mods are built solely so their assemblies and manifests
     end up in this project's bin/<config>/<tfm>/Fixtures/<assembly>/.
     ReferenceOutputAssembly=false keeps their types out of the test

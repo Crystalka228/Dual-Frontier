@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Core.Scheduling;
 
@@ -42,6 +43,7 @@ internal sealed class ParallelSystemScheduler
     private readonly World _world;
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
+    private readonly NativeWorld? _nativeWorld;
     private readonly ParallelOptions _parallelOptions;
     private Dictionary<SystemBase, SystemExecutionContext> _contextCache;
     private IReadOnlyDictionary<SystemBase, SystemMetadata> _systemMetadata;
@@ -59,13 +61,15 @@ internal sealed class ParallelSystemScheduler
     /// <param name="systemMetadata">Per-system <see cref="SystemMetadata"/> table the scheduler reads in <c>BuildContext</c> for origin/modId propagation. Systems absent from the table fall through to <c>Core/null</c> defaults — covers core systems registered via local arrays in tests where the table is empty.</param>
     /// <param name="faultSink">Sink for mod-origin faults; required (no silent default). Tests that never produce faults pass <c>new NullModFaultSink()</c> explicitly.</param>
     /// <param name="services">Optional domain-bus aggregator surfaced to systems via <c>SystemBase.Services</c>; null for tests that never publish.</param>
+    /// <param name="nativeWorld">K8.2 v2 — optional native world handle surfaced to systems via <c>SystemBase.NativeWorld</c>. Required in production where systems intern strings or read NativeMap fields; null for unit tests that exercise only managed-side ECS.</param>
     public ParallelSystemScheduler(
         IReadOnlyList<SystemPhase> phases,
         TickScheduler ticks,
         World world,
         IReadOnlyDictionary<SystemBase, SystemMetadata> systemMetadata,
         IModFaultSink faultSink,
-        IGameServices? services = null)
+        IGameServices? services = null,
+        NativeWorld? nativeWorld = null)
     {
         _phases = phases ?? throw new ArgumentNullException(nameof(phases));
         _ticks = ticks ?? throw new ArgumentNullException(nameof(ticks));
@@ -73,6 +77,7 @@ internal sealed class ParallelSystemScheduler
         _systemMetadata = systemMetadata ?? throw new ArgumentNullException(nameof(systemMetadata));
         _faultSink = faultSink ?? throw new ArgumentNullException(nameof(faultSink));
         _services = services;
+        _nativeWorld = nativeWorld;
         _parallelOptions = new ParallelOptions
         {
             MaxDegreeOfParallelism = System.Math.Max(1, Environment.ProcessorCount - 2),
@@ -248,6 +253,7 @@ internal sealed class ParallelSystemScheduler
             origin,
             modId,
             _faultSink,
-            _services);
+            _services,
+            _nativeWorld);
     }
 }

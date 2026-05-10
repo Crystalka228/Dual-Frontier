@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Core.ECS;
 
@@ -46,6 +47,7 @@ public sealed class SystemExecutionContext
     private readonly string? _modId;
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
+    private readonly NativeWorld? _nativeWorld;
 
     /// <summary>
     /// Creates a guard for the given system. The scheduler (or a test)
@@ -66,6 +68,7 @@ public sealed class SystemExecutionContext
     /// <param name="modId">Mod identifier when <paramref name="origin"/> is Mod; otherwise null.</param>
     /// <param name="faultSink">Destination for mod-origin fault reports.</param>
     /// <param name="services">Domain-bus aggregator exposed to the system via <c>SystemBase.Services</c>; null for tests that do not exercise publication.</param>
+    /// <param name="nativeWorld">K8.2 v2 — optional native world handle exposed to the system via <c>SystemBase.NativeWorld</c>. Non-null in production where systems intern strings / read NativeMap fields; null in unit tests that exercise only managed-side ECS semantics.</param>
     internal SystemExecutionContext(
         World world,
         string systemName,
@@ -75,7 +78,8 @@ public sealed class SystemExecutionContext
         SystemOrigin origin,
         string? modId,
         IModFaultSink faultSink,
-        IGameServices? services = null)
+        IGameServices? services = null,
+        NativeWorld? nativeWorld = null)
     {
         _world = world ?? throw new ArgumentNullException(nameof(world));
         _systemName = systemName ?? throw new ArgumentNullException(nameof(systemName));
@@ -95,6 +99,7 @@ public sealed class SystemExecutionContext
         _origin = origin;
         _modId = modId;
         _services = services;
+        _nativeWorld = nativeWorld;
     }
 
     /// <summary>
@@ -103,6 +108,14 @@ public sealed class SystemExecutionContext
     /// Exposed internally; systems reach it via <c>SystemBase.Services</c>.
     /// </summary>
     internal IGameServices? Services => _services;
+
+    /// <summary>
+    /// K8.2 v2 — native world handle supplied by the scheduler. Null when no
+    /// NativeWorld was provided at construction time (isolated unit tests
+    /// that exercise only managed-side ECS). Exposed internally; systems
+    /// reach it via <c>SystemBase.NativeWorld</c>.
+    /// </summary>
+    internal NativeWorld? NativeWorld => _nativeWorld;
 
     /// <summary>
     /// Current execution context for the calling thread. Null when the
