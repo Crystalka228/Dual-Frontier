@@ -543,7 +543,7 @@ public sealed class NativeWorld : IDisposable
                 $"df_world_get_keyed_map returned null for map_id={mapId}, " +
                 $"key_size={Unsafe.SizeOf<TKey>()}, value_size={Unsafe.SizeOf<TValue>()}.");
         }
-        return new NativeMap<TKey, TValue>(this, mapId, handle);
+        return new NativeMap<TKey, TValue>(mapId, handle);
     }
 
     public NativeComposite<T> GetComposite<T>(uint compositeId) where T : unmanaged

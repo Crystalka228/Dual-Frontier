@@ -11,30 +11,42 @@ namespace DualFrontier.Core.Interop;
 /// must be <c>unmanaged</c> — values are copied across the C ABI
 /// boundary as raw bytes. The native side uses <c>memcmp</c> for key
 /// ordering; <see cref="IComparable{T}"/> on the managed side is
-/// surfaced for managed-only use (e.g. to validate ordering in tests),
-/// not for native lookup.
+/// surfaced for managed-only use (e.g. to validate ordering in tests
+/// and to satisfy K8.1 generic constraints), not for native lookup.
 ///
-/// Lifetime: the underlying native map is owned by the
-/// <see cref="NativeWorld"/>. <see cref="NativeMap{TKey,TValue}"/>
-/// is a thin facade — copies share the same backing storage.
+/// <para>
+/// <b>Value-type wrapper (K8.2 v2).</b> Refactored from <c>sealed unsafe class</c>
+/// to <c>readonly unsafe struct</c> so component structs can carry
+/// <see cref="NativeMap{TKey,TValue}"/> fields without breaking the
+/// K-L3 «unmanaged» constraint. Lifetime: the underlying native map is
+/// owned by the <see cref="NativeWorld"/>; this wrapper is a thin facade.
+/// Callers obtain wrappers via <see cref="NativeWorld.CreateMap{TKey,TValue}"/>
+/// (allocates fresh id) or <see cref="NativeWorld.GetKeyedMap{TKey,TValue}(uint)"/>
+/// (re-binds to an explicit id).
+/// </para>
 /// </summary>
-public sealed unsafe class NativeMap<TKey, TValue>
+public readonly unsafe struct NativeMap<TKey, TValue>
     where TKey : unmanaged, IComparable<TKey>
     where TValue : unmanaged
 {
-    private readonly NativeWorld _world;
     private readonly uint _mapId;
     private readonly IntPtr _handle;
 
-    internal NativeMap(NativeWorld world, uint mapId, IntPtr handle)
+    internal NativeMap(uint mapId, IntPtr handle)
     {
-        _world = world;
         _mapId = mapId;
         _handle = handle;
     }
 
-    /// <summary>Stable id assigned by the caller at <see cref="NativeWorld.GetKeyedMap"/> time.</summary>
+    /// <summary>Stable id assigned at <see cref="NativeWorld.GetKeyedMap"/> time.</summary>
     public uint MapId => _mapId;
+
+    /// <summary>
+    /// True when the wrapper refers to a real native map. False for
+    /// <c>default(NativeMap&lt;...&gt;)</c> (id=0, handle=null) — the
+    /// invalid sentinel used by un-initialised component fields.
+    /// </summary>
+    public bool IsValid => _mapId != 0 && _handle != IntPtr.Zero;
 
     /// <summary>Number of entries currently stored.</summary>
     public int Count => NativeMethods.df_keyed_map_count(_handle);
