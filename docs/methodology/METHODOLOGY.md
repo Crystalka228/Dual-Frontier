@@ -1,47 +1,22 @@
-<!--
-A'.0.7 DEFERRAL MARKER (added 2026-05-10 in A'.0.5 Phase 7).
-
-This document describes the methodology in its 4-agent pipeline state
-(Crystalka + local quantized executor + cloud prompt-generator + cloud
-architect). Crystalka direction 2026-05-10 restructured the pipeline
-to 2-agent (Crystalka + unified Claude Desktop session). Substantive
-sections of this document — §0 Abstract, §2.1 Role distribution, §2.2
-Contracts as IPC, §3 Pipeline economics, §4 Empirical results, §5
-Threat model, §8 Reproducibility — describe the prior 4-agent shape
-and require A'.0.7 architectural-deliberation rewrite (analog to
-K-L3.1) before they reflect current pipeline reality.
-
-A'.0.7 milestone: documentation methodology rewrite. Reads METHODOLOGY
-+ PIPELINE_METRICS + MAXIMUM_ENGINEERING_REFACTOR; deliberates each
-substantive section against new 2-agent reality; produces revised
-documents with falsifiable claims re-grounded in current configuration.
-
-A'.0.5 (this milestone) only relocated the file to docs/methodology/
-and applied mechanical pipeline-terminology scrubs in non-substantive
-contexts. The 4-agent prose below is intentionally preserved as the
-state to be rewritten in A'.0.7.
-
-See /docs/architecture/PHASE_A_PRIME_SEQUENCING.md for the Phase A'
-sequence locating A'.0.7 between A'.0.5 and A'.1.
--->
-
 # Dual Frontier development methodology
 
-*The project's central methodology document. Describes the four-agent LLM pipeline, contracts as IPC between agents, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
+*The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
 
-*Version: 1.5 (2026-05-09). The document describes the methodology in its state after Phase 4 closure, with the M7 operating-principle elevation appended in §7, the post-K0 / post-K1 / post-K3 native-layer adjustments appended to the native-layer adjustments section (descriptive pre-flight checks, ABI boundary exception completeness, brief authoring as prerequisite step, calibrated time estimates), and the post-K8.1 / post-K8.1.1 pipeline closure lessons sub-section (atomic commit as compilable unit, Phase 0.4 inventory as hypothesis, mod-scope test isolation).*
+*Version: 1.6 (2026-05-10). Pipeline restructure rewrite per A'.0.7 deliberation session. §0 Abstract generalized к architect-executor abstract framing; §2.1 role distribution rewritten в abstract role categories с v1.6 current-configuration table; §2.2 contracts as IPC reframed across context boundaries с three-properties mechanism; §3 economics restructured к invariant + current-configuration с A'.0.5 empirical anchor; §4 throughput parallel-form case studies (Phase 4 closure v1.x + A'.0.5 closure v1.6); §5.2/§5.3 threat model restructured для v1.6 session-mode reality; §9 «degradation as codebase grows» reformulated к pipeline-agnostic; methodology corpus declared agent-as-primary-reader per Q-A07-6. K-Lessons sub-section expanded с A'.0.5 lesson «milestone consolidation under session-mode pipeline» per Q-A07-5.*
 
 ---
 
 ## 0. Abstract
 
-This document describes a methodology for developing complex software solo through structured work with an LLM. The methodology tests a hypothesis: a human in the role of contract architect plus LLMs in the role of executors inside strict contract boundaries can produce engineering systems of the same complexity class that usually requires teams of several developers over months.
+This document describes a methodology for developing complex software solo through structured work with an LLM. The methodology tests a hypothesis: a human in the role of contract architect plus one or more LLM instances operating as executors inside strict contract boundaries can produce engineering systems of the same complexity class that usually requires teams of several developers over months.
 
-The configuration is four agents with explicitly distributed roles: a local quantized model in the 4–8B parameter class as code executor, a mid-tier cloud model as prompt generator, a top-tier cloud model as architect and QA, the human as direction owner. There is no direct coordination between agents — formal contracts in code and documentation in the repository tie them together, acting as inter-process communication.
+The configuration is **N agents in an architect-executor split with rigid contracts at boundaries**: a human as direction owner; one or more LLM instances operating as architect (deliberation, brief authoring, QA review) and executor (mechanical application against authored briefs). There is no direct coordination between agents — formal contracts in code and documentation in the repository tie them together, acting as inter-process communication. The architect-executor split with contracts at boundaries is **invariant across configurations**; specific N, the boundary type between architect and executor (model-tier boundary, session-mode boundary, or mixed), and tier mix vary by pipeline configuration.
 
-The methodology's main falsifiable claim: a working production-quality game, built by one developer through this methodology in 6–12 months, with measured pipeline performance, defect rate, and architectural integrity over the long haul. Empirical measurements of the pipeline operating against this methodology are recorded in [PIPELINE_METRICS](./PIPELINE_METRICS.md) — see particularly [§2 task-level metrics](./PIPELINE_METRICS.md#2-empirical-task-level-metrics) and [§4 sustained throughput](./PIPELINE_METRICS.md#4-sustained-throughput). Additional falsifiable claims appear in §2.2, §3.1, §4.5, and §5.3.
+The methodology's main falsifiable claim: a working production-quality game, built by one developer through this methodology in 6–12 months, with measured pipeline performance, defect rate, and architectural integrity over the long haul. Empirical measurements are recorded in [PIPELINE_METRICS](./PIPELINE_METRICS.md) per-era — see particularly [§2 task-level metrics](./PIPELINE_METRICS.md#2-empirical-task-level-metrics) and [§4 sustained throughput](./PIPELINE_METRICS.md#4-sustained-throughput). Additional falsifiable claims appear in §2.2, §3.1, §4.5, and §5.3.
 
 The methodology is not universal. Boundaries of applicability are recorded in §6.
+
+*Footnote (v1.6, 2026-05-10).* At this methodology version, N=2: Crystalka as direction owner plus a unified Claude Desktop session that switches between deliberation mode (chat interface, architectural-decision recording per K8.0 / K-L3.1 / A'.0.7 precedent) and execution mode (Claude Code agent, tool-loop autonomous, per A'.0.5 precedent). The boundary type is **session-mode**, not model-tier. v1.x era (Phase 0–8, ending 2026-05-09) configured N=4 with model-tier boundaries (local Gemma executor + cloud Sonnet prompt-generator + cloud Opus architect + human); empirical record preserved in [PIPELINE_METRICS](./PIPELINE_METRICS.md) §1–§4 with per-metric transferability annotations. This document is authored under **agent-as-primary-reader assumption (Q-A07-6 lock 2026-05-10)** — readers unfamiliar with the project's cross-reference density should consult [README](../../README.md) first and use AI tooling for navigation.
 
 ---
 
@@ -73,40 +48,64 @@ Author profile and prior work history: linked from the
 
 ### 2.1 Role distribution
 
-The pipeline uses four agents. Each has a narrow specialized role and operates at the complexity level where its capacity is justified — no higher.
+The pipeline configures three role categories operating across rigid contract boundaries:
 
-**Local executor.** A quantized model in the 4–8B parameter class, run locally via an inference server with an OpenAI-compatible API. In the Dual Frontier reference configuration this is Gemma 4 E4B Q4_K_M (6.33 GB, 131,072-token context window) through LM Studio. The orchestrator is the Cline extension in VS Code, which feeds the model the current project's context and applies the generated code to the filesystem. The executor's role is routine code generation from a self-contained prompt: 1 prompt → 1–2 files. It makes no architectural decisions. It receives a contract and produces code that satisfies the contract.
+**Direction owner** (human). Selects contracts, makes architectural decisions, frames phase goals, routes between sessions. Per unit of time, types noticeably fewer keystrokes than a classical developer and makes noticeably more architectural decisions.
 
-**Prompt generator.** A mid-tier cloud model. Turns a task plus its contract into a self-contained prompt for the local executor. Knows the architecture as a whole and formulates precise instructions with namespace, using directives, class signatures, field names, types, default values, and commit-message format. Additionally handles mid-complexity tasks directly, without delegating to the local executor.
+**Architect** (LLM in deliberation mode). Architectural deliberation, brief authoring, QA review at phase closure. Operates on the corpus as a whole rather than individual files. Used for hard architectural tasks (the scheduler, the dependency graph, non-trivial algorithms, K-Lxx invariant deliberation) and for full reviews at phase closure. Brief authoring is itself a deliberation product — the architect formalizes decisions before any execution begins (see «Brief authoring as prerequisite step» in the Native layer methodology adjustments section).
 
-**Architect and QA.** A top-tier cloud model with a large context window. Used sparingly — on hard architectural tasks (the scheduler, the dependency graph, non-trivial algorithms) and during full reviews at the closure of each development phase. The ability to operate on the corpus as a whole, rather than individual files, structurally distinguishes the architect from the executor.
+**Executor** (LLM in execution mode against authored briefs). Mechanical application of briefs to the codebase: source edits, atomic commits, build verification, test runs. Makes no architectural decisions; escalates to the direction owner when a brief proves insufficient for mechanical execution (per §3 stop/escalate/lock).
 
-**Human.** Direction owner. Selects contracts, makes architectural decisions, frames phase goals. Per unit of time, types noticeably fewer keystrokes than a classical developer and makes noticeably more architectural decisions.
+There is no direct coordination between the architect and the executor — formal contracts in code, briefs in `tools/briefs/`, and amendment plans in `docs/architecture/` tie them together, acting as inter-process communication. The architect's deliberation output is the executor's input contract; the executor's commits are the architect's audit input at the next phase closure.
 
-### 2.2 Contracts as IPC between agents
+The boundary between architect and executor may be a **model-tier boundary** (different LLM models for each role), a **session-mode boundary** (same LLM, different session framing), or **mixed**. The split itself is invariant; the specific boundary type varies by pipeline configuration.
 
-This is the central methodological device. In traditional development, contracts — interfaces, types, protocols — serve as a communication mechanism between subsystems of the code. In an LLM pipeline they additionally become a communication mechanism between agents.
+#### 2.1.1 Current configuration (v1.6, 2026-05-10)
 
-A rigid contract is the point where interpretations converge. If a contract is formulated strictly enough to exclude ambiguity, any two agents (a local quantized model and a cloud architect, asynchronously, without direct coordination) will produce compatible artifacts. This works because the contract specifies a condition, not a preference — the compiler, tests, or a static analyzer can check satisfaction mechanically.
+| Role | Current binding |
+|---|---|
+| Direction owner | Crystalka (human) |
+| Architect | Claude Desktop session, deliberation mode (chat interface, no autonomous tool loop) |
+| Executor | Claude Desktop session, execution mode (Claude Code agent, tool-loop autonomous) |
+| Boundary type | Session-mode (single underlying model; mode-switching by session framing) |
+| Coordination surface | Repository (LOCKED docs, briefs, amendment plans); human as router between sessions |
 
-The same role for contracts operates between agents in one pipeline during phase reviews: the mid-tier agent leaves formalized diagnostics as a numbered list of items with file and line references; the top-tier agent in the next session receives this diagnostic as input and treats it as a contract. Coordination between agents is resolved through the repository and formal documents, not through direct message exchange.
+Earlier configurations (v1.x era, Phase 0–8, ending 2026-05-09) used model-tier boundaries with N=4 (local quantized Gemma executor + cloud Sonnet prompt-generator + cloud Opus architect + human direction owner); empirical record preserved in [PIPELINE_METRICS §1](./PIPELINE_METRICS.md#1-pipeline-configuration) с per-metric era annotations.
 
-**Falsifiable claim.** If the architecture is fixed as a set of contracts satisfying a "sufficient rigor" criterion, a quantized model in the 4–8B parameter class on average produces code that passes tests on those contracts on the first build. The measurement metric is the fraction of tasks requiring a second generation round after the first build; the target threshold is under 30%. An empirical example of asynchronous development against a formal contract without human participation appears in §4.2.
+### 2.2 Contracts as IPC across context boundaries
 
-Contracts in Dual Frontier live in a separate `DualFrontier.Contracts` assembly that contains no implementation (see [CONTRACTS.md](/docs/architecture/CONTRACTS.md)). It acts as the single vocabulary for every layer of the system: the core, game systems, mods, and build tooling.
+This is the central methodological device. In traditional development, contracts — interfaces, types, protocols — serve as a communication mechanism between subsystems of the code. In an LLM pipeline they additionally become a communication mechanism across **context boundaries** between architect and executor (§2.1) — whether those boundaries are model-tier, session-mode, or mixed.
+
+A rigid contract is the point where interpretations converge. If a contract is formulated strictly enough to exclude ambiguity, any two entities working against it (whether different LLM models, the same LLM in different sessions, or the same LLM in different operating modes) will produce compatible artifacts. This works because the contract specifies a condition, not a preference — the compiler, tests, or a static analyzer can check satisfaction mechanically.
+
+The IPC-equivalence depends on three properties of the contract:
+
+1. **Falsifiability.** The contract states a condition checkable by tooling (types, tests, analyzers), not a preference checkable by judgement. An entity satisfying the contract is recognizable as satisfying it; an entity violating it triggers a known failure mode.
+
+2. **Self-contained scope.** The contract carries enough context to be applied without consulting the entity that authored it. Briefs in `tools/briefs/` capture this property explicitly — Phase 0 reads + Phase N execution + closure criteria are scoped so an executor reading the brief at execution time has the same information the architect had at authoring time.
+
+3. **Repository as coordination surface.** Contracts and their satisfaction artifacts (code, tests, commits) live in version-controlled documents. Cross-references between contracts use repo-rooted absolute paths and §-level addressability so any reader (any agent, any session) resolves them identically.
+
+Coordination between architect and executor is resolved through these three properties operating on the repository, not through direct message exchange. This is the mechanism by which the architect-executor split (§2.1) remains tractable across any boundary type — model-tier, session-mode, or mixed.
+
+**Falsifiable claim.** If the architecture is fixed as a set of contracts satisfying the three properties above, the executor produces artifacts that pass the contract's tooling-checkable conditions on the first build at a measurable rate. The measurement metric is the fraction of tasks requiring a second execution round after the first build; the target threshold is under 30%. An empirical example of asynchronous development against a formal contract appears in §4.2; per-era measurements live in [PIPELINE_METRICS §2](./PIPELINE_METRICS.md#2-empirical-task-level-metrics).
+
+Contracts in Dual Frontier live in a separate `DualFrontier.Contracts` assembly that contains no implementation (see [CONTRACTS](/docs/architecture/CONTRACTS.md)). It acts as the single vocabulary for every layer of the system: the core, game systems, mods, and build tooling.
 
 ### 2.3 Verification cycle
 
 The base sequence for one task:
 
 ```
-Human frames the task plus contract
+Direction owner frames the task plus contract
   ↓
-Prompt generator turns it into a self-contained prompt for the executor
+Architect-mode session formalizes the brief (Phase 0 reads + Phase N
+  execution plan + closure criteria); brief becomes the executor's
+  input contract
   ↓
-Local executor generates 1–2 files (free, local)
+Executor-mode session generates code against the brief
   ↓
-Local build verifies syntactic conformance
+Build verifies syntactic conformance
   ↓
 Tests verify behavioral conformance to the contract
   ↓
@@ -118,20 +117,21 @@ Every step has a failure point with explicit diagnostics. The build is either cl
 After each substantial development phase closes, the **extended phase-review cycle** runs:
 
 ```
-Prompt generator: diagnose contradictions and debt across the corpus
+Architect-mode session: diagnose contradictions and debt across the
+  corpus; validate prior closure reports against current code state;
+  find endemic patterns; formulate architectural decisions with
+  explicitly rejected alternatives; implement the decisions in code,
+  write tests, debug, update documentation
   ↓
-Architect: validate the diagnostic, find endemic patterns,
-           formulate architectural decisions with explicitly
-           rejected alternatives, implement the decisions in code,
-           write tests, debug, update documentation
-  ↓
-Human: review the result, push the commits
+Direction owner: review the result, push the commits
   ↓
 Self-teaching ritual (§4.5): systematize understanding
                              of the built system
 ```
 
 This extended cycle runs less often than the base cycle — once every 1–2 weeks — and spends substantially more tokens, but its role is critical: it closes architectural debt and preserves corpus integrity over the long haul.
+
+Per §2.1, the architect-mode and executor-mode sessions may be the same underlying LLM in different session framings (v1.6 era, session-mode boundary) or different LLMs (v1.x era, model-tier boundary). The structural shape of the cycle is invariant; the boundary type determines whether the «Architect-mode session» and «Executor-mode session» lines describe one model or two.
 
 ### 2.4 Atomicity of phase review
 
@@ -143,42 +143,28 @@ This means that **splitting architecture and implementation between agents saves
 
 ## 3. Pipeline economics
 
-### 3.1 Principles
+### 3.1 Economic invariant
 
-Division-of-labor principle between free local and paid cloud: routine work runs locally, architectural work runs in the cloud. This keeps pipeline operation sustainable under a fixed subscription, with no spillover into pay-as-you-go.
+The architect-executor split has an economic correlate: architectural deliberation (architect work) and mechanical execution (executor work) have **structurally different cost profiles** regardless of boundary type between them.
 
-Cost-asymmetry principle: the bulk of the code is generated by the local quantized model for free; the subscription pays only for architectural work. This inverts the usual economics of LLM-driven development, where the cloud model is used for everything and quickly runs into limits or invoices. The phase-review atomicity principle (§2.4) caps the savings from splitting work between agents in favor of session integrity.
+Architectural deliberation is **context-intensive**: it reads the corpus as a whole, holds multiple alternatives in working memory, produces structured output (briefs, amendment plans, locked decisions). Token cost per architectural decision is high; calendar frequency is low (one deliberation session per phase closure, typically 1–2 weeks apart).
 
-**Falsifiable claim.** Given properly formulated contracts, at least 70% of the lines of code in the repository are generated by the local model without calling a paid API. The measurement metric is the counter from the local agent's interaction history, cross-referenced with the git log by date and authorship.
+Mechanical execution is **scope-bounded**: it operates against an authored brief, applies pre-decided changes, verifies through tooling. Token cost per execution is bounded by brief scope; frequency is high (multiple executions per day during active phases).
 
-### 3.2 Empirical record at Phase 4 closure
+**Invariant**: as long as architectural decisions are captured in briefs upfront — Phase 0 reads + locked design questions + Phase N execution plan + closure criteria — executor cost scales with **size of execution**, not **size of architectural surface** the executor must reason about. This is the economic mechanism that makes the pipeline sustainable under a fixed-cost configuration (subscription tier, self-hosted infrastructure, mixed).
 
-**Base cycle (local executor + prompt generator):**
+**Falsifiable claim.** Pipeline operating against this discipline sustains development cadence within a fixed-cost ceiling over a 6+ month horizon. Falsification: at any point in the development window, session-cost or subscription-tier-utilization grows non-linearly with codebase size or feature count. Pipeline-restructure events (boundary type changes) re-baseline this measurement.
 
-| Task | Context (tokens) | Output (tokens) | Artifact size |
-|---|---|---|---|
-| Implement InventorySystem | 13 900 | 1 600 | 55.9 kB |
-| Implement power grid events | 99 900 | 2 800 | 80.1 kB |
-| Implement ItemReservedEvent | 79 300 | 2 100 | 63.9 kB |
-| Implement ItemAddedEvent | 132 900 | 2 800 | 79.5 kB |
-| Implement StorageComponent | 98 200 | 3 800 | 83.8 kB |
+### 3.2 Current configuration economics (v1.6, 2026-05-10)
 
-Variable cost per task is zero. Cloud prompt-generator usage is about 10% of the weekly subscription budget.
+Boundary type: session-mode. Single underlying LLM (Claude Desktop) switches between deliberation mode and execution mode per session framing.
 
-**Phase review (Phase 4 closure, 2026-04-25):**
+- **Deliberation sessions**: chat interface, manual turn-by-turn. Architectural decision recording brief shape (K8.0 / K-L3.1 / A'.0.7 precedent) constrains scope to one architectural surface per session. Token cost per session: large context (Phase 0 reads of relevant LOCKED docs + brief authoring); single session per architectural lock.
+- **Execution sessions**: Claude Code agent, autonomous tool loop against authored brief. Per-execution-session scope bounded by brief; multiple sessions per day during active phase.
+- **Subscription tier**: Claude Max 5×. Empirical headroom under v1.6 era reality — see [PIPELINE_METRICS §3](./PIPELINE_METRICS.md#3-subscription-headroom) (v1.x era measurement preserved verbatim with transferability annotation per Q10).
+- **Empirical reference (v1.6)**: A'.0.5 execution session (commit range `27523ac..4e332bb`) delivered ~25 atomic commits, ~250 cross-reference updates, 36 file relocations, +4354/-653 LOC, in a single 2–4 hour session window, with test baseline preserved at 631 throughout. This is the v1.6 reference data point for execution-session scope vs cost.
 
-| Parameter | Value |
-|---|---|
-| Session context window | ~444k tokens out of 1M (44%) |
-| 5-hour limit consumption | ~30% in a single session |
-| Weekly all-models budget consumption | ~34% in a single session |
-| Session wall-clock time | ~35 minutes from first to last commit |
-
-**Subscription-tier sustainability condition.** The current cadence (one Opus phase session every 1–2 weeks plus base prompt-generator and local-executor work in between) fits inside Claude Max 5× at $100/month. A faster cadence requires moving up to Max 20× ($200/month) or to API pay-as-you-go.
-
-### 3.3 Comparison with alternative configurations
-
-The same workload through direct API calls without a local model runs to tens of cents per task at Opus-tier prices — tens to hundreds of dollars per month. Through agentic coding tools with broad permissions (see §5) the economics are comparable, but additional risk classes appear that are structurally absent from the pipeline. Comparison with classical non-LLM development is in §4.3.
+v1.x era economics (model-tier boundary, N=4 — local Gemma executor free + cloud Sonnet prompt-generator paid + cloud Opus architect paid + human) operated under the same economic invariant but with different cost profile per role: executor cost was zero (local hardware), prompt-generator and architect cost was subscription-bounded. Empirical record preserved in [PIPELINE_METRICS §1–§4](./PIPELINE_METRICS.md).
 
 ---
 
@@ -186,26 +172,27 @@ The same workload through direct API calls without a local model runs to tens of
 
 ### 4.1 State at publication
 
-Snapshot of the `Crystalka228/Dual-Frontier` repository on 2026-04-25 after Phase 4 closure:
+Snapshot of the `Crystalka228/Dual-Frontier` repository on 2026-05-10 after A'.0.5 closure (Phase A' in progress):
 
 | Parameter | Value |
 |---|---|
-| Project age | 5 days |
-| Commits (across all branches) | 188 |
-| Tests | 82/82 passing |
+| Project age | 20 days (since 2026-04-20 origin) |
+| Commits (across all branches) | 600+ |
+| Tests | 631/631 passing |
 | Production bugs | 0 |
-| Architectural assemblies | 9 |
-| Architectural documents in `docs/` | 23 |
-| Completed phases | 4 (Core ECS, Verification, Pawns, Economy) |
-| Current phase | Phase 5 (Combat) |
+| Architectural assemblies | 11 (post-K8 native split) |
+| Architectural documents in `docs/architecture/` | ~30 (post-A'.0.5 reorg) |
+| Methodology documents in `docs/methodology/` | 3 (METHODOLOGY + PIPELINE_METRICS + MAXIMUM_ENGINEERING_REFACTOR + supporting) |
+| Completed phases | Phase 0–8 (K-series kernel foundation + K-L3.1 bridge formalization) |
+| Current phase | Phase A' (between K-series closure and M-series mass migration) |
 
-The architecture includes a custom ECS with `SparseSet` storage and a parallel scheduler, a dependency graph with Kahn topological sort and formal verification of access declarations, an event bus with three delivery modes (synchronous, `[Deferred]`, `[Immediate]`), physical mod isolation via `AssemblyLoadContext`, a persistence layer with RLE and StringPool independent of Godot, and Godot 4 integration through `PresentationBridge` with a "Domain knows nothing about Godot" rule.
+The architecture includes a custom ECS with both Path α (`unmanaged struct` via NativeWorld, K8.1 primitive wrappers) and Path β (managed `class` via per-mod `ManagedStore<T>` per K-L3.1 bridge formalization) storage paths, a parallel scheduler with topological phase sorting, a dependency graph with Kahn topological sort and formal access verification, an event bus with three delivery modes (synchronous, `[Deferred]`, `[Immediate]`), physical mod isolation via `AssemblyLoadContext`, and a persistence layer with RLE + StringPool independent of Godot. The native ECS kernel runs alongside the managed reference implementation (K-L11 «World-as-test-fixture»). Cross-references: [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md), [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md), [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md).
 
 ### 4.2 Case study: asynchronous native-core development
 
-The idea for an experimental branch with a native C++ core emerged during the author's shift work outside the home. The prompt was sent to the cloud architect from a mobile device; by the time the author returned home, the `claude/cpp-core-experiment-cEsyH` branch had been built by the agent, published to the repository, and made available for local build. A local `dotnet build` of the solution passed on the first try with no edits.
+The idea for an experimental branch with a native C++ core emerged during the author's shift work outside the home. The prompt was sent to the architect-mode session from a mobile device; by the time the author returned home, the `claude/cpp-core-experiment-cEsyH` branch had been built by the agent, published to the repository, and made available for local build. A local `dotnet build` of the solution passed on the first try with no edits.
 
-Several hours of asynchronous work passed between task formulation and working artifact, during which the author could not physically participate. This works because `DualFrontier.Contracts` is rigid enough to play the IPC role between agents without synchronous coordination. The cloud agent wrote code against a formal interface; the local build verified conformance to the interface. Divergence between intent and result is physically impossible when the code passes the build and the tests, because the very notion of "correct code" is fixed in the contract, not in interpretation.
+Several hours of asynchronous work passed between task formulation and working artifact, during which the author could not physically participate. This works because `DualFrontier.Contracts` is rigid enough to play the IPC role between sessions, regardless of boundary type, without synchronous coordination. The architect-mode session wrote code against a formal interface; the local build verified conformance to the interface. Divergence between intent and result is physically impossible when the code passes the build and the tests, because the very notion of "correct code" is fixed in the contract, not in interpretation.
 
 The experiment itself ended with a negative result — per-element P/Invoke ate the native gain on the benchmark (NativeAdd10k: ratio 3.92× against the managed baseline). This is a separate methodological result: the acceptance criterion was reframed from mean latency to p99, GC pause, and long-run drift; the batch-API decision is deferred to Phase 9. Details are in [NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md). What matters for this document: the cycle "hypothesis → asynchronous implementation → measurement → criterion reframing → deferred decision" fit into hours, not weeks, with no drop in code quality in the repository.
 
@@ -217,15 +204,17 @@ This yields roughly 60–100× compression against the typical pace of indie dev
 
 **Falsifiable claim.** Compression applies to architectural work. Game content, balancing, and narrative shrink less, because the "good/bad" criterion is subjective and verifiable only through playtesting. Falsifying it: measure the same indicator on a domain with a subjective criterion and find comparable acceleration there.
 
-### 4.4 Phase-review wall-clock performance
+### 4.4 Session wall-clock performance — case studies
 
-The Phase 4 closure review by the architect took **approximately 35 wall-clock minutes** from first to last commit (per session log; the session's commits are squashed in the git history, so the timeline cannot be reconstructed directly from timestamps). Within those 35 minutes the architect validated the prompt-generator's diagnostic (10 items), discovered 5 additional issues (including an endemic `NotImplementedException` pattern across 22 systems), formulated 6 architectural decisions with explicitly rejected alternatives, implemented the decisions in code, wrote 17 new tests while debugging two self-introduced failures, and updated five documents. Result: tests 65/65 → 82/82, Phase 4 closed, Phase 5 unblocked.
+Per Q-A07-3=β+γ (PIPELINE_METRICS preservation as historical), per-era throughput measurements live primarily in [PIPELINE_METRICS](./PIPELINE_METRICS.md). Two methodology-level case studies preserved here as falsifiability anchors:
+
+**Case A: Phase 4 closure review (v1.x era, 2026-04-25).** Architect session ~35 wall-clock minutes from first to last commit (per session log; the session's commits are squashed in the git history, so the timeline cannot be reconstructed directly from timestamps). Within those 35 minutes the architect validated the prompt-generator's diagnostic (10 items), discovered 5 additional issues (including an endemic `NotImplementedException` pattern across 22 systems), formulated 6 architectural decisions with explicitly rejected alternatives, implemented the decisions in code, wrote 17 new tests while debugging two self-introduced failures, and updated five documents. Result: tests 65/65 → 82/82, Phase 4 closed, Phase 5 unblocked. Boundary type: model-tier (architect = cloud Opus session, executor = local Gemma). Full session log: [SESSION_PHASE_4_CLOSURE_REVIEW](/docs/audit/SESSION_PHASE_4_CLOSURE_REVIEW.md). *(Russian-language audit trail; preserved verbatim per the i18n campaign rules.)*
+
+**Case B: A'.0.5 closure session (v1.6 era, 2026-05-10).** Execution session — Claude Code agent against authored brief. Delivered ~25 atomic commits over commit range `27523ac..4e332bb`: 36 file relocations (Phase 3), ~250 cross-reference updates (Phase 4), 5 component README cleanups (Phase 5), 6+ module-local doc refreshes (Phase 6), 7 pipeline-terminology scrubs (Phase 7), 1 Tier 1 typo fix + Tier 2 flag artifact (Phase 8), 3 closure commits (Phase 9). Total diff: +4354/-653 LOC. Test baseline preserved at 631 throughout. Session window: 2–4 hours wall-clock. Boundary type: session-mode (architect-mode session authored brief upstream; A'.0.5 invocation = execution-mode session). Full closure entry: [MIGRATION_PROGRESS §A'.0.5](/docs/MIGRATION_PROGRESS.md).
+
+Per-session wall-clock varies with session scope (architectural deliberation vs mechanical execution, codebase size at session time, brief depth). The methodology-level point is **case studies as falsifiability anchors**: each closure session is named, dated, boundary-type-tagged, and the per-session metrics live in [PIPELINE_METRICS](./PIPELINE_METRICS.md) per-era data sections.
 
 In typical team development, an equivalent phase session would be 16–24 hours of total work by a team of 2–3 people, or several days on the calendar. Solo without an LLM: at least a week.
-
-Active developer involvement in those 35 minutes amounted to framing the task on input, reading the result, and pushing the commits. The rest of the time the architect worked autonomously, including debugging two self-introduced test failures.
-
-Full session log: [SESSION_PHASE_4_CLOSURE_REVIEW.md](./SESSION_PHASE_4_CLOSURE_REVIEW.md). *(Russian-language audit trail; preserved verbatim per the i18n campaign rules.)*
 
 ### 4.5 Self-teaching ritual between phases
 
@@ -263,26 +252,35 @@ Sources for independent verification: [OpenClaw Wikipedia article](https://en.wi
 
 ### 5.2 Pipeline structural defense
 
-The four-agent architecture structurally avoids the main risk class through minimal permissions for each agent's role, not through "we will be careful."
+The architect-executor split (§2.1) structurally avoids the broad-permissions agent risk class through minimal permissions per session mode, not through «we will be careful». The defense is invariant across boundary types; specific mechanisms vary by boundary type.
 
-**Local executor.** No network access (LM Studio runs on localhost). No shell. The filesystem is limited to what the orchestrator (the editor extension) exposes. Prompt injection through the project's file contents is theoretically possible but does not lead to data exfiltration, because there is no outbound channel.
+**Deliberation sessions** (architect mode). Chat interface, no autonomous tool loop. Every tool invocation is initiated by a human turn. MCP connectors are connected explicitly per session and visible at every moment in the session UI. Read-only access is default; write actions surface explicit confirmations. No heartbeat mode, no scheduled work, no background actions.
 
-**Prompt generator via desktop app.** Every action is initiated by the user through the chat interface. No heartbeat mode. No autonomous scheduled work. MCP tools are connected explicitly and visible to the user at every moment. Filesystem access through MCP is limited to directories explicitly permitted in the settings.
+**Execution sessions** (executor mode). Claude Code agent, autonomous tool loop within session scope. Tool access bounded by authored brief (Phase 0 reads + Phase N execution plan + closure criteria). Session ends when brief closes; agent does not persist across sessions. Filesystem access is scoped to the repository working directory; network actions are gated by brief specification. MCP tools are enabled per session, not globally.
 
-**Architect via desktop app.** Same as above, plus used sparingly (once every 1–2 weeks for a phase review), which reduces the attack surface across time.
+**No persistent agent state between sessions.** Each session starts with clean context. Cross-session coordination happens through the repository (LOCKED docs, briefs, amendment plans, commit history) — not through agent memory or background state.
 
-**No direct channel between agents.** Coordination happens through files in the repository and through the human. This means compromise of one agent does not propagate to the others automatically: the attacker must compromise each agent separately, through different channels.
+**Session-mode discipline as structural barrier.** Deliberation mode does not apply changes; if architectural deliberation requires mechanical changes to verify a hypothesis, that is a separate execution session against an authored brief. Execution mode does not make architectural decisions; the agent escalates on ambiguity per §3 stop/escalate/lock. The split is procedural — but the **briefs themselves** are the structural mechanism: the agent cannot do work outside brief scope without escalation.
+
+v1.x era equivalent defense (model-tier boundary, N=4) operated under the same invariant principle through different mechanisms: local executor (Gemma) had no network access; prompt generator and architect (cloud sessions) had no heartbeat mode; no direct channel between the four agents. Empirical defense properties preserved across boundary type — the **principle** of minimal-permissions-per-role-via-structural-mechanism is invariant.
 
 ### 5.3 Falsifiable claims
 
-Specific attack classes that are impossible in the pipeline for structural reasons, not "carefulness":
+Specific attack classes that are impossible in the v1.6 pipeline for structural reasons, not «carefulness»:
 
-1. **Data exfiltration through the local executor is impossible** — it has no network access.
-2. **Scheduled autonomous actions are impossible** — no agent has a heartbeat mode.
-3. **Compromise propagation between agents through a direct channel is impossible** — no direct channel exists, only the repository and the human.
-4. **Installation of a malicious skill is impossible** — the pipeline has no community-extensions repository with automatic installation.
+1. **Out-of-session autonomous actions are impossible** — no session mode includes scheduled work, heartbeat, or persistent background agent. All sessions are human-initiated with explicit scope.
 
-These claims are verified by inspecting the pipeline architecture and do not depend on the behavior of individual models.
+2. **Cross-session agent compromise propagation is impossible** — no persistent agent state between sessions. Compromise of one session does not infect the next; only the repository carries forward, and the repository is human-reviewable.
+
+3. **Out-of-brief execution is impossible** — execution agent operates against authored brief. Brief scope is explicit (Phase 0 reads, Phase N execution plan, closure criteria); the agent escalates on ambiguity rather than improvise.
+
+4. **Installation of malicious extensions is impossible** — pipeline has no community-extensions repository with automatic installation. MCP connectors are connected explicitly per user action, visible per session.
+
+5. **Architect-executor compromise crosstalk is impossible** — boundary type is session-mode; one session's compromise does not propagate to the other through a direct channel. Only the repository is shared, and repository state is human-auditable through git history.
+
+These claims are verified by inspecting the pipeline architecture and do not depend on the behavior of individual models. Per Q-A07-4=γ, they survive any boundary-type change: if the pipeline restructures to a mixed boundary type or multi-model architecture, the structural defense reformulates per the new boundary type; the **principle** of minimal-permissions-per-role-via-structural-mechanism is invariant.
+
+v1.x era equivalent claims (model-tier boundary, 4-agent) — see [PIPELINE_METRICS §1](./PIPELINE_METRICS.md#1-pipeline-configuration) historical record.
 
 ---
 
@@ -331,7 +329,7 @@ The principle has been formally invoked at least six times during the M7 batch a
 
 6. **Needs semantic flip** ([f4a5839](https://github.com/Crystalka228/Dual-Frontier/commit/f4a5839), TD-3.1). The storage convention "0 = full, 1 = starving" combined with consumer expectations of wellness ("1 = best") forced a translation layer (`1f -` inversions in `MoodSystem` and `PawnStateReporterSystem`) that hid the mismatch. After the flip, the inversion logic disappeared naturally, because storage now matched consumer semantics. The principle did the work it is supposed to do.
 
-The principle constrains all four agents in the pipeline (§2.1). The prompt generator cannot specify data sources that do not exist on disk; the local executor cannot synthesize fields whose backing data is absent from the brief; the architect's QA cycle requires that every artifact be auditable against real existence; the human cannot hide behind "we will fill it later" because the next agent in the pipeline will refuse to operate against a stub. Each application of the principle is a moment where one agent's output would have introduced a placeholder lie if not constrained.
+The principle constrains all participants in the pipeline (§2.1): the architect cannot author a brief that references data sources absent from disk; the executor cannot synthesize fields whose backing data is absent from the brief; the QA review at phase closure requires that every artifact be auditable against real existence; the direction owner cannot hide behind «we will fill it later» because the next session in the pipeline will refuse to operate against a stub. Each application of the principle is a moment where one role's output would have introduced a placeholder lie if not constrained.
 
 **Falsifiable claim.** The track record across cycles is the falsifiable signal of whether the principle is load-bearing. As of M7 closure: six applications, zero counter-examples — no case where a placeholder was deliberately preserved as a "we will fill it later" stub. Forward target: the count continues to grow without counter-examples through M8–M10. A counter-example — a placeholder that survives a closure review — would falsify the principle's load-bearing role and would force a methodological retraction.
 
@@ -383,7 +381,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 
 **Applicability to team development.** Every argument here applies to solo development. Whether formal contracts suffice as IPC between teams, or whether additional methodological devices are needed, is an open question with its own literature.
 
-**Degradation as the codebase grows.** The local model's 131k-token context is already close to the limit for large tasks (132.9k for the `Implement ItemAddedEvent` task in Phase 4). With further project growth, the pipeline may need restructuring: splitting the corpus into modules with independent context, switching to models with larger context windows, or using retrieval instead of a fully loaded context.
+**Degradation as the codebase grows.** Session context windows place an upper bound on architectural-deliberation surface and on executor brief scope. With further project growth, the methodology may need restructuring: splitting the corpus into modules with independent context, switching to larger context windows, using retrieval instead of fully loaded context, or moving к multi-session deliberation/execution flows where one session can no longer hold the relevant surface. v1.x era hit this constraint first at 131k tokens (local Gemma, `Implement ItemAddedEvent` task в Phase 4 reached 132.9k); v1.6 era operates под higher ceiling (Claude Desktop Max 5× subscription session context) but the same fundamental constraint applies — context window is finite, codebase scope grows.
 
 **Behavior on series of negative results.** Dual Frontier has one publicly recorded negative result ([NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md)). The pipeline handled it correctly as a methodological artifact. But that is one case. The pipeline's systematic behavior on series, when several architectural hypotheses in a row prove wrong, has not been tested.
 
@@ -401,6 +399,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.3 | 2026-05-07 | Post-K1 lessons added to «Native layer methodology adjustments»: ABI boundary exception completeness (throws и their boundary catches are inseparable; brief must enumerate explicitly) and brief authoring as prerequisite step (brief is its own commit, performed before execution begins). |
 | 1.4 | 2026-05-07 | Post-K3 calibration lesson added к «Native layer methodology adjustments»: brief time estimates from architectural docs assume hobby pace (~1h/day manual typing); auto-mode execution actual time is 5-10x faster. Future briefs must state both hobby-pace и auto-mode estimates explicitly. K0-K3 measured data: 11-17 days hobby estimate vs ~6 hours actual auto-mode. |
 | 1.5 | 2026-05-09 | Added "Pipeline closure lessons (K-series, post-K8.1)" sub-section under "Native layer methodology adjustments" with three lessons formalized from K8.1 and K8.1.1 closures: atomic commit as compilable unit (per K8.1 Phase 5 dependency-cycle bundling, `a62c1f3..059f712`), Phase 0.4 inventory as hypothesis (per K8.1 `Marshalling/` layout reconciliation), mod-scope test isolation (per K8.1.1 Stop condition #3 fix on `EqualsByContent_StaleGeneration_ReturnsFalse`, `fc4400d..63777ef`). |
+| 1.6 | 2026-05-10 | Pipeline restructure rewrite per A'.0.7 — §0 Abstract generalized к architect-executor abstract framing; §2.1 role distribution rewritten в abstract role categories с v1.6 current-configuration table; §2.2 contracts as IPC reframed across context boundaries с three-properties mechanism; §3 economics restructured к invariant + current-configuration с A'.0.5 empirical anchor; §4 throughput parallel-form case studies (Phase 4 closure v1.x + A'.0.5 closure v1.6); §5.2/§5.3 threat model restructured для v1.6 session-mode reality; §9 «degradation as codebase grows» reformulated к pipeline-agnostic; methodology corpus declared agent-as-primary-reader per Q-A07-6. K-Lessons sub-section expanded с A'.0.5 lesson «milestone consolidation under session-mode pipeline» per Q-A07-5. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -408,17 +407,17 @@ The document is updated after each substantial phase closes. Substantial methodo
 
 ## 11. See also
 
-- [README.md](../README.md) — research framing, falsifiability conditions, and pointers to operational data.
-- [PIPELINE_METRICS.md](./PIPELINE_METRICS.md) — empirical configuration, throughput data, and subscription economics measured while running this methodology.
-- [learning/PHASE_1.md](./learning/PHASE_1.md) — self-teaching ritual artifact after Phase 1; direct empirical referent for §4.5.
-- [SESSION_PHASE_4_CLOSURE_REVIEW.md](./SESSION_PHASE_4_CLOSURE_REVIEW.md) — Phase 4 closure review session log; direct empirical referent for §4.4. *(Russian-language audit trail; preserved verbatim per the i18n campaign rules.)*
-- [ARCHITECTURE.md](/docs/architecture/ARCHITECTURE.md) — layers, dependency rules, scenarios.
-- [CONTRACTS.md](/docs/architecture/CONTRACTS.md) — the contract system, six domain buses, contract evolution.
-- [DEVELOPMENT_HYGIENE.md](./DEVELOPMENT_HYGIENE.md) — hygiene checklist for every PR, the engine/game boundary.
-- [ISOLATION.md](/docs/architecture/ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
-- [NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
-- [GPU_COMPUTE.md](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
-- [ROADMAP.md](./ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
+- [README](/README.md) — research framing, falsifiability conditions, and pointers to operational data.
+- [PIPELINE_METRICS](./PIPELINE_METRICS.md) — empirical configuration, throughput data, and subscription economics measured while running this methodology.
+- [PHASE_1](/docs/learning/PHASE_1.md) — self-teaching ritual artifact after Phase 1; direct empirical referent for §4.5.
+- [SESSION_PHASE_4_CLOSURE_REVIEW](/docs/audit/SESSION_PHASE_4_CLOSURE_REVIEW.md) — Phase 4 closure review session log; direct empirical referent for §4.4. *(Russian-language audit trail; preserved verbatim per the i18n campaign rules.)*
+- [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — layers, dependency rules, scenarios.
+- [CONTRACTS](/docs/architecture/CONTRACTS.md) — the contract system, six domain buses, contract evolution.
+- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — hygiene checklist for every PR, the engine/game boundary.
+- [ISOLATION](/docs/architecture/ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
+- [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
+- [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
+- [ROADMAP](/docs/ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
 
 ## Native layer methodology adjustments
 
@@ -659,6 +658,36 @@ This generalizes beyond string interning. K8.2 component conversion will produce
 - [ ] **Scope-leak proof obligation**: if the test must take a reference outside the scope (rare, but possible for cross-scope semantics), the test asserts that reclaim does not occur, and that intent is the test's documented purpose.
 
 **Falsifiable claim**: from K8.2 onward, tests that follow the reclaim-test-isolation rule will assert reclaim correctly on the first build, without the executor needing to invoke Stop condition #3 to debug per-mod reclaim semantics. Counter-examples — Stop condition #3 invocations on reclaim assertions where the test setup was the cause — would force re-examination of the rule's coverage.
+
+### Phase A' lessons (post-A'.0.5)
+
+#### Milestone consolidation under session-mode pipeline
+
+Milestone boundaries should respect handoff costs between sessions. In v1.x era с model-tier boundaries (N=4, local executor + cloud prompt-generator + cloud architect + human), each milestone carried handoff cost: outputs from one tier became inputs to the next, context loss between tiers required brief authoring as an intermediate artifact. Splitting work into multiple milestones reduced per-milestone scope but compounded handoff cost.
+
+In v1.6 era с session-mode boundary (N=2, human + unified Claude Desktop session switching between deliberation and execution modes), handoff cost between sessions is captured by **brief authoring itself** (architectural-decision brief, fourth brief type per K8.0 / K-L3.1 / A'.0.7 precedent). One brief = one session = one milestone shape. Splitting work into multiple milestones no longer reduces handoff cost — it duplicates brief authoring overhead.
+
+**Failure mode (observed at A'.0.5 authoring 2026-05-10).** A'.0.5 brief originally proposed two-milestone split: A'.0.5 mechanical (file reorganization + cross-ref refresh, Cloud Code session) and A'.0.6 semantic refresh (module-local doc rewrite, Opus deliberation + Cloud Code execution). Rationale was built on stale 4-agent assumption — split would reduce per-session context load for local executor. Crystalka surfaced «зачем сплит там окно контекста в 1 миллион токенов»; under v1.6 session-mode boundary с unified Claude Desktop session capacity, the split rationale collapsed.
+
+The two-milestone proposal collapsed back to single A'.0.5 session. Delivered 19 atomic commits (Phase 0–9), 36 file relocations, ~250 cross-reference updates, 5 README cleanups, 6 module-local refreshes, pipeline terminology scrub, Tier 1 + Tier 2 audit. Test baseline preserved at 631 throughout. Session length: ~2-4 hours wall-clock (commit range `27523ac..4e332bb`). The proposed A'.0.6 milestone collapsed into A'.0.5 Phase 5 (README cleanup) at execution time per Stop #1 protocol; no handoff cost incurred.
+
+**Principle: milestone boundaries should match session capacity boundaries, not legacy milestone-splitting habits.** Under session-mode boundary с large context windows, a single session can host multiple-phase work without handoff cost. Splitting introduces overhead (brief authoring duplication, context re-establishment, inter-milestone state management) without proportional benefit.
+
+This generalizes K-Lessons «atomic commit as compilable unit» (K8.1 closure 2026-05-09) to milestone scope: atomic commit said «commit boundaries respect compilable units within milestone»; this lesson says «milestone boundaries respect handoff costs between sessions». Both share structural pattern: boundaries should match natural seams (compilable units / session capacity), not arbitrary fragmentation.
+
+**Brief authoring requirement** (mandatory checklist item for authoring milestone briefs from A'.0.7 onward):
+
+- [ ] **Session-capacity assessment**: brief author estimates whether proposed milestone scope fits one Claude Desktop session capacity (deliberation or execution mode as appropriate)
+- [ ] **Handoff cost check**: if proposing multi-milestone split, brief author justifies handoff cost as bringing proportional benefit (unique к v1.6 session-mode reality — split was default-free in v1.x era)
+- [ ] **Stop protocol clarity**: multi-phase single-session milestones have explicit Stop conditions between phases enabling mid-session deliberation (Q&A with direction owner) without milestone fragmentation
+
+**Falsifiable claim**: milestones authored under this lesson will maintain or improve completion-rate vs legacy multi-milestone splits on equivalent scope, measured via «sessions per closure» counter. Counter-examples (milestone split that empirically delivered better than equivalent bundled milestone) would force re-examination of the bundle-default rule.
+
+**Caveat — what session capacity does NOT include**:
+- **Sequential dependencies**: if Milestone B requires architectural deliberation against Milestone A's output (e.g., A'.1 amendment requires A'.0.7 methodology rewrite to land first because amendments need to reflect post-A'.0.7 methodology framing), separate sessions are correct — this IS handoff cost, just deliberately deferred. Stop protocol detects this; bundles fail and split is the recovery.
+- **Different boundary types within scope**: deliberation work and execution work require different session modes; cannot bundle into one session even с large context. K-L3.1 (deliberation) + amendment brief execution (execution) are correctly separate milestones.
+
+**Compared с v1.x era pattern**: under model-tier boundary, splitting was default safe — each tier had bounded capacity, handoff cost was relatively low (brief-as-artifact was natural between tiers anyway). Under session-mode boundary, bundling is default safe — single tier с large capacity, handoff cost is brief-authoring duplication. The discipline inverted с pipeline restructure.
 
 ### Reference: K0 lessons learned
 
