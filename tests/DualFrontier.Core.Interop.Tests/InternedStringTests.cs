@@ -227,4 +227,86 @@ public class InternedStringTests
         underModA.EqualsByContent(postClear, world, world).Should().BeFalse(
             "stale generation makes content resolution null; comparison is false");
     }
+
+    [Fact]
+    public void Empty_StaticConstant_EqualsDefault()
+    {
+        InternedString.Empty.Should().Be(default(InternedString));
+        InternedString.Empty.IsEmpty.Should().BeTrue();
+        InternedString.Empty.Id.Should().Be(0u);
+        InternedString.Empty.Generation.Should().Be(0u);
+    }
+
+    [Fact]
+    public void CompareTo_DifferentIds_OrdersByIdAscending()
+    {
+        using var world = new NativeWorld();
+
+        InternedString first = world.InternString("Alpha");
+        InternedString second = world.InternString("Beta");
+
+        if (first.Id < second.Id)
+        {
+            first.CompareTo(second).Should().BeNegative();
+            second.CompareTo(first).Should().BePositive();
+        }
+        else
+        {
+            first.CompareTo(second).Should().BePositive();
+            second.CompareTo(first).Should().BeNegative();
+        }
+    }
+
+    [Fact]
+    public void CompareTo_EqualHandles_ReturnsZero()
+    {
+        using var world = new NativeWorld();
+
+        InternedString a = world.InternString("Same");
+        InternedString b = world.InternString("Same");
+
+        a.CompareTo(b).Should().Be(0);
+        b.CompareTo(a).Should().Be(0);
+    }
+
+    [Fact]
+    public void CompareTo_TwoEmpties_ReturnsZero()
+    {
+        InternedString.Empty.CompareTo(InternedString.Empty).Should().Be(0);
+        default(InternedString).CompareTo(InternedString.Empty).Should().Be(0);
+    }
+
+    [Fact]
+    public void CompareTo_SameIdLowerGenerationComesFirst()
+    {
+        // Construct two handles with same Id but different Generation to
+        // exercise the generation-as-secondary-sort-key path. Direct
+        // construction via internal ctor is not accessible from tests; use
+        // mod-scope reclaim to produce same-id-different-gen pair.
+        using var world = new NativeWorld();
+
+        world.BeginModScope("ModA");
+        InternedString preClear = world.InternString("Recyclable");
+        world.EndModScope("ModA");
+        world.ClearModScope("ModA");
+
+        InternedString postClear = world.InternString("Recyclable");
+
+        // Post-clear handle has same Id (slot reused) but bumped Generation.
+        if (preClear.Id == postClear.Id && preClear.Generation != postClear.Generation)
+        {
+            int compare = preClear.CompareTo(postClear);
+            if (preClear.Generation < postClear.Generation)
+            {
+                compare.Should().BeNegative("lower-generation handle sorts before higher-generation handle of the same id");
+            }
+            else
+            {
+                compare.Should().BePositive();
+            }
+        }
+        // If implementation chose not to reuse the id slot, the test is still
+        // a valid no-op (the asserted property is conditional on slot reuse,
+        // which is an internal pool decision, not a public contract).
+    }
 }

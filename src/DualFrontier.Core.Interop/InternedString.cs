@@ -55,8 +55,11 @@ namespace DualFrontier.Core.Interop;
 /// snapshots may have been written by different worlds.
 /// </para>
 /// </summary>
-public readonly struct InternedString : IEquatable<InternedString>
+public readonly struct InternedString : IEquatable<InternedString>, IComparable<InternedString>
 {
+    /// <summary>The empty/uninitialized sentinel. Equivalent to <c>default(InternedString)</c>; Id = 0, Generation = 0.</summary>
+    public static readonly InternedString Empty = default;
+
     /// <summary>The native pool's id for this string. 0 = empty sentinel.</summary>
     public uint Id { get; }
 
@@ -71,6 +74,23 @@ public readonly struct InternedString : IEquatable<InternedString>
 
     /// <summary>True if this is the empty/uninitialized sentinel.</summary>
     public bool IsEmpty => Id == 0;
+
+    /// <summary>
+    /// Ordinal handle comparison on (Id, Generation) — required by
+    /// <see cref="NativeMap{TKey,TValue}"/> and <see cref="NativeSet{T}"/>
+    /// where <c>TKey</c>/<c>T</c> must implement <see cref="IComparable{T}"/>.
+    /// This is handle equality, not content equality: two interned strings
+    /// with identical content but distinct generations compare unequal.
+    /// For content-equal comparison across pools or across reclaim cycles,
+    /// use <see cref="EqualsByContent"/> at the call site and canonicalize
+    /// keys via a single <see cref="NativeWorld.InternString"/> at insertion.
+    /// </summary>
+    public int CompareTo(InternedString other)
+    {
+        int idCompare = Id.CompareTo(other.Id);
+        if (idCompare != 0) return idCompare;
+        return Generation.CompareTo(other.Generation);
+    }
 
     /// <summary>
     /// Resolves to the underlying string content via the supplied
