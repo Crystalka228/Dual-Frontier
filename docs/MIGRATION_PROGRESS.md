@@ -474,6 +474,82 @@
 
 ---
 
+## Phase A' progress
+
+Phase A' is the structural unit between Phase A (K-series) closure and Phase B (M-series) start, formalized 2026-05-10 per `/docs/architecture/PHASE_A_PRIME_SEQUENCING.md`. It contains all Phase A → B transition deliverables: K-L3.1 architectural decision, documentation reorganization, methodology pipeline restructure, amendment plan execution, push to origin, K9/K8.3-K8.5 skeleton execution, K-closure report, and architectural analyzer milestone.
+
+### Overview
+
+| Milestone | Title | Status | Estimate | Commits | Date closed |
+|---|---|---|---|---|---|
+| A'.0 | K-L3.1 bridge formalization | DONE | 2-4 hours session | `45d831c` | 2026-05-10 |
+| A'.0.5 | Documentation reorganization + cross-ref refresh + module-local refresh + pipeline-terminology scrub + cleanup campaign | DONE | 2-4 hours auto-mode | `27523ac`..`<HEAD>` | 2026-05-10 |
+| A'.0.7 | Methodology pipeline restructure rewrite | NOT STARTED | 1-2 hours session + auto-mode | — | — |
+| A'.1 | Amendment brief execution (K-L3.1 propagation + Tier 2 K-L11 framing + Vanilla mod READMEs) | NOT STARTED | 30-60 min auto-mode | — | — |
+| A'.2 | REMOVED — folded into A'.0.5 Phase 5 | — | — | — | — |
+| A'.3 | Push to origin | NOT STARTED | minutes | — | — |
+| A'.4 | K9 skeleton execution (RawTileField) | NOT STARTED | 1-2 weeks | — | — |
+| A'.5 | K8.3 skeleton execution (production system migration) | NOT STARTED | 4-6 weeks | — | — |
+| A'.6 | K8.4 skeleton execution (managed World retired) | NOT STARTED | 1-2 weeks | — | — |
+| A'.7 | K8.5 skeleton execution (mod ecosystem migration prep) | NOT STARTED | 3-5 days | — | — |
+| A'.8 | K-closure report | NOT STARTED | 1-2 sessions | — | — |
+| A'.9 | Architectural analyzer milestone | NOT STARTED | 2-4 weeks | — | — |
+
+### A'.0 — K-L3.1 bridge formalization
+
+- **Status**: DONE (`45d831c`, 2026-05-10)
+- **Brief**: `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md` (EXECUTED) + `K_L3_1_BRIEF_ADDENDUM_1.md` (APPLIED)
+- **Output**: amendment plan at `/docs/architecture/K_L3_1_AMENDMENT_PLAN.md` (Phase 4 deliverable; awaits A'.1 execution to propagate locks into 4 LOCKED docs)
+- **Architectural decisions**: K-L3.1 lock — Path α (`unmanaged struct` via `RegisterComponent<T>`, kernel-side `NativeWorld`) and Path β (managed `class` annotated with `[ManagedStorage]` via `RegisterManagedComponent<T>`, mod-side `ManagedStore<T>`) as first-class peers; cross-mod managed-path direct access structurally impossible by ALC isolation; capability annotation path-blind (Q6.a)
+- **Code changes**: zero (deliberation session; implementation lands in K8.4 per plan)
+- **Test count**: 631 unchanged
+
+### A'.0.5 — Documentation reorganization + cross-ref refresh + module-local refresh + pipeline-terminology scrub + cleanup campaign
+
+- **Status**: DONE (closure 2026-05-10)
+- **Brief**: `tools/briefs/A_PRIME_0_5_REORG_AND_REFRESH_BRIEF.md` (EXECUTED)
+- **Closure commits**: `27523ac` (Phase 0 brief authoring) through Phase 9 closure (~25 atomic commits) on main
+- **Test count**: 631 unchanged (documentation-only milestone)
+- **Phases completed**:
+  - Phase 0 pre-flight: HEAD `45d831c` ✓, build ✓, working-tree state mismatch (8 pre-staged moves) noted and resolved per Stop #1 Q0=A
+  - Phase 1 discovery: ~135 .md files inventoried, classified A/B/C/D/E/F/G/H, staleness scan + pipeline-terminology scan complete; outputs at `tools/scratch/A_05/`
+  - Phase 2 reorganization plan authored, Crystalka approved 2026-05-10 with Q0=A, Q1-Q10=yes per 11-question Stop #1 protocol
+  - Phase 3 file moves (5 commits): 8 pre-staged Cat A + 3 new Cat A + 14 subsystem-arch + 6 methodology + 5 reports → 36 files relocated
+  - Phase 4 cross-reference refresh (3 commits): ~250 stale path references updated to repo-rooted absolute form (architecture group: 97 files; methodology group: 54 files; reports group: 25 files)
+  - Phase 5 README stub-reference cleanup: 5 component READMEs (top-level, Combat, World, Magic, Pawn) — single atomic commit
+  - Phase 6 module-local doc refresh (3 commits): kernel-area (Core/Math, Core.Interop) + Systems (Combat/World/Pawn/Magic/Faction/top) + Events (Combat/Pawn) — mechanical-only refreshes per brief §8.1 Stop #2 boundary
+  - Phase 7 pipeline-terminology scrub (2 commits): 7 active narrative docs mechanically scrubbed; A'.0.7 deferral markers added on 3 methodology files (METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR)
+  - Phase 8 discovery cleanup: Tier 1 typo fix («Opus aud the result» → «Opus audits the result»); Tier 2 items flagged at `tools/scratch/A_05/TIER2_FLAGS.md`
+  - Phase 9 closure (this entry): Phase A' sequencing doc updated; this MIGRATION_PROGRESS entry filled; brief marked EXECUTED in next commit
+
+- **Tier 2 surfaced debt (forwarded for future deliberation)**:
+  - **K-L11 managed-World framing in kernel-area module-local docs** (Core/README.md, Core/ECS/README.md) — substantive narrative refresh required; forwarded to A'.1
+  - **Vanilla mod placeholder READMEs** (mods/DualFrontier.Mod.Vanilla.{Core,Combat,Magic,Inventory,Pawn,World}/README.md) — Phase 6 deferred; forwarded to A'.1 / M8+
+  - **IModApi v3 surface docs** (Contracts/Modding/README.md) — forward-looking; verify post-K8.4 closure
+
+- **Items forwarded to A'.0.7**:
+  - Substantive rewrite of `docs/methodology/METHODOLOGY.md` §0/§2.1/§2.2/§3/§4/§5/§8 (4-agent pipeline framing → 2-agent unified Claude Desktop session)
+  - Substantive rewrite of `docs/methodology/PIPELINE_METRICS.md` (entire empirical record gathered with Gemma-era pipeline; reframe-or-recollect decision)
+  - Substantive rewrite of `docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md` 4-agent layout / hardware-variance / pipeline-mapping sub-sections
+  - README.md (root) Pipeline section rewrite (substantive 4-agent decomposition; HTML deferral marker preserves verbatim until A'.0.7 lands)
+
+- **Items forwarded to A'.1**:
+  - K-L3.1 lock propagation into 4 LOCKED docs (KERNEL/MOD_OS/MIGRATION_PLAN/MIGRATION_PROGRESS) per `K_L3_1_AMENDMENT_PLAN.md`
+  - K-L11 framing propagation in kernel-area module-local docs (per Tier 2 flag above)
+  - Vanilla mod placeholder README refresh (per Tier 2 flag above)
+
+- **Brief deviations**:
+  - Working tree was NOT clean at Phase 0 (8 pre-staged moves + brief untracked) — accepted Option A (commit pre-staged moves with rename detection) per Stop #1 Q0=A; rename detection produced 100%-similarity renames as expected
+  - Phase 4 commit count came in at 3 (matched brief estimate); Phase 6 commit count came in at 3 (lower than brief's 6-12 estimate because mechanical-only scope kept changes narrow); Phase 7 commit count 2 (matched estimate)
+
+- **Lessons learned**:
+  - **Single-session pipeline collapses milestone splits**: A'.2 (originally separate README cleanup milestone) folded naturally into A'.0.5 Phase 5 because there's no longer a multi-agent handoff cost to multiple milestones. Future Phase A' / M-series brief authoring should consider milestone consolidation when the work is documentation-shaped and falls within single-session capacity.
+  - **Stop #2 mechanical-vs-architectural boundary holds**: Phase 6 module-local refresh strictly limited to deleted-type removals + status-line corrections + factual updates — no narrative-meaning changes. Items requiring architectural deliberation (K-L11 framing, K-L3.1 propagation, Vanilla mod READMEs) explicitly flagged forward rather than improvised. Discipline preserved at the cost of slightly thin post-Phase-5 Combat/README that Phase 6 didn't refill (it would have required architectural narrative beyond scope).
+  - **Cross-ref refresh script reusability**: PowerShell script at `tools/scratch/A_05/update_xrefs.ps1` parameterized by category — reusable for future organizational reshuffles. Pattern: «replace markdown link form within destDir-aware scope; replace inline path form repo-root-uniformly». Worth formalizing as `tools/` permanent helper if future moves are anticipated.
+  - **Pre-staged work + Stop #1 protocol scales**: Crystalka pre-staged 8 file moves before invoking the session. Treating those as Phase 3 work-in-progress (via Q0=A in Stop #1) preserved the user's pre-decision rather than re-deciding it. The 11-question Stop #1 format with explicit Q/recommendation/decision columns made the deliberation efficient (~3-minute response cycle).
+
+---
+
 ## M9-series progress (runtime)
 
 ### Overview
