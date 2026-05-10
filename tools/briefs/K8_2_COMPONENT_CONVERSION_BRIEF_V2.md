@@ -153,7 +153,7 @@ grep -r "class ModAccessibleAttribute" src/DualFrontier.Contracts/
 
 ### 0.7 — Migration plan housekeeping
 
-`docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` is untracked with status «AUTHORED — pending Crystalka acceptance and lock». Per Crystalka 2026-05-09 «Всё сохранил в главные документы как план» — accepted.
+`docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` is untracked with status «AUTHORED — pending Crystalka acceptance and lock». Per Crystalka 2026-05-09 «Всё сохранил в главные документы как план» — accepted.
 
 Edit the frontmatter:
 - `**Status**: AUTHORED — pending Crystalka acceptance and lock` → `**Status**: AUTHORITATIVE LOCKED — architectural roadmap for K-series and M-series`
@@ -163,11 +163,11 @@ Edit the frontmatter:
 Commit on **main** before feature branch:
 
 ```
-git add docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md
+git add docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md
 git commit -m "docs(plans): lock migration plan v1.0 (kernel→vanilla)"
 ```
 
-Move plan to `docs/` if currently in working tree at non-`docs/` location. Verify via `ls docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` after move.
+Move plan to `docs/` if currently in working tree at non-`docs/` location. Verify via `ls docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` after move.
 
 ### 0.8 — K8.2 v1 brief deprecation
 

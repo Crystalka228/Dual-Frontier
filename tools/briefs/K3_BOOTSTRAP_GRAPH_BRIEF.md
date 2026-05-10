@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
 **Status**: EXECUTED
-**Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K3, §1.3 (two-phase model), §1.4 (threading model), `docs/MIGRATION_PROGRESS.md` (K2 closure context), `docs/METHODOLOGY.md` v1.3
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K3, §1.3 (two-phase model), §1.4 (threading model), `docs/MIGRATION_PROGRESS.md` (K2 closure context), `docs/METHODOLOGY.md` v1.3
 **Predecessor**: K2 (`129a0a0`) — registry + bridge tests, merged to main
 **Target**: fresh feature branch `feat/k3-bootstrap-graph` от `main`
 **Estimated time**: 5–7 days at hobby pace (largest K-milestone in scope)

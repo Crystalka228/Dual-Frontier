@@ -15,7 +15,7 @@ Apply here: M7 closure documents what M7 actually shipped, what it did NOT ship,
 ## Out of scope
 
 - ANY code change to `src/`. Closure is verification. The §9.2 v1.6 ratification candidate is **registered for future cycle**, not addressed in this session.
-- ANY change to `docs/MOD_OS_ARCHITECTURE.md`. Spec wording stays at v1.5 LOCKED through M7. v1.6 ratification belongs to a follow-up cycle informed by the §9.2 candidate. **Surgical fixes** to typos / broken cross-references / clearly-wrong facts in newly-added M7 documentation are allowed per §9 of M3-M6 closure precedent — but only those.
+- ANY change to `docs/architecture/MOD_OS_ARCHITECTURE.md`. Spec wording stays at v1.5 LOCKED through M7. v1.6 ratification belongs to a follow-up cycle informed by the §9.2 candidate. **Surgical fixes** to typos / broken cross-references / clearly-wrong facts in newly-added M7 documentation are allowed per §9 of M3-M6 closure precedent — but only those.
 - ANY change to test fixtures or assertions. The 437/437 test count is the closure baseline.
 - M8 (Vanilla skeletons) preparation work. M7 closes; M8 is a separate session.
 - UI redesign (Kenney + Cinzel) brief — separate larger work, decisions still pending.
@@ -45,7 +45,7 @@ Apply here: M7 closure documents what M7 actually shipped, what it did NOT ship,
 
 7. **§7.5 fifth scenario closure verification.** M6 closure registered «§7.5 fifth scenario (mod-unloaded replacement-revert) is M6→M7 hand-off». M7 closure must verify this hand-off is met: the test surface that exercises mod unload AND post-unload kernel bridge re-registration. Run `grep -rn "ReplacementRevert\|UnloadRevert\|UnloadedMod_RestoresKernel" tests/` to find the exact test name. If the scenario was implicitly covered (e.g., M7.2 unload chain tests + M6.2 replacement skip tests run independently but no joint test exists), §7 documents this as a **carried hand-off to M8 or M9** rather than asserting closure. **Honest reporting required**: if M6→M7 hand-off was deferred without explicit registration, §7 surfaces the deferral, does not pretend it landed.
 
-8. **Spec byte-identity verification in §3 and §5.** `git diff <M6-closure-baseline>..HEAD -- docs/MOD_OS_ARCHITECTURE.md`. M6 closure baseline was `e643011`. Expected: zero output if v1.5 is byte-identical to the v1.4-locked-at-M6-closure state. M7 introduced **at least one** spec change — the v1.4 → v1.5 transition documented in user memory occurred during M7. So zero-output is NOT expected; the diff IS expected to show v1.4 → v1.5 transition with documented changelog entry. §3 and §5 capture the actual diff and verify it matches the intended changelog (no silent ratifications).
+8. **Spec byte-identity verification in §3 and §5.** `git diff <M6-closure-baseline>..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md`. M6 closure baseline was `e643011`. Expected: zero output if v1.5 is byte-identical to the v1.4-locked-at-M6-closure state. M7 introduced **at least one** spec change — the v1.4 → v1.5 transition documented in user memory occurred during M7. So zero-output is NOT expected; the diff IS expected to show v1.4 → v1.5 transition with documented changelog entry. §3 and §5 capture the actual diff and verify it matches the intended changelog (no silent ratifications).
 
 9. **Cross-document consistency check in §3.** Same three documents as M6 closure: `MOD_OS_ARCHITECTURE.md` (v1.5 LOCKED expected), `ROADMAP.md` (header date + M7 row + engine snapshot), `docs/README.md` (v1.5 LOCKED expected). Plus auxiliary: every housekeeping prompt file in `docs/prompts/` referenced by the relevant ROADMAP closure entries.
 
@@ -84,7 +84,7 @@ Apply here: M7 closure documents what M7 actually shipped, what it did NOT ship,
     - `docs/audit/UI_REVIEW_PRE_M75B2.md` — pre-implementation audit document, referenced from housekeeping briefs.
 
 3. **Current state documents**:
-    - `docs/MOD_OS_ARCHITECTURE.md` — verify v1.5 LOCKED status; identify v1.4→v1.5 changelog entry; locate §9.2 wording.
+    - `docs/architecture/MOD_OS_ARCHITECTURE.md` — verify v1.5 LOCKED status; identify v1.4→v1.5 changelog entry; locate §9.2 wording.
     - `docs/ROADMAP.md` — locate M7 row; verify all 7 sub-phases marked ✅ Closed; verify engine snapshot at 437/437.
     - `docs/README.md` — verify spec-version pointer.
     - `.gitignore` — verify Kenney + Cinzel patterns from `0b11d1f` housekeeping.
@@ -113,7 +113,7 @@ git log --oneline -1                                # expect 110ad61 (M7.5.B.2 m
 dotnet test                                         # expect 437/437 passing
 
 # Confirm spec version.
-grep -E "^.*v1\.[0-9]+ LOCKED" docs/MOD_OS_ARCHITECTURE.md | head -5
+grep -E "^.*v1\.[0-9]+ LOCKED" docs/architecture/MOD_OS_ARCHITECTURE.md | head -5
 grep -E "^.*v1\.[0-9]+ LOCKED" docs/README.md | head -5
 
 # Verify M7.5.B.2 sub-phase status in ROADMAP.
@@ -127,7 +127,7 @@ grep -E "^.*\(commits .*\.\..*," docs/audit/M6_CLOSURE_REVIEW.md | head -1
 # Expected output: refers to e643011 as M6 closure HEAD; that's our M7-closure baseline.
 
 # Verify §9.2 wording in spec.
-grep -A 5 "## 9.2\|### 9.2\|^9.2 " docs/MOD_OS_ARCHITECTURE.md | head -30
+grep -A 5 "## 9.2\|### 9.2\|^9.2 " docs/architecture/MOD_OS_ARCHITECTURE.md | head -30
 ```
 
 ## Implementation
@@ -379,7 +379,7 @@ M7 closes <cleanly | with one v1.6 candidate registered>. M8 (Vanilla skeletons)
 #### §12 See also
 
 ```markdown
-- [MOD_OS_ARCHITECTURE](../MOD_OS_ARCHITECTURE.md) v1.5 LOCKED.
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.5 LOCKED.
 - [ROADMAP](../ROADMAP.md) — M7 closure status, 7 sub-phase entries,
   6 housekeeping closures.
 - [METHODOLOGY](../METHODOLOGY.md) — §2.4, §7.3, §11.4.

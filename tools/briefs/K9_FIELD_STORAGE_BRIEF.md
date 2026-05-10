@@ -1,11 +1,11 @@
 # K9 — Field Storage Abstraction (Full Brief)
 
 **Status**: AUTHORED — awaiting K6, K7, K8 closure per β6 sequencing before execution
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K9
-**Specification**: `docs/GPU_COMPUTE.md` v2.0 LOCKED, "Architectural integration → Native kernel (K9)" + "Roadmap → K9"
-**API contract**: `docs/MOD_OS_ARCHITECTURE.md` v1.6 §4.6 (IModApi v3 — Fields and Compute Pipelines)
-**Companion document**: `docs/FIELDS.md` (storage contract, orthogonal to ECS)
-**Mathematical models**: `docs/GPU_COMPUTE.md` "Mathematical models" — diffusion, anisotropy, capacitance, cliff threshold
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K9
+**Specification**: `docs/architecture/GPU_COMPUTE.md` v2.0 LOCKED, "Architectural integration → Native kernel (K9)" + "Roadmap → K9"
+**API contract**: `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.6 §4.6 (IModApi v3 — Fields and Compute Pipelines)
+**Companion document**: `docs/architecture/FIELDS.md` (storage contract, orthogonal to ECS)
+**Mathematical models**: `docs/architecture/GPU_COMPUTE.md` "Mathematical models" — diffusion, anisotropy, capacitance, cliff threshold
 
 ---
 
@@ -54,10 +54,10 @@ Read `docs/MIGRATION_PROGRESS.md`. Verify:
 ### 0.4 — Prerequisite documents at expected versions
 
 ```
-head -10 docs/GPU_COMPUTE.md
-head -10 docs/KERNEL_ARCHITECTURE.md
-head -10 docs/MOD_OS_ARCHITECTURE.md
-head -10 docs/FIELDS.md
+head -10 docs/architecture/GPU_COMPUTE.md
+head -10 docs/architecture/KERNEL_ARCHITECTURE.md
+head -10 docs/architecture/MOD_OS_ARCHITECTURE.md
+head -10 docs/architecture/FIELDS.md
 ```
 
 **Expected**:
@@ -1985,7 +1985,7 @@ Add K9 row under K-series progress (full closure entry following K0–K5 format)
 
 ### 9.2 — Update `KERNEL_ARCHITECTURE.md` status snapshot
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 The status snapshot line in the Executive Summary section currently reads:
 
@@ -1997,7 +1997,7 @@ Update to reflect K9 closure (preserve the format).
 
 ### 9.3 — Update `FIELDS.md` from Draft to LOCKED-equivalent
 
-**File**: `docs/FIELDS.md`
+**File**: `docs/architecture/FIELDS.md`
 
 Remove **TBD** markers from sections that K9 has now grounded (Native layer, C ABI, Managed bridge — all have concrete implementations). The Save/load section keeps **TBD** until the persistence-integration milestone.
 
@@ -2037,7 +2037,7 @@ Append a closing section:
 ### 9.5 — Final atomic commit
 
 ```
-git add docs/MIGRATION_PROGRESS.md docs/KERNEL_ARCHITECTURE.md docs/FIELDS.md tools/briefs/K9_FIELD_STORAGE_BRIEF.md
+git add docs/MIGRATION_PROGRESS.md docs/architecture/KERNEL_ARCHITECTURE.md docs/architecture/FIELDS.md tools/briefs/K9_FIELD_STORAGE_BRIEF.md
 git commit -m "docs(migration): K9 closure recorded"
 ```
 

@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09
 **Status**: EXECUTED 2026-05-09 — closed at `72ea8b5..e917220`. See `docs/PERFORMANCE_REPORT_K7.md` for measurements + analysis and `docs/MIGRATION_PROGRESS.md` K7 closure section for closure record.
-**Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K7, `docs/MIGRATION_PROGRESS.md` (K6.1 closure context), `docs/METHODOLOGY.md`, `docs/CODING_STANDARDS.md`
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K7, `docs/MIGRATION_PROGRESS.md` (K6.1 closure context), `docs/METHODOLOGY.md`, `docs/CODING_STANDARDS.md`
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K7 row promotes from NOT STARTED → DONE on closure)
 **Methodology lineage**: `tools/briefs/K6_1_FAULT_WIRING_BRIEF.md` (read-first/brief-second/execute-third pivot, Anthropic `Edit` literal-mode semantics)
 **Predecessor**: K6.1 (`fe03ed3..ab5a717`) — mod fault wiring end-to-end
@@ -67,7 +67,7 @@ git log --oneline -25
 ### 0.3 — Prerequisite documents at expected versions
 
 ```
-head -10 docs/KERNEL_ARCHITECTURE.md
+head -10 docs/architecture/KERNEL_ARCHITECTURE.md
 head -10 docs/MIGRATION_PROGRESS.md
 ```
 
@@ -405,7 +405,7 @@ The report is written **after measurements** as the final K7 deliverable. Struct
 **Date**: 2026-MM-DD
 **Author**: K7 brief execution session
 **Hardware**: AMD Ryzen 7 7435HS, 32 GB DDR5-4800, Win11 25H2 (Skarlet)
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §K7, K8 evidence base
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §K7, K8 evidence base
 
 ## Executive summary
 

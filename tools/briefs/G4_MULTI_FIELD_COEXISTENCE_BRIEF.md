@@ -1,7 +1,7 @@
 # G4 — Multi-field coexistence
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G4
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G4
 **Prerequisites**: G3 closed
 
 ## Goal

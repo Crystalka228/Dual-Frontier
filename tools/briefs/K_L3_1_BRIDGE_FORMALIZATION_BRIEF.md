@@ -4,7 +4,7 @@
 **Authored**: 2026-05-10 (Opus, post-K8.2 v2 closure)
 **Target session**: Crystalka + Opus chat session (no Cloud Code)
 **Estimated session length**: 2–4 hours (deliberation + Phase 4 amendment plan authoring)
-**Status**: EXECUTED 2026-05-10 — Phase 0 reads + Phase 1 deliberation Q1–Q6 + Phase 3 synthesis (§4.A) + Phase 4 amendment plan authoring complete. Amendment plan at `docs/K_L3_1_AMENDMENT_PLAN.md` is the executable artifact for follow-up amendment brief.
+**Status**: EXECUTED 2026-05-10 — Phase 0 reads + Phase 1 deliberation Q1–Q6 + Phase 3 synthesis (§4.A) + Phase 4 amendment plan authoring complete. Amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` is the executable artifact for follow-up amendment brief.
 **Locks** (session 2026-05-10): Q1=(a) `[ManagedStorage]` attribute on type; Q2=(β-i) mod-side storage + IModApi `RegisterManagedComponent<T>`; Q3=(i) explicit dual API via `SystemBase.NativeWorld` + `SystemBase.ManagedStore<T>()`; Q4=(b) runtime-only managed-path (no persistence); Q5=(a) passive metrics, analyzer (Q5.b) deferred post-migration; Q6=(a) path-blind capability (already structurally true per K4 prerequisite); Synthesis=§4.A amend K-L3 (peer paths, single principle).
 **Prerequisite**: K8.2 v2 closure (`7527d00` on main) — DONE 2026-05-09
 **Blocks**: README cleanup pass, push to origin, K8.3 brief authoring (all deferred to post-K-L3.1 amendment brief execution)
@@ -60,7 +60,7 @@ The session begins with the Opus instance reading these documents end-to-end bef
 
 ### §2.1 Architectural reads (mandatory, full-document)
 
-1. **`docs/KERNEL_ARCHITECTURE.md` v1.4** — full document. Particular attention:
+1. **`docs/architecture/KERNEL_ARCHITECTURE.md` v1.4** — full document. Particular attention:
    - Part 0 — K-L1 through K-L11 (which are foundational invariants and which are conditional)
    - K-L3 specifically — original wording, post-K8.0 implication extension, post-K8.2 v2 implication update
    - K-L8 «storage as architectural concern» — relates to bridge mechanism
@@ -68,7 +68,7 @@ The session begins with the Opus instance reading these documents end-to-end bef
    - K-L11 «World-as-test-fixture» — defines retained managed surface
    - Part 2 — K8.x master plan (current row wording for K8.2/K8.3/K8.4/K8.5)
    - Part 7 (if present) — error semantics convention from K-Lessons closure
-2. **`docs/MOD_OS_ARCHITECTURE.md` v1.6 LOCKED** — full document. Particular attention:
+2. **`docs/architecture/MOD_OS_ARCHITECTURE.md` v1.6 LOCKED** — full document. Particular attention:
    - §1.3 vanilla mod definition + §1.4 load graph
    - §3 capability model (§3.1, §3.2, §3.5, §3.6)
    - §4.6 IModApi v3 surface (Fields and ComputePipelines — relate to per-path API extension question)
@@ -77,7 +77,7 @@ The session begins with the Opus instance reading these documents end-to-end bef
    - §11 migration phases (M3.5 deferred entry — capability registry refresh)
    - §12 D-1 LOCKED `[ModAccessible]` (must work uniformly across paths)
    - **Lines 1149–1150** specifically — the precise stale wording
-3. **`docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED** — full document. Particular attention:
+3. **`docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED** — full document. Particular attention:
    - §0.3 LOCKED architectural decisions — 8 decisions; will likely need decision #9 added or #2 reformulated
    - §1.1 K8.2 scope (already executed — historical reference for what selective judgment was applied)
    - §1.2 K8.3 scope (next milestone — bridge decision affects system access pattern wording)

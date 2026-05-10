@@ -1713,7 +1713,7 @@ What the bridge depends on, that main provides equivalently:
 
 These are headline main-side changes that landed after the experiment branched off (i.e. on origin/main but not on the local main; the gap matters):
 
-- **`docs/RUNTIME_ARCHITECTURE.md` v1.0** (origin/main only — `bcd63aa` / `75be805`): the Vulkan migration spec the prompt's own context references. The runtime layer is being designed; the C++ kernel work has not been considered as input to that design.
+- **`docs/architecture/RUNTIME_ARCHITECTURE.md` v1.0** (origin/main only — `bcd63aa` / `75be805`): the Vulkan migration spec the prompt's own context references. The runtime layer is being designed; the C++ kernel work has not been considered as input to that design.
 - The Persistence project (`DualFrontier.Persistence`, `DualFrontier.Persistence.Tests`) — out-of-band of the kernel, but proves the SLN has grown.
 - Mod fixture projects — out-of-band.
 - Substantial domain content in `Components/`, `Systems/`, `Application/` that the branch has older or absent.

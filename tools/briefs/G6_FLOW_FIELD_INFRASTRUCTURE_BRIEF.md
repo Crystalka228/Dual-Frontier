@@ -1,7 +1,7 @@
 # G6 — Flow field infrastructure
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G6
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G6
 **Prerequisites**: G5 closed (or G4 closed if scheduling permits early start)
 
 ## Goal

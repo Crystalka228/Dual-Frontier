@@ -258,12 +258,12 @@ state. This is the first M-cycle closure since M3 where
 state — both the M7 pre-flight v1.4 ratification (`b504813`) and the
 mid-batch v1.5 audit-Pass-2 ratification (`3f00c2a`) happened during
 the M7 batch. This is a deviation from the M3–M6 pattern (where every
-closure had `git diff <baseline>..HEAD -- docs/MOD_OS_ARCHITECTURE.md`
+closure had `git diff <baseline>..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md`
 returning zero output) and is explicitly handled in §5.2 below.
 
 ### Spec diff between M6 closure baseline and HEAD
 
-`git diff c7210ca..HEAD -- docs/MOD_OS_ARCHITECTURE.md` shows 21 lines
+`git diff c7210ca..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` shows 21 lines
 changed, distributed across:
 
 - **Status line** (line 8): `LOCKED v1.3 — …M4.3 implementation review (v1.3) applied.` → `LOCKED v1.5 — …M7 pre-flight readiness review (v1.4), and Audit Campaign Pass 2 (v1.5) applied.`
@@ -283,11 +283,11 @@ M5/M6 byte-identity pattern but they remain non-strategic
 
 | Document | Field | Expected | Found | Status |
 |---|---|---|---|---|
-| `docs/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.5` | `LOCKED v1.5 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), M7 pre-flight readiness review (v1.4), and Audit Campaign Pass 2 (v1.5) applied.` | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | v1.4 changelog entry | covers §9.5 step 7 GC pump + §9.5.1 best-effort | present | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | v1.5 changelog entry | covers §11.2 baseline enumeration | present | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | §9.5.1 sub-section | new section locking best-effort failure semantics | present after §9.5 | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | §12 D-1..D-7 byte-identity | byte-identical to M6 closure baseline `c7210ca` | `diff <(awk '/^## 12\./,EOF' /tmp/m6_spec.md) <(awk '/^## 12\./,EOF' docs/MOD_OS_ARCHITECTURE.md)` returns zero output | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.5` | `LOCKED v1.5 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), M7 pre-flight readiness review (v1.4), and Audit Campaign Pass 2 (v1.5) applied.` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | v1.4 changelog entry | covers §9.5 step 7 GC pump + §9.5.1 best-effort | present | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | v1.5 changelog entry | covers §11.2 baseline enumeration | present | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | §9.5.1 sub-section | new section locking best-effort failure semantics | present after §9.5 | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | §12 D-1..D-7 byte-identity | byte-identical to M6 closure baseline `c7210ca` | `diff <(awk '/^## 12\./,EOF' /tmp/m6_spec.md) <(awk '/^## 12\./,EOF' docs/architecture/MOD_OS_ARCHITECTURE.md)` returns zero output | ✓ |
 | `docs/ROADMAP.md` | Header date (line 11) | `2026-05-03` | post-update: `*Updated: 2026-05-03 (M7 closed; M8 (Vanilla skeletons) is the next phase; §9.2 v1.6 ratification candidate registered).*` | ✓ |
 | `docs/ROADMAP.md` | M7 row (line 30) | `✅ Closed` | post-update: `M7 — Hot reload \| ✅ Closed \| 437/437 (50 commits)` | ✓ |
 | `docs/ROADMAP.md` | All 7 M7 sub-phase entries | each `✅ Closed` with commit SHAs | M7.1, M7.2, M7.3, M7.4, M7.5.A, M7.5.B.1, M7.5.B.2 each `✅` with their feat/test/docs commit triples | ✓ |
@@ -403,17 +403,17 @@ v1.5 ratifications). However:
 - The full diff is contained in the **status line + version-history
   changelog entries + §9.5 step 7 body + new §9.5.1 sub-section + §11.2
   baseline-enumeration line**.
-- `git diff c7210ca..HEAD -- docs/MOD_OS_ARCHITECTURE.md` shows zero
+- `git diff c7210ca..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` shows zero
   changes inside the §12 «Locked decisions» section (D-1 through D-7).
   Verified directly:
 
 ```
 $ diff <(awk '/^## 12\./,EOF' /tmp/m6_spec.md) \
-       <(awk '/^## 12\./,EOF' docs/MOD_OS_ARCHITECTURE.md) | wc -l
+       <(awk '/^## 12\./,EOF' docs/architecture/MOD_OS_ARCHITECTURE.md) | wc -l
 0
 ```
 
-Where `/tmp/m6_spec.md` is `git show c7210ca:docs/MOD_OS_ARCHITECTURE.md`.
+Where `/tmp/m6_spec.md` is `git show c7210ca:docs/architecture/MOD_OS_ARCHITECTURE.md`.
 
 This is the structural meaning: the M7 batch's spec ratifications are
 **non-strategic** by construction. The v1.4 entry is a clarification of
@@ -840,16 +840,16 @@ commit per the M3-M6 precedent (one commit per coherent fix bucket).
 | File | Line | Pre-fix | Post-fix | Justification |
 |---|---|---|---|---|
 | `docs/README.md` | 28 | `**v1.4 LOCKED.**` | `**v1.5 LOCKED.**` | Stale reference; spec is v1.5 LOCKED at HEAD per `MOD_OS_ARCHITECTURE.md:8`. Audit Pass 4 §14 Tier 3 #2 / Pass 5 H-1b confirmed. |
-| `docs/ROADMAP.md` | 3 | `MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.4 LOCKED;` | `MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.5 LOCKED;` | Stale preamble. Audit Pass 2 §13 OOS #10 / Pass 3 OOS #1 / Pass 4 §14 Tier 3 #3 / Pass 5 H-1c confirmed. |
+| `docs/ROADMAP.md` | 3 | `MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.4 LOCKED;` | `MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.5 LOCKED;` | Stale preamble. Audit Pass 2 §13 OOS #10 / Pass 3 OOS #1 / Pass 4 §14 Tier 3 #3 / Pass 5 H-1c confirmed. |
 | `docs/ROADMAP.md` | 157 | `derived from MOD_OS_ARCHITECTURE v1.4 §11.` | `derived from MOD_OS_ARCHITECTURE v1.5 §11.` | Stale M-section preamble. Internal consistency — same spec. |
-| `docs/ROADMAP.md` | 516 | `[MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.4 LOCKED specification driving M1–M10.` | `[MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.` | Stale see-also. Audit Pass 4 §14 Tier 3 #5 / Pass 5 H-1e confirmed. |
+| `docs/ROADMAP.md` | 516 | `[MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — v1.4 LOCKED specification driving M1–M10.` | `[MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.` | Stale see-also. Audit Pass 4 §14 Tier 3 #5 / Pass 5 H-1e confirmed. |
 | `docs/ROADMAP.md` | 390 | `the resolution is a v1.5 ratification rather than relocating the flag` | `the resolution is a v1.6 ratification rather than relocating the flag into the scheduler (v1.5 was consumed by audit campaign Pass 2).` | Hypothetical-future clause overtaken by mid-batch v1.5 ratification (`3f00c2a`). The next available ratification slot is v1.6. Also fixes a broken cross-reference to `./M6_CLOSURE_REVIEW.md` (now at `./audit/M6_CLOSURE_REVIEW.md`) in the same paragraph. |
 | `docs/ROADMAP.md` | 392 | `the resolution is a v1.5 ratification rather than silent reordering.` | `the resolution is a v1.6 ratification rather than silent reordering (v1.5 was consumed by audit campaign Pass 2).` | Same justification as #5 above. |
 | `docs/ROADMAP.md` | 394 | `the resolution is a v1.5 ratification rather than silent semantic drift.` | `the resolution is a v1.6 ratification rather than silent semantic drift (v1.5 was consumed by audit campaign Pass 2).` | Same justification as #5 above. |
 
 **Total:** 6 surgical-fix edits across 2 files, applied in a single
 combined commit per M3-M6 precedent. No surgical fix touches
-`docs/MOD_OS_ARCHITECTURE.md` (spec stays at v1.5 LOCKED through M7
+`docs/architecture/MOD_OS_ARCHITECTURE.md` (spec stays at v1.5 LOCKED through M7
 per the brief's out-of-scope clause) or any code under `src/`.
 
 The closure-review cross-references in `docs/audit/AUDIT_CAMPAIGN_PLAN.md`
@@ -1073,7 +1073,7 @@ is unblocked.
 
 ## §12 See also
 
-- [MOD_OS_ARCHITECTURE](../MOD_OS_ARCHITECTURE.md) v1.5 LOCKED — the
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.5 LOCKED — the
   specification this review verifies. v1.4 + v1.5 ratifications during
   M7 batch; D-1 through D-7 byte-identical to M6 closure state.
 - [ROADMAP](../ROADMAP.md) — M7 closure status, 7 sub-phase entries,

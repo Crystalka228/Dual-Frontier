@@ -1,7 +1,7 @@
 # G0 — Vulkan compute pipeline plumbing
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G0
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G0
 **Prerequisites**: K9 closed; M9.0–M9.4 closed (Vulkan instance/device live)
 
 ## Goal

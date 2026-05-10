@@ -83,7 +83,7 @@ M7.5.B.2 closes the M7 cycle's core implementation by binding the `ModMenuContro
 5. **Existing input handling**:
     - `src/DualFrontier.Presentation/Input/InputRouter.cs` — current ESC handler. Stays unchanged.
 6. **Spec conformance reference**:
-    - `docs/MOD_OS_ARCHITECTURE.md` §9.6 wording for the hot-reload disabled tooltip text. Match the spec phrasing closely.
+    - `docs/architecture/MOD_OS_ARCHITECTURE.md` §9.6 wording for the hot-reload disabled tooltip text. Match the spec phrasing closely.
 7. **Existing M7.5.B.1 tests** (head only):
     - `tests/DualFrontier.Modding.Tests/Bootstrap/GameBootstrapIntegrationTests.cs` — pattern for the new integration tests in commit 2.
 8. **METHODOLOGY** §2.4, §7.3.

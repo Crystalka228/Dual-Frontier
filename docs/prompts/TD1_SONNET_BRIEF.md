@@ -81,7 +81,7 @@ grep -rnE '\./M[3-7]_CLOSURE_REVIEW\.md' docs/audit/             # >0 матче
 
 3. **Forward references valid.** `M7_CLOSURE_REVIEW.md` упоминается до его создания (он будет создан в M7-closure session post-TD). Ссылки `../audit/M7_CLOSURE_REVIEW.md` валидны как forward references — не делать их битыми, не удалять.
 
-4. **No changes outside the 14 files.** Никаких правок в `docs/MOD_OS_ARCHITECTURE.md`, `docs/ROADMAP.md`, `docs/METHODOLOGY.md`, исходниках, тестах. M-phase boundary preserved.
+4. **No changes outside the 14 files.** Никаких правок в `docs/architecture/MOD_OS_ARCHITECTURE.md`, `docs/ROADMAP.md`, `docs/METHODOLOGY.md`, исходниках, тестах. M-phase boundary preserved.
 
 5. **No tests, no build verification.** Это pure docs sweep. После коммита `dotnet build && dotnet test` не нужны (ничего не изменилось в коде). Verification — только grep-команды выше.
 

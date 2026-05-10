@@ -139,7 +139,7 @@ Source: `.git/logs/HEAD`, filtered for `commit:` event-type lines (checkout and 
 
 ## §3 Spec version
 
-- **File:** `docs/MOD_OS_ARCHITECTURE.md`
+- **File:** `docs/architecture/MOD_OS_ARCHITECTURE.md`
 - **Status line (line 8, verbatim):**
   ```
   **Status:** LOCKED v1.4 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), and M7 pre-flight readiness review (v1.4) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
@@ -151,8 +151,8 @@ Source: `.git/logs/HEAD`, filtered for `commit:` event-type lines (checkout and 
     - §9.5: new sub-section §9.5.1 «Failure semantics» added, locking the best-effort discipline already implicit in the chain. Steps 1–6 are sequential and best-effort: if any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. The `ModLoader.UnloadMod` swallowed `try/catch` around `mod.Instance.Unload()` (in place since M0) is consistent with this discipline. After step 6, if step 7 times out, the existing `ModUnloadTimeout` warning fires; the mod is removed from the active set regardless. There is no atomic-unload guarantee — `Unload` is conceptually irreversible (subscriptions removed cannot be re-attached without re-running `Subscribe`); the chain is structured so each step is a no-op if its predecessor failed (e.g. `RemoveSystems` on a mod with no registered systems is harmless). This formalises a discipline the M0–M6 implementation already follows; no new state is introduced to §9.1.
     - No semantic changes. No locked decision (D-1 through D-7) is altered. No state added to §9.1. M0–M6 implementations continue to comply.
   ```
-- **File size:** 65,037 bytes (source: `ls -la docs/MOD_OS_ARCHITECTURE.md`).
-- **Total line count:** 982 (source: `wc -l docs/MOD_OS_ARCHITECTURE.md`).
+- **File size:** 65,037 bytes (source: `ls -la docs/architecture/MOD_OS_ARCHITECTURE.md`).
+- **Total line count:** 982 (source: `wc -l docs/architecture/MOD_OS_ARCHITECTURE.md`).
 - **Top-level section count (lines starting with `## `):** 15 (Preamble + 13 numbered sections §0–§12 + See also; source: Grep `^## ` over file).
 
 ---
@@ -165,31 +165,31 @@ Source: `.git/logs/HEAD`, filtered for `commit:` event-type lines (checkout and 
 |---|---|---|---|
 | `README.md` (root) | nav / research framing | active (v1.0 framing) | 6,561 |
 | `docs/README.md` | nav | active | 5,834 |
-| `docs/MOD_OS_ARCHITECTURE.md` | spec | LOCKED v1.4 (line 8) | 65,037 |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | spec | LOCKED v1.4 (line 8) | 65,037 |
 | `docs/ROADMAP.md` | active roadmap | active (M7.3 closed; M7.4–M7.5 pending per status overview line 11) | 52,535 |
 | `docs/METHODOLOGY.md` | methodology | active v1.0 (line 6 says "Version: 1.0 (2026-04-25)") | 33,275 |
-| `docs/ARCHITECTURE.md` | architecture | active v0.3 (line 7 changelog `v0.3 (2026-04)`) | 11,712 |
-| `docs/CONTRACTS.md` | architecture | active | 5,933 |
-| `docs/ECS.md` | architecture | active | 7,493 |
-| `docs/EVENT_BUS.md` | architecture | active | 10,139 |
-| `docs/THREADING.md` | architecture | active | 9,579 |
-| `docs/ISOLATION.md` | architecture | active | 8,952 |
-| `docs/MODDING.md` | architecture/dev | active | 12,695 |
-| `docs/MOD_PIPELINE.md` | architecture/dev | active v0.2 (line 4 says `Architecture version: v0.2  \|  Implementation phase: 2`) | 13,394 |
+| `docs/architecture/ARCHITECTURE.md` | architecture | active v0.3 (line 7 changelog `v0.3 (2026-04)`) | 11,712 |
+| `docs/architecture/CONTRACTS.md` | architecture | active | 5,933 |
+| `docs/architecture/ECS.md` | architecture | active | 7,493 |
+| `docs/architecture/EVENT_BUS.md` | architecture | active | 10,139 |
+| `docs/architecture/THREADING.md` | architecture | active | 9,579 |
+| `docs/architecture/ISOLATION.md` | architecture | active | 8,952 |
+| `docs/architecture/MODDING.md` | architecture/dev | active | 12,695 |
+| `docs/architecture/MOD_PIPELINE.md` | architecture/dev | active v0.2 (line 4 says `Architecture version: v0.2  \|  Implementation phase: 2`) | 13,394 |
 | `docs/CODING_STANDARDS.md` | development | active | 6,319 |
 | `docs/DEVELOPMENT_HYGIENE.md` | development | active | 9,966 |
 | `docs/TESTING_STRATEGY.md` | development | active | 6,347 |
-| `docs/PERFORMANCE.md` | development | active | 7,266 |
+| `docs/architecture/PERFORMANCE.md` | development | active | 7,266 |
 | `docs/PIPELINE_METRICS.md` | methodology empirics | active v0.1 (line 13 says "Status: v0.1 (2026-04-28)") | 10,568 |
-| `docs/GPU_COMPUTE.md` | research deferred | active (deferred decision) | 2,990 |
+| `docs/architecture/GPU_COMPUTE.md` | research deferred | active (deferred decision) | 2,990 |
 | `docs/NATIVE_CORE_EXPERIMENT.md` | research / experiment | "Experiment — awaiting benchmark results" (line 13) | 18,914 |
-| `docs/VISUAL_ENGINE.md` | architecture | active | 5,932 |
-| `docs/GODOT_INTEGRATION.md` | architecture | active | 9,615 |
-| `docs/RESOURCE_MODELS.md` | v0.2 addendum | active | 4,412 |
-| `docs/COMPOSITE_REQUESTS.md` | v0.2 addendum | active | 6,626 |
+| `docs/architecture/VISUAL_ENGINE.md` | architecture | active | 5,932 |
+| `docs/architecture/GODOT_INTEGRATION.md` | architecture | active | 9,615 |
+| `docs/architecture/RESOURCE_MODELS.md` | v0.2 addendum | active | 4,412 |
+| `docs/architecture/COMPOSITE_REQUESTS.md` | v0.2 addendum | active | 6,626 |
 | `docs/FEEDBACK_LOOPS.md` | v0.2 addendum | active | 5,079 |
-| `docs/COMBO_RESOLUTION.md` | v0.2 addendum | active | 4,983 |
-| `docs/OWNERSHIP_TRANSITION.md` | v0.2 addendum | active | 6,340 |
+| `docs/architecture/COMBO_RESOLUTION.md` | v0.2 addendum | active | 4,983 |
+| `docs/architecture/OWNERSHIP_TRANSITION.md` | v0.2 addendum | active | 6,340 |
 | `docs/TRANSLATION_GLOSSARY.md` | translation | locked v1.0 (line 8 says "Status: v1.0 (locked)") | 49,589 |
 | `docs/TRANSLATION_PLAN.md` | translation | active v0.1 draft (line 10 says "Version: 0.1 (draft, 2026-04-26)") | 17,643 |
 | `docs/NORMALIZATION_REPORT.md` | translation Pass 1 artifact | "Status: complete. Pass 2 may begin once the human resolves the two escalations recorded in §6." (line 8) | 31,442 |
@@ -400,7 +400,7 @@ Translation-campaign audit-trail artifacts also present in `docs/audit/`:
 | `docs/audit/PASS_3_NOTES.md` | 2026-04-27 | Pass 3 (code translation) | "complete. Cyrillic-grep clean across `src/`, `tests/`, `mods/`" (line 8) |
 | `docs/audit/PASS_4_REPORT.md` | 2026-04-27 | Pass 4 (verification) | branch `chore/translation-pass-3`; surgical fix `352ff0f` (line 9) |
 
-**Ratification entries in `docs/MOD_OS_ARCHITECTURE.md` Version history (lines 10–29):**
+**Ratification entries in `docs/architecture/MOD_OS_ARCHITECTURE.md` Version history (lines 10–29):**
 
 | Version | Source review | Entry summary (verbatim quote of headline) |
 |---|---|---|

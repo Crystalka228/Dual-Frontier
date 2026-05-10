@@ -81,7 +81,7 @@ D:\Colony_Simulator\Colony_Simulator\docs\M6_CLOSURE_REVIEW.md    (образе�
 | Что | Источник |
 |---|---|
 | Repo root | `D:\Colony_Simulator\Colony_Simulator\` |
-| Spec | `docs/MOD_OS_ARCHITECTURE.md` v1.4 LOCKED |
+| Spec | `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.4 LOCKED |
 | Roadmap | `docs/ROADMAP.md` |
 | Campaign plan | `docs/audit/AUDIT_CAMPAIGN_PLAN.md` v1.0 LOCKED |
 | Closure review template | `docs/M6_CLOSURE_REVIEW.md` |
@@ -190,7 +190,7 @@ or `[Fact(Skip=...)]` are noted separately.
 
 ## §3 Spec version
 
-- **File:** `docs/MOD_OS_ARCHITECTURE.md`
+- **File:** `docs/architecture/MOD_OS_ARCHITECTURE.md`
 - **Status line (line ~8):** `LOCKED v1.X — ...` (verbatim copy)
 - **Last ratification entry (verbatim from changelog):**
   ```
@@ -211,7 +211,7 @@ ANOMALY (do not stop the pass — Pass 1 inventories what is, not what should be
 
 | Path | Type | Status (from header or content) | File size (bytes) |
 |---|---|---|---|
-| `docs/MOD_OS_ARCHITECTURE.md` | spec | LOCKED v1.X | N |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | spec | LOCKED v1.X | N |
 | `docs/ROADMAP.md` | active | active (M7.X in progress) | N |
 | `docs/M3_CLOSURE_REVIEW.md` | audit-trail | historical/frozen | N |
 | `docs/M4_CLOSURE_REVIEW.md` | audit-trail | historical/frozen | N |
@@ -220,26 +220,26 @@ ANOMALY (do not stop the pass — Pass 1 inventories what is, not what should be
 | `docs/SESSION_PHASE_4_CLOSURE_REVIEW.md` | audit-trail | preserved Russian | N |
 | `docs/METHODOLOGY.md` | methodology | active | N |
 | `docs/PIPELINE_METRICS.md` | methodology | active | N |
-| `docs/CONTRACTS.md` | architecture | active | N |
-| `docs/ECS.md` | architecture | active | N |
-| `docs/EVENT_BUS.md` | architecture | active | N |
-| `docs/THREADING.md` | architecture | active | N |
-| `docs/ISOLATION.md` | architecture | active | N |
-| `docs/MODDING.md` | architecture/dev | active | N |
-| `docs/MOD_PIPELINE.md` | architecture/dev | active | N |
+| `docs/architecture/CONTRACTS.md` | architecture | active | N |
+| `docs/architecture/ECS.md` | architecture | active | N |
+| `docs/architecture/EVENT_BUS.md` | architecture | active | N |
+| `docs/architecture/THREADING.md` | architecture | active | N |
+| `docs/architecture/ISOLATION.md` | architecture | active | N |
+| `docs/architecture/MODDING.md` | architecture/dev | active | N |
+| `docs/architecture/MOD_PIPELINE.md` | architecture/dev | active | N |
 | `docs/CODING_STANDARDS.md` | development | active | N |
 | `docs/DEVELOPMENT_HYGIENE.md` | development | active | N |
 | `docs/TESTING_STRATEGY.md` | development | active | N |
-| `docs/PERFORMANCE.md` | development | active | N |
-| `docs/GPU_COMPUTE.md` | development | active | N |
+| `docs/architecture/PERFORMANCE.md` | development | active | N |
+| `docs/architecture/GPU_COMPUTE.md` | development | active | N |
 | `docs/NATIVE_CORE_EXPERIMENT.md` | development | active | N |
-| `docs/VISUAL_ENGINE.md` | architecture | active | N |
-| `docs/GODOT_INTEGRATION.md` | architecture | active | N |
-| `docs/RESOURCE_MODELS.md` | v0.2 addendum | active | N |
-| `docs/COMPOSITE_REQUESTS.md` | v0.2 addendum | active | N |
+| `docs/architecture/VISUAL_ENGINE.md` | architecture | active | N |
+| `docs/architecture/GODOT_INTEGRATION.md` | architecture | active | N |
+| `docs/architecture/RESOURCE_MODELS.md` | v0.2 addendum | active | N |
+| `docs/architecture/COMPOSITE_REQUESTS.md` | v0.2 addendum | active | N |
 | `docs/FEEDBACK_LOOPS.md` | v0.2 addendum | active | N |
-| `docs/COMBO_RESOLUTION.md` | v0.2 addendum | active | N |
-| `docs/OWNERSHIP_TRANSITION.md` | v0.2 addendum | active | N |
+| `docs/architecture/COMBO_RESOLUTION.md` | v0.2 addendum | active | N |
+| `docs/architecture/OWNERSHIP_TRANSITION.md` | v0.2 addendum | active | N |
 | `docs/TRANSLATION_GLOSSARY.md` | translation | locked v1.0 | N |
 | `docs/TRANSLATION_PLAN.md` | translation | active | N |
 | `docs/NORMALIZATION_REPORT.md` | translation | locked Pass 1 | N |

@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
 **Status**: EXECUTED
-**Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K2, §1.10 (component type registry), §1.11 (testing strategy), `docs/MIGRATION_PROGRESS.md` (K1 closure context), `docs/METHODOLOGY.md` v1.3
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K2, §1.10 (component type registry), §1.11 (testing strategy), `docs/MIGRATION_PROGRESS.md` (K1 closure context), `docs/METHODOLOGY.md` v1.3
 **Predecessor**: K1 (`e2c50b8`) — batching primitive, merged to main
 **Target**: fresh feature branch `feat/k2-registry-and-tests` от `main`
 **Estimated time**: 2–3 days at hobby pace

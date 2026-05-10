@@ -2,7 +2,7 @@
 
 **Status**: EXECUTED 2026-05-09 — closed at `fe03ed3..1a76d10`. See `docs/MIGRATION_PROGRESS.md` K6.1 closure section for full deliverable list, test count delta, and lessons learned.
 **Reference**: `docs/MIGRATION_PROGRESS.md` K6 closure section "Out of K6 scope (deferred)" + K6 lessons learned
-**Specification source**: `docs/MOD_OS_ARCHITECTURE.md` v1.6 §10.3 (architectural threats — caught), §3.6 (hybrid enforcement); `docs/KERNEL_ARCHITECTURE.md` v1.1 §K6 (deliverables superseded by K6.1 closure)
+**Specification source**: `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.6 §10.3 (architectural threats — caught), §3.6 (hybrid enforcement); `docs/architecture/KERNEL_ARCHITECTURE.md` v1.1 §K6 (deliverables superseded by K6.1 closure)
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K6.1 row added on closure)
 **Methodology lineage**: `tools/briefs/K6_MOD_REBUILD_BRIEF.md` (closure-shaped brief format), `tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md` (Anthropic `Edit` literal-mode semantics, atomic commit discipline)
 
@@ -49,8 +49,8 @@ git log --oneline -30
 ### 0.3 — Prerequisite documents at expected versions
 
 ```
-head -10 docs/KERNEL_ARCHITECTURE.md
-head -10 docs/MOD_OS_ARCHITECTURE.md
+head -10 docs/architecture/KERNEL_ARCHITECTURE.md
+head -10 docs/architecture/MOD_OS_ARCHITECTURE.md
 head -10 docs/MIGRATION_PROGRESS.md
 ```
 

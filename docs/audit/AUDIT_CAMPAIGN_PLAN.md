@@ -57,7 +57,7 @@ nav_order: 102
 | **Реализация ECS/scheduler/buses** | `src/DualFrontier.Core/` | Точечно в местах, упомянутых в LOCKED §3, §4, §9 |
 | **Components, Events, Systems** | `src/DualFrontier.Components/`, `src/DualFrontier.Events/`, `src/DualFrontier.Systems/` | Через `[ModAccessible]` + `[BridgeImplementation]` атрибуты |
 | **Тесты** | `tests/DualFrontier.Modding.Tests/`, `tests/DualFrontier.Core.Tests/`, `tests/DualFrontier.Systems.Tests/`, `tests/DualFrontier.Persistence.Tests/` | Acceptance criteria из ROADMAP → file:line:test_name |
-| **Сопровождающие доки** | `docs/CONTRACTS.md`, `docs/ECS.md`, `docs/EVENT_BUS.md`, `docs/THREADING.md`, `docs/ISOLATION.md`, `docs/MODDING.md`, `docs/MOD_PIPELINE.md`, `docs/CODING_STANDARDS.md`, `docs/TESTING_STRATEGY.md` | Cross-doc consistency vs v1.4; устаревшие утверждения → Tier 3 |
+| **Сопровождающие доки** | `docs/architecture/CONTRACTS.md`, `docs/architecture/ECS.md`, `docs/architecture/EVENT_BUS.md`, `docs/architecture/THREADING.md`, `docs/architecture/ISOLATION.md`, `docs/architecture/MODDING.md`, `docs/architecture/MOD_PIPELINE.md`, `docs/CODING_STANDARDS.md`, `docs/TESTING_STRATEGY.md` | Cross-doc consistency vs v1.4; устаревшие утверждения → Tier 3 |
 | **Артефакты translation campaign** | `NORMALIZATION_REPORT.md`, `PASS_2_NOTES.md`, `PASS_3_NOTES.md`, `PASS_4_REPORT.md`, `TRANSLATION_GLOSSARY.md` | Подтверждение завершённости: `grep '[А-Яа-я]' src/ tests/ mods/ --include='*.cs'` пуст модулю whitelist (§6.6) |
 | **Closure reviews** | `M3..M6_CLOSURE_REVIEW.md`, `SESSION_PHASE_4_CLOSURE_REVIEW.md` | Целостность аудит-следа: `Date:` поле ↔ `git log` ↔ HEAD коммит на момент создания |
 | **README в подпапках** | `src/*/README.md`, `tests/*/README.md`, `mods/*/README.md` | Quantitative claims (test counts, bus counts, system counts) ↔ реальность |
@@ -467,5 +467,5 @@ Tier 1+ копятся до Pass 5 final report.
 - [NORMALIZATION_REPORT](../NORMALIZATION_REPORT.md) — пример Pass 1 артефакта (translation campaign Pass 1).
 - [M6_CLOSURE_REVIEW](./M6_CLOSURE_REVIEW.md) — образец 8-section closure review формата для всех пяти проходов кампании (per §7.2 LOCKED).
 - [METHODOLOGY](../METHODOLOGY.md) — §2.4 atomic phase review, §7.3 process discipline; принципы кампании.
-- [MOD_OS_ARCHITECTURE](../MOD_OS_ARCHITECTURE.md) v1.4 LOCKED — основная цель аудита.
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.4 LOCKED — основная цель аудита.
 - [ROADMAP](../ROADMAP.md) — вторая основная цель аудита.

@@ -22,5 +22,5 @@ Godot DevKit and Native (Silk.NET). At runtime exactly one is active.
       (Silk.NET + OpenGL, SpriteBatch, TilemapRenderer).
 
 ## See also
-- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — overall
+- [../.docs/architecture/VISUAL_ENGINE.md](/docs/architecture/VISUAL_ENGINE.md) — overall
   DevKit vs Native strategy, the `.dfscene` format, and the developer pipeline.

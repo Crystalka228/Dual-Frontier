@@ -2,7 +2,7 @@
 
 **Purpose**: xUnit-based equivalence tests verifying managed bridge correctly mirrors managed `World` semantics. Validates marshalling, span lifetime invariants, write batch serialization.
 
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §1.11, K2 milestone
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §1.11, K2 milestone
 
 **Status**: scaffolding only. Tests added в K2 milestone (~30-40 tests).
 

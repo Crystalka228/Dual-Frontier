@@ -108,7 +108,7 @@ public void System_publishing_to_wrong_bus_throws()
 }
 ```
 
-Every violation listed in [ISOLATION](./ISOLATION.md) MUST have a paired test. Without these tests the architectural guarantee remains marketing.
+Every violation listed in [ISOLATION](/docs/architecture/ISOLATION.md) MUST have a paired test. Without these tests the architectural guarantee remains marketing.
 
 ## Modding tests — the mod sees no internals
 
@@ -155,7 +155,7 @@ Fixture mods live in `tests/fixtures/*` and are built in CI before the main test
 
 Benchmarks (BenchmarkDotNet) live in a separate `tests/DualFrontier.Core.Benchmarks` project. Zero overhead on a regular test run: benchmarks are not invoked through `dotnet test`, only through `dotnet run -c Release`.
 
-Regression gates in CI: `PerformanceGates.cs` compares results to the baseline and fails when degradation exceeds 10%. Details: [PERFORMANCE](./PERFORMANCE.md).
+Regression gates in CI: `PerformanceGates.cs` compares results to the baseline and fails when degradation exceeds 10%. Details: [PERFORMANCE](/docs/architecture/PERFORMANCE.md).
 
 ## dotnet test
 
@@ -198,6 +198,6 @@ CI gate: red build on any test failure or any performance-threshold violation. S
 
 ## See also
 
-- [ISOLATION](./ISOLATION.md)
-- [PERFORMANCE](./PERFORMANCE.md)
+- [ISOLATION](/docs/architecture/ISOLATION.md)
+- [PERFORMANCE](/docs/architecture/PERFORMANCE.md)
 - [CODING_STANDARDS](./CODING_STANDARDS.md)

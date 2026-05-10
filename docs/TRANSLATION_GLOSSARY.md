@@ -11,7 +11,7 @@ nav_order: 99
 
 - v0.1 (initial draft) — term tables (§1–§10), decisions to lock (§11), style notes (§12).
 - v0.2 — adds Preamble, §13 Reserved code identifiers, §14 Phrase patterns, §15 User-facing string contracts, §16 Maintenance & versioning. No removals. No section renumbering.
-- **v1.0 (this version, 2026-04-26, produced by Pass 1)** — all `⚠ DECISION` markers resolved. 8 of 10 lexical decisions locked as `✓ LOCKED v1.0`; 2 escalated as `⚠ ESCALATE TO HUMAN` (§11.1 owner-role label, §11.7 race-vs-species lore question). All 5 §15 string contracts locked, with §15.1 split into 15.1a (read) / 15.1b (write) to match the actual two-method emission in `SystemExecutionContext`. Pass 1 also verified §15.5 against `docs/ISOLATION.md` lines 86–90 and aligned the Russian source to the verbose form documented there.
+- **v1.0 (this version, 2026-04-26, produced by Pass 1)** — all `⚠ DECISION` markers resolved. 8 of 10 lexical decisions locked as `✓ LOCKED v1.0`; 2 escalated as `⚠ ESCALATE TO HUMAN` (§11.1 owner-role label, §11.7 race-vs-species lore question). All 5 §15 string contracts locked, with §15.1 split into 15.1a (read) / 15.1b (write) to match the actual two-method emission in `SystemExecutionContext`. Pass 1 also verified §15.5 against `docs/architecture/ISOLATION.md` lines 86–90 and aligned the Russian source to the verbose form documented there.
 
 ---
 
@@ -623,9 +623,9 @@ Use the EventBus instead of a direct system reference.
 
 ### 15.3 Isolation guard — direct World access — ✓ LOCKED v1.0 (doc-only, not yet emitted by code)
 
-**Source location:** Currently a documentation-only specification in `docs/ISOLATION.md` lines 168–172. **Not yet implemented in `SystemExecutionContext`.** Pass 1 verified by reading the file: the runtime check that would emit this message does not exist; the doc shows the *intended* future format. A future phase (likely Phase 5 of the original roadmap, or whichever phase wires `World`-bypass detection) implements the runtime check; this lock pre-commits the wording so doc and code converge.
+**Source location:** Currently a documentation-only specification in `docs/architecture/ISOLATION.md` lines 168–172. **Not yet implemented in `SystemExecutionContext`.** Pass 1 verified by reading the file: the runtime check that would emit this message does not exist; the doc shows the *intended* future format. A future phase (likely Phase 5 of the original roadmap, or whichever phase wires `World`-bypass detection) implements the runtime check; this lock pre-commits the wording so doc and code converge.
 
-**Russian (current docs/ISOLATION.md text):**
+**Russian (current docs/architecture/ISOLATION.md text):**
 ```
 [IsolationViolationException]
 Система 'XxxSystem' вызвала World.GetComponentUnsafe напрямую.
@@ -641,9 +641,9 @@ Use SystemBase.GetComponent / Query instead of direct World access.
 
 ### 15.4 Isolation guard — wrong bus publishing — ✓ LOCKED v1.0 (doc-only, not yet emitted by code)
 
-**Source location:** Currently a documentation-only specification in `docs/ISOLATION.md` lines 178–183. **Not yet implemented in `SystemExecutionContext`.** Pass 1 confirmed by inspection of the constructor (`_allowedBuses` is captured but never validated against an actual `Publish` call). A future phase wires the bus-publication check; this lock pre-commits wording.
+**Source location:** Currently a documentation-only specification in `docs/architecture/ISOLATION.md` lines 178–183. **Not yet implemented in `SystemExecutionContext`.** Pass 1 confirmed by inspection of the constructor (`_allowedBuses` is captured but never validated against an actual `Publish` call). A future phase wires the bus-publication check; this lock pre-commits wording.
 
-**Russian (current docs/ISOLATION.md text):**
+**Russian (current docs/architecture/ISOLATION.md text):**
 ```
 [IsolationViolationException]
 Система 'CombatSystem' публикует 'ItemAddedEvent'
@@ -661,9 +661,9 @@ Either change the event's bus or add it to the system's declaration.
 
 ### 15.5 Mod fault banner (UI-facing) — ✓ LOCKED v1.0 (doc-only, not yet emitted by code)
 
-**Source location:** Currently a documentation-only specification in `docs/ISOLATION.md` lines 86–90. **Not yet emitted by code:** Pass 1 audited the codebase and found no UI banner implementation in `PresentationBridge`, `AlertPanel`, or any `ModFaultHandler` (the latter does not yet exist as a concrete class — only the specification in ISOLATION.md §"ModFaultHandler — жизненный цикл при нарушении мода"). A future phase implements the banner; this lock pre-commits the wording so the future implementation can drop in canonical text without re-litigation.
+**Source location:** Currently a documentation-only specification in `docs/architecture/ISOLATION.md` lines 86–90. **Not yet emitted by code:** Pass 1 audited the codebase and found no UI banner implementation in `PresentationBridge`, `AlertPanel`, or any `ModFaultHandler` (the latter does not yet exist as a concrete class — only the specification in ISOLATION.md §"ModFaultHandler — жизненный цикл при нарушении мода"). A future phase implements the banner; this lock pre-commits the wording so the future implementation can drop in canonical text without re-litigation.
 
-**Russian (verbatim from `docs/ISOLATION.md` lines 86–90, lock-aligned):**
+**Russian (verbatim from `docs/architecture/ISOLATION.md` lines 86–90, lock-aligned):**
 ```
 Мод «{modName}» нарушил изоляцию
 и был автоматически выключен.
@@ -683,7 +683,7 @@ Details in log: logs/mods/{modId}.log
 
 ### 15.6 PR rejection format (developer-facing, doc-only)
 
-`docs/ISOLATION.md` ends with: «Если хотя бы один пункт не выполнен — pull request отклоняется.» This is doc text, not code, but it sets a register for the project. Canonical English: "If any item is not satisfied, the PR is rejected." Use this exact phrasing throughout.
+`docs/architecture/ISOLATION.md` ends with: «Если хотя бы один пункт не выполнен — pull request отклоняется.» This is doc text, not code, but it sets a register for the project. Canonical English: "If any item is not satisfied, the PR is rejected." Use this exact phrasing throughout.
 
 ### 15.7 Test assertion patterns
 

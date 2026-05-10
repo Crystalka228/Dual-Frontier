@@ -153,7 +153,7 @@ The pattern includes a code-identifier rename (`BehaviourTree` namespace), which
 
 ## §5 Style consistency
 
-Sampled 1 mid-document paragraph from each of: `docs/METHODOLOGY.md`, `docs/ARCHITECTURE.md`, `docs/CONTRACTS.md`, `docs/ISOLATION.md`, `docs/EVENT_BUS.md`.
+Sampled 1 mid-document paragraph from each of: `docs/METHODOLOGY.md`, `docs/architecture/ARCHITECTURE.md`, `docs/architecture/CONTRACTS.md`, `docs/architecture/ISOLATION.md`, `docs/architecture/EVENT_BUS.md`.
 
 | Doc & section | (a) US spelling | (b) Active voice | (c) Sentence length | (d) Calque-free | Notes |
 |---|---|---|---|---|---|
@@ -178,13 +178,13 @@ The minor stylistic observation in METHODOLOGY (line 97) is below the surgical-f
 
 | Contract | Doc | Code constants | Tests | Status |
 |---|---|---|---|---|
-| **15.1a Read isolation** | `docs/ISOLATION.md` lines 134-142 (`[ISOLATION VIOLATED] / System '...' / accessed '...' / without an access declaration. / Add: [SystemAccess(reads: new[]{typeof(...)})]`) | `IsolationDiagnostics.{ViolationHeader, SystemPrefix, SystemSuffix, ReadVerb, ComponentSuffix, ReadReason, HintPrefix, ReadHintArgPrefix, HintArgSuffix}` (concatenated in `SystemExecutionContext.BuildReadViolationMessage` at line 282-296) | `IsolationGuardTests.cs:53,54,125` use `IsolationDiagnostics.UndeclaredAccessToken`, `IsolationDiagnostics.HintToken` | **PASS** |
-| **15.1b Write isolation** | `docs/ISOLATION.md` (parallel structure to 15.1a, `modified` / `without a write declaration` / `writes:`) | `IsolationDiagnostics.{WriteVerb, WriteReason, WriteHintArgPrefix}` (concatenated in `BuildWriteViolationMessage` at line 298-310) | `IsolationGuardTests.cs:85,86` use `IsolationDiagnostics.WriteVerbToken`, `IsolationDiagnostics.HintToken` | **PASS** |
-| **15.2 Direct system access** | `docs/ISOLATION.md` lines 156-161 | `IsolationDiagnostics.{GetSystemHeader, GetSystemBody, GetSystemHint}` joined in `GetSystem<TSystem>` at line 256-262 | `IsolationGuardTests.cs:99` uses `IsolationDiagnostics.DirectSystemAccessToken` | **PASS** |
-| 15.3 Direct World access (doc-only pre-spec) | `docs/ISOLATION.md` lines 167-171 | NOT YET IMPLEMENTED (verified — `World.GetComponentUnsafe` is reachable in the same file at line 159 but no IsolationViolationException is thrown for the bypass) | NOT YET TESTED | **PASS as doc-only** (matches glossary expectation) |
-| 15.4 Wrong-bus publishing (doc-only pre-spec) | `docs/ISOLATION.md` lines 178-182 | NOT YET IMPLEMENTED (`_allowedBuses` is captured but never validated against an actual `Publish` call) | NOT YET TESTED | **PASS as doc-only** |
-| 15.5 Mod fault banner (doc-only pre-spec, UI-facing) | `docs/ISOLATION.md` lines 86-90 | NOT YET IMPLEMENTED in `PresentationBridge`/`AlertPanel`/`ModFaultHandler` | NOT YET TESTED | **PASS as doc-only**. Cosmetic note: doc uses `<name>` / `<mod-id>` placeholder syntax while glossary §15.5 lock uses `{modName}` / `{modId}`. Not a contract issue (placeholders are presentational); not flagged for Pass 5. |
-| §15.6 PR rejection format | `docs/ISOLATION.md` tail: "If any item is not satisfied, the PR is rejected." | N/A (doc-only) | N/A | **PASS** — matches glossary §15.6 verbatim. |
+| **15.1a Read isolation** | `docs/architecture/ISOLATION.md` lines 134-142 (`[ISOLATION VIOLATED] / System '...' / accessed '...' / without an access declaration. / Add: [SystemAccess(reads: new[]{typeof(...)})]`) | `IsolationDiagnostics.{ViolationHeader, SystemPrefix, SystemSuffix, ReadVerb, ComponentSuffix, ReadReason, HintPrefix, ReadHintArgPrefix, HintArgSuffix}` (concatenated in `SystemExecutionContext.BuildReadViolationMessage` at line 282-296) | `IsolationGuardTests.cs:53,54,125` use `IsolationDiagnostics.UndeclaredAccessToken`, `IsolationDiagnostics.HintToken` | **PASS** |
+| **15.1b Write isolation** | `docs/architecture/ISOLATION.md` (parallel structure to 15.1a, `modified` / `without a write declaration` / `writes:`) | `IsolationDiagnostics.{WriteVerb, WriteReason, WriteHintArgPrefix}` (concatenated in `BuildWriteViolationMessage` at line 298-310) | `IsolationGuardTests.cs:85,86` use `IsolationDiagnostics.WriteVerbToken`, `IsolationDiagnostics.HintToken` | **PASS** |
+| **15.2 Direct system access** | `docs/architecture/ISOLATION.md` lines 156-161 | `IsolationDiagnostics.{GetSystemHeader, GetSystemBody, GetSystemHint}` joined in `GetSystem<TSystem>` at line 256-262 | `IsolationGuardTests.cs:99` uses `IsolationDiagnostics.DirectSystemAccessToken` | **PASS** |
+| 15.3 Direct World access (doc-only pre-spec) | `docs/architecture/ISOLATION.md` lines 167-171 | NOT YET IMPLEMENTED (verified — `World.GetComponentUnsafe` is reachable in the same file at line 159 but no IsolationViolationException is thrown for the bypass) | NOT YET TESTED | **PASS as doc-only** (matches glossary expectation) |
+| 15.4 Wrong-bus publishing (doc-only pre-spec) | `docs/architecture/ISOLATION.md` lines 178-182 | NOT YET IMPLEMENTED (`_allowedBuses` is captured but never validated against an actual `Publish` call) | NOT YET TESTED | **PASS as doc-only** |
+| 15.5 Mod fault banner (doc-only pre-spec, UI-facing) | `docs/architecture/ISOLATION.md` lines 86-90 | NOT YET IMPLEMENTED in `PresentationBridge`/`AlertPanel`/`ModFaultHandler` | NOT YET TESTED | **PASS as doc-only**. Cosmetic note: doc uses `<name>` / `<mod-id>` placeholder syntax while glossary §15.5 lock uses `{modName}` / `{modId}`. Not a contract issue (placeholders are presentational); not flagged for Pass 5. |
+| §15.6 PR rejection format | `docs/architecture/ISOLATION.md` tail: "If any item is not satisfied, the PR is rejected." | N/A (doc-only) | N/A | **PASS** — matches glossary §15.6 verbatim. |
 
 **Cross-check:** A dedicated grep for literal-string assertions in tests (`"accessed"`, `"modified"`, `"without an access"`, `"\\[ISOLATION VIOLATED\\]"`, etc.) returned zero hits — confirming all assertions go through `IsolationDiagnostics` constants, not literals.
 

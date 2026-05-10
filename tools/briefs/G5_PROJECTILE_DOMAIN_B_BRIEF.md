@@ -1,7 +1,7 @@
 # G5 — Domain B integration (`ProjectileSystem` reactivation)
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G5
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G5
 **Prerequisites**: G4 closed
 
 ## Goal

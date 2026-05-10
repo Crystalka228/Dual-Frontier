@@ -82,7 +82,7 @@ nav_order: 109
 | Pass 2 artifact | `docs/audit/AUDIT_PASS_2_SPEC_CODE.md` |
 | Pass 3 artifact | `docs/audit/AUDIT_PASS_3_ROADMAP_REALITY.md` |
 | Pass 4 artifact | `docs/audit/AUDIT_PASS_4_CROSSDOC_TRANSLATION.md` |
-| Spec | `docs/MOD_OS_ARCHITECTURE.md` v1.5 LOCKED |
+| Spec | `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.5 LOCKED |
 | ROADMAP | `docs/ROADMAP.md` |
 | Methodology | `docs/METHODOLOGY.md` (для context'а evaluation) |
 | Campaign plan | `docs/audit/AUDIT_CAMPAIGN_PLAN.md` v1.0 LOCKED |

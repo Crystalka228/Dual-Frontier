@@ -2,7 +2,7 @@
 
 **Purpose**: Standalone executable validating C ABI without requiring .NET runtime. Run after every native build.
 
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §1.11
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §1.11
 
 **Current scenarios** (К0 от branch):
 - `scenario_basic_crud` — entity/component CRUD round-trip

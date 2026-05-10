@@ -1,6 +1,6 @@
 # Roadmap
 
-The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.5 LOCKED; this roadmap is the execution sequence derived from it.
+The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.5 LOCKED; this roadmap is the execution sequence derived from it.
 
 The reorganisation follows the project's central methodological claim: **engine and methodology are the main research result, the game is a test case for the hypothesis** ([METHODOLOGY](./METHODOLOGY.md)). By implementing combat, magic, and world content through the modding system rather than alongside it, we make every gameplay feature also a test of the modding architecture. A combat system that ships as a vanilla mod is the strongest possible falsifiable claim that the contract surface for mods is complete.
 
@@ -31,10 +31,10 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | M8 — Vanilla skeletons | ⏭ Pending | — | Five empty mod assemblies |
 | M9 — Vanilla.Combat | ⏭ Pending | — | Absorbs original Phase 5 scope |
 | M10 — Remaining vanilla | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental |
-| **K-series — Native ECS kernel** | ⏭ Pending | — | K0–K8 per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) v1.0 LOCKED, 5–8 weeks |
-| **K9 — Field storage abstraction** | ⏭ Pending | — | `RawTileField<T>` + conductivity / storage flags, CPU functional first; gates G-series ([GPU_COMPUTE](./GPU_COMPUTE.md) v2.0) |
-| **G-series — GPU compute** | ⏭ Pending | — | G0 plumbing → G1 mana → G2 electricity → G3 storage → G4 multi-field → G5 `ProjectileSystem` (Domain B) → G6–G9 flow-field pathfinding ([GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 LOCKED) |
-| **M9.0–M9.8 — Vulkan + Win32 runtime** | ⏭ Pending | — | Per [RUNTIME_ARCHITECTURE](./RUNTIME_ARCHITECTURE.md) v1.0 LOCKED, parallel-development cutover at M9.5, Godot deletion at M9.8 |
+| **K-series — Native ECS kernel** | ⏭ Pending | — | K0–K8 per [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) v1.0 LOCKED, 5–8 weeks |
+| **K9 — Field storage abstraction** | ⏭ Pending | — | `RawTileField<T>` + conductivity / storage flags, CPU functional first; gates G-series ([GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) v2.0) |
+| **G-series — GPU compute** | ⏭ Pending | — | G0 plumbing → G1 mana → G2 electricity → G3 storage → G4 multi-field → G5 `ProjectileSystem` (Domain B) → G6–G9 flow-field pathfinding ([GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) v2.0 LOCKED) |
+| **M9.0–M9.8 — Vulkan + Win32 runtime** | ⏭ Pending | — | Per [RUNTIME_ARCHITECTURE](/docs/architecture/RUNTIME_ARCHITECTURE.md) v1.0 LOCKED, parallel-development cutover at M9.5, Godot deletion at M9.8 |
 | Phase 9 — Native Runtime | ⏭ Post-launch | — | Separate large project (now decomposed into K-series + M9.x runtime above) |
 
 **Engine snapshot:** Phases 0–4 closed at 82/82 tests. M1 added Manifest/Parser test suites (`VersionConstraintTests`, `ModDependencyTests`, `ManifestCapabilitiesTests`, `ModManifestV2Tests`, `ManifestParserTests`). M2 added `RestrictedModApiV2Tests`. M3 added `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, and `ProductionComponentCapabilityTests` (260/260 at M3 closure). M4 added `CrossAlcTypeIdentityTests` and `SharedAssemblyResolutionTests` (M4.1), `ContractTypeInRegularModTests` (M4.2), and `SharedModComplianceTests` (M4.3). M5 added `RegularModTopologicalSortTests`, `DependencyPresenceTests`, and `M51PipelineIntegrationTests` (M5.1) plus `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, and `M52IntegrationTests` (M5.2). M6 added `PhaseHBridgeReplacementTests` and `Phase5BridgeAnnotationsTests` (M6.1) plus `CollectReplacedFqnsTests` and `M62IntegrationTests` (M6.2). M7.1 added `M71PauseResumeTests` (11 — default-state, idempotent setters, Apply/UnloadAll guards with verbatim §9.3 messages, default-paused regression guard). M7.2 added `M72UnloadChainTests` (13 — run-flag guard parity, idempotency for non-active mods, per-step verification of the §9.5 chain steps 1–6, best-effort failure discipline via a step-2 throwing seam, UnloadAll refactor regression + bulk-unload preservation + M7.1 guard preservation). M7.3 added `M73Step7Tests` (5 — happy-path step 7 release, ALC-retainer timeout path, canonical warning shape, AD #7 step-7-after-upstream-failure invariant, mod-removed-from-active-set after timeout), `M73Phase2DebtTests` (2 real-mod fixtures — `Fixture.RegularMod_DependedOn` minimal surface + `Fixture.RegularMod_ReplacesCombat` with system registration and bridge replacement; both close §10.4 hard-required `WeakReference.IsAlive == false` within timeout), and the `ModUnloadAssertions` helper mirroring the production spin pattern (non-inlined + GC pump bracket per §9.5 step 7) for reuse by M8+ fixture tests. M7.4 added `ManifestRewriterTests` (7 — flips `hotReload: true` → `false` and returns `Rewritten`, byte-identical no-ops for `AlreadyFalse` / `FieldAbsent` cases, full v2 manifest field-preservation round-trip, `NotFound` / `ParseError` failure semantics, idempotency under repeat invocation) and `M74BuildPipelineTests` (2 integration tests via `dotnet build` subprocess against `Fixture.VanillaMod_HotReloadOverride` — Release build rewrites the bin manifest while leaving the source unchanged; Debug build leaves both source and bin manifests at `hotReload: true`). M7.5.A added `ModMenuControllerTests` (22 — Begin/Cancel pause-resume + AD #6 idempotency, Toggle pending-set mutation + §9.6 RejectedHotReloadDisabled + AD #5 first-load-is-not-reload + NoSession/UnknownMod gates, CanToggle UI hint mirror, GetEditableState combined active+discovered rows with flags + throws-without-session, Commit no-op-success + add-only + remove-only + add-and-remove + AD #4 failure-stays-paused + retry-recovery), `DefaultModDiscovererTests` (4 — nonexistent-root empty for first-launch safety, manifest-less subdir skipped, valid manifest parsed, per-manifest parse failure swallowed for best-effort enumeration), and `PipelineGetActiveModsTests` (4 — empty-pipeline empty list, post-Apply contents, post-UnloadMod removal, fresh-list snapshot not live view). M7.5.B.1 added `GameBootstrapIntegrationTests` (7 — production-side smoke coverage of `GameBootstrap.CreateLoop`: returns `GameContext` with both `Loop` + `Controller`, controller's `BeginEditing` succeeds and flips `IsEditing`, empty-`modsRoot` returns empty editing state, fixture-`modsRoot` returns the discovered row with `IsCurrentlyActive`/`IsPendingActive`/`CanToggle` flags set correctly, non-existent-`modsRoot` succeeds with no throw, default-`modsRoot` parameter is the literal string `"mods"` via reflection on `MethodInfo.GetParameters()[1].DefaultValue`, loop start/stop round-trips cleanly through the new `GameContext` shape). **Total at M7.5.B.1 closure: 415/415 passed** (verify with `dotnet test` against the current solution). A subsequent Phase-4 housekeeping commit added one integration test (`CreateLoop_RunningLoop_PublishesTickAdvancedCommandsThroughBridge`) for the TICK display fix, taking the total to **416/416** at the time of the Backlog section establishment. A second housekeeping commit (`e0b0ecf` fix + `52d6d3f` stress test) resolved a pre-Phase-1 latent race in `TickScheduler.ShouldRun`'s tick-rate cache (surfaced by the new integration test at ~60 % flake rate over a 5-run sample) by swapping the underlying storage from `Dictionary<Type, int>` to `ConcurrentDictionary<Type, int>` and adding `TickSchedulerThreadSafetyTests` as a unit-level regression guard, taking the total to **417/417**. A third housekeeping pass (`9141bd6` feat + `659a64a` test) replaced the 3-pawn hardcoded list and the Warhammer-flavored placeholder name/role/skill UI fabrications with real end-to-end data: new `IdentityComponent` (single `Name` field), new `RandomPawnFactory` (deterministic by seed, 10 colonists, all 13 SkillKind values populated per pawn), `PawnStateChangedEvent` + `PawnStateCommand` extended with `TopSkills`, `PawnStateReporterSystem` rewritten to read `IdentityComponent.Name` and compute top-3 skills (no LINQ), `PawnDetail` re-adding the SKILLS section driven by real component data and removing the role label entirely, plus 8 dead files deleted (4 Phase-3 stub UI classes, 1 Phase-3 stub node, 3 undispatched bridge commands). New `RandomPawnFactoryTests` (8) + `GameBootstrapIntegrationTests` (+3 facts: 10-pawn baseline, real Name in PawnStateCommand, descending TopSkills in PawnStateCommand) take the total to **428/428**. A fourth housekeeping pass (`ee12108` fix + `7ea038c` test) flipped the four `NeedsSystem` decay-line signs from `-` to `+` so the implementation finally matches the field semantic in `NeedsComponent` (`0 = full, 1 = starving`). Decay-toward-0 was a placeholder lie: it implied automatic recovery while no module currently closes needs in the simulation — there are no food / water / bed entities, no `EatSystem` / `DrinkSystem` / `SleepSystem`, only a `JobSystem` that already assigns `JobKind.Eat` / `Sleep` on `NeedsCriticalEvent` but has no execution layer to consume the assignment. Per the project's operating principle, the honest behaviour for an incomplete simulation is accumulating deficit until Phase 5 lands the recovery loop. New `NeedsAccumulationTests` (3 — single-need growth at initial 0.5, all-four-needs symmetric growth at initial 0.3, ceiling clamp at 1.0) lock the post-honesty-pass contract so a future refactor cannot silently revert the direction; existing `NeedsJobIntegrationTests.Starving_pawn_receives_Eat_job_after_NeedsCritical_fires_on_the_Pawns_bus` continues to pass without modification (its fixture seeds `Hunger = 0.9f`, above `CriticalThreshold = 0.8f` under either decay direction). Test count: 428 → **431/431**. M7.5.B.2 added `MenuFlow_OpenCommitClose_LeavesEditingFalse`, `MenuFlow_OpenCancelClose_LeavesEditingFalse`, and `MenuFlow_OpenWithoutCommitOrCancel_StaysEditing` to `GameBootstrapIntegrationTests` — three controller-level integration tests that lock the menu-flow sequences `ModMenuPanel` invokes (Commit closes the session, Cancel closes the session, opening without explicit close keeps the session live). Test count: 431 → **434/434**. A second M7.5.B.2 follow-up housekeeping pass added `MenuFlow_BeginEditing_PausesGameLoop`, `MenuFlow_Cancel_ResumesGameLoop`, and `MenuFlow_CommitSuccess_ResumesGameLoop` to the same suite — three integration tests at the `GameContext` level locking the menu lifecycle's effect on the simulation thread (BeginEditing pauses, Cancel resumes, successful Commit resumes; failed-commit-stays-paused covered indirectly by the controller's success-path-only RaiseHook plus M7.5.A's existing failure-path coverage). Test count: 434 → **437/437**. The structural foundation laid in Phases 0–4 is the entire prerequisite for the Mod-OS Migration; nothing in M1–M7 requires touching the ECS core, the scheduler, or the bus contracts (`IGameServices`).
@@ -149,7 +149,7 @@ Tests: 1/1 (high-level integration); the system-level coverage moves to M9/M10 w
 
 Result: Godot works as both editor and temporary runtime. `DfDevKitPlugin`, `SceneExporter`, `EntityExporter` enable scene authoring and `.dfscene` export. `IRenderer`, `ISceneLoader`, `IInputSource` contracts exist with both Godot and Native backends. F5 in Godot starts the game with the loaded scene.
 
-Architectural context: [VISUAL_ENGINE](./VISUAL_ENGINE.md). The decoupling work here unblocks Phase 9 (Native Runtime) without committing to its timeline.
+Architectural context: [VISUAL_ENGINE](/docs/architecture/VISUAL_ENGINE.md). The decoupling work here unblocks Phase 9 (Native Runtime) without committing to its timeline.
 
 ### ✅ Phase 4 — Economy (closed)
 
@@ -184,7 +184,7 @@ The migration sequence is derived from `MOD_OS_ARCHITECTURE` v1.5 §11. Each M-p
 
 Goal achieved: architectural specification produced, reviewed, and locked.
 
-**Output:** [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.0 LOCKED. All twelve decisions resolved (five strategic + seven detail D-1 through D-7). Implementation phases unblocked.
+**Output:** [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.0 LOCKED. All twelve decisions resolved (five strategic + seven detail D-1 through D-7). Implementation phases unblocked.
 
 **No code changes.** This phase exists to make every subsequent code change traceable to a documented decision.
 
@@ -311,7 +311,7 @@ Goal achieved: `ModIntegrationPipeline` resolves regular-mod dependencies using 
 
 - **M5.2 ✅ Closed.** Acceptance: `ContractValidator` Phase A modernized for v1/v2 dual-path — legacy `IncompatibleContractsVersion` retained for v1 manifests, new `IncompatibleVersion` emitted for v2 manifests through the full `VersionConstraint` pipeline; `ContractValidator` Phase G inter-mod dependency version check produces `IncompatibleVersion` when a regular mod's `dependencies[i].version` constraint is unsatisfied by the depended-on mod's actual version; `ContractValidator` class XML-doc updated to "seven-phase validator" (Phases A–G). Commits: `50efe9d` (Phase A modernization for v2 manifests via `VersionConstraint` pipeline), `f8f18ee` (Phase G inter-mod dependency version check), `376be7e` (integration tests). Tests: `PhaseAModernizationTests` (6), `PhaseGInterModVersionTests` (7), `M52IntegrationTests` (3).
 
-**Cascade-failure semantics — accumulation, not skip.** Per §8.7 of [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), "the failed set is presented to the user; the success set proceeds to load." M5 implementation interprets this as: when mod A depends on mod B and B fails its own validation (any phase), A is **not** silently dropped — A's own validation runs to completion, and any independent errors A produces also surface. Both errors appear in `result.Errors`. This matches the existing pipeline accumulation pattern (Phases B / C / D / E / F / G all accumulate without short-circuit) and gives mod authors maximum diagnostic information per `Apply` call. Demonstrated by:
+**Cascade-failure semantics — accumulation, not skip.** Per §8.7 of [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md), "the failed set is presented to the user; the success set proceeds to load." M5 implementation interprets this as: when mod A depends on mod B and B fails its own validation (any phase), A is **not** silently dropped — A's own validation runs to completion, and any independent errors A produces also surface. Both errors appear in `result.Errors`. This matches the existing pipeline accumulation pattern (Phases B / C / D / E / F / G all accumulate without short-circuit) and gives mod authors maximum diagnostic information per `Apply` call. Demonstrated by:
 
 - Validator-level: `Mod_WithCascadeFailure_BothErrorsReportedNotSkipped` (`PhaseGInterModVersionTests`).
 - Pipeline-level: `Apply_WithCascadeFailure_SurfacesBothErrors` (`M52IntegrationTests`).
@@ -527,11 +527,11 @@ Goal: incremental delivery of the four remaining vanilla mods, in any order the 
 
 ## ⏭ Native foundation tracks (K-series + G-series + Runtime M9.x)
 
-The post-Phase-4 architectural pivots committed in [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) v1.0, [RUNTIME_ARCHITECTURE](./RUNTIME_ARCHITECTURE.md) v1.0, and [GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 decompose the original "Phase 9 — Native Runtime" endpoint into three coordinated tracks. Each track has its own brief; this section is the execution-sequence summary.
+The post-Phase-4 architectural pivots committed in [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) v1.0, [RUNTIME_ARCHITECTURE](/docs/architecture/RUNTIME_ARCHITECTURE.md) v1.0, and [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) v2.0 decompose the original "Phase 9 — Native Runtime" endpoint into three coordinated tracks. Each track has its own brief; this section is the execution-sequence summary.
 
 ### K-series — Native ECS kernel (5–8 weeks)
 
-Per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 2:
+Per [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) Part 2:
 
 - **K0** — cherry-pick + cleanup from `claude/cpp-core-experiment-cEsyH` branch.
 - **K1** — batching primitive (bulk Add/Get + `Span<T>` access).
@@ -545,7 +545,7 @@ Per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 2:
 
 ### K9 — Field storage abstraction (1–2 weeks)
 
-Prerequisite for all GPU compute work; ships CPU functional path first. Per [GPU_COMPUTE](./GPU_COMPUTE.md) "K9 — Field storage abstraction".
+Prerequisite for all GPU compute work; ships CPU functional path first. Per [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) "K9 — Field storage abstraction".
 
 - `RawTileField<T>` (C++): conductivity map, storage flags, ping-pong back buffer.
 - C ABI: `df_world_register_field`, `field_read_cell`, `field_acquire_span`, `field_set_conductivity`, `field_set_storage_flag`.
@@ -556,9 +556,9 @@ Exit criteria: any field type registrable / readable / writeable from managed; C
 
 ### G-series — Vulkan compute integration (~6–8 weeks)
 
-Per [GPU_COMPUTE](./GPU_COMPUTE.md) Roadmap:
+Per [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) Roadmap:
 
-- **G0** — Vulkan compute pipeline plumbing (~1 week). `VkBuffer` / descriptor sets / pipeline registration / dispatch C ABI / fence-based sync / build-time SPIR-V for compute shaders (extends [RUNTIME_ARCHITECTURE](./RUNTIME_ARCHITECTURE.md) §1.7).
+- **G0** — Vulkan compute pipeline plumbing (~1 week). `VkBuffer` / descriptor sets / pipeline registration / dispatch C ABI / fence-based sync / build-time SPIR-V for compute shaders (extends [RUNTIME_ARCHITECTURE](/docs/architecture/RUNTIME_ARCHITECTURE.md) §1.7).
 - **G1** — first field compute shader, mana diffusion (~1 week). `Vanilla.Magic` ships `ManaField` + isotropic diffusion shader; CPU/GPU equivalence verified.
 - **G2** — anisotropic diffusion, electricity (~1 week). `Vanilla.Electricity` + conductivity map + cliff-threshold consumer effectiveness.
 - **G3** — storage cells / capacitance (~3–5 days). Batteries, water tanks; α/β retention and release.
@@ -572,17 +572,17 @@ Per [GPU_COMPUTE](./GPU_COMPUTE.md) Roadmap:
 
 ### M9.0–M9.8 — Vulkan + Win32 runtime (~3–6 weeks)
 
-Per [RUNTIME_ARCHITECTURE](./RUNTIME_ARCHITECTURE.md). Replaces Godot DevKit production path with own Vulkan rendering + Win32 windowing. Parallel-development cutover at M9.5; Godot deletion at M9.8. Domain layer preserved verbatim — `Vanilla.{Combat, Magic, ...}` runs identically under DevKit and under the new runtime because both consume the same `IGameServices` contracts.
+Per [RUNTIME_ARCHITECTURE](/docs/architecture/RUNTIME_ARCHITECTURE.md). Replaces Godot DevKit production path with own Vulkan rendering + Win32 windowing. Parallel-development cutover at M9.5; Godot deletion at M9.8. Domain layer preserved verbatim — `Vanilla.{Combat, Magic, ...}` runs identically under DevKit and under the new runtime because both consume the same `IGameServices` contracts.
 
 ### Combined timeline
 
-K0–K8 (5–8w) + K9 (1–2w) + G0–G5 (~5–6w) + G6–G9 (~3–4w) + M9.0–M9.8 (~3–6w) ≈ 17–26 weeks for the full architectural foundation, runnable in parallel where dependencies allow ([KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) §8 governs cross-track sequencing). Ordering: K-series gates K9; K9 gates G-series; M9.x is independent of the K/G tracks once Vulkan handles are exposed (G0 prerequisite is M9.0–M9.4 having loaded `vulkan-1.dll` into the runtime).
+K0–K8 (5–8w) + K9 (1–2w) + G0–G5 (~5–6w) + G6–G9 (~3–4w) + M9.0–M9.8 (~3–6w) ≈ 17–26 weeks for the full architectural foundation, runnable in parallel where dependencies allow ([KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) §8 governs cross-track sequencing). Ordering: K-series gates K9; K9 gates G-series; M9.x is independent of the K/G tracks once Vulkan handles are exposed (G0 prerequisite is M9.0–M9.4 having loaded `vulkan-1.dll` into the runtime).
 
 ### When
 
 Original "post-launch" framing is preserved as the outer envelope, but the K/G/M9.x tracks may begin during the M-cycle wherever non-blocking — particularly K9 (CPU-only, no GPU dependency) which can land alongside the M-cycle without disrupting it. Cutover decisions remain at K8 and M9.5/M9.8.
 
-**Why this is possible:** the architecture is already ready. The Mod-OS Migration does not change the relationship between Application and Presentation; `Vanilla.Combat` runs identically under Godot and under the future native runtime, because both consume the same `IGameServices` contracts. Field-based mechanics ship as additional vanilla mods registering through the same `IModApi` ([GPU_COMPUTE](./GPU_COMPUTE.md) "Mod parity (KERNEL K-L9)").
+**Why this is possible:** the architecture is already ready. The Mod-OS Migration does not change the relationship between Application and Presentation; `Vanilla.Combat` runs identically under Godot and under the future native runtime, because both consume the same `IGameServices` contracts. Field-based mechanics ship as additional vanilla mods registering through the same `IModApi` ([GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) "Mod parity (KERNEL K-L9)").
 
 ---
 
@@ -600,24 +600,24 @@ Candidate ideas for post-release updates live in a dedicated reservoir document:
 - AI opponents through behavior cloning (challenging-but-legible adversaries from anonymized replays).
 - Lambda calculus REPL for power users (minimal Turing-complete scripting under the capability system).
 - Player model for adaptive personalization (local-only, transparent, player-controlled).
-- FHE integration (architectural commitment ratified separately as [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) v1.0; activation deferred per its §D1).
+- FHE integration (architectural commitment ratified separately as [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) v1.0; activation deferred per its §D1).
 
 The reservoir is read after Phase 7 closure, not before. Reading it during the active M-cycle introduces decision fatigue: every idea there looks plausible, and the temptation to begin "just one" before shipping is real. The roadmap is the active surface; the reservoir is dormant context.
 
-The single exception is FHE: because its contract is already ratified, [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) v1.0 is binding from now even though activation is conditional. The contract specifies architectural boundaries that the multiplayer-related code in M0–M10 does not currently produce — this is the contract's specified resting state, not a defect.
+The single exception is FHE: because its contract is already ratified, [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) v1.0 is binding from now even though activation is conditional. The contract specifies architectural boundaries that the multiplayer-related code in M0–M10 does not currently produce — this is the contract's specified resting state, not a defect.
 
 ---
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.
 - [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline; M1–M10 are exercised through it.
-- [ARCHITECTURE](./ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
-- [CONTRACTS](./CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
-- [MODDING](./MODDING.md) — v1 mod-author guide; M-phase outputs supersede this document for v2.
-- [MOD_PIPELINE](./MOD_PIPELINE.md) — `ModIntegrationPipeline` mechanics; M2, M5, M6, M7 extend it.
+- [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
+- [CONTRACTS](/docs/architecture/CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
+- [MODDING](/docs/architecture/MODDING.md) — v1 mod-author guide; M-phase outputs supersede this document for v2.
+- [MOD_PIPELINE](/docs/architecture/MOD_PIPELINE.md) — `ModIntegrationPipeline` mechanics; M2, M5, M6, M7 extend it.
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md) — test discipline; M-phase acceptance criteria slot into the existing isolation/modding/integration tiers.
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — PR hygiene; the Mod-OS migration is exercised through the same checklist.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — post-release ideas reservoir; populated, not scheduled. Read after Phase 7 closure.
-- [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) — architectural contract for fully homomorphic encryption multiplayer; ratified at v1.0, activation deferred per its §D1.
+- [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — architectural contract for fully homomorphic encryption multiplayer; ratified at v1.0, activation deferred per its §D1.
 - [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) — three-track discipline escalation; ratified v1.0, activation deferred per-track.

@@ -2,7 +2,7 @@
 
 **Purpose**: Public C ABI и C++ implementation headers.
 
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §1.2
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §1.2
 
 **Files** (post-K8):
 - `df_capi.h` — public C ABI (extern «C» functions, DllExport/DllImport macros)

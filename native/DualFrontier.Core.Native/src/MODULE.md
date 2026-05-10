@@ -2,7 +2,7 @@
 
 **Purpose**: C++ implementation files corresponding к headers в `../include/`.
 
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §1.2
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §1.2
 
 **Files** (post-K8):
 - `world.cpp` — World methods

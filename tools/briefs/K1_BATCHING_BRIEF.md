@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
 **Status**: EXECUTED
-**Reference docs**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K1, §1.6 (P/Invoke patterns), §1.7 (Span protocol), `docs/MIGRATION_PROGRESS.md` (K0 closure context)
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K1, §1.6 (P/Invoke patterns), §1.7 (Span protocol), `docs/MIGRATION_PROGRESS.md` (K0 closure context)
 **Predecessor**: K0 (`89a4b24`) — cherry-pick + cleanup, merged to main
 **Target**: fresh feature branch `feat/k1-batching-primitive` от `main`
 **Estimated time**: 3–5 days at hobby pace

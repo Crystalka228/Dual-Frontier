@@ -2,7 +2,7 @@
 
 **Generated**: 2026-05-09 by K6 brief execution session (Phase 1)
 **Source brief**: `tools/briefs/K6_MOD_REBUILD_BRIEF.md` (commit `05bee4c`)
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §K6, `docs/MOD_OS_ARCHITECTURE.md` §9.5 / §9.5.1
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §K6, `docs/architecture/MOD_OS_ARCHITECTURE.md` §9.5 / §9.5.1
 **Baseline**: 538 tests passing on `main` at HEAD `05bee4c`
   (ManifestRewriter: 7 + Persistence: 4 + Systems: 38 + Core.Interop: 66 + Core: 76 + Modding: 347 = 538).
 **Build**: 0 warnings, 0 errors.

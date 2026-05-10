@@ -2,7 +2,7 @@
 
 **Purpose**: P/Invoke bridge layer между managed Application и native `DualFrontier.Core.Native.dll`. Translates managed API calls к C ABI invocations с appropriate marshalling.
 
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §1.2
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §1.2
 
 **Public API surface** (post-K8):
 - `NativeWorld` — managed handle wrapper (`IDisposable`)

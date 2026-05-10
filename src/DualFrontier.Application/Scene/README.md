@@ -50,6 +50,6 @@ Versioning policy: any breaking change increments
 - `ushort[]` is the compact tile array; in JSON it serializes as base64.
 
 ## See also
-- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — full
+- [../.docs/architecture/VISUAL_ENGINE.md](/docs/architecture/VISUAL_ENGINE.md) — full
   DevKit vs Native architecture.
 - [../Rendering/README.md](../Rendering/README.md) — the `IRenderer` contract.

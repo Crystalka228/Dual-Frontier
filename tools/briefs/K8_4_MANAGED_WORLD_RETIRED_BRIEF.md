@@ -1,7 +1,7 @@
 # K8.4 — ManagedWorld retired as production; Mod API v3 ships
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` K-L11, K-L8 in-production implication, MOD_OS_ARCHITECTURE.md §4.6 (IModApi v2 → v3)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` K-L11, K-L8 in-production implication, MOD_OS_ARCHITECTURE.md §4.6 (IModApi v2 → v3)
 **Prerequisite**: K8.3 closure (all production systems on NativeWorld)
 
 ## Goal

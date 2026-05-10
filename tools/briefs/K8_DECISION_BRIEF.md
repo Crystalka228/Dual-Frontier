@@ -1,7 +1,7 @@
 # K8 — Decision step + production cutover
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K8
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K8
 **Prerequisite**: K7 complete
 
 ## Goal

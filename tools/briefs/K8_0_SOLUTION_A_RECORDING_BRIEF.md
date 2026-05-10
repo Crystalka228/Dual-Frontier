@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09
 **Status**: EXECUTED (2026-05-09, branch `feat/k8-0-solution-a-recording`, closure `9f9dc05`..`5fa3f1d`) — architectural decision brief, fourth brief type alongside «implementation», «skeleton», «closure-shaped implementation». See `docs/MIGRATION_PROGRESS.md` K8.0 closure section for closure summary.
-**Reference docs**: `docs/KERNEL_ARCHITECTURE.md` v1.1 LOCKED §K8 (deliverables superseded by K8.0 closure), `docs/PERFORMANCE_REPORT_K7.md` (K7 evidence base informing K8.0 decision), `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 row added on closure), `docs/METHODOLOGY.md`, `docs/CODING_STANDARDS.md`
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` v1.1 LOCKED §K8 (deliverables superseded by K8.0 closure), `docs/PERFORMANCE_REPORT_K7.md` (K7 evidence base informing K8.0 decision), `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 row added on closure), `docs/METHODOLOGY.md`, `docs/CODING_STANDARDS.md`
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 entry recorded; K8.1-K8.5 skeleton entries added)
 **Methodology lineage**: `tools/briefs/K7_PERFORMANCE_MEASUREMENT_BRIEF.md` (read-first/brief-second/execute-third pivot), `tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md` (Anthropic `Edit` literal-mode semantics), `tools/briefs/K6_MOD_REBUILD_BRIEF.md` (closure-shaped brief format precedent)
 **Predecessor**: K7 (`72ea8b5..60482f4`) — performance measurement, evidence base for this decision
@@ -57,7 +57,7 @@ git log --oneline -10
 ### 0.3 — Prerequisite documents at expected versions
 
 ```
-head -5 docs/KERNEL_ARCHITECTURE.md
+head -5 docs/architecture/KERNEL_ARCHITECTURE.md
 head -5 docs/MIGRATION_PROGRESS.md
 ls docs/PERFORMANCE_REPORT_K7.md
 ```
@@ -259,11 +259,11 @@ K8.0 establishes the pattern. Future architectural inflection points (e.g., M9.x
 
 ## Phase 2 — KERNEL_ARCHITECTURE.md v1.2 amendment
 
-The executor amends `docs/KERNEL_ARCHITECTURE.md` from v1.1 to v1.2 with the changes designed in Phase 1. All edits are deterministic; the executor uses Anthropic `Edit` tool literal-mode semantics throughout.
+The executor amends `docs/architecture/KERNEL_ARCHITECTURE.md` from v1.1 to v1.2 with the changes designed in Phase 1. All edits are deterministic; the executor uses Anthropic `Edit` tool literal-mode semantics throughout.
 
 ### 2.1 — Bump version + status line
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Edit 1**: Replace
 ```
@@ -285,7 +285,7 @@ docs(kernel): bump status to v1.2 — Solution A commitment recorded
 
 ### 2.2 — Add K-L11 to Part 0 LOCKED decisions table
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Edit**: After the K-L10 row in the Part 0 table, before the existing «Implication of K-L3» line, insert a new row:
 
@@ -306,7 +306,7 @@ docs(kernel): add K-L11 production storage backbone — Solution A LOCKED
 
 ### 2.3 — Extend K-L3 implication line
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Edit**: Find the existing K-L3 implication:
 ```
@@ -325,7 +325,7 @@ docs(kernel): K-L3 implication extended — Hybrid Path retirement in K8.2
 
 ### 2.4 — Extend K-L8 implication
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Edit**: After the existing K-L9 implication line in Part 0, insert:
 
@@ -342,7 +342,7 @@ docs(kernel): K-L8 in-production implication added
 
 ### 2.5 — Replace §K8 body with sub-milestone framing
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Edit**: Find the existing `### K8 — Decision step + production cutover` section in Part 2 (around line 727 in v1.1). Replace its full body (from the `### K8` header through the end of the section, before the next `### K9` header) with the wording designed in §1.6 of this brief:
 
@@ -373,7 +373,7 @@ docs(kernel): §K8 reconciled to Solution A sub-milestone series
 
 ### 2.6 — Update master plan table (Part 2)
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Edit**: Find the master plan table (around line 574 in v1.1):
 ```
@@ -399,7 +399,7 @@ docs(kernel): expand master plan with K8.0-K8.5 sub-milestones
 
 ### 2.7 — Add Part 4 Decisions log entry for Solution A
 
-**File**: `docs/KERNEL_ARCHITECTURE.md`
+**File**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Edit**: In Part 4 «Decisions log», after the existing «Q4 — Two-phase entry point: clean separation» resolved entry, add a new resolved entry:
 
@@ -435,7 +435,7 @@ The executor creates five new skeleton brief files in `tools/briefs/`. Each skel
 # K8.1 — Native-side reference handling primitives
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K8 (Solution A sub-milestone series), K-L3 implication, K-L11
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K8 (Solution A sub-milestone series), K-L3 implication, K-L11
 **Prerequisite**: K8.0 closure (Solution A LOCKED in v1.2)
 
 ## Goal
@@ -477,7 +477,7 @@ Native-side primitives that allow currently class-based components (Movement/Ide
 # K8.2 — 7 class components redesigned to unmanaged structs
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L3 implication (Hybrid Path retirement), K8.1 (prerequisite — provides primitives)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L3 implication (Hybrid Path retirement), K8.1 (prerequisite — provides primitives)
 **Prerequisite**: K8.1 closure
 
 ## Goal
@@ -526,7 +526,7 @@ Convert the 7 class components retained under K4's Hybrid Path to unmanaged stru
 # K8.3 — 12 vanilla systems migrated to SpanLease/WriteBatch
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L7 (span protocol), K-L11 (NativeWorld backbone)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L7 (span protocol), K-L11 (NativeWorld backbone)
 **Prerequisite**: K8.2 closure (all components are unmanaged structs)
 
 ## Goal
@@ -570,7 +570,7 @@ NeedsSystem, MoodSystem, JobSystem, ConsumeSystem, SleepSystem, ComfortAuraSyste
 # K8.4 — ManagedWorld retired as production; Mod API v3 ships
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` K-L11, K-L8 in-production implication, MOD_OS_ARCHITECTURE.md §4.6 (IModApi v2 → v3)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` K-L11, K-L8 in-production implication, MOD_OS_ARCHITECTURE.md §4.6 (IModApi v2 → v3)
 **Prerequisite**: K8.3 closure (all production systems on NativeWorld)
 
 ## Goal
@@ -611,7 +611,7 @@ Remove `World` class from production code paths. `World` retained only as test f
 # K8.5 — Mod ecosystem migration prep (documentation + guide)
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` K-L9 (mod parity), MOD_OS_ARCHITECTURE.md §4.6 (Mod API v3, post-K8.4)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` K-L9 (mod parity), MOD_OS_ARCHITECTURE.md §4.6 (Mod API v3, post-K8.4)
 **Prerequisite**: K8.4 closure (Mod API v3 shipped)
 
 ## Goal
@@ -804,7 +804,7 @@ If `KERNEL_ARCHITECTURE.md` still contains "Outcome 1" / "Outcome 2" / "Outcome 
 ### 5.3 — Spec consistency check
 
 ```
-grep -n "K-L11\|Solution A" docs/KERNEL_ARCHITECTURE.md
+grep -n "K-L11\|Solution A" docs/architecture/KERNEL_ARCHITECTURE.md
 ```
 
 **Expected**: K-L11 referenced in Part 0 (table row + implication line), Part 2 §K8 (decision line), Part 4 (decisions log entry). 5+ matches.

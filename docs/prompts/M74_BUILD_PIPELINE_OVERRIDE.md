@@ -53,7 +53,7 @@ M7.4 scope: ship the manifest-rewriter CLI tool, the `mods/Directory.Build.targe
 
 ## Required reading
 
-1. `docs/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 — §2.2 (`hotReload` field row in manifest reference table; default `false`; v1 manifest grace), §9.6 (hot-reload disabled mods semantics — menu disables button, restart required), D-7 (LOCKED override mechanism wording), §11.1 M7 row, §11.2 (no new error kinds for M7.4).
+1. `docs/architecture/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 — §2.2 (`hotReload` field row in manifest reference table; default `false`; v1 manifest grace), §9.6 (hot-reload disabled mods semantics — menu disables button, restart required), D-7 (LOCKED override mechanism wording), §11.1 M7 row, §11.2 (no new error kinds for M7.4).
 2. `docs/ROADMAP.md` — M7 sub-phase status block, M7.4 entry "Build-pipeline override per D-7", M8 entry acceptance criterion ("Vanilla manifest `hotReload: true` in source; build-pipeline override correctness verified by a CI test").
 3. `docs/METHODOLOGY.md` — §2.4 atomic phase review, §7.3 three-commit invariant.
 4. `docs/CODING_STANDARDS.md` — English-only comments, file-scoped namespaces, member order, `_camelCase` private fields, PascalCase public, **Stack-frame retention for collected resources** section (added in commit `f4b2cb8`; not directly relevant to M7.4 but locks the broader discipline).

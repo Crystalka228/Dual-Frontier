@@ -157,10 +157,10 @@ Three documents must agree on the v1.3 / M4-closed / 281-tests state:
 
 | Document | Field | Expected | Found | Status |
 |---|---|---|---|---|
-| `docs/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.3` | `LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied.` | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | Version history v1.3 entry (lines 23–25) | v1.3 entry with §2.2 reference + final no-semantic statement | Two bullets present: §2.2 wording correction + "No semantic changes. No locked decision (D-1 through D-7) is altered. M4 implementations continue to comply." | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | §2.2 entryAssembly row (line 214) | "must be empty for `kind=shared`" | `Required for kind=regular; **must be empty for kind=shared** (per §5.2 step 1).` | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | §2.2 entryType row (line 215) | "must be empty for `kind=shared`" | `Required for kind=regular; **must be empty for kind=shared** (per §5.2 step 1).` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.3` | `LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied.` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Version history v1.3 entry (lines 23–25) | v1.3 entry with §2.2 reference + final no-semantic statement | Two bullets present: §2.2 wording correction + "No semantic changes. No locked decision (D-1 through D-7) is altered. M4 implementations continue to comply." | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | §2.2 entryAssembly row (line 214) | "must be empty for `kind=shared`" | `Required for kind=regular; **must be empty for kind=shared** (per §5.2 step 1).` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | §2.2 entryType row (line 215) | "must be empty for `kind=shared`" | `Required for kind=regular; **must be empty for kind=shared** (per §5.2 step 1).` | ✓ |
 | `docs/ROADMAP.md` | Header date (line 11) | `2026-04-29` | `*Updated: 2026-04-29 (M4 closed — M4.1, M4.2, M4.3 done; M5 next).*` | ✓ |
 | `docs/ROADMAP.md` | M4 row (line 27) | `✅ Closed` | `✅ Closed` with the four added M4 test classes (`CrossAlcTypeIdentityTests`, `SharedAssemblyResolutionTests`, `ContractTypeInRegularModTests`, `SharedModComplianceTests`) and a one-line summary covering M4.1/M4.2/M4.3 | ✓ |
 | `docs/ROADMAP.md` | M4 sub-phase block (lines 207–209) | M4.1, M4.2, M4.3 each `✅ Closed` with commit list and test class | All three sub-phases marked closed with the exact commit SHAs from the batch and the right test class per sub-phase | ✓ |
@@ -254,7 +254,7 @@ shape as v1.1 (`MOD_OS_ARCHITECTURE.md:14–17`) and v1.2
 
 ### §5.3 LOCKED decision sanctity
 
-`git diff 7e44eb2..HEAD -- docs/MOD_OS_ARCHITECTURE.md` (the v1.2
+`git diff 7e44eb2..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` (the v1.2
 ratification through the v1.3 ratification) confined to:
 
 - Status line (v1.2 → v1.3 with extended explanation; "M4.3
@@ -267,8 +267,8 @@ ratification through the v1.3 ratification) confined to:
 Comparing the bytes of §12 (D-1 through D-7 declarations) directly:
 
 ```
-$ diff <(git show 7e44eb2:docs/MOD_OS_ARCHITECTURE.md | sed -n '871,$p') \
-       <(git show 2a707f3:docs/MOD_OS_ARCHITECTURE.md | sed -n '874,$p')
+$ diff <(git show 7e44eb2:docs/architecture/MOD_OS_ARCHITECTURE.md | sed -n '871,$p') \
+       <(git show 2a707f3:docs/architecture/MOD_OS_ARCHITECTURE.md | sed -n '874,$p')
 $ echo $?
 0
 ```
@@ -445,7 +445,7 @@ syntax) is unblocked.
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.3 LOCKED — the
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.3 LOCKED — the
   specification this review verifies.
 - [ROADMAP](./ROADMAP.md) — M4 closure status, M4.1/M4.2/M4.3 sub-phase
   detail, M5 pre-conditions.

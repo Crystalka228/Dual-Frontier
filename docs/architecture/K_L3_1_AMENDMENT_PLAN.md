@@ -101,7 +101,7 @@ Path β components are runtime-only (Q4.b lock) — not persisted by save system
 - Path α: `unmanaged struct` components in kernel-side `NativeWorld` (existing K-L3 default; K8.2 v2 closure delivered for `src/DualFrontier.Components/`)
 - Path β (original rejection): GCHandle marshalling on kernel-side managed component store — rejected, defeats GC pressure reduction goal
 - Path β (K-L3.1 reformulation): managed `class` components annotated with `[ManagedStorage]`, stored mod-side in per-mod `RestrictedModApi.ManagedStore<T>` instance (Q2.β-i lock); kernel-side has no managed component store; ALC isolation provides ownership boundary; reclaim is deterministic on `AssemblyLoadContext.Unload`
-- **Both paths chosen as first-class peers per K-L3.1 (2026-05-10)**: kernel-side native storage (Path α) preserves K-L11 «NativeWorld single source of truth» for native data; managed-storage decentralization-by-mod is consistent with K-L9 «vanilla = mods» + ALC isolation. Performance characteristics visible per-call via dual `SystemBase` API (Q3.i). Capability model path-orthogonal (Q6.a). Save system out of scope (Q4.b runtime-only managed-path). Amendment authority: K-L3.1 amendment plan at `docs/K_L3_1_AMENDMENT_PLAN.md` + bridge formalization brief at `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md`.
+- **Both paths chosen as first-class peers per K-L3.1 (2026-05-10)**: kernel-side native storage (Path α) preserves K-L11 «NativeWorld single source of truth» for native data; managed-storage decentralization-by-mod is consistent with K-L9 «vanilla = mods» + ALC isolation. Performance characteristics visible per-call via dual `SystemBase` API (Q3.i). Capability model path-orthogonal (Q6.a). Save system out of scope (Q4.b runtime-only managed-path). Amendment authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` + bridge formalization brief at `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md`.
 ```
 
 ### §1.6 Part 2 K8.2 row (master plan table)
@@ -161,7 +161,7 @@ Insert before `---` separator following v1.6 entry:
   - §3.5 D-1 LOCKED note: path orthogonality clarified — `[ModAccessible]` (already `Class | Struct` per K4 prerequisite) and capability strings function uniformly across paths.
   - §4.6 IModApi v3 surface: `RegisterManagedComponent<T> where T : class, IComponent` added alongside existing `RegisterComponent<T>` (Path α) and `Fields`/`ComputePipelines` v1.6 additions.
   - §11.1: M3.5 deferred milestone description extended (analyzer covers Path α/β consistency in addition to `[FieldAccessible]` scan extension); analyzer ships post-migration per Q5.b deferral.
-  - No semantic changes to v1.6 decisions. No locked decision (D-1 through D-7) is altered. Authority: K-L3.1 amendment plan at `docs/K_L3_1_AMENDMENT_PLAN.md`.
+  - No semantic changes to v1.6 decisions. No locked decision (D-1 through D-7) is altered. Authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`.
 ```
 
 ### §2.3 Lines 1149–1150 (the precise stale wording)
@@ -329,7 +329,7 @@ The current §11.1 M3.5 row covers field-type capability scan extension. K-L3.1 
 
 **New text** (new bullet, append to §0.3 numbered list):
 ```
-9. **Bridge formalization LOCKED (K-L3.1, 2026-05-10)**: Path α (`unmanaged struct`, kernel-side `NativeWorld`) and Path β (managed `class` via `[ManagedStorage]`, mod-side per-mod `ManagedStore<T>`) are first-class peers per K-L3.1 amendment to `KERNEL_ARCHITECTURE.md` Part 0 K-L3. Decision criterion: per-component architectural fit; default Path α; Path β opt-in via attribute. K8.2 v2 closure framing «K-L3 «без exception»» reframed as «K-L3 selective per-component application» (closure delivered selective judgment, not universal mandate). M-series vanilla mod content milestones author per-component on appropriate path. K8.3 system migration extends to dual-path access (`SystemBase.NativeWorld` + `SystemBase.ManagedStore<T>`); per-system access pattern decision in K8.3 brief. K8.4 ships `IModApi.RegisterManagedComponent<T>` as part of v3 surface alongside `Fields` and `ComputePipelines`. K8.5 mod authoring guide documents per-component path choice criterion. Save system out of scope (Q4.b runtime-only managed-path). Authority: K-L3.1 amendment plan at `docs/K_L3_1_AMENDMENT_PLAN.md`; bridge brief at `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md`.
+9. **Bridge formalization LOCKED (K-L3.1, 2026-05-10)**: Path α (`unmanaged struct`, kernel-side `NativeWorld`) and Path β (managed `class` via `[ManagedStorage]`, mod-side per-mod `ManagedStore<T>`) are first-class peers per K-L3.1 amendment to `KERNEL_ARCHITECTURE.md` Part 0 K-L3. Decision criterion: per-component architectural fit; default Path α; Path β opt-in via attribute. K8.2 v2 closure framing «K-L3 «без exception»» reframed as «K-L3 selective per-component application» (closure delivered selective judgment, not universal mandate). M-series vanilla mod content milestones author per-component on appropriate path. K8.3 system migration extends to dual-path access (`SystemBase.NativeWorld` + `SystemBase.ManagedStore<T>`); per-system access pattern decision in K8.3 brief. K8.4 ships `IModApi.RegisterManagedComponent<T>` as part of v3 surface alongside `Fields` and `ComputePipelines`. K8.5 mod authoring guide documents per-component path choice criterion. Save system out of scope (Q4.b runtime-only managed-path). Authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`; bridge brief at `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md`.
 ```
 
 ### §3.3 Line 62 — Option (I) rejection paragraph reframing
@@ -381,7 +381,7 @@ Option (I) was rejected because it would put the mass migration work in front of
 ### 6.6 — K-L3.1 amendment execution (deferred to follow-up brief)
 
 **Trigger**: K-L3.1 amendment plan execution (separate Cloud Code amendment brief, post-K-L3.1 closure 2026-05-10).
-**Change**: per-document edits enumerated in `docs/K_L3_1_AMENDMENT_PLAN.md` (this plan's authoring deliverable):
+**Change**: per-document edits enumerated in `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` (this plan's authoring deliverable):
 - KERNEL_ARCHITECTURE.md `v1.3 → v1.5` (Part 0 K-L3 row + implication paragraph + Part 4 Decisions log + Part 2 K8.2 row + status line + closing v1.0 sediment)
 - MOD_OS_ARCHITECTURE.md `v1.6 → v1.7` (lines 1149–1150 + §3.5 D-1 path orthogonality + §4.6 IModApi v3 + §11.1 M3.5 + §11.2 new ValidationErrorKind)
 - MIGRATION_PLAN_KERNEL_TO_VANILLA.md `v1.0 → v1.1` (this document — header + §0.1 Phase A' integration + §0.3 Decision #9 + §1.2/§1.3/§1.5 extensions + §6.6 self-reference)
@@ -450,7 +450,7 @@ Phase B: M-series mod-OS migration         (5-10 weeks at hobby pace; runs under
                     │
                     ▼
 Phase C: Post-migration GPU compute        (per existing roadmap)
-  G-series (Vulkan compute, per docs/GPU_COMPUTE.md v2.0)
+  G-series (Vulkan compute, per docs/architecture/GPU_COMPUTE.md v2.0)
 ```
 
 (K9 moved from Phase C to Phase A'.4 per K8.0 closure Option c sequencing 2026-05-09; K9 is kernel-side independent of K8.3–K8.5 except in IModApi v3 surface which K8.4 ships.)
@@ -473,7 +473,7 @@ Live tracker — content sync, no version bump.
 
 **New text**:
 ```
-**Last updated**: 2026-05-10 (K-L3.1 bridge formalization closure — amendment plan authored at `docs/K_L3_1_AMENDMENT_PLAN.md`)
+**Last updated**: 2026-05-10 (K-L3.1 bridge formalization closure — amendment plan authored at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`)
 ```
 
 ### §4.2 Current state snapshot — line 35 (K8.2 v2 framing correction)
@@ -485,7 +485,7 @@ Live tracker — content sync, no version bump.
 
 **New text**:
 ```
-| **Last completed milestone** | K-L3.1 (bridge formalization — Path α/β peer paths locked; amendment plan authored at `docs/K_L3_1_AMENDMENT_PLAN.md`) — 2026-05-10. Previous: K8.2 v2 (K-L3 selective per-component closure: K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass) — 2026-05-09 |
+| **Last completed milestone** | K-L3.1 (bridge formalization — Path α/β peer paths locked; amendment plan authored at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`) — 2026-05-10. Previous: K8.2 v2 (K-L3 selective per-component closure: K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass) — 2026-05-09 |
 ```
 
 ### §4.3 Current state snapshot — Active phase line
@@ -574,12 +574,12 @@ Live tracker — content sync, no version bump.
 
 1. `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md` (Status: AUTHORED → EXECUTED 2026-05-10)
 2. `tools/briefs/K_L3_1_BRIEF_ADDENDUM_1.md` (skeleton brief disposition extension — APPLIED)
-3. `docs/K_L3_1_AMENDMENT_PLAN.md` (NEW — Phase 4 deliverable; old/new text pairs for KERNEL + MOD_OS + MIGRATION_PLAN + MIGRATION_PROGRESS + skeleton brief dispositions)
+3. `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` (NEW — Phase 4 deliverable; old/new text pairs for KERNEL + MOD_OS + MIGRATION_PLAN + MIGRATION_PROGRESS + skeleton brief dispositions)
 4. This MIGRATION_PROGRESS entry (added by amendment brief atomic with line corrections)
 
 **Cross-cutting impact**:
 
-- **Amendment brief = Phase A'.1**: docs-only execution per `docs/K_L3_1_AMENDMENT_PLAN.md`; KERNEL `v1.3 → v1.5`, MOD_OS `v1.6 → v1.7`, MIGRATION_PLAN `v1.0 → v1.1` (includes §0.1 Phase A' integration) + this MIGRATION_PROGRESS sync. Estimated 30–60 min auto-mode. Test count delta zero (docs-only). Atomic commit shape: per-document.
+- **Amendment brief = Phase A'.1**: docs-only execution per `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`; KERNEL `v1.3 → v1.5`, MOD_OS `v1.6 → v1.7`, MIGRATION_PLAN `v1.0 → v1.1` (includes §0.1 Phase A' integration) + this MIGRATION_PROGRESS sync. Estimated 30–60 min auto-mode. Test count delta zero (docs-only). Atomic commit shape: per-document.
 - **Phase A' sequencing**: companion document at `docs/architecture/PHASE_A_PRIME_SEQUENCING.md` (authored 2026-05-10) anchors structural unit between K8.2 v2 closure (DONE) and M8.4 begin (Phase B). Phase A' contains 10 phases: A'.0 K-L3.1 (DONE), A'.1 amendment brief, A'.2 README cleanup, A'.3 push, A'.4 K9, A'.5 K8.3, A'.6 K8.4, A'.7 K8.5, A'.8 K-closure report (NEW), A'.9 Architectural analyzer (NEW). Cumulative duration ~10–16 weeks hobby pace; analyzer's dual purpose = M-series migration verifier + architectural debugger per Crystalka 2026-05-10 «анализатор будет верификатором миграции и будет нашим дебагером на баги которые не ловят тесты».
 - **K9 brief = Phase A'.4** (full authored, ~1200 lines, AUTHORED awaiting execution per β6 sequencing — NOT a skeleton): Disposition B (surgical) — version refs (KERNEL v1.4+ instead of v1.0) + test baseline (631 instead of 538) update; scope unchanged (fields architecturally orthogonal to entity-component bridge per addendum §A2.5)
 - **K8.3 skeleton brief = Phase A'.5** (~36 lines true skeleton): Disposition B-to-C — scope undercount correction (12 named systems → 34 actual per migration plan §1.2 reformulated scope) + dual-path access pattern wording per Q3.i; full brief authoring against post-K-L3.1 amended state
@@ -662,7 +662,7 @@ Each forward-track brief receives one of three dispositions per addendum §A5.6:
 - **Deliverables list** (around lines 16–22):
   - Insert new bullet after «`IModApi` v3 ships»: «- `RegisterManagedComponent<T> where T : class, IComponent` added to `IModApi` v3 (per K-L3.1 Q2.β-i lock). `RestrictedModApi` implementation creates per-mod `ManagedStore<T>` instance held in the mod's `RestrictedModApi` instance; reclaimed on `AssemblyLoadContext.Unload`.»
   - Insert new bullet: «- `SystemBase.ManagedStore<T>()` accessor ships (parallel to `SystemBase.NativeWorld` K8.2 v2 plumbing). Resolves via `SystemExecutionContext.Current.ModId` to owning mod's per-mod store. Type `T` must be a class annotated with `[ManagedStorage]`; absence triggers load-time `MissingManagedStorageAttribute` error.»
-  - Insert new bullet: «- `MOD_OS_ARCHITECTURE.md` v1.7+ references (already amended at K-L3.1 amendment time per `docs/K_L3_1_AMENDMENT_PLAN.md` §2); K8.4 brief verifies the v1.7 wording against shipped Mod API v3 surface and adjusts further if needed (per migration plan §6 sequence).»
+  - Insert new bullet: «- `MOD_OS_ARCHITECTURE.md` v1.7+ references (already amended at K-L3.1 amendment time per `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` §2); K8.4 brief verifies the v1.7 wording against shipped Mod API v3 surface and adjusts further if needed (per migration plan §6 sequence).»
 
 - **TODO list** (lines 25–30):
   - Insert TODO: «- [ ] Per-mod `ManagedStore<T>` implementation in `RestrictedModApi` — concrete data structure choice (Dictionary<EntityId, T>, custom hashmap, etc.); per-store lifecycle parallel to subscription cleanup (UnsubscribeAll precedent)»
@@ -698,7 +698,7 @@ Per K-Lessons «atomic commit as compilable unit» (METHODOLOGY v1.5): docs-only
 
 | # | Commit | Files | Scope |
 |---|---|---|---|
-| S1 | `docs(architecture): K-L3.1 bridge formalization session — brief, addendum, amendment plan, Phase A' sequencing` | `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md` (new tracked, EXECUTED), `tools/briefs/K_L3_1_BRIEF_ADDENDUM_1.md` (new tracked, APPLIED), `docs/K_L3_1_AMENDMENT_PLAN.md` (new), `docs/architecture/PHASE_A_PRIME_SEQUENCING.md` (new) | Single bundled commit for all K-L3.1 session deliverables. Brief + addendum start tracked at EXECUTED/APPLIED status (already AUTHORED on disk pre-session). Amendment plan + Phase A' sequencing are Phase 4 outputs of the same session — bundled per K-Lessons «atomic = compilable unit» since these four files are co-dependent (amendment plan references brief/addendum/Phase A'; Phase A' references brief/amendment plan). |
+| S1 | `docs(architecture): K-L3.1 bridge formalization session — brief, addendum, amendment plan, Phase A' sequencing` | `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md` (new tracked, EXECUTED), `tools/briefs/K_L3_1_BRIEF_ADDENDUM_1.md` (new tracked, APPLIED), `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` (new), `docs/architecture/PHASE_A_PRIME_SEQUENCING.md` (new) | Single bundled commit for all K-L3.1 session deliverables. Brief + addendum start tracked at EXECUTED/APPLIED status (already AUTHORED on disk pre-session). Amendment plan + Phase A' sequencing are Phase 4 outputs of the same session — bundled per K-Lessons «atomic = compilable unit» since these four files are co-dependent (amendment plan references brief/addendum/Phase A'; Phase A' references brief/amendment plan). |
 
 **Single commit** for K-L3.1 session output. Test count delta zero. Repo on commit: K-L3.1 fully closed, amendment brief and downstream Phase A' phases unblocked.
 
@@ -706,9 +706,9 @@ Per K-Lessons «atomic commit as compilable unit» (METHODOLOGY v1.5): docs-only
 
 | # | Commit | Files | Scope |
 |---|---|---|---|
-| A1 | `docs(kernel): K-L3.1 bridge formalization; bump KERNEL v1.3→v1.5` | `docs/KERNEL_ARCHITECTURE.md` | All edits per §1 of this plan |
-| A2 | `docs(modos): K-L3.1 bridge formalization; bump MOD_OS v1.6→v1.7` | `docs/MOD_OS_ARCHITECTURE.md` | All edits per §2 of this plan |
-| A3 | `docs(migration): K-L3.1 bridge formalization + Phase A' integration; bump MIGRATION_PLAN v1.0→v1.1` | `docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` | All edits per §3 of this plan (incl. §3.8 Phase A' integration into §0.1) |
+| A1 | `docs(kernel): K-L3.1 bridge formalization; bump KERNEL v1.3→v1.5` | `docs/architecture/KERNEL_ARCHITECTURE.md` | All edits per §1 of this plan |
+| A2 | `docs(modos): K-L3.1 bridge formalization; bump MOD_OS v1.6→v1.7` | `docs/architecture/MOD_OS_ARCHITECTURE.md` | All edits per §2 of this plan |
+| A3 | `docs(migration): K-L3.1 bridge formalization + Phase A' integration; bump MIGRATION_PLAN v1.0→v1.1` | `docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md` | All edits per §3 of this plan (incl. §3.8 Phase A' integration into §0.1) |
 | A4 | `docs(progress): record K-L3.1 closure; reframe K8.2 v2 «без exception»` | `docs/MIGRATION_PROGRESS.md` | All edits per §4 of this plan (line corrections + new K-L3.1 entry, atomic) |
 | A5 | `docs(briefs): K9 surgical edits per K-L3.1 disposition B` | `tools/briefs/K9_FIELD_STORAGE_BRIEF.md` | Per §5.1 (full authored brief, version refs only) |
 | A6 | `docs(briefs): K8.3 surgical edits per K-L3.1 disposition B-to-C` | `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md` | Per §5.2 (skeleton, scope undercount + dual-path note) |
@@ -730,11 +730,11 @@ After commits 1–10 land, the amendment brief executes a cross-document grep ve
 **Audit greps** (each must return zero results in the 4 LOCKED docs after amendment):
 
 ```
-grep -rn "без exception" docs/KERNEL_ARCHITECTURE.md docs/MOD_OS_ARCHITECTURE.md docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
-grep -rn "no exception" docs/KERNEL_ARCHITECTURE.md docs/MOD_OS_ARCHITECTURE.md docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
-grep -rn "K-L3 violation" docs/KERNEL_ARCHITECTURE.md docs/MOD_OS_ARCHITECTURE.md docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
-grep -rn "must be unmanaged struct" docs/KERNEL_ARCHITECTURE.md docs/MOD_OS_ARCHITECTURE.md docs/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
-grep -rn "Class-based component storage prohibited" docs/MOD_OS_ARCHITECTURE.md
+grep -rn "без exception" docs/architecture/KERNEL_ARCHITECTURE.md docs/architecture/MOD_OS_ARCHITECTURE.md docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
+grep -rn "no exception" docs/architecture/KERNEL_ARCHITECTURE.md docs/architecture/MOD_OS_ARCHITECTURE.md docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
+grep -rn "K-L3 violation" docs/architecture/KERNEL_ARCHITECTURE.md docs/architecture/MOD_OS_ARCHITECTURE.md docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
+grep -rn "must be unmanaged struct" docs/architecture/KERNEL_ARCHITECTURE.md docs/architecture/MOD_OS_ARCHITECTURE.md docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md docs/MIGRATION_PROGRESS.md
+grep -rn "Class-based component storage prohibited" docs/architecture/MOD_OS_ARCHITECTURE.md
 ```
 
 **Acceptable matches**: only in version-history entries that quote prior wording for traceability (e.g. v1.1 entry recording the v1.0 framing being corrected). All matches must be in version-history quote-context, never in active spec wording.

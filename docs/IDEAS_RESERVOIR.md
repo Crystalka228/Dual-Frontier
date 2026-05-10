@@ -10,7 +10,7 @@
 
 After Phase 7 closure — game shipped, baseline performance measured, full vanilla mod set live — development continues in the form of post-release updates. This reservoir holds candidate ideas for those updates. Each idea here exists on the terms of "what if?", not on the terms of a deliverable.
 
-The single criterion for inclusion is architectural compatibility with the foundation already specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [METHODOLOGY](./METHODOLOGY.md), and [ARCHITECTURE](./ARCHITECTURE.md). An idea belongs here if implementing it would not require breaking any existing LOCKED spec. An idea that would require such a break belongs in a ratification proposal, not the reservoir.
+The single criterion for inclusion is architectural compatibility with the foundation already specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md), [METHODOLOGY](./METHODOLOGY.md), and [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md). An idea belongs here if implementing it would not require breaking any existing LOCKED spec. An idea that would require such a break belongs in a ratification proposal, not the reservoir.
 
 The reservoir deliberately omits performance targets, success metrics, and acceptance criteria. Validation of these ideas happens in field work — through actual implementation against actual users — not through speculative numbers written before the work begins. Stating "90% success rate" or "60% win rate" at the speculative stage is marketing language; the reservoir is engineering scratch space.
 
@@ -90,9 +90,9 @@ The architectural fit is strong: the existing event log already captures the act
 
 ### 2.9 FHE integration
 
-The architectural commitment for fully homomorphic encryption is documented separately as a LOCKED specification: [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) v1.0.
+The architectural commitment for fully homomorphic encryption is documented separately as a LOCKED specification: [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) v1.0.
 
-Unlike the other entries in this reservoir, FHE has a formal architectural contract under the same discipline as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md). The contract is ratified; activation is conditional on the three independent conditions enumerated in §D1 of the contract; the dormant period is unbounded.
+Unlike the other entries in this reservoir, FHE has a formal architectural contract under the same discipline as [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md). The contract is ratified; activation is conditional on the three independent conditions enumerated in §D1 of the contract; the dormant period is unbounded.
 
 The deliberate asymmetry between "idea in the reservoir" and "ratified LOCKED contract" reflects the asymmetric structure of the problem. FHE is simultaneously the entry most distant from implementation and the entry most precisely specifiable in architectural terms. When the implementation specifics are unknowable — because the library does not yet exist — what remains specifiable is the principle. When the specifics are knowable, the principle has typically already been compromised. The contract captures the principle while it is still capturable.
 
@@ -136,13 +136,13 @@ The reservoir lives by these conventions, which are deliberately lighter than th
 - Removing an idea is also allowed. If an idea has lost relevance or has been falsified by new architectural decisions, it is better to remove than to leave a stale entry.
 - Inclusion in the reservoir is not a commitment. The presence of an idea here implies only that it has been considered and found architecturally compatible, not that it will be implemented.
 - There is no version-locking. History lives in git. Major changes to the document's shape (a new top-level section, a restructure of the categories) warrant a commit, not a version bump.
-- When an idea transitions from reservoir to active development, its specification moves to a dedicated `docs/research/<feature>.md` document — the reservoir entry remains as the genesis record, while the active spec lives as a normal LOCKED-discipline document. This mirrors the relationship the reservoir already has with [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md): the reservoir entry references the formal contract; the contract itself follows project discipline.
+- When an idea transitions from reservoir to active development, its specification moves to a dedicated `docs/research/<feature>.md` document — the reservoir entry remains as the genesis record, while the active spec lives as a normal LOCKED-discipline document. This mirrors the relationship the reservoir already has with [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md): the reservoir entry references the formal contract; the contract itself follows project discipline.
 
 ---
 
 ## See also
 
 - [ROADMAP](./ROADMAP.md) — the active surface, including the "Beyond ship" section that links here.
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — the modding architecture every reservoir entry is required to fit within.
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the modding architecture every reservoir entry is required to fit within.
 - [METHODOLOGY](./METHODOLOGY.md) — the determinism invariant, the discipline of locking sensitive contracts before implementation, and the boundary against speculative metrics.
-- [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) — the one reservoir idea that has already crossed the line into formal ratification.
+- [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — the one reservoir idea that has already crossed the line into formal ratification.

@@ -18,4 +18,4 @@ When raising the version:
 1. Update `SceneDef.CurrentVersion`.
 2. Update every existing fixture, OR add a migration in `ISceneLoader`
    implementations.
-3. Document the breaking change in `docs/VISUAL_ENGINE.md`.
+3. Document the breaking change in `docs/architecture/VISUAL_ENGINE.md`.

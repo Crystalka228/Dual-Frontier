@@ -4,7 +4,7 @@
 **Date**: 2026-05-09
 **Author**: K7 brief execution session (`tools/briefs/K7_PERFORMANCE_MEASUREMENT_BRIEF.md`)
 **Hardware**: AMD Ryzen 7 7435HS (Zen 3+, 8C/16T, 3.10 GHz base), 32 GB DDR5-4800, AMD Radeon RX 7600S (irrelevant for K7), Win11 25H2 build 26200.8246, ASUS TUF A16 ("Skarlet" — Crystalka's primary dev machine, treated as median target audience hardware per K7 brief Phase 1)
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §K7 + Part 0 K-L10, K8 evidence base, `MIGRATION_PROGRESS.md` K6.1 closure context
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §K7 + Part 0 K-L10, K8 evidence base, `MIGRATION_PROGRESS.md` K6.1 closure context
 
 ---
 

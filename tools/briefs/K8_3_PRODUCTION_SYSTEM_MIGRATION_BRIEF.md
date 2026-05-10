@@ -1,7 +1,7 @@
 # K8.3 — 12 vanilla systems migrated to SpanLease/WriteBatch
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L7 (span protocol), K-L11 (NativeWorld backbone)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L7 (span protocol), K-L11 (NativeWorld backbone)
 **Prerequisite**: K8.2 closure (all components are unmanaged structs)
 
 ## Goal

@@ -12,7 +12,7 @@ nav_order: 101
 **Companion artifacts:**
 - [TRANSLATION_GLOSSARY.md](./TRANSLATION_GLOSSARY.md) — v1.0, locked.
 - [TRANSLATION_PLAN.md](./TRANSLATION_PLAN.md) — campaign plan, unchanged by Pass 1.
-- [ISOLATION.md](./ISOLATION.md) — referenced for §15.5 banner alignment and §15.3/§15.4 doc-only specifications.
+- [ISOLATION.md](/docs/architecture/ISOLATION.md) — referenced for §15.5 banner alignment and §15.3/§15.4 doc-only specifications.
 
 ---
 
@@ -68,7 +68,7 @@ Two stale specs fixed by Pass 1 (atomic commits per file). Three additional occu
 
 **Commit:** `chore(normalize): align Core/Bus README to six-bus reality`.
 
-### §2.3 Preserved as historical: `docs/ARCHITECTURE.md:9`
+### §2.3 Preserved as historical: `docs/architecture/ARCHITECTURE.md:9`
 
 **Text:** `**v0.1 (2026-03):** Исходный каркас: четыре слоя, пять доменных шин, декларативная изоляция, параллельный планировщик.`
 
@@ -147,7 +147,7 @@ Per the task scope ("only inventorying, does not translate"), no `.cs` file was 
 
 ## §4 — User-facing string contracts
 
-Five contracts identified. **Three are emitted by current code** (must be translated atomically with their tests in Pass 3). **Two are doc-only specifications** in `docs/ISOLATION.md` for future runtime checks not yet implemented.
+Five contracts identified. **Three are emitted by current code** (must be translated atomically with their tests in Pass 3). **Two are doc-only specifications** in `docs/architecture/ISOLATION.md` for future runtime checks not yet implemented.
 
 ### §4.1 Read-isolation violation (implemented, asserted)
 
@@ -163,7 +163,7 @@ Five contracts identified. **Three are emitted by current code** (must be transl
 | Slot | Reference |
 |---|---|
 | Code | `src/DualFrontier.Core/ECS/SystemExecutionContext.cs` lines 282–292, method `BuildReadViolationMessage(Type)` |
-| Doc | `docs/ISOLATION.md` §"Обращение к незадекларированному компоненту" lines 116–142, §"Формат сообщений" lines 185–202 |
+| Doc | `docs/architecture/ISOLATION.md` §"Обращение к незадекларированному компоненту" lines 116–142, §"Формат сообщений" lines 185–202 |
 | Tests | `tests/DualFrontier.Core.Tests/Isolation/IsolationGuardTests.cs`: `GetComponent_Undeclared_Throws_ForCore` lines 50–54 (`.ContainAll("TestHealthComponent", "без декларации", "Добавь: [SystemAccess")`); `ModOrigin_Violation_ReportsToSink` line 123 (`.ContainAll("TestHealthComponent", "без декларации")`) |
 | Glossary lock | §15.1a, locked v1.0 |
 
@@ -181,7 +181,7 @@ Five contracts identified. **Three are emitted by current code** (must be transl
 | Slot | Reference |
 |---|---|
 | Code | `src/DualFrontier.Core/ECS/SystemExecutionContext.cs` lines 294–304, method `BuildWriteViolationMessage(Type)` |
-| Doc | `docs/ISOLATION.md` §"Формат сообщений" lines 185–202 (general format); no write-specific example shown — recommend Pass 2 add a parallel example block |
+| Doc | `docs/architecture/ISOLATION.md` §"Формат сообщений" lines 185–202 (general format); no write-specific example shown — recommend Pass 2 add a parallel example block |
 | Tests | `tests/DualFrontier.Core.Tests/Isolation/IsolationGuardTests.cs`: `SetComponent_Undeclared_Throws` lines 82–86 (`.ContainAll("TestHealthComponent", "модифицирует", "Добавь: [SystemAccess")`) |
 | Glossary lock | §15.1b, locked v1.0 |
 
@@ -197,21 +197,21 @@ Five contracts identified. **Three are emitted by current code** (must be transl
 | Slot | Reference |
 |---|---|
 | Code | `src/DualFrontier.Core/ECS/SystemExecutionContext.cs` lines 256–262, method `GetSystem<TSystem>()` (always throws, even in Release) |
-| Doc | `docs/ISOLATION.md` §"Прямой доступ к другой системе" lines 146–162 |
+| Doc | `docs/architecture/ISOLATION.md` §"Прямой доступ к другой системе" lines 146–162 |
 | Tests | `tests/DualFrontier.Core.Tests/Isolation/IsolationGuardTests.cs`: `GetSystem_AlwaysThrows` line 99 (`.Contain("Прямой доступ к системам запрещён")`) |
 | Glossary lock | §15.2, locked v1.0 |
 
 ### §4.4 Direct World access (doc-only, not yet emitted)
 
-Documented in `docs/ISOLATION.md` lines 168–172 as the intended runtime diagnostic when a system bypasses `SystemBase` to call `World.GetComponentUnsafe` directly. **No corresponding code exists** — Pass 1 verified by reading `SystemExecutionContext` end-to-end. A future phase implements the check; the wording is pre-locked in glossary §15.3 so doc and code converge when implementation lands.
+Documented in `docs/architecture/ISOLATION.md` lines 168–172 as the intended runtime diagnostic when a system bypasses `SystemBase` to call `World.GetComponentUnsafe` directly. **No corresponding code exists** — Pass 1 verified by reading `SystemExecutionContext` end-to-end. A future phase implements the check; the wording is pre-locked in glossary §15.3 so doc and code converge when implementation lands.
 
 ### §4.5 Wrong-bus publishing (doc-only, not yet emitted)
 
-Documented in `docs/ISOLATION.md` lines 178–183 as the intended runtime diagnostic when a system publishes to a bus it has not declared. **No corresponding code exists** — `SystemExecutionContext` captures `_allowedBuses` but never validates against an actual `Publish` call. A future phase wires the check; wording pre-locked in glossary §15.4.
+Documented in `docs/architecture/ISOLATION.md` lines 178–183 as the intended runtime diagnostic when a system publishes to a bus it has not declared. **No corresponding code exists** — `SystemExecutionContext` captures `_allowedBuses` but never validates against an actual `Publish` call. A future phase wires the check; wording pre-locked in glossary §15.4.
 
 ### §4.6 Mod fault banner (doc-only, not yet emitted)
 
-Documented in `docs/ISOLATION.md` lines 86–90 as the player-facing UI banner shown when a mod is unloaded. **No corresponding code exists** — `ModFaultHandler` (the entire class described in `ISOLATION.md` §"ModFaultHandler — жизненный цикл при нарушении мода") is itself a specification, not yet implemented. Pass 1 corrected the v0.2 glossary draft's "presumed" Russian to match the verbose form actually documented in ISOLATION.md. Wording pre-locked in glossary §15.5.
+Documented in `docs/architecture/ISOLATION.md` lines 86–90 as the player-facing UI banner shown when a mod is unloaded. **No corresponding code exists** — `ModFaultHandler` (the entire class described in `ISOLATION.md` §"ModFaultHandler — жизненный цикл при нарушении мода") is itself a specification, not yet implemented. Pass 1 corrected the v0.2 glossary draft's "presumed" Russian to match the verbose form actually documented in ISOLATION.md. Wording pre-locked in glossary §15.5.
 
 ### §4.7 Scheduler diagnostics (implemented, partial Russian)
 
@@ -232,7 +232,7 @@ Resolve: разорви цикл через [Deferred] событие.
 | Slot | Reference |
 |---|---|
 | Code | `src/DualFrontier.Core/Scheduling/DependencyGraph.cs` lines 225–235 (`BuildWriteConflictException`), lines 238–259 (`BuildCycleException`) |
-| Doc | `src/DualFrontier.Core/Scheduling/DependencyGraph.cs` line 21 references `docs/THREADING.md` for format spec — Pass 2 should verify what THREADING.md actually documents |
+| Doc | `src/DualFrontier.Core/Scheduling/DependencyGraph.cs` line 21 references `docs/architecture/THREADING.md` for format spec — Pass 2 should verify what THREADING.md actually documents |
 | Tests | `tests/DualFrontier.Core.Tests/Scheduling/DependencyGraphTests.cs` — substring assertion patterns to be enumerated during Pass 3 prep (out of Pass 1 inventory scope) |
 | Glossary lock | **Not yet in §15.** Recommend Pass 2 add §15.6 (Scheduler diagnostics) before Pass 3 begins, modeled on §15.1a/§15.1b. |
 

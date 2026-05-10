@@ -10,7 +10,7 @@ nav_order: 108
 **HEAD:** `d1c1338dac06364b062695baee26a8393cc06385` (per `.git/refs/heads/main` line 1)
 **Pass 1 baseline HEAD:** `1d43858a36c17b956a345e9bfe07a9ccf82daddb` (per `AUDIT_PASS_1_INVENTORY.md:10`)
 **HEAD delta since Pass 1 baseline:** +3 commits — `3f00c2a` (`docs(architecture): ratify v1.5`), `6e9c433` (`Update AUDIT_PASS_2_SPEC_CODE.md`, the Pass 3 baseline HEAD), `d1c1338` (`Pass 1 baseline: 1d43858 (M7.3 closure) Current: 6e9c433 (Update AUDIT_PASS_2_SPEC_CODE.md) Delta: +2 commits (3f00c2a v1.5 ratify, 6e9c433 Pass 2 sync)`, an audit-baseline annotation commit). All three commits are post-Pass-1; Pass 4 audits current state per plan §10 step 2.
-**Spec under audit:** `docs/MOD_OS_ARCHITECTURE.md` LOCKED v1.5
+**Spec under audit:** `docs/architecture/MOD_OS_ARCHITECTURE.md` LOCKED v1.5
 **Pass 1 inventory consumed:** `docs/audit/AUDIT_PASS_1_INVENTORY.md` (9/9 PASSED)
 **Pass 2 artifact consumed:** `docs/audit/AUDIT_PASS_2_SPEC_CODE.md` (10/11 PASSED + 1/11 FAILED with Tier 0 RESOLVED via v1.5)
 **Pass 3 artifact consumed:** `docs/audit/AUDIT_PASS_3_ROADMAP_REALITY.md` (12/12 PASSED)
@@ -59,11 +59,11 @@ escalation NOT triggered.
 | Spec see-also entry | Path | Exists? | Verdict |
 |---|---|---|---|
 | METHODOLOGY | `docs/METHODOLOGY.md` | yes | ✓ |
-| ARCHITECTURE | `docs/ARCHITECTURE.md` | yes | ✓ |
-| MODDING | `docs/MODDING.md` | yes | ✓ |
-| MOD_PIPELINE | `docs/MOD_PIPELINE.md` | yes | ✓ |
-| CONTRACTS | `docs/CONTRACTS.md` | yes | ✓ |
-| ISOLATION | `docs/ISOLATION.md` | yes | ✓ |
+| ARCHITECTURE | `docs/architecture/ARCHITECTURE.md` | yes | ✓ |
+| MODDING | `docs/architecture/MODDING.md` | yes | ✓ |
+| MOD_PIPELINE | `docs/architecture/MOD_PIPELINE.md` | yes | ✓ |
+| CONTRACTS | `docs/architecture/CONTRACTS.md` | yes | ✓ |
+| ISOLATION | `docs/architecture/ISOLATION.md` | yes | ✓ |
 | ROADMAP | `docs/ROADMAP.md` | yes | ✓ |
 | `src/DualFrontier.Contracts/Modding/` (folder) | `src/DualFrontier.Contracts/Modding/` | yes (folder present, contains `IMod.cs`, `IModApi.cs`, `IModContract.cs`, `ContractsVersion.cs`, `ModManifest.cs`, `ManifestCapabilities.cs`, etc.) | ✓ |
 
@@ -73,9 +73,9 @@ escalation NOT triggered.
 
 ## §2 MODDING.md ↔ spec consistency
 
-Read `docs/MODDING.md` целиком (309 lines). The document self-titles «Writing mods» without a version or status header. Spec see-also (line 980) explicitly frames this document: «MODDING — the existing v1 mod-author guide; this document specifies v2.»
+Read `docs/architecture/MODDING.md` целиком (309 lines). The document self-titles «Writing mods» without a version or status header. Spec see-also (line 980) explicitly frames this document: «MODDING — the existing v1 mod-author guide; this document specifies v2.»
 
-**Spec acknowledges it as v1 surface; the doc itself does not announce v1 status visibly.** A reader landing on `docs/MODDING.md` from the `docs/README.md` Development section nav (line 43) sees no header signalling v1 vs. v2.
+**Spec acknowledges it as v1 surface; the doc itself does not announce v1 status visibly.** A reader landing on `docs/architecture/MODDING.md` from the `docs/README.md` Development section nav (line 43) sees no header signalling v1 vs. v2.
 
 **Code mapping:**
 
@@ -89,14 +89,14 @@ Read `docs/MODDING.md` целиком (309 lines). The document self-titles «Wr
 
 **Findings:**
 
-- **Tier 3 (wording lag).** `docs/MODDING.md` documents the v1 IModApi/manifest/hot-reload surface across IModApi enumeration (lines 34–55), manifest example (lines 122–148), and hot reload sequence (lines 151–162). The spec see-also entry frames the doc as the v1 guide, but the doc itself does not announce its v1 status — there is no «Status: v1 surface (superseded by v2 in MOD_OS_ARCHITECTURE)» header. A reader navigating from `docs/README.md` § Development row (line 43) cannot distinguish current vs. historical surface. Recommendation: add a one-line header mirroring `MOD_PIPELINE.md` self-version pattern (e.g. «**Status:** v1 mod-author guide. The v2 surface is specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md).»). Not blocking M7.4. Surgical-fix candidate after Pass 5 ratification.
+- **Tier 3 (wording lag).** `docs/architecture/MODDING.md` documents the v1 IModApi/manifest/hot-reload surface across IModApi enumeration (lines 34–55), manifest example (lines 122–148), and hot reload sequence (lines 151–162). The spec see-also entry frames the doc as the v1 guide, but the doc itself does not announce its v1 status — there is no «Status: v1 surface (superseded by v2 in MOD_OS_ARCHITECTURE)» header. A reader navigating from `docs/README.md` § Development row (line 43) cannot distinguish current vs. historical surface. Recommendation: add a one-line header mirroring `MOD_PIPELINE.md` self-version pattern (e.g. «**Status:** v1 mod-author guide. The v2 surface is specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md).»). Not blocking M7.4. Surgical-fix candidate after Pass 5 ratification.
 - **Tier 4 (manifest example schema lag).** Manifest JSON example at lines 122–148 uses `requiresContracts: "^1.0.0"` and a separate `optionalDependencies` array. v2 surface uses `apiVersion` and `dependencies[i].optional`. Tied to the wording-lag finding above; if the doc is reframed as v1 historical, the example becomes consistent with that frame. Not blocking. Cosmetic refresh candidate.
 
 ---
 
 ## §3 MOD_PIPELINE.md ↔ spec consistency
 
-Read `docs/MOD_PIPELINE.md` целиком (329 lines). Self-version at line 4: «Architecture version: v0.2 | Implementation phase: 2». This is engine-architecture v0.2, not MOD_OS spec version.
+Read `docs/architecture/MOD_PIPELINE.md` целиком (329 lines). Self-version at line 4: «Architecture version: v0.2 | Implementation phase: 2». This is engine-architecture v0.2, not MOD_OS spec version.
 
 **Code mapping:**
 
@@ -110,21 +110,21 @@ Read `docs/MOD_PIPELINE.md` целиком (329 lines). Self-version at line 4: 
 
 **Findings:**
 
-- **Tier 3 (wording lag).** `docs/MOD_PIPELINE.md` self-versions as «Architecture version: v0.2» and describes the modding pipeline at the M2-era surface: a two-phase ContractValidator, a 4-member `ValidationErrorKind`, a five-step unload sequence with a 500ms `IMod.Unload` timeout. After M3–M7.3 the actual implementation has eight ContractValidator phases (per Pass 2 §11), an eleven-member `ValidationErrorKind` (per Pass 2 §13 Tier 0 row 1, ratified into v1.5 spec §11.2), and a seven-step unload chain with a 10s WeakReference + GC pump bracket (per spec v1.4 §9.5 step 7 + v1.4 §9.5.1, verified in Pass 2 §9). The doc has not been refreshed against the spec evolution. Practical impact: external readers navigating from `docs/README.md` § Development row (line 44) see the v0.2 surface as if current. Recommendation: refresh the doc to v0.3+ surface, or add a status header pinning the as-designed snapshot. Not blocking M7.4.
+- **Tier 3 (wording lag).** `docs/architecture/MOD_PIPELINE.md` self-versions as «Architecture version: v0.2» and describes the modding pipeline at the M2-era surface: a two-phase ContractValidator, a 4-member `ValidationErrorKind`, a five-step unload sequence with a 500ms `IMod.Unload` timeout. After M3–M7.3 the actual implementation has eight ContractValidator phases (per Pass 2 §11), an eleven-member `ValidationErrorKind` (per Pass 2 §13 Tier 0 row 1, ratified into v1.5 spec §11.2), and a seven-step unload chain with a 10s WeakReference + GC pump bracket (per spec v1.4 §9.5 step 7 + v1.4 §9.5.1, verified in Pass 2 §9). The doc has not been refreshed against the spec evolution. Practical impact: external readers navigating from `docs/README.md` § Development row (line 44) see the v0.2 surface as if current. Recommendation: refresh the doc to v0.3+ surface, or add a status header pinning the as-designed snapshot. Not blocking M7.4.
 
 ---
 
 ## §4 CONTRACTS.md ↔ spec consistency
 
-Read `docs/CONTRACTS.md` целиком (132 lines). The document covers marker interfaces, the six domain buses, IModContract, contract evolution, and SemVer.
+Read `docs/architecture/CONTRACTS.md` целиком (132 lines). The document covers marker interfaces, the six domain buses, IModContract, contract evolution, and SemVer.
 
 **Pass 1 anomaly #8 follow-up (bus count cross-doc):**
 
 - `Contracts/README.md:17` lists 5 buses (per Pass 1 anomaly #8). Routed to §7.
 - `IGameServices.cs:13–57` declares 6 properties (Pass 2 §11 sequence #46).
 - `Contracts/Bus/README.md:5` describes 6 buses (per Pass 1 anomaly #8 third source).
-- **`docs/CONTRACTS.md:34–48` documents «Six domain buses» and lists exactly 6 in `IGameServices` (Combat, Inventory, Magic, World, Pawns, Power), with «Power introduced in v0.3 §13.1».** ✓ matches `IGameServices.cs` count.
-- **`docs/EVENT_BUS.md:11–21` mirrors the same six-bus enumeration** ✓.
+- **`docs/architecture/CONTRACTS.md:34–48` documents «Six domain buses» and lists exactly 6 in `IGameServices` (Combat, Inventory, Magic, World, Pawns, Power), with «Power introduced in v0.3 §13.1».** ✓ matches `IGameServices.cs` count.
+- **`docs/architecture/EVENT_BUS.md:11–21` mirrors the same six-bus enumeration** ✓.
 
 So the bus-count drift is exclusively in `src/DualFrontier.Contracts/README.md:17` (parent README); the architecture docs (CONTRACTS.md, EVENT_BUS.md) and the sibling sub-folder README (Contracts/Bus/README.md) all declare 6 correctly. The Tier 3 stale-README finding for the parent file is recorded in §7.
 
@@ -153,7 +153,7 @@ Read all four целиком.
 
 **Findings:**
 
-- **Tier 3.** `docs/ISOLATION.md` `ModFaultHandler` sequence at lines 70–79 documents 6 steps; spec §9.5 v1.4 + v1.4 §9.5.1 unload chain has 7 steps (with explicit `WeakReference` + GC pump bracket as step 7). The doc predates v1.4 ratification. Practical impact: low — `ModFaultHandler` is the runtime-violation path, and the doc describes its conceptual lifecycle accurately for the M0–M6 implementation. Recommendation: add a sentence noting that the menu-driven `ModIntegrationPipeline.UnloadMod` adds a final `WeakReference` verification step (per spec §9.5 step 7 v1.4) that completes the conceptual chain. Not blocking. Surgical-fix candidate.
+- **Tier 3.** `docs/architecture/ISOLATION.md` `ModFaultHandler` sequence at lines 70–79 documents 6 steps; spec §9.5 v1.4 + v1.4 §9.5.1 unload chain has 7 steps (with explicit `WeakReference` + GC pump bracket as step 7). The doc predates v1.4 ratification. Practical impact: low — `ModFaultHandler` is the runtime-violation path, and the doc describes its conceptual lifecycle accurately for the M0–M6 implementation. Recommendation: add a sentence noting that the menu-driven `ModIntegrationPipeline.UnloadMod` adds a final `WeakReference` verification step (per spec §9.5 step 7 v1.4) that completes the conceptual chain. Not blocking. Surgical-fix candidate.
 
 ---
 
@@ -205,7 +205,7 @@ Per Pass 1 §0 row 4 inventory: 58 sub-folder READMEs total under `src/`, `tests
 
 **Findings:**
 
-- **Tier 3 #1.** `src/DualFrontier.Contracts/README.md:17` lists 5 buses (`ICombatBus`, `IInventoryBus`, `IMagicBus`, `IPawnBus`, `IWorldBus`); actual is 6 (`IPowerBus` missing from this list, though properly described in sibling `Bus/README.md:5` and in `docs/CONTRACTS.md:34–48`). Confirms Pass 1 anomaly #8. Recommendation: append `IPowerBus` to line 17. Not blocking. (Source-of-truth code is `IGameServices.cs` and remains correct; this is a parent-README enumeration drift only.)
+- **Tier 3 #1.** `src/DualFrontier.Contracts/README.md:17` lists 5 buses (`ICombatBus`, `IInventoryBus`, `IMagicBus`, `IPawnBus`, `IWorldBus`); actual is 6 (`IPowerBus` missing from this list, though properly described in sibling `Bus/README.md:5` and in `docs/architecture/CONTRACTS.md:34–48`). Confirms Pass 1 anomaly #8. Recommendation: append `IPowerBus` to line 17. Not blocking. (Source-of-truth code is `IGameServices.cs` and remains correct; this is a parent-README enumeration drift only.)
 - **Tier 3 #2.** `src/DualFrontier.Application/Modding/README.md:14–19` Contents listing enumerates 4 of the 10+ source files in the folder. Several core M-phase additions (`ContractValidator`, `ManifestParser`, `ModIntegrationPipeline`, `ModRegistry`, `ModContractStore`, `KernelCapabilityRegistry`, `SharedModLoadContext`, `LoadedMod`, `ValidationError`, `ValidationReport`) added across M1–M7 are absent. Recommendation: refresh contents listing or replace with «source-of-truth: see folder for current file list» framing. Not blocking.
 - **Tier 4.** Pattern-wide stale TODO bullets across many `src/` READMEs reference closed phases (Phase 0/1/2/3) as pending. Scope: ~40+ READMEs. Cosmetic; recommendation: doc-hygiene sweep batched against a future ratification cycle.
 
@@ -317,7 +317,7 @@ LC_ALL=en_US.UTF-8 grep -lP '[\x{0400}-\x{04FF}]' \
 Active = `docs/*.md` excluding:
 
 - `docs/audit/` (historical / translation campaign artifacts whitelist).
-- `docs/MOD_OS_ARCHITECTURE.md` Version history lines 12–32 (changelog whitelist; verified via `grep -P '[\x{0400}-\x{04FF}]'` — no matches in this file).
+- `docs/architecture/MOD_OS_ARCHITECTURE.md` Version history lines 12–32 (changelog whitelist; verified via `grep -P '[\x{0400}-\x{04FF}]'` — no matches in this file).
 - `docs/TRANSLATION_GLOSSARY.md` (RU source by design, whitelist).
 - `docs/learning/PHASE_1.md` (frozen Phase 1 snapshot — header lines 4–7 confirm «Translated to English on 2026-04-27 as part of the i18n campaign. The original Russian version is preserved in git history at commit `cf8ef86`.» Verified zero cyrillic remaining via PCRE grep).
 
@@ -404,8 +404,8 @@ Each `[link](path)` verified:
 | Link target | Exists? |
 |---|---|
 | `./docs/ROADMAP.md` | ✓ |
-| `./docs/ARCHITECTURE.md` | ✓ |
-| `./docs/MOD_OS_ARCHITECTURE.md` | ✓ |
+| `docs/architecture/ARCHITECTURE.md` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | ✓ |
 | `./docs/NORMALIZATION_REPORT.md` | ✓ |
 | `./docs/PIPELINE_METRICS.md` (and three section anchors `#1-pipeline-configuration`, `#3-subscription-headroom`, `#5-reproducibility-requirements`) | ✓ (file exists; PIPELINE_METRICS.md per Pass 1 §4 contains §1, §3, §5 sections — anchor refs presumed valid pending future deep verification, out of scope here) |
 | `./docs/METHODOLOGY.md` (and section anchor `#6`) | ✓ |
@@ -419,7 +419,7 @@ Frontmatter `nav_order:` collected via Grep across `docs/**/*.md` (line-3 frontm
 
 | nav_order | Path |
 |---|---|
-| 25 | `docs/MOD_OS_ARCHITECTURE.md` |
+| 25 | `docs/architecture/MOD_OS_ARCHITECTURE.md` |
 | 27 | `docs/PIPELINE_METRICS.md` |
 | 95 | `docs/audit/M3_CLOSURE_REVIEW.md` |
 | 96 | `docs/audit/M4_CLOSURE_REVIEW.md` and `docs/audit/PASS_4_REPORT.md` |
@@ -496,9 +496,9 @@ Eager-escalation triggered: **NO**.
 | 7 | Sub-folder README inaccurate (Pass 1 anomaly #7 / Pass 2 OOS #4) | `tests/DualFrontier.Systems.Tests/README.md:13` («.gitkeep — placeholder. Real tests will arrive in Phase 2+.»; actual: 6 .cs / 16 [Fact]) | Replace with current per-folder summary |
 | 8 | Sub-folder README inaccurate (Pass 1 anomaly #8 / Pass 2 OOS #5) | `src/DualFrontier.Contracts/README.md:17` (lists 5 buses, missing `IPowerBus`; actual 6 in `IGameServices.cs`) | Append `IPowerBus` to the enumeration |
 | 9 | Sub-folder README inaccurate | `src/DualFrontier.Application/Modding/README.md:14–19` (lists 4 of 10+ source files) | Refresh contents listing or replace with «source-of-truth: see folder» framing |
-| 10 | Cross-doc wording lag (v1 surface doc not labelled v1) | `docs/MODDING.md` (no version header) | Add «**Status:** v1 mod-author guide. The v2 surface is specified in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md).» header |
-| 11 | Cross-doc wording lag (v0.2 surface doc, ContractValidator phases / ValidationErrorKind / unload sequence outdated vs spec v1.5 + Pass 2 §11 / §13 verifications) | `docs/MOD_PIPELINE.md` (self-versioned «Architecture version: v0.2») | Refresh to v0.3+ surface or pin as designed-snapshot |
-| 12 | Cross-doc wording lag (ModFaultHandler 6-step sequence vs spec §9.5 v1.4 7-step unload chain) | `docs/ISOLATION.md:70–79` | Add note about menu-driven `UnloadMod` step 7 WeakReference verification per spec §9.5 step 7 v1.4 |
+| 10 | Cross-doc wording lag (v1 surface doc not labelled v1) | `docs/architecture/MODDING.md` (no version header) | Add «**Status:** v1 mod-author guide. The v2 surface is specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md).» header |
+| 11 | Cross-doc wording lag (v0.2 surface doc, ContractValidator phases / ValidationErrorKind / unload sequence outdated vs spec v1.5 + Pass 2 §11 / §13 verifications) | `docs/architecture/MOD_PIPELINE.md` (self-versioned «Architecture version: v0.2») | Refresh to v0.3+ surface or pin as designed-snapshot |
+| 12 | Cross-doc wording lag (ModFaultHandler 6-step sequence vs spec §9.5 v1.4 7-step unload chain) | `docs/architecture/ISOLATION.md:70–79` | Add note about menu-driven `UnloadMod` step 7 WeakReference verification per spec §9.5 step 7 v1.4 |
 
 ### Tier 4 — Cosmetic
 
@@ -506,7 +506,7 @@ Eager-escalation triggered: **NO**.
 |---|---|---|---|
 | 1 | Stale narrative reference (historically accurate but could clarify) | `ROADMAP.md:290` («v1.4 §9.5 step 7») | Update to «v1.4 §9.5 step 7 (preserved verbatim in v1.5)» for absolute reader clarity |
 | 2 | Pattern-wide stale TODO bullets in `src/` READMEs (~40+ READMEs reference closed Phase 0/1/2/3 work as pending) | `src/**/README.md` | Doc-hygiene sweep batched against a future ratification cycle |
-| 3 | Manifest example schema lag (uses `requiresContracts` v1 field) | `docs/MODDING.md:122–148`, `docs/CONTRACTS.md:122` | Tied to Tier 3 #10 / #11 wording-lag refresh |
+| 3 | Manifest example schema lag (uses `requiresContracts` v1 field) | `docs/architecture/MODDING.md:122–148`, `docs/architecture/CONTRACTS.md:122` | Tied to Tier 3 #10 / #11 wording-lag refresh |
 | 4 | Missing README in `tests/DualFrontier.Persistence.Tests/` (pattern broken — other test projects have one) | `tests/DualFrontier.Persistence.Tests/` | Add minimal README per the established pattern |
 | 5 | Missing README + empty placeholder folder | `tests/DualFrontier.Core.Benchmarks/` (only `.lscache`, `bin/`, `obj/`) | Add README OR remove the empty folder if benchmarks are still pending |
 | 6 | Incomplete enumeration in `tests/README.md` | `tests/README.md:7–9` (lists 3 of 4 test projects + 1 benchmarks project; Persistence.Tests + Core.Benchmarks missing) | Append both projects |

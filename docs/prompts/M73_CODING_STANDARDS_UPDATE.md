@@ -118,7 +118,7 @@ Reuse this pattern for any future code path с similar shape: ALC unload (M7.x),
 
 ### Cross-reference cleanup
 
-«See also» list at bottom: existing ARCHITECTURE / TESTING_STRATEGY / ISOLATION cross-refs remain accurate. Add `[MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)` если ещё не присутствует — new section references §9.5; verify before adding.
+«See also» list at bottom: existing ARCHITECTURE / TESTING_STRATEGY / ISOLATION cross-refs remain accurate. Add `[MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md)` если ещё не присутствует — new section references §9.5; verify before adding.
 
 ## Acceptance criteria
 

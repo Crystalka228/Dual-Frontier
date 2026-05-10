@@ -1,7 +1,7 @@
 # G1 — First field compute shader (mana diffusion)
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G1
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G1
 **Prerequisites**: G0 closed
 
 ## Goal

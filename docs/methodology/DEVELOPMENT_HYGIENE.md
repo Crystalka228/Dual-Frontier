@@ -2,7 +2,7 @@
 
 The project is deliberately developed along two parallel tracks: the **game** Dual Frontier (Phases 0–7, main branch) and the **engine** — a generic ECS core that forks into a separate product after the game ships (see [ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)). To make the fork cheap, the engine/game boundary must stay clean through Phases 4–7, when the temptation to "cut corners" is at its highest.
 
-This document is not architectural theory (that lives in [ARCHITECTURE](./ARCHITECTURE.md) and [CODING_STANDARDS](./CODING_STANDARDS.md)) — it is an **applied checklist for every PR**. If every item is green, the boundary does not degrade. If anything is red, it stops the merge — not "we'll fix it later."
+This document is not architectural theory (that lives in [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) and [CODING_STANDARDS](./CODING_STANDARDS.md)) — it is an **applied checklist for every PR**. If every item is green, the boundary does not degrade. If anything is red, it stops the merge — not "we'll fix it later."
 
 ## Core invariant
 
@@ -17,7 +17,7 @@ Engine assemblies never reference game assemblies. Everything else in this docum
 | `DualFrontier.Presentation.Native`      | `DualFrontier.Presentation` (Godot DevKit)  |
 | Modding section of `DualFrontier.Application` | Game-loop part of `DualFrontier.Application` |
 
-Full list and rationale: [ARCHITECTURE §"Dependency rules"](./ARCHITECTURE.md#dependency-rules).
+Full list and rationale: [ARCHITECTURE §"Dependency rules"](/docs/architecture/ARCHITECTURE.md#dependency-rules).
 
 ## Checklist for every PR
 
@@ -166,8 +166,8 @@ Full list with examples: [CODING_STANDARDS §"Commit messages"](./CODING_STANDAR
 
 ## See also
 
-- [ARCHITECTURE §"Dependency rules"](./ARCHITECTURE.md#dependency-rules)
+- [ARCHITECTURE §"Dependency rules"](/docs/architecture/ARCHITECTURE.md#dependency-rules)
 - [CODING_STANDARDS §"Commit messages"](./CODING_STANDARDS.md#commit-messages)
 - [ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)
-- [ISOLATION](./ISOLATION.md)
-- [MODDING](./MODDING.md)
+- [ISOLATION](/docs/architecture/ISOLATION.md)
+- [MODDING](/docs/architecture/MODDING.md)

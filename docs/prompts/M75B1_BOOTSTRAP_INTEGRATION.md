@@ -41,7 +41,7 @@ M7.5.B.1 scope: extend `GameBootstrap` to construct the full modding stack (load
 
 ## Required reading
 
-1. `docs/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 — §9.1 (lifecycle states), §9.2 (menu flow — bootstrap exposes the controller the menu drives), §1.4 (load graph — bootstrap's discovery root resolves to where mods live).
+1. `docs/architecture/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 — §9.1 (lifecycle states), §9.2 (menu flow — bootstrap exposes the controller the menu drives), §1.4 (load graph — bootstrap's discovery root resolves to where mods live).
 2. `docs/ROADMAP.md` — M7 sub-phase status block, M7.5.A closure entry pattern as reference for M7.5.B.1's closure entry shape.
 3. `docs/METHODOLOGY.md` — §2.4 atomic phase review, §7.3 three-commit invariant.
 4. `docs/CODING_STANDARDS.md` — full document. Especially: one class per file, English-only comments, member order, `_camelCase` private fields, **Stack-frame retention** section (added in commit `f4b2cb8`).

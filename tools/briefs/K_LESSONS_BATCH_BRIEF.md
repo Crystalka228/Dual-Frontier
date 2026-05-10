@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09 (post-K8.1.1 closure)
 **Status**: EXECUTED (2026-05-09, branch `feat/k-lessons-formalization`, closure `9df2709..071ae11`). See `docs/MIGRATION_PROGRESS.md` § "K-Lessons — Pipeline closure lessons formalization" for closure record.
-**Reference docs**: `docs/METHODOLOGY.md` v1.4 (target for 3 lessons + version bump to v1.5), `docs/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (target for 1 lesson + version bump to v1.3), `docs/MIGRATION_PROGRESS.md` (closure tracker — K-Lessons row authored as part of this brief)
+**Reference docs**: `docs/METHODOLOGY.md` v1.4 (target for 3 lessons + version bump to v1.5), `docs/architecture/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (target for 1 lesson + version bump to v1.3), `docs/MIGRATION_PROGRESS.md` (closure tracker — K-Lessons row authored as part of this brief)
 **Companion**: closure records in `MIGRATION_PROGRESS.md` for K8.0 (`9f9dc05..28498f9`), K8.1 (`a62c1f3..059f712`), K8.1.1 (`fc4400d..63777ef`)
 **Methodology lineage**: this brief is itself an instance of the brief-authoring discipline (`MOD_OS_V16_AMENDMENT_CLOSURE.md`) and is target-document-only — no source code or tests are touched
 **Predecessor**: K8.1.1 (`fc4400d..63777ef`) — InternedString closure follow-up EXECUTED
@@ -56,7 +56,7 @@ git log --oneline -25
 
 ```
 head -10 docs/METHODOLOGY.md
-head -10 docs/KERNEL_ARCHITECTURE.md
+head -10 docs/architecture/KERNEL_ARCHITECTURE.md
 ```
 
 **Expected**:
@@ -73,7 +73,7 @@ ls docs/
 
 **Expected** present:
 - `docs/METHODOLOGY.md`
-- `docs/KERNEL_ARCHITECTURE.md`
+- `docs/architecture/KERNEL_ARCHITECTURE.md`
 - `docs/MIGRATION_PROGRESS.md`
 
 This is an **informational check**, not a hard gate — listing the directory documents the working state for the audit trail. The hard gate is on the version headers in 0.3.
@@ -341,7 +341,7 @@ The version bump and the change history entry are part of the **same commit as l
 
 ### 3.1 — Lesson 4: Error semantics convention for Interop layer
 
-**Target file**: `docs/KERNEL_ARCHITECTURE.md`
+**Target file**: `docs/architecture/KERNEL_ARCHITECTURE.md`
 
 **Insertion point**: in Part 7 (Methodology adjustments для K-series), after the paragraph beginning "**Operating principle continues**:" and before the paragraph beginning "**AD numbering continues**:". The existing structure is:
 
@@ -501,7 +501,7 @@ dotnet test
 **Sanity grep on touched documents**:
 
 ```
-grep -nE "TODO|FIXME|XXX|HACK" docs/METHODOLOGY.md docs/KERNEL_ARCHITECTURE.md
+grep -nE "TODO|FIXME|XXX|HACK" docs/METHODOLOGY.md docs/architecture/KERNEL_ARCHITECTURE.md
 ```
 
 **Expected**: zero new debt markers introduced by K-Lessons. Pre-existing markers (if any) are out of scope; diff against baseline if needed.

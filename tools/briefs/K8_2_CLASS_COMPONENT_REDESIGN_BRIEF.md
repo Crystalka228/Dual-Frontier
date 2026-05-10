@@ -1,7 +1,7 @@
 # K8.2 — 7 class components redesigned to unmanaged structs
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L3 implication (Hybrid Path retirement), K8.1 (prerequisite — provides primitives)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K8, K-L3 implication (Hybrid Path retirement), K8.1 (prerequisite — provides primitives)
 **Prerequisite**: K8.1 closure
 
 ## Goal

@@ -165,7 +165,7 @@ The reviewer sees at once — which fields, which constructor, which public API.
 
 - `using` — sorted: `System.*` first, then `DualFrontier.*`, then the rest. IDE auto-format.
 - `var` — when the type is obvious from the RHS (`new`, cast, factory). Otherwise an explicit type.
-- `async` is forbidden in Domain (see [THREADING](./THREADING.md)). Allowed in Application and Presentation.
+- `async` is forbidden in Domain (see [THREADING](/docs/architecture/THREADING.md)). Allowed in Application and Presentation.
 - Magic numbers go into a `const` with a name that describes the meaning. `4.2f` in code without a comment is a mortal sin.
 - Returning `null` from a public API only when it is an explicit part of the contract (`TryGet` and `T? FindBy(...)`).
 
@@ -247,7 +247,7 @@ Reuse this pattern for any future code path with similar shape: ALC unload (M7.x
 
 ## See also
 
-- [ARCHITECTURE](./ARCHITECTURE.md)
+- [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md)
 - [TESTING_STRATEGY](./TESTING_STRATEGY.md)
-- [ISOLATION](./ISOLATION.md)
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)
+- [ISOLATION](/docs/architecture/ISOLATION.md)
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md)

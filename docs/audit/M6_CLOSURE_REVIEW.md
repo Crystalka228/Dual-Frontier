@@ -22,7 +22,7 @@ follow-up item rather than remediated in this session.
 | 2 | Spec ↔ code ↔ test triple consistency | **PASSED** | All five `MOD_OS_ARCHITECTURE` §7.5 / §11.1 acceptance bullets reachable inside a single load batch have all three legs (spec section, file:line, test name) present. The CENTRAL bridge-replacement demonstration is `Apply_WithReplaceableBridge_SkipsBridgeAndUsesModSystem`. Conflict / Protected / Unknown semantics demonstrated at validator and pipeline level independently. The §7.5 fifth bullet (mod-unloaded re-registration) is hot-reload territory and is registered as the M6→M7 hand-off. |
 | 3 | Cross-document consistency | **PASSED** | `MOD_OS_ARCHITECTURE` v1.3 LOCKED unchanged through M6 (byte-identical from `32f6f04..HEAD`). `ROADMAP` header `Updated: 2026-05-01` with M6 ✅ Closed, M6.1/M6.2 sub-sections, and `338/338`. `docs/README` v1.3 LOCKED unchanged. |
 | 4 | Stale-reference sweep | **PASSED** | All forbidden patterns return zero hits in active-navigation context. `311`, `328`, `333` survive only inside `M5_CLOSURE_REVIEW.md` (frozen audit trail) or as line-number citations in `NORMALIZATION_REPORT.md` (column header, not a test count). `v1.0`/`v1.1`/`v1.2 LOCKED` survive only as legitimate historical-attribution (M0 row, M3/M4/M5 reviews). No `M6 in progress` / `🔨 Current` markers active. |
-| 5 | Methodology compliance | **PASSED** | All 7 commits have scope prefixes per METHODOLOGY §7.3; every commit carries a substantive body. The §12 LOCKED decisions D-1 through D-7 are byte-identical between v1.3 (M5 closure point) and HEAD — verified by `git diff 32f6f04..HEAD -- docs/MOD_OS_ARCHITECTURE.md` returning zero output. **M6 introduces no spec change.** This is the strongest possible falsifiable signal that v1.3 LOCKED specification correctly drove implementation through entire M6 batch — same headline result as the M5 closure review. |
+| 5 | Methodology compliance | **PASSED** | All 7 commits have scope prefixes per METHODOLOGY §7.3; every commit carries a substantive body. The §12 LOCKED decisions D-1 through D-7 are byte-identical between v1.3 (M5 closure point) and HEAD — verified by `git diff 32f6f04..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` returning zero output. **M6 introduces no spec change.** This is the strongest possible falsifiable signal that v1.3 LOCKED specification correctly drove implementation through entire M6 batch — same headline result as the M5 closure review. |
 | 6 | Sub-phase acceptance criteria coverage | **PASSED** | Every acceptance bullet for M6.1 and M6.2 maps to an identifiable artifact (commit, file:line, test name). M6.3 is itself the closure mechanism (the ROADMAP-sync commit `e643011`), not a verifiable sub-phase. |
 | 7 | Carried debts forward | **PASSED** | Phase 2 WeakReference unload tests still tracked in M7; Phase 3 `SocialSystem`/`SkillSystem` stubs still tracked in M10.C; M3.4 (CI Roslyn analyzer) remains `⏸ Deferred`. M6 introduces one new forward-tracked carried hand-off — §7.5 fifth test scenario (mod unloaded → replacement skip reverted, kernel bridge re-registers) is registered as M7's territory in the M6 closure note `ROADMAP.md:278`. Two non-blocking M9 architectural considerations registered in §10 (Phase B vs. Replaces ordering; three-way HealthComponent write overlap among Phase 5 stubs). |
 | 8 | Ready-for-M7 readiness | **PASSED** | `ModIntegrationPipeline.Apply` already rebuilds graph from current mod set on every call — the unload-revert path reduces to "re-`Apply` without the unloaded mod" once M7's Pause/Resume + per-mod unload chain lands. `CollectReplacedFqns(loaded)` is parameter-driven and naturally regenerates the skip set when a mod is removed. `ModLoader._loaded`, `ModLoader.UnloadMod`, `ModRegistry.RemoveMod`, `IModContractStore.RevokeAll` infrastructure is all present (most from M0–M2). The 8-phase validator does not require a new phase for M7 — hot reload runs the existing pipeline against the new mod set. No M6 surface change blocks M7. |
@@ -174,8 +174,8 @@ Three documents must agree on the v1.3 / M6-closed / 338-tests state:
 
 | Document | Field | Expected | Found | Status |
 |---|---|---|---|---|
-| `docs/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.3` | `LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied.` | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | Byte-identity through M6 | zero changes since `32f6f04` | `git diff 32f6f04..HEAD -- docs/MOD_OS_ARCHITECTURE.md` returns zero output | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.3` | `LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied.` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Byte-identity through M6 | zero changes since `32f6f04` | `git diff 32f6f04..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` returns zero output | ✓ |
 | `docs/ROADMAP.md` | Header date (line 11) | `2026-05-01` | `*Updated: 2026-05-01 (M6 closed — M6.1, M6.2 done; M7 next).*` | ✓ |
 | `docs/ROADMAP.md` | M6 row (line 29) | `✅ Closed` | `✅ Closed` with the four new M6 test classes (`PhaseHBridgeReplacementTests`, `Phase5BridgeAnnotationsTests`, `CollectReplacedFqnsTests`, `M62IntegrationTests`) and a one-line summary covering M6.1 (Phase H + Phase 5 annotations) and M6.2 (pipeline skip + integration tests) | ✓ |
 | `docs/ROADMAP.md` | M6 sub-phase block (lines 258–278) | M6.1 and M6.2 each `✅ Closed` with commit list and test classes; M7 hand-off note | M6.1 marked closed with `1af73ad, a408f44, b0f1ee5` and the two M6.1 test classes; M6.2 marked closed with `23f2933, 602a84e, adad506` and the two M6.2 test classes; M7 hand-off note at line 278 records §7.5 fifth scenario as hot-reload territory | ✓ |
@@ -262,7 +262,7 @@ closure verification report commit) and `HEAD` (M6.3 ROADMAP-sync
 commit). Verified directly:
 
 ```
-$ git diff 32f6f04..HEAD -- docs/MOD_OS_ARCHITECTURE.md | wc -l
+$ git diff 32f6f04..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md | wc -l
 0
 ```
 
@@ -454,8 +454,8 @@ implementation pass:
 |---|---|---|---|
 | M3 closure review | v1.1 | v1.2 | **1** — §3.6 hybrid enforcement formulation contradicted §4.2/§4.3 implementation; ratified in v1.2 changelog |
 | M4 closure review | v1.2 | v1.3 | **1** — §2.2 entryAssembly/entryType "ignored for kind=shared" contradicted §5.2 step 1; ratified in v1.3 changelog |
-| M5 closure review | v1.3 | v1.3 (unchanged) | **0** — `git diff dba17c7..HEAD -- docs/MOD_OS_ARCHITECTURE.md` returns zero output; M5 implementation surfaced no latent contradictions |
-| M6 closure review | v1.3 | v1.3 (unchanged) | **0** — `git diff 32f6f04..HEAD -- docs/MOD_OS_ARCHITECTURE.md` returns zero output; M6 implementation surfaced no latent contradictions |
+| M5 closure review | v1.3 | v1.3 (unchanged) | **0** — `git diff dba17c7..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` returns zero output; M5 implementation surfaced no latent contradictions |
+| M6 closure review | v1.3 | v1.3 (unchanged) | **0** — `git diff 32f6f04..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` returns zero output; M6 implementation surfaced no latent contradictions |
 
 The hypothesis is: **contradiction discovery rate decreases
 asymptotically with each major implementation pass that exercises a
@@ -593,7 +593,7 @@ M6 closes cleanly. M7 (Hot reload from menu) is unblocked.
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.3 LOCKED — the
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.3 LOCKED — the
   specification this review verifies. Byte-identical to its M5 closure
   state; M6 exercised §7 (entirely new section relative to all prior
   ratifications) without surfacing any latent contradiction.

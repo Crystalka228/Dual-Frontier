@@ -15,7 +15,7 @@ nav_order: 100
 
 Translating Dual Frontier is **not a linguistic task — it is a distributed edit across three layers at once**: documentation, source code, tests. Concrete example: `IsolationViolationException` formats its message via the template `[ИЗОЛЯЦИЯ НАРУШЕНА]\nСистема '{name}'\nобратилась к '{type}'...`. This format is:
 
-- described in `docs/ISOLATION.md` as a specification (documentation),
+- described in `docs/architecture/ISOLATION.md` as a specification (documentation),
 - hardcoded in `SystemExecutionContext.cs` (code),
 - used as the `WithMessage("*WrongSystem*HealthComponent*")` argument and the `.Contain("Добавь: [SystemAccess")` assertion in tests.
 
@@ -90,7 +90,7 @@ Confirmed locations:
 
 This is the central risk. The format of the isolation-guard messages is not a private detail — it is a contract for the mod author (they fix their code from the hint). The format is:
 
-1. Pinned in `docs/ISOLATION.md` as "mandatory elements".
+1. Pinned in `docs/architecture/ISOLATION.md` as "mandatory elements".
 2. Generated in `SystemExecutionContext.GetComponent<T>` via interpolation.
 3. Verified in `tests/DualFrontier.Core.Tests/Isolation/*Tests.cs` via wildcard substring assertions.
 

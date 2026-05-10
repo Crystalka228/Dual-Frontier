@@ -2,7 +2,7 @@
 
 **Purpose**: ECS kernel storage + bootstrap orchestration + thread pool. C++20 implementation built independently от .NET solution via CMake.
 
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §1.2, §1.3, §1.4
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §1.2, §1.3, §1.4
 
 **Public API surface** (post-K8):
 - `df_capi.h` — extern «C» functions (~20 total)

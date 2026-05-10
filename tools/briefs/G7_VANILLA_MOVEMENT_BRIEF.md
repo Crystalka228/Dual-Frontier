@@ -1,7 +1,7 @@
 # G7 — `Vanilla.Movement` integration
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G7
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G7
 **Prerequisites**: G6 closed
 
 ## Goal

@@ -153,8 +153,8 @@ Three documents must agree on the v1.2 / M3-closed / 260-tests state:
 
 | Document | Field | Expected | Found | Status |
 |---|---|---|---|---|
-| `docs/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.2` | `LOCKED v1.2 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1) and M3 closure review (v1.2) applied.` | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | Version history (lines 18–22) | v1.2 entry with §3.6, §3.5+§2.1, §11.1, "no semantic changes" | All four bullets present and well-formed | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.2` | `LOCKED v1.2 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1) and M3 closure review (v1.2) applied.` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Version history (lines 18–22) | v1.2 entry with §3.6, §3.5+§2.1, §11.1, "no semantic changes" | All four bullets present and well-formed | ✓ |
 | `docs/ROADMAP.md` | Header date (line 11) | `2026-04-29` | `*Updated: 2026-04-29 (M3 closed — M3.1, M3.2, M3.3 done; M3.4 deferred; M4 next).*` | ✓ |
 | `docs/ROADMAP.md` | M3 row (line 25) | `✅ Closed` | `✅ Closed` with M3.1/M3.2/M3.3 acceptance bullets and v1.2 §3.6 reference | ✓ |
 | `docs/ROADMAP.md` | M3.4 row (line 26) | `⏸ Deferred` | `⏸ Deferred` with explicit rationale (D-2 hybrid completion; first external mod author trigger) | ✓ |
@@ -228,7 +228,7 @@ four-rule shape as v1.1 (`MOD_OS_ARCHITECTURE.md:14–17`):
 
 ### §5.3 LOCKED decision sanctity
 
-`git diff e37ca25..7e44eb2 -- docs/MOD_OS_ARCHITECTURE.md` (the v1.1
+`git diff e37ca25..7e44eb2 -- docs/architecture/MOD_OS_ARCHITECTURE.md` (the v1.1
 ratification through the v1.2 ratification) contains no edits to any of
 the seven D-N declarations (§12). The diff is confined to:
 
@@ -382,7 +382,7 @@ M3 closes cleanly. M4 (Shared ALC) is unblocked.
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.2 LOCKED — the
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.2 LOCKED — the
   specification this review verifies.
 - [ROADMAP](./ROADMAP.md) — M3 closure status, M3.4 deferral, M4
   pre-conditions.

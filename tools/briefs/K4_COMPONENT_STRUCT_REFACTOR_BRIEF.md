@@ -1,7 +1,7 @@
 # K4 — Component struct refactor (Path α)
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K4
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K4
 **Prerequisite**: K3 complete
 
 ## Goal

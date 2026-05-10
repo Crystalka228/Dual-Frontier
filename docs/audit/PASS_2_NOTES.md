@@ -89,8 +89,8 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 ### 4.1 ARCHITECTURE.md anchor — retargeted
 
 - **Russian source link:** `[ARCHITECTURE §«Граница движок / игра»](./ARCHITECTURE.md#граница-движок--игра)`
-- **Issue:** the `«Граница движок / игра»` section does not exist in the current `docs/ARCHITECTURE.md` source (Russian or English). The link was already broken before Pass 2.
-- **Pass 2 action:** retargeted to the closest existing section: `[ARCHITECTURE §"Dependency rules"](./ARCHITECTURE.md#dependency-rules)`. The `## Dependency rules` heading exists in the translated ARCHITECTURE.md.
+- **Issue:** the `«Граница движок / игра»` section does not exist in the current `docs/architecture/ARCHITECTURE.md` source (Russian or English). The link was already broken before Pass 2.
+- **Pass 2 action:** retargeted to the closest existing section: `[ARCHITECTURE §"Dependency rules"](/docs/architecture/ARCHITECTURE.md#dependency-rules)`. The `## Dependency rules` heading exists in the translated ARCHITECTURE.md.
 - **Suggested follow-up (out of scope for Pass 2):** the human may want to add an explicit "Engine / game boundary" section to ARCHITECTURE.md that contains the engine vs game assembly table currently duplicated in DEVELOPMENT_HYGIENE.md.
 
 ### 4.2 CODING_STANDARDS.md anchor — section missing in source

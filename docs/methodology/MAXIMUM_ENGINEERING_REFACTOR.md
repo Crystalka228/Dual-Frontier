@@ -158,7 +158,7 @@ Initial scope: invariants currently asserted only through prose + audits.
 
 **Candidate B1: Layer dependency rules**
 
-Currently in [ARCHITECTURE](./ARCHITECTURE.md):
+Currently in [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md):
 > "Domain and Application never import `Godot;` and never import `Silk.NET;`. Contracts only."
 
 Enforcement today: code review + audit passes.
@@ -166,7 +166,7 @@ Proposed enforcement: build-time analyzer that fails compilation if forbidden im
 
 **Candidate B2: Capability declaration completeness**
 
-Currently in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md):
+Currently in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md):
 > Every reflection-accessible component type used by a mod must have its capability declared in the manifest.
 
 Enforcement today: runtime check at mod load time.
@@ -174,7 +174,7 @@ Proposed enforcement: Roslyn analyzer that scans mod source at compile time and 
 
 **Candidate B3: Bus channel correctness**
 
-Currently in [CONTRACTS](./CONTRACTS.md):
+Currently in [CONTRACTS](/docs/architecture/CONTRACTS.md):
 > Events targeting `ICombatBus` must inherit from `CombatEvent`; mismatches are a runtime error.
 
 Enforcement today: runtime cast check.
@@ -197,7 +197,7 @@ Formal type system implemented externally; runs as pre-build step. Allows richer
 ### 3.4 Deliverables
 
 ```
-docs/ARCHITECTURE_TYPE_SYSTEM.md   (v1.0 LOCKED)
+docs/architecture/ARCHITECTURE_TYPE_SYSTEM.md   (v1.0 LOCKED)
 src/DualFrontier.Analyzers/        (new project)
   ├── LayerDependencyAnalyzer.cs    (Candidate B1)
   ├── CapabilityCompletenessAnalyzer.cs (Candidate B2)
@@ -211,7 +211,7 @@ Each analyzer ships as separate type. CI fails build if any analyzer reports err
 
 ### 3.5 Acceptance criteria
 
-- [ ] `docs/ARCHITECTURE_TYPE_SYSTEM.md` v1.0 LOCKED.
+- [ ] `docs/architecture/ARCHITECTURE_TYPE_SYSTEM.md` v1.0 LOCKED.
 - [ ] At least one analyzer (B1 recommended as pilot) implemented and passing on existing codebase.
 - [ ] CI pipeline includes analyzer run on every commit.
 - [ ] Existing LOCKED specs that describe these invariants updated with cross-reference to enforcing analyzer.
@@ -438,7 +438,7 @@ The discipline this brief proposes is not corrective — the existing corpus is 
 ## 10. Ratification
 
 Ratified at v1.0 on 2026-05-06 under the same discipline as
-[IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) and [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md).
+[IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) and [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md).
 
 The brief joins the LOCKED corpus on equal standing with other research-tier
 specifications. Per-track briefs will be authored when activation triggers
@@ -457,10 +457,10 @@ amended through the same ratification process.
 
 - [ROADMAP](./ROADMAP.md) — active surface; this brief proposes parallel-track addition to backlog.
 - [METHODOLOGY](./METHODOLOGY.md) — methodology that Track C aims to make replicable; §8 open questions that motivate Track C.
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — capability model that Track A may verify formally; §3 isolation that Track B may enforce via analyzer.
-- [ARCHITECTURE](./ARCHITECTURE.md) — layer rules that Track B (B1 analyzer) enforces.
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — capability model that Track A may verify formally; §3 isolation that Track B may enforce via analyzer.
+- [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — layer rules that Track B (B1 analyzer) enforces.
 - [PIPELINE_METRICS](./PIPELINE_METRICS.md) — baseline measurements that Track C aims to enable replication of.
-- [ISOLATION](./ISOLATION.md) — isolation guard that Track A's pilot (A2) targets.
+- [ISOLATION](/docs/architecture/ISOLATION.md) — isolation guard that Track A's pilot (A2) targets.
 - [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — precedent for measured commitment with abort criteria; cited in MR-2.
-- [FHE_INTEGRATION_CONTRACT](./FHE_INTEGRATION_CONTRACT.md) — precedent for ratifying contracts before implementation activates; same discipline applies here.
+- [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — precedent for ratifying contracts before implementation activates; same discipline applies here.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — reservoir for post-release ideas; this brief differs by proposing parallel-track work during active development.

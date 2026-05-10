@@ -63,7 +63,7 @@ nav_order: 107
 **Pass 3 НЕ делает:**
 
 - Spec ↔ code drift (это Pass 2 — уже complete).
-- Cross-doc consistency (`docs/CONTRACTS.md`, `docs/MODDING.md`) — Pass 4.
+- Cross-doc consistency (`docs/architecture/CONTRACTS.md`, `docs/architecture/MODDING.md`) — Pass 4.
 - Sub-folder README accuracy — Pass 4.
 - Cyrillic remainder — Pass 4.
 - Performance / threat model active testing — out of scope.
@@ -77,7 +77,7 @@ nav_order: 107
 |---|---|
 | Repo root | `D:\Colony_Simulator\Colony_Simulator\` |
 | ROADMAP | `docs/ROADMAP.md` (active document) |
-| Spec (для §11.1 reference) | `docs/MOD_OS_ARCHITECTURE.md` v1.5 LOCKED |
+| Spec (для §11.1 reference) | `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.5 LOCKED |
 | Pass 1 inventory | `docs/audit/AUDIT_PASS_1_INVENTORY.md` (locked) |
 | Pass 2 artifact | `docs/audit/AUDIT_PASS_2_SPEC_CODE.md` (complete) |
 | Closure reviews | `docs/audit/M3_CLOSURE_REVIEW.md`, `M4_CLOSURE_REVIEW.md`, `M5_CLOSURE_REVIEW.md`, `M6_CLOSURE_REVIEW.md` |
@@ -514,7 +514,7 @@ Per template в §9 этого промта. Conclude Pass 1 anomaly #1 + #12 ve
 ## 11. Запрещено в Pass 3
 
 - **Spec ↔ code drift verification** — Pass 2 territory (already complete).
-- **Cross-doc consistency** (`docs/CONTRACTS.md`, `docs/MODDING.md`, `docs/MOD_PIPELINE.md`) — Pass 4.
+- **Cross-doc consistency** (`docs/architecture/CONTRACTS.md`, `docs/architecture/MODDING.md`, `docs/architecture/MOD_PIPELINE.md`) — Pass 4.
 - **Sub-folder README accuracy** — Pass 4.
 - **Cyrillic remainder в active sections** — Pass 4.
 - **Forward-looking phase verification** (M7.4, M7.5, M7-closure, M8+) — out of scope.

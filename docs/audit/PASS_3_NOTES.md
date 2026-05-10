@@ -68,7 +68,7 @@ Atomicity rule held: zero rolled-back commits, zero `--amend`-rewritten commits.
 - [x] `grep -rE --include='*.cs' '[А-Яа-я]' src/ tests/ mods/` — clean.
 - [x] All tests green, build clean.
 - [x] Glossary terms used consistently (spot-checked: `pawn`, `ether`, `mana`, `golem`, `mage`, `school`, `bus`, `isolation guard`, `lease`).
-- [x] `IsolationDiagnostics` constant values align with `docs/ISOLATION.md` examples (lines 137–141 for read, 158–161 for direct-system access, 184–202 for the general format).
+- [x] `IsolationDiagnostics` constant values align with `docs/architecture/ISOLATION.md` examples (lines 137–141 for read, 158–161 for direct-system access, 184–202 for the general format).
 - [x] Public API surface unchanged: `git diff main..HEAD -- '*.cs' | grep -E '^[+-]\s*(public|internal|protected|private)\s' | grep -v 'XML doc\|comment'` returns no signature changes (only doc/comment churn).
 
 Pass 4 (verification) ready.

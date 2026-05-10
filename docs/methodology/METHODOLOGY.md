@@ -66,7 +66,7 @@ The same role for contracts operates between agents in one pipeline during phase
 
 **Falsifiable claim.** If the architecture is fixed as a set of contracts satisfying a "sufficient rigor" criterion, a quantized model in the 4–8B parameter class on average produces code that passes tests on those contracts on the first build. The measurement metric is the fraction of tasks requiring a second generation round after the first build; the target threshold is under 30%. An empirical example of asynchronous development against a formal contract without human participation appears in §4.2.
 
-Contracts in Dual Frontier live in a separate `DualFrontier.Contracts` assembly that contains no implementation (see [CONTRACTS.md](./CONTRACTS.md)). It acts as the single vocabulary for every layer of the system: the core, game systems, mods, and build tooling.
+Contracts in Dual Frontier live in a separate `DualFrontier.Contracts` assembly that contains no implementation (see [CONTRACTS.md](/docs/architecture/CONTRACTS.md)). It acts as the single vocabulary for every layer of the system: the core, game systems, mods, and build tooling.
 
 ### 2.3 Verification cycle
 
@@ -385,12 +385,12 @@ The document is updated after each substantial phase closes. Substantial methodo
 - [PIPELINE_METRICS.md](./PIPELINE_METRICS.md) — empirical configuration, throughput data, and subscription economics measured while running this methodology.
 - [learning/PHASE_1.md](./learning/PHASE_1.md) — self-teaching ritual artifact after Phase 1; direct empirical referent for §4.5.
 - [SESSION_PHASE_4_CLOSURE_REVIEW.md](./SESSION_PHASE_4_CLOSURE_REVIEW.md) — Phase 4 closure review session log; direct empirical referent for §4.4. *(Russian-language audit trail; preserved verbatim per the i18n campaign rules.)*
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — layers, dependency rules, scenarios.
-- [CONTRACTS.md](./CONTRACTS.md) — the contract system, six domain buses, contract evolution.
+- [ARCHITECTURE.md](/docs/architecture/ARCHITECTURE.md) — layers, dependency rules, scenarios.
+- [CONTRACTS.md](/docs/architecture/CONTRACTS.md) — the contract system, six domain buses, contract evolution.
 - [DEVELOPMENT_HYGIENE.md](./DEVELOPMENT_HYGIENE.md) — hygiene checklist for every PR, the engine/game boundary.
-- [ISOLATION.md](./ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
+- [ISOLATION.md](/docs/architecture/ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
 - [NATIVE_CORE_EXPERIMENT.md](./NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
-- [GPU_COMPUTE.md](./GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
+- [GPU_COMPUTE.md](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
 - [ROADMAP.md](./ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
 
 ## Native layer methodology adjustments

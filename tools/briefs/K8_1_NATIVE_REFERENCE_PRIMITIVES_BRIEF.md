@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09
 **Status**: EXECUTED (2026-05-09, branch `feat/k8-1-native-reference-primitives`, closure `a62c1f3..812df98`). See `docs/MIGRATION_PROGRESS.md` § "K8.1 — Native-side reference handling primitives" for closure record.
-**Reference docs**: `docs/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (K-L11 production storage backbone, K-L3 implication extended), `docs/MIGRATION_PROGRESS.md` (K8.0 closure + Solution A roadmap), `docs/CODING_STANDARDS.md`, native module docs (`native/DualFrontier.Core.Native/MODULE.md`, `native/DualFrontier.Core.Native/include/MODULE.md`, `native/DualFrontier.Core.Native/src/MODULE.md`)
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (K-L11 production storage backbone, K-L3 implication extended), `docs/MIGRATION_PROGRESS.md` (K8.0 closure + Solution A roadmap), `docs/CODING_STANDARDS.md`, native module docs (`native/DualFrontier.Core.Native/MODULE.md`, `native/DualFrontier.Core.Native/include/MODULE.md`, `native/DualFrontier.Core.Native/src/MODULE.md`)
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K8.1 row promotes from NOT STARTED → DONE on closure)
 **Methodology lineage**: `tools/briefs/K8_0_SOLUTION_A_RECORDING_BRIEF.md` (architectural decision brief precedent), `tools/briefs/K7_PERFORMANCE_MEASUREMENT_BRIEF.md` (read-first/brief-second/execute-third pivot), `tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md` (Anthropic `Edit` literal-mode semantics)
 **Predecessor**: K8.0 (`9f9dc05..28498f9`) — Solution A architectural commitment recorded
@@ -60,7 +60,7 @@ git log --oneline -25
 ### 0.3 — Prerequisite documents at expected versions
 
 ```
-head -10 docs/KERNEL_ARCHITECTURE.md
+head -10 docs/architecture/KERNEL_ARCHITECTURE.md
 head -10 docs/MIGRATION_PROGRESS.md
 ls docs/PERFORMANCE_REPORT_K7.md
 ```

@@ -34,7 +34,7 @@ rendering layer.
   with `isCollectible: true` to enable hot reload (TechArch 11.8).
 - `SaveSystem.Save/Load` are synchronous. Async I/O is performed by the upstream
   layer that hands a ready path/stream. This rule comes from THREADING (see
-  `docs/THREADING.md`).
+  `docs/architecture/THREADING.md`).
 
 ## Usage examples
 ```csharp

@@ -153,8 +153,8 @@ tests/DualFrontier.Analyzers.Tests/
 
 - `src/DualFrontier.Analyzers/README.md` — developer-facing entry point: how to consume the analyzers, how to add a new one to the family, link to family specification.
 - `AnalyzerReleases.Shipped.md` — Roslyn convention for diagnostic-id history; first entry covers DF_TS_001..DF_TS_N at first release.
-- `docs/ARCHITECTURE_TYPE_SYSTEM.md` v0.x non-semantic correction (if any) recording diagnostic-id allocation in §1.2 / §7 (TS-D-8). The correction lands in the same commit as the analyzer release.
-- `docs/MOD_OS_ARCHITECTURE.md` v1.7 non-semantic correction reworking §11.1 M3.4 entry as "subsumed into ARCHITECTURE_TYPE_SYSTEM.md §4.1, see Track B activation. Closed at <DATE>." — lands at the same commit as repair-pass closure.
+- `docs/architecture/ARCHITECTURE_TYPE_SYSTEM.md` v0.x non-semantic correction (if any) recording diagnostic-id allocation in §1.2 / §7 (TS-D-8). The correction lands in the same commit as the analyzer release.
+- `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.7 non-semantic correction reworking §11.1 M3.4 entry as "subsumed into ARCHITECTURE_TYPE_SYSTEM.md §4.1, see Track B activation. Closed at <DATE>." — lands at the same commit as repair-pass closure.
 
 ### 4.6 Build pipeline integration
 

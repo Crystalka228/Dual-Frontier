@@ -1,8 +1,8 @@
 # K6 — Second-graph rebuild on mod change (Full Brief)
 
 **Status**: AUTHORED — closure-shaped implementation brief, executes against existing M7-era code with explicit gap identification
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` Part 2 §K6
-**Specification source**: `docs/MOD_OS_ARCHITECTURE.md` v1.6 §9 (lifecycle), §9.5 (ALC unload protocol), §9.5.1 (failure semantics), §11.1 (migration phases M7.1–M7.3)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K6
+**Specification source**: `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.6 §9 (lifecycle), §9.5 (ALC unload protocol), §9.5.1 (failure semantics), §11.1 (migration phases M7.1–M7.3)
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K6 row promotes from NOT STARTED → DONE on closure)
 **Methodology lineage**: `tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md` (Anthropic `Edit` literal-mode semantics, atomic commit discipline, read-first/brief-second/execute-third pivot)
 
@@ -51,8 +51,8 @@ Additional expected: M3 closure, M4 closure, M5.1, M5.2, M6.x, M7.1, M7.2, M7.3 
 ### 0.3 — Prerequisite documents at expected versions
 
 ```
-head -10 docs/KERNEL_ARCHITECTURE.md
-head -10 docs/MOD_OS_ARCHITECTURE.md
+head -10 docs/architecture/KERNEL_ARCHITECTURE.md
+head -10 docs/architecture/MOD_OS_ARCHITECTURE.md
 head -3  docs/MIGRATION_PROGRESS.md
 ```
 
@@ -300,7 +300,7 @@ After Phases 1.1–1.8, the executor writes the verification log to `tools/brief
 
 **Generated**: 2026-MM-DD by K6 brief execution session
 **Source brief**: `tools/briefs/K6_MOD_REBUILD_BRIEF.md`
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` §K6, `docs/MOD_OS_ARCHITECTURE.md` §9.5
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §K6, `docs/architecture/MOD_OS_ARCHITECTURE.md` §9.5
 
 | Deliverable | File | Method/Class | Verified | Evidence |
 |---|---|---|---|---|

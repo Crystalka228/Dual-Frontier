@@ -32,8 +32,8 @@ development window:
    activity — locked specifications stop reflecting the code, contracts
    weaken to accommodate executor limitations, or isolation guarantees erode.
    Current state: architectural decisions and their rejected alternatives are
-   recorded in [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md),
-   [docs/MOD_OS_ARCHITECTURE.md](./docs/MOD_OS_ARCHITECTURE.md), and the
+   recorded in [docs/architecture/ARCHITECTURE.md](/docs/architecture/ARCHITECTURE.md),
+   [docs/architecture/MOD_OS_ARCHITECTURE.md](/docs/architecture/MOD_OS_ARCHITECTURE.md), and the
    normalization audit in [docs/NORMALIZATION_REPORT.md](./docs/NORMALIZATION_REPORT.md).
 3. **Pipeline economics.** The pipeline cannot sustain its own throughput
    under a fixed monthly subscription and spills into pay-as-you-go API
@@ -95,7 +95,7 @@ properties that make the workload non-trivial:
   `AssemblyLoadContext`, sees only `DualFrontier.Contracts`, and interacts
   with the kernel through reflection-scanned capabilities. The architecture
   is documented as an OS-style design in
-  [docs/MOD_OS_ARCHITECTURE.md](./docs/MOD_OS_ARCHITECTURE.md).
+  [docs/architecture/MOD_OS_ARCHITECTURE.md](/docs/architecture/MOD_OS_ARCHITECTURE.md).
 - A replaceable native core, treated as an experimental boundary rather than
   a load-bearing assumption. One negative result against this boundary is
   recorded with criterion reformulation in
@@ -114,7 +114,7 @@ in [docs/METHODOLOGY.md §6](./docs/METHODOLOGY.md).
 - [docs/METHODOLOGY.md](./docs/METHODOLOGY.md) — the methodology as designed:
   pipeline architecture, contracts as inter-agent IPC, verification cycle,
   threat model, boundaries of applicability.
-- [docs/MOD_OS_ARCHITECTURE.md](./docs/MOD_OS_ARCHITECTURE.md) — the
+- [docs/architecture/MOD_OS_ARCHITECTURE.md](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the
   capability-based mod isolation as an OS-style architecture; v1.0 LOCKED.
 - [docs/NATIVE_CORE_EXPERIMENT.md](./docs/NATIVE_CORE_EXPERIMENT.md) — a
   measured negative result with explicit criterion reformulation.
@@ -122,7 +122,7 @@ in [docs/METHODOLOGY.md §6](./docs/METHODOLOGY.md).
 ## Repository layout
 
 The full documentation index is in [docs/README.md](./docs/README.md).
-Source layout is described in [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md);
+Source layout is described in [docs/architecture/ARCHITECTURE.md](/docs/architecture/ARCHITECTURE.md);
 without it the assembly structure looks excessive.
 
 ## License
@@ -135,7 +135,7 @@ engine code requires a separate agreement.
 
 - `docs/METHODOLOGY.md` — pipeline и methodology
 - `docs/CODING_STANDARDS.md` — coding conventions
-- `docs/MOD_OS_ARCHITECTURE.md` — modding architecture
-- `docs/RUNTIME_ARCHITECTURE.md` — Vulkan rendering layer (M9.x)
-- `docs/KERNEL_ARCHITECTURE.md` — native ECS kernel layer (K0-K8)
+- `docs/architecture/MOD_OS_ARCHITECTURE.md` — modding architecture
+- `docs/architecture/RUNTIME_ARCHITECTURE.md` — Vulkan rendering layer (M9.x)
+- `docs/architecture/KERNEL_ARCHITECTURE.md` — native ECS kernel layer (K0-K8)
 - `docs/CPP_KERNEL_BRANCH_REPORT.md` — Discovery report (experimental branch)

@@ -20,7 +20,7 @@ empirical evidence for the between-phase self-teaching ritual.*
 
 Before learning the language — you need to understand how the project is laid out. Dual Frontier consists of strictly separated layers. Breaking a dependency between them is an architectural error.
 
-## 1.1 Four layers (docs/ARCHITECTURE.md)
+## 1.1 Four layers (docs/architecture/ARCHITECTURE.md)
 
 | Layer | Assembly | What it does | Rule |
 |---|---|---|---|
@@ -375,7 +375,7 @@ A data race = the result depends on the simultaneous access order of threads. In
 Dual Frontier has 5 domain buses: Combat, Inventory, Magic, Pawns, World. Each is a separate DomainEventBus instance. This reduces lock contention and simplifies profiling.
 
 ```csharp
-// GameServices — bus aggregator (docs/CONTRACTS.md)
+// GameServices — bus aggregator (docs/architecture/CONTRACTS.md)
 public interface IGameServices
 {
     ICombatBus    Combat    { get; }

@@ -18,7 +18,7 @@ An explicit system order looks like a simple fix but is fragile: every new syste
 Any read that closes a cycle goes **through a snapshot of the previous tick**. On tick N the work looks like this:
 
 1. `ManaSystem` performs its drain and writes the actual `ManaComponent` — this is `Mana[N]`.
-2. At the tick boundary (Phase 5 — Feedback snapshot, see [THREADING](./THREADING.md)), the scheduler copies `ManaComponent` into `ManaSnapshot` — that is `ManaSnapshot[N]`.
+2. At the tick boundary (Phase 5 — Feedback snapshot, see [THREADING](/docs/architecture/THREADING.md)), the scheduler copies `ManaComponent` into `ManaSnapshot` — that is `ManaSnapshot[N]`.
 3. On tick N+1 `GolemSystem` reads through `ReadPreviousTickManaState()` — it gets `ManaSnapshot[N]`, the state captured _after_ the previous tick's drain.
 
 ```
@@ -59,7 +59,7 @@ Not every reading system is required to use a snapshot — only those that parti
 
 ## See also
 
-- [THREADING](./THREADING.md) — Phase 5 (Feedback snapshot).
-- [EVENT_BUS](./EVENT_BUS.md) — `[Deferred]` as an alternative for breaking a write cycle.
-- [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — determinism in damage application.
-- [OWNERSHIP_TRANSITION](./OWNERSHIP_TRANSITION.md) — `GolemSystem` and its mana-snapshot read.
+- [THREADING](/docs/architecture/THREADING.md) — Phase 5 (Feedback snapshot).
+- [EVENT_BUS](/docs/architecture/EVENT_BUS.md) — `[Deferred]` as an alternative for breaking a write cycle.
+- [COMBO_RESOLUTION](/docs/architecture/COMBO_RESOLUTION.md) — determinism in damage application.
+- [OWNERSHIP_TRANSITION](/docs/architecture/OWNERSHIP_TRANSITION.md) — `GolemSystem` and its mana-snapshot read.

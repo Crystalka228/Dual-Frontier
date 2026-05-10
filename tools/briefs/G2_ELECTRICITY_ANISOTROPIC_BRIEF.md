@@ -1,7 +1,7 @@
 # G2 — Anisotropic diffusion (electricity)
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G2
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G2
 **Prerequisites**: G1 closed
 
 ## Goal

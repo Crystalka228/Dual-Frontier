@@ -11,7 +11,7 @@ nav_order: 107
 **Pass 1 baseline HEAD:** `1d43858a36c17b956a345e9bfe07a9ccf82daddb` (per `AUDIT_PASS_1_INVENTORY.md:10`)
 **HEAD delta since Pass 1:** +2 commits — `3f00c2a` (`docs(architecture): ratify v1.5`, ratifies the Pass 2 §11 Tier 0 finding as a non-semantic spec amendment) and `6e9c433` (`Update AUDIT_PASS_2_SPEC_CODE.md`, syncs the Pass 2 artifact with the v1.5 amendment landing). Both commits are post-Pass-1; Pass 3 audits current state per plan §10 step 2.
 **ROADMAP under audit:** `docs/ROADMAP.md` (active document)
-**Spec referenced:** `docs/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 §11.1
+**Spec referenced:** `docs/architecture/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 §11.1
 **Pass 1 inventory consumed:** `docs/audit/AUDIT_PASS_1_INVENTORY.md` (9/9 PASSED)
 **Pass 2 artifact consumed:** `docs/audit/AUDIT_PASS_2_SPEC_CODE.md` (10/11 PASSED + 1/11 FAILED with Tier 0 RESOLVED via v1.5)
 **Scope:** Per-M-phase acceptance verification, engine snapshot test

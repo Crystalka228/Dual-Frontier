@@ -1,7 +1,7 @@
 # mods/
 
 Example mods. Each is a separate assembly that sees ONLY `DualFrontier.Contracts`.
-See [docs/MODDING.md](../docs/MODDING.md).
+See [docs/architecture/MODDING.md](/docs/architecture/MODDING.md).
 
 ## Contents
 

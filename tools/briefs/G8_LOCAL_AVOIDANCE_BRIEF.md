@@ -1,7 +1,7 @@
 # G8 — Local avoidance layer
 
 **Status**: SKELETON — full brief authored when ready к execute
-**Reference**: `docs/GPU_COMPUTE.md` v2.0 Roadmap §G8
+**Reference**: `docs/architecture/GPU_COMPUTE.md` v2.0 Roadmap §G8
 **Prerequisites**: G7 closed
 
 ## Goal

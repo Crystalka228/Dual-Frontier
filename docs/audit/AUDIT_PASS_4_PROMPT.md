@@ -75,7 +75,7 @@ nav_order: 108
 | Что | Источник |
 |---|---|
 | Repo root | `D:\Colony_Simulator\Colony_Simulator\` |
-| Spec | `docs/MOD_OS_ARCHITECTURE.md` v1.5 LOCKED |
+| Spec | `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.5 LOCKED |
 | Pass 1 inventory | `docs/audit/AUDIT_PASS_1_INVENTORY.md` (locked) |
 | Pass 2 artifact | `docs/audit/AUDIT_PASS_2_SPEC_CODE.md` (complete) |
 | Pass 3 artifact | `docs/audit/AUDIT_PASS_3_ROADMAP_REALITY.md` (complete) |
@@ -126,7 +126,7 @@ nav_order: 108
 | Tier | Определение в Pass 4 | Эскалация | Пример |
 |---|---|---|---|
 | **Tier 0** | Cross-doc drift нарушающий audit trail integrity (e.g. `MODDING.md` claims v1 API surface exists exclusively, contradicting spec v2). | **Eager — pass останавливается** | `CONTRACTS.md` documents bus list inconsistent с production code AND spec |
-| **Tier 1** | Missing required cross-doc — spec references `<doc>.md` которого нет, или required README отсутствует. | Накапливается | Spec see-also references `docs/PERFORMANCE.md` если файл missing |
+| **Tier 1** | Missing required cross-doc — spec references `<doc>.md` которого нет, или required README отсутствует. | Накапливается | Spec see-also references `docs/architecture/PERFORMANCE.md` если файл missing |
 | **Tier 2** | Whitelist deviation (см. §5) confirmed. | Накапливается | RU text в `SESSION_PHASE_4_CLOSURE_REVIEW.md` preserved by design |
 | **Tier 3** | Stale reference, version drift в active text, sub-folder README inaccurate. | Накапливается | `ROADMAP.md:3` «v1.4 LOCKED» (post-v1.5); README говорит «placeholder» при наличии 31 теста |
 | **Tier 4** | Cosmetic — typo, broken link, formatting, minor wording. | Накапливается | nav_order duplicate; markdown link к non-existent anchor |
@@ -215,7 +215,7 @@ nav_order: 108
 **HEAD:** <40-char SHA>
 **Pass 1 baseline HEAD:** `1d43858a36c17b956a345e9bfe07a9ccf82daddb` (per Pass 1 §1)
 **HEAD delta since Pass 1:** <list new commits if any>
-**Spec under audit:** `docs/MOD_OS_ARCHITECTURE.md` LOCKED v1.5
+**Spec under audit:** `docs/architecture/MOD_OS_ARCHITECTURE.md` LOCKED v1.5
 **Pass 1 inventory consumed:** `docs/audit/AUDIT_PASS_1_INVENTORY.md` (9/9 PASSED)
 **Pass 2 artifact consumed:** `docs/audit/AUDIT_PASS_2_SPEC_CODE.md` (complete)
 **Pass 3 artifact consumed:** `docs/audit/AUDIT_PASS_3_ROADMAP_REALITY.md` (complete)
@@ -259,7 +259,7 @@ out of scope.
 | Spec see-also entry | Path | Exists? | Verdict |
 |---|---|---|---|
 | METHODOLOGY | `docs/METHODOLOGY.md` | yes | ✓ |
-| ARCHITECTURE | `docs/ARCHITECTURE.md` | yes/no | ✓/Tier 1 |
+| ARCHITECTURE | `docs/architecture/ARCHITECTURE.md` | yes/no | ✓/Tier 1 |
 | ... | ... | ... | ... |
 
 **Findings:** [table]
@@ -268,7 +268,7 @@ out of scope.
 
 ## §2 MODDING.md ↔ spec consistency
 
-Read `docs/MODDING.md` целиком. Cross-reference против spec v1.5:
+Read `docs/architecture/MODDING.md` целиком. Cross-reference против spec v1.5:
 - Manifest schema mentions match §2.2.
 - Capability syntax matches §3.2.
 - IModApi method enumeration matches §4.1.
@@ -287,7 +287,7 @@ Read `docs/MODDING.md` целиком. Cross-reference против spec v1.5:
 
 ## §3 MOD_PIPELINE.md ↔ spec consistency
 
-Read `docs/MOD_PIPELINE.md` целиком. Cross-reference:
+Read `docs/architecture/MOD_PIPELINE.md` целиком. Cross-reference:
 - Pipeline lifecycle matches §9.
 - Validator phase enumeration matches `ContractValidator.cs` (per Pass 2 §11 sequence #37–#38).
 - ALC management matches §5.1, §9.5.
@@ -298,7 +298,7 @@ Read `docs/MOD_PIPELINE.md` целиком. Cross-reference:
 
 ## §4 CONTRACTS.md ↔ spec consistency
 
-Read `docs/CONTRACTS.md`. Cross-reference:
+Read `docs/architecture/CONTRACTS.md`. Cross-reference:
 - Bus enumeration vs `IGameServices.cs` (Pass 1 §9 entry 46: 6 buses).
 - Three-level contracts match spec §6.
 - Marker attribute conventions match §6.
@@ -308,7 +308,7 @@ Read `docs/CONTRACTS.md`. Cross-reference:
 - `IGameServices.cs:13–57` declares 6 properties.
 - `Bus/README.md:5` describes 6 buses.
 
-`docs/CONTRACTS.md` may be additional source of bus enumeration — verify count match.
+`docs/architecture/CONTRACTS.md` may be additional source of bus enumeration — verify count match.
 
 **Findings:** [table]
 
@@ -317,8 +317,8 @@ Read `docs/CONTRACTS.md`. Cross-reference:
 ## §5 ECS.md / EVENT_BUS.md / THREADING.md / ISOLATION.md ↔ spec consistency
 
 Read all four. Spec v1.5 references:
-- `[ISOLATION](./ISOLATION.md)` — `SystemExecutionContext` (per §10.1)
-- `[EVENT_BUS](./EVENT_BUS.md)` — bus dispatcher (per §4.2)
+- `[ISOLATION](/docs/architecture/ISOLATION.md)` — `SystemExecutionContext` (per §10.1)
+- `[EVENT_BUS](/docs/architecture/EVENT_BUS.md)` — bus dispatcher (per §4.2)
 - ECS conventions
 - Threading model
 
@@ -442,7 +442,7 @@ If N > 0 — list every file with line:char location.
 
 Active = `docs/*.md` excluding:
 - `docs/audit/` (historical / translation campaign artifacts whitelist)
-- `docs/MOD_OS_ARCHITECTURE.md` Version history lines 12–32 (changelog whitelist)
+- `docs/architecture/MOD_OS_ARCHITECTURE.md` Version history lines 12–32 (changelog whitelist)
 - `docs/TRANSLATION_GLOSSARY.md` (RU source by design)
 - `docs/learning/PHASE_1.md` (frozen Phase 1 snapshot — read header to verify «frozen» status)
 

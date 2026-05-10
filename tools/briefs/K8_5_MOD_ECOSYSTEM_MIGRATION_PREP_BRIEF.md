@@ -1,7 +1,7 @@
 # K8.5 — Mod ecosystem migration prep (documentation + guide)
 
 **Status**: SKELETON
-**Reference**: `docs/KERNEL_ARCHITECTURE.md` K-L9 (mod parity), MOD_OS_ARCHITECTURE.md §4.6 (Mod API v3, post-K8.4)
+**Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` K-L9 (mod parity), MOD_OS_ARCHITECTURE.md §4.6 (Mod API v3, post-K8.4)
 **Prerequisite**: K8.4 closure (Mod API v3 shipped)
 
 ## Goal

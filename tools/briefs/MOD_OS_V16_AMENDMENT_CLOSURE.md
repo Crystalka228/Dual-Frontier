@@ -28,9 +28,9 @@ Read-only investigation phase consumes full context window for doc reading witho
 ### Phase 0 — Pre-flight (executed)
 
 Verified file state before any edit:
-1. `docs/MOD_OS_ARCHITECTURE.md` at `LOCKED v1.5` baseline (997 lines, after stash of corrupted v1.6 attempt)
-2. `docs/GPU_COMPUTE.md` at `LOCKED v2.0`
-3. `docs/KERNEL_ARCHITECTURE.md` at `Version 1.0`
+1. `docs/architecture/MOD_OS_ARCHITECTURE.md` at `LOCKED v1.5` baseline (997 lines, after stash of corrupted v1.6 attempt)
+2. `docs/architecture/GPU_COMPUTE.md` at `LOCKED v2.0`
+3. `docs/architecture/KERNEL_ARCHITECTURE.md` at `Version 1.0`
 4. `docs/MIGRATION_PROGRESS.md` showing K0–K5 closed, K6 next
 5. `tools/briefs/` containing K0–K8, no K9, no G-series
 6. Working tree clean

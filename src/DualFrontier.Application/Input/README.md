@@ -24,6 +24,6 @@ from; each Presentation assembly implements its own polling.
       (Silk.NET input polling).
 
 ## See also
-- [../../docs/VISUAL_ENGINE.md](../../../docs/VISUAL_ENGINE.md) — overall
+- [../.docs/architecture/VISUAL_ENGINE.md](/docs/architecture/VISUAL_ENGINE.md) — overall
   DevKit vs Native strategy and the three contracts (`IRenderer`,
   `ISceneLoader`, `IInputSource`).

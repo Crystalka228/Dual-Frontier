@@ -22,7 +22,7 @@ follow-up item rather than remediated in this session.
 | 2 | Spec ↔ code ↔ test triple consistency | **PASSED** | All six `MOD_OS_ARCHITECTURE` §11.1 acceptance bullets for M5 have all three legs (spec section, file:line, test name) present. The CENTRAL inter-mod caret-version demonstration is `Mod_WithSatisfiedDepVersion_NoError` plus `Mod_WithUnsatisfiedDepVersion_ProducesIncompatibleVersionError`. Cascade-failure semantics demonstrated at validator and pipeline levels independently. |
 | 3 | Cross-document consistency | **PASSED** | `MOD_OS_ARCHITECTURE` v1.3 LOCKED unchanged through M5 (byte-identical from `dba17c7..HEAD`). `ROADMAP` header `Updated: 2026-04-30` with M5 ✅ Closed, M5.1/M5.2 sub-sections, cascade-failure semantics block, and `311/311`. `docs/README` v1.3 LOCKED unchanged. |
 | 4 | Stale-reference sweep | **PASSED** | All forbidden patterns return zero hits in active-navigation context. `281`, `295`, `301`, `308` survive only inside `M4_CLOSURE_REVIEW.md` (frozen audit trail) or as line-number citations in `NORMALIZATION_REPORT.md` (column header, not a test count). `v1.0`/`v1.1`/`v1.2 LOCKED` survive only as legitimate historical-attribution (M0 row, M3 review). No `M5 in progress` / `🔨 Current` markers active. |
-| 5 | Methodology compliance | **PASSED** | All 8 commits have scope prefixes per METHODOLOGY §7.3; every commit carries a substantive body. The §12 LOCKED decisions D-1 through D-7 are byte-identical between v1.3 (M4 closure point) and HEAD — verified by `git diff dba17c7..HEAD -- docs/MOD_OS_ARCHITECTURE.md` returning zero output. M5 introduces no spec change. Cascade-failure interpretation deliberately registered in ROADMAP per "no improvisation" rule. |
+| 5 | Methodology compliance | **PASSED** | All 8 commits have scope prefixes per METHODOLOGY §7.3; every commit carries a substantive body. The §12 LOCKED decisions D-1 through D-7 are byte-identical between v1.3 (M4 closure point) and HEAD — verified by `git diff dba17c7..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` returning zero output. M5 introduces no spec change. Cascade-failure interpretation deliberately registered in ROADMAP per "no improvisation" rule. |
 | 6 | Sub-phase acceptance criteria coverage | **PASSED** | Every acceptance bullet for M5.1 and M5.2 maps to an identifiable artifact (commit, file:line, test name). M5.3 is itself the closure mechanism (the ROADMAP-sync commit), not a verifiable sub-phase. |
 | 7 | Carried debts forward | **PASSED** | Phase 2 WeakReference unload tests still tracked in M7; Phase 3 `SocialSystem`/`SkillSystem` stubs still tracked in M10.C; M3.4 (CI Roslyn analyzer) remains `⏸ Deferred`. M5 introduces one carried compatibility (v1 manifest legacy `IncompatibleContractsVersion` path preserved by deliberate dual-path) and one in-batch deliberate interpretation (cascade-failure as accumulation per §8.7) — both registered, neither latent. |
 | 8 | Ready-for-M6 readiness | **PASSED** | `TopoSortByPredicate` (M5.1 generalisation) is orthogonal to bridge replacement — algorithm-independent. `ContractValidator` seven-phase pipeline (A→B→E→G→C→D→F) establishes the additive-phase pattern for the prospective M6 Phase H. `ValidationErrorKind` already carries `BridgeReplacementConflict`, `ProtectedSystemReplacement`, `UnknownSystemReplacement` from M1 plumbing. `ModManifest.Replaces` field is in place. No M5 surface change blocks M6. |
@@ -151,8 +151,8 @@ Three documents must agree on the v1.3 / M5-closed / 311-tests state:
 
 | Document | Field | Expected | Found | Status |
 |---|---|---|---|---|
-| `docs/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.3` | `LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied.` | ✓ |
-| `docs/MOD_OS_ARCHITECTURE.md` | Byte-identity through M5 | zero changes since `dba17c7` | `git diff dba17c7..HEAD -- docs/MOD_OS_ARCHITECTURE.md` returns zero output | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Status line (line 8) | `LOCKED v1.3` | `LOCKED v1.3 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), and M4.3 implementation review (v1.3) applied.` | ✓ |
+| `docs/architecture/MOD_OS_ARCHITECTURE.md` | Byte-identity through M5 | zero changes since `dba17c7` | `git diff dba17c7..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` returns zero output | ✓ |
 | `docs/ROADMAP.md` | Header date (line 11) | `2026-04-30` | `*Updated: 2026-04-30 (M5 closed — M5.1, M5.2 done; M6 next).*` | ✓ |
 | `docs/ROADMAP.md` | M5 row (line 28) | `✅ Closed` | `✅ Closed` with the six new M5 test classes (`RegularModTopologicalSortTests`, `DependencyPresenceTests`, `M51PipelineIntegrationTests`, `PhaseAModernizationTests`, `PhaseGInterModVersionTests`, `M52IntegrationTests`) and a one-line summary covering M5.1 and M5.2 plus cascade-failure semantics ratification | ✓ |
 | `docs/ROADMAP.md` | M5 sub-phase block (lines 226–254) | M5.1 and M5.2 each `✅ Closed` with commit list and test classes; cascade-failure semantics block | M5.1 marked closed with `fffd785, 13400bb, a3968f4, bab4d85` and the three M5.1 test classes; M5.2 marked closed with `50efe9d, f8f18ee, 376be7e` and the three M5.2 test classes; cascade-failure block at lines 236–241 references both the validator-level (`Mod_WithCascadeFailure_BothErrorsReportedNotSkipped`) and pipeline-level (`Apply_WithCascadeFailure_SurfacesBothErrors`) demonstrating tests | ✓ |
@@ -241,7 +241,7 @@ closure verification report commit) and `HEAD` (M5.3 ROADMAP-sync
 commit). Verified directly:
 
 ```
-$ git diff dba17c7..HEAD -- docs/MOD_OS_ARCHITECTURE.md | wc -l
+$ git diff dba17c7..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md | wc -l
 0
 ```
 
@@ -439,7 +439,7 @@ implementation pass:
 |---|---|---|---|
 | M3 closure review | v1.1 | v1.2 | **1** — §3.6 hybrid enforcement formulation contradicted §4.2/§4.3 implementation; ratified in v1.2 changelog |
 | M4 closure review | v1.2 | v1.3 | **1** — §2.2 entryAssembly/entryType "ignored for kind=shared" contradicted §5.2 step 1; ratified in v1.3 changelog |
-| M5 closure review | v1.3 | v1.3 (unchanged) | **0** — `git diff dba17c7..HEAD -- docs/MOD_OS_ARCHITECTURE.md` returns zero output; M5 implementation surfaced no latent contradictions |
+| M5 closure review | v1.3 | v1.3 (unchanged) | **0** — `git diff dba17c7..HEAD -- docs/architecture/MOD_OS_ARCHITECTURE.md` returns zero output; M5 implementation surfaced no latent contradictions |
 
 The hypothesis is: **contradiction discovery rate decreases
 asymptotically with each major implementation pass that exercises a
@@ -506,7 +506,7 @@ M5 closes cleanly. M6 (Bridge replacement via `replaces`) is unblocked.
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) v1.3 LOCKED — the
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.3 LOCKED — the
   specification this review verifies. Byte-identical to its M4 closure
   state; M5 exercised §8 without surfacing any latent contradiction.
 - [ROADMAP](./ROADMAP.md) — M5 closure status, M5.1/M5.2 sub-phase

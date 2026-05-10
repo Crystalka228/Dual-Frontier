@@ -250,7 +250,7 @@ Section 1 closed Phase A. M-series begins from the resulting `src/` state. This 
 - `src/DualFrontier.Contracts/Modding/IModApi.cs` — v3 interface.
 - `mods/DualFrontier.Mod.Vanilla.{Pawn,Combat,Magic,Inventory,World,Core}/` — empty skeletons (M8.1 commit `cafedcf` state, untouched through Phase A).
 - `docs/MODDING_MIGRATION_GUIDE.md` — K8.5 deliverable, authoritative reference for M-series brief authoring.
-- `docs/KERNEL_ARCHITECTURE.md` v1.4+ (post-K8.5 amendment per §6 of this plan) — K8.x rows updated to reflect actual delivered state.
+- `docs/architecture/KERNEL_ARCHITECTURE.md` v1.4+ (post-K8.5 amendment per §6 of this plan) — K8.x rows updated to reflect actual delivered state.
 
 **Capability registry baseline**: snapshot of every capability string the vanilla mods will need, ready for inclusion in their manifests. Examples (drawn from K8.5 deliverable):
 
