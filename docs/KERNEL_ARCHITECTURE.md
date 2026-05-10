@@ -47,7 +47,7 @@ The following decisions are committed как architectural foundation. Departure
 | K-L10 | Decision rule | §8 metrics (GC pause / p99 / long-run drift on weak hardware) | §6 «20% mean speed» superseded; §8 captures actual project value |
 | K-L11 | Production storage backbone | NativeWorld single source of truth (Solution A); ManagedWorld retained as test fixture and research artifact only | K7 evidence (V3 dominates V2 by 4-32× across §8 metrics) + «no compromises» commitment; single ownership boundary, single mental model |
 
-**Implication of K-L3**: All managed components must convert от class к struct (K4 closed 24 of 31; K8.2 closes the remaining 7 via native-side reference primitives from K8.1). Mod components subject к same constraint. **K4's "Hybrid Path" softening retired in K8.2** — after K8.2 closure, K-L3 holds without exception across vanilla and mod components alike.
+**Implication of K-L3**: All managed components must be unmanaged structs. **K8.2 v2 (`MIGRATION_PROGRESS.md` K8.2 closure entry, 2026-05-09) achieved K-L3 «без exception» state** for `src/DualFrontier.Components/`. Three deliverables in one milestone: (1) K8.1 wrapper value-type refactor — `NativeMap<K,V>`, `NativeSet<T>`, `NativeComposite<T>` from `sealed unsafe class` to `readonly unsafe struct` so component structs can carry these as fields without violating the `unmanaged` constraint; `InternedString` gained `IComparable<InternedString>`; `NativeWorld` gained `Allocate*Id` counters and `Create*` factory methods. (2) 6 class→struct conversions using K8.1 primitives — Identity/Workbench/Faction (InternedString), Skills (NativeMap×2), Storage (NativeMap+NativeSet), Movement (NativeComposite + bool HasTarget + PathStepIndex). (3) 6 empty TODO stub deletions per METHODOLOGY §7.1 «data exists or it doesn't» — Combat (Ammo/Shield/Weapon), Magic (School), Pawn (Social), World (Biome). Real game-mechanics components for these slices are authored fresh as `unmanaged struct` in the M-series vanilla mod content milestones (M9 Combat, M10.B Magic, M-series Pawn social, M-series World biome). Mod components subject to same constraint. **K4's "Hybrid Path" softening retired** — after K8.2 v2 closure, K-L3 holds without exception across vanilla and mod components alike.
 
 **Implication of K-L6**: There is NO «native scheduler» для game tick. Native scheduler exists only для bootstrap orchestration. All system code (vanilla mods + third-party mods) executes managed.
 
@@ -579,7 +579,7 @@ Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
 | K7 | Performance measurement (tick-loop) | 3-5 days | +200-400 |
 | K8.0 | Architectural decision recording (Solution A) | 1-2 days | +/- (docs only) |
 | K8.1 | Native-side reference handling primitives | 1-2 weeks | +600-1000 |
-| K8.2 | 7 class components redesigned to structs | 1-2 weeks | -200/+300 |
+| K8.2 | K-L3 «без exception» closure: K8.1 wrapper value-type refactor (NativeMap/NativeSet/NativeComposite to readonly struct + IComparable<InternedString> + per-instance id allocation) + 6 class→struct conversions (Identity/Workbench/Faction/Skills/Storage/Movement) + 6 empty TODO stub deletions (Ammo/Shield/Weapon/School/Social/Biome — content deferred to M-series) + 12 ModAccessible annotation completeness pass | 6-12 hours auto-mode (3-5 days hobby) | +800/-1500 |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | 2-3 weeks | -400/+600 |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | 1 week | -2000/+200 |
 | K8.5 | Mod ecosystem migration prep | 3-5 days | +500 (docs) |
@@ -741,7 +741,7 @@ e2bc2d9 — DLL loading fix
 **Sub-milestone series**:
 - **K8.0** — Architectural decision recording (this milestone; LOCKED v1.2)
 - **K8.1** — Native-side reference handling primitives (string interning, keyed maps, composite components)
-- **K8.2** — Per-component redesign for 7 class components (Movement, Identity, Skills, Social, Storage, Workbench, Faction)
+- **K8.2** — Per-component redesign + K8.1 wrapper value-type refactor + empty TODO stub deletions; K-L3 «без exception» achieved (v2 brief, single milestone)
 - **K8.3** — Production system migration (12 vanilla systems → SpanLease/WriteBatch)
 - **K8.4** — ManagedWorld retired as production; Mod API v3 ships
 - **K8.5** — Mod ecosystem migration prep (documentation + migration guide)
@@ -778,7 +778,7 @@ e2bc2d9 — DLL loading fix
 
 Managed `World` stayed functional throughout K0-K7. K8.0 closure (2026-05-09) recorded the architectural decision per K-L11: **Solution A — single NativeWorld backbone**. Migration executes via the K8.1-K8.5 sub-milestone series:
 - K8.1 — native-side reference handling primitives (string interning, keyed maps, composite components)
-- K8.2 — 7 class components redesigned to unmanaged structs using K8.1 primitives
+- K8.2 — K-L3 «без exception» closure: K8.1 wrapper value-type refactor + 6 class→struct conversions using K8.1 primitives + 6 empty TODO stub deletions per METHODOLOGY §7.1
 - K8.3 — 12 vanilla systems migrated to `SpanLease<T>` reads + `WriteBatch<T>` writes
 - K8.4 — managed `World` retired as production path; Mod API v3 ships
 - K8.5 — mod ecosystem migration prep (documentation + migration guide)
