@@ -612,6 +612,31 @@ Phase A' is the structural unit between Phase A (K-series) closure and Phase B (
 - **Q-A07 cascade auxiliary locks surfaced during deliberation**: Q-A07-6 (audience contract during Q1), Q-A07-7 (К-L3.1 lesson scope during Q9), Q-A07-8 (PIPELINE_METRICS backlog tracking during Q10). All three surface-and-lock followed «escalate, не improvise» discipline; each got explicit deliberation surface, recommendation rationale, и lock. Cascade pattern (auxiliary Q-A07-X locks emerging during main Q1-Q12 surface) may recur in future architectural decision sessions; documenting Q-A07-X with «session lock» marker (vs pre-session lock) preserves traceability.
 - **Pipeline empirical validation**: this deliberation session executed under v1.6 session-mode boundary (Claude Desktop deliberation mode) delivered substantial architectural work (15 Q locks + synthesis + 1460-line amendment plan) в single ~3-hour session. Becomes v1.6 era data point alongside A'.0.5 (execution session). Both feed PIPELINE_METRICS §6 forward measurement plan.
 
+**Amendment landing (A'.1.M, 2026-05-10)**:
+
+5 atomic commits landed amendments per `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md` §1–§4 + closure:
+- Commit M-1: METHODOLOGY.md v1.5 → v1.6 (§0 Abstract / §2.1 Role distribution + §2.1.1 Current configuration / §2.2 Contracts as IPC / §2.3 Verification cycle / §3 Economics / §4.1 State at publication / §4.2 mechanical scrub / §4.4 parallel-form Case A+B / §5.2-§5.3 Threat model / §7.1 surgical scrub / §9 «degradation as codebase grows» / §10 v1.6 row / new «Phase A' lessons (post-A'.0.5)» K-Lessons sub-section / §11 path verification / tagline surgical scrub / deferral marker removed)
+- Commit M-2: PIPELINE_METRICS.md v0.1 → v0.2 (top-of-document era frame note + per-metric annotations с 5 standardized transferability labels at 17 sub-sections + new §6 Forward measurement plan + Version history sub-section + tagline surgical scrub + deferral marker removed)
+- Commit M-3: MAXIMUM_ENGINEERING_REFACTOR.md v1.0 → v1.1 (§4.3 prompts/ rewrite + §5.2 parallel-track mapping rewrite + §4.8 «Hardware variance» surgical scrub + §10 v1.1 row + header version line bump + deferral marker removed)
+- Commit M-4: README.md Pipeline section rewrite (Q12.c-formulation hybrid + agent-as-primary-reader audience contract declaration + deferral marker removed)
+- Commit M-5: this closure entry + A'.0.7 brief Status amendment landing reference
+
+Test count delta: zero across all 5 commits (docs-only).
+Working tree clean post-A'.1.M; baseline 631 preserved by construction.
+
+**HG-4 pre-flight divergence (recorded per user directive 2026-05-10)**: Pre-flight HG-4 (dotnet test 631 baseline verification) skipped due к dotnet test environmental stall — 18 worker processes idle for 10+ min с empty output streams; same hang pattern as A'.0.7 closure session 2026-05-10 §5.1 (which was recovered via kill). Permission denial on kill для >5min-old processes blocked recovery в this session. Construction argument applied: 3 intervening commits since prior 631 verification (c74a342, c2b83b4, 86b721a) are docs-only; baseline preserved by construction. Empirical retry of `dotnet test --logger "console;verbosity=minimal"` после commit M-1: 5 of 6 test projects ran cleanly (275/275 passing, 0 failures); 6th project (DualFrontier.Modding.Tests, 356 tests) blocked at build due к file lock on test fixture DLLs held by leftover testhost (16692) from prior hung run. Root cause identified: leftover testhost from earlier hangs holds file locks on `tests/Fixture.*/bin/Debug/net8.0/*.dll`. This is the **2nd confirmed environmental incident** в Phase A' execution sessions (A'.0.7 closure §5.1 was the 1st; both involved hung dotnet processes requiring kill для recovery). Environmental investigation deferred к A'.8 К-closure report candidate list (out of A'.1 scope).
+
+**Amendment plan gap surgical scrubs applied (out-of-amendment-plan, per §1.3 «surgical scrub at execution time» pattern)**:
+- METHODOLOGY tagline (line 3): «four-agent LLM pipeline, contracts as IPC between agents» → «architect-executor split with contracts as IPC across context boundaries». Amendment plan §1.1 didn't enumerate tagline; v1.6 framing required alignment.
+- METHODOLOGY §7.1 closing paragraph: «all four agents in the pipeline... prompt generator... local executor... architect... human» → «all participants... architect... executor... QA review... direction owner». Q7.a-table «verify clean» reported hit; surgical reformulation preserves substantive principle while generalizing vocabulary per Q-A07-4=γ.
+- METHODOLOGY §11 cross-ref paths: PHASE_1, SESSION_PHASE_4_CLOSURE_REVIEW, ROADMAP, root README updated к post-A'.0.5 repo-rooted absolute paths (amendment plan §1.16 anticipated need).
+- METHODOLOGY §4.4 Case A: SESSION_PHASE_4_CLOSURE_REVIEW path corrected к `/docs/audit/` (amendment plan §1.9.4 specified pre-reorg sibling path).
+- PIPELINE_METRICS tagline (line 30): «for the four-agent LLM pipeline used in this project» → «for the LLM pipeline used in this project, gathered per-era with transferability annotations». Same gap pattern as METHODOLOGY tagline.
+- MAXIMUM_ENGINEERING_REFACTOR header version line: v1.0 → v1.1. Amendment plan §3 declared target version v1.0 → v1.1 but §3.1-§3.6 didn't enumerate header line edit; consistency с §10 v1.1 row required header update.
+- MAXIMUM_ENGINEERING_REFACTOR §4.8 «Hardware variance» Risk bullet: «Local Gemma performance varies with GPU» → «Environment variance» с v1.x era qualifier + v1.6 era equivalent risk note. §3.5 «surgical scrub at execution time» pattern.
+
+These amendment plan gaps may surface к A'.8 К-closure report as «brief authoring inaccuracy» pattern; not A'.1 re-deliberation scope.
+
 ---
 
 ## M9-series progress (runtime)
