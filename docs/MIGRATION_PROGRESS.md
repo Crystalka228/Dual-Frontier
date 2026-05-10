@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-10 (A'.0.7 methodology pipeline restructure closure — amendment plan authored at `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md`; awaits A'.1 К-L3.1 amendment + folded-or-standalone A'.0.7 amendment execution)
+**Last updated**: 2026-05-10 (К-L3.1 bridge formalization amendment landed via A'.1.K; 10 atomic commits per К-L3.1 amendment plan §6.2 + 2 closure commits; KERNEL v1.5 + MOD_OS v1.7 + MIGRATION_PLAN v1.1 + MIGRATION_PROGRESS sync + 4 skeleton brief surgical edits; A'.1 amendment milestone complete — A'.1.M (A'.0.7 amendment) + A'.1.K (К-L3.1 amendment) both landed 2026-05-10)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,8 +31,8 @@
 
 | | Value |
 |---|---|
-| **Active phase** | A'.1 amendment brief (К-L3.1 amendment + A'.0.7 amendment, possibly folded per A'.0.7 brief §6.2 / amendment plan §7.2; docs-only; per-document atomic commits) → A'.3 push к origin → A'.4 K9 / A'.5 K8.3 / A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 analyzer (K-L3.1 + A'.0.5 + A'.0.7 closed as Phase A' deliberation foundation) |
-| **Last completed milestone** | A'.0.7 (methodology pipeline restructure deliberation; amendment plan authored at `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md`) — 2026-05-10. Previous: A'.0.5 (documentation reorganization + cross-ref refresh + cleanup) — 2026-05-10; K-L3.1 (bridge formalization) — 2026-05-10. |
+| **Active phase** | A'.3 push к origin → A'.4 K9 / A'.5 K8.3 / A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (К-L3.1 + A'.0.5 + A'.0.7 + A'.1.M + A'.1.K closed as Phase A' foundation; K-series execution begins at A'.4) |
+| **Last completed milestone** | A'.1.K (К-L3.1 architecture amendment landing; KERNEL v1.5 + MOD_OS v1.7 + MIGRATION_PLAN v1.1 + 4 skeleton brief surgical edits) — 2026-05-10. Previous: A'.1.M (A'.0.7 methodology amendment landing; METHODOLOGY v1.6 + PIPELINE_METRICS v0.2 + MAXIMUM_ENGINEERING_REFACTOR v1.1 + README Pipeline rewrite) — 2026-05-10; A'.0.7 (methodology pipeline restructure deliberation) — 2026-05-10; A'.0.5 (documentation reorganization + cross-ref refresh + cleanup) — 2026-05-10; К-L3.1 (bridge formalization deliberation) — 2026-05-10. |
 | **Next milestone (recommended)** | K9 (RawTileField) if not yet closed; otherwise K8.3 (system migration to SpanLease/WriteBatch) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09); K8.2 reformulated as v2 single-milestone foundation closure per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
@@ -84,7 +84,7 @@
 | K8.1 | Native-side reference handling primitives | DONE | 8-14 hours auto-mode | `a62c1f3`..`812df98` | 2026-05-09 |
 | K8.1.1 | InternedString closure follow-up (cross-pool equality, doc semantics, empty-string coverage) | DONE | 1-3 hours auto-mode | `f8273ca`..`16afdf3` | 2026-05-09 |
 | K-Lessons | Pipeline closure lessons formalization (METHODOLOGY v1.5 + KERNEL v1.3) | DONE | 30-60 min auto-mode | `9df2709`..`071ae11` | 2026-05-09 |
-| K8.2 | K-L3 «без exception» closure: K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass | DONE | 6-12 hours auto-mode | `6ee1a85`..`7527d00` (preceded by 3 main commits: `c834f18` migration plan lock, `b1a461e` v1 deprecate, `88cbe3f` v2 brief author) | 2026-05-09 |
+| K8.2 | K-L3 selective per-component closure (post-K-L3.1 reframing): K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass | DONE | 6-12 hours auto-mode | `6ee1a85`..`7527d00` (preceded by 3 main commits: `c834f18` migration plan lock, `b1a461e` v1 deprecate, `88cbe3f` v2 brief author) | 2026-05-09 |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
 | K8.5 | Mod ecosystem migration prep | NOT STARTED | 3-5 days | — | — |
@@ -404,7 +404,7 @@
 - Per-lesson commits (one `####` sub-section per commit) preserve readability of the document history without adding overhead, because each lesson is self-contained.
 - Bundling the version bump into the final-lesson commit (rather than a separate "version bump" commit) avoids a tax commit that would not leave the document in a coherent reviewable state on its own. This generalizes the atomic-commit-as-compilable-unit principle to documentation: each commit should leave the doc reviewable.
 
-### K8.2 v2 — K-L3 «без exception» closure (single milestone)
+### K8.2 v2 — K-L3 selective per-component closure (single milestone; framing reformulated by K-L3.1 amendment 2026-05-10)
 
 **Status**: DONE
 **Closure**: 3 main commits + `6ee1a85`..`7527d00` on `feat/k82-foundation-closure` (fast-forward merged to main).
@@ -440,7 +440,7 @@
 
 **ModAccessible annotation pass** (Phase 3): 12 verify-only struct components annotated per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` §1.5 defaults. Surviving 25 production components (31 pre-K8.2 − 6 stub deletions = 25) all carry `[ModAccessible]`.
 
-**KERNEL_ARCHITECTURE.md** v1.3 → v1.4: Part 2 K8.2 row reformulated; Part 0 K-L3 implication rewritten («без exception» state achieved); status line updated.
+**KERNEL_ARCHITECTURE.md** v1.3 → v1.4 (header bump deferred; landed at v1.5 in K-L3.1 amendment): Part 2 K8.2 row reformulated; Part 0 K-L3 implication rewritten (post-K-L3.1: K8.2 v2 selective per-component application; «без exception» framing superseded); status line updated.
 
 **Brief deviations**:
   - Phase 0.7 lock of `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 (status `AUTHORED — pending Crystalka acceptance and lock` → `AUTHORITATIVE LOCKED`) committed on main as the milestone's first commit per v2 brief Phase 0.7.
@@ -454,7 +454,7 @@
   - K8.1 wrapper class→struct refactor is now permanent (was Cloud Code's recommended K8.1.2 follow-up; Crystalka folded into K8.2 v2 to avoid a partial intermediate state).
   - Per-instance id allocation strategy: managed-side `NativeWorld` monotonic counter, 0 = invalid sentinel. Native side unchanged.
   - Empty TODO stub deletions per METHODOLOGY §7.1 are an architectural application of an existing principle, not a new K-Lxx decision.
-  - K-L3 «без exception» state is now an architectural fact for `src/DualFrontier.Components/`. KERNEL_ARCHITECTURE.md Part 0 implication updated.
+  - K-L3 selective per-component application is the architectural fact for `src/DualFrontier.Components/` (25 surviving components: 6 conversions via K8.1 primitives + 19 verify-only annotations on already-struct + 6 deletions per METHODOLOGY §7.1). KERNEL_ARCHITECTURE.md Part 0 implication updated. Post-K-L3.1 (2026-05-10): «без exception» framing reformulated as «selective per-component»; bridge formalization adds Path β as first-class peer.
 
 **Cross-cutting impact**:
   - K8.3 (system migration) unblocked: every consumer-bearing component is now `unmanaged struct` and uses K8.1 primitives where applicable. K8.3 brief authoring against this state.
@@ -465,6 +465,61 @@
   - When a brief's design assumes consumer-site infrastructure that doesn't yet exist (here: `NativeWorld` access from systems and factories), surface as Phase 2.7 §3 stop early, ask, and treat the resolution as architectural plumbing rather than per-component improvisation. Saves replicating the same plumbing across 6 conversions.
   - Wrapper generic constraints can be over-constrained for documentary reasons. When a constraint blocks idiomatic usage of valid managed types (enums) without buying anything semantically, drop it. The native side is the authority on ordering when it uses memcmp.
   - Brief Phase 6.1 split-point contingency (partial closure mid-K8.2) ended up not used: single session executed the full milestone in 21 commits over the branch + 3 main commits, with all green. The split-point design remains a useful contingency for future similar milestones.
+
+### K-L3.1 — Bridge formalization (architectural decision session)
+
+- **Status**: DONE (2026-05-10)
+- **Brief**: `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md` + `tools/briefs/K_L3_1_BRIEF_ADDENDUM_1.md` (FULL EXECUTED — Phase 0 reads + Phase 1 deliberation Q1–Q6 + Phase 3 synthesis + Phase 4 amendment plan)
+- **Brief type**: Architectural decision brief (fourth brief type, K8.0 precedent)
+- **Trigger**: post-K8.2 v2 cleanup session 2026-05-10 — Crystalka clarification «там был частичный перенос то что можно легко преобразовывать в struct было преобразовано, а что нет то managed, так как не все имеет смысл тащить в натив для скорости» revealed K8.2 v2 closure framing «K-L3 «без exception»» as misframing of selective per-component judgment actually applied; bridge formalization escalated per METHODOLOGY §3 «stop, escalate, lock»
+- **Session length**: deliberation 2026-05-10 (single session, Crystalka + Opus, no Cloud Code execution)
+- **Test count**: 631 (unchanged — deliberation session, no source edits; Phase 4 deliverable is documentation plan)
+
+**Locks** (Phase 1 deliberation closures):
+
+- **Q1 = (a)**: `[ManagedStorage]` attribute on type. Class `: IComponent` types annotated with this attribute are Path β; absent attribute + struct shape implies Path α. Analyzer enforcement of shape↔attribute consistency deferred to post-migration analyzer milestone (Q5.b/M3.5-extension).
+- **Q2 = (β-i)**: mod-side managed-storage ownership; `IModApi` v3 extension `RegisterManagedComponent<T> where T : class, IComponent`. Storage lives in per-mod `RestrictedModApi` instance; reclaimed deterministically on `AssemblyLoadContext.Unload`.
+- **Q3 = (i)**: explicit dual API. `SystemBase.NativeWorld.AcquireSpan<T>()` for Path α (existing K8.2 v2 plumbing); `SystemBase.ManagedStore<T>()` for Path β (new K8.4 plumbing). Cross-mod managed-path direct access structurally impossible by ALC isolation; cross-mod data flow via events per §6 three-level contracts.
+- **Q4 = (b)**: managed-path forbidden for persisted components. Save system out of scope per migration plan §0.4 + §8.1; managed-path = runtime-only state; codec layer untouched.
+- **Q5 = (a)**: passive performance metrics; `KernelCapabilityRegistry` tagged per-path; PERFORMANCE_REPORT splits native/managed. Active Roslyn analyzer enforcement (Q5.b) deferred per Crystalka 2026-05-10 «после миграции нужен будет анализатор... но это потом».
+- **Q6 = (a)**: capability surface path-blind. `[ModAccessible]` already targets `Class | Struct` (K4 prerequisite); capability strings (`kernel.read:`, `mod.<id>.read:`) carry verb + FQN, path-orthogonal — confirms existing structural reality.
+- **Synthesis = §4.A**: amend K-L3 wording (single principle, peer paths) rather than add new K-L12. KERNEL `v1.3 → v1.5`; MOD_OS `v1.6 → v1.7`; MIGRATION_PLAN `v1.0 → v1.1`.
+
+**Architectural decisions LOCKED in this milestone**:
+
+- Path α (`unmanaged struct` / native) and Path β (managed `class` via `[ManagedStorage]` / mod-side) are first-class peers, not principle/exception
+- K-L3 implication post-K-L3.1: components are either path; default is α (silent + struct shape); β requires `[ManagedStorage]` opt-in
+- Mod-side managed-storage ownership preserves K-L11 «NativeWorld single source of truth» for native data; managed-storage decentralization-by-mod is consistent with K-L9 «vanilla = mods» + ALC isolation
+- Path β components are runtime-only at K-L3.1; persistence opt-in (if/when needed) is a future amendment milestone
+- Capability model uniform across paths (Q6.a confirmed structural truth)
+- K8.2 v2 closure framing «K-L3 «без exception» state achieved» reformulated as «K-L3 selective per-component application» — closure outcome was selective judgment per METHODOLOGY §7.1 (delete) + per K8.1 primitive coverage (convert) + verify-only annotations (already struct), not universal mandate
+
+**Output artifacts**:
+
+1. `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md` (Status: AUTHORED → EXECUTED 2026-05-10)
+2. `tools/briefs/K_L3_1_BRIEF_ADDENDUM_1.md` (skeleton brief disposition extension — APPLIED)
+3. `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` (NEW — Phase 4 deliverable; old/new text pairs for KERNEL + MOD_OS + MIGRATION_PLAN + MIGRATION_PROGRESS + skeleton brief dispositions)
+4. This MIGRATION_PROGRESS entry (added by amendment brief atomic with line corrections)
+
+**Cross-cutting impact**:
+
+- **Amendment brief = Phase A'.1**: docs-only execution per `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`; KERNEL `v1.3 → v1.5`, MOD_OS `v1.6 → v1.7`, MIGRATION_PLAN `v1.0 → v1.1` (includes §0.1 Phase A' integration) + this MIGRATION_PROGRESS sync. Estimated 30–60 min auto-mode. Test count delta zero (docs-only). Atomic commit shape: per-document.
+- **Phase A' sequencing**: companion document at `docs/architecture/PHASE_A_PRIME_SEQUENCING.md` (authored 2026-05-10) anchors structural unit between K8.2 v2 closure (DONE) and M8.4 begin (Phase B). Phase A' contains 10 phases: A'.0 K-L3.1 (DONE), A'.1 amendment brief, A'.2 README cleanup, A'.3 push, A'.4 K9, A'.5 K8.3, A'.6 K8.4, A'.7 K8.5, A'.8 K-closure report (NEW), A'.9 Architectural analyzer (NEW). Cumulative duration ~10–16 weeks hobby pace; analyzer's dual purpose = M-series migration verifier + architectural debugger per Crystalka 2026-05-10 «анализатор будет верификатором миграции и будет нашим дебагером на баги которые не ловят тесты».
+- **K9 brief = Phase A'.4** (full authored, ~1200 lines, AUTHORED awaiting execution per β6 sequencing — NOT a skeleton): Disposition B (surgical) — version refs (KERNEL v1.4+ instead of v1.0) + test baseline (631 instead of 538) update; scope unchanged (fields architecturally orthogonal to entity-component bridge per addendum §A2.5)
+- **K8.3 skeleton brief = Phase A'.5** (~36 lines true skeleton): Disposition B-to-C — scope undercount correction (12 named systems → 34 actual per migration plan §1.2 reformulated scope) + dual-path access pattern wording per Q3.i; full brief authoring against post-K-L3.1 amended state
+- **K8.4 skeleton brief = Phase A'.6** (~33 lines true skeleton): Disposition C.1 in-place rewrite — title «ManagedWorld retired» framing preserved (kernel-side managed `World` still retires per K-L11; managed-storage moves mod-side per K-L3.1, not stays kernel-side); add `RegisterManagedComponent<T>` to v3 surface deliverables; add `SystemBase.ManagedStore<T>()` plumbing
+- **K8.5 skeleton brief = Phase A'.7** (~30 lines true skeleton): Disposition B (surgical) — content list expands to include bridge mechanism documentation (per-component path choice criterion, `[ManagedStorage]` usage, `ManagedStore<T>` access pattern, dual-API examples)
+- **K-closure report = Phase A'.8** (NEW per Phase A' sequencing): structured document enumerating final K-Lxx invariants; dual purpose = (1) historical record of K-series, (2) formal analyzer rule specification surface; format = each invariant has formal statement + violation example + compliance example. Out of K-L3.1 amendment plan scope; tracked as future Phase A' milestone.
+- **Architectural analyzer = Phase A'.9** (NEW per Phase A' sequencing): Roslyn analyzer encoding K-Lxx invariants per K-closure report; dual purpose = M-series migration verifier + architectural debugger; track B activation candidate per ROADMAP «Maximum Engineering Refactor»; M3.4 capability analyzer merge decision at analyzer brief authoring time. Out of K-L3.1 amendment plan scope; tracked as future Phase A' milestone.
+
+**Lessons learned**:
+
+- Architectural decision briefs (fourth brief type, K8.0 precedent) extended to K-L3.1 with «closure clarification triggers retroactive principle reformulation» case. Phase 0 reads → Phase 1 deliberation Q1–Q6 → Phase 3 synthesis → Phase 4 amendment plan format works for this case (K8.2 v2 closure framing was misread by closure report; K-L3.1 reformulates without invalidating closure outcome).
+- B.2 finding (live `IModApi.RegisterComponent<T> where T : IComponent` is path-agnostic at code level despite K-L3 doc-level «universal mandate» framing) was the structural anchor enabling Reading γ. Bridge was empirically already compatible with existing surface; K-L3.1 formalized convention into LOCKED architectural decision rather than creating new mechanism.
+- B.4 finding (K8.2 v2 closure outcome empirically embodies Reading γ — 6 §7.1 deletions are «not converted to struct, removed because data didn't exist», not «universally constrained») confirmed §4.A synthesis correctness. The closure outcome was selective per-component judgment, not universal mandate; §4.A captures this in K-L3 amendment without inventing new principle.
+- Crystalka clarification («что можно легко преобразовывать в struct было преобразовано, а что нет — managed») as session trigger validated «stop, escalate, lock» rule (METHODOLOGY §3): closure framing misalignment was surfaced by user observation, not auto-detected by tooling; deliberation session is the structurally correct response (vs. inline closure-report patch which would have been a kostyl).
+- Q6 (capability path-orthogonality) was already structurally true per K4 prerequisite (`[ModAccessible]` widened to `Class | Struct`). This is empirical evidence that some «open» architectural questions in deliberation briefs may already be answered by accumulated code state — Phase 0 inventory lessons (K-Lessons «inventory as hypothesis, not authority») extended: hypothesis can resolve question without deliberation when disk truth is decisive.
+- Crystalka direction «без костылей, у меня нет давления временем» as session frame enabled rigorous Q1–Q6 walkthrough with each lock + rationale, rather than batched/forced answers under time pressure. Long-horizon framing aligns with brief §1.3 «architectural cleanness... десятилетиями».
 
 ### K8.3-K8.5 — Sub-milestones
 
