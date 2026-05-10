@@ -72,7 +72,7 @@ K9 closure-review event is approved. At that moment:
 
 1. Sonnet is invited to decompose this brief into a concrete M-phase brief in the standard `M{N}_CLAUDE_CODE_PROMPT.md` form. The decomposition produces the activation M-phase number (probably `M10` or `M11`, depending on the `ROADMAP.md` queue at the time; the number is not load-bearing).
 2. Crystalka ratifies the decomposed M-phase brief in the usual pipeline shape — same gates as any other M-phase brief.
-3. Implementation proceeds in the standard pipeline: the Claude Desktop session writes the analyzer code per the M-phase prompt; Opus aud the result; Crystalka reviews and merges the closure.
+3. Implementation proceeds in the standard pipeline: the Claude Desktop session writes the analyzer code per the M-phase prompt; Opus audits the result; Crystalka reviews and merges the closure.
 
 The structural shape — analyzer csproj, two analyzers, test corpus, `AnalyzerReleases.Shipped.md` — is fixed by §4 below. The M-phase prompt fills in implementation specifics (Roslyn API surface choice, `DF_TS_<n>` allocation, etc.) per the deferred-questions list in `ARCHITECTURE_TYPE_SYSTEM.md` §8.
 
