@@ -5,8 +5,10 @@ using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
@@ -53,17 +55,19 @@ public sealed class MovementSystem : SystemBase
     {
         var move = GetComponent<MovementComponent>(evt.PawnId);
         move.Target = evt.TargetTile;
+        move.HasTarget = true;
         // Drop any stale wander path so the next Update repaths toward the
         // newly assigned consume target instead of finishing the old route.
-        move.Path.Clear();
+        ResetPath(ref move, evt.PawnId);
         SetComponent(evt.PawnId, move);
     }
 
     private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
     {
         var move = GetComponent<MovementComponent>(evt.PawnId);
-        move.Target = null;
-        move.Path.Clear();
+        move.HasTarget = false;
+        move.Target = default;
+        ResetPath(ref move, evt.PawnId);
         SetComponent(evt.PawnId, move);
     }
 
@@ -71,15 +75,17 @@ public sealed class MovementSystem : SystemBase
     {
         var move = GetComponent<MovementComponent>(evt.PawnId);
         move.Target = evt.TargetTile;
-        move.Path.Clear();
+        move.HasTarget = true;
+        ResetPath(ref move, evt.PawnId);
         SetComponent(evt.PawnId, move);
     }
 
     private void OnSleepFinished(PawnSleepFinishedEvent evt)
     {
         var move = GetComponent<MovementComponent>(evt.PawnId);
-        move.Target = null;
-        move.Path.Clear();
+        move.HasTarget = false;
+        move.Target = default;
+        ResetPath(ref move, evt.PawnId);
         SetComponent(evt.PawnId, move);
     }
 
@@ -97,14 +103,15 @@ public sealed class MovementSystem : SystemBase
                 continue;
             }
 
-            if (move.Path.Count == 0)
+            int pathCount = move.Path.IsValid ? move.Path.CountFor(entity) : 0;
+            if (move.PathStepIndex >= pathCount)
             {
                 GridVector target;
                 bool isExternalTarget;
 
-                if (move.Target.HasValue)
+                if (move.HasTarget)
                 {
-                    target = move.Target.Value;
+                    target = move.Target;
                     isExternalTarget = true;
 
                     // If pawn is already at target, do nothing — wait for an
@@ -129,22 +136,30 @@ public sealed class MovementSystem : SystemBase
                     && path.Count > 0)
                 {
                     move.Target = target;
-                    move.Path   = new List<GridVector>(path);
+                    move.HasTarget = true;
+                    if (!move.Path.IsValid)
+                        move.Path = NativeWorld.CreateComposite<GridVector>();
+                    else
+                        move.Path.ClearFor(entity);
+                    foreach (GridVector step in path)
+                        move.Path.Add(entity, step);
+                    move.PathStepIndex = 0;
                 }
                 else if (isExternalTarget)
                 {
                     // External target unreachable — clear so caller (e.g.
                     // ConsumeSystem) can retarget on a later tick instead of
                     // the pawn freezing in place.
-                    move.Target = null;
+                    move.HasTarget = false;
+                    move.Target = default;
                 }
 
                 SetComponent(entity, move);
                 continue;
             }
 
-            var next = move.Path[0];
-            move.Path.RemoveAt(0);
+            move.Path.TryGetAt(entity, move.PathStepIndex, out GridVector next);
+            move.PathStepIndex++;
             pos.Position = next;
 
             move.StepCooldown = StepCooldownTicks;
@@ -159,5 +174,11 @@ public sealed class MovementSystem : SystemBase
                 Y      = next.Y
             });
         }
+    }
+
+    private static void ResetPath(ref MovementComponent move, EntityId entity)
+    {
+        if (move.Path.IsValid) move.Path.ClearFor(entity);
+        move.PathStepIndex = 0;
     }
 }

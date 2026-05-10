@@ -148,7 +148,10 @@ internal sealed class RandomPawnFactory
         });
         world.AddComponent(id, new MindComponent());
         world.AddComponent(id, new JobComponent { Current = JobKind.Idle });
-        world.AddComponent(id, new MovementComponent());
+        world.AddComponent(id, new MovementComponent
+        {
+            Path = _nativeWorld.CreateComposite<GridVector>(),
+        });
 
         services.Pawns.Publish(new PawnSpawnedEvent
         {

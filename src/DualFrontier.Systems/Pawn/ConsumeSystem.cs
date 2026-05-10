@@ -76,9 +76,9 @@ public sealed class ConsumeSystem : SystemBase
             NeedsComponent needs      = GetComponent<NeedsComponent>(pawn);
 
             // Phase 2: arrival check (if we have a target and we're standing on it).
-            if (job.Target.HasValue && move.Target.HasValue &&
-                pawnPos.Position.X == move.Target.Value.X &&
-                pawnPos.Position.Y == move.Target.Value.Y)
+            if (job.Target.HasValue && move.HasTarget &&
+                pawnPos.Position.X == move.Target.X &&
+                pawnPos.Position.Y == move.Target.Y)
             {
                 ApplyRestoration(pawn, job.Target.Value);
                 Services.Pawns.Publish(new PawnConsumeFinishedEvent { PawnId = pawn });

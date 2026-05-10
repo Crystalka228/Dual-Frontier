@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Systems.Pawn;
 using FluentAssertions;
@@ -50,7 +51,7 @@ public sealed class ConsumeSystemTests
         // Pre-set the pawn's job and movement target so we skip target selection
         // and exercise the arrival branch directly.
         world.AddComponent(pawn, new JobComponent { Current = JobKind.Eat, Target = food });
-        world.AddComponent(pawn, new MovementComponent { Target = foodPos });
+        world.AddComponent(pawn, new MovementComponent { Target = foodPos, HasTarget = true });
 
         scheduler.ExecuteTick(1f / 30f);
 
@@ -72,7 +73,7 @@ public sealed class ConsumeSystemTests
         EntityId pawn = SpawnEatingPawn(world, satiety: 0.1f, position: foodPos);
         EntityId food = SpawnFood(world, position: foodPos, charges: 1);
         world.AddComponent(pawn, new JobComponent { Current = JobKind.Eat, Target = food });
-        world.AddComponent(pawn, new MovementComponent { Target = foodPos });
+        world.AddComponent(pawn, new MovementComponent { Target = foodPos, HasTarget = true });
 
         scheduler.ExecuteTick(1f / 30f);
 
@@ -81,7 +82,7 @@ public sealed class ConsumeSystemTests
         job.Target.Should().BeNull("Job.Target clears after consume");
 
         world.TryGetComponent<MovementComponent>(pawn, out var move).Should().BeTrue();
-        move.Target.Should().BeNull("Movement.Target clears after consume");
+        move.HasTarget.Should().BeFalse("Movement.HasTarget clears after consume");
     }
 
     [Fact]
@@ -108,7 +109,7 @@ public sealed class ConsumeSystemTests
         EntityId pawn = SpawnEatingPawn(world, hydration: 0.1f, position: waterPos);
         EntityId water = SpawnWater(world, position: waterPos);
         world.AddComponent(pawn, new JobComponent { Current = JobKind.Eat, Target = water });
-        world.AddComponent(pawn, new MovementComponent { Target = waterPos });
+        world.AddComponent(pawn, new MovementComponent { Target = waterPos, HasTarget = true });
 
         scheduler.ExecuteTick(1f / 30f);
 
@@ -143,6 +144,7 @@ public sealed class ConsumeSystemTests
         var world    = new World();
         var services = new GameServices();
         var ticks    = new TickScheduler();
+        var nativeWorld = new NativeWorld();
 
         var graph = new DependencyGraph();
         // ConsumeSystem publishes PawnConsumeTarget / PawnConsumeFinished /
@@ -160,7 +162,8 @@ public sealed class ConsumeSystemTests
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services);
+            services,
+            nativeWorld);
 
         return (world, scheduler);
     }
