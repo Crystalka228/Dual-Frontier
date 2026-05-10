@@ -1,15 +1,23 @@
 namespace DualFrontier.Components.Building;
 
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Core.Interop;
 
 /// <summary>
 /// Crafting station. Holds active recipe and progress.
 /// Written exclusively by CraftSystem.
 /// </summary>
-public sealed class WorkbenchComponent : IComponent
+[ModAccessible(Read = true, Write = true)]
+public struct WorkbenchComponent : IComponent
 {
-    /// <summary>Recipe currently being crafted. Null = idle.</summary>
-    public string? ActiveRecipeId;
+    /// <summary>
+    /// Recipe currently being crafted. Empty interned-string sentinel
+    /// (<see cref="InternedString.Empty"/>) signals idle. Set by CraftSystem
+    /// via <c>NativeWorld.InternString</c> when a recipe begins; cleared
+    /// back to default when the recipe completes or aborts.
+    /// </summary>
+    public InternedString ActiveRecipeId;
 
     /// <summary>Crafting progress 0..1. 1.0 = ready to complete.</summary>
     public float Progress;
@@ -24,5 +32,5 @@ public sealed class WorkbenchComponent : IComponent
     public bool IsOccupied => WorkerEntityIndex > 0;
 
     /// <summary>True if no recipe is active.</summary>
-    public bool IsIdle => ActiveRecipeId is null;
+    public bool IsIdle => ActiveRecipeId.IsEmpty;
 }
