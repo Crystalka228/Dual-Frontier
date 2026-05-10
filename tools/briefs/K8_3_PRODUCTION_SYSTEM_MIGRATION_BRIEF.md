@@ -6,7 +6,7 @@
 
 ## Goal
 
-Migrate the 12 vanilla production systems from `World.GetComponent` / `World.SetComponent` access patterns to `NativeWorld` + `SpanLease<T>` reads + `WriteBatch<T>` writes. After K8.3 closure, all production system code runs against NativeWorld.
+Migrate all 34 production systems in `src/DualFrontier.Systems/` (per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.1 §1.2 reformulated scope) from `World.GetComponent` / `World.SetComponent` access patterns to dual-path access per K-L3.1 Q3.i: `SystemBase.NativeWorld` + `SpanLease<T>` reads + `WriteBatch<T>` writes for Path α components; `SystemBase.ManagedStore<T>()` for Path β components (when present in same mod). After K8.3 closure, all production system code runs against `NativeWorld` (Path α) and per-mod `ManagedStore<T>` (Path β if any).
 
 ## Systems in scope (per `GameBootstrap.coreSystems`)
 
@@ -28,6 +28,7 @@ NeedsSystem, MoodSystem, JobSystem, ConsumeSystem, SleepSystem, ComfortAuraSyste
 
 - [ ] Author full brief
 - [ ] Per-system access pattern analysis (read-only vs read-write; phase placement; deferred-event publish ordering)
+- [ ] Per-system Path α/β access audit — for each of 34 systems, identify Path α reads/writes and Path β reads/writes (Path β requires K8.4 plumbing; if K8.4 ships before K8.3 brief authoring, dual-path access enabled; if K8.3 authored before K8.4, Path β is empty and brief covers only Path α — defer Path β audit to amendment after K8.4)
 - [ ] Test fixture design — how does a system test construct a NativeWorld with the right components registered?
 - [ ] Migrate test count (some tests currently use ManagedWorld directly; switching to NativeWorld may surface latent assumptions)
 - [ ] Decide if K8.3 includes a benchmark commit confirming production-on-NativeWorld matches K7 V3 within 20% (recommended: yes)
