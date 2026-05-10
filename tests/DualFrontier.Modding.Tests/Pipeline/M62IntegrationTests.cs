@@ -173,7 +173,6 @@ public sealed class M62IntegrationTests
         var pipeline = BuildPipeline(
             new CombatSystem(),
             new ProjectileSystem(),
-            new ShieldSystem(),
             new ComboResolutionSystem(),
             new CompositeResolutionSystem());
 
@@ -187,8 +186,6 @@ public sealed class M62IntegrationTests
         ContainsSystemByFqn(scheduler, "DualFrontier.Systems.Combat.CombatSystem")
             .Should().BeTrue();
         ContainsSystemByFqn(scheduler, "DualFrontier.Systems.Combat.ProjectileSystem")
-            .Should().BeTrue();
-        ContainsSystemByFqn(scheduler, "DualFrontier.Systems.Combat.ShieldSystem")
             .Should().BeTrue();
         ContainsSystemByFqn(scheduler, "DualFrontier.Systems.Combat.ComboResolutionSystem")
             .Should().BeTrue();

@@ -31,12 +31,14 @@ public class VanillaComponentRoundTripTests
         using var world = Bootstrap.Run();
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
 
-        // Should not throw — all 24 components must register
+        // Should not throw — all production components must register
         var act = () => VanillaComponentRegistration.RegisterAll(registry);
         act.Should().NotThrow();
 
-        // Verify count
-        registry.Count.Should().Be(24);
+        // Verify count: post-Combat-stub-deletions (Ammo/Shield/Weapon removed
+        // in K8.2 v2 Phase 2.C.1). Subsequent phases will further reduce as
+        // School/Biome stubs are deleted.
+        registry.Count.Should().Be(21);
     }
 
     [Fact]
@@ -191,27 +193,4 @@ public class VanillaComponentRoundTripTests
         retrieved.BondStrength.Should().Be(5);
     }
 
-    [Fact]
-    public void EmptyComponents_RoundTrip_DoNotCorruptStorage()
-    {
-        // Components with no fields (BiomeComponent, SchoolComponent, AmmoComponent,
-        // ShieldComponent, WeaponComponent) must roundtrip без issue
-        using var world = Bootstrap.Run();
-        var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
-        VanillaComponentRegistration.RegisterAll(registry);
-
-        EntityId entity = world.CreateEntity();
-
-        var act1 = () => world.AddComponent(entity, new BiomeComponent());
-        var act2 = () => world.AddComponent(entity, new SchoolComponent());
-        var act3 = () => world.AddComponent(entity, new AmmoComponent());
-
-        act1.Should().NotThrow();
-        act2.Should().NotThrow();
-        act3.Should().NotThrow();
-
-        world.HasComponent<BiomeComponent>(entity).Should().BeTrue();
-        world.HasComponent<SchoolComponent>(entity).Should().BeTrue();
-        world.HasComponent<AmmoComponent>(entity).Should().BeTrue();
-    }
 }

@@ -22,7 +22,7 @@ namespace DualFrontier.Systems.Combat;
 /// Tick: FAST (3 frames) — combat responsiveness.
 /// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(PositionComponent), typeof(WeaponComponent), typeof(ManaComponent) },
+    reads:  new[] { typeof(PositionComponent), typeof(ManaComponent) },
     writes: new[] { typeof(HealthComponent) },
     buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Magic) }
 )]

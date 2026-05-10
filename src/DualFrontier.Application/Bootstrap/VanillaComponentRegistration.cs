@@ -10,22 +10,18 @@ using DualFrontier.Core.Interop.Marshalling;
 namespace DualFrontier.Application.Bootstrap;
 
 /// <summary>
-/// Registers all 24 Vanilla trivial-POCO components with the native
+/// Registers Vanilla production components with the native
 /// ComponentTypeRegistry. Called from the Application bootstrap chain after
 /// Bootstrap.Run() returns a ready NativeWorld.
 ///
-/// Per K4 Hybrid Path: only Категория A trivial structs are registered.
-/// Категория B (collections) and Категория C (strings) components stay
-/// on the managed path — not registered with the native registry.
-///
-/// Per K-L4 deterministic registry principle: registration order is
-/// stable, type IDs are sequential (1, 2, 3, ... 24). Mod-driven
-/// registration extends this list at K6.
+/// Per K-L4 deterministic registry principle: registration order is stable,
+/// type IDs are sequential (1, 2, ...). Mod-driven registration extends this
+/// list at K6.
 /// </summary>
 public static class VanillaComponentRegistration
 {
     /// <summary>
-    /// Register all 24 Vanilla trivial-POCO components.
+    /// Register Vanilla production components.
     /// </summary>
     /// <param name="registry">The component type registry to register with.</param>
     public static void RegisterAll(ComponentTypeRegistry registry)
@@ -58,11 +54,8 @@ public static class VanillaComponentRegistration
         registry.Register<ManaComponent>();
         registry.Register<SchoolComponent>();
 
-        // Combat category (4)
-        registry.Register<AmmoComponent>();
+        // Combat category (1)
         registry.Register<ArmorComponent>();
-        registry.Register<ShieldComponent>();
-        registry.Register<WeaponComponent>();
 
         // Building category — trivial (2)
         registry.Register<PowerConsumerComponent>();

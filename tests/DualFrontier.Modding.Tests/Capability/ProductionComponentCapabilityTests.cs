@@ -18,10 +18,7 @@ public sealed class ProductionComponentCapabilityTests
     [InlineData("kernel.publish:DualFrontier.Events.Combat.DamageEvent")]
     [InlineData("kernel.publish:DualFrontier.Events.Combat.DeathEvent")]
     [InlineData("kernel.subscribe:DualFrontier.Events.Combat.ShootGranted")]
-    [InlineData("kernel.read:DualFrontier.Components.Combat.WeaponComponent")]
     [InlineData("kernel.read:DualFrontier.Components.Combat.ArmorComponent")]
-    [InlineData("kernel.read:DualFrontier.Components.Combat.AmmoComponent")]
-    [InlineData("kernel.read:DualFrontier.Components.Combat.ShieldComponent")]
     [InlineData("kernel.write:DualFrontier.Components.Shared.HealthComponent")]
     public void Section21ExampleManifest_TokensResolveInKernelRegistry(string token)
     {
@@ -30,10 +27,7 @@ public sealed class ProductionComponentCapabilityTests
     }
 
     [Theory]
-    [InlineData("kernel.write:DualFrontier.Components.Combat.WeaponComponent")]
     [InlineData("kernel.write:DualFrontier.Components.Combat.ArmorComponent")]
-    [InlineData("kernel.write:DualFrontier.Components.Combat.AmmoComponent")]
-    [InlineData("kernel.write:DualFrontier.Components.Combat.ShieldComponent")]
     public void ReadOnlyCombatComponents_DoNotProvideWriteTokens(string token)
     {
         // Regression guard: Read = true alone must NOT yield a write token.

@@ -13,6 +13,5 @@ namespace DualFrontier.Events.Combat;
 public sealed record AmmoIntent : IEvent
 {
     // TODO: public required EntityId RequesterId { get; init; }
-    // TODO: public required AmmoType AmmoType { get; init; }   // see Components/Combat/AmmoComponent
     // TODO: public required GridVector Position { get; init; } // see Components/Shared/PositionComponent
 }

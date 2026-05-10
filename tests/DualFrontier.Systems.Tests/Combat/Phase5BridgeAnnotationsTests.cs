@@ -36,12 +36,6 @@ public sealed class Phase5BridgeAnnotationsTests
     }
 
     [Fact]
-    public void ShieldSystem_HasReplaceableBridgeAttribute()
-    {
-        AssertReplaceablePhase5(typeof(ShieldSystem));
-    }
-
-    [Fact]
     public void StatusEffectSystem_HasReplaceableBridgeAttribute()
     {
         AssertReplaceablePhase5(typeof(StatusEffectSystem));

@@ -16,7 +16,7 @@ namespace DualFrontier.Systems.Combat;
 /// Tick: FAST (3 frames).
 /// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(ArmorComponent), typeof(ShieldComponent) },
+    reads:  new[] { typeof(ArmorComponent) },
     writes: new[] { typeof(HealthComponent) },
     bus:    nameof(IGameServices.Combat)
 )]
