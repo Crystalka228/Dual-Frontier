@@ -125,7 +125,7 @@ artifact.
 | 8 | Pass 4 §14 Tier 4 #6 | `tests/README.md:7–9` lists 3 of 4 test projects + 1 benchmarks project (Persistence.Tests + Core.Benchmarks omitted). | `tests/README.md` | S |
 | 9 | Pass 4 §14 Tier 4 #7 | Broken nav link `[SESSION_PHASE_4_CLOSURE_REVIEW](./SESSION_PHASE_4_CLOSURE_REVIEW.md)`; actual location is `docs/audit/SESSION_PHASE_4_CLOSURE_REVIEW.md`. | `docs/README.md:69` | S |
 | 10 | Pass 4 §14 Tier 4 #8 | Three pairs of unrelated documents share `nav_order` values (96, 98, 103) — affects rendered nav ordering only when both documents listed in the same site index. | `docs/audit/M4_CLOSURE_REVIEW.md` and `PASS_4_REPORT.md` (96); `M6_CLOSURE_REVIEW.md` and `PASS_2_NOTES.md` (98); `AUDIT_PASS_1_PROMPT.md` and `PASS_3_NOTES.md` (103) | S |
-| 11 | Pass 4 §14 Tier 4 #9 | `AUDIT_PASS_4_PROMPT.md` §5.1 wrote `docs/audit/NORMALIZATION_REPORT.md` but the actual file is at `docs/NORMALIZATION_REPORT.md`. Pass 4 honored intent and applied whitelist to actual path. | `docs/audit/AUDIT_PASS_4_PROMPT.md` §5.1 | (no remediation — audit prompt-quality observation; future prompt revisions should align with Pass 1 §4 inventory) |
+| 11 | Pass 4 §14 Tier 4 #9 | `AUDIT_PASS_4_PROMPT.md` §5.1 wrote `docs/audit/NORMALIZATION_REPORT.md` but the actual file is at `docs/reports/NORMALIZATION_REPORT.md`. Pass 4 honored intent and applied whitelist to actual path. | `docs/audit/AUDIT_PASS_4_PROMPT.md` §5.1 | (no remediation — audit prompt-quality observation; future prompt revisions should align with Pass 1 §4 inventory) |
 
 ---
 
@@ -216,7 +216,7 @@ Items inherited from Pass 2/3/4 with no actionable remediation.
 | # | Item | Source | Note |
 |---|---|---|---|
 | Obs-1 | Early-migration M0–M2 commit cadence does not match strict feat→test→docs triplet emerged from M5.1 onward | Pass 3 §14 Tier 3 #1 | Methodology evolution; not behavioural drift, not spec drift. Pass 5 records as historical context for §5 Methodology observations. |
-| Obs-2 | `AUDIT_PASS_4_PROMPT.md` §5.1 path-mismatch (`docs/audit/NORMALIZATION_REPORT.md` vs. actual `docs/NORMALIZATION_REPORT.md`) | Pass 4 §14 Tier 4 #9 | Audit-process hygiene observation — Pass 4 self-detected and honored intent. Pass 5 records as methodology observation for future prompt revisions. |
+| Obs-2 | `AUDIT_PASS_4_PROMPT.md` §5.1 path-mismatch (`docs/audit/NORMALIZATION_REPORT.md` vs. actual `docs/reports/NORMALIZATION_REPORT.md`) | Pass 4 §14 Tier 4 #9 | Audit-process hygiene observation — Pass 4 self-detected and honored intent. Pass 5 records as methodology observation for future prompt revisions. |
 
 ---
 
@@ -424,7 +424,7 @@ Audit-process improvements distilled from this campaign for future cycles.
 
 - **Audit prompt path-mismatch self-observation** (Pass 4 §14 Tier 4 #9).
   `AUDIT_PASS_4_PROMPT.md` §5.1 wrote `docs/audit/NORMALIZATION_REPORT.md`
-  but the actual file is at `docs/NORMALIZATION_REPORT.md`. Pass 4
+  but the actual file is at `docs/reports/NORMALIZATION_REPORT.md`. Pass 4
   honored intent and applied the whitelist. **Suggested improvement:**
   future audit prompts should validate paths against the Pass 1 §4
   inventory before ratification — a prompt-quality sub-step in the

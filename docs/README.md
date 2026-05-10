@@ -12,7 +12,7 @@ designed; [PIPELINE_METRICS](/docs/methodology/PIPELINE_METRICS.md) records the
 operational data measured while running it;
 [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) describes the
 capability-based mod isolation as an OS-style architecture;
-[NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) records a
+[NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) records a
 measured negative result with criterion reformulation. The remaining
 documents below describe the engine that supports the claim.
 
@@ -48,7 +48,7 @@ Documents required to reproduce the work or contribute to it: methodology, moddi
 - [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order.
 - [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
 - [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) — the hygiene checklist for every PR, the engine/game boundary, red flags.
-- [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — the C++ core experiment, the P/Invoke boundary, benchmark results, plan for the batching API in Phase 9.
+- [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — the C++ core experiment, the P/Invoke boundary, benchmark results, plan for the batching API in Phase 9.
 - [PERSISTENCE](../src/DualFrontier.Persistence/README.md) — save-compression algorithms: tile RLE, component quantization, entity range encoding, StringPool.
 
 ## Process

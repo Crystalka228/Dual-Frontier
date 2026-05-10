@@ -62,7 +62,7 @@ git log --oneline -25
 ```
 head -10 docs/architecture/KERNEL_ARCHITECTURE.md
 head -10 docs/MIGRATION_PROGRESS.md
-ls docs/PERFORMANCE_REPORT_K7.md
+ls docs/reports/PERFORMANCE_REPORT_K7.md
 ```
 
 **Expected**:

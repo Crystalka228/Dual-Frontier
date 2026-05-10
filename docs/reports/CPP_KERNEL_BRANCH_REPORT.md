@@ -77,7 +77,7 @@ CMakeLists, directory layout. No code yet.
 
 **Phase E — Documentation (`959ccd0`, `cb65761`, `dd5de10`, `cdeedbb`)**
 - `docs/NATIVE_CORE.md` — English, focuses on architecture boundary, P/Invoke mapping, marshalling options, decision rule.
-- Substantial revisions to `docs/NATIVE_CORE_EXPERIMENT.md` — Russian, focuses on motivation, decision criterion (revised away from "20% faster mean" toward p99/GC-pause/long-run drift on weak hardware).
+- Substantial revisions to `docs/reports/NATIVE_CORE_EXPERIMENT.md` — Russian, focuses on motivation, decision criterion (revised away from "20% faster mean" toward p99/GC-pause/long-run drift on weak hardware).
 - `docs/methodology/DEVELOPMENT_HYGIENE.md` — added; engine/game boundary checklist that pre-emptively names `interop:` and `native:` as legitimate scope prefixes.
 
 **Phase F — Build/run wiring (`f59492a`, `e2bc2d9`)**
@@ -187,7 +187,7 @@ The shipping surface of the experiment is bounded. The full list:
 |---|---|
 | `src/DualFrontier.Core/DualFrontier.Core.csproj` | +3 lines — `<InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />` |
 | `DualFrontier.sln` | Adds two project entries (`DualFrontier.Core.Interop`, `DualFrontier.Core.Benchmarks`) with GUIDs `CAFE0001-…` and `CAFE0002-…`, plus configuration block. |
-| `docs/NATIVE_CORE_EXPERIMENT.md` | Substantial — rewrites the decision criterion in light of weak-hardware target; introduces the GC-pause / p99 / long-run-drift metric set. |
+| `docs/reports/NATIVE_CORE_EXPERIMENT.md` | Substantial — rewrites the decision criterion in light of weak-hardware target; introduces the GC-pause / p99 / long-run-drift metric set. |
 | `docs/methodology/DEVELOPMENT_HYGIENE.md` | Adds `interop:` and `native:` as engine-side scope prefixes; codifies a 5-step PR checklist. |
 
 ### 3.4 LOC delta — scoped
@@ -1506,7 +1506,7 @@ This particular scenario encodes the most non-trivial invariants — version bum
 | Path | Status | Size |
 |---|---|---|
 | `docs/NATIVE_CORE.md` | Added on this branch only | 205 lines / ~7.5 KB |
-| `docs/NATIVE_CORE_EXPERIMENT.md` | Modified — substantial rewrite of decision criterion | 414 lines / ~15 KB |
+| `docs/reports/NATIVE_CORE_EXPERIMENT.md` | Modified — substantial rewrite of decision criterion | 414 lines / ~15 KB |
 | `docs/methodology/DEVELOPMENT_HYGIENE.md` | Modified | 313 lines / ~12 KB |
 | `native/DualFrontier.Core.Native/build.md` | Added | 72 lines / ~2 KB |
 
@@ -1521,7 +1521,7 @@ This is the canonical English doc for the experiment. It covers seven sections: 
 - **Risks**: marshalling cost can eat the win; reference-type components require a class→struct refactor across the whole catalog; cross-platform packaging (`runtimes/{rid}/native/...`) is unsolved; mixed-mode debugging is awkward; version drift between `df_capi.h` and `EntityIdPacking.cs` produces silent corruption.
 - **Follow-ups** (§7): explicit type-id registry, struct-based component catalog, port `DependencyGraph`, port `ParallelSystemScheduler` (requires reverse P/Invoke for `SystemBase.Update`), `runtimes/{rid}/native/...` packaging, CI matrix.
 
-### 9.3 `docs/NATIVE_CORE_EXPERIMENT.md` — the major rewrite
+### 9.3 `docs/reports/NATIVE_CORE_EXPERIMENT.md` — the major rewrite
 
 This document is in Russian and is structurally older (it predates the C++ commits — appears to have been a planning document). The experiment's modifications added §8 ("Критерий принятия решения") which **revises the decision criterion away from mean latency** toward p99, GC pause count, throughput on 2 cores, and long-run drift over 2 hours of simulation.
 
@@ -1531,7 +1531,7 @@ Key reformulation in §8:
 
 Rule table now allows accepting C++ even on mean-latency parity if GC pauses are eliminated and p99 improves on the constrained 2-core target hardware. This is a meaningfully different bar from the English `NATIVE_CORE.md` §6.
 
-> **Inconsistency to flag.** `docs/NATIVE_CORE.md` (English) and `docs/NATIVE_CORE_EXPERIMENT.md` (Russian) define **different decision rules**. NATIVE_CORE.md §6 is "≥20% combined Get+Add → continue"; NATIVE_CORE_EXPERIMENT.md §8 is GC-pause + p99 + long-run-drift on 2-core target. They were authored in adjacent commits (`959ccd0` and `cb65761`), so the inconsistency is deliberate and not yet reconciled. Whichever decision rule Opus is going to apply, this needs resolution first.
+> **Inconsistency to flag.** `docs/NATIVE_CORE.md` (English) and `docs/reports/NATIVE_CORE_EXPERIMENT.md` (Russian) define **different decision rules**. NATIVE_CORE.md §6 is "≥20% combined Get+Add → continue"; NATIVE_CORE_EXPERIMENT.md §8 is GC-pause + p99 + long-run-drift on 2-core target. They were authored in adjacent commits (`959ccd0` and `cb65761`), so the inconsistency is deliberate and not yet reconciled. Whichever decision rule Opus is going to apply, this needs resolution first.
 
 ### 9.4 `docs/methodology/DEVELOPMENT_HYGIENE.md`
 
@@ -1680,7 +1680,7 @@ We can still ask which files the **experiment-relevant subset** changes that **a
 |---|---|---|---|
 | `DualFrontier.sln` | Yes (much larger — 27 vs 17 projects) | Adds two project entries (`DualFrontier.Core.Interop`, `DualFrontier.Core.Benchmarks`) | **Mechanical, low risk** — append two `Project(...) ... EndProject` pairs and the configuration block. Main has its own structure; just add the new GUIDs. |
 | `src/DualFrontier.Core/DualFrontier.Core.csproj` | Yes | +3 lines: `<InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />` plus a comment | **None** — main's csproj has the same shape; one-line addition slots in cleanly. |
-| `docs/NATIVE_CORE_EXPERIMENT.md` | Yes (already on main with the planning content) | Substantial revision — new §8 decision rule | **Medium** — the branch's version is genuinely newer; needs a manual content merge or a deliberate decision to take the branch's whole text. |
+| `docs/reports/NATIVE_CORE_EXPERIMENT.md` | Yes (already on main with the planning content) | Substantial revision — new §8 decision rule | **Medium** — the branch's version is genuinely newer; needs a manual content merge or a deliberate decision to take the branch's whole text. |
 | `docs/methodology/DEVELOPMENT_HYGIENE.md` | Yes (already on main) | Pre-emptive scope-prefix additions for `interop:` / `native:` | **Low** — small addition, slot in. |
 | `.gitignore` | Yes | No change in branch (so main's version applies). Branch already ignores `native/*/build/` but **not** `out/`. | **No conflict, but branch carries 39 build-cache files in `out/` that should be removed before integration.** |
 
@@ -1989,4 +1989,4 @@ If this Discovery report is the input to "what do we do with the branch", the an
 | Native self-test result | ALL PASSED (4/4 scenarios, 100k entity throughput run) |
 | Managed build/test result | Not run — `dotnet` not available in Discovery sandbox |
 | Generated by | Claude Code, model `claude-opus-4-7` (1M context) |
-| Report file | `docs/CPP_KERNEL_BRANCH_REPORT.md` |
+| Report file | `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` |

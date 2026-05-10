@@ -69,7 +69,7 @@ dotnet run -c Release -- --full
 
 ### Comparison vs Discovery report
 
-Discovery report (`docs/CPP_KERNEL_BRANCH_REPORT.md` §10.4, measured ~3 hours earlier same day on experimental branch):
+Discovery report (`docs/reports/CPP_KERNEL_BRANCH_REPORT.md` §10.4, measured ~3 hours earlier same day on experimental branch):
 
 | Method | Discovery | Post-K3 | Δ |
 |---|---:|---:|---|

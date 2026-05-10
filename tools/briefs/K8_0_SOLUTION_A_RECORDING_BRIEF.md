@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09
 **Status**: EXECUTED (2026-05-09, branch `feat/k8-0-solution-a-recording`, closure `9f9dc05`..`5fa3f1d`) — architectural decision brief, fourth brief type alongside «implementation», «skeleton», «closure-shaped implementation». See `docs/MIGRATION_PROGRESS.md` K8.0 closure section for closure summary.
-**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` v1.1 LOCKED §K8 (deliverables superseded by K8.0 closure), `docs/PERFORMANCE_REPORT_K7.md` (K7 evidence base informing K8.0 decision), `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 row added on closure), `docs/methodology/METHODOLOGY.md`, `docs/methodology/CODING_STANDARDS.md`
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` v1.1 LOCKED §K8 (deliverables superseded by K8.0 closure), `docs/reports/PERFORMANCE_REPORT_K7.md` (K7 evidence base informing K8.0 decision), `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 row added on closure), `docs/methodology/METHODOLOGY.md`, `docs/methodology/CODING_STANDARDS.md`
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 entry recorded; K8.1-K8.5 skeleton entries added)
 **Methodology lineage**: `tools/briefs/K7_PERFORMANCE_MEASUREMENT_BRIEF.md` (read-first/brief-second/execute-third pivot), `tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md` (Anthropic `Edit` literal-mode semantics), `tools/briefs/K6_MOD_REBUILD_BRIEF.md` (closure-shaped brief format precedent)
 **Predecessor**: K7 (`72ea8b5..60482f4`) — performance measurement, evidence base for this decision
@@ -59,7 +59,7 @@ git log --oneline -10
 ```
 head -5 docs/architecture/KERNEL_ARCHITECTURE.md
 head -5 docs/MIGRATION_PROGRESS.md
-ls docs/PERFORMANCE_REPORT_K7.md
+ls docs/reports/PERFORMANCE_REPORT_K7.md
 ```
 
 **Expected**:
@@ -707,7 +707,7 @@ After the K7 closure section (where K7 row is recorded), add:
 - **Brief type**: Architectural decision brief (fourth brief type — see brief §1.8)
 - **Decision recorded**: Solution A — single NativeWorld backbone for production storage. ManagedWorld retained as test fixture and research reference only. K-L11 added to LOCKED foundational decisions; K-L3 and K-L8 implications extended; §K8 reconciled to K8.0-K8.5 sub-milestone series.
 - **Context**:
-  - K7 evidence (`docs/PERFORMANCE_REPORT_K7.md`): V3 (NativeWorld) dominates V2 (managed-with-structs) by 4× mean tick / 32× p99 / 27× total allocation / 0 vs 13 GC collections across 10k ticks on Skarlet hardware
+  - K7 evidence (`docs/reports/PERFORMANCE_REPORT_K7.md`): V3 (NativeWorld) dominates V2 (managed-with-structs) by 4× mean tick / 32× p99 / 27× total allocation / 0 vs 13 GC collections across 10k ticks on Skarlet hardware
   - Crystalka commitment (chat session 2026-05-09): «игра это стресс тест, тут всё чистая инженирия и исследование, так что можно развивать максимально сложную архитектуру которая будет работать десятилетиями без костылей»
   - Solution B (storage abstraction layer) and Solution C (explicit hybrid) rejected — both are "structural costlines" relative to long-horizon cleanness
 - **Migration roadmap**: K8.0 → K8.1 (primitives) → K9 (RawTileField; sequencing decision per brief §1.7) → K8.2 (component redesigns) → K8.3 (system migrations) → K8.4 (ManagedWorld retirement, Mod API v3) → K8.5 (mod ecosystem prep)
@@ -929,7 +929,7 @@ The fallback in every halt case is `git stash push -m "k8-0-WIP-halt-$(date +%s)
 
 ## Brief authoring lineage
 
-- **2026-05-09** — K7 closed (`72ea8b5..60482f4`); K7 evidence base in `docs/PERFORMANCE_REPORT_K7.md` available. Crystalka selects Solution A in chat session per «архитектура на десятилетия без костылей» commitment. K8.0 brief authored same day to record the architectural decision in LOCKED specs and author K8.1-K8.5 skeletons.
+- **2026-05-09** — K7 closed (`72ea8b5..60482f4`); K7 evidence base in `docs/reports/PERFORMANCE_REPORT_K7.md` available. Crystalka selects Solution A in chat session per «архитектура на десятилетия без костылей» commitment. K8.0 brief authored same day to record the architectural decision in LOCKED specs and author K8.1-K8.5 skeletons.
 - **(date TBD)** — Executed and closed at K8.0 milestone closure.
 
 The brief was authored read-first / brief-second per the methodology pivot. Source documents read during authoring: `KERNEL_ARCHITECTURE.md` v1.1 LOCKED (Part 0 K-L1..K-L10, §K8, Part 4 Decisions log), `MIGRATION_PROGRESS.md` (K7 closure, K9 prerequisites, decisions log D1..D4), `PERFORMANCE_REPORT_K7.md` (V2 vs V3 evidence base). The "no compromises" rule applied: Solution A locked, B/C rejected with rationale, K9 sequencing recorded as Option c not deferred.

@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-08
 **Status**: EXECUTED (2026-05-08, branch `feat/k5-write-batching`, closure `547c919`). See `docs/MIGRATION_PROGRESS.md` §K5 for closure record and lessons learned.
-**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K5, `docs/MIGRATION_PROGRESS.md` (K4 closure context), `docs/methodology/METHODOLOGY.md` v1.4, `docs/PERFORMANCE_REPORT_K3.md` (80 KB allocation discovery), `docs/methodology/CODING_STANDARDS.md`
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K5, `docs/MIGRATION_PROGRESS.md` (K4 closure context), `docs/methodology/METHODOLOGY.md` v1.4, `docs/reports/PERFORMANCE_REPORT_K3.md` (80 KB allocation discovery), `docs/methodology/CODING_STANDARDS.md`
 **Predecessor**: K4 (`2fc59d1`) — component struct refactor (Hybrid Path), merged to main
 **Target**: fresh feature branch `feat/k5-write-batching` от `main`
 **Estimated time**: 6-8 hours auto-mode (2-3 weeks at hobby pace, ~1h/day manual typing) — applying METHODOLOGY v1.4 calibration

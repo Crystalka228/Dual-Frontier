@@ -2,7 +2,7 @@
 
 **Status**: SKELETON — full brief authored when ready к execute
 **Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K0
-**Source**: `claude/cpp-core-experiment-cEsyH` per `docs/CPP_KERNEL_BRANCH_REPORT.md` §11.6
+**Source**: `claude/cpp-core-experiment-cEsyH` per `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` §11.6
 
 ## Goal
 

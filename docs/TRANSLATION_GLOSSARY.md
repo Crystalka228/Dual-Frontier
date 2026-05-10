@@ -551,7 +551,7 @@ Rule: in normative documentation (CONTRACTS, ISOLATION, ARCHITECTURE) — minimi
 
 This section enumerates strings that are simultaneously: (a) emitted by code at runtime, (b) documented as format specifications, (c) asserted in tests via substring matching. These are the most rigid translation surface in the project — changing any single one is a three-way change (doc + code + tests) that must commit atomically.
 
-Pass 1 (2026-04-26) locked the English forms below as `✓ LOCKED v1.0`. Pass 3 will execute the three-way change atomically using the `IsolationDiagnostics` constant pool specified in `docs/NORMALIZATION_REPORT.md` §5.
+Pass 1 (2026-04-26) locked the English forms below as `✓ LOCKED v1.0`. Pass 3 will execute the three-way change atomically using the `IsolationDiagnostics` constant pool specified in `docs/reports/NORMALIZATION_REPORT.md` §5.
 
 ### 15.1a Isolation guard — undeclared **read** access — ✓ LOCKED v1.0
 

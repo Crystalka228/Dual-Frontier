@@ -42,7 +42,7 @@ grep -rE --include='*.md' --include='*.cs' --include='*.json' --include='*.cspro
 |---|---|---|
 | `docs/SESSION_PHASE_4_CLOSURE_REVIEW.md` | 133 | **Policy-allowed** per Pass 4 prompt — Russian-language audit-trail, intentionally preserved verbatim. |
 | `docs/TRANSLATION_GLOSSARY.md` | 292 | **By-design bilingual reference** — RU↔EN term mappings. Cyrillic is load-bearing. |
-| `docs/NORMALIZATION_REPORT.md` | 72 | **By-design bilingual reference** — Pass 1 report, cites Russian source for traceability. |
+| `docs/reports/NORMALIZATION_REPORT.md` | 72 | **By-design bilingual reference** — Pass 1 report, cites Russian source for traceability. |
 | `docs/TRANSLATION_PLAN.md` | 13 | **By-design bilingual reference** — campaign meta-doc, cites Russian terms. |
 | `docs/PASS_2_NOTES.md` | 12 | **By-design bilingual reference** — pass closure notes citing source-side anchors and Russian glossary terms. |
 | `docs/PASS_3_NOTES.md` | 3 | **By-design bilingual reference** — pass closure notes citing source terms. |
@@ -306,6 +306,6 @@ Three follow-up items, all of which were either documented in earlier pass notes
 
 - [TRANSLATION_GLOSSARY](./TRANSLATION_GLOSSARY.md) v1.0 — authoritative glossary.
 - [TRANSLATION_PLAN](./TRANSLATION_PLAN.md) — campaign scope.
-- [NORMALIZATION_REPORT](./NORMALIZATION_REPORT.md) — Pass 1 closure.
+- [NORMALIZATION_REPORT](/docs/reports/NORMALIZATION_REPORT.md) — Pass 1 closure.
 - [PASS_2_NOTES](./PASS_2_NOTES.md) — Pass 2 closure (originator of §10.1).
 - [PASS_3_NOTES](./PASS_3_NOTES.md) — Pass 3 closure.

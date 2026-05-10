@@ -182,7 +182,7 @@ Source: `.git/logs/HEAD`, filtered for `commit:` event-type lines (checkout and 
 | `docs/architecture/PERFORMANCE.md` | development | active | 7,266 |
 | `docs/methodology/PIPELINE_METRICS.md` | methodology empirics | active v0.1 (line 13 says "Status: v0.1 (2026-04-28)") | 10,568 |
 | `docs/architecture/GPU_COMPUTE.md` | research deferred | active (deferred decision) | 2,990 |
-| `docs/NATIVE_CORE_EXPERIMENT.md` | research / experiment | "Experiment — awaiting benchmark results" (line 13) | 18,914 |
+| `docs/reports/NATIVE_CORE_EXPERIMENT.md` | research / experiment | "Experiment — awaiting benchmark results" (line 13) | 18,914 |
 | `docs/architecture/VISUAL_ENGINE.md` | architecture | active | 5,932 |
 | `docs/architecture/GODOT_INTEGRATION.md` | architecture | active | 9,615 |
 | `docs/architecture/RESOURCE_MODELS.md` | v0.2 addendum | active | 4,412 |
@@ -192,7 +192,7 @@ Source: `.git/logs/HEAD`, filtered for `commit:` event-type lines (checkout and 
 | `docs/architecture/OWNERSHIP_TRANSITION.md` | v0.2 addendum | active | 6,340 |
 | `docs/TRANSLATION_GLOSSARY.md` | translation | locked v1.0 (line 8 says "Status: v1.0 (locked)") | 49,589 |
 | `docs/TRANSLATION_PLAN.md` | translation | active v0.1 draft (line 10 says "Version: 0.1 (draft, 2026-04-26)") | 17,643 |
-| `docs/NORMALIZATION_REPORT.md` | translation Pass 1 artifact | "Status: complete. Pass 2 may begin once the human resolves the two escalations recorded in §6." (line 8) | 31,442 |
+| `docs/reports/NORMALIZATION_REPORT.md` | translation Pass 1 artifact | "Status: complete. Pass 2 may begin once the human resolves the two escalations recorded in §6." (line 8) | 31,442 |
 
 ### `docs/audit/`
 

@@ -376,7 +376,7 @@ These integrations land at the natural next non-semantic correction of each docu
 - [MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION](./MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md) — activation brief; specifies the M-phase that builds the composite pilot.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — `[ModCapabilities]` runtime guard; v1.2 §11.1 M3.4 superseded per `TS-D-2` and §4.3.
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — K-series migration that determines activation timing (`TS-D-6`).
-- [PERFORMANCE_REPORT_K7](./PERFORMANCE_REPORT_K7.md) — K7 closure date establishing the K-series progression at v0.1 ratification time.
+- [PERFORMANCE_REPORT_K7](/docs/reports/PERFORMANCE_REPORT_K7.md) — K7 closure date establishing the K-series progression at v0.1 ratification time.
 - [ARCHITECTURE](./ARCHITECTURE.md) — four layers; the layer dependency rules referenced in §1.3 / §6.4 live here, awaiting their own analyzer specification.
 - [ISOLATION](./ISOLATION.md) — `SystemExecutionContext` runtime guard semantics anchored by §2.
 - [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — ratification process inherited; §2.4 atomicity rule applied to repair-pass closure (§6.3); housekeeping commit discipline applied to repair-pass commits (`TS-D-7`).

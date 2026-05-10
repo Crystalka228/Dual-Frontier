@@ -142,7 +142,7 @@ The extracted F# implementation replaces or wraps the existing C# `SystemExecuti
 - **Proof maintenance burden.** Code changes may require proof updates; estimated +20-50% effort on touched files.
 - **Single-developer toolchain.** Few engineers worldwide use F*; no community fallback for blockers.
 
-Mitigation: pilot scope (A2 only). Falsifiable via: if pilot consumes >2 weeks total effort, abandon track and document negative result per [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) precedent.
+Mitigation: pilot scope (A2 only). Falsifiable via: if pilot consumes >2 weeks total effort, abandon track and document negative result per [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) precedent.
 
 ---
 
@@ -383,7 +383,7 @@ Adoption is opt-in per track. Tracks do not block shipping path.
 | ID | Decision | Rationale |
 |----|----------|-----------|
 | MR-1 | Three independent tracks, not bundled | Adopting one does not require adopting others. Reduces commitment threshold per track. |
-| MR-2 | Each track has pilot scope before full commitment | Pilot scope falsifiable in bounded effort. Mirrors [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) precedent of measured commitment with abort criteria. |
+| MR-2 | Each track has pilot scope before full commitment | Pilot scope falsifiable in bounded effort. Mirrors [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) precedent of measured commitment with abort criteria. |
 | MR-3 | Track A pilots A2 (isolation guard) not A1 (capability validator) | Lower difficulty establishes toolchain before tackling higher-stakes proof. |
 | MR-4 | Track B uses Roslyn analyzers, not external type checker | Native ecosystem integration; mature tooling; immediate IDE feedback. |
 | MR-5 | Track C is post-shipping (Phase 8+) | Replication of stable baseline matters more than replication of moving target. |
@@ -461,6 +461,6 @@ amended through the same ratification process.
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — layer rules that Track B (B1 analyzer) enforces.
 - [PIPELINE_METRICS](./PIPELINE_METRICS.md) — baseline measurements that Track C aims to enable replication of.
 - [ISOLATION](/docs/architecture/ISOLATION.md) — isolation guard that Track A's pilot (A2) targets.
-- [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — precedent for measured commitment with abort criteria; cited in MR-2.
+- [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — precedent for measured commitment with abort criteria; cited in MR-2.
 - [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — precedent for ratifying contracts before implementation activates; same discipline applies here.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — reservoir for post-release ideas; this brief differs by proposing parallel-track work during active development.

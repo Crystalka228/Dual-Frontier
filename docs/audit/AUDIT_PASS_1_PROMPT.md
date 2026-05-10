@@ -232,7 +232,7 @@ ANOMALY (do not stop the pass — Pass 1 inventories what is, not what should be
 | `docs/methodology/TESTING_STRATEGY.md` | development | active | N |
 | `docs/architecture/PERFORMANCE.md` | development | active | N |
 | `docs/architecture/GPU_COMPUTE.md` | development | active | N |
-| `docs/NATIVE_CORE_EXPERIMENT.md` | development | active | N |
+| `docs/reports/NATIVE_CORE_EXPERIMENT.md` | development | active | N |
 | `docs/architecture/VISUAL_ENGINE.md` | architecture | active | N |
 | `docs/architecture/GODOT_INTEGRATION.md` | architecture | active | N |
 | `docs/architecture/RESOURCE_MODELS.md` | v0.2 addendum | active | N |
@@ -242,7 +242,7 @@ ANOMALY (do not stop the pass — Pass 1 inventories what is, not what should be
 | `docs/architecture/OWNERSHIP_TRANSITION.md` | v0.2 addendum | active | N |
 | `docs/TRANSLATION_GLOSSARY.md` | translation | locked v1.0 | N |
 | `docs/TRANSLATION_PLAN.md` | translation | active | N |
-| `docs/NORMALIZATION_REPORT.md` | translation | locked Pass 1 | N |
+| `docs/reports/NORMALIZATION_REPORT.md` | translation | locked Pass 1 | N |
 | `docs/PASS_2_NOTES.md` | translation | locked Pass 2 | N |
 | `docs/PASS_3_NOTES.md` | translation | locked Pass 3 | N |
 | `docs/PASS_4_REPORT.md` | translation | locked Pass 4 | N |

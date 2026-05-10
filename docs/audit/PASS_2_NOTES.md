@@ -136,7 +136,7 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 - [x] `grep -rE --include='*.md' '[А-Яа-я]' .` returns only intentionally-preserved Russian:
   - `docs/SESSION_PHASE_4_CLOSURE_REVIEW.md` (audit-trail preserved per spec).
   - `docs/TRANSLATION_GLOSSARY.md` (Russian column of the glossary).
-  - `docs/NORMALIZATION_REPORT.md` (Pass 1 output, quotes Russian source terms).
+  - `docs/reports/NORMALIZATION_REPORT.md` (Pass 1 output, quotes Russian source terms).
   - `docs/TRANSLATION_PLAN.md` (this document quotes the original Russian diagnostic strings and the §3 lock-decision Russian terms — intentional reference material).
   - `docs/PASS_2_NOTES.md` (this file's audit-trail entries quote the Russian source).
   - `docs/methodology/CODING_STANDARDS.md` (the "Russian-language domain comments" section preserves the policy example with Russian-comment C# code; the policy as stated will outlive Pass 2 and is revisited during Pass 3 code-comment translation).

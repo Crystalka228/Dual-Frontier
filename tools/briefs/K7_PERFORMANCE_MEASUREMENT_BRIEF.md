@@ -2,7 +2,7 @@
 
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09
-**Status**: EXECUTED 2026-05-09 — closed at `72ea8b5..e917220`. See `docs/PERFORMANCE_REPORT_K7.md` for measurements + analysis and `docs/MIGRATION_PROGRESS.md` K7 closure section for closure record.
+**Status**: EXECUTED 2026-05-09 — closed at `72ea8b5..e917220`. See `docs/reports/PERFORMANCE_REPORT_K7.md` for measurements + analysis and `docs/MIGRATION_PROGRESS.md` K7 closure section for closure record.
 **Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K7, `docs/MIGRATION_PROGRESS.md` (K6.1 closure context), `docs/methodology/METHODOLOGY.md`, `docs/methodology/CODING_STANDARDS.md`
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K7 row promotes from NOT STARTED → DONE on closure)
 **Methodology lineage**: `tools/briefs/K6_1_FAULT_WIRING_BRIEF.md` (read-first/brief-second/execute-third pivot, Anthropic `Edit` literal-mode semantics)
@@ -15,7 +15,7 @@
 
 ## Goal
 
-Apply §8 metrics rule (GC pause / p99 / long-run drift on target hardware) to three TickLoopBenchmark variants — managed-current (pre-K4 baseline), managed-with-structs (post-K4 main), native-with-batching (NativeWorld + K1 batching + K5 WriteBatch) — and write `docs/PERFORMANCE_REPORT_K7.md` with raw CSV + per-variant analysis. Report informs K8 decision call (which Crystalka makes on report basis, not K7 executor).
+Apply §8 metrics rule (GC pause / p99 / long-run drift on target hardware) to three TickLoopBenchmark variants — managed-current (pre-K4 baseline), managed-with-structs (post-K4 main), native-with-batching (NativeWorld + K1 batching + K5 WriteBatch) — and write `docs/reports/PERFORMANCE_REPORT_K7.md` with raw CSV + per-variant analysis. Report informs K8 decision call (which Crystalka makes on report basis, not K7 executor).
 
 K7 is **purely instrumentation + measurement + reporting**. It does not change production behavior. No Phase B (managed bootstrap) modifications; no scheduler changes; no system contract changes. The benchmark project is a leaf tests-adjacent project.
 
@@ -343,7 +343,7 @@ Helper class — wraps GC/process metrics sampling. Used by both BDN benchmarks 
 
 Adds CLI flags: `--bdn-tick V<n>` (run BDN tick-cost on variant n), `--long-run V<n>` (run 10k-tick custom loop).
 
-**File**: `docs/PERFORMANCE_REPORT_K7.md` (NEW)
+**File**: `docs/reports/PERFORMANCE_REPORT_K7.md` (NEW)
 
 The actual K7 deliverable — written after measurements complete. See §1.9 for structure.
 
@@ -811,7 +811,7 @@ Computation can be done with a Python script, an Excel pivot, or by hand from th
 
 ### 4.2 — Write PERFORMANCE_REPORT_K7.md
 
-**File**: `docs/PERFORMANCE_REPORT_K7.md` (NEW)
+**File**: `docs/reports/PERFORMANCE_REPORT_K7.md` (NEW)
 
 Fill the template from §1.9 with actual numbers. Be honest:
 - If V3 doesn't dominate, say so
@@ -847,7 +847,7 @@ docs(performance): K7 report — tick-loop measurements V1/V2/V3 with §8 analys
 - **Workload**: 50 pawns × full vanilla component set × 10,000 ticks @ 30 TPS, fixed seeds
 - **Metrics**: BDN tick cost (mean / p50 / p99 / allocations / gen0-2) + long-run cumulative (drift / GC count / GC pause / allocations)
 - **Frameworks**: BenchmarkDotNet 0.13.x for tick cost; custom Stopwatch loop for 10k-tick scenario
-- **Report**: `docs/PERFORMANCE_REPORT_K7.md`
+- **Report**: `docs/reports/PERFORMANCE_REPORT_K7.md`
 - **Raw data**: `docs/benchmarks/k7-bdn-V{1,2,3}.csv`, `docs/benchmarks/k7-long-run-V{1,2,3}.csv`
 - **Recommended K8 outcome direction (per report §"Recommended K8 outcome direction")**: <fill in based on actual numbers; one of Outcome 1 / 2 / 3>. Crystalka makes the K8 decision call on report basis.
 - **Lessons learned**:
@@ -906,7 +906,7 @@ grep -rn "TODO\|FIXME\|XXX" tests/DualFrontier.Core.Benchmarks/TickLoop/
 ```
 ls docs/benchmarks/k7-bdn-V*.csv
 ls docs/benchmarks/k7-long-run-V*.csv
-ls docs/PERFORMANCE_REPORT_K7.md
+ls docs/reports/PERFORMANCE_REPORT_K7.md
 ```
 
 **Expected**: 3 BDN CSVs + 3 long-run CSVs + report present.

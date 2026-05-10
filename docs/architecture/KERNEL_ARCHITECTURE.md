@@ -19,7 +19,7 @@ DualFrontier ECS kernel migrates от managed C# к pure C++ via P/Invoke. Domai
 - Component constraint: `unmanaged` structs only (Path α — class-based components prohibited)
 - Two-phase model: native bootstrap → managed game tick
 
-**Source of truth для existing experimental work**: `claude/cpp-core-experiment-cEsyH` branch + `docs/CPP_KERNEL_BRANCH_REPORT.md` (Discovery report). 11 substantive C++ commits + 1637 LOC delta + clean self-test passing.
+**Source of truth для existing experimental work**: `claude/cpp-core-experiment-cEsyH` branch + `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` (Discovery report). 11 substantive C++ commits + 1637 LOC delta + clean self-test passing.
 
 **Estimated scope**: 5-8 weeks at hobby pace (~1h/day) для full kernel completion (K0-K8) + **1-2 weeks** для К9 (field storage abstraction).
 
@@ -594,7 +594,7 @@ Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
 
 **Goal**: experimental branch contents preserved on current main as fresh feature branch. Hygiene fixes applied.
 
-**Source**: `claude/cpp-core-experiment-cEsyH` per `docs/CPP_KERNEL_BRANCH_REPORT.md` Section 11.6.
+**Source**: `claude/cpp-core-experiment-cEsyH` per `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` Section 11.6.
 
 **Cherry-pick sequence** (7 substantive commits, skipping 4 doc commits):
 ````
@@ -730,7 +730,7 @@ e2bc2d9 — DLL loading fix
 - Variants: managed-current, managed-with-structs (validates К7 conversion value), native-with-batching
 - Metrics: p50/p95/p99 tick time, GC pause count + duration, total allocations, drift over time
 - Run on weak hardware (Docker cpu-limit container OR secondary machine)
-- Report file `docs/PERFORMANCE_REPORT_K7.md` documenting findings
+- Report file `docs/reports/PERFORMANCE_REPORT_K7.md` documenting findings
 
 **Time**: 3-5 days. **LOC**: +200-400 (mostly benchmark code).
 

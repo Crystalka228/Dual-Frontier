@@ -338,7 +338,7 @@ For each active `.md` — Grep PCRE `[\x{0400}-\x{04FF}]`. Per recursive grep ac
 - `docs/audit/PASS_3_NOTES.md` (translation campaign whitelist §5.1)
 - `docs/audit/PASS_4_REPORT.md` (translation campaign whitelist §5.1)
 - `docs/audit/SESSION_PHASE_4_CLOSURE_REVIEW.md` (whitelist §5.1)
-- `docs/NORMALIZATION_REPORT.md` (translation campaign whitelist §5.1; path-corrected note in §14 Tier 4)
+- `docs/reports/NORMALIZATION_REPORT.md` (translation campaign whitelist §5.1; path-corrected note in §14 Tier 4)
 - `docs/TRANSLATION_GLOSSARY.md` (whitelist §5.1)
 - `docs/TRANSLATION_PLAN.md` (translation campaign companion; cyrillic content is preserved-by-design — translation source examples in §1, glossary mappings in §3 — analogous whitelist to TRANSLATION_GLOSSARY)
 
@@ -352,7 +352,7 @@ For each active `.md` — Grep PCRE `[\x{0400}-\x{04FF}]`. Per recursive grep ac
 | `docs/audit/M3_CLOSURE_REVIEW.md` … `M6_CLOSURE_REVIEW.md` | (checked: present at audit/) — historical audit-trail artifacts; per Pass 1 §4 inventory included in audit folder; Pass 4 read-only (no cyrillic flag for whitelist purposes) | per AUDIT_PASS_4_PROMPT §5.1 | Tier 2 (frozen) |
 | `docs/TRANSLATION_GLOSSARY.md` | yes (RU source terms by design) | per AUDIT_PASS_4_PROMPT §5.1 | Tier 2 |
 | `docs/audit/PASS_2_NOTES.md`, `PASS_3_NOTES.md`, `PASS_4_REPORT.md` | yes (translation campaign artifacts) | per AUDIT_PASS_4_PROMPT §5.1 | Tier 2 |
-| `docs/NORMALIZATION_REPORT.md` | yes (translation campaign Pass 1 normalization report) | AUDIT_PASS_4_PROMPT §5.1 wrote the path as «`docs/audit/NORMALIZATION_REPORT.md`», but the actual file is at `docs/NORMALIZATION_REPORT.md`. Intent is clear from the surrounding clause «translation campaign artifacts; Russian commentary preserved by design». | Tier 2 (intent-honored; see §14 Tier 4 path-mismatch observation) |
+| `docs/reports/NORMALIZATION_REPORT.md` | yes (translation campaign Pass 1 normalization report) | AUDIT_PASS_4_PROMPT §5.1 wrote the path as «`docs/audit/NORMALIZATION_REPORT.md`», but the actual file is at `docs/reports/NORMALIZATION_REPORT.md`. Intent is clear from the surrounding clause «translation campaign artifacts; Russian commentary preserved by design». | Tier 2 (intent-honored; see §14 Tier 4 path-mismatch observation) |
 
 **Findings:**
 
@@ -406,10 +406,10 @@ Each `[link](path)` verified:
 | `./docs/ROADMAP.md` | ✓ |
 | `docs/architecture/ARCHITECTURE.md` | ✓ |
 | `docs/architecture/MOD_OS_ARCHITECTURE.md` | ✓ |
-| `./docs/NORMALIZATION_REPORT.md` | ✓ |
+| `docs/reports/NORMALIZATION_REPORT.md` | ✓ |
 | `docs/methodology/PIPELINE_METRICS.md` (and three section anchors `#1-pipeline-configuration`, `#3-subscription-headroom`, `#5-reproducibility-requirements`) | ✓ (file exists; PIPELINE_METRICS.md per Pass 1 §4 contains §1, §3, §5 sections — anchor refs presumed valid pending future deep verification, out of scope here) |
 | `docs/methodology/METHODOLOGY.md` (and section anchor `#6`) | ✓ |
-| `./docs/NATIVE_CORE_EXPERIMENT.md` | ✓ |
+| `docs/reports/NATIVE_CORE_EXPERIMENT.md` | ✓ |
 | `./docs/README.md` | ✓ |
 | `./LICENSE` | ✓ |
 
@@ -427,7 +427,7 @@ Frontmatter `nav_order:` collected via Grep across `docs/**/*.md` (line-3 frontm
 | 98 | `docs/audit/M6_CLOSURE_REVIEW.md` and `docs/audit/PASS_2_NOTES.md` |
 | 99 | `docs/TRANSLATION_GLOSSARY.md` |
 | 100 | `docs/TRANSLATION_PLAN.md` |
-| 101 | `docs/NORMALIZATION_REPORT.md` |
+| 101 | `docs/reports/NORMALIZATION_REPORT.md` |
 | 102 | `docs/audit/AUDIT_CAMPAIGN_PLAN.md` |
 | 103 | `docs/audit/AUDIT_PASS_1_PROMPT.md` and `docs/audit/PASS_3_NOTES.md` |
 | 104 | `docs/audit/AUDIT_PASS_1_INVENTORY.md` |
@@ -512,7 +512,7 @@ Eager-escalation triggered: **NO**.
 | 6 | Incomplete enumeration in `tests/README.md` | `tests/README.md:7–9` (lists 3 of 4 test projects + 1 benchmarks project; Persistence.Tests + Core.Benchmarks missing) | Append both projects |
 | 7 | Broken nav link | `docs/README.md:69` (`./SESSION_PHASE_4_CLOSURE_REVIEW.md` — actual location `docs/audit/`) | Change href to `./audit/SESSION_PHASE_4_CLOSURE_REVIEW.md` |
 | 8 | nav_order duplicates (unrelated documents share value) | `docs/audit/M4_CLOSURE_REVIEW.md` and `PASS_4_REPORT.md` (96); `M6_CLOSURE_REVIEW.md` and `PASS_2_NOTES.md` (98); `AUDIT_PASS_1_PROMPT.md` and `PASS_3_NOTES.md` (103) | Re-stagger translation-campaign report nav_orders into a non-overlapping band |
-| 9 | AUDIT_PASS_4_PROMPT §5.1 path-mismatch observation | `docs/audit/AUDIT_PASS_4_PROMPT.md` §5.1 wrote «`docs/audit/NORMALIZATION_REPORT.md`» but the actual file is at `docs/NORMALIZATION_REPORT.md` (per Pass 1 §4 inventory). Pass 4 honored intent; Tier 2 whitelist applied to actual path. | Future prompt revisions: align path with Pass 1 inventory |
+| 9 | AUDIT_PASS_4_PROMPT §5.1 path-mismatch observation | `docs/audit/AUDIT_PASS_4_PROMPT.md` §5.1 wrote «`docs/audit/NORMALIZATION_REPORT.md`» but the actual file is at `docs/reports/NORMALIZATION_REPORT.md` (per Pass 1 §4 inventory). Pass 4 honored intent; Tier 2 whitelist applied to actual path. | Future prompt revisions: align path with Pass 1 inventory |
 
 ### Out-of-scope items observed (for Pass 5)
 

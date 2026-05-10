@@ -281,7 +281,7 @@
   - Long-run max: V2 88,000 μs (gen2 spike) → V3 43.7 μs (2,013× faster)
   - GC pause total over 10k ticks: V2 3.4 ms → V3 0.0 ms (V3 had zero collections of any generation)
   - Both variants comfortably meet 30 TPS / 60 FPS budget in absolute terms on Skarlet
-- **Report**: `docs/PERFORMANCE_REPORT_K7.md`
+- **Report**: `docs/reports/PERFORMANCE_REPORT_K7.md`
 - **Raw data**: `docs/benchmarks/k7-bdn-tick.csv`, `docs/benchmarks/k7-bdn-tick-report.html`, `docs/benchmarks/k7-bdn-tick-report.md`, `docs/benchmarks/k7-long-run-V{1,2,3}.csv`
 - **Recommended K8 outcome direction** (per report's executive summary): **Outcome 1 OR Outcome 2 depending on Crystalka's weighting of relative-improvement vs cutover-cost**. Outcome 1 (native + batching wins decisively) is favoured by relative-improvement axis (V3 4-32× margin across §8 metrics — exactly the "decisively" definition). Outcome 2 (managed-with-structs alone wins) is favoured by absolute-budget axis (V2 already meets target with 100×+ margin on Skarlet — K8 cutover cost may not be justified). Outcome 3 is excluded (V2 vs V3 not within 10%; gap is 4-32×). Crystalka makes the K8 decision call.
 - **Lessons learned**:
@@ -299,7 +299,7 @@
 - **Brief type**: Architectural decision brief (fourth brief type — see brief §1.8)
 - **Decision recorded**: Solution A — single NativeWorld backbone for production storage. ManagedWorld retained as test fixture and research reference only. K-L11 added to LOCKED foundational decisions; K-L3 and K-L8 implications extended; §K8 reconciled to K8.0-K8.5 sub-milestone series.
 - **Context**:
-  - K7 evidence (`docs/PERFORMANCE_REPORT_K7.md`): V3 (NativeWorld) dominates V2 (managed-with-structs) by 4× mean tick / 32× p99 / 27× total allocation / 0 vs 13 GC collections across 10k ticks on Skarlet hardware
+  - K7 evidence (`docs/reports/PERFORMANCE_REPORT_K7.md`): V3 (NativeWorld) dominates V2 (managed-with-structs) by 4× mean tick / 32× p99 / 27× total allocation / 0 vs 13 GC collections across 10k ticks on Skarlet hardware
   - Crystalka commitment (chat session 2026-05-09): «игра это стресс тест, тут всё чистая инженирия и исследование, так что можно развивать максимально сложную архитектуру которая будет работать десятилетиями без костылей»
   - Solution B (storage abstraction layer) and Solution C (explicit hybrid) rejected — both are "structural costlines" relative to long-horizon cleanness
 - **Migration roadmap**: K8.0 → K8.1 (primitives) → K9 (RawTileField; sequencing decision per brief §1.7) → K8.2 (component redesigns) → K8.3 (system migrations) → K8.4 (ManagedWorld retirement, Mod API v3) → K8.5 (mod ecosystem prep)

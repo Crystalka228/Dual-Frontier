@@ -180,7 +180,7 @@ The idea for an experimental branch with a native C++ core emerged during the au
 
 Several hours of asynchronous work passed between task formulation and working artifact, during which the author could not physically participate. This works because `DualFrontier.Contracts` is rigid enough to play the IPC role between agents without synchronous coordination. The cloud agent wrote code against a formal interface; the local build verified conformance to the interface. Divergence between intent and result is physically impossible when the code passes the build and the tests, because the very notion of "correct code" is fixed in the contract, not in interpretation.
 
-The experiment itself ended with a negative result — per-element P/Invoke ate the native gain on the benchmark (NativeAdd10k: ratio 3.92× against the managed baseline). This is a separate methodological result: the acceptance criterion was reframed from mean latency to p99, GC pause, and long-run drift; the batch-API decision is deferred to Phase 9. Details are in [NATIVE_CORE_EXPERIMENT.md](./NATIVE_CORE_EXPERIMENT.md). What matters for this document: the cycle "hypothesis → asynchronous implementation → measurement → criterion reframing → deferred decision" fit into hours, not weeks, with no drop in code quality in the repository.
+The experiment itself ended with a negative result — per-element P/Invoke ate the native gain on the benchmark (NativeAdd10k: ratio 3.92× against the managed baseline). This is a separate methodological result: the acceptance criterion was reframed from mean latency to p99, GC pause, and long-run drift; the batch-API decision is deferred to Phase 9. Details are in [NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md). What matters for this document: the cycle "hypothesis → asynchronous implementation → measurement → criterion reframing → deferred decision" fit into hours, not weeks, with no drop in code quality in the repository.
 
 ### 4.3 Comparison with typical indie development
 
@@ -358,7 +358,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 
 **Degradation as the codebase grows.** The local model's 131k-token context is already close to the limit for large tasks (132.9k for the `Implement ItemAddedEvent` task in Phase 4). With further project growth, the pipeline may need restructuring: splitting the corpus into modules with independent context, switching to models with larger context windows, or using retrieval instead of a fully loaded context.
 
-**Behavior on series of negative results.** Dual Frontier has one publicly recorded negative result ([NATIVE_CORE_EXPERIMENT.md](./NATIVE_CORE_EXPERIMENT.md)). The pipeline handled it correctly as a methodological artifact. But that is one case. The pipeline's systematic behavior on series, when several architectural hypotheses in a row prove wrong, has not been tested.
+**Behavior on series of negative results.** Dual Frontier has one publicly recorded negative result ([NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md)). The pipeline handled it correctly as a methodological artifact. But that is one case. The pipeline's systematic behavior on series, when several architectural hypotheses in a row prove wrong, has not been tested.
 
 **Reproducibility by other developers.** The pipeline has been tested by one author on one project. Reproducibility by other developers with different backgrounds and on different tasks has not been tested. This is the most important open question: if the pipeline reproduces only for the author and only on this project, the methodology becomes a private finding rather than a method.
 
@@ -389,7 +389,7 @@ The document is updated after each substantial phase closes. Substantial methodo
 - [CONTRACTS.md](/docs/architecture/CONTRACTS.md) — the contract system, six domain buses, contract evolution.
 - [DEVELOPMENT_HYGIENE.md](./DEVELOPMENT_HYGIENE.md) — hygiene checklist for every PR, the engine/game boundary.
 - [ISOLATION.md](/docs/architecture/ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
-- [NATIVE_CORE_EXPERIMENT.md](./NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
+- [NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
 - [GPU_COMPUTE.md](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
 - [ROADMAP.md](./ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
 

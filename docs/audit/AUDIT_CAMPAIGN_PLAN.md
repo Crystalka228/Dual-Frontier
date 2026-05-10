@@ -464,7 +464,7 @@ Tier 1+ копятся до Pass 5 final report.
 ## 11. См. также
 
 - [TRANSLATION_PLAN](../TRANSLATION_PLAN.md) — прецедент multipass campaign по этому же проекту; шаблон для structure §2.
-- [NORMALIZATION_REPORT](../NORMALIZATION_REPORT.md) — пример Pass 1 артефакта (translation campaign Pass 1).
+- [NORMALIZATION_REPORT](/docs/reports/NORMALIZATION_REPORT.md) — пример Pass 1 артефакта (translation campaign Pass 1).
 - [M6_CLOSURE_REVIEW](./M6_CLOSURE_REVIEW.md) — образец 8-section closure review формата для всех пяти проходов кампании (per §7.2 LOCKED).
 - [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomic phase review, §7.3 process discipline; принципы кампании.
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.4 LOCKED — основная цель аудита.

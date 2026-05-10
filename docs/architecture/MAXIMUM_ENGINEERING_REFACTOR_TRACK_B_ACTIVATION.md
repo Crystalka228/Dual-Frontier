@@ -344,7 +344,7 @@ These integrations are non-blocking; they land at natural touch-points of each d
 - [MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) — parent v1.0; this brief realises §3 Track B per §5.3 of the parent.
 - [ARCHITECTURE_TYPE_SYSTEM](./ARCHITECTURE_TYPE_SYSTEM.md) — v0.1 LOCKED family specification; this brief is its activation companion.
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — K-series progression; K9 closure is this brief's activation trigger (§1).
-- [PERFORMANCE_REPORT_K7](./PERFORMANCE_REPORT_K7.md) — K7 closure note dated 2026-05-09; establishes K-series progression at this brief's ratification time.
+- [PERFORMANCE_REPORT_K7](/docs/reports/PERFORMANCE_REPORT_K7.md) — K7 closure note dated 2026-05-09; establishes K-series progression at this brief's ratification time.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.2 §11.1 M3.4 closed by integration per §4.3 / `TBA-D-6`.
 - [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomicity rule applied to repair-pass closure (§6.5); standard pipeline conventions for the activation M-phase (§3.2).
 - [ROADMAP](./ROADMAP.md) — Backlog entry for Track B updated per "Pending integrations" above.

@@ -34,7 +34,7 @@ development window:
    Current state: architectural decisions and their rejected alternatives are
    recorded in [docs/architecture/ARCHITECTURE.md](/docs/architecture/ARCHITECTURE.md),
    [docs/architecture/MOD_OS_ARCHITECTURE.md](/docs/architecture/MOD_OS_ARCHITECTURE.md), and the
-   normalization audit in [docs/NORMALIZATION_REPORT.md](./docs/NORMALIZATION_REPORT.md).
+   normalization audit in [docs/reports/NORMALIZATION_REPORT.md](/docs/reports/NORMALIZATION_REPORT.md).
 3. **Pipeline economics.** The pipeline cannot sustain its own throughput
    under a fixed monthly subscription and spills into pay-as-you-go API
    consumption to keep moving. Current state: two consecutive weekly windows
@@ -99,7 +99,7 @@ properties that make the workload non-trivial:
 - A replaceable native core, treated as an experimental boundary rather than
   a load-bearing assumption. One negative result against this boundary is
   recorded with criterion reformulation in
-  [docs/NATIVE_CORE_EXPERIMENT.md](./docs/NATIVE_CORE_EXPERIMENT.md).
+  [docs/reports/NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md).
 
 ## What this is not
 
@@ -116,7 +116,7 @@ in [docs/methodology/METHODOLOGY.md §6](/docs/methodology/METHODOLOGY.md).
   threat model, boundaries of applicability.
 - [docs/architecture/MOD_OS_ARCHITECTURE.md](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the
   capability-based mod isolation as an OS-style architecture; v1.0 LOCKED.
-- [docs/NATIVE_CORE_EXPERIMENT.md](./docs/NATIVE_CORE_EXPERIMENT.md) — a
+- [docs/reports/NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — a
   measured negative result with explicit criterion reformulation.
 
 ## Repository layout
@@ -138,4 +138,4 @@ engine code requires a separate agreement.
 - `docs/architecture/MOD_OS_ARCHITECTURE.md` — modding architecture
 - `docs/architecture/RUNTIME_ARCHITECTURE.md` — Vulkan rendering layer (M9.x)
 - `docs/architecture/KERNEL_ARCHITECTURE.md` — native ECS kernel layer (K0-K8)
-- `docs/CPP_KERNEL_BRANCH_REPORT.md` — Discovery report (experimental branch)
+- `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` — Discovery report (experimental branch)
