@@ -5,7 +5,8 @@
 **Phase A' position**: A'.0.7 — between A'.0.5 (DONE 4e332bb) and A'.1 (pending)
 **Target session**: Crystalka + Claude Desktop session, deliberation mode (no code execution)
 **Estimated session length**: 3–5 hours (full Q-survey + synthesis + amendment plan authoring)
-**Status**: AUTHORED — pending session execution
+**Status**: EXECUTED 2026-05-10 — Phase 0 reads + Phase 1 deliberation Q1–Q12 + 3 surfaced auxiliary Q-A07-6/7/8 + Phase 2 synthesis form choice (§4.A-primary с §4.C для PIPELINE_METRICS) + Phase 3 amendment plan authoring complete. Amendment plan at `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md` is executable artifact для follow-up amendment brief.
+**Locks** (session 2026-05-10): Q-A07-6 audience contract (agent-as-primary-reader); Q-A07-7=b (defer К-L3.1 lesson к A'.8); Q-A07-8=c (inline §6 forward measurement plan в PIPELINE_METRICS); Q1=b (abstract primary + footnote); Q2=α (structural rewrite + current config table); Q3=c-reformulated (three-properties mechanism); Q4=b-reformulated (economic invariant + A'.0.5 anchor); Q5=c-decomposed (parallel case studies); Q6=α-b (§5 substantial + §6 verify clean); Q7=a-table (per-section judgment); Q8=c-formulation (Phase A' lessons sub-section); Q9=b (verify clean Native adjustments); Q10=a-with-standardized-labels (5 labels + per-metric annotations + v0.1→v0.2); Q11=table (per-sub-section MAXIMUM_ENGINEERING_REFACTOR dispositions); Q12=c-formulation (README hybrid + audience contract). Synthesis = §4.A-primary с document-specific §4.C для PIPELINE_METRICS.
 **Prerequisite**: A'.0.5 closure (commit `4e332bb` on main, deferral markers in place on METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR/README)
 **Blocks**: A'.1 amendment brief execution, A'.3 push to origin, A'.4-A'.7 K-series execution
 **Does not block**: nothing (everything sequential)

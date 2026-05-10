@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-09 (K-Lessons closure — 4 pipeline-execution lessons formalized in METHODOLOGY.md v1.5 and KERNEL_ARCHITECTURE.md v1.3)
+**Last updated**: 2026-05-10 (A'.0.7 methodology pipeline restructure closure — amendment plan authored at `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md`; awaits A'.1 К-L3.1 amendment + folded-or-standalone A'.0.7 amendment execution)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,8 +31,8 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K9 / K8.3 (per Option c sequencing K9 runs before K8.3; K-Lessons + K8.2 v2 closed as the K-side foundation completion) |
-| **Last completed milestone** | K8.2 v2 (K-L3 «без exception» state achieved: K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass) — 2026-05-09 |
+| **Active phase** | A'.1 amendment brief (К-L3.1 amendment + A'.0.7 amendment, possibly folded per A'.0.7 brief §6.2 / amendment plan §7.2; docs-only; per-document atomic commits) → A'.3 push к origin → A'.4 K9 / A'.5 K8.3 / A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 analyzer (K-L3.1 + A'.0.5 + A'.0.7 closed as Phase A' deliberation foundation) |
+| **Last completed milestone** | A'.0.7 (methodology pipeline restructure deliberation; amendment plan authored at `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md`) — 2026-05-10. Previous: A'.0.5 (documentation reorganization + cross-ref refresh + cleanup) — 2026-05-10; K-L3.1 (bridge formalization) — 2026-05-10. |
 | **Next milestone (recommended)** | K9 (RawTileField) if not yet closed; otherwise K8.3 (system migration to SpanLease/WriteBatch) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09); K8.2 reformulated as v2 single-milestone foundation closure per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
@@ -484,7 +484,7 @@ Phase A' is the structural unit between Phase A (K-series) closure and Phase B (
 |---|---|---|---|---|---|
 | A'.0 | K-L3.1 bridge formalization | DONE | 2-4 hours session | `45d831c` | 2026-05-10 |
 | A'.0.5 | Documentation reorganization + cross-ref refresh + module-local refresh + pipeline-terminology scrub + cleanup campaign | DONE | 2-4 hours auto-mode | `27523ac`..`<HEAD>` | 2026-05-10 |
-| A'.0.7 | Methodology pipeline restructure rewrite | NOT STARTED | 1-2 hours session + auto-mode | — | — |
+| A'.0.7 | Methodology pipeline restructure rewrite | DONE | ~3 hours deliberation + landing | session 2026-05-10 | 2026-05-10 |
 | A'.1 | Amendment brief execution (K-L3.1 propagation + Tier 2 K-L11 framing + Vanilla mod READMEs) | NOT STARTED | 30-60 min auto-mode | — | — |
 | A'.2 | REMOVED — folded into A'.0.5 Phase 5 | — | — | — | — |
 | A'.3 | Push to origin | NOT STARTED | minutes | — | — |
@@ -547,6 +547,70 @@ Phase A' is the structural unit between Phase A (K-series) closure and Phase B (
   - **Stop #2 mechanical-vs-architectural boundary holds**: Phase 6 module-local refresh strictly limited to deleted-type removals + status-line corrections + factual updates — no narrative-meaning changes. Items requiring architectural deliberation (K-L11 framing, K-L3.1 propagation, Vanilla mod READMEs) explicitly flagged forward rather than improvised. Discipline preserved at the cost of slightly thin post-Phase-5 Combat/README that Phase 6 didn't refill (it would have required architectural narrative beyond scope).
   - **Cross-ref refresh script reusability**: PowerShell script at `tools/scratch/A_05/update_xrefs.ps1` parameterized by category — reusable for future organizational reshuffles. Pattern: «replace markdown link form within destDir-aware scope; replace inline path form repo-root-uniformly». Worth formalizing as `tools/` permanent helper if future moves are anticipated.
   - **Pre-staged work + Stop #1 protocol scales**: Crystalka pre-staged 8 file moves before invoking the session. Treating those as Phase 3 work-in-progress (via Q0=A in Stop #1) preserved the user's pre-decision rather than re-deciding it. The 11-question Stop #1 format with explicit Q/recommendation/decision columns made the deliberation efficient (~3-minute response cycle).
+
+### A'.0.7 — Methodology pipeline restructure rewrite
+
+- **Status**: DONE (deliberation session 2026-05-10)
+- **Brief**: `tools/briefs/A_PRIME_0_7_METHODOLOGY_RESTRUCTURE_BRIEF.md` (EXECUTED via this closure)
+- **Closure brief**: `tools/briefs/A_PRIME_0_7_CLOSURE_EXECUTION_BRIEF.md` (this milestone's execution-mode brief)
+- **Phase 4 deliverable**: `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md` (1460 lines; awaits A'.1 amendment brief execution к propagate locks into 4 methodology docs)
+- **Brief type**: Architectural decision brief (fourth brief type, К8.0 / К-L3.1 precedent)
+- **Trigger**: A'.0.5 closure 2026-05-10 (`4e332bb`) placed HTML deferral markers on 4 methodology docs (METHODOLOGY / PIPELINE_METRICS / MAXIMUM_ENGINEERING_REFACTOR / README) flagging substantive sections для A'.0.7 architectural-deliberation rewrite. Crystalka direction 2026-05-10 («Всё делается через десктопное приложение Claude» + pipeline restructure clarifications) + «Без костылей, у меня много времени» discipline declaration set frame для deliberation session.
+- **Session length**: ~3 hours (single Crystalka + Claude Desktop session, deliberation mode; no code execution)
+- **Test count**: 631 unchanged (deliberation session, no source edits)
+
+**Locks** (Phase 1 deliberation closures):
+
+- **Q-A07-1 = (α)**: pure deliberation brief shape (analog К-L3.1).
+- **Q-A07-2 = (β)**: mixed disposition per section (per-section judgment in cascade).
+- **Q-A07-3 = (β+γ)**: PIPELINE_METRICS preserve historical с per-metric reassessment notes.
+- **Q-A07-4 = (γ)**: falsifiable claim generalized к architect/executor abstract framing.
+- **Q-A07-5 = (a)**: A'.0.5 lesson #1 («single-session pipeline collapses milestone splits») formalized as methodology K-Lessons entry.
+- **Q-A07-6** (surfaced during Q1 deliberation): **audience contract** — methodology corpus authored under agent-as-primary-reader assumption. Human reader pathway preserved at README level only; high cross-reference density, FQN-style references, §-level addressability, terse compression declared as design features, not coincidental complexity. Session-level invariant frame для Q2–Q12.
+- **Q-A07-7 = (b)** (surfaced during Q9 deliberation): defer K-L3.1-derived methodology lesson («closure clarification triggers retroactive principle reformulation») к A'.8 К-closure report scope. A'.0.7 stays within locked Q-A07-1..5 + Q-A07-6.
+- **Q-A07-8 = (c)** (surfaced during Q10 deliberation): inline §6 forward measurement plan в PIPELINE_METRICS itself; no separate backlog document.
+- **Q1 = (b)**: §0 Abstract — abstract framing primary + current-configuration footnote.
+- **Q2 = (α)**: §2.1 Role distribution — structural rewrite, abstract role categories (direction owner / architect / executor) + §2.1.1 Current configuration table (v1.6 N=2 Claude Desktop session-mode).
+- **Q3 = (c-reformulated)**: §2.2 Contracts as IPC — top-layer principle «contracts as IPC across context boundaries» + sub-layer three-properties mechanism (falsifiability + self-contained scope + repository as coordination surface).
+- **Q4 = (b-reformulated)**: §3 Economics — §3.1 economic invariant (architectural deliberation context-intensive low-frequency vs mechanical execution scope-bounded high-frequency, independent of boundary type) + §3.2 current configuration economics с A'.0.5 empirical anchor (commit range `27523ac..4e332bb`); v1.5 §3.3 comparison-with-alternatives discarded.
+- **Q5 = (c-decomposed)**: §4 Empirical results — per-sub-section disposition (§4.1 refresh / §4.2 mechanical scrub / §4.3 untouched / §4.4 parallel-form rewrite Case A Phase 4 v1.x + Case B A'.0.5 v1.6 / §4.5 untouched).
+- **Q6 = (α-b)**: §5 Threat model substantial rewrite (§5.1 OpenClaw case study untouched; §5.2 4-agent enumeration → v1.6 session-mode enumeration; §5.3 falsifiable claims reformulated к 5 attack classes including new «architect-executor crosstalk impossible») + §6 Boundaries verify clean.
+- **Q7 = (a-table)**: per-section judgment с explicit table for §1 / §2.3 / §2.4 / §7 / §8 / §9 / §10 / §11 dispositions.
+- **Q8 = (c-formulation)**: new «Phase A' lessons (post-A'.0.5)» sub-section с full formulation of «Milestone consolidation under session-mode pipeline» lesson (era classification framing, A'.0.5 empirical anchor, brief authoring checklist, falsifiable claim, caveats, era inversion observation).
+- **Q9 = (b)**: existing Native layer methodology adjustments sub-sections verify clean; no expansion.
+- **Q10 = (a-with-standardized-labels)**: PIPELINE_METRICS — 5 standardized transferability labels (`[v1.x era specific]` / `[transfers с reframing]` / `[transfers as-is]` / `[uncertain — needs v1.6 measurement]` / `[v1.x historical record]`) applied к 17 sub-sections + top-of-document era frame note + version history sub-section + v0.1 → v0.2 version bump.
+- **Q11 = (table)**: MAXIMUM_ENGINEERING_REFACTOR — per-sub-section dispositions (bulk untouched; 3 substantial rewrites: §4.3 prompts/ sub-tree, §5.2 parallel-track discipline mapping, §10 v1.1 ratification row); Tracks A/B/C architectural content untouched.
+- **Q12 = (c-formulation)**: README Pipeline section — hybrid (abstract + current configuration + historical) + audience contract declaration («agent-as-primary-reader assumption») + falsifiability claim generalized.
+- **Synthesis form = §4.A-primary с document-specific §4.C для PIPELINE_METRICS**: methodology corpus (METHODOLOGY + MAXIMUM_ENGINEERING_REFACTOR + README) describes invariants pipeline-agnostically с current-configuration anchor + historical mention. Empirical record (PIPELINE_METRICS) preserves per-era data verbatim с era classification annotations. Two-track principle explicit: pipeline-agnostic principles + per-era empirical data are different epistemic categories.
+
+**Architectural decisions LOCKED в this milestone**:
+
+- Methodology corpus is **abstract primary** documents (METHODOLOGY + MAXIMUM_ENGINEERING_REFACTOR + README). Falsifiable claims pipeline-agnostic per Q-A07-4=γ. Survives any future pipeline pivot.
+- Empirical record is **versioned per-era** document (PIPELINE_METRICS). v1.x era data preserved verbatim с transferability annotations; v1.6 era data collection forward-looking.
+- Audience contract: **agent-as-primary-reader** для methodology corpus deeper than README. Cross-reference density, FQN-style references, §-level addressability, terse compression declared as design features. README serves as gateway human entry point.
+- Pipeline reality: 2-agent unified Claude Desktop session с deliberation/execution modes; boundary type session-mode. v1.x era 4-agent model-tier boundary preserved as historical reference.
+- New К-Lessons entry: «Phase A' lessons (post-A'.0.5)» sub-section с «Milestone consolidation under session-mode pipeline» lesson — extends K-Lessons #1 «atomic commit as compilable unit» к milestone scope; same structural pattern (boundaries match natural seams) at different scope levels.
+
+**Output artifacts**:
+
+1. `tools/briefs/A_PRIME_0_7_METHODOLOGY_RESTRUCTURE_BRIEF.md` (commit `55d9e36`; Status: AUTHORED → EXECUTED 2026-05-10)
+2. `tools/briefs/A_PRIME_0_7_CLOSURE_EXECUTION_BRIEF.md` (this milestone's closure execution brief; new tracked artifact)
+3. `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md` (NEW — Phase 3 deliverable; 1460 lines old/new text pairs for 4 methodology corpus docs)
+4. This MIGRATION_PROGRESS entry (added by closure execution commit)
+
+**Cross-cutting impact**:
+
+- **Amendment brief = Phase A'.1 follow-up** (after К-L3.1 amendment lands): docs-only execution per `docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md`; touches 4 methodology corpus docs (METHODOLOGY v1.5 → v1.6, PIPELINE_METRICS v0.1 → v0.2, MAXIMUM_ENGINEERING_REFACTOR v1.0 → v1.1, README Pipeline section). 5 atomic commits per amendment plan §7.1. Estimated 30-60 min auto-mode. Test count delta zero. Possible fold с A'.1 К-L3.1 amendment per brief §6.2 + amendment plan §7.2.
+- **No К-L3.1 amendment scope overlap**: К-L3.1 amendment touches architecture corpus (KERNEL / MOD_OS / MIGRATION_PLAN / MIGRATION_PROGRESS / 4 skeleton briefs); A'.0.7 amendment touches methodology corpus (METHODOLOGY / PIPELINE_METRICS / MAXIMUM_ENGINEERING_REFACTOR / README). Zero file overlap, zero section overlap. Per amendment plan §5.
+- **Phase A' progress**: A'.0 К-L3.1 DONE + A'.0.5 reorg DONE + A'.0.7 methodology rewrite DONE (this) → A'.1 amendment brief execution → A'.3 push → A'.4-A'.7 К-series execution → A'.8 К-closure report → A'.9 architectural analyzer milestone → Phase B M8.4.
+
+**Lessons learned**:
+
+- **Audience contract surfaces as architectural decision**: Crystalka «документы для агентов, не для людей» mid-Q1 elevated к Q-A07-6 session-level invariant. Surfacing as separate lock rather than improvising Q1.b формулировку was correct per «escalate, не improvise» discipline. Audience contract declaration appears explicitly в three documents (METHODOLOGY §0 footnote, PIPELINE_METRICS frame note, README Pipeline section) для cross-document consistency.
+- **Two-track synthesis is cleaner than monolithic synthesis**: locked dispositions Q1-Q12 pushed methodology corpus к §4.A (abstract primary), но Q10 locked preservation pushed PIPELINE_METRICS к §4.C (versioned-empirical-record). Recognizing these are different epistemic categories (pipeline-agnostic principles vs per-era empirical data) и giving them different document shapes resolves what brief §4 phrased as «one coherent v1.6 framing» without forcing inconsistency.
+- **Era inversion observation in K-Lessons #2 (Phase A' lessons)**: v1.x era principle was «split is default safe» (model-tier handoff bounded); v1.6 era principle is «bundle is default safe» (session-mode handoff = brief authoring duplication). Same underlying discipline («boundaries match natural seams»), different default behavior. Future pipeline pivots may invert again. Lesson formulated с explicit era-comparison structure.
+- **Q-A07 cascade auxiliary locks surfaced during deliberation**: Q-A07-6 (audience contract during Q1), Q-A07-7 (К-L3.1 lesson scope during Q9), Q-A07-8 (PIPELINE_METRICS backlog tracking during Q10). All three surface-and-lock followed «escalate, не improvise» discipline; each got explicit deliberation surface, recommendation rationale, и lock. Cascade pattern (auxiliary Q-A07-X locks emerging during main Q1-Q12 surface) may recur in future architectural decision sessions; documenting Q-A07-X with «session lock» marker (vs pre-session lock) preserves traceability.
+- **Pipeline empirical validation**: this deliberation session executed under v1.6 session-mode boundary (Claude Desktop deliberation mode) delivered substantial architectural work (15 Q locks + synthesis + 1460-line amendment plan) в single ~3-hour session. Becomes v1.6 era data point alongside A'.0.5 (execution session). Both feed PIPELINE_METRICS §6 forward measurement plan.
 
 ---
 
