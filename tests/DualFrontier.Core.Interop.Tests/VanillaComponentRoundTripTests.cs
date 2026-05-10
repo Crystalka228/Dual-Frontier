@@ -35,9 +35,10 @@ public class VanillaComponentRoundTripTests
         var act = () => VanillaComponentRegistration.RegisterAll(registry);
         act.Should().NotThrow();
 
-        // Verify count: post-K8.2-v2-stub-deletions in progress. Combat (3)
-        // and Magic.School deleted; Biome still pending Phase 2.C.4.
-        registry.Count.Should().Be(20);
+        // Verify count: post-K8.2-v2-stub-deletions complete. 19 surviving
+        // production components after Combat (3) + Magic.School + World.Biome
+        // deletions; Social was class — never registered.
+        registry.Count.Should().Be(19);
     }
 
     [Fact]

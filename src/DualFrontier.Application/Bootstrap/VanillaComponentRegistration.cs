@@ -45,7 +45,6 @@ public static class VanillaComponentRegistration
 
         // World category (3)
         registry.Register<TileComponent>();
-        registry.Register<BiomeComponent>();
         registry.Register<EtherNodeComponent>();
 
         // Magic category (4)

@@ -15,7 +15,7 @@ namespace DualFrontier.Systems.World;
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
-    writes: new[] { typeof(BiomeComponent) },
+    writes: new Type[0],
     bus:    nameof(IGameServices.World)
 )]
 [TickRate(TickRates.RARE)]
