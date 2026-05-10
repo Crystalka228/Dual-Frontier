@@ -43,28 +43,40 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
 ```
 [K8.2 v2 closure — DONE 2026-05-09, commits 7527d00 on main]
   │
-  ├─ Phase A'.0 — K-L3.1 architectural decision session
-  │   Brief: K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md (authored)
-  │   Addendum: K_L3_1_BRIEF_ADDENDUM_1.md (authored — skeleton brief state correction)
-  │   Output: amendment plan for KERNEL/MOD_OS/MIGRATION_PLAN/MIGRATION_PROGRESS
+  ├─ Phase A'.0 — K-L3.1 architectural decision session — DONE 2026-05-10
+  │   Brief: K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md (EXECUTED)
+  │   Addendum: K_L3_1_BRIEF_ADDENDUM_1.md (APPLIED)
+  │   Output: amendment plan at /docs/architecture/K_L3_1_AMENDMENT_PLAN.md
+  │   Closure commit: 45d831c on main
   │   Code changes: zero
   │   Test count: zero delta
-  │   Estimated time: 2-4 hours chat session
+  │
+  ├─ Phase A'.0.5 — Documentation reorganization + cross-ref refresh + module-local refresh + pipeline-terminology scrub + cleanup campaign — DONE 2026-05-10
+  │   Brief: A_PRIME_0_5_REORG_AND_REFRESH_BRIEF.md (EXECUTED)
+  │   Scope: 36 files relocated to docs/architecture/ + docs/methodology/ + docs/reports/ per Crystalka organizational principle; ~250 stale cross-references updated to repo-rooted absolute form; 5 component READMEs deleted-stub cleanup (Phase 5); 6 Systems READMEs + 2 Events READMEs + 2 kernel-area READMEs refreshed (Phase 6); pipeline terminology mechanically scrubbed in active narratives (Phase 7) + A'.0.7 deferral markers on METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR
+  │   A'.2 (was: README cleanup) folded into Phase 5 of this milestone per execution unification (single-session pipeline reality renders milestone splitting unnecessary)
+  │   Closure commits: 27523ac through Phase 9 closure on main (Phase 0 brief authoring + Phases 1-9 atomic commits, ~25 total)
+  │   Code changes: zero
+  │   Test count: zero delta
+  │   Estimated time: 2-4 hours auto-mode (matched actual)
+  │
+  ├─ Phase A'.0.7 — Methodology pipeline restructure rewrite — NEXT (pending Crystalka deliberation session)
+  │   Scope: substantive rewrite of METHODOLOGY.md (§0/§2.1/§2.2/§3/§4/§5/§8) + PIPELINE_METRICS.md (entire empirical record) + MAXIMUM_ENGINEERING_REFACTOR.md (4-agent layout/hardware-variance/pipeline-mapping sub-sections) for new 2-agent pipeline shape per Crystalka direction 2026-05-10
+  │   Pre-condition: A'.0.5 EXECUTED (deferral markers in place; substantive prose preserved verbatim awaiting rewrite)
+  │   Architectural deliberation milestone analog to K-L3.1: no code changes; doc-only
+  │   Output: revised METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR with falsifiable claims re-grounded in 2-agent reality; possibly README.md root Pipeline section rewrite (deferred via inline marker in A'.0.5)
+  │   Estimated time: one Opus deliberation chat session + auto-mode commit (~1-2 hours total)
   │
   ├─ Phase A'.1 — Amendment brief execution
-  │   Scope: docs-only amendments to 4 LOCKED docs + 4 skeleton briefs (K9, K8.3-K8.5)
+  │   Scope: docs-only amendments to 4 LOCKED docs + 4 skeleton briefs (K9, K8.3-K8.5) per /docs/architecture/K_L3_1_AMENDMENT_PLAN.md; plus K-L11 framing propagation in kernel-area module-local docs (per A'.0.5 Phase 8 Tier 2 flag) + Vanilla mod placeholder READMEs (Tier 2)
+  │   Pre-condition: A'.0.7 EXECUTED (methodology rewrite establishes the post-restructure state docs propagate against)
   │   Disposition system: per-skeleton A/B/C decision per addendum §A5.6
   │   Code changes: zero (or near-zero for skeleton briefs)
   │   Test count: zero delta
   │   Estimated time: 30-60 min auto-mode
-  │   Executor: Cloud Code
+  │   Executor: Claude Desktop session
   │
-  ├─ Phase A'.2 — README cleanup
-  │   Scope: remove deleted-stub references from 5 READMEs (top-level Components, Combat, World, Magic, Pawn)
-  │   Atomic commit: scope `docs(components)`, single commit
-  │   Test count: zero delta
-  │   Estimated time: 5-10 min auto-mode
-  │   Executor: Cloud Code
+  ├─ Phase A'.2 — REMOVED (folded into A'.0.5 Phase 5 per execution unification 2026-05-10)
   │
   ├─ Phase A'.3 — Push to origin
   │   Scope: main branch — all K-L3.1 era commits + foundation closure commits
@@ -128,9 +140,11 @@ At hobby pace (~1h/day):
 
 | Phase | Estimate | Cumulative |
 |---|---|---|
-| A'.0 K-L3.1 | 2-4 hours session | <1 day |
+| A'.0 K-L3.1 (DONE 2026-05-10) | 2-4 hours session | <1 day |
+| A'.0.5 Documentation reorganization (DONE 2026-05-10) | 2-4 hours auto-mode | <1 day |
+| A'.0.7 Methodology rewrite | 1-2 hours session + auto-mode | <1 day |
 | A'.1 Amendment | 30-60 min auto-mode | ~1 day |
-| A'.2 README cleanup | 5-10 min auto-mode | ~1 day |
+| A'.2 (REMOVED — folded into A'.0.5) | — | — |
 | A'.3 Push | minutes | ~1 day |
 | A'.4 K9 | 1-2 weeks | 2-3 weeks |
 | A'.5 K8.3 | 4-6 weeks | 6-9 weeks |
@@ -139,7 +153,7 @@ At hobby pace (~1h/day):
 | A'.8 K-closure report | 1-2 sessions | 8-12 weeks (overlap-able) |
 | A'.9 Analyzer | 2-4 weeks | 10-16 weeks |
 
-**Total Phase A' duration: ~10-16 weeks at hobby pace** (~2.5-4 months).
+**Total Phase A' duration: ~10-16 weeks at hobby pace** (~2.5-4 months). The A'.0/A'.0.5/A'.0.7 doc-only deliberation+refresh sessions are sub-day each and do not materially extend cumulative timeline.
 
 This duration reflects «без костылей + decade-horizon» commitment. Faster paths exist (skip K-L3.1, skip closure report, skip analyzer) but each shortcut creates structural debt this phase exists to prevent.
 
@@ -195,13 +209,17 @@ Multiple LOCKED documents accumulate amendments through Phase A'. Coordinated am
 ### §5.4 METHODOLOGY.md
 
 - **A'.0 K-L3.1**: possibly new lesson «architectural decisions get formal recording before execution» (analog of K8.0 precedent). Decision at K-L3.1 closure.
+- **A'.0.5 (DONE)**: A'.0.7 deferral marker added at top of file noting which substantive sections require A'.0.7 rewrite. No content modified.
+- **A'.0.7**: substantive rewrite of §0 Abstract, §2.1 Role distribution, §2.2 Contracts as IPC, §3 Pipeline economics, §4 Empirical results, §5 Threat model, §8 Reproducibility for new 2-agent pipeline. Possibly new lesson «pipeline restructure as architectural deliberation» (analog of K-L3.1). Decision at A'.0.7 closure.
 - **A'.8 K-closure report authoring**: may produce new methodology lesson «closure reports as analyzer specification surface». Decision at A'.8.
 
 ### §5.5 MIGRATION_PROGRESS.md
 
-- **A'.0 K-L3.1 closure entry**
-- **A'.1 amendment closure entry** (if amendment is treated as standalone milestone, otherwise folded into A'.0)
-- **A'.2 cleanup closure entry** (small, possibly folded with A'.3)
+- **A'.0 K-L3.1 closure entry** (filled at K-L3.1 amendment plan execution per A'.1)
+- **A'.0.5 closure entry** (this milestone, recorded in Phase 9 closure commits)
+- **A'.0.7 closure entry** (after A'.0.7 milestone executes)
+- **A'.1 amendment closure entry**
+- **A'.2 — N/A (folded into A'.0.5)**
 - **A'.4-A'.7** per-milestone closure entries (existing precedent, K8.1/K8.1.1/K-Lessons shape)
 - **A'.8 K-closure report entry** (special — closure of closure)
 - **A'.9 analyzer milestone closure entry**
