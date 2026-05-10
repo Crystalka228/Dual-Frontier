@@ -47,42 +47,17 @@ restate the numbers.
 
 ## Pipeline
 
-<!-- TODO: A'.0.7 — pipeline restructure to 2-agent (Crystalka + unified Claude Desktop session); current section describes pre-restructure 4-agent shape and is preserved verbatim as historical state until A'.0.7 substantive rewrite lands -->
+The pipeline configures N agents in an architect-executor split with rigid contracts at boundaries: a human as direction owner; one or more LLM instances operating as architect (deliberation, brief authoring, QA review) and executor (mechanical application against authored briefs). The architect-executor split with contracts at boundaries is invariant across configurations; specific N, the boundary type between architect and executor (model-tier boundary, session-mode boundary, or mixed), and tier mix vary by pipeline configuration.
 
-The pipeline uses four agents separated by level of abstraction, not by
-development phase. The agents do not communicate directly; coordination
-happens through LOCKED documents in the repository and through the human as
-session router.
+The agents do not communicate directly; coordination happens through LOCKED documents in the repository and through the human as session router.
 
-- **Syntax-tier executor.** A local quantized model in the 4–8B parameter
-  class, hosted through a local OpenAI-compatible backend and orchestrated by
-  an editor extension. Receives a self-contained prompt and produces 1–2
-  files of code against a contract. Makes no architectural decisions.
-- **Prompt-generation tier.** A mid-tier hosted model. Turns a task plus its
-  contract into a self-contained prompt for the syntax-tier executor; handles
-  routine tasks directly.
-- **Architect-tier executor.** A top-tier hosted model with a large context
-  window. Used sparingly, on hard architectural tasks and on full reviews at
-  phase closure.
-- **Direction owner.** The human. Selects contracts, makes architectural
-  decisions, frames phase goals, routes between sessions.
+**Current configuration (v1.6, 2026-05-10).** N=2: Crystalka (direction owner) plus a unified Claude Desktop session that switches between deliberation mode (chat interface, architectural decision recording per K8.0 / K-L3.1 / A'.0.7 precedent) and execution mode (Claude Code agent, autonomous tool-loop per A'.0.5 precedent). Boundary type: session-mode.
 
-Full configuration, empirical task metrics, subscription headroom data, and
-reproducibility requirements are documented in
-[docs/methodology/PIPELINE_METRICS.md](/docs/methodology/PIPELINE_METRICS.md):
+v1.x era (Phase 0–8, ending 2026-05-09) used model-tier boundary с N=4 (local quantized Gemma executor + cloud Sonnet prompt-generator + cloud Opus architect + human direction owner). Empirical record preserved in [docs/methodology/PIPELINE_METRICS.md](/docs/methodology/PIPELINE_METRICS.md) с per-metric transferability annotations.
 
-- [§1 Pipeline configuration](/docs/methodology/PIPELINE_METRICS.md#1-pipeline-configuration) —
-  agent assignments, workflow, hardware, and software stack.
-- [§3 Subscription headroom](/docs/methodology/PIPELINE_METRICS.md#3-subscription-headroom) —
-  empirical measurements across two consecutive weekly windows.
-- [§5 Reproducibility requirements](/docs/methodology/PIPELINE_METRICS.md#5-reproducibility-requirements) —
-  what is required to reproduce these measurements and what these
-  measurements do not show.
+Full pipeline configuration, empirical task metrics, subscription headroom data, and reproducibility requirements documented in [docs/methodology/PIPELINE_METRICS.md](/docs/methodology/PIPELINE_METRICS.md). Full methodology documented in [docs/methodology/METHODOLOGY.md](/docs/methodology/METHODOLOGY.md). The methodology and deeper documents are authored under **agent-as-primary-reader assumption** — readers unfamiliar с the project's cross-reference density should use AI tooling for navigation through the documentation corpus.
 
-If a contract is rigid enough that a 4-bit quantized local model produces
-correct code under it, the contract will hold under any stronger executor.
-Isolation from hallucinations is a structural property of the contract, not
-of the executor's capacity.
+If a contract is rigid enough that an executor produces correct code under it on the first build at a measurable rate (target <30% requiring second execution), the contract will hold under any stronger executor or any restructured boundary type. Isolation from executor errors is a structural property of the contract, not of the executor's specific capacity.
 
 ## What the engine demonstrates
 
