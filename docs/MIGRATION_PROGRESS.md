@@ -521,6 +521,33 @@
 - Q6 (capability path-orthogonality) was already structurally true per K4 prerequisite (`[ModAccessible]` widened to `Class | Struct`). This is empirical evidence that some «open» architectural questions in deliberation briefs may already be answered by accumulated code state — Phase 0 inventory lessons (K-Lessons «inventory as hypothesis, not authority») extended: hypothesis can resolve question without deliberation when disk truth is decisive.
 - Crystalka direction «без костылей, у меня нет давления временем» as session frame enabled rigorous Q1–Q6 walkthrough with each lock + rationale, rather than batched/forced answers under time pressure. Long-horizon framing aligns with brief §1.3 «architectural cleanness... десятилетиями».
 
+**Amendment landing (A'.1.K, 2026-05-10)**:
+
+8 atomic commits landed amendments per `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` §1–§5:
+- Commit K-A1: KERNEL_ARCHITECTURE.md v1.3 → v1.5 (Part 0 K-L3 row + K-L8 implication paragraph + Part 2 K8.2 row + Status line + Part 4 Decisions log Path α vs Path β + closing v1.0 → v1.5 sediment + 4 surgical scrubs on «без exception» active spec wording)
+- Commit K-A2: MOD_OS_ARCHITECTURE.md v1.6 → v1.7 (lines 1149-1150 full rewrite — «must be unmanaged struct» → Path α + Path β + dual SystemBase API + ALC isolation barrier; §3.5 D-1 path orthogonality clarification; §4.6 IModApi v3 RegisterManagedComponent<T>; §11.1 M3.5 Path α/β consistency analyzer scope extension; §11.2 MissingManagedStorageAttribute ValidationErrorKind entry)
+- Commit K-A3: MIGRATION_PLAN_KERNEL_TO_VANILLA.md v1.0 → v1.1 (§0.1 Phase A' integration full sequence diagram replacement; §0.3 Decision #9 K-L3.1 bridge formalization LOCKED; line 62/78 «K-L3 violation» reframing; line 148 «no exception post-K8.2» reframing; §1.2 K8.3 dual-path access constraint; §1.3 K8.4 RegisterManagedComponent ships; §1.5 Phase A closure gate Path α/β registration paths; §6.6 NEW K-L3.1 amendment execution maintenance entry)
+- Commit K-A4: MIGRATION_PROGRESS.md sync (line 5 Last updated A'.1.K landing; line 34 Active phase A'.3 push next; line 35 Last completed milestone cascade A'.1.K → A'.1.M → A'.0.7 → A'.0.5 → K-L3.1; line 87 Overview table K8.2 reframe; line 407 K8.2 v2 header reframe; line 443 KERNEL doc bump entry reframe; line 457 architectural fact reframe; new K-L3.1 closure entry per §4.7)
+- Commits K-A5 through K-A8: 4 skeleton brief surgical edits (K9 Disposition B — Phase 0.4 version refs KERNEL v1.5+ + MOD_OS v1.7+, Phase 0.7 baseline 631+; K8.3 Disposition B-to-C — scope 12 → 34 systems + dual-path access TODO; K8.4 Disposition C.1 in-place rewrite — Mod API v3 dual registration paths + SystemBase.ManagedStore<T>() accessor + per-mod ManagedStore<T> implementation + MissingManagedStorageAttribute TODO; K8.5 Disposition B — bridge documentation + dual-API access patterns + v2→v3 migration guide)
+- Commit K-A9: K-L3.1 brief Status amendment landing reference
+- Commit K-A10: this closure entry extension
+
+Test count delta: zero across all 10 commits (docs-only).
+Working tree clean post-A'.1.K; baseline 631 preserved by construction.
+
+**HG-4 pre-flight (recorded 2026-05-10)**: dotnet test executed with testhost cleared (per user directive — kill leftover testhost.exe before pre-flight HG-4 prevents environmental incident #3 per incident #2 root cause). Baseline 631 verified at start of Part K execution.
+
+**Surgical scrubs applied during Part K (per §1.3 amendment plan pattern; out-of-plan)**:
+- KERNEL line 19 «Component constraint: unmanaged structs only (class-based prohibited)» → «Component storage: Path α default; Path β per opt-in»
+- KERNEL line 79 «struct components (Path α post-K7)» → «vanilla components: Path α or Path β»
+- KERNEL line 752 «K-L3 «без exception» achieved» → «K-L3 selective per-component closure achieved (post-K-L3.1 reframing)»
+- KERNEL line 789 «K-L3 «без exception» closure» → «K-L3 selective per-component closure (post-K-L3.1 reframing)»
+- MIGRATION_PLAN line 148 «Conversion target: unmanaged struct (Path α, K-L3 LOCKED, no exception post-K8.2)» → «default Path α + per-component Path β opt-in per K-L3.1»
+
+§K.12.2 cross-document drift audit: all remaining «без exception» / «K-L3 violation» / «must be unmanaged struct» / «Class-based component storage prohibited» / «no exception» hits are in version-history quote-context or explicit reframing context (acceptable per §K.12.2 directive «only in version-history quote-context»).
+
+K-L3.1 + A'.0.7 amendments both LANDED. Phase A' deliberation foundation (A'.0 К-L3.1 / A'.0.5 reorg / A'.0.7 methodology rewrite) + amendment landing (A'.1.M A'.0.7 amendment / A'.1.K K-L3.1 amendment) DONE. Awaits A'.3 push к origin → A'.4-A'.7 K-series execution → A'.8 K-closure report → A'.9 architectural analyzer.
+
 ### K8.3-K8.5 — Sub-milestones
 
 - **K8.3**: `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md` (skeleton; reformulated scope per migration plan §1.2 — all 34 production systems in `src/DualFrontier.Systems/`)
