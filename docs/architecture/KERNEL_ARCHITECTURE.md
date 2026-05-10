@@ -1,8 +1,8 @@
 # DualFrontier Kernel — Architecture & Roadmap
 
-**Version**: 1.3
-**Date**: 2026-05-09
-**Status**: AUTHORITATIVE LOCKED — operational reference document, Solution A architectural commitment recorded (K-L11 added in v1.2, K-L3/K-L8 implications extended); Interop error semantics convention formalized in Part 7 (v1.3)
+**Version**: 1.5
+**Date**: 2026-05-10
+**Status**: AUTHORITATIVE LOCKED — operational reference document, Solution A architectural commitment recorded (K-L11 added in v1.2, K-L3/K-L8 implications extended); Interop error semantics convention formalized in Part 7 (v1.3); K8.2 v2 closure of K-L3 selective per-component application via K8.1 primitives (v1.4, header bump deferred to v1.5); K-L3.1 bridge formalization — Path β (managed-class, mod-side storage) as first-class peer to Path α (`unmanaged struct`, kernel-side NativeWorld) per session 2026-05-10 (v1.5)
 **Companion documents**: `METHODOLOGY.md`, `CODING_STANDARDS.md`, `MOD_OS_ARCHITECTURE.md`, `RUNTIME_ARCHITECTURE.md`
 **Scope**: Full architectural specification + milestone roadmap для native ECS kernel (C++ via pure P/Invoke). Companion к `RUNTIME_ARCHITECTURE.md` (Vulkan rendering layer) — together describing complete native foundation under managed Application layer.
 
@@ -16,7 +16,7 @@ DualFrontier ECS kernel migrates от managed C# к pure C++ via P/Invoke. Domai
 - Pure P/Invoke к `DualFrontier.Core.Native.dll` (no third-party C# binding library, mirrors RUNTIME_ARCHITECTURE.md L2)
 - BCL only for managed bridge (`System.Runtime.InteropServices`, `System.Numerics`)
 - Manual memory management в C++ (std::vector + std::unordered_map only, no third-party libs)
-- Component constraint: `unmanaged` structs only (Path α — class-based components prohibited)
+- Component storage: Path α (`unmanaged struct`, kernel-side NativeWorld) default; Path β (managed `class` via `[ManagedStorage]`, mod-side store) per opt-in (K-L3.1 bridge formalization, 2026-05-10)
 - Two-phase model: native bootstrap → managed game tick
 
 **Source of truth для existing experimental work**: `claude/cpp-core-experiment-cEsyH` branch + `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` (Discovery report). 11 substantive C++ commits + 1637 LOC delta + clean self-test passing.
@@ -37,7 +37,7 @@ The following decisions are committed как architectural foundation. Departure
 |---|---|---|---|
 | K-L1 | Native language | C++20, MSVC/GCC/Clang | Compiled native, modern features, no third-party deps |
 | K-L2 | Bindings | Pure P/Invoke к `DualFrontier.Core.Native.dll` | Zero third-party C# в production binary (mirrors L2) |
-| K-L3 | Component constraint | Unmanaged structs only (Path α) | Storage requires blittable layout; class-based prohibited |
+| K-L3 | Component storage paths | Path α (`unmanaged struct`, NativeWorld) default; Path β (managed `class` via `[ManagedStorage]`, mod-side store) per opt-in | Two first-class peer paths; per-component author choice based on architectural fit; native-path retains blittable-layout invariant, managed-path is mod-private and runtime-only |
 | K-L4 | Type IDs | Explicit registry per-mod registration | FNV-1a hash collision-prone; explicit IDs deterministic |
 | K-L5 | Bootstrap orchestration | Declarative graph, native, parallel where deps allow | Symmetric к runtime second graph; explicit dependencies |
 | K-L6 | Game tick scheduler | Managed (because all systems are mods) | «Vanilla = mods» principle; AssemblyLoadContext mandates managed code path для systems |
@@ -47,7 +47,15 @@ The following decisions are committed как architectural foundation. Departure
 | K-L10 | Decision rule | §8 metrics (GC pause / p99 / long-run drift on weak hardware) | §6 «20% mean speed» superseded; §8 captures actual project value |
 | K-L11 | Production storage backbone | NativeWorld single source of truth (Solution A); ManagedWorld retained as test fixture and research artifact only | K7 evidence (V3 dominates V2 by 4-32× across §8 metrics) + «no compromises» commitment; single ownership boundary, single mental model |
 
-**Implication of K-L3**: All managed components must be unmanaged structs. **K8.2 v2 (`MIGRATION_PROGRESS.md` K8.2 closure entry, 2026-05-09) achieved K-L3 «без exception» state** for `src/DualFrontier.Components/`. Three deliverables in one milestone: (1) K8.1 wrapper value-type refactor — `NativeMap<K,V>`, `NativeSet<T>`, `NativeComposite<T>` from `sealed unsafe class` to `readonly unsafe struct` so component structs can carry these as fields without violating the `unmanaged` constraint; `InternedString` gained `IComparable<InternedString>`; `NativeWorld` gained `Allocate*Id` counters and `Create*` factory methods. (2) 6 class→struct conversions using K8.1 primitives — Identity/Workbench/Faction (InternedString), Skills (NativeMap×2), Storage (NativeMap+NativeSet), Movement (NativeComposite + bool HasTarget + PathStepIndex). (3) 6 empty TODO stub deletions per METHODOLOGY §7.1 «data exists or it doesn't» — Combat (Ammo/Shield/Weapon), Magic (School), Pawn (Social), World (Biome). Real game-mechanics components for these slices are authored fresh as `unmanaged struct` in the M-series vanilla mod content milestones (M9 Combat, M10.B Magic, M-series Pawn social, M-series World biome). Mod components subject to same constraint. **K4's "Hybrid Path" softening retired** — after K8.2 v2 closure, K-L3 holds without exception across vanilla and mod components alike.
+**Implication of K-L3 (post-K-L3.1, 2026-05-10)**: Components are first-class via either Path α (`unmanaged struct`, kernel-side `NativeWorld` storage) or Path β (managed `class`, mod-side per-mod ManagedStore). Path α is the default — author silence + struct shape implies native registration via existing `IModApi.RegisterComponent<T> where T : IComponent`. Path β is per-component opt-in via `[ManagedStorage]` attribute on a `class : IComponent` type, registered through `IModApi.RegisterManagedComponent<T> where T : class, IComponent` (Mod API v3 surface, ships at K8.4 closure). Decision criterion is per-component architectural fit: Path α applies when conversion to `unmanaged struct` is justified (performance, locality, blittable layout, K8.1 primitive coverage); Path β applies when conversion forces structural compromise (managed-only references not expressible as K8.1 primitives, lazy state graphs, runtime-only computed handles, complex object graphs not blittable).
+
+Path β components are runtime-only (Q4.b lock) — not persisted by save system; managed-storage lives per-mod (mod assembly's `RestrictedModApi` instance), reclaimed deterministically on `AssemblyLoadContext.Unload` per `MOD_OS_ARCHITECTURE.md` §9.5 unload chain. Cross-mod managed-path direct access is structurally impossible by ALC isolation; cross-mod data flow uses event/intent contracts per `MOD_OS_ARCHITECTURE.md` §6 three-level contracts. Within-mod cross-path access (one system reads native + managed components on same entity) is supported via dual `SystemBase` API (Q3.i lock): `SystemBase.NativeWorld.AcquireSpan<T>()` for Path α, `SystemBase.ManagedStore<T>()` for Path β; performance characteristics are visible per-call (no opaque dispatch).
+
+**K8.2 v2 closure (`MIGRATION_PROGRESS.md` K8.2 v2 entry, 2026-05-09)** delivered the Path α kernel-side completion: K8.1 wrapper value-type refactor (`NativeMap<K,V>`, `NativeSet<T>`, `NativeComposite<T>` from `sealed unsafe class` to `readonly unsafe struct`; `InternedString.IComparable`; `NativeWorld.Allocate*Id` counters + `Create*` factory methods); 6 class→struct conversions using K8.1 primitives (Identity/Workbench/Faction via InternedString, Skills via NativeMap×2, Storage via NativeMap+NativeSet, Movement via NativeComposite+`HasTarget`+`PathStepIndex`); 6 empty TODO stub deletions per METHODOLOGY §7.1 «data exists or it doesn't» (Combat: Ammo/Shield/Weapon; Magic: School; Pawn: Social; World: Biome). The 6 deletions reflect §7.1 application — empty placeholder components removed because their data did not exist; this is selective per-component judgment (delete per §7.1, convert per K8.1 primitives, leave verify-only struct annotations on already-struct), not universal Path α mandate.
+
+**K4's "Hybrid Path" framing superseded by K-L3.1**: post-amendment, both paths are first-class peers, not «α default plus β tolerated as exception». Author choice is recorded explicitly via `[ManagedStorage]` opt-in; absence implies Path α. The K8.2 v2 closure framing «K-L3 «без exception» state achieved» is corrected — closure delivered selective per-component application of K-L3 to `src/DualFrontier.Components/`, not universal mandate. Capability model is path-orthogonal (Q6.a lock) — `[ModAccessible]` attribute and capability strings (`kernel.read:` / `mod.<id>.read:`) function uniformly across paths; the resolver dispatches internally to NativeWorld span access or ManagedStore lookup per-T.
+
+**Performance contract (Q5.a lock)**: native-path publishes specific guarantees (zero-allocation reads via `SpanLease<T>`, structure-of-arrays layout, batched writes via `WriteBatch<T>`). Managed-path provides Dictionary-shaped lookup with no zero-allocation guarantee. The contract difference is visible per-call via dual `SystemBase` API (Q3.i). Performance metrics are tagged per-path in `KernelCapabilityRegistry` (Q5.a passive); active analyzer enforcement (Q5.b) deferred to post-migration analyzer milestone per Crystalka 2026-05-10 «после миграции нужен будет анализатор... но это потом».
 
 **Implication of K-L6**: There is NO «native scheduler» для game tick. Native scheduler exists only для bootstrap orchestration. All system code (vanilla mods + third-party mods) executes managed.
 
@@ -68,7 +76,7 @@ src/
   // ====== Domain layer (preserved verbatim — zero touch) ======
   DualFrontier.Core/                          # managed wrappers, World facade
   DualFrontier.Contracts/                     # IComponent, EntityId, etc.
-  DualFrontier.Components/                    # struct components (Path α post-K7)
+  DualFrontier.Components/                    # vanilla components: Path α (struct, default) or Path β (class via [ManagedStorage], per K-L3.1)
   DualFrontier.Events/                        # event types
   DualFrontier.Systems/                       # system implementations (managed)
   DualFrontier.Application/                   # bootstrap, scheduler, coordinator
@@ -579,7 +587,7 @@ Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
 | K7 | Performance measurement (tick-loop) | 3-5 days | +200-400 |
 | K8.0 | Architectural decision recording (Solution A) | 1-2 days | +/- (docs only) |
 | K8.1 | Native-side reference handling primitives | 1-2 weeks | +600-1000 |
-| K8.2 | K-L3 «без exception» closure: K8.1 wrapper value-type refactor (NativeMap/NativeSet/NativeComposite to readonly struct + IComparable<InternedString> + per-instance id allocation) + 6 class→struct conversions (Identity/Workbench/Faction/Skills/Storage/Movement) + 6 empty TODO stub deletions (Ammo/Shield/Weapon/School/Social/Biome — content deferred to M-series) + 12 ModAccessible annotation completeness pass | 6-12 hours auto-mode (3-5 days hobby) | +800/-1500 |
+| K8.2 | K-L3 selective per-component closure (post-K-L3.1 reframing): K8.1 wrapper value-type refactor (NativeMap/NativeSet/NativeComposite to readonly struct + IComparable<InternedString> + per-instance id allocation) + 6 class→struct conversions on Path α via K8.1 primitives (Identity/Workbench/Faction/Skills/Storage/Movement) + 6 empty TODO stub deletions per METHODOLOGY §7.1 (Ammo/Shield/Weapon/School/Social/Biome — content deferred to M-series, authored on appropriate path per K-L3.1) + 12 ModAccessible annotation completeness pass on already-struct components | 6-12 hours auto-mode (3-5 days hobby) | +800/-1500 |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | 2-3 weeks | -400/+600 |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | 1 week | -2000/+200 |
 | K8.5 | Mod ecosystem migration prep | 3-5 days | +500 (docs) |
@@ -741,7 +749,7 @@ e2bc2d9 — DLL loading fix
 **Sub-milestone series**:
 - **K8.0** — Architectural decision recording (this milestone; LOCKED v1.2)
 - **K8.1** — Native-side reference handling primitives (string interning, keyed maps, composite components)
-- **K8.2** — Per-component redesign + K8.1 wrapper value-type refactor + empty TODO stub deletions; K-L3 «без exception» achieved (v2 brief, single milestone)
+- **K8.2** — Per-component redesign + K8.1 wrapper value-type refactor + empty TODO stub deletions; K-L3 selective per-component closure achieved (v2 brief, single milestone; post-K-L3.1 reframing)
 - **K8.3** — Production system migration (12 vanilla systems → SpanLease/WriteBatch)
 - **K8.4** — ManagedWorld retired as production; Mod API v3 ships
 - **K8.5** — Mod ecosystem migration prep (documentation + migration guide)
@@ -778,7 +786,7 @@ e2bc2d9 — DLL loading fix
 
 Managed `World` stayed functional throughout K0-K7. K8.0 closure (2026-05-09) recorded the architectural decision per K-L11: **Solution A — single NativeWorld backbone**. Migration executes via the K8.1-K8.5 sub-milestone series:
 - K8.1 — native-side reference handling primitives (string interning, keyed maps, composite components)
-- K8.2 — K-L3 «без exception» closure: K8.1 wrapper value-type refactor + 6 class→struct conversions using K8.1 primitives + 6 empty TODO stub deletions per METHODOLOGY §7.1
+- K8.2 — K-L3 selective per-component closure (post-K-L3.1 reframing): K8.1 wrapper value-type refactor + 6 class→struct conversions using K8.1 primitives + 6 empty TODO stub deletions per METHODOLOGY §7.1
 - K8.3 — 12 vanilla systems migrated to `SpanLease<T>` reads + `WriteBatch<T>` writes
 - K8.4 — managed `World` retired as production path; Mod API v3 ships
 - K8.5 — mod ecosystem migration prep (documentation + migration guide)
@@ -802,10 +810,11 @@ K-L1 through K-L10 above.
 - §8 (Russian NATIVE_CORE_EXPERIMENT.md): «GC pause / p99 / drift on weak hardware» — captures actual project value
 - **§8 authoritative**, §6 superseded и retained для historical context only
 
-**Path α vs Path β для components**:
-- Path α: convert components к structs (this document, K-L3)
-- Path β: GCHandle marshalling for class components (rejected — defeats GC pressure reduction goal)
-- **Path α chosen** — aligns с modern ECS conventions, eliminates GC pressure structurally
+**Path α vs Path β для components (resolved 2026-05-10 per K-L3.1)**:
+- Path α: `unmanaged struct` components in kernel-side `NativeWorld` (existing K-L3 default; K8.2 v2 closure delivered for `src/DualFrontier.Components/`)
+- Path β (original rejection): GCHandle marshalling on kernel-side managed component store — rejected, defeats GC pressure reduction goal
+- Path β (K-L3.1 reformulation): managed `class` components annotated with `[ManagedStorage]`, stored mod-side in per-mod `RestrictedModApi.ManagedStore<T>` instance (Q2.β-i lock); kernel-side has no managed component store; ALC isolation provides ownership boundary; reclaim is deterministic on `AssemblyLoadContext.Unload`
+- **Both paths chosen as first-class peers per K-L3.1 (2026-05-10)**: kernel-side native storage (Path α) preserves K-L11 «NativeWorld single source of truth» for native data; managed-storage decentralization-by-mod is consistent with K-L9 «vanilla = mods» + ALC isolation. Performance characteristics visible per-call via dual `SystemBase` API (Q3.i). Capability model path-orthogonal (Q6.a). Save system out of scope (Q4.b runtime-only managed-path). Amendment authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` + bridge formalization brief at `tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md`.
 
 **Q1 — Bootstrap graph: declarative**
 - Imperative simpler но dependencies implicit
@@ -1082,7 +1091,7 @@ Both documents commit к following invariants:
 
 **«Features only on demand»** (continuing principle от RUNTIME_ARCHITECTURE.md): kernel API surface stays minimal. ~20 C ABI functions sufficient для full DF gameplay. Resist temptation к build «complete» ECS engine — every function must trace к specific Domain requirement.
 
-This document is **v1.0**, authoritative until amended via explicit decision. Amendments require commit с rationale (similar к how MOD_OS_ARCHITECTURE.md evolved).
+This document is **v1.5** (current), authoritative until amended via explicit decision. Amendments require commit с rationale (similar к how MOD_OS_ARCHITECTURE.md evolved). Version history: v1.0 initial; v1.1 K6 reconciliation; v1.2 K-L11 + Solution A; v1.3 Interop error semantics convention; v1.4 K8.2 v2 closure (header bump deferred); v1.5 K-L3.1 bridge formalization.
 
 Next document update expected при K8 closure (decision step results recorded), then per K-milestone (decisions log + risk register updates).
 
