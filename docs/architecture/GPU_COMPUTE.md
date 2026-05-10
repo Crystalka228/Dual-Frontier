@@ -889,7 +889,7 @@ This is not a commercial positioning argument (project is hobby+polygon framing)
 - [PERFORMANCE](./PERFORMANCE.md) — benchmark tracking, threshold measurements per system
 - [THREADING](./THREADING.md) — async sync patterns, fence-based GPU coordination
 - [ROADMAP](./ROADMAP.md) — overall milestone sequencing
-- [METHODOLOGY](./METHODOLOGY.md) — pipeline patterns, brief authoring conventions
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — pipeline patterns, brief authoring conventions
 - [CPP_KERNEL_BRANCH_REPORT](./CPP_KERNEL_BRANCH_REPORT.md) — Discovery report establishing K0 cherry-pick scope
 
 **LOCKED v2.0** — supersedes Phase 3 `GPU_COMPUTE.md`. Departures require explicit re-architecture milestone and updates to dependent K9/G-series briefs.

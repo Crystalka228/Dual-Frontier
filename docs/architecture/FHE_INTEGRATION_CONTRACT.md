@@ -10,7 +10,7 @@
 
 This document specifies the integration contract for fully homomorphic encryption (FHE) within Dual Frontier. The contract is LOCKED at v1.0 as of the date above. Implementation activation is conditional on §D1; the contract decisions themselves are not.
 
-The contract follows the same ratification discipline as other LOCKED specifications in this project. Decisions enumerated below are not subject to revision through implementation pressure, schedule constraints, or library-specific limitations encountered at integration time. If circumstances at integration render a decision infeasible, the contract is reopened formally — through the ratification process described in [METHODOLOGY](./METHODOLOGY.md) — not implicitly violated.
+The contract follows the same ratification discipline as other LOCKED specifications in this project. Decisions enumerated below are not subject to revision through implementation pressure, schedule constraints, or library-specific limitations encountered at integration time. If circumstances at integration render a decision infeasible, the contract is reopened formally — through the ratification process described in [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — not implicitly violated.
 
 The reading discipline mirrors [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §0: a decision marked LOCKED is binding for every implementation pass; deliberate interpretations are footnoted at point of use; conflicts between this document and another LOCKED spec resolve through escalation, not improvisation.
 
@@ -44,7 +44,7 @@ Until all three conditions hold, the contract remains active but dormant. The do
 
 The FHE layer MUST preserve simulation determinism. Where homomorphic operations introduce floating-point ambiguity — notably in CKKS-family schemes — the integration MUST use exact-arithmetic schemes (BGV, BFV, or successor) for any operation participating in the deterministic core. Approximate schemes are permissible only for operations explicitly marked as non-deterministic in the simulation contract. At v1.0 ratification, no such operations exist.
 
-Determinism is not negotiable per [METHODOLOGY](./METHODOLOGY.md) §7.1. CKKS approximation introduces non-determinism that compounds over simulation ticks; over a long session, two clients running the same input would observe state divergence indistinguishable from a desync bug. The contract treats this as disqualifying.
+Determinism is not negotiable per [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7.1. CKKS approximation introduces non-determinism that compounds over simulation ticks; over a long session, two clients running the same input would observe state divergence indistinguishable from a desync bug. The contract treats this as disqualifying.
 
 ### D3. Boundary placement (structural, not optional)
 
@@ -136,7 +136,7 @@ The empty-interface form is deliberate. It commits the namespace, names the part
 | ID | Decision | Rationale |
 |---|---|---|
 | D1 | Three-condition activation gate | Single-condition gates have historically led to premature integration of immature cryptographic primitives. Three independent conditions provide structural protection against wishful activation. |
-| D2 | Exact-arithmetic schemes only for the deterministic core | CKKS-family approximation introduces non-determinism that compounds over simulation ticks. Determinism is non-negotiable per [METHODOLOGY](./METHODOLOGY.md) §7.1. |
+| D2 | Exact-arithmetic schemes only for the deterministic core | CKKS-family approximation introduces non-determinism that compounds over simulation ticks. Determinism is non-negotiable per [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7.1. |
 | D3 | Structural boundary, not optional | Optional boundaries decay under performance pressure. Structural boundaries do not. Mirrors the isolation-guard discipline from [ISOLATION](./ISOLATION.md). |
 | D4 | Minimum operation set, not maximum | Specifying minimums prevents feature creep at integration time; specifying maximums would invite scope expansion. |
 | D5 | No silent plaintext fallback | Silent fallback is the standard failure mode of cryptographic integrations across the industry. Explicit prohibition is required. Read-only spectator state is the documented degradation mode. |
@@ -169,7 +169,7 @@ When this document is read at integration time, the following will likely be tru
 - Performance characteristics will differ from current expectations.
 - At least one decision in §D will feel inconvenient under the constraints of the chosen library.
 
-The third point is intentional. Inconvenient decisions in LOCKED specs are not bugs; they are the spec doing its job. If a decision feels inconvenient enough to warrant violation, the correct path is contract revision (v1.0 → v1.1) through the [METHODOLOGY](./METHODOLOGY.md) ratification process, not implicit non-compliance.
+The third point is intentional. Inconvenient decisions in LOCKED specs are not bugs; they are the spec doing its job. If a decision feels inconvenient enough to warrant violation, the correct path is contract revision (v1.0 → v1.1) through the [METHODOLOGY](/docs/methodology/METHODOLOGY.md) ratification process, not implicit non-compliance.
 
 The contract was written precisely because the technology did not exist at v1.0. Specifications written under the pressure of an existing implementation tend to legitimize that implementation's compromises. This contract is not subject to that pressure. Treat it accordingly.
 
@@ -187,5 +187,5 @@ Activation pending §D1 conditions. Dormant period is unbounded.
 
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — capability model (§3) and three-tier SemVer model (§8) referenced by §D6 and §D7.
 - [ISOLATION](./ISOLATION.md) — structural-boundary discipline referenced by §D3 and §D5.
-- [METHODOLOGY](./METHODOLOGY.md) — determinism invariant referenced by §D2; ratification process referenced by §6.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — determinism invariant referenced by §D2; ratification process referenced by §6.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — post-release ideas reservoir; this contract is referenced from there as the formal architectural commitment behind one of its entries.

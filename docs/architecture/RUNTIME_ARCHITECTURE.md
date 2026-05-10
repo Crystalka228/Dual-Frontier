@@ -7,7 +7,7 @@ nav_order: 26
 
 **Status:** AUTHORITATIVE LOCKED v1.0 — operational reference document. Every architectural decision in this document is final input to all subsequent migration milestones (M9.0–M9.8, see §2). Items marked **✓ LOCKED** reflect decisions taken during foundation deliberation; deviation in implementation requires reopening this document, not improvisation in code.
 
-**Companion documents:** [METHODOLOGY](./METHODOLOGY.md), [CODING_STANDARDS](./CODING_STANDARDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [ARCHITECTURE](./ARCHITECTURE.md), [THREADING](./THREADING.md), [VISUAL_ENGINE](./VISUAL_ENGINE.md), [GODOT_INTEGRATION](./GODOT_INTEGRATION.md), [ROADMAP](./ROADMAP.md).
+**Companion documents:** [METHODOLOGY](/docs/methodology/METHODOLOGY.md), [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [ARCHITECTURE](./ARCHITECTURE.md), [THREADING](./THREADING.md), [VISUAL_ENGINE](./VISUAL_ENGINE.md), [GODOT_INTEGRATION](./GODOT_INTEGRATION.md), [ROADMAP](./ROADMAP.md).
 
 **Scope:** Full architectural specification + milestone roadmap для path от Godot Presentation к pure Vulkan-based 2D runtime. The Domain layer ([ARCHITECTURE §Domain](./ARCHITECTURE.md), [ECS](./ECS.md), [EVENT_BUS](./EVENT_BUS.md), [ISOLATION](./ISOLATION.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) is preserved verbatim by this migration — see L10 in §0.
 
@@ -36,7 +36,7 @@ The specification does **not** govern:
 - Domain content — Domain is preserved verbatim, see [ARCHITECTURE](./ARCHITECTURE.md), [ECS](./ECS.md), [CONTRACTS](./CONTRACTS.md), [EVENT_BUS](./EVENT_BUS.md).
 - The mod system — covered by [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [MODDING](./MODDING.md), [MOD_PIPELINE](./MOD_PIPELINE.md). Runtime exposes presentation primitives only; mods cannot reach the runtime layer directly.
 - Game-design questions (balance, narrative, pacing).
-- Methodology of the development pipeline — covered by [METHODOLOGY](./METHODOLOGY.md), with M9.x adjustments noted in §7.
+- Methodology of the development pipeline — covered by [METHODOLOGY](/docs/methodology/METHODOLOGY.md), with M9.x adjustments noted in §7.
 
 **The "stop, escalate, lock" rule.** When implementation encounters a design question not answered here, the response is "stop, document in §4, wait for the human to lock" — not "guess." Same discipline as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) Preamble.
 
@@ -80,7 +80,7 @@ The following decisions are committed как architectural foundation. Departure
 
 **Implication of L7.** Project becomes Windows-only до явного cross-platform milestone. macOS/Linux support deferred indefinitely (или through SDL2 layer accepted as «pragmatic compromise» if needed). See §4 open decision «Cross-platform support».
 
-**Implication of L10.** All existing namespaces under `DualFrontier.Core`, `DualFrontier.Contracts`, `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Systems`, `DualFrontier.Application`, `DualFrontier.Modding`, `DualFrontier.Persistence` are untouched. The 472 existing tests pass throughout migration ([TESTING_STRATEGY](./TESTING_STRATEGY.md)). Mod system contracts ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) remain unchanged — runtime is not visible from a mod's `AssemblyLoadContext`.
+**Implication of L10.** All existing namespaces under `DualFrontier.Core`, `DualFrontier.Contracts`, `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Systems`, `DualFrontier.Application`, `DualFrontier.Modding`, `DualFrontier.Persistence` are untouched. The 472 existing tests pass throughout migration ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md)). Mod system contracts ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) remain unchanged — runtime is not visible from a mod's `AssemblyLoadContext`.
 
 ---
 
@@ -397,7 +397,7 @@ Runtime.cs (facade — top)
 
 **Rule 4.** No layer skipping (Diagnostic не imports Native.Vulkan directly; goes через Graphics).
 
-**Rule 5.** Runtime exposes minimal public API. Internal implementation details `internal`. Naming follows [CODING_STANDARDS](./CODING_STANDARDS.md).
+**Rule 5.** Runtime exposes minimal public API. Internal implementation details `internal`. Naming follows [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md).
 
 ### 1.5 Native interop patterns
 
@@ -477,7 +477,7 @@ sprite handle (used by Visuals)
 
 ### 1.8 Testing strategy
 
-The existing 472 tests are preserved verbatim — Domain layer is untouched (L10). [TESTING_STRATEGY](./TESTING_STRATEGY.md) governs the test pyramid; Runtime additions slot in as new unit-test categories without altering the pyramid shape.
+The existing 472 tests are preserved verbatim — Domain layer is untouched (L10). [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) governs the test pyramid; Runtime additions slot in as new unit-test categories without altering the pyramid shape.
 
 **New tests in `DualFrontier.Runtime.Tests`** (non-GPU, JIT-runnable):
 
@@ -486,13 +486,13 @@ The existing 472 tests are preserved verbatim — Domain layer is untouched (L10
 - `Camera2D` math tests (~10): orthographic projection, screen ↔ world conversion.
 - `InputEventQueue` tests (~5): cross-thread enqueue/dequeue semantics.
 
-**GPU-dependent tests:** F5 manual visual verification per established M8.8/M8.9 protocol. Validation layer output captured к console — clean output is success criterion. The protocol mirrors the [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) red-flag checklist for visual changes.
+**GPU-dependent tests:** F5 manual visual verification per established M8.8/M8.9 protocol. Validation layer output captured к console — clean output is success criterion. The protocol mirrors the [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) red-flag checklist for visual changes.
 
 **Goal post-M9.8:** ~520 total tests (472 + new).
 
 ### 1.9 Naming conventions
 
-Continued from [CODING_STANDARDS](./CODING_STANDARDS.md):
+Continued from [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md):
 
 - All identifiers English (Russian glossary unchanged — see [TRANSLATION_GLOSSARY](./TRANSLATION_GLOSSARY.md)).
 - Vulkan struct types: keep canonical `VkInstanceCreateInfo` naming (matches Vulkan spec).
@@ -595,7 +595,7 @@ The milestones extend [ROADMAP](./ROADMAP.md). The numeric range M9.0–M9.8 is 
 
 **Deliverables:** Rewrite Presentation layer к target Runtime API. `PawnVisual` / `ItemVisual` / `TileMapVisual` на sprite handles. `RenderCommandDispatcher` retargeted (existing pattern from [GODOT_INTEGRATION](./GODOT_INTEGRATION.md)).
 
-**Success criteria:** 50 pawns + 255 items + terrain. 60+ FPS. 472 domain tests passing ([TESTING_STRATEGY](./TESTING_STRATEGY.md) gate).
+**Success criteria:** 50 pawns + 255 items + terrain. 60+ FPS. 472 domain tests passing ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) gate).
 
 **Time:** 6–8 hours. **LOC:** ~800–1200 (rewrite).
 
@@ -672,12 +672,12 @@ The «stop, escalate, lock» rule applies; opening any item below requires a bri
 **R2 — Vulkan complexity bugs (synchronization, layout transitions).**
 
 - Probability: High.
-- Mitigation: validation layers ALWAYS on в development. RenderDoc для visual debugging. Validation-clean output added to the [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) checklist.
+- Mitigation: validation layers ALWAYS on в development. RenderDoc для visual debugging. Validation-clean output added to the [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) checklist.
 
 **R3 — PNG decoder edge cases.**
 
 - Probability: Medium.
-- Mitigation: extensive test suite с synthetic + real PNG inputs ([TESTING_STRATEGY](./TESTING_STRATEGY.md) §unit).
+- Mitigation: extensive test suite с synthetic + real PNG inputs ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) §unit).
 
 **R4 — Bitmap font tooling bottleneck.**
 
@@ -715,13 +715,13 @@ The scaffolding generator `tools/scaffold-runtime.ps1` is committed and idempote
 
 ## 7. Methodology adjustments для M9.x
 
-The existing methodology ([METHODOLOGY](./METHODOLOGY.md)) carries forward с the following adjustments. None of these adjustments alter the four-agent pipeline shape; they extend its pre-flight + verification stages для the Vulkan-specific failure modes.
+The existing methodology ([METHODOLOGY](/docs/methodology/METHODOLOGY.md)) carries forward с the following adjustments. None of these adjustments alter the four-agent pipeline shape; they extend its pre-flight + verification stages для the Vulkan-specific failure modes.
 
 **Pre-flight checks adapted:**
 
 - Write-conflict table — applies к Domain commits, не Runtime.
 - Project reference direction sanity check — extended: Runtime may not reference Domain (§1.4 Rule 1).
-- New: **Validation layer output check** — clean validation output mandatory before commit. Added to [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) checklist.
+- New: **Validation layer output check** — clean validation output mandatory before commit. Added to [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) checklist.
 
 **Brief structure:**
 
@@ -749,16 +749,16 @@ This document is **v1.0**, authoritative until amended via explicit decision. Am
 
 ## See also
 
-- [METHODOLOGY](./METHODOLOGY.md) — the development pipeline; the M9.x adjustments in §7 keep this architecture inside the same methodology.
-- [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order; Runtime adheres verbatim.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the development pipeline; the M9.x adjustments in §7 keep this architecture inside the same methodology.
+- [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order; Runtime adheres verbatim.
 - [ARCHITECTURE](./ARCHITECTURE.md) — the four layers; Runtime extends the Presentation layer без touching the others.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — companion architectural authority for the modding subsystem; version-history protocol and «stop, escalate, lock» rule follow that document.
 - [THREADING](./THREADING.md) — domain `ParallelSystemScheduler`; the Window+Render thread merge in §1.3 is the only addition.
 - [VISUAL_ENGINE](./VISUAL_ENGINE.md) — current dual-backend (Godot DevKit + Silk.NET Native); superseded for production by this document at M9.8.
 - [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) — current `PresentationBridge` and Godot-specific glue; deprecated at M9.8.
 - [ROADMAP](./ROADMAP.md) — phase ordering; §2 of this document is the authoritative sequence for the runtime work.
-- [TESTING_STRATEGY](./TESTING_STRATEGY.md) — test pyramid; §1.8 slots Runtime tests into the existing structure.
-- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — pre-commit checklist; §7 adds the validation-layer-clean check.
+- [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — test pyramid; §1.8 slots Runtime tests into the existing structure.
+- [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) — pre-commit checklist; §7 adds the validation-layer-clean check.
 - [PERFORMANCE](./PERFORMANCE.md) — target metrics; sprite/tile budgets adopted in M9.2 / M9.3.
 - [GPU_COMPUTE](./GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute (Domain A) + entity-keyed bulk compute (Domain B). The G-series builds on the same `VkInstance`/`VkDevice`/`vulkan-1.dll` linkage M9.x establishes for rendering; SPIR-V toolchain reused per §1.7.
 

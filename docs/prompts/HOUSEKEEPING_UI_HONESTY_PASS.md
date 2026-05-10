@@ -205,7 +205,7 @@ Edits to `docs/ROADMAP.md`:
 2. `src/DualFrontier.Presentation/UI/PawnDetail.cs` — full file (the modify target).
 3. `src/DualFrontier.Systems/Pawn/PawnStateReporterSystem.cs` — full file (the modify target).
 4. `docs/ROADMAP.md` — locate Backlog section established by housekeeping commit `3d800d2`. New subsections will replace the flat list with categorized Phase 5 entries.
-5. `docs/METHODOLOGY.md` — §7.3 three-commit invariant (deletion commits count as their own atomic step).
+5. `docs/methodology/METHODOLOGY.md` — §7.3 three-commit invariant (deletion commits count as their own atomic step).
 6. The 8 files slated for deletion (verify each is truly unused before deletion, especially via `grep -r` for any stray reference):
    - `src/DualFrontier.Presentation/UI/BuildMenu.cs`
    - `src/DualFrontier.Presentation/UI/AlertPanel.cs`

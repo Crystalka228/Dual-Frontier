@@ -2,7 +2,7 @@
 
 **Purpose**: Brief skeletons и full briefs для milestone execution.
 
-**Reference**: `docs/METHODOLOGY.md`, `docs/architecture/KERNEL_ARCHITECTURE.md`, `docs/architecture/RUNTIME_ARCHITECTURE.md`
+**Reference**: `docs/methodology/METHODOLOGY.md`, `docs/architecture/KERNEL_ARCHITECTURE.md`, `docs/architecture/RUNTIME_ARCHITECTURE.md`
 
 **Convention**:
 - `K{N}_TITLE_BRIEF.md` — kernel milestone brief

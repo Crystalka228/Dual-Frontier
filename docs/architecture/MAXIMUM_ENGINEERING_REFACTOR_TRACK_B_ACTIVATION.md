@@ -8,7 +8,7 @@ nav_order: 111
 **Version**: 0.1
 **Date**: 2026-05-09
 **Status**: RATIFIED v0.1 — activation brief authored ahead of activation per `MAXIMUM_ENGINEERING_REFACTOR.md` v1.0 §5.3. Activation gated on K-series closure per §3. Brief stands as the canonical specification of the M-phase scope; the M-phase itself opens at the activation trigger.
-**Companion documents**: [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) (parent v1.0; this brief realises §3 Track B), [ARCHITECTURE_TYPE_SYSTEM](./ARCHITECTURE_TYPE_SYSTEM.md) (v0.1 LOCKED specification of the analyzer family this brief activates), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) (K-series progression that determines activation timing), [METHODOLOGY](./METHODOLOGY.md) (§2.4 atomicity rule applied to repair-pass closure), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) (v1.2 §11.1 M3.4 closed by §4.3 of this brief).
+**Companion documents**: [MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) (parent v1.0; this brief realises §3 Track B), [ARCHITECTURE_TYPE_SYSTEM](./ARCHITECTURE_TYPE_SYSTEM.md) (v0.1 LOCKED specification of the analyzer family this brief activates), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) (K-series progression that determines activation timing), [METHODOLOGY](/docs/methodology/METHODOLOGY.md) (§2.4 atomicity rule applied to repair-pass closure), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) (v1.2 §11.1 M3.4 closed by §4.3 of this brief).
 **Scope**: Activation specification for Track B of the Maximum Engineering Refactor. Defines the activation trigger, the M-phase shape, the deliverables, the acceptance criteria for the composite pilot (`SystemAccessCompletenessAnalyzer` + `ModCapabilitiesHonestyAnalyzer`) and the structured repair-pass that follows. Does **not** redefine the analyzer family — the family is specified in `ARCHITECTURE_TYPE_SYSTEM.md` v0.1 and consumed here.
 
 **Version history:**
@@ -317,7 +317,7 @@ When repair-pass closure is approved and Track B closes, this brief's status mov
 ## 11. Ratification
 
 Ratified at v0.1 on 2026-05-09 under the same discipline as
-[MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) v1.0 and
+[MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) v1.0 and
 [ARCHITECTURE_TYPE_SYSTEM](./ARCHITECTURE_TYPE_SYSTEM.md) v0.1 (same date,
 companion ratification).
 
@@ -341,10 +341,10 @@ These integrations are non-blocking; they land at natural touch-points of each d
 
 ## See also
 
-- [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) — parent v1.0; this brief realises §3 Track B per §5.3 of the parent.
+- [MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) — parent v1.0; this brief realises §3 Track B per §5.3 of the parent.
 - [ARCHITECTURE_TYPE_SYSTEM](./ARCHITECTURE_TYPE_SYSTEM.md) — v0.1 LOCKED family specification; this brief is its activation companion.
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — K-series progression; K9 closure is this brief's activation trigger (§1).
 - [PERFORMANCE_REPORT_K7](./PERFORMANCE_REPORT_K7.md) — K7 closure note dated 2026-05-09; establishes K-series progression at this brief's ratification time.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — v1.2 §11.1 M3.4 closed by integration per §4.3 / `TBA-D-6`.
-- [METHODOLOGY](./METHODOLOGY.md) — §2.4 atomicity rule applied to repair-pass closure (§6.5); standard pipeline conventions for the activation M-phase (§3.2).
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomicity rule applied to repair-pass closure (§6.5); standard pipeline conventions for the activation M-phase (§3.2).
 - [ROADMAP](./ROADMAP.md) — Backlog entry for Track B updated per "Pending integrations" above.

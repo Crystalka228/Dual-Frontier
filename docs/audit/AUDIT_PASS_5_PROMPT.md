@@ -84,7 +84,7 @@ nav_order: 109
 | Pass 4 artifact | `docs/audit/AUDIT_PASS_4_CROSSDOC_TRANSLATION.md` |
 | Spec | `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.5 LOCKED |
 | ROADMAP | `docs/ROADMAP.md` |
-| Methodology | `docs/METHODOLOGY.md` (для context'а evaluation) |
+| Methodology | `docs/methodology/METHODOLOGY.md` (для context'а evaluation) |
 | Campaign plan | `docs/audit/AUDIT_CAMPAIGN_PLAN.md` v1.0 LOCKED |
 | Tools | `Filesystem` MCP tools only |
 

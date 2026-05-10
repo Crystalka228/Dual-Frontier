@@ -2,17 +2,17 @@
 
 ## Контекст
 
-M7.3 closed (commits `9bed1a4`, `46b4f33`, `1d43858`). 369/369 tests passing. Working tree clean. Implementation surfaced an empirical engineering finding worth персистить в `docs/CODING_STANDARDS.md` отдельным docs commit перед M7.4 — display-class hoisting от lambdas hoist'ит captured args в compiler-synthesized `<>c__DisplayClass`, allocated в caller scope. Этот display class остаётся strongly rooted из caller's stack frame на ВЕСЬ scope метода, что ломает любой downstream code path который зависит на отсутствии strong refs (ALC release, finalizer-based cleanup, weak-reference-based cache eviction).
+M7.3 closed (commits `9bed1a4`, `46b4f33`, `1d43858`). 369/369 tests passing. Working tree clean. Implementation surfaced an empirical engineering finding worth персистить в `docs/methodology/CODING_STANDARDS.md` отдельным docs commit перед M7.4 — display-class hoisting от lambdas hoist'ит captured args в compiler-synthesized `<>c__DisplayClass`, allocated в caller scope. Этот display class остаётся strongly rooted из caller's stack frame на ВЕСЬ scope метода, что ломает любой downstream code path который зависит на отсутствии strong refs (ALC release, finalizer-based cleanup, weak-reference-based cache eviction).
 
 Сценарий не tied к §9.5 step 7 specifically — это general runtime discipline для любого code path который должен дать GC release некий resource. AD #3 в M7.3 brief формулировал «non-inlined helpers + WR-only signature for spin», но empirical finding показал scope broader: то же дисциплина применяется к **closure-display-class hoisting**, не только к explicit locals или lambda spin signatures.
 
 ## Задача
 
-Single docs commit. Modifies `docs/CODING_STANDARDS.md` only. Adds new section persisting M7.3's empirical lesson так чтобы M8+/M10 implementations не наступили на те же грабли независимо.
+Single docs commit. Modifies `docs/methodology/CODING_STANDARDS.md` only. Adds new section persisting M7.3's empirical lesson так чтобы M8+/M10 implementations не наступили на те же грабли независимо.
 
 ## Required reading
 
-1. `docs/CODING_STANDARDS.md` — full document. Особое внимание: existing structure (PascalCase / file-scoped namespaces / Nullable / English comments / one class per file / member order / Additional rules / See also). Tone — sober, prescriptive, motivation-first, code snippets BAD vs CORRECT.
+1. `docs/methodology/CODING_STANDARDS.md` — full document. Особое внимание: existing structure (PascalCase / file-scoped namespaces / Nullable / English comments / one class per file / member order / Additional rules / See also). Tone — sober, prescriptive, motivation-first, code snippets BAD vs CORRECT.
 2. `docs/ROADMAP.md` — M7.3 sub-phase closure entry в M7 section. **Это authoritative source для empirical narrative**: full account of `RunUnloadSteps1Through6AndCaptureAlc` extraction rationale, `SnapshotActiveModIds` extraction rationale, why both helpers are non-inlined, why DEBUG-build retention specifically. Не выдумывать additional context — rule of thumb в новой секции paraphrases этот paragraph.
 3. `src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs` — реальная implementation reference: `RunUnloadSteps1Through6AndCaptureAlc`, `SnapshotActiveModIds`, `CaptureAlcWeakReference`, `TryStep7AlcVerification`. The XML docs of these helpers carry the finding inline — readable for code-comment style reference if the new CODING_STANDARDS section needs cross-link wording.
 

@@ -207,7 +207,7 @@ Files that the first repository visitor sees.
 
 ### Phase 2: Methodology (2–3 days)
 
-`docs/METHODOLOGY.md` — the longest and most methodologically important document. The single document that external researchers / readers of a hypothetical project post will definitely read.
+`docs/methodology/METHODOLOGY.md` — the longest and most methodologically important document. The single document that external researchers / readers of a hypothetical project post will definitely read.
 
 **Exit criterion:** METHODOLOGY translated; every internal link (to ARCHITECTURE, CONTRACTS, ISOLATION) points to an English placeholder with a TODO marker. The §-numbering structure is preserved.
 
@@ -318,6 +318,6 @@ This makes it possible later to run `git log --grep "i18n"` and get a clean hist
 ## 7. See also
 
 - [TRANSLATION_GLOSSARY.md](./TRANSLATION_GLOSSARY.md) — glossary and lock-decisions.
-- [METHODOLOGY.md](./METHODOLOGY.md) — project methodology; documentation translation can be seen as its applied use case.
-- [CODING_STANDARDS.md](./CODING_STANDARDS.md) — commit-prefix and naming rules.
-- [DEVELOPMENT_HYGIENE.md](./DEVELOPMENT_HYGIENE.md) — PR checklist; for an i18n PR it is worth adding a "cyrillic check: grep returned empty" item.
+- [METHODOLOGY.md](/docs/methodology/METHODOLOGY.md) — project methodology; documentation translation can be seen as its applied use case.
+- [CODING_STANDARDS.md](/docs/methodology/CODING_STANDARDS.md) — commit-prefix and naming rules.
+- [DEVELOPMENT_HYGIENE.md](/docs/methodology/DEVELOPMENT_HYGIENE.md) — PR checklist; for an i18n PR it is worth adding a "cyrillic check: grep returned empty" item.

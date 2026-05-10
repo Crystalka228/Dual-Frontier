@@ -167,7 +167,7 @@ Source: `.git/logs/HEAD`, filtered for `commit:` event-type lines (checkout and 
 | `docs/README.md` | nav | active | 5,834 |
 | `docs/architecture/MOD_OS_ARCHITECTURE.md` | spec | LOCKED v1.4 (line 8) | 65,037 |
 | `docs/ROADMAP.md` | active roadmap | active (M7.3 closed; M7.4–M7.5 pending per status overview line 11) | 52,535 |
-| `docs/METHODOLOGY.md` | methodology | active v1.0 (line 6 says "Version: 1.0 (2026-04-25)") | 33,275 |
+| `docs/methodology/METHODOLOGY.md` | methodology | active v1.0 (line 6 says "Version: 1.0 (2026-04-25)") | 33,275 |
 | `docs/architecture/ARCHITECTURE.md` | architecture | active v0.3 (line 7 changelog `v0.3 (2026-04)`) | 11,712 |
 | `docs/architecture/CONTRACTS.md` | architecture | active | 5,933 |
 | `docs/architecture/ECS.md` | architecture | active | 7,493 |
@@ -176,11 +176,11 @@ Source: `.git/logs/HEAD`, filtered for `commit:` event-type lines (checkout and 
 | `docs/architecture/ISOLATION.md` | architecture | active | 8,952 |
 | `docs/architecture/MODDING.md` | architecture/dev | active | 12,695 |
 | `docs/architecture/MOD_PIPELINE.md` | architecture/dev | active v0.2 (line 4 says `Architecture version: v0.2  \|  Implementation phase: 2`) | 13,394 |
-| `docs/CODING_STANDARDS.md` | development | active | 6,319 |
-| `docs/DEVELOPMENT_HYGIENE.md` | development | active | 9,966 |
-| `docs/TESTING_STRATEGY.md` | development | active | 6,347 |
+| `docs/methodology/CODING_STANDARDS.md` | development | active | 6,319 |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md` | development | active | 9,966 |
+| `docs/methodology/TESTING_STRATEGY.md` | development | active | 6,347 |
 | `docs/architecture/PERFORMANCE.md` | development | active | 7,266 |
-| `docs/PIPELINE_METRICS.md` | methodology empirics | active v0.1 (line 13 says "Status: v0.1 (2026-04-28)") | 10,568 |
+| `docs/methodology/PIPELINE_METRICS.md` | methodology empirics | active v0.1 (line 13 says "Status: v0.1 (2026-04-28)") | 10,568 |
 | `docs/architecture/GPU_COMPUTE.md` | research deferred | active (deferred decision) | 2,990 |
 | `docs/NATIVE_CORE_EXPERIMENT.md` | research / experiment | "Experiment — awaiting benchmark results" (line 13) | 18,914 |
 | `docs/architecture/VISUAL_ENGINE.md` | architecture | active | 5,932 |

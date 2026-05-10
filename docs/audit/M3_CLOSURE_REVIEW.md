@@ -386,6 +386,6 @@ M3 closes cleanly. M4 (Shared ALC) is unblocked.
   specification this review verifies.
 - [ROADMAP](./ROADMAP.md) — M3 closure status, M3.4 deferral, M4
   pre-conditions.
-- [METHODOLOGY](./METHODOLOGY.md) — §2.4 atomic phase review, §7.3
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomic phase review, §7.3
   process discipline; the verification cycle this report instantiates.
 - [PASS_4_REPORT](./PASS_4_REPORT.md) — closure-report format model.

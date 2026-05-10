@@ -457,7 +457,7 @@ exercises §9 lifecycle + §10.4 WeakReference unload) discovers ≤ 1.
 The hypothesis fails if M6 or M7 produce spec-amendment counts ≥ 2.
 
 The observation belongs in a future `PIPELINE_METRICS.md` entry
-(`docs/PIPELINE_METRICS.md` already exists per `docs/README.md:42` —
+(`docs/methodology/PIPELINE_METRICS.md` already exists per `docs/README.md:42` —
 M-phase contradiction-discovery rate would slot into the empirical
 metrics section). This review records the third datapoint as audit
 trail; the metrics-section update is out of scope for a closure
@@ -511,7 +511,7 @@ M5 closes cleanly. M6 (Bridge replacement via `replaces`) is unblocked.
   state; M5 exercised §8 without surfacing any latent contradiction.
 - [ROADMAP](./ROADMAP.md) — M5 closure status, M5.1/M5.2 sub-phase
   detail, cascade-failure semantics block, M6 pre-conditions.
-- [METHODOLOGY](./METHODOLOGY.md) — §2.4 atomic phase review, §7.3
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomic phase review, §7.3
   process discipline; the verification cycle this report instantiates.
 - [M3_CLOSURE_REVIEW](./M3_CLOSURE_REVIEW.md) — closure-report format
   origin (eight-check structure).

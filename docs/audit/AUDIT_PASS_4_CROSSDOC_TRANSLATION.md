@@ -58,7 +58,7 @@ escalation NOT triggered.
 
 | Spec see-also entry | Path | Exists? | Verdict |
 |---|---|---|---|
-| METHODOLOGY | `docs/METHODOLOGY.md` | yes | ✓ |
+| METHODOLOGY | `docs/methodology/METHODOLOGY.md` | yes | ✓ |
 | ARCHITECTURE | `docs/architecture/ARCHITECTURE.md` | yes | ✓ |
 | MODDING | `docs/architecture/MODDING.md` | yes | ✓ |
 | MOD_PIPELINE | `docs/architecture/MOD_PIPELINE.md` | yes | ✓ |
@@ -407,8 +407,8 @@ Each `[link](path)` verified:
 | `docs/architecture/ARCHITECTURE.md` | ✓ |
 | `docs/architecture/MOD_OS_ARCHITECTURE.md` | ✓ |
 | `./docs/NORMALIZATION_REPORT.md` | ✓ |
-| `./docs/PIPELINE_METRICS.md` (and three section anchors `#1-pipeline-configuration`, `#3-subscription-headroom`, `#5-reproducibility-requirements`) | ✓ (file exists; PIPELINE_METRICS.md per Pass 1 §4 contains §1, §3, §5 sections — anchor refs presumed valid pending future deep verification, out of scope here) |
-| `./docs/METHODOLOGY.md` (and section anchor `#6`) | ✓ |
+| `docs/methodology/PIPELINE_METRICS.md` (and three section anchors `#1-pipeline-configuration`, `#3-subscription-headroom`, `#5-reproducibility-requirements`) | ✓ (file exists; PIPELINE_METRICS.md per Pass 1 §4 contains §1, §3, §5 sections — anchor refs presumed valid pending future deep verification, out of scope here) |
+| `docs/methodology/METHODOLOGY.md` (and section anchor `#6`) | ✓ |
 | `./docs/NATIVE_CORE_EXPERIMENT.md` | ✓ |
 | `./docs/README.md` | ✓ |
 | `./LICENSE` | ✓ |
@@ -420,7 +420,7 @@ Frontmatter `nav_order:` collected via Grep across `docs/**/*.md` (line-3 frontm
 | nav_order | Path |
 |---|---|
 | 25 | `docs/architecture/MOD_OS_ARCHITECTURE.md` |
-| 27 | `docs/PIPELINE_METRICS.md` |
+| 27 | `docs/methodology/PIPELINE_METRICS.md` |
 | 95 | `docs/audit/M3_CLOSURE_REVIEW.md` |
 | 96 | `docs/audit/M4_CLOSURE_REVIEW.md` and `docs/audit/PASS_4_REPORT.md` |
 | 97 | `docs/audit/M5_CLOSURE_REVIEW.md` |

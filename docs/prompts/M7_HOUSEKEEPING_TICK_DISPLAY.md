@@ -42,8 +42,8 @@ This housekeeping session: **TICK display fix only.** Document remaining Phase 3
 
 1. `docs/architecture/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 — not directly relevant to this housekeeping fix; bug is in presentation layer, not modding spec. Read only if any §-anchored question surfaces during execution.
 2. `docs/ROADMAP.md` — locate the M7 sub-phase status block. The new "Backlog" section will sit after the M-phase status block and before any closure-review citations. Examine the document structure for where best to insert.
-3. `docs/METHODOLOGY.md` — §2.4 atomic phase review, §7.3 three-commit invariant.
-4. `docs/CODING_STANDARDS.md` — full document. Especially: one class per file, English-only comments, member order, `_camelCase` private fields.
+3. `docs/methodology/METHODOLOGY.md` — §2.4 atomic phase review, §7.3 three-commit invariant.
+4. `docs/methodology/CODING_STANDARDS.md` — full document. Especially: one class per file, English-only comments, member order, `_camelCase` private fields.
 5. Code (full files):
    - `src/DualFrontier.Application/Bridge/Commands/PawnStateCommand.cs` — pattern reference for the new `TickAdvancedCommand` record (sealed record, `IRenderCommand` interface, `Execute(object)` placeholder).
    - `src/DualFrontier.Application/Bridge/IRenderCommand.cs` — interface to confirm shape.

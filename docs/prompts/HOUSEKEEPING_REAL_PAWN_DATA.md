@@ -96,8 +96,8 @@ Comprehensive audit captured in `docs/audit/UI_REVIEW_PRE_M75B2.md` (created 202
 8. **Pathfinding** (head only): `src/DualFrontier.AI/Pathfinding/NavGrid.cs` — to confirm `IsPassable(x, y)` API or equivalent. If method differs, adapt to existing API; do NOT modify NavGrid.
 9. **Existing tests** (head only): `tests/DualFrontier.Modding.Tests/Bootstrap/GameBootstrapIntegrationTests.cs` — confirm none assert pawn count == 3 or specific names. If any do, update them as part of this commit pass to expect count == 10 or assert presence of Name without specific value.
 10. **Save system** (head only): `src/DualFrontier.Application/Save/SaveSystem.cs` — confirm it does not hardcode pawn count or component layout. If it does and would break, STOP.
-11. **CODING_STANDARDS** (full): `docs/CODING_STANDARDS.md` — one class per file, English-only comments, `_camelCase` private fields, member order.
-12. **METHODOLOGY** (relevant sections): `docs/METHODOLOGY.md` §2.4, §7.3.
+11. **CODING_STANDARDS** (full): `docs/methodology/CODING_STANDARDS.md` — one class per file, English-only comments, `_camelCase` private fields, member order.
+12. **METHODOLOGY** (relevant sections): `docs/methodology/METHODOLOGY.md` §2.4, §7.3.
 13. **ROADMAP**: `docs/ROADMAP.md` — locate Backlog section.
 
 Pre-flight grep checks before starting commit 2 (deletion):

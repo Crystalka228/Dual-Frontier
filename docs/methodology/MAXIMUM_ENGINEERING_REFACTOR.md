@@ -300,7 +300,7 @@ Replications outside bounds are not failures but **data points** for refining th
 docs/REPLICATION_PROTOCOL.md        (v1.0 LOCKED)
 replication-kit/                    (new top-level directory)
   └── (contents per §4.3)
-docs/PIPELINE_METRICS.md            (updated with §6 replication results, when available)
+docs/methodology/PIPELINE_METRICS.md            (updated with §6 replication results, when available)
 ```
 
 ### 4.7 Acceptance criteria

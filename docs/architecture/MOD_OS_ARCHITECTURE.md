@@ -62,7 +62,7 @@ The specification does **not** govern:
 - Specific gameplay content (weapons, recipes, biomes) — these are decided by the mod author within the architecture.
 - Game-design questions (balance, narrative, pacing).
 - Performance budgets for individual systems — covered by [PERFORMANCE](./PERFORMANCE.md).
-- Methodology of the development pipeline — covered by [METHODOLOGY](./METHODOLOGY.md).
+- Methodology of the development pipeline — covered by [METHODOLOGY](/docs/methodology/METHODOLOGY.md).
 
 **Strategic locked decisions.** Five top-level decisions taken during Phase 0; the seven detail decisions (D-1 through D-7) are listed in §12:
 
@@ -956,7 +956,7 @@ These are explicitly out of scope and documented:
 - **Mod calls `Process.Kill(0)` or `Environment.Exit(1)`.** The .NET runtime gives mods full process access. We do not sandbox via AppDomain (deprecated in .NET 8) or process isolation (would break the in-process performance assumptions).
 - **Mod opens network sockets, reads arbitrary files, executes shell commands.** Same reason.
 - **Mod consumes unbounded memory or CPU.** Performance budgets are advisory, not enforced.
-- **Mod mutates `IComponent` instances obtained via `GetComponent` after the call returns.** Component records are returned by reference for performance. A mod ignoring the [CODING_STANDARDS](./CODING_STANDARDS.md) immutability convention can corrupt state. This is caught at code review, not at runtime.
+- **Mod mutates `IComponent` instances obtained via `GetComponent` after the call returns.** Component records are returned by reference for performance. A mod ignoring the [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) immutability convention can corrupt state. This is caught at code review, not at runtime.
 - **Mod uses reflection to access internal types.** A mod that calls `Type.GetType("DualFrontier.Core.ECS.World")` and casts to it bypasses the contract surface. The `ALC.Resolving` event refuses to load `DualFrontier.Core` into the mod's context, but a determined mod can still find loaded instances via static lookups in shared types. This is the cost of in-process execution.
 
 ### 10.3 The contract: best-effort structural isolation
@@ -1133,7 +1133,7 @@ These items were unresolved in v0.1 and were locked during Phase 0 closure (v1.0
 
 ## See also
 
-- [METHODOLOGY](./METHODOLOGY.md) — the development pipeline; this architecture is the artifact of the same methodology applied to the engine's modding layer.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the development pipeline; this architecture is the artifact of the same methodology applied to the engine's modding layer.
 - [ARCHITECTURE](./ARCHITECTURE.md) — the four layers; mods live above Domain through `IModApi`.
 - [MODDING](./MODDING.md) — the existing v1 mod-author guide; this document specifies v2.
 - [MOD_PIPELINE](./MOD_PIPELINE.md) — the existing pipeline implementation; M2–M7 extend it.

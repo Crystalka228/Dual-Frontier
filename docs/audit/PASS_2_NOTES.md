@@ -30,9 +30,9 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 | File | Line (RU) | Context |
 |---|---|---|
 | `README.md` | 20 | Agent role table, fourth row: «Человек / Владелец смысла / — / Выбор контрактов, архитектурные решения, формулировка целей фаз» |
-| `docs/METHODOLOGY.md` | 13 | §0 abstract: «человек как владелец смысла» (in the four-agent role list) |
-| `docs/METHODOLOGY.md` | 43 | §2.1 role distribution: «**Человек.** Владелец смысла.» |
-| `docs/METHODOLOGY.md` (link description in `README.md`) | — | The README's METHODOLOGY bullet was rephrased to "the human as direction owner" using the same fallback. |
+| `docs/methodology/METHODOLOGY.md` | 13 | §0 abstract: «человек как владелец смысла» (in the four-agent role list) |
+| `docs/methodology/METHODOLOGY.md` | 43 | §2.1 role distribution: «**Человек.** Владелец смысла.» |
+| `docs/methodology/METHODOLOGY.md` (link description in `README.md`) | — | The README's METHODOLOGY bullet was rephrased to "the human as direction owner" using the same fallback. |
 
 (Further occurrences in lore docs and any remaining methodology cross-links will be appended as Pass 2 reaches them.)
 
@@ -48,7 +48,7 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 |---|---|---|
 | `README.md` | 3 | Project tagline: «обусловленными биологией рас, а не идеологическим выбором игрока» |
 
-(Additional occurrences in `docs/METHODOLOGY.md` and lore docs will be appended as Pass 2 reaches them.)
+(Additional occurrences in `docs/methodology/METHODOLOGY.md` and lore docs will be appended as Pass 2 reaches them.)
 
 ---
 
@@ -84,7 +84,7 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 
 ## 4. Anchor-link coordination
 
-`docs/DEVELOPMENT_HYGIENE.md` has three cross-doc anchor links that GitHub auto-derives from heading text. To keep them resolvable after translation, the target docs MUST use exactly these English headings:
+`docs/methodology/DEVELOPMENT_HYGIENE.md` has three cross-doc anchor links that GitHub auto-derives from heading text. To keep them resolvable after translation, the target docs MUST use exactly these English headings:
 
 ### 4.1 ARCHITECTURE.md anchor — retargeted
 
@@ -96,7 +96,7 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
 ### 4.2 CODING_STANDARDS.md anchor — section missing in source
 
 - **Predicted heading in translated CODING_STANDARDS.md:** `## Commit messages` → anchor `#commit-messages`.
-- **Issue discovered during Pass 2:** the Russian source `docs/CODING_STANDARDS.md` does not actually contain a `«Сообщения коммитов»` section. The DEVELOPMENT_HYGIENE.md links to a section that was never written. The anchor will remain broken in both Russian and English versions until someone adds the section.
+- **Issue discovered during Pass 2:** the Russian source `docs/methodology/CODING_STANDARDS.md` does not actually contain a `«Сообщения коммитов»` section. The DEVELOPMENT_HYGIENE.md links to a section that was never written. The anchor will remain broken in both Russian and English versions until someone adds the section.
 - **Pass 2 action:** preserved the predicted English anchor `#commit-messages` in DEVELOPMENT_HYGIENE.md, anticipating that the missing section will eventually be added with that exact heading.
 - **Suggested follow-up (out of scope for Pass 2):** add a `## Commit messages` section to CODING_STANDARDS.md that documents the commit-prefix taxonomy already enumerated in DEVELOPMENT_HYGIENE.md §"Quick reference — commit scope prefixes".
 
@@ -139,7 +139,7 @@ This file is the audit trail for Pass 2 (documentation translation). It captures
   - `docs/NORMALIZATION_REPORT.md` (Pass 1 output, quotes Russian source terms).
   - `docs/TRANSLATION_PLAN.md` (this document quotes the original Russian diagnostic strings and the §3 lock-decision Russian terms — intentional reference material).
   - `docs/PASS_2_NOTES.md` (this file's audit-trail entries quote the Russian source).
-  - `docs/CODING_STANDARDS.md` (the "Russian-language domain comments" section preserves the policy example with Russian-comment C# code; the policy as stated will outlive Pass 2 and is revisited during Pass 3 code-comment translation).
+  - `docs/methodology/CODING_STANDARDS.md` (the "Russian-language domain comments" section preserves the policy example with Russian-comment C# code; the policy as stated will outlive Pass 2 and is revisited during Pass 3 code-comment translation).
   - `assets/scenes/README.md` — out of Pass 2 scope (see §5).
 
 - [x] §1 escalations recorded for the human. `direction owner` and `species biology` are the Pass 2 fallback choices; every occurrence is logged. Once the human picks the final form, a single search-and-replace closes the audit.

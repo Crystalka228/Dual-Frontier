@@ -1,6 +1,6 @@
 # tests/
 
-xUnit + FluentAssertions. See [docs/TESTING_STRATEGY.md](../docs/TESTING_STRATEGY.md).
+xUnit + FluentAssertions. See [docs/methodology/TESTING_STRATEGY.md](/docs/methodology/TESTING_STRATEGY.md).
 
 ## Contents
 

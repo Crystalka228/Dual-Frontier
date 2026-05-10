@@ -350,7 +350,7 @@ If the indulgence stops being joyful, the document should be archived without ce
 
 Ratified at v0.1 on 2026-05-09 under the same discipline as
 [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) and
-[MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md).
+[MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md).
 
 The document joins the LOCKED corpus on equal standing with other research-tier
 specifications. The activation M-phase brief is authored separately as
@@ -372,13 +372,13 @@ These integrations land at the natural next non-semantic correction of each docu
 
 ## See also
 
-- [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) — parent v1.0 specification; this document realises Track B per §3, with composite-pilot supersession of §3.3 documented at `TS-D-2`.
+- [MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) — parent v1.0 specification; this document realises Track B per §3, with composite-pilot supersession of §3.3 documented at `TS-D-2`.
 - [MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION](./MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md) — activation brief; specifies the M-phase that builds the composite pilot.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — `[ModCapabilities]` runtime guard; v1.2 §11.1 M3.4 superseded per `TS-D-2` and §4.3.
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — K-series migration that determines activation timing (`TS-D-6`).
 - [PERFORMANCE_REPORT_K7](./PERFORMANCE_REPORT_K7.md) — K7 closure date establishing the K-series progression at v0.1 ratification time.
 - [ARCHITECTURE](./ARCHITECTURE.md) — four layers; the layer dependency rules referenced in §1.3 / §6.4 live here, awaiting their own analyzer specification.
 - [ISOLATION](./ISOLATION.md) — `SystemExecutionContext` runtime guard semantics anchored by §2.
-- [METHODOLOGY](./METHODOLOGY.md) — ratification process inherited; §2.4 atomicity rule applied to repair-pass closure (§6.3); housekeeping commit discipline applied to repair-pass commits (`TS-D-7`).
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — ratification process inherited; §2.4 atomicity rule applied to repair-pass closure (§6.3); housekeeping commit discipline applied to repair-pass commits (`TS-D-7`).
 - [TRANSLATION_PLAN](./TRANSLATION_PLAN.md) — §2.1 triple-binding anti-pattern; the anchoring rule (§2) is the structural defence against it for this analyzer family.
-- [CODING_STANDARDS](./CODING_STANDARDS.md) — operational reference for diagnostic-message style, naming conventions in analyzer code (consumed by activation M-phase brief, not by this specification directly).
+- [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) — operational reference for diagnostic-message style, naming conventions in analyzer code (consumed by activation M-phase brief, not by this specification directly).

@@ -11,7 +11,7 @@ Full course tied to real project files. Version 1.0, 2026-04-25.*
 *Each topic is a real `src/` file, not an abstract example.
 Format: 20–30 min of theory + 30–60 min of work with the code + a practical check.*
 
-*This document is referenced from [METHODOLOGY.md §4.5](../METHODOLOGY.md) as
+*This document is referenced from [METHODOLOGY.md §4.5](/docs/methodology/METHODOLOGY.md) as
 empirical evidence for the between-phase self-teaching ritual.*
 
 ---

@@ -71,7 +71,7 @@ The fix wires the second surface so the user-visible behavior matches the spec's
 5. `tests/DualFrontier.Modding.Tests/Bootstrap/GameBootstrapIntegrationTests.cs` — full file. Confirm the existing 3 `MenuFlow_*` tests; identify the test class style (FluentAssertions per M7.5.B.2 closure report). New tests follow the same style.
 6. `docs/architecture/MOD_OS_ARCHITECTURE.md` §9.2 wording — quote the exact spec line in the ROADMAP closure entry. Confirms whether the two-flag implementation is a §9.2 ambiguity worth flagging as v1.6 candidate.
 7. `docs/ROADMAP.md` — locate the M7.5.B.2 entry and its follow-up housekeeping note (added in commit `0b11d1f`); this brief appends a second follow-up note. Locate the §9 ratification candidates section if one exists; if not, the closure entry text covers it.
-8. `docs/METHODOLOGY.md` §2.4, §7.3.
+8. `docs/methodology/METHODOLOGY.md` §2.4, §7.3.
 
 Pre-flight verification commands:
 

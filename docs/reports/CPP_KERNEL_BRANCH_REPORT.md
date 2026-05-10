@@ -78,7 +78,7 @@ CMakeLists, directory layout. No code yet.
 **Phase E — Documentation (`959ccd0`, `cb65761`, `dd5de10`, `cdeedbb`)**
 - `docs/NATIVE_CORE.md` — English, focuses on architecture boundary, P/Invoke mapping, marshalling options, decision rule.
 - Substantial revisions to `docs/NATIVE_CORE_EXPERIMENT.md` — Russian, focuses on motivation, decision criterion (revised away from "20% faster mean" toward p99/GC-pause/long-run drift on weak hardware).
-- `docs/DEVELOPMENT_HYGIENE.md` — added; engine/game boundary checklist that pre-emptively names `interop:` and `native:` as legitimate scope prefixes.
+- `docs/methodology/DEVELOPMENT_HYGIENE.md` — added; engine/game boundary checklist that pre-emptively names `interop:` and `native:` as legitimate scope prefixes.
 
 **Phase F — Build/run wiring (`f59492a`, `e2bc2d9`)**
 - `f59492a` adds `.vscode/settings.json`, `CppProperties.json`, the BenchmarkDotNet artifact directory (yes, results are committed — see Section 10), and a copy of the built `DualFrontier.Core.Native.dll` next to the benchmark project.
@@ -188,7 +188,7 @@ The shipping surface of the experiment is bounded. The full list:
 | `src/DualFrontier.Core/DualFrontier.Core.csproj` | +3 lines — `<InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />` |
 | `DualFrontier.sln` | Adds two project entries (`DualFrontier.Core.Interop`, `DualFrontier.Core.Benchmarks`) with GUIDs `CAFE0001-…` and `CAFE0002-…`, plus configuration block. |
 | `docs/NATIVE_CORE_EXPERIMENT.md` | Substantial — rewrites the decision criterion in light of weak-hardware target; introduces the GC-pause / p99 / long-run-drift metric set. |
-| `docs/DEVELOPMENT_HYGIENE.md` | Adds `interop:` and `native:` as engine-side scope prefixes; codifies a 5-step PR checklist. |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md` | Adds `interop:` and `native:` as engine-side scope prefixes; codifies a 5-step PR checklist. |
 
 ### 3.4 LOC delta — scoped
 
@@ -1507,7 +1507,7 @@ This particular scenario encodes the most non-trivial invariants — version bum
 |---|---|---|
 | `docs/NATIVE_CORE.md` | Added on this branch only | 205 lines / ~7.5 KB |
 | `docs/NATIVE_CORE_EXPERIMENT.md` | Modified — substantial rewrite of decision criterion | 414 lines / ~15 KB |
-| `docs/DEVELOPMENT_HYGIENE.md` | Modified | 313 lines / ~12 KB |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md` | Modified | 313 lines / ~12 KB |
 | `native/DualFrontier.Core.Native/build.md` | Added | 72 lines / ~2 KB |
 
 ### 9.2 `docs/NATIVE_CORE.md` (full inline)
@@ -1533,7 +1533,7 @@ Rule table now allows accepting C++ even on mean-latency parity if GC pauses are
 
 > **Inconsistency to flag.** `docs/NATIVE_CORE.md` (English) and `docs/NATIVE_CORE_EXPERIMENT.md` (Russian) define **different decision rules**. NATIVE_CORE.md §6 is "≥20% combined Get+Add → continue"; NATIVE_CORE_EXPERIMENT.md §8 is GC-pause + p99 + long-run-drift on 2-core target. They were authored in adjacent commits (`959ccd0` and `cb65761`), so the inconsistency is deliberate and not yet reconciled. Whichever decision rule Opus is going to apply, this needs resolution first.
 
-### 9.4 `docs/DEVELOPMENT_HYGIENE.md`
+### 9.4 `docs/methodology/DEVELOPMENT_HYGIENE.md`
 
 Adds the engine/game boundary checklist for PRs. Pre-emptively names `interop:` and `native:` as legitimate engine-side scope prefixes — i.e. the doc already assumes the C++ branch will land. Includes a 5-item PR checklist (engine doesn't import game; `dotnet build` green with `TreatWarningsAsErrors`; tests don't regress; commits have scope prefixes; commits don't mix engine and game). This doc is **not** strictly experiment code, but the experiment is what motivated adding it.
 
@@ -1681,7 +1681,7 @@ We can still ask which files the **experiment-relevant subset** changes that **a
 | `DualFrontier.sln` | Yes (much larger — 27 vs 17 projects) | Adds two project entries (`DualFrontier.Core.Interop`, `DualFrontier.Core.Benchmarks`) | **Mechanical, low risk** — append two `Project(...) ... EndProject` pairs and the configuration block. Main has its own structure; just add the new GUIDs. |
 | `src/DualFrontier.Core/DualFrontier.Core.csproj` | Yes | +3 lines: `<InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />` plus a comment | **None** — main's csproj has the same shape; one-line addition slots in cleanly. |
 | `docs/NATIVE_CORE_EXPERIMENT.md` | Yes (already on main with the planning content) | Substantial revision — new §8 decision rule | **Medium** — the branch's version is genuinely newer; needs a manual content merge or a deliberate decision to take the branch's whole text. |
-| `docs/DEVELOPMENT_HYGIENE.md` | Yes (already on main) | Pre-emptive scope-prefix additions for `interop:` / `native:` | **Low** — small addition, slot in. |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md` | Yes (already on main) | Pre-emptive scope-prefix additions for `interop:` / `native:` | **Low** — small addition, slot in. |
 | `.gitignore` | Yes | No change in branch (so main's version applies). Branch already ignores `native/*/build/` but **not** `out/`. | **No conflict, but branch carries 39 build-cache files in `out/` that should be removed before integration.** |
 
 ### 11.3 Files the experiment adds — no conflict possible

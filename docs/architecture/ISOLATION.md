@@ -221,4 +221,4 @@ If any item is not satisfied, the PR is rejected.
 
 - [ECS](./ECS.md)
 - [THREADING](./THREADING.md)
-- [TESTING_STRATEGY](./TESTING_STRATEGY.md)
+- [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md)

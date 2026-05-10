@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09
 **Status**: EXECUTED (2026-05-09, branch `feat/k8-0-solution-a-recording`, closure `9f9dc05`..`5fa3f1d`) — architectural decision brief, fourth brief type alongside «implementation», «skeleton», «closure-shaped implementation». See `docs/MIGRATION_PROGRESS.md` K8.0 closure section for closure summary.
-**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` v1.1 LOCKED §K8 (deliverables superseded by K8.0 closure), `docs/PERFORMANCE_REPORT_K7.md` (K7 evidence base informing K8.0 decision), `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 row added on closure), `docs/METHODOLOGY.md`, `docs/CODING_STANDARDS.md`
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` v1.1 LOCKED §K8 (deliverables superseded by K8.0 closure), `docs/PERFORMANCE_REPORT_K7.md` (K7 evidence base informing K8.0 decision), `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 row added on closure), `docs/methodology/METHODOLOGY.md`, `docs/methodology/CODING_STANDARDS.md`
 **Companion**: `docs/MIGRATION_PROGRESS.md` (live tracker — K8.0 entry recorded; K8.1-K8.5 skeleton entries added)
 **Methodology lineage**: `tools/briefs/K7_PERFORMANCE_MEASUREMENT_BRIEF.md` (read-first/brief-second/execute-third pivot), `tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md` (Anthropic `Edit` literal-mode semantics), `tools/briefs/K6_MOD_REBUILD_BRIEF.md` (closure-shaped brief format precedent)
 **Predecessor**: K7 (`72ea8b5..60482f4`) — performance measurement, evidence base for this decision

@@ -484,7 +484,7 @@ produces spec-amendment count ≥ 2 or if the cumulative count across
 M3–M10 exceeds 4.
 
 The observation belongs in a future `PIPELINE_METRICS.md` entry
-(`docs/PIPELINE_METRICS.md` already exists per `docs/README.md` —
+(`docs/methodology/PIPELINE_METRICS.md` already exists per `docs/README.md` —
 M-phase contradiction-discovery rate would slot into the empirical
 metrics section). This review records the fourth datapoint as audit
 trail; the metrics-section update is out of scope for a closure
@@ -599,7 +599,7 @@ M6 closes cleanly. M7 (Hot reload from menu) is unblocked.
   ratifications) without surfacing any latent contradiction.
 - [ROADMAP](./ROADMAP.md) — M6 closure status, M6.1/M6.2 sub-phase
   detail, M7 pre-conditions and hand-off note.
-- [METHODOLOGY](./METHODOLOGY.md) — §2.4 atomic phase review, §7.3
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomic phase review, §7.3
   process discipline; the verification cycle this report instantiates.
 - [M3_CLOSURE_REVIEW](./M3_CLOSURE_REVIEW.md) — closure-report format
   origin (eight-check structure).

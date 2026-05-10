@@ -43,8 +43,8 @@ M7.5.A scope: ship `ModMenuController` in `DualFrontier.Application/Modding/` en
 
 1. `docs/architecture/MOD_OS_ARCHITECTURE.md` LOCKED v1.5 — §9.1 (lifecycle states), §9.2 (menu-driven hot-reload flow, the canonical pause-toggle-apply-resume sequence), §9.3 (no live-tick reload, run-flag guard wording), §9.5 / §9.5.1 (unload chain — controller calls `UnloadMod` per removed mod, accumulates warnings), §9.6 (hot-reload disabled semantics — applies to currently-active mods), §2.2 (`hotReload` field default and effect), §11.2 (no new error kinds for M7.5.A).
 2. `docs/ROADMAP.md` — M7 sub-phase status block, M7.5 entry "Mod-menu UI integration" (will be replaced with M7.5.A + M7.5.B sub-entries by commit 3 of this session), M5/M6 closure entry pattern as decomposition reference.
-3. `docs/METHODOLOGY.md` — §2.4 atomic phase review, §7.3 three-commit invariant.
-4. `docs/CODING_STANDARDS.md` — full document. Especially: one class per file, English-only comments, member order, `_camelCase` private fields, **Stack-frame retention** section (added in commit `f4b2cb8` — not directly relevant to M7.5.A since no GC-collection code paths, but locks the broader discipline for any future helper extraction).
+3. `docs/methodology/METHODOLOGY.md` — §2.4 atomic phase review, §7.3 three-commit invariant.
+4. `docs/methodology/CODING_STANDARDS.md` — full document. Especially: one class per file, English-only comments, member order, `_camelCase` private fields, **Stack-frame retention** section (added in commit `f4b2cb8` — not directly relevant to M7.5.A since no GC-collection code paths, but locks the broader discipline for any future helper extraction).
 5. Code (full files):
    - `src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs` — controller composes `Pause`/`Resume`/`Apply`/`UnloadMod` directly. Read the public surface and the `_activeMods` field. The new `GetActiveMods` method extends this surface.
    - `src/DualFrontier.Application/Modding/ModLoader.cs` — `ReadManifestFromDirectory(path)` is the manifest-parsing primitive `DefaultModDiscoverer` uses.

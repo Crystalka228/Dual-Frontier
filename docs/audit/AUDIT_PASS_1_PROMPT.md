@@ -218,8 +218,8 @@ ANOMALY (do not stop the pass — Pass 1 inventories what is, not what should be
 | `docs/M5_CLOSURE_REVIEW.md` | audit-trail | historical/frozen | N |
 | `docs/M6_CLOSURE_REVIEW.md` | audit-trail | historical/frozen | N |
 | `docs/SESSION_PHASE_4_CLOSURE_REVIEW.md` | audit-trail | preserved Russian | N |
-| `docs/METHODOLOGY.md` | methodology | active | N |
-| `docs/PIPELINE_METRICS.md` | methodology | active | N |
+| `docs/methodology/METHODOLOGY.md` | methodology | active | N |
+| `docs/methodology/PIPELINE_METRICS.md` | methodology | active | N |
 | `docs/architecture/CONTRACTS.md` | architecture | active | N |
 | `docs/architecture/ECS.md` | architecture | active | N |
 | `docs/architecture/EVENT_BUS.md` | architecture | active | N |
@@ -227,9 +227,9 @@ ANOMALY (do not stop the pass — Pass 1 inventories what is, not what should be
 | `docs/architecture/ISOLATION.md` | architecture | active | N |
 | `docs/architecture/MODDING.md` | architecture/dev | active | N |
 | `docs/architecture/MOD_PIPELINE.md` | architecture/dev | active | N |
-| `docs/CODING_STANDARDS.md` | development | active | N |
-| `docs/DEVELOPMENT_HYGIENE.md` | development | active | N |
-| `docs/TESTING_STRATEGY.md` | development | active | N |
+| `docs/methodology/CODING_STANDARDS.md` | development | active | N |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md` | development | active | N |
+| `docs/methodology/TESTING_STRATEGY.md` | development | active | N |
 | `docs/architecture/PERFORMANCE.md` | development | active | N |
 | `docs/architecture/GPU_COMPUTE.md` | development | active | N |
 | `docs/NATIVE_CORE_EXPERIMENT.md` | development | active | N |

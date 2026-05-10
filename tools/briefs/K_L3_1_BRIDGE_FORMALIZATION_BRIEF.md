@@ -86,7 +86,7 @@ The session begins with the Opus instance reading these documents end-to-end bef
    - K8.2 v2 entry (lines ~407–467) — actual delivered state, in-flight decisions recorded
    - Decision log D5 — Solution A choice rationale (NativeWorld single source of truth)
    - Open questions OQ1–OQ4
-5. **`docs/METHODOLOGY.md` v1.5** — Particular attention:
+5. **`docs/methodology/METHODOLOGY.md` v1.5** — Particular attention:
    - §3 «stop, escalate, lock» rule
    - §7.1 «data exists or it doesn't» principle (relates to bridge necessity question)
    - K-Lessons sub-section (atomic commit, Phase 0.4 hypothesis, mod-scope test isolation)

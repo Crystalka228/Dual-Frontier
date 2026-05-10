@@ -40,7 +40,7 @@ development window:
    consumption to keep moving. Current state: two consecutive weekly windows
    under different operational profiles converge on the same headroom band;
    measurements are recorded in
-   [docs/PIPELINE_METRICS.md §3](./docs/PIPELINE_METRICS.md#3-subscription-headroom).
+   [docs/methodology/PIPELINE_METRICS.md §3](/docs/methodology/PIPELINE_METRICS.md#3-subscription-headroom).
 
 Each condition has a documented source of truth; the present README does not
 restate the numbers.
@@ -67,13 +67,13 @@ session router.
 
 Full configuration, empirical task metrics, subscription headroom data, and
 reproducibility requirements are documented in
-[docs/PIPELINE_METRICS.md](./docs/PIPELINE_METRICS.md):
+[docs/methodology/PIPELINE_METRICS.md](/docs/methodology/PIPELINE_METRICS.md):
 
-- [§1 Pipeline configuration](./docs/PIPELINE_METRICS.md#1-pipeline-configuration) —
+- [§1 Pipeline configuration](/docs/methodology/PIPELINE_METRICS.md#1-pipeline-configuration) —
   agent assignments, workflow, hardware, and software stack.
-- [§3 Subscription headroom](./docs/PIPELINE_METRICS.md#3-subscription-headroom) —
+- [§3 Subscription headroom](/docs/methodology/PIPELINE_METRICS.md#3-subscription-headroom) —
   empirical measurements across two consecutive weekly windows.
-- [§5 Reproducibility requirements](./docs/PIPELINE_METRICS.md#5-reproducibility-requirements) —
+- [§5 Reproducibility requirements](/docs/methodology/PIPELINE_METRICS.md#5-reproducibility-requirements) —
   what is required to reproduce these measurements and what these
   measurements do not show.
 
@@ -107,11 +107,11 @@ This repository is not a game release, a competitor to Bevy or Unity DOTS,
 or a claim that LLM pipelines can replace software engineers. It is also not
 a claim about generalizability beyond systems software with formal,
 machine-checkable contracts. The boundaries of applicability are recorded
-in [docs/METHODOLOGY.md §6](./docs/METHODOLOGY.md).
+in [docs/methodology/METHODOLOGY.md §6](/docs/methodology/METHODOLOGY.md).
 
 ## Three primary documents
 
-- [docs/METHODOLOGY.md](./docs/METHODOLOGY.md) — the methodology as designed:
+- [docs/methodology/METHODOLOGY.md](/docs/methodology/METHODOLOGY.md) — the methodology as designed:
   pipeline architecture, contracts as inter-agent IPC, verification cycle,
   threat model, boundaries of applicability.
 - [docs/architecture/MOD_OS_ARCHITECTURE.md](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the
@@ -133,8 +133,8 @@ engine code requires a separate agreement.
 
 ### Architecture documents
 
-- `docs/METHODOLOGY.md` — pipeline и methodology
-- `docs/CODING_STANDARDS.md` — coding conventions
+- `docs/methodology/METHODOLOGY.md` — pipeline и methodology
+- `docs/methodology/CODING_STANDARDS.md` — coding conventions
 - `docs/architecture/MOD_OS_ARCHITECTURE.md` — modding architecture
 - `docs/architecture/RUNTIME_ARCHITECTURE.md` — Vulkan rendering layer (M9.x)
 - `docs/architecture/KERNEL_ARCHITECTURE.md` — native ECS kernel layer (K0-K8)

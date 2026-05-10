@@ -2,7 +2,7 @@
 
 The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.5 LOCKED; this roadmap is the execution sequence derived from it.
 
-The reorganisation follows the project's central methodological claim: **engine and methodology are the main research result, the game is a test case for the hypothesis** ([METHODOLOGY](./METHODOLOGY.md)). By implementing combat, magic, and world content through the modding system rather than alongside it, we make every gameplay feature also a test of the modding architecture. A combat system that ships as a vanilla mod is the strongest possible falsifiable claim that the contract surface for mods is complete.
+The reorganisation follows the project's central methodological claim: **engine and methodology are the main research result, the game is a test case for the hypothesis** ([METHODOLOGY](/docs/methodology/METHODOLOGY.md)). By implementing combat, magic, and world content through the modding system rather than alongside it, we make every gameplay feature also a test of the modding architecture. A combat system that ships as a vanilla mod is the strongest possible falsifiable claim that the contract surface for mods is complete.
 
 Phases do not overlap in code ownership. Closed phases retain their entries here as historical record; current work is the Mod-OS Migration; Phase 9 (Native Runtime) remains the post-launch endpoint.
 
@@ -96,7 +96,7 @@ Phase 3.5 / Phase 4 / Phase 5 carry-forward items surfaced during housekeeping p
 ### Maximum engineering refactor (parallel track)
 
 A three-track discipline escalation proposed and ratified in
-[MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) v1.0.
+[MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) v1.0.
 Tracks adopt incrementally as Phase 6+ sidecar work, parallel to the
 M0–M10 sequence and the post-shipping reservoir entries.
 
@@ -316,7 +316,7 @@ Goal achieved: `ModIntegrationPipeline` resolves regular-mod dependencies using 
 - Validator-level: `Mod_WithCascadeFailure_BothErrorsReportedNotSkipped` (`PhaseGInterModVersionTests`).
 - Pipeline-level: `Apply_WithCascadeFailure_SurfacesBothErrors` (`M52IntegrationTests`).
 
-This is a deliberate interpretation of §8.7 wording "cascade-fail," registered here per [METHODOLOGY](./METHODOLOGY.md)'s "no improvisation" rule. If the interpretation needs revision, escalate via §12 ratification process.
+This is a deliberate interpretation of §8.7 wording "cascade-fail," registered here per [METHODOLOGY](/docs/methodology/METHODOLOGY.md)'s "no improvisation" rule. If the interpretation needs revision, escalate via §12 ratification process.
 
 **Consumes decisions:** strategic lock 5 (caret syntax for inter-mod deps).
 
@@ -359,7 +359,7 @@ Goal achieved: explicit bridge replacement is operational. Vanilla mods can now 
 
 ### ✅ M7 — Hot reload from menu (closed)
 
-Goal achieved: hot-reload path through `ModIntegrationPipeline` complete, including `AssemblyLoadContext` unload with WeakReference verification. Decomposed per [METHODOLOGY](./METHODOLOGY.md) §2.4 into seven implementation sub-phases (M7.1, M7.2, M7.3, M7.4, M7.5.A, M7.5.B.1, M7.5.B.2) plus a closure session, with 6 housekeeping passes interleaved.
+Goal achieved: hot-reload path through `ModIntegrationPipeline` complete, including `AssemblyLoadContext` unload with WeakReference verification. Decomposed per [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §2.4 into seven implementation sub-phases (M7.1, M7.2, M7.3, M7.4, M7.5.A, M7.5.B.1, M7.5.B.2) plus a closure session, with 6 housekeeping passes interleaved.
 
 **Sub-phase status:**
 
@@ -411,7 +411,7 @@ Goal achieved: hot-reload path through `ModIntegrationPipeline` complete, includ
 
 - **M7-closure ✅ Closed.** Sub-phase closure session — ROADMAP M7 row updated to ✅ Closed, engine snapshot at 437/437, M7 closure verification report at [`docs/audit/M7_CLOSURE_REVIEW.md`](./audit/M7_CLOSURE_REVIEW.md). All 8 closure checks PASSED. §7.5 fifth scenario M6→M7 hand-off resolved via outcome (B) Structural verification (M7.2 `UnloadMod` + M6.2 `CollectReplacedFqns` parameter-driven design close the property via disjoint tests). Phase 2 WeakReference unload-test carried debt CLOSED via M7.3. §9.2 v1.6 ratification candidate registered in §10 of the closure review for future cycle (the «menu pauses the scheduler» wording-vs-implementation gap surfaced via F5 manual verification). Six surgical fixes applied to sync stale `v1.4 LOCKED` and stale `v1.5 ratification` references after mid-batch v1.5 was consumed by audit campaign Pass 2. M7 closes; M8 (Vanilla skeletons) is unblocked.
 
-**Deliberate interpretation of §9.2 / §9.3 — flag location on the pipeline, not the scheduler.** §9.2 step 1 reads "menu sets the scheduler's run flag to false"; §9.3 reads "enforced by `ModIntegrationPipeline` checking the scheduler's run flag." M7.1 locates the flag itself on `ModIntegrationPipeline` (private `_isRunning` bool) rather than introducing one inside `ParallelSystemScheduler`. Adding a flag to the scheduler would require modifying `DualFrontier.Core`, which would break the M-phase boundary discipline that M3–M6 maintained (no `DualFrontier.Core` touched by any Mod-OS Migration phase) and which the [M6 closure review](./audit/M6_CLOSURE_REVIEW.md) §8 footer explicitly carries forward to M7. The pipeline-mediated reading is consistent with §9.3's "`ModIntegrationPipeline` checking" wording and treats §9.2's "scheduler's run flag" as the run state observable to the scheduler from the outside (via the pipeline), rather than as state the scheduler itself owns. This is a deliberate interpretation registered here per [METHODOLOGY](./METHODOLOGY.md)'s "no improvisation" rule and the M5.2 cascade-failure precedent above. If a future M7 closure review finds this materially incompatible with §9 wording, the resolution is a v1.6 ratification rather than relocating the flag into the scheduler (v1.5 was consumed by audit campaign Pass 2).
+**Deliberate interpretation of §9.2 / §9.3 — flag location on the pipeline, not the scheduler.** §9.2 step 1 reads "menu sets the scheduler's run flag to false"; §9.3 reads "enforced by `ModIntegrationPipeline` checking the scheduler's run flag." M7.1 locates the flag itself on `ModIntegrationPipeline` (private `_isRunning` bool) rather than introducing one inside `ParallelSystemScheduler`. Adding a flag to the scheduler would require modifying `DualFrontier.Core`, which would break the M-phase boundary discipline that M3–M6 maintained (no `DualFrontier.Core` touched by any Mod-OS Migration phase) and which the [M6 closure review](./audit/M6_CLOSURE_REVIEW.md) §8 footer explicitly carries forward to M7. The pipeline-mediated reading is consistent with §9.3's "`ModIntegrationPipeline` checking" wording and treats §9.2's "scheduler's run flag" as the run state observable to the scheduler from the outside (via the pipeline), rather than as state the scheduler itself owns. This is a deliberate interpretation registered here per [METHODOLOGY](/docs/methodology/METHODOLOGY.md)'s "no improvisation" rule and the M5.2 cascade-failure precedent above. If a future M7 closure review finds this materially incompatible with §9 wording, the resolution is a v1.6 ratification rather than relocating the flag into the scheduler (v1.5 was consumed by audit campaign Pass 2).
 
 **Deliberate interpretation of §9.5 / §9.5.1 — step 7 ordering: capture WR → remove from active set → spin.** §9.5 step 7 specifies the spin protocol but does not pin the order of `_activeMods` removal relative to WR capture and spin entry; §9.5.1 says "the mod is removed from the active set regardless of whether the assembly actually unloaded." M7.3 wires the order as `CaptureAlcWeakReference(mod) → _activeMods.Remove(mod) → TryStep7AlcVerification(modId, wr, warnings) → return`. The capture must precede the removal so the WR is bound to the same `ModLoadContext` instance the active-set removal then helps release; the spin must follow the removal so the pipeline-side strong reference (`_activeMods`) is gone before the spin's GC pumps run. This is consistent with §9.5.1's "removed regardless" wording (the removal does not wait for spin success) and with §9.5 step 7's spin running on a captured WR with no requirement to keep the mod in the active set. Registered here per the M7.1 §9.2/§9.3 footer interpretation precedent. If a future M7 closure review finds this materially incompatible with §9 wording, the resolution is a v1.6 ratification rather than silent reordering (v1.5 was consumed by audit campaign Pass 2).
 
@@ -611,13 +611,13 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 ## See also
 
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.
-- [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline; M1–M10 are exercised through it.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the four-agent pipeline; M1–M10 are exercised through it.
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
 - [CONTRACTS](/docs/architecture/CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
 - [MODDING](/docs/architecture/MODDING.md) — v1 mod-author guide; M-phase outputs supersede this document for v2.
 - [MOD_PIPELINE](/docs/architecture/MOD_PIPELINE.md) — `ModIntegrationPipeline` mechanics; M2, M5, M6, M7 extend it.
-- [TESTING_STRATEGY](./TESTING_STRATEGY.md) — test discipline; M-phase acceptance criteria slot into the existing isolation/modding/integration tiers.
-- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — PR hygiene; the Mod-OS migration is exercised through the same checklist.
+- [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — test discipline; M-phase acceptance criteria slot into the existing isolation/modding/integration tiers.
+- [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) — PR hygiene; the Mod-OS migration is exercised through the same checklist.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — post-release ideas reservoir; populated, not scheduled. Read after Phase 7 closure.
 - [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — architectural contract for fully homomorphic encryption multiplayer; ratified at v1.0, activation deferred per its §D1.
-- [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) — three-track discipline escalation; ratified v1.0, activation deferred per-track.
+- [MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) — three-track discipline escalation; ratified v1.0, activation deferred per-track.

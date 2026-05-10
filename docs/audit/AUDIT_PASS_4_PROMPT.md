@@ -258,7 +258,7 @@ out of scope.
 
 | Spec see-also entry | Path | Exists? | Verdict |
 |---|---|---|---|
-| METHODOLOGY | `docs/METHODOLOGY.md` | yes | ✓ |
+| METHODOLOGY | `docs/methodology/METHODOLOGY.md` | yes | ✓ |
 | ARCHITECTURE | `docs/architecture/ARCHITECTURE.md` | yes/no | ✓/Tier 1 |
 | ... | ... | ... | ... |
 

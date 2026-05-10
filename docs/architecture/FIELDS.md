@@ -359,7 +359,7 @@ A mod registering a field without declaring `mod.<id>.field.read:<id>` (or equiv
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — §3.2 (capability syntax for `field.*` verbs), §4.6 (`IModApi` v3 — `Fields` and `ComputePipelines` sub-APIs), §11.2 (validation error kinds for field operations).
 - [THREADING](./THREADING.md) — fence-based GPU sync; field dispatches are non-blocking.
 - [PERFORMANCE](./PERFORMANCE.md) — field memory budget, dispatch timing.
-- [METHODOLOGY](./METHODOLOGY.md) — pipeline patterns; «data exists or it doesn't» applies to field cells (out-of-bounds reads return zero, not undefined).
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — pipeline patterns; «data exists or it doesn't» applies to field cells (out-of-bounds reads return zero, not undefined).
 - `tools/briefs/K9_FIELD_STORAGE_BRIEF.md` — the executable contract for the K9 implementation milestone.
 
 **Document end.** Updated incrementally as K9 lands. Sections marked **TBD** become concrete once their implementation commits exist.

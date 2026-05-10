@@ -46,7 +46,7 @@ grep -rE --include='*.md' --include='*.cs' --include='*.json' --include='*.cspro
 | `docs/TRANSLATION_PLAN.md` | 13 | **By-design bilingual reference** — campaign meta-doc, cites Russian terms. |
 | `docs/PASS_2_NOTES.md` | 12 | **By-design bilingual reference** — pass closure notes citing source-side anchors and Russian glossary terms. |
 | `docs/PASS_3_NOTES.md` | 3 | **By-design bilingual reference** — pass closure notes citing source terms. |
-| `docs/CODING_STANDARDS.md` | 3 | **§10 Pass 5 item.** See §10.1 below — these 3 lines are inside an entire section ("Russian-language domain comments", lines 84-115) that is now stale. The Cyrillic itself is illustrative (a Russian-comment example), but the surrounding policy contradicts the post-Pass-3 codebase reality. Not a translation defect — a content-policy decision. |
+| `docs/methodology/CODING_STANDARDS.md` | 3 | **§10 Pass 5 item.** See §10.1 below — these 3 lines are inside an entire section ("Russian-language domain comments", lines 84-115) that is now stale. The Cyrillic itself is illustrative (a Russian-comment example), but the surrounding policy contradicts the post-Pass-3 codebase reality. Not a translation defect — a content-policy decision. |
 | ~~`assets/scenes/README.md`~~ | ~~15~~ | **FIXED** in commit `352ff0f` (surgical fix §9.1). |
 
 **Pass 1 sweeps:** 0 Cyrillic in any `.cs` or `.csproj` — confirms Pass 3's "src/, tests/, mods/ Cyrillic-clean" claim still holds.
@@ -141,9 +141,9 @@ The pattern includes a code-identifier rename (`BehaviourTree` namespace), which
 
 | Source | Target | Anchor | Disposition |
 |---|---|---|---|
-| `docs/DEVELOPMENT_HYGIENE.md:63` | `./CODING_STANDARDS.md` | `#commit-messages` | **Predicted forward-pointing anchor** per `PASS_2_NOTES.md` §4.2. The target section was never written in the Russian source either. Pass 2 deliberately preserved the anchor to lock the eventual section heading. Awaits Pass 5 / content addition. |
-| `docs/DEVELOPMENT_HYGIENE.md:134` | `./CODING_STANDARDS.md` | `#commit-messages` | Same as above. |
-| `docs/DEVELOPMENT_HYGIENE.md:151` | `./CODING_STANDARDS.md` | `#commit-messages` | Same as above. |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md:63` | `./CODING_STANDARDS.md` | `#commit-messages` | **Predicted forward-pointing anchor** per `PASS_2_NOTES.md` §4.2. The target section was never written in the Russian source either. Pass 2 deliberately preserved the anchor to lock the eventual section heading. Awaits Pass 5 / content addition. |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md:134` | `./CODING_STANDARDS.md` | `#commit-messages` | Same as above. |
+| `docs/methodology/DEVELOPMENT_HYGIENE.md:151` | `./CODING_STANDARDS.md` | `#commit-messages` | Same as above. |
 | `docs/PASS_2_NOTES.md:91` | `./ARCHITECTURE.md` | `#граница-движок--игра` | **Historical citation** — PASS_2_NOTES.md §4.1 cites this Russian-anchor as "the original broken link, retargeted to `#dependency-rules`". The Russian-anchor literal here is documentation of a historical broken link, not an active navigation link. |
 | `docs/PASS_2_NOTES.md:105` | `./ROADMAP.md` | `#пост-релиз--развилка-на-движок` | **Historical citation** — PASS_2_NOTES.md §4.3 cites this Russian-anchor as "the original broken link, retargeted to `#phase-9--native-runtime`". Documentation, not navigation. |
 
@@ -153,7 +153,7 @@ The pattern includes a code-identifier rename (`BehaviourTree` namespace), which
 
 ## §5 Style consistency
 
-Sampled 1 mid-document paragraph from each of: `docs/METHODOLOGY.md`, `docs/architecture/ARCHITECTURE.md`, `docs/architecture/CONTRACTS.md`, `docs/architecture/ISOLATION.md`, `docs/architecture/EVENT_BUS.md`.
+Sampled 1 mid-document paragraph from each of: `docs/methodology/METHODOLOGY.md`, `docs/architecture/ARCHITECTURE.md`, `docs/architecture/CONTRACTS.md`, `docs/architecture/ISOLATION.md`, `docs/architecture/EVENT_BUS.md`.
 
 | Doc & section | (a) US spelling | (b) Active voice | (c) Sentence length | (d) Calque-free | Notes |
 |---|---|---|---|---|---|
@@ -217,7 +217,7 @@ The minor stylistic observation in METHODOLOGY (line 97) is below the surgical-f
 |---|---|---|---|
 | 8.1 | The pipeline configuration table (root `README.md` line 17-20) introduces "**Direction owner**" as the human's role label without explanation. A reader unfamiliar with the i18n campaign will not know this is the Pass 2 fallback for an escalated term. | Info | Acceptable: the label functions as a clear English term independent of campaign history. The escalation status is internal to the i18n process. |
 | 8.2 | Root `README.md` line 135 describes `CODING_STANDARDS.md` as covering "naming, comments, file structure, **commit scope prefixes**" — but `CODING_STANDARDS.md` does not contain a Commit messages section (the commit-prefix taxonomy lives in `DEVELOPMENT_HYGIENE.md`). Same root cause as the 3 broken anchors in §4. | Minor | Rolled into Pass 5 item §10.1 — single content task. |
-| 8.3 | `docs/CODING_STANDARDS.md` §"Russian-language domain comments" (lines 84-115) prescribes a coding-style policy ("Internal domain logic is commented in Russian. That is the project's working language.") that contradicts the post-Pass-3 codebase reality (0 Cyrillic in `*.cs`). A new contributor reading this would conclude they should write Russian comments. | Major | Pass 5 item §10.3. Not a Pass 4 surgical fix (requires team decision on the new comment-language policy, not a typo correction). |
+| 8.3 | `docs/methodology/CODING_STANDARDS.md` §"Russian-language domain comments" (lines 84-115) prescribes a coding-style policy ("Internal domain logic is commented in Russian. That is the project's working language.") that contradicts the post-Pass-3 codebase reality (0 Cyrillic in `*.cs`). A new contributor reading this would conclude they should write Russian comments. | Major | Pass 5 item §10.3. Not a Pass 4 surgical fix (requires team decision on the new comment-language policy, not a typo correction). |
 | 8.4 | `docs/README.md` line 51 explicitly notes that `SESSION_PHASE_4_CLOSURE_REVIEW.md` is "*Russian-language audit trail; preserved verbatim per the i18n campaign rules.*" — a clean, contributor-friendly handling of the bilingual file. | Positive | None. Good pattern. |
 | 8.5 | Root `README.md` Phase status table (line 113-122) shows "Updated: 2026-04-25" but reports 82/82 tests, 0 known production bugs — consistent with current state. | Positive | None. Up-to-date. |
 
@@ -245,7 +245,7 @@ Three follow-up items, all of which were either documented in earlier pass notes
 > "add a `## Commit messages` section to CODING_STANDARDS.md that documents the commit-prefix taxonomy already enumerated in DEVELOPMENT_HYGIENE.md §'Quick reference — commit scope prefixes'."
 
 **Effects of doing this:**
-- Resolves 3 broken anchors in `docs/DEVELOPMENT_HYGIENE.md` (lines 63, 134, 151) → `#commit-messages`.
+- Resolves 3 broken anchors in `docs/methodology/DEVELOPMENT_HYGIENE.md` (lines 63, 134, 151) → `#commit-messages`.
 - Resolves the root `README.md:135` cross-reference inaccuracy (item 8.2).
 - Aligns CODING_STANDARDS.md scope with what root README claims it covers.
 

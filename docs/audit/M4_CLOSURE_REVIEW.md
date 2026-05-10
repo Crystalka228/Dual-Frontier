@@ -449,7 +449,7 @@ syntax) is unblocked.
   specification this review verifies.
 - [ROADMAP](./ROADMAP.md) — M4 closure status, M4.1/M4.2/M4.3 sub-phase
   detail, M5 pre-conditions.
-- [METHODOLOGY](./METHODOLOGY.md) — §2.4 atomic phase review, §7.3
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomic phase review, §7.3
   process discipline; the verification cycle this report instantiates.
 - [M3_CLOSURE_REVIEW](./M3_CLOSURE_REVIEW.md) — closure-report format
   model; this document mirrors its eight-check structure.

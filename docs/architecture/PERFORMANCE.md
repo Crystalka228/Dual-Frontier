@@ -160,4 +160,4 @@ A benchmark without a pinned baseline does not land in main — otherwise anyone
 
 - [THREADING](./THREADING.md)
 - [EVENT_BUS](./EVENT_BUS.md)
-- [TESTING_STRATEGY](./TESTING_STRATEGY.md)
+- [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md)

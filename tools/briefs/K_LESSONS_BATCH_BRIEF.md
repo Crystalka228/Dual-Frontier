@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-09 (post-K8.1.1 closure)
 **Status**: EXECUTED (2026-05-09, branch `feat/k-lessons-formalization`, closure `9df2709..071ae11`). See `docs/MIGRATION_PROGRESS.md` § "K-Lessons — Pipeline closure lessons formalization" for closure record.
-**Reference docs**: `docs/METHODOLOGY.md` v1.4 (target for 3 lessons + version bump to v1.5), `docs/architecture/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (target for 1 lesson + version bump to v1.3), `docs/MIGRATION_PROGRESS.md` (closure tracker — K-Lessons row authored as part of this brief)
+**Reference docs**: `docs/methodology/METHODOLOGY.md` v1.4 (target for 3 lessons + version bump to v1.5), `docs/architecture/KERNEL_ARCHITECTURE.md` v1.2 LOCKED (target for 1 lesson + version bump to v1.3), `docs/MIGRATION_PROGRESS.md` (closure tracker — K-Lessons row authored as part of this brief)
 **Companion**: closure records in `MIGRATION_PROGRESS.md` for K8.0 (`9f9dc05..28498f9`), K8.1 (`a62c1f3..059f712`), K8.1.1 (`fc4400d..63777ef`)
 **Methodology lineage**: this brief is itself an instance of the brief-authoring discipline (`MOD_OS_V16_AMENDMENT_CLOSURE.md`) and is target-document-only — no source code or tests are touched
 **Predecessor**: K8.1.1 (`fc4400d..63777ef`) — InternedString closure follow-up EXECUTED
@@ -55,7 +55,7 @@ git log --oneline -25
 ### 0.3 — Prerequisite documents at expected versions
 
 ```
-head -10 docs/METHODOLOGY.md
+head -10 docs/methodology/METHODOLOGY.md
 head -10 docs/architecture/KERNEL_ARCHITECTURE.md
 ```
 
@@ -72,7 +72,7 @@ ls docs/
 ```
 
 **Expected** present:
-- `docs/METHODOLOGY.md`
+- `docs/methodology/METHODOLOGY.md`
 - `docs/architecture/KERNEL_ARCHITECTURE.md`
 - `docs/MIGRATION_PROGRESS.md`
 
@@ -195,7 +195,7 @@ K-Lessons **does**:
 
 ### 2.1 — Lesson 1: Atomic commit as compilable unit
 
-**Target file**: `docs/METHODOLOGY.md`
+**Target file**: `docs/methodology/METHODOLOGY.md`
 
 **Insertion point**: after the existing `### Calibrated time estimates` sub-section (which ends with the "Caveat — what auto-mode does NOT speed up" paragraph and the "The pattern is: think slowly, decide carefully, execute fast" line) and before the existing `### Reference: K0 lessons learned` sub-section.
 
@@ -233,7 +233,7 @@ In practice, most commits remain single-file or two-file because most type defin
 
 ### 2.2 — Lesson 2: Phase 0.4 inventory as hypothesis
 
-**Target file**: `docs/METHODOLOGY.md`
+**Target file**: `docs/methodology/METHODOLOGY.md`
 
 **Insertion point**: at the end of the new `### Pipeline closure lessons (K-series, post-K8.1)` section (i.e., after the lesson 1 content from §2.1 above, appended to the same section).
 
@@ -269,7 +269,7 @@ This separation is consistent with the descriptive-pre-flight principle establis
 
 ### 2.3 — Lesson 3: Mod-scope test isolation
 
-**Target file**: `docs/METHODOLOGY.md`
+**Target file**: `docs/methodology/METHODOLOGY.md`
 
 **Insertion point**: at the end of the `### Pipeline closure lessons (K-series, post-K8.1)` section (after the lesson 2 content from §2.2 above).
 
@@ -501,7 +501,7 @@ dotnet test
 **Sanity grep on touched documents**:
 
 ```
-grep -nE "TODO|FIXME|XXX|HACK" docs/METHODOLOGY.md docs/architecture/KERNEL_ARCHITECTURE.md
+grep -nE "TODO|FIXME|XXX|HACK" docs/methodology/METHODOLOGY.md docs/architecture/KERNEL_ARCHITECTURE.md
 ```
 
 **Expected**: zero new debt markers introduced by K-Lessons. Pre-existing markers (if any) are out of scope; diff against baseline if needed.

@@ -69,8 +69,8 @@ Phase 4 UI pattern reference: `GameHUD` extends `CanvasLayer` (Layer 10), with `
 5. `assets/` directory — `ls` to inventory current content (zips + extracted folders). Use `dir` (Windows) or `ls -la` (bash). Record exact folder names for gitignore patterns.
 6. `tests/DualFrontier.Modding.Tests/Bootstrap/GameBootstrapIntegrationTests.cs` — confirm 3 MenuFlow tests still pass without modification.
 7. `docs/ROADMAP.md` — locate the M7.5.B.2 closure entry; this housekeeping appends a follow-up note, does not move M7.5.B.2 status.
-8. `docs/METHODOLOGY.md` §2.4, §7.3.
-9. `docs/CODING_STANDARDS.md` — English-only comments, member order.
+8. `docs/methodology/METHODOLOGY.md` §2.4, §7.3.
+9. `docs/methodology/CODING_STANDARDS.md` — English-only comments, member order.
 
 Pre-flight verification commands (run before any edits):
 

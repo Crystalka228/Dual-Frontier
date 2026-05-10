@@ -3,7 +3,7 @@
 **Brief version**: 1.0 (full, executable)
 **Authored**: 2026-05-07
 **Status**: EXECUTED 2026-05-08 on `feat/k4-struct-refactor` (final commit `5c2995f`). See `MIGRATION_PROGRESS.md` K4 entry for closure record.
-**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K4, `docs/MIGRATION_PROGRESS.md` (K3 closure context), `docs/METHODOLOGY.md` v1.4, `docs/PERFORMANCE_REPORT_K3.md` (motivation evidence)
+**Reference docs**: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 2 §K4, `docs/MIGRATION_PROGRESS.md` (K3 closure context), `docs/methodology/METHODOLOGY.md` v1.4, `docs/PERFORMANCE_REPORT_K3.md` (motivation evidence)
 **Predecessor**: K3 (`7629f57`) — bootstrap graph + thread pool, merged to main
 **Target**: fresh feature branch `feat/k4-struct-refactor` от `main`
 **Estimated time**: 3-5 hours auto-mode (3-4 days at hobby pace, ~1h/day manual typing) — applying METHODOLOGY v1.4 calibration

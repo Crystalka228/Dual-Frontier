@@ -55,8 +55,8 @@ User authorized fix on 2026-05-02 (Option 1 from agent's three-option report-bac
 3. `tests/DualFrontier.Core.Tests/Scheduling/` — directory contains existing test files (`ConverterCycleResolutionTests.cs`, `DependencyGraphTests.cs`, `ParallelExecutionTests.cs`). The new `TickSchedulerThreadSafetyTests.cs` joins them; reference these files for the project's existing Core-test conventions (xUnit, FluentAssertions if present, namespacing).
 4. `tests/DualFrontier.Core.Tests/DualFrontier.Core.Tests.csproj` — confirm existing test project reference structure; new test file does not need any new project references.
 5. `tests/DualFrontier.Modding.Tests/Bootstrap/GameBootstrapIntegrationTests.cs` — the existing `CreateLoop_RunningLoop_PublishesTickAdvancedCommandsThroughBridge` test stays unchanged; just rerun for verification.
-6. `docs/METHODOLOGY.md` — §2.4, §7.3.
-7. `docs/CODING_STANDARDS.md` — full doc. Especially: one class per file, English-only comments, member order, `_camelCase` private fields. **Stack-frame retention** section is not directly relevant here (no GC-collection paths in this fix).
+6. `docs/methodology/METHODOLOGY.md` — §2.4, §7.3.
+7. `docs/methodology/CODING_STANDARDS.md` — full doc. Especially: one class per file, English-only comments, member order, `_camelCase` private fields. **Stack-frame retention** section is not directly relevant here (no GC-collection paths in this fix).
 8. `docs/ROADMAP.md` — locate the Backlog section established by the prior housekeeping commit (`3d800d2`). New entry will be appended documenting the TickScheduler race discovery and resolution.
 
 ## Implementation

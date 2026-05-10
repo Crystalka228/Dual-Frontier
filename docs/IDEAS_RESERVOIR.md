@@ -10,7 +10,7 @@
 
 After Phase 7 closure — game shipped, baseline performance measured, full vanilla mod set live — development continues in the form of post-release updates. This reservoir holds candidate ideas for those updates. Each idea here exists on the terms of "what if?", not on the terms of a deliverable.
 
-The single criterion for inclusion is architectural compatibility with the foundation already specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md), [METHODOLOGY](./METHODOLOGY.md), and [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md). An idea belongs here if implementing it would not require breaking any existing LOCKED spec. An idea that would require such a break belongs in a ratification proposal, not the reservoir.
+The single criterion for inclusion is architectural compatibility with the foundation already specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md), [METHODOLOGY](/docs/methodology/METHODOLOGY.md), and [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md). An idea belongs here if implementing it would not require breaking any existing LOCKED spec. An idea that would require such a break belongs in a ratification proposal, not the reservoir.
 
 The reservoir deliberately omits performance targets, success metrics, and acceptance criteria. Validation of these ideas happens in field work — through actual implementation against actual users — not through speculative numbers written before the work begins. Stating "90% success rate" or "60% win rate" at the speculative stage is marketing language; the reservoir is engineering scratch space.
 
@@ -34,7 +34,7 @@ A local LLM generates a mod from a player's natural-language request. The capabi
 
 The hardware tier model is straightforward: RTX 4060+ class cards (8 GB VRAM) run Gemma 4B; RTX 4070+ (12 GB) runs Gemma 7B; RTX 4090+ (24 GB) runs Gemma 27B; CPU-only fallback runs TinyLlama and is restricted to tier-1 mods (single-system, kernel-capability-only). Documentation of the modding API doubles as the LLM's context. This inverts the usual reading: documentation is no longer "for humans" — it is for humans and models simultaneously, and the same document serves both.
 
-The architectural fit is good: the ALC isolation already covers generated mods identically to authored ones; the capability validation path applies unchanged; static type checking acts as a validation layer before runtime; and the documentation-as-context pattern gives the LLM exactly the surface area it needs. The dependency that bites is API stability — generated mods written against an API snapshot stop working when the API evolves. This is the same triple-binding risk the translation pipeline faces (see [METHODOLOGY](./METHODOLOGY.md) §7 on multi-surface synchronization), and is closer to a `TRANSLATION_GLOSSARY`-shaped problem than a feature-shaped one.
+The architectural fit is good: the ALC isolation already covers generated mods identically to authored ones; the capability validation path applies unchanged; static type checking acts as a validation layer before runtime; and the documentation-as-context pattern gives the LLM exactly the surface area it needs. The dependency that bites is API stability — generated mods written against an API snapshot stop working when the API evolves. This is the same triple-binding risk the translation pipeline faces (see [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7 on multi-surface synchronization), and is closer to a `TRANSLATION_GLOSSARY`-shaped problem than a feature-shaped one.
 
 ### 2.2 Voronoi-driven faction borders
 
@@ -42,7 +42,7 @@ Colony and faction borders emerge from weighted Voronoi geometry rather than bei
 
 The algorithm is Jump Flooding on the GPU, which runs in O(log n) parallel passes. Multi-level partitioning (civilizational → regional → local) lets the same machinery serve different zoom levels. Landmark anchoring contributes weight to specific points, so player-significant locations exert a gravitational pull on their region's borders.
 
-The dependency that bites is GPU determinism. Floating-point reduction order, driver versions, and vendor differences (NVIDIA / AMD / Intel) all conspire against bit-identical output. Determinism is non-negotiable per [METHODOLOGY](./METHODOLOGY.md) §7.1, so any GPU-compute integration that this idea depends on must be preceded by a determinism verification pass.
+The dependency that bites is GPU determinism. Floating-point reduction order, driver versions, and vendor differences (NVIDIA / AMD / Intel) all conspire against bit-identical output. Determinism is non-negotiable per [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7.1, so any GPU-compute integration that this idea depends on must be preceded by a determinism verification pass.
 
 ### 2.3 Topological data analysis for social dynamics
 
@@ -72,7 +72,7 @@ An antagonist faction whose decisions are recognizably human. Trained on anonymi
 
 Architecture: a small transformer (~50M parameters) running CPU inference, which is acceptable for the latency budget of strategic decisions (sub-second is fine; sub-millisecond is not required). The faction integration uses the same capability system as any other mod — the AI is constrained by exactly the capabilities its faction holds, no more. Power scaling comes from ensemble + faster reactions, not from super-strategy: the AI does not invent moves no human plays; it executes the moves humans play, faster and with less hesitation.
 
-The pre-launch training corpus is the developer's own playthroughs. Post-launch, opt-in community contribution extends the corpus. The privacy boundary needs explicit decision before any replay collection begins: what fields are included in "anonymized," what fields are stripped, and what consent flow the player sees. This is a LOCKED-spec-shaped decision, not a runtime decision — see [METHODOLOGY](./METHODOLOGY.md) §7 on the discipline of locking sensitive contracts before implementation pressure begins.
+The pre-launch training corpus is the developer's own playthroughs. Post-launch, opt-in community contribution extends the corpus. The privacy boundary needs explicit decision before any replay collection begins: what fields are included in "anonymized," what fields are stripped, and what consent flow the player sees. This is a LOCKED-spec-shaped decision, not a runtime decision — see [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7 on the discipline of locking sensitive contracts before implementation pressure begins.
 
 ### 2.7 Lambda calculus REPL for power users
 
@@ -120,8 +120,8 @@ The §2.2 + §2.3 combination is the strongest. Geopolitics that emerges from tw
 Some ideas were considered and rejected at this stage. The rejections are recorded so the question does not re-emerge as a fresh proposal:
 
 - **Online leaderboards or social features.** Conflicts with the local-only data discipline that the player model and AI opponent training rely on. The same discipline that enables those features specifically forecloses leaderboards.
-- **Microtransactions.** Incompatible with the project's commercial model and with the methodology's positioning ([METHODOLOGY](./METHODOLOGY.md) §0). Not an architectural objection — a values objection.
-- **Procedural narrative through a runtime LLM.** Slow, non-deterministic, and incompatible with the deterministic-replay invariant in [METHODOLOGY](./METHODOLOGY.md) §7.1. The AI mod assistant in §2.1 is build-time; runtime narrative generation is a different shape of problem.
+- **Microtransactions.** Incompatible with the project's commercial model and with the methodology's positioning ([METHODOLOGY](/docs/methodology/METHODOLOGY.md) §0). Not an architectural objection — a values objection.
+- **Procedural narrative through a runtime LLM.** Slow, non-deterministic, and incompatible with the deterministic-replay invariant in [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7.1. The AI mod assistant in §2.1 is build-time; runtime narrative generation is a different shape of problem.
 - **Blockchain anything.** No architectural need that another mechanism does not already address. The capability system handles authorization; the deterministic simulation handles reproducibility; the mod-signing system handles authorship. There is no remaining problem for which a distributed ledger is the answer.
 
 These are not moral judgments. They are architectural fit decisions. The same ideas in different projects can be implemented correctly; they do not fit Dual Frontier specifically.
@@ -144,5 +144,5 @@ The reservoir lives by these conventions, which are deliberately lighter than th
 
 - [ROADMAP](./ROADMAP.md) — the active surface, including the "Beyond ship" section that links here.
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the modding architecture every reservoir entry is required to fit within.
-- [METHODOLOGY](./METHODOLOGY.md) — the determinism invariant, the discipline of locking sensitive contracts before implementation, and the boundary against speculative metrics.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the determinism invariant, the discipline of locking sensitive contracts before implementation, and the boundary against speculative metrics.
 - [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — the one reservoir idea that has already crossed the line into formal ratification.

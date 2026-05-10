@@ -91,8 +91,8 @@ This is honest "incomplete state": the simulation runs, needs grow, jobs trigger
 5. `tests/DualFrontier.Systems.Tests/Pawn/NeedsJobIntegrationTests.cs` — confirm it still passes (no fixture change needed).
 6. `tests/DualFrontier.Systems.Tests/` — confirm directory structure for adding the new file. Match existing project conventions (xUnit, FluentAssertions if present elsewhere).
 7. `docs/ROADMAP.md` Backlog section — locate the "NeedsSystem decay direction" entry under "Phase 5 — gameplay completeness" subsection. Move to "Resolved" subsection on commit 3.
-8. `docs/METHODOLOGY.md` §2.4 atomic phase review, §7.3 three-commit invariant.
-9. `docs/CODING_STANDARDS.md` — English-only comments, member order.
+8. `docs/methodology/METHODOLOGY.md` §2.4 atomic phase review, §7.3 three-commit invariant.
+9. `docs/methodology/CODING_STANDARDS.md` — English-only comments, member order.
 
 Pre-flight grep checks before commit 1:
 - `grep -rn "HungerDecayPerTick\|ThirstDecayPerTick\|SleepDecayPerTick\|ComfortDecayPerTick" src/ tests/` — should return references in NeedsSystem.cs only. Any other reference would suggest external dependency on these constants.

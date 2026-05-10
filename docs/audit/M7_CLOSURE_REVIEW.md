@@ -1078,7 +1078,7 @@ is unblocked.
   M7 batch; D-1 through D-7 byte-identical to M6 closure state.
 - [ROADMAP](../ROADMAP.md) — M7 closure status, 7 sub-phase entries,
   6 housekeeping closures, 3 deliberate-interpretation footers.
-- [METHODOLOGY](../METHODOLOGY.md) — §2.4 atomic phase review, §7.3
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4 atomic phase review, §7.3
   process discipline, §11.4 stop-condition discipline.
 - [M3_CLOSURE_REVIEW](./M3_CLOSURE_REVIEW.md) — closure-report format
   origin (eight-check structure).

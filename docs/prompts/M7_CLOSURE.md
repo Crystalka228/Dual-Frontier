@@ -382,7 +382,7 @@ M7 closes <cleanly | with one v1.6 candidate registered>. M8 (Vanilla skeletons)
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.5 LOCKED.
 - [ROADMAP](../ROADMAP.md) — M7 closure status, 7 sub-phase entries,
   6 housekeeping closures.
-- [METHODOLOGY](../METHODOLOGY.md) — §2.4, §7.3, §11.4.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — §2.4, §7.3, §11.4.
 - [M3_CLOSURE_REVIEW](../audit/M3_CLOSURE_REVIEW.md) — closure-report
   format origin (eight-check structure).
 - [M4_CLOSURE_REVIEW](../audit/M4_CLOSURE_REVIEW.md) — multi-document

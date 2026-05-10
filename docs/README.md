@@ -7,8 +7,8 @@ research framing is in the [root README](../README.md); the engine
 exists to stress-test the methodology under non-trivial workload.
 
 Three documents carry the primary research weight:
-[METHODOLOGY](./METHODOLOGY.md) describes the four-agent pipeline as
-designed; [PIPELINE_METRICS](./PIPELINE_METRICS.md) records the
+[METHODOLOGY](/docs/methodology/METHODOLOGY.md) describes the four-agent pipeline as
+designed; [PIPELINE_METRICS](/docs/methodology/PIPELINE_METRICS.md) records the
 operational data measured while running it;
 [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) describes the
 capability-based mod isolation as an OS-style architecture;
@@ -39,15 +39,15 @@ Technical documents describing the engine that stress-tests the methodology: lay
 
 Documents required to reproduce the work or contribute to it: methodology, modding, performance, coding standards, and tests.
 
-- [METHODOLOGY](./METHODOLOGY.md) — the four-agent pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
-- [PIPELINE_METRICS](./PIPELINE_METRICS.md) — pipeline configuration, empirical metrics, throughput, subscription headroom, reproducibility requirements. Companion to METHODOLOGY.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the four-agent pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
+- [PIPELINE_METRICS](/docs/methodology/PIPELINE_METRICS.md) — pipeline configuration, empirical metrics, throughput, subscription headroom, reproducibility requirements. Companion to METHODOLOGY.
 - [MODDING](/docs/architecture/MODDING.md) — `IMod`, `IModApi`, `AssemblyLoadContext`, `IModContract`, the mod manifest.
 - [MOD_PIPELINE](/docs/architecture/MOD_PIPELINE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity.
 - [PERFORMANCE](/docs/architecture/PERFORMANCE.md) — target metrics, profiling, hot paths, caches.
 - [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability (Domain A: mana / electricity / water / heat / sound / scent), with `ProjectileSystem` preserved as Domain B (entity-keyed bulk compute). K9 field storage abstraction + G0–G5 Vulkan compute roadmap.
-- [CODING_STANDARDS](./CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order.
-- [TESTING_STRATEGY](./TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
-- [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — the hygiene checklist for every PR, the engine/game boundary, red flags.
+- [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order.
+- [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
+- [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) — the hygiene checklist for every PR, the engine/game boundary, red flags.
 - [NATIVE_CORE_EXPERIMENT](./NATIVE_CORE_EXPERIMENT.md) — the C++ core experiment, the P/Invoke boundary, benchmark results, plan for the batching API in Phase 9.
 - [PERSISTENCE](../src/DualFrontier.Persistence/README.md) — save-compression algorithms: tile RLE, component quantization, entity range encoding, StringPool.
 
@@ -56,11 +56,11 @@ Documents required to reproduce the work or contribute to it: methodology, moddi
 Work organization: phase order and acceptance criteria.
 
 - [ROADMAP](./ROADMAP.md) — closed phases 0–4 plus the Mod-OS Migration (M0–M10), with acceptance criteria and what each phase unlocks next.
-- [MAXIMUM_ENGINEERING_REFACTOR](./MAXIMUM_ENGINEERING_REFACTOR.md) — **v1.0 RATIFIED.** Three-track discipline escalation brief: formal verification (Track A), type-theoretic architecture (Track B), methodology replication kit (Track C). Activation deferred per-track; each track requires its own brief at activation time.
+- [MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) — **v1.0 RATIFIED.** Three-track discipline escalation brief: formal verification (Track A), type-theoretic architecture (Track B), methodology replication kit (Track C). Activation deferred per-track; each track requires its own brief at activation time.
 
 ## Learning materials
 
-Self-teaching artifacts produced after each substantial phase closes (see [METHODOLOGY §4.5](./METHODOLOGY.md)).
+Self-teaching artifacts produced after each substantial phase closes (see [METHODOLOGY §4.5](/docs/methodology/METHODOLOGY.md)).
 
 - [learning/PHASE_1](./learning/PHASE_1.md) — C# and multithreading through the lens of Core ECS: class vs struct, generics, attributes via reflection, nullable, `ThreadLocal`, race conditions, stack traces, tests as invariant proof. Includes a 14-day study path.
 
