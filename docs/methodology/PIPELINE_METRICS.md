@@ -3,6 +3,28 @@ title: Pipeline Metrics
 nav_order: 27
 ---
 
+<!--
+A'.0.7 DEFERRAL MARKER (added 2026-05-10 in A'.0.5 Phase 7).
+
+Empirical metrics in this document were gathered with the 4-agent
+pipeline (Crystalka + local quantized executor + cloud prompt-generator
++ cloud architect). Crystalka direction 2026-05-10 restructured the
+pipeline to 2-agent (Crystalka + unified Claude Desktop session).
+Continued accuracy of these metrics under the new pipeline is not
+established. A'.0.7 milestone deliberates whether to:
+- discard prior metrics (no longer representative)
+- reframe as historical record at a labeled time-of-measurement
+- recollect under the new pipeline configuration before publication
+
+A'.0.5 (this milestone) only relocated the file to docs/methodology/
+and applied mechanical pipeline-terminology scrubs in non-substantive
+contexts. Substantive empirical claims are preserved verbatim as the
+state to be re-evaluated in A'.0.7.
+
+See /docs/architecture/PHASE_A_PRIME_SEQUENCING.md for the Phase A'
+sequence locating A'.0.7 between A'.0.5 and A'.1.
+-->
+
 # Pipeline metrics — Dual Frontier
 
 *Empirical configuration, throughput data, and reproducibility requirements

@@ -3,6 +3,26 @@ title: Maximum Engineering Refactor Brief
 nav_order: 109
 ---
 
+<!--
+A'.0.7 DEFERRAL MARKER (added 2026-05-10 in A'.0.5 Phase 7).
+
+Sections of this document referencing the 4-agent pipeline (especially
+the directory-tree layout sub-sections naming gemma-executor.md role
+templates, hardware-variance discussions of local Gemma performance,
+and pipeline-mapping tables of Implementation→Gemma) describe the
+prior 4-agent shape. Crystalka direction 2026-05-10 restructured the
+pipeline to 2-agent (Crystalka + unified Claude Desktop session).
+Substantive sections require A'.0.7 architectural-deliberation rewrite.
+
+A'.0.5 (this milestone) only relocated the file to docs/methodology/
+and applied mechanical pipeline-terminology scrubs in non-substantive
+contexts. Substantive 4-agent prose is preserved verbatim as the
+state to be rewritten in A'.0.7.
+
+See /docs/architecture/PHASE_A_PRIME_SEQUENCING.md for the Phase A'
+sequence locating A'.0.7 between A'.0.5 and A'.1.
+-->
+
 # Maximum Engineering Refactor — Discipline Escalation Brief
 
 *A focused refactoring proposal to escalate the project's engineering discipline from its current level (subjectively assessed at 7/10 deliberate over-engineering) toward the structural maximum (10/10). The refactor adds three load-bearing discipline layers: formal verification of critical paths, type-theoretic architecture specification, and a methodology replication kit. Each addition is independently valuable, internally consistent with existing LOCKED specifications, and architecturally compatible with the foundation laid by M0–M10.*

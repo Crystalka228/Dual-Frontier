@@ -1,3 +1,30 @@
+<!--
+A'.0.7 DEFERRAL MARKER (added 2026-05-10 in A'.0.5 Phase 7).
+
+This document describes the methodology in its 4-agent pipeline state
+(Crystalka + local quantized executor + cloud prompt-generator + cloud
+architect). Crystalka direction 2026-05-10 restructured the pipeline
+to 2-agent (Crystalka + unified Claude Desktop session). Substantive
+sections of this document — §0 Abstract, §2.1 Role distribution, §2.2
+Contracts as IPC, §3 Pipeline economics, §4 Empirical results, §5
+Threat model, §8 Reproducibility — describe the prior 4-agent shape
+and require A'.0.7 architectural-deliberation rewrite (analog to
+K-L3.1) before they reflect current pipeline reality.
+
+A'.0.7 milestone: documentation methodology rewrite. Reads METHODOLOGY
++ PIPELINE_METRICS + MAXIMUM_ENGINEERING_REFACTOR; deliberates each
+substantive section against new 2-agent reality; produces revised
+documents with falsifiable claims re-grounded in current configuration.
+
+A'.0.5 (this milestone) only relocated the file to docs/methodology/
+and applied mechanical pipeline-terminology scrubs in non-substantive
+contexts. The 4-agent prose below is intentionally preserved as the
+state to be rewritten in A'.0.7.
+
+See /docs/architecture/PHASE_A_PRIME_SEQUENCING.md for the Phase A'
+sequence locating A'.0.7 between A'.0.5 and A'.1.
+-->
+
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the four-agent LLM pipeline, contracts as IPC between agents, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
