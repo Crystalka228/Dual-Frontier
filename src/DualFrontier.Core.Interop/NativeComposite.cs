@@ -17,23 +17,35 @@ namespace DualFrontier.Core.Interop;
 /// brief LOCKED design (§1.4): movement waypoints and storage item
 /// lists are the targets, neither needs stable index order.
 ///
-/// Lifetime: the native composite is owned by the
-/// <see cref="NativeWorld"/>; this wrapper is a thin facade.
+/// <para>
+/// <b>Value-type wrapper (K8.2 v2).</b> Refactored from <c>sealed unsafe class</c>
+/// to <c>readonly unsafe struct</c> so component structs can carry
+/// <see cref="NativeComposite{T}"/> fields without breaking K-L3 «unmanaged».
+/// Lifetime: the native composite is owned by the <see cref="NativeWorld"/>;
+/// this wrapper is a thin facade. Construct via
+/// <see cref="NativeWorld.CreateComposite{T}"/> (allocates fresh id; one
+/// composite per component instance) or <see cref="NativeWorld.GetComposite{T}(uint)"/>
+/// (re-binds to explicit id, e.g., for cross-entity shared lists).
+/// </para>
 /// </summary>
-public sealed unsafe class NativeComposite<T> where T : unmanaged
+public readonly unsafe struct NativeComposite<T> where T : unmanaged
 {
-    private readonly NativeWorld _world;
     private readonly uint _compositeId;
     private readonly IntPtr _handle;
 
-    internal NativeComposite(NativeWorld world, uint compositeId, IntPtr handle)
+    internal NativeComposite(uint compositeId, IntPtr handle)
     {
-        _world = world;
         _compositeId = compositeId;
         _handle = handle;
     }
 
     public uint CompositeId => _compositeId;
+
+    /// <summary>
+    /// True when the wrapper refers to a real native composite. False for
+    /// <c>default(NativeComposite&lt;T&gt;)</c> — the invalid sentinel.
+    /// </summary>
+    public bool IsValid => _compositeId != 0 && _handle != IntPtr.Zero;
 
     public int CountFor(EntityId parent)
     {

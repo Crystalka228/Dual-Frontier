@@ -559,7 +559,7 @@ public sealed class NativeWorld : IDisposable
                 $"df_world_get_composite returned null for composite_id={compositeId}, " +
                 $"element_size={Unsafe.SizeOf<T>()}.");
         }
-        return new NativeComposite<T>(this, compositeId, handle);
+        return new NativeComposite<T>(compositeId, handle);
     }
 
     public NativeSet<T> GetSet<T>(uint setId) where T : unmanaged, IComparable<T>
