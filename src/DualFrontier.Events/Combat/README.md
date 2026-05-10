@@ -21,7 +21,7 @@ two-step model, damage events, deaths, and status-effect application.
 - `DeathEvent` is marked `[Deferred]`: entity destruction must not preempt the
   current phase (entity references are still in use by other systems).
 - `ShootAttemptEvent` is published by AI/the player; CombatSystem decides
-  whether the shot is possible (it inspects `WeaponComponent`/`AmmoComponent`).
+  whether the shot is possible.
 
 ## Usage examples
 ```csharp

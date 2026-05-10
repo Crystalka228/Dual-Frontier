@@ -36,4 +36,3 @@ if (mind.Mood < mind.MoodBreakThreshold && !already)
 
 ## TODO
 - [ ] Settle the break severity scale (minor / major / berserk) — psychology GDD.
-- [ ] Add `RelationshipChangedEvent` — for SocialSystem, Phase 3.
