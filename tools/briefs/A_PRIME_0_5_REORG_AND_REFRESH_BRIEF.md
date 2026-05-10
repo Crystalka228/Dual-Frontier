@@ -5,7 +5,7 @@
 **Phase A' position**: A'.0.5 — between A'.0 (K-L3.1, DONE) and A'.0.7 (methodology rewrite, NEXT)
 **Target session**: single Claude Desktop session, full MCP tool access (Filesystem MCP, bash, git)
 **Estimated session length**: 2–4 hours auto-mode, ~25–40 atomic commits
-**Status**: AUTHORED — pending session execution
+**Status**: EXECUTED — closure 2026-05-10, commits `27523ac`..`28a9c8d` on main; MIGRATION_PROGRESS A'.0.5 entry filled at `28a9c8d`; final brief-EXECUTED commit lands per Phase 9 commit 3 of 3
 **Prerequisite**: A'.0 K-L3.1 closure (commit `45d831c` on main)
 **Blocks**: A'.0.7 methodology rewrite, A'.1 amendment brief execution, A'.3 push to origin, A'.4 K9 execution
 
