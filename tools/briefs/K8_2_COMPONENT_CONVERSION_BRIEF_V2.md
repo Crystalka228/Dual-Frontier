@@ -2,7 +2,7 @@
 
 **Brief version**: 2.0 (full rewrite of v1.0 after Cloud Code Phase 2.7 §1 stop)
 **Authored**: 2026-05-09 (after K8.2 v1 halt; Crystalka Variant 3 lock)
-**Status**: AUTHORED, awaits Cloud Code execution
+**Status**: EXECUTED 2026-05-09 — branch `feat/k82-foundation-closure`, 3 main commits + 21 branch commits (`6ee1a85`..`7527d00`). See `docs/MIGRATION_PROGRESS.md` § "K8.2 v2 — K-L3 «без exception» closure (single milestone)" for closure record. K-L3 «без exception» state achieved.
 **Supersedes**: `K8_2_COMPONENT_CONVERSION_BRIEF.md` v1.0 (deprecated; see Phase 0.8)
 **Reference docs**:
 - `KERNEL_ARCHITECTURE.md` v1.3 LOCKED (target for Part 2 + Part 0 + Part 7 amendment + bump to v1.4)

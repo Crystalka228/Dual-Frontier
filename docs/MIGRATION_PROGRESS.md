@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | K9 (next per K8.0 sequencing decision Option c — K9 runs between K8.1 and K8.2; K8.1.1 closed as in-place follow-up amendment to K8.1; K-Lessons closed as methodology-formalization batch post-K8.1.1) |
-| **Last completed milestone** | K-Lessons (4 pipeline-execution lessons formalized: atomic commit as compilable unit, Phase 0.4 inventory as hypothesis, mod-scope test isolation, Interop error semantics convention) — 2026-05-09 |
-| **Next milestone (recommended)** | K9 (RawTileField; consumes K8.1 primitives where applicable) |
-| **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09) |
+| **Active phase** | K9 / K8.3 (per Option c sequencing K9 runs before K8.3; K-Lessons + K8.2 v2 closed as the K-side foundation completion) |
+| **Last completed milestone** | K8.2 v2 (K-L3 «без exception» state achieved: K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass) — 2026-05-09 |
+| **Next milestone (recommended)** | K9 (RawTileField) if not yet closed; otherwise K8.3 (system migration to SpanLease/WriteBatch) |
+| **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09); K8.2 reformulated as v2 single-milestone foundation closure per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 592 (583 post-K8.1 + 9 K8.1.1 bridge tests; native selftest still 21 scenarios with 3 added sub-checks inside scenario_string_pool) |
+| **Tests passing** | 631 (post-K8.2 v2; +39 over the K-Lessons baseline of 592 — 33 new component/wrapper tests across InternedStringTests/NativeWorldFactoryTests/IdentityComponentTests/WorkbenchComponentTests/FactionComponentTests/SkillsComponentTests/StorageComponentTests/MovementComponentTests, minus 8 deleted-stub test scaffolding) |
 
 ---
 
@@ -84,7 +84,7 @@
 | K8.1 | Native-side reference handling primitives | DONE | 8-14 hours auto-mode | `a62c1f3`..`812df98` | 2026-05-09 |
 | K8.1.1 | InternedString closure follow-up (cross-pool equality, doc semantics, empty-string coverage) | DONE | 1-3 hours auto-mode | `f8273ca`..`16afdf3` | 2026-05-09 |
 | K-Lessons | Pipeline closure lessons formalization (METHODOLOGY v1.5 + KERNEL v1.3) | DONE | 30-60 min auto-mode | `9df2709`..`071ae11` | 2026-05-09 |
-| K8.2 | 7 class components redesigned to structs | NOT STARTED | 1-2 weeks | — | — |
+| K8.2 | K-L3 «без exception» closure: K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass | DONE | 6-12 hours auto-mode | `6ee1a85`..`7527d00` (preceded by 3 main commits: `c834f18` migration plan lock, `b1a461e` v1 deprecate, `88cbe3f` v2 brief author) | 2026-05-09 |
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
 | K8.5 | Mod ecosystem migration prep | NOT STARTED | 3-5 days | — | — |
@@ -404,14 +404,72 @@
 - Per-lesson commits (one `####` sub-section per commit) preserve readability of the document history without adding overhead, because each lesson is self-contained.
 - Bundling the version bump into the final-lesson commit (rather than a separate "version bump" commit) avoids a tax commit that would not leave the document in a coherent reviewable state on its own. This generalizes the atomic-commit-as-compilable-unit principle to documentation: each commit should leave the doc reviewable.
 
-### K8.2-K8.5 — Sub-milestones
+### K8.2 v2 — K-L3 «без exception» closure (single milestone)
 
-Each sub-milestone has a SKELETON brief in `tools/briefs/`. Full brief authoring is triggered sequentially after each predecessor closure. See K8.0 closure migration roadmap above for the order.
+**Status**: DONE
+**Closure**: 3 main commits + `6ee1a85`..`7527d00` on `feat/k82-foundation-closure` (fast-forward merged to main).
+  - Main commits (Phase 0): `c834f18` lock migration plan v1.0; `b1a461e` deprecate v1 brief; `88cbe3f` author v2 brief.
+  - Branch commits (Phases 2.A + 2.C + 2.B + 3 + 4): 21 atomic commits — wrapper refactor, deletions, conversions, annotation pass, KERNEL doc bump.
+**Brief**: `tools/briefs/K8_2_COMPONENT_CONVERSION_BRIEF_V2.md` (FULL EXECUTED). v1 deprecated to `tools/briefs/K8_2_COMPONENT_CONVERSION_BRIEF_V1_DEPRECATED.md` after Phase 2.7 §1 stop on K8.1 wrapper surface mismatch.
+**Test count**: 631 (up from 592 K-Lessons baseline; +39 net = 33 new wrapper/component tests + 14 InternedString IComparable + 9 NativeWorldFactory − 8 deleted-stub test scaffolding − 9 internal accounting).
 
-- **K8.1**: `tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md` (FULL EXECUTED)
-- **K8.2**: `tools/briefs/K8_2_CLASS_COMPONENT_REDESIGN_BRIEF.md` (skeleton)
-- **K8.3**: `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md` (skeleton)
-- **K8.4**: `tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md` (skeleton)
+**Deliverables** (single milestone, three concerns merged per Crystalka «Variant 3» 2026-05-09):
+
+1. **K8.1 wrapper value-type refactor.** `NativeMap<K,V>`, `NativeSet<T>`, `NativeComposite<T>` from `sealed unsafe class` to `readonly unsafe struct (uint id, IntPtr handle)`. `InternedString` gained `IComparable<InternedString>` + `Empty` static constant. `NativeWorld` gained `AllocateMapId/SetId/CompositeId` + `CreateMap/CreateSet/CreateComposite` factory methods (managed-side monotonic counters; native side unchanged — leverages existing `get_or_create_*` lazy pattern). `NativeMap` and `NativeSet` generic constraints relaxed from `IComparable<T>` to plain `unmanaged` so C# enums (e.g. `SkillKind`) work as keys.
+
+2. **6 class→struct conversions** using post-refactor wrappers:
+  - IdentityComponent — `string Name` → `InternedString Name`
+  - WorkbenchComponent — `string? ActiveRecipeId` → `InternedString ActiveRecipeId` (Empty = idle sentinel)
+  - FactionComponent — `string FactionId` → `InternedString FactionId`; const strings renamed to `*IdString` to clarify intern-at-use-site requirement
+  - SkillsComponent — two `Dictionary<SkillKind, T>?` → `NativeMap<SkillKind, T>`
+  - StorageComponent — `Dictionary<string, int>` → `NativeMap<InternedString, int>`; `HashSet<string>` → `NativeSet<InternedString>`
+  - MovementComponent — `GridVector? Target` → `GridVector Target + bool HasTarget`; `List<GridVector> Path` → `NativeComposite<GridVector> Path + int PathStepIndex` (advance-counter walk to dodge `RemoveAt` swap-with-last semantics)
+
+3. **6 empty TODO stub deletions** per METHODOLOGY §7.1 «data exists or it doesn't»:
+  - Combat: AmmoComponent, ShieldComponent, WeaponComponent (+ orphan ShieldSystem)
+  - Magic: SchoolComponent
+  - Pawn: SocialComponent (+ orphan SocialSystem; replaces-protected fixture redirected to SkillSystem)
+  - World: BiomeComponent (+ orphan BiomeSystem)
+  - Reference cleanup across consumers: VanillaComponentRegistration, CombatSystem, DamageSystem, SpellSystem, EtherGrowthSystem, RitualSystem, RelationSystem, WeatherSystem, AmmoIntent, RefusalReason, DeathReactionEvent, M62IntegrationTests, Phase5BridgeAnnotationsTests, ProductionComponentCapabilityTests, VanillaComponentRoundTripTests.
+
+**Architectural plumbing added** (Phase 2.B.1 surfaced as Phase 2.7 §3 stop, then resolved):
+  - `DualFrontier.Core` → `DualFrontier.Core.Interop` ProjectReference (new dep).
+  - `SystemExecutionContext` and `ParallelSystemScheduler` accept optional `NativeWorld?` parameter; `SystemBase` exposes `protected NativeWorld NativeWorld` accessor mirroring the existing `Services` pattern.
+  - `GameBootstrap.CreateLoop` constructs one `NativeWorld` alongside the managed `World`. `RandomPawnFactory` ctor takes the native world (5th param). `PawnStateReporterSystem` resolves InternedString names via `SystemBase.NativeWorld`. `InventorySystem` and `HaulSystem` intern/resolve at the event-bridge boundary.
+  - `DualFrontier.Modding.Tests` and `DualFrontier.Systems.Tests` csproj add native DLL `CopyToOutputDirectory` block (mirrors Core.Interop.Tests + Benchmarks).
+
+**ModAccessible annotation pass** (Phase 3): 12 verify-only struct components annotated per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` §1.5 defaults. Surviving 25 production components (31 pre-K8.2 − 6 stub deletions = 25) all carry `[ModAccessible]`.
+
+**KERNEL_ARCHITECTURE.md** v1.3 → v1.4: Part 2 K8.2 row reformulated; Part 0 K-L3 implication rewritten («без exception» state achieved); status line updated.
+
+**Brief deviations**:
+  - Phase 0.7 lock of `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 (status `AUTHORED — pending Crystalka acceptance and lock` → `AUTHORITATIVE LOCKED`) committed on main as the milestone's first commit per v2 brief Phase 0.7.
+  - v1 brief deprecated to `K8_2_COMPONENT_CONVERSION_BRIEF_V1_DEPRECATED.md` with frontmatter superseded note instead of `git mv` (v1 was untracked; standard rename + commit).
+  - Native side `df_world_allocate_*_id` C ABI primitives NOT added; managed-side counter approach used instead per v2 brief Phase 1.A.5 «if existing has counters, reuse; else minimal addition» — chose the no-addition path because the native side accepts any non-zero uint via the existing `get_or_create_*` lazy primitives. Avoids C++ rebuild and binary deploy.
+  - `NativeMap`/`NativeSet` generic constraint relaxation (drop `IComparable<TKey>`) — discovered at Phase 2.B.4 SkillsComponent compile because C# enums don't satisfy `IComparable<T>` automatically. Native side uses memcmp regardless of any managed comparer; constraint was documentary not load-bearing.
+  - SystemBase NativeWorld accessor + GameBootstrap NativeWorld plumbing — surfaced as Phase 2.7 §3 stop at IdentityComponent conversion start (no production code path had a NativeWorld available); resolved per Crystalka «(A) add NativeWorld to SystemBase» direction.
+  - NativeComposite EntityId-parameterized API preserved unchanged — for per-component-instance use the same parent entity passes every method call; redundant dimension is harmless. MovementComponent uses `PathStepIndex` advance-counter rather than `RemoveAt` to dodge the swap-with-last FIFO break.
+
+**Architectural decisions LOCKED in this milestone**:
+  - K8.1 wrapper class→struct refactor is now permanent (was Cloud Code's recommended K8.1.2 follow-up; Crystalka folded into K8.2 v2 to avoid a partial intermediate state).
+  - Per-instance id allocation strategy: managed-side `NativeWorld` monotonic counter, 0 = invalid sentinel. Native side unchanged.
+  - Empty TODO stub deletions per METHODOLOGY §7.1 are an architectural application of an existing principle, not a new K-Lxx decision.
+  - K-L3 «без exception» state is now an architectural fact for `src/DualFrontier.Components/`. KERNEL_ARCHITECTURE.md Part 0 implication updated.
+
+**Cross-cutting impact**:
+  - K8.3 (system migration) unblocked: every consumer-bearing component is now `unmanaged struct` and uses K8.1 primitives where applicable. K8.3 brief authoring against this state.
+  - K8.4 (managed `World` retirement, Mod API v3) — partial preview already in place: GameBootstrap owns one NativeWorld alongside managed World, and SystemBase exposes it. K8.4 finalizes the retirement.
+  - M-series migrations (M8.4 Vanilla.World, M8.5-M8.7 Vanilla.Pawn, M9 Vanilla.Combat, M10/M10.B Vanilla.Inventory/Magic) consume K-L3-clean components. The 6 deleted-stub slice contents are M-series content concerns — vanilla mods author them as `unmanaged struct` from inception.
+
+**Lessons learned**:
+  - When a brief's design assumes consumer-site infrastructure that doesn't yet exist (here: `NativeWorld` access from systems and factories), surface as Phase 2.7 §3 stop early, ask, and treat the resolution as architectural plumbing rather than per-component improvisation. Saves replicating the same plumbing across 6 conversions.
+  - Wrapper generic constraints can be over-constrained for documentary reasons. When a constraint blocks idiomatic usage of valid managed types (enums) without buying anything semantically, drop it. The native side is the authority on ordering when it uses memcmp.
+  - Brief Phase 6.1 split-point contingency (partial closure mid-K8.2) ended up not used: single session executed the full milestone in 21 commits over the branch + 3 main commits, with all green. The split-point design remains a useful contingency for future similar milestones.
+
+### K8.3-K8.5 — Sub-milestones
+
+- **K8.3**: `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md` (skeleton; reformulated scope per migration plan §1.2 — all 34 production systems in `src/DualFrontier.Systems/`)
+- **K8.4**: `tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md` (skeleton; partial preview already in place via K8.2 v2 SystemBase NativeWorld plumbing)
 - **K8.5**: `tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md` (skeleton)
 
 ---
