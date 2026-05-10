@@ -3,31 +3,11 @@ title: Maximum Engineering Refactor Brief
 nav_order: 109
 ---
 
-<!--
-A'.0.7 DEFERRAL MARKER (added 2026-05-10 in A'.0.5 Phase 7).
-
-Sections of this document referencing the 4-agent pipeline (especially
-the directory-tree layout sub-sections naming gemma-executor.md role
-templates, hardware-variance discussions of local Gemma performance,
-and pipeline-mapping tables of Implementation→Gemma) describe the
-prior 4-agent shape. Crystalka direction 2026-05-10 restructured the
-pipeline to 2-agent (Crystalka + unified Claude Desktop session).
-Substantive sections require A'.0.7 architectural-deliberation rewrite.
-
-A'.0.5 (this milestone) only relocated the file to docs/methodology/
-and applied mechanical pipeline-terminology scrubs in non-substantive
-contexts. Substantive 4-agent prose is preserved verbatim as the
-state to be rewritten in A'.0.7.
-
-See /docs/architecture/PHASE_A_PRIME_SEQUENCING.md for the Phase A'
-sequence locating A'.0.7 between A'.0.5 and A'.1.
--->
-
 # Maximum Engineering Refactor — Discipline Escalation Brief
 
 *A focused refactoring proposal to escalate the project's engineering discipline from its current level (subjectively assessed at 7/10 deliberate over-engineering) toward the structural maximum (10/10). The refactor adds three load-bearing discipline layers: formal verification of critical paths, type-theoretic architecture specification, and a methodology replication kit. Each addition is independently valuable, internally consistent with existing LOCKED specifications, and architecturally compatible with the foundation laid by M0–M10.*
 
-*Version: 1.0 (2026-05-06). RATIFIED. Three independent tracks (A: Verification, B: Type System, C: Replication Kit) added to backlog per §5.3. Activation of any track requires per-track brief at activation time.*
+*Version: 1.1 (2026-05-10). RATIFIED. Three independent tracks (A: Verification, B: Type System, C: Replication Kit) added to backlog per §5.3. Activation of any track requires per-track brief at activation time. A'.0.7 amendment (2026-05-10) updated §4.3 replication kit prompt directory + §5.2 parallel-track discipline mapping для v1.6 era pipeline (architect-mode / executor-mode sessions); Tracks A/B/C architectural content unchanged.*
 
 ---
 
@@ -272,10 +252,20 @@ replication-kit/
   │   ├── tools-versions.lock          (exact versions of every tool)
   │   └── setup.sh                     (one-command environment bootstrap)
   ├── prompts/
-  │   ├── opus-architect.md            (Opus role prompt template)
-  │   ├── sonnet-decomposer.md         (Sonnet role prompt template)
-  │   ├── gemma-executor.md            (Gemma role prompt template)
-  │   └── escalation-criteria.md       (when to invoke which agent)
+  │   ├── architect-mode.md            (deliberation-mode session prompt template
+  │   │                                  — architectural decision recording brief
+  │   │                                  shape per K8.0 / K-L3.1 / A'.0.7 precedent;
+  │   │                                  per-milestone briefs per K9 / K8.3 / K8.4
+  │   │                                  precedent)
+  │   ├── executor-mode.md             (execution-mode session prompt template
+  │   │                                  — autonomous tool-loop against authored
+  │   │                                  brief; analog A'.0.5 execution precedent)
+  │   ├── boundary-type-config.md      (deliberation/execution mode-switching
+  │   │                                  protocol; agent role specification
+  │   │                                  per METHODOLOGY §2.1 role categories)
+  │   └── escalation-criteria.md       (when to invoke deliberation mode vs
+  │                                     execution mode per METHODOLOGY §3
+  │                                     stop/escalate/lock)
   ├── corpus/
   │   ├── task-001-baseline.md         (reference task with expected output)
   │   ├── task-002-medium.md           (medium-complexity reference task)
@@ -334,7 +324,7 @@ docs/methodology/PIPELINE_METRICS.md            (updated with §6 replication re
 ### 4.8 Risk
 
 - **Cost.** External replication requires the same Anthropic Max subscription tier. Not all interested researchers can afford.
-- **Hardware variance.** Local Gemma performance varies with GPU. Statistical bounds account for this but introduce noise.
+- **Environment variance.** Under v1.x era pipeline configurations, local quantized executor performance varied with GPU; statistical bounds account for this but introduce noise. Under v1.6 era (cloud-tier Claude Desktop, no local inference), equivalent variance shifts к subscription tier + regional rate limits — different noise profile, not yet measured under replication.
 - **Methodology drift.** As the project evolves, the kit must be kept current. Triple-binding risk again.
 - **Negative result risk.** External replications may fail to reproduce key claims, falsifying the central hypothesis. This is the **point** of the kit — falsifiability requires the possibility of falsification — but psychologically difficult.
 
@@ -366,14 +356,14 @@ Track C (Replication):  Phase 8+ (post-shipping)
 
 ### 5.2 Parallel-track discipline
 
-Each track adopts the same M-phase discipline as existing migration work:
+Each track adopts the same milestone discipline as existing migration work:
 
-- Brief authoring → Sonnet
-- Implementation → Gemma
-- Audit → Opus
-- Closure review with byte-identical diff verification on the new LOCKED spec
+- Brief authoring → architect-mode session (analog K8.0 / K-L3.1 / A'.0.7 precedent для architectural decision recording brief; analog K9 / K8.3 / K8.4 / K8.5 per-milestone briefs for execution scope specification)
+- Implementation → executor-mode session (autonomous tool-loop against authored brief; analog A'.0.5 execution precedent)
+- Audit → architect-mode session at phase closure (analog Phase 4 closure review precedent; analog K-L3.1 closure deliberation precedent)
+- Closure review с byte-identical diff verification on the new LOCKED spec
 
-This brief itself is the equivalent of an "M-phase prompt" but spanning multiple phases. Per-track briefs are written when the track activates.
+This brief itself is the equivalent of an «M-phase prompt» but spanning multiple phases. Per-track briefs are written when the track activates.
 
 ### 5.3 ROADMAP.md integration
 
@@ -470,6 +460,7 @@ amended through the same ratification process.
 
 - **v1.0** (2026-05-06) — initial ratification. Three tracks (A/B/C) added
   to ROADMAP backlog. No track activated.
+- **v1.1** (2026-05-10) — A'.0.7 amendment: §4.3 replication kit prompt directory rewritten к v1.6 reality (architect-mode / executor-mode prompts replace per-agent prompts; boundary-type-config.md added); §5.2 parallel-track discipline mapping rewritten к v1.6 reality с K8.0 / K-L3.1 / A'.0.7 / A'.0.5 / K9 / K8.3 / K8.4 / K8.5 / Phase 4 closure precedent cross-refs; document body otherwise unchanged. Tracks A / B / C architectural content untouched.
 
 ---
 
