@@ -52,7 +52,6 @@ public static class VanillaComponentRegistration
         registry.Register<EtherComponent>();
         registry.Register<GolemBondComponent>();
         registry.Register<ManaComponent>();
-        registry.Register<SchoolComponent>();
 
         // Combat category (1)
         registry.Register<ArmorComponent>();

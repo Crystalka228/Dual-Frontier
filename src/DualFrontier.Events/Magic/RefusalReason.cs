@@ -26,8 +26,10 @@ public enum RefusalReason
     NoActiveBond,
 
     /// <summary>
-    /// The school of the requesting spell does not match the school of the caster/target
-    /// — see <c>SchoolComponent</c>, GDD 4.3.
+    /// The school of the requesting spell does not match the school of the caster/target.
+    /// School data lives in vanilla magic mod content per migration plan §3.5; the
+    /// kernel-side SchoolComponent stub was removed in K8.2 v2 alongside the other
+    /// empty TODO stubs. GDD 4.3.
     /// </summary>
     SchoolMismatch,
 }

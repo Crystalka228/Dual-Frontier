@@ -15,7 +15,7 @@ namespace DualFrontier.Systems.Magic;
 /// Tick: RARE (3600 frames) — ritual steps are long.
 /// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(SchoolComponent) },
+    reads:  new System.Type[0],
     writes: new[] { typeof(ManaComponent) },
     bus:    nameof(IGameServices.Magic)
 )]

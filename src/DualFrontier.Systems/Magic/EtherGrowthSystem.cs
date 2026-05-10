@@ -14,7 +14,7 @@ namespace DualFrontier.Systems.Magic;
 /// Tick: SLOW (60 frames) — ether grows slowly.
 /// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(EtherComponent), typeof(SchoolComponent) },
+    reads:  new[] { typeof(EtherComponent) },
     writes: new[] { typeof(EtherComponent) },
     bus:    nameof(IGameServices.Magic)
 )]

@@ -35,10 +35,9 @@ public class VanillaComponentRoundTripTests
         var act = () => VanillaComponentRegistration.RegisterAll(registry);
         act.Should().NotThrow();
 
-        // Verify count: post-Combat-stub-deletions (Ammo/Shield/Weapon removed
-        // in K8.2 v2 Phase 2.C.1). Subsequent phases will further reduce as
-        // School/Biome stubs are deleted.
-        registry.Count.Should().Be(21);
+        // Verify count: post-K8.2-v2-stub-deletions in progress. Combat (3)
+        // and Magic.School deleted; Biome still pending Phase 2.C.4.
+        registry.Count.Should().Be(20);
     }
 
     [Fact]

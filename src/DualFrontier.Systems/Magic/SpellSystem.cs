@@ -15,7 +15,7 @@ namespace DualFrontier.Systems.Magic;
 /// Tick: FAST (3 frames) — spell responsiveness.
 /// </summary>
 [SystemAccess(
-    reads:  new[] { typeof(ManaComponent), typeof(SchoolComponent) },
+    reads:  new[] { typeof(ManaComponent) },
     writes: new Type[0],
     bus:    nameof(IGameServices.Magic)
 )]
