@@ -4,7 +4,7 @@
 **Authored**: 2026-05-10 (Opus, post-K8.2 v2 closure)
 **Target session**: Crystalka + Opus chat session (no Cloud Code)
 **Estimated session length**: 2–4 hours (deliberation + Phase 4 amendment plan authoring)
-**Status**: EXECUTED 2026-05-10 — Phase 0 reads + Phase 1 deliberation Q1–Q6 + Phase 3 synthesis (§4.A) + Phase 4 amendment plan authoring complete. Amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` is the executable artifact for follow-up amendment brief.
+**Status**: EXECUTED 2026-05-10 — Phase 0 reads + Phase 1 deliberation Q1–Q6 + Phase 3 synthesis (§4.A) + Phase 4 amendment plan authoring complete. Amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md` is executable artifact; AMENDMENTS LANDED 2026-05-10 via A'.1.K execution session (commits K-A1 through K-A8 covering KERNEL v1.5 + MOD_OS v1.7 + MIGRATION_PLAN v1.1 + MIGRATION_PROGRESS sync + 4 skeleton brief surgical edits).
 **Locks** (session 2026-05-10): Q1=(a) `[ManagedStorage]` attribute on type; Q2=(β-i) mod-side storage + IModApi `RegisterManagedComponent<T>`; Q3=(i) explicit dual API via `SystemBase.NativeWorld` + `SystemBase.ManagedStore<T>()`; Q4=(b) runtime-only managed-path (no persistence); Q5=(a) passive metrics, analyzer (Q5.b) deferred post-migration; Q6=(a) path-blind capability (already structurally true per K4 prerequisite); Synthesis=§4.A amend K-L3 (peer paths, single principle).
 **Prerequisite**: K8.2 v2 closure (`7527d00` on main) — DONE 2026-05-09
 **Blocks**: README cleanup pass, push to origin, K8.3 brief authoring (all deferred to post-K-L3.1 amendment brief execution)
