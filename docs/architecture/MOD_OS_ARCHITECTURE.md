@@ -5,7 +5,7 @@ nav_order: 25
 
 # Mod OS Architecture — Dual Frontier
 
-**Status:** LOCKED v1.6 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), M7 pre-flight readiness review (v1.4), Audit Campaign Pass 2 (v1.5), and GPU compute integration ratification (v1.6) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, K9, G0–G9, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
+**Status:** LOCKED v1.7 — Phase 0 closed; non-semantic corrections from M1–M3.1 audit (v1.1), M3 closure review (v1.2), M4.3 implementation review (v1.3), M7 pre-flight readiness review (v1.4), Audit Campaign Pass 2 (v1.5), GPU compute integration ratification (v1.6), and K-L3.1 bridge formalization (v1.7) applied. Every architectural decision in this document is final input to all subsequent migration phases (M1–M10, K9, G0–G9, see §11). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
 
 **Version history:**
 
@@ -38,6 +38,12 @@ nav_order: 25
   - §11.2: six new `ValidationErrorKind` entries (`FieldRegistrationConflict`, `InvalidFieldDimensions`, `FieldCapabilityMismatch`, `ComputePipelineCompilationFailed`, `ComputePipelineRegistrationConflict`, `ComputeUnsupportedWarning`). The first five are blocking errors; the sixth is a non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [GPU_COMPUTE](./GPU_COMPUTE.md) "Failure modes → CPU fallback".
   - §11.1: M3.5 added as deferred milestone — capability registry refresh for field types via `[FieldAccessible]` scan extension to `KernelCapabilityRegistry`. Unblocked at K9 in-progress.
   - No semantic changes to v1.5 decisions. No locked decision (D-1 through D-7) is altered. K9 + G0–G9 implementations begin against this surface.
+- v1.7 — K-L3.1 bridge formalization applied (session 2026-05-10):
+  - §«Modding с native ECS kernel» (lines 1149–1150 v1.6): rewritten to reflect K-L3.1 — Path α (`unmanaged struct` via `RegisterComponent<T>`) and Path β (managed `class` via `[ManagedStorage]` + `RegisterManagedComponent<T>`) as first-class peers; cross-mod direct managed-path access structurally impossible by ALC isolation; within-mod cross-path access via dual `SystemBase` API.
+  - §3.5 D-1 LOCKED note: path orthogonality clarified — `[ModAccessible]` (already `Class | Struct` per K4 prerequisite) and capability strings function uniformly across paths.
+  - §4.6 IModApi v3 surface: `RegisterManagedComponent<T> where T : class, IComponent` added alongside existing `RegisterComponent<T>` (Path α) and `Fields`/`ComputePipelines` v1.6 additions.
+  - §11.1: M3.5 deferred milestone description extended (analyzer covers Path α/β consistency in addition to `[FieldAccessible]` scan extension); analyzer ships post-migration per Q5.b deferral.
+  - No semantic changes to v1.6 decisions. No locked decision (D-1 through D-7) is altered. Authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`.
 
 ---
 
@@ -306,6 +312,8 @@ Failure produces a `ValidationError` of new kind `MissingCapability`, listing ea
 The kernel exposes a fixed list of capabilities derived from public types in `DualFrontier.Contracts` and `DualFrontier.Components`. The list is generated at build time from a reflection scan and embedded as a resource in the kernel assembly. Mods read this resource through a new `IModApi.GetKernelCapabilities()` accessor.
 
 > **✓ LOCKED (D-1).** `read` and `write` capabilities apply only to a **curated, opt-in subset** of public components. A component is reachable from a mod only when annotated with `[ModAccessible(Read = true, Write = false)]`. The component author actively decides what mods can touch; everything else is invisible to the capability resolver and produces a `MissingCapability` error if requested. Aligns with the project's structural-isolation philosophy: tighter blast radius, falsifiable surface.
+>
+> **Path orthogonality (K-L3.1, 2026-05-10).** `[ModAccessible]` annotation applies uniformly across Path α (`unmanaged struct`) and Path β (managed `class` via `[ManagedStorage]`). The attribute's `AttributeUsage` already targets `Class | Struct` (widened in K4 prerequisite commit). Capability strings carry verb + FQN (e.g. `kernel.read:Vanilla.Pawn.JobQueueComponent` or `mod.dualfrontier.vanilla.pawn.read:JobQueueComponent`) and are path-orthogonal — provider namespace prefix differs by ownership (kernel vs mod), not by storage path. The capability resolver dispatches internally to `NativeWorld` span access (Path α) or per-mod `ManagedStore<T>` lookup (Path β) per-T. See `KERNEL_ARCHITECTURE.md` Part 0 K-L3 implication post-K-L3.1 for the storage-path decision criterion.
 
 ### 3.6 Hybrid enforcement — load-time + runtime
 
@@ -431,11 +439,24 @@ v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and
 public interface IModApi // v3 — extends v2
 {
     // ── v1 + v2 surface (preserved verbatim) ──────────────────────────────
-    // RegisterComponent, RegisterSystem, Publish, Subscribe,
+    // RegisterComponent<T> where T : IComponent (Path α; existing v2)
+    // RegisterSystem, Publish, Subscribe,
     // PublishContract, TryGetContract, GetKernelCapabilities,
     // GetOwnManifest, Log
 
     // ── New in v3 ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Register a Path β managed-class component (K-L3.1 bridge per
+    /// `KERNEL_ARCHITECTURE.md` Part 0 K-L3 implication post-K-L3.1).
+    /// Type T must be a class implementing IComponent and annotated with
+    /// [ManagedStorage]; absence of attribute on a class component is a
+    /// load-time `ValidationErrorKind.MissingManagedStorageAttribute`
+    /// error (added in v1.7 §11.2). Storage lives in the per-mod
+    /// RestrictedModApi instance (mod-side ownership per Q2.β-i);
+    /// reclaimed deterministically on AssemblyLoadContext.Unload.
+    /// </summary>
+    void RegisterManagedComponent<T>() where T : class, IComponent;
 
     /// <summary>
     /// Field-storage sub-API. Null when the kernel does not support fields
@@ -996,7 +1017,7 @@ The current state of the codebase is ~30% of the target. The migration is staged
 | **M2** | `IModApi.Publish`/`Subscribe` real implementation | `RestrictedModApi` no longer no-ops | Publish/subscribe round-trip tests |
 | **M3** | Capability model: parser, kernel-provided set, load-time + runtime check | `CapabilityRegistry`, `[ModAccessible]` attribute, `[ModCapabilities]` attribute, `RestrictedModApi.EnforceCapability` | `KernelCapabilityRegistryTests`, `CapabilityValidationTests`, capability violation tests |
 | **M3.4** *(deferred)* | CI Roslyn analyzer for `[ModCapabilities]` honesty (D-2 hybrid completion) | Standalone analyzer package; runs in mod-publication CI, not at game load | Static-analysis integration tests; unblocked when first external mod author appears |
-| **M3.5** *(deferred)* | Capability registry refresh for field types via `[FieldAccessible]` scan extension to `KernelCapabilityRegistry` (per v1.6 §3.5) | Extended `KernelCapabilityRegistry` recognising `[FieldAccessible]` annotation | `FieldCapabilityRegistryTests`; unblocked at K9 in-progress |
+| **M3.5** *(deferred)* | Capability registry refresh for field types via `[FieldAccessible]` scan extension (per v1.6 §3.5) + Path α/β consistency analyzer covering `[ManagedStorage]` shape↔attribute consistency, `RegisterComponent`/`RegisterManagedComponent` constraint match, and dual-API access pattern enforcement (per K-L3.1 Q5.b deferred enforcement) | Extended `KernelCapabilityRegistry` recognising `[FieldAccessible]` annotation; Roslyn analyzer covering Path α/β consistency rules | `FieldCapabilityRegistryTests` + `PathConsistencyAnalyzerTests`; unblocked at K9 in-progress (field side) and post-migration (path-consistency side per K-L3.1 Q5.b) |
 | **M4** | Shared ALC + shared mod kind | `SharedModLoadContext`, manifest `kind` field | Type-sharing test (shared-mod event published from one regular mod, received in another) |
 | **M5** | Inter-mod dependency resolution with caret syntax | `VersionConstraint` parser, dependency graph in `ModIntegrationPipeline` | Version constraint tests |
 | **M6** | Bridge replacement via `replaces` | `[BridgeImplementation(Replaceable=true)]`, loader skip logic | Bridge replacement tests (all of §7.5) |
@@ -1023,6 +1044,7 @@ The current enum has `IncompatibleContractsVersion`, `WriteWriteConflict`, `Miss
 - `ComputePipelineCompilationFailed` (G0) — SPIR-V bytecode failed validation at pipeline registration
 - `ComputePipelineRegistrationConflict` (G0) — two mods register a compute pipeline with the same id
 - `ComputeUnsupportedWarning` (G0) — non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [GPU_COMPUTE](./GPU_COMPUTE.md) "Failure modes → CPU fallback"
+- `MissingManagedStorageAttribute` (K-L3.1) — mod calls `RegisterManagedComponent<T>` where T is a class but not annotated with `[ManagedStorage]`, OR mod calls `RegisterComponent<T>` where T is a class (Path α expects `unmanaged struct` shape; class type without `[ManagedStorage]` is shape-attribute mismatch). Active enforcement is load-time runtime check until M3.5 analyzer ships (per K-L3.1 Q5.b deferral); analyzer adds compile-time enforcement.
 
 ### 11.3 Closing `ROADMAP` debt incidentally
 
@@ -1146,10 +1168,13 @@ These items were unresolved in v0.1 and were locked during Phase 0 closure (v1.0
 ## Modding с native ECS kernel
 
 When kernel migration к native completes (K-series, see `KERNEL_ARCHITECTURE.md`):
-- Mod component types must be `unmanaged` structs (Path α)
-- Class-based component storage prohibited (через ECS — mod state classes acceptable outside ECS)
-- Vanilla mods register components и systems through same IModApi as third-party (vanilla = mods principle preserved)
-- Mod replacement triggers second-graph rebuild (managed) — native side untouched
-- Mod fields (`RawTileField<T>`) и compute pipelines registered through same `IModApi` extension (`api.Fields` / `api.ComputePipelines`); see [GPU_COMPUTE](./GPU_COMPUTE.md) "Architectural integration → Mod-driven shader registration"
+- Mod component types are either Path α (`unmanaged struct`, kernel-side `NativeWorld` storage) or Path β (managed `class` annotated with `[ManagedStorage]`, mod-side `ManagedStore<T>` storage). Path α is default; Path β is per-component opt-in for shapes where unmanaged conversion forces structural compromise (managed-only references, lazy state graphs, complex object graphs not blittable). See `KERNEL_ARCHITECTURE.md` Part 0 K-L3 implication post-K-L3.1 for the decision criterion.
+- Path α registers via existing `IModApi.RegisterComponent<T> where T : IComponent`. Path β registers via `IModApi.RegisterManagedComponent<T> where T : class, IComponent` (Mod API v3 surface, ships at K8.4 closure). Both registration entries are uniform across vanilla and third-party mods (K-L9 «vanilla = mods» preserved).
+- Cross-mod managed-path direct access is structurally impossible by `AssemblyLoadContext` isolation: a regular mod's ALC cannot resolve types from another regular mod's ALC, so `Vanilla.Combat` cannot reference `Vanilla.Pawn.JobQueueComponent` at compile time. Cross-mod data flow uses event/intent contracts per §6 three-level contracts (publish/subscribe via shared protocol mods).
+- Within-mod cross-path access (one system reads native + managed components on same entity) is supported via dual `SystemBase` API: `SystemBase.NativeWorld.AcquireSpan<T>()` for Path α; `SystemBase.ManagedStore<T>()` for Path β. The accessor resolves to the system's owning mod's per-mod store via `SystemMetadata.ModId` (K6.1 plumbing). Performance characteristics visible per-call: native-path is zero-allocation span iteration; managed-path is Dictionary-shaped lookup.
+- Mod replacement triggers second-graph rebuild (managed) — native side untouched. Per-mod `ManagedStore<T>` instances reclaim deterministically with the mod's `AssemblyLoadContext.Unload` per §9.5 unload chain.
+- Vanilla mods register components, systems, fields, and compute pipelines through the same IModApi as third-party (vanilla = mods principle preserved per K-L9).
+- Mod fields (`RawTileField<T>`) и compute pipelines registered through `IModApi` extension (`api.Fields` / `api.ComputePipelines`); see [GPU_COMPUTE](./GPU_COMPUTE.md) "Architectural integration → Mod-driven shader registration".
+- `[ModAccessible]` annotation and capability strings (`kernel.read:`, `mod.<id>.read:`) function uniformly across Path α and Path β (Q6.a path-blind capability lock per K-L3.1). The capability resolver dispatches internally to `NativeWorld` span access or `ManagedStore` lookup per-T.
 
 See `KERNEL_ARCHITECTURE.md` §1.9 (mod system registration) и §1.10 (component type registry) для full detail. See [GPU_COMPUTE](./GPU_COMPUTE.md) "Architectural integration with existing systems → Mod parity (KERNEL K-L9)" для GPU compute mod-parity invariant.
