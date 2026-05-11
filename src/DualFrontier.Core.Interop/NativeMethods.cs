@@ -14,7 +14,7 @@ namespace DualFrontier.Core.Interop;
 /// <c>native/DualFrontier.Core.Native/build.md</c> for the build output
 /// locations and the post-build copy recipe.
 /// </summary>
-internal static class NativeMethods
+internal static partial class NativeMethods
 {
     /// <summary>
     /// Name without extension. The CLR adds the platform-specific prefix
