@@ -720,4 +720,176 @@ DF_API int32_t df_set_iterate(df_set_handle set,
     }
 }
 
+// K9 field storage C ABI implementations.
+
+DF_API int32_t df_world_register_field(
+    df_world_handle world, const char* field_id,
+    int32_t width, int32_t height, int32_t cell_size)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        return w->register_field(field_id, width, height, cell_size);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_unregister(
+    df_world_handle world, const char* field_id)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        return w->unregister_field(field_id);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_read_cell(
+    df_world_handle world, const char* field_id,
+    int32_t x, int32_t y, void* out_value, int32_t size)
+{
+    if (world == nullptr || field_id == nullptr || out_value == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        return field->read_cell(x, y, out_value, size);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_write_cell(
+    df_world_handle world, const char* field_id,
+    int32_t x, int32_t y, const void* value, int32_t size)
+{
+    if (world == nullptr || field_id == nullptr || value == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        return field->write_cell(x, y, value, size);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_acquire_span(
+    df_world_handle world, const char* field_id,
+    const void** out_data, int32_t* out_width, int32_t* out_height)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    if (out_data == nullptr || out_width == nullptr || out_height == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        return field->acquire_span(out_data, out_width, out_height);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_release_span(
+    df_world_handle world, const char* field_id)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        field->release_span();
+        return 1;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_set_conductivity(
+    df_world_handle world, const char* field_id,
+    int32_t x, int32_t y, float value)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        return field->set_conductivity(x, y, value);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API float df_world_field_get_conductivity(
+    df_world_handle world, const char* field_id, int32_t x, int32_t y)
+{
+    if (world == nullptr || field_id == nullptr) return 0.0f;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0.0f;
+        return field->get_conductivity(x, y);
+    } catch (...) {
+        return 0.0f;
+    }
+}
+
+DF_API int32_t df_world_field_set_storage_flag(
+    df_world_handle world, const char* field_id,
+    int32_t x, int32_t y, int32_t enabled)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        return field->set_storage_flag(x, y, enabled);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_get_storage_flag(
+    df_world_handle world, const char* field_id, int32_t x, int32_t y)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        return field->get_storage_flag(x, y);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_swap_buffers(
+    df_world_handle world, const char* field_id)
+{
+    if (world == nullptr || field_id == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        auto* field = w->get_field(field_id);
+        if (field == nullptr) return 0;
+        field->swap_buffers();
+        return 1;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_count(df_world_handle world)
+{
+    if (world == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        return w->field_count();
+    } catch (...) {
+        return 0;
+    }
+}
+
 } // extern "C"
