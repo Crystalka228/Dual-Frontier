@@ -414,6 +414,113 @@ DF_API int32_t         df_set_iterate(
                            void* out_elements_buffer,
                            int32_t buffer_capacity);
 
+/*
+ * K9 field storage.
+ *
+ * Field storage is a parallel abstraction alongside component stores. Each
+ * field is a typed dense 2D grid keyed by string id. The id must be
+ * mod-namespaced (caller's responsibility — kernel does not enforce); the
+ * loader-side capability cross-check (MOD_OS_ARCHITECTURE.md §3.4) gates
+ * which mods can register and access which fields.
+ *
+ * Storage layout per field:
+ *   - Primary buffer: width * height * cell_size bytes
+ *   - Back buffer: identical layout (ping-pong target for compute kernels)
+ *   - Conductivity map: width * height floats (default 1.0)
+ *   - Storage flags: width * height bits, byte-packed (default 0)
+ *
+ * Lifecycle:
+ *   - df_world_register_field — idempotent on identical dimensions; rejects
+ *     mismatched re-registration.
+ *   - df_world_field_unregister — removes the field; subsequent access
+ *     to that id returns 0.
+ *
+ * Mutation rejection contract (parallels active_spans on component stores):
+ *   While any span on the field is acquired, write_cell, set_conductivity,
+ *   set_storage_flag, and swap_buffers all return 0 / no-op.
+ *
+ * Span lifetime contract:
+ *   1. Caller calls df_world_field_acquire_span -> dense data ptr + dimensions.
+ *   2. Caller iterates without further P/Invokes.
+ *   3. Caller MUST call df_world_field_release_span before any mutation.
+ *   4. Multiple concurrent spans on different field ids OR same field allowed.
+ *   5. Mutation attempt while any span active returns 0 / no-op.
+ *
+ * Returns 1 on success, 0 on failure (out-of-bounds, size mismatch, field
+ * not found, mutation during active span).
+ */
+
+DF_API int32_t df_world_register_field(
+    df_world_handle world,
+    const char* field_id,
+    int32_t width,
+    int32_t height,
+    int32_t cell_size);
+
+DF_API int32_t df_world_field_unregister(
+    df_world_handle world,
+    const char* field_id);
+
+DF_API int32_t df_world_field_read_cell(
+    df_world_handle world,
+    const char* field_id,
+    int32_t x,
+    int32_t y,
+    void* out_value,
+    int32_t size);
+
+DF_API int32_t df_world_field_write_cell(
+    df_world_handle world,
+    const char* field_id,
+    int32_t x,
+    int32_t y,
+    const void* value,
+    int32_t size);
+
+DF_API int32_t df_world_field_acquire_span(
+    df_world_handle world,
+    const char* field_id,
+    const void** out_data,
+    int32_t* out_width,
+    int32_t* out_height);
+
+DF_API int32_t df_world_field_release_span(
+    df_world_handle world,
+    const char* field_id);
+
+DF_API int32_t df_world_field_set_conductivity(
+    df_world_handle world,
+    const char* field_id,
+    int32_t x,
+    int32_t y,
+    float value);
+
+DF_API float df_world_field_get_conductivity(
+    df_world_handle world,
+    const char* field_id,
+    int32_t x,
+    int32_t y);
+
+DF_API int32_t df_world_field_set_storage_flag(
+    df_world_handle world,
+    const char* field_id,
+    int32_t x,
+    int32_t y,
+    int32_t enabled);
+
+DF_API int32_t df_world_field_get_storage_flag(
+    df_world_handle world,
+    const char* field_id,
+    int32_t x,
+    int32_t y);
+
+DF_API int32_t df_world_field_swap_buffers(
+    df_world_handle world,
+    const char* field_id);
+
+DF_API int32_t df_world_field_count(
+    df_world_handle world);
+
 #ifdef __cplusplus
 }
 #endif
