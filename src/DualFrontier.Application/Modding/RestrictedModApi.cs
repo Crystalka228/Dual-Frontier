@@ -132,6 +132,12 @@ internal sealed class RestrictedModApi : IModApi
     public void Log(ModLogLevel level, string message)
         => Console.WriteLine($"[{level.ToString().ToUpperInvariant()}][{_modId}] {message}");
 
+    /// <inheritdoc />
+    public IModFieldApi? Fields => null;
+
+    /// <inheritdoc />
+    public IModComputePipelineApi? ComputePipelines => null;
+
     /// <summary>
     /// Removes every subscription the mod had registered through
     /// <see cref="Subscribe{T}"/> from the underlying buses, then clears the

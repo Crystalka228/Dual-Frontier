@@ -1,21 +1,8 @@
 using System;
 using System.Runtime.CompilerServices;
+using DualFrontier.Contracts.Modding;
 
 namespace DualFrontier.Core.Interop;
-
-/// <summary>
-/// Type-erased contract surface for a registered K9 field. The generic
-/// concrete type is <see cref="FieldHandle{T}"/>; this interface exists so
-/// <see cref="FieldRegistry"/> can hold heterogeneous handles in a single
-/// dictionary without exposing the element type at the registry level.
-/// </summary>
-public interface IFieldHandle
-{
-    string Id { get; }
-    int Width { get; }
-    int Height { get; }
-    Type ElementType { get; }
-}
 
 /// <summary>
 /// Managed handle over a native <c>RawTileField</c> registered in

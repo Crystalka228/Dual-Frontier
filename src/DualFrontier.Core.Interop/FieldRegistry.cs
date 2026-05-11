@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DualFrontier.Contracts.Modding;
 
 namespace DualFrontier.Core.Interop;
 

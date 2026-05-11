@@ -72,4 +72,17 @@ public interface IModApi
     /// Logs a structured message prefixed with the mod's id.
     /// </summary>
     void Log(ModLogLevel level, string message);
+
+    /// <summary>
+    /// Field-storage sub-API per MOD_OS_ARCHITECTURE.md v1.7 §4.6.
+    /// Returns null on builds without K9 field storage support; mods check
+    /// for null and degrade gracefully.
+    /// </summary>
+    IModFieldApi? Fields { get; }
+
+    /// <summary>
+    /// Compute-pipeline sub-API per MOD_OS_ARCHITECTURE.md v1.7 §4.6.
+    /// Returns null on K9 (lands at G0). Mods check for null.
+    /// </summary>
+    IModComputePipelineApi? ComputePipelines { get; }
 }
