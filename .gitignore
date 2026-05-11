@@ -36,3 +36,8 @@ tests/DualFrontier.Core.Benchmarks/DualFrontier.Core.Native.dll
 /assets/Cinzel/
 /assets/kenney_*/
 /assets/Kenney_*/
+
+# Workflow-generated dotnet test logs (per-milestone baseline / verification
+# captures via PowerShell Tee-Object). Local-only ephemeral artifacts; the
+# authoritative outcome lives in the closure commit message and MIGRATION_PROGRESS.md.
+/.k*_*_dotnet_test.log
