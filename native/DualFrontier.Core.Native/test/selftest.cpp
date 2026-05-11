@@ -843,6 +843,155 @@ void scenario_set_primitive() {
     df_world_destroy(w);
 }
 
+// K9 — field storage scenarios.
+
+void scenario_field_register_and_read() {
+    std::printf("scenario_field_register_and_read\n");
+    df_world_handle w = df_world_create();
+    DF_CHECK(w != nullptr, "world created");
+
+    DF_CHECK(df_world_register_field(w, "test.scalar", 10, 10, sizeof(float)) == 1,
+             "register field test.scalar");
+
+    float value = 99.0f;  // pre-set to detect lack of zero-init
+    DF_CHECK(df_world_field_read_cell(w, "test.scalar", 5, 5, &value, sizeof(float)) == 1,
+             "read_cell at (5,5) succeeds");
+    DF_CHECK(value == 0.0f, "freshly registered field is zero-initialized");
+
+    df_world_destroy(w);
+}
+
+void scenario_field_write_and_read_roundtrip() {
+    std::printf("scenario_field_write_and_read_roundtrip\n");
+    df_world_handle w = df_world_create();
+    df_world_register_field(w, "test.roundtrip", 5, 5, sizeof(float));
+
+    float in = 42.5f;
+    DF_CHECK(df_world_field_write_cell(w, "test.roundtrip", 2, 3, &in, sizeof(float)) == 1,
+             "write_cell at (2,3) succeeds");
+
+    float out = 0.0f;
+    df_world_field_read_cell(w, "test.roundtrip", 2, 3, &out, sizeof(float));
+    DF_CHECK(out == 42.5f, "round-trip value preserved");
+
+    df_world_destroy(w);
+}
+
+void scenario_field_span_lifecycle() {
+    std::printf("scenario_field_span_lifecycle\n");
+    df_world_handle w = df_world_create();
+    df_world_register_field(w, "test.span", 4, 4, sizeof(float));
+
+    const void* data = nullptr;
+    int32_t fw = 0, fh = 0;
+    DF_CHECK(df_world_field_acquire_span(w, "test.span", &data, &fw, &fh) == 1,
+             "acquire_span succeeds");
+    DF_CHECK(fw == 4 && fh == 4, "span dimensions match");
+    DF_CHECK(data != nullptr, "span data pointer non-null");
+
+    // Mutation must reject during active span.
+    float x = 1.0f;
+    DF_CHECK(df_world_field_write_cell(w, "test.span", 0, 0, &x, sizeof(float)) == 0,
+             "write_cell rejected during active span");
+
+    DF_CHECK(df_world_field_release_span(w, "test.span") == 1,
+             "release_span succeeds");
+
+    // After release, mutation succeeds.
+    DF_CHECK(df_world_field_write_cell(w, "test.span", 0, 0, &x, sizeof(float)) == 1,
+             "write_cell succeeds after span released");
+
+    df_world_destroy(w);
+}
+
+void scenario_field_conductivity_default_and_set() {
+    std::printf("scenario_field_conductivity_default_and_set\n");
+    df_world_handle w = df_world_create();
+    df_world_register_field(w, "test.cond", 3, 3, sizeof(float));
+
+    DF_CHECK(df_world_field_get_conductivity(w, "test.cond", 1, 1) == 1.0f,
+             "default conductivity == 1.0");
+
+    DF_CHECK(df_world_field_set_conductivity(w, "test.cond", 1, 1, 0.5f) == 1,
+             "set_conductivity succeeds");
+    DF_CHECK(df_world_field_get_conductivity(w, "test.cond", 1, 1) == 0.5f,
+             "conductivity reads back at 0.5");
+
+    df_world_destroy(w);
+}
+
+void scenario_field_storage_flag_toggle() {
+    std::printf("scenario_field_storage_flag_toggle\n");
+    df_world_handle w = df_world_create();
+    df_world_register_field(w, "test.stor", 3, 3, sizeof(float));
+
+    DF_CHECK(df_world_field_get_storage_flag(w, "test.stor", 1, 1) == 0,
+             "default storage flag == 0");
+
+    df_world_field_set_storage_flag(w, "test.stor", 1, 1, 1);
+    DF_CHECK(df_world_field_get_storage_flag(w, "test.stor", 1, 1) == 1,
+             "storage flag reads back as 1");
+
+    df_world_field_set_storage_flag(w, "test.stor", 1, 1, 0);
+    DF_CHECK(df_world_field_get_storage_flag(w, "test.stor", 1, 1) == 0,
+             "storage flag reads back as 0 after clear");
+
+    df_world_destroy(w);
+}
+
+void scenario_field_swap_buffers() {
+    std::printf("scenario_field_swap_buffers\n");
+    df_world_handle w = df_world_create();
+    df_world_register_field(w, "test.swap", 2, 2, sizeof(float));
+
+    float a = 1.0f, b = 2.0f, c = 3.0f, d = 4.0f;
+    df_world_field_write_cell(w, "test.swap", 0, 0, &a, sizeof(float));
+    df_world_field_write_cell(w, "test.swap", 1, 0, &b, sizeof(float));
+    df_world_field_write_cell(w, "test.swap", 0, 1, &c, sizeof(float));
+    df_world_field_write_cell(w, "test.swap", 1, 1, &d, sizeof(float));
+
+    DF_CHECK(df_world_field_swap_buffers(w, "test.swap") == 1, "swap_buffers succeeds");
+
+    // After swap, primary buffer is the back buffer (zero-initialized).
+    float check = 99.0f;
+    df_world_field_read_cell(w, "test.swap", 0, 0, &check, sizeof(float));
+    DF_CHECK(check == 0.0f, "post-swap primary at (0,0) == 0 (back buffer)");
+    df_world_field_read_cell(w, "test.swap", 1, 1, &check, sizeof(float));
+    DF_CHECK(check == 0.0f, "post-swap primary at (1,1) == 0 (back buffer)");
+
+    df_world_destroy(w);
+}
+
+void scenario_field_register_idempotent_and_conflict() {
+    std::printf("scenario_field_register_idempotent_and_conflict\n");
+    df_world_handle w = df_world_create();
+
+    DF_CHECK(df_world_register_field(w, "test.idem", 5, 5, 4) == 1, "initial register");
+    DF_CHECK(df_world_register_field(w, "test.idem", 5, 5, 4) == 1,
+             "re-register with same dims is idempotent");
+    DF_CHECK(df_world_register_field(w, "test.idem", 6, 6, 4) == 0,
+             "re-register with different dims rejected");
+
+    df_world_destroy(w);
+}
+
+void scenario_field_unregister() {
+    std::printf("scenario_field_unregister\n");
+    df_world_handle w = df_world_create();
+    df_world_register_field(w, "test.unreg", 3, 3, 4);
+
+    DF_CHECK(df_world_field_count(w) == 1, "field_count == 1 after register");
+    DF_CHECK(df_world_field_unregister(w, "test.unreg") == 1, "unregister succeeds");
+    DF_CHECK(df_world_field_count(w) == 0, "field_count == 0 after unregister");
+
+    // Read on unregistered field fails cleanly.
+    float v = 0.0f;
+    DF_CHECK(df_world_field_read_cell(w, "test.unreg", 0, 0, &v, sizeof(float)) == 0,
+             "read_cell on unregistered field returns 0");
+
+    df_world_destroy(w);
+}
+
 } // namespace
 
 int main() {
@@ -868,6 +1017,14 @@ int main() {
     scenario_keyed_map();
     scenario_composite();
     scenario_set_primitive();
+    scenario_field_register_and_read();
+    scenario_field_write_and_read_roundtrip();
+    scenario_field_span_lifecycle();
+    scenario_field_conductivity_default_and_set();
+    scenario_field_storage_flag_toggle();
+    scenario_field_swap_buffers();
+    scenario_field_register_idempotent_and_conflict();
+    scenario_field_unregister();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
