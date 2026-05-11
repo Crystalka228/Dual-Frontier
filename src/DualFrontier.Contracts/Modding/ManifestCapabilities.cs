@@ -11,9 +11,13 @@ public readonly record struct ManifestCapabilities
 {
     // --- static readonly ---
 
-    /// <summary>Authoritative capability-string pattern from MOD_OS_ARCHITECTURE §2.3.</summary>
+    /// <summary>
+    /// Authoritative capability-string pattern from MOD_OS_ARCHITECTURE §2.3.
+    /// K9 (2026-05-10) extended the verb alphabet with <c>field.*</c> and
+    /// <c>pipeline.*</c> entries per §4.6 (field storage and compute pipelines).
+    /// </summary>
     private static readonly Regex s_capabilityPattern =
-        new(@"^(kernel|mod\.[a-z0-9.]+)\.(publish|subscribe|read|write):[A-Za-z][A-Za-z0-9_.]+$",
+        new(@"^(kernel|mod\.[a-z0-9.]+)\.(publish|subscribe|read|write|field\.(read|write|acquire|conductivity|storage|dispatch)|pipeline\.register):[A-Za-z][A-Za-z0-9_.]+$",
             RegexOptions.Compiled);
 
     private static readonly HashSet<string> s_emptySet = [];
@@ -67,7 +71,8 @@ public readonly record struct ManifestCapabilities
     /// <returns>A validated <see cref="ManifestCapabilities"/> instance.</returns>
     /// <exception cref="ArgumentException">
     /// Thrown when any token in either set does not conform to the authoritative pattern
-    /// <c>^(kernel|mod\.[a-z0-9.]+)\.(publish|subscribe|read|write):[A-Za-z][A-Za-z0-9_.]+$</c>.
+    /// (kernel|mod.X)(verb):TypeName where verb is one of publish/subscribe/read/write/
+    /// field.(read|write|acquire|conductivity|storage|dispatch)/pipeline.register.
     /// The offending token is included in the exception message.
     /// </exception>
     public static ManifestCapabilities Parse(

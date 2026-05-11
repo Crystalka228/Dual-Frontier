@@ -4,6 +4,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Application.Modding;
 
@@ -36,6 +37,7 @@ internal sealed class RestrictedModApi : IModApi
     private readonly IModContractStore _contractStore;
     private readonly IGameServices _services;
     private readonly KernelCapabilityRegistry _kernelCapabilities;
+    private readonly RestrictedFieldApi? _fieldsApi;
     private readonly List<(IEventBus Bus, Action Unsubscribe)> _subscriptions = new();
 
     /// <summary>
@@ -45,6 +47,10 @@ internal sealed class RestrictedModApi : IModApi
     /// <paramref name="kernelCapabilities"/> is the catalogue returned to the
     /// mod by <see cref="GetKernelCapabilities"/> so it can inspect which
     /// kernel capabilities are available before declaring them.
+    /// <paramref name="fieldRegistry"/> is the K9 field storage registry;
+    /// pass <c>null</c> on builds without field-storage support (the
+    /// <see cref="Fields"/> property then returns <c>null</c> and mods
+    /// degrade gracefully).
     /// </summary>
     internal RestrictedModApi(
         string modId,
@@ -52,7 +58,8 @@ internal sealed class RestrictedModApi : IModApi
         ModRegistry registry,
         IModContractStore contractStore,
         IGameServices services,
-        KernelCapabilityRegistry kernelCapabilities)
+        KernelCapabilityRegistry kernelCapabilities,
+        FieldRegistry? fieldRegistry = null)
     {
         _modId = modId ?? throw new ArgumentNullException(nameof(modId));
         _manifest = manifest ?? throw new ArgumentNullException(nameof(manifest));
@@ -60,6 +67,10 @@ internal sealed class RestrictedModApi : IModApi
         _contractStore = contractStore ?? throw new ArgumentNullException(nameof(contractStore));
         _services = services ?? throw new ArgumentNullException(nameof(services));
         _kernelCapabilities = kernelCapabilities ?? throw new ArgumentNullException(nameof(kernelCapabilities));
+
+        _fieldsApi = fieldRegistry is null
+            ? null
+            : new RestrictedFieldApi(fieldRegistry, _modId, _manifest.Capabilities.Required);
     }
 
     /// <summary>
@@ -133,7 +144,7 @@ internal sealed class RestrictedModApi : IModApi
         => Console.WriteLine($"[{level.ToString().ToUpperInvariant()}][{_modId}] {message}");
 
     /// <inheritdoc />
-    public IModFieldApi? Fields => null;
+    public IModFieldApi? Fields => _fieldsApi;
 
     /// <inheritdoc />
     public IModComputePipelineApi? ComputePipelines => null;
