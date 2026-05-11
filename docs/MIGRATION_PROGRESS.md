@@ -2,7 +2,7 @@
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-10 (A'.3 push к origin/main complete — 20 commits pushed `4e332bb..0789bd4`; main and origin/main fully synchronized; Phase A' deliberation foundation + amendment landing complete; K-series execution next via A'.4 K9)
+**Last updated**: 2026-05-10 (A'.4 K9 closure — RawTileField field storage + IModApi v3 Fields wiring complete; 17-commit bundle `d163341..<HEAD>` on `feat/k9-field-storage`; native selftest 21 → 29 scenarios; bridge tests +27 (FieldRegistry/FieldHandle/IsotropicDiffusionKernel); capability regex extended with field.*/pipeline.* verbs)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -31,12 +31,12 @@
 
 | | Value |
 |---|---|
-| **Active phase** | A'.4 K9 (RawTileField field storage) → A'.5 K8.3 / A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (К-L3.1 + A'.0.5 + A'.0.7 + A'.1.M + A'.1.K + A'.3 push closed; K-series execution next via K9 full-authored brief) |
-| **Last completed milestone** | A'.1.K (К-L3.1 architecture amendment landing; KERNEL v1.5 + MOD_OS v1.7 + MIGRATION_PLAN v1.1 + 4 skeleton brief surgical edits) — 2026-05-10. Previous: A'.1.M (A'.0.7 methodology amendment landing; METHODOLOGY v1.6 + PIPELINE_METRICS v0.2 + MAXIMUM_ENGINEERING_REFACTOR v1.1 + README Pipeline rewrite) — 2026-05-10; A'.0.7 (methodology pipeline restructure deliberation) — 2026-05-10; A'.0.5 (documentation reorganization + cross-ref refresh + cleanup) — 2026-05-10; К-L3.1 (bridge formalization deliberation) — 2026-05-10. |
-| **Next milestone (recommended)** | K9 (RawTileField) if not yet closed; otherwise K8.3 (system migration to SpanLease/WriteBatch) |
+| **Active phase** | A'.5 K8.3 (production system migration → SpanLease/WriteBatch) → A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (А'.4 K9 + A'.1.K + A'.1.M + A'.0.5 + A'.0.7 + К-L3.1 + A'.3 push closed) |
+| **Last completed milestone** | **A'.4** (K9 + A'.4.0 patch bundled per Crystalka 2026-05-10 «всё в одну сессию, окно контекста позволяет») — RawTileField field storage; 12-function C ABI; FieldHandle/FieldSpanLease/FieldRegistry managed bridge; CPU IsotropicDiffusionKernel reference; IModApi v3 Fields + ComputePipelines surface wiring; capability regex field.*/pipeline.* extension. Branch `feat/k9-field-storage` `d163341..<HEAD>` (17 commits), 2026-05-10. Previous: A'.1.K (К-L3.1 architecture amendment landing) — 2026-05-10; A'.1.M (A'.0.7 methodology amendment landing) — 2026-05-10; A'.0.7 (methodology pipeline restructure) — 2026-05-10; A'.0.5 (documentation reorganization) — 2026-05-10. |
+| **Next milestone (recommended)** | A'.5 K8.3 (production system migration to SpanLease/WriteBatch — 12+ vanilla systems per migration plan §1.2) |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09); K8.2 reformulated as v2 single-milestone foundation closure per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 631 (post-K8.2 v2; +39 over the K-Lessons baseline of 592 — 33 new component/wrapper tests across InternedStringTests/NativeWorldFactoryTests/IdentityComponentTests/WorkbenchComponentTests/FactionComponentTests/SkillsComponentTests/StorageComponentTests/MovementComponentTests, minus 8 deleted-stub test scaffolding) |
+| **Tests passing** | 671 expected post-A'.4 K9 (631 baseline + 27 K9 bridge + 13 K9 capability validation = 671; K9 bridge tests verified 27/27 PASSED 0.92s; native selftest 21 → 29 scenarios verified). Final dotnet test verification at K9 closure. |
 
 ---
 
@@ -88,6 +88,7 @@
 | K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
 | K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
 | K8.5 | Mod ecosystem migration prep | NOT STARTED | 3-5 days | — | — |
+| K9 | Field storage abstraction (RawTileField + IModApi v3 Fields wiring) | DONE | 8-12 hours auto-mode | `d163341..<HEAD>` on `feat/k9-field-storage` | 2026-05-10 |
 
 **Cumulative estimate**: 5–8 weeks at hobby pace (~1h/day).
 
@@ -570,7 +571,7 @@ Phase A' is the structural unit between Phase A (K-series) closure and Phase B (
 | A'.1 | Amendment brief execution (K-L3.1 propagation + Tier 2 K-L11 framing + Vanilla mod READMEs) | NOT STARTED | 30-60 min auto-mode | — | — |
 | A'.2 | REMOVED — folded into A'.0.5 Phase 5 | — | — | — | — |
 | A'.3 | Push to origin | NOT STARTED | minutes | — | — |
-| A'.4 | K9 skeleton execution (RawTileField) | NOT STARTED | 1-2 weeks | — | — |
+| A'.4 | K9 + A'.4.0 patch execution (RawTileField + IModApi v3 Fields wiring) | DONE | 8-12 hours auto-mode | `d163341..<HEAD>` on `feat/k9-field-storage` (17 commits) | 2026-05-10 |
 | A'.5 | K8.3 skeleton execution (production system migration) | NOT STARTED | 4-6 weeks | — | — |
 | A'.6 | K8.4 skeleton execution (managed World retired) | NOT STARTED | 1-2 weeks | — | — |
 | A'.7 | K8.5 skeleton execution (mod ecosystem migration prep) | NOT STARTED | 3-5 days | — | — |

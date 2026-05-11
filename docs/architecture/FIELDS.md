@@ -4,7 +4,7 @@ Dual Frontier carries two orthogonal data systems under the same managed Applica
 
 ## Status
 
-**Draft.** Populated incrementally during K9 implementation. Sections marked **TBD** are placeholders awaiting concrete native code; their architectural intent is fixed (per [GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 LOCKED), but the matching managed-side surface only exists once the K9 milestone closes. Sections without **TBD** are contract-grounded and stable.
+**Live — populated by K9 closure (A'.4, 2026-05-10).** Storage contract is concrete and stable; G-series amendments will not change the K9-defined surface. The Save/load section keeps **TBD** until the persistence-integration milestone.
 
 ## Why two systems, not one
 

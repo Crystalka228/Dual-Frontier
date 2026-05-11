@@ -2140,4 +2140,46 @@ The full brief was authored read-first / brief-second per the methodology pivot 
 
 ---
 
-**Brief end.** Awaits K6, K7, K8 closure for execution per β6 sequencing.
+**Brief end.** ~~Awaits K6, K7, K8 closure for execution per β6 sequencing.~~
+
+---
+
+## Execution closure
+
+**Status**: FULL EXECUTED on 2026-05-10 as A'.4 milestone (K9 + A'.4.0 patch bundle per Crystalka 2026-05-10 «всё в одну сессию, окно контекста позволяет»). Branch: `feat/k9-field-storage`.
+
+**Atomic commits landed** (17 total — patch added commit #1 per `K9_BRIEF_REFRESH_PATCH.md` §"Commit ordering"):
+
+1. `d163341` — `docs(briefs): A'.4.0 K9 brief refresh patch (companion to K9 brief)`
+2. `0cc24a3` — `feat(native): add RawTileField header for K9 field storage` (Phase 1.1)
+3. `4e89cba` — `feat(native): implement RawTileField with conductivity and storage flags` (Phase 1.2-1.4)
+4. `fbf5ef5` — `feat(native): extend World with field registry parallel to component stores` (Phase 2)
+5. `0f2a076` — `feat(native): add K9 field storage C ABI declarations` (Phase 3.1)
+6. `ce4dba8` — `feat(native): implement K9 field storage C ABI bridge` (Phase 3.2)
+7. `4b5f873` — `test(native): add 8 field storage scenarios to selftest` (Phase 4)
+8. `b96750d` — `feat(interop): add P/Invoke declarations for K9 field storage` (Phase 5.1)
+9. `b86d357` — `feat(interop): add FieldHandle, FieldSpanLease, and exception types` (Phase 5.2)
+10. `0825fce` — `feat(interop): add FieldRegistry tracking managed-side field handles` (Phase 5.3)
+11. `48eb485` — `feat(interop): expose FieldRegistry on NativeWorld` (Phase 5.4)
+12. `4fe81e1` — `feat(interop): add CPU isotropic diffusion kernel as equivalence oracle` (Phase 6)
+13. `e30c662` — `test(interop): add 27 K9 tests for FieldRegistry, FieldHandle, and CPU diffusion kernel` (Phase 7)
+14. `46e995c` — `feat(contracts): add IModFieldApi and IModComputePipelineApi to IModApi v3 surface` (Phase 8.1-8.2)
+15. `873ce14` — `feat(modding): wire IModApi.Fields to FieldRegistry with capability cross-check` (Phase 8.3-8.5)
+16. `ab5e578` — `test(modding): add field capability validation tests` (Phase 8.6)
+17. (this commit) — `docs(migration): K9 closure recorded` (Phase 9.1-9.5)
+
+**Test deltas**:
+- Native selftest: 21 → 29 scenarios (8 new K9 field scenarios — `scenario_field_register_and_read`, `scenario_field_write_and_read_roundtrip`, `scenario_field_span_lifecycle`, `scenario_field_conductivity_default_and_set`, `scenario_field_storage_flag_toggle`, `scenario_field_swap_buffers`, `scenario_field_register_idempotent_and_conflict`, `scenario_field_unregister`); ALL PASSED.
+- Bridge tests (Interop.Tests): +27 (11 FieldRegistryTests + 12 FieldHandleTests + 4 IsotropicDiffusionKernelTests); ALL PASSED 0.92s.
+- Modding tests (capability validation): +13 (7 valid InlineData + 5 invalid InlineData + 1 PreviousVerbs_StillAccepted). 631 → 671 expected.
+
+**Lessons learned**:
+
+- **Brief Phase 4 scenario style was stale**: the brief authored 8 selftest scenarios in `static int` return-code style; the actual `selftest.cpp` pattern at execution time uses `void` + `DF_CHECK` macro + `g_failures` counter. Adapted to existing pattern for file-local consistency; brief intent preserved verbatim (the brief itself said «each scenario follows the existing pattern» — the author's recollection of «existing pattern» was off, not the architectural intent).
+- **NativeMethods P/Invoke style**: brief drafted `[MarshalAs(UnmanagedType.LPStr)] string fieldId` with `CharSet.Ansi`; the existing project pattern (`df_world_intern_string`, `df_world_begin_mod_scope`) uses `byte*` + UTF-8 stackalloc helper. Adopted the contemporary `byte*` pattern (CharSet is deprecated in .NET 8+, and UTF-8 is the correct encoding for namespaced ids). Brief's contract (12 P/Invoke functions over the C ABI) preserved; only the marshalling style differs.
+- **IModApi v3 Fields/ComputePipelines circular dependency**: brief Phase 8.1 flagged this case. Resolved per brief's fallback: `IFieldHandle` moved to `DualFrontier.Contracts.Modding` (non-generic marker), `FieldHandle<T>` in `Core.Interop` implements it, `IModFieldApi.RegisterField<T>` returns `IFieldHandle` (callers downcast). Avoids inverting the dep direction.
+- **Capability regex was not pre-extended**: brief Phase 8.5 assumed the K-L3.1 MOD_OS v1.6 §2.3 step 6 regex extension already landed in source. Inspection showed the actual `ManifestCapabilities.Parse` regex still had only `publish|subscribe|read|write`. Extended in this milestone to add `field.(read|write|acquire|conductivity|storage|dispatch)` and `pipeline.register` per spec.
+- **RegisterManagedComponent<T> pre-flight check (per patch §Phase 8.2 override)**: `IModApi.cs` did NOT contain `RegisterManagedComponent<T>` at execution time (it ships at K8.4 per Phase A' sequencing, not K-L3.1 amendment). K9 did not add it — only `Fields` and `ComputePipelines` properties.
+- **FieldRegistry plumbing through ModIntegrationPipeline**: K9 exposes `FieldRegistry` on `NativeWorld.Fields`, but `ModIntegrationPipeline` does not currently carry a `NativeWorld` reference (mod loading is decoupled from world lifecycle). `RestrictedModApi` accepts a nullable `FieldRegistry?`; K9 passes `null` at the existing call site and `Fields` returns `null`. Mods degrade gracefully per the IModApi.Fields docstring contract («Returns null on builds without K9 field storage support»). Production wiring (passing the live `FieldRegistry` from a configured `NativeWorld`) lands at A'.5 K8.3 or A'.6 K8.4 when the kernel-world / mod-loader integration matures.
+- **CPU kernel write performance**: the IsotropicDiffusionKernel uses per-cell `WriteCell` after reading the span (40 000 P/Invokes per iteration on 200×200). Acceptable for K9 (GPU equivalence oracle), not for production. G1 replaces with Vulkan compute dispatch. Brief explicitly documents this design choice; no surprise.
+
