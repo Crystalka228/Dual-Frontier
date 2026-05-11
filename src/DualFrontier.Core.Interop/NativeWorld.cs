@@ -84,6 +84,7 @@ public sealed class NativeWorld : IDisposable
                 "df_world_create returned null — native library failed to allocate a World.");
         }
         _registry = registry;
+        Fields = new FieldRegistry(_handle);
     }
 
     /// <summary>
@@ -104,7 +105,16 @@ public sealed class NativeWorld : IDisposable
     {
         _handle = existingHandle;
         _registry = registry;
+        Fields = new FieldRegistry(_handle);
     }
+
+    /// <summary>
+    /// K9 field registry. Field storage is orthogonal to entity-component
+    /// storage (see <c>docs/architecture/FIELDS.md</c>): identity is
+    /// <c>(field_id, x, y)</c>, not <see cref="EntityId"/>. The registry is
+    /// per-world and lives until <see cref="Dispose"/>.
+    /// </summary>
+    public FieldRegistry Fields { get; }
 
     public EntityId CreateEntity()
     {
