@@ -13,6 +13,7 @@
 #include "keyed_map.h"
 #include "set_primitive.h"
 #include "string_pool.h"
+#include "tile_field.h"
 
 namespace dualfrontier {
 
@@ -104,6 +105,18 @@ public:
     void end_mod_scope(const std::string& mod_id);
     void clear_mod_scope(const std::string& mod_id);
 
+    // K9 field registry. Field storage is orthogonal to component stores
+    // (FIELDS.md): identity is (field_id, x, y) cell coordinate, not EntityId.
+    // Each field is a type-erased dense 2D grid; managed bridge tracks
+    // element type and copies cell_size bytes per cell on read/write.
+    int32_t register_field(const std::string& field_id, int32_t width, int32_t height, int32_t cell_size);
+    RawTileField* get_field(const std::string& field_id) noexcept;
+    const RawTileField* get_field(const std::string& field_id) const noexcept;
+    int32_t unregister_field(const std::string& field_id);
+    [[nodiscard]] int32_t field_count() const noexcept {
+        return static_cast<int32_t>(fields_.size());
+    }
+
 private:
     static constexpr std::size_t kInitialCapacity = 256;
 
@@ -141,6 +154,9 @@ private:
     std::unordered_map<uint32_t, std::unique_ptr<KeyedMap>> keyed_maps_;
     std::unordered_map<uint32_t, std::unique_ptr<Composite>> composites_;
     std::unordered_map<uint32_t, std::unique_ptr<SetPrimitive>> sets_;
+
+    // K9 — field storage parallel to component stores.
+    std::unordered_map<std::string, std::unique_ptr<RawTileField>> fields_;
 };
 
 // K5 Command Buffer pattern — write batching protocol.

@@ -528,4 +528,47 @@ void World::clear_mod_scope(const std::string& mod_id) {
     string_pool_.clear_mod_scope(mod_id);
 }
 
+int32_t World::register_field(const std::string& field_id, int32_t width, int32_t height, int32_t cell_size)
+{
+    if (field_id.empty()) {
+        throw std::invalid_argument("World::register_field: field_id must be non-empty");
+    }
+    if (width <= 0 || height <= 0 || cell_size <= 0) {
+        throw std::invalid_argument("World::register_field: dimensions and cell_size must be positive");
+    }
+
+    auto it = fields_.find(field_id);
+    if (it != fields_.end()) {
+        // Idempotent: same dimensions = no-op success; mismatch = throw.
+        const RawTileField& existing = *it->second;
+        if (existing.width() == width && existing.height() == height && existing.cell_size() == cell_size) {
+            return 1;
+        }
+        throw std::invalid_argument("World::register_field: id already registered with different dimensions");
+    }
+
+    fields_.emplace(field_id, std::make_unique<RawTileField>(width, height, cell_size));
+    return 1;
+}
+
+RawTileField* World::get_field(const std::string& field_id) noexcept
+{
+    auto it = fields_.find(field_id);
+    return (it != fields_.end()) ? it->second.get() : nullptr;
+}
+
+const RawTileField* World::get_field(const std::string& field_id) const noexcept
+{
+    auto it = fields_.find(field_id);
+    return (it != fields_.end()) ? it->second.get() : nullptr;
+}
+
+int32_t World::unregister_field(const std::string& field_id)
+{
+    auto it = fields_.find(field_id);
+    if (it == fields_.end()) return 0;
+    fields_.erase(it);
+    return 1;
+}
+
 } // namespace dualfrontier
