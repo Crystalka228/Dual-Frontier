@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "1.0"
 last_modified: "2026-05-12"
-last_modified_commit: "d87dfa5"  # filled at A'.4.5 closure 2026-05-12 per Q-A45-X2 bootstrap (self-reference resolved via git commit --amend)
+last_modified_commit: "fe35f00"  # filled at A'.4.5 closure 2026-05-12 per Q-A45-X2 bootstrap (self-reference resolved via git commit --amend)
 last_modified_by: "Crystalka"
 
 # === Audit calendar (Q13 anchor) ===
@@ -596,7 +596,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-05-12"
-    last_modified_commit: "d87dfa5"
+    last_modified_commit: "fe35f00"
     content_language: mixed
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-12"
@@ -646,7 +646,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-05-12"
-    last_modified_commit: "d87dfa5"
+    last_modified_commit: "fe35f00"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-12"
@@ -733,7 +733,7 @@ documents:
     version: "1.0"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "d87dfa5"
+    last_modified_commit: "fe35f00"
     content_language: en
     review_cadence: on-every-milestone-closure
     last_review_date: "2026-05-12"
@@ -2333,7 +2333,7 @@ documents:
     version: "1.0"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "d87dfa5"
+    last_modified_commit: "fe35f00"
     content_language: en
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -2350,7 +2350,7 @@ documents:
     version: "Live"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "d87dfa5"
+    last_modified_commit: "fe35f00"
     content_language: en
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -2368,7 +2368,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-04-XX"
-    last_modified_commit: "d87dfa5"
+    last_modified_commit: "fe35f00"
     content_language: en
     review_cadence: on-source-commit+quarterly
     reviewer: Crystalka
