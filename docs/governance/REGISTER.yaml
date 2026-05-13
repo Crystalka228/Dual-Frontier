@@ -2307,6 +2307,1111 @@ documents:
     last_review_event: "A'.4.5 deliberation completion"
     reviewer: Crystalka
 
+  # === Tier 4 Module-local (Category F) — src/ ===
+
+  - id: DOC-F-SRC-AI
+    path: src/DualFrontier.AI/README.md
+    title: "DualFrontier.AI module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-AI-BEHAVIOURTREE
+    path: src/DualFrontier.AI/BehaviourTree/README.md
+    title: "AI BehaviourTree submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-AI-JOBS
+    path: src/DualFrontier.AI/Jobs/README.md
+    title: "AI Jobs submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-AI-PATHFINDING
+    path: src/DualFrontier.AI/Pathfinding/README.md
+    title: "AI Pathfinding submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION
+    path: src/DualFrontier.Application/README.md
+    title: "DualFrontier.Application module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-BRIDGE
+    path: src/DualFrontier.Application/Bridge/README.md
+    title: "Application Bridge submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-BRIDGE-COMMANDS
+    path: src/DualFrontier.Application/Bridge/Commands/README.md
+    title: "Application Bridge Commands submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-INPUT
+    path: src/DualFrontier.Application/Input/README.md
+    title: "Application Input submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-LOOP
+    path: src/DualFrontier.Application/Loop/README.md
+    title: "Application Loop submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-MODDING
+    path: src/DualFrontier.Application/Modding/README.md
+    title: "Application Modding submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-RENDERING
+    path: src/DualFrontier.Application/Rendering/README.md
+    title: "Application Rendering submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-SAVE
+    path: src/DualFrontier.Application/Save/README.md
+    title: "Application Save submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-SCENARIO
+    path: src/DualFrontier.Application/Scenario/README.md
+    title: "Application Scenario submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-APPLICATION-SCENE
+    path: src/DualFrontier.Application/Scene/README.md
+    title: "Application Scene submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS
+    path: src/DualFrontier.Components/README.md
+    title: "DualFrontier.Components module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS-BUILDING
+    path: src/DualFrontier.Components/Building/README.md
+    title: "Components Building submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS-COMBAT
+    path: src/DualFrontier.Components/Combat/README.md
+    title: "Components Combat submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS-ITEMS
+    path: src/DualFrontier.Components/Items/README.md
+    title: "Components Items submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS-MAGIC
+    path: src/DualFrontier.Components/Magic/README.md
+    title: "Components Magic submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS-PAWN
+    path: src/DualFrontier.Components/Pawn/README.md
+    title: "Components Pawn submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS-SHARED
+    path: src/DualFrontier.Components/Shared/README.md
+    title: "Components Shared submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-COMPONENTS-WORLD
+    path: src/DualFrontier.Components/World/README.md
+    title: "Components World submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CONTRACTS
+    path: src/DualFrontier.Contracts/README.md
+    title: "DualFrontier.Contracts module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CONTRACTS-ATTRIBUTES
+    path: src/DualFrontier.Contracts/Attributes/README.md
+    title: "Contracts Attributes submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CONTRACTS-BUS
+    path: src/DualFrontier.Contracts/Bus/README.md
+    title: "Contracts Bus submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CONTRACTS-CORE
+    path: src/DualFrontier.Contracts/Core/README.md
+    title: "Contracts Core submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CONTRACTS-MODDING
+    path: src/DualFrontier.Contracts/Modding/README.md
+    title: "Contracts Modding submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CORE
+    path: src/DualFrontier.Core/README.md
+    title: "DualFrontier.Core module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CORE-BUS
+    path: src/DualFrontier.Core/Bus/README.md
+    title: "Core Bus submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CORE-ECS
+    path: src/DualFrontier.Core/ECS/README.md
+    title: "Core ECS submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CORE-MATH
+    path: src/DualFrontier.Core/Math/README.md
+    title: "Core Math submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CORE-REGISTRY
+    path: src/DualFrontier.Core/Registry/README.md
+    title: "Core Registry submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CORE-SCHEDULING
+    path: src/DualFrontier.Core/Scheduling/README.md
+    title: "Core Scheduling submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-CORE-INTEROP
+    path: src/DualFrontier.Core.Interop/MODULE.md
+    title: "DualFrontier.Core.Interop module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-EVENTS
+    path: src/DualFrontier.Events/README.md
+    title: "DualFrontier.Events module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-EVENTS-COMBAT
+    path: src/DualFrontier.Events/Combat/README.md
+    title: "Events Combat submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-EVENTS-INVENTORY
+    path: src/DualFrontier.Events/Inventory/README.md
+    title: "Events Inventory submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-EVENTS-MAGIC
+    path: src/DualFrontier.Events/Magic/README.md
+    title: "Events Magic submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-EVENTS-PAWN
+    path: src/DualFrontier.Events/Pawn/README.md
+    title: "Events Pawn submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-EVENTS-POWER
+    path: src/DualFrontier.Events/Power/README.md
+    title: "Events Power submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-EVENTS-WORLD
+    path: src/DualFrontier.Events/World/README.md
+    title: "Events World submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PERSISTENCE
+    path: src/DualFrontier.Persistence/README.md
+    title: "DualFrontier.Persistence module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PRESENTATION
+    path: src/DualFrontier.Presentation/README.md
+    title: "DualFrontier.Presentation module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PRESENTATION-INPUT
+    path: src/DualFrontier.Presentation/Input/README.md
+    title: "Presentation Input submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PRESENTATION-NODES
+    path: src/DualFrontier.Presentation/Nodes/README.md
+    title: "Presentation Nodes submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PRESENTATION-SCENES
+    path: src/DualFrontier.Presentation/Scenes/README.md
+    title: "Presentation Scenes submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PRESENTATION-UI
+    path: src/DualFrontier.Presentation/UI/README.md
+    title: "Presentation UI submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
+    path: src/DualFrontier.Presentation/addons/df_devkit/README.md
+    title: "Presentation addons df_devkit"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-PRESENTATION-NATIVE
+    path: src/DualFrontier.Presentation.Native/README.md
+    title: "DualFrontier.Presentation.Native module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS
+    path: src/DualFrontier.Systems/README.md
+    title: "DualFrontier.Systems module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-COMBAT
+    path: src/DualFrontier.Systems/Combat/README.md
+    title: "Systems Combat submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-FACTION
+    path: src/DualFrontier.Systems/Faction/README.md
+    title: "Systems Faction submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-INVENTORY
+    path: src/DualFrontier.Systems/Inventory/README.md
+    title: "Systems Inventory submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-MAGIC
+    path: src/DualFrontier.Systems/Magic/README.md
+    title: "Systems Magic submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-MAGIC-INTERNAL
+    path: src/DualFrontier.Systems/Magic/Internal/README.md
+    title: "Systems Magic Internal submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-PAWN
+    path: src/DualFrontier.Systems/Pawn/README.md
+    title: "Systems Pawn submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-POWER
+    path: src/DualFrontier.Systems/Power/README.md
+    title: "Systems Power submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-SYSTEMS-WORLD
+    path: src/DualFrontier.Systems/World/README.md
+    title: "Systems World submodule"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  # === Tier 4 Module-local (Category F) — tests/ ===
+
+  - id: DOC-F-TESTS
+    path: tests/README.md
+    title: "Tests module index"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-TESTS-CORE
+    path: tests/DualFrontier.Core.Tests/README.md
+    title: "Core tests"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-TESTS-CORE-INTEROP
+    path: tests/DualFrontier.Core.Interop.Tests/MODULE.md
+    title: "Core Interop tests"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-TESTS-MODDING
+    path: tests/DualFrontier.Modding.Tests/README.md
+    title: "Modding tests"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-TESTS-SYSTEMS
+    path: tests/DualFrontier.Systems.Tests/README.md
+    title: "Systems tests"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  # === Tier 4 Module-local (Category F) — mods/ ===
+
+  - id: DOC-F-MODS
+    path: mods/README.md
+    title: "Mods directory index"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-MODS-EXAMPLE
+    path: mods/DualFrontier.Mod.Example/README.md
+    title: "Mod Example"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-MODS-VANILLA-COMBAT
+    path: mods/DualFrontier.Mod.Vanilla.Combat/README.md
+    title: "Mod Vanilla Combat"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-MODS-VANILLA-CORE
+    path: mods/DualFrontier.Mod.Vanilla.Core/README.md
+    title: "Mod Vanilla Core"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-MODS-VANILLA-INVENTORY
+    path: mods/DualFrontier.Mod.Vanilla.Inventory/README.md
+    title: "Mod Vanilla Inventory"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-MODS-VANILLA-MAGIC
+    path: mods/DualFrontier.Mod.Vanilla.Magic/README.md
+    title: "Mod Vanilla Magic"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-MODS-VANILLA-PAWN
+    path: mods/DualFrontier.Mod.Vanilla.Pawn/README.md
+    title: "Mod Vanilla Pawn"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-MODS-VANILLA-WORLD
+    path: mods/DualFrontier.Mod.Vanilla.World/README.md
+    title: "Mod Vanilla World"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  # === Tier 4 Module-local (Category F) — native/ MODULE.md ===
+
+  - id: DOC-F-NATIVE-CORE
+    path: native/DualFrontier.Core.Native/MODULE.md
+    title: "Native Core module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-NATIVE-CORE-INCLUDE
+    path: native/DualFrontier.Core.Native/include/MODULE.md
+    title: "Native Core include"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-NATIVE-CORE-SRC
+    path: native/DualFrontier.Core.Native/src/MODULE.md
+    title: "Native Core src"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-NATIVE-CORE-TEST
+    path: native/DualFrontier.Core.Native/test/MODULE.md
+    title: "Native Core test"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  # === Tier 4 Module-local (Category F) — tools/ + assets/ ===
+
+  - id: DOC-F-TOOLS-BRIEFS
+    path: tools/briefs/MODULE.md
+    title: "Tools briefs module"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
+  - id: DOC-F-TOOLS-GOVERNANCE
+    path: tools/governance/MODULE.md
+    title: "Tools governance module (register tooling)"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-12"
+    last_modified: "2026-05-12"
+    last_modified_commit: "8ee27fe"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 closure (initial creation)"
+    reviewer: Crystalka
+
+  - id: DOC-F-ASSETS-SCENES
+    path: assets/scenes/README.md
+    title: "Assets scenes"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-source-commit+quarterly
+    reviewer: Crystalka
+
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
   - id: REQ-K-L1
