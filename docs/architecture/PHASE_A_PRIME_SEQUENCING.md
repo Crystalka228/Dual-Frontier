@@ -72,36 +72,39 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Test count: zero delta
   │   Estimated time: 2-4 hours auto-mode (matched actual)
   │
-  ├─ Phase A'.0.7 — Methodology pipeline restructure rewrite — NEXT (pending Crystalka deliberation session)
-  │   Scope: substantive rewrite of METHODOLOGY.md (§0/§2.1/§2.2/§3/§4/§5/§8) + PIPELINE_METRICS.md (entire empirical record) + MAXIMUM_ENGINEERING_REFACTOR.md (4-agent layout/hardware-variance/pipeline-mapping sub-sections) for new 2-agent pipeline shape per Crystalka direction 2026-05-10
-  │   Pre-condition: A'.0.5 EXECUTED (deferral markers in place; substantive prose preserved verbatim awaiting rewrite)
-  │   Architectural deliberation milestone analog to K-L3.1: no code changes; doc-only
-  │   Output: revised METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR with falsifiable claims re-grounded in 2-agent reality; possibly README.md root Pipeline section rewrite (deferred via inline marker in A'.0.5)
-  │   Estimated time: one Opus deliberation chat session + auto-mode commit (~1-2 hours total)
-  │
-  ├─ Phase A'.1 — Amendment brief execution
-  │   Scope: docs-only amendments to 4 LOCKED docs + 4 skeleton briefs (K9, K8.3-K8.5) per /docs/architecture/K_L3_1_AMENDMENT_PLAN.md; plus K-L11 framing propagation in kernel-area module-local docs (per A'.0.5 Phase 8 Tier 2 flag) + Vanilla mod placeholder READMEs (Tier 2)
-  │   Pre-condition: A'.0.7 EXECUTED (methodology rewrite establishes the post-restructure state docs propagate against)
-  │   Disposition system: per-skeleton A/B/C decision per addendum §A5.6
-  │   Code changes: zero (or near-zero for skeleton briefs)
+  ├─ Phase A'.0.7 — Methodology pipeline restructure rewrite — DONE 2026-05-10
+  │   Scope: substantive rewrite of METHODOLOGY.md (§0/§2.1/§2.2/§3/§4/§5/§8/§9) + PIPELINE_METRICS.md (entire empirical record per-era split) + MAXIMUM_ENGINEERING_REFACTOR.md (4-agent layout/hardware-variance/pipeline-mapping sub-sections) for new 2-agent pipeline shape per Crystalka direction 2026-05-10
+  │   Q-A07-1..12 deliberation locks recorded; Q-A07-6 audience contract «agent-as-primary-reader» surfaced
+  │   Closure commit: 9d4da64 on main; methodology corpus v1.5→v1.6 / v0.1→v0.2 / v1.0→v1.1
+  │   Code changes: zero
   │   Test count: zero delta
-  │   Estimated time: 30-60 min auto-mode
-  │   Executor: Claude Desktop session
+  │
+  ├─ Phase A'.1 — Amendment brief execution — DONE 2026-05-10
+  │   Two parallel landings:
+  │   - A'.1.K: K-L3.1 amendment plan landed (KERNEL v1.3→v1.5, MOD_OS v1.6→v1.7, MIGRATION_PLAN v1.0→v1.1); closure commit 0789bd4
+  │   - A'.1.M: A'.0.7 methodology rewrite landed; closure commit 9d4da64
+  │   Code changes: zero
   │
   ├─ Phase A'.2 — REMOVED (folded into A'.0.5 Phase 5 per execution unification 2026-05-10)
   │
-  ├─ Phase A'.3 — Push to origin
-  │   Scope: main branch — all K-L3.1 era commits + foundation closure commits
-  │   Single coherent push: foundation closure + bridge formalization + cleanup
+  ├─ Phase A'.3 — Push to origin — DONE 2026-05-10
+  │   ~25 commits drained from local-only state through 38c2e19 on origin/main
   │   No code changes
-  │   Executor: Crystalka or Cloud Code per Crystalka direction
   │
-  ├─ Phase A'.4 — K9 skeleton execution
-  │   Brief: K9 skeleton authored, post-Phase-A'.1 amendment if disposition B/C applied
-  │   Scope: RawTileField + IModApi v3 Fields surface
-  │   Architecturally independent of bridge (kernel-side, not entity-component)
-  │   Estimated time: 1-2 weeks hobby pace, ~4-8 hours auto-mode
-  │   Executor: Cloud Code
+  ├─ Phase A'.4 — K9 field storage execution — DONE 2026-05-11
+  │   RawTileField C++ core + IModApi v3 Fields surface + CPU IsotropicDiffusionKernel reference
+  │   27 bridge tests + 8 selftest scenarios added (21→29 total native)
+  │   FIELDS.md Draft → Live
+  │   Commits: ce4dba8..80c9ba6; closure entry in MIGRATION_PROGRESS K9 section
+  │   K9 lessons learned recorded (7 items)
+  │
+  ├─ Phase A'.4.5 — Document Control Register — DONE 2026-05-12
+  │   Brief: A_PRIME_4_5_DOCUMENT_CONTROL_REGISTER_BRIEF.md (deliberation-mode); deliberation closure document (23 Q-locks + 39 production entries); 5 Pass execution-context briefs (Pass 1-5)
+  │   Scope: synthesized governance framework from DO-178C / ISO 9001 / ISO 26262 / IEC 61508 / FDA 21 CFR Part 11 (9 selected + 11 deselected elements); REGISTER.yaml schema v1.0 + 229 documents enrolled; 3 PowerShell tooling scripts (sync_register/query_register/render_register); 4 new folders (docs/governance, docs/ideas, docs/mechanics, tools/governance); METHODOLOGY v1.6 → v1.7 (§12 register integration + §7.1 7th invocation)
+  │   Deliverables: FRAMEWORK.md v1.0 LOCKED + SYNTHESIS_RATIONALE.md v1.0 LOCKED + REGISTER.yaml (Tier 2 Live; schema LOCKED) + REGISTER_RENDER.md + BYPASS_LOG.md + VALIDATION_REPORT.md + SCOPE_EXCLUSIONS.yaml + tools/governance/MODULE.md
+  │   Validation clean: 229 documents enrolled, 13 REQ + 14 RISK + 3 CAPA + 9 EVT, 0 errors, 0 warnings; per-category A=30 B=6 C=3 D=48 E=54 F=78 G=8 H=2 I=0 J=0
+  │   Code changes: zero (governance + docs + tooling only)
+  │   Executor: Claude Code session ~5-7 hours auto-mode
   │
   ├─ Phase A'.5 — K8.3 skeleton execution
   │   Brief: K8.3 skeleton authored, post-Phase-A'.1 amendment if disposition B/C applied
@@ -154,11 +157,12 @@ At hobby pace (~1h/day):
 |---|---|---|
 | A'.0 K-L3.1 (DONE 2026-05-10) | 2-4 hours session | <1 day |
 | A'.0.5 Documentation reorganization (DONE 2026-05-10) | 2-4 hours auto-mode | <1 day |
-| A'.0.7 Methodology rewrite | 1-2 hours session + auto-mode | <1 day |
-| A'.1 Amendment | 30-60 min auto-mode | ~1 day |
+| A'.0.7 Methodology rewrite (DONE 2026-05-10) | 1-2 hours session + auto-mode | <1 day |
+| A'.1 Amendment (DONE 2026-05-10) | 30-60 min auto-mode | ~1 day |
 | A'.2 (REMOVED — folded into A'.0.5) | — | — |
-| A'.3 Push | minutes | ~1 day |
-| A'.4 K9 | 1-2 weeks | 2-3 weeks |
+| A'.3 Push (DONE 2026-05-10) | minutes | ~1 day |
+| A'.4 K9 (DONE 2026-05-11) | 1-2 weeks | 2-3 weeks |
+| A'.4.5 Document Control Register (DONE 2026-05-12) | ~5-7 hours auto-mode | ~3 weeks |
 | A'.5 K8.3 | 4-6 weeks | 6-9 weeks |
 | A'.6 K8.4 | 1-2 weeks | 7-11 weeks |
 | A'.7 K8.5 | 3-5 days | 8-12 weeks |

@@ -14,7 +14,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-10 (A'.4 K9 closure — RawTileField field storage + IModApi v3 Fields wiring complete; 17-commit bundle `d163341..<HEAD>` on `feat/k9-field-storage`; native selftest 21 → 29 scenarios; bridge tests +27 (FieldRegistry/FieldHandle/IsotropicDiffusionKernel); capability regex extended with field.*/pipeline.* verbs)
+**Last updated**: 2026-05-12 (A'.4.5 closure — Document Control Register operational: FRAMEWORK.md v1.0 + SYNTHESIS_RATIONALE.md v1.0 + REGISTER.yaml schema v1.0 + 3 PowerShell scripts + 229 documents enrolled + 228 frontmatter mirrors + METHODOLOGY v1.6→v1.7 with new §12 register integration + §7.1 7th invocation; validation clean 0 errors / 0 warnings)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -43,9 +43,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 
 | | Value |
 |---|---|
-| **Active phase** | A'.5 K8.3 (production system migration → SpanLease/WriteBatch) → A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (А'.4 K9 + A'.1.K + A'.1.M + A'.0.5 + A'.0.7 + К-L3.1 + A'.3 push closed) |
-| **Last completed milestone** | **A'.4** (K9 + A'.4.0 patch bundled per Crystalka 2026-05-10 «всё в одну сессию, окно контекста позволяет») — RawTileField field storage; 12-function C ABI; FieldHandle/FieldSpanLease/FieldRegistry managed bridge; CPU IsotropicDiffusionKernel reference; IModApi v3 Fields + ComputePipelines surface wiring; capability regex field.*/pipeline.* extension. Branch `feat/k9-field-storage` `d163341..<HEAD>` (17 commits), 2026-05-10. Previous: A'.1.K (К-L3.1 architecture amendment landing) — 2026-05-10; A'.1.M (A'.0.7 methodology amendment landing) — 2026-05-10; A'.0.7 (methodology pipeline restructure) — 2026-05-10; A'.0.5 (documentation reorganization) — 2026-05-10. |
-| **Next milestone (recommended)** | A'.5 K8.3 (production system migration to SpanLease/WriteBatch — 12+ vanilla systems per migration plan §1.2) |
+| **Active phase** | A'.5 K8.3 (production system migration → SpanLease/WriteBatch) → A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (А'.4 K9 + А'.4.5 Register + A'.1.K + A'.1.M + A'.0.5 + A'.0.7 + К-L3.1 + A'.3 push closed) |
+| **Last completed milestone** | **A'.4.5** (Document Control Register) — 2026-05-12 — synthesized governance framework from 5 industry standards (DO-178C / ISO 9001 / ISO 26262 / IEC 61508 / FDA 21 CFR Part 11; 9 selected / 11 deselected); REGISTER.yaml schema v1.0 with 229 documents enrolled + 13 REQ + 14 RISK + 3 CAPA + 9 EVT; 3 PowerShell tooling scripts at `tools/governance/`; 4 new folders (docs/governance, docs/ideas, docs/mechanics, tools/governance); METHODOLOGY v1.6→v1.7 with §12 register integration + §7.1 7th invocation; closure protocol §12.7 now canonical (this document cross-references). Previous: A'.4 (K9 field storage) — 2026-05-11; A'.1.K (К-L3.1 architecture amendment landing) — 2026-05-10; A'.1.M (A'.0.7 methodology amendment landing) — 2026-05-10; A'.0.7 (methodology pipeline restructure) — 2026-05-10; A'.0.5 (documentation reorganization) — 2026-05-10. |
+| **Next milestone (recommended)** | A'.5 K8.3 (production system migration to SpanLease/WriteBatch — 12+ vanilla systems per migration plan §1.2). **First post-register closure** — exercises Q-A45-X5 post-session protocol; closure verifies CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT effectiveness. |
 | **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09); K8.2 reformulated as v2 single-milestone foundation closure per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED |
 | **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
 | **Tests passing** | 671 expected post-A'.4 K9 (631 baseline + 27 K9 bridge + 13 K9 capability validation = 671; K9 bridge tests verified 27/27 PASSED 0.92s; native selftest 21 → 29 scenarios verified). Final dotnet test verification at K9 closure. |
@@ -578,12 +578,13 @@ Phase A' is the structural unit between Phase A (K-series) closure and Phase B (
 | Milestone | Title | Status | Estimate | Commits | Date closed |
 |---|---|---|---|---|---|
 | A'.0 | K-L3.1 bridge formalization | DONE | 2-4 hours session | `45d831c` | 2026-05-10 |
-| A'.0.5 | Documentation reorganization + cross-ref refresh + module-local refresh + pipeline-terminology scrub + cleanup campaign | DONE | 2-4 hours auto-mode | `27523ac`..`<HEAD>` | 2026-05-10 |
-| A'.0.7 | Methodology pipeline restructure rewrite | DONE | ~3 hours deliberation + landing | session 2026-05-10 | 2026-05-10 |
-| A'.1 | Amendment brief execution (K-L3.1 propagation + Tier 2 K-L11 framing + Vanilla mod READMEs) | NOT STARTED | 30-60 min auto-mode | — | — |
+| A'.0.5 | Documentation reorganization + cross-ref refresh + module-local refresh + pipeline-terminology scrub + cleanup campaign | DONE | 2-4 hours auto-mode | `27523ac..4e332bb` | 2026-05-10 |
+| A'.0.7 | Methodology pipeline restructure rewrite | DONE | ~3 hours deliberation + landing | `86b721a..9d4da64` | 2026-05-10 |
+| A'.1 | Amendment brief execution (K-L3.1 propagation + Tier 2 K-L11 framing + Vanilla mod READMEs) | DONE | 30-60 min auto-mode | bundled into A'.1.K + A'.1.M | 2026-05-10 |
 | A'.2 | REMOVED — folded into A'.0.5 Phase 5 | — | — | — | — |
-| A'.3 | Push to origin | NOT STARTED | minutes | — | — |
-| A'.4 | K9 + A'.4.0 patch execution (RawTileField + IModApi v3 Fields wiring) | DONE | 8-12 hours auto-mode | `d163341..<HEAD>` on `feat/k9-field-storage` (17 commits) | 2026-05-10 |
+| A'.3 | Push to origin | DONE | minutes | through `38c2e19` | 2026-05-10 |
+| A'.4 | K9 + A'.4.0 patch execution (RawTileField + IModApi v3 Fields wiring) | DONE | 8-12 hours auto-mode | `ce4dba8..80c9ba6` | 2026-05-11 |
+| A'.4.5 | Document Control Register (synthesized governance + 229 docs enrolled + tooling + METHODOLOGY v1.7) | DONE | ~5-7 hours auto-mode | this milestone | 2026-05-12 |
 | A'.5 | K8.3 skeleton execution (production system migration) | NOT STARTED | 4-6 weeks | — | — |
 | A'.6 | K8.4 skeleton execution (managed World retired) | NOT STARTED | 1-2 weeks | — | — |
 | A'.7 | K8.5 skeleton execution (mod ecosystem migration prep) | NOT STARTED | 3-5 days | — | — |
@@ -731,6 +732,44 @@ Working tree clean post-A'.1.M; baseline 631 preserved by construction.
 - MAXIMUM_ENGINEERING_REFACTOR §4.8 «Hardware variance» Risk bullet: «Local Gemma performance varies with GPU» → «Environment variance» с v1.x era qualifier + v1.6 era equivalent risk note. §3.5 «surgical scrub at execution time» pattern.
 
 These amendment plan gaps may surface к A'.8 К-closure report as «brief authoring inaccuracy» pattern; not A'.1 re-deliberation scope.
+
+---
+
+### A'.4.5 — Document Control Register
+
+- **Status**: DONE (2026-05-12)
+- **Brief**: `tools/briefs/A_PRIME_4_5_DOCUMENT_CONTROL_REGISTER_BRIEF.md` (EXECUTED) + 5 execution-context Pass briefs (Pass 1 Q4 standards / Pass 2 classification model / Pass 3 schema+tooling+protocol / Pass 4 auxiliary cascade locks / Pass 5 production entries; all EXECUTED)
+- **Deliberation closure**: `tools/scratch/A_05/A_PRIME_4_5_DELIBERATION_CLOSURE.md` (23 Q-locks + 39 production entries)
+- **Output**: synthesized governance framework from 5 industry standards (DO-178C / ISO 9001 primary + ISO 26262 / IEC 61508 / FDA 21 CFR Part 11 targeted; 9 selected + 11 deselected elements documented in SYNTHESIS_RATIONALE.md)
+- **Deliverables shipped**:
+  - `docs/governance/FRAMEWORK.md` v1.0 LOCKED — governance specification (~700 lines)
+  - `docs/governance/SYNTHESIS_RATIONALE.md` v1.0 LOCKED — provenance for synthesis (~330 lines)
+  - `docs/governance/REGISTER.yaml` schema v1.0 + 229 documents enrolled + 13 REQ + 14 RISK + 3 CAPA + 9 EVT pre-authored entries
+  - `docs/governance/REGISTER_RENDER.md` auto-generated human-readable derivative (~1850 lines)
+  - `docs/governance/VALIDATION_REPORT.md` auto-generated (0 errors / 0 warnings clean)
+  - `docs/governance/BYPASS_LOG.md` Tier 2 Live tracker (empty at closure)
+  - 3 PowerShell scripts at `tools/governance/`: `sync_register.ps1` (write-side sync + validation, 30+ validation rules), `query_register.ps1` (8 query patterns), `render_register.ps1` (per-category render + global tables)
+  - `tools/governance/SCOPE_EXCLUSIONS.yaml` (glob patterns for excluded paths)
+  - `tools/governance/MODULE.md` Tier 4 module README
+  - 4 new folders: `docs/governance/`, `docs/ideas/`, `docs/mechanics/`, `tools/governance/`
+  - 228 frontmatter mirrors auto-generated on .md files (227 register-tracked + REGISTER_RENDER.md regenerated)
+- **METHODOLOGY v1.6 → v1.7**: new §12 «Document Control Register integration» (7 sub-sections including canonical §12.7 closure protocol); §7.1 «Data exists or it doesn't» extended with 7th formal invocation (documentation layer); §11 «See also» extended with FRAMEWORK + SYNTHESIS_RATIONALE links; §10 v1.7 change history row
+- **PHASE_A_PRIME_SEQUENCING.md**: stale A'.0.7 «NEXT» corrected to «DONE 2026-05-10»; A'.1/A'.3/A'.4 statuses brought current; A'.4.5 entry inserted
+- **MIGRATION_PROGRESS.md (this document)**: closure protocol §928 cross-references METHODOLOGY §12.7 as canonical post-A'.4.5 + adds steps 5-7 (REGISTER.yaml updates + audit_trail entry + sync_register validation gate)
+- **Borderline classification (Pass 2 §1.4 deferred)**: COMBO_RESOLUTION, COMPOSITE_REQUESTS, RESOURCE_MODELS classified as Category A by execution agent with `special_case_rationale` documenting decision (predominantly architectural pattern content; design-intent layer minimal — would split to J if substantive game-design content authored later)
+- **Bootstrap**: Q-A45-X2 self-referential `last_modified_commit` filled via `git commit --amend` at closure (REGISTER.yaml meta-entry references its own closure commit hash)
+- **Validation result**: 229 documents enrolled, per-category A=30 / B=6 / C=3 / D=48 / E=54 / F=78 / G=8 / H=2 / I=0 / J=0; per-tier T1=33 / T2=18 / T3=100 / T4=78 / T5=0; 0 errors, 0 advisory warnings, 0 STALE flags
+- **Code changes**: zero (governance + docs + PS tooling only)
+- **Executor**: Claude Code session, ~5-7 hours auto-mode, 16+ atomic commits on main
+- **Lessons learned** (added to register at A'.5 K8.3 closure if patterns recur):
+  - PowerShell 5.1 `Where-Object` returns Hashtable scalar on single match; `.Count` returns property count not result count — wrap in `@()` to force array context
+  - PowerShell 5.1 regex single-line by default; multi-line frontmatter detection requires `(?s)` prefix
+  - Initial sync pass discovered orphan (TIER2_FLAGS.md) missed in enrollment — validation reveals enrollment gaps that manual inventory missed (RISK-008 amendment plan completeness gap reproduced and detected by tooling)
+  - `Install-Module powershell-yaml` requires manual user action (auto-classifier blocks blind module installs); install once per machine
+
+**CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT effectiveness verification**: register operational; structural fix in place. Verification pending — A'.5 K8.3 first post-register closure must run `sync_register.ps1 --validate` cleanly to confirm CAPA effectiveness.
+
+**RISK-010 mitigation effectiveness**: Q-A45-X5 strict gate ships at A'.4.5 closure. Measured at A'.5 K8.3.
 
 ---
 

@@ -1,4 +1,4 @@
-# DualFrontier Document Control Register
+﻿# DualFrontier Document Control Register
 # Operational SoT for documentation governance per A'.4.5 deliberation closure.
 # Schema specification: docs/governance/FRAMEWORK.md v1.0
 # Source-standard provenance: docs/governance/SYNTHESIS_RATIONALE.md v1.0
@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "1.0"
 last_modified: "2026-05-12"
-last_modified_commit: "PENDING-INITIAL"  # filled via git commit --amend at A'.4.5 closure per Q-A45-X2 bootstrap
+last_modified_commit: "d87dfa5"  # filled at A'.4.5 closure 2026-05-12 per Q-A45-X2 bootstrap (self-reference resolved via git commit --amend)
 last_modified_by: "Crystalka"
 
 # === Audit calendar (Q13 anchor) ===
@@ -150,7 +150,7 @@ documents:
     owner: Crystalka
     version: "0.3"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "80c9ba6"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-05-12"
@@ -429,7 +429,7 @@ documents:
     owner: Crystalka
     version: "1.7"
     last_modified: "2026-05-12"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "34374f3"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-05-12"
@@ -537,7 +537,7 @@ documents:
     version: "1.0"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "6278a36"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-12"
@@ -559,7 +559,7 @@ documents:
     version: "1.0"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "c7dca3e"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-12"
@@ -595,12 +595,12 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-11"
-    last_modified_commit: "80c9ba6"
+    last_modified: "2026-05-12"
+    last_modified_commit: "d87dfa5"
     content_language: mixed
     review_cadence: on-closure+quarterly
-    last_review_date: "2026-05-11"
-    last_review_event: "K9 closure entry written"
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 closure entry + canonical closure protocol cross-ref to METHODOLOGY §12.7"
     next_review_due: "2026-Q3"
     reviewer: Crystalka
 
@@ -646,11 +646,11 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-05-12"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "d87dfa5"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-12"
-    last_review_event: "A'.4.5 closure — stale A'.0.7 status corrected"
+    last_review_event: "A'.4.5 closure — stale A'.0.7/A'.1/A'.3/A'.4 statuses brought current + A'.4.5 entry inserted"
     next_review_due: "2026-Q3"
     reviewer: Crystalka
     special_case_rationale: "Category A + Tier 2 + Live override: document is mutable per phase closure, subordinate to MIGRATION_PLAN_KERNEL_TO_VANILLA — not LOCKED architecture per Pass 2 §1.3"
@@ -733,7 +733,7 @@ documents:
     version: "1.0"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "d87dfa5"
     content_language: en
     review_cadence: on-every-milestone-closure
     last_review_date: "2026-05-12"
@@ -770,7 +770,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-04-26"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "b655d4b"
     content_language: mixed
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -786,7 +786,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "8ee27fe"
     content_language: mixed
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -803,7 +803,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-05-09"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "8ee27fe"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-09"
@@ -1565,7 +1565,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "7448267"
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
@@ -1620,7 +1620,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "411c284"
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
@@ -1634,7 +1634,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "411c284"
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
@@ -1648,7 +1648,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "411c284"
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
@@ -1662,7 +1662,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "411c284"
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
@@ -1676,7 +1676,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "411c284"
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
@@ -2316,7 +2316,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-05-10"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "43374f1"
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
@@ -2333,7 +2333,7 @@ documents:
     version: "1.0"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "d87dfa5"
     content_language: en
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -2350,7 +2350,7 @@ documents:
     version: "Live"
     first_authored: "2026-05-12"
     last_modified: "2026-05-12"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "d87dfa5"
     content_language: en
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -2368,7 +2368,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "d87dfa5"
     content_language: en
     review_cadence: on-source-commit+quarterly
     reviewer: Crystalka
@@ -3457,7 +3457,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified_commit: "8ee27fe"
     content_language: en
     review_cadence: on-source-commit+quarterly
     reviewer: Crystalka

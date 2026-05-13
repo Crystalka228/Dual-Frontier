@@ -381,7 +381,7 @@
 - **Path**: `docs/MIGRATION_PROGRESS.md`
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-05-11 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
 
 ### DOC-C-ROADMAP — Roadmap
