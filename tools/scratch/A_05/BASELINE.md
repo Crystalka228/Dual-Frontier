@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-A_PRIME_0_5_BASELINE
+category: E
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_0_5_BASELINE
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-A_PRIME_0_5_BASELINE
+category: E
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_0_5_BASELINE
+---
 # A'.0.5 Phase 0 — pre-flight baseline grep
 
 **Date**: 2026-05-10

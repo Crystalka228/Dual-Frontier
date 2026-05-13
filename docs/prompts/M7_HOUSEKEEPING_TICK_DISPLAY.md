@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-M7_HOUSEKEEPING_TICK_DISPLAY
+category: E
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-M7_HOUSEKEEPING_TICK_DISPLAY
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-M7_HOUSEKEEPING_TICK_DISPLAY
+category: E
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-M7_HOUSEKEEPING_TICK_DISPLAY
+---
 # M7-cycle housekeeping — TICK display wiring + Phase 4/5 backlog establishment
 
 ## Context

@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-K4_STRUCT_REFACTOR
+category: D
+tier: 3
+lifecycle: SUPERSEDED
+owner: Crystalka
+version: "0.1"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K4_STRUCT_REFACTOR
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-K4_STRUCT_REFACTOR
+category: D
+tier: 3
+lifecycle: SUPERSEDED
+owner: Crystalka
+version: "0.1"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K4_STRUCT_REFACTOR
+---
 # K4 — Component struct refactor (Hybrid path)
 
 **Brief version**: 1.0 (full, executable)

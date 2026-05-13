@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-FIELDS
+category: A
+tier: 1
+lifecycle: Live
+owner: Crystalka
+version: "0.1"
+next_review_due: 2027-05-11
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FIELDS
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-FIELDS
+category: A
+tier: 1
+lifecycle: Live
+owner: Crystalka
+version: "0.1"
+next_review_due: 2027-05-11
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FIELDS
+---
 # Field Storage
 
 Dual Frontier carries two orthogonal data systems under the same managed Application layer. The Entity Component System ([ECS](./ECS.md)) stores per-entity state as sparse component arrays; the Field Storage system stores spatial scalar/vector state as dense 2D grids. Neither subsumes the other. A pawn is an entity with components; a mana density is a field with cells. Code that reads pawn health does not touch fields; code that reads local mana does not touch components. The two systems share the native kernel ([KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md)) as the storage owner and `IModApi` ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §4.6) as the registration surface, but their access patterns, lifecycle rules, and capability verbs are distinct.

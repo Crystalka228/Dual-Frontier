@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-NATIVE_CORE_EXPERIMENT
+category: E
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-NATIVE_CORE_EXPERIMENT
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-NATIVE_CORE_EXPERIMENT
+category: E
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-NATIVE_CORE_EXPERIMENT
+---
 > **SUPERSEDED v2026-05-07** — заменён `KERNEL_ARCHITECTURE.md` (v1.0 LOCKED).
 > Сохраняется для исторического контекста. §8 decision rule из этого документа
 > признан authoritative и зафиксирован как K-L10 в `KERNEL_ARCHITECTURE.md`.

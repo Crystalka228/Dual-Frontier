@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-G2
+category: D
+tier: 3
+lifecycle: AUTHORED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-G2
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-G2
+category: D
+tier: 3
+lifecycle: AUTHORED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-G2
+---
 # G2 — Anisotropic diffusion (electricity)
 
 **Status**: SKELETON — full brief authored when ready к execute

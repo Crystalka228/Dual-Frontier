@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-GODOT_INTEGRATION
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-GODOT_INTEGRATION
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-GODOT_INTEGRATION
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-GODOT_INTEGRATION
+---
 # Godot integration
 
 Godot is an excellent engine for 2D simulation, but it has a hard limitation: the `SceneTree` and `Node` APIs work only from the main thread. Dual Frontier's Domain logic is multithreaded and must not know that Godot is even nearby. The link between the layers is built on a unidirectional command bridge.

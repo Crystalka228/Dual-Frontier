@@ -282,6 +282,9 @@ if ($Sync -and $errors.Count -eq 0) {
     foreach ($doc in $register.documents) {
         $path = $doc.path
         if (-not $path) { continue }
+        # Only .md files get frontmatter mirrors; YAML/other-extension entries (e.g., REGISTER.yaml itself)
+        # are tracked but not mirrored.
+        if (-not $path.EndsWith('.md')) { continue }
         $fullPath = Join-Path $REPO_ROOT $path
         if (-not (Test-Path $fullPath)) { continue }
 

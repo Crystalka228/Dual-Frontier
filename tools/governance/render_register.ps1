@@ -46,9 +46,9 @@ if ($register.documents) {
     }
 }
 
-$openCapa = if ($register.capa_entries) { ($register.capa_entries | Where-Object { $_.closure_status -eq 'OPEN' }).Count } else { 0 }
-$activeRisks = if ($register.risks) { ($register.risks | Where-Object { $_.status -in @('ACTIVE','RESIDUAL','REALIZED') }).Count } else { 0 }
-$staleDocs = if ($register.documents) { ($register.documents | Where-Object {
+$openCapa = if ($register.capa_entries) { @($register.capa_entries | Where-Object { $_.closure_status -eq 'OPEN' }).Count } else { 0 }
+$activeRisks = if ($register.risks) { @($register.risks | Where-Object { $_.status -in @('ACTIVE','RESIDUAL','REALIZED') }).Count } else { 0 }
+$staleDocs = if ($register.documents) { @($register.documents | Where-Object {
     $_.lifecycle -eq 'STALE' -or ($_.next_review_due -and ([string]$_.next_review_due) -lt $today)
 }).Count } else { 0 }
 

@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-ARCHITECTURE_TYPE_SYSTEM
+category: A
+tier: 1
+lifecycle: Draft
+owner: Crystalka
+version: "0.1"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ARCHITECTURE_TYPE_SYSTEM
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-ARCHITECTURE_TYPE_SYSTEM
+category: A
+tier: 1
+lifecycle: Draft
+owner: Crystalka
+version: "0.1"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ARCHITECTURE_TYPE_SYSTEM
+---
 ---
 title: Architecture Type System
 nav_order: 110

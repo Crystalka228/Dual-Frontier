@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-PERFORMANCE
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERFORMANCE
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-PERFORMANCE
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERFORMANCE
+---
 # Performance
 
 Performance is an architectural property, not a late-stage optimization. Dual Frontier aims at specific numbers from day one; the dependency graph, domain buses, and invalidating caches are the direct tools for hitting them.

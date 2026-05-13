@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-FHE_INTEGRATION_CONTRACT
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FHE_INTEGRATION_CONTRACT
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-FHE_INTEGRATION_CONTRACT
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FHE_INTEGRATION_CONTRACT
+---
 # FHE Integration Contract
 
 *Architectural contract specifying the integration of fully homomorphic encryption between Dual Frontier's deterministic simulation core and a future cheat-resistant multiplayer compute layer. This document follows the same discipline as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md): decisions are enumerated, ratified, and locked. Implementation is deferred pending technological maturity of the underlying libraries; the contract itself is binding from v1.0 onward.*

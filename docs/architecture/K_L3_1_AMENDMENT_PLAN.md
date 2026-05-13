@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-K_L3_1_AMENDMENT_PLAN
+category: A
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_L3_1_AMENDMENT_PLAN
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-K_L3_1_AMENDMENT_PLAN
+category: A
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_L3_1_AMENDMENT_PLAN
+---
 # K-L3.1 Amendment Plan — old/new text pairs
 
 **Status**: AUTHORED 2026-05-10 (Phase 4 deliverable of K-L3.1 session)

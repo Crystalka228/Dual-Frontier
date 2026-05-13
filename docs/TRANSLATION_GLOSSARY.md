@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-H-TRANSLATION_GLOSSARY
+category: H
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "1.0"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-H-TRANSLATION_GLOSSARY
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-H-TRANSLATION_GLOSSARY
+category: H
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "1.0"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-H-TRANSLATION_GLOSSARY
+---
 ---
 title: Translation Glossary
 nav_order: 99

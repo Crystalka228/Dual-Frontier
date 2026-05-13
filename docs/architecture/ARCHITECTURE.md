@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-ARCHITECTURE
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "0.3"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ARCHITECTURE
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-ARCHITECTURE
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "0.3"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ARCHITECTURE
+---
 # Dual Frontier architecture
 
 The project is built around one rigid principle: a system MUST NOT access another system's data directly. Interaction happens only through contracts. Any deviation is caught by the isolation guard and produces an immediate crash with diagnostics, not silent state corruption.

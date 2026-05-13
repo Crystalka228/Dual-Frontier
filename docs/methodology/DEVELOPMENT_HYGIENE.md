@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-B-DEVELOPMENT_HYGIENE
+category: B
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-DEVELOPMENT_HYGIENE
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-B-DEVELOPMENT_HYGIENE
+category: B
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-DEVELOPMENT_HYGIENE
+---
 # Development hygiene
 
 The project is deliberately developed along two parallel tracks: the **game** Dual Frontier (Phases 0–7, main branch) and the **engine** — a generic ECS core that forks into a separate product after the game ships (see [ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)). To make the fork cheap, the engine/game boundary must stay clean through Phases 4–7, when the temptation to "cut corners" is at its highest.

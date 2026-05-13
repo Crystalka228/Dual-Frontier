@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-GPU_COMPUTE
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "2.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-GPU_COMPUTE
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-GPU_COMPUTE
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "2.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-GPU_COMPUTE
+---
 # GPU Compute
 
 Authoritative reference for GPU compute strategy in Dual Frontier. Supersedes the Phase 3 `ProjectileSystem`-only formulation. Reflects the architectural pivot toward native ECS kernel + Vulkan rendering layer (see [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) and [RUNTIME_ARCHITECTURE](./RUNTIME_ARCHITECTURE.md)), and the field-based simulation model that elevates GPU compute from a deferred per-system optimization to a foundational architectural capability.

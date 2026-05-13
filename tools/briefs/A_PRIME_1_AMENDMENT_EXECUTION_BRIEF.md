@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-A_PRIME_1_AMENDMENT_EXECUTION
+category: D
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_1_AMENDMENT_EXECUTION
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-A_PRIME_1_AMENDMENT_EXECUTION
+category: D
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_1_AMENDMENT_EXECUTION
+---
 # A'.1 Amendment Execution Brief — combined methodology + architecture corpus landing
 
 **Brief type**: Execution brief (mechanical landing of pre-decided amendments; two parts, two sessions)

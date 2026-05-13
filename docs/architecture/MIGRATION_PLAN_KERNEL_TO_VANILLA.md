@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-MIGRATION_PLAN
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.1"
+next_review_due: 2027-05-10
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-MIGRATION_PLAN
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.1"
+next_review_due: 2027-05-10
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
+---
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)
 
 **Version**: 1.1 LOCKED (v1.1 = non-semantic correction post-K-L3.1 amendment 2026-05-10)

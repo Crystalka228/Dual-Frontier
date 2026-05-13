@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-PHASE_A_PRIME_SEQUENCING
+category: A
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PHASE_A_PRIME_SEQUENCING
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-PHASE_A_PRIME_SEQUENCING
+category: A
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PHASE_A_PRIME_SEQUENCING
+---
 # Phase A' sequencing — K-L3.1 to M-series begins
 
 **Authored**: 2026-05-10 (Opus, post-K8.2 v2 closure cleanup session)

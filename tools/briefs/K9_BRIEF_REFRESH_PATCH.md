@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-K9_BRIEF_REFRESH_PATCH
+category: D
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K9_BRIEF_REFRESH_PATCH
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-K9_BRIEF_REFRESH_PATCH
+category: D
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K9_BRIEF_REFRESH_PATCH
+---
 # K9 Brief Refresh Patch — Companion to K9_FIELD_STORAGE_BRIEF.md
 
 **Status**: AUTHORED 2026-05-10 — companion patch to `tools/briefs/K9_FIELD_STORAGE_BRIEF.md` (authored 2026-05-08).

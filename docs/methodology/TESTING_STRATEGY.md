@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-B-TESTING_STRATEGY
+category: B
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-TESTING_STRATEGY
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-B-TESTING_STRATEGY
+category: B
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-TESTING_STRATEGY
+---
 # Testing strategy
 
 Tests in Dual Frontier are the first line of defense for architectural guarantees. The isolation guard, the dependency graph, the event bus — all of these are useless without tests that fail on regression. The project uses xUnit + FluentAssertions; mocks appear only where a real component cannot be substituted. Test projects are grouped by the assemblies they verify.

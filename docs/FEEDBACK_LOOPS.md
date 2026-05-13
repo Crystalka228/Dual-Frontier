@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-FEEDBACK_LOOPS
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "0.2"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FEEDBACK_LOOPS
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-FEEDBACK_LOOPS
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "0.2"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FEEDBACK_LOOPS
+---
 # Feedback-loop resolution
 
 The system dependency graph does not allow cycles over the same components — otherwise the scheduler cannot build phases. But game logic regularly demands feedback: one system writes a resource and another reads that same resource to make a decision. v0.2 resolves such loops with a single technique — reading a snapshot of the previous tick.

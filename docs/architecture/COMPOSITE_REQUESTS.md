@@ -1,3 +1,27 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-COMPOSITE_REQUESTS
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMPOSITE_REQUESTS
+---
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-COMPOSITE_REQUESTS
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "1.0"
+next_review_due: 2027-05-12
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMPOSITE_REQUESTS
+---
 # Composite requests
 
 A one-step Intent solves the problem when exactly one resource on one bus is required. But even a "mana arrow" shot needs two confirmations at once: a bullet on `IInventoryBus` and mana on `IMagicBus`. A direct "get both responses and act" approach produces race conditions inside a multithreaded phase. v0.2 introduces two-phase commit through a single mediator.
