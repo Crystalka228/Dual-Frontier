@@ -427,14 +427,14 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.6"
-    last_modified: "2026-05-10"
-    last_modified_commit: "9d4da64"
+    version: "1.7"
+    last_modified: "2026-05-12"
+    last_modified_commit: "PENDING-INITIAL"
     content_language: mixed
     review_cadence: on-change+annual
-    last_review_date: "2026-05-10"
-    last_review_event: "A'.0.7 methodology pipeline restructure"
-    next_review_due: "2027-05-10"
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 closure — §12 register integration + §7.1 extension + §11 links"
+    next_review_due: "2027-05-12"
     reviewer: Crystalka
     requirements_authored: [REQ-Q-A07-6]
     risks_referenced: [RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014]

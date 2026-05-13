@@ -336,10 +336,10 @@
 ### DOC-B-METHODOLOGY — Dual Frontier development methodology
 
 - **Path**: `docs/methodology/METHODOLOGY.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.6
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.7
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-05-10 ($(System.Collections.Hashtable.last_modified_commit))
-- **Next review due**: 2027-05-10
+- **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: 2027-05-12
 - **Requirements authored**: REQ-Q-A07-6
 - **Risks referenced**: RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014
 - **CAPA referenced**: CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION

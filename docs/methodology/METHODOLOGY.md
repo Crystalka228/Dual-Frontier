@@ -6,13 +6,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.6"
-next_review_due: 2027-05-10
+version: "1.7"
+next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
+
+*Version: 1.7 (2026-05-12). Document Control Register integration per A'.4.5 closure — new §12 specifies the register as governance authority with post-session update protocol (Q-A45-X5); §7.1 «Data exists or it doesn't» extended with seventh formal invocation at the documentation layer (every document either has a register entry or is out-of-scope); §11 «See also» extended with [FRAMEWORK](../governance/FRAMEWORK.md) + [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) links. Closure protocol §12.7 is now canonical (MIGRATION_PROGRESS.md closure protocol section cross-references it).*
 
 *Version: 1.6 (2026-05-10). Pipeline restructure rewrite per A'.0.7 deliberation session. §0 Abstract generalized к architect-executor abstract framing; §2.1 role distribution rewritten в abstract role categories с v1.6 current-configuration table; §2.2 contracts as IPC reframed across context boundaries с three-properties mechanism; §3 economics restructured к invariant + current-configuration с A'.0.5 empirical anchor; §4 throughput parallel-form case studies (Phase 4 closure v1.x + A'.0.5 closure v1.6); §5.2/§5.3 threat model restructured для v1.6 session-mode reality; §9 «degradation as codebase grows» reformulated к pipeline-agnostic; methodology corpus declared agent-as-primary-reader per Q-A07-6. K-Lessons sub-section expanded с A'.0.5 lesson «milestone consolidation under session-mode pipeline» per Q-A07-5.*
 
@@ -327,7 +329,7 @@ Concrete system classes: compilers, engines, frameworks, libraries, infrastructu
 
 The project's central operating principle, applied at every layer: **state and data either have a real grounding artifact in the codebase, or they are removed.** There is no third option of "we will add the artifact later, and the placeholder represents what it will become." Placeholder state is a lie about what the system actually is, and lies in code compound across LLM-driven cycles.
 
-The principle has been formally invoked at least six times during the M7 batch and the pre-M8 technical-debt closure:
+The principle has been formally invoked at least seven times during the M7 batch, the pre-M8 technical-debt closure, and the A'.4.5 governance layer:
 
 1. **Real pawn data** ([9141bd6](https://github.com/Crystalka228/Dual-Frontier/commit/9141bd6), M7 H3). Hardcoded Warhammer-flavored pawn names, hash-derived role labels, and hash-derived skill bars were removed in favor of `IdentityComponent`, `RandomPawnFactory`, and real `SkillsComponent` data. Eight dead files were deleted alongside the replacement (four stub UI components, one stub node, three undispatched bridge commands).
 
@@ -341,9 +343,11 @@ The principle has been formally invoked at least six times during the M7 batch a
 
 6. **Needs semantic flip** ([f4a5839](https://github.com/Crystalka228/Dual-Frontier/commit/f4a5839), TD-3.1). The storage convention "0 = full, 1 = starving" combined with consumer expectations of wellness ("1 = best") forced a translation layer (`1f -` inversions in `MoodSystem` and `PawnStateReporterSystem`) that hid the mismatch. After the flip, the inversion logic disappeared naturally, because storage now matched consumer semantics. The principle did the work it is supposed to do.
 
+7. **Documentation layer — every document either has a register entry or is out-of-scope** (A'.4.5 closure, 2026-05-12). Pre-A'.4.5 the principle applied to code (production data sources, placeholder fields) but not to documentation governance: a `.md` file could exist in the repository without any structural surface declaring its category, tier, lifecycle, or ownership. This permitted a class of placeholder lie at the documentation layer — e.g., `PHASE_A_PRIME_SEQUENCING.md` carrying status «A'.0.7 NEXT» after A'.0.7 closure completed (no mechanism enforced update); `INVENTORY.md` carrying baseline ~135 files when actual count had drifted to ~220 (no mechanism flagged drift). A'.4.5 introduces `docs/governance/REGISTER.yaml` as the structural surface: every `.md` file either has a register entry (with category × tier × lifecycle declared) or matches a pattern in `tools/governance/SCOPE_EXCLUSIONS.yaml`. There is no third option. `sync_register.ps1 --validate` enforces the invariant; the post-session update protocol (Q-A45-X5, §12.5) closes the «I forgot to update X» failure mode at every closure.
+
 The principle constrains all participants in the pipeline (§2.1): the architect cannot author a brief that references data sources absent from disk; the executor cannot synthesize fields whose backing data is absent from the brief; the QA review at phase closure requires that every artifact be auditable against real existence; the direction owner cannot hide behind «we will fill it later» because the next session in the pipeline will refuse to operate against a stub. Each application of the principle is a moment where one role's output would have introduced a placeholder lie if not constrained.
 
-**Falsifiable claim.** The track record across cycles is the falsifiable signal of whether the principle is load-bearing. As of M7 closure: six applications, zero counter-examples — no case where a placeholder was deliberately preserved as a "we will fill it later" stub. Forward target: the count continues to grow without counter-examples through M8–M10. A counter-example — a placeholder that survives a closure review — would falsify the principle's load-bearing role and would force a methodological retraction.
+**Falsifiable claim.** The track record across cycles is the falsifiable signal of whether the principle is load-bearing. As of A'.4.5 closure: seven applications, zero counter-examples — no case where a placeholder was deliberately preserved as a "we will fill it later" stub at either code or documentation layer. Forward target: the count continues to grow without counter-examples through M8–M10. A counter-example — a placeholder that survives a closure review, OR a `.md` file that ships without register entry (and is not in `SCOPE_EXCLUSIONS.yaml`) — would falsify the principle's load-bearing role and would force a methodological retraction.
 
 ---
 
@@ -412,6 +416,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.4 | 2026-05-07 | Post-K3 calibration lesson added к «Native layer methodology adjustments»: brief time estimates from architectural docs assume hobby pace (~1h/day manual typing); auto-mode execution actual time is 5-10x faster. Future briefs must state both hobby-pace и auto-mode estimates explicitly. K0-K3 measured data: 11-17 days hobby estimate vs ~6 hours actual auto-mode. |
 | 1.5 | 2026-05-09 | Added "Pipeline closure lessons (K-series, post-K8.1)" sub-section under "Native layer methodology adjustments" with three lessons formalized from K8.1 and K8.1.1 closures: atomic commit as compilable unit (per K8.1 Phase 5 dependency-cycle bundling, `a62c1f3..059f712`), Phase 0.4 inventory as hypothesis (per K8.1 `Marshalling/` layout reconciliation), mod-scope test isolation (per K8.1.1 Stop condition #3 fix on `EqualsByContent_StaleGeneration_ReturnsFalse`, `fc4400d..63777ef`). |
 | 1.6 | 2026-05-10 | Pipeline restructure rewrite per A'.0.7 — §0 Abstract generalized к architect-executor abstract framing; §2.1 role distribution rewritten в abstract role categories с v1.6 current-configuration table; §2.2 contracts as IPC reframed across context boundaries с three-properties mechanism; §3 economics restructured к invariant + current-configuration с A'.0.5 empirical anchor; §4 throughput parallel-form case studies (Phase 4 closure v1.x + A'.0.5 closure v1.6); §5.2/§5.3 threat model restructured для v1.6 session-mode reality; §9 «degradation as codebase grows» reformulated к pipeline-agnostic; methodology corpus declared agent-as-primary-reader per Q-A07-6. K-Lessons sub-section expanded с A'.0.5 lesson «milestone consolidation under session-mode pipeline» per Q-A07-5. |
+| 1.7 | 2026-05-12 | Document Control Register integration per A'.4.5 closure. New §12 specifies the register as governance authority, classification model (Category×Tier×Lifecycle), seven sections, post-session update protocol (Q-A45-X5), and canonical closure protocol §12.7. §7.1 «Data exists or it doesn't» extended with seventh formal invocation (documentation layer: every `.md` either has a register entry or is in `SCOPE_EXCLUSIONS.yaml`; no third option). §11 «See also» extended with [FRAMEWORK](../governance/FRAMEWORK.md) + [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) links. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -430,8 +435,118 @@ The document is updated after each substantial phase closes. Substantial methodo
 - [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
 - [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
 - [ROADMAP](/docs/ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
+- [FRAMEWORK](../governance/FRAMEWORK.md) — Document Control Register governance framework v1.0 (LOCKED at A'.4.5). Governance authority over documentation lifecycle, classification, post-session protocol.
+- [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) — Source-standard provenance for the register synthesis (DO-178C / ISO 9001 / ISO 26262 / IEC 61508 / FDA 21 CFR Part 11; 9 selected + 11 deselected elements).
+- [REGISTER.yaml](../governance/REGISTER.yaml) — Operational SoT for the Document Control Register; 229 documents enrolled at A'.4.5 closure with classification + cross-references.
 
-## Native layer methodology adjustments
+---
+
+## 12. Document Control Register integration
+
+A'.4.5 closure (2026-05-12) introduced the Document Control Register at `docs/governance/REGISTER.yaml` with framework specification at [FRAMEWORK.md](../governance/FRAMEWORK.md) v1.0 LOCKED. This section integrates the register's governance authority into the methodology corpus.
+
+### 12.1 What the register is
+
+The Document Control Register is the project's **operational navigation surface** for documentation governance — a YAML-format Source of Truth tracking every `.md` file's classification (category × tier × lifecycle), ownership, versioning, audit cadence, and cross-references. Three-tool PowerShell suite at `tools/governance/` provides write-side sync + validation (`sync_register.ps1`), read-side queries (`query_register.ps1`), and human-readable rendering (`render_register.ps1`).
+
+The register is **agent-primary** by design (per Q-A07-6 audience contract inheritance, §0 v1.6 footnote). Human-readable rendering (`REGISTER_RENDER.md`) is derivative, auto-generated from the YAML SoT.
+
+### 12.2 Why it exists — failure modes the register prevents
+
+Pre-A'.4.5 the project accumulated five categories of governance-tracking failure:
+
+1. **Stale referencing documents** — `PHASE_A_PRIME_SEQUENCING.md` carried «A'.0.7 NEXT» status after A'.0.7 closure completed; no mechanism enforced update of referencing documents on milestone closure.
+2. **Inventory drift** — `INVENTORY.md` baseline ~135 files (A'.0.5 closure 2026-05-10); actual count ~220 by A'.4.5 deliberation pre-flight 2026-05-12. No mechanism tracked drift between snapshots.
+3. **Unknown unknowns at closure** — agent executing milestone had no completeness check for «what governance bookkeeping was missed»; mental model lived in Crystalka's head between sessions.
+4. **Cross-document drift between LOCKED specs** — amendment plans for one spec (K-L3.1, A'.0.7) might not propagate consistently across all referencing documents; surfaced as RISK-004.
+5. **«I forgot to update X» pattern** — routine bookkeeping omissions at closure protocol; no structural surface to enforce per-milestone updates.
+
+The register closes all five failure modes structurally. See [FRAMEWORK.md](../governance/FRAMEWORK.md) §2 for full enumeration.
+
+### 12.3 Classification model — Category × Tier × Lifecycle
+
+Three orthogonal axes per FRAMEWORK §3:
+
+- **Category** (A–J, ten values) — content type: Architecture (A) / Methodology (B) / Live tracker (C) / Brief (D) / Discovery+closure+audit (E) / Module-local (F) / Project meta (G) / i18n (H) / Ideas Bank (I) / Game Mechanics (J).
+- **Tier** (1–5) — governance regime: Architectural authority (T1) / Operational live state (T2) / Milestone instruments (T3) / Module-local (T4) / Speculative (T5).
+- **Lifecycle** (8 states) — control state: Draft / Live / LOCKED / EXECUTED / AUTHORED / DEPRECATED / SUPERSEDED / STALE.
+
+Not fully orthogonal — allowed-combinations matrix encoded in FRAMEWORK §3.4 + validated by `sync_register.ps1`. Forbidden combinations require `special_case_rationale` field populated.
+
+This methodology document is `DOC-B-METHODOLOGY` — Category B (Methodology), Tier 1 (Architectural authority), Lifecycle LOCKED, version (this revision) 1.7.
+
+### 12.4 Seven register sections
+
+Per FRAMEWORK §4, the register has seven sections answering distinct agent query patterns:
+
+1. **Document Control** (per-document) — ID, path, title, classification, ownership, version, audit cadence
+2. **Architecture Case** (per-document) — decisions anchored + rationale_anchors (which brief justifies which K-Lxx invariant)
+3. **Requirement → Test Traceability** (global) — K-Lxx, M-Lxx, G-Lxx, Q-lock requirements + verifying tests + verification status
+4. **Architectural Risk Analysis** (global) — risk taxonomy by Type × Status × Likelihood × Impact + mitigation
+5. **Internal Audit Schedule** (per-document + global calendar) — per-tier cadence enforcement, STALE flag
+6. **Corrective Action Log (CAPA)** (global) — formal 5-field problem→solution shape for milestone-driven amendments
+7. **Audit Trail** (global) — chronological governance-significant events (milestone closures, amendment landings) referencing git log
+
+### 12.5 Post-session update protocol (Q-A45-X5 lock)
+
+**Most load-bearing element of A'.4.5.** Every agent execution session that closes a milestone OR makes architectural decisions OR modifies any register-scope document **must** execute the post-session update protocol before commit closure:
+
+```
+1. Identify all documents modified during session (git status / git diff)
+2. For each modified document: update register entry (last_modified, last_modified_commit,
+   lifecycle if transitioning, governance_events if applicable). New documents: create entry.
+   Renamed/moved/deleted: update path / supersession / deprecation cross-references.
+3. If milestone is closure event: append audit_trail entry (EVT-{date}-{symbolic}),
+   update affected documents' governance_events lists, create CAPA entry if opened,
+   update risks collection, create requirement entries if any added.
+4. Run sync_register.ps1 --validate
+5. If validation passes: include REGISTER.yaml updates in milestone closure commit.
+6. If validation fails: halt closure; surface errors.
+```
+
+Strict gate: validation must pass before final commit. Bypass via `git commit --no-verify` available but logged in `BYPASS_LOG.md` (Tier 2 Live tracker). Accumulated unresolved bypasses surface as governance hygiene debt.
+
+Strict-vs-advisory split: cross-reference integrity violations, schema integrity violations, missing terminal-state references, and document-changed-without-register-update all block commit. STALE flag generation, translation candidacy warnings, brief-AUTHORED-aging warnings are advisory only.
+
+### 12.6 Falsifiable claims
+
+Per FRAMEWORK §10, the register is falsified if any of:
+
+1. Navigation-aid claim fails — task-level metrics in PIPELINE_METRICS measurably degrade post-register
+2. Decade-horizon scalability fails — disruptive MAJOR schema bumps every 6 months (vs anticipated 1-2 MINOR + occasional MAJOR in first year then stabilization)
+3. Construction-by-rationale fails — false positives/negatives at rate requiring constant `--no-verify` bypass; BYPASS_LOG.md grows monotonically without cleanup
+4. Post-session protocol staleness — sync_register --validate run yields STALE flags on >10% of Tier 1 documents at any sampled point
+5. Cross-tier transitions blocked — `special_case_rationale` overrides accumulate to 20%+ of register entries, signaling allowed-combinations matrix is wrong
+
+Falsification mechanism: PIPELINE_METRICS records per-milestone metrics; quarterly audit reviews register efficiency. If falsified, A'.4.5.X micro-milestones or A'.9 analyzer milestone re-deliberates.
+
+### 12.7 Closure protocol — canonical post-A'.4.5
+
+The closure protocol previously documented in `MIGRATION_PROGRESS.md` is extended for register integration. **This is the canonical version**; MIGRATION_PROGRESS.md preserves its historical version for reference but cross-references this section as authoritative:
+
+```
+1. Run final verification (existing): dotnet build, dotnet test, native selftest, F5 verification
+2. Atomic commit with scope prefix (existing): feat(scope) / fix(scope) / docs / refactor(scope)
+3. Update MIGRATION_PROGRESS.md (existing): closure entry recording outcomes, commits, deviations, lessons
+4. Update brief Status field (existing): AUTHORED → EXECUTED transition with closure commit reference
+5. NEW — Update REGISTER.yaml entries for all documents touched during milestone:
+   - last_modified, last_modified_commit, lifecycle (if transitioning), governance_events
+   - New documents: create entries with required fields populated
+   - Renamed/moved/deleted: update path; update all cross-references
+6. NEW — Append audit_trail entry for milestone closure (EVT-{date}-{symbolic-event}):
+   - documents_affected list, commits range + key_commits, governance_impact narrative
+   - cross-references to CAPA entries (if opened), lifecycle transitions
+7. NEW — Run sync_register.ps1 --validate:
+   - Must exit 0 before final commit
+   - Bypass available via --no-verify but logged in BYPASS_LOG.md
+8. NEW — If REGISTER.yaml or any meta-entry modified during milestone:
+   - Final commit incorporates REGISTER.yaml updates
+   - Bootstrap pattern for self-referential `last_modified_commit` field per FRAMEWORK §8.3
+```
+
+The new steps (5-8) constitute the post-session update protocol per §12.5. They are strict by default (validation blocks commit); bypass mechanism (§12.5) provides explicit-and-logged escape hatch when register state cannot be reconciled within the closing session.
+
+
 
 Kernel и runtime native layers introduce specific methodology adjustments documented в:
 - `KERNEL_ARCHITECTURE.md` Part 7 (kernel-specific adjustments)

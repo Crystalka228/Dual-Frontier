@@ -927,6 +927,8 @@ OQ3 («Cross-document drift между KERNEL_ARCHITECTURE и RUNTIME_ARCHITECTU
 
 ## Closure protocol
 
+> **Note (post-A'.4.5)**: [METHODOLOGY §12.7](./methodology/METHODOLOGY.md#127-closure-protocol--canonical-post-a45) is the canonical closure protocol. The version preserved below is the historical pre-A'.4.5 form; it remains correct as a subset but does NOT include register update steps. New milestone closures must follow §12.7 (which extends this protocol with REGISTER.yaml updates + audit_trail entry + sync_register.ps1 --validate gate).
+
 Когда milestone закрывается:
 
 1. **Run final verification**: `dotnet build`, `dotnet test`, native selftest (для K-series), F5 verification (для M-series)
@@ -938,6 +940,9 @@ OQ3 («Cross-document drift между KERNEL_ARCHITECTURE и RUNTIME_ARCHITECTU
    - Update `Current state snapshot` table
    - Если milestone разрешил OQ — переместить из «Open questions» в «Decisions log»
 4. **Update brief**: mark brief as EXECUTED + add link к commit в `tools/briefs/K{N}_*.md`
+5. **(NEW post-A'.4.5)** Update [REGISTER.yaml](./governance/REGISTER.yaml) entries for all documents touched during milestone: `last_modified`, `last_modified_commit`, `lifecycle` (if transitioning), `governance_events`. New documents get new entries. Renamed/moved/deleted documents get path / supersession / deprecation updates.
+6. **(NEW post-A'.4.5)** Append audit_trail entry for milestone closure (EVT-{date}-{symbolic-event}) referencing documents_affected, commits range, governance_impact narrative.
+7. **(NEW post-A'.4.5)** Run `./tools/governance/sync_register.ps1 --validate`. Must exit 0 before final commit. Bypass available via `git commit --no-verify` but logged in [BYPASS_LOG.md](./governance/BYPASS_LOG.md).
 
 **Pre-flight для самого update**: pre-flight grep на «NOT STARTED» / «IN PROGRESS» — убедиться что только один milestone в IN PROGRESS одновременно.
 
