@@ -27,8 +27,545 @@ audit_calendar:
     next_scheduled: "TBD — after A'.5 K8.3 closure"
     cadence: "approximately quarterly, or at next major Phase boundary"
 
-# === documents collection (~220 entries; populated during enrollment Phase 3) ===
-documents: []
+# === documents collection (populated during enrollment Phase 3) ===
+documents:
+
+  # === Tier 1 Architecture (Category A) ===
+
+  - id: DOC-A-KERNEL
+    path: docs/architecture/KERNEL_ARCHITECTURE.md
+    title: "DualFrontier Kernel — Architecture & Roadmap"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.5"
+    last_modified: "2026-05-10"
+    last_modified_commit: "2df5921"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-10"
+    last_review_event: "K-L3.1 bridge formalization 2026-05-10"
+    next_review_due: "2027-05-10"
+    reviewer: Crystalka
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11]
+    risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004]
+    capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+
+  - id: DOC-A-MOD_OS
+    path: docs/architecture/MOD_OS_ARCHITECTURE.md
+    title: "Mod OS Architecture — Dual Frontier"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.7"
+    last_modified: "2026-05-10"
+    last_modified_commit: "0789bd4"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-10"
+    last_review_event: "K-L3.1 bridge formalization"
+    next_review_due: "2027-05-10"
+    reviewer: Crystalka
+    risks_referenced: [RISK-002, RISK-004, RISK-005, RISK-006]
+    capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+
+  - id: DOC-A-RUNTIME
+    path: docs/architecture/RUNTIME_ARCHITECTURE.md
+    title: "Runtime Architecture — Dual Frontier"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-06"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    risks_referenced: [RISK-004, RISK-013]
+
+  - id: DOC-A-MIGRATION_PLAN
+    path: docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md
+    title: "Migration Plan — Kernel-to-Vanilla (K-series → M-series)"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.1"
+    last_modified: "2026-05-10"
+    last_modified_commit: "0789bd4"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-10"
+    last_review_event: "K-L3.1 amendment landing"
+    next_review_due: "2027-05-10"
+    reviewer: Crystalka
+    risks_referenced: [RISK-004]
+    capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+
+  - id: DOC-A-GPU_COMPUTE
+    path: docs/architecture/GPU_COMPUTE.md
+    title: "GPU Compute"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "2.0"
+    last_modified: "2026-05-06"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    risks_referenced: [RISK-013]
+
+  - id: DOC-A-FIELDS
+    path: docs/architecture/FIELDS.md
+    title: "Field Storage"
+    category: A
+    tier: 1
+    lifecycle: Live
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-11"
+    last_review_event: "K9 closure populated FIELDS storage contract"
+    next_review_due: "2027-05-11"
+    reviewer: Crystalka
+    special_case_rationale: "Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone"
+    risks_referenced: [RISK-003]
+
+  - id: DOC-A-ARCHITECTURE
+    path: docs/architecture/ARCHITECTURE.md
+    title: "Dual Frontier architecture (umbrella)"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "0.3"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-CONTRACTS
+    path: docs/architecture/CONTRACTS.md
+    title: "Contract system"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    risks_referenced: [RISK-003]
+
+  - id: DOC-A-ISOLATION
+    path: docs/architecture/ISOLATION.md
+    title: "System isolation"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-THREADING
+    path: docs/architecture/THREADING.md
+    title: "Multithreading"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-ECS
+    path: docs/architecture/ECS.md
+    title: "Entity Component System"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-EVENT_BUS
+    path: docs/architecture/EVENT_BUS.md
+    title: "Event buses"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-MODDING
+    path: docs/architecture/MODDING.md
+    title: "Writing mods"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    risks_referenced: [RISK-005]
+
+  - id: DOC-A-MOD_PIPELINE
+    path: docs/architecture/MOD_PIPELINE.md
+    title: "Mod Pipeline"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "0.2"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-GODOT_INTEGRATION
+    path: docs/architecture/GODOT_INTEGRATION.md
+    title: "Godot integration"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-VISUAL_ENGINE
+    path: docs/architecture/VISUAL_ENGINE.md
+    title: "Visual engine — DevKit and Native"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-PERFORMANCE
+    path: docs/architecture/PERFORMANCE.md
+    title: "Performance"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-OWNERSHIP_TRANSITION
+    path: docs/architecture/OWNERSHIP_TRANSITION.md
+    title: "Golem ownership transitions"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-FHE_INTEGRATION_CONTRACT
+    path: docs/architecture/FHE_INTEGRATION_CONTRACT.md
+    title: "FHE Integration Contract"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-06"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-ARCHITECTURE_TYPE_SYSTEM
+    path: docs/architecture/ARCHITECTURE_TYPE_SYSTEM.md
+    title: "Architecture Type System — Attribute-as-Declaration Verification"
+    category: A
+    tier: 1
+    lifecycle: Draft
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    special_case_rationale: "Draft (not LOCKED) — Track B verification activation pending; v0.1 sketch authoring stage"
+
+  - id: DOC-A-MAX_ENG_REFACTOR_TRACK_B
+    path: docs/architecture/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md
+    title: "Track B Activation — Type System Verification"
+    category: A
+    tier: 1
+    lifecycle: Draft
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    special_case_rationale: "Draft — Track B activation pending Phase A'.9 analyzer milestone; v0.1 conceptual draft"
+
+  - id: DOC-A-COMBO_RESOLUTION
+    path: docs/architecture/COMBO_RESOLUTION.md
+    title: "Combo damage resolution"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "0.2"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    special_case_rationale: "A vs J borderline classified as A by A'.4.5 execution agent — predominantly architectural pattern (deterministic ordering via ComboResolutionSystem); mechanic-design intent minimal. Cross-referenced from docs/mechanics/ index when future J-category combat-design doc authored"
+
+  - id: DOC-A-COMPOSITE_REQUESTS
+    path: docs/architecture/COMPOSITE_REQUESTS.md
+    title: "Composite requests"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    special_case_rationale: "A vs J borderline classified as A by A'.4.5 execution agent — engine-level composite request resolution pattern; design intent minimal"
+
+  - id: DOC-A-RESOURCE_MODELS
+    path: docs/architecture/RESOURCE_MODELS.md
+    title: "Resource models"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    special_case_rationale: "A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored"
+
+  # === Tier 1 Methodology (Category B) ===
+
+  - id: DOC-B-METHODOLOGY
+    path: docs/methodology/METHODOLOGY.md
+    title: "Dual Frontier development methodology"
+    category: B
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.6"
+    last_modified: "2026-05-10"
+    last_modified_commit: "9d4da64"
+    content_language: mixed
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-10"
+    last_review_event: "A'.0.7 methodology pipeline restructure"
+    next_review_due: "2027-05-10"
+    reviewer: Crystalka
+    requirements_authored: [REQ-Q-A07-6]
+    risks_referenced: [RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014]
+    capa_entries_referenced: [CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION]
+
+  - id: DOC-B-CODING_STANDARDS
+    path: docs/methodology/CODING_STANDARDS.md
+    title: "Coding standards"
+    category: B
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-B-DEVELOPMENT_HYGIENE
+    path: docs/methodology/DEVELOPMENT_HYGIENE.md
+    title: "Development hygiene"
+    category: B
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    risks_referenced: [RISK-011]
+
+  - id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
+    path: docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md
+    title: "Maximum Engineering Refactor — Discipline Escalation Brief"
+    category: B
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.1"
+    last_modified: "2026-05-10"
+    last_modified_commit: "9d4da64"
+    content_language: mixed
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-10"
+    last_review_event: "A'.0.7 methodology rewrite"
+    next_review_due: "2027-05-10"
+    reviewer: Crystalka
+    capa_entries_referenced: [CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION]
+
+  - id: DOC-B-PIPELINE_METRICS
+    path: docs/methodology/PIPELINE_METRICS.md
+    title: "Pipeline metrics — empirical record"
+    category: B
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "0.2"
+    last_modified: "2026-05-10"
+    last_modified_commit: "9d4da64"
+    content_language: mixed
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-10"
+    last_review_event: "A'.0.7 methodology rewrite"
+    next_review_due: "2027-05-10"
+    reviewer: Crystalka
+    risks_referenced: [RISK-014]
+    capa_entries_referenced: [CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION]
+
+  - id: DOC-B-TESTING_STRATEGY
+    path: docs/methodology/TESTING_STRATEGY.md
+    title: "Testing strategy"
+    category: B
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  # === Tier 1 Governance (Category A, meta-entries) ===
+
+  - id: DOC-A-FRAMEWORK
+    path: docs/governance/FRAMEWORK.md
+    title: "Document Control Register — Governance Framework"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    is_meta_entry: true
+    meta_role: register_specification
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-12"
+    last_modified: "2026-05-12"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 closure"
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    requirements_authored: [REQ-Q-A45-X5]
+    risks_referenced: [RISK-010, RISK-012]
+
+  - id: DOC-A-SYNTHESIS_RATIONALE
+    path: docs/governance/SYNTHESIS_RATIONALE.md
+    title: "Document Control Register — Synthesis Rationale"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    is_meta_entry: true
+    meta_role: register_provenance
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-12"
+    last_modified: "2026-05-12"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 closure"
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
 
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
