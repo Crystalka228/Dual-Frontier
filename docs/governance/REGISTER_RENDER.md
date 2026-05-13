@@ -2,7 +2,7 @@
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-12  |  Schema version: 1.0  |  Register version: 1.0*
+*Last generated: 2026-05-13  |  Schema version: 1.0  |  Register version: 1.0*
 
 ---
 
@@ -107,12 +107,11 @@
 
 ### DOC-A-FEEDBACK_LOOPS — Feedback-loop resolution
 
-- **Path**: `docs/FEEDBACK_LOOPS.md`
+- **Path**: `docs/architecture/FEEDBACK_LOOPS.md`
 - **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 0.2
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-12
-- **Special-case rationale**: Category A architectural pattern but lives at docs/ root (not docs/architecture/) for historical reasons; future cleanup may relocate
 
 ### DOC-A-FHE_INTEGRATION_CONTRACT — FHE Integration Contract
 

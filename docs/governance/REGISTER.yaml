@@ -570,20 +570,21 @@ documents:
   # === Tier 1 Architecture (addendum — root-level placement) ===
 
   - id: DOC-A-FEEDBACK_LOOPS
-    path: docs/FEEDBACK_LOOPS.md
+    path: docs/architecture/FEEDBACK_LOOPS.md
     title: "Feedback-loop resolution"
     category: A
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
     version: "0.2"
-    last_modified: "2026-04-XX"
+    last_modified: "2026-05-12"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
+    last_review_date: "2026-05-12"
+    last_review_event: "Relocated docs/ root → docs/architecture/ to align with Category A default location (post-A'.4.5 cleanup)"
     next_review_due: "2027-05-12"
     reviewer: Crystalka
-    special_case_rationale: "Category A architectural pattern but lives at docs/ root (not docs/architecture/) for historical reasons; future cleanup may relocate"
 
   # === Tier 2 Live trackers (Category C) ===
 
