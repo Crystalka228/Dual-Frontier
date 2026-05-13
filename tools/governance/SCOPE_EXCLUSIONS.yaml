@@ -1,0 +1,40 @@
+# tools/governance/SCOPE_EXCLUSIONS.yaml
+# Paths excluded from register enrollment; not flagged as orphans by sync_register.ps1 --validate.
+# This file is itself a Tier 1 LOCKED governance artifact (DOC-G-SCOPE_EXCLUSIONS).
+#
+# Schema version aligns with REGISTER.yaml schema_version.
+
+schema_version: "1.0"
+
+# Glob patterns for excluded paths
+excluded_paths:
+  - pattern: ".godot/**"
+    rationale: "Godot generated artifacts"
+  - pattern: ".git/**"
+    rationale: "Git internals"
+  - pattern: "bin/**"
+    rationale: "Build outputs"
+  - pattern: "obj/**"
+    rationale: "Build outputs"
+  - pattern: "**/bin/**"
+    rationale: "Build outputs (per-project)"
+  - pattern: "**/obj/**"
+    rationale: "Build outputs (per-project)"
+  - pattern: "**/BenchmarkDotNet.Artifacts/**"
+    rationale: "Auto-generated benchmark artifacts (non-canonical results; canonical reports in docs/benchmarks/)"
+  - pattern: "**/LICENSE.txt"
+    rationale: "Legal documents, not project documentation"
+  - pattern: "**/*.csproj.lscache"
+    rationale: "Lscache files"
+  - pattern: "**/.gdignore"
+    rationale: "Godot internal markers"
+  - pattern: "node_modules/**"
+    rationale: "If npm dependencies introduced in future"
+  - pattern: ".vs/**"
+    rationale: "Visual Studio user-local cache"
+
+# Allow-list inverse: only .md extensions registered.
+# All other extensions excluded by default (tooling scripts like .ps1, configs like
+# SCOPE_EXCLUSIONS.yaml itself are tracked through their parent module README).
+included_extensions:
+  - ".md"
