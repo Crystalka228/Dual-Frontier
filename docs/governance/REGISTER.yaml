@@ -860,6 +860,1453 @@ documents:
     reviewer: Crystalka
     special_case_rationale: "E + Tier 2 Live override per Pass 2 §2.2"
 
+  # === Tier 3 Briefs (Category D) — K-series ===
+
+  - id: DOC-D-K0
+    path: tools/briefs/K0_CHERRY_PICK_BRIEF.md
+    title: "K0 — Cherry Pick"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-07"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K1
+    path: tools/briefs/K1_BATCHING_BRIEF.md
+    title: "K1 — Batching"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-07"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-002]
+
+  - id: DOC-D-K2
+    path: tools/briefs/K2_REGISTRY_TESTS_BRIEF.md
+    title: "K2 — Registry Tests"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-07"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K3
+    path: tools/briefs/K3_BOOTSTRAP_GRAPH_BRIEF.md
+    title: "K3 — Bootstrap Graph"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-08"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K4
+    path: tools/briefs/K4_COMPONENT_STRUCT_REFACTOR_BRIEF.md
+    title: "K4 — Component Struct Refactor"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-08"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-001]
+
+  - id: DOC-D-K4_STRUCT_REFACTOR
+    path: tools/briefs/K4_STRUCT_REFACTOR_BRIEF.md
+    title: "K4 — Struct Refactor (alternative draft)"
+    category: D
+    tier: 3
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-D-K4
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-08"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K5
+    path: tools/briefs/K5_SPAN_PROTOCOL_BRIEF.md
+    title: "K5 — Span Protocol"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-08"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-002, RISK-003]
+
+  - id: DOC-D-K6_1_AFFECTED_TESTS
+    path: tools/briefs/K6_1_AFFECTED_TESTS.md
+    title: "K6.1 — Affected Tests"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K6_1_FAULT_WIRING
+    path: tools/briefs/K6_1_FAULT_WIRING_BRIEF.md
+    title: "K6.1 — Fault Wiring"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K6_MOD_REBUILD
+    path: tools/briefs/K6_MOD_REBUILD_BRIEF.md
+    title: "K6 — Mod Rebuild"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K6_VERIFICATION_LOG
+    path: tools/briefs/K6_VERIFICATION_LOG.md
+    title: "K6 — Verification Log"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    special_case_rationale: "Verification log is closure-style artifact but housed in briefs/ — classified D Tier 3 per location"
+
+  - id: DOC-D-K7
+    path: tools/briefs/K7_PERFORMANCE_MEASUREMENT_BRIEF.md
+    title: "K7 — Performance Measurement"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K8_0
+    path: tools/briefs/K8_0_SOLUTION_A_RECORDING_BRIEF.md
+    title: "K8.0 — Solution A Recording"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K8_1
+    path: tools/briefs/K8_1_NATIVE_REFERENCE_PRIMITIVES_BRIEF.md
+    title: "K8.1 — Native Reference Primitives"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-003]
+
+  - id: DOC-D-K8_1_1
+    path: tools/briefs/K8_1_1_INTERNED_STRING_FOLLOWUP_BRIEF.md
+    title: "K8.1.1 — Interned String Followup"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K8_2_CLASS_COMPONENT
+    path: tools/briefs/K8_2_CLASS_COMPONENT_REDESIGN_BRIEF.md
+    title: "K8.2 — Class Component Redesign"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K8_2_V1_DEPRECATED
+    path: tools/briefs/K8_2_COMPONENT_CONVERSION_BRIEF_V1_DEPRECATED.md
+    title: "K8.2 — Component Conversion v1 (DEPRECATED)"
+    category: D
+    tier: 3
+    lifecycle: DEPRECATED
+    deprecated_by: DOC-D-K8_2_V2
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K8_2_V2
+    path: tools/briefs/K8_2_COMPONENT_CONVERSION_BRIEF_V2.md
+    title: "K8.2 — Component Conversion v2"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    supersedes: [DOC-D-K8_2_V1_DEPRECATED]
+    owner: Crystalka
+    version: "2.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "0789bd4"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-09"
+    last_review_event: "K8.2 v2 closure"
+    reviewer: Crystalka
+    risks_referenced: [RISK-001]
+    capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+
+  - id: DOC-D-K8_3
+    path: tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md
+    title: "K8.3 — Production System Migration"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-007]
+
+  - id: DOC-D-K8_4
+    path: tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md
+    title: "K8.4 — Managed World Retired"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-005, RISK-007]
+
+  - id: DOC-D-K8_5
+    path: tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md
+    title: "K8.5 — Mod Ecosystem Migration Prep"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-005, RISK-007]
+
+  - id: DOC-D-K8_DECISION
+    path: tools/briefs/K8_DECISION_BRIEF.md
+    title: "K8 — Decision Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K9
+    path: tools/briefs/K9_FIELD_STORAGE_BRIEF.md
+    title: "K9 — Field Storage"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-11"
+    last_review_event: "K9 closure"
+    reviewer: Crystalka
+    risks_referenced: [RISK-002, RISK-007]
+
+  - id: DOC-D-K9_BRIEF_REFRESH_PATCH
+    path: tools/briefs/K9_BRIEF_REFRESH_PATCH.md
+    title: "K9 — Brief Refresh Patch"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    special_case_rationale: "Patch brief for stale K9 brief — precedent for staleness density mitigation per RISK-007"
+
+  - id: DOC-D-K_L3_1_BRIDGE
+    path: tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md
+    title: "K-L3.1 — Bridge Formalization"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "0789bd4"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-10"
+    last_review_event: "K-L3.1 amendment landing"
+    reviewer: Crystalka
+    risks_referenced: [RISK-004, RISK-006]
+    capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+
+  - id: DOC-D-K_L3_1_ADDENDUM_1
+    path: tools/briefs/K_L3_1_BRIEF_ADDENDUM_1.md
+    title: "K-L3.1 — Brief Addendum 1"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "0789bd4"
+    content_language: mixed
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-K_LESSONS_BATCH
+    path: tools/briefs/K_LESSONS_BATCH_BRIEF.md
+    title: "K-Lessons Batch"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-009]
+
+  # === Tier 3 Briefs (Category D) — G-series (AUTHORED, future Phase A'.6+ execution) ===
+
+  - id: DOC-D-G0
+    path: tools/briefs/G0_VULKAN_COMPUTE_PLUMBING_BRIEF.md
+    title: "G0 — Vulkan Compute Plumbing"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-013]
+
+  - id: DOC-D-G1
+    path: tools/briefs/G1_MANA_DIFFUSION_BRIEF.md
+    title: "G1 — Mana Diffusion"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G2
+    path: tools/briefs/G2_ELECTRICITY_ANISOTROPIC_BRIEF.md
+    title: "G2 — Electricity Anisotropic"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G3
+    path: tools/briefs/G3_STORAGE_CAPACITANCE_BRIEF.md
+    title: "G3 — Storage Capacitance"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G4
+    path: tools/briefs/G4_MULTI_FIELD_COEXISTENCE_BRIEF.md
+    title: "G4 — Multi-Field Coexistence"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G5
+    path: tools/briefs/G5_PROJECTILE_DOMAIN_B_BRIEF.md
+    title: "G5 — Projectile Domain B"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G6
+    path: tools/briefs/G6_FLOW_FIELD_INFRASTRUCTURE_BRIEF.md
+    title: "G6 — Flow Field Infrastructure"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G7
+    path: tools/briefs/G7_VANILLA_MOVEMENT_BRIEF.md
+    title: "G7 — Vanilla Movement"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G8
+    path: tools/briefs/G8_LOCAL_AVOIDANCE_BRIEF.md
+    title: "G8 — Local Avoidance"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-G9
+    path: tools/briefs/G9_EIKONAL_UPGRADE_BRIEF.md
+    title: "G9 — Eikonal Upgrade"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  # === Tier 3 Briefs (Category D) — A'/Phase A' deliberation + execution briefs ===
+
+  - id: DOC-D-A_PRIME_0_5_REORG_REFRESH
+    path: tools/briefs/A_PRIME_0_5_REORG_AND_REFRESH_BRIEF.md
+    title: "A'.0.5 — Reorg and Refresh"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "4e332bb"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-10"
+    last_review_event: "A'.0.5 closure"
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_0_7_METHODOLOGY_RESTRUCTURE
+    path: tools/briefs/A_PRIME_0_7_METHODOLOGY_RESTRUCTURE_BRIEF.md
+    title: "A'.0.7 — Methodology Restructure"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "9d4da64"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-10"
+    last_review_event: "A'.0.7 landing"
+    reviewer: Crystalka
+    capa_entries_referenced: [CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION]
+
+  - id: DOC-D-A_PRIME_0_7_CLOSURE_EXECUTION
+    path: tools/briefs/A_PRIME_0_7_CLOSURE_EXECUTION_BRIEF.md
+    title: "A'.0.7 — Closure Execution"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "9d4da64"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_1_AMENDMENT_EXECUTION
+    path: tools/briefs/A_PRIME_1_AMENDMENT_EXECUTION_BRIEF.md
+    title: "A'.1 — Amendment Execution"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_4_5_REGISTER_BRIEF
+    path: tools/briefs/A_PRIME_4_5_DOCUMENT_CONTROL_REGISTER_BRIEF.md
+    title: "A'.4.5 — Document Control Register (deliberation brief)"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-12"
+    last_modified_commit: "7448267"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 deliberation closure recorded"
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_4_5_PASS_1
+    path: tools/briefs/A_PRIME_4_5_PASS_1_Q4_STANDARDS_SELECTION_LOCK.md
+    title: "A'.4.5 Pass 1 — Q4 Standards Selection Lock"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-12"
+    last_modified_commit: "411c284"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_4_5_PASS_2
+    path: tools/briefs/A_PRIME_4_5_PASS_2_CLASSIFICATION_MODEL_LOCK.md
+    title: "A'.4.5 Pass 2 — Classification Model Lock"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-12"
+    last_modified_commit: "411c284"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_4_5_PASS_3
+    path: tools/briefs/A_PRIME_4_5_PASS_3_SCHEMA_TOOLING_PROTOCOL_LOCK.md
+    title: "A'.4.5 Pass 3 — Schema + Tooling + Protocol Lock"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-12"
+    last_modified_commit: "411c284"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_4_5_PASS_4
+    path: tools/briefs/A_PRIME_4_5_PASS_4_AUXILIARY_CASCADE_LOCKS.md
+    title: "A'.4.5 Pass 4 — Auxiliary Cascade Locks"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-12"
+    last_modified_commit: "411c284"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-A_PRIME_4_5_PASS_5
+    path: tools/briefs/A_PRIME_4_5_PASS_5_PRODUCTION_ENTRIES.md
+    title: "A'.4.5 Pass 5 — Production Entries"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-12"
+    last_modified_commit: "411c284"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-D-MOD_OS_V16_AMENDMENT
+    path: tools/briefs/MOD_OS_V16_AMENDMENT_BRIEF.md
+    title: "Mod OS v1.6 — Amendment Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  # === Tier 3 Amendment plans (Category A + Tier 3 EXECUTED override) ===
+
+  - id: DOC-A-K_L3_1_AMENDMENT_PLAN
+    path: docs/architecture/K_L3_1_AMENDMENT_PLAN.md
+    title: "K-L3.1 Amendment Plan — old/new text pairs"
+    category: A
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "0789bd4"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-10"
+    last_review_event: "K-L3.1 amendment landing"
+    reviewer: Crystalka
+    special_case_rationale: "Amendment plans behave like briefs (EXECUTED post-landing, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3"
+    risks_referenced: [RISK-004, RISK-008]
+
+  - id: DOC-A-A_PRIME_0_7_AMENDMENT_PLAN
+    path: docs/architecture/A_PRIME_0_7_AMENDMENT_PLAN.md
+    title: "A'.0.7 Amendment Plan — old/new text pairs"
+    category: A
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "9d4da64"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-10"
+    last_review_event: "A'.0.7 landing"
+    reviewer: Crystalka
+    special_case_rationale: "Amendment plans behave like briefs (EXECUTED post-landing, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3"
+    risks_referenced: [RISK-008]
+    capa_entries_referenced: [CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION]
+
+  # === Tier 3 Closure / Audit / Prompt artifacts (Category E) ===
+
+  - id: DOC-E-AUDIT_CAMPAIGN_PLAN
+    path: docs/audit/AUDIT_CAMPAIGN_PLAN.md
+    title: "Audit Campaign Plan"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_1_INVENTORY
+    path: docs/audit/AUDIT_PASS_1_INVENTORY.md
+    title: "Audit Pass 1 — Inventory"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_1_PROMPT
+    path: docs/audit/AUDIT_PASS_1_PROMPT.md
+    title: "Audit Pass 1 — Prompt"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_2_PROMPT
+    path: docs/audit/AUDIT_PASS_2_PROMPT.md
+    title: "Audit Pass 2 — Prompt"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_2_RESUMPTION_PROMPT
+    path: docs/audit/AUDIT_PASS_2_RESUMPTION_PROMPT.md
+    title: "Audit Pass 2 — Resumption Prompt"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_2_SPEC_CODE
+    path: docs/audit/AUDIT_PASS_2_SPEC_CODE.md
+    title: "Audit Pass 2 — Spec/Code"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_3_PROMPT
+    path: docs/audit/AUDIT_PASS_3_PROMPT.md
+    title: "Audit Pass 3 — Prompt"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_3_ROADMAP_REALITY
+    path: docs/audit/AUDIT_PASS_3_ROADMAP_REALITY.md
+    title: "Audit Pass 3 — Roadmap Reality"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_4_CROSSDOC_TRANSLATION
+    path: docs/audit/AUDIT_PASS_4_CROSSDOC_TRANSLATION.md
+    title: "Audit Pass 4 — Cross-doc Translation"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_4_PROMPT
+    path: docs/audit/AUDIT_PASS_4_PROMPT.md
+    title: "Audit Pass 4 — Prompt"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_5_PROMPT
+    path: docs/audit/AUDIT_PASS_5_PROMPT.md
+    title: "Audit Pass 5 — Prompt"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_PASS_5_TRIAGE
+    path: docs/audit/AUDIT_PASS_5_TRIAGE.md
+    title: "Audit Pass 5 — Triage"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-AUDIT_REPORT
+    path: docs/audit/AUDIT_REPORT.md
+    title: "Audit Report"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M3_CLOSURE_REVIEW
+    path: docs/audit/M3_CLOSURE_REVIEW.md
+    title: "M3 Closure Review"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M4_CLOSURE_REVIEW
+    path: docs/audit/M4_CLOSURE_REVIEW.md
+    title: "M4 Closure Review"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M5_CLOSURE_REVIEW
+    path: docs/audit/M5_CLOSURE_REVIEW.md
+    title: "M5 Closure Review"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M6_CLOSURE_REVIEW
+    path: docs/audit/M6_CLOSURE_REVIEW.md
+    title: "M6 Closure Review"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M7_CLOSURE_REVIEW
+    path: docs/audit/M7_CLOSURE_REVIEW.md
+    title: "M7 Closure Review"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-PASS_2_NOTES
+    path: docs/audit/PASS_2_NOTES.md
+    title: "Pass 2 — Notes"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-PASS_3_NOTES
+    path: docs/audit/PASS_3_NOTES.md
+    title: "Pass 3 — Notes"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-PASS_4_REPORT
+    path: docs/audit/PASS_4_REPORT.md
+    title: "Pass 4 — Report"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-SESSION_PHASE_4_CLOSURE_REVIEW
+    path: docs/audit/SESSION_PHASE_4_CLOSURE_REVIEW.md
+    title: "Session Phase 4 — Closure Review"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-UI_REVIEW_PRE_M75B2
+    path: docs/audit/UI_REVIEW_PRE_M75B2.md
+    title: "UI Review — Pre-M75B2"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-PERFORMANCE_REPORT_K3
+    path: docs/reports/PERFORMANCE_REPORT_K3.md
+    title: "Performance Report — K3"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-08"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-K7_BDN_TICK_REPORT
+    path: docs/benchmarks/k7-bdn-tick-report.md
+    title: "K7 BDN Tick Report"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-LEARNING_PHASE_1
+    path: docs/learning/PHASE_1.md
+    title: "Self-teaching ritual artifact — Phase 1 (Самообучение фаза 1)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: ru
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-NATIVE_BUILD
+    path: native/DualFrontier.Core.Native/build.md
+    title: "Native Build Notes"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    special_case_rationale: "Closure-style notes housed in native/ source tree; tracked as Category E rather than F because content is build/closure narrative not module-local README"
+
+  - id: DOC-E-MOD_OS_V16_AMENDMENT_CLOSURE
+    path: tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md
+    title: "Mod OS v1.6 — Amendment Closure"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    special_case_rationale: "Closure artifact lives in tools/briefs/ alongside its parent brief; classified E (closure) Tier 3 EXECUTED"
+
+  # === Tier 3 Prompts (Category E — housekeeping prompts as deliberation artifacts) ===
+
+  - id: DOC-E-HOUSEKEEPING_MENU_PAUSES_SIMULATION
+    path: docs/prompts/HOUSEKEEPING_MENU_PAUSES_SIMULATION.md
+    title: "Housekeeping — Menu Pauses Simulation"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-HOUSEKEEPING_MENU_POSITION_AND_ASSETS_GITIGNORE
+    path: docs/prompts/HOUSEKEEPING_MENU_POSITION_AND_ASSETS_GITIGNORE.md
+    title: "Housekeeping — Menu Position and Assets Gitignore"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-HOUSEKEEPING_NEEDS_DECAY_DIRECTION
+    path: docs/prompts/HOUSEKEEPING_NEEDS_DECAY_DIRECTION.md
+    title: "Housekeeping — Needs Decay Direction"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-HOUSEKEEPING_REAL_PAWN_DATA
+    path: docs/prompts/HOUSEKEEPING_REAL_PAWN_DATA.md
+    title: "Housekeeping — Real Pawn Data"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-HOUSEKEEPING_TICKSCHEDULER_RACE
+    path: docs/prompts/HOUSEKEEPING_TICKSCHEDULER_RACE.md
+    title: "Housekeeping — TickScheduler Race"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-HOUSEKEEPING_UI_HONESTY_PASS
+    path: docs/prompts/HOUSEKEEPING_UI_HONESTY_PASS.md
+    title: "Housekeeping — UI Honesty Pass"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M73_CODING_STANDARDS_UPDATE
+    path: docs/prompts/M73_CODING_STANDARDS_UPDATE.md
+    title: "M73 — Coding Standards Update"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M74_BUILD_PIPELINE_OVERRIDE
+    path: docs/prompts/M74_BUILD_PIPELINE_OVERRIDE.md
+    title: "M74 — Build Pipeline Override"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M75A_MOD_MENU_CONTROLLER
+    path: docs/prompts/M75A_MOD_MENU_CONTROLLER.md
+    title: "M75A — Mod Menu Controller"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M75B1_BOOTSTRAP_INTEGRATION
+    path: docs/prompts/M75B1_BOOTSTRAP_INTEGRATION.md
+    title: "M75B1 — Bootstrap Integration"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M75B2_GODOT_UI_SCENE
+    path: docs/prompts/M75B2_GODOT_UI_SCENE.md
+    title: "M75B2 — Godot UI Scene"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M7_CLOSURE
+    path: docs/prompts/M7_CLOSURE.md
+    title: "M7 Closure"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-M7_HOUSEKEEPING_TICK_DISPLAY
+    path: docs/prompts/M7_HOUSEKEEPING_TICK_DISPLAY.md
+    title: "M7 — Housekeeping Tick Display"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-TD1_SONNET_BRIEF
+    path: docs/prompts/TD1_SONNET_BRIEF.md
+    title: "TD1 — Sonnet Brief"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  # === Tier 3 Scratch artifacts (Category E) ===
+
+  - id: DOC-E-A_PRIME_0_5_INVENTORY
+    path: tools/scratch/A_05/INVENTORY.md
+    title: "A'.0.5 — Inventory (point-in-time baseline 2026-05-10)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    special_case_rationale: "Inventory baseline; superseded by REGISTER.yaml as living inventory at A'.4.5; legacy artifact retained for historical reference"
+    capa_entries_referenced: [CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT]
+
+  - id: DOC-E-A_PRIME_0_5_BASELINE
+    path: tools/scratch/A_05/BASELINE.md
+    title: "A'.0.5 — Baseline grep counts"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-A_PRIME_0_5_DISCOVERY_SUMMARY
+    path: tools/scratch/A_05/DISCOVERY_SUMMARY.md
+    title: "A'.0.5 — Discovery Summary"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-A_PRIME_0_5_REORG_PLAN
+    path: tools/scratch/A_05/REORG_PLAN_APPROVED.md
+    title: "A'.0.5 — Reorg Plan (approved)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-A_PRIME_0_5_STALENESS_REPORT
+    path: tools/scratch/A_05/STALENESS_REPORT.md
+    title: "A'.0.5 — Staleness Report"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-A_PRIME_0_5_PIPELINE_TERMINOLOGY
+    path: tools/scratch/A_05/PIPELINE_TERMINOLOGY.md
+    title: "A'.0.5 — Pipeline Terminology"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+
+  - id: DOC-E-A_PRIME_4_5_DELIBERATION_CLOSURE
+    path: tools/scratch/A_05/A_PRIME_4_5_DELIBERATION_CLOSURE.md
+    title: "A'.4.5 — Deliberation Closure (23 Q-locks + 39 entries)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-12"
+    last_modified_commit: "43374f1"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 deliberation completion"
+    reviewer: Crystalka
+
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
   - id: REQ-K-L1
