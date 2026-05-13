@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-THREADING
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-THREADING
-category: A
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-THREADING
----
 # Multithreading
 
 RimWorld is single-threaded: every system runs in sequence. On multi-core hardware 7 of 8 cores sit idle. Dual Frontier builds the dependency graph once at startup and runs unrelated systems in parallel. With no changes to game code — purely through the `[SystemAccess]` declaration.

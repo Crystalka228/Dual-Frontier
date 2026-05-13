@@ -10,18 +10,6 @@ version: "0.1"
 next_review_due: 2026-Q3
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-IDEAS_RESERVOIR
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-C-IDEAS_RESERVOIR
-category: C
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "0.1"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-IDEAS_RESERVOIR
----
 # Ideas Reservoir
 
 *Post-release ideas considered but not committed to the M0–M10 migration sequence. Each entry is recorded for future reference at the appropriate boundary; no entry is a commitment, and no entry blocks the active roadmap. The reservoir is intentionally separate from [ROADMAP](./ROADMAP.md) so that documenting an idea here does not imply scheduling it.*

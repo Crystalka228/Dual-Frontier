@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-CODING_STANDARDS
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-B-CODING_STANDARDS
-category: B
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-CODING_STANDARDS
----
 # Coding standards
 
 A single code style is not aesthetics — it is a navigation tool: when reading another file, a developer does not spend attention decoding someone else's habits. In Dual Frontier the standards are formalized and checked by the analyzer; deviations are caught by `dotnet build` with `TreatWarningsAsErrors`.

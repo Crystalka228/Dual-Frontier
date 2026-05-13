@@ -10,18 +10,6 @@ version: "2.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_2_V2
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-D-K8_2_V2
-category: D
-tier: 3
-lifecycle: EXECUTED
-owner: Crystalka
-version: "2.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_2_V2
----
 # K8.2 v2 — Component class→struct conversion + K8.1 wrapper value-type refactor + empty TODO stub deletions
 
 **Brief version**: 2.0 (full rewrite of v1.0 after Cloud Code Phase 2.7 §1 stop)

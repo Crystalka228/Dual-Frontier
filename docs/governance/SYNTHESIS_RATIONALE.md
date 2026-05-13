@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-SYNTHESIS_RATIONALE
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-SYNTHESIS_RATIONALE
-category: A
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-SYNTHESIS_RATIONALE
----
 # Document Control Register — Synthesis Rationale
 
 *Source-standard provenance for the Document Control Register synthesis. Documents which elements were borrowed from which industry standards, why each was selected, and which elements were deliberately rejected.*

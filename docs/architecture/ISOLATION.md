@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ISOLATION
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-ISOLATION
-category: A
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ISOLATION
----
 # System isolation
 
 A silent isolation violation is worse than a crash: corrupted state surfaces an hour into play as an inexplicable bug. Dual Frontier installs an active isolation guard: every component access passes through `SystemExecutionContext`, and an undeclared access produces an immediate exception with diagnostics.

@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-EVENT_BUS
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-EVENT_BUS
-category: A
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-EVENT_BUS
----
 # Event buses
 
 The event bus is the central mechanism for system interaction. Direct calls between systems are forbidden by the isolation guard, so every horizontal link runs through a bus. The right choice of delivery model and bus type directly determines the performance and correctness of multithreaded code.

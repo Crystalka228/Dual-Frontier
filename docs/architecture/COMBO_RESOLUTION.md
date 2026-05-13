@@ -10,18 +10,6 @@ version: "0.2"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMBO_RESOLUTION
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-COMBO_RESOLUTION
-category: A
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "0.2"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMBO_RESOLUTION
----
 # Combo damage resolution
 
 The same target in one tick often takes damage from several systems: physical from `CombatSystem`, magical from `SpellSystem`, status from `StatusEffectSystem`. If each system writes `HealthComponent` directly in publish order, the combat outcome depends on the thread scheduler. v0.2 introduces deterministic ordering through `ComboResolutionSystem`.

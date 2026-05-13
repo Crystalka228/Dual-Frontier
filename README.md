@@ -10,18 +10,6 @@ version: "Live"
 next_review_due: 2026-Q3
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-README
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-README
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-README
----
 # Dual Frontier
 
 A falsifiable test of LLM-augmented systems engineering at one-person scale.

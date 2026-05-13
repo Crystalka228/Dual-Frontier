@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-RESOURCE_MODELS
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-RESOURCE_MODELS
-category: A
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-RESOURCE_MODELS
----
 # Resource models
 
 A resource in Dual Frontier is any quantity that one system spends and another tracks: ammunition in inventory, a mage's mana, shield durability, ritual slots. Previously every system picked a request style by feel, and the same scenario ended up written differently in different places. v0.2 pins two models and a rule for choosing between them.

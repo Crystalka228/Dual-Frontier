@@ -10,18 +10,6 @@ version: "Live"
 next_review_due: 2026-Q3
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-CPP_KERNEL_BRANCH_REPORT
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-E-CPP_KERNEL_BRANCH_REPORT
-category: E
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-CPP_KERNEL_BRANCH_REPORT
----
 # C++ Kernel Experimental Branch — Discovery Report
 
 **Source branch:** `claude/cpp-core-experiment-cEsyH`

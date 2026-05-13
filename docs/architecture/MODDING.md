@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MODDING
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-MODDING
-category: A
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MODDING
----
 # Writing mods
 
 In RimWorld a mod patches any private method via Harmony and at some point breaks it. Dual Frontier loads every mod into its own `AssemblyLoadContext`: the mod physically cannot see `DualFrontier.Core`, has no reference to `World` or to any concrete system. Mods interact with the core and with each other through contracts. This takes longer to write, but mods gain compatibility across versions and across each other.

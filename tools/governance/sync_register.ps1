@@ -304,21 +304,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#$($doc.id)
 ---
 
 "@
-        # Strip existing frontmatter if present
-        if ($content -match '^---[\r\n]+(.*?)[\r\n]+---[\r\n]+(.*)$') {
-            $existingFm = $Matches[1]
-            $body = $Matches[2]
-            if ($existingFm -match 'register_id:') {
-                # Replace existing register frontmatter
-                $newContent = $frontmatter + $body
-            } else {
-                # Existing non-register frontmatter; preserve as-is, prepend register
-                $newContent = $frontmatter + $content
-            }
-        } else {
-            $newContent = $frontmatter + $content
+        # Strip ALL leading register-generated frontmatter blocks (handles prior double-write bug).
+        # Pattern '(?s)' enables single-line mode so . matches newlines.
+        # Repeat strip until no leading register frontmatter remains.
+        while ($content -match '(?s)^﻿?---\s*[\r\n]+(?<fm># Auto-generated from docs/governance/REGISTER.yaml.*?register_id:.*?[\r\n]+)---\s*[\r\n]+(?<rest>.*)$') {
+            $content = $Matches['rest']
         }
+        # Preserve any pre-existing non-register frontmatter (e.g., translation docs with original frontmatter)
+        # by not stripping non-register blocks. The while loop above only matches register-generated ones.
 
+        $newContent = $frontmatter + $content
         Set-Content -Path $fullPath -Value $newContent -Encoding UTF8 -NoNewline
         $syncedCount++
     }

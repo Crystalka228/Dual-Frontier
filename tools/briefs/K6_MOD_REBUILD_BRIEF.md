@@ -10,18 +10,6 @@ version: "1.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K6_MOD_REBUILD
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-D-K6_MOD_REBUILD
-category: D
-tier: 3
-lifecycle: EXECUTED
-owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K6_MOD_REBUILD
----
 # K6 — Second-graph rebuild on mod change (Full Brief)
 
 **Status**: AUTHORED — closure-shaped implementation brief, executes against existing M7-era code with explicit gap identification

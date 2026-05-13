@@ -11,18 +11,6 @@ next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-PIPELINE_METRICS
 ---
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-B-PIPELINE_METRICS
-category: B
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "0.2"
-next_review_due: 2027-05-10
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-PIPELINE_METRICS
----
----
 title: Pipeline Metrics
 nav_order: 27
 ---

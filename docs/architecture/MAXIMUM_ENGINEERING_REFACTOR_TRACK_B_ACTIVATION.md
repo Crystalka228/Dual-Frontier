@@ -11,18 +11,6 @@ next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MAX_ENG_REFACTOR_TRACK_B
 ---
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-MAX_ENG_REFACTOR_TRACK_B
-category: A
-tier: 1
-lifecycle: Draft
-owner: Crystalka
-version: "0.1"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MAX_ENG_REFACTOR_TRACK_B
----
----
 title: Maximum Engineering Refactor — Track B Activation
 nav_order: 111
 ---

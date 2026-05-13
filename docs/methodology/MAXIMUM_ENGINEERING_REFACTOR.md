@@ -11,18 +11,6 @@ next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-MAXIMUM_ENGINEERING_REFACTOR
 ---
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
-category: B
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.1"
-next_review_due: 2027-05-10
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-MAXIMUM_ENGINEERING_REFACTOR
----
----
 title: Maximum Engineering Refactor Brief
 nav_order: 109
 ---

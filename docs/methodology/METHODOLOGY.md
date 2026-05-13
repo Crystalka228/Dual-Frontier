@@ -10,18 +10,6 @@ version: "1.6"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
----
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-B-METHODOLOGY
-category: B
-tier: 1
-lifecycle: LOCKED
-owner: Crystalka
-version: "1.6"
-next_review_due: 2027-05-10
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
----
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
