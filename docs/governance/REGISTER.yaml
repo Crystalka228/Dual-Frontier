@@ -567,6 +567,299 @@ documents:
     next_review_due: "2027-05-12"
     reviewer: Crystalka
 
+  # === Tier 1 Architecture (addendum — root-level placement) ===
+
+  - id: DOC-A-FEEDBACK_LOOPS
+    path: docs/FEEDBACK_LOOPS.md
+    title: "Feedback-loop resolution"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "0.2"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-05-12"
+    reviewer: Crystalka
+    special_case_rationale: "Category A architectural pattern but lives at docs/ root (not docs/architecture/) for historical reasons; future cleanup may relocate"
+
+  # === Tier 2 Live trackers (Category C) ===
+
+  - id: DOC-C-MIGRATION_PROGRESS
+    path: docs/MIGRATION_PROGRESS.md
+    title: "Native Migration — Progress Tracker"
+    category: C
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-11"
+    last_modified_commit: "80c9ba6"
+    content_language: mixed
+    review_cadence: on-closure+quarterly
+    last_review_date: "2026-05-11"
+    last_review_event: "K9 closure entry written"
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  - id: DOC-C-ROADMAP
+    path: docs/ROADMAP.md
+    title: "Roadmap"
+    category: C
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  - id: DOC-C-IDEAS_RESERVOIR
+    path: docs/IDEAS_RESERVOIR.md
+    title: "Ideas Reservoir (index for docs/ideas/ Category I bank)"
+    category: C
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-06"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "Post-A'.4.5 functions as index for Category I docs/ideas/ folder; existing content preserved verbatim; individual ideas grow as separate files in docs/ideas/ over time"
+
+  # === Tier 2 Architecture special-case (Category A + Tier 2 Live override) ===
+
+  - id: DOC-A-PHASE_A_PRIME_SEQUENCING
+    path: docs/architecture/PHASE_A_PRIME_SEQUENCING.md
+    title: "Phase A' sequencing — K-L3.1 to M-series begins"
+    category: A
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-12"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 closure — stale A'.0.7 status corrected"
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "Category A + Tier 2 + Live override: document is mutable per phase closure, subordinate to MIGRATION_PLAN_KERNEL_TO_VANILLA — not LOCKED architecture per Pass 2 §1.3"
+
+  # === Tier 2 Project meta (Category G) ===
+
+  - id: DOC-G-README
+    path: README.md
+    title: "Dual Frontier — root README"
+    category: G
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-10"
+    last_modified_commit: "9d4da64"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  - id: DOC-G-DOCS_README
+    path: docs/README.md
+    title: "Dual Frontier documentation index"
+    category: G
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-10"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  - id: DOC-G-IDEAS_README
+    path: docs/ideas/README.md
+    title: "docs/ideas — Ideas Bank index"
+    category: G
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-12"
+    last_modified: "2026-05-12"
+    last_modified_commit: "8ee27fe"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  - id: DOC-G-MECHANICS_README
+    path: docs/mechanics/README.md
+    title: "docs/mechanics — Game Mechanics index"
+    category: G
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-12"
+    last_modified: "2026-05-12"
+    last_modified_commit: "8ee27fe"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  # === Tier 2 Governance meta (Category G — REGISTER and BYPASS_LOG; REGISTER_RENDER + VALIDATION_REPORT added Phase 4) ===
+
+  - id: DOC-G-REGISTER
+    path: docs/governance/REGISTER.yaml
+    title: "Document Control Register (operational SoT)"
+    category: G
+    tier: 2
+    lifecycle: Live
+    is_meta_entry: true
+    meta_role: register_source_of_truth
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-12"
+    last_modified: "2026-05-12"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-every-milestone-closure
+    last_review_date: "2026-05-12"
+    last_review_event: "A'.4.5 closure (initial creation)"
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "Meta-entry self-reference (Q-A45-X2). YAML format exempt from .md-only included_extensions rule because this IS the SoT artifact. Cadence on-every-milestone-closure is load-bearing enforcement for Q-A45-X5 post-session protocol"
+    risks_referenced: [RISK-010]
+
+  - id: DOC-G-BYPASS_LOG
+    path: docs/governance/BYPASS_LOG.md
+    title: "Register Validation Bypass Tracking"
+    category: G
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-12"
+    last_modified: "2026-05-12"
+    last_modified_commit: "b655d4b"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  # === Tier 2 i18n (Category H) ===
+
+  - id: DOC-H-TRANSLATION_GLOSSARY
+    path: docs/TRANSLATION_GLOSSARY.md
+    title: "Translation Glossary — Dual Frontier"
+    category: H
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-04-26"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: mixed
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "Content LOCKED v1.0 (lexical commitments final); lifecycle Live because H category allows Live/EXECUTED only — content-stability tracked via version pinning rather than LOCKED lifecycle"
+
+  - id: DOC-H-TRANSLATION_PLAN
+    path: docs/TRANSLATION_PLAN.md
+    title: "Dual Frontier translation plan (Russian → English)"
+    category: H
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: mixed
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+
+  # === Tier 2 Live closure reports (Category E special-case while K-series open) ===
+
+  - id: DOC-E-PERFORMANCE_REPORT_K7
+    path: docs/reports/PERFORMANCE_REPORT_K7.md
+    title: "Performance Report — K7"
+    category: E
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-09"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    last_review_date: "2026-05-09"
+    last_review_event: "K7 closure"
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "E default Tier 3 EXECUTED; Tier 2 Live override because K-series still open (K8.3/K8.4/K8.5 pending) and report mutates with subsequent measurement updates per Pass 2 §2.2"
+
+  - id: DOC-E-NORMALIZATION_REPORT
+    path: docs/reports/NORMALIZATION_REPORT.md
+    title: "Normalization Report"
+    category: E
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "E + Tier 2 Live override per Pass 2 §2.2 (live closure report; mutable while series open)"
+
+  - id: DOC-E-CPP_KERNEL_BRANCH_REPORT
+    path: docs/reports/CPP_KERNEL_BRANCH_REPORT.md
+    title: "C++ Kernel Branch Report"
+    category: E
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "E + Tier 2 Live override per Pass 2 §2.2"
+
+  - id: DOC-E-NATIVE_CORE_EXPERIMENT
+    path: docs/reports/NATIVE_CORE_EXPERIMENT.md
+    title: "Native Core Experiment"
+    category: E
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-04-XX"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "E + Tier 2 Live override per Pass 2 §2.2"
+
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
   - id: REQ-K-L1
