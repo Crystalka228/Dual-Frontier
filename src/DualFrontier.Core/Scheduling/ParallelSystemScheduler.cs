@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
@@ -44,6 +45,11 @@ internal sealed class ParallelSystemScheduler
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
     private readonly NativeWorld? _nativeWorld;
+    // K8.3+K8.4 — Path β resolver passed by GameBootstrap (ModRegistry
+    // implements IManagedStorageResolver). Null in tests + builds without
+    // mod loading; system-side SystemBase.ManagedStore<T>() returns null
+    // when this is null.
+    private readonly IManagedStorageResolver? _managedStorageResolver;
     private readonly ParallelOptions _parallelOptions;
     private Dictionary<SystemBase, SystemExecutionContext> _contextCache;
     private IReadOnlyDictionary<SystemBase, SystemMetadata> _systemMetadata;
@@ -62,6 +68,7 @@ internal sealed class ParallelSystemScheduler
     /// <param name="faultSink">Sink for mod-origin faults; required (no silent default). Tests that never produce faults pass <c>new NullModFaultSink()</c> explicitly.</param>
     /// <param name="services">Optional domain-bus aggregator surfaced to systems via <c>SystemBase.Services</c>; null for tests that never publish.</param>
     /// <param name="nativeWorld">K8.2 v2 — optional native world handle surfaced to systems via <c>SystemBase.NativeWorld</c>. Required in production where systems intern strings or read NativeMap fields; null for unit tests that exercise only managed-side ECS.</param>
+    /// <param name="managedStorageResolver">K8.3+K8.4 — optional Path β resolver. Production passes the ModRegistry (which implements <see cref="IManagedStorageResolver"/>); tests and builds without mod loading pass null and <c>SystemBase.ManagedStore&lt;T&gt;()</c> returns null.</param>
     public ParallelSystemScheduler(
         IReadOnlyList<SystemPhase> phases,
         TickScheduler ticks,
@@ -69,7 +76,8 @@ internal sealed class ParallelSystemScheduler
         IReadOnlyDictionary<SystemBase, SystemMetadata> systemMetadata,
         IModFaultSink faultSink,
         IGameServices? services = null,
-        NativeWorld? nativeWorld = null)
+        NativeWorld? nativeWorld = null,
+        IManagedStorageResolver? managedStorageResolver = null)
     {
         _phases = phases ?? throw new ArgumentNullException(nameof(phases));
         _ticks = ticks ?? throw new ArgumentNullException(nameof(ticks));
@@ -78,6 +86,7 @@ internal sealed class ParallelSystemScheduler
         _faultSink = faultSink ?? throw new ArgumentNullException(nameof(faultSink));
         _services = services;
         _nativeWorld = nativeWorld;
+        _managedStorageResolver = managedStorageResolver;
         _parallelOptions = new ParallelOptions
         {
             MaxDegreeOfParallelism = System.Math.Max(1, Environment.ProcessorCount - 2),
@@ -254,6 +263,7 @@ internal sealed class ParallelSystemScheduler
             modId,
             _faultSink,
             _services,
-            _nativeWorld);
+            _nativeWorld,
+            _managedStorageResolver);
     }
 }

@@ -5,6 +5,9 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
+// IManagedStore + ManagedStore<T> live in DualFrontier.Contracts.Modding
+// (same namespace as IModApi) so mods can receive them from SystemBase.
+// The using directive above brings them into scope.
 
 namespace DualFrontier.Application.Modding;
 
@@ -39,6 +42,12 @@ internal sealed class RestrictedModApi : IModApi
     private readonly KernelCapabilityRegistry _kernelCapabilities;
     private readonly RestrictedFieldApi? _fieldsApi;
     private readonly List<(IEventBus Bus, Action Unsubscribe)> _subscriptions = new();
+
+    // K8.3+K8.4 — Path β per-mod managed-class component storage. Dictionary
+    // keyed by component Type; values are concrete ManagedStore<T> instances
+    // held type-erased via the IManagedStore marker interface. Cleared by
+    // ClearManagedStores on mod unload (MOD_OS §9.5 chain step 5).
+    private readonly Dictionary<Type, IManagedStore> _managedStores = new();
 
     /// <summary>
     /// Creates an API instance bound to the given mod id, manifest, backing
@@ -86,18 +95,55 @@ internal sealed class RestrictedModApi : IModApi
     /// <inheritdoc />
     public void RegisterManagedComponent<T>() where T : class, IComponent
     {
-        // K8.3+K8.4 combined milestone — Commit 5 of 4 Phase 3 commits ships
-        // the IModApi v3 interface; Commit 6 adds [ManagedStorage] attribute +
-        // ManagedStore<T> + ValidationErrorKind.MissingManagedStorageAttribute;
-        // Commit 7 lands the full RegisterManagedComponent implementation
-        // (per-mod store dispatch + attribute validation + ModLoader unload
-        // chain integration). This stub fails fast on any Path β registration
-        // attempt during the 2-commit interval so no mod silently relies on a
-        // half-built bridge.
-        throw new NotImplementedException(
-            "RegisterManagedComponent<T> is part of the K8.3+K8.4 IModApi v3 surface; " +
-            "implementation lands in Phase 3 Commit 7 (full Path β bridge with " +
-            "ManagedStore<T> + IManagedStorageResolver + ModLoader unload chain).");
+        // 1. Verify T carries [ManagedStorage] — opt-in marker per MOD_OS §11.2.
+        if (!typeof(T).IsDefined(typeof(ManagedStorageAttribute), inherit: false))
+        {
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] Mod '{_modId}' attempted to register Path β " +
+                $"managed component '{typeof(T).FullName}' without the " +
+                $"[ManagedStorage] attribute. " +
+                $"(ValidationErrorKind.MissingManagedStorageAttribute) " +
+                $"Add the attribute to the class declaration: " +
+                $"[ManagedStorage] public class {typeof(T).Name} : IComponent ");
+        }
+
+        // 2. Idempotent — re-registering the same type returns existing store.
+        if (_managedStores.ContainsKey(typeof(T)))
+            return;
+
+        // 3. Create per-mod store.
+        _managedStores[typeof(T)] = new ManagedStore<T>(_modId);
+
+        // 4. Track in ModRegistry for runtime cleanup + cross-mod resolver
+        //    (ModRegistry is the IManagedStorageResolver implementation).
+        _registry.RegisterComponent(_modId, typeof(T));
+    }
+
+    /// <summary>
+    /// Returns the <see cref="ManagedStore{T}"/> for this mod, or null if
+    /// <typeparamref name="T"/> was not registered via
+    /// <see cref="RegisterManagedComponent{T}"/>. Called by
+    /// <see cref="ModRegistry.Resolve{T}"/> (the IManagedStorageResolver
+    /// implementation) which dispatches by mod-id.
+    /// </summary>
+    internal ManagedStore<T>? GetManagedStore<T>() where T : class, IComponent
+    {
+        return _managedStores.TryGetValue(typeof(T), out IManagedStore? store)
+            ? store as ManagedStore<T>
+            : null;
+    }
+
+    /// <summary>
+    /// Clears every per-mod managed store. Called from
+    /// <c>ModRegistry.RemoveMod</c> / equivalent unload chain (MOD_OS §9.5
+    /// step 5 — Path β state reclamation). Idempotent — calling on an empty
+    /// dictionary is a no-op.
+    /// </summary>
+    internal void ClearManagedStores()
+    {
+        foreach (IManagedStore store in _managedStores.Values)
+            store.Clear();
+        _managedStores.Clear();
     }
 
     /// <inheritdoc />

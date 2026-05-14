@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Core.ECS;
@@ -48,6 +49,11 @@ public sealed class SystemExecutionContext
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
     private readonly NativeWorld? _nativeWorld;
+    // K8.3+K8.4 — Path β bridge. Null for Core systems and for tests that
+    // don't exercise managed-class storage. The scheduler passes the
+    // ModRegistry as the resolver (ModRegistry implements
+    // IManagedStorageResolver and tracks per-mod RestrictedModApi instances).
+    private readonly IManagedStorageResolver? _managedStorageResolver;
 
     /// <summary>
     /// Creates a guard for the given system. The scheduler (or a test)
@@ -69,6 +75,7 @@ public sealed class SystemExecutionContext
     /// <param name="faultSink">Destination for mod-origin fault reports.</param>
     /// <param name="services">Domain-bus aggregator exposed to the system via <c>SystemBase.Services</c>; null for tests that do not exercise publication.</param>
     /// <param name="nativeWorld">K8.2 v2 — optional native world handle exposed to the system via <c>SystemBase.NativeWorld</c>. Non-null in production where systems intern strings / read NativeMap fields; null in unit tests that exercise only managed-side ECS semantics.</param>
+    /// <param name="managedStorageResolver">K8.3+K8.4 — optional Path β resolver passed by the scheduler (ModRegistry implements <see cref="IManagedStorageResolver"/>). Null in tests and builds without mod loading; <c>SystemBase.ManagedStore&lt;T&gt;()</c> returns null in that case.</param>
     internal SystemExecutionContext(
         World world,
         string systemName,
@@ -79,7 +86,8 @@ public sealed class SystemExecutionContext
         string? modId,
         IModFaultSink faultSink,
         IGameServices? services = null,
-        NativeWorld? nativeWorld = null)
+        NativeWorld? nativeWorld = null,
+        IManagedStorageResolver? managedStorageResolver = null)
     {
         _world = world ?? throw new ArgumentNullException(nameof(world));
         _systemName = systemName ?? throw new ArgumentNullException(nameof(systemName));
@@ -100,6 +108,7 @@ public sealed class SystemExecutionContext
         _modId = modId;
         _services = services;
         _nativeWorld = nativeWorld;
+        _managedStorageResolver = managedStorageResolver;
     }
 
     /// <summary>
@@ -116,6 +125,26 @@ public sealed class SystemExecutionContext
     /// reach it via <c>SystemBase.NativeWorld</c>.
     /// </summary>
     internal NativeWorld? NativeWorld => _nativeWorld;
+
+    /// <summary>
+    /// K8.3+K8.4 — Resolves the calling system's owning mod to its Path β
+    /// <see cref="ManagedStore{T}"/>. Returns null when:
+    /// <list type="bullet">
+    ///   <item>No resolver was supplied at construction (tests, builds
+    ///         without mod loading).</item>
+    ///   <item>The system origin is <see cref="SystemOrigin.Core"/> — no
+    ///         owning mod, so no per-mod store. Core systems should rely
+    ///         on the kernel-side NativeWorld for component storage.</item>
+    ///   <item>The mod has not registered <typeparamref name="T"/> via
+    ///         <c>IModApi.RegisterManagedComponent&lt;T&gt;</c>.</item>
+    /// </list>
+    /// </summary>
+    internal ManagedStore<T>? ResolveManagedStore<T>() where T : class, IComponent
+    {
+        if (_managedStorageResolver is null) return null;
+        if (_modId is null) return null;
+        return _managedStorageResolver.Resolve<T>(_modId);
+    }
 
     /// <summary>
     /// Current execution context for the calling thread. Null when the

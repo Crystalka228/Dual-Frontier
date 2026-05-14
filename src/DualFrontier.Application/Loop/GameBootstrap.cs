@@ -216,7 +216,8 @@ internal static class GameBootstrap
             initialMetadata,
             faultHandler,
             services,
-            nativeWorld);
+            nativeWorld,
+            modRegistry);  // K8.3+K8.4 — IManagedStorageResolver for Path β bridge
 
         // M7.5.B.1 — modding stack. Pipeline starts in its default
         // paused state (M7.1 load-bearing default); bootstrap does not

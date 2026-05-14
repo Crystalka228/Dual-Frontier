@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Core;
 
-namespace DualFrontier.Application.Modding;
+namespace DualFrontier.Contracts.Modding;
 
 /// <summary>
 /// Marker interface for type-erased <see cref="ManagedStore{T}"/> instances.
@@ -10,7 +10,7 @@ namespace DualFrontier.Application.Modding;
 /// without open generics. Concrete operations require downcast to
 /// <see cref="ManagedStore{T}"/>.
 /// </summary>
-internal interface IManagedStore
+public interface IManagedStore
 {
     /// <summary>Number of components currently stored.</summary>
     int Count { get; }
@@ -34,33 +34,41 @@ internal interface IManagedStore
 ///
 /// Lifetime: scoped to the owning mod's <c>RestrictedModApi</c> instance.
 /// Cleared on <c>AssemblyLoadContext.Unload</c> via
-/// <c>ModLoader.UnloadMod</c> step 5 (chain to
+/// <c>ModRegistry.RemoveMod</c> (chain to
 /// <c>RestrictedModApi.ClearManagedStores</c>) per
 /// MOD_OS_ARCHITECTURE §9.5.
 ///
 /// Path β components are runtime-only (Q4.b K-L3.1 lock) — not persisted
 /// by save system; reconstructed on load post-G-series.
+///
+/// Lives in <c>DualFrontier.Contracts.Modding</c> so mod systems — which
+/// subclass <c>SystemBase</c> in Core but cannot reference Application —
+/// can receive a <see cref="ManagedStore{T}"/> from
+/// <c>SystemBase.ManagedStore&lt;T&gt;()</c> and call Add/TryGet/Has/Remove
+/// against it directly.
 /// </summary>
 /// <typeparam name="T">
 /// Class IComponent type. Must be annotated with
-/// <see cref="DualFrontier.Contracts.Modding.ManagedStorageAttribute"/> —
-/// absence is rejected by <c>RegisterManagedComponent&lt;T&gt;</c> with
-/// <see cref="ValidationErrorKind.MissingManagedStorageAttribute"/>.
+/// <see cref="ManagedStorageAttribute"/> — absence is rejected by
+/// <c>RegisterManagedComponent&lt;T&gt;</c> with the
+/// <c>MissingManagedStorageAttribute</c> validation error (defined in
+/// <c>DualFrontier.Application.Modding</c>; cannot be linked from this XML
+/// doc).
 /// </typeparam>
-internal sealed class ManagedStore<T> : IManagedStore where T : class, IComponent
+public sealed class ManagedStore<T> : IManagedStore where T : class, IComponent
 {
     private readonly Dictionary<EntityId, T> _components = new();
     private readonly string _modId;
 
     /// <summary>Constructs an empty store bound to a specific mod's lifetime.</summary>
     /// <param name="modId">Owning mod identifier; preserved for diagnostics.</param>
-    internal ManagedStore(string modId)
+    public ManagedStore(string modId)
     {
         _modId = modId ?? throw new ArgumentNullException(nameof(modId));
     }
 
     /// <summary>Owning mod identifier (diagnostic-only — not used for dispatch).</summary>
-    internal string ModId => _modId;
+    public string ModId => _modId;
 
     /// <summary>Adds or overwrites the component for the given entity.</summary>
     public void Add(EntityId entity, T component)

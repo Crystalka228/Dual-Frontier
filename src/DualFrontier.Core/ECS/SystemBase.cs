@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Core.ECS;
@@ -185,5 +186,34 @@ public abstract class SystemBase
                     "SystemBase.NativeWorld requested but the scheduler did not supply a NativeWorld instance. " +
                     "Pass one to ParallelSystemScheduler's constructor.");
         }
+    }
+
+    /// <summary>
+    /// K8.3+K8.4 — Path β bridge accessor. Returns the calling mod's
+    /// <see cref="ManagedStore{T}"/> for component type <typeparamref name="T"/>,
+    /// or <c>null</c> when:
+    /// <list type="bullet">
+    ///   <item>The active scheduler context has no <c>IManagedStorageResolver</c>
+    ///         (tests, builds without mod loading).</item>
+    ///   <item>The system origin is <see cref="SystemOrigin.Core"/> — no
+    ///         owning mod and thus no per-mod managed store. Core systems
+    ///         use NativeWorld for component storage.</item>
+    ///   <item>The owning mod has not registered <typeparamref name="T"/>
+    ///         via <c>IModApi.RegisterManagedComponent&lt;T&gt;</c>.</item>
+    /// </list>
+    /// Throws <see cref="InvalidOperationException"/> when called outside
+    /// an active scheduler context (e.g. from the Godot main thread).
+    /// </summary>
+    /// <typeparam name="T">
+    /// Class IComponent type previously registered via
+    /// <c>RegisterManagedComponent&lt;T&gt;</c> with the
+    /// <c>[ManagedStorage]</c> attribute.
+    /// </typeparam>
+    protected ManagedStore<T>? ManagedStore<T>() where T : class, IComponent
+    {
+        var ctx = SystemExecutionContext.Current
+            ?? throw new InvalidOperationException(
+                "SystemBase.ManagedStore called outside an active scheduler context.");
+        return ctx.ResolveManagedStore<T>();
     }
 }

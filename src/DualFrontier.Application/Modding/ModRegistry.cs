@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using DualFrontier.Contracts.Attributes;
+using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Application.Modding;
@@ -17,14 +19,28 @@ namespace DualFrontier.Application.Modding;
 /// first and then mod systems in registration order so the dependency graph
 /// builds deterministically.
 ///
+/// K8.3+K8.4 combined milestone (2026-05-14) — implements
+/// <see cref="IManagedStorageResolver"/> so <c>SystemBase.ManagedStore&lt;T&gt;()</c>
+/// can resolve a Path β <see cref="ManagedStore{T}"/> from the calling
+/// system's owning mod. <see cref="RegisterRestrictedModApi"/> /
+/// <see cref="UnregisterRestrictedModApi"/> maintain the mod-id → API map
+/// the resolver dispatches against.
+///
 /// Not thread-safe: the registry is only mutated from the menu thread when
 /// the simulation is stopped, never from runtime.
 /// </summary>
-internal sealed class ModRegistry
+internal sealed class ModRegistry : IManagedStorageResolver
 {
     private readonly Dictionary<Type, string> _componentOwners = new();
     private readonly List<SystemRegistration> _coreSystems = new();
     private readonly List<SystemRegistration> _modSystems = new();
+
+    // K8.3+K8.4 — mod-id → RestrictedModApi mapping for IManagedStorageResolver
+    // dispatch. ModLoader/pipeline registers each mod's API instance after
+    // construction; UnregisterRestrictedModApi clears at unload. Resolver
+    // returns null for unknown ids (e.g. Core-origin systems whose modId is
+    // null — handled in SystemExecutionContext before the call reaches here).
+    private readonly Dictionary<string, RestrictedModApi> _restrictedModApis = new();
 
     /// <summary>
     /// Sets the list of core systems once at start-up. Subsequent calls
@@ -144,11 +160,21 @@ internal sealed class ModRegistry
     /// <summary>
     /// Removes mod systems and components that belong to the given mod id.
     /// Used when a single mod is unloaded while others remain active.
+    /// K8.3+K8.4 — also clears the mod's Path β ManagedStore&lt;T&gt; instances
+    /// (MOD_OS §9.5 chain step 5) and drops the resolver-dispatch entry.
     /// </summary>
     /// <param name="modId">Identifier of the mod to clear.</param>
     public void RemoveMod(string modId)
     {
         if (modId is null) throw new ArgumentNullException(nameof(modId));
+
+        // Path β cleanup before system/component removal so mod systems
+        // can't observe inconsistent state mid-unload.
+        if (_restrictedModApis.TryGetValue(modId, out RestrictedModApi? api))
+        {
+            api.ClearManagedStores();
+            _restrictedModApis.Remove(modId);
+        }
 
         // Reverse pass — indices do not shift on removal.
         for (int i = _modSystems.Count - 1; i >= 0; i--)
@@ -165,6 +191,40 @@ internal sealed class ModRegistry
         }
         foreach (Type t in toRemove)
             _componentOwners.Remove(t);
+    }
+
+    /// <summary>
+    /// Registers a mod's <see cref="RestrictedModApi"/> instance so the
+    /// <see cref="IManagedStorageResolver"/> implementation can dispatch
+    /// <see cref="ManagedStore{T}"/> queries to it. Called by the pipeline
+    /// after constructing the API for a mod (K8.3+K8.4).
+    /// </summary>
+    internal void RegisterRestrictedModApi(string modId, RestrictedModApi api)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (api is null) throw new ArgumentNullException(nameof(api));
+        _restrictedModApis[modId] = api;
+    }
+
+    /// <summary>
+    /// Removes a mod's <see cref="RestrictedModApi"/> from the resolver
+    /// dispatch table. <see cref="RemoveMod"/> calls this internally; the
+    /// method is exposed separately for tests that exercise the resolver in
+    /// isolation.
+    /// </summary>
+    internal void UnregisterRestrictedModApi(string modId)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        _restrictedModApis.Remove(modId);
+    }
+
+    /// <inheritdoc />
+    public ManagedStore<T>? Resolve<T>(string modId) where T : class, IComponent
+    {
+        if (modId is null) return null;
+        return _restrictedModApis.TryGetValue(modId, out RestrictedModApi? api)
+            ? api.GetManagedStore<T>()
+            : null;
     }
 
     private static SystemBase CreateSystemInstance(Type systemType)
