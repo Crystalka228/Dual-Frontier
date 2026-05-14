@@ -1876,6 +1876,6 @@
 | 2026-05-11 | A'.4 K9 field storage execution | execution_milestone | ce4dba8..80c9ba6 |
 | 2026-05-12 | A'.4.5 register execution closure | execution_milestone | TBD |
 | 2026-05-12 | A'.4.5 document control register deliberation | deliberation_milestone | 7448267..411c284 |
-| 2026-05-13 | K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation | governance_event | f7e6d52..06d3b1f |
+| 2026-05-13 | K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation | governance_event | f7e6d52..6c79914 |
 
 

@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "1.1"
 last_modified: "2026-05-13"
-last_modified_commit: "06d3b1f"  # K8.3 v2.0 halt governance commit 2026-05-13 (self-referential, backfilled via amend per FRAMEWORK §8.3)
+last_modified_commit: "6c79914"  # K8.3 v2.0 halt governance commit 2026-05-13 (self-referential, backfilled via amend per FRAMEWORK §8.3)
 last_modified_by: "Crystalka"
 
 # === Audit calendar (Q13 anchor) ===
@@ -4404,7 +4404,7 @@ audit_trail:
       - DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
       - DOC-G-REGISTER
     commits:
-      range: "f7e6d52..06d3b1f"
+      range: "f7e6d52..6c79914"
       key_commits:
         - hash: "f7e6d52"
           summary: "K8.3 v2.0 brief authored (2026-05-13 morning Opus deliberation; premise miss embedded)"
@@ -4412,7 +4412,7 @@ audit_trail:
           summary: "Halt investigation artifact preserved (docs/scratch/A_PRIME_5/HALT_REPORT.md)"
         - hash: "8cf94b3"
           summary: "K8.3 v2 brief refresh patch authored (storage premise correction; K8.3/K8.4 swap)"
-        - hash: "06d3b1f"
+        - hash: "6c79914"
           summary: "REGISTER governance entries: this EVT + CAPA-2026-05-13 + DOC-D-K8_3 update + DOC-D-K8_3_BRIEF_REFRESH_PATCH + DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION (backfilled via amend per FRAMEWORK §8.3)"
     governance_impact: |
       First post-A'.4.5 invocation of METHODOLOGY §3 «stop, escalate, lock» under register
