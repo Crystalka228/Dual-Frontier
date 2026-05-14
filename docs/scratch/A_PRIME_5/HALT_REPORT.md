@@ -1,4 +1,6 @@
----
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
 category: E
 tier: 3

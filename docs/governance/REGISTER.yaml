@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "1.0"
-last_modified: "2026-05-12"
-last_modified_commit: "fe35f00"  # filled at A'.4.5 closure 2026-05-12 per Q-A45-X2 bootstrap (self-reference resolved via git commit --amend)
+register_version: "1.1"
+last_modified: "2026-05-13"
+last_modified_commit: "06d3b1f"  # K8.3 v2.0 halt governance commit 2026-05-13 (self-referential, backfilled via amend per FRAMEWORK §8.3)
 last_modified_by: "Crystalka"
 
 # === Audit calendar (Q13 anchor) ===
@@ -1134,13 +1134,16 @@ documents:
     tier: 3
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-05-10"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "2.0"
+    last_modified: "2026-05-13"
+    last_modified_commit: "f7e6d52"
     content_language: en
     review_cadence: on-status-transition
+    last_review_date: "2026-05-13"
+    last_review_event: "K8.3 v2.0 execution halt — premise miss surfaced; pair with refresh patch"
     reviewer: Crystalka
-    risks_referenced: [RISK-007]
+    risks_referenced: [RISK-007, RISK-008]
+    capa_entries_referenced: [CAPA-2026-05-13-K8.3-PREMISE-MISS]
 
   - id: DOC-D-K8_4
     path: tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md
@@ -1217,6 +1220,23 @@ documents:
     review_cadence: on-status-transition
     reviewer: Crystalka
     special_case_rationale: "Patch brief for stale K9 brief — precedent for staleness density mitigation per RISK-007"
+
+  - id: DOC-D-K8_3_BRIEF_REFRESH_PATCH
+    path: tools/briefs/K8_3_BRIEF_REFRESH_PATCH.md
+    title: "K8.3 v2 — Brief Refresh Patch (storage premise correction + K8.3/K8.4 order swap)"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-13"
+    last_modified_commit: "8cf94b3"
+    content_language: en
+    review_cadence: on-status-transition
+    reviewer: Crystalka
+    risks_referenced: [RISK-007, RISK-008]
+    capa_entries_referenced: [CAPA-2026-05-13-K8.3-PREMISE-MISS]
+    special_case_rationale: "Patch brief for K8.3 v2.0 brief authoring premise miss (storage location vs struct shape conflation); K9_BRIEF_REFRESH_PATCH precedent; lifecycle transitions to EXECUTED at A'.6 K8.3 closure post-K8.4 landing"
 
   - id: DOC-D-K_L3_1_BRIDGE
     path: tools/briefs/K_L3_1_BRIDGE_FORMALIZATION_BRIEF.md
@@ -2321,6 +2341,23 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+
+  - id: DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
+    path: docs/scratch/A_PRIME_5/HALT_REPORT.md
+    title: "A'.5 K8.3 v2.0 execution halt — partial-investigation artifact"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-13"
+    last_modified_commit: "b46a6c6"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-13"
+    last_review_event: "K8.3 v2.0 execution halt 2026-05-13 — METHODOLOGY §3 stop-escalate-lock first invocation post-A'.4.5"
+    reviewer: Crystalka
+    capa_entries_referenced: [CAPA-2026-05-13-K8.3-PREMISE-MISS]
 
   - id: DOC-G-REGISTER_RENDER
     path: docs/governance/REGISTER_RENDER.md
@@ -4091,12 +4128,77 @@ capa_entries:
       PHASE_A_PRIME_SEQUENCING.md and INVENTORY.md become superseded by register at A'.4.5
       closure.
     effectiveness_verification:
-      method: "A'.5 K8.3 first post-register closure runs sync validation cleanly"
+      method: "A'.5 K8.4 first post-register closure runs sync validation cleanly (verification milestone shifted from K8.3 to K8.4 per K8.3_BRIEF_REFRESH_PATCH §3.3 ordering swap)"
       date_verified: null
       verification_commit: null
       verification_outcome: null
-      verification_pending: "A'.5 K8.3 closure"
+      verification_pending: "A'.5 K8.4 closure (post K8.3/K8.4 order swap)"
     lessons_learned_reference: DOC-A-FRAMEWORK
+
+  - id: CAPA-2026-05-13-K8.3-PREMISE-MISS
+    opened_date: "2026-05-13"
+    closure_status: OPEN
+    trigger: |
+      K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52)
+      presupposed component storage already in NativeWorld at K8.3 execution time
+      («post-K8.2 v2 closure, all production components are unmanaged structs (Path α)»
+      framing in brief §1). Claude Code execution attempt same day surfaced premise
+      defect at Phase 0.2: GameBootstrap.cs:85-90 inline comment explicitly states
+      «component storage stays on the managed World through K8.3; the registry-based
+      path lights up at K8.4 when component storage moves.» Brief authoring conflated
+      K-L3 «struct shape» (achieved K8.2 v2 2026-05-09) with K-L8/K-L11 «native
+      storage» (scheduled K8.4 per MIGRATION_PLAN §1.3).
+    affected_documents:
+      - DOC-D-K8_3
+      - DOC-D-K8_3_BRIEF_REFRESH_PATCH
+      - DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
+      - DOC-A-MIGRATION_PLAN
+      - DOC-A-KERNEL
+      - DOC-A-PHASE_A_PRIME_SEQUENCING
+    root_cause: |
+      Brief authoring read GameBootstrap.cs primarily for Q-K8.3-1 coreSystems
+      verification (12-system count + names). Comment block at lines 85-90 about
+      storage path activation was not surfaced during scope verification. Brief
+      authoring relied on architecture-document target-state wording
+      (MIGRATION_PLAN §1.2 K8.3 row, KERNEL_ARCHITECTURE Part 0 K-L3 implication
+      «default storage path is unmanaged struct») without empirical verification
+      against current production wiring. Architecture docs describe target state;
+      production wiring describes current state — divergence silent until execution
+      attempt. RISK-008 (amendment plan completeness gap) reproduction.
+    immediate_action: |
+      Halt K8.3 v2.0 execution at Cloud Code session 2026-05-13 Phase 0.2 per
+      METHODOLOGY §3 «stop, escalate, lock». Surface 4 resolution options
+      (A: re-deliberate fully; B: swap K8.3/K8.4 order; C: re-scope in-flight;
+      D: managed-only protocol). Crystalka selects Option B (swap K8.3/K8.4
+      order) via patch brief direction («Да давай писать дополнение как и раньше
+      было отправить в ту сессию K8.3v2 как патч»).
+    corrective_action: |
+      (1) Halt artifact authored at docs/scratch/A_PRIME_5/HALT_REPORT.md
+          (DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION) preserving investigation
+          + diagnosis + deliberation surface; landed in commit b46a6c6.
+      (2) Patch brief authored at tools/briefs/K8_3_BRIEF_REFRESH_PATCH.md
+          (DOC-D-K8_3_BRIEF_REFRESH_PATCH) carrying Option B resolution
+          (K8.4-first, then K8.3, then K8.5); landed in commit 8cf94b3.
+      (3) K8.4 v2 brief authoring scheduled for next Opus deliberation
+          session; absorbs storage migration scope + orphan .uid cleanup +
+          Mod API v3 surface (Fields/ComputePipelines/RegisterManagedComponent).
+      (4) K8.5 v2 brief authoring scheduled subsequently; absorbs managed
+          World retirement from original K8.4 scope.
+      (5) PHASE_A_PRIME_SEQUENCING.md amendment scheduled at K8.4 closure
+          (A'.5 revised): A'.5 = K8.4; A'.6 = K8.3; A'.7 = K8.5.
+      (6) Future brief authoring protocol enhancement candidate:
+          deep-read entry-point files (GameBootstrap.cs, Bootstrap.cs,
+          factory classes, SystemExecutionContext) in Phase 0 alongside
+          architecture-doc reads — empirical ground truth verification.
+          Lesson candidate for METHODOLOGY §K-Lessons next revision
+          (drafted in HALT_REPORT.md §7).
+    effectiveness_verification:
+      method: "K8.4 → K8.3 → K8.5 cascade lands cleanly in revised order; no further premise miss at any of the three closures"
+      date_verified: null
+      verification_commit: null
+      verification_outcome: null
+      verification_pending: "A'.7 K8.5 closure (final verification point of revised cascade)"
+    lessons_learned_reference: DOC-B-METHODOLOGY
 
 # === audit_trail collection (Q15 — 9 events; pre-authored from Pass 5 §5) ===
 audit_trail:
@@ -4291,3 +4393,51 @@ audit_trail:
       Register operational. Post-session protocol mandatory. Subsequent milestone closures
       (A'.5 K8.3 onward) include sync_register.ps1 validation as closure step. RISK-010
       mitigation effectiveness measured at A'.5 K8.3 first post-register closure.
+
+  - id: EVT-2026-05-13-K8.3-V2-HALT
+    date: "2026-05-13"
+    event: "K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation"
+    event_type: governance_event
+    documents_affected:
+      - DOC-D-K8_3
+      - DOC-D-K8_3_BRIEF_REFRESH_PATCH
+      - DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
+      - DOC-G-REGISTER
+    commits:
+      range: "f7e6d52..06d3b1f"
+      key_commits:
+        - hash: "f7e6d52"
+          summary: "K8.3 v2.0 brief authored (2026-05-13 morning Opus deliberation; premise miss embedded)"
+        - hash: "b46a6c6"
+          summary: "Halt investigation artifact preserved (docs/scratch/A_PRIME_5/HALT_REPORT.md)"
+        - hash: "8cf94b3"
+          summary: "K8.3 v2 brief refresh patch authored (storage premise correction; K8.3/K8.4 swap)"
+        - hash: "06d3b1f"
+          summary: "REGISTER governance entries: this EVT + CAPA-2026-05-13 + DOC-D-K8_3 update + DOC-D-K8_3_BRIEF_REFRESH_PATCH + DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION (backfilled via amend per FRAMEWORK §8.3)"
+    governance_impact: |
+      First post-A'.4.5 invocation of METHODOLOGY §3 «stop, escalate, lock» under register
+      governance. K8.3 v2.0 brief authoring presupposed component storage already in
+      NativeWorld at K8.3 time; production state (GameBootstrap.cs:85-90) showed storage
+      stays on managed World through K8.3 with migration scheduled K8.4. Cloud Code
+      execution attempt halted at Phase 0.2; halt artifact authored; resolution patch
+      authored carrying Option 2 (swap K8.3/K8.4 order). RISK-008 (amendment plan
+      completeness gap) reproduced; structurally caught before harmful commits landed.
+      CAPA-2026-05-13-K8.3-PREMISE-MISS opened; effectiveness verification target
+      A'.7 K8.5 closure (K8.4 → K8.3 → K8.5 cascade clean).
+
+      Phase A' sequencing revision (deferred to K8.4 brief authoring closure): A'.5
+      becomes K8.4 (was K8.3); A'.6 becomes K8.3 (was K8.4); A'.7 K8.5 absorbs managed
+      World retirement from original K8.4 scope. Strategic LOCKED Decision #1
+      («K-track closes before M-track begins») preserved — internal K8.x reorder
+      does not violate K-vs-M ordering.
+
+      Methodology lesson candidate for METHODOLOGY §K-Lessons next revision: brief
+      authoring for milestones touching system/component access path must include
+      production runtime wiring files (GameBootstrap.cs + factories + scheduler +
+      SystemExecutionContext) in Phase 0 reads — architecture docs describe target
+      state, production wiring describes current state; the two can diverge silently.
+    cross_references:
+      capa_entries:
+        - CAPA-2026-05-13-K8.3-PREMISE-MISS
+      risks:
+        - RISK-008  # amendment plan completeness gap — reproduction

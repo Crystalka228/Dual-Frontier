@@ -2,16 +2,16 @@
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-13  |  Schema version: 1.0  |  Register version: 1.0*
+*Last generated: 2026-05-13  |  Schema version: 1.0  |  Register version: 1.1*
 
 ---
 
 ## Statistics
 
-- Total documents: 229
-- Tier 1: 33  |  Tier 2: 18  |  Tier 3: 100  |  Tier 4: 78  |  Tier 5: 0
-- Per category: A=30  |  B=6  |  C=3  |  D=48  |  E=54  |  F=78  |  G=8  |  H=2  |  I=0  |  J=0
-- Open CAPA: 1  |  Active risks: 12  |  Stale documents: 0
+- Total documents: 231
+- Tier 1: 33  |  Tier 2: 18  |  Tier 3: 102  |  Tier 4: 78  |  Tier 5: 0
+- Per category: A=30  |  B=6  |  C=3  |  D=49  |  E=55  |  F=78  |  G=8  |  H=2  |  I=0  |  J=0
+- Open CAPA: 2  |  Active risks: 12  |  Stale documents: 0
 
 ---
 
@@ -20,8 +20,8 @@
 - [Category A (30 documents)](#category-A)
 - [Category B (6 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
-- [Category D (48 documents)](#category-D)
-- [Category E (54 documents)](#category-E)
+- [Category D (49 documents)](#category-D)
+- [Category E (55 documents)](#category-E)
 - [Category F (78 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
 - [Category H (2 documents)](#category-H)
@@ -698,10 +698,21 @@
 ### DOC-D-K8_3 — K8.3 — Production System Migration
 
 - **Path**: `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 2.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-13 ($(System.Collections.Hashtable.last_modified_commit))
+- **Risks referenced**: RISK-007, RISK-008
+- **CAPA referenced**: CAPA-2026-05-13-K8.3-PREMISE-MISS
+
+### DOC-D-K8_3_BRIEF_REFRESH_PATCH — K8.3 v2 — Brief Refresh Patch (storage premise correction + K8.3/K8.4 order swap)
+
+- **Path**: `tools/briefs/K8_3_BRIEF_REFRESH_PATCH.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-10 ($(System.Collections.Hashtable.last_modified_commit))
-- **Risks referenced**: RISK-007
+- **Last modified**: 2026-05-13 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Patch brief for K8.3 v2.0 brief authoring premise miss (storage location vs struct shape conflation); K9_BRIEF_REFRESH_PATCH precedent; lifecycle transitions to EXECUTED at A'.6 K8.3 closure post-K8.4 landing
+- **Risks referenced**: RISK-007, RISK-008
+- **CAPA referenced**: CAPA-2026-05-13-K8.3-PREMISE-MISS
 
 ### DOC-D-K8_4 — K8.4 — Managed World Retired
 
@@ -811,6 +822,14 @@
 - **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
+
+### DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION — A'.5 K8.3 v2.0 execution halt — partial-investigation artifact
+
+- **Path**: `docs/scratch/A_PRIME_5/HALT_REPORT.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-13 ($(System.Collections.Hashtable.last_modified_commit))
+- **CAPA referenced**: CAPA-2026-05-13-K8.3-PREMISE-MISS
 
 ### DOC-E-AUDIT_CAMPAIGN_PLAN — Audit Campaign Plan
 
@@ -1841,6 +1860,7 @@
 | CAPA-2026-05-09-K8.2-V2-REFRAMING | 2026-05-09 | CLOSED | K-L3 «без exception» framing surfaced as misalignment at K8.2 v2 closure verification. |
 | CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION | 2026-05-10 | CLOSED | Methodology corpus (METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR) |
 | CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT | 2026-05-12 | OPEN | A'.0.5 INVENTORY.md baseline ~135 .md files. A'.4.5 deliberation pre-flight |
+| CAPA-2026-05-13-K8.3-PREMISE-MISS | 2026-05-13 | OPEN | K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52) |
 
 <a name="global-audit-trail"></a>
 ## Global: Audit trail
@@ -1856,5 +1876,6 @@
 | 2026-05-11 | A'.4 K9 field storage execution | execution_milestone | ce4dba8..80c9ba6 |
 | 2026-05-12 | A'.4.5 register execution closure | execution_milestone | TBD |
 | 2026-05-12 | A'.4.5 document control register deliberation | deliberation_milestone | 7448267..411c284 |
+| 2026-05-13 | K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation | governance_event | f7e6d52..06d3b1f |
 
 
