@@ -46,6 +46,17 @@ internal static class ManifestParser
                 throw new InvalidOperationException(
                     $"Mod manifest at '{sourcePath}' must be a JSON object.");
 
+            // K8.3+K8.4 — strict v3-only manifest gate. Missing or non-"3"
+            // value rejects with ValidationErrorKind.IncompatibleContractsVersion
+            // semantic. No grace period; no backward compatibility.
+            string manifestVersion = ReadRequiredString(root, "manifestVersion", sourcePath);
+            if (manifestVersion != "3")
+                throw new InvalidOperationException(
+                    $"Mod manifest at '{sourcePath}' declares manifestVersion: " +
+                    $"'{manifestVersion}' — only '3' is accepted post-K8.3+K8.4 " +
+                    $"combined milestone. v1/v2 manifests must be updated to v3 " +
+                    $"format (ValidationErrorKind.IncompatibleContractsVersion).");
+
             string id = ReadRequiredString(root, "id", sourcePath);
             string name = ReadRequiredString(root, "name", sourcePath);
             string version = ReadRequiredString(root, "version", sourcePath);
@@ -64,6 +75,7 @@ internal static class ManifestParser
 
             return new ModManifest
             {
+                ManifestVersion = manifestVersion,
                 Id = id,
                 Name = name,
                 Version = version,

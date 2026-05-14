@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.regular.replacesprotected",
   "name": "Regular Mod (replaces non-Replaceable SkillSystem)",
   "version": "1.0.0",

@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.regular.dependedon",
   "name": "Regular Mod (no deps; depended on by tests.regular.dependson)",
   "version": "1.0.0",

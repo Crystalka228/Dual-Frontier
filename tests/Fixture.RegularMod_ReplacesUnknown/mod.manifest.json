@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.regular.replacesunknown",
   "name": "Regular Mod (replaces non-existent FQN)",
   "version": "1.0.0",

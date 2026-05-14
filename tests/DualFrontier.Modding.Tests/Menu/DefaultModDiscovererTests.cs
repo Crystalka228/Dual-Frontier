@@ -100,7 +100,7 @@ public sealed class DefaultModDiscovererTests
     private static void WriteValidManifest(string dir, string id)
     {
         Directory.CreateDirectory(dir);
-        string json = "{ \"id\": \"" + id + "\", \"name\": \"Minimal Disc\", " +
+        string json = "{ \"manifestVersion\": \"3\", \"id\": \"" + id + "\", \"name\": \"Minimal Disc\", " +
             "\"version\": \"1.0.0\" }";
         File.WriteAllText(Path.Combine(dir, "mod.manifest.json"), json);
     }

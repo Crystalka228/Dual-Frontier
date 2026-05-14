@@ -24,6 +24,32 @@ public enum ModKind
 public sealed class ModManifest
 {
     /// <summary>
+    /// K8.3+K8.4 — Manifest schema version. Distinguishes the IModApi
+    /// surface available to the mod:
+    /// <list type="bullet">
+    ///   <item>"3" — IModApi v3 (the only supported version post-K8.3+K8.4).
+    ///         RegisterComponent&lt;T&gt; constrained to unmanaged structs;
+    ///         RegisterManagedComponent&lt;T&gt; available for Path β class
+    ///         shapes annotated with [ManagedStorage]; Fields,
+    ///         ComputePipelines accessible.</item>
+    /// </list>
+    /// Post-K8.3+K8.4 combined milestone, only "3" is accepted by
+    /// <c>ManifestParser</c>. v1/v2 manifests are rejected with an
+    /// <c>InvalidOperationException</c> at parse time (carries the
+    /// <c>ValidationErrorKind.IncompatibleContractsVersion</c> semantic in
+    /// the message). No grace period; no deprecation warnings; no
+    /// backward compatibility — per Crystalka direction 2026-05-13.
+    ///
+    /// Default value "3" applies to programmatic construction (e.g. tests
+    /// that instantiate <see cref="ModManifest"/> with <c>new { Id = "x", ... }</c>).
+    /// On-disk JSON manifests must explicitly declare
+    /// <c>"manifestVersion": "3"</c> — <c>ManifestParser.Parse</c> enforces
+    /// presence and exact value even though the C# default would otherwise
+    /// fire for a JSON object missing the field.
+    /// </summary>
+    public string ManifestVersion { get; init; } = "3";
+
+    /// <summary>
     /// Unique mod identifier in reverse-domain style (e.g.
     /// <c>com.example.voidmagic</c>). Used as the key in all registries.
     /// </summary>

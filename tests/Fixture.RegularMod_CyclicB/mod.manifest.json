@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.regular.cycb",
   "name": "Regular Mod CyclicB (depends on tests.regular.cyca)",
   "version": "1.0.0",

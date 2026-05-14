@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.publisher",
   "name": "Publisher Test Mod",
   "version": "1.0.0",

@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.fixture.vanillamod.hotreloadoverride",
   "name": "Vanilla Mod HotReload Override Fixture",
   "version": "1.0.0",

@@ -511,7 +511,7 @@ public sealed class GameBootstrapIntegrationTests
     private static void WriteValidManifest(string dir, string id)
     {
         Directory.CreateDirectory(dir);
-        string json = "{ \"id\": \"" + id + "\", \"name\": \"Bootstrap Fixture\", " +
+        string json = "{ \"manifestVersion\": \"3\", \"id\": \"" + id + "\", \"name\": \"Bootstrap Fixture\", " +
             "\"version\": \"1.0.0\" }";
         File.WriteAllText(Path.Combine(dir, "mod.manifest.json"), json);
     }

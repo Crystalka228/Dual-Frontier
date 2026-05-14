@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "dualfrontier.vanilla.pawn",
   "name": "Vanilla Pawn",
   "version": "0.1.0",

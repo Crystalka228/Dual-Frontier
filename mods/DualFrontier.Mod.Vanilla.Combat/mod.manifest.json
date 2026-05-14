@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "dualfrontier.vanilla.combat",
   "name": "Vanilla Combat",
   "version": "0.1.0",

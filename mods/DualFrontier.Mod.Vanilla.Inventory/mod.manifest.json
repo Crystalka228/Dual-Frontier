@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "dualfrontier.vanilla.inventory",
   "name": "Vanilla Inventory",
   "version": "0.1.0",

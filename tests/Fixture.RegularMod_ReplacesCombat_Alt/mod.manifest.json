@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.regular.replacescombat.alt",
   "name": "Regular Mod (also replaces CombatSystem — conflict probe)",
   "version": "1.0.0",

@@ -19,6 +19,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.combat",
           "name": "Combat",
           "version": "1.0.0",
@@ -71,6 +72,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.legacy",
           "name": "Legacy",
           "version": "1.0.0",
@@ -152,6 +154,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "name": "Test",
           "version": "1.0.0"
         }
@@ -166,6 +169,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "",
           "name": "Test",
           "version": "1.0.0"
@@ -181,6 +185,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.x",
           "version": "1.0.0"
         }
@@ -195,6 +200,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.x",
           "name": "Test"
         }
@@ -209,6 +215,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.x",
           "name": "Test",
           "version": "1.0.0",
@@ -225,6 +232,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.x",
           "name": "Test",
           "version": "1.0.0",
@@ -243,6 +251,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.x",
           "name": "Test",
           "version": "1.0.0",
@@ -263,6 +272,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "id": "com.example.x",
           "name": "Test",
           "version": "1.0.0",
@@ -284,6 +294,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           "ID": "com.example.test",
           "NAME": "Test",
           "Version": "1.0.0"
@@ -302,6 +313,7 @@ public sealed class ManifestParserTests
     {
         const string json = """
         {
+          "manifestVersion": "3",
           // header comment
           "id": "com.example.test",
           "name": "Test", // inline comment
@@ -319,6 +331,7 @@ public sealed class ManifestParserTests
     private static string MinimalJson() =>
         """
         {
+          "manifestVersion": "3",
           "id": "com.example.x",
           "name": "Test",
           "version": "1.0.0"

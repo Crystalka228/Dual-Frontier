@@ -1,4 +1,5 @@
-{
+﻿{
+  "manifestVersion": "3",
   "id": "tests.shared.events",
   "name": "Shared Events Test Fixture",
   "version": "1.0.0",
