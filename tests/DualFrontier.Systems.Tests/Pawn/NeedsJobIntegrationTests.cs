@@ -3,6 +3,7 @@ using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Systems.Pawn;
 using FluentAssertions;
@@ -21,6 +22,8 @@ public sealed class NeedsJobIntegrationTests
         var world    = new World();
         var services = new GameServices();
         var ticks    = new TickScheduler();
+        // K8.3+K8.4 Phase 4 — JobSystem invokes NativeWorld.BeginBatch for dual-write.
+        var nativeWorld = new NativeWorld();
 
         var graph = new DependencyGraph();
         graph.AddSystem(new NeedsSystem());
@@ -33,7 +36,8 @@ public sealed class NeedsJobIntegrationTests
             world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services);
+            services,
+            nativeWorld);
 
         EntityId pawn = world.CreateEntity();
         world.AddComponent(pawn, new NeedsComponent { Satiety = 0.1f });
