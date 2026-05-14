@@ -197,6 +197,14 @@ public sealed class ConsumeSystem : SystemBase
     /// (NeedsSystem applies it on the same tick at the phase boundary). For
     /// <see cref="ConsumableComponent"/> targets, also decrements Charges in
     /// place — that field belongs to ConsumeSystem's own write set.
+    ///
+    /// K8.3+K8.4 Phase 4 migration (hybrid dual-write): the Charges-- write
+    /// is queued onto a NativeWorld WriteBatch AND mirrored via the legacy
+    /// SystemBase.SetComponent path. The batch produces a single native
+    /// P/Invoke per phase rather than per-pawn; the legacy mirror keeps the
+    /// managed World current for unmigrated systems and tests that read via
+    /// World.TryGetComponent. Phase 5 commit 21 removes the legacy mirror
+    /// when reads switch fully to NativeWorld.
     /// </summary>
     private void ApplyRestoration(EntityId pawn, EntityId target)
     {
@@ -212,6 +220,10 @@ public sealed class ConsumeSystem : SystemBase
                     Amount = c.RestorationAmount,
                 });
                 c.Charges--;
+                // Dual-write: native batch (K-L7 path α) + legacy mirror
+                // (Phase 4 transition; removed Phase 5 commit 21).
+                using (var batch = NativeWorld.BeginBatch<ConsumableComponent>())
+                    batch.Update(target, c);
                 SetComponent(target, c);
                 return;
             }
