@@ -72,8 +72,8 @@ internal sealed class V2ManagedStructsScenario : TickLoopScenarioBase
         // rendering cost.
 
         var nativeWorld = new NativeWorld();
-        var pawnFactory = new RandomPawnFactory(seed, navGrid, MapWidth, MapHeight, nativeWorld);
-        IReadOnlyList<EntityId> pawnIds = pawnFactory.Spawn(_world, _services, pawnCount);
+        var pawnFactory = new RandomPawnFactory(seed, navGrid, MapWidth, MapHeight);
+        IReadOnlyList<EntityId> pawnIds = pawnFactory.Spawn(nativeWorld, _world, _services, pawnCount);
 
         var excludedPositions = new List<GridVector>(pawnIds.Count);
         foreach (EntityId pid in pawnIds)
@@ -82,8 +82,9 @@ internal sealed class V2ManagedStructsScenario : TickLoopScenarioBase
                 excludedPositions.Add(pawnPos.Position);
         }
 
-        var itemFactory = new ItemFactory(ItemFactorySeed, navGrid, MapWidth, MapHeight);
+        var itemFactory = new ItemFactory(ItemFactorySeed, navGrid, MapWidth, MapHeight, nativeWorld);
         itemFactory.Spawn(
+            nativeWorld,
             _world,
             excludedPositions,
             InitialFoodCount,

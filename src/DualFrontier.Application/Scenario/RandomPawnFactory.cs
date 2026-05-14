@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using DualFrontier.AI.Pathfinding;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
@@ -31,6 +32,19 @@ namespace DualFrontier.Application.Scenario;
 /// The factory does NOT generate health/faction/race/mana/etc. because
 /// the corresponding UI does not display them yet — adding the data
 /// without the display would create asymmetry. Phase 5 expands scope.
+///
+/// K8.3+K8.4 combined milestone (2026-05-14) — Spawn signature gained
+/// a <see cref="NativeWorld"/> parameter and the body adopted the two-
+/// phase pattern (per-entity K8.1-primitive allocation → bulk
+/// <see cref="NativeWorld.AddComponents{T}"/> → dual-write to managed
+/// <see cref="World"/> during transition). Phase A per-entity ids are
+/// minted on BOTH worlds in lockstep (both start <c>_nextIndex = 1</c>
+/// so indices align naturally; verified by Debug.Assert) — preserves
+/// <c>world.IsAlive(id)</c> semantics for unmigrated systems while
+/// <see cref="NativeWorld"/> sees the entity as alive for
+/// <see cref="NativeWorld.AcquireSpan{T}"/> reads. Phase 5 commit 21
+/// removes the managed-side mint + dual-write, leaving the factory
+/// nativeWorld-only.
 /// </summary>
 internal sealed class RandomPawnFactory
 {
@@ -56,26 +70,27 @@ internal sealed class RandomPawnFactory
     private readonly NavGrid _navGrid;
     private readonly int _mapWidth;
     private readonly int _mapHeight;
-    private readonly NativeWorld _nativeWorld;
 
-    public RandomPawnFactory(int seed, NavGrid navGrid, int mapWidth, int mapHeight, NativeWorld nativeWorld)
+    public RandomPawnFactory(int seed, NavGrid navGrid, int mapWidth, int mapHeight)
     {
         _rng = new Random(seed);
         _navGrid = navGrid ?? throw new ArgumentNullException(nameof(navGrid));
         _mapWidth = mapWidth;
         _mapHeight = mapHeight;
-        _nativeWorld = nativeWorld ?? throw new ArgumentNullException(nameof(nativeWorld));
     }
 
     /// <summary>
-    /// Spawns <paramref name="count"/> pawns into <paramref name="world"/>,
+    /// Spawns <paramref name="count"/> pawns into both <paramref name="nativeWorld"/>
+    /// and <paramref name="world"/> (dual-write transition pattern, Phase 2-4),
     /// each on a unique passable tile, with a randomly generated name and
     /// fully-populated SkillsComponent. Publishes one PawnSpawnedEvent per
     /// pawn on the supplied <paramref name="services"/>.Pawns bus.
     /// </summary>
     /// <returns>EntityIds of the created pawns, in spawn order.</returns>
-    public IReadOnlyList<EntityId> Spawn(World world, GameServices services, int count)
+    public IReadOnlyList<EntityId> Spawn(NativeWorld nativeWorld, World world,
+                                         GameServices services, int count)
     {
+        if (nativeWorld is null) throw new ArgumentNullException(nameof(nativeWorld));
         if (world is null) throw new ArgumentNullException(nameof(world));
         if (services is null) throw new ArgumentNullException(nameof(services));
         if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
@@ -105,61 +120,104 @@ internal sealed class RandomPawnFactory
             (passable[i], passable[j]) = (passable[j], passable[i]);
         }
 
-        var ids = new List<EntityId>(count);
+        // ── Phase A: per-entity K8.1-primitive allocation + lockstep mint ─────
+        // Mint on BOTH worlds. Both World.CreateEntity() and NativeWorld.CreateEntity()
+        // assign monotonic indices starting at 1; called in lockstep they produce
+        // matching ids — preserving managed-world IsAlive semantics for unmigrated
+        // systems AND native-side is_alive semantics for AcquireSpan reads.
+        // Phase 5 commit 21 removes the managed-side mint when the factory becomes
+        // nativeWorld-only.
+        var entities = new EntityId[count];
+        var positions = new PositionComponent[count];
+        var identities = new IdentityComponent[count];
+        var needs = new NeedsComponent[count];
+        var minds = new MindComponent[count];
+        var jobs = new JobComponent[count];
+        var skills = new SkillsComponent[count];
+        var movements = new MovementComponent[count];
+
         for (int i = 0; i < count; i++)
         {
-            EntityId id = SpawnOne(world, services, passable[i]);
-            ids.Add(id);
+            EntityId managedId = world.CreateEntity();
+            EntityId nativeId = nativeWorld.CreateEntity();
+            // Both worlds start _nextIndex=1 and grow monotonically. Drift is a
+            // bootstrap invariant violation (someone called CreateEntity outside
+            // the factory between iterations). Debug-only assert; production runs
+            // strip the check.
+            Debug.Assert(managedId.Index == nativeId.Index,
+                "Managed/native entity index drift during dual-write transition — " +
+                "CreateEntity was called outside the factory between iterations.");
+            entities[i] = managedId;
+
+            positions[i] = new PositionComponent { Position = passable[i] };
+
+            string fullName = $"{Forenames[_rng.Next(Forenames.Length)]} " +
+                              $"{Surnames[_rng.Next(Surnames.Length)]}";
+            identities[i] = new IdentityComponent
+            {
+                Name = nativeWorld.InternString(fullName),
+            };
+
+            NativeMap<SkillKind, int> levels = nativeWorld.CreateMap<SkillKind, int>();
+            NativeMap<SkillKind, float> experience = nativeWorld.CreateMap<SkillKind, float>();
+            foreach (SkillKind kind in (SkillKind[])Enum.GetValues(typeof(SkillKind)))
+            {
+                levels.Set(kind, _rng.Next(0, SkillsComponent.MaxLevel + 1));
+                experience.Set(kind, 0f);
+            }
+            skills[i] = new SkillsComponent { Levels = levels, Experience = experience };
+
+            needs[i] = new NeedsComponent
+            {
+                Satiety = 0.9f,
+                Hydration = 0.9f,
+                Sleep = 0.9f,
+                Comfort = 1.0f,
+            };
+            minds[i] = new MindComponent();
+            jobs[i] = new JobComponent { Current = JobKind.Idle };
+            movements[i] = new MovementComponent
+            {
+                Path = nativeWorld.CreateComposite<GridVector>(),
+            };
         }
-        return ids;
-    }
 
-    private EntityId SpawnOne(World world, GameServices services, GridVector pos)
-    {
-        EntityId id = world.CreateEntity();
+        // ── Phase B: bulk component add to NativeWorld (one P/Invoke per type) ─
+        nativeWorld.AddComponents<PositionComponent>(entities, positions);
+        nativeWorld.AddComponents<IdentityComponent>(entities, identities);
+        nativeWorld.AddComponents<NeedsComponent>(entities, needs);
+        nativeWorld.AddComponents<MindComponent>(entities, minds);
+        nativeWorld.AddComponents<JobComponent>(entities, jobs);
+        nativeWorld.AddComponents<SkillsComponent>(entities, skills);
+        nativeWorld.AddComponents<MovementComponent>(entities, movements);
 
-        world.AddComponent(id, new PositionComponent { Position = pos });
-
-        string fullName = $"{Forenames[_rng.Next(Forenames.Length)]} {Surnames[_rng.Next(Surnames.Length)]}";
-        world.AddComponent(id, new IdentityComponent
+        // ── Dual-write to managed World during transition (Phase 2-4) ─────────
+        // Removed in Phase 5 commit 21 once all 12 production systems migrate
+        // to NativeWorld.AcquireSpan reads. Until then, unmigrated systems read
+        // via World.GetEntitiesWith / GetComponentUnsafe and must see the same
+        // entity-component records the native side carries.
+        for (int i = 0; i < count; i++)
         {
-            Name = _nativeWorld.InternString(fullName)
-        });
-
-        NativeMap<SkillKind, int> levels = _nativeWorld.CreateMap<SkillKind, int>();
-        NativeMap<SkillKind, float> experience = _nativeWorld.CreateMap<SkillKind, float>();
-        foreach (SkillKind kind in (SkillKind[])Enum.GetValues(typeof(SkillKind)))
-        {
-            levels.Set(kind, _rng.Next(0, SkillsComponent.MaxLevel + 1));
-            experience.Set(kind, 0f);
+            world.AddComponent(entities[i], positions[i]);
+            world.AddComponent(entities[i], identities[i]);
+            world.AddComponent(entities[i], needs[i]);
+            world.AddComponent(entities[i], minds[i]);
+            world.AddComponent(entities[i], jobs[i]);
+            world.AddComponent(entities[i], skills[i]);
+            world.AddComponent(entities[i], movements[i]);
         }
-        world.AddComponent(id, new SkillsComponent
-        {
-            Levels = levels,
-            Experience = experience,
-        });
 
-        world.AddComponent(id, new NeedsComponent
+        // ── Event publication ─────────────────────────────────────────────────
+        for (int i = 0; i < count; i++)
         {
-            Satiety   = 0.9f,
-            Hydration = 0.9f,
-            Sleep     = 0.9f,
-            Comfort   = 1.0f
-        });
-        world.AddComponent(id, new MindComponent());
-        world.AddComponent(id, new JobComponent { Current = JobKind.Idle });
-        world.AddComponent(id, new MovementComponent
-        {
-            Path = _nativeWorld.CreateComposite<GridVector>(),
-        });
+            services.Pawns.Publish(new PawnSpawnedEvent
+            {
+                PawnId = entities[i],
+                X = passable[i].X,
+                Y = passable[i].Y,
+            });
+        }
 
-        services.Pawns.Publish(new PawnSpawnedEvent
-        {
-            PawnId = id,
-            X = pos.X,
-            Y = pos.Y
-        });
-
-        return id;
+        return entities;
     }
 }

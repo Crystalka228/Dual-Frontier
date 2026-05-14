@@ -33,7 +33,7 @@ public sealed class RandomPawnFactoryTests
     public void Spawn_RequestedCount_ReturnsExactCount()
     {
         var fx = BuildFixture(seed: 1);
-        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
+        var ids = fx.factory.Spawn(fx.nativeWorld, fx.world, fx.services, 10);
         ids.Count.Should().Be(10);
     }
 
@@ -43,8 +43,8 @@ public sealed class RandomPawnFactoryTests
         var fxA = BuildFixture(seed: 42);
         var fxB = BuildFixture(seed: 42);
 
-        var idsA = fxA.factory.Spawn(fxA.world, fxA.services, 10);
-        var idsB = fxB.factory.Spawn(fxB.world, fxB.services, 10);
+        var idsA = fxA.factory.Spawn(fxA.nativeWorld, fxA.world, fxA.services, 10);
+        var idsB = fxB.factory.Spawn(fxB.nativeWorld, fxB.world, fxB.services, 10);
 
         // Compare resolved name strings per pawn — these come straight from
         // the RNG draws against fixed pools, so identical seeds must produce
@@ -62,7 +62,7 @@ public sealed class RandomPawnFactoryTests
     public void Spawn_NamesAreNonEmpty()
     {
         var fx = BuildFixture(seed: 7);
-        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
+        var ids = fx.factory.Spawn(fx.nativeWorld, fx.world, fx.services, 10);
 
         foreach (var id in ids)
         {
@@ -78,7 +78,7 @@ public sealed class RandomPawnFactoryTests
     public void Spawn_PositionsAreUnique()
     {
         var fx = BuildFixture(seed: 7);
-        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
+        var ids = fx.factory.Spawn(fx.nativeWorld, fx.world, fx.services, 10);
 
         var positions = ids
             .Select(id => fx.world.GetComponentForTest<PositionComponent>(id).Position)
@@ -91,11 +91,11 @@ public sealed class RandomPawnFactoryTests
     {
         var navGrid = BuildNavGrid();
         var nativeWorld = new NativeWorld();
-        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH, nativeWorld);
+        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH);
         var world = new World();
         var services = new GameServices();
 
-        var ids = factory.Spawn(world, services, 10);
+        var ids = factory.Spawn(nativeWorld, world, services, 10);
 
         foreach (var id in ids)
         {
@@ -108,7 +108,7 @@ public sealed class RandomPawnFactoryTests
     public void Spawn_EveryPawnHasAllSkillKindsPopulated()
     {
         var fx = BuildFixture(seed: 7);
-        var ids = fx.factory.Spawn(fx.world, fx.services, 10);
+        var ids = fx.factory.Spawn(fx.nativeWorld, fx.world, fx.services, 10);
 
         var allKinds = (SkillKind[])Enum.GetValues(typeof(SkillKind));
 
@@ -132,7 +132,7 @@ public sealed class RandomPawnFactoryTests
         var observed = new List<PawnSpawnedEvent>();
         fx.services.Pawns.Subscribe<PawnSpawnedEvent>(e => observed.Add(e));
 
-        fx.factory.Spawn(fx.world, fx.services, 10);
+        fx.factory.Spawn(fx.nativeWorld, fx.world, fx.services, 10);
 
         observed.Count.Should().Be(10);
     }
@@ -148,11 +148,11 @@ public sealed class RandomPawnFactoryTests
                     navGrid.SetTile(x, y, passable: false);
 
         var nativeWorld = new NativeWorld();
-        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH, nativeWorld);
+        var factory = new RandomPawnFactory(seed: 7, navGrid, MapW, MapH);
         var world = new World();
         var services = new GameServices();
 
-        Action act = () => factory.Spawn(world, services, 100);
+        Action act = () => factory.Spawn(nativeWorld, world, services, 100);
         act.Should().Throw<InvalidOperationException>();
     }
 
@@ -170,7 +170,7 @@ public sealed class RandomPawnFactoryTests
     {
         var navGrid = BuildNavGrid();
         var nativeWorld = new NativeWorld();
-        var factory = new RandomPawnFactory(seed, navGrid, MapW, MapH, nativeWorld);
+        var factory = new RandomPawnFactory(seed, navGrid, MapW, MapH);
         var world = new World();
         var services = new GameServices();
         return (factory, world, services, nativeWorld);

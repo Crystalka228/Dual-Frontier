@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DualFrontier.AI.Pathfinding;
+using DualFrontier.Application.Bootstrap;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Modding;
@@ -81,14 +82,22 @@ internal static class GameBootstrap
     /// </returns>
     public static GameContext CreateLoop(PresentationBridge bridge, string modsRoot = "mods")
     {
-        var world        = new World();
-        // K8.2 v2 — NativeWorld owned alongside the managed World until K8.4
-        // retires the latter. Production uses NativeWorld only for K8.1
-        // primitives (string interning, native maps/sets/composites bound to
-        // struct components); component storage stays on the managed World
-        // through K8.3. Bootstrap path uses FNV-1a fallback type ids; the
-        // registry-based path lights up at K8.4 when component storage moves.
-        var nativeWorld  = new NativeWorld();
+        // K8.3+K8.4 combined milestone — Phase 2 storage foundation (dual-write
+        // transition Phase 2-4; managed-side retired at Phase 5 commit 21).
+        //
+        // Bootstrap.Run constructs the ComponentTypeRegistry internally against
+        // the bootstrapped handle and binds it to the returned NativeWorld —
+        // registry-based deterministic type ids per K-L4. The managed World is
+        // retained alongside during Phase 2-4 because the 12 production systems
+        // still read via SystemBase.Query / GetComponent (managed). Factories
+        // mint entities on BOTH worlds in lockstep (both start _nextIndex=1,
+        // indices align naturally) and dual-write component data. Phase 4
+        // commits migrate systems one-by-one to NativeWorld.AcquireSpan reads;
+        // Phase 5 commit 21 removes the managed-side mint + dual-write entirely.
+        var nativeWorld = DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true);
+        VanillaComponentRegistration.RegisterAll(nativeWorld.Registry!);
+
+        var world = new World();
 
         var services = new GameServices();
         var ticks    = new TickScheduler();
@@ -116,8 +125,8 @@ internal static class GameBootstrap
         }
         var pathfinding = new AStarPathfinding(navGrid);
 
-        var pawnFactory = new RandomPawnFactory(FactorySeed, navGrid, MapWidth, MapHeight, nativeWorld);
-        IReadOnlyList<EntityId> pawnIds = pawnFactory.Spawn(world, services, InitialPawnCount);
+        var pawnFactory = new RandomPawnFactory(FactorySeed, navGrid, MapWidth, MapHeight);
+        IReadOnlyList<EntityId> pawnIds = pawnFactory.Spawn(nativeWorld, world, services, InitialPawnCount);
 
         // ItemFactory must not place items on pawn tiles — collect pawn
         // positions and pass as the excluded set. RandomPawnFactory always
@@ -129,8 +138,9 @@ internal static class GameBootstrap
                 excludedPositions.Add(pawnPos.Position);
         }
 
-        var itemFactory = new ItemFactory(ItemFactorySeed, navGrid, MapWidth, MapHeight);
+        var itemFactory = new ItemFactory(ItemFactorySeed, navGrid, MapWidth, MapHeight, nativeWorld);
         itemFactory.Spawn(
+            nativeWorld,
             world,
             excludedPositions,
             InitialFoodCount,
