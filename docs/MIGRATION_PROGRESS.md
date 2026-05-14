@@ -39,6 +39,107 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 
 ---
 
+## A'.5 K8.3+K8.4 combined closure (PARTIAL — 2026-05-14)
+
+**Status**: PARTIAL_CLOSURE — Phases 0-4 fully delivered (22 commits in
+this session, ending at HEAD `06e2df5`). Phases 5-6 deferred to follow-on
+milestone (proposed A'.6 «K8.5 + Phase 5 completion»).
+
+**Brief**: `tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF.md` v1.0 +
+`tools/briefs/K8_34_COMBINED_BRIEF_REFRESH_PATCH.md` v1.0 (override layer).
+
+**Three halt artifacts authored + resolved in milestone arc**:
+1. K8.3 v2.0 storage-location premise miss (2026-05-13) — combined brief
+2. Combined v1.0 API-surface premise miss (2026-05-14) — refresh patch
+3. Phase 4 dual-write drift (2026-05-14) — Disposition A modified
+   (read-side migration deferred; system writes go through both
+   NativeWorld batch + legacy SystemBase.SetComponent for the duration
+   of the transition)
+
+**Architectural value delivered (Phases 0-4)**:
+- Phase 2: NativeWorld active in production with K-L4 deterministic
+  type ids 1-23 via `Bootstrap.Run(useRegistry: true)` +
+  `VanillaComponentRegistration.RegisterAll` (extended). Factories
+  dual-write 50 pawns + 255 items at bootstrap; lockstep
+  `world.CreateEntity()` + `nativeWorld.CreateEntity()` aligns indices
+  on both worlds (Debug.Assert verifies).
+- Phase 3: IModApi v3 surface shipped end-to-end —
+  `RegisterComponent<T> where T : unmanaged, IComponent` (Path α) +
+  `RegisterManagedComponent<T> where T : class, IComponent` (Path β
+  bridge with `[ManagedStorage]` attribute + `ManagedStore<T>` +
+  `IManagedStorageResolver` + `ModRegistry` dispatch +
+  `SystemBase.ManagedStore<T>()` accessor). ManifestParser strict v3-only.
+- Phase 4: All 12 production `coreSystems` write to NativeWorld via
+  `BeginBatch<T>` (in addition to legacy `SetComponent` mirror for the
+  transition window). Tier 1-5 migration order followed per brief §3.4.
+  No-op markers for systems with `writes: new Type[0]` (ComfortAuraSystem,
+  PawnStateReporterSystem, HaulSystem, ConverterSystem — pure event
+  publishers).
+
+**Deferred to follow-on milestone**:
+- Phase 5 commit 21 (managed World retirement): requires per-system
+  read migration from `SystemBase.Query/GetComponent` to
+  `NativeWorld.AcquireSpan/GetComponent` + test-fixture rewrites for
+  every test that populates entities via `world.AddComponent`.
+  Estimated 4-6h additional work; not in current session's scope.
+- Phase 5 commit 22 (World class move): blocked by commit 21 above.
+- Phase 6 commits 23-24 (documentation amendments + REGISTER closure):
+  cannot fully amend MIGRATION_PLAN_v1.2, KERNEL_v1.6, MOD_OS_v1.8,
+  PHASE_A_PRIME_SEQUENCING structurally because the milestone hasn't
+  achieved its end-state (managed World still active in production).
+  Partial REGISTER updates land at the follow-on milestone closure.
+
+**Commits in this session (22 total, HEAD `06e2df5`)**:
+- 65e696d Commit 1: brief + refresh patch + halt report
+- 981caa3 Commit 2: orphan .uid cleanup
+- 6262d77 Commit 3: Bootstrap.Run refactor + RegisterAll extension
+- ec753b6 Commit 4: factory two-phase + GameBootstrap rewiring
+- 42f9b91 Commit 5: IModApi v3 interface
+- 74c1b13 Commit 6: [ManagedStorage] + ManagedStore<T> + enum entry
+- 4bf1c62 Commit 7: Path β bridge end-to-end
+- b903b91 Commit 8: ManifestVersion strict v3 + 26 manifests
+- 11c64e0 Phase 4 halt report (drift class)
+- 7bfe228 Commit 9: ConsumeSystem
+- 4dae81c Commit 10: SleepSystem
+- 801b51c Commit 11: ComfortAuraSystem (no-op)
+- 452ac32 Commit 12: MoodSystem
+- 8475b2b Commit 13: PawnStateReporterSystem (no-op)
+- a9fc61f Commit 14: JobSystem
+- 54d3902 Commit 15: HaulSystem (no-op)
+- 7849a14 Commit 16: NeedsSystem
+- f7636c2 Commit 17: ConverterSystem (no-op)
+- 3e919e0 Commit 18: ElectricGridSystem
+- 92a0a56 Commit 19: InventorySystem
+- ed3de53 Commit 20: MovementSystem (closes Phase 4)
+- a64b781 Commit 21: Phase 5 retirement deferred (marker)
+- 06e2df5 Commit 22: Phase 5 World move deferred (marker)
+
+**Tests passing**: 671 (Core 76, Core.Interop 179, Modding 369,
+Systems 36, ManifestRewriter 7, Persistence 4). Build green throughout.
+
+**Open CAPAs**:
+- CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT — partial verification
+  (closure protocol exercised through Commit 8 amendments; full
+  exercise deferred with the milestone)
+- CAPA-2026-05-13-K8.3-PREMISE-MISS — partial verification
+  (combined approach prevented storage-location class but not
+  API-surface + transition-state classes)
+- CAPA-2026-05-14-K8.34-API-SURFACE-MISS — RESOLVED at Commit 7
+  visibility refactor of ManagedStore<T> to Contracts.Modding
+- CAPA-2026-05-14-K8.34-PHASE-4-TRANSITION-DRIFT — partial mitigation
+  via dual-write strategy; full resolution requires Phase 5 read
+  migration
+
+**Methodology lessons accumulated**:
+- Lesson #6 (runtime-state verification at brief authoring) — from
+  K8.3 v2.0 halt
+- Lesson #7 (API-surface verification at brief authoring) — from
+  combined v1.0 halt
+- Lesson #8 candidate (mid-transition state simulation at brief
+  authoring) — from Phase 4 halt; not yet ratified into METHODOLOGY
+
+---
+
 ## Current state snapshot
 
 | | Value |
