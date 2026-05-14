@@ -69,6 +69,9 @@ namespace DualFrontier.Systems.Inventory
             int existing = 0;
             storage.Items.TryGet(itemKey, out existing);
             storage.Items.Set(itemKey, existing + e.Quantity);
+            // K8.3+K8.4 Phase 4 dual-write — legacy mirror removed Phase 5 commit 21.
+            using (var batch = NativeWorld.BeginBatch<StorageComponent>())
+                batch.Update(e.StorageId, storage);
             SetComponent(e.StorageId, storage);
             _cacheDirty = true;
         }
@@ -83,6 +86,8 @@ namespace DualFrontier.Systems.Inventory
                 storage.Items.Remove(itemKey);
             else
                 storage.Items.Set(itemKey, remaining);
+            using (var batch = NativeWorld.BeginBatch<StorageComponent>())
+                batch.Update(e.StorageId, storage);
             SetComponent(e.StorageId, storage);
             _cacheDirty = true;
 
