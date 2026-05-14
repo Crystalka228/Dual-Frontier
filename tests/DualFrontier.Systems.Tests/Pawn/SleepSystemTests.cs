@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Systems.Pawn;
 using FluentAssertions;
@@ -168,6 +169,9 @@ public sealed class SleepSystemTests
         var world    = new World();
         var services = new GameServices();
         var ticks    = new TickScheduler();
+        // K8.3+K8.4 Phase 4 — SystemBase.NativeWorld is required when systems
+        // call BeginBatch<T> on the native side (dual-write transition pattern).
+        var nativeWorld = new NativeWorld();
 
         var graph = new DependencyGraph();
         graph.AddSystem(new SleepSystem());
@@ -178,7 +182,8 @@ public sealed class SleepSystemTests
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services);
+            services,
+            nativeWorld);
         return (world, scheduler);
     }
 
@@ -187,6 +192,7 @@ public sealed class SleepSystemTests
         var world    = new World();
         var services = new GameServices();
         var ticks    = new TickScheduler();
+        var nativeWorld = new NativeWorld();
 
         var graph = new DependencyGraph();
         graph.AddSystem(new NeedsSystem());
@@ -198,7 +204,8 @@ public sealed class SleepSystemTests
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services);
+            services,
+            nativeWorld);
         return (world, scheduler);
     }
 
