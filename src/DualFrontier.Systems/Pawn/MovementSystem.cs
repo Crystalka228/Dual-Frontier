@@ -51,6 +51,21 @@ public sealed class MovementSystem : SystemBase
         Services.Pawns.Subscribe<PawnSleepFinishedEvent>(OnSleepFinished);
     }
 
+    // K8.3+K8.4 Phase 4 dual-write helpers — legacy mirror removed Phase 5 commit 21.
+    private void WriteMove(EntityId entity, MovementComponent move)
+    {
+        using (var batch = NativeWorld.BeginBatch<MovementComponent>())
+            batch.Update(entity, move);
+        SetComponent(entity, move);
+    }
+
+    private void WritePos(EntityId entity, PositionComponent pos)
+    {
+        using (var batch = NativeWorld.BeginBatch<PositionComponent>())
+            batch.Update(entity, pos);
+        SetComponent(entity, pos);
+    }
+
     private void OnConsumeTarget(PawnConsumeTargetEvent evt)
     {
         var move = GetComponent<MovementComponent>(evt.PawnId);
@@ -59,7 +74,7 @@ public sealed class MovementSystem : SystemBase
         // Drop any stale wander path so the next Update repaths toward the
         // newly assigned consume target instead of finishing the old route.
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
     }
 
     private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
@@ -68,7 +83,7 @@ public sealed class MovementSystem : SystemBase
         move.HasTarget = false;
         move.Target = default;
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
     }
 
     private void OnSleepTarget(PawnSleepTargetEvent evt)
@@ -77,7 +92,7 @@ public sealed class MovementSystem : SystemBase
         move.Target = evt.TargetTile;
         move.HasTarget = true;
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
     }
 
     private void OnSleepFinished(PawnSleepFinishedEvent evt)
@@ -86,7 +101,7 @@ public sealed class MovementSystem : SystemBase
         move.HasTarget = false;
         move.Target = default;
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
     }
 
     public override void Update(float delta)
@@ -99,7 +114,7 @@ public sealed class MovementSystem : SystemBase
             if (move.StepCooldown > 0)
             {
                 move.StepCooldown--;
-                SetComponent(entity, move);
+                WriteMove(entity, move);
                 continue;
             }
 
@@ -120,7 +135,7 @@ public sealed class MovementSystem : SystemBase
                     // an empty path which would otherwise loop indefinitely.
                     if (target.X == pos.Position.X && target.Y == pos.Position.Y)
                     {
-                        SetComponent(entity, move);
+                        WriteMove(entity, move);
                         continue;
                     }
                 }
@@ -154,7 +169,7 @@ public sealed class MovementSystem : SystemBase
                     move.Target = default;
                 }
 
-                SetComponent(entity, move);
+                WriteMove(entity, move);
                 continue;
             }
 
@@ -164,8 +179,8 @@ public sealed class MovementSystem : SystemBase
 
             move.StepCooldown = StepCooldownTicks;
 
-            SetComponent(entity, pos);
-            SetComponent(entity, move);
+            WritePos(entity, pos);
+            WriteMove(entity, move);
 
             Services.Pawns.Publish(new PawnMovedEvent
             {
