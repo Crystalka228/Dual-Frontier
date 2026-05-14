@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
----
-# DF DevKit — Godot editor plugin
+﻿# DF DevKit — Godot editor plugin
 
 ## Purpose
 Editor plugin for authoring game scenes and exporting to the `.dfscene`
@@ -42,3 +30,16 @@ and never lands in a production build.
 - No game logic here. Only authoring and export.
 - The JSON output is validated against the `SceneDef` DTO in
   `DualFrontier.Application.Scene`.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
+---

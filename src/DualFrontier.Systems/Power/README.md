@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-SYSTEMS-POWER
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-POWER
----
-# Power Systems
+﻿# Power Systems
 
 ## Purpose
 Power-supply networks: the electric grid, the ether grid, and converters
@@ -53,3 +41,16 @@ between them. See GDD section 9 "Power systems".
       `ElectricGrid ↔ Converter` via `PowerConsumer/PowerProducer`).
 - [ ] Implement `EtherGridSystem`: node density and transfer.
 - [ ] Consider splitting out a dedicated `IPowerBus` once traffic grows.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-SYSTEMS-POWER
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-POWER
+---

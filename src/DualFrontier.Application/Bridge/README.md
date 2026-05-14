@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-APPLICATION-BRIDGE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-BRIDGE
----
-# Bridge — Domain → Presentation bridge
+﻿# Bridge — Domain → Presentation bridge
 
 ## Purpose
 A unidirectional command queue between the domain (multithreaded) and the
@@ -47,3 +35,16 @@ bridge.DrainCommands(cmd => cmd.Execute(renderContext));
 ## TODO
 - [ ] Phase 3 — wire `DrainCommands` into `GameRoot._Process` in Presentation.
 - [ ] Phase 5 — fill `Commands/` with real effects.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-APPLICATION-BRIDGE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-BRIDGE
+---

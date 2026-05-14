@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-PRESENTATION-NODES
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-NODES
----
-# Nodes — Godot game-scene nodes
+﻿# Nodes — Godot game-scene nodes
 
 ## Purpose
 Visual scene nodes: the root (`GameRoot`) and its children
@@ -45,3 +33,16 @@ public override void _Process(double delta)
 ## TODO
 - [ ] Phase 3 — inherit from the corresponding Godot types.
 - [ ] Phase 3 — wire up to `.tscn` scenes from `Scenes/`.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-PRESENTATION-NODES
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-NODES
+---

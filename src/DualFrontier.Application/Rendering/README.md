@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-APPLICATION-RENDERING
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-RENDERING
----
-# Rendering — Render-backend contract
+﻿# Rendering — Render-backend contract
 
 ## Purpose
 `IRenderer` is the single entry point for any visual backend. Application holds
@@ -36,3 +24,16 @@ Godot DevKit and Native (Silk.NET). At runtime exactly one is active.
 ## See also
 - [../.docs/architecture/VISUAL_ENGINE.md](/docs/architecture/VISUAL_ENGINE.md) — overall
   DevKit vs Native strategy, the `.dfscene` format, and the developer pipeline.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-APPLICATION-RENDERING
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-RENDERING
+---

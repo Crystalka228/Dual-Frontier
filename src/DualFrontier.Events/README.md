@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-EVENTS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS
----
-# DualFrontier.Events
+﻿# DualFrontier.Events
 
 ## Purpose
 The assembly of all domain events, intents, and queries. Each event is an
@@ -62,3 +50,16 @@ _bus.Publish(new AmmoIntent { /* RequesterId = pawn, AmmoType = ..., Position = 
       handling (Phase 1).
 - [ ] Write a generator for "who publishes / who subscribes" diagrams from
       attributes and event names (Phase 3, tooling).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-EVENTS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS
+---

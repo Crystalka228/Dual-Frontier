@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-SYSTEMS-COMBAT
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-COMBAT
----
-# Combat Systems
+﻿# Combat Systems
 
 ## Purpose
 Combat: shot initiation, projectile flight, damage computation, shields, and
@@ -66,3 +54,16 @@ combatBus.Publish(new ShootAttemptEvent(shooterId, targetId));
 - `CombatSystem` updated: now declares the `Combat` and `Magic` buses
   (the shot's mana cost is part of the compound shot) and delegates resource
   checks through `CompoundShotIntent` instead of a direct `AmmoIntent`.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-SYSTEMS-COMBAT
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-COMBAT
+---

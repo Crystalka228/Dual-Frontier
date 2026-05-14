@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-SYSTEMS-FACTION
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-FACTION
----
-# Faction Systems
+﻿# Faction Systems
 
 ## Purpose
 Meta-game relations between factions: diplomacy, trade, and raids. See the
@@ -43,3 +31,16 @@ worldBus.Publish(new RaidIncomingEvent(fromFaction: "raiders", strength: 12));
 - [ ] Implement `RelationSystem`: relation matrix [-100..100].
 - [ ] Implement `TradeSystem`: per-faction goods table.
 - [ ] Implement `RaidSystem`: raid-strength formula derived from colony wealth.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-SYSTEMS-FACTION
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-FACTION
+---

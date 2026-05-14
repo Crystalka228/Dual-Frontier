@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CORE-MATH
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-MATH
----
-# Math — Grid math
+﻿# Math — Grid math
 
 ## Purpose
 Math primitives for tile-grid work and spatial indexing. Used by almost every
@@ -45,3 +33,16 @@ foreach (var near in grid.Query(position, radius: 5)) { /* ... */ }
 ## TODO
 - [ ] Phase 3 — implement `SpatialGrid.Insert/Remove/Update/Query`.
 - [ ] Phase 3 — cover `SpatialGrid` with a benchmark (BenchmarkDotNet).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CORE-MATH
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-MATH
+---

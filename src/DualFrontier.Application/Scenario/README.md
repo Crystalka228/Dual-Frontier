@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-APPLICATION-SCENARIO
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-SCENARIO
----
-# Scenario — Scenario loading
+﻿# Scenario — Scenario loading
 
 ## Purpose
 Start scenarios describe the initial world state: biome, generation seed,
@@ -47,3 +35,16 @@ ScenarioDef scenario = loader.Load("scenarios/default.json");
 - [ ] Schema validation and clear parse-error messages.
 - [ ] `LoadDefault()` is used when the scenario file is missing
       (the method exists, but the caller does not yet fall back).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-APPLICATION-SCENARIO
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-SCENARIO
+---

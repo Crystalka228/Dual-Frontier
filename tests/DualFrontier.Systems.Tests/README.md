@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-TESTS-SYSTEMS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TESTS-SYSTEMS
----
-# DualFrontier.Systems.Tests
+﻿# DualFrontier.Systems.Tests
 
 ## Purpose
 Tests for game systems: Pathfinding, Jobs, Inventory, Combat, Magic, etc.
@@ -38,3 +26,16 @@ Run: `dotnet test tests/DualFrontier.Systems.Tests/DualFrontier.Systems.Tests.cs
 - [ ] Phase 3 — Jobs/Needs tests.
 - [ ] Phase 4 — Inventory/Craft tests.
 - [ ] Phase 5 — Combat/Projectile tests.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-TESTS-SYSTEMS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TESTS-SYSTEMS
+---

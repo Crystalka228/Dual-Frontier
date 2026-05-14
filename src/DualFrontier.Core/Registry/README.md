@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CORE-REGISTRY
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-REGISTRY
----
-# Registry — Type registries
+﻿# Registry — Type registries
 
 ## Purpose
 Registries for component and system types. They are needed for:
@@ -49,3 +37,16 @@ foreach (var system in systems.GetAll()) { /* build graph */ }
 - [ ] Phase 1 — implement `ComponentRegistry` with stable IDs.
 - [ ] Phase 1 — implement `SystemRegistry`.
 - [ ] Phase 2 — add Type ↔ ID mapping serialization to the save file.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CORE-REGISTRY
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-REGISTRY
+---

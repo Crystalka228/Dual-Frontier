@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-EVENTS-COMBAT
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS-COMBAT
----
-# Combat Events
+﻿# Combat Events
 
 ## Purpose
 Events of the combat subsystem: shot attempts, ammunition requests via the
@@ -57,3 +45,16 @@ Combat-subsystem extension: two-phase commit for the "compound shot" (ammo + man
 - `ShootGranted.cs` — `IEvent`: both buses confirmed; the shot is permitted.
 - `ShootRefused.cs` — `IEvent`: at least one bus refused; the shot is canceled.
 - `DamageIntent.cs` — `ICommand`: damage-application request for `DamageSystem` (before publishing `DamageEvent`).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-EVENTS-COMBAT
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS-COMBAT
+---

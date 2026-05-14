@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-COMPONENTS-WORLD
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-WORLD
----
-# World
+﻿# World
 
 ## Purpose
 Components for entities that represent the world: tiles, ether nodes, biomes.
@@ -41,3 +29,16 @@ world.AddComponent(node, new PositionComponent { Position = new GridVector(42, 1
       Arcane, Unknown).
 - [ ] Plan layers (floor / wall / decorative) — possibly through separate
       components rather than through `TileComponent`.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-COMPONENTS-WORLD
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-WORLD
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CONTRACTS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS
----
-# DualFrontier.Contracts
+﻿# DualFrontier.Contracts
 
 ## Purpose
 Public contracts of the Dual Frontier project — ECS marker interfaces, base
@@ -55,3 +43,16 @@ public sealed class ExampleSystem { }
 - [ ] Phase 0 — align `IModApi` signatures with the mod loading subsystem.
 - [ ] Phase 2 — add contract versioning (`[ContractVersion]` attribute).
 - [ ] Phase 2 — document the SemVer policy for breaking changes.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CONTRACTS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS
+---

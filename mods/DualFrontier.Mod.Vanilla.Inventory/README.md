@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-MODS-VANILLA-INVENTORY
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-VANILLA-INVENTORY
----
-# DualFrontier.Mod.Vanilla.Inventory
+﻿# DualFrontier.Mod.Vanilla.Inventory
 
 ## Purpose
 Vanilla Inventory mod — empty M8 skeleton. Establishes the assembly,
@@ -30,3 +18,16 @@ folds under Inventory for the economy pipeline per §1.3).
 
 ## Status
 M8.1 skeleton — content empty. Migration target: M10 Inventory.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-MODS-VANILLA-INVENTORY
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-VANILLA-INVENTORY
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-SYSTEMS-PAWN
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-PAWN
----
-# Pawn Systems
+﻿# Pawn Systems
 
 ## Purpose
 Pawn lifecycle systems: needs (hunger/sleep/rest), current job selection,
@@ -61,3 +49,16 @@ foreach (var pawn in Query<NeedsComponent, SkillsComponent, PositionComponent>()
 - [ ] Wire event publication through `IGameServices` — `MoodSystem` currently
       has a stub instead of actually publishing `MoodBreakEvent`; systems do
       not yet have bus access.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-SYSTEMS-PAWN
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-PAWN
+---

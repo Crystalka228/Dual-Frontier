@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CORE-SCHEDULING
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-SCHEDULING
----
-# Scheduling — Parallel scheduler
+﻿# Scheduling — Parallel scheduler
 
 ## Purpose
 Builds the READ/WRITE dependency graph between systems based on `[SystemAccess]`
@@ -57,3 +45,16 @@ scheduler.ExecuteTick(delta: 1f / 30f);
 - [x] Phase 1 — implement parallel phase execution.
 - [x] Phase 1 — implement `TickScheduler` with multiple frequencies.
 - [x] Phase 1 — add cycle detection in the graph with diagnostics.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CORE-SCHEDULING
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-SCHEDULING
+---

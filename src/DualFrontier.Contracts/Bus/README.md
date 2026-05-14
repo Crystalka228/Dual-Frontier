@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CONTRACTS-BUS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS-BUS
----
-# Bus — Domain event buses
+﻿# Bus — Domain event buses
 
 ## Purpose
 Defines the base event-bus contract `IEventBus` and the six domain buses
@@ -55,3 +43,16 @@ public sealed class CombatSystem
 - [x] Phase 1 — `DomainEventBus` implemented with a `ConcurrentDictionary` of subscriptions.
 - [x] Phase 1 — `GameServices` implemented as the composition of the six buses.
 - [ ] Phase 2 — add metrics (events/sec per bus) for the profiler.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CONTRACTS-BUS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS-BUS
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-IDEAS_README
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "1.0"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-IDEAS_README
----
-# docs/ideas — Ideas Bank index
+﻿# docs/ideas — Ideas Bank index
 
 *This folder contains Category I idea documents (Tier 5 Speculative per A'.4.5 governance framework).*
 
@@ -46,3 +34,16 @@ New idea: `docs/ideas/<slug>.md` (kebab-case slug). Register ID `DOC-I-<SLUG_UPP
 - [docs/governance/FRAMEWORK.md](../governance/FRAMEWORK.md) §3 classification model
 - [docs/IDEAS_RESERVOIR.md](../IDEAS_RESERVOIR.md) project-wide index (Category C Tier 2)
 - [docs/governance/REGISTER.yaml](../governance/REGISTER.yaml) operational SoT
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-G-IDEAS_README
+category: G
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "1.0"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-IDEAS_README
+---

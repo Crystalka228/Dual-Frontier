@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-AI-JOBS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-AI-JOBS
----
-# Jobs
+﻿# Jobs
 
 ## Purpose
 A job is a "task" the pawn executes step by step: walk, pick up, process, drop.
@@ -49,3 +37,16 @@ while (job.Tick(delta) == JobStatus.Running) { /* next frame */ }
 - [ ] Implement every job.
 - [ ] Add job serialization for save files (through `Application`).
 - [ ] Write Abort unit tests for every job.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-AI-JOBS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-AI-JOBS
+---

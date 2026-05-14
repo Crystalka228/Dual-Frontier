@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-MODS-VANILLA-WORLD
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-VANILLA-WORLD
----
-# DualFrontier.Mod.Vanilla.World
+﻿# DualFrontier.Mod.Vanilla.World
 
 ## Purpose
 Vanilla World mod — empty M8 skeleton. Establishes the assembly,
@@ -31,3 +19,16 @@ entity types).
 ## Status
 M8.1 skeleton — content empty. Migration target: M8.4 Item factory + 4
 entity types.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-MODS-VANILLA-WORLD
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-VANILLA-WORLD
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-COMPONENTS-SHARED
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-SHARED
----
-# Shared
+﻿# Shared
 
 ## Purpose
 Components potentially applicable to any entity: world position, health, faction
@@ -43,3 +31,16 @@ world.AddComponent(pawn, new FactionComponent { /* FactionId = "colony" */ });
 ## TODO
 - [ ] Define the `RaceKind` enum (Human, Undead, Synthetic …) per the GDD.
 - [ ] Decide: `FactionId` — `string` or `int` (ID in the faction table).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-COMPONENTS-SHARED
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-SHARED
+---

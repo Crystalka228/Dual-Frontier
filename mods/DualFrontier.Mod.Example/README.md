@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-MODS-EXAMPLE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-EXAMPLE
----
-# DualFrontier.Mod.Example
+﻿# DualFrontier.Mod.Example
 
 ## Purpose
 Reference example mod: a minimal assembly demonstrating the correct
@@ -49,3 +37,16 @@ The mod assembly is built into `mods/DualFrontier.Mod.Example/bin/.../net8.0/`;
 ## TODO
 - [ ] Phase 2 — add an example of registering a component and subscribing to an event.
 - [ ] Phase 2 — example of `PublishContract<T>` / `TryGetContract<T>`.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-MODS-EXAMPLE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-EXAMPLE
+---

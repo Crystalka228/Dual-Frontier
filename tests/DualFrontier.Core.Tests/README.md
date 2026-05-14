@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-TESTS-CORE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TESTS-CORE
----
-# DualFrontier.Core.Tests
+﻿# DualFrontier.Core.Tests
 
 ## Purpose
 Core unit tests: ECS (`World`, `ComponentStore`), scheduler
@@ -39,3 +27,16 @@ Run: `dotnet test tests/DualFrontier.Core.Tests/DualFrontier.Core.Tests.csproj`.
 - [ ] Phase 2 — fill `Isolation/` with `[SystemAccess]` tests.
 - [ ] Phase 2 — `Scheduling/` with the dependency graph.
 - [ ] Phase 1 — `ECS/` with the basic entity lifecycle.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-TESTS-CORE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TESTS-CORE
+---

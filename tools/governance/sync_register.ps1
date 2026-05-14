@@ -304,16 +304,44 @@ register_view_url: docs/governance/REGISTER_RENDER.md#$($doc.id)
 ---
 
 "@
+        # Frontmatter position policy: README.md files get frontmatter at END
+        # of file. GitHub renders any README.md as the directory front page
+        # without stripping YAML frontmatter; the auto-generated YAML's
+        # "# Auto-generated…" comment lines render as H1 Markdown headings
+        # at the top of the rendered page, obscuring the document's actual
+        # title (e.g. "Dual Frontier" at the repo root). End-of-file placement
+        # keeps the H1 title visible to readers while preserving the register
+        # metadata for tooling. Non-README files keep frontmatter at TOP per
+        # the original convention (Tier 1 specs, briefs, closure reports).
+        $leafName = Split-Path -Path $path -Leaf
+        $placeAtEnd = ($leafName -eq 'README.md')
+
         # Strip ALL leading register-generated frontmatter blocks (handles prior double-write bug).
         # Pattern '(?s)' enables single-line mode so . matches newlines.
         # Repeat strip until no leading register frontmatter remains.
         while ($content -match '(?s)^﻿?---\s*[\r\n]+(?<fm># Auto-generated from docs/governance/REGISTER.yaml.*?register_id:.*?[\r\n]+)---\s*[\r\n]+(?<rest>.*)$') {
             $content = $Matches['rest']
         }
+        # Strip ALL trailing register-generated frontmatter blocks (handles
+        # end-of-file placement + prior end-of-file double-write artefacts).
+        # Anchored at '$' to find the LAST FM block; loop re-runs to strip
+        # any earlier trailing FMs.
+        while ($content -match '(?s)^(?<rest>.*?)\s*[\r\n]+---\s*[\r\n]+# Auto-generated from docs/governance/REGISTER\.yaml.*?register_id:.*?[\r\n]+---\s*[\r\n]*$') {
+            $content = $Matches['rest']
+        }
         # Preserve any pre-existing non-register frontmatter (e.g., translation docs with original frontmatter)
-        # by not stripping non-register blocks. The while loop above only matches register-generated ones.
+        # by not stripping non-register blocks. The while loops above only match register-generated ones.
 
-        $newContent = $frontmatter + $content
+        if ($placeAtEnd) {
+            $contentTrimmed = $content -replace '[\r\n\s]+$', ''
+            if ($contentTrimmed.Length -gt 0) {
+                $newContent = "$contentTrimmed`n`n$frontmatter"
+            } else {
+                $newContent = $frontmatter
+            }
+        } else {
+            $newContent = $frontmatter + $content
+        }
         Set-Content -Path $fullPath -Value $newContent -Encoding UTF8 -NoNewline
         $syncedCount++
     }

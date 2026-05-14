@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-COMPONENTS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS
----
-# DualFrontier.Components
+﻿# DualFrontier.Components
 
 ## Purpose
 The ECS components assembly. Pure POCO data, no logic. Every component
@@ -68,3 +56,16 @@ public class DeathReporterSystem : SystemBase
       domain folders.
       (`GridVector` is already defined in `DualFrontier.Contracts.Math`.)
 - [ ] Write unit tests for component serialization (Phase 3, for save/load).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-COMPONENTS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-APPLICATION-BRIDGE-COMMANDS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-BRIDGE-COMMANDS
----
-# Commands — Render commands
+﻿# Commands — Render commands
 
 ## Purpose
 Concrete `IRenderCommand` implementations. Each file is a single command:
@@ -45,3 +33,16 @@ bridge.Enqueue(new PawnDiedCommand(pawnId, x: 42, y: 17));
 - [ ] Phase 5 — fill `Execute` with real Godot logic through Presentation
       helpers.
 - [ ] Phase 5 — add commands for the rest of the domain events.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-APPLICATION-BRIDGE-COMMANDS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-BRIDGE-COMMANDS
+---

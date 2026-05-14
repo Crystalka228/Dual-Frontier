@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-AI-BEHAVIOURTREE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-AI-BEHAVIOURTREE
----
-# BehaviourTree
+﻿# BehaviourTree
 
 ## Purpose
 A generic behaviour tree for pawns and units. The BT does not store world
@@ -52,3 +40,16 @@ var status = root.Tick(ctx);
 - [ ] Implement `Leaf` as abstract with debugger-visible fields.
 - [ ] Add `BTBlackboard` for per-pawn local state.
 - [ ] BT JSON parser for mods.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-AI-BEHAVIOURTREE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-AI-BEHAVIOURTREE
+---

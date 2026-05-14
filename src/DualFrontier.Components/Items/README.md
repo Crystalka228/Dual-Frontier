@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-COMPONENTS-ITEMS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-ITEMS
----
-# Items
+﻿# Items
 
 ## Purpose
 Components for world-placed item entities — consumables (food, drink),
@@ -91,3 +79,16 @@ foreach (var decoration in Query<DecorativeAuraComponent>())
 - [ ] Multi-occupant beds (bunk beds) — defer; single-occupant в M8.
 - [ ] Aura decay over time (e.g. flowers wilt) — defer to spoilage system.
 - [ ] Item carrying / inventory — separate component family когда `Inventory` mod has content (M10).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-COMPONENTS-ITEMS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-ITEMS
+---

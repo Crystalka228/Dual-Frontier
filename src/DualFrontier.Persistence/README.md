@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-PERSISTENCE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PERSISTENCE
----
-# DualFrontier.Persistence
+﻿# DualFrontier.Persistence
 
 ## Purpose
 
@@ -127,3 +115,16 @@ This gives three guarantees:
   and `encoded.Length < 32`.
 - `StringPool_intern_dedup` — a repeated `Intern` returns the same handle
   and does not grow the pool.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-PERSISTENCE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PERSISTENCE
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-SYSTEMS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS
----
-# DualFrontier.Systems
+﻿# DualFrontier.Systems
 
 ## Purpose
 All Dual Frontier game logic. Each system is a `SystemBase` subclass that
@@ -68,3 +56,16 @@ public sealed class CombatSystem : SystemBase { /* ... */ }
 - [ ] Subscribe to relevant events in each system's `OnInitialize()`.
 - [ ] Cover dependency-graph tests (READ/WRITE conflicts → error).
 - [ ] Add integration tests for "one phase — one bus pass".
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-SYSTEMS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS
+---

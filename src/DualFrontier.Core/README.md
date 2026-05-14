@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CORE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE
----
-# DualFrontier.Core
+﻿# DualFrontier.Core
 
 ## Purpose
 The project's core: ECS (World + ComponentStore + SystemBase + isolation guard),
@@ -69,3 +57,16 @@ scheduler.ExecuteTick(delta: 1f / 30f);
 - [x] Phase 1 — implement `DependencyGraph` and `ParallelSystemScheduler`.
 - [x] Phase 1 — implement `DomainEventBus` and `GameServices`.
 - [x] Phase 2 — write isolation tests confirming the guard crashes.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CORE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE
+---

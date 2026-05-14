@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-PRESENTATION-SCENES
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-SCENES
----
-# Scenes — Godot scenes
+﻿# Scenes — Godot scenes
 
 ## Purpose
 Godot scene `.tscn` files (main menu, game scene, UI overlays).
@@ -34,3 +22,16 @@ Editing through the Godot editor; programmatic access via
 
 ## TODO
 - [ ] Phase 3 — create the base scenes (`main.tscn`, `ui_root.tscn`).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-PRESENTATION-SCENES
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-SCENES
+---

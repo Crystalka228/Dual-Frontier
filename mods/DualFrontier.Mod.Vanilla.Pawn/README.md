@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-MODS-VANILLA-PAWN
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-VANILLA-PAWN
----
-# DualFrontier.Mod.Vanilla.Pawn
+﻿# DualFrontier.Mod.Vanilla.Pawn
 
 ## Purpose
 Vanilla Pawn mod — empty M8 skeleton. Establishes the assembly,
@@ -31,3 +19,16 @@ Content migration into this mod happens across M8.5–M8.7
 ## Status
 M8.1 skeleton — content empty. Migration target: M8.5–M8.7
 ConsumeSystem / SleepSystem / ComfortAuraSystem.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-MODS-VANILLA-PAWN
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-VANILLA-PAWN
+---

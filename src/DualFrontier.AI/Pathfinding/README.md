@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-AI-PATHFINDING
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-AI-PATHFINDING
----
-# Pathfinding
+﻿# Pathfinding
 
 ## Purpose
 A* pathfinding over the passability grid. Strictly synchronous: no
@@ -51,3 +39,16 @@ if (pf.TryFindPath(from, to, out var path)) { /* use it */ }
 - [ ] Add hierarchical pathfinding for distant goals.
 - [ ] Path cache between frequently used pairs of points (invalidation on
       `BuildingPlacedEvent` / `TileChangedEvent`, see PERFORMANCE).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-AI-PATHFINDING
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-AI-PATHFINDING
+---

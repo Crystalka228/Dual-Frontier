@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-APPLICATION
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION
----
-# DualFrontier.Application
+﻿# DualFrontier.Application
 
 ## Purpose
 The glue layer between the domain (`Core`, `Systems`, `Components`, `Events`, `AI`)
@@ -71,3 +59,16 @@ loop.Start();
       (`PresentationBridge.SetScene` / `EnqueueInput` do not yet exist;
       `GameBootstrap` is not implemented).
 - [x] Phase 3 — `ScenarioLoader` parses JSON via `System.Text.Json`.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-APPLICATION
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-APPLICATION-MODDING
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-MODDING
----
-# Modding — Mod loader
+﻿# Modding — Mod loader
 
 ## Purpose
 Infrastructure for loading, unloading, and isolating mods. Each mod lives in
@@ -55,3 +43,16 @@ loader.UnloadMod("dualfrontier.example");
 - [ ] Phase 2 — `RestrictedModApi` proxies into `GameServices`.
 - [ ] Phase 2 — isolation tests (`tests/DualFrontier.Modding.Tests`).
 - [ ] Phase 3 — hot reload (Unload + repeat LoadMod).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-APPLICATION-MODDING
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-MODDING
+---

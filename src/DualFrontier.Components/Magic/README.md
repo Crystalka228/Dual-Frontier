@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-COMPONENTS-MAGIC
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-MAGIC
----
-# Magic
+﻿# Magic
 
 ## Purpose
 Components of the magic subsystem: mana, magic-school levels, ether perception,
@@ -52,3 +40,16 @@ Extension to `GolemBondComponent` (v02 §12.5): ownership-mode fields and contes
 - `GolemBondComponent.BondStrength` — `int`, bond strength, used in dispute resolution.
 
 Note: the `OwnershipMode` enum is defined in `DualFrontier.Contracts.Enums` — Components do not depend on Events, so the shared type is lifted into Contracts.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-COMPONENTS-MAGIC
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-MAGIC
+---

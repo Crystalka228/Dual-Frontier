@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-EVENTS-POWER
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS-POWER
----
-# Power Events
+﻿# Power Events
 
 ## Purpose
 Power-grid events (electricity and ether): power requests, grants, overload.
@@ -42,3 +30,16 @@ _bus.Publish(new PowerRequestEvent { /* ConsumerId = forge, Type = PowerType.Eth
 ## TODO
 - [ ] Decide: separate `GridOverload` events for Electric and Ether, or a shared event with the kind in the body.
 - [ ] Add `PowerShutdownEvent` for forced shutdown (Phase 4).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-EVENTS-POWER
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS-POWER
+---

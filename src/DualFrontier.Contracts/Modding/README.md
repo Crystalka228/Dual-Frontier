@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CONTRACTS-MODDING
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS-MODDING
----
-# Modding — Mod API
+﻿# Modding — Mod API
 
 ## Purpose
 The public mod API. Every mod implements `IMod`, receives an `IModApi`, and
@@ -55,3 +43,16 @@ public sealed class ExampleMod : IMod
 - [ ] Phase 2 — describe the `mod.manifest.json` structure and the mapping to `ModManifest`.
 - [ ] Phase 2 — settle the SemVer policy for `ModManifest.Version`.
 - [ ] Phase 2 — implement `RestrictedModApi` in `DualFrontier.Application`.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CONTRACTS-MODDING
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS-MODDING
+---

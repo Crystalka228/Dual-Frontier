@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-EVENTS-MAGIC
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS-MAGIC
----
-# Magic Events
+﻿# Magic Events
 
 ## Purpose
 Events of the magic subsystem: mana requests (the two-step model), spells,
@@ -60,3 +48,16 @@ Magic-subsystem extension: continuous mana lease and golem ownership transfer.
 - `GolemOwnershipChanged.cs` — `[Deferred]` `IEvent`: golem ownership changed.
 
 Note: `OwnershipMode` lives in `DualFrontier.Contracts.Enums`, since it is used both by components (`GolemBondComponent`) and by magic events.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-EVENTS-MAGIC
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS-MAGIC
+---

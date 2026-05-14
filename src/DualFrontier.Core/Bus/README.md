@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CORE-BUS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-BUS
----
-# Bus — Domain bus implementations
+﻿# Bus — Domain bus implementations
 
 ## Purpose
 Implements the `IEventBus` and `IGameServices` contracts from
@@ -47,3 +35,16 @@ services.Inventory.Subscribe<AmmoIntent>(batcher.Collect);
 - [x] Phase 1 — implement `DomainEventBus` with `[Deferred]` / `[Immediate]` support.
 - [x] Phase 1 — implement `IntentBatcher` with two-phase collection and drain.
 - [ ] Phase 2 — add telemetry (events/sec counters per bus).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CORE-BUS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-BUS
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-SYSTEMS-INVENTORY
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-INVENTORY
----
-# Inventory Systems
+﻿# Inventory Systems
 
 ## Purpose
 Storage, hauling, and crafting. See the GDD "Resources and production" section
@@ -57,3 +45,16 @@ inventoryBus.Publish(new AmmoIntentEvent(shooter, weaponId, amount: 1));
       otherwise `InventorySystem.OnItemAdded.SetComponent` runs in the
       publisher's context and trips the DEBUG isolation guard as soon as
       real `StorageComponent` entities appear.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-SYSTEMS-INVENTORY
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-INVENTORY
+---

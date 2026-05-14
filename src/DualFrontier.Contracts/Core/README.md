@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-CONTRACTS-CORE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS-CORE
----
-# Core — ECS marker interfaces
+﻿# Core — ECS marker interfaces
 
 ## Purpose
 Defines the base ECS types on which the entire domain model is built: the
@@ -53,3 +41,16 @@ EntityId id = EntityId.Invalid; // "no entity" check
 - [ ] Phase 0 — settle the `EntityId` version-field format (int vs ushort).
 - [ ] Phase 2 — add `IQuery<TResult>` for type-safe queries.
 - [ ] Phase 2 — cover `EntityId` with equality and hash-code tests.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-CONTRACTS-CORE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CONTRACTS-CORE
+---

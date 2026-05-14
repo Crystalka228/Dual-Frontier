@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-SYSTEMS-MAGIC-INTERNAL
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-MAGIC-INTERNAL
----
-# Magic / Internal
+﻿# Magic / Internal
 
 ## Purpose
 
@@ -45,3 +33,16 @@ and the other systems in this assembly.
 See §12.2 "Continuous mana leases" — the rationale for the two-step
 `ManaLeaseOpenRequest` / `ManaLeaseOpened` / `ManaLeaseClosed` model and why
 the registry lives inside ManaSystem rather than on a public bus.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-SYSTEMS-MAGIC-INTERNAL
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-SYSTEMS-MAGIC-INTERNAL
+---

@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-TESTS
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TESTS
----
-# tests/
+﻿# tests/
 
 xUnit + FluentAssertions. See [docs/methodology/TESTING_STRATEGY.md](/docs/methodology/TESTING_STRATEGY.md).
 
@@ -25,3 +13,16 @@ xUnit + FluentAssertions. See [docs/methodology/TESTING_STRATEGY.md](/docs/metho
 ```bash
 dotnet test
 ```
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-TESTS
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TESTS
+---

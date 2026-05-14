@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-PRESENTATION
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION
----
-# DualFrontier.Presentation
+﻿# DualFrontier.Presentation
 
 ## Purpose
 The Godot layer: nodes, UI controls, input. The only assembly allowed to use
@@ -64,3 +52,16 @@ public override void _Process(double delta)
 - [ ] Phase 3 — make nodes inherit from the corresponding base Godot classes.
 - [ ] Phase 3 — create the real Godot project and replace `project.godot`.
 - [ ] Phase 3.5 — implement GodotRenderer through IDevKitRenderer (inherits IRenderer + debug surface).
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-PRESENTATION
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION
+---

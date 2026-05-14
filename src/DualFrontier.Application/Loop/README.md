@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-APPLICATION-LOOP
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-LOOP
----
-# Loop — Main game loop
+﻿# Loop — Main game loop
 
 ## Purpose
 Main simulation loop. `GameLoop` ticks systems through the `Core` scheduler
@@ -47,3 +35,16 @@ while (running)
 - [x] Phase 1 — pause / speed multiplier (x1/x2/x3).
 - [x] Phase 3 — `GameBootstrap` implemented; `NavGrid` and
       `MovementSystem` are wired in.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-APPLICATION-LOOP
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-LOOP
+---

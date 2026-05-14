@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-MECHANICS_README
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "1.0"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-MECHANICS_README
----
-# docs/mechanics — Game Mechanics index
+﻿# docs/mechanics — Game Mechanics index
 
 *This folder contains Category J game mechanics design documents (Tier 1 or Tier 2 per A'.4.5 governance framework).*
 
@@ -49,3 +37,16 @@ Inline classification by execution agent at A'.4.5 enrollment with `special_case
 
 - [docs/governance/FRAMEWORK.md](../governance/FRAMEWORK.md) §3 classification model
 - [docs/governance/REGISTER.yaml](../governance/REGISTER.yaml) operational SoT
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-G-MECHANICS_README
+category: G
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "1.0"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-MECHANICS_README
+---

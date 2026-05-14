@@ -1,16 +1,4 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-F-SRC-PRESENTATION-NATIVE
-category: F
-tier: 4
-lifecycle: Live
-owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-NATIVE
----
-# DualFrontier.Presentation.Native — Production Runtime Stub
+﻿# DualFrontier.Presentation.Native — Production Runtime Stub
 
 ## Purpose
 A production runtime on Silk.NET + OpenGL. Implements the `IRenderer`,
@@ -47,3 +35,16 @@ Neither `Core`, nor `Systems`, nor `Godot`.
 - [ ] Phase 5 — implement Silk.NET input polling in NativeInputHandler.
 - [ ] Phase 6 — add SpriteBatch + TilemapRenderer + ShaderProgram.
 - [ ] Phase 6 — add ImGui.NET for the HUD.
+
+---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-F-SRC-PRESENTATION-NATIVE
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-PRESENTATION-NATIVE
+---
