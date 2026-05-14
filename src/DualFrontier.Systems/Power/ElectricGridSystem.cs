@@ -5,6 +5,7 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Power;
 
 namespace DualFrontier.Systems.Power;
@@ -76,6 +77,9 @@ public sealed class ElectricGridSystem : SystemBase
 
         float remaining      = totalSupply;
         int   unpoweredCount = 0;
+        // K8.3+K8.4 Phase 4 — single batch wraps all consumer flip writes;
+        // legacy SetComponent mirrors for dual-write (removed Phase 5 commit 21).
+        using var batch = NativeWorld.BeginBatch<PowerConsumerComponent>();
         foreach (var pair in _consumers)
         {
             var entity   = pair.Entity;
@@ -84,6 +88,7 @@ public sealed class ElectricGridSystem : SystemBase
             {
                 consumer.IsPowered = true;
                 remaining -= consumer.RequiredWatts;
+                batch.Update(entity, consumer);
                 SetComponent(entity, consumer);
 
                 Services.Power.Publish(new PowerGrantedEvent
@@ -95,6 +100,7 @@ public sealed class ElectricGridSystem : SystemBase
             else
             {
                 consumer.IsPowered = false;
+                batch.Update(entity, consumer);
                 SetComponent(entity, consumer);
                 unpoweredCount++;
             }

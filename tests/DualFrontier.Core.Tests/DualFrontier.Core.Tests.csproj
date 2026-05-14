@@ -15,4 +15,17 @@
     <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
   </ItemGroup>
+  <!--
+    K8.3+K8.4 — native DLL ride-along for tests that construct NativeWorld
+    (ConverterCycleResolutionTests + any future Phase 4 Core.Tests touching
+    the system layer). Mirrors the pattern in Core.Interop.Tests / Modding.Tests
+    / Systems.Tests / Benchmarks csproj files.
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+  </ItemGroup>
 </Project>
