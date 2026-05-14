@@ -50,11 +50,17 @@ public class BootstrapTests
     [Fact]
     public void Bootstrap_with_registry_uses_deterministic_ids()
     {
-        using var world1 = Bootstrap.Run();
+        // useRegistry: false — this test constructs its own ComponentTypeRegistry
+        // to verify deterministic id assignment in isolation. Post-K8.3+K8.4
+        // Bootstrap.Run(useRegistry: true) would create world.Registry alongside,
+        // and the two registries would race on id allocation against the same
+        // native handle (sequential _nextId both starting at 1) — for this
+        // determinism test we want a single registry on the handle.
+        using var world1 = Bootstrap.Run(useRegistry: false);
         var registry1 = new ComponentTypeRegistry(world1.HandleForInternalUseTest);
         uint id1 = registry1.Register<TestComponent>();
 
-        using var world2 = Bootstrap.Run();
+        using var world2 = Bootstrap.Run(useRegistry: false);
         var registry2 = new ComponentTypeRegistry(world2.HandleForInternalUseTest);
         uint id2 = registry2.Register<TestComponent>();
 

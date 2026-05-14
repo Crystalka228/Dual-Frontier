@@ -28,23 +28,35 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void Smoke_AllVanillaComponents_RegisterSuccessfully()
     {
-        using var world = Bootstrap.Run();
+        // useRegistry: false — this test constructs its own ComponentTypeRegistry
+        // and registers all Vanilla components against the native handle directly.
+        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
+        // world.Registry; two registries on one handle would race on id
+        // allocation. Tests that exercise the registry class in isolation pass
+        // useRegistry: false; production code uses the default (true).
+        using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
 
         // Should not throw — all production components must register
         var act = () => VanillaComponentRegistration.RegisterAll(registry);
         act.Should().NotThrow();
 
-        // Verify count: post-K8.2-v2-stub-deletions complete. 19 surviving
-        // production components after Combat (3) + Magic.School + World.Biome
-        // deletions; Social was class — never registered.
-        registry.Count.Should().Be(19);
+        // Verify count: 19 K4-era + 4 K8.3+K8.4 appended (Identity, Skills,
+        // Movement, Storage) = 23. The K8.3+K8.4 extension preserves K4-era
+        // ids 1-19 by appending the new entries at the very end of the helper.
+        registry.Count.Should().Be(23);
     }
 
     [Fact]
     public void HealthComponent_RoundTrip_PreservesData()
     {
-        using var world = Bootstrap.Run();
+        // useRegistry: false — this test constructs its own ComponentTypeRegistry
+        // and registers all Vanilla components against the native handle directly.
+        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
+        // world.Registry; two registries on one handle would race on id
+        // allocation. Tests that exercise the registry class in isolation pass
+        // useRegistry: false; production code uses the default (true).
+        using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
         VanillaComponentRegistration.RegisterAll(registry);
 
@@ -62,7 +74,13 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void NeedsComponent_RoundTrip_PreservesComputedProperties()
     {
-        using var world = Bootstrap.Run();
+        // useRegistry: false — this test constructs its own ComponentTypeRegistry
+        // and registers all Vanilla components against the native handle directly.
+        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
+        // world.Registry; two registries on one handle would race on id
+        // allocation. Tests that exercise the registry class in isolation pass
+        // useRegistry: false; production code uses the default (true).
+        using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
         VanillaComponentRegistration.RegisterAll(registry);
 
@@ -93,7 +111,13 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void JobComponent_RoundTrip_PreservesNullableEntityId()
     {
-        using var world = Bootstrap.Run();
+        // useRegistry: false — this test constructs its own ComponentTypeRegistry
+        // and registers all Vanilla components against the native handle directly.
+        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
+        // world.Registry; two registries on one handle would race on id
+        // allocation. Tests that exercise the registry class in isolation pass
+        // useRegistry: false; production code uses the default (true).
+        using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
         VanillaComponentRegistration.RegisterAll(registry);
 
@@ -135,7 +159,13 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void RaceComponent_RoundTrip_PreservesInitOnlyFields()
     {
-        using var world = Bootstrap.Run();
+        // useRegistry: false — this test constructs its own ComponentTypeRegistry
+        // and registers all Vanilla components against the native handle directly.
+        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
+        // world.Registry; two registries on one handle would race on id
+        // allocation. Tests that exercise the registry class in isolation pass
+        // useRegistry: false; production code uses the default (true).
+        using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
         VanillaComponentRegistration.RegisterAll(registry);
 
@@ -170,7 +200,13 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void GolemBondComponent_RoundTrip_PreservesInitOnlyEntityId()
     {
-        using var world = Bootstrap.Run();
+        // useRegistry: false — this test constructs its own ComponentTypeRegistry
+        // and registers all Vanilla components against the native handle directly.
+        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
+        // world.Registry; two registries on one handle would race on id
+        // allocation. Tests that exercise the registry class in isolation pass
+        // useRegistry: false; production code uses the default (true).
+        using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
         VanillaComponentRegistration.RegisterAll(registry);
 

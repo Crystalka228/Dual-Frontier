@@ -25,7 +25,14 @@ public class BootstrapTimeBenchmark
     [Benchmark]
     public NativeWorld BootstrapAndDispose()
     {
-        var world = Bootstrap.Run();
+        // useRegistry: false — preserves the original K3-era benchmark baseline
+        // (5-15ms target measured without registry construction overhead). The
+        // K8.3+K8.4 milestone (2026-05-14) made the registry-bound path the
+        // Bootstrap.Run default; benchmark stays on the no-registry path so
+        // historical baselines remain comparable. A separate benchmark variant
+        // for the registry path can be added if K-L4 wiring overhead matters
+        // for production wall-clock targets.
+        var world = Bootstrap.Run(useRegistry: false);
         world.Dispose();
         return world;
     }
