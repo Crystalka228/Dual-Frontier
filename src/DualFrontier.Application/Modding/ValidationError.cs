@@ -80,6 +80,18 @@ public enum ValidationErrorKind
     /// be found in any loaded assembly.
     /// </summary>
     UnknownSystemReplacement,
+
+    /// <summary>
+    /// A class-shape <c>IComponent</c> type was registered via
+    /// <c>IModApi.RegisterManagedComponent&lt;T&gt;</c> without the
+    /// <c>[ManagedStorage]</c> attribute. Path β (K-L3.1 bridge) requires
+    /// the attribute as an opt-in marker per
+    /// MOD_OS_ARCHITECTURE.md v1.8 §11.2 — absent attribute is a brief-
+    /// authoring miss in the mod, caught at <c>RegisterManagedComponent</c>
+    /// time before the per-mod <c>ManagedStore&lt;T&gt;</c> is created.
+    /// Introduced at K8.3+K8.4 combined milestone (2026-05-14).
+    /// </summary>
+    MissingManagedStorageAttribute,
 }
 
 /// <summary>
