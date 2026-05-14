@@ -80,8 +80,25 @@ internal sealed class RestrictedModApi : IModApi
     internal int SubscriptionCount => _subscriptions.Count;
 
     /// <inheritdoc />
-    public void RegisterComponent<T>() where T : IComponent
+    public void RegisterComponent<T>() where T : unmanaged, IComponent
         => _registry.RegisterComponent(_modId, typeof(T));
+
+    /// <inheritdoc />
+    public void RegisterManagedComponent<T>() where T : class, IComponent
+    {
+        // K8.3+K8.4 combined milestone — Commit 5 of 4 Phase 3 commits ships
+        // the IModApi v3 interface; Commit 6 adds [ManagedStorage] attribute +
+        // ManagedStore<T> + ValidationErrorKind.MissingManagedStorageAttribute;
+        // Commit 7 lands the full RegisterManagedComponent implementation
+        // (per-mod store dispatch + attribute validation + ModLoader unload
+        // chain integration). This stub fails fast on any Path β registration
+        // attempt during the 2-commit interval so no mod silently relies on a
+        // half-built bridge.
+        throw new NotImplementedException(
+            "RegisterManagedComponent<T> is part of the K8.3+K8.4 IModApi v3 surface; " +
+            "implementation lands in Phase 3 Commit 7 (full Path β bridge with " +
+            "ManagedStore<T> + IManagedStorageResolver + ModLoader unload chain).");
+    }
 
     /// <inheritdoc />
     public void RegisterSystem<T>() where T : class

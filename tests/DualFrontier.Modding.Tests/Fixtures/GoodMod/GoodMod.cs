@@ -27,11 +27,16 @@ public sealed class GoodMod : IMod
     }
 }
 
-/// <summary>Component exclusive to the good mod; no core system references it.</summary>
-public sealed class GoodComponent : IComponent
+/// <summary>
+/// Component exclusive to the good mod; no core system references it.
+/// Unmanaged struct shape per K-L3 default (RegisterComponent&lt;T&gt; constraint
+/// since K8.3+K8.4 IModApi v3). Mods can register class shapes via
+/// RegisterManagedComponent&lt;T&gt; with [ManagedStorage] attribute.
+/// </summary>
+public struct GoodComponent : IComponent
 {
     /// <summary>Integer payload; present only so the struct has meaningful size in tests.</summary>
-    public int Value { get; init; }
+    public int Value;
 }
 
 /// <summary>System that writes to <see cref="GoodComponent"/> every tick.</summary>

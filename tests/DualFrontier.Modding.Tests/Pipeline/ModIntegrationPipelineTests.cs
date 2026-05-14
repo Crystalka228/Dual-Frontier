@@ -231,7 +231,7 @@ public sealed class ModIntegrationPipelineTests
         public override void Update(float delta) { }
     }
 
-    public sealed class CycleModComponent : IComponent { public int C { get; init; } }
+    public struct CycleModComponent : IComponent { public int C; }
 
     [SystemAccess(reads: new[] { typeof(CoreComponentX) }, writes: new[] { typeof(CycleModComponent) }, bus: nameof(IGameServices.World))]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
