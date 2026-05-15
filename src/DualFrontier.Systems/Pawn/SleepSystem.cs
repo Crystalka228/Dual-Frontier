@@ -61,10 +61,6 @@ public sealed class SleepSystem : SystemBase
             if (needs.Sleep >= WakeThreshold)
             {
                 bedComp.Occupant = null;
-                // K8.3+K8.4 Phase 4 dual-write: native batch + legacy mirror
-                // (legacy removed Phase 5 commit 21).
-                using (var batch = NativeWorld.BeginBatch<BedComponent>())
-                    batch.Update(bed, bedComp);
                 SetComponent(bed, bedComp);
                 Services.Pawns.Publish(new PawnSleepFinishedEvent
                 {
@@ -129,8 +125,6 @@ public sealed class SleepSystem : SystemBase
 
             // Claim bed (sole runtime writer).
             bedComp.Occupant = pawn;
-            using (var batch = NativeWorld.BeginBatch<BedComponent>())
-                batch.Update(bed, bedComp);
             SetComponent(bed, bedComp);
         }
 

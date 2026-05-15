@@ -3,7 +3,6 @@ using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
-using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Systems.Pawn;
 using FluentAssertions;
@@ -78,8 +77,6 @@ public sealed class NeedsAccumulationTests
         var world    = new World();
         var services = new GameServices();
         var ticks    = new TickScheduler();
-        // K8.3+K8.4 Phase 4 — NeedsSystem invokes NativeWorld.BeginBatch for dual-write.
-        var nativeWorld = new NativeWorld();
 
         var graph = new DependencyGraph();
         graph.AddSystem(new NeedsSystem());
@@ -89,8 +86,7 @@ public sealed class NeedsAccumulationTests
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services,
-            nativeWorld);
+            services);
 
         return (world, scheduler);
     }

@@ -6,7 +6,6 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
 using DualFrontier.Core.ECS;
-using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
@@ -46,21 +45,11 @@ public sealed class JobSystem : SystemBase
         _urgentPawns.Add(evt.PawnId);
     }
 
-    // K8.3+K8.4 Phase 4 — every JobComponent SetComponent gets a paired
-    // NativeWorld.BeginBatch update for the dual-write transition (legacy
-    // mirror removed Phase 5 commit 21).
-    private void WriteJob(EntityId pawnId, JobComponent job)
-    {
-        using (var batch = NativeWorld.BeginBatch<JobComponent>())
-            batch.Update(pawnId, job);
-        SetComponent(pawnId, job);
-    }
-
     private void OnConsumeTarget(PawnConsumeTargetEvent evt)
     {
         var job = GetComponent<JobComponent>(evt.PawnId);
         job.Target = evt.Target;
-        WriteJob(evt.PawnId, job);
+        SetComponent(evt.PawnId, job);
     }
 
     private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
@@ -68,14 +57,14 @@ public sealed class JobSystem : SystemBase
         var job = GetComponent<JobComponent>(evt.PawnId);
         job.Current = JobKind.Idle;
         job.Target  = null;
-        WriteJob(evt.PawnId, job);
+        SetComponent(evt.PawnId, job);
     }
 
     private void OnSleepTarget(PawnSleepTargetEvent evt)
     {
         var job = GetComponent<JobComponent>(evt.PawnId);
         job.Target = evt.Target;
-        WriteJob(evt.PawnId, job);
+        SetComponent(evt.PawnId, job);
     }
 
     private void OnSleepFinished(PawnSleepFinishedEvent evt)
@@ -83,7 +72,7 @@ public sealed class JobSystem : SystemBase
         var job = GetComponent<JobComponent>(evt.PawnId);
         job.Current = JobKind.Idle;
         job.Target  = null;
-        WriteJob(evt.PawnId, job);
+        SetComponent(evt.PawnId, job);
     }
 
     public override void Update(float delta)
@@ -111,7 +100,7 @@ public sealed class JobSystem : SystemBase
                 continue;
 
             job.Current = next;
-            WriteJob(entity, job);
+            SetComponent(entity, job);
         }
     }
 

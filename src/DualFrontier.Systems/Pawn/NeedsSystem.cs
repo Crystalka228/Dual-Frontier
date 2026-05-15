@@ -5,7 +5,6 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
-using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn
@@ -77,18 +76,11 @@ namespace DualFrontier.Systems.Pawn
                     needs.Comfort   = Math.Clamp(needs.Comfort   + evt.Amount, 0f, 1f);
                     break;
             }
-            // K8.3+K8.4 Phase 4 dual-write — legacy mirror removed Phase 5 commit 21.
-            using (var batch = NativeWorld.BeginBatch<NeedsComponent>())
-                batch.Update(evt.PawnId, needs);
             SetComponent(evt.PawnId, needs);
         }
 
         public override void Update(float delta)
         {
-            // Single batch wraps the per-pawn loop — one P/Invoke at dispose
-            // regardless of pawn count.
-            using var batch = NativeWorld.BeginBatch<NeedsComponent>();
-
             foreach (var entity in Query<NeedsComponent>())
             {
                 var needs = GetComponent<NeedsComponent>(entity);
@@ -96,7 +88,6 @@ namespace DualFrontier.Systems.Pawn
                 needs.Hydration = Math.Clamp(needs.Hydration - HydrationDepletionPerTick, 0f, 1f);
                 needs.Sleep     = Math.Clamp(needs.Sleep     - SleepDepletionPerTick,     0f, 1f);
                 needs.Comfort   = Math.Clamp(needs.Comfort   - ComfortDepletionPerTick,   0f, 1f);
-                batch.Update(entity, needs);
                 SetComponent(entity, needs);
 
                 CheckCritical(entity, NeedKind.Satiety,   needs.Satiety);

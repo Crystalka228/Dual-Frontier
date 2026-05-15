@@ -3,7 +3,6 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
-using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn
@@ -20,11 +19,6 @@ namespace DualFrontier.Systems.Pawn
 
         public override void Update(float delta)
         {
-            // K8.3+K8.4 Phase 4 — single batch wraps all MindComponent writes
-            // for this Update (one P/Invoke at dispose); legacy SetComponent
-            // mirrors for dual-write transition (removed Phase 5 commit 21).
-            using var batch = NativeWorld.BeginBatch<MindComponent>();
-
             foreach (var entity in Query<NeedsComponent, MindComponent>())
             {
                 var needs = GetComponent<NeedsComponent>(entity);
@@ -49,7 +43,6 @@ namespace DualFrontier.Systems.Pawn
                     });
                 }
 
-                batch.Update(entity, mind);
                 SetComponent(entity, mind);
             }
         }

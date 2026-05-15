@@ -4,7 +4,6 @@ using DualFrontier.Components.Building;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
-using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Events.Power;
 using DualFrontier.Systems.Power;
@@ -65,8 +64,7 @@ public sealed class ConverterEfficiencyTests : IDisposable
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services,
-            new NativeWorld());
+            services);
 
         scheduler.ExecuteTick(1f / 30f);
 
@@ -100,8 +98,7 @@ public sealed class ConverterEfficiencyTests : IDisposable
             graph.GetPhases(), ticks, world,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
-            services,
-            new NativeWorld());
+            services);
 
         scheduler.ExecuteTick(1f / 30f);
 
