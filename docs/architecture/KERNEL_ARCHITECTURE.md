@@ -6,15 +6,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.5"
+version: "1.6"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL
 ---
 # DualFrontier Kernel — Architecture & Roadmap
 
-**Version**: 1.5
-**Date**: 2026-05-10
-**Status**: AUTHORITATIVE LOCKED — operational reference document, Solution A architectural commitment recorded (K-L11 added in v1.2, K-L3/K-L8 implications extended); Interop error semantics convention formalized in Part 7 (v1.3); K8.2 v2 closure of K-L3 selective per-component application via K8.1 primitives (v1.4, header bump deferred to v1.5); K-L3.1 bridge formalization — Path β (managed-class, mod-side storage) as first-class peer to Path α (`unmanaged struct`, kernel-side NativeWorld) per session 2026-05-10 (v1.5)
+**Version**: 1.6
+**Date**: 2026-05-14
+**Status**: AUTHORITATIVE LOCKED — operational reference document, Solution A architectural commitment recorded (K-L11 added in v1.2, K-L3/K-L8 implications extended); Interop error semantics convention formalized in Part 7 (v1.3); K8.2 v2 closure of K-L3 selective per-component application via K8.1 primitives (v1.4, header bump deferred to v1.5); K-L3.1 bridge formalization — Path β (managed-class, mod-side storage) as first-class peer to Path α (`unmanaged struct`, kernel-side NativeWorld) per session 2026-05-10 (v1.5); A'.5 K8.3+K8.4 combined milestone closure 2026-05-14 — managed `World` retired from production as `ManagedTestWorld` (test-project fixture only); Power subsystem deleted (electricity deferred to a separate GPU-compute brief); 10 production systems migrated to NativeWorld AcquireSpan/BeginBatch; isolation enforced at compile time (runtime guard removed) (v1.6)
 **Companion documents**: `METHODOLOGY.md`, `CODING_STANDARDS.md`, `MOD_OS_ARCHITECTURE.md`, `RUNTIME_ARCHITECTURE.md`
 **Scope**: Full architectural specification + milestone roadmap для native ECS kernel (C++ via pure P/Invoke). Companion к `RUNTIME_ARCHITECTURE.md` (Vulkan rendering layer) — together describing complete native foundation under managed Application layer.
 
@@ -35,7 +35,7 @@ DualFrontier ECS kernel migrates от managed C# к pure C++ via P/Invoke. Domai
 
 **Estimated scope**: 5-8 weeks at hobby pace (~1h/day) для full kernel completion (K0-K8) + **1-2 weeks** для К9 (field storage abstraction).
 
-**Status snapshot** (live, обновляется по closure milestone): K0–K8.2 v2 closed (cumulative `547c919..7527d00`, 2026-05-07 through 2026-05-09); K-L3.1 bridge formalization recorded 2026-05-10; A'.4 K9 closed (RawTileField field storage + IModApi v3 Fields wiring) 2026-05-10; A'.5 K8.3 next per Phase A' sequencing. См. `MIGRATION_PROGRESS.md` для current state.
+**Status snapshot** (live, обновляется по closure milestone): K0–K8.2 v2 closed (cumulative `547c919..7527d00`, 2026-05-07 through 2026-05-09); K-L3.1 bridge formalization recorded 2026-05-10; A'.4 K9 closed (RawTileField field storage + IModApi v3 Fields wiring) 2026-05-10; A'.5 K8.3+K8.4 combined closed 2026-05-14 (commits `24e5f56..54c6658` — managed World retired, Power subsystem deleted, 10 production systems on NativeWorld). См. `MIGRATION_PROGRESS.md` для current state.
 
 **Combined с RUNTIME_ARCHITECTURE.md (M9.0-M9.8) + GPU_COMPUTE.md (К9 + G0–G9)**: **15-25 weeks** для full architectural foundation. См. `ROADMAP.md` "Native foundation tracks" section для master sequencing.
 
@@ -600,8 +600,8 @@ Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
 | K8.0 | Architectural decision recording (Solution A) | 1-2 days | +/- (docs only) |
 | K8.1 | Native-side reference handling primitives | 1-2 weeks | +600-1000 |
 | K8.2 | K-L3 selective per-component closure (post-K-L3.1 reframing): K8.1 wrapper value-type refactor (NativeMap/NativeSet/NativeComposite to readonly struct + IComparable<InternedString> + per-instance id allocation) + 6 class→struct conversions on Path α via K8.1 primitives (Identity/Workbench/Faction/Skills/Storage/Movement) + 6 empty TODO stub deletions per METHODOLOGY §7.1 (Ammo/Shield/Weapon/School/Social/Biome — content deferred to M-series, authored on appropriate path per K-L3.1) + 12 ModAccessible annotation completeness pass on already-struct components | 6-12 hours auto-mode (3-5 days hobby) | +800/-1500 |
-| K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | 2-3 weeks | -400/+600 |
-| K8.4 | ManagedWorld retired; Mod API v3 ships | 1 week | -2000/+200 |
+| K8.3 | **CLOSED 2026-05-14** (combined w/ K8.4 in A'.5): 10 vanilla systems migrated to SpanLease/WriteBatch (Power 2 deleted as disposable CPU systems — electricity moves to GPU compute) | combined w/ K8.4 | actual -4481/+1211 |
+| K8.4 | **CLOSED 2026-05-14** (combined w/ K8.3 in A'.5): ManagedWorld retired from production as `ManagedTestWorld` (test-project fixture); Mod API v3 ships (Path β bridge: `RegisterManagedComponent<T>` + `ManagedStore<T>`); compile-time isolation enforcement (runtime guard removed) | combined w/ K8.3 | (see K8.3 row) |
 | K8.5 | Mod ecosystem migration prep | 3-5 days | +500 (docs) |
 | K9 | Field storage abstraction (`RawTileField<T>`) | 1-2 weeks | +600-900 |
 

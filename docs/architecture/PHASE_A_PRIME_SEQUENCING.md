@@ -106,19 +106,17 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Code changes: zero (governance + docs + tooling only)
   │   Executor: Claude Code session ~5-7 hours auto-mode
   │
-  ├─ Phase A'.5 — K8.3 skeleton execution
-  │   Brief: K8.3 skeleton authored, post-Phase-A'.1 amendment if disposition B/C applied
-  │   Scope: 31 production systems → SpanLease/WriteBatch (per Migration Plan §1.2 reformulation)
-  │   System access patterns reflect Q3 K-L3.1 lock
-  │   Estimated time: 4-6 weeks hobby pace, ~12-20 hours auto-mode
-  │   Executor: Cloud Code
+  ├─ Phase A'.5 — K8.3+K8.4 combined storage cutover — DONE 2026-05-14
+  │   Brief: tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF_V2.md (v2.0 supersedes v1.0 + patch v1)
+  │   Scope: 10 production systems migrated to NativeWorld AcquireSpan/BeginBatch (12 → 10: ElectricGridSystem + ConverterSystem deleted as disposable vanilla CPU systems, electricity deferred to GPU compute brief); managed World retired from production as ManagedTestWorld test fixture; runtime isolation guard removed (compile-time [SystemAccess] + future A'.9 analyzer); Mod API v3 closed (RegisterComponent + RegisterManagedComponent + Fields + ComputePipelines); manifestVersion strict v3-only parser. Storage backend is binary, not divisible — atomic single-commit cutover (brief v2.0 §1.4 + Lesson #8).
+  │   Outcome: 4 commits (24e5f56 revert + 54c6658 cutover + 2 closure commits)
+  │   3 halts protected the milestone (storage-location, API-surface, mid-transition drift) — methodology working as designed
+  │   K8.3 and K8.4 absorbed into A'.5; A'.6 = K8.5 (mod ecosystem prep), A'.7 = Roslyn analyzer; horizon item: «electricity on GPU compute» (separate future brief, not yet sequenced)
   │
-  ├─ Phase A'.6 — K8.4 skeleton execution
-  │   Brief: K8.4 skeleton authored, post-Phase-A'.1 amendment if disposition B/C applied
-  │   Scope: managed World retired; Mod API v3 ships; [ModAccessible] propagation
-  │   Mod API v3 surface reflects Q1+Q2+Q6 K-L3.1 lock (storage path declaration, where it lives, capability extension)
-  │   Estimated time: 1-2 weeks hobby pace, ~4-8 hours auto-mode
-  │   Executor: Cloud Code
+  ├─ Phase A'.6 — (formerly K8.4 standalone — combined into A'.5 above) K8.5 skeleton execution
+  │   Brief: K8.5 mod-ecosystem migration prep (re-numbered after K8.3+K8.4 combination)
+  │   Scope: per the original A'.7 K8.5 description below — mod authoring guide updated post-K-L3.1 + dual API documentation + compatibility test plan published
+  │   Note: A'.6 was originally «K8.4 skeleton execution» before the K8.3+K8.4 combination; that scope is now closed within A'.5 per above.
   │
   ├─ Phase A'.7 — K8.5 skeleton execution
   │   Brief: K8.5 skeleton authored, post-Phase-A'.1 amendment if disposition B/C applied

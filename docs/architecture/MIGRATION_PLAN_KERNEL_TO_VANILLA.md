@@ -6,14 +6,14 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1"
+version: "1.2"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
 ---
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)
 
-**Version**: 1.1 LOCKED (v1.1 = non-semantic correction post-K-L3.1 amendment 2026-05-10)
-**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`); amended 2026-05-10 (K-L3.1 bridge formalization, Decision #9 added, line 62 reframed, K8.3-K8.5 sub-section extensions)
+**Version**: 1.2 LOCKED (v1.2 = A'.5 K8.3+K8.4 combined milestone closure recorded 2026-05-14 — K8.3 ordering swap and combination history captured; coreSystems shrank from 12 → 10 with Power deletion; managed `World` retired from production as `ManagedTestWorld`)
+**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`); amended 2026-05-10 (K-L3.1 bridge formalization, Decision #9 added, line 62 reframed, K8.3-K8.5 sub-section extensions); amended 2026-05-14 (v1.2 — A'.5 closure)
 **Locked**: 2026-05-09 (Crystalka acceptance during K8.2 v2 session)
 **Status**: AUTHORITATIVE LOCKED — architectural roadmap for K-series and M-series
 **Strategy**: Option (II) "Struct-first sequential" — kernel-track closes completely before mod-OS-track mass migration begins
@@ -173,7 +173,9 @@ The "remaining 7" wording in the old Part 2 row was authored against an out-of-d
 
 **Estimated LOC delta**: +800 / -1200 net (substantial deletion as Dictionary<K,V> field declarations replace by NativeMap<K,V> handles, plus K8.1 primitive call sites add per-component setup code).
 
-### 1.2 — K8.3: System migration to SpanLease/WriteBatch (in `src/`)
+### 1.2 — K8.3: System migration to SpanLease/WriteBatch (in `src/`) — **CLOSED 2026-05-14 (combined w/ K8.4 in A'.5)**
+
+**A'.5 closure note (2026-05-14)**: K8.3 was combined with K8.4 into a single atomic storage cutover (brief `tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF_V2.md`). The `src/DualFrontier.Systems/` set shrank from 12 systems to **10**: ElectricGridSystem and ConverterSystem were deleted as disposable vanilla CPU systems (electricity will be redesigned on the GPU compute pipeline in a separate future brief; PowerConsumerComponent + PowerProducerComponent + 4 power events deleted alongside, IPowerBus removed from IGameServices). Remaining 10 systems migrated atomically — bodies switched from managed-`World` access surface to `NativeWorld.AcquireSpan<T>()` + `BeginBatch<T>().Update(id, value)`. Game logic unchanged. The «v1.0 brief 12-incremental-commits» path was reverted (commits `11c64e0..02f9ecf`) before the cutover began — storage backend is a binary property, not divisible into N steps with valid intermediate states; see brief v2.0 §1.4 + Lesson #8 in METHODOLOGY. Original K8.3 sub-section preserved below as historical authoring context.
 
 **Old Part 2 wording**: "12 vanilla systems migrated to SpanLease/WriteBatch. 2-3 weeks. -400/+600 LOC."
 
@@ -207,7 +209,11 @@ The "12 vanilla systems" in the old wording was either a slice-count approximati
 
 **Estimated LOC delta**: -1500 / +1200 net (system bodies become more idiomatic, per-system ceremony reduces — span/batch pattern eliminates `_world.Get<T>(entity)` per-call P/Invoke ceremony from K7 era).
 
-### 1.3 — K8.4: Managed World retirement + Mod API v3 ship
+### 1.3 — K8.4: Managed World retirement + Mod API v3 ship — **CLOSED 2026-05-14 (combined w/ K8.3 in A'.5)**
+
+**A'.5 closure note (2026-05-14)**: K8.4 was executed atomically with K8.3 in the same storage cutover commit. Production `src/DualFrontier.Core/ECS/World.cs` + `ComponentStore.cs` moved to `tests/DualFrontier.Core.Tests/Fixtures/ManagedTestWorld.cs` (renamed `World` → `ManagedTestWorld`, visibility widened from `internal` to `public`). The runtime isolation guard (`SystemExecutionContext.GetComponent`/`SetComponent`/`Query`/`GetSystem` + `IsolationViolationException` + `IsolationDiagnostics`) was removed; isolation is now enforced at compile time by `[SystemAccess]` consumed by `DependencyGraph` for edge-building, with the future A'.9 Roslyn analyzer to catch undeclared accesses statically. Mod API v3 (`RegisterComponent<T> where T : unmanaged, IComponent` + `RegisterManagedComponent<T> where T : class, IComponent` + `Fields` + `ComputePipelines`) was shipped earlier in Phase 3 of the combined milestone (commits `42f9b91..b903b91`); v2.0's cutover is the K8.4 closure proper. Original K8.4 sub-section preserved below as historical authoring context.
+
+
 
 **Old Part 2 wording**: "ManagedWorld retired; Mod API v3 ships. 1 week. -2000/+200 LOC."
 

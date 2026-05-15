@@ -6,7 +6,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.7"
+version: "1.8"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
@@ -416,6 +416,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.4 | 2026-05-07 | Post-K3 calibration lesson added к «Native layer methodology adjustments»: brief time estimates from architectural docs assume hobby pace (~1h/day manual typing); auto-mode execution actual time is 5-10x faster. Future briefs must state both hobby-pace и auto-mode estimates explicitly. K0-K3 measured data: 11-17 days hobby estimate vs ~6 hours actual auto-mode. |
 | 1.5 | 2026-05-09 | Added "Pipeline closure lessons (K-series, post-K8.1)" sub-section under "Native layer methodology adjustments" with three lessons formalized from K8.1 and K8.1.1 closures: atomic commit as compilable unit (per K8.1 Phase 5 dependency-cycle bundling, `a62c1f3..059f712`), Phase 0.4 inventory as hypothesis (per K8.1 `Marshalling/` layout reconciliation), mod-scope test isolation (per K8.1.1 Stop condition #3 fix on `EqualsByContent_StaleGeneration_ReturnsFalse`, `fc4400d..63777ef`). |
 | 1.6 | 2026-05-10 | Pipeline restructure rewrite per A'.0.7 — §0 Abstract generalized к architect-executor abstract framing; §2.1 role distribution rewritten в abstract role categories с v1.6 current-configuration table; §2.2 contracts as IPC reframed across context boundaries с three-properties mechanism; §3 economics restructured к invariant + current-configuration с A'.0.5 empirical anchor; §4 throughput parallel-form case studies (Phase 4 closure v1.x + A'.0.5 closure v1.6); §5.2/§5.3 threat model restructured для v1.6 session-mode reality; §9 «degradation as codebase grows» reformulated к pipeline-agnostic; methodology corpus declared agent-as-primary-reader per Q-A07-6. K-Lessons sub-section expanded с A'.0.5 lesson «milestone consolidation under session-mode pipeline» per Q-A07-5. |
+| 1.8 | 2026-05-14 | A'.5 K8.3+K8.4 closure — Lesson #7 (brief prescribing API must transcribe API) + Lesson #8 (brief splitting change into N steps must prove each of N-1 intermediate states is valid) added to K-Lessons sub-section per brief v2.0 §9.4. Both lessons originated in the K8.3+K8.4 combined milestone authoring (v1.0 → patch v1 → v2.0 arc) and were formalized at A'.5 closure. |
 | 1.7 | 2026-05-12 | Document Control Register integration per A'.4.5 closure. New §12 specifies the register as governance authority, classification model (Category×Tier×Lifecycle), seven sections, post-session update protocol (Q-A45-X5), and canonical closure protocol §12.7. §7.1 «Data exists or it doesn't» extended with seventh formal invocation (documentation layer: every `.md` either has a register entry or is in `SCOPE_EXCLUSIONS.yaml`; no third option). §11 «See also» extended with [FRAMEWORK](../governance/FRAMEWORK.md) + [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) links. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
@@ -815,6 +816,24 @@ This generalizes K-Lessons «atomic commit as compilable unit» (K8.1 closure 20
 - **Different boundary types within scope**: deliberation work and execution work require different session modes; cannot bundle into one session even с large context. K-L3.1 (deliberation) + amendment brief execution (execution) are correctly separate milestones.
 
 **Compared с v1.x era pattern**: under model-tier boundary, splitting was default safe — each tier had bounded capacity, handoff cost was relatively low (brief-as-artifact was natural between tiers anyway). Under session-mode boundary, bundling is default safe — single tier с large capacity, handoff cost is brief-authoring duplication. The discipline inverted с pipeline restructure.
+
+#### Lesson #7 — A brief that prescribes an API must transcribe the API, not paraphrase it
+
+When a brief tells the executor to call a constructor, a helper, or a file path, the brief author must open the actual source and copy the real signature into the brief at authoring time. «K2-era registry ready» is a note, not a signature. CAPA-2026-05-13's lesson («read entry-point files in full») addressed transitional-state comments; this lesson addresses *API surface*. A brief is a contract for mechanical execution; a contract cannot reference an interface it has not read.
+
+**Origin**: A'.5 K8.3+K8.4 combined milestone v1.0 (2026-05-14) prescribed `new ComponentTypeRegistry()` — no such ctor existed; invented a helper that already existed; gave a wrong sln path; the factory bulk-write shape was incompatible with the real K8.1-primitive structure. Caught at execution time by the executor reading the kernel files; resolved by patch v1 (5 findings). Formalized at A'.5 closure (2026-05-14, brief v2.0 §9.4). CAPA-2026-05-14-K8.34-API-SURFACE-MISS opened by patch v1, closed at v2.0 closure.
+
+**Falsifiable claim**: briefs authored under this lesson will not incur API-surface halts during execution. Counter-examples (brief that paraphrased API and executed cleanly anyway) would force re-examination — but the failure mode is asymmetric (paraphrase that happens to be correct doesn't validate the practice; one paraphrase that's wrong invalidates it).
+
+#### Lesson #8 — A brief that splits a change into N steps must prove each of the N−1 intermediate states is valid
+
+Before a brief prescribes an incremental sequence, the author must walk each intermediate state and confirm it compiles, passes tests, and is architecturally coherent. If an intermediate state cannot be made valid, the change is not incrementally divisible — the atomic unit is larger than one step, and the brief must say so.
+
+**Origin**: A'.5 K8.3+K8.4 combined milestone v1.0 split the storage cutover into 12 commits and never simulated what the data looked like between commit 9 and commit 20 — the answer was «two stores diverging per tick», and the dual-write bridge was the costyl that hid it. The third halt of the milestone (mid-transition drift, 2026-05-14) surfaced the issue before any incremental commit landed on `main`. Brief v2.0 §1.4 + §6.4 re-designed Phase 4+5 as a single atomic cutover; v2.0's Commit 2 (`54c6658`) is one indivisible commit that does not compile until the entire cutover is complete. Storage-backend cutover is the canonical example: it is binary, the atom is the whole thing.
+
+**Corollary** (for METHODOLOGY): a brief cannot promise «zero halts»; it can promise «halts before damage». Three halts on the K8.3+K8.4 milestone, zero harmful commits — that is the system working. A brief's honest guarantee is that bad premises surface at Phase 0 / at deep-read / at the compile gate, before they reach `main`. CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT opened by halt 3, closed at v2.0 closure.
+
+**Falsifiable claim**: briefs authored under this lesson will not incur mid-transition-drift halts. Counter-examples (a brief that split an indivisible change and executed cleanly because the executor improvised) would force re-examination — but per the asymmetric failure mode, improvised executions do not validate the brief's split rationale.
 
 ### Reference: K0 lessons learned
 
