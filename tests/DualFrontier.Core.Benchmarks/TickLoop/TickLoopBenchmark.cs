@@ -29,27 +29,12 @@ public class TickLoopBenchmark
     private const int SetupSeed = 42;
     private const float TickDelta = 1f / 30f;
 
-    private V2ManagedStructsScenario _v2 = null!;
     private V3NativeBatchedScenario _v3 = null!;
 
-    [GlobalSetup(Target = nameof(TickV2_ManagedStructs))]
-    public void SetupV2()
-    {
-        _v2 = new V2ManagedStructsScenario();
-        _v2.SetupWorld(PawnCount, SetupSeed);
-    }
-
-    [GlobalCleanup(Target = nameof(TickV2_ManagedStructs))]
-    public void CleanupV2()
-    {
-        _v2.TeardownWorld();
-    }
-
-    [Benchmark]
-    public void TickV2_ManagedStructs()
-    {
-        _v2.ExecuteTick(TickDelta);
-    }
+    // K8.3+K8.4 cutover: the V2 managed-structs scenario is gone with the
+    // managed World. Only V3 (native batched) remains as a meaningful tick-
+    // loop benchmark; comparison vs the deleted managed path is no longer
+    // a live concern.
 
     [GlobalSetup(Target = nameof(TickV3_NativeBatched))]
     public void SetupV3()

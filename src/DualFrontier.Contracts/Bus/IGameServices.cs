@@ -43,15 +43,7 @@ public interface IGameServices
     /// <summary>
     /// World bus: EtherNodeChanged, WeatherChanged, RaidIncoming.
     /// Writers: <c>BiomeSystem</c>, <c>WeatherSystem</c>.
-    /// Readers: <c>EtherGridSystem</c>, <c>RaidSystem</c>.
+    /// Readers: <c>RaidSystem</c>.
     /// </summary>
     IWorldBus World { get; }
-
-    /// <summary>
-    /// Industrial power-grid bus: PowerRequest, PowerGranted, GridOverload,
-    /// ConverterPowerOutput. Writers: <c>ElectricGridSystem</c>,
-    /// <c>ConverterSystem</c>. Readers: <c>ElectricGridSystem</c>, consumers,
-    /// UI. Introduced in TechArch v0.3 §13.1.
-    /// </summary>
-    IPowerBus Power { get; }
 }

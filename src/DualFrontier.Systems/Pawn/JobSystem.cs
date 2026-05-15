@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
@@ -19,9 +20,6 @@ namespace DualFrontier.Systems.Pawn;
 [TickRate(TickRates.NORMAL)]
 public sealed class JobSystem : SystemBase
 {
-    // Entities flagged via NeedsCriticalEvent between our ticks. Processed
-    // even if their current job is not Idle, so a starving hauler drops the
-    // haul to eat rather than waiting for the job to complete.
     private readonly HashSet<EntityId> _urgentPawns = new();
 
     protected override void OnInitialize()
@@ -47,32 +45,38 @@ public sealed class JobSystem : SystemBase
 
     private void OnConsumeTarget(PawnConsumeTargetEvent evt)
     {
-        var job = GetComponent<JobComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<JobComponent>(evt.PawnId, out JobComponent job)) return;
         job.Target = evt.Target;
-        SetComponent(evt.PawnId, job);
+        WriteJob(evt.PawnId, job);
     }
 
     private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
     {
-        var job = GetComponent<JobComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<JobComponent>(evt.PawnId, out JobComponent job)) return;
         job.Current = JobKind.Idle;
         job.Target  = null;
-        SetComponent(evt.PawnId, job);
+        WriteJob(evt.PawnId, job);
     }
 
     private void OnSleepTarget(PawnSleepTargetEvent evt)
     {
-        var job = GetComponent<JobComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<JobComponent>(evt.PawnId, out JobComponent job)) return;
         job.Target = evt.Target;
-        SetComponent(evt.PawnId, job);
+        WriteJob(evt.PawnId, job);
     }
 
     private void OnSleepFinished(PawnSleepFinishedEvent evt)
     {
-        var job = GetComponent<JobComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<JobComponent>(evt.PawnId, out JobComponent job)) return;
         job.Current = JobKind.Idle;
         job.Target  = null;
-        SetComponent(evt.PawnId, job);
+        WriteJob(evt.PawnId, job);
+    }
+
+    private void WriteJob(EntityId pawn, JobComponent job)
+    {
+        using WriteBatch<JobComponent> batch = NativeWorld.BeginBatch<JobComponent>();
+        batch.Update(pawn, job);
     }
 
     public override void Update(float delta)
@@ -84,23 +88,41 @@ public sealed class JobSystem : SystemBase
             _urgentPawns.Clear();
         }
 
-        foreach (var entity in Query<NeedsComponent, JobComponent>())
+        var pendingWrites = new List<(EntityId Entity, JobComponent Job)>();
+
+        using (SpanLease<JobComponent> jobs = NativeWorld.AcquireSpan<JobComponent>())
         {
-            var job = GetComponent<JobComponent>(entity);
+            ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
+            ReadOnlySpan<int> jobIndices = jobs.Indices;
 
-            bool isUrgent = urgentSnapshot != null
-                         && urgentSnapshot.Contains(entity);
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                var entity = new EntityId(jobIndices[i], 0);
+                if (!NativeWorld.TryGetComponent<NeedsComponent>(entity, out NeedsComponent needs))
+                    continue;
 
-            if (!isUrgent && job.Current != JobKind.Idle)
-                continue;
+                JobComponent job = jobSpan[i];
 
-            var needs = GetComponent<NeedsComponent>(entity);
-            JobKind next = PickJob(needs);
-            if (next == job.Current)
-                continue;
+                bool isUrgent = urgentSnapshot != null
+                             && urgentSnapshot.Contains(entity);
 
-            job.Current = next;
-            SetComponent(entity, job);
+                if (!isUrgent && job.Current != JobKind.Idle)
+                    continue;
+
+                JobKind next = PickJob(needs);
+                if (next == job.Current)
+                    continue;
+
+                job.Current = next;
+                pendingWrites.Add((entity, job));
+            }
+        }
+
+        if (pendingWrites.Count > 0)
+        {
+            using WriteBatch<JobComponent> batch = NativeWorld.BeginBatch<JobComponent>();
+            foreach ((EntityId entity, JobComponent job) in pendingWrites)
+                batch.Update(entity, job);
         }
     }
 

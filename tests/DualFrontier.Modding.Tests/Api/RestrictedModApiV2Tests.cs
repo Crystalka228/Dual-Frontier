@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using FluentAssertions;
 using Xunit;
 
@@ -316,14 +317,12 @@ public sealed class RestrictedModApiV2Tests
     private static SystemExecutionContext BuildTestContext(string name = "TestSystem")
     {
         return new SystemExecutionContext(
-            new World(),
             name,
-            Array.Empty<Type>(),
-            Array.Empty<Type>(),
             new[] { "TestBus" },
             SystemOrigin.Core,
             modId: null,
-            faultSink: new NullModFaultSink());
+            faultSink: new NullModFaultSink(),
+            nativeWorld: new NativeWorld());
     }
 
     private static (RestrictedModApi api, GameServices services) BuildApi(ManifestCapabilities caps)

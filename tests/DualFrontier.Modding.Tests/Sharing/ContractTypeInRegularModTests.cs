@@ -5,6 +5,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Modding.Tests.Fixtures;
 using FluentAssertions;
@@ -131,11 +132,11 @@ public sealed class ContractTypeInRegularModTests
         var validator = new ContractValidator();
         var contractStore = new ModContractStore();
         var services = new GameServices();
-        var world = new World();
+        using var nativeWorld = new NativeWorld();
         var ticks = new TickScheduler();
         var graph = new DependencyGraph();
         graph.Build();
-        var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, world);
+        var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, nativeWorld);
         var pipeline = new ModIntegrationPipeline(
             loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler());
 

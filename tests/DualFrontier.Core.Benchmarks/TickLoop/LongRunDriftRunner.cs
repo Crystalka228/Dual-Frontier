@@ -35,9 +35,9 @@ internal static class LongRunDriftRunner
         TickLoopScenarioBase scenario = variant switch
         {
             "V1" => new V1ManagedCurrentScenario(),
-            "V2" => new V2ManagedStructsScenario(),
             "V3" => new V3NativeBatchedScenario(),
-            _    => throw new ArgumentException($"Unknown variant '{variant}'. Expected V1 / V2 / V3.", nameof(variant)),
+            // V2 deleted in K8.3+K8.4 cutover — managed-structs scenario gone with the managed World.
+            _    => throw new ArgumentException($"Unknown variant '{variant}'. Expected V1 / V3.", nameof(variant)),
         };
 
         Console.WriteLine($"K7 long-run — variant {variant}, {tickCount} ticks @ {TickDelta:F4}s/tick (target {tickCount * TickDelta:F1}s simulated)");

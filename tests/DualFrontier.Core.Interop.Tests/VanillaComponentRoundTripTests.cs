@@ -41,10 +41,14 @@ public class VanillaComponentRoundTripTests
         var act = () => VanillaComponentRegistration.RegisterAll(registry);
         act.Should().NotThrow();
 
-        // Verify count: 19 K4-era + 4 K8.3+K8.4 appended (Identity, Skills,
-        // Movement, Storage) = 23. The K8.3+K8.4 extension preserves K4-era
-        // ids 1-19 by appending the new entries at the very end of the helper.
-        registry.Count.Should().Be(23);
+        // Verify count: 17 K4-era (PowerConsumer/PowerProducer removed in
+        // K8.3+K8.4 cutover §2) + 4 K8.3+K8.4 appended (Identity, Skills,
+        // Movement, Storage) = 21. K4-era ids 1-17 preserved; the K8.3+K8.4
+        // extension block now occupies ids 18-21 (shifted down from 20-23 by
+        // the Power-component deletion — acceptable per brief v2.0 §2.3
+        // because registry ids are deterministic per-run, not persisted
+        // across versions).
+        registry.Count.Should().Be(21);
     }
 
     [Fact]

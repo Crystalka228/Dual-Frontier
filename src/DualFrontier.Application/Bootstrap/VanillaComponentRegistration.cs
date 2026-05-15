@@ -65,19 +65,23 @@ public static class VanillaComponentRegistration
         // Combat category (1)
         registry.Register<ArmorComponent>();          // id 17
 
-        // Building category — trivial (2)
-        registry.Register<PowerConsumerComponent>();  // id 18
-        registry.Register<PowerProducerComponent>();  // id 19
+        // ── K8.3+K8.4 cutover — Building category power components removed ──
+        // PowerConsumerComponent + PowerProducerComponent were registered here
+        // (ids 18-19) prior to A'.5; deleted with the Power subsystem (brief
+        // v2.0 §2). Electricity will be redesigned on the GPU compute pipeline
+        // in a separate future brief. Subsequent ids shift down by 2 (the
+        // K8.3+K8.4 extension block below now occupies ids 18-21 instead of
+        // 20-23) — acceptable because registry ids are deterministic per-run,
+        // not persisted across versions.
 
-        // ── K8.3+K8.4 extension — appended at end to preserve K4-era ids ───
+        // ── K8.3+K8.4 extension — appended at end ─────────────────────────
         // Production components that the K4-era helper did not enumerate but
-        // the factories (RandomPawnFactory + ItemFactory) and the 12
-        // coreSystems require. Appended rather than inserted to avoid
-        // shifting K4-era ids 1-19; K-L4 stability across runs preserved.
+        // the factories (RandomPawnFactory + ItemFactory) and the 10
+        // coreSystems require.
 
-        registry.Register<IdentityComponent>();       // id 20 — RandomPawnFactory (per-pawn InternedString)
-        registry.Register<SkillsComponent>();         // id 21 — RandomPawnFactory (per-pawn NativeMap × 2)
-        registry.Register<MovementComponent>();       // id 22 — RandomPawnFactory (per-pawn NativeComposite path)
-        registry.Register<StorageComponent>();        // id 23 — InventorySystem write / HaulSystem read
+        registry.Register<IdentityComponent>();       // id 18 — RandomPawnFactory (per-pawn InternedString)
+        registry.Register<SkillsComponent>();         // id 19 — RandomPawnFactory (per-pawn NativeMap × 2)
+        registry.Register<MovementComponent>();       // id 20 — RandomPawnFactory (per-pawn NativeComposite path)
+        registry.Register<StorageComponent>();        // id 21 — InventorySystem write / HaulSystem read
     }
 }

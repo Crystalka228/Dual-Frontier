@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Modding.Tests.Fixtures;
 using DualFrontier.Modding.Tests.Fixtures.GoodMod;
@@ -159,13 +160,13 @@ public sealed class ModIntegrationPipelineTests
             var services = new GameServices();
 
             // Initial scheduler — core only. The pipeline will call Rebuild later.
-            var world = new World();
+            using var nativeWorld = new NativeWorld();
             var ticks = new TickScheduler();
             var graph = new DependencyGraph();
             foreach (SystemBase s in coreSystems)
                 graph.AddSystem(s);
             graph.Build();
-            var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, world);
+            var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, nativeWorld);
 
             var pipeline = new ModIntegrationPipeline(
                 loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler());

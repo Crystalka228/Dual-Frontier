@@ -14,9 +14,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Components\DualFrontier.Components.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Events\DualFrontier.Events.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Systems\DualFrontier.Systems.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
   </ItemGroup>
   <!--
     K8.2 v2 — native DLL must ride along: integration tests now construct

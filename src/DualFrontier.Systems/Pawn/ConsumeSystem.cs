@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
@@ -14,37 +15,11 @@ namespace DualFrontier.Systems.Pawn;
 /// <summary>
 /// Closes the autonomous consume loop. For pawns with <see cref="JobKind.Eat"/>:
 /// (1) if no Job.Target — finds nearest matching consumable based on the
-///     pawn's most-critical need, publishes <see cref="PawnConsumeTargetEvent"/>
-///     so JobSystem and MovementSystem can set their targets;
+///     pawn's most-critical need, publishes <see cref="PawnConsumeTargetEvent"/>;
 /// (2) if at Movement.Target tile — publishes
 ///     <see cref="NeedsRestoredEvent"/> for restoration AND
-///     <see cref="PawnConsumeFinishedEvent"/> so JobSystem clears the job
-///     and MovementSystem clears its target. Decrements Charges (for
-///     <see cref="ConsumableComponent"/>) in place — that field belongs
-///     to ConsumeSystem's own write set.
-///
-/// Why every cross-component update is event-driven: the dependency graph
-/// forbids two systems from declaring write access to the same component.
-/// NeedsComponent / JobComponent / MovementComponent each already have a
-/// declared owner (NeedsSystem / JobSystem / MovementSystem). The deferred-
-/// event pattern moves the writes into those owners' captured contexts at
-/// the phase boundary, preserving the single-writer invariant while still
-/// letting ConsumeSystem own the "decision to consume" logic.
-///
-/// Disambiguation: a pawn with both Satiety and Hydration critical seeks the
-/// more critical of the two (lower value first). For Hydration,
-/// <see cref="WaterSourceComponent"/> is prioritised over
-/// <see cref="ConsumableComponent"/> with RestoresKind=Hydration (infinite
-/// source, no Charges depletion).
-///
-/// Filtering: <see cref="ConsumableComponent"/> entities with Charges &lt;= 0
-/// are ignored — cosmetic limitation, they remain visible in the world but
-/// are functionally inert. M9+ adds a destruction mechanism via IModApi
-/// extension.
-///
-/// Linear scan over all 255 items × 50 pawns each NORMAL tick = 12,750
-/// distance checks. SpatialGrid integration deferred to M8.7 where runtime
-/// spatial queries actually matter.
+///     <see cref="PawnConsumeFinishedEvent"/>. Decrements Charges (for
+///     <see cref="ConsumableComponent"/>) in place.
 /// </summary>
 [SystemAccess(
     reads: new[]
@@ -66,15 +41,29 @@ public sealed class ConsumeSystem : SystemBase
 {
     public override void Update(float delta)
     {
-        foreach (EntityId pawn in Query<JobComponent, NeedsComponent>())
+        // Snapshot Job/Position/Movement/Needs reads first so the inner
+        // FindNearest* helpers can open their own AcquireSpan calls without
+        // racing this outer iteration. JobComponent span is the iteration
+        // anchor; entities without NeedsComponent are skipped.
+        var pawns = new System.Collections.Generic.List<(EntityId Pawn, JobComponent Job, PositionComponent Pos, MovementComponent Move, NeedsComponent Needs)>();
+        using (SpanLease<JobComponent> jobs = NativeWorld.AcquireSpan<JobComponent>())
         {
-            JobComponent job = GetComponent<JobComponent>(pawn);
-            if (job.Current != JobKind.Eat) continue;
+            ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
+            ReadOnlySpan<int> jobIndices = jobs.Indices;
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                JobComponent job = jobSpan[i];
+                if (job.Current != JobKind.Eat) continue;
+                var pawn = new EntityId(jobIndices[i], 0);
+                if (!NativeWorld.TryGetComponent<NeedsComponent>(pawn, out NeedsComponent needs)) continue;
+                if (!NativeWorld.TryGetComponent<PositionComponent>(pawn, out PositionComponent pos)) continue;
+                if (!NativeWorld.TryGetComponent<MovementComponent>(pawn, out MovementComponent move)) continue;
+                pawns.Add((pawn, job, pos, move, needs));
+            }
+        }
 
-            PositionComponent pawnPos = GetComponent<PositionComponent>(pawn);
-            MovementComponent move    = GetComponent<MovementComponent>(pawn);
-            NeedsComponent needs      = GetComponent<NeedsComponent>(pawn);
-
+        foreach ((EntityId pawn, JobComponent job, PositionComponent pawnPos, MovementComponent move, NeedsComponent needs) in pawns)
+        {
             // Phase 2: arrival check (if we have a target and we're standing on it).
             if (job.Target.HasValue && move.HasTarget &&
                 pawnPos.Position.X == move.Target.X &&
@@ -89,9 +78,9 @@ public sealed class ConsumeSystem : SystemBase
             if (!job.Target.HasValue)
             {
                 EntityId? target = FindNearestConsumable(pawnPos.Position, needs);
-                if (target.HasValue)
+                if (target.HasValue
+                    && NativeWorld.TryGetComponent<PositionComponent>(target.Value, out PositionComponent targetPos))
                 {
-                    PositionComponent targetPos = GetComponent<PositionComponent>(target.Value);
                     Services.Pawns.Publish(new PawnConsumeTargetEvent
                     {
                         PawnId     = pawn,
@@ -105,12 +94,6 @@ public sealed class ConsumeSystem : SystemBase
         }
     }
 
-    /// <summary>
-    /// Finds the nearest consumable entity that matches the pawn's most
-    /// critical need. For Hydration, <see cref="WaterSourceComponent"/>
-    /// is prioritised over <see cref="ConsumableComponent"/> with
-    /// RestoresKind=Hydration.
-    /// </summary>
     private EntityId? FindNearestConsumable(GridVector pawnPos, NeedsComponent needs)
     {
         bool needsSatiety   = needs.Satiety   <= NeedsComponent.CriticalThreshold;
@@ -137,13 +120,17 @@ public sealed class ConsumeSystem : SystemBase
     {
         EntityId? best = null;
         int bestDist = int.MaxValue;
-        foreach (EntityId candidate in Query<ConsumableComponent, PositionComponent>())
+        using SpanLease<ConsumableComponent> consumables = NativeWorld.AcquireSpan<ConsumableComponent>();
+        ReadOnlySpan<ConsumableComponent> consumableSpan = consumables.Span;
+        ReadOnlySpan<int> consumableIndices = consumables.Indices;
+        for (int i = 0; i < consumables.Count; i++)
         {
-            ConsumableComponent c = GetComponent<ConsumableComponent>(candidate);
+            ConsumableComponent c = consumableSpan[i];
             if (c.RestoresKind != NeedKind.Satiety) continue;
             if (c.Charges <= 0) continue;
 
-            PositionComponent pos = GetComponent<PositionComponent>(candidate);
+            var candidate = new EntityId(consumableIndices[i], 0);
+            if (!NativeWorld.TryGetComponent<PositionComponent>(candidate, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDist)
             {
@@ -158,9 +145,12 @@ public sealed class ConsumeSystem : SystemBase
     {
         EntityId? best = null;
         int bestDist = int.MaxValue;
-        foreach (EntityId candidate in Query<WaterSourceComponent, PositionComponent>())
+        using SpanLease<WaterSourceComponent> waters = NativeWorld.AcquireSpan<WaterSourceComponent>();
+        ReadOnlySpan<int> waterIndices = waters.Indices;
+        for (int i = 0; i < waters.Count; i++)
         {
-            PositionComponent pos = GetComponent<PositionComponent>(candidate);
+            var candidate = new EntityId(waterIndices[i], 0);
+            if (!NativeWorld.TryGetComponent<PositionComponent>(candidate, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDist)
             {
@@ -175,13 +165,17 @@ public sealed class ConsumeSystem : SystemBase
     {
         EntityId? best = null;
         int bestDist = int.MaxValue;
-        foreach (EntityId candidate in Query<ConsumableComponent, PositionComponent>())
+        using SpanLease<ConsumableComponent> consumables = NativeWorld.AcquireSpan<ConsumableComponent>();
+        ReadOnlySpan<ConsumableComponent> consumableSpan = consumables.Span;
+        ReadOnlySpan<int> consumableIndices = consumables.Indices;
+        for (int i = 0; i < consumables.Count; i++)
         {
-            ConsumableComponent c = GetComponent<ConsumableComponent>(candidate);
+            ConsumableComponent c = consumableSpan[i];
             if (c.RestoresKind != NeedKind.Hydration) continue;
             if (c.Charges <= 0) continue;
 
-            PositionComponent pos = GetComponent<PositionComponent>(candidate);
+            var candidate = new EntityId(consumableIndices[i], 0);
+            if (!NativeWorld.TryGetComponent<PositionComponent>(candidate, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDist)
             {
@@ -192,48 +186,33 @@ public sealed class ConsumeSystem : SystemBase
         return best;
     }
 
-    /// <summary>
-    /// Publishes a <see cref="NeedsRestoredEvent"/> describing the restoration
-    /// (NeedsSystem applies it on the same tick at the phase boundary). For
-    /// <see cref="ConsumableComponent"/> targets, also decrements Charges in
-    /// place — that field belongs to ConsumeSystem's own write set.
-    /// </summary>
     private void ApplyRestoration(EntityId pawn, EntityId target)
     {
-        foreach (EntityId e in Query<ConsumableComponent>())
+        if (NativeWorld.TryGetComponent<ConsumableComponent>(target, out ConsumableComponent c))
         {
-            if (e == target)
+            Services.Pawns.Publish(new NeedsRestoredEvent
             {
-                ConsumableComponent c = GetComponent<ConsumableComponent>(target);
-                Services.Pawns.Publish(new NeedsRestoredEvent
-                {
-                    PawnId = pawn,
-                    Need   = c.RestoresKind,
-                    Amount = c.RestorationAmount,
-                });
-                c.Charges--;
-                SetComponent(target, c);
-                return;
-            }
+                PawnId = pawn,
+                Need   = c.RestoresKind,
+                Amount = c.RestorationAmount,
+            });
+            c.Charges--;
+            using WriteBatch<ConsumableComponent> batch = NativeWorld.BeginBatch<ConsumableComponent>();
+            batch.Update(target, c);
+            return;
         }
 
-        foreach (EntityId e in Query<WaterSourceComponent>())
+        if (NativeWorld.TryGetComponent<WaterSourceComponent>(target, out WaterSourceComponent w))
         {
-            if (e == target)
+            Services.Pawns.Publish(new NeedsRestoredEvent
             {
-                WaterSourceComponent w = GetComponent<WaterSourceComponent>(target);
-                Services.Pawns.Publish(new NeedsRestoredEvent
-                {
-                    PawnId = pawn,
-                    Need   = NeedKind.Hydration,
-                    Amount = w.RestorationAmount,
-                });
-                return;
-            }
+                PawnId = pawn,
+                Need   = NeedKind.Hydration,
+                Amount = w.RestorationAmount,
+            });
         }
-        // Target has neither component — caller already commits to clearing
-        // Job.Target on the same tick (via PawnConsumeFinishedEvent); silent
-        // no-op preserves the "no fake state" discipline.
+        // Target has neither component — silent no-op preserves the
+        // "no fake state" discipline.
     }
 
     private static int ChebyshevDistance(GridVector a, GridVector b)

@@ -13,17 +13,7 @@ namespace DualFrontier.Systems.Inventory
     /// <summary>
     /// Manages item storage. Caches free storage slots to avoid full scan
     /// every tick. Cache invalidated on ItemAdded/Removed/Reserved.
-    /// Single writer of <see cref="StorageComponent"/> — all inventory changes
-    /// go through this system's deferred subscription to <see cref="ItemAddedEvent"/>
-    /// and <see cref="ItemRemovedEvent"/>; mutation runs at the next phase
-    /// boundary inside this system's captured execution context, so the
-    /// publisher (e.g. <c>HaulSystem</c>) does not need to declare
-    /// <c>StorageComponent</c> as a write target.
-    /// <para>
-    /// <see cref="ItemReservedEvent"/> populates a persistent reservation table
-    /// so future Phase 5+ multi-tick haul / craft can deduct reserved
-    /// quantities before allocating.
-    /// </para>
+    /// Single writer of <see cref="StorageComponent"/>.
     /// Phase: Phase 4. Tick: FAST.
     /// </summary>
     [SystemAccess(
@@ -38,11 +28,6 @@ namespace DualFrontier.Systems.Inventory
         private readonly Dictionary<(EntityId Storage, string ItemId), int> _reservedQuantities = new();
         private bool _cacheDirty = true;
 
-        /// <summary>
-        /// Reservation table keyed by (storage entity, item id) → reserved
-        /// quantity. Phase 4 exposes this for tests; Phase 5+ multi-tick haul
-        /// will consult it before picking source stacks.
-        /// </summary>
         internal IReadOnlyDictionary<(EntityId Storage, string ItemId), int> ReservedQuantities
             => _reservedQuantities;
 
@@ -64,18 +49,19 @@ namespace DualFrontier.Systems.Inventory
 
         private void OnItemAdded(ItemAddedEvent e)
         {
-            var storage = GetComponent<StorageComponent>(e.StorageId);
+            if (!NativeWorld.TryGetComponent<StorageComponent>(e.StorageId, out StorageComponent storage)) return;
             InternedString itemKey = NativeWorld.InternString(e.ItemId);
             int existing = 0;
             storage.Items.TryGet(itemKey, out existing);
             storage.Items.Set(itemKey, existing + e.Quantity);
-            SetComponent(e.StorageId, storage);
+            using (WriteBatch<StorageComponent> batch = NativeWorld.BeginBatch<StorageComponent>())
+                batch.Update(e.StorageId, storage);
             _cacheDirty = true;
         }
 
         private void OnItemRemoved(ItemRemovedEvent e)
         {
-            var storage = GetComponent<StorageComponent>(e.StorageId);
+            if (!NativeWorld.TryGetComponent<StorageComponent>(e.StorageId, out StorageComponent storage)) return;
             InternedString itemKey = NativeWorld.InternString(e.ItemId);
             if (!storage.Items.TryGet(itemKey, out int currentQty)) return;
             int remaining = currentQty - e.Quantity;
@@ -83,7 +69,8 @@ namespace DualFrontier.Systems.Inventory
                 storage.Items.Remove(itemKey);
             else
                 storage.Items.Set(itemKey, remaining);
-            SetComponent(e.StorageId, storage);
+            using (WriteBatch<StorageComponent> batch = NativeWorld.BeginBatch<StorageComponent>())
+                batch.Update(e.StorageId, storage);
             _cacheDirty = true;
 
             var key = (e.StorageId, e.ItemId);
@@ -106,9 +93,12 @@ namespace DualFrontier.Systems.Inventory
         private void RebuildCache()
         {
             _freeSlotCache.Clear();
-            foreach (var entity in Query<StorageComponent>())
+            using SpanLease<StorageComponent> storages = NativeWorld.AcquireSpan<StorageComponent>();
+            ReadOnlySpan<StorageComponent> storageSpan = storages.Span;
+            ReadOnlySpan<int> storageIndices = storages.Indices;
+            for (int i = 0; i < storages.Count; i++)
             {
-                var storage = GetComponent<StorageComponent>(entity);
+                StorageComponent storage = storageSpan[i];
                 if (!storage.IsFull && storage.Items.IsValid)
                 {
                     int count = storage.Items.Count;
@@ -117,12 +107,12 @@ namespace DualFrontier.Systems.Inventory
                     storage.Items.Iterate(keysBuf, valuesBuf);
 
                     var keyStrings = new List<string>(count);
-                    for (int i = 0; i < count; i++)
+                    for (int k = 0; k < count; k++)
                     {
-                        string? resolved = keysBuf[i].Resolve(NativeWorld);
+                        string? resolved = keysBuf[k].Resolve(NativeWorld);
                         if (resolved is not null) keyStrings.Add(resolved);
                     }
-                    _freeSlotCache[entity.Index] = keyStrings;
+                    _freeSlotCache[storageIndices[i]] = keyStrings;
                 }
             }
         }

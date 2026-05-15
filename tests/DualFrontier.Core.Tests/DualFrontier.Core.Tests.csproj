@@ -13,6 +13,19 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
+  </ItemGroup>
+  <!--
+    K8.3+K8.4 cutover — native DLL must ride along: scheduler tests now
+    construct NativeWorld instead of the deleted managed World. Mirrors
+    Systems.Tests / Modding.Tests / Benchmarks.
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
   </ItemGroup>
 </Project>

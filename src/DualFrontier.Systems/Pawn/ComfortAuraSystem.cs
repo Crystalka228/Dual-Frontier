@@ -7,28 +7,29 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
 
 /// <summary>
-/// Passive ambient Comfort emitter. Each SLOW tick (~2s at 30 TPS), для
+/// Passive ambient Comfort emitter. Each SLOW tick (~2s at 30 TPS), for
 /// each entity carrying <see cref="DecorativeAuraComponent"/>, scans pawns
 /// within Chebyshev distance <see cref="DecorativeAuraComponent.Radius"/>
-/// and publishes <see cref="NeedsRestoredEvent"/> с
+/// and publishes <see cref="NeedsRestoredEvent"/> with
 /// <see cref="DecorativeAuraComponent.ComfortPerTick"/> amount.
 ///
 /// Pure publisher: writes no components. NeedsComponent restoration
-/// happens в NeedsSystem's captured-context handler (M8.5 pattern,
-/// extended in M8.6 для Sleep + Comfort cases).
+/// happens in NeedsSystem's captured-context handler (M8.5 pattern,
+/// extended in M8.6 for Sleep + Comfort cases).
 ///
 /// Nested O(N×M) loop: 25 decorations × 50 pawns at current scale = 1250
-/// distance checks per SLOW tick. SpatialGrid integration deferred к
-/// backlog когда entity counts grow (formal kernel system needed для
+/// distance checks per SLOW tick. SpatialGrid integration deferred to
+/// backlog when entity counts grow (formal kernel system needed for
 /// lifecycle).
 ///
 /// Primary Comfort path. Secondary path = bed-sleep proportional formula
-/// (ΔComfort = ΔSleep × 0.3) implemented в SleepSystem (M8.6, master plan
+/// (ΔComfort = ΔSleep × 0.3) implemented in SleepSystem (M8.6, master plan
 /// AD-3). Combined paths give pawns autonomous Comfort recovery.
 /// </summary>
 [SystemAccess(
@@ -46,25 +47,35 @@ public sealed class ComfortAuraSystem : SystemBase
 {
     public override void Update(float delta)
     {
-        // For each decoration, scan pawns в radius and publish
-        // restoration events. Outer loop = decorations (smaller set);
-        // inner loop = pawns. Order matters только если we add
-        // per-pawn caps/dedup в future (currently each event is
-        // additive through NeedsSystem).
-        foreach (EntityId decoration in Query<DecorativeAuraComponent, PositionComponent>())
-        {
-            DecorativeAuraComponent aura = GetComponent<DecorativeAuraComponent>(decoration);
-            PositionComponent decoPos = GetComponent<PositionComponent>(decoration);
+        // Acquire spans once per tick. Pawn span is iterated for each
+        // decoration; both are released at scope end (using-disposal).
+        using SpanLease<DecorativeAuraComponent> auras = NativeWorld.AcquireSpan<DecorativeAuraComponent>();
+        using SpanLease<NeedsComponent> needs = NativeWorld.AcquireSpan<NeedsComponent>();
 
-            foreach (EntityId pawn in Query<NeedsComponent, PositionComponent>())
+        ReadOnlySpan<DecorativeAuraComponent> auraSpan = auras.Span;
+        ReadOnlySpan<int> auraIndices = auras.Indices;
+        ReadOnlySpan<int> needsIndices = needs.Indices;
+
+        for (int a = 0; a < auras.Count; a++)
+        {
+            var auraEntity = new EntityId(auraIndices[a], 0);
+            if (!NativeWorld.HasComponent<PositionComponent>(auraEntity)) continue;
+
+            DecorativeAuraComponent aura = auraSpan[a];
+            PositionComponent decoPos = NativeWorld.GetComponent<PositionComponent>(auraEntity);
+
+            for (int p = 0; p < needs.Count; p++)
             {
-                PositionComponent pawnPos = GetComponent<PositionComponent>(pawn);
+                var pawnEntity = new EntityId(needsIndices[p], 0);
+                if (!NativeWorld.HasComponent<PositionComponent>(pawnEntity)) continue;
+
+                PositionComponent pawnPos = NativeWorld.GetComponent<PositionComponent>(pawnEntity);
                 int dist = ChebyshevDistance(decoPos.Position, pawnPos.Position);
                 if (dist > aura.Radius) continue;
 
                 Services.Pawns.Publish(new NeedsRestoredEvent
                 {
-                    PawnId = pawn,
+                    PawnId = pawnEntity,
                     Need   = NeedKind.Comfort,
                     Amount = aura.ComfortPerTick,
                 });

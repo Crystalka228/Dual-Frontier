@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
@@ -10,45 +9,38 @@ using DualFrontier.Core.Interop;
 namespace DualFrontier.Core.ECS;
 
 /// <summary>
-/// Isolation guard for systems. When a specific system is executing,
-/// <see cref="Current"/> holds its context: allowed READ/WRITE types,
-/// system name (for error messages), reference to {World}, and
-/// {SystemOrigin} — whether the system is Core or Mod.
+/// Per-system execution context pushed by <see cref="DualFrontier.Core.Scheduling.ParallelSystemScheduler"/>
+/// before each <c>SystemBase.Update</c> and popped after (always, even on
+/// exceptions). Holds the <see cref="NativeWorld"/> handle systems reach
+/// through <c>SystemBase.NativeWorld</c>, the <see cref="IGameServices"/>
+/// aggregator, and — for mod-origin systems — the owning mod id and fault
+/// sink.
 ///
-/// Context is stored in {ThreadLocal{T}} — each scheduler thread has its own.
-/// The scheduler pushes the context before calling <c>SystemBase.Update</c>
-/// and pops it after (in a <c>finally</c> block).
+/// Stored in a <see cref="ThreadLocal{T}"/> slot so each scheduler thread
+/// has its own current context. <c>async</c>/<c>await</c> inside a system
+/// would suspend on a different thread where <see cref="Current"/> is null;
+/// it is forbidden in Domain code per TechArch 11.7.
 ///
-/// Violation reaction depends on <see cref="SystemOrigin"/>:
-/// Core systems throw <see cref="IsolationViolationException"/> (crash —
-/// this is a developer bug); Mod systems additionally route the diagnostic
-/// through {IModFaultSink}, so the Application layer's {ModFaultHandler}
-/// can unload the mod gracefully while the game continues running.
-///
-/// In Release builds, the access checks are elided by <c>#if DEBUG</c>,
-/// making <see cref="GetComponent{T}"/>/<see cref="SetComponent{T}"/> a thin
-/// pass-through with zero guard overhead. <see cref="GetSystem{TSystem}"/>
-/// always throws regardless of build flavor — direct system-to-system
-/// references are a semantic architectural violation.
-///
-/// WARNING: context breaks with async/await inside a system — the
-/// continuation may land on a different thread where <see cref="Current"/>
-/// is null. async/await is strictly forbidden in Domain. See TechArch 11.7.
+/// K8.3+K8.4 cutover: the managed-<c>World</c> access surface (GetComponent /
+/// SetComponent / Query / GetSystem) is removed — systems read and write
+/// component storage exclusively through <see cref="NativeWorld"/>. Isolation
+/// is enforced at compile time by the <c>[SystemAccess]</c> attribute (which
+/// <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/> consumes for
+/// edge-building) and by the future A'.9 Roslyn analyzer; the runtime
+/// guard methods that previously threw <c>IsolationViolationException</c>
+/// are deleted.
 /// </summary>
 public sealed class SystemExecutionContext
 {
     private static readonly ThreadLocal<SystemExecutionContext?> _current = new();
 
-    private readonly World _world;
     private readonly string _systemName;
-    private readonly HashSet<Type> _allowedReads;
-    private readonly HashSet<Type> _allowedWrites;
     private readonly IReadOnlyList<string> _allowedBuses;
     private readonly SystemOrigin _origin;
     private readonly string? _modId;
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
-    private readonly NativeWorld? _nativeWorld;
+    private readonly NativeWorld _nativeWorld;
     // K8.3+K8.4 — Path β bridge. Null for Core systems and for tests that
     // don't exercise managed-class storage. The scheduler passes the
     // ModRegistry as the resolver (ModRegistry implements
@@ -56,48 +48,34 @@ public sealed class SystemExecutionContext
     private readonly IManagedStorageResolver? _managedStorageResolver;
 
     /// <summary>
-    /// Creates a guard for the given system. The scheduler (or a test)
-    /// populates allowed reads/writes/buses from the system's
-    /// <c>[SystemAccess]</c> declaration. {Origin} decides whether
-    /// violations crash ({Core}) or route through {IModFaultSink} ({Mod}).
-    /// {ModId} is only meaningful when <paramref name="origin"/> is
-    /// <see cref="SystemOrigin.Mod"/>. {Services} is optional — when null,
-    /// systems that reach for <c>SystemBase.Services</c> receive an explicit
-    /// error instead of silently publishing into a no-op bus.
+    /// Creates a context for the given system. The scheduler reads the
+    /// system's <c>[SystemAccess]</c> declaration and supplies the bus
+    /// list and metadata (origin, modId). <paramref name="nativeWorld"/>
+    /// is required — production systems read and write component storage
+    /// through it.
     /// </summary>
-    /// <param name="world">Target world the guarded system may access.</param>
-    /// <param name="systemName">Display name used in violation messages.</param>
-    /// <param name="allowedReads">Component types the system may read.</param>
-    /// <param name="allowedWrites">Component types the system may write.</param>
+    /// <param name="systemName">Display name for diagnostics.</param>
     /// <param name="allowedBuses">Bus names the system may publish to.</param>
     /// <param name="origin">Core vs Mod provenance of the system.</param>
     /// <param name="modId">Mod identifier when <paramref name="origin"/> is Mod; otherwise null.</param>
-    /// <param name="faultSink">Destination for mod-origin fault reports.</param>
-    /// <param name="services">Domain-bus aggregator exposed to the system via <c>SystemBase.Services</c>; null for tests that do not exercise publication.</param>
-    /// <param name="nativeWorld">K8.2 v2 — optional native world handle exposed to the system via <c>SystemBase.NativeWorld</c>. Non-null in production where systems intern strings / read NativeMap fields; null in unit tests that exercise only managed-side ECS semantics.</param>
-    /// <param name="managedStorageResolver">K8.3+K8.4 — optional Path β resolver passed by the scheduler (ModRegistry implements <see cref="IManagedStorageResolver"/>). Null in tests and builds without mod loading; <c>SystemBase.ManagedStore&lt;T&gt;()</c> returns null in that case.</param>
+    /// <param name="faultSink">Destination for mod-origin fault reports (e.g. surfaced via <c>ModLoader.HandleModFault</c>).</param>
+    /// <param name="nativeWorld">Native world handle exposed to the system via <c>SystemBase.NativeWorld</c>. Required.</param>
+    /// <param name="services">Domain-bus aggregator exposed via <c>SystemBase.Services</c>; null for tests that do not exercise publication.</param>
+    /// <param name="managedStorageResolver">K8.3+K8.4 — optional Path β resolver. Production passes the ModRegistry; null in tests and core-only builds.</param>
     internal SystemExecutionContext(
-        World world,
         string systemName,
-        IEnumerable<Type> allowedReads,
-        IEnumerable<Type> allowedWrites,
         IEnumerable<string> allowedBuses,
         SystemOrigin origin,
         string? modId,
         IModFaultSink faultSink,
+        NativeWorld nativeWorld,
         IGameServices? services = null,
-        NativeWorld? nativeWorld = null,
         IManagedStorageResolver? managedStorageResolver = null)
     {
-        _world = world ?? throw new ArgumentNullException(nameof(world));
         _systemName = systemName ?? throw new ArgumentNullException(nameof(systemName));
-        if (allowedReads is null) throw new ArgumentNullException(nameof(allowedReads));
-        if (allowedWrites is null) throw new ArgumentNullException(nameof(allowedWrites));
         if (allowedBuses is null) throw new ArgumentNullException(nameof(allowedBuses));
         _faultSink = faultSink ?? throw new ArgumentNullException(nameof(faultSink));
-
-        _allowedReads = new HashSet<Type>(allowedReads);
-        _allowedWrites = new HashSet<Type>(allowedWrites);
+        _nativeWorld = nativeWorld ?? throw new ArgumentNullException(nameof(nativeWorld));
 
         var buses = new List<string>();
         foreach (string bus in allowedBuses)
@@ -107,7 +85,6 @@ public sealed class SystemExecutionContext
         _origin = origin;
         _modId = modId;
         _services = services;
-        _nativeWorld = nativeWorld;
         _managedStorageResolver = managedStorageResolver;
     }
 
@@ -119,12 +96,11 @@ public sealed class SystemExecutionContext
     internal IGameServices? Services => _services;
 
     /// <summary>
-    /// K8.2 v2 — native world handle supplied by the scheduler. Null when no
-    /// NativeWorld was provided at construction time (isolated unit tests
-    /// that exercise only managed-side ECS). Exposed internally; systems
-    /// reach it via <c>SystemBase.NativeWorld</c>.
+    /// Native world handle supplied by the scheduler. Non-null — required
+    /// at construction. Exposed internally; systems reach it via
+    /// <c>SystemBase.NativeWorld</c>.
     /// </summary>
-    internal NativeWorld? NativeWorld => _nativeWorld;
+    internal NativeWorld NativeWorld => _nativeWorld;
 
     /// <summary>
     /// K8.3+K8.4 — Resolves the calling system's owning mod to its Path β
@@ -133,8 +109,8 @@ public sealed class SystemExecutionContext
     ///   <item>No resolver was supplied at construction (tests, builds
     ///         without mod loading).</item>
     ///   <item>The system origin is <see cref="SystemOrigin.Core"/> — no
-    ///         owning mod, so no per-mod store. Core systems should rely
-    ///         on the kernel-side NativeWorld for component storage.</item>
+    ///         owning mod, so no per-mod store. Core systems use NativeWorld
+    ///         for component storage.</item>
     ///   <item>The mod has not registered <typeparamref name="T"/> via
     ///         <c>IModApi.RegisterManagedComponent&lt;T&gt;</c>.</item>
     /// </list>
@@ -157,7 +133,8 @@ public sealed class SystemExecutionContext
     /// Pushes <paramref name="context"/> onto the calling thread's slot.
     /// Throws <see cref="InvalidOperationException"/> if a context is
     /// already set — indicates a scheduler bug (nested push without pop).
-    /// Called by {ParallelSystemScheduler} before <c>SystemBase.Update</c>.
+    /// Called by <see cref="DualFrontier.Core.Scheduling.ParallelSystemScheduler"/>
+    /// before <c>SystemBase.Update</c>.
     /// </summary>
     /// <param name="context">The context to make current on this thread.</param>
     internal static void PushContext(SystemExecutionContext context)
@@ -173,190 +150,12 @@ public sealed class SystemExecutionContext
 
     /// <summary>
     /// Pops the context from the calling thread's slot. Called by
-    /// {ParallelSystemScheduler} in a <c>finally</c> block after
-    /// <c>SystemBase.Update</c> so the slot is always cleared, even on
-    /// exceptions.
+    /// <see cref="DualFrontier.Core.Scheduling.ParallelSystemScheduler"/>
+    /// in a <c>finally</c> block after <c>SystemBase.Update</c> so the slot
+    /// is always cleared, even on exceptions.
     /// </summary>
     internal static void PopContext()
     {
         _current.Value = null;
-    }
-
-    /// <summary>
-    /// Reads the component of type {T} from entity <paramref name="id"/>.
-    /// In DEBUG: throws <see cref="IsolationViolationException"/> if {T}
-    /// is not declared in the system's <c>[SystemAccess]</c> reads or
-    /// writes. In RELEASE: the check is elided — thin pass-through to
-    /// <c>World.GetComponentUnsafe</c>.
-    /// </summary>
-    /// <typeparam name="T">Component type to read.</typeparam>
-    /// <param name="id">Target entity.</param>
-    /// <returns>The stored component instance.</returns>
-    public T GetComponent<T>(EntityId id) where T : IComponent
-    {
-#if DEBUG
-        if (!IsReadAllowed(typeof(T)))
-            ThrowUndeclaredRead(typeof(T));
-#endif
-        return _world.GetComponentUnsafe<T>(id);
-    }
-
-    /// <summary>
-    /// Writes a component of type {T} on entity <paramref name="id"/>.
-    /// In DEBUG: throws <see cref="IsolationViolationException"/> if {T}
-    /// is not declared in the system's <c>[SystemAccess]</c> writes.
-    /// In RELEASE: the check is elided — thin pass-through to
-    /// <c>World.SetComponent</c>.
-    /// </summary>
-    /// <typeparam name="T">Component type to write.</typeparam>
-    /// <param name="id">Target entity.</param>
-    /// <param name="value">New component value.</param>
-    public void SetComponent<T>(EntityId id, T value) where T : IComponent
-    {
-#if DEBUG
-        if (!_allowedWrites.Contains(typeof(T)))
-            ThrowUndeclaredWrite(typeof(T));
-#endif
-        _world.SetComponent<T>(id, value);
-    }
-
-    /// <summary>
-    /// Enumerates entities that currently have a component of type {T}.
-    /// Lazy — uses <c>yield return</c> so iteration stops at the caller's
-    /// <c>break</c> without materialising. In DEBUG: throws
-    /// <see cref="IsolationViolationException"/> if {T} is not declared
-    /// in the system's <c>[SystemAccess]</c> reads or writes.
-    /// </summary>
-    /// <typeparam name="T">Component type whose owners to enumerate.</typeparam>
-    /// <returns>Lazy sequence of entity ids carrying a component of type {T}.</returns>
-    public IEnumerable<EntityId> Query<T>() where T : IComponent
-    {
-#if DEBUG
-        if (!IsReadAllowed(typeof(T)))
-            ThrowUndeclaredRead(typeof(T));
-#endif
-        return _world.GetEntitiesWith<T>();
-    }
-
-    /// <summary>
-    /// Enumerates entities that currently have both a {T1} and a {T2}
-    /// component. Picks the smaller store to iterate and filters by
-    /// <c>HasComponent</c> on the larger one. Lazy — no materialisation.
-    /// In DEBUG: each type parameter is checked against declared reads
-    /// or writes.
-    /// </summary>
-    /// <typeparam name="T1">First required component type.</typeparam>
-    /// <typeparam name="T2">Second required component type.</typeparam>
-    /// <returns>Lazy sequence of entity ids carrying both components.</returns>
-    public IEnumerable<EntityId> Query<T1, T2>()
-        where T1 : IComponent
-        where T2 : IComponent
-    {
-#if DEBUG
-        if (!IsReadAllowed(typeof(T1)))
-            ThrowUndeclaredRead(typeof(T1));
-        if (!IsReadAllowed(typeof(T2)))
-            ThrowUndeclaredRead(typeof(T2));
-#endif
-        return QueryIntersection<T1, T2>();
-    }
-
-    private IEnumerable<EntityId> QueryIntersection<T1, T2>()
-        where T1 : IComponent
-        where T2 : IComponent
-    {
-        int count1 = _world.GetComponentCount<T1>();
-        int count2 = _world.GetComponentCount<T2>();
-
-        if (count1 <= count2)
-        {
-            foreach (EntityId id in _world.GetEntitiesWith<T1>())
-            {
-                if (_world.HasComponent<T2>(id))
-                    yield return id;
-            }
-        }
-        else
-        {
-            foreach (EntityId id in _world.GetEntitiesWith<T2>())
-            {
-                if (_world.HasComponent<T1>(id))
-                    yield return id;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Always throws <see cref="IsolationViolationException"/>. Direct
-    /// system-to-system references break the architecture's isolation
-    /// rules — use {EventBus} instead. This method exists intentionally
-    /// so that attempting to reach a sibling system produces a clear,
-    /// actionable diagnostic rather than a silent compile error.
-    /// </summary>
-    /// <typeparam name="TSystem">System type the caller tried to resolve.</typeparam>
-    /// <returns>Never returns — always throws.</returns>
-    public TSystem GetSystem<TSystem>() where TSystem : SystemBase
-    {
-        throw new IsolationViolationException(
-            IsolationDiagnostics.GetSystemHeader + Environment.NewLine +
-            IsolationDiagnostics.GetSystemBody + Environment.NewLine +
-            IsolationDiagnostics.GetSystemHint);
-    }
-
-    private bool IsReadAllowed(Type componentType)
-    {
-        return _allowedReads.Contains(componentType)
-            || _allowedWrites.Contains(componentType);
-    }
-
-    private void ThrowUndeclaredRead(Type componentType)
-    {
-        string message = BuildReadViolationMessage(componentType);
-        RouteAndThrow(message);
-    }
-
-    private void ThrowUndeclaredWrite(Type componentType)
-    {
-        string message = BuildWriteViolationMessage(componentType);
-        RouteAndThrow(message);
-    }
-
-    private string BuildReadViolationMessage(Type componentType)
-    {
-        var sb = new StringBuilder();
-        sb.Append(IsolationDiagnostics.ViolationHeader).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.SystemPrefix).Append(_systemName)
-          .Append(IsolationDiagnostics.SystemSuffix).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.ReadVerb).Append(componentType.Name)
-          .Append(IsolationDiagnostics.ComponentSuffix).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.ReadReason).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.HintPrefix)
-          .Append(IsolationDiagnostics.ReadHintArgPrefix)
-          .Append(componentType.Name)
-          .Append(IsolationDiagnostics.HintArgSuffix);
-        return sb.ToString();
-    }
-
-    private string BuildWriteViolationMessage(Type componentType)
-    {
-        var sb = new StringBuilder();
-        sb.Append(IsolationDiagnostics.ViolationHeader).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.SystemPrefix).Append(_systemName)
-          .Append(IsolationDiagnostics.SystemSuffix).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.WriteVerb).Append(componentType.Name)
-          .Append(IsolationDiagnostics.ComponentSuffix).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.WriteReason).Append(Environment.NewLine);
-        sb.Append(IsolationDiagnostics.HintPrefix)
-          .Append(IsolationDiagnostics.WriteHintArgPrefix)
-          .Append(componentType.Name)
-          .Append(IsolationDiagnostics.HintArgSuffix);
-        return sb.ToString();
-    }
-
-    private void RouteAndThrow(string message)
-    {
-        if (_origin == SystemOrigin.Mod)
-            _faultSink.ReportFault(_modId!, message);
-        throw new IsolationViolationException(message);
     }
 }

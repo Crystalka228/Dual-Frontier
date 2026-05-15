@@ -5,6 +5,7 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using FluentAssertions;
 using Xunit;
@@ -83,7 +84,7 @@ public sealed class DeferredEventDeliveryTests : IDisposable
     [Fact]
     public void Deferred_Drained_PerPhase_BySchedulerExecutePhase()
     {
-        var world = new World();
+        using var nativeWorld = new NativeWorld();
         var services = new GameServices();
         var ticks = new TickScheduler();
         var emitter = new DeferredEmitterSystem();
@@ -95,9 +96,10 @@ public sealed class DeferredEventDeliveryTests : IDisposable
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world,
+            graph.GetPhases(), ticks,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
+            nativeWorld,
             services);
 
         scheduler.ExecuteTick(0.016f);
@@ -120,9 +122,9 @@ public sealed class DeferredEventDeliveryTests : IDisposable
     [Fact]
     public void Deferred_HandlerRunsWith_CapturedSystemExecutionContext()
     {
-        var world = new World();
-        EntityId entity = world.CreateEntity();
-        world.AddComponent(entity, new DeferredMutableComponent { Value = 1 });
+        using var nativeWorld = new NativeWorld();
+        EntityId entity = nativeWorld.CreateEntity();
+        nativeWorld.AddComponent(entity, new DeferredMutableComponent { Value = 1 });
 
         var services = new GameServices();
         var ticks = new TickScheduler();
@@ -135,9 +137,10 @@ public sealed class DeferredEventDeliveryTests : IDisposable
         graph.Build();
 
         var scheduler = new ParallelSystemScheduler(
-            graph.GetPhases(), ticks, world,
+            graph.GetPhases(), ticks,
             new Dictionary<SystemBase, SystemMetadata>(),
             new NullModFaultSink(),
+            nativeWorld,
             services);
 
         Action act = () => scheduler.ExecuteTick(0.016f);
@@ -145,7 +148,7 @@ public sealed class DeferredEventDeliveryTests : IDisposable
             "deferred handlers must run with the subscribing system's captured context, "
             + "letting them mutate components their declared writes cover");
 
-        world.TryGetComponent<DeferredMutableComponent>(entity, out var comp).Should().BeTrue();
+        nativeWorld.TryGetComponent<DeferredMutableComponent>(entity, out var comp).Should().BeTrue();
         comp.Value.Should().Be(42);
     }
 
@@ -164,15 +167,15 @@ public sealed class DeferredEventDeliveryTests : IDisposable
     [Deferred]
     internal sealed record DeferredMutateRequestDeferred(EntityId Target, int NewValue) : IEvent;
 
-    internal sealed class DeferredMutableComponent : IComponent
+    public struct DeferredMutableComponent : IComponent
     {
         public int Value;
     }
 
-    internal sealed class EmitterMarker : IComponent { }
-    internal sealed class ListenerMarker : IComponent { }
-    internal sealed class PublisherMarker : IComponent { }
-    internal sealed class MutatorMarker : IComponent { }
+    public struct EmitterMarker : IComponent { }
+    public struct ListenerMarker : IComponent { }
+    public struct PublisherMarker : IComponent { }
+    public struct MutatorMarker : IComponent { }
 
     // ── Test fixture systems ────────────────────────────────────────────────
 
@@ -222,9 +225,11 @@ public sealed class DeferredEventDeliveryTests : IDisposable
 
         private void OnRequest(DeferredMutateRequestDeferred req)
         {
-            var c = GetComponent<DeferredMutableComponent>(req.Target);
+            if (!NativeWorld.TryGetComponent<DeferredMutableComponent>(req.Target, out var c))
+                return;
             c.Value = req.NewValue;
-            SetComponent(req.Target, c);
+            using WriteBatch<DeferredMutableComponent> batch = NativeWorld.BeginBatch<DeferredMutableComponent>();
+            batch.Update(req.Target, c);
         }
     }
 }

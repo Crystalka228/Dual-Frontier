@@ -39,67 +39,87 @@ public sealed class MovementSystem : SystemBase
 
     protected override void OnInitialize()
     {
-        // M8.5 — ConsumeSystem decides where the pawn must travel for
-        // food / water but cannot write MovementComponent (single-writer
-        // invariant). Both events are dispatched at the phase boundary
-        // with this system's captured context, which permits the writes.
         Services.Pawns.Subscribe<PawnConsumeTargetEvent>(OnConsumeTarget);
         Services.Pawns.Subscribe<PawnConsumeFinishedEvent>(OnConsumeFinished);
 
-        // M8.6 — SleepSystem mirrors the same pattern for the sleep loop.
         Services.Pawns.Subscribe<PawnSleepTargetEvent>(OnSleepTarget);
         Services.Pawns.Subscribe<PawnSleepFinishedEvent>(OnSleepFinished);
     }
 
     private void OnConsumeTarget(PawnConsumeTargetEvent evt)
     {
-        var move = GetComponent<MovementComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<MovementComponent>(evt.PawnId, out MovementComponent move)) return;
         move.Target = evt.TargetTile;
         move.HasTarget = true;
-        // Drop any stale wander path so the next Update repaths toward the
-        // newly assigned consume target instead of finishing the old route.
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
     }
 
     private void OnConsumeFinished(PawnConsumeFinishedEvent evt)
     {
-        var move = GetComponent<MovementComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<MovementComponent>(evt.PawnId, out MovementComponent move)) return;
         move.HasTarget = false;
         move.Target = default;
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
     }
 
     private void OnSleepTarget(PawnSleepTargetEvent evt)
     {
-        var move = GetComponent<MovementComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<MovementComponent>(evt.PawnId, out MovementComponent move)) return;
         move.Target = evt.TargetTile;
         move.HasTarget = true;
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
     }
 
     private void OnSleepFinished(PawnSleepFinishedEvent evt)
     {
-        var move = GetComponent<MovementComponent>(evt.PawnId);
+        if (!NativeWorld.TryGetComponent<MovementComponent>(evt.PawnId, out MovementComponent move)) return;
         move.HasTarget = false;
         move.Target = default;
         ResetPath(ref move, evt.PawnId);
-        SetComponent(evt.PawnId, move);
+        WriteMove(evt.PawnId, move);
+    }
+
+    private void WriteMove(EntityId entity, MovementComponent move)
+    {
+        using WriteBatch<MovementComponent> batch = NativeWorld.BeginBatch<MovementComponent>();
+        batch.Update(entity, move);
     }
 
     public override void Update(float delta)
     {
-        foreach (var entity in Query<MovementComponent>())
+        // Snapshot the MovementComponent span and per-entity PositionComponent
+        // reads, then apply (Position, Movement) writes via two batches once
+        // the lease is released. Two BeginBatch scopes are needed because
+        // each batch is single-type.
+        var movePending = new List<(EntityId Entity, MovementComponent Move)>();
+        var posPending = new List<(EntityId Entity, PositionComponent Pos)>();
+        var movedEvents = new List<PawnMovedEvent>();
+
+        var snapshot = new List<(EntityId Entity, MovementComponent Move, PositionComponent Pos)>();
+        using (SpanLease<MovementComponent> moves = NativeWorld.AcquireSpan<MovementComponent>())
         {
-            var pos  = GetComponent<PositionComponent>(entity);
-            var move = GetComponent<MovementComponent>(entity);
+            ReadOnlySpan<MovementComponent> moveSpan = moves.Span;
+            ReadOnlySpan<int> moveIndices = moves.Indices;
+            for (int i = 0; i < moves.Count; i++)
+            {
+                var entity = new EntityId(moveIndices[i], 0);
+                if (!NativeWorld.TryGetComponent<PositionComponent>(entity, out PositionComponent pos)) continue;
+                snapshot.Add((entity, moveSpan[i], pos));
+            }
+        }
+
+        foreach ((EntityId entity, MovementComponent moveOriginal, PositionComponent posOriginal) in snapshot)
+        {
+            MovementComponent move = moveOriginal;
+            PositionComponent pos = posOriginal;
 
             if (move.StepCooldown > 0)
             {
                 move.StepCooldown--;
-                SetComponent(entity, move);
+                movePending.Add((entity, move));
                 continue;
             }
 
@@ -114,13 +134,9 @@ public sealed class MovementSystem : SystemBase
                     target = move.Target;
                     isExternalTarget = true;
 
-                    // If pawn is already at target, do nothing — wait for an
-                    // arrival-handler system (M8.5 ConsumeSystem) to clear
-                    // Target on this tick. Pathfinding from start==end returns
-                    // an empty path which would otherwise loop indefinitely.
                     if (target.X == pos.Position.X && target.Y == pos.Position.Y)
                     {
-                        SetComponent(entity, move);
+                        movePending.Add((entity, move));
                         continue;
                     }
                 }
@@ -147,33 +163,43 @@ public sealed class MovementSystem : SystemBase
                 }
                 else if (isExternalTarget)
                 {
-                    // External target unreachable — clear so caller (e.g.
-                    // ConsumeSystem) can retarget on a later tick instead of
-                    // the pawn freezing in place.
                     move.HasTarget = false;
                     move.Target = default;
                 }
 
-                SetComponent(entity, move);
+                movePending.Add((entity, move));
                 continue;
             }
 
             move.Path.TryGetAt(entity, move.PathStepIndex, out GridVector next);
             move.PathStepIndex++;
             pos.Position = next;
-
             move.StepCooldown = StepCooldownTicks;
 
-            SetComponent(entity, pos);
-            SetComponent(entity, move);
-
-            Services.Pawns.Publish(new PawnMovedEvent
+            posPending.Add((entity, pos));
+            movePending.Add((entity, move));
+            movedEvents.Add(new PawnMovedEvent
             {
                 PawnId = entity,
                 X      = next.X,
-                Y      = next.Y
+                Y      = next.Y,
             });
         }
+
+        if (posPending.Count > 0)
+        {
+            using WriteBatch<PositionComponent> batch = NativeWorld.BeginBatch<PositionComponent>();
+            foreach ((EntityId entity, PositionComponent pos) in posPending)
+                batch.Update(entity, pos);
+        }
+        if (movePending.Count > 0)
+        {
+            using WriteBatch<MovementComponent> batch = NativeWorld.BeginBatch<MovementComponent>();
+            foreach ((EntityId entity, MovementComponent move) in movePending)
+                batch.Update(entity, move);
+        }
+        foreach (PawnMovedEvent evt in movedEvents)
+            Services.Pawns.Publish(evt);
     }
 
     private static void ResetPath(ref MovementComponent move, EntityId entity)

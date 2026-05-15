@@ -18,7 +18,6 @@ internal sealed class GameServices : IGameServices, IDeferredFlush
     private readonly MagicBus _magicBus = new();
     private readonly WorldBus _worldBus = new();
     private readonly PawnBus _pawnBus = new();
-    private readonly PowerBus _powerBus = new();
 
     /// <inheritdoc/>
     public ICombatBus Combat => _combatBus;
@@ -35,9 +34,6 @@ internal sealed class GameServices : IGameServices, IDeferredFlush
     /// <inheritdoc/>
     public IPawnBus Pawns => _pawnBus;
 
-    /// <inheritdoc/>
-    public IPowerBus Power => _powerBus;
-
     /// <summary>
     /// Clears all underlying event buses. Should be called between scenes or during testing
     /// to prevent stale events from affecting subsequent game states.
@@ -49,7 +45,6 @@ internal sealed class GameServices : IGameServices, IDeferredFlush
         _magicBus.Clear();
         _worldBus.Clear();
         _pawnBus.Clear();
-        _powerBus.Clear();
     }
 
     /// <summary>
@@ -64,7 +59,6 @@ internal sealed class GameServices : IGameServices, IDeferredFlush
         _magicBus.FlushDeferred();
         _worldBus.FlushDeferred();
         _pawnBus.FlushDeferred();
-        _powerBus.FlushDeferred();
     }
 }
 
@@ -109,16 +103,6 @@ internal sealed class WorldBus : IWorldBus
 }
 
 internal sealed class PawnBus : IPawnBus
-{
-    private readonly DomainEventBus _bus = new();
-    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
-    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
-    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
-    public void Clear() => _bus.Clear();
-    public void FlushDeferred() => _bus.FlushDeferred();
-}
-
-internal sealed class PowerBus : IPowerBus
 {
     private readonly DomainEventBus _bus = new();
     public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);

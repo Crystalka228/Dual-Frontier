@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DualFrontier.Components.Items;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
@@ -7,6 +8,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
@@ -14,20 +16,8 @@ namespace DualFrontier.Systems.Pawn;
 /// <summary>
 /// Multi-tick sleep state machine on <see cref="BedComponent"/>. 3-phase
 /// tick: sleeping (active sleepers restore needs, possibly wake) → arrival
-/// (just-arrived pawns claim beds) → targeting (Sleep-job pawns без target
-/// find nearest bed).
-/// <para>
-/// Hybrid restoration formula (master plan AD-3): pawn occupying bed
-/// restores Sleep at <see cref="BedComponent.SleepRestorationPerTick"/>
-/// per NORMAL tick, plus Comfort at 30% of that rate. The two needs are
-/// updated via two <see cref="NeedsRestoredEvent"/> publications which
-/// route through <c>NeedsSystem</c>'s captured context — the only system
-/// allowed to write <see cref="NeedsComponent"/>.
-/// </para>
-/// <para>
-/// Single-writer of <see cref="BedComponent"/> at runtime; <c>ItemFactory</c>
-/// writes at bootstrap-time only.
-/// </para>
+/// (just-arrived pawns claim beds) → targeting (Sleep-job pawns without
+/// target find nearest bed).
 /// </summary>
 [SystemAccess(
     reads: new[]
@@ -48,35 +38,49 @@ public sealed class SleepSystem : SystemBase
 
     public override void Update(float delta)
     {
+        var bedWrites = new List<(EntityId Bed, BedComponent State)>();
+        var sleepFinishedPublications = new List<EntityId>();
+        var restorationPublications = new List<NeedsRestoredEvent>();
+        var sleepTargetPublications = new List<PawnSleepTargetEvent>();
+
         // Phase 1: Sleeping — process active sleepers (occupied beds).
-        foreach (EntityId bed in Query<BedComponent>())
+        // Snapshot the whole BedComponent span; reads of NeedsComponent for
+        // the occupant pawn are independent P/Invokes and don't conflict
+        // with the lease.
+        var bedsSnapshot = new List<(EntityId Bed, BedComponent State)>();
+        using (SpanLease<BedComponent> beds = NativeWorld.AcquireSpan<BedComponent>())
         {
-            BedComponent bedComp = GetComponent<BedComponent>(bed);
+            ReadOnlySpan<BedComponent> bedSpan = beds.Span;
+            ReadOnlySpan<int> bedIndices = beds.Indices;
+            for (int i = 0; i < beds.Count; i++)
+            {
+                bedsSnapshot.Add((new EntityId(bedIndices[i], 0), bedSpan[i]));
+            }
+        }
+
+        foreach ((EntityId bed, BedComponent bedCompOriginal) in bedsSnapshot)
+        {
+            BedComponent bedComp = bedCompOriginal;
             if (!bedComp.Occupant.HasValue) continue;
 
             EntityId pawn = bedComp.Occupant.Value;
-            NeedsComponent needs = GetComponent<NeedsComponent>(pawn);
+            if (!NativeWorld.TryGetComponent<NeedsComponent>(pawn, out NeedsComponent needs)) continue;
 
-            // Wake check using current Sleep value.
             if (needs.Sleep >= WakeThreshold)
             {
                 bedComp.Occupant = null;
-                SetComponent(bed, bedComp);
-                Services.Pawns.Publish(new PawnSleepFinishedEvent
-                {
-                    PawnId = pawn,
-                });
+                bedWrites.Add((bed, bedComp));
+                sleepFinishedPublications.Add(pawn);
                 continue;
             }
 
-            // Apply restoration: hybrid formula ΔSleep + ΔComfort × 0.3.
-            Services.Pawns.Publish(new NeedsRestoredEvent
+            restorationPublications.Add(new NeedsRestoredEvent
             {
                 PawnId = pawn,
                 Need   = NeedKind.Sleep,
                 Amount = bedComp.SleepRestorationPerTick,
             });
-            Services.Pawns.Publish(new NeedsRestoredEvent
+            restorationPublications.Add(new NeedsRestoredEvent
             {
                 PawnId = pawn,
                 Need   = NeedKind.Comfort,
@@ -84,70 +88,85 @@ public sealed class SleepSystem : SystemBase
             });
         }
 
-        // Phase 2: Arrival/Claim — pawns с Sleep job AND target reached.
-        foreach (EntityId pawn in Query<JobComponent, PositionComponent>())
+        // Phase 2: Arrival/Claim — pawns with Sleep job AND target reached.
+        // Snapshot the JobComponent span; per-pawn reads of NeedsComponent,
+        // PositionComponent, BedComponent are independent.
+        var jobSnapshot = new List<(EntityId Pawn, JobComponent Job)>();
+        using (SpanLease<JobComponent> jobs = NativeWorld.AcquireSpan<JobComponent>())
         {
-            JobComponent job = GetComponent<JobComponent>(pawn);
-            if (job.Current != JobKind.Sleep || !job.Target.HasValue) continue;
+            ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
+            ReadOnlySpan<int> jobIndices = jobs.Indices;
+            for (int i = 0; i < jobs.Count; i++)
+            {
+                jobSnapshot.Add((new EntityId(jobIndices[i], 0), jobSpan[i]));
+            }
+        }
 
-            // If this pawn just crossed the wake threshold, Phase 1 above
-            // already released the bed and queued PawnSleepFinishedEvent —
-            // don't reclaim before the event flushes at the phase boundary.
-            NeedsComponent needs = GetComponent<NeedsComponent>(pawn);
-            if (needs.Sleep >= WakeThreshold) continue;
+        foreach ((EntityId pawn, JobComponent job) in jobSnapshot)
+        {
+            if (job.Current != JobKind.Sleep || !job.Target.HasValue) continue;
+            if (!NativeWorld.TryGetComponent<PositionComponent>(pawn, out PositionComponent pawnPos)) continue;
+
+            if (NativeWorld.TryGetComponent<NeedsComponent>(pawn, out NeedsComponent needs)
+                && needs.Sleep >= WakeThreshold) continue;
 
             EntityId bed = job.Target.Value;
-            BedComponent bedComp = GetComponent<BedComponent>(bed);
+            if (!NativeWorld.TryGetComponent<BedComponent>(bed, out BedComponent bedComp)) continue;
 
-            // Already in this bed? Skip — the sleeping phase above handles it.
             if (bedComp.Occupant.HasValue
                 && bedComp.Occupant.Value.Index   == pawn.Index
                 && bedComp.Occupant.Value.Version == pawn.Version) continue;
 
-            PositionComponent pawnPos = GetComponent<PositionComponent>(pawn);
-            PositionComponent bedPos  = GetComponent<PositionComponent>(bed);
+            if (!NativeWorld.TryGetComponent<PositionComponent>(bed, out PositionComponent bedPos)) continue;
 
             bool atBed = pawnPos.Position.X == bedPos.Position.X
                       && pawnPos.Position.Y == bedPos.Position.Y;
-
             if (!atBed) continue;
 
             if (bedComp.Occupant.HasValue)
             {
-                // Race: another pawn claimed first. Abort this pawn's job
-                // so JobSystem reassigns next tick.
-                Services.Pawns.Publish(new PawnSleepFinishedEvent
-                {
-                    PawnId = pawn,
-                });
+                sleepFinishedPublications.Add(pawn);
                 continue;
             }
 
-            // Claim bed (sole runtime writer).
             bedComp.Occupant = pawn;
-            SetComponent(bed, bedComp);
+            bedWrites.Add((bed, bedComp));
         }
 
-        // Phase 3: Targeting — pawns с Sleep job AND no Job.Target.
-        foreach (EntityId pawn in Query<JobComponent, PositionComponent>())
+        // Phase 3: Targeting — pawns with Sleep job AND no Job.Target.
+        foreach ((EntityId pawn, JobComponent job) in jobSnapshot)
         {
-            JobComponent job = GetComponent<JobComponent>(pawn);
             if (job.Current != JobKind.Sleep) continue;
             if (job.Target.HasValue) continue;
+            if (!NativeWorld.TryGetComponent<PositionComponent>(pawn, out PositionComponent pawnPos)) continue;
 
-            PositionComponent pawnPos = GetComponent<PositionComponent>(pawn);
             EntityId? target = FindNearestUnoccupiedBed(pawnPos.Position);
             if (!target.HasValue) continue;
 
-            PositionComponent bedPos = GetComponent<PositionComponent>(target.Value);
+            if (!NativeWorld.TryGetComponent<PositionComponent>(target.Value, out PositionComponent bedPos)) continue;
 
-            Services.Pawns.Publish(new PawnSleepTargetEvent
+            sleepTargetPublications.Add(new PawnSleepTargetEvent
             {
                 PawnId     = pawn,
                 Target     = target.Value,
                 TargetTile = bedPos.Position,
             });
         }
+
+        // Single batch for all BedComponent writes accumulated above.
+        if (bedWrites.Count > 0)
+        {
+            using WriteBatch<BedComponent> batch = NativeWorld.BeginBatch<BedComponent>();
+            foreach ((EntityId bed, BedComponent state) in bedWrites)
+                batch.Update(bed, state);
+        }
+
+        foreach (NeedsRestoredEvent evt in restorationPublications)
+            Services.Pawns.Publish(evt);
+        foreach (EntityId pawn in sleepFinishedPublications)
+            Services.Pawns.Publish(new PawnSleepFinishedEvent { PawnId = pawn });
+        foreach (PawnSleepTargetEvent evt in sleepTargetPublications)
+            Services.Pawns.Publish(evt);
     }
 
     private EntityId? FindNearestUnoccupiedBed(GridVector pawnPos)
@@ -155,12 +174,16 @@ public sealed class SleepSystem : SystemBase
         EntityId? bestBed = null;
         int bestDistance = int.MaxValue;
 
-        foreach (EntityId bed in Query<BedComponent, PositionComponent>())
+        using SpanLease<BedComponent> beds = NativeWorld.AcquireSpan<BedComponent>();
+        ReadOnlySpan<BedComponent> bedSpan = beds.Span;
+        ReadOnlySpan<int> bedIndices = beds.Indices;
+        for (int i = 0; i < beds.Count; i++)
         {
-            BedComponent bedComp = GetComponent<BedComponent>(bed);
+            BedComponent bedComp = bedSpan[i];
             if (bedComp.Occupant.HasValue) continue;
 
-            PositionComponent pos = GetComponent<PositionComponent>(bed);
+            var bed = new EntityId(bedIndices[i], 0);
+            if (!NativeWorld.TryGetComponent<PositionComponent>(bed, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDistance)
             {
@@ -168,7 +191,6 @@ public sealed class SleepSystem : SystemBase
                 bestBed = bed;
             }
         }
-
         return bestBed;
     }
 

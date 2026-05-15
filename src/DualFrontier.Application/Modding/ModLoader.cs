@@ -277,21 +277,22 @@ public sealed class ModLoader
     }
 
     /// <summary>
-    /// Handles an isolation violation surfaced by the runtime guard.
-    /// Per MOD_OS_ARCHITECTURE §10.3 + TechArch 11.8: the core does not
-    /// crash on a mod isolation violation. The fault is reported through
-    /// <see cref="ModFaultHandler"/> (an <see cref="IModFaultSink"/>
-    /// implementation owned by <see cref="ModIntegrationPipeline"/>); the
-    /// offending mod is queued for deferred unload at the next menu open
-    /// per the design comment retained from the original Phase 2 (part 2)
-    /// plan.
+    /// Handles a fault surfaced by mod-side code (currently the public
+    /// surface for callers that wrap a mod-system invocation in try/catch
+    /// and route the failure here). Per MOD_OS_ARCHITECTURE §10.3 +
+    /// TechArch 11.8: the core does not crash on a mod fault. The fault is
+    /// reported through <see cref="ModFaultHandler"/> (an
+    /// <see cref="IModFaultSink"/> implementation owned by
+    /// <see cref="ModIntegrationPipeline"/>); the offending mod is queued
+    /// for deferred unload at the next menu open per the design comment
+    /// retained from the original Phase 2 (part 2) plan.
     ///
-    /// This method is the public-surface entry point for callers that hold
-    /// a <see cref="ModLoader"/> reference but not a
-    /// <see cref="ModFaultHandler"/> reference. New code routes faults
-    /// through <see cref="IModFaultSink"/> directly via
-    /// <see cref="DualFrontier.Core.ECS.SystemExecutionContext"/>'s
-    /// installed sink. See <see cref="ModIsolationException"/> and
+    /// Post-K8.3+K8.4 cutover: the prior runtime isolation-guard route
+    /// (which called <see cref="IModFaultSink.ReportFault"/> from inside
+    /// <see cref="DualFrontier.Core.ECS.SystemExecutionContext"/>) is gone;
+    /// isolation is now enforced at compile time by <c>[SystemAccess]</c>
+    /// + the future A'.9 analyzer. This method is the surviving fault
+    /// entry point. See <see cref="ModIsolationException"/> and
     /// <c>docs/MOD_PIPELINE.md</c>.
     ///
     /// Idempotent: handling the same fault twice is harmless; the handler

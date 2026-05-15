@@ -5,6 +5,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn
@@ -19,15 +20,6 @@ namespace DualFrontier.Systems.Pawn
     /// <see cref="NeedsComponent.CriticalThreshold"/>; <c>JobSystem</c>
     /// subscribes and reassigns the pawn to a recovery job
     /// (<c>JobKind.Eat</c>, <c>JobKind.Sleep</c>) when urgent.
-    ///
-    /// No recovery mechanism exists yet — neither food entities, nor an
-    /// EatSystem that consumes food and restores
-    /// <see cref="NeedsComponent.Satiety"/>, nor parallel systems for
-    /// hydration / sleep / comfort. Pawns therefore deplete indefinitely
-    /// once spawned. Phase 5 introduces those systems; until then, the
-    /// displayed need bars truthfully reflect ungrounded depletion. By the
-    /// project's operating principle: state either exists or it does not —
-    /// we do not fake recovery via inverted depletion.
     /// </summary>
     [SystemAccess(
         reads:  new Type[0],
@@ -37,15 +29,11 @@ namespace DualFrontier.Systems.Pawn
     [TickRate(TickRates.SLOW)]
     public sealed class NeedsSystem : SystemBase
     {
-        // Depletion rates per SLOW tick.
         private const float SatietyDepletionPerTick   = 0.002f;
         private const float HydrationDepletionPerTick = 0.0015f;
         private const float SleepDepletionPerTick     = 0.001f;
         private const float ComfortDepletionPerTick   = 0.0005f;
 
-        // Per-entity edge state: remembers which needs were critical on the
-        // previous tick so we publish NeedsCriticalEvent exactly once per
-        // crossing rather than on every tick the value stays at or below threshold.
         private readonly Dictionary<(EntityId Entity, NeedKind Kind), bool> _critical
             = new();
 
@@ -60,7 +48,8 @@ namespace DualFrontier.Systems.Pawn
 
         private void OnNeedsRestored(NeedsRestoredEvent evt)
         {
-            var needs = GetComponent<NeedsComponent>(evt.PawnId);
+            if (!NativeWorld.TryGetComponent<NeedsComponent>(evt.PawnId, out NeedsComponent needs))
+                return;
             switch (evt.Need)
             {
                 case NeedKind.Satiety:
@@ -76,24 +65,52 @@ namespace DualFrontier.Systems.Pawn
                     needs.Comfort   = Math.Clamp(needs.Comfort   + evt.Amount, 0f, 1f);
                     break;
             }
-            SetComponent(evt.PawnId, needs);
+            using WriteBatch<NeedsComponent> batch = NativeWorld.BeginBatch<NeedsComponent>();
+            batch.Update(evt.PawnId, needs);
         }
 
         public override void Update(float delta)
         {
-            foreach (var entity in Query<NeedsComponent>())
+            // Snapshot pass: read every NeedsComponent from a span lease,
+            // collect (entity, modifiedNeeds) into a buffer, then dispose
+            // the lease before opening the BeginBatch. The native side
+            // forbids batch creation while a span lease is active on the
+            // same world, but reads via TryGetComponent are fine alongside
+            // the batch — see WriteBatch / SpanLease lifetime contracts.
+            var entities = new List<EntityId>();
+            var updated = new List<NeedsComponent>();
+            using (SpanLease<NeedsComponent> needs = NativeWorld.AcquireSpan<NeedsComponent>())
             {
-                var needs = GetComponent<NeedsComponent>(entity);
-                needs.Satiety   = Math.Clamp(needs.Satiety   - SatietyDepletionPerTick,   0f, 1f);
-                needs.Hydration = Math.Clamp(needs.Hydration - HydrationDepletionPerTick, 0f, 1f);
-                needs.Sleep     = Math.Clamp(needs.Sleep     - SleepDepletionPerTick,     0f, 1f);
-                needs.Comfort   = Math.Clamp(needs.Comfort   - ComfortDepletionPerTick,   0f, 1f);
-                SetComponent(entity, needs);
+                ReadOnlySpan<NeedsComponent> needsSpan = needs.Span;
+                ReadOnlySpan<int> indices = needs.Indices;
+                for (int i = 0; i < needs.Count; i++)
+                {
+                    NeedsComponent n = needsSpan[i];
+                    n.Satiety   = Math.Clamp(n.Satiety   - SatietyDepletionPerTick,   0f, 1f);
+                    n.Hydration = Math.Clamp(n.Hydration - HydrationDepletionPerTick, 0f, 1f);
+                    n.Sleep     = Math.Clamp(n.Sleep     - SleepDepletionPerTick,     0f, 1f);
+                    n.Comfort   = Math.Clamp(n.Comfort   - ComfortDepletionPerTick,   0f, 1f);
+                    entities.Add(new EntityId(indices[i], 0));
+                    updated.Add(n);
+                }
+            }
 
-                CheckCritical(entity, NeedKind.Satiety,   needs.Satiety);
-                CheckCritical(entity, NeedKind.Hydration, needs.Hydration);
-                CheckCritical(entity, NeedKind.Sleep,     needs.Sleep);
-                CheckCritical(entity, NeedKind.Comfort,   needs.Comfort);
+            using (WriteBatch<NeedsComponent> batch = NativeWorld.BeginBatch<NeedsComponent>())
+            {
+                for (int i = 0; i < entities.Count; i++)
+                    batch.Update(entities[i], updated[i]);
+            }
+
+            // Critical-edge tracking can use the post-update snapshot we just
+            // built — the values are identical to what just landed on disk.
+            for (int i = 0; i < entities.Count; i++)
+            {
+                EntityId e = entities[i];
+                NeedsComponent n = updated[i];
+                CheckCritical(e, NeedKind.Satiety,   n.Satiety);
+                CheckCritical(e, NeedKind.Hydration, n.Hydration);
+                CheckCritical(e, NeedKind.Sleep,     n.Sleep);
+                CheckCritical(e, NeedKind.Comfort,   n.Comfort);
             }
         }
 

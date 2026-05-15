@@ -43,10 +43,15 @@ public sealed class HaulSystem : SystemBase
     {
         _inCallReservations.Clear();
 
-        foreach (var pawn in Query<JobComponent>())
+        using SpanLease<JobComponent> jobs = NativeWorld.AcquireSpan<JobComponent>();
+        ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
+        ReadOnlySpan<int> jobIndices = jobs.Indices;
+
+        for (int i = 0; i < jobs.Count; i++)
         {
-            var job = GetComponent<JobComponent>(pawn);
+            JobComponent job = jobSpan[i];
             if (job.Current != JobKind.Idle) continue;
+            var pawn = new EntityId(jobIndices[i], 0);
 
             if (!TryFindHaul(out var sourceId, out var destId, out var itemId, out var quantity))
                 continue;
@@ -93,43 +98,57 @@ public sealed class HaulSystem : SystemBase
         int      srcQty   = 0;
         bool     srcFound = false;
 
-        foreach (var storage in Query<StorageComponent>())
+        using (SpanLease<StorageComponent> storages = NativeWorld.AcquireSpan<StorageComponent>())
         {
-            var s = GetComponent<StorageComponent>(storage);
-            if (!s.Items.IsValid || s.Items.Count == 0) continue;
+            ReadOnlySpan<StorageComponent> storageSpan = storages.Span;
+            ReadOnlySpan<int> storageIndices = storages.Indices;
 
-            int count = s.Items.Count;
-            var keysBuf = new InternedString[count];
-            var valuesBuf = new int[count];
-            s.Items.Iterate(keysBuf, valuesBuf);
-
-            for (int i = 0; i < count; i++)
+            for (int s = 0; s < storages.Count; s++)
             {
-                string? resolved = keysBuf[i].Resolve(NativeWorld);
-                if (resolved is null) continue;
-                if (_inCallReservations.Contains((storage, resolved)))
-                    continue;
-                src      = storage;
-                srcItem  = resolved;
-                srcQty   = valuesBuf[i];
-                srcFound = true;
-                break;
+                StorageComponent storage = storageSpan[s];
+                if (!storage.Items.IsValid || storage.Items.Count == 0) continue;
+                var storageId = new EntityId(storageIndices[s], 0);
+
+                int count = storage.Items.Count;
+                var keysBuf = new InternedString[count];
+                var valuesBuf = new int[count];
+                storage.Items.Iterate(keysBuf, valuesBuf);
+
+                for (int i = 0; i < count; i++)
+                {
+                    string? resolved = keysBuf[i].Resolve(NativeWorld);
+                    if (resolved is null) continue;
+                    if (_inCallReservations.Contains((storageId, resolved)))
+                        continue;
+                    src      = storageId;
+                    srcItem  = resolved;
+                    srcQty   = valuesBuf[i];
+                    srcFound = true;
+                    break;
+                }
+                if (srcFound) break;
             }
-            if (srcFound) break;
         }
 
         if (!srcFound) return false;
 
         EntityId dst      = default;
         bool     dstFound = false;
-        foreach (var storage in Query<StorageComponent>())
+        using (SpanLease<StorageComponent> storages = NativeWorld.AcquireSpan<StorageComponent>())
         {
-            if (storage.Equals(src)) continue;
-            var s = GetComponent<StorageComponent>(storage);
-            if (!s.Items.IsValid || s.IsFull) continue;
-            dst      = storage;
-            dstFound = true;
-            break;
+            ReadOnlySpan<StorageComponent> storageSpan = storages.Span;
+            ReadOnlySpan<int> storageIndices = storages.Indices;
+
+            for (int s = 0; s < storages.Count; s++)
+            {
+                var storageId = new EntityId(storageIndices[s], 0);
+                if (storageId.Equals(src)) continue;
+                StorageComponent storage = storageSpan[s];
+                if (!storage.Items.IsValid || storage.IsFull) continue;
+                dst      = storageId;
+                dstFound = true;
+                break;
+            }
         }
 
         if (!dstFound) return false;

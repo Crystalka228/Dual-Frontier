@@ -6,6 +6,7 @@ using System.Threading;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using FluentAssertions;
 using Xunit;
@@ -20,7 +21,7 @@ public sealed class ParallelExecutionTests
         if (Environment.ProcessorCount < 2)
             return; // Test requires multi-core; single-core CI cannot observe parallelism.
 
-        var world = new World();
+        using var nativeWorld = new NativeWorld();
         var a = new ThreadRecorderASystem();
         var b = new ThreadRecorderBSystem();
         var c = new ThreadRecorderCSystem();
@@ -29,9 +30,10 @@ public sealed class ParallelExecutionTests
             new SystemPhase(new SystemBase[] { a, b, c }),
         };
         var scheduler = new ParallelSystemScheduler(
-            phases, new TickScheduler(), world,
+            phases, new TickScheduler(),
             new Dictionary<SystemBase, SystemMetadata>(),
-            new NullModFaultSink());
+            new NullModFaultSink(),
+            nativeWorld);
 
         for (int i = 0; i < 50; i++)
             scheduler.ExecuteTick(0.016f);
@@ -48,7 +50,7 @@ public sealed class ParallelExecutionTests
     [Fact]
     public void DependentSystems_RunSequentially()
     {
-        var world = new World();
+        using var nativeWorld = new NativeWorld();
         var timeline = new TimelineRecorder();
         var producer = new TimestampProducerSystem(timeline, "producer");
         var consumer = new TimestampConsumerSystem(timeline, "consumer");
@@ -58,9 +60,10 @@ public sealed class ParallelExecutionTests
             new SystemPhase(new SystemBase[] { consumer }),
         };
         var scheduler = new ParallelSystemScheduler(
-            phases, new TickScheduler(), world,
+            phases, new TickScheduler(),
             new Dictionary<SystemBase, SystemMetadata>(),
-            new NullModFaultSink());
+            new NullModFaultSink(),
+            nativeWorld);
 
         scheduler.ExecuteTick(0.016f);
 
@@ -74,7 +77,7 @@ public sealed class ParallelExecutionTests
     [Fact]
     public void PhaseBarrier_WaitsForAllSystems()
     {
-        var world = new World();
+        using var nativeWorld = new NativeWorld();
         var fast = new CompletionCounterSystem(spinMs: 0);
         var slow = new CompletionCounterSystem(spinMs: 50);
         var phases = new List<SystemPhase>
@@ -82,9 +85,10 @@ public sealed class ParallelExecutionTests
             new SystemPhase(new SystemBase[] { fast, slow }),
         };
         var scheduler = new ParallelSystemScheduler(
-            phases, new TickScheduler(), world,
+            phases, new TickScheduler(),
             new Dictionary<SystemBase, SystemMetadata>(),
-            new NullModFaultSink());
+            new NullModFaultSink(),
+            nativeWorld);
 
         scheduler.ExecutePhase(phases[0], 0.016f);
 

@@ -41,10 +41,9 @@ internal sealed class ParallelSystemScheduler
 {
     private IReadOnlyList<SystemPhase> _phases;
     private readonly TickScheduler _ticks;
-    private readonly World _world;
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
-    private readonly NativeWorld? _nativeWorld;
+    private readonly NativeWorld _nativeWorld;
     // K8.3+K8.4 — Path β resolver passed by GameBootstrap (ModRegistry
     // implements IManagedStorageResolver). Null in tests + builds without
     // mod loading; system-side SystemBase.ManagedStore<T>() returns null
@@ -56,36 +55,33 @@ internal sealed class ParallelSystemScheduler
 
     /// <summary>
     /// Creates a scheduler bound to the given phase list, tick clock, and
-    /// target world. The <c>MaxDegreeOfParallelism</c> is fixed at
+    /// native world. The <c>MaxDegreeOfParallelism</c> is fixed at
     /// construction time to <c>max(1, ProcessorCount - 2)</c>. Execution
     /// contexts are pre-built for every registered system so the per-tick
     /// hot path does no reflection or allocation.
     /// </summary>
     /// <param name="phases">Phases in execution order as produced by <see cref="DependencyGraph"/>.</param>
     /// <param name="ticks">Tick clock used to filter systems by <c>[TickRate]</c>.</param>
-    /// <param name="world">Target world the systems act upon.</param>
     /// <param name="systemMetadata">Per-system <see cref="SystemMetadata"/> table the scheduler reads in <c>BuildContext</c> for origin/modId propagation. Systems absent from the table fall through to <c>Core/null</c> defaults — covers core systems registered via local arrays in tests where the table is empty.</param>
     /// <param name="faultSink">Sink for mod-origin faults; required (no silent default). Tests that never produce faults pass <c>new NullModFaultSink()</c> explicitly.</param>
+    /// <param name="nativeWorld">Native world handle the systems act upon. Required post-K8.3+K8.4 cutover — sole production component-storage backend.</param>
     /// <param name="services">Optional domain-bus aggregator surfaced to systems via <c>SystemBase.Services</c>; null for tests that never publish.</param>
-    /// <param name="nativeWorld">K8.2 v2 — optional native world handle surfaced to systems via <c>SystemBase.NativeWorld</c>. Required in production where systems intern strings or read NativeMap fields; null for unit tests that exercise only managed-side ECS.</param>
     /// <param name="managedStorageResolver">K8.3+K8.4 — optional Path β resolver. Production passes the ModRegistry (which implements <see cref="IManagedStorageResolver"/>); tests and builds without mod loading pass null and <c>SystemBase.ManagedStore&lt;T&gt;()</c> returns null.</param>
     public ParallelSystemScheduler(
         IReadOnlyList<SystemPhase> phases,
         TickScheduler ticks,
-        World world,
         IReadOnlyDictionary<SystemBase, SystemMetadata> systemMetadata,
         IModFaultSink faultSink,
+        NativeWorld nativeWorld,
         IGameServices? services = null,
-        NativeWorld? nativeWorld = null,
         IManagedStorageResolver? managedStorageResolver = null)
     {
         _phases = phases ?? throw new ArgumentNullException(nameof(phases));
         _ticks = ticks ?? throw new ArgumentNullException(nameof(ticks));
-        _world = world ?? throw new ArgumentNullException(nameof(world));
         _systemMetadata = systemMetadata ?? throw new ArgumentNullException(nameof(systemMetadata));
         _faultSink = faultSink ?? throw new ArgumentNullException(nameof(faultSink));
+        _nativeWorld = nativeWorld ?? throw new ArgumentNullException(nameof(nativeWorld));
         _services = services;
-        _nativeWorld = nativeWorld;
         _managedStorageResolver = managedStorageResolver;
         _parallelOptions = new ParallelOptions
         {
@@ -254,16 +250,13 @@ internal sealed class ParallelSystemScheduler
         }
 
         return new SystemExecutionContext(
-            _world,
             systemType.FullName ?? systemType.Name,
-            attr.Reads,
-            attr.Writes,
             attr.Buses,
             origin,
             modId,
             _faultSink,
-            _services,
             _nativeWorld,
+            _services,
             _managedStorageResolver);
     }
 }

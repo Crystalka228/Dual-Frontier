@@ -125,26 +125,8 @@ internal sealed class V3NativeBatchedScenario : TickLoopScenarioBase
         SpawnItems<DecorativeAuraComponent>(rng, InitialDecorationCount,
             () => new DecorativeAuraComponent());
 
-        // A handful of power producer/consumer entities so V3PowerSystem
-        // has work to do. Keeps the benchmark exercising more than just
-        // pawn updates.
-        var powerIds = new EntityId[8];
-        var producers = new PowerProducerComponent[8];
-        var consumers = new PowerConsumerComponent[8];
-        for (int i = 0; i < 8; i++)
-        {
-            powerIds[i] = _world.CreateEntity();
-            producers[i] = new PowerProducerComponent
-            {
-                MaxWatts = 100f, CurrentWatts = 100f, IsActive = true, Efficiency = 1.0f,
-            };
-            consumers[i] = new PowerConsumerComponent
-            {
-                RequiredWatts = 80f, IsPowered = true, Priority = 0,
-            };
-        }
-        _world.AddComponents<PowerProducerComponent>(powerIds, producers);
-        _world.AddComponents<PowerConsumerComponent>(powerIds, consumers);
+        // K8.3+K8.4 cutover: power producers/consumers are gone with the
+        // Power subsystem; V3PowerSystem benchmark step is a no-op now.
     }
 
     private void SpawnItems<T>(Random rng, int count, Func<T> factory) where T : unmanaged, IComponent
@@ -173,7 +155,6 @@ internal sealed class V3NativeBatchedScenario : TickLoopScenarioBase
         // SpanLease+WriteBatch pair, mirroring the post-K5 access pattern.
         TickNeedsDepletion(delta);
         TickMoodFromNeeds();
-        TickPowerConsumption();
     }
 
     private void TickNeedsDepletion(float delta)
@@ -230,36 +211,7 @@ internal sealed class V3NativeBatchedScenario : TickLoopScenarioBase
         }
     }
 
-    private void TickPowerConsumption()
-    {
-        // Mirrors ElectricGridSystem — consumers draw from producers.
-        // Trivial single-grid model: total supply ≥ total demand → all
-        // consumers stay powered. The benchmark cares about the iteration
-        // shape, not the simulation accuracy.
-        using var prodLease = _world.AcquireSpan<PowerProducerComponent>();
-        using var consLease = _world.AcquireSpan<PowerConsumerComponent>();
-
-        float totalSupply = 0f;
-        ReadOnlySpan<PowerProducerComponent> producers = prodLease.Span;
-        for (int i = 0; i < producers.Length; i++)
-            totalSupply += producers[i].CurrentWatts;
-
-        float totalDemand = 0f;
-        ReadOnlySpan<PowerConsumerComponent> consumers = consLease.Span;
-        for (int i = 0; i < consumers.Length; i++)
-            totalDemand += consumers[i].RequiredWatts;
-
-        // No write — V3PowerSystem is a read-only pass for benchmark
-        // simplicity. The float result is consumed via a sink to avoid
-        // dead-code elimination by the JIT.
-        _powerSink = totalSupply - totalDemand;
-    }
-
-    // Volatile sink — prevents the JIT from eliding TickPowerConsumption's
-    // arithmetic when the result isn't observed elsewhere. BDN benchmarks
-    // sometimes hit this if the loop body has no side effect the runtime
-    // can see.
-    private volatile float _powerSink;
+    // TickPowerConsumption removed — Power subsystem deleted in K8.3+K8.4 cutover.
 
     public override void TeardownWorld()
     {

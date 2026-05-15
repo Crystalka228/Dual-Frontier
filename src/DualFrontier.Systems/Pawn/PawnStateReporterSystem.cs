@@ -5,6 +5,7 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Systems.Pawn;
@@ -36,40 +37,53 @@ public sealed class PawnStateReporterSystem : SystemBase
 
     public override void Update(float delta)
     {
-        // Pre-materialise membership sets so per-pawn reads stay branch-free
-        // and avoid try/catch in the hot loop. The [SystemAccess] reads
-        // declaration above keeps these Query calls inside the isolation
-        // guard. Allocation: two short-lived HashSets per SLOW tick — at
-        // 10 pawns and SLOW rate this is negligible.
-        var identitySet = new HashSet<EntityId>();
-        foreach (var e in Query<IdentityComponent>()) identitySet.Add(e);
-
-        var skillsSet = new HashSet<EntityId>();
-        foreach (var e in Query<SkillsComponent>()) skillsSet.Add(e);
-
-        foreach (var pawn in Query<NeedsComponent, JobComponent>())
+        // Pre-materialise membership sets so per-pawn presence checks stay
+        // branch-free. Iterate the (smaller) NeedsComponent + JobComponent
+        // intersection as the outer loop; identity / skills are optional.
+        var identitySet = new HashSet<int>();
+        using (SpanLease<IdentityComponent> ids = NativeWorld.AcquireSpan<IdentityComponent>())
         {
-            var needs = GetComponent<NeedsComponent>(pawn);
-            var mind  = GetComponent<MindComponent>(pawn);
-            var job   = GetComponent<JobComponent>(pawn);
+            ReadOnlySpan<int> idIndices = ids.Indices;
+            for (int i = 0; i < ids.Count; i++) identitySet.Add(idIndices[i]);
+        }
 
-            string name = identitySet.Contains(pawn)
-                ? GetComponent<IdentityComponent>(pawn).Name.Resolve(NativeWorld) ?? string.Empty
+        var skillsSet = new HashSet<int>();
+        using (SpanLease<SkillsComponent> skills = NativeWorld.AcquireSpan<SkillsComponent>())
+        {
+            ReadOnlySpan<int> sIndices = skills.Indices;
+            for (int i = 0; i < skills.Count; i++) skillsSet.Add(sIndices[i]);
+        }
+
+        using SpanLease<NeedsComponent> needs = NativeWorld.AcquireSpan<NeedsComponent>();
+        ReadOnlySpan<NeedsComponent> needsSpan = needs.Span;
+        ReadOnlySpan<int> needsIndices = needs.Indices;
+
+        for (int i = 0; i < needs.Count; i++)
+        {
+            var pawn = new EntityId(needsIndices[i], 0);
+            if (!NativeWorld.HasComponent<JobComponent>(pawn)) continue;
+
+            NeedsComponent n = needsSpan[i];
+            MindComponent mind = NativeWorld.GetComponent<MindComponent>(pawn);
+            JobComponent job = NativeWorld.GetComponent<JobComponent>(pawn);
+
+            string name = identitySet.Contains(pawn.Index)
+                ? NativeWorld.GetComponent<IdentityComponent>(pawn).Name.Resolve(NativeWorld) ?? string.Empty
                 : string.Empty;
 
             IReadOnlyList<(SkillKind Kind, int Level)> topSkills =
-                skillsSet.Contains(pawn)
-                    ? ComputeTopSkills(GetComponent<SkillsComponent>(pawn))
+                skillsSet.Contains(pawn.Index)
+                    ? ComputeTopSkills(NativeWorld.GetComponent<SkillsComponent>(pawn))
                     : Array.Empty<(SkillKind, int)>();
 
             Services.Pawns.Publish(new PawnStateChangedEvent
             {
                 PawnId    = pawn,
                 Name      = name,
-                Satiety   = needs.Satiety,
-                Hydration = needs.Hydration,
-                Sleep     = needs.Sleep,
-                Comfort   = needs.Comfort,
+                Satiety   = n.Satiety,
+                Hydration = n.Hydration,
+                Sleep     = n.Sleep,
+                Comfort   = n.Comfort,
                 Mood      = mind.Mood,
                 JobLabel  = TranslateJob(job.Current),
                 JobUrgent = job.Current == JobKind.Eat || job.Current == JobKind.Sleep,
@@ -83,11 +97,6 @@ public sealed class PawnStateReporterSystem : SystemBase
         if (!skills.Levels.IsValid || skills.Levels.Count == 0)
             return Array.Empty<(SkillKind, int)>();
 
-        // Build a working array of all (kind, level) pairs, sort by level
-        // descending (ties broken by enum order), take top N.
-        // NativeMap.Iterate yields entries in sorted-by-key (memcmp) order,
-        // not insertion order. Allocates two temp buffers — typical pawn
-        // skill count is 13 (one per SkillKind), so heap pressure is low.
         int count = skills.Levels.Count;
         var keysBuf = new SkillKind[count];
         var valuesBuf = new int[count];
@@ -97,7 +106,6 @@ public sealed class PawnStateReporterSystem : SystemBase
         for (int i = 0; i < count; i++)
             pairs[i] = (keysBuf[i], valuesBuf[i]);
 
-        // Insertion sort — fixed size 13, allocation-free, O(n^2) trivial.
         for (int a = 1; a < pairs.Length; a++)
         {
             var cur = pairs[a];
@@ -116,12 +124,6 @@ public sealed class PawnStateReporterSystem : SystemBase
         return result;
     }
 
-    /// <summary>
-    /// Comparer: descending by level, ascending by SkillKind enum value
-    /// for ties. Returns negative if <paramref name="a"/> should come
-    /// BEFORE <paramref name="b"/> in the sorted (top-first) order;
-    /// positive otherwise.
-    /// </summary>
     private static int CompareDesc((SkillKind Kind, int Level) a, (SkillKind Kind, int Level) b)
     {
         if (a.Level != b.Level) return b.Level - a.Level;

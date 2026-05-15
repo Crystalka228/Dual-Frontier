@@ -17,12 +17,14 @@ namespace DualFrontier.Application.Modding;
 /// (<see cref="ModIntegrationPipeline.Apply"/>,
 /// <see cref="ModLoader.HandleModFault"/>) hold a reference to the handler
 /// and query <see cref="GetFaultedMods"/> / <see cref="ClearFault"/> on
-/// demand — the handler itself depends on nothing. Faults arrive on
-/// simulation tick threads (via the isolation guard or the public
-/// <see cref="ModLoader.HandleModFault"/> entry point); reads happen on
-/// the menu thread when <see cref="ModIntegrationPipeline.Apply"/> drains
-/// the faulted set. All access is gated through <c>lock (_lock)</c> to
-/// keep the handler thread-safe across that boundary.
+/// demand — the handler itself depends on nothing. Faults arrive via the
+/// public <see cref="ModLoader.HandleModFault"/> entry point (post-K8.3+K8.4
+/// cutover, the runtime isolation-guard route is removed; isolation is
+/// enforced at compile time by <c>[SystemAccess]</c> + the future A'.9
+/// analyzer). Reads happen on the menu thread when
+/// <see cref="ModIntegrationPipeline.Apply"/> drains the faulted set.
+/// All access is gated through <c>lock (_lock)</c> to keep the handler
+/// thread-safe across that boundary.
 ///
 /// The handler does NOT rebuild the dependency graph synchronously. Per
 /// TechArch 11.8 and the comment retained from the original
@@ -53,16 +55,12 @@ internal sealed class ModFaultHandler : IModFaultSink
     }
 
     /// <summary>
-    /// Called by <see cref="SystemExecutionContext"/> (via the
-    /// <see cref="IModFaultSink"/> contract) and by
-    /// <see cref="ModLoader.HandleModFault"/> when a mod system breaks
-    /// isolation or otherwise misbehaves. Records the fault in an internal
-    /// set for deferred unload at the next menu open. Idempotent: faulting
-    /// the same mod twice during a single tick is harmless. Defensive on
-    /// null modId (silent no-op) per the sink contract — the
-    /// <see cref="DualFrontier.Core.ECS.IsolationViolationException"/>
-    /// thrown alongside the report carries the diagnostic message, so
-    /// the sink itself is intentionally silent.
+    /// Called by <see cref="ModLoader.HandleModFault"/> when a mod system
+    /// misbehaves. Records the fault in an internal set for deferred unload
+    /// at the next menu open. Idempotent: faulting the same mod twice during
+    /// a single tick is harmless. Defensive on null modId (silent no-op) per
+    /// the sink contract — the diagnostic message is already on the
+    /// underlying exception that triggered the report.
     /// </summary>
     public void ReportFault(string modId, string message)
     {

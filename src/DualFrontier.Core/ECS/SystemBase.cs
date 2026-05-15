@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
@@ -9,7 +8,13 @@ namespace DualFrontier.Core.ECS;
 
 /// <summary>
 /// Base class for all game systems in DualFrontier.
-/// Systems contain game logic and run every tick via ParallelSystemScheduler.
+/// Systems contain game logic and run every tick via <see cref="DualFrontier.Core.Scheduling.ParallelSystemScheduler"/>.
+///
+/// K8.3+K8.4 cutover: the managed-<c>World</c> access surface (GetComponent /
+/// SetComponent / Query / GetSystem) is removed. Systems read and write
+/// component storage exclusively through <see cref="NativeWorld"/>'s
+/// span/batch API. Cross-system communication remains via <see cref="Services"/>;
+/// per-mod managed-class storage remains via <see cref="ManagedStore{T}"/>.
 /// </summary>
 public abstract class SystemBase
 {
@@ -50,99 +55,10 @@ public abstract class SystemBase
     internal void Dispose() => OnDispose();
 
     /// <summary>
-    /// Reads a component of type {T} from entity <paramref name="id"/> via the
-    /// thread-local execution context. Delegates to
-    /// <see cref="SystemExecutionContext.GetComponent{T}"/>, which enforces
-    /// the isolation guard in DEBUG. Throws {InvalidOperationException} when
-    /// called outside a scheduler-pushed context (e.g. from the Godot main
-    /// thread).
-    /// </summary>
-    /// <typeparam name="T">Component type to read.</typeparam>
-    /// <param name="id">Target entity.</param>
-    /// <returns>The stored component instance.</returns>
-    protected T GetComponent<T>(EntityId id) where T : IComponent
-    {
-        var ctx = SystemExecutionContext.Current
-            ?? throw new InvalidOperationException(
-                "SystemBase.GetComponent called outside an active scheduler context.");
-        return ctx.GetComponent<T>(id);
-    }
-
-    /// <summary>
-    /// Writes a component of type {T} on entity <paramref name="id"/> via the
-    /// thread-local execution context. Delegates to
-    /// <see cref="SystemExecutionContext.SetComponent{T}"/>, which enforces
-    /// the isolation guard in DEBUG. Throws {InvalidOperationException} when
-    /// called outside a scheduler-pushed context.
-    /// </summary>
-    /// <typeparam name="T">Component type to write.</typeparam>
-    /// <param name="id">Target entity.</param>
-    /// <param name="value">New component value.</param>
-    protected void SetComponent<T>(EntityId id, T value) where T : IComponent
-    {
-        var ctx = SystemExecutionContext.Current
-            ?? throw new InvalidOperationException(
-                "SystemBase.SetComponent called outside an active scheduler context.");
-        ctx.SetComponent<T>(id, value);
-    }
-
-    /// <summary>
-    /// Enumerates entities that currently have a component of type {T}.
-    /// Delegates to <see cref="SystemExecutionContext.Query{T}"/> — lazy,
-    /// DEBUG-guarded. Throws {InvalidOperationException} when called outside
-    /// an active scheduler context.
-    /// </summary>
-    /// <typeparam name="T">Component type whose owners to enumerate.</typeparam>
-    /// <returns>Lazy sequence of entity ids carrying a component of type {T}.</returns>
-    protected IEnumerable<EntityId> Query<T>() where T : IComponent
-    {
-        var ctx = SystemExecutionContext.Current
-            ?? throw new InvalidOperationException(
-                "SystemBase.Query called outside an active scheduler context.");
-        return ctx.Query<T>();
-    }
-
-    /// <summary>
-    /// Enumerates entities that currently have both {T1} and {T2}
-    /// components. Delegates to
-    /// <see cref="SystemExecutionContext.Query{T1, T2}"/>. Throws
-    /// {InvalidOperationException} when called outside an active scheduler
-    /// context.
-    /// </summary>
-    /// <typeparam name="T1">First required component type.</typeparam>
-    /// <typeparam name="T2">Second required component type.</typeparam>
-    /// <returns>Lazy sequence of entity ids carrying both components.</returns>
-    protected IEnumerable<EntityId> Query<T1, T2>()
-        where T1 : IComponent
-        where T2 : IComponent
-    {
-        var ctx = SystemExecutionContext.Current
-            ?? throw new InvalidOperationException(
-                "SystemBase.Query called outside an active scheduler context.");
-        return ctx.Query<T1, T2>();
-    }
-
-    /// <summary>
-    /// Always throws <see cref="IsolationViolationException"/> via the
-    /// thread-local execution context. Retained so that attempts to reach
-    /// another system produce a clear, diagnosable error instead of a silent
-    /// compile. Use {EventBus} for cross-system communication.
-    /// </summary>
-    /// <typeparam name="TSystem">System type the caller tried to resolve.</typeparam>
-    /// <returns>Never returns — always throws.</returns>
-    protected TSystem GetSystem<TSystem>() where TSystem : SystemBase
-    {
-        var ctx = SystemExecutionContext.Current
-            ?? throw new InvalidOperationException(
-                "SystemBase.GetSystem called outside an active scheduler context.");
-        return ctx.GetSystem<TSystem>();
-    }
-
-    /// <summary>
     /// Domain-bus aggregator supplied by the scheduler. Use for publishing
     /// events (<c>Services.Pawns.Publish(...)</c>) and subscribing in
-    /// <see cref="OnInitialize"/>. Reads are routed through the active
-    /// <see cref="SystemExecutionContext"/> so that out-of-context calls
+    /// <see cref="OnInitialize"/>. Reads route through the active
+    /// <see cref="SystemExecutionContext"/> so out-of-context calls
     /// (e.g. from the Godot main thread) fail loudly, and tests that build
     /// a context without supplying services receive a diagnostic instead of
     /// a silent NullReferenceException.
@@ -162,17 +78,13 @@ public abstract class SystemBase
     }
 
     /// <summary>
-    /// K8.2 v2 — native world handle supplied by the scheduler. Use to intern
-    /// strings (<c>NativeWorld.InternString</c>) and resolve <see cref="InternedString"/>
-    /// fields on struct components, and to construct per-component-instance
-    /// <see cref="NativeMap{TKey,TValue}"/>/<see cref="NativeSet{T}"/>/<see cref="NativeComposite{T}"/>
-    /// handles via the world's <c>Create*</c> factory methods. Reads route
-    /// through the active <see cref="SystemExecutionContext"/> so that
-    /// out-of-context calls (e.g. from the Godot main thread) fail loudly,
-    /// and tests that build a context without supplying a NativeWorld receive
-    /// a diagnostic instead of a silent null. Per migration plan §1.3 K8.4
-    /// preview, the production path now owns one NativeWorld alongside the
-    /// legacy managed World.
+    /// Native world handle supplied by the scheduler. Sole production
+    /// component-storage path post-K8.3+K8.4 cutover. Use the span/batch
+    /// surface (<c>AcquireSpan&lt;T&gt;()</c>, <c>BeginBatch&lt;T&gt;()</c>,
+    /// <c>HasComponent&lt;T&gt;</c>, <c>TryGetComponent&lt;T&gt;</c>) for
+    /// component access, and the K8.1 primitive factories
+    /// (<c>InternString</c>, <c>CreateMap</c>, <c>CreateSet</c>,
+    /// <c>CreateComposite</c>) for component-owned reference fields.
     /// </summary>
     protected NativeWorld NativeWorld
     {
@@ -181,10 +93,7 @@ public abstract class SystemBase
             var ctx = SystemExecutionContext.Current
                 ?? throw new InvalidOperationException(
                     "SystemBase.NativeWorld accessed outside an active scheduler context.");
-            return ctx.NativeWorld
-                ?? throw new InvalidOperationException(
-                    "SystemBase.NativeWorld requested but the scheduler did not supply a NativeWorld instance. " +
-                    "Pass one to ParallelSystemScheduler's constructor.");
+            return ctx.NativeWorld;
         }
     }
 

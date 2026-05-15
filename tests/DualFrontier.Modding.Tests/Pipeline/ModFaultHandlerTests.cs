@@ -5,6 +5,7 @@ using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Modding.Tests.Fixtures;
 using FluentAssertions;
@@ -205,14 +206,14 @@ public sealed class ModFaultHandlerTests
         var validator = new ContractValidator();
         var contractStore = new ModContractStore();
         IGameServices services = new GameServices();
-        var world = new World();
+        using var nativeWorld = new NativeWorld();
         var ticks = new TickScheduler();
         var graph = new DependencyGraph();
         graph.Build();
         var faultHandler = new ModFaultHandler();
         loader.SetFaultHandler(faultHandler);
         var scheduler = SchedulerTestFixture.BuildIsolated(
-            graph.GetPhases(), ticks, world, faultSink: faultHandler);
+            graph.GetPhases(), ticks, nativeWorld, faultSink: faultHandler);
         return new ModIntegrationPipeline(
             loader, registry, validator, contractStore, services, scheduler, faultHandler);
     }
