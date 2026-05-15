@@ -1648,6 +1648,22 @@ documents:
     review_cadence: on-status-transition
     reviewer: Crystalka
 
+  - id: DOC-D-NAMESPACE_CASCADE_RESEARCH_BRIEF
+    path: tools/briefs/NAMESPACE_CASCADE_RESEARCH_BRIEF.md
+    title: "M/G/R Namespace Cascade Map — Research Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-15"
+    last_modified_commit: "e3fef89"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-15"
+    last_review_event: "Brief executed 2026-05-15 — cascade map shipped at docs/research/M_G_R_NAMESPACE_CASCADE_MAP.md (commit e3fef89); no halts; 2 LOCKED renames captured, 10 ambiguities surfaced for ratification proposal"
+    reviewer: Crystalka
+
   # === Tier 3 Amendment plans (Category A + Tier 3 EXECUTED override) ===
 
   - id: DOC-A-K_L3_1_AMENDMENT_PLAN
