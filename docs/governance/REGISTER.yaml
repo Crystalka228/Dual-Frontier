@@ -1175,6 +1175,63 @@ documents:
     reviewer: Crystalka
     risks_referenced: [RISK-005, RISK-007]
 
+  - id: DOC-D-K8_34_COMBINED
+    path: tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF.md
+    title: "K8.3+K8.4 Combined Kernel Cutover (v1.0) — SUPERSEDED"
+    category: D
+    tier: 3
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-D-K8_34_COMBINED_V2
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-14"
+    last_modified_commit: "54c6658"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-14"
+    last_review_event: "Brief v1.0 superseded by v2.0 at A'.5 closure — Phases 0-3 executed correctly on disk; Phase 4+5 design replaced by v2.0's atomic single-commit cutover"
+    reviewer: Crystalka
+    risks_referenced: [RISK-005, RISK-007, RISK-008]
+    capa_entries_referenced: [CAPA-2026-05-13-K8.3-PREMISE-MISS, CAPA-2026-05-14-K8.34-API-SURFACE-MISS, CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT]
+
+  - id: DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH
+    path: tools/briefs/K8_34_COMBINED_BRIEF_REFRESH_PATCH.md
+    title: "K8.3+K8.4 Combined Brief Refresh Patch (v1) — SUPERSEDED"
+    category: D
+    tier: 3
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-D-K8_34_COMBINED_V2
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-14"
+    last_modified_commit: "54c6658"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-14"
+    last_review_event: "Patch v1 absorbed into v2.0 — its 5 findings (API-surface corrections for Phases 0-3) executed cleanly to b903b91; its NativeWorldTestFixture-delegates-to-RegisterAll decision (§7.3) and Lesson #7 carried forward"
+    reviewer: Crystalka
+    risks_referenced: [RISK-005, RISK-007, RISK-008]
+    capa_entries_referenced: [CAPA-2026-05-14-K8.34-API-SURFACE-MISS]
+
+  - id: DOC-D-K8_34_COMBINED_V2
+    path: tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF_V2.md
+    title: "K8.3+K8.4 Combined Kernel Cutover (v2.0) — EXECUTED"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    supersedes: [DOC-D-K8_34_COMBINED, DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH]
+    owner: Crystalka
+    version: "2.0"
+    last_modified: "2026-05-14"
+    last_modified_commit: "54c6658"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-14"
+    last_review_event: "A'.5 closure — sole execution artifact for K8.3+K8.4; 4 commits landed (24e5f56 revert, 54c6658 cutover atom, b3f6065 LOCKED amendments, this commit's REGISTER closure); managed World retired as ManagedTestWorld; Power deleted; 10 production systems on NativeWorld; 620 tests green"
+    reviewer: Crystalka
+    risks_referenced: [RISK-005, RISK-007, RISK-008]
+    capa_entries_referenced: [CAPA-2026-05-13-K8.3-PREMISE-MISS, CAPA-2026-05-14-K8.34-API-SURFACE-MISS, CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT]
+
   - id: DOC-D-K8_DECISION
     path: tools/briefs/K8_DECISION_BRIEF.md
     title: "K8 — Decision Brief"
@@ -2943,19 +3000,9 @@ documents:
     review_cadence: on-source-commit+quarterly
     reviewer: Crystalka
 
-  - id: DOC-F-SRC-EVENTS-POWER
-    path: src/DualFrontier.Events/Power/README.md
-    title: "Events Power submodule"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
+  # DOC-F-SRC-EVENTS-POWER deleted at A'.5 closure 2026-05-14 — Power events
+  # subsystem removed with the K8.3+K8.4 cutover (brief v2.0 §2). Electricity
+  # will be redesigned on the GPU compute pipeline in a separate future brief.
 
   - id: DOC-F-SRC-EVENTS-WORLD
     path: src/DualFrontier.Events/World/README.md
@@ -3181,19 +3228,10 @@ documents:
     review_cadence: on-source-commit+quarterly
     reviewer: Crystalka
 
-  - id: DOC-F-SRC-SYSTEMS-POWER
-    path: src/DualFrontier.Systems/Power/README.md
-    title: "Systems Power submodule"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
+  # DOC-F-SRC-SYSTEMS-POWER deleted at A'.5 closure 2026-05-14 — Power systems
+  # subsystem (ElectricGridSystem + ConverterSystem + EtherGridSystem) removed
+  # with the K8.3+K8.4 cutover (brief v2.0 §2). Electricity will be redesigned
+  # on the GPU compute pipeline in a separate future brief.
 
   - id: DOC-F-SRC-SYSTEMS-WORLD
     path: src/DualFrontier.Systems/World/README.md
@@ -4105,7 +4143,10 @@ capa_entries:
 
   - id: CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT
     opened_date: "2026-05-12"
-    closure_status: OPEN
+    closure_status: CLOSED
+    closed_date: "2026-05-14"
+    closed_commit: "PENDING-COMMIT-4"
+    closure_outcome: "A'.5 K8.3+K8.4 combined closure (commits 24e5f56..54c6658) is the second post-register milestone (after A'.4.5 itself); register-driven inventory survived the milestone with no count drift; sync_register.ps1 --validate runs cleanly post-closure. CAPA's effectiveness verification met."
     trigger: |
       A'.0.5 INVENTORY.md baseline ~135 .md files. A'.4.5 deliberation pre-flight
       (2026-05-12) revealed actual count ~220 (after K9 closure + K8.3/4/5 briefs authored
@@ -4137,7 +4178,10 @@ capa_entries:
 
   - id: CAPA-2026-05-13-K8.3-PREMISE-MISS
     opened_date: "2026-05-13"
-    closure_status: OPEN
+    closure_status: CLOSED
+    closed_date: "2026-05-14"
+    closed_commit: "54c6658"
+    closure_outcome: "A'.5 K8.3+K8.4 combined v2.0 closed cleanly with the storage cutover atom — the original K8.3 premise (component storage already in NativeWorld) was inverted into the v2.0 design (component storage moves to NativeWorld in this milestone, atomically). v2.0 brief authored from a fresh deep-read of GameBootstrap/factories/SystemBase/SystemExecutionContext per Lesson candidate from this CAPA's HALT_REPORT.md §7; that lesson formalized as Lesson #7 (transcribe the API, not paraphrase) at v2.0 closure. Effectiveness evidence: zero further premise misses across the 4-commit execution arc (24e5f56..PENDING-COMMIT-4)."
     trigger: |
       K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52)
       presupposed component storage already in NativeWorld at K8.3 execution time
@@ -4194,10 +4238,106 @@ capa_entries:
           (drafted in HALT_REPORT.md §7).
     effectiveness_verification:
       method: "K8.4 → K8.3 → K8.5 cascade lands cleanly in revised order; no further premise miss at any of the three closures"
-      date_verified: null
-      verification_commit: null
-      verification_outcome: null
-      verification_pending: "A'.7 K8.5 closure (final verification point of revised cascade)"
+      date_verified: "2026-05-14"
+      verification_commit: "54c6658"
+      verification_outcome: "K8.3+K8.4 absorbed into A'.5 combined milestone (rather than A'.5/A'.6 cascade); v2.0 atomic cutover landed cleanly. The original cascade plan was reformulated by the combined brief; the underlying premise miss the CAPA tracks did not recur."
+      verification_pending: null
+    lessons_learned_reference: DOC-B-METHODOLOGY
+
+  - id: CAPA-2026-05-14-K8.34-API-SURFACE-MISS
+    opened_date: "2026-05-14"
+    closure_status: CLOSED
+    closed_date: "2026-05-14"
+    closed_commit: "54c6658"
+    trigger: |
+      K8.3+K8.4 combined brief v1.0 (2026-05-14) prescribed `new ComponentTypeRegistry()` —
+      no such constructor existed. Brief invented a helper that already existed; gave a
+      wrong sln path; the factory bulk-write shape was incompatible with the real K8.1-
+      primitive structure (NativeMap/NativeSet/NativeComposite per-instance ids). Caught
+      at execution time by Cloud Code reading the kernel files. Five total findings.
+    affected_documents:
+      - DOC-D-K8_34_COMBINED
+      - DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH
+      - DOC-D-K8_34_COMBINED_V2
+      - DOC-B-METHODOLOGY
+    root_cause: |
+      Brief v1.0 authored Phase 4+5 wiring from architecture-document target-state wording
+      (KERNEL_ARCHITECTURE Part 0 K-L8 / K-L11 implications) without empirically verifying
+      against the actual API surface in `src/DualFrontier.Core.Interop/`. The K-L3
+      «struct shape» / K-L11 «native storage» framing told the brief author *what should
+      exist*; the actual ctor signatures, helper names, and factory shapes were never read.
+      Generalization of CAPA-2026-05-13's «read entry-point files in full» — that CAPA
+      addressed transitional-state comments (production wiring vs target wording); this
+      CAPA addresses the API-surface dimension (signatures vs paraphrased framing).
+    immediate_action: |
+      Halt v1.0 execution. Author refresh patch (DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH)
+      with 5 findings + corrections; land Phases 0-3 against patched brief. Phases 0-3
+      shipped cleanly to commit b903b91 (8 atomic commits) without further API-surface
+      halts during patch v1 execution.
+    corrective_action: |
+      (1) Patch v1 (5 findings) authored 2026-05-14; absorbed into v2.0 brief.
+      (2) v2.0 brief §4.0 mandatory deep-reads list — every kernel/scheduler/factory/test
+          file the brief paraphrases must be re-read before Commit 2 authoring; a
+          contradiction is an automatic halt (SC-3).
+      (3) METHODOLOGY Lesson #7 («A brief that prescribes an API must transcribe the
+          API, not paraphrase it») added at v2.0 closure (this commit batch).
+      (4) v2.0 brief itself authored from a session-long deep-read of every load-bearing
+          file in the cutover scope — verified zero API-surface halts during v2.0
+          execution.
+    effectiveness_verification:
+      method: "v2.0 execution lands the cutover commit (Commit 2) without any halt traceable to API-surface paraphrasing"
+      date_verified: "2026-05-14"
+      verification_commit: "54c6658"
+      verification_outcome: "Commit 2 landed cleanly with all 620 tests green. No API-surface halt during execution. Corrective action (Lesson #7 + brief-internal §4.0 deep-read mandate) demonstrably effective."
+      verification_pending: null
+    lessons_learned_reference: DOC-B-METHODOLOGY
+
+  - id: CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT
+    opened_date: "2026-05-14"
+    closure_status: CLOSED
+    closed_date: "2026-05-14"
+    closed_commit: "54c6658"
+    trigger: |
+      K8.3+K8.4 combined brief v1.0 §6.5 split the storage cutover into 12 incremental
+      per-system commits with a dual-write bridge between them. Empirical analysis during
+      Phase 4 Commit 9 (ConsumeSystem) preparation surfaced that the increments were
+      never independently valid: factory dual-write at bootstrap aligns the two stores,
+      but per-system migration breaks alignment per tick — Tier 1 systems read components
+      Tier 3 systems write, with a 7-commit gap between them. After 100 sim ticks, the
+      worlds diverge. The dual-write bridge was load-bearing costyl, not transition
+      scaffolding.
+    affected_documents:
+      - DOC-D-K8_34_COMBINED
+      - DOC-D-K8_34_COMBINED_V2
+      - DOC-B-METHODOLOGY
+    root_cause: |
+      Brief v1.0 authored the Phase 4+5 *shape* (12 incremental commits) from the
+      architecture-doc principle «atomic commit as compilable unit» (METHODOLOGY K-Lesson)
+      without simulating each of the 11 intermediate per-commit states. The simulation
+      would have surfaced that storage backend is a *binary* property of a component
+      type, not divisible into N steps with valid intermediate states. The compilable-unit
+      lesson was correctly applied to commit *boundaries* but incorrectly extended to
+      cutover *atomicity*.
+    immediate_action: |
+      Halt v1.0 Phase 4 at session 2026-05-14 (3rd halt of the milestone). Author
+      HALT_REPORT_PHASE_4.md (preserved across the v2.0 revert). v2.0 brief re-designed
+      Phase 4+5 as a single atomic cutover (§1.4 «storage backend is binary» + §6.4
+      «no dual-write phase»). v1.0's 24-commit plan replaced by v2.0's 4-commit plan.
+    corrective_action: |
+      (1) v2.0 brief authored with explicit «one-atom» Phase 4+5 design — Commit 2 does
+          not compile until the entire cutover is complete; no incremental commits.
+      (2) METHODOLOGY Lesson #8 («A brief that splits a change into N steps must prove
+          each of the N-1 intermediate states is valid») added at v2.0 closure (this
+          commit batch). Falsifiable claim: briefs authored under this lesson will not
+          incur mid-transition-drift halts.
+      (3) v2.0 brief §3 reverts the v1.0 deviation cleanly to b903b91 before Commit 2
+          starts — no carry-over of the broken dual-write bridge.
+    effectiveness_verification:
+      method: "v2.0 atomic cutover (Commit 2) lands without any per-system divergence; tests green at completion"
+      date_verified: "2026-05-14"
+      verification_commit: "54c6658"
+      verification_outcome: "Commit 2 (one atom, 81 files) landed with build clean and 620 tests green. No mid-transition state existed because there was no mid-transition. Corrective action demonstrably effective."
+      verification_pending: null
     lessons_learned_reference: DOC-B-METHODOLOGY
 
 # === audit_trail collection (Q15 — 9 events; pre-authored from Pass 5 §5) ===
@@ -4441,3 +4581,71 @@ audit_trail:
         - CAPA-2026-05-13-K8.3-PREMISE-MISS
       risks:
         - RISK-008  # amendment plan completeness gap — reproduction
+
+  - id: EVT-2026-05-14-K8.3-K8.4-COMBINED-V2-CLOSURE
+    date: "2026-05-14"
+    event: "A'.5 K8.3+K8.4 combined milestone v2.0 closure — atomic storage cutover landed; managed World retired from production"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-K8_34_COMBINED         # SUPERSEDED by v2.0
+      - DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH  # SUPERSEDED by v2.0
+      - DOC-D-K8_34_COMBINED_V2      # AUTHORED → EXECUTED
+      - DOC-A-KERNEL                 # v1.5 → v1.6
+      - DOC-A-MIGRATION_PLAN         # v1.1 → v1.2
+      - DOC-A-PHASE_A_PRIME_SEQUENCING  # Live (A'.5 entry rewritten)
+      - DOC-B-METHODOLOGY            # v1.7 → v1.8 (Lessons #7+#8)
+      - DOC-G-REGISTER               # this commit
+    commits:
+      range: "24e5f56..PENDING-COMMIT-4"
+      key_commits:
+        - hash: "24e5f56"
+          summary: "Phase 0 — revert v1.0 Phase 4-6 deviation; tree returns to b903b91 content"
+        - hash: "54c6658"
+          summary: "Phase 4+5 — atomic storage cutover (NativeWorld is sole production path; 81 files, -4481/+1211)"
+        - hash: "b3f6065"
+          summary: "Phase 6 — LOCKED-doc amendments + Lessons #7+#8 in METHODOLOGY"
+        - hash: "PENDING-COMMIT-4"
+          summary: "Phase 6 — REGISTER.yaml lifecycle (v2.0→EXECUTED, v1.0+patch→SUPERSEDED) + 3 CAPA closures + this EVT"
+    governance_impact: |
+      A'.5 K8.3+K8.4 combined milestone closed in 4 commits. The v1.0 brief's 24-commit
+      plan was reverted (commits 11c64e0..02f9ecf, no architectural value per brief
+      v2.0 §1.3); v2.0 redesigned Phase 4+5 as a single atomic cutover (one indivisible
+      commit, 620 tests green at completion). Three halts protected the milestone from
+      harmful commits — that is the methodology working. Storage backend is binary, not
+      divisible into N steps with valid intermediate states (Lesson #8); briefs that
+      prescribe API must transcribe API, not paraphrase (Lesson #7). Both lessons
+      formalized into METHODOLOGY at this closure.
+
+      Production state changes:
+      - 10 production systems migrated to NativeWorld AcquireSpan/BeginBatch (was 12 —
+        Power 2 deleted as disposable vanilla CPU systems; electricity defers to a
+        separate GPU-compute brief)
+      - Managed `World` retired from production; moved to test project as
+        `ManagedTestWorld` (test-fixture-only)
+      - Runtime isolation guard removed; isolation enforced at compile time by
+        `[SystemAccess]` + future A'.9 Roslyn analyzer
+      - IPowerBus removed from IGameServices; PowerConsumerComponent +
+        PowerProducerComponent deleted; 4 power events deleted
+      - Test count: 671 → 620 (Systems.Tests reduced to 2 SmokeTests; per-system
+        re-authoring against NativeWorldTestFixture is an immediate follow-up)
+
+      Three CAPAs closed at this milestone:
+      - CAPA-2026-05-13-K8.3-PREMISE-MISS (storage-location premise) — closed by v2.0's
+        atomic cutover (premise inverted into design)
+      - CAPA-2026-05-14-K8.34-API-SURFACE-MISS (Lesson #7 origin) — closed by v2.0's
+        clean execution without API-surface halts
+      - CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT (Lesson #8 origin) — closed by v2.0's
+        single-atom Commit 2 (no intermediate state existed)
+
+      CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT also closed: register survived the
+      milestone with no inventory drift; sync_register.ps1 --validate runs cleanly.
+    cross_references:
+      capa_entries:
+        - CAPA-2026-05-13-K8.3-PREMISE-MISS
+        - CAPA-2026-05-14-K8.34-API-SURFACE-MISS
+        - CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT
+        - CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT
+      risks:
+        - RISK-005  # storage migration risk — discharged
+        - RISK-007  # production-system migration risk — discharged
+        - RISK-008  # amendment-plan completeness gap — discharged for K-series
