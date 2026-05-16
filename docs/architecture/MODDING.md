@@ -44,39 +44,62 @@ The `ModLoader` loader in `DualFrontier.Application/Modding` creates a `ModLoadC
 The mod receives an `IModApi` and may only do what the contract enumerates:
 
 ```csharp
+// Canonical: src/DualFrontier.Contracts/Modding/IModApi.cs (v3 strict — K8.3+K8.4 cutover 2026-05-14)
 public interface IModApi
 {
-    void RegisterComponent<T>() where T : IComponent;
-    void RegisterSystem<T>()    where T : SystemBase;
+    // Path α: NativeWorld-backed unmanaged struct storage (K-L3 default).
+    void RegisterComponent<T>() where T : unmanaged, IComponent;
+
+    // Path β: per-mod managed-class storage (K-L3.1 bridge).
+    // T must be annotated with [ManagedStorage].
+    void RegisterManagedComponent<T>() where T : class, IComponent;
+
+    void RegisterSystem<T>() where T : class;
 
     void Publish<T>(T evt) where T : IEvent;
     void Subscribe<T>(Action<T> handler) where T : IEvent;
-    void Unsubscribe<T>(Action<T> handler) where T : IEvent;
+    // Note: no Unsubscribe — ModApi tracks every subscription and removes
+    // them all on Unload via RestrictedModApi.UnsubscribeAll().
 
     // Publishes a contract for other mods
     void PublishContract<T>(T contract) where T : IModContract;
 
-    // Retrieves another mod's contract (optional)
-    bool TryGetContract<T>(out T contract) where T : IModContract;
+    // Retrieves another mod's contract (optional, graceful-degrade pattern)
+    bool TryGetContract<T>(out T? contract) where T : class, IModContract;
 
-    // Logging to the shared log with the mod-id prefix
-    void Log(string message);
-    void LogWarning(string message);
-    void LogError(string message);
+    // Kernel capability set the mod may declare in its manifest
+    IReadOnlySet<string> GetKernelCapabilities();
+
+    // The mod's own manifest, as parsed by the loader
+    ModManifest GetOwnManifest();
+
+    // Single structured log entry; mod-id prefix added by RestrictedModApi.
+    void Log(ModLogLevel level, string message);
+
+    // Field-storage sub-API per MOD_OS_ARCHITECTURE §4.6 — null on builds
+    // without K9 field storage support; mods null-check and degrade gracefully.
+    IModFieldApi? Fields { get; }
+
+    // Compute-pipeline sub-API per MOD_OS_ARCHITECTURE §4.6 — null on K9
+    // (lands at G0). Mods null-check.
+    IModComputePipelineApi? ComputePipelines { get; }
 }
 ```
 
-Anything not in `IModApi` is unreachable. `IModApi` is implemented inside the core (`RestrictedModApi`) and proxies calls through the isolation guard: system registration checks for the `[SystemAccess]` attribute, component registration is stored in `ComponentRegistry` tagged with the mod-id.
+Anything not in `IModApi` is unreachable. `IModApi` is implemented inside the core (`RestrictedModApi`) and proxies calls into the core: system registration checks for the `[SystemAccess]` attribute, component registration is stored in `ComponentRegistry` tagged with the mod-id. **Strict v3 — manifestVersion must be `"3"`; v2 / v1 IModApi surfaces were deleted entirely in K8.3+K8.4 cutover (2026-05-14) per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §4.6.3.**
 
 | Action                                | Allowed | Reason                                            |
 |---------------------------------------|---------|---------------------------------------------------|
 | Publish events to a bus               | Yes     | Through `IModApi` — proxied                       |
 | Subscribe to events                   | Yes     | Through `IModApi` — proxied                       |
-| Register components                   | Yes     | Through `IModApi`                                 |
-| Register systems                      | Yes     | Through `IModApi` + READ/WRITE declaration        |
+| Register Path α components            | Yes     | `RegisterComponent<T>` — `where T : unmanaged, IComponent` |
+| Register Path β components            | Yes     | `RegisterManagedComponent<T>` — class + `[ManagedStorage]` |
+| Register systems                      | Yes     | Through `IModApi` + `[SystemAccess]` declaration  |
 | Publish a contract for mods           | Yes     | `IModContract` — a public interface               |
-| Obtain a reference to `World`         | No      | `AssemblyLoadContext` blocks it                   |
-| Obtain a reference to a system        | No      | Isolation guard — crash                           |
+| Register a compute pipeline           | Yes     | `IModApi.ComputePipelines` (null pre-G0)          |
+| Register a field type                 | Yes     | `IModApi.Fields` (null pre-K9 field support)      |
+| Obtain a reference to `NativeWorld`   | No      | `AssemblyLoadContext` blocks `DualFrontier.Core`  |
+| Obtain a reference to a system        | No      | No `GetSystem` accessor exists (deleted K8.3+K8.4) |
 | Load `DualFrontier.Core`              | No      | `AssemblyLoadContext` blocks it                   |
 | Bypass `EventBus` directly            | No      | Physically no reference                           |
 
@@ -85,7 +108,7 @@ Anything not in `IModApi` is unreachable. `IModApi` is implemented inside the co
 When asked to load an assembly, `ModLoadContext` inspects the name:
 
 - `DualFrontier.Contracts` — passed through from the main context (shared).
-- `DualFrontier.Core`, `DualFrontier.Systems`, `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Application` — **refused**. The mod receives `ModIsolationException`.
+- `DualFrontier.Core`, `DualFrontier.Systems`, `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Application` — **refused**. The load attempt fails when the mod runtime cannot resolve the assembly; the exception propagates up to `ModFaultHandler`, which runs the §9.5 unload chain (see [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.5).
 - `System.*`, `Microsoft.*`, third-party libraries under the mod's `BasePath` — passed through.
 
 This means: even if a mod tries to find the `World` type through reflection, it will not find the assembly. Even compiling a mod with `using DualFrontier.Core;` will fail, because `ModLoadContext` will not supply the assembly when the package is loaded.
@@ -132,16 +155,20 @@ A contract is a regular public interface housed in a separate assembly that both
 
 ## mod.manifest.json
 
-Every mod contains a manifest file at the package root.
+Every mod contains a manifest file at the package root. **`manifestVersion` must be exactly `"3"`** — the parser rejects any other value (strict v3, K8.3+K8.4 cutover).
 
 ```json
 {
+  "manifestVersion": "3",
   "id": "com.example.voidmagic",
   "name": "Void Magic",
   "description": "Adds the Void school of magic.",
   "author": "Example Modder",
   "version": "1.2.0",
   "requiresContracts": "^1.0.0",
+  "capabilities": {
+    "required": ["kernel.bus.subscribe:Magic"]
+  },
   "dependencies": [],
   "optionalDependencies": [
     { "id": "com.example.artifactmod", "version": "^0.5.0" }
@@ -151,26 +178,30 @@ Every mod contains a manifest file at the package root.
 }
 ```
 
+- `manifestVersion` — strict literal `"3"` per IModApi v3 (anything else is a load-time error).
 - `id` — a unique identifier in reverse-domain style.
 - `version` — the mod's SemVer.
 - `requiresContracts` — minimum `DualFrontier.Contracts` version. The loader refuses if the core has a different major version than the requirement.
+- `capabilities.required` — capability strings the mod needs (see [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §3.2).
 - `dependencies` — required mods; their absence blocks loading.
 - `optionalDependencies` — optional; signal that integration via a contract is possible, but the mod also works without them.
 - `entryAssembly` / `entryType` — the assembly name and the FQN of the class implementing `IMod`.
 
 ## Hot reloading
 
-`ModLoader` supports unloading through `ModLoadContext.Unload()`. The sequence:
+`ModLoader` supports unloading through `ModLoadContext.Unload()`. The sequence follows the canonical §9.5 unload chain in [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) (best-effort per §9.5.1):
 
-1. The scheduler pauses between phases.
-2. `OnDestroy` is called on every system registered by the mod.
-3. `Unload()` is called on the mod.
-4. The `IModApi` implementation removes any remaining subscriptions (a safety net).
-5. `ModLoadContext.Unload()` releases the assembly (after the next GC).
+1. `ModRegistry.ResetModSystems()` — remove the mod's systems from the scheduler.
+2. `IModContractStore.RevokeAll(modId)` — revoke this mod's inter-mod contracts.
+3. `EventBus`: remove every subscription registered by the mod (`RestrictedModApi.UnsubscribeAll`).
+4. `IMod.Unload()` is invoked with a bounded timeout; user code releases resources.
+5. `ModLoadContext.Unload()` releases the `AssemblyLoadContext` (after the next GC).
+6. `DependencyGraph.Reset()` + `Build()` rebuilds without the mod (deferred to the mod menu for runtime faults — see [MOD_PIPELINE](./MOD_PIPELINE.md) §ModFaultHandler).
+7. `ModDisabledEvent` is published; the UI shows a banner.
 
-Limitation: `AssemblyLoadContext.Unload` is collaborative. If a mod left a reference to its type in another mod's static field, unloading will not complete. That is why `OnDestroy` is critical.
+Limitation: `AssemblyLoadContext.Unload` is collaborative. If a mod leaves a reference to its type in another mod's static field, unloading will not complete. That is why subscription tracking + `IMod.Unload` discipline matter.
 
-Hot reload (updating a mod without exiting the game) = Unload + Load with the new version. No save is required — `World` does not change, only the set of systems and subscriptions.
+Hot reload (updating a mod without exiting the game) = Unload + Load with the new version. No save is required — `NativeWorld` does not change, only the set of systems and subscriptions. Path β managed-class component data does not survive a reload — it lives in per-mod `ManagedStore<T>` that is collected when the ALC is unloaded (K-L3.1 lock: Path β is runtime-only, not persisted).
 
 ## Step-by-step guide
 
@@ -189,7 +220,7 @@ To create your first mod:
     {
         public void Initialize(IModApi api)
         {
-            api.Log("MyFirstMod initialized");
+            api.Log(ModLogLevel.Info, "MyFirstMod initialized");
             api.Subscribe<DeathEvent>(OnDeath);
         }
 
@@ -262,14 +293,20 @@ The pipeline is atomic. On any error:
 
 Through `IModApi` in `IMod.Initialize`:
 
-| Method                   | What it does                                  | Constraint                                         |
-|--------------------------|-----------------------------------------------|----------------------------------------------------|
-| `RegisterComponent<T>()` | Adds a type to the ECS                        | `T : IComponent`, once per type                    |
-| `RegisterSystem<T>()`    | Adds a system to the scheduler                | `T : class`, requires `[SystemAccess]` and `[TickRate]` |
-| `Subscribe<T>(handler)`  | Subscribe to a bus event                      | Removed automatically on `Unload`                  |
-| `Publish<T>(evt)`        | Publish an event                              | Only to the bus declared in the mod's `[SystemAccess]` |
-| `PublishContract<T>(c)`  | Publish a contract for other mods             | `T : IModContract`                                 |
-| `TryGetContract<T>(out)` | Retrieve another mod's contract               | Graceful degrade if the mod is not loaded          |
+| Method                          | What it does                                      | Constraint                                                  |
+|---------------------------------|---------------------------------------------------|-------------------------------------------------------------|
+| `RegisterComponent<T>()`        | Adds a Path α component type (NativeWorld struct) | `T : unmanaged, IComponent`, once per type                  |
+| `RegisterManagedComponent<T>()` | Adds a Path β component type (per-mod managed)    | `T : class, IComponent`, annotated `[ManagedStorage]`       |
+| `RegisterSystem<T>()`           | Adds a system to the scheduler                    | `T : class`, requires `[SystemAccess]` and `[TickRate]`     |
+| `Subscribe<T>(handler)`         | Subscribe to a bus event                          | Removed automatically on `Unload` (no separate `Unsubscribe`) |
+| `Publish<T>(evt)`               | Publish an event                                  | Only to the bus declared in the mod's `[SystemAccess]`      |
+| `PublishContract<T>(c)`         | Publish a contract for other mods                 | `T : IModContract`                                          |
+| `TryGetContract<T>(out)`        | Retrieve another mod's contract                   | Graceful degrade if the mod is not loaded                   |
+| `Log(level, message)`           | Structured log with mod-id prefix                 | `ModLogLevel` (Info / Warning / Error)                      |
+| `Fields`                        | Field-storage sub-API (§4.6 of MOD_OS)            | `null` on builds without K9 field storage                   |
+| `ComputePipelines`              | Compute-pipeline sub-API (§4.6 of MOD_OS)         | `null` until G0 lands                                        |
+| `GetKernelCapabilities()`       | Capability strings the kernel exposes             | Used by mod to know what it may declare in manifest         |
+| `GetOwnManifest()`              | The parsed manifest of the calling mod            | Read-only snapshot                                          |
 
 ### Hot reload
 

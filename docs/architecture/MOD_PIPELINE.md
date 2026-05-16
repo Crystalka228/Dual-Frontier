@@ -116,29 +116,45 @@ Rules:
 
 ### 4. RestrictedModApi
 
-The `IModApi` implementation that `ModLoader` hands to every mod in `IMod.Initialize`. Proxies calls into the core through `ModRegistry` and `IModContractStore`.
+The `IModApi` v3 implementation that `ModLoader` hands to every mod in `IMod.Initialize`. Proxies calls into the core through `ModRegistry`, `IModContractStore`, and `KernelCapabilityRegistry`. Routes `Publish<T>` / `Subscribe<T>` through `ModBusRouter` to the correct domain bus.
 
 ```csharp
+// Canonical: src/DualFrontier.Application/Modding/RestrictedModApi.cs (v3 strict)
 internal sealed class RestrictedModApi : IModApi
 {
     internal RestrictedModApi(
         string modId,
+        ModManifest manifest,
         ModRegistry registry,
         IModContractStore contractStore,
-        IGameServices services);
+        IGameServices services,
+        KernelCapabilityRegistry kernelCapabilities,
+        RestrictedFieldApi? fieldsApi);
 
-    public void RegisterComponent<T>() where T : IComponent;
+    // Path α — NativeWorld-backed unmanaged struct storage (K-L3 default).
+    public void RegisterComponent<T>() where T : unmanaged, IComponent;
+
+    // Path β — per-mod managed-class storage (K-L3.1 bridge; requires [ManagedStorage]).
+    public void RegisterManagedComponent<T>() where T : class, IComponent;
+
     public void RegisterSystem<T>() where T : class;
+    public void Publish<T>(T evt) where T : IEvent;
+    public void Subscribe<T>(Action<T> handler) where T : IEvent;
     public void PublishContract<T>(T c) where T : IModContract;
     public bool TryGetContract<T>(out T? c) where T : class, IModContract;
-    public void Subscribe<T>(Action<T> handler) where T : IEvent;
-    public void Publish<T>(T evt) where T : IEvent;
+    public IReadOnlySet<string> GetKernelCapabilities();
+    public ModManifest GetOwnManifest();
+    public void Log(ModLogLevel level, string message);
+
+    public IModFieldApi? Fields { get; }
+    public IModComputePipelineApi? ComputePipelines { get; }  // null pre-G0
 
     internal void UnsubscribeAll();
+    internal void ClearManagedStores();  // MOD_OS §9.5 chain step 5
 }
 ```
 
-Subscriptions (`Subscribe<T>`) are tracked in a private `List<(Type eventType, Delegate handler)> _subscriptions` for removal during `Unload`. Routing events to specific buses is handled in the next sub-phase.
+Subscriptions are tracked per instance in `_subscriptions: List<(IEventBus, Action Unsubscribe)>` so `UnsubscribeAll` can release them on unload. Path β managed-class storage lives in a `Dictionary<Type, IManagedStore>` keyed by component type — cleared by `ClearManagedStores` on mod unload (step 5 of the §9.5 chain). Capability gates are enforced from the strict v3 manifest: a mod must declare `kernel.publish:<FQN>` / `kernel.subscribe:<FQN>` in `ManifestCapabilities.Required` for every event type it publishes or subscribes; v2 / v1 manifest paths were deleted in K8.3+K8.4 (manifest parser rejects `manifestVersion` other than `"3"`).
 
 ### 5. IModContractStore
 
@@ -186,21 +202,32 @@ ModIntegrationPipeline.Apply()
 
 ### Unloading a mod
 
+Canonical sequence per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.5 (best-effort discipline per §9.5.1 — each step is sequential and best-effort; failures log + warn but do not block subsequent steps):
+
 ```
 ModLoader.UnloadMod(modId)
       │
-      ├── [1] ModRegistry.ResetModSystems()       — remove the mod's systems
-      ├── [2] IModContractStore.RevokeAll(modId)  — revoke inter-mod contracts
-      ├── [3] EventBus: remove every subscription of the mod
-      ├── [4] IMod.Unload() with a 500ms timeout
-      ├── [5] ModLoadContext.Unload()             — unload the AssemblyLoadContext
-      ├── [6] DependencyGraph.Reset() + Build()   — rebuild without the mod
-      └── [7] Publish ModDisabledEvent            — the UI shows a banner
+      ├── [1] ModRegistry.ResetModSystems()       — remove the mod's systems from the scheduler
+      ├── [2] IModContractStore.RevokeAll(modId)  — revoke this mod's inter-mod contracts
+      ├── [3] EventBus: remove every subscription registered by the mod
+      │         (RestrictedModApi.UnsubscribeAll)
+      ├── [4] IMod.Unload() with a bounded timeout
+      │         (ModLoader.UnloadMod has a swallowed try/catch around this
+      │          call, in place since M0, consistent with the §9.5.1
+      │          best-effort discipline)
+      ├── [5] RestrictedModApi.ClearManagedStores()  — drop Path β managed-class data
+      │         (per K-L3.1: runtime-only, not persisted by save system)
+      ├── [6] ModLoadContext.Unload()             — unload the AssemblyLoadContext
+      │         (collaborative — caller-held references prevent collection)
+      ├── [7] DependencyGraph.Reset() + Build()   — rebuild without the mod
+      └── [8] Publish ModDisabledEvent            — the UI shows a banner
 ```
 
-### ModFaultHandler (runtime violation)
+### ModFaultHandler (unhandled mod exception)
 
-If a mod system violates isolation at runtime (not from the menu), `ModFaultHandler` runs the same chain, but step **[6] is skipped** (the graph cannot be rebuilt at runtime). Instead: the mod's systems are marked `Disabled` in the scheduler, and the graph is rebuilt the next time the mod menu is opened.
+If a mod system raises any unhandled exception at runtime (not from the mod menu), `ModFaultHandler` runs the same chain — the trigger is generalized from the deleted runtime isolation guard (K8.3+K8.4 cutover) to «any unhandled exception originating in a mod-loaded AssemblyLoadContext». Step **[7] (DependencyGraph rebuild) is deferred** (the graph cannot be rebuilt mid-tick safely). Instead: the mod's systems are marked `Disabled` in the scheduler, and the graph is rebuilt the next time the mod menu is opened.
+
+See [ISOLATION](./ISOLATION.md) §«Two response modes» for the core-crash vs mod-soft-unload split, and [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.5.1 «Failure semantics» for the best-effort discipline that governs every step.
 
 ## File layout
 
