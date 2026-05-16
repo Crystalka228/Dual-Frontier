@@ -520,7 +520,7 @@ Goal: incremental delivery of the four remaining vanilla mods, in any order the 
 
 **M10.A — Vanilla.Magic.** Consumes original Phase 6 scope. Eight schools of magic per [GDD] §6.1. Five levels of ether perception per §4.1. Five golem types per §5.1. Combo mechanics per §6.3. Replaces kernel `ManaSystem`, `SpellSystem`, `GolemSystem`, `EtherGrowthSystem`, `RitualSystem` bridges. Cross-slice: depends on `Vanilla.Combat` for damage profiles, on `Vanilla.Inventory` for crystal storage.
 
-**M10.B — Vanilla.Inventory.** The Phase 4 `InventorySystem`, `HaulSystem`, and the power-grid systems (`ElectricGridSystem`, `ConverterSystem`) migrate from kernel to mod. The kernel keeps the bus contracts and the `[Deferred]` event types; the systems move. This is a **refactor migration**, not new gameplay; covered by existing tests.
+**M10.B — Vanilla.Inventory.** The Phase 4 `InventorySystem` and `HaulSystem` migrate from kernel to mod. This is a **refactor migration**, not new gameplay; covered by existing tests. *(The v0.3 power-grid CPU subsystems — `ElectricGridSystem`, `ConverterSystem`, `IPowerBus`, `PowerConsumerComponent`, `PowerProducerComponent`, and the four power events — were deleted in A'.5 K8.3+K8.4 cutover 2026-05-14. Electricity-like mechanics are routed toward V substrate field/compute work per [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) §1.2 + §5.1; see M-V2 reservation.)*
 
 **M10.C — Vanilla.Pawn.** Consumes Phase 3 backlog: `SocialSystem` and `SkillSystem` get real implementations inside the mod. The kernel `JobSystem`, `MoodSystem`, `MovementSystem`, `NeedsSystem`, `PawnStateReporterSystem` migrate as part of the same refactor.
 

@@ -96,7 +96,7 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.3"
+    version: "1.4"
     last_modified: "2026-05-16"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
