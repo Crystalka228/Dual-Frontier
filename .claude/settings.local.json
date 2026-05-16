@@ -10,7 +10,8 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(grep -E \"\\\\.godot|\\\\.uid$|\\\\.import$|\\\\.translation$|\\\\.tmp$|export_presets\\\\.cfg\")",
-      "Bash(dotnet run *)"
+      "Bash(dotnet run *)",
+      "Bash(git push *)"
     ]
   }
 }
