@@ -1,29 +1,17 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-REGISTER_RENDER
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "1.0"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
----
-# DualFrontier Document Control Register — Rendered View
+﻿# DualFrontier Document Control Register — Rendered View
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-13  |  Schema version: 1.0  |  Register version: 1.1*
+*Last generated: 2026-05-16  |  Schema version: 1.0  |  Register version: 1.2*
 
 ---
 
 ## Statistics
 
-- Total documents: 231
-- Tier 1: 33  |  Tier 2: 18  |  Tier 3: 102  |  Tier 4: 78  |  Tier 5: 0
-- Per category: A=30  |  B=6  |  C=3  |  D=49  |  E=55  |  F=78  |  G=8  |  H=2  |  I=0  |  J=0
-- Open CAPA: 2  |  Active risks: 12  |  Stale documents: 0
+- Total documents: 239
+- Tier 1: 32  |  Tier 2: 14  |  Tier 3: 117  |  Tier 4: 76  |  Tier 5: 0
+- Per category: A=30  |  B=6  |  C=3  |  D=55  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
+- Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
 
@@ -32,9 +20,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - [Category A (30 documents)](#category-A)
 - [Category B (6 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
-- [Category D (49 documents)](#category-D)
-- [Category E (55 documents)](#category-E)
-- [Category F (78 documents)](#category-F)
+- [Category D (55 documents)](#category-D)
+- [Category E (59 documents)](#category-E)
+- [Category F (76 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
 - [Category H (2 documents)](#category-H)
 - [Global: Requirements](#global-requirements)
@@ -82,6 +70,14 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-12
 - **Special-case rationale**: A vs J borderline classified as A by A'.4.5 execution agent — predominantly architectural pattern (deterministic ordering via ComboResolutionSystem); mechanic-design intent minimal. Cross-referenced from docs/mechanics/ index when future J-category combat-design doc authored
+
+### DOC-A-COMPOSITE_NAMESPACE_DELIBERATION_STATE — Composite Milestone Namespace — Deliberation Final State
+
+- **Path**: `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-15 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Deliberation state document behaves like amendment plan (EXECUTED post-deliberation, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3 precedent (cf. DOC-A-K_L3_1_AMENDMENT_PLAN, DOC-A-A_PRIME_0_7_AMENDMENT_PLAN)
 
 ### DOC-A-COMPOSITE_REQUESTS — Composite requests
 
@@ -162,15 +158,6 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-12
 
-### DOC-A-GPU_COMPUTE — GPU Compute
-
-- **Path**: `docs/architecture/GPU_COMPUTE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.0
-- **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-06 ($(System.Collections.Hashtable.last_modified_commit))
-- **Next review due**: 2027-05-12
-- **Risks referenced**: RISK-013
-
 ### DOC-A-ISOLATION — System isolation
 
 - **Path**: `docs/architecture/ISOLATION.md`
@@ -211,9 +198,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-MIGRATION_PLAN — Migration Plan — Kernel-to-Vanilla (K-series → M-series)
 
 - **Path**: `docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.1
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.3
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-10 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-10
 - **Risks referenced**: RISK-004
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
@@ -279,15 +266,6 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Next review due**: 2027-05-12
 - **Special-case rationale**: A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored
 
-### DOC-A-RUNTIME — Runtime Architecture — Dual Frontier
-
-- **Path**: `docs/architecture/RUNTIME_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0
-- **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-06 ($(System.Collections.Hashtable.last_modified_commit))
-- **Next review due**: 2027-05-12
-- **Risks referenced**: RISK-004, RISK-013
-
 ### DOC-A-SYNTHESIS_RATIONALE — Document Control Register — Synthesis Rationale
 
 - **Path**: `docs/governance/SYNTHESIS_RATIONALE.md`
@@ -312,6 +290,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-12
+
+### DOC-A-VULKAN_SUBSTRATE — Vulkan Substrate (V) — Dual Frontier
+
+- **Path**: `docs/architecture/VULKAN_SUBSTRATE.md`
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: 2027-05-16
+- **Special-case rationale**: Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases.
+- **Risks referenced**: RISK-004, RISK-013
 
 ---
 
@@ -479,76 +467,100 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
 
-### DOC-D-G0 — G0 — Vulkan Compute Plumbing
+### DOC-D-ARCHITECTURE_RECON_BRIEF — Architecture Reconnaissance Brief
+
+- **Path**: `tools/briefs/ARCHITECTURE_RECON_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-15 ($(System.Collections.Hashtable.last_modified_commit))
+
+### DOC-D-COMPOSITE_NAMESPACE_RATIFICATION_BRIEF — Composite Milestone Namespace — Ratification Execution Brief
+
+- **Path**: `tools/briefs/COMPOSITE_NAMESPACE_RATIFICATION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
+
+### DOC-D-G0 — G0 — Vulkan Compute Plumbing (historical; consolidated into V0)
 
 - **Path**: `tools/briefs/G0_VULKAN_COMPUTE_PLUMBING_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G0 consolidated into V0 (Vulkan substrate foundation, covers rendering + compute use cases). Brief content superseded by VULKAN_SUBSTRATE.md §1.1 + §3.4. Retained as historical record of pre-Q-G-1/Q-G-2 architectural intent.
 - **Risks referenced**: RISK-013
 
-### DOC-D-G1 — G1 — Mana Diffusion
+### DOC-D-G1 — G1 — Mana Diffusion (historical; demonstrated by M-V1 on V1)
 
 - **Path**: `tools/briefs/G1_MANA_DIFFUSION_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G1 reframed as M-V1 demonstration (Vanilla.Magic mana field) on V1 substrate primitive (isotropic diffusion). Brief content superseded by VULKAN_SUBSTRATE.md §1.2 + §6.3. Retained as historical record.
 
-### DOC-D-G2 — G2 — Electricity Anisotropic
+### DOC-D-G2 — G2 — Electricity Anisotropic (historical; demonstrated by M-V2 on V1)
 
 - **Path**: `tools/briefs/G2_ELECTRICITY_ANISOTROPIC_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G2 reframed as M-V2 demonstration (Vanilla.Electricity power field) on V1 anisotropic diffusion variant. Brief content superseded by VULKAN_SUBSTRATE.md §1.2 + §5.1 + §6.3. Retained as historical record.
 
-### DOC-D-G3 — G3 — Storage Capacitance
+### DOC-D-G3 — G3 — Storage Capacitance (historical; reduced to gameplay node config)
 
 - **Path**: `tools/briefs/G3_STORAGE_CAPACITANCE_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G3 storage cells / capacitance reduced to gameplay-level node config (not shader feature, not substrate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §5.1 + Lesson #12 candidate. Retained as historical record of reduction rationale.
 
-### DOC-D-G4 — G4 — Multi-Field Coexistence
+### DOC-D-G4 — G4 — Multi-Field Coexistence (historical; reframed as V substrate close criterion)
 
 - **Path**: `tools/briefs/G4_MULTI_FIELD_COEXISTENCE_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G4 multi-field coexistence reframed as V substrate close acceptance criterion (not separate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §1.4 (V substrate close acceptance criteria). Retained as historical record.
 
-### DOC-D-G5 — G5 — Projectile Domain B
+### DOC-D-G5 — G5 — Projectile Domain B (historical; substrate disposition deferred)
 
 - **Path**: `tools/briefs/G5_PROJECTILE_DOMAIN_B_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G5 projectile Domain B substrate disposition deferred to M-V5 reactivation amendment authoring (whether V3 primitive, separate substrate, or consumer-level). M-V5 identifier reserved per Q-R-1. Brief content cross-referenced from VULKAN_SUBSTRATE.md §1.3.2 + §5.6. Retained as historical record.
 
-### DOC-D-G6 — G6 — Flow Field Infrastructure
+### DOC-D-G6 — G6 — Flow Field Infrastructure (historical; folded into V2)
 
 - **Path**: `tools/briefs/G6_FLOW_FIELD_INFRASTRUCTURE_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G6 flow field infrastructure folded into V2 wave shader side products (distance/direction fields). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3. Retained as historical record.
 
-### DOC-D-G7 — G7 — Vanilla Movement
+### DOC-D-G7 — G7 — Vanilla Movement (historical; demonstrated by M-V7 on V2)
 
 - **Path**: `tools/briefs/G7_VANILLA_MOVEMENT_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G7 reframed as M-V7 demonstration (Vanilla.Movement routed flow field pathfinding) on V2 substrate primitive (wave shader). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3 + §5.5 + §6.3. Retained as historical record.
 
-### DOC-D-G8 — G8 — Local Avoidance
+### DOC-D-G8 — G8 — Local Avoidance (historical; demonstrated by M-V8, mod-level)
 
 - **Path**: `tools/briefs/G8_LOCAL_AVOIDANCE_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G8 local avoidance reframed as M-V8 demonstration — mod-level concern, NOT V substrate primitive. Brief content superseded by VULKAN_SUBSTRATE.md §5.5 (local avoidance separate concern) + §6.3. Retained as historical record.
 
-### DOC-D-G9 — G9 — Eikonal Upgrade
+### DOC-D-G9 — G9 — Eikonal Upgrade (historical; deferred — V2 tunable or V3)
 
 - **Path**: `tools/briefs/G9_EIKONAL_UPGRADE_BRIEF.md`
 - **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-XX ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Q-G-2 LOCK: G9 eikonal upgrade deferred — possibly folded into V2 tunable parameter (Option A vs Option B), or becomes separate V-N primitive — evidence-gated at amendment authoring. Brief content cross-referenced from VULKAN_SUBSTRATE.md §1.3 + §1.3.1 + §5.3. Retained as historical record.
 
 ### DOC-D-K_L3_1_ADDENDUM_1 — K-L3.1 — Brief Addendum 1
 
@@ -726,6 +738,33 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Risks referenced**: RISK-007, RISK-008
 - **CAPA referenced**: CAPA-2026-05-13-K8.3-PREMISE-MISS
 
+### DOC-D-K8_34_COMBINED — K8.3+K8.4 Combined Kernel Cutover (v1.0) — SUPERSEDED
+
+- **Path**: `tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: SUPERSEDED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-14 ($(System.Collections.Hashtable.last_modified_commit))
+- **Risks referenced**: RISK-005, RISK-007, RISK-008
+- **CAPA referenced**: CAPA-2026-05-13-K8.3-PREMISE-MISS, CAPA-2026-05-14-K8.34-API-SURFACE-MISS, CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT
+
+### DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH — K8.3+K8.4 Combined Brief Refresh Patch (v1) — SUPERSEDED
+
+- **Path**: `tools/briefs/K8_34_COMBINED_BRIEF_REFRESH_PATCH.md`
+- **Tier**: 3  |  **Lifecycle**: SUPERSEDED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-14 ($(System.Collections.Hashtable.last_modified_commit))
+- **Risks referenced**: RISK-005, RISK-007, RISK-008
+- **CAPA referenced**: CAPA-2026-05-14-K8.34-API-SURFACE-MISS
+
+### DOC-D-K8_34_COMBINED_V2 — K8.3+K8.4 Combined Kernel Cutover (v2.0) — EXECUTED
+
+- **Path**: `tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF_V2.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 2.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-14 ($(System.Collections.Hashtable.last_modified_commit))
+- **Risks referenced**: RISK-005, RISK-007, RISK-008
+- **CAPA referenced**: CAPA-2026-05-13-K8.3-PREMISE-MISS, CAPA-2026-05-14-K8.34-API-SURFACE-MISS, CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT
+
 ### DOC-D-K8_4 — K8.4 — Managed World Retired
 
 - **Path**: `tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md`
@@ -771,6 +810,13 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
+
+### DOC-D-NAMESPACE_CASCADE_RESEARCH_BRIEF — M/G/R Namespace Cascade Map — Research Brief
+
+- **Path**: `tools/briefs/NAMESPACE_CASCADE_RESEARCH_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-15 ($(System.Collections.Hashtable.last_modified_commit))
 
 ---
 
@@ -842,6 +888,13 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-13 ($(System.Collections.Hashtable.last_modified_commit))
 - **CAPA referenced**: CAPA-2026-05-13-K8.3-PREMISE-MISS
+
+### DOC-E-ARCHITECTURE_RECON_REPORT — Architecture Reconnaissance Report
+
+- **Path**: `docs/reports/ARCHITECTURE_RECON_REPORT.md`
+- **Tier**: 3  |  **Lifecycle**: Live  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-15 ($(System.Collections.Hashtable.last_modified_commit))
 
 ### DOC-E-AUDIT_CAMPAIGN_PLAN — Audit Campaign Plan
 
@@ -937,11 +990,18 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-E-CPP_KERNEL_BRANCH_REPORT — C++ Kernel Branch Report
 
 - **Path**: `docs/reports/CPP_KERNEL_BRANCH_REPORT.md`
-- **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
+- **Tier**: 3  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
 - **Special-case rationale**: E + Tier 2 Live override per Pass 2 §2.2
+
+### DOC-E-DOCUMENTATION_DRIFT_AUDIT_REPORT — Documentation Drift Audit Report
+
+- **Path**: `docs/audit/DOCUMENTATION_DRIFT_AUDIT_REPORT.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
 
 ### DOC-E-HOUSEKEEPING_MENU_PAUSES_SIMULATION — Housekeeping — Menu Pauses Simulation
 
@@ -1091,6 +1151,13 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 - **Special-case rationale**: Closure artifact lives in tools/briefs/ alongside its parent brief; classified E (closure) Tier 3 EXECUTED
 
+### DOC-E-NAMESPACE_CASCADE_MAP — M/G/R Namespace Cascade Map
+
+- **Path**: `docs/research/M_G_R_NAMESPACE_CASCADE_MAP.md`
+- **Tier**: 3  |  **Lifecycle**: Live  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-15 ($(System.Collections.Hashtable.last_modified_commit))
+
 ### DOC-E-NATIVE_BUILD — Native Build Notes
 
 - **Path**: `native/DualFrontier.Core.Native/build.md`
@@ -1102,7 +1169,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-E-NATIVE_CORE_EXPERIMENT — Native Core Experiment
 
 - **Path**: `docs/reports/NATIVE_CORE_EXPERIMENT.md`
-- **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
+- **Tier**: 3  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
@@ -1111,7 +1178,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-E-NORMALIZATION_REPORT — Normalization Report
 
 - **Path**: `docs/reports/NORMALIZATION_REPORT.md`
-- **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
+- **Tier**: 3  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
@@ -1148,11 +1215,18 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-E-PERFORMANCE_REPORT_K7 — Performance Report — K7
 
 - **Path**: `docs/reports/PERFORMANCE_REPORT_K7.md`
-- **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
+- **Tier**: 3  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-09 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
 - **Special-case rationale**: E default Tier 3 EXECUTED; Tier 2 Live override because K-series still open (K8.3/K8.4/K8.5 pending) and report mutates with subsequent measurement updates per Pass 2 §2.2
+
+### DOC-E-Q_K_1_REPORT — Q-K-1 Execution Report — Verbatim Reconciliation Findings
+
+- **Path**: `docs/scratch/RATIFICATION_EXECUTION/Q_K_1_REPORT.md`
+- **Tier**: 3  |  **Lifecycle**: Live  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
 
 ### DOC-E-SESSION_PHASE_4_CLOSURE_REVIEW — Session Phase 4 — Closure Review
 
@@ -1544,13 +1618,6 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
 
-### DOC-F-SRC-EVENTS-POWER — Events Power submodule
-
-- **Path**: `src/DualFrontier.Events/Power/README.md`
-- **Tier**: 4  |  **Lifecycle**: Live  |  **Version**: Live
-- **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
-
 ### DOC-F-SRC-EVENTS-WORLD — Events World submodule
 
 - **Path**: `src/DualFrontier.Events/World/README.md`
@@ -1659,13 +1726,6 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-F-SRC-SYSTEMS-PAWN — Systems Pawn submodule
 
 - **Path**: `src/DualFrontier.Systems/Pawn/README.md`
-- **Tier**: 4  |  **Lifecycle**: Live  |  **Version**: Live
-- **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
-
-### DOC-F-SRC-SYSTEMS-POWER — Systems Power submodule
-
-- **Path**: `src/DualFrontier.Systems/Power/README.md`
 - **Tier**: 4  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-04-XX ($(System.Collections.Hashtable.last_modified_commit))
@@ -1871,8 +1931,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 |---|---|---|---|
 | CAPA-2026-05-09-K8.2-V2-REFRAMING | 2026-05-09 | CLOSED | K-L3 «без exception» framing surfaced as misalignment at K8.2 v2 closure verification. |
 | CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION | 2026-05-10 | CLOSED | Methodology corpus (METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR) |
-| CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT | 2026-05-12 | OPEN | A'.0.5 INVENTORY.md baseline ~135 .md files. A'.4.5 deliberation pre-flight |
-| CAPA-2026-05-13-K8.3-PREMISE-MISS | 2026-05-13 | OPEN | K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52) |
+| CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT | 2026-05-12 | CLOSED | A'.0.5 INVENTORY.md baseline ~135 .md files. A'.4.5 deliberation pre-flight |
+| CAPA-2026-05-13-K8.3-PREMISE-MISS | 2026-05-13 | CLOSED | K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52) |
+| CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 §6.5 split the storage cutover into 12 incremental |
+| CAPA-2026-05-14-K8.34-API-SURFACE-MISS | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 (2026-05-14) prescribed `new ComponentTypeRegistry()` — |
 
 <a name="global-audit-trail"></a>
 ## Global: Audit trail
@@ -1889,5 +1951,6 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | 2026-05-12 | A'.4.5 register execution closure | execution_milestone | TBD |
 | 2026-05-12 | A'.4.5 document control register deliberation | deliberation_milestone | 7448267..411c284 |
 | 2026-05-13 | K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation | governance_event | f7e6d52..6c79914 |
+| 2026-05-14 | A'.5 K8.3+K8.4 combined milestone v2.0 closure — atomic storage cutover landed; managed World retired from production | execution_milestone | 24e5f56..PENDING-COMMIT-4 |
 
 

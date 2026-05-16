@@ -8,10 +8,10 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "1.1"
-last_modified: "2026-05-13"
-last_modified_commit: "6c79914"  # K8.3 v2.0 halt governance commit 2026-05-13 (self-referential, backfilled via amend per FRAMEWORK §8.3)
-last_modified_by: "Crystalka"
+register_version: "1.2"
+last_modified: "2026-05-16"
+last_modified_commit: "PENDING-INITIAL"
+last_modified_by: "Codex"
 
 # === Audit calendar (Q13 anchor) ===
 # Per-tier cadence enums encoded in per-document review_cadence field.
@@ -1746,6 +1746,22 @@ documents:
     review_cadence: on-status-transition
     last_review_date: "2026-05-15"
     last_review_event: "Recon shipped 2026-05-15 — broad architecture audit, input to composite namespace deliberation + cascade map recon"
+    reviewer: Crystalka
+
+  - id: DOC-E-DOCUMENTATION_DRIFT_AUDIT_REPORT
+    path: docs/audit/DOCUMENTATION_DRIFT_AUDIT_REPORT.md
+    title: "Documentation Drift Audit Report"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-16"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-16"
+    last_review_event: "Audit-only documentation drift report authored 2026-05-16; no architecture/source documents modified"
     reviewer: Crystalka
 
   - id: DOC-E-Q_K_1_REPORT
