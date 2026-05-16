@@ -78,10 +78,6 @@ Publishing an event walks the subscriber list synchronously. The implementation 
 
 Find entities within radius R from a point. Implementation: a cell grid, each cell holds `List<EntityId>`. Target: a walk over ≤9 cells instead of all 10,000 entities.
 
-### SystemExecutionContext.GetComponent (DEBUG)
-
-In DEBUG the full declaration check adds +1–2 ns per call. In RELEASE the check is removed.
-
 ### PathfindingService
 
 A\* through the navigation graph. The most expensive operation (1–5 ms per path).
