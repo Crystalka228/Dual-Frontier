@@ -66,16 +66,23 @@ claim reduces to a statement about toy problems. The engine carries three
 properties that make the workload non-trivial:
 
 - A multithreaded ECS with declarative system access (`[SystemAccess]`),
-  a Kahn-sorted dependency graph, and a runtime isolation guard that crashes
-  immediately on any access violation.
+  a Kahn-sorted dependency graph, and compile-time isolation enforcement.
+  `[SystemAccess]` declarations are consumed by `DependencyGraph` for
+  edge-building; the future A'.9 Roslyn analyzer extends this enforcement
+  to call sites. The runtime guard methods that previously threw
+  `IsolationViolationException` were deleted in K8.3+K8.4 (A'.5 closure,
+  2026-05-14) — the safety model is compile-time + analyzer, not runtime.
 - Capability-based mod isolation: each mod loads into its own
   `AssemblyLoadContext`, sees only `DualFrontier.Contracts`, and interacts
   with the kernel through reflection-scanned capabilities. The architecture
   is documented as an OS-style design in
   [docs/architecture/MOD_OS_ARCHITECTURE.md](/docs/architecture/MOD_OS_ARCHITECTURE.md).
-- A replaceable native core, treated as an experimental boundary rather than
-  a load-bearing assumption. One negative result against this boundary is
-  recorded with criterion reformulation in
+- A native ECS storage backend (`NativeWorld`) — the sole production
+  component-storage path after A'.5 K8.3+K8.4 (2026-05-14). The prior
+  managed `World` is retired from production and survives only as a test
+  fixture (`ManagedTestWorld`). An earlier exploration of a separate C++
+  kernel as a replaceable boundary produced a measured negative result with
+  criterion reformulation, recorded in
   [docs/reports/NATIVE_CORE_EXPERIMENT.md](/docs/reports/NATIVE_CORE_EXPERIMENT.md).
 
 ## What this is not
