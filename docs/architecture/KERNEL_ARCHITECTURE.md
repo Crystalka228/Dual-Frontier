@@ -15,8 +15,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL
 **Version**: 1.6
 **Date**: 2026-05-14
 **Status**: AUTHORITATIVE LOCKED — operational reference document, Solution A architectural commitment recorded (K-L11 added in v1.2, K-L3/K-L8 implications extended); Interop error semantics convention formalized in Part 7 (v1.3); K8.2 v2 closure of K-L3 selective per-component application via K8.1 primitives (v1.4, header bump deferred to v1.5); K-L3.1 bridge formalization — Path β (managed-class, mod-side storage) as first-class peer to Path α (`unmanaged struct`, kernel-side NativeWorld) per session 2026-05-10 (v1.5); A'.5 K8.3+K8.4 combined milestone closure 2026-05-14 — managed `World` retired from production as `ManagedTestWorld` (test-project fixture only); Power subsystem deleted (electricity deferred to a separate GPU-compute brief); 10 production systems migrated to NativeWorld AcquireSpan/BeginBatch; isolation enforced at compile time (runtime guard removed) (v1.6)
-**Companion documents**: `METHODOLOGY.md`, `CODING_STANDARDS.md`, `MOD_OS_ARCHITECTURE.md`, `RUNTIME_ARCHITECTURE.md`
-**Scope**: Full architectural specification + milestone roadmap для native ECS kernel (C++ via pure P/Invoke). Companion к `RUNTIME_ARCHITECTURE.md` (Vulkan rendering layer) — together describing complete native foundation under managed Application layer.
+**Companion documents**: `METHODOLOGY.md`, `CODING_STANDARDS.md`, `MOD_OS_ARCHITECTURE.md`, `VULKAN_SUBSTRATE.md`
+**Scope**: Full architectural specification + milestone roadmap для native ECS kernel (C++ via pure P/Invoke). Companion к `VULKAN_SUBSTRATE.md` (Vulkan rendering layer) — together describing complete native foundation under managed Application layer.
 
 ---
 
@@ -25,7 +25,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL
 DualFrontier ECS kernel migrates от managed C# к pure C++ via P/Invoke. Domain layer abstractions (Components, Events, Systems) preserved verbatim в managed; only storage и primitive operations move к native. All systems remain managed (because all systems are mods loaded via AssemblyLoadContext — vanilla mods и third-party mods uniformly).
 
 **Foundation philosophy** — «без компромиссов»:
-- Pure P/Invoke к `DualFrontier.Core.Native.dll` (no third-party C# binding library, mirrors RUNTIME_ARCHITECTURE.md L2)
+- Pure P/Invoke к `DualFrontier.Core.Native.dll` (no third-party C# binding library, mirrors VULKAN_SUBSTRATE.md L2)
 - BCL only for managed bridge (`System.Runtime.InteropServices`, `System.Numerics`)
 - Manual memory management в C++ (std::vector + std::unordered_map only, no third-party libs)
 - Component storage: Path α (`unmanaged struct`, kernel-side NativeWorld) default; Path β (managed `class` via `[ManagedStorage]`, mod-side store) per opt-in (K-L3.1 bridge formalization, 2026-05-10)
@@ -37,7 +37,7 @@ DualFrontier ECS kernel migrates от managed C# к pure C++ via P/Invoke. Domai
 
 **Status snapshot** (live, обновляется по closure milestone): K0–K8.2 v2 closed (cumulative `547c919..7527d00`, 2026-05-07 through 2026-05-09); K-L3.1 bridge formalization recorded 2026-05-10; A'.4 K9 closed (RawTileField field storage + IModApi v3 Fields wiring) 2026-05-10; A'.5 K8.3+K8.4 combined closed 2026-05-14 (commits `24e5f56..54c6658` — managed World retired, Power subsystem deleted, 10 production systems on NativeWorld). См. `MIGRATION_PROGRESS.md` для current state.
 
-**Combined с RUNTIME_ARCHITECTURE.md (M9.0-M9.8) + GPU_COMPUTE.md (К9 + G0–G9)**: **15-25 weeks** для full architectural foundation. См. `ROADMAP.md` "Native foundation tracks" section для master sequencing.
+**Combined с VULKAN_SUBSTRATE.md (M9.0-M9.8) + VULKAN_SUBSTRATE.md (К9 + G0–G9)**: **15-25 weeks** для full architectural foundation. См. `ROADMAP.md` "Native foundation tracks" section для master sequencing.
 
 ---
 
@@ -113,8 +113,8 @@ src/
       SpanLease.cs                            # IDisposable span lifetime
 
   // ====== Runtime stack ======
-  DualFrontier.Runtime/                       # see RUNTIME_ARCHITECTURE.md
-  DualFrontier.Presentation/                  # see RUNTIME_ARCHITECTURE.md
+  DualFrontier.Runtime/                       # see VULKAN_SUBSTRATE.md
+  DualFrontier.Presentation/                  # see VULKAN_SUBSTRATE.md
 
 native/
   DualFrontier.Core.Native/
@@ -147,7 +147,7 @@ docs/
   METHODOLOGY.md
   CODING_STANDARDS.md
   MOD_OS_ARCHITECTURE.md
-  RUNTIME_ARCHITECTURE.md                     # Vulkan layer companion
+  VULKAN_SUBSTRATE.md                     # Vulkan layer companion
   KERNEL_ARCHITECTURE.md                      # THIS DOCUMENT
   CPP_KERNEL_BRANCH_REPORT.md                 # Discovery report (input to К0)
   NATIVE_CORE.md                              # superseded by this doc, retained для history
@@ -285,7 +285,7 @@ Crossings per tick estimate:
 │ Managed side (during game runtime):                          │
 │  - Simulation Thread (existing GameLoop, 30 TPS)             │
 │  - Worker threads (existing ParallelSystemScheduler)         │
-│  - Window/Render Thread (RUNTIME_ARCHITECTURE.md)            │
+│  - Window/Render Thread (VULKAN_SUBSTRATE.md)            │
 │                                                               │
 │ Communication:                                                │
 │  - PresentationBridge (existing, domain → render)            │
@@ -579,7 +579,7 @@ Continued от existing `CODING_STANDARDS.md`:
 - C# wrapper classes: PascalCase (`NativeWorld`, `WriteCommandBuffer`)
 - P/Invoke methods: keep C names (`df_world_create`) — no idiomatic translation
 
-Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
+Mirrors VULKAN_SUBSTRATE.md §1.9 для cross-document consistency.
 
 ---
 
@@ -608,7 +608,7 @@ Mirrors RUNTIME_ARCHITECTURE.md §1.9 для cross-document consistency.
 **Cumulative K0-K8**: 5-8 weeks at hobby pace.
 **Cumulative K0-K9**: 6-10 weeks at hobby pace (K9 prerequisite for G-series GPU compute).
 
-**Combined с RUNTIME_ARCHITECTURE.md M9.0-M9.8 + GPU_COMPUTE.md G0-G9**: 16-25 weeks total для full architectural foundation. K-series gates K9; K9 gates G-series. See [GPU_COMPUTE](./GPU_COMPUTE.md) Roadmap for G0-G9 detail и combined timeline.
+**Combined с VULKAN_SUBSTRATE.md M9.0-M9.8 + VULKAN_SUBSTRATE.md G0-G9**: 16-25 weeks total для full architectural foundation. K-series gates K9; K9 gates G-series. See [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Roadmap for G0-G9 detail и combined timeline.
 
 ### K0 — Cherry-pick + cleanup от branch
 
@@ -772,15 +772,15 @@ e2bc2d9 — DLL loading fix
 
 ### K9 — Field storage abstraction
 
-**Goal**: native `RawTileField<T>` storage as a parallel abstraction alongside `RawComponentStore`. Prerequisite for the G-series GPU compute roadmap ([GPU_COMPUTE](./GPU_COMPUTE.md) v2.0). Ships CPU functional path first; no Vulkan compute dependency.
+**Goal**: native `RawTileField<T>` storage as a parallel abstraction alongside `RawComponentStore`. Prerequisite for the G-series GPU compute roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0). Ships CPU functional path first; no Vulkan compute dependency.
 
-**Authoritative spec**: [GPU_COMPUTE.md](./GPU_COMPUTE.md) "Architectural integration → Native kernel (KERNEL_ARCHITECTURE.md K9)" + "Roadmap → K9 — Field storage abstraction".
+**Authoritative spec**: [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) "Architectural integration → Native kernel (KERNEL_ARCHITECTURE.md K9)" + "Roadmap → K9 — Field storage abstraction".
 
 **Deliverables**:
 - `RawTileField<T>` C++ class (data + back buffer + conductivity map + storage flags)
 - C ABI: `df_world_register_field`, `df_world_field_read_cell`, `df_world_field_acquire_span`, `df_world_field_set_conductivity`, `df_world_field_set_storage_flag`
 - Managed bridge: `FieldRegistry`, `FieldHandle<T>` в `DualFrontier.Core.Interop`
-- CPU-side reference implementation of basic diffusion (also serves as G1+ shader equivalence oracle and as CPU fallback per [GPU_COMPUTE](./GPU_COMPUTE.md) "Failure modes → CPU fallback")
+- CPU-side reference implementation of basic diffusion (also serves as G1+ shader equivalence oracle and as CPU fallback per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Failure modes → CPU fallback")
 - Selftest: round-trip, span access, mutation, conductivity update, storage flag toggle
 
 **Success criteria**:
@@ -805,7 +805,7 @@ Managed `World` stayed functional throughout K0-K7. K8.0 closure (2026-05-09) re
 
 **Operating principle**: «honest state always available» — managed World stayed working through K0-K7 so the K7 evidence base could be collected; the K-L11 commitment then settles the decision permanently. Reversal trigger documented in `docs/MIGRATION_PROGRESS.md` D5 (Solution A rationale and reversal trigger).
 
-Mirrors RUNTIME_ARCHITECTURE.md migration approach (parallel Godot + Vulkan until M9.5 cutover).
+Mirrors VULKAN_SUBSTRATE.md migration approach (parallel Godot + Vulkan until M9.5 cutover).
 
 ---
 
@@ -860,7 +860,7 @@ K-L1 through K-L10 above.
 
 | Decision | Trigger to resolve |
 |---|---|
-| Cross-platform support | If/when needed (parallels RUNTIME_ARCHITECTURE.md L7) |
+| Cross-platform support | If/when needed (parallels VULKAN_SUBSTRATE.md L7) |
 | Vulkan dispatch (LibraryImport vs vkGetInstanceProcAddr) — applies к Native too | K7+ if profiling demands |
 | Save/load of Native World | Persistence integration milestone (M-Persistence?) |
 | Native event bus (если scheduler ever moves к native) | Currently не planned (К-L6 keeps systems managed) |
@@ -948,7 +948,7 @@ Existing methodology (METHODOLOGY.md) carries forward с adjustments:
 **Operating principle continues**:
 - «Data exists or it doesn't» applies к component stores и span availability
 - New corollary: «Native owns or managed holds opaque IntPtr — no in-between» — single ownership boundary
-- Mirrors RUNTIME_ARCHITECTURE.md §1.9 «State exists или driver crashes»
+- Mirrors VULKAN_SUBSTRATE.md §1.9 «State exists или driver crashes»
 
 ### Error semantics convention for Interop layer
 
@@ -979,15 +979,15 @@ The Interop layer has two surfaces: the C ABI (C-level functions in `df_capi.h` 
 **Cross-reference**: the convention applies to all Interop layer additions from K9 onward. K8.1 wrappers (`NativeMap`, `NativeSet`, `NativeComposite`) are already convention-compliant (sparse). K9 brief drift findings note `FieldHandle<T>` as convention-compliant (dense) but recommend the brief surface this categorization explicitly during K9 execution.
 
 **AD numbering continues**:
-- M-series ADs от RUNTIME_ARCHITECTURE.md continue
+- M-series ADs от VULKAN_SUBSTRATE.md continue
 - K-series ADs new sequence
 - Direct Opus → Claude Code routing pattern continues
 
 ---
 
-## Part 8: Relationship к RUNTIME_ARCHITECTURE.md
+## Part 8: Relationship к VULKAN_SUBSTRATE.md
 
-KERNEL_ARCHITECTURE.md (this) и RUNTIME_ARCHITECTURE.md describe **two halves of single architectural vision**: native foundation under managed Application layer.
+KERNEL_ARCHITECTURE.md (this) и VULKAN_SUBSTRATE.md describe **two halves of single architectural vision**: native foundation under managed Application layer.
 
 ### Symmetric architecture diagram
 
@@ -1020,7 +1020,7 @@ KERNEL_ARCHITECTURE.md (this) и RUNTIME_ARCHITECTURE.md describe **two halves o
 
 ### Independent layers
 
-**Kernel knows nothing of rendering**: `DualFrontier.Core.Native` doesn't include `vulkan-1.dll`, doesn't depend on RUNTIME_ARCHITECTURE.md decisions. Could be open-sourced separately as «sparse-set ECS kernel».
+**Kernel knows nothing of rendering**: `DualFrontier.Core.Native` doesn't include `vulkan-1.dll`, doesn't depend on VULKAN_SUBSTRATE.md decisions. Could be open-sourced separately as «sparse-set ECS kernel».
 
 **Runtime knows nothing of ECS**: `DualFrontier.Runtime` doesn't include `DualFrontier.Core.Native.dll`, doesn't depend on KERNEL_ARCHITECTURE.md decisions. Could be open-sourced separately as «2D Vulkan runtime».
 
@@ -1101,10 +1101,10 @@ Both documents commit к following invariants:
 
 3 weeks к current Dual Frontier state demonstrates high learning velocity, architectural rigor, methodology effectiveness. Combined kernel + runtime native vision within 9-15 weeks comparable к existing pace.
 
-**«Features only on demand»** (continuing principle от RUNTIME_ARCHITECTURE.md): kernel API surface stays minimal. ~20 C ABI functions sufficient для full DF gameplay. Resist temptation к build «complete» ECS engine — every function must trace к specific Domain requirement.
+**«Features only on demand»** (continuing principle от VULKAN_SUBSTRATE.md): kernel API surface stays minimal. ~20 C ABI functions sufficient для full DF gameplay. Resist temptation к build «complete» ECS engine — every function must trace к specific Domain requirement.
 
 This document is **v1.5** (current), authoritative until amended via explicit decision. Amendments require commit с rationale (similar к how MOD_OS_ARCHITECTURE.md evolved). Version history: v1.0 initial; v1.1 K6 reconciliation; v1.2 K-L11 + Solution A; v1.3 Interop error semantics convention; v1.4 K8.2 v2 closure (header bump deferred); v1.5 K-L3.1 bridge formalization.
 
 Next document update expected при K8 closure (decision step results recorded), then per K-milestone (decisions log + risk register updates).
 
-**Document end. Companion: METHODOLOGY.md, CODING_STANDARDS.md, MOD_OS_ARCHITECTURE.md, RUNTIME_ARCHITECTURE.md, [GPU_COMPUTE.md](./GPU_COMPUTE.md) (v2.0 LOCKED — K9 field storage + G-series Vulkan compute).**
+**Document end. Companion: METHODOLOGY.md, CODING_STANDARDS.md, MOD_OS_ARCHITECTURE.md, VULKAN_SUBSTRATE.md, [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) (v2.0 LOCKED — K9 field storage + G-series Vulkan compute).**

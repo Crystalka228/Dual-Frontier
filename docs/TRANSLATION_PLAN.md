@@ -49,7 +49,7 @@ That is why the plan is split into phases: first **close the 9 unresolved glossa
 | Integration | `GODOT_INTEGRATION.md`, `VISUAL_ENGINE.md` | medium | **P2** |
 | Modding | `MODDING.md`, `MOD_PIPELINE.md` | medium | **P2** |
 | Process | `CODING_STANDARDS.md`, `DEVELOPMENT_HYGIENE.md`, `TESTING_STRATEGY.md`, `ROADMAP.md` | medium | **P2** |
-| Performance | `PERFORMANCE.md`, `GPU_COMPUTE.md`, `NATIVE_CORE_EXPERIMENT.md` | medium | **P2** |
+| Performance | `PERFORMANCE.md`, `VULKAN_SUBSTRATE.md`, `NATIVE_CORE_EXPERIMENT.md` | medium | **P2** |
 | v0.2 addendum | `RESOURCE_MODELS.md`, `COMPOSITE_REQUESTS.md`, `FEEDBACK_LOOPS.md`, `COMBO_RESOLUTION.md`, `OWNERSHIP_TRANSITION.md` | medium | **P2** |
 | Learning / audit | `learning/PHASE_1.md`, `SESSION_PHASE_4_CLOSURE_REVIEW.md` | large | **P3 + special policy** |
 | Persistence | `src/DualFrontier.Persistence/README.md` | medium | **P2** |

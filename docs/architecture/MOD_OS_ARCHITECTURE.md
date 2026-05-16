@@ -42,12 +42,12 @@ nav_order: 25
 - v1.5 (this version) — non-semantic correction from Audit Campaign Pass 2 (cumulative drift audit, 2026-05-01):
   - §11.2: baseline enumeration of `ValidationErrorKind` expanded to include `IncompatibleContractsVersion` and `WriteWriteConflict` alongside `MissingDependency` and `CyclicDependency`. The v1.0–v1.4 wording «The current enum has `MissingDependency` and `CyclicDependency`» is declarative without a non-exhaustive qualifier (no `e.g.`, no `among others`); on a strict reading it implies a complete 2-member baseline. The actual baseline at every v1.x snapshot is 4 members — `IncompatibleContractsVersion` is used by `ContractValidator` Phase A (`ValidateContractsVersions`) for `RequiresContractsVersion` failures, and `WriteWriteConflict` is used by Phase B (`ValidateWriteWriteConflicts`) for component write-collision detection per §10.1 («Mod registers a system that conflicts with another mod's system»). Both errors existed before any M-phase migration; the spec wording understated the baseline. v1.5 brings §11.2 in line with `src/DualFrontier.Application/Modding/ValidationError.cs:9–83` (11 enum members total: 4 baseline + 7 migration additions, matching the §11.2 «migration adds» list).
   - No semantic changes. No locked decision (D-1 through D-7) is altered. No state added to §9.1. M0–M7.3 implementations continue to comply.
-- v1.6 — ratification of GPU compute integration capabilities, gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) milestones per [GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 LOCKED:
+- v1.6 — ratification of GPU compute integration capabilities, gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) milestones per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 LOCKED:
   - §3.2: capability syntax extended with `field.*` and `pipeline.*` verbs. The `read`/`write` verbs apply only to entity-keyed components; field operations require dedicated verbs because the access pattern (point queries, dense spans, compute dispatch) is structurally distinct from entity component access. Pipeline registration is mod-side; pipeline dispatch is implicit through field dispatch and does not require a separate verb in v1.6 (deferred to v1.7 if cross-mod pipeline reuse becomes a feature).
   - §3.5: kernel-provided capability set extended via new `[FieldAccessible]` annotation. Field types ship in vanilla mod assemblies (not the kernel), so kernel-provided field capabilities are the *infrastructure verbs* (e.g. `kernel.field.acquire`, `kernel.field.dispatch`); concrete field tokens (e.g. `mod.dualfrontier.vanilla.magic.field.read:vanilla.magic.mana`) are mod-provided and resolve through the dependency chain established in §3.4.
   - §3.7: cross-check extended for `[FieldAccess]` and `[ComputePipelineAccess]` attributes on systems. The drift-prevention principle from §3.7 is preserved — manifest-vs-code mismatches surface as load-time errors, never silent.
   - §4.6 NEW: `IModApi` v3 surface — `Fields` and `ComputePipelines` sub-APIs. Additive to v2; v2 mods continue to load unchanged. Default-null sub-APIs allow mods that don't use fields to ignore the surface entirely.
-  - §11.2: six new `ValidationErrorKind` entries (`FieldRegistrationConflict`, `InvalidFieldDimensions`, `FieldCapabilityMismatch`, `ComputePipelineCompilationFailed`, `ComputePipelineRegistrationConflict`, `ComputeUnsupportedWarning`). The first five are blocking errors; the sixth is a non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [GPU_COMPUTE](./GPU_COMPUTE.md) "Failure modes → CPU fallback".
+  - §11.2: six new `ValidationErrorKind` entries (`FieldRegistrationConflict`, `InvalidFieldDimensions`, `FieldCapabilityMismatch`, `ComputePipelineCompilationFailed`, `ComputePipelineRegistrationConflict`, `ComputeUnsupportedWarning`). The first five are blocking errors; the sixth is a non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Failure modes → CPU fallback".
   - §11.1: M3.5 added as deferred milestone — capability registry refresh for field types via `[FieldAccessible]` scan extension to `KernelCapabilityRegistry`. Unblocked at K9 in-progress.
   - No semantic changes to v1.5 decisions. No locked decision (D-1 through D-7) is altered. K9 + G0–G9 implementations begin against this surface.
 - v1.7 — K-L3.1 bridge formalization applied (session 2026-05-10):
@@ -443,7 +443,7 @@ All v1 mods (using `Publish`/`Subscribe` with no-op semantics) continue to load 
 
 ### 4.6 IModApi v3 — Fields and Compute Pipelines (NEW in v1.6)
 
-v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) capabilities per [GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 LOCKED. Both sub-APIs are additive: v2 mods that do not reference `Fields` or `ComputePipelines` continue to load unchanged.
+v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) capabilities per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 LOCKED. Both sub-APIs are additive: v2 mods that do not reference `Fields` or `ComputePipelines` continue to load unchanged.
 
 ### 4.6.1 Surface
 
@@ -586,7 +586,7 @@ public class MagicMod : IMod
 }
 ```
 
-The full motivation for the field abstraction, Domain A vs Domain B distinction, and shader registration model is in [GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 — "Architectural integration" and "Mod-driven shader registration" sections.
+The full motivation for the field abstraction, Domain A vs Domain B distinction, and shader registration model is in [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 — "Architectural integration" and "Mod-driven shader registration" sections.
 
 ---
 
@@ -1055,7 +1055,7 @@ The current enum has `IncompatibleContractsVersion`, `WriteWriteConflict`, `Miss
 - `FieldCapabilityMismatch` (K9) — mod accesses a field without the corresponding `field.*` capability declared in its manifest
 - `ComputePipelineCompilationFailed` (G0) — SPIR-V bytecode failed validation at pipeline registration
 - `ComputePipelineRegistrationConflict` (G0) — two mods register a compute pipeline with the same id
-- `ComputeUnsupportedWarning` (G0) — non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [GPU_COMPUTE](./GPU_COMPUTE.md) "Failure modes → CPU fallback"
+- `ComputeUnsupportedWarning` (G0) — non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Failure modes → CPU fallback"
 - `MissingManagedStorageAttribute` (K-L3.1) — mod calls `RegisterManagedComponent<T>` where T is a class but not annotated with `[ManagedStorage]`, OR mod calls `RegisterComponent<T>` where T is a class (Path α expects `unmanaged struct` shape; class type without `[ManagedStorage]` is shape-attribute mismatch). Active enforcement is load-time runtime check until M3.5 analyzer ships (per K-L3.1 Q5.b deferral); analyzer adds compile-time enforcement.
 
 ### 11.3 Closing `ROADMAP` debt incidentally
@@ -1175,7 +1175,7 @@ These items were unresolved in v0.1 and were locked during Phase 0 closure (v1.0
 - [ISOLATION](./ISOLATION.md) — `SystemExecutionContext`; capability enforcement at runtime delegates here.
 - [ROADMAP](./ROADMAP.md) — phase order; the migration plan in §11 is the new authoritative sequence for the mod-OS work.
 - `src/DualFrontier.Contracts/Modding/` — the source-of-truth surface for `IMod`, `IModApi`, `IModContract`, `ContractsVersion`, `ModManifest`.
-- [GPU_COMPUTE](./GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability. Per K-L9, vanilla and third-party mods register fields and compute pipelines through the same `IModApi` (see "Mod-driven shader registration" and "Mod parity (KERNEL K-L9)").
+- [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability. Per K-L9, vanilla and third-party mods register fields and compute pipelines through the same `IModApi` (see "Mod-driven shader registration" and "Mod parity (KERNEL K-L9)").
 
 ## Modding с native ECS kernel
 
@@ -1186,7 +1186,7 @@ When kernel migration к native completes (K-series, see `KERNEL_ARCHITECTURE.md
 - Within-mod cross-path access (one system reads native + managed components on same entity) is supported via dual `SystemBase` API: `SystemBase.NativeWorld.AcquireSpan<T>()` for Path α; `SystemBase.ManagedStore<T>()` for Path β. The accessor resolves to the system's owning mod's per-mod store via `SystemMetadata.ModId` (K6.1 plumbing). Performance characteristics visible per-call: native-path is zero-allocation span iteration; managed-path is Dictionary-shaped lookup.
 - Mod replacement triggers second-graph rebuild (managed) — native side untouched. Per-mod `ManagedStore<T>` instances reclaim deterministically with the mod's `AssemblyLoadContext.Unload` per §9.5 unload chain.
 - Vanilla mods register components, systems, fields, and compute pipelines through the same IModApi as third-party (vanilla = mods principle preserved per K-L9).
-- Mod fields (`RawTileField<T>`) и compute pipelines registered through `IModApi` extension (`api.Fields` / `api.ComputePipelines`); see [GPU_COMPUTE](./GPU_COMPUTE.md) "Architectural integration → Mod-driven shader registration".
+- Mod fields (`RawTileField<T>`) и compute pipelines registered through `IModApi` extension (`api.Fields` / `api.ComputePipelines`); see [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Architectural integration → Mod-driven shader registration".
 - `[ModAccessible]` annotation and capability strings (`kernel.read:`, `mod.<id>.read:`) function uniformly across Path α and Path β (Q6.a path-blind capability lock per K-L3.1). The capability resolver dispatches internally to `NativeWorld` span access or `ManagedStore` lookup per-T.
 
-See `KERNEL_ARCHITECTURE.md` §1.9 (mod system registration) и §1.10 (component type registry) для full detail. See [GPU_COMPUTE](./GPU_COMPUTE.md) "Architectural integration with existing systems → Mod parity (KERNEL K-L9)" для GPU compute mod-parity invariant.
+See `KERNEL_ARCHITECTURE.md` §1.9 (mod system registration) и §1.10 (component type registry) для full detail. See [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Architectural integration with existing systems → Mod parity (KERNEL K-L9)" для GPU compute mod-parity invariant.

@@ -434,7 +434,7 @@ The document is updated after each substantial phase closes. Substantial methodo
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — hygiene checklist for every PR, the engine/game boundary.
 - [ISOLATION](/docs/architecture/ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
 - [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
-- [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability; K9 field storage + G0–G5 Vulkan compute roadmap. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case.
+- [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) — **v1.0 LOCKED.** Unified Vulkan substrate (V) covering rendering + compute use cases per Q-G-1 LOCK; consolidates former RUNTIME_ARCHITECTURE.md v1.0 + GPU_COMPUTE.md v2.0. Substrate primitives V0 (foundation) / V1 (diffusion) / V2 (wave) per Q-G-2; M-V demonstrations per Q-R-1 format. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case with substrate disposition TBD at M-V5 amendment.
 - [ROADMAP](/docs/ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.
 - [FRAMEWORK](../governance/FRAMEWORK.md) — Document Control Register governance framework v1.0 (LOCKED at A'.4.5). Governance authority over documentation lifecycle, classification, post-session protocol.
 - [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) — Source-standard provenance for the register synthesis (DO-178C / ISO 9001 / ISO 26262 / IEC 61508 / FDA 21 CFR Part 11; 9 selected + 11 deselected elements).
@@ -551,7 +551,7 @@ The new steps (5-8) constitute the post-session update protocol per §12.5. They
 
 Kernel и runtime native layers introduce specific methodology adjustments documented в:
 - `KERNEL_ARCHITECTURE.md` Part 7 (kernel-specific adjustments)
-- `RUNTIME_ARCHITECTURE.md` Part 7 (runtime-specific adjustments)
+- `VULKAN_SUBSTRATE.md` Part 7 (runtime-specific adjustments)
 
 Common adjustments (apply к both, plus any subsequent native artifact per `MIGRATION_PROGRESS.md` D3 Lvl 1 pattern):
 - C++ build verification mandatory pre-commit (CMake clean + selftest passing)
@@ -656,7 +656,7 @@ This was correct resolution but not specified by the brief — agent improvised.
 
 ### Calibrated time estimates
 
-Time estimates in architectural documents (`KERNEL_ARCHITECTURE.md` Part 2, `RUNTIME_ARCHITECTURE.md` Part 2, brief skeletons in `tools/briefs/`) are written assuming **hobby solo developer pace — approximately one hour per day of manual typing**. This was the working assumption when those documents were authored.
+Time estimates in architectural documents (`KERNEL_ARCHITECTURE.md` Part 2, `VULKAN_SUBSTRATE.md` Part 2, brief skeletons in `tools/briefs/`) are written assuming **hobby solo developer pace — approximately one hour per day of manual typing**. This was the working assumption when those documents were authored.
 
 **Auto-mode execution is fundamentally faster.** When briefs are executed by Claude Code agent в auto mode, three multipliers apply:
 

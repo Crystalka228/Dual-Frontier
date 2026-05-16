@@ -26,7 +26,7 @@ Technical documents describing the engine that stress-tests the methodology: lay
 
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — the four layers, dependency rules, assembly diagram.
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — **v1.5 LOCKED.** Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model. Drives the M1–M10 migration plan in ROADMAP.
-- [RUNTIME_ARCHITECTURE](/docs/architecture/RUNTIME_ARCHITECTURE.md) — **v1.0 LOCKED.** Pure-Vulkan + pure-Win32 2D runtime to replace the Godot DevKit production path. Ten foundation decisions (L1–L10), nine migration milestones (M9.0–M9.8), parallel-development cutover at M9.5, Godot deletion at M9.8. Domain layer preserved verbatim.
+- [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) — **v1.0 LOCKED.** Unified Vulkan substrate (V) — rendering + compute use cases on one VkInstance/VkDevice per Q-G-1 LOCK (supersedes prior RUNTIME_ARCHITECTURE.md v1.0 + GPU_COMPUTE.md v2.0). Substrate primitives V0 (foundation, includes rendering migration phases R.0..R.8 — formerly M9.0..M9.8) / V1 (diffusion shader) / V2 (wave shader). M-V demonstrations (M-V1 mana, M-V2 electricity, M-V7 movement, M-V8 local avoidance) per Q-R-1 format. Domain layer preserved verbatim.
 - [CONTRACTS](/docs/architecture/CONTRACTS.md) — marker interfaces, six domain buses, evolution and versioning.
 - [ECS](/docs/architecture/ECS.md) — `World`, `EntityId`, `Component`, `SparseSet`, `Query`, `SystemBase`.
 - [EVENT_BUS](/docs/architecture/EVENT_BUS.md) — domain buses, the two-step Intent→Granted/Refused model, batch processing.
@@ -44,7 +44,7 @@ Documents required to reproduce the work or contribute to it: methodology, moddi
 - [MODDING](/docs/architecture/MODDING.md) — `IMod`, `IModApi`, `AssemblyLoadContext`, `IModContract`, the mod manifest.
 - [MOD_PIPELINE](/docs/architecture/MOD_PIPELINE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity.
 - [PERFORMANCE](/docs/architecture/PERFORMANCE.md) — target metrics, profiling, hot paths, caches.
-- [GPU_COMPUTE](/docs/architecture/GPU_COMPUTE.md) — **v2.0 LOCKED.** Field-based GPU compute as a foundational architectural capability (Domain A: mana / electricity / water / heat / sound / scent), with `ProjectileSystem` preserved as Domain B (entity-keyed bulk compute). K9 field storage abstraction + G0–G5 Vulkan compute roadmap.
+- [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) §3-§5 — Compute use case of V substrate (consolidates former GPU_COMPUTE.md v2.0 content). Field-based GPU compute as a foundational architectural capability (Domain A: mana / electricity / water / heat / sound / scent on V1/V2 primitives), with `ProjectileSystem` preserved as Domain B (entity-keyed bulk compute, substrate disposition deferred to M-V5 amendment). K9 field storage abstraction + V0/V1/V2 substrate primitives per Q-G-2 reductions.
 - [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order.
 - [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — unit, integration, isolation, modding, performance.
 - [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) — the hygiene checklist for every PR, the engine/game boundary, red flags.

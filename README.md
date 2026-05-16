@@ -113,7 +113,7 @@ engine code requires a separate agreement.
 - `docs/methodology/METHODOLOGY.md` — pipeline и methodology
 - `docs/methodology/CODING_STANDARDS.md` — coding conventions
 - `docs/architecture/MOD_OS_ARCHITECTURE.md` — modding architecture
-- `docs/architecture/RUNTIME_ARCHITECTURE.md` — Vulkan rendering layer (M9.x)
+- `docs/architecture/VULKAN_SUBSTRATE.md` — Vulkan substrate (V) — rendering + compute use cases unified per Q-G-1 LOCK
 - `docs/architecture/KERNEL_ARCHITECTURE.md` — native ECS kernel layer (K0-K8)
 - `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` — Discovery report (experimental branch)
 

@@ -42,11 +42,11 @@ The two systems remain decoupled at every layer above storage: managed bridges l
 
 ## Scope
 
-This document specifies the **storage contract** for fields. It is the substrate that the GPU compute roadmap ([GPU_COMPUTE](./GPU_COMPUTE.md) G0–G9) sits on top of. The storage path is required to function on CPU alone — every shader has a CPU reference implementation that operates on the same `RawTileField<T>` instances, and the `IModApi.Fields` surface is identical regardless of GPU availability.
+This document specifies the **storage contract** for fields. It is the substrate that the GPU compute roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G0–G9) sits on top of. The storage path is required to function on CPU alone — every shader has a CPU reference implementation that operates on the same `RawTileField<T>` instances, and the `IModApi.Fields` surface is identical regardless of GPU availability.
 
 Three scopes are out of band for this document:
 
-- **Mathematical models** (diffusion, anisotropy, capacitance, cliff thresholds, eikonal). These live in [GPU_COMPUTE](./GPU_COMPUTE.md) as the spec layer; the storage layer carries the data the math operates on, not the math itself.
+- **Mathematical models** (diffusion, anisotropy, capacitance, cliff thresholds, eikonal). These live in [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) as the spec layer; the storage layer carries the data the math operates on, not the math itself.
 - **Compute pipeline registration** (`IModApi.ComputePipelines`). Pipelines are registered alongside fields but are a separate API; only field-side verbs (`field.dispatch`) reach pipelines transitively.
 - **Mod-specific gameplay decisions** (which fields ship in which vanilla mod, which decay rates, which colour ramps). These live in mod assemblies, not architectural docs.
 
@@ -63,13 +63,13 @@ Element type `T` is constrained to `unmanaged` (matches K-L3 from the kernel —
 
 ### Why ping-pong from day one, not «add later»
 
-A diffusion update reads four neighbours and writes the current cell. If the read and write target the same buffer, the update sees partially-applied results from earlier cells in the same pass — Gauss-Seidel rather than Jacobi semantics. The two converge to the same equilibrium but with different transient behaviour, and the choice is not free: GPU compute pipelines parallelise across cells, which forces Jacobi (no order guarantee), and the CPU reference implementation that serves as the shader equivalence oracle ([GPU_COMPUTE](./GPU_COMPUTE.md) «Failure modes → CPU fallback») must produce bit-equivalent output.
+A diffusion update reads four neighbours and writes the current cell. If the read and write target the same buffer, the update sees partially-applied results from earlier cells in the same pass — Gauss-Seidel rather than Jacobi semantics. The two converge to the same equilibrium but with different transient behaviour, and the choice is not free: GPU compute pipelines parallelise across cells, which forces Jacobi (no order guarantee), and the CPU reference implementation that serves as the shader equivalence oracle ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) «Failure modes → CPU fallback») must produce bit-equivalent output.
 
 Ping-pong is therefore not an optimisation; it's the only update model that survives the CPU↔GPU equivalence requirement. The back buffer is allocated at field registration time, not lazily on first dispatch — there is no «field without back buffer» state.
 
 ### Why conductivity map and storage flags from day one
 
-K9 ships isotropic mana diffusion (`Vanilla.Magic` per [GPU_COMPUTE](./GPU_COMPUTE.md) G1) where a uniform conductivity = 1.0 suffices. Adding anisotropy retroactively (G2 — `Vanilla.Electricity` wires) would force a storage layout migration: the existing buffer must grow by `width × height × 4` bytes, the C ABI surface gains `set_conductivity`, the managed bridge gains `SetConductivity(x, y, value)`, and every field-aware test must be updated to expect the new layout.
+K9 ships isotropic mana diffusion (`Vanilla.Magic` per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G1) where a uniform conductivity = 1.0 suffices. Adding anisotropy retroactively (G2 — `Vanilla.Electricity` wires) would force a storage layout migration: the existing buffer must grow by `width × height × 4` bytes, the C ABI surface gains `set_conductivity`, the managed bridge gains `SetConductivity(x, y, value)`, and every field-aware test must be updated to expect the new layout.
 
 Same logic for storage flags (G3 — batteries). The cost of including both from K9 is fixed memory (`width × height × 5` bytes per field, ~200 KB for a 200×200 field) and a few extra C ABI functions; the cost of adding them later is a flag day across native, bridge, tests, and mod code. The «no compromises» rule resolves this trivially — pay the cost once at K9.
 
@@ -151,7 +151,7 @@ Compute dispatches are not gated by `active_spans_` but by their own dispatch sy
 
 ## C ABI extension — `df_world_field_*`
 
-**TBD** — exact signatures land at K9 implementation. The contract per [GPU_COMPUTE](./GPU_COMPUTE.md) «Architectural integration → Native compute dispatch (G-series)»:
+**TBD** — exact signatures land at K9 implementation. The contract per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) «Architectural integration → Native compute dispatch (G-series)»:
 
 ```c
 // native/DualFrontier.Core.Native/include/df_capi.h (K9 extension)
@@ -289,7 +289,7 @@ The kernel does not own any field. Vanilla = mods means there is no engine-speci
 
 A field is destroyed by:
 
-- The owning mod calling `FieldRegistry.Unregister(id)` explicitly (e.g. dynamic field lifetime — flow field eviction per [GPU_COMPUTE](./GPU_COMPUTE.md) G7).
+- The owning mod calling `FieldRegistry.Unregister(id)` explicitly (e.g. dynamic field lifetime — flow field eviction per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G7).
 - The owning mod being unloaded (loader sweeps mod-namespaced ids).
 - World destruction (kernel shutdown sweeps all fields).
 
@@ -302,13 +302,13 @@ A field is destroyed by:
 - On load, fields are re-registered by the owning mod's startup, then the loader streams the blob into the registered field's buffers.
 - Width / height mismatch between save and current registration is a load error — fields cannot resize across sessions.
 
-Save format and per-field opt-out (some fields might be ephemeral, e.g. flow fields per [GPU_COMPUTE](./GPU_COMPUTE.md) G7) are deferred к persistence-integration milestone.
+Save format and per-field opt-out (some fields might be ephemeral, e.g. flow fields per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G7) are deferred к persistence-integration milestone.
 
 ## CPU and GPU paths share the same field
 
 A field is a single allocation in native memory. The GPU path (G0+) lazily allocates a `VkBuffer` mirror of the primary buffer when the field is first dispatched; subsequent dispatches reuse the buffer. Read-back to CPU happens through `acquire_span` after a fence wait — the managed code never sees a partially-applied dispatch.
 
-The CPU reference path operates directly on the native buffers. A CPU-only build (Vulkan unavailable, per [GPU_COMPUTE](./GPU_COMPUTE.md) «Failure modes → CPU fallback») runs the same shaders translated to managed C# — diffusion math is straightforward, the equivalence is testable cell-by-cell.
+The CPU reference path operates directly on the native buffers. A CPU-only build (Vulkan unavailable, per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) «Failure modes → CPU fallback») runs the same shaders translated to managed C# — diffusion math is straightforward, the equivalence is testable cell-by-cell.
 
 The mod author writes the same code regardless of backend:
 
@@ -366,7 +366,7 @@ A mod registering a field without declaring `mod.<id>.field.read:<id>` (or equiv
 ## See also
 
 - [ECS](./ECS.md) — the orthogonal system; entities, components, sparse-set storage. Same kernel, separate access model.
-- [GPU_COMPUTE](./GPU_COMPUTE.md) — v2.0 LOCKED. Field math models (diffusion, anisotropy, capacitance, eikonal). The mathematics fields exist to carry.
+- [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — v2.0 LOCKED. Field math models (diffusion, anisotropy, capacitance, eikonal). The mathematics fields exist to carry.
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — Part 2 §K9 (field storage abstraction milestone). The native-side spec.
 - [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — §3.2 (capability syntax for `field.*` verbs), §4.6 (`IModApi` v3 — `Fields` and `ComputePipelines` sub-APIs), §11.2 (validation error kinds for field operations).
 - [THREADING](./THREADING.md) — fence-based GPU sync; field dispatches are non-blocking.

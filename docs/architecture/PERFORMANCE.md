@@ -91,14 +91,14 @@ the pawn re-requests on the next tick. A path cache between frequently used
 pairs of points is not yet implemented (TODO — would give 10×).
 
 Long-term: pathfinding migrates to GPU flow fields under the K9 + G6/G7
-roadmap ([GPU_COMPUTE](./GPU_COMPUTE.md) Domain A extension). Per-pawn cost
+roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Domain A extension). Per-pawn cost
 collapses to one field read + arithmetic; pathfinding cost decouples from
 pawn count. A\* preserved as fallback for unique destinations only.
 
 ### GPU compute — Domain A (fields) and Domain B (entity-keyed bulk)
 
 GPU compute is now a foundational architectural capability with two workload domains
-([GPU_COMPUTE](./GPU_COMPUTE.md) v2.0 LOCKED).
+([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 LOCKED).
 
 **Domain A — fields** (mana, electricity, water, heat, sound, scent). Dense 2D grids
 updated by 4-neighbor stencil compute shaders. No CPU/GPU crossover threshold — field
@@ -118,7 +118,7 @@ shift downward in practice.
 TODO (G5+): BenchmarkDotNet scenario `ProjectileStressBenchmark` with parameter
 `[Params(100, 500, 1000, 5000)]` for projectile count. Compare `CpuProjectileCompute`
 vs `GpuProjectileCompute` on the post-pivot architecture. Pin the switchover
-threshold in [GPU_COMPUTE](./GPU_COMPUTE.md) Domain B timing budget.
+threshold in [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Domain B timing budget.
 
 ## Caches and invalidation
 

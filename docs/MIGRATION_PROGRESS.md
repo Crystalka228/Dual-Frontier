@@ -16,13 +16,13 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 **Created**: 2026-05-07
 **Last updated**: 2026-05-12 (A'.4.5 closure — Document Control Register operational: FRAMEWORK.md v1.0 + SYNTHESIS_RATIONALE.md v1.0 + REGISTER.yaml schema v1.0 + 3 PowerShell scripts + 229 documents enrolled + 228 frontmatter mirrors + METHODOLOGY v1.6→v1.7 with new §12 register integration + §7.1 7th invocation; validation clean 0 errors / 0 warnings)
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
-**Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `RUNTIME_ARCHITECTURE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `GPU_COMPUTE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
+**Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `VULKAN_SUBSTRATE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `VULKAN_SUBSTRATE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
 ---
 
 ## Purpose
 
-Этот документ — единая точка наблюдения за продвижением миграции на native foundation (C++ ECS kernel + Vulkan runtime). НЕ является архитектурным документом — архитектура зафиксирована в `KERNEL_ARCHITECTURE.md` и `RUNTIME_ARCHITECTURE.md` как LOCKED v1.0.
+Этот документ — единая точка наблюдения за продвижением миграции на native foundation (C++ ECS kernel + Vulkan runtime). НЕ является архитектурным документом — архитектура зафиксирована в `KERNEL_ARCHITECTURE.md` и `VULKAN_SUBSTRATE.md` как LOCKED v1.0.
 
 **Что фиксируется здесь**:
 - Status каждого milestone (not started / in progress / done / decision-pending / blocked)
@@ -32,7 +32,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 - Open questions, которые проявились в ходе работы
 
 **Что НЕ фиксируется здесь** (см. соответствующие документы):
-- Архитектурные решения K-L1..K-L10, L1..L10 — `KERNEL_ARCHITECTURE.md` Part 0, `RUNTIME_ARCHITECTURE.md` Part 0
+- Архитектурные решения K-L1..K-L10, L1..L10 — `KERNEL_ARCHITECTURE.md` Part 0, `VULKAN_SUBSTRATE.md` Part 0
 - Детальные milestone briefs — `tools/briefs/`
 - Discovery findings от experimental branch — `CPP_KERNEL_BRANCH_REPORT.md`
 - Methodology adjustments — `METHODOLOGY.md`
@@ -817,7 +817,7 @@ Detailed entries будут добавлены при подходе к кажд
 
 ## Decisions log (operational, не архитектурные)
 
-Решения, принятые в ходе исполнения миграции. Архитектурные LOCKED-решения см. в `KERNEL_ARCHITECTURE.md` Part 0 и `RUNTIME_ARCHITECTURE.md` Part 0.
+Решения, принятые в ходе исполнения миграции. Архитектурные LOCKED-решения см. в `KERNEL_ARCHITECTURE.md` Part 0 и `VULKAN_SUBSTRATE.md` Part 0.
 
 ### D1 — Single progress tracker для K и M
 - **Date**: 2026-05-07
@@ -854,10 +854,10 @@ Detailed entries будут добавлены при подходе к кажд
 
 **Подтверждённые** (зафиксированы в LOCKED architectural docs):
 - `DualFrontier.Core.Native.dll` — ECS kernel (KERNEL_ARCHITECTURE.md)
-- `DualFrontier.Runtime.Native.dll` — Vulkan rendering (RUNTIME_ARCHITECTURE.md)
+- `DualFrontier.Runtime.Native.dll` — Vulkan rendering (VULKAN_SUBSTRATE.md)
 
 **Запланированные** (зафиксированы в research/roadmap docs):
-- GPU Compute pipeline для `ProjectileSystem` — Phase 5 «Battle of the Gods» threshold (GPU_COMPUTE.md). Уже спроектирован через `IProjectileCompute` interface — готовый к Lvl 1 паттерну без переделки.
+- GPU Compute pipeline для `ProjectileSystem` — Phase 5 «Battle of the Gods» threshold (VULKAN_SUBSTRATE.md). Уже спроектирован через `IProjectileCompute` interface — готовый к Lvl 1 паттерну без переделки.
 
 **Потенциальные** (могут возникнуть в будущем):
 - Audio engine, если решит уйти от managed
