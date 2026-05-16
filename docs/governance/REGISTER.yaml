@@ -71,21 +71,22 @@ documents:
     risks_referenced: [RISK-002, RISK-004, RISK-005, RISK-006]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
 
-  - id: DOC-A-RUNTIME
-    path: docs/architecture/RUNTIME_ARCHITECTURE.md
-    title: "Runtime Architecture — Dual Frontier"
+  - id: DOC-A-VULKAN_SUBSTRATE
+    path: docs/architecture/VULKAN_SUBSTRATE.md
+    title: "Vulkan Substrate (V) — Dual Frontier"
     category: A
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
     version: "1.0"
-    last_modified: "2026-05-06"
+    last_modified: "2026-05-16"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "2027-05-16"
     reviewer: Crystalka
     risks_referenced: [RISK-004, RISK-013]
+    special_case_rationale: "Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases."
 
   - id: DOC-A-MIGRATION_PLAN
     path: docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md
@@ -105,22 +106,6 @@ documents:
     reviewer: Crystalka
     risks_referenced: [RISK-004]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
-
-  - id: DOC-A-GPU_COMPUTE
-    path: docs/architecture/GPU_COMPUTE.md
-    title: "GPU Compute"
-    category: A
-    tier: 1
-    lifecycle: LOCKED
-    owner: Crystalka
-    version: "2.0"
-    last_modified: "2026-05-06"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
-    reviewer: Crystalka
-    risks_referenced: [RISK-013]
 
   - id: DOC-A-FIELDS
     path: docs/architecture/FIELDS.md
