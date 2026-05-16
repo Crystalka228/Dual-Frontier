@@ -10,6 +10,8 @@ version: "1.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_2_V1_DEPRECATED
 ---
+> **HISTORICAL DOCUMENT**: Register-DEPRECATED before 2026-05-16 (deprecated_by DOC-D-K8_2_V2). Moved to `tools/briefs/historical/` per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts.
+> Preserved for historical record. Do not execute as current brief.
 # K8.2 — Component class → struct conversion + ModAccessible annotation completeness pass
 
 **Brief version**: 1.0 (full, executable)

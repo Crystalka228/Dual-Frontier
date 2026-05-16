@@ -3,7 +3,7 @@
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-E-PERFORMANCE_REPORT_K7
 category: E
-tier: 2
+tier: 3
 lifecycle: Live
 owner: Crystalka
 version: "Live"

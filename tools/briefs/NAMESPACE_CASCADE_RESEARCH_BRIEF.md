@@ -1,4 +1,4 @@
----
+﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-D-NAMESPACE_CASCADE_RESEARCH_BRIEF
@@ -10,7 +10,6 @@ version: "1.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-NAMESPACE_CASCADE_RESEARCH_BRIEF
 ---
-
 # M/G/R Namespace Cascade Map — Research Brief for Claude Code
 
 **Status**: AUTHORED 2026-05-15. EXECUTED 2026-05-15 (cascade map shipped at commit `e3fef89`, output `docs/research/M_G_R_NAMESPACE_CASCADE_MAP.md`).
