@@ -62,7 +62,7 @@ The architecture is split into four layers. Each layer knows only the layers bel
 
 ### Presentation
 
-The `DualFrontier.Presentation` (Godot DevKit) and `DualFrontier.Presentation.Native` (Silk.NET production runtime) assemblies. Both implement the `IRenderer`, `ISceneLoader`, and `IInputSource` contracts from Application. Godot is the development and scene-editor tool; Native is what players run. Both work only in their backend's main thread. They do not call Domain directly — they read commands from `PresentationBridge` and send input to the buses through their own `IInputSource` implementation. Details: [VISUAL_ENGINE](./VISUAL_ENGINE.md).
+The `DualFrontier.Presentation` (Godot DevKit, current pre-V-substrate state) and `DualFrontier.Presentation.Native` (Vulkan substrate target) assemblies. Both implement the `IRenderer`, `ISceneLoader`, and `IInputSource` contracts from Application. Godot is the development and scene-editor tool that survives until the rendering cutover phase R.8 ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §2.2); Native migrates from the historical Silk.NET + OpenGL stack to the unified Vulkan substrate per Q-G-1 LOCK. Both work only in their backend's main thread. They do not call Domain directly — they read commands from `PresentationBridge` and send input to the buses through their own `IInputSource` implementation. Current authority: [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md). Historical: [VISUAL_ENGINE (historical)](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION (historical)](./historical/GODOT_INTEGRATION.md).
 
 ### Application
 
@@ -87,7 +87,7 @@ The dependency-arrow direction is strictly top-to-bottom. A violation is an arch
 - `AI` depends on `Contracts` and `Components`.
 - `Application` depends on `Core` and `Systems`.
 - `Presentation` (Godot DevKit) depends on `Application` and `Godot`.
-- `Presentation.Native` depends on `Application` and `Silk.NET` (not on `Godot`).
+- `Presentation.Native` depends on `Application` and on the Vulkan substrate ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — `vulkan-1.dll` via pure P/Invoke + Win32 P/Invoke; the historical Silk.NET + OpenGL stack is superseded per Q-G-1 LOCK and retired at the rendering cutover R.8). Never depends on `Godot`.
 - Mods depend **only** on `Contracts`. A reference to `Core` from a mod is blocked by `AssemblyLoadContext`.
 
 ## Why this way: scenarios

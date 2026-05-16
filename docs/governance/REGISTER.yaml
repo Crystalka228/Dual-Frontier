@@ -134,9 +134,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "0.3"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "80c9ba6"
+    version: "0.4"
+    last_modified: "2026-05-16"
+    last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-05-12"
