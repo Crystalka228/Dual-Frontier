@@ -784,7 +784,7 @@ documents:
     path: docs/reports/PERFORMANCE_REPORT_K7.md
     title: "Performance Report — K7"
     category: E
-    tier: 2
+    tier: 3
     lifecycle: Live
     owner: Crystalka
     version: "Live"
@@ -802,7 +802,7 @@ documents:
     path: docs/reports/NORMALIZATION_REPORT.md
     title: "Normalization Report"
     category: E
-    tier: 2
+    tier: 3
     lifecycle: Live
     owner: Crystalka
     version: "Live"
@@ -818,7 +818,7 @@ documents:
     path: docs/reports/CPP_KERNEL_BRANCH_REPORT.md
     title: "C++ Kernel Branch Report"
     category: E
-    tier: 2
+    tier: 3
     lifecycle: Live
     owner: Crystalka
     version: "Live"
@@ -834,7 +834,7 @@ documents:
     path: docs/reports/NATIVE_CORE_EXPERIMENT.md
     title: "Native Core Experiment"
     category: E
-    tier: 2
+    tier: 3
     lifecycle: Live
     owner: Crystalka
     version: "Live"
@@ -1329,9 +1329,17 @@ documents:
 
   # === Tier 3 Briefs (Category D) — G-series (AUTHORED, future Phase A'.6+ execution) ===
 
+  # G-series skeleton briefs: AUTHORED at pre-Q-G-2 era when G0..G6+G9 were separate
+  # substrate primitive milestones. Per Q-G-2 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md
+  # §3.2, ratified 2026-05-15), substrate primitives reduced to V0/V1/V2; briefs retained as
+  # historical record of pre-deliberation architectural intent. Brief content superseded by
+  # docs/architecture/VULKAN_SUBSTRATE.md §1 + §6 (V substrate primitives V0/V1/V2 + roadmap
+  # + M-V demonstrations). Per-brief composite namespace disposition annotated below in
+  # special_case_rationale field.
+
   - id: DOC-D-G0
     path: tools/briefs/G0_VULKAN_COMPUTE_PLUMBING_BRIEF.md
-    title: "G0 — Vulkan Compute Plumbing"
+    title: "G0 — Vulkan Compute Plumbing (historical; consolidated into V0)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1343,10 +1351,11 @@ documents:
     review_cadence: on-status-transition
     reviewer: Crystalka
     risks_referenced: [RISK-013]
+    special_case_rationale: "Q-G-2 LOCK: G0 consolidated into V0 (Vulkan substrate foundation, covers rendering + compute use cases). Brief content superseded by VULKAN_SUBSTRATE.md §1.1 + §3.4. Retained as historical record of pre-Q-G-1/Q-G-2 architectural intent."
 
   - id: DOC-D-G1
     path: tools/briefs/G1_MANA_DIFFUSION_BRIEF.md
-    title: "G1 — Mana Diffusion"
+    title: "G1 — Mana Diffusion (historical; demonstrated by M-V1 on V1)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1357,10 +1366,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G1 reframed as M-V1 demonstration (Vanilla.Magic mana field) on V1 substrate primitive (isotropic diffusion). Brief content superseded by VULKAN_SUBSTRATE.md §1.2 + §6.3. Retained as historical record."
 
   - id: DOC-D-G2
     path: tools/briefs/G2_ELECTRICITY_ANISOTROPIC_BRIEF.md
-    title: "G2 — Electricity Anisotropic"
+    title: "G2 — Electricity Anisotropic (historical; demonstrated by M-V2 on V1)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1371,10 +1381,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G2 reframed as M-V2 demonstration (Vanilla.Electricity power field) on V1 anisotropic diffusion variant. Brief content superseded by VULKAN_SUBSTRATE.md §1.2 + §5.1 + §6.3. Retained as historical record."
 
   - id: DOC-D-G3
     path: tools/briefs/G3_STORAGE_CAPACITANCE_BRIEF.md
-    title: "G3 — Storage Capacitance"
+    title: "G3 — Storage Capacitance (historical; reduced to gameplay node config)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1385,10 +1396,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G3 storage cells / capacitance reduced to gameplay-level node config (not shader feature, not substrate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §5.1 + Lesson #12 candidate. Retained as historical record of reduction rationale."
 
   - id: DOC-D-G4
     path: tools/briefs/G4_MULTI_FIELD_COEXISTENCE_BRIEF.md
-    title: "G4 — Multi-Field Coexistence"
+    title: "G4 — Multi-Field Coexistence (historical; reframed as V substrate close criterion)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1399,10 +1411,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G4 multi-field coexistence reframed as V substrate close acceptance criterion (not separate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §1.4 (V substrate close acceptance criteria). Retained as historical record."
 
   - id: DOC-D-G5
     path: tools/briefs/G5_PROJECTILE_DOMAIN_B_BRIEF.md
-    title: "G5 — Projectile Domain B"
+    title: "G5 — Projectile Domain B (historical; substrate disposition deferred)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1413,10 +1426,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G5 projectile Domain B substrate disposition deferred to M-V5 reactivation amendment authoring (whether V3 primitive, separate substrate, or consumer-level). M-V5 identifier reserved per Q-R-1. Brief content cross-referenced from VULKAN_SUBSTRATE.md §1.3.2 + §5.6. Retained as historical record."
 
   - id: DOC-D-G6
     path: tools/briefs/G6_FLOW_FIELD_INFRASTRUCTURE_BRIEF.md
-    title: "G6 — Flow Field Infrastructure"
+    title: "G6 — Flow Field Infrastructure (historical; folded into V2)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1427,10 +1441,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G6 flow field infrastructure folded into V2 wave shader side products (distance/direction fields). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3. Retained as historical record."
 
   - id: DOC-D-G7
     path: tools/briefs/G7_VANILLA_MOVEMENT_BRIEF.md
-    title: "G7 — Vanilla Movement"
+    title: "G7 — Vanilla Movement (historical; demonstrated by M-V7 on V2)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1441,10 +1456,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G7 reframed as M-V7 demonstration (Vanilla.Movement routed flow field pathfinding) on V2 substrate primitive (wave shader). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3 + §5.5 + §6.3. Retained as historical record."
 
   - id: DOC-D-G8
     path: tools/briefs/G8_LOCAL_AVOIDANCE_BRIEF.md
-    title: "G8 — Local Avoidance"
+    title: "G8 — Local Avoidance (historical; demonstrated by M-V8, mod-level)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1455,10 +1471,11 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G8 local avoidance reframed as M-V8 demonstration — mod-level concern, NOT V substrate primitive. Brief content superseded by VULKAN_SUBSTRATE.md §5.5 (local avoidance separate concern) + §6.3. Retained as historical record."
 
   - id: DOC-D-G9
     path: tools/briefs/G9_EIKONAL_UPGRADE_BRIEF.md
-    title: "G9 — Eikonal Upgrade"
+    title: "G9 — Eikonal Upgrade (historical; deferred — V2 tunable or V3)"
     category: D
     tier: 3
     lifecycle: AUTHORED
@@ -1469,6 +1486,7 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+    special_case_rationale: "Q-G-2 LOCK: G9 eikonal upgrade deferred — possibly folded into V2 tunable parameter (Option A vs Option B), or becomes separate V-N primitive — evidence-gated at amendment authoring. Brief content cross-referenced from VULKAN_SUBSTRATE.md §1.3 + §1.3.1 + §5.3. Retained as historical record."
 
   # === Tier 3 Briefs (Category D) — A'/Phase A' deliberation + execution briefs ===
 
@@ -1647,6 +1665,103 @@ documents:
     review_cadence: on-status-transition
     last_review_date: "2026-05-15"
     last_review_event: "Brief executed 2026-05-15 — cascade map shipped at docs/research/M_G_R_NAMESPACE_CASCADE_MAP.md (commit e3fef89); no halts; 2 LOCKED renames captured, 10 ambiguities surfaced for ratification proposal"
+    reviewer: Crystalka
+
+  - id: DOC-D-ARCHITECTURE_RECON_BRIEF
+    path: tools/briefs/ARCHITECTURE_RECON_BRIEF.md
+    title: "Architecture Reconnaissance Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-15"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-15"
+    last_review_event: "Brief authored + executed 2026-05-15 — recon report shipped at docs/reports/ARCHITECTURE_RECON_REPORT.md; pre-deliberation broad architecture audit"
+    reviewer: Crystalka
+
+  - id: DOC-D-COMPOSITE_NAMESPACE_RATIFICATION_BRIEF
+    path: tools/briefs/COMPOSITE_NAMESPACE_RATIFICATION_BRIEF.md
+    title: "Composite Milestone Namespace — Ratification Execution Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-16"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-16"
+    last_review_event: "Brief executed 2026-05-16 — composite namespace ratification cascade applied across LOCKED docs (VULKAN_SUBSTRATE, MIGRATION_PLAN, ROADMAP), Q-K-1 verbatim reconciliation per docs/scratch/RATIFICATION_EXECUTION/Q_K_1_REPORT.md; 6 atomic commits per Q-target on claude/composite-ns-ratification branch"
+    reviewer: Crystalka
+
+  - id: DOC-A-COMPOSITE_NAMESPACE_DELIBERATION_STATE
+    path: docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md
+    title: "Composite Milestone Namespace — Deliberation Final State"
+    category: A
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-15"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-15"
+    last_review_event: "Deliberation closed 2026-05-15 — 9 of 10 Q explicitly locked, Q-K-1 instruction-only with retroactive lock mechanism; ratified ratification proposal brief execution"
+    reviewer: Crystalka
+    special_case_rationale: "Deliberation state document behaves like amendment plan (EXECUTED post-deliberation, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3 precedent (cf. DOC-A-K_L3_1_AMENDMENT_PLAN, DOC-A-A_PRIME_0_7_AMENDMENT_PLAN)"
+
+  - id: DOC-E-NAMESPACE_CASCADE_MAP
+    path: docs/research/M_G_R_NAMESPACE_CASCADE_MAP.md
+    title: "M/G/R Namespace Cascade Map"
+    category: E
+    tier: 3
+    lifecycle: Live
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-15"
+    last_modified_commit: "e3fef89"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-15"
+    last_review_event: "Recon shipped 2026-05-15 — mechanical inventory of milestone ID references across LOCKED/Live docs; input to composite namespace deliberation"
+    reviewer: Crystalka
+
+  - id: DOC-E-ARCHITECTURE_RECON_REPORT
+    path: docs/reports/ARCHITECTURE_RECON_REPORT.md
+    title: "Architecture Reconnaissance Report"
+    category: E
+    tier: 3
+    lifecycle: Live
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-15"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-15"
+    last_review_event: "Recon shipped 2026-05-15 — broad architecture audit, input to composite namespace deliberation + cascade map recon"
+    reviewer: Crystalka
+
+  - id: DOC-E-Q_K_1_REPORT
+    path: docs/scratch/RATIFICATION_EXECUTION/Q_K_1_REPORT.md
+    title: "Q-K-1 Execution Report — Verbatim Reconciliation Findings"
+    category: E
+    tier: 3
+    lifecycle: Live
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-16"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-16"
+    last_review_event: "Report shipped 2026-05-16 — verbatim findings for Q-K-1 retroactive lock per COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §5; awaiting subsequent deliberation ratification"
     reviewer: Crystalka
 
   # === Tier 3 Amendment plans (Category A + Tier 3 EXECUTED override) ===

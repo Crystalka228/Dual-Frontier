@@ -1,13 +1,13 @@
----
+﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-E-ARCHITECTURE_RECON_REPORT
 category: E
-tier: 2
+tier: 3
 lifecycle: Live
 owner: Crystalka
 version: "1.0"
-next_review_due: 2026-Q3
+next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-ARCHITECTURE_RECON_REPORT
 ---
 # Architecture Reconnaissance — DualFrontier Engine Audit
