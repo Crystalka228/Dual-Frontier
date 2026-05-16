@@ -52,6 +52,16 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
 
 ## §2 Full Phase A' sequence
 
+> **Q-K-1 reconciliation note (added 2026-05-16, composite namespace ratification cascade):**
+>
+> **K8.5 is the canonical kernel-series milestone identifier** per `KERNEL_ARCHITECTURE.md` Part 2 master plan (lines 605 + 767): «Mod ecosystem migration prep (documentation + migration guide)». A'-cycle sequencing labels A'.6 and A'.7 below are **sequencing pointers** to K8.5 as the milestone being executed within their phase — they are not **alternate identities** for K8.5.
+>
+> The A'.5 closure note (below) records post-K8.3+K8.4-absorption renumbering intent: «A'.6 = K8.5 (mod ecosystem prep), A'.7 = Roslyn analyzer». The body subsections for A'.6 / A'.7 / A'.8 / A'.9, and the §3 duration estimate table, retain **pre-renumbering structure**: A'.5=K8.3, A'.6=K8.4 (absorbed), A'.7=K8.5, A'.8=K-closure report, A'.9=architectural analyzer milestone. Both A'.6 and A'.7 body subsections describe «K8.5 skeleton execution» — a duplicate-pointer artifact of the partial renumbering.
+>
+> Resolution of the A'-cycle renumbering question (whether to propagate A'.6 = K8.5 + A'.7 = analyzer through body/§3 table, or to leave the closure note's intent unimplemented) is a downstream **sequencing-label concern**, deferred to subsequent deliberation when K8.5 brief authoring approaches. K8.5's canonical identity is unaffected by the renumbering question.
+>
+> See `docs/scratch/RATIFICATION_EXECUTION/Q_K_1_REPORT.md` for full verbatim findings and recommendation match analysis. Q-K-1 retroactive lock pending subsequent deliberation per `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md` §5.
+
 ```
 [K8.2 v2 closure — DONE 2026-05-09, commits 7527d00 on main]
   │
