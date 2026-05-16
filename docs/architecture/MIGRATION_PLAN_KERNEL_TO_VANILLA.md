@@ -6,14 +6,14 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.2"
+version: "1.3"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
 ---
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)
 
-**Version**: 1.2 LOCKED (v1.2 = A'.5 K8.3+K8.4 combined milestone closure recorded 2026-05-14 — K8.3 ordering swap and combination history captured; coreSystems shrank from 12 → 10 with Power deletion; managed `World` retired from production as `ManagedTestWorld`)
-**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`); amended 2026-05-10 (K-L3.1 bridge formalization, Decision #9 added, line 62 reframed, K8.3-K8.5 sub-section extensions); amended 2026-05-14 (v1.2 — A'.5 closure)
+**Version**: 1.3 LOCKED (v1.3 = composite milestone namespace ratification 2026-05-16 — bucket prefixes M-K (vanilla on K) + M-V (vanilla on V) introduced; multi-substrate mods carry compound marker `M-K{N} / M-V`; specific identifiers within M-K bucket deferred to per-mod authoring per FHE-style reserved pattern (Q-M-2 + Q-V-2 LOCKs); pre-namespace M0..M7 closed phases preserved as historical record (Q-M-1 LOCK); Vanilla.Combat excluded from cascade entirely (deferred to post-substrate deliberation); cross-references to RUNTIME_ARCHITECTURE.md and GPU_COMPUTE.md updated to VULKAN_SUBSTRATE.md per Q-G-1 LOCK)
+**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`); amended 2026-05-10 (K-L3.1 bridge formalization, Decision #9 added, line 62 reframed, K8.3-K8.5 sub-section extensions); amended 2026-05-14 (v1.2 — A'.5 closure); amended 2026-05-16 (v1.3 — composite namespace ratification per `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md`)
 **Locked**: 2026-05-09 (Crystalka acceptance during K8.2 v2 session)
 **Status**: AUTHORITATIVE LOCKED — architectural roadmap for K-series and M-series
 **Strategy**: Option (II) "Struct-first sequential" — kernel-track closes completely before mod-OS-track mass migration begins
@@ -63,8 +63,9 @@ Phase B: M-series mod-OS migration         (5-10 weeks at hobby pace; runs under
        └──────────────────────────────┘
                     │
                     ▼
-Phase C: Post-migration GPU compute        (per existing roadmap)
-  G-series (Vulkan compute, per docs/architecture/GPU_COMPUTE.md v2.0)
+Phase C: V substrate work                  (per existing roadmap, in parallel where independent)
+  V0/V1/V2 (Vulkan substrate primitives + rendering use case, per docs/architecture/VULKAN_SUBSTRATE.md v1.0;
+  consolidates former runtime-bucket R [RUNTIME_ARCHITECTURE.md] + GPU-compute-bucket G [GPU_COMPUTE.md] per Q-G-1 LOCK)
 ```
 
 (K9 moved from Phase C to Phase A'.4 per K8.0 closure Option c sequencing 2026-05-09; K9 is kernel-side independent of K8.3–K8.5 except in IModApi v3 surface which K8.4 ships.)
@@ -107,13 +108,30 @@ The following 8 decisions are committed by this plan and cannot be revisited ins
 
 6. **K8.5 LOCKED**: bridge between Phase A and Phase B. Documentation, capability annotation pass on production components (`[ModAccessible]` per D-1 LOCKED), readiness gate. Does **not** start migration into vanilla mods.
 
-7. **M-series unchanged structurally LOCKED**: M8.4, M8.5-M8.7, M9, M10.x sequence preserves `MOD_OS_ARCHITECTURE.md` §11. The vanilla mod doc-comments (in M8.1 skeleton commit `cafedcf`) authoritatively assign which slice goes to which M-milestone:
- - Vanilla.World → **M8.4**
- - Vanilla.Pawn → **M8.5-M8.7** (ConsumeSystem / SleepSystem / ComfortAuraSystem)
- - Vanilla.Combat → **M9** (Combat + Faction folded under Combat)
- - Vanilla.Inventory → **M10** (Inventory + Power folded under Inventory)
- - Vanilla.Magic → **M10.B**
- - Vanilla.Core → **M10 incremental** (shared types as cross-slice need surfaces)
+7. **M-series unchanged structurally LOCKED** (amended v1.3 — composite namespace per Q-V-2 + Q-M-2 + Q-M-3 LOCKs): M-cycle sequence preserves `MOD_OS_ARCHITECTURE.md` §11. Vanilla mod doc-comments (in M8.1 skeleton commit `cafedcf`) authoritatively assign which slice goes to which M-milestone; under composite namespace, all vanilla content carries M-K bucket prefix (single-substrate K-only mods) or compound marker `M-K{N} / M-V` (multi-substrate mods with V-side reserved per FHE-style pattern). **Specific identifiers within the M-K bucket are deferred** to per-mod authoring time (Q-M-2 LOCK); placeholder labels below preserve the v1.2 mapping for traceability:
+
+   **K-only mods (single M-K milestone; specific identifier deferred):**
+   - Vanilla.World → **M-K bucket** (current placeholder: M8.4; identifier deferred per Q-M-2)
+   - Vanilla.Pawn → **M-K bucket** (current placeholder: M8.5-M8.7; 3 sub-milestones; identifiers deferred per Q-M-2). Sub-milestones map to ConsumeSystem / SleepSystem / ComfortAuraSystem.
+   - Vanilla.Inventory → **M-K bucket** (current placeholder: M10; identifier deferred). Inventory + Power folded under Inventory.
+   - Vanilla.Core → **M-K bucket** (current placeholder: M10 incremental; identifier deferred). Shared types as cross-slice need surfaces.
+
+   **Multi-substrate mods (compound marker `M-K{N} / M-V`; V-side reserved per Q-V-2 LOCK; specific identifiers within each bucket deferred):**
+   - Vanilla.Magic → **M-K{N} / M-V** (K-side current placeholder: M10.B; K-side identifier deferred. V-side reserved; concrete V-identifier appears when V substrate ready and V-side mod authoring approached. Demonstrates V1 isotropic diffusion as M-V1 per Q-R-1 format.)
+   - Vanilla.Electricity → **M-K{N} / M-V** (K-side slot not yet assigned; deferred per Q-M-2. V-side reserved; demonstrates V1 anisotropic diffusion as M-V2.)
+   - Vanilla.Water → **M-K{N} / M-V** (K-side slot not yet assigned; deferred. V-side reserved; demonstrates V1+V2 hybrid coupling. Hybrid coupling spec TBD per VULKAN_SUBSTRATE.md §6.5.)
+   - Vanilla.Movement → **M-K{N} / M-V** (K-side slot not yet assigned; deferred. V-side reserved; demonstrates V2 routed flow field as M-V7; local avoidance extension as M-V8.)
+
+   **Excluded from cascade entirely (separate post-substrate deliberation):**
+   - Vanilla.Combat — consumer mod, identity discussion deferred until V substrate ready and Combat requirements analyzable against готовую substrate. Previously placeholder-labeled M9 (M-cycle); the M9 namespace becomes free under composite namespace per Q-R-2 LOCK (no remaining collision with runtime M9.x — runtime M9.x folded into V substrate per Q-G-1).
+
+   **Deferred-but-named (Q-M-3 LOCK — treated as pending under Q-M-2 protocol, not as Q-M-1 historical):**
+   - M3.4 → **M-K bucket** placeholder M-K3.4 (deferral note preserved: capability analyzer trigger met at K9 close, awaiting authoring approach)
+   - M3.5 → **M-K bucket** placeholder M-K3.5 (deferral note preserved: capability registry refresh, K9 trigger met)
+
+   **Sequencing pattern:** for multi-substrate mods, K-side milestone authored first; V-side milestone authored after V substrate ready. V-side concrete identifier within the M-V bucket appears at V-side authoring time per FHE-style reserved pattern (Q-V-2 precedent, mirrors `IHomomorphicComputeProvider` ratified-but-dormant model in `FHE_INTEGRATION_CONTRACT.md`).
+
+   **Pre-namespace boundary (Q-M-1 LOCK):** M0..M7 closed phases retain their original M-cycle names as shipped (not renamed retroactively to M-K). Closure reviews under `docs/audit/M*_CLOSURE_REVIEW.md`, audit passes (`docs/audit/AUDIT_PASS_*.md`), and historical prompts (`docs/prompts/M*.md`) preserve pre-composite-namespace nomenclature. Composite namespace applies M8.x forward only.
 
 8. **Phased delete LOCKED**: after each M-milestone closes, the corresponding `src/DualFrontier.Components/<Slice>/` and `src/DualFrontier.Systems/<Slice>/` directories are **deleted** in the same milestone's atomic commit set. No "delete legacy first, migrate later" — always "migrate then delete migrated source." Foundation never loses functionality between milestones (commits can be reverted; tests can be run at any commit). See §5 for full strategy.
 
@@ -227,7 +245,7 @@ The "12 vanilla systems" in the old wording was either a slice-count approximati
 
 - **`[ModAccessible]` annotation pass on `src/Components/*`** — every production component opts in to mod-readable/writable access per D-1 LOCKED. This is the foundation for M-series: vanilla mods must declare `kernel.read:DualFrontier.Components.X.YComponent` capabilities, and those capabilities only resolve if the component carries the annotation.
 
-- **`KernelCapabilityRegistry`** finalized (per M3.5 deferred from MOD_OS_ARCHITECTURE §11.1, unblocked at K9 in-progress per v1.6) — but this plan **delays M3.5 to post-K9** since it depends on `[FieldAccessible]` annotation which doesn't exist until K9. K8.4 ships only the entity-component side of capability registry, sufficient for M8.4-M10.x migration.
+- **`KernelCapabilityRegistry`** finalized (per M-K3.5 — deferred from MOD_OS_ARCHITECTURE §11.1 under former M3.5 placeholder, unblocked at K9 in-progress per v1.6) — but this plan **delays M-K3.5 to post-K9** since it depends on `[FieldAccessible]` annotation which doesn't exist until K9. K8.4 ships only the entity-component side of capability registry, sufficient for M-K8.4-M-K10.x migration. (Per Q-M-3 LOCK: M3.5 deferred-but-named treated under Q-M-2 bucket-assignment protocol — placeholder `M-K3.5` used pending per-mod authoring; not Q-M-1 historical scope since trigger conditions are met.)
 
 **Estimated time**: 1-2 weeks at hobby pace, ~4-8 hours auto-mode.
 
@@ -362,13 +380,19 @@ The split is **mechanical-axis-based** — each sub-milestone is one wellness me
 
 **Estimated time**: 4-7 weeks at hobby pace across the three sub-milestones.
 
-### 3.3 — M9: Vanilla.Combat (Combat + Faction folded)
+### 3.3 — Vanilla.Combat (Combat + Faction folded) — DEFERRED FROM CASCADE
+
+**Composite namespace status (v1.3 amendment):** Vanilla.Combat is **excluded from composite namespace cascade entirely** per Q-V-2 LOCK and deliberation §4 (deferred items registry). Combat is a **consumer mod**, not an identity question — gameplay mechanics should not dictate substrate. The Combat migration decision is deferred to **post-substrate deliberation** when full V infrastructure is ready and Combat requirements can be analyzed against готовую substrate. The original v1.2 placeholder identifier «M9» (M-cycle) is preserved below for historical traceability; under composite namespace the M9 namespace is freed (Q-R-2 LOCK — no remaining collision with runtime M9.x after V substrate consolidation per Q-G-1).
+
+The remainder of this subsection preserves v1.2 content as historical traceability for the eventual Combat brief authoring session post-substrate; it does **not** lock Combat to a specific M-K identifier or scope.
+
+---
 
 **Source slices**: `src/DualFrontier.Components/Combat/` (4: Ammo, Armor, Shield, Weapon) + `src/DualFrontier.Components/Shared/{Faction,Health}.cs` (2 of 4 Shared components fold here), `src/DualFrontier.Systems/Combat/` (7 systems) + `src/DualFrontier.Systems/Faction/` (3 systems).
 
 **Target**: `mods/DualFrontier.Mod.Vanilla.Combat/`.
 
-**Authority**: vanilla mod doc-comment (`CombatMod.cs`): «content lands in M9 Combat (...mapping: Faction folds under Combat for the raid pipeline)».
+**Authority**: vanilla mod doc-comment (`CombatMod.cs`): «content lands in M9 Combat (...mapping: Faction folds under Combat for the raid pipeline)» (v1.2 placeholder; not authoritative under v1.3 composite namespace — Combat identifier resolution deferred to post-substrate deliberation).
 
 **Faction-folded scope**: Faction systems (RaidSystem, RelationSystem, TradeSystem) are part of M9 Vanilla.Combat per the doc-comment. Faction component is in Shared/ but moves to Vanilla.Combat per this folding. (RelationSystem may overlap with future social-feature design; ledger noted, M9 brief decides.)
 
@@ -388,25 +412,27 @@ The split is **mechanical-axis-based** — each sub-milestone is one wellness me
 
 **Estimated time**: 3-5 weeks at hobby pace.
 
-### 3.5 — M10.B: Vanilla.Magic
+### 3.5 — Vanilla.Magic (K-side M-K bucket; V-side M-V1 deferred per Q-V-2)
 
 **Source slices**: `src/DualFrontier.Components/Magic/` (4: Ether, GolemBond, Mana, School), `src/DualFrontier.Systems/Magic/` (5 systems + Internal/ManaLease helpers).
 
 **Target**: `mods/DualFrontier.Mod.Vanilla.Magic/`.
 
-**Authority**: vanilla mod doc-comment (`MagicMod.cs`): «content lands in M10.B Magic».
+**Authority**: vanilla mod doc-comment (`MagicMod.cs`): «content lands in M10.B Magic» (v1.2 placeholder; v1.3 amendment — K-side identifier deferred per Q-M-2; current placeholder M-K10.B for traceability).
 
-**Note**: Magic slice is the most complex per system count (5 systems with internal helpers). May benefit from sub-milestone split during M10.B brief authoring (M10.B.1, M10.B.2, ...).
+**Composite namespace status (v1.3 amendment):** Vanilla.Magic is a multi-substrate mod per Q-V-2 LOCK. K-side ships under M-K bucket (specific identifier deferred — current placeholder M-K10.B). V-side ships as M-V1 demonstration (mana field on V1 isotropic diffusion primitive per VULKAN_SUBSTRATE.md). K-side milestone authored first; V-side milestone authored after V substrate ready (V0 + V1 closed). V-side identifier (M-V1) is fixed per Q-R-1 format preserving traceability to former G1 brief.
 
-**Field-API integration**: Magic mod is a primary candidate for `IModApi.Fields` consumer (e.g., Mana field per `MOD_OS_ARCHITECTURE.md` §4.6.4 example). However, K9 (RawTileField) has not closed at M10.B authoring time per Phase A→B sequence. **Two scenarios**:
+**Note**: Magic slice is the most complex per system count (5 systems with internal helpers). May benefit from sub-milestone split during K-side brief authoring.
 
-- **K9 closes after K8.5 but before M10.B brief authoring**: Magic mod uses Fields API directly, manifest declares `mod.dualfrontier.vanilla.magic.field.read:vanilla.magic.mana` and similar. M10.B brief includes Field registration code per `IModApi.Fields.RegisterField<float>("vanilla.magic.mana", w, h)`.
+**Field-API integration**: Magic mod is a primary candidate for `IModApi.Fields` consumer (e.g., Mana field per `MOD_OS_ARCHITECTURE.md` §4.6.4 example). K9 (RawTileField) ships ahead of V substrate compute primitives per Option c sequencing. **Two scenarios at K-side brief authoring time**:
 
-- **K9 not yet closed at M10.B brief authoring time**: Magic mod uses managed `Dictionary<GridVector, float>` interim storage with `IComponent`-keyed components. M10.B brief carries TODO marker for K9 follow-up: "Magic field-of-mana migrates to RawTileField when K9 closes, separate amendment milestone M10.B.field."
+- **V0 + V1 ready at K-side brief authoring**: Magic mod uses Fields API directly with V1 diffusion shader, manifest declares `mod.dualfrontier.vanilla.magic.field.read:vanilla.magic.mana` and similar. K-side brief includes Field registration code per `IModApi.Fields.RegisterField<float>("vanilla.magic.mana", w, h)`. V-side M-V1 demonstration unifies with K-side in single milestone scope or splits per gameplay readiness — decision at K-side brief.
 
-This plan does not lock between scenarios — depends on K9 timing relative to M10.B authoring. M10.B brief checks K9 status at brief-authoring time and routes accordingly.
+- **V substrate not yet ready at K-side brief authoring**: Magic mod K-side uses managed `Dictionary<GridVector, float>` interim storage with `IComponent`-keyed components. V-side M-V1 demonstration becomes separate follow-up amendment when V substrate ready: "Magic field-of-mana migrates to RawTileField + V1 diffusion when V substrate closes."
 
-**Estimated time**: 4-7 weeks at hobby pace (depending on K9 integration scenario).
+This plan does not lock between scenarios — depends on V substrate timing relative to K-side authoring. K-side brief checks V substrate status at brief-authoring time and routes accordingly.
+
+**Estimated time**: 4-7 weeks at hobby pace K-side (depending on V substrate integration scenario); V-side M-V1 demonstration adds 1-2 weeks (gates on V1 close).
 
 ### 3.6 — M10.Core: Vanilla.Core shared types
 
@@ -428,16 +454,16 @@ After M10.B closes (and M10.Core completed implicitly):
 
 ## Section 4 — Per-slice migration mapping (consolidated)
 
-Reference table for migration brief authors. Each row is one source slice; the destination is one vanilla mod. The K8.x column shows the kernel-side milestones that affect the slice; the M-x column shows the mod-OS milestone that relocates the slice.
+Reference table for migration brief authors. Each row is one source slice; the destination is one vanilla mod. The K8.x column shows the kernel-side milestones that affect the slice; the M-milestone column shows the mod-OS bucket assignment under composite namespace (v1.3 amendment — specific identifiers within each M-K bucket deferred per Q-M-2 LOCK; v1.2 placeholder labels preserved for traceability in parentheses).
 
-| Source slice | Components | Systems | K8.x affecting | Destination mod | M-milestone |
+| Source slice | Components | Systems | K8.x affecting | Destination mod | M-milestone bucket (v1.2 placeholder) |
 |---|---|---|---|---|---|
-| `Components/Building/` + `Systems/Inventory/` + `Systems/Power/` | 4 (PowerConsumer, PowerProducer, Storage, Workbench) | 6 (CraftSystem, HaulSystem, InventorySystem, ConverterSystem, ElectricGridSystem, EtherGridSystem) | K8.2 + K8.3 | Vanilla.Inventory | M10 |
-| `Components/Combat/` + `Components/Shared/Faction.cs` + `Components/Shared/Health.cs` (partial — see §3.3) + `Systems/Combat/` + `Systems/Faction/` | 4 + 2 partial | 7 + 3 = 10 | K8.2 + K8.3 | Vanilla.Combat (+ Vanilla.Core for Health) | M9 |
-| `Components/Items/` + `Components/Pawn/` + `Components/Shared/Race.cs` (partial) + `Systems/Pawn/` | 5 + 7 + 1 partial | 10 | K8.2 + K8.3 | Vanilla.Pawn (+ Vanilla.Core for Race) | M8.5-M8.7 |
-| `Components/Magic/` + `Systems/Magic/` | 4 | 5 (+ helpers) | K8.2 + K8.3 (+ K9 if available) | Vanilla.Magic | M10.B |
-| `Components/Shared/Position.cs` (partial — Position is universal) | 1 partial | 0 (no system specific to Position) | K8.2 only | Vanilla.Core (shared) | Incremental in earliest M-milestone needing it |
-| `Components/World/` + `Systems/World/` | 3 (+ TerrainKind) | 3 | K8.2 + K8.3 | Vanilla.World | M8.4 |
+| `Components/Building/` + `Systems/Inventory/` + `Systems/Power/` | 4 (PowerConsumer, PowerProducer, Storage, Workbench) | 6 (CraftSystem, HaulSystem, InventorySystem, ConverterSystem, ElectricGridSystem, EtherGridSystem) | K8.2 + K8.3 | Vanilla.Inventory | M-K bucket (M10) |
+| `Components/Combat/` + `Components/Shared/Faction.cs` + `Components/Shared/Health.cs` (partial — see §3.3) + `Systems/Combat/` + `Systems/Faction/` | 4 + 2 partial | 7 + 3 = 10 | K8.2 + K8.3 | Vanilla.Combat (+ Vanilla.Core for Health) | **DEFERRED — excluded from cascade per Q-V-2 + deliberation §4 (v1.2 placeholder: M9)** |
+| `Components/Items/` + `Components/Pawn/` + `Components/Shared/Race.cs` (partial) + `Systems/Pawn/` | 5 + 7 + 1 partial | 10 | K8.2 + K8.3 | Vanilla.Pawn (+ Vanilla.Core for Race) | M-K bucket (M8.5-M8.7) |
+| `Components/Magic/` + `Systems/Magic/` | 4 | 5 (+ helpers) | K8.2 + K8.3 (+ K9 if available) | Vanilla.Magic | M-K bucket K-side (M10.B) + M-V1 reserved V-side (V1 isotropic diffusion demo) |
+| `Components/Shared/Position.cs` (partial — Position is universal) | 1 partial | 0 (no system specific to Position) | K8.2 only | Vanilla.Core (shared) | M-K bucket — incremental in earliest M-K milestone needing it |
+| `Components/World/` + `Systems/World/` | 3 (+ TerrainKind) | 3 | K8.2 + K8.3 | Vanilla.World | M-K bucket (M8.4) |
 
 Total mapping: 31 components + 34 systems → 6 regular vanilla mods + 1 shared (Core). Every component and system has exactly one destination, except the 4 Shared/ components which split between Vanilla.Core (Health, Position, Race) and Vanilla.Combat (Faction, the only Shared/ component that's domain-specific to one mod).
 
@@ -488,7 +514,7 @@ After M10.Cleanup:
 - `src/DualFrontier.Modding/` — mod loader implementation
 - `src/DualFrontier.Persistence/` — codec library (untouched throughout K+M migration; addressed in future save-system milestone)
 - `src/DualFrontier.Events/` — event types (might also see partial migration to vanilla mods if any events are slice-specific; brief decides)
-- `src/DualFrontier.Runtime/`, `src/DualFrontier.Presentation/` — Vulkan-track, separate (per RUNTIME_ARCHITECTURE.md)
+- `src/DualFrontier.Runtime/`, `src/DualFrontier.Presentation/` — V substrate track, separate (per VULKAN_SUBSTRATE.md; consolidates former runtime + GPU compute layers per Q-G-1 LOCK)
 
 The `src/` directory shrinks by ~31+34 = 65 production files plus per-slice directories and per-slice tests. The codebase center of gravity moves to `mods/Vanilla.*/` — exactly what K-L9 «vanilla = mods» intends.
 
@@ -639,15 +665,15 @@ Empty stubs (SocialComponent, anything similar) are placeholder lies per METHODO
 
 When game mechanics design begins (post-M10.B, post-G-series), it authors **new** components and systems in vanilla mod assemblies (or third-party mods), shaped against the now-mature foundation. It does not "fill in" the placeholders; placeholders are deleted, real designs replace them.
 
-### 8.3 — RUNTIME_ARCHITECTURE.md M9.x runtime track
+### 8.3 — V substrate work track (Vulkan rendering + compute unified per Q-G-1)
 
-Vulkan rendering layer (M9.0-M9.8 per RUNTIME_ARCHITECTURE.md) is a **separate track** from this plan's mod-OS migration. The naming overlap (RUNTIME M9 vs MOD-OS M9) is unfortunate but historical.
+Vulkan substrate work (former RUNTIME M9.0-M9.8 + former G-series GPU compute, unified per Q-G-1 LOCK into V0/V1/V2 substrate primitives per `VULKAN_SUBSTRATE.md`) is a **separate track** from this plan's mod-OS migration. The pre-namespace numeric collision between M-cycle M9 (Vanilla.Combat) and runtime M9.x (Vulkan rendering migration) is resolved by Q-R-2 LOCK: runtime M9.x folded into V substrate (no longer M9-prefixed); Vanilla.Combat excluded from cascade entirely per deliberation §4.
 
-This plan's M9 (Vanilla.Combat migration) is **not** RUNTIME's M9.x (Vulkan device/swapchain/pipeline work). Sequence parents differ: this plan is β6 mod-OS sequencing; RUNTIME M9.x is β6+G-sequential per KERNEL_ARCHITECTURE Part 8.
+This plan's mod-cycle work and V substrate work proceed in parallel where independent (K-series gates K9; K9 gates V1/V2 compute primitives; V0 rendering side independent of K-series). Sequence parents: this plan is β6 mod-OS sequencing; V substrate work is V0-first with V1/V2 layered on top per VULKAN_SUBSTRATE.md §6.
 
-K8.5 amendment (per §6.2) clarifies the namespace separation in MOD_OS_ARCHITECTURE.md and RUNTIME_ARCHITECTURE.md if needed.
+K8.5 amendment (per §6.2) clarifies cross-references in MOD_OS_ARCHITECTURE.md to cite VULKAN_SUBSTRATE.md (replacing prior RUNTIME_ARCHITECTURE.md + GPU_COMPUTE.md citations) where applicable.
 
-### 8.4 — GPU compute (G-series) and K9 (RawTileField)
+### 8.4 — V substrate primitives V1/V2 + Domain B (former G-series) and K9 (RawTileField)
 
 Per current MIGRATION_PROGRESS.md state, K9 is the **next** kernel milestone after K8.1.1/K-Lessons (Option c sequencing per K8.0). This means K9 may close **before** K8.2 begins — Option c places K9 between K8.1 and K8.2.
 
@@ -655,7 +681,7 @@ Per current MIGRATION_PROGRESS.md state, K9 is the **next** kernel milestone aft
 
 **K9 status at K8.2 brief authoring time**: likely DONE per Option c sequencing. This plan does not require K9 closure as Phase A prerequisite — only K8.1.1 + K-Lessons (both DONE per chat session 2026-05-09).
 
-G-series (G0-G9 GPU compute) is post-Phase-A, post-Phase-B work. Not addressed by this plan.
+V substrate primitives V0/V1/V2 (per VULKAN_SUBSTRATE.md, post-Q-G-1 unification of former G-series GPU compute and former RUNTIME M9.x rendering) is post-Phase-A V substrate work, in parallel with Phase B M-K mass migration where dependencies permit. Not addressed by this plan directly; cross-referenced from §6.2 MOD_OS_ARCHITECTURE.md amendment scope.
 
 ### 8.5 — Persistence codec layer architectural redesign
 
