@@ -161,7 +161,7 @@ Tests: 1/1 (high-level integration); the system-level coverage moves to M9/M10 w
 
 Result: Godot works as both editor and temporary runtime. `DfDevKitPlugin`, `SceneExporter`, `EntityExporter` enable scene authoring and `.dfscene` export. `IRenderer`, `ISceneLoader`, `IInputSource` contracts exist with both Godot and Native backends. F5 in Godot starts the game with the loaded scene.
 
-Architectural context: [VISUAL_ENGINE](/docs/architecture/VISUAL_ENGINE.md). The decoupling work here unblocks Phase 9 (Native Runtime) without committing to its timeline.
+Architectural context: [VISUAL_ENGINE (historical)](/docs/architecture/historical/VISUAL_ENGINE.md), superseded by [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) per Q-G-1 LOCK. The decoupling work here unblocks Phase 9 (Native Runtime) without committing to its timeline.
 
 ### ✅ Phase 4 — Economy (closed)
 
