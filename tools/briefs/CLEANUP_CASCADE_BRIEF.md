@@ -13,8 +13,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-CLEANUP_CASCADE_BRIE
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: CLEANUP_CASCADE_BRIEF
-status: AUTHORED
+status: EXECUTED
 authored: 2026-05-16
+executed: 2026-05-16
 author: Claude Opus 4.7 (Crystalka deliberation session)
 target_executor: Claude Code (auto-mode)
 estimated_duration: 4-7 hours auto-mode
@@ -553,3 +554,65 @@ Do NOT formalize during cleanup. Post-cleanup → A'.8 K-closure report → METH
 ---
 
 **End of brief. 16 atomic commits across 18 audit findings + 5 CAPAs + 1 EVT + register render/validation regeneration. Expected 4-7 hours auto-mode execution.**
+
+---
+
+## §8 — Closure (added at brief EXECUTED transition 2026-05-16)
+
+Execution closed 2026-05-16 by Claude Code auto-mode on branch `claude/cleanup-cascade` from `main` head `53697da`. Final commit `7bd7b4e`.
+
+### Commit ledger (commits e68d799..7bd7b4e)
+
+| # | Hash | Commit summary | DRIFTs |
+|---|---|---|---|
+| 1 | `e68d799` | G-skeleton + K-series brief moves to historical/ + REGISTER + brief enrollment | DRIFT-014 |
+| 2 | `253c7ab` | VISUAL_ENGINE + GODOT_INTEGRATION moved to historical/ | DRIFT-009 (visual portion) |
+| 3 | `438de49` | README NativeWorld production + isolation safety rewrite | DRIFT-002 + DRIFT-003 |
+| 4 | `f5e27f3` | ISOLATION runtime guard removal | DRIFT-005 (ISOLATION) |
+| 5 | `6cf1d77` | THREADING runtime guard refs cleanup | DRIFT-005 (THREADING) |
+| 6 | `613e5ef` | PERFORMANCE deleted-mechanism section removal | DRIFT-005 (PERFORMANCE) |
+| 7 | `11bf1c1` | ECS NativeWorld production storage rewrite | DRIFT-004 |
+| 8 | `1a88ece` | CONTRACTS + EVENT_BUS IPowerBus removal | DRIFT-006 |
+| 9 | `73c7bbf` | ROADMAP + MIGRATION_PLAN power reconciliation | DRIFT-007 + DRIFT-008 |
+| 10 | `3aa3585` | ARCHITECTURE Silk.NET supersession | DRIFT-009 (ARCHITECTURE portion) |
+| 11 | `c926382` | MOD_OS v3 strict (no v2 compat) | DRIFT-011 |
+| 12 | `f7fe134` | MODDING + MOD_PIPELINE v3 + §9.5 unload | DRIFT-012 (+ DRIFT-005 MODDING portion) |
+| 13 | `fa88f12` | MIGRATION_PROGRESS state sync | DRIFT-001 |
+| 14 | `08e4fde` | S3 cleanup wave (G→V tail + RECON annotation + module-local) | DRIFT-013 + DRIFT-015 + DRIFT-017 (DRIFT-016 HALTED per SC-4) |
+| 15 | `2371b41` | REGISTER amendments + 5 CAPA closures + EVT-2026-05-16-CLEANUP-CASCADE | DRIFT annotations on audit report |
+| 16 | `7bd7b4e` | REGISTER_RENDER + VALIDATION_REPORT regeneration | DRIFT-010 |
+
+### Verification metrics (final state)
+
+- `git status`: clean working tree on branch `claude/cleanup-cascade`.
+- `sync_register.ps1 --validate`: exit 0, 240 documents, 13 REQ, 14 RISK, 11 CAPA, 12 audit_trail, 2 advisory orphan warnings (pre-existing scratch files, out of scope).
+- `dotnet build`: 0 warnings, 0 errors.
+- `dotnet test`: 620 passed, 0 failed (matches A'.5 closure baseline).
+- `register_version`: 1.2 → 1.4 (bumped 1.3 in Commit 1, 1.4 in Commit 15).
+- `last_modified_by`: Codex → Claude Code.
+
+### Halt protocol activations
+
+- **DRIFT-016 HALTED per SC-4** (A'-cycle renumbering propagation conflict): Q-K-1 reconciliation note in `docs/architecture/PHASE_A_PRIME_SEQUENCING.md` lines 55-63 explicitly defers A'-cycle renumbering propagation. The §2 body subsections (A'.6 / A'.7 / A'.8 / A'.9) and §3 duration table retain pre-renumbering structure intentionally. Surface to Crystalka for K8.5-brief-time decision on whether to propagate «A'.6 = K8.5, A'.7 = Roslyn analyzer» or to retain the dual-pointer pre-renumbering structure.
+
+### Out-of-scope items deferred
+
+- **DRIFT-018 (S2)**: IDEAS_RESERVOIR.md game-as-product framing — deferred to next docs pass per audit own categorization.
+- **DRIFT-019 (S1)**: Historical residue in closure/audit reports — no-action per audit recommendation when register lifecycle is obeyed.
+- **K8_2_CLASS_COMPONENT_REDESIGN_BRIEF.md** disposition: kept in tools/briefs/ (not moved to historical/) per ambiguous §1.2 case — registered EXECUTED, body says SKELETON. Defers to next audit cycle.
+- **METHODOLOGY revision**: post-cleanup A'.8 K-closure report timing per cleanup lock.
+
+### Pattern established (formalized in K-closure report at A'.8)
+
+1. **Architectural authorities (Tier 1 docs) → `*/historical/` folder.** Both VISUAL_ENGINE and GODOT_INTEGRATION moved to `docs/architecture/historical/` with HISTORICAL banner + REGISTER lifecycle LOCKED → SUPERSEDED + bidirectional `superseded_by: DOC-A-VULKAN_SUBSTRATE`.
+2. **Subsection-level legacy content within current docs → deleted outright.** Runtime isolation guard sections, IPowerBus + 4 power events, power slice rows in tables — all deleted; closure narratives (HALT_REPORT.md, K8_34_COMBINED_V2 brief EXECUTED, MIGRATION_PROGRESS A'.5 entry) carry history.
+3. **Superseded briefs → `tools/briefs/historical/`.** G0-G9 + K8_3 + K8_4 + K8_3_BRIEF_REFRESH_PATCH + K4_STRUCT_REFACTOR + K8_2_V1_DEPRECATED.
+4. **CAPA opened + closed within same governance event.** «Audit-surfaced + execution-addressed» pattern: audit opens the finding, cleanup brief execution closes within the same governance event. 5 CAPA entries demonstrating the pattern at this cleanup cascade closure.
+
+### Lesson candidates (deferred to A'.8 K-closure report)
+
+Tracked for METHODOLOGY revision per cleanup brief §6:
+- Audit + execution pairing pattern (auditor surfaces, executor closes within same governance event).
+- Historical folder disposition pattern (architectural authorities move; subsection legacy deletes; closure narratives carry history).
+- Pre-existing drift cleanup as separate cascade (Lesson #14 candidate refinement with empirical evidence).
+- CAPA open+close within same commit pattern (audit-surfaced + execution-addressed events).
