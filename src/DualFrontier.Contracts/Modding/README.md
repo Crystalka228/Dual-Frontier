@@ -11,10 +11,10 @@ mod has is this assembly (Contracts).
 
 ## Contents
 - `IMod.cs` — the mod's entry point: `Initialize(api)` and `Unload()`.
-- `IModApi.cs` — methods the mod can call: register components and systems,
-  publish/subscribe to events, publish and retrieve inter-mod contracts.
+- `IModApi.cs` — Mod API v3 strict (post-K8.3+K8.4 cutover 2026-05-14). Methods the mod can call: register Path α components (`RegisterComponent<T> where T : unmanaged, IComponent`), register Path β components (`RegisterManagedComponent<T> where T : class, IComponent` with `[ManagedStorage]`), register systems, publish/subscribe to events, publish and retrieve inter-mod contracts, structured log, get kernel capabilities + own manifest. Includes `Fields` (`IModFieldApi?`) and `ComputePipelines` (`IModComputePipelineApi?`) sub-APIs (default-null on builds without K9/V-substrate support).
 - `IModContract.cs` — marker interface for a public contract between mods.
-- `ModManifest.cs` — mod metadata: id, name, version, author, dependencies.
+- `ModManifest.cs` — mod metadata: id, name, version, author, dependencies, capabilities. `manifestVersion` must be strict literal `"3"` per K8.3+K8.4.
+- `IManagedStore.cs` + `ManagedStore.cs` — Path β per-mod managed-class storage (K-L3.1 bridge). Reachable from systems via `SystemBase.ManagedStore<T>()`.
 
 ## Rules
 - A mod MUST NOT cast `IModApi` to a concrete type — that is an attempt to bypass
@@ -22,6 +22,7 @@ mod has is this assembly (Contracts).
 - A mod interacts with other mods only through `IModContract`.
 - Hard inter-mod dependencies are forbidden: use `TryGetContract<T>` and gracefully
   degrade if the contract is not found.
+- Manifest must declare `manifestVersion: "3"` — parser rejects any other value.
 
 ## Usage examples
 ```csharp
@@ -29,20 +30,22 @@ public sealed class ExampleMod : IMod
 {
     public void Initialize(IModApi api)
     {
-        api.RegisterComponent<MyComponent>();
+        api.RegisterComponent<MyUnmanagedComponent>();        // Path α
+        api.RegisterManagedComponent<MyManagedComponent>();   // Path β (requires [ManagedStorage])
         api.Subscribe<SpellCastEvent>(OnSpellCast);
+        api.Log(ModLogLevel.Info, "ExampleMod initialized");
     }
 
-    public void Unload() { /* TODO: cleanup */ }
+    public void Unload() { /* subscriptions removed automatically */ }
 
     private void OnSpellCast(SpellCastEvent e) { /* ... */ }
 }
 ```
 
 ## TODO
-- [ ] Phase 2 — describe the `mod.manifest.json` structure and the mapping to `ModManifest`.
+- [x] `RestrictedModApi` implemented in `DualFrontier.Application/Modding/RestrictedModApi.cs` (v3 strict — closed K8.3+K8.4 2026-05-14).
+- [x] `mod.manifest.json` schema documented in [MODDING](../../../docs/architecture/MODDING.md) §mod.manifest.json.
 - [ ] Phase 2 — settle the SemVer policy for `ModManifest.Version`.
-- [ ] Phase 2 — implement `RestrictedModApi` in `DualFrontier.Application`.
 
 ---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY

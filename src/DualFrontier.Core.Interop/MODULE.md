@@ -37,9 +37,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-INTEROP
 - [x] K8.1: NativeMap<K,V> / NativeComposite / NativeSet wrapper value types
 - [x] K8.1.1: InternedString refactor + mod-scope test isolation
 - [x] K8.2 v2: kernel-side foundation closure (component conversions + ModAccessible pass)
-- [ ] K8.3: production system migration to SpanLease/WriteBatch (pending)
-- [ ] K8.4: managed World retired; Path β `ManagedStore<T>` plumbing for K-L3.1 bridge (pending)
-- [ ] K8.5: mod-ecosystem migration prep (pending)
-- [ ] K9: RawTileField field-storage abstraction (pending; runs before K8.3 per Option c sequencing)
+- [x] K9: RawTileField field-storage abstraction (DONE A'.4 — 2026-05-11)
+- [x] K8.3+K8.4 (combined): 10 production systems on NativeWorld span/batch; managed World retired to ManagedTestWorld; Path β `ManagedStore<T>` plumbing for K-L3.1 bridge; Mod API v3 strict ships (DONE A'.5 — 2026-05-14, commits `24e5f56..fc8ecb6`)
+- [ ] K8.5: mod-ecosystem migration prep (pending — A'.6)
 
-**Status**: production wrappers operational post-K8.2v2 (NativeWorld + WriteCommandBuffer + SpanLease<T> + ComponentTypeRegistry + InternedString + NativeMap/NativeComposite/NativeSet). K8.3 / K8.4 / K8.5 / K9 pending per `docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md`.
+**Status**: production wrappers operational post-A'.5 K8.3+K8.4 (NativeWorld sole production storage + WriteCommandBuffer + SpanLease<T> + ComponentTypeRegistry + InternedString + NativeMap/NativeComposite/NativeSet + RawTileField + Path β ManagedStore<T> bridge). K8.5 pending per `docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md`.

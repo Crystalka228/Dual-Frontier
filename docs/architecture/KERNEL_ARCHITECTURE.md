@@ -606,9 +606,9 @@ Mirrors VULKAN_SUBSTRATE.md §1.9 для cross-document consistency.
 | K9 | Field storage abstraction (`RawTileField<T>`) | 1-2 weeks | +600-900 |
 
 **Cumulative K0-K8**: 5-8 weeks at hobby pace.
-**Cumulative K0-K9**: 6-10 weeks at hobby pace (K9 prerequisite for G-series GPU compute).
+**Cumulative K0-K9**: 6-10 weeks at hobby pace (K9 prerequisite for V substrate primitives per Q-G-2 LOCK).
 
-**Combined с VULKAN_SUBSTRATE.md M9.0-M9.8 + VULKAN_SUBSTRATE.md G0-G9**: 16-25 weeks total для full architectural foundation. K-series gates K9; K9 gates G-series. See [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Roadmap for G0-G9 detail и combined timeline.
+**Combined с VULKAN_SUBSTRATE.md R.0-R.8 rendering migration + V0/V1/V2 substrate primitives**: 16-25 weeks total для full architectural foundation. K-series gates K9; K9 gates V substrate primitives. See [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Roadmap for V0/V1/V2 detail и combined timeline (per Q-G-1/Q-G-2 LOCKs unifying former R-bucket + G-bucket into V substrate).
 
 ### K0 — Cherry-pick + cleanup от branch
 
@@ -772,7 +772,7 @@ e2bc2d9 — DLL loading fix
 
 ### K9 — Field storage abstraction
 
-**Goal**: native `RawTileField<T>` storage as a parallel abstraction alongside `RawComponentStore`. Prerequisite for the G-series GPU compute roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0). Ships CPU functional path first; no Vulkan compute dependency.
+**Goal**: native `RawTileField<T>` storage as a parallel abstraction alongside `RawComponentStore`. Prerequisite for the V substrate primitives roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v1.0 LOCKED — V0/V1/V2 per Q-G-2). Ships CPU functional path first; no Vulkan compute dependency.
 
 **Authoritative spec**: [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) "Architectural integration → Native kernel (KERNEL_ARCHITECTURE.md K9)" + "Roadmap → K9 — Field storage abstraction".
 

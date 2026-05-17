@@ -696,7 +696,7 @@ Per §7.4, codec layer **consequences** of K8.2 (file path updates, struct vs cl
 
 **Phase B** (5-10 weeks at hobby pace): M8.4 (Vanilla.World) → M8.5-M8.7 (Vanilla.Pawn 3 sub-milestones) → M9 (Vanilla.Combat + Faction) → M10 (Vanilla.Inventory) → M10.B (Vanilla.Magic) → M10.Core (incremental, concurrent throughout) → M10.Cleanup (terminal `src/` directory cleanup). (Power slice deleted in A'.5; future electricity-like mechanics routed to V substrate per VULKAN_SUBSTRATE.md.)
 
-**Phase C** (per existing roadmap): K9 if not yet closed (Option c places K9 between K8.1 and K8.2, so likely DONE before Phase A begins) → G-series GPU compute → save system implementation.
+**Phase C** (per existing roadmap): K9 if not yet closed (Option c places K9 between K8.1 and K8.2, so likely DONE before Phase A begins) → V substrate primitives (V0/V1/V2 per VULKAN_SUBSTRATE.md §1.1-1.3) → save system implementation.
 
 **Total Phase A+B duration**: 9-18 weeks at hobby pace.
 

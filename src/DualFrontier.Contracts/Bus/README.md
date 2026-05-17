@@ -1,10 +1,14 @@
 ﻿# Bus — Domain event buses
 
 ## Purpose
-Defines the base event-bus contract `IEventBus` and the six domain buses
-(Combat, Inventory, Magic, Pawn, Power, World), aggregated under `IGameServices`.
+Defines the base event-bus contract `IEventBus` and the five domain buses
+(Combat, Inventory, Magic, Pawns, World), aggregated under `IGameServices`.
 Splitting buses by domain reduces lock contention, simplifies debugging, and
 makes per-domain load profiling possible.
+
+(The v0.3 `IPowerBus` was deleted in A'.5 K8.3+K8.4 cutover 2026-05-14 along
+with the power subsystem; future electricity routes to V substrate per
+[VULKAN_SUBSTRATE](../../../docs/architecture/VULKAN_SUBSTRATE.md).)
 
 ## Dependencies
 - `DualFrontier.Contracts.Core` (the `IEvent` marker).
@@ -16,7 +20,6 @@ makes per-domain load profiling possible.
 - `IInventoryBus.cs` — inventory bus: AmmoRequest/Result, ItemAdded/Removed.
 - `IMagicBus.cs` — magic bus: ManaRequest/Result, SpellCast, EtherSurge.
 - `IPawnBus.cs` — pawn bus: MoodBreak, DeathReaction, SkillGain.
-- `IPowerBus.cs` — power-grid bus: ConverterPowerOutput.
 - `IWorldBus.cs` — world bus: EtherNodeChanged, WeatherChanged, RaidIncoming.
 
 ## Rules

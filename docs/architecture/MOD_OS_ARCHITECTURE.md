@@ -445,9 +445,9 @@ A mod is forbidden from casting `IModApi` to a concrete type. The `RestrictedMod
 
 All v1 mods (using `Publish`/`Subscribe` with no-op semantics) continue to load and run, but log a v1-API warning. The mod author updates capability declarations in the manifest to migrate to functional v2 semantics. This grace period closes at kernel API version `2.0.0`.
 
-### 4.6 IModApi v3 — Fields and Compute Pipelines (NEW in v1.6)
+### 4.6 IModApi v3 — Fields and Compute Pipelines (NEW in v1.6, made strict in v1.8)
 
-v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) capabilities per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 LOCKED. Both sub-APIs are additive: v2 mods that do not reference `Fields` or `ComputePipelines` continue to load unchanged.
+v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and V0/V1/V2 substrate primitives (Vulkan compute integration) capabilities per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v1.0 LOCKED (Q-G-1 + Q-G-2). The sub-APIs are now part of strict v3 — see §4.6.3 for the K8.3+K8.4 cutover that deleted v2 IModApi entirely (no backward compatibility).
 
 ### 4.6.1 Surface
 

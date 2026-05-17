@@ -1,37 +1,29 @@
 ﻿# Building
 
 ## Purpose
-Components for buildings and their infrastructure: power consumers and producers
-(electricity and ether), storages, workbenches.
+Components for buildings and their infrastructure: storages, workbenches.
+
+(The v0.3 power components — `PowerConsumerComponent`, `PowerProducerComponent` — and the related events were deleted in A'.5 K8.3+K8.4 cutover 2026-05-14. Future electricity-like mechanics are routed to V substrate field/compute work per [VULKAN_SUBSTRATE](../../../docs/architecture/VULKAN_SUBSTRATE.md) §1.2 + §5.1.)
 
 ## Dependencies
 - `DualFrontier.Contracts` — `IComponent`, `EntityId`.
 
 ## Contents
-- `PowerConsumerComponent.cs` — power consumer (type + per-tick draw).
-- `PowerProducerComponent.cs` — power producer (type + output).
 - `StorageComponent.cs` — storage (capacity + item list).
 - `WorkbenchComponent.cs` — workbench (kind + work speed).
 
 ## Rules
-- Two independent power networks: electricity and ether. The `PowerType` field
-  indicates which network the building is connected to. Mixing within a single
-  network is forbidden by the PowerSystem validator.
-- Network overload publishes `GridOverloadEvent`.
 - `StorageComponent.Items` is a list of entity IDs of items in the world (items
   are separate entities with their own components).
 
 ## Usage examples
 ```csharp
-var reactor = world.CreateEntity();
-world.AddComponent(reactor, new PowerProducerComponent { /* Type = PowerType.Electric, Output = 1000 */ });
-
-var golemForge = world.CreateEntity();
-world.AddComponent(golemForge, new PowerConsumerComponent { /* Type = PowerType.Ether, WattsPerTick = 50 */ });
+var crate = nativeWorld.CreateEntity();
+using var batch = nativeWorld.BeginBatch<StorageComponent>();
+batch.Set(crate, new StorageComponent { /* Capacity = 50 */ });
 ```
 
 ## TODO
-- [ ] Define the `PowerType` enum (Electric, Ether).
 - [ ] Define the `WorkbenchKind` enum (Cooking, Smithing, Research, GolemForge …).
 - [ ] Plan equipment degradation/breakage — a separate `DurabilityComponent`.
 
