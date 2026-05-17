@@ -42,7 +42,7 @@ The two systems remain decoupled at every layer above storage: managed bridges l
 
 ## Scope
 
-This document specifies the **storage contract** for fields. It is the substrate that the GPU compute roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G0–G9) sits on top of. The storage path is required to function on CPU alone — every shader has a CPU reference implementation that operates on the same `RawTileField<T>` instances, and the `IModApi.Fields` surface is identical regardless of GPU availability.
+This document specifies the **storage contract** for fields. It is the substrate that the V substrate primitives ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) V0/V1/V2 per Q-G-2 LOCK) sit on top of. The storage path is required to function on CPU alone — every shader has a CPU reference implementation that operates on the same `RawTileField<T>` instances, and the `IModApi.Fields` surface is identical regardless of GPU availability.
 
 Three scopes are out of band for this document:
 

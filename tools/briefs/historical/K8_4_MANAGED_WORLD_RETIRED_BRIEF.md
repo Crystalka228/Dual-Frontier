@@ -4,12 +4,15 @@
 register_id: DOC-D-K8_4
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_4
 ---
+> **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16 by `K8_34_COMBINED_KERNEL_CUTOVER_BRIEF_V2.md` (EXECUTED at A'.5 closure 2026-05-14).
+> Original lifecycle: AUTHORED. Disposition per CLEANUP_CASCADE_BRIEF §1.2 (A'.5 K8.3+K8.4 absorption).
+> Preserved for historical record. Do not execute as current brief.
 # K8.4 — ManagedWorld retired as production; Mod API v3 ships
 
 **Status**: SKELETON

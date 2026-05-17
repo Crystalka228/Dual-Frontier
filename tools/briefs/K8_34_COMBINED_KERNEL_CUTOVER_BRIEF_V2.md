@@ -1,17 +1,14 @@
----
+﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-D-K8_34_COMBINED_V2
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
 version: "2.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_34_COMBINED_V2
-supersedes:
-  - DOC-D-K8_34_COMBINED                      # combined brief v1.0 — Phase 4+5 design replaced
-  - DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH  # patch v1 — Phases 0-3 corrections absorbed into v2.0 as executed-state
 ---
 # K8.3+K8.4 — Combined Kernel Cutover Brief v2.0
 

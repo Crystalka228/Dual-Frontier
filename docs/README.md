@@ -32,8 +32,8 @@ Technical documents describing the engine that stress-tests the methodology: lay
 - [EVENT_BUS](/docs/architecture/EVENT_BUS.md) — domain buses, the two-step Intent→Granted/Refused model, batch processing.
 - [THREADING](/docs/architecture/THREADING.md) — `DependencyGraph`, phases, tick rates, the ban on `async`.
 - [ISOLATION](/docs/architecture/ISOLATION.md) — `SystemExecutionContext`, the isolation guard, DEBUG vs RELEASE, types of violations.
-- [GODOT_INTEGRATION](/docs/architecture/GODOT_INTEGRATION.md) — `PresentationBridge`, `IRenderCommand`, `InputRouter`, the main thread.
-- [VISUAL_ENGINE](/docs/architecture/VISUAL_ENGINE.md) — DevKit vs Native, the `IRenderer` / `ISceneLoader` / `IInputSource` contracts, the `.dfscene` format.
+- [GODOT_INTEGRATION (historical)](/docs/architecture/historical/GODOT_INTEGRATION.md) — `PresentationBridge`, `IRenderCommand`, `InputRouter`, the main thread. Superseded by [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) §2.2 per Q-G-1 LOCK.
+- [VISUAL_ENGINE (historical)](/docs/architecture/historical/VISUAL_ENGINE.md) — DevKit vs Native, the `IRenderer` / `ISceneLoader` / `IInputSource` contracts, the `.dfscene` format. Superseded by [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) per Q-G-1 LOCK.
 
 ## Development
 

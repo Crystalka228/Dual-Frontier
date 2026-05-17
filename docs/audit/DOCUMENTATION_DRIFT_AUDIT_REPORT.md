@@ -16,6 +16,39 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-DOCUMENTATION_DRIFT_
 
 Audit-only report. No architecture documents were modified by this pass.
 
+## Cleanup status (added 2026-05-16, CLEANUP_CASCADE_BRIEF execution)
+
+The cleanup cascade (CLEANUP_CASCADE_BRIEF.md, branch `claude/cleanup-cascade`) closed 18 of 19 findings in a 16-commit atomic cascade. Per-finding disposition:
+
+| Finding | Severity | Status | Closure commit(s) |
+|---|---|---|---|
+| DRIFT-001 | S4 | ADDRESSED | Commit 13 (fa88f12) — MIGRATION_PROGRESS state sync |
+| DRIFT-002 | S4 | ADDRESSED | Commit 3 (438de49) — README NativeWorld production rewrite |
+| DRIFT-003 | S5 | ADDRESSED | Commit 3 (438de49) — README isolation safety rewrite |
+| DRIFT-004 | S4 | ADDRESSED | Commit 7 (11bf1c1) — ECS NativeWorld production storage rewrite |
+| DRIFT-005 | S5 | ADDRESSED | Commit 4 (f5e27f3) ISOLATION + Commit 5 (6cf1d77) THREADING + Commit 6 (613e5ef) PERFORMANCE + Commit 12 (f7fe134) MODDING |
+| DRIFT-006 | S4 | ADDRESSED | Commit 8 (1a88ece) — CONTRACTS + EVENT_BUS IPowerBus removal |
+| DRIFT-007 | S4 | ADDRESSED | Commit 9 (73c7bbf) — ROADMAP M10.B power deletion reconciliation |
+| DRIFT-008 | S4 | ADDRESSED | Commit 9 (73c7bbf) — MIGRATION_PLAN internal conflict reconciled |
+| DRIFT-009 | S4 | ADDRESSED | Commit 2 (253c7ab) VISUAL/GODOT historical move + Commit 10 (3aa3585) ARCHITECTURE Silk.NET supersession |
+| DRIFT-010 | S4 | ADDRESSED | Commit 16 (PENDING) — REGISTER_RENDER regeneration via render_register.ps1 |
+| DRIFT-011 | S4 | ADDRESSED | Commit 11 (c926382) — MOD_OS v3 strict (no v2 compat) |
+| DRIFT-012 | S4 | ADDRESSED | Commit 12 (f7fe134) — MODDING + MOD_PIPELINE v3 + current §9.5 unload |
+| DRIFT-013 | S3 | ADDRESSED | Commit 14 (08e4fde) — G→V namespace tail across FIELDS/KERNEL/MIGRATION_PLAN/MOD_OS |
+| DRIFT-014 | S3 | ADDRESSED | Commit 1 (e68d799) — G-series briefs AUTHORED → SUPERSEDED + moved to historical/ |
+| DRIFT-015 | S3 | ADDRESSED | Commit 14 (08e4fde) — ARCHITECTURE_RECON_REPORT pre-V-unification annotation |
+| DRIFT-016 | S3 | **HALTED (SC-4)** | Q-K-1 reconciliation note in PHASE_A_PRIME_SEQUENCING.md (lines 55-63, added 2026-05-16 commit d303fb5) explicitly defers A'-cycle renumbering propagation to «subsequent deliberation when K8.5 brief authoring approaches». Cleanup brief §4 SC-4 halt trigger fired; surfaces to Crystalka for K8.5-brief-time decision. |
+| DRIFT-017 | S3 | ADDRESSED | Commit 14 (08e4fde) — module-local READMEs (Core.Interop/MODULE + Components/Building + Contracts/Bus + Contracts/Modding) |
+| DRIFT-018 | S2 | DEFERRED | Per audit own categorization (S2 minor wording); IDEAS_RESERVOIR game-as-product framing deferred to next docs pass. |
+| DRIFT-019 | S1 | NO ACTION | Historical residue in closure/audit reports; audit explicitly recommended no-action when register lifecycle is obeyed. |
+
+5 CAPAs opened+closed within same governance event (EVT-2026-05-16-CLEANUP-CASCADE in REGISTER.yaml audit_trail):
+- CAPA-2026-05-16-ISOLATION-AUTHORITY-RESTORATION (DRIFT-003 + DRIFT-005)
+- CAPA-2026-05-16-LIVE-STATE-CLOSURE-PROTOCOL-GAP (DRIFT-001 + DRIFT-010)
+- CAPA-2026-05-16-POWER-DELETION-PROPAGATION (DRIFT-006 + DRIFT-007 + DRIFT-008)
+- CAPA-2026-05-16-MOD-API-V3-AUTHORITY (DRIFT-011 + DRIFT-012)
+- CAPA-2026-05-16-V-SUBSTRATE-SUPERSESSION (DRIFT-009 + DRIFT-013 + DRIFT-014 + DRIFT-015)
+
 ## Scope
 
 Audited the document corpus through the governance register, with emphasis on:

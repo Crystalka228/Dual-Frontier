@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERFORMANCE
 ---
@@ -77,10 +77,6 @@ Publishing an event walks the subscriber list synchronously. The implementation 
 ### SpatialGrid.QueryRadius
 
 Find entities within radius R from a point. Implementation: a cell grid, each cell holds `List<EntityId>`. Target: a walk over ≤9 cells instead of all 10,000 entities.
-
-### SystemExecutionContext.GetComponent (DEBUG)
-
-In DEBUG the full declaration check adds +1–2 ns per call. In RELEASE the check is removed.
 
 ### PathfindingService
 

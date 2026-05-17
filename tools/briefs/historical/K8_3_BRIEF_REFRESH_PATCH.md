@@ -4,7 +4,7 @@
 register_id: DOC-D-K8_3_BRIEF_REFRESH_PATCH
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0"
 next_review_due: "null"

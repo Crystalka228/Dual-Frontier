@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.7"
+version: "1.8"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_OS
 ---
@@ -46,7 +46,7 @@ nav_order: 25
   - §3.2: capability syntax extended with `field.*` and `pipeline.*` verbs. The `read`/`write` verbs apply only to entity-keyed components; field operations require dedicated verbs because the access pattern (point queries, dense spans, compute dispatch) is structurally distinct from entity component access. Pipeline registration is mod-side; pipeline dispatch is implicit through field dispatch and does not require a separate verb in v1.6 (deferred to v1.7 if cross-mod pipeline reuse becomes a feature).
   - §3.5: kernel-provided capability set extended via new `[FieldAccessible]` annotation. Field types ship in vanilla mod assemblies (not the kernel), so kernel-provided field capabilities are the *infrastructure verbs* (e.g. `kernel.field.acquire`, `kernel.field.dispatch`); concrete field tokens (e.g. `mod.dualfrontier.vanilla.magic.field.read:vanilla.magic.mana`) are mod-provided and resolve through the dependency chain established in §3.4.
   - §3.7: cross-check extended for `[FieldAccess]` and `[ComputePipelineAccess]` attributes on systems. The drift-prevention principle from §3.7 is preserved — manifest-vs-code mismatches surface as load-time errors, never silent.
-  - §4.6 NEW: `IModApi` v3 surface — `Fields` and `ComputePipelines` sub-APIs. Additive to v2; v2 mods continue to load unchanged. Default-null sub-APIs allow mods that don't use fields to ignore the surface entirely.
+  - §4.6 NEW: `IModApi` v3 surface — `Fields` and `ComputePipelines` sub-APIs. (Historical note v1.6 framed v3 as additive over v2 with v2 mods continuing to load. v3 was subsequently made strict in K8.3+K8.4 cutover — v2 IModApi deleted entirely, manifest parser rejects any version other than `"3"`. See v1.8 amendment below.)
   - §11.2: six new `ValidationErrorKind` entries (`FieldRegistrationConflict`, `InvalidFieldDimensions`, `FieldCapabilityMismatch`, `ComputePipelineCompilationFailed`, `ComputePipelineRegistrationConflict`, `ComputeUnsupportedWarning`). The first five are blocking errors; the sixth is a non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Failure modes → CPU fallback".
   - §11.1: M3.5 added as deferred milestone — capability registry refresh for field types via `[FieldAccessible]` scan extension to `KernelCapabilityRegistry`. Unblocked at K9 in-progress.
   - No semantic changes to v1.5 decisions. No locked decision (D-1 through D-7) is altered. K9 + G0–G9 implementations begin against this surface.
@@ -56,6 +56,10 @@ nav_order: 25
   - §4.6 IModApi v3 surface: `RegisterManagedComponent<T> where T : class, IComponent` added alongside existing `RegisterComponent<T>` (Path α) and `Fields`/`ComputePipelines` v1.6 additions.
   - §11.1: M3.5 deferred milestone description extended (analyzer covers Path α/β consistency in addition to `[FieldAccessible]` scan extension); analyzer ships post-migration per Q5.b deferral.
   - No semantic changes to v1.6 decisions. No locked decision (D-1 through D-7) is altered. Authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`.
+- v1.8 — IModApi v3 strict (K8.3+K8.4 cutover 2026-05-14, audit cleanup 2026-05-16):
+  - §4.6 + §4.6.3: v3 reframed from additive-over-v2 to **strict v3-only**. Per `src/DualFrontier.Contracts/Modding/IModApi.cs` lines 16-27 (canonical): «v2 IModApi deleted entirely — no backward compatibility. Mods that registered class-shape components without `RegisterManagedComponent` fail to compile post-K8.3+K8.4; the manifest parser also rejects any `manifestVersion` other than `"3"`.» `RegisterComponent<T>` carries `where T : unmanaged, IComponent` (Path α — NativeWorld struct storage); `RegisterManagedComponent<T>` carries `where T : class, IComponent` (Path β — per-mod managed storage, requires `[ManagedStorage]`).
+  - §4.6.3 «Backward compatibility» section: rewritten to remove v2-continues-to-load claim. v2 grace-period text deleted per §1.4 LOCK (no historical subsection in current Tier 1 doc).
+  - No semantic changes to v1.7 decisions. No locked decision (D-1 through D-7) is altered. Authority: `IModApi.cs` verbatim + CLEANUP_CASCADE_BRIEF §3 Commit 11.
 
 ---
 
@@ -441,9 +445,9 @@ A mod is forbidden from casting `IModApi` to a concrete type. The `RestrictedMod
 
 All v1 mods (using `Publish`/`Subscribe` with no-op semantics) continue to load and run, but log a v1-API warning. The mod author updates capability declarations in the manifest to migrate to functional v2 semantics. This grace period closes at kernel API version `2.0.0`.
 
-### 4.6 IModApi v3 — Fields and Compute Pipelines (NEW in v1.6)
+### 4.6 IModApi v3 — Fields and Compute Pipelines (NEW in v1.6, made strict in v1.8)
 
-v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) capabilities per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 LOCKED. Both sub-APIs are additive: v2 mods that do not reference `Fields` or `ComputePipelines` continue to load unchanged.
+v3 extends `IModApi` with two sub-APIs gating K9 (field storage abstraction) and V0/V1/V2 substrate primitives (Vulkan compute integration) capabilities per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v1.0 LOCKED (Q-G-1 + Q-G-2). The sub-APIs are now part of strict v3 — see §4.6.3 for the K8.3+K8.4 cutover that deleted v2 IModApi entirely (no backward compatibility).
 
 ### 4.6.1 Surface
 
@@ -560,7 +564,9 @@ Every operation on `IModFieldApi` and `IModComputePipelineApi` is gated by a man
 
 ### 4.6.3 Backward compatibility
 
-A v2 mod that does not reference `Fields` or `ComputePipelines` continues to compile and load against v3 unchanged. The v3 properties default to null on builds that do not include K9/G-series support; v2 mods never observe them. v1 mods (no-op `Publish`/`Subscribe`) continue under the §4.5 grace period.
+**Strict v3 only — no backward compatibility.** Per [src/DualFrontier.Contracts/Modding/IModApi.cs](../../src/DualFrontier.Contracts/Modding/IModApi.cs) lines 16-27 (canonical statement): v2 `IModApi` was deleted entirely in K8.3+K8.4 cutover (2026-05-14). Mods compiled against v2 fail to load — the `RegisterComponent<T>` surface now carries `where T : unmanaged, IComponent` (was unconstrained in v2), and class-shape components must use `RegisterManagedComponent<T>` (Path β, K-L3.1 bridge) with the `[ManagedStorage]` attribute. The manifest parser rejects any `manifestVersion` other than `"3"`.
+
+The `Fields` and `ComputePipelines` properties remain default-null on builds without K9/G-series support — mods that opt into those sub-APIs check for null and degrade gracefully (see §4.6.4 startup example). This is forward-compatibility within v3, not backward-compatibility with prior IModApi versions.
 
 ### 4.6.4 Mod startup example
 

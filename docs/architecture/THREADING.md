@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-THREADING
 ---
@@ -93,7 +93,7 @@ void RunPhase(SystemPhase phase, float delta)
 }
 ```
 
-Each system gets its own `SystemExecutionContext` via `ThreadLocal<T>`. The context holds the list of permitted components and the name of the active bus. Isolation-guard access is O(1) via `HashSet`.
+Each system gets its own `SystemExecutionContext` via `ThreadLocal<T>`. The context carries the active `NativeWorld`, the `IGameServices` aggregator, the system's `SystemOrigin` and optional `ModId`, and the Path β managed-storage resolver (see [ISOLATION](./ISOLATION.md) §SystemExecutionContext). Isolation enforcement is compile-time: `[SystemAccess]` declarations are consumed by `DependencyGraph` for edge-building; the future A'.9 Roslyn analyzer extends enforcement to call sites. The runtime guard `HashSet` lookup that historically gated each component access was removed in K8.3+K8.4 (A'.5 closure 2026-05-14) along with the entire `GetComponent`/`SetComponent` access surface — systems read and write through `NativeWorld.AcquireSpan<T>()` / `BeginBatch<T>()` directly.
 
 ## TickRates
 
@@ -117,7 +117,7 @@ public sealed class NeedsSystem : SystemBase { /* ... */ }
 
 ## Rule: async is forbidden
 
-Inside systems, `async` / `await` are forbidden. The reason lies in `SystemExecutionContext`: it lives in `ThreadLocal`, bound to the current thread, and `await` switches execution to another thread after the return — on the new thread the context is different, the isolation guard will not see the declaration, and even if it did, the component write would happen without synchronization with the dependency graph.
+Inside systems, `async` / `await` are forbidden. The reason lies in `SystemExecutionContext`: it lives in `ThreadLocal`, bound to the current thread, and `await` switches execution to another thread after the return — on the new thread `SystemExecutionContext.Current` is `null`, and any access to `SystemBase.NativeWorld` / `SystemBase.Services` throws `InvalidOperationException` (see [ISOLATION](./ISOLATION.md) §SystemExecutionContext). Even if a context were present, the component write would happen without synchronization with the dependency graph.
 
 What to do instead of `async`:
 
@@ -125,7 +125,7 @@ What to do instead of `async`:
 - I/O — only in Application, never in systems.
 - Waiting is unnecessary: the scheduler will call the system in the next phase or the next tick.
 
-In DEBUG, the isolation guard catches `Task`, `ValueTask`, and `await` via stack-trace analysis and throws `IsolationViolationException` with the message: `"System 'XXX' uses async. Move the work to Application."`.
+The `async`/`await` ban is enforced by convention and code review today; the A'.9 Roslyn analyzer (planned per [PHASE_A_PRIME_SEQUENCING](./PHASE_A_PRIME_SEQUENCING.md)) will catch `Task` / `ValueTask` / `await` in any `SystemBase.Update` body at build time.
 
 ## Debugging conflicts
 

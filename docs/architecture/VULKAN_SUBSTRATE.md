@@ -16,7 +16,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 
 **Supersedes:** prior `RUNTIME_ARCHITECTURE.md` v1.0 LOCKED (rendering layer spec) + `GPU_COMPUTE.md` v2.0 LOCKED (compute layer spec). Both source documents were physically describing **one** Vulkan device with two use cases; the documentation drift introduced separate substrate identities for what is one physical layer. Per Q-G-1 LOCK in `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md` §3.1, R (runtime) and G (GPU compute) substrate buckets merged into unified Vulkan substrate **V**.
 
-**Companion documents:** [METHODOLOGY](/docs/methodology/METHODOLOGY.md), [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [ARCHITECTURE](./ARCHITECTURE.md), [THREADING](./THREADING.md), [VISUAL_ENGINE](./VISUAL_ENGINE.md), [GODOT_INTEGRATION](./GODOT_INTEGRATION.md), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md), [FIELDS](./FIELDS.md), [ROADMAP](/docs/ROADMAP.md).
+**Companion documents:** [METHODOLOGY](/docs/methodology/METHODOLOGY.md), [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [ARCHITECTURE](./ARCHITECTURE.md), [THREADING](./THREADING.md), [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md), [FIELDS](./FIELDS.md), [ROADMAP](/docs/ROADMAP.md).
 
 **Scope:** Full architectural specification for the Vulkan substrate (V) — single `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage serving both 2D rendering and compute. Defines substrate primitives V0/V1/V2 (compute-side), rendering use case implementation, compute use case implementation, threading model, asset pipeline, shader strategy, mod-driven compute pipeline registration, mathematical models for field-based gameplay mechanics, failure modes, and the unified roadmap toward full architectural foundation. The Domain layer ([ARCHITECTURE §Domain](./ARCHITECTURE.md), [ECS](./ECS.md), [EVENT_BUS](./EVENT_BUS.md), [ISOLATION](./ISOLATION.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) is preserved verbatim by this layer — see L10 in §0.
 
@@ -40,7 +40,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 - The threading model on top of [THREADING](./THREADING.md) (window+render thread merged with simulation thread preserved).
 - The compute pipeline plumbing (V0 substrate primitive) for both Domain A (field updates) and Domain B (entity-keyed bulk computation).
 - Scalar field primitives V1 (diffusion shader) and V2 (wave shader) — substrate-level abstractions consumed by vanilla mods as gameplay mechanics.
-- The migration sequencing from the current dual-backend Godot+Silk.NET state ([VISUAL_ENGINE](./VISUAL_ENGINE.md), [GODOT_INTEGRATION](./GODOT_INTEGRATION.md)) toward the locked Vulkan target — historically tracked as M9.0..M9.8 runtime milestones, now unified within V substrate (Q-R-2 LOCK).
+- The migration sequencing from the current dual-backend Godot+Silk.NET state ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) toward the locked Vulkan target — historically tracked as M9.0..M9.8 runtime milestones, now unified within V substrate (Q-R-2 LOCK).
 
 The specification does **not** govern:
 
@@ -58,10 +58,10 @@ The specification does **not** govern:
 
 Dual Frontier's Vulkan substrate (V) is a **unified Vulkan 1.3 layer** serving two use cases on one `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage:
 
-- **Rendering use case** — Win32 window, swapchain, sprite batching, bitmap text, atlas-based 2D rendering. Migration target replacing Godot 4 + C# Presentation layer ([VISUAL_ENGINE](./VISUAL_ENGINE.md), [GODOT_INTEGRATION](./GODOT_INTEGRATION.md)).
+- **Rendering use case** — Win32 window, swapchain, sprite batching, bitmap text, atlas-based 2D rendering. Migration target replacing Godot 4 + C# Presentation layer ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)).
 - **Compute use case** — field-based GPU compute (Domain A) + entity-keyed bulk computation (Domain B). Substrate-level abstraction for diffusion / wave / flow field gameplay mechanics. Mod-driven shader registration.
 
-The Domain layer ([ARCHITECTURE](./ARCHITECTURE.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [THREADING](./THREADING.md), [ISOLATION](./ISOLATION.md)) is preserved verbatim — zero touch by V substrate work. Only the Presentation layer ([VISUAL_ENGINE](./VISUAL_ENGINE.md), [GODOT_INTEGRATION](./GODOT_INTEGRATION.md)) is rewritten on the new foundation.
+The Domain layer ([ARCHITECTURE](./ARCHITECTURE.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [THREADING](./THREADING.md), [ISOLATION](./ISOLATION.md)) is preserved verbatim — zero touch by V substrate work. Only the Presentation layer ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) is rewritten on the new foundation.
 
 **Foundation philosophy** — «без компромиссов»:
 
@@ -448,7 +448,7 @@ docs/
   architecture/
     VULKAN_SUBSTRATE.md                       // THIS DOCUMENT (V substrate spec)
     KERNEL_ARCHITECTURE.md / MOD_OS_ARCHITECTURE.md / FIELDS.md
-    ARCHITECTURE.md / THREADING.md / VISUAL_ENGINE.md / GODOT_INTEGRATION.md
+    ARCHITECTURE.md / THREADING.md / historical/VISUAL_ENGINE.md / historical/GODOT_INTEGRATION.md
   methodology/
     METHODOLOGY.md / CODING_STANDARDS.md / ...
   ROADMAP.md
@@ -493,13 +493,13 @@ The scaffolding in `tools/scaffold-runtime.ps1` materializes the rendering hiera
 
 **Purpose:** High-level window abstraction. Hides Win32 details. Provides lifecycle (create/show/destroy), event subscription, input event delivery.
 
-**Public API surface:** `IWindow`, `Window`, `WindowOptions`. Replaces the [VISUAL_ENGINE](./VISUAL_ENGINE.md) `IRenderer` initialization path on the new foundation.
+**Public API surface:** `IWindow`, `Window`, `WindowOptions`. Replaces the [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) `IRenderer` initialization path on the new foundation.
 
 **Dependencies:** `Native.Win32`, `Input`.
 
 #### `DualFrontier.Runtime.Input`
 
-**Purpose:** Typed input events + event queue. Events posted by Window, consumed by clients via polling. Supersedes the Godot `IInputSource` adapter ([VISUAL_ENGINE](./VISUAL_ENGINE.md) §Contracts) once rendering cutover lands.
+**Purpose:** Typed input events + event queue. Events posted by Window, consumed by clients via polling. Supersedes the Godot `IInputSource` adapter ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) §Contracts) once rendering cutover lands.
 
 **Public API surface:** `IInputEvent` + concrete event types + `InputEventQueue`.
 
@@ -555,7 +555,7 @@ The scaffolding in `tools/scaffold-runtime.ps1` materializes the rendering hiera
 
 #### `DualFrontier.Presentation` (rewritten adapter)
 
-**Purpose:** Bridge from Domain to Runtime. Translates `RenderCommands` (from existing `PresentationBridge`, see [GODOT_INTEGRATION](./GODOT_INTEGRATION.md)) to Runtime API calls. Owns «what to draw» logic.
+**Purpose:** Bridge from Domain to Runtime. Translates `RenderCommands` (from existing `PresentationBridge`, see [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) to Runtime API calls. Owns «what to draw» logic.
 
 **Public API surface:** `Program.Main()`, `GameRoot`. Internal classes wire bridge to Runtime.
 
@@ -609,7 +609,7 @@ The substrate extends [THREADING](./THREADING.md) — domain `ParallelSystemSche
 
 **Cross-thread synchronization:**
 
-- `PresentationBridge` (existing `ConcurrentQueue<IRenderCommand>`, see [GODOT_INTEGRATION](./GODOT_INTEGRATION.md)) preserved as primary domain → render channel.
+- `PresentationBridge` (existing `ConcurrentQueue<IRenderCommand>`, see [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) preserved as primary domain → render channel.
 - New: `InputEventQueue` (`ConcurrentQueue<IInputEvent>`) for render → domain input events.
 - Pause coupling: Main thread detects focus loss, calls `loop.SetPaused(true)`. Domain thread sleeps. Pattern proven from M8.10 (focus notifications) — extended Vulkan way (Win32 `WM_KILLFOCUS`/`WM_SETFOCUS` messages — clean semantics, no `tree.paused` surprises).
 - Compute dispatch: simulation thread calls `FieldHandle<T>.DispatchCompute(pipeline, params, iterations)` → native kernel records command buffer, submits to compute queue, returns immediately. Fence-based sync ensures subsequent `ReadCell` sees consistent state; one-tick lag acceptable for continuous field values (see §5.5 async sync hazards).
@@ -980,7 +980,7 @@ These R.0..R.8 phases are V0 rendering side implementation sequence; they do not
 
 **Goal:** keyboard and mouse events from Win32 delivered to domain.
 
-**Deliverables:** `InputEventQueue` + event types + Win32 message handler dispatching. Replaces the Godot `InputRouter` ([VISUAL_ENGINE](./VISUAL_ENGINE.md)) for new code path; Godot path stays alive until cutover phase R.8.
+**Deliverables:** `InputEventQueue` + event types + Win32 message handler dispatching. Replaces the Godot `InputRouter` ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md)) for new code path; Godot path stays alive until cutover phase R.8.
 
 **Success criteria:** smooth camera pan, key bindings work.
 
@@ -990,7 +990,7 @@ These R.0..R.8 phases are V0 rendering side implementation sequence; they do not
 
 **Goal:** full M8.9 visual parity on Vulkan stack.
 
-**Deliverables:** Rewrite Presentation layer to target Runtime API. `PawnVisual` / `ItemVisual` / `TileMapVisual` on sprite handles. `RenderCommandDispatcher` retargeted (existing pattern from [GODOT_INTEGRATION](./GODOT_INTEGRATION.md)).
+**Deliverables:** Rewrite Presentation layer to target Runtime API. `PawnVisual` / `ItemVisual` / `TileMapVisual` on sprite handles. `RenderCommandDispatcher` retargeted (existing pattern from [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)).
 
 **Success criteria:** 50 pawns + 255 items + terrain. 60+ FPS. Domain tests passing ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) gate).
 
@@ -1022,7 +1022,7 @@ These R.0..R.8 phases are V0 rendering side implementation sequence; they do not
 
 **Deliverables:** Delete `.godot/`, `project.godot`, `*.import`, Godot-specific gitignore entries. Update `tools/build-all.ps1`. Update `README.md`.
 
-**Success criteria:** `dotnet build` clean without Godot. `grep -r godot` returns empty. `dotnet run` launches game. [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) marked deprecated; superseded by §2.2 of this document.
+**Success criteria:** `dotnet build` clean without Godot. `grep -r godot` returns empty. `dotnet run` launches game. [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md) marked deprecated; superseded by §2.2 of this document.
 
 **Time:** 2–3 hours. **LOC:** -2000+ (net deletion).
 
@@ -1509,8 +1509,8 @@ This document is **v1.0**, authoritative until amended via explicit decision. Am
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — native ECS kernel; K9 `RawTileField<T>` is the storage primitive V substrate compute consumes.
 - [FIELDS](./FIELDS.md) — field storage contract; consumed by V substrate compute (V1/V2 primitives bind `RawTileField<T>` as SSBO/storage image).
 - [THREADING](./THREADING.md) — domain `ParallelSystemScheduler`; the Window+Render thread merge in §2.3 is the only addition. Compute dispatch is fence-async on simulation thread.
-- [VISUAL_ENGINE](./VISUAL_ENGINE.md) — current dual-backend (Godot DevKit + Silk.NET Native); superseded for production by this document at rendering cutover R.8.
-- [GODOT_INTEGRATION](./GODOT_INTEGRATION.md) — current `PresentationBridge` and Godot-specific glue; deprecated at R.8.
+- [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) — current dual-backend (Godot DevKit + Silk.NET Native); superseded for production by this document at rendering cutover R.8.
+- [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md) — current `PresentationBridge` and Godot-specific glue; deprecated at R.8.
 - [MIGRATION_PLAN_KERNEL_TO_VANILLA](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md) — Phase A K-series + Phase B M-cycle sequencing; V substrate work runs in parallel with K-series per β6 sequencing, gates Phase B M-V demonstrations.
 - [ROADMAP](/docs/ROADMAP.md) — phase ordering; §6 of this document is the authoritative sequence for the V substrate work.
 - [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — test pyramid; §2.8 slots V substrate tests into the existing structure.

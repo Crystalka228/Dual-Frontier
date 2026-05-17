@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-CONTRACTS
 ---
@@ -43,7 +43,7 @@ public sealed class HealthComponent : IComponent
 }
 ```
 
-## Six domain buses
+## Five domain buses
 
 A single bus for everything is a bottleneck under load. Lock contention at 100+ systems. The solution: a separate bus per domain. Less contention, easier to debug, easier to profile.
 
@@ -53,9 +53,8 @@ public interface IGameServices
     ICombatBus    Combat    { get; }
     IInventoryBus Inventory { get; }
     IMagicBus     Magic     { get; }
-    IWorldBus     World     { get; }
     IPawnBus      Pawns     { get; }
-    IPowerBus     Power     { get; } // Introduced in v0.3 §13.1
+    IWorldBus     World     { get; }
 }
 ```
 
@@ -65,10 +64,11 @@ public interface IGameServices
 | InventoryBus  | HaulSystem, CraftSystem          | InventorySystem, JobSystem           | AmmoIntent/Granted, ItemAdded/Removed/Reserved    |
 | MagicBus      | SpellSystem, GolemSystem         | ManaSystem, EtherGrowthSystem        | ManaIntent/Granted, SpellCast, EtherSurge         |
 | PawnBus       | NeedsSystem, MoodSystem          | JobSystem, SocialSystem              | MoodBreak, DeathReaction, SkillGain               |
-| WorldBus      | BiomeSystem, WeatherSystem       | EtherGridSystem, RaidSystem          | EtherNodeChanged, WeatherChanged, RaidIncoming    |
-| PowerBus      | ElectricGridSystem, ConverterSystem | ElectricGridSystem, consumers, UI | PowerRequest, PowerGranted, GridOverload, ConverterPowerOutput |
+| WorldBus      | BiomeSystem, WeatherSystem       | RaidSystem                           | EtherNodeChanged, WeatherChanged, RaidIncoming    |
 
-Each bus is its own `ConcurrentDictionary` of subscribers. `CombatSystem` writes only to `Combat`; `InventorySystem` writes only to `Inventory`. There is no shared lock point. A system declares the bus it uses inside `[SystemAccess]`, and the isolation guard verifies that publication targets only that bus.
+Each bus is its own `ConcurrentDictionary` of subscribers. `CombatSystem` writes only to `Combat`; `InventorySystem` writes only to `Inventory`. There is no shared lock point. A system declares the bus it uses inside `[SystemAccess]`, and the dependency graph + future A'.9 Roslyn analyzer verify that publication targets only that bus.
+
+The bus list is canonical per [src/DualFrontier.Contracts/Bus/IGameServices.cs](../../src/DualFrontier.Contracts/Bus/IGameServices.cs).
 
 ## IModContract — API between mods
 

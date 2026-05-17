@@ -4,12 +4,15 @@
 register_id: DOC-A-GODOT_INTEGRATION
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-GODOT_INTEGRATION
 ---
+> **HISTORICAL DOCUMENT**: Superseded by `docs/architecture/VULKAN_SUBSTRATE.md` v1.0 LOCKED 2026-05-16 per Q-G-1 LOCK. Pre-V-substrate authority preserved for historical record.
+> Original lifecycle: LOCKED. The Godot-as-DevKit + Silk.NET production model documented here is not the current production direction. V substrate replaces Godot entirely at R.8 cutover; PresentationBridge surface migrates per VULKAN_SUBSTRATE.md §2.2.
+
 # Godot integration
 
 Godot is an excellent engine for 2D simulation, but it has a hard limitation: the `SceneTree` and `Node` APIs work only from the main thread. Dual Frontier's Domain logic is multithreaded and must not know that Godot is even nearby. The link between the layers is built on a unidirectional command bridge.

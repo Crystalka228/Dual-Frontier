@@ -4,12 +4,15 @@
 register_id: DOC-D-G3
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-G3
 ---
+> **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).
+> Original lifecycle: AUTHORED. Disposition per Q-G-2 LOCK (composite namespace deliberation 2026-05-15).
+> Preserved for historical record. Do not execute as current brief.
 # G3 — Storage cells / capacitance (batteries, tanks)
 
 **Status**: SKELETON — full brief authored when ready к execute

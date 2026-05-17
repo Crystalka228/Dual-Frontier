@@ -4,12 +4,15 @@
 register_id: DOC-D-G5
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-G5
 ---
+> **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).
+> Original lifecycle: AUTHORED. Disposition per Q-G-2 LOCK (composite namespace deliberation 2026-05-15).
+> Preserved for historical record. Do not execute as current brief.
 # G5 — Domain B integration (`ProjectileSystem` reactivation)
 
 **Status**: SKELETON — full brief authored when ready к execute

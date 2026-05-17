@@ -1,18 +1,14 @@
----
+﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-D-K8_34_COMBINED
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0"
 next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_34_COMBINED
-supersedes:
-  - DOC-D-K8_3                      # K8.3 v2.0 brief — system migration scope absorbed
-  - DOC-D-K8_3_BRIEF_REFRESH_PATCH  # K8.3 patch — swap rationale resolved by combine
-  - DOC-D-K8_4                      # K8.4 skeleton — storage migration scope absorbed
 ---
 # K8.3+K8.4 — Combined Kernel Cutover Brief
 

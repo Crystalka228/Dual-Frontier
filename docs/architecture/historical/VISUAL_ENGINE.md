@@ -4,12 +4,15 @@
 register_id: DOC-A-VISUAL_ENGINE
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VISUAL_ENGINE
 ---
+> **HISTORICAL DOCUMENT**: Superseded by `docs/architecture/VULKAN_SUBSTRATE.md` v1.0 LOCKED 2026-05-16 per Q-G-1 LOCK. Pre-V-substrate authority preserved for historical record.
+> Original lifecycle: LOCKED. The dual-backend Godot DevKit + Silk.NET OpenGL production model documented here is not the current production direction. V substrate is the unified Vulkan rendering + compute target.
+
 # Visual engine — DevKit and Native
 
 Dual Frontier uses two parallel visual backends. Godot is the **DevKit**:

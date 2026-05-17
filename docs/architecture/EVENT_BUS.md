@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-EVENT_BUS
 ---
@@ -26,11 +26,12 @@ public interface IGameServices
     ICombatBus    Combat    { get; }
     IInventoryBus Inventory { get; }
     IMagicBus     Magic     { get; }
-    IWorldBus     World     { get; }
     IPawnBus      Pawns     { get; }
-    IPowerBus     Power     { get; } // Introduced in v0.3 §13.1
+    IWorldBus     World     { get; }
 }
 ```
+
+The bus list is canonical per [src/DualFrontier.Contracts/Bus/IGameServices.cs](../../src/DualFrontier.Contracts/Bus/IGameServices.cs).
 
 Advantages:
 

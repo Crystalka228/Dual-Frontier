@@ -3,7 +3,7 @@
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-E-CPP_KERNEL_BRANCH_REPORT
 category: E
-tier: 2
+tier: 3
 lifecycle: Live
 owner: Crystalka
 version: "Live"

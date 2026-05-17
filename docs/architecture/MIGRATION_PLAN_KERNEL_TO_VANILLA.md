@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.3"
+version: "1.4"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
 ---
@@ -208,11 +208,10 @@ The "remaining 7" wording in the old Part 2 row was authored against an out-of-d
 | Inventory | `src/DualFrontier.Systems/Inventory/` | CraftSystem, HaulSystem, InventorySystem | 3 |
 | Magic | `src/DualFrontier.Systems/Magic/` | EtherGrowthSystem, GolemSystem, ManaSystem, RitualSystem, SpellSystem (+ Internal/ManaLease helpers) | 5 |
 | Pawn | `src/DualFrontier.Systems/Pawn/` | ComfortAuraSystem, ConsumeSystem, JobSystem, MoodSystem, MovementSystem, NeedsSystem, PawnStateReporterSystem, SkillSystem, SleepSystem, SocialSystem | 10 |
-| Power | `src/DualFrontier.Systems/Power/` | ConverterSystem, ElectricGridSystem, EtherGridSystem | 3 |
 | World | `src/DualFrontier.Systems/World/` | BiomeSystem, MapSystem, WeatherSystem | 3 |
-| **Total** | | | **34 systems** |
+| **Total** | | | **31 systems** (post-A'.5; was 34 before Power slice deletion) |
 
-The "12 vanilla systems" in the old wording was either a slice-count approximation (7 slices) or an early estimate from a different design era. Real count = 34.
+The "12 vanilla systems" in the old wording was either a slice-count approximation (7 slices) or an early estimate from a different design era. Original count at brief authoring time = 34; post-A'.5 K8.3+K8.4 deletion of the Power slice (ConverterSystem, ElectricGridSystem, EtherGridSystem — see §0.3 Decision #4 closure note above), count = 31.
 
 **Architectural design constraints that K8.3 brief must inherit from this plan**:
 
@@ -458,14 +457,14 @@ Reference table for migration brief authors. Each row is one source slice; the d
 
 | Source slice | Components | Systems | K8.x affecting | Destination mod | M-milestone bucket (v1.2 placeholder) |
 |---|---|---|---|---|---|
-| `Components/Building/` + `Systems/Inventory/` + `Systems/Power/` | 4 (PowerConsumer, PowerProducer, Storage, Workbench) | 6 (CraftSystem, HaulSystem, InventorySystem, ConverterSystem, ElectricGridSystem, EtherGridSystem) | K8.2 + K8.3 | Vanilla.Inventory | M-K bucket (M10) |
+| `Components/Building/` + `Systems/Inventory/` | 2 (Storage, Workbench) | 3 (CraftSystem, HaulSystem, InventorySystem) | K8.2 + K8.3 | Vanilla.Inventory | M-K bucket (M10) |
 | `Components/Combat/` + `Components/Shared/Faction.cs` + `Components/Shared/Health.cs` (partial — see §3.3) + `Systems/Combat/` + `Systems/Faction/` | 4 + 2 partial | 7 + 3 = 10 | K8.2 + K8.3 | Vanilla.Combat (+ Vanilla.Core for Health) | **DEFERRED — excluded from cascade per Q-V-2 + deliberation §4 (v1.2 placeholder: M9)** |
 | `Components/Items/` + `Components/Pawn/` + `Components/Shared/Race.cs` (partial) + `Systems/Pawn/` | 5 + 7 + 1 partial | 10 | K8.2 + K8.3 | Vanilla.Pawn (+ Vanilla.Core for Race) | M-K bucket (M8.5-M8.7) |
 | `Components/Magic/` + `Systems/Magic/` | 4 | 5 (+ helpers) | K8.2 + K8.3 (+ K9 if available) | Vanilla.Magic | M-K bucket K-side (M10.B) + M-V1 reserved V-side (V1 isotropic diffusion demo) |
 | `Components/Shared/Position.cs` (partial — Position is universal) | 1 partial | 0 (no system specific to Position) | K8.2 only | Vanilla.Core (shared) | M-K bucket — incremental in earliest M-K milestone needing it |
 | `Components/World/` + `Systems/World/` | 3 (+ TerrainKind) | 3 | K8.2 + K8.3 | Vanilla.World | M-K bucket (M8.4) |
 
-Total mapping: 31 components + 34 systems → 6 regular vanilla mods + 1 shared (Core). Every component and system has exactly one destination, except the 4 Shared/ components which split between Vanilla.Core (Health, Position, Race) and Vanilla.Combat (Faction, the only Shared/ component that's domain-specific to one mod).
+Total mapping (post-A'.5): 29 components + 31 systems → 6 regular vanilla mods + 1 shared (Core). The original 31 components + 34 systems mapping is reduced by Power-slice deletion: 2 power components (PowerConsumer, PowerProducer) + 3 power systems (ConverterSystem, ElectricGridSystem, EtherGridSystem) + IPowerBus + 4 power events deleted in A'.5 K8.3+K8.4 cutover. Every remaining component and system has exactly one destination, except the 4 Shared/ components which split between Vanilla.Core (Health, Position, Race) and Vanilla.Combat (Faction, the only Shared/ component that's domain-specific to one mod).
 
 ---
 
@@ -695,9 +694,9 @@ Per §7.4, codec layer **consequences** of K8.2 (file path updates, struct vs cl
 
 **Phase A** (4-8 weeks at hobby pace): K8.2 (31 components class→struct in `src/`) → K8.3 (34 systems → SpanLease/WriteBatch in `src/`) → K8.4 (managed World retire, Mod API v3) → K8.5 (Phase A→B handoff: docs + capability annotations + verification).
 
-**Phase B** (5-10 weeks at hobby pace): M8.4 (Vanilla.World) → M8.5-M8.7 (Vanilla.Pawn 3 sub-milestones) → M9 (Vanilla.Combat + Faction) → M10 (Vanilla.Inventory + Power) → M10.B (Vanilla.Magic) → M10.Core (incremental, concurrent throughout) → M10.Cleanup (terminal `src/` directory cleanup).
+**Phase B** (5-10 weeks at hobby pace): M8.4 (Vanilla.World) → M8.5-M8.7 (Vanilla.Pawn 3 sub-milestones) → M9 (Vanilla.Combat + Faction) → M10 (Vanilla.Inventory) → M10.B (Vanilla.Magic) → M10.Core (incremental, concurrent throughout) → M10.Cleanup (terminal `src/` directory cleanup). (Power slice deleted in A'.5; future electricity-like mechanics routed to V substrate per VULKAN_SUBSTRATE.md.)
 
-**Phase C** (per existing roadmap): K9 if not yet closed (Option c places K9 between K8.1 and K8.2, so likely DONE before Phase A begins) → G-series GPU compute → save system implementation.
+**Phase C** (per existing roadmap): K9 if not yet closed (Option c places K9 between K8.1 and K8.2, so likely DONE before Phase A begins) → V substrate primitives (V0/V1/V2 per VULKAN_SUBSTRATE.md §1.1-1.3) → save system implementation.
 
 **Total Phase A+B duration**: 9-18 weeks at hobby pace.
 

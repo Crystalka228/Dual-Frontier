@@ -43,12 +43,12 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 
 | | Value |
 |---|---|
-| **Active phase** | A'.5 K8.3 (production system migration → SpanLease/WriteBatch) → A'.6 K8.4 / A'.7 K8.5 / A'.8 К-closure report / A'.9 architectural analyzer (А'.4 K9 + А'.4.5 Register + A'.1.K + A'.1.M + A'.0.5 + A'.0.7 + К-L3.1 + A'.3 push closed) |
-| **Last completed milestone** | **A'.4.5** (Document Control Register) — 2026-05-12 — synthesized governance framework from 5 industry standards (DO-178C / ISO 9001 / ISO 26262 / IEC 61508 / FDA 21 CFR Part 11; 9 selected / 11 deselected); REGISTER.yaml schema v1.0 with 229 documents enrolled + 13 REQ + 14 RISK + 3 CAPA + 9 EVT; 3 PowerShell tooling scripts at `tools/governance/`; 4 new folders (docs/governance, docs/ideas, docs/mechanics, tools/governance); METHODOLOGY v1.6→v1.7 with §12 register integration + §7.1 7th invocation; closure protocol §12.7 now canonical (this document cross-references). Previous: A'.4 (K9 field storage) — 2026-05-11; A'.1.K (К-L3.1 architecture amendment landing) — 2026-05-10; A'.1.M (A'.0.7 methodology amendment landing) — 2026-05-10; A'.0.7 (methodology pipeline restructure) — 2026-05-10; A'.0.5 (documentation reorganization) — 2026-05-10. |
-| **Next milestone (recommended)** | A'.5 K8.3 (production system migration to SpanLease/WriteBatch — 12+ vanilla systems per migration plan §1.2). **First post-register closure** — exercises Q-A45-X5 post-session protocol; closure verifies CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT effectiveness. |
-| **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8 split into sub-milestones K8.0-K8.5 per K8.0 closure (2026-05-09); K8.2 reformulated as v2 single-milestone foundation closure per `MIGRATION_PLAN_KERNEL_TO_VANILLA.md` v1.0 LOCKED |
-| **Combined estimate** | 9-15 weeks (5-8 kernel + 4-7 runtime) |
-| **Tests passing** | 671 expected post-A'.4 K9 (631 baseline + 27 K9 bridge + 13 K9 capability validation = 671; K9 bridge tests verified 27/27 PASSED 0.92s; native selftest 21 → 29 scenarios verified). Final dotnet test verification at K9 closure. |
+| **Active phase** | Cleanup cascade closing post-A'.5 documentation drift (audit-surfaced 2026-05-16) → A'.6 K8.5 → A'.7 (analyzer; per `PHASE_A_PRIME_SEQUENCING.md` post-renumbering intent) → A'.8 K-closure report (A'.4 K9 + A'.4.5 Register + A'.5 K8.3+K8.4 combined + composite namespace ratification all closed). |
+| **Last completed milestone** | **Cleanup cascade** (CLEANUP_CASCADE_BRIEF) — 2026-05-16 — 16-commit atomic cascade closing 18 of 19 audit findings (DRIFT-001..018, except DRIFT-019 historical residue no-action) on branch `claude/cleanup-cascade`. Previous: **Composite namespace ratification** — 2026-05-16 — Q-G-1 LOCK unified RUNTIME + GPU_COMPUTE into VULKAN_SUBSTRATE.md v1.0; Q-G-2 LOCK reduced G-series → V0/V1/V2; 6 atomic commits per Q-target on `claude/composite-ns-ratification` (commits f3b3d68..ca9483d on main post-merge). Previous: **A'.5 K8.3+K8.4 combined** — 2026-05-14 — single atomic storage cutover (NativeWorld sole production backend; managed `World` retired to `ManagedTestWorld`; Power subsystem deleted; coreSystems 12→10; IModApi v3 strict; 4 commits 24e5f56→fc8ecb6). Previous: A'.4.5 (Document Control Register) — 2026-05-12. Previous: A'.4 (K9 field storage) — 2026-05-11. Previous: A'.1.K (K-L3.1 amendment) + A'.1.M (A'.0.7 amendment) — 2026-05-10. |
+| **Next milestone (recommended)** | A'.6 K8.5 (mod ecosystem migration prep) — pending brief authoring. K8.5 was NOT absorbed into A'.5 (only K8.3+K8.4 were combined). |
+| **Sequencing strategy** | β6 — kernel-first sequential (decided 2026-05-07 per K2 closure); K8.3+K8.4 combined into atomic single-commit storage cutover per Lesson #8 (storage backend is binary, not divisible into N steps with valid intermediates) per A'.5 closure 2026-05-14. |
+| **Combined estimate** | A'.6 K8.5 1-2 weeks hobby pace; A'.7 analyzer 2-3 weeks hobby pace; A'.8 K-closure report 1 week hobby pace. Aggregate to A'.8 close: 4-6 weeks. |
+| **Tests passing** | **620** verified at A'.5 K8.3+K8.4 closure (2026-05-14, commit `fc8ecb6`). Pre-cleanup re-verified 620 green at 2026-05-16 baseline. Cleanup cascade is docs-only; no test impact expected. |
 
 ---
 
@@ -97,9 +97,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 | K8.1.1 | InternedString closure follow-up (cross-pool equality, doc semantics, empty-string coverage) | DONE | 1-3 hours auto-mode | `f8273ca`..`16afdf3` | 2026-05-09 |
 | K-Lessons | Pipeline closure lessons formalization (METHODOLOGY v1.5 + KERNEL v1.3) | DONE | 30-60 min auto-mode | `9df2709`..`071ae11` | 2026-05-09 |
 | K8.2 | K-L3 selective per-component closure (post-K-L3.1 reframing): K8.1 wrapper value-type refactor + 6 class→struct conversions + 6 empty TODO stub deletions + 12 ModAccessible annotation pass | DONE | 6-12 hours auto-mode | `6ee1a85`..`7527d00` (preceded by 3 main commits: `c834f18` migration plan lock, `b1a461e` v1 deprecate, `88cbe3f` v2 brief author) | 2026-05-09 |
-| K8.3 | 12 vanilla systems migrated to SpanLease/WriteBatch | NOT STARTED | 2-3 weeks | — | — |
-| K8.4 | ManagedWorld retired; Mod API v3 ships | NOT STARTED | 1 week | — | — |
-| K8.5 | Mod ecosystem migration prep | NOT STARTED | 3-5 days | — | — |
+| K8.3+K8.4 (combined) | 10 production systems on NativeWorld span/batch; managed `World` retired to `ManagedTestWorld`; Power subsystem deleted; Mod API v3 ships strict | **DONE** | 4 commits, ~14h auto-mode | `24e5f56..fc8ecb6` (atomic cutover at `54c6658`) | 2026-05-14 |
+| K8.5 | Mod ecosystem migration prep | NOT STARTED | 3-5 days | — | — (pending A'.6 brief authoring; K8.3+K8.4 were absorbed into A'.5, not K8.5) |
 | K9 | Field storage abstraction (RawTileField + IModApi v3 Fields wiring) | DONE | 8-12 hours auto-mode | `d163341..<HEAD>` on `feat/k9-field-storage` | 2026-05-10 |
 
 **Cumulative estimate**: 5–8 weeks at hobby pace (~1h/day).
