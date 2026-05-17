@@ -6,13 +6,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.7"
-next_review_due: 2027-05-12
+version: "1.8"
+next_review_due: 2027-05-17
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
+
+*Version: 1.8 (2026-05-17). Lessons #11, #20, #22 formalized at К10 deliberation S6 lock. NEW «Provisional Lessons» section captures candidates pending promotion (9 candidates: #9, #10, #14, #15, #16, #17, #18, #19, #21). Lesson formalization model hybrid: high-confidence lessons promoted immediately when surfaced; low-confidence remain provisional pool, promoted at К-closure report (А'.8) timing per accumulated evidence.*
 
 *Version: 1.7 (2026-05-12). Document Control Register integration per A'.4.5 closure — new §12 specifies the register as governance authority with post-session update protocol (Q-A45-X5); §7.1 «Data exists or it doesn't» extended with seventh formal invocation at the documentation layer (every document either has a register entry or is out-of-scope); §11 «See also» extended with [FRAMEWORK](../governance/FRAMEWORK.md) + [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) links. Closure protocol §12.7 is now canonical (MIGRATION_PROGRESS.md closure protocol section cross-references it).*
 
@@ -416,8 +418,9 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.4 | 2026-05-07 | Post-K3 calibration lesson added к «Native layer methodology adjustments»: brief time estimates from architectural docs assume hobby pace (~1h/day manual typing); auto-mode execution actual time is 5-10x faster. Future briefs must state both hobby-pace и auto-mode estimates explicitly. K0-K3 measured data: 11-17 days hobby estimate vs ~6 hours actual auto-mode. |
 | 1.5 | 2026-05-09 | Added "Pipeline closure lessons (K-series, post-K8.1)" sub-section under "Native layer methodology adjustments" with three lessons formalized from K8.1 and K8.1.1 closures: atomic commit as compilable unit (per K8.1 Phase 5 dependency-cycle bundling, `a62c1f3..059f712`), Phase 0.4 inventory as hypothesis (per K8.1 `Marshalling/` layout reconciliation), mod-scope test isolation (per K8.1.1 Stop condition #3 fix on `EqualsByContent_StaleGeneration_ReturnsFalse`, `fc4400d..63777ef`). |
 | 1.6 | 2026-05-10 | Pipeline restructure rewrite per A'.0.7 — §0 Abstract generalized к architect-executor abstract framing; §2.1 role distribution rewritten в abstract role categories с v1.6 current-configuration table; §2.2 contracts as IPC reframed across context boundaries с three-properties mechanism; §3 economics restructured к invariant + current-configuration с A'.0.5 empirical anchor; §4 throughput parallel-form case studies (Phase 4 closure v1.x + A'.0.5 closure v1.6); §5.2/§5.3 threat model restructured для v1.6 session-mode reality; §9 «degradation as codebase grows» reformulated к pipeline-agnostic; methodology corpus declared agent-as-primary-reader per Q-A07-6. K-Lessons sub-section expanded с A'.0.5 lesson «milestone consolidation under session-mode pipeline» per Q-A07-5. |
-| 1.8 | 2026-05-14 | A'.5 K8.3+K8.4 closure — Lesson #7 (brief prescribing API must transcribe API) + Lesson #8 (brief splitting change into N steps must prove each of N-1 intermediate states is valid) added to K-Lessons sub-section per brief v2.0 §9.4. Both lessons originated in the K8.3+K8.4 combined milestone authoring (v1.0 → patch v1 → v2.0 arc) and were formalized at A'.5 closure. |
+| 1.8 | 2026-05-14 | A'.5 K8.3+K8.4 closure — Lesson #7 (brief prescribing API must transcribe API) + Lesson #8 (brief splitting change into N steps must prove each of N-1 intermediate states is valid) added to K-Lessons sub-section per brief v2.0 §9.4. Both lessons originated in the K8.3+K8.4 combined milestone authoring (v1.0 → patch v1 → v2.0 arc) and were formalized at A'.5 closure. (Note: A'.5 closure added these lessons in-place but did not bump frontmatter version; frontmatter bump к v1.8 actually landed at К10 deliberation S6 lock 2026-05-17 per row below.) |
 | 1.7 | 2026-05-12 | Document Control Register integration per A'.4.5 closure. New §12 specifies the register as governance authority, classification model (Category×Tier×Lifecycle), seven sections, post-session update protocol (Q-A45-X5), and canonical closure protocol §12.7. §7.1 «Data exists or it doesn't» extended with seventh formal invocation (documentation layer: every `.md` either has a register entry or is in `SCOPE_EXCLUSIONS.yaml`; no third option). §11 «See also» extended with [FRAMEWORK](../governance/FRAMEWORK.md) + [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) links. |
+| 1.8 | 2026-05-17 | К10 deliberation S6 lock — Lesson #11 (architectural reduction methodology, 6 strong applications + Q-G-2 composite namespace precedent) + Lesson #20 (tactical heuristics in research framework are category error) + Lesson #22 (read existing code + ask operational context before surfacing architectural concerns) added to «Phase A' lessons» sub-section. NEW «Provisional Lessons» section captures 9 candidates (#9, #10, #14, #15, #16, #17, #18, #19, #21) pending promotion at К-closure report (А'.8) per accumulated evidence. Frontmatter version bumped к 1.8 in this commit (back-fills A'.5 row above). |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -834,6 +837,161 @@ Before a brief prescribes an incremental sequence, the author must walk each int
 **Corollary** (for METHODOLOGY): a brief cannot promise «zero halts»; it can promise «halts before damage». Three halts on the K8.3+K8.4 milestone, zero harmful commits — that is the system working. A brief's honest guarantee is that bad premises surface at Phase 0 / at deep-read / at the compile gate, before they reach `main`. CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT opened by halt 3, closed at v2.0 closure.
 
 **Falsifiable claim**: briefs authored under this lesson will not incur mid-transition-drift halts. Counter-examples (a brief that split an indivisible change and executed cleanly because the executor improvised) would force re-examination — but per the asymmetric failure mode, improvised executions do not validate the brief's split rationale.
+
+#### Lesson #11 — Architectural reduction methodology
+
+When designing mechanism, actively search для reductions where complex setup hides simpler model. Reduction patterns recur consistently в research-framework deliberation work; они shorten architectural surface, dissolve compromises, и preserve invariant integrity. Six strong applications across К10 deliberation arc (2026-05-16 → 2026-05-17) + Q-G-2 composite namespace precedent (2026-05-15) establish empirical foundation.
+
+**Sub-patterns surfaced**:
+
+1. **Reduction by recognizing assumption.** Single-latency display assumption hidden inside К-L16 lock until К-L17 questioned it; multi-layer composition emerged as alternative dissolving Mode C latency compromise.
+
+2. **Reduction by invariant introduction.** К-L18 mod lifecycle quiescent state invariant dissolved coordination machinery — pipeline drain protocol unnecessary because system already quiescent at unload time.
+
+3. **Reduction by ground truth check.** К-L19 hardware tier commitment eliminated defensive abstraction layer — target hardware (AMD RDNA 3, NVIDIA Turing+, Intel Arc) fully supports async compute; designing fallback layer для hypothetical absent capability was over-engineering.
+
+4. **Reduction by recognizing complex setup hides simpler model.** Q-G-2 composite namespace deliberation (2026-05-15) had 6 successive reductions: storage as gameplay metadata, wave shader as gameplay-driven, two-layer model, distribution+navigation unified, CPU/GPU policy decoupled, autonomous=GPU persistent. Final architecture: 3 substrate primitives (V0/V1/V2) instead of original 7 (G0..G6).
+
+5. **Reduction through multi-layer composition.** К-L17 split display tick state by latency tolerance — sim state pipeline-bound, intent overlay sub-tick latency, combat feedback sub-tick. Single-latency assumption dissolved without trading compromise.
+
+6. **Reduction by redistributing complexity к cleaner architectural locus.** К-L15 filter primitive (S2 Q3b hybrid) redistributed cost asymmetrically — cold path preserves К-L7 atomic-from-observer performance, hot path same as naive without abstraction overhead.
+
+**Mental checks к add when designing mechanism**:
+
+- «Is there invariant that makes this mechanism unnecessary?»
+- «Is there assumption I'm making that's not necessary?»
+- «What's the ground truth I haven't verified?»
+- «Can I redistribute complexity к cleaner location?»
+- «Does this dissolve compromise, или just choose which compromise к accept?»
+
+**Application discipline**: when deliberation surfaces architectural mechanism, run mental checks before committing к mechanism design. Reduction patterns не replace proper engineering — sometimes proper engineering choice is correct outcome. But absence of reduction search risks accepting compromise prematurely.
+
+**Falsifiable claim**: K10 implementation (А'.7) and subsequent milestones authored under Lesson #11 discipline will surface fewer late-stage architectural revisions vs milestones without. Counter-example would force re-examination — но pattern recognition during К10 deliberation suggests reduction-aware authoring catches issues earlier.
+
+**Origin**: Q-G-2 composite namespace deliberation 2026-05-15 (first strong application); К10 deliberation 2026-05-16 → 2026-05-17 (6 strong applications). Formalized at S6 lock 2026-05-17.
+
+#### Lesson #20 — Tactical heuristics в research framework (category error)
+
+Tactical heuristics never argue against strategic architectural decisions в decade-horizon research framework. Heuristics like «overengineered», «YAGNI», «premature optimization», «simpler architecture» are appropriate only when goal is shipping speed; они category error когда goal is architectural integrity.
+
+**Refined element 1 — Effort/time cost не argues against architectural completeness**: When horizon is long, distributed-perpetual costs (rent) of architectural compromise outweigh front-loaded migration costs. Quote Crystalka 2026-05-17:
+
+> «Не зачем архитектурно упрощать, если это дорого по времени для реализации, но дает большой плюс на дистанции — то оно того стоит.»
+
+**Refined element 2 — «Simpler architecture» reasoning can be tactical heuristic disguised as architectural argument**: Mental check: «does this dissolve compromise, или just choose which compromise к accept?» Если answer is «choose compromise», argument is tactical. Architectural reasoning addresses **what is being architected**, не **how much effort к invest**.
+
+**Refined element 3 — Default-inclusion bias appropriate для architectural items**: К-L14 explicit application. Burden of proof on **exclusion**, не inclusion. Architectural items dismissed only on specific architectural grounds (invariant violation, principle conflict).
+
+**Refined element 4 — Performance reasoning is tactical; architectural integrity is strategic** (from #17 candidate, merged into #20 per scope): On decade horizons, distributed-perpetual costs of architectural compromise outweigh front-loaded migration costs. Migration motivation must engage с architectural integrity, не just performance optimization.
+
+**Mental check before recommending architectural choice**:
+
+«Am I reasoning from cost, или from correctness?»
+
+- Cost reasoning belongs в product context (shipping speed, resource constraints)
+- Correctness reasoning belongs в research framework context (architectural integrity, invariant preservation)
+
+When goal is research framework, correctness wins.
+
+**Application track record**:
+
+- К-L14 invariant initial formulation (К10 deliberation session 2026-05-16)
+- К10 scope expansion к 25 items (session log §3.10 — Crystalka correction prompted default-inclusion bias adoption)
+- S8-Q3 Pattern (b) adaptive depth initial rejection corrected (this session — «performance optimization, not architectural cleanliness» was tactical-style rejection without considering governor framework framing)
+- S8-Q3 Pattern (d) initial recommendation corrected (this session — «simpler architecture» was tactical heuristic disguised as architectural argument)
+- S8-Q4 Pattern (d) initial recommendation corrected (this session — built complex coordination protocol для problem that doesn't exist under К-L18 invariant)
+
+**Falsifiable claim**: Deliberation sessions conducted under Lesson #20 discipline will surface fewer Lesson #20 violations per session vs sessions without. Counter-example (deliberation following Lesson #20 still surfaces violations as if it weren't formalized) would force re-examination — но pattern recognition в К10 deliberation suggests formalization shifts discourse pattern.
+
+**Origin**: К-L14 invariant formulation 2026-05-16; refined через 3 violations + corrections в К10 S8 deliberation 2026-05-17. Formalized at S6 lock 2026-05-17.
+
+#### Lesson #22 — Read existing code + ask operational context before surfacing architectural concerns
+
+Existing codebase часто имеет answer'ы которые would otherwise re-derive from first principles. Code-first reading reduces surface'ing redundant questions. Operational context (who triggers this, when, under what state) frequently eliminates concerns architectural surface assumes are present. Especially important для mature subsystems (modding, persistence) где multiple migration cycles уже surfaced edge cases.
+
+**Refined element (this session) — extends к «ask about operational context»**: Before designing mechanism для hypothetical concern, verify if operational reality eliminates concern. Operational reality often surfaces invariants that dissolve mechanism need (per Lesson #11 sub-pattern 2 — invariant introduction).
+
+**Mental check before designing mechanism**:
+
+1. «Have I read the existing code в this area?»
+2. «What's the operational context (who triggers this, when, under what state)?»
+3. «Is there ground truth (hardware, target environment, configuration) I should verify?»
+
+If any answer is «no», pause mechanism design и address gap first.
+
+**Application track record**:
+
+- **S3 Mod ALC lifecycle (S3-Q1)** — initially surfaced atomicity granularity options (atomic/incremental/hybrid) as if discussion новая. Crystalka redirected к reading existing `ModIntegrationPipeline.UnloadMod`. Reading revealed substantial existing 7-step chain с pre-pause discipline, best-effort step wrapping, WeakReference spin loop, JIT stack-frame discipline. Re-framed S3 questions accordingly (L1/L2/L3 layering pattern, not redo atomicity from scratch).
+- **К-L18 trigger (S8-Q4)** — built complex (d) two-phase coordination protocol для pipeline drain timing concern. Crystalka surfaced operational reality («mods unload только через settings menu, не во время active simulation»). К-L18 quiescent state invariant emerged; coordination protocol unnecessary.
+- **К-L19 trigger (S8-Q5)** — designed defensive abstraction layer (Pattern (d)) для hypothetical hardware concern. Crystalka surfaced actual hardware (own machine ASUS TUF Gaming A16 «Skarlet» с AMD RX 7600S RDNA 3, target hardware tier supports async compute). К-L19 hardware tier commitment emerged; abstraction layer unnecessary.
+
+**Falsifiable claim**: Deliberation following Lesson #22 discipline will surface fewer «mechanism designed for non-existent problem» corrections vs deliberation without. Counter-example (deliberation that read code и checked operational context still designed for hypothetical concerns) would force re-examination.
+
+**Connection к Lesson #11**: Lesson #22 is **input** к Lesson #11 reduction patterns. Reading code surfaces existing assumptions worth questioning (#11 sub-pattern 1); operational context surfaces invariants (#11 sub-pattern 2); ground truth check eliminates defensive architecture (#11 sub-pattern 3). Both lessons describe complementary deliberation discipline.
+
+**Origin**: Surfaced repeatedly в К10 deliberation 2026-05-17. Formalized at S6 lock 2026-05-17.
+
+### Provisional Lessons
+
+Lessons surfaced but не yet formally promoted к Full Lessons. They are captured here для consultation during future deliberation; promotion к Full Lesson status happens когда application evidence accumulates (typically 3+ strong applications). К-closure report (А'.8) reviews provisional pool и promotes mature candidates.
+
+#### Lesson #9 — Survey phase before brief authoring (provisional)
+
+Architecture recon surveys precede brief authoring когда «fully update LOCKED» arises и scope is undefined. Briefs are for known scope; surveys define scope. Switch authoring → survey mode.
+
+**Application count**: 1 (Architecture Recon 2026-05-15).
+**Promotion gate**: 2+ more strong applications.
+
+#### Lesson #10 — Architecture audit + technical debt inventory in one pass (provisional)
+
+Debt signals where compromise hid architectural truth. Combining audit + debt inventory surfaces both в same documentation pass.
+
+**Application count**: 1 (Architecture Recon 2026-05-15).
+**Promotion gate**: 2+ more strong applications.
+
+#### Lesson #14 — Pre-existing drift cleanup as separate cascade (refined: deferrals must be respected) (provisional)
+
+Pre-existing drift surfaced during prior cleanup gets deferral notes. Subsequent cleanup must respect deferrals, не override them without re-deliberation. Self-consistent governance behavior across cleanup cycles.
+
+**Application count**: 1 strong (DRIFT-016 SC-4 halt in cleanup cascade 2026-05-16).
+**Promotion gate**: 2+ more strong applications.
+
+#### Lesson #15 — Emotional projection avoidance (provisional)
+
+Earlier session lesson. Awaiting more evidence.
+
+#### Lesson #16 — Brief length correlates с deliberation complexity, не execution scope (provisional)
+
+Brief length scales с amount of decision-recording needed, не amount of mechanical work. Comprehensive defensive briefs preferred for context safety across session gaps.
+
+**Application count**: pattern reasonable, applications needed.
+
+#### Lesson #17 — Performance reasoning tactical vs strategic (provisional, may merge с #20)
+
+Performance optimization is tactical; architectural integrity is strategic. Migration motivation must engage с architectural integrity, не just performance.
+
+**Status**: refined elements folded into Lesson #20 «Refined element 4». May merge entirely с #20 at next deliberation.
+
+#### Lesson #18 — Boundary crossing batching pattern (symmetric forward/reverse) (provisional)
+
+When boundary crossing performance is invoked as objection к migration, check if batching pattern from existing layer can extend symmetric direction. Forward batching (managed→native AcquireSpan/BeginBatch precedent) suggests reverse batching (native→managed callback batch) is natural и supported.
+
+**Application count**: 1 strong (.NET 10 + К10 batched callback ABI surface).
+**Promotion gate**: 2+ more strong applications.
+
+#### Lesson #19 — On-demand activation pattern (TickScheduler one wake among many) (provisional)
+
+On-demand activation pattern from OS process scheduling applies к ECS system scheduling. Time-driven и event/state-driven systems both legitimate; scheduler unifies via wake-up registry. Architectural reduction: TickScheduler is one wake source among many, не the sole scheduling mechanism.
+
+**Application count**: 1 (К-L13 candidate, К10 deliberation §3.7).
+**Promotion gate**: 2+ more strong applications.
+
+#### Lesson #21 — Redundancy check before default-inclusion (К-L14 complement) (provisional)
+
+Default-inclusion bias под К-L14 не применяется когда proposed item дублирует функцию existing item. Mental check: «что **уникально** добавляет item к architectural surface?» Если ответ «ничего» — exclude. Complement к Lesson #20 (don't reject on cost grounds), не contradiction.
+
+**Application count**: 1 strong (К9.5 cancellation 2026-05-17).
+**Promotion gate**: 2+ more strong applications.
 
 ### Reference: K0 lessons learned
 
