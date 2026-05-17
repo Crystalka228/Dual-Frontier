@@ -4,7 +4,7 @@
 register_id: DOC-D-CLEANUP_CASCADE_BRIEF
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
 version: "1.0"
 next_review_due: "null"

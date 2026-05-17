@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
+category: A
+tier: 1
+lifecycle: LOCKED
+owner: Crystalka
+version: "2.0"
+next_review_due: 2027-05-17
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
+---
 # Kernel Full Native Scheduler — Architectural Specification
 
 **Version: 2.0 (2026-05-17, this version)** — K10 architectural deliberation complete (all 9 S surfaces ratified). Major amendment per S deliberation arc: К-Lxx invariant series extended 11 → 20 (К-L6 SUPERSEDED + К-L7.1 sub + К-L12-К-L19); К10 scope extended 25 → 46 items; performance predictions restructured §5.1.A К10 + §5.1.B К11+; Q-N surface extended Q-N-1 through Q-N-49+; cross-document amendment list 9 documents; risk register extended с R-K10-6 through R-K10-9; Tier 1 LOCKED status (post-amendment).

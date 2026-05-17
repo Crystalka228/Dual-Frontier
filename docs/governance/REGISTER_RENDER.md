@@ -1,35 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-REGISTER_RENDER
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "1.0"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
----
-# DualFrontier Document Control Register — Rendered View
+﻿# DualFrontier Document Control Register — Rendered View
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-16  |  Schema version: 1.0  |  Register version: 1.4*
+*Last generated: 2026-05-17  |  Schema version: 1.0  |  Register version: 1.5*
 
 ---
 
 ## Statistics
 
-- Total documents: 240
-- Tier 1: 32  |  Tier 2: 14  |  Tier 3: 118  |  Tier 4: 76  |  Tier 5: 0
-- Per category: A=30  |  B=6  |  C=3  |  D=56  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
+- Total documents: 241
+- Tier 1: 33  |  Tier 2: 14  |  Tier 3: 118  |  Tier 4: 76  |  Tier 5: 0
+- Per category: A=31  |  B=6  |  C=3  |  D=56  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
 - Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
 
 ## Table of contents
 
-- [Category A (30 documents)](#category-A)
+- [Category A (31 documents)](#category-A)
 - [Category B (6 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
 - [Category D (56 documents)](#category-D)
@@ -199,6 +187,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Risks referenced**: RISK-001, RISK-002, RISK-003, RISK-004
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
 
+### DOC-A-KERNEL_FULL_NATIVE_SCHEDULER — К10 Native Kernel Scheduler — Architecture Specification
+
+- **Path**: `docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md`
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: 2027-05-17
+- **Special-case rationale**: К10 specification document. Sister к K10_DELIBERATION_STATE.md (Project file, not register-tracked). Major amendment landed 2026-05-17 (v1.0 → v2.0) per К10 deliberation arc — 9 S surfaces ratified, 8 new К-L invariants + 2 sub-invariants (К-L6 SUPERSEDED + К-L7.1 sub + К-L12 through К-L19), 46 items, TLA+ scope. Tier 1 LOCKED status promoted at this enrollment. Requirements (К-L12 through К-L19) not yet enrolled as REQ entries; deferred к К-closure report (А'.8).
+- **Risks referenced**: RISK-002, RISK-003, RISK-004, RISK-013
+
 ### DOC-A-MAX_ENG_REFACTOR_TRACK_B — Track B Activation — Type System Verification
 
 - **Path**: `docs/architecture/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md`
@@ -349,10 +347,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-B-METHODOLOGY — Dual Frontier development methodology
 
 - **Path**: `docs/methodology/METHODOLOGY.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.7
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.8
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
-- **Next review due**: 2027-05-12
+- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: 2027-05-17
 - **Requirements authored**: REQ-Q-A07-6
 - **Risks referenced**: RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014
 - **CAPA referenced**: CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
@@ -491,10 +489,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-D-CLEANUP_CASCADE_BRIEF — Cleanup Cascade Execution Brief — 18 of 19 audit findings
 
 - **Path**: `tools/briefs/CLEANUP_CASCADE_BRIEF.md`
-- **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
-- **Special-case rationale**: Execution-mode brief addressing 18 of 19 findings from DOC-E-DOCUMENTATION_DRIFT_AUDIT_REPORT (DRIFT-019 historical residue no-action per audit). Authority chain: audit findings + Crystalka 4 cleanup locks (§1.1-1.4) + VULKAN_SUBSTRATE.md v1.0 LOCKED + SystemExecutionContext.cs/IGameServices.cs/IModApi.cs canonical statements.
+- **Special-case rationale**: Execution-mode brief addressing 18 of 19 findings from DOC-E-DOCUMENTATION_DRIFT_AUDIT_REPORT (DRIFT-019 historical residue no-action per audit; DRIFT-016 HALTED per CLEANUP_CASCADE_BRIEF §4 SC-4 — Q-K-1 A'-cycle renumbering deferral surfaced to Crystalka for K8.5-brief-time decision). Authority chain: audit findings + Crystalka 4 cleanup locks (§1.1-1.4) + VULKAN_SUBSTRATE.md v1.0 LOCKED + SystemExecutionContext.cs/IGameServices.cs/IModApi.cs canonical statements.
 
 ### DOC-D-COMPOSITE_NAMESPACE_RATIFICATION_BRIEF — Composite Milestone Namespace — Ratification Execution Brief
 
@@ -1984,5 +1982,6 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | 2026-05-13 | K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation | governance_event | f7e6d52..6c79914 |
 | 2026-05-14 | A'.5 K8.3+K8.4 combined milestone v2.0 closure — atomic storage cutover landed; managed World retired from production | execution_milestone | 24e5f56..PENDING-COMMIT-4 |
 | 2026-05-16 | Cleanup cascade closing 18 of 19 audit findings; 5 CAPAs opened+closed within same governance event; DRIFT-016 halted per SC-4 | governance_event | e68d799..PENDING-COMMIT-16 |
+| 2026-05-17 | К10 deliberation amendments application — METHODOLOGY v1.8 + KERNEL_FULL_NATIVE_SCHEDULER v2.0 landed; new Tier 1 LOCKED enrollment | amendment_landing | 8c3cf5a..PENDING-COMMIT-5 |
 
 
