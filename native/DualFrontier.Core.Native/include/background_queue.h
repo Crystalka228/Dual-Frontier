@@ -74,6 +74,64 @@ DF_API int32_t df_background_queue_saturation_events(void);
 // is exercised by dispatch.
 DF_API int32_t df_background_queue_force_coalesce(void);
 
+// =========================================================================
+// K10.2 Item 31 — Save-integrated storage (S3-Q3 untargeted persistence)
+// =========================================================================
+//
+// Saves the pending background queue к a caller-provided buffer; loads from
+// the same wire format. Saved events are available к subscribers in any
+// future session (S3-Q4 untargeted persistence — events aren't queued
+// specifically для unloading mod's subscribers; allows mod replacement
+// pattern).
+//
+// Wire format (К10.2 schema version 1):
+//   Header (12 bytes):
+//     - uint32 schema_version            (currently 1)
+//     - uint32 event_count
+//     - uint32 total_payload_bytes
+//   Event records (variable, repeated event_count times):
+//     - uint32 type_id
+//     - uint32 coalesce_key
+//     - uint32 payload_size
+//     - byte[] payload (payload_size bytes)
+//
+// Cross-version compatibility (per Q-N-44 + R-K10-6 risk mitigation):
+// schema version field allows older readers к detect newer formats and
+// emit a warning (graceful degradation rather than silent corruption).
+// Future schema extensions (e.g. per-event timestamps) increment the
+// version и add fields после existing fields.
+
+// Computes the bytes required к serialize the current pending queue.
+// Returns 1 on success; out_required_bytes filled с the buffer size needed.
+DF_API int32_t df_background_queue_compute_save_size(uint32_t* out_required_bytes);
+
+// Serializes the pending background queue к the supplied buffer. The buffer
+// must be at least the size returned by df_background_queue_compute_save_size.
+// Returns 1 on success; out_bytes_written filled.
+DF_API int32_t df_background_queue_serialize(
+    void*     out_buffer,
+    uint32_t  buffer_size,
+    uint32_t* out_bytes_written);
+
+// Deserializes pending events from a buffer (typically loaded from save).
+// Replaces the current pending queue (caller is responsible for calling
+// during quiescent state per К-L18 — save/load lifecycle pauses simulation).
+// Returns 1 on success; out_events_loaded filled с count.
+// Returns 0 with no state mutation if buffer is malformed.
+//
+// Behavior on schema version mismatch:
+//   - Schema version > current supported (1): returns 0 (caller logs warning).
+//   - Schema version < current supported: not yet defined (К10.2 ships v1
+//     as initial schema; downgrades are not supported and reserved by
+//     R-K10-6 mitigation).
+DF_API int32_t df_background_queue_deserialize(
+    const void* buffer,
+    uint32_t    buffer_size,
+    uint32_t*   out_events_loaded);
+
+// Schema version constant — К10.2 ships v1.
+#define DF_BG_QUEUE_SCHEMA_VERSION 1u
+
 #ifdef __cplusplus
 }
 #endif

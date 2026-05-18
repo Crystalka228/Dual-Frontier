@@ -1967,6 +1967,88 @@ void scenario_bg_queue_idle_slot_budget_partial_dispatch() {
     df_event_type_registry_clear();
 }
 
+// ===== K10.2 Item 31 — background queue save-integrated storage =====
+
+void scenario_bg_queue_serialize_deserialize_roundtrip() {
+    std::printf("scenario_bg_queue_serialize_deserialize_roundtrip\n");
+    df_bus_clear();
+    df_event_type_registry_clear();
+
+    const uint32_t type_id = 0xC0FFEE10u;
+    df_event_type_registry_register(
+        type_id, /*Background*/2, sizeof(int32_t), "Test.Bg.Save", coalesce_sum_int32_bg);
+    df_bus_subscribe_background(type_id, /*mod_id=*/800u, &test_background_subscriber, nullptr);
+
+    // Publish 3 events с unique coalesce keys
+    int32_t v1 = 11, v2 = 22, v3 = 33;
+    df_bus_publish_background(type_id, &v1, sizeof(v1), 10u);
+    df_bus_publish_background(type_id, &v2, sizeof(v2), 20u);
+    df_bus_publish_background(type_id, &v3, sizeof(v3), 30u);
+
+    // Compute size + serialize
+    uint32_t required = 0;
+    DF_CHECK(df_background_queue_compute_save_size(&required) == 1, "compute size succeeds");
+    DF_CHECK(required >= 12u, "header at minimum 12 bytes"); // header
+
+    std::vector<uint8_t> buffer(required);
+    uint32_t written = 0;
+    DF_CHECK(df_background_queue_serialize(buffer.data(), required, &written) == 1, "serialize succeeds");
+    DF_CHECK(written == required, "bytes written matches computed size");
+
+    // Drain (verify queue is empty)
+    df_bus_clear();
+    uint32_t after_clear_count = 0;
+    df_background_queue_size(&after_clear_count, nullptr);
+    DF_CHECK(after_clear_count == 0, "queue empty after clear");
+
+    // Re-subscribe (clear wipes subscribers too); register event type
+    df_event_type_registry_register(
+        type_id, /*Background*/2, sizeof(int32_t), "Test.Bg.Save", coalesce_sum_int32_bg);
+    df_bus_subscribe_background(type_id, /*mod_id=*/800u, &test_background_subscriber, nullptr);
+
+    // Deserialize
+    uint32_t loaded = 0;
+    DF_CHECK(df_background_queue_deserialize(buffer.data(), written, &loaded) == 1, "deserialize succeeds");
+    DF_CHECK(loaded == 3, "3 events loaded");
+
+    uint32_t after_load_count = 0;
+    df_background_queue_size(&after_load_count, nullptr);
+    DF_CHECK(after_load_count == 3, "3 events in queue после load");
+
+    df_bus_clear();
+    df_event_type_registry_clear();
+}
+
+void scenario_bg_queue_deserialize_schema_mismatch_rejected() {
+    std::printf("scenario_bg_queue_deserialize_schema_mismatch_rejected\n");
+    df_bus_clear();
+
+    // Header с schema version 999 (unsupported) + zero events
+    uint8_t buffer[12] = {0};
+    buffer[0] = 0xE7;  // 999 little-endian = 0x03E7
+    buffer[1] = 0x03;
+    // event_count + total_payload_bytes already 0
+
+    uint32_t loaded = 999;
+    int32_t rc = df_background_queue_deserialize(buffer, sizeof(buffer), &loaded);
+    DF_CHECK(rc == 0, "deserialize fails on schema version mismatch");
+
+    df_bus_clear();
+}
+
+void scenario_bg_queue_deserialize_malformed_returns_zero() {
+    std::printf("scenario_bg_queue_deserialize_malformed_returns_zero\n");
+    df_bus_clear();
+
+    // Buffer too short для header
+    uint8_t short_buf[4] = {0};
+    uint32_t loaded = 999;
+    int32_t rc = df_background_queue_deserialize(short_buf, sizeof(short_buf), &loaded);
+    DF_CHECK(rc == 0, "deserialize fails when buffer truncated");
+
+    df_bus_clear();
+}
+
 void scenario_bg_queue_saturation_drop_oldest() {
     std::printf("scenario_bg_queue_saturation_drop_oldest\n");
     df_bus_clear();
@@ -2128,6 +2210,9 @@ int main() {
     scenario_bg_queue_different_keys_not_coalesced();
     scenario_bg_queue_idle_slot_budget_partial_dispatch();
     scenario_bg_queue_saturation_drop_oldest();
+    scenario_bg_queue_serialize_deserialize_roundtrip();
+    scenario_bg_queue_deserialize_schema_mismatch_rejected();
+    scenario_bg_queue_deserialize_malformed_returns_zero();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

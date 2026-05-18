@@ -171,6 +171,118 @@ DF_API int32_t df_background_queue_saturation_events(void) {
     return policy().saturation_count.load(std::memory_order_relaxed);
 }
 
+// =========================================================================
+// K10.2 Item 31 — Save-integrated storage (S3-Q3 untargeted persistence)
+// =========================================================================
+
+namespace {
+
+// Header bytes per Item 31 wire format (К10.2 schema v1)
+constexpr uint32_t HEADER_BYTES         = 12;
+constexpr uint32_t EVENT_FIXED_BYTES    = 12;  // type_id + coalesce_key + payload_size
+
+void write_u32(uint8_t* dst, uint32_t v) {
+    dst[0] = static_cast<uint8_t>(v & 0xFFu);
+    dst[1] = static_cast<uint8_t>((v >> 8) & 0xFFu);
+    dst[2] = static_cast<uint8_t>((v >> 16) & 0xFFu);
+    dst[3] = static_cast<uint8_t>((v >> 24) & 0xFFu);
+}
+
+uint32_t read_u32(const uint8_t* src) {
+    return static_cast<uint32_t>(src[0])
+        | (static_cast<uint32_t>(src[1]) << 8)
+        | (static_cast<uint32_t>(src[2]) << 16)
+        | (static_cast<uint32_t>(src[3]) << 24);
+}
+
+} // namespace
+
+DF_API int32_t df_background_queue_compute_save_size(uint32_t* out_required_bytes) {
+    if (out_required_bytes == nullptr) return 0;
+    auto& bus = dualfrontier::BusNative::instance();
+    std::lock_guard<std::mutex> bus_lock(bus.mutex());
+    const auto& q = bus.pending_background_unsafe();
+    uint64_t total = HEADER_BYTES;
+    for (const auto& ev : q) {
+        total += EVENT_FIXED_BYTES + ev.payload.size();
+    }
+    if (total > UINT32_MAX) return 0;
+    *out_required_bytes = static_cast<uint32_t>(total);
+    return 1;
+}
+
+DF_API int32_t df_background_queue_serialize(
+    void* out_buffer, uint32_t buffer_size, uint32_t* out_bytes_written)
+{
+    if (out_buffer == nullptr || out_bytes_written == nullptr) return 0;
+    auto& bus = dualfrontier::BusNative::instance();
+    std::lock_guard<std::mutex> bus_lock(bus.mutex());
+    const auto& q = bus.pending_background_unsafe();
+
+    uint64_t required = HEADER_BYTES;
+    uint32_t total_payload = 0;
+    for (const auto& ev : q) {
+        required += EVENT_FIXED_BYTES + ev.payload.size();
+        total_payload += static_cast<uint32_t>(ev.payload.size());
+    }
+    if (required > buffer_size) return 0;
+
+    uint8_t* p = static_cast<uint8_t*>(out_buffer);
+    write_u32(p,     DF_BG_QUEUE_SCHEMA_VERSION); p += 4;
+    write_u32(p,     static_cast<uint32_t>(q.size())); p += 4;
+    write_u32(p,     total_payload); p += 4;
+
+    for (const auto& ev : q) {
+        write_u32(p, ev.type_id);      p += 4;
+        write_u32(p, ev.coalesce_key); p += 4;
+        write_u32(p, static_cast<uint32_t>(ev.payload.size())); p += 4;
+        if (!ev.payload.empty()) {
+            std::memcpy(p, ev.payload.data(), ev.payload.size());
+            p += ev.payload.size();
+        }
+    }
+    *out_bytes_written = static_cast<uint32_t>(required);
+    return 1;
+}
+
+DF_API int32_t df_background_queue_deserialize(
+    const void* buffer, uint32_t buffer_size, uint32_t* out_events_loaded)
+{
+    if (buffer == nullptr) return 0;
+    if (buffer_size < HEADER_BYTES) return 0;
+    const uint8_t* p = static_cast<const uint8_t*>(buffer);
+    const uint8_t* end = p + buffer_size;
+
+    uint32_t schema   = read_u32(p); p += 4;
+    uint32_t count    = read_u32(p); p += 4;
+    uint32_t total_pl = read_u32(p); p += 4;
+    (void)total_pl;
+    if (schema != DF_BG_QUEUE_SCHEMA_VERSION) return 0;  // unsupported version
+
+    std::vector<dualfrontier::PendingBackgroundEventRecord> loaded;
+    loaded.reserve(count);
+    for (uint32_t i = 0; i < count; ++i) {
+        if (end - p < static_cast<ptrdiff_t>(EVENT_FIXED_BYTES)) return 0;
+        uint32_t type_id      = read_u32(p); p += 4;
+        uint32_t coalesce_key = read_u32(p); p += 4;
+        uint32_t payload_size = read_u32(p); p += 4;
+        if (end - p < static_cast<ptrdiff_t>(payload_size)) return 0;
+        dualfrontier::PendingBackgroundEventRecord ev;
+        ev.type_id      = type_id;
+        ev.coalesce_key = coalesce_key;
+        ev.payload.assign(p, p + payload_size);
+        p += payload_size;
+        loaded.push_back(std::move(ev));
+    }
+
+    auto& bus = dualfrontier::BusNative::instance();
+    std::lock_guard<std::mutex> bus_lock(bus.mutex());
+    auto& q = bus.pending_background_unsafe();
+    q = std::move(loaded);
+    if (out_events_loaded) *out_events_loaded = count;
+    return 1;
+}
+
 DF_API int32_t df_background_queue_force_coalesce(void) {
     auto& bus = BusNative::instance();
     auto& cfg = policy();
