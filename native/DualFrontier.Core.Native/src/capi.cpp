@@ -16,6 +16,7 @@
 #include "managed_callback.h"
 #include "scheduling_policies.h"
 #include "shm_region.h"
+#include "state_change_filter.h"
 #include "string_pool.h"
 #include "system_graph.h"
 #include "thread_pool.h"
@@ -1102,6 +1103,71 @@ DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out
 
 DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id) {
     return dualfrontier::default_wake_registry().wake_subscriptions_for(system_id);
+}
+
+// =============================================================================
+// K10.1 Item 17 — write-through hook (state change filter).
+// =============================================================================
+
+DF_API int32_t df_state_filter_may_have_subscribers(uint32_t component_type_id) {
+    return dualfrontier::default_state_change_filter()
+        .may_have_subscribers(component_type_id) ? 1 : 0;
+}
+
+DF_API int32_t df_state_filter_has_entity_specific_subscriber(
+    uint32_t component_type_id, uint32_t entity_id) {
+    return dualfrontier::default_state_change_filter()
+        .has_entity_specific_subscriber(component_type_id, entity_id) ? 1 : 0;
+}
+
+DF_API int32_t df_state_filter_subscribe_type(
+    uint32_t component_type_id, uint32_t subscriber_system_id) {
+    dualfrontier::default_state_change_filter()
+        .subscribe_type(component_type_id, subscriber_system_id);
+    return 1;
+}
+
+DF_API int32_t df_state_filter_subscribe_entity(
+    uint32_t component_type_id, uint32_t entity_id, uint32_t subscriber_system_id) {
+    dualfrontier::default_state_change_filter()
+        .subscribe_entity(component_type_id, entity_id, subscriber_system_id);
+    return 1;
+}
+
+DF_API int32_t df_state_filter_unsubscribe_type(
+    uint32_t component_type_id, uint32_t subscriber_system_id) {
+    dualfrontier::default_state_change_filter()
+        .unsubscribe_type(component_type_id, subscriber_system_id);
+    return 1;
+}
+
+DF_API int32_t df_state_filter_unsubscribe_entity(
+    uint32_t component_type_id, uint32_t entity_id, uint32_t subscriber_system_id) {
+    dualfrontier::default_state_change_filter()
+        .unsubscribe_entity(component_type_id, entity_id, subscriber_system_id);
+    return 1;
+}
+
+DF_API int32_t df_state_filter_type_wide_subscriber_count(uint32_t component_type_id) {
+    return dualfrontier::default_state_change_filter()
+        .type_wide_subscriber_count(component_type_id);
+}
+
+DF_API int32_t df_state_filter_entity_subscriber_count(uint32_t component_type_id) {
+    return dualfrontier::default_state_change_filter()
+        .entity_subscriber_count(component_type_id);
+}
+
+DF_API void df_state_filter_clear(void) {
+    dualfrontier::default_state_change_filter().clear();
+}
+
+DF_API void df_native_world_commit_hook(uint32_t component_type_id, uint32_t entity_id) {
+    try {
+        dualfrontier::df_native_world_commit_hook_impl(component_type_id, entity_id);
+    } catch (...) {
+        // swallow — commit hook must not throw к caller
+    }
 }
 
 // =============================================================================

@@ -687,6 +687,30 @@ DF_API int32_t df_scheduler_set_phase_barrier(int32_t phase_index, int32_t barri
 DF_API int32_t df_scheduler_get_phase_barrier(int32_t phase_index);
 
 /*
+ * K10.1 Item 17 — Write-through hook (state change filter, S2 hybrid).
+ *
+ * Two-level filter (Level 1 atomic bitset + Level 2 sparse hint) backs the
+ * NativeWorld.WriteBatch.Commit hook. К-L7 atomic-from-observer preserved
+ * (hook fires at commit time, not per-write).
+ */
+DF_API int32_t df_state_filter_may_have_subscribers(uint32_t component_type_id);
+DF_API int32_t df_state_filter_has_entity_specific_subscriber(uint32_t component_type_id, uint32_t entity_id);
+
+DF_API int32_t df_state_filter_subscribe_type(uint32_t component_type_id, uint32_t subscriber_system_id);
+DF_API int32_t df_state_filter_subscribe_entity(uint32_t component_type_id, uint32_t entity_id, uint32_t subscriber_system_id);
+DF_API int32_t df_state_filter_unsubscribe_type(uint32_t component_type_id, uint32_t subscriber_system_id);
+DF_API int32_t df_state_filter_unsubscribe_entity(uint32_t component_type_id, uint32_t entity_id, uint32_t subscriber_system_id);
+
+DF_API int32_t df_state_filter_type_wide_subscriber_count(uint32_t component_type_id);
+DF_API int32_t df_state_filter_entity_subscriber_count(uint32_t component_type_id);
+
+DF_API void    df_state_filter_clear(void);
+
+// Commit-time write-through hook entrypoint. Caller (NativeWorld batch commit)
+// invokes per committed entity. Internal: cold-path bypass when no subscribers.
+DF_API void    df_native_world_commit_hook(uint32_t component_type_id, uint32_t entity_id);
+
+/*
  * K10.1 Item 15 — Batched callback ABI (К-L12 cross-layer bridge).
  *
  * Native scheduler dispatches managed systems via batched reverse-P/Invoke.

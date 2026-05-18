@@ -1253,6 +1253,61 @@ void batch_capture_cb(const df_managed_system_batch* batch) {
     state->last_ids.assign(batch->system_ids, batch->system_ids + batch->count);
 }
 
+// =============================================================================
+// K10.1 Item 17 — write-through hook (state change filter) scenarios.
+// =============================================================================
+
+void scenario_state_filter_cold_path_bypass() {
+    std::printf("scenario_state_filter_cold_path_bypass\n");
+    df_state_filter_clear();
+    df_wake_registry_clear();
+    // Empty filter — cold path bypass: may_have_subscribers returns false.
+    DF_CHECK(df_state_filter_may_have_subscribers(42) == 0, "no subscribers → bypass");
+    // Hook is a no-op when no subscribers.
+    df_native_world_commit_hook(42, /*entity*/1);
+    DF_CHECK(df_wake_registry_runqueue_size() == 0, "hook adds nothing к runqueue");
+}
+
+void scenario_state_filter_subscribe_and_hook() {
+    std::printf("scenario_state_filter_subscribe_and_hook\n");
+    df_state_filter_clear();
+    df_wake_registry_clear();
+    // Subscribe SystemA type-wide on component 42.
+    DF_CHECK(df_state_filter_subscribe_type(42, /*systemA*/1) == 1, "subscribe type");
+    // Also subscribe к state-change для wake routing.
+    df_wake_registry_subscribe_state(1, 42);
+
+    DF_CHECK(df_state_filter_may_have_subscribers(42) == 1, "filter Level 1 hit");
+    DF_CHECK(df_state_filter_may_have_subscribers(99) == 0, "other types still cold");
+
+    // Commit hook fires wake for SystemA.
+    df_native_world_commit_hook(42, /*entity*/5);
+    DF_CHECK(df_wake_registry_runqueue_size() == 1, "system A in runqueue");
+
+    // Unsubscribe drops the bit.
+    DF_CHECK(df_state_filter_unsubscribe_type(42, 1) == 1, "unsubscribe");
+    DF_CHECK(df_state_filter_may_have_subscribers(42) == 0, "bit cleared");
+}
+
+void scenario_state_filter_entity_specific() {
+    std::printf("scenario_state_filter_entity_specific\n");
+    df_state_filter_clear();
+    df_wake_registry_clear();
+    df_state_filter_subscribe_entity(42, /*entity*/7, /*systemA*/1);
+    DF_CHECK(df_state_filter_may_have_subscribers(42) == 1, "Level 1 hit on entity sub");
+    DF_CHECK(df_state_filter_has_entity_specific_subscriber(42, 7) == 1, "entity 7 specifically");
+    DF_CHECK(df_state_filter_has_entity_specific_subscriber(42, 99) == 0, "entity 99 not");
+    DF_CHECK(df_state_filter_entity_subscriber_count(42) == 1, "1 entity subscriber");
+}
+
+void scenario_state_filter_out_of_range() {
+    std::printf("scenario_state_filter_out_of_range\n");
+    df_state_filter_clear();
+    // Type id ≥ 256 — conservative may_have_subscribers = true.
+    DF_CHECK(df_state_filter_may_have_subscribers(256) == 1, "out-of-range conservative true");
+    DF_CHECK(df_state_filter_may_have_subscribers(0xFFFFFFFFu) == 1, "uint max conservative true");
+}
+
 void scenario_managed_callback_roundtrip() {
     std::printf("scenario_managed_callback_roundtrip\n");
     df_scheduler_clear_managed_callback();
@@ -1603,6 +1658,10 @@ int main() {
     scenario_shm_region_basic();
     scenario_scheduler_affinity_workstealing_barriers();
     scenario_managed_callback_roundtrip();
+    scenario_state_filter_cold_path_bypass();
+    scenario_state_filter_subscribe_and_hook();
+    scenario_state_filter_entity_specific();
+    scenario_state_filter_out_of_range();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
