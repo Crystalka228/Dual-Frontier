@@ -598,3 +598,35 @@ internal struct VkViewport
     internal float minDepth;
     internal float maxDepth;
 }
+
+// ===========================================================================
+// V0.B Commit 10 — Shader module + pipeline shader stage
+// ===========================================================================
+
+// VkShaderModuleCreateInfo (32 bytes per Vulkan 1.3 spec on x64).
+// sType (4) + pad (4) + pNext (8) + flags (4) + pad (4) + codeSize (8 — nuint) + pCode (8) = 40
+// Wait — codeSize is size_t (nuint = 8 on x64). 4+4+8+4+4+8+8 = 40. Brief said 32, my calc says 40.
+// Cross-check via Marshal.SizeOf test.
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkShaderModuleCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeCodeSize;
+    internal nuint codeSize;       // size_t = 8 bytes on x64
+    internal uint* pCode;
+}
+
+// VkPipelineShaderStageCreateInfo (48 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineShaderStageCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkShaderStageFlags stage;
+    internal IntPtr module;
+    internal byte* pName;
+    internal IntPtr pSpecializationInfo;
+}

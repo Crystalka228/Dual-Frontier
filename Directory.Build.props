@@ -12,4 +12,23 @@
     <Company>DualFrontier</Company>
     <Product>Dual Frontier</Product>
   </PropertyGroup>
+
+  <!--
+    V0.B SPIR-V toolchain integration (per S-LOCK-5).
+    Compiles GLSL shaders in tools/shaders/ к SPIR-V in assets/shaders/ before the
+    Runtime project builds. Uses in-repo tools/glslangValidator.exe (committed binary) —
+    developer machine doesn't need VULKAN_SDK installed для shader compilation.
+  -->
+  <Target Name="CompileShaders" BeforeTargets="Build"
+          Condition="'$(MSBuildProjectName)' == 'DualFrontier.Runtime'">
+    <PropertyGroup>
+      <GlslangValidatorExe>$(MSBuildThisFileDirectory)tools\glslangValidator.exe</GlslangValidatorExe>
+      <ShaderSourceDir>$(MSBuildThisFileDirectory)tools\shaders</ShaderSourceDir>
+      <ShaderOutputDir>$(MSBuildThisFileDirectory)assets\shaders</ShaderOutputDir>
+    </PropertyGroup>
+    <MakeDir Directories="$(ShaderOutputDir)" Condition="!Exists('$(ShaderOutputDir)')" />
+    <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\clearcolor.vert&quot; -o &quot;$(ShaderOutputDir)\clearcolor.vert.spv&quot;" />
+    <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\clearcolor.frag&quot; -o &quot;$(ShaderOutputDir)\clearcolor.frag.spv&quot;" />
+    <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\noop.comp&quot; -o &quot;$(ShaderOutputDir)\noop.comp.spv&quot;" />
+  </Target>
 </Project>

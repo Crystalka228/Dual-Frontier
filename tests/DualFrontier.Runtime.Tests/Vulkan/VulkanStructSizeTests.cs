@@ -178,6 +178,24 @@ public sealed class VulkanStructSizeTests
     public void VkViewport_Size_Matches_Spec() => Marshal.SizeOf<VkViewport>().Should().Be(24);
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commits 10-12)
+    // V0.B Commit 10 — Shader module + pipeline shader stage
+    // ============================================================
+
+    [Fact]
+    public void VkShaderModuleCreateInfo_Size_Matches_Spec()
+    {
+        // sType (4) + pad (4) + pNext (8) + flags (4) + pad (4) + codeSize (8 nuint) + pCode (8) = 40
+        Marshal.SizeOf<VkShaderModuleCreateInfo>().Should().Be(40);
+    }
+
+    [Fact]
+    public void VkPipelineShaderStageCreateInfo_Size_Matches_Spec()
+    {
+        // sType (4) + pad (4) + pNext (8) + flags (4) + stage (4) + module (8) + pName (8) + pSpecializationInfo (8) = 48
+        Marshal.SizeOf<VkPipelineShaderStageCreateInfo>().Should().Be(48);
+    }
+
+    // ============================================================
+    // V0.B additions appended per-commit (see brief §3 commits 11-12)
     // ============================================================
 }

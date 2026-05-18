@@ -371,4 +371,18 @@ internal static unsafe partial class VkApi
 
     [LibraryImport(VulkanLib, EntryPoint = "vkDestroySemaphore")]
     internal static partial void vkDestroySemaphore(IntPtr device, IntPtr semaphore, IntPtr pAllocator);
+
+    // =======================================================================
+    // V0.B Commit 10 — Shader module
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateShaderModule")]
+    internal static partial VkResult vkCreateShaderModule(
+        IntPtr device,
+        in VkShaderModuleCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pShaderModule);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyShaderModule")]
+    internal static partial void vkDestroyShaderModule(IntPtr device, IntPtr shaderModule, IntPtr pAllocator);
 }
