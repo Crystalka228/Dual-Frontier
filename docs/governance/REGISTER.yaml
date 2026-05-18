@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "1.7"
+register_version: "1.8"
 last_modified: "2026-05-18"
-last_modified_commit: "PENDING-COMMIT-K8_5-CLOSURE"
+last_modified_commit: "PENDING-COMMIT-K10_1-BRIEF"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -1399,6 +1399,25 @@ documents:
     reviewer: Crystalka
     risks_referenced: [RISK-004]
     special_case_rationale: "Skeleton brief for К10 architectural propagation across 8 dependent documents per KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 Part 7. Awaits full brief authoring at К10 execution closure (А'.7) timing or earlier per Crystalka prioritization."
+
+  - id: DOC-D-K10_1
+    path: tools/briefs/K10_1_EXECUTION_BRIEF.md
+    title: "К10.1 — Kernel Scheduler Core Execution"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-18"
+    last_modified_commit: "PENDING-COMMIT-K10_1-BRIEF"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-18"
+    last_review_event: "К10.1 standalone sub-milestone execution brief authored per К10 deliberation arc closure (Option III ratified 2026-05-18)"
+    next_review_due: "null"
+    reviewer: Crystalka
+    risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
+    special_case_rationale: "К10.1 standalone execution brief — first of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 = kernel scheduler core; К10.2 = native bus + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 17 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.1 Items 1-5, §3.2 Items 6-8, §3.3 Items 9 + 11-13 (Item 10 NUMA deferred к К-extensions), §3.4 Items 15-16 (Item 14 К11+), §3.5 Items 17 + 19-20, §3.7 Item 24. Ratifies К-L6 SUPERSEDED + К-L12/L13/L14 architecturally established at Commit 14 (load-bearing). К10 as whole closes only after К10.4 sub-milestone; К-closure report (А'.8) waits for all four К10 sub-milestones. Brief authored from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified). Distinct from DOC-D-K10_EXECUTION (skeleton brief for original 10-sub-milestone partitioning, retained as historical record under Option III restructuring)."
 
   # === Tier 3 Briefs (Category D) — G-series (AUTHORED, future Phase A'.6+ execution) ===
 
