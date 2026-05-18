@@ -44,6 +44,30 @@ void ThreadPool::submit(Task task) {
     queue_cv_.notify_one();
 }
 
+void ThreadPool::submit_batch(std::vector<Task> tasks) {
+    if (stopping_.load(std::memory_order_acquire)) {
+        throw std::logic_error("ThreadPool::submit_batch called after shutdown");
+    }
+    if (tasks.empty()) {
+        return;
+    }
+    {
+        std::lock_guard<std::mutex> lock(queue_mutex_);
+        for (auto& t : tasks) {
+            task_queue_.push(std::move(t));
+        }
+    }
+    queue_cv_.notify_all();
+}
+
+void ThreadPool::transition_to_scheduler_mode() noexcept {
+    mode_.store(Mode::Scheduler, std::memory_order_release);
+}
+
+void ThreadPool::transition_to_bootstrap_mode() noexcept {
+    mode_.store(Mode::Bootstrap, std::memory_order_release);
+}
+
 void ThreadPool::wait_idle() {
     std::unique_lock<std::mutex> lock(queue_mutex_);
     idle_cv_.wait(lock, [this] {

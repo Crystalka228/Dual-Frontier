@@ -1115,6 +1115,70 @@ void scenario_system_graph_cycle_detection() {
     DF_CHECK(r == -2, "cycle detected (-2)");
 }
 
+// =============================================================================
+// K10.1 Item 2 — thread pool extension scenarios.
+// =============================================================================
+
+void scenario_thread_pool_mode_transition() {
+    std::printf("scenario_thread_pool_mode_transition\n");
+    using namespace dualfrontier;
+    ThreadPool pool(2);
+    DF_CHECK(pool.current_mode() == ThreadPool::Mode::Bootstrap,
+             "default mode is Bootstrap");
+
+    pool.transition_to_scheduler_mode();
+    DF_CHECK(pool.current_mode() == ThreadPool::Mode::Scheduler,
+             "transition к Scheduler mode");
+
+    pool.transition_to_bootstrap_mode();
+    DF_CHECK(pool.current_mode() == ThreadPool::Mode::Bootstrap,
+             "revert к Bootstrap mode");
+    pool.shutdown();
+}
+
+void scenario_thread_pool_submit_batch() {
+    std::printf("scenario_thread_pool_submit_batch\n");
+    using namespace dualfrontier;
+    ThreadPool pool(4);
+    std::atomic<int> counter{0};
+    std::vector<ThreadPool::Task> batch;
+    for (int i = 0; i < 50; ++i) {
+        batch.push_back([&counter]() { counter.fetch_add(1); });
+    }
+    pool.submit_batch(std::move(batch));
+    pool.wait_phase_barrier();
+    DF_CHECK(counter.load() == 50, "all 50 batched tasks executed");
+
+    // Empty batch is a no-op.
+    pool.submit_batch({});
+    pool.wait_phase_barrier();
+
+    pool.shutdown();
+}
+
+void scenario_thread_pool_phase_barrier() {
+    std::printf("scenario_thread_pool_phase_barrier\n");
+    using namespace dualfrontier;
+    ThreadPool pool(2);
+    std::atomic<int> seen{0};
+    // First phase: 10 tasks, all bumping seen by 1.
+    std::vector<ThreadPool::Task> phase1;
+    for (int i = 0; i < 10; ++i) {
+        phase1.push_back([&seen]() { seen.fetch_add(1); });
+    }
+    pool.submit_batch(std::move(phase1));
+    pool.wait_phase_barrier();
+    DF_CHECK(seen.load() == 10, "phase 1 completed before barrier release");
+
+    // Second phase reads pre-barrier value, asserts it.
+    std::atomic<int> observed{-1};
+    pool.submit([&]() { observed.store(seen.load()); });
+    pool.wait_phase_barrier();
+    DF_CHECK(observed.load() == 10, "phase 2 observes phase 1 final state");
+
+    pool.shutdown();
+}
+
 void scenario_system_graph_per_tick_subset() {
     std::printf("scenario_system_graph_per_tick_subset\n");
     df_scheduler_clear();
@@ -1185,6 +1249,9 @@ int main() {
     scenario_system_graph_write_conflict();
     scenario_system_graph_cycle_detection();
     scenario_system_graph_per_tick_subset();
+    scenario_thread_pool_mode_transition();
+    scenario_thread_pool_submit_batch();
+    scenario_thread_pool_phase_barrier();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
