@@ -44,6 +44,9 @@ public sealed class Runtime : IDisposable
 
             runtime.VulkanDevice = new VulkanDevice(runtime.VulkanInstance);
 
+            // V0.B: К-L19 hardware tier fail-fast (Item 44).
+            HardwareCapabilityCheck.Verify(runtime.VulkanInstance, runtime.VulkanDevice);
+
             return runtime;
         }
         catch
