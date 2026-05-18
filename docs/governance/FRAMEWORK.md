@@ -6,8 +6,8 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
+version: "1.1"
+next_review_due: 2027-05-17
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FRAMEWORK
 ---
 # Document Control Register — Governance Framework
@@ -15,6 +15,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FRAMEWORK
 *Project synthesis from DO-178C / ISO 9001 / ISO 26262 / IEC 61508 / FDA 21 CFR Part 11. Bespoke framework fitted to solo-developer + AI-pipeline + decade-horizon planning context.*
 
 *Version: 1.0 (2026-05-12). Schema lock at A'.4.5 closure. Status: AUTHORITATIVE LOCKED.*
+
+*Version: 1.1 (2026-05-17). Schema extension AUTHORED-SKELETON lifecycle added per К10 forward planning skeleton framework. §3.3 eight → nine lifecycle values; §3.3.1 transition matrix extended с four new transitions; §3.4 allowed-combinations matrix updated Category D row; §3.4.1 forbidden combinations extended. Schema version stays 1.0 (minor change, no breaking enum removal); tooling forward-compatible.*
 
 *Authored under agent-as-primary-reader assumption per Q-A07-6 lock 2026-05-10. Provenance for source-standard borrowings documented in [SYNTHESIS_RATIONALE.md](./SYNTHESIS_RATIONALE.md).*
 
@@ -104,7 +106,7 @@ Three orthogonal axes; each answers a different governance question.
 |---|---|---|
 | **Category** (A–J) | What is this content? | Template, voice, audience, organizing folder |
 | **Tier** (1–5) | What governance regime? | Change authority, review cadence, approval gate |
-| **Lifecycle** (8 states) | Can this be cited as authority right now? | Mutability, terminal state, cross-reference rules |
+| **Lifecycle** (9 states) | Can this be cited as authority right now? | Mutability, terminal state, cross-reference rules |
 
 Three-axis classification is **not** fully orthogonal — strong correlations exist between Category-default Tier and allowed Lifecycle states. The allowed-combinations matrix (§3.4) encodes legal combinations; tooling validates.
 
@@ -193,7 +195,7 @@ Tier 4 sub-division (4a/4b/4c per src/tests/mods/native split) deferred to futur
 
 Why Tier 5 needed: ideas cannot fit Tier 1 (not authority), Tier 2 (not state), Tier 3 (not instrument), or Tier 4 (not local). Explicit «not authoritative» tier critical for agent navigation: agent querying «what does the project say about X?» must differentiate authoritative vs aspirational.
 
-### 3.3 Eight lifecycle states
+### 3.3 Nine lifecycle states
 
 | State | Description | Mutability |
 |---|---|---|
@@ -202,37 +204,45 @@ Why Tier 5 needed: ideas cannot fit Tier 1 (not authority), Tier 2 (not state), 
 | **LOCKED** | Change authority via formal amendment milestone only | Restricted mutation |
 | **EXECUTED** | Brief that has been run; historical immutable | Only «Lessons learned» appendable |
 | **AUTHORED** | Brief authored, awaits execution; revisable via patch brief | Patch-brief mutation pattern |
+| **AUTHORED-SKELETON** | Skeleton brief authored — title + scope + sub-milestones + reads + halt + Q-N seeded + closure protocol stub. Awaits full brief authoring at proper milestone timing | Patch-brief mutation pattern; full brief authoring promotes к AUTHORED |
 | **DEPRECATED** | Superseded by successor; retained for historical context | Read-only with cross-reference |
 | **SUPERSEDED** | Replaced by newer version of same logical document | Read-only with cross-reference |
 | **STALE** | Known out-of-date; awaits update or formal archive | Surfaced by audit; not steady state |
+
+The AUTHORED-SKELETON lifecycle (added 2026-05-17 per К10 forward planning skeleton framework brief) captures the upstream state of brief authoring — when the project's forward operational plan is visible in the register before full briefs are authored. Skeletons carry expected scope, sub-milestones, Phase 0 reads, halt conditions, and Q-N seeds; they are revisable via patch brief pattern (precedent: K9_BRIEF_REFRESH_PATCH). Full brief authoring promotes the lifecycle к AUTHORED. Distinguishes from full AUTHORED state where brief is execution-ready.
 
 #### 3.3.1 Transition matrix
 
 Allowed transitions (any not listed = forbidden; tooling validation blocks):
 
 ```
-Draft → Live           (Tier 2 documents finalized for active use)
-Draft → LOCKED         (Tier 1 documents reach first stable version)
-Draft → AUTHORED       (Tier 3 brief authoring complete)
-Draft → EXECUTED       (Tier 3 closure report authored)
+Draft → Live                       (Tier 2 documents finalized for active use)
+Draft → LOCKED                     (Tier 1 documents reach first stable version)
+Draft → AUTHORED                   (Tier 3 brief authoring complete)
+Draft → AUTHORED-SKELETON          (skeleton authored from forward planning)
+Draft → EXECUTED                   (Tier 3 closure report authored)
 
-Live → STALE           (audit flags review overdue)
-Live → DEPRECATED      (live tracker retired; example: PHASE_A_PRIME_SEQUENCING absorbed by MIGRATION_PLAN v1.1)
-Live → SUPERSEDED      (rare; live tracker replaced by new structure)
+Live → STALE                       (audit flags review overdue)
+Live → DEPRECATED                  (live tracker retired; example: PHASE_A_PRIME_SEQUENCING absorbed by MIGRATION_PLAN v1.1)
+Live → SUPERSEDED                  (rare; live tracker replaced by new structure)
 
-LOCKED → SUPERSEDED    (amendment milestone produces new version)
-LOCKED → DEPRECATED    (architectural retirement; rare — example: K8.2 v1 brief)
+LOCKED → SUPERSEDED                (amendment milestone produces new version)
+LOCKED → DEPRECATED                (architectural retirement; rare — example: K8.2 v1 brief)
 
-AUTHORED → EXECUTED    (execution session closes milestone)
-AUTHORED → DEPRECATED  (brief abandoned without execution)
-AUTHORED → SUPERSEDED  (brief replaced by amendment; example: K8.2 v1 → K8.2 v2)
+AUTHORED → EXECUTED                (execution session closes milestone)
+AUTHORED → DEPRECATED              (brief abandoned without execution)
+AUTHORED → SUPERSEDED              (brief replaced by amendment; example: K8.2 v1 → K8.2 v2)
 
-EXECUTED → DEPRECATED  (historical brief no longer reflects authoritative state)
+AUTHORED-SKELETON → AUTHORED       (full brief authoring complete; promotion)
+AUTHORED-SKELETON → DEPRECATED     (skeleton abandoned without promotion)
+AUTHORED-SKELETON → SUPERSEDED     (skeleton replaced by new skeleton; rare)
+
+EXECUTED → DEPRECATED              (historical brief no longer reflects authoritative state)
 EXECUTED → (no further transitions; immutable contract)
 
-STALE → Live           (review completed, document brought up to date)
-STALE → DEPRECATED     (review determines obsolete)
-STALE → SUPERSEDED     (review produces replacement)
+STALE → Live                       (review completed, document brought up to date)
+STALE → DEPRECATED                 (review determines obsolete)
+STALE → SUPERSEDED                 (review produces replacement)
 
 DEPRECATED → (terminal; no transitions out)
 SUPERSEDED → (terminal; no transitions out)
@@ -252,7 +262,7 @@ SUPERSEDED → (terminal; no transitions out)
 | A | 1 | LOCKED, SUPERSEDED, Draft (pre-lock only) | Tier 1 dominant |
 | B | 1 | LOCKED, SUPERSEDED, Draft | Same as A |
 | C | 2 | Live, STALE | STALE flagged by audit |
-| D | 3 | AUTHORED, EXECUTED, DEPRECATED, SUPERSEDED | Brief-specific |
+| D | 3 | AUTHORED-SKELETON, AUTHORED, EXECUTED, DEPRECATED, SUPERSEDED | Brief-specific |
 | E | 3 | EXECUTED, DEPRECATED | Historical immutable on creation |
 | F | 4 | Live, STALE | Updated with source commits |
 | G | 2 | Live | README and index files |
@@ -265,9 +275,13 @@ SUPERSEDED → (terminal; no transitions out)
 Tooling rejects without `special_case_rationale`:
 
 - Tier 1 + Lifecycle AUTHORED («LOCKED-кандидат limbo» not permitted)
+- Tier 1 + Lifecycle AUTHORED-SKELETON (skeletons are briefs Tier 3 only)
+- Tier 2 + Lifecycle AUTHORED-SKELETON (skeletons are briefs Tier 3 only)
 - Tier 3 + Lifecycle LOCKED (briefs aren't LOCKED specs; promote to A/B if authoritative)
-- Tier 5 + Lifecycle STALE (ideas don't stale)
 - Tier 4 + Lifecycle LOCKED (module-local mutable per commit)
+- Tier 4 + Lifecycle AUTHORED-SKELETON (module-local cannot be skeleton)
+- Tier 5 + Lifecycle STALE (ideas don't stale)
+- Tier 5 + Lifecycle AUTHORED-SKELETON (ideas not skeletons)
 - Category D + Tier 1/2/4/5 (briefs are Tier 3)
 - Category E + Tier 1/2/4/5 (closures are Tier 3)
 - Category F + Tier 1/2/3/5 (module-local stays Tier 4)
@@ -697,6 +711,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 | Version | Date | Closure | Change |
 |---|---|---|---|
 | 1.0 | 2026-05-12 | A'.4.5 | Initial framework lock from A'.4.5 deliberation closure |
+| 1.1 | 2026-05-17 | Brief skeleton framework | AUTHORED-SKELETON lifecycle value added per К10 forward planning skeleton framework — §3.3 8→9 states, §3.3.1 transition matrix extended с 4 new transitions, §3.4 Category D row updated, §3.4.1 forbidden combinations extended с 4 entries. Schema version 1.0 preserved (minor extension, no breaking enum removal). |
 
 ---
 
