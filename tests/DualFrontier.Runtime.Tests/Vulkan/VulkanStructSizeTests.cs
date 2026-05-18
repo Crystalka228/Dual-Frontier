@@ -46,6 +46,57 @@ public sealed class VulkanStructSizeTests
     }
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commits 4-12)
+    // V0.B Commit 6 — Memory + buffer + image
+    // ============================================================
+
+    [Fact]
+    public void VkExtent2D_Size_Matches_Spec() => Marshal.SizeOf<VkExtent2D>().Should().Be(8);
+
+    [Fact]
+    public void VkExtent3D_Size_Matches_Spec() => Marshal.SizeOf<VkExtent3D>().Should().Be(12);
+
+    [Fact]
+    public void VkRect2D_Size_Matches_Spec() => Marshal.SizeOf<VkRect2D>().Should().Be(16);
+
+    [Fact]
+    public void VkComponentMapping_Size_Matches_Spec() => Marshal.SizeOf<VkComponentMapping>().Should().Be(16);
+
+    [Fact]
+    public void VkImageSubresourceRange_Size_Matches_Spec() => Marshal.SizeOf<VkImageSubresourceRange>().Should().Be(20);
+
+    [Fact]
+    public void VkMemoryType_Size_Matches_Spec() => Marshal.SizeOf<VkMemoryType>().Should().Be(8);
+
+    [Fact]
+    public void VkMemoryHeap_Size_Matches_Spec() => Marshal.SizeOf<VkMemoryHeap>().Should().Be(16);
+
+    [Fact]
+    public void VkMemoryRequirements_Size_Matches_Spec() => Marshal.SizeOf<VkMemoryRequirements>().Should().Be(24);
+
+    [Fact]
+    public void VkPhysicalDeviceMemoryProperties_Size_Matches_Spec()
+    {
+        // memoryTypeCount (4) + memoryTypes[32 × 8] (256) + memoryHeapCount (4) + memoryHeaps[16 × 16] (256) = 520
+        Marshal.SizeOf<VkPhysicalDeviceMemoryProperties>().Should().Be(520);
+    }
+
+    [Fact]
+    public void VkMemoryAllocateInfo_Size_Matches_Spec()
+    {
+        // sType (4) + pad (4) + pNext (8) + allocationSize (8) + memoryTypeIndex (4) + trailing pad (4) = 32
+        Marshal.SizeOf<VkMemoryAllocateInfo>().Should().Be(32);
+    }
+
+    [Fact]
+    public void VkBufferCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkBufferCreateInfo>().Should().Be(56);
+
+    [Fact]
+    public void VkImageCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkImageCreateInfo>().Should().Be(88);
+
+    [Fact]
+    public void VkImageViewCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkImageViewCreateInfo>().Should().Be(80);
+
+    // ============================================================
+    // V0.B additions appended per-commit (see brief §3 commits 7-12)
     // ============================================================
 }

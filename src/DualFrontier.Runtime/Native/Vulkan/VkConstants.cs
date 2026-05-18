@@ -21,4 +21,8 @@ internal static class VkConstants
     // VkPhysicalDeviceLimits opaque size (Vulkan 1.3 spec on x64)
     internal const int VK_PHYSICAL_DEVICE_LIMITS_SIZE = 504;
     internal const int VK_PHYSICAL_DEVICE_SPARSE_PROPERTIES_SIZE = 20;
+
+    // VkPhysicalDeviceMemoryProperties max array sizes
+    internal const int VK_MAX_MEMORY_TYPES = 32;
+    internal const int VK_MAX_MEMORY_HEAPS = 16;
 }
