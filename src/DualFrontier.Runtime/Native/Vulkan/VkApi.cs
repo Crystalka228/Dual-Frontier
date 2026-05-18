@@ -227,4 +227,28 @@ internal static unsafe partial class VkApi
 
     [LibraryImport(VulkanLib, EntryPoint = "vkQueueWaitIdle")]
     internal static partial VkResult vkQueueWaitIdle(IntPtr queue);
+
+    // =======================================================================
+    // V0.B Commit 8 — Render pass + framebuffer
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateRenderPass")]
+    internal static partial VkResult vkCreateRenderPass(
+        IntPtr device,
+        in VkRenderPassCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pRenderPass);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyRenderPass")]
+    internal static partial void vkDestroyRenderPass(IntPtr device, IntPtr renderPass, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateFramebuffer")]
+    internal static partial VkResult vkCreateFramebuffer(
+        IntPtr device,
+        in VkFramebufferCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pFramebuffer);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyFramebuffer")]
+    internal static partial void vkDestroyFramebuffer(IntPtr device, IntPtr framebuffer, IntPtr pAllocator);
 }

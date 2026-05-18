@@ -387,3 +387,97 @@ internal unsafe struct VkPresentInfoKHR
     internal uint* pImageIndices;
     internal VkResult* pResults;
 }
+
+// ===========================================================================
+// V0.B Commit 8 — Render pass + framebuffer
+// ===========================================================================
+
+// VkAttachmentDescription (36 bytes — 9 × uint32-sized fields, 4-byte aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkAttachmentDescription
+{
+    internal uint flags;
+    internal VkFormat format;
+    internal VkSampleCountFlagBits samples;
+    internal VkAttachmentLoadOp loadOp;
+    internal VkAttachmentStoreOp storeOp;
+    internal VkAttachmentLoadOp stencilLoadOp;
+    internal VkAttachmentStoreOp stencilStoreOp;
+    internal VkImageLayout initialLayout;
+    internal VkImageLayout finalLayout;
+}
+
+// VkAttachmentReference (8 bytes — two uint32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkAttachmentReference
+{
+    internal uint attachment;
+    internal VkImageLayout layout;
+}
+
+// VkSubpassDescription (72 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkSubpassDescription
+{
+    internal uint flags;
+    internal VkPipelineBindPoint pipelineBindPoint;
+    internal uint inputAttachmentCount;
+    internal uint _padBeforeInput;
+    internal VkAttachmentReference* pInputAttachments;
+    internal uint colorAttachmentCount;
+    internal uint _padBeforeColor;
+    internal VkAttachmentReference* pColorAttachments;
+    internal VkAttachmentReference* pResolveAttachments;
+    internal VkAttachmentReference* pDepthStencilAttachment;
+    internal uint preserveAttachmentCount;
+    internal uint _padBeforePreserve;
+    internal uint* pPreserveAttachments;
+}
+
+// VkSubpassDependency (28 bytes — 7 × uint32, 4-byte aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSubpassDependency
+{
+    internal uint srcSubpass;
+    internal uint dstSubpass;
+    internal VkPipelineStageFlags srcStageMask;
+    internal VkPipelineStageFlags dstStageMask;
+    internal VkAccessFlags srcAccessMask;
+    internal VkAccessFlags dstAccessMask;
+    internal VkDependencyFlags dependencyFlags;
+}
+
+// VkRenderPassCreateInfo (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkRenderPassCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint attachmentCount;
+    internal VkAttachmentDescription* pAttachments;
+    internal uint subpassCount;
+    internal uint _padBeforeSubpasses;
+    internal VkSubpassDescription* pSubpasses;
+    internal uint dependencyCount;
+    internal uint _padBeforeDeps;
+    internal VkSubpassDependency* pDependencies;
+}
+
+// VkFramebufferCreateInfo (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkFramebufferCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeRenderPass;
+    internal IntPtr renderPass;
+    internal uint attachmentCount;
+    internal uint _padBeforeAttachments;
+    internal IntPtr* pAttachments;     // VkImageView*
+    internal uint width;
+    internal uint height;
+    internal uint layers;
+    internal uint _padTrailing;
+}

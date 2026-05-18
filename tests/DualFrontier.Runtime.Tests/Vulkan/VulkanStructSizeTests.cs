@@ -122,6 +122,28 @@ public sealed class VulkanStructSizeTests
     }
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commits 8-12)
+    // V0.B Commit 8 — Render pass + framebuffer
+    // ============================================================
+
+    [Fact]
+    public void VkAttachmentDescription_Size_Matches_Spec() => Marshal.SizeOf<VkAttachmentDescription>().Should().Be(36);
+
+    [Fact]
+    public void VkAttachmentReference_Size_Matches_Spec() => Marshal.SizeOf<VkAttachmentReference>().Should().Be(8);
+
+    [Fact]
+    public void VkSubpassDescription_Size_Matches_Spec() => Marshal.SizeOf<VkSubpassDescription>().Should().Be(72);
+
+    [Fact]
+    public void VkSubpassDependency_Size_Matches_Spec() => Marshal.SizeOf<VkSubpassDependency>().Should().Be(28);
+
+    [Fact]
+    public void VkRenderPassCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkRenderPassCreateInfo>().Should().Be(64);
+
+    [Fact]
+    public void VkFramebufferCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkFramebufferCreateInfo>().Should().Be(64);
+
+    // ============================================================
+    // V0.B additions appended per-commit (see brief §3 commits 9-12)
     // ============================================================
 }
