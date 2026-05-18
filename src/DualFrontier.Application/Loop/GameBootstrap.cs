@@ -39,6 +39,18 @@ namespace DualFrontier.Application.Loop;
 /// production component-storage backend; the prior managed <c>World</c>
 /// is gone from production. Power subsystems (ElectricGrid + Converter)
 /// are deleted; <c>coreSystems</c> shrinks from 12 to 10.
+///
+/// K10.1 closure (2026-05-18, Item 16 load-bearing): К-L6 «Game tick
+/// scheduler: Managed» SUPERSEDED by К-L12 «Full native kernel scheduling».
+/// Core systems are registered with the native scheduler graph at startup
+/// (df_scheduler_register_system) so kernel scheduling decisions (graph
+/// construction, runqueue, phase composition) occur in native code per К-L12.
+/// The managed <see cref="ParallelSystemScheduler"/> is retained as the
+/// dispatch adapter facade (per Item 14 «may remain as managed scheduler
+/// adapter facade or be deleted depending on Phase 0 read» clause); К11+
+/// Core-systems-к-native migration absorbs the facade. К10.2 mechanical
+/// dispatch switch routes через the batched callback ABI (Item 15) once
+/// mod ALC lifecycle context surrounds the call sites.
 /// </summary>
 internal static class GameBootstrap
 {
@@ -133,6 +145,39 @@ internal static class GameBootstrap
         foreach (SystemBase s in coreSystems)
             graph.AddSystem(s);
         graph.Build();
+
+        // K10.1 К-L12 — register Core systems with the native scheduler graph.
+        // Native side participates в kernel scheduling decisions (graph
+        // construction, runqueue, per-tick phase composition). The managed
+        // ParallelSystemScheduler below acts as the dispatch adapter facade
+        // per К-L12 cross-layer ABI bridge (К10.2 mechanical dispatch switch
+        // routes через batched callback ABI Item 15 once mod ALC lifecycle
+        // surrounds the call sites). К10.1 baseline: native scheduler knows
+        // about Core systems and can compute graph natively; bit-equivalent
+        // verification of phase composition is exercised в df_native_selftest
+        // scheduler scenarios.
+        SystemGraphInterop.Clear();
+        WakeRegistryInterop.Clear();
+        for (uint i = 0; i < coreSystems.Length; i++)
+        {
+            SystemBase s = coreSystems[i];
+            // К10.1 minimal: register с empty reads/writes (К10.2 will marshal
+            // the [SystemAccess] component type ids к the native registry once
+            // a per-system component-id resolver is wired). Default Priority
+            // class Normal (2), default wake type Timer (0). Existing systems
+            // continue к use [TickRate] via the managed TickScheduler facade.
+            SystemGraphInterop.RegisterSystem(
+                systemId: i,
+                systemFqn: s.GetType().FullName ?? s.GetType().Name,
+                readComponentIds: ReadOnlySpan<uint>.Empty,
+                writeComponentIds: ReadOnlySpan<uint>.Empty,
+                priorityClass: 2,
+                wakeType: 0);
+            // К-L13 default — system woken every tick (TimerWake rate 1) until
+            // [WakeOnEvent/State/Init/Explicit] declarations override.
+            WakeRegistryInterop.SubscribeTimer(i, 1);
+        }
+        SystemGraphInterop.ComputeStaticGraph();
 
         var modLoader = new ModLoader();
         var modRegistry = new ModRegistry();
