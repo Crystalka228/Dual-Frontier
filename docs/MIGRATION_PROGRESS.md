@@ -566,12 +566,13 @@ K-L3.1 + A'.0.7 amendments both LANDED. Phase A' deliberation foundation (A'.0 �
 - **K8.4**: `tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md` (skeleton; partial preview already in place via K8.2 v2 SystemBase NativeWorld plumbing)
 - **K8.5**: `tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md` (skeleton, DEFERRED 2026-05-18 per composite-namespace ratification cascade)
 
-### K10 — Native kernel scheduler (DONE for K10.1; remaining sub-milestones IN PROGRESS)
+### K10 — Native kernel scheduler (DONE for K10.1 + K10.2; remaining sub-milestones IN PROGRESS)
 
-**Brief**: `tools/briefs/K10_1_EXECUTION_BRIEF.md` (К10.1 sub-milestone — kernel scheduler core)
-**Status**: K10.1 = DONE (2026-05-18 closure); K10.2/К10.3/К10.4 = NOT STARTED
-**Commits**: `f439b74..PENDING-COMMIT-K10_1-CLOSURE` (16 atomic commits on `claude/k10_1-kernel-scheduler-core`)
-**Test count**: 620 baseline → 624 (+4 BatchedCallbackTests); df_native_selftest 28 → 58 scenarios
+**Brief**: `tools/briefs/K10_1_EXECUTION_BRIEF.md` + `tools/briefs/K10_2_EXECUTION_BRIEF.md`
+**Status**: K10.1 = DONE (2026-05-18 closure); K10.2 = DONE (2026-05-18 closure); К10.3/К10.4 = NOT STARTED
+**Commits**: К10.1 = `f439b74..PENDING-COMMIT-K10_1-CLOSURE` (16 atomic on `claude/k10_1-kernel-scheduler-core`); К10.2 = `a677388..PENDING-COMMIT-K10_2-CLOSURE` (14 atomic on `claude/k10_2-native-bus-mod-alc`)
+**Test count**: 620 → 624 (K10.1 +4) → 665 (K10.2 +41: 6 ManagedBusBridge + 13 SubscriberContract/FastTierMonitor + 4 KernelCapabilityRegistryTier + 9 ModSubScheduler + 4 ModUnloadInterop + 5 BackgroundQueueInterop)
+**Native selftest**: 28 → 58 (К10.1) → 77 (К10.2) scenarios
 
 K10.1 closure (2026-05-18) ratifies:
 - **К-L6 SUPERSEDED** by К-L12 (KERNEL_ARCHITECTURE.md v1.6 → v2.0)
@@ -579,7 +580,13 @@ K10.1 closure (2026-05-18) ratifies:
 - **К-L13 AUTHORED**: «On-demand system activation (5 wake types: Timer/Event/StateChange/Init/Explicit)»
 - **К-L14 AUTHORED**: «Performance derives from architectural cleanliness»
 
-К10.1 implemented 17 of 46 К10 items. Remaining items distributed across К10.2 (8 items — native bus + mod ALC lifecycle), К10.3 (12 items — pipeline + display + hardware), К10.4 (3 items — TLA+ formal verification). К-series formal closure waits for all four К10 sub-milestones + К-closure report (А'.8). Future К10.2/К10.3/К10.4 briefs authored at execution moment each, informed by К10.1 closure metrics + patterns + lesson candidates.
+K10.2 closure (2026-05-18) ratifies:
+- **К-L15 AUTHORED**: «Native bus authority + three-tier event dispatch (Fast/Normal/Background)» (KERNEL_ARCHITECTURE.md v2.0 → v2.1)
+- MOD_OS_ARCHITECTURE.md v1.8 → v1.9: §3.2 tier-prefixed bus verbs, §9.5 8-step unload chain с Step 3.5, §11.2 new ValidationErrorKinds
+
+К10.1 + К10.2 implemented 25 of 46 К10 items cumulative. Remaining 21 items distributed across К10.3 (12 items — pipeline + display + hardware), К10.4 (3 items — TLA+ formal verification), Item 14 deferred к К11+, Item 25 cross-cutting к А'.8. К-series formal closure waits for all four К10 sub-milestones + К-closure report (А'.8). Future К10.3/К10.4 briefs authored at execution moment each, informed by К10.1 + К10.2 closure metrics + patterns + lesson candidates.
+
+К10.2 strategy «managed-facade-preserved» (К10.1 precedent applied): native bus + Step 3.5 native primitive landed как additive parallel infrastructure; managed bus remains dispatch authority; BusFacade.UseNativeBusForDispatch defaults к false. Sovereign authority switch deferred к К10.4 closure / А'.8.
 
 ---
 

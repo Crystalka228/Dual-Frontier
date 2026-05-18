@@ -6,8 +6,8 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.5"
-next_review_due: 2027-05-10
+version: "2.1"
+next_review_due: 2027-05-18
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL
 ---
 # DualFrontier Kernel — Architecture & Roadmap
