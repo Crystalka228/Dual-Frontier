@@ -39,16 +39,16 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.0"
+    version: "2.1"
     last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K10_1-CLOSURE"
+    last_modified_commit: "PENDING-COMMIT-K10_2-CLOSURE"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-18"
-    last_review_event: "K10.1 closure 2026-05-18 — K-L6 SUPERSEDED + K-L12/L13/L14 AUTHORED + K10 row inserted в Part 2 master plan"
+    last_review_event: "K10.2 closure 2026-05-18 — K-L15 «Native bus authority + three-tier event dispatch» AUTHORED + Part 2 K10 row updated с K10.2 closure annotation"
     next_review_due: "2027-05-18"
     reviewer: Crystalka
-    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14]
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15]
     risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
 
@@ -78,14 +78,14 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.8"
-    last_modified: "2026-05-16"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "1.9"
+    last_modified: "2026-05-18"
+    last_modified_commit: "PENDING-COMMIT-K10_2-CLOSURE"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-10"
-    last_review_event: "K-L3.1 bridge formalization"
-    next_review_due: "2027-05-10"
+    last_review_date: "2026-05-18"
+    last_review_event: "K10.2 closure 2026-05-18 — §3.2 tier-prefixed bus verbs added (S-LOCK-4 per-FQN per-tier); §9.5 unload chain extended 7-step → 8-step с Step 3.5 (df_scheduler_unload_mod_native_state); §11.2 new ValidationErrorKinds added (FastTierContractViolation, BusTierMismatch, BackgroundCoalesceMissing)"
+    next_review_due: "2027-05-18"
     reviewer: Crystalka
     risks_referenced: [RISK-002, RISK-004, RISK-005, RISK-006]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]

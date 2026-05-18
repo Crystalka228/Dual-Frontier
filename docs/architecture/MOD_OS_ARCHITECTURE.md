@@ -293,7 +293,7 @@ The cost is verbose manifests for content-rich mods. The benefit is that a `git 
 - `provider`:
   - `kernel` — provided by `DualFrontier.Contracts` itself.
   - `mod.<modId>` — provided by another loaded mod (typically a shared mod publishing event types).
-- `verb`: one of `publish`, `subscribe`, `read`, `write`, `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch`, `pipeline.register`.
+- `verb`: one of `publish`, `subscribe`, `read`, `write`, `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch`, `pipeline.register`, or **(K10.2)** tier-prefixed bus verbs `fast.publish`, `fast.subscribe`, `normal.publish`, `normal.subscribe`, `background.publish`, `background.subscribe`.
 - `fully-qualified-type-name`: the C# FQN of the event or component type, or the namespaced field/pipeline id for the `field.*` and `pipeline.*` verbs.
 
 The `read` and `write` verbs apply to entity-keyed components (`IComponent`). The `publish` and `subscribe` verbs apply to events (`IEvent`). The `field.*` verbs apply to spatial fields (`RawTileField<T>` per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) K9 — dense 2D grids with conductivity map and storage flags). The `pipeline.register` verb applies to mod-owned compute pipelines registered via `IModApi.ComputePipelines` (§4.6).
@@ -306,6 +306,16 @@ Field verb semantics:
 - `field.conductivity:<id>` — modify the conductivity map (per-cell diffusion coefficient `D`); used by mods that own the field to wire physical infrastructure (wires, pipes).
 - `field.storage:<id>` — modify the per-cell storage flag (capacitance marker); used to designate batteries, tanks, thermal mass cells.
 - `field.dispatch:<id>` — issue a compute dispatch on the field via a registered pipeline. The pipeline itself does not require a separate `pipeline.dispatch` capability — the field-side dispatch verb covers it. Pipelines registered by other mods are reachable through the dependency chain (§3.4).
+
+Bus tier verb semantics (K10.2, per K-L15 + S-LOCK-4):
+
+- `kernel.fast.publish:<FQN>` / `kernel.fast.subscribe:<FQN>` — Fast tier (≤1ms latency target). Synchronous bypass dispatch; bounded execution contract enforced via runtime monitor (`FastTierContractMonitor`).
+- `kernel.normal.publish:<FQN>` / `kernel.normal.subscribe:<FQN>` — Normal tier (batched callback per-phase). К-L7 atomic-from-observer preserved within batch.
+- `kernel.background.publish:<FQN>` / `kernel.background.subscribe:<FQN>` — Background tier (coalesce + idle-slot dispatch). Background tier event types require coalesce function declaration via `[EventTier(BusTier.Background, CoalesceFunctionTypeName = "...")]`; missing declaration emits `BackgroundCoalesceMissing` validation error (§11.2).
+
+**Backward-compatible aliases** (S-LOCK-4): `kernel.publish:<FQN>` / `kernel.subscribe:<FQN>` continue к function for Normal-tier events. Mods authored prior к K10.2 require no manifest changes; tier-explicit tokens are opt-in for Fast/Background tier semantics.
+
+Tier mismatch (manifest declares tier-specific capability но event type's `[EventTier]` attribute names a different tier) is caught at load time via `BusTierMismatch` (§11.2).
 
 ### 3.3 Reserved namespaces
 
@@ -952,6 +962,7 @@ The fine-grained handling of component data from missing mods is delegated to th
 1. `RestrictedModApi.UnsubscribeAll()` — drops bus subscriptions.
 2. `IModContractStore.RevokeAll(modId)` — drops contract registrations.
 3. `ModRegistry.RemoveSystems(modId)` — drops system instances.
+3.5. **(К10.2)** `df_scheduler_unload_mod_native_state(modId)` — native primitive encapsulating T0-T7 internal sequence: clears native scheduler state (subscriber registries per tier, capability registrations, wake registry subscriptions, shared memory registrations); returns `ModUnloadResult` с per-tier metrics. Best-effort sequential per §9.5.1; native primitive internal critical section atomicity (per S3-Q1 L3 layering, single primitive contract per S3-Q6). Also tears down per-mod `ModSubScheduler` (К10.2 Item 21).
 4. The dependency graph is rebuilt without this mod's systems.
 5. The scheduler swaps to the new phase list.
 6. `ALC.Unload()` is called.
@@ -961,7 +972,7 @@ WeakReference-based unload tests are mandatory for every regular mod (§10.4).
 
 ### 9.5.1 Failure semantics
 
-Steps 1–6 of the unload protocol (§9.5) are sequential and best-effort. If any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. After step 6, if step 7 times out, the `ModUnloadTimeout` warning per §9.5 fires; the mod is removed from the active set regardless of whether the assembly actually unloaded.
+Steps 1–6 (including К10.2 Step 3.5 — `df_scheduler_unload_mod_native_state`) of the unload protocol (§9.5) are sequential and best-effort. If any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. After step 6, if step 7 times out, the `ModUnloadTimeout` warning per §9.5 fires; the mod is removed from the active set regardless of whether the assembly actually unloaded.
 
 There is no atomic-unload guarantee. `Unload` is conceptually irreversible: subscriptions removed in step 1 cannot be re-attached without re-running `Subscribe`. The chain is structured so each step is a no-op if its predecessor failed (e.g. `RemoveSystems` on a mod with no registered systems is harmless), making best-effort progression safe. The `ModLoader.UnloadMod` swallowed `try/catch` around `mod.Instance.Unload()` is the canonical example of this discipline, in place since M0.
 
@@ -1063,6 +1074,9 @@ The current enum has `IncompatibleContractsVersion`, `WriteWriteConflict`, `Miss
 - `ComputePipelineRegistrationConflict` (G0) — two mods register a compute pipeline with the same id
 - `ComputeUnsupportedWarning` (G0) — non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Failure modes → CPU fallback"
 - `MissingManagedStorageAttribute` (K-L3.1) — mod calls `RegisterManagedComponent<T>` where T is a class but not annotated with `[ManagedStorage]`, OR mod calls `RegisterComponent<T>` where T is a class (Path α expects `unmanaged struct` shape; class type without `[ManagedStorage]` is shape-attribute mismatch). Active enforcement is load-time runtime check until M3.5 analyzer ships (per K-L3.1 Q5.b deferral); analyzer adds compile-time enforcement.
+- `FastTierContractViolation` (K10.2) — Fast tier subscriber violates bounded-execution contract (K-L15 fast tier latency invariant ≤1ms). Static detection (blocking call in subscriber body, GC allocation hint declared but absent) is a Roslyn analyzer concern deferred к A'.9; K10.2 lands runtime monitor via `FastTierContractMonitor` — per-(modId, eventFqn) violation counter с threshold-breach event.
+- `BusTierMismatch` (K10.2) — manifest declares a tier-specific capability (`kernel.fast.subscribe:{FQN}`, `kernel.background.publish:{FQN}`, etc.) но event type's `[EventTier]` attribute names a different tier. Catches manifest/event-type drift at load time per K-L15 + S-LOCK-4 per-FQN per-tier capability declarations.
+- `BackgroundCoalesceMissing` (K10.2) — Background tier event type is missing its coalesce-function declaration (`[EventTier(BusTier.Background, CoalesceFunctionTypeName = "...")]`). Background tier dispatch requires per-(type_id, coalesce_key) coalesce semantics (Q-N-34 author control); absent declaration is a load-time failure.
 
 ### 11.3 Closing `ROADMAP` debt incidentally
 
