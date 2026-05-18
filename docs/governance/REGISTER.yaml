@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "1.8"
+register_version: "1.9"
 last_modified: "2026-05-18"
-last_modified_commit: "PENDING-COMMIT-K10_1-BRIEF"
+last_modified_commit: "PENDING-COMMIT-K10_1-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -39,17 +39,17 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.5"
-    last_modified: "2026-05-10"
-    last_modified_commit: "2df5921"
+    version: "2.0"
+    last_modified: "2026-05-18"
+    last_modified_commit: "PENDING-COMMIT-K10_1-CLOSURE"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-10"
-    last_review_event: "K-L3.1 bridge formalization 2026-05-10"
-    next_review_due: "2027-05-10"
+    last_review_date: "2026-05-18"
+    last_review_event: "K10.1 closure 2026-05-18 — K-L6 SUPERSEDED + K-L12/L13/L14 AUTHORED + K10 row inserted в Part 2 master plan"
+    next_review_due: "2027-05-18"
     reviewer: Crystalka
-    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11]
-    risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004]
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14]
+    risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
 
   - id: DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
@@ -1405,15 +1405,15 @@ documents:
     title: "К10.1 — Kernel Scheduler Core Execution"
     category: D
     tier: 3
-    lifecycle: AUTHORED
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K10_1-BRIEF"
+    last_modified_commit: "PENDING-COMMIT-K10_1-CLOSURE"
     content_language: mixed
     review_cadence: on-status-transition
     last_review_date: "2026-05-18"
-    last_review_event: "К10.1 standalone sub-milestone execution brief authored per К10 deliberation arc closure (Option III ratified 2026-05-18)"
+    last_review_event: "К10.1 sub-milestone closure 2026-05-18 — 16 atomic commits f439b74..PENDING-COMMIT-K10_1-CLOSURE; K-L6 SUPERSEDED + K-L12/L13/L14 AUTHORED; 17 of 46 K10 items landed; 624 tests green baseline preserved"
     next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
@@ -4080,6 +4080,85 @@ requirements:
     verification_date: null
     verification_milestone: "A'.4.5 closure"
 
+  - id: REQ-K-L12
+    title: "Native kernel scheduling — sovereign per-tick scheduling for kernel-space systems"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L12 (K10.1 AUTHORED)"
+    requirement_text: |
+      Native kernel owns sovereign per-tick scheduling for kernel-space systems (Core).
+      Managed scheduler exists only for user-space (mod) systems within mod ALCs. Kernel
+      scheduling decisions are made natively: dependency graph construction, runqueue
+      maintenance, wake-up dispatch, phase composition, parallelism scheduling, priority
+      arbitration, resource quota enforcement. Cross-layer communication uses C ABI with
+      batched callbacks (managed adapter receives batched managed-system dispatches from
+      kernel scheduler).
+    verified_by:
+      - file: native/DualFrontier.Core.Native/include/system_graph.h
+        test_method: "SystemGraph class + default_scheduler_graph singleton"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "scenario_system_graph_basic_register + linear_chain + write_conflict + cycle_detection + per_tick_subset"
+        verification_type: native_evidence
+      - file: src/DualFrontier.Application/Scheduler/SchedulerAdapter.cs
+        test_method: "Register / DispatchBatch / batched callback ABI"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Core.Tests/Scheduler/BatchedCallbackTests.cs
+        test_method: "all 4 BatchedCallbackTests"
+        verification_type: behavioral
+      - file: src/DualFrontier.Application/Loop/GameBootstrap.cs
+        test_method: "Core systems registered с native scheduler at startup"
+        verification_type: code_inspection
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "K10.1 closure"
+
+  - id: REQ-K-L13
+    title: "On-demand system activation — 5 wake types"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L13 (K10.1 AUTHORED)"
+    requirement_text: |
+      Kernel scheduler activates systems on-demand based on wake-up registration, not by
+      global tick clock. Five wake-up types supported: Timer (periodic by [TickRate]), Event
+      (bus publication subscription), StateChange (component value condition crossing), Init
+      (one-shot at startup), Explicit (API-driven wake by another system). Systems not
+      satisfying any wake condition for current tick remain blocked; only runnable systems
+      enter phase dispatch. Per-tick dependency graph computed on runnable subset.
+    verified_by:
+      - file: native/DualFrontier.Core.Native/include/wake_registry.h
+        test_method: "WakeRegistry class + 5 wake type structs + default_wake_registry"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "scenario_wake_registry_subscription_lifecycle + fire_timer + fire_event_and_state + fire_init_one_shot + fire_explicit"
+        verification_type: native_evidence
+      - file: src/DualFrontier.Contracts/Scheduling/WakeAttributes.cs
+        test_method: "[WakeOnEvent], [WakeOnState], [WakeOnInit], [WakeOnExplicit] attributes"
+        verification_type: code_inspection
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "K10.1 closure"
+
+  - id: REQ-K-L14
+    title: "Performance derives from architectural cleanliness"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L14 (K10.1 AUTHORED)"
+    requirement_text: |
+      Performance is causally derived from clean complex architecture, not traded against
+      simplicity. Each architectural addition that is principled (matches real OS pattern,
+      serves cleanness, satisfies invariant cohesion) increases performance ceiling. Tactical
+      reasoning («overengineered», «YAGNI», «premature optimization») does not argue against
+      strategic architectural completeness in research framework context. Burden of proof on
+      exclusion of architectural items, not inclusion.
+    verified_by:
+      - file: docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md
+        test_method: "Part 2 §2.3 K-L14 verbatim text + rationale"
+        verification_type: spec_inspection
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L14 row (post-K10.1 amendment)"
+        verification_type: spec_inspection
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "K10.1 closure (architecturally established; measurable evidence pending К11+ per S4 lock — К10.1 brief authoring section §6.1 #6 measurement plan)"
+
 # === risks collection (Q11 — 14 entries; pre-authored from Pass 5 §3) ===
 risks:
   - id: RISK-001
@@ -5527,3 +5606,96 @@ audit_trail:
         - CAPA-2026-05-18-K8_5-DRIFT  # opened + closed within this cascade
       risks:
         - RISK-004  # cross-document drift class — register drift sub-case
+
+  - id: EVT-2026-05-18-K10_1-CLOSURE
+    date: "2026-05-18"
+    event: "К10.1 sub-milestone closure — kernel scheduler core (17 of 46 К10 items)"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-K10_1                       # lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL                      # version 1.5 → 2.0 (К-L6 SUPERSEDED + К-L12/L13/L14)
+      - DOC-A-KERNEL_FULL_NATIVE_SCHEDULER # governance_events append (К10.1 closure reference)
+    commits:
+      range: "f439b74..PENDING-COMMIT-K10_1-CLOSURE"
+      key_commits:
+        - hash: "f439b74"
+          summary: "Commit 1 — K10.1 brief enrollment"
+        - hash: "215eb43"
+          summary: "Commit 2 — native test framework decision + smoke"
+        - hash: "d1a94f4"
+          summary: "Commit 3 — Item 1 native dependency graph"
+        - hash: "617db7b"
+          summary: "Commit 4 — Item 2 thread pool extension"
+        - hash: "4ad0bae"
+          summary: "Commit 5 — Item 3 wake registry (5 wake types)"
+        - hash: "5e8f705"
+          summary: "Commit 6 — Item 4 wake registry diagnostic API"
+        - hash: "95e0f6c"
+          summary: "Commit 7 — Item 5 dynamic per-tick graph orchestration"
+        - hash: "9ab169b"
+          summary: "Commit 8 — Items 6+7+8 scheduling policies"
+        - hash: "dbd4a02"
+          summary: "Commit 9 — Item 9 shared memory regions"
+        - hash: "023b1fe"
+          summary: "Commit 10 — Items 11+12+13 affinity + work stealing + barriers"
+        - hash: "80a10a9"
+          summary: "Commit 11 — Item 15 batched callback ABI"
+        - hash: "6772b9d"
+          summary: "Commit 12 — Item 17 write-through hook (S2 hybrid filter)"
+        - hash: "53998df"
+          summary: "Commit 13 — Items 19+20 observability + intrinsics"
+        - hash: "a9ba798"
+          summary: "Commit 14 — Item 16 LOAD-BEARING К-L6 SUPERSEDED + К-L12/L13/L14 amendment"
+        - hash: "ba0cc76"
+          summary: "Commit 15 — Item 24 test infrastructure + ManagedTestScheduler"
+        - hash: "PENDING-COMMIT-K10_1-CLOSURE"
+          summary: "Commit 16 — К10.1 closure (REGISTER + 3 REQ + EVT)"
+    governance_impact: |
+      К10.1 sub-milestone closure under Option III standalone-briefs structure. First of four
+      К10 sub-milestones (К10.1 = kernel scheduler core; К10.2 = native bus + mod ALC lifecycle;
+      К10.3 = pipeline + display + hardware; К10.4 = TLA+ formal verification).
+
+      Implemented 17 of 46 К10 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED:
+      §3.1 Items 1-5 (scheduling primitives), §3.2 Items 6-8 (policies), §3.3 Items 9 +
+      11-13 (memory/IPC; Item 10 NUMA deferred к К-extensions), §3.4 Items 15-16 (native
+      execution layer; Item 14 К11+ deferred), §3.5 Items 17 + 19-20 (state + observability),
+      §3.7 Item 24 (test infrastructure).
+
+      К-L invariant landings (Commit 14 load-bearing):
+      - К-L6 «Game tick scheduler: Managed» SUPERSEDED by К-L12
+      - К-L12 «Full native kernel scheduling» AUTHORED
+      - К-L13 «On-demand system activation (5 wake types)» AUTHORED
+      - К-L14 «Performance derives from architectural cleanliness» AUTHORED
+
+      KERNEL_ARCHITECTURE.md v1.6 → v2.0: К-L invariant table updated; Part 2 К10 row inserted.
+      DOC-A-KERNEL_FULL_NATIVE_SCHEDULER governance_events append с К10.1 closure reference.
+
+      REGISTER amendments:
+      - DOC-D-K10_1 lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL version 1.5 → 2.0
+      - 3 new REQ entries: REQ-K-L12, REQ-K-L13, REQ-K-L14
+      - register_version 1.8 → 1.9
+
+      К10 master closure waits for К10.4 (TLA+); К-series formal closure waits for all four
+      К10 sub-milestones + К-closure report (А'.8).
+
+      Validation metrics (final state):
+      - cmake --build: clean (0 warnings)
+      - df_native_selftest: ALL PASSED (58 scenarios: 28 existing + 30 К10.1 scheduler)
+      - dotnet build: clean (0 warnings, 0 errors)
+      - dotnet test: 624 passed, 0 failed (620 baseline preserved + 4 new BatchedCallbackTests)
+      - sync_register.ps1 --validate: exit 0 (5 advisory orphan warnings, baseline)
+    cross_references:
+      requirements:
+        - REQ-K-L12  # verified at this closure
+        - REQ-K-L13  # verified at this closure
+        - REQ-K-L14  # architecturally established (measurable evidence К11+)
+      risks:
+        - RISK-002  # ABI risk surface — batched callback ABI exercised
+        - RISK-003  # threading risk surface — thread pool extension + mode transition
+        - RISK-004  # cross-document drift — minimal К10.1 amendment surface bounded к KERNEL_ARCHITECTURE.md
+        - RISK-013  # rendering substrate cross-cutting — К10.3 boundary clear
+      lifecycle_transitions:
+        - document: DOC-D-K10_1
+          from: AUTHORED
+          to: EXECUTED

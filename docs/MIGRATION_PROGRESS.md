@@ -564,7 +564,22 @@ K-L3.1 + A'.0.7 amendments both LANDED. Phase A' deliberation foundation (A'.0 �
 
 - **K8.3**: `tools/briefs/K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md` (skeleton; reformulated scope per migration plan §1.2 — all 34 production systems in `src/DualFrontier.Systems/`)
 - **K8.4**: `tools/briefs/K8_4_MANAGED_WORLD_RETIRED_BRIEF.md` (skeleton; partial preview already in place via K8.2 v2 SystemBase NativeWorld plumbing)
-- **K8.5**: `tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md` (skeleton)
+- **K8.5**: `tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md` (skeleton, DEFERRED 2026-05-18 per composite-namespace ratification cascade)
+
+### K10 — Native kernel scheduler (DONE for K10.1; remaining sub-milestones IN PROGRESS)
+
+**Brief**: `tools/briefs/K10_1_EXECUTION_BRIEF.md` (К10.1 sub-milestone — kernel scheduler core)
+**Status**: K10.1 = DONE (2026-05-18 closure); K10.2/К10.3/К10.4 = NOT STARTED
+**Commits**: `f439b74..PENDING-COMMIT-K10_1-CLOSURE` (16 atomic commits on `claude/k10_1-kernel-scheduler-core`)
+**Test count**: 620 baseline → 624 (+4 BatchedCallbackTests); df_native_selftest 28 → 58 scenarios
+
+K10.1 closure (2026-05-18) ratifies:
+- **К-L6 SUPERSEDED** by К-L12 (KERNEL_ARCHITECTURE.md v1.6 → v2.0)
+- **К-L12 AUTHORED**: «Native kernel owns sovereign per-tick scheduling for kernel-space systems»
+- **К-L13 AUTHORED**: «On-demand system activation (5 wake types: Timer/Event/StateChange/Init/Explicit)»
+- **К-L14 AUTHORED**: «Performance derives from architectural cleanliness»
+
+К10.1 implemented 17 of 46 К10 items. Remaining items distributed across К10.2 (8 items — native bus + mod ALC lifecycle), К10.3 (12 items — pipeline + display + hardware), К10.4 (3 items — TLA+ formal verification). К-series formal closure waits for all four К10 sub-milestones + К-closure report (А'.8). Future К10.2/К10.3/К10.4 briefs authored at execution moment each, informed by К10.1 closure metrics + patterns + lesson candidates.
 
 ---
 

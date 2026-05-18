@@ -13,8 +13,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_1
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: K10_1_EXECUTION_BRIEF
-status: AUTHORED
+status: EXECUTED
 authored: 2026-05-18
+executed: 2026-05-18
 author: Claude Opus 4.7 (Crystalka deliberation session)
 target_executor: Claude Code (auto-mode + Crystalka oversight)
 estimated_duration: 12-20 hours auto-mode (К10.1 scope substantial — kernel scheduler core)
@@ -1165,3 +1166,81 @@ PR ready for review. Crystalka:
 К10 as a whole remains AUTHORED-IN-PROGRESS until К10.4 closure. К-series formally closes only after all four К10 sub-milestones + К-closure report (А'.8).
 
 «Halt is success, not failure» per Lesson #8 corollary. The brief's honest guarantee: bad premises surface at Phase 0 / at deep-read / at the compile gate, before they reach `main`.
+
+---
+
+## §8 — Closure (added at brief EXECUTED transition 2026-05-18)
+
+Execution closed 2026-05-18 by Claude Code auto-mode on branch `claude/k10_1-kernel-scheduler-core` from `main` HEAD `a145548`. Final commit lands в Commit 16 (this section + closure REGISTER amendments).
+
+### Commit ledger (commits f439b74..PENDING-COMMIT-K10_1-CLOSURE)
+
+| # | Hash | Commit summary | Items closed |
+|---|---|---|---|
+| 1 | f439b74 | brief authored | DOC-D-K10_1 enrollment |
+| 2 | 215eb43 | native test framework decision + smoke | Item 24 framework decision |
+| 3 | d1a94f4 | Item 1 native dependency graph | Item 1 |
+| 4 | 617db7b | Item 2 thread pool extension | Item 2 |
+| 5 | 4ad0bae | Item 3 wake registry (5 wake types) | Item 3 |
+| 6 | 5e8f705 | Item 4 wake registry diagnostic API | Item 4 |
+| 7 | 95e0f6c | Item 5 per-tick orchestration | Item 5 |
+| 8 | 9ab169b | Items 6+7+8 scheduling policies | Items 6+7+8 |
+| 9 | dbd4a02 | Item 9 shared memory regions | Item 9 |
+| 10 | 023b1fe | Items 11+12+13 affinity + work stealing + barriers | Items 11+12+13 |
+| 11 | 80a10a9 | Item 15 batched callback ABI | Item 15 |
+| 12 | 6772b9d | Item 17 write-through hook (S2 hybrid filter) | Item 17 |
+| 13 | 53998df | Items 19+20 observability + intrinsics | Items 19+20 |
+| 14 | a9ba798 | **Item 16 LOAD-BEARING К-L6 SUPERSEDED + К-L12/L13/L14 amendment** | Item 16 + К-L invariants |
+| 15 | ba0cc76 | Item 24 test infrastructure + ManagedTestScheduler | Item 24 close |
+| 16 | PENDING-COMMIT-K10_1-CLOSURE | governance closure | EVT-K10_1-CLOSURE |
+
+### Verification metrics (final state)
+
+- `git status`: clean working tree on branch `claude/k10_1-kernel-scheduler-core`
+- `sync_register.ps1 --validate`: exit 0 (5 advisory orphan warnings, baseline)
+- `cmake --build`: 0 warnings, 0 errors
+- `dotnet build`: 0 warnings, 0 errors
+- `dotnet test`: 624 passed, 0 failed (620 baseline preserved + 4 new BatchedCallbackTests)
+- `df_native_selftest.exe`: ALL PASSED (58 scenarios — 28 ECS pre-К10.1 + 30 К10.1 scheduler)
+
+### Halt protocol activations
+
+None — К10.1 completed без any SC-N halt firing. Phase 0 pre-flight gates all passed; no SC-1 anchor contradictions; no SC-2 native sync bugs; no SC-3 deep-read contradictions; no SC-4 supersession test regressions; no SC-5 ABI round-trip failures; no SC-6 cross-reference integrity breaks; no SC-7 validation regressions; no SC-8 scope creep into К10.2/К10.3 territory; no SC-9 performance regressions (К-L14 measurable evidence pending К11+ per S4 lock).
+
+### Out-of-scope items deferred
+
+Confirmed per S-LOCK boundaries:
+- К10.2 scope: native bus + mod ALC native primitives (Items 21, 26-32) — future brief
+- К10.3 scope: pipeline depth + display composition + hardware tier (Items 33-44) — future brief
+- К10.4 scope: TLA+ formal verification (Items 18, 45, 46) — future brief
+- Item 14: К11+ Core systems migration к native code (К-L12 sovereign decisions established; sovereign execution bodies are К11+ optional)
+- Item 25: К-closure report (А'.8) — waits for К10.4 closure
+
+### Pattern established
+
+Patterns from К10.1 worth bringing к К10.2/3/4 briefs:
+1. **Custom DF_CHECK selftest pattern** preserved за Lesson #22 — К10.2/3/4 scheduler scenarios continue к extend `selftest.cpp` rather than adopting catch2/gtest. Pattern remains lean.
+2. **Process-global default singletons** (default_scheduler_graph + default_wake_registry + default_scheduling_policies + default_shm_registry + default_state_change_filter + default_scheduler_trace + default_scheduler_intrinsics + default_managed_callback_registry) match OS-faithful «one kernel scheduler per process» model. К10.2 native bus + mod ALC primitives follow this pattern.
+3. **Native-side internal class + C ABI wrapper + managed *Interop wrapper** triple. Pattern shapes consistent across 8 К10.1 modules. К10.2 native bus follows.
+4. **Header decoupling**: keep canonical type definitions in `df_capi.h` (single source). `managed_callback.h` lesson — duplicate typedef caused conflict; fix was `#include "df_capi.h"` not redefine. К10.2/3 watchout.
+5. **ManagedTestScheduler fixture pattern** mirrors ManagedTestWorld. Tests reset native singletons explicitly because process-global state. К10.2 scheduler tests use the same fixture.
+6. **Brief enrollment as Commit 1** (DOC-D-K10_1 lifecycle AUTHORED) per CLEANUP_CASCADE_BRIEF precedent — keeps working tree clean from Commit 2 onwards.
+7. **К-L invariant amendment commit timing** (LOAD-BEARING last) per spec brief Commit 14 placement. All primitives must exist before К-L supersession lands.
+
+### Lesson candidates surfaced
+
+Worth bringing к К10.2 brief authoring deliberation:
+1. **«Pre-built native DLL + checked-in build artifact» as test gate viability** — К10.1 found that cmake/MSVC binaries are not in PATH but VS-bundled cmake at `D:\Visual Studio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe` is functional. К10.2 should formalize this как «Phase 0 hard gate informational check — locate native toolchain» so executor doesn't need к discover ad-hoc.
+2. **Brief Commit 2 «catch2 vs gtest» decision criteria** — Phase 0 read trumps brief tentative. К10.2 brief authoring should default к «match existing pattern» language rather than recommend new framework.
+3. **K-L invariant verbatim transcription** (Lesson #7) — verified across К10.1 commit messages. К-L12 / К-L13 / К-L14 text matches spec verbatim. К10.2 should preserve discipline.
+4. **К-L14 «default-inclusion bias»** held throughout: 5 wake types (not 4-of-5), 3 affinity/work-stealing/barrier items (not deferred individually), batched callback ABI landed despite К11+ being the consumer. Pattern: architectural completeness > tactical effort heuristics.
+5. **Item 14 «К11+ optional» discipline**: К-L12 says native sovereign **scheduling decisions** are made; native sovereign **execution bodies** are К11+ optional. К10.2 should preserve this layering — bus integration + mod ALC primitives are scheduling-decision-adjacent, not execution-body migration.
+
+### К10.2 forward priorities (informational, not authoritative for К10.2 brief authoring)
+
+К10.1 closure leaves К10.2 entry conditions:
+- Native scheduler graph + wake registry + scheduling policies + batched callback ABI + state filter + observability + intrinsics all operational
+- К-L12 / К-L13 / К-L14 invariants AUTHORED and referenced from KERNEL_ARCHITECTURE.md
+- 624 tests baseline; new tests can rely on ManagedTestScheduler fixture
+- К10.2 needs к amend MOD_OS_ARCHITECTURE.md per К-L15 + К-L18; native bus integration + mod ALC lifecycle + write-through hook k NativeWorld.WriteBatch.Commit
+- К10.2 brief authoring informed by К10.1 closure metrics + pattern established + lesson candidates above.
