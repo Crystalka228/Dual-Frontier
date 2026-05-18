@@ -14,6 +14,8 @@
 #include "keyed_map.h"
 #include "set_primitive.h"
 #include "managed_callback.h"
+#include "scheduler_intrinsics.h"
+#include "scheduler_trace.h"
 #include "scheduling_policies.h"
 #include "shm_region.h"
 #include "state_change_filter.h"
@@ -1103,6 +1105,72 @@ DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out
 
 DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id) {
     return dualfrontier::default_wake_registry().wake_subscriptions_for(system_id);
+}
+
+// =============================================================================
+// K10.1 Items 19+20 — observability + scheduler intrinsics.
+// =============================================================================
+
+DF_API void df_scheduler_trace_set_enabled(int32_t enabled) {
+    dualfrontier::default_scheduler_trace().set_enabled(enabled != 0);
+}
+
+DF_API int32_t df_scheduler_trace_enabled(void) {
+    return dualfrontier::default_scheduler_trace().enabled() ? 1 : 0;
+}
+
+DF_API void df_scheduler_trace_push(int32_t event_type, uint32_t arg0, uint32_t arg1,
+                                     int64_t timestamp_micros, int64_t value) {
+    dualfrontier::TraceEvent evt;
+    evt.event_type = event_type;
+    evt.arg0 = arg0;
+    evt.arg1 = arg1;
+    evt.timestamp_micros = timestamp_micros;
+    evt.value = value;
+    dualfrontier::default_scheduler_trace().push(evt);
+}
+
+DF_API int32_t df_scheduler_trace_dump(df_trace_event* out_buffer, int32_t out_capacity) {
+    static_assert(sizeof(df_trace_event) == sizeof(dualfrontier::TraceEvent),
+                  "C ABI trace event layout must match native struct");
+    return dualfrontier::default_scheduler_trace().dump(
+        reinterpret_cast<dualfrontier::TraceEvent*>(out_buffer), out_capacity);
+}
+
+DF_API int32_t df_scheduler_trace_event_count(void) {
+    return dualfrontier::default_scheduler_trace().event_count();
+}
+
+DF_API void df_scheduler_trace_clear(void) {
+    dualfrontier::default_scheduler_trace().clear();
+}
+
+DF_API void df_scheduler_suspend(void) {
+    dualfrontier::default_scheduler_intrinsics().suspend();
+}
+
+DF_API void df_scheduler_resume(void) {
+    dualfrontier::default_scheduler_intrinsics().resume();
+}
+
+DF_API int32_t df_scheduler_is_suspended(void) {
+    return dualfrontier::default_scheduler_intrinsics().is_suspended() ? 1 : 0;
+}
+
+DF_API void df_scheduler_panic_halt(const char* message) {
+    dualfrontier::default_scheduler_intrinsics().panic_halt(message);
+}
+
+DF_API int32_t df_scheduler_is_panic(void) {
+    return dualfrontier::default_scheduler_intrinsics().is_panic() ? 1 : 0;
+}
+
+DF_API int32_t df_scheduler_snapshot(char* out_buffer, int32_t out_capacity) {
+    return dualfrontier::default_scheduler_intrinsics().snapshot(out_buffer, out_capacity);
+}
+
+DF_API void df_scheduler_intrinsics_reset(void) {
+    dualfrontier::default_scheduler_intrinsics().reset();
 }
 
 // =============================================================================

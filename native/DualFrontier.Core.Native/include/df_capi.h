@@ -687,6 +687,43 @@ DF_API int32_t df_scheduler_set_phase_barrier(int32_t phase_index, int32_t barri
 DF_API int32_t df_scheduler_get_phase_barrier(int32_t phase_index);
 
 /*
+ * K10.1 Items 19+20 — Observability hooks + scheduler intrinsics.
+ *
+ * Item 19: lock-free trace ring buffer. Default off (zero overhead).
+ *   Event types match dualfrontier::TraceEventType:
+ *     0=SystemWoken / 1=SystemDispatched / 2=SystemCompleted /
+ *     3=PhaseStarted / 4=PhaseCompleted / 5=QuotaViolation /
+ *     6=FilterHit / 7=FilterMiss
+ *
+ * Item 20: scheduler intrinsics (suspend/resume/panic/snapshot). Used during
+ *   hot reload, state migration, debug snapshots, panic conditions.
+ */
+
+typedef struct {
+    int32_t  event_type;
+    uint32_t arg0;
+    uint32_t arg1;
+    int64_t  timestamp_micros;
+    int64_t  value;
+} df_trace_event;
+
+DF_API void    df_scheduler_trace_set_enabled(int32_t enabled);
+DF_API int32_t df_scheduler_trace_enabled(void);
+DF_API void    df_scheduler_trace_push(int32_t event_type, uint32_t arg0, uint32_t arg1,
+                                        int64_t timestamp_micros, int64_t value);
+DF_API int32_t df_scheduler_trace_dump(df_trace_event* out_buffer, int32_t out_capacity);
+DF_API int32_t df_scheduler_trace_event_count(void);
+DF_API void    df_scheduler_trace_clear(void);
+
+DF_API void    df_scheduler_suspend(void);
+DF_API void    df_scheduler_resume(void);
+DF_API int32_t df_scheduler_is_suspended(void);
+DF_API void    df_scheduler_panic_halt(const char* message);
+DF_API int32_t df_scheduler_is_panic(void);
+DF_API int32_t df_scheduler_snapshot(char* out_buffer, int32_t out_capacity);
+DF_API void    df_scheduler_intrinsics_reset(void);
+
+/*
  * K10.1 Item 17 — Write-through hook (state change filter, S2 hybrid).
  *
  * Two-level filter (Level 1 atomic bitset + Level 2 sparse hint) backs the

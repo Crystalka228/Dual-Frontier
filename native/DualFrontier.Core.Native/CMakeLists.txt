@@ -34,6 +34,8 @@ set(DF_NATIVE_SOURCES
     src/shm_region.cpp
     src/managed_callback.cpp
     src/state_change_filter.cpp
+    src/scheduler_trace.cpp
+    src/scheduler_intrinsics.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -56,6 +58,8 @@ set(DF_NATIVE_HEADERS
     include/phase_barrier.h
     include/managed_callback.h
     include/state_change_filter.h
+    include/scheduler_trace.h
+    include/scheduler_intrinsics.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})

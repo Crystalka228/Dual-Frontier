@@ -1257,6 +1257,59 @@ void batch_capture_cb(const df_managed_system_batch* batch) {
 // K10.1 Item 17 — write-through hook (state change filter) scenarios.
 // =============================================================================
 
+void scenario_scheduler_trace() {
+    std::printf("scenario_scheduler_trace\n");
+    df_scheduler_trace_clear();
+    df_scheduler_trace_set_enabled(0);
+    DF_CHECK(df_scheduler_trace_enabled() == 0, "trace off by default");
+    df_scheduler_trace_push(0, 1, 2, 1000, 50);
+    DF_CHECK(df_scheduler_trace_event_count() == 0, "disabled push ignored");
+
+    df_scheduler_trace_set_enabled(1);
+    DF_CHECK(df_scheduler_trace_enabled() == 1, "trace enabled");
+    df_scheduler_trace_push(/*type*/0, /*arg0*/10, /*arg1*/2, /*ts*/100, /*val*/0);
+    df_scheduler_trace_push(/*type*/1, /*arg0*/10, /*arg1*/0, /*ts*/200, /*val*/50);
+    df_scheduler_trace_push(/*type*/2, /*arg0*/10, /*arg1*/0, /*ts*/300, /*val*/150);
+    DF_CHECK(df_scheduler_trace_event_count() == 3, "3 events recorded");
+
+    df_trace_event buf[8] = {};
+    int32_t n = df_scheduler_trace_dump(buf, 8);
+    DF_CHECK(n == 3, "dump returns 3");
+    // Most-recent first.
+    DF_CHECK(buf[0].event_type == 2 && buf[0].value == 150, "newest = SystemCompleted");
+    DF_CHECK(buf[1].event_type == 1, "next = SystemDispatched");
+    DF_CHECK(buf[2].event_type == 0, "oldest = SystemWoken");
+
+    df_scheduler_trace_clear();
+    DF_CHECK(df_scheduler_trace_event_count() == 0, "cleared");
+    df_scheduler_trace_set_enabled(0);
+}
+
+void scenario_scheduler_intrinsics() {
+    std::printf("scenario_scheduler_intrinsics\n");
+    df_scheduler_intrinsics_reset();
+    DF_CHECK(df_scheduler_is_suspended() == 0, "default not suspended");
+    DF_CHECK(df_scheduler_is_panic() == 0, "default not panic");
+
+    df_scheduler_suspend();
+    DF_CHECK(df_scheduler_is_suspended() == 1, "suspended");
+    df_scheduler_resume();
+    DF_CHECK(df_scheduler_is_suspended() == 0, "resumed");
+
+    df_scheduler_panic_halt("test panic message");
+    DF_CHECK(df_scheduler_is_panic() == 1, "panic latched");
+    DF_CHECK(df_scheduler_is_suspended() == 1, "panic implies suspend");
+
+    char snap[256] = {0};
+    int32_t bytes = df_scheduler_snapshot(snap, 256);
+    DF_CHECK(bytes > 0, "snapshot wrote bytes");
+    DF_CHECK(std::strstr(snap, "K10.1") != nullptr, "snapshot contains K10.1 marker");
+
+    df_scheduler_intrinsics_reset();
+    DF_CHECK(df_scheduler_is_panic() == 0, "reset clears panic");
+    DF_CHECK(df_scheduler_is_suspended() == 0, "reset clears suspend");
+}
+
 void scenario_state_filter_cold_path_bypass() {
     std::printf("scenario_state_filter_cold_path_bypass\n");
     df_state_filter_clear();
@@ -1662,6 +1715,8 @@ int main() {
     scenario_state_filter_subscribe_and_hook();
     scenario_state_filter_entity_specific();
     scenario_state_filter_out_of_range();
+    scenario_scheduler_trace();
+    scenario_scheduler_intrinsics();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
