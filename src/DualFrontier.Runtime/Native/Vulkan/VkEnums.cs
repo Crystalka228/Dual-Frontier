@@ -338,3 +338,40 @@ internal enum VkPipelineBindPoint : int
     VK_PIPELINE_BIND_POINT_GRAPHICS = 0,
     VK_PIPELINE_BIND_POINT_COMPUTE = 1,
 }
+
+// ===========================================================================
+// V0.B Commit 9 — Command pool + buffer + fence + semaphore
+// ===========================================================================
+
+[Flags]
+internal enum VkCommandPoolCreateFlags : uint
+{
+    VK_COMMAND_POOL_CREATE_TRANSIENT_BIT = 0x00000001,
+    VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT = 0x00000002,
+}
+
+internal enum VkCommandBufferLevel : int
+{
+    VK_COMMAND_BUFFER_LEVEL_PRIMARY = 0,
+    VK_COMMAND_BUFFER_LEVEL_SECONDARY = 1,
+}
+
+[Flags]
+internal enum VkCommandBufferUsageFlags : uint
+{
+    VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT = 0x00000001,
+    VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT = 0x00000002,
+    VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT = 0x00000004,
+}
+
+internal enum VkSubpassContents : int
+{
+    VK_SUBPASS_CONTENTS_INLINE = 0,
+    VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS = 1,
+}
+
+[Flags]
+internal enum VkFenceCreateFlags : uint
+{
+    VK_FENCE_CREATE_SIGNALED_BIT = 0x00000001,
+}

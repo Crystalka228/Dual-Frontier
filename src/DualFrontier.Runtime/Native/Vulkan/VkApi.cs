@@ -251,4 +251,124 @@ internal static unsafe partial class VkApi
 
     [LibraryImport(VulkanLib, EntryPoint = "vkDestroyFramebuffer")]
     internal static partial void vkDestroyFramebuffer(IntPtr device, IntPtr framebuffer, IntPtr pAllocator);
+
+    // =======================================================================
+    // V0.B Commit 9 — Command pool + buffer + fence + semaphore
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateCommandPool")]
+    internal static partial VkResult vkCreateCommandPool(
+        IntPtr device,
+        in VkCommandPoolCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pCommandPool);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyCommandPool")]
+    internal static partial void vkDestroyCommandPool(IntPtr device, IntPtr commandPool, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkAllocateCommandBuffers")]
+    internal static unsafe partial VkResult vkAllocateCommandBuffers(
+        IntPtr device,
+        in VkCommandBufferAllocateInfo pAllocateInfo,
+        IntPtr* pCommandBuffers);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkFreeCommandBuffers")]
+    internal static unsafe partial void vkFreeCommandBuffers(
+        IntPtr device,
+        IntPtr commandPool,
+        uint commandBufferCount,
+        IntPtr* pCommandBuffers);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkBeginCommandBuffer")]
+    internal static partial VkResult vkBeginCommandBuffer(
+        IntPtr commandBuffer,
+        in VkCommandBufferBeginInfo pBeginInfo);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkEndCommandBuffer")]
+    internal static partial VkResult vkEndCommandBuffer(IntPtr commandBuffer);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkResetCommandBuffer")]
+    internal static partial VkResult vkResetCommandBuffer(IntPtr commandBuffer, uint flags);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdBeginRenderPass")]
+    internal static partial void vkCmdBeginRenderPass(
+        IntPtr commandBuffer,
+        in VkRenderPassBeginInfo pRenderPassBegin,
+        VkSubpassContents contents);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdEndRenderPass")]
+    internal static partial void vkCmdEndRenderPass(IntPtr commandBuffer);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdBindPipeline")]
+    internal static partial void vkCmdBindPipeline(
+        IntPtr commandBuffer,
+        VkPipelineBindPoint pipelineBindPoint,
+        IntPtr pipeline);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdDraw")]
+    internal static partial void vkCmdDraw(
+        IntPtr commandBuffer,
+        uint vertexCount,
+        uint instanceCount,
+        uint firstVertex,
+        uint firstInstance);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdDispatch")]
+    internal static partial void vkCmdDispatch(
+        IntPtr commandBuffer,
+        uint groupCountX,
+        uint groupCountY,
+        uint groupCountZ);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdSetViewport")]
+    internal static unsafe partial void vkCmdSetViewport(
+        IntPtr commandBuffer,
+        uint firstViewport,
+        uint viewportCount,
+        VkViewport* pViewports);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdSetScissor")]
+    internal static unsafe partial void vkCmdSetScissor(
+        IntPtr commandBuffer,
+        uint firstScissor,
+        uint scissorCount,
+        VkRect2D* pScissors);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkQueueSubmit")]
+    internal static partial VkResult vkQueueSubmit(
+        IntPtr queue,
+        uint submitCount,
+        in VkSubmitInfo pSubmits,
+        IntPtr fence);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateFence")]
+    internal static partial VkResult vkCreateFence(
+        IntPtr device,
+        in VkFenceCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pFence);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyFence")]
+    internal static partial void vkDestroyFence(IntPtr device, IntPtr fence, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkWaitForFences")]
+    internal static unsafe partial VkResult vkWaitForFences(
+        IntPtr device,
+        uint fenceCount,
+        IntPtr* pFences,
+        uint waitAll,
+        ulong timeout);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkResetFences")]
+    internal static unsafe partial VkResult vkResetFences(IntPtr device, uint fenceCount, IntPtr* pFences);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateSemaphore")]
+    internal static partial VkResult vkCreateSemaphore(
+        IntPtr device,
+        in VkSemaphoreCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pSemaphore);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroySemaphore")]
+    internal static partial void vkDestroySemaphore(IntPtr device, IntPtr semaphore, IntPtr pAllocator);
 }

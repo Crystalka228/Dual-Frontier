@@ -144,6 +144,40 @@ public sealed class VulkanStructSizeTests
     public void VkFramebufferCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkFramebufferCreateInfo>().Should().Be(64);
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commits 9-12)
+    // V0.B Commit 9 — Command pool + buffer + fence + semaphore
+    // ============================================================
+
+    [Fact]
+    public void VkCommandPoolCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkCommandPoolCreateInfo>().Should().Be(24);
+
+    [Fact]
+    public void VkCommandBufferAllocateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkCommandBufferAllocateInfo>().Should().Be(32);
+
+    [Fact]
+    public void VkCommandBufferBeginInfo_Size_Matches_Spec() => Marshal.SizeOf<VkCommandBufferBeginInfo>().Should().Be(32);
+
+    [Fact]
+    public void VkClearColorValue_Size_Matches_Spec() => Marshal.SizeOf<VkClearColorValue>().Should().Be(16);
+
+    [Fact]
+    public void VkClearValue_Size_Matches_Spec() => Marshal.SizeOf<VkClearValue>().Should().Be(16);
+
+    [Fact]
+    public void VkRenderPassBeginInfo_Size_Matches_Spec() => Marshal.SizeOf<VkRenderPassBeginInfo>().Should().Be(64);
+
+    [Fact]
+    public void VkSubmitInfo_Size_Matches_Spec() => Marshal.SizeOf<VkSubmitInfo>().Should().Be(72);
+
+    [Fact]
+    public void VkFenceCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkFenceCreateInfo>().Should().Be(24);
+
+    [Fact]
+    public void VkSemaphoreCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkSemaphoreCreateInfo>().Should().Be(24);
+
+    [Fact]
+    public void VkViewport_Size_Matches_Spec() => Marshal.SizeOf<VkViewport>().Should().Be(24);
+
+    // ============================================================
+    // V0.B additions appended per-commit (see brief §3 commits 10-12)
     // ============================================================
 }

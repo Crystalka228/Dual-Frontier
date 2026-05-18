@@ -481,3 +481,120 @@ internal unsafe struct VkFramebufferCreateInfo
     internal uint layers;
     internal uint _padTrailing;
 }
+
+// ===========================================================================
+// V0.B Commit 9 — Command pool + buffer + fence + semaphore
+// ===========================================================================
+
+// VkCommandPoolCreateInfo (24 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkCommandPoolCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkCommandPoolCreateFlags flags;
+    internal uint queueFamilyIndex;
+}
+
+// VkCommandBufferAllocateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkCommandBufferAllocateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr commandPool;
+    internal VkCommandBufferLevel level;
+    internal uint commandBufferCount;
+}
+
+// VkCommandBufferBeginInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkCommandBufferBeginInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkCommandBufferUsageFlags flags;
+    internal uint _padBeforePtr;
+    internal IntPtr pInheritanceInfo;
+}
+
+// VkClearColorValue (16 bytes — union of float[4] / int[4] / uint[4]; use float[4] inline).
+[StructLayout(LayoutKind.Explicit, Size = 16)]
+internal unsafe struct VkClearColorValue
+{
+    [FieldOffset(0)] internal fixed float float32[4];
+    [FieldOffset(0)] internal fixed int int32[4];
+    [FieldOffset(0)] internal fixed uint uint32[4];
+}
+
+// VkClearValue (16 bytes — union of VkClearColorValue + VkClearDepthStencilValue;
+// V0.B color only).
+[StructLayout(LayoutKind.Explicit, Size = 16)]
+internal struct VkClearValue
+{
+    [FieldOffset(0)] internal VkClearColorValue color;
+}
+
+// VkRenderPassBeginInfo (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkRenderPassBeginInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr renderPass;
+    internal IntPtr framebuffer;
+    internal VkRect2D renderArea;
+    internal uint clearValueCount;
+    internal uint _padBeforePtr;
+    internal VkClearValue* pClearValues;
+}
+
+// VkSubmitInfo (72 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkSubmitInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint waitSemaphoreCount;
+    internal uint _padBeforeWaitSem;
+    internal IntPtr* pWaitSemaphores;
+    internal VkPipelineStageFlags* pWaitDstStageMask;
+    internal uint commandBufferCount;
+    internal uint _padBeforeCmd;
+    internal IntPtr* pCommandBuffers;
+    internal uint signalSemaphoreCount;
+    internal uint _padBeforeSignal;
+    internal IntPtr* pSignalSemaphores;
+}
+
+// VkFenceCreateInfo (24 bytes — sType+pad+pNext+flags+trailing pad).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkFenceCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkFenceCreateFlags flags;
+    internal uint _padTrailing;
+}
+
+// VkSemaphoreCreateInfo (24 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSemaphoreCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padTrailing;
+}
+
+// VkViewport (24 bytes — 6 floats).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkViewport
+{
+    internal float x;
+    internal float y;
+    internal float width;
+    internal float height;
+    internal float minDepth;
+    internal float maxDepth;
+}
