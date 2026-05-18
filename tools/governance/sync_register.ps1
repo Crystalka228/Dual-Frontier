@@ -112,7 +112,7 @@ function Test-PathExcluded($relPath) {
 # --- Enum definitions per FRAMEWORK §3 ---
 $VALID_CATEGORIES = @('A','B','C','D','E','F','G','H','I','J')
 $VALID_TIERS = @(1,2,3,4,5)
-$VALID_LIFECYCLES = @('Draft','Live','LOCKED','EXECUTED','AUTHORED','DEPRECATED','SUPERSEDED','STALE')
+$VALID_LIFECYCLES = @('Draft','Live','LOCKED','EXECUTED','AUTHORED','AUTHORED-SKELETON','DEPRECATED','SUPERSEDED','STALE')
 $VALID_RISK_TYPES = @('Technical','Architectural','Methodological','Operational','External')
 $VALID_RISK_STATUS = @('ACTIVE','RESIDUAL','CLOSED','REALIZED','ACCEPTED')
 $VALID_LIKELIHOODS = @('Low','Medium-Low','Medium','Medium-High','High')
@@ -172,7 +172,7 @@ if ($register.documents -and $register.documents.Count -gt 0) {
 
         # Tier × Lifecycle forbidden combinations
         $combo = "$tier+$lifecycle"
-        if ($combo -in @('1+AUTHORED','3+LOCKED','5+STALE','4+LOCKED')) {
+        if ($combo -in @('1+AUTHORED','1+AUTHORED-SKELETON','2+AUTHORED-SKELETON','3+LOCKED','5+STALE','4+LOCKED','4+AUTHORED-SKELETON','5+AUTHORED-SKELETON')) {
             if (-not $doc.special_case_rationale) {
                 [void]$errors.Add("$id : forbidden combination tier=$tier + lifecycle=$lifecycle without special_case_rationale")
             }

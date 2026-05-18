@@ -10,7 +10,7 @@
     Filter by tier (1-5).
 
 .PARAMETER Lifecycle
-    Filter by lifecycle state (Draft/Live/LOCKED/EXECUTED/AUTHORED/DEPRECATED/SUPERSEDED/STALE).
+    Filter by lifecycle state (Draft/Live/LOCKED/EXECUTED/AUTHORED/AUTHORED-SKELETON/DEPRECATED/SUPERSEDED/STALE).
 
 .PARAMETER Category
     Filter by category (A-J).
