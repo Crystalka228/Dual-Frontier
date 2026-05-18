@@ -661,6 +661,24 @@ DF_API int32_t df_scheduler_policies_order_by_priority(
 DF_API void    df_scheduler_policies_clear(void);
 
 /*
+ * K10.1 Item 9 — Shared memory regions (К-L14 IPC primitive).
+ *
+ * Single-process shared memory registry. Region created with size; map
+ * returns void* into the buffer; destroy clears. Single-writer / multi-reader
+ * pattern enforced through register_writer convention (К10.1: metadata only,
+ * not panic-enforced).
+ */
+DF_API int32_t df_shm_create(uint32_t region_id, int32_t size_bytes);
+DF_API void*   df_shm_map(uint32_t region_id);
+DF_API int32_t df_shm_size(uint32_t region_id);
+DF_API int32_t df_shm_unmap(uint32_t region_id);
+DF_API int32_t df_shm_destroy(uint32_t region_id);
+DF_API int32_t df_shm_register_writer(uint32_t region_id, uint32_t writer_system_id);
+DF_API int32_t df_shm_writer(uint32_t region_id);
+DF_API int32_t df_shm_region_count(void);
+DF_API void    df_shm_clear(void);
+
+/*
  * K10.1 Item 5 — Per-tick scheduler orchestration (К-L12 + К-L13).
  *
  * The full per-tick scheduling sequence:

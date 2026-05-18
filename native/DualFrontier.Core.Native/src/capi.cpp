@@ -12,6 +12,7 @@
 #include "keyed_map.h"
 #include "set_primitive.h"
 #include "scheduling_policies.h"
+#include "shm_region.h"
 #include "string_pool.h"
 #include "system_graph.h"
 #include "thread_pool.h"
@@ -1098,6 +1099,50 @@ DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out
 
 DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id) {
     return dualfrontier::default_wake_registry().wake_subscriptions_for(system_id);
+}
+
+// =============================================================================
+// K10.1 Item 9 — shared memory regions C ABI.
+// =============================================================================
+
+DF_API int32_t df_shm_create(uint32_t region_id, int32_t size_bytes) {
+    try {
+        return dualfrontier::default_shm_registry().create(region_id, size_bytes) ? 1 : 0;
+    } catch (...) { return 0; }
+}
+
+DF_API void* df_shm_map(uint32_t region_id) {
+    try {
+        return dualfrontier::default_shm_registry().map(region_id);
+    } catch (...) { return nullptr; }
+}
+
+DF_API int32_t df_shm_size(uint32_t region_id) {
+    return dualfrontier::default_shm_registry().size(region_id);
+}
+
+DF_API int32_t df_shm_unmap(uint32_t region_id) {
+    return dualfrontier::default_shm_registry().unmap(region_id) ? 1 : 0;
+}
+
+DF_API int32_t df_shm_destroy(uint32_t region_id) {
+    return dualfrontier::default_shm_registry().destroy(region_id) ? 1 : 0;
+}
+
+DF_API int32_t df_shm_register_writer(uint32_t region_id, uint32_t writer_system_id) {
+    return dualfrontier::default_shm_registry().register_writer(region_id, writer_system_id) ? 1 : 0;
+}
+
+DF_API int32_t df_shm_writer(uint32_t region_id) {
+    return static_cast<int32_t>(dualfrontier::default_shm_registry().writer(region_id));
+}
+
+DF_API int32_t df_shm_region_count(void) {
+    return dualfrontier::default_shm_registry().region_count();
+}
+
+DF_API void df_shm_clear(void) {
+    dualfrontier::default_shm_registry().clear();
 }
 
 // =============================================================================

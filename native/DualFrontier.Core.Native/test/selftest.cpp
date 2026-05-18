@@ -1208,6 +1208,37 @@ void scenario_wake_registry_fire_init_one_shot() {
 // K10.1 Items 6+7+8 — scheduling policies scenarios.
 // =============================================================================
 
+void scenario_shm_region_basic() {
+    std::printf("scenario_shm_region_basic\n");
+    df_shm_clear();
+    DF_CHECK(df_shm_region_count() == 0, "no regions initially");
+
+    DF_CHECK(df_shm_create(1, 256) == 1, "create region 1 (256 bytes)");
+    DF_CHECK(df_shm_create(1, 256) == 0, "duplicate region rejected");
+    DF_CHECK(df_shm_create(2, 0) == 0, "size 0 rejected");
+    DF_CHECK(df_shm_create(2, -1) == 0, "negative size rejected");
+    DF_CHECK(df_shm_size(1) == 256, "size queries to 256");
+    DF_CHECK(df_shm_size(99) == 0, "unknown region size 0");
+
+    void* ptr = df_shm_map(1);
+    DF_CHECK(ptr != nullptr, "map returns non-null");
+    // Memory is zero-initialized.
+    auto* bytes = static_cast<uint8_t*>(ptr);
+    DF_CHECK(bytes[0] == 0 && bytes[255] == 0, "region zero-initialized");
+    bytes[42] = 0xAB;
+    auto* re_map = static_cast<uint8_t*>(df_shm_map(1));
+    DF_CHECK(re_map[42] == 0xAB, "writes visible on re-map");
+
+    DF_CHECK(df_shm_register_writer(1, 99) == 1, "register writer 99");
+    DF_CHECK(df_shm_writer(1) == 99, "writer is 99");
+    DF_CHECK(df_shm_register_writer(99, 42) == 0, "unknown region writer rejected");
+
+    DF_CHECK(df_shm_unmap(1) == 1, "unmap (no-op) returns ok");
+    DF_CHECK(df_shm_destroy(1) == 1, "destroy region 1");
+    DF_CHECK(df_shm_destroy(1) == 0, "second destroy fails");
+    DF_CHECK(df_shm_map(1) == nullptr, "post-destroy map nullptr");
+}
+
 void scenario_scheduling_policies_default() {
     std::printf("scenario_scheduling_policies_default\n");
     df_scheduler_policies_clear();
@@ -1488,6 +1519,7 @@ int main() {
     scenario_scheduling_policies_set_and_get();
     scenario_scheduling_policies_quota_enforcement();
     scenario_scheduling_policies_order_by_priority();
+    scenario_shm_region_basic();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
