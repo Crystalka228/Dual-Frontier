@@ -35,6 +35,17 @@ public sealed class VulkanStructSizeTests
     }
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commits 3-12)
+    // V0.B Commit 3 — Win32 surface foundation
+    // ============================================================
+
+    [Fact]
+    public void VkWin32SurfaceCreateInfoKHR_Size_Matches_Spec()
+    {
+        // sType (4) + pad (4) + pNext (8) + flags (4) + pad (4) + hinstance (8) + hwnd (8) = 40
+        Marshal.SizeOf<VkWin32SurfaceCreateInfoKHR>().Should().Be(40);
+    }
+
+    // ============================================================
+    // V0.B additions appended per-commit (see brief §3 commits 4-12)
     // ============================================================
 }

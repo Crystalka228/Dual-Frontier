@@ -120,3 +120,21 @@ internal unsafe struct VkDebugUtilsMessengerCallbackDataEXT
     internal uint objectCount;
     internal IntPtr pObjects;
 }
+
+// ===========================================================================
+// V0.B Commit 3 — Win32 surface foundation
+// ===========================================================================
+
+// VkWin32SurfaceCreateInfoKHR (VK_KHR_win32_surface extension)
+// Per Vulkan 1.3 spec on x64 MSVC ABI: 40 bytes total.
+// Layout (C#/CLR Sequential auto-pads IntPtr to 8-byte alignment):
+//   sType (4) + pad (4) + pNext (8) + flags (4) + pad (4) + hinstance (8) + hwnd (8) = 40
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkWin32SurfaceCreateInfoKHR
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal IntPtr hinstance;
+    internal IntPtr hwnd;
+}
