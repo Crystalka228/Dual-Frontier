@@ -8,6 +8,12 @@
 // rather than introducing catch2/gtest dependencies. Each new scheduler
 // primitive (system_graph, wake_registry, etc.) contributes its scenarios
 // to this file, called from main().
+//
+// K10.2 extension (native bus + mod ALC lifecycle native primitives):
+// Continues the same DF_CHECK runner convention. Each К10.2 item (event type
+// registry, native bus three-tier dispatcher, background queue, native unload
+// primitive, etc.) contributes scenarios to this file in its dedicated commit.
+// Per Lesson #22 «match existing convention» — no new test framework introduced.
 
 #include <atomic>
 #include <chrono>
@@ -1717,6 +1723,9 @@ int main() {
     scenario_state_filter_out_of_range();
     scenario_scheduler_trace();
     scenario_scheduler_intrinsics();
+    // ===== K10.2 scenarios (added per-item commits below) =====
+    // Event type registry, native bus three-tier dispatcher, background queue,
+    // native unload primitive — each lands its scenarios in the dedicated commit.
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
