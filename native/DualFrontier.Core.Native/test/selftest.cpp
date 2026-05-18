@@ -24,6 +24,7 @@
 #include <thread>
 #include <vector>
 
+#include "background_queue.h"
 #include "bootstrap_graph.h"
 #include "bus_native.h"
 #include "df_capi.h"
@@ -1855,6 +1856,152 @@ void scenario_bus_background_publish_stores_pending() {
     df_bus_clear();
 }
 
+// ===== K10.2 Item 30 — background queue + idle-slot scheduling =====
+
+std::atomic<int32_t> g_bg_subscriber_invocations{0};
+
+void test_background_subscriber(const df_managed_system_batch* /*batch*/) {
+    g_bg_subscriber_invocations.fetch_add(1, std::memory_order_relaxed);
+}
+
+void coalesce_sum_int32_bg(void* existing, const void* new_event) {
+    int32_t* dst = static_cast<int32_t*>(existing);
+    const int32_t* src = static_cast<const int32_t*>(new_event);
+    *dst += *src;
+}
+
+void scenario_bg_queue_coalesce_same_key() {
+    std::printf("scenario_bg_queue_coalesce_same_key\n");
+    df_bus_clear();
+    df_event_type_registry_clear();
+
+    const uint32_t type_id = 0xBA110001u;
+    df_event_type_registry_register(
+        type_id, /*Background*/2, sizeof(int32_t), "Test.Bg.Coalesce", coalesce_sum_int32_bg);
+
+    df_bus_subscription_id sid = df_bus_subscribe_background(
+        type_id, /*mod_id=*/700u, &test_background_subscriber, nullptr);
+    DF_CHECK(sid != 0, "background subscribe id non-zero");
+
+    // Publish 3 events с same coalesce_key — should coalesce к 1
+    int32_t v1 = 10;
+    int32_t v2 = 20;
+    int32_t v3 = 5;
+    df_bus_publish_background(type_id, &v1, sizeof(v1), /*coalesce_key=*/1u);
+    df_bus_publish_background(type_id, &v2, sizeof(v2), /*coalesce_key=*/1u);
+    df_bus_publish_background(type_id, &v3, sizeof(v3), /*coalesce_key=*/1u);
+
+    uint32_t count_before = 0;
+    df_background_queue_size(&count_before, nullptr);
+    DF_CHECK(count_before == 3, "3 events queued before coalesce");
+
+    int32_t merged = df_background_queue_force_coalesce();
+    DF_CHECK(merged == 2, "2 events merged into 1 by coalesce");
+
+    uint32_t count_after = 0;
+    df_background_queue_size(&count_after, nullptr);
+    DF_CHECK(count_after == 1, "1 event remains after coalesce");
+
+    // Dispatch with unlimited budget (0)
+    g_bg_subscriber_invocations.store(0);
+    int32_t dispatched = df_background_queue_dispatch_idle_slot(0);
+    DF_CHECK(dispatched == 1, "1 event dispatched in idle slot");
+    DF_CHECK(g_bg_subscriber_invocations.load() == 1, "subscriber invoked once");
+
+    df_bus_clear();
+    df_event_type_registry_clear();
+}
+
+void scenario_bg_queue_different_keys_not_coalesced() {
+    std::printf("scenario_bg_queue_different_keys_not_coalesced\n");
+    df_bus_clear();
+    df_event_type_registry_clear();
+
+    const uint32_t type_id = 0xBA110002u;
+    df_event_type_registry_register(
+        type_id, /*Background*/2, sizeof(int32_t), "Test.Bg.NoCoalesce", coalesce_sum_int32_bg);
+    df_bus_subscribe_background(type_id, /*mod_id=*/701u, &test_background_subscriber, nullptr);
+
+    int32_t v1 = 10, v2 = 20;
+    df_bus_publish_background(type_id, &v1, sizeof(v1), /*coalesce_key=*/1u);
+    df_bus_publish_background(type_id, &v2, sizeof(v2), /*coalesce_key=*/2u);
+
+    int32_t merged = df_background_queue_force_coalesce();
+    DF_CHECK(merged == 0, "no events merged when keys differ");
+
+    uint32_t count = 0;
+    df_background_queue_size(&count, nullptr);
+    DF_CHECK(count == 2, "2 events remain (different keys)");
+
+    df_bus_clear();
+    df_event_type_registry_clear();
+}
+
+void scenario_bg_queue_idle_slot_budget_partial_dispatch() {
+    std::printf("scenario_bg_queue_idle_slot_budget_partial_dispatch\n");
+    df_bus_clear();
+    df_event_type_registry_clear();
+
+    const uint32_t type_id = 0xBA110003u;
+    df_event_type_registry_register(
+        type_id, /*Background*/2, sizeof(int32_t), "Test.Bg.Partial", coalesce_sum_int32_bg);
+    df_bus_subscribe_background(type_id, /*mod_id=*/702u, &test_background_subscriber, nullptr);
+
+    // Publish 5 events с unique coalesce keys
+    for (int32_t i = 0; i < 5; ++i) {
+        int32_t v = i + 1;
+        df_bus_publish_background(type_id, &v, sizeof(v), static_cast<uint32_t>(i + 100));
+    }
+
+    g_bg_subscriber_invocations.store(0);
+    // 250 micros budget at 100 micros/event = 2 events dispatched, 3 requeued
+    int32_t dispatched = df_background_queue_dispatch_idle_slot(250);
+    DF_CHECK(dispatched == 2, "2 events dispatched in 250µs budget");
+    DF_CHECK(g_bg_subscriber_invocations.load() == 2, "subscriber invoked twice");
+
+    uint32_t remaining = 0;
+    df_background_queue_size(&remaining, nullptr);
+    DF_CHECK(remaining == 3, "3 events requeued for next idle slot");
+
+    df_bus_clear();
+    df_event_type_registry_clear();
+}
+
+void scenario_bg_queue_saturation_drop_oldest() {
+    std::printf("scenario_bg_queue_saturation_drop_oldest\n");
+    df_bus_clear();
+    df_event_type_registry_clear();
+
+    const uint32_t type_id = 0xBA110004u;
+    df_event_type_registry_register(
+        type_id, /*Background*/2, sizeof(int32_t), "Test.Bg.Sat", coalesce_sum_int32_bg);
+    df_bus_subscribe_background(type_id, /*mod_id=*/703u, &test_background_subscriber, nullptr);
+
+    // Configure 20-byte cap (5 events × 4 bytes each)
+    int32_t cfg_rc = df_background_queue_configure(20u, 16u, DF_BG_QUEUE_DROP_OLDEST);
+    DF_CHECK(cfg_rc == 1, "configure with 20-byte cap succeeds");
+
+    // Publish 8 events (32 bytes total — exceeds cap by 12 bytes)
+    int32_t before_sat = df_background_queue_saturation_events();
+    for (int32_t i = 0; i < 8; ++i) {
+        int32_t v = i + 1;
+        df_bus_publish_background(type_id, &v, sizeof(v), static_cast<uint32_t>(i + 200));
+    }
+    // Force coalesce + apply saturation policy
+    df_background_queue_force_coalesce();
+    int32_t after_sat = df_background_queue_saturation_events();
+    DF_CHECK(after_sat - before_sat == 3, "3 events dropped по drop-oldest");
+
+    uint32_t remaining = 0;
+    df_background_queue_size(&remaining, nullptr);
+    DF_CHECK(remaining == 5, "5 events remain after saturation policy");
+
+    // Restore defaults для other tests
+    df_background_queue_configure(10u * 1024u * 1024u, 8u * 1024u * 1024u, DF_BG_QUEUE_DROP_OLDEST);
+    df_bus_clear();
+    df_event_type_registry_clear();
+}
+
 void scenario_bus_per_mod_bulk_unsubscribe() {
     std::printf("scenario_bus_per_mod_bulk_unsubscribe\n");
     df_bus_clear();
@@ -1977,6 +2124,10 @@ int main() {
     scenario_bus_normal_publish_batched_drain();
     scenario_bus_background_publish_stores_pending();
     scenario_bus_per_mod_bulk_unsubscribe();
+    scenario_bg_queue_coalesce_same_key();
+    scenario_bg_queue_different_keys_not_coalesced();
+    scenario_bg_queue_idle_slot_budget_partial_dispatch();
+    scenario_bg_queue_saturation_drop_oldest();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
