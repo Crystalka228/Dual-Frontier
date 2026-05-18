@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Runtime", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Runtime.Tests", "tests\DualFrontier.Runtime.Tests\DualFrontier.Runtime.Tests.csproj", "{42D8634A-8B2B-4142-8C18-791AE96F84B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Runtime.SmokeTest", "tests\DualFrontier.Runtime.SmokeTest\DualFrontier.Runtime.SmokeTest.csproj", "{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -397,6 +399,18 @@ Global
 		{42D8634A-8B2B-4142-8C18-791AE96F84B5}.Release|x64.Build.0 = Release|Any CPU
 		{42D8634A-8B2B-4142-8C18-791AE96F84B5}.Release|x86.ActiveCfg = Release|Any CPU
 		{42D8634A-8B2B-4142-8C18-791AE96F84B5}.Release|x86.Build.0 = Release|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Debug|x64.Build.0 = Debug|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Debug|x86.Build.0 = Debug|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Release|x64.ActiveCfg = Release|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Release|x64.Build.0 = Release|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Release|x86.ActiveCfg = Release|Any CPU
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -430,5 +444,6 @@ Global
 		{DAA1E1FF-192E-4372-B4E3-3A71EFB990B0} = {22222222-2222-2222-2222-222222222222}
 		{C2C2CA5F-4094-4A8E-BEF3-F018727F22C0} = {11111111-1111-1111-1111-111111111111}
 		{42D8634A-8B2B-4142-8C18-791AE96F84B5} = {22222222-2222-2222-2222-222222222222}
+		{DA5D4D59-E979-4574-9DEB-8E7FEAF627A4} = {22222222-2222-2222-2222-222222222222}
 	EndGlobalSection
 EndGlobal
