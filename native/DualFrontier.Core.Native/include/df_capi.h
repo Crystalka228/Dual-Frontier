@@ -610,6 +610,23 @@ DF_API int32_t df_wake_registry_drain_runqueue(uint32_t* out_system_ids, int32_t
 DF_API int32_t df_wake_registry_subscription_count(int32_t wake_type);
 DF_API void    df_wake_registry_clear(void);
 
+/*
+ * K10.1 Item 4 — Wake registry diagnostic API.
+ *
+ * Peek-only accessors over wake registry state. Distinct from drain in that
+ * they do not consume the runqueue. Used by diagnostic tooling, integration
+ * tests, and future Roslyn analyzer (A'.9) к verify wake declarations.
+ */
+
+// Peek the runqueue without draining it. Copies sorted ids into out_buffer;
+// returns count written. The runqueue is unaffected.
+DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out_capacity);
+
+// Bitmask of wake types subscribed by the given system id. Bit positions match
+// WakeType values: bit 0 = Timer, 1 = Event, 2 = StateChange, 3 = Init, 4 = Explicit.
+// Returns 0 if the system has no wake subscriptions at all.
+DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id);
+
 #ifdef __cplusplus
 }
 #endif

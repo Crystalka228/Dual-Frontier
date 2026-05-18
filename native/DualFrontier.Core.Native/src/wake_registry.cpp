@@ -162,6 +162,28 @@ int32_t WakeRegistry::subscription_count(WakeType type) const noexcept {
     return 0;
 }
 
+int32_t WakeRegistry::peek_runqueue(uint32_t* out_buffer, int32_t out_capacity) const {
+    if (out_buffer == nullptr || out_capacity <= 0) return 0;
+    std::vector<uint32_t> ids(runqueue_.begin(), runqueue_.end());
+    std::sort(ids.begin(), ids.end());
+    int32_t n = static_cast<int32_t>(ids.size());
+    if (n > out_capacity) n = out_capacity;
+    for (int32_t i = 0; i < n; ++i) {
+        out_buffer[i] = ids[static_cast<std::size_t>(i)];
+    }
+    return n;
+}
+
+int32_t WakeRegistry::wake_subscriptions_for(uint32_t system_id) const noexcept {
+    int32_t mask = 0;
+    for (const auto& s : timer_subs_)    if (s.system_id == system_id) { mask |= (1 << 0); break; }
+    for (const auto& s : event_subs_)    if (s.system_id == system_id) { mask |= (1 << 1); break; }
+    for (const auto& s : state_subs_)    if (s.system_id == system_id) { mask |= (1 << 2); break; }
+    for (const auto& s : init_subs_)     if (s.system_id == system_id) { mask |= (1 << 3); break; }
+    for (const auto& s : explicit_subs_) if (s.system_id == system_id) { mask |= (1 << 4); break; }
+    return mask;
+}
+
 void WakeRegistry::clear() noexcept {
     timer_subs_.clear();
     event_subs_.clear();

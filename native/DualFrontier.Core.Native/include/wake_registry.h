@@ -103,6 +103,15 @@ public:
     const std::vector<InitSubscription>&  init_subs()  const noexcept { return init_subs_; }
     const std::vector<ExplicitSubscription>& explicit_subs() const noexcept { return explicit_subs_; }
 
+    // K10.1 Item 4 — diagnostic peek of the runqueue without draining.
+    // Copies up к out_capacity ids into out_buffer in sorted order; the
+    // runqueue itself is unaffected. Returns count written.
+    int32_t peek_runqueue(uint32_t* out_buffer, int32_t out_capacity) const;
+
+    // K10.1 Item 4 — Bitmask of wake types subscribed by the given system id.
+    // Returned bitmask matches (1 << WakeType) for each active wake type.
+    [[nodiscard]] int32_t wake_subscriptions_for(uint32_t system_id) const noexcept;
+
 private:
     std::vector<TimerSubscription> timer_subs_;
     std::vector<EventSubscription> event_subs_;

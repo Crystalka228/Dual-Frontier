@@ -1204,6 +1204,33 @@ void scenario_wake_registry_fire_init_one_shot() {
     DF_CHECK(df_wake_registry_fire_init() == 0, "second init fires zero (one-shot)");
 }
 
+void scenario_scheduler_diagnostics() {
+    std::printf("scenario_scheduler_diagnostics\n");
+    df_wake_registry_clear();
+    df_wake_registry_subscribe_timer(10, 1);
+    df_wake_registry_subscribe_event(10, 0xA1);
+    df_wake_registry_subscribe_init(10);
+    df_wake_registry_subscribe_state(20, 0xC0);
+
+    int32_t mask10 = df_scheduler_query_wake_subscriptions(10);
+    DF_CHECK(mask10 == (1 | (1<<1) | (1<<3)), "system 10 has Timer|Event|Init");
+    int32_t mask20 = df_scheduler_query_wake_subscriptions(20);
+    DF_CHECK(mask20 == (1<<2), "system 20 has only StateChange");
+    int32_t mask99 = df_scheduler_query_wake_subscriptions(99);
+    DF_CHECK(mask99 == 0, "unknown system has no subscriptions");
+
+    // Fire timer + event so runqueue has both 10 (from timer or event) and 20 (state)
+    df_wake_registry_fire_timer(0);  // 10 wakes (rate=1, tick=0)
+    df_wake_registry_fire_state_change(0xC0, 0);  // 20 wakes
+    uint32_t buf[4] = {0};
+    int32_t n = df_scheduler_query_runnable(buf, 4);
+    DF_CHECK(n == 2, "peek shows 2 runnable");
+    DF_CHECK(buf[0] == 10 && buf[1] == 20, "ids sorted");
+    // Peek is non-draining — runqueue still has the same.
+    int32_t n2 = df_scheduler_query_runnable(buf, 4);
+    DF_CHECK(n2 == 2, "second peek still shows 2 (non-draining)");
+}
+
 void scenario_wake_registry_fire_explicit() {
     std::printf("scenario_wake_registry_fire_explicit\n");
     df_wake_registry_clear();
@@ -1353,6 +1380,7 @@ int main() {
     scenario_wake_registry_fire_event_and_state();
     scenario_wake_registry_fire_init_one_shot();
     scenario_wake_registry_fire_explicit();
+    scenario_scheduler_diagnostics();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

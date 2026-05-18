@@ -1087,4 +1087,16 @@ DF_API void df_wake_registry_clear(void) {
     dualfrontier::default_wake_registry().clear();
 }
 
+// =============================================================================
+// K10.1 Item 4 — wake registry diagnostic API.
+// =============================================================================
+
+DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out_capacity) {
+    return dualfrontier::default_wake_registry().peek_runqueue(out_system_ids, out_capacity);
+}
+
+DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id) {
+    return dualfrontier::default_wake_registry().wake_subscriptions_for(system_id);
+}
+
 } // extern "C"

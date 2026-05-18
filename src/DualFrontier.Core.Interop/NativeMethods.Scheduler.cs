@@ -108,4 +108,12 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void df_wake_registry_clear();
+
+    // ----- K10.1 Item 4 — diagnostic API -----
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_scheduler_query_runnable(uint* outSystemIds, int outCapacity);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_query_wake_subscriptions(uint systemId);
 }
