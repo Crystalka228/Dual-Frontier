@@ -1451,15 +1451,15 @@ documents:
     title: "V0.A — Win32 window + Vulkan instance + device + queue families + validation layer"
     category: D
     tier: 3
-    lifecycle: AUTHORED
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-V0_A-AUTHORED"
+    last_modified_commit: "PENDING-COMMIT-V0_A-CLOSURE"
     content_language: mixed
     review_cadence: on-status-transition
     last_review_date: "2026-05-18"
-    last_review_event: "V0.A brief authored 2026-05-18 — V substrate foundation prerequisite layer первая Vulkan code на проекте; unblocks K10.3 brief halt SC-14 (V substrate absent)"
+    last_review_event: "V0.A sub-milestone closure 2026-05-18 — 11 atomic commits 1a1c772..PENDING-COMMIT-V0_A-CLOSURE; V substrate foundation prerequisite layer операционен (Win32 + Vulkan instance + device + queue families + validation); 4 REQs authored (REQ-V0-A-WIN32_WINDOW + REQ-V0-A-VULKAN_INSTANCE + REQ-V0-A-VULKAN_DEVICE + REQ-V0-A-VALIDATION_LAYER); 665 baseline tests preserved + 20 V0.A additive; AMD Radeon RX 7600S verified at smoke test; К10.3 brief restart pathway unblocked after V0.B closure (compute pipeline plumbing)"
     next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-013]
@@ -4257,6 +4257,171 @@ requirements:
     verification_date: "2026-05-18"
     verification_milestone: "K10.2 closure (architecturally established; sovereign authority switch deferred к K10.4 closure / А'.8 per managed-facade-preserved strategy — К10.1 precedent applied)"
 
+  - id: REQ-V0-A-WIN32_WINDOW
+    title: "Win32 window lifecycle + message pump (V0.A foundation)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§1.1 V0 rendering side deliverables — Win32 window + surface; §2.2 Window module; §2.5 Win32 P/Invoke template"
+    requirement_text: |
+      Win32 window lifecycle implemented via pure P/Invoke к user32.dll + kernel32.dll
+      (no third-party binding per L3). Window can open, show, hide, destroy cleanly.
+      Message pump (PeekMessage/TranslateMessage/DispatchMessage loop) drains the OS
+      message queue without blocking. WM_CLOSE handler triggers DestroyWindow → WM_DESTROY
+      handler calls PostQuitMessage which sets IsOpen=false. Window class registration
+      uses unique GUID-suffixed name to prevent multi-instance collision. WindowProc
+      delegate pinned via GCHandle.Alloc to prevent GC collection of the function pointer
+      thunk during native lifetime. Surface creation hooks (vkCreateWin32SurfaceKHR) deferred
+      к V0.B alongside swapchain.
+    verified_by:
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§1.1 V0 rendering side first bullet — «Win32 window + surface»"
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Runtime/Native/Win32/Win32Api.cs
+        test_method: "14 P/Invoke functions: RegisterClassEx [DllImport], UnregisterClass + CreateWindowEx + DestroyWindow + ShowWindow + GetModuleHandle + message pump (Peek/Translate/Dispatch/DefWindow/PostQuit) + LoadCursor + LoadIcon + GetLastError"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Window/Window.cs
+        test_method: "Lifecycle InitializeWin32 + WindowProcedure dispatch (WM_CLOSE/WM_DESTROY) + Show/Hide/PumpMessages + idempotent Dispose с GCHandle.Free"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Window/WindowOptionsTests.cs
+        test_method: "WindowOptions defaults + record syntax + value equality (3 scenarios)"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.Tests/RuntimeCompositionTests.cs
+        test_method: "Window_plus_VulkanInstance_compose_without_crash + Window lifecycle через Runtime.Create"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        test_method: "V0.A smoke test — Window opened, 3-sec message pump, clean shutdown verified empirically"
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.A closure"
+
+  - id: REQ-V0-A-VULKAN_INSTANCE
+    title: "Vulkan instance с К-L19 Vulkan 1.3 verification + DEBUG validation layer (V0.A)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§0 L1 (Vulkan 1.3) + §0 L2 (pure P/Invoke к vulkan-1.dll) + §1.1 V0 rendering side — Vulkan instance + queue family selection; §2.5 Vulkan P/Invoke template; §11 validation discipline"
+    requirement_text: |
+      VulkanInstance lifecycle implemented via pure P/Invoke к vulkan-1.dll (no third-party
+      C# binding per L2). К-L19 hardware tier enforcement (partial — V0.A scope only): на
+      instance creation, vkEnumerateInstanceVersion queried; если reported API version <
+      VK_API_VERSION_1_3 throws diagnostic exception referencing K-L19 rationale. Hardware
+      capability check at startup (К10.3 brief Item 44) deferred к V0.B alongside async
+      compute queue selection. Validation layer (VK_LAYER_KHRONOS_validation) + debug utils
+      extension (VK_EXT_debug_utils) activated conditionally on enableValidation flag —
+      DEBUG builds default к true per S-LOCK-4 (validation discipline ALWAYS-ON в DEBUG).
+      Surface extensions (VK_KHR_surface + VK_KHR_win32_surface) always enabled (consumed
+      V0.B при swapchain creation). UTF-8 marshalling for layer/extension names via
+      Marshal.StringToCoTaskMemUTF8 (Vulkan uses UTF-8, не Win32 UTF-16). All allocated
+      native strings freed via try/finally regardless of exception path.
+    verified_by:
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§0 L1+L2 + §1.1 V0 + §11 validation discipline verbatim"
+        verification_type: spec_inspection
+      - file: docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md
+        test_method: "К-L19 hardware tier verbatim — Vulkan 1.3 minimum + async compute queue family commitment"
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Runtime/Native/Vulkan/VkApi.cs
+        test_method: "vkCreateInstance + vkDestroyInstance + vkEnumerateInstanceVersion + vkGetInstanceProcAddr P/Invoke surface"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanInstance.cs
+        test_method: "VerifyVulkanApiVersion (К-L19 partial enforcement) + CreateInstance (UTF-8 marshalling + extension/layer activation + memory cleanup) + idempotent Dispose"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanInstanceMarshallingTests.cs
+        test_method: "VkApplicationInfo 48 bytes + VkInstanceCreateInfo 64 bytes + UTF-8 roundtrip + VK_API_VERSION_1_3 == 0x403000 (4 scenarios)"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        test_method: "V0.A smoke test — vkCreateInstance succeeds на AMD Radeon RX 7600S; API version 0x403000 reported"
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.A closure (К-L19 surface partial; hardware capability check startup logic deferred к V0.B alongside async compute queue selection)"
+
+  - id: REQ-V0-A-VULKAN_DEVICE
+    title: "Vulkan physical + logical device + graphics queue family selection (V0.A)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§1.1 V0 rendering side — physical/logical device + queue family selection; §2.2 Graphics module"
+    requirement_text: |
+      VulkanDevice lifecycle implemented via pure P/Invoke. EnumeratePhysicalDevices uses
+      two-pass vkEnumeratePhysicalDevices pattern (count query c null pointer, then fill).
+      For each physical device — vkGetPhysicalDeviceProperties + vkGetPhysicalDeviceQueueFamilyProperties.
+      Device name marshalled UTF-8 via Marshal.PtrToStringUTF8. PhysicalDeviceInfo +
+      QueueFamilyInfo records expose diagnostic info с public API surface (VkPhysicalDeviceType
+      mapped к public PhysicalDeviceType enum per Rule 5 — Native.Vulkan types stay internal).
+      SelectPhysicalDevice prefers discrete GPU c graphics queue family; fallback к first
+      device c graphics. LINQ-free foreach implementation per project «no LINQ в src/» rule.
+      CreateLogicalDevice creates VkDevice с single graphics queue (priority 1.0, count 1).
+      Async compute queue family selection deferred к V0.B (per S-LOCK-3 + К10.3 brief
+      Item 43). VkPhysicalDeviceProperties C# struct layout c explicit 4-byte padding
+      between pipelineCacheUUID и limits + trailing 4-byte padding (total 824 bytes vs
+      naive 816) к match MSVC x64 alignment ABI — VkPhysicalDeviceLimits contains
+      VkDeviceSize fields requiring 8-byte alignment.
+    verified_by:
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§1.1 V0 — physical/logical device + queue family selection"
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Runtime/Native/Vulkan/VkStructs.cs
+        test_method: "VkPhysicalDeviceProperties с explicit padding (_padBeforeLimits[4] + _padTrailing[4]) к 824 bytes total per MSVC x64 ABI"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanDevice.cs
+        test_method: "EnumeratePhysicalDevices two-pass + SelectPhysicalDevice (foreach, prefer discrete + graphics; fallback к first c graphics) + CreateLogicalDevice + idempotent Dispose"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/PhysicalDeviceInfo.cs
+        test_method: "Public record с DeviceType wrapped в public PhysicalDeviceType enum (Native.Vulkan internal accessibility preserved per Rule 5)"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/QueueFamilyInfo.cs
+        test_method: "Public record c QueueFlags decomposed в 4 capability bool fields (avoids exposing internal VkQueueFlags enum)"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanDeviceMarshallingTests.cs
+        test_method: "VkPhysicalDeviceProperties 824 bytes + VkQueueFamilyProperties 24 bytes + VkDeviceCreateInfo 72 bytes (3 scenarios)"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        test_method: "V0.A smoke test — AMD Radeon RX 7600S enumerated, graphics QF 0 selected, logical device created clean"
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.A closure"
+
+  - id: REQ-V0-A-VALIDATION_LAYER
+    title: "Vulkan validation layer ALWAYS-ON в DEBUG + ValidationLog ring buffer (V0.A)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§11 methodology adjustments — validation layer output check; V0.A brief §1.4 S-LOCK-4"
+    requirement_text: |
+      Vulkan validation layer (VK_LAYER_KHRONOS_validation) ALWAYS-ON в DEBUG builds per
+      S-LOCK-4. Debug messenger created via vkCreateDebugUtilsMessengerEXT (extension
+      function loaded via vkGetInstanceProcAddr — не direct vulkan-1.dll export). Severity
+      filter excludes VERBOSE + INFO (noise reduction); only WARNING + ERROR captured.
+      Validation messages stored в thread-safe ring buffer (1024 message capacity, FIFO
+      eviction on overflow; per-severity counters preserve total recorded count даже после
+      buffer overflow). Per-message severity converted from VkDebugUtilsMessageSeverityFlagsEXT
+      к managed ValidationSeverity enum. Debug callback uses [UnmanagedCallersOnly] static
+      method с CallConvCdecl (canonical .NET 5+ pattern); cannot capture instance fields,
+      so uses static _staticLog (single-instance design — multi-instance would race, V0.A
+      scope не exercises). Callback swallows managed exceptions — must не propagate across
+      native boundary. Returns VK_FALSE (0) к let Vulkan continue triggering call.
+      vkCreateDebugUtilsMessengerCreateInfoEXT chained к VkInstanceCreateInfo.pNext deferred
+      к V0.B alongside more robust messenger setup; V0.A uses simpler post-instance creation
+      pattern.
+    verified_by:
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§11 validation layer output check discipline verbatim"
+        verification_type: spec_inspection
+      - file: tools/briefs/V0_A_EXECUTION_BRIEF.md
+        test_method: "§1.4 S-LOCK-4 verbatim — validation discipline ALWAYS-ON в DEBUG"
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Runtime/Graphics/ValidationLayer.cs
+        test_method: "CreateMessenger via vkGetInstanceProcAddr extension load + DebugCallback с [UnmanagedCallersOnly(CallConvCdecl)] + severity conversion + idempotent Dispose"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Diagnostic/ValidationLog.cs
+        test_method: "Thread-safe ring buffer (1024 capacity, lock-protected Record/Snapshot/Clear, per-severity counters preserved on eviction)"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Diagnostic/ValidationLogTests.cs
+        test_method: "Record increments + Snapshot ordering + Clear reset + ring buffer eviction at 1024 capacity (4 scenarios)"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        test_method: "V0.A smoke test — validation layer activated, 0 errors + 0 warnings reported during instance + device lifecycle (К-L19 + S-LOCK-4 satisfied на AMD Radeon RX 7600S)"
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.A closure"
+
 # === risks collection (Q11 — 14 entries; pre-authored from Pass 5 §3) ===
 risks:
   - id: RISK-001
@@ -5908,5 +6073,118 @@ audit_trail:
         - RISK-013  # rendering substrate cross-cutting — К10.3 boundary preserved
       lifecycle_transitions:
         - document: DOC-D-K10_2
+          from: AUTHORED
+          to: EXECUTED
+
+  - id: EVT-2026-05-18-V0_A-CLOSURE
+    date: "2026-05-18"
+    event: "V0.A sub-milestone closure — V substrate foundation prerequisite layer (Win32 + Vulkan instance + device + queue families + validation); первая Vulkan code на проекте; unblocks K10.3 brief restart pathway after V0.B compute plumbing closure"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-V0_A                        # lifecycle AUTHORED → EXECUTED
+    commits:
+      range: "1a1c772..PENDING-COMMIT-V0_A-CLOSURE"
+      key_commits:
+        - hash: "1a1c772"
+          summary: "Commit 1 — V0.A brief authored + REGISTER enrollment (DOC-D-V0_A AUTHORED)"
+        - hash: "5c6a064"
+          summary: "Commit 2 — DualFrontier.Runtime project scaffold + Runtime.Tests + scaffold-runtime.ps1"
+        - hash: "0cc72ca"
+          summary: "Commit 3 — Win32 P/Invoke surface (Win32Api + constants + structs + WindowProc)"
+        - hash: "e6aedb0"
+          summary: "Commit 4 — Vulkan P/Invoke surface (VkApi + enums + structs + delegates, V0.A subset)"
+        - hash: "b2ba32d"
+          summary: "Commit 5 — Window layer (IWindow + Window + WindowOptions + InputEventQueue placeholder)"
+        - hash: "d854b8f"
+          summary: "Commit 6 — VulkanInstance (К-L19 Vulkan 1.3 verification + DEBUG validation activation)"
+        - hash: "b7cfea0"
+          summary: "Commit 7 — ValidationLayer (debug messenger + ValidationLog ring buffer, S-LOCK-4)"
+        - hash: "785cfbe"
+          summary: "Commit 8 — VulkanDevice (physical enumeration + logical device + graphics queue selection)"
+        - hash: "691ff74"
+          summary: "Commit 9 — Runtime facade composition + VkPhysicalDeviceProperties size fix (824 bytes x64 alignment)"
+        - hash: "33205b7"
+          summary: "Commit 10 — V0.A smoke test executable (exit criteria verification)"
+        - hash: "PENDING-COMMIT-V0_A-CLOSURE"
+          summary: "Commit 11 — V0.A closure (REGISTER + 4 REQs + EVT-V0_A-CLOSURE + brief §8)"
+    governance_impact: |
+      V0.A sub-milestone closure — first of three V0 sub-milestones under V substrate
+      foundation split (V0.A = Win32 + Vulkan instance + device + queue families +
+      validation; V0.B = swapchain + render pass + compute pipeline plumbing + memory
+      allocator + SPIR-V toolchain; V0.C = sprite/text/atlas + PNG decoder + threading
+      model integration + clear color → first textured quad). V substrate authoring stream
+      activated 2026-05-18 после К10.3 Phase 0 halt SC-14 (V substrate absent) per Crystalka
+      Option B ratification.
+
+      Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering side baseline
+      (first 4 of 11 rendering deliverables):
+      - Win32 window + Vulkan surface plumbing (swapchain deferred к V0.B)
+      - Vulkan instance + physical/logical device + queue family selection
+      - Validation layer (VK_LAYER_KHRONOS_validation) ALWAYS-ON в DEBUG
+      - К-L19 partial surface: Vulkan 1.3 instance creation check
+
+      Architectural locks landed (per V0.A brief §1):
+      - S-LOCK-1: V0.A scope = Win32 + Vulkan instance + device + queue families + validation
+      - S-LOCK-4: validation layer ALWAYS-ON в DEBUG (no «known issue» suppression)
+      - S-LOCK-5: .NET 8 target framework (verified Phase 0 from Directory.Build.props)
+      - S-LOCK-6: pure P/Invoke к vulkan-1.dll + user32.dll + kernel32.dll, zero third-party
+      - S-LOCK-3: К-L19 partial enforcement V0.A; async compute queue family selection
+        deferred к V0.B alongside compute pipeline plumbing (Item 43 от halted K10.3 brief)
+
+      REGISTER amendments:
+      - DOC-D-V0_A lifecycle AUTHORED → EXECUTED
+      - 4 new REQ entries: REQ-V0-A-WIN32_WINDOW + REQ-V0-A-VULKAN_INSTANCE +
+        REQ-V0-A-VULKAN_DEVICE + REQ-V0-A-VALIDATION_LAYER
+
+      K10.3 brief restart pathway: V0.A + V0.B closure together provide all Vulkan code
+      anchors K10.3 expects. После V0.B closure (compute pipeline plumbing + async compute
+      queue selection), K10.3 brief Commits 3-4 extend existing V0.B HardwareCapabilityCheck
+      + queue selection rather than create from scratch. K10.3 SC-14 halt class will не fire.
+
+      Validation metrics (final state):
+      - dotnet build (full solution): clean (0 warnings, 0 errors)
+      - dotnet test (full solution): 685 passed (665 baseline preserved + 20 V0.A additive:
+        3 WindowOptionsTests + 4 ValidationLogTests + 4 VulkanInstanceMarshallingTests +
+        3 VulkanDeviceMarshallingTests + 5 RuntimeCompositionTests + 1 PlaceholderTest)
+      - V0.A smoke test (DualFrontier.Runtime.SmokeTest): exit 0; AMD Radeon RX 7600S
+        verified; Vulkan instance API 0x403000 (1.3); 5 queue families enumerated; graphics
+        QF 0 selected; validation log clean (0 errors, 0 warnings)
+      - sync_register.ps1 --validate: exit 0 (5 advisory orphan warnings baseline)
+
+      Hardware tier confirmation (К-L19 baseline empirical):
+      - AMD Radeon RX 7600S (RDNA 3, discrete GPU, vendor 0x1002, device 0x7480)
+      - Driver API 0x404158 (Vulkan 1.4.344 — exceeds 1.3 minimum)
+      - Async compute queue family present (QF 1: compute+transfer без graphics, 8 queues)
+        — selection deferred к V0.B per S-LOCK-3
+
+      V substrate primitive V0 split rationale (per Crystalka Option B):
+      - Atomic compilable intermediate states (V0.A independently shippable; tests pass)
+      - К-series cascade pause length minimized — K10.3 unblocks после V0.B (compute side
+        ready) rather than full V0 (V0.C is rendering-side cherry on top)
+      - Allows К10.3 restart pathway parallel-able с V0.C if desired
+
+      First Vulkan code на проекте — establishes substantial novel architectural surface
+      vs K-series briefs (К10.1/К10.2 inherited K-series patterns; V0.A authors from
+      VULKAN_SUBSTRATE.md spec без prior V brief lineage). Per Lesson #22 (match existing
+      convention), V0.A applies discovered conventions verbatim: net8.0 target framework,
+      LangVersion 12.0, Nullable enable, TreatWarningsAsErrors true, xunit + FluentAssertions
+      test framework, minimal csproj pattern.
+
+      Lesson #7 strengthening surfaced (informational, formal promotion deferred к А'.8):
+      P/Invoke struct layout must respect C ABI alignment requirements, не just byte sums.
+      VkPhysicalDeviceProperties bug (8-byte struct undersized due к missing alignment pad)
+      caused silent CLR-level crash via stack corruption. Discovered at composition test
+      (Commit 9 fix). Future Vulkan structs containing 64-bit fields (VkDeviceSize, size_t,
+      double) need explicit alignment audit + size assertion test at struct authoring time.
+    cross_references:
+      requirements:
+        - REQ-V0-A-WIN32_WINDOW       # authored + verified at this closure
+        - REQ-V0-A-VULKAN_INSTANCE    # authored + verified at this closure
+        - REQ-V0-A-VULKAN_DEVICE      # authored + verified at this closure
+        - REQ-V0-A-VALIDATION_LAYER   # authored + verified at this closure
+      risks:
+        - RISK-013  # rendering substrate cross-cutting — V substrate foundation prerequisite layer landed
+      lifecycle_transitions:
+        - document: DOC-D-V0_A
           from: AUTHORED
           to: EXECUTED

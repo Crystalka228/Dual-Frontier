@@ -14,7 +14,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-12 (A'.4.5 closure — Document Control Register operational: FRAMEWORK.md v1.0 + SYNTHESIS_RATIONALE.md v1.0 + REGISTER.yaml schema v1.0 + 3 PowerShell scripts + 229 documents enrolled + 228 frontmatter mirrors + METHODOLOGY v1.6→v1.7 with new §12 register integration + §7.1 7th invocation; validation clean 0 errors / 0 warnings)
+**Last updated**: 2026-05-18 (V0.A closure — V substrate foundation prerequisite layer landed: DualFrontier.Runtime project + Win32 P/Invoke + Vulkan P/Invoke + Window + VulkanInstance + ValidationLayer + VulkanDevice + Runtime facade + smoke test exit 0 на AMD Radeon RX 7600S; 685 tests passing; 4 new REQs verified; K10.3 brief restart pathway gated on V0.B). Previous: 2026-05-12 (A'.4.5 closure — Document Control Register operational).
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `VULKAN_SUBSTRATE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `VULKAN_SUBSTRATE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 
@@ -800,7 +800,7 @@ These amendment plan gaps may surface к A'.8 К-closure report as «brief autho
 
 | Milestone | Title | Status | Estimate | Commit | Date closed |
 |---|---|---|---|---|---|
-| M9.0 | Win32 window + Vulkan instance + clear color | NOT STARTED | 4–5 days | — | — |
+| M9.0 | Win32 window + Vulkan instance + clear color | SUPERSEDED by V0.A + V0.B | (see V-series) | (see V-series) | (see V-series) |
 | M9.1 | Textured quad pipeline (single sprite) | NOT STARTED | 3–4 days | — | — |
 | M9.2 | Batched sprite renderer (instancing) | NOT STARTED | 4–5 days | — | — |
 | M9.3 | TileMap parity (M8.9 visual reproduction) | NOT STARTED | 4–6 days | — | — |
@@ -814,7 +814,55 @@ These amendment plan gaps may surface к A'.8 К-closure report as «brief autho
 
 ### M9.0 — M9.8
 
-Detailed entries будут добавлены при подходе к каждому milestone.
+Detailed entries будут добавлены при подходе к каждому milestone. **Note**: post-Q-G-1 + Q-G-2 LOCK (2026-05-15-16), M9.0..M9.8 superseded by V substrate primitives V0/V1/V2 + M-V demonstrations per VULKAN_SUBSTRATE.md v1.0 §1 + §6. See V-series progress section below.
+
+---
+
+## V-series progress (V substrate foundation — Vulkan rendering + compute)
+
+### Overview
+
+| Milestone | Title | Status | Estimate | Commit | Date closed |
+|---|---|---|---|---|---|
+| V0.A | Win32 window + Vulkan instance + device + queue families + validation | **DONE** | 12-20h auto-mode | PENDING-COMMIT-V0_A-CLOSURE | 2026-05-18 |
+| V0.B | Swapchain + render pass + compute pipeline plumbing + memory allocator + SPIR-V toolchain + К-L19 startup check | NOT STARTED | TBD per brief authoring | — | — |
+| V0.C | Sprite/text/atlas + PNG decoder + threading model integration + clear color → first textured quad | NOT STARTED | TBD per brief authoring | — | — |
+| V1 | Scalar field + diffusion shader (environmental layer — mana, electricity, water etc.) | NOT STARTED | 1-2 weeks hobby pace | — | — |
+| V2 | Scalar field + wave shader (routed layer — pathfinding, distance, direction fields) | NOT STARTED | TBD | — | — |
+
+**Cumulative estimate**: V0 (V0.A + V0.B + V0.C) 4-6 weeks at hobby pace per VULKAN_SUBSTRATE.md §1.1; V1+V2 additional 3-5 weeks combined.
+
+### V0.A — Win32 window + Vulkan instance + device + queue families + validation layer
+
+**Status**: DONE (closed 2026-05-18 via V0_A_EXECUTION_BRIEF.md)
+**Branch**: `claude/v0_a-vulkan-foundation` (11 atomic commits 1a1c772..PENDING-COMMIT-V0_A-CLOSURE)
+**Hardware verified**: AMD Radeon RX 7600S (discrete GPU, vendor 0x1002, device 0x7480, driver Vulkan 1.4.344)
+
+**Scope delivered** (per V0.A brief §1.1 S-LOCK-1):
+- DualFrontier.Runtime project scaffold (csproj + Native/{Win32,Vulkan}/ + Window/ + Input/ + Graphics/ + Diagnostic/)
+- Win32 P/Invoke surface (14 functions — window lifecycle + message pump + resource loading + diagnostic)
+- Vulkan P/Invoke surface (10 direct functions + 2 extension functions via vkGetInstanceProcAddr)
+- Window layer (IWindow + Window с GCHandle-pinned WindowProc + WindowOptions record + InputEventQueue placeholder)
+- VulkanInstance (К-L19 partial: Vulkan 1.3 verification at vkEnumerateInstanceVersion; UTF-8 layer/extension activation)
+- ValidationLayer (debug messenger via vkCreateDebugUtilsMessengerEXT extension; ValidationLog thread-safe ring buffer; S-LOCK-4 ALWAYS-ON в DEBUG; severity filter WARNING+ERROR)
+- VulkanDevice (physical enumeration + discrete-GPU-preferring selection + graphics queue family selection + logical device + queue retrieval)
+- Runtime facade composition (Window + VulkanInstance + ValidationLayer + VulkanDevice + InputQueue)
+- V0.A smoke test executable (exit criteria verification end-to-end)
+
+**Verification metrics**:
+- dotnet build: 0 warnings, 0 errors
+- dotnet test: 685 passed (665 baseline + 20 V0.A additive)
+- Smoke test exit 0; 5 queue families enumerated; graphics QF 0 selected (8 queues, graphics+compute+transfer+sparse); validation log clean (0 errors, 0 warnings)
+- К-L19 hardware tier confirmed (AMD RDNA 3 supports Vulkan 1.4 — exceeds 1.3 minimum)
+
+**REGISTER amendments**:
+- DOC-D-V0_A lifecycle AUTHORED → EXECUTED
+- 4 new REQ entries: REQ-V0-A-WIN32_WINDOW + REQ-V0-A-VULKAN_INSTANCE + REQ-V0-A-VULKAN_DEVICE + REQ-V0-A-VALIDATION_LAYER
+- EVT-2026-05-18-V0_A-CLOSURE audit_trail entry
+
+**Pattern established** (worth inheriting в V0.B + V0.C briefs): pure P/Invoke к vulkan-1.dll, mixed [LibraryImport] + [DllImport] per source-generator capability, UTF-8 vs UTF-16 marshalling discipline, C ABI alignment audit для Vulkan structs containing 64-bit fields (VkPhysicalDeviceProperties bug caught + fixed), Native.Vulkan internal accessibility boundary via public record wrappers, extension function loading via vkGetInstanceProcAddr, [UnmanagedCallersOnly] static callback pattern, GCHandle pinning для WindowProc.
+
+**K10.3 brief restart pathway**: gated on V0.B closure (compute pipeline plumbing + async compute queue family selection logic per Items 43+44). After V0.B: K10.3 SC-14 halt class не fires; brief Commits 3-4 extend existing V0.B HardwareCapabilityCheck + queue selection rather than create from scratch.
 
 ---
 

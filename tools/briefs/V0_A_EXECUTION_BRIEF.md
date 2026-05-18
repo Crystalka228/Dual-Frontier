@@ -4,7 +4,7 @@
 register_id: DOC-D-V0_A
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
 version: "1.0"
 next_review_due: null
@@ -13,8 +13,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V0_A
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: V0_A_EXECUTION_BRIEF
-status: AUTHORED
+status: EXECUTED
 authored: 2026-05-18
+executed: 2026-05-18
 author: Claude Opus 4.7 (Crystalka deliberation session, post-K10.3 halt)
 target_executor: Claude Code (auto-mode + Crystalka oversight)
 estimated_duration: 12-20 hours auto-mode (V0.A scope: first Vulkan code на проекте — Win32 + Vulkan instance + device + queue families + validation layer)
@@ -2217,3 +2218,66 @@ V substrate authoring stream insertion в Phase A' sequencing preserves К-serie
 «Halt is success, не failure» per Lesson #8 corollary. К10.3 halt empirically validated this — and V0.A unblocks К10.3. Brief's honest guarantee: bad premises surface at Phase 0 / at deep-read / at the compile gate, before they reach `main`.
 
 «Без костылей» applied к V substrate authoring: pure P/Invoke к vulkan-1.dll, zero third-party binding, ALWAYS-ON validation discipline в DEBUG. V0.A первая Vulkan code на проекте — first verification of К-L14 thesis на новый substrate.
+
+---
+
+## §8 — Closure (added at brief EXECUTED transition 2026-05-18)
+
+Execution closed 2026-05-18 by Claude Code auto-mode на branch `claude/v0_a-vulkan-foundation` from `main` HEAD `070be85` (K10.2 closure). Cascade landed clean без halts; V0.A exit criteria satisfied empirically на Crystalka «Skarlet» hardware (AMD Radeon RX 7600S).
+
+### Commit ledger (commits 1a1c772..PENDING-COMMIT-V0_A-CLOSURE)
+
+| # | Hash | Commit summary |
+|---|---|---|
+| 1 | 1a1c772 | docs(briefs): V0.A brief authored + REGISTER enrollment |
+| 2 | 5c6a064 | feat(runtime): project scaffold + Runtime.Tests + scaffold-runtime.ps1 |
+| 3 | 0cc72ca | feat(runtime): Win32 P/Invoke surface |
+| 4 | e6aedb0 | feat(runtime): Vulkan P/Invoke surface (V0.A subset) |
+| 5 | b2ba32d | feat(runtime): Window layer |
+| 6 | d854b8f | feat(runtime): VulkanInstance (K-L19 Vulkan 1.3 verification) |
+| 7 | b7cfea0 | feat(runtime): ValidationLayer (S-LOCK-4) |
+| 8 | 785cfbe | feat(runtime): VulkanDevice |
+| 9 | 691ff74 | feat(runtime): Runtime facade + VkPhysicalDeviceProperties size fix (824 bytes) |
+| 10 | 33205b7 | test(runtime): smoke test executable (V0.A exit criteria) |
+| 11 | PENDING | governance: V0.A closure (REGISTER + 4 REQs + EVT + brief §8) |
+
+### Verification metrics (final state)
+
+- `git status`: clean working tree on branch `claude/v0_a-vulkan-foundation`
+- `sync_register.ps1 --validate`: exit 0 (5 advisory orphan warnings baseline)
+- `dotnet build` (full solution): 0 warnings, 0 errors
+- `dotnet test` (full solution): **685 passed** (665 baseline preserved + 20 V0.A additive)
+- Smoke test exit 0; Vulkan instance API 0x403000; AMD Radeon RX 7600S; graphics QF 0 selected; validation log clean (0 errors, 0 warnings)
+
+### Halt protocol activations
+
+**Zero hard-gate halts fired.** Cascade landed clean. One tactical course-correction между Commit 8 and Commit 9: latent `VkPhysicalDeviceProperties` size bug (816 vs C ABI 824 bytes due к VkPhysicalDeviceLimits 8-byte alignment requirement) caused silent CLR-level crash via stack corruption. Discovered via incremental composition test added at Commit 9 authoring; fix bundled with composition feature commit. Caught at test gate before reaching main per Lesson #8 atomicity intent.
+
+### Out-of-scope items deferred
+
+- **V0.B**: swapchain, render pass, compute pipeline plumbing, memory allocator, SPIR-V toolchain (glslangValidator), К-L19 hardware capability check startup + async compute queue family selection (K10.3 brief Items 43+44)
+- **V0.C**: sprite/text/atlas batching, PNG decoder, threading model integration, clear color → first textured quad
+- **K10.3 brief restart**: gated on V0.B closure (compute pipeline plumbing required)
+- **K10.4 (TLA+)**: deferred to after K10.3 closure
+- **К-L19 invariant landing**: at V0.B closure (full enforcement + HardwareCapabilityCheck.Verify); V0.A surfaces instance-side only
+
+### Pattern established (worth inheriting в V0.B + V0.C)
+
+1. **Mixed [LibraryImport] + [DllImport] pattern** per source-generator capability boundary (struct fields with non-blittable types need DllImport)
+2. **UTF-8 vs UTF-16 marshalling discipline** (Vulkan UTF-8, Win32 UTF-16)
+3. **C ABI alignment audit для Vulkan structs containing 64-bit fields** (VkDeviceSize, size_t, double need explicit padding + marshalling size test)
+4. **Native.Vulkan internal accessibility boundary preserved via public record wrappers** (PhysicalDeviceInfo wraps VkPhysicalDeviceType → public PhysicalDeviceType)
+5. **Extension function loading via vkGetInstanceProcAddr + Marshal.GetDelegateForFunctionPointer<T>** (V0.B inherits для swapchain + compute functions)
+6. **[UnmanagedCallersOnly] static callback pattern** для debug messenger (no instance field capture; static state)
+7. **GCHandle pinning для WindowProc delegate** during native lifetime
+8. **Validation discipline ALWAYS-ON в DEBUG** (S-LOCK-4 inheritance)
+9. **Per-layer incremental composition tests** localize latent bugs к smallest possible scope
+
+### Lesson candidates surfaced (informational, formal promotion deferred к А'.8 K-closure report)
+
+- **Lesson #7 strengthening — P/Invoke ABI alignment audit recipe**: when wrapping C structs containing 64-bit fields (VkDeviceSize, size_t, double), C# `fixed byte` opaque blocks need explicit padding fields к match MSVC x64 ABI alignment. Naive byte-sum-only struct size calculation insufficient. Marshalling test за каждым новым Vulkan struct catching mismatch early — fail-fast at compile/test gate, не silent runtime crash via stack corruption.
+- **Pattern for «catch-by-incremental-test»**: per-layer composition tests (Window-only, +VulkanInstance, +VulkanDevice, +full Runtime) localize bugs к smallest possible scope при authoring substantial native interop. Pattern inherits к V0.B (swapchain + compute pipeline) + V0.C (sprite + text + atlas).
+
+### V0.B brief authoring informed by
+
+After V0.B closure, K10.3 brief CAN restart unchanged (V0.A + V0.B together provide all Vulkan code anchors K10.3 expects); К10.3 brief Commits 3-4 (Items 43+44) extend existing V0.B HardwareCapabilityCheck + queue selection rather than create from scratch. V0.C focuses on rendering use case; K10.3 compute side does не depend on V0.C.
