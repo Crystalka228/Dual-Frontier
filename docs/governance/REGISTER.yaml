@@ -546,7 +546,7 @@ documents:
     version: "1.1"
     first_authored: "2026-05-12"
     last_modified: "2026-05-17"
-    last_modified_commit: "PENDING-COMMIT-1"
+    last_modified_commit: "15ffa0a"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-17"
@@ -1369,7 +1369,7 @@ documents:
     owner: Crystalka
     version: "0.1"
     last_modified: "2026-05-17"
-    last_modified_commit: "PENDING-COMMIT-3"
+    last_modified_commit: "07551df"
     content_language: en
     review_cadence: on-status-transition
     last_review_date: "2026-05-17"
@@ -1387,7 +1387,7 @@ documents:
     owner: Crystalka
     version: "0.1"
     last_modified: "2026-05-17"
-    last_modified_commit: "PENDING-COMMIT-4"
+    last_modified_commit: "30bd613"
     content_language: en
     review_cadence: on-status-transition
     last_review_date: "2026-05-17"
@@ -1727,7 +1727,7 @@ documents:
     owner: Crystalka
     version: "0.1"
     last_modified: "2026-05-17"
-    last_modified_commit: "PENDING-COMMIT-5"
+    last_modified_commit: "8b47133"
     content_language: en
     review_cadence: on-status-transition
     last_review_date: "2026-05-17"
@@ -1746,7 +1746,7 @@ documents:
     owner: Crystalka
     version: "0.1"
     last_modified: "2026-05-17"
-    last_modified_commit: "PENDING-COMMIT-6"
+    last_modified_commit: "14521b8"
     content_language: en
     review_cadence: on-status-transition
     last_review_date: "2026-05-17"
@@ -5323,3 +5323,62 @@ audit_trail:
       capa_entries: []  # no CAPAs opened или closed at this event
       risks:
         - RISK-004  # cross-document drift mitigation extended к К10 invariant series
+
+  - id: EVT-2026-05-17-BRIEF-SKELETON-FRAMEWORK
+    date: "2026-05-17"
+    event: "Brief skeleton framework — schema extension AUTHORED-SKELETON + 4 К/А' forward planning skeleton briefs authored"
+    event_type: governance_event
+    documents_affected:
+      - DOC-A-FRAMEWORK                                     # v1.0 → v1.1
+      - DOC-D-K10_EXECUTION                                 # NEW skeleton
+      - DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE              # NEW skeleton
+      - DOC-D-A_PRIME_8_K_CLOSURE_REPORT                    # NEW skeleton
+      - DOC-D-A_PRIME_9_ROSLYN_ANALYZER                     # NEW skeleton
+      - DOC-G-REGISTER                                      # register_version 1.5 → 1.6
+      - DOC-G-REGISTER_RENDER                               # regenerated
+      - DOC-G-VALIDATION_REPORT                             # regenerated
+    commits:
+      range: "15ffa0a..PENDING-COMMIT-8"
+      key_commits:
+        - hash: "15ffa0a"
+          summary: "Commit 1 — FRAMEWORK.md v1.0 → v1.1 (AUTHORED-SKELETON lifecycle value added; §3.3 + §3.3.1 + §3.4 + §3.4.1 + §12 change history)"
+        - hash: "e43349d"
+          summary: "Commit 2 — sync_register.ps1 + query_register.ps1 tooling update (AUTHORED-SKELETON enum + 4 forbidden combos)"
+        - hash: "07551df"
+          summary: "Commit 3 — К10 execution brief skeleton authored"
+        - hash: "30bd613"
+          summary: "Commit 4 — К10 cross-document amendments cascade brief skeleton authored"
+        - hash: "8b47133"
+          summary: "Commit 5 — А'.8 K-series closure report brief skeleton authored"
+        - hash: "14521b8"
+          summary: "Commit 6 — А'.9 Roslyn architectural analyzer brief skeleton authored"
+        - hash: "4be3062"
+          summary: "Commit 7 — REGISTER enrollment 4 skeleton briefs + DOC-A-FRAMEWORK bump + register_version 1.5 → 1.6"
+        - hash: "PENDING-COMMIT-8"
+          summary: "Commit 8 — Phase 8 closure (PENDING-COMMIT-1/3/4/5/6 backfilled с actual hashes + EVT entry added + sync frontmatter mirrors + REGISTER_RENDER + VALIDATION_REPORT regeneration); schema metadata last_modified_commit PENDING-COMMIT-7 deferred к next governance commit per FRAMEWORK §8.3 Option B"
+    governance_impact: |
+      Brief skeleton framework established. Forward operational plan for К-series + А' остающееся visible в register.
+
+      Schema extension: FRAMEWORK.md v1.0 → v1.1 added AUTHORED-SKELETON lifecycle value (8 → 9 values).
+      Tooling forward-compatible с new enum value (sync_register.ps1 + query_register.ps1 updated; render_register.ps1 unchanged — no hardcoded enum).
+
+      Four skeleton briefs authored at Tier 3 Category D:
+      - DOC-D-K10_EXECUTION: К10 native kernel scheduler implementation (46 items + 12 К-L invariants)
+      - DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE: К10 propagation across 8 dependent documents
+      - DOC-D-A_PRIME_8_K_CLOSURE_REPORT: К-series formal closure (substantial scope)
+      - DOC-D-A_PRIME_9_ROSLYN_ANALYZER: К-Lxx invariant Roslyn analyzer encoding (dual purpose)
+
+      Skeleton briefs carry: expected sub-milestones, Phase 0 reads, halt classes, Q-N execution seeds, closure protocol stubs.
+      Promotion к AUTHORED gates per skeleton brief individual triggers:
+      - К10 execution: post-К8.5 closure (Opus deliberation session for full brief)
+      - К10 cross-doc cascade: post-К10 execution closure (А'.7) or earlier per Crystalka prioritization
+      - А'.8 K-closure: post-К10 execution closure (Opus deliberation session)
+      - А'.9 Roslyn analyzer: post-К-closure report landed (А'.8 → А'.9 sequence)
+
+      М-series + FO research forks explicitly OUT of scope per Crystalka Q1 lock 2026-05-17.
+
+      К8.5 brief NOT enrolled (already DOC-D-K8_5 AUTHORED in register — Lesson #11 redundancy check applied).
+    cross_references:
+      capa_entries: []  # no CAPAs opened или closed at this event
+      risks:
+        - RISK-004  # cross-document drift — skeleton framework establishes forward-planning visibility

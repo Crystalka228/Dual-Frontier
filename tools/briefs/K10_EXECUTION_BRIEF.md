@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-K10_EXECUTION
+category: D
+tier: 3
+lifecycle: AUTHORED-SKELETON
+owner: Crystalka
+version: "0.1"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_EXECUTION
+---
 # К10 Native Kernel Scheduler — Execution Brief (SKELETON)
 
 **Brief authored**: 2026-05-17 (skeleton; Claude Opus 4.7 К10 deliberation arc closure)

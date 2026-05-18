@@ -2,15 +2,15 @@
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-17  |  Schema version: 1.0  |  Register version: 1.5*
+*Last generated: 2026-05-17  |  Schema version: 1.0  |  Register version: 1.6*
 
 ---
 
 ## Statistics
 
-- Total documents: 241
-- Tier 1: 33  |  Tier 2: 14  |  Tier 3: 118  |  Tier 4: 76  |  Tier 5: 0
-- Per category: A=31  |  B=6  |  C=3  |  D=56  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
+- Total documents: 245
+- Tier 1: 33  |  Tier 2: 14  |  Tier 3: 122  |  Tier 4: 76  |  Tier 5: 0
+- Per category: A=31  |  B=6  |  C=3  |  D=60  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
 - Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
@@ -20,7 +20,7 @@
 - [Category A (31 documents)](#category-A)
 - [Category B (6 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
-- [Category D (56 documents)](#category-D)
+- [Category D (60 documents)](#category-D)
 - [Category E (59 documents)](#category-E)
 - [Category F (76 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
@@ -142,10 +142,10 @@
 ### DOC-A-FRAMEWORK — Document Control Register — Governance Framework
 
 - **Path**: `docs/governance/FRAMEWORK.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.1
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
-- **Next review due**: 2027-05-12
+- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: 2027-05-17
 - **Requirements authored**: REQ-Q-A45-X5
 - **Risks referenced**: RISK-010, RISK-012
 - **Meta entry**: yes (role=register_specification)
@@ -479,6 +479,24 @@
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
 
+### DOC-D-A_PRIME_8_K_CLOSURE_REPORT — А'.8 K-Series Closure Report (SKELETON)
+
+- **Path**: `tools/briefs/A_PRIME_8_K_CLOSURE_REPORT_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.1
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Skeleton brief for К-series formal closure report. Substantial scope (~3-6 weeks). 8-part structure (chronology, К-L invariants, empirical results, lessons, pipeline metrics, Roslyn analyzer prep, K→M transition, open work). Awaits full brief authoring at К10 execution closure (А'.7) timing.
+- **Risks referenced**: RISK-014
+
+### DOC-D-A_PRIME_9_ROSLYN_ANALYZER — А'.9 Roslyn Architectural Analyzer (SKELETON)
+
+- **Path**: `tools/briefs/A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.1
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Skeleton brief for Roslyn architectural analyzer encoding К-Lxx invariants. Dual purpose (M-series migration verifier + К-Lxx compile-time enforcement). 17-18 expected analyzer rules. Awaits full brief authoring at К-closure report (А'.8) landed timing.
+- **Risks referenced**: RISK-004
+
 ### DOC-D-ARCHITECTURE_RECON_BRIEF — Architecture Reconnaissance Brief
 
 - **Path**: `tools/briefs/ARCHITECTURE_RECON_BRIEF.md`
@@ -620,6 +638,24 @@
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-07 ($(System.Collections.Hashtable.last_modified_commit))
 - **Risks referenced**: RISK-002
+
+### DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE — К10 Cross-Document Amendments Cascade (SKELETON)
+
+- **Path**: `tools/briefs/K10_CROSS_DOC_AMENDMENTS_CASCADE_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.1
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Skeleton brief for К10 architectural propagation across 8 dependent documents per KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 Part 7. Awaits full brief authoring at К10 execution closure (А'.7) timing or earlier per Crystalka prioritization.
+- **Risks referenced**: RISK-004
+
+### DOC-D-K10_EXECUTION — К10 Native Kernel Scheduler — Execution (SKELETON)
+
+- **Path**: `tools/briefs/K10_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.1
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Skeleton brief awaiting full brief authoring at Opus deliberation session post-К8.5 closure. Captures 10 expected sub-milestones (K10.A through K10.J), 4 halt classes, 5 Q-N seeds. К10 specification authority at DOC-A-KERNEL_FULL_NATIVE_SCHEDULER v2.0 LOCKED.
+- **Risks referenced**: RISK-003, RISK-004, RISK-013
 
 ### DOC-D-K2 — K2 — Registry Tests
 
@@ -1982,6 +2018,7 @@
 | 2026-05-13 | K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation | governance_event | f7e6d52..6c79914 |
 | 2026-05-14 | A'.5 K8.3+K8.4 combined milestone v2.0 closure — atomic storage cutover landed; managed World retired from production | execution_milestone | 24e5f56..PENDING-COMMIT-4 |
 | 2026-05-16 | Cleanup cascade closing 18 of 19 audit findings; 5 CAPAs opened+closed within same governance event; DRIFT-016 halted per SC-4 | governance_event | e68d799..PENDING-COMMIT-16 |
+| 2026-05-17 | Brief skeleton framework — schema extension AUTHORED-SKELETON + 4 К/А' forward planning skeleton briefs authored | governance_event | 15ffa0a..PENDING-COMMIT-8 |
 | 2026-05-17 | К10 deliberation amendments application — METHODOLOGY v1.8 + KERNEL_FULL_NATIVE_SCHEDULER v2.0 landed; new Tier 1 LOCKED enrollment | amendment_landing | 8c3cf5a..PENDING-COMMIT-5 |
 
 
