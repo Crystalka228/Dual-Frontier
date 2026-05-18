@@ -29,6 +29,7 @@
 #include "bus_native.h"
 #include "df_capi.h"
 #include "event_type_registry.h"
+#include "mod_unload.h"
 #include "thread_pool.h"
 
 namespace {
@@ -2084,6 +2085,88 @@ void scenario_bg_queue_saturation_drop_oldest() {
     df_event_type_registry_clear();
 }
 
+// ===== K10.2 Item 32 — native unload primitive + ModUnloadResult =====
+
+void scenario_mod_unload_native_state_t0_t7_sequence() {
+    std::printf("scenario_mod_unload_native_state_t0_t7_sequence\n");
+    df_bus_clear();
+    df_event_type_registry_clear();
+    df_scheduler_set_sim_paused(1);
+
+    const uint32_t mod_id = 900u;
+    const uint32_t type_id_fast = 0xC0FF0001u;
+    const uint32_t type_id_normal = 0xC0FF0002u;
+    const uint32_t type_id_bg = 0xC0FF0003u;
+
+    df_event_type_registry_register(type_id_fast, 0, sizeof(int32_t), "Test.U.Fast", nullptr);
+    df_event_type_registry_register(type_id_normal, 1, sizeof(int32_t), "Test.U.Normal", nullptr);
+    df_event_type_registry_register(type_id_bg, 2, sizeof(int32_t), "Test.U.Bg", coalesce_sum_int32_bg);
+
+    df_bus_subscribe_fast(type_id_fast, mod_id, &test_fast_subscriber, nullptr);
+    df_bus_subscribe_normal(type_id_normal, mod_id, &test_normal_subscriber, nullptr);
+    df_bus_subscribe_background(type_id_bg, mod_id, &test_normal_subscriber, nullptr);
+
+    // Publish a normal event (will be drained during T2)
+    int32_t v = 42;
+    df_bus_publish_normal(type_id_normal, &v, sizeof(v));
+
+    // Publish a background event (preserved during T3 per S3-Q3/Q4)
+    df_bus_publish_background(type_id_bg, &v, sizeof(v), 1u);
+
+    ModUnloadResult result{};
+    int32_t rc = df_scheduler_unload_mod_native_state(mod_id, &result);
+    DF_CHECK(rc == 1 && result.success == 1, "T0-T7 sequence completes");
+    DF_CHECK(result.fast_subscriptions_cleared == 1, "T1: 1 fast sub cleared");
+    DF_CHECK(result.normal_subscriptions_cleared == 1, "T2: 1 normal sub cleared");
+    DF_CHECK(result.normal_batch_commit_completed == 1, "T2: batch commit");
+    DF_CHECK(result.normal_events_drained == 1, "T2: 1 event drained");
+    DF_CHECK(result.background_subscriptions_cleared == 1, "T3: 1 bg sub cleared");
+    DF_CHECK(result.background_events_preserved == 1,
+             "T3: 1 bg event preserved (S3-Q3/Q4 untargeted persistence)");
+    DF_CHECK(result.error_count == 0, "no errors");
+
+    // Verify bus subscribers actually cleared
+    DF_CHECK(df_bus_subscriber_count_fast(type_id_fast) == 0, "fast bus empty post-unload");
+    DF_CHECK(df_bus_subscriber_count_normal(type_id_normal) == 0, "normal bus empty post-unload");
+    DF_CHECK(df_bus_subscriber_count_background(type_id_bg) == 0, "background subs empty post-unload");
+
+    df_bus_clear();
+    df_event_type_registry_clear();
+}
+
+void scenario_mod_unload_quiescent_precondition_violation() {
+    std::printf("scenario_mod_unload_quiescent_precondition_violation\n");
+    df_bus_clear();
+
+    // К-L18 violation: sim is running
+    df_scheduler_set_sim_paused(0);
+
+    ModUnloadResult result{};
+    int32_t rc = df_scheduler_unload_mod_native_state(123u, &result);
+    DF_CHECK(rc == 0, "unload fails when sim is not paused");
+    DF_CHECK(result.success == 0, "ModUnloadResult.success = 0");
+    DF_CHECK(result.error_count >= 1, "error message recorded");
+
+    // Restore paused for subsequent scenarios
+    df_scheduler_set_sim_paused(1);
+    df_bus_clear();
+}
+
+void scenario_mod_unload_no_subscriptions_succeeds_vacuously() {
+    std::printf("scenario_mod_unload_no_subscriptions_succeeds_vacuously\n");
+    df_bus_clear();
+    df_scheduler_set_sim_paused(1);
+
+    ModUnloadResult result{};
+    int32_t rc = df_scheduler_unload_mod_native_state(/*unknown_mod_id=*/0xFFFFFFFFu, &result);
+    DF_CHECK(rc == 1 && result.success == 1, "vacuous unload succeeds");
+    DF_CHECK(result.fast_subscriptions_cleared == 0, "0 fast subs cleared");
+    DF_CHECK(result.normal_subscriptions_cleared == 0, "0 normal subs cleared");
+    DF_CHECK(result.background_subscriptions_cleared == 0, "0 bg subs cleared");
+
+    df_bus_clear();
+}
+
 void scenario_bus_per_mod_bulk_unsubscribe() {
     std::printf("scenario_bus_per_mod_bulk_unsubscribe\n");
     df_bus_clear();
@@ -2213,6 +2296,9 @@ int main() {
     scenario_bg_queue_serialize_deserialize_roundtrip();
     scenario_bg_queue_deserialize_schema_mismatch_rejected();
     scenario_bg_queue_deserialize_malformed_returns_zero();
+    scenario_mod_unload_native_state_t0_t7_sequence();
+    scenario_mod_unload_quiescent_precondition_violation();
+    scenario_mod_unload_no_subscriptions_succeeds_vacuously();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

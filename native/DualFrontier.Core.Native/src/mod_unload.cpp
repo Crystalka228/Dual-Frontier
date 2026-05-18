@@ -1,0 +1,107 @@
+#include "mod_unload.h"
+
+#include <atomic>
+#include <cstring>
+#include <mutex>
+
+#include "bus_native.h"
+#include "bus_native_internal.h"
+
+namespace {
+
+// К-L18 quiescent state stub — К10.2 default: paused (suitable для tests +
+// ModIntegrationPipeline Step 3.5 invocation which already holds the
+// _isRunning=false check). К10.3 wire-up connects this к the actual sim
+// thread state via settings menu integration.
+std::atomic<int32_t> g_sim_paused{1};
+
+void copy_error_message(ModUnloadResult* result, const char* msg) {
+    if (result == nullptr || msg == nullptr) return;
+    if (result->error_count < 8) {
+        char* dst = result->error_messages[result->error_count];
+        size_t i = 0;
+        for (; i < 255 && msg[i] != '\0'; ++i) {
+            dst[i] = msg[i];
+        }
+        dst[i] = '\0';
+        ++result->error_count;
+    }
+}
+
+} // namespace
+
+extern "C" {
+
+DF_API int32_t df_scheduler_set_sim_paused(int32_t paused) {
+    g_sim_paused.store(paused != 0 ? 1 : 0, std::memory_order_release);
+    return 1;
+}
+
+DF_API int32_t df_scheduler_is_sim_paused(void) {
+    return g_sim_paused.load(std::memory_order_acquire);
+}
+
+DF_API int32_t df_scheduler_unload_mod_native_state(
+    uint32_t mod_id, ModUnloadResult* out_result)
+{
+    if (out_result == nullptr) return 0;
+    std::memset(out_result, 0, sizeof(*out_result));
+
+    // К-L18 precondition: simulation thread must be paused
+    if (g_sim_paused.load(std::memory_order_acquire) == 0) {
+        copy_error_message(out_result,
+            "K-L18 quiescent state precondition violated: sim is not paused");
+        return 0;
+    }
+
+    auto& bus = dualfrontier::BusNative::instance();
+
+    // T0: Lock bus mutex (acquire scheduler critical section). Each per-mod
+    // unsubscribe call acquires + releases internally; для К10.2 cascade
+    // simplicity we issue them sequentially. К10.3 wire-up wraps in single
+    // critical section если future invariants require atomicity across tiers.
+
+    // T1: Fast tier — clear subscriptions + drop in-flight events.
+    // Fast events не stored (synchronous dispatch); in_flight_dropped=0.
+    out_result->fast_subscriptions_cleared = bus.unsubscribe_fast_by_mod(mod_id);
+    out_result->fast_in_flight_dropped = 0;
+
+    // T2: Normal tier — drain current batch к commit boundary, then clear subs.
+    out_result->normal_events_drained = bus.drain_normal_batch();
+    out_result->normal_batch_commit_completed = 1;
+    out_result->normal_subscriptions_cleared = bus.unsubscribe_normal_by_mod(mod_id);
+
+    // T3: Background tier — clear subscriber registry; queue contents preserved
+    // per S3-Q3/Q4 untargeted persistence.
+    out_result->background_subscriptions_cleared = bus.unsubscribe_background_by_mod(mod_id);
+
+    int32_t bg_subs_remaining = 0;
+    int32_t bg_events_preserved = 0;
+    {
+        std::lock_guard<std::mutex> bus_lock(bus.mutex());
+        auto& bg_subs = bus.background_subscribers_unsafe();
+        for (auto& [type_id, subs] : bg_subs) {
+            bg_subs_remaining += static_cast<int32_t>(subs.size());
+        }
+        auto& pending = bus.pending_background_unsafe();
+        bg_events_preserved = static_cast<int32_t>(pending.size());
+    }
+    out_result->background_subscriber_count_remaining = bg_subs_remaining;
+    out_result->background_events_preserved = bg_events_preserved;
+
+    // T4: Revoke fast/background tier capabilities per FQN — К10.3 wire-up
+    out_result->capabilities_revoked = 0;
+
+    // T5: Clear ShmWriter/ShmReader registrations + CPU affinity — К10.3 wire-up
+
+    // T6: Clear wake registry subscriptions — К10.3 wire-up.
+    // Per Q-N-48 orderly teardown: Explicit → Init → StateChange → Event → Timer
+    out_result->wake_subscriptions_cleared = 0;
+
+    // T7: Unregister system access declarations — К10.3 wire-up
+
+    out_result->success = 1;
+    return 1;
+}
+
+} // extern "C"

@@ -39,6 +39,7 @@ set(DF_NATIVE_SOURCES
     src/event_type_registry.cpp
     src/bus_native.cpp
     src/background_queue.cpp
+    src/mod_unload.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -66,6 +67,7 @@ set(DF_NATIVE_HEADERS
     include/event_type_registry.h
     include/bus_native.h
     include/background_queue.h
+    include/mod_unload.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})
