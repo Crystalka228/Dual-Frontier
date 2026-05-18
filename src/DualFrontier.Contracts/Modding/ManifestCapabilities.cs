@@ -15,9 +15,14 @@ public readonly record struct ManifestCapabilities
     /// Authoritative capability-string pattern from MOD_OS_ARCHITECTURE §2.3.
     /// K9 (2026-05-10) extended the verb alphabet with <c>field.*</c> and
     /// <c>pipeline.*</c> entries per §4.6 (field storage and compute pipelines).
+    /// K10.2 (2026-05-18) extended с tier-prefixed verbs
+    /// (<c>fast|normal|background</c>).<c>publish|subscribe</c> per S-LOCK-4
+    /// per-FQN per-tier capability tokens (MOD_OS §3.2 amended at K10.2
+    /// closure, v1.9). Legacy <c>kernel.publish</c>/<c>kernel.subscribe</c>
+    /// tokens continue к match (backward compatibility).
     /// </summary>
     private static readonly Regex s_capabilityPattern =
-        new(@"^(kernel|mod\.[a-z0-9.]+)\.(publish|subscribe|read|write|field\.(read|write|acquire|conductivity|storage|dispatch)|pipeline\.register):[A-Za-z][A-Za-z0-9_.]+$",
+        new(@"^(kernel|mod\.[a-z0-9.]+)\.((?:fast|normal|background)\.(?:publish|subscribe)|publish|subscribe|read|write|field\.(read|write|acquire|conductivity|storage|dispatch)|pipeline\.register):[A-Za-z][A-Za-z0-9_.]+$",
             RegexOptions.Compiled);
 
     private static readonly HashSet<string> s_emptySet = [];

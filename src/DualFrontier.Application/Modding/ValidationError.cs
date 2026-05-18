@@ -92,6 +92,36 @@ public enum ValidationErrorKind
     /// Introduced at K8.3+K8.4 combined milestone (2026-05-14).
     /// </summary>
     MissingManagedStorageAttribute,
+
+    /// <summary>
+    /// K10.2 Item 29: a Fast tier subscriber violates the bounded-execution
+    /// contract (К-L15 fast tier latency invariant ≤1ms) — either statically
+    /// detected (blocking call in subscriber body, GC allocation hint
+    /// declared but absent) or dynamically (runtime monitor reports
+    /// threshold violations beyond the configured policy). Documented in
+    /// MOD_OS_ARCHITECTURE.md §11.2 (amended at K10.2 closure, v1.9).
+    /// </summary>
+    FastTierContractViolation,
+
+    /// <summary>
+    /// K10.2 Item 29: the manifest declares a tier-specific capability
+    /// (<c>kernel.fast.subscribe:{FQN}</c>, <c>kernel.background.publish:{FQN}</c>,
+    /// etc.) но the event type's <c>[EventTier]</c> attribute names a
+    /// different tier. Catches manifest/event-type drift at load time.
+    /// Documented in MOD_OS_ARCHITECTURE.md §11.2 (amended at K10.2 closure,
+    /// v1.9).
+    /// </summary>
+    BusTierMismatch,
+
+    /// <summary>
+    /// K10.2 Item 29: a Background tier event type is missing its
+    /// coalesce-function declaration в <c>[EventTier]</c>. Background tier
+    /// dispatch requires per-(type_id, coalesce_key) coalesce semantics
+    /// (Q-N-34 author control); absent declaration is a load-time failure.
+    /// Documented в MOD_OS_ARCHITECTURE.md §11.2 (amended at K10.2 closure,
+    /// v1.9).
+    /// </summary>
+    BackgroundCoalesceMissing,
 }
 
 /// <summary>
