@@ -9,14 +9,16 @@ public sealed class VulkanDeviceMarshallingTests
     [Fact]
     public unsafe void VkPhysicalDeviceProperties_size_matches_x64_spec()
     {
-        // Vulkan 1.3 spec on x64:
+        // Vulkan 1.3 spec on x64 (MSVC ABI с explicit padding для VkPhysicalDeviceLimits alignment):
         // - 5×uint32 header (apiVersion, driverVersion, vendorID, deviceID, deviceType) = 20
         // - deviceName[256] = 256
         // - pipelineCacheUUID[16] = 16
+        // - pad к 8-byte alignment для limits = 4
         // - VkPhysicalDeviceLimits opaque = 504
         // - VkPhysicalDeviceSparseProperties opaque = 20
-        // Total = 816 bytes
-        sizeof(VkPhysicalDeviceProperties).Should().Be(816);
+        // - trailing pad для struct 8-byte alignment = 4
+        // Total = 824 bytes
+        sizeof(VkPhysicalDeviceProperties).Should().Be(824);
     }
 
     [Fact]

@@ -69,7 +69,6 @@ public sealed class VulkanDevice : IDisposable
             // containing struct on stack; implicit pointer conversion via props.deviceName.
             string deviceName = Marshal.PtrToStringUTF8((IntPtr)props.deviceName) ?? "<unknown>";
 
-            // Enumerate queue families for this physical device
             uint qfCount = 0;
             VkApi.vkGetPhysicalDeviceQueueFamilyProperties(handle, ref qfCount, null);
             var qfProps = new VkQueueFamilyProperties[qfCount];

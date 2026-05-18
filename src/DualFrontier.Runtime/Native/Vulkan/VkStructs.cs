@@ -30,18 +30,22 @@ internal unsafe struct VkInstanceCreateInfo
 [StructLayout(LayoutKind.Sequential)]
 internal unsafe struct VkPhysicalDeviceProperties
 {
-    internal uint apiVersion;
-    internal uint driverVersion;
-    internal uint vendorID;
-    internal uint deviceID;
-    internal VkPhysicalDeviceType deviceType;
-    internal fixed byte deviceName[VkConstants.VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];
-    internal fixed byte pipelineCacheUUID[VkConstants.VK_UUID_SIZE];
+    internal uint apiVersion;                                                       // offset 0
+    internal uint driverVersion;                                                    // offset 4
+    internal uint vendorID;                                                         // offset 8
+    internal uint deviceID;                                                         // offset 12
+    internal VkPhysicalDeviceType deviceType;                                       // offset 16
+    internal fixed byte deviceName[VkConstants.VK_MAX_PHYSICAL_DEVICE_NAME_SIZE];   // offset 20
+    internal fixed byte pipelineCacheUUID[VkConstants.VK_UUID_SIZE];                // offset 276
+    // VkPhysicalDeviceLimits requires 8-byte alignment (contains VkDeviceSize/uint64 fields).
+    // C compiler pads from offset 292 → 296 to align limits. Explicit pad here matches MSVC x64 ABI.
+    internal fixed byte _padBeforeLimits[4];                                        // offset 292
     // Opaque: VkPhysicalDeviceLimits (504 bytes on x64 per Vulkan 1.3 spec).
-    // V0.A does not consume limits fields; declared opaque to preserve struct size.
-    internal fixed byte limits[VkConstants.VK_PHYSICAL_DEVICE_LIMITS_SIZE];
+    internal fixed byte limits[VkConstants.VK_PHYSICAL_DEVICE_LIMITS_SIZE];         // offset 296
     // Opaque: VkPhysicalDeviceSparseProperties (20 bytes, 5×VkBool32).
-    internal fixed byte sparseProperties[VkConstants.VK_PHYSICAL_DEVICE_SPARSE_PROPERTIES_SIZE];
+    internal fixed byte sparseProperties[VkConstants.VK_PHYSICAL_DEVICE_SPARSE_PROPERTIES_SIZE]; // offset 800
+    // C struct trailing pad к 8-byte alignment: 820 → 824.
+    internal fixed byte _padTrailing[4];                                            // offset 820
 }
 
 [StructLayout(LayoutKind.Sequential)]
