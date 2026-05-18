@@ -521,6 +521,60 @@ DF_API int32_t df_world_field_swap_buffers(
 DF_API int32_t df_world_field_count(
     df_world_handle world);
 
+/*
+ * K10.1 — Kernel scheduler system graph (Item 1).
+ *
+ * Process-global default scheduler graph singleton. Mirrors OS-faithful
+ * «one kernel scheduler per process» model. Registration is incremental;
+ * static graph is recomputed on demand (registration changes mark dirty).
+ *
+ * Return codes for compute operations:
+ *    1 — success, phases computed
+ *    0 — generic failure (caller may inspect last_error via diagnostics)
+ *   -1 — write-write conflict on the same component type
+ *   -2 — cyclic dependency detected
+ */
+
+DF_API int32_t df_scheduler_register_system(
+    uint32_t system_id,
+    const char* system_fqn,
+    const uint32_t* read_component_ids,
+    uint32_t read_count,
+    const uint32_t* write_component_ids,
+    uint32_t write_count,
+    int32_t priority_class,
+    int32_t wake_type);
+
+DF_API int32_t df_scheduler_unregister_system(uint32_t system_id);
+
+DF_API int32_t df_scheduler_system_count(void);
+
+DF_API void    df_scheduler_clear(void);
+
+DF_API int32_t df_scheduler_compute_static_graph(void);
+
+DF_API int32_t df_scheduler_static_phase_count(void);
+
+DF_API int32_t df_scheduler_static_phase_size(int32_t phase_index);
+
+DF_API int32_t df_scheduler_static_phase_systems(
+    int32_t phase_index,
+    uint32_t* out_system_ids,
+    int32_t out_capacity);
+
+DF_API int32_t df_scheduler_compute_per_tick_graph(
+    const uint32_t* runnable_ids,
+    uint32_t runnable_count);
+
+DF_API int32_t df_scheduler_per_tick_phase_count(void);
+
+DF_API int32_t df_scheduler_per_tick_phase_size(int32_t phase_index);
+
+DF_API int32_t df_scheduler_per_tick_phase_systems(
+    int32_t phase_index,
+    uint32_t* out_system_ids,
+    int32_t out_capacity);
+
 #ifdef __cplusplus
 }
 #endif

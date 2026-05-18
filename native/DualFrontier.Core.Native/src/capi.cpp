@@ -12,6 +12,7 @@
 #include "keyed_map.h"
 #include "set_primitive.h"
 #include "string_pool.h"
+#include "system_graph.h"
 #include "thread_pool.h"
 #include "world.h"
 
@@ -890,6 +891,131 @@ DF_API int32_t df_world_field_count(df_world_handle world)
     } catch (...) {
         return 0;
     }
+}
+
+// =============================================================================
+// K10.1 Item 1 — scheduler graph C ABI.
+// =============================================================================
+
+DF_API int32_t df_scheduler_register_system(
+    uint32_t system_id,
+    const char* system_fqn,
+    const uint32_t* read_component_ids,
+    uint32_t read_count,
+    const uint32_t* write_component_ids,
+    uint32_t write_count,
+    int32_t priority_class,
+    int32_t wake_type)
+{
+    if (system_fqn == nullptr) return 0;
+    try {
+        std::vector<uint32_t> reads;
+        reads.reserve(read_count);
+        if (read_component_ids != nullptr) {
+            for (uint32_t i = 0; i < read_count; ++i) {
+                reads.push_back(read_component_ids[i]);
+            }
+        }
+        std::vector<uint32_t> writes;
+        writes.reserve(write_count);
+        if (write_component_ids != nullptr) {
+            for (uint32_t i = 0; i < write_count; ++i) {
+                writes.push_back(write_component_ids[i]);
+            }
+        }
+        bool ok = dualfrontier::default_scheduler_graph().register_system(
+            system_id,
+            std::string(system_fqn),
+            std::move(reads),
+            std::move(writes),
+            priority_class,
+            wake_type);
+        return ok ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_scheduler_unregister_system(uint32_t system_id)
+{
+    try {
+        return dualfrontier::default_scheduler_graph().unregister_system(system_id) ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_scheduler_system_count(void)
+{
+    return static_cast<int32_t>(dualfrontier::default_scheduler_graph().system_count());
+}
+
+DF_API void df_scheduler_clear(void)
+{
+    try {
+        dualfrontier::default_scheduler_graph().clear();
+    } catch (...) {
+        // swallow
+    }
+}
+
+DF_API int32_t df_scheduler_compute_static_graph(void)
+{
+    try {
+        return dualfrontier::default_scheduler_graph().compute_static_graph();
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_scheduler_static_phase_count(void)
+{
+    return dualfrontier::default_scheduler_graph().static_phase_count();
+}
+
+DF_API int32_t df_scheduler_static_phase_size(int32_t phase_index)
+{
+    return dualfrontier::default_scheduler_graph().static_phase_size(phase_index);
+}
+
+DF_API int32_t df_scheduler_static_phase_systems(
+    int32_t phase_index,
+    uint32_t* out_system_ids,
+    int32_t out_capacity)
+{
+    return dualfrontier::default_scheduler_graph().static_phase_systems(
+        phase_index, out_system_ids, out_capacity);
+}
+
+DF_API int32_t df_scheduler_compute_per_tick_graph(
+    const uint32_t* runnable_ids,
+    uint32_t runnable_count)
+{
+    try {
+        return dualfrontier::default_scheduler_graph().compute_per_tick_graph(
+            runnable_ids, runnable_count);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_scheduler_per_tick_phase_count(void)
+{
+    return dualfrontier::default_scheduler_graph().per_tick_phase_count();
+}
+
+DF_API int32_t df_scheduler_per_tick_phase_size(int32_t phase_index)
+{
+    return dualfrontier::default_scheduler_graph().per_tick_phase_size(phase_index);
+}
+
+DF_API int32_t df_scheduler_per_tick_phase_systems(
+    int32_t phase_index,
+    uint32_t* out_system_ids,
+    int32_t out_capacity)
+{
+    return dualfrontier::default_scheduler_graph().per_tick_phase_systems(
+        phase_index, out_system_ids, out_capacity);
 }
 
 } // extern "C"

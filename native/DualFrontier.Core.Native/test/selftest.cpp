@@ -1008,12 +1008,141 @@ void scenario_field_unregister() {
 void scenario_k10_smoke() {
     std::printf("scenario_k10_smoke\n");
     // K10.1 framework smoke: verifies the selftest runner hosts scheduler
-    // scope correctly. No production code exercised — placeholder confirming
-    // the test target compiles and executes under the K10.1 cascade. Real
-    // scheduler scenarios land in subsequent K10.1 commits (system_graph,
-    // wake_registry, etc.).
+    // scope correctly. Real scheduler scenarios in scenario_system_graph_*
+    // and forward (added per K10.1 commits 3-13).
     constexpr uint32_t k10_marker = 0x4B313031u;  // ASCII 'K101'
     DF_CHECK(k10_marker == 0x4B313031u, "K10.1 scheduler scope marker resolves");
+}
+
+// =============================================================================
+// K10.1 Item 1 — system graph scenarios.
+// =============================================================================
+
+void scenario_system_graph_basic_register() {
+    std::printf("scenario_system_graph_basic_register\n");
+    df_scheduler_clear();
+    DF_CHECK(df_scheduler_system_count() == 0, "empty after clear");
+
+    uint32_t reads_a[] = {100};
+    uint32_t writes_a[] = {101};
+    int32_t ok = df_scheduler_register_system(
+        1, "SystemA", reads_a, 1, writes_a, 1, /*priority*/2, /*wake*/0);
+    DF_CHECK(ok == 1, "register SystemA");
+    DF_CHECK(df_scheduler_system_count() == 1, "count=1 after first register");
+
+    // Duplicate id rejected.
+    int32_t dup = df_scheduler_register_system(
+        1, "SystemA", nullptr, 0, nullptr, 0, 2, 0);
+    DF_CHECK(dup == 0, "duplicate id rejected");
+
+    // Empty fqn rejected.
+    int32_t empty = df_scheduler_register_system(
+        2, "", nullptr, 0, nullptr, 0, 2, 0);
+    DF_CHECK(empty == 0, "empty fqn rejected");
+
+    DF_CHECK(df_scheduler_unregister_system(1) == 1, "unregister SystemA");
+    DF_CHECK(df_scheduler_system_count() == 0, "count=0 after unregister");
+    DF_CHECK(df_scheduler_unregister_system(1) == 0, "unregister unknown id");
+}
+
+void scenario_system_graph_linear_chain() {
+    std::printf("scenario_system_graph_linear_chain\n");
+    df_scheduler_clear();
+    // A writes X; B reads X writes Y; C reads Y.  Expect A → B → C in 3 phases.
+    constexpr uint32_t cX = 100, cY = 101;
+    uint32_t a_writes[] = {cX};
+    uint32_t b_reads[]  = {cX};
+    uint32_t b_writes[] = {cY};
+    uint32_t c_reads[]  = {cY};
+
+    df_scheduler_register_system(1, "A", nullptr, 0, a_writes, 1, 2, 0);
+    df_scheduler_register_system(2, "B", b_reads, 1, b_writes, 1, 2, 0);
+    df_scheduler_register_system(3, "C", c_reads, 1, nullptr, 0, 2, 0);
+
+    int32_t result = df_scheduler_compute_static_graph();
+    DF_CHECK(result == 1, "compute success on linear chain");
+    DF_CHECK(df_scheduler_static_phase_count() == 3, "linear chain produces 3 phases");
+
+    uint32_t buf[4] = {0};
+    DF_CHECK(df_scheduler_static_phase_size(0) == 1, "phase 0 size=1");
+    df_scheduler_static_phase_systems(0, buf, 4);
+    DF_CHECK(buf[0] == 1, "phase 0 is A");
+    df_scheduler_static_phase_systems(1, buf, 4);
+    DF_CHECK(buf[0] == 2, "phase 1 is B");
+    df_scheduler_static_phase_systems(2, buf, 4);
+    DF_CHECK(buf[0] == 3, "phase 2 is C");
+}
+
+void scenario_system_graph_parallel_layer() {
+    std::printf("scenario_system_graph_parallel_layer\n");
+    df_scheduler_clear();
+    // Two independent systems → both in phase 0 (no edges between them).
+    df_scheduler_register_system(1, "X", nullptr, 0, nullptr, 0, 2, 0);
+    df_scheduler_register_system(2, "Y", nullptr, 0, nullptr, 0, 2, 0);
+    int32_t r = df_scheduler_compute_static_graph();
+    DF_CHECK(r == 1, "compute success on independent pair");
+    DF_CHECK(df_scheduler_static_phase_count() == 1, "single phase");
+    DF_CHECK(df_scheduler_static_phase_size(0) == 2, "phase contains both systems");
+    uint32_t buf[4] = {0};
+    df_scheduler_static_phase_systems(0, buf, 4);
+    DF_CHECK(buf[0] == 1 && buf[1] == 2, "sorted phase ids");
+}
+
+void scenario_system_graph_write_conflict() {
+    std::printf("scenario_system_graph_write_conflict\n");
+    df_scheduler_clear();
+    constexpr uint32_t cX = 100;
+    uint32_t writes[] = {cX};
+    df_scheduler_register_system(1, "A", nullptr, 0, writes, 1, 2, 0);
+    df_scheduler_register_system(2, "B", nullptr, 0, writes, 1, 2, 0);
+    int32_t r = df_scheduler_compute_static_graph();
+    DF_CHECK(r == -1, "write-write conflict detected (-1)");
+    DF_CHECK(df_scheduler_static_phase_count() == 0, "no phases produced on conflict");
+}
+
+void scenario_system_graph_cycle_detection() {
+    std::printf("scenario_system_graph_cycle_detection\n");
+    df_scheduler_clear();
+    constexpr uint32_t cX = 100, cY = 101;
+    // A: reads Y, writes X. B: reads X, writes Y. Cycle A↔B.
+    uint32_t a_r[] = {cY};
+    uint32_t a_w[] = {cX};
+    uint32_t b_r[] = {cX};
+    uint32_t b_w[] = {cY};
+    df_scheduler_register_system(1, "A", a_r, 1, a_w, 1, 2, 0);
+    df_scheduler_register_system(2, "B", b_r, 1, b_w, 1, 2, 0);
+    int32_t r = df_scheduler_compute_static_graph();
+    DF_CHECK(r == -2, "cycle detected (-2)");
+}
+
+void scenario_system_graph_per_tick_subset() {
+    std::printf("scenario_system_graph_per_tick_subset\n");
+    df_scheduler_clear();
+    // Static graph: A → B → C (linear). Per-tick over {A, C} only — B blocked.
+    // Edges between A and C? A writes X (read by B), B writes Y (read by C).
+    // A's writes do NOT directly touch C's reads, so no edge A → C in subset.
+    // Per-tick phases over {A, C}: both runnable in phase 0 (no edges between
+    // them within subset).
+    constexpr uint32_t cX = 100, cY = 101;
+    uint32_t a_w[] = {cX};
+    uint32_t b_r[] = {cX};
+    uint32_t b_w[] = {cY};
+    uint32_t c_r[] = {cY};
+    df_scheduler_register_system(1, "A", nullptr, 0, a_w, 1, 2, 0);
+    df_scheduler_register_system(2, "B", b_r, 1, b_w, 1, 2, 0);
+    df_scheduler_register_system(3, "C", c_r, 1, nullptr, 0, 2, 0);
+
+    uint32_t runnable[] = {1, 3};
+    int32_t r = df_scheduler_compute_per_tick_graph(runnable, 2);
+    DF_CHECK(r == 1, "per-tick compute success");
+    DF_CHECK(df_scheduler_per_tick_phase_count() == 1,
+             "single per-tick phase (no edge A→C in subset)");
+    DF_CHECK(df_scheduler_per_tick_phase_size(0) == 2, "both A and C in phase 0");
+
+    // Unknown id rejected.
+    uint32_t bad[] = {99};
+    int32_t br = df_scheduler_compute_per_tick_graph(bad, 1);
+    DF_CHECK(br == 0, "unknown runnable id rejected");
 }
 
 } // namespace
@@ -1050,6 +1179,12 @@ int main() {
     scenario_field_register_idempotent_and_conflict();
     scenario_field_unregister();
     scenario_k10_smoke();
+    scenario_system_graph_basic_register();
+    scenario_system_graph_linear_chain();
+    scenario_system_graph_parallel_layer();
+    scenario_system_graph_write_conflict();
+    scenario_system_graph_cycle_detection();
+    scenario_system_graph_per_tick_subset();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

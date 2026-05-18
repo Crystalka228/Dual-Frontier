@@ -28,6 +28,7 @@ set(DF_NATIVE_SOURCES
     src/composite.cpp
     src/set_primitive.cpp
     src/tile_field.cpp
+    src/system_graph.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -43,6 +44,7 @@ set(DF_NATIVE_HEADERS
     include/composite.h
     include/set_primitive.h
     include/tile_field.h
+    include/system_graph.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})
