@@ -80,6 +80,30 @@ public static class ModUnloadInterop
         => df_scheduler_is_sim_paused() == 1;
 
     /// <summary>
+    /// Stable mapping from managed mod id string к the uint32 mod_id used
+    /// в native bus subscriber registries and unload primitive. К10.2 lands
+    /// the hash function (FNV-1a 32-bit) consistently shared между К10.2
+    /// subscribe sites + Step 3.5 unload caller.
+    ///
+    /// Returns 0 only when input is null или the FNV-1a output is 0 — in
+    /// the rare 0-output case, returns 1 instead. mod_id=0 is reserved для
+    /// Core/vanilla subscribers (per native bus_native.h convention).
+    /// </summary>
+    public static uint HashModId(string modId)
+    {
+        if (modId is null) return 0;
+        const uint FNV_OFFSET = 2166136261u;
+        const uint FNV_PRIME = 16777619u;
+        uint h = FNV_OFFSET;
+        foreach (char ch in modId)
+        {
+            h ^= ch;
+            h *= FNV_PRIME;
+        }
+        return h == 0u ? 1u : h;
+    }
+
+    /// <summary>
     /// Invokes the native unload primitive для <paramref name="modId"/>.
     /// Returns <see langword="true"/> if T0-T7 sequence completed (Result.Success=1);
     /// <see langword="false"/> on К-L18 precondition violation or fault

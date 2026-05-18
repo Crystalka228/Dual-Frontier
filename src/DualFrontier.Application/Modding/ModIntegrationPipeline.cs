@@ -5,6 +5,7 @@ using System.Threading;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 
 namespace DualFrontier.Application.Modding;
@@ -635,6 +636,48 @@ internal sealed class ModIntegrationPipeline
         TryUnloadStep(3, modId, warnings, () =>
         {
             _registry.RemoveMod(modId);
+        });
+
+        // Step 3.5 (К10.2 Item 32) — native primitive encapsulating T0-T7
+        // internal sequence: clears native scheduler state per tier (subscriber
+        // registries, capability registrations, wake registry subscriptions,
+        // shared memory registrations); returns ModUnloadResult с per-tier
+        // metrics. Best-effort sequential per §9.5.1; native primitive internal
+        // critical section atomicity (per S3-Q1 L3 layering + S3-Q6 single
+        // primitive contract).
+        //
+        // К10.2 «managed-facade-preserved» strategy: when К10.2 ships, native
+        // bus has zero subscribers for this mod (UseNativeBusForDispatch=false
+        // default), so primitive returns vacuous success. К10.4 sovereign
+        // authority switch makes this load-bearing.
+        //
+        // Also tears down the per-mod ModSubScheduler (Item 21).
+        TryUnloadStep(35, modId, warnings, () =>
+        {
+            uint modIdHash = ModUnloadInterop.HashModId(modId);
+            if (ModUnloadInterop.UnloadModNativeState(modIdHash, out ModUnloadResult result))
+            {
+                // Native teardown succeeded; ModUnloadResult metrics могут
+                // be surfaced via observability hook (К10.1 Item 19) when
+                // wired в К-extensions. For К10.2, success is silent.
+                _ = result;
+            }
+            else
+            {
+                // Native primitive reported failure. Surface error messages
+                // through the same warning pipeline as Steps 1-6.
+                for (int i = 0; i < result.ErrorCount; i++)
+                {
+                    warnings.Add(new ValidationWarning(
+                        modId,
+                        $"Step 3.5 (К10.2 native unload) reported: {result.GetErrorMessage(i)}"));
+                }
+            }
+
+            // Per-mod sub-scheduler managed-side teardown (Item 21 consumption).
+            // Idempotent — no-op if Item 21 sub-scheduler was never created
+            // (К10.2 default before mods opt-in к the sub-scheduler API).
+            _registry.RemoveSubScheduler(modId);
         });
 
         // Steps 4 + 5 — rebuild graph without the mod's systems and swap
