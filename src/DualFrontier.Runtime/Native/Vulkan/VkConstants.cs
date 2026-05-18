@@ -12,6 +12,7 @@ internal static class VkConstants
     internal const string VK_EXT_DEBUG_UTILS_EXTENSION_NAME = "VK_EXT_debug_utils";
     internal const string VK_KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
     internal const string VK_KHR_WIN32_SURFACE_EXTENSION_NAME = "VK_KHR_win32_surface";
+    internal const string VK_KHR_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_swapchain";
 
     // Sizes
     internal const int VK_MAX_PHYSICAL_DEVICE_NAME_SIZE = 256;
