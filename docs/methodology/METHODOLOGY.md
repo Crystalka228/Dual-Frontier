@@ -993,6 +993,26 @@ Default-inclusion bias под К-L14 не применяется когда prop
 **Application count**: 1 strong (К9.5 cancellation 2026-05-17).
 **Promotion gate**: 2+ more strong applications.
 
+#### Lesson #23 candidate — Register classification can drift from actual document state
+
+**Origin**: K8.5 deferral cascade (2026-05-18). Lesson #22 reconnaissance surfaced register classification drift — DOC-D-K8_5 entry classified `lifecycle: AUTHORED`, actual content skeleton-grade. Mismatch existed since A'.4.5 enrollment (2026-05-12) and persisted through subsequent governance cycles without detection.
+
+**Pattern**: Register classification applied at enrollment time based on enrollment evidence (file exists, brief authored). Actual content state may differ at enrollment OR drift post-enrollment as project context shifts (e.g., audience deferral, scope reframing, schema extensions making prior classification obsolete).
+
+**Application**: Extend Lesson #22 (read existing code before authoring) к include register entry vs actual content reconciliation. Pre-flight reads for brief authoring against existing registered documents should:
+1. Read register entry (lifecycle, version, special_case_rationale)
+2. Read document content itself
+3. Reconcile entry classification with actual content state
+4. If mismatch surfaced, reclassification cascade may be required before main brief work
+
+**Strong applications counted**: 1 (К8.5 deferral cascade 2026-05-18).
+
+**Formalization gate**: 2+ strong applications + formalization review at А'.8 K-closure report per S6 lock 2026-05-17.
+
+**Complementary к**: Lesson #22 (read existing code first); Lesson #11 (architectural reduction redundancy check — applied к exclude К8.5 from skeleton framework based on register state, then refuted by content state — Lesson #11 also benefits from content-based reduction check).
+
+**Potential analyzer encoding**: register classification verification rules (DOC-D entries cross-referenced with actual file content); deferred к А'.9 analyzer rule specification phase.
+
 ### Reference: K0 lessons learned
 
 Concrete K0 closure lessons live в `docs/MIGRATION_PROGRESS.md` K0 entry (5 items). The descriptive-pre-flight principle in this section generalizes from those lessons; it is не a complete account of K0 — that lives в the migration tracker.

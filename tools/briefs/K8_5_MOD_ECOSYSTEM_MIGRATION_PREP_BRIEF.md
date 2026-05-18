@@ -4,10 +4,10 @@
 register_id: DOC-D-K8_5
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
+version: "0.1"
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_5
 ---
 # K8.5 — Mod ecosystem migration prep (documentation + guide)

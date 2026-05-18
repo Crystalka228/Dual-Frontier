@@ -2,7 +2,7 @@
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-17  |  Schema version: 1.0  |  Register version: 1.6*
+*Last generated: 2026-05-17  |  Schema version: 1.0  |  Register version: 1.7*
 
 ---
 
@@ -264,7 +264,7 @@
 - **Path**: `docs/architecture/PHASE_A_PRIME_SEQUENCING.md`
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-12 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
 - **Special-case rationale**: Category A + Tier 2 + Live override: document is mutable per phase closure, subordinate to MIGRATION_PLAN_KERNEL_TO_VANILLA — not LOCKED architecture per Pass 2 §1.3
 
@@ -349,7 +349,7 @@
 - **Path**: `docs/methodology/METHODOLOGY.md`
 - **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.8
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-05-17 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-17
 - **Requirements authored**: REQ-Q-A07-6
 - **Risks referenced**: RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014
@@ -836,9 +836,11 @@
 ### DOC-D-K8_5 — K8.5 — Mod Ecosystem Migration Prep
 
 - **Path**: `tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md`
-- **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
+- **Tier**: 3  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.1
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-10 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: Skeleton brief awaiting full brief authoring at proper milestone timing. Content (mod ecosystem migration prep from v2 to v3) premised on external mod authors audience; vanilla mods deferred к Phase B per composite namespace ratification (PR #34, 2026-05-16) means no current audience. Promotion к AUTHORED triggers when Phase B initial M-series sprint begins establishing mod author audience. Deferred from Phase А'.6 slot 2026-05-18 per Crystalka direction.
 - **Risks referenced**: RISK-005, RISK-007
 
 ### DOC-D-K8_DECISION — K8 — Decision Brief
@@ -2000,6 +2002,7 @@
 | CAPA-2026-05-16-POWER-DELETION-PROPAGATION | 2026-05-16 | CLOSED | Audit DRIFT-006 (S4) + DRIFT-007 (S4) + DRIFT-008 (S4): CONTRACTS + EVENT_BUS |
 | CAPA-2026-05-16-ISOLATION-AUTHORITY-RESTORATION | 2026-05-16 | CLOSED | Audit DRIFT-003 (S5) + DRIFT-005 (S5): README + ISOLATION + THREADING + PERFORMANCE |
 | CAPA-2026-05-16-LIVE-STATE-CLOSURE-PROTOCOL-GAP | 2026-05-16 | CLOSED | Audit DRIFT-001 (S4): MIGRATION_PROGRESS.md last_updated 2026-05-12 pre-A'.5; |
+| CAPA-2026-05-18-K8_5-DRIFT | 2026-05-18 | CLOSED | K8.5 brief reconnaissance per Lesson #22 (read existing code before brief authoring) surfaced |
 
 <a name="global-audit-trail"></a>
 ## Global: Audit trail
@@ -2020,5 +2023,6 @@
 | 2026-05-16 | Cleanup cascade closing 18 of 19 audit findings; 5 CAPAs opened+closed within same governance event; DRIFT-016 halted per SC-4 | governance_event | e68d799..PENDING-COMMIT-16 |
 | 2026-05-17 | Brief skeleton framework — schema extension AUTHORED-SKELETON + 4 К/А' forward planning skeleton briefs authored | governance_event | 15ffa0a..PENDING-COMMIT-8 |
 | 2026-05-17 | К10 deliberation amendments application — METHODOLOGY v1.8 + KERNEL_FULL_NATIVE_SCHEDULER v2.0 landed; new Tier 1 LOCKED enrollment | amendment_landing | 8c3cf5a..PENDING-COMMIT-5 |
+| 2026-05-18 | K8.5 deferral cascade — DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON, Phase A'.6 slot SKIPPED, milestone deferred к post-Phase B | governance_event | 4bc34c1..PENDING-COMMIT-K8_5-CLOSURE |
 
 

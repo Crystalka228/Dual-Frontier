@@ -437,12 +437,12 @@ documents:
     lifecycle: LOCKED
     owner: Crystalka
     version: "1.8"
-    last_modified: "2026-05-17"
-    last_modified_commit: "8c3cf5a"
+    last_modified: "2026-05-18"
+    last_modified_commit: "PENDING-COMMIT-K8_5-3"
     content_language: mixed
     review_cadence: on-change+annual
-    last_review_date: "2026-05-17"
-    last_review_event: "К10 deliberation S6 lock — Lessons #11, #20, #22 + Provisional Lessons section"
+    last_review_date: "2026-05-18"
+    last_review_event: "K8.5 deferral cascade — Lesson #23 candidate added к Provisional Lessons pool (register classification drift from actual document state)"
     next_review_due: "2027-05-17"
     reviewer: Crystalka
     requirements_authored: [REQ-Q-A07-6]
@@ -656,7 +656,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K8_5-2"
+    last_modified_commit: "235ad57"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-18"
@@ -1184,7 +1184,7 @@ documents:
     owner: Crystalka
     version: "0.1"
     last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K8_5-1"
+    last_modified_commit: "4bc34c1"
     content_language: en
     review_cadence: on-status-transition
     last_review_date: "2026-05-18"
@@ -4822,6 +4822,69 @@ capa_entries:
       verification_outcome: "V substrate supersession fully propagated. DRIFT-009 + DRIFT-013 + DRIFT-014 + DRIFT-015 closed."
     lessons_learned_reference: DOC-B-METHODOLOGY
 
+  - id: CAPA-2026-05-18-K8_5-DRIFT
+    title: "DOC-D-K8_5 lifecycle classification drift surfaced via Lesson #22 reconnaissance"
+    opened_date: "2026-05-18"
+    closure_status: CLOSED
+    closed_date: "2026-05-18"
+    closed_commit: "PENDING-COMMIT-K8_5-CLOSURE"
+    trigger: |
+      K8.5 brief reconnaissance per Lesson #22 (read existing code before brief authoring) surfaced
+      that DOC-D-K8_5 register entry classified lifecycle AUTHORED, but actual brief content
+      (tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md) is skeleton-grade:
+      - File header: «Status: SKELETON»
+      - First TODO line: «Author full brief»
+      - Trigger note: «Brief authoring trigger: after K8.4 closure»
+
+      Register classification did not reflect actual document state. Additionally, brief content
+      premise (v2-to-v3 mod authors migration) mismatched current reality (vanilla mods deferred
+      к Phase B per composite namespace ratification PR #34, 2026-05-16, no v2 codebase exists).
+    affected_documents:
+      - DOC-D-K8_5
+      - DOC-A-PHASE_A_PRIME_SEQUENCING
+      - DOC-G-REGISTER
+      - DOC-B-METHODOLOGY
+    root_cause: |
+      Register classification (DOC-D-K8_5 lifecycle: AUTHORED) was applied at enrollment time
+      (A'.4.5 closure, 2026-05-12) based on enrollment evidence (brief file exists, brief
+      authored by Opus). Actual content state (skeleton vs full) was not verified during
+      enrollment.
+
+      Additionally, post-enrollment events (composite namespace ratification PR #34 deferring
+      vanilla mods к Phase B, 2026-05-16) drifted brief's premise from reality without
+      triggering register classification review.
+
+      No tooling currently detects register classification vs actual content state mismatch.
+    immediate_action: |
+      Surface drift via K8.5 deferral cascade brief authoring session 2026-05-18. Crystalka
+      direction («просто пропускаем и двигаемся дальше только лишь фиксируем что K8.5 пропущен»)
+      adopted as authoritative resolution path.
+    corrective_action: |
+      DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON per K8.5 deferral cascade
+      (commit 4bc34c1, Phase 1). Phase A'.6 slot marked SKIPPED with deferral marker in
+      PHASE_A_PRIME_SEQUENCING.md (commit 235ad57, Phase 2). K8.5 promotion trigger updated к
+      post-Phase B initial M-series sprint.
+    preventive_action: |
+      Lesson #23 candidate authored в METHODOLOGY.md Provisional Lessons pool: «Register
+      classification can drift from actual document state. Lesson #22 (read existing code
+      before authoring) extended: read register entry AND open document content before
+      assuming register classification accurate. Especially after schema extensions
+      (AUTHORED-SKELETON post-FRAMEWORK v1.1) — pre-existing entries may need reclassification
+      к match actual state.»
+
+      Lesson formalization deferred к А'.8 K-closure report per existing timing lock
+      (S6 lock 2026-05-17).
+
+      Architectural analyzer milestone (А'.9) may encode register classification verification
+      rules per К-closure report Roslyn analyzer rule specification (К-closure report
+      authoring decision).
+    effectiveness_verification:
+      method: "sync_register.ps1 --validate exit 0 post K8.5 cascade closure; DOC-D-K8_5 frontmatter mirror reflects AUTHORED-SKELETON + version 0.1; PHASE_A_PRIME_SEQUENCING.md §2 sequence shows А'.6 SKIPPED + А'.7 К10"
+      date_verified: "2026-05-18"
+      verification_commit: "PENDING-COMMIT-K8_5-CLOSURE"
+      verification_outcome: "Register classification drift surfaced + corrected within single cascade. CAPA opened+closed within same governance commit per A'.4.5 precedent. Lesson #23 candidate captured for К-closure report formalization review."
+    lessons_learned_reference: DOC-B-METHODOLOGY
+
 # === audit_trail collection (Q15 — 9 events; pre-authored from Pass 5 §5) ===
 audit_trail:
   - id: EVT-2026-05-10-K-L3.1-DELIBERATION
@@ -5386,3 +5449,62 @@ audit_trail:
       capa_entries: []  # no CAPAs opened или closed at this event
       risks:
         - RISK-004  # cross-document drift — skeleton framework establishes forward-planning visibility
+
+  - id: EVT-2026-05-18-K8_5-DEFERRAL
+    date: "2026-05-18"
+    event: "K8.5 deferral cascade — DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON, Phase A'.6 slot SKIPPED, milestone deferred к post-Phase B"
+    event_type: governance_event
+    documents_affected:
+      - DOC-D-K8_5                                          # lifecycle reclassified
+      - DOC-A-PHASE_A_PRIME_SEQUENCING                      # §2 + §3 + §4.1 + §5.x + §6 + §7.1 amended
+      - DOC-B-METHODOLOGY                                   # Lesson #23 candidate added к Provisional Lessons pool
+      - DOC-G-REGISTER                                      # register_version 1.6 → 1.7
+      - DOC-G-REGISTER_RENDER                               # regenerated
+      - DOC-G-VALIDATION_REPORT                             # regenerated
+    commits:
+      range: "4bc34c1..PENDING-COMMIT-K8_5-CLOSURE"
+      key_commits:
+        - hash: "4bc34c1"
+          summary: "Commit 1 — REGISTER.yaml DOC-D-K8_5 lifecycle AUTHORED → AUTHORED-SKELETON + version 1.0 → 0.1 + deferral note"
+        - hash: "235ad57"
+          summary: "Commit 2 — PHASE_A_PRIME_SEQUENCING.md §2 sequence + §3 duration + §4.1 invariant + §5.x amendment refs + §6 completion gate + §7.1 К-closure approach amended"
+        - hash: "PENDING-COMMIT-K8_5-CLOSURE"
+          summary: "Commit 3 — Closure (CAPA-2026-05-18-K8_5-DRIFT + EVT-2026-05-18-K8_5-DEFERRAL entries + METHODOLOGY Provisional Lessons Lesson #23 candidate + DOC-B-METHODOLOGY bump + sync frontmatter mirrors + REGISTER_RENDER/VALIDATION_REPORT regen); schema metadata last_modified_commit PENDING-COMMIT-K8_5-CLOSURE + DOC-B-METHODOLOGY last_modified_commit PENDING-COMMIT-K8_5-3 deferred к next governance commit per FRAMEWORK §8.3 Option B"
+    governance_impact: |
+      K8.5 brief drift surfaced via Lesson #22 reconnaissance (K8.5 brief content skeleton-grade;
+      premise of v2-to-v3 mod authors migration mismatched reality given vanilla mods deferred
+      к Phase B per composite namespace ratification PR #34, 2026-05-16).
+
+      Crystalka direction 2026-05-18: «просто пропускаем и двигаемся дальше только лишь фиксируем
+      что K8.5 пропущен».
+
+      Phase A' execution sequence revised:
+      - А'.5 K8.3+K8.4 combined cutover (CLOSED 2026-05-14)
+      - А'.6 SKIPPED — K8.5 deferred к post-Phase B initial M-series sprint
+      - А'.7 К10 native kernel scheduler — next milestone, brief authoring at К10 execution brief Opus deliberation session
+      - А'.8 K-closure report
+      - А'.9 Roslyn analyzer
+      - Phase B M-series begins
+
+      DOC-D-K8_5 lifecycle reclassified AUTHORED → AUTHORED-SKELETON; version 1.0 → 0.1 per
+      skeleton convention; special_case_rationale updated с deferral note.
+
+      K8.5 canonical identifier preserved per KERNEL_ARCHITECTURE.md Part 2 lines 605 + 767
+      (upstream authority unchanged).
+
+      Q-K-1 retroactive lock trigger updated: was «K8.5 brief authoring approaches» (deferred
+      per composite namespace ratification 2026-05-16); is now «post-Phase B initial M-series
+      sprint when mod authors audience exists».
+
+      CAPA-2026-05-18-K8_5-DRIFT opened+closed within this cascade. Root cause: register
+      classification (AUTHORED) was applied at enrollment time without actual content state
+      verification; post-enrollment context drift (PR #34 deferring vanilla mods) shifted
+      brief premise from reality. Preventive: Lesson #23 candidate added к Provisional Lessons
+      pool (formalization at А'.8 per S6 timing lock).
+
+      register_version 1.6 → 1.7.
+    cross_references:
+      capa_entries:
+        - CAPA-2026-05-18-K8_5-DRIFT  # opened + closed within this cascade
+      risks:
+        - RISK-004  # cross-document drift class — register drift sub-case
