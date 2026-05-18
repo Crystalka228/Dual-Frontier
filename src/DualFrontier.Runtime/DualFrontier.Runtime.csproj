@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Runtime</AssemblyName>
+    <RootNamespace>DualFrontier.Runtime</RootNamespace>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="DualFrontier.Runtime.Tests" />
+  </ItemGroup>
+</Project>

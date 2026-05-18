@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>DualFrontier.Runtime.SmokeTest</AssemblyName>
+    <RootNamespace>DualFrontier.Runtime.SmokeTest</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
+  </ItemGroup>
+</Project>
