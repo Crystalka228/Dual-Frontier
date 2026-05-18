@@ -61,6 +61,8 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
 > Resolution of the A'-cycle renumbering question (whether to propagate A'.6 = K8.5 + A'.7 = analyzer through body/§3 table, or to leave the closure note's intent unimplemented) is a downstream **sequencing-label concern**, deferred to subsequent deliberation when K8.5 brief authoring approaches. K8.5's canonical identity is unaffected by the renumbering question.
 >
 > See `docs/scratch/RATIFICATION_EXECUTION/Q_K_1_REPORT.md` for full verbatim findings and recommendation match analysis. Q-K-1 retroactive lock pending subsequent deliberation per `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md` §5.
+>
+> **Update 2026-05-18 (K8.5 deferral cascade):** K8.5 brief authoring does not approach within Phase A' execution. K8.5 deferred к post-Phase B initial M-series sprint when mod authors audience exists (per Crystalka direction 2026-05-18, surfaced via skeleton drift detection — actual brief content remains skeleton-grade, premise of v2-to-v3 mod authors migration mismatches reality given vanilla mods deferred к Phase B per composite namespace ratification PR #34). Phase A' execution sequence revised: А'.5 (CLOSED) → А'.6 SKIPPED (deferral marker) → А'.7 К10 (next) → А'.8 K-closure → А'.9 Roslyn analyzer → [M8.4 Phase B begins]. Q-K-1 retroactive lock trigger updated: was «K8.5 brief authoring approaches»; is now «post-Phase B initial M-series sprint when mod authors audience exists». Q-K-1 reconciliation remains pending until that trigger.
 
 ```
 [K8.2 v2 closure — DONE 2026-05-09, commits 7527d00 on main]
@@ -123,17 +125,21 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   3 halts protected the milestone (storage-location, API-surface, mid-transition drift) — methodology working as designed
   │   K8.3 and K8.4 absorbed into A'.5; A'.6 = K8.5 (mod ecosystem prep), A'.7 = Roslyn analyzer; horizon item: «electricity on GPU compute» (separate future brief, not yet sequenced)
   │
-  ├─ Phase A'.6 — (formerly K8.4 standalone — combined into A'.5 above) K8.5 skeleton execution
-  │   Brief: K8.5 mod-ecosystem migration prep (re-numbered after K8.3+K8.4 combination)
-  │   Scope: per the original A'.7 K8.5 description below — mod authoring guide updated post-K-L3.1 + dual API documentation + compatibility test plan published
-  │   Note: A'.6 was originally «K8.4 skeleton execution» before the K8.3+K8.4 combination; that scope is now closed within A'.5 per above.
+  ├─ Phase A'.6 — SKIPPED — K8.5 deferred к post-Phase B (2026-05-18 deferral cascade)
+  │   Original scope: K8.5 mod-ecosystem migration prep (mod authoring guide + dual API documentation + compatibility test plan)
+  │   Deferral rationale: K8.5 brief content skeleton-grade; premise (mod ecosystem migration from v2 to v3) requires external mod authors audience; vanilla mods deferred к Phase B per composite namespace ratification (PR #34, 2026-05-16) means audience absent. Documentation milestone needs target audience к serve.
+  │   K8.5 canonical identifier preserved per KERNEL_ARCHITECTURE.md Part 2 lines 605 + 767 (unchanged).
+  │   DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON per K8.5 deferral cascade (EVT-2026-05-18-K8_5-DEFERRAL).
+  │   Promotion trigger: post-Phase B initial M-series sprint when mod authors audience exists.
+  │   Phase A' execution proceeds к А'.7 К10 without K8.5 intermediate step.
   │
-  ├─ Phase A'.7 — K8.5 skeleton execution
-  │   Brief: K8.5 skeleton authored, post-Phase-A'.1 amendment if disposition B/C applied
-  │   Scope: Phase A → B handoff (docs, capability annotations, readiness gate)
-  │   K8.5 is the natural place for MOD_OS_ARCHITECTURE.md v1.7 amendment per Migration Plan §6.2
-  │   Estimated time: 3-5 days hobby pace, ~1-2 hours auto-mode
-  │   Executor: Cloud Code
+  ├─ Phase A'.7 — К10 native kernel scheduler execution
+  │   Brief: K10_EXECUTION_BRIEF.md (currently DOC-D-K10_EXECUTION lifecycle AUTHORED-SKELETON; promotion к AUTHORED at brief authoring session post-А'.5 closure)
+  │   Specification: KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED — 46-item К10 scope, 12 К-L invariants targeted (K-L7.1 sub + K-L12-19), TLA+ formal verification
+  │   Scope: full native kernel scheduler + bus + control plane migration + V substrate interlock + TLA+ formal verification
+  │   К-L6 SUPERSEDED rationale realized; К-L12-19 + К-L7.1 candidates promoted к LOCKED at К10 execution closure
+  │   Estimated time: substantial; 1500-2500 line execution brief; multi-session Claude Code execution possible
+  │   Executor: Opus deliberation (brief authoring) + Claude Code (execution)
   │
   ├─ Phase A'.8 — K-closure report
   │   Scope: structured document enumerating final K-Lxx invariants
@@ -171,13 +177,13 @@ At hobby pace (~1h/day):
 | A'.3 Push (DONE 2026-05-10) | minutes | ~1 day |
 | A'.4 K9 (DONE 2026-05-11) | 1-2 weeks | 2-3 weeks |
 | A'.4.5 Document Control Register (DONE 2026-05-12) | ~5-7 hours auto-mode | ~3 weeks |
-| A'.5 K8.3 | 4-6 weeks | 6-9 weeks |
-| A'.6 K8.4 | 1-2 weeks | 7-11 weeks |
-| A'.7 K8.5 | 3-5 days | 8-12 weeks |
+| A'.5 K8.3+K8.4 combined (CLOSED 2026-05-14) | 4 commits, 1 session | <1 day |
+| A'.6 K8.5 SKIPPED (deferred к post-Phase B) | — | — |
+| A'.7 K10 native kernel scheduler | substantial; multi-session | TBD (post-execution measurement) |
 | A'.8 K-closure report | 1-2 sessions | 8-12 weeks (overlap-able) |
 | A'.9 Analyzer | 2-4 weeks | 10-16 weeks |
 
-**Total Phase A' duration: ~10-16 weeks at hobby pace** (~2.5-4 months). The A'.0/A'.0.5/A'.0.7 doc-only deliberation+refresh sessions are sub-day each and do not materially extend cumulative timeline.
+**Total Phase A' duration: revised estimate post-K8.5 deferral.** А'.5 closed in 1 session 2026-05-14 (compressed vs. 4-6 weeks original estimate). А'.7 К10 execution substantial (multi-session expected). Phase A' duration TBD pending К10 execution closure measurements; original 10-16 weeks estimate retained as rough order-of-magnitude pending K10 measurement. The А'.0/А'.0.5/А'.0.7 doc-only deliberation+refresh sessions were sub-day each as predicted.
 
 This duration reflects «без костылей + decade-horizon» commitment. Faster paths exist (skip K-L3.1, skip closure report, skip analyzer) but each shortcut creates structural debt this phase exists to prevent.
 
@@ -194,6 +200,8 @@ Each Phase A'.N depends on A'.<N-1> closure. No skipping. No parallelism within 
 Reasoning: each milestone produces input to the next. K-L3.1 → amendment plan → amended skeleton briefs → executable kernel migrations → closure report enumerating all final state → analyzer encoding closure report. Any reorder breaks the input chain.
 
 **Exception**: Phase A'.4 K9 may be re-ordered relative to A'.5-A'.7 (K8.3-K8.5) per Migration Plan Option c sequencing logic — K9 is kernel-side independent of K8.3-K8.5 except in IModApi v3 surface which K8.4 ships. The ordering above places K9 first as default, but if K-L3.1 deliberation surfaces reasons to defer K9 (e.g., K9 skeleton requires significant amendment vs K8.3-K8.5 minimal amendment), order may be K8.3 → K8.4 → K8.5 → K9 → K-closure report → analyzer. Decision at A'.1 amendment brief time.
+
+**Refinement 2026-05-18 (K8.5 deferral cascade):** «No skipping» applies к execution work, not к slot allocation. Phase А'.6 slot marked SKIPPED because the milestone originally planned for that slot (K8.5) is deferred к post-Phase B per audience-absence architectural reason — not because Phase A' work itself is skipped. Phase A' execution proceeds от А'.5 closure к А'.7 К10 directly. К8.5 milestone preserves canonical identity per KERNEL_ARCHITECTURE.md Part 2; only its Phase A' execution slot defers. Sequencing invariant violation candidate: «А'.7 depends on А'.6 closure» — checked: К10 execution (А'.7) has no dependency on К8.5 outputs (K8.5 documentation milestone, К10 architectural milestone, orthogonal scopes). Invariant preserved by dependency check, not by slot-numbering continuity.
 
 ### §4.2 No M-series work during Phase A'
 
@@ -222,13 +230,16 @@ Multiple LOCKED documents accumulate amendments through Phase A'. Coordinated am
 ### §5.2 MOD_OS_ARCHITECTURE.md
 
 - **A'.1 amendment**: v1.6 → v1.7 (lines 1149-1150 reformulation per K-L3.1 lock + Q6 capability extension). May bump to v2.0 if K-L3.1 introduces structurally significant change (e.g., separate ManagedAccessible attribute per Q6.b).
-- **A'.6 K8.4 amendment**: §4.6 IModApi v3 surface finalized per K-L3.1 Q1+Q2 lock.
-- **A'.7 K8.5 amendment**: §11 migration phases table extended with M8.4-M10.B rows per Migration Plan §6.2 schedule.
+- **A'.5 K8.3+K8.4 combined amendment (DONE 2026-05-14)**: §4.6 IModApi v3 surface finalized per K-L3.1 Q1+Q2 lock + post-cutover NativeWorld single source of truth wording.
+- **A'.6 K8.5 amendment: DEFERRED**. Originally §11 migration phases table extended with M8.4-M10.B rows per Migration Plan §6.2 schedule. Deferral к post-Phase B per K8.5 deferral cascade (2026-05-18).
+- **A'.7 K10 amendment**: cross-doc cascade per `tools/briefs/K10_CROSS_DOC_AMENDMENTS_CASCADE_BRIEF.md` skeleton (AUTHORED-SKELETON; promotion к AUTHORED at К10 execution closure or earlier per prioritization). MOD_OS section updates per K10 specification v2.0 Part 7 cross-document amendments queue (capability section tier-prefixed tokens, §9.5 unload chain extension, §11 К-L18 quiescent state compliance).
 
 ### §5.3 MIGRATION_PLAN_KERNEL_TO_VANILLA.md
 
 - **A'.1 amendment**: v1.0 → v1.1 (decision #9 added per K-L3.1 lock; line 62 framing corrected; sections 1.2/1.3/1.4 scope wording updated per K-L3.1 Q3+Q1+Q2 answers; **Phase A' formalization integrated into §0.1 sequence**).
-- **A'.4-A'.7**: per-milestone scope clarifications as needed.
+- **A'.4-A'.5**: per-milestone scope clarifications as needed (A'.4 K9 DONE; A'.5 K8.3+K8.4 DONE).
+- **A'.6 K8.5: DEFERRED** — no MIGRATION_PLAN amendment trigger fires within Phase A' for K8.5.
+- **A'.7 К10**: К10 native kernel scheduler may produce Migration Plan amendments per К10 execution closure; scope deferred к К10 execution brief authoring.
 
 ### §5.4 METHODOLOGY.md
 
@@ -244,13 +255,17 @@ Multiple LOCKED documents accumulate amendments through Phase A'. Coordinated am
 - **A'.0.7 closure entry** (after A'.0.7 milestone executes)
 - **A'.1 amendment closure entry**
 - **A'.2 — N/A (folded into A'.0.5)**
-- **A'.4-A'.7** per-milestone closure entries (existing precedent, K8.1/K8.1.1/K-Lessons shape)
+- **A'.4 K9 closure entry** (DONE 2026-05-11)
+- **A'.4.5 Document Control Register closure entry** (DONE 2026-05-12)
+- **A'.5 K8.3+K8.4 combined closure entry** (DONE 2026-05-14)
+- **A'.6 K8.5 DEFERRAL entry** (this cascade 2026-05-18; closure-as-deferral, not closure-as-execution)
+- **A'.7 К10 closure entry** (planned post-К10 execution)
 - **A'.8 K-closure report entry** (special — closure of closure)
 - **A'.9 analyzer milestone closure entry**
 
 ### §5.6 ROADMAP.md
 
-ROADMAP currently «Updated 2026-05-03» (stale; M8.0/M8.1/M8.2 closures and K0-K8.2v2 closures not reflected). Phase A' is the natural occasion for full ROADMAP refresh — this is **not** scheduled here as separate milestone but as **A'.7 K8.5 housekeeping** or **A'.8 K-closure report** companion update.
+ROADMAP currently «Updated 2026-05-03» (stale; M8.0/M8.1/M8.2 closures and K0-K8.2v2 closures not reflected). Phase A' is the natural occasion for full ROADMAP refresh — this is **not** scheduled here as separate milestone but as **А'.8 K-closure report** companion update (К8.5 housekeeping path retired per K8.5 deferral cascade 2026-05-18).
 
 ### §5.7 New documents Phase A' may produce
 
@@ -267,9 +282,11 @@ Before Phase B (M8.4) begins, the following are TRUE:
 - [ ] K-L3.1 decision LOCKED with amendment plan executed
 - [ ] All 4 LOCKED docs synced to post-K-L3.1 architecture (KERNEL/MOD_OS/MIGRATION_PLAN/MIGRATION_PROGRESS)
 - [ ] All 4 skeleton briefs (K9, K8.3, K8.4, K8.5) reviewed for post-K-L3.1 consistency, amended per disposition, executed successfully
-- [ ] K-series fully closed: 31 components struct-or-explicit-managed-bridge per K-L3.1 lock; 31+3 systems migrated to SpanLease/WriteBatch (or fewer per K8.3 scope amendment); managed World retired as production path; capability annotation pass complete; M-series migration guide published
-- [ ] K-closure report authored, MIGRATION_PROGRESS reflects K-series end state with formal invariant enumeration
-- [ ] Architectural analyzer milestone executed: rules encoding K-closure report invariants; first run on existing codebase passes (any surfaced debt fixed during analyzer milestone scope); CI integration active
+- [x] K-series substrate closed via К8.3+К8.4 cutover (А'.5 closure 2026-05-14): 10 production systems migrated к NativeWorld AcquireSpan/BeginBatch, managed World retired как ManagedTestWorld test fixture, Mod API v3 closed, runtime isolation guard removed per K-L11
+- [ ] К10 native kernel scheduler executed (А'.7): full native scheduler + bus + control plane + V substrate interlock + TLA+ formal verification per KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED; К-L12-19 + К-L7.1 invariants promoted к LOCKED
+- [ ] K-closure report authored (А'.8): formal К-Lxx invariant enumeration + analyzer rule specification surface + Provisional Lessons promotion review (9 candidates)
+- [ ] Architectural analyzer milestone executed (А'.9): rules encoding K-closure report invariants; first run on existing codebase passes (debt fixed during analyzer milestone scope per Linux -Werror precedent); CI integration active
+- [ ] М-series migration guide deferred к post-Phase B (К8.5 deferred): documentation milestone awaits mod authors audience; not a Phase A' completion gate.
 - [ ] Test baseline holds (specific count TBD, plausibly 600-900 per Migration Plan §1.5)
 - [ ] No uncommitted work, no orphan branches, working tree clean
 - [ ] origin synced
@@ -288,7 +305,7 @@ These surface as candidates for K-L3.1 deliberation or per-phase brief authoring
 - **(b) Multi-session iterative** — Opus drafts, Crystalka reviews per K-Lxx, iterates
 - **(c) Skeleton-first** — skeleton authored late in K8.5, populated incrementally during A'.4-A'.7, finalized in dedicated session
 
-Default lean: **(c) skeleton-first**. Each milestone (K9, K8.3, K8.4, K8.5) populates its section as it closes; A'.8 finalizes.
+Default lean: **(c) skeleton-first**. Each milestone (K9, K8.3+K8.4 combined, К10) populates its section as it closes; А'.8 finalizes. К8.5 deferred к post-Phase B (2026-05-18 deferral cascade) means К-closure report does not include К8.5 section initially; К8.5 closure section added post-Phase B при К8.5 execution.
 
 ### §7.2 — Analyzer milestone scope contraction
 
