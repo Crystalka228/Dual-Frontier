@@ -627,6 +627,24 @@ DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out
 // Returns 0 if the system has no wake subscriptions at all.
 DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id);
 
+/*
+ * K10.1 Item 5 — Per-tick scheduler orchestration (К-L12 + К-L13).
+ *
+ * The full per-tick scheduling sequence:
+ *   1. Fire timer wakes for the current tick (rate divisibility).
+ *   2. Drain the runqueue into the runnable subset.
+ *   3. Compute the per-tick graph (Kahn topological sort on runnable subset).
+ *
+ * The result is queryable via the existing df_scheduler_per_tick_phase_*
+ * accessors. Phase dispatch (thread pool submit + barrier) is wired в the
+ * load-bearing Commit 14 (К-L6 supersession switch).
+ *
+ * Event / StateChange / Init / Explicit wakes fire from their own source
+ * triggers between calls к df_scheduler_tick_begin(); the runqueue accumulates
+ * across triggers and is drained here.
+ */
+DF_API int32_t df_scheduler_tick_begin(uint64_t current_tick);
+
 #ifdef __cplusplus
 }
 #endif

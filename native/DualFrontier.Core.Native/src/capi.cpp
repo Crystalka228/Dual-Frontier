@@ -1099,4 +1099,29 @@ DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id) {
     return dualfrontier::default_wake_registry().wake_subscriptions_for(system_id);
 }
 
+// =============================================================================
+// K10.1 Item 5 — per-tick scheduler orchestration.
+// =============================================================================
+
+DF_API int32_t df_scheduler_tick_begin(uint64_t current_tick) {
+    try {
+        auto& registry = dualfrontier::default_wake_registry();
+        auto& graph = dualfrontier::default_scheduler_graph();
+
+        registry.fire_timer(current_tick);
+
+        // Drain runqueue into a local buffer.
+        int32_t runqueue_size = registry.runqueue_size();
+        if (runqueue_size <= 0) {
+            return graph.compute_per_tick_graph(nullptr, 0);
+        }
+        std::vector<uint32_t> runnable(static_cast<std::size_t>(runqueue_size));
+        int32_t drained = registry.drain_runqueue(runnable.data(), runqueue_size);
+        return graph.compute_per_tick_graph(runnable.data(),
+                                            static_cast<uint32_t>(drained));
+    } catch (...) {
+        return 0;
+    }
+}
+
 } // extern "C"

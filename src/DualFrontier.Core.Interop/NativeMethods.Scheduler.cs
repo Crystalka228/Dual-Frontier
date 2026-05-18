@@ -116,4 +116,9 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern int df_scheduler_query_wake_subscriptions(uint systemId);
+
+    // ----- K10.1 Item 5 — per-tick orchestration -----
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_tick_begin(ulong currentTick);
 }

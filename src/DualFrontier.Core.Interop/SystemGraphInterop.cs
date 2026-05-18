@@ -185,4 +185,13 @@ public static class SystemGraphInterop
             return phases;
         }
     }
+
+    /// <summary>
+    /// K10.1 Item 5 — Begin a per-tick scheduling pass. Fires timer wakes,
+    /// drains the runqueue into the runnable subset, and computes the per-tick
+    /// graph. After this returns, <see cref="PerTickPhases"/> reflects the
+    /// composition к dispatch.
+    /// </summary>
+    public static ComputeResult TickBegin(ulong currentTick)
+        => (ComputeResult)NativeMethods.df_scheduler_tick_begin(currentTick);
 }

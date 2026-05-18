@@ -1204,6 +1204,39 @@ void scenario_wake_registry_fire_init_one_shot() {
     DF_CHECK(df_wake_registry_fire_init() == 0, "second init fires zero (one-shot)");
 }
 
+void scenario_scheduler_tick_begin_orchestration() {
+    std::printf("scenario_scheduler_tick_begin_orchestration\n");
+    df_wake_registry_clear();
+    df_scheduler_clear();
+    // Register three systems with a linear write→read chain A→B→C.
+    constexpr uint32_t cX = 100, cY = 101;
+    uint32_t a_w[] = {cX};
+    uint32_t b_r[] = {cX};
+    uint32_t b_w[] = {cY};
+    uint32_t c_r[] = {cY};
+    df_scheduler_register_system(1, "A", nullptr, 0, a_w, 1, 2, 0);
+    df_scheduler_register_system(2, "B", b_r, 1, b_w, 1, 2, 0);
+    df_scheduler_register_system(3, "C", c_r, 1, nullptr, 0, 2, 0);
+    // Subscribe: A timer every tick, B timer rate 2, C timer rate 4.
+    df_wake_registry_subscribe_timer(1, 1);
+    df_wake_registry_subscribe_timer(2, 2);
+    df_wake_registry_subscribe_timer(3, 4);
+
+    // Tick 0: all three rates divide 0, so {1,2,3} run → phases 1→2→3.
+    DF_CHECK(df_scheduler_tick_begin(0) == 1, "tick 0 success");
+    DF_CHECK(df_scheduler_per_tick_phase_count() == 3, "3 per-tick phases at tick 0");
+
+    // Tick 1: only A (rate 1) fires. Single phase containing only {1}.
+    DF_CHECK(df_scheduler_tick_begin(1) == 1, "tick 1 success");
+    DF_CHECK(df_scheduler_per_tick_phase_count() == 1, "1 per-tick phase at tick 1");
+    DF_CHECK(df_scheduler_per_tick_phase_size(0) == 1, "phase 0 has 1 system");
+
+    // Tick 2: A (rate 1) + B (rate 2). B reads cX which A writes, so A → B
+    // edge in subset → phases [A] then [B].
+    DF_CHECK(df_scheduler_tick_begin(2) == 1, "tick 2 success");
+    DF_CHECK(df_scheduler_per_tick_phase_count() == 2, "2 phases at tick 2 (A→B chain)");
+}
+
 void scenario_scheduler_diagnostics() {
     std::printf("scenario_scheduler_diagnostics\n");
     df_wake_registry_clear();
@@ -1381,6 +1414,7 @@ int main() {
     scenario_wake_registry_fire_init_one_shot();
     scenario_wake_registry_fire_explicit();
     scenario_scheduler_diagnostics();
+    scenario_scheduler_tick_begin_orchestration();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
