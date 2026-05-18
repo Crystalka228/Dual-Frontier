@@ -14,6 +14,7 @@
 #include "string_pool.h"
 #include "system_graph.h"
 #include "thread_pool.h"
+#include "wake_registry.h"
 #include "world.h"
 
 using dualfrontier::BootstrapGraph;
@@ -1016,6 +1017,74 @@ DF_API int32_t df_scheduler_per_tick_phase_systems(
 {
     return dualfrontier::default_scheduler_graph().per_tick_phase_systems(
         phase_index, out_system_ids, out_capacity);
+}
+
+// =============================================================================
+// K10.1 Item 3 — wake registry C ABI.
+// =============================================================================
+
+DF_API int32_t df_wake_registry_subscribe_timer(uint32_t system_id, uint32_t ticks_per_update) {
+    return dualfrontier::default_wake_registry().subscribe_timer(system_id, ticks_per_update) ? 1 : 0;
+}
+
+DF_API int32_t df_wake_registry_subscribe_event(uint32_t system_id, uint32_t event_type_id) {
+    return dualfrontier::default_wake_registry().subscribe_event(system_id, event_type_id) ? 1 : 0;
+}
+
+DF_API int32_t df_wake_registry_subscribe_state(uint32_t system_id, uint32_t component_type_id) {
+    return dualfrontier::default_wake_registry().subscribe_state(system_id, component_type_id) ? 1 : 0;
+}
+
+DF_API int32_t df_wake_registry_subscribe_init(uint32_t system_id) {
+    return dualfrontier::default_wake_registry().subscribe_init(system_id) ? 1 : 0;
+}
+
+DF_API int32_t df_wake_registry_subscribe_explicit(uint32_t system_id, uint32_t wake_id) {
+    return dualfrontier::default_wake_registry().subscribe_explicit(system_id, wake_id) ? 1 : 0;
+}
+
+DF_API int32_t df_wake_registry_unsubscribe(uint32_t system_id, int32_t wake_type) {
+    using WT = dualfrontier::WakeRegistry::WakeType;
+    if (wake_type < 0 || wake_type > 4) return 0;
+    return dualfrontier::default_wake_registry().unsubscribe(system_id, static_cast<WT>(wake_type));
+}
+
+DF_API int32_t df_wake_registry_fire_timer(uint64_t current_tick) {
+    return dualfrontier::default_wake_registry().fire_timer(current_tick);
+}
+
+DF_API int32_t df_wake_registry_fire_event(uint32_t event_type_id) {
+    return dualfrontier::default_wake_registry().fire_event(event_type_id);
+}
+
+DF_API int32_t df_wake_registry_fire_state_change(uint32_t component_type_id, uint32_t entity_id) {
+    return dualfrontier::default_wake_registry().fire_state_change(component_type_id, entity_id);
+}
+
+DF_API int32_t df_wake_registry_fire_init(void) {
+    return dualfrontier::default_wake_registry().fire_init();
+}
+
+DF_API int32_t df_wake_registry_fire_explicit(uint32_t target_system_id, uint32_t wake_id) {
+    return dualfrontier::default_wake_registry().fire_explicit(target_system_id, wake_id);
+}
+
+DF_API int32_t df_wake_registry_runqueue_size(void) {
+    return dualfrontier::default_wake_registry().runqueue_size();
+}
+
+DF_API int32_t df_wake_registry_drain_runqueue(uint32_t* out_system_ids, int32_t out_capacity) {
+    return dualfrontier::default_wake_registry().drain_runqueue(out_system_ids, out_capacity);
+}
+
+DF_API int32_t df_wake_registry_subscription_count(int32_t wake_type) {
+    using WT = dualfrontier::WakeRegistry::WakeType;
+    if (wake_type < 0 || wake_type > 4) return 0;
+    return dualfrontier::default_wake_registry().subscription_count(static_cast<WT>(wake_type));
+}
+
+DF_API void df_wake_registry_clear(void) {
+    dualfrontier::default_wake_registry().clear();
 }
 
 } // extern "C"

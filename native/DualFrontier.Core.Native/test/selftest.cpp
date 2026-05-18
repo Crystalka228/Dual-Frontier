@@ -1119,6 +1119,102 @@ void scenario_system_graph_cycle_detection() {
 // K10.1 Item 2 — thread pool extension scenarios.
 // =============================================================================
 
+// =============================================================================
+// K10.1 Item 3 — wake registry scenarios.
+// =============================================================================
+
+void scenario_wake_registry_subscription_lifecycle() {
+    std::printf("scenario_wake_registry_subscription_lifecycle\n");
+    df_wake_registry_clear();
+    DF_CHECK(df_wake_registry_subscription_count(0) == 0, "no timer subs initially");
+
+    DF_CHECK(df_wake_registry_subscribe_timer(1, 15) == 1, "subscribe timer(1, 15)");
+    DF_CHECK(df_wake_registry_subscribe_timer(1, 0) == 0, "rate=0 rejected");
+    DF_CHECK(df_wake_registry_subscription_count(0) == 1, "one timer sub");
+
+    DF_CHECK(df_wake_registry_subscribe_event(2, 0xA1) == 1, "subscribe event(2, 0xA1)");
+    DF_CHECK(df_wake_registry_subscribe_state(3, 0xC0) == 1, "subscribe state(3, 0xC0)");
+    DF_CHECK(df_wake_registry_subscribe_init(4) == 1, "subscribe init(4)");
+    DF_CHECK(df_wake_registry_subscribe_explicit(5, 0xE0) == 1, "subscribe explicit(5, 0xE0)");
+
+    DF_CHECK(df_wake_registry_subscription_count(0) == 1, "timer subs");
+    DF_CHECK(df_wake_registry_subscription_count(1) == 1, "event subs");
+    DF_CHECK(df_wake_registry_subscription_count(2) == 1, "state subs");
+    DF_CHECK(df_wake_registry_subscription_count(3) == 1, "init subs");
+    DF_CHECK(df_wake_registry_subscription_count(4) == 1, "explicit subs");
+
+    DF_CHECK(df_wake_registry_unsubscribe(1, 0) == 1, "unsubscribe timer");
+    DF_CHECK(df_wake_registry_subscription_count(0) == 0, "timer subs now 0");
+    DF_CHECK(df_wake_registry_unsubscribe(99, 0) == 0, "unsubscribe unknown");
+}
+
+void scenario_wake_registry_fire_timer() {
+    std::printf("scenario_wake_registry_fire_timer\n");
+    df_wake_registry_clear();
+    df_wake_registry_subscribe_timer(/*sys*/10, /*rate*/1);   // every tick
+    df_wake_registry_subscribe_timer(/*sys*/20, /*rate*/3);   // every 3rd tick
+    df_wake_registry_subscribe_timer(/*sys*/30, /*rate*/60);  // every 60th
+
+    // Tick 0: all three fire (0 % anything == 0).
+    DF_CHECK(df_wake_registry_fire_timer(0) == 3, "tick 0 wakes all three");
+    uint32_t buf[8] = {0};
+    int32_t drained = df_wake_registry_drain_runqueue(buf, 8);
+    DF_CHECK(drained == 3, "runqueue drains 3 ids");
+    DF_CHECK(buf[0] == 10 && buf[1] == 20 && buf[2] == 30, "ids sorted");
+
+    // Tick 1: only rate=1 system fires.
+    DF_CHECK(df_wake_registry_fire_timer(1) == 1, "tick 1 wakes only rate=1");
+    df_wake_registry_drain_runqueue(buf, 8);
+
+    // Tick 3: rate=1 and rate=3 fire.
+    DF_CHECK(df_wake_registry_fire_timer(3) == 2, "tick 3 wakes rate=1 and rate=3");
+}
+
+void scenario_wake_registry_fire_event_and_state() {
+    std::printf("scenario_wake_registry_fire_event_and_state\n");
+    df_wake_registry_clear();
+    df_wake_registry_subscribe_event(/*sys*/10, /*evt*/0xA1);
+    df_wake_registry_subscribe_event(/*sys*/11, /*evt*/0xA1);
+    df_wake_registry_subscribe_event(/*sys*/20, /*evt*/0xB2);
+
+    DF_CHECK(df_wake_registry_fire_event(0xA1) == 2, "event 0xA1 wakes 10 and 11");
+    DF_CHECK(df_wake_registry_runqueue_size() == 2, "runqueue size 2");
+    uint32_t buf[4] = {0};
+    df_wake_registry_drain_runqueue(buf, 4);
+    DF_CHECK(buf[0] == 10 && buf[1] == 11, "correct ids drained");
+
+    DF_CHECK(df_wake_registry_fire_event(0xB2) == 1, "event 0xB2 wakes 20");
+    df_wake_registry_drain_runqueue(buf, 4);
+
+    df_wake_registry_subscribe_state(/*sys*/30, /*comp*/0xC0);
+    df_wake_registry_subscribe_state(/*sys*/40, /*comp*/0xC1);
+    DF_CHECK(df_wake_registry_fire_state_change(0xC0, /*entity*/0) == 1,
+             "state change comp=0xC0 wakes 30");
+}
+
+void scenario_wake_registry_fire_init_one_shot() {
+    std::printf("scenario_wake_registry_fire_init_one_shot\n");
+    df_wake_registry_clear();
+    df_wake_registry_subscribe_init(10);
+    df_wake_registry_subscribe_init(20);
+    DF_CHECK(df_wake_registry_fire_init() == 2, "first init fires both");
+    uint32_t buf[4] = {0};
+    df_wake_registry_drain_runqueue(buf, 4);
+
+    DF_CHECK(df_wake_registry_fire_init() == 0, "second init fires zero (one-shot)");
+}
+
+void scenario_wake_registry_fire_explicit() {
+    std::printf("scenario_wake_registry_fire_explicit\n");
+    df_wake_registry_clear();
+    df_wake_registry_subscribe_explicit(/*sys*/10, /*wake_id*/0xE0);
+    df_wake_registry_subscribe_explicit(/*sys*/10, /*wake_id*/0xE1);
+
+    DF_CHECK(df_wake_registry_fire_explicit(10, 0xE0) == 1, "fire E0 on 10");
+    DF_CHECK(df_wake_registry_fire_explicit(10, 0xE2) == 0, "fire unknown E2 fires zero");
+    DF_CHECK(df_wake_registry_fire_explicit(99, 0xE0) == 0, "fire on unknown target");
+}
+
 void scenario_thread_pool_mode_transition() {
     std::printf("scenario_thread_pool_mode_transition\n");
     using namespace dualfrontier;
@@ -1252,6 +1348,11 @@ int main() {
     scenario_thread_pool_mode_transition();
     scenario_thread_pool_submit_batch();
     scenario_thread_pool_phase_barrier();
+    scenario_wake_registry_subscription_lifecycle();
+    scenario_wake_registry_fire_timer();
+    scenario_wake_registry_fire_event_and_state();
+    scenario_wake_registry_fire_init_one_shot();
+    scenario_wake_registry_fire_explicit();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

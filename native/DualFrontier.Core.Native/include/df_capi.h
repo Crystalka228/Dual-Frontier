@@ -575,6 +575,41 @@ DF_API int32_t df_scheduler_per_tick_phase_systems(
     uint32_t* out_system_ids,
     int32_t out_capacity);
 
+/*
+ * K10.1 Item 3 — Wake-up registry (5 wake types per К-L13).
+ *
+ * Process-global default wake registry singleton. Subscriptions persist
+ * until unsubscribe() or clear(). Fire calls add matching subscribers к
+ * the runqueue; drain_runqueue returns sorted ids and clears.
+ *
+ * Wake type enum (matches dualfrontier::WakeRegistry::WakeType):
+ *   0 = Timer        (periodic by ticks_per_update / [TickRate])
+ *   1 = Event        (bus publication subscription)
+ *   2 = StateChange  (component value condition)
+ *   3 = Init         (one-shot at startup)
+ *   4 = Explicit     (API-driven wake by another system)
+ */
+
+DF_API int32_t df_wake_registry_subscribe_timer(uint32_t system_id, uint32_t ticks_per_update);
+DF_API int32_t df_wake_registry_subscribe_event(uint32_t system_id, uint32_t event_type_id);
+DF_API int32_t df_wake_registry_subscribe_state(uint32_t system_id, uint32_t component_type_id);
+DF_API int32_t df_wake_registry_subscribe_init(uint32_t system_id);
+DF_API int32_t df_wake_registry_subscribe_explicit(uint32_t system_id, uint32_t wake_id);
+
+DF_API int32_t df_wake_registry_unsubscribe(uint32_t system_id, int32_t wake_type);
+
+DF_API int32_t df_wake_registry_fire_timer(uint64_t current_tick);
+DF_API int32_t df_wake_registry_fire_event(uint32_t event_type_id);
+DF_API int32_t df_wake_registry_fire_state_change(uint32_t component_type_id, uint32_t entity_id);
+DF_API int32_t df_wake_registry_fire_init(void);
+DF_API int32_t df_wake_registry_fire_explicit(uint32_t target_system_id, uint32_t wake_id);
+
+DF_API int32_t df_wake_registry_runqueue_size(void);
+DF_API int32_t df_wake_registry_drain_runqueue(uint32_t* out_system_ids, int32_t out_capacity);
+
+DF_API int32_t df_wake_registry_subscription_count(int32_t wake_type);
+DF_API void    df_wake_registry_clear(void);
+
 #ifdef __cplusplus
 }
 #endif
