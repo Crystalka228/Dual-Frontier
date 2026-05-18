@@ -37,6 +37,7 @@ set(DF_NATIVE_SOURCES
     src/scheduler_trace.cpp
     src/scheduler_intrinsics.cpp
     src/event_type_registry.cpp
+    src/bus_native.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -62,6 +63,7 @@ set(DF_NATIVE_HEADERS
     include/scheduler_trace.h
     include/scheduler_intrinsics.h
     include/event_type_registry.h
+    include/bus_native.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})

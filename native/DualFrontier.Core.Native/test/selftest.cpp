@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "bootstrap_graph.h"
+#include "bus_native.h"
 #include "df_capi.h"
 #include "event_type_registry.h"
 #include "thread_pool.h"
@@ -1753,6 +1754,135 @@ void scenario_event_type_registry_reregister_idempotent_or_conflict() {
     df_event_type_registry_clear();
 }
 
+// ===== K10.2 Item 26 — native bus three-tier dispatcher =====
+
+struct BusTestPayload {
+    int32_t value;
+};
+
+std::atomic<int32_t> g_fast_subscriber_invocations{0};
+std::atomic<int32_t> g_fast_subscriber_last_value{0};
+
+void test_fast_subscriber(uint32_t type_id, const void* payload, uint32_t /*size*/, void* /*user_data*/) {
+    (void)type_id;
+    const BusTestPayload* p = static_cast<const BusTestPayload*>(payload);
+    g_fast_subscriber_last_value.store(p->value, std::memory_order_relaxed);
+    g_fast_subscriber_invocations.fetch_add(1, std::memory_order_relaxed);
+}
+
+std::atomic<int32_t> g_normal_subscriber_invocations{0};
+
+void test_normal_subscriber(const df_managed_system_batch* batch) {
+    (void)batch;
+    g_normal_subscriber_invocations.fetch_add(1, std::memory_order_relaxed);
+}
+
+void scenario_bus_fast_publish_subscribe_roundtrip() {
+    std::printf("scenario_bus_fast_publish_subscribe_roundtrip\n");
+    df_bus_clear();
+
+    const uint32_t type_id = 0xFA570001u;
+    g_fast_subscriber_invocations.store(0);
+    g_fast_subscriber_last_value.store(0);
+
+    df_bus_subscription_id sid = df_bus_subscribe_fast(
+        type_id, /*mod_id=*/100u, &test_fast_subscriber, nullptr);
+    DF_CHECK(sid != 0, "fast subscribe returns non-zero id");
+    DF_CHECK(df_bus_subscriber_count_fast(type_id) == 1, "fast subscriber count = 1");
+
+    BusTestPayload payload{42};
+    int32_t invoked = df_bus_publish_fast(type_id, &payload, sizeof(payload));
+    DF_CHECK(invoked == 1, "fast publish invoked 1 subscriber");
+    DF_CHECK(g_fast_subscriber_invocations.load() == 1, "subscriber callback fired once");
+    DF_CHECK(g_fast_subscriber_last_value.load() == 42, "payload delivered with value=42");
+
+    // Unsubscribe + publish again: no invocation
+    int32_t unsubbed = df_bus_unsubscribe(sid);
+    DF_CHECK(unsubbed == 1, "unsubscribe succeeds");
+    DF_CHECK(df_bus_subscriber_count_fast(type_id) == 0, "subscriber count = 0 after unsubscribe");
+    g_fast_subscriber_invocations.store(0);
+    df_bus_publish_fast(type_id, &payload, sizeof(payload));
+    DF_CHECK(g_fast_subscriber_invocations.load() == 0, "no invocation after unsubscribe");
+
+    df_bus_clear();
+}
+
+void scenario_bus_normal_publish_batched_drain() {
+    std::printf("scenario_bus_normal_publish_batched_drain\n");
+    df_bus_clear();
+
+    const uint32_t type_id = 0xA0BAFF01u;
+    g_normal_subscriber_invocations.store(0);
+
+    df_bus_subscription_id sid = df_bus_subscribe_normal(
+        type_id, /*mod_id=*/200u, &test_normal_subscriber, nullptr);
+    DF_CHECK(sid != 0, "normal subscribe returns non-zero id");
+
+    // Publish 3 events; no dispatch yet (Normal tier batches к phase boundary)
+    BusTestPayload payload{1};
+    df_bus_publish_normal(type_id, &payload, sizeof(payload));
+    df_bus_publish_normal(type_id, &payload, sizeof(payload));
+    df_bus_publish_normal(type_id, &payload, sizeof(payload));
+    DF_CHECK(g_normal_subscriber_invocations.load() == 0, "no dispatch before drain");
+
+    // Drain — dispatches all pending to subscriber
+    int32_t batches = df_bus_drain_normal_batch();
+    DF_CHECK(batches == 3, "3 batches dispatched after drain");
+    DF_CHECK(g_normal_subscriber_invocations.load() == 3, "subscriber received 3 invocations");
+
+    // Drain again — empty pending, no invocations
+    batches = df_bus_drain_normal_batch();
+    DF_CHECK(batches == 0, "drain on empty pending returns 0");
+
+    df_bus_clear();
+}
+
+void scenario_bus_background_publish_stores_pending() {
+    std::printf("scenario_bus_background_publish_stores_pending\n");
+    df_bus_clear();
+
+    const uint32_t type_id = 0xB6000101u;
+    df_bus_subscription_id sid = df_bus_subscribe_background(
+        type_id, /*mod_id=*/300u, &test_normal_subscriber, nullptr);
+    DF_CHECK(sid != 0, "background subscribe returns non-zero id");
+
+    // Commit 4 lands the storage path; coalesce + idle-slot dispatch in Commit 5
+    BusTestPayload payload{99};
+    int32_t rc = df_bus_publish_background(type_id, &payload, sizeof(payload), /*coalesce_key=*/7u);
+    DF_CHECK(rc == 1, "background publish accepts event");
+    DF_CHECK(df_bus_subscriber_count_background(type_id) == 1, "background subscriber registry preserved");
+
+    df_bus_clear();
+}
+
+void scenario_bus_per_mod_bulk_unsubscribe() {
+    std::printf("scenario_bus_per_mod_bulk_unsubscribe\n");
+    df_bus_clear();
+
+    const uint32_t type_a = 0xAA110001u;
+    const uint32_t type_b = 0xAA110002u;
+
+    // Mod 500 subscribes Fast (type_a) + Normal (type_b) + Background (type_a)
+    df_bus_subscribe_fast(type_a, /*mod_id=*/500u, &test_fast_subscriber, nullptr);
+    df_bus_subscribe_normal(type_b, /*mod_id=*/500u, &test_normal_subscriber, nullptr);
+    df_bus_subscribe_background(type_a, /*mod_id=*/500u, &test_normal_subscriber, nullptr);
+    // Mod 501 subscribes Fast (type_a) only — should NOT be reaped
+    df_bus_subscribe_fast(type_a, /*mod_id=*/501u, &test_fast_subscriber, nullptr);
+
+    DF_CHECK(df_bus_subscriber_count_fast(type_a) == 2, "before bulk: 2 fast subs on type_a");
+
+    int32_t removed_fast = df_bus_unsubscribe_fast_by_mod(500u);
+    int32_t removed_normal = df_bus_unsubscribe_normal_by_mod(500u);
+    int32_t removed_bg = df_bus_unsubscribe_background_by_mod(500u);
+
+    DF_CHECK(removed_fast == 1, "1 fast subscription removed for mod 500");
+    DF_CHECK(removed_normal == 1, "1 normal subscription removed for mod 500");
+    DF_CHECK(removed_bg == 1, "1 background subscription removed for mod 500");
+    DF_CHECK(df_bus_subscriber_count_fast(type_a) == 1, "mod 501 fast subscription preserved");
+
+    df_bus_clear();
+}
+
 void scenario_event_type_registry_invalid_args() {
     std::printf("scenario_event_type_registry_invalid_args\n");
     df_event_type_registry_clear();
@@ -1843,6 +1973,10 @@ int main() {
     scenario_event_type_registry_get_tier_default_normal();
     scenario_event_type_registry_reregister_idempotent_or_conflict();
     scenario_event_type_registry_invalid_args();
+    scenario_bus_fast_publish_subscribe_roundtrip();
+    scenario_bus_normal_publish_batched_drain();
+    scenario_bus_background_publish_stores_pending();
+    scenario_bus_per_mod_bulk_unsubscribe();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
