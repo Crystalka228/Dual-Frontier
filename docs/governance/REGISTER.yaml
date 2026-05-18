@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "1.6"
-last_modified: "2026-05-17"
-last_modified_commit: "PENDING-COMMIT-7"
+register_version: "1.7"
+last_modified: "2026-05-18"
+last_modified_commit: "PENDING-COMMIT-K8_5-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -655,12 +655,12 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-12"
-    last_modified_commit: "fe35f00"
+    last_modified: "2026-05-18"
+    last_modified_commit: "PENDING-COMMIT-K8_5-2"
     content_language: en
     review_cadence: on-closure+quarterly
-    last_review_date: "2026-05-12"
-    last_review_event: "A'.4.5 closure — stale A'.0.7/A'.1/A'.3/A'.4 statuses brought current + A'.4.5 entry inserted"
+    last_review_date: "2026-05-18"
+    last_review_event: "§2 sequence + §3 duration table amended per K8.5 deferral cascade"
     next_review_due: "2026-Q3"
     reviewer: Crystalka
     special_case_rationale: "Category A + Tier 2 + Live override: document is mutable per phase closure, subordinate to MIGRATION_PLAN_KERNEL_TO_VANILLA — not LOCKED architecture per Pass 2 §1.3"
@@ -1180,15 +1180,19 @@ documents:
     title: "K8.5 — Mod Ecosystem Migration Prep"
     category: D
     tier: 3
-    lifecycle: AUTHORED
+    lifecycle: AUTHORED-SKELETON
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-05-10"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "0.1"
+    last_modified: "2026-05-18"
+    last_modified_commit: "PENDING-COMMIT-K8_5-1"
     content_language: en
     review_cadence: on-status-transition
+    last_review_date: "2026-05-18"
+    last_review_event: "Reclassified AUTHORED → AUTHORED-SKELETON per K8.5 deferral cascade (actual content skeleton-grade; mod authors audience deferred к post-Phase B)"
+    next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-005, RISK-007]
+    special_case_rationale: "Skeleton brief awaiting full brief authoring at proper milestone timing. Content (mod ecosystem migration prep from v2 to v3) premised on external mod authors audience; vanilla mods deferred к Phase B per composite namespace ratification (PR #34, 2026-05-16) means no current audience. Promotion к AUTHORED triggers when Phase B initial M-series sprint begins establishing mod author audience. Deferred from Phase А'.6 slot 2026-05-18 per Crystalka direction."
 
   - id: DOC-D-K8_34_COMBINED
     path: tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF.md
