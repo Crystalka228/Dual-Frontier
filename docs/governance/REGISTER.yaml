@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "1.5"
+register_version: "1.6"
 last_modified: "2026-05-17"
-last_modified_commit: "PENDING-COMMIT-3"
+last_modified_commit: "PENDING-COMMIT-7"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -543,15 +543,15 @@ documents:
     is_meta_entry: true
     meta_role: register_specification
     owner: Crystalka
-    version: "1.0"
+    version: "1.1"
     first_authored: "2026-05-12"
-    last_modified: "2026-05-12"
-    last_modified_commit: "6278a36"
+    last_modified: "2026-05-17"
+    last_modified_commit: "PENDING-COMMIT-1"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-12"
-    last_review_event: "A'.4.5 closure"
-    next_review_due: "2027-05-12"
+    last_review_date: "2026-05-17"
+    last_review_event: "Schema extension AUTHORED-SKELETON lifecycle value per К10 forward planning skeleton framework"
+    next_review_due: "2027-05-17"
     reviewer: Crystalka
     requirements_authored: [REQ-Q-A45-X5]
     risks_referenced: [RISK-010, RISK-012]
@@ -1358,6 +1358,44 @@ documents:
     reviewer: Crystalka
     risks_referenced: [RISK-009]
 
+  # === Tier 3 Briefs (Category D) — К10 forward planning skeletons (AUTHORED-SKELETON, awaiting Opus deliberation session for full brief authoring) ===
+
+  - id: DOC-D-K10_EXECUTION
+    path: tools/briefs/K10_EXECUTION_BRIEF.md
+    title: "К10 Native Kernel Scheduler — Execution (SKELETON)"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED-SKELETON
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-17"
+    last_modified_commit: "PENDING-COMMIT-3"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-17"
+    last_review_event: "Skeleton authored per К10 forward planning skeleton framework brief"
+    reviewer: Crystalka
+    risks_referenced: [RISK-003, RISK-004, RISK-013]
+    special_case_rationale: "Skeleton brief awaiting full brief authoring at Opus deliberation session post-К8.5 closure. Captures 10 expected sub-milestones (K10.A through K10.J), 4 halt classes, 5 Q-N seeds. К10 specification authority at DOC-A-KERNEL_FULL_NATIVE_SCHEDULER v2.0 LOCKED."
+
+  - id: DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE
+    path: tools/briefs/K10_CROSS_DOC_AMENDMENTS_CASCADE_BRIEF.md
+    title: "К10 Cross-Document Amendments Cascade (SKELETON)"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED-SKELETON
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-17"
+    last_modified_commit: "PENDING-COMMIT-4"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-17"
+    last_review_event: "Skeleton authored per К10 forward planning skeleton framework brief"
+    reviewer: Crystalka
+    risks_referenced: [RISK-004]
+    special_case_rationale: "Skeleton brief for К10 architectural propagation across 8 dependent documents per KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 Part 7. Awaits full brief authoring at К10 execution closure (А'.7) timing or earlier per Crystalka prioritization."
+
   # === Tier 3 Briefs (Category D) — G-series (AUTHORED, future Phase A'.6+ execution) ===
 
   # G-series skeleton briefs: AUTHORED at pre-Q-G-2 era when G0..G6+G9 were separate
@@ -1677,6 +1715,45 @@ documents:
     content_language: en
     review_cadence: on-status-transition
     reviewer: Crystalka
+
+  # === Tier 3 Briefs (Category D) — А' forward planning skeletons (AUTHORED-SKELETON, awaiting Opus deliberation session for full brief authoring) ===
+
+  - id: DOC-D-A_PRIME_8_K_CLOSURE_REPORT
+    path: tools/briefs/A_PRIME_8_K_CLOSURE_REPORT_BRIEF.md
+    title: "А'.8 K-Series Closure Report (SKELETON)"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED-SKELETON
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-17"
+    last_modified_commit: "PENDING-COMMIT-5"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-17"
+    last_review_event: "Skeleton authored per К10 forward planning skeleton framework brief"
+    reviewer: Crystalka
+    risks_referenced: [RISK-014]
+    capa_entries_referenced: []
+    special_case_rationale: "Skeleton brief for К-series formal closure report. Substantial scope (~3-6 weeks). 8-part structure (chronology, К-L invariants, empirical results, lessons, pipeline metrics, Roslyn analyzer prep, K→M transition, open work). Awaits full brief authoring at К10 execution closure (А'.7) timing."
+
+  - id: DOC-D-A_PRIME_9_ROSLYN_ANALYZER
+    path: tools/briefs/A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md
+    title: "А'.9 Roslyn Architectural Analyzer (SKELETON)"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED-SKELETON
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-17"
+    last_modified_commit: "PENDING-COMMIT-6"
+    content_language: en
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-17"
+    last_review_event: "Skeleton authored per К10 forward planning skeleton framework brief"
+    reviewer: Crystalka
+    risks_referenced: [RISK-004]
+    special_case_rationale: "Skeleton brief for Roslyn architectural analyzer encoding К-Lxx invariants. Dual purpose (M-series migration verifier + К-Lxx compile-time enforcement). 17-18 expected analyzer rules. Awaits full brief authoring at К-closure report (А'.8) landed timing."
 
   - id: DOC-D-MOD_OS_V16_AMENDMENT
     path: tools/briefs/MOD_OS_V16_AMENDMENT_BRIEF.md
