@@ -26,6 +26,7 @@
 
 #include "bootstrap_graph.h"
 #include "df_capi.h"
+#include "event_type_registry.h"
 #include "thread_pool.h"
 
 namespace {
@@ -1660,6 +1661,118 @@ void scenario_system_graph_per_tick_subset() {
     DF_CHECK(br == 0, "unknown runnable id rejected");
 }
 
+// ===== K10.2 Item 28 — event type registry (tier-annotated) =====
+
+void coalesce_sum_int32(void* existing, const void* new_event) {
+    int32_t* dst = static_cast<int32_t*>(existing);
+    const int32_t* src = static_cast<const int32_t*>(new_event);
+    *dst += *src;
+}
+
+void scenario_event_type_registry_register_and_lookup() {
+    std::printf("scenario_event_type_registry_register_and_lookup\n");
+    df_event_type_registry_clear();
+
+    // Register Fast tier event
+    const char* fast_fqn = "DualFrontier.Test.FastEvent";
+    int32_t rc = df_event_type_registry_register(
+        0x1000u, /*Fast*/0, sizeof(int32_t), fast_fqn, nullptr);
+    DF_CHECK(rc == 1, "fast tier register succeeds without coalesce");
+
+    // Register Normal tier event
+    const char* normal_fqn = "DualFrontier.Test.NormalEvent";
+    rc = df_event_type_registry_register(
+        0x2000u, /*Normal*/1, sizeof(int32_t) * 2, normal_fqn, nullptr);
+    DF_CHECK(rc == 1, "normal tier register succeeds without coalesce");
+
+    // Register Background tier event с coalesce
+    const char* bg_fqn = "DualFrontier.Test.BackgroundEvent";
+    rc = df_event_type_registry_register(
+        0x3000u, /*Background*/2, sizeof(int32_t), bg_fqn, coalesce_sum_int32);
+    DF_CHECK(rc == 1, "background tier register succeeds with coalesce");
+
+    // Background tier без coalesce fails
+    rc = df_event_type_registry_register(
+        0x3001u, /*Background*/2, sizeof(int32_t), "Test.Other", nullptr);
+    DF_CHECK(rc == 0, "background tier register without coalesce fails");
+
+    // Lookup
+    int32_t  tier = -1;
+    uint32_t size = 0;
+    const char* fqn = nullptr;
+    void (*coalesce)(void*, const void*) = nullptr;
+    rc = df_event_type_registry_lookup(0x1000u, &tier, &size, &fqn, &coalesce);
+    DF_CHECK(rc == 1 && tier == 0 && size == sizeof(int32_t) && fqn == fast_fqn && coalesce == nullptr,
+             "fast tier metadata round-trip");
+
+    rc = df_event_type_registry_lookup(0x3000u, &tier, &size, &fqn, &coalesce);
+    DF_CHECK(rc == 1 && tier == 2 && coalesce == coalesce_sum_int32,
+             "background tier coalesce fn pointer round-trip");
+
+    df_event_type_registry_clear();
+}
+
+void scenario_event_type_registry_get_tier_default_normal() {
+    std::printf("scenario_event_type_registry_get_tier_default_normal\n");
+    df_event_type_registry_clear();
+
+    // Per S-LOCK-4 backward compatibility: unregistered events return Normal
+    int32_t tier = -1;
+    int32_t rc = df_event_type_registry_get_tier(0xDEAD0001u, &tier);
+    DF_CHECK(rc == 1 && tier == 1, "unregistered event defaults к Normal tier");
+
+    // After registration, get_tier returns explicit value
+    df_event_type_registry_register(0x4000u, /*Fast*/0, 4, "Test.Default.Fast", nullptr);
+    rc = df_event_type_registry_get_tier(0x4000u, &tier);
+    DF_CHECK(rc == 1 && tier == 0, "registered event returns explicit Fast tier");
+
+    df_event_type_registry_clear();
+}
+
+void scenario_event_type_registry_reregister_idempotent_or_conflict() {
+    std::printf("scenario_event_type_registry_reregister_idempotent_or_conflict\n");
+    df_event_type_registry_clear();
+
+    // First registration succeeds
+    int32_t rc = df_event_type_registry_register(
+        0x5000u, /*Normal*/1, 8, "Test.Reg.A", nullptr);
+    DF_CHECK(rc == 1, "first register succeeds");
+
+    // Idempotent re-registration с identical metadata
+    rc = df_event_type_registry_register(
+        0x5000u, /*Normal*/1, 8, "Test.Reg.A", nullptr);
+    DF_CHECK(rc == 1, "idempotent re-register с identical metadata succeeds");
+
+    // Conflict re-registration с different tier fails
+    rc = df_event_type_registry_register(
+        0x5000u, /*Fast*/0, 8, "Test.Reg.A", nullptr);
+    DF_CHECK(rc == 0, "conflict re-register с different tier fails");
+
+    DF_CHECK(df_event_type_registry_count() == 1,
+             "registry count remains 1 after conflict");
+    df_event_type_registry_clear();
+}
+
+void scenario_event_type_registry_invalid_args() {
+    std::printf("scenario_event_type_registry_invalid_args\n");
+    df_event_type_registry_clear();
+
+    // Null FQN fails
+    int32_t rc = df_event_type_registry_register(0x6000u, 1, 4, nullptr, nullptr);
+    DF_CHECK(rc == 0, "null fqn fails");
+
+    // Out-of-range tier fails
+    rc = df_event_type_registry_register(0x6001u, 99, 4, "Test", nullptr);
+    DF_CHECK(rc == 0, "out-of-range tier fails");
+
+    rc = df_event_type_registry_register(0x6002u, -1, 4, "Test", nullptr);
+    DF_CHECK(rc == 0, "negative tier fails");
+
+    DF_CHECK(df_event_type_registry_count() == 0,
+             "invalid registrations not persisted");
+    df_event_type_registry_clear();
+}
+
 } // namespace
 
 int main() {
@@ -1726,6 +1839,10 @@ int main() {
     // ===== K10.2 scenarios (added per-item commits below) =====
     // Event type registry, native bus three-tier dispatcher, background queue,
     // native unload primitive — each lands its scenarios in the dedicated commit.
+    scenario_event_type_registry_register_and_lookup();
+    scenario_event_type_registry_get_tier_default_normal();
+    scenario_event_type_registry_reregister_idempotent_or_conflict();
+    scenario_event_type_registry_invalid_args();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

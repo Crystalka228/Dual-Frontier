@@ -36,6 +36,7 @@ set(DF_NATIVE_SOURCES
     src/state_change_filter.cpp
     src/scheduler_trace.cpp
     src/scheduler_intrinsics.cpp
+    src/event_type_registry.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -60,6 +61,7 @@ set(DF_NATIVE_HEADERS
     include/state_change_filter.h
     include/scheduler_trace.h
     include/scheduler_intrinsics.h
+    include/event_type_registry.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})
