@@ -42,6 +42,12 @@ internal sealed class ModRegistry : IManagedStorageResolver
     // null — handled in SystemExecutionContext before the call reaches here).
     private readonly Dictionary<string, RestrictedModApi> _restrictedModApis = new();
 
+    // K10.2 Item 21 — per-mod sub-scheduler instance ownership (К-L12 separation).
+    // Each mod ALC owns a ModSubScheduler that tracks its registered systems.
+    // Teardown consumed at Step 3.5 native primitive consumption pattern
+    // (per S3-Q1 L3 layering).
+    private readonly Dictionary<string, ModSubScheduler> _modSubSchedulers = new();
+
     /// <summary>
     /// Sets the list of core systems once at start-up. Subsequent calls
     /// overwrite the core list but leave mod systems untouched — this
@@ -216,6 +222,53 @@ internal sealed class ModRegistry : IManagedStorageResolver
     {
         if (modId is null) throw new ArgumentNullException(nameof(modId));
         _restrictedModApis.Remove(modId);
+    }
+
+    // ===== K10.2 Item 21 — per-mod sub-scheduler ownership =====
+
+    /// <summary>
+    /// K10.2 Item 21 — Returns the existing <see cref="ModSubScheduler"/> for
+    /// <paramref name="modId"/>, creating one if absent. К-L9 «Vanilla = mods»:
+    /// vanilla mods are treated identically to third-party.
+    /// </summary>
+    public ModSubScheduler GetOrCreateSubScheduler(string modId)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (!_modSubSchedulers.TryGetValue(modId, out ModSubScheduler? sub))
+        {
+            sub = new ModSubScheduler(modId);
+            _modSubSchedulers[modId] = sub;
+        }
+        return sub;
+    }
+
+    /// <summary>
+    /// K10.2 Item 21 — Returns the sub-scheduler for <paramref name="modId"/>
+    /// или <see langword="null"/> if none has been created.
+    /// </summary>
+    public ModSubScheduler? TryGetSubScheduler(string modId)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        return _modSubSchedulers.TryGetValue(modId, out ModSubScheduler? sub) ? sub : null;
+    }
+
+    /// <summary>
+    /// K10.2 Item 21 — Removes the sub-scheduler for <paramref name="modId"/>
+    /// and invokes <see cref="ModSubScheduler.Teardown"/>. Consumed by
+    /// ModIntegrationPipeline Step 3.5 (Commit 11) after the native unload
+    /// primitive returns (per S3-Q1 L3 layering: native primitive handles
+    /// native state в parallel; this disposes managed-side mod-system instances).
+    /// </summary>
+    public bool RemoveSubScheduler(string modId)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (_modSubSchedulers.TryGetValue(modId, out ModSubScheduler? sub))
+        {
+            sub.Teardown();
+            _modSubSchedulers.Remove(modId);
+            return true;
+        }
+        return false;
     }
 
     /// <inheritdoc />
