@@ -1419,6 +1419,25 @@ documents:
     risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
     special_case_rationale: "К10.1 standalone execution brief — first of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 = kernel scheduler core; К10.2 = native bus + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 17 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.1 Items 1-5, §3.2 Items 6-8, §3.3 Items 9 + 11-13 (Item 10 NUMA deferred к К-extensions), §3.4 Items 15-16 (Item 14 К11+), §3.5 Items 17 + 19-20, §3.7 Item 24. Ratifies К-L6 SUPERSEDED + К-L12/L13/L14 architecturally established at Commit 14 (load-bearing). К10 as whole closes only after К10.4 sub-milestone; К-closure report (А'.8) waits for all four К10 sub-milestones. Brief authored from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified). Distinct from DOC-D-K10_EXECUTION (skeleton brief for original 10-sub-milestone partitioning, retained as historical record under Option III restructuring)."
 
+  - id: DOC-D-K10_2
+    path: tools/briefs/K10_2_EXECUTION_BRIEF.md
+    title: "К10.2 — Native bus three-tier dispatch + mod ALC lifecycle native primitives"
+    category: D
+    tier: 3
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-18"
+    last_modified_commit: "PENDING-COMMIT-K10_2-AUTHORING"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-18"
+    last_review_event: "К10.2 brief authored 2026-05-18 from К10 deliberation arc closure + К10.1 closure context; 14-commit cascade plan covering 8 К10 items (21, 26-32); К-L15 invariant landing planned at Commit 13"
+    next_review_due: "null"
+    reviewer: Crystalka
+    risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
+    special_case_rationale: "К10.2 standalone execution brief — second of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 closed 2026-05-18; К10.2 = native bus three-tier dispatch + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 8 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.8 Items 26-30 (native bus three-tier dispatcher + event type registry + subscriber contract + background queue), §3.9 Items 31-32 (background queue save-integrated storage + native unload primitive), §3.6 Item 21 (mod scheduler authority per-mod sub-schedulers). К-L15 «Native bus authority + three-tier event dispatch» AUTHORED at Commit 13 (load-bearing). Strategy: managed-facade-preserved per К10.1 precedent — native bus parallel infrastructure landed; managed bus remains dispatch authority; sovereign authority switch deferred к К10.4 / А'.8. Cumulative с К10.1: 25 of 46 К10 items closed; remaining 21 items distributed across К10.3 (12 items: 33-44), К10.4 (3 items: 18, 45, 46), Item 14 deferred к К11+, Item 25 cross-cutting к А'.8. Brief authored 2026-05-18 from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified) + К10.1 closure precedent (managed-facade-preserved pattern + native test convention + DF_CHECK runner + selftest infrastructure)."
+
   # === Tier 3 Briefs (Category D) — G-series (AUTHORED, future Phase A'.6+ execution) ===
 
   # G-series skeleton briefs: AUTHORED at pre-Q-G-2 era when G0..G6+G9 were separate
