@@ -227,4 +227,20 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void df_scheduler_clear_managed_callback();
+
+    // ----- K10.1 Item 17 — state change filter (test isolation needs clear) -----
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_state_filter_clear();
+
+    // ----- K10.1 Items 19+20 — scheduler trace + intrinsics (test isolation) -----
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_scheduler_trace_set_enabled(int enabled);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_scheduler_trace_clear();
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_scheduler_intrinsics_reset();
 }

@@ -21,5 +21,9 @@
          NativeMethods directly к bind ManagedSystemDispatcher.OnBatch к
          the native scheduler. -->
     <InternalsVisibleTo Include="DualFrontier.Application" />
+    <!-- K10.1 Item 24 — Core.Tests fixture ManagedTestScheduler needs к
+         reset native scheduler singletons (state filter, trace, intrinsics,
+         managed callback) for test isolation. -->
+    <InternalsVisibleTo Include="DualFrontier.Core.Tests" />
   </ItemGroup>
 </Project>
