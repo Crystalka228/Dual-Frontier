@@ -190,4 +190,24 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void df_shm_clear();
+
+    // ----- K10.1 Items 11+12+13 — affinity / work stealing / phase barriers -----
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_set_affinity(uint systemId, int affinityCoreId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_get_affinity(uint systemId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_work_stealing_enabled();
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_scheduler_set_work_stealing_enabled(int enabled);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_set_phase_barrier(int phaseIndex, int barrierType);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_get_phase_barrier(int phaseIndex);
 }

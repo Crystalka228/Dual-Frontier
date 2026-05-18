@@ -34,6 +34,10 @@ public:
         int32_t max_jitter_micros = 0;
         int32_t cpu_quota_micros_per_tick = 0; // 0 = no quota
         PreemptionMode preemption_mode = PreemptionMode::Cooperative;
+        // K10.1 Item 11 — affinity hint (-1 = no preference; 0..N-1 = core id).
+        // K10.1 lands metadata; pthread_setaffinity_np / SetThreadAffinityMask
+        // binding в К11+ when scheduling sites consume affinity.
+        int32_t cpu_affinity_core_id = -1;
     };
 
     struct ExecutionStats {

@@ -1208,6 +1208,32 @@ void scenario_wake_registry_fire_init_one_shot() {
 // K10.1 Items 6+7+8 — scheduling policies scenarios.
 // =============================================================================
 
+void scenario_scheduler_affinity_workstealing_barriers() {
+    std::printf("scenario_scheduler_affinity_workstealing_barriers\n");
+    df_scheduler_policies_clear();
+    df_scheduler_clear();
+    // Affinity round-trip.
+    DF_CHECK(df_scheduler_policies_get_affinity(7) == -1, "unset affinity is -1");
+    DF_CHECK(df_scheduler_policies_set_affinity(7, 4) == 1, "set affinity 4");
+    DF_CHECK(df_scheduler_policies_get_affinity(7) == 4, "affinity read 4");
+
+    // Work stealing toggle.
+    DF_CHECK(df_scheduler_work_stealing_enabled() == 1, "default work stealing on");
+    df_scheduler_set_work_stealing_enabled(0);
+    DF_CHECK(df_scheduler_work_stealing_enabled() == 0, "work stealing toggled off");
+    df_scheduler_set_work_stealing_enabled(1);
+    DF_CHECK(df_scheduler_work_stealing_enabled() == 1, "work stealing toggled on");
+
+    // Phase barrier round-trip (default Full).
+    DF_CHECK(df_scheduler_get_phase_barrier(0) == 0, "default barrier Full");
+    DF_CHECK(df_scheduler_set_phase_barrier(0, 1) == 1, "set barrier Partial");
+    DF_CHECK(df_scheduler_get_phase_barrier(0) == 1, "barrier read Partial");
+    DF_CHECK(df_scheduler_set_phase_barrier(2, 2) == 1, "set barrier None on phase 2");
+    DF_CHECK(df_scheduler_get_phase_barrier(2) == 2, "barrier read None");
+    DF_CHECK(df_scheduler_set_phase_barrier(-1, 0) == 0, "negative phase rejected");
+    DF_CHECK(df_scheduler_set_phase_barrier(0, 99) == 0, "invalid barrier type rejected");
+}
+
 void scenario_shm_region_basic() {
     std::printf("scenario_shm_region_basic\n");
     df_shm_clear();
@@ -1520,6 +1546,7 @@ int main() {
     scenario_scheduling_policies_quota_enforcement();
     scenario_scheduling_policies_order_by_priority();
     scenario_shm_region_basic();
+    scenario_scheduler_affinity_workstealing_barriers();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

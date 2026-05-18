@@ -661,6 +661,32 @@ DF_API int32_t df_scheduler_policies_order_by_priority(
 DF_API void    df_scheduler_policies_clear(void);
 
 /*
+ * K10.1 Item 11 — CPU affinity hints (per spec §3.3).
+ * Stores the preferred core id для a system. К10.1 lands metadata;
+ * thread-pool binding (pthread_setaffinity_np / SetThreadAffinityMask)
+ * extends к К11+ when scheduling sites consume affinity.
+ * affinity_core_id: -1 = no preference, 0..N-1 = specific core.
+ */
+DF_API int32_t df_scheduler_policies_set_affinity(uint32_t system_id, int32_t affinity_core_id);
+DF_API int32_t df_scheduler_policies_get_affinity(uint32_t system_id);
+
+/*
+ * K10.1 Item 12 — Work stealing toggle (default enabled per К-L14).
+ * К10.1 lands the policy toggle; per-thread deque implementation extends
+ * к К11+ when contention measurements support architectural choice.
+ */
+DF_API int32_t df_scheduler_work_stealing_enabled(void);
+DF_API void    df_scheduler_set_work_stealing_enabled(int32_t enabled);
+
+/*
+ * K10.1 Item 13 — Phase barrier semantics per spec §3.3.
+ * BarrierType values: 0 = Full (default), 1 = Partial, 2 = None.
+ * Per-phase barrier override applies к the static graph composition.
+ */
+DF_API int32_t df_scheduler_set_phase_barrier(int32_t phase_index, int32_t barrier_type);
+DF_API int32_t df_scheduler_get_phase_barrier(int32_t phase_index);
+
+/*
  * K10.1 Item 9 — Shared memory regions (К-L14 IPC primitive).
  *
  * Single-process shared memory registry. Region created with size; map

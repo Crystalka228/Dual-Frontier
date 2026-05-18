@@ -88,6 +88,17 @@ public:
         return mode_.load(std::memory_order_acquire);
     }
 
+    // K10.1 Item 12 — Work-stealing enablement flag. К10.1 lands the policy
+    // toggle; the actual per-thread deque implementation extends к К11+ when
+    // contention measurements support the architectural choice. Default true
+    // (per К-L14 default-inclusion).
+    void set_work_stealing_enabled(bool enabled) noexcept {
+        work_stealing_.store(enabled, std::memory_order_release);
+    }
+    [[nodiscard]] bool work_stealing_enabled() const noexcept {
+        return work_stealing_.load(std::memory_order_acquire);
+    }
+
     // Stop accepting new tasks. Drain in-flight, then exit. Idempotent.
     void shutdown();
 
@@ -105,6 +116,7 @@ private:
     std::atomic<int> in_flight_{0};
     std::atomic<bool> stopping_{false};
     std::atomic<Mode> mode_{Mode::Bootstrap};
+    std::atomic<bool> work_stealing_{true};
 
     void worker_loop();
 };

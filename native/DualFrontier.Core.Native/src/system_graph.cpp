@@ -49,10 +49,28 @@ bool SystemGraph::unregister_system(uint32_t system_id) {
     return false;
 }
 
+int32_t SystemGraph::set_phase_barrier(int32_t phase_index, int32_t barrier_type) noexcept {
+    if (phase_index < 0) return 0;
+    if (barrier_type < 0 || barrier_type > 2) return 0;
+    if (static_cast<std::size_t>(phase_index) >= static_phase_barriers_.size()) {
+        static_phase_barriers_.resize(static_cast<std::size_t>(phase_index) + 1, kBarrierDefault);
+    }
+    static_phase_barriers_[static_cast<std::size_t>(phase_index)] = barrier_type;
+    return 1;
+}
+
+int32_t SystemGraph::get_phase_barrier(int32_t phase_index) const noexcept {
+    if (phase_index < 0 || static_cast<std::size_t>(phase_index) >= static_phase_barriers_.size()) {
+        return kBarrierDefault;
+    }
+    return static_phase_barriers_[static_cast<std::size_t>(phase_index)];
+}
+
 void SystemGraph::clear() noexcept {
     systems_.clear();
     static_phases_.clear();
     per_tick_phases_.clear();
+    static_phase_barriers_.clear();
     last_error_.clear();
 }
 

@@ -51,6 +51,7 @@ set(DF_NATIVE_HEADERS
     include/wake_registry.h
     include/scheduling_policies.h
     include/shm_region.h
+    include/phase_barrier.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})

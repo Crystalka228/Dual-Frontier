@@ -39,6 +39,10 @@ public:
         int32_t wake_type;       // K10.1 Item 3 — default 0 (Timer)
     };
 
+    // K10.1 Item 13 — Per-phase barrier semantics override. Mirrors
+    // dualfrontier::BarrierType values: 0=Full (default), 1=Partial, 2=None.
+    static constexpr int32_t kBarrierDefault = 0;
+
     SystemGraph();
     ~SystemGraph();
 
@@ -97,6 +101,11 @@ public:
     // Last error message after a failing compute. Empty if no failure.
     [[nodiscard]] const std::string& last_error() const noexcept { return last_error_; }
 
+    // K10.1 Item 13 — Per-phase barrier type accessors. Default 0 (Full).
+    // Persists across compute_static_graph calls but reset by clear().
+    int32_t set_phase_barrier(int32_t phase_index, int32_t barrier_type) noexcept;
+    [[nodiscard]] int32_t get_phase_barrier(int32_t phase_index) const noexcept;
+
     // Reset to empty state (no registrations, no computed phases).
     void clear() noexcept;
 
@@ -104,6 +113,7 @@ private:
     std::vector<SystemEntry> systems_;
     std::vector<std::vector<uint32_t>> static_phases_;
     std::vector<std::vector<uint32_t>> per_tick_phases_;
+    std::vector<int32_t> static_phase_barriers_;  // K10.1 Item 13
     std::string last_error_;
 
     // Run Kahn's topological sort over the given subset (pointers into systems_).

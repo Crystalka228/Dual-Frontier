@@ -6,6 +6,8 @@
 #include <thread>
 #include <vector>
 
+#include <atomic>
+
 #include "bootstrap_graph.h"
 #include "composite.h"
 #include "entity_id.h"
@@ -1209,6 +1211,45 @@ DF_API int32_t df_scheduler_policies_order_by_priority(
 
 DF_API void df_scheduler_policies_clear(void) {
     dualfrontier::default_scheduling_policies().clear();
+}
+
+// K10.1 Item 11 — CPU affinity.
+DF_API int32_t df_scheduler_policies_set_affinity(uint32_t system_id, int32_t affinity_core_id) {
+    using namespace dualfrontier;
+    auto& policies = default_scheduling_policies();
+    auto p = policies.get_policy(system_id);
+    p.cpu_affinity_core_id = affinity_core_id;
+    return policies.set_policy(system_id, p) ? 1 : 0;
+}
+
+DF_API int32_t df_scheduler_policies_get_affinity(uint32_t system_id) {
+    return dualfrontier::default_scheduling_policies().get_policy(system_id).cpu_affinity_core_id;
+}
+
+// K10.1 Item 12 — work stealing toggle. Single global thread pool for
+// scheduler use is the К10.1 model; per-pool toggles arise in К11+. К10.1
+// stores the policy on the system_graph scope (process-global) via a static
+// flag external к the thread pool instance — this is the metadata layer the
+// future pool reads. For К10.1 we maintain it as a module-local atomic.
+namespace {
+std::atomic<bool> g_work_stealing_enabled{true};
+}
+
+DF_API int32_t df_scheduler_work_stealing_enabled(void) {
+    return g_work_stealing_enabled.load(std::memory_order_acquire) ? 1 : 0;
+}
+
+DF_API void df_scheduler_set_work_stealing_enabled(int32_t enabled) {
+    g_work_stealing_enabled.store(enabled != 0, std::memory_order_release);
+}
+
+// K10.1 Item 13 — phase barrier semantics.
+DF_API int32_t df_scheduler_set_phase_barrier(int32_t phase_index, int32_t barrier_type) {
+    return dualfrontier::default_scheduler_graph().set_phase_barrier(phase_index, barrier_type);
+}
+
+DF_API int32_t df_scheduler_get_phase_barrier(int32_t phase_index) {
+    return dualfrontier::default_scheduler_graph().get_phase_barrier(phase_index);
 }
 
 // =============================================================================
