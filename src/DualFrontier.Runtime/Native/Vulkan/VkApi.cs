@@ -146,4 +146,85 @@ internal static unsafe partial class VkApi
 
     [LibraryImport(VulkanLib, EntryPoint = "vkDestroyImageView")]
     internal static partial void vkDestroyImageView(IntPtr device, IntPtr imageView, IntPtr pAllocator);
+
+    // =======================================================================
+    // V0.B Commit 7 — Surface + swapchain
+    //
+    // KHR functions exported by vulkan-1.dll loader trampoline on Windows; use [LibraryImport]
+    // directly. Function pointers acquired при first call would also work via vkGetInstanceProcAddr
+    // / vkGetDeviceProcAddr per Vulkan loader contract, but direct binding matches V0.A core
+    // function approach (simpler + statically verifiable).
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateWin32SurfaceKHR")]
+    internal static partial VkResult vkCreateWin32SurfaceKHR(
+        IntPtr instance,
+        in VkWin32SurfaceCreateInfoKHR pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pSurface);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroySurfaceKHR")]
+    internal static partial void vkDestroySurfaceKHR(IntPtr instance, IntPtr surface, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkGetPhysicalDeviceSurfaceSupportKHR")]
+    internal static partial VkResult vkGetPhysicalDeviceSurfaceSupportKHR(
+        IntPtr physicalDevice,
+        uint queueFamilyIndex,
+        IntPtr surface,
+        out uint pSupported);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkGetPhysicalDeviceSurfaceCapabilitiesKHR")]
+    internal static partial VkResult vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+        IntPtr physicalDevice,
+        IntPtr surface,
+        out VkSurfaceCapabilitiesKHR pSurfaceCapabilities);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkGetPhysicalDeviceSurfaceFormatsKHR")]
+    internal static unsafe partial VkResult vkGetPhysicalDeviceSurfaceFormatsKHR(
+        IntPtr physicalDevice,
+        IntPtr surface,
+        ref uint pSurfaceFormatCount,
+        VkSurfaceFormatKHR* pSurfaceFormats);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkGetPhysicalDeviceSurfacePresentModesKHR")]
+    internal static unsafe partial VkResult vkGetPhysicalDeviceSurfacePresentModesKHR(
+        IntPtr physicalDevice,
+        IntPtr surface,
+        ref uint pPresentModeCount,
+        VkPresentModeKHR* pPresentModes);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateSwapchainKHR")]
+    internal static partial VkResult vkCreateSwapchainKHR(
+        IntPtr device,
+        in VkSwapchainCreateInfoKHR pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pSwapchain);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroySwapchainKHR")]
+    internal static partial void vkDestroySwapchainKHR(IntPtr device, IntPtr swapchain, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkGetSwapchainImagesKHR")]
+    internal static unsafe partial VkResult vkGetSwapchainImagesKHR(
+        IntPtr device,
+        IntPtr swapchain,
+        ref uint pSwapchainImageCount,
+        IntPtr* pSwapchainImages);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkAcquireNextImageKHR")]
+    internal static partial VkResult vkAcquireNextImageKHR(
+        IntPtr device,
+        IntPtr swapchain,
+        ulong timeout,
+        IntPtr semaphore,
+        IntPtr fence,
+        out uint pImageIndex);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkQueuePresentKHR")]
+    internal static partial VkResult vkQueuePresentKHR(IntPtr queue, in VkPresentInfoKHR pPresentInfo);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDeviceWaitIdle")]
+    internal static partial VkResult vkDeviceWaitIdle(IntPtr device);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkQueueWaitIdle")]
+    internal static partial VkResult vkQueueWaitIdle(IntPtr queue);
 }

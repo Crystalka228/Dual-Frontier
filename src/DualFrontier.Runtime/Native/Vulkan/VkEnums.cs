@@ -21,6 +21,8 @@ internal enum VkResult : int
     VK_ERROR_FORMAT_NOT_SUPPORTED = -11,
     VK_ERROR_FRAGMENTED_POOL = -12,
     VK_ERROR_UNKNOWN = -13,
+    VK_ERROR_OUT_OF_DATE_KHR = -1000001004,
+    VK_SUBOPTIMAL_KHR = 1000001003,
 }
 
 internal enum VkPhysicalDeviceType : int
@@ -237,4 +239,39 @@ internal enum VkFormat : int
     VK_FORMAT_R32_SFLOAT = 100,
     VK_FORMAT_R32G32_SFLOAT = 103,
     VK_FORMAT_R32G32B32A32_SFLOAT = 109,
+}
+
+// ===========================================================================
+// V0.B Commit 7 — Surface + swapchain
+// ===========================================================================
+
+internal enum VkColorSpaceKHR : int
+{
+    VK_COLOR_SPACE_SRGB_NONLINEAR_KHR = 0,
+}
+
+internal enum VkPresentModeKHR : int
+{
+    VK_PRESENT_MODE_IMMEDIATE_KHR = 0,
+    VK_PRESENT_MODE_MAILBOX_KHR = 1,
+    VK_PRESENT_MODE_FIFO_KHR = 2,
+    VK_PRESENT_MODE_FIFO_RELAXED_KHR = 3,
+}
+
+[Flags]
+internal enum VkSurfaceTransformFlagsKHR : uint
+{
+    VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR = 0x00000001,
+    VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR = 0x00000002,
+    VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR = 0x00000004,
+    VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR = 0x00000008,
+}
+
+[Flags]
+internal enum VkCompositeAlphaFlagsKHR : uint
+{
+    VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR = 0x00000001,
+    VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR = 0x00000002,
+    VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR = 0x00000004,
+    VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR = 0x00000008,
 }

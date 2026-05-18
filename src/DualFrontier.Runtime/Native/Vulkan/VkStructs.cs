@@ -317,3 +317,73 @@ internal struct VkImageViewCreateInfo
     internal VkImageSubresourceRange subresourceRange;  // 20 bytes
     internal uint _padTrailing;
 }
+
+// ===========================================================================
+// V0.B Commit 7 — Surface + swapchain
+// ===========================================================================
+
+// VkSurfaceCapabilitiesKHR (52 bytes — all uint32 + VkExtent2D pairs, 4-byte aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSurfaceCapabilitiesKHR
+{
+    internal uint minImageCount;
+    internal uint maxImageCount;
+    internal VkExtent2D currentExtent;
+    internal VkExtent2D minImageExtent;
+    internal VkExtent2D maxImageExtent;
+    internal uint maxImageArrayLayers;
+    internal VkSurfaceTransformFlagsKHR supportedTransforms;
+    internal VkSurfaceTransformFlagsKHR currentTransform;
+    internal VkCompositeAlphaFlagsKHR supportedCompositeAlpha;
+    internal VkImageUsageFlags supportedUsageFlags;
+}
+
+// VkSurfaceFormatKHR (8 bytes — two int enums).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSurfaceFormatKHR
+{
+    internal VkFormat format;
+    internal VkColorSpaceKHR colorSpace;
+}
+
+// VkSwapchainCreateInfoKHR (104 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkSwapchainCreateInfoKHR
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeSurface;
+    internal IntPtr surface;
+    internal uint minImageCount;
+    internal VkFormat imageFormat;
+    internal VkColorSpaceKHR imageColorSpace;
+    internal VkExtent2D imageExtent;          // 8 bytes
+    internal uint imageArrayLayers;
+    internal VkImageUsageFlags imageUsage;
+    internal VkSharingMode imageSharingMode;
+    internal uint queueFamilyIndexCount;
+    internal uint _padBeforePtr;
+    internal uint* pQueueFamilyIndices;
+    internal VkSurfaceTransformFlagsKHR preTransform;
+    internal VkCompositeAlphaFlagsKHR compositeAlpha;
+    internal VkPresentModeKHR presentMode;
+    internal uint clipped;       // VkBool32
+    internal IntPtr oldSwapchain;
+}
+
+// VkPresentInfoKHR (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPresentInfoKHR
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint waitSemaphoreCount;
+    internal uint _padBeforeWaitSem;
+    internal IntPtr* pWaitSemaphores;
+    internal uint swapchainCount;
+    internal uint _padBeforeSwapchains;
+    internal IntPtr* pSwapchains;
+    internal uint* pImageIndices;
+    internal VkResult* pResults;
+}

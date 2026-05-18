@@ -97,6 +97,31 @@ public sealed class VulkanStructSizeTests
     public void VkImageViewCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkImageViewCreateInfo>().Should().Be(80);
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commits 7-12)
+    // V0.B Commit 7 — Surface + swapchain
+    // ============================================================
+
+    [Fact]
+    public void VkSurfaceCapabilitiesKHR_Size_Matches_Spec()
+    {
+        // 2×uint32 (8) + 3×VkExtent2D (24) + 5×uint32 (20) = 52
+        Marshal.SizeOf<VkSurfaceCapabilitiesKHR>().Should().Be(52);
+    }
+
+    [Fact]
+    public void VkSurfaceFormatKHR_Size_Matches_Spec() => Marshal.SizeOf<VkSurfaceFormatKHR>().Should().Be(8);
+
+    [Fact]
+    public void VkSwapchainCreateInfoKHR_Size_Matches_Spec() => Marshal.SizeOf<VkSwapchainCreateInfoKHR>().Should().Be(104);
+
+    [Fact]
+    public void VkPresentInfoKHR_Size_Matches_Spec()
+    {
+        // sType (4) + pad (4) + pNext (8) + waitSemaphoreCount (4) + pad (4) + pWaitSemaphores (8)
+        //   + swapchainCount (4) + pad (4) + pSwapchains (8) + pImageIndices (8) + pResults (8) = 64
+        Marshal.SizeOf<VkPresentInfoKHR>().Should().Be(64);
+    }
+
+    // ============================================================
+    // V0.B additions appended per-commit (see brief §3 commits 8-12)
     // ============================================================
 }
