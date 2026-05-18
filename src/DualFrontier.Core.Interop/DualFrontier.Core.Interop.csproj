@@ -17,5 +17,9 @@
   <ItemGroup>
     <InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />
     <InternalsVisibleTo Include="DualFrontier.Core.Interop.Tests" />
+    <!-- K10.1 Item 15 — Application's SchedulerAdapter calls the internal
+         NativeMethods directly к bind ManagedSystemDispatcher.OnBatch к
+         the native scheduler. -->
+    <InternalsVisibleTo Include="DualFrontier.Application" />
   </ItemGroup>
 </Project>

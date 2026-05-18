@@ -687,6 +687,29 @@ DF_API int32_t df_scheduler_set_phase_barrier(int32_t phase_index, int32_t barri
 DF_API int32_t df_scheduler_get_phase_barrier(int32_t phase_index);
 
 /*
+ * K10.1 Item 15 — Batched callback ABI (К-L12 cross-layer bridge).
+ *
+ * Native scheduler dispatches managed systems via batched reverse-P/Invoke.
+ * One ABI crossing per phase per origin amortizes GC transition cost across
+ * N systems in batch. See managed_callback.h for full constraints + perf
+ * characteristics.
+ */
+
+typedef struct {
+    const uint32_t* system_ids;
+    uint32_t        count;
+    float           delta;
+    void*           user_data;
+} df_managed_system_batch;
+
+typedef void (*df_managed_batch_fn)(const df_managed_system_batch* batch);
+
+DF_API void    df_scheduler_register_managed_callback(df_managed_batch_fn cb, void* user_data);
+DF_API int32_t df_scheduler_dispatch_managed_batch(const df_managed_system_batch* batch);
+DF_API int32_t df_scheduler_managed_callback_registered(void);
+DF_API void    df_scheduler_clear_managed_callback(void);
+
+/*
  * K10.1 Item 9 — Shared memory regions (К-L14 IPC primitive).
  *
  * Single-process shared memory registry. Region created with size; map

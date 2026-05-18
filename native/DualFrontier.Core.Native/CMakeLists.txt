@@ -32,6 +32,7 @@ set(DF_NATIVE_SOURCES
     src/wake_registry.cpp
     src/scheduling_policies.cpp
     src/shm_region.cpp
+    src/managed_callback.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -52,6 +53,7 @@ set(DF_NATIVE_HEADERS
     include/scheduling_policies.h
     include/shm_region.h
     include/phase_barrier.h
+    include/managed_callback.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})

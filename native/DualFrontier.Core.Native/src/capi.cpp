@@ -13,6 +13,7 @@
 #include "entity_id.h"
 #include "keyed_map.h"
 #include "set_primitive.h"
+#include "managed_callback.h"
 #include "scheduling_policies.h"
 #include "shm_region.h"
 #include "string_pool.h"
@@ -1101,6 +1102,28 @@ DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out
 
 DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id) {
     return dualfrontier::default_wake_registry().wake_subscriptions_for(system_id);
+}
+
+// =============================================================================
+// K10.1 Item 15 — batched callback ABI.
+// =============================================================================
+
+DF_API void df_scheduler_register_managed_callback(df_managed_batch_fn cb, void* user_data) {
+    dualfrontier::default_managed_callback_registry().register_callback(cb, user_data);
+}
+
+DF_API int32_t df_scheduler_dispatch_managed_batch(const df_managed_system_batch* batch) {
+    try {
+        return dualfrontier::default_managed_callback_registry().dispatch_batch(batch);
+    } catch (...) { return 0; }
+}
+
+DF_API int32_t df_scheduler_managed_callback_registered(void) {
+    return dualfrontier::default_managed_callback_registry().has_callback();
+}
+
+DF_API void df_scheduler_clear_managed_callback(void) {
+    dualfrontier::default_managed_callback_registry().clear();
 }
 
 // =============================================================================

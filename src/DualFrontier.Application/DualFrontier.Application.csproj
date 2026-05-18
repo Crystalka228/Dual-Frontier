@@ -2,6 +2,9 @@
   <PropertyGroup>
     <AssemblyName>DualFrontier.Application</AssemblyName>
     <RootNamespace>DualFrontier.Application</RootNamespace>
+    <!-- K10.1 Item 15 — managed dispatcher uses unsafe function pointer
+         delegate types к bind the [UnmanagedCallersOnly] callback. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />

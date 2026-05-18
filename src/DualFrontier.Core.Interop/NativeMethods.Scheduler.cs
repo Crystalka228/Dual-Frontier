@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using DualFrontier.Core.Interop.Marshalling;
 
 namespace DualFrontier.Core.Interop;
 
@@ -210,4 +211,20 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern int df_scheduler_get_phase_barrier(int phaseIndex);
+
+    // ----- K10.1 Item 15 — batched callback ABI -----
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe void df_scheduler_register_managed_callback(
+        delegate* unmanaged[Cdecl]<NativeManagedBatch*, void> cb,
+        void* userData);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_scheduler_dispatch_managed_batch(NativeManagedBatch* batch);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_managed_callback_registered();
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_scheduler_clear_managed_callback();
 }

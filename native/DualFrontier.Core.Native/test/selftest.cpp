@@ -1234,6 +1234,61 @@ void scenario_scheduler_affinity_workstealing_barriers() {
     DF_CHECK(df_scheduler_set_phase_barrier(0, 99) == 0, "invalid barrier type rejected");
 }
 
+// =============================================================================
+// K10.1 Item 15 — batched callback ABI scenarios.
+// =============================================================================
+
+struct BatchCaptureState {
+    int call_count = 0;
+    uint32_t last_count = 0;
+    float last_delta = 0.0f;
+    std::vector<uint32_t> last_ids;
+};
+
+void batch_capture_cb(const df_managed_system_batch* batch) {
+    auto* state = static_cast<BatchCaptureState*>(batch->user_data);
+    state->call_count++;
+    state->last_count = batch->count;
+    state->last_delta = batch->delta;
+    state->last_ids.assign(batch->system_ids, batch->system_ids + batch->count);
+}
+
+void scenario_managed_callback_roundtrip() {
+    std::printf("scenario_managed_callback_roundtrip\n");
+    df_scheduler_clear_managed_callback();
+    DF_CHECK(df_scheduler_managed_callback_registered() == 0, "no callback initially");
+
+    BatchCaptureState state;
+    df_scheduler_register_managed_callback(batch_capture_cb, &state);
+    DF_CHECK(df_scheduler_managed_callback_registered() == 1, "callback registered");
+
+    uint32_t ids[] = {7, 11, 13};
+    df_managed_system_batch batch;
+    batch.system_ids = ids;
+    batch.count = 3;
+    batch.delta = 0.033f;  // ~30Hz
+    batch.user_data = &state;
+
+    DF_CHECK(df_scheduler_dispatch_managed_batch(&batch) == 1, "dispatch succeeded");
+    DF_CHECK(state.call_count == 1, "callback invoked once");
+    DF_CHECK(state.last_count == 3, "count round-tripped");
+    DF_CHECK(state.last_ids.size() == 3 &&
+             state.last_ids[0] == 7 &&
+             state.last_ids[1] == 11 &&
+             state.last_ids[2] == 13,
+             "ids round-tripped");
+    DF_CHECK(state.last_delta == 0.033f, "delta round-tripped");
+
+    // Dispatch с null batch returns 0, no crash.
+    DF_CHECK(df_scheduler_dispatch_managed_batch(nullptr) == 0, "null batch rejected");
+    DF_CHECK(state.call_count == 1, "no extra invocation on null batch");
+
+    // Clear and re-dispatch — should fail (no callback).
+    df_scheduler_clear_managed_callback();
+    DF_CHECK(df_scheduler_managed_callback_registered() == 0, "cleared");
+    DF_CHECK(df_scheduler_dispatch_managed_batch(&batch) == 0, "dispatch fails post-clear");
+}
+
 void scenario_shm_region_basic() {
     std::printf("scenario_shm_region_basic\n");
     df_shm_clear();
@@ -1547,6 +1602,7 @@ int main() {
     scenario_scheduling_policies_order_by_priority();
     scenario_shm_region_basic();
     scenario_scheduler_affinity_workstealing_barriers();
+    scenario_managed_callback_roundtrip();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
