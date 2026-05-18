@@ -628,6 +628,39 @@ DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out
 DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id);
 
 /*
+ * K10.1 Items 6+7+8 — Scheduling policies (priority + quotas + preemption).
+ *
+ * Per-system policy metadata + execution accounting. Default policy applies
+ * when set_policy() not called for a given system (Normal class, no quota,
+ * cooperative preemption — preserves K-L6-era behavior for un-attributed
+ * systems).
+ *
+ * scheduling_class values: 0=RealTime, 1=High, 2=Normal, 3=Low, 4=Background.
+ * preemption_mode values: 0=Cooperative, 1=Forced.
+ */
+DF_API int32_t df_scheduler_policies_set(
+    uint32_t system_id,
+    int32_t scheduling_class,
+    int32_t max_latency_micros,
+    int32_t max_jitter_micros,
+    int32_t cpu_quota_micros_per_tick,
+    int32_t preemption_mode);
+
+DF_API int32_t df_scheduler_policies_get_class(uint32_t system_id);
+DF_API int32_t df_scheduler_policies_get_quota(uint32_t system_id);
+DF_API int32_t df_scheduler_policies_record_execution(uint32_t system_id, int64_t micros);
+DF_API int32_t df_scheduler_policies_quota_exceeded(uint32_t system_id);
+DF_API int64_t df_scheduler_policies_total_micros(uint32_t system_id);
+DF_API int32_t df_scheduler_policies_quota_violations(uint32_t system_id);
+DF_API void    df_scheduler_policies_reset_tick_stats(void);
+
+DF_API int32_t df_scheduler_policies_order_by_priority(
+    const uint32_t* in_ids, uint32_t in_count,
+    uint32_t* out_ids, int32_t out_capacity);
+
+DF_API void    df_scheduler_policies_clear(void);
+
+/*
  * K10.1 Item 5 — Per-tick scheduler orchestration (К-L12 + К-L13).
  *
  * The full per-tick scheduling sequence:

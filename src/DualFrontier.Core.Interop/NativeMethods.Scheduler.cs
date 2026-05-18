@@ -121,4 +121,44 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern int df_scheduler_tick_begin(ulong currentTick);
+
+    // ----- K10.1 Items 6+7+8 — scheduling policies -----
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_set(
+        uint systemId,
+        int schedulingClass,
+        int maxLatencyMicros,
+        int maxJitterMicros,
+        int cpuQuotaMicrosPerTick,
+        int preemptionMode);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_get_class(uint systemId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_get_quota(uint systemId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_record_execution(uint systemId, long micros);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_quota_exceeded(uint systemId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern long df_scheduler_policies_total_micros(uint systemId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_scheduler_policies_quota_violations(uint systemId);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_scheduler_policies_reset_tick_stats();
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_scheduler_policies_order_by_priority(
+        uint* inIds, uint inCount,
+        uint* outIds, int outCapacity);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_scheduler_policies_clear();
 }

@@ -1204,6 +1204,75 @@ void scenario_wake_registry_fire_init_one_shot() {
     DF_CHECK(df_wake_registry_fire_init() == 0, "second init fires zero (one-shot)");
 }
 
+// =============================================================================
+// K10.1 Items 6+7+8 — scheduling policies scenarios.
+// =============================================================================
+
+void scenario_scheduling_policies_default() {
+    std::printf("scenario_scheduling_policies_default\n");
+    df_scheduler_policies_clear();
+    // Unset systems get default: Normal class (2), no quota.
+    DF_CHECK(df_scheduler_policies_get_class(99) == 2, "default class is Normal");
+    DF_CHECK(df_scheduler_policies_get_quota(99) == 0, "default quota is 0 (unbounded)");
+    DF_CHECK(df_scheduler_policies_quota_exceeded(99) == 0, "no quota → never exceeded");
+}
+
+void scenario_scheduling_policies_set_and_get() {
+    std::printf("scenario_scheduling_policies_set_and_get\n");
+    df_scheduler_policies_clear();
+    DF_CHECK(df_scheduler_policies_set(10, /*RT*/0, 100, 50, 200, /*Forced*/1) == 1,
+             "set policy RT/100us/50us/200us/Forced");
+    DF_CHECK(df_scheduler_policies_get_class(10) == 0, "class is RealTime");
+    DF_CHECK(df_scheduler_policies_get_quota(10) == 200, "quota is 200");
+
+    // Invalid class rejected.
+    DF_CHECK(df_scheduler_policies_set(11, 99, 0, 0, 0, 0) == 0, "invalid class rejected");
+}
+
+void scenario_scheduling_policies_quota_enforcement() {
+    std::printf("scenario_scheduling_policies_quota_enforcement\n");
+    df_scheduler_policies_clear();
+    df_scheduler_policies_set(20, /*Normal*/2, 0, 0, /*quota*/100, 0);
+
+    // Under quota.
+    DF_CHECK(df_scheduler_policies_record_execution(20, 50) == 0, "50us under 100us");
+    DF_CHECK(df_scheduler_policies_quota_exceeded(20) == 0, "not yet exceeded");
+
+    // Push over quota.
+    DF_CHECK(df_scheduler_policies_record_execution(20, 60) == 1, "50+60=110 exceeds 100");
+    DF_CHECK(df_scheduler_policies_quota_exceeded(20) == 1, "quota now exceeded");
+    DF_CHECK(df_scheduler_policies_quota_violations(20) == 1, "one violation event");
+
+    DF_CHECK(df_scheduler_policies_total_micros(20) == 110, "total micros tracked");
+
+    // Reset tick stats clears per-tick state but preserves totals.
+    df_scheduler_policies_reset_tick_stats();
+    DF_CHECK(df_scheduler_policies_quota_exceeded(20) == 0, "post-reset not exceeded");
+    DF_CHECK(df_scheduler_policies_total_micros(20) == 110, "total micros preserved");
+    DF_CHECK(df_scheduler_policies_quota_violations(20) == 1, "violation count preserved");
+}
+
+void scenario_scheduling_policies_order_by_priority() {
+    std::printf("scenario_scheduling_policies_order_by_priority\n");
+    df_scheduler_policies_clear();
+    df_scheduler_policies_set(1, /*Normal*/2, 0, 0, 0, 0);
+    df_scheduler_policies_set(2, /*RealTime*/0, 0, 0, 0, 0);
+    df_scheduler_policies_set(3, /*High*/1, 0, 0, 0, 0);
+    df_scheduler_policies_set(4, /*Background*/4, 0, 0, 0, 0);
+    df_scheduler_policies_set(5, /*Normal*/2, 0, 0, 0, 0);
+
+    uint32_t in_ids[] = {1, 2, 3, 4, 5};
+    uint32_t out_ids[5] = {0};
+    int32_t n = df_scheduler_policies_order_by_priority(in_ids, 5, out_ids, 5);
+    DF_CHECK(n == 5, "5 ids ordered");
+    // Expected: 2 (RT), 3 (High), 1 (Normal id=1), 5 (Normal id=5), 4 (Background)
+    DF_CHECK(out_ids[0] == 2, "RT first");
+    DF_CHECK(out_ids[1] == 3, "High second");
+    DF_CHECK(out_ids[2] == 1, "Normal id=1 third");
+    DF_CHECK(out_ids[3] == 5, "Normal id=5 fourth");
+    DF_CHECK(out_ids[4] == 4, "Background last");
+}
+
 void scenario_scheduler_tick_begin_orchestration() {
     std::printf("scenario_scheduler_tick_begin_orchestration\n");
     df_wake_registry_clear();
@@ -1415,6 +1484,10 @@ int main() {
     scenario_wake_registry_fire_explicit();
     scenario_scheduler_diagnostics();
     scenario_scheduler_tick_begin_orchestration();
+    scenario_scheduling_policies_default();
+    scenario_scheduling_policies_set_and_get();
+    scenario_scheduling_policies_quota_enforcement();
+    scenario_scheduling_policies_order_by_priority();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

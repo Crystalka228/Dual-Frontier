@@ -11,6 +11,7 @@
 #include "entity_id.h"
 #include "keyed_map.h"
 #include "set_primitive.h"
+#include "scheduling_policies.h"
 #include "string_pool.h"
 #include "system_graph.h"
 #include "thread_pool.h"
@@ -1097,6 +1098,72 @@ DF_API int32_t df_scheduler_query_runnable(uint32_t* out_system_ids, int32_t out
 
 DF_API int32_t df_scheduler_query_wake_subscriptions(uint32_t system_id) {
     return dualfrontier::default_wake_registry().wake_subscriptions_for(system_id);
+}
+
+// =============================================================================
+// K10.1 Items 6+7+8 — scheduling policies C ABI.
+// =============================================================================
+
+DF_API int32_t df_scheduler_policies_set(
+    uint32_t system_id,
+    int32_t scheduling_class,
+    int32_t max_latency_micros,
+    int32_t max_jitter_micros,
+    int32_t cpu_quota_micros_per_tick,
+    int32_t preemption_mode)
+{
+    using namespace dualfrontier;
+    if (scheduling_class < 0 || scheduling_class > 4) return 0;
+    if (preemption_mode < 0 || preemption_mode > 1) return 0;
+    SchedulingPolicies::Policy p;
+    p.scheduling_class = static_cast<SchedulingClass>(scheduling_class);
+    p.max_latency_micros = max_latency_micros;
+    p.max_jitter_micros = max_jitter_micros;
+    p.cpu_quota_micros_per_tick = cpu_quota_micros_per_tick;
+    p.preemption_mode = static_cast<PreemptionMode>(preemption_mode);
+    return default_scheduling_policies().set_policy(system_id, p) ? 1 : 0;
+}
+
+DF_API int32_t df_scheduler_policies_get_class(uint32_t system_id) {
+    return static_cast<int32_t>(
+        dualfrontier::default_scheduling_policies().get_policy(system_id).scheduling_class);
+}
+
+DF_API int32_t df_scheduler_policies_get_quota(uint32_t system_id) {
+    return dualfrontier::default_scheduling_policies()
+        .get_policy(system_id).cpu_quota_micros_per_tick;
+}
+
+DF_API int32_t df_scheduler_policies_record_execution(uint32_t system_id, int64_t micros) {
+    return dualfrontier::default_scheduling_policies().record_execution(system_id, micros);
+}
+
+DF_API int32_t df_scheduler_policies_quota_exceeded(uint32_t system_id) {
+    return dualfrontier::default_scheduling_policies().quota_exceeded(system_id);
+}
+
+DF_API int64_t df_scheduler_policies_total_micros(uint32_t system_id) {
+    return dualfrontier::default_scheduling_policies().total_micros(system_id);
+}
+
+DF_API int32_t df_scheduler_policies_quota_violations(uint32_t system_id) {
+    return dualfrontier::default_scheduling_policies().quota_violations(system_id);
+}
+
+DF_API void df_scheduler_policies_reset_tick_stats(void) {
+    dualfrontier::default_scheduling_policies().reset_tick_stats();
+}
+
+DF_API int32_t df_scheduler_policies_order_by_priority(
+    const uint32_t* in_ids, uint32_t in_count,
+    uint32_t* out_ids, int32_t out_capacity)
+{
+    return dualfrontier::default_scheduling_policies().order_by_priority(
+        in_ids, in_count, out_ids, out_capacity);
+}
+
+DF_API void df_scheduler_policies_clear(void) {
+    dualfrontier::default_scheduling_policies().clear();
 }
 
 // =============================================================================
