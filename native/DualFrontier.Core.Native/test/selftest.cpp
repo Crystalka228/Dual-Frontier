@@ -1,6 +1,13 @@
 // Native self-test: exercises the C ABI end-to-end so the library can be
 // validated on a machine without a .NET SDK. Prints pass/fail per scenario
 // and returns a non-zero exit code on failure.
+//
+// K10.1 test framework decision (per Lesson #22 — read existing code first):
+// The K3-era custom DF_CHECK macro runner established here is the canonical
+// native test pattern. K10.1 scheduler scenarios extend this same selftest
+// rather than introducing catch2/gtest dependencies. Each new scheduler
+// primitive (system_graph, wake_registry, etc.) contributes its scenarios
+// to this file, called from main().
 
 #include <atomic>
 #include <chrono>
@@ -992,6 +999,23 @@ void scenario_field_unregister() {
     df_world_destroy(w);
 }
 
+// =============================================================================
+// K10.1 scheduler scenarios. Native scheduler primitives extend the existing
+// K3-era selftest pattern rather than adopting catch2/gtest (per Item 24
+// decision + Lesson #22). Each primitive adds its scenario_* functions here.
+// =============================================================================
+
+void scenario_k10_smoke() {
+    std::printf("scenario_k10_smoke\n");
+    // K10.1 framework smoke: verifies the selftest runner hosts scheduler
+    // scope correctly. No production code exercised — placeholder confirming
+    // the test target compiles and executes under the K10.1 cascade. Real
+    // scheduler scenarios land in subsequent K10.1 commits (system_graph,
+    // wake_registry, etc.).
+    constexpr uint32_t k10_marker = 0x4B313031u;  // ASCII 'K101'
+    DF_CHECK(k10_marker == 0x4B313031u, "K10.1 scheduler scope marker resolves");
+}
+
 } // namespace
 
 int main() {
@@ -1025,6 +1049,7 @@ int main() {
     scenario_field_swap_buffers();
     scenario_field_register_idempotent_and_conflict();
     scenario_field_unregister();
+    scenario_k10_smoke();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
