@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Attributes;
+using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Events.Pawn;
 
@@ -100,8 +101,33 @@ internal sealed class KernelCapabilityRegistry
 
             if (typeof(IEvent).IsAssignableFrom(type))
             {
-                capabilities.Add($"kernel.publish:{fqn}");
-                capabilities.Add($"kernel.subscribe:{fqn}");
+                // К10.2 Item 28 + S-LOCK-4: tier-prefixed tokens based on
+                // [EventTier] attribute. Events без attribute default к
+                // Normal tier; legacy kernel.publish/subscribe tokens
+                // continue к work (backward compatibility).
+                EventTierAttribute? tierAttr = type.GetCustomAttribute<EventTierAttribute>();
+                BusTier tier = tierAttr?.Tier ?? BusTier.Normal;
+
+                switch (tier)
+                {
+                    case BusTier.Fast:
+                        capabilities.Add($"kernel.fast.publish:{fqn}");
+                        capabilities.Add($"kernel.fast.subscribe:{fqn}");
+                        break;
+                    case BusTier.Normal:
+                        capabilities.Add($"kernel.normal.publish:{fqn}");
+                        capabilities.Add($"kernel.normal.subscribe:{fqn}");
+                        // Backward-compat aliases per S-LOCK-4 — existing
+                        // kernel.publish:{FQN} / kernel.subscribe:{FQN} tokens
+                        // continue к work for Normal tier events.
+                        capabilities.Add($"kernel.publish:{fqn}");
+                        capabilities.Add($"kernel.subscribe:{fqn}");
+                        break;
+                    case BusTier.Background:
+                        capabilities.Add($"kernel.background.publish:{fqn}");
+                        capabilities.Add($"kernel.background.subscribe:{fqn}");
+                        break;
+                }
             }
 
             if (typeof(IComponent).IsAssignableFrom(type))
