@@ -543,3 +543,15 @@ internal enum VkVertexInputRate : int
     VK_VERTEX_INPUT_RATE_VERTEX = 0,
     VK_VERTEX_INPUT_RATE_INSTANCE = 1,
 }
+
+// ===========================================================================
+// V0.C.2 — Indexed draw
+// ===========================================================================
+
+internal enum VkIndexType : uint
+{
+    VK_INDEX_TYPE_UINT16 = 0,
+    VK_INDEX_TYPE_UINT32 = 1,
+    VK_INDEX_TYPE_NONE_KHR = 1_000_165_000,
+    VK_INDEX_TYPE_UINT8_EXT = 1_000_265_000,
+}

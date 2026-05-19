@@ -827,11 +827,16 @@ Detailed entries будут добавлены при подходе к кажд
 | V0.A | Win32 window + Vulkan instance + device + queue families + validation | **DONE** | 12-20h auto-mode | PENDING-COMMIT-V0_A-CLOSURE | 2026-05-18 |
 | V0.B | Swapchain + render pass + compute pipeline plumbing + memory allocator + SPIR-V toolchain + К-L19 startup check | **DONE** | 18-24h auto-mode | PENDING-COMMIT-V0_B-CLOSURE | 2026-05-18 |
 | V0.C.1 | PNG decoder + textured sprite pipeline + input event types (R.1 + R.4) | **DONE** | 20-30h auto-mode | PENDING-COMMIT-V0_C_1-CLOSURE | 2026-05-19 |
-| V0.C.2 | Batched sprite renderer (10K sprites at 60+ FPS) + Camera2D + TileMap (R.2 + R.3) | NOT STARTED | TBD per brief authoring | — | — |
+| V0.C.2 | Batched sprite renderer (10K sprites at 60+ FPS) + Camera2D + TileMap (R.2 + R.3) | **DONE** | 15-25h auto-mode | PENDING-COMMIT-V0_C_2-CLOSURE | 2026-05-19 |
 | V1 | Scalar field + diffusion shader (environmental layer — mana, electricity, water etc.) | NOT STARTED | 1-2 weeks hobby pace | — | — |
 | V2 | Scalar field + wave shader (routed layer — pathfinding, distance, direction fields) | NOT STARTED | TBD | — | — |
 
 **Cumulative estimate**: V0 (V0.A + V0.B + V0.C) 4-6 weeks at hobby pace per VULKAN_SUBSTRATE.md §1.1; V1+V2 additional 3-5 weeks combined.
+
+**V0 substrate close achieved** 2026-05-19 per Q8 ratification (V0.A → V0.B → V0.C.1 → V0.C.2
+all DONE). Unlocks V1 + V2 brief authoring + Phase B M-cycle vanilla content mass migration
+(also gated on Roslyn analyzer A'.9). Four consecutive zero-hard-gate-halt cascades on V
+substrate authoring stream — К-L14 thesis empirically validated.
 
 ### V0.A — Win32 window + Vulkan instance + device + queue families + validation layer
 

@@ -76,17 +76,56 @@ public sealed class SpriteRendererTests : IDisposable
     [Fact]
     public void Renderer_constructs_with_descriptor_pool_and_vertex_buffer()
     {
-        using var renderer = new SpriteRenderer(_device, _allocator, _pipeline);
+        using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
+            swapchainImageCount: _swapchain.Images.Count, maxSpritesPerFrame: 100);
         renderer.CachedDescriptorSetCount.Should().Be(0);
+        renderer.MaxSpritesPerFrame.Should().Be(100);
     }
 
     [Fact]
     public void Disposed_renderer_throws_on_use()
     {
-        var renderer = new SpriteRenderer(_device, _allocator, _pipeline);
+        var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
+            swapchainImageCount: _swapchain.Images.Count, maxSpritesPerFrame: 100);
         renderer.Dispose();
-        Action act = () => renderer.DrawSprite(default!, null!, System.Numerics.Matrix4x4.Identity);
+        Action act = () => renderer.BeginFrame(0);
         act.Should().Throw<ObjectDisposedException>();
+    }
+
+    [Fact]
+    public void Submit_Without_BeginFrame_Throws()
+    {
+        using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
+            swapchainImageCount: _swapchain.Images.Count, maxSpritesPerFrame: 100);
+        Action act = () => renderer.Submit(default);
+        act.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void BeginFrame_Twice_Without_EndFrame_Throws()
+    {
+        using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
+            swapchainImageCount: _swapchain.Images.Count, maxSpritesPerFrame: 100);
+        renderer.BeginFrame(0);
+        try
+        {
+            Action act = () => renderer.BeginFrame(1);
+            act.Should().Throw<InvalidOperationException>();
+        }
+        finally
+        {
+            // Discard the frame without EndFrame would leak _frameActive — but renderer
+            // is about к be disposed via using block, so OK in test.
+        }
+    }
+
+    [Fact]
+    public void Constructor_With_MaxSpritesPerFrame_Over_MaxUint16_Throws()
+    {
+        Action act = () => new SpriteRenderer(_device, _allocator, _pipeline,
+            swapchainImageCount: _swapchain.Images.Count,
+            maxSpritesPerFrame: SpriteIndexBuffer.MaxUint16Quads + 1);
+        act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     private static string FindShaderPath(string name)

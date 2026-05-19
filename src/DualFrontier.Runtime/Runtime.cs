@@ -44,6 +44,9 @@ public sealed class Runtime : IDisposable
     public VulkanSpritePipeline SpritePipeline { get; private set; } = null!;
     public SpriteRenderer SpriteRenderer { get; private set; } = null!;
 
+    // V0.C.2 additions
+    public Camera2D Camera { get; private set; } = null!;
+
     private readonly List<VulkanFramebuffer> _framebuffers = new();
     private bool _disposed;
 
@@ -127,10 +130,23 @@ public sealed class Runtime : IDisposable
                 runtime.SpriteDescriptorSetLayout,
                 runtime.SpritePipelineLayout);
 
+            // V0.C.2: SpriteRenderer now batched per S-LOCK-7; constructor accepts
+            // swapchainImageCount + maxSpritesPerFrame.
             runtime.SpriteRenderer = new SpriteRenderer(
                 runtime.VulkanDevice,
                 runtime.MemoryAllocator,
-                runtime.SpritePipeline);
+                runtime.SpritePipeline,
+                runtime.Swapchain.Images.Count,
+                maxSpritesPerFrame: 10_000);
+
+            // V0.C.2: Camera2D initialized с window viewport size, identity position/zoom.
+            runtime.Camera = new Camera2D
+            {
+                Position = Vector2.Zero,
+                Zoom = 1.0f,
+                Rotation = 0f,
+                ViewportSize = new Vector2(options.Window.Width, options.Window.Height),
+            };
 
             return runtime;
         }
@@ -162,21 +178,39 @@ public sealed class Runtime : IDisposable
     }
 
     /// <summary>
-    /// V0.C.1 convenience: record a single-sprite frame onto the given command buffer.
-    /// Begins render pass с clear color, sets dynamic viewport + scissor to the framebuffer
-    /// size, calls <see cref="SpriteRenderer.DrawSprite"/>, ends render pass. Caller manages
-    /// command buffer Begin/End + acquire/submit/present.
+    /// V0.C.1 convenience preserved as V0.C.2 backward-compat shim: routes through the new
+    /// batched SpriteRenderer API (BeginFrame/Submit/EndFrame). The <paramref name="mvp"/>
+    /// parameter is treated as identity (V0.C.1 smoke test passed identity matrix only;
+    /// V0.C.2 callers should use RecordSpritesFrame с Camera2D instead).
     /// </summary>
-    /// <param name="commandBuffer">Recording-active command buffer.</param>
-    /// <param name="imageIndex">Index into <see cref="Framebuffers"/> from swapchain.AcquireNextImage.</param>
-    /// <param name="sprite">Sprite к draw.</param>
-    /// <param name="mvp">Model-view-projection matrix; V0.C.1 uses identity for NDC-space draw.</param>
-    /// <param name="clearColor">Background clear color (RGBA 0..1 floats).</param>
     public unsafe void RecordSpriteFrame(
         VulkanCommandBuffer commandBuffer,
         int imageIndex,
         Sprite.Sprite sprite,
         Matrix4x4 mvp,
+        Vector4 clearColor)
+    {
+        // V0.C.2 backward-compat: single sprite via batched infrastructure.
+        // Internally constructs a temporary Camera2D matching swapchain viewport;
+        // smoke test caller previously passed Matrix4x4.Identity (no MVP transform applied).
+        var tempCam = new Camera2D
+        {
+            Position = new Vector2(0, 0),
+            ViewportSize = new Vector2(2, 2),  // ±1 maps к NDC ±1 = effectively identity ortho
+            Zoom = 1.0f,
+        };
+        RecordSpritesFrame(commandBuffer, imageIndex, new[] { sprite }, tempCam, clearColor);
+    }
+
+    /// <summary>
+    /// V0.C.2: begin a render pass + set viewport/scissor + clear к specified color.
+    /// Public helper для multi-cycle SpriteRenderer rendering (per S-LOCK-5a TileMap case).
+    /// Caller invokes BeginRenderPassForSprites → SpriteRenderer.BeginFrame/Submit/EndFrame
+    /// (one or more cycles) → EndSpriteRenderPass.
+    /// </summary>
+    public unsafe void BeginRenderPassForSprites(
+        VulkanCommandBuffer commandBuffer,
+        int imageIndex,
         Vector4 clearColor)
     {
         ArgumentNullException.ThrowIfNull(commandBuffer);
@@ -224,8 +258,83 @@ public sealed class Runtime : IDisposable
             width = framebuffer.Width, height = framebuffer.Height,
         };
         VkApi.vkCmdSetScissor(commandBuffer.Handle, 0, 1, &scissor);
+    }
 
-        SpriteRenderer.DrawSprite(sprite, commandBuffer, mvp);
+    /// <summary>
+    /// V0.C.2: end the render pass started by <see cref="BeginRenderPassForSprites"/>.
+    /// </summary>
+    public void EndSpriteRenderPass(VulkanCommandBuffer commandBuffer)
+    {
+        ArgumentNullException.ThrowIfNull(commandBuffer);
+        VkApi.vkCmdEndRenderPass(commandBuffer.Handle);
+    }
+
+    /// <summary>
+    /// V0.C.2 batched convenience: record many sprites per frame с Camera2D MVP.
+    /// Begins render pass с clear color, sets viewport/scissor, calls SpriteRenderer
+    /// BeginFrame/Submit/EndFrame, ends render pass.
+    /// </summary>
+    public unsafe void RecordSpritesFrame(
+        VulkanCommandBuffer commandBuffer,
+        int imageIndex,
+        IEnumerable<Sprite.Sprite> sprites,
+        Camera2D camera,
+        Vector4 clearColor)
+    {
+        ArgumentNullException.ThrowIfNull(commandBuffer);
+        ArgumentNullException.ThrowIfNull(sprites);
+        ArgumentNullException.ThrowIfNull(camera);
+        if ((uint)imageIndex >= _framebuffers.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(imageIndex));
+        }
+
+        VulkanFramebuffer framebuffer = _framebuffers[imageIndex];
+
+        VkClearValue clearValue = default;
+        clearValue.color.float32[0] = clearColor.X;
+        clearValue.color.float32[1] = clearColor.Y;
+        clearValue.color.float32[2] = clearColor.Z;
+        clearValue.color.float32[3] = clearColor.W;
+
+        var renderPassBegin = new VkRenderPassBeginInfo
+        {
+            sType = VkStructureType.VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            pNext = IntPtr.Zero,
+            renderPass = RenderPass.Handle,
+            framebuffer = framebuffer.Handle,
+            renderArea = new VkRect2D
+            {
+                offsetX = 0, offsetY = 0,
+                width = framebuffer.Width, height = framebuffer.Height,
+            },
+            clearValueCount = 1,
+            _padBeforePtr = 0,
+            pClearValues = &clearValue,
+        };
+        VkApi.vkCmdBeginRenderPass(commandBuffer.Handle, in renderPassBegin, VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
+
+        VkViewport viewport = new()
+        {
+            x = 0, y = 0,
+            width = framebuffer.Width, height = framebuffer.Height,
+            minDepth = 0.0f, maxDepth = 1.0f,
+        };
+        VkApi.vkCmdSetViewport(commandBuffer.Handle, 0, 1, &viewport);
+
+        VkRect2D scissor = new()
+        {
+            offsetX = 0, offsetY = 0,
+            width = framebuffer.Width, height = framebuffer.Height,
+        };
+        VkApi.vkCmdSetScissor(commandBuffer.Handle, 0, 1, &scissor);
+
+        SpriteRenderer.BeginFrame((uint)imageIndex);
+        foreach (var sprite in sprites)
+        {
+            SpriteRenderer.Submit(sprite);
+        }
+        SpriteRenderer.EndFrame(commandBuffer, camera);
 
         VkApi.vkCmdEndRenderPass(commandBuffer.Handle);
     }

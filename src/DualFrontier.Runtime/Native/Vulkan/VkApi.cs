@@ -522,4 +522,24 @@ internal static unsafe partial class VkApi
         uint bindingCount,
         IntPtr* pBuffers,
         ulong* pOffsets);
+
+    // =======================================================================
+    // V0.C.2 — Indexed draw + index buffer binding
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdBindIndexBuffer")]
+    internal static partial void vkCmdBindIndexBuffer(
+        IntPtr commandBuffer,
+        IntPtr buffer,
+        ulong offset,
+        VkIndexType indexType);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdDrawIndexed")]
+    internal static partial void vkCmdDrawIndexed(
+        IntPtr commandBuffer,
+        uint indexCount,
+        uint instanceCount,
+        uint firstIndex,
+        int vertexOffset,
+        uint firstInstance);
 }
