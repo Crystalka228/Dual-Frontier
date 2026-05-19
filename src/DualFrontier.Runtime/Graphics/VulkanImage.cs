@@ -1,3 +1,4 @@
+using DualFrontier.Runtime.Assets;
 using DualFrontier.Runtime.Native.Vulkan;
 
 namespace DualFrontier.Runtime.Graphics;
@@ -132,6 +133,41 @@ public sealed class VulkanImage : IDisposable
             _image = IntPtr.Zero;
         }
         _disposed = true;
+    }
+
+    /// <summary>
+    /// V0.C.1 convenience: create a device-local 2D image (RGBA8) from a decoded PngImage,
+    /// uploading pixel data via the supplied <see cref="TextureUploader"/>. Image is left in
+    /// VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL after upload, ready for descriptor binding.
+    /// </summary>
+    public static VulkanImage CreateFromPngImage(
+        VulkanDevice device,
+        MemoryAllocator allocator,
+        TextureUploader uploader,
+        PngImage png)
+    {
+        ArgumentNullException.ThrowIfNull(device);
+        ArgumentNullException.ThrowIfNull(allocator);
+        ArgumentNullException.ThrowIfNull(uploader);
+        ArgumentNullException.ThrowIfNull(png);
+
+        var image = new VulkanImage(
+            device, allocator,
+            (uint)png.Width, (uint)png.Height,
+            VkFormatPublic.R8G8B8A8_UNorm,
+            VkImageUsageFlagsPublic.Sampled | VkImageUsageFlagsPublic.TransferDst,
+            VkMemoryPropertyFlagsPublic.DeviceLocal);
+
+        try
+        {
+            uploader.Upload(image, png.PixelsRgba8);
+            return image;
+        }
+        catch
+        {
+            image.Dispose();
+            throw;
+        }
     }
 }
 
