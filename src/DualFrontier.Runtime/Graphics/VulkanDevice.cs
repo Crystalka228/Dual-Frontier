@@ -292,6 +292,15 @@ public sealed class VulkanDevice : IDisposable
         }
     }
 
+    /// <summary>Blocks until the device is idle. Required before swapchain recreation / Dispose.</summary>
+    public void WaitIdle()
+    {
+        if (_device != IntPtr.Zero)
+        {
+            VkApi.vkDeviceWaitIdle(_device);
+        }
+    }
+
     public void Dispose()
     {
         if (_disposed)
