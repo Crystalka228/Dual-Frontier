@@ -1,4 +1,5 @@
 #include "world.h"
+#include "compute_pipeline.h"
 
 #include <cstring>
 #include <stdexcept>
@@ -7,6 +8,33 @@ namespace dualfrontier {
 
 World::World() {
     versions_.assign(kInitialCapacity, 0);
+    vulkan_attachment_ = std::make_unique<VulkanAttachment>();
+    compute_pipelines_ = std::make_unique<ComputePipelineRegistry>();
+}
+
+World::~World() = default;
+
+void World::attach_vulkan(void* instance, void* physical_device, void* device,
+                          void* async_compute_queue, uint32_t async_compute_queue_family_index)
+{
+    vulkan_attachment_->instance = instance;
+    vulkan_attachment_->physical_device = physical_device;
+    vulkan_attachment_->device = device;
+    vulkan_attachment_->async_compute_queue = async_compute_queue;
+    vulkan_attachment_->async_compute_queue_family_index = async_compute_queue_family_index;
+    vulkan_attachment_->attached = (device != nullptr);
+}
+
+bool World::has_vulkan_attached() const noexcept {
+    return vulkan_attachment_ && vulkan_attachment_->attached;
+}
+
+ComputePipelineRegistry& World::compute_pipelines() noexcept {
+    return *compute_pipelines_;
+}
+
+int32_t World::compute_pipeline_count() const noexcept {
+    return compute_pipelines_ ? compute_pipelines_->count() : 0;
 }
 
 EntityId World::create_entity() {

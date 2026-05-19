@@ -522,6 +522,53 @@ DF_API int32_t df_world_field_count(
     df_world_handle world);
 
 /*
+ * V0.B — Compute pipeline registration + field dispatch (per S-LOCK-3 of
+ * V0.B brief). Bridges K9 field storage к Vulkan compute pipelines.
+ *
+ * V0.B scope: C ABI signatures fixed, native-side bookkeeping operational
+ * (Vulkan handles received via df_world_attach_vulkan, pipeline registrations
+ * tracked with SPIR-V bytecode + binding count, pipeline_id allocated
+ * monotonically starting from 1). Actual VkPipeline creation +
+ * VkCmdDispatch invocation deferred к V1+ when wired к field storage.
+ *
+ * df_world_attach_vulkan stores opaque handles. Native side does not
+ * interpret them; downstream code casts back к VkInstance/VkDevice/...
+ *
+ * df_world_register_compute_pipeline returns a non-zero pipeline_id on
+ * success; 0 indicates failure (duplicate name, empty bytecode, or
+ * misaligned SPIR-V).
+ *
+ * df_world_field_dispatch_compute returns 1 on success, 0 on failure.
+ * V0.B implementation is a no-op success path для known pipeline_ids;
+ * V1+ implements actual dispatch.
+ */
+
+DF_API int32_t df_world_attach_vulkan(
+    df_world_handle world,
+    void* vk_instance,
+    void* vk_physical_device,
+    void* vk_device,
+    void* vk_async_compute_queue,
+    uint32_t async_compute_queue_family_index);
+
+DF_API uint32_t df_world_register_compute_pipeline(
+    df_world_handle world,
+    const char* pipeline_name,
+    const uint8_t* spirv_bytecode,
+    int32_t spirv_size,
+    uint32_t descriptor_binding_count);
+
+DF_API int32_t df_world_field_dispatch_compute(
+    df_world_handle world,
+    const char* field_name,
+    uint32_t pipeline_id,
+    uint32_t dispatch_x,
+    uint32_t dispatch_y,
+    uint32_t dispatch_z);
+
+DF_API int32_t df_world_compute_pipeline_count(df_world_handle world);
+
+/*
  * K10.1 — Kernel scheduler system graph (Item 1).
  *
  * Process-global default scheduler graph singleton. Mirrors OS-faithful

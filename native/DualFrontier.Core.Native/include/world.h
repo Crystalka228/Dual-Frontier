@@ -19,6 +19,12 @@ namespace dualfrontier {
 
 class WriteBatch;  // forward declaration for friend access
 
+// V0.B compute pipeline registry + Vulkan attachment storage forward decls
+// (defined in compute_pipeline.h; declared here to keep that header out of
+// world.h's public include surface).
+struct VulkanAttachment;
+class ComputePipelineRegistry;
+
 // Native mirror of src/DualFrontier.Core/ECS/World.cs.
 //
 // Intentional simplifications for the PoC:
@@ -32,6 +38,7 @@ class WriteBatch;  // forward declaration for friend access
 class World {
 public:
     World();
+    ~World();
 
     EntityId create_entity();
     void     destroy_entity(EntityId id);
@@ -117,6 +124,16 @@ public:
         return static_cast<int32_t>(fields_.size());
     }
 
+    // V0.B compute pipeline plumbing (per VULKAN_SUBSTRATE.md §3.4 + V0.B brief §1.3).
+    // Vulkan handles attached from managed side (Runtime.Create); compute pipelines
+    // registered via SPIR-V bytecode + binding count; actual VkPipeline creation
+    // deferred к V1+ when wired к K9 field storage.
+    void attach_vulkan(void* instance, void* physical_device, void* device,
+                       void* async_compute_queue, uint32_t async_compute_queue_family_index);
+    [[nodiscard]] bool has_vulkan_attached() const noexcept;
+    [[nodiscard]] ComputePipelineRegistry& compute_pipelines() noexcept;
+    [[nodiscard]] int32_t compute_pipeline_count() const noexcept;
+
 private:
     static constexpr std::size_t kInitialCapacity = 256;
 
@@ -157,6 +174,12 @@ private:
 
     // K9 — field storage parallel to component stores.
     std::unordered_map<std::string, std::unique_ptr<RawTileField>> fields_;
+
+    // V0.B compute pipeline plumbing — Vulkan attachment + pipeline registry
+    // owned by World. unique_ptr instead of value type avoids leaking the
+    // implementation headers (compute_pipeline.h) into world.h consumers.
+    std::unique_ptr<VulkanAttachment> vulkan_attachment_;
+    std::unique_ptr<ComputePipelineRegistry> compute_pipelines_;
 };
 
 // K5 Command Buffer pattern — write batching protocol.

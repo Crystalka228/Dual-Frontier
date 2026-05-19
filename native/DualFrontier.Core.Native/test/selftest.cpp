@@ -2167,6 +2167,47 @@ void scenario_mod_unload_no_subscriptions_succeeds_vacuously() {
     df_bus_clear();
 }
 
+void scenario_v0b_compute_pipeline_registration_roundtrip() {
+    std::printf("scenario_v0b_compute_pipeline_registration_roundtrip\n");
+    df_world_handle world = df_world_create();
+    DF_CHECK(world != nullptr, "world created");
+
+    // Without Vulkan attached, registration is rejected.
+    const uint8_t fake_spirv[] = {0x03, 0x02, 0x23, 0x07, 0x00, 0x00, 0x01, 0x00};
+    uint32_t pid = df_world_register_compute_pipeline(world, "noop", fake_spirv, sizeof(fake_spirv), 0);
+    DF_CHECK(pid == 0, "register without attach rejected");
+
+    // Attach с mock Vulkan handles (non-null device к satisfy attached check).
+    void* fake_device = reinterpret_cast<void*>(static_cast<intptr_t>(0xDEADBEEF));
+    int32_t att = df_world_attach_vulkan(world, nullptr, nullptr, fake_device, nullptr, 1);
+    DF_CHECK(att == 1, "attach_vulkan succeeds с non-null device");
+
+    // First registration returns non-zero pipeline_id.
+    pid = df_world_register_compute_pipeline(world, "noop", fake_spirv, sizeof(fake_spirv), 0);
+    DF_CHECK(pid != 0, "register noop returns non-zero pipeline_id");
+    DF_CHECK(df_world_compute_pipeline_count(world) == 1, "count = 1 after register");
+
+    // Duplicate name rejected.
+    uint32_t pid2 = df_world_register_compute_pipeline(world, "noop", fake_spirv, sizeof(fake_spirv), 0);
+    DF_CHECK(pid2 == 0, "duplicate name rejected");
+    DF_CHECK(df_world_compute_pipeline_count(world) == 1, "count unchanged after duplicate");
+
+    // Misaligned SPIR-V rejected (V0.B contract — multiple of 4 required).
+    const uint8_t bad_spirv[] = {0x01, 0x02, 0x03};
+    uint32_t pid3 = df_world_register_compute_pipeline(world, "other", bad_spirv, sizeof(bad_spirv), 0);
+    DF_CHECK(pid3 == 0, "misaligned SPIR-V rejected");
+
+    // Dispatch against valid pipeline returns 1.
+    int32_t disp = df_world_field_dispatch_compute(world, "test_field", pid, 1, 1, 1);
+    DF_CHECK(disp == 1, "dispatch against registered pipeline succeeds (V0.B no-op)");
+
+    // Dispatch against unknown pipeline_id returns 0.
+    disp = df_world_field_dispatch_compute(world, "test_field", 0xDEADBEEF, 1, 1, 1);
+    DF_CHECK(disp == 0, "dispatch against unknown pipeline_id fails");
+
+    df_world_destroy(world);
+}
+
 void scenario_bus_per_mod_bulk_unsubscribe() {
     std::printf("scenario_bus_per_mod_bulk_unsubscribe\n");
     df_bus_clear();
@@ -2299,6 +2340,7 @@ int main() {
     scenario_mod_unload_native_state_t0_t7_sequence();
     scenario_mod_unload_quiescent_precondition_violation();
     scenario_mod_unload_no_subscriptions_succeeds_vacuously();
+    scenario_v0b_compute_pipeline_registration_roundtrip();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

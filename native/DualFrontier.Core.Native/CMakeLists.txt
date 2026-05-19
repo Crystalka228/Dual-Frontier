@@ -40,6 +40,8 @@ set(DF_NATIVE_SOURCES
     src/bus_native.cpp
     src/background_queue.cpp
     src/mod_unload.cpp
+    src/compute_pipeline.cpp
+    src/compute_dispatch.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -68,6 +70,8 @@ set(DF_NATIVE_HEADERS
     include/bus_native.h
     include/background_queue.h
     include/mod_unload.h
+    include/compute_pipeline.h
+    include/compute_dispatch.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})
