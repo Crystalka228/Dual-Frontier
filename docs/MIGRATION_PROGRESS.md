@@ -14,7 +14,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure
 **Created**: 2026-05-07
-**Last updated**: 2026-05-18 (V0.A closure — V substrate foundation prerequisite layer landed: DualFrontier.Runtime project + Win32 P/Invoke + Vulkan P/Invoke + Window + VulkanInstance + ValidationLayer + VulkanDevice + Runtime facade + smoke test exit 0 на AMD Radeon RX 7600S; 685 tests passing; 4 new REQs verified; K10.3 brief restart pathway gated on V0.B). Previous: 2026-05-12 (A'.4.5 closure — Document Control Register operational).
+**Last updated**: 2026-05-18 (V0.B closure — V substrate foundation completion: swapchain + render pass + framebuffer + command infrastructure + minimal graphics pipeline + bumper memory allocator + SPIR-V toolchain integration + compute pipeline plumbing + async compute queue family selection + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding; К-L19 hardware tier invariant LOCKED с full implementation backing — KERNEL_ARCHITECTURE.md v2.1 → v2.2 + README.md hardware requirements; 786 tests passing (685 V0.A baseline + 101 V0.B additive); 78 native selftest scenarios passing (77 K10.2 baseline + 1 V0.B compute roundtrip); 8 new REQs verified (REQ-K-L19 + 7 REQ-V0-B-*); К10.3 brief restart pathway opens). Previous: 2026-05-18 (V0.A closure — V substrate foundation prerequisite layer).
 **Scope**: Tracks combined K-series (kernel) + M9-series (runtime) migration progression
 **Companion documents**: `KERNEL_ARCHITECTURE.md` (LOCKED v1.0), `VULKAN_SUBSTRATE.md` (LOCKED v1.0), `CPP_KERNEL_BRANCH_REPORT.md` (Discovery, reference), `VULKAN_SUBSTRATE.md` (Phase 5 research, Lvl 1 pattern applies — см. D3)
 

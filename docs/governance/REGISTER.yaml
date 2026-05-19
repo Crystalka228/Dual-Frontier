@@ -1470,15 +1470,15 @@ documents:
     title: "V0.B — Swapchain + render pass + compute pipeline + memory allocator + SPIR-V + async compute + hardware check"
     category: D
     tier: 3
-    lifecycle: AUTHORED
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-V0_B-AUTHORING"
+    last_modified_commit: "PENDING-COMMIT-V0_B-CLOSURE"
     content_language: mixed
     review_cadence: on-status-transition
     last_review_date: "2026-05-18"
-    last_review_event: "V0.B brief authored 2026-05-18 post-V0.A closure — second V substrate sub-milestone; rendering bullets 4-9 (swapchain + render pass + command + memory + graphics pipeline) + compute use case foundation (compute pipeline + descriptors + dispatch + C ABI extension + SPIR-V toolchain + async compute queue + HardwareCapabilityCheck); К-L19 invariant landing с full implementation backing (Commit 13 load-bearing); К10.3 brief restart pathway opens at V0.B closure"
+    last_review_event: "V0.B sub-milestone closure 2026-05-18 — 18 atomic commits d2c6627..PENDING-COMMIT-V0_B-CLOSURE; V substrate foundation completion операционен (swapchain + render pass + framebuffer + command + compute pipeline + memory allocator + SPIR-V toolchain + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); 7 REQs authored (REQ-V0-B-SWAPCHAIN, REQ-V0-B-RENDER_PASS, REQ-V0-B-COMPUTE_PIPELINE, REQ-V0-B-MEMORY_ALLOCATOR, REQ-V0-B-SPIRV_TOOLCHAIN, REQ-V0-B-ASYNC_COMPUTE_QUEUE, REQ-V0-B-HARDWARE_CHECK) + REQ-K-L19 (Commit 13 load-bearing); 685 V0.A baseline tests preserved + 101 V0.B additive (786 total managed); 77 native selftest baseline + 1 V0.B compute roundtrip = 78; AMD Radeon RX 7600S verified K-L19 hardware tier at smoke test (clear color render path operational, compute roundtrip via managed + native C ABI paths, validation log 0 errors); К10.3 brief restart pathway opens (Items 43 + 44 already implemented; K-L16/L17/L18 numbering reserved для К10.3 elaboration)"
     next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-013]
@@ -4488,6 +4488,214 @@ requirements:
     verification_date: "2026-05-18"
     verification_milestone: "V0.A closure"
 
+  - id: REQ-V0-B-SWAPCHAIN
+    title: "VkSwapchainKHR + Win32 surface + recreation on resize (V0.B)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§1.1 V0 rendering deliverables 4-5 (surface + swapchain) + §4.2 R.0; V0.B brief Commit 7"
+    requirement_text: |
+      VkSurfaceKHR (Win32, via vkCreateWin32SurfaceKHR) + VkSwapchainKHR lifecycle.
+      Swapchain selects format (B8G8R8A8_SRGB + SRGB_NONLINEAR_KHR preferred), present mode
+      (MAILBOX preferred, FIFO fallback), extent (respects surface.currentExtent, clamps
+      requested к min/max capabilities), image count (minImageCount + 1, clamped к maxImageCount),
+      composite alpha OPAQUE. Per-swapchain-image VkImageView created (color aspect, identity
+      swizzle, 2D type). Recreation API receives new extent, passes oldSwapchain к driver,
+      destroys old after success. AcquireNextImage + Present surfaces для render loop.
+      WindowResizeEvent emitted by Window.WindowProcedure (WM_SIZE) flows through InputEventQueue
+      к consumer (smoke test exercises live recreate).
+    verified_by:
+      - file: src/DualFrontier.Runtime/Graphics/VulkanSurface.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanSwapchain.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanSwapchainTests.cs
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure"
+
+  - id: REQ-V0-B-RENDER_PASS
+    title: "VkRenderPass + VkFramebuffer + command infrastructure (V0.B)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§1.1 V0 rendering deliverables 6-7; V0.B brief Commits 8 + 9 + 11"
+    requirement_text: |
+      Minimal V0.B render pass: 1 color attachment, no depth/stencil, CLEAR loadOp + STORE
+      storeOp, UNDEFINED → PRESENT_SRC_KHR layout transition, single graphics subpass с
+      external-to-0 dependency на COLOR_ATTACHMENT_OUTPUT stage. Per-swapchain-image
+      VkFramebuffer. VkCommandPool с RESET_COMMAND_BUFFER flag (per-frame reset pattern).
+      Per-pool primary VkCommandBuffer allocation. VkFence + VkSemaphore wrappers для
+      CPU-GPU + GPU-GPU sync. Minimal graphics pipeline (clearcolor) via vkCreateGraphicsPipelines
+      consuming compiled SPIR-V (fullscreen triangle vertex + solid color fragment),
+      empty pipeline layout, dynamic viewport + scissor.
+    verified_by:
+      - file: src/DualFrontier.Runtime/Graphics/VulkanRenderPass.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanFramebuffer.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanCommandPool.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanCommandBuffer.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanGraphicsPipeline.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanRenderPassTests.cs
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanCommandBufferTests.cs
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanGraphicsPipelineTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure"
+
+  - id: REQ-V0-B-COMPUTE_PIPELINE
+    title: "VkPipeline (compute) + descriptor sets + dispatch (V0.B)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§1.1 V0 compute + §3.4 compute dispatch; V0.B brief Commit 12 + 15"
+    requirement_text: |
+      VK_PIPELINE_BIND_POINT_COMPUTE pipeline lifecycle wrapped в VulkanComputePipeline
+      consuming compute shader module + VulkanComputeDescriptors (descriptor set layout +
+      descriptor pool + pipeline layout bundle). Empty descriptor set supported для noop
+      round-trip; ComputeDescriptorBinding record + ComputeDescriptorType public mirror
+      ensure managed-side type safety. ComputeDispatch wraps synchronous record + submit
+      к async compute queue + fence wait per К-L7 atomic-from-observer. ComputePipelineRegistry
+      named-pipeline lookup owns lifetimes + disposed на Runtime teardown. Round-trip
+      exercised на real К-L19 hardware: noop.comp registered, ExecuteSync completes без error
+      via async compute queue family (Crystalka «Skarlet» QF 1).
+    verified_by:
+      - file: src/DualFrontier.Runtime/Compute/VulkanComputePipeline.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Compute/VulkanComputeDescriptors.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Compute/ComputeDispatch.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Compute/ComputePipelineRegistry.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Compute/FieldStorageBinding.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Compute/ComputePipelineRegistrationTests.cs
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.Tests/Compute/FieldStorageBindingTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure"
+
+  - id: REQ-V0-B-MEMORY_ALLOCATOR
+    title: "Bumper linear memory allocator + VulkanBuffer + VulkanImage primitives (V0.B)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§1.1 V0 rendering deliverable 9 + S-LOCK-4 of V0.B brief"
+    requirement_text: |
+      Linear bumper allocator (per S-LOCK-4: simplest viable allocator per VULKAN_SUBSTRATE.md
+      verbatim «bumper allocator initially»). One VkDeviceMemory block per memory type index
+      (64 MB default). Allocations bump pointer forward, aligned к requested alignment;
+      no free list. Reset rewinds offsets. MemoryAllocation descriptor returned для caller
+      vkBindXxxMemory binding. VulkanBuffer + VulkanImage wrappers handle vkCreateXxx +
+      vkGetXxxMemoryRequirements + allocator.Allocate + vkBindXxxMemory. Public-facing enum
+      mirrors (VkMemoryPropertyFlagsPublic, VkBufferUsageFlagsPublic, VkImageUsageFlagsPublic,
+      VkFormatPublic) avoid leaking internal Vulkan enums к public API. Free-list /
+      pool allocator deferred к V0.C+ or later (К-extensions scope).
+    verified_by:
+      - file: src/DualFrontier.Runtime/Graphics/MemoryAllocator.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanBuffer.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanImage.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/MemoryAllocatorTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure"
+
+  - id: REQ-V0-B-SPIRV_TOOLCHAIN
+    title: "In-repo SPIR-V toolchain integration (V0.B)"
+    source_document: DOC-A-VULKAN_SUBSTRATE
+    source_section: "§2.7 shader strategy; V0.B brief S-LOCK-5"
+    requirement_text: |
+      tools/glslangValidator.exe committed (binary discipline в .gitattributes) per
+      S-LOCK-5 — in-repo toolchain so clone-and-build does не require VULKAN_SDK install
+      на developer or CI machine. MSBuild CompileShaders target (Directory.Build.props,
+      conditional на DualFrontier.Runtime project) invokes glslangValidator BeforeTargets="Build"
+      and writes assets/shaders/*.spv (committed для clone-and-run convenience).
+      Minimal shaders (V0.B S-LOCK-6): clearcolor.vert (fullscreen triangle), clearcolor.frag
+      (solid blue), noop.comp (empty compute). Sprite shaders deferred к V0.C.
+      VulkanShaderModule loads SPIR-V byte arrays (4-byte alignment validated), creates
+      VkShaderModule via vkCreateShaderModule, disposed via vkDestroyShaderModule.
+    verified_by:
+      - file: tools/glslangValidator.exe
+        verification_type: artifact_inspection
+      - file: tools/shaders/clearcolor.vert
+        verification_type: artifact_inspection
+      - file: tools/shaders/clearcolor.frag
+        verification_type: artifact_inspection
+      - file: tools/shaders/noop.comp
+        verification_type: artifact_inspection
+      - file: Directory.Build.props
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanShaderModule.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/ShaderCompilationTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure"
+
+  - id: REQ-V0-B-ASYNC_COMPUTE_QUEUE
+    title: "Async compute queue family selection (V0.B, K-L19 Item 43)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0 K-L19; V0.B brief Commit 4"
+    requirement_text: |
+      VulkanDevice extends V0.A graphics-only queue family selection с async compute queue
+      family selection. Algorithm: prefer dedicated compute-only queue family (parallel
+      compute alongside graphics, К-L16 pipeline depth dispatches per К-L19 architectural
+      intent), fallback к compute-capable graphics queue family (shared queue). null
+      when no compute-capable family — HardwareCapabilityCheck fail-fast in that case.
+      VkDeviceCreateInfo extended к request both queues when distinct families; single
+      VkDeviceQueueCreateInfo otherwise. VK_KHR_swapchain device extension activated.
+      AsyncComputeQueue + AsyncComputeQueueFamilyIndex public surface used by smoke test
+      + downstream compute pipelines.
+    verified_by:
+      - file: src/DualFrontier.Runtime/Graphics/VulkanDevice.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/AsyncComputeQueueSelectionTests.cs
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure"
+
+  - id: REQ-V0-B-HARDWARE_CHECK
+    title: "HardwareCapabilityCheck.Verify startup fail-fast (V0.B, K-L19 Item 44)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0 K-L19; V0.B brief Commit 5"
+    requirement_text: |
+      HardwareCapabilityCheck.Verify(VulkanInstance, VulkanDevice) invoked by Runtime.Create
+      after VulkanDevice construction. Two sub-checks expose internal entry points (VerifyVulkanApiVersion +
+      VerifyAsyncComputeQueueFamily) for unit-testing failure paths без mocking Vulkan handles.
+      Failures throw HardwareCapabilityException с user-facing diagnostic message containing
+      target hardware tier requirements (NVIDIA Turing+ / AMD RDNA 1+ / Intel Arc Alchemist+)
+      и pointer к README hardware requirements section. Defense-in-depth integration via
+      FieldStorageBinding.Attach (additional throw if AsyncComputeQueueFamilyIndex null
+      reaches that path).
+    verified_by:
+      - file: src/DualFrontier.Runtime/Graphics/HardwareCapabilityCheck.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/HardwareCapabilityException.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Runtime.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/HardwareCapabilityCheckTests.cs
+        verification_type: managed_test
+      - file: README.md
+        test_method: "Hardware requirements section (К-L19 + this REQ user-facing reference)"
+        verification_type: spec_inspection
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure"
+
 # === risks collection (Q11 — 14 entries; pre-authored from Pass 5 §3) ===
 risks:
   - id: RISK-001
@@ -6252,5 +6460,113 @@ audit_trail:
         - RISK-013  # rendering substrate cross-cutting — V substrate foundation prerequisite layer landed
       lifecycle_transitions:
         - document: DOC-D-V0_A
+          from: AUTHORED
+          to: EXECUTED
+
+  - id: EVT-2026-05-18-V0_B-CLOSURE
+    date: "2026-05-18"
+    event: "V0.B sub-milestone closure — V substrate foundation completion (swapchain + render pass + framebuffer + command infrastructure + minimal graphics pipeline + memory allocator + SPIR-V toolchain + compute pipeline plumbing + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); К-L19 hardware tier invariant LOCKED с full implementation backing; smoke test exit criteria operational на real К-L19 hardware; К10.3 brief restart pathway opens"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-V0_B                       # lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL                      # version 2.1 → 2.2 (Commit 13 К-L19 amendment)
+      - DOC-G-README                      # hardware requirements section added (Commit 13)
+    commits:
+      range: "d2c6627..PENDING-COMMIT-V0_B-CLOSURE"
+      key_commits:
+        - hash: "d2c6627"
+          summary: "Commit 1 — V0.B brief authored + REGISTER enrollment (DOC-D-V0_B AUTHORED)"
+        - hash: "a9e5ebb"
+          summary: "Commit 2 — Vulkan struct size verification test infrastructure (Lesson #7 strengthening)"
+        - hash: "a71ecdc"
+          summary: "Commit 3 — Win32 surface foundation + WM_SIZE + WindowResizeEvent"
+        - hash: "6ff58dc"
+          summary: "Commit 4 — async compute queue family selection (К-L19 Item 43)"
+        - hash: "d62b80b"
+          summary: "Commit 5 — HardwareCapabilityCheck.Verify (К-L19 Item 44)"
+        - hash: "ebd1296"
+          summary: "Commit 6 — memory allocator (bumper) + VulkanBuffer + VulkanImage"
+        - hash: "877635b"
+          summary: "Commit 7 — VulkanSurface + VulkanSwapchain + recreation on WM_SIZE"
+        - hash: "648b523"
+          summary: "Commit 8 — VulkanRenderPass + VulkanFramebuffer (one color attachment)"
+        - hash: "75dde8c"
+          summary: "Commit 9 — VulkanCommandPool + CommandBuffer + Fence + Semaphore"
+        - hash: "09a22e8"
+          summary: "Commit 10 — SPIR-V toolchain (in-repo glslangValidator) + shaders + VulkanShaderModule"
+        - hash: "d99b1b9"
+          summary: "Commit 11 — minimal graphics pipeline (clearcolor fullscreen triangle)"
+        - hash: "d3ff335"
+          summary: "Commit 12 — VulkanComputePipeline + descriptors + ComputeDispatch + ComputePipelineRegistry"
+        - hash: "834140f"
+          summary: "Commit 13 — К-L19 hardware tier invariant LOCKED (LOAD-BEARING: KERNEL_ARCHITECTURE v2.2 + README hardware requirements + REQ-K-L19)"
+        - hash: "6c867ec"
+          summary: "Commit 14 — native C ABI extension (df_world_attach_vulkan + register/dispatch/count, bookkeeping; V1+ adds Vulkan-side implementation)"
+        - hash: "09bf10d"
+          summary: "Commit 15 — FieldStorageBinding (managed wrapper consuming native C ABI)"
+        - hash: "048e3f9"
+          summary: "Commit 16 — Runtime facade full V0.B composition"
+        - hash: "401c3a3"
+          summary: "Commit 17 — V0.B smoke test executable (all exit criteria green на AMD Radeon RX 7600S)"
+    governance_impact: |
+      V0.B sub-milestone closure under V substrate foundation split. Second of three V0
+      sub-milestones (V0.A closed 2026-05-18 = Win32 + Vulkan instance + device + validation;
+      V0.B closed 2026-05-18 = swapchain + render pass + compute pipeline plumbing +
+      memory allocator + SPIR-V toolchain + async compute queue + hardware check; V0.C =
+      sprite/text/atlas + PNG decoder + threading + first textured quad).
+
+      К-L invariant landings (Commit 13 load-bearing per S-LOCK-9):
+      - К-L19 «Hardware tier commitment» LOCKED с full implementation backing
+        (Vulkan 1.3 + async compute queue family mandate; HardwareCapabilityCheck.Verify
+        fail-fast at Runtime.Create; AMD Radeon RX 7600S verified К-L19 hardware
+        baseline). К-L16/L17/L18 numbering reserved для К10.3 restart per
+        cross-stream dependency resolution.
+
+      KERNEL_ARCHITECTURE.md v2.1 → v2.2: K-L invariant table extended с K-L19 row;
+      version + Status line updated.
+      README.md: Hardware requirements section added (user-facing minimum tier matrix +
+      diagnostic guidance + К-L14 + К-L19 rationale).
+
+      REGISTER amendments:
+      - DOC-D-V0_B lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL version 2.1 → 2.2 (requirements_authored extended с REQ-K-L19)
+      - 8 new REQ entries: REQ-K-L19 (Commit 13) + REQ-V0-B-SWAPCHAIN + REQ-V0-B-RENDER_PASS +
+        REQ-V0-B-COMPUTE_PIPELINE + REQ-V0-B-MEMORY_ALLOCATOR + REQ-V0-B-SPIRV_TOOLCHAIN +
+        REQ-V0-B-ASYNC_COMPUTE_QUEUE + REQ-V0-B-HARDWARE_CHECK
+
+      К10.3 brief restart pathway opens: V0.A + V0.B together provide all Vulkan code
+      anchors К10.3 brief expects. К10.3 SC-14 halt class won't fire. К10.3 brief Items
+      43 (async compute queue selection) + 44 (HardwareCapabilityCheck.Verify) already
+      implemented as part of V0.B; К10.3 restart marks these as «verified existing
+      implementation» rather than «create from scratch» (Lesson #22 application —
+      cross-stream prerequisite resolution preserves work investment in halted brief).
+
+      Validation metrics (final state):
+      - dotnet build (sln): clean (0 warnings, 0 errors)
+      - dotnet test (sln): 786 passed, 0 failed (685 V0.A baseline + 101 V0.B additive
+        — Runtime.Tests grew от 20 к 121: +2 V0.A struct regression (Commit 2) + 99 V0.B
+        per-commit additions)
+      - cmake --build (native): clean (0 warnings)
+      - df_native_selftest: ALL PASSED (78 scenarios — 77 К10.2 baseline + 1 V0.B
+        compute pipeline registration roundtrip)
+      - V0.B smoke test: exit 0 с clear color render path operational, compute roundtrip
+        verified через managed-side + native C ABI paths, validation layer 0 errors,
+        К-L19 hardware tier baseline satisfied на AMD Radeon RX 7600S
+      - sync_register.ps1 --validate: exit 0 (advisory orphan warnings only —
+        baseline + V0.B MODULE.md files)
+    cross_references:
+      requirements:
+        - REQ-K-L19                       # Commit 13 LOAD-BEARING (K-L19 LOCKED)
+        - REQ-V0-B-SWAPCHAIN
+        - REQ-V0-B-RENDER_PASS
+        - REQ-V0-B-COMPUTE_PIPELINE
+        - REQ-V0-B-MEMORY_ALLOCATOR
+        - REQ-V0-B-SPIRV_TOOLCHAIN
+        - REQ-V0-B-ASYNC_COMPUTE_QUEUE
+        - REQ-V0-B-HARDWARE_CHECK
+      risks:
+        - RISK-013                        # rendering substrate cross-cutting — V substrate foundation completion landed
+      lifecycle_transitions:
+        - document: DOC-D-V0_B
           from: AUTHORED
           to: EXECUTED

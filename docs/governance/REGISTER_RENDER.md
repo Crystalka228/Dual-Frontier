@@ -1,28 +1,16 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-REGISTER_RENDER
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "1.0"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
----
-# DualFrontier Document Control Register — Rendered View
+﻿# DualFrontier Document Control Register — Rendered View
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-17  |  Schema version: 1.0  |  Register version: 1.7*
+*Last generated: 2026-05-18  |  Schema version: 1.0  |  Register version: 2.0*
 
 ---
 
 ## Statistics
 
-- Total documents: 245
-- Tier 1: 33  |  Tier 2: 14  |  Tier 3: 122  |  Tier 4: 76  |  Tier 5: 0
-- Per category: A=31  |  B=6  |  C=3  |  D=60  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
+- Total documents: 249
+- Tier 1: 33  |  Tier 2: 14  |  Tier 3: 126  |  Tier 4: 76  |  Tier 5: 0
+- Per category: A=31  |  B=6  |  C=3  |  D=64  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
 - Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
@@ -32,7 +20,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - [Category A (31 documents)](#category-A)
 - [Category B (6 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
-- [Category D (60 documents)](#category-D)
+- [Category D (64 documents)](#category-D)
 - [Category E (59 documents)](#category-E)
 - [Category F (76 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
@@ -191,12 +179,12 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-KERNEL — DualFrontier Kernel — Architecture & Roadmap
 
 - **Path**: `docs/architecture/KERNEL_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.5
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.2
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-10 ($(System.Collections.Hashtable.last_modified_commit))
-- **Next review due**: 2027-05-10
-- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11
-- **Risks referenced**: RISK-001, RISK-002, RISK-003, RISK-004
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: 2027-05-18
+- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L19
+- **Risks referenced**: RISK-001, RISK-002, RISK-003, RISK-004, RISK-013
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
 
 ### DOC-A-KERNEL_FULL_NATIVE_SCHEDULER — К10 Native Kernel Scheduler — Architecture Specification
@@ -231,10 +219,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-MOD_OS — Mod OS Architecture — Dual Frontier
 
 - **Path**: `docs/architecture/MOD_OS_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.8
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.9
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
-- **Next review due**: 2027-05-10
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: 2027-05-18
 - **Risks referenced**: RISK-002, RISK-004, RISK-005, RISK-006
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
 
@@ -651,6 +639,26 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Last modified**: 2026-05-07 ($(System.Collections.Hashtable.last_modified_commit))
 - **Risks referenced**: RISK-002
 
+### DOC-D-K10_1 — К10.1 — Kernel Scheduler Core Execution
+
+- **Path**: `tools/briefs/K10_1_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: К10.1 standalone execution brief — first of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 = kernel scheduler core; К10.2 = native bus + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 17 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.1 Items 1-5, §3.2 Items 6-8, §3.3 Items 9 + 11-13 (Item 10 NUMA deferred к К-extensions), §3.4 Items 15-16 (Item 14 К11+), §3.5 Items 17 + 19-20, §3.7 Item 24. Ratifies К-L6 SUPERSEDED + К-L12/L13/L14 architecturally established at Commit 14 (load-bearing). К10 as whole closes only after К10.4 sub-milestone; К-closure report (А'.8) waits for all four К10 sub-milestones. Brief authored from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified). Distinct from DOC-D-K10_EXECUTION (skeleton brief for original 10-sub-milestone partitioning, retained as historical record under Option III restructuring).
+- **Risks referenced**: RISK-002, RISK-003, RISK-004, RISK-013
+
+### DOC-D-K10_2 — К10.2 — Native bus three-tier dispatch + mod ALC lifecycle native primitives
+
+- **Path**: `tools/briefs/K10_2_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: К10.2 standalone execution brief — second of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 closed 2026-05-18; К10.2 = native bus three-tier dispatch + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 8 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.8 Items 26-30 (native bus three-tier dispatcher + event type registry + subscriber contract + background queue), §3.9 Items 31-32 (background queue save-integrated storage + native unload primitive), §3.6 Item 21 (mod scheduler authority per-mod sub-schedulers). К-L15 «Native bus authority + three-tier event dispatch» AUTHORED at Commit 13 (load-bearing). Strategy: managed-facade-preserved per К10.1 precedent — native bus parallel infrastructure landed; managed bus remains dispatch authority; sovereign authority switch deferred к К10.4 / А'.8. Cumulative с К10.1: 25 of 46 К10 items closed; remaining 21 items distributed across К10.3 (12 items: 33-44), К10.4 (3 items: 18, 45, 46), Item 14 deferred к К11+, Item 25 cross-cutting к А'.8. Brief authored 2026-05-18 from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified) + К10.1 closure precedent (managed-facade-preserved pattern + native test convention + DF_CHECK runner + selftest infrastructure).
+- **Risks referenced**: RISK-002, RISK-003, RISK-004, RISK-013
+
 ### DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE — К10 Cross-Document Amendments Cascade (SKELETON)
 
 - **Path**: `tools/briefs/K10_CROSS_DOC_AMENDMENTS_CASCADE_BRIEF.md`
@@ -891,6 +899,26 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-15 ($(System.Collections.Hashtable.last_modified_commit))
+
+### DOC-D-V0_A — V0.A — Win32 window + Vulkan instance + device + queue families + validation layer
+
+- **Path**: `tools/briefs/V0_A_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: V0.A standalone execution brief — first of three V0 sub-milestones under V substrate foundation split (V0.A = Win32 window + Vulkan instance + device + queue families + validation; V0.B = swapchain + render pass + compute pipeline plumbing + memory allocator + SPIR-V toolchain; V0.C = sprite/text/atlas + PNG decoder + threading model integration + clear color → first textured quad). Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering side baseline (first 4 of 11 rendering deliverables). Authored 2026-05-18 после K10.3 Phase 0 halt SC-14 (V substrate absent — Option B selected: build V substrate foundation first, then К10.3 restarts against real layer). First Vulkan code на проекте; substantial novel architectural surface vs K-series briefs. Per Crystalka ratification 2026-05-18: V substrate authoring stream inserts between K10.2 closure and K10.3 resumption. К10.3 brief restart pathway gated on V0.A + V0.B closure (compute pipeline plumbing lands V0.B). K-L19 hardware tier surface partially landed at V0.A (Vulkan 1.3 instance creation check); async compute queue selection deferred к V0.B. Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): pure P/Invoke к vulkan-1.dll (S-LOCK-6), zero third-party binding, ALWAYS-ON validation discipline в DEBUG (S-LOCK-4), .NET 8 target (S-LOCK-5 verified Phase 0 from Directory.Build.props).
+- **Risks referenced**: RISK-013
+
+### DOC-D-V0_B — V0.B — Swapchain + render pass + compute pipeline + memory allocator + SPIR-V + async compute + hardware check
+
+- **Path**: `tools/briefs/V0_B_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: V0.B standalone execution brief — second of three V0 sub-milestones under V substrate foundation split. Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering bullets 4-9 + compute use case implementation foundation. Authored 2026-05-18 post-V0.A closure 2026-05-18 (PR #36 merged; 11 atomic commits 1a1c772..1a56887; 685 tests baseline; AMD RX 7600S verified К-L19 hardware tier; VkPhysicalDeviceProperties alignment fix precedent landed — Lesson #7 strengthening). Per Crystalka ratification 2026-05-18 (V0.A/V0.B/V0.C split ratified post-V0.A closure): V substrate authoring stream continues. К10.3 brief restart pathway: V0.B implementation lands async compute queue selection (Item 43) + HardwareCapabilityCheck (Item 44) — К10.3 restarts post-V0.B closure с surgical amendments where V0.B shape differs from К10.3 brief assumptions. К-L19 invariant LOCKED at Commit 13 (load-bearing — KERNEL_ARCHITECTURE.md amendment + README.md hardware requirements section + REGISTER.yaml DOC-A-KERNEL version bump 2.1 → 2.2 + REQ-K-L19 enrollment all in same commit per Lesson #8). 11 S-LOCKs enumerate scope: S-LOCK-1 (V0.B scope = swapchain + render pass + compute + memory + SPIR-V + async compute + hardware check); S-LOCK-2 (monolithic approach NOT split V0.B.1/V0.B.2); S-LOCK-3 (native C ABI extension lands в existing DualFrontier.Core.Native module); S-LOCK-4 (memory allocator = bumper linear allocator only); S-LOCK-5 (SPIR-V toolchain = in-repo committed glslangValidator.exe); S-LOCK-6 (V0.B shaders = minimal clearcolor + noop only); S-LOCK-7 (mixed [LibraryImport] + [DllImport] convention formalized — V0.A executor precedent); S-LOCK-8 (C ABI alignment audit mandatory per V0.A executor finding — Lesson #7 strengthening); S-LOCK-9 (К-L19 invariant landing on V0.B post-К10.3 halt resolution); S-LOCK-10 (К10.3 brief restart pathway documented); S-LOCK-11 (atomic cascade preserves V0.A discipline). Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): same V0.A patterns inherited; mixed [LibraryImport]/[DllImport] formalized; pure P/Invoke к vulkan-1.dll + vulkan-1.dll linkage в native module via CMake find_package(Vulkan); ALWAYS-ON validation discipline в DEBUG preserved; .NET 8 target preserved.
+- **Risks referenced**: RISK-013
 
 ---
 
@@ -1967,6 +1995,11 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | REQ-K-L1 | Native language: C++20 | VERIFIED | DOC-A-KERNEL | K0 closure |
 | REQ-K-L10 | Native organicity Lvl 1 (each native artifact independent) | VERIFIED | DOC-A-KERNEL | K0 closure (D3 codification) |
 | REQ-K-L11 | Single NativeWorld backbone — production storage | VERIFIED | DOC-A-KERNEL | K8.2 v2 closure |
+| REQ-K-L12 | Native kernel scheduling — sovereign per-tick scheduling for kernel-space systems | VERIFIED | DOC-A-KERNEL | K10.1 closure |
+| REQ-K-L13 | On-demand system activation — 5 wake types | VERIFIED | DOC-A-KERNEL | K10.1 closure |
+| REQ-K-L14 | Performance derives from architectural cleanliness | VERIFIED | DOC-A-KERNEL | K10.1 closure (architecturally established; measurable evidence pending К11+ per S4 lock — К10.1 brief authoring section §6.1 #6 measurement plan) |
+| REQ-K-L15 | Native bus authority + three-tier event dispatch | VERIFIED | DOC-A-KERNEL | K10.2 closure (architecturally established; sovereign authority switch deferred к K10.4 closure / А'.8 per managed-facade-preserved strategy — К10.1 precedent applied) |
+| REQ-K-L19 | Hardware tier commitment (Vulkan 1.3 + async compute queue family mandate) | VERIFIED | DOC-A-KERNEL | V0.B closure (full implementation backing operational at landing per Lesson #8 + Lesson #11 — no architectural commitment без implementation behind it) |
 | REQ-K-L2 | Bindings: Pure P/Invoke | VERIFIED | DOC-A-KERNEL | K0 closure |
 | REQ-K-L3 | Component storage paths: Path α default + Path β opt-in | PARTIAL | DOC-A-KERNEL | K-L3.1 bridge formalization |
 | REQ-K-L4 | Explicit component registry (no reflection-driven) | VERIFIED | DOC-A-KERNEL | K4 closure |
@@ -1977,6 +2010,17 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | REQ-K-L9 | Performance threshold met (V3 dominates V2 by 4-32× across metrics) | VERIFIED | DOC-A-KERNEL | K7 closure |
 | REQ-Q-A07-6 | Audience contract: methodology corpus agent-as-primary-reader | VERIFIED | DOC-B-METHODOLOGY | A'.0.7 closure (methodology); A'.4.5 closure (governance inheritance) |
 | REQ-Q-A45-X5 | Post-session update protocol mandatory | PENDING | DOC-A-FRAMEWORK | A'.4.5 closure |
+| REQ-V0-A-VALIDATION_LAYER | Vulkan validation layer ALWAYS-ON в DEBUG + ValidationLog ring buffer (V0.A) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.A closure |
+| REQ-V0-A-VULKAN_DEVICE | Vulkan physical + logical device + graphics queue family selection (V0.A) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.A closure |
+| REQ-V0-A-VULKAN_INSTANCE | Vulkan instance с К-L19 Vulkan 1.3 verification + DEBUG validation layer (V0.A) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.A closure (К-L19 surface partial; hardware capability check startup logic deferred к V0.B alongside async compute queue selection) |
+| REQ-V0-A-WIN32_WINDOW | Win32 window lifecycle + message pump (V0.A foundation) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.A closure |
+| REQ-V0-B-ASYNC_COMPUTE_QUEUE | Async compute queue family selection (V0.B, K-L19 Item 43) | VERIFIED | DOC-A-KERNEL | V0.B closure |
+| REQ-V0-B-COMPUTE_PIPELINE | VkPipeline (compute) + descriptor sets + dispatch (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
+| REQ-V0-B-HARDWARE_CHECK | HardwareCapabilityCheck.Verify startup fail-fast (V0.B, K-L19 Item 44) | VERIFIED | DOC-A-KERNEL | V0.B closure |
+| REQ-V0-B-MEMORY_ALLOCATOR | Bumper linear memory allocator + VulkanBuffer + VulkanImage primitives (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
+| REQ-V0-B-RENDER_PASS | VkRenderPass + VkFramebuffer + command infrastructure (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
+| REQ-V0-B-SPIRV_TOOLCHAIN | In-repo SPIR-V toolchain integration (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
+| REQ-V0-B-SWAPCHAIN | VkSwapchainKHR + Win32 surface + recreation on resize (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
 
 <a name="global-risks"></a>
 ## Global: Risks
@@ -2035,6 +2079,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | 2026-05-16 | Cleanup cascade closing 18 of 19 audit findings; 5 CAPAs opened+closed within same governance event; DRIFT-016 halted per SC-4 | governance_event | e68d799..PENDING-COMMIT-16 |
 | 2026-05-17 | Brief skeleton framework — schema extension AUTHORED-SKELETON + 4 К/А' forward planning skeleton briefs authored | governance_event | 15ffa0a..PENDING-COMMIT-8 |
 | 2026-05-17 | К10 deliberation amendments application — METHODOLOGY v1.8 + KERNEL_FULL_NATIVE_SCHEDULER v2.0 landed; new Tier 1 LOCKED enrollment | amendment_landing | 8c3cf5a..PENDING-COMMIT-5 |
+| 2026-05-18 | V0.A sub-milestone closure — V substrate foundation prerequisite layer (Win32 + Vulkan instance + device + queue families + validation); первая Vulkan code на проекте; unblocks K10.3 brief restart pathway after V0.B compute plumbing closure | execution_milestone | 1a1c772..PENDING-COMMIT-V0_A-CLOSURE |
+| 2026-05-18 | V0.B sub-milestone closure — V substrate foundation completion (swapchain + render pass + framebuffer + command infrastructure + minimal graphics pipeline + memory allocator + SPIR-V toolchain + compute pipeline plumbing + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); К-L19 hardware tier invariant LOCKED с full implementation backing; smoke test exit criteria operational на real К-L19 hardware; К10.3 brief restart pathway opens | execution_milestone | d2c6627..PENDING-COMMIT-V0_B-CLOSURE |
+| 2026-05-18 | К10.2 sub-milestone closure — native bus three-tier dispatch + mod ALC lifecycle (8 of 46 К10 items; 25 cumulative) | execution_milestone | a677388..PENDING-COMMIT-K10_2-CLOSURE |
 | 2026-05-18 | K8.5 deferral cascade — DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON, Phase A'.6 slot SKIPPED, milestone deferred к post-Phase B | governance_event | 4bc34c1..PENDING-COMMIT-K8_5-CLOSURE |
+| 2026-05-18 | К10.1 sub-milestone closure — kernel scheduler core (17 of 46 К10 items) | execution_milestone | f439b74..PENDING-COMMIT-K10_1-CLOSURE |
 
 

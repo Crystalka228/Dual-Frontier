@@ -4,16 +4,17 @@
 register_id: DOC-D-V0_B
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
 version: "1.0"
-next_review_due: "null"
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V0_B
 ---
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: V0_B_EXECUTION_BRIEF
-status: AUTHORED
+status: EXECUTED
+executed: 2026-05-18
 authored: 2026-05-18
 author: Claude Opus 4.7 (Crystalka deliberation session, post-V0.A closure)
 target_executor: Claude Code (auto-mode + Crystalka oversight)
@@ -2318,3 +2319,66 @@ V substrate authoring stream продолжается per Phase A' sequencing (�
 «Без костылей» applied к V substrate authoring V0.B: pure P/Invoke к vulkan-1.dll continued, in-repo SPIR-V toolchain commits build self-contained, bumper allocator simplest viable solution (не temporary hack), native C ABI extension lives в existing kernel module preserving К-L11 single source of truth, К-L19 invariant lands с full implementation backing. Substantial scope addressed coherently per К-L14 default-inclusion bias.
 
 V0.B is second verification of К-L14 thesis на новый substrate (V0.A was first). Если V0.B closes c similar discipline (zero hard-gate halts + alignment audit catches regression early + validation clean + manual visual verification passes), К-L14 thesis on V substrate validated across multiple substantial cascades.
+
+---
+
+## §8 — Closure section (V0.B EXECUTED 2026-05-18)
+
+**Commit range**: `d2c6627..PENDING-COMMIT-V0_B-CLOSURE` (18 atomic commits on branch `claude/v0_b-vulkan-foundation`).
+
+**Cascade ledger**:
+| # | Hash | Subject |
+|---|------|---------|
+| 1 | d2c6627 | docs(briefs): V0.B brief authored — swapchain + render pass + compute pipeline + memory allocator + SPIR-V + async compute + hardware check |
+| 2 | a9e5ebb | test(runtime): V0.B — Vulkan struct size verification infrastructure (Lesson #7 strengthening per V0.A executor finding) |
+| 3 | a71ecdc | feat(runtime): V0.B — Win32 surface foundation + WM_SIZE handler + WindowResizeEvent (preparing swapchain) |
+| 4 | 6ff58dc | feat(runtime): V0.B — async compute queue family selection (К-L19 Item 43 from halted К10.3) |
+| 5 | d62b80b | feat(runtime): V0.B — HardwareCapabilityCheck.Verify (К-L19 Item 44 from halted К10.3, startup fail-fast) |
+| 6 | ebd1296 | feat(runtime): V0.B — memory allocator (bumper) + VulkanBuffer + VulkanImage primitives |
+| 7 | 877635b | feat(runtime): V0.B — VulkanSurface + VulkanSwapchain + recreation on WM_SIZE |
+| 8 | 648b523 | feat(runtime): V0.B — VulkanRenderPass + VulkanFramebuffer (one color attachment, no depth) |
+| 9 | 75dde8c | feat(runtime): V0.B — VulkanCommandPool + VulkanCommandBuffer + per-frame fence/semaphore sync |
+| 10 | 09a22e8 | feat(runtime): V0.B — SPIR-V toolchain integration + minimal shaders (clearcolor + noop) + VulkanShaderModule |
+| 11 | d99b1b9 | feat(runtime): V0.B — minimal graphics pipeline (clearcolor fullscreen triangle) |
+| 12 | d3ff335 | feat(runtime): V0.B — VulkanComputePipeline + VulkanComputeDescriptors + ComputeDispatch + ComputePipelineRegistry |
+| 13 | 834140f | governance: V0.B — К-L19 hardware tier invariant LOCKED (KERNEL_ARCHITECTURE v2.2 + README.md hardware requirements + REQ-K-L19) |
+| 14 | 6c867ec | feat(native): V0.B — df_world_register_compute_pipeline + df_world_field_dispatch_compute C ABI extension |
+| 15 | 09bf10d | feat(runtime): V0.B — FieldStorageBinding bridges K9 RawTileField к Vulkan compute (managed wrapper consuming native C ABI) |
+| 16 | 048e3f9 | feat(runtime): V0.B — Runtime facade full V0.B composition (surface + swapchain + render pass + command pool + memory + compute registry) |
+| 17 | 401c3a3 | test(runtime): V0.B — smoke test executable (V0.B exit criteria: swapchain + render pass + compute roundtrip + hardware check) |
+| 18 | PENDING-COMMIT-V0_B-CLOSURE | governance: V0.B closure — REGISTER amendments + 7 REQs + EVT-V0_B-CLOSURE |
+
+**Verification metrics (final)**:
+- `dotnet build DualFrontier.sln`: clean (0 warnings, 0 errors)
+- `dotnet test DualFrontier.sln`: 786 passed, 0 failed (685 V0.A baseline + 101 V0.B additive)
+  - DualFrontier.Runtime.Tests grew 20 → 121 (V0.B test contribution)
+  - All other test projects baselines preserved
+- `cmake --build native/DualFrontier.Core.Native`: clean (0 warnings)
+- `df_native_selftest.exe`: ALL PASSED (78 scenarios — 77 K10.2 baseline + 1 V0.B compute pipeline registration roundtrip)
+- `V0.B smoke test`: exit 0 — К-L19 hardware tier satisfied (AMD Radeon RX 7600S, async compute QF 1), swapchain + render pass + compute round-trip operational, validation layer 0 errors / warnings / info
+- `sync_register.ps1 --validate`: exit 0 (advisory orphan warnings only — pre-existing baseline + V0.B MODULE.md files)
+
+**Halt protocol activations**: 1 minor cascade course-correction (Commit 14 native build: forward-decl namespace collision `dualfrontier::dualfrontier::ComputePipelineRegistry`, caught by MSVC + missing include in capi.cpp). Neither а hard-gate halt nor SC-N classification — both fixed in same commit cycle и build passed before commit landed.
+
+**Zero hard-gate halts** across 18 commits. Same V0.A discipline preserved. К-L14 thesis on V substrate validated across two substantial cascades (V0.A + V0.B).
+
+**Lesson candidates surfaced (informational, formal promotion deferred к А'.8 K-closure report)**:
+- **Lesson #7 strengthened (V0.B reinforcement)**: P/Invoke ABI alignment audit recipe inherited from V0.A, applied к ~50+ new Vulkan structs in V0.B. Five brief-stated sizes corrected via Marshal.SizeOf test feedback (VkMemoryAllocateInfo 32 not 24; VkPresentInfoKHR 64 not 40; VkDescriptorSetLayoutCreateInfo 32 not 24; VkShaderModuleCreateInfo 40 not 32; VkPipelineColorBlendStateCreateInfo 56 not 40). Each correction caught at test gate, не at runtime crash.
+- **Lesson #8 corollary applied**: К-L19 invariant landing (Commit 13) sequenced AFTER full implementation backing operational (Commits 4 + 5 + 12) — never leaving intermediate state where invariant claimed без implementation.
+- **Lesson #22 confirmed**: native code modifications consume VS-bundled CMake; DllImport convention preserved; SmokeTest project deploys native DLL via same csproj pattern as Interop.Tests.
+- **K-L14 default-inclusion bias validated**: V0.B substantial scope (18 commits, ~5000 LOC managed + native) addressed coherently as single monolithic milestone per S-LOCK-2 ratification. Splitting V0.B.1/V0.B.2 would have fragmented unified VkDevice setup unnecessarily.
+- **Cross-stream prerequisite resolution pattern (Lesson candidate #23 confirmation)**: К10.3 brief halt at Phase 0 SC-14 (V substrate absent) resolved by completing prerequisite stream (V0.A + V0.B) rather than rewriting halted brief. К10.3 restart pathway opens; Items 43 + 44 already implemented as part of V0.B; К10.3 brief restart marks these as «verified existing implementation». Preserves work investment in halted brief (1923-line К10.3 brief authoring not lost).
+- **Load-bearing commit pattern (Lesson candidate #24 confirmation)**: К-L19 invariant landing в Commit 13 — KERNEL_ARCHITECTURE.md amendment + README.md amendment + REGISTER.yaml bump + REQ-K-L19 enrollment all в одном commit. Intermediate state never inconsistent (claim без implementation backing или vice versa). K-L8 atomic compilable commits scales к cross-document invariant landing.
+
+**К10.3 restart preconditions met at this closure**:
+- ✓ src/DualFrontier.Runtime/ project exists (V0.A)
+- ✓ Vulkan P/Invoke surface complete via VkApi + VkStructs + VkEnums (V0.A + V0.B substantial extensions)
+- ✓ Graphics/VulkanInstance.cs (V0.A)
+- ✓ Graphics/VulkanDevice.cs с graphics + async compute queue family selection (V0.A + V0.B Commit 4)
+- ✓ Graphics/HardwareCapabilityCheck.cs (V0.B Commit 5)
+- ✓ Compute/VulkanComputePipeline.cs + ComputeDispatch.cs + ComputePipelineRegistry.cs (V0.B Commit 12)
+- ✓ Native C ABI extension df_world_register_compute_pipeline + df_world_field_dispatch_compute (V0.B Commit 14)
+- ✓ К-L19 invariant LOCKED в KERNEL_ARCHITECTURE.md v2.2 (V0.B Commit 13)
+- ✓ README.md Hardware requirements section (V0.B Commit 13)
+
+К10.3 brief SC-14 halt class won't fire at restart. К10.3 brief Commits 6-17 (Items 33-44 pipeline depth + display composition + mod lifecycle + К-L16/L17/L18 invariants) proceed с surgical amendments where V0.B shape differs from К10.3 brief assumptions. К-L16/L17/L18 numbering reserved для К10.3 elaboration.
