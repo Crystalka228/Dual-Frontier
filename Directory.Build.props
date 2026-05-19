@@ -30,5 +30,8 @@
     <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\clearcolor.vert&quot; -o &quot;$(ShaderOutputDir)\clearcolor.vert.spv&quot;" />
     <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\clearcolor.frag&quot; -o &quot;$(ShaderOutputDir)\clearcolor.frag.spv&quot;" />
     <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\noop.comp&quot; -o &quot;$(ShaderOutputDir)\noop.comp.spv&quot;" />
+    <!-- V0.C.1 sprite shaders -->
+    <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\sprite.vert&quot; -o &quot;$(ShaderOutputDir)\sprite.vert.spv&quot;" />
+    <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\sprite.frag&quot; -o &quot;$(ShaderOutputDir)\sprite.frag.spv&quot;" />
   </Target>
 </Project>
