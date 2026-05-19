@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.IO.Compression;
 using System.Text;
 using DualFrontier.Runtime.Assets;
 using FluentAssertions;
@@ -123,6 +124,255 @@ public sealed class PngDecoderTests
 
         Action act = () => PngDecoder.Decode(bytes.ToArray());
         act.Should().Throw<PngDecoderException>().WithMessage("*CRC32 mismatch*");
+    }
+
+    // ============================================================
+    // V0.C.1 Commit 4 (Part 2) — DEFLATE + filter unfiltering positive tests
+    // ============================================================
+
+    [Fact]
+    public void Decode_1x1Rgba_Filter0_Roundtrips()
+    {
+        // 1×1 RGBA red opaque (filter type 0 = None).
+        byte[] pixels = { 200, 50, 75, 255 };
+        byte[] png = BuildValidPng(1, 1, colorType: 6, pixels: pixels, filterType: 0);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.Width.Should().Be(1);
+        decoded.Height.Should().Be(1);
+        decoded.PixelsRgba8.Should().BeEquivalentTo(pixels);
+    }
+
+    [Fact]
+    public void Decode_2x2Rgba_Filter0_Roundtrips()
+    {
+        // 2×2 RGBA: 4 distinct pixels.
+        byte[] pixels =
+        {
+             10,  20,  30, 255,    40,  50,  60, 255,
+             70,  80,  90, 200,   100, 110, 120, 150,
+        };
+        byte[] png = BuildValidPng(2, 2, colorType: 6, pixels: pixels, filterType: 0);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.Width.Should().Be(2);
+        decoded.Height.Should().Be(2);
+        decoded.PixelsRgba8.Should().BeEquivalentTo(pixels);
+    }
+
+    [Fact]
+    public void Decode_2x2Rgb8_Filter0_ExpandsToRgba8()
+    {
+        // 2×2 RGB (no alpha channel) — decoder converts к RGBA8 с alpha=255.
+        byte[] pixels =
+        {
+             10,  20,  30,    40,  50,  60,
+             70,  80,  90,   100, 110, 120,
+        };
+        byte[] png = BuildValidPng(2, 2, colorType: 2, pixels: pixels, filterType: 0);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.PixelsRgba8.Should().HaveCount(2 * 2 * 4);
+        // Verify alpha = 255 для every pixel + RGB preserved.
+        for (int i = 0; i < 4; i++)
+        {
+            decoded.PixelsRgba8[i * 4 + 0].Should().Be(pixels[i * 3 + 0]);
+            decoded.PixelsRgba8[i * 4 + 1].Should().Be(pixels[i * 3 + 1]);
+            decoded.PixelsRgba8[i * 4 + 2].Should().Be(pixels[i * 3 + 2]);
+            decoded.PixelsRgba8[i * 4 + 3].Should().Be(255);
+        }
+    }
+
+    [Fact]
+    public void Decode_2x2Rgba_Filter1_Sub_Roundtrips()
+    {
+        byte[] pixels =
+        {
+             10,  20,  30, 255,    40,  50,  60, 255,
+             70,  80,  90, 200,   100, 110, 120, 150,
+        };
+        byte[] png = BuildValidPng(2, 2, colorType: 6, pixels: pixels, filterType: 1);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.PixelsRgba8.Should().BeEquivalentTo(pixels);
+    }
+
+    [Fact]
+    public void Decode_2x2Rgba_Filter2_Up_Roundtrips()
+    {
+        byte[] pixels =
+        {
+             10,  20,  30, 255,    40,  50,  60, 255,
+             70,  80,  90, 200,   100, 110, 120, 150,
+        };
+        byte[] png = BuildValidPng(2, 2, colorType: 6, pixels: pixels, filterType: 2);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.PixelsRgba8.Should().BeEquivalentTo(pixels);
+    }
+
+    [Fact]
+    public void Decode_2x2Rgba_Filter3_Average_Roundtrips()
+    {
+        byte[] pixels =
+        {
+             10,  20,  30, 255,    40,  50,  60, 255,
+             70,  80,  90, 200,   100, 110, 120, 150,
+        };
+        byte[] png = BuildValidPng(2, 2, colorType: 6, pixels: pixels, filterType: 3);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.PixelsRgba8.Should().BeEquivalentTo(pixels);
+    }
+
+    [Fact]
+    public void Decode_2x2Rgba_Filter4_Paeth_Roundtrips()
+    {
+        byte[] pixels =
+        {
+             10,  20,  30, 255,    40,  50,  60, 255,
+             70,  80,  90, 200,   100, 110, 120, 150,
+        };
+        byte[] png = BuildValidPng(2, 2, colorType: 6, pixels: pixels, filterType: 4);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.PixelsRgba8.Should().BeEquivalentTo(pixels);
+    }
+
+    [Fact]
+    public void Decode_8x8Rgba_GradientPattern_Roundtrips()
+    {
+        // Larger image to verify scanline indexing + multi-IDAT path (single IDAT in our test).
+        byte[] pixels = new byte[8 * 8 * 4];
+        for (int y = 0; y < 8; y++)
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                int idx = (y * 8 + x) * 4;
+                pixels[idx + 0] = (byte)(x * 32);
+                pixels[idx + 1] = (byte)(y * 32);
+                pixels[idx + 2] = (byte)((x + y) * 16);
+                pixels[idx + 3] = 255;
+            }
+        }
+        byte[] png = BuildValidPng(8, 8, colorType: 6, pixels: pixels, filterType: 0);
+        PngImage decoded = PngDecoder.Decode(png);
+        decoded.Width.Should().Be(8);
+        decoded.Height.Should().Be(8);
+        decoded.PixelsRgba8.Should().BeEquivalentTo(pixels);
+    }
+
+    // ============================================================
+    // Synthetic PNG construction with DEFLATE + filter
+    // ============================================================
+
+    /// <summary>
+    /// Build a fully valid PNG byte sequence from raw RGBA8 or RGB8 pixel data + applied filter.
+    /// Used by Part 2 positive tests to exercise full Decode path including DEFLATE + filter
+    /// unfiltering. Filter algorithms applied INVERSE to PngDecoder's reconstruction.
+    /// </summary>
+    private static byte[] BuildValidPng(int width, int height, byte colorType, byte[] pixels, byte filterType)
+    {
+        int bytesPerPixel = colorType == 6 ? 4 : 3;
+        int scanlineLength = width * bytesPerPixel;
+        if (pixels.Length != scanlineLength * height)
+        {
+            throw new ArgumentException("Pixel buffer size mismatch.");
+        }
+
+        // 1. Apply filter to each scanline + prefix filter type byte.
+        byte[] filtered = new byte[(scanlineLength + 1) * height];
+        byte[] previousScanline = new byte[scanlineLength];
+        for (int y = 0; y < height; y++)
+        {
+            int srcOffset = y * scanlineLength;
+            int dstOffset = y * (scanlineLength + 1);
+            filtered[dstOffset] = filterType;
+            ReadOnlySpan<byte> current = pixels.AsSpan(srcOffset, scanlineLength);
+
+            switch (filterType)
+            {
+                case 0:
+                    current.CopyTo(filtered.AsSpan(dstOffset + 1, scanlineLength));
+                    break;
+                case 1:
+                    // Sub(x) = Raw(x) - Raw(x - bpp).
+                    for (int i = 0; i < scanlineLength; i++)
+                    {
+                        byte left = i >= bytesPerPixel ? current[i - bytesPerPixel] : (byte)0;
+                        filtered[dstOffset + 1 + i] = (byte)(current[i] - left);
+                    }
+                    break;
+                case 2:
+                    // Up(x) = Raw(x) - Prior(x).
+                    for (int i = 0; i < scanlineLength; i++)
+                    {
+                        filtered[dstOffset + 1 + i] = (byte)(current[i] - previousScanline[i]);
+                    }
+                    break;
+                case 3:
+                    // Average(x) = Raw(x) - floor((Raw(x - bpp) + Prior(x)) / 2).
+                    for (int i = 0; i < scanlineLength; i++)
+                    {
+                        int left = i >= bytesPerPixel ? current[i - bytesPerPixel] : 0;
+                        int up = previousScanline[i];
+                        filtered[dstOffset + 1 + i] = (byte)(current[i] - ((left + up) >> 1));
+                    }
+                    break;
+                case 4:
+                    // Paeth(x) = Raw(x) - PaethPredictor(Raw(x - bpp), Prior(x), Prior(x - bpp)).
+                    for (int i = 0; i < scanlineLength; i++)
+                    {
+                        byte a = i >= bytesPerPixel ? current[i - bytesPerPixel] : (byte)0;
+                        byte b = previousScanline[i];
+                        byte c = i >= bytesPerPixel ? previousScanline[i - bytesPerPixel] : (byte)0;
+                        filtered[dstOffset + 1 + i] = (byte)(current[i] - PaethPredictor(a, b, c));
+                    }
+                    break;
+                default:
+                    throw new ArgumentException($"Unsupported filter type {filterType}.");
+            }
+
+            current.CopyTo(previousScanline);
+        }
+
+        // 2. DEFLATE compress, prepend zlib header.
+        byte[] compressed = DeflateCompress(filtered);
+        byte[] zlibWrapped = WrapZlib(compressed);
+
+        // 3. Construct PNG byte sequence.
+        var bytes = new List<byte>(PngSignature);
+        AppendChunk(bytes, "IHDR", BuildIhdr(width, height, bitDepth: 8, colorType: colorType));
+        AppendChunk(bytes, "IDAT", zlibWrapped);
+        AppendChunk(bytes, "IEND", Array.Empty<byte>());
+        return bytes.ToArray();
+    }
+
+    private static byte PaethPredictor(byte a, byte b, byte c)
+    {
+        int p = a + b - c;
+        int pa = Math.Abs(p - a);
+        int pb = Math.Abs(p - b);
+        int pc = Math.Abs(p - c);
+        if (pa <= pb && pa <= pc) return a;
+        if (pb <= pc) return b;
+        return c;
+    }
+
+    private static byte[] DeflateCompress(byte[] raw)
+    {
+        using var output = new MemoryStream();
+        using (var deflate = new DeflateStream(output, CompressionLevel.Optimal, leaveOpen: true))
+        {
+            deflate.Write(raw, 0, raw.Length);
+        }
+        return output.ToArray();
+    }
+
+    private static byte[] WrapZlib(byte[] deflateData)
+    {
+        // Minimal zlib wrapper: CMF = 0x78 (32K window, DEFLATE method 8) + FLG (FCHECK matching CMF).
+        // RFC 1950 §2.2 — (CMF*256 + FLG) must be divisible by 31. CMF=0x78 → FLG=0x9C works.
+        // Adler-32 trailer omitted: PngDecoder skips 2-byte zlib header + DeflateStream
+        // decodes raw DEFLATE stream end-marker; trailing Adler-32 not consumed by our decoder.
+        var output = new byte[deflateData.Length + 2];
+        output[0] = 0x78;
+        output[1] = 0x9C;
+        Buffer.BlockCopy(deflateData, 0, output, 2, deflateData.Length);
+        return output;
     }
 
     // ============================================================

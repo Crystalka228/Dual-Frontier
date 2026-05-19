@@ -235,18 +235,181 @@ public static class PngDecoder
     }
 
     // =====================================================================
-    // DEFLATE decompression + filter unfiltering (Part 2 — Commit 4 implements)
+    // DEFLATE decompression + filter unfiltering (Part 2 — V0.C.1 Commit 4)
     // =====================================================================
 
     private static byte[] DecompressAndUnfilter(List<byte[]> idatChunks, int width, int height, int colorType)
     {
-        throw new PngDecoderException(
-            "DecompressAndUnfilter not yet implemented; lands in V0.C.1 Commit 4 (Part 2).");
+        int bytesPerPixel = colorType == 6 ? 4 : 3;  // RGBA или RGB
+
+        // 1. Concatenate IDAT bytes.
+        int totalLength = 0;
+        foreach (byte[] c in idatChunks)
+        {
+            totalLength += c.Length;
+        }
+        byte[] compressed = new byte[totalLength];
+        int pos = 0;
+        foreach (byte[] c in idatChunks)
+        {
+            Buffer.BlockCopy(c, 0, compressed, pos, c.Length);
+            pos += c.Length;
+        }
+
+        if (compressed.Length < 2)
+        {
+            throw new PngDecoderException("IDAT data too short to contain zlib header.");
+        }
+
+        // 2. Skip 2-byte zlib header (CMF + FLG per RFC 1950 §2.2). Verify CMF compression
+        // method = 8 (DEFLATE) per RFC 1950 §2.2 + §2.4. FLG check (FCHECK + FDICT + FLEVEL)
+        // not strictly needed for decode; rely on DeflateStream for DEFLATE-level validation.
+        byte cmf = compressed[0];
+        if ((cmf & 0x0F) != 8)
+        {
+            throw new PngDecoderException($"Unsupported zlib compression method {cmf & 0x0F}; expected 8 (DEFLATE).");
+        }
+
+        // 3. DEFLATE decompression via System.IO.Compression.DeflateStream (BCL per §0 L5).
+        int scanlineLength = width * bytesPerPixel + 1;  // +1 для filter type byte per RFC 2083 §6
+        int rawTotal = scanlineLength * height;
+        byte[] raw;
+        try
+        {
+            using var ms = new MemoryStream(compressed, index: 2, count: compressed.Length - 2, writable: false);
+            using var deflate = new DeflateStream(ms, CompressionMode.Decompress);
+            using var rawMs = new MemoryStream(rawTotal);
+            deflate.CopyTo(rawMs);
+            raw = rawMs.ToArray();
+        }
+        catch (InvalidDataException ex)
+        {
+            throw new PngDecoderException("Corrupt DEFLATE stream in IDAT chunks.", ex);
+        }
+
+        if (raw.Length != rawTotal)
+        {
+            throw new PngDecoderException(
+                $"DEFLATE output size {raw.Length} bytes does not match expected {rawTotal} bytes ({width}×{height}, {bytesPerPixel} bpp).");
+        }
+
+        // 4. Unfilter scanlines (per RFC 2083 §6).
+        byte[] unfiltered = new byte[width * bytesPerPixel * height];
+        UnfilterScanlines(raw, unfiltered, width, height, bytesPerPixel);
+        return unfiltered;
+    }
+
+    private static void UnfilterScanlines(byte[] raw, byte[] unfiltered, int width, int height, int bytesPerPixel)
+    {
+        int scanlineLength = width * bytesPerPixel;
+        int rawScanlineLength = scanlineLength + 1;  // +1 filter byte prefix per RFC 2083 §6
+
+        // Previous scanline initialized to zeros per RFC 2083 §6.3 (Filter Algorithm: prior row
+        // of scanline 0 is virtual all-zero scanline).
+        byte[] previousScanline = new byte[scanlineLength];
+
+        for (int y = 0; y < height; y++)
+        {
+            int rawOffset = y * rawScanlineLength;
+            byte filterType = raw[rawOffset];
+            ReadOnlySpan<byte> currentRaw = raw.AsSpan(rawOffset + 1, scanlineLength);
+            Span<byte> currentOut = unfiltered.AsSpan(y * scanlineLength, scanlineLength);
+
+            switch (filterType)
+            {
+                case 0: UnfilterNone(currentRaw, currentOut); break;
+                case 1: UnfilterSub(currentRaw, currentOut, bytesPerPixel); break;
+                case 2: UnfilterUp(currentRaw, currentOut, previousScanline); break;
+                case 3: UnfilterAverage(currentRaw, currentOut, previousScanline, bytesPerPixel); break;
+                case 4: UnfilterPaeth(currentRaw, currentOut, previousScanline, bytesPerPixel); break;
+                default:
+                    throw new PngDecoderException($"Unknown filter type {filterType} on scanline {y}.");
+            }
+
+            currentOut.CopyTo(previousScanline);
+        }
+    }
+
+    private static void UnfilterNone(ReadOnlySpan<byte> raw, Span<byte> output)
+    {
+        raw.CopyTo(output);
+    }
+
+    private static void UnfilterSub(ReadOnlySpan<byte> raw, Span<byte> output, int bytesPerPixel)
+    {
+        // RFC 2083 §6.3: Sub(x) = Raw(x) - Raw(x - bpp); reconstructed: Raw(x) = Sub(x) + Recon(x - bpp).
+        for (int i = 0; i < raw.Length; i++)
+        {
+            byte left = i >= bytesPerPixel ? output[i - bytesPerPixel] : (byte)0;
+            output[i] = (byte)(raw[i] + left);
+        }
+    }
+
+    private static void UnfilterUp(ReadOnlySpan<byte> raw, Span<byte> output, byte[] previousScanline)
+    {
+        // RFC 2083 §6.4: Up(x) = Raw(x) - Prior(x); reconstructed: Raw(x) = Up(x) + Prior(x).
+        for (int i = 0; i < raw.Length; i++)
+        {
+            output[i] = (byte)(raw[i] + previousScanline[i]);
+        }
+    }
+
+    private static void UnfilterAverage(ReadOnlySpan<byte> raw, Span<byte> output, byte[] previousScanline, int bytesPerPixel)
+    {
+        // RFC 2083 §6.5: Average(x) = Raw(x) - floor((Raw(x - bpp) + Prior(x)) / 2).
+        // Reconstruction uses integer division (floor) per RFC.
+        for (int i = 0; i < raw.Length; i++)
+        {
+            int left = i >= bytesPerPixel ? output[i - bytesPerPixel] : 0;
+            int up = previousScanline[i];
+            output[i] = (byte)(raw[i] + ((left + up) >> 1));
+        }
+    }
+
+    private static void UnfilterPaeth(ReadOnlySpan<byte> raw, Span<byte> output, byte[] previousScanline, int bytesPerPixel)
+    {
+        // RFC 2083 §6.6: Paeth(x) = Raw(x) - PaethPredictor(Recon(a), Recon(b), Recon(c)).
+        for (int i = 0; i < raw.Length; i++)
+        {
+            byte a = i >= bytesPerPixel ? output[i - bytesPerPixel] : (byte)0;             // left
+            byte b = previousScanline[i];                                                    // above
+            byte c = i >= bytesPerPixel ? previousScanline[i - bytesPerPixel] : (byte)0;    // upper-left
+            output[i] = (byte)(raw[i] + PaethPredictor(a, b, c));
+        }
+    }
+
+    private static byte PaethPredictor(byte a, byte b, byte c)
+    {
+        // RFC 2083 §6.6 PaethPredictor algorithm.
+        int p = a + b - c;
+        int pa = Math.Abs(p - a);
+        int pb = Math.Abs(p - b);
+        int pc = Math.Abs(p - c);
+        if (pa <= pb && pa <= pc)
+        {
+            return a;
+        }
+        if (pb <= pc)
+        {
+            return b;
+        }
+        return c;
     }
 
     private static byte[] ConvertRgb8ToRgba8(byte[] rgb, int width, int height)
     {
-        throw new PngDecoderException(
-            "ConvertRgb8ToRgba8 not yet implemented; lands in V0.C.1 Commit 4 (Part 2).");
+        byte[] rgba = new byte[width * height * 4];
+        int srcIdx = 0;
+        int dstIdx = 0;
+        for (int i = 0; i < width * height; i++)
+        {
+            rgba[dstIdx + 0] = rgb[srcIdx + 0];
+            rgba[dstIdx + 1] = rgb[srcIdx + 1];
+            rgba[dstIdx + 2] = rgb[srcIdx + 2];
+            rgba[dstIdx + 3] = 255;  // fully opaque per Q2 (a) ratification
+            srcIdx += 3;
+            dstIdx += 4;
+        }
+        return rgba;
     }
 }
