@@ -392,3 +392,80 @@ internal enum VkShaderStageFlags : uint
     VK_SHADER_STAGE_ALL_GRAPHICS = 0x0000001F,
     VK_SHADER_STAGE_ALL = 0x7FFFFFFF,
 }
+
+// ===========================================================================
+// V0.B Commit 11 — Graphics pipeline
+// ===========================================================================
+
+internal enum VkPrimitiveTopology : int
+{
+    VK_PRIMITIVE_TOPOLOGY_POINT_LIST = 0,
+    VK_PRIMITIVE_TOPOLOGY_LINE_LIST = 1,
+    VK_PRIMITIVE_TOPOLOGY_LINE_STRIP = 2,
+    VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST = 3,
+    VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP = 4,
+    VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN = 5,
+}
+
+internal enum VkPolygonMode : int
+{
+    VK_POLYGON_MODE_FILL = 0,
+    VK_POLYGON_MODE_LINE = 1,
+    VK_POLYGON_MODE_POINT = 2,
+}
+
+[Flags]
+internal enum VkCullModeFlags : uint
+{
+    VK_CULL_MODE_NONE = 0,
+    VK_CULL_MODE_FRONT_BIT = 0x00000001,
+    VK_CULL_MODE_BACK_BIT = 0x00000002,
+    VK_CULL_MODE_FRONT_AND_BACK = 0x00000003,
+}
+
+internal enum VkFrontFace : int
+{
+    VK_FRONT_FACE_COUNTER_CLOCKWISE = 0,
+    VK_FRONT_FACE_CLOCKWISE = 1,
+}
+
+[Flags]
+internal enum VkColorComponentFlags : uint
+{
+    VK_COLOR_COMPONENT_R_BIT = 0x00000001,
+    VK_COLOR_COMPONENT_G_BIT = 0x00000002,
+    VK_COLOR_COMPONENT_B_BIT = 0x00000004,
+    VK_COLOR_COMPONENT_A_BIT = 0x00000008,
+    VK_COLOR_COMPONENT_RGBA = 0x0000000F,
+}
+
+internal enum VkBlendFactor : int
+{
+    VK_BLEND_FACTOR_ZERO = 0,
+    VK_BLEND_FACTOR_ONE = 1,
+    VK_BLEND_FACTOR_SRC_COLOR = 2,
+    VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR = 3,
+    VK_BLEND_FACTOR_DST_COLOR = 4,
+    VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR = 5,
+    VK_BLEND_FACTOR_SRC_ALPHA = 6,
+    VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA = 7,
+}
+
+internal enum VkBlendOp : int
+{
+    VK_BLEND_OP_ADD = 0,
+    VK_BLEND_OP_SUBTRACT = 1,
+}
+
+internal enum VkLogicOp : int
+{
+    VK_LOGIC_OP_CLEAR = 0,
+    VK_LOGIC_OP_COPY = 3,
+}
+
+internal enum VkDynamicState : int
+{
+    VK_DYNAMIC_STATE_VIEWPORT = 0,
+    VK_DYNAMIC_STATE_SCISSOR = 1,
+    VK_DYNAMIC_STATE_LINE_WIDTH = 2,
+}

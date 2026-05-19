@@ -630,3 +630,161 @@ internal unsafe struct VkPipelineShaderStageCreateInfo
     internal byte* pName;
     internal IntPtr pSpecializationInfo;
 }
+
+// ===========================================================================
+// V0.B Commit 11 — Graphics pipeline
+// ===========================================================================
+
+// VkPipelineVertexInputStateCreateInfo (48 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineVertexInputStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint vertexBindingDescriptionCount;
+    internal IntPtr pVertexBindingDescriptions;
+    internal uint vertexAttributeDescriptionCount;
+    internal uint _padBeforeAttrPtr;
+    internal IntPtr pVertexAttributeDescriptions;
+}
+
+// VkPipelineInputAssemblyStateCreateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkPipelineInputAssemblyStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkPrimitiveTopology topology;
+    internal uint primitiveRestartEnable;     // VkBool32
+    internal uint _padTrailing;
+}
+
+// VkPipelineViewportStateCreateInfo (48 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineViewportStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint viewportCount;
+    internal VkViewport* pViewports;
+    internal uint scissorCount;
+    internal uint _padBeforeScissorPtr;
+    internal VkRect2D* pScissors;
+}
+
+// VkPipelineRasterizationStateCreateInfo (64 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkPipelineRasterizationStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint depthClampEnable;            // VkBool32
+    internal uint rasterizerDiscardEnable;     // VkBool32
+    internal VkPolygonMode polygonMode;
+    internal VkCullModeFlags cullMode;
+    internal VkFrontFace frontFace;
+    internal uint depthBiasEnable;             // VkBool32
+    internal float depthBiasConstantFactor;
+    internal float depthBiasClamp;
+    internal float depthBiasSlopeFactor;
+    internal float lineWidth;
+}
+
+// VkPipelineMultisampleStateCreateInfo (48 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineMultisampleStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkSampleCountFlagBits rasterizationSamples;
+    internal uint sampleShadingEnable;     // VkBool32
+    internal float minSampleShading;
+    internal uint* pSampleMask;
+    internal uint alphaToCoverageEnable;   // VkBool32
+    internal uint alphaToOneEnable;        // VkBool32
+}
+
+// VkPipelineColorBlendAttachmentState (32 bytes — 8 × uint32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkPipelineColorBlendAttachmentState
+{
+    internal uint blendEnable;                     // VkBool32
+    internal VkBlendFactor srcColorBlendFactor;
+    internal VkBlendFactor dstColorBlendFactor;
+    internal VkBlendOp colorBlendOp;
+    internal VkBlendFactor srcAlphaBlendFactor;
+    internal VkBlendFactor dstAlphaBlendFactor;
+    internal VkBlendOp alphaBlendOp;
+    internal VkColorComponentFlags colorWriteMask;
+}
+
+// VkPipelineColorBlendStateCreateInfo (56 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineColorBlendStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint logicOpEnable;           // VkBool32
+    internal VkLogicOp logicOp;
+    internal uint attachmentCount;
+    internal VkPipelineColorBlendAttachmentState* pAttachments;
+    internal fixed float blendConstants[4];
+}
+
+// VkPipelineDynamicStateCreateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineDynamicStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint dynamicStateCount;
+    internal VkDynamicState* pDynamicStates;
+}
+
+// VkPipelineLayoutCreateInfo (48 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineLayoutCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint setLayoutCount;
+    internal IntPtr* pSetLayouts;            // VkDescriptorSetLayout*
+    internal uint pushConstantRangeCount;
+    internal uint _padBeforePushPtr;
+    internal IntPtr pPushConstantRanges;
+}
+
+// VkGraphicsPipelineCreateInfo (144 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkGraphicsPipelineCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint stageCount;
+    internal VkPipelineShaderStageCreateInfo* pStages;
+    internal VkPipelineVertexInputStateCreateInfo* pVertexInputState;
+    internal VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState;
+    internal IntPtr pTessellationState;
+    internal VkPipelineViewportStateCreateInfo* pViewportState;
+    internal VkPipelineRasterizationStateCreateInfo* pRasterizationState;
+    internal VkPipelineMultisampleStateCreateInfo* pMultisampleState;
+    internal IntPtr pDepthStencilState;
+    internal VkPipelineColorBlendStateCreateInfo* pColorBlendState;
+    internal VkPipelineDynamicStateCreateInfo* pDynamicState;
+    internal IntPtr layout;
+    internal IntPtr renderPass;
+    internal uint subpass;
+    internal uint _padBeforeBase;
+    internal IntPtr basePipelineHandle;
+    internal int basePipelineIndex;
+    internal uint _padTrailing;
+}

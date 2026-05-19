@@ -385,4 +385,30 @@ internal static unsafe partial class VkApi
 
     [LibraryImport(VulkanLib, EntryPoint = "vkDestroyShaderModule")]
     internal static partial void vkDestroyShaderModule(IntPtr device, IntPtr shaderModule, IntPtr pAllocator);
+
+    // =======================================================================
+    // V0.B Commit 11 — Graphics pipeline
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreatePipelineLayout")]
+    internal static partial VkResult vkCreatePipelineLayout(
+        IntPtr device,
+        in VkPipelineLayoutCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pPipelineLayout);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyPipelineLayout")]
+    internal static partial void vkDestroyPipelineLayout(IntPtr device, IntPtr pipelineLayout, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateGraphicsPipelines")]
+    internal static unsafe partial VkResult vkCreateGraphicsPipelines(
+        IntPtr device,
+        IntPtr pipelineCache,
+        uint createInfoCount,
+        VkGraphicsPipelineCreateInfo* pCreateInfos,
+        IntPtr pAllocator,
+        IntPtr* pPipelines);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyPipeline")]
+    internal static partial void vkDestroyPipeline(IntPtr device, IntPtr pipeline, IntPtr pAllocator);
 }

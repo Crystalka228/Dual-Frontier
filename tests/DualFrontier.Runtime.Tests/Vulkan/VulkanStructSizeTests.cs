@@ -196,6 +196,40 @@ public sealed class VulkanStructSizeTests
     }
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commits 11-12)
+    // V0.B Commit 11 — Graphics pipeline
+    // ============================================================
+
+    [Fact]
+    public void VkPipelineVertexInputStateCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineVertexInputStateCreateInfo>().Should().Be(48);
+
+    [Fact]
+    public void VkPipelineInputAssemblyStateCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineInputAssemblyStateCreateInfo>().Should().Be(32);
+
+    [Fact]
+    public void VkPipelineViewportStateCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineViewportStateCreateInfo>().Should().Be(48);
+
+    [Fact]
+    public void VkPipelineRasterizationStateCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineRasterizationStateCreateInfo>().Should().Be(64);
+
+    [Fact]
+    public void VkPipelineMultisampleStateCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineMultisampleStateCreateInfo>().Should().Be(48);
+
+    [Fact]
+    public void VkPipelineColorBlendAttachmentState_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineColorBlendAttachmentState>().Should().Be(32);
+
+    [Fact]
+    public void VkPipelineColorBlendStateCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineColorBlendStateCreateInfo>().Should().Be(56);
+
+    [Fact]
+    public void VkPipelineDynamicStateCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineDynamicStateCreateInfo>().Should().Be(32);
+
+    [Fact]
+    public void VkPipelineLayoutCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkPipelineLayoutCreateInfo>().Should().Be(48);
+
+    [Fact]
+    public void VkGraphicsPipelineCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkGraphicsPipelineCreateInfo>().Should().Be(144);
+
+    // ============================================================
+    // V0.B additions appended per-commit (see brief §3 commit 12)
     // ============================================================
 }
