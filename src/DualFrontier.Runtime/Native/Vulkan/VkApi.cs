@@ -469,4 +469,57 @@ internal static unsafe partial class VkApi
         IntPtr* pDescriptorSets,
         uint dynamicOffsetCount,
         uint* pDynamicOffsets);
+
+    // =======================================================================
+    // V0.C.1 — Sampler + texture upload + push constants + vertex buffers
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateSampler")]
+    internal static partial VkResult vkCreateSampler(
+        IntPtr device,
+        in VkSamplerCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pSampler);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroySampler")]
+    internal static partial void vkDestroySampler(IntPtr device, IntPtr sampler, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdCopyBufferToImage")]
+    internal static partial void vkCmdCopyBufferToImage(
+        IntPtr commandBuffer,
+        IntPtr srcBuffer,
+        IntPtr dstImage,
+        VkImageLayout dstImageLayout,
+        uint regionCount,
+        in VkBufferImageCopy pRegions);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdPushConstants")]
+    internal static unsafe partial void vkCmdPushConstants(
+        IntPtr commandBuffer,
+        IntPtr layout,
+        VkShaderStageFlags stageFlags,
+        uint offset,
+        uint size,
+        void* pValues);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdPipelineBarrier")]
+    internal static unsafe partial void vkCmdPipelineBarrier(
+        IntPtr commandBuffer,
+        VkPipelineStageFlags srcStageMask,
+        VkPipelineStageFlags dstStageMask,
+        VkDependencyFlags dependencyFlags,
+        uint memoryBarrierCount,
+        IntPtr pMemoryBarriers,
+        uint bufferMemoryBarrierCount,
+        IntPtr pBufferMemoryBarriers,
+        uint imageMemoryBarrierCount,
+        VkImageMemoryBarrier* pImageMemoryBarriers);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdBindVertexBuffers")]
+    internal static unsafe partial void vkCmdBindVertexBuffers(
+        IntPtr commandBuffer,
+        uint firstBinding,
+        uint bindingCount,
+        IntPtr* pBuffers,
+        ulong* pOffsets);
 }

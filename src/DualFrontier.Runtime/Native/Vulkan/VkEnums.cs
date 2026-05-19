@@ -79,6 +79,8 @@ internal enum VkStructureType : int
     VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO = 40,
     VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO = 42,
     VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO = 43,
+    VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER = 45,
+    VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO = 31,
     VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR = 1000001000,
     VK_STRUCTURE_TYPE_PRESENT_INFO_KHR = 1000001001,
     VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR = 1000009000,
@@ -488,4 +490,56 @@ internal enum VkDescriptorType : int
 internal enum VkDescriptorPoolCreateFlags : uint
 {
     VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT = 0x00000001,
+}
+
+// ===========================================================================
+// V0.C.1 — Sampler + texture upload + vertex input
+// ===========================================================================
+
+internal enum VkFilter : int
+{
+    VK_FILTER_NEAREST = 0,
+    VK_FILTER_LINEAR = 1,
+}
+
+internal enum VkSamplerMipmapMode : int
+{
+    VK_SAMPLER_MIPMAP_MODE_NEAREST = 0,
+    VK_SAMPLER_MIPMAP_MODE_LINEAR = 1,
+}
+
+internal enum VkSamplerAddressMode : int
+{
+    VK_SAMPLER_ADDRESS_MODE_REPEAT = 0,
+    VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT = 1,
+    VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE = 2,
+    VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER = 3,
+}
+
+internal enum VkCompareOp : int
+{
+    VK_COMPARE_OP_NEVER = 0,
+    VK_COMPARE_OP_LESS = 1,
+    VK_COMPARE_OP_EQUAL = 2,
+    VK_COMPARE_OP_LESS_OR_EQUAL = 3,
+    VK_COMPARE_OP_GREATER = 4,
+    VK_COMPARE_OP_NOT_EQUAL = 5,
+    VK_COMPARE_OP_GREATER_OR_EQUAL = 6,
+    VK_COMPARE_OP_ALWAYS = 7,
+}
+
+internal enum VkBorderColor : int
+{
+    VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK = 0,
+    VK_BORDER_COLOR_INT_TRANSPARENT_BLACK = 1,
+    VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK = 2,
+    VK_BORDER_COLOR_INT_OPAQUE_BLACK = 3,
+    VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE = 4,
+    VK_BORDER_COLOR_INT_OPAQUE_WHITE = 5,
+}
+
+internal enum VkVertexInputRate : int
+{
+    VK_VERTEX_INPUT_RATE_VERTEX = 0,
+    VK_VERTEX_INPUT_RATE_INSTANCE = 1,
 }

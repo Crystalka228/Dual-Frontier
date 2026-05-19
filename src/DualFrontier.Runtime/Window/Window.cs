@@ -127,7 +127,76 @@ public sealed class Window : IWindow
                     InputQueue.Enqueue(new WindowResizeEvent(newWidth, newHeight));
                 }
                 return Win32Api.DefWindowProc(hWnd, msg, wParam, lParam);
-            // V0.C: WM_KILLFOCUS, WM_SETFOCUS, WM_KEYDOWN/UP, WM_MOUSE* dispatch.
+
+            // V0.C.1: keyboard input
+            case Win32Constants.WM_KEYDOWN:
+            case Win32Constants.WM_SYSKEYDOWN:
+            {
+                int vk = (int)wParam.ToInt64();
+                Key key = VirtualKeyMapper.Map(vk);
+                if (key != Key.Unknown)
+                {
+                    InputQueue.Enqueue(new KeyPressedEvent(key));
+                }
+                return IntPtr.Zero;
+            }
+            case Win32Constants.WM_KEYUP:
+            case Win32Constants.WM_SYSKEYUP:
+            {
+                int vk = (int)wParam.ToInt64();
+                Key key = VirtualKeyMapper.Map(vk);
+                if (key != Key.Unknown)
+                {
+                    InputQueue.Enqueue(new KeyReleasedEvent(key));
+                }
+                return IntPtr.Zero;
+            }
+
+            // V0.C.1: mouse input
+            case Win32Constants.WM_MOUSEMOVE:
+            {
+                long movePacked = lParam.ToInt64();
+                // LOWORD = cursor X (signed), HIWORD = cursor Y (signed); cast through short for sign.
+                int x = (short)(movePacked & 0xFFFF);
+                int y = (short)((movePacked >> 16) & 0xFFFF);
+                InputQueue.Enqueue(new MouseMovedEvent(x, y));
+                return IntPtr.Zero;
+            }
+            case Win32Constants.WM_LBUTTONDOWN:
+                InputQueue.Enqueue(new MouseButtonEvent(MouseButton.Left, Pressed: true));
+                return IntPtr.Zero;
+            case Win32Constants.WM_LBUTTONUP:
+                InputQueue.Enqueue(new MouseButtonEvent(MouseButton.Left, Pressed: false));
+                return IntPtr.Zero;
+            case Win32Constants.WM_RBUTTONDOWN:
+                InputQueue.Enqueue(new MouseButtonEvent(MouseButton.Right, Pressed: true));
+                return IntPtr.Zero;
+            case Win32Constants.WM_RBUTTONUP:
+                InputQueue.Enqueue(new MouseButtonEvent(MouseButton.Right, Pressed: false));
+                return IntPtr.Zero;
+            case Win32Constants.WM_MBUTTONDOWN:
+                InputQueue.Enqueue(new MouseButtonEvent(MouseButton.Middle, Pressed: true));
+                return IntPtr.Zero;
+            case Win32Constants.WM_MBUTTONUP:
+                InputQueue.Enqueue(new MouseButtonEvent(MouseButton.Middle, Pressed: false));
+                return IntPtr.Zero;
+            case Win32Constants.WM_MOUSEWHEEL:
+            {
+                // HIWORD of wParam = wheel delta, signed (Win32 docs); WHEEL_DELTA=120 per notch.
+                int rawDelta = (short)((wParam.ToInt64() >> 16) & 0xFFFF);
+                int normalizedDelta = rawDelta / Win32Constants.WHEEL_DELTA;
+                InputQueue.Enqueue(new MouseWheelEvent(normalizedDelta));
+                return IntPtr.Zero;
+            }
+
+            // V0.C.1: focus events
+            case Win32Constants.WM_SETFOCUS:
+                InputQueue.Enqueue(new WindowFocusEvent(Focused: true));
+                return IntPtr.Zero;
+            case Win32Constants.WM_KILLFOCUS:
+                InputQueue.Enqueue(new WindowFocusEvent(Focused: false));
+                return IntPtr.Zero;
+
             default:
                 return Win32Api.DefWindowProc(hWnd, msg, wParam, lParam);
         }

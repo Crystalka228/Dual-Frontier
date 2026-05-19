@@ -5,6 +5,7 @@
     <RootNamespace>DualFrontier.Runtime.SmokeTest</RootNamespace>
     <IsPackable>false</IsPackable>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />

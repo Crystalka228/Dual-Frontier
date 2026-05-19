@@ -21,4 +21,11 @@ public sealed record RuntimeOptions
 #else
         = false;
 #endif
+
+    /// <summary>
+    /// Root directory for asset loading via <see cref="Assets.AssetManager"/>. Resolved relative
+    /// к executable working directory. Defaults к "assets". V0.C.1+ uses this for PNG sprite
+    /// + shader (assets/shaders/*.spv) loading.
+    /// </summary>
+    public string AssetsDirectory { get; init; } = "assets";
 }
