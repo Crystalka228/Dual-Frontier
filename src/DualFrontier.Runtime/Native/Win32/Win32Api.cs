@@ -51,6 +51,9 @@ internal static partial class Win32Api
     [LibraryImport("user32.dll", EntryPoint = "DefWindowProcW")]
     internal static partial IntPtr DefWindowProc(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+    [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+    internal static partial IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
     [LibraryImport("user32.dll", EntryPoint = "PostQuitMessage")]
     internal static partial void PostQuitMessage(int nExitCode);
 

@@ -12,6 +12,7 @@ internal static class VkConstants
     internal const string VK_EXT_DEBUG_UTILS_EXTENSION_NAME = "VK_EXT_debug_utils";
     internal const string VK_KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
     internal const string VK_KHR_WIN32_SURFACE_EXTENSION_NAME = "VK_KHR_win32_surface";
+    internal const string VK_KHR_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_swapchain";
 
     // Sizes
     internal const int VK_MAX_PHYSICAL_DEVICE_NAME_SIZE = 256;
@@ -20,4 +21,8 @@ internal static class VkConstants
     // VkPhysicalDeviceLimits opaque size (Vulkan 1.3 spec on x64)
     internal const int VK_PHYSICAL_DEVICE_LIMITS_SIZE = 504;
     internal const int VK_PHYSICAL_DEVICE_SPARSE_PROPERTIES_SIZE = 20;
+
+    // VkPhysicalDeviceMemoryProperties max array sizes
+    internal const int VK_MAX_MEMORY_TYPES = 32;
+    internal const int VK_MAX_MEMORY_HEAPS = 16;
 }

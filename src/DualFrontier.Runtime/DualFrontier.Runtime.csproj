@@ -5,6 +5,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="DualFrontier.Runtime.Tests" />
   </ItemGroup>
 </Project>

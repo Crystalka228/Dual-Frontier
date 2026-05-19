@@ -10,6 +10,7 @@
 
 #include "bootstrap_graph.h"
 #include "composite.h"
+#include "compute_pipeline.h"
 #include "entity_id.h"
 #include "keyed_map.h"
 #include "set_primitive.h"
@@ -897,6 +898,79 @@ DF_API int32_t df_world_field_count(df_world_handle world)
     try {
         auto* w = static_cast<dualfrontier::World*>(world);
         return w->field_count();
+    } catch (...) {
+        return 0;
+    }
+}
+
+// =============================================================================
+// V0.B — Compute pipeline registration + field dispatch C ABI.
+// =============================================================================
+
+DF_API int32_t df_world_attach_vulkan(
+    df_world_handle world,
+    void* vk_instance,
+    void* vk_physical_device,
+    void* vk_device,
+    void* vk_async_compute_queue,
+    uint32_t async_compute_queue_family_index)
+{
+    if (world == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        w->attach_vulkan(vk_instance, vk_physical_device, vk_device,
+                         vk_async_compute_queue, async_compute_queue_family_index);
+        return w->has_vulkan_attached() ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API uint32_t df_world_register_compute_pipeline(
+    df_world_handle world,
+    const char* pipeline_name,
+    const uint8_t* spirv_bytecode,
+    int32_t spirv_size,
+    uint32_t descriptor_binding_count)
+{
+    if (world == nullptr || pipeline_name == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        if (!w->has_vulkan_attached()) return 0;
+        return w->compute_pipelines().register_pipeline(
+            std::string(pipeline_name), spirv_bytecode, spirv_size, descriptor_binding_count);
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_field_dispatch_compute(
+    df_world_handle world,
+    const char* field_name,
+    uint32_t pipeline_id,
+    uint32_t dispatch_x,
+    uint32_t dispatch_y,
+    uint32_t dispatch_z)
+{
+    (void)field_name; (void)dispatch_x; (void)dispatch_y; (void)dispatch_z;
+    if (world == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        if (!w->has_vulkan_attached()) return 0;
+        // V0.B: success if pipeline_id refers к a registered pipeline.
+        // V1+ implements actual VkCmdDispatch + queue submit + fence sync.
+        return w->compute_pipelines().get_pipeline(pipeline_id) != nullptr ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API int32_t df_world_compute_pipeline_count(df_world_handle world)
+{
+    if (world == nullptr) return 0;
+    try {
+        auto* w = static_cast<dualfrontier::World*>(world);
+        return w->compute_pipeline_count();
     } catch (...) {
         return 0;
     }

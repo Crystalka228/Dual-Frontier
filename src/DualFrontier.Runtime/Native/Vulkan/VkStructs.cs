@@ -120,3 +120,780 @@ internal unsafe struct VkDebugUtilsMessengerCallbackDataEXT
     internal uint objectCount;
     internal IntPtr pObjects;
 }
+
+// ===========================================================================
+// V0.B Commit 3 — Win32 surface foundation
+// ===========================================================================
+
+// VkWin32SurfaceCreateInfoKHR (VK_KHR_win32_surface extension)
+// Per Vulkan 1.3 spec on x64 MSVC ABI: 40 bytes total.
+// Layout (C#/CLR Sequential auto-pads IntPtr to 8-byte alignment):
+//   sType (4) + pad (4) + pNext (8) + flags (4) + pad (4) + hinstance (8) + hwnd (8) = 40
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkWin32SurfaceCreateInfoKHR
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal IntPtr hinstance;
+    internal IntPtr hwnd;
+}
+
+// ===========================================================================
+// V0.B Commit 6 — Memory allocator + buffer/image primitives
+// ===========================================================================
+
+// VkExtent2D — 2D extent (8 bytes, two uint32, 4-byte alignment).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkExtent2D
+{
+    internal uint width;
+    internal uint height;
+}
+
+// VkExtent3D — 3D extent (12 bytes, three uint32, 4-byte alignment).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkExtent3D
+{
+    internal uint width;
+    internal uint height;
+    internal uint depth;
+}
+
+// VkRect2D (16 bytes — offset + extent).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkRect2D
+{
+    internal int offsetX;
+    internal int offsetY;
+    internal uint width;
+    internal uint height;
+}
+
+// VkComponentMapping (16 bytes — 4 VkComponentSwizzle enums each 4 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkComponentMapping
+{
+    internal VkComponentSwizzle r;
+    internal VkComponentSwizzle g;
+    internal VkComponentSwizzle b;
+    internal VkComponentSwizzle a;
+}
+
+// VkImageSubresourceRange (20 bytes — aspectMask + 4 uint32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkImageSubresourceRange
+{
+    internal VkImageAspectFlags aspectMask;
+    internal uint baseMipLevel;
+    internal uint levelCount;
+    internal uint baseArrayLayer;
+    internal uint layerCount;
+}
+
+// VkMemoryType (8 bytes — two uint32, 4-byte alignment).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkMemoryType
+{
+    internal VkMemoryPropertyFlags propertyFlags;
+    internal uint heapIndex;
+}
+
+// VkMemoryHeap (16 bytes — VkDeviceSize size + uint32 flags + 4-byte trailing pad).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkMemoryHeap
+{
+    internal ulong size;            // VkDeviceSize (uint64)
+    internal VkMemoryHeapFlags flags;
+    // 4-byte trailing pad implicit (struct contains 8-byte field → 8-byte alignment).
+    internal uint _padTrailing;
+}
+
+// VkMemoryRequirements (24 bytes — two VkDeviceSize + memoryTypeBits + trailing pad).
+// Per Vulkan 1.3 spec on x64 MSVC ABI:
+//   size (8) + alignment (8) + memoryTypeBits (4) + trailing pad (4) = 24
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkMemoryRequirements
+{
+    internal ulong size;          // VkDeviceSize
+    internal ulong alignment;     // VkDeviceSize
+    internal uint memoryTypeBits;
+    internal uint _padTrailing;
+}
+
+// VkPhysicalDeviceMemoryProperties (520 bytes on x64).
+// Inline arrays via fixed byte buffers — accessed through helper methods. C struct layout:
+//   memoryTypeCount uint32 (4) + memoryTypes[32 × 8 = 256] (256) + memoryHeapCount uint32 (4)
+//   + memoryHeaps[16 × 16 = 256] (256) = 520. No pad before memoryHeaps because
+//   memoryHeapCount ends at offset 264 (already 8-aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPhysicalDeviceMemoryProperties
+{
+    internal uint memoryTypeCount;
+    internal fixed byte _memoryTypesData[VkConstants.VK_MAX_MEMORY_TYPES * 8];
+    internal uint memoryHeapCount;
+    internal fixed byte _memoryHeapsData[VkConstants.VK_MAX_MEMORY_HEAPS * 16];
+
+    internal VkMemoryType GetMemoryType(int index)
+    {
+        fixed (byte* p = _memoryTypesData)
+        {
+            return ((VkMemoryType*)p)[index];
+        }
+    }
+
+    internal VkMemoryHeap GetMemoryHeap(int index)
+    {
+        fixed (byte* p = _memoryHeapsData)
+        {
+            return ((VkMemoryHeap*)p)[index];
+        }
+    }
+}
+
+// VkMemoryAllocateInfo (32 bytes — sType+pad+pNext+allocationSize+memoryTypeIndex+trailing pad).
+// Brief originally stated 24 bytes — corrected к 32 per Vulkan 1.3 spec on x64.
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkMemoryAllocateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal ulong allocationSize;  // VkDeviceSize
+    internal uint memoryTypeIndex;
+    internal uint _padTrailing;
+}
+
+// VkBufferCreateInfo (56 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkBufferCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeSize;     // VkDeviceSize requires 8-byte alignment
+    internal ulong size;
+    internal VkBufferUsageFlags usage;
+    internal VkSharingMode sharingMode;
+    internal uint queueFamilyIndexCount;
+    internal uint _padBeforePtr;
+    internal uint* pQueueFamilyIndices;
+}
+
+// VkImageCreateInfo (88 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkImageCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkImageType imageType;
+    internal VkFormat format;
+    internal VkExtent3D extent;        // 12 bytes inline
+    internal uint mipLevels;
+    internal uint arrayLayers;
+    internal VkSampleCountFlagBits samples;
+    internal VkImageTiling tiling;
+    internal VkImageUsageFlags usage;
+    internal VkSharingMode sharingMode;
+    internal uint queueFamilyIndexCount;
+    internal uint _padBeforePtr;
+    internal uint* pQueueFamilyIndices;
+    internal VkImageLayout initialLayout;
+    internal uint _padTrailing;
+}
+
+// VkImageViewCreateInfo (80 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkImageViewCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeImage;
+    internal IntPtr image;
+    internal VkImageViewType viewType;
+    internal VkFormat format;
+    internal VkComponentMapping components;     // 16 bytes
+    internal VkImageSubresourceRange subresourceRange;  // 20 bytes
+    internal uint _padTrailing;
+}
+
+// ===========================================================================
+// V0.B Commit 7 — Surface + swapchain
+// ===========================================================================
+
+// VkSurfaceCapabilitiesKHR (52 bytes — all uint32 + VkExtent2D pairs, 4-byte aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSurfaceCapabilitiesKHR
+{
+    internal uint minImageCount;
+    internal uint maxImageCount;
+    internal VkExtent2D currentExtent;
+    internal VkExtent2D minImageExtent;
+    internal VkExtent2D maxImageExtent;
+    internal uint maxImageArrayLayers;
+    internal VkSurfaceTransformFlagsKHR supportedTransforms;
+    internal VkSurfaceTransformFlagsKHR currentTransform;
+    internal VkCompositeAlphaFlagsKHR supportedCompositeAlpha;
+    internal VkImageUsageFlags supportedUsageFlags;
+}
+
+// VkSurfaceFormatKHR (8 bytes — two int enums).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSurfaceFormatKHR
+{
+    internal VkFormat format;
+    internal VkColorSpaceKHR colorSpace;
+}
+
+// VkSwapchainCreateInfoKHR (104 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkSwapchainCreateInfoKHR
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeSurface;
+    internal IntPtr surface;
+    internal uint minImageCount;
+    internal VkFormat imageFormat;
+    internal VkColorSpaceKHR imageColorSpace;
+    internal VkExtent2D imageExtent;          // 8 bytes
+    internal uint imageArrayLayers;
+    internal VkImageUsageFlags imageUsage;
+    internal VkSharingMode imageSharingMode;
+    internal uint queueFamilyIndexCount;
+    internal uint _padBeforePtr;
+    internal uint* pQueueFamilyIndices;
+    internal VkSurfaceTransformFlagsKHR preTransform;
+    internal VkCompositeAlphaFlagsKHR compositeAlpha;
+    internal VkPresentModeKHR presentMode;
+    internal uint clipped;       // VkBool32
+    internal IntPtr oldSwapchain;
+}
+
+// VkPresentInfoKHR (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPresentInfoKHR
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint waitSemaphoreCount;
+    internal uint _padBeforeWaitSem;
+    internal IntPtr* pWaitSemaphores;
+    internal uint swapchainCount;
+    internal uint _padBeforeSwapchains;
+    internal IntPtr* pSwapchains;
+    internal uint* pImageIndices;
+    internal VkResult* pResults;
+}
+
+// ===========================================================================
+// V0.B Commit 8 — Render pass + framebuffer
+// ===========================================================================
+
+// VkAttachmentDescription (36 bytes — 9 × uint32-sized fields, 4-byte aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkAttachmentDescription
+{
+    internal uint flags;
+    internal VkFormat format;
+    internal VkSampleCountFlagBits samples;
+    internal VkAttachmentLoadOp loadOp;
+    internal VkAttachmentStoreOp storeOp;
+    internal VkAttachmentLoadOp stencilLoadOp;
+    internal VkAttachmentStoreOp stencilStoreOp;
+    internal VkImageLayout initialLayout;
+    internal VkImageLayout finalLayout;
+}
+
+// VkAttachmentReference (8 bytes — two uint32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkAttachmentReference
+{
+    internal uint attachment;
+    internal VkImageLayout layout;
+}
+
+// VkSubpassDescription (72 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkSubpassDescription
+{
+    internal uint flags;
+    internal VkPipelineBindPoint pipelineBindPoint;
+    internal uint inputAttachmentCount;
+    internal uint _padBeforeInput;
+    internal VkAttachmentReference* pInputAttachments;
+    internal uint colorAttachmentCount;
+    internal uint _padBeforeColor;
+    internal VkAttachmentReference* pColorAttachments;
+    internal VkAttachmentReference* pResolveAttachments;
+    internal VkAttachmentReference* pDepthStencilAttachment;
+    internal uint preserveAttachmentCount;
+    internal uint _padBeforePreserve;
+    internal uint* pPreserveAttachments;
+}
+
+// VkSubpassDependency (28 bytes — 7 × uint32, 4-byte aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSubpassDependency
+{
+    internal uint srcSubpass;
+    internal uint dstSubpass;
+    internal VkPipelineStageFlags srcStageMask;
+    internal VkPipelineStageFlags dstStageMask;
+    internal VkAccessFlags srcAccessMask;
+    internal VkAccessFlags dstAccessMask;
+    internal VkDependencyFlags dependencyFlags;
+}
+
+// VkRenderPassCreateInfo (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkRenderPassCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint attachmentCount;
+    internal VkAttachmentDescription* pAttachments;
+    internal uint subpassCount;
+    internal uint _padBeforeSubpasses;
+    internal VkSubpassDescription* pSubpasses;
+    internal uint dependencyCount;
+    internal uint _padBeforeDeps;
+    internal VkSubpassDependency* pDependencies;
+}
+
+// VkFramebufferCreateInfo (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkFramebufferCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeRenderPass;
+    internal IntPtr renderPass;
+    internal uint attachmentCount;
+    internal uint _padBeforeAttachments;
+    internal IntPtr* pAttachments;     // VkImageView*
+    internal uint width;
+    internal uint height;
+    internal uint layers;
+    internal uint _padTrailing;
+}
+
+// ===========================================================================
+// V0.B Commit 9 — Command pool + buffer + fence + semaphore
+// ===========================================================================
+
+// VkCommandPoolCreateInfo (24 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkCommandPoolCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkCommandPoolCreateFlags flags;
+    internal uint queueFamilyIndex;
+}
+
+// VkCommandBufferAllocateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkCommandBufferAllocateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr commandPool;
+    internal VkCommandBufferLevel level;
+    internal uint commandBufferCount;
+}
+
+// VkCommandBufferBeginInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkCommandBufferBeginInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkCommandBufferUsageFlags flags;
+    internal uint _padBeforePtr;
+    internal IntPtr pInheritanceInfo;
+}
+
+// VkClearColorValue (16 bytes — union of float[4] / int[4] / uint[4]; use float[4] inline).
+[StructLayout(LayoutKind.Explicit, Size = 16)]
+internal unsafe struct VkClearColorValue
+{
+    [FieldOffset(0)] internal fixed float float32[4];
+    [FieldOffset(0)] internal fixed int int32[4];
+    [FieldOffset(0)] internal fixed uint uint32[4];
+}
+
+// VkClearValue (16 bytes — union of VkClearColorValue + VkClearDepthStencilValue;
+// V0.B color only).
+[StructLayout(LayoutKind.Explicit, Size = 16)]
+internal struct VkClearValue
+{
+    [FieldOffset(0)] internal VkClearColorValue color;
+}
+
+// VkRenderPassBeginInfo (64 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkRenderPassBeginInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr renderPass;
+    internal IntPtr framebuffer;
+    internal VkRect2D renderArea;
+    internal uint clearValueCount;
+    internal uint _padBeforePtr;
+    internal VkClearValue* pClearValues;
+}
+
+// VkSubmitInfo (72 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkSubmitInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint waitSemaphoreCount;
+    internal uint _padBeforeWaitSem;
+    internal IntPtr* pWaitSemaphores;
+    internal VkPipelineStageFlags* pWaitDstStageMask;
+    internal uint commandBufferCount;
+    internal uint _padBeforeCmd;
+    internal IntPtr* pCommandBuffers;
+    internal uint signalSemaphoreCount;
+    internal uint _padBeforeSignal;
+    internal IntPtr* pSignalSemaphores;
+}
+
+// VkFenceCreateInfo (24 bytes — sType+pad+pNext+flags+trailing pad).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkFenceCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkFenceCreateFlags flags;
+    internal uint _padTrailing;
+}
+
+// VkSemaphoreCreateInfo (24 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSemaphoreCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padTrailing;
+}
+
+// VkViewport (24 bytes — 6 floats).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkViewport
+{
+    internal float x;
+    internal float y;
+    internal float width;
+    internal float height;
+    internal float minDepth;
+    internal float maxDepth;
+}
+
+// ===========================================================================
+// V0.B Commit 10 — Shader module + pipeline shader stage
+// ===========================================================================
+
+// VkShaderModuleCreateInfo (32 bytes per Vulkan 1.3 spec on x64).
+// sType (4) + pad (4) + pNext (8) + flags (4) + pad (4) + codeSize (8 — nuint) + pCode (8) = 40
+// Wait — codeSize is size_t (nuint = 8 on x64). 4+4+8+4+4+8+8 = 40. Brief said 32, my calc says 40.
+// Cross-check via Marshal.SizeOf test.
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkShaderModuleCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeCodeSize;
+    internal nuint codeSize;       // size_t = 8 bytes on x64
+    internal uint* pCode;
+}
+
+// VkPipelineShaderStageCreateInfo (48 bytes per Vulkan 1.3 spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineShaderStageCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkShaderStageFlags stage;
+    internal IntPtr module;
+    internal byte* pName;
+    internal IntPtr pSpecializationInfo;
+}
+
+// ===========================================================================
+// V0.B Commit 11 — Graphics pipeline
+// ===========================================================================
+
+// VkPipelineVertexInputStateCreateInfo (48 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineVertexInputStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint vertexBindingDescriptionCount;
+    internal IntPtr pVertexBindingDescriptions;
+    internal uint vertexAttributeDescriptionCount;
+    internal uint _padBeforeAttrPtr;
+    internal IntPtr pVertexAttributeDescriptions;
+}
+
+// VkPipelineInputAssemblyStateCreateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkPipelineInputAssemblyStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkPrimitiveTopology topology;
+    internal uint primitiveRestartEnable;     // VkBool32
+    internal uint _padTrailing;
+}
+
+// VkPipelineViewportStateCreateInfo (48 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineViewportStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint viewportCount;
+    internal VkViewport* pViewports;
+    internal uint scissorCount;
+    internal uint _padBeforeScissorPtr;
+    internal VkRect2D* pScissors;
+}
+
+// VkPipelineRasterizationStateCreateInfo (64 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkPipelineRasterizationStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint depthClampEnable;            // VkBool32
+    internal uint rasterizerDiscardEnable;     // VkBool32
+    internal VkPolygonMode polygonMode;
+    internal VkCullModeFlags cullMode;
+    internal VkFrontFace frontFace;
+    internal uint depthBiasEnable;             // VkBool32
+    internal float depthBiasConstantFactor;
+    internal float depthBiasClamp;
+    internal float depthBiasSlopeFactor;
+    internal float lineWidth;
+}
+
+// VkPipelineMultisampleStateCreateInfo (48 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineMultisampleStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkSampleCountFlagBits rasterizationSamples;
+    internal uint sampleShadingEnable;     // VkBool32
+    internal float minSampleShading;
+    internal uint* pSampleMask;
+    internal uint alphaToCoverageEnable;   // VkBool32
+    internal uint alphaToOneEnable;        // VkBool32
+}
+
+// VkPipelineColorBlendAttachmentState (32 bytes — 8 × uint32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkPipelineColorBlendAttachmentState
+{
+    internal uint blendEnable;                     // VkBool32
+    internal VkBlendFactor srcColorBlendFactor;
+    internal VkBlendFactor dstColorBlendFactor;
+    internal VkBlendOp colorBlendOp;
+    internal VkBlendFactor srcAlphaBlendFactor;
+    internal VkBlendFactor dstAlphaBlendFactor;
+    internal VkBlendOp alphaBlendOp;
+    internal VkColorComponentFlags colorWriteMask;
+}
+
+// VkPipelineColorBlendStateCreateInfo (56 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineColorBlendStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint logicOpEnable;           // VkBool32
+    internal VkLogicOp logicOp;
+    internal uint attachmentCount;
+    internal VkPipelineColorBlendAttachmentState* pAttachments;
+    internal fixed float blendConstants[4];
+}
+
+// VkPipelineDynamicStateCreateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineDynamicStateCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint dynamicStateCount;
+    internal VkDynamicState* pDynamicStates;
+}
+
+// VkPipelineLayoutCreateInfo (48 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkPipelineLayoutCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint setLayoutCount;
+    internal IntPtr* pSetLayouts;            // VkDescriptorSetLayout*
+    internal uint pushConstantRangeCount;
+    internal uint _padBeforePushPtr;
+    internal IntPtr pPushConstantRanges;
+}
+
+// VkGraphicsPipelineCreateInfo (144 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkGraphicsPipelineCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint stageCount;
+    internal VkPipelineShaderStageCreateInfo* pStages;
+    internal VkPipelineVertexInputStateCreateInfo* pVertexInputState;
+    internal VkPipelineInputAssemblyStateCreateInfo* pInputAssemblyState;
+    internal IntPtr pTessellationState;
+    internal VkPipelineViewportStateCreateInfo* pViewportState;
+    internal VkPipelineRasterizationStateCreateInfo* pRasterizationState;
+    internal VkPipelineMultisampleStateCreateInfo* pMultisampleState;
+    internal IntPtr pDepthStencilState;
+    internal VkPipelineColorBlendStateCreateInfo* pColorBlendState;
+    internal VkPipelineDynamicStateCreateInfo* pDynamicState;
+    internal IntPtr layout;
+    internal IntPtr renderPass;
+    internal uint subpass;
+    internal uint _padBeforeBase;
+    internal IntPtr basePipelineHandle;
+    internal int basePipelineIndex;
+    internal uint _padTrailing;
+}
+
+// ===========================================================================
+// V0.B Commit 12 — Compute pipeline + descriptors
+// ===========================================================================
+
+// VkComputePipelineCreateInfo (96 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkComputePipelineCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeStage;
+    internal VkPipelineShaderStageCreateInfo stage;   // 48 nested
+    internal IntPtr layout;
+    internal IntPtr basePipelineHandle;
+    internal int basePipelineIndex;
+    internal uint _padTrailing;
+}
+
+// VkDescriptorSetLayoutBinding (24 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorSetLayoutBinding
+{
+    internal uint binding;
+    internal VkDescriptorType descriptorType;
+    internal uint descriptorCount;
+    internal VkShaderStageFlags stageFlags;
+    internal IntPtr pImmutableSamplers;
+}
+
+// VkDescriptorSetLayoutCreateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkDescriptorSetLayoutCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint bindingCount;
+    internal VkDescriptorSetLayoutBinding* pBindings;
+}
+
+// VkDescriptorPoolSize (8 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorPoolSize
+{
+    internal VkDescriptorType type;
+    internal uint descriptorCount;
+}
+
+// VkDescriptorPoolCreateInfo (40 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkDescriptorPoolCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkDescriptorPoolCreateFlags flags;
+    internal uint maxSets;
+    internal uint poolSizeCount;
+    internal uint _padBeforePool;
+    internal VkDescriptorPoolSize* pPoolSizes;
+}
+
+// VkDescriptorSetAllocateInfo (40 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkDescriptorSetAllocateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr descriptorPool;
+    internal uint descriptorSetCount;
+    internal uint _padBeforeLayouts;
+    internal IntPtr* pSetLayouts;
+}
+
+// VkDescriptorBufferInfo (24 bytes — 3 × 8-byte fields).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorBufferInfo
+{
+    internal IntPtr buffer;
+    internal ulong offset;
+    internal ulong range;
+}
+
+// VkDescriptorImageInfo (24 bytes — sampler (8) + view (8) + layout (4) + trailing pad (4)).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorImageInfo
+{
+    internal IntPtr sampler;
+    internal IntPtr imageView;
+    internal VkImageLayout imageLayout;
+    internal uint _padTrailing;
+}
+
+// VkWriteDescriptorSet (64 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkWriteDescriptorSet
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr dstSet;
+    internal uint dstBinding;
+    internal uint dstArrayElement;
+    internal uint descriptorCount;
+    internal VkDescriptorType descriptorType;
+    internal VkDescriptorImageInfo* pImageInfo;
+    internal VkDescriptorBufferInfo* pBufferInfo;
+    internal IntPtr pTexelBufferView;
+}

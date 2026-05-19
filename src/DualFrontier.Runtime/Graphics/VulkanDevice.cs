@@ -4,10 +4,12 @@ using DualFrontier.Runtime.Native.Vulkan;
 namespace DualFrontier.Runtime.Graphics;
 
 /// <summary>
-/// Vulkan physical + logical device lifecycle. V0.A scope: enumerates physical devices,
-/// selects one с graphics queue family (prefer discrete GPU), creates logical device с graphics
-/// queue. Async compute queue family selection deferred к V0.B (per S-LOCK-3 + К10.3 brief
-/// Item 43).
+/// Vulkan physical + logical device lifecycle. V0.A scope: enumerated physical devices, selected
+/// one с graphics queue family (prefer discrete GPU), created logical device с graphics queue.
+/// V0.B adds: async compute queue family selection (К-L19 Item 43 — prefer dedicated compute-only
+/// queue family, fallback к compute-capable graphics queue family); VK_KHR_swapchain device
+/// extension activation; logical device requests both graphics + async compute queues when
+/// distinct families exist.
 /// </summary>
 public sealed class VulkanDevice : IDisposable
 {
@@ -15,13 +17,30 @@ public sealed class VulkanDevice : IDisposable
     private IntPtr _physicalDevice;
     private IntPtr _device;
     private uint _graphicsQueueFamilyIndex;
+    private uint? _asyncComputeQueueFamilyIndex;
     private IntPtr _graphicsQueue;
+    private IntPtr _asyncComputeQueue;
     private bool _disposed;
 
     public IntPtr Handle => _device;
     public IntPtr PhysicalDevice => _physicalDevice;
     public IntPtr GraphicsQueue => _graphicsQueue;
     public uint GraphicsQueueFamilyIndex => _graphicsQueueFamilyIndex;
+
+    /// <summary>
+    /// Async compute queue handle. Populated when the selected physical device exposes a
+    /// compute-capable queue family (К-L19 mandate enforced by HardwareCapabilityCheck).
+    /// May equal <see cref="GraphicsQueue"/> if no dedicated compute family exists и the graphics
+    /// family supports compute — in that case the device only has one queue created (sharing).
+    /// </summary>
+    public IntPtr AsyncComputeQueue => _asyncComputeQueue;
+
+    /// <summary>
+    /// Async compute queue family index. <see langword="null"/> if no compute-capable queue family
+    /// found on selected device (HardwareCapabilityCheck throws in that case per К-L19).
+    /// </summary>
+    public uint? AsyncComputeQueueFamilyIndex => _asyncComputeQueueFamilyIndex;
+
     public PhysicalDeviceInfo SelectedDevice { get; private set; } = null!;
     public IReadOnlyList<PhysicalDeviceInfo> AvailableDevices { get; private set; } = Array.Empty<PhysicalDeviceInfo>();
 
@@ -149,6 +168,37 @@ public sealed class VulkanDevice : IDisposable
                 break;
             }
         }
+
+        // V0.B: async compute queue family selection (К-L19 Item 43). May resolve null if
+        // device exposes graphics queue family that lacks compute bit (unusual on К-L19
+        // hardware tier; HardwareCapabilityCheck throws fail-fast in that case).
+        _asyncComputeQueueFamilyIndex = FindAsyncComputeQueueFamilyIndex(selected.QueueFamilies);
+    }
+
+    /// <summary>
+    /// К-L19 Item 43 selection algorithm. Prefer dedicated compute-only queue family
+    /// (parallel compute alongside graphics — К-L16 pipeline depth dispatches); fallback к
+    /// any compute-capable queue family (incl. graphics-bit queue).
+    /// </summary>
+    internal static uint? FindAsyncComputeQueueFamilyIndex(IReadOnlyList<QueueFamilyInfo> queueFamilies)
+    {
+        // Prefer dedicated compute-only queue family.
+        foreach (QueueFamilyInfo qf in queueFamilies)
+        {
+            if (qf.SupportsCompute && !qf.SupportsGraphics)
+            {
+                return qf.Index;
+            }
+        }
+        // Fallback: compute-capable graphics queue family.
+        foreach (QueueFamilyInfo qf in queueFamilies)
+        {
+            if (qf.SupportsCompute)
+            {
+                return qf.Index;
+            }
+        }
+        return null;
     }
 
     private static bool HasGraphicsQueueFamily(PhysicalDeviceInfo device)
@@ -166,7 +216,16 @@ public sealed class VulkanDevice : IDisposable
     private unsafe void CreateLogicalDevice()
     {
         float queuePriority = 1.0f;
-        var queueCreateInfo = new VkDeviceQueueCreateInfo
+
+        // Request graphics queue always. If async compute family is distinct, request additional queue.
+        // Single-family compute (graphics QF supports compute too) gets queue handle from the same
+        // graphics queue create info — `_asyncComputeQueue` aliases `_graphicsQueue` in that case.
+        bool distinctAsyncCompute =
+            _asyncComputeQueueFamilyIndex.HasValue
+            && _asyncComputeQueueFamilyIndex.Value != _graphicsQueueFamilyIndex;
+
+        Span<VkDeviceQueueCreateInfo> queueCreateInfos = stackalloc VkDeviceQueueCreateInfo[distinctAsyncCompute ? 2 : 1];
+        queueCreateInfos[0] = new VkDeviceQueueCreateInfo
         {
             sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
             pNext = IntPtr.Zero,
@@ -175,28 +234,71 @@ public sealed class VulkanDevice : IDisposable
             queueCount = 1,
             pQueuePriorities = &queuePriority,
         };
-
-        var createInfo = new VkDeviceCreateInfo
+        if (distinctAsyncCompute)
         {
-            sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-            pNext = IntPtr.Zero,
-            flags = 0,
-            queueCreateInfoCount = 1,
-            pQueueCreateInfos = &queueCreateInfo,
-            enabledLayerCount = 0,
-            ppEnabledLayerNames = null,
-            enabledExtensionCount = 0,
-            ppEnabledExtensionNames = null,
-            pEnabledFeatures = IntPtr.Zero,
-        };
-
-        VkResult result = VkApi.vkCreateDevice(_physicalDevice, in createInfo, IntPtr.Zero, out _device);
-        if (result != VkResult.VK_SUCCESS)
-        {
-            throw new InvalidOperationException($"vkCreateDevice failed: {result}");
+            queueCreateInfos[1] = new VkDeviceQueueCreateInfo
+            {
+                sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+                pNext = IntPtr.Zero,
+                flags = 0,
+                queueFamilyIndex = _asyncComputeQueueFamilyIndex!.Value,
+                queueCount = 1,
+                pQueuePriorities = &queuePriority,
+            };
         }
 
-        VkApi.vkGetDeviceQueue(_device, _graphicsQueueFamilyIndex, 0, out _graphicsQueue);
+        // Device extensions: VK_KHR_swapchain required для V0.B swapchain (Commit 7).
+        IntPtr swapchainNamePtr = Marshal.StringToCoTaskMemUTF8(VkConstants.VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+        var extPtrs = new[] { swapchainNamePtr };
+
+        try
+        {
+            fixed (VkDeviceQueueCreateInfo* queuesPtr = queueCreateInfos)
+            fixed (IntPtr* extPtrsPinned = extPtrs)
+            {
+                var createInfo = new VkDeviceCreateInfo
+                {
+                    sType = VkStructureType.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+                    pNext = IntPtr.Zero,
+                    flags = 0,
+                    queueCreateInfoCount = (uint)queueCreateInfos.Length,
+                    pQueueCreateInfos = queuesPtr,
+                    enabledLayerCount = 0,
+                    ppEnabledLayerNames = null,
+                    enabledExtensionCount = 1,
+                    ppEnabledExtensionNames = (byte**)extPtrsPinned,
+                    pEnabledFeatures = IntPtr.Zero,
+                };
+
+                VkResult result = VkApi.vkCreateDevice(_physicalDevice, in createInfo, IntPtr.Zero, out _device);
+                if (result != VkResult.VK_SUCCESS)
+                {
+                    throw new InvalidOperationException($"vkCreateDevice failed: {result}");
+                }
+            }
+
+            VkApi.vkGetDeviceQueue(_device, _graphicsQueueFamilyIndex, 0, out _graphicsQueue);
+
+            if (_asyncComputeQueueFamilyIndex.HasValue)
+            {
+                // For distinct family, this fetches the second queue; for shared family, it
+                // aliases the graphics queue handle (Vulkan returns the same VkQueue).
+                VkApi.vkGetDeviceQueue(_device, _asyncComputeQueueFamilyIndex.Value, 0, out _asyncComputeQueue);
+            }
+        }
+        finally
+        {
+            Marshal.FreeCoTaskMem(swapchainNamePtr);
+        }
+    }
+
+    /// <summary>Blocks until the device is idle. Required before swapchain recreation / Dispose.</summary>
+    public void WaitIdle()
+    {
+        if (_device != IntPtr.Zero)
+        {
+            VkApi.vkDeviceWaitIdle(_device);
+        }
     }
 
     public void Dispose()

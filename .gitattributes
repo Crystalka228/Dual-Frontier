@@ -1,2 +1,6 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# Binary files (V0.B additions per S-LOCK-5)
+tools/glslangValidator.exe binary
+assets/shaders/*.spv binary

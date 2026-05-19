@@ -1,11 +1,13 @@
 using System.Runtime.InteropServices;
+using DualFrontier.Runtime.Input;
 using DualFrontier.Runtime.Native.Win32;
 
 namespace DualFrontier.Runtime.Window;
 
 /// <summary>
 /// Win32 window implementation. Lifecycle owns: class registration, HWND, WindowProc delegate
-/// pinning, message pump. V0.A scope: lifecycle + close handling. V0.C extends с input event
+/// pinning, message pump. V0.A scope: lifecycle + close handling. V0.B adds WM_SIZE handler
+/// emitting WindowResizeEvent for swapchain recreation. V0.C extends с input event
 /// dispatch from WM_KEYDOWN/WM_MOUSEMOVE/etc.
 /// </summary>
 public sealed class Window : IWindow
@@ -17,10 +19,12 @@ public sealed class Window : IWindow
     private bool _isOpen;
     private GCHandle _wndProcHandle;
     private WindowProc? _wndProc;
+    private int _currentWidth;
+    private int _currentHeight;
 
     public IntPtr Handle => _hwnd;
-    public int Width => _options.Width;
-    public int Height => _options.Height;
+    public int Width => _currentWidth;
+    public int Height => _currentHeight;
     public bool IsOpen => _isOpen;
 
     internal InputEventQueue InputQueue { get; }
@@ -31,6 +35,8 @@ public sealed class Window : IWindow
         ArgumentNullException.ThrowIfNull(inputQueue);
 
         _options = options;
+        _currentWidth = options.Width;
+        _currentHeight = options.Height;
         InputQueue = inputQueue;
         InitializeWin32();
     }
@@ -107,7 +113,21 @@ public sealed class Window : IWindow
                 Win32Api.PostQuitMessage(0);
                 _isOpen = false;
                 return IntPtr.Zero;
-            // V0.C: WM_SIZE, WM_KILLFOCUS, WM_SETFOCUS, WM_KEYDOWN/UP, WM_MOUSE* dispatch.
+            case Win32Constants.WM_SIZE:
+                // LOWORD = new client width, HIWORD = new client height (Win32 docs).
+                long packed = lParam.ToInt64();
+                int newWidth = (int)(packed & 0xFFFF);
+                int newHeight = (int)((packed >> 16) & 0xFFFF);
+                // Skip 0×0 (WM_SIZE during minimize) + skip unchanged dimensions.
+                if (newWidth > 0 && newHeight > 0
+                    && (newWidth != _currentWidth || newHeight != _currentHeight))
+                {
+                    _currentWidth = newWidth;
+                    _currentHeight = newHeight;
+                    InputQueue.Enqueue(new WindowResizeEvent(newWidth, newHeight));
+                }
+                return Win32Api.DefWindowProc(hWnd, msg, wParam, lParam);
+            // V0.C: WM_KILLFOCUS, WM_SETFOCUS, WM_KEYDOWN/UP, WM_MOUSE* dispatch.
             default:
                 return Win32Api.DefWindowProc(hWnd, msg, wParam, lParam);
         }

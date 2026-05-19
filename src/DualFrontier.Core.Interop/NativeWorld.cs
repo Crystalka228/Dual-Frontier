@@ -389,6 +389,91 @@ public sealed class NativeWorld : IDisposable
         return new WriteBatch<T>(this, typeId, batchHandle);
     }
 
+    /// <summary>
+    /// V0.B compute pipeline plumbing — attaches Vulkan instance/device handles
+    /// to the native world. After attach, compute pipelines can be registered и
+    /// dispatched via <see cref="RegisterComputePipeline"/> + <see cref="DispatchFieldCompute"/>.
+    /// </summary>
+    public bool AttachVulkan(
+        IntPtr vkInstance,
+        IntPtr vkPhysicalDevice,
+        IntPtr vkDevice,
+        IntPtr vkAsyncComputeQueue,
+        uint asyncComputeQueueFamilyIndex)
+    {
+        if (_handle == IntPtr.Zero)
+        {
+            throw new ObjectDisposedException(nameof(NativeWorld));
+        }
+        return NativeMethods.df_world_attach_vulkan(
+            _handle, vkInstance, vkPhysicalDevice, vkDevice,
+            vkAsyncComputeQueue, asyncComputeQueueFamilyIndex) == 1;
+    }
+
+    /// <summary>
+    /// V0.B compute pipeline registration. Returns non-zero pipeline_id on success,
+    /// 0 on failure (Vulkan не attached, duplicate name, empty/misaligned SPIR-V).
+    /// </summary>
+    public unsafe uint RegisterComputePipeline(
+        string pipelineName,
+        ReadOnlySpan<byte> spirvBytecode,
+        uint descriptorBindingCount)
+    {
+        if (_handle == IntPtr.Zero)
+        {
+            throw new ObjectDisposedException(nameof(NativeWorld));
+        }
+        ArgumentNullException.ThrowIfNull(pipelineName);
+
+        Span<byte> nameUtf8 = stackalloc byte[System.Text.Encoding.UTF8.GetByteCount(pipelineName) + 1];
+        int written = System.Text.Encoding.UTF8.GetBytes(pipelineName, nameUtf8);
+        nameUtf8[written] = 0;
+
+        fixed (byte* namePtr = nameUtf8)
+        fixed (byte* codePtr = spirvBytecode)
+        {
+            return NativeMethods.df_world_register_compute_pipeline(
+                _handle, namePtr, codePtr, spirvBytecode.Length, descriptorBindingCount);
+        }
+    }
+
+    /// <summary>
+    /// V0.B field dispatch — invokes registered compute pipeline against named K9 field.
+    /// V0.B no-op: succeeds for registered pipeline_id; V1+ implements real dispatch.
+    /// </summary>
+    public unsafe bool DispatchFieldCompute(
+        string fieldName,
+        uint pipelineId,
+        uint dispatchX,
+        uint dispatchY,
+        uint dispatchZ)
+    {
+        if (_handle == IntPtr.Zero)
+        {
+            throw new ObjectDisposedException(nameof(NativeWorld));
+        }
+        ArgumentNullException.ThrowIfNull(fieldName);
+
+        Span<byte> nameUtf8 = stackalloc byte[System.Text.Encoding.UTF8.GetByteCount(fieldName) + 1];
+        int written = System.Text.Encoding.UTF8.GetBytes(fieldName, nameUtf8);
+        nameUtf8[written] = 0;
+
+        fixed (byte* namePtr = nameUtf8)
+        {
+            return NativeMethods.df_world_field_dispatch_compute(
+                _handle, namePtr, pipelineId, dispatchX, dispatchY, dispatchZ) == 1;
+        }
+    }
+
+    public int ComputePipelineCount()
+    {
+        if (_handle == IntPtr.Zero)
+        {
+            throw new ObjectDisposedException(nameof(NativeWorld));
+        }
+        return NativeMethods.df_world_compute_pipeline_count(_handle);
+    }
+
     public void Dispose()
     {
         if (_handle != IntPtr.Zero)

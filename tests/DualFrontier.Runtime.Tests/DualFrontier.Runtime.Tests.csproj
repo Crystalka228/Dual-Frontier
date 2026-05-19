@@ -15,4 +15,17 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
   </ItemGroup>
+
+  <!--
+    Native DLL must ride along into test output for FieldStorageBindingTests
+    (V0.B Commit 15) which exercise the C ABI through NativeWorld P/Invoke.
+    Mirrors the DualFrontier.Core.Interop.Tests pattern.
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+  </ItemGroup>
 </Project>
