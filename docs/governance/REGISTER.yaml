@@ -39,16 +39,16 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.1"
+    version: "2.2"
     last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K10_2-CLOSURE"
+    last_modified_commit: "PENDING-COMMIT-V0_B-K_L19"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-18"
-    last_review_event: "K10.2 closure 2026-05-18 — K-L15 «Native bus authority + three-tier event dispatch» AUTHORED + Part 2 K10 row updated с K10.2 closure annotation"
+    last_review_event: "V0.B closure 2026-05-18 — K-L19 «Hardware tier commitment» LOCKED с full implementation backing (Vulkan 1.3 + async compute queue family mandate; HardwareCapabilityCheck.Verify fail-fast at Runtime.Create); AMD RX 7600S verified К-L19 hardware baseline on test machine; K-L16/L17/L18 numbering reserved для К10.3 restart per cross-stream dependency resolution"
     next_review_due: "2027-05-18"
     reviewer: Crystalka
-    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15]
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L19]
     risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
 
@@ -4275,6 +4275,53 @@ requirements:
     verification_status: VERIFIED
     verification_date: "2026-05-18"
     verification_milestone: "K10.2 closure (architecturally established; sovereign authority switch deferred к K10.4 closure / А'.8 per managed-facade-preserved strategy — К10.1 precedent applied)"
+
+  - id: REQ-K-L19
+    title: "Hardware tier commitment (Vulkan 1.3 + async compute queue family mandate)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L19 (V0.B LOCKED 2026-05-18 — implementation backing operational at landing)"
+    requirement_text: |
+      Dual Frontier requires Vulkan 1.3 hardware с async compute queue family support.
+      Target hardware tier: NVIDIA Turing+ (GeForce GTX 1660 / RTX 20-series и newer),
+      AMD RDNA 1+ (Radeon RX 5500 и newer), Intel Arc Alchemist+ (Arc A380 и newer).
+      Async compute queue family used для compute-side pipeline depth dispatches
+      (К-L16 reserved для К10.3 elaboration); graphics queue for display rendering;
+      copy/transfer queue for asset transfers. Kernel mandates queue family availability
+      at startup; failure to detect async compute queue family is fail-fast condition
+      с user-facing diagnostic message pointing к README hardware requirements section.
+      Hardware exclusion of pre-Turing NVIDIA, pre-RDNA AMD, pre-Arc Intel, и most
+      integrated GPUs accepted as architectural choice supporting clean implementation
+      per K-L14 («performance derives from architectural cleanliness»); not a hardware-
+      discrimination decision. By Dual Frontier release timeline, target hardware tier
+      represents majority of gaming hardware.
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L19 row (V0.B amendment, v2.2)"
+        verification_type: spec_inspection
+      - file: README.md
+        test_method: "Hardware requirements section (V0.B amendment)"
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanDevice.cs
+        test_method: "FindAsyncComputeQueueFamilyIndex + SelectPhysicalDevice integration — async compute QF selection с distinct-family preference"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/HardwareCapabilityCheck.cs
+        test_method: "Verify(VulkanInstance, VulkanDevice) — VerifyVulkanApiVersion + VerifyAsyncComputeQueueFamily fail-fast at Runtime.Create"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Runtime.cs
+        test_method: "Runtime.Create invokes HardwareCapabilityCheck.Verify after VulkanDevice construction"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/AsyncComputeQueueSelectionTests.cs
+        test_method: "Algorithm tests (4 mock scenarios) + integration test verifies AMD RX 7600S exposes QF 1 dedicated compute"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/HardwareCapabilityCheckTests.cs
+        test_method: "Vulkan 1.0 below 1.3 throws; null async compute QF throws с GPU name + hardware tier message; integration on real К-L19 hardware succeeds (5 scenarios)"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.Tests/Compute/ComputePipelineRegistrationTests.cs
+        test_method: "noop.comp register + ExecuteSync round-trip уpon async compute queue (К-L19 hardware baseline exercised live)"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-18"
+    verification_milestone: "V0.B closure (full implementation backing operational at landing per Lesson #8 + Lesson #11 — no architectural commitment без implementation behind it)"
 
   - id: REQ-V0-A-WIN32_WINDOW
     title: "Win32 window lifecycle + message pump (V0.A foundation)"

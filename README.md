@@ -93,6 +93,35 @@ a claim about generalizability beyond systems software with formal,
 machine-checkable contracts. The boundaries of applicability are recorded
 in [docs/methodology/METHODOLOGY.md §6](/docs/methodology/METHODOLOGY.md).
 
+## Hardware requirements
+
+Dual Frontier targets modern GPU hardware с Vulkan 1.3 + async compute queue
+family support per the K-L19 architectural commitment
+([docs/architecture/KERNEL_ARCHITECTURE.md](/docs/architecture/KERNEL_ARCHITECTURE.md)
+Part 0, K-L19).
+
+**Minimum tier**:
+- **NVIDIA**: Turing or newer — GeForce GTX 1660 / RTX 20-series и later
+- **AMD**: RDNA 1 or newer — Radeon RX 5500 и later
+- **Intel**: Arc Alchemist or newer — Arc A380 и later
+- **Integrated GPUs**: most NOT supported (lack async compute queue family)
+
+Pre-Turing NVIDIA, pre-RDNA AMD, pre-Arc Intel hardware will fail at startup
+с a clear diagnostic message. This is an intentional architectural choice
+supporting clean implementation per K-L14 («performance derives from
+architectural cleanliness»); it is not a hardware-discrimination decision.
+By Dual Frontier release timeline, the target hardware tier represents the
+majority of gaming hardware.
+
+**Verification**: launch Dual Frontier — if startup fails с
+`HardwareCapabilityException`, upgrade GPU driver or hardware. Run
+`vulkaninfo.exe` (from the Vulkan SDK or GPU driver) to verify that the
+host hardware supports Vulkan 1.3 + a compute-capable queue family.
+
+**OS support**: Windows 10/11 x64. Linux/macOS deferred per
+[docs/architecture/VULKAN_SUBSTRATE.md](/docs/architecture/VULKAN_SUBSTRATE.md)
+L7 LOCKED.
+
 ## Three primary documents
 
 - [docs/methodology/METHODOLOGY.md](/docs/methodology/METHODOLOGY.md) — the methodology as designed:
