@@ -305,4 +305,17 @@ public sealed class VulkanStructSizeTests
         //   + trailing pad (4) = 72
         Marshal.SizeOf<VkImageMemoryBarrier>().Should().Be(72);
     }
+
+    // ============================================================
+    // V0.C.2 — Indexed draw enum
+    // ============================================================
+
+    [Fact]
+    public unsafe void VkIndexType_Size_Matches_Spec()
+    {
+        // enum underlying type uint = 4 bytes. Marshal.SizeOf<T>() does not support enums
+        // in .NET 8 ("cannot be marshaled as an unmanaged structure"); use sizeof() instead.
+        sizeof(VkIndexType).Should().Be(4);
+        Enum.GetUnderlyingType(typeof(VkIndexType)).Should().Be(typeof(uint));
+    }
 }
