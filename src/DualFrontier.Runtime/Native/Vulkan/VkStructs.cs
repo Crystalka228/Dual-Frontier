@@ -897,3 +897,116 @@ internal unsafe struct VkWriteDescriptorSet
     internal VkDescriptorBufferInfo* pBufferInfo;
     internal IntPtr pTexelBufferView;
 }
+
+// ===========================================================================
+// V0.C.1 — Sampler + texture upload + vertex input + push constants
+// ===========================================================================
+
+// VkSamplerCreateInfo (80 bytes per Vulkan 1.3 spec on x64).
+// sType (4) + pad (4) + pNext (8) + flags (4) + magFilter (4) + minFilter (4)
+//   + mipmapMode (4) + addressU (4) + addressV (4) + addressW (4)
+//   + mipLodBias (4) + anisotropyEnable (4) + maxAnisotropy (4) + compareEnable (4)
+//   + compareOp (4) + minLod (4) + maxLod (4) + borderColor (4) + unnormalizedCoords (4) = 80
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkSamplerCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal VkFilter magFilter;
+    internal VkFilter minFilter;
+    internal VkSamplerMipmapMode mipmapMode;
+    internal VkSamplerAddressMode addressModeU;
+    internal VkSamplerAddressMode addressModeV;
+    internal VkSamplerAddressMode addressModeW;
+    internal float mipLodBias;
+    internal uint anisotropyEnable;
+    internal float maxAnisotropy;
+    internal uint compareEnable;
+    internal VkCompareOp compareOp;
+    internal float minLod;
+    internal float maxLod;
+    internal VkBorderColor borderColor;
+    internal uint unnormalizedCoordinates;
+}
+
+// VkPushConstantRange (12 bytes — 3 × uint32, natural 4-byte alignment).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkPushConstantRange
+{
+    internal VkShaderStageFlags stageFlags;
+    internal uint offset;
+    internal uint size;
+}
+
+// VkVertexInputBindingDescription (12 bytes — 2 × uint32 + enum, 4-byte aligned).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkVertexInputBindingDescription
+{
+    internal uint binding;
+    internal uint stride;
+    internal VkVertexInputRate inputRate;
+}
+
+// VkVertexInputAttributeDescription (16 bytes — 4 × uint32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkVertexInputAttributeDescription
+{
+    internal uint location;
+    internal uint binding;
+    internal VkFormat format;
+    internal uint offset;
+}
+
+// VkOffset3D (12 bytes — 3 × int32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkOffset3D
+{
+    internal int x;
+    internal int y;
+    internal int z;
+}
+
+// VkImageSubresourceLayers (16 bytes — aspectMask + 3 × uint32).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkImageSubresourceLayers
+{
+    internal VkImageAspectFlags aspectMask;
+    internal uint mipLevel;
+    internal uint baseArrayLayer;
+    internal uint layerCount;
+}
+
+// VkBufferImageCopy (56 bytes per Vulkan 1.3 spec on x64).
+// bufferOffset (8 — VkDeviceSize 8-byte aligned at struct start) + bufferRowLength (4)
+//   + bufferImageHeight (4) + imageSubresource (16) + imageOffset (12) + imageExtent (12) = 56
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkBufferImageCopy
+{
+    internal ulong bufferOffset;      // VkDeviceSize
+    internal uint bufferRowLength;
+    internal uint bufferImageHeight;
+    internal VkImageSubresourceLayers imageSubresource;
+    internal VkOffset3D imageOffset;
+    internal VkExtent3D imageExtent;
+}
+
+// VkImageMemoryBarrier (72 bytes per Vulkan 1.3 spec on x64).
+// sType (4) + pad (4) + pNext (8) + srcAccess (4) + dstAccess (4) + oldLayout (4) + newLayout (4)
+//   + srcQueueFamilyIndex (4) + dstQueueFamilyIndex (4) + image (8) + subresourceRange (20)
+//   + trailing pad (4 — struct contains 8-byte field → 8-byte aligned) = 72
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkImageMemoryBarrier
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkAccessFlags srcAccessMask;
+    internal VkAccessFlags dstAccessMask;
+    internal VkImageLayout oldLayout;
+    internal VkImageLayout newLayout;
+    internal uint srcQueueFamilyIndex;
+    internal uint dstQueueFamilyIndex;
+    internal IntPtr image;
+    internal VkImageSubresourceRange subresourceRange;
+    internal uint _padTrailing;
+}

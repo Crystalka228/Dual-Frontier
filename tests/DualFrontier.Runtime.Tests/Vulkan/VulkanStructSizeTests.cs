@@ -259,4 +259,50 @@ public sealed class VulkanStructSizeTests
 
     [Fact]
     public void VkWriteDescriptorSet_Size_Matches_Spec() => Marshal.SizeOf<VkWriteDescriptorSet>().Should().Be(64);
+
+    // ============================================================
+    // V0.C.1 — Sampler + texture upload + vertex input + push constants
+    // ============================================================
+
+    [Fact]
+    public void VkSamplerCreateInfo_Size_Matches_Spec()
+    {
+        // sType (4) + pad (4) + pNext (8) + flags (4) + magFilter (4) + minFilter (4)
+        //   + mipmapMode (4) + addressU (4) + addressV (4) + addressW (4)
+        //   + mipLodBias (4) + anisotropyEnable (4) + maxAnisotropy (4) + compareEnable (4)
+        //   + compareOp (4) + minLod (4) + maxLod (4) + borderColor (4) + unnormalizedCoords (4) = 80
+        Marshal.SizeOf<VkSamplerCreateInfo>().Should().Be(80);
+    }
+
+    [Fact]
+    public void VkPushConstantRange_Size_Matches_Spec() => Marshal.SizeOf<VkPushConstantRange>().Should().Be(12);
+
+    [Fact]
+    public void VkVertexInputBindingDescription_Size_Matches_Spec() => Marshal.SizeOf<VkVertexInputBindingDescription>().Should().Be(12);
+
+    [Fact]
+    public void VkVertexInputAttributeDescription_Size_Matches_Spec() => Marshal.SizeOf<VkVertexInputAttributeDescription>().Should().Be(16);
+
+    [Fact]
+    public void VkOffset3D_Size_Matches_Spec() => Marshal.SizeOf<VkOffset3D>().Should().Be(12);
+
+    [Fact]
+    public void VkImageSubresourceLayers_Size_Matches_Spec() => Marshal.SizeOf<VkImageSubresourceLayers>().Should().Be(16);
+
+    [Fact]
+    public void VkBufferImageCopy_Size_Matches_Spec()
+    {
+        // bufferOffset (8) + bufferRowLength (4) + bufferImageHeight (4)
+        //   + imageSubresource (16) + imageOffset (12) + imageExtent (12) = 56
+        Marshal.SizeOf<VkBufferImageCopy>().Should().Be(56);
+    }
+
+    [Fact]
+    public void VkImageMemoryBarrier_Size_Matches_Spec()
+    {
+        // sType (4) + pad (4) + pNext (8) + srcAccess (4) + dstAccess (4) + oldLayout (4) + newLayout (4)
+        //   + srcQueueFamilyIndex (4) + dstQueueFamilyIndex (4) + image (8) + subresourceRange (20)
+        //   + trailing pad (4) = 72
+        Marshal.SizeOf<VkImageMemoryBarrier>().Should().Be(72);
+    }
 }
