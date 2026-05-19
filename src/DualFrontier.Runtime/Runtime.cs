@@ -203,6 +203,73 @@ public sealed class Runtime : IDisposable
     }
 
     /// <summary>
+    /// V0.C.2: begin a render pass + set viewport/scissor + clear к specified color.
+    /// Public helper для multi-cycle SpriteRenderer rendering (per S-LOCK-5a TileMap case).
+    /// Caller invokes BeginRenderPassForSprites → SpriteRenderer.BeginFrame/Submit/EndFrame
+    /// (one or more cycles) → EndSpriteRenderPass.
+    /// </summary>
+    public unsafe void BeginRenderPassForSprites(
+        VulkanCommandBuffer commandBuffer,
+        int imageIndex,
+        Vector4 clearColor)
+    {
+        ArgumentNullException.ThrowIfNull(commandBuffer);
+        if ((uint)imageIndex >= _framebuffers.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(imageIndex));
+        }
+
+        VulkanFramebuffer framebuffer = _framebuffers[imageIndex];
+
+        VkClearValue clearValue = default;
+        clearValue.color.float32[0] = clearColor.X;
+        clearValue.color.float32[1] = clearColor.Y;
+        clearValue.color.float32[2] = clearColor.Z;
+        clearValue.color.float32[3] = clearColor.W;
+
+        var renderPassBegin = new VkRenderPassBeginInfo
+        {
+            sType = VkStructureType.VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+            pNext = IntPtr.Zero,
+            renderPass = RenderPass.Handle,
+            framebuffer = framebuffer.Handle,
+            renderArea = new VkRect2D
+            {
+                offsetX = 0, offsetY = 0,
+                width = framebuffer.Width, height = framebuffer.Height,
+            },
+            clearValueCount = 1,
+            _padBeforePtr = 0,
+            pClearValues = &clearValue,
+        };
+        VkApi.vkCmdBeginRenderPass(commandBuffer.Handle, in renderPassBegin, VkSubpassContents.VK_SUBPASS_CONTENTS_INLINE);
+
+        VkViewport viewport = new()
+        {
+            x = 0, y = 0,
+            width = framebuffer.Width, height = framebuffer.Height,
+            minDepth = 0.0f, maxDepth = 1.0f,
+        };
+        VkApi.vkCmdSetViewport(commandBuffer.Handle, 0, 1, &viewport);
+
+        VkRect2D scissor = new()
+        {
+            offsetX = 0, offsetY = 0,
+            width = framebuffer.Width, height = framebuffer.Height,
+        };
+        VkApi.vkCmdSetScissor(commandBuffer.Handle, 0, 1, &scissor);
+    }
+
+    /// <summary>
+    /// V0.C.2: end the render pass started by <see cref="BeginRenderPassForSprites"/>.
+    /// </summary>
+    public void EndSpriteRenderPass(VulkanCommandBuffer commandBuffer)
+    {
+        ArgumentNullException.ThrowIfNull(commandBuffer);
+        VkApi.vkCmdEndRenderPass(commandBuffer.Handle);
+    }
+
+    /// <summary>
     /// V0.C.2 batched convenience: record many sprites per frame с Camera2D MVP.
     /// Begins render pass с clear color, sets viewport/scissor, calls SpriteRenderer
     /// BeginFrame/Submit/EndFrame, ends render pass.
