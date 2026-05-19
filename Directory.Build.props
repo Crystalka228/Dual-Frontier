@@ -33,5 +33,7 @@
     <!-- V0.C.1 sprite shaders -->
     <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\sprite.vert&quot; -o &quot;$(ShaderOutputDir)\sprite.vert.spv&quot;" />
     <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\sprite.frag&quot; -o &quot;$(ShaderOutputDir)\sprite.frag.spv&quot;" />
+    <!-- V1 diffusion compute shader (isotropic + anisotropic via per-cell D in conductivity buffer) -->
+    <Exec Command="&quot;$(GlslangValidatorExe)&quot; -V &quot;$(ShaderSourceDir)\diffusion.comp&quot; -o &quot;$(ShaderOutputDir)\diffusion.comp.spv&quot;" />
   </Target>
 </Project>

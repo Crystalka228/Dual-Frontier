@@ -1,0 +1,65 @@
+#version 450
+
+// V1 diffusion compute shader per VULKAN_SUBSTRATE.md §1.2 + §5.1.
+// Handles both isotropic (uniform D) and anisotropic (per-cell D from conductivity)
+// variants via parameter-driven path: substrate ships the shader template, mods supply
+// conductivity buffer (uniform value для isotropic, per-cell map для anisotropic).
+//
+// Asymmetric flow rule: flow(self → neighbour) = min(D_self, D_neighbour) · (P_n - P_self).
+// Wire path emerges automatically (high D wire row, low D off-path).
+// Boundary: missing neighbour contributes zero flow (matches CPU reference convention —
+// equivalent к reflective boundary since min(D, D) · (P - P) = 0).
+
+layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+
+layout(set = 0, binding = 0) readonly buffer FieldIn {
+    float values[];
+} fieldIn;
+
+layout(set = 0, binding = 1) writeonly buffer FieldOut {
+    float values[];
+} fieldOut;
+
+layout(set = 0, binding = 2) readonly buffer Conductivity {
+    float values[];
+} conductivity;
+
+layout(push_constant) uniform PushConstants {
+    float decayCoefficient;
+    float deltaTime;
+    uint width;
+    uint height;
+} pc;
+
+void main() {
+    uint x = gl_GlobalInvocationID.x;
+    uint y = gl_GlobalInvocationID.y;
+
+    if (x >= pc.width || y >= pc.height) return;
+
+    uint idx = y * pc.width + x;
+    float center = fieldIn.values[idx];
+    float dSelf = conductivity.values[idx];
+
+    float flowSum = 0.0;
+
+    if (y > 0u) {
+        uint nIdx = (y - 1u) * pc.width + x;
+        flowSum += min(dSelf, conductivity.values[nIdx]) * (fieldIn.values[nIdx] - center);
+    }
+    if (y < pc.height - 1u) {
+        uint sIdx = (y + 1u) * pc.width + x;
+        flowSum += min(dSelf, conductivity.values[sIdx]) * (fieldIn.values[sIdx] - center);
+    }
+    if (x < pc.width - 1u) {
+        uint eIdx = y * pc.width + (x + 1u);
+        flowSum += min(dSelf, conductivity.values[eIdx]) * (fieldIn.values[eIdx] - center);
+    }
+    if (x > 0u) {
+        uint wIdx = y * pc.width + (x - 1u);
+        flowSum += min(dSelf, conductivity.values[wIdx]) * (fieldIn.values[wIdx] - center);
+    }
+
+    float delta = (flowSum - pc.decayCoefficient * center) * pc.deltaTime;
+    fieldOut.values[idx] = center + delta;
+}
