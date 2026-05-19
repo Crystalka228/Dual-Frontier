@@ -411,4 +411,62 @@ internal static unsafe partial class VkApi
 
     [LibraryImport(VulkanLib, EntryPoint = "vkDestroyPipeline")]
     internal static partial void vkDestroyPipeline(IntPtr device, IntPtr pipeline, IntPtr pAllocator);
+
+    // =======================================================================
+    // V0.B Commit 12 — Compute pipeline + descriptors
+    // =======================================================================
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateComputePipelines")]
+    internal static unsafe partial VkResult vkCreateComputePipelines(
+        IntPtr device,
+        IntPtr pipelineCache,
+        uint createInfoCount,
+        VkComputePipelineCreateInfo* pCreateInfos,
+        IntPtr pAllocator,
+        IntPtr* pPipelines);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateDescriptorSetLayout")]
+    internal static partial VkResult vkCreateDescriptorSetLayout(
+        IntPtr device,
+        in VkDescriptorSetLayoutCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pSetLayout);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyDescriptorSetLayout")]
+    internal static partial void vkDestroyDescriptorSetLayout(IntPtr device, IntPtr descriptorSetLayout, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateDescriptorPool")]
+    internal static partial VkResult vkCreateDescriptorPool(
+        IntPtr device,
+        in VkDescriptorPoolCreateInfo pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pDescriptorPool);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkDestroyDescriptorPool")]
+    internal static partial void vkDestroyDescriptorPool(IntPtr device, IntPtr descriptorPool, IntPtr pAllocator);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkAllocateDescriptorSets")]
+    internal static unsafe partial VkResult vkAllocateDescriptorSets(
+        IntPtr device,
+        in VkDescriptorSetAllocateInfo pAllocateInfo,
+        IntPtr* pDescriptorSets);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkUpdateDescriptorSets")]
+    internal static unsafe partial void vkUpdateDescriptorSets(
+        IntPtr device,
+        uint descriptorWriteCount,
+        VkWriteDescriptorSet* pDescriptorWrites,
+        uint descriptorCopyCount,
+        IntPtr pDescriptorCopies);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCmdBindDescriptorSets")]
+    internal static unsafe partial void vkCmdBindDescriptorSets(
+        IntPtr commandBuffer,
+        VkPipelineBindPoint pipelineBindPoint,
+        IntPtr layout,
+        uint firstSet,
+        uint descriptorSetCount,
+        IntPtr* pDescriptorSets,
+        uint dynamicOffsetCount,
+        uint* pDynamicOffsets);
 }

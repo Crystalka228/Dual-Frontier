@@ -788,3 +788,112 @@ internal unsafe struct VkGraphicsPipelineCreateInfo
     internal int basePipelineIndex;
     internal uint _padTrailing;
 }
+
+// ===========================================================================
+// V0.B Commit 12 — Compute pipeline + descriptors
+// ===========================================================================
+
+// VkComputePipelineCreateInfo (96 bytes per spec on x64).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkComputePipelineCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint _padBeforeStage;
+    internal VkPipelineShaderStageCreateInfo stage;   // 48 nested
+    internal IntPtr layout;
+    internal IntPtr basePipelineHandle;
+    internal int basePipelineIndex;
+    internal uint _padTrailing;
+}
+
+// VkDescriptorSetLayoutBinding (24 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorSetLayoutBinding
+{
+    internal uint binding;
+    internal VkDescriptorType descriptorType;
+    internal uint descriptorCount;
+    internal VkShaderStageFlags stageFlags;
+    internal IntPtr pImmutableSamplers;
+}
+
+// VkDescriptorSetLayoutCreateInfo (32 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkDescriptorSetLayoutCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal uint bindingCount;
+    internal VkDescriptorSetLayoutBinding* pBindings;
+}
+
+// VkDescriptorPoolSize (8 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorPoolSize
+{
+    internal VkDescriptorType type;
+    internal uint descriptorCount;
+}
+
+// VkDescriptorPoolCreateInfo (40 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkDescriptorPoolCreateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal VkDescriptorPoolCreateFlags flags;
+    internal uint maxSets;
+    internal uint poolSizeCount;
+    internal uint _padBeforePool;
+    internal VkDescriptorPoolSize* pPoolSizes;
+}
+
+// VkDescriptorSetAllocateInfo (40 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkDescriptorSetAllocateInfo
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr descriptorPool;
+    internal uint descriptorSetCount;
+    internal uint _padBeforeLayouts;
+    internal IntPtr* pSetLayouts;
+}
+
+// VkDescriptorBufferInfo (24 bytes — 3 × 8-byte fields).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorBufferInfo
+{
+    internal IntPtr buffer;
+    internal ulong offset;
+    internal ulong range;
+}
+
+// VkDescriptorImageInfo (24 bytes — sampler (8) + view (8) + layout (4) + trailing pad (4)).
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkDescriptorImageInfo
+{
+    internal IntPtr sampler;
+    internal IntPtr imageView;
+    internal VkImageLayout imageLayout;
+    internal uint _padTrailing;
+}
+
+// VkWriteDescriptorSet (64 bytes).
+[StructLayout(LayoutKind.Sequential)]
+internal unsafe struct VkWriteDescriptorSet
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal IntPtr dstSet;
+    internal uint dstBinding;
+    internal uint dstArrayElement;
+    internal uint descriptorCount;
+    internal VkDescriptorType descriptorType;
+    internal VkDescriptorImageInfo* pImageInfo;
+    internal VkDescriptorBufferInfo* pBufferInfo;
+    internal IntPtr pTexelBufferView;
+}

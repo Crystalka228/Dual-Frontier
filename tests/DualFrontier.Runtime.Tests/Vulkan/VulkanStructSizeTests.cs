@@ -230,6 +230,33 @@ public sealed class VulkanStructSizeTests
     public void VkGraphicsPipelineCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkGraphicsPipelineCreateInfo>().Should().Be(144);
 
     // ============================================================
-    // V0.B additions appended per-commit (see brief §3 commit 12)
+    // V0.B Commit 12 — Compute pipeline + descriptors
     // ============================================================
+
+    [Fact]
+    public void VkComputePipelineCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkComputePipelineCreateInfo>().Should().Be(96);
+
+    [Fact]
+    public void VkDescriptorSetLayoutBinding_Size_Matches_Spec() => Marshal.SizeOf<VkDescriptorSetLayoutBinding>().Should().Be(24);
+
+    [Fact]
+    public void VkDescriptorSetLayoutCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkDescriptorSetLayoutCreateInfo>().Should().Be(32);
+
+    [Fact]
+    public void VkDescriptorPoolSize_Size_Matches_Spec() => Marshal.SizeOf<VkDescriptorPoolSize>().Should().Be(8);
+
+    [Fact]
+    public void VkDescriptorPoolCreateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkDescriptorPoolCreateInfo>().Should().Be(40);
+
+    [Fact]
+    public void VkDescriptorSetAllocateInfo_Size_Matches_Spec() => Marshal.SizeOf<VkDescriptorSetAllocateInfo>().Should().Be(40);
+
+    [Fact]
+    public void VkDescriptorBufferInfo_Size_Matches_Spec() => Marshal.SizeOf<VkDescriptorBufferInfo>().Should().Be(24);
+
+    [Fact]
+    public void VkDescriptorImageInfo_Size_Matches_Spec() => Marshal.SizeOf<VkDescriptorImageInfo>().Should().Be(24);
+
+    [Fact]
+    public void VkWriteDescriptorSet_Size_Matches_Spec() => Marshal.SizeOf<VkWriteDescriptorSet>().Should().Be(64);
 }
