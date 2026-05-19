@@ -1,52 +1,88 @@
 using System.Numerics;
-using System.Runtime.InteropServices;
 using DualFrontier.Runtime.Graphics;
 using DualFrontier.Runtime.Native.Vulkan;
 
 namespace DualFrontier.Runtime.Sprite;
 
 /// <summary>
-/// V0.C.1 sprite renderer. Single-sprite per draw call: 6 vertices (2 triangles forming a quad)
-/// uploaded к dynamic vertex buffer + descriptor set bound per texture + push-constant MVP +
-/// vkCmdDraw(6, 1, 0, 0).
+/// V0.C.2 batched sprite renderer per S-LOCK-7 (90% rewrite from V0.C.1 single-sprite).
 ///
-/// V0.C.2 will refactor к batched (one draw call per atlas, ~10,000 sprites at 60+ FPS) by:
-/// - Accumulating sprites by SpriteTexture key in a frame buffer
-/// - Building one large vertex buffer per atlas
-/// - Issuing one vkCmdDraw per atlas
-/// - Maintaining per-frame descriptor pool sized to active atlas count
+/// API:
+///   BeginFrame(uint frameIndex) — starts batch on ring buffer chunk N (frameIndex % frameCount)
+///   Submit(Sprite) — accumulates sprite into atlas group bucket
+///   EndFrame(VulkanCommandBuffer, Camera2D) — writes vertices, records commands,
+///     issues one vkCmdDrawIndexed per atlas group, MVP = camera.ViewProjectionMatrix
 ///
-/// Descriptor set caching: each unique SpriteTexture gets an allocated descriptor set
-/// populated via vkUpdateDescriptorSets; subsequent draws с same texture reuse the cached set.
+/// Vertex layout (per quad, consumed via uint16 index pattern 0,1,2,2,3,0):
+///   [0] TL = top-left   (pos - halfSize, uv(U0,V0))
+///   [1] TR = top-right  (pos.X + halfSize.X, pos.Y - halfSize.Y, uv(U1,V0))
+///   [2] BR = bottom-right (pos + halfSize, uv(U1,V1))
+///   [3] BL = bottom-left (pos.X - halfSize.X, pos.Y + halfSize.Y, uv(U0,V1))
+///
+/// Single-atlas optimization (R.2 10K stress): all sprites share one SpriteTexture key
+/// → single dictionary entry → single vkCmdDrawIndexed. Verifiable в RenderDoc.
+///
+/// Per-frame descriptor pool reset NOT implemented in V0.C.2 (per-frame state hassle);
+/// descriptor pool sized к 64 keeps cached sets across frames per V0.C.1 precedent.
 /// </summary>
 public sealed class SpriteRenderer : IDisposable
 {
-    private const ulong VertexBufferSize = 64 * 1024;  // 64 KB — accommodates V0.C.2 batched expansion
-    private const uint DescriptorPoolCapacity = 32;
+    private const uint DescriptorPoolCapacity = 64;
+    private const int DefaultMaxSpritesPerFrame = 10_000;
 
     private readonly VulkanDevice _device;
     private readonly VulkanSpritePipeline _pipeline;
-    private readonly VulkanBuffer _vertexBuffer;
-    private IntPtr _descriptorPool;
+    private readonly VertexBufferRing _vertexRing;
+    private readonly SpriteIndexBuffer _indexBuffer;
+    private readonly int _maxSpritesPerFrame;
+    private readonly Dictionary<SpriteTexture, List<Sprite>> _frameAtlasGroups = new();
     private readonly Dictionary<SpriteTexture, IntPtr> _descriptorSetCache = new();
+    private IntPtr _descriptorPool;
+    private uint _currentFrameIndex;
+    private bool _frameActive;
     private bool _disposed;
+
+    public int MaxSpritesPerFrame => _maxSpritesPerFrame;
+    public int CurrentFrameSubmissionCount
+    {
+        get
+        {
+            int total = 0;
+            foreach (var list in _frameAtlasGroups.Values)
+            {
+                total += list.Count;
+            }
+            return total;
+        }
+    }
+    public int CachedDescriptorSetCount => _descriptorSetCache.Count;
 
     public SpriteRenderer(
         VulkanDevice device,
         MemoryAllocator allocator,
-        VulkanSpritePipeline pipeline)
+        VulkanSpritePipeline pipeline,
+        int swapchainImageCount,
+        int maxSpritesPerFrame = DefaultMaxSpritesPerFrame)
     {
         ArgumentNullException.ThrowIfNull(device);
         ArgumentNullException.ThrowIfNull(allocator);
         ArgumentNullException.ThrowIfNull(pipeline);
+        if (swapchainImageCount <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(swapchainImageCount));
+        }
+        if (maxSpritesPerFrame <= 0 || maxSpritesPerFrame > SpriteIndexBuffer.MaxUint16Quads)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maxSpritesPerFrame),
+                $"Must be 1..{SpriteIndexBuffer.MaxUint16Quads}.");
+        }
+
         _device = device;
         _pipeline = pipeline;
+        _maxSpritesPerFrame = maxSpritesPerFrame;
 
-        _vertexBuffer = new VulkanBuffer(
-            _device, allocator, VertexBufferSize,
-            VkMemoryPropertyFlagsPublic.HostVisible | VkMemoryPropertyFlagsPublic.HostCoherent,
-            VkBufferUsageFlagsPublic.VertexBuffer);
-
+        _vertexRing = new VertexBufferRing(device, allocator, swapchainImageCount, maxSpritesPerFrame);
+        _indexBuffer = new SpriteIndexBuffer(device, allocator, maxSpritesPerFrame);
         CreateDescriptorPool();
     }
 
@@ -74,6 +110,164 @@ public sealed class SpriteRenderer : IDisposable
         }
     }
 
+    /// <summary>Begin batched frame. frameIndex typically = swapchain image index.</summary>
+    public void BeginFrame(uint frameIndex)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_frameActive)
+        {
+            throw new InvalidOperationException("SpriteRenderer.BeginFrame called twice without EndFrame.");
+        }
+
+        _currentFrameIndex = frameIndex;
+        _frameAtlasGroups.Clear();
+        _vertexRing.BeginFrame(frameIndex);
+        _frameActive = true;
+    }
+
+    /// <summary>Submit sprite для batched rendering. Sprites grouped by SpriteTexture key.</summary>
+    public void Submit(Sprite sprite)
+    {
+        if (!_frameActive)
+        {
+            throw new InvalidOperationException("SpriteRenderer.Submit called without BeginFrame.");
+        }
+        if (sprite.Texture is null)
+        {
+            throw new ArgumentNullException(nameof(sprite), "Sprite.Texture is null.");
+        }
+
+        if (CurrentFrameSubmissionCount >= _maxSpritesPerFrame)
+        {
+            throw new InvalidOperationException(
+                $"SpriteRenderer frame capacity exceeded ({_maxSpritesPerFrame} per S-LOCK-3a hard cap). " +
+                "Multiple BeginFrame/EndFrame cycles required.");
+        }
+
+        if (!_frameAtlasGroups.TryGetValue(sprite.Texture, out var list))
+        {
+            list = new List<Sprite>();
+            _frameAtlasGroups[sprite.Texture] = list;
+        }
+        list.Add(sprite);
+    }
+
+    /// <summary>
+    /// Record draw commands к command buffer. One vkCmdDrawIndexed per atlas group.
+    /// MVP push constant = camera.ViewProjectionMatrix.
+    /// </summary>
+    public unsafe void EndFrame(VulkanCommandBuffer commandBuffer, Camera2D camera)
+    {
+        if (!_frameActive)
+        {
+            throw new InvalidOperationException("SpriteRenderer.EndFrame called without BeginFrame.");
+        }
+        ArgumentNullException.ThrowIfNull(commandBuffer);
+        ArgumentNullException.ThrowIfNull(camera);
+
+        try
+        {
+            // 1. Write vertices к ring buffer chunk grouped by atlas.
+            var atlasDrawRanges = new List<(SpriteTexture Texture, int VertexOffset, int IndexCount)>();
+            int totalSpritesWritten = 0;
+
+            foreach (var kvp in _frameAtlasGroups)
+            {
+                SpriteTexture texture = kvp.Key;
+                List<Sprite> sprites = kvp.Value;
+                int vertexOffset = totalSpritesWritten * 4;
+                int indexCount = sprites.Count * SpriteIndexBuffer.IndicesPerQuad;
+
+                foreach (Sprite sprite in sprites)
+                {
+                    WriteSpriteVertices(sprite);
+                    totalSpritesWritten++;
+                }
+
+                atlasDrawRanges.Add((texture, vertexOffset, indexCount));
+            }
+
+            ulong vertexChunkOffset = _vertexRing.EndFrame();
+
+            // 2. Bind pipeline + push constants + vertex/index buffers.
+            VkApi.vkCmdBindPipeline(
+                commandBuffer.Handle,
+                VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
+                _pipeline.Handle);
+
+            Matrix4x4 mvp = camera.ViewProjectionMatrix;
+            VkApi.vkCmdPushConstants(
+                commandBuffer.Handle,
+                _pipeline.Layout.Handle,
+                VkShaderStageFlags.VK_SHADER_STAGE_VERTEX_BIT,
+                offset: 0,
+                size: 64,
+                pValues: &mvp);
+
+            IntPtr vbuffer = _vertexRing.Handle;
+            ulong vbufferOffset = vertexChunkOffset;
+            VkApi.vkCmdBindVertexBuffers(
+                commandBuffer.Handle,
+                firstBinding: 0,
+                bindingCount: 1,
+                pBuffers: &vbuffer,
+                pOffsets: &vbufferOffset);
+
+            VkApi.vkCmdBindIndexBuffer(
+                commandBuffer.Handle,
+                _indexBuffer.Handle,
+                offset: 0,
+                VkIndexType.VK_INDEX_TYPE_UINT16);
+
+            // 3. Issue one vkCmdDrawIndexed per atlas group.
+            int currentFirstIndex = 0;
+            foreach (var range in atlasDrawRanges)
+            {
+                IntPtr descriptorSet = GetOrCreateDescriptorSet(range.Texture);
+                IntPtr setHandle = descriptorSet;
+                VkApi.vkCmdBindDescriptorSets(
+                    commandBuffer.Handle,
+                    VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
+                    _pipeline.Layout.Handle,
+                    firstSet: 0,
+                    descriptorSetCount: 1,
+                    pDescriptorSets: &setHandle,
+                    dynamicOffsetCount: 0,
+                    pDynamicOffsets: null);
+
+                VkApi.vkCmdDrawIndexed(
+                    commandBuffer.Handle,
+                    indexCount: (uint)range.IndexCount,
+                    instanceCount: 1,
+                    firstIndex: (uint)currentFirstIndex,
+                    vertexOffset: range.VertexOffset,
+                    firstInstance: 0);
+
+                currentFirstIndex += range.IndexCount;
+            }
+        }
+        finally
+        {
+            _frameActive = false;
+        }
+    }
+
+    private void WriteSpriteVertices(Sprite sprite)
+    {
+        Vector2 halfSize = new(sprite.Transform.Scale.X * 0.5f, sprite.Transform.Scale.Y * 0.5f);
+        Vector2 pos = sprite.Transform.Position;
+        AtlasRegion uv = sprite.Region;
+        uint tint = sprite.Transform.TintRgba;
+
+        // Vulkan NDC +Y down: TL has smaller Y; BR has larger Y.
+        SpriteVertex tl = new(new Vector2(pos.X - halfSize.X, pos.Y - halfSize.Y), new Vector2(uv.U0, uv.V0), tint);
+        SpriteVertex tr = new(new Vector2(pos.X + halfSize.X, pos.Y - halfSize.Y), new Vector2(uv.U1, uv.V0), tint);
+        SpriteVertex br = new(new Vector2(pos.X + halfSize.X, pos.Y + halfSize.Y), new Vector2(uv.U1, uv.V1), tint);
+        SpriteVertex bl = new(new Vector2(pos.X - halfSize.X, pos.Y + halfSize.Y), new Vector2(uv.U0, uv.V1), tint);
+
+        _vertexRing.WriteSprite(in tl, in tr, in br, in bl);
+    }
+
     private unsafe IntPtr GetOrCreateDescriptorSet(SpriteTexture texture)
     {
         if (_descriptorSetCache.TryGetValue(texture, out IntPtr cached))
@@ -83,7 +277,7 @@ public sealed class SpriteRenderer : IDisposable
         if (_descriptorSetCache.Count >= DescriptorPoolCapacity)
         {
             throw new InvalidOperationException(
-                $"SpriteRenderer descriptor pool exhausted ({DescriptorPoolCapacity} textures). V0.C.2 expands.");
+                $"SpriteRenderer descriptor pool exhausted ({DescriptorPoolCapacity} textures).");
         }
 
         IntPtr layout = _pipeline.DescriptorSetLayout.Handle;
@@ -129,104 +323,6 @@ public sealed class SpriteRenderer : IDisposable
         return descriptorSet;
     }
 
-    /// <summary>
-    /// Record sprite draw commands к command buffer. Caller must have already begun a render pass.
-    /// V0.C.1 single-sprite per call; V0.C.2 will refactor к batched.
-    /// </summary>
-    public unsafe void DrawSprite(Sprite sprite, VulkanCommandBuffer commandBuffer, Matrix4x4 mvp)
-    {
-        ThrowIfDisposed();
-        ArgumentNullException.ThrowIfNull(sprite.Texture);
-        ArgumentNullException.ThrowIfNull(commandBuffer);
-
-        // 1. Build 6 vertices for sprite quad (2 triangles, CCW front face).
-        // Quad corners в local space; transform applied via MVP push constant (Camera2D) +
-        // SpriteTransform's Position/Scale baked into vertex positions.
-        Vector2 halfSize = new(sprite.Transform.Scale.X * 0.5f, sprite.Transform.Scale.Y * 0.5f);
-        Vector2 pos = sprite.Transform.Position;
-        AtlasRegion uv = sprite.Region;
-        uint tint = sprite.Transform.TintRgba;
-
-        // Vulkan NDC: +Y is down, +X is right. UV: (0,0) = top-left, (1,1) = bottom-right.
-        Span<SpriteVertex> vertices = stackalloc SpriteVertex[6];
-        // Triangle 1: top-left, top-right, bottom-right
-        vertices[0] = new(new Vector2(pos.X - halfSize.X, pos.Y - halfSize.Y), new Vector2(uv.U0, uv.V0), tint);  // TL
-        vertices[1] = new(new Vector2(pos.X + halfSize.X, pos.Y - halfSize.Y), new Vector2(uv.U1, uv.V0), tint);  // TR
-        vertices[2] = new(new Vector2(pos.X + halfSize.X, pos.Y + halfSize.Y), new Vector2(uv.U1, uv.V1), tint);  // BR
-        // Triangle 2: top-left, bottom-right, bottom-left
-        vertices[3] = new(new Vector2(pos.X - halfSize.X, pos.Y - halfSize.Y), new Vector2(uv.U0, uv.V0), tint);  // TL
-        vertices[4] = new(new Vector2(pos.X + halfSize.X, pos.Y + halfSize.Y), new Vector2(uv.U1, uv.V1), tint);  // BR
-        vertices[5] = new(new Vector2(pos.X - halfSize.X, pos.Y + halfSize.Y), new Vector2(uv.U0, uv.V1), tint);  // BL
-
-        // 2. Upload vertices к dynamic vertex buffer (host-visible, mapped writes).
-        ulong vertexBytes = 6UL * 20UL;
-        IntPtr mappedPtr;
-        VkResult mapResult = VkApi.vkMapMemory(
-            _device.Handle,
-            _vertexBuffer.Allocation.DeviceMemory,
-            _vertexBuffer.Allocation.Offset,
-            vertexBytes,
-            0,
-            out mappedPtr);
-        if (mapResult != VkResult.VK_SUCCESS)
-        {
-            throw new InvalidOperationException($"vkMapMemory (vertex buffer) failed: {mapResult}");
-        }
-        try
-        {
-            fixed (SpriteVertex* vptr = vertices)
-            {
-                Buffer.MemoryCopy(vptr, mappedPtr.ToPointer(), vertexBytes, vertexBytes);
-            }
-        }
-        finally
-        {
-            VkApi.vkUnmapMemory(_device.Handle, _vertexBuffer.Allocation.DeviceMemory);
-        }
-
-        // 3. Get или create descriptor set for the texture.
-        IntPtr descriptorSet = GetOrCreateDescriptorSet(sprite.Texture);
-
-        // 4. Record commands.
-        VkApi.vkCmdBindPipeline(
-            commandBuffer.Handle,
-            VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
-            _pipeline.Handle);
-
-        IntPtr setHandle = descriptorSet;
-        VkApi.vkCmdBindDescriptorSets(
-            commandBuffer.Handle,
-            VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
-            _pipeline.Layout.Handle,
-            firstSet: 0,
-            descriptorSetCount: 1,
-            pDescriptorSets: &setHandle,
-            dynamicOffsetCount: 0,
-            pDynamicOffsets: null);
-
-        Matrix4x4 mvpLocal = mvp;
-        VkApi.vkCmdPushConstants(
-            commandBuffer.Handle,
-            _pipeline.Layout.Handle,
-            VkShaderStageFlags.VK_SHADER_STAGE_VERTEX_BIT,
-            offset: 0,
-            size: 64,
-            pValues: &mvpLocal);
-
-        IntPtr vbuffer = _vertexBuffer.Handle;
-        ulong vbufferOffset = 0;
-        VkApi.vkCmdBindVertexBuffers(
-            commandBuffer.Handle,
-            firstBinding: 0,
-            bindingCount: 1,
-            pBuffers: &vbuffer,
-            pOffsets: &vbufferOffset);
-
-        VkApi.vkCmdDraw(commandBuffer.Handle, vertexCount: 6, instanceCount: 1, firstVertex: 0, firstInstance: 0);
-    }
-
-    public int CachedDescriptorSetCount => _descriptorSetCache.Count;
-
     public void Dispose()
     {
         if (_disposed)
@@ -238,16 +334,9 @@ public sealed class SpriteRenderer : IDisposable
             VkApi.vkDestroyDescriptorPool(_device.Handle, _descriptorPool, IntPtr.Zero);
             _descriptorPool = IntPtr.Zero;
         }
-        _vertexBuffer.Dispose();
+        _indexBuffer.Dispose();
+        _vertexRing.Dispose();
         _descriptorSetCache.Clear();
         _disposed = true;
-    }
-
-    private void ThrowIfDisposed()
-    {
-        if (_disposed)
-        {
-            throw new ObjectDisposedException(nameof(SpriteRenderer));
-        }
     }
 }
