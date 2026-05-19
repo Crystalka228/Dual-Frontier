@@ -22,20 +22,65 @@ public sealed class AssetManager : IDisposable
     private readonly Dictionary<AssetPath, PngImage> _pngCache = new();
     private bool _disposed;
 
+    /// <summary>Absolute path к resolved assets root directory (with trailing separator).</summary>
+    public string RootDirectory => _rootDirectory;
+
     public AssetManager(string rootDirectory)
     {
         ArgumentNullException.ThrowIfNull(rootDirectory);
-        if (!Directory.Exists(rootDirectory))
-        {
-            throw new DirectoryNotFoundException($"Asset root directory not found: {rootDirectory}");
-        }
+        string resolved = ResolveAssetsDirectory(rootDirectory);
         // Normalize root path (trailing separator + canonical form) для secure traversal check.
-        _rootDirectory = Path.GetFullPath(rootDirectory);
+        _rootDirectory = Path.GetFullPath(resolved);
         if (!_rootDirectory.EndsWith(Path.DirectorySeparatorChar))
         {
             _rootDirectory += Path.DirectorySeparatorChar;
         }
     }
+
+    /// <summary>
+    /// Resolve assets directory: if absolute path, use as-is; if relative, first check cwd,
+    /// then walk up from AppContext.BaseDirectory looking for an ancestor directory containing
+    /// the named subdirectory. To avoid false positives на case-insensitive filesystems
+    /// (e.g., test project "Assets" folders), candidates must also contain a "shaders"
+    /// subdirectory (V0.B+ baseline asset layout). Throws DirectoryNotFoundException if not found.
+    /// </summary>
+    private static string ResolveAssetsDirectory(string rootDirectory)
+    {
+        if (Path.IsPathRooted(rootDirectory))
+        {
+            if (!Directory.Exists(rootDirectory))
+            {
+                throw new DirectoryNotFoundException($"Asset root directory not found: {rootDirectory}");
+            }
+            return rootDirectory;
+        }
+
+        // 1. Relative к current working directory — verify с shaders subdir too.
+        string cwdCandidate = Path.GetFullPath(rootDirectory);
+        if (IsValidAssetsRoot(cwdCandidate))
+        {
+            return cwdCandidate;
+        }
+
+        // 2. Walk up from AppContext.BaseDirectory looking for ancestor containing the directory.
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir != null)
+        {
+            string candidate = Path.Combine(dir.FullName, rootDirectory);
+            if (IsValidAssetsRoot(candidate))
+            {
+                return candidate;
+            }
+            dir = dir.Parent;
+        }
+
+        throw new DirectoryNotFoundException(
+            $"Asset root directory not found: {rootDirectory} (checked cwd + ancestors of AppContext.BaseDirectory). " +
+            "Candidate must exist and contain a 'shaders' subdirectory.");
+    }
+
+    private static bool IsValidAssetsRoot(string path) =>
+        Directory.Exists(path) && Directory.Exists(Path.Combine(path, "shaders"));
 
     /// <summary>Load PNG image, cached by path. Subsequent loads return cached instance.</summary>
     public PngImage LoadPng(AssetPath path)
