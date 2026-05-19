@@ -44,6 +44,9 @@ public sealed class Runtime : IDisposable
     public VulkanSpritePipeline SpritePipeline { get; private set; } = null!;
     public SpriteRenderer SpriteRenderer { get; private set; } = null!;
 
+    // V0.C.2 additions
+    public Camera2D Camera { get; private set; } = null!;
+
     private readonly List<VulkanFramebuffer> _framebuffers = new();
     private bool _disposed;
 
@@ -135,6 +138,15 @@ public sealed class Runtime : IDisposable
                 runtime.SpritePipeline,
                 runtime.Swapchain.Images.Count,
                 maxSpritesPerFrame: 10_000);
+
+            // V0.C.2: Camera2D initialized с window viewport size, identity position/zoom.
+            runtime.Camera = new Camera2D
+            {
+                Position = Vector2.Zero,
+                Zoom = 1.0f,
+                Rotation = 0f,
+                ViewportSize = new Vector2(options.Window.Width, options.Window.Height),
+            };
 
             return runtime;
         }
