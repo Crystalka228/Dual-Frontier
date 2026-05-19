@@ -4,10 +4,10 @@
 register_id: DOC-D-V0_C_2
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
 version: "1.0"
-next_review_due: 2027-05-19
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V0_C_2
 ---
 ---
