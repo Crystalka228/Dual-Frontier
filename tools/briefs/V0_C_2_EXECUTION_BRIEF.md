@@ -2934,4 +2934,83 @@ V0.A (PR #36) + V0.B (PR #37) + V0.C.1 (PR #38) + V0.C.2 (PR #XX) = four consecu
 
 ---
 
-*V0.C.2 EXECUTION BRIEF AUTHORED 2026-05-19 — DOC-D-V0_C_2 lifecycle AUTHORED, awaiting EXECUTED transition at Commit 17 closure.*
+## §8 — Closure section (added at EXECUTED transition)
+
+**Date executed**: 2026-05-19
+**Branch**: `claude/v0_c_2-batched-sprite-tilemap-camera`
+**Commits**: 17 atomic (b4084f1..PENDING-COMMIT-V0_C_2-CLOSURE)
+**PR**: Pending (Crystalka reviews + merges per V0.A/V0.B/V0.C.1 precedent)
+
+### Commit ledger
+
+| # | Hash | Scope | Summary |
+|---|------|-------|---------|
+| 1 | b4084f1 | governance | enroll V0.C.2 execution brief (DOC-D-V0_C_2 AUTHORED) |
+| 2 | 6733c9c | vulkan + tests | add VkIndexType + vkCmdBindIndexBuffer + vkCmdDrawIndexed |
+| 3 | 26720fc | sprite + tests | add VertexBufferRing N-frame ring buffer (S-LOCK-2) |
+| 4 | 18555e9 | sprite + tests | add SpriteIndexBuffer pre-populated uint16 pattern (S-LOCK-3) |
+| 5 | ce40e67 | sprite + tests | harden AtlasRegion.FromPixels validation guards (S-LOCK-6) |
+| 6 | bd2c8eb | sprite + tests | add Camera2D class (S-LOCK-4) |
+| 7 | 18e6f8e | sprite + runtime | SpriteRenderer batched API rewrite + Runtime backward-compat |
+| 8 | d9de52a | runtime | Runtime.Camera property wiring (S-LOCK-1) |
+| 9 | b72cd7e | sprite + tests | add TileMap class (S-LOCK-5) |
+| 10 | e596f73 | tests | ProceduralAtlas SmokeTest helper |
+| 11 | 01d9c1c | tests | 10K sprite stress test scene (R.2) |
+| 12 | 655e6c0 | tests + runtime | 200×200 TileMap scene + multi-cycle helpers (R.3 + S-LOCK-5a) |
+| 13 | f6ff03b | docs | Manual visual verification protocol |
+| 14 | 1b8f2ea | governance | DOC-D-V0_C_2 EXECUTED + audit_trail event |
+| 15 | (this) | docs | Closure section в brief |
+| 16 | (next) | tests | Final integration smoke test |
+| 17 | (next) | governance | Final REGISTER sync + push + PR |
+
+### Verification metrics
+
+- `dotnet build` clean (0 errors, 0 warnings) at every atomic commit
+- `dotnet test (DualFrontier.Runtime.Tests)`: **271 tests passing** (210 V0.C.1 baseline + 61 V0.C.2 additive)
+- `sync_register.ps1 -Validate` exit 0 (audit_trail=21, documents=251, 20 advisory orphan warnings)
+- Smoke test execution на «Skarlet»: pending Commit 16 final integration verification per Manual Visual Verification Protocol
+
+### Halt protocol activations
+
+- **SC-1 non-critical drift** (Commit 5): AtlasRegion.FromPixels already present from V0.C.1 without validation guards; hardened existing factory rather than full add per Lesson #1 production-wiring-surfaces-embedded-behavior pattern.
+- **SC-6 averted** (Commit 6): Camera2D ortho projection initial argument order incorrect (brief said «swap для +Y down» but standard CreateOrthographicOffCenter convention works directly); test gate caught inversion; fixed pre-commit.
+- **SC-7 averted** (Commit 7): combined SpriteRenderer rewrite + Runtime call site update в single semantic commit per atomic discipline; build invariant preserved at every step.
+- **Lesson #7 alignment audit** (Commit 2): Marshal.SizeOf<T>() doesn't support enums в .NET 8; substituted sizeof + Enum.GetUnderlyingType. First V0.C.2 alignment audit correction.
+- No SC-N hard-halt activations.
+
+### Alignment audit corrections caught
+
+- VkIndexType: hypothesis Marshal.SizeOf<T>()==4 rejected by .NET 8 enum marshalability constraint; substituted sizeof + Enum.GetUnderlyingType — actual size 4 bytes confirmed via underlying type uint.
+
+### Lesson candidates surfaced
+
+- **Lesson #7 strengthening MATURED continues**: V0.A 1 → V0.B 5 → V0.C.1 0 → V0.C.2 1 correction. Pattern: discipline-mandatory regardless; methodology rigor preserved through changing failure modes.
+- **Lesson #22 strengthening continues**: mixed [LibraryImport]/[DllImport] preserved (2 new functions, both [LibraryImport]).
+- **Lesson #25 strengthening continues**: scope discipline — Camera2D culling + TileMap chunked/instanced + JSON atlas manifest all deferred к consumer materialization.
+- **Lesson #26 strengthening continues**: V0.C split (V0.C.1 + V0.C.2) validated through both successful cascades.
+- **Lesson #27 candidate continues**: render workload exercises prior substrate primitives (V0.B framebuffers + swapchain + memory allocator + V0.C.1 sprite pipeline + push constants).
+- **New candidate — Ring buffer N-frame production pattern** (Commit 3): VertexBufferRing applies к per-frame GPU resources (uniform buffers, dynamic descriptors, future V1/V2 compute).
+- **New candidate — Indexed quad rendering memory tradeoff** (Commit 4): 4 vertices + uint16 indices vs 6 non-indexed = ~33% vertex memory reduction.
+- **New candidate — Composition refactor preserves backward compat via routing** (Commit 7): SpriteRenderer.DrawSprite removed, Runtime.RecordSpriteFrame preserved via routing through batched API.
+- **New candidate — Multi-scene smoke test layering** (Commits 11 + 12): V0.C.1 single scene → V0.C.2 3 sequential scenes inheriting prior baselines + adding specific verification.
+
+### V0 substrate close pattern established
+
+V0.A (PR #36) + V0.B (PR #37) + V0.C.1 (PR #38) + V0.C.2 (PR #pending) = **four consecutive zero-hard-gate-halt cascades** on V substrate authoring stream. К-L14 thesis empirically validated на V substrate matching K substrate K0..K10 development accumulation pattern.
+
+### Next steps
+
+**V0 substrate close per Q8 ratification opens**:
+- V1 brief authoring (scalar field + diffusion shader, isotropic + anisotropic)
+- V2 brief authoring (scalar field + wave shader, routed + breakable)
+- Phase B M-cycle vanilla content migration (gated also on Roslyn analyzer A'.9 + K-closure report A'.8)
+
+**Independent streams unchanged**:
+- К10.3 brief restart (Crystalka prerogative)
+- К10.4 TLA+ brief authoring
+- A'.8 K-closure report
+- A'.9 Roslyn architectural analyzer milestone
+
+---
+
+*V0.C.2 EXECUTION BRIEF EXECUTED 2026-05-19 — DOC-D-V0_C_2 lifecycle transitioned AUTHORED → EXECUTED at Commit 14 closure governance landing.*
