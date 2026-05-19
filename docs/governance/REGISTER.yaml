@@ -1489,15 +1489,15 @@ documents:
     title: "V0.C.1 — PNG decoder + textured sprite pipeline + input event types (R.1 + R.4)"
     category: D
     tier: 3
-    lifecycle: AUTHORED
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-05-19"
-    last_modified_commit: "PENDING-COMMIT-V0_C_1-BRIEF"
+    last_modified_commit: "PENDING-COMMIT-V0_C_1-CLOSURE"
     content_language: mixed
     review_cadence: on-status-transition
     last_review_date: "2026-05-19"
-    last_review_event: "V0.C.1 brief AUTHORED 2026-05-19 post-V0.B closure (PR #37 merged HEAD 9959bf5; 18 atomic commits d2c6627..e9ccd0f; 786 tests baseline; AMD RX 7600S verified К-L19 hardware tier; 5 brief estimate alignment corrections caught via Marshal.SizeOf test gate continuing Lesson #7 strengthening); brief targets ~17 atomic commits implementing R.1 (first textured quad) + R.4 (input system) per VULKAN_SUBSTRATE.md v1.0 §4.2 phase mapping; in-scope: PNG decoder (RGBA8/RGB8 8-bit non-interlaced) + AssetManager + VulkanSampler + TextureUploader + sprite shaders + sprite pipeline + single-sprite renderer + 6 input event types + Win32 message dispatch; out-of-scope (V0.C.2): batched sprite renderer (10K sprites at 60+ FPS) + Camera2D + TileMap (R.2 + R.3); К10.3 brief restart pathway independent of V0.C.1 — Crystalka prerogative on timing"
+    last_review_event: "V0.C.1 sub-milestone closure 2026-05-19 — 17 atomic commits 4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE; V substrate R.1 (first textured quad) + R.4 (input system) operational per VULKAN_SUBSTRATE.md v1.0 §4.2 phase mapping; 7 REQs authored (REQ-V0-C-1-PNG_DECODER, REQ-V0-C-1-SAMPLER, REQ-V0-C-1-TEXTURE_UPLOAD, REQ-V0-C-1-SPRITE_PIPELINE, REQ-V0-C-1-SPRITE_RENDERER, REQ-V0-C-1-INPUT_EVENTS, REQ-V0-C-1-WIN32_INPUT_DISPATCH); 121 V0.B Runtime.Tests baseline preserved + 89 V0.C.1 additive (210 total Runtime.Tests) — full sln tests 786 V0.B baseline + 89 V0.C.1 = 875 total managed; AMD Radeon RX 7600S verified К-L19 hardware tier at smoke test (sprite render loop 820 frames at 164 FPS over 5 seconds, validation log 0 errors/warnings/info — S-LOCK-4 preserved); 8 Marshal.SizeOf alignment hypotheses ALL VERIFIED on first attempt (vs V0.B 5 corrections — Lesson #7 strengthening continues robust); V0.C.2 brief pending (R.2 batched sprite renderer 10,000 sprites at 60+ FPS + R.3 TileMap + Camera2D); К10.3 brief restart pathway independent of V0.C.1 closure — Crystalka prerogative on timing"
     next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-013]
@@ -4715,6 +4715,212 @@ requirements:
     verification_date: "2026-05-18"
     verification_milestone: "V0.B closure"
 
+  - id: REQ-V0-C-1-PNG_DECODER
+    title: "Manual PNG decoder (8-bit RGB/RGBA, non-interlaced, all 4 filter predictors)"
+    source_document: DOC-D-V0_C_1
+    source_section: "S-LOCK-2; V0.C.1 brief Commit 3-4"
+    requirement_text: |
+      DualFrontier.Runtime.Assets.PngDecoder implements RFC 2083 PNG decoding for 8-bit
+      RGB (color type 2) и RGBA (color type 6) non-interlaced PNG files. Supports все 4 filter
+      predictors (None/Sub/Up/Average/Paeth per RFC 2083 §6.2-6.6). Uses System.IO.Compression.DeflateStream
+      для DEFLATE decompression (BCL per §0 L5). Mandatory CRC32 verification per RFC 2083 §5.3.
+      Unsupported variants (interlaced, palette/color type 3, grayscale/color type 0/4, 16-bit channels)
+      throw explicit PngDecoderException — produces wrong pixels never per Lesson #20 «no improvisation».
+      RGB → RGBA conversion at decode time с alpha = 255 (fully opaque) per Q2 (a) ratification.
+    verified_by:
+      - file: src/DualFrontier.Runtime/Assets/PngDecoder.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Assets/PngImage.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Assets/PngDecoderTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-19"
+    verification_milestone: "V0.C.1 closure"
+
+  - id: REQ-V0-C-1-SAMPLER
+    title: "VulkanSampler primitive (nearest+repeat default per S-LOCK-6 pixel art aesthetic)"
+    source_document: DOC-D-V0_C_1
+    source_section: "S-LOCK-6; V0.C.1 brief Commit 6"
+    requirement_text: |
+      DualFrontier.Runtime.Graphics.VulkanSampler wraps VkSampler lifecycle с configurable
+      SamplerOptions (MagFilter/MinFilter Nearest|Linear, WrapU/WrapV Repeat|ClampToEdge|
+      ClampToBorder|MirroredRepeat, EnableAnisotropy bool). Default = nearest filter +
+      repeat wrap per Q3 (b) ratification (pixel art preservation + atlas/tilemap compatibility).
+      Mipmaps disabled (maxLod=0); anisotropy disabled (requires VkPhysicalDeviceFeatures
+      opt-in not currently requested).
+    verified_by:
+      - file: src/DualFrontier.Runtime/Graphics/VulkanSampler.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanSamplerTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-19"
+    verification_milestone: "V0.C.1 closure"
+
+  - id: REQ-V0-C-1-TEXTURE_UPLOAD
+    title: "TextureUploader staging-buffer → device-local image transfer + layout transitions"
+    source_document: DOC-D-V0_C_1
+    source_section: "V0.C.1 brief Commit 7"
+    requirement_text: |
+      DualFrontier.Runtime.Graphics.TextureUploader.Upload(VulkanImage, byte[]) orchestrates
+      synchronous texture upload: host-visible staging VulkanBuffer + vkMapMemory/vkUnmapMemory
+      + one-shot command buffer recording (vkCmdPipelineBarrier UNDEFINED→TRANSFER_DST_OPTIMAL +
+      vkCmdCopyBufferToImage + vkCmdPipelineBarrier TRANSFER_DST_OPTIMAL→SHADER_READ_ONLY_OPTIMAL)
+      + SubmitTo graphics queue с fence + fence.Wait per К-L7 atomic-from-observer.
+      VulkanImage.CreateFromPngImage convenience method: creates VulkanImage с Sampled|TransferDst
+      usage + device-local memory, uploads PngImage pixels through TextureUploader, disposes
+      image on upload failure к prevent leaks.
+    verified_by:
+      - file: src/DualFrontier.Runtime/Graphics/TextureUploader.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanImage.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/TextureUploaderTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-19"
+    verification_milestone: "V0.C.1 closure"
+
+  - id: REQ-V0-C-1-SPRITE_PIPELINE
+    title: "VulkanSpritePipeline (vertex input + alpha blending + descriptor sets + push constants)"
+    source_document: DOC-D-V0_C_1
+    source_section: "S-LOCK-3, S-LOCK-4, S-LOCK-5, S-LOCK-8; V0.C.1 brief Commit 9-11"
+    requirement_text: |
+      DualFrontier.Runtime.Sprite.VulkanSpritePipeline extends V0.B VulkanGraphicsPipeline pattern с:
+      (a) Vertex input description: binding 0 stride 20 bytes (SpriteVertex), 3 attributes
+          (Position R32G32_SFLOAT offset 0, Uv R32G32_SFLOAT offset 8, TintRgba R8G8B8A8_UNORM offset 16).
+      (b) Alpha blending enabled (premultiplied alpha workflow per S-LOCK-5):
+          srcColor=ONE, dstColor=ONE_MINUS_SRC_ALPHA, blendOp=ADD; same для alpha channel.
+      (c) SpriteDescriptorSetLayout с 1 binding (COMBINED_IMAGE_SAMPLER, FRAGMENT_BIT, count 1)
+          matches sprite.frag layout(set = 0, binding = 0) uniform sampler2D atlas.
+      (d) VulkanPipelineLayout backward-compatibly extended с pushConstantRanges parameter; sprite
+          pipeline uses 64-byte VERTEX_BIT range для Camera2D MVP mat4.
+      sprite.vert + sprite.frag GLSL sources committed; MSBuild CompileShaders target regenerates
+      .spv outputs on every Runtime project build per S-LOCK-5.
+    verified_by:
+      - file: src/DualFrontier.Runtime/Sprite/SpriteVertex.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Sprite/VulkanSpritePipeline.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Sprite/SpriteDescriptorSetLayout.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Graphics/VulkanPipelineLayout.cs
+        verification_type: code_inspection
+      - file: tools/shaders/sprite.vert
+        verification_type: spec_inspection
+      - file: tools/shaders/sprite.frag
+        verification_type: spec_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Sprite/VulkanSpritePipelineTests.cs
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanPipelineLayoutTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-19"
+    verification_milestone: "V0.C.1 closure"
+
+  - id: REQ-V0-C-1-SPRITE_RENDERER
+    title: "SpriteRenderer single-sprite-per-draw API с descriptor set caching"
+    source_document: DOC-D-V0_C_1
+    source_section: "V0.C.1 brief Commit 12"
+    requirement_text: |
+      DualFrontier.Runtime.Sprite.SpriteRenderer orchestrates V0.C.1 sprite drawing:
+      (a) Dynamic vertex buffer (64 KB host-visible+host-coherent, VertexBuffer usage)
+          sized for V0.C.2 batched expansion without resize churn.
+      (b) Descriptor pool sized for 32 textures (COMBINED_IMAGE_SAMPLER).
+      (c) DrawSprite(Sprite, VulkanCommandBuffer, Matrix4x4 mvp):
+           - Build 6 vertices (2 triangles forming quad, CCW)
+           - Upload via vkMapMemory + Buffer.MemoryCopy + vkUnmapMemory
+           - Get-or-allocate descriptor set per SpriteTexture (caching)
+           - Record vkCmdBindPipeline + vkCmdBindDescriptorSets + vkCmdPushConstants (MVP)
+             + vkCmdBindVertexBuffers + vkCmdDraw(6, 1, 0, 0).
+      V0.C.2 will refactor к batched (one draw call per atlas, 10,000+ sprites at 60+ FPS).
+    verified_by:
+      - file: src/DualFrontier.Runtime/Sprite/SpriteRenderer.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Sprite/SpriteTexture.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Sprite/AtlasRegion.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Sprite/SpriteTransform.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Sprite/Sprite.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Sprite/SpriteRendererTests.cs
+        verification_type: managed_test
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-19"
+    verification_milestone: "V0.C.1 closure"
+
+  - id: REQ-V0-C-1-INPUT_EVENTS
+    title: "Input event types complete (Key/MouseButton enums + 6 event records + VirtualKeyMapper)"
+    source_document: DOC-D-V0_C_1
+    source_section: "S-LOCK-10; V0.C.1 brief Commit 13"
+    requirement_text: |
+      DualFrontier.Runtime.Input module event surface:
+      (a) Key enum: Unknown + Left/Right/Up/Down + Shift/Control/Alt + Escape/Space/Enter/Tab/
+          Backspace/Delete/Home/End/PageUp/PageDown + F1-F12 + A-Z + Digit0-Digit9.
+      (b) MouseButton enum: Left, Right, Middle.
+      (c) 6 event records implementing IInputEvent:
+           KeyPressedEvent(Key), KeyReleasedEvent(Key), MouseMovedEvent(int X, int Y),
+           MouseButtonEvent(MouseButton, bool Pressed), MouseWheelEvent(int Delta),
+           WindowFocusEvent(bool Focused).
+      (d) VirtualKeyMapper.Map(int vkCode) → Key: maps Win32 virtual key codes к Key enum via
+           switch с range patterns for letters (0x41-0x5A) + digits (0x30-0x39); unmapped → Key.Unknown.
+    verified_by:
+      - file: src/DualFrontier.Runtime/Input/Key.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/MouseButton.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/KeyPressedEvent.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/KeyReleasedEvent.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/MouseMovedEvent.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/MouseButtonEvent.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/MouseWheelEvent.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/WindowFocusEvent.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Input/VirtualKeyMapper.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.Tests/Input/VirtualKeyMapperTests.cs
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-19"
+    verification_milestone: "V0.C.1 closure"
+
+  - id: REQ-V0-C-1-WIN32_INPUT_DISPATCH
+    title: "Win32 message dispatch (WM_KEYDOWN/UP/MOUSEMOVE/L|R|MBUTTONDOWN/UP/MOUSEWHEEL/SETFOCUS/KILLFOCUS → InputEventQueue)"
+    source_document: DOC-D-V0_C_1
+    source_section: "S-LOCK-10; V0.C.1 brief Commit 14"
+    requirement_text: |
+      Window.cs WindowProcedure extended с keyboard/mouse/focus dispatch:
+      (a) WM_KEYDOWN/WM_SYSKEYDOWN → VirtualKeyMapper.Map(vk) → KeyPressedEvent (if not Unknown).
+      (b) WM_KEYUP/WM_SYSKEYUP → KeyReleasedEvent.
+      (c) WM_MOUSEMOVE → MouseMovedEvent с signed cursor coordinates from lParam (cast через
+          short к preserve sign).
+      (d) WM_L|R|MBUTTONDOWN/UP → MouseButtonEvent с (MouseButton, Pressed=true|false).
+      (e) WM_MOUSEWHEEL → MouseWheelEvent с normalized delta (rawDelta / WHEEL_DELTA=120).
+      (f) WM_SETFOCUS → WindowFocusEvent(true); WM_KILLFOCUS → WindowFocusEvent(false).
+      Win32Constants.cs extended с WM_SYSKEYDOWN/UP, WM_RBUTTONDOWN/UP, WM_MBUTTONDOWN/UP,
+      WM_MOUSEWHEEL, VK_BACK/TAB/RETURN/SHIFT/CONTROL/MENU/ESCAPE/SPACE/PRIOR/NEXT/END/HOME/
+      LEFT/UP/RIGHT/DOWN/DELETE/F1-F12, WHEEL_DELTA.
+    verified_by:
+      - file: src/DualFrontier.Runtime/Window/Window.cs
+        verification_type: code_inspection
+      - file: src/DualFrontier.Runtime/Native/Win32/Win32Constants.cs
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+        verification_type: smoke_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-19"
+    verification_milestone: "V0.C.1 closure"
+
 # === risks collection (Q11 — 14 entries; pre-authored from Pass 5 §3) ===
 risks:
   - id: RISK-001
@@ -6587,5 +6793,111 @@ audit_trail:
         - RISK-013                        # rendering substrate cross-cutting — V substrate foundation completion landed
       lifecycle_transitions:
         - document: DOC-D-V0_B
+          from: AUTHORED
+          to: EXECUTED
+
+  - id: EVT-2026-05-19-V0_C_1-CLOSURE
+    date: "2026-05-19"
+    event: "V0.C.1 sub-milestone closure — V substrate R.1 (first textured quad) + R.4 (input system) operational; PngDecoder + AssetManager + VulkanSampler + TextureUploader + sprite shaders + VulkanSpritePipeline + SpriteRenderer + 6 input event types + Win32 dispatch + Runtime facade composition; smoke test exit criteria operational на real К-L19 hardware (820 frames at 164 FPS, validation log 0 errors); V0.C.2 brief restart pathway opens"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-V0_C_1                  # lifecycle AUTHORED → EXECUTED
+    commits:
+      range: "4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE"
+      key_commits:
+        - hash: "4c4be8f"
+          summary: "Commit 1 — V0.C.1 brief authored + REGISTER enrollment (DOC-D-V0_C_1 AUTHORED)"
+        - hash: "20aee0f"
+          summary: "Commit 2 — Vulkan struct + function extensions + 8 Marshal.SizeOf tests (all hypotheses VERIFIED — vs V0.B 5 corrections)"
+        - hash: "76e027a"
+          summary: "Commit 3 — PngDecoder Part 1 (chunk parsing + CRC32 + IHDR validation)"
+        - hash: "132c65e"
+          summary: "Commit 4 — PngDecoder Part 2 (DEFLATE + filter unfiltering: None/Sub/Up/Average/Paeth)"
+        - hash: "10bcd67"
+          summary: "Commit 5 — AssetManager + AssetPath (PNG caching + path traversal protection)"
+        - hash: "80d9fdc"
+          summary: "Commit 6 — VulkanSampler primitive (nearest+repeat default per S-LOCK-6)"
+        - hash: "3f43d8b"
+          summary: "Commit 7 — TextureUploader (staging buffer + buffer-to-image copy + layout transitions) + VulkanImage.CreateFromPngImage"
+        - hash: "3773baa"
+          summary: "Commit 8 — VulkanPipelineLayout extension с push constant range support (backward-compatible)"
+        - hash: "51950b0"
+          summary: "Commit 9 — Sprite GLSL shaders + MSBuild target extension + pre-compiled SPIR-V"
+        - hash: "ff58b9b"
+          summary: "Commit 10 — Sprite primitive types (SpriteVertex 20 bytes + AtlasRegion + SpriteTexture + SpriteTransform + Sprite)"
+        - hash: "883031e"
+          summary: "Commit 11 — VulkanSpritePipeline (vertex input + alpha blending + descriptor set + push constants)"
+        - hash: "68cc32c"
+          summary: "Commit 12 — SpriteRenderer (single-sprite per draw + descriptor set caching + dynamic vertex buffer)"
+        - hash: "eb4b50a"
+          summary: "Commit 13 — Input event types (Key/MouseButton enums + 6 event records + VirtualKeyMapper)"
+        - hash: "bf5433c"
+          summary: "Commit 14 — Win32 message dispatch (WindowProcedure WM_KEYDOWN/UP/MOUSEMOVE/L|R|MBUTTONDOWN/UP/MOUSEWHEEL/SETFOCUS/KILLFOCUS)"
+        - hash: "c3cf964"
+          summary: "Commit 15 — Runtime facade extension (AssetManager + DefaultSampler + sprite pipeline + SpriteRenderer + RecordSpriteFrame helper + AssetManager smart path resolution)"
+        - hash: "d94c568"
+          summary: "Commit 16 — V0.C.1 smoke test extension (procedural sprite rendered 820 frames at 164 FPS на К-L19 AMD RX 7600S; validation 0 errors)"
+    governance_impact: |
+      V0.C.1 sub-milestone closure under V substrate foundation split. Third of three V0
+      sub-milestones (V0.A closed 2026-05-18 = Win32 + Vulkan instance + device + validation;
+      V0.B closed 2026-05-18 = swapchain + render pass + compute pipeline plumbing +
+      memory allocator + SPIR-V toolchain + async compute queue + hardware check;
+      V0.C.1 closed 2026-05-19 = PNG decoder + sprite pipeline + input events).
+
+      V0.C.1 advances V substrate к R.1 (first textured quad) + R.4 (input system) per
+      VULKAN_SUBSTRATE.md v1.0 §4.2 phase mapping. R.2 (batched sprite renderer at 10,000
+      sprites) + R.3 (TileMap + Camera2D) deferred к V0.C.2 brief. R.5-R.8 phases (Domain
+      integration + UI + lifecycle + Godot cutover) separate R-cycle briefs post-V substrate close.
+
+      REGISTER amendments:
+      - DOC-D-V0_C_1 lifecycle AUTHORED → EXECUTED
+      - 7 new REQ entries: REQ-V0-C-1-PNG_DECODER, REQ-V0-C-1-SAMPLER, REQ-V0-C-1-TEXTURE_UPLOAD,
+        REQ-V0-C-1-SPRITE_PIPELINE, REQ-V0-C-1-SPRITE_RENDERER, REQ-V0-C-1-INPUT_EVENTS,
+        REQ-V0-C-1-WIN32_INPUT_DISPATCH
+
+      Validation metrics (final state):
+      - dotnet build (sln): clean (0 warnings, 0 errors)
+      - dotnet test (DualFrontier.Runtime.Tests): 210 passed, 0 failed (121 V0.B baseline + 89 V0.C.1
+        additive — Vulkan struct sizes +8 + PngDecoderTests +19 + AssetManagerTests +9 + VulkanSamplerTests
+        +6 + TextureUploaderTests +4 + VulkanPipelineLayoutTests +4 + SpriteVertexTests +7 +
+        VulkanSpritePipelineTests +2 + SpriteRendererTests +2 + VirtualKeyMapperTests +28)
+      - dotnet test (sln full): all green (Modding.Tests + Core.Tests + Systems.Tests + Runtime.Tests baseline preserved + V0.C.1 additive)
+      - V0.C.1 smoke test: exit 0; 820 frames at 164 FPS over 5-second sprite render loop;
+        validation log 0 errors / 0 warnings / 0 info на AMD Radeon RX 7600S; all V0.A + V0.B
+        regression checks preserved (window opens, Vulkan instance live, device composed,
+        К-L19 HardwareCapabilityCheck passes, swapchain operational, compute pipeline roundtrip
+        managed + native C ABI paths preserved); S-LOCK-4 (validation ALWAYS-ON в DEBUG) preserved
+      - sync_register.ps1 --validate: exit 0 (advisory orphan warnings only — baseline)
+
+      Lesson #7 strengthening continues: 8 new Marshal.SizeOf<T>() hypotheses ALL VERIFIED on
+      first attempt — robust contrast vs V0.B 5 corrections caught at test gate. C ABI alignment
+      audit recipe operational (V0.A → V0.B → V0.C.1).
+
+      Lesson #20 «no improvisation» preserved: PNG decoder explicitly rejects unsupported variants
+      (interlaced, palette, grayscale, 16-bit) с PngDecoderException rather than silently producing
+      wrong pixels. Future support via Lesson #25 (implementation depth follows consumer materialization).
+
+      К-L14 default-inclusion bias preserved across V substrate: all 4 PNG filter predictors implemented
+      (None/Sub/Up/Average/Paeth), sprite vertex format с tint color for future modulation, premultiplied
+      alpha blending production-shape, full descriptor pool sized for V0.C.2 batched expansion без resize.
+
+      V substrate next steps:
+      - V0.C.2 brief authoring: R.2 batched sprite renderer (10K sprites at 60+ FPS) + R.3 TileMap + Camera2D
+      - V0 substrate close gates на V0.C.2 (per Q8 ratification)
+      - К10.3 brief restart pathway independent — Crystalka prerogative on timing
+      - R.5-R.8 phases (Domain integration + UI + lifecycle + Godot cutover) separate briefs
+    cross_references:
+      requirements:
+        - REQ-V0-C-1-PNG_DECODER
+        - REQ-V0-C-1-SAMPLER
+        - REQ-V0-C-1-TEXTURE_UPLOAD
+        - REQ-V0-C-1-SPRITE_PIPELINE
+        - REQ-V0-C-1-SPRITE_RENDERER
+        - REQ-V0-C-1-INPUT_EVENTS
+        - REQ-V0-C-1-WIN32_INPUT_DISPATCH
+      risks:
+        - RISK-013                        # rendering substrate cross-cutting — V substrate R.1 + R.4 operational
+      lifecycle_transitions:
+        - document: DOC-D-V0_C_1
           from: AUTHORED
           to: EXECUTED
