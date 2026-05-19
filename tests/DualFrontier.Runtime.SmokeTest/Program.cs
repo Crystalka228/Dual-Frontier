@@ -215,6 +215,13 @@ internal static class Program
                 s.Dispose();
             }
 
+            // ===========================================================================
+            // V0.C.2 — R.2 batched sprite renderer stress test (10K sprites at 60+ FPS)
+            // ===========================================================================
+            Console.WriteLine();
+            Console.WriteLine("V0.C.2 R.2 batched sprite stress test:");
+            RunStressTest10K(runtime, durationSeconds: 5);
+
             // Dispose texture before runtime.WaitIdle / disposal cascade — texture owns image+sampler
             // (default sampler not owned by texture — handle aliased; check before disposing).
             // pawnTexture uses runtime.DefaultSampler — disposing pawnTexture would dispose the
@@ -340,6 +347,133 @@ internal static class Program
             }
         }
         return new PngImage(size, size, pixels);
+    }
+
+    /// <summary>
+    /// V0.C.2 R.2 — 10,000 sprite stress test. Renders 10K randomly-positioned + tinted
+    /// sprites referencing single procedural atlas. Verifies 60+ FPS sustained.
+    /// Per S-LOCK-7a single-atlas optimization: single vkCmdDrawIndexed per frame
+    /// (verifiable in RenderDoc at manual visual verification gate).
+    /// </summary>
+    private static void RunStressTest10K(Runtime runtime, int durationSeconds)
+    {
+        // 1. Generate procedural atlas + upload via TextureUploader.
+        PngImage atlasImage = ProceduralAtlas.GenerateAtlas();
+        VulkanImage atlasVkImage = VulkanImage.CreateFromPngImage(
+            runtime.VulkanDevice, runtime.MemoryAllocator, runtime.TextureUploader, atlasImage);
+        var atlasSampler = new VulkanSampler(runtime.VulkanDevice);
+        using var atlasTexture = new SpriteTexture(atlasVkImage, atlasSampler);
+        Console.WriteLine($"  Atlas: {ProceduralAtlas.AtlasWidth}×{ProceduralAtlas.AtlasHeight} RGBA8, " +
+                          $"{ProceduralAtlas.TotalTiles} distinct tile regions");
+
+        // 2. Generate 10,000 random sprites referencing procedural atlas.
+        var random = new Random(Seed: 42);
+        var sprites = new List<DualFrontier.Runtime.Sprite.Sprite>(10_000);
+        for (int i = 0; i < 10_000; i++)
+        {
+            int tileIdx = random.Next(ProceduralAtlas.TotalTiles);
+            AtlasRegion region = ProceduralAtlas.GetTileRegion(tileIdx);
+            // Distribute across viewport (world coords matching ViewportSize via Camera2D centered at viewport mid).
+            float x = (float)(random.NextDouble() * runtime.Swapchain.Width) - runtime.Swapchain.Width * 0.5f;
+            float y = (float)(random.NextDouble() * runtime.Swapchain.Height) - runtime.Swapchain.Height * 0.5f;
+            // Pack random tint.
+            byte r = (byte)random.Next(80, 256);
+            byte g = (byte)random.Next(80, 256);
+            byte b = (byte)random.Next(80, 256);
+            uint tint = SpriteVertex.PackTintRgba(r, g, b, 255);
+
+            sprites.Add(new DualFrontier.Runtime.Sprite.Sprite(
+                Texture: atlasTexture,
+                Region: region,
+                Transform: new SpriteTransform(
+                    Position: new Vector2(x, y),
+                    Scale: new Vector2(16f, 16f),
+                    Rotation: 0f,
+                    TintRgba: tint)));
+        }
+        Console.WriteLine($"  Sprites: {sprites.Count} (single atlas → single vkCmdDrawIndexed per frame)");
+
+        // 3. Configure camera at viewport center.
+        runtime.Camera.Position = Vector2.Zero;
+        runtime.Camera.ViewportSize = new Vector2(runtime.Swapchain.Width, runtime.Swapchain.Height);
+        runtime.Camera.Zoom = 1.0f;
+
+        // 4. Per-frame sync.
+        using var commandBuffer = runtime.GraphicsCommandPool.AllocateBuffer();
+        using var imageAvailable = new VulkanSemaphore(runtime.VulkanDevice);
+        var renderFinishedPerImage = new VulkanSemaphore[runtime.Swapchain.ImageCount];
+        for (int i = 0; i < renderFinishedPerImage.Length; i++)
+        {
+            renderFinishedPerImage[i] = new VulkanSemaphore(runtime.VulkanDevice);
+        }
+        using var frameFence = new VulkanFence(runtime.VulkanDevice);
+
+        int frameCount = 0;
+        var stressStart = DateTime.UtcNow;
+        while ((DateTime.UtcNow - stressStart).TotalSeconds < durationSeconds && runtime.Window.IsOpen)
+        {
+            runtime.Window.PumpMessages();
+
+            // Drain input events (no action — stress test ignores input).
+            while (runtime.InputQueue.TryDequeue(out _)) { }
+
+            if (!runtime.Window.IsOpen) break;
+
+            uint imageIndex = runtime.Swapchain.AcquireNextImage(imageAvailable.Handle, IntPtr.Zero, out bool outOfDate);
+            if (outOfDate)
+            {
+                runtime.VulkanDevice.WaitIdle();
+                runtime.Swapchain.Recreate((uint)runtime.Window.Width, (uint)runtime.Window.Height);
+                runtime.RecreateFramebuffersForSwapchain();
+                continue;
+            }
+
+            commandBuffer.Reset();
+            commandBuffer.Begin(VkCommandBufferUsageFlagsPublic.OneTimeSubmit);
+            runtime.RecordSpritesFrame(
+                commandBuffer, (int)imageIndex, sprites, runtime.Camera,
+                clearColor: new Vector4(0.05f, 0.10f, 0.20f, 1.0f));
+            commandBuffer.End();
+
+            IntPtr renderFinishedHandle = renderFinishedPerImage[imageIndex].Handle;
+            commandBuffer.SubmitTo(
+                runtime.VulkanDevice.GraphicsQueue,
+                waitSemaphore: imageAvailable.Handle,
+                waitStage: VkPipelineStageFlagsPublic.ColorAttachmentOutput,
+                signalSemaphore: renderFinishedHandle,
+                fence: frameFence);
+
+            bool presentOutOfDate = runtime.Swapchain.Present(
+                runtime.VulkanDevice.GraphicsQueue, renderFinishedHandle, imageIndex);
+            if (presentOutOfDate)
+            {
+                runtime.VulkanDevice.WaitIdle();
+                runtime.Swapchain.Recreate((uint)runtime.Window.Width, (uint)runtime.Window.Height);
+            }
+
+            frameFence.Wait();
+            frameFence.Reset();
+            frameCount++;
+        }
+
+        double elapsed = (DateTime.UtcNow - stressStart).TotalSeconds;
+        double fps = frameCount / Math.Max(elapsed, 0.001);
+        Console.WriteLine($"  [PASS?] 10K sprite stress: {frameCount} frames in {elapsed:F2}s = {fps:F1} FPS");
+        if (fps >= 60.0)
+        {
+            Console.WriteLine($"  [PASS] R.2 success criterion met (60+ FPS sustained)");
+        }
+        else
+        {
+            Console.WriteLine($"  [WARN] R.2 target unmet ({fps:F1} < 60 FPS) — surface к Crystalka for SC-8 investigation");
+        }
+
+        // Cleanup per-image semaphores.
+        runtime.VulkanDevice.WaitIdle();
+        foreach (VulkanSemaphore s in renderFinishedPerImage)
+        {
+            s.Dispose();
+        }
     }
 
     private static string LocateAsset(string name)
