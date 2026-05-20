@@ -1,4 +1,5 @@
 using System.Numerics;
+using DualFrontier.Core.Interop;
 using DualFrontier.Runtime.Assets;
 using DualFrontier.Runtime.Compute;
 using DualFrontier.Runtime.Graphics;
@@ -48,6 +49,7 @@ public sealed class Runtime : IDisposable
     public Camera2D Camera { get; private set; } = null!;
 
     private readonly List<VulkanFramebuffer> _framebuffers = new();
+    private byte[]? _v1DiffusionSpirvCache;
     private bool _disposed;
 
     private Runtime()
@@ -337,6 +339,63 @@ public sealed class Runtime : IDisposable
         SpriteRenderer.EndFrame(commandBuffer, camera);
 
         VkApi.vkCmdEndRenderPass(commandBuffer.Handle);
+    }
+
+    /// <summary>
+    /// V1-14: attach а caller-owned <see cref="NativeWorld"/> к the Vulkan substrate so it
+    /// can register + dispatch compute pipelines (V1 diffusion, V2 wave, …). Wraps the world
+    /// в а <see cref="FieldStorageBinding"/> and validates async-compute queue availability
+    /// per К-L19.
+    /// </summary>
+    /// <remarks>
+    /// World ownership stays с the caller; Runtime supplies only the Vulkan handles + pipeline
+    /// + descriptor layout. The returned binding can be passed к factory methods like
+    /// <see cref="CreateV1DiffusionPipeline"/> к compose compute pipelines.
+    /// </remarks>
+    public FieldStorageBinding CreateFieldStorageBinding(NativeWorld world)
+    {
+        ArgumentNullException.ThrowIfNull(world);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        var binding = new FieldStorageBinding(world);
+        if (!binding.Attach(VulkanInstance, VulkanDevice))
+        {
+            throw new InvalidOperationException(
+                "FieldStorageBinding.Attach failed — caller's NativeWorld could не bind к the " +
+                "Vulkan instance/device. Check async-compute queue family availability and that " +
+                "the world has не already been attached к a different Vulkan device.");
+        }
+        return binding;
+    }
+
+    /// <summary>
+    /// V1-14 factory: constructs а V1 diffusion compute pipeline registered against
+    /// <paramref name="binding"/>'s world. Shader SPIR-V (diffusion.comp.spv) is loaded from
+    /// the AssetManager-resolved <c>shaders/</c> directory on first call and cached for
+    /// subsequent invocations (multiple consumers can register distinct pipelines reusing
+    /// the same bytecode без re-reading the file).
+    /// </summary>
+    /// <param name="binding">Field storage binding obtained via <see cref="CreateFieldStorageBinding"/>.</param>
+    /// <param name="pipelineName">Unique name на the native side; consumer-chosen.</param>
+    public V1DiffusionPipeline CreateV1DiffusionPipeline(FieldStorageBinding binding, string pipelineName)
+    {
+        ArgumentNullException.ThrowIfNull(binding);
+        ArgumentException.ThrowIfNullOrEmpty(pipelineName);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+
+        if (_v1DiffusionSpirvCache is null)
+        {
+            string spirvPath = Path.Combine(AssetManager.RootDirectory, "shaders", "diffusion.comp.spv");
+            if (!File.Exists(spirvPath))
+            {
+                throw new FileNotFoundException(
+                    $"V1 diffusion shader не found at '{spirvPath}'. " +
+                    "Verify Directory.Build.props CompileShaders target produced diffusion.comp.spv " +
+                    "during build.", spirvPath);
+            }
+            _v1DiffusionSpirvCache = File.ReadAllBytes(spirvPath);
+        }
+
+        return new V1DiffusionPipeline(binding, pipelineName, _v1DiffusionSpirvCache);
     }
 
     public void Dispose()
