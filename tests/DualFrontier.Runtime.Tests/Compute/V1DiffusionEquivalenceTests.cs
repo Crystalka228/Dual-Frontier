@@ -345,6 +345,87 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
     }
 
     [Fact]
+    public void Isotropic_long_run_mass_conserved_and_matches_CPU_within_tolerance()
+    {
+        // V1-11 multi-iteration evolution + mass conservation invariant.
+        // 50 iterations c reflective boundary + no decay → total mass at end
+        // should equal the initial spike mass within FP tolerance. CPU + GPU
+        // both must satisfy this, AND must agree cell-by-cell.
+        const int W = 16, H = 16;
+        const float D = 0.1f, Decay = 0.0f, Dt = 1.0f;
+        const int Iterations = 50;
+        const float InitialMass = 100f;
+        const float MassTolerance = 0.01f;
+        // Long-run tolerance — Δ accumulates over 50 iterations as ~iter × eps × |values|.
+        // Max value during evolution ≈ 25 (spreading spike on 16×16), so accumulated
+        // error ≈ 50 × 1e-7 × 25 ~ 1e-4; well within the 1e-3 IsotropicTolerance bound.
+        const float LongRunTolerance = IsotropicTolerance;
+
+        var cpuField = _cpuWorld.Fields.Register<float>("equiv.iso.long.cpu", W, H);
+        cpuField.WriteCell(W / 2, H / 2, InitialMass);
+        var cpuParams = new IsotropicDiffusionKernel.Parameters
+        {
+            DiffusionCoefficient = D, DecayCoefficient = Decay, DeltaTime = Dt,
+        };
+        IsotropicDiffusionKernel.Run(cpuField, cpuParams, Iterations);
+
+        var binding = new FieldStorageBinding(_gpuWorld);
+        binding.Attach(_instance, _device).Should().BeTrue();
+        var gpuField = _gpuWorld.Fields.Register<float>("equiv.iso.long.gpu", W, H);
+        gpuField.WriteCell(W / 2, H / 2, InitialMass);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                gpuField.SetConductivity(x, y, D);
+
+        byte[] spirv = File.ReadAllBytes(FindShaderPath("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(binding, "equiv.iso.long.pipeline", spirv);
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        for (int i = 0; i < Iterations; i++)
+        {
+            pipeline.ExecuteIteration("equiv.iso.long.gpu", pc, dispatchX: 2, dispatchY: 2)
+                    .Should().BeTrue();
+        }
+
+        AssertCellWiseEquivalent(cpuField, gpuField, W, H, LongRunTolerance,
+                                 $"iso long-run {Iterations} iter");
+
+        // Mass conservation invariant on both sides: no decay + reflective boundary ⇒
+        // total field mass at end = total field mass at start.
+        float cpuTotal = 0, gpuTotal = 0;
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = 0; x < W; x++)
+            {
+                cpuTotal += cpuField.ReadCell(x, y);
+                gpuTotal += gpuField.ReadCell(x, y);
+            }
+        }
+        cpuTotal.Should().BeApproximately(InitialMass, MassTolerance,
+            "CPU mass conservation under no-decay diffusion с reflective boundary");
+        gpuTotal.Should().BeApproximately(InitialMass, MassTolerance,
+            "GPU mass conservation under no-decay diffusion с reflective boundary");
+
+        // Convergence indicator: max - min cell range narrows as field approaches equilibrium.
+        // Equilibrium на 16×16 = InitialMass / 256 ≈ 0.39. Current state should be closer к
+        // uniform than the original 100-vs-0 spike.
+        float min = float.MaxValue, max = float.MinValue;
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = 0; x < W; x++)
+            {
+                float v = cpuField.ReadCell(x, y);
+                if (v < min) min = v;
+                if (v > max) max = v;
+            }
+        }
+        (max - min).Should().BeLessThan(InitialMass,
+            "after 50 iterations the field range has narrowed from the initial 100→0 spike");
+    }
+
+    [Fact]
     public void Anisotropic_insulator_column_blocks_propagation_matches_CPU_within_tolerance()
     {
         // V1-10: full insulator column (D=0) blocks propagation на one side.
