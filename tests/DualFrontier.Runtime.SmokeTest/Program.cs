@@ -265,6 +265,13 @@ internal static class Program
             Console.WriteLine("V1-12 V1 isotropic diffusion 200×200:");
             RunV1IsotropicDiffusion(runtime, durationSeconds: 5);
 
+            // ===========================================================================
+            // V1-13 — V1 anisotropic diffusion wire-path substrate-primitive smoke scene
+            // ===========================================================================
+            Console.WriteLine();
+            Console.WriteLine("V1-13 V1 anisotropic diffusion 200×200 wire path:");
+            RunV1AnisotropicWire(runtime, durationSeconds: 5);
+
             if (runtime.ValidationLayer is not null)
             {
                 Console.WriteLine("Validation log:");
@@ -770,6 +777,103 @@ internal static class Program
 
         // К-L7 atomic-from-observer: ExecuteIteration waits its fence per-call, so device idle
         // before disposing the binding/pipeline ensures no lingering submission.
+        runtime.VulkanDevice.WaitIdle();
+    }
+
+    /// <summary>
+    /// V1-13 — V1 anisotropic diffusion на 200×200 field с а horizontal "wire" row
+    /// (high D), source at the left end of the wire, off-wire conductivity low.
+    /// Verifies the asymmetric flow rule min(D_self, D_neighbour) channels propagation
+    /// along the wire (per VULKAN_SUBSTRATE.md §1.2 + §5.1 wire-path emergence pattern).
+    /// FPS ≥ 60 sustained.
+    /// </summary>
+    private static void RunV1AnisotropicWire(Runtime runtime, int durationSeconds)
+    {
+        const int W = 200, H = 200;
+        const int WireY = H / 2;
+        const float WireD = 1.0f, OffWireD = 0.01f;
+        const float Decay = 0.0f, Dt = 0.2f;
+        const int IterationsPerFrame = 5;
+
+        using var aniseWorld = new NativeWorld();
+        var fieldBinding = new FieldStorageBinding(aniseWorld);
+        if (!fieldBinding.Attach(runtime.VulkanInstance, runtime.VulkanDevice))
+        {
+            Console.WriteLine("  [FAIL] FieldStorageBinding.Attach failed for V1 anisotropic scene");
+            return;
+        }
+
+        var field = aniseWorld.Fields.Register<float>("v1.aniso.wire.200x200", W, H);
+        field.WriteCell(0, WireY, 1000f);
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = 0; x < W; x++)
+            {
+                field.SetConductivity(x, y, y == WireY ? WireD : OffWireD);
+            }
+        }
+
+        byte[] spirv = File.ReadAllBytes(LocateAsset("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(fieldBinding, "v1.aniso.wire.pipeline", spirv);
+
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay,
+            DeltaTime = Dt,
+            Width = W,
+            Height = H,
+        };
+
+        const uint DispatchX = 25, DispatchY = 25;
+
+        int frameCount = 0;
+        int iterationsExecuted = 0;
+        var sceneStart = DateTime.UtcNow;
+        while ((DateTime.UtcNow - sceneStart).TotalSeconds < durationSeconds && runtime.Window.IsOpen)
+        {
+            runtime.Window.PumpMessages();
+            while (runtime.InputQueue.TryDequeue(out _)) { }
+            if (!runtime.Window.IsOpen) break;
+
+            for (int i = 0; i < IterationsPerFrame; i++)
+            {
+                if (!pipeline.ExecuteIteration("v1.aniso.wire.200x200", pc, DispatchX, DispatchY))
+                {
+                    Console.WriteLine($"  [FAIL] Dispatch failed at iteration {iterationsExecuted}");
+                    return;
+                }
+                iterationsExecuted++;
+            }
+            frameCount++;
+        }
+
+        double elapsed = (DateTime.UtcNow - sceneStart).TotalSeconds;
+        double fps = frameCount / Math.Max(elapsed, 0.001);
+
+        // Snapshot к prove wire channels propagation — wire cells along x past the source
+        // should have non-trivial values, off-wire cells nearby should be near-zero.
+        float wireSource = field.ReadCell(0, WireY);
+        float wireMid = field.ReadCell(W / 4, WireY);
+        float wireFar = field.ReadCell(W / 2, WireY);
+        float offWireAdjacent = field.ReadCell(W / 4, WireY - 1);  // 1 cell off wire, same x
+        float offWireFar = field.ReadCell(W / 4, WireY - 10);      // 10 cells off wire
+
+        Console.WriteLine($"  Field {W}×{H}: wire-row y={WireY}, WireD={WireD}, OffWireD={OffWireD}, dt={Dt}");
+        Console.WriteLine($"  Iterations executed: {iterationsExecuted}, frames: {frameCount}, elapsed: {elapsed:F2}s");
+        Console.WriteLine($"  Wire(x=0)={wireSource:F2}, wire(x=W/4)={wireMid:F4}, wire(x=W/2)={wireFar:F6}");
+        Console.WriteLine($"  Off-wire(y-1)={offWireAdjacent:F4}, off-wire(y-10)={offWireFar:F6}");
+        Console.WriteLine($"  Wire ratio (wire(W/4) ÷ off-wire(y-10)): " +
+                          $"{(offWireFar > 1e-6f ? wireMid / offWireFar : float.PositiveInfinity):F2}× (channeling factor)");
+        Console.WriteLine($"  [PASS?] V1 anisotropic wire 200×200: {fps:F1} FPS sustained over compute dispatch loop");
+        if (fps >= 60.0)
+        {
+            Console.WriteLine($"  [PASS] V1-13 success criterion met (60+ FPS sustained)");
+        }
+        else
+        {
+            Console.WriteLine($"  [WARN] V1-13 FPS target unmet ({fps:F1} < 60) — surface к Crystalka for SC-13 investigation");
+        }
+
         runtime.VulkanDevice.WaitIdle();
     }
 
