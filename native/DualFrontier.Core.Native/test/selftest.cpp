@@ -30,6 +30,7 @@
 #include "df_capi.h"
 #include "event_type_registry.h"
 #include "mod_unload.h"
+#include "pipeline_slot.h"
 #include "thread_pool.h"
 
 namespace {
@@ -2245,6 +2246,194 @@ void scenario_event_type_registry_invalid_args() {
     df_event_type_registry_clear();
 }
 
+// ===== K10.3 v2 Item 33 scenarios — pipeline_slot state machine =====
+//
+// Pipeline depth (К-L16 D=2 default), К-L7.1 sub-invariant binding (slot tail
+// reads), К-L18 forward dependency (df_pipeline_is_quiescent). Per Lesson #22
+// DF_CHECK runner convention preserved.
+
+void scenario_pipeline_slot_init_and_depth() {
+    std::printf("scenario_pipeline_slot_init_and_depth\n");
+    df_pipeline_reset();
+
+    int32_t depth_out = -1;
+    DF_CHECK(df_pipeline_get_depth(&depth_out) == 1, "get_depth returns ok pre-init");
+    DF_CHECK(depth_out == 0, "depth=0 before init");
+
+    // К-L16 D=1-3 range; out-of-range fails.
+    DF_CHECK(df_pipeline_init(0) == 0, "init depth=0 rejected");
+    DF_CHECK(df_pipeline_init(4) == 0, "init depth=4 rejected (max=3)");
+
+    // Default D=2 per S-LOCK-4.
+    DF_CHECK(df_pipeline_init(DF_PIPELINE_DEFAULT_DEPTH) == 1, "init D=2 succeeds");
+    DF_CHECK(df_pipeline_get_depth(&depth_out) == 1, "get_depth after init");
+    DF_CHECK(depth_out == 2, "depth=2 after init D=2");
+
+    // Re-init без reset fails (idempotency through error per К10.2 pattern).
+    DF_CHECK(df_pipeline_init(3) == 0, "re-init без reset rejected");
+
+    df_pipeline_reset();
+    DF_CHECK(df_pipeline_get_depth(&depth_out) == 1 && depth_out == 0,
+             "reset returns depth к 0");
+}
+
+void scenario_pipeline_slot_state_machine_cycle() {
+    std::printf("scenario_pipeline_slot_state_machine_cycle\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    PipelineSlot* slot = nullptr;
+    DF_CHECK(df_pipeline_allocate_slot(100, &slot) == 1, "allocate slot tick=100");
+    DF_CHECK(slot != nullptr, "slot pointer non-null");
+    DF_CHECK(slot->sim_tick == 100, "sim_tick assigned");
+    DF_CHECK(slot->state == SlotState_Dispatched, "state=Dispatched after allocate");
+
+    // Fence handle binding.
+    void* fake_fence = reinterpret_cast<void*>(static_cast<uintptr_t>(0xDEADBEEFu));
+    DF_CHECK(df_pipeline_set_fence(slot, fake_fence) == 1, "set_fence ok");
+    DF_CHECK(slot->compute_fence_handle == fake_fence, "fence handle stored");
+
+    // Transition Dispatched → FenceCompleted (test path via force_fence_completed
+    // until Commit 4 wires real vkGetFenceStatus в df_pipeline_check_fences).
+    DF_CHECK(df_pipeline_force_fence_completed(slot) == 1,
+             "force_fence_completed transitions к FenceCompleted");
+    DF_CHECK(slot->state == SlotState_FenceCompleted, "state=FenceCompleted");
+
+    // Transition FenceCompleted → ReadableAsTail.
+    DF_CHECK(df_pipeline_transition_to_tail(slot) == 1, "transition_to_tail ok");
+    DF_CHECK(slot->state == SlotState_ReadableAsTail, "state=ReadableAsTail");
+
+    // Invalid transitions: transition_to_tail again fails (already in tail state).
+    DF_CHECK(df_pipeline_transition_to_tail(slot) == 0,
+             "transition_to_tail rejected from ReadableAsTail");
+
+    df_pipeline_reset();
+}
+
+void scenario_pipeline_slot_d2_default_cycling() {
+    std::printf("scenario_pipeline_slot_d2_default_cycling\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // Allocate 2 slots — both succeed, fill the cycle.
+    PipelineSlot* s0 = nullptr;
+    PipelineSlot* s1 = nullptr;
+    DF_CHECK(df_pipeline_allocate_slot(200, &s0) == 1, "tick=200 allocate");
+    DF_CHECK(df_pipeline_allocate_slot(201, &s1) == 1, "tick=201 allocate");
+    DF_CHECK(s0 != s1, "different slot pointers");
+
+    // Drain both slots through full state machine.
+    df_pipeline_force_fence_completed(s0);
+    df_pipeline_transition_to_tail(s0);
+    df_pipeline_force_fence_completed(s1);
+    df_pipeline_transition_to_tail(s1);
+
+    DF_CHECK(s0->state == SlotState_ReadableAsTail, "s0 ReadableAsTail");
+    DF_CHECK(s1->state == SlotState_ReadableAsTail, "s1 ReadableAsTail");
+
+    // Third allocation cycles back к slot 0 (recycle).
+    PipelineSlot* s2 = nullptr;
+    DF_CHECK(df_pipeline_allocate_slot(202, &s2) == 1, "tick=202 allocate (recycle)");
+    DF_CHECK(s2 == s0, "recycles slot 0");
+    DF_CHECK(s2->sim_tick == 202, "recycled slot has new sim_tick");
+    DF_CHECK(s2->state == SlotState_Dispatched, "recycled slot in Dispatched");
+
+    df_pipeline_reset();
+}
+
+void scenario_pipeline_slot_get_slot_offsets() {
+    std::printf("scenario_pipeline_slot_get_slot_offsets\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // No allocations — get_slot returns 0.
+    PipelineSlot* out = nullptr;
+    DF_CHECK(df_pipeline_get_slot(0, &out) == 0, "no slot returned pre-allocate");
+
+    PipelineSlot* s0 = nullptr;
+    PipelineSlot* s1 = nullptr;
+    df_pipeline_allocate_slot(300, &s0);
+    df_pipeline_allocate_slot(301, &s1);
+
+    // get_slot(0) = most-recently-allocated.
+    DF_CHECK(df_pipeline_get_slot(0, &out) == 1 && out == s1, "offset 0 = current");
+    DF_CHECK(out->sim_tick == 301, "current sim_tick=301");
+
+    // get_slot(-1) = tail (К-L7.1 sim-thread read pattern, T-1).
+    DF_CHECK(df_pipeline_get_slot(-1, &out) == 1 && out == s0, "offset -1 = tail");
+    DF_CHECK(out->sim_tick == 300, "tail sim_tick=300");
+
+    // Out-of-range offsets rejected.
+    DF_CHECK(df_pipeline_get_slot(1, &out) == 0, "positive offset rejected");
+    DF_CHECK(df_pipeline_get_slot(-2, &out) == 0, "offset -D rejected (D=2)");
+
+    df_pipeline_reset();
+}
+
+void scenario_pipeline_slot_is_quiescent() {
+    std::printf("scenario_pipeline_slot_is_quiescent\n");
+    df_pipeline_reset();
+
+    // Pre-init: not quiescent + return code -1.
+    int32_t quiescent = -1;
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == -1,
+             "is_quiescent rejects pre-init");
+
+    df_pipeline_init(2);
+
+    // Just initialized: all slots Empty → quiescent.
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == 1, "is_quiescent succeeds");
+    DF_CHECK(quiescent == 1, "quiescent=1 after init (all Empty)");
+
+    // Allocate slot — Dispatched state → not quiescent.
+    PipelineSlot* s = nullptr;
+    df_pipeline_allocate_slot(400, &s);
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == 1 && quiescent == 0,
+             "not quiescent с Dispatched slot");
+
+    // Fence completed → still not quiescent (FenceCompleted = in-flight per К-L18).
+    df_pipeline_force_fence_completed(s);
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == 1 && quiescent == 0,
+             "not quiescent с FenceCompleted slot");
+
+    // Transition к tail → quiescent (ReadableAsTail = work done, slot drained).
+    df_pipeline_transition_to_tail(s);
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == 1 && quiescent == 1,
+             "quiescent после ReadableAsTail");
+
+    df_pipeline_reset();
+}
+
+void scenario_pipeline_slot_backpressure_on_inflight() {
+    std::printf("scenario_pipeline_slot_backpressure_on_inflight\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // Fill both slots без draining.
+    PipelineSlot* s0 = nullptr;
+    PipelineSlot* s1 = nullptr;
+    DF_CHECK(df_pipeline_allocate_slot(500, &s0) == 1, "alloc s0 ok");
+    DF_CHECK(df_pipeline_allocate_slot(501, &s1) == 1, "alloc s1 ok");
+    DF_CHECK(s0->state == SlotState_Dispatched, "s0 Dispatched");
+    DF_CHECK(s1->state == SlotState_Dispatched, "s1 Dispatched");
+
+    // Third allocation fails (backpressure — slot 0 still Dispatched).
+    PipelineSlot* s2 = nullptr;
+    DF_CHECK(df_pipeline_allocate_slot(502, &s2) == 0,
+             "allocate rejected when slot still in-flight");
+    DF_CHECK(s2 == nullptr, "out_slot null on backpressure");
+
+    // Drain slot 0 through к ReadableAsTail — allocation can now recycle slot 0.
+    df_pipeline_force_fence_completed(s0);
+    df_pipeline_transition_to_tail(s0);
+
+    DF_CHECK(df_pipeline_allocate_slot(502, &s2) == 1,
+             "allocate succeeds after slot 0 drained");
+    DF_CHECK(s2 == s0, "recycles slot 0");
+
+    df_pipeline_reset();
+}
+
 } // namespace
 
 int main() {
@@ -2337,6 +2526,12 @@ int main() {
     // с pipeline quiescence check). Each item lands its scenarios в dedicated
     // commit. Per Lesson #22 «match existing convention» — no new test framework
     // introduced; DF_CHECK runner pattern preserved per K3/K10.1/K10.2 lineage.
+    scenario_pipeline_slot_init_and_depth();
+    scenario_pipeline_slot_state_machine_cycle();
+    scenario_pipeline_slot_d2_default_cycling();
+    scenario_pipeline_slot_get_slot_offsets();
+    scenario_pipeline_slot_is_quiescent();
+    scenario_pipeline_slot_backpressure_on_inflight();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

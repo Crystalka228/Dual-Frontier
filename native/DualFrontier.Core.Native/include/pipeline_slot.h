@@ -1,0 +1,121 @@
+#pragma once
+
+#include <cstdint>
+
+// K10.3 v2 Item 33 — Pipeline depth mechanism (S8-Q1 + S8-Q2 lock).
+//
+// PipelineSlot state machine establishes sim-tick pipeline depth D=2 (default,
+// configurable 1-3) per К-L16. Simulation thread allocates new slot at start of
+// pipeline-managed tick; compute dispatches submitted к async compute queue (K-L19,
+// V0.B); fence orchestration tracks slot transitions Empty→Dispatched→
+// FenceCompleted→ReadableAsTail.
+//
+// К-L7.1 sub-invariant binding: FieldStorageSnapshot bound к slot via
+// fields_snapshot_ptr; sim-thread reads of pipeline-managed fields see slot tail
+// state (sim_tick - 1). One-tick lag bounded и deterministic. К-L7 atomic-from-
+// observer preserved within slot boundary; cross-slot reads see different snapshots.
+//
+// S-LOCK-10/13 coexistence: V1's existing dispatch_compute_field synchronous path
+// (per compute_dispatch.h sync model К-L7 atomic-from-observer) remains operational.
+// Pipeline slot mechanism is opt-in для pipeline-managed dispatch consumers. К-L9
+// «Vanilla = mods» — author choice per field.
+//
+// K-L18 forward dependency (Item 41): df_pipeline_is_quiescent consumed by mod
+// unload primitive (mod_unload.h) к verify all slots quiescent (Empty or
+// ReadableAsTail) before accepting mod operation.
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#if defined(_WIN32)
+    #if defined(DF_NATIVE_BUILDING_DLL)
+        #define DF_API __declspec(dllexport)
+    #else
+        #define DF_API __declspec(dllimport)
+    #endif
+#else
+    #define DF_API __attribute__((visibility("default")))
+#endif
+
+// Configurable depth range per К-L16 (D=1-3, default 2).
+#define DF_PIPELINE_DEFAULT_DEPTH 2
+#define DF_PIPELINE_MAX_DEPTH 3
+
+// Slot state machine per spec §3.10 Item 33 verbatim.
+typedef enum {
+    SlotState_Empty = 0,           // Initial state, no sim_tick assigned
+    SlotState_Dispatched = 1,      // Sim thread dispatched compute work к GPU
+    SlotState_FenceCompleted = 2,  // GPU finished, results available
+    SlotState_ReadableAsTail = 3   // Display/sim thread reads from here
+} SlotState;
+
+// PipelineSlot struct verbatim from spec §3.10 Item 33.
+//
+// fields_snapshot_ptr: К-L7.1 binding subject — pipeline-managed FieldStorageSnapshot.
+// compute_fence_handle: VkFence opaque (cast к/от VkFence в integration code).
+// world_snapshot_ptr: NativeWorld snapshot pointer (К-L7.1 binding subject).
+typedef struct {
+    uint64_t sim_tick;
+    void* world_snapshot_ptr;
+    void* fields_snapshot_ptr;
+    void* compute_fence_handle;
+    int32_t state;  // SlotState enum value (int32 для C ABI portability)
+} PipelineSlot;
+
+// Initialize pipeline с specified depth (1-3 per К-L16 default 2).
+// Returns 1 on success, 0 on failure (invalid depth, already initialized).
+// Subsequent calls without explicit reset return 0 (idempotency through error).
+DF_API int32_t df_pipeline_init(int32_t depth);
+
+// Reset pipeline state (test/teardown convenience — empties all slots, depth=0).
+DF_API void df_pipeline_reset(void);
+
+// Get current configured depth. Returns 0 if не initialized.
+DF_API int32_t df_pipeline_get_depth(int32_t* out_depth);
+
+// Allocate next slot для simulation tick. Cycles through D slots.
+// Returns pointer к slot on success (state transitions Empty/ReadableAsTail →
+// Dispatched), null if no slot available (all D slots in flight — К-L16 backpressure).
+DF_API int32_t df_pipeline_allocate_slot(uint64_t sim_tick, PipelineSlot** out_slot);
+
+// Get slot at offset relative к current allocation cursor.
+// slot_offset: 0 = current (most recently allocated), -1 = previous (sim-thread
+// tail read per К-L7.1), -2..-D = display tail (К-L16).
+// Returns 1 on success, 0 if offset out of range or no slot at that position.
+DF_API int32_t df_pipeline_get_slot(int32_t slot_offset, PipelineSlot** out_slot);
+
+// Bind VkFence opaque handle к slot после compute dispatch submitted.
+// Caller responsible для actual VkQueueSubmit; this just stores handle для
+// later vkGetFenceStatus polling via df_pipeline_check_fences.
+DF_API int32_t df_pipeline_set_fence(PipelineSlot* slot, void* vk_fence_handle);
+
+// Poll fences для all Dispatched slots; transitions slots Dispatched →
+// FenceCompleted when fence signaled.
+//
+// K10.3 v2 Commit 3 scope: stub returning zero «no fences checked» — actual
+// vkGetFenceStatus integration lands в Commit 4 (Phase.Compute) когда we have
+// VulkanAttachment context. Until then, callers can directly call
+// df_pipeline_force_fence_completed для testing state transitions.
+DF_API int32_t df_pipeline_check_fences(int32_t* out_slots_transitioned);
+
+// Test/integration helper: explicitly mark slot Dispatched → FenceCompleted.
+// Used by test scenarios that don't have real VkFence handles; will also be
+// callable from Commit 4 Phase.Compute integration as a transition primitive.
+DF_API int32_t df_pipeline_force_fence_completed(PipelineSlot* slot);
+
+// Atomic transition FenceCompleted → ReadableAsTail.
+// Fires StateChangeWake per К10.3 v2 Item 37 (filter primitive integration —
+// wired в Commit 7). Returns 1 on success, 0 if slot не в FenceCompleted state.
+DF_API int32_t df_pipeline_transition_to_tail(PipelineSlot* slot);
+
+// K-L18 quiescent state check (Item 41 forward consumer).
+// All slots must be Empty или ReadableAsTail для quiescent state (no Dispatched
+// slots = no in-flight compute work).
+// Returns 1 if quiescent, 0 если any slot Dispatched/FenceCompleted, -1 if
+// pipeline не initialized.
+DF_API int32_t df_pipeline_is_quiescent(int32_t* out_is_quiescent);
+
+#ifdef __cplusplus
+}
+#endif
