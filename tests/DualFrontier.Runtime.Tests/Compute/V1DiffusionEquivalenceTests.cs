@@ -111,6 +111,177 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
     }
 
     [Fact]
+    public void Isotropic_corner_source_reflective_boundary_matches_CPU_within_tolerance()
+    {
+        // V1-8 edge case: source at corner (0,0) exercises the reflective-boundary
+        // code path on the CPU (edge cell uses self as out-of-bounds neighbour) and
+        // the "skip out-of-bounds neighbour" code path в the GLSL shader. These
+        // collapse к the same delta because min(D, D) * (P - P) = 0.
+        const int W = 32, H = 32;
+        const float D = 0.1f, Decay = 0.0f, Dt = 1.0f;
+        const int Iterations = 5;
+
+        var cpuField = _cpuWorld.Fields.Register<float>("equiv.iso.corner.cpu", W, H);
+        cpuField.WriteCell(0, 0, 100f);
+        var cpuParams = new IsotropicDiffusionKernel.Parameters
+        {
+            DiffusionCoefficient = D, DecayCoefficient = Decay, DeltaTime = Dt,
+        };
+        IsotropicDiffusionKernel.Run(cpuField, cpuParams, Iterations);
+
+        var binding = new FieldStorageBinding(_gpuWorld);
+        binding.Attach(_instance, _device).Should().BeTrue();
+        var gpuField = _gpuWorld.Fields.Register<float>("equiv.iso.corner.gpu", W, H);
+        gpuField.WriteCell(0, 0, 100f);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                gpuField.SetConductivity(x, y, D);
+
+        byte[] spirv = File.ReadAllBytes(FindShaderPath("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(binding, "equiv.iso.corner.pipeline", spirv);
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        for (int i = 0; i < Iterations; i++)
+        {
+            pipeline.ExecuteIteration("equiv.iso.corner.gpu", pc, dispatchX: 4, dispatchY: 4)
+                    .Should().BeTrue();
+        }
+
+        AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, "iso corner reflective");
+    }
+
+    [Fact]
+    public void Isotropic_decay_only_no_diffusion_matches_CPU_within_tolerance()
+    {
+        // V1-8 edge case: D=0 ⇒ no flow, every cell decays independently
+        // P(t+1) = P(t) - K · P(t) · dt. CPU + GPU should evolve identically per-cell.
+        const int W = 16, H = 16;
+        const float D = 0.0f, Decay = 0.1f, Dt = 1.0f;
+        const int Iterations = 5;
+
+        var cpuField = _cpuWorld.Fields.Register<float>("equiv.iso.decay.cpu", W, H);
+        // Non-uniform initial state — verifies decay applies к every cell, не just spike.
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                cpuField.WriteCell(x, y, (x + y) * 1.5f);
+        var cpuParams = new IsotropicDiffusionKernel.Parameters
+        {
+            DiffusionCoefficient = D, DecayCoefficient = Decay, DeltaTime = Dt,
+        };
+        IsotropicDiffusionKernel.Run(cpuField, cpuParams, Iterations);
+
+        var binding = new FieldStorageBinding(_gpuWorld);
+        binding.Attach(_instance, _device).Should().BeTrue();
+        var gpuField = _gpuWorld.Fields.Register<float>("equiv.iso.decay.gpu", W, H);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                gpuField.WriteCell(x, y, (x + y) * 1.5f);
+                gpuField.SetConductivity(x, y, D);
+            }
+
+        byte[] spirv = File.ReadAllBytes(FindShaderPath("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(binding, "equiv.iso.decay.pipeline", spirv);
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        for (int i = 0; i < Iterations; i++)
+        {
+            pipeline.ExecuteIteration("equiv.iso.decay.gpu", pc, dispatchX: 2, dispatchY: 2)
+                    .Should().BeTrue();
+        }
+
+        AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, "iso decay-only");
+    }
+
+    [Fact]
+    public void Isotropic_combined_diffusion_and_decay_matches_CPU_within_tolerance()
+    {
+        // V1-8 edge case: both terms active simultaneously. Verifies the combined
+        // delta = D · laplacian - K · center evolves identically on CPU + GPU.
+        const int W = 24, H = 24;
+        const float D = 0.15f, Decay = 0.05f, Dt = 1.0f;
+        const int Iterations = 5;
+
+        var cpuField = _cpuWorld.Fields.Register<float>("equiv.iso.mix.cpu", W, H);
+        cpuField.WriteCell(W / 2, H / 2, 200f);
+        var cpuParams = new IsotropicDiffusionKernel.Parameters
+        {
+            DiffusionCoefficient = D, DecayCoefficient = Decay, DeltaTime = Dt,
+        };
+        IsotropicDiffusionKernel.Run(cpuField, cpuParams, Iterations);
+
+        var binding = new FieldStorageBinding(_gpuWorld);
+        binding.Attach(_instance, _device).Should().BeTrue();
+        var gpuField = _gpuWorld.Fields.Register<float>("equiv.iso.mix.gpu", W, H);
+        gpuField.WriteCell(W / 2, H / 2, 200f);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                gpuField.SetConductivity(x, y, D);
+
+        byte[] spirv = File.ReadAllBytes(FindShaderPath("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(binding, "equiv.iso.mix.pipeline", spirv);
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        for (int i = 0; i < Iterations; i++)
+        {
+            pipeline.ExecuteIteration("equiv.iso.mix.gpu", pc, dispatchX: 3, dispatchY: 3)
+                    .Should().BeTrue();
+        }
+
+        AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, "iso combined D+K");
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(5)]
+    [InlineData(10)]
+    [InlineData(20)]
+    public void Isotropic_iteration_count_matches_CPU_within_tolerance(int iterations)
+    {
+        // V1-8 edge case: multi-iteration evolution across {1, 5, 10, 20} iterations.
+        // Larger iter counts accumulate floating-point error, but well within tolerance
+        // because the stencil is contracting (laplacian-based, не amplifying).
+        const int W = 32, H = 32;
+        const float D = 0.1f, Decay = 0.0f, Dt = 1.0f;
+
+        var cpuField = _cpuWorld.Fields.Register<float>($"equiv.iso.iter{iterations}.cpu", W, H);
+        cpuField.WriteCell(W / 2, H / 2, 100f);
+        var cpuParams = new IsotropicDiffusionKernel.Parameters
+        {
+            DiffusionCoefficient = D, DecayCoefficient = Decay, DeltaTime = Dt,
+        };
+        IsotropicDiffusionKernel.Run(cpuField, cpuParams, iterations);
+
+        var binding = new FieldStorageBinding(_gpuWorld);
+        binding.Attach(_instance, _device).Should().BeTrue();
+        var gpuField = _gpuWorld.Fields.Register<float>($"equiv.iso.iter{iterations}.gpu", W, H);
+        gpuField.WriteCell(W / 2, H / 2, 100f);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                gpuField.SetConductivity(x, y, D);
+
+        byte[] spirv = File.ReadAllBytes(FindShaderPath("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(binding, $"equiv.iso.iter{iterations}.pipeline", spirv);
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        for (int i = 0; i < iterations; i++)
+        {
+            pipeline.ExecuteIteration($"equiv.iso.iter{iterations}.gpu", pc, dispatchX: 4, dispatchY: 4)
+                    .Should().BeTrue();
+        }
+
+        AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, $"iso iter={iterations}");
+    }
+
+    [Fact]
     public void Anisotropic_wire_path_matches_CPU_kernel_within_tolerance()
     {
         const int W = 32, H = 32;
@@ -171,6 +342,34 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
         mismatchCount.Should().Be(0,
             $"all cells must agree within {AnisotropicTolerance:F4} tolerance. " +
             $"Max abs diff observed: {maxAbsDiff:F6}");
+    }
+
+    private static void AssertCellWiseEquivalent(
+        FieldHandle<float> cpu, FieldHandle<float> gpu,
+        int width, int height, float tolerance, string scenario)
+    {
+        int mismatchCount = 0;
+        float maxAbsDiff = 0;
+        (int x, int y, float cpuVal, float gpuVal) firstMismatch = default;
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                float c = cpu.ReadCell(x, y);
+                float g = gpu.ReadCell(x, y);
+                float diff = MathF.Abs(c - g);
+                if (diff > maxAbsDiff) maxAbsDiff = diff;
+                if (diff > tolerance)
+                {
+                    if (mismatchCount == 0) firstMismatch = (x, y, c, g);
+                    mismatchCount++;
+                }
+            }
+        }
+        mismatchCount.Should().Be(0,
+            $"[{scenario}] all cells must agree within {tolerance:F4} tolerance. " +
+            $"Max abs diff: {maxAbsDiff:F6}. First mismatch at ({firstMismatch.x},{firstMismatch.y}): " +
+            $"cpu={firstMismatch.cpuVal:F6}, gpu={firstMismatch.gpuVal:F6}");
     }
 
     private static string FindShaderPath(string name)
