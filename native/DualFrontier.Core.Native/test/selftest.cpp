@@ -30,6 +30,7 @@
 #include "df_capi.h"
 #include "event_type_registry.h"
 #include "mod_unload.h"
+#include "phase_compute.h"
 #include "pipeline_slot.h"
 #include "thread_pool.h"
 
@@ -2404,6 +2405,107 @@ void scenario_pipeline_slot_is_quiescent() {
     df_pipeline_reset();
 }
 
+// ===== K10.3 v2 Item 35 scenarios — Phase.Compute scheduler integration =====
+//
+// Phase enum (Update/Compute/Display); VkQueueSubmit batching coalesces
+// dispatches per slot per tick. S-LOCK-13 coexistence: V1 sync path orthogonal.
+
+void scenario_phase_compute_registration_and_count() {
+    std::printf("scenario_phase_compute_registration_and_count\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+    df_scheduler_phase_compute_reset();
+
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(600, &slot);
+    DF_CHECK(df_scheduler_compute_dispatch_count(slot) == 0, "no dispatches initially");
+
+    // Register 3 dispatches against slot.
+    void* fake_pipeline = reinterpret_cast<void*>(static_cast<uintptr_t>(0x1000u));
+    void* fake_descriptor = reinterpret_cast<void*>(static_cast<uintptr_t>(0x2000u));
+    DF_CHECK(df_scheduler_register_compute_dispatch(slot, fake_pipeline, fake_descriptor, 16, 16, 1) == 1,
+             "register dispatch 1");
+    DF_CHECK(df_scheduler_register_compute_dispatch(slot, fake_pipeline, fake_descriptor, 32, 32, 1) == 1,
+             "register dispatch 2");
+    DF_CHECK(df_scheduler_register_compute_dispatch(slot, fake_pipeline, fake_descriptor, 64, 64, 1) == 1,
+             "register dispatch 3");
+    DF_CHECK(df_scheduler_compute_dispatch_count(slot) == 3,
+             "3 dispatches registered против slot");
+
+    df_scheduler_phase_compute_reset();
+    df_pipeline_reset();
+}
+
+void scenario_phase_compute_dispatch_empty_slot() {
+    std::printf("scenario_phase_compute_dispatch_empty_slot\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+    df_scheduler_phase_compute_reset();
+
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(700, &slot);
+
+    // No dispatches registered против slot — dispatch_phase_compute returns ok
+    // (vacuous submit, slot still Dispatched).
+    DF_CHECK(df_scheduler_dispatch_phase_compute(slot) == 1, "dispatch ok с 0 records");
+    DF_CHECK(slot->state == SlotState_Dispatched, "slot still Dispatched after empty dispatch");
+
+    df_scheduler_phase_compute_reset();
+    df_pipeline_reset();
+}
+
+void scenario_phase_compute_batch_coalesce_per_slot() {
+    std::printf("scenario_phase_compute_batch_coalesce_per_slot\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+    df_scheduler_phase_compute_reset();
+
+    PipelineSlot* s0 = nullptr;
+    PipelineSlot* s1 = nullptr;
+    df_pipeline_allocate_slot(800, &s0);
+    df_pipeline_allocate_slot(801, &s1);
+
+    // 2 dispatches на s0, 3 dispatches на s1.
+    void* fake_pipeline = reinterpret_cast<void*>(static_cast<uintptr_t>(0x3000u));
+    void* fake_descriptor = reinterpret_cast<void*>(static_cast<uintptr_t>(0x4000u));
+    df_scheduler_register_compute_dispatch(s0, fake_pipeline, fake_descriptor, 8, 8, 1);
+    df_scheduler_register_compute_dispatch(s0, fake_pipeline, fake_descriptor, 8, 8, 1);
+    df_scheduler_register_compute_dispatch(s1, fake_pipeline, fake_descriptor, 16, 16, 1);
+    df_scheduler_register_compute_dispatch(s1, fake_pipeline, fake_descriptor, 16, 16, 1);
+    df_scheduler_register_compute_dispatch(s1, fake_pipeline, fake_descriptor, 16, 16, 1);
+
+    DF_CHECK(df_scheduler_compute_dispatch_count(s0) == 2, "s0 has 2 dispatches");
+    DF_CHECK(df_scheduler_compute_dispatch_count(s1) == 3, "s1 has 3 dispatches");
+
+    // submit_compute_batch reports per-slot count.
+    void* fake_queue = reinterpret_cast<void*>(static_cast<uintptr_t>(0x5000u));
+    DF_CHECK(df_scheduler_submit_compute_batch(s0, fake_queue) == 2, "s0 batch coalesces 2");
+    DF_CHECK(df_scheduler_submit_compute_batch(s1, fake_queue) == 3, "s1 batch coalesces 3");
+
+    df_scheduler_phase_compute_reset();
+    df_pipeline_reset();
+}
+
+void scenario_phase_compute_reset_clears_registry() {
+    std::printf("scenario_phase_compute_reset_clears_registry\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+    df_scheduler_phase_compute_reset();
+
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(900, &slot);
+
+    void* fake_pipeline = reinterpret_cast<void*>(static_cast<uintptr_t>(0x6000u));
+    void* fake_descriptor = reinterpret_cast<void*>(static_cast<uintptr_t>(0x7000u));
+    df_scheduler_register_compute_dispatch(slot, fake_pipeline, fake_descriptor, 4, 4, 1);
+    DF_CHECK(df_scheduler_compute_dispatch_count(slot) == 1, "1 dispatch registered");
+
+    df_scheduler_phase_compute_reset();
+    DF_CHECK(df_scheduler_compute_dispatch_count(slot) == 0, "registry cleared after reset");
+
+    df_pipeline_reset();
+}
+
 void scenario_pipeline_slot_backpressure_on_inflight() {
     std::printf("scenario_pipeline_slot_backpressure_on_inflight\n");
     df_pipeline_reset();
@@ -2532,6 +2634,10 @@ int main() {
     scenario_pipeline_slot_get_slot_offsets();
     scenario_pipeline_slot_is_quiescent();
     scenario_pipeline_slot_backpressure_on_inflight();
+    scenario_phase_compute_registration_and_count();
+    scenario_phase_compute_dispatch_empty_slot();
+    scenario_phase_compute_batch_coalesce_per_slot();
+    scenario_phase_compute_reset_clears_registry();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
