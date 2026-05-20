@@ -116,6 +116,31 @@ DF_API int32_t df_pipeline_transition_to_tail(PipelineSlot* slot);
 // pipeline не initialized.
 DF_API int32_t df_pipeline_is_quiescent(int32_t* out_is_quiescent);
 
+// K-L7.1 sub-invariant — pipeline slot tail read API (S8-Q2 Pattern C).
+//
+// Convenience wrapper around df_pipeline_get_slot that extracts fields_snapshot_ptr
+// + sim_tick from а slot at given offset. Used by pipeline-managed field
+// consumers к read slot tail state per К-L7.1: «sim tick T+D reads dispatched-
+// at-(T+D-1) state. One-tick lag from sim-perspective bounded и deterministic.»
+//
+// slot_offset semantics (matches df_pipeline_get_slot):
+//   0  = current (most recently allocated)
+//   -1 = sim-thread tail (К-L7.1 read pattern)
+//   -2..-(D-1) = display tail (К-L16 governed)
+//
+// Validation: slot must be в ReadableAsTail or FenceCompleted state — reading
+// от Dispatched slot returns 0 (fence не signaled). К-L7 atomic-from-observer
+// preserved within slot boundary; cross-slot reads see different snapshots
+// (К-L7.1).
+//
+// К10.3 v2 boundary: actual consumer integration (FieldHandle opt-in pattern,
+// per spec §3.10 Item 36 RawTileField example) deferred к К-extensions when
+// pipeline-managed field consumers surface. К10.3 v2 establishes API surface.
+DF_API int32_t df_pipeline_read_slot_tail(
+    int32_t slot_offset,
+    void** out_field_snapshot,
+    uint64_t* out_sim_tick);
+
 #ifdef __cplusplus
 }
 #endif

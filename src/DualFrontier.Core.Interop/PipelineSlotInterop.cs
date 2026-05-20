@@ -153,4 +153,36 @@ public static class PipelineSlotInterop
             return rc == 1 && q == 1;
         }
     }
+
+    /// <summary>
+    /// K-L7.1 sub-invariant — pipeline slot tail read API (S8-Q2 Pattern C).
+    /// Reads fields_snapshot_ptr + sim_tick от slot at given offset.
+    ///
+    /// slot_offset=-1 is the К-L7.1 sim-thread read pattern: «sim tick T+D
+    /// reads dispatched-at-(T+D-1) state. One-tick lag bounded и deterministic.»
+    /// slot_offset=-(D-1) is display tail (К-L16 governed).
+    ///
+    /// Returns true on success (slot в ReadableAsTail или FenceCompleted state);
+    /// false if slot still Dispatched (fence не signaled) или out-of-range.
+    ///
+    /// К10.3 v2 boundary: actual consumer integration (FieldHandle opt-in
+    /// pattern per spec §3.10 Item 36) deferred к К-extensions when pipeline-
+    /// managed field consumers surface. PipelineSlotInterop establishes API
+    /// surface; FieldHandle К-L7.1 dispatch flag deferred.
+    ///
+    /// S-LOCK-10 coexistence: V1 К-L7 sync default preserved для FieldHandle
+    /// consumers. ReadSlotTail is opt-in path для pipeline-managed access.
+    /// </summary>
+    public static bool ReadSlotTail(int slotOffset, out nint fieldSnapshot, out ulong simTick)
+    {
+        unsafe
+        {
+            nint snapshot = 0;
+            ulong tick = 0;
+            int rc = NativeMethods.df_pipeline_read_slot_tail(slotOffset, &snapshot, &tick);
+            fieldSnapshot = snapshot;
+            simTick = tick;
+            return rc == 1;
+        }
+    }
 }

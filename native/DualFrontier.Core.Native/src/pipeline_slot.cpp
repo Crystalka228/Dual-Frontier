@@ -174,6 +174,32 @@ int32_t df_pipeline_transition_to_tail(PipelineSlot* slot) {
     return 1;
 }
 
+int32_t df_pipeline_read_slot_tail(
+    int32_t slot_offset,
+    void** out_field_snapshot,
+    uint64_t* out_sim_tick) {
+    if (!out_field_snapshot || !out_sim_tick) {
+        return 0;
+    }
+    PipelineSlot* slot = nullptr;
+    if (df_pipeline_get_slot(slot_offset, &slot) != 1 || !slot) {
+        *out_field_snapshot = nullptr;
+        *out_sim_tick = 0;
+        return 0;
+    }
+    // К-L7.1 validation: slot must be в ReadableAsTail or FenceCompleted state
+    // (fence signaled, results available). Reading от Dispatched slot returns 0.
+    if (slot->state != SlotState_ReadableAsTail &&
+        slot->state != SlotState_FenceCompleted) {
+        *out_field_snapshot = nullptr;
+        *out_sim_tick = 0;
+        return 0;
+    }
+    *out_field_snapshot = slot->fields_snapshot_ptr;
+    *out_sim_tick = slot->sim_tick;
+    return 1;
+}
+
 int32_t df_pipeline_is_quiescent(int32_t* out_is_quiescent) {
     if (!out_is_quiescent) {
         return -1;

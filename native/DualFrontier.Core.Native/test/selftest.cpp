@@ -2405,6 +2405,50 @@ void scenario_pipeline_slot_is_quiescent() {
     df_pipeline_reset();
 }
 
+// ===== K10.3 v2 Item 36 scenarios — pipeline slot read API (К-L7.1 opt-in) =====
+
+void scenario_pipeline_read_slot_tail_K_L7_1() {
+    std::printf("scenario_pipeline_read_slot_tail_K_L7_1\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(1000, &slot);
+
+    // Bind fields_snapshot_ptr (К-L7.1 binding subject).
+    void* fake_fields = reinterpret_cast<void*>(static_cast<uintptr_t>(0xCAFE0001u));
+    slot->fields_snapshot_ptr = fake_fields;
+
+    // Dispatched state → read_slot_tail returns 0 (fence не signaled).
+    void* snapshot_out = nullptr;
+    uint64_t tick_out = 0;
+    DF_CHECK(df_pipeline_read_slot_tail(0, &snapshot_out, &tick_out) == 0,
+             "Dispatched slot rejects read (fence не signaled)");
+    DF_CHECK(snapshot_out == nullptr, "snapshot null after reject");
+
+    // Transition к ReadableAsTail.
+    df_pipeline_force_fence_completed(slot);
+    df_pipeline_transition_to_tail(slot);
+
+    // Now read succeeds.
+    DF_CHECK(df_pipeline_read_slot_tail(0, &snapshot_out, &tick_out) == 1,
+             "ReadableAsTail slot allows read");
+    DF_CHECK(snapshot_out == fake_fields, "fields_snapshot_ptr roundtrip");
+    DF_CHECK(tick_out == 1000, "sim_tick roundtrip");
+
+    // К-L7.1 sim-thread read pattern: offset=-1 = tail (one-tick lag).
+    PipelineSlot* slot2 = nullptr;
+    df_pipeline_allocate_slot(1001, &slot2);
+    slot2->fields_snapshot_ptr = reinterpret_cast<void*>(static_cast<uintptr_t>(0xCAFE0002u));
+    // slot is now offset=-1 (tail per К-L7.1).
+    DF_CHECK(df_pipeline_read_slot_tail(-1, &snapshot_out, &tick_out) == 1,
+             "tail read (offset=-1) succeeds");
+    DF_CHECK(snapshot_out == fake_fields, "tail = prior slot snapshot");
+    DF_CHECK(tick_out == 1000, "tail = prior sim_tick (К-L7.1 one-tick lag)");
+
+    df_pipeline_reset();
+}
+
 // ===== K10.3 v2 Item 35 scenarios — Phase.Compute scheduler integration =====
 //
 // Phase enum (Update/Compute/Display); VkQueueSubmit batching coalesces
@@ -2634,6 +2678,7 @@ int main() {
     scenario_pipeline_slot_get_slot_offsets();
     scenario_pipeline_slot_is_quiescent();
     scenario_pipeline_slot_backpressure_on_inflight();
+    scenario_pipeline_read_slot_tail_K_L7_1();
     scenario_phase_compute_registration_and_count();
     scenario_phase_compute_dispatch_empty_slot();
     scenario_phase_compute_batch_coalesce_per_slot();

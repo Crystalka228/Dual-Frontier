@@ -43,4 +43,10 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern unsafe int df_pipeline_is_quiescent(int* outIsQuiescent);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_pipeline_read_slot_tail(
+        int slotOffset,
+        nint* outFieldSnapshot,
+        ulong* outSimTick);
 }

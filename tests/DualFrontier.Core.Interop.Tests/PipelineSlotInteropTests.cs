@@ -107,6 +107,36 @@ public sealed class PipelineSlotInteropTests
     }
 
     [Fact]
+    public void ReadSlotTail_K_L7_1_Pattern()
+    {
+        PipelineSlotInterop.Reset();
+        PipelineSlotInterop.Init(2);
+
+        unsafe
+        {
+            PipelineSlotInterop.PipelineSlot* slot = PipelineSlotInterop.AllocateSlot(5000);
+            nint fakeFields = unchecked((nint)0xC0FFEE00);
+            slot->FieldsSnapshotPtr = fakeFields;
+
+            // Dispatched → read rejected (fence не signaled).
+            PipelineSlotInterop.ReadSlotTail(0, out nint sn0, out ulong tk0)
+                .Should().BeFalse("Dispatched rejects read");
+            sn0.Should().Be(0);
+
+            // Transition к ReadableAsTail → read succeeds.
+            PipelineSlotInterop.ForceFenceCompleted(slot);
+            PipelineSlotInterop.TransitionToTail(slot);
+
+            PipelineSlotInterop.ReadSlotTail(0, out nint sn1, out ulong tk1)
+                .Should().BeTrue("ReadableAsTail allows read");
+            sn1.Should().Be(fakeFields, "fields_snapshot_ptr roundtrip");
+            tk1.Should().Be(5000UL, "sim_tick roundtrip");
+        }
+
+        PipelineSlotInterop.Reset();
+    }
+
+    [Fact]
     public void IsQuiescent_K_L18_Precondition()
     {
         PipelineSlotInterop.Reset();
