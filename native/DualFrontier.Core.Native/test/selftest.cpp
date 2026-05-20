@@ -2330,6 +2330,13 @@ int main() {
     scenario_mod_unload_quiescent_precondition_violation();
     scenario_mod_unload_no_subscriptions_succeeds_vacuously();
     scenario_v0b_compute_pipeline_registration_roundtrip();
+    // ===== K10.3 v2 scenarios (added per-item commits below) =====
+    // Pipeline depth (Items 33-37 — pipeline_slot state machine, Phase.Compute,
+    // slot read API, drain/refill protocols, filter primitive integration);
+    // К-L18 quiescent state enforcement (Item 41 — extends mod_unload primitive
+    // с pipeline quiescence check). Each item lands its scenarios в dedicated
+    // commit. Per Lesson #22 «match existing convention» — no new test framework
+    // introduced; DF_CHECK runner pattern preserved per K3/K10.1/K10.2 lineage.
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
