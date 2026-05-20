@@ -417,7 +417,8 @@ public sealed class NativeWorld : IDisposable
     public unsafe uint RegisterComputePipeline(
         string pipelineName,
         ReadOnlySpan<byte> spirvBytecode,
-        uint descriptorBindingCount)
+        uint descriptorBindingCount,
+        uint pushConstantSize = 0)
     {
         if (_handle == IntPtr.Zero)
         {
@@ -433,17 +434,21 @@ public sealed class NativeWorld : IDisposable
         fixed (byte* codePtr = spirvBytecode)
         {
             return NativeMethods.df_world_register_compute_pipeline(
-                _handle, namePtr, codePtr, spirvBytecode.Length, descriptorBindingCount);
+                _handle, namePtr, codePtr, spirvBytecode.Length,
+                descriptorBindingCount, pushConstantSize);
         }
     }
 
     /// <summary>
-    /// V0.B field dispatch — invokes registered compute pipeline against named K9 field.
-    /// V0.B no-op: succeeds for registered pipeline_id; V1+ implements real dispatch.
+    /// V1+ field dispatch — invokes registered compute pipeline against named K9 field
+    /// с push constant payload bound at dispatch time. V1-5c lands the actual
+    /// VkCmdDispatch with descriptor set update + per-field VkBuffer binding; this
+    /// signature is the wire format the managed side commits к.
     /// </summary>
     public unsafe bool DispatchFieldCompute(
         string fieldName,
         uint pipelineId,
+        ReadOnlySpan<byte> pushConstantData,
         uint dispatchX,
         uint dispatchY,
         uint dispatchZ)
@@ -459,9 +464,12 @@ public sealed class NativeWorld : IDisposable
         nameUtf8[written] = 0;
 
         fixed (byte* namePtr = nameUtf8)
+        fixed (byte* pcPtr = pushConstantData)
         {
             return NativeMethods.df_world_field_dispatch_compute(
-                _handle, namePtr, pipelineId, dispatchX, dispatchY, dispatchZ) == 1;
+                _handle, namePtr, pipelineId,
+                pushConstantData.IsEmpty ? null : pcPtr, pushConstantData.Length,
+                dispatchX, dispatchY, dispatchZ) == 1;
         }
     }
 

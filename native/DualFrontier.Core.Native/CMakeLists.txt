@@ -5,6 +5,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# V1 substrate primitive — Vulkan link для compute_pipeline + compute_dispatch wiring
+# per VULKAN_SUBSTRATE.md §1.2 + §3. Found via standard CMake module which honours
+# the VULKAN_SDK environment variable (set by LunarG installer on Windows). Required —
+# native compute dispatch is а hard dependency for V1+ field substrate primitives.
+find_package(Vulkan REQUIRED)
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
 endif()
@@ -82,6 +88,8 @@ target_include_directories(DualFrontier.Core.Native PUBLIC
 
 target_compile_definitions(DualFrontier.Core.Native PRIVATE DF_NATIVE_BUILDING_DLL)
 
+target_link_libraries(DualFrontier.Core.Native PRIVATE Vulkan::Vulkan)
+
 set_target_properties(DualFrontier.Core.Native PROPERTIES
     OUTPUT_NAME "DualFrontier.Core.Native"
     PREFIX ""
@@ -101,4 +109,5 @@ if(DF_NATIVE_BUILD_SELFTEST)
     # an .exe (the symbols are simply marked externally visible) and avoids
     # the dllimport stub that would otherwise expect a DLL.
     target_compile_definitions(df_native_selftest PRIVATE DF_NATIVE_BUILDING_DLL)
+    target_link_libraries(df_native_selftest PRIVATE Vulkan::Vulkan)
 endif()

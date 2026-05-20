@@ -1,4 +1,5 @@
 #include "world.h"
+#include "compute_dispatch.h"
 #include "compute_pipeline.h"
 
 #include <cstring>
@@ -12,7 +13,19 @@ World::World() {
     compute_pipelines_ = std::make_unique<ComputePipelineRegistry>();
 }
 
-World::~World() = default;
+World::~World() {
+    // V1+: tear down all Vulkan-owned resources while the VkDevice is still
+    // live. Order matters — release_dispatch_resources frees the V1+ shadow
+    // VkBuffers + descriptor pool + command pool + fence; compute_pipelines
+    // then frees pipelines + layouts + shader modules. Both must run before
+    // vulkan_attachment_ destruction (which loses the device pointer).
+    if (vulkan_attachment_) {
+        if (compute_pipelines_) {
+            compute_pipelines_->clear(*vulkan_attachment_);
+        }
+        release_dispatch_resources(*vulkan_attachment_);
+    }
+}
 
 void World::attach_vulkan(void* instance, void* physical_device, void* device,
                           void* async_compute_queue, uint32_t async_compute_queue_family_index)
@@ -35,6 +48,10 @@ ComputePipelineRegistry& World::compute_pipelines() noexcept {
 
 int32_t World::compute_pipeline_count() const noexcept {
     return compute_pipelines_ ? compute_pipelines_->count() : 0;
+}
+
+const VulkanAttachment& World::vulkan_attachment() const noexcept {
+    return *vulkan_attachment_;
 }
 
 EntityId World::create_entity() {

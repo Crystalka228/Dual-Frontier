@@ -24,13 +24,16 @@ internal static partial class NativeMethods
         byte* pipelineName,
         byte* spirvBytecode,
         int spirvSize,
-        uint descriptorBindingCount);
+        uint descriptorBindingCount,
+        uint pushConstantSize);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern unsafe int df_world_field_dispatch_compute(
         IntPtr world,
         byte* fieldName,
         uint pipelineId,
+        byte* pushConstantData,
+        int pushConstantSize,
         uint dispatchX,
         uint dispatchY,
         uint dispatchZ);

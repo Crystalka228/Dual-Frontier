@@ -133,6 +133,10 @@ public:
     [[nodiscard]] bool has_vulkan_attached() const noexcept;
     [[nodiscard]] ComputePipelineRegistry& compute_pipelines() noexcept;
     [[nodiscard]] int32_t compute_pipeline_count() const noexcept;
+    // V1+: accessor нужен для passing к ComputePipelineRegistry::register_pipeline
+    // and clear() so Vulkan object creation / destruction can use the same
+    // VkDevice the world was attached to.
+    [[nodiscard]] const VulkanAttachment& vulkan_attachment() const noexcept;
 
 private:
     static constexpr std::size_t kInitialCapacity = 256;

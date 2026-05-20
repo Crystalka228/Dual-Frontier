@@ -535,12 +535,16 @@ DF_API int32_t df_world_field_count(
  * interpret them; downstream code casts back к VkInstance/VkDevice/...
  *
  * df_world_register_compute_pipeline returns a non-zero pipeline_id on
- * success; 0 indicates failure (duplicate name, empty bytecode, or
- * misaligned SPIR-V).
+ * success; 0 indicates failure (duplicate name, empty bytecode, misaligned
+ * SPIR-V, or Vulkan object creation failure). V1+ creates real VkPipeline +
+ * pipeline layout + descriptor set layout objects на registration;
+ * push_constant_size sizes the pipeline layout's push constant range
+ * (pass 0 if the shader does not use push constants).
  *
  * df_world_field_dispatch_compute returns 1 on success, 0 on failure.
- * V0.B implementation is a no-op success path для known pipeline_ids;
- * V1+ implements actual dispatch.
+ * V1+ implements actual VkCmdDispatch с descriptor sets bound к field
+ * VkBuffers; push_constant_data + push_constant_size carry the pipeline's
+ * push constant payload (V1 DiffusionPushConstants = 16 bytes, etc).
  */
 
 DF_API int32_t df_world_attach_vulkan(
@@ -556,12 +560,15 @@ DF_API uint32_t df_world_register_compute_pipeline(
     const char* pipeline_name,
     const uint8_t* spirv_bytecode,
     int32_t spirv_size,
-    uint32_t descriptor_binding_count);
+    uint32_t descriptor_binding_count,
+    uint32_t push_constant_size);
 
 DF_API int32_t df_world_field_dispatch_compute(
     df_world_handle world,
     const char* field_name,
     uint32_t pipeline_id,
+    const uint8_t* push_constant_data,
+    int32_t push_constant_size,
     uint32_t dispatch_x,
     uint32_t dispatch_y,
     uint32_t dispatch_z);
