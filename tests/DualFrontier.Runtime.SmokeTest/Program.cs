@@ -259,6 +259,12 @@ internal static class Program
             Console.WriteLine($"  Attach: {attached}, register pid: {nativePid}, dispatch: {dispatched}, count: {binding.PipelineCount}");
             Console.WriteLine();
 
+            // ===========================================================================
+            // V1-12 — V1 isotropic diffusion 200×200 substrate-primitive smoke scene
+            // ===========================================================================
+            Console.WriteLine("V1-12 V1 isotropic diffusion 200×200:");
+            RunV1IsotropicDiffusion(runtime, durationSeconds: 5);
+
             if (runtime.ValidationLayer is not null)
             {
                 Console.WriteLine("Validation log:");
@@ -666,6 +672,105 @@ internal static class Program
         }
 
         runtime.EndSpriteRenderPass(commandBuffer);
+    }
+
+    /// <summary>
+    /// V1-12 — V1 isotropic diffusion на 200×200 field. Source spike at center, uniform
+    /// conductivity D=0.1, 5 iterations per frame. Substrate primitive close criterion:
+    /// FPS ≥ 60 sustained over the dispatch loop. Per VULKAN_SUBSTRATE.md §1.2 + §1.4 budget.
+    /// </summary>
+    private static void RunV1IsotropicDiffusion(Runtime runtime, int durationSeconds)
+    {
+        const int W = 200, H = 200;
+        const float D = 0.1f, Decay = 0.0f, Dt = 0.5f;
+        const int IterationsPerFrame = 5;
+
+        using var diffusionWorld = new NativeWorld();
+        var fieldBinding = new FieldStorageBinding(diffusionWorld);
+        if (!fieldBinding.Attach(runtime.VulkanInstance, runtime.VulkanDevice))
+        {
+            Console.WriteLine("  [FAIL] FieldStorageBinding.Attach failed for V1 isotropic scene");
+            return;
+        }
+
+        var field = diffusionWorld.Fields.Register<float>("v1.iso.200x200", W, H);
+        field.WriteCell(W / 2, H / 2, 1000f);
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = 0; x < W; x++)
+            {
+                field.SetConductivity(x, y, D);
+            }
+        }
+
+        byte[] spirv = File.ReadAllBytes(LocateAsset("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(fieldBinding, "v1.iso.200x200.pipeline", spirv);
+
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay,
+            DeltaTime = Dt,
+            Width = W,
+            Height = H,
+        };
+
+        // Dispatch dimensions cover 200×200 с 8×8 workgroups: ceil(200/8) = 25 workgroups per axis.
+        const uint DispatchX = 25, DispatchY = 25;
+
+        int frameCount = 0;
+        int iterationsExecuted = 0;
+        var sceneStart = DateTime.UtcNow;
+        while ((DateTime.UtcNow - sceneStart).TotalSeconds < durationSeconds && runtime.Window.IsOpen)
+        {
+            runtime.Window.PumpMessages();
+            while (runtime.InputQueue.TryDequeue(out _)) { }
+            if (!runtime.Window.IsOpen) break;
+
+            for (int i = 0; i < IterationsPerFrame; i++)
+            {
+                if (!pipeline.ExecuteIteration("v1.iso.200x200", pc, DispatchX, DispatchY))
+                {
+                    Console.WriteLine($"  [FAIL] Dispatch failed at iteration {iterationsExecuted}");
+                    return;
+                }
+                iterationsExecuted++;
+            }
+            frameCount++;
+        }
+
+        double elapsed = (DateTime.UtcNow - sceneStart).TotalSeconds;
+        double fps = frameCount / Math.Max(elapsed, 0.001);
+
+        // Snapshot к prove the field actually evolved (vs no-op stub holding initial state).
+        float centerValue = field.ReadCell(W / 2, H / 2);
+        float adjacentValue = field.ReadCell(W / 2 + 1, H / 2);
+        float ringValue = field.ReadCell(W / 2 + 5, H / 2);
+        float total = 0;
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = 0; x < W; x++)
+            {
+                total += field.ReadCell(x, y);
+            }
+        }
+
+        Console.WriteLine($"  Field {W}×{H}: D={D}, K={Decay}, dt={Dt}, {IterationsPerFrame} iter/frame");
+        Console.WriteLine($"  Iterations executed: {iterationsExecuted}, frames: {frameCount}, elapsed: {elapsed:F2}s");
+        Console.WriteLine($"  Field state: center={centerValue:F2}, adjacent={adjacentValue:F4}, " +
+                          $"ring(+5)={ringValue:F4}, total={total:F2} (initial mass=1000, no decay)");
+        Console.WriteLine($"  [PASS?] V1 isotropic 200×200: {fps:F1} FPS sustained over compute dispatch loop");
+        if (fps >= 60.0)
+        {
+            Console.WriteLine($"  [PASS] V1-12 success criterion met (60+ FPS sustained)");
+        }
+        else
+        {
+            Console.WriteLine($"  [WARN] V1-12 FPS target unmet ({fps:F1} < 60) — surface к Crystalka for SC-13 investigation");
+        }
+
+        // К-L7 atomic-from-observer: ExecuteIteration waits its fence per-call, so device idle
+        // before disposing the binding/pipeline ensures no lingering submission.
+        runtime.VulkanDevice.WaitIdle();
     }
 
     private static string LocateAsset(string name)
