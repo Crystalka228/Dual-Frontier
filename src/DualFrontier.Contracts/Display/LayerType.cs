@@ -1,11 +1,13 @@
-namespace DualFrontier.Application.Display;
+namespace DualFrontier.Contracts.Display;
 
 /// <summary>
-/// К-L17 display composition taxonomy (К10.3 v2 Item 38).
+/// К-L17 display composition taxonomy (К10.3 v2 Items 38-40).
 ///
-/// Layer type drives composition order in <see cref="CompositionFramework"/> и
-/// declares the latency contract that the layer's <see cref="Layer.Render"/>
-/// implementation must respect.
+/// Lives в Contracts so mod assemblies can reference the enum в
+/// <c>[Layer(LayerType.X)]</c> attributes без taking а dependency on
+/// <c>DualFrontier.Application</c>. Layer type drives composition order
+/// в Application/Display/CompositionFramework и declares the latency
+/// contract that the layer's Render implementation must respect.
 ///
 /// Per KERNEL_ARCHITECTURE.md К-L17 row: «sim state + intent overlay + combat
 /// feedback layers с independent latency contracts; composition order: sim

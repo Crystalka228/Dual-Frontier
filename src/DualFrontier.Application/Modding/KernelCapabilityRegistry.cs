@@ -5,6 +5,7 @@ using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Display;
 using DualFrontier.Events.Pawn;
 
 namespace DualFrontier.Application.Modding;
@@ -140,6 +141,32 @@ internal sealed class KernelCapabilityRegistry
                     capabilities.Add($"kernel.read:{fqn}");
                 if (attr.Write)
                     capabilities.Add($"kernel.write:{fqn}");
+            }
+
+            // К10.3 v2 Items 39+40: К-L17 layer capability tokens. Mod-registered
+            // layer classes carry [Layer(LayerType.Intent | CombatFeedback)] и
+            // surface as kernel.layer.intent:{FQN} / kernel.layer.combat_feedback:{FQN}
+            // tokens per S3-Q5 + S8-Q3 granular FQN pattern. SimState и Static use
+            // existing renderer-level capabilities (V substrate primitives) и do
+            // не emit layer capability tokens here.
+            LayerAttribute? layerAttr = type.GetCustomAttribute<LayerAttribute>();
+            if (layerAttr is not null)
+            {
+                switch (layerAttr.LayerType)
+                {
+                    case LayerType.Intent:
+                        capabilities.Add($"kernel.layer.intent:{fqn}");
+                        break;
+                    case LayerType.CombatFeedback:
+                        capabilities.Add($"kernel.layer.combat_feedback:{fqn}");
+                        break;
+                    case LayerType.SimState:
+                    case LayerType.Static:
+                    default:
+                        // SimState/Static use renderer-level capabilities; no
+                        // К-L17 layer token surfaces here.
+                        break;
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 using System;
+using DualFrontier.Contracts.Display;
 
 namespace DualFrontier.Application.Display;
 

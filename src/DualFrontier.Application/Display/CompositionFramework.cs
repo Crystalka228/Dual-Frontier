@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DualFrontier.Contracts.Display;
 
 namespace DualFrontier.Application.Display;
 
