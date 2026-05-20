@@ -20,6 +20,7 @@ struct PipelineState {
     std::atomic<int32_t> depth{0};            // 0 = не initialized
     std::atomic<int32_t> cursor{0};           // Next slot index к allocate (mod depth)
     std::atomic<uint64_t> allocation_count{0}; // Total slots ever allocated (для offset math)
+    std::atomic<int32_t> paused{0};           // Pause protocol (Item 34): 1 = no new allocations
 };
 
 PipelineState g_pipeline;
@@ -43,6 +44,7 @@ int32_t df_pipeline_init(int32_t depth) {
     }
     g_pipeline.cursor.store(0);
     g_pipeline.allocation_count.store(0);
+    g_pipeline.paused.store(0);
     return 1;
 }
 
@@ -50,6 +52,7 @@ void df_pipeline_reset(void) {
     g_pipeline.depth.store(0);
     g_pipeline.cursor.store(0);
     g_pipeline.allocation_count.store(0);
+    g_pipeline.paused.store(0);
     for (auto& slot : g_pipeline.slots) {
         std::memset(&slot, 0, sizeof(slot));
         slot.state = SlotState_Empty;
@@ -71,6 +74,12 @@ int32_t df_pipeline_allocate_slot(uint64_t sim_tick, PipelineSlot** out_slot) {
     const int32_t depth = g_pipeline.depth.load();
     if (depth == 0) {
         return 0;  // Не initialized.
+    }
+    // Pause protocol (Item 34): no new allocations accepted while paused.
+    // Existing in-flight slots drain naturally via fence check + transition.
+    if (g_pipeline.paused.load()) {
+        *out_slot = nullptr;
+        return 0;
     }
     // Cycle cursor через D slots. Backpressure: if next slot is Dispatched/
     // FenceCompleted (in-flight compute), caller must wait or К-L16 invariant
@@ -197,6 +206,117 @@ int32_t df_pipeline_read_slot_tail(
     }
     *out_field_snapshot = slot->fields_snapshot_ptr;
     *out_sim_tick = slot->sim_tick;
+    return 1;
+}
+
+int32_t df_pipeline_serialize_display_state(
+    void* buffer,
+    int32_t buffer_size,
+    int32_t* out_bytes_written) {
+    if (!buffer || !out_bytes_written) {
+        return 0;
+    }
+    const int32_t depth = g_pipeline.depth.load();
+    if (depth == 0) {
+        return 0;
+    }
+    const int32_t needed = DF_PIPELINE_SNAPSHOT_HEADER_SIZE +
+                           depth * DF_PIPELINE_SNAPSHOT_PER_SLOT_SIZE;
+    if (buffer_size < needed) {
+        *out_bytes_written = 0;
+        return 0;
+    }
+    uint8_t* cursor = static_cast<uint8_t*>(buffer);
+    // Header: depth (int32).
+    std::memcpy(cursor, &depth, sizeof(int32_t));
+    cursor += sizeof(int32_t);
+    // Per-slot: sim_tick (8) + state (4) + reserved (4).
+    for (int32_t i = 0; i < depth; ++i) {
+        const PipelineSlot& slot = g_pipeline.slots[i];
+        std::memcpy(cursor, &slot.sim_tick, sizeof(uint64_t));
+        cursor += sizeof(uint64_t);
+        std::memcpy(cursor, &slot.state, sizeof(int32_t));
+        cursor += sizeof(int32_t);
+        // Reserved 4 bytes для future expansion (fields_snapshot_size hint, etc.).
+        const int32_t reserved = 0;
+        std::memcpy(cursor, &reserved, sizeof(int32_t));
+        cursor += sizeof(int32_t);
+    }
+    *out_bytes_written = needed;
+    return 1;
+}
+
+int32_t df_pipeline_deserialize_display_state(
+    const void* buffer,
+    int32_t buffer_size) {
+    if (!buffer) {
+        return 0;
+    }
+    if (buffer_size < DF_PIPELINE_SNAPSHOT_HEADER_SIZE) {
+        return 0;
+    }
+    const uint8_t* cursor = static_cast<const uint8_t*>(buffer);
+    int32_t saved_depth = 0;
+    std::memcpy(&saved_depth, cursor, sizeof(int32_t));
+    cursor += sizeof(int32_t);
+    if (saved_depth < 1 || saved_depth > DF_PIPELINE_MAX_DEPTH) {
+        return 0;
+    }
+    const int32_t current_depth = g_pipeline.depth.load();
+    if (current_depth != saved_depth) {
+        return 0;  // Depth mismatch — caller must init с matching depth first.
+    }
+    const int32_t needed = DF_PIPELINE_SNAPSHOT_HEADER_SIZE +
+                           saved_depth * DF_PIPELINE_SNAPSHOT_PER_SLOT_SIZE;
+    if (buffer_size < needed) {
+        return 0;
+    }
+    uint64_t max_sim_tick = 0;
+    for (int32_t i = 0; i < saved_depth; ++i) {
+        PipelineSlot& slot = g_pipeline.slots[i];
+        std::memcpy(&slot.sim_tick, cursor, sizeof(uint64_t));
+        cursor += sizeof(uint64_t);
+        std::memcpy(&slot.state, cursor, sizeof(int32_t));
+        cursor += sizeof(int32_t);
+        cursor += sizeof(int32_t);  // Skip reserved.
+        slot.world_snapshot_ptr = nullptr;
+        slot.fields_snapshot_ptr = nullptr;
+        slot.compute_fence_handle = nullptr;
+        if (slot.sim_tick > max_sim_tick) {
+            max_sim_tick = slot.sim_tick;
+        }
+    }
+    // Restore allocation_count + cursor consistent с saved state.
+    g_pipeline.allocation_count.store(max_sim_tick);
+    g_pipeline.cursor.store(static_cast<int32_t>(max_sim_tick % saved_depth) + 1);
+    return 1;
+}
+
+int32_t df_pipeline_pause(void) {
+    if (g_pipeline.depth.load() == 0) {
+        return 0;
+    }
+    g_pipeline.paused.store(1);
+    return 1;
+}
+
+int32_t df_pipeline_resume(void) {
+    if (g_pipeline.depth.load() == 0) {
+        return 0;
+    }
+    g_pipeline.paused.store(0);
+    return 1;
+}
+
+int32_t df_pipeline_is_paused(int32_t* out_is_paused) {
+    if (!out_is_paused) {
+        return -1;
+    }
+    if (g_pipeline.depth.load() == 0) {
+        *out_is_paused = 0;
+        return -1;
+    }
+    *out_is_paused = g_pipeline.paused.load();
     return 1;
 }
 

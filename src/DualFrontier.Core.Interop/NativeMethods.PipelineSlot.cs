@@ -49,4 +49,22 @@ internal static partial class NativeMethods
         int slotOffset,
         nint* outFieldSnapshot,
         ulong* outSimTick);
+
+    // K10.3 v2 Item 34 — drain/refill protocols.
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_pipeline_serialize_display_state(
+        byte* buffer, int bufferSize, int* outBytesWritten);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_pipeline_deserialize_display_state(
+        byte* buffer, int bufferSize);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_pipeline_pause();
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_pipeline_resume();
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_pipeline_is_paused(int* outIsPaused);
 }

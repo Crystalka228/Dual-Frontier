@@ -185,4 +185,74 @@ public static class PipelineSlotInterop
             return rc == 1;
         }
     }
+
+    /// <summary>
+    /// Maximum snapshot size per spec — header (4 bytes) + max_depth (3) ×
+    /// per-slot size (16 bytes) = 52 bytes max.
+    /// </summary>
+    public const int MaxSnapshotSize = 4 + MaxDepth * 16;
+
+    /// <summary>
+    /// K10.3 v2 Item 34 — serialize pipeline display state per S8-Q1.5.
+    /// Caller-allocated buffer of MaxSnapshotSize bytes recommended. Returns
+    /// bytes written on success; 0 on failure (buffer too small or pipeline
+    /// not initialized).
+    ///
+    /// К10.3 v2 boundary: Persistence subsystem integration (PipelineSlotSerializer
+    /// в DualFrontier.Persistence) deferred — SaveSystem currently stub
+    /// (NotImplementedException). Full SaveSystem wiring lands когда Phase 1/3
+    /// closes per its own roadmap.
+    /// </summary>
+    public static int SerializeDisplayState(Span<byte> buffer)
+    {
+        unsafe
+        {
+            int written = 0;
+            fixed (byte* p = buffer)
+            {
+                NativeMethods.df_pipeline_serialize_display_state(p, buffer.Length, &written);
+            }
+            return written;
+        }
+    }
+
+    /// <summary>
+    /// K10.3 v2 Item 34 — deserialize pipeline display state per S8-Q1.5.
+    /// Pipeline must be initialized с matching depth before calling. Returns
+    /// true on success; false on depth mismatch, schema mismatch, or malformed buffer.
+    /// </summary>
+    public static bool DeserializeDisplayState(ReadOnlySpan<byte> buffer)
+    {
+        unsafe
+        {
+            fixed (byte* p = buffer)
+            {
+                return NativeMethods.df_pipeline_deserialize_display_state(p, buffer.Length) == 1;
+            }
+        }
+    }
+
+    /// <summary>
+    /// K10.3 v2 Item 34 — pause protocol. Natural convergence: no new allocations
+    /// accepted while paused; existing in-flight slots drain naturally via fence
+    /// check + transition. К-L18 quiescent state precondition (Item 41) verifies
+    /// pause completed quiescence before mod operations.
+    /// </summary>
+    public static bool Pause() => NativeMethods.df_pipeline_pause() == 1;
+
+    /// <summary>
+    /// K10.3 v2 Item 34 — resume protocol. Re-enables slot allocation after pause.
+    /// </summary>
+    public static bool Resume() => NativeMethods.df_pipeline_resume() == 1;
+
+    /// <summary>Returns true if pipeline currently paused (Item 34).</summary>
+    public static bool IsPaused()
+    {
+        unsafe
+        {
+            int p = 0;
+            int rc = NativeMethods.df_pipeline_is_paused(&p);
+            return rc == 1 && p == 1;
+        }
+    }
 }

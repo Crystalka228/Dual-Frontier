@@ -116,6 +116,64 @@ DF_API int32_t df_pipeline_transition_to_tail(PipelineSlot* slot);
 // pipeline не initialized.
 DF_API int32_t df_pipeline_is_quiescent(int32_t* out_is_quiescent);
 
+// K10.3 v2 Item 34 — Pipeline drain/refill protocols.
+//
+// Save protocol per S8-Q1.5: snapshot display tick state (CurrentSimTick - D).
+// Display already sees coherent world; pipeline drain не required at save time.
+// Faster save (no waiting для in-flight compute completion).
+//
+// Pause protocol: natural convergence — sim thread completes current tick, no
+// new dispatch. Pipeline depth naturally absorbs already-dispatched work.
+// К-L18 quiescent state precondition (Item 41) verifies pipeline quiesced
+// before mod operations.
+//
+// Load protocol: orderly refill — sim thread starts at saved tick, refills
+// pipeline incrementally; display unblocks once D slots populated.
+//
+// Resume protocol: refill от pause point; sim thread resumes от last saved sim_tick.
+//
+// К10.3 v2 boundary: native serialize/deserialize land C ABI surface +
+// state machine; managed-side Persistence integration (PipelineSlotSerializer
+// + SaveSystem integration) deferred — SaveSystem currently stub
+// (NotImplementedException). Full persistence wiring lands когда SaveSystem
+// Phase 1/3 closes per its own roadmap.
+
+// Snapshot serialization size constants. Snapshot captures display tick state:
+// sim_tick (8) + state (4) + fields_snapshot_size hint (4) = 16 bytes per slot,
+// plus pipeline depth (4) at header = 4 + D*16 bytes max.
+//
+// Note: fields_snapshot_ptr/world_snapshot_ptr/compute_fence_handle are runtime
+// pointers — НЕ persisted (regenerated на load from saved sim_tick через
+// re-dispatch). Serialization holds metadata только.
+#define DF_PIPELINE_SNAPSHOT_HEADER_SIZE 4
+#define DF_PIPELINE_SNAPSHOT_PER_SLOT_SIZE 16
+#define DF_PIPELINE_SNAPSHOT_MAX_SIZE (DF_PIPELINE_SNAPSHOT_HEADER_SIZE + DF_PIPELINE_MAX_DEPTH * DF_PIPELINE_SNAPSHOT_PER_SLOT_SIZE)
+
+// Serialize pipeline display state per S8-Q1.5. Writes depth + per-slot
+// sim_tick + state. Returns bytes written, 0 on failure (buffer too small).
+DF_API int32_t df_pipeline_serialize_display_state(
+    void* buffer,
+    int32_t buffer_size,
+    int32_t* out_bytes_written);
+
+// Deserialize pipeline display state per S8-Q1.5. Pipeline must be initialized
+// с matching depth; slots restored к saved sim_tick + state. Returns 1 on
+// success, 0 on schema mismatch / depth mismatch / malformed buffer.
+DF_API int32_t df_pipeline_deserialize_display_state(
+    const void* buffer,
+    int32_t buffer_size);
+
+// Pause protocol: natural convergence — no new allocations accepted while
+// paused. Existing in-flight slots drain naturally via fence check + transition.
+// К-L18 quiescent state precondition (Item 41) verifies pause completed.
+DF_API int32_t df_pipeline_pause(void);
+
+// Resume protocol: re-enables slot allocation after pause.
+DF_API int32_t df_pipeline_resume(void);
+
+// Query pause state. Returns 1 if paused, 0 if running, -1 if не initialized.
+DF_API int32_t df_pipeline_is_paused(int32_t* out_is_paused);
+
 // K-L7.1 sub-invariant — pipeline slot tail read API (S8-Q2 Pattern C).
 //
 // Convenience wrapper around df_pipeline_get_slot that extracts fields_snapshot_ptr

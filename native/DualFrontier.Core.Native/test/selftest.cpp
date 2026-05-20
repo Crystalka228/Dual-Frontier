@@ -2449,6 +2449,103 @@ void scenario_pipeline_read_slot_tail_K_L7_1() {
     df_pipeline_reset();
 }
 
+// ===== K10.3 v2 Item 34 scenarios — pipeline drain/refill protocols =====
+
+void scenario_pipeline_drain_pause_resume() {
+    std::printf("scenario_pipeline_drain_pause_resume\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // Before pause — allocation succeeds.
+    PipelineSlot* s0 = nullptr;
+    DF_CHECK(df_pipeline_allocate_slot(1100, &s0) == 1, "alloc before pause");
+
+    int32_t paused = -1;
+    DF_CHECK(df_pipeline_is_paused(&paused) == 1 && paused == 0, "not paused initially");
+
+    DF_CHECK(df_pipeline_pause() == 1, "pause ok");
+    DF_CHECK(df_pipeline_is_paused(&paused) == 1 && paused == 1, "now paused");
+
+    // Allocation rejected while paused.
+    PipelineSlot* s1 = nullptr;
+    DF_CHECK(df_pipeline_allocate_slot(1101, &s1) == 0, "alloc rejected while paused");
+
+    // Existing in-flight slot still drains naturally (force_fence_completed +
+    // transition_to_tail).
+    df_pipeline_force_fence_completed(s0);
+    df_pipeline_transition_to_tail(s0);
+
+    DF_CHECK(df_pipeline_resume() == 1, "resume ok");
+    DF_CHECK(df_pipeline_is_paused(&paused) == 1 && paused == 0, "resumed");
+    DF_CHECK(df_pipeline_allocate_slot(1102, &s1) == 1, "alloc accepted after resume");
+
+    df_pipeline_reset();
+}
+
+void scenario_pipeline_serialize_deserialize_roundtrip() {
+    std::printf("scenario_pipeline_serialize_deserialize_roundtrip\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // Populate slots с distinct states.
+    PipelineSlot* s0 = nullptr;
+    PipelineSlot* s1 = nullptr;
+    df_pipeline_allocate_slot(1200, &s0);
+    df_pipeline_allocate_slot(1201, &s1);
+    df_pipeline_force_fence_completed(s0);
+    df_pipeline_transition_to_tail(s0);  // s0 = ReadableAsTail
+    // s1 = Dispatched
+
+    // Serialize.
+    uint8_t buffer[DF_PIPELINE_SNAPSHOT_MAX_SIZE];
+    int32_t bytes_written = 0;
+    DF_CHECK(df_pipeline_serialize_display_state(buffer, sizeof(buffer), &bytes_written) == 1,
+             "serialize ok");
+    DF_CHECK(bytes_written == DF_PIPELINE_SNAPSHOT_HEADER_SIZE +
+             2 * DF_PIPELINE_SNAPSHOT_PER_SLOT_SIZE,
+             "expected snapshot size для D=2");
+
+    // Reset + re-init с matching depth + deserialize.
+    df_pipeline_reset();
+    df_pipeline_init(2);
+    DF_CHECK(df_pipeline_deserialize_display_state(buffer, bytes_written) == 1,
+             "deserialize ok");
+
+    // After deserialize, cursor points к (max_sim_tick % depth) + 1 = (1201 % 2) + 1 = 2.
+    // Most recent slot index = (cursor-1) % depth = 1 % 2 = 1, so s1 (sim_tick=1201) at
+    // offset 0, s0 (sim_tick=1200) at offset -1.
+    PipelineSlot* out = nullptr;
+    DF_CHECK(df_pipeline_get_slot(0, &out) == 1, "offset 0 ok after restore");
+    DF_CHECK(out->sim_tick == 1201, "current slot sim_tick=1201 restored");
+    DF_CHECK(out->state == SlotState_Dispatched, "current slot state=Dispatched restored");
+
+    DF_CHECK(df_pipeline_get_slot(-1, &out) == 1, "offset -1 ok after restore");
+    DF_CHECK(out->sim_tick == 1200, "tail slot sim_tick=1200 restored");
+    DF_CHECK(out->state == SlotState_ReadableAsTail, "tail slot state=ReadableAsTail restored");
+
+    df_pipeline_reset();
+}
+
+void scenario_pipeline_deserialize_depth_mismatch_rejected() {
+    std::printf("scenario_pipeline_deserialize_depth_mismatch_rejected\n");
+    df_pipeline_reset();
+    df_pipeline_init(3);  // Init D=3.
+
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(1300, &slot);
+    uint8_t buffer[DF_PIPELINE_SNAPSHOT_MAX_SIZE];
+    int32_t bytes_written = 0;
+    df_pipeline_serialize_display_state(buffer, sizeof(buffer), &bytes_written);
+
+    // Reset + init с DIFFERENT depth = 2; deserialize rejected.
+    df_pipeline_reset();
+    df_pipeline_init(2);
+    DF_CHECK(df_pipeline_deserialize_display_state(buffer, bytes_written) == 0,
+             "deserialize rejects depth mismatch (saved=3, current=2)");
+
+    df_pipeline_reset();
+}
+
 // ===== K10.3 v2 Item 35 scenarios — Phase.Compute scheduler integration =====
 //
 // Phase enum (Update/Compute/Display); VkQueueSubmit batching coalesces
@@ -2679,6 +2776,9 @@ int main() {
     scenario_pipeline_slot_is_quiescent();
     scenario_pipeline_slot_backpressure_on_inflight();
     scenario_pipeline_read_slot_tail_K_L7_1();
+    scenario_pipeline_drain_pause_resume();
+    scenario_pipeline_serialize_deserialize_roundtrip();
+    scenario_pipeline_deserialize_depth_mismatch_rejected();
     scenario_phase_compute_registration_and_count();
     scenario_phase_compute_dispatch_empty_slot();
     scenario_phase_compute_batch_coalesce_per_slot();
