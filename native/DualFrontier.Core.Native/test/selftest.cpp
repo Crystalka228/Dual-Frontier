@@ -2449,6 +2449,46 @@ void scenario_pipeline_read_slot_tail_K_L7_1() {
     df_pipeline_reset();
 }
 
+// ===== K10.3 v2 Item 37 scenarios — slot transition wake (К-L13 extension) =====
+
+void scenario_pipeline_transition_fires_wake() {
+    std::printf("scenario_pipeline_transition_fires_wake\n");
+    df_pipeline_reset();
+    df_pipeline_init(2);
+    df_pipeline_reset_wake_fire_count();
+
+    int32_t count = -1;
+    DF_CHECK(df_pipeline_get_wake_fire_count(&count) == 1 && count == 0,
+             "wake fire count = 0 initially");
+
+    // Allocate + dispatch 2 slots, transition both к ReadableAsTail.
+    PipelineSlot* s0 = nullptr;
+    PipelineSlot* s1 = nullptr;
+    df_pipeline_allocate_slot(1400, &s0);
+    df_pipeline_allocate_slot(1401, &s1);
+
+    // Transition s0 — fires wake (count → 1).
+    df_pipeline_force_fence_completed(s0);
+    df_pipeline_transition_to_tail(s0);
+    df_pipeline_get_wake_fire_count(&count);
+    DF_CHECK(count == 1, "wake fire count = 1 after first transition");
+
+    // Transition s1 — fires wake (count → 2).
+    df_pipeline_force_fence_completed(s1);
+    df_pipeline_transition_to_tail(s1);
+    df_pipeline_get_wake_fire_count(&count);
+    DF_CHECK(count == 2, "wake fire count = 2 after second transition");
+
+    // Failed transition (slot не в FenceCompleted) → wake не fires.
+    PipelineSlot* s2 = nullptr;
+    df_pipeline_allocate_slot(1402, &s2);  // Dispatched, не FenceCompleted
+    DF_CHECK(df_pipeline_transition_to_tail(s2) == 0, "transition rejected от Dispatched");
+    df_pipeline_get_wake_fire_count(&count);
+    DF_CHECK(count == 2, "wake count unchanged on failed transition");
+
+    df_pipeline_reset();
+}
+
 // ===== K10.3 v2 Item 34 scenarios — pipeline drain/refill protocols =====
 
 void scenario_pipeline_drain_pause_resume() {
@@ -2776,6 +2816,7 @@ int main() {
     scenario_pipeline_slot_is_quiescent();
     scenario_pipeline_slot_backpressure_on_inflight();
     scenario_pipeline_read_slot_tail_K_L7_1();
+    scenario_pipeline_transition_fires_wake();
     scenario_pipeline_drain_pause_resume();
     scenario_pipeline_serialize_deserialize_roundtrip();
     scenario_pipeline_deserialize_depth_mismatch_rejected();

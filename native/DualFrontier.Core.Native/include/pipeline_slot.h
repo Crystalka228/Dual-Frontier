@@ -174,6 +174,31 @@ DF_API int32_t df_pipeline_resume(void);
 // Query pause state. Returns 1 if paused, 0 if running, -1 if не initialized.
 DF_API int32_t df_pipeline_is_paused(int32_t* out_is_paused);
 
+// K10.3 v2 Item 37 — Filter primitive integration с pipeline slot transitions.
+//
+// К-L13 on-demand activation (К10.1 Item 3 + Item 17 state_change_filter)
+// extended с pipeline slot transitions. Downstream pipeline-managed read systems
+// can wake when fence completes на slot tail (drives sim-side reactivity post-
+// GPU dispatch).
+//
+// К10.3 v2 boundary: lands wake fire counter + transition hook infrastructure.
+// Full subscriber registry integration (subscribed system tracking + wake
+// payload delivery) deferred к К-extensions when pipeline-managed wake
+// consumers surface. K-L13 5-wake-type model unchanged; slot transitions
+// are а pipeline lifecycle signal, not а standard wake type.
+//
+// Architectural rationale per К-L14: keep pipeline slot wake separate primitive
+// rather than overloading state_change_filter с per-component-type semantics
+// что awkwardly compose с slot-level transitions.
+
+// Returns total count of slot transitions (FenceCompleted → ReadableAsTail)
+// that fired the wake hook since pipeline init. Used by test scenarios + future
+// observability (К-L13 diagnostic surface).
+DF_API int32_t df_pipeline_get_wake_fire_count(int32_t* out_count);
+
+// Reset wake fire counter (test convenience). Pipeline state unchanged.
+DF_API void df_pipeline_reset_wake_fire_count(void);
+
 // K-L7.1 sub-invariant — pipeline slot tail read API (S8-Q2 Pattern C).
 //
 // Convenience wrapper around df_pipeline_get_slot that extracts fields_snapshot_ptr

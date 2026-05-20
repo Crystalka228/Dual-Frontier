@@ -21,6 +21,7 @@ struct PipelineState {
     std::atomic<int32_t> cursor{0};           // Next slot index к allocate (mod depth)
     std::atomic<uint64_t> allocation_count{0}; // Total slots ever allocated (для offset math)
     std::atomic<int32_t> paused{0};           // Pause protocol (Item 34): 1 = no new allocations
+    std::atomic<int32_t> wake_fire_count{0};  // Item 37: K10.3 v2 transition wake fire counter
 };
 
 PipelineState g_pipeline;
@@ -45,6 +46,7 @@ int32_t df_pipeline_init(int32_t depth) {
     g_pipeline.cursor.store(0);
     g_pipeline.allocation_count.store(0);
     g_pipeline.paused.store(0);
+    g_pipeline.wake_fire_count.store(0);
     return 1;
 }
 
@@ -53,6 +55,7 @@ void df_pipeline_reset(void) {
     g_pipeline.cursor.store(0);
     g_pipeline.allocation_count.store(0);
     g_pipeline.paused.store(0);
+    g_pipeline.wake_fire_count.store(0);
     for (auto& slot : g_pipeline.slots) {
         std::memset(&slot, 0, sizeof(slot));
         slot.state = SlotState_Empty;
@@ -178,8 +181,10 @@ int32_t df_pipeline_transition_to_tail(PipelineSlot* slot) {
         return 0;
     }
     slot->state = SlotState_ReadableAsTail;
-    // К10.3 v2 Item 37 forward: StateChangeWake fires here via filter primitive
-    // integration. Wired в Commit 7 (df_filter_check_pipeline_slot_subscribers).
+    // K10.3 v2 Item 37: slot transition fires wake hook. Full subscriber
+    // registry integration deferred к К-extensions; counter increment proves
+    // infrastructure operational + provides observability surface.
+    g_pipeline.wake_fire_count.fetch_add(1);
     return 1;
 }
 
@@ -318,6 +323,18 @@ int32_t df_pipeline_is_paused(int32_t* out_is_paused) {
     }
     *out_is_paused = g_pipeline.paused.load();
     return 1;
+}
+
+int32_t df_pipeline_get_wake_fire_count(int32_t* out_count) {
+    if (!out_count) {
+        return 0;
+    }
+    *out_count = g_pipeline.wake_fire_count.load();
+    return 1;
+}
+
+void df_pipeline_reset_wake_fire_count(void) {
+    g_pipeline.wake_fire_count.store(0);
 }
 
 int32_t df_pipeline_is_quiescent(int32_t* out_is_quiescent) {

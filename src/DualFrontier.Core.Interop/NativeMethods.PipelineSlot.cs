@@ -67,4 +67,11 @@ internal static partial class NativeMethods
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern unsafe int df_pipeline_is_paused(int* outIsPaused);
+
+    // K10.3 v2 Item 37 — slot transition wake counter.
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_pipeline_get_wake_fire_count(int* outCount);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_pipeline_reset_wake_fire_count();
 }

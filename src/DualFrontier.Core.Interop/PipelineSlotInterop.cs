@@ -255,4 +255,22 @@ public static class PipelineSlotInterop
             return rc == 1 && p == 1;
         }
     }
+
+    /// <summary>
+    /// K10.3 v2 Item 37 — total slot transitions (FenceCompleted → ReadableAsTail)
+    /// fired since pipeline init. Observability surface для К-L13 diagnostic.
+    /// Full subscriber registry integration deferred к К-extensions.
+    /// </summary>
+    public static int GetWakeFireCount()
+    {
+        unsafe
+        {
+            int c = 0;
+            NativeMethods.df_pipeline_get_wake_fire_count(&c);
+            return c;
+        }
+    }
+
+    /// <summary>Reset wake fire counter (test convenience). Pipeline state unchanged.</summary>
+    public static void ResetWakeFireCount() => NativeMethods.df_pipeline_reset_wake_fire_count();
 }
