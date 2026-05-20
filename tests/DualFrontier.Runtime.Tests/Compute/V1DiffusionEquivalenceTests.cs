@@ -344,6 +344,128 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
             $"Max abs diff observed: {maxAbsDiff:F6}");
     }
 
+    [Fact]
+    public void Anisotropic_insulator_column_blocks_propagation_matches_CPU_within_tolerance()
+    {
+        // V1-10: full insulator column (D=0) blocks propagation на one side.
+        // Cells на the far side of the wall must remain at 0 (no flow can cross),
+        // and CPU + GPU must agree cell-by-cell.
+        const int W = 32, H = 32;
+        const int WallX = 15;
+        const float OpenD = 0.5f, WallD = 0.0f, Decay = 0.0f, Dt = 0.5f;
+        const int Iterations = 6;
+
+        var cpuField = _cpuWorld.Fields.Register<float>("equiv.aniso.wall.cpu", W, H);
+        cpuField.WriteCell(5, H / 2, 100f);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                cpuField.SetConductivity(x, y, x == WallX ? WallD : OpenD);
+
+        var cpuParams = new AnisotropicDiffusionKernel.Parameters
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt,
+        };
+        AnisotropicDiffusionKernel.Run(cpuField, cpuParams, Iterations);
+
+        var binding = new FieldStorageBinding(_gpuWorld);
+        binding.Attach(_instance, _device).Should().BeTrue();
+        var gpuField = _gpuWorld.Fields.Register<float>("equiv.aniso.wall.gpu", W, H);
+        gpuField.WriteCell(5, H / 2, 100f);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                gpuField.SetConductivity(x, y, x == WallX ? WallD : OpenD);
+
+        byte[] spirv = File.ReadAllBytes(FindShaderPath("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(binding, "equiv.aniso.wall.pipeline", spirv);
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        for (int i = 0; i < Iterations; i++)
+        {
+            pipeline.ExecuteIteration("equiv.aniso.wall.gpu", pc, dispatchX: 4, dispatchY: 4)
+                    .Should().BeTrue();
+        }
+
+        AssertCellWiseEquivalent(cpuField, gpuField, W, H, AnisotropicTolerance, "aniso wall column");
+
+        // Sanity: behaviour matches physical expectation — far side of wall stayed at 0.
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = WallX + 1; x < W; x++)
+            {
+                cpuField.ReadCell(x, y).Should().Be(0f,
+                    $"far side of insulator wall at ({x},{y}) cannot receive flow");
+            }
+        }
+    }
+
+    [Fact]
+    public void Anisotropic_insulator_with_gap_propagates_through_gap_matches_CPU_within_tolerance()
+    {
+        // V1-10 extension: wall с gap. Flow channels through gap; CPU + GPU agree.
+        const int W = 32, H = 32;
+        const int WallX = 15;
+        const int GapYStart = H / 2 - 2, GapYEnd = H / 2 + 2;
+        // 4·D·dt = 0.4 stays below 1.0 CFL bound for the 4-neighbour explicit-Euler stencil;
+        // higher values oscillate (center ↔ neighbours alternating) which masks real diffusion.
+        const float OpenD = 0.5f, WallD = 0.0f, Decay = 0.0f, Dt = 0.2f;
+        const int Iterations = 12;
+
+        var cpuField = _cpuWorld.Fields.Register<float>("equiv.aniso.gap.cpu", W, H);
+        cpuField.WriteCell(5, H / 2, 200f);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                bool wall = (x == WallX) && (y < GapYStart || y >= GapYEnd);
+                cpuField.SetConductivity(x, y, wall ? WallD : OpenD);
+            }
+        var cpuParams = new AnisotropicDiffusionKernel.Parameters
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt,
+        };
+        AnisotropicDiffusionKernel.Run(cpuField, cpuParams, Iterations);
+
+        var binding = new FieldStorageBinding(_gpuWorld);
+        binding.Attach(_instance, _device).Should().BeTrue();
+        var gpuField = _gpuWorld.Fields.Register<float>("equiv.aniso.gap.gpu", W, H);
+        gpuField.WriteCell(5, H / 2, 200f);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+            {
+                bool wall = (x == WallX) && (y < GapYStart || y >= GapYEnd);
+                gpuField.SetConductivity(x, y, wall ? WallD : OpenD);
+            }
+
+        byte[] spirv = File.ReadAllBytes(FindShaderPath("diffusion.comp.spv"));
+        var pipeline = new V1DiffusionPipeline(binding, "equiv.aniso.gap.pipeline", spirv);
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        for (int i = 0; i < Iterations; i++)
+        {
+            pipeline.ExecuteIteration("equiv.aniso.gap.gpu", pc, dispatchX: 4, dispatchY: 4)
+                    .Should().BeTrue();
+        }
+
+        AssertCellWiseEquivalent(cpuField, gpuField, W, H, AnisotropicTolerance, "aniso wall с gap");
+
+        // Sanity: wall-blocked cells (y outside the gap, x past the wall) stayed at 0,
+        // while open-side cells received some flow. Verifies the wall configuration is
+        // actually constraining the simulation, не just an inert decoration.
+        for (int y = 0; y < H; y++)
+        {
+            if (y >= GapYStart && y < GapYEnd) continue; // gap rows can have flow
+            for (int x = WallX + 1; x < W; x++)
+            {
+                cpuField.ReadCell(x, y).Should().Be(0f,
+                    $"wall-blocked far-side cell at ({x},{y}) cannot receive any flow");
+            }
+        }
+        cpuField.ReadCell(4, H / 2).Should().BeGreaterThan(0f, "source-side neighbour received flow");
+    }
+
     private static void AssertCellWiseEquivalent(
         FieldHandle<float> cpu, FieldHandle<float> gpu,
         int width, int height, float tolerance, string scenario)
