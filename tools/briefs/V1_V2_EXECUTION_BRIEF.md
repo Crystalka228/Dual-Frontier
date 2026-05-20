@@ -10,7 +10,6 @@ version: "1.0"
 next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V1_V2
 ---
-
 # V1+V2 — Scalar field + diffusion shader + wave shader (V substrate primitives, combined deliberation, sequential execution)
 
 **Brief lifecycle**: AUTHORED 2026-05-19 by Opus deliberation. EXECUTED post-V2 closure (two sub-PRs expected — V1 closure + V2 closure). Author: Crystalka (judicial role) + Claude Opus 4.7 (deliberation pipeline). Successor brief к V0.C.2 (closed PR #39 merged) per V substrate authoring stream. **Closure achieves V substrate full close** per VULKAN_SUBSTRATE.md §1.4 multi-field coexistence acceptance criterion (V0 ✓ + V1 ✓ + V2 ✓ + multi-field-coexistence verified) — unlocks Phase B M-cycle vanilla content migration (gated also on Roslyn analyzer А'.9).
