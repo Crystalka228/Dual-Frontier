@@ -10,6 +10,7 @@
 
 #include "bootstrap_graph.h"
 #include "composite.h"
+#include "compute_dispatch.h"
 #include "compute_pipeline.h"
 #include "entity_id.h"
 #include "keyed_map.h"
@@ -957,18 +958,13 @@ DF_API int32_t df_world_field_dispatch_compute(
     uint32_t dispatch_y,
     uint32_t dispatch_z)
 {
-    (void)field_name;
-    (void)push_constant_data; (void)push_constant_size;
-    (void)dispatch_x; (void)dispatch_y; (void)dispatch_z;
-    if (world == nullptr) return 0;
+    if (world == nullptr || field_name == nullptr) return 0;
     try {
         auto* w = static_cast<dualfrontier::World*>(world);
-        if (!w->has_vulkan_attached()) return 0;
-        // V1-5b: V1 pipeline objects created at registration; V1-5c wires
-        // actual VkCmdDispatch + per-field VkBuffer binding. Currently still
-        // а success path для known pipeline_ids — V1-5c will replace this с
-        // real dispatch + fence sync per К-L7 atomic-from-observer.
-        return w->compute_pipelines().get_pipeline(pipeline_id) != nullptr ? 1 : 0;
+        return dualfrontier::dispatch_compute_field(
+            *w, std::string(field_name), pipeline_id,
+            push_constant_data, push_constant_size,
+            dispatch_x, dispatch_y, dispatch_z) ? 1 : 0;
     } catch (...) {
         return 0;
     }

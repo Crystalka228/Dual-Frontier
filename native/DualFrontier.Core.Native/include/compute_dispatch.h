@@ -1,21 +1,48 @@
-// V0.B compute dispatch — native side stub.
+// V1 compute dispatch — native side.
 //
-// Wraps a single compute dispatch invocation. V0.B implementation is a no-op
-// that returns success — the actual VkCmdDispatch + VkQueueSubmit + fence
-// sync sequence lands V1+ when compute is wired к K9 field storage. The C
-// ABI surface is fixed at V0.B per S-LOCK-3 so managed-side consumers do
-// not have к churn.
+// V0.B was а pure no-op success path; V1+ wires actual VkCmdDispatch against
+// а K9 field's CPU-side RawTileField storage. The native side maintains
+// shadow VkBuffers per registered field (input + output + conductivity),
+// uploads field state CPU→GPU before dispatch, runs the compute shader,
+// and reads back GPU→CPU to the field's primary buffer.
+//
+// Sync model: К-L7 atomic-from-observer. Dispatch is synchronous — the call
+// blocks until VkFence signals. V1+ may switch к multi-frame async dispatch
+// when consumers need it (M-V demonstration mods).
 
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace dualfrontier {
 
-// V0.B no-op dispatch. Returns true to allow round-trip tests к pass; the
-// actual Vulkan dispatch is deferred к V1+ when bound к K9 field storage.
-bool dispatch_compute_noop(const char* field_name,
-                           uint32_t pipeline_id,
-                           uint32_t x, uint32_t y, uint32_t z);
+class World;
+
+// V1+ real dispatch. Returns true on success, false on failure. Failure modes:
+//   * unknown pipeline_id
+//   * field not registered (по name)
+//   * Vulkan operation failure (buffer alloc, descriptor alloc, queue submit)
+//   * push_constant_size > pipeline's registered push constant range
+//   * field not attached к Vulkan (world.has_vulkan_attached() == false)
+//
+// On success, the field's primary CPU storage is updated в-place с the GPU
+// result. Push constant data is bound к the pipeline layout's compute push
+// constant range starting at offset 0; pass nullptr + 0 if the pipeline does
+// не use push constants.
+bool dispatch_compute_field(World& world,
+                            const std::string& field_name,
+                            uint32_t pipeline_id,
+                            const uint8_t* push_constant_data,
+                            int32_t push_constant_size,
+                            uint32_t dispatch_x,
+                            uint32_t dispatch_y,
+                            uint32_t dispatch_z);
+
+// Releases all V1 dispatch resources (command pool, descriptor pool, fence,
+// per-field shadow buffers) held by the attachment. Called from World
+// destructor before the VkDevice is implicitly invalidated.
+struct VulkanAttachment;
+void release_dispatch_resources(VulkanAttachment& attachment) noexcept;
 
 }  // namespace dualfrontier

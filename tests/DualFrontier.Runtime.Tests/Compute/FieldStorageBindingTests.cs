@@ -46,6 +46,13 @@ public sealed class FieldStorageBindingTests : IDisposable
         bool attached = binding.Attach(_instance, _device);
         attached.Should().BeTrue();
 
+        // V1+: real dispatch requires а registered field. Use noop.comp (0
+        // bindings) с а minimal 4×4 scratch field. The shader does nothing
+        // but the dispatch path still allocates shadow VkBuffers + records
+        // а command buffer + submits к the async compute queue + waits на
+        // the fence per К-L7 atomic-from-observer.
+        _ = _world.Fields.Register<float>("test_field", 4, 4);
+
         byte[] noopSpirv = File.ReadAllBytes(FindShaderPath("noop.comp.spv"));
         uint pid = binding.Register("noop", noopSpirv, descriptorBindingCount: 0, pushConstantSize: 0);
         pid.Should().BeGreaterThan(0u);
@@ -53,7 +60,7 @@ public sealed class FieldStorageBindingTests : IDisposable
 
         bool dispatched = binding.DispatchField("test_field", pid, pushConstantData: ReadOnlySpan<byte>.Empty,
                                                 x: 1, y: 1, z: 1);
-        dispatched.Should().BeTrue("native side returns success for registered pipeline_id");
+        dispatched.Should().BeTrue("V1+ dispatch through async compute queue + fence wait completes");
     }
 
     [Fact]

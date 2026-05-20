@@ -31,8 +31,25 @@
 
 namespace dualfrontier {
 
-// Opaque Vulkan handle storage. Set via df_world_attach_vulkan; cast back к
-// VkInstance/VkDevice/VkQueue when invoking Vulkan APIs.
+// Per-field shadow VkBuffer set used by V1+ compute dispatch. Lazily created
+// при first dispatch against а given field, cached across iterations, freed
+// when the registry is cleared / world is destroyed.
+struct FieldShadowBuffers {
+    VkBuffer input = VK_NULL_HANDLE;
+    VkBuffer output = VK_NULL_HANDLE;
+    VkBuffer conductivity = VK_NULL_HANDLE;
+    VkDeviceMemory input_memory = VK_NULL_HANDLE;
+    VkDeviceMemory output_memory = VK_NULL_HANDLE;
+    VkDeviceMemory conductivity_memory = VK_NULL_HANDLE;
+    int32_t byte_size = 0;            // width * height * cell_size
+    int32_t conductivity_byte_size = 0;  // width * height * sizeof(float)
+};
+
+// Opaque Vulkan handle storage + per-world dispatch resources. Set via
+// df_world_attach_vulkan; cast back к VkInstance/VkDevice/VkQueue when
+// invoking Vulkan APIs. Dispatch resources (descriptor pool + command pool +
+// fence + per-field shadow buffers) are lazily allocated by the V1 dispatch
+// path and released в release_dispatch_resources().
 struct VulkanAttachment {
     void* instance = nullptr;
     void* physical_device = nullptr;
@@ -40,6 +57,18 @@ struct VulkanAttachment {
     void* async_compute_queue = nullptr;
     uint32_t async_compute_queue_family_index = 0;
     bool attached = false;
+
+    // V1+ dispatch state. Owned by attachment lifetime — freed before the
+    // VkDevice would otherwise outlive these handles.
+    VkCommandPool command_pool = VK_NULL_HANDLE;
+    VkCommandBuffer command_buffer = VK_NULL_HANDLE;
+    VkFence dispatch_fence = VK_NULL_HANDLE;
+    VkDescriptorPool descriptor_pool = VK_NULL_HANDLE;
+    std::unordered_map<std::string, FieldShadowBuffers> field_buffers;
+
+    // Memory type index satisfying HOST_VISIBLE | HOST_COHERENT, computed on
+    // first allocation. UINT32_MAX = not yet probed.
+    uint32_t host_coherent_memory_type = UINT32_MAX;
 };
 
 struct ComputePipelineEntry {

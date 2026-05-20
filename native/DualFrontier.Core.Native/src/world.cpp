@@ -1,4 +1,5 @@
 #include "world.h"
+#include "compute_dispatch.h"
 #include "compute_pipeline.h"
 
 #include <cstring>
@@ -13,12 +14,16 @@ World::World() {
 }
 
 World::~World() {
-    // V1+: tear down Vulkan-owned compute pipeline objects (VkPipeline,
-    // VkPipelineLayout, VkDescriptorSetLayout, VkShaderModule) while the
-    // VulkanAttachment is still live. Defaulted destructor would destroy
-    // vulkan_attachment_ before compute_pipelines_, leaking Vulkan handles.
-    if (compute_pipelines_ && vulkan_attachment_) {
-        compute_pipelines_->clear(*vulkan_attachment_);
+    // V1+: tear down all Vulkan-owned resources while the VkDevice is still
+    // live. Order matters — release_dispatch_resources frees the V1+ shadow
+    // VkBuffers + descriptor pool + command pool + fence; compute_pipelines
+    // then frees pipelines + layouts + shader modules. Both must run before
+    // vulkan_attachment_ destruction (which loses the device pointer).
+    if (vulkan_attachment_) {
+        if (compute_pipelines_) {
+            compute_pipelines_->clear(*vulkan_attachment_);
+        }
+        release_dispatch_resources(*vulkan_attachment_);
     }
 }
 
