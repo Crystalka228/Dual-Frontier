@@ -252,8 +252,10 @@ internal static class Program
             using var nativeWorld = new NativeWorld();
             var binding = new FieldStorageBinding(nativeWorld);
             bool attached = binding.Attach(runtime.VulkanInstance, runtime.VulkanDevice);
-            uint nativePid = binding.Register("noop_native", spirv, descriptorBindingCount: 0);
-            bool dispatched = binding.DispatchField("noop_field", nativePid, 1, 1, 1);
+            uint nativePid = binding.Register("noop_native", spirv, descriptorBindingCount: 0, pushConstantSize: 0);
+            bool dispatched = binding.DispatchField("noop_field", nativePid,
+                                                    pushConstantData: ReadOnlySpan<byte>.Empty,
+                                                    x: 1, y: 1, z: 1);
             Console.WriteLine($"  Attach: {attached}, register pid: {nativePid}, dispatch: {dispatched}, count: {binding.PipelineCount}");
             Console.WriteLine();
 

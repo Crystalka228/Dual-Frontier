@@ -931,14 +931,17 @@ DF_API uint32_t df_world_register_compute_pipeline(
     const char* pipeline_name,
     const uint8_t* spirv_bytecode,
     int32_t spirv_size,
-    uint32_t descriptor_binding_count)
+    uint32_t descriptor_binding_count,
+    uint32_t push_constant_size)
 {
     if (world == nullptr || pipeline_name == nullptr) return 0;
     try {
         auto* w = static_cast<dualfrontier::World*>(world);
         if (!w->has_vulkan_attached()) return 0;
         return w->compute_pipelines().register_pipeline(
-            std::string(pipeline_name), spirv_bytecode, spirv_size, descriptor_binding_count);
+            std::string(pipeline_name), spirv_bytecode, spirv_size,
+            descriptor_binding_count, push_constant_size,
+            w->vulkan_attachment());
     } catch (...) {
         return 0;
     }
@@ -948,17 +951,23 @@ DF_API int32_t df_world_field_dispatch_compute(
     df_world_handle world,
     const char* field_name,
     uint32_t pipeline_id,
+    const uint8_t* push_constant_data,
+    int32_t push_constant_size,
     uint32_t dispatch_x,
     uint32_t dispatch_y,
     uint32_t dispatch_z)
 {
-    (void)field_name; (void)dispatch_x; (void)dispatch_y; (void)dispatch_z;
+    (void)field_name;
+    (void)push_constant_data; (void)push_constant_size;
+    (void)dispatch_x; (void)dispatch_y; (void)dispatch_z;
     if (world == nullptr) return 0;
     try {
         auto* w = static_cast<dualfrontier::World*>(world);
         if (!w->has_vulkan_attached()) return 0;
-        // V0.B: success if pipeline_id refers к a registered pipeline.
-        // V1+ implements actual VkCmdDispatch + queue submit + fence sync.
+        // V1-5b: V1 pipeline objects created at registration; V1-5c wires
+        // actual VkCmdDispatch + per-field VkBuffer binding. Currently still
+        // а success path для known pipeline_ids — V1-5c will replace this с
+        // real dispatch + fence sync per К-L7 atomic-from-observer.
         return w->compute_pipelines().get_pipeline(pipeline_id) != nullptr ? 1 : 0;
     } catch (...) {
         return 0;

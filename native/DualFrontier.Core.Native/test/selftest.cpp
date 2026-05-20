@@ -2172,38 +2172,27 @@ void scenario_v0b_compute_pipeline_registration_roundtrip() {
     df_world_handle world = df_world_create();
     DF_CHECK(world != nullptr, "world created");
 
+    // V1+: with а real VkDevice attached, register_pipeline calls
+    // vkCreateShaderModule / vkCreateComputePipelines on the SPIR-V. The
+    // selftest does не bring up а live Vulkan instance, so only the negative
+    // "rejected without attach" path is exercised here. The positive path is
+    // covered by C# FieldStorageBindingTests which constructs а real Vulkan
+    // instance + device per К-L19 hardware tier.
+
     // Without Vulkan attached, registration is rejected.
     const uint8_t fake_spirv[] = {0x03, 0x02, 0x23, 0x07, 0x00, 0x00, 0x01, 0x00};
-    uint32_t pid = df_world_register_compute_pipeline(world, "noop", fake_spirv, sizeof(fake_spirv), 0);
+    uint32_t pid = df_world_register_compute_pipeline(world, "noop", fake_spirv, sizeof(fake_spirv), 0, 0);
     DF_CHECK(pid == 0, "register without attach rejected");
 
-    // Attach с mock Vulkan handles (non-null device к satisfy attached check).
-    void* fake_device = reinterpret_cast<void*>(static_cast<intptr_t>(0xDEADBEEF));
-    int32_t att = df_world_attach_vulkan(world, nullptr, nullptr, fake_device, nullptr, 1);
-    DF_CHECK(att == 1, "attach_vulkan succeeds с non-null device");
-
-    // First registration returns non-zero pipeline_id.
-    pid = df_world_register_compute_pipeline(world, "noop", fake_spirv, sizeof(fake_spirv), 0);
-    DF_CHECK(pid != 0, "register noop returns non-zero pipeline_id");
-    DF_CHECK(df_world_compute_pipeline_count(world) == 1, "count = 1 after register");
-
-    // Duplicate name rejected.
-    uint32_t pid2 = df_world_register_compute_pipeline(world, "noop", fake_spirv, sizeof(fake_spirv), 0);
-    DF_CHECK(pid2 == 0, "duplicate name rejected");
-    DF_CHECK(df_world_compute_pipeline_count(world) == 1, "count unchanged after duplicate");
-
-    // Misaligned SPIR-V rejected (V0.B contract — multiple of 4 required).
+    // Misaligned SPIR-V rejected без needing attach (size check is unconditional).
     const uint8_t bad_spirv[] = {0x01, 0x02, 0x03};
-    uint32_t pid3 = df_world_register_compute_pipeline(world, "other", bad_spirv, sizeof(bad_spirv), 0);
+    uint32_t pid3 = df_world_register_compute_pipeline(world, "other", bad_spirv, sizeof(bad_spirv), 0, 0);
     DF_CHECK(pid3 == 0, "misaligned SPIR-V rejected");
 
-    // Dispatch against valid pipeline returns 1.
-    int32_t disp = df_world_field_dispatch_compute(world, "test_field", pid, 1, 1, 1);
-    DF_CHECK(disp == 1, "dispatch against registered pipeline succeeds (V0.B no-op)");
-
-    // Dispatch against unknown pipeline_id returns 0.
-    disp = df_world_field_dispatch_compute(world, "test_field", 0xDEADBEEF, 1, 1, 1);
-    DF_CHECK(disp == 0, "dispatch against unknown pipeline_id fails");
+    // Dispatch against unknown pipeline_id returns 0 (does не require attach
+    // since the world rejects all dispatches when not attached).
+    int32_t disp = df_world_field_dispatch_compute(world, "test_field", 0xDEADBEEF, nullptr, 0, 1, 1, 1);
+    DF_CHECK(disp == 0, "dispatch against unknown pipeline_id fails (no attach)");
 
     df_world_destroy(world);
 }

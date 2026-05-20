@@ -46,21 +46,28 @@ public sealed class FieldStorageBinding
     }
 
     /// <summary>
-    /// Register a named compute pipeline on the native side. Returns pipeline_id
+    /// Register а named compute pipeline on the native side. Returns pipeline_id
     /// for use в later DispatchField calls. Returns 0 on failure.
+    /// pushConstantSize sizes the pipeline layout's push constant range covering
+    /// VK_SHADER_STAGE_COMPUTE_BIT (pass 0 if the shader does not use push constants).
     /// </summary>
-    public uint Register(string pipelineName, ReadOnlySpan<byte> spirvBytecode, uint descriptorBindingCount)
+    public uint Register(string pipelineName, ReadOnlySpan<byte> spirvBytecode,
+                         uint descriptorBindingCount, uint pushConstantSize = 0)
     {
-        return _world.RegisterComputePipeline(pipelineName, spirvBytecode, descriptorBindingCount);
+        return _world.RegisterComputePipeline(pipelineName, spirvBytecode,
+                                              descriptorBindingCount, pushConstantSize);
     }
 
     /// <summary>
-    /// Dispatch a registered pipeline against a named K9 field. V0.B no-op success
-    /// path; V1+ implements actual VkCmdDispatch sequence.
+    /// Dispatch а registered pipeline against а named K9 field, с push constant payload.
+    /// V1-5c implements the actual VkCmdDispatch sequence; this signature is the wire
+    /// format the managed side commits к.
     /// </summary>
-    public bool DispatchField(string fieldName, uint pipelineId, uint x, uint y, uint z)
+    public bool DispatchField(string fieldName, uint pipelineId,
+                              ReadOnlySpan<byte> pushConstantData,
+                              uint x, uint y, uint z)
     {
-        return _world.DispatchFieldCompute(fieldName, pipelineId, x, y, z);
+        return _world.DispatchFieldCompute(fieldName, pipelineId, pushConstantData, x, y, z);
     }
 
     public int PipelineCount => _world.ComputePipelineCount();
