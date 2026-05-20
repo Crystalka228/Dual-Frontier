@@ -272,6 +272,13 @@ internal static class Program
             Console.WriteLine("V1-13 V1 anisotropic diffusion 200×200 wire path:");
             RunV1AnisotropicWire(runtime, durationSeconds: 5);
 
+            // ===========================================================================
+            // V1-17 — V1 isotropic dispatch latency benchmark (200×200, single-iter timing)
+            // ===========================================================================
+            Console.WriteLine();
+            Console.WriteLine("V1-17 V1 isotropic dispatch latency:");
+            MeasureV1DispatchLatency(runtime, samples: 200);
+
             if (runtime.ValidationLayer is not null)
             {
                 Console.WriteLine("Validation log:");
@@ -880,6 +887,87 @@ internal static class Program
         else
         {
             Console.WriteLine($"  [WARN] V1-13 FPS target unmet ({fps:F1} < 60) — surface к Crystalka for SC-13 investigation");
+        }
+
+        runtime.VulkanDevice.WaitIdle();
+    }
+
+    /// <summary>
+    /// V1-17 — V1 isotropic dispatch latency benchmark. Measures wall-clock per-iteration
+    /// latency on 200×200 field using single-iteration dispatches (each includes the
+    /// compute-fence wait per К-L7 atomic-from-observer). Target: ~1ms / iteration per
+    /// VULKAN_SUBSTRATE.md §1.4 budget («~1 ms/tick per active field on mid-range GPU»).
+    /// </summary>
+    private static void MeasureV1DispatchLatency(Runtime runtime, int samples)
+    {
+        const int W = 200, H = 200;
+        const float D = 0.1f, Decay = 0.0f, Dt = 0.5f;
+
+        using var perfWorld = new NativeWorld();
+        FieldStorageBinding fieldBinding;
+        V1DiffusionPipeline pipeline;
+        try
+        {
+            fieldBinding = runtime.CreateFieldStorageBinding(perfWorld);
+            pipeline = runtime.CreateV1DiffusionPipeline(fieldBinding, "v1.iso.perf.pipeline");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"  [FAIL] V1 latency benchmark composition: {ex.GetType().Name}: {ex.Message}");
+            return;
+        }
+
+        var field = perfWorld.Fields.Register<float>("v1.iso.perf", W, H);
+        field.WriteCell(W / 2, H / 2, 1000f);
+        for (int y = 0; y < H; y++)
+        {
+            for (int x = 0; x < W; x++)
+            {
+                field.SetConductivity(x, y, D);
+            }
+        }
+
+        var pc = new DiffusionPushConstants
+        {
+            DecayCoefficient = Decay, DeltaTime = Dt, Width = W, Height = H,
+        };
+        const uint DispatchX = 25, DispatchY = 25;
+
+        // Warmup: 10 dispatches to prime caches, pipeline state, and command pool reuse.
+        for (int i = 0; i < 10; i++)
+        {
+            if (!pipeline.ExecuteIteration("v1.iso.perf", pc, DispatchX, DispatchY))
+            {
+                Console.WriteLine($"  [FAIL] Warmup dispatch failed at i={i}");
+                return;
+            }
+        }
+
+        // Measurement loop.
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        for (int i = 0; i < samples; i++)
+        {
+            pipeline.ExecuteIteration("v1.iso.perf", pc, DispatchX, DispatchY);
+        }
+        sw.Stop();
+
+        double totalMs = sw.Elapsed.TotalMilliseconds;
+        double meanMs = totalMs / samples;
+        double effectiveHz = samples / Math.Max(sw.Elapsed.TotalSeconds, 1e-9);
+
+        Console.WriteLine($"  Field {W}×{H}, {samples} single-iter dispatches (warmup=10)");
+        Console.WriteLine($"  Total: {totalMs:F2} ms, mean: {meanMs:F3} ms/iter, throughput: {effectiveHz:F1} dispatches/sec");
+        if (meanMs <= 1.0)
+        {
+            Console.WriteLine($"  [PASS] V1-17 latency within ~1 ms/iter budget (per VULKAN_SUBSTRATE §1.4)");
+        }
+        else if (meanMs <= 2.0)
+        {
+            Console.WriteLine($"  [WARN] V1-17 latency {meanMs:F3} ms > 1 ms budget but < 2 ms — surface к Crystalka");
+        }
+        else
+        {
+            Console.WriteLine($"  [WARN] V1-17 latency {meanMs:F3} ms exceeds 2× budget — investigate dispatch overhead, fence sync, descriptor rebinding (SC-13)");
         }
 
         runtime.VulkanDevice.WaitIdle();
