@@ -39,16 +39,16 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.2"
-    last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-V0_B-K_L19"
+    version: "2.3"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L7_1-K_L16-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-18"
-    last_review_event: "V0.B closure 2026-05-18 — K-L19 «Hardware tier commitment» LOCKED с full implementation backing (Vulkan 1.3 + async compute queue family mandate; HardwareCapabilityCheck.Verify fail-fast at Runtime.Create); AMD RX 7600S verified К-L19 hardware baseline on test machine; K-L16/L17/L18 numbering reserved для К10.3 restart per cross-stream dependency resolution"
+    last_review_date: "2026-05-20"
+    last_review_event: "К10.3 v2 load-bearing commit 1/3 2026-05-20 — K-L7 row extended с K-L7.1 sub-invariant (mirrors K-L3.1 precedent — opt-in coexistence с V1 K-L7 sync default per S-LOCK-10/13); K-L16 «Simulation tick pipeline depth» AUTHORED (D=1-3 configurable, default 2; governs pipeline-managed dispatches per S-LOCK-13; V1 sync dispatch_compute_field path orthogonal). К-L17 + К-L18 numbering reserved для subsequent К10.3 v2 load-bearing commits. К10.3 v2 К-L7.1/L16 implementation backing: native pipeline_slot.h state machine (D=2 default) + Phase.Compute scheduler integration (VkQueueSubmit batching scaffold) + slot read API (К-L7.1 opt-in) + drain/refill protocols + filter primitive integration (slot transition wake counter); 7 commits ahead of main on claude/k10_3-v2-pipeline-display-quiescent branch (15f8aca..26cce91). К-L19 inherited V0.B (no re-implementation)."
     next_review_due: "2027-05-18"
     reviewer: Crystalka
-    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L19]
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L19]
     risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
 
@@ -98,11 +98,13 @@ documents:
     lifecycle: LOCKED
     supersedes: [DOC-D-G0, DOC-D-G1, DOC-D-G2, DOC-D-G3, DOC-D-G4, DOC-D-G5, DOC-D-G6, DOC-D-G7, DOC-D-G8, DOC-D-G9, DOC-A-VISUAL_ENGINE, DOC-A-GODOT_INTEGRATION]
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-05-16"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "1.1"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L7_1-K_L16-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
+    last_review_date: "2026-05-20"
+    last_review_event: "К10.3 v2 load-bearing commit 1/3 reconciliation per S-LOCK-14 (Crystalka 2026-05-19 lock). Consolidated v1.0 → v1.1 bump incorporating: (a) K-L19 deferred V0.B amendments (§0 L1 Vulkan 1.3 + async compute queue mandate notation; §0 L7 K-L19 hardware tier baseline note; §3.4 K-L19 mandate documentation cleanup); (b) К10.3 v2 К-L7.1/L16 amendments (§2.0 pipeline depth architecture subsection с PipelineSlot struct verbatim from KERNEL_FULL_NATIVE_SCHEDULER.md §3.10 Item 33; §2.3.1 threading model pipeline depth + queue family roles; §7.2.0 pipeline drain semantics S8-Q1.5 save protocol; §7.3.0 pipeline slot tail read pattern). К-L17 amendments (§4 rendering display composition + §5.5 Mode C visibility latency) land в subsequent К10.3 v2 К-L17 load-bearing commit; К-L18 amendment (§3.4 df_vulkan_unload_mod_resources placeholder) lands в К-L18 final commit."
     next_review_due: "2027-05-16"
     reviewer: Crystalka
     risks_referenced: [RISK-004, RISK-013]
@@ -4398,6 +4400,105 @@ requirements:
     verification_status: VERIFIED
     verification_date: "2026-05-18"
     verification_milestone: "V0.B closure (full implementation backing operational at landing per Lesson #8 + Lesson #11 — no architectural commitment без implementation behind it)"
+
+  - id: REQ-K-L7_1
+    title: "GPU compute pipeline slot binding (sub-invariant к K-L7; opt-in coexistence)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L7 (+К-L7.1 К10.3 v2 load-bearing 2026-05-20)"
+    requirement_text: |
+      GPU compute writes к RawTileField storage are bound к pipeline slot (К-L16).
+      Sim-thread reads of compute-managed fields see slot-tail state — sim tick T+D
+      reads dispatched-at-(T+D-1) state. One-tick lag from sim-perspective bounded
+      и deterministic. К-L7 atomic-from-observer invariant preserved within pipeline
+      slot boundary; cross-slot reads see different snapshots.
+
+      S-LOCK-10 coexistence: К-L7.1 opt-in per field per К-L9 «Vanilla = mods» author
+      choice. V1's existing V1DiffusionPipeline.ExecuteIteration synchronous dispatch
+      path (К-L7 atomic-from-observer per compute_dispatch.h) remains operational
+      orthogonal к К-L7.1. К-L7 default preserved для existing FieldHandle consumers.
+
+      Mirrors K-L3.1 sub-invariant precedent pattern (К-L3 preserved + К-L3.1 sub
+      specifies opt-in extension).
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L7 (+K-L7.1) row (К10.3 v2 load-bearing amendment, v2.3 partial)"
+        verification_type: spec_inspection
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§2.0 pipeline depth architecture subsection (К-L7.1 coexistence note); §2.3.1 threading model К-L7.1 sim-thread read pattern; §7.3.0 pipeline slot tail read pattern"
+        verification_type: spec_inspection
+      - file: native/DualFrontier.Core.Native/include/pipeline_slot.h
+        test_method: "PipelineSlot.fields_snapshot_ptr К-L7.1 binding subject; df_pipeline_read_slot_tail tail read API (offset=-1 = sim-thread К-L7.1 read pattern)"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/src/pipeline_slot.cpp
+        test_method: "Slot state validation (read rejected pre-FenceCompleted/ReadableAsTail); К-L7 atomic-from-observer preserved within slot boundary"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Core.Interop/PipelineSlotInterop.cs
+        test_method: "ReadSlotTail managed wrapper exposes К-L7.1 opt-in read pattern; К10.3 v2 boundary doc о FieldHandle K-L7.1 dispatch flag deferred к К-extensions"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "scenario_pipeline_read_slot_tail_K_L7_1 — verifies Dispatched rejection + fields_snapshot_ptr roundtrip + sim_tick roundtrip + tail offset returns prior sim_tick (К-L7.1 one-tick lag)"
+        verification_type: native_test
+      - file: tests/DualFrontier.Core.Interop.Tests/PipelineSlotInteropTests.cs
+        test_method: "ReadSlotTail_K_L7_1_Pattern — managed-side roundtrip"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-20"
+    verification_milestone: "К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C — pipeline depth + sub-invariant share physical reality «GPU pipeline slots»)"
+
+  - id: REQ-K-L16
+    title: "Simulation tick pipeline depth (D=2 default; configurable 1-3)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L16 (К10.3 v2 load-bearing 2026-05-20)"
+    requirement_text: |
+      Simulation tick pipeline depth D ≥ 1 (configurable 1-3, default 2). Simulation
+      thread runs D ticks ahead of display thread для pipeline-managed dispatches.
+      Cross-layer async operations (GPU compute pipeline-managed, network, disk I/O)
+      have full pipeline-depth window к complete без blocking simulation thread.
+      Display thread reads results от simulation tick (CurrentSimTick - D). Pipeline
+      drain orderly at save/pause; pipeline refill orderly at load/resume. К-L16
+      establishes display latency invariant (D × tick_period); К-L15 fast tier latency
+      invariant (subscriber response ≤1ms) preserved independently.
+
+      S-LOCK-13 coexistence: governs pipeline-managed dispatches; V1's K-L7 sync
+      dispatch_compute_field path orthogonal и preserved для existing consumers per
+      K-L9 «Vanilla = mods» author choice per field.
+
+      Save protocol per S8-Q1.5: snapshot display tick state (CurrentSimTick - D).
+      Display already sees coherent world; pipeline drain не required at save time.
+      Faster save (no waiting для in-flight compute completion).
+
+      Pause protocol: natural convergence — sim thread completes current tick, no
+      new dispatch. Pipeline depth naturally absorbs already-dispatched work. К-L18
+      quiescent state precondition (Item 41, subsequent load-bearing commit) verifies
+      pipeline quiesced before mod operations.
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L16 row (К10.3 v2 load-bearing amendment, v2.3 partial)"
+        verification_type: spec_inspection
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§2.0 pipeline depth architecture; §2.3.1 threading model pipeline depth + queue family roles; §7.2.0 pipeline drain semantics"
+        verification_type: spec_inspection
+      - file: native/DualFrontier.Core.Native/include/pipeline_slot.h
+        test_method: "PipelineSlot struct verbatim from spec §3.10 Item 33; D=1-3 configurable per DF_PIPELINE_MAX_DEPTH=3 + DF_PIPELINE_DEFAULT_DEPTH=2; state machine Empty→Dispatched→FenceCompleted→ReadableAsTail; drain/refill protocols (serialize/deserialize/pause/resume)"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/src/pipeline_slot.cpp
+        test_method: "Atomic state transitions + cycling cursor + bounded backpressure (allocate fails when all slots in-flight); pause rejects new allocations; serialize captures sim_tick + state per slot; deserialize restores state + validates depth match"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/include/phase_compute.h
+        test_method: "Phase enum (Update/Compute/Display) + df_scheduler_register_compute_dispatch + VkQueueSubmit batching scaffold (К10.3 v2 boundary: real submit wired в V-cycle integration)"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Core.Interop/PipelineSlotInterop.cs
+        test_method: "Managed wrapper exposing Init/Reset/GetDepth/AllocateSlot/GetSlot/SetFence/CheckFences/ForceFenceCompleted/TransitionToTail/IsQuiescent/ReadSlotTail/Serialize+Deserialize/Pause/Resume/IsPaused/GetWakeFireCount surface; struct layout 40 bytes verified via unsafe sizeof"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "6 pipeline_slot scenarios (init/depth, state machine, D=2 cycling, get_slot offsets, is_quiescent, backpressure) + 4 phase_compute scenarios + 3 drain/refill scenarios + 1 wake fire scenario — total 14 К10.3 v2 native scenarios"
+        verification_type: native_test
+      - file: tests/DualFrontier.Core.Interop.Tests/PipelineSlotInteropTests.cs
+        test_method: "7 managed-side roundtrip tests (struct layout 40 bytes, init/depth, out-of-range rejection, state transitions, get_slot offsets, ReadSlotTail K-L7.1, is_quiescent K-L18 precondition)"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-20"
+    verification_milestone: "К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C)"
 
   - id: REQ-V0-A-WIN32_WINDOW
     title: "Win32 window lifecycle + message pump (V0.A foundation)"
