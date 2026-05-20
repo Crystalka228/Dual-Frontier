@@ -682,9 +682,11 @@ internal static class Program
     }
 
     /// <summary>
-    /// V1-12 — V1 isotropic diffusion на 200×200 field. Source spike at center, uniform
-    /// conductivity D=0.1, 5 iterations per frame. Substrate primitive close criterion:
-    /// FPS ≥ 60 sustained over the dispatch loop. Per VULKAN_SUBSTRATE.md §1.2 + §1.4 budget.
+    /// V1-12 / V1-16 — V1 isotropic diffusion на 200×200 field. Source spike at center,
+    /// uniform conductivity D=0.1, 5 iterations per frame. Substrate primitive close
+    /// criterion: FPS ≥ 60 sustained. Per VULKAN_SUBSTRATE.md §1.2 + §1.4 budget.
+    /// Composed through <see cref="Runtime.CreateFieldStorageBinding"/> +
+    /// <see cref="Runtime.CreateV1DiffusionPipeline"/> per V1-14 factory pattern.
     /// </summary>
     private static void RunV1IsotropicDiffusion(Runtime runtime, int durationSeconds)
     {
@@ -693,10 +695,16 @@ internal static class Program
         const int IterationsPerFrame = 5;
 
         using var diffusionWorld = new NativeWorld();
-        var fieldBinding = new FieldStorageBinding(diffusionWorld);
-        if (!fieldBinding.Attach(runtime.VulkanInstance, runtime.VulkanDevice))
+        FieldStorageBinding fieldBinding;
+        V1DiffusionPipeline pipeline;
+        try
         {
-            Console.WriteLine("  [FAIL] FieldStorageBinding.Attach failed for V1 isotropic scene");
+            fieldBinding = runtime.CreateFieldStorageBinding(diffusionWorld);
+            pipeline = runtime.CreateV1DiffusionPipeline(fieldBinding, "v1.iso.200x200.pipeline");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"  [FAIL] V1 isotropic factory composition: {ex.GetType().Name}: {ex.Message}");
             return;
         }
 
@@ -709,9 +717,6 @@ internal static class Program
                 field.SetConductivity(x, y, D);
             }
         }
-
-        byte[] spirv = File.ReadAllBytes(LocateAsset("diffusion.comp.spv"));
-        var pipeline = new V1DiffusionPipeline(fieldBinding, "v1.iso.200x200.pipeline", spirv);
 
         var pc = new DiffusionPushConstants
         {
@@ -781,11 +786,11 @@ internal static class Program
     }
 
     /// <summary>
-    /// V1-13 — V1 anisotropic diffusion на 200×200 field с а horizontal "wire" row
-    /// (high D), source at the left end of the wire, off-wire conductivity low.
-    /// Verifies the asymmetric flow rule min(D_self, D_neighbour) channels propagation
-    /// along the wire (per VULKAN_SUBSTRATE.md §1.2 + §5.1 wire-path emergence pattern).
-    /// FPS ≥ 60 sustained.
+    /// V1-13 / V1-16 — V1 anisotropic diffusion на 200×200 field с а horizontal "wire" row
+    /// (high D), source at the left end of the wire, off-wire conductivity low. Verifies
+    /// the asymmetric flow rule min(D_self, D_neighbour) channels propagation along the
+    /// wire (per VULKAN_SUBSTRATE.md §1.2 + §5.1 wire-path emergence pattern). FPS ≥ 60.
+    /// Composed through <see cref="Runtime"/> factories per V1-14 pattern.
     /// </summary>
     private static void RunV1AnisotropicWire(Runtime runtime, int durationSeconds)
     {
@@ -796,10 +801,16 @@ internal static class Program
         const int IterationsPerFrame = 5;
 
         using var aniseWorld = new NativeWorld();
-        var fieldBinding = new FieldStorageBinding(aniseWorld);
-        if (!fieldBinding.Attach(runtime.VulkanInstance, runtime.VulkanDevice))
+        FieldStorageBinding fieldBinding;
+        V1DiffusionPipeline pipeline;
+        try
         {
-            Console.WriteLine("  [FAIL] FieldStorageBinding.Attach failed for V1 anisotropic scene");
+            fieldBinding = runtime.CreateFieldStorageBinding(aniseWorld);
+            pipeline = runtime.CreateV1DiffusionPipeline(fieldBinding, "v1.aniso.wire.pipeline");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"  [FAIL] V1 anisotropic factory composition: {ex.GetType().Name}: {ex.Message}");
             return;
         }
 
@@ -812,9 +823,6 @@ internal static class Program
                 field.SetConductivity(x, y, y == WireY ? WireD : OffWireD);
             }
         }
-
-        byte[] spirv = File.ReadAllBytes(LocateAsset("diffusion.comp.spv"));
-        var pipeline = new V1DiffusionPipeline(fieldBinding, "v1.aniso.wire.pipeline", spirv);
 
         var pc = new DiffusionPushConstants
         {
