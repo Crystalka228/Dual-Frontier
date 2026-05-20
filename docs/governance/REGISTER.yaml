@@ -1531,7 +1531,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-05-19"
-    last_modified_commit: "PENDING-COMMIT-V1_V2-AUTHORING"
+    last_modified_commit: "PENDING-COMMIT-V1-CLOSURE"
     content_language: mixed
     review_cadence: on-status-transition
     last_review_date: "2026-05-19"
@@ -7040,3 +7040,115 @@ audit_trail:
         - document: DOC-D-V0_C_2
           from: AUTHORED
           to: EXECUTED
+
+  - id: EVT-2026-05-19-V1-CLOSURE
+    timestamp: "2026-05-19T23:30:00Z"
+    date: "2026-05-19"
+    event: "V1 sub-milestone closure (PR #40) — V substrate primitive: scalar field + isotropic + anisotropic diffusion compute shader operational; AnisotropicDiffusionKernel CPU reference + diffusion.comp GLSL + DiffusionPushConstants alignment-audited (S-LOCK-7) + native VkCmdDispatch с per-field shadow VkBuffers + V1DiffusionPipeline managed wrapper + V1DiffusionPipeline Runtime factories + CPU/GPU equivalence gates (isotropic uniform D + corner reflective + decay-only + combined D+K + iteration count Theory + anisotropic wire-path + insulator column + insulator-with-gap + long-run mass-conservation 50-iter) + V1 200×200 isotropic + anisotropic wire-path smoke scenes + V1 dispatch latency benchmark + Compute MODULE.md V1 extension + V1 manual visual verification protocol; fifth consecutive zero-hard-gate-halt cascade on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1) — К-L14 thesis fifth verification accumulated."
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-V1_V2                  # lifecycle stays AUTHORED through V1 close — schema-valid; flips к EXECUTED at V2 closure (PR #41)
+    commits:
+      range: "9cbaed3..PENDING-COMMIT-V1-CLOSURE"
+      key_commits:
+        - hash: "9cbaed3"
+          summary: "V1-1 — governance enrolment (DOC-D-V1_V2 AUTHORED)"
+        - hash: "43883bc"
+          summary: "V1-2 — AnisotropicDiffusionKernel CPU reference"
+        - hash: "8bf4e7d"
+          summary: "V1-3 — diffusion.comp GLSL shader (isotropic + anisotropic via per-cell D)"
+        - hash: "c29a7c8"
+          summary: "V1-4 — DiffusionPushConstants struct + Lesson #7 alignment audit gate"
+        - hash: "68fcab0..7148910"
+          summary: "V1-5a..V1-5c — native Vulkan SDK link + real VkPipeline / VkCmdDispatch / per-field shadow VkBuffers"
+        - hash: "9724e15"
+          summary: "V1-5 — V1DiffusionPipeline managed wrapper"
+        - hash: "dba4a78"
+          summary: "V1-6 — end-к-end V1 diffusion integration test"
+        - hash: "0539caa"
+          summary: "V1-7 + V1-9 — CPU/GPU equivalence gates: isotropic uniform D + anisotropic wire-path"
+        - hash: "1803daf"
+          summary: "V1-8 — isotropic equivalence edge cases (boundary, decay-only, combined D+K, iteration count Theory)"
+        - hash: "59dfc72"
+          summary: "V1-10 — anisotropic insulator equivalence (column blocks + column-with-gap)"
+        - hash: "429eaa3"
+          summary: "V1-11 — long-run 50-iteration mass-conservation invariant test"
+        - hash: "34d85e0"
+          summary: "V1-12 — V1 isotropic 200×200 smoke scene"
+        - hash: "2f00a8f"
+          summary: "V1-13 — V1 anisotropic wire-path 200×200 smoke scene"
+        - hash: "4bc6a7c"
+          summary: "V1-14 — Runtime factories (CreateFieldStorageBinding + CreateV1DiffusionPipeline) + factory tests"
+        - hash: "8cf8cdb"
+          summary: "V1-16 — smoke scenes routed through Runtime factory composition"
+        - hash: "34cd713"
+          summary: "V1-17 — V1 isotropic dispatch latency benchmark (target ~1ms/iter per §1.4)"
+        - hash: "6758298"
+          summary: "V1-18 — Compute/MODULE.md V1 substrate primitive documentation"
+        - hash: "94335eb"
+          summary: "V1-19 — docs/scratch/V1_V2/V1_MANUAL_VERIFICATION_PROTOCOL.md authored"
+    governance_impact: |
+      V1 sub-milestone closure under V substrate authoring stream. Fifth of six V
+      substrate sub-milestones (V0.A → V0.B → V0.C.1 → V0.C.2 → V1 → V2). V2 portion
+      pending; V1 portion ships PR #40 and DOC-D-V1_V2 transitions AUTHORED → IN_PROGRESS
+      pending V2 closure transition к EXECUTED.
+
+      REGISTER amendments:
+      - DOC-D-V1_V2 lifecycle remains AUTHORED through V1 closure — schema does не
+        define an IN_PROGRESS state; the brief §7.1 used IN_PROGRESS as an informal
+        intermediate label. Schema-compliant path: AUTHORED through V1 close, flip
+        directly к EXECUTED at V2 closure (PR #41) when the full brief scope is shipped.
+      - last_modified_commit field updated к reflect V1 closure commit range.
+
+      Validation metrics (V1 portion final state):
+      - dotnet build (sln): clean (0 warnings, 0 errors)
+      - dotnet test (DualFrontier.Runtime.Tests): 292 passed (271 V0.C.2 baseline +
+        7 V1-8 isotropic edge cases + 2 V1-10 anisotropic insulator + 1 V1-11 long-run
+        + 5 V1-14 factory + 2 V1-7/V1-9 equivalence + 2 V1-6 integration = +21 net post-baseline)
+      - dotnet test (sln full): preserved baseline + V1 additive
+      - V1 smoke scenes: V1-12 isotropic 200×200, V1-13 anisotropic wire path 200×200,
+        V1-17 dispatch latency — all run на Skarlet at PR review per
+        docs/scratch/V1_V2/V1_MANUAL_VERIFICATION_PROTOCOL.md
+      - sync_register.ps1 -Validate: exit 0 (advisory orphan warnings baseline)
+
+      Lesson #7 strengthening continues: V0.A 1 fix → V0.B 5 → V0.C.1 0 → V0.C.2 1 →
+      V1 0 hard fixes (one CFL stability tuning surfaced via test gate, не alignment
+      mismatch). Maturity curve preserved.
+
+      Lesson #22 (mixed [LibraryImport]/[DllImport] convention) preserved continued.
+
+      Lesson #25 (implementation depth follows consumer materialization) preserved:
+      - V1-15 heatmap visualization helper deferred (optional per brief, не required
+        для V1 close criterion — substrate primitive close = pipeline + equivalence +
+        smoke scene FPS target).
+      - V2 wave + direction extraction + multi-field coexistence scope deferred к V2
+        portion (PR #41).
+
+      Lesson #26 (cross-substrate scope splitting preserves multi-session budget):
+      V1+V2 → V1 (PR #40) + V2 (PR #41) pause-point preserved per Q6c ratification
+      (combined deliberation, sequential execution).
+
+      К-L14 thesis fifth verification: V0.A → V0.B → V0.C.1 → V0.C.2 → V1 = five
+      consecutive zero-hard-gate-halt cascades on V substrate authoring stream. К-L14
+      «performance derives from clean complex architecture без compromise» empirically
+      validated across substrate primitive types — V1 substrate primitive composed
+      from existing K9 FieldHandle<T> + V0.B compute round-trip + new GLSL + new CPU
+      reference + new Runtime factory без architectural compromise.
+
+      V substrate next steps (V2 portion):
+      - V2 brief portion execution (PR #41): WaveKernel + DirectionExtractKernel +
+        wave.comp + direction_extract.comp + V2WavePipeline + V2DirectionExtractPipeline
+        + WavePushConstants + DirectionExtractPushConstants + V2 200×200 smoke scenes
+        + multi-field coexistence scene (V substrate close acceptance per §1.4)
+      - V2 closure → EVT-V2-CLOSURE + EVT-V-SUBSTRATE-CLOSE → DOC-D-V1_V2 lifecycle
+        IN_PROGRESS → EXECUTED
+
+      Independent streams unchanged:
+      - К10.3 brief restart (Crystalka prerogative)
+      - К10.4 TLA+ brief authoring
+      - A'.8 K-closure report
+      - A'.9 Roslyn architectural analyzer milestone
+    cross_references:
+      risks:
+        - RISK-013                        # rendering substrate cross-cutting — V1 substrate primitive close
+      lifecycle_transitions: []           # DOC-D-V1_V2 stays AUTHORED through V1 close per schema; transitions к EXECUTED at V2 closure

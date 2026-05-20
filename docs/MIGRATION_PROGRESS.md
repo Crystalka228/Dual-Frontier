@@ -828,8 +828,8 @@ Detailed entries будут добавлены при подходе к кажд
 | V0.B | Swapchain + render pass + compute pipeline plumbing + memory allocator + SPIR-V toolchain + К-L19 startup check | **DONE** | 18-24h auto-mode | PENDING-COMMIT-V0_B-CLOSURE | 2026-05-18 |
 | V0.C.1 | PNG decoder + textured sprite pipeline + input event types (R.1 + R.4) | **DONE** | 20-30h auto-mode | PENDING-COMMIT-V0_C_1-CLOSURE | 2026-05-19 |
 | V0.C.2 | Batched sprite renderer (10K sprites at 60+ FPS) + Camera2D + TileMap (R.2 + R.3) | **DONE** | 15-25h auto-mode | PENDING-COMMIT-V0_C_2-CLOSURE | 2026-05-19 |
-| V1 | Scalar field + diffusion shader (environmental layer — mana, electricity, water etc.) | NOT STARTED | 1-2 weeks hobby pace | — | — |
-| V2 | Scalar field + wave shader (routed layer — pathfinding, distance, direction fields) | NOT STARTED | TBD | — | — |
+| V1 | Scalar field + diffusion shader (environmental layer — mana, electricity, water etc.) | **DONE pending PR #40 merge** | 15-20h auto-mode | PENDING-COMMIT-V1-CLOSURE | 2026-05-19 |
+| V2 | Scalar field + wave shader (routed layer — pathfinding, distance, direction fields) | NOT STARTED | 15-20h auto-mode | — | — |
 
 **Cumulative estimate**: V0 (V0.A + V0.B + V0.C) 4-6 weeks at hobby pace per VULKAN_SUBSTRATE.md §1.1; V1+V2 additional 3-5 weeks combined.
 
@@ -837,6 +837,21 @@ Detailed entries будут добавлены при подходе к кажд
 all DONE). Unlocks V1 + V2 brief authoring + Phase B M-cycle vanilla content mass migration
 (also gated on Roslyn analyzer A'.9). Four consecutive zero-hard-gate-halt cascades on V
 substrate authoring stream — К-L14 thesis empirically validated.
+
+**V1 substrate primitive close pending PR #40 merge** 2026-05-19. Adds isotropic + anisotropic
+diffusion shader на top of V0 foundation (per VULKAN_SUBSTRATE.md §1.2 + §5.1):
+AnisotropicDiffusionKernel CPU reference + diffusion.comp GLSL + DiffusionPushConstants
+(Lesson #7 alignment audit gate, 16 bytes verified first attempt) + native VkPipeline +
+real VkCmdDispatch + per-field shadow VkBuffers + V1DiffusionPipeline managed wrapper +
+Runtime factory composition (CreateFieldStorageBinding + CreateV1DiffusionPipeline) +
+CPU/GPU equivalence gates (isotropic uniform D + corner reflective boundary + decay-only +
+combined D+K + iteration count Theory + anisotropic wire-path + insulator column +
+insulator-with-gap + long-run 50-iter mass-conservation) + V1 200×200 isotropic +
+anisotropic wire smoke scenes + V1-17 dispatch latency benchmark + Compute/MODULE.md
+V1 extension + V1 manual visual verification protocol. Fifth consecutive zero-hard-gate-halt
+cascade on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1) —
+К-L14 thesis fifth verification accumulated. V2 portion (PR #41) opens V substrate full
+close per §1.4 multi-field coexistence acceptance criterion.
 
 ### V0.A — Win32 window + Vulkan instance + device + queue families + validation layer
 
