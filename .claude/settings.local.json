@@ -12,7 +12,9 @@
       "Bash(grep -E \"\\\\.godot|\\\\.uid$|\\\\.import$|\\\\.translation$|\\\\.tmp$|export_presets\\\\.cfg\")",
       "Bash(dotnet run *)",
       "Bash(git push *)",
-      "PowerShell(.\\\\tools\\\\governance\\\\sync_register.ps1)"
+      "PowerShell(.\\\\tools\\\\governance\\\\sync_register.ps1)",
+      "Bash(mkdir -p /root/.claude/plans)",
+      "Read(//root/.claude/**)"
     ]
   }
 }
