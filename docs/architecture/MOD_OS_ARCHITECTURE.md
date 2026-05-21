@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.9"
+version: "1.10"
 next_review_due: 2027-05-18
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_OS
 ---
@@ -293,7 +293,7 @@ The cost is verbose manifests for content-rich mods. The benefit is that a `git 
 - `provider`:
   - `kernel` — provided by `DualFrontier.Contracts` itself.
   - `mod.<modId>` — provided by another loaded mod (typically a shared mod publishing event types).
-- `verb`: one of `publish`, `subscribe`, `read`, `write`, `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch`, `pipeline.register`, or **(K10.2)** tier-prefixed bus verbs `fast.publish`, `fast.subscribe`, `normal.publish`, `normal.subscribe`, `background.publish`, `background.subscribe`.
+- `verb`: one of `publish`, `subscribe`, `read`, `write`, `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch`, `pipeline.register`, **(K10.2)** tier-prefixed bus verbs `fast.publish`, `fast.subscribe`, `normal.publish`, `normal.subscribe`, `background.publish`, `background.subscribe`, or **(К10.3 v2)** К-L17 display composition layer verbs `layer.intent`, `layer.combat_feedback`.
 - `fully-qualified-type-name`: the C# FQN of the event or component type, or the namespaced field/pipeline id for the `field.*` and `pipeline.*` verbs.
 
 The `read` and `write` verbs apply to entity-keyed components (`IComponent`). The `publish` and `subscribe` verbs apply to events (`IEvent`). The `field.*` verbs apply to spatial fields (`RawTileField<T>` per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) K9 — dense 2D grids with conductivity map and storage flags). The `pipeline.register` verb applies to mod-owned compute pipelines registered via `IModApi.ComputePipelines` (§4.6).
@@ -316,6 +316,17 @@ Bus tier verb semantics (K10.2, per K-L15 + S-LOCK-4):
 **Backward-compatible aliases** (S-LOCK-4): `kernel.publish:<FQN>` / `kernel.subscribe:<FQN>` continue к function for Normal-tier events. Mods authored prior к K10.2 require no manifest changes; tier-explicit tokens are opt-in for Fast/Background tier semantics.
 
 Tier mismatch (manifest declares tier-specific capability но event type's `[EventTier]` attribute names a different tier) is caught at load time via `BusTierMismatch` (§11.2).
+
+**К-L17 display composition layer capabilities** (К10.3 v2 Items 39+40, per S3-Q5 + S8-Q3 granular FQN pattern):
+
+- `kernel.layer.intent:<FQN>` — mod registers an intent overlay layer (sub-pipeline-latency input surface; ≤16ms render latency contract).
+- `kernel.layer.combat_feedback:<FQN>` — mod registers a combat feedback layer (К-L15 Fast tier consumer; ≤17ms event-к-visible latency contract).
+
+Layer registration uses the `[Layer(LayerType.Intent | CombatFeedback)]` attribute on a concrete `DualFrontier.Application.Display.Layer` subclass; `KernelCapabilityRegistry` scans loaded assemblies and emits the corresponding capability tokens. Granular per FQN per tier — same uniformity as К10.2 bus tier tokens.
+
+SimState and Static layer tiers use existing renderer-level capabilities (V substrate primitives) and do не surface layer capability tokens here. Vanilla layers register through the same attribute + capability pattern per К-L9 «Vanilla = mods».
+
+Layer mismatch (attribute declares one `LayerType` но runtime layer instance reports a different `Type`) is reserved для validation error `LayerCapabilityMismatch` (§11.2 К10.3 v2 amendment, finalized в К-L18 load-bearing commit).
 
 ### 3.3 Reserved namespaces
 

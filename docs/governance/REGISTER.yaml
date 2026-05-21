@@ -41,14 +41,14 @@ documents:
     owner: Crystalka
     version: "2.3"
     last_modified: "2026-05-20"
-    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L7_1-K_L16-LOAD-BEARING"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L17-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
-    last_review_event: "К10.3 v2 load-bearing commit 1/3 2026-05-20 — K-L7 row extended с K-L7.1 sub-invariant (mirrors K-L3.1 precedent — opt-in coexistence с V1 K-L7 sync default per S-LOCK-10/13); K-L16 «Simulation tick pipeline depth» AUTHORED (D=1-3 configurable, default 2; governs pipeline-managed dispatches per S-LOCK-13; V1 sync dispatch_compute_field path orthogonal). К-L17 + К-L18 numbering reserved для subsequent К10.3 v2 load-bearing commits. К10.3 v2 К-L7.1/L16 implementation backing: native pipeline_slot.h state machine (D=2 default) + Phase.Compute scheduler integration (VkQueueSubmit batching scaffold) + slot read API (К-L7.1 opt-in) + drain/refill protocols + filter primitive integration (slot transition wake counter); 7 commits ahead of main on claude/k10_3-v2-pipeline-display-quiescent branch (15f8aca..26cce91). К-L19 inherited V0.B (no re-implementation)."
+    last_review_event: "К10.3 v2 load-bearing commit 2/3 2026-05-20 — K-L17 «Display composition multi-layer» AUTHORED. Sim state + intent overlay + combat feedback layers с independent latency contracts (SimState К-L16 pipeline tail or К-L7 sync; Intent ≤16ms; CombatFeedback ≤17ms event-к-visible per Prediction 15). Composition order SimState → Intent → CombatFeedback → Static. Framework lives в src/DualFrontier.Application/Display/ per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces preserved). Mod-registered layers via [Layer(LayerType.X)] attribute (Contracts/Display) + kernel.layer.intent:{FQN}/kernel.layer.combat_feedback:{FQN} capabilities (granular per FQN per tier). Implementation backing: CompositionFramework + Layer + LayerType + ILayerRenderContext + SimStateLayer/IntentOverlayLayer/CombatFeedbackLayer slots + LayerAttribute + KernelCapabilityRegistry layer-token scan. 9 commits ahead of main on claude/k10_3-v2-pipeline-display-quiescent branch (15f8aca..28a2029). Predecessor К10.3 v2 commit 1/3 (К-L7.1+К-L16 load-bearing fd5c7e2) intact. К-L18 reserved для subsequent К10.3 v2 load-bearing commit 3/3."
     next_review_due: "2027-05-18"
     reviewer: Crystalka
-    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L19]
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L17, REQ-K-L19]
     risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
 
@@ -78,13 +78,13 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.9"
-    last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K10_2-CLOSURE"
+    version: "1.10"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L17-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-18"
-    last_review_event: "K10.2 closure 2026-05-18 — §3.2 tier-prefixed bus verbs added (S-LOCK-4 per-FQN per-tier); §9.5 unload chain extended 7-step → 8-step с Step 3.5 (df_scheduler_unload_mod_native_state); §11.2 new ValidationErrorKinds added (FastTierContractViolation, BusTierMismatch, BackgroundCoalesceMissing)"
+    last_review_date: "2026-05-20"
+    last_review_event: "К10.3 v2 load-bearing commit 2/3 2026-05-20 — §3.2 К-L17 display composition layer capability verbs added (kernel.layer.intent + kernel.layer.combat_feedback) per S3-Q5 + S8-Q3 granular FQN pattern. Layer registration via [Layer(LayerType.X)] attribute on concrete Layer subclass; KernelCapabilityRegistry scans loaded assemblies for the attribute and emits matching capability tokens. SimState/Static tiers use existing renderer-level capabilities and emit no layer tokens here. К-L18 amendments (§9.5 Step 3.6 + §11 hot reload + §11.2 new ValidationErrorKinds) land в subsequent К-L18 final commit (LayerCapabilityMismatch placeholder reference added в §3.2 awaiting §11.2 finalization)."
     next_review_due: "2027-05-18"
     reviewer: Crystalka
     risks_referenced: [RISK-002, RISK-004, RISK-005, RISK-006]
@@ -100,11 +100,11 @@ documents:
     owner: Crystalka
     version: "1.1"
     last_modified: "2026-05-20"
-    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L7_1-K_L16-LOAD-BEARING"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L17-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
-    last_review_event: "К10.3 v2 load-bearing commit 1/3 reconciliation per S-LOCK-14 (Crystalka 2026-05-19 lock). Consolidated v1.0 → v1.1 bump incorporating: (a) K-L19 deferred V0.B amendments (§0 L1 Vulkan 1.3 + async compute queue mandate notation; §0 L7 K-L19 hardware tier baseline note; §3.4 K-L19 mandate documentation cleanup); (b) К10.3 v2 К-L7.1/L16 amendments (§2.0 pipeline depth architecture subsection с PipelineSlot struct verbatim from KERNEL_FULL_NATIVE_SCHEDULER.md §3.10 Item 33; §2.3.1 threading model pipeline depth + queue family roles; §7.2.0 pipeline drain semantics S8-Q1.5 save protocol; §7.3.0 pipeline slot tail read pattern). К-L17 amendments (§4 rendering display composition + §5.5 Mode C visibility latency) land в subsequent К10.3 v2 К-L17 load-bearing commit; К-L18 amendment (§3.4 df_vulkan_unload_mod_resources placeholder) lands в К-L18 final commit."
+    last_review_event: "К10.3 v2 load-bearing commit 2/3 2026-05-20 — К-L17 display composition amendments landed: §4.0 «Display composition (К-L17)» subsection (three-layer composition: SimStateLayer V substrate render path + IntentOverlayLayer current input ≤16ms + CombatFeedbackLayer К-L15 Fast tier ≤17ms event-к-visible per Prediction 15; composition order; [Layer] attribute + kernel.layer.intent/combat_feedback capabilities; existing IRenderer/IDevKitRenderer interfaces preserved per S-LOCK-11); §5.5 Mode C visibility latency через К-L17 composition (no special-case visibility mechanism). К-L18 final amendment (§3.4 df_vulkan_unload_mod_resources C ABI placeholder) lands в К-L18 final commit. Commit 1/3 (К-L7.1+К-L16 reconciliation per S-LOCK-14: §0 L1/L7 K-L19 cleanup + §2.0 pipeline depth + §2.3 threading model + §3.4 К-L19 mandate cleanup + §7.2 drain semantics + §7.3 К-L7.1 slot tail read pattern) intact."
     next_review_due: "2027-05-16"
     reviewer: Crystalka
     risks_referenced: [RISK-004, RISK-013]
@@ -4499,6 +4499,86 @@ requirements:
     verification_status: VERIFIED
     verification_date: "2026-05-20"
     verification_milestone: "К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C)"
+
+  - id: REQ-K-L17
+    title: "Display composition multi-layer (К-L17, К10.3 v2 load-bearing 2/3)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L17 (К10.3 v2 load-bearing 2026-05-20)"
+    requirement_text: |
+      Display tick T composites multi-layer state where layers carry independent
+      latency contracts:
+        - SimState layer — К-L16 pipeline tail for pipeline-managed display state,
+          либо current sim state for К-L7 sync default (V1 path). Latency
+          D × tick_period or sub-tick.
+        - Intent overlay — current input state (≤16ms latency at 60 FPS).
+        - Combat feedback — К-L15 Fast tier consumers (≤17ms event-к-visible
+          per Prediction 15: ≤1ms К-L15 + ≤16ms display).
+        - Static — loaded assets, composited last.
+
+      Composition order: SimState first, intent + combat overlays composited
+      on top, static last. Framework lives в src/DualFrontier.Application/Display/
+      per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces
+      preserved unchanged).
+
+      Mod-registered layers declare via [Layer(LayerType.Intent | CombatFeedback)]
+      attribute (DualFrontier.Contracts.Display.LayerAttribute) + capability tokens:
+        - kernel.layer.intent:{FQN}
+        - kernel.layer.combat_feedback:{FQN}
+      granular per FQN per tier per S3-Q5 + S8-Q3 pattern. SimState/Static tiers
+      use existing renderer-level capabilities (V substrate primitives) и do не
+      surface layer capability tokens here.
+
+      Per К-L9 «Vanilla = mods», vanilla layers register through the same attribute
+      + capability pattern as third-party mods.
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L17 row (К10.3 v2 load-bearing amendment, v2.3 partial)"
+        verification_type: spec_inspection
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§4.0 Display composition (К-L17) three-layer model + composition order + capability tokens + S-LOCK-11 boundary; §5.5 Mode C visibility latency через К-L17"
+        verification_type: spec_inspection
+      - file: docs/architecture/MOD_OS_ARCHITECTURE.md
+        test_method: "§3.2 К-L17 display composition layer capability verbs (kernel.layer.intent + kernel.layer.combat_feedback) + [Layer] attribute pattern + granular per FQN per tier"
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Contracts/Display/LayerType.cs
+        test_method: "Enum LayerType { SimState=0, Intent=1, CombatFeedback=2, Static=3 } lives в Contracts so mod assemblies can reference"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Contracts/Display/LayerAttribute.cs
+        test_method: "[Layer(LayerType)] attribute с optional CompositionOrder init property"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/CompositionFramework.cs
+        test_method: "Layer registry с deterministic composition order (LayerType primary, CompositionOrder secondary, FQN tertiary tie-break); RegisterLayer/UnregisterLayer/GetLayer/GetLayersInCompositionOrder/RenderFrame surface"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/Layer.cs
+        test_method: "Abstract base с Type + Fqn + CompositionOrder + Render + OnUnregistered hook"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/SimStateLayer.cs
+        test_method: "Default SimState layer slot wrapping presentation backend render delegate (no-op default; full integration deferred per managed-facade-preserved)"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/IntentOverlayLayer.cs
+        test_method: "LayerType.Intent slot с render delegate; ≤16ms latency contract documented; reads current input state, не pipeline slot tail"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/CombatFeedbackLayer.cs
+        test_method: "LayerType.CombatFeedback slot с thread-safe EnqueueFeedback Fast tier sink + drain-on-render snapshot semantics; ≤17ms event-к-visible contract"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Modding/KernelCapabilityRegistry.cs
+        test_method: "Scans for [Layer] attribute; emits kernel.layer.intent:{FQN} or kernel.layer.combat_feedback:{FQN}; SimState/Static emit no layer token"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Application.Tests/Display/CompositionFrameworkTests.cs
+        test_method: "12 tests: layer registration (duplicate FQN, empty FQN, unregister callback), composition order (primary by type, secondary by composition order, tertiary by FQN), RenderFrame order, SimStateLayer no-op + delegate"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Application.Tests/Display/IntentOverlayLayerTests.cs
+        test_method: "9 tests: tier identity, default+custom FQN, no-op default, delegate invocation, null-context throw, composition order after SimState"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Application.Tests/Display/CombatFeedbackLayerTests.cs
+        test_method: "11 tests: tier identity, EnqueueFeedback queue, drain-on-render snapshot, no-delegate drain, OnUnregistered clear, concurrent-writer thread safety (8 writers × 250 events), composition order after Intent"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Modding.Tests/Capability/KernelCapabilityRegistryLayerTests.cs
+        test_method: "6 tests: Intent/CombatFeedback emit correct tokens; SimState/Static emit none; types without attribute emit none; granular per FQN per tier"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-20"
+    verification_milestone: "К10.3 v2 load-bearing commit 2/3 (К-L17 display composition framework + Items 38-40 implementation backing)"
 
   - id: REQ-V0-A-WIN32_WINDOW
     title: "Win32 window lifecycle + message pump (V0.A foundation)"

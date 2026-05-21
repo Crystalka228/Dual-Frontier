@@ -950,6 +950,25 @@ public sealed class FieldHandle<T> where T : unmanaged
 
 The rendering use case rebuilds presentation functionality from Godot 4 onto the V substrate. Existing Godot path runs in parallel until cutover; substrate rendering side reaches full M8.x parity before Godot deletion.
 
+### 4.0 Display composition (К-L17, К10.3 v2 amendment)
+
+V substrate rendering use case is consumed by display composition framework per К-L17 (lives в `src/DualFrontier.Application/Display/`, not в V substrate). Three-layer composition с independent latency contracts:
+
+1. **SimStateLayer** — V substrate render path (existing V0.C.2 batched sprite + Camera2D — preserved verbatim, wrapped as default layer slot). Reads от pipeline slot tail (К-L16) for pipeline-managed display state; reads current state for К-L7 sync default (V1 path). Latency `D × tick_period` or sub-tick.
+2. **IntentOverlayLayer** (К10.3 v2 Item 39) — current input state surface. Reads from InputEventQueue at display tick time. Latency ≤16ms (60 FPS) per К-L17 contract.
+3. **CombatFeedbackLayer** (К10.3 v2 Item 40) — К-L15 Fast tier event consumers. Subscribes к Fast tier events; renders damage numbers, hit sparks, weapon glints. Latency ≤1ms К-L15 + ≤16ms display ≈ ≤17ms event-к-visible per Prediction 15.
+
+Composition order (К-L17 mandate): SimState layers rendered first, intent + combat overlays composited on top, static layers (loaded assets) last.
+
+Mod-registered layers use `[Layer(LayerType.Intent | CombatFeedback)]` attribute (`DualFrontier.Contracts.Display.LayerAttribute`) + capability declaration:
+
+- `kernel.layer.intent:{FQN}` — sub-pipeline-latency input overlay.
+- `kernel.layer.combat_feedback:{FQN}` — К-L15 Fast tier consumer.
+
+Per К-L9 «Vanilla = mods», vanilla layers (built-in intent cursor, combat hit feedback) register through same attribute + capability pattern as third-party mods.
+
+V substrate exposes rendering primitives (`SpriteRenderer`, `Camera2D`, `TileMap`); layer composition lives one architectural layer above per S-LOCK-11. Existing `IRenderer`/`IDevKitRenderer` interfaces в `DualFrontier.Application.Rendering` preserved unchanged — composition framework operates above them, не extending.
+
 ### 4.1 Migration approach
 
 **Strategy: parallel development.**
@@ -1288,6 +1307,12 @@ foreach (var pawn in pawns)
 ```
 
 **Local avoidance** is a separate concern (mod-level, NOT substrate primitive). Local steering on top of flow field direction — RVO-like or simple boids approach, combines flow field global direction + local agent collision avoidance. Pure managed CPU code (per-pawn, but simple math, parallelizable). M-V8 demonstration.
+
+#### Mode C visibility latency (К-L17, К10.3 v2 amendment)
+
+Mode C navigation visibility latency is governed по К-L17 composition framework (§4.0). Player commands → IntentOverlayLayer (≤16ms render latency, sub-pipeline-latency input surface); pawn responses → SimStateLayer (pipeline-managed К-L16 D=2 lag для async dispatches, либо К-L7 sync для V1 path); combat feedback на encounter → CombatFeedbackLayer (К-L15 Fast tier ≤1ms + display ≤16ms ≈ ≤17ms event-к-visible per Prediction 15).
+
+No special-case visibility mechanism — К-L17 composition framework handles latency separation uniformly across навигation modes.
 
 ### 5.6 Domain B kernel (deferred)
 
