@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.10"
+version: "1.11"
 next_review_due: 2027-05-18
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_OS
 ---
@@ -973,7 +973,8 @@ The fine-grained handling of component data from missing mods is delegated to th
 1. `RestrictedModApi.UnsubscribeAll()` — drops bus subscriptions.
 2. `IModContractStore.RevokeAll(modId)` — drops contract registrations.
 3. `ModRegistry.RemoveSystems(modId)` — drops system instances.
-3.5. **(К10.2)** `df_scheduler_unload_mod_native_state(modId)` — native primitive encapsulating T0-T7 internal sequence: clears native scheduler state (subscriber registries per tier, capability registrations, wake registry subscriptions, shared memory registrations); returns `ModUnloadResult` с per-tier metrics. Best-effort sequential per §9.5.1; native primitive internal critical section atomicity (per S3-Q1 L3 layering, single primitive contract per S3-Q6). Also tears down per-mod `ModSubScheduler` (К10.2 Item 21).
+3.5. **(К10.2)** `df_scheduler_unload_mod_native_state(modId)` — native primitive encapsulating T0-T7 internal sequence: clears native scheduler state (subscriber registries per tier, capability registrations, wake registry subscriptions, shared memory registrations); returns `ModUnloadResult` с per-tier metrics. Best-effort sequential per §9.5.1; native primitive internal critical section atomicity (per S3-Q1 L3 layering, single primitive contract per S3-Q6). К10.3 v2 Item 41 extends с pipeline slot quiescence check (К-L18 invariant) — primitive rejects unload if any pipeline slot is `Dispatched` или `FenceCompleted`. Also tears down per-mod `ModSubScheduler` (К10.2 Item 21).
+3.6. **(К10.3 v2 Item 42)** V (Vulkan) resource cleanup — wraps `df_vulkan_unload_mod_resources(mod_id)` C ABI primitive per VULKAN_SUBSTRATE.md §3.4 К10.3 v2 amendment. К10.3 v2 lands the managed wrapper (`DualFrontier.Application.Bridge.VResourceCleanup`) returning vacuous success when no pipeline-managed mod resources are registered; full native implementation (`VkDestroyPipeline` / `VkFreeDescriptorSets` / `vkDestroyBuffer` / `vkDestroyImage` для mod-registered Vulkan handles) lands V-cycle или К-extensions per managed-facade-preserved strategy. К-L18 quiescent state precondition already satisfied (Step 3.5 verified sim paused + pipeline quiescent per К-L18 invariant). Best-effort sequential per §9.5.1.
 4. The dependency graph is rebuilt without this mod's systems.
 5. The scheduler swaps to the new phase list.
 6. `ALC.Unload()` is called.
@@ -983,13 +984,25 @@ WeakReference-based unload tests are mandatory for every regular mod (§10.4).
 
 ### 9.5.1 Failure semantics
 
-Steps 1–6 (including К10.2 Step 3.5 — `df_scheduler_unload_mod_native_state`) of the unload protocol (§9.5) are sequential and best-effort. If any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. After step 6, if step 7 times out, the `ModUnloadTimeout` warning per §9.5 fires; the mod is removed from the active set regardless of whether the assembly actually unloaded.
+Steps 1–6 (including К10.2 Step 3.5 — `df_scheduler_unload_mod_native_state` — и К10.3 v2 Step 3.6 — V resource cleanup placeholder) of the unload protocol (§9.5) are sequential and best-effort. If any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. After step 6, if step 7 times out, the `ModUnloadTimeout` warning per §9.5 fires; the mod is removed from the active set regardless of whether the assembly actually unloaded.
+
+Step 3.5 may reject the entire unload if К-L18 quiescent state precondition is not satisfied (sim не paused, либо pipeline slots в `Dispatched`/`FenceCompleted` state). In that case the native primitive returns failure + error message; Steps 3.6 onward proceed best-effort consuming the same warning pipeline, но the upstream К-L18 violation surfaces as `QuiescentStatePreconditionViolated` (§11.2 К10.3 v2 amendment) carrying the rejection reason.
 
 There is no atomic-unload guarantee. `Unload` is conceptually irreversible: subscriptions removed in step 1 cannot be re-attached without re-running `Subscribe`. The chain is structured so each step is a no-op if its predecessor failed (e.g. `RemoveSystems` on a mod with no registered systems is harmless), making best-effort progression safe. The `ModLoader.UnloadMod` swallowed `try/catch` around `mod.Instance.Unload()` is the canonical example of this discipline, in place since M0.
 
 ### 9.6 Hot-reload disabled mods
 
 A mod with `"hotReload": false` cannot be reloaded mid-session. The menu disables the reload button for that mod and presents a tooltip. To change such a mod, the user must restart the game.
+
+### 9.7 Hot reload К-L18 compliance (К10.3 v2 amendment)
+
+Hot reload preserves game state through managed dependency graph swap (§9.2/§9.5). К-L18 «mod lifecycle quiescent state» mandates the simulation be paused и pipeline slots quiescent before unload/reload operations proceed:
+
+- `DualFrontier.Application.Loop.SimulationStateController.PauseAsync()` sets the К-L18 sim-paused flag (consumed by native `df_scheduler_unload_mod_native_state` Step 3.5 precondition check per К10.2 + К10.3 v2 Item 41 extension).
+- `WaitForQuiescenceAsync(timeout)` polls pipeline slot state (К10.3 v2 Item 33 — all slots `Empty` или `ReadableAsTail`) until quiescent или timeout. Timeout surfaces as `PipelineQuiescenceTimeout` validation error (§11.2 К10.3 v2 amendment).
+- `ResumeAsync()` clears the sim-paused flag после the mod operation completes.
+
+Mod management UI и hot reload tooling share this enforcement pattern. Per S-LOCK-12 К10.3 v2 scope: helpers only land; full settings menu / preferences UI deferred к V-cycle или К-extensions.
 
 ---
 
@@ -1088,6 +1101,10 @@ The current enum has `IncompatibleContractsVersion`, `WriteWriteConflict`, `Miss
 - `FastTierContractViolation` (K10.2) — Fast tier subscriber violates bounded-execution contract (K-L15 fast tier latency invariant ≤1ms). Static detection (blocking call in subscriber body, GC allocation hint declared but absent) is a Roslyn analyzer concern deferred к A'.9; K10.2 lands runtime monitor via `FastTierContractMonitor` — per-(modId, eventFqn) violation counter с threshold-breach event.
 - `BusTierMismatch` (K10.2) — manifest declares a tier-specific capability (`kernel.fast.subscribe:{FQN}`, `kernel.background.publish:{FQN}`, etc.) но event type's `[EventTier]` attribute names a different tier. Catches manifest/event-type drift at load time per K-L15 + S-LOCK-4 per-FQN per-tier capability declarations.
 - `BackgroundCoalesceMissing` (K10.2) — Background tier event type is missing its coalesce-function declaration (`[EventTier(BusTier.Background, CoalesceFunctionTypeName = "...")]`). Background tier dispatch requires per-(type_id, coalesce_key) coalesce semantics (Q-N-34 author control); absent declaration is a load-time failure.
+- `QuiescentStatePreconditionViolated` (К10.3 v2 К-L18) — mod load/unload operation attempted while simulation thread не paused либо pipeline slots в `Dispatched`/`FenceCompleted` state. Caught by `df_scheduler_unload_mod_native_state` К-L18 precondition check (К10.2 sim-paused stub + К10.3 v2 Item 41 pipeline quiescence extension). Surfaced as warning when the upstream precondition rejection bubbles through Step 3.5 в the §9.5 chain.
+- `PipelineQuiescenceTimeout` (К10.3 v2 К-L18) — `SimulationStateController.WaitForQuiescenceAsync` timeout exceeded waiting для pipeline slots к reach quiescent state. Indicates either а stuck compute dispatch либо misconfigured pause sequence (sim paused но compute dispatches in-flight from before the pause).
+- `LayerCapabilityMismatch` (К10.3 v2 К-L17) — concrete `Layer` subclass's `Type` property reports а `LayerType` different от the value declared in its `[Layer(LayerType.X)]` attribute. Caught at load time when `KernelCapabilityRegistry` emits the capability token; the mismatch indicates author confusion about which К-L17 tier the layer participates в.
+- `VulkanModResourceCleanupFailed` (К10.3 v2 К-L18 V scope) — Step 3.6 V resource cleanup primitive (`df_vulkan_unload_mod_resources` / managed `VResourceCleanup`) reported failure during mod unload. К10.3 v2 lands placeholder returning vacuous success; this error kind is reserved для when full native implementation lands V-cycle / К-extensions и actually destroys mod-registered Vulkan handles.
 
 ### 11.3 Closing `ROADMAP` debt incidentally
 

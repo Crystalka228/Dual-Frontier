@@ -944,6 +944,30 @@ public sealed class FieldHandle<T> where T : unmanaged
 }
 ```
 
+### 3.4.1 `df_vulkan_unload_mod_resources` C ABI primitive (К-L18, К10.3 v2 placeholder per S-LOCK-12 spec scope)
+
+К10.3 v2 lands the C ABI signature + managed wrapper placeholder for Step 3.6 of the mod unload chain (MOD_OS_ARCHITECTURE §9.5 К10.3 v2 amendment); native implementation lands as V-cycle work либо К-extensions per managed-facade-preserved strategy. К-L18 quiescent state precondition is already satisfied before this primitive is invoked (Step 3.5 К10.2 native primitive verified sim paused + pipeline quiescent per К-L18 invariant).
+
+```c
+typedef struct {
+    int32_t success;
+    int32_t pipelines_destroyed;
+    int32_t descriptor_sets_destroyed;
+    int32_t buffers_destroyed;
+    int32_t images_destroyed;
+    char    error_messages[8][256];
+    int32_t error_count;
+} VulkanModUnloadResult;
+
+DF_API int32_t df_vulkan_unload_mod_resources(
+    const char*             mod_id,
+    VulkanModUnloadResult*  out_result);
+```
+
+К10.3 v2 placeholder behavior: returns `success = 1` + zero counts (no pipeline-managed mod resources yet registered). Full implementation: `VkDestroyPipeline` / `VkFreeDescriptorSets` / `vkDestroyBuffer` / `vkDestroyImage` operations for mod-registered resources, paralleling the existing per-mod tracking conventions established for compute pipeline registration (§3.4) и field storage. Best-effort sequential per MOD_OS §9.5.1.
+
+Managed wrapper lives at `src/DualFrontier.Application/Bridge/VResourceCleanup.cs` (К10.3 v2 Item 42). К10.3 v2 cascade lands the managed surface; native side wires up when consumer code begins registering Vulkan handles per mod (after V-cycle / К-extensions surface lands).
+
 ---
 
 ## 4. Rendering use case (V0 rendering side)

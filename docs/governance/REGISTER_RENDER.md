@@ -183,7 +183,7 @@
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-20 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-18
-- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L17, REQ-K-L19
+- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19
 - **Risks referenced**: RISK-001, RISK-002, RISK-003, RISK-004, RISK-013
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
 
@@ -219,7 +219,7 @@
 ### DOC-A-MOD_OS — Mod OS Architecture — Dual Frontier
 
 - **Path**: `docs/architecture/MOD_OS_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.10
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.11
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-20 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-18
@@ -2041,6 +2041,7 @@
 | REQ-K-L15 | Native bus authority + three-tier event dispatch | VERIFIED | DOC-A-KERNEL | K10.2 closure (architecturally established; sovereign authority switch deferred к K10.4 closure / А'.8 per managed-facade-preserved strategy — К10.1 precedent applied) |
 | REQ-K-L16 | Simulation tick pipeline depth (D=2 default; configurable 1-3) | VERIFIED | DOC-A-KERNEL | К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C) |
 | REQ-K-L17 | Display composition multi-layer (К-L17, К10.3 v2 load-bearing 2/3) | VERIFIED | DOC-A-KERNEL | К10.3 v2 load-bearing commit 2/3 (К-L17 display composition framework + Items 38-40 implementation backing) |
+| REQ-K-L18 | Mod lifecycle quiescent state (К-L18, К10.3 v2 load-bearing 3/3) | VERIFIED | DOC-A-KERNEL | К10.3 v2 load-bearing commit 3/3 (К-L18 mod lifecycle quiescent state + Items 41-42 implementation backing) |
 | REQ-K-L19 | Hardware tier commitment (Vulkan 1.3 + async compute queue family mandate) | VERIFIED | DOC-A-KERNEL | V0.B closure (full implementation backing operational at landing per Lesson #8 + Lesson #11 — no architectural commitment без implementation behind it) |
 | REQ-K-L2 | Bindings: Pure P/Invoke | VERIFIED | DOC-A-KERNEL | K0 closure |
 | REQ-K-L3 | Component storage paths: Path α default + Path β opt-in | PARTIAL | DOC-A-KERNEL | K-L3.1 bridge formalization |
