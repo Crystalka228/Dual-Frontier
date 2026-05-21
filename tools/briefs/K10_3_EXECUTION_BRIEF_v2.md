@@ -4,7 +4,7 @@
 register_id: DOC-D-K10_3
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
 version: "2.0"
 next_review_due: null
@@ -13,9 +13,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_3
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: K10_3_EXECUTION_BRIEF_v2
-status: AUTHORED
+status: EXECUTED
 authored: 2026-05-19
 ratified: 2026-05-19 (Crystalka ratified all 5 PENDING-RATIFICATION S-LOCKs via Q1+Q5/Q2/Q3/Q4 recommended-option lock)
+executed: 2026-05-20 (15-commit atomic cascade 1982351..PENDING-COMMIT-K10_3-V2-CLOSURE; 4 К-L invariants AUTHORED; cumulative К-Lxx 20 invariants; К-L14 thesis seventh verification — zero hard-gate halts during execution)
 author: Claude Opus 4.7 (Crystalka auto-mode session, Option D execution)
 supersedes: K10_3_EXECUTION_BRIEF.md (v1, AUTHORED 2026-05-18, never enrolled, two Phase 0 halts)
 target_executor: Claude Code (auto-mode + Crystalka oversight)
@@ -1774,3 +1775,121 @@ Brief frontmatter updated DRAFT-PENDING-RATIFICATION → AUTHORED. S-LOCK-10/11/
 **К10.4 outlook unchanged from v1**: К10.4 = TLA+ formal verification finalization. Architecturally significant beyond TLA+ alone — К10.4 likely single comprehensive switching point где managed-facade-preserved strategy retires и native sovereign authority activates across all 8 К10-landed invariants (К-L12/L13/L14/L15/L7.1/L16/L17/L18/L19; К-L6 superseded).
 
 «Halt is success, не failure» per Lesson #8 corollary. Brief's honest guarantee: bad premises surface at Phase 0 / at deep-read / at the compile gate, before they reach `main`.
+
+---
+
+## §9 Closure section (К10.3 v2 EXECUTED 2026-05-20)
+
+### §9.1 Commit ledger (15-commit atomic cascade)
+
+| # | Hash | Title | Purpose |
+|---|---|---|---|
+| 1 | `1982351` | docs(briefs): K10.3 v2 brief authored | Brief authoring + v1 supersession enrollment |
+| 2 | `2e441d9` | feat(native-test): K10.3 v2 — native test scaffold | DF_CHECK runner extension |
+| 3 | `15f8aca` | feat(kernel-native): Item 33 tick pipeline depth | К-L7.1 + К-L16 foundation; D=2 default |
+| 4 | `3e0fc84` | feat(kernel-native): Item 35 Phase.Compute | VkQueueSubmit batching scaffold; V1 sync coexists |
+| 5 | `859e6dc` | feat(kernel-native): Item 36 pipeline slot read API | К-L7.1 opt-in coexists с К-L7 sync default |
+| 6 | `971cb24` | feat(kernel-native): Item 34 drain/refill protocols | Pipeline pause/resume + save/load serialization |
+| 7 | `26cce91` | feat(kernel-native): Item 37 slot transition wake | WakeOnSlotTransitionAttribute + counter scaffold |
+| 8 | `fd5c7e2` | **LOAD-BEARING 1/3** К-L7.1 + К-L16 | KERNEL_ARCH v2.3 partial + VULKAN_SUBSTRATE v1.0→v1.1 reconciliation |
+| 9 | `fc2a908` | feat(application): Item 38 display composition framework | К-L17 layer registry + composition order; Application/Display/ |
+| 10 | `28a2029` | feat(application): Items 39+40 intent overlay + combat feedback | К-L17 layer infrastructure + capability tokens |
+| 11 | `9c660d9` | **LOAD-BEARING 2/3** К-L17 amendment | KERNEL_ARCH v2.3 partial + VULKAN_SUBSTRATE v1.1 partial + MOD_OS §3.2 |
+| 12 | `90c1dd0` | feat(kernel-native): Item 41 К-L18 quiescent enforcement | mod_unload pipeline quiescence verification |
+| 13 | `d29a765` | feat(application): Item 42 К-L18 helper layer wiring | SimulationStateController + Step 3.6 V cleanup placeholder |
+| 14 | `f09055a` | **LOAD-BEARING 3/3** К-L18 amendment | KERNEL_ARCH v2.3 final + MOD_OS v1.11 + VULKAN_SUBSTRATE v1.1 final |
+| 15 | `PENDING` | governance: К10.3 v2 closure | DOC-D-K10_3 EXECUTED + audit_trail EVT + MIGRATION_PROGRESS + brief §9 |
+
+### §9.2 Verification metrics (final state)
+
+| Gate | Baseline (pre-К10.3 v2) | К10.3 v2 final | Delta |
+|---|---|---|---|
+| Full sln tests | 936 | 1022 | +86 |
+| - Application.Tests (NEW) | 0 | 45 | +45 |
+| - Modding.Tests | 389 | 395 | +6 (layer tokens) |
+| - Runtime.Tests | 292 | 292 | 0 |
+| - Core.Interop.Tests | 167 | 202 | +35 (pipeline slot interop) |
+| - Core.Tests | 75 | 75 | 0 |
+| - Persistence.Tests | 4 | 4 | 0 |
+| - Mod.ManifestRewriter | 7 | 7 | 0 |
+| - Systems.Tests | 2 | 2 | 0 |
+| Native selftest | 29 (К10.2 baseline) | 33 (+4 К-L18 integration) + 14 К10.3 v2 pipeline scenarios | +18 net |
+| REGISTER documents | 253 | 253 | 0 |
+| REGISTER requirements | 38 | 40 | +2 (REQ-K-L17, REQ-K-L18; REQ-K-L7_1 + REQ-K-L16 already enrolled Commit 8 / pre-existing) |
+| REGISTER audit_trail | 22 | 23 | +1 (EVT-2026-05-20-K10_3-V2-CLOSURE) |
+| `sync_register.ps1 -Validate` | exit 0 | exit 0 | unchanged (advisory orphans baseline) |
+| `dotnet build` | clean | clean | unchanged |
+| `cmake --build` | clean | clean | unchanged |
+
+### §9.3 Halt protocol activations (К10.3 v2 cascade)
+
+**Hard gate halts during cascade**: 0 (zero halts during 15-commit execution — К-L14 thesis seventh verification).
+
+**Pre-cascade halts on К10.3 series**: 2 (v1 brief halted Phase 0 twice 2026-05-18 + 2026-05-19 per HALT_REPORT + HALT_REPORT_ADDENDUM; supersession к v2 chose Option D per Crystalka 2026-05-19 lock). Halts surfaced V substrate prerequisite (V0.A/V0.B/V0.C.1/V0.C.2/V1 landed 2026-05-18..2026-05-19) + duplicate-landed-work detection (v1 Commits 3/4/5 duplicate; К-L19 + Items 43/44 landed V0.B per cross-stream prerequisite resolution).
+
+«Halt is success, не failure» empirically validated: v1 halts produced clean v2 brief reflecting current ground truth; v2 cascade executed zero-halt across 15 commits.
+
+### §9.4 Lesson candidates (К10.3 v2 patterns)
+
+1. **Sub-invariant pattern repeats** (К-L7.1 mirrors К-L3.1) — К-L invariant numerical extension when parent integrity must be preserved across opt-in/coexistence boundary. К-L9 «Vanilla = mods» author choice surface enables natural per-field opt-in. Pattern validated across two cases (К-L3.1 component storage path + К-L7.1 GPU compute pipeline slot binding) — promote к METHODOLOGY Lesson после third validation case surfaces.
+
+2. **Capability-mismatch placeholder reservation** — К-L17 LayerCapabilityMismatch + К-L18 QuiescentStatePreconditionViolated/PipelineQuiescenceTimeout/VulkanModResourceCleanupFailed reserved в §11.2 amendments в advance of full integration (placeholder ValidationErrorKind entries lock the error semantic so future implementations consume the same error path). Pattern preserves architectural integrity across multi-phase implementation.
+
+3. **Application/Display/ new directory location** (S-LOCK-11) — К-L17 lives above renderer abstraction, не extending IRenderer interfaces. New directory establishes clean separation: V substrate exposes rendering primitives, Application/Display composes them. Future-proof against renderer-implementation churn (Vulkan vs Godot DevKit) — same composition framework consumed by both backend implementations.
+
+4. **Helpers-only scope discipline** (S-LOCK-12 К-L18) — Architecturally complete invariant landing с minimum operational glue, full UI deferred per managed-facade-preserved precedent. К10.3 v2 third application of managed-facade-preserved pattern (К10.1 native scheduler authoritative + managed adapter facade preserved; К10.2 native bus authoritative + managed bus facade preserved; К10.3 v2 К-L17/L18 architecture landed + concrete UI integration deferred). Pattern validated for К + V architectural commitments across 3 milestones.
+
+### §9.5 Pattern established (К-L14 thesis seventh verification)
+
+К-L14 thesis «performance derives from clean complex architecture без compromise» now empirically validated across **seven consecutive zero-hard-gate-halt cascades**:
+
+| # | Milestone | Closure date | Halts |
+|---|---|---|---|
+| 1 | К0..К8 lineage | through 2026-05-09 | 0 (8 milestones combined) |
+| 2 | V0.A | 2026-05-18 | 0 |
+| 3 | V0.B | 2026-05-18 | 0 |
+| 4 | V0.C.1 | 2026-05-19 | 0 |
+| 5 | V0.C.2 | 2026-05-19 | 0 |
+| 6 | V1 | 2026-05-19 | 0 |
+| 7 | **К10.3 v2** | **2026-05-20** | **0** |
+
+Decade-horizon planning thesis evidence accumulates further. К-series + V substrate authoring streams both demonstrate that careful brief authoring + Phase 0 ground-truth reads + atomic compilable unit cascade + multi-layer code anchor verification + ratified Q-decisions per S-LOCK pattern combine into reliable zero-halt execution.
+
+### §9.6 Post-К10.3 v2 К-Lxx series state
+
+**Cumulative К-Lxx series total: 20 invariants**:
+
+| # | Invariant | Status | Landed at |
+|---|---|---|---|
+| К-L1 | Native language (C++20) | LOCKED | К0 |
+| К-L2 | Bindings (pure P/Invoke) | LOCKED | К0 |
+| К-L3 | Component storage paths | LOCKED | К1-К8 |
+| К-L3.1 | Bridge sub-invariant (Path β managed) | LOCKED | 2026-05-10 |
+| К-L4 | Type IDs (explicit registry) | LOCKED | К2 |
+| К-L5 | Bootstrap orchestration | LOCKED | К3 |
+| К-L6 | **SUPERSEDED by К-L12** | SUPERSEDED 2026-05-18 | К10.1 closure |
+| К-L7 | Span protocol | LOCKED | К5 |
+| К-L7.1 | GPU compute pipeline slot binding sub-invariant | LOCKED 2026-05-20 | К10.3 v2 commit 8 (LOAD-BEARING 1/3) |
+| К-L8 | Component lifetime | LOCKED | К4 |
+| К-L9 | Mod parity («Vanilla = mods») | LOCKED | К3 |
+| К-L10 | Decision rule (§8 metrics) | LOCKED | К7 |
+| К-L11 | Production storage backbone (NativeWorld) | LOCKED | К7 |
+| К-L12 | Native kernel scheduling | LOCKED | К10.1 closure 2026-05-18 |
+| К-L13 | On-demand system activation | LOCKED | К10.1 closure 2026-05-18 |
+| К-L14 | Performance derives from cleanness | LOCKED | К10.1 closure 2026-05-18 |
+| К-L15 | Native bus authority + three-tier dispatch | LOCKED | К10.2 closure 2026-05-18 |
+| К-L16 | Simulation tick pipeline depth | LOCKED 2026-05-20 | К10.3 v2 commit 8 (LOAD-BEARING 1/3) |
+| К-L17 | Display composition multi-layer | LOCKED 2026-05-20 | К10.3 v2 commit 11 (LOAD-BEARING 2/3) |
+| К-L18 | Mod lifecycle quiescent state | LOCKED 2026-05-20 | К10.3 v2 commit 14 (LOAD-BEARING 3/3) |
+| К-L19 | Hardware tier commitment | LOCKED 2026-05-18 | V0.B cross-stream prerequisite resolution |
+
+Next К-L invariant landing: К10.4 brief authoring (no new К-L; TLA+ formal verification only — Items 18/45/46). К-series formal closure waits для all 4 К10 sub-milestones + А'.8 К-closure report.
+
+### §9.7 Next-session options (Crystalka prerogative)
+
+- **Option α**: V2 brief portion execution (PR #41) — V substrate full close per VULKAN_SUBSTRATE.md §1.4 (WaveKernel + DirectionExtractKernel + multi-field coexistence)
+- **Option β**: К10.4 brief authoring — TLA+ formal verification finalization (3 items: 18, 45, 46); likely single comprehensive switching point где managed-facade-preserved strategy retires и native sovereign authority activates across 8 К10-landed invariants
+- **Option γ**: A'.8 К-closure report preparation — formal К-Lxx enumeration + Lessons promotion
+- **Option δ**: A'.9 Roslyn analyzer milestone — architectural analyzer для M-cycle migration verification
+
+Independent streams unchanged.

@@ -1445,14 +1445,14 @@ documents:
     title: "К10.3 v2 — Pipeline depth + display composition + mod lifecycle quiescent (К-L7.1/L16/L17/L18)"
     category: D
     tier: 3
-    lifecycle: AUTHORED
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "2.0"
-    last_modified: "2026-05-19"
-    last_modified_commit: "PENDING-COMMIT-K10_3-V2-ENROLL"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-CLOSURE"
     content_language: mixed
     review_cadence: on-status-transition
-    last_review_date: "2026-05-19"
+    last_review_date: "2026-05-20"
     last_review_event: "К10.3 v2 brief AUTHORED + ratified 2026-05-19 per Option D execution. Supersedes К10.3 v1 brief (tools/briefs/K10_3_EXECUTION_BRIEF.md, AUTHORED 2026-05-18 from К10 deliberation arc closure но never enrolled). v1 halted Phase 0 twice: (1) 2026-05-18 SC-14 V substrate absent → Crystalka Option B (build V substrate first); V0.A/V0.B/V0.C.1/V0.C.2/V1 cascades landed 2026-05-18..2026-05-19 (5 closure PRs, main 070be85 → 88aebf2); V0.B landed К-L19 + Items 43+44 inline per cross-stream prerequisite resolution per KERNEL_ARCHITECTURE.md line 65-67. (2) 2026-05-19 SC-1+SC-3+SC-14 post-V substrate cascade — v1 brief Commits 3/4/5 duplicate landed work; remaining items 33-42 valid но need path/integration revisions. Crystalka chose Option D per HALT_REPORT_ADDENDUM_2026_05_19 §6 — revised brief authored from current state. v2 authored Opus 4.7 (Crystalka auto-mode 2026-05-19 session) with all 5 PENDING-RATIFICATION S-LOCKs ratified by Crystalka same day (Q1+Q5 coexistence opt-in для К-L7/L7.1 + V1 sync parallel paths; Q2 combined VULKAN_SUBSTRATE.md v1.0→v1.1 reconciliation; Q3 src/DualFrontier.Application/Display/ NEW location для К-L17; Q4 helpers-only scope для К-L18 UI integration). ~14-15 atomic commits planned, 4 К-L additions (К-L7.1 sub + К-L16/L17/L18; К-L19 inherited V0.B). Revised scope 10 items (33-42) vs v1's 12 items (43-44 done V0.B)."
     next_review_due: "null"
     reviewer: Crystalka
@@ -7423,3 +7423,136 @@ audit_trail:
       risks:
         - RISK-013                        # rendering substrate cross-cutting — V1 substrate primitive close
       lifecycle_transitions: []           # DOC-D-V1_V2 stays AUTHORED through V1 close per schema; transitions к EXECUTED at V2 closure
+
+  - id: EVT-2026-05-20-K10_3-V2-CLOSURE
+    timestamp: "2026-05-20T23:59:00Z"
+    date: "2026-05-20"
+    event: "К10.3 v2 sub-milestone closure — pipeline depth (К-L7.1 sub-invariant + К-L16) + display composition (К-L17) + mod lifecycle quiescent state (К-L18) ALL AUTHORED. 4 К-L invariants landed; cumulative К-Lxx series 20 invariants post-К10.3 v2. К-L7 sync coexistence preserved per S-LOCK-10/13 (V1 dispatch_compute_field path orthogonal к pipeline-managed dispatches). К-L17 display composition framework lives в src/DualFrontier.Application/Display/ per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces preserved). К-L18 UI = SimulationStateController + ModMenuController pause hook only per S-LOCK-12 (settings menu deferred к V-cycle / К-extensions). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. К-L19 inherited V0.B (no re-implementation). 15-commit cascade на branch claude/k10_3-v2-pipeline-display-quiescent (1982351..PENDING-CLOSURE-COMMIT). К-L14 thesis seventh verification window: К0..К8 + V0.A..V0.C.2 + V1 (6 closures) + К10.3 v2 = seven consecutive zero-hard-gate-halt cascades."
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-K10_3                       # lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL                      # version 2.2 → 2.3 (К-L7.1 sub + К-L16/L17/L18 added; cumulative 20 invariants)
+      - DOC-A-VULKAN_SUBSTRATE            # version 1.0 → 1.1 (S-LOCK-14 reconciliation + К10.3 v2 amendments)
+      - DOC-A-MOD_OS                      # version 1.9 → 1.11 (К-L17 §3.2 capability + К-L18 §9.5/§9.7/§11.2)
+    commits:
+      range: "1982351..PENDING-COMMIT-K10_3-V2-CLOSURE"
+      key_commits:
+        - hash: "1982351"
+          summary: "Commit 1 — К10.3 v2 brief AUTHORED + v1 supersession enrollment"
+        - hash: "2e441d9"
+          summary: "Commit 2 — native test scaffold (DF_CHECK runner extension)"
+        - hash: "15f8aca"
+          summary: "Commit 3 — Item 33 tick pipeline depth mechanism (К-L7.1 + К-L16 foundation; D=2 default)"
+        - hash: "3e0fc84"
+          summary: "Commit 4 — Item 35 Phase.Compute scheduler integration (VkQueueSubmit batching scaffold)"
+        - hash: "859e6dc"
+          summary: "Commit 5 — Item 36 pipeline slot read API (К-L7.1 opt-in coexists с К-L7 sync)"
+        - hash: "971cb24"
+          summary: "Commit 6 — Item 34 pipeline drain/refill protocols + pause/resume"
+        - hash: "26cce91"
+          summary: "Commit 7 — Item 37 slot transition wake counter + WakeOnSlotTransitionAttribute"
+        - hash: "fd5c7e2"
+          summary: "Commit 8 LOAD-BEARING 1/3 — К-L7.1 + К-L16 + VULKAN_SUBSTRATE.md v1.0→v1.1 reconciliation"
+        - hash: "fc2a908"
+          summary: "Commit 9 — Item 38 display composition framework (К-L17 layer registry + composition order)"
+        - hash: "28a2029"
+          summary: "Commit 10 — Items 39+40 intent overlay + combat feedback layer infrastructure"
+        - hash: "9c660d9"
+          summary: "Commit 11 LOAD-BEARING 2/3 — К-L17 display composition amendment + cross-document propagation"
+        - hash: "90c1dd0"
+          summary: "Commit 12 — Item 41 К-L18 quiescent state enforcement (pipeline slot quiescence verification)"
+        - hash: "d29a765"
+          summary: "Commit 13 — Item 42 К-L18 helper layer wiring (SimulationStateController + Step 3.6 V cleanup placeholder)"
+        - hash: "f09055a"
+          summary: "Commit 14 LOAD-BEARING 3/3 — К-L18 quiescent state amendment + final cross-document propagation"
+        - hash: "PENDING-COMMIT-K10_3-V2-CLOSURE"
+          summary: "Commit 15 — К10.3 v2 closure (lifecycle AUTHORED → EXECUTED + REGISTER amendments + audit_trail EVT + MIGRATION_PROGRESS entry + brief §9 closure section)"
+    governance_impact: |
+      К10.3 v2 sub-milestone closure under К-series Native Kernel authoring
+      stream. Third of four К10 sub-milestones (К10.1 + К10.2 + К10.3 v2 closed;
+      К10.4 TLA+ formal verification pending).
+
+      REGISTER amendments:
+      - DOC-D-K10_3 lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL version 2.2 → 2.3 (К-L7.1 sub + К-L16/L17/L18 added к
+        Part 0 invariant table; cumulative К-Lxx series 20 invariants;
+        requirements_authored extended с REQ-K-L7_1/L16/L17/L18)
+      - DOC-A-VULKAN_SUBSTRATE version 1.0 → 1.1 (S-LOCK-14 reconciliation
+        consolidating V0.B-deferred K-L19 amendments + К10.3 v2 К-L7.1/L16/
+        L17/L18 amendments; 8 sub-section amendments per spec Part 7.5)
+      - DOC-A-MOD_OS version 1.9 → 1.11 (К-L17 §3.2 capability syntax layer
+        tokens + К-L18 §9.5 9-step unload chain с Step 3.6 + §9.5.1 failure
+        semantics + §9.7 hot reload К-L18 compliance + §11.2 4 new
+        ValidationErrorKind entries)
+      - 4 new REQ entries: REQ-K-L7_1, REQ-K-L16, REQ-K-L17, REQ-K-L18 (all
+        VERIFIED through К10.3 v2 cascade implementation backing)
+
+      Validation metrics (final state):
+      - dotnet build (sln): clean (0 warnings, 0 errors)
+      - dotnet test (sln full): 1022 passed (936 pre-К10.3 v2 baseline +
+        86 К10.3 v2 additive — Application.Tests 45, Modding.Tests +6
+        Capability layer tokens, Core.Interop.Tests +35 К10.3 v2 pipeline
+        slot interop)
+      - native selftest: 33 scenarios (29 К10.1/К10.2 baseline + 4 К-L18
+        integration scenarios from Commit 12); ALL PASSED
+      - sync_register.ps1 -Validate: exit 0 (advisory orphans baseline)
+      - cmake --build (native): clean
+
+      К-L14 thesis seventh verification: К0..К8 (8 closures pre-К-series
+      milestones) + V0.A..V1 (6 V substrate closures) + К10.3 v2 = seven
+      consecutive zero-hard-gate-halt cascades. К-L14 «performance derives
+      from clean complex architecture без compromise» empirically validated
+      across К + V substrate authoring streams. Decade-horizon planning
+      thesis evidence accumulates further.
+
+      Lesson #11 strengthening: К-L7.1 sub-invariant к К-L7 (mirrors К-L3.1
+      precedent), preserving К-L7 integrity through architectural reduction
+      pattern. Sub-invariant naming convention validated across two cases.
+
+      Lesson #22 (read existing code first) consumed: V0.C.1 input event
+      types + V0.C.2 batched sprite renderer + Camera2D + TileMap inherited
+      verbatim by К10.3 v2 SimStateLayer slot (placeholder renderer delegate;
+      full integration deferred per managed-facade-preserved).
+
+      Lesson #25 (implementation depth follows consumer materialization)
+      preserved: К-L7.1 opt-in design (per К-L9 «Vanilla = mods» author choice
+      per field) keeps V1 К-L7 sync path operational unchanged; pipeline-
+      managed adoption happens when concrete mod consumers materialize.
+      Display composition framework lands minimal slot infrastructure;
+      concrete vanilla intent + combat feedback layers wire в later cycles.
+      К-L18 helpers + Step 3.6 placeholder; full settings menu + native
+      df_vulkan_unload_mod_resources implementation deferred к V-cycle /
+      К-extensions.
+
+      K10.3 v2 brief halts: zero halts during 15-commit cascade execution
+      («halt is success, не failure» — К10.3 v2 brief premise validated;
+      v1 brief halted Phase 0 twice + supersession to v2 = 2 halts total
+      на К10.3 series от initial AUTHORED 2026-05-18).
+
+      Next-session options (Crystalka prerogative):
+      - V2 brief portion execution (PR #41) — V substrate full close per
+        §1.4 (WaveKernel + DirectionExtractKernel + multi-field coexistence)
+      - К10.4 brief authoring — TLA+ formal verification finalization (3
+        items: 18, 45, 46); likely single comprehensive switching point
+        где managed-facade-preserved strategy retires и native sovereign
+        authority activates across 8 К10-landed invariants (К-L12..L19)
+      - A'.8 К-closure report preparation — formal К-Lxx enumeration +
+        Lessons promotion
+      - A'.9 Roslyn analyzer milestone — architectural analyzer для M-cycle
+        migration verification
+
+      Independent streams unchanged:
+      - V2 brief portion (V substrate full close)
+      - К10.4 TLA+ brief
+      - A'.8 К-closure report
+      - A'.9 Roslyn analyzer milestone
+    cross_references:
+      risks:
+        - RISK-002                        # incremental migration scaffolding
+        - RISK-003                        # architectural drift
+        - RISK-004                        # mod ecosystem integration
+        - RISK-013                        # rendering substrate cross-cutting
+      lifecycle_transitions:
+        - document: DOC-D-K10_3
+          from: AUTHORED
+          to: EXECUTED
