@@ -2169,6 +2169,104 @@ void scenario_mod_unload_no_subscriptions_succeeds_vacuously() {
     df_bus_clear();
 }
 
+// ===== K10.3 v2 Item 41 — К-L18 quiescent state enforcement (pipeline slot) =====
+
+void scenario_mod_unload_fails_when_pipeline_has_dispatched_slot() {
+    std::printf("scenario_mod_unload_fails_when_pipeline_has_dispatched_slot\n");
+    df_bus_clear();
+    df_scheduler_set_sim_paused(1);
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // Allocate slot → Dispatched state. Pipeline is не quiescent.
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(500, &slot);
+
+    int32_t quiescent = -1;
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == 1 && quiescent == 0,
+             "pipeline reports not quiescent под Dispatched slot");
+
+    ModUnloadResult result{};
+    int32_t rc = df_scheduler_unload_mod_native_state(700u, &result);
+    DF_CHECK(rc == 0, "unload fails when pipeline has Dispatched slot");
+    DF_CHECK(result.success == 0, "ModUnloadResult.success = 0");
+    DF_CHECK(result.error_count >= 1, "К-L18 pipeline error message recorded");
+
+    df_pipeline_reset();
+    df_bus_clear();
+}
+
+void scenario_mod_unload_fails_when_pipeline_has_fence_completed_slot() {
+    std::printf("scenario_mod_unload_fails_when_pipeline_has_fence_completed_slot\n");
+    df_bus_clear();
+    df_scheduler_set_sim_paused(1);
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // Dispatched → force fence → FenceCompleted (still in-flight per К-L18).
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(501, &slot);
+    df_pipeline_force_fence_completed(slot);
+
+    int32_t quiescent = -1;
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == 1 && quiescent == 0,
+             "pipeline reports not quiescent под FenceCompleted slot");
+
+    ModUnloadResult result{};
+    int32_t rc = df_scheduler_unload_mod_native_state(701u, &result);
+    DF_CHECK(rc == 0, "unload fails when pipeline has FenceCompleted slot");
+    DF_CHECK(result.success == 0, "ModUnloadResult.success = 0");
+
+    df_pipeline_reset();
+    df_bus_clear();
+}
+
+void scenario_mod_unload_succeeds_when_pipeline_quiescent_after_tail_transition() {
+    std::printf("scenario_mod_unload_succeeds_when_pipeline_quiescent_after_tail_transition\n");
+    df_bus_clear();
+    df_scheduler_set_sim_paused(1);
+    df_pipeline_reset();
+    df_pipeline_init(2);
+
+    // Cycle slot through full state machine to ReadableAsTail → quiescent.
+    PipelineSlot* slot = nullptr;
+    df_pipeline_allocate_slot(502, &slot);
+    df_pipeline_force_fence_completed(slot);
+    df_pipeline_transition_to_tail(slot);
+
+    int32_t quiescent = -1;
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == 1 && quiescent == 1,
+             "pipeline reports quiescent после ReadableAsTail");
+
+    ModUnloadResult result{};
+    int32_t rc = df_scheduler_unload_mod_native_state(702u, &result);
+    DF_CHECK(rc == 1 && result.success == 1, "unload succeeds when pipeline quiescent");
+    DF_CHECK(result.error_count == 0, "no errors");
+
+    df_pipeline_reset();
+    df_bus_clear();
+}
+
+void scenario_mod_unload_succeeds_when_pipeline_uninitialized() {
+    std::printf("scenario_mod_unload_succeeds_when_pipeline_uninitialized\n");
+    df_bus_clear();
+    df_scheduler_set_sim_paused(1);
+    df_pipeline_reset();
+    // Не init the pipeline.
+
+    int32_t quiescent = -1;
+    // df_pipeline_is_quiescent returns -1 when depth==0 — mod_unload treats as quiescent.
+    DF_CHECK(df_pipeline_is_quiescent(&quiescent) == -1, "is_quiescent returns -1 pre-init");
+
+    ModUnloadResult result{};
+    int32_t rc = df_scheduler_unload_mod_native_state(703u, &result);
+    DF_CHECK(rc == 1 && result.success == 1,
+             "unload succeeds when pipeline не initialized (no in-flight compute)");
+    DF_CHECK(result.error_count == 0, "no errors");
+
+    df_bus_clear();
+}
+
 void scenario_v0b_compute_pipeline_registration_roundtrip() {
     std::printf("scenario_v0b_compute_pipeline_registration_roundtrip\n");
     df_world_handle world = df_world_create();
@@ -2824,6 +2922,11 @@ int main() {
     scenario_phase_compute_dispatch_empty_slot();
     scenario_phase_compute_batch_coalesce_per_slot();
     scenario_phase_compute_reset_clears_registry();
+    // К-L18 quiescent state enforcement integration (Item 41)
+    scenario_mod_unload_fails_when_pipeline_has_dispatched_slot();
+    scenario_mod_unload_fails_when_pipeline_has_fence_completed_slot();
+    scenario_mod_unload_succeeds_when_pipeline_quiescent_after_tail_transition();
+    scenario_mod_unload_succeeds_when_pipeline_uninitialized();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
