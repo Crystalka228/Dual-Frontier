@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
@@ -83,6 +84,11 @@ internal sealed class ModIntegrationPipeline
     private readonly SharedModLoadContext _sharedAlc = new();
     private readonly List<LoadedMod> _activeMods = new();
     private readonly List<LoadedSharedMod> _activeShared = new();
+    // К10.3 v2 Item 42 + S-LOCK-12 — Step 3.6 V resource cleanup placeholder.
+    // К10.3 v2 lands the managed wrapper; native df_vulkan_unload_mod_resources
+    // implementation lands V-cycle or К-extensions per managed-facade-preserved
+    // strategy.
+    private readonly VResourceCleanup _vResourceCleanup = new();
 
     /// <summary>
     /// Pipeline-mediated proxy for the run flag described by
@@ -678,6 +684,32 @@ internal sealed class ModIntegrationPipeline
             // Idempotent — no-op if Item 21 sub-scheduler was never created
             // (К10.2 default before mods opt-in к the sub-scheduler API).
             _registry.RemoveSubScheduler(modId);
+        });
+
+        // Step 3.6 (К10.3 v2 Item 42 + S-LOCK-12 helpers-only) — V (Vulkan)
+        // resource cleanup placeholder. К-L18 quiescent state precondition
+        // already satisfied (Step 3.5 К10.2 native primitive verified sim
+        // paused + pipeline quiescent per К10.3 v2 Item 41 extension).
+        //
+        // К10.3 v2 ships the managed wrapper returning vacuous success (no
+        // pipeline-managed mod resources yet registered). Future implementation
+        // P/Invokes df_vulkan_unload_mod_resources (VULKAN_SUBSTRATE.md §3.4
+        // К10.3 v2 amendment) and destroys mod-registered VkPipeline /
+        // VkDescriptorSet / VkBuffer / VkImage handles.
+        //
+        // Best-effort sequential per §9.5.1; failures surface as warnings.
+        TryUnloadStep(36, modId, warnings, () =>
+        {
+            VResourceCleanup.Result vResult = _vResourceCleanup.UnloadModResources(modId);
+            if (!vResult.Success)
+            {
+                foreach (string msg in vResult.ErrorMessages)
+                {
+                    warnings.Add(new ValidationWarning(
+                        modId,
+                        $"Step 3.6 (К10.3 v2 V resource cleanup) reported: {msg}"));
+                }
+            }
         });
 
         // Steps 4 + 5 — rebuild graph without the mod's systems and swap
