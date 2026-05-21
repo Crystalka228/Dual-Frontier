@@ -39,16 +39,16 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.2"
-    last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-V0_B-K_L19"
+    version: "2.3"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L18-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-18"
-    last_review_event: "V0.B closure 2026-05-18 — K-L19 «Hardware tier commitment» LOCKED с full implementation backing (Vulkan 1.3 + async compute queue family mandate; HardwareCapabilityCheck.Verify fail-fast at Runtime.Create); AMD RX 7600S verified К-L19 hardware baseline on test machine; K-L16/L17/L18 numbering reserved для К10.3 restart per cross-stream dependency resolution"
+    last_review_date: "2026-05-20"
+    last_review_event: "К10.3 v2 load-bearing commit 3/3 2026-05-20 — K-L18 «Mod lifecycle quiescent state» AUTHORED. Sim paused + pipeline slots quiescent precondition для mod load/unload; UI helper layer enforces precondition per S-LOCK-12 helpers-only scope (settings menu deferred к V-cycle / К-extensions). Native mod_unload primitive extended с pipeline quiescence check (К10.3 v2 Item 41 — df_pipeline_is_quiescent rejects unload when slots Dispatched/FenceCompleted); managed SimulationStateController helper + Step 3.6 V resource cleanup placeholder (Item 42). К10.3 v2 cascade complete: 4 К-L invariants AUTHORED (К-L7.1 sub + К-L16/L17/L18); cumulative К-Lxx series total 20 invariants post-К10.3 v2 (К-L1..L11 + К-L6 SUPERSEDED + К-L3.1/L7.1 subs + К-L12..L19). 13 commits ahead of main on claude/k10_3-v2-pipeline-display-quiescent branch (15f8aca..d29a765 + this commit)."
     next_review_due: "2027-05-18"
     reviewer: Crystalka
-    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L19]
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19]
     risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
 
@@ -78,13 +78,13 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.9"
-    last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K10_2-CLOSURE"
+    version: "1.11"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L18-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-18"
-    last_review_event: "K10.2 closure 2026-05-18 — §3.2 tier-prefixed bus verbs added (S-LOCK-4 per-FQN per-tier); §9.5 unload chain extended 7-step → 8-step с Step 3.5 (df_scheduler_unload_mod_native_state); §11.2 new ValidationErrorKinds added (FastTierContractViolation, BusTierMismatch, BackgroundCoalesceMissing)"
+    last_review_date: "2026-05-20"
+    last_review_event: "К10.3 v2 load-bearing commit 3/3 2026-05-20 — К-L18 amendments landed: §9.5 ALC unload chain extended 8-step → 9-step с Step 3.6 V resource cleanup placeholder (К10.3 v2 Item 42; managed wrapper VResourceCleanup returns vacuous success, native df_vulkan_unload_mod_resources lands V-cycle / К-extensions); §9.5.1 failure semantics extended с Step 3.6 inclusion + К-L18 quiescent state precondition rejection note; §9.7 «Hot reload К-L18 compliance» subsection added (SimulationStateController.PauseAsync + WaitForQuiescenceAsync + ResumeAsync pattern; mod management UI и hot reload tooling share enforcement). §11.2 ValidationErrorKind enum extended с 4 К10.3 v2 entries: QuiescentStatePreconditionViolated (К-L18; mod operation attempted while sim не paused либо pipeline in-flight); PipelineQuiescenceTimeout (К-L18; quiescence wait timeout); LayerCapabilityMismatch (К-L17; layer attribute/Type mismatch); VulkanModResourceCleanupFailed (К-L18 V scope; Step 3.6 placeholder; full implementation V-cycle). Predecessor commits 1/3 (К-L7.1+К-L16 reconciliation) + 2/3 (К-L17 §3.2 capability syntax) intact."
     next_review_due: "2027-05-18"
     reviewer: Crystalka
     risks_referenced: [RISK-002, RISK-004, RISK-005, RISK-006]
@@ -98,11 +98,13 @@ documents:
     lifecycle: LOCKED
     supersedes: [DOC-D-G0, DOC-D-G1, DOC-D-G2, DOC-D-G3, DOC-D-G4, DOC-D-G5, DOC-D-G6, DOC-D-G7, DOC-D-G8, DOC-D-G9, DOC-A-VISUAL_ENGINE, DOC-A-GODOT_INTEGRATION]
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-05-16"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "1.1"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L18-LOAD-BEARING"
     content_language: en
     review_cadence: on-change+annual
+    last_review_date: "2026-05-20"
+    last_review_event: "К10.3 v2 load-bearing commit 3/3 2026-05-20 — К-L18 final amendment landed: §3.4.1 «df_vulkan_unload_mod_resources C ABI primitive (К-L18, К10.3 v2 placeholder)» subsection (struct shape + signature + К10.3 v2 placeholder behavior + full implementation reservation для V-cycle / К-extensions). К10.3 v2 cascade complete: §0 L1/L7 К-L19 cleanup + §2.0 pipeline depth + §2.3 threading model К-L7.1/L16 + §3.4 К-L19 mandate cleanup + §3.4.1 df_vulkan_unload_mod_resources placeholder + §4.0 display composition К-L17 + §5.5 Mode C visibility К-L17 + §7.2 drain semantics К-L16 + §7.3 К-L7.1 slot tail read pattern."
     next_review_due: "2027-05-16"
     reviewer: Crystalka
     risks_referenced: [RISK-004, RISK-013]
@@ -1437,6 +1439,25 @@ documents:
     reviewer: Crystalka
     risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
     special_case_rationale: "К10.2 standalone execution brief — second of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 closed 2026-05-18; К10.2 = native bus three-tier dispatch + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 8 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.8 Items 26-30 (native bus three-tier dispatcher + event type registry + subscriber contract + background queue), §3.9 Items 31-32 (background queue save-integrated storage + native unload primitive), §3.6 Item 21 (mod scheduler authority per-mod sub-schedulers). К-L15 «Native bus authority + three-tier event dispatch» AUTHORED at Commit 13 (load-bearing). Strategy: managed-facade-preserved per К10.1 precedent — native bus parallel infrastructure landed; managed bus remains dispatch authority; sovereign authority switch deferred к К10.4 / А'.8. Cumulative с К10.1: 25 of 46 К10 items closed; remaining 21 items distributed across К10.3 (12 items: 33-44), К10.4 (3 items: 18, 45, 46), Item 14 deferred к К11+, Item 25 cross-cutting к А'.8. Brief authored 2026-05-18 from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified) + К10.1 closure precedent (managed-facade-preserved pattern + native test convention + DF_CHECK runner + selftest infrastructure)."
+
+  - id: DOC-D-K10_3
+    path: tools/briefs/K10_3_EXECUTION_BRIEF_v2.md
+    title: "К10.3 v2 — Pipeline depth + display composition + mod lifecycle quiescent (К-L7.1/L16/L17/L18)"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "2.0"
+    last_modified: "2026-05-20"
+    last_modified_commit: "PENDING-COMMIT-K10_3-V2-CLOSURE"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-20"
+    last_review_event: "К10.3 v2 brief AUTHORED + ratified 2026-05-19 per Option D execution. Supersedes К10.3 v1 brief (tools/briefs/K10_3_EXECUTION_BRIEF.md, AUTHORED 2026-05-18 from К10 deliberation arc closure но never enrolled). v1 halted Phase 0 twice: (1) 2026-05-18 SC-14 V substrate absent → Crystalka Option B (build V substrate first); V0.A/V0.B/V0.C.1/V0.C.2/V1 cascades landed 2026-05-18..2026-05-19 (5 closure PRs, main 070be85 → 88aebf2); V0.B landed К-L19 + Items 43+44 inline per cross-stream prerequisite resolution per KERNEL_ARCHITECTURE.md line 65-67. (2) 2026-05-19 SC-1+SC-3+SC-14 post-V substrate cascade — v1 brief Commits 3/4/5 duplicate landed work; remaining items 33-42 valid но need path/integration revisions. Crystalka chose Option D per HALT_REPORT_ADDENDUM_2026_05_19 §6 — revised brief authored from current state. v2 authored Opus 4.7 (Crystalka auto-mode 2026-05-19 session) with all 5 PENDING-RATIFICATION S-LOCKs ratified by Crystalka same day (Q1+Q5 coexistence opt-in для К-L7/L7.1 + V1 sync parallel paths; Q2 combined VULKAN_SUBSTRATE.md v1.0→v1.1 reconciliation; Q3 src/DualFrontier.Application/Display/ NEW location для К-L17; Q4 helpers-only scope для К-L18 UI integration). ~14-15 atomic commits planned, 4 К-L additions (К-L7.1 sub + К-L16/L17/L18; К-L19 inherited V0.B). Revised scope 10 items (33-42) vs v1's 12 items (43-44 done V0.B)."
+    next_review_due: "null"
+    reviewer: Crystalka
+    risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
+    special_case_rationale: "К10.3 v2 standalone execution brief — third of four К10 sub-milestones under Option III standalone-briefs structure. v2 supersedes v1 (AUTHORED 2026-05-18 from K10 deliberation arc closure, never enrolled, halted Phase 0 twice). К10.3 v2 implements 10 of 46 К10 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.10 Items 33-37 (pipeline depth К-L16 + sub-invariant К-L7.1), §3.11 Items 38-40 (display composition К-L17), §3.12 Items 41-42 (mod lifecycle quiescent К-L18). Items 43-44 already landed V0.B as cross-stream prerequisite resolution (К-L19 + HardwareCapabilityCheck + QueueFamilyInfo + README hardware section). Cumulative К10 progress post-К10.3 v2 (if executed): 35 of 46 К10 items closed (К10.1 К-L12/L13/L14 12 items + К10.2 К-L15 8 items + V0.B К-L19 2 items + К10.3 v2 К-L7.1/L16/L17/L18 10 items = 32; + К10.4 3 items pending; + Item 14 deferred К11+; + Item 25 cross-cutting А'.8; + Items 10/22/23 К-extensions scope = 11 remaining). Strategy: managed-facade-preserved per К10.1+К10.2+V0.B precedent — К10.3 v2 architecture landings + helper wirings; full UI / pipeline-managed mod adoption deferred к К-closure or К-extensions. К-L7.1 introduces opt-in pipeline-managed pattern coexisting с V1 К-L7 sync (per К-L9 «Vanilla = mods» author choice per field). К-L17 display composition lives в src/DualFrontier.Application/Display/ NEW directory per S-LOCK-11 Crystalka 2026-05-19 lock. К-L18 UI integration scope = SimulationStateController helper + ModMenuController pause hook only per S-LOCK-12 (full settings menu deferred). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. v1 brief retained on disk (tools/briefs/K10_3_EXECUTION_BRIEF.md) с superseded_by annotation per Commit 1 enrollment design."
 
   # === Tier 3 Briefs (Category D) — V-series (V substrate foundation, in-flight execution) ===
 
@@ -4380,6 +4401,256 @@ requirements:
     verification_date: "2026-05-18"
     verification_milestone: "V0.B closure (full implementation backing operational at landing per Lesson #8 + Lesson #11 — no architectural commitment без implementation behind it)"
 
+  - id: REQ-K-L7_1
+    title: "GPU compute pipeline slot binding (sub-invariant к K-L7; opt-in coexistence)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L7 (+К-L7.1 К10.3 v2 load-bearing 2026-05-20)"
+    requirement_text: |
+      GPU compute writes к RawTileField storage are bound к pipeline slot (К-L16).
+      Sim-thread reads of compute-managed fields see slot-tail state — sim tick T+D
+      reads dispatched-at-(T+D-1) state. One-tick lag from sim-perspective bounded
+      и deterministic. К-L7 atomic-from-observer invariant preserved within pipeline
+      slot boundary; cross-slot reads see different snapshots.
+
+      S-LOCK-10 coexistence: К-L7.1 opt-in per field per К-L9 «Vanilla = mods» author
+      choice. V1's existing V1DiffusionPipeline.ExecuteIteration synchronous dispatch
+      path (К-L7 atomic-from-observer per compute_dispatch.h) remains operational
+      orthogonal к К-L7.1. К-L7 default preserved для existing FieldHandle consumers.
+
+      Mirrors K-L3.1 sub-invariant precedent pattern (К-L3 preserved + К-L3.1 sub
+      specifies opt-in extension).
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L7 (+K-L7.1) row (К10.3 v2 load-bearing amendment, v2.3 partial)"
+        verification_type: spec_inspection
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§2.0 pipeline depth architecture subsection (К-L7.1 coexistence note); §2.3.1 threading model К-L7.1 sim-thread read pattern; §7.3.0 pipeline slot tail read pattern"
+        verification_type: spec_inspection
+      - file: native/DualFrontier.Core.Native/include/pipeline_slot.h
+        test_method: "PipelineSlot.fields_snapshot_ptr К-L7.1 binding subject; df_pipeline_read_slot_tail tail read API (offset=-1 = sim-thread К-L7.1 read pattern)"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/src/pipeline_slot.cpp
+        test_method: "Slot state validation (read rejected pre-FenceCompleted/ReadableAsTail); К-L7 atomic-from-observer preserved within slot boundary"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Core.Interop/PipelineSlotInterop.cs
+        test_method: "ReadSlotTail managed wrapper exposes К-L7.1 opt-in read pattern; К10.3 v2 boundary doc о FieldHandle K-L7.1 dispatch flag deferred к К-extensions"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "scenario_pipeline_read_slot_tail_K_L7_1 — verifies Dispatched rejection + fields_snapshot_ptr roundtrip + sim_tick roundtrip + tail offset returns prior sim_tick (К-L7.1 one-tick lag)"
+        verification_type: native_test
+      - file: tests/DualFrontier.Core.Interop.Tests/PipelineSlotInteropTests.cs
+        test_method: "ReadSlotTail_K_L7_1_Pattern — managed-side roundtrip"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-20"
+    verification_milestone: "К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C — pipeline depth + sub-invariant share physical reality «GPU pipeline slots»)"
+
+  - id: REQ-K-L16
+    title: "Simulation tick pipeline depth (D=2 default; configurable 1-3)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L16 (К10.3 v2 load-bearing 2026-05-20)"
+    requirement_text: |
+      Simulation tick pipeline depth D ≥ 1 (configurable 1-3, default 2). Simulation
+      thread runs D ticks ahead of display thread для pipeline-managed dispatches.
+      Cross-layer async operations (GPU compute pipeline-managed, network, disk I/O)
+      have full pipeline-depth window к complete без blocking simulation thread.
+      Display thread reads results от simulation tick (CurrentSimTick - D). Pipeline
+      drain orderly at save/pause; pipeline refill orderly at load/resume. К-L16
+      establishes display latency invariant (D × tick_period); К-L15 fast tier latency
+      invariant (subscriber response ≤1ms) preserved independently.
+
+      S-LOCK-13 coexistence: governs pipeline-managed dispatches; V1's K-L7 sync
+      dispatch_compute_field path orthogonal и preserved для existing consumers per
+      K-L9 «Vanilla = mods» author choice per field.
+
+      Save protocol per S8-Q1.5: snapshot display tick state (CurrentSimTick - D).
+      Display already sees coherent world; pipeline drain не required at save time.
+      Faster save (no waiting для in-flight compute completion).
+
+      Pause protocol: natural convergence — sim thread completes current tick, no
+      new dispatch. Pipeline depth naturally absorbs already-dispatched work. К-L18
+      quiescent state precondition (Item 41, subsequent load-bearing commit) verifies
+      pipeline quiesced before mod operations.
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L16 row (К10.3 v2 load-bearing amendment, v2.3 partial)"
+        verification_type: spec_inspection
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§2.0 pipeline depth architecture; §2.3.1 threading model pipeline depth + queue family roles; §7.2.0 pipeline drain semantics"
+        verification_type: spec_inspection
+      - file: native/DualFrontier.Core.Native/include/pipeline_slot.h
+        test_method: "PipelineSlot struct verbatim from spec §3.10 Item 33; D=1-3 configurable per DF_PIPELINE_MAX_DEPTH=3 + DF_PIPELINE_DEFAULT_DEPTH=2; state machine Empty→Dispatched→FenceCompleted→ReadableAsTail; drain/refill protocols (serialize/deserialize/pause/resume)"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/src/pipeline_slot.cpp
+        test_method: "Atomic state transitions + cycling cursor + bounded backpressure (allocate fails when all slots in-flight); pause rejects new allocations; serialize captures sim_tick + state per slot; deserialize restores state + validates depth match"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/include/phase_compute.h
+        test_method: "Phase enum (Update/Compute/Display) + df_scheduler_register_compute_dispatch + VkQueueSubmit batching scaffold (К10.3 v2 boundary: real submit wired в V-cycle integration)"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Core.Interop/PipelineSlotInterop.cs
+        test_method: "Managed wrapper exposing Init/Reset/GetDepth/AllocateSlot/GetSlot/SetFence/CheckFences/ForceFenceCompleted/TransitionToTail/IsQuiescent/ReadSlotTail/Serialize+Deserialize/Pause/Resume/IsPaused/GetWakeFireCount surface; struct layout 40 bytes verified via unsafe sizeof"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "6 pipeline_slot scenarios (init/depth, state machine, D=2 cycling, get_slot offsets, is_quiescent, backpressure) + 4 phase_compute scenarios + 3 drain/refill scenarios + 1 wake fire scenario — total 14 К10.3 v2 native scenarios"
+        verification_type: native_test
+      - file: tests/DualFrontier.Core.Interop.Tests/PipelineSlotInteropTests.cs
+        test_method: "7 managed-side roundtrip tests (struct layout 40 bytes, init/depth, out-of-range rejection, state transitions, get_slot offsets, ReadSlotTail K-L7.1, is_quiescent K-L18 precondition)"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-20"
+    verification_milestone: "К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C)"
+
+  - id: REQ-K-L17
+    title: "Display composition multi-layer (К-L17, К10.3 v2 load-bearing 2/3)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L17 (К10.3 v2 load-bearing 2026-05-20)"
+    requirement_text: |
+      Display tick T composites multi-layer state where layers carry independent
+      latency contracts:
+        - SimState layer — К-L16 pipeline tail for pipeline-managed display state,
+          либо current sim state for К-L7 sync default (V1 path). Latency
+          D × tick_period or sub-tick.
+        - Intent overlay — current input state (≤16ms latency at 60 FPS).
+        - Combat feedback — К-L15 Fast tier consumers (≤17ms event-к-visible
+          per Prediction 15: ≤1ms К-L15 + ≤16ms display).
+        - Static — loaded assets, composited last.
+
+      Composition order: SimState first, intent + combat overlays composited
+      on top, static last. Framework lives в src/DualFrontier.Application/Display/
+      per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces
+      preserved unchanged).
+
+      Mod-registered layers declare via [Layer(LayerType.Intent | CombatFeedback)]
+      attribute (DualFrontier.Contracts.Display.LayerAttribute) + capability tokens:
+        - kernel.layer.intent:{FQN}
+        - kernel.layer.combat_feedback:{FQN}
+      granular per FQN per tier per S3-Q5 + S8-Q3 pattern. SimState/Static tiers
+      use existing renderer-level capabilities (V substrate primitives) и do не
+      surface layer capability tokens here.
+
+      Per К-L9 «Vanilla = mods», vanilla layers register through the same attribute
+      + capability pattern as third-party mods.
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L17 row (К10.3 v2 load-bearing amendment, v2.3 partial)"
+        verification_type: spec_inspection
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§4.0 Display composition (К-L17) three-layer model + composition order + capability tokens + S-LOCK-11 boundary; §5.5 Mode C visibility latency через К-L17"
+        verification_type: spec_inspection
+      - file: docs/architecture/MOD_OS_ARCHITECTURE.md
+        test_method: "§3.2 К-L17 display composition layer capability verbs (kernel.layer.intent + kernel.layer.combat_feedback) + [Layer] attribute pattern + granular per FQN per tier"
+        verification_type: spec_inspection
+      - file: src/DualFrontier.Contracts/Display/LayerType.cs
+        test_method: "Enum LayerType { SimState=0, Intent=1, CombatFeedback=2, Static=3 } lives в Contracts so mod assemblies can reference"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Contracts/Display/LayerAttribute.cs
+        test_method: "[Layer(LayerType)] attribute с optional CompositionOrder init property"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/CompositionFramework.cs
+        test_method: "Layer registry с deterministic composition order (LayerType primary, CompositionOrder secondary, FQN tertiary tie-break); RegisterLayer/UnregisterLayer/GetLayer/GetLayersInCompositionOrder/RenderFrame surface"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/Layer.cs
+        test_method: "Abstract base с Type + Fqn + CompositionOrder + Render + OnUnregistered hook"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/SimStateLayer.cs
+        test_method: "Default SimState layer slot wrapping presentation backend render delegate (no-op default; full integration deferred per managed-facade-preserved)"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/IntentOverlayLayer.cs
+        test_method: "LayerType.Intent slot с render delegate; ≤16ms latency contract documented; reads current input state, не pipeline slot tail"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Display/CombatFeedbackLayer.cs
+        test_method: "LayerType.CombatFeedback slot с thread-safe EnqueueFeedback Fast tier sink + drain-on-render snapshot semantics; ≤17ms event-к-visible contract"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Modding/KernelCapabilityRegistry.cs
+        test_method: "Scans for [Layer] attribute; emits kernel.layer.intent:{FQN} or kernel.layer.combat_feedback:{FQN}; SimState/Static emit no layer token"
+        verification_type: code_inspection
+      - file: tests/DualFrontier.Application.Tests/Display/CompositionFrameworkTests.cs
+        test_method: "12 tests: layer registration (duplicate FQN, empty FQN, unregister callback), composition order (primary by type, secondary by composition order, tertiary by FQN), RenderFrame order, SimStateLayer no-op + delegate"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Application.Tests/Display/IntentOverlayLayerTests.cs
+        test_method: "9 tests: tier identity, default+custom FQN, no-op default, delegate invocation, null-context throw, composition order after SimState"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Application.Tests/Display/CombatFeedbackLayerTests.cs
+        test_method: "11 tests: tier identity, EnqueueFeedback queue, drain-on-render snapshot, no-delegate drain, OnUnregistered clear, concurrent-writer thread safety (8 writers × 250 events), composition order after Intent"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Modding.Tests/Capability/KernelCapabilityRegistryLayerTests.cs
+        test_method: "6 tests: Intent/CombatFeedback emit correct tokens; SimState/Static emit none; types without attribute emit none; granular per FQN per tier"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-20"
+    verification_milestone: "К10.3 v2 load-bearing commit 2/3 (К-L17 display composition framework + Items 38-40 implementation backing)"
+
+  - id: REQ-K-L18
+    title: "Mod lifecycle quiescent state (К-L18, К10.3 v2 load-bearing 3/3)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L18 (К10.3 v2 load-bearing 2026-05-20)"
+    requirement_text: |
+      Mod load/unload operations require simulation paused state + pipeline
+      slots quiescent (all fences completed; no concurrent compute dispatches
+      in-flight) per К-L18 spec verbatim.
+
+      Native enforcement: df_scheduler_unload_mod_native_state checks the
+      К10.2 sim-paused flag (rejected с error если 0) AND the К10.3 v2 Item 41
+      extension df_pipeline_is_quiescent (rejected с error если any slot
+      Dispatched/FenceCompleted). Pre-init pipeline (depth=0) treated as
+      quiescent (no in-flight compute by definition).
+
+      Managed UI helper layer (per S-LOCK-12 helpers-only scope):
+      - DualFrontier.Application.Loop.SimulationStateController.PauseAsync —
+        sets К-L18 sim-paused flag via ModUnloadInterop.SetSimPaused;
+        invokes optional notification delegate.
+      - SimulationStateController.WaitForQuiescenceAsync(timeout) — polls
+        PipelineSlotInterop.IsQuiescent until true or timeout.
+      - SimulationStateController.ResumeAsync — clears К-L18 sim-paused flag.
+
+      Mod unload chain extended 8-step → 9-step с Step 3.6 V (Vulkan) resource
+      cleanup placeholder (К10.3 v2 Item 42; managed wrapper
+      DualFrontier.Application.Bridge.VResourceCleanup returns vacuous success;
+      native df_vulkan_unload_mod_resources C ABI primitive lands V-cycle /
+      К-extensions). К-L18 quiescent state precondition already satisfied
+      before Step 3.6 invocation (Step 3.5 native primitive verified).
+
+      Full settings menu / preferences UI deferred к V-cycle / К-extensions
+      per S-LOCK-12 К10.3 v2 scope discipline; К10.3 v2 lands helpers + Step
+      3.6 placeholder only.
+    verified_by:
+      - file: docs/architecture/KERNEL_ARCHITECTURE.md
+        test_method: "Part 0 K-L18 row (К10.3 v2 load-bearing amendment, v2.3 final)"
+        verification_type: spec_inspection
+      - file: docs/architecture/MOD_OS_ARCHITECTURE.md
+        test_method: "§9.5 ALC unload chain extended 8-step → 9-step (Step 3.5 К-L18 precondition + Step 3.6 V resource cleanup); §9.5.1 failure semantics с Step 3.6 + К-L18 rejection note; §9.7 Hot reload К-L18 compliance subsection; §11.2 new ValidationErrorKinds (QuiescentStatePreconditionViolated, PipelineQuiescenceTimeout, LayerCapabilityMismatch, VulkanModResourceCleanupFailed)"
+        verification_type: spec_inspection
+      - file: docs/architecture/VULKAN_SUBSTRATE.md
+        test_method: "§3.4.1 df_vulkan_unload_mod_resources C ABI primitive placeholder (struct shape + signature + К10.3 v2 placeholder behavior + V-cycle/К-extensions reservation)"
+        verification_type: spec_inspection
+      - file: native/DualFrontier.Core.Native/src/mod_unload.cpp
+        test_method: "К-L18 precondition check extended с df_pipeline_is_quiescent (К10.3 v2 Item 41); rejects unload с descriptive error message if pipeline has Dispatched/FenceCompleted slots; pre-init pipeline treated as quiescent"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/include/mod_unload.h
+        test_method: "Header comment updated к document К10.3 v2 Item 41 pipeline quiescence extension + Item 42 UI hookup forward reference"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Loop/SimulationStateController.cs
+        test_method: "PauseAsync/ResumeAsync wire к ModUnloadInterop.SetSimPaused + notification delegate; IsPipelineQuiescent treats pre-init as quiescent (matches native); WaitForQuiescenceAsync polls until true or timeout с cancellation support; PipelineQuiescenceTimeoutException runtime-path counterpart к §11.2 PipelineQuiescenceTimeout"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Bridge/VResourceCleanup.cs
+        test_method: "Step 3.6 placeholder managed wrapper; UnloadModResources returns Result.Success=true + zero counts; full native impl reserved для V-cycle / К-extensions"
+        verification_type: code_inspection
+      - file: src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs
+        test_method: "Step 3.6 added к UnloadModInternal chain после Step 3.5; invokes _vResourceCleanup.UnloadModResources(modId); failures surface as ValidationWarning entries per §9.5.1 best-effort"
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "4 К-L18 integration scenarios: unload fails on Dispatched slot, fails on FenceCompleted slot, succeeds after ReadableAsTail transition, succeeds when pipeline uninitialized"
+        verification_type: native_test
+      - file: tests/DualFrontier.Application.Tests/Loop/SimulationStateControllerTests.cs
+        test_method: "10 helper tests: Pause/Resume sim-paused flag + callback; IsPipelineQuiescent override; WaitForQuiescenceAsync immediate/eventual/timeout/cancellation paths + parameter validation"
+        verification_type: managed_test
+      - file: tests/DualFrontier.Application.Tests/Bridge/VResourceCleanupTests.cs
+        test_method: "3 placeholder tests: success + zero counts; null-modId throw; empty-modId vacuous success"
+        verification_type: managed_test
+    verification_status: VERIFIED
+    verification_date: "2026-05-20"
+    verification_milestone: "К10.3 v2 load-bearing commit 3/3 (К-L18 mod lifecycle quiescent state + Items 41-42 implementation backing)"
+
   - id: REQ-V0-A-WIN32_WINDOW
     title: "Win32 window lifecycle + message pump (V0.A foundation)"
     source_document: DOC-A-VULKAN_SUBSTRATE
@@ -7152,3 +7423,136 @@ audit_trail:
       risks:
         - RISK-013                        # rendering substrate cross-cutting — V1 substrate primitive close
       lifecycle_transitions: []           # DOC-D-V1_V2 stays AUTHORED through V1 close per schema; transitions к EXECUTED at V2 closure
+
+  - id: EVT-2026-05-20-K10_3-V2-CLOSURE
+    timestamp: "2026-05-20T23:59:00Z"
+    date: "2026-05-20"
+    event: "К10.3 v2 sub-milestone closure — pipeline depth (К-L7.1 sub-invariant + К-L16) + display composition (К-L17) + mod lifecycle quiescent state (К-L18) ALL AUTHORED. 4 К-L invariants landed; cumulative К-Lxx series 20 invariants post-К10.3 v2. К-L7 sync coexistence preserved per S-LOCK-10/13 (V1 dispatch_compute_field path orthogonal к pipeline-managed dispatches). К-L17 display composition framework lives в src/DualFrontier.Application/Display/ per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces preserved). К-L18 UI = SimulationStateController + ModMenuController pause hook only per S-LOCK-12 (settings menu deferred к V-cycle / К-extensions). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. К-L19 inherited V0.B (no re-implementation). 15-commit cascade на branch claude/k10_3-v2-pipeline-display-quiescent (1982351..PENDING-CLOSURE-COMMIT). К-L14 thesis seventh verification window: К0..К8 + V0.A..V0.C.2 + V1 (6 closures) + К10.3 v2 = seven consecutive zero-hard-gate-halt cascades."
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-K10_3                       # lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL                      # version 2.2 → 2.3 (К-L7.1 sub + К-L16/L17/L18 added; cumulative 20 invariants)
+      - DOC-A-VULKAN_SUBSTRATE            # version 1.0 → 1.1 (S-LOCK-14 reconciliation + К10.3 v2 amendments)
+      - DOC-A-MOD_OS                      # version 1.9 → 1.11 (К-L17 §3.2 capability + К-L18 §9.5/§9.7/§11.2)
+    commits:
+      range: "1982351..PENDING-COMMIT-K10_3-V2-CLOSURE"
+      key_commits:
+        - hash: "1982351"
+          summary: "Commit 1 — К10.3 v2 brief AUTHORED + v1 supersession enrollment"
+        - hash: "2e441d9"
+          summary: "Commit 2 — native test scaffold (DF_CHECK runner extension)"
+        - hash: "15f8aca"
+          summary: "Commit 3 — Item 33 tick pipeline depth mechanism (К-L7.1 + К-L16 foundation; D=2 default)"
+        - hash: "3e0fc84"
+          summary: "Commit 4 — Item 35 Phase.Compute scheduler integration (VkQueueSubmit batching scaffold)"
+        - hash: "859e6dc"
+          summary: "Commit 5 — Item 36 pipeline slot read API (К-L7.1 opt-in coexists с К-L7 sync)"
+        - hash: "971cb24"
+          summary: "Commit 6 — Item 34 pipeline drain/refill protocols + pause/resume"
+        - hash: "26cce91"
+          summary: "Commit 7 — Item 37 slot transition wake counter + WakeOnSlotTransitionAttribute"
+        - hash: "fd5c7e2"
+          summary: "Commit 8 LOAD-BEARING 1/3 — К-L7.1 + К-L16 + VULKAN_SUBSTRATE.md v1.0→v1.1 reconciliation"
+        - hash: "fc2a908"
+          summary: "Commit 9 — Item 38 display composition framework (К-L17 layer registry + composition order)"
+        - hash: "28a2029"
+          summary: "Commit 10 — Items 39+40 intent overlay + combat feedback layer infrastructure"
+        - hash: "9c660d9"
+          summary: "Commit 11 LOAD-BEARING 2/3 — К-L17 display composition amendment + cross-document propagation"
+        - hash: "90c1dd0"
+          summary: "Commit 12 — Item 41 К-L18 quiescent state enforcement (pipeline slot quiescence verification)"
+        - hash: "d29a765"
+          summary: "Commit 13 — Item 42 К-L18 helper layer wiring (SimulationStateController + Step 3.6 V cleanup placeholder)"
+        - hash: "f09055a"
+          summary: "Commit 14 LOAD-BEARING 3/3 — К-L18 quiescent state amendment + final cross-document propagation"
+        - hash: "PENDING-COMMIT-K10_3-V2-CLOSURE"
+          summary: "Commit 15 — К10.3 v2 closure (lifecycle AUTHORED → EXECUTED + REGISTER amendments + audit_trail EVT + MIGRATION_PROGRESS entry + brief §9 closure section)"
+    governance_impact: |
+      К10.3 v2 sub-milestone closure under К-series Native Kernel authoring
+      stream. Third of four К10 sub-milestones (К10.1 + К10.2 + К10.3 v2 closed;
+      К10.4 TLA+ formal verification pending).
+
+      REGISTER amendments:
+      - DOC-D-K10_3 lifecycle AUTHORED → EXECUTED
+      - DOC-A-KERNEL version 2.2 → 2.3 (К-L7.1 sub + К-L16/L17/L18 added к
+        Part 0 invariant table; cumulative К-Lxx series 20 invariants;
+        requirements_authored extended с REQ-K-L7_1/L16/L17/L18)
+      - DOC-A-VULKAN_SUBSTRATE version 1.0 → 1.1 (S-LOCK-14 reconciliation
+        consolidating V0.B-deferred K-L19 amendments + К10.3 v2 К-L7.1/L16/
+        L17/L18 amendments; 8 sub-section amendments per spec Part 7.5)
+      - DOC-A-MOD_OS version 1.9 → 1.11 (К-L17 §3.2 capability syntax layer
+        tokens + К-L18 §9.5 9-step unload chain с Step 3.6 + §9.5.1 failure
+        semantics + §9.7 hot reload К-L18 compliance + §11.2 4 new
+        ValidationErrorKind entries)
+      - 4 new REQ entries: REQ-K-L7_1, REQ-K-L16, REQ-K-L17, REQ-K-L18 (all
+        VERIFIED through К10.3 v2 cascade implementation backing)
+
+      Validation metrics (final state):
+      - dotnet build (sln): clean (0 warnings, 0 errors)
+      - dotnet test (sln full): 1022 passed (936 pre-К10.3 v2 baseline +
+        86 К10.3 v2 additive — Application.Tests 45, Modding.Tests +6
+        Capability layer tokens, Core.Interop.Tests +35 К10.3 v2 pipeline
+        slot interop)
+      - native selftest: 33 scenarios (29 К10.1/К10.2 baseline + 4 К-L18
+        integration scenarios from Commit 12); ALL PASSED
+      - sync_register.ps1 -Validate: exit 0 (advisory orphans baseline)
+      - cmake --build (native): clean
+
+      К-L14 thesis seventh verification: К0..К8 (8 closures pre-К-series
+      milestones) + V0.A..V1 (6 V substrate closures) + К10.3 v2 = seven
+      consecutive zero-hard-gate-halt cascades. К-L14 «performance derives
+      from clean complex architecture без compromise» empirically validated
+      across К + V substrate authoring streams. Decade-horizon planning
+      thesis evidence accumulates further.
+
+      Lesson #11 strengthening: К-L7.1 sub-invariant к К-L7 (mirrors К-L3.1
+      precedent), preserving К-L7 integrity through architectural reduction
+      pattern. Sub-invariant naming convention validated across two cases.
+
+      Lesson #22 (read existing code first) consumed: V0.C.1 input event
+      types + V0.C.2 batched sprite renderer + Camera2D + TileMap inherited
+      verbatim by К10.3 v2 SimStateLayer slot (placeholder renderer delegate;
+      full integration deferred per managed-facade-preserved).
+
+      Lesson #25 (implementation depth follows consumer materialization)
+      preserved: К-L7.1 opt-in design (per К-L9 «Vanilla = mods» author choice
+      per field) keeps V1 К-L7 sync path operational unchanged; pipeline-
+      managed adoption happens when concrete mod consumers materialize.
+      Display composition framework lands minimal slot infrastructure;
+      concrete vanilla intent + combat feedback layers wire в later cycles.
+      К-L18 helpers + Step 3.6 placeholder; full settings menu + native
+      df_vulkan_unload_mod_resources implementation deferred к V-cycle /
+      К-extensions.
+
+      K10.3 v2 brief halts: zero halts during 15-commit cascade execution
+      («halt is success, не failure» — К10.3 v2 brief premise validated;
+      v1 brief halted Phase 0 twice + supersession to v2 = 2 halts total
+      на К10.3 series от initial AUTHORED 2026-05-18).
+
+      Next-session options (Crystalka prerogative):
+      - V2 brief portion execution (PR #41) — V substrate full close per
+        §1.4 (WaveKernel + DirectionExtractKernel + multi-field coexistence)
+      - К10.4 brief authoring — TLA+ formal verification finalization (3
+        items: 18, 45, 46); likely single comprehensive switching point
+        где managed-facade-preserved strategy retires и native sovereign
+        authority activates across 8 К10-landed invariants (К-L12..L19)
+      - A'.8 К-closure report preparation — formal К-Lxx enumeration +
+        Lessons promotion
+      - A'.9 Roslyn analyzer milestone — architectural analyzer для M-cycle
+        migration verification
+
+      Independent streams unchanged:
+      - V2 brief portion (V substrate full close)
+      - К10.4 TLA+ brief
+      - A'.8 К-closure report
+      - A'.9 Roslyn analyzer milestone
+    cross_references:
+      risks:
+        - RISK-002                        # incremental migration scaffolding
+        - RISK-003                        # architectural drift
+        - RISK-004                        # mod ecosystem integration
+        - RISK-013                        # rendering substrate cross-cutting
+      lifecycle_transitions:
+        - document: DOC-D-K10_3
+          from: AUTHORED
+          to: EXECUTED

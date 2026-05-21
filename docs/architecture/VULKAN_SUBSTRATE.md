@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.1"
 next_review_due: 2027-05-16
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 ---
@@ -22,7 +22,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 
 **Version history:**
 
-- **v1.0 (2026-05-16, this version)** — unified V substrate spec authored as cascade output of composite namespace ratification (Q-G-1 + Q-G-2 LOCK). Consolidates verbatim content from `RUNTIME_ARCHITECTURE.md` v1.0 (foundation decisions L1–L10, rendering migration sequencing, module structure, threading, asset pipeline, shader strategy) and `GPU_COMPUTE.md` v2.0 (two compute domains, field abstraction, mathematical models, flow field pathfinding, failure modes). Restructured per Q-G-2 LOCK: substrate primitives reduced from G0..G6+G9 (seven items) to V0/V1/V2 (three items) via six successive reductions (storage as gameplay metadata, wave shader as gameplay-driven, two-layer model, distribution+navigation unified, CPU/GPU policy decoupled, autonomous=GPU persistent). Упразднено: G3 storage cells (now gameplay-level node config), G6 flow field infrastructure (folded into V2 wave shader side products), G4 multi-field coexistence (now substrate close acceptance criterion, not separate primitive). Deferred: G5 projectile Domain B (substrate identity TBD), G9 eikonal upgrade (folded into V2 tunable or separate primitive — evidence-gated). M-V demonstrations cited per Q-R-1 format (M-V1 mana, M-V2 electricity, M-V5 projectile (deferred), M-V7 movement, M-V8 local avoidance; gaps M-V3/M-V4/M-V6/M-V9 reflect Q-G-2 reductions).
+- **v1.1 (2026-05-20, this version)** — К10.3 v2 load-bearing commit 1/3 reconciliation per S-LOCK-14. Consolidates: (a) К-L19 deferred V0.B amendments (§0 L1 Vulkan 1.3 + async compute queue mandate notation; §0 L7 К-L19 hardware tier baseline note; §3.4 К-L19 mandate documentation); (b) К10.3 v2 К-L7.1/L16 amendments (§2 pipeline depth architecture subsection; §2.3 threading model pipeline depth + queue family roles subsection; §7.2 pipeline drain semantics; §7.3 pipeline slot tail read pattern). К-L17 + К-L18 amendments land в subsequent К10.3 v2 load-bearing commits.
+
+- **v1.0 (2026-05-16)** — unified V substrate spec authored as cascade output of composite namespace ratification (Q-G-1 + Q-G-2 LOCK). Consolidates verbatim content from `RUNTIME_ARCHITECTURE.md` v1.0 (foundation decisions L1–L10, rendering migration sequencing, module structure, threading, asset pipeline, shader strategy) and `GPU_COMPUTE.md` v2.0 (two compute domains, field abstraction, mathematical models, flow field pathfinding, failure modes). Restructured per Q-G-2 LOCK: substrate primitives reduced from G0..G6+G9 (seven items) to V0/V1/V2 (three items) via six successive reductions (storage as gameplay metadata, wave shader as gameplay-driven, two-layer model, distribution+navigation unified, CPU/GPU policy decoupled, autonomous=GPU persistent). Упразднено: G3 storage cells (now gameplay-level node config), G6 flow field infrastructure (folded into V2 wave shader side products), G4 multi-field coexistence (now substrate close acceptance criterion, not separate primitive). Deferred: G5 projectile Domain B (substrate identity TBD), G9 eikonal upgrade (folded into V2 tunable or separate primitive — evidence-gated). M-V demonstrations cited per Q-R-1 format (M-V1 mana, M-V2 electricity, M-V5 projectile (deferred), M-V7 movement, M-V8 local avoidance; gaps M-V3/M-V4/M-V6/M-V9 reflect Q-G-2 reductions).
 
 ---
 
@@ -86,18 +88,20 @@ The following decisions are committed as architectural foundation. Departures re
 
 | #   | Decision               | Choice                                                                           | Rationale                                                            |
 | --- | ---------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| L1  | GPU API                | Vulkan 1.3                                                                       | Future-proof, total control, modern GPU pipeline (rendering + compute) |
+| L1  | GPU API                | Vulkan 1.3 + async compute queue family mandate (К-L19 V0.B; К-L16 К10.3 v2)     | Future-proof, total control, modern GPU pipeline (rendering + compute + async dispatch per К-L16) |
 | L2  | Vulkan bindings        | Pure P/Invoke to `vulkan-1.dll`                                                  | Zero third-party C# in production binary                              |
 | L3  | Window/OS surface      | Pure Win32 P/Invoke (`user32.dll`, `kernel32.dll`)                               | Same — zero third-party for OS surface                                |
 | L4  | Math                   | `System.Numerics` (BCL only)                                                     | BCL is .NET runtime surface, not third-party                          |
 | L5  | PNG loading            | Manual decoder + `System.IO.Compression.DeflateStream` (BCL)                     | DEFLATE is BCL, chunk parsing manual ~500 lines                       |
 | L6  | Shader strategy        | Build-time GLSL → SPIR-V via `glslangValidator.exe` (both graphics + compute)    | Production binary has no shader compiler dependency                   |
-| L7  | Initial platform       | Windows-only                                                                     | Cross-platform deferred — adds SDL2/GLFW dep or manual X11/Cocoa      |
+| L7  | Initial platform       | Windows-only (matches К-L19 hardware tier baseline — Vulkan 1.3 + async compute) | Cross-platform deferred — adds SDL2/GLFW dep or manual X11/Cocoa      |
 | L8  | Threading              | Window+Render thread merged + Simulation thread (existing GameLoop preserved)    | Minimal change to domain; see [THREADING](./THREADING.md)             |
 | L9  | Migration approach     | Parallel — keep Godot Presentation functional until rendering cutover            | Honest state always available                                         |
 | L10 | Domain layer treatment | Preserved verbatim — zero modification                                           | Mature ECS proven; not throwing away tests + simulation work          |
 
 **Implication of L7.** Project becomes Windows-only until explicit cross-platform milestone. macOS/Linux support deferred indefinitely (or through SDL2 layer accepted as «pragmatic compromise» if needed). See §4 open decision «Cross-platform support».
+
+**Implication of L1 (К-L19 V0.B + К-L16 К10.3 v2).** Async compute queue family mandatory at startup per К-L19 hardware tier commitment (V0.B closure 2026-05-18). К10.3 v2 К-L16 pipeline depth (D=1-3, default 2) consumes the async compute queue для pipeline-managed dispatches (Phase.Compute scheduler integration per native phase_compute.h). К-L7.1 sub-invariant binds pipeline-managed FieldStorageSnapshot к slot tail — sim-thread reads see one-tick lag (К-L7 atomic-from-observer preserved within slot boundary). К-L9 «Vanilla = mods» — opt-in per field; V1 К-L7 sync dispatch_compute_field path preserved для existing consumers.
 
 **Implication of L10.** All existing namespaces under `DualFrontier.Core`, `DualFrontier.Contracts`, `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Systems`, `DualFrontier.Application`, `DualFrontier.Modding`, `DualFrontier.Persistence` are untouched. The existing test suite passes throughout migration ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md)). Mod system contracts ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) remain unchanged — V substrate is not visible from a mod's `AssemblyLoadContext` directly; mods reach Vulkan compute via `IModApi.ComputePipelines` and field storage via `IModApi.Fields` (v3 surface, K8.4 closure).
 
@@ -296,6 +300,35 @@ V substrate close gates Phase B M-cycle vanilla content mass migration. Future V
 ---
 
 ## 2. Architecture
+
+### 2.0 Pipeline depth architecture (К-L16, К10.3 v2 amendment)
+
+The V substrate supports simulation tick pipeline depth D=2 (default, configurable 1-3) per К-L16 для pipeline-managed dispatches. Simulation thread runs D ticks ahead of display thread для these dispatches; cross-layer async operations (GPU compute pipeline-managed, network, disk I/O) have full pipeline-depth window к complete без blocking simulation thread.
+
+Pipeline slot data model (verbatim from `KERNEL_FULL_NATIVE_SCHEDULER.md` §3.10 Item 33; implementation в `native/DualFrontier.Core.Native/include/pipeline_slot.h`):
+
+```c
+typedef enum {
+    SlotState_Empty = 0,
+    SlotState_Dispatched = 1,
+    SlotState_FenceCompleted = 2,
+    SlotState_ReadableAsTail = 3
+} SlotState;
+
+typedef struct {
+    uint64_t sim_tick;
+    void* world_snapshot_ptr;
+    void* fields_snapshot_ptr;   // К-L7.1 binding subject
+    void* compute_fence_handle;  // VkFence opaque
+    int32_t state;
+} PipelineSlot;
+```
+
+Sim-thread reads see slot tail state для pipeline-managed fields (К-L7.1 sub-invariant): sim tick T+D reads dispatched-at-(T+D-1) state. One-tick lag bounded и deterministic.
+
+Display thread reads from CurrentSimTick - D для pipeline-managed display state — display latency invariant established по К-L16.
+
+**К-L7 sync coexistence (S-LOCK-10 + S-LOCK-13)**: V1's existing `V1DiffusionPipeline.ExecuteIteration` synchronous dispatch path (К-L7 atomic-from-observer per `compute_dispatch.h`) remains operational orthogonal к К-L16. К-L7.1 is opt-in для new pipeline-managed consumers; К-L7 is default для existing V1 consumers. К-L9 «Vanilla = mods» preserved — author choice per field.
 
 ### 2.1 Project structure (post-migration target)
 
@@ -564,6 +597,19 @@ The scaffolding in `tools/scaffold-runtime.ps1` materializes the rendering hiera
 ### 2.3 Threading model
 
 The substrate extends [THREADING](./THREADING.md) — domain `ParallelSystemScheduler` and tick rate are unchanged; the substrate contributes a single render thread merged with the OS message pump (per L8). Compute dispatches happen on the simulation thread (managed-side `IModApi.Fields.DispatchCompute` call), executed asynchronously by the GPU; fence-based sync ensures next-tick reads see consistent state without blocking the simulation thread.
+
+#### 2.3.1 Pipeline depth and queue family roles (К-L16/L19/L7.1, К10.3 v2 amendment)
+
+Sim thread coordinates с three Vulkan queues:
+- **Graphics queue** — display rendering (existing — preserved verbatim).
+- **Async compute queue** (К-L19 V0.B amendment) — К-L16 pipeline depth dispatches per Phase.Compute (К10.3 v2 Item 35 — see `native/include/phase_compute.h`); V1 sync `dispatch_compute_field` also uses this queue.
+- **Copy/transfer queue** (К-L19 V0.B amendment) — asset transfers (existing semantics).
+
+Pipeline depth D=2 default (К-L16): sim thread allocates new slot at start of pipeline-managed tick; Phase.Compute dispatches к async compute queue; fence orchestration tracks slot transitions Empty→Dispatched→FenceCompleted→ReadableAsTail. K-L13 wake registry extended с slot transition counter (К10.3 v2 Item 37 — `WakeOnSlotTransitionAttribute` consumer surface, full subscriber registry integration deferred к К-extensions).
+
+Sim-thread reads от slot tail (К-L7.1) для pipeline-managed fields — `df_pipeline_read_slot_tail(slot_offset = -1)` returns sim_tick - 1 results. К-L7 atomic-from-observer preserved within slot boundary; cross-slot reads see different snapshots.
+
+V1's `dispatch_compute_field` sync path (К-L7 baseline): preserved unchanged; consumer call returns after fence signals. Orthogonal к pipeline depth per S-LOCK-13 coexistence.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -840,6 +886,12 @@ public class MagicMod : IMod
 
 V0 introduces Vulkan compute integration. The native kernel gains a new linkage to `vulkan-1.dll` for compute pipeline operations (shared with the rendering linkage — one `vulkan-1.dll`, one `VkInstance`, one `VkDevice`).
 
+#### 3.4.0 К-L19 async compute queue mandate (К10.3 v2 documentation cleanup от V0.B landing)
+
+Native compute dispatch к dedicated async compute queue family mandated per К-L19 (V0.B implementation backing): `df_world_attach_vulkan` populates `VulkanAttachment.async_compute_queue` от `VulkanDevice.AsyncComputeQueueFamilyIndex`. V1's `dispatch_compute_field` и К10.3 v2's Phase.Compute (Item 35) both submit к this queue. Graphics queue не used для compute. К-L19 hardware tier exclusion accepted as architectural choice per `KERNEL_ARCHITECTURE.md` К-L19 row (Vulkan 1.3 + async compute queue family — NVIDIA Turing+/AMD RDNA 1+/Intel Arc Alchemist+).
+
+К10.3 v2 К-L16 pipeline depth (D=2 default) operates атоп of К-L19's async compute queue infrastructure — pipeline-managed dispatches batched per tick into single VkQueueSubmit (Phase.Compute scheduler integration; Prediction 12 ~50-100μs savings at ~10 active dispatch systems). S-LOCK-13 coexistence: V1's `dispatch_compute_field` synchronous path orthogonal к pipeline-managed Phase.Compute path.
+
 C ABI extension on `df_capi.h` (per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) K9 + V0 integration):
 
 ```c
@@ -892,11 +944,54 @@ public sealed class FieldHandle<T> where T : unmanaged
 }
 ```
 
+### 3.4.1 `df_vulkan_unload_mod_resources` C ABI primitive (К-L18, К10.3 v2 placeholder per S-LOCK-12 spec scope)
+
+К10.3 v2 lands the C ABI signature + managed wrapper placeholder for Step 3.6 of the mod unload chain (MOD_OS_ARCHITECTURE §9.5 К10.3 v2 amendment); native implementation lands as V-cycle work либо К-extensions per managed-facade-preserved strategy. К-L18 quiescent state precondition is already satisfied before this primitive is invoked (Step 3.5 К10.2 native primitive verified sim paused + pipeline quiescent per К-L18 invariant).
+
+```c
+typedef struct {
+    int32_t success;
+    int32_t pipelines_destroyed;
+    int32_t descriptor_sets_destroyed;
+    int32_t buffers_destroyed;
+    int32_t images_destroyed;
+    char    error_messages[8][256];
+    int32_t error_count;
+} VulkanModUnloadResult;
+
+DF_API int32_t df_vulkan_unload_mod_resources(
+    const char*             mod_id,
+    VulkanModUnloadResult*  out_result);
+```
+
+К10.3 v2 placeholder behavior: returns `success = 1` + zero counts (no pipeline-managed mod resources yet registered). Full implementation: `VkDestroyPipeline` / `VkFreeDescriptorSets` / `vkDestroyBuffer` / `vkDestroyImage` operations for mod-registered resources, paralleling the existing per-mod tracking conventions established for compute pipeline registration (§3.4) и field storage. Best-effort sequential per MOD_OS §9.5.1.
+
+Managed wrapper lives at `src/DualFrontier.Application/Bridge/VResourceCleanup.cs` (К10.3 v2 Item 42). К10.3 v2 cascade lands the managed surface; native side wires up when consumer code begins registering Vulkan handles per mod (after V-cycle / К-extensions surface lands).
+
 ---
 
 ## 4. Rendering use case (V0 rendering side)
 
 The rendering use case rebuilds presentation functionality from Godot 4 onto the V substrate. Existing Godot path runs in parallel until cutover; substrate rendering side reaches full M8.x parity before Godot deletion.
+
+### 4.0 Display composition (К-L17, К10.3 v2 amendment)
+
+V substrate rendering use case is consumed by display composition framework per К-L17 (lives в `src/DualFrontier.Application/Display/`, not в V substrate). Three-layer composition с independent latency contracts:
+
+1. **SimStateLayer** — V substrate render path (existing V0.C.2 batched sprite + Camera2D — preserved verbatim, wrapped as default layer slot). Reads от pipeline slot tail (К-L16) for pipeline-managed display state; reads current state for К-L7 sync default (V1 path). Latency `D × tick_period` or sub-tick.
+2. **IntentOverlayLayer** (К10.3 v2 Item 39) — current input state surface. Reads from InputEventQueue at display tick time. Latency ≤16ms (60 FPS) per К-L17 contract.
+3. **CombatFeedbackLayer** (К10.3 v2 Item 40) — К-L15 Fast tier event consumers. Subscribes к Fast tier events; renders damage numbers, hit sparks, weapon glints. Latency ≤1ms К-L15 + ≤16ms display ≈ ≤17ms event-к-visible per Prediction 15.
+
+Composition order (К-L17 mandate): SimState layers rendered first, intent + combat overlays composited on top, static layers (loaded assets) last.
+
+Mod-registered layers use `[Layer(LayerType.Intent | CombatFeedback)]` attribute (`DualFrontier.Contracts.Display.LayerAttribute`) + capability declaration:
+
+- `kernel.layer.intent:{FQN}` — sub-pipeline-latency input overlay.
+- `kernel.layer.combat_feedback:{FQN}` — К-L15 Fast tier consumer.
+
+Per К-L9 «Vanilla = mods», vanilla layers (built-in intent cursor, combat hit feedback) register through same attribute + capability pattern as third-party mods.
+
+V substrate exposes rendering primitives (`SpriteRenderer`, `Camera2D`, `TileMap`); layer composition lives one architectural layer above per S-LOCK-11. Existing `IRenderer`/`IDevKitRenderer` interfaces в `DualFrontier.Application.Rendering` preserved unchanged — composition framework operates above them, не extending.
 
 ### 4.1 Migration approach
 
@@ -1237,6 +1332,12 @@ foreach (var pawn in pawns)
 
 **Local avoidance** is a separate concern (mod-level, NOT substrate primitive). Local steering on top of flow field direction — RVO-like or simple boids approach, combines flow field global direction + local agent collision avoidance. Pure managed CPU code (per-pawn, but simple math, parallelizable). M-V8 demonstration.
 
+#### Mode C visibility latency (К-L17, К10.3 v2 amendment)
+
+Mode C navigation visibility latency is governed по К-L17 composition framework (§4.0). Player commands → IntentOverlayLayer (≤16ms render latency, sub-pipeline-latency input surface); pawn responses → SimStateLayer (pipeline-managed К-L16 D=2 lag для async dispatches, либо К-L7 sync для V1 path); combat feedback на encounter → CombatFeedbackLayer (К-L15 Fast tier ≤1ms + display ≤16ms ≈ ≤17ms event-к-visible per Prediction 15).
+
+No special-case visibility mechanism — К-L17 composition framework handles latency separation uniformly across навигation modes.
+
 ### 5.6 Domain B kernel (deferred)
 
 Original `ProjectileSystem` GPU implementation pattern preserved as deferred consideration:
@@ -1354,6 +1455,16 @@ CPU fallback is also mandatory for deterministic save snapshots (see below) if G
 
 ### 7.2 Determinism considerations
 
+#### 7.2.0 Pipeline drain semantics (К-L16, К10.3 v2 amendment)
+
+Save protocol per S8-Q1.5: snapshot display tick state (CurrentSimTick - D). Display already sees coherent world; pipeline drain не required at save time. Faster save (no waiting для in-flight compute completion).
+
+Pause protocol: natural convergence — sim thread completes current tick, no new dispatch. Pipeline depth naturally absorbs already-dispatched work. К-L18 quiescent state precondition (Item 41 К10.3 v2 — subsequent load-bearing commit) verifies pipeline quiesced before mod operations.
+
+V1 sync dispatch path (К-L7 default): not affected by pipeline drain semantics (no slot machinery involvement). К-L7.1 pipeline-managed path opt-in per field per К-L9 «Vanilla = mods» author choice.
+
+#### 7.2.1 Pre-К10.3 v2 determinism notes
+
 GPU compute results may vary across hardware/driver combinations due to floating-point ordering, parallel reduction differences, and driver optimizations. For Dual Frontier:
 
 - Realtime simulation does not require bit-exact determinism (single-player, no replays)
@@ -1365,6 +1476,16 @@ Mitigation: CPU reference implementation produces canonical state for save snaps
 For hobby-scale single-player, slight non-determinism between sessions is acceptable. The CPU canonical save path is implemented but minimally exercised.
 
 ### 7.3 Async sync hazards
+
+#### 7.3.0 Pipeline slot tail read pattern (К-L7.1, К10.3 v2 amendment)
+
+К10.3 v2 К-L7.1 introduces opt-in slot tail read pattern: sim-thread reads see slot tail state (sim_tick - 1) without per-read fence query для pipeline-managed fields. Predicted savings ~30-50% reduction в FieldHandle.ReadCell latency для pipeline-managed paths (Prediction 13).
+
+К-L7 atomic-from-observer invariant preserved within pipeline slot boundary; cross-slot reads see different snapshots (К-L7.1).
+
+**Coexistence (S-LOCK-10 + S-LOCK-13)**: V1's К-L7 sync semantics remain default; pipeline-managed К-L7.1 is opt-in per field. Mod authors choose per-field based на consumer pattern requirements. V1 К-L7 sync default note section follows below.
+
+#### 7.3.1 Pre-К10.3 v2 К-L7 async sync hazards (V1 sync path baseline)
 
 Field reads from managed code use `ReadCell` (point query). If a compute dispatch is in flight, the read may see stale data (last frame's state) or new data (if dispatch completed). Either is acceptable for gameplay because:
 

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Application.Tests</AssemblyName>
+    <RootNamespace>DualFrontier.Application.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
+  </ItemGroup>
+  <!--
+    К10.3 v2 Item 42: К-L18 SimulationStateController tests exercise
+    ModUnloadInterop.SetSimPaused which P/Invokes DualFrontier.Core.Native.dll.
+    Native DLL must ride along into test output, mirrors Modding.Tests +
+    Core.Interop.Tests pattern. Prefer Release build if available, fall
+    back к Debug otherwise (so cmake build default works).
+  -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Debug\DualFrontier.Core.Native.dll"
+          Condition="!Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll') and Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Debug\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+  </ItemGroup>
+</Project>

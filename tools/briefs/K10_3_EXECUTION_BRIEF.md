@@ -13,7 +13,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_3
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: K10_3_EXECUTION_BRIEF
-status: AUTHORED
+status: SUPERSEDED
+superseded_by: tools/briefs/K10_3_EXECUTION_BRIEF_v2.md
+superseded_date: 2026-05-19
+superseded_reason: "v1 brief halted Phase 0 twice (SC-14 2026-05-18 V substrate absent → Crystalka Option B; SC-1+SC-3+SC-14 2026-05-19 post-V substrate cascade since К-L19 + Items 43+44 landed inline V0.B). Crystalka chose Option D per HALT_REPORT_ADDENDUM_2026_05_19 §6 — revised brief authored from current state. v1 retained on disk для historical record. See docs/scratch/A_PRIME_7_K10_3/HALT_REPORT.md (2026-05-18 first halt) + HALT_REPORT_ADDENDUM_2026_05_19.md (2026-05-19 second halt + Option D selection)."
 authored: 2026-05-18
 author: Claude Opus 4.7 (Crystalka deliberation session)
 target_executor: Claude Code (auto-mode + Crystalka oversight)

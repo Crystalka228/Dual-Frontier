@@ -16,8 +16,13 @@
 //   T7: Unregister system access declarations (К10.3 wire-up)
 //
 // К-L18 quiescent state precondition: primitive returns error if simulation
-// thread не paused (К10.2 lands the precondition stub; К10.3 enforces
-// at UI layer via settings menu / mod management UI integration).
+// thread не paused, OR (К10.3 v2 Item 41) if pipeline slots not quiescent
+// (any slot Dispatched/FenceCompleted = in-flight compute work). К10.2
+// landed the sim-paused stub; К10.3 v2 Item 41 extends с pipeline quiescence
+// verification per К-L18 spec verbatim («pipeline slots quiescent (all fences
+// completed); no concurrent compute dispatches in-flight»). К10.3 v2 Item 42
+// lands UI helper integration enforcing the precondition (SimulationStateController
+// + ModMenuController pause hook).
 
 #ifdef __cplusplus
 extern "C" {

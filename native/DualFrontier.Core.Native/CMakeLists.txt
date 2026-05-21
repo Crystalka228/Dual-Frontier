@@ -48,6 +48,8 @@ set(DF_NATIVE_SOURCES
     src/mod_unload.cpp
     src/compute_pipeline.cpp
     src/compute_dispatch.cpp
+    src/pipeline_slot.cpp
+    src/phase_compute.cpp
 )
 
 set(DF_NATIVE_HEADERS
@@ -78,6 +80,8 @@ set(DF_NATIVE_HEADERS
     include/mod_unload.h
     include/compute_pipeline.h
     include/compute_dispatch.h
+    include/pipeline_slot.h
+    include/phase_compute.h
 )
 
 add_library(DualFrontier.Core.Native SHARED ${DF_NATIVE_SOURCES} ${DF_NATIVE_HEADERS})

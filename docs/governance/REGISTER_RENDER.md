@@ -1,28 +1,16 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-REGISTER_RENDER
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "1.0"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
----
-# DualFrontier Document Control Register — Rendered View
+﻿# DualFrontier Document Control Register — Rendered View
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-05-18  |  Schema version: 1.0  |  Register version: 2.0*
+*Last generated: 2026-05-20  |  Schema version: 1.0  |  Register version: 2.0*
 
 ---
 
 ## Statistics
 
-- Total documents: 249
-- Tier 1: 33  |  Tier 2: 14  |  Tier 3: 126  |  Tier 4: 76  |  Tier 5: 0
-- Per category: A=31  |  B=6  |  C=3  |  D=64  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
+- Total documents: 253
+- Tier 1: 33  |  Tier 2: 14  |  Tier 3: 130  |  Tier 4: 76  |  Tier 5: 0
+- Per category: A=31  |  B=6  |  C=3  |  D=68  |  E=59  |  F=76  |  G=8  |  H=2  |  I=0  |  J=0
 - Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
@@ -32,7 +20,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - [Category A (31 documents)](#category-A)
 - [Category B (6 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
-- [Category D (64 documents)](#category-D)
+- [Category D (68 documents)](#category-D)
 - [Category E (59 documents)](#category-E)
 - [Category F (76 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
@@ -191,11 +179,11 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-KERNEL — DualFrontier Kernel — Architecture & Roadmap
 
 - **Path**: `docs/architecture/KERNEL_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.2
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.3
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-20 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-18
-- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L19
+- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19
 - **Risks referenced**: RISK-001, RISK-002, RISK-003, RISK-004, RISK-013
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
 
@@ -231,9 +219,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-MOD_OS — Mod OS Architecture — Dual Frontier
 
 - **Path**: `docs/architecture/MOD_OS_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.9
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.11
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-20 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-18
 - **Risks referenced**: RISK-002, RISK-004, RISK-005, RISK-006
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
@@ -318,9 +306,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-VULKAN_SUBSTRATE — Vulkan Substrate (V) — Dual Frontier
 
 - **Path**: `docs/architecture/VULKAN_SUBSTRATE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.1
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-16 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-05-20 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-16
 - **Special-case rationale**: Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases. Additionally supersedes G-series briefs DOC-D-G0..G9 per Q-G-2 LOCK + CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16). Additionally supersedes DOC-A-VISUAL_ENGINE + DOC-A-GODOT_INTEGRATION (visual-runtime authority moved to docs/architecture/historical/) per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16). Bidirectional integrity per FRAMEWORK §3.3.2.
 - **Risks referenced**: RISK-004, RISK-013
@@ -671,6 +659,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Special-case rationale**: К10.2 standalone execution brief — second of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 closed 2026-05-18; К10.2 = native bus three-tier dispatch + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 8 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.8 Items 26-30 (native bus three-tier dispatcher + event type registry + subscriber contract + background queue), §3.9 Items 31-32 (background queue save-integrated storage + native unload primitive), §3.6 Item 21 (mod scheduler authority per-mod sub-schedulers). К-L15 «Native bus authority + three-tier event dispatch» AUTHORED at Commit 13 (load-bearing). Strategy: managed-facade-preserved per К10.1 precedent — native bus parallel infrastructure landed; managed bus remains dispatch authority; sovereign authority switch deferred к К10.4 / А'.8. Cumulative с К10.1: 25 of 46 К10 items closed; remaining 21 items distributed across К10.3 (12 items: 33-44), К10.4 (3 items: 18, 45, 46), Item 14 deferred к К11+, Item 25 cross-cutting к А'.8. Brief authored 2026-05-18 from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified) + К10.1 closure precedent (managed-facade-preserved pattern + native test convention + DF_CHECK runner + selftest infrastructure).
 - **Risks referenced**: RISK-002, RISK-003, RISK-004, RISK-013
 
+### DOC-D-K10_3 — К10.3 v2 — Pipeline depth + display composition + mod lifecycle quiescent (К-L7.1/L16/L17/L18)
+
+- **Path**: `tools/briefs/K10_3_EXECUTION_BRIEF_v2.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 2.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-20 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: К10.3 v2 standalone execution brief — third of four К10 sub-milestones under Option III standalone-briefs structure. v2 supersedes v1 (AUTHORED 2026-05-18 from K10 deliberation arc closure, never enrolled, halted Phase 0 twice). К10.3 v2 implements 10 of 46 К10 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.10 Items 33-37 (pipeline depth К-L16 + sub-invariant К-L7.1), §3.11 Items 38-40 (display composition К-L17), §3.12 Items 41-42 (mod lifecycle quiescent К-L18). Items 43-44 already landed V0.B as cross-stream prerequisite resolution (К-L19 + HardwareCapabilityCheck + QueueFamilyInfo + README hardware section). Cumulative К10 progress post-К10.3 v2 (if executed): 35 of 46 К10 items closed (К10.1 К-L12/L13/L14 12 items + К10.2 К-L15 8 items + V0.B К-L19 2 items + К10.3 v2 К-L7.1/L16/L17/L18 10 items = 32; + К10.4 3 items pending; + Item 14 deferred К11+; + Item 25 cross-cutting А'.8; + Items 10/22/23 К-extensions scope = 11 remaining). Strategy: managed-facade-preserved per К10.1+К10.2+V0.B precedent — К10.3 v2 architecture landings + helper wirings; full UI / pipeline-managed mod adoption deferred к К-closure or К-extensions. К-L7.1 introduces opt-in pipeline-managed pattern coexisting с V1 К-L7 sync (per К-L9 «Vanilla = mods» author choice per field). К-L17 display composition lives в src/DualFrontier.Application/Display/ NEW directory per S-LOCK-11 Crystalka 2026-05-19 lock. К-L18 UI integration scope = SimulationStateController helper + ModMenuController pause hook only per S-LOCK-12 (full settings menu deferred). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. v1 brief retained on disk (tools/briefs/K10_3_EXECUTION_BRIEF.md) с superseded_by annotation per Commit 1 enrollment design.
+- **Risks referenced**: RISK-002, RISK-003, RISK-004, RISK-013
+
 ### DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE — К10 Cross-Document Amendments Cascade (SKELETON)
 
 - **Path**: `tools/briefs/K10_CROSS_DOC_AMENDMENTS_CASCADE_BRIEF.md`
@@ -930,6 +928,36 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Last modified**: 2026-05-18 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: null
 - **Special-case rationale**: V0.B standalone execution brief — second of three V0 sub-milestones under V substrate foundation split. Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering bullets 4-9 + compute use case implementation foundation. Authored 2026-05-18 post-V0.A closure 2026-05-18 (PR #36 merged; 11 atomic commits 1a1c772..1a56887; 685 tests baseline; AMD RX 7600S verified К-L19 hardware tier; VkPhysicalDeviceProperties alignment fix precedent landed — Lesson #7 strengthening). Per Crystalka ratification 2026-05-18 (V0.A/V0.B/V0.C split ratified post-V0.A closure): V substrate authoring stream continues. К10.3 brief restart pathway: V0.B implementation lands async compute queue selection (Item 43) + HardwareCapabilityCheck (Item 44) — К10.3 restarts post-V0.B closure с surgical amendments where V0.B shape differs from К10.3 brief assumptions. К-L19 invariant LOCKED at Commit 13 (load-bearing — KERNEL_ARCHITECTURE.md amendment + README.md hardware requirements section + REGISTER.yaml DOC-A-KERNEL version bump 2.1 → 2.2 + REQ-K-L19 enrollment all in same commit per Lesson #8). 11 S-LOCKs enumerate scope: S-LOCK-1 (V0.B scope = swapchain + render pass + compute + memory + SPIR-V + async compute + hardware check); S-LOCK-2 (monolithic approach NOT split V0.B.1/V0.B.2); S-LOCK-3 (native C ABI extension lands в existing DualFrontier.Core.Native module); S-LOCK-4 (memory allocator = bumper linear allocator only); S-LOCK-5 (SPIR-V toolchain = in-repo committed glslangValidator.exe); S-LOCK-6 (V0.B shaders = minimal clearcolor + noop only); S-LOCK-7 (mixed [LibraryImport] + [DllImport] convention formalized — V0.A executor precedent); S-LOCK-8 (C ABI alignment audit mandatory per V0.A executor finding — Lesson #7 strengthening); S-LOCK-9 (К-L19 invariant landing on V0.B post-К10.3 halt resolution); S-LOCK-10 (К10.3 brief restart pathway documented); S-LOCK-11 (atomic cascade preserves V0.A discipline). Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): same V0.A patterns inherited; mixed [LibraryImport]/[DllImport] formalized; pure P/Invoke к vulkan-1.dll + vulkan-1.dll linkage в native module via CMake find_package(Vulkan); ALWAYS-ON validation discipline в DEBUG preserved; .NET 8 target preserved.
+- **Risks referenced**: RISK-013
+
+### DOC-D-V0_C_1 — V0.C.1 — PNG decoder + textured sprite pipeline + input event types (R.1 + R.4)
+
+- **Path**: `tools/briefs/V0_C_1_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-19 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: V0.C.1 standalone execution brief — third sub-milestone of V0 series under V substrate foundation split (V0.A → V0.B → V0.C.1 → V0.C.2). Authored 2026-05-19 post-V0.B closure (PR #37 merged) per Crystalka split ratification 2026-05-19 (V0.C → V0.C.1 + V0.C.2). Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering bullets 5-9 partial coverage — specifically R.1 (first textured quad) + R.4 (input system) per §4.2 phase mapping. Excludes R.2 (batched sprite renderer at 10,000 sprites), R.3 (TileMap + Camera2D), R.5+ (Domain integration, UI primitives, lifecycle, cutover) — those belong V0.C.2 + post-V substrate close briefs. К10.3 brief restart pathway already open post-V0.B closure; V0.C.1 не gates К10.3 — runs parallel в same V substrate stream. 11 S-LOCKs enumerate scope: S-LOCK-1 (deliverables order: Vulkan struct + functions → PngDecoder → AssetManager → VulkanSampler → TextureUploader → VulkanPipelineLayout extension → sprite shaders → SpriteVertex + types → VulkanSpritePipeline → SpriteRenderer → input event types → Win32 dispatch → Runtime facade → smoke test → closure); S-LOCK-2 (PNG decoder scope = RGBA8 + RGB8 8-bit non-interlaced minimum coverage; interlaced + palette + 16-bit deferred к Lesson #25 pattern); S-LOCK-3 (sprite vertex format = pos+UV+color packed 20 bytes per S-LOCK-3); S-LOCK-4 (sprite shader scope = textured + tinted + camera MVP push constant); S-LOCK-5 (alpha blending = premultiplied alpha workflow standard); S-LOCK-6 (VulkanSampler default = nearest+repeat per pixel art aesthetic); S-LOCK-7 (threading model unchanged — V0.C.1 single-threaded; PresentationBridge + Domain integration R.5 post-V substrate close); S-LOCK-8 (push constants для Camera MVP; VulkanPipelineLayout backward-compat extension); S-LOCK-9 (C ABI alignment audit mandatory per Lesson #7 strengthening — 5 brief-estimate corrections V0.B precedent); S-LOCK-10 (input event types + Win32 dispatch completion per VULKAN_SUBSTRATE §2.2); S-LOCK-11 (atomic cascade preserves V0.A + V0.B discipline). Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): same V0.B patterns inherited; mixed [LibraryImport]/[DllImport] formalized continues; ALWAYS-ON validation discipline в DEBUG preserved; .NET 8 target preserved; default-inclusion bias per К-L14 (all 4 PNG filter predictors, sprite shader vertex+UV+color, premultiplied blending production-shape).
+- **Risks referenced**: RISK-013
+
+### DOC-D-V0_C_2 — V0.C.2 — Batched sprite renderer + Camera2D + TileMap (V substrate R.2 + R.3)
+
+- **Path**: `tools/briefs/V0_C_2_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-19 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: V0.C.2 standalone execution brief — fourth and final sub-milestone of V0 series under V substrate foundation split (V0.A → V0.B → V0.C.1 → V0.C.2). Authored 2026-05-19 post-V0.C.1 closure (PR #38 merged) per Crystalka V0.C split ratification 2026-05-19. Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §4.2 R.2 (batched sprite renderer 10K sprites at 60+ FPS) + R.3 (TileMap + Camera2D 200×200 grid at 60+ FPS). V0.C.2 closure = V0 substrate close per Q8 ratification — unlocks V1 (scalar field + diffusion shader) + V2 (scalar field + wave shader) brief authoring + Phase B M-cycle vanilla content mass migration (also gated on Roslyn analyzer A'.9). К10.3 brief restart pathway independent — runs parallel в V substrate stream; V0.C.2 не gates К10.3. 11 S-LOCKs enumerate scope: S-LOCK-1 (V0.C.2 scope = batched sprite renderer + Camera2D + TileMap per VULKAN_SUBSTRATE §4.2 R.2 + R.3); S-LOCK-2 (vertex buffer = N-frame ring buffer per Q1c ratification — production-standard pattern matching swapchain image count); S-LOCK-3 (indexed quad rendering per Q2b ratification — 4 vertices + 6 uint16 indices per quad, ~33% vertex memory reduction); S-LOCK-3a (10K hard cap per BeginFrame/EndFrame cycle — uint16 index limit); S-LOCK-4 (Camera2D standard scope per Q3b ratification — position + zoom + rotation + viewport + matrices + transforms, ~150 LOC; culling deferred); S-LOCK-5 (TileMap one-sprite-per-tile per Q4a ratification — reuses batched infrastructure, 200×200 = 40K = 4× R.2 stress); S-LOCK-5a (multi-cycle BeginFrame/EndFrame для grids exceeding 10K cap); S-LOCK-6 (atlas regions code-defined per Q5a ratification — AtlasRegion.FromPixels static factory с validation guards; JSON manifest deferred к V0.C.2.1/V0.D); S-LOCK-7 (SpriteRenderer batched API rewrite — BeginFrame/Submit/EndFrame replaces single-sprite DrawSprite); S-LOCK-8 (K-L19 hardware capability preserved verbatim + Lesson #7 alignment audit continues); S-LOCK-9 (atomic cascade preserves V0.A + V0.B + V0.C.1 discipline + multi-session pause provision per Lesson #8 + Lesson #26); S-LOCK-10 (validation layer ALWAYS-ON DEBUG preserved); S-LOCK-11 (REGISTER governance discipline preserved per A'.4.5). Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): same V0.A + V0.B + V0.C.1 patterns inherited; mixed [LibraryImport]/[DllImport] formalized continues; ALWAYS-ON validation discipline в DEBUG preserved; .NET 8 target preserved; default-inclusion bias per К-L14 preserved through scope coherence (substantial cohesive scope, не aggregation). К-L14 thesis fourth verification window: V0.A + V0.B + V0.C.1 closed с three consecutive zero-hard-gate-halt cascades; V0.C.2 closure = fourth verification + V0 substrate close pattern reliability empirically validated.
+- **Risks referenced**: RISK-013
+
+### DOC-D-V1_V2 — V1+V2 — Scalar field + diffusion shader + wave shader (V substrate primitives, combined deliberation, sequential execution)
+
+- **Path**: `tools/briefs/V1_V2_EXECUTION_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: mixed
+- **Last modified**: 2026-05-19 ($(System.Collections.Hashtable.last_modified_commit))
+- **Next review due**: null
+- **Special-case rationale**: V1+V2 combined deliberation execution brief — fifth + sixth sub-milestones of V substrate stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1 → V2). Authored 2026-05-19 post-V0.C.2 closure (PR #39 merged) per Crystalka substrate authoring stream protocol. Implements V substrate primitives per VULKAN_SUBSTRATE.md v1.0 §1.2 (V1 isotropic + anisotropic diffusion shader) + §1.3 (V2 wave shader baseline + direction extraction) + §1.4 (V substrate close acceptance — multi-field coexistence). V2 closure = V substrate FULL close per §1.4 — unlocks M-V demonstration mod paths (M-V1 Vanilla.Magic, M-V2 Vanilla.Electricity, M-V7 Vanilla.Movement) + Phase B M-cycle vanilla content mass migration (also gated on Roslyn analyzer A'.9). К10.3 brief restart pathway independent — runs parallel в V substrate stream; V1+V2 не gates К10.3. Q1-Q8 ratification 2026-05-19 (Crystalka): hybrid sub-milestone structure (Q1c — V1 monolithic + V2.A wave/distance + V2.B direction extraction split); minimal CPU reference scope (Q2a — single-iteration small grid synthetic tests); direct K9 consumption (Q3a — no new C ABI extensions); extend Directory.Build.props CompileShaders target (Q4a — substrate-side compilation); standard smoke test scenes (Q5b — minimal + multi-field coexistence); combined deliberation + sequential execution (Q6c — V1 PR #40 → V2 PR #41); diffusion baseline для V2 (Q7a — eikonal upgrade deferred TBD per spec); Phase A' naming А'.10 V1 + А'.11 V2 (Q8 — sequential post-V0 sub-milestones). 11 S-LOCKs enumerate scope: S-LOCK-1 (V1+V2 combined scope = scalar field substrate primitives per VULKAN_SUBSTRATE §1.2 + §1.3 + §1.4); S-LOCK-2 (compute shader sourcing = substrate-side compilation per Q4a — extends Directory.Build.props CompileShaders target); S-LOCK-3 (CPU/GPU equivalence test mandatory per §11 — every compute shader has CPU reference, tolerance-bounded comparison gates correctness); S-LOCK-4 (direct K9 consumption — no new C ABI extensions per Q3a; consumes existing FieldHandle<T> + FieldRegistry + V0.B compute pipeline surface verbatim); S-LOCK-5 (ping-pong buffer management via FieldHandle<T>.SwapBuffers — K9 contract preserved); S-LOCK-6 (V0 substrate inheritance preserved — K-L19, validation layer ALWAYS-ON, per-image semaphore, framebuffer recreation, mixed [LibraryImport]/[DllImport]); S-LOCK-7 (alignment audit mandatory per Lesson #7 strengthening — V0.A 1 + V0.B 5 + V0.C.1 0 + V0.C.2 1 maturity curve continues; new push constant structs DiffusionPushConstants/WavePushConstants/DirectionExtractPushConstants get Marshal.SizeOf test gates); S-LOCK-8 (atomic cascade discipline preserves V substrate stream pattern с V1→V2 pause point); S-LOCK-9 (validation layer ALWAYS-ON DEBUG preserved — zero validation messages tolerated as commit gate); S-LOCK-10 (REGISTER.yaml governance discipline preserved — EVT-V1-CLOSURE + EVT-V2-CLOSURE + EVT-V-SUBSTRATE-CLOSE audit_trail events); S-LOCK-11 (CPU reference inheritance + extension per Lesson #11 redundancy check — IsotropicDiffusionKernel inherited verbatim, AnisotropicDiffusionKernel + WaveKernel + DirectionExtractKernel new CPU references follow same pattern). Per Lesson #22 (read existing code first) + Lesson #11 (redundancy check) + Lesson #25 (consumer materialization): V1+V2 inherits substantial existing infrastructure — K9 FieldHandle<T> production-ready, V0.B compute pipeline registration round-trip verified, IsotropicDiffusionKernel CPU reference existing K9-era code consumed verbatim. К-L14 thesis fifth + sixth verification window: V0.A + V0.B + V0.C.1 + V0.C.2 closed с four consecutive zero-hard-gate-halt cascades; V1 + V2 = fifth + sixth verifications; V substrate full close per §1.4 = pattern reliability empirically validated across 6 consecutive substrate sub-milestones.
 - **Risks referenced**: RISK-013
 
 ---
@@ -2011,6 +2039,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | REQ-K-L13 | On-demand system activation — 5 wake types | VERIFIED | DOC-A-KERNEL | K10.1 closure |
 | REQ-K-L14 | Performance derives from architectural cleanliness | VERIFIED | DOC-A-KERNEL | K10.1 closure (architecturally established; measurable evidence pending К11+ per S4 lock — К10.1 brief authoring section §6.1 #6 measurement plan) |
 | REQ-K-L15 | Native bus authority + three-tier event dispatch | VERIFIED | DOC-A-KERNEL | K10.2 closure (architecturally established; sovereign authority switch deferred к K10.4 closure / А'.8 per managed-facade-preserved strategy — К10.1 precedent applied) |
+| REQ-K-L16 | Simulation tick pipeline depth (D=2 default; configurable 1-3) | VERIFIED | DOC-A-KERNEL | К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C) |
+| REQ-K-L17 | Display composition multi-layer (К-L17, К10.3 v2 load-bearing 2/3) | VERIFIED | DOC-A-KERNEL | К10.3 v2 load-bearing commit 2/3 (К-L17 display composition framework + Items 38-40 implementation backing) |
+| REQ-K-L18 | Mod lifecycle quiescent state (К-L18, К10.3 v2 load-bearing 3/3) | VERIFIED | DOC-A-KERNEL | К10.3 v2 load-bearing commit 3/3 (К-L18 mod lifecycle quiescent state + Items 41-42 implementation backing) |
 | REQ-K-L19 | Hardware tier commitment (Vulkan 1.3 + async compute queue family mandate) | VERIFIED | DOC-A-KERNEL | V0.B closure (full implementation backing operational at landing per Lesson #8 + Lesson #11 — no architectural commitment без implementation behind it) |
 | REQ-K-L2 | Bindings: Pure P/Invoke | VERIFIED | DOC-A-KERNEL | K0 closure |
 | REQ-K-L3 | Component storage paths: Path α default + Path β opt-in | PARTIAL | DOC-A-KERNEL | K-L3.1 bridge formalization |
@@ -2018,6 +2049,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | REQ-K-L5 | Span protocol (zero-copy enumeration) | VERIFIED | DOC-A-KERNEL | K5 closure |
 | REQ-K-L6 | Mod rebuild capability (load/unload/reload without process restart) | VERIFIED | DOC-A-KERNEL | K6 closure |
 | REQ-K-L7 | Read-only spans + write batching | VERIFIED | DOC-A-KERNEL | K5 closure |
+| REQ-K-L7_1 | GPU compute pipeline slot binding (sub-invariant к K-L7; opt-in coexistence) | VERIFIED | DOC-A-KERNEL | К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C — pipeline depth + sub-invariant share physical reality «GPU pipeline slots») |
 | REQ-K-L8 | Native scheduler (parallel system execution) | VERIFIED | DOC-A-KERNEL | K3 closure |
 | REQ-K-L9 | Performance threshold met (V3 dominates V2 by 4-32× across metrics) | VERIFIED | DOC-A-KERNEL | K7 closure |
 | REQ-Q-A07-6 | Audience contract: methodology corpus agent-as-primary-reader | VERIFIED | DOC-B-METHODOLOGY | A'.0.7 closure (methodology); A'.4.5 closure (governance inheritance) |
@@ -2033,6 +2065,13 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | REQ-V0-B-RENDER_PASS | VkRenderPass + VkFramebuffer + command infrastructure (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
 | REQ-V0-B-SPIRV_TOOLCHAIN | In-repo SPIR-V toolchain integration (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
 | REQ-V0-B-SWAPCHAIN | VkSwapchainKHR + Win32 surface + recreation on resize (V0.B) | VERIFIED | DOC-A-VULKAN_SUBSTRATE | V0.B closure |
+| REQ-V0-C-1-INPUT_EVENTS | Input event types complete (Key/MouseButton enums + 6 event records + VirtualKeyMapper) | VERIFIED | DOC-D-V0_C_1 | V0.C.1 closure |
+| REQ-V0-C-1-PNG_DECODER | Manual PNG decoder (8-bit RGB/RGBA, non-interlaced, all 4 filter predictors) | VERIFIED | DOC-D-V0_C_1 | V0.C.1 closure |
+| REQ-V0-C-1-SAMPLER | VulkanSampler primitive (nearest+repeat default per S-LOCK-6 pixel art aesthetic) | VERIFIED | DOC-D-V0_C_1 | V0.C.1 closure |
+| REQ-V0-C-1-SPRITE_PIPELINE | VulkanSpritePipeline (vertex input + alpha blending + descriptor sets + push constants) | VERIFIED | DOC-D-V0_C_1 | V0.C.1 closure |
+| REQ-V0-C-1-SPRITE_RENDERER | SpriteRenderer single-sprite-per-draw API с descriptor set caching | VERIFIED | DOC-D-V0_C_1 | V0.C.1 closure |
+| REQ-V0-C-1-TEXTURE_UPLOAD | TextureUploader staging-buffer → device-local image transfer + layout transitions | VERIFIED | DOC-D-V0_C_1 | V0.C.1 closure |
+| REQ-V0-C-1-WIN32_INPUT_DISPATCH | Win32 message dispatch (WM_KEYDOWN/UP/MOUSEMOVE/L|R|MBUTTONDOWN/UP/MOUSEWHEEL/SETFOCUS/KILLFOCUS → InputEventQueue) | VERIFIED | DOC-D-V0_C_1 | V0.C.1 closure |
 
 <a name="global-risks"></a>
 ## Global: Risks
@@ -2096,5 +2135,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | 2026-05-18 | К10.2 sub-milestone closure — native bus three-tier dispatch + mod ALC lifecycle (8 of 46 К10 items; 25 cumulative) | execution_milestone | a677388..PENDING-COMMIT-K10_2-CLOSURE |
 | 2026-05-18 | K8.5 deferral cascade — DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON, Phase A'.6 slot SKIPPED, milestone deferred к post-Phase B | governance_event | 4bc34c1..PENDING-COMMIT-K8_5-CLOSURE |
 | 2026-05-18 | К10.1 sub-milestone closure — kernel scheduler core (17 of 46 К10 items) | execution_milestone | f439b74..PENDING-COMMIT-K10_1-CLOSURE |
+| 2026-05-19 | V1 sub-milestone closure (PR #40) — V substrate primitive: scalar field + isotropic + anisotropic diffusion compute shader operational; AnisotropicDiffusionKernel CPU reference + diffusion.comp GLSL + DiffusionPushConstants alignment-audited (S-LOCK-7) + native VkCmdDispatch с per-field shadow VkBuffers + V1DiffusionPipeline managed wrapper + V1DiffusionPipeline Runtime factories + CPU/GPU equivalence gates (isotropic uniform D + corner reflective + decay-only + combined D+K + iteration count Theory + anisotropic wire-path + insulator column + insulator-with-gap + long-run mass-conservation 50-iter) + V1 200×200 isotropic + anisotropic wire-path smoke scenes + V1 dispatch latency benchmark + Compute MODULE.md V1 extension + V1 manual visual verification protocol; fifth consecutive zero-hard-gate-halt cascade on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1) — К-L14 thesis fifth verification accumulated. | execution_milestone | 9cbaed3..PENDING-COMMIT-V1-CLOSURE |
+| 2026-05-19 | V0.C.2 sub-milestone closure — V substrate R.2 (batched sprite renderer 10K sprites at 60+ FPS target) + R.3 (TileMap + Camera2D 200×200 grid at 60+ FPS target) operational; VertexBufferRing N-frame ring buffer + SpriteIndexBuffer pre-populated uint16 pattern + Camera2D standard scope + TileMap one-sprite-per-tile + SpriteRenderer batched BeginFrame/Submit/EndFrame rewrite + AtlasRegion.FromPixels hardening + Runtime facade extension с Camera + RecordSpritesFrame batched + multi-cycle render pass helpers; V0 substrate close achieved per Q8 ratification — V1 + V2 brief authoring + Phase B M-cycle vanilla migration unblocked (latter also gated on Roslyn analyzer A'.9); 4 consecutive zero-hard-gate-halt cascades on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2) — К-L14 thesis empirically validated | execution_milestone | b4084f1..PENDING-COMMIT-V0_C_2-CLOSURE |
+| 2026-05-19 | V0.C.1 sub-milestone closure — V substrate R.1 (first textured quad) + R.4 (input system) operational; PngDecoder + AssetManager + VulkanSampler + TextureUploader + sprite shaders + VulkanSpritePipeline + SpriteRenderer + 6 input event types + Win32 dispatch + Runtime facade composition; smoke test exit criteria operational на real К-L19 hardware (820 frames at 164 FPS, validation log 0 errors); V0.C.2 brief restart pathway opens | execution_milestone | 4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE |
+| 2026-05-20 | К10.3 v2 sub-milestone closure — pipeline depth (К-L7.1 sub-invariant + К-L16) + display composition (К-L17) + mod lifecycle quiescent state (К-L18) ALL AUTHORED. 4 К-L invariants landed; cumulative К-Lxx series 20 invariants post-К10.3 v2. К-L7 sync coexistence preserved per S-LOCK-10/13 (V1 dispatch_compute_field path orthogonal к pipeline-managed dispatches). К-L17 display composition framework lives в src/DualFrontier.Application/Display/ per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces preserved). К-L18 UI = SimulationStateController + ModMenuController pause hook only per S-LOCK-12 (settings menu deferred к V-cycle / К-extensions). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. К-L19 inherited V0.B (no re-implementation). 15-commit cascade на branch claude/k10_3-v2-pipeline-display-quiescent (1982351..PENDING-CLOSURE-COMMIT). К-L14 thesis seventh verification window: К0..К8 + V0.A..V0.C.2 + V1 (6 closures) + К10.3 v2 = seven consecutive zero-hard-gate-halt cascades. | execution_milestone | 1982351..PENDING-COMMIT-K10_3-V2-CLOSURE |
 
 

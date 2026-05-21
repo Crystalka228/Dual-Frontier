@@ -6,6 +6,7 @@
 
 #include "bus_native.h"
 #include "bus_native_internal.h"
+#include "pipeline_slot.h"
 
 namespace {
 
@@ -47,10 +48,26 @@ DF_API int32_t df_scheduler_unload_mod_native_state(
     if (out_result == nullptr) return 0;
     std::memset(out_result, 0, sizeof(*out_result));
 
-    // К-L18 precondition: simulation thread must be paused
+    // К-L18 precondition (К10.2 baseline): simulation thread must be paused.
     if (g_sim_paused.load(std::memory_order_acquire) == 0) {
         copy_error_message(out_result,
             "K-L18 quiescent state precondition violated: sim is not paused");
+        return 0;
+    }
+
+    // К-L18 precondition extended (К10.3 v2 Item 41): pipeline slots quiescent
+    // (no Dispatched/FenceCompleted slots = no in-flight compute work). When the
+    // pipeline is не initialized (depth==0), df_pipeline_is_quiescent returns -1
+    // and writes 0 — treat as quiescent for К10.3 v2 mod unload (no pipeline =
+    // no in-flight compute by definition). When initialized, require all slots
+    // Empty или ReadableAsTail per К-L18 spec verbatim: «pipeline slots quiescent
+    // (all fences completed); no concurrent compute dispatches in-flight».
+    int32_t pipeline_is_quiescent = 0;
+    const int32_t pipeline_query = df_pipeline_is_quiescent(&pipeline_is_quiescent);
+    if (pipeline_query == 1 && pipeline_is_quiescent == 0) {
+        copy_error_message(out_result,
+            "K-L18 quiescent state precondition violated: pipeline slots not "
+            "quiescent (in-flight compute dispatches)");
         return 0;
     }
 
