@@ -261,6 +261,94 @@ public sealed class ManagedBusBridgeTests : IDisposable
            .WithMessage("*coalesce_key parameter only valid for Background tier*");
     }
 
+    // ═════════════════════════════════════════════════════════════════════════
+    // Bug #2 (A'.7.x γ2) — ManagedBusBridge.DrainBackgroundBatch wrapper
+    // ═════════════════════════════════════════════════════════════════════════
+
+    [Fact]
+    public void ManagedBusBridge_DrainBackgroundBatch_DispatchesAccumulatedEvents()
+    {
+        _facade.UseNativeBusForDispatch = true;
+
+        IntPtr coalesceFn = Marshal.GetFunctionPointerForDelegate(s_bgCoalesceDelegate);
+        _facade.RegisterEventType<BackgroundTestEvent>(coalesceFn).Should().BeTrue();
+        uint typeId = _facade.GetOrAssignTypeId<BackgroundTestEvent>();
+
+        IntPtr cb = Marshal.GetFunctionPointerForDelegate(s_bgSubscriberDelegate);
+        var handle = GCHandle.Alloc(s_bgSubscriberDelegate);
+        try
+        {
+            ulong sid = _bridge.SubscribeBackground(typeId, modId: 100u, cb, handle);
+            sid.Should().NotBe(0u);
+
+            s_bgSubscriberInvocations = 0;
+            const int N = 50;
+            for (uint i = 1; i <= N; i++)
+                _facade.Publish(new BackgroundTestEvent { Value = (int)i }, coalesceKey: i);
+
+            int dispatched = _bridge.DrainBackgroundBatch(availableBudgetMicros: 0);
+            dispatched.Should().Be(N, "drain must process all accumulated background events");
+            s_bgSubscriberInvocations.Should().Be(N);
+
+            _bridge.Unsubscribe(sid);
+        }
+        finally
+        {
+            if (handle.IsAllocated) handle.Free();
+        }
+    }
+
+    [Fact]
+    public void Bug2_BackgroundDispatch_AfterModUnload_DoesNotCrashAndDrainsToNothing()
+    {
+        // K-L18 compatibility per BRIEF §7.2: publishing a batch of background
+        // events for a mod, then bulk-unsubscribing that mod's background
+        // subscribers (simulating Step 3.5 native unload), then draining must
+        // not crash + the queue must drain к nothing per S3-Q3/Q4 untargeted
+        // persistence semantics.
+        _facade.UseNativeBusForDispatch = true;
+
+        IntPtr coalesceFn = Marshal.GetFunctionPointerForDelegate(s_bgCoalesceDelegate);
+        _facade.RegisterEventType<BackgroundTestEvent>(coalesceFn).Should().BeTrue();
+        uint typeId = _facade.GetOrAssignTypeId<BackgroundTestEvent>();
+
+        IntPtr cb = Marshal.GetFunctionPointerForDelegate(s_bgSubscriberDelegate);
+        var handle = GCHandle.Alloc(s_bgSubscriberDelegate);
+        const uint modId = 999u;
+        try
+        {
+            ulong sid = _bridge.SubscribeBackground(typeId, modId, cb, handle);
+            sid.Should().NotBe(0u);
+
+            s_bgSubscriberInvocations = 0;
+            const int N = 50;
+            for (uint i = 1; i <= N; i++)
+                _facade.Publish(new BackgroundTestEvent { Value = (int)i }, coalesceKey: i);
+
+            // Bulk-unsubscribe simulating Step 3.5 native unload primitive
+            // (mod_unload.cpp:T3 background tier path).
+            int removed = BackgroundBusUnsubscribeByMod(modId);
+            removed.Should().Be(1);
+
+            // Drain — events are still queued but no subscriber remains; the
+            // dispatch path must not crash, and pending count must drop к 0.
+            Action drainAct = () => _bridge.DrainBackgroundBatch(0);
+            drainAct.Should().NotThrow("background dispatch after mod unsubscribe must not crash");
+
+            var (eventCount, _) = BackgroundBusTestDriver.GetQueueSize();
+            eventCount.Should().Be(0u, "drained queue must be empty after dispatch к no subscribers");
+            s_bgSubscriberInvocations.Should().Be(0, "no subscriber remained, so 0 callbacks");
+        }
+        finally
+        {
+            if (handle.IsAllocated) handle.Free();
+        }
+    }
+
+    [DllImport("DualFrontier.Core.Native", CallingConvention = CallingConvention.Cdecl,
+        EntryPoint = "df_bus_unsubscribe_background_by_mod")]
+    private static extern int BackgroundBusUnsubscribeByMod(uint modId);
+
     // Background tier reverse-P/Invoke harness.
     private static int s_bgSubscriberInvocations;
     private static readonly BackgroundSubscriberDelegate s_bgSubscriberDelegate = BackgroundSubscriberCallback;

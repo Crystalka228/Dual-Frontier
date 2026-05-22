@@ -4,6 +4,7 @@ using DualFrontier.AI.Pathfinding;
 using DualFrontier.Application.Bootstrap;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
+using DualFrontier.Application.Bus;
 using DualFrontier.Application.Modding;
 using DualFrontier.Application.Scenario;
 using DualFrontier.Components.Items;
@@ -204,7 +205,13 @@ internal static class GameBootstrap
         var discoverer = new DefaultModDiscoverer(modsRoot);
         var controller = new ModMenuController(pipeline, discoverer);
 
-        var loop = new GameLoop(scheduler, ticks, bridge);
+        // К-L15 §3.8 Item 30 — Background tier idle-slot dispatch needs a live
+        // managed bridge so the simulation loop can drain at each tick boundary
+        // (A'.7.x γ2). The bridge stays test-instantiable separately; production
+        // code routes through this construction-time instance.
+        var busBridge = new ManagedBusBridge();
+
+        var loop = new GameLoop(scheduler, ticks, bridge, busBridge);
 
         controller.OnEditingBegan = () => loop.SetPaused(true);
         controller.OnEditingEnded = () => loop.SetPaused(false);
