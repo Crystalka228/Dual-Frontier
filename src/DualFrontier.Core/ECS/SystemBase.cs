@@ -59,9 +59,9 @@ public abstract class SystemBase
     /// events (<c>Services.Pawns.Publish(...)</c>) and subscribing in
     /// <see cref="OnInitialize"/>. Reads route through the active
     /// <see cref="SystemExecutionContext"/> so out-of-context calls
-    /// (e.g. from the Godot main thread) fail loudly, and tests that build
-    /// a context without supplying services receive a diagnostic instead of
-    /// a silent NullReferenceException.
+    /// (e.g. from a presentation render thread) fail loudly, and tests that
+    /// build a context without supplying services receive a diagnostic
+    /// instead of a silent NullReferenceException.
     /// </summary>
     protected IGameServices Services
     {
@@ -111,7 +111,7 @@ public abstract class SystemBase
     ///         via <c>IModApi.RegisterManagedComponent&lt;T&gt;</c>.</item>
     /// </list>
     /// Throws <see cref="InvalidOperationException"/> when called outside
-    /// an active scheduler context (e.g. from the Godot main thread).
+    /// an active scheduler context (e.g. from a presentation render thread).
     /// </summary>
     /// <typeparam name="T">
     /// Class IComponent type previously registered via

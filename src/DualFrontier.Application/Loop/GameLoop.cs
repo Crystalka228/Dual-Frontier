@@ -12,7 +12,7 @@ namespace DualFrontier.Application.Loop
     /// Communicates with Presentation only through PresentationBridge: per
     /// fixed-step tick the loop enqueues a <see cref="TickAdvancedCommand"/>
     /// carrying the current <c>TickScheduler.CurrentTick</c> value so the
-    /// HUD's tick label can update on the Godot main thread.
+    /// HUD's tick label can update on the presentation render thread.
     /// Internal — created by GameBootstrap, not exposed to Presentation.
     /// </summary>
     internal sealed class GameLoop : IDisposable

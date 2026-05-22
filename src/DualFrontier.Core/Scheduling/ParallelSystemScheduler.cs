@@ -34,8 +34,8 @@ namespace DualFrontier.Core.Scheduling;
 /// mod-origin systems; Core systems continue to propagate.
 ///
 /// The <c>MaxDegreeOfParallelism</c> follows the documented N-2 rule —
-/// reserving one core for Godot's main thread and one for the OS and
-/// background work. See <c>docs/THREADING.md</c>.
+/// reserving one core for the presentation render thread and one for
+/// the OS and background work. See <c>docs/THREADING.md</c>.
 /// </summary>
 internal sealed class ParallelSystemScheduler
 {

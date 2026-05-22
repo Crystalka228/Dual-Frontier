@@ -6,10 +6,9 @@ namespace DualFrontier.Application.Rendering;
 
 /// <summary>
 /// DevKit-tier extension of <see cref="IRenderer"/>. Implemented only by
-/// backends that carry development tooling — the Godot DevKit renderer is
-/// the canonical consumer. The Native production renderer never references
-/// this interface: its debug surface is deliberately empty to keep the
-/// shipped runtime lean.
+/// backends that carry development tooling. The Native production renderer
+/// never references this interface: its debug surface is deliberately empty
+/// to keep the shipped runtime lean.
 /// </summary>
 /// <remarks>
 /// Every method here is a visualisation or inspection aid for developers.

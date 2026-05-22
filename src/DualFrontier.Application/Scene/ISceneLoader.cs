@@ -2,8 +2,8 @@ namespace DualFrontier.Application.Scene;
 
 /// <summary>
 /// Loads <c>.dfscene</c> files from disk or virtual file systems. Each
-/// presentation backend provides its own implementation: Godot reads via
-/// <c>GD.Load</c> (res://), Native reads via <c>System.IO</c>.
+/// presentation backend provides its own implementation; the Native
+/// backend reads via <c>System.IO</c>.
 /// </summary>
 public interface ISceneLoader
 {

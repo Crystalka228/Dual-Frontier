@@ -3,8 +3,8 @@ using System;
 namespace DualFrontier.Application.Attributes;
 
 /// <summary>
-/// Marks a type or method as belonging exclusively to the Godot DevKit —
-/// i.e. editor tooling, debug visualisations, or Godot-specific helpers
+/// Marks a type or method as belonging exclusively to the DevKit —
+/// i.e. editor tooling, debug visualisations, or authoring-time helpers
 /// that must never ship inside the Native runtime. A CI or Roslyn analyser
 /// (future work) can walk references and fail the build if any
 /// <c>[DevKitOnly]</c> symbol is reached from <c>DualFrontier.Presentation.Native</c>.

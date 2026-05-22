@@ -5,9 +5,8 @@ namespace DualFrontier.Application.Bridge;
 /// Presentation. Implementations are immutable value records carrying the
 /// data needed to apply a visual effect. Each active <see cref="Rendering.IRenderer"/>
 /// drains the bridge queue and invokes <see cref="Execute"/> on the main
-/// thread of its backend, passing the backend-specific root object:
-/// Godot passes its <c>GameRoot</c> node; Native passes its <c>NativeRenderer</c>.
-/// The command casts as needed.
+/// thread of its backend, passing the backend-specific root object (e.g.
+/// Native passes its <c>NativeRenderer</c>). The command casts as needed.
 /// </summary>
 public interface IRenderCommand
 {

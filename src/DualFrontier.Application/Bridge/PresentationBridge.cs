@@ -6,7 +6,7 @@ namespace DualFrontier.Application.Bridge;
 /// <summary>
 /// Domain → Presentation bridge. The domain enqueues
 /// <see cref="IRenderCommand"/> instances from any thread; the main thread of
-/// the active <see cref="Rendering.IRenderer"/> (Godot or Native) drains them
+/// the active <see cref="Rendering.IRenderer"/> (Native) drains them
 /// via <see cref="DrainCommands"/>. The link is strictly one-way (TechArch 11.9).
 /// </summary>
 public sealed class PresentationBridge

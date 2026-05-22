@@ -124,8 +124,8 @@ public sealed class SystemExecutionContext
 
     /// <summary>
     /// Current execution context for the calling thread. Null when the
-    /// calling thread does not belong to the scheduler (e.g. Godot main
-    /// thread, a test that has not pushed a context).
+    /// calling thread does not belong to the scheduler (e.g. a presentation
+    /// render thread, a test that has not pushed a context).
     /// </summary>
     public static SystemExecutionContext? Current => _current.Value;
 

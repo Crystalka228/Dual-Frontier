@@ -10,8 +10,7 @@ namespace DualFrontier.Application.Display;
 /// SimState rendering pipeline) as the default <see cref="LayerType.SimState"/>
 /// layer. Concrete presentation backends construct this с a render delegate
 /// that drives their substrate-specific pipeline (Vulkan sprite renderer +
-/// Camera2D + TileMap in <c>DualFrontier.Presentation.Native</c>; Godot canvas
-/// в <c>DualFrontier.Presentation</c>).
+/// Camera2D + TileMap in <c>DualFrontier.Presentation.Native</c>).
 ///
 /// Per К10.3 v2 §1 strategy «managed-facade-preserved + Lesson #20 scope
 /// discipline»: К10.3 v2 lands the architectural commitment (К-L17 invariant

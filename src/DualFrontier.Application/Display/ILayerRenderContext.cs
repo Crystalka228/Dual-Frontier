@@ -6,9 +6,9 @@ namespace DualFrontier.Application.Display;
 ///
 /// К10.3 v2 К-L17 lands the minimal abstraction (delta + frame index) that
 /// concrete presentation backends extend with их own rendering surfaces
-/// (e.g. Vulkan command buffer, Godot canvas). Application layer stays
-/// substrate-agnostic per S-LOCK-11 — composition operates above renderer
-/// abstraction, не extending <see cref="Rendering.IRenderer"/>.
+/// (e.g. Vulkan command buffer). Application layer stays substrate-agnostic
+/// per S-LOCK-11 — composition operates above renderer abstraction,
+/// не extending <see cref="Rendering.IRenderer"/>.
 /// </summary>
 public interface ILayerRenderContext
 {
