@@ -36,34 +36,63 @@ uint32_t compute_pending_bytes_locked(const std::vector<PendingBackgroundEventRe
     return static_cast<uint32_t>(std::min<uint64_t>(total, UINT32_MAX));
 }
 
-// Apply Q-N-34 coalesce policy: for each (type_id, coalesce_key) match against
-// existing pending events; coalesce in-place using event type registry's
-// coalesce_fn. К10.2 К-L14 default-inclusion: coalesce is the architectural
-// primitive, not an optional optimization.
+// Apply Q-N-34 coalesce policy in O(N): for each (type_id, coalesce_key)
+// the first occurrence accumulates merges from all subsequent duplicates.
+// К10.2 К-L14 default-inclusion: coalesce is the architectural primitive,
+// not an optional optimization.
+//
+// 2026-05-21: rewritten from O(N²) nested scan to single-pass hash index.
+// Old version became effectively infinite past ~10k events (5M pending →
+// 25 trillion comparisons). New version handles 5M events in O(N) time.
 //
 // Caller MUST hold the Background tier mutex.
 void coalesce_pending_locked(std::vector<PendingBackgroundEventRecord>& q) {
-    for (auto it = q.begin(); it != q.end(); ) {
-        bool merged = false;
-        for (auto prior = q.begin(); prior != it; ++prior) {
-            if (prior->type_id == it->type_id && prior->coalesce_key == it->coalesce_key) {
-                // Look up coalesce_fn from event type registry (Item 28)
-                int32_t tier_value = 0;
-                uint32_t payload_size = 0;
-                const char* fqn = nullptr;
-                void (*coalesce_fn)(void*, const void*) = nullptr;
-                int32_t found = df_event_type_registry_lookup(
-                    it->type_id, &tier_value, &payload_size, &fqn, &coalesce_fn);
-                if (found == 1 && coalesce_fn != nullptr && !prior->payload.empty() && !it->payload.empty()) {
-                    coalesce_fn(prior->payload.data(), it->payload.data());
-                    it = q.erase(it);
-                    merged = true;
-                    break;
-                }
-            }
+    if (q.size() <= 1) return;
+
+    // Compact key: (type_id << 32) | coalesce_key. uint64 hash is cheap.
+    auto make_key = [](const PendingBackgroundEventRecord& e) -> uint64_t {
+        return (static_cast<uint64_t>(e.type_id) << 32) | e.coalesce_key;
+    };
+
+    std::unordered_map<uint64_t, size_t> first_index;
+    first_index.reserve(q.size());
+
+    std::vector<PendingBackgroundEventRecord> result;
+    result.reserve(q.size());
+
+    for (auto& ev : q) {
+        uint64_t k = make_key(ev);
+        auto [it, inserted] = first_index.try_emplace(k, result.size());
+        if (inserted) {
+            // First time seeing this (type_id, coalesce_key) — keep as-is.
+            result.push_back(std::move(ev));
+            continue;
         }
-        if (!merged) ++it;
+
+        // Duplicate. Look up coalesce_fn from event type registry (Item 28).
+        size_t first_idx = it->second;
+        int32_t tier_value = 0;
+        uint32_t payload_size = 0;
+        const char* fqn = nullptr;
+        void (*coalesce_fn)(void*, const void*) = nullptr;
+        int32_t found = df_event_type_registry_lookup(
+            ev.type_id, &tier_value, &payload_size, &fqn, &coalesce_fn);
+
+        if (found == 1 && coalesce_fn != nullptr &&
+            !result[first_idx].payload.empty() && !ev.payload.empty()) {
+            // Merge new into existing first; drop the duplicate.
+            coalesce_fn(result[first_idx].payload.data(), ev.payload.data());
+        } else {
+            // Cannot coalesce (no registry entry, no coalesce_fn, or empty
+            // payload). Preserve legacy semantics by keeping the event;
+            // subsequent same-key events will try to merge with THIS one
+            // since we update the index.
+            first_index[k] = result.size();
+            result.push_back(std::move(ev));
+        }
     }
+
+    q = std::move(result);
 }
 
 // Drop-oldest until queue size <= max_bytes. Returns count of events dropped.
