@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using BenchmarkDotNet.Running;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Core.Benchmarks.Stress;
 using DualFrontier.Core.Benchmarks.TickLoop;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
@@ -45,10 +46,25 @@ public static class Program
                     return RunBdnTick(args, i);
                 case "--long-run":
                     return RunLongRun(args, i);
+                case "--bdn-stress":
+                    return RunBdnStress();
             }
         }
 
         RunSmoke();
+        return 0;
+    }
+
+    private static int RunBdnStress()
+    {
+        // 8c/16t scheduler stress benchmark suite — companion to the xUnit
+        // SchedulerStressTests / ModDependencyGraphStressTests. Runs both the
+        // native scheduler benchmarks and the managed mod-graph benchmarks.
+        BenchmarkRunner.Run(new[]
+        {
+            typeof(SchedulerStressBenchmarks),
+            typeof(ModDependencyGraphBenchmarks),
+        });
         return 0;
     }
 

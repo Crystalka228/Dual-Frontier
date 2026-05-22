@@ -1,0 +1,50 @@
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Release\net8.0\DualFrontier.Core.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Release\net8.0\DualFrontier.Core.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.27)
+[xUnit.net 00:00:00.08]   Discovering: DualFrontier.Core.Tests
+[xUnit.net 00:00:00.12]   Discovered:  DualFrontier.Core.Tests
+[xUnit.net 00:00:00.13]   Starting:    DualFrontier.Core.Tests
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S6_Bus_FastTier_SixtySecondMarathon_ThroughputStable [1 m]
+  Standard Output Messages:
+ [S6 Bus_FastMarathon_60s] PASS
+   Wall time:                60.01 s
+   Producer threads:       16
+   Total Fast publishes:   315,498,856
+   Mean throughput:           5,257,660 events/sec
+   Per-thread per-sec:          328,604 events/sec/thread
+   Total allocated:               0.9 MB
+   GC Gen0 / Gen1 / Gen2:  0 / 0 / 0
+   Mean alloc per publish:        0.0 bytes
+
+
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S3_Bus_FiveMillionEventsPerTier_HoldsAllDeliveryContracts [4 s]
+  Standard Output Messages:
+ [S3 Bus_5M×3tiers] PASS
+   Producer threads:  16
+   Per-tier published: 5,000,000
+   Total events:      15,000,000
+   Publish loop:         4196 ms
+   Throughput total:     3574833 events/sec
+   Normal drain time:     144 ms  (1 drain calls)
+   Background delivered: 0 / 5,000,000 (coalesce_key=0 may collapse)
+   Allocated:                0.1 MB
+   GC Gen2 Δ:         0
+
+
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S5b_Bus_FastTier_PublishLatency_Percentiles_ThirtyTwoSubscribers [515 ms]
+  Standard Output Messages:
+ [S5b Bus_FastLatency_32subs] PASS
+   Subscribers per event: 32
+   Producer threads:      16
+   Samples (post-warmup): 800,000  (raw 816,000, dropped 16,000)
+   Stopwatch frequency:   10,000,000 ticks/sec  (100.0 ns/tick)
+   Wall time:                 373 ms
+   Mean:              7000.0 ns  (    7.00 µs)
+   P50:               6700.0 ns  (    6.70 µs)
+   P95:               7300.0 ns  (    7.30 µs)
+   P99:               8600.0 ns  (    8.60 µs)
+   P999:             39100.0 ns  (   39.10 µs)  ← gate: < 5 ms (relaxed for 32 subs)
+   Max:           13508100.0 ns  (13508.10 µs)
+
+

@@ -1,0 +1,250 @@
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\DualFrontier.Modding.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.72]     DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithIncompatibleApiVersion_RejectsBatchWithIncompatibleVersion [FAIL]
+  Failed DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithIncompatibleApiVersion_RejectsBatchWithIncompatibleVersion [408 ms]
+  Error Message:
+   Expected ValidationError err = result.Errors to contain a single item matching (Convert(e.Kind, Int32) == 4) AndAlso (e.ModId == "tests.regular.badapi"), but no such item was found.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithIncompatibleApiVersion_RejectsBatchWithIncompatibleVersion() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M52IntegrationTests.cs:line 41
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithProtectedSystemReplacement_RejectsBatch [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M73Phase2DebtTests.RegularMod_DependedOn_LoadsAndUnloadsCleanly_WrReleasedWithinTimeout [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithRegularModCycle_RejectsBatchWithCyclicDependency [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithSatisfiedDeps_LoadsInTopologicalOrder [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M73Phase2DebtTests.RegularMod_ReplacesCombat_LoadsAndUnloadsCleanly_WrReleasedWithinTimeout [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithIncompatibleDepVersion_RejectsBatchWithIncompatibleVersion [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithUnknownFqn_RejectsBatch [FAIL]
+  Failed DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithProtectedSystemReplacement_RejectsBatch [230 ms]
+  Error Message:
+   Expected ValidationError err = result.Errors to contain a single item matching (Convert(e.Kind, Int32) == 9) AndAlso (e.ModId == "tests.regular.replacesprotected"), but no such item was found.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithProtectedSystemReplacement_RejectsBatch() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M62IntegrationTests.cs:line 85
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M73Phase2DebtTests.RegularMod_DependedOn_LoadsAndUnloadsCleanly_WrReleasedWithinTimeout [518 ms]
+  Error Message:
+   Expected applyResult.Success to be True because the fixture must apply cleanly for the unload assertion to be meaningful (errors: Failed to read manifest for 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_DependedOn': mod.manifest.json not found in 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_DependedOn'.), but found False.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.BeTrue(String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M73Phase2DebtTests.RegularMod_DependedOn_LoadsAndUnloadsCleanly_WrReleasedWithinTimeout() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M73Phase2DebtTests.cs:line 50
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithRegularModCycle_RejectsBatchWithCyclicDependency [426 ms]
+  Error Message:
+   Expected result.Errors 
+{
+    DualFrontier.Application.Modding.ValidationError
+    {
+        ConflictingComponent = <null>, 
+        ConflictingModId = <null>, 
+        Kind = ValidationErrorKind.MissingDependency {value: 3}, 
+        Message = "Failed to read manifest for 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_CyclicA': mod.manifest.json not found in 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_CyclicA'.", 
+        ModId = "D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_CyclicA"
+    }, 
+    DualFrontier.Application.Modding.ValidationError
+    {
+        ConflictingComponent = <null>, 
+        ConflictingModId = <null>, 
+        Kind = ValidationErrorKind.MissingDependency {value: 3}, 
+        Message = "Failed to read manifest for 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_CyclicB': mod.manifest.json not found in 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_CyclicB'.", 
+        ModId = "D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_CyclicB"
+    }
+} to have an item matching ((Convert(e.Kind, Int32) == 2) AndAlso (e.ModId == "tests.regular.cyca")).
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.Contain(Expression`1 predicate, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithRegularModCycle_RejectsBatchWithCyclicDependency() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M51PipelineIntegrationTests.cs:line 43
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithSatisfiedDeps_LoadsInTopologicalOrder [1 ms]
+  Error Message:
+   Expected result.Success to be True, but found False.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.BeTrue(String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithSatisfiedDeps_LoadsInTopologicalOrder() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M51PipelineIntegrationTests.cs:line 118
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M73Phase2DebtTests.RegularMod_ReplacesCombat_LoadsAndUnloadsCleanly_WrReleasedWithinTimeout [1 ms]
+  Error Message:
+   Expected applyResult.Success to be True because the fixture must apply cleanly for the unload assertion to be meaningful (errors: Failed to read manifest for 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_ReplacesCombat': mod.manifest.json not found in 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_ReplacesCombat'.), but found False.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.BeTrue(String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M73Phase2DebtTests.RegularMod_ReplacesCombat_LoadsAndUnloadsCleanly_WrReleasedWithinTimeout() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M73Phase2DebtTests.cs:line 79
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithIncompatibleDepVersion_RejectsBatchWithIncompatibleVersion [1 ms]
+  Error Message:
+   Expected ValidationError err = result.Errors to contain a single item matching (Convert(e.Kind, Int32) == 4) AndAlso (e.ModId == "tests.regular.depsbadver"), but no such item was found.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithIncompatibleDepVersion_RejectsBatchWithIncompatibleVersion() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M52IntegrationTests.cs:line 66
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithUnknownFqn_RejectsBatch [2 ms]
+  Error Message:
+   Expected ValidationError err = result.Errors to contain a single item matching (Convert(e.Kind, Int32) == 10) AndAlso (e.ModId == "tests.regular.replacesunknown"), but no such item was found.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithUnknownFqn_RejectsBatch() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M62IntegrationTests.cs:line 110
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithMissingRequiredDep_RejectsBatchWithMissingDependency [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithCascadeFailure_SurfacesBothErrors [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithoutAnyReplaces_BridgesAllRegistered [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithMissingOptionalDep_LoadsSuccessfullyWithWarning [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithTwoModsReplacingSameSystem_RejectsBatchWithConflict [FAIL]
+[xUnit.net 00:00:00.73]     DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithReplaceableBridge_SkipsBridgeAndUsesModSystem [FAIL]
+  Failed DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithMissingRequiredDep_RejectsBatchWithMissingDependency [1 ms]
+  Error Message:
+   Expected ValidationError err = result.Errors to contain a single item matching (Convert(e.Kind, Int32) == 3) AndAlso (e.ModId == "tests.regular.missreq"), but no such item was found.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.ContainSingle(Expression`1 predicate, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithMissingRequiredDep_RejectsBatchWithMissingDependency() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M51PipelineIntegrationTests.cs:line 71
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithCascadeFailure_SurfacesBothErrors [1 ms]
+  Error Message:
+   Expected result.Errors 
+{
+    DualFrontier.Application.Modding.ValidationError
+    {
+        ConflictingComponent = <null>, 
+        ConflictingModId = <null>, 
+        Kind = ValidationErrorKind.MissingDependency {value: 3}, 
+        Message = "Failed to read manifest for 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_BadApiVersion': mod.manifest.json not found in 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_BadApiVersion'.", 
+        ModId = "D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_BadApiVersion"
+    }, 
+    DualFrontier.Application.Modding.ValidationError
+    {
+        ConflictingComponent = <null>, 
+        ConflictingModId = <null>, 
+        Kind = ValidationErrorKind.MissingDependency {value: 3}, 
+        Message = "Failed to read manifest for 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_DependsOnBadApi': mod.manifest.json not found in 'D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_DependsOnBadApi'.", 
+        ModId = "D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\Fixtures\Fixture.RegularMod_DependsOnBadApi"
+    }
+} to have an item matching (((Convert(e.Kind, Int32) == 4) AndAlso (e.ModId == "tests.regular.badapi")) AndAlso e.Message.Contains("§8.1")) because the provider's Phase A failure surfaces with §8.1 citation.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.Contain(Expression`1 predicate, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M52IntegrationTests.Apply_WithCascadeFailure_SurfacesBothErrors() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M52IntegrationTests.cs:line 96
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithoutAnyReplaces_BridgesAllRegistered [2 ms]
+  Error Message:
+   Expected result.Success to be True, but found False.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.BeTrue(String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithoutAnyReplaces_BridgesAllRegistered() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M62IntegrationTests.cs:line 182
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithMissingOptionalDep_LoadsSuccessfullyWithWarning [2 ms]
+  Error Message:
+   Expected result.Success to be True because an optional missing dependency must not block the apply, but found False.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.BeTrue(String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M51PipelineIntegrationTests.Apply_WithMissingOptionalDep_LoadsSuccessfullyWithWarning() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M51PipelineIntegrationTests.cs:line 93
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithTwoModsReplacingSameSystem_RejectsBatchWithConflict [3 ms]
+  Error Message:
+   Expected result.Errors.Where(e => e.Kind == ValidationErrorKind.BridgeReplacementConflict) to contain 2 item(s) because both mods must produce a symmetric BridgeReplacementConflict, but found 0: {empty}.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.HaveCount(Int32 expected, String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithTwoModsReplacingSameSystem_RejectsBatchWithConflict() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M62IntegrationTests.cs:line 139
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithReplaceableBridge_SkipsBridgeAndUsesModSystem [1 ms]
+  Error Message:
+   Expected result.Success to be True, but found False.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Primitives.BooleanAssertions`1.BeTrue(String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Pipeline.M62IntegrationTests.Apply_WithReplaceableBridge_SkipsBridgeAndUsesModSystem() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Pipeline\M62IntegrationTests.cs:line 54
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:    14, Passed:   381, Skipped:     0, Total:   395, Duration: 43 s - DualFrontier.Modding.Tests.dll (net8.0)

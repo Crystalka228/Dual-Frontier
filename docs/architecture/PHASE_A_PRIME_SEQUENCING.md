@@ -141,6 +141,32 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Estimated time: substantial; 1500-2500 line execution brief; multi-session Claude Code execution possible
   │   Executor: Opus deliberation (brief authoring) + Claude Code (execution)
   │
+  ├─ Phase A'.7.x — BUS_ARCHITECTURE_AMENDMENT (К-extensions cascade #0, CLOSED 2026-05-21)
+  │   Brief: A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT_BRIEF.md (EXECUTED)
+  │   Designation: «К-extensions cascade #0» per Q-N-7X-12 — chronologically pre-A'.8 closure,
+  │   architecturally a К-extension that adds К-L15.1 to the К-series surface.
+  │   Scope: К-L15.1 «Three-tier independence» AUTHORED → LOCKED (2-layer sub-invariant к К-L15:
+  │   per-tier state isolation + per-tier mutex runtime isolation + cross-tier re-entrant publish
+  │   safe). Investigation atomization (β1-β7) + Bug #1 (BusFacade coalesceKey overload) + Bug #2
+  │   (DrainBackgroundBatch wiring) + Bug #3 (O(N²) → O(N) coalesce) + Bug #4 (single-mutex
+  │   contention closed via per-tier state split) + Group B cross-test pollution (Dispose
+  │   extension) + governance (METHODOLOGY §12.7 Modding suite verification gate per
+  │   CAPA-K10_3-V2-SOFT-HALT step (c)). KERNEL_ARCHITECTURE.md v2.3 → v2.4, METHODOLOGY.md
+  │   v1.8 → v1.9, 5 CAPAs + EVT-2026-05-21-A_PRIME_7_X-CLOSURE.
+  │   Cumulative К-Lxx series: 20 → 21 (К-L15.1 added; К-L15 stays AUTHORED candidate until A'.8
+  │   per К-L7.1 precedent).
+  │   Commits: 13 atomic on claude/scheduler-stress-test-KmVM3 (b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE)
+  │   Executor: Claude Opus 4.7 (deliberation) + Claude Code (execution).
+  │
+  ├─ Phase A'.7.5 — Bus source split (sub-milestone, separate cascade)
+  │   Scope: bus_native.cpp → bus_fast/normal/background/common.cpp (4-file split) +
+  │   bus_native.cpp DELETED + CMakeLists.txt updated. background_queue.cpp preserved distinct
+  │   (К10.2 Item 26/30 policy/dispatch layer separation per gap audit G-2 layer-collapse note).
+  │   К-L impact: NONE — К-L15.1 stays 2-layer; source split is engineering aesthetic, not
+  │   invariant material per Q-N-7X-2 Option C hybrid. ~3-5 atomic commits, separate brief
+  │   authored post-A'.7.x closure.
+  │   Status: NOT STARTED (brief authoring queued post-A'.7.x closure).
+  │
   ├─ Phase A'.8 — K-closure report
   │   Scope: structured document enumerating final K-Lxx invariants
   │   Dual purpose: (1) historical record of K-series, (2) formal analyzer rule specification surface

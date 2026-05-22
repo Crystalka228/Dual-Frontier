@@ -1,0 +1,106 @@
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Release\net8.0\DualFrontier.Core.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Release\net8.0\DualFrontier.Core.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.27)
+[xUnit.net 00:00:00.06]   Discovering: DualFrontier.Core.Tests
+[xUnit.net 00:00:00.10]   Discovered:  DualFrontier.Core.Tests
+[xUnit.net 00:00:00.10]   Starting:    DualFrontier.Core.Tests
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S6_Bus_FastTier_SixtySecondMarathon_ThroughputStable [1 m]
+  Standard Output Messages:
+ [S6 Bus_FastMarathon_60s] PASS
+   Wall time:                60.02 s
+   Producer threads:       16
+   Total Fast publishes:   301,206,517
+   Mean throughput:           5,018,199 events/sec
+   Per-thread per-sec:          313,637 events/sec/thread
+   Total allocated:               0.9 MB
+   GC Gen0 / Gen1 / Gen2:  0 / 0 / 0
+   Mean alloc per publish:        0.0 bytes
+
+
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S8_Bus_BackgroundTier_CoalesceKeyZero_CollapsesAllToOneDispatch [12 ms]
+  Standard Output Messages:
+ [S8 Bus_Bg_CoalesceCollapse] PASS
+   Published events:        1,000  (all with coalesce_key = 0)
+   Queue size pre-dispatch: 1,000 events / 4,000 bytes
+   Native dispatched:       1  (after coalesce collapse)
+   Subscriber fires:        1
+   Queue size post:         0 events / 0 bytes
+   Collapse ratio:          1,000 → 1  (1000×)
+
+
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S3_Bus_FiveMillionEventsPerTier_HoldsAllDeliveryContracts [2 s]
+  Standard Output Messages:
+ [S3 Bus_5M×3tiers] PASS
+   Producer threads:    16
+   Per-tier published:  5,000,000
+   Total events:        15,000,000
+   Publish loop:           2289 ms
+   Throughput total:       6553080 events/sec
+   Normal drain time:       253 ms  (1 drain calls)
+   Bg queue pre-drain:  992 events / 3.9 KB
+   Bg dispatch result:  1 event(s) dispatched in 0 ms
+   Bg queue post-drain: 0 events / 0 bytes
+   Bg subscriber fires: 1  (collapsed from 992 via coalesce_key=0)
+   Allocated:                  0.0 MB
+   GC Gen2 Δ:           0
+
+
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S5b_Bus_FastTier_PublishLatency_Percentiles_ThirtyTwoSubscribers [565 ms]
+  Standard Output Messages:
+ [S5b Bus_FastLatency_32subs] PASS
+   Subscribers per event: 32
+   Producer threads:      16
+   Samples (post-warmup): 800,000  (raw 816,000, dropped 16,000)
+   Stopwatch frequency:   10,000,000 ticks/sec  (100.0 ns/tick)
+   Wall time:                 407 ms
+   Mean:              7100.0 ns  (    7.10 µs)
+   P50:               5200.0 ns  (    5.20 µs)
+   P95:               6400.0 ns  (    6.40 µs)
+   P99:               8300.0 ns  (    8.30 µs)
+   P999:            169400.0 ns  (  169.40 µs)  ← gate: < 5 ms (relaxed for 32 subs)
+   Max:           19392200.0 ns  (19392.20 µs)
+
+
+[xUnit.net 00:01:06.17]   Finished:    DualFrontier.Core.Tests
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S4_Bus_FastTier_SixtyFourProducerThreads_NoLossOrCrash [2 s]
+  Standard Output Messages:
+ [S4 Bus_64producer_4×oversub] PASS
+   Producer threads:  64 (4× HW threads = 16)
+   Total Fast events: 12,800,000
+   Wall time:            2581 ms
+   Throughput:           4959318 events/sec
+   Distinct threads:  18
+
+
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S9_Bus_BackgroundTier_DistinctCoalesceKeys_DeliverAll [7 ms]
+  Standard Output Messages:
+ [S9 Bus_Bg_DistinctKeys] PASS
+   Published events:        1,000  (coalesce_key 1..1000)
+   Queue size pre-dispatch: 1,000 events / 4,000 bytes
+   Native dispatched:       1,000  (no collapse — keys distinct)
+   Subscriber fires:        1,000
+   Queue size post:         0 events / 0 bytes
+
+
+  Passed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S5a_Bus_FastTier_PublishLatency_Percentiles_OneSubscriber [235 ms]
+  Standard Output Messages:
+ [S5a Bus_FastLatency_1sub] PASS
+   Subscribers per event: 1
+   Producer threads:      16
+   Samples (post-warmup): 800,000  (raw 816,000, dropped 16,000)
+   Stopwatch frequency:   10,000,000 ticks/sec  (100.0 ns/tick)
+   Wall time:                 167 ms
+   Mean:              2700.0 ns  (    2.70 µs)
+   P50:                400.0 ns  (    0.40 µs)
+   P95:               4900.0 ns  (    4.90 µs)
+   P99:              38600.0 ns  (   38.60 µs)
+   P999:            187300.0 ns  (  187.30 µs)  ← gate: < 1 ms (К-L15)
+   Max:           34462300.0 ns  (34462.30 µs)
+
+
+
+Test Run Successful.
+Total tests: 7
+     Passed: 7
+ Total time: 1.1112 Minutes

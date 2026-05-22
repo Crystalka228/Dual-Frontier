@@ -2,7 +2,9 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cstring>
 #include <mutex>
+#include <unordered_map>
 
 #include "bus_native_internal.h"
 #include "event_type_registry.h"
@@ -26,45 +28,75 @@ PolicyConfig& policy() {
     return cfg;
 }
 
-// Compute total bytes used by pending events. Caller MUST hold BusNative mutex.
+// Compute total bytes used by pending events. Caller MUST hold the
+// Background tier mutex.
 uint32_t compute_pending_bytes_locked(const std::vector<PendingBackgroundEventRecord>& q) {
     uint64_t total = 0;
     for (const auto& ev : q) total += static_cast<uint64_t>(ev.payload.size());
     return static_cast<uint32_t>(std::min<uint64_t>(total, UINT32_MAX));
 }
 
-// Apply Q-N-34 coalesce policy: for each (type_id, coalesce_key) match against
-// existing pending events; coalesce in-place using event type registry's
-// coalesce_fn. К10.2 К-L14 default-inclusion: coalesce is the architectural
-// primitive, not an optional optimization.
+// Apply Q-N-34 coalesce policy in O(N): for each (type_id, coalesce_key)
+// the first occurrence accumulates merges from all subsequent duplicates.
+// К10.2 К-L14 default-inclusion: coalesce is the architectural primitive,
+// not an optional optimization.
 //
-// Caller MUST hold BusNative mutex.
+// 2026-05-21: rewritten from O(N²) nested scan to single-pass hash index.
+// Old version became effectively infinite past ~10k events (5M pending →
+// 25 trillion comparisons). New version handles 5M events in O(N) time.
+//
+// Caller MUST hold the Background tier mutex.
 void coalesce_pending_locked(std::vector<PendingBackgroundEventRecord>& q) {
-    for (auto it = q.begin(); it != q.end(); ) {
-        bool merged = false;
-        for (auto prior = q.begin(); prior != it; ++prior) {
-            if (prior->type_id == it->type_id && prior->coalesce_key == it->coalesce_key) {
-                // Look up coalesce_fn from event type registry (Item 28)
-                int32_t tier_value = 0;
-                uint32_t payload_size = 0;
-                const char* fqn = nullptr;
-                void (*coalesce_fn)(void*, const void*) = nullptr;
-                int32_t found = df_event_type_registry_lookup(
-                    it->type_id, &tier_value, &payload_size, &fqn, &coalesce_fn);
-                if (found == 1 && coalesce_fn != nullptr && !prior->payload.empty() && !it->payload.empty()) {
-                    coalesce_fn(prior->payload.data(), it->payload.data());
-                    it = q.erase(it);
-                    merged = true;
-                    break;
-                }
-            }
+    if (q.size() <= 1) return;
+
+    // Compact key: (type_id << 32) | coalesce_key. uint64 hash is cheap.
+    auto make_key = [](const PendingBackgroundEventRecord& e) -> uint64_t {
+        return (static_cast<uint64_t>(e.type_id) << 32) | e.coalesce_key;
+    };
+
+    std::unordered_map<uint64_t, size_t> first_index;
+    first_index.reserve(q.size());
+
+    std::vector<PendingBackgroundEventRecord> result;
+    result.reserve(q.size());
+
+    for (auto& ev : q) {
+        uint64_t k = make_key(ev);
+        auto [it, inserted] = first_index.try_emplace(k, result.size());
+        if (inserted) {
+            // First time seeing this (type_id, coalesce_key) — keep as-is.
+            result.push_back(std::move(ev));
+            continue;
         }
-        if (!merged) ++it;
+
+        // Duplicate. Look up coalesce_fn from event type registry (Item 28).
+        size_t first_idx = it->second;
+        int32_t tier_value = 0;
+        uint32_t payload_size = 0;
+        const char* fqn = nullptr;
+        void (*coalesce_fn)(void*, const void*) = nullptr;
+        int32_t found = df_event_type_registry_lookup(
+            ev.type_id, &tier_value, &payload_size, &fqn, &coalesce_fn);
+
+        if (found == 1 && coalesce_fn != nullptr &&
+            !result[first_idx].payload.empty() && !ev.payload.empty()) {
+            // Merge new into existing first; drop the duplicate.
+            coalesce_fn(result[first_idx].payload.data(), ev.payload.data());
+        } else {
+            // Cannot coalesce (no registry entry, no coalesce_fn, or empty
+            // payload). Preserve legacy semantics by keeping the event;
+            // subsequent same-key events will try to merge with THIS one
+            // since we update the index.
+            first_index[k] = result.size();
+            result.push_back(std::move(ev));
+        }
     }
+
+    q = std::move(result);
 }
 
 // Drop-oldest until queue size <= max_bytes. Returns count of events dropped.
-// Caller MUST hold BusNative mutex.
+// Caller MUST hold the Background tier mutex.
 int32_t apply_drop_oldest_locked(std::vector<PendingBackgroundEventRecord>& q, uint32_t max_bytes) {
     int32_t dropped = 0;
     uint32_t bytes = compute_pending_bytes_locked(q);
@@ -105,19 +137,18 @@ DF_API int32_t df_background_queue_configure(
 }
 
 DF_API int32_t df_background_queue_dispatch_idle_slot(uint64_t available_budget_micros) {
-    auto& bus = BusNative::instance();
+    auto& tier = BusNative::background();
 
-    // Snapshot subscribers + drain pending under bus mutex; apply coalesce
-    // before dispatch (idempotent с per-publish coalesce when publishers
-    // call force_coalesce too).
+    // Snapshot subscribers + drain pending under Background tier mutex;
+    // apply coalesce before dispatch (idempotent с per-publish coalesce
+    // when publishers call force_coalesce too).
     std::vector<PendingBackgroundEventRecord> drained;
     std::unordered_map<uint32_t, std::vector<BatchedSubscriberRecord>> subs_snapshot;
     {
-        std::lock_guard<std::mutex> bus_lock(bus.mutex());
-        auto& q = bus.pending_background_unsafe();
-        coalesce_pending_locked(q);
-        drained.swap(q);
-        subs_snapshot = bus.background_subscribers_unsafe();
+        std::lock_guard<std::mutex> tier_lock(tier.mutex);
+        coalesce_pending_locked(tier.pending);
+        drained.swap(tier.pending);
+        subs_snapshot = tier.subscribers;
     }
 
     if (drained.empty()) return 0;
@@ -131,10 +162,9 @@ DF_API int32_t df_background_queue_dispatch_idle_slot(uint64_t available_budget_
     for (const auto& ev : drained) {
         if (budget < cost_per_event && available_budget_micros != 0) {
             // Out of budget; requeue remaining events for next idle-slot.
-            std::lock_guard<std::mutex> bus_lock(bus.mutex());
-            auto& q = bus.pending_background_unsafe();
+            std::lock_guard<std::mutex> tier_lock(tier.mutex);
             for (auto it = drained.begin() + dispatched; it != drained.end(); ++it) {
-                q.push_back(*it);
+                tier.pending.push_back(*it);
             }
             break;
         }
@@ -159,11 +189,10 @@ DF_API int32_t df_background_queue_dispatch_idle_slot(uint64_t available_budget_
 }
 
 DF_API int32_t df_background_queue_size(uint32_t* out_event_count, uint32_t* out_bytes_used) {
-    auto& bus = BusNative::instance();
-    std::lock_guard<std::mutex> bus_lock(bus.mutex());
-    auto& q = bus.pending_background_unsafe();
-    if (out_event_count) *out_event_count = static_cast<uint32_t>(q.size());
-    if (out_bytes_used)  *out_bytes_used  = compute_pending_bytes_locked(q);
+    auto& tier = BusNative::background();
+    std::lock_guard<std::mutex> tier_lock(tier.mutex);
+    if (out_event_count) *out_event_count = static_cast<uint32_t>(tier.pending.size());
+    if (out_bytes_used)  *out_bytes_used  = compute_pending_bytes_locked(tier.pending);
     return 1;
 }
 
@@ -199,11 +228,10 @@ uint32_t read_u32(const uint8_t* src) {
 
 DF_API int32_t df_background_queue_compute_save_size(uint32_t* out_required_bytes) {
     if (out_required_bytes == nullptr) return 0;
-    auto& bus = dualfrontier::BusNative::instance();
-    std::lock_guard<std::mutex> bus_lock(bus.mutex());
-    const auto& q = bus.pending_background_unsafe();
+    auto& tier = dualfrontier::BusNative::background();
+    std::lock_guard<std::mutex> tier_lock(tier.mutex);
     uint64_t total = HEADER_BYTES;
-    for (const auto& ev : q) {
+    for (const auto& ev : tier.pending) {
         total += EVENT_FIXED_BYTES + ev.payload.size();
     }
     if (total > UINT32_MAX) return 0;
@@ -215,13 +243,12 @@ DF_API int32_t df_background_queue_serialize(
     void* out_buffer, uint32_t buffer_size, uint32_t* out_bytes_written)
 {
     if (out_buffer == nullptr || out_bytes_written == nullptr) return 0;
-    auto& bus = dualfrontier::BusNative::instance();
-    std::lock_guard<std::mutex> bus_lock(bus.mutex());
-    const auto& q = bus.pending_background_unsafe();
+    auto& tier = dualfrontier::BusNative::background();
+    std::lock_guard<std::mutex> tier_lock(tier.mutex);
 
     uint64_t required = HEADER_BYTES;
     uint32_t total_payload = 0;
-    for (const auto& ev : q) {
+    for (const auto& ev : tier.pending) {
         required += EVENT_FIXED_BYTES + ev.payload.size();
         total_payload += static_cast<uint32_t>(ev.payload.size());
     }
@@ -229,10 +256,10 @@ DF_API int32_t df_background_queue_serialize(
 
     uint8_t* p = static_cast<uint8_t*>(out_buffer);
     write_u32(p,     DF_BG_QUEUE_SCHEMA_VERSION); p += 4;
-    write_u32(p,     static_cast<uint32_t>(q.size())); p += 4;
+    write_u32(p,     static_cast<uint32_t>(tier.pending.size())); p += 4;
     write_u32(p,     total_payload); p += 4;
 
-    for (const auto& ev : q) {
+    for (const auto& ev : tier.pending) {
         write_u32(p, ev.type_id);      p += 4;
         write_u32(p, ev.coalesce_key); p += 4;
         write_u32(p, static_cast<uint32_t>(ev.payload.size())); p += 4;
@@ -275,22 +302,20 @@ DF_API int32_t df_background_queue_deserialize(
         loaded.push_back(std::move(ev));
     }
 
-    auto& bus = dualfrontier::BusNative::instance();
-    std::lock_guard<std::mutex> bus_lock(bus.mutex());
-    auto& q = bus.pending_background_unsafe();
-    q = std::move(loaded);
+    auto& tier = dualfrontier::BusNative::background();
+    std::lock_guard<std::mutex> tier_lock(tier.mutex);
+    tier.pending = std::move(loaded);
     if (out_events_loaded) *out_events_loaded = count;
     return 1;
 }
 
 DF_API int32_t df_background_queue_force_coalesce(void) {
-    auto& bus = BusNative::instance();
+    auto& tier = BusNative::background();
     auto& cfg = policy();
-    std::lock_guard<std::mutex> bus_lock(bus.mutex());
-    auto& q = bus.pending_background_unsafe();
-    size_t before = q.size();
-    coalesce_pending_locked(q);
-    size_t after = q.size();
+    std::lock_guard<std::mutex> tier_lock(tier.mutex);
+    size_t before = tier.pending.size();
+    coalesce_pending_locked(tier.pending);
+    size_t after = tier.pending.size();
 
     // Apply saturation policy after coalesce (smaller queue post-coalesce
     // is more likely к fit cap; drop-oldest only kicks in если still over).
@@ -299,7 +324,7 @@ DF_API int32_t df_background_queue_force_coalesce(void) {
         std::lock_guard<std::mutex> cfg_lock(cfg.mutex);
         max_bytes = cfg.max_bytes;
     }
-    int32_t dropped = apply_drop_oldest_locked(q, max_bytes);
+    int32_t dropped = apply_drop_oldest_locked(tier.pending, max_bytes);
     if (dropped > 0) {
         cfg.saturation_count.fetch_add(dropped, std::memory_order_relaxed);
     }

@@ -64,6 +64,9 @@ public sealed class ManagedBusBridge
     private static extern int df_bus_drain_normal_batch();
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    private static extern int df_background_queue_dispatch_idle_slot(ulong available_budget_micros);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     private static extern int df_bus_subscriber_count_fast(uint type_id);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
@@ -133,6 +136,17 @@ public sealed class ManagedBusBridge
     /// boundary). Returns count of dispatched batches.
     /// </summary>
     public int DrainNormalBatch() => df_bus_drain_normal_batch();
+
+    /// <summary>
+    /// Drains the Background tier coalesce + dispatch loop within the supplied
+    /// idle-slot budget (microseconds). Pass 0 для unbounded — caller covers
+    /// the whole pending queue. К-L15 §3.8 Item 30 names the scheduler as the
+    /// invoker of this surface at tick-end; <see cref="DualFrontier.Application.Loop.GameLoop"/>
+    /// calls it after each fixed step с budget = remaining tick period.
+    /// </summary>
+    /// <returns>Count of background events dispatched in this call.</returns>
+    public int DrainBackgroundBatch(ulong availableBudgetMicros)
+        => df_background_queue_dispatch_idle_slot(availableBudgetMicros);
 
     /// <summary>Diagnostic: count of native subscribers per tier per type.</summary>
     public int SubscriberCount(BusTier tier, uint typeId) => tier switch

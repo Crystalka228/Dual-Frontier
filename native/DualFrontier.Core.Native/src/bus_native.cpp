@@ -25,51 +25,108 @@ constexpr TierTag decode_tier(df_bus_subscription_id sid) {
     return static_cast<TierTag>((sid & TIER_MASK) >> TIER_SHIFT);
 }
 
-} // namespace
-
-BusNative& BusNative::instance() {
-    static BusNative inst;
-    return inst;
+template<typename Record>
+bool remove_by_id_locked(std::unordered_map<uint32_t, std::vector<Record>>& subs, df_bus_subscription_id sid) {
+    for (auto& [type_id, vec] : subs) {
+        auto it = std::find_if(vec.begin(), vec.end(),
+            [sid](const Record& s) { return s.id == sid; });
+        if (it != vec.end()) { vec.erase(it); return true; }
+    }
+    return false;
 }
 
-df_bus_subscription_id BusNative::subscribe_fast(
+template<typename Record>
+int32_t remove_by_mod_locked(std::unordered_map<uint32_t, std::vector<Record>>& subs, uint32_t mod_id) {
+    int32_t removed = 0;
+    for (auto& [type_id, vec] : subs) {
+        auto before = vec.size();
+        vec.erase(std::remove_if(vec.begin(), vec.end(),
+            [mod_id](const Record& s) { return s.mod_id == mod_id; }),
+            vec.end());
+        removed += static_cast<int32_t>(before - vec.size());
+    }
+    return removed;
+}
+
+} // namespace
+
+// ─── Tier-state singletons ───────────────────────────────────────────────
+// Each tier owns its own state; no shared mutex, no shared sequence counter.
+
+FastTierState& BusNative::fast() {
+    static FastTierState s;
+    return s;
+}
+
+NormalTierState& BusNative::normal() {
+    static NormalTierState s;
+    return s;
+}
+
+BackgroundTierState& BusNative::background() {
+    static BackgroundTierState s;
+    return s;
+}
+
+} // namespace dualfrontier
+
+using namespace dualfrontier;
+
+extern "C" {
+
+// ─── Subscribe ───────────────────────────────────────────────────────────
+
+DF_API df_bus_subscription_id df_bus_subscribe_fast(
     uint32_t type_id, uint32_t mod_id,
     df_bus_fast_subscriber_fn cb, void* user_data)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    df_bus_subscription_id id = encode_id(TierTag::Fast, next_seq_++);
-    fast_[type_id].push_back(FastSubscriberRecord{id, mod_id, type_id, cb, user_data});
+    auto& tier = BusNative::fast();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    df_bus_subscription_id id = encode_id(TierTag::Fast, tier.next_seq++);
+    tier.subscribers[type_id].push_back(FastSubscriberRecord{id, mod_id, type_id, cb, user_data});
     return id;
 }
 
-df_bus_subscription_id BusNative::subscribe_normal(
+DF_API df_bus_subscription_id df_bus_subscribe_normal(
     uint32_t type_id, uint32_t mod_id,
     df_bus_batched_subscriber_fn cb, void* user_data)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    df_bus_subscription_id id = encode_id(TierTag::Normal, next_seq_++);
-    normal_[type_id].push_back(BatchedSubscriberRecord{id, mod_id, type_id, cb, user_data});
+    auto& tier = BusNative::normal();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    df_bus_subscription_id id = encode_id(TierTag::Normal, tier.next_seq++);
+    tier.subscribers[type_id].push_back(BatchedSubscriberRecord{id, mod_id, type_id, cb, user_data});
     return id;
 }
 
-df_bus_subscription_id BusNative::subscribe_background(
+DF_API df_bus_subscription_id df_bus_subscribe_background(
     uint32_t type_id, uint32_t mod_id,
     df_bus_batched_subscriber_fn cb, void* user_data)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    df_bus_subscription_id id = encode_id(TierTag::Background, next_seq_++);
-    background_[type_id].push_back(BatchedSubscriberRecord{id, mod_id, type_id, cb, user_data});
+    auto& tier = BusNative::background();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    df_bus_subscription_id id = encode_id(TierTag::Background, tier.next_seq++);
+    tier.subscribers[type_id].push_back(BatchedSubscriberRecord{id, mod_id, type_id, cb, user_data});
     return id;
 }
 
-int32_t BusNative::publish_fast(uint32_t type_id, const void* payload, uint32_t payload_size) {
+// ─── Publish ─────────────────────────────────────────────────────────────
+
+DF_API int32_t df_bus_publish_fast(
+    uint32_t type_id, const void* payload, uint32_t payload_size)
+{
+    auto& tier = BusNative::fast();
     std::vector<FastSubscriberRecord> snapshot;
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        auto it = fast_.find(type_id);
-        if (it == fast_.end()) return 0;
+        std::lock_guard<std::mutex> lock(tier.mutex);
+        auto it = tier.subscribers.find(type_id);
+        if (it == tier.subscribers.end()) return 0;
         snapshot = it->second;
     }
+    // Callbacks fire WITHOUT holding the Fast mutex — synchronous dispatch
+    // is single-thread per call but doesn't block other Fast publishers,
+    // and (post-split) doesn't block Normal/Background either. A Fast
+    // subscriber can now safely publish to any tier without re-entrancy
+    // deadlock on the shared mutex (which no longer exists).
     int32_t invoked = 0;
     for (const auto& sub : snapshot) {
         sub.callback(type_id, payload, payload_size, sub.user_data);
@@ -78,25 +135,46 @@ int32_t BusNative::publish_fast(uint32_t type_id, const void* payload, uint32_t 
     return invoked;
 }
 
-int32_t BusNative::publish_normal(uint32_t type_id, const void* payload, uint32_t payload_size) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    if (normal_.find(type_id) == normal_.end()) return 0;
+DF_API int32_t df_bus_publish_normal(
+    uint32_t type_id, const void* payload, uint32_t payload_size)
+{
+    auto& tier = BusNative::normal();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    if (tier.subscribers.find(type_id) == tier.subscribers.end()) return 0;
     PendingNormalEventRecord ev;
     ev.type_id = type_id;
     ev.payload.assign(
         static_cast<const uint8_t*>(payload),
         static_cast<const uint8_t*>(payload) + payload_size);
-    pending_normal_.push_back(std::move(ev));
+    tier.pending.push_back(std::move(ev));
     return 1;
 }
 
-int32_t BusNative::drain_normal_batch() {
+DF_API int32_t df_bus_publish_background(
+    uint32_t type_id, const void* payload, uint32_t payload_size, uint32_t coalesce_key)
+{
+    auto& tier = BusNative::background();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    PendingBackgroundEventRecord ev;
+    ev.type_id      = type_id;
+    ev.coalesce_key = coalesce_key;
+    ev.payload.assign(
+        static_cast<const uint8_t*>(payload),
+        static_cast<const uint8_t*>(payload) + payload_size);
+    tier.pending.push_back(std::move(ev));
+    return 1;
+}
+
+// ─── Drain (Normal) ──────────────────────────────────────────────────────
+
+DF_API int32_t df_bus_drain_normal_batch(void) {
+    auto& tier = BusNative::normal();
     std::vector<PendingNormalEventRecord> pending;
     std::unordered_map<uint32_t, std::vector<BatchedSubscriberRecord>> snapshot;
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        pending.swap(pending_normal_);
-        snapshot = normal_;
+        std::lock_guard<std::mutex> lock(tier.mutex);
+        pending.swap(tier.pending);
+        snapshot = tier.subscribers;
     }
     if (pending.empty()) return 0;
 
@@ -117,202 +195,90 @@ int32_t BusNative::drain_normal_batch() {
     return batches;
 }
 
-int32_t BusNative::publish_background(uint32_t type_id, const void* payload, uint32_t payload_size, uint32_t coalesce_key) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    PendingBackgroundEventRecord ev;
-    ev.type_id      = type_id;
-    ev.coalesce_key = coalesce_key;
-    ev.payload.assign(
-        static_cast<const uint8_t*>(payload),
-        static_cast<const uint8_t*>(payload) + payload_size);
-    pending_background_.push_back(std::move(ev));
-    return 1;
-}
+// ─── Unsubscribe ─────────────────────────────────────────────────────────
 
-int32_t BusNative::unsubscribe(df_bus_subscription_id sid) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    TierTag tier = decode_tier(sid);
-    switch (tier) {
-        case TierTag::Fast:       return remove_from_fast(sid) ? 1 : 0;
-        case TierTag::Normal:     return remove_from_normal(sid) ? 1 : 0;
-        case TierTag::Background: return remove_from_background(sid) ? 1 : 0;
+DF_API int32_t df_bus_unsubscribe(df_bus_subscription_id sid) {
+    TierTag tier_tag = decode_tier(sid);
+    switch (tier_tag) {
+        case TierTag::Fast: {
+            auto& tier = BusNative::fast();
+            std::lock_guard<std::mutex> lock(tier.mutex);
+            return remove_by_id_locked(tier.subscribers, sid) ? 1 : 0;
+        }
+        case TierTag::Normal: {
+            auto& tier = BusNative::normal();
+            std::lock_guard<std::mutex> lock(tier.mutex);
+            return remove_by_id_locked(tier.subscribers, sid) ? 1 : 0;
+        }
+        case TierTag::Background: {
+            auto& tier = BusNative::background();
+            std::lock_guard<std::mutex> lock(tier.mutex);
+            return remove_by_id_locked(tier.subscribers, sid) ? 1 : 0;
+        }
     }
     return 0;
 }
 
-int32_t BusNative::unsubscribe_fast_by_mod(uint32_t mod_id) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    int32_t removed = 0;
-    for (auto& [type_id, subs] : fast_) {
-        auto before = subs.size();
-        subs.erase(std::remove_if(subs.begin(), subs.end(),
-            [mod_id](const FastSubscriberRecord& s) { return s.mod_id == mod_id; }),
-            subs.end());
-        removed += static_cast<int32_t>(before - subs.size());
-    }
-    return removed;
-}
-
-int32_t BusNative::unsubscribe_normal_by_mod(uint32_t mod_id) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    int32_t removed = 0;
-    for (auto& [type_id, subs] : normal_) {
-        auto before = subs.size();
-        subs.erase(std::remove_if(subs.begin(), subs.end(),
-            [mod_id](const BatchedSubscriberRecord& s) { return s.mod_id == mod_id; }),
-            subs.end());
-        removed += static_cast<int32_t>(before - subs.size());
-    }
-    return removed;
-}
-
-int32_t BusNative::unsubscribe_background_by_mod(uint32_t mod_id) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    int32_t removed = 0;
-    for (auto& [type_id, subs] : background_) {
-        auto before = subs.size();
-        subs.erase(std::remove_if(subs.begin(), subs.end(),
-            [mod_id](const BatchedSubscriberRecord& s) { return s.mod_id == mod_id; }),
-            subs.end());
-        removed += static_cast<int32_t>(before - subs.size());
-    }
-    return removed;
-}
-
-int32_t BusNative::subscriber_count_fast(uint32_t type_id) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    auto it = fast_.find(type_id);
-    return it == fast_.end() ? 0 : static_cast<int32_t>(it->second.size());
-}
-
-int32_t BusNative::subscriber_count_normal(uint32_t type_id) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    auto it = normal_.find(type_id);
-    return it == normal_.end() ? 0 : static_cast<int32_t>(it->second.size());
-}
-
-int32_t BusNative::subscriber_count_background(uint32_t type_id) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    auto it = background_.find(type_id);
-    return it == background_.end() ? 0 : static_cast<int32_t>(it->second.size());
-}
-
-void BusNative::clear() {
-    std::lock_guard<std::mutex> lock(mutex_);
-    fast_.clear();
-    normal_.clear();
-    background_.clear();
-    pending_normal_.clear();
-    pending_background_.clear();
-    next_seq_ = 1;
-}
-
-bool BusNative::remove_from_fast(df_bus_subscription_id sid) {
-    for (auto& [type_id, subs] : fast_) {
-        auto it = std::find_if(subs.begin(), subs.end(),
-            [sid](const FastSubscriberRecord& s) { return s.id == sid; });
-        if (it != subs.end()) { subs.erase(it); return true; }
-    }
-    return false;
-}
-
-bool BusNative::remove_from_normal(df_bus_subscription_id sid) {
-    for (auto& [type_id, subs] : normal_) {
-        auto it = std::find_if(subs.begin(), subs.end(),
-            [sid](const BatchedSubscriberRecord& s) { return s.id == sid; });
-        if (it != subs.end()) { subs.erase(it); return true; }
-    }
-    return false;
-}
-
-bool BusNative::remove_from_background(df_bus_subscription_id sid) {
-    for (auto& [type_id, subs] : background_) {
-        auto it = std::find_if(subs.begin(), subs.end(),
-            [sid](const BatchedSubscriberRecord& s) { return s.id == sid; });
-        if (it != subs.end()) { subs.erase(it); return true; }
-    }
-    return false;
-}
-
-} // namespace dualfrontier
-
-using namespace dualfrontier;
-
-extern "C" {
-
-DF_API df_bus_subscription_id df_bus_subscribe_fast(
-    uint32_t type_id, uint32_t mod_id,
-    df_bus_fast_subscriber_fn cb, void* user_data)
-{
-    return BusNative::instance().subscribe_fast(type_id, mod_id, cb, user_data);
-}
-
-DF_API df_bus_subscription_id df_bus_subscribe_normal(
-    uint32_t type_id, uint32_t mod_id,
-    df_bus_batched_subscriber_fn cb, void* user_data)
-{
-    return BusNative::instance().subscribe_normal(type_id, mod_id, cb, user_data);
-}
-
-DF_API df_bus_subscription_id df_bus_subscribe_background(
-    uint32_t type_id, uint32_t mod_id,
-    df_bus_batched_subscriber_fn cb, void* user_data)
-{
-    return BusNative::instance().subscribe_background(type_id, mod_id, cb, user_data);
-}
-
-DF_API int32_t df_bus_publish_fast(
-    uint32_t type_id, const void* payload, uint32_t payload_size)
-{
-    return BusNative::instance().publish_fast(type_id, payload, payload_size);
-}
-
-DF_API int32_t df_bus_publish_normal(
-    uint32_t type_id, const void* payload, uint32_t payload_size)
-{
-    return BusNative::instance().publish_normal(type_id, payload, payload_size);
-}
-
-DF_API int32_t df_bus_publish_background(
-    uint32_t type_id, const void* payload, uint32_t payload_size, uint32_t coalesce_key)
-{
-    return BusNative::instance().publish_background(type_id, payload, payload_size, coalesce_key);
-}
-
-DF_API int32_t df_bus_drain_normal_batch(void) {
-    return BusNative::instance().drain_normal_batch();
-}
-
-DF_API int32_t df_bus_unsubscribe(df_bus_subscription_id sid) {
-    return BusNative::instance().unsubscribe(sid);
-}
-
 DF_API int32_t df_bus_unsubscribe_fast_by_mod(uint32_t mod_id) {
-    return BusNative::instance().unsubscribe_fast_by_mod(mod_id);
+    auto& tier = BusNative::fast();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    return remove_by_mod_locked(tier.subscribers, mod_id);
 }
 
 DF_API int32_t df_bus_unsubscribe_normal_by_mod(uint32_t mod_id) {
-    return BusNative::instance().unsubscribe_normal_by_mod(mod_id);
+    auto& tier = BusNative::normal();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    return remove_by_mod_locked(tier.subscribers, mod_id);
 }
 
 DF_API int32_t df_bus_unsubscribe_background_by_mod(uint32_t mod_id) {
-    return BusNative::instance().unsubscribe_background_by_mod(mod_id);
+    auto& tier = BusNative::background();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    return remove_by_mod_locked(tier.subscribers, mod_id);
 }
 
+// ─── Subscriber count ────────────────────────────────────────────────────
+
 DF_API int32_t df_bus_subscriber_count_fast(uint32_t type_id) {
-    return BusNative::instance().subscriber_count_fast(type_id);
+    auto& tier = BusNative::fast();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    auto it = tier.subscribers.find(type_id);
+    return it == tier.subscribers.end() ? 0 : static_cast<int32_t>(it->second.size());
 }
 
 DF_API int32_t df_bus_subscriber_count_normal(uint32_t type_id) {
-    return BusNative::instance().subscriber_count_normal(type_id);
+    auto& tier = BusNative::normal();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    auto it = tier.subscribers.find(type_id);
+    return it == tier.subscribers.end() ? 0 : static_cast<int32_t>(it->second.size());
 }
 
 DF_API int32_t df_bus_subscriber_count_background(uint32_t type_id) {
-    return BusNative::instance().subscriber_count_background(type_id);
+    auto& tier = BusNative::background();
+    std::lock_guard<std::mutex> lock(tier.mutex);
+    auto it = tier.subscribers.find(type_id);
+    return it == tier.subscribers.end() ? 0 : static_cast<int32_t>(it->second.size());
 }
 
+// ─── Clear (all tiers, atomic per-tier) ──────────────────────────────────
+
 DF_API void df_bus_clear(void) {
-    BusNative::instance().clear();
+    auto& f = BusNative::fast();
+    auto& n = BusNative::normal();
+    auto& b = BusNative::background();
+    // Fixed lock-ordering fast → normal → background prevents deadlock if
+    // another thread happens to attempt cross-tier work concurrently.
+    std::lock_guard<std::mutex> lf(f.mutex);
+    std::lock_guard<std::mutex> ln(n.mutex);
+    std::lock_guard<std::mutex> lb(b.mutex);
+    f.subscribers.clear();
+    f.next_seq = 1;
+    n.subscribers.clear();
+    n.pending.clear();
+    n.next_seq = 1;
+    b.subscribers.clear();
+    b.pending.clear();
+    b.next_seq = 1;
 }
 
 } // extern "C"
