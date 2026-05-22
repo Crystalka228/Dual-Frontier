@@ -108,6 +108,46 @@ public sealed class BusFacade
     }
 
     /// <summary>
+    /// Publishes a Background tier event with an explicit coalesce key. The
+    /// kernel groups Background events sharing the same <c>(type_id,
+    /// coalesceKey)</c> pair through the registered coalesce function before
+    /// dispatch (К-L15 background tier semantics, Q-N-34).
+    /// </summary>
+    /// <param name="evt">Event payload (unmanaged struct).</param>
+    /// <param name="coalesceKey">
+    /// Distinct value per logical Background event "slot"; events with the
+    /// same key coalesce into one dispatch via the registered coalesce_fn.
+    /// Use 0 only when collapsing all instances of the type to a single
+    /// dispatch is the intended semantics.
+    /// </param>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown if the event's <c>[EventTier]</c> attribute is not
+    /// <see cref="BusTier.Background"/>. Fast/Normal tier publishers do not
+    /// use coalesce_key — calling this overload for them is a programming
+    /// error and is caught at the managed boundary rather than silently
+    /// ignored по native side.
+    /// </exception>
+    /// <returns>1 if the event was queued for dispatch; 0 if
+    /// <see cref="UseNativeBusForDispatch"/> is false.</returns>
+    public int Publish<T>(T evt, uint coalesceKey) where T : unmanaged, IEvent
+    {
+        if (!UseNativeBusForDispatch) return 0;
+        BusTier tier = GetTier<T>();
+        if (tier != BusTier.Background)
+        {
+            throw new InvalidOperationException(
+                $"coalesce_key parameter only valid for Background tier events. " +
+                $"Event type {typeof(T).FullName ?? typeof(T).Name} declared с EventTier({tier}).");
+        }
+        uint typeId = GetOrAssignTypeId<T>();
+        unsafe
+        {
+            T local = evt;
+            return _bridge.PublishViaNative(typeId, tier, (IntPtr)(&local), (uint)sizeof(T), coalesceKey);
+        }
+    }
+
+    /// <summary>
     /// Drains Normal tier batched dispatch (called by scheduler at phase
     /// boundary). К10.2 default: caller (managed adapter) explicitly invokes
     /// this if <see cref="UseNativeBusForDispatch"/> = true; otherwise managed

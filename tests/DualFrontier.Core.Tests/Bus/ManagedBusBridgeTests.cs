@@ -4,6 +4,7 @@ using DualFrontier.Application.Bus;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop;
+using DualFrontier.Core.Tests.Scheduling.Fixtures;
 using FluentAssertions;
 using Xunit;
 
@@ -31,6 +32,12 @@ public sealed class ManagedBusBridgeTests : IDisposable
 #pragma warning disable CS0649
         public int Value;
 #pragma warning restore CS0649
+    }
+
+    [EventTier(BusTier.Background)]
+    private struct BackgroundTestEvent : IEvent
+    {
+        public int Value;
     }
 
     private struct DefaultTierTestEvent : IEvent
@@ -151,5 +158,128 @@ public sealed class ManagedBusBridgeTests : IDisposable
         {
             // К-L15 fast tier contract: no managed exceptions across boundary
         }
+    }
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // Bug #1 (A'.7.x γ1) — BusFacade.Publish<T>(T, uint coalesceKey) overload
+    // ═════════════════════════════════════════════════════════════════════════
+
+    [Fact]
+    public void BusFacade_PublishBackground_WithDistinctCoalesceKeys_ProducesDistinctDispatches()
+    {
+        _facade.UseNativeBusForDispatch = true;
+
+        // Background tier registration requires a coalesce_fn (К-L15 / Q-N-34).
+        IntPtr coalesceFn = Marshal.GetFunctionPointerForDelegate(s_bgCoalesceDelegate);
+        _facade.RegisterEventType<BackgroundTestEvent>(coalesceFn).Should().BeTrue();
+        uint typeId = _facade.GetOrAssignTypeId<BackgroundTestEvent>();
+
+        IntPtr cb = Marshal.GetFunctionPointerForDelegate(s_bgSubscriberDelegate);
+        var handle = GCHandle.Alloc(s_bgSubscriberDelegate);
+        try
+        {
+            ulong sid = _bridge.SubscribeBackground(typeId, modId: 100u, cb, handle);
+            sid.Should().NotBe(0u);
+
+            s_bgSubscriberInvocations = 0;
+            const int N = 100;
+            for (uint i = 1; i <= N; i++)
+            {
+                int rc = _facade.Publish(new BackgroundTestEvent { Value = (int)i }, coalesceKey: i);
+                rc.Should().Be(1, "Background publish must queue the event");
+            }
+
+            int dispatched = BackgroundBusTestDriver.DispatchIdleSlot(0);
+            dispatched.Should().Be(N,
+                "{0} distinct coalesce keys must dispatch as {0} separate events", N);
+            s_bgSubscriberInvocations.Should().Be(N,
+                "managed subscriber must observe {0} callbacks (one per distinct key)", N);
+
+            _bridge.Unsubscribe(sid);
+        }
+        finally
+        {
+            if (handle.IsAllocated) handle.Free();
+        }
+    }
+
+    [Fact]
+    public void BusFacade_PublishBackground_WithSameCoalesceKey_CollapsesToOneDispatch()
+    {
+        _facade.UseNativeBusForDispatch = true;
+
+        IntPtr coalesceFn = Marshal.GetFunctionPointerForDelegate(s_bgCoalesceDelegate);
+        _facade.RegisterEventType<BackgroundTestEvent>(coalesceFn).Should().BeTrue();
+        uint typeId = _facade.GetOrAssignTypeId<BackgroundTestEvent>();
+
+        IntPtr cb = Marshal.GetFunctionPointerForDelegate(s_bgSubscriberDelegate);
+        var handle = GCHandle.Alloc(s_bgSubscriberDelegate);
+        try
+        {
+            ulong sid = _bridge.SubscribeBackground(typeId, modId: 100u, cb, handle);
+            sid.Should().NotBe(0u);
+
+            s_bgSubscriberInvocations = 0;
+            const int N = 100;
+            for (int i = 0; i < N; i++)
+            {
+                _facade.Publish(new BackgroundTestEvent { Value = i }, coalesceKey: 7u);
+            }
+
+            int dispatched = BackgroundBusTestDriver.DispatchIdleSlot(0);
+            dispatched.Should().Be(1,
+                "{0} publishes sharing coalesceKey=7 must collapse to a single dispatch", N);
+            s_bgSubscriberInvocations.Should().Be(1);
+
+            _bridge.Unsubscribe(sid);
+        }
+        finally
+        {
+            if (handle.IsAllocated) handle.Free();
+        }
+    }
+
+    [Fact]
+    public void BusFacade_PublishWithCoalesceKey_OnFastTier_ThrowsInvalidOperation()
+    {
+        _facade.UseNativeBusForDispatch = true;
+
+        Action act = () => _facade.Publish(new FastTestEvent { Value = 42 }, coalesceKey: 1u);
+
+        act.Should().Throw<InvalidOperationException>()
+           .WithMessage("*coalesce_key parameter only valid for Background tier*");
+    }
+
+    [Fact]
+    public void BusFacade_PublishWithCoalesceKey_OnNormalTier_ThrowsInvalidOperation()
+    {
+        _facade.UseNativeBusForDispatch = true;
+
+        Action act = () => _facade.Publish(new NormalTestEvent { Value = 99 }, coalesceKey: 2u);
+
+        act.Should().Throw<InvalidOperationException>()
+           .WithMessage("*coalesce_key parameter only valid for Background tier*");
+    }
+
+    // Background tier reverse-P/Invoke harness.
+    private static int s_bgSubscriberInvocations;
+    private static readonly BackgroundSubscriberDelegate s_bgSubscriberDelegate = BackgroundSubscriberCallback;
+    private static readonly CoalesceDelegate s_bgCoalesceDelegate = BackgroundCoalesce;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void BackgroundSubscriberDelegate(uint typeId, IntPtr payload, uint payloadSize, IntPtr userData);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void CoalesceDelegate(IntPtr dst, IntPtr src);
+
+    private static void BackgroundSubscriberCallback(uint typeId, IntPtr payload, uint payloadSize, IntPtr userData)
+    {
+        try { s_bgSubscriberInvocations++; } catch { }
+    }
+
+    // Latest-wins coalesce — 4-byte int payload, newest overwrites old.
+    private static void BackgroundCoalesce(IntPtr dst, IntPtr src)
+    {
+        Marshal.WriteInt32(dst, Marshal.ReadInt32(src));
     }
 }
