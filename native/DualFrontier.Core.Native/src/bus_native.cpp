@@ -5,50 +5,6 @@
 #include <cstring>
 
 namespace dualfrontier {
-namespace {
-
-constexpr uint64_t TIER_SHIFT = 56;
-constexpr uint64_t TIER_MASK  = uint64_t{0xFF} << TIER_SHIFT;
-constexpr uint64_t ID_MASK    = (uint64_t{1} << TIER_SHIFT) - 1;
-
-enum class TierTag : uint8_t {
-    Fast       = 0,
-    Normal     = 1,
-    Background = 2,
-};
-
-constexpr df_bus_subscription_id encode_id(TierTag tier, uint64_t seq) {
-    return (static_cast<uint64_t>(tier) << TIER_SHIFT) | (seq & ID_MASK);
-}
-
-constexpr TierTag decode_tier(df_bus_subscription_id sid) {
-    return static_cast<TierTag>((sid & TIER_MASK) >> TIER_SHIFT);
-}
-
-template<typename Record>
-bool remove_by_id_locked(std::unordered_map<uint32_t, std::vector<Record>>& subs, df_bus_subscription_id sid) {
-    for (auto& [type_id, vec] : subs) {
-        auto it = std::find_if(vec.begin(), vec.end(),
-            [sid](const Record& s) { return s.id == sid; });
-        if (it != vec.end()) { vec.erase(it); return true; }
-    }
-    return false;
-}
-
-template<typename Record>
-int32_t remove_by_mod_locked(std::unordered_map<uint32_t, std::vector<Record>>& subs, uint32_t mod_id) {
-    int32_t removed = 0;
-    for (auto& [type_id, vec] : subs) {
-        auto before = vec.size();
-        vec.erase(std::remove_if(vec.begin(), vec.end(),
-            [mod_id](const Record& s) { return s.mod_id == mod_id; }),
-            vec.end());
-        removed += static_cast<int32_t>(before - vec.size());
-    }
-    return removed;
-}
-
-} // namespace
 
 // ─── Tier-state singletons ───────────────────────────────────────────────
 // Each tier owns its own state; no shared mutex, no shared sequence counter.
