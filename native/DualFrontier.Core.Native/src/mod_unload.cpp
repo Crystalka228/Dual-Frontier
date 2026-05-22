@@ -71,37 +71,36 @@ DF_API int32_t df_scheduler_unload_mod_native_state(
         return 0;
     }
 
-    auto& bus = dualfrontier::BusNative::instance();
-
-    // T0: Lock bus mutex (acquire scheduler critical section). Each per-mod
-    // unsubscribe call acquires + releases internally; для К10.2 cascade
-    // simplicity we issue them sequentially. К10.3 wire-up wraps in single
-    // critical section если future invariants require atomicity across tiers.
+    // T0: Per-tier cleanup. After 2026-05-21 bus refactor each tier owns
+    // its own state + mutex; each unsubscribe call acquires only the
+    // relevant tier mutex. The cross-tier «single critical section»
+    // concept is gone — К10.3 wire-up should reconsider whether atomicity
+    // across tiers is actually required (it wasn't enforced before the
+    // refactor either, since per-tier sub calls already lock-released).
 
     // T1: Fast tier — clear subscriptions + drop in-flight events.
     // Fast events не stored (synchronous dispatch); in_flight_dropped=0.
-    out_result->fast_subscriptions_cleared = bus.unsubscribe_fast_by_mod(mod_id);
+    out_result->fast_subscriptions_cleared = df_bus_unsubscribe_fast_by_mod(mod_id);
     out_result->fast_in_flight_dropped = 0;
 
     // T2: Normal tier — drain current batch к commit boundary, then clear subs.
-    out_result->normal_events_drained = bus.drain_normal_batch();
+    out_result->normal_events_drained = df_bus_drain_normal_batch();
     out_result->normal_batch_commit_completed = 1;
-    out_result->normal_subscriptions_cleared = bus.unsubscribe_normal_by_mod(mod_id);
+    out_result->normal_subscriptions_cleared = df_bus_unsubscribe_normal_by_mod(mod_id);
 
     // T3: Background tier — clear subscriber registry; queue contents preserved
     // per S3-Q3/Q4 untargeted persistence.
-    out_result->background_subscriptions_cleared = bus.unsubscribe_background_by_mod(mod_id);
+    out_result->background_subscriptions_cleared = df_bus_unsubscribe_background_by_mod(mod_id);
 
     int32_t bg_subs_remaining = 0;
     int32_t bg_events_preserved = 0;
     {
-        std::lock_guard<std::mutex> bus_lock(bus.mutex());
-        auto& bg_subs = bus.background_subscribers_unsafe();
-        for (auto& [type_id, subs] : bg_subs) {
+        auto& bg_tier = dualfrontier::BusNative::background();
+        std::lock_guard<std::mutex> tier_lock(bg_tier.mutex);
+        for (auto& [type_id, subs] : bg_tier.subscribers) {
             bg_subs_remaining += static_cast<int32_t>(subs.size());
         }
-        auto& pending = bus.pending_background_unsafe();
-        bg_events_preserved = static_cast<int32_t>(pending.size());
+        bg_events_preserved = static_cast<int32_t>(bg_tier.pending.size());
     }
     out_result->background_subscriber_count_remaining = bg_subs_remaining;
     out_result->background_events_preserved = bg_events_preserved;
