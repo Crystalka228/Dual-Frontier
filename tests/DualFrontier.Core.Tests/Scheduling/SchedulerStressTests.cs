@@ -53,13 +53,37 @@ public sealed class SchedulerStressTests : IDisposable
         ResetNativeGlobals();
     }
 
+    // А'.7.x δ4 — Group B cross-test pollution fix per BRIEF §9.
+    // SchedulerStressTests.Dispose was missing managed bus bridge cleanup +
+    // native bus state reset, so stress-test subscriber registrations + pending
+    // events leaked into the next test in the suite (the two
+    // GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* tests pass в
+    // isolation, were failing only в the full Modding-tests run per Crystalka
+    // 2026-05-21 investigation). Defence layers, top к bottom:
+    //   1. Drain Normal + Background pending queues (last-chance dispatch).
+    //   2. ManagedBusBridge.ClearForTesting releases any held GCHandles +
+    //      calls df_bus_clear() on the bridge instance.
+    //   3. Belt-and-suspenders direct df_bus_clear() to wipe subscriber maps,
+    //      next_seq counters, pending queues for any other bridge instance
+    //      that the test forgot к clean.
+    //   4. Existing 4-singleton reset (SystemGraph / WakeRegistry /
+    //      SchedulingPolicies / EventTypeRegistry).
     private static void ResetNativeGlobals()
     {
+        var bridge = new ManagedBusBridge();
+        bridge.DrainNormalBatch();
+        bridge.DrainBackgroundBatch(ulong.MaxValue);
+        bridge.ClearForTesting();
+        df_bus_clear();
+
         SystemGraphInterop.Clear();
         WakeRegistryInterop.Clear();
         SchedulingPoliciesInterop.Clear();
         EventTypeRegistryInterop.ClearForTesting();
     }
+
+    [DllImport("DualFrontier.Core.Native", CallingConvention = CallingConvention.Cdecl)]
+    private static extern void df_bus_clear();
 
     // ════════════════════════════════════════════════════════════════════════
     // Scenario 1 — Native scheduler + native dependency graph.
