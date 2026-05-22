@@ -6,13 +6,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.8"
+version: "1.9"
 next_review_due: 2027-05-17
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
+
+*Version: 1.9 (2026-05-21). §12.7 closure protocol step 1 «Run final verification» expanded к explicit per-test-suite checklist — Core + Modding suite runs are both mandatory at every closure (not just Core), per CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c). K10.3 v2 closure (2026-05-20) ran only the Core suite + native selftest; the Modding suite was not exercised, which let a transient fixture-copy build-state issue ship undetected (initially mis-diagnosed as a К-L18 regression в the А'.7.x investigation report and brief Hypothesis 1). The CAPA fix re-frames the gate so that closure verification covers every test project в the solution explicitly, not just «dotnet test» applied к whichever subset the executor remembered. Lessons batch deferred к A'.8 closure (METHODOLOGY v1.9 → v1.10) per Q-N-7X-11 split. К-extensions cascade #0 designation (А'.7.x) does not change §1-§11 substance.*
 
 *Version: 1.8 (2026-05-17). Lessons #11, #20, #22 formalized at К10 deliberation S6 lock. NEW «Provisional Lessons» section captures candidates pending promotion (9 candidates: #9, #10, #14, #15, #16, #17, #18, #19, #21). Lesson formalization model hybrid: high-confidence lessons promoted immediately when surfaced; low-confidence remain provisional pool, promoted at К-closure report (А'.8) timing per accumulated evidence.*
 
@@ -529,7 +531,19 @@ Falsification mechanism: PIPELINE_METRICS records per-milestone metrics; quarter
 The closure protocol previously documented in `MIGRATION_PROGRESS.md` is extended for register integration. **This is the canonical version**; MIGRATION_PROGRESS.md preserves its historical version for reference but cross-references this section as authoritative:
 
 ```
-1. Run final verification (existing): dotnet build, dotnet test, native selftest, F5 verification
+1. Run final verification per-test-suite (v1.9 expansion: every test project, not just Core):
+   - dotnet build -c Release <sln> → 0 warnings, 0 errors
+   - cmake --build <native> --config Release → clean
+   - df_native_selftest → ALL PASSED
+   - dotnet test tests/DualFrontier.Core.Tests/ -c Release → all PASS (incl. Stress filter sweep
+     if cascade touches stress harness)
+   - dotnet test tests/DualFrontier.Core.Interop.Tests/ -c Release → all PASS
+   - dotnet test tests/DualFrontier.Application.Tests/ -c Release → all PASS
+   - **dotnet test tests/DualFrontier.Modding.Tests/ -c Release → all PASS** (MANDATORY per
+     v1.9 — closures that touch ModIntegrationPipeline, mod_unload native, capability registry,
+     fixture-mod copy, OR ANY shared interop surface that Modding-suite fixtures consume MUST
+     exercise this suite explicitly; «we already ran Core» is not sufficient evidence)
+   - Manual F5 verification → application starts cleanly, no regressions
 2. Atomic commit with scope prefix (existing): feat(scope) / fix(scope) / docs / refactor(scope)
 3. Update MIGRATION_PROGRESS.md (existing): closure entry recording outcomes, commits, deviations, lessons
 4. Update brief Status field (existing): AUTHORED → EXECUTED transition with closure commit reference
@@ -549,6 +563,8 @@ The closure protocol previously documented in `MIGRATION_PROGRESS.md` is extende
 ```
 
 The new steps (5-8) constitute the post-session update protocol per §12.5. They are strict by default (validation blocks commit); bypass mechanism (§12.5) provides explicit-and-logged escape hatch when register state cannot be reconciled within the closing session.
+
+**v1.9 expansion rationale**: К10.3 v2 closure (2026-05-20) ran the Core suite + native selftest + F5 verification but did not exercise the Modding suite explicitly. A transient fixture-copy build-state issue (missing Fixture.RegularMod_* / Fixture.PublisherMod manifest artifacts в `tests/DualFrontier.Modding.Tests/bin/Release/net8.0/Fixtures/`) was therefore not caught at closure ratification time. Crystalka's А'.7.x BUS_DESIGN_INVESTIGATION 2026-05-21 surfaced the resulting 14 fails (M51 ×4 + M52 ×3 + M62 ×5 + M73 ×2). A'.7.x Phase 0 «Pre-flight B» repro on the same branch с the same WT changes но a freshly-rebuilt Fixtures/ tree showed 0 fails — the build state, not the code, was the regression. К-L14 verification #7 was initially mis-annotated as a soft-halt against K10.3 v2's K-L18 amendment (Hypothesis 1 в А'.7.x brief §8.3); the closure-protocol gap is the actual root cause, не a К-L18 regression. The new step 1 wording explicitly enumerates Modding suite to prevent recurrence (CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c)).
 
 
 

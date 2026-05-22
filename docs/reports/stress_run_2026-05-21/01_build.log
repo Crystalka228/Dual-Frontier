@@ -1,0 +1,57 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  DualFrontier.Mod.ManifestRewriter -> D:\Colony_Simulator\Colony_Simulator\tools\DualFrontier.Mod.ManifestRewriter\bin\Release\net8.0\DualFrontier.Mod.ManifestRewriter.dll
+  DualFrontier.Crypto.Future -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Crypto.Future\bin\Release\net8.0\DualFrontier.Crypto.Future.dll
+  DualFrontier.Mod.ManifestRewriter.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Mod.ManifestRewriter.Tests\bin\Release\net8.0\DualFrontier.Mod.ManifestRewriter.Tests.dll
+  DualFrontier.Contracts -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\bin\Release\net8.0\DualFrontier.Contracts.dll
+  Fixture.SharedEvents -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.SharedEvents\bin\Release\net8.0\tests.shared.events.dll
+  Fixture.VanillaMod_HotReloadOverride -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.VanillaMod_HotReloadOverride\bin\Release\net8.0\Fixture.VanillaMod_HotReloadOverride.dll
+  Fixture.BadRegularMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.BadRegularMod\bin\Release\net8.0\Fixture.BadRegularMod.dll
+  Fixture.BadSharedMod_WithIMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.BadSharedMod_WithIMod\bin\Release\net8.0\tests.bad-shared-imod.dll
+  DualFrontier.Mod.Example -> D:\Colony_Simulator\Colony_Simulator\mods\DualFrontier.Mod.Example\bin\Release\net8.0\DualFrontier.Mod.Example.dll
+  DualFrontier.Core.Interop -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Core.Interop\bin\Release\net8.0\DualFrontier.Core.Interop.dll
+  Fixture.SubscriberMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.SubscriberMod\bin\Release\net8.0\Fixture.SubscriberMod.dll
+  Fixture.PublisherMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.PublisherMod\bin\Release\net8.0\Fixture.PublisherMod.dll
+  DualFrontier.Components -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Components\bin\Release\net8.0\DualFrontier.Components.dll
+  DualFrontier.Core -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Core\bin\Release\net8.0\DualFrontier.Core.dll
+  DualFrontier.Runtime -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Runtime\bin\Release\net8.0\DualFrontier.Runtime.dll
+  DualFrontier.AI -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.AI\bin\Release\net8.0\DualFrontier.AI.dll
+  DualFrontier.Persistence -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Persistence\bin\Release\net8.0\DualFrontier.Persistence.dll
+  DualFrontier.Events -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Events\bin\Release\net8.0\DualFrontier.Events.dll
+  DualFrontier.Systems -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Systems\bin\Release\net8.0\DualFrontier.Systems.dll
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\clearcolor.vert
+  DualFrontier.Persistence.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Persistence.Tests\bin\Release\net8.0\DualFrontier.Persistence.Tests.dll
+  DualFrontier.Application -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Application\bin\Release\net8.0\DualFrontier.Application.dll
+  Fixture.RegularMod_CyclicA -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_CyclicA\bin\Debug\net8.0\Fixture.RegularMod_CyclicA.dll
+  Fixture.RegularMod_DependedOn -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependedOn\bin\Debug\net8.0\Fixture.RegularMod_DependedOn.dll
+  Fixture.RegularMod_CyclicB -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_CyclicB\bin\Debug\net8.0\Fixture.RegularMod_CyclicB.dll
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\clearcolor.frag
+  Fixture.RegularMod_DepsBadVersion -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DepsBadVersion\bin\Debug\net8.0\Fixture.RegularMod_DepsBadVersion.dll
+  Fixture.RegularMod_ReplacesProtected -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesProtected\bin\Debug\net8.0\Fixture.RegularMod_ReplacesProtected.dll
+  Fixture.RegularMod_MissingOptional -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_MissingOptional\bin\Debug\net8.0\Fixture.RegularMod_MissingOptional.dll
+  Fixture.RegularMod_DependsOnAnother -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependsOnAnother\bin\Debug\net8.0\Fixture.RegularMod_DependsOnAnother.dll
+  Fixture.RegularMod_BadApiVersion -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_BadApiVersion\bin\Debug\net8.0\Fixture.RegularMod_BadApiVersion.dll
+  Fixture.RegularMod_ReplacesCombat_Alt -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesCombat_Alt\bin\Debug\net8.0\Fixture.RegularMod_ReplacesCombat_Alt.dll
+  Fixture.RegularMod_ReplacesCombat -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesCombat\bin\Debug\net8.0\Fixture.RegularMod_ReplacesCombat.dll
+  DualFrontier.Systems.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Systems.Tests\bin\Release\net8.0\DualFrontier.Systems.Tests.dll
+  DualFrontier.Application.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Application.Tests\bin\Release\net8.0\DualFrontier.Application.Tests.dll
+  Fixture.RegularMod_DependsOnBadApi -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependsOnBadApi\bin\Debug\net8.0\Fixture.RegularMod_DependsOnBadApi.dll
+  DualFrontier.Core.Interop.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Interop.Tests\bin\Release\net8.0\DualFrontier.Core.Interop.Tests.dll
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\noop.comp
+  DualFrontier.Core.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Release\net8.0\DualFrontier.Core.Tests.dll
+  Fixture.RegularMod_ReplacesUnknown -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesUnknown\bin\Debug\net8.0\Fixture.RegularMod_ReplacesUnknown.dll
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\sprite.vert
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\sprite.frag
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\diffusion.comp
+  DualFrontier.Presentation.Native -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Presentation.Native\bin\Release\net8.0\DualFrontier.Presentation.Native.dll
+  Fixture.RegularMod_MissingRequired -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_MissingRequired\bin\Debug\net8.0\Fixture.RegularMod_MissingRequired.dll
+  DualFrontier.Runtime.SmokeTest -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Runtime.SmokeTest\bin\Release\net8.0\DualFrontier.Runtime.SmokeTest.dll
+  DualFrontier.Runtime.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Runtime.Tests\bin\Release\net8.0\DualFrontier.Runtime.Tests.dll
+  DualFrontier.Core.Benchmarks -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Benchmarks\bin\Release\net8.0\DualFrontier.Core.Benchmarks.dll
+  DualFrontier.Modding.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Release\net8.0\DualFrontier.Modding.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:08.17

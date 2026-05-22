@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.0"
-last_modified: "2026-05-18"
-last_modified_commit: "PENDING-COMMIT-K10_2-CLOSURE"
+register_version: "2.1"
+last_modified: "2026-05-21"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -39,18 +39,18 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.3"
-    last_modified: "2026-05-20"
-    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L18-LOAD-BEARING"
+    version: "2.4"
+    last_modified: "2026-05-21"
+    last_modified_commit: "08d0bba"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-20"
-    last_review_event: "К10.3 v2 load-bearing commit 3/3 2026-05-20 — K-L18 «Mod lifecycle quiescent state» AUTHORED. Sim paused + pipeline slots quiescent precondition для mod load/unload; UI helper layer enforces precondition per S-LOCK-12 helpers-only scope (settings menu deferred к V-cycle / К-extensions). Native mod_unload primitive extended с pipeline quiescence check (К10.3 v2 Item 41 — df_pipeline_is_quiescent rejects unload when slots Dispatched/FenceCompleted); managed SimulationStateController helper + Step 3.6 V resource cleanup placeholder (Item 42). К10.3 v2 cascade complete: 4 К-L invariants AUTHORED (К-L7.1 sub + К-L16/L17/L18); cumulative К-Lxx series total 20 invariants post-К10.3 v2 (К-L1..L11 + К-L6 SUPERSEDED + К-L3.1/L7.1 subs + К-L12..L19). 13 commits ahead of main on claude/k10_3-v2-pipeline-display-quiescent branch (15f8aca..d29a765 + this commit)."
-    next_review_due: "2027-05-18"
+    last_review_date: "2026-05-21"
+    last_review_event: "А'.7.x γ4 LOAD-BEARING commit 2026-05-21 — К-L15.1 «Three-tier independence» AUTHORED → LOCKED (2-layer sub-invariant к К-L15: state isolation + runtime isolation + cross-tier re-entrant publish safe; falsifiability committed). Mirrors К-L7.1 / К-L3.1 sub-invariant precedent (К-L15.1 LOCKS while К-L15 parent stays AUTHORED candidate until A'.8 closure). KERNEL_ARCHITECTURE.md Part 0 К-L15 row updated к «К-L15 (+К-L15.1)» pattern; status footnote extended с А'.7.x К-extensions cascade #0 entry. Cumulative К-Lxx series 20 → 21 post-A'.7.x. К-L15.1 closes investigation Bug #4 (48-way single-mutex contention) + cross-tier re-entrancy deadlock hazard (S10 cross-tier probe в SchedulerExtremeTests.cs:1007 PASS post-split). Source split deferred к А'.7.5 sub-milestone per Q-N-7X-2 Option C hybrid (К-L15.1 в 2-layer form does not require compile-time isolation as a 3rd layer). KFNS v2.0 unchanged per Q-N-7X-14 Option C Phase 0 read (no «shared mutex» refs that would be misleading without sub-invariant qualifier). MOD_OS v1.11 unchanged (К-L15 capability semantics per-FQN per-tier orthogonal к sub-invariant behavioral contract)."
+    next_review_due: "2027-05-21"
     reviewer: Crystalka
-    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19]
+    requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19]
     risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
-    capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+    capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING, CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST, CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN, CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED]
 
   - id: DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
     path: docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md
@@ -438,18 +438,18 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.8"
-    last_modified: "2026-05-18"
-    last_modified_commit: "PENDING-COMMIT-K8_5-3"
+    version: "1.9"
+    last_modified: "2026-05-21"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
     content_language: mixed
     review_cadence: on-change+annual
-    last_review_date: "2026-05-18"
-    last_review_event: "K8.5 deferral cascade — Lesson #23 candidate added к Provisional Lessons pool (register classification drift from actual document state)"
-    next_review_due: "2027-05-17"
+    last_review_date: "2026-05-21"
+    last_review_event: "А'.7.x δ5 closure 2026-05-21 — §12.7 closure protocol step 1 «Run final verification» expanded к per-test-suite checklist; Modding suite now MANDATORY at every closure (CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c)). K10.3 v2 closure ran only the Core suite; a transient fixture-copy build-state issue (missing Fixture.RegularMod_* / Fixture.PublisherMod manifest artifacts) shipped undetected, initially mis-framed as K-L18 regression в А'.7.x brief Hypothesis 1. v1.9 §12.7 expansion closes the gap forward. Lessons batch (#N5/#N6/#27 promotions) deferred к A'.8 closure (METHODOLOGY v1.9 → v1.10) per Q-N-7X-11 split — A'.7.x covers only the §12.7 amendment."
+    next_review_due: "2027-05-21"
     reviewer: Crystalka
     requirements_authored: [REQ-Q-A07-6]
     risks_referenced: [RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014]
-    capa_entries_referenced: [CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION]
+    capa_entries_referenced: [CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION, CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT]
 
   - id: DOC-B-CODING_STANDARDS
     path: docs/methodology/CODING_STANDARDS.md
@@ -1883,6 +1883,81 @@ documents:
     reviewer: Crystalka
 
   # === Tier 3 Briefs (Category D) — А' forward planning skeletons (AUTHORED-SKELETON, awaiting Opus deliberation session for full brief authoring) ===
+
+  - id: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+    path: tools/briefs/A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT_BRIEF.md
+    title: "А'.7.x BUS_ARCHITECTURE_AMENDMENT — К-extensions cascade #0"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-21"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-21"
+    last_review_event: "А'.7.x cascade closure 2026-05-21 — К-L15.1 «Three-tier independence» AUTHORED → LOCKED (2-layer sub-invariant к К-L15). 13 atomic commits on claude/scheduler-stress-test-KmVM3 (b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE). Bug #1 (BusFacade.Publish coalesce_key overload) + Bug #2 (df_background_queue_dispatch_idle_slot wired через ManagedBusBridge.DrainBackgroundBatch + GameLoop tick-end) + Bug #3 (O(N²) → O(N) coalesce) + Bug #4 (single-mutex contention closed via per-tier state split) ALL closed. Group B (2 stress-induced cross-test pollution tests) closed via SchedulerStressTests.Dispose extension. KERNEL_ARCHITECTURE.md v2.3 → v2.4, METHODOLOGY.md v1.8 → v1.9 (§12.7 Modding suite verification gate per CAPA-K10_3-V2-SOFT-HALT step (c)). Cumulative К-Lxx series 20 → 21. Source split (bus_native.cpp → 4-file) deferred к А'.7.5 sub-milestone per Q-N-7X-2 Option C hybrid. К-L14 verification #8 clean cascade — К-L14 verification #7 framing corrected: «14 Modding fails on main» soft-halt premise disproved (transient fixture-copy build state, NOT K-L18 regression as brief Hypothesis 1 framed); δ1-δ3 Group A fix scope dropped per Crystalka Option A. Investigation atomization (β1-β7) preserves 39a01be α1 commit provenance per Q-N-7X-13. +45% bus throughput verified empirically; S10 cross-tier re-entrancy probe PASS ≤100 ms."
+    reviewer: Crystalka
+    risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
+    capa_entries_referenced:
+      - CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST
+      - CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN
+      - CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
+      - CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT
+      - CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION
+    special_case_rationale: "А'.7.x designated «К-extensions cascade #0» per Q-N-7X-12 LOCKED — chronologically pre-A'.8 closure («#0» signals position в К-extensions numbering), architecturally a К-extension (adds К-L15.1 к К-series surface). К-L15.1 is sub-invariant к К-L15 (mirrors К-L7.1 / К-L3.1 precedent); LOCKS at A'.7.x closure while parent К-L15 stays AUTHORED candidate until A'.8 closure. Authored 2026-05-21 by Claude Opus 4.7 post-investigation surface (Crystalka's BUS_DESIGN_INVESTIGATION_2026-05-21 + SCHEDULER_STRESS_TEST_SUITE input artifacts); gap-audit-amended same day (17 findings 3 critical / 4 major / 10 minor — incorporated in-place); Q-N ratified same day (all 12 Q-N LOCKED via Crystalka Session 2 Day 2 deliberation); executed same day by Claude Code (this cascade). All 12 Q-N references: Q-N-7X-1 К-L15.1 canonical text (§4.1 verbatim, 2-layer), Q-N-7X-2 scope (Option C hybrid: A'.7.x 2-layer К-L15.1 + A'.7.5 source split sub-milestone), Q-N-7X-3 К-L14 soft-halt framing (§1.3 verbatim — later corrected по execution: 14 fails were transient build state, not regression), Q-N-7X-6 Bug #1 style (Option A overload с runtime tier validation), Q-N-7X-7 Bug #2 phase boundary (Option A end-of-Reporting → end-of-fixed-step in this codebase), Q-N-7X-8 К-L14 criterion 6 (provisional, review at next soft-halt OR V2 closure), Q-N-7X-9 atomization count (Option A 14 atomic ± 2 tolerance; actual 13 per Crystalka δ1-δ3 drop = within tolerance), Q-N-7X-10 Group A diagnostic (§8 verbatim — execution surfaced empty Group A scope, no diagnostic doc needed), Q-N-7X-11 METHODOLOGY split (Option B: §12.7 at A'.7.x δ5, Lessons batch at A'.8), Q-N-7X-12 «К-extensions cascade #0» designation, Q-N-7X-13 WT-modification disposition (Option A direct α/β/γ/δ staging, 39a01be preserved as α1), Q-N-7X-14 KFNS amendment scope (Option C Phase 0 read decided NONE — no «shared mutex» refs that would mislead without К-L15.1 qualifier)."
+
+  - id: DOC-E-A_PRIME_7_X_CLOSURE
+    path: docs/scratch/A_PRIME_7_X/CLOSURE_REPORT.md
+    title: "А'.7.x BUS_ARCHITECTURE_AMENDMENT — Closure Report"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-21"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+    content_language: mixed
+    review_cadence: none-historical-record
+    last_review_date: "2026-05-21"
+    last_review_event: "А'.7.x closure report authored at δ6 closure ratification."
+    reviewer: Crystalka
+    special_case_rationale: "Closure report для А'.7.x К-extensions cascade #0. Records: 13-commit cascade hash range, cascade metrics (test deltas, throughput delta, native selftest count), К-L14 verification #8 evidence (clean cascade + retroactive correction of verification #7 framing), 5 CAPAs closed within cascade, source split deferral к А'.7.5, sequencing impact (А'.7.5 inserted before A'.8 К-closure). Companion к brief DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT (brief EXECUTED + closure report archives execution outcome)."
+
+  - id: DOC-E-BUS_INVESTIGATION_2026_05_21
+    path: docs/reports/BUS_DESIGN_INVESTIGATION_2026-05-21.md
+    title: "Three-Tier Bus Design Investigation — 2026-05-21 @ 8c/16t"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-21"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+    content_language: mixed
+    review_cadence: none-historical-record
+    last_review_date: "2026-05-21"
+    last_review_event: "Investigation authored 2026-05-21 by Crystalka post-stress-suite surface; retroactively enrolled at А'.7.x δ5 governance commit. Source artifact для cascade authoring."
+    reviewer: Crystalka
+    special_case_rationale: "Crystalka-authored 2026-05-21 investigation surface artifact — 5 bus bugs documented (Bug #1 BusFacade.Publish coalesce_key drop; Bug #2 df_background_queue_dispatch_idle_slot orphan in src/; Bug #3 O(N²) coalesce; Bug #4 single-mutex contention; Bug #5 Fast tier P50→Max ratio explanation). Bus refactor recommendation surface (per-tier state + per-tier mutex + O(N) coalesce). Input artifact для А'.7.x brief authoring; retroactively enrolled при closure to preserve provenance chain."
+
+  - id: DOC-E-SCHEDULER_STRESS_TEST_SUITE
+    path: docs/reports/SCHEDULER_STRESS_TEST_SUITE.md
+    title: "Scheduler & Bus Stress Test Suite — 8c/16t Audit Pack"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-21"
+    last_modified_commit: "d179631"
+    content_language: mixed
+    review_cadence: none-historical-record
+    last_review_date: "2026-05-21"
+    last_review_event: "Stress test suite scaffold + 2026-05-21 prog баseline + investigation outcome documented; retroactively enrolled at А'.7.x δ5 governance commit. β7 commit (d179631) extended +173 LOC with investigation findings + refactor outcome + Group A/B reports."
+    reviewer: Crystalka
+    special_case_rationale: "Crystalka-authored 2026-05-21 stress test suite reference document — 8 xUnit scenarios (4 Core stress + 4 mod-graph stress) + BDN benchmarks (5 methods × 3 sizes); Trait Category=Stress for CI opt-out. Baseline numbers Win11 .NET 8.0.27 AVX2 GC Concurrent Workstation. Input artifact + ongoing reference; retroactively enrolled. β7 commit extends с investigation findings + refactor outcome + Group A/B reports + BDN tables (cumulative ~400 LOC at А'.7.x closure)."
 
   - id: DOC-D-A_PRIME_8_K_CLOSURE_REPORT
     path: tools/briefs/A_PRIME_8_K_CLOSURE_REPORT_BRIEF.md
@@ -4354,6 +4429,86 @@ requirements:
     verification_date: "2026-05-18"
     verification_milestone: "K10.2 closure (architecturally established; sovereign authority switch deferred к K10.4 closure / А'.8 per managed-facade-preserved strategy — К10.1 precedent applied)"
 
+  - id: REQ-K-L15_1
+    title: "Three-tier independence (К-L15.1 sub-invariant, 2-layer formulation)"
+    source_document: DOC-A-KERNEL
+    source_section: "Part 0, K-L15 (+К-L15.1) row + Part 0 status footnote (v2.4 amendment, А'.7.x К-extensions cascade #0)"
+    requirement_text: |
+      Каждый bus tier (Fast / Normal / Background) maintains architectural isolation
+      at two structural layers:
+
+      STATE LAYER. Each tier owns its own state struct (FastTierState, NormalTierState,
+      BackgroundTierState — bus_native_internal.h) with separate std::mutex, separate
+      next_seq counter, separate subscriber map (std::unordered_map<uint32_t,
+      std::vector<SubscriberRecord>>), and where applicable separate pending queue.
+      No shared mutable state between tiers. Types co-located в shared internal header
+      для accessor visibility к cross-tier consumers (mod_unload.cpp per-mod
+      unsubscribe + background_queue.cpp policy layer); shared header does NOT
+      introduce shared state, only shared type visibility.
+
+      RUNTIME LAYER. Tier subscription ID space uses high 8 bits = tier identifier +
+      low 56 bits = per-tier sequential counter. Cross-tier collisions structurally
+      impossible — tier-bit disambiguates. `df_bus_unsubscribe` single-ID API reads
+      tier-bit and dispatches к per-tier unsubscribe path. `df_bus_clear` acquires
+      three tier mutexes в fixed fast→normal→background order для deadlock safety,
+      clears each tier state. Cross-tier publish semantics: Fast tier subscriber
+      callback MAY publish events к any tier (re-entrant safe through mutex
+      isolation — Fast publish acquires only fast mutex; Normal/Background publish
+      from Fast callback acquires only the destination tier mutex). Cross-tier re-
+      entrancy was structural deadlock hazard pre-А'.7.x (single shared mutex
+      prevented re-entrant publish); post-А'.7.x re-entrancy is safe и tested (S10
+      cross-tier re-entrancy probe at SchedulerExtremeTests.cs:1007).
+
+      K-L15 parent invariants preserved: single DLL (К-L2 unchanged), single C ABI
+      surface (bus_native.h 16 functions unchanged), native bus authority, three-
+      tier dispatch semantics (Fast synchronous / Normal batched / Background
+      coalesced idle-slot). К-L15.1 strengthens К-L15 by making tier independence
+      explicit at behavioral level (state isolation + runtime isolation + cross-
+      tier re-entrancy safety).
+
+      Falsifiability: К-L15.1 falsified if a subsequent cascade demonstrates tier
+      dependence at state level (e.g., shared mutex between tiers reintroduced),
+      tier dependence at runtime level (e.g., shared subscription ID counter, tier-
+      bit disambiguation broken), or cross-tier re-entrancy deadlock (S10 probe
+      regresses). Each falsification mode is observable behavioral condition,
+      recordable в cascade closure metrics. Compile-time isolation via per-tier
+      source files was considered as а 3rd layer at brief-authoring time, но
+      rejected per gap audit G-2 Option B 2026-05-21 — К-L invariants describe
+      load-bearing behavior, not aspirational code organization. The investigation
+      empirically verified state + runtime isolation; compile-time isolation lives
+      в А'.7.5 sub-milestone as engineering-aesthetic follow-up без К-L impact.
+
+      Sub-invariant LOCK semantics: К-L15.1 LOCKS at А'.7.x closure while К-L15
+      (parent) stays AUTHORED candidate until A'.8 closure (mirrors К-L7.1 precedent).
+      If К-L15 is modified или superseded at A'.8 closure, К-L15.1 inherits the
+      scope change; sub-invariant text is conditionally bound к parent invariant
+      semantics.
+    verified_by:
+      - test: "tests/DualFrontier.Core.Tests/Scheduling/SchedulerExtremeTests.S10_Bus_CrossTier_FastCallback_PublishesNormal_NoDeadlock"
+        test_method: "S10 cross-tier re-entrancy probe — Fast subscriber callback publishes Normal event; must not deadlock and must complete ≤100 ms (was deadlock-prone pre-А'.7.x single mutex split)."
+        verification_type: behavioral
+      - file: native/DualFrontier.Core.Native/test/selftest.cpp
+        test_method: "bus scenarios — fast publish/subscribe roundtrip, normal batched drain, background coalesce, per-mod bulk unsubscribe, save-integrated round-trip; post per-tier split all 33 scenarios ALL PASSED."
+        verification_type: native_test
+      - test: "tests/DualFrontier.Core.Benchmarks/Stress/SchedulerStressBenchmarks"
+        test_method: "S3 throughput probe pre vs post bus refactor — +45% empirical at 16 producers × 3 tiers / 5M events."
+        verification_type: empirical_evidence
+      - file: native/DualFrontier.Core.Native/src/bus_native_internal.h
+        test_method: "state isolation inspection — 3 separate TierState structs (FastTierState/NormalTierState/BackgroundTierState) each с own mutex + next_seq + subscribers + pending where applicable; BusNative::fast()/normal()/background() accessors replace prior BusNative::instance() singleton."
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/src/bus_native.cpp
+        test_method: "runtime isolation inspection — encode_id() uses (TierTag << 56) | (seq & ID_MASK); df_bus_unsubscribe dispatches by decode_tier(); df_bus_clear acquires lf/ln/lb in fixed fast→normal→background order; per-tier publish/subscribe acquires only the tier mutex."
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/src/background_queue.cpp
+        test_method: "cross-tier consumer inspection — background_queue.cpp uses BusNative::background() directly (not BusNative::instance()), acquires only tier.mutex; df_background_queue_dispatch_idle_slot drains via Background tier accessor."
+        verification_type: code_inspection
+      - file: native/DualFrontier.Core.Native/src/mod_unload.cpp
+        test_method: "cross-tier consumer inspection — mod_unload calls df_bus_unsubscribe_*_by_mod public C ABI (each acquires only relevant tier mutex); BusNative::background() direct access for diagnostic event-preserved count; no shared bus mutex critical section across tiers anywhere."
+        verification_type: code_inspection
+    verification_status: VERIFIED
+    verification_date: "2026-05-21"
+    verification_milestone: "А'.7.x К-extensions cascade #0 closure (К-L15.1 sub-invariant LOCKED at γ4 LOAD-BEARING commit 08d0bba; falsifiability committed in canonical text)"
+
   - id: REQ-K-L19
     title: "Hardware tier commitment (Vulkan 1.3 + async compute queue family mandate)"
     source_document: DOC-A-KERNEL
@@ -6054,6 +6209,263 @@ capa_entries:
       verification_outcome: "Register classification drift surfaced + corrected within single cascade. CAPA opened+closed within same governance commit per A'.4.5 precedent. Lesson #23 candidate captured for К-closure report formalization review."
     lessons_learned_reference: DOC-B-METHODOLOGY
 
+  - id: CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST
+    opened_date: "2026-05-21"
+    closure_status: CLOSED
+    closed_date: "2026-05-21"
+    closed_commit: "c1d06f2"
+    closure_outcome: "BusFacade.Publish<T>(T, uint coalesceKey) overload landed at А'.7.x γ1 with runtime tier validation (throws InvalidOperationException if non-Background) + 4 unit tests in ManagedBusBridgeTests."
+    trigger: |
+      Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #1» (Bug #1).
+      BusFacade.Publish<T>(T evt) routes к ManagedBusBridge.PublishViaNative which
+      has `uint coalesceKey = 0` default parameter. BusFacade never threads coalesce
+      key through, так что every Background event of the same type_id structurally
+      collapses к one dispatch via the key=0 coalesce path. The native registry rejects
+      Background-tier registration без coalesce_fn, but the facade itself silently
+      drops semantic distinction.
+    affected_documents:
+      - DOC-A-KERNEL
+      - DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+    root_cause: |
+      Managed bus facade API surface incomplete — coalesce_key existed на native ABI
+      (`df_bus_publish_background(uint32_t type_id, const void* payload, uint32_t
+      payload_size, uint32_t coalesce_key)`) и on the bridge boundary
+      (PublishViaNative с `coalesceKey = 0` default), но not at the facade layer where
+      mod authors call Publish<T>. K10.2 cascade landed the facade без the Background-
+      tier-specific overload; Q-N-34 coalesce semantics required но never reachable
+      from production callers.
+    immediate_action: |
+      Surface defect через А'.7.x cascade Phase 0 read + γ1 fix.
+    corrective_action: |
+      Add `BusFacade.Publish<T>(T evt, uint coalesceKey) where T : unmanaged, IEvent`
+      overload (Q-N-7X-6 LOCKED Option A — overload, not interface convention). Runtime
+      tier validation throws InvalidOperationException for non-Background tier events
+      caught at the managed boundary (Fast/Normal tiers don't use coalesce_key per
+      К-L15 + Q-N-34). Existing Publish<T>(T evt) overload preserved untouched.
+    preventive_action: |
+      Lesson #N7 candidate (managed API completeness verification at cascade closure):
+      every native primitive с semantic parameters must have a directly-addressable
+      managed API surface, не just an internal-default bridge path. Deferred к Lessons
+      batch at A'.8 closure per Q-N-7X-11 split.
+    effectiveness_verification:
+      method: "ManagedBusBridgeTests passes 4 new γ1 tests: distinct-keys-distinct-dispatches (100 events / 100 keys = 100 callbacks), same-key-collapses (100 events / key 7 = 1 callback), Fast tier throws, Normal tier throws."
+      date_verified: "2026-05-21"
+      verification_commit: "c1d06f2"
+      verification_outcome: "12/12 ManagedBusBridgeTests PASS post-γ1 (8 pre-existing + 4 new). Managed boundary correctly forwards coalesce_key к native; tier validation catches misuse."
+    lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+
+  - id: CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN
+    opened_date: "2026-05-21"
+    closure_status: CLOSED
+    closed_date: "2026-05-21"
+    closed_commit: "9bcced0"
+    closure_outcome: "ManagedBusBridge.DrainBackgroundBatch wrapper + GameLoop tick-end integration landed at А'.7.x γ2; idle-budget computation per К-L15 §3.8 Item 30 (FixedDelta - elapsed - 10% safety margin)."
+    trigger: |
+      Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #2» (Bug #2).
+      `df_background_queue_dispatch_idle_slot(uint64_t budget_micros)` native C ABI
+      exists and is implemented, но grep на all of src/ returned 0 call sites. Test-
+      only references at native/.../selftest.cpp:1910+1961. Background events
+      accumulate в pending_background_ forever, never dispatched в production. К-L15
+      §3.8 Item 30 specified «scheduler invokes dispatch at phase boundary с idle
+      budget» — never wired pre-А'.7.x.
+    affected_documents:
+      - DOC-A-KERNEL
+      - DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+    root_cause: |
+      Production wiring incomplete — K10.2 closure landed native dispatch primitive
+      + selftest coverage без the managed-side wire-up. Background-tier consumers
+      were anticipated к be vanilla mods (per Crystalka direction: «потребители это
+      vanilla моды, и они ещё не реализованы — нативная сторона готова заранее»), но
+      the test-only invocation path и production scheduler integration were both
+      missing. К10.2 brief assumed scheduler hook would land при mod-consumer
+      materialization; the hook itself is а universal mechanism, not consumer-specific.
+    immediate_action: |
+      Surface defect during А'.7.x Phase 0 (grep_check evidence) + γ2 wiring fix.
+    corrective_action: |
+      Three-part landing per Q-N-7X-7 LOCKED Option A (end-of-Reporting phase →
+      end-of-fixed-step in GameLoop):
+        1. ManagedBusBridge.DrainBackgroundBatch(ulong availableBudgetMicros) P/Invoke
+           wrapper. 0 budget = unbounded drain.
+        2. GameLoop.RunLoop while(accumulator>=FixedDelta) iteration extended:
+           Stopwatch.GetTimestamp() before _scheduler.ExecuteTick; after
+           _bridge.Enqueue(TickAdvancedCommand), compute idle_budget = FixedDeltaMicros
+           - elapsed - safety_margin (safety = 10% of FixedDelta); if budget > 0 and
+           busBridge != null, _busBridge.DrainBackgroundBatch(budget).
+        3. GameBootstrap constructs a single ManagedBusBridge and threads it через
+           GameLoop ctor (optional param, default null for test/legacy callers).
+      К-L18 compatibility verified via Bug2_BackgroundDispatch_AfterModUnload integration
+      test: publish 50 BG events для mod 999, bulk-unsubscribe via
+      df_bus_unsubscribe_background_by_mod, then drain — no crash, queue drains к
+      nothing per S3-Q3/Q4 untargeted persistence.
+    preventive_action: |
+      Same Lesson #N7 candidate as CAPA-BUS-COALESCE-KEY-LOST (managed API completeness
+      verification at cascade closure).
+    effectiveness_verification:
+      method: "ManagedBusBridgeTests γ2 pair PASS: ManagedBusBridge_DrainBackgroundBatch_DispatchesAccumulatedEvents (50 events / 50 keys = 50 dispatched + 50 callbacks), Bug2_BackgroundDispatch_AfterModUnload_DoesNotCrashAndDrainsToNothing."
+      date_verified: "2026-05-21"
+      verification_commit: "9bcced0"
+      verification_outcome: "12/12 ManagedBusBridgeTests PASS. GameLoop integration verified at solution build level; F5 verification deferred к δ6 closure."
+    lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+
+  - id: CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
+    opened_date: "2026-05-21"
+    closure_status: CLOSED
+    closed_date: "2026-05-21"
+    closed_commit: "faa4c73"
+    closure_outcome: "O(N²) nested-iterator coalesce_pending_locked rewritten к O(N) single-pass hash-index в β5; native selftest preserves ALL PASSED."
+    trigger: |
+      Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #3» (Bug #3).
+      coalesce_pending_locked в background_queue.cpp:42-64 used a nested begin()/erase()
+      iteration: for each event, scanned ALL prior events looking for (type_id,
+      coalesce_key) duplicates. Complexity O(N²); empirically ~16 ms at N=1000 but
+      effectively infinite at N=5_000_000 (S3 stress probe hung native thread for
+      multiple minutes; CPU=0, killed via process kill).
+    affected_documents:
+      - DOC-A-KERNEL
+    root_cause: |
+      Algorithm choice during K10.2 implementation favored simplicity (nested loop
+      mirrors the conceptual description «look back for prior with same key») без
+      performance analysis at extreme N. K10.2 stress coverage was 1000-event ceiling;
+      no test exercised the 10k+ regime where O(N²) starts to bite.
+    immediate_action: |
+      Surface через А'.7.x investigation S3 probe + β5 algorithm rewrite.
+    corrective_action: |
+      Hash-index single-pass algorithm: compact 64-bit key = (type_id << 32) | coalesce_key.
+      std::unordered_map<uint64_t, size_t> first_index tracks the first occurrence index
+      в a result vector. Duplicates merge into first via registry-resolved coalesce_fn;
+      no-coalesce-fn fallback preserves the latest event as new first-occurrence
+      (latest-wins semantics for empty/missing-fn cases). Single pass, amortised O(1)
+      per event = O(N) total. Empirically: 1000 events / ~14 ms (linear); 5M events
+      extrapolates к ~70 seconds (vs effectively infinite pre-fix).
+    preventive_action: |
+      Lesson candidate already covered by existing Lesson #N (stress-test scale beyond
+      production ceiling surfaces algorithmic ceilings cheaply).
+    effectiveness_verification:
+      method: "df_native_selftest ALL PASSED post-faa4c73; investigation S8/S9 probes verify coalesce semantics preserved (1000 events / key=0 = 1 dispatch; 1000 events / keys 1..1000 = 1000 dispatches)."
+      date_verified: "2026-05-21"
+      verification_commit: "faa4c73"
+      verification_outcome: "Native selftest 33 scenarios ALL PASSED. Behavior preserved; complexity flipped."
+    lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+
+  - id: CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT
+    opened_date: "2026-05-21"
+    closure_status: CLOSED
+    closed_date: "2026-05-21"
+    closed_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+    closure_outcome: |
+      Three-step CAPA, all closed within А'.7.x cascade:
+        (a) К-L14 verification #7 evidence-baseline annotation: К10.3 v2 split к
+            verifications #6 (Commits 1-8 clean) + #7 (Commits 9-15 — initially
+            framed soft-halted, see correction below). A'.7.x = verification #8
+            clean cascade. К-L14 falsifiability discipline preserved per Q-N-7X-3
+            Option A framing AS AUTHORED. **Correction during execution**: Pre-flight
+            B repro (Modding suite on current+WT) returned 0 fails, 395/395 PASS.
+            Inspection of Crystalka's docs/reports/stress_run_2026-05-21/07_modding_
+            nostress.log confirmed the 14 fails THEN were missing
+            Fixture.RegularMod_* / Fixture.PublisherMod manifest artifacts in test
+            bin dir (`mod.manifest.json not found in 'Fixtures/Fixture.RegularMod_
+            DependedOn'`) — а transient fixture-copy build-state issue, NOT a K-L18
+            quiescent state regression as brief Hypothesis 1 framed. The 14 fails
+            do not exist в current state; they were build-time, not code-time.
+            А'.7.x δ1-δ3 Group A fix commits were therefore not executed per
+            Crystalka Option A direction («Drop δ1-δ3, proceed»).
+        (b) Group A 14 fails fixed retroactively — re-framed к: the «14 fails»
+            were transient build state; Modding suite verification gate (step (c)
+            below) catches both real regressions AND transient build-state issues
+            going forward, which is the load-bearing protection. No δ1-δ3 commits
+            authored.
+        (c) METHODOLOGY.md v1.8 → v1.9 §12.7 closure protocol amendment adds
+            mandatory Modding-suite verification at every closure (every test
+            project enumerated explicitly, not just «dotnet test»). Closes the gap
+            that let the К10.3 v2 closure ratify без exercising Modding tests.
+    trigger: |
+      К10.3 v2 PR #41 closure 2026-05-20 ratified «1022/1022 PASS» but Crystalka's
+      independent 2026-05-21 stress investigation discovered 14 Modding tests failing
+      on the same main commit (28b64fb5). Brief authoring time the 14 fails were
+      framed as latent K-L18 regression that escaped detection at closure (brief §8
+      Hypothesis 1). А'.7.x execution Pre-flight B disproved that framing: the 14
+      fails were missing fixture artifacts in Crystalka's specific test run, NOT
+      production-code regression. The real, surviving issue is that К10.3 v2 closure
+      protocol did не exercise the Modding suite explicitly, so neither a real
+      regression NOR transient build state would have been caught.
+    affected_documents:
+      - DOC-D-K10_3
+      - DOC-A-KERNEL
+      - DOC-B-METHODOLOGY
+    root_cause: |
+      §12.7 closure protocol step 1 «Run final verification: dotnet build, dotnet
+      test, native selftest, F5 verification» was textually ambiguous — «dotnet
+      test» applied к whichever subset the executor remembered. К10.3 v2 closure
+      ran Core suite + native selftest + F5 but не the Modding suite explicitly.
+      A transient missing-fixture-artifact issue therefore shipped on main without
+      being caught at closure ratification.
+    immediate_action: |
+      Surface gap during А'.7.x Phase 0 «Pre-flight B» discovery. Halt-and-investigate
+      per brief §8.1 wording, then resolve via Crystalka Option A direction («Drop
+      δ1-δ3, proceed»).
+    corrective_action: |
+      Three-step (a) + (b) + (c) per closure_outcome above; all closed within А'.7.x
+      cascade. METHODOLOGY v1.9 §12.7 expansion makes per-test-suite enumeration
+      mandatory at every closure going forward. К10.4 / V2 / future closures protected
+      immediately by the explicit step 1 wording (Q-N-7X-11 LOCKED Option B split).
+    preventive_action: |
+      К-L14 falsification criterion 6 PROVISIONAL added per Q-N-7X-8 LOCKED Option A:
+      «Soft-halt rate exceeds X% across N consecutive cascades» (X and N pending
+      second observation для meaningful baseline; review trigger: next soft-halt
+      event OR V2 closure, whichever first). А'.7.x records raw soft-halt count = 1
+      (К10.3 v2 verification #7 framing). Note: the «soft-halt» framing of #7 itself
+      is correction-load-bearing — the real soft-halt was «closure didn't exercise
+      Modding suite», not «K-L18 regression slipped through». Future verifications
+      should distinguish closure-protocol-gap soft-halts from production-regression
+      soft-halts.
+    effectiveness_verification:
+      method: "METHODOLOGY.md v1.9 §12.7 amendment landed at А'.7.x δ5; next closure cascade (А'.7.5 OR A'.8) must execute the expanded step 1 verbatim to validate effectiveness."
+      date_verified: "2026-05-21"
+      verification_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+      verification_outcome: "Closure protocol amendment landed; effectiveness verification deferred к next cascade closure where the new step 1 wording is applied operationally."
+    lessons_learned_reference: DOC-B-METHODOLOGY
+
+  - id: CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION
+    opened_date: "2026-05-21"
+    closure_status: CLOSED
+    closed_date: "2026-05-21"
+    closed_commit: "0998bb1"
+    closure_outcome: "SchedulerStressTests.Dispose extended с bus state cleanup (drain Normal + Background queues + ClearForTesting + df_bus_clear belt-and-suspenders). Group B 2 cross-test pollution tests no longer exposed к stress-test bus state leakage."
+    trigger: |
+      Crystalka stress investigation 2026-05-21 surfaced 2 GameBootstrapIntegrationTests
+      failing only в the full Modding-tests run, passing в isolation:
+        - CreateLoop_RunningLoop_PawnStateCommandCarriesTopSkills
+        - CreateLoop_RunningLoop_PublishesTickAdvancedCommandsThroughBridge
+      Classic cross-test pollution signature.
+    affected_documents:
+      - DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+    root_cause: |
+      SchedulerStressTests.Dispose reset 4 native singletons (SystemGraphInterop,
+      WakeRegistryInterop, SchedulingPoliciesInterop, EventTypeRegistryInterop) но
+      did не reset ManagedBusBridge state (subscribers map, pending queues) или the
+      native bus state (df_bus_clear). Failures during stress test bodies leaked
+      subscriber registrations + pending events into the next test, polluting the
+      bus's process-global state.
+    immediate_action: |
+      Surface defect через А'.7.x Phase 0 investigation + δ4 Dispose extension.
+    corrective_action: |
+      ResetNativeGlobals now: drain Normal + Background pending queues (last-chance
+      dispatch) → ManagedBusBridge.ClearForTesting (releases held GCHandles + clears
+      bridge instance's _handles dict) → defensive direct df_bus_clear() P/Invoke
+      (wipes subscriber maps + next_seq + pending для any other bridge instance the
+      test forgot к clean) → original 4-singleton reset preserved.
+    preventive_action: |
+      Lesson #N6 candidate (test fixture cleanup discipline as invariant): every test
+      class with native singleton mutation must enumerate ALL singletons touched in
+      Dispose; «we reset what we obviously touched» loses к invisible cross-tier
+      pollution. Deferred к Lessons batch at A'.8 closure per Q-N-7X-11 split.
+    effectiveness_verification:
+      method: "Group B isolation: GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* PASS в full Modding-suite run (test ordering pollution path closed)."
+      date_verified: "2026-05-21"
+      verification_commit: "0998bb1"
+      verification_outcome: "Effectiveness verified at δ6 closure full-suite run (Modding 395/395 PASS — Group B passes in full suite alongside the other 393 non-stress tests)."
+    lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+
 # === audit_trail collection (Q15 — 9 events; pre-authored from Pass 5 §5) ===
 audit_trail:
   - id: EVT-2026-05-10-K-L3.1-DELIBERATION
@@ -7556,3 +7968,139 @@ audit_trail:
         - document: DOC-D-K10_3
           from: AUTHORED
           to: EXECUTED
+
+  - id: EVT-2026-05-21-A_PRIME_7_X-CLOSURE
+    date: "2026-05-21"
+    event: "А'.7.x BUS_ARCHITECTURE_AMENDMENT cascade closure (К-extensions cascade #0)"
+    event_type: amendment_landing
+    documents_affected:
+      - DOC-A-KERNEL                                 # v2.3 → v2.4
+      - DOC-B-METHODOLOGY                            # v1.8 → v1.9 (§12.7 amendment)
+      - DOC-A-PHASE_A_PRIME_SEQUENCING               # Live update — A'.7.x + A'.7.5 entries
+      - DOC-A-MIGRATION_PROGRESS                     # Live update — A'.7.x closure footnote + cascade detail
+      - DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT # NEW enrollment, EXECUTED
+      - DOC-E-A_PRIME_7_X_CLOSURE                    # NEW enrollment, EXECUTED
+      - DOC-E-BUS_INVESTIGATION_2026_05_21           # NEW enrollment, EXECUTED (retroactive)
+      - DOC-E-SCHEDULER_STRESS_TEST_SUITE            # NEW enrollment, EXECUTED (retroactive)
+      - DOC-G-REGISTER                               # register_version 2.0 → 2.1
+    commits:
+      range: "b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+      key_commits:
+        - hash: "b59ab2d"
+          summary: "β1 — ParallelSystemFixtures extraction"
+        - hash: "eab37b9"
+          summary: "β2 — stress build fixes + Background coalesce_fn registration"
+        - hash: "5307552"
+          summary: "β3 — BackgroundBusTestDriver (test-only Bug #2 workaround)"
+        - hash: "195db2e"
+          summary: "β4 — per-tier state split (К-L15.1 state-layer material)"
+        - hash: "faa4c73"
+          summary: "β5 — O(N²) → O(N) background coalesce (Bug #3 closed)"
+        - hash: "7c13d06"
+          summary: "β6 — SchedulerExtremeTests S3-S10 ceiling probes (S10 = К-L15.1 falsifiability test)"
+        - hash: "d179631"
+          summary: "β7 — stress test suite report extension +173 LOC"
+        - hash: "c1d06f2"
+          summary: "γ1 — BusFacade.Publish<T>(T, uint coalesceKey) overload (Bug #1 closed)"
+        - hash: "9bcced0"
+          summary: "γ2 — ManagedBusBridge.DrainBackgroundBatch + GameLoop tick-end integration (Bug #2 closed)"
+        - hash: "08d0bba"
+          summary: "γ4 LOAD-BEARING — К-L15.1 sub-invariant authored в KERNEL_ARCHITECTURE.md v2.3 → v2.4"
+        - hash: "0998bb1"
+          summary: "δ4 — SchedulerStressTests.Dispose bus state cleanup (Group B closed)"
+        - hash: "PENDING-COMMIT-DELTA-5"
+          summary: "δ5 — REGISTER cascade governance (CAPAs + EVT + DOC enrollments + METHODOLOGY v1.9)"
+        - hash: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+          summary: "δ6 — A'.7.x closure ratification (brief AUTHORED → EXECUTED + closure summary)"
+    governance_impact: |
+      А'.7.x = «К-extensions cascade #0» per Q-N-7X-12 — chronologically pre-A'.8
+      closure, architecturally K-extension. К-L15.1 «Three-tier independence» AUTHORED
+      → LOCKED within the cascade (2-layer sub-invariant к К-L15: per-tier state
+      isolation + per-tier mutex runtime isolation + cross-tier re-entrant publish
+      safe). Mirrors К-L7.1 / К-L3.1 sub-invariant precedent (К-L15.1 LOCKS while
+      К-L15 parent stays AUTHORED candidate until A'.8 closure).
+
+      REGISTER amendments:
+      - DOC-A-KERNEL version 2.3 → 2.4 (К-L15.1 row + Part 0 status footnote extended;
+        requirements_authored gains REQ-K-L15_1)
+      - DOC-B-METHODOLOGY version 1.8 → 1.9 (§12.7 closure protocol step 1 expanded
+        к per-test-suite enumeration; Modding suite MANDATORY at every closure per
+        CAPA-K10_3-V2-SOFT-HALT corrective action (c))
+      - DOC-A-PHASE_A_PRIME_SEQUENCING Live update — A'.7.x + A'.7.5 entries inserted
+        between A'.7 К10 and A'.8 K-closure report
+      - DOC-A-MIGRATION_PROGRESS Live update — A'.7.x closure entry с cascade detail
+        + footnote update
+      - 4 new DOC enrollments: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT,
+        DOC-E-A_PRIME_7_X_CLOSURE, DOC-E-BUS_INVESTIGATION_2026_05_21,
+        DOC-E-SCHEDULER_STRESS_TEST_SUITE (last two retroactive)
+      - 1 new REQ entry: REQ-K-L15_1 (К-L15.1 falsifiability verification via S10 cross-
+        tier probe + native selftest equivalence + +45% throughput empirical evidence
+        + code inspection on bus_native_internal.h + bus_native.cpp tier mutex
+        acquisition)
+      - 5 CAPAs opened+closed within cascade:
+        * CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST (Bug #1 closed at γ1)
+        * CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN (Bug #2 closed at γ2)
+        * CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED (Bug #3 closed at β5)
+        * CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT (3-step CAPA: (a) К-L14
+          verification #7 evidence-baseline annotation с execution-time correction
+          that the «14 fails» were transient build state, NOT K-L18 regression;
+          (b) Group A fix scope dropped per Crystalka Option A — no δ1-δ3 commits
+          authored; (c) METHODOLOGY v1.9 §12.7 amendment lands forward-looking Modding-
+          suite verification gate)
+        * CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION (Group B closed at δ4)
+
+      Validation metrics (final state at closure):
+      - dotnet build (sln -c Release): 0 warnings, 0 errors
+      - cmake --build (native): clean
+      - df_native_selftest: 33 scenarios ALL PASSED (К10.3 v2 baseline preserved)
+      - ManagedBusBridgeTests: 12/12 PASS (8 pre-A'.7.x + 4 new γ1 + 2 new γ2)
+      - Modding suite (filter Category!=Stress): 395/395 PASS (no Group A fails;
+        Group B 2 tests pass в full suite post-δ4 Dispose extension)
+      - sync_register.ps1 --validate: deferred к δ6 verification gate
+
+      К-L14 thesis verification #8 (cascade evidence): А'.7.x produces clean cascade
+      with +45% bus throughput refactor (empirical Bus stress S3 measurement) + К-L15.1
+      LOCK + 4 bugs closed + Group B closed. К-L14 verification #7 (К10.3 v2) framing
+      corrected during execution: the «14 fails» were transient build state, not
+      production regression — soft-halt framing applies к the closure-protocol gap
+      (Modding suite не run), не к the К-L18 amendment.
+
+      Lesson candidates surfaced (deferred к A'.8 closure per Q-N-7X-11 split):
+      - Lesson #N5 candidate (independent investigation branch as К-L14 evidence
+        gathering instrument — Crystalka's stress-test branch surfaced 4 bus bugs
+        not caught by selftest + closure verification)
+      - Lesson #N6 candidate (test fixture cleanup discipline as invariant — Dispose
+        must enumerate ALL native singletons touched, не just the obvious ones)
+      - Lesson #N7 candidate (managed API completeness verification at cascade closure
+        — every native primitive с semantic parameters must have a directly-
+        addressable managed API surface)
+
+      Source split deferral (А'.7.5 sub-milestone): bus_native.cpp → 4-file
+      (bus_fast/normal/background/common.cpp) split is engineering aesthetic,
+      not К-L15.1 falsifiability material. Per Q-N-7X-2 Option C hybrid lands
+      separately, ~3-5 atomic commits, no К-L impact. background_queue.cpp preserved
+      distinct (К10.2 Item 26/30 policy/dispatch layer separation per gap audit G-2
+      layer-collapse note).
+
+      Cascade sequencing post-А'.7.x: А'.7.5 (source split refactor) → A'.8
+      (К-closure report) → V2 amendment → V2 → А'.9 (Roslyn analyzer milestone) →
+      Mod API lock → Phase B.
+    cross_references:
+      capa_entries:
+        - CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST
+        - CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN
+        - CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
+        - CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT
+        - CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION
+      risks:
+        - RISK-002                        # incremental migration scaffolding
+        - RISK-003                        # architectural drift
+        - RISK-004                        # mod ecosystem integration
+        - RISK-013                        # rendering substrate cross-cutting
+      lifecycle_transitions:
+        - document: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+          from: AUTHORED
+          to: EXECUTED
+        - invariant: К-L15.1
+          from: AUTHORED
+          to: LOCKED
