@@ -30,7 +30,7 @@ public sealed class ModDependencyGraphStressTests
     public void TopoSortRegularMods_FiveThousandModRandomDag_ProducesValidOrdering()
     {
         const int ModCount = 5000;
-        var (mods, byId) = BuildRandomAcyclicModBatch(ModCount, seed: 0xDF_BA7CH);
+        var (mods, byId) = BuildRandomAcyclicModBatch(ModCount, seed: 0xDF_BA7C);
 
         (IReadOnlyList<ModManifest> sorted, IReadOnlyList<ValidationError> cycleErrors) =
             ModIntegrationPipeline.TopoSortRegularMods(mods, byId);
@@ -93,7 +93,7 @@ public sealed class ModDependencyGraphStressTests
         // (each contributing 2 cyclic participants -> 200 expected errors).
         const int AcyclicCount = 4800;
         const int CyclicPairs = 100;
-        var (mods, byId) = BuildRandomAcyclicModBatch(AcyclicCount, seed: 0xCAFE_F00D);
+        var (mods, byId) = BuildRandomAcyclicModBatch(AcyclicCount, seed: unchecked((int)0xCAFE_F00D));
         var allMods = new List<ModManifest>(mods);
         var allByIdMutable = new Dictionary<string, ModManifest>(byId, StringComparer.Ordinal);
 
@@ -139,7 +139,7 @@ public sealed class ModDependencyGraphStressTests
         const int BaseCount = 3000;
         const int MissingRequired = 1000;
         const int MissingOptional = 1000;
-        var (mods, byId) = BuildRandomAcyclicModBatch(BaseCount, seed: 0xBEEF_0042);
+        var (mods, byId) = BuildRandomAcyclicModBatch(BaseCount, seed: unchecked((int)0xBEEF_0042));
         var mutableBatch = new Dictionary<string, ModManifest>(byId, StringComparer.Ordinal);
 
         for (int i = 0; i < MissingRequired; i++)

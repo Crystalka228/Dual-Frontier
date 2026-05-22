@@ -251,9 +251,10 @@ public sealed class SchedulerStressTests : IDisposable
 
         try
         {
+            IntPtr backgroundCoalesceFn = Marshal.GetFunctionPointerForDelegate(s_backgroundCoalesceDelegate);
             facade.RegisterEventType<StressFastEvent>().Should().BeTrue();
             facade.RegisterEventType<StressNormalEvent>().Should().BeTrue();
-            facade.RegisterEventType<StressBackgroundEvent>().Should().BeTrue();
+            facade.RegisterEventType<StressBackgroundEvent>(backgroundCoalesceFn).Should().BeTrue();
 
             uint fastTypeId = facade.GetOrAssignTypeId<StressFastEvent>();
             uint normalTypeId = facade.GetOrAssignTypeId<StressNormalEvent>();
@@ -478,6 +479,12 @@ public sealed class SchedulerStressTests : IDisposable
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void SubscriberDelegate(uint typeId, IntPtr payload, uint payloadSize, IntPtr userData);
 
+    // Native registry rejects Background-tier registration без coalesce_fn
+    // (event_type_registry.cpp:56, К-L15 / Q-N-34). Test provides
+    // latest-wins coalesce: payload is 4-byte int, newest overwrites old.
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    private delegate void CoalesceDelegate(IntPtr dst, IntPtr src);
+
     private static int s_fastCount;
     private static int s_normalCount;
     private static int s_backgroundCount;
@@ -485,6 +492,12 @@ public sealed class SchedulerStressTests : IDisposable
     private static readonly SubscriberDelegate s_fastSubscriberDelegate = FastCallback;
     private static readonly SubscriberDelegate s_normalSubscriberDelegate = NormalCallback;
     private static readonly SubscriberDelegate s_backgroundSubscriberDelegate = BackgroundCallback;
+    private static readonly CoalesceDelegate s_backgroundCoalesceDelegate = BackgroundCoalesce;
+
+    private static void BackgroundCoalesce(IntPtr dst, IntPtr src)
+    {
+        Marshal.WriteInt32(dst, Marshal.ReadInt32(src));
+    }
 
     private static void FastCallback(uint typeId, IntPtr payload, uint payloadSize, IntPtr userData)
     {

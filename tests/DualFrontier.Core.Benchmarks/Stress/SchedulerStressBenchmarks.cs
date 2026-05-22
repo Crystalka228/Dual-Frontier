@@ -164,14 +164,14 @@ public class ModDependencyGraphBenchmarks
     [GlobalSetup]
     public void GlobalSetup()
     {
-        var rng = new Random(0xBA7CH_BD);
+        var rng = new Random(0xBA7C_BD);
         _mods = new List<ModManifest>(ModCount);
         _byId = new Dictionary<string, ModManifest>(ModCount, StringComparer.Ordinal);
 
         for (int i = 0; i < ModCount; i++)
         {
             string id = $"bench.mod.{i:D5}";
-            int depCount = i == 0 ? 0 : rng.Next(0, Math.Min(4, i + 1));
+            int depCount = i == 0 ? 0 : rng.Next(0, System.Math.Min(4, i + 1));
             var deps = new ModDependency[depCount];
             for (int d = 0; d < depCount; d++)
             {
