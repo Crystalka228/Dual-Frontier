@@ -13,10 +13,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K_CLOSURE_AUTHORING_
 ---
 # Brief frontmatter
 brief_id: K_CLOSURE_AUTHORING_BRIEF
-status: RATIFIED
+status: EXECUTED
 authored: 2026-05-22 (Claude Opus 4.7 A'.8 deliberation Session 2)
 ratified: 2026-05-23 (Crystalka Q-N deliberation Session 2 Day 2 — 10/10 Q-N LOCKED; Q-N-8-4 AUTHORED amendment к Meta-Q1 Session 1 LOCKED commitment)
-executed: PENDING (Claude Code execution mode, 6-commit atomic cascade per Q-N-8-9 LOCKED)
+executed: 2026-05-23 (Claude Code execution mode — 6-commit atomic cascade per Q-N-8-9 LOCKED, commits 044855c..PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION on feature/a_prime_8-k-closure-report)
 author: Claude Opus 4.7 (A'.8 deliberation Session 2 post-A'.7.5 closure)
 target_executor: Claude Code (auto-mode + Crystalka oversight)
 estimated_duration: 8-14 hours auto-mode (substantial K_CLOSURE_REPORT authoring ~5000-7000 lines + cross-document amendments + REGISTER cascade)
@@ -1385,6 +1385,139 @@ Honest framing committed — soft-halt annotations preserved as research framewo
 
 ---
 
+## §12 — Closure section (EXECUTED 2026-05-23)
+
+**Status**: EXECUTED — 6-commit atomic cascade complete on `feature/a_prime_8-k-closure-report` branch.
+
+### §12.1 — Commit cascade summary
+
+| Step | Commit hash | Description | Outcome |
+|---|---|---|---|
+| Pre-cascade | 9f3c567 | Brief AUTHORED → RATIFIED (§11 ratification summary appended; Q-N-8-4 AUTHORED amendment propagated через body) | RATIFIED state landed on main |
+| Branch creation | (no commit) | feature/a_prime_8-k-closure-report from main 9f3c567 | Branch operational |
+| Commit 1 | 044855c | feat(architecture): A'.8 Commit 1 — K_CLOSURE_REPORT.md authoring (LOAD-BEARING Tier 1 AUTHORED per Q-N-8-4) | K_CLOSURE_REPORT.md 2296 lines, 12 sections per Q-N-8-8 |
+| Commit 2 | 5b77b5a | feat(architecture): A'.8 Commit 2 — KERNEL_ARCHITECTURE.md v2.4 → v2.5 (8 К-L LOCK batch) | 8 К-L LOCK transitions; К-L14 hybrid (c); status footnote extended |
+| Commit 3 | fad169b | feat(methodology): A'.8 Commit 3 — METHODOLOGY.md v1.9 → v1.10 (12 FORMALIZE + 9 DEFER + 1 SUNSET) | Lessons batch landed; Provisional pool updated; v1.9 + v1.10 Change history rows |
+| Commit 4 | 517f68b | governance: A'.8 Commit 4 — PHASE_A_PRIME_SEQUENCING + MIGRATION_PROGRESS chronicle | А'.8 entry expanded; chronicle prepended |
+| Commit 5 | ae2ca2c | governance: A'.8 Commit 5 — REGISTER cascade + EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION (register_version 2.2 → 2.3) | 3 new DOC enrollments + EVT + register_version 2.2 → 2.3; sync_register.ps1 --validate PASS |
+| Commit 6 | (this commit) | governance: A'.8 Commit 6 — K_CLOSURE_AUTHORING_BRIEF AUTHORED → EXECUTED + closure section | Brief lifecycle EXECUTED; §12 closure section appended |
+
+**Total**: 6 atomic commits on feature/a_prime_8-k-closure-report (per Q-N-8-9 LOCKED S-LOCK-8).
+
+### §12.2 — К-Lxx series final state at A'.8 closure
+
+**21 invariants cumulative** (К-L1..L19 main series с К-L6 SUPERSEDED + 3 sub-invariants К-L3.1/L7.1/L15.1; К-L20 reserved post-Mod API lock).
+
+**К-L LOCK batch at A'.8** (per Q-N-8-1 LOCKED):
+- К-L7.1 (sub-invariant к К-L7, GPU compute pipeline slot binding) — LOCKED (was AUTHORED К10.3 v2)
+- К-L12 (full native kernel scheduling) — LOCKED (was AUTHORED К10.1)
+- К-L13 (on-demand activation, 5 wake types) — LOCKED (was AUTHORED К10.1)
+- К-L14 (performance derives from cleanness, meta-invariant) — LOCKED (was AUTHORED К10.1; canonical text Q-N-8-2 §1.2 verbatim)
+- К-L15 (native bus authority + three-tier dispatch, parent) — LOCKED (was AUTHORED К10.2; sub К-L15.1 already LOCKED А'.7.x)
+- К-L16 (simulation tick pipeline depth D≥1, default 2) — LOCKED (was AUTHORED К10.3 v2)
+- К-L17 (display composition multi-layer) — LOCKED (was AUTHORED К10.3 v2)
+- К-L18 (mod lifecycle quiescent state precondition) — LOCKED (was AUTHORED К10.3 v2)
+
+К-L15.1 (three-tier independence, 3-layer manifestation: state + runtime + compile-time) already LOCKED А'.7.x (commit 08d0bba) + compile-time layer materialized А'.7.5 (commit 752c04b) — NOT part of A'.8 LOCK batch (preserved per А'.7.x ratification).
+
+### §12.3 — К-L14 evidence baseline at A'.8 closure
+
+**9 verifications** (per Q-N-8-3 LOCKED):
+- 8 clean: V0.A, V0.B, V0.C.1, V0.C.2, V1, К10.3 v2 commits 1-8, А'.7.x, А'.7.5
+- 1 honest soft-halt annotation: verification #7 (К10.3 v2 commits 9-15) — process-gap cause (Modding suite not in §12.7 step (a) pre-v1.9), retroactively closed by А'.7.x К-extensions cascade #0
+
+**К-L14 falsifiability criteria** (post-Q-N-8-7 LOCKED):
+- 1-4 active (NOT falsified at A'.8 closure)
+- 5 deferred (post-Phase B empirical evidence)
+- 6 Provisional NEW (soft-halt rate threshold TBD pending 2nd observation)
+
+### §12.4 — Cross-document amendments landed
+
+| Document | Version transition | Commit |
+|---|---|---|
+| K_CLOSURE_REPORT.md | NEW (v1.0 AUTHORED Tier 1 Category A per Q-N-8-4) | 044855c |
+| KERNEL_ARCHITECTURE.md | v2.4 → v2.5 | 5b77b5a |
+| METHODOLOGY.md | v1.9 → v1.10 | fad169b |
+| PHASE_A_PRIME_SEQUENCING.md | Live update (А'.8 entry full closure) | 517f68b |
+| MIGRATION_PROGRESS.md | Live update (chronicle prepended) | 517f68b |
+| REGISTER.yaml | register_version 2.2 → 2.3 | ae2ca2c |
+| K_L14_EVIDENCE_DASHBOARD.md | NEW (Tier 2 AUTHORED-SKELETON) | ae2ca2c |
+| ANALYZER_RULES.md | NEW (Tier 1 AUTHORED-SKELETON) | ae2ca2c |
+| K_CLOSURE_AUTHORING_BRIEF.md | AUTHORED → RATIFIED → EXECUTED | 9f3c567 + this commit |
+
+### §12.5 — Lessons promotion batch (per Q-N-8-5 LOCKED)
+
+**12 FORMALIZED**: #7 strengthened, #8 strengthened, #9 + #9.1 sub, #10, #14 PROMOTED, #16, #17, #21, #25 strengthened, #26, #27 PROMOTED, #N2 strengthened.
+
+**9 DEFER (Provisional pool)**: #18, #19, #N3 carried; #N5/#N6/#N7/#N8/#N9 NEW А'.7.x; #N10 NEW Godot.
+
+**1 SUNSET**: Lesson #15 (subsumed by Lesson #20).
+
+### §12.6 — Roslyn analyzer rule specifications
+
+**18 active rules** (DF001-DF019 + DF015.1 sub-rule NEW А'.7.x) + **4 reserved** (DF006 SUPERSEDED, DF008 process, DF014 meta, DF020 post-Mod API lock).
+
+ANALYZER_RULES.md Tier 1 AUTHORED-SKELETON enrolled at A'.8; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade.
+
+### §12.7 — К-extensions designation operationalization (per Q-N-8-10 LOCKED)
+
+**Cascade #0**: А'.7.x BUS_ARCHITECTURE_AMENDMENT (CLOSED 2026-05-21) — К-L15.1 LOCKED 2-layer + bus refactor +45% throughput + 5 CAPAs closed; К-L14 verification #8.
+
+**Cascade #1**: А'.7.5 BUS_SOURCE_SPLIT (CLOSED 2026-05-22) — К-L15.1 compile-time layer materialized (3-layer manifestation complete); 731 baseline preserved; К-L14 verification #9.
+
+**Cascade #2**: Godot removal (DEFERRED к post-closure per Q-N-8-6 LOCKED) — `claude/godot-removal-deliberation-Vfg2R` branch с 1 atomic commit (-1955 LOC) awaiting Crystalka merge discretion. К-L14 verification #10 candidate = first removal-type evidence.
+
+### §12.8 — Deviations from authored brief
+
+**Q-N-8-4 amended Meta-Q1 LOCKED Session 1**: Brief §1.2 originally specified «Lifecycle: LOCKED (initial v1.0 at A'.8 closure ratification commit)» per Meta-Q1 Session 1 LOCKED commitment. Q-N-8-4 Crystalka ratification adopted alternative: **Tier 1 AUTHORED initial v1.0; LOCKED transition deferred к downstream review when forward evidence accumulates**. Brief body amended through Q-N ratification + execution cascade — propagated через §1.2/§1.6/§1.8/§3.8/§3.12/§4.1/§4.7/§5.1/§5.4/§7.2/§8.1 references. К-closure event boundary semantics adjusted: K_CLOSURE_REPORT.md AUTHORED ratification commit push к origin/main = formal К-series closure timestamp (lifecycle anchor adjusted LOCKED → AUTHORED; semantic preserved). Brief frontmatter «status: AUTHORED» → «status: RATIFIED» → «status: EXECUTED» через three commits (9f3c567 pre-cascade + this Commit 6).
+
+**Brief size note**: K_CLOSURE_REPORT.md authored 2296 lines vs 4800-7500 target estimate. Below target but comprehensive coverage of all 12 sections per Q-N-8-8 LOCKED S-LOCK-3. Target was estimate, не hard minimum. Section depth adequate для К-series formal closure authoritative record.
+
+### §12.9 — Empirical metrics (post-Commit 6 pre-push verification)
+
+Per §7.1 closure protocol verification gates executed at Task #11:
+
+| Gate | Outcome | Notes |
+|---|---|---|
+| `dotnet build -c Release DualFrontier.sln` | **PASS** (0 warnings, 0 errors; 23.95s) | Documentation-only cascade preserved managed build state |
+| `dotnet test tests/DualFrontier.Modding.Tests/ -c Release --no-build` | **398/399 PASS** (1 pre-existing pollution flake) | 1 failure: `CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` — fails when run with full suite (30m9s elapsed; pollution exposure window); **PASSES in isolation** (1/1 in 617ms via FullyQualifiedName filter). Verified `git diff fe5a871 HEAD -- tests/ src/ native/` is empty — zero code changes between А'.7.5 closure baseline and А'.8 closure. Failure is pre-existing test fixture pollution / timing flake, NOT А'.8 cascade-introduced. Pattern matches А'.7.5 closure precedent (pre-existing pollution failures verified pre-existing on ε1 baseline state). |
+| `cmake --build native/DualFrontier.Core.Native --config Release` | NOT RUN (documentation-only cascade; native unchanged per `git diff` empty) | Trust А'.7.5 closure baseline (native build clean) per Lesson #20 |
+| `df_native_selftest.exe` | NOT RUN (documentation-only cascade; native unchanged) | Trust А'.7.5 closure baseline (97 scenarios ALL PASSED) per Lesson #20 |
+| Core/Interop/Application test suites | NOT RUN individually (zero code changes guarantees baseline preserved) | Trust А'.7.5 closure baseline (Core 81+4, Interop 202, Application 45 all PASS) per Lesson #20 |
+| `sync_register.ps1 --validate` | **PASS** at Commit 5 (ae2ca2c) — 0 errors, 22 advisory orphan warnings unchanged from baseline | Mandatory closure gate per A'.4.5 |
+
+**Pre-existing test pollution finding** (Lesson #N6 second observation):
+
+The Modding test failure `CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` is а new occurrence of test pollution / timing-dependent flake pattern. А'.7.5 closure surfaced 2 pre-existing pollution failures (ManagedBusBridgeTests.BusFacade_PublishEnabled + S6_Bus_FastTier_SixtySecondMarathon_ThroughputStable in Core.Tests.Bus + Stress namespace). А'.8 closure surfaces 1 pre-existing pollution failure in Modding namespace.
+
+**Lesson #N6 (Test fixture cleanup discipline as invariant) — second application observation surfaced at А'.8 closure**. Per Q-N-8-5 LOCKED, Lesson #N6 stays Provisional с this second observation. Promotion criterion (2+ strong applications across different cascades) approaches; next cascade demonstrating fixture cleanup discipline may PROMOTE Lesson #N6 к Formalized.
+
+**Per Lesson #14 (pre-existing drift cleanup as separate cascade)**: This pre-existing pollution does NOT block А'.8 closure. Cascade-introduced failures would be К-L14 falsification candidate (criterion 4 atomic discipline); pre-existing failures are out-of-scope per Lesson #14. Pollution cleanup queued для separate cascade post-closure.
+
+**К-L14 thesis verification at А'.8 closure status**: cascade succeeds с clean atomic discipline + zero code changes + documentation-only nature. К-L14 thesis criterion 4 (atomic discipline) NOT falsified. The pre-existing pollution failure is honest finding в research framework spirit — documented openly per Q-N-8-3 LOCKED honest framing principle.
+
+### §12.10 — К-closure event boundary
+
+**К-closure event boundary timestamp**: К_CLOSURE_REPORT.md AUTHORED ratification commit (Commit 1: **044855c**) push к origin/main = formal К-series closure timestamp.
+
+**Phase A' formal closure event boundary**: anchored at K_CLOSURE_REPORT.md AUTHORED ratification commit per Q-N-8-4 amendment к Q8 LOCKED Session 1.
+
+**EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION**: audit_trail entry в REGISTER.yaml at Commit 5 (ae2ca2c) records closure event boundary timestamp + cascade metadata + governance_impact narrative.
+
+### §12.11 — Post-closure forward
+
+**К-extensions cascade #2 (Godot removal)**: deferred к post-closure per Q-N-8-6 LOCKED. Crystalka merge discretion timing. К-L14 verification #10 candidate (first removal-type evidence).
+
+**V2 amendment brief authoring**: post-Godot merge (preferred clean origin baseline). К-L14 verification #11 candidate at V2 closure.
+
+**A'.9 Roslyn analyzer milestone**: 18 active rules + 4 reserved per S-LOCK-10; ANALYZER_RULES.md populated к Tier 1 LOCKED. К-L14 verification #12 candidate.
+
+**Mod API lock milestone**: К-L20 codification + Bridge mechanism + MOD_API_CONTRACT.md authored. К-L14 verification #13 candidate.
+
+**Phase B M-cycle**: К-L9 «vanilla = mods» purity verified через vanilla mod migrations. К-L14 verifications #N+1+ candidates.
+
+---
+
 # Closing notes
 
 K_CLOSURE_AUTHORING_BRIEF authored 2026-05-22 в Opus deliberation session post-A'.7.5 closure (main = fe5a871). Brief encodes:
@@ -1409,4 +1542,4 @@ K_CLOSURE_AUTHORING_BRIEF authored 2026-05-22 в Opus deliberation session post-
 
 **End of brief.**
 
-**Status**: RATIFIED 2026-05-23 (Crystalka Q-N deliberation Session 2 Day 2 — 10/10 Q-N LOCKED including Q-N-8-4 AUTHORED amendment к Meta-Q1 Session 1 LOCKED commitment). Execution cascade ready.
+**Status**: EXECUTED 2026-05-23 (Claude Code execution mode — 6-commit atomic cascade complete on feature/a_prime_8-k-closure-report per Q-N-8-9 LOCKED S-LOCK-8). К-closure event boundary anchored at Commit 1 (044855c) push к origin/main = formal К-series closure timestamp per Q-N-8-4 amendment к Q8 LOCKED Session 1. Phase A' formal closure event boundary. К-extensions cascade #2 (Godot) merge deferred к post-closure per Q-N-8-6 LOCKED. Brief lifecycle progression: AUTHORED (2026-05-22) → RATIFIED (2026-05-23 9f3c567) → EXECUTED (2026-05-23 this commit). See §12 closure section для detailed cascade outcomes.
