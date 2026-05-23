@@ -35,7 +35,7 @@ The runtime guard methods that previously threw `IsolationViolationException` fr
 - The fault sink for mod-origin systems (`IModFaultSink`).
 - The Path β `IManagedStorageResolver` for per-mod managed-class storage (K-L3.1 bridge — see [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.5).
 
-The context is pushed by `ParallelSystemScheduler` before each `SystemBase.Update` call and popped after (always, including on exceptions). It lives in a `ThreadLocal<SystemExecutionContext?>` slot — each scheduler thread has its own current context. Systems reach the context through `SystemBase.NativeWorld`, `SystemBase.Services`, and `SystemBase.ManagedStore<T>()`. Out-of-context calls (for example from the Godot main thread, or from a system that suspended via `async`/`await` and resumed on a different thread) fail loudly with `InvalidOperationException`.
+The context is pushed by `ParallelSystemScheduler` before each `SystemBase.Update` call and popped after (always, including on exceptions). It lives in a `ThreadLocal<SystemExecutionContext?>` slot — each scheduler thread has its own current context. Systems reach the context through `SystemBase.NativeWorld`, `SystemBase.Services`, and `SystemBase.ManagedStore<T>()`. Out-of-context calls (for example from the renderer main thread, or from a system that suspended via `async`/`await` and resumed on a different thread) fail loudly with `InvalidOperationException`.
 
 `async`/`await` inside system code is forbidden by [THREADING §11.7](./THREADING.md): suspending would resume on a different scheduler thread where `Current` is null, breaking the per-thread context model.
 

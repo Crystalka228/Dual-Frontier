@@ -818,7 +818,7 @@ Managed `World` stayed functional throughout K0-K7. K8.0 closure (2026-05-09) re
 
 **Operating principle**: «honest state always available» — managed World stayed working through K0-K7 so the K7 evidence base could be collected; the K-L11 commitment then settles the decision permanently. Reversal trigger documented in `docs/MIGRATION_PROGRESS.md` D5 (Solution A rationale and reversal trigger).
 
-Mirrors VULKAN_SUBSTRATE.md migration approach (parallel Godot + Vulkan until M9.5 cutover).
+Mirrors VULKAN_SUBSTRATE.md historical migration approach (parallel Godot + Vulkan until R.8 cutover; cutover completed К-extensions cascade #2, 2026-05-23 — Godot paths fully retired).
 
 ---
 

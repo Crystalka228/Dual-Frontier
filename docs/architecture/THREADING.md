@@ -76,7 +76,7 @@ Within each phase, unrelated systems execute in parallel via `Parallel.ForEach` 
 
 ## Parallel execution
 
-`ParallelSystemScheduler` runs every system in one phase through `Parallel.ForEach` with a core-count cap: `N-2` for the game, leaving cores for the Godot main thread and the OS scheduler.
+`ParallelSystemScheduler` runs every system in one phase through `Parallel.ForEach` with a core-count cap: `N-2` for the game, leaving cores for the renderer main thread (Launcher's main loop iteration per К-extensions cascade #2, 2026-05-23) and the OS scheduler.
 
 ```csharp
 // Simplified skeleton — full version in Scheduling/ParallelSystemScheduler.cs

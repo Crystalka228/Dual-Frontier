@@ -133,7 +133,7 @@ public abstract class SystemBase
 }
 ```
 
-`SystemBase.NativeWorld` and `SystemBase.Services` throw `InvalidOperationException` when accessed outside an active scheduler context (for example from the Godot main thread, or after an illegal `async`/`await` resumed on a different thread). The K8.3+K8.4 cutover removed the managed-World access surface (`GetComponent` / `SetComponent` / `Query` / `GetSystem`) — see [src/DualFrontier.Core/ECS/SystemBase.cs](../../src/DualFrontier.Core/ECS/SystemBase.cs) lines 9-17 for the canonical statement.
+`SystemBase.NativeWorld` and `SystemBase.Services` throw `InvalidOperationException` when accessed outside an active scheduler context (for example from the renderer main thread, or after an illegal `async`/`await` resumed on a different thread). The K8.3+K8.4 cutover removed the managed-World access surface (`GetComponent` / `SetComponent` / `Query` / `GetSystem`) — see [src/DualFrontier.Core/ECS/SystemBase.cs](../../src/DualFrontier.Core/ECS/SystemBase.cs) lines 9-17 for the canonical statement.
 
 An access declaration is mandatory: `[SystemAccess(reads: [...], writes: [...], bus: nameof(IGameServices.Combat))]`. The scheduler reads the attribute once at startup and builds the dependency graph. Compile-time isolation enforcement is described in [ISOLATION](./ISOLATION.md); the future A'.9 Roslyn analyzer extends enforcement to call sites.
 

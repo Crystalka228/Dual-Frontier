@@ -43,8 +43,8 @@ The architecture is split into four layers. Each layer knows only the layers bel
 ```
 ┌─────────────────────────────────────────────────────┐
 │                   PRESENTATION                      │
-│         Godot SceneTree, UI, Render, Input          │
-│         Main thread only. Visuals only.             │
+│      Vulkan substrate, sprite render, UI, Input     │
+│      Main thread only. Visuals only.                │
 ├─────────────────────────────────────────────────────┤
 │                  APPLICATION                        │
 │      GameLoop, SaveSystem, ScenarioManager          │
@@ -52,7 +52,7 @@ The architecture is split into four layers. Each layer knows only the layers bel
 ├─────────────────────────────────────────────────────┤
 │                    DOMAIN                           │
 │   Systems, Entities, Components, Contracts          │
-│   Multithreaded. Godot-agnostic.                    │
+│   Multithreaded. Renderer-agnostic.                 │
 ├─────────────────────────────────────────────────────┤
 │                 INFRASTRUCTURE                      │
 │   EventBus (domain buses), Pathfinding,             │
@@ -62,7 +62,7 @@ The architecture is split into four layers. Each layer knows only the layers bel
 
 ### Presentation
 
-The `DualFrontier.Presentation` (Godot DevKit, current pre-V-substrate state) and `DualFrontier.Presentation.Native` (Vulkan substrate target) assemblies. Both implement the `IRenderer`, `ISceneLoader`, and `IInputSource` contracts from Application. Godot is the development and scene-editor tool that survives until the rendering cutover phase R.8 ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §2.2); Native migrates from the historical Silk.NET + OpenGL stack to the unified Vulkan substrate per Q-G-1 LOCK. Both work only in their backend's main thread. They do not call Domain directly — they read commands from `PresentationBridge` and send input to the buses through their own `IInputSource` implementation. Current authority: [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md). Historical: [VISUAL_ENGINE (historical)](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION (historical)](./historical/GODOT_INTEGRATION.md).
+The `DualFrontier.Launcher` assembly (Vulkan substrate via `DualFrontier.Runtime`). Implements the `IRenderer` contract from Application. Reserved DevKit-tier extension `IDevKitRenderer` remains dormant per К-extensions cascade #2 (2026-05-23) — reserved для future first-party DevKit work над Vulkan substrate. Works only in the renderer main thread. Does not call Domain directly — reads commands from `PresentationBridge` and dispatches via `RenderCommandDispatcher`. Current authority: [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md). Historical (superseded): [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md) — pre-V-substrate dual-backend Godot DevKit + Silk.NET Native state, retired в К-extensions cascade #2.
 
 ### Application
 
@@ -70,7 +70,7 @@ The `DualFrontier.Application` assembly. A glue layer: the main game loop (`Game
 
 ### Domain
 
-The `DualFrontier.Systems`, `DualFrontier.Components`, `DualFrontier.Events`, and `DualFrontier.AI` assemblies. All game rules. Multithreaded: systems execute in parallel. Never imports `using Godot;`.
+The `DualFrontier.Systems`, `DualFrontier.Components`, `DualFrontier.Events`, and `DualFrontier.AI` assemblies. All game rules. Multithreaded: systems execute in parallel. Never imports renderer-specific code (Vulkan, Win32, et al.) — renderer-agnostic per layer contract.
 
 ### Infrastructure
 
@@ -86,8 +86,7 @@ The dependency-arrow direction is strictly top-to-bottom. A violation is an arch
 - `Systems` depends on `Contracts`, `Components`, `Events`, and `Core` through `InternalsVisibleTo`.
 - `AI` depends on `Contracts` and `Components`.
 - `Application` depends on `Core` and `Systems`.
-- `Presentation` (Godot DevKit) depends on `Application` and `Godot`.
-- `Presentation.Native` depends on `Application` and on the Vulkan substrate ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — `vulkan-1.dll` via pure P/Invoke + Win32 P/Invoke; the historical Silk.NET + OpenGL stack is superseded per Q-G-1 LOCK and retired at the rendering cutover R.8). Never depends on `Godot`.
+- `Launcher` depends on `Application` and on the Vulkan substrate ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — `vulkan-1.dll` via pure P/Invoke + Win32 P/Invoke). К-extensions cascade #2 (2026-05-23) retired the historical Godot DevKit + Silk.NET + OpenGL dual-backend; `DualFrontier.Launcher` is the single production renderer.
 - Mods depend **only** on `Contracts`. A reference to `Core` from a mod is blocked by `AssemblyLoadContext`.
 
 ## Why this way: scenarios
@@ -102,7 +101,7 @@ The `VoidMagic` mod loads into its own `AssemblyLoadContext`. It registers the `
 
 ### Scenario 3 — a pawn dies
 
-`DamageSystem` drops `HealthComponent.Current` to zero and publishes a `DeathEvent` (marked `[Deferred]`) to `IPawnBus`. In the next phase, `MoodSystem` reacts to the death, `SocialSystem` adjusts relationships, and `Application` places a `PawnDiedCommand` on the `PresentationBridge` queue — Godot picks up the command in `_Process()` and plays the animation. Domain and Presentation never meet.
+`DamageSystem` drops `HealthComponent.Current` to zero and publishes a `DeathEvent` (marked `[Deferred]`) to `IPawnBus`. In the next phase, `MoodSystem` reacts to the death, `SocialSystem` adjusts relationships, and `Application` places a `PawnDiedCommand` on the `PresentationBridge` queue — Launcher picks up the command in its per-frame iteration and dispatches via `RenderCommandDispatcher` (К-extensions cascade #2 2026-05-23 architecture). Domain and Presentation never meet.
 
 ## Assembly dependency diagram
 
@@ -135,8 +134,8 @@ The `VoidMagic` mod loads into its own `AssemblyLoadContext`. It registers the `
                                         │
                                         ▼
                          ┌────────────────────────────┐
-                         │ DualFrontier.Presentation  │
-                         │  Godot nodes / UI / Input  │
+                         │   DualFrontier.Launcher    │
+                         │ Vulkan substrate / Renderer│
                          └────────────────────────────┘
 
     ┌──────────────────────┐
