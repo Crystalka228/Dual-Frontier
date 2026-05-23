@@ -43,7 +43,10 @@ set(DF_NATIVE_SOURCES
     src/scheduler_trace.cpp
     src/scheduler_intrinsics.cpp
     src/event_type_registry.cpp
-    src/bus_native.cpp
+    src/bus_common.cpp
+    src/bus_fast.cpp
+    src/bus_normal.cpp
+    src/bus_background.cpp
     src/background_queue.cpp
     src/mod_unload.cpp
     src/compute_pipeline.cpp
