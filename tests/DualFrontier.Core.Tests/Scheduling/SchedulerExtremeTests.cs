@@ -378,14 +378,15 @@ public sealed class SchedulerExtremeTests : IDisposable
 
             const int ProducerThreads = 16;
             // Fast + Normal scale to 5M per tier (16 × 312.5k). Background
-            // is capped at 1k total (16 × 62) because the native coalesce
-            // algorithm `coalesce_pending_locked` in background_queue.cpp:42-64
-            // is O(N²) — every dispatched event scans all prior queued
-            // events for a (type_id, coalesce_key) match. With 5M events the
-            // dispatch step becomes effectively infinite (25T comparisons).
-            // The bug surfaces in the «hand-driven dispatch» path that
-            // BackgroundBusTestDriver invokes; production never hits it
-            // today because no production caller invokes dispatch at all.
+            // historically capped at 1k total (16 × 62) due к prior O(N²)
+            // coalesce in background_queue.cpp. Post-A'.7.x β5 (commit
+            // faa4c73, 2026-05-21): `coalesce_pending_locked` rewritten к
+            // O(N) hash-indexed single-pass — 5M events now feasible without
+            // quadratic blow-up. Background cap retained at 1k pending an
+            // explicit ceiling-probe sweep; A'.7.x γ2 (commit 9bcced0)
+            // wired production dispatch (Bug #2 closed), so the «hand-driven
+            // dispatch» framing is also outdated — production now invokes
+            // df_background_queue_dispatch_idle_slot via the GameLoop hook.
             const int PerThreadPerTier = 312_500;
             const int PerThreadBackground = 62;
 

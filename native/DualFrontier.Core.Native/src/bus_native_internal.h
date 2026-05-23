@@ -1,7 +1,9 @@
 #pragma once
 
 // Internal header — NOT in include/, NOT part of public API.
-// Shared between bus_native.cpp (Item 26) и background_queue.cpp (Item 30).
+// Shared between the four per-concern bus TUs (bus_common.cpp + bus_fast.cpp
+// + bus_normal.cpp + bus_background.cpp — Item 26 source-split в A'.7.5)
+// и background_queue.cpp (Item 30).
 //
 // 2026-05-21 refactor: state split per tier.
 //   Each of Fast / Normal / Background now owns its own mutex, sequence
