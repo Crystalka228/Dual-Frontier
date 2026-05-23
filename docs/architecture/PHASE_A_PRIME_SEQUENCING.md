@@ -180,12 +180,36 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Commits: 5 atomic on feature/a_prime_7_5-bus-source-split (c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE)
   │   Executor: Claude Opus 4.7 (brief authoring + execution) + Crystalka (Q-N ratification).
   │
-  ├─ Phase A'.8 — K-closure report
-  │   Scope: structured document enumerating final K-Lxx invariants
-  │   Dual purpose: (1) historical record of K-series, (2) formal analyzer rule specification surface
-  │   Format: each invariant has formal statement + violation example + compliance example
-  │   Estimated time: 1-2 sessions chat + 30-60 min auto-mode for amendments to MIGRATION_PROGRESS
-  │   Executor: Opus (deliberation) + Cloud Code (commit + tracker update)
+  ├─ Phase A'.8 — К-SERIES FORMAL CLOSURE (Phase A' formal closure event, CLOSED 2026-05-23)
+  │   Brief: K_CLOSURE_AUTHORING_BRIEF.md (RATIFIED 2026-05-23 → EXECUTED at Commit 6)
+  │   Designation: К-series formal closure event. Phase A' formal closure event boundary.
+  │   Scope: K_CLOSURE_REPORT.md authored Tier 1 AUTHORED Category A (per Q-N-8-4 amendment к
+  │   Meta-Q1 Session 1 LOCKED — initial AUTHORED; LOCKED transition deferred к downstream review)
+  │   с 12 sections per Q-N-8-8 LOCKED (S-LOCK-3): exec summary + К-L14 thesis canonical text +
+  │   К-Lxx 21 invariants enumeration + К-L14 evidence baseline 9 verifications + cascades closure
+  │   summaries + V substrate progress + Lessons promotion + Roslyn analyzer rule specs + Phase A'
+  │   chronology + forward sequencing + hypothesis tracking + cross-reference integrity + closure
+  │   metrics. KERNEL_ARCHITECTURE.md v2.4 → v2.5 (8 К-L LOCK batch per Q-N-8-1: К-L7.1 + К-L12-L18;
+  │   К-L14 abbreviated row + cross-reference к K_CLOSURE_REPORT.md §1.2 per Q-N-8-2 hybrid (c)).
+  │   METHODOLOGY.md v1.9 → v1.10 (12 FORMALIZE + 9 DEFER + 1 SUNSET Lessons batch per Q-N-8-5).
+  │   REGISTER.yaml register_version 2.2 → 2.3 (3 new DOC enrollments: DOC-A-K_CLOSURE_REPORT,
+  │   DOC-A-ANALYZER_RULES skeleton, DOC-A-K_L14_EVIDENCE_DASHBOARD skeleton; EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION).
+  │   К-L14 falsifiability criterion 6 (soft-halt rate exceeds X%) introduced as Provisional per
+  │   Q-N-8-7 LOCKED (threshold TBD pending 2nd soft-halt observation).
+  │   К-extensions designation operationalized per Q-N-8-10 LOCKED: cascade #0 (А'.7.x) + #1
+  │   (А'.7.5) closed pre-closure architecturally as К-extensions; cascade #2 (Godot removal)
+  │   deferred к post-closure per Q-N-8-6 LOCKED.
+  │   Cumulative К-Lxx series: 21 invariants final (К-L1..L19 + К-L6 SUPERSEDED + 3 subs
+  │   К-L3.1/L7.1/L15.1; К-L20 reserved post-Mod API lock).
+  │   К-L14 evidence baseline: 9 verifications (8 clean + 1 honest soft-halt annotation
+  │   verification #7 К10.3 v2 retroactively closed by А'.7.x).
+  │   Commits: 6 atomic on feature/a_prime_8-k-closure-report (per Q-N-8-9 LOCKED S-LOCK-8).
+  │   К-closure event boundary: K_CLOSURE_REPORT.md AUTHORED ratification commit (Commit 1) push
+  │   к origin/main = formal К-series closure timestamp (per Q-N-8-4 amendment к Q8 LOCKED Session 1).
+  │   Q-N deliberation: 10/10 Q-N LOCKED Session 2 Day 2 (Q-N-8-1 through Q-N-8-10; §8.4 order
+  │   B-class → A-class → C-class).
+  │   Executor: Claude Opus 4.7 (brief authoring + Q-N deliberation) + Claude Code (execution) +
+  │   Crystalka (Q-N ratification).
   │
   ├─ Phase A'.9 — Architectural analyzer milestone
   │   Scope: Roslyn analyzer encoding K-Lxx invariants per K-closure report
