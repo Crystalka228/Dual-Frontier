@@ -6,13 +6,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.9"
+version: "1.10"
 next_review_due: 2027-05-21
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
+
+*Version: 1.10 (2026-05-23). A'.8 К-series formal closure — Lessons promotion batch landed per [K_CLOSURE_REPORT.md §6](../architecture/K_CLOSURE_REPORT.md#6--lessons-promotion-individual-decisions). 12 FORMALIZE actions (#7 strengthened, #8 strengthened, #9 + #9.1 sub, #10, #14 PROMOTED at A'.8, #16, #17, #21, #25 strengthened с A'.7.5 application, #26, #27 PROMOTED at A'.8, #N2 strengthened с A'.7.x δ1-δ3 application) per Q-N-8-5 LOCKED Session 2 Day 2. Lesson #14 PROMOTED criterion satisfied: second clean application surfaced (А'.7.x bus refactor on separate `claude/scheduler-stress-test-KmVM3` branch + Godot removal cascade on separate `claude/godot-removal-deliberation-Vfg2R` branch). Lesson #27 PROMOTED criterion satisfied: third application surfaced (А'.7.x bus stress workload exercised K-L13 wake-source diversity, surfacing 5 Bugs in К10.2 bus primitives). 9 DEFER candidates Provisional pool (#18, #19, #N3 carried; #N5/#N6/#N7/#N8/#N9 from А'.7.x; #N10 from Godot removal). 1 SUNSET (Lesson #15 subsumed by Lesson #20). К-L14 falsifiability criterion 6 (soft-halt rate exceeds X% across N consecutive cascades) introduced as Provisional per Q-N-8-7 LOCKED — threshold TBD pending 2nd soft-halt observation. К-closure report K_CLOSURE_REPORT.md authored Tier 1 AUTHORED Category A per Q-N-8-4 amendment к Meta-Q1 Session 1 LOCKED commitment. §1-§11 substance unchanged.*
 
 *Version: 1.9 (2026-05-21). §12.7 closure protocol step 1 «Run final verification» expanded к explicit per-test-suite checklist — Core + Modding suite runs are both mandatory at every closure (not just Core), per CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c). K10.3 v2 closure (2026-05-20) ran only the Core suite + native selftest; the Modding suite was not exercised, which let a transient fixture-copy build-state issue ship undetected (initially mis-diagnosed as a К-L18 regression в the А'.7.x investigation report and brief Hypothesis 1). The CAPA fix re-frames the gate so that closure verification covers every test project в the solution explicitly, not just «dotnet test» applied к whichever subset the executor remembered. Lessons batch deferred к A'.8 closure (METHODOLOGY v1.9 → v1.10) per Q-N-7X-11 split. К-extensions cascade #0 designation (А'.7.x) does not change §1-§11 substance.*
 
@@ -423,6 +425,8 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.8 | 2026-05-14 | A'.5 K8.3+K8.4 closure — Lesson #7 (brief prescribing API must transcribe API) + Lesson #8 (brief splitting change into N steps must prove each of N-1 intermediate states is valid) added to K-Lessons sub-section per brief v2.0 §9.4. Both lessons originated in the K8.3+K8.4 combined milestone authoring (v1.0 → patch v1 → v2.0 arc) and were formalized at A'.5 closure. (Note: A'.5 closure added these lessons in-place but did not bump frontmatter version; frontmatter bump к v1.8 actually landed at К10 deliberation S6 lock 2026-05-17 per row below.) |
 | 1.7 | 2026-05-12 | Document Control Register integration per A'.4.5 closure. New §12 specifies the register as governance authority, classification model (Category×Tier×Lifecycle), seven sections, post-session update protocol (Q-A45-X5), and canonical closure protocol §12.7. §7.1 «Data exists or it doesn't» extended with seventh formal invocation (documentation layer: every `.md` either has a register entry or is in `SCOPE_EXCLUSIONS.yaml`; no third option). §11 «See also» extended with [FRAMEWORK](../governance/FRAMEWORK.md) + [SYNTHESIS_RATIONALE](../governance/SYNTHESIS_RATIONALE.md) links. |
 | 1.8 | 2026-05-17 | К10 deliberation S6 lock — Lesson #11 (architectural reduction methodology, 6 strong applications + Q-G-2 composite namespace precedent) + Lesson #20 (tactical heuristics in research framework are category error) + Lesson #22 (read existing code + ask operational context before surfacing architectural concerns) added to «Phase A' lessons» sub-section. NEW «Provisional Lessons» section captures 9 candidates (#9, #10, #14, #15, #16, #17, #18, #19, #21) pending promotion at К-closure report (А'.8) per accumulated evidence. Frontmatter version bumped к 1.8 in this commit (back-fills A'.5 row above). |
+| 1.9 | 2026-05-21 | A'.7.x К-extensions cascade #0 closure — §12.7 closure protocol step 1 expanded с explicit per-test-suite checklist (Core + Modding suite both mandatory) per CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c). К10.3 v2 verification #7 soft-halt root cause closure-protocol gap, retroactively closed by А'.7.x. Lessons batch deferred к A'.8 closure (v1.9 → v1.10). К-extensions cascade #0 designation (А'.7.x) does not change §1-§11 substance. |
+| 1.10 | 2026-05-23 | A'.8 К-series formal closure — Lessons promotion batch per K_CLOSURE_REPORT.md §6. 12 FORMALIZE (10 carried Session 1 LOCKED Q4 + #14 PROMOTED + #27 PROMOTED at A'.8 per Q-N-8-5 LOCKED). 9 DEFER candidates Provisional pool (3 carried + 5 А'.7.x surfaced + 1 Godot removal surfaced). 1 SUNSET (Lesson #15 subsumed by Lesson #20). К-L14 falsifiability criterion 6 (soft-halt rate) added as Provisional per Q-N-8-7 LOCKED. К-closure report K_CLOSURE_REPORT.md authored Tier 1 AUTHORED per Q-N-8-4 amendment к Meta-Q1. §1-§11 substance unchanged. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -950,6 +954,38 @@ If any answer is «no», pause mechanism design и address gap first.
 ### Provisional Lessons
 
 Lessons surfaced but не yet formally promoted к Full Lessons. They are captured here для consultation during future deliberation; promotion к Full Lesson status happens когда application evidence accumulates (typically 3+ strong applications). К-closure report (А'.8) reviews provisional pool и promotes mature candidates.
+
+**A'.8 К-series formal closure (2026-05-23) promotion outcomes** per Q-N-8-5 LOCKED Session 2 Day 2:
+
+**12 FORMALIZED at A'.8 closure** (per [K_CLOSURE_REPORT.md §6.2](../architecture/K_CLOSURE_REPORT.md#62--per-lesson-formalize-rationale-12-lessons)):
+- Lesson #7 (strengthened) — Marshal.SizeOf<T>() alignment audit + maturity curve [previously Formalized]
+- Lesson #8 (strengthened) — Atomic compilable commits + К10.3 v2 multi-document evidence + А'.7.x 13-atomic precedent [previously Formalized]
+- Lesson #9 + #9.1 sub — Survey phase before brief authoring + placeholder vs production status [PROMOTED from Provisional at A'.8]
+- Lesson #10 — Architecture audit + technical debt inventory in one pass [PROMOTED from Provisional at A'.8]
+- **Lesson #14 — Pre-existing drift cleanup as separate cascade [PROMOTED from Provisional at A'.8; second clean application surfaced — А'.7.x bus refactor + Godot removal both separate-branch atomic]**
+- Lesson #16 — Brief length scales с deliberation complexity, не execution scope [PROMOTED from Provisional at A'.8]
+- Lesson #17 — Tactical vs strategic performance reasoning [PROMOTED from Provisional at A'.8]
+- Lesson #21 — Redundancy check complementing К-L14 default-inclusion bias [PROMOTED from Provisional at A'.8]
+- Lesson #25 — Implementation depth follows consumer materialization [FORMALIZED at A'.8; A'.7.5 compile-time layer materialization third application]
+- Lesson #26 — Cross-substrate scope splitting [FORMALIZED at A'.8]
+- **Lesson #27 — Render/compute workload exercises prior substrate primitives [PROMOTED from Provisional at A'.8; third application surfaced — А'.7.x bus stress workload surfaced 5 Bugs in К10.2 primitives]**
+- Lesson #N2 — Mid-session brief amendment via halt-before-damage Path 2 [FORMALIZED at A'.8; A'.7.x δ1-δ3 application добавлено]
+
+**1 SUNSET at A'.8 closure**:
+- Lesson #15 — Emotional projection avoidance — SUNSET (subsumed by Lesson #20 tactical heuristics correction discipline; preserved for historical record). См. K_CLOSURE_REPORT.md §6.4.
+
+**9 DEFER (Provisional pool carry forward post-A'.8)**:
+- Lesson #18 — Boundary crossing batching symmetric pattern (carried)
+- Lesson #19 — On-demand activation multi-wake-source (carried; long-term defer; sunset candidate если К-L13 invariant subsumes pattern)
+- Lesson #N3 — К-L9 mod-facing boundary Contracts/Application (carried)
+- Lesson #N5 (NEW А'.7.x) — Independent investigation branch as К-L14 evidence gathering
+- Lesson #N6 (NEW А'.7.x) — Test fixture cleanup discipline as invariant
+- Lesson #N7 (NEW А'.7.x) — Gap audit между AUTHORED and Q-N ratification
+- Lesson #N8 (NEW А'.7.x) — Pre-flight reproduction disproves diagnostic hypothesis
+- Lesson #N9 (NEW А'.7.x) — Closure-protocol gap as soft-halt class (tied к К-L14 falsifiability criterion 6)
+- Lesson #N10 (NEW Godot removal) — Brief leaning vs Phase 0 evidence reduction discipline
+
+Full per-Lesson promotion rationale + application history в [K_CLOSURE_REPORT.md §6](../architecture/K_CLOSURE_REPORT.md#6--lessons-promotion-individual-decisions).
 
 #### Lesson #9 — Survey phase before brief authoring (provisional)
 
