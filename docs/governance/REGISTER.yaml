@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.2"
-last_modified: "2026-05-22"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_7_5-CLOSURE"
+register_version: "2.3"
+last_modified: "2026-05-23"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -597,6 +597,43 @@ documents:
     next_review_due: "2027-05-12"
     reviewer: Crystalka
 
+  - id: DOC-A-K_CLOSURE_REPORT
+    path: docs/architecture/K_CLOSURE_REPORT.md
+    title: "DualFrontier К-Series Formal Closure Report"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-23"
+    last_modified_commit: "044855c"
+    content_language: mixed
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-23"
+    last_review_event: "A'.8 К-series formal closure (Commit 1) — K_CLOSURE_REPORT.md authored Tier 1 AUTHORED Category A per Q-N-8-4 LOCKED amendment к Meta-Q1 Session 1 LOCKED commitment (initial lifecycle AUTHORED; LOCKED transition deferred к downstream review). 12 sections per Q-N-8-8 LOCKED (S-LOCK-3): exec summary + К-L14 thesis canonical text §1.2 (Q-N-8-2 verbatim per hybrid Q2 (c) policy) + К-Lxx 21 invariants enumeration + К-L14 evidence baseline 9 verifications с #7 honest soft-halt annotation (Q-N-8-3 LOCKED) + cascades closure summaries (включая А'.7.x К-extensions cascade #0 + А'.7.5 К-extensions cascade #1 detailed) + V substrate progress (RT cores V-series scope, NOT FO, per Q-N-8-6 LOCKED) + Lessons promotion individual decisions (12 FORMALIZE с #14 + #27 PROMOTED + 9 DEFER + 1 SUNSET per Q-N-8-5 LOCKED) + Roslyn analyzer rule specifications (18 active с DF015.1 NEW + 4 reserved) + Phase A' sequencing closure (14 cascades А'.0 through А'.8) + forward sequencing (Godot K-extensions #2 post-closure → V2 amendment → V2 → A'.9 → Mod API lock → Phase B per Q-N-8-6 LOCKED) + hypothesis tracking forward (К-L14 falsifiability criteria 1-4 active, 5 deferred, 6 Provisional Q-N-8-7 NEW) + cross-reference integrity verification (Q7.3/7.4 LOCKED hybrid frozen-core + amendment-addenda) + closure metrics + governance state. ~2296 lines. К-closure event boundary anchored here (per Q-N-8-4 amendment к Q8 LOCKED Session 1 — lifecycle anchor adjusted LOCKED → AUTHORED, semantic preserved)."
+    next_review_due: "2027-05-23"
+    reviewer: Crystalka
+    requirements_authored: [REQ-K-L14, REQ-K-L7_1, REQ-K-L12, REQ-K-L13, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18]
+    special_case_rationale: "Tier 1 AUTHORED override per Q-N-8-4 LOCKED 2026-05-23 amendment к Meta-Q1 Session 1 LOCKED commitment. К-closure report carries load-bearing material (К-L14 canonical text §1.2 + К-Lxx invariants enumeration §2 + К-L14 evidence baseline 9 verifications §3 + К-extensions designation §4.3 + Lessons promotion §6 + Roslyn rules §7 + forward sequencing §9) = architectural authority surface, NOT pure history. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy. Initial lifecycle AUTHORED (not LOCKED); LOCKED transition deferred к downstream review when forward evidence accumulates (e.g., 6 months post-closure across К-extensions cascades + V substrate evolution + A'.9 Roslyn analyzer milestone + Mod API lock). К-L14 canonical text content (per Q-N-8-2 verbatim) is LOCKED within AUTHORED document body — sub-element LOCK within parent AUTHORED parallel к К-L7+К-L7.1 / К-L15+К-L15.1 sub-invariant precedent."
+
+  - id: DOC-A-ANALYZER_RULES
+    path: docs/architecture/ANALYZER_RULES.md
+    title: "DualFrontier Roslyn Analyzer Rule Specifications"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED-SKELETON
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-23"
+    last_review_event: "A'.8 К-series formal closure (Commit 5) — DOC-A-ANALYZER_RULES enrolled at A'.8 closure per S-LOCK-10 LOCKED Session 2. 18 active rule specs (DF001-DF019 + DF015.1 NEW А'.7.x) + 4 reserved (DF006 SUPERSEDED, DF008 process, DF014 meta, DF020 post-Mod API lock). Initial entry references K_CLOSURE_REPORT.md §7.2 для canonical detection narratives. Populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade с per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase."
+    next_review_due: "2027-05-23"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification."
+
   # === Tier 2 Live trackers (Category C) ===
 
   - id: DOC-C-MIGRATION_PROGRESS
@@ -657,15 +694,33 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-18"
-    last_modified_commit: "235ad57"
+    last_modified: "2026-05-23"
+    last_modified_commit: "517f68b"
     content_language: en
     review_cadence: on-closure+quarterly
-    last_review_date: "2026-05-18"
-    last_review_event: "§2 sequence + §3 duration table amended per K8.5 deferral cascade"
+    last_review_date: "2026-05-23"
+    last_review_event: "A'.8 К-series formal closure (Commit 4) — А'.8 entry expanded from skeleton к full closure entry recording Q-N deliberation Session 2 Day 2 outcomes (10/10 Q-N LOCKED), 8 К-L LOCK batch per Q-N-8-1, K_CLOSURE_REPORT.md authored Tier 1 AUTHORED per Q-N-8-4 amendment к Meta-Q1, К-extensions designation operationalized per Q-N-8-10 (cascade #0+#1 closed; #2 Godot deferred к post-closure per Q-N-8-6). Phase A' formal closure event boundary anchored. К-L14 evidence baseline 9 verifications с honest soft-halt annotation. K_CLOSURE_REPORT.md AUTHORED ratification commit = formal К-series closure timestamp per Q-N-8-4 amendment к Q8 LOCKED Session 1."
     next_review_due: "2026-Q3"
     reviewer: Crystalka
     special_case_rationale: "Category A + Tier 2 + Live override: document is mutable per phase closure, subordinate to MIGRATION_PLAN_KERNEL_TO_VANILLA — not LOCKED architecture per Pass 2 §1.3"
+
+  - id: DOC-A-K_L14_EVIDENCE_DASHBOARD
+    path: docs/architecture/K_L14_EVIDENCE_DASHBOARD.md
+    title: "К-L14 Evidence Dashboard"
+    category: A
+    tier: 2
+    lifecycle: AUTHORED-SKELETON
+    owner: Crystalka
+    version: "0.1"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    last_review_date: "2026-05-23"
+    last_review_event: "A'.8 К-series formal closure (Commit 5) — DOC-A-K_L14_EVIDENCE_DASHBOARD enrolled at A'.8 closure per S-LOCK-9 LOCKED Session 2 + Q-N-8-3 LOCKED. Initial entry с 9-verification baseline (8 clean + 1 honest soft-halt verification #7 К10.3 v2 retroactively closed by А'.7.x). К-L14 falsifiability criteria 1-4 active, 5 deferred, 6 Provisional Q-N-8-7 NEW (soft-halt rate threshold TBD pending 2nd observation). Forward verifications appended per К-extensions cascade closures + V substrate cascades + A'.9 cascade + Mod API lock cascade + Phase B M-cycle cascades. Tracking instrument для К-L14 thesis falsifiability commitment Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2 honest framing principle. Cross-references к K_CLOSURE_REPORT.md §3 initial baseline + KERNEL_ARCHITECTURE.md Part 0 К-L14 row (abbreviated form + cross-reference per Q-N-8-2 hybrid Q2 (c) policy)."
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "Category A + Tier 2 + AUTHORED-SKELETON override: forward-evolving dashboard appended per cascade closure; populated к Tier 2 Live при 3+ post-closure verifications appended"
 
   # === Tier 2 Project meta (Category G) ===
 
@@ -1926,6 +1981,25 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "А'.7.5 designated «К-extensions cascade #1 sub-milestone» per A'.7.x EVT closure governance_impact §16.5 deferral note. Pure source-level reorganization implementing К-L15.1 compile-time layer (parent К-L15.1 LOCKED as 2-layer formulation at A'.7.x γ4; A'.7.5 adds 3rd layer per К-L15.1 «Three-tier independence» implementation depth — state + runtime + compile-time). Authored 2026-05-22 by Claude Opus 4.7 в post-A'.7.x closure deliberation session. ~500 line execution brief per Lesson #16 (brief length scales с deliberation surface, not execution scope — A'.7.5 has 3 Q-N S-LOCKs vs A'.7.x's 14 Q-N reflecting smaller deliberation surface). Q-N ratified same day: S-LOCK-1 (4-file split + background_queue distinct, Option A recommended), S-LOCK-2 (helpers к internal header, Option A recommended), S-LOCK-3 (stale comment cleanup в-scope as ε3, Option A recommended). Executed same day by Claude Code (5-commit atomic cascade ε1..ε5)."
+
+  - id: DOC-D-K_CLOSURE_AUTHORING_BRIEF
+    path: tools/briefs/K_CLOSURE_AUTHORING_BRIEF.md
+    title: "K_CLOSURE_AUTHORING_BRIEF — A'.8 К-closure report authoring (Tier 1 AUTHORED creation per Q-N-8-4)"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-23"
+    last_review_event: "A'.8 К-series formal closure (cascade EXECUTED 2026-05-23) — 10/10 Q-N LOCKED Session 2 Day 2; Q-N-8-4 amendment к Meta-Q1 Session 1 LOCKED commitment (K_CLOSURE_REPORT.md initial lifecycle Tier 1 AUTHORED не LOCKED; LOCKED transition deferred к downstream review). К-closure event boundary anchored at K_CLOSURE_REPORT.md AUTHORED ratification commit (Commit 1: 044855c) push к origin/main = formal К-series closure timestamp. 6-commit atomic cascade per Q-N-8-9 LOCKED (S-LOCK-8): Commit 1 K_CLOSURE_REPORT.md authoring (LOAD-BEARING ~2296 lines, 12 sections per Q-N-8-8 LOCKED) + Commit 2 KERNEL v2.4 → v2.5 (8 К-L LOCK batch per Q-N-8-1) + Commit 3 METHODOLOGY v1.9 → v1.10 (12 FORMALIZE + 9 DEFER + 1 SUNSET Lessons batch per Q-N-8-5) + Commit 4 PHASE_A_PRIME_SEQUENCING + MIGRATION_PROGRESS chronicle + Commit 5 REGISTER cascade (3 new DOC enrollments + EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION + register_version 2.2 → 2.3) + Commit 6 brief AUTHORED → EXECUTED + closure section. Brief size ~1413 lines (post-Q-N ratification с §11 ratification summary appended). Lifecycle progression: AUTHORED (2026-05-22, Opus authoring) → RATIFIED (2026-05-23 9f3c567 pre-cascade с §11 Q-N ratification summary section) → EXECUTED (2026-05-23 Commit 6 с §12 closure section)."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "K_CLOSURE_AUTHORING_BRIEF authored 2026-05-22 by Claude Opus 4.7 post-A'.7.5 closure deliberation session. Q-N ratified Session 2 Day 2 (2026-05-23 Crystalka deliberation) с 10/10 Q-N LOCKED including Q-N-8-4 AUTHORED amendment к Meta-Q1 Session 1 LOCKED commitment. Brief executes К-series formal closure cascade (6-commit atomic per Q-N-8-9 LOCKED). К-extensions designation operationalized per Q-N-8-10 LOCKED — cascade #0 (А'.7.x) + #1 (А'.7.5) closed pre-closure architecturally as К-extensions; cascade #2 (Godot removal) deferred к post-closure for clean event boundary preservation. К-L14 evidence baseline 9 verifications с #7 honest soft-halt annotation preserves falsifiability commitment per Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2."
 
   - id: DOC-E-A_PRIME_7_X_CLOSURE
     path: docs/scratch/A_PRIME_7_X/CLOSURE_REPORT.md
@@ -8222,5 +8296,170 @@ audit_trail:
       risks: []
       lifecycle_transitions:
         - document: DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT
+          from: AUTHORED
+          to: EXECUTED
+
+  - id: EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION
+    date: "2026-05-23"
+    event: "А'.8 К-series formal closure event — Phase A' formal closure event boundary"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-A-K_CLOSURE_REPORT                         # NEW enrollment, AUTHORED Tier 1
+      - DOC-A-ANALYZER_RULES                           # NEW enrollment, AUTHORED-SKELETON Tier 1
+      - DOC-A-K_L14_EVIDENCE_DASHBOARD                 # NEW enrollment, AUTHORED-SKELETON Tier 2
+      - DOC-A-KERNEL                                   # v2.4 → v2.5 (8 К-L LOCK batch + К-L14 abbreviated cross-reference)
+      - DOC-B-METHODOLOGY                              # v1.9 → v1.10 (12 FORMALIZE + 9 DEFER + 1 SUNSET Lessons batch)
+      - DOC-A-PHASE_A_PRIME_SEQUENCING                 # Live update — A'.8 entry full closure expansion
+      - DOC-C-MIGRATION_PROGRESS                       # Live update — A'.8 closure chronicle prepended
+      - DOC-D-K_CLOSURE_AUTHORING_BRIEF                # AUTHORED → RATIFIED → EXECUTED
+      - DOC-G-REGISTER                                 # register_version 2.2 → 2.3
+    commits:
+      range: "044855c..PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+      key_commits:
+        - hash: "9f3c567"
+          summary: "Pre-cascade — A'.8 brief RATIFIED (Q-N deliberation Session 2 Day 2 complete; 10/10 Q-N LOCKED including Q-N-8-4 AUTHORED amendment к Meta-Q1)"
+        - hash: "044855c"
+          summary: "Commit 1 LOAD-BEARING — K_CLOSURE_REPORT.md authored Tier 1 AUTHORED Category A (12 sections per Q-N-8-8; К-L14 canonical text §1.2 per Q-N-8-2; 9-verification baseline §3.2 per Q-N-8-3 с #7 honest soft-halt; 12 FORMALIZE Lessons §6 per Q-N-8-5; 18 active + 4 reserved Roslyn rules §7 per S-LOCK-10; forward sequencing §9 per Q-N-8-6; К-extensions designation §4.3 per Q-N-8-10). К-closure event boundary anchored at this commit per Q-N-8-4 amendment к Q8 LOCKED Session 1 (lifecycle anchor adjusted LOCKED → AUTHORED, semantic preserved)."
+        - hash: "5b77b5a"
+          summary: "Commit 2 — KERNEL_ARCHITECTURE.md v2.4 → v2.5 (8 К-L LOCK batch per Q-N-8-1: К-L7.1 + К-L12-L18; К-L14 row updated к hybrid Q2 (c) abbreviated form + cross-reference к K_CLOSURE_REPORT.md §1.2; cumulative К-Lxx series 21 invariants final)"
+        - hash: "fad169b"
+          summary: "Commit 3 — METHODOLOGY.md v1.9 → v1.10 (12 FORMALIZE Lessons batch per Q-N-8-5: #7 strengthened, #8 strengthened, #9+#9.1, #10, #14 PROMOTED, #16, #17, #21, #25 strengthened, #26, #27 PROMOTED, #N2 strengthened; 9 DEFER candidates Provisional pool с #N5-#N10 new; 1 SUNSET Lesson #15; К-L14 falsifiability criterion 6 Provisional added per Q-N-8-7)"
+        - hash: "517f68b"
+          summary: "Commit 4 — PHASE_A_PRIME_SEQUENCING + MIGRATION_PROGRESS chronicle (A'.8 entry full closure expansion; MIGRATION_PROGRESS Last updated chronicle prepended с А'.8 К-series formal closure entry)"
+        - hash: "PENDING-COMMIT-A_PRIME_8_COMMIT_5"
+          summary: "Commit 5 — REGISTER cascade (3 new DOC enrollments + EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION + register_version 2.2 → 2.3 + skeleton files K_L14_EVIDENCE_DASHBOARD.md + ANALYZER_RULES.md created)"
+        - hash: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+          summary: "Commit 6 — K_CLOSURE_AUTHORING_BRIEF AUTHORED → EXECUTED + closure section (final ratification commit)"
+    governance_impact: |
+      А'.8 К-SERIES FORMAL CLOSURE — Phase A' formal closure event boundary anchored
+      at K_CLOSURE_REPORT.md AUTHORED ratification commit (Commit 1: 044855c) push к
+      origin/main = formal К-series closure timestamp per Q-N-8-4 LOCKED amendment к
+      Q8 LOCKED Session 1 (lifecycle anchor adjusted LOCKED → AUTHORED, semantic
+      preserved).
+
+      Q-N deliberation Session 2 Day 2 (2026-05-23) ratified 10/10 Q-N seeds per brief
+      §8.4 ordering (B-class architectural first → A-class formal → C-class
+      organizational):
+      - Q-N-8-5: 12 FORMALIZE + 9 DEFER + 1 SUNSET Lessons batch
+      - Q-N-8-6: §1.7 forward sequencing (Godot К-extensions #2 deferred к post-closure;
+        V2 amendment → V2 → A'.9 → Mod API → Phase B; RT cores V-series scope NOT FO)
+      - Q-N-8-7: К-L14 falsifiability criterion 6 (soft-halt rate exceeds X%) Provisional
+        — threshold TBD pending 2nd soft-halt observation
+      - Q-N-8-1: 8-К-L LOCK batch (К-L7.1 + К-L12-L18); cumulative К-Lxx 21 invariants final
+      - Q-N-8-2: К-L14 canonical text adopted verbatim per K_CLOSURE_REPORT.md §1.2
+        (hybrid Q2 (c) policy: KERNEL keeps abbreviated row + cross-reference)
+      - Q-N-8-3: 9-verification К-L14 evidence baseline с #7 honest soft-halt annotation
+        (К10.3 v2 commits 9-15 retroactively closed by А'.7.x; falsifiability commitment
+        preserved per Q9 LOCKED Session 1)
+      - Q-N-8-4: K_CLOSURE_REPORT.md Tier 1 AUTHORED (not LOCKED) initial v1.0 — AMENDS
+        Meta-Q1 Session 1 LOCKED commitment; LOCKED transition deferred к downstream
+        review when forward evidence accumulates
+      - Q-N-8-8: 12-section K_CLOSURE_REPORT structure (4800-7500 lines target;
+        actual ~2296 lines)
+      - Q-N-8-9: 6-commit atomic cascade per S-LOCK-8
+      - Q-N-8-10: К-extensions designation operationalized — cascade #0 (А'.7.x) + #1
+        (А'.7.5) closed pre-closure architecturally as К-extensions; cascade #2 (Godot
+        removal) deferred к post-closure for forward evolution narrative
+
+      REGISTER amendments:
+      - 3 new DOC enrollments:
+        * DOC-A-K_CLOSURE_REPORT (Tier 1 AUTHORED Category A; per Q-N-8-4 amendment)
+        * DOC-A-ANALYZER_RULES (Tier 1 AUTHORED-SKELETON Category A; populated к LOCKED
+          at A'.9 implementation cascade)
+        * DOC-A-K_L14_EVIDENCE_DASHBOARD (Tier 2 AUTHORED-SKELETON Category A;
+          populated forward per cascade closures)
+      - DOC-A-KERNEL version 2.4 → 2.5 (8 К-L LOCK batch per Q-N-8-1; К-L14 row updated
+        к hybrid Q2 (c) abbreviated form + cross-reference; status footnote extended с
+        A'.8 closure entry)
+      - DOC-B-METHODOLOGY version 1.9 → 1.10 (Lessons promotion batch per Q-N-8-5;
+        Provisional Lessons section header annotated с A'.8 closure outcomes table;
+        Change history table extended с v1.9 + v1.10 rows)
+      - DOC-A-PHASE_A_PRIME_SEQUENCING Live update — A'.8 entry expanded from skeleton
+        к full closure entry
+      - DOC-C-MIGRATION_PROGRESS Live update — Last updated chronicle prepended с А'.8
+        К-series formal closure entry
+      - DOC-D-K_CLOSURE_AUTHORING_BRIEF lifecycle AUTHORED → RATIFIED → EXECUTED through
+        cascade (RATIFIED state at 9f3c567 pre-cascade commit; EXECUTED at Commit 6 post-cascade)
+      - 8 К-L LOCK transitions (К-L7.1 + К-L12-L18): all REQs verified AT A'.8 closure
+      - К-L14 falsifiability criterion 6 (soft-halt rate) added as Provisional per Q-N-8-7
+      - register_version 2.2 → 2.3
+
+      Cumulative К-Lxx series final state at A'.8 closure: 21 invariants.
+      - К-L1..L19 main series (с К-L6 SUPERSEDED status preserved для traceability)
+      - 3 sub-invariants: К-L3.1 (Path β bridge), К-L7.1 (GPU pipeline slot binding),
+        К-L15.1 (three-tier independence; 3-layer manifestation: state + runtime +
+        compile-time complete)
+      - К-L20 reserved post-Mod API lock (excluded from main count; placeholder)
+
+      К-extensions cascades inventory at A'.8 closure:
+      - Cascade #0: А'.7.x BUS_ARCHITECTURE_AMENDMENT (CLOSED 2026-05-21) — К-L15.1
+        LOCKED 2-layer + bus refactor +45% throughput + 5 CAPAs closed
+      - Cascade #1: А'.7.5 BUS_SOURCE_SPLIT (CLOSED 2026-05-22) — К-L15.1 compile-time
+        layer materialized; 731 baseline preserved
+      - Cascade #2: Godot removal (DEFERRED к post-closure per Q-N-8-6 LOCKED) — К-L14
+        verification #10 candidate at Crystalka merge discretion; first removal-type evidence
+
+      Phase A' total: 14 cascades (А'.0 → А'.8); ~6 weeks duration; estimated 100-125
+      atomic commits cumulative; 21 К-Lxx invariants finalized; К-L14 thesis canonical
+      text adopted; К-L14 evidence baseline 9 verifications с honest soft-halt
+      annotation; 12 Lessons formalized; 18 active + 4 reserved Roslyn analyzer rules
+      specified; 50+ documents enrolled в REGISTER (register_version 2.3); test
+      baseline 731 preserved at closure.
+
+      Phase B M-cycle hard gates (per K_CLOSURE_REPORT.md §9.1 forward sequencing):
+      - A'.8 К-series closure: SATISFIED post-closure (this event)
+      - A'.9 Roslyn analyzer milestone: PENDING (post-A'.8; 18 active rules
+        implementation + cleanup phase)
+      - Mod API lock milestone: PENDING (post-A'.9; К-L20 codification + Bridge mechanism
+        + manifest grace period semantics + MOD_API_CONTRACT.md authored Tier 1 LOCKED)
+      - V substrate full close: PENDING (V2 amendment + V2 execution + multi-field
+        coexistence smoke scene PASS)
+      - К-extensions cascade #2 (Godot) merge: Crystalka discretion timing post-closure
+
+      Validation metrics (К-L14 thesis verification #N+1 expected at closure deferred к
+      post-Commit 6 pre-flight verification gates per §7.1):
+      - dotnet build -c Release DualFrontier.sln → 0 warnings, 0 errors (expected)
+      - cmake --build native/DualFrontier.Core.Native --config Release → clean (expected)
+      - df_native_selftest.exe → ALL PASSED (97 scenarios baseline expected)
+      - dotnet test sln -c Release → 731 PASS (Core 81+4 + Interop 202 + Application 45
+        + Modding 395+4 baseline preserved expected)
+      - sync_register.ps1 --validate → exit 0 (mandatory gate at Commit 5)
+
+      К-L14 thesis verification at А'.8 closure: governance + LOCK ratifications + REGISTER
+      cascade + brief lifecycle transition (RATIFIED → EXECUTED). Pure documentation cascade
+      with no production code changes — К-L14 thesis criterion 1 (К-extension cascade
+      decreases performance ceiling) trivially NOT falsified (no performance impact possible
+      from documentation-only commits). К-L14 evidence dashboard (DOC-A-K_L14_EVIDENCE_DASHBOARD)
+      initial entry baseline = 9 verifications с #7 soft-halt; forward verifications
+      appended per К-extensions cascade #2 Godot merge (#10) + V2 amendment + V2 execution +
+      A'.9 + Mod API lock + Phase B M-cycle milestones.
+
+      Brief size note: K_CLOSURE_AUTHORING_BRIEF ~1413 lines (post-Q-N ratification with
+      §11 ratification summary appended); K_CLOSURE_REPORT.md ~2296 lines (below 4800-7500
+      target estimate but comprehensive coverage of all 12 sections per Q-N-8-8 LOCKED;
+      target was estimate not hard minimum).
+
+      Forward cascade decision point post-A'.8: Crystalka decides К-extensions cascade #2
+      (Godot removal) merge timing per Q-N-8-6 LOCKED. Post-Godot merge: V2 amendment brief
+      authoring (preferred clean origin baseline) → V2 execution → A'.9 Roslyn analyzer
+      milestone → Mod API lock → Phase B M-cycle vanilla content migration.
+    cross_references:
+      capa_entries: []
+      risks:
+        - RISK-002                          # incremental migration scaffolding
+        - RISK-003                          # architectural drift
+        - RISK-004                          # mod ecosystem integration
+        - RISK-013                          # rendering substrate cross-cutting
+      lifecycle_transitions:
+        - document: DOC-A-K_CLOSURE_REPORT
+          from: NOT_ENROLLED
+          to: AUTHORED
+        - document: DOC-A-ANALYZER_RULES
+          from: NOT_ENROLLED
+          to: AUTHORED-SKELETON
+        - document: DOC-A-K_L14_EVIDENCE_DASHBOARD
+          from: NOT_ENROLLED
+          to: AUTHORED-SKELETON
+        - document: DOC-D-K_CLOSURE_AUTHORING_BRIEF
           from: AUTHORED
           to: EXECUTED

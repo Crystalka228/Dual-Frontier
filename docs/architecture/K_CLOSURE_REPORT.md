@@ -1,7 +1,6 @@
----
+﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
-# REGISTER entry CREATED at A'.8 Commit 5 (register_version 2.2 → 2.3).
 register_id: DOC-A-K_CLOSURE_REPORT
 category: A
 tier: 1
@@ -11,7 +10,6 @@ version: "1.0"
 next_review_due: 2027-05-23
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_CLOSURE_REPORT
 ---
-
 # DualFrontier К-Series Formal Closure Report
 
 **Version**: 1.0 (AUTHORED 2026-05-23 at A'.8 К-series formal closure event)
