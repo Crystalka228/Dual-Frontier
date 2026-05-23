@@ -158,14 +158,27 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Commits: 13 atomic on claude/scheduler-stress-test-KmVM3 (b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE)
   │   Executor: Claude Opus 4.7 (deliberation) + Claude Code (execution).
   │
-  ├─ Phase A'.7.5 — Bus source split (sub-milestone, separate cascade)
-  │   Scope: bus_native.cpp → bus_fast/normal/background/common.cpp (4-file split) +
-  │   bus_native.cpp DELETED + CMakeLists.txt updated. background_queue.cpp preserved distinct
-  │   (К10.2 Item 26/30 policy/dispatch layer separation per gap audit G-2 layer-collapse note).
-  │   К-L impact: NONE — К-L15.1 stays 2-layer; source split is engineering aesthetic, not
-  │   invariant material per Q-N-7X-2 Option C hybrid. ~3-5 atomic commits, separate brief
-  │   authored post-A'.7.x closure.
-  │   Status: NOT STARTED (brief authoring queued post-A'.7.x closure).
+  ├─ Phase A'.7.5 — BUS_SOURCE_SPLIT (К-extensions cascade #1 sub-milestone, CLOSED 2026-05-22)
+  │   Brief: A_PRIME_7_5_BUS_SOURCE_SPLIT_BRIEF.md (EXECUTED)
+  │   Designation: «К-extensions cascade #1 sub-milestone» per A'.7.x EVT closure
+  │   governance_impact §16.5 deferral note. Pure source-level reorganization
+  │   implementing К-L15.1 compile-time layer; К-L15.1 invariant text UNCHANGED
+  │   (parent A'.7.x γ4 LOCKED 2-layer formulation: state + runtime; A'.7.5 ε2
+  │   lands 3rd layer compile-time per source-level concern separation).
+  │   Scope: bus_native.cpp (240 lines, 15 df_bus_* C ABI functions) → bus_common.cpp
+  │   (cross-tier accessors + clear + unsubscribe) + bus_fast.cpp + bus_normal.cpp +
+  │   bus_background.cpp (per-tier C ABI). background_queue.cpp preserved distinct
+  │   (К10.2 Item 26/30 separation per gap audit G-2 layer-collapse note). Helper
+  │   primitives migrated к bus_native_internal.h (ε1). Stale O(N²) + bus_native.cpp
+  │   reference comments cleaned up (ε3).
+  │   К-L impact: NONE — К-L15.1 invariant text preserved verbatim; compile-time layer
+  │   materialization adds implementation depth without amendment. Cumulative К-Lxx
+  │   series stays 21 (no new sub-invariants).
+  │   К-L14 verification #9 clean cascade — empirical baseline preserved (97 selftest
+  │   ALL PASSED; Core.Tests.Bus 20/20 PASS; pre-existing test pollution failures
+  │   verified pre-existing on ε1 state, NOT caused by source split).
+  │   Commits: 5 atomic on feature/a_prime_7_5-bus-source-split (c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE)
+  │   Executor: Claude Opus 4.7 (brief authoring + execution) + Crystalka (Q-N ratification).
   │
   ├─ Phase A'.8 — K-closure report
   │   Scope: structured document enumerating final K-Lxx invariants

@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-SCHEDULER_STRESS_TEST_SUITE
+category: E
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-SCHEDULER_STRESS_TEST_SUITE
+---
 # Scheduler & Bus Stress Test Suite — 8c/16t Audit Pack
 
 Цель: убедиться, что на машине 8 ядер / 16 потоков нативный планировщик,

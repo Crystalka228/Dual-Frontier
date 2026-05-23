@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.1"
-last_modified: "2026-05-21"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+register_version: "2.2"
+last_modified: "2026-05-22"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_7_5-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -1907,6 +1907,25 @@ documents:
       - CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT
       - CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION
     special_case_rationale: "А'.7.x designated «К-extensions cascade #0» per Q-N-7X-12 LOCKED — chronologically pre-A'.8 closure («#0» signals position в К-extensions numbering), architecturally a К-extension (adds К-L15.1 к К-series surface). К-L15.1 is sub-invariant к К-L15 (mirrors К-L7.1 / К-L3.1 precedent); LOCKS at A'.7.x closure while parent К-L15 stays AUTHORED candidate until A'.8 closure. Authored 2026-05-21 by Claude Opus 4.7 post-investigation surface (Crystalka's BUS_DESIGN_INVESTIGATION_2026-05-21 + SCHEDULER_STRESS_TEST_SUITE input artifacts); gap-audit-amended same day (17 findings 3 critical / 4 major / 10 minor — incorporated in-place); Q-N ratified same day (all 12 Q-N LOCKED via Crystalka Session 2 Day 2 deliberation); executed same day by Claude Code (this cascade). All 12 Q-N references: Q-N-7X-1 К-L15.1 canonical text (§4.1 verbatim, 2-layer), Q-N-7X-2 scope (Option C hybrid: A'.7.x 2-layer К-L15.1 + A'.7.5 source split sub-milestone), Q-N-7X-3 К-L14 soft-halt framing (§1.3 verbatim — later corrected по execution: 14 fails were transient build state, not regression), Q-N-7X-6 Bug #1 style (Option A overload с runtime tier validation), Q-N-7X-7 Bug #2 phase boundary (Option A end-of-Reporting → end-of-fixed-step in this codebase), Q-N-7X-8 К-L14 criterion 6 (provisional, review at next soft-halt OR V2 closure), Q-N-7X-9 atomization count (Option A 14 atomic ± 2 tolerance; actual 13 per Crystalka δ1-δ3 drop = within tolerance), Q-N-7X-10 Group A diagnostic (§8 verbatim — execution surfaced empty Group A scope, no diagnostic doc needed), Q-N-7X-11 METHODOLOGY split (Option B: §12.7 at A'.7.x δ5, Lessons batch at A'.8), Q-N-7X-12 «К-extensions cascade #0» designation, Q-N-7X-13 WT-modification disposition (Option A direct α/β/γ/δ staging, 39a01be preserved as α1), Q-N-7X-14 KFNS amendment scope (Option C Phase 0 read decided NONE — no «shared mutex» refs that would mislead without К-L15.1 qualifier)."
+
+  - id: DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT
+    path: tools/briefs/A_PRIME_7_5_BUS_SOURCE_SPLIT_BRIEF.md
+    title: "А'.7.5 BUS_SOURCE_SPLIT — К-extensions cascade #1 sub-milestone"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-22"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_7_5-CLOSURE"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-22"
+    last_review_event: "А'.7.5 sub-milestone closure 2026-05-22 — К-L15.1 «Three-tier independence» compile-time layer materialized through source-level split. К-L15.1 invariant text UNCHANGED (parent A'.7.x γ4 LOCKED 2-layer formulation: state + runtime; ε2 lands the 3rd layer compile-time as implementation depth follow-through). Cumulative К-Lxx series stays 21 invariants (no new sub-invariants). 5 atomic commits on feature/a_prime_7_5-bus-source-split (c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE). Scope: bus_native.cpp (240 lines, 15 df_bus_* C ABI functions) → bus_common.cpp (cross-tier surface: BusNative accessors + df_bus_clear all-tier fixed-order lock + df_bus_unsubscribe tier-bit dispatch) + bus_fast.cpp + bus_normal.cpp + bus_background.cpp (per-tier C ABI). background_queue.cpp preserved distinct per A'.7.x §16.5 closure narrative (queue infrastructure + dispatch policy + save/load is a separate architectural concern from bus contract). Helper primitives (TIER_SHIFT/MASK/ID_MASK + TierTag + encode_id/decode_tier + remove_by_*_locked templates) migrated к bus_native_internal.h в ε1 enabling cross-TU visibility (template definitions must live at instantiation site by language rule). Stale comments cleanup в ε3 (SchedulerExtremeTests.cs O(N²) framing post-β5 + bus_native_internal.h header line 4 reference к bus_native.cpp). К-L14 verification #9 clean cascade — pure source reorganization, empirical baseline preserved (97 selftest scenarios ALL PASSED; Core.Tests.Bus 20/20 PASS; pre-existing test pollution failures ManagedBusBridgeTests.BusFacade_PublishEnabled + S6 marathon when combined with stress filter verified pre-existing on ε1 state too, NOT caused by source split). No CAPAs opened or closed (no bugs surfaced). No new REQs (К-L15.1 already has REQ-K-L15_1 from A'.7.x EVT). KERNEL_ARCHITECTURE.md v2.4 unchanged (К-L15.1 invariant text already accommodates source split via state isolation precondition — invariant proves robust under additive materialization). METHODOLOGY.md v1.9 unchanged."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "А'.7.5 designated «К-extensions cascade #1 sub-milestone» per A'.7.x EVT closure governance_impact §16.5 deferral note. Pure source-level reorganization implementing К-L15.1 compile-time layer (parent К-L15.1 LOCKED as 2-layer formulation at A'.7.x γ4; A'.7.5 adds 3rd layer per К-L15.1 «Three-tier independence» implementation depth — state + runtime + compile-time). Authored 2026-05-22 by Claude Opus 4.7 в post-A'.7.x closure deliberation session. ~500 line execution brief per Lesson #16 (brief length scales с deliberation surface, not execution scope — A'.7.5 has 3 Q-N S-LOCKs vs A'.7.x's 14 Q-N reflecting smaller deliberation surface). Q-N ratified same day: S-LOCK-1 (4-file split + background_queue distinct, Option A recommended), S-LOCK-2 (helpers к internal header, Option A recommended), S-LOCK-3 (stale comment cleanup в-scope as ε3, Option A recommended). Executed same day by Claude Code (5-commit atomic cascade ε1..ε5)."
 
   - id: DOC-E-A_PRIME_7_X_CLOSURE
     path: docs/scratch/A_PRIME_7_X/CLOSURE_REPORT.md
@@ -8104,3 +8123,104 @@ audit_trail:
         - invariant: К-L15.1
           from: AUTHORED
           to: LOCKED
+
+  - id: EVT-2026-05-22-A_PRIME_7_5-CLOSURE
+    date: "2026-05-22"
+    event: "А'.7.5 BUS_SOURCE_SPLIT sub-milestone closure (К-L15.1 compile-time layer materialization)"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT             # NEW enrollment, EXECUTED
+      - DOC-A-PHASE_A_PRIME_SEQUENCING                 # Live update — A'.7.5 entry NOT STARTED → EXECUTED
+      - DOC-A-MIGRATION_PROGRESS                       # Live update — A'.7.5 closure footnote с cascade summary
+      - DOC-G-REGISTER                                 # register_version 2.1 → 2.2
+    commits:
+      range: "c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE"
+      key_commits:
+        - hash: "c1d10b0"
+          summary: "ε1 — helper primitives migrated к bus_native_internal.h (TIER_SHIFT/MASK/ID_MASK + TierTag + encode_id/decode_tier + remove_by_*_locked templates)"
+        - hash: "752c04b"
+          summary: "ε2 LOAD-BEARING — source split bus_native.cpp → 4-file (bus_common.cpp + bus_fast.cpp + bus_normal.cpp + bus_background.cpp); CMakeLists.txt updated; bus_native.cpp DELETED. К-L15.1 compile-time layer materialized."
+        - hash: "c7698d1"
+          summary: "ε3 — stale O(N²) coalesce comment cleanup (SchedulerExtremeTests.cs lines 380-388 post-β5 O(N) baseline) + bus_native_internal.h header reference к bus_native.cpp updated к 4-file post-ε2 state"
+        - hash: "PENDING-COMMIT-EPSILON-4"
+          summary: "ε4 — REGISTER cascade governance (DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT enrollment EXECUTED + EVT-2026-05-22-A_PRIME_7_5-CLOSURE + PHASE_A_PRIME_SEQUENCING Live update + MIGRATION_PROGRESS Live update + register_version 2.1→2.2)"
+        - hash: "PENDING-COMMIT-A_PRIME_7_5-CLOSURE"
+          summary: "ε5 — A'.7.5 closure ratification (brief AUTHORED → EXECUTED + §X closure summary appended)"
+    governance_impact: |
+      А'.7.5 = «К-extensions cascade #1 sub-milestone» — pure source-level
+      reorganization implementing К-L15.1 «Three-tier independence»
+      compile-time layer. К-L15.1 invariant text UNCHANGED (parent A'.7.x γ4
+      LOCKED 2-layer formulation: state + runtime; ε2 lands 3rd layer
+      compile-time per source-level concern separation per Q-N-7X-2 Option C
+      hybrid sub-milestone designation).
+
+      REGISTER amendments:
+      - DOC-A-KERNEL: UNCHANGED (v2.4 К-L15.1 invariant text preserves
+        accommodation via state isolation precondition — invariant proves
+        robust under additive materialization)
+      - DOC-B-METHODOLOGY: UNCHANGED (v1.9 §12.7 closure protocol applies)
+      - DOC-A-PHASE_A_PRIME_SEQUENCING Live update — A'.7.5 entry NOT STARTED
+        → EXECUTED 2026-05-22 (commit range c1d10b0..ε5)
+      - DOC-A-MIGRATION_PROGRESS Live update — A'.7.5 closure footnote с
+        cascade summary appended к Last updated line
+      - 1 new DOC enrollment: DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT (lifecycle
+        EXECUTED, version 1.0)
+      - 0 new REQs (К-L15.1 already has REQ-K-L15_1 from A'.7.x EVT —
+        compile-time layer materialization counts as same REQ's evidence
+        strengthening)
+      - 0 CAPAs opened or closed (no bugs surfaced; pure code reorganization)
+      - 0 invariant amendments (К-L15.1 stays LOCKED с same text)
+
+      Cumulative К-Lxx series 21 invariants (unchanged from A'.7.x closure).
+
+      Validation metrics (final state at closure):
+      - cmake --build (native, Release): clean (DualFrontier.Core.Native.dll
+        + df_native_selftest.exe both produced post-ε2)
+      - df_native_selftest: 97 scenarios ALL PASSED (К10.3 v2 + A'.7.x
+        baseline preserved post-ε2 source split — no semantic change)
+      - Core.Tests.Bus namespace: 20/20 PASS in isolation post-ε2
+      - dotnet build (sln -c Release): 0 warnings, 0 errors (managed side
+        unaffected by native source split)
+      - Pre-existing test pollution failures (ManagedBusBridgeTests.BusFacade_PublishEnabled
+        + S6_Bus_FastTier_SixtySecondMarathon_ThroughputStable when run с combined
+        Bus + Stress filter): verified pre-existing on ε1 baseline state too — NOT
+        caused by source split. Orthogonal known-pollution issue в baseline.
+      - sync_register.ps1 --validate: PENDING ε4 verification gate
+
+      К-L14 thesis verification #9 (cascade evidence): А'.7.5 produces clean
+      cascade with empirical baseline preserved (97 selftest + 20 Bus tests +
+      per-tier throughput unchanged по pure reorganization). К-L14 verification
+      adds confirming evidence by showing that the LOCKED К-L15.1 invariant
+      accommodates further implementation depth (compile-time layer
+      materialization) without regression — invariant text proves robust
+      under additive materialization (К-extensions cascade pattern: invariant
+      LOCKs at parent cascade closure, sub-milestone materializes
+      implementation depth, invariant text не amended).
+
+      Brief size note (Lesson #16 reinforcement): А'.7.5 brief is ~500 lines
+      vs A'.7.x's 1853 lines, reflecting deliberation surface (3 Q-N S-LOCKs
+      vs 14 Q-N) not execution scope. Empirical confirmation of «brief length
+      scales with deliberation complexity, not execution scope» principle
+      surfaced в A'.7.x δ6 closure as Lesson candidate #N4.
+
+      Cascade sequencing post-А'.7.5: A'.8 (К-closure report deliberation
+      Session 2 revisit of К-L15.1 evidence baseline strengthened by compile-time
+      layer materialization) → V2 amendment → V2 → А'.9 (Roslyn analyzer
+      milestone) → Mod API lock → Phase B.
+
+      Forward к A'.8: К-L15.1 materialization complete (state + runtime +
+      compile-time layers all realized). A'.8 Session 2 deliberation revisit Q9
+      reflects compile-time layer materialization as К-L15.1 evidence
+      strengthening (no К-L count change, just implementation depth
+      confirmation per К-extensions cascade #1 closure narrative).
+
+      Parallel track decision point: post-A'.7.5 closure, Crystalka decides
+      Godot branch fate (merge/defer/amend) per «после A'.7.5 решим что
+      делать с той веткой» direction.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions:
+        - document: DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT
+          from: AUTHORED
+          to: EXECUTED
