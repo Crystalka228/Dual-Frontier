@@ -3,15 +3,19 @@ namespace DualFrontier.Application.Rendering;
 /// <summary>
 /// The production-tier rendering contract implemented by every presentation
 /// backend. Exactly one <see cref="IRenderer"/> is active per game session.
-/// This interface carries only methods that the shipped Native runtime must
-/// support. Debug visualisations, inspectors, and authoring helpers live in
-/// the devkit-tier extension <see cref="IDevKitRenderer"/>, which only Godot
-/// DevKit implements.
+/// This interface carries only methods that the shipped production runtime
+/// must support. Debug visualisations, inspectors, and authoring helpers live
+/// in the devkit-tier extension <see cref="IDevKitRenderer"/> (dormant per
+/// К-extensions cascade #2, 2026-05-23 — reserved для future first-party
+/// DevKit над Vulkan substrate).
 /// </summary>
 /// <remarks>
 /// Rule of thumb: if players see it in the final game, it belongs here. If
 /// only developers or modders ever see it, it belongs in
-/// <see cref="IDevKitRenderer"/>.
+/// <see cref="IDevKitRenderer"/>. Current shipped implementation:
+/// <c>DualFrontier.Launcher.LauncherRenderer</c> (Vulkan-native via
+/// <c>DualFrontier.Runtime</c> substrate), wiring lands в К-extensions
+/// cascade #2 δ phase (infrastructure) + cascade #3 (visual implementation).
 /// </remarks>
 public interface IRenderer
 {

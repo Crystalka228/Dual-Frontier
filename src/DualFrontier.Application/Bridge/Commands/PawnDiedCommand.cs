@@ -4,15 +4,10 @@ namespace DualFrontier.Application.Bridge.Commands;
 
 /// <summary>
 /// Command: pawn <paramref name="PawnId"/> has died. The presentation layer
-/// finds its visual node, plays the death animation, and removes the node
-/// once the animation completes.
+/// (Launcher's <c>RenderCommandDispatcher</c>) finds its visual node, plays
+/// the death animation, and removes the node once the animation completes.
+/// Per К-extensions cascade #2 (2026-05-23): dispatch handled centrally
+/// by Launcher.
 /// </summary>
 /// <param name="PawnId">Identifier of the deceased pawn.</param>
-public sealed record PawnDiedCommand(EntityId PawnId) : IRenderCommand
-{
-    /// <inheritdoc />
-    public void Execute(object renderContext)
-    {
-        /* TODO Phase 5 — apply via active IRenderer backend. */
-    }
-}
+public sealed record PawnDiedCommand(EntityId PawnId) : IRenderCommand;

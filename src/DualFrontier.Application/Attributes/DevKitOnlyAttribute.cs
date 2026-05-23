@@ -3,11 +3,15 @@ using System;
 namespace DualFrontier.Application.Attributes;
 
 /// <summary>
-/// Marks a type or method as belonging exclusively to the Godot DevKit —
-/// i.e. editor tooling, debug visualisations, or Godot-specific helpers
-/// that must never ship inside the Native runtime. A CI or Roslyn analyser
-/// (future work) can walk references and fail the build if any
-/// <c>[DevKitOnly]</c> symbol is reached from <c>DualFrontier.Presentation.Native</c>.
+/// Marks a type or method as belonging exclusively to the future DevKit tier —
+/// i.e. editor tooling, debug visualisations, or developer-specific helpers
+/// that must never ship inside the production runtime. A CI or Roslyn analyser
+/// (future work, A'.9 milestone) can walk references and fail the build if any
+/// <c>[DevKitOnly]</c> symbol is reached from <c>DualFrontier.Launcher</c>
+/// (production renderer). К-extensions cascade #2 (2026-05-23) retired the
+/// prior Godot DevKit + Silk.NET production split; current state: DevKit
+/// surface dormant (<c>IDevKitRenderer</c>) pending first-party developer
+/// tooling materialization.
 /// </summary>
 /// <remarks>
 /// This attribute is purely a marker. It imposes no runtime behaviour. The

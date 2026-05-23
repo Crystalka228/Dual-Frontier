@@ -5,20 +5,25 @@ using DualFrontier.Contracts.Math;
 namespace DualFrontier.Application.Rendering;
 
 /// <summary>
-/// DevKit-tier extension of <see cref="IRenderer"/>. Implemented only by
-/// backends that carry development tooling — the Godot DevKit renderer is
-/// the canonical consumer. The Native production renderer never references
-/// this interface: its debug surface is deliberately empty to keep the
+/// DevKit-tier extension of <see cref="IRenderer"/> — reserved abstraction
+/// surface для future first-party DevKit backend. Currently dormant: no
+/// active consumer post-Godot deprecation (К-extensions cascade #2,
+/// 2026-05-23). The production runtime (<c>DualFrontier.Launcher</c>) never
+/// references this interface — debug surface deliberately empty к keep
 /// shipped runtime lean.
 /// </summary>
 /// <remarks>
-/// Every method here is a visualisation or inspection aid for developers.
-/// Nothing in this contract should ever be called from gameplay logic:
-/// systems publish domain events, the DevKit backend reacts. If a feature
-/// ever needs to be available in Native, it should be promoted to
-/// <see cref="IRenderer"/> — never cross-cast.
+/// Reserved для forward DevKit work: when first-party developer tooling
+/// materializes, it MAY implement this contract atop the Vulkan substrate
+/// (<c>DualFrontier.Runtime</c> primitives) либо supersede it с a
+/// Vulkan-native equivalent. Until then the abstraction stays в place as
+/// architectural intent — DevKit/Production renderer split survives the
+/// Godot deprecation per Q-G-1 LOCKED. Every method here is a visualisation
+/// or inspection aid for developers; nothing here should ever be called from
+/// gameplay logic. If a feature ever needs to be available in production, it
+/// should be promoted к <see cref="IRenderer"/> — never cross-cast.
 /// </remarks>
-[DevKitOnly("Debug visualisation surface — not shipped to players.")]
+[DevKitOnly("Reserved DevKit surface — not shipped to players. Currently dormant.")]
 public interface IDevKitRenderer : IRenderer
 {
     /// <summary>

@@ -1,24 +1,14 @@
 namespace DualFrontier.Application.Bridge;
 
 /// <summary>
-/// The base contract for all render commands pushed from Domain to
-/// Presentation. Implementations are immutable value records carrying the
-/// data needed to apply a visual effect. Each active <see cref="Rendering.IRenderer"/>
-/// drains the bridge queue and invokes <see cref="Execute"/> on the main
-/// thread of its backend, passing the backend-specific root object:
-/// Godot passes its <c>GameRoot</c> node; Native passes its <c>NativeRenderer</c>.
-/// The command casts as needed.
+/// Marker interface для render commands enqueued onto the
+/// <see cref="PresentationBridge"/>. Commands are pure immutable data records
+/// carrying the information needed для visual effects. Dispatch is handled
+/// by the active renderer (e.g. Launcher's <c>RenderCommandDispatcher</c>),
+/// не by the command itself — per Lesson #25 refined: empty <c>Execute()</c>
+/// bodies were lying-test surface, structurally eliminated в К-extensions
+/// cascade #2 (2026-05-23).
 /// </summary>
 public interface IRenderCommand
 {
-    /// <summary>
-    /// Applies the command to the active rendering context. Called on the
-    /// main/render thread of whichever backend is live. Must not capture
-    /// references to ECS components or query the <c>World</c>.
-    /// </summary>
-    /// <param name="renderContext">
-    /// Backend-specific root object. Cast to the expected concrete type
-    /// inside the implementing Presentation assembly.
-    /// </param>
-    void Execute(object renderContext);
 }

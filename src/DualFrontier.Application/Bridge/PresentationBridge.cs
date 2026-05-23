@@ -6,8 +6,11 @@ namespace DualFrontier.Application.Bridge;
 /// <summary>
 /// Domain → Presentation bridge. The domain enqueues
 /// <see cref="IRenderCommand"/> instances from any thread; the main thread of
-/// the active <see cref="Rendering.IRenderer"/> (Godot or Native) drains them
-/// via <see cref="DrainCommands"/>. The link is strictly one-way (TechArch 11.9).
+/// the active <see cref="Rendering.IRenderer"/> drains them via
+/// <see cref="DrainCommands"/>. The link is strictly one-way (TechArch 11.9).
+/// К-extensions cascade #2 (2026-05-23) deprecated Godot + Silk.NET paths;
+/// current single backend = Launcher's <c>LauncherRenderer</c> +
+/// <c>RenderCommandDispatcher</c>.
 /// </summary>
 public sealed class PresentationBridge
 {
@@ -18,10 +21,9 @@ public sealed class PresentationBridge
     private readonly ConcurrentQueue<IRenderCommand> _commands = new();
 
     /// <summary>
-    /// TODO: Phase 3 — appends a command to the queue. Called from any
-    /// domain thread.
+    /// Appends a command к the queue. Called from any domain thread.
     /// </summary>
-    /// <param name="cmd">Render command to apply on the main thread.</param>
+    /// <param name="cmd">Render command к apply on the main thread.</param>
     public void Enqueue(IRenderCommand cmd)
     {
         if (cmd is null) throw new ArgumentNullException(nameof(cmd));
@@ -29,11 +31,16 @@ public sealed class PresentationBridge
     }
 
     /// <summary>
-    /// TODO: Phase 3 — dequeues and executes every accumulated command.
-    /// Called ONLY from the main thread of the active render backend.
+    /// Dequeues and dispatches every accumulated command via
+    /// <paramref name="execute"/>. Called ONLY from the main thread of the
+    /// active render backend (Launcher's per-frame iteration). К-extensions
+    /// cascade #2 (Q-G-3): <see cref="IRenderCommand"/> is а pure marker —
+    /// dispatch handled by the renderer's dispatcher, не by а per-command
+    /// <c>Execute()</c> method.
     /// </summary>
     /// <param name="execute">
-    /// Delegate that executes the command. Typically <c>cmd =&gt; cmd.Execute(renderContext)</c>.
+    /// Delegate that dispatches the command (typically the renderer's pattern-
+    /// matching dispatcher, e.g. <c>RenderCommandDispatcher.Dispatch</c>).
     /// </param>
     public void DrainCommands(Action<IRenderCommand> execute)
     {

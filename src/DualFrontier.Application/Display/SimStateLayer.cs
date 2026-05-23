@@ -8,10 +8,11 @@ namespace DualFrontier.Application.Display;
 ///
 /// Wraps the existing V0.C.2 batched sprite rendering path (or any future
 /// SimState rendering pipeline) as the default <see cref="LayerType.SimState"/>
-/// layer. Concrete presentation backends construct this с a render delegate
-/// that drives their substrate-specific pipeline (Vulkan sprite renderer +
-/// Camera2D + TileMap in <c>DualFrontier.Presentation.Native</c>; Godot canvas
-/// в <c>DualFrontier.Presentation</c>).
+/// layer. The production renderer (<c>DualFrontier.Launcher.LauncherRenderer</c>)
+/// constructs this с a render delegate that drives the Vulkan sprite pipeline
+/// (Vulkan sprite renderer + Camera2D + TileMap via <c>DualFrontier.Runtime</c>
+/// primitives). Godot + Silk.NET presentation paths retired per К-extensions
+/// cascade #2 (2026-05-23).
 ///
 /// Per К10.3 v2 §1 strategy «managed-facade-preserved + Lesson #20 scope
 /// discipline»: К10.3 v2 lands the architectural commitment (К-L17 invariant

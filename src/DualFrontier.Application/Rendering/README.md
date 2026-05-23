@@ -1,29 +1,40 @@
 ﻿# Rendering — Render-backend contract
 
 ## Purpose
-`IRenderer` is the single entry point for any visual backend. Application holds
-only the contract; the concrete implementations live in Presentation assemblies:
-Godot DevKit and Native (Silk.NET). At runtime exactly one is active.
+`IRenderer` is the single entry point for the visual backend. Application holds
+only the contract; the concrete implementation lives in `DualFrontier.Launcher`
+(Vulkan-native via `DualFrontier.Runtime` substrate). Reserved DevKit-tier
+extension (`IDevKitRenderer`, dormant per К-extensions cascade #2 2026-05-23)
+для future first-party DevKit work над Vulkan substrate.
 
 ## Dependencies
-- `DualFrontier.Contracts` — base types (through `PresentationBridge`).
+- `DualFrontier.Contracts` — base types (через `PresentationBridge`).
 
 ## Contents
 - `IRenderer.cs` — `Initialize` / `RenderFrame` / `Shutdown` / `IsRunning`.
+- `IDevKitRenderer.cs` — dormant DevKit-tier extension (debug gizmos,
+  profiler overlay, entity highlighting); reserved для future first-party
+  DevKit над Vulkan substrate.
 
 ## Rules
-- No `using Godot;` or `using Silk.NET;` — only the abstract contract.
+- No `using Godot;` or `using Silk.NET;` (paths retired per К-extensions cascade
+  #2) — only the abstract contract.
 - The implementation MUST drain `PresentationBridge` inside its `RenderFrame`.
 - Every GPU resource is released in `Shutdown` — leaks are unacceptable.
 
 ## TODO
-- [ ] Phase 3.5 — `GodotRenderer` in `DualFrontier.Presentation`.
-- [ ] Phase 5+ — `NativeRenderer` in `DualFrontier.Presentation.Native`
-      (Silk.NET + OpenGL, SpriteBatch, TilemapRenderer).
+- [x] К-extensions cascade #2 — `LauncherRenderer` infrastructure scaffold
+      (δ phase 2026-05-23 — defensive throws per Lesson #N12).
+- [ ] К-extensions cascade #3 — `LauncherRenderer` real visual implementation
+      (SpriteCatalog + scene state + Vulkan sprite recording).
+- [ ] Future К-extensions / V-cycle — first-party DevKit materialization
+      implementing `IDevKitRenderer` над Vulkan substrate.
 
 ## See also
-- [../.docs/architecture/VISUAL_ENGINE.md](/docs/architecture/VISUAL_ENGINE.md) — overall
-  DevKit vs Native strategy, the `.dfscene` format, and the developer pipeline.
+- [VISUAL_ENGINE.md](/docs/architecture/historical/VISUAL_ENGINE.md) — historical
+  (superseded) overview of pre-Vulkan DevKit vs Native strategy.
+- [VULKAN_SUBSTRATE.md](/docs/architecture/VULKAN_SUBSTRATE.md) — current
+  authoritative substrate spec.
 
 ---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY

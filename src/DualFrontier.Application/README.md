@@ -2,11 +2,12 @@
 
 ## Purpose
 The glue layer between the domain (`Core`, `Systems`, `Components`, `Events`, `AI`)
-and presentation (`Presentation`). Home of the main loop (`GameLoop`), saving
-(`SaveSystem`), scenario loading (`ScenarioLoader`), the mod loader (`ModLoader`),
-and the bridge into the Godot layer (`PresentationBridge`). Application is the
-only assembly that knows both the domain and the existence of an "upstream"
-rendering layer.
+and presentation (`DualFrontier.Launcher` via `IRenderer` contract). Home of the
+main loop (`GameLoop`), saving (`SaveSystem`), scenario loading (`ScenarioLoader`),
+the mod loader (`ModLoader`), and the bridge into the rendering layer
+(`PresentationBridge`). Application is the only assembly that knows both the
+domain and the existence of an "upstream" rendering layer. Godot DevKit + Silk.NET
+Native paths retired per К-extensions cascade #2 (2026-05-23).
 
 ## Dependencies
 - `DualFrontier.Contracts` — interfaces (`IMod`, `IModApi`, `IEvent`, `EntityId`, ...)
@@ -27,9 +28,10 @@ rendering layer.
 
 ## Rules
 - Application **may** know about `Core` and `Systems` — gluing them is its job.
-- Application **must not** know about Godot or call `Presentation` directly.
-  The link is strictly one-way: Domain/Application → `PresentationBridge`
-  (command queue) → Presentation reads in the main thread.
+- Application **must not** know about specific renderer implementations or call
+  presentation backends directly (Godot path retired per К-extensions cascade #2,
+  2026-05-23). The link is strictly one-way: Domain/Application →
+  `PresentationBridge` (command queue) → renderer reads in the main thread.
 - A mod **always** loads through its own `AssemblyLoadContext` (`ModLoadContext`)
   with `isCollectible: true` to enable hot reload (TechArch 11.8).
 - `SaveSystem.Save/Load` are synchronous. Async I/O is performed by the upstream
@@ -55,9 +57,10 @@ loop.Start();
 - [ ] Phase 1 — `SaveSystem.Save/Load` (binary + `SaveFormat` header).
 - [ ] Phase 2 — `ModLoader` (`AssemblyLoadContext`, mod registry, hot reload).
 - [ ] Phase 2 — `RestrictedModApi` proxies calls into `Core.GameServices`.
-- [ ] Phase 3 — wire `PresentationBridge.DrainCommands` into Godot `_Process`
-      (`PresentationBridge.SetScene` / `EnqueueInput` do not yet exist;
-      `GameBootstrap` is not implemented).
+- [x] Phase 3 — wire `PresentationBridge.DrainCommands` into Launcher's
+      `RenderCommandDispatcher` (К-extensions cascade #2 δ phase, 2026-05-23 —
+      infrastructure-only with defensive throws per Lesson #N12; visual
+      implementation lands cascade #3).
 - [x] Phase 3 — `ScenarioLoader` parses JSON via `System.Text.Json`.
 
 ---

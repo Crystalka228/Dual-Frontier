@@ -24,10 +24,4 @@ public sealed record PawnStateCommand(
     string JobLabel,
     bool JobUrgent,
     IReadOnlyList<(SkillKind Kind, int Level)> TopSkills
-) : IRenderCommand
-{
-    public void Execute(object renderContext)
-    {
-        /* Dispatched by RenderCommandDispatcher, not via Execute. */
-    }
-}
+) : IRenderCommand;
