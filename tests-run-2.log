@@ -1,0 +1,86 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  DualFrontier.Contracts -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\bin\Debug\net8.0\DualFrontier.Contracts.dll
+  DualFrontier.Mod.ManifestRewriter -> D:\Colony_Simulator\Colony_Simulator\tools\DualFrontier.Mod.ManifestRewriter\bin\Debug\net8.0\DualFrontier.Mod.ManifestRewriter.dll
+  DualFrontier.Core.Interop -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Core.Interop\bin\Debug\net8.0\DualFrontier.Core.Interop.dll
+  DualFrontier.Mod.ManifestRewriter.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Mod.ManifestRewriter.Tests\bin\Debug\net8.0\DualFrontier.Mod.ManifestRewriter.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Mod.ManifestRewriter.Tests\bin\Debug\net8.0\DualFrontier.Mod.ManifestRewriter.Tests.dll (.NETCoreApp,Version=v8.0)
+  DualFrontier.Components -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Components\bin\Debug\net8.0\DualFrontier.Components.dll
+  DualFrontier.Core -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Core\bin\Debug\net8.0\DualFrontier.Core.dll
+A total of 1 test files matched the specified pattern.
+  DualFrontier.Runtime -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Runtime\bin\Debug\net8.0\DualFrontier.Runtime.dll
+  DualFrontier.Persistence -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Persistence\bin\Debug\net8.0\DualFrontier.Persistence.dll
+  DualFrontier.Events -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Events\bin\Debug\net8.0\DualFrontier.Events.dll
+  DualFrontier.AI -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.AI\bin\Debug\net8.0\DualFrontier.AI.dll
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\clearcolor.vert
+
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration: 135 ms - DualFrontier.Mod.ManifestRewriter.Tests.dll (net8.0)
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\clearcolor.frag
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\noop.comp
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\sprite.vert
+  DualFrontier.Systems -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Systems\bin\Debug\net8.0\DualFrontier.Systems.dll
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\sprite.frag
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\diffusion.comp
+  DualFrontier.Application -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Application\bin\Debug\net8.0\DualFrontier.Application.dll
+  DualFrontier.Persistence.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Persistence.Tests\bin\Debug\net8.0\DualFrontier.Persistence.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Persistence.Tests\bin\Debug\net8.0\DualFrontier.Persistence.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  Fixture.BadRegularMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.BadRegularMod\bin\Debug\net8.0\Fixture.BadRegularMod.dll
+  DualFrontier.Runtime.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Runtime.Tests\bin\Debug\net8.0\DualFrontier.Runtime.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Runtime.Tests\bin\Debug\net8.0\DualFrontier.Runtime.Tests.dll (.NETCoreApp,Version=v8.0)
+  Fixture.BadSharedMod_WithIMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.BadSharedMod_WithIMod\bin\Debug\net8.0\tests.bad-shared-imod.dll
+  Fixture.SharedEvents -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.SharedEvents\bin\Debug\net8.0\tests.shared.events.dll
+  DualFrontier.Application.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Application.Tests\bin\Debug\net8.0\DualFrontier.Application.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Application.Tests\bin\Debug\net8.0\DualFrontier.Application.Tests.dll (.NETCoreApp,Version=v8.0)
+  Fixture.PublisherMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.PublisherMod\bin\Debug\net8.0\Fixture.PublisherMod.dll
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 341 ms - DualFrontier.Persistence.Tests.dll (net8.0)
+A total of 1 test files matched the specified pattern.
+  DualFrontier.Systems.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Systems.Tests\bin\Debug\net8.0\DualFrontier.Systems.Tests.dll
+  DualFrontier.Core.Interop.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Interop.Tests\bin\Debug\net8.0\DualFrontier.Core.Interop.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Systems.Tests\bin\Debug\net8.0\DualFrontier.Systems.Tests.dll (.NETCoreApp,Version=v8.0)
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Interop.Tests\bin\Debug\net8.0\DualFrontier.Core.Interop.Tests.dll (.NETCoreApp,Version=v8.0)
+  DualFrontier.Core.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Debug\net8.0\DualFrontier.Core.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Debug\net8.0\DualFrontier.Core.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    45, Skipped:     0, Total:    45, Duration: 399 ms - DualFrontier.Application.Tests.dll (net8.0)
+  Fixture.SubscriberMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.SubscriberMod\bin\Debug\net8.0\Fixture.SubscriberMod.dll
+
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 1 s - DualFrontier.Systems.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:   202, Skipped:     0, Total:   202, Duration: 837 ms - DualFrontier.Core.Interop.Tests.dll (net8.0)
+  Fixture.RegularMod_ReplacesUnknown -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesUnknown\bin\Debug\net8.0\Fixture.RegularMod_ReplacesUnknown.dll
+  Fixture.RegularMod_ReplacesCombat -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesCombat\bin\Debug\net8.0\Fixture.RegularMod_ReplacesCombat.dll
+  Fixture.RegularMod_ReplacesProtected -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesProtected\bin\Debug\net8.0\Fixture.RegularMod_ReplacesProtected.dll
+  Fixture.RegularMod_MissingOptional -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_MissingOptional\bin\Debug\net8.0\Fixture.RegularMod_MissingOptional.dll
+  Fixture.RegularMod_DependsOnBadApi -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependsOnBadApi\bin\Debug\net8.0\Fixture.RegularMod_DependsOnBadApi.dll
+  Fixture.RegularMod_ReplacesCombat_Alt -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesCombat_Alt\bin\Debug\net8.0\Fixture.RegularMod_ReplacesCombat_Alt.dll
+  Fixture.RegularMod_CyclicA -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_CyclicA\bin\Debug\net8.0\Fixture.RegularMod_CyclicA.dll
+  Fixture.RegularMod_MissingRequired -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_MissingRequired\bin\Debug\net8.0\Fixture.RegularMod_MissingRequired.dll
+  Fixture.RegularMod_DepsBadVersion -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DepsBadVersion\bin\Debug\net8.0\Fixture.RegularMod_DepsBadVersion.dll
+  Fixture.RegularMod_BadApiVersion -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_BadApiVersion\bin\Debug\net8.0\Fixture.RegularMod_BadApiVersion.dll
+  Fixture.RegularMod_DependedOn -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependedOn\bin\Debug\net8.0\Fixture.RegularMod_DependedOn.dll
+dotnet : The active test run was aborted. Reason: Test host process crashed
+At line:1 char:90
++ ... ; $output = dotnet test --logger "console;verbosity=minimal" 2>&1 | O ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (The active test...process crashed:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 647 ms - DualFrontier.Core.Tests.dll (net8.0)
+Test Run Aborted.
+  Fixture.RegularMod_DependsOnAnother -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependsOnAnother\bin\Debug\net8.0\Fixture.RegularMod_DependsOnAnother.dll
+
+Passed!  - Failed:     0, Passed:   292, Skipped:     0, Total:   292, Duration: 12 s - DualFrontier.Runtime.Tests.dll (net8.0)
+  Fixture.RegularMod_CyclicB -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_CyclicB\bin\Debug\net8.0\Fixture.RegularMod_CyclicB.dll
+  DualFrontier.Modding.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Debug\net8.0\DualFrontier.Modding.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Debug\net8.0\DualFrontier.Modding.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   399, Skipped:     0, Total:   399, Duration: 30 m 13 s - DualFrontier.Modding.Tests.dll (net8.0)
+

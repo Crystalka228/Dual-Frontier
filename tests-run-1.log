@@ -1,0 +1,277 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  DualFrontier.Contracts -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Contracts\bin\Debug\net8.0\DualFrontier.Contracts.dll
+  DualFrontier.Mod.ManifestRewriter -> D:\Colony_Simulator\Colony_Simulator\tools\DualFrontier.Mod.ManifestRewriter\bin\Debug\net8.0\DualFrontier.Mod.ManifestRewriter.dll
+  DualFrontier.Core.Interop -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Core.Interop\bin\Debug\net8.0\DualFrontier.Core.Interop.dll
+  DualFrontier.Mod.ManifestRewriter.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Mod.ManifestRewriter.Tests\bin\Debug\net8.0\DualFrontier.Mod.ManifestRewriter.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Mod.ManifestRewriter.Tests\bin\Debug\net8.0\DualFrontier.Mod.ManifestRewriter.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+  DualFrontier.Components -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Components\bin\Debug\net8.0\DualFrontier.Components.dll
+  DualFrontier.Core -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Core\bin\Debug\net8.0\DualFrontier.Core.dll
+  DualFrontier.Persistence -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Persistence\bin\Debug\net8.0\DualFrontier.Persistence.dll
+  DualFrontier.AI -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.AI\bin\Debug\net8.0\DualFrontier.AI.dll
+  DualFrontier.Events -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Events\bin\Debug\net8.0\DualFrontier.Events.dll
+  DualFrontier.Runtime -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Runtime\bin\Debug\net8.0\DualFrontier.Runtime.dll
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\clearcolor.vert
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\clearcolor.frag
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\noop.comp
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\sprite.vert
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\sprite.frag
+  D:\Colony_Simulator\Colony_Simulator\tools\shaders\diffusion.comp
+  DualFrontier.Systems -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Systems\bin\Debug\net8.0\DualFrontier.Systems.dll
+
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration: 338 ms - DualFrontier.Mod.ManifestRewriter.Tests.dll (net8.0)
+  DualFrontier.Application -> D:\Colony_Simulator\Colony_Simulator\src\DualFrontier.Application\bin\Debug\net8.0\DualFrontier.Application.dll
+  DualFrontier.Runtime.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Runtime.Tests\bin\Debug\net8.0\DualFrontier.Runtime.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Runtime.Tests\bin\Debug\net8.0\DualFrontier.Runtime.Tests.dll (.NETCoreApp,Version=v8.0)
+  Fixture.BadRegularMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.BadRegularMod\bin\Debug\net8.0\Fixture.BadRegularMod.dll
+  Fixture.BadSharedMod_WithIMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.BadSharedMod_WithIMod\bin\Debug\net8.0\tests.bad-shared-imod.dll
+  Fixture.SharedEvents -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.SharedEvents\bin\Debug\net8.0\tests.shared.events.dll
+A total of 1 test files matched the specified pattern.
+  DualFrontier.Persistence.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Persistence.Tests\bin\Debug\net8.0\DualFrontier.Persistence.Tests.dll
+  DualFrontier.Core.Interop.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Interop.Tests\bin\Debug\net8.0\DualFrontier.Core.Interop.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Interop.Tests\bin\Debug\net8.0\DualFrontier.Core.Interop.Tests.dll (.NETCoreApp,Version=v8.0)
+  DualFrontier.Systems.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Systems.Tests\bin\Debug\net8.0\DualFrontier.Systems.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Systems.Tests\bin\Debug\net8.0\DualFrontier.Systems.Tests.dll (.NETCoreApp,Version=v8.0)
+  DualFrontier.Application.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Application.Tests\bin\Debug\net8.0\DualFrontier.Application.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Application.Tests\bin\Debug\net8.0\DualFrontier.Application.Tests.dll (.NETCoreApp,Version=v8.0)
+  Fixture.SubscriberMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.SubscriberMod\bin\Debug\net8.0\Fixture.SubscriberMod.dll
+  Fixture.PublisherMod -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.PublisherMod\bin\Debug\net8.0\Fixture.PublisherMod.dll
+  DualFrontier.Core.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Debug\net8.0\DualFrontier.Core.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\bin\Debug\net8.0\DualFrontier.Core.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+A total of 1 test files matched the specified pattern.
+  Fixture.RegularMod_DependsOnBadApi -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependsOnBadApi\bin\Debug\net8.0\Fixture.RegularMod_DependsOnBadApi.dll
+  Fixture.RegularMod_ReplacesUnknown -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesUnknown\bin\Debug\net8.0\Fixture.RegularMod_ReplacesUnknown.dll
+  Fixture.RegularMod_DepsBadVersion -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DepsBadVersion\bin\Debug\net8.0\Fixture.RegularMod_DepsBadVersion.dll
+  Fixture.RegularMod_BadApiVersion -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_BadApiVersion\bin\Debug\net8.0\Fixture.RegularMod_BadApiVersion.dll
+  Fixture.RegularMod_ReplacesCombat_Alt -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesCombat_Alt\bin\Debug\net8.0\Fixture.RegularMod_ReplacesCombat_Alt.dll
+  Fixture.RegularMod_ReplacesProtected -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesProtected\bin\Debug\net8.0\Fixture.RegularMod_ReplacesProtected.dll
+  Fixture.RegularMod_ReplacesCombat -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_ReplacesCombat\bin\Debug\net8.0\Fixture.RegularMod_ReplacesCombat.dll
+  Fixture.RegularMod_CyclicB -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_CyclicB\bin\Debug\net8.0\Fixture.RegularMod_CyclicB.dll
+
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 1 s - DualFrontier.Systems.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:   202, Skipped:     0, Total:   202, Duration: 731 ms - DualFrontier.Core.Interop.Tests.dll (net8.0)
+
+Passed!  - Failed:     0, Passed:    45, Skipped:     0, Total:    45, Duration: 426 ms - DualFrontier.Application.Tests.dll (net8.0)
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Persistence.Tests\bin\Debug\net8.0\DualFrontier.Persistence.Tests.dll (.NETCoreApp,Version=v8.0)
+  Fixture.RegularMod_DependedOn -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependedOn\bin\Debug\net8.0\Fixture.RegularMod_DependedOn.dll
+  Fixture.RegularMod_CyclicA -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_CyclicA\bin\Debug\net8.0\Fixture.RegularMod_CyclicA.dll
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4, Duration: 467 ms - DualFrontier.Persistence.Tests.dll (net8.0)
+  Fixture.RegularMod_MissingOptional -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_MissingOptional\bin\Debug\net8.0\Fixture.RegularMod_MissingOptional.dll
+
+Passed!  - Failed:     0, Passed:   292, Skipped:     0, Total:   292, Duration: 13 s - DualFrontier.Runtime.Tests.dll (net8.0)
+  Fixture.RegularMod_MissingRequired -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_MissingRequired\bin\Debug\net8.0\Fixture.RegularMod_MissingRequired.dll
+dotnet : [xUnit.net 00:01:02.59]     DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.NativeGraph_FiveThousandSy
+stems_RandomDag_ComputesAndTicksWithoutError [FAIL]
+At line:1 char:90
++ ... ; $output = dotnet test --logger "console;verbosity=minimal" 2>&1 | O ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...outError [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:01:02.59]     
+DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S6_Bus_FastTier_SixtySecondMarathon_ThroughputStable [FAIL]
+  Failed DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError [1 m 1 s]
+  Error Message:
+   Expected tickResult to be ComputeResult.Success {value: 1} because TickBegin failed on tick 4134, but found ComputeResult.Failure {value: 0}.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Primitives.EnumAssertions`2.Be(TEnum expected, String because, Object[] becauseArgs)
+   at DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\Scheduling\SchedulerStressTests.cs:line 170
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S6_Bus_FastTier_SixtySecondMarathon_ThroughputStable [1 m 1 s]
+  Error Message:
+   Expected totalPublishes to be greater than 100000L because Fast tier must sustain at least 100k publishes over 60 seconds, but found 3115L (difference of -96885).
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Numeric.NumericAssertions`2.BeGreaterThan(T expected, String because, Object[] becauseArgs)
+   at DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S6_Bus_FastTier_SixtySecondMarathon_ThroughputStable() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\Scheduling\SchedulerExtremeTests.cs:line 775
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Standard Output Messages:
+ [S6 Bus_FastMarathon_60s] PASS
+   Wall time:                60.02 s
+   Producer threads:       16
+   Total Fast publishes:   3,115
+   Mean throughput:                  52 events/sec
+   Per-thread per-sec:                3 events/sec/thread
+   Total allocated:              50.7 MB
+   GC Gen0 / Gen1 / Gen2:  7 / 1 / 0
+   Mean alloc per publish:    17061.9 bytes
+
+
+[xUnit.net 00:01:02.61]     DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.SchedulingPolicies_OrderByPriority_
+ParallelCalls_DeterministicAndCorrectlyOrdered [FAIL]
+[xUnit.net 00:01:02.63]     DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.BusTiers_AllThreeTiers_HighContenti
+onPublish_RespectsTierContract [FAIL]
+[xUnit.net 00:01:03.80]     
+DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S3_Bus_FiveMillionEventsPerTier_HoldsAllDeliveryContracts 
+[FAIL]
+  Failed DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.SchedulingPolicies_OrderByPriority_ParallelCalls_DeterministicAndCorrectlyOrdered [22 ms]
+  Error Message:
+   Expected failures to be empty, but found at least one item {"call 11 iter 0: in-class ordering violated at 100"}.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.BeEmpty(String because, Object[] becauseArgs)
+   at DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.SchedulingPolicies_OrderByPriority_ParallelCalls_DeterministicAndCorrectlyOrdered() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\Scheduling\SchedulerStressTests.cs:line 467
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.BusTiers_AllThreeTiers_HighContentionPublish_RespectsTierContract [20 ms]
+  Error Message:
+   Expected s_normalCount to be 16000 because Normal tier must deliver every published event after drain (drained 1024x), but found 0 (difference of -16000).
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.BusTiers_AllThreeTiers_HighContentionPublish_RespectsTierContract() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\Scheduling\SchedulerStressTests.cs:line 370
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Failed DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S3_Bus_FiveMillionEventsPerTier_HoldsAllDeliveryContracts [1 s]
+  Error Message:
+   Expected s_extremeFastCount to be 5000000 because Fast tier contract: sync dispatch, count == published, but found 32191 (difference of -4967809).
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at DualFrontier.Core.Tests.Scheduling.SchedulerExtremeTests.S3_Bus_FiveMillionEventsPerTier_HoldsAllDeliveryContracts() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Core.Tests\Scheduling\SchedulerExtremeTests.cs:line 409
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+The active test run was aborted. Reason: Test host process crashed : Fatal error. System.AccessViolationException: 
+Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
+   at System.Threading.ThreadLocal`1[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]].set_Value(System.__Canon)
+   at DualFrontier.Core.ECS.SystemExecutionContext.PopContext()
+   at DualFrontier.Core.Scheduling.ParallelSystemScheduler+<>c__DisplayClass11_0.<ExecutePhase>b__0(DualFrontier.Core.E
+CS.SystemBase)
+   at System.Threading.Tasks.Parallel+<>c__DisplayClass19_0`2[[System.__Canon, System.Private.CoreLib, 
+Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, 
+Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]].<ForWorker>b__1(System.Threading.Tasks.RangeWorker 
+ByRef, Int64, Boolean ByRef)
+   at System.Threading.Tasks.TaskReplicator+Replica.Execute()
+   at System.Threading.ExecutionContext.RunInternal(System.Threading.ExecutionContext, 
+System.Threading.ContextCallback, System.Object)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(System.Threading.Tasks.Task ByRef, System.Threading.Thread)
+   at System.Threading.Tasks.ThreadPoolTaskScheduler.TryExecuteTaskInline(System.Threading.Tasks.Task, Boolean)
+   at System.Threading.Tasks.Task.InternalRunSynchronously(System.Threading.Tasks.TaskScheduler, Boolean)
+   at System.Threading.Tasks.TaskReplicator.Run[[System.Threading.Tasks.RangeWorker, System.Threading.Tasks.Parallel, 
+Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=b03f5f7f11d50a3a]](ReplicatableUserAction`1<System.Threading.Tasks.RangeWorker>, 
+System.Threading.Tasks.ParallelOptions, Boolean)
+   at System.Threading.Tasks.Parallel.ForWorker[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Int32, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e]](Int32, Int32, System.Threading.Tasks.ParallelOptions, 
+System.Action`1<Int32>, System.Action`2<Int32,System.Threading.Tasks.ParallelLoopState>, 
+System.Func`4<Int32,System.Threading.Tasks.ParallelLoopState,System.__Canon,System.__Canon>, 
+System.Func`1<System.__Canon>, System.Action`1<System.__Canon>)
+   at System.Threading.Tasks.Parallel.ForEachWorker[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e]](System.Collections.Generic.IEnumerable`1<System.__Canon>, 
+System.Threading.Tasks.ParallelOptions, System.Action`1<System.__Canon>, 
+System.Action`2<System.__Canon,System.Threading.Tasks.ParallelLoopState>, 
+System.Action`3<System.__Canon,System.Threading.Tasks.ParallelLoopState,Int64>, 
+System.Func`4<System.__Canon,System.Threading.Tasks.ParallelLoopState,System.__Canon,System.__Canon>, 
+System.Func`5<System.__Canon,System.Threading.Tasks.ParallelLoopState,Int64,System.__Canon,System.__Canon>, 
+System.Func`1<System.__Canon>, System.Action`1<System.__Canon>)
+   at System.Threading.Tasks.Parallel.ForEach[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e]](System.Collections.Generic.IEnumerable`1<System.__Canon>, 
+System.Threading.Tasks.ParallelOptions, System.Action`1<System.__Canon>)
+   at DualFrontier.Core.Scheduling.ParallelSystemScheduler.ExecutePhase(DualFrontier.Core.Scheduling.SystemPhase, 
+Single)
+   at DualFrontier.Core.Scheduling.ParallelSystemScheduler.ExecuteTick(Single)
+   at DualFrontier.Core.Tests.Scheduling.SchedulerStressTests.ManagedScheduler_WideLayerPlusDeepChain_DoesNotDeadlockAn
+dExecutesAllSystems()
+   at System.RuntimeMethodHandle.InvokeMethod(System.Object, Void**, System.Signature, Boolean)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(System.Object, System.Reflection.BindingFlags)
+   at System.Reflection.MethodBase.Invoke(System.Object, System.Object[])
+   at Xunit.Sdk.TestInvoker`1[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]].CallTestMethod(System.Object)
+   at Xunit.Sdk.TestInvoker`1+<>c__DisplayClass47_0+<<InvokeTestMethodAsync>b__1>d[[System.__Canon, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]].MoveNext()
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[[Xunit.Sdk.TestInvoker`1+<>c__DisplayClass47_0+<<Inv
+okeTestMethodAsync>b__1>d[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]], xunit.execution.dotnet, Version=2.9.2.0, Culture=neutral, 
+PublicKeyToken=8d05b1bb7a6fdb6c]](<<InvokeTestMethodAsync>b__1>d<System.__Canon> ByRef)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[[Xunit.Sdk.TestInvoker`1+<>c__DisplayClass47_0+<<Inv
+okeTestMethodAsync>b__1>d[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]], xunit.execution.dotnet, Version=2.9.2.0, Culture=neutral, 
+PublicKeyToken=8d05b1bb7a6fdb6c]](<<InvokeTestMethodAsync>b__1>d<System.__Canon> ByRef)
+   at Xunit.Sdk.TestInvoker`1+<>c__DisplayClass47_0[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e]].<InvokeTestMethodAsync>b__1()
+   at Xunit.Sdk.ExecutionTimer+<AggregateAsync>d__4.MoveNext()
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[[Xunit.Sdk.ExecutionTimer+<AggregateAsync>d__4, 
+xunit.execution.dotnet, Version=2.9.2.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c]](<AggregateAsync>d__4 ByRef)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[[Xunit.Sdk.ExecutionTimer+<AggregateAsync>d__4, 
+xunit.execution.dotnet, Version=2.9.2.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c]](<AggregateAsync>d__4 ByRef)
+   at Xunit.Sdk.ExecutionTimer.AggregateAsync(System.Func`1<System.Threading.Tasks.Task>)
+   at Xunit.Sdk.TestInvoker`1+<>c__DisplayClass47_0[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e]].<InvokeTestMethodAsync>b__0()
+   at Xunit.Sdk.ExceptionAggregator+<RunAsync>d__9.MoveNext()
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[[Xunit.Sdk.ExceptionAggregator+<RunAsync>d__9, 
+xunit.core, Version=2.9.2.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c]](<RunAsync>d__9 ByRef)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder.Start[[Xunit.Sdk.ExceptionAggregator+<RunAsync>d__9, 
+xunit.core, Version=2.9.2.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c]](<RunAsync>d__9 ByRef)
+   at Xunit.Sdk.ExceptionAggregator.RunAsync(System.Func`1<System.Threading.Tasks.Task>)
+   at Xunit.Sdk.TestInvoker`1+<InvokeTestMethodAsync>d__47[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, 
+Culture=neutral, PublicKeyToken=7cec85d7bea7798e]].MoveNext()
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[[Xunit.Sdk.TestInvoker`1+<InvokeTestMethodAsync>d__4
+7[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], 
+xunit.execution.dotnet, Version=2.9.2.0, Culture=neutral, 
+PublicKeyToken=8d05b1bb7a6fdb6c]](<InvokeTestMethodAsync>d__47<System.__Canon> ByRef)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1[[System.Decimal, System.Private.CoreLib, 
+Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]].Start[[Xunit.Sdk.TestInvoker`1+<InvokeTestMethodAsync>d__47[[System.__Canon, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]], xunit.execution.dotnet, 
+Version=2.9.2.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c]](<InvokeTestMethodAsync>d__47<System.__Canon> ByRef)
+   at Xunit.Sdk.TestInvoker`1[[System.__Canon, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]].InvokeTestMethodAsync(System.Object)
+   at Xunit.Sdk.XunitTestInvoker.InvokeTestMethodAsync(System.Object)
+   at Xunit.Sdk.TestInvoker`1+<<RunAsync>b__46_0>d[[System.__Canon, System.Private.CoreLib, Version=8.0.
+
+Failed!  - Failed:     5, Passed:    83, Skipped:     0, Total:    88, Duration: 1 m 2 s - DualFrontier.Core.Tests.dll (net8.0)
+Test Run Aborted.
+  Fixture.RegularMod_DependsOnAnother -> D:\Colony_Simulator\Colony_Simulator\tests\Fixture.RegularMod_DependsOnAnother\bin\Debug\net8.0\Fixture.RegularMod_DependsOnAnother.dll
+  DualFrontier.Modding.Tests -> D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Debug\net8.0\DualFrontier.Modding.Tests.dll
+Test run for D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\bin\Debug\net8.0\DualFrontier.Modding.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:05.44]     DualFrontier.Modding.Tests.Bootstrap.GameBootstrapIntegrationTests.CreateLoop_RunningLoop_P
+awnStateCommandCarriesRealName [FAIL]
+  Failed DualFrontier.Modding.Tests.Bootstrap.GameBootstrapIntegrationTests.CreateLoop_RunningLoop_PawnStateCommandCarriesRealName [3 s]
+  Error Message:
+   Expected stateCommands not to be empty because expected at least one PawnStateCommand publish during the loop window.
+  Stack Trace:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message, Object[] args)
+   at FluentAssertions.Execution.GivenSelector`1.FailWith(String message)
+   at FluentAssertions.Collections.GenericCollectionAssertions`3.NotBeEmpty(String because, Object[] becauseArgs)
+   at DualFrontier.Modding.Tests.Bootstrap.GameBootstrapIntegrationTests.CreateLoop_RunningLoop_PawnStateCommandCarriesRealName() in D:\Colony_Simulator\Colony_Simulator\tests\DualFrontier.Modding.Tests\Bootstrap\GameBootstrapIntegrationTests.cs:line 230
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:   398, Skipped:     0, Total:   399, Duration: 51 m 46 s - DualFrontier.Modding.Tests.dll (net8.0)
+
