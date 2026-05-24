@@ -89,6 +89,6 @@ tier: 4
 lifecycle: Live
 owner: Crystalka
 version: "Live"
-next_review_due: TBD — after cascade #3 closure
+next_review_due: TBD — after Vanilla mods consumer materialization OR substrate palette decoder extension cascade
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-LAUNCHER
 ---

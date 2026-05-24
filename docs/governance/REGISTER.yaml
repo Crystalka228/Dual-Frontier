@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.4"
+register_version: "2.5"
 last_modified: "2026-05-23"
-last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
+last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -717,11 +717,11 @@ documents:
     owner: Crystalka
     version: "0.1"
     last_modified: "2026-05-23"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-23"
-    last_review_event: "A'.8 К-series formal closure (Commit 5) — DOC-A-K_L14_EVIDENCE_DASHBOARD enrolled at A'.8 closure per S-LOCK-9 LOCKED Session 2 + Q-N-8-3 LOCKED. Initial entry с 9-verification baseline (8 clean + 1 honest soft-halt verification #7 К10.3 v2 retroactively closed by А'.7.x). К-L14 falsifiability criteria 1-4 active, 5 deferred, 6 Provisional Q-N-8-7 NEW (soft-halt rate threshold TBD pending 2nd observation). Forward verifications appended per К-extensions cascade closures + V substrate cascades + A'.9 cascade + Mod API lock cascade + Phase B M-cycle cascades. Tracking instrument для К-L14 thesis falsifiability commitment Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2 honest framing principle. Cross-references к K_CLOSURE_REPORT.md §3 initial baseline + KERNEL_ARCHITECTURE.md Part 0 К-L14 row (abbreviated form + cross-reference per Q-N-8-2 hybrid Q2 (c) policy)."
+    last_review_event: "К-extensions cascade #3 δ4 — verification #12 entry appended (first clean additive evidence per Q-H-7 LOCKED framing; substrate Runtime + PngDecoder + SpriteRenderer + ProceduralAtlas primitives completely untouched через consumer materialization — 3 dispatch arm real implementations + SceneState minimum sprite registry + LauncherRenderer Vulkan recording integration + Program.cs composition root extension). Lesson #N12 semantic refinement narrative captured (NOT a К-L14 falsifying observation — refines Lesson, не invariant; substrate stability preserved через amendment process). Cumulative post-#12: 11 verifications в active log (10 clean + 1 honest soft-halt #7); К-L14 thesis remains не-falsified. Prior context: А'.8 К-series formal closure (Commit 5) enrolled DOC с 9-verification baseline; К-extensions cascade #2 (verification #11) added first removal-type evidence."
     next_review_due: "2026-Q3"
     reviewer: Crystalka
     special_case_rationale: "Category A + Tier 2 + AUTHORED-SKELETON override: forward-evolving dashboard appended per cascade closure; populated к Tier 2 Live при 3+ post-closure verifications appended"
@@ -8658,3 +8658,183 @@ audit_trail:
         - document: DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
           from: Live
           to: RETIRED
+
+  - id: EVT-2026-05-23-K_EXT_3-LAUNCHER_VISUAL_IMPLEMENTATION
+    date: "2026-05-23"
+    event: "К-extensions cascade #3 — Launcher Visual Implementation (Minimum Scope) closure event (post-cascade-#2 closure execution per cascade #2 §4 forward roadmap + Crystalka direction «после исполнения в сесии claude code я приложу отчёт и мы продолжим уже делать второй»)"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-D-K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF  # NEW enrollment, EXECUTED Tier 3 (cascade #3 brief)
+      - DOC-F-SRC-LAUNCHER-PROCEDURAL-ATLAS                 # NEW enrollment, Live Tier 4 (α1 file)
+      - DOC-F-SRC-LAUNCHER-SCENE-STATE                      # NEW enrollment, Live Tier 4 (α2 file, covers SceneState + co-located PawnSpriteEntry)
+      - DOC-F-SRC-LAUNCHER                                  # last_modified update (β dispatcher/renderer/program modifications)
+      - DOC-A-KERNEL                                        # v2.5.1 → v2.5.2 (cascade #3 patch bump per Q-G-12 + chronicle + К-L14 #12 cross-ref)
+      - DOC-B-METHODOLOGY                                   # v1.11 → v1.12 (#N12 semantic refined + #N13 + #N14 NEW Provisionals)
+      - DOC-A-K_EXTENSIONS_LEDGER                           # §3.4 cascade #3 entry + §4 forward roadmap update
+      - DOC-A-K_L14_EVIDENCE_DASHBOARD                      # verification #12 entry appended (first clean additive evidence)
+      - DOC-A-PHASE_A_PRIME_SEQUENCING                      # Live update — cascade #3 entry added between cascade #2 + A'.9
+      - DOC-G-REGISTER                                      # register_version 2.4 → 2.5
+    commits:
+      range: "e1bbc6a..PENDING-COMMIT-K_EXT_3-CLOSURE-RATIFICATION"
+      key_commits:
+        - hash: "e1bbc6a"
+          summary: "α0 — Brief amendment commit (S-LOCK-4 silent stubs per Crystalka mid-cascade ratification 2026-05-23). Phase 0 §2.5 + §2.8 reads surfaced production-fires conflict с defensive throw design (GameBootstrap publishes ~255 ItemSpawnedCommand at startup + GameLoop emits TickAdvancedCommand every 33ms + PawnStateReporterSystem emits PawnStateCommand periodically). Lesson #N12 semantic refined inline. R-1 verification gate hung in background (PowerShell syntax retry); R-2 verification gate resolved analytically (skip empirical run — defensive throws would crash on cascade #2 state; Phase γ smoke replaces)."
+        - hash: "bf697db"
+          summary: "α1 — LauncherProceduralAtlas (Q-H-17 Option C copy от SmokeTest's ProceduralAtlas). 256×256 RGBA8 atlas с 16×16 tile grid (256 tiles), 4 pattern types. Internal namespace DualFrontier.Launcher. Forward consolidation candidate в file header comment."
+        - hash: "f28fe4d"
+          summary: "α2 — SceneState + PawnSpriteEntry types (Q-H-2 + S-LOCK-3 minimum scope sprite registry; no camera/HUD/layer/animation state). API: RegisterPawn/MovePawn/DespawnPawn/EnumerateActiveSprites + ActivePawnCount."
+        - hash: "97f4573"
+          summary: "β — Atomic dispatcher + renderer + program commit (Lesson #8 compilable unit). RenderCommandDispatcher pawn-3 real implementations + 3 deferred silent stubs per S-LOCK-4 amended; LauncherRenderer Vulkan integration via Runtime.RecordSpritesFrame V0.C.2 batched API one-liner (per §2.0 empirical finding — simpler than brief's manual draft); Program.cs composition root с atlas upload + SceneState constructor injection per S-LOCK-10. Uses gameContext.Loop.Start() per cascade #2 amendment."
+        - hash: "cc252ff"
+          summary: "δ1 — KERNEL_ARCHITECTURE.md v2.5.1 → v2.5.2 patch bump + cascade #3 chronicle entry"
+        - hash: "89243a0"
+          summary: "δ2 — METHODOLOGY v1.11 → v1.12 minor bump; Lesson #N12 semantic refined с sub-pattern A (test-only-fires defensive throws) + sub-pattern B (production-fires silent stubs); 2 NEW Provisional candidates (#N13 commit integrity verification + #N14 Phase 0 empirical assumed-state coverage)"
+        - hash: "eb73a76"
+          summary: "δ3 — PHASE_A_PRIME_SEQUENCING cascade #3 chronological entry added between cascade #2 + A'.9"
+        - hash: "9356f7f"
+          summary: "δ4 — K_EXTENSIONS_LEDGER §3.4 cascade #3 entry + §4 forward roadmap update (pre-existing pollution cleanup + substrate palette decoder + cascade #4+ emergent candidates); K_L14_EVIDENCE_DASHBOARD verification #12 entry appended (first clean additive evidence)"
+        - hash: "7e2bc79"
+          summary: "δ5 — REGISTER Commit α: 3 new DOC enrollments (DOC-D-K_EXT_3 brief + DOC-F-SRC-LAUNCHER-PROCEDURAL-ATLAS + DOC-F-SRC-LAUNCHER-SCENE-STATE) + 3 DOC modifications (DOC-F-SRC-LAUNCHER last_modified + DOC-A-KERNEL v2.5.2 + DOC-B-METHODOLOGY v1.12)"
+        - hash: "PENDING-COMMIT-K_EXT_3-DELTA_6"
+          summary: "δ6 (this commit) — REGISTER Commits β + γ combined: DOC-A-K_L14_EVIDENCE_DASHBOARD last_modified update (verification #12) + register_version 2.4 → 2.5 + EVT-2026-05-23-K_EXT_3-LAUNCHER_VISUAL_IMPLEMENTATION audit_trail entry + sync_register.ps1 frontmatter sync"
+        - hash: "PENDING-COMMIT-K_EXT_3-CLOSURE-RATIFICATION"
+          summary: "δ7 — Brief AUTHORED → EXECUTED + §9 closure section с verification #12 evidence table (final ratification commit)"
+    governance_impact: |
+      К-EXTENSIONS CASCADE #3 — LAUNCHER VISUAL IMPLEMENTATION (MINIMUM SCOPE)
+      closure event (post-cascade-#2 closure execution per cascade #2 §4 forward
+      roadmap + Crystalka direction).
+
+      Q-H deliberation Session 2026-05-23 ratified 11/16 Q-H seeds (per brief
+      §8 appendix Q-H lock summary):
+      - Q-H-0: Path B Hybrid (Phase 0 fully-locked + execution intent
+        architecturally specified + mid-cascade checkpoint allowed)
+      - Q-H-1: Pawn-3 active, 3 deferred
+      - Q-H-2: Scene state = sprite registry only
+      - Q-H-3: Path γ-A (procedural-only, no substrate work)
+      - Q-H-4: Runtime API empirical signatures (§2.0)
+      - Q-H-5: R-1 fail-annotate + R-2 fail-halt
+      - Q-H-6: Test discipline = pawn-3 only
+      - Q-H-7: К-L14 #12 = clean additive evidence
+      - Q-H-8: К-L17.1 deferred
+      - Q-H-9: Filename K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF.md
+      - Q-H-10: METHODOLOGY v1.11 → v1.12 + #N13/#N14 Provisional candidates
+      - Q-H-11..16: DISSOLVED (PNG decoder + sprite asset format + substrate
+        extension authorization + palette decoder fallback + extension scope
+        bounding + substrate test discipline — all dissolved via Phase 0
+        empirical grounding)
+      - Q-H-17: CHECKPOINT-DEFERRED (ProceduralAtlas reuse strategy) — Option C
+        ratified mid-cascade при α1 execution (production-side copy preserves
+        S-LOCK-2 substrate isolation; alternative Option B substrate Move
+        not raised к Crystalka because Option C aligns с minimum-scope discipline)
+
+      Mid-cascade brief amendment ratified by Crystalka 2026-05-23 α0:
+      - S-LOCK-4 amendment: defensive throws → silent stubs для 3 deferred
+        dispatch arms (PawnState/ItemSpawned/TickAdvanced). Phase 0 §2.5 + §2.8
+        reads surfaced production-fires conflict (GameBootstrap.PublishItemSpawnedEvents
+        queues ~255 ItemSpawnedCommand at composition + GameLoop.RunLoop emits
+        TickAdvancedCommand every 33ms + PawnStateReporterSystem emits
+        PawnStateCommand periodically — all 3 deferred command types fire actively
+        в production flow; defensive throws would crash Launcher on first frame).
+        Crystalka ratification text: «ситуация такая для сапуска можно поставить
+        заглушку, главное не включать в тесты участки с заглушками, а вдруг
+        появится тест то он должен падать на заглушке так как там нечего
+        тестировать и тест будет врать» — silent stub pattern + DO NOT TEST
+        discipline + tests that try к exercise stubs should fail because nothing
+        к assert. Amendment captured inline в brief §1 S-LOCK-4 с original text
+        preserved для audit trail. Lesson #N12 promotion criterion refined.
+
+      К-L impact: zero (К-L count unchanged: 21 final). Cascade focused on
+      consumer materialization, не invariant extension. К-L17.1 «Renderer-к-
+      CompositionFramework binding» sub-invariant candidacy noted в brief §6.2
+      forward consideration — still deferred (cascade #3 scene state minimum
+      did not materialize composition framework binding per Q-H-2 LOCKED).
+
+      К-L14 verification #12 contribution (first clean additive evidence per
+      Q-H-7 LOCKED framing): substrate (DualFrontier.Runtime + PngDecoder +
+      SpriteRenderer + ProceduralAtlas) primitives completely untouched через
+      addition of substantial new consumer functionality (3 dispatch arm real
+      implementations + SceneState minimum sprite registry + LauncherRenderer
+      Vulkan recording integration + Program.cs composition root extension с
+      atlas upload). К-L14 thesis preservation: substrate exhibits stability
+      across consumer materialization — not just across architectural addition
+      (#1-#9 forward-add) либо consumer removal/addition swap (#11). Performance
+      impact: zero (consumer materialization only; no production tick path
+      change; sim continues к run on background thread per existing GameLoop;
+      LauncherRenderer adds render-thread Vulkan recording per V0.C.2 batched
+      API with no observable substrate cost). Note on Lesson #N12 semantic
+      refinement: NOT a К-L14 falsifying observation — refines Lesson (cascade-
+      level discipline), не invariant; substrate stability preserved через
+      amendment process.
+
+      Lessons surfaced (3, per METHODOLOGY v1.12 δ2):
+      - Lesson #N12 SEMANTIC REFINED — second application + sub-pattern split:
+        Sub-pattern A (test-only-fires) defensive throws preserved для cases
+        where command type cannot fire в production composition (cascade #2
+        first app); Sub-pattern B (production-fires) silent stubs с DO NOT TEST
+        documentation для cases where command DOES fire в production (cascade
+        #3 first app). Promotion criterion amended к require substantially-
+        different sub-pattern OR different domain (HUD primitives skeleton,
+        audio dispatcher skeleton, либо network sync skeleton).
+      - Lesson #N13 (NEW Provisional): Commit integrity verification before
+        commit. First observation cascade #2 α1 (sln mutation claim/diff
+        mismatch → α1.5 correction). Cascade #3 α0 explicit application
+        (verified `git status` content matched commit message claims).
+        Promotion gate: second application с different mutation type.
+      - Lesson #N14 (NEW Provisional): Phase 0 reads empirical assumed-state
+        coverage. First observations cascade #2 α1 (directory state divergence
+        — ~45 tracked files in assumed-untracked dir) + cascade #3 §2.0
+        (production composition divergence — defensive throw assumption invalid).
+        Promotion gate: second application с different state-class.
+
+      REGISTER amendments:
+      - 3 new DOC enrollments:
+        * DOC-D-K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF (Tier 3 EXECUTED
+          Category D; cascade #3 brief)
+        * DOC-F-SRC-LAUNCHER-PROCEDURAL-ATLAS (Tier 4 Live Category F; α1 file)
+        * DOC-F-SRC-LAUNCHER-SCENE-STATE (Tier 4 Live Category F; α2 file,
+          covers both SceneState.cs + co-located PawnSpriteEntry.cs)
+      - 3 DOC modifications:
+        * DOC-F-SRC-LAUNCHER last_modified update (β file modifications)
+        * DOC-A-KERNEL version 2.5.1 → 2.5.2 (cascade #3 patch bump)
+        * DOC-B-METHODOLOGY version 1.11 → 1.12 (#N12 refined + #N13 + #N14)
+      - DOC-A-K_L14_EVIDENCE_DASHBOARD last_modified update (#12 entry appended)
+      - DOC-A-K_EXTENSIONS_LEDGER §3.4 entry added + §4 forward roadmap updated
+      - DOC-A-PHASE_A_PRIME_SEQUENCING cascade #3 chronological entry added
+      - register_version 2.4 → 2.5
+
+      Cascade #2 retroactive ratification (R-1 + R-2 verification gate
+      inheritance from cascade #2 closure):
+      - R-1 (test variance falsifiability): background run hung at Run 1 без
+        output; testhost (4368) was alive holding fixture files (cascade #3
+        full-solution build during execution showed lock conflict, confirming
+        R-1 process was active). Outcome indeterminate. Future cascade revisits
+        — documented as inherited indeterminacy, не cascade #3 falsifying.
+      - R-2 (Launcher composition smoke): resolved analytically (skipped
+        empirical R-2 on cascade #2 state since defensive throws would crash
+        Launcher on first frame; Phase γ smoke на cascade #3 post-implementation
+        state replaces). Cascade #2 К-L14 #11 status: unchanged (CLEAN-WITH-
+        ANNOTATION preserved — R-2 verification gap resolved analytically +
+        cascade #3 fix path ratified, не via empirical R-2 PASS on cascade #2).
+
+      Forward sequencing post-closure:
+      - Pre-existing pollution cleanup cascade (flaky test stabilization)
+      - Substrate palette decoder extension cascade (когда Vanilla mods
+        materialize consumer need; first К-L14 substrate-extension-evidence
+        opportunity; Lesson #N15 first application reserved)
+      - К-extensions cascade #4+ (HUD primitives reserved skeleton — Lesson
+        #N12 third app opportunity; input bridge wiring; camera control)
+      - A'.9 Roslyn analyzer milestone
+    cross_references:
+      capa_entries: []
+      risks:
+        - RISK-013                          # rendering substrate cross-cutting
+      lifecycle_transitions:
+        - document: DOC-D-K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF
+          from: NOT_ENROLLED
+          to: EXECUTED
+        - document: DOC-F-SRC-LAUNCHER-PROCEDURAL-ATLAS
+          from: NOT_ENROLLED
+          to: Live
+        - document: DOC-F-SRC-LAUNCHER-SCENE-STATE
+          from: NOT_ENROLLED
+          to: Live
