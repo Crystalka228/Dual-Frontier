@@ -1,4 +1,4 @@
----
+﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT
@@ -7,10 +7,9 @@ tier: 2
 lifecycle: Live
 owner: Crystalka
 version: "Live"
-next_review_due: "post-A'.9.1 closure"
+next_review_due: post-A'.9.1 closure
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT
 ---
-
 # A'.9 Reconnaissance Report — Roslyn Analyzer Architecture Discovery
 
 **Designation**: A'.9.0 Reconnaissance cascade output (К-extensions cascade #4 cross-reference)
