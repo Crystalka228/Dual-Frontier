@@ -11,7 +11,18 @@ next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-GODOT_INTEGRATION
 ---
 > **HISTORICAL DOCUMENT**: Superseded by `docs/architecture/VULKAN_SUBSTRATE.md` v1.0 LOCKED 2026-05-16 per Q-G-1 LOCK. Pre-V-substrate authority preserved for historical record.
-> Original lifecycle: LOCKED. The Godot-as-DevKit + Silk.NET production model documented here is not the current production direction. V substrate replaces Godot entirely at R.8 cutover; PresentationBridge surface migrates per VULKAN_SUBSTRATE.md §2.2.
+> Original lifecycle: LOCKED. The Godot-as-DevKit + Silk.NET production model documented here is not the current production direction. V substrate replaced Godot entirely at К-extensions cascade #2 closure (2026-05-23); PresentationBridge surface migrates per VULKAN_SUBSTRATE.md §2.2.
+>
+> **К-extensions cascade #2 closure addendum (2026-05-23)**:
+> К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization — completes the deprecation arc started here. Architectural intent preservation:
+> - DevKit/Production renderer split survives через `IDevKitRenderer` interface (now dormant per Q-G-1 LOCKED — reserved для future first-party DevKit над Vulkan substrate).
+> - `PresentationBridge` command queue pattern survives — dispatch now centralized в Launcher's `RenderCommandDispatcher` (vs original per-command `Execute()` pattern, which constituted lying-test surface per Lesson #25 refined; structurally eliminated via Q-G-3 marker-only `IRenderCommand`).
+> - Domain/Presentation isolation rule preserved verbatim (Domain `Godot-agnostic` → `Renderer-agnostic` framing in current architecture docs).
+>
+> Cross-references:
+> - `tools/briefs/K_EXT_2_GODOT_DEPRECATION_BRIEF.md` — cascade authoring brief
+> - `docs/architecture/VULKAN_SUBSTRATE.md` v1.1.1 — current production renderer authority
+> - `src/DualFrontier.Launcher/` — new production launcher project
 
 # Godot integration
 

@@ -11,7 +11,19 @@ next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VISUAL_ENGINE
 ---
 > **HISTORICAL DOCUMENT**: Superseded by `docs/architecture/VULKAN_SUBSTRATE.md` v1.0 LOCKED 2026-05-16 per Q-G-1 LOCK. Pre-V-substrate authority preserved for historical record.
-> Original lifecycle: LOCKED. The dual-backend Godot DevKit + Silk.NET OpenGL production model documented here is not the current production direction. V substrate is the unified Vulkan rendering + compute target.
+> Original lifecycle: LOCKED. The dual-backend Godot DevKit + Silk.NET OpenGL production model documented here is not the current production direction. V substrate is the unified Vulkan rendering + compute target. Final retirement: К-extensions cascade #2 closure 2026-05-23 (tracked Godot files removed, DualFrontier.Launcher production renderer formalized per Q-G-6 (b1) infrastructure-only).
+>
+> **К-extensions cascade #2 closure addendum (2026-05-23)**:
+> К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization — completes deprecation of the dual-backend model documented here. Architectural intent preservation:
+> - Tier split (production-tier `IRenderer` + devkit-tier `IDevKitRenderer`) survives с DevKit tier now dormant per Q-G-1 LOCKED (reserved для future first-party DevKit над Vulkan substrate, не extending Runtime).
+> - "Does the player need this в the finished game?" tier-selection rule survives unchanged.
+> - `[DevKitOnly]` attribute remains as forward analyzer surface (А'.9 milestone) — semantics updated к point к `DualFrontier.Launcher` as production renderer.
+>
+> Cross-references:
+> - `tools/briefs/K_EXT_2_GODOT_DEPRECATION_BRIEF.md` — cascade authoring brief
+> - `docs/architecture/VULKAN_SUBSTRATE.md` v1.1.1 — current authoritative substrate spec
+> - `src/DualFrontier.Launcher/` — new production launcher project (formalized К-extensions cascade #2 δ phase)
+> - `src/DualFrontier.Application/Rendering/IDevKitRenderer.cs` — dormant DevKit-tier extension surface
 
 # Visual engine — DevKit and Native
 
