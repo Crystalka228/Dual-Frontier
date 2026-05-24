@@ -2,7 +2,10 @@ using System;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Loop;
 using DualFrontier.Runtime;
+using DualFrontier.Runtime.Assets;
+using DualFrontier.Runtime.Graphics;
 using DualFrontier.Runtime.Input;
+using DualFrontier.Runtime.Sprite;
 using DualFrontier.Runtime.Window;
 
 namespace DualFrontier.Launcher;
@@ -12,24 +15,13 @@ namespace DualFrontier.Launcher;
 /// substrate (<see cref="Runtime.Runtime"/>) + Domain layer
 /// (<see cref="GameContext"/> via <see cref="GameBootstrap"/>) +
 /// <see cref="LauncherRenderer"/> bridge between them. Drives main loop
-/// per Q-G-7 (d) hybrid orchestration.
+/// per Q-G-7 (d) hybrid orchestration (cascade #2 amendment Crystalka
+/// Option A — GameLoop self-ticks on background thread).
 ///
-/// К-extensions cascade #2 (2026-05-23) ships infrastructure-only:
-/// — Window opens, Vulkan initializes, GameLoop ticks (on its own background
-///   thread), bridge connects, dispatcher receives commands (defensive throws
-///   fire if visual paths invoked) per Lesson #N12 first application.
-/// Visual implementation lands в К-extensions cascade #3 (next session).
-///
-/// Architecture note (brief amendment, Crystalka Option A ratification
-/// 2026-05-23 mid-cascade): brief assumed <c>gameContext.GameLoop.Tick()</c>
-/// — empirically <see cref="GameLoop"/> runs on its own background thread
-/// (Start/Stop API only, no external Tick()). Main loop drives window +
-/// input + rendering only; simulation ticks autonomously on background
-/// thread via accumulator-based fixed step. Q-G-7 (d) hybrid orchestration
-/// intent preserved — Program.cs still explicitly drives lifecycle
-/// (Start/Stop, message pump, render), just не the sim tick (which is
-/// background thread concern). Cross-thread communication через
-/// <see cref="PresentationBridge"/> command queue.
+/// К-extensions cascade #3 (2026-05-23): composition extended к include
+/// atlas texture upload (LauncherProceduralAtlas → VulkanImage → SpriteTexture)
+/// + SceneState composition root + dispatcher/renderer constructor injection
+/// per S-LOCK-10.
 /// </summary>
 internal static class Program
 {
@@ -49,17 +41,31 @@ internal static class Program
             // conditional default (#if DEBUG = true, else = false).
         };
         using var runtime = Runtime.Runtime.Create(runtimeOptions);
+
+        // Generate procedural atlas + upload к device-local memory.
+        // S-LOCK-2 satisfied: no substrate touch; LauncherProceduralAtlas is
+        // production-side copy (Q-H-17 Option C) preserving substrate isolation.
+        PngImage atlasImage = LauncherProceduralAtlas.GenerateAtlas();
+        VulkanImage atlasVkImage = VulkanImage.CreateFromPngImage(
+            runtime.VulkanDevice, runtime.MemoryAllocator, runtime.TextureUploader, atlasImage);
+        var atlasSampler = new VulkanSampler(runtime.VulkanDevice);
+        using var atlasTexture = new SpriteTexture(atlasVkImage, atlasSampler);
+
         var bridge = new PresentationBridge();
         GameContext gameContext = GameBootstrap.CreateLoop(bridge);
-        var dispatcher = new RenderCommandDispatcher(runtime);
-        using var renderer = new LauncherRenderer(runtime, bridge, dispatcher);
+
+        // S-LOCK-10 composition root: SceneState constructed here, passed к
+        // both dispatcher (writes) и renderer (reads) via constructor injection.
+        var sceneState = new SceneState();
+        var dispatcher = new RenderCommandDispatcher(sceneState);
+        using var renderer = new LauncherRenderer(runtime, bridge, dispatcher, sceneState, atlasTexture);
 
         // === Lifecycle init ===
         renderer.Initialize();
         runtime.Window.Show();
         gameContext.Loop.Start();
 
-        // === Main loop (Q-G-7 (d) hybrid orchestration, amended Crystalka 2026-05-23) ===
+        // === Main loop (Q-G-7 (d) hybrid orchestration, cascade #2 Crystalka Option A amendment) ===
         var lastFrameTime = DateTime.UtcNow;
         while (runtime.Window.IsOpen)
         {
@@ -71,19 +77,17 @@ internal static class Program
             runtime.Window.PumpMessages();
 
             // 2. Drain InputQueue → forward к Application.
-            //    К-extensions cascade #3 territory — InputBridge wiring TBD.
-            //    Cascade #2: input events pumped but discarded (no consumer yet).
+            //    Future cascade — InputBridge wiring TBD; events discarded for now.
             while (runtime.InputQueue.TryDequeue(out IInputEvent? _))
             {
-                // Cascade #3 will forward к Application input bridge here.
+                // Future cascade will forward к Application input bridge here.
             }
 
-            // 3. (No simulation tick here — GameLoop runs on its own background
-            //    thread via Start() above. Cross-thread communication через
-            //    PresentationBridge command queue. Brief amendment Crystalka
-            //    Option A 2026-05-23 — gameContext.Loop self-ticks internally.)
+            // 3. (No simulation tick here — GameLoop self-ticks on background thread
+            //    via Loop.Start() above. Cross-thread communication через
+            //    PresentationBridge command queue.)
 
-            // 4. Render frame (drain bridge + dispatch + future Runtime record).
+            // 4. Render frame (drain bridge + dispatch к SceneState + Vulkan record + present).
             renderer.RenderFrame(deltaSeconds);
         }
 
