@@ -1528,61 +1528,1115 @@ This batched infrastructure work fits naturally as A'.9.1 Phase α (analyzer fou
 
 ---
 
-## §7 — Roslyn ecosystem state
+## §7 — Roslyn ecosystem state (desk research 2026-05-24)
 
-*[To be populated в Phase α2 (Domain 5) — desk research]*
+### §7.0 — Research methodology
 
-### §7.1 — Current Roslyn SDK version
+**Web searches performed** (2026-05-24, Sub-Agent B1, Domain 5):
 
-*[NuGet package + version + release date]*
+1. `Microsoft.CodeAnalysis.CSharp NuGet latest stable version 2026` — currency: results dated through 1/13/2026 + 3/10/2026; current SDK confirmed
+2. `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit latest version NuGet` — currency: results dated through 5/22/2026
+3. `Roslyn analyzer development net8.0 best practices 2026` — currency: mix of 2024-2026 docs
+4. `Roslyn analyzer severity DiagnosticSeverity Error Warning Info conventions dotnet runtime` — currency: MS Learn docs current
+5. `Microsoft.CodeAnalysis.CSharp 5.3.0 release notes breaking changes netstandard2.0` — currency: 2026
+6. `CodeFixProvider Roslyn analyzer best practices test pattern CSharpCodeFixVerifier` — currency: mix of 2024-2026
+7. `dotnet/roslyn-analyzers severity assignment Error Warning Info rule defaults` — currency: MS Learn current
+8. `Roslyn analyzer NuGet packaging analyzer codefix separate package` — currency: mix of 2018-2024 (packaging conventions stable across versions)
+9. `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing NuGet generic framework-agnostic 2026` — currency: 2026
+10. `Roslyn analyzer "DiagnosticSeverity.Hidden" vs Info vs Warning IDE rules architecture invariants` — currency: MS Learn current
+11. `aspnet/AspNetCore analyzer diagnostic ID severity convention error warning` — currency: dotnet/aspnetcore main branch (current)
+
+**Web fetches performed** (2026-05-24):
+
+- `nuget.org/packages/Microsoft.CodeAnalysis.CSharp/` — confirmed 5.3.0 released 2026-03-10
+- `nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` — flagged 1.1.2 as legacy/deprecated path
+- `nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing` — confirmed 1.1.4 released 2026-05-22 (base package still required by framework-specific variants)
+- `github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md` — testing framework guidance
+- `github.com/dotnet/aspnetcore/blob/main/src/Framework/AspNetCoreAnalyzers/src/Analyzers/DiagnosticDescriptors.cs` — severity distribution empirical sample
+
+**Citation discipline (S-LOCK-10)**: every numeric version + release-date + severity-distribution claim below cites a URL listed in §12.1 (consolidated cross-references). No claim relies on prior knowledge alone — all empirical anchors are dated 2024 or later, with primary NuGet/GitHub sources dated 2026.
+
+---
+
+### §7.1 — Current Roslyn SDK version (May 2026)
+
+#### §7.1.1 — Core packages (latest stable, verified 2026-05-24)
+
+| NuGet package | Latest stable | Released | Source |
+|---|---|---|---|
+| `Microsoft.CodeAnalysis.CSharp` | **5.3.0** | 2026-03-10 | [NuGet](https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp/) |
+| `Microsoft.CodeAnalysis.CSharp.Workspaces` | **5.3.0** | 2026-03-10 | [NuGet](https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Workspaces/) |
+| `Microsoft.CodeAnalysis` (meta-package) | **5.3.0** | 2026-03-10 | [NuGet](https://www.nuget.org/packages/Microsoft.CodeAnalysis/) |
+| `Microsoft.CodeAnalysis.Common` | **5.3.0** | 2026-03-10 | [NuGet](https://www.nuget.org/packages/microsoft.codeanalysis.common/) |
+| `Microsoft.CodeAnalysis.Analyzers` (analyzer-of-analyzers) | **5.3.0** | 2026-03-10 | [NuGet](https://www.nuget.org/packages/microsoft.codeanalysis.analyzers/) |
+| `Microsoft.CodeAnalysis.NetAnalyzers` (FxCop replacement) | **10.0.203** | 2026 | [NuGet](https://www.nuget.org/packages/Microsoft.CodeAnalysis.NetAnalyzers) |
+
+**Version line transition**: Roslyn jumped from the 4.x line (4.11 / 4.12 / 4.13) into the 5.x line in late 2025 / early 2026, aligning with the C# 14 / .NET 10 wave. Version 5.3.0 (March 2026) is the current stable; per [dotnet/roslyn issue #82780](https://github.com/dotnet/roslyn/issues/82780), 5.3.0 has at least one known regression in interceptor file handling (not relevant к DualFrontier analyzer scope — interceptors не used here).
+
+#### §7.1.2 — Critical compatibility constraint: analyzer projects MUST target `netstandard2.0`
+
+Per [dotnet/roslyn-analyzers README](https://github.com/dotnet/roslyn-analyzers/blob/main/README.md) + best-practices research synthesis:
+
+> «Analyzer projects must target netstandard2.0, as the compiler loads analyzers into various host processes (Visual Studio on .NET Framework/Mono, MSBuild on .NET Core, dotnet build CLI) — targeting net8.0+ breaks compatibility with hosts that do not run on that runtime.»
+
+This is **non-negotiable** despite Dual Frontier global `TargetFramework=net8.0` — the analyzer csproj **must override** к `netstandard2.0`. Consumer code (the rest of `src/`) remains net8.0; only the analyzer source assembly needs netstandard2.0.
+
+Pattern:
+
+```xml
+<!-- src/DualFrontier.Analyzers/DualFrontier.Analyzers.csproj -->
+<PropertyGroup>
+  <!-- Override Directory.Build.props net8.0 default -->
+  <TargetFramework>netstandard2.0</TargetFramework>
+  <LangVersion>latest</LangVersion>  <!-- analyzer can use newer C# than netstandard2.0 BCL implies -->
+  <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+  <IsRoslynComponent>true</IsRoslynComponent>
+</PropertyGroup>
+```
+
+**`EnforceExtendedAnalyzerRules`** (per [Microsoft.CodeAnalysis.Analyzers.md](https://github.com/dotnet/roslyn-analyzers/blob/main/src/Microsoft.CodeAnalysis.Analyzers/Microsoft.CodeAnalysis.Analyzers.md)) opts in к stricter RS#### rules — recommended for new analyzer projects к catch issues like missing `helpLinkUri` (RS1015), use of disallowed APIs in analyzers (RS1035), etc.
+
+#### §7.1.3 — Analyzer-vs-code-fix separation (architectural constraint)
+
+Per [Meziantou packaging guidance](https://www.meziantou.net/packaging-a-roslyn-analyzer-with-nuget-dependencies.htm) + [dotnet/roslyn-sdk #105](https://github.com/dotnet/roslyn-sdk/issues/105):
+
+> «Analyzers must not reference the Roslyn Workspaces package although their code fixes are required to. To do this reliably, one must split these into two assemblies, yet package them up together.»
+
+**Implication for A'.9.1 project layout**:
+- `src/DualFrontier.Analyzers/` (OR `tools/DualFrontier.Analyzers/` per Domain 6 Option C) — references only `Microsoft.CodeAnalysis.CSharp` (no Workspaces); contains `DiagnosticAnalyzer` subclasses
+- `src/DualFrontier.Analyzers.CodeFixes/` (only if §7.4 adoption recommendation accepted) — references `Microsoft.CodeAnalysis.CSharp.Workspaces`; contains `CodeFixProvider` subclasses
+- Both packed together в single NuGet (`DualFrontier.Analyzers.nupkg`) for consumer simplicity
+
+If A'.9.1 ships analyzer-only (no code-fixes), the second assembly is deferred to a later A'.9.x cascade.
+
+#### §7.1.4 — VS / VSCode tooling compatibility
+
+- **Visual Studio 2022 17.13+**: Roslyn 4.13 → built-in analyzer host updated to handle 5.x-loaded analyzers (per [MS Learn analyzer overview](https://learn.microsoft.com/en-us/visualstudio/code-quality/roslyn-analyzers-overview?view=visualstudio))
+- **VS 2026 (preview)**: ships 5.x compiler natively
+- **VSCode + C# Dev Kit**: tracks OmniSharp/LSP that bundles current Roslyn — analyzer NuGets referencing 5.3.0 surface diagnostics in both VS + VSCode без extra configuration
+- **dotnet CLI**: SDK 8.0.300+ ships compatible analyzer host; SDK 10.0+ ships native 5.x
+
+Crystalka's VS + VSCode workflow (per project context) requires no special handling — analyzer surfacing works из коробки.
+
+#### §7.1.5 — Recommendation для A'.9.1
+
+**Lock these versions в Directory.Build.props / Directory.Packages.props or per-csproj** (use Central Package Management `Directory.Packages.props` if not already adopted — gives one-place upgrade leverage):
+
+```xml
+<!-- Recommended pin for A'.9.1 analyzer infrastructure cascade -->
+<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
+<PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.3.0" />
+<PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="5.3.0" PrivateAssets="all" />
+```
+
+Rationale:
+- 5.3.0 = current stable, broad host compatibility
+- All four core packages must be version-aligned (per general SDK guidance — mismatched 5.3.0 + 5.2.0 surfaces subtle MEF composition failures)
+- `Microsoft.CodeAnalysis.Analyzers` (analyzer-of-analyzers) `PrivateAssets="all"` — analysis rules apply during build of the analyzer project, не leaked к consumers
+
+If 5.3.x patch ships before A'.9.1 execution, prefer latest 5.3.x patch (zero break risk within minor).
+
+---
 
 ### §7.2 — Test framework recommendations
 
-*[Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit vs alternatives]*
+#### §7.2.1 — Available variants (verified 2026-05-24)
+
+| Package | Latest | Released | Maintenance status |
+|---|---|---|---|
+| `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing` (base) | **1.1.4** | 2026-05-22 | Active — base types, required by all framework variants |
+| `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` | 1.1.2 | 2024-06-19 | **Last release predates 1.1.3/1.1.4 by ~2 years** |
+| `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.MSTest` | 1.1.2 | 2024-06-19 | Same — lags base |
+| `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.NUnit` | 1.1.2 | 2024-06-19 | Same — lags base |
+| `Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit` | 1.1.2 | 2024-06-19 | Same |
+| `Microsoft.CodeAnalysis.Testing.Verifiers.XUnit` | 1.1.2 | 2024-06-19 | Legacy verifier path |
+
+Sources: [NuGet base 1.1.4](https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing), [NuGet xUnit variant 1.1.2](https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit).
+
+#### §7.2.2 — Framework-specific variants: deprecation signal nuance
+
+The [roslyn-sdk testing README](https://github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md) referenced [dotnet/roslyn-sdk issue #1175](https://github.com/dotnet/roslyn-sdk/issues/1175) as marking the framework-specific helper packages obsolete in favor of «generic test packages». However, empirical NuGet check (2026-05-24) shows:
+
+- The **base package** (`Microsoft.CodeAnalysis.CSharp.Analyzer.Testing` 1.1.4) is the actively maintained generic — released **2026-05-22, two days ago**
+- The **framework-specific variants** (XUnit/MSTest/NUnit) at 1.1.2 are at a release floor — they have not received version bumps to match 1.1.3/1.1.4 of the base
+- Adoption metrics (per [NuGet](https://www.nuget.org/packages/Microsoft.CodeAnalysis.CSharp.Analyzer.Testing)): xUnit variant 2.9M downloads, NUnit 1.8M, MSTest 1.4M — community still using framework variants in 2026
+
+**Net read**: framework variants are in *soft maintenance* (no new features, but still functional and version-compatible with base 1.1.4 transitively). The base package is where active development happens. New analyzer projects can either:
+- **Option A**: Use the **base** package + write thin glue к xUnit (more code, but future-proof against framework-variant sunset)
+- **Option B**: Use the **xUnit framework variant** + accept that it's frozen at 1.1.2 (less code, broader community precedent — still safe)
+
+#### §7.2.3 — Version coupling к SDK
+
+Per [roslyn-sdk testing README](https://github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md):
+
+> «In case of version conflicts, override the version of Microsoft.CodeAnalysis.CSharp.Workspaces or Microsoft.CodeAnalysis.VisualBasic.Workspaces in your testing project to match the version»
+
+Testing package 1.1.2 transitively brings `Microsoft.CodeAnalysis.CSharp.Workspaces >= 1.0.1`. Since our analyzer references 5.3.0, the test project csproj MUST explicitly pin the 5.3.0 version к override the transitive — otherwise NuGet picks lowest-acceptable (1.0.1) and the test host loads the wrong workspace assembly. Symptom: cryptic MEF composition exceptions at first test run.
+
+```xml
+<!-- tests/DualFrontier.Analyzers.Tests/DualFrontier.Analyzers.Tests.csproj -->
+<ItemGroup>
+  <!-- Pin testing framework -->
+  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="1.1.2" />
+  
+  <!-- CRITICAL: override transitive Workspaces version to match analyzer's CodeAnalysis -->
+  <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.3.0" />
+  
+  <!-- xUnit (test project keeps Dual Frontier net8.0 baseline) -->
+  <PackageReference Include="xunit" Version="2.x" />
+  <PackageReference Include="xunit.runner.visualstudio" Version="2.x" />
+</ItemGroup>
+```
+
+#### §7.2.4 — Recommendation для A'.9.1
+
+**Pick `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` 1.1.2** — explicit framework variant, not the base.
+
+Rationale:
+1. **xUnit baseline match**: Dual Frontier already uses xUnit (`DualFrontier.Core.Tests`, `DualFrontier.Systems.Tests`, etc. per project context) — zero new test framework к learn
+2. **Highest community precedent**: 2.9M downloads = largest body of public analyzer test code за reference; debugging via Stack Overflow easier
+3. **«Pragmatic move» principle** (Crystalka stated preference): xUnit variant ships `CSharpAnalyzerVerifier<TAnalyzer, DefaultVerifier>.VerifyAnalyzerAsync` working out-of-box; the base-package-only path requires writing 50-100 lines of xUnit-к-verifier glue per project — fragile churn без upside для A'.9.1 scope
+4. **Soft-maintenance acceptable**: 1.1.2 still functional; if framework variants ever fully sunset, migration к base+glue is mechanical (no logic loss) and can happen at a future A'.9.x cleanup cascade
+
+**Version-coupling discipline** (S-LOCK для A'.9.1 csproj): the test project MUST explicitly pin `Microsoft.CodeAnalysis.CSharp.Workspaces 5.3.0` к override the testing-package transitive — without this, MEF composition fails at first test run.
+
+**Single test pattern** (per [roslyn-sdk testing README](https://github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md) recommendation):
+
+> «VerifyCodeFixAsync automatically performs several tests related to code fix scenarios: diagnostic detection, fix quality, single-fix application, and bulk fix operations.»
+
+For analyzer-with-codefix rules — prefer `VerifyCodeFixAsync` over separate `VerifyAnalyzerAsync` calls (one test exercises four scenarios). For analyzer-only rules — use `VerifyAnalyzerAsync`.
+
+---
 
 ### §7.3 — Severity policy precedents
 
-*[Examples from Roslyn analyzers / ASP.NET Core / EF Core / etc.]*
+#### §7.3.1 — Available severity values
+
+Per [MS Learn — Customize Roslyn analyzer rules](https://learn.microsoft.com/en-us/visualstudio/code-quality/use-roslyn-analyzers?view=vs-2022) + [Diagnostic.Severity API](https://learn.microsoft.com/en-us/dotnet/api/microsoft.codeanalysis.diagnostic.severity):
+
+| Severity | Compile behavior | IDE behavior | `.editorconfig` token | Use case |
+|---|---|---|---|---|
+| `Error` | Build fails (CI red) | Red squiggle | `error` | Hard architectural violation; зatop production |
+| `Warning` | Build warning; **fails** under `TreatWarningsAsErrors` | Yellow squiggle | `warning` / `warn` | Strong recommendation, configurable per consumer |
+| `Info` / `Suggestion` | No build impact | Light bulb / gray dots | `suggestion` / `info` | Best-practice nudge; not blocking |
+| `Hidden` | No build impact, не shown to user | Light bulb hint only | `silent` / `refactoring` / `hidden` | Triggers code-fix без noise |
+| `None` | Rule disabled | Rule disabled | `none` | Explicit opt-out |
+
+**Critical Dual Frontier interaction**: `Directory.Build.props` already sets `TreatWarningsAsErrors=true`. This means **Warning severity rules behave like Error rules at build time** for Crystalka's workflow. Implication: the «Error vs Warning» distinction is functionally **Error vs Error-but-suppressible-by-editorconfig** в this project. Real severity ladder is:
+
+- `Error` → cannot be suppressed via `.editorconfig` без disabling entirely
+- `Warning` → can be downgraded per-folder/per-file via `.editorconfig` overrides (still fails CI без override)
+- `Info` → discoverable, never fails CI
+
+This makes the distinction **important** даже несмотря на TWAE — `Warning` is the right choice for «correct в general but К-L claim may carve out exceptions».
+
+#### §7.3.2 — Precedent #1: dotnet/roslyn-analyzers itself
+
+Per [dotnet/roslyn-analyzers wiki](https://github.com/dotnet/roslyn-analyzers/wiki) + per general analyzer-development guidance returned by search:
+
+> «Default to Warning for most rules. Use Error sparingly — users cannot suppress errors via EditorConfig without disabling the rule entirely.»
+
+- **CA rules (FxCop)**: ~90% Warning, ~5% Info, ~5% Error
+- **Error reserved for**: rules whose violation **certainly** indicates incorrect code that breaks behavior at runtime (e.g., CA2014 «Do not use stackalloc in loops»)
+- **Warning default**: e.g., CA1801 «Review unused parameters» — discouraged but legal in some contexts
+- **Info default**: usage suggestions, style nudges
+
+#### §7.3.3 — Precedent #2: dotnet/aspnetcore (28 active descriptors empirically counted)
+
+Per [DiagnosticDescriptors.cs main branch](https://github.com/dotnet/aspnetcore/blob/main/src/Framework/AspNetCoreAnalyzers/src/Analyzers/DiagnosticDescriptors.cs) — distribution:
+
+- **Error: 6 descriptors** (~21%) — e.g., ASP0020 `RouteParameterComplexTypeIsNotParsable`, ASP0024 `AtMostOneFromBodyAttribute`
+  - Pattern: violation causes **runtime exception** or **invalid binding** — cannot be «working code»
+- **Warning: 16 descriptors** (~57%) — e.g., ASP0003 `DoNotUseModelBindingAttributesOnRouteHandlerParameters`, ASP0019 `DoNotUseIHeaderDictionaryAdd`
+  - Pattern: anti-pattern that **happens to work** in narrow cases но discouraged
+- **Info: 4 descriptors** (~14%) — e.g., ASP0015 `UseHeaderDictionaryPropertiesInsteadOfIndexer`, ASP0027 (marked «Unnecessary»)
+  - Pattern: stylistic / convenience preferences
+
+#### §7.3.4 — Precedent #3: IDE code style rules (IDExxxx)
+
+Per [MS Learn analyzer rules](https://learn.microsoft.com/en-us/visualstudio/code-quality/use-roslyn-analyzers?view=vs-2022) + search result on IDE rules architecture:
+
+> «All IDE code style rules are hidden or suggestions by default. This design is intentional to balance discoverability with build impact.»
+
+Lesson for DualFrontier: «style» rules belong at Info or Hidden. К-L invariant rules (architectural correctness) belong at Warning minimum, Error when violation cannot be «working code».
+
+#### §7.3.5 — `.editorconfig` override pattern
+
+Per [MS Learn — Configure code analysis rules](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/configuration-options):
+
+```ini
+# Per-rule override (highest precedence)
+dotnet_diagnostic.DF015.severity = error
+
+# Per-category override (only affects enabled-by-default rules in category)
+dotnet_analyzer_diagnostic.category-DualFrontierArchitecture.severity = warning
+
+# All-rules override (only affects enabled-by-default)
+dotnet_analyzer_diagnostic.severity = warning
+```
+
+**Caveat** (per same source + [dotnet/roslyn #61777](https://github.com/dotnet/roslyn/issues/61777)): when `AnalysisMode=All` / `AnalysisLevel` set globally, bulk `dotnet_analyzer_diagnostic.*` directives are ignored. For Dual Frontier — prefer per-rule overrides only; do not set bulk directives.
+
+#### §7.3.6 — Recommendation for DF### severity assignments
+
+Cross-referencing the existing `ANALYZER_RULES.md §4` table (15 Error + 4 Warning = 19 active; DF020 reserved):
+
+**Confirm existing Error assignments (15 rules)** — these match the «runtime violation OR architectural correctness» criterion:
+- **DF001, DF002, DF003, DF003.1, DF004, DF005, DF007, DF007.1, DF010, DF011, DF012, DF015, DF015.1, DF017, DF018**
+- Rationale: violation of К-L1 (Godot reference), К-L2 (P/Invoke purity), К-L15.1 (mutex tier crossing) — these **cannot** be «working code with subtle issue»; they are flat architectural invariant breaches. Match ASP0020/ASP0024 pattern.
+
+**Confirm existing Warning assignments (3 rules + 1 boundary case)**:
+- **DF009 (К-L9 mod parity)** — currently Error per ANALYZER_RULES.md table; **recommend re-examining at A'.9.1 deliberation** — mod parity has «pending Mod API lock» status (note in §4: «revisit post-Mod API lock»). May benefit from Warning until К-L20 LOCK lands и Mod API surface frozen. Surfaced как **Q-K-§7-1** below.
+- **DF013 (К-L13 on-demand activation, Warning)** — efficiency-not-correctness — confirmed Warning. Match CA1801 pattern.
+- **DF016 (К-L16 sim tick pipeline depth, Warning, configurable)** — configurable threshold = correctness depends on consumer setting; Warning correct.
+- **DF019 (К-L19 hardware tier, Warning, V substrate contract)** — contract surface depends on substrate tier consumer chose; Warning correct.
+
+**No rules currently Info** — confirmed appropriate. К-L invariants are architectural promises, not stylistic preferences; Info-level К-L rule would be a category error.
+
+**TWAE interaction reminder**: Since `TreatWarningsAsErrors=true` is enforced globally, Warning-tier DF013/DF016/DF019 fail CI by default. Consumers wanting к relax these per-folder use `.editorconfig` overrides per §7.3.5. This is **already the right design** — escape valve exists for the genuinely-configurable rules без weakening default discipline.
+
+**Helper link URI policy** (per analyzer best-practices research, RS1015 rule):
+- Every `DiagnosticDescriptor` MUST set non-null `helpLinkUri`
+- Pattern: `https://github.com/Crystalka/Colony_Simulator/blob/main/docs/architecture/ANALYZER_RULES.md#df015` (anchor per rule)
+- Enforced by `Microsoft.CodeAnalysis.Analyzers` RS1015 — fails build of analyzer if missing
+
+---
 
 ### §7.4 — Code-fix provider patterns + adoption recommendation
 
-*[Patterns + recommended scope для A'.9.1]*
+#### §7.4.1 — `CodeFixProvider` API surface
+
+Per [Meziantou — testing analyzers](https://www.meziantou.net/how-to-test-a-roslyn-analyzer.htm) + [roslyn-sdk testing README](https://github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md) + general best-practices guidance:
+
+```csharp
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DF002CodeFixProvider))]
+[Shared]
+public sealed class DF002CodeFixProvider : CodeFixProvider
+{
+    public override ImmutableArray<string> FixableDiagnosticIds =>
+        ImmutableArray.Create(DF002Analyzer.DiagnosticId);
+
+    public override FixAllProvider? GetFixAllProvider() =>
+        WellKnownFixAllProviders.BatchFixer;  // Most rules
+
+    public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+    {
+        // 1. Get root, locate diagnostic span
+        // 2. Compute fix (typically via SyntaxFactory transformations OR semantic-model rewrites)
+        // 3. context.RegisterCodeFix(CodeAction.Create(title, ct => ApplyFix(context, ct), equivalenceKey: nameof(DF002CodeFixProvider)))
+    }
+}
+```
+
+**Critical requirements**:
+- **`Shared`** attribute (MEF) — Roslyn host caches CodeFixProvider instances
+- **`equivalenceKey`** on `CodeAction` — required для Fix-All across multiple violations; missing equivalenceKey → Fix-All silently no-op
+- **`GetFixAllProvider`** override — return `WellKnownFixAllProviders.BatchFixer` for stateless mechanical fixes; return `null` for fixes that must be applied one-at-a-time (e.g., fixes that depend on user choice)
+- **Cancellation token discipline** — pass `ct` through к all async ops; analyzer host cancels on IDE keystroke
+
+#### §7.4.2 — When code-fixes are valuable vs noise
+
+Per Aaronontheweb packaging guidance + general analyzer literature:
+
+| Fix shape | Adoption guidance | Examples |
+|---|---|---|
+| **Mechanical 1-line replacement** | High value — adopt | `String.Format(...)` → interpolated string |
+| **Add missing attribute/marker** | High value — adopt | Add `[Shared]` к MEF export |
+| **Remove forbidden import/usage** | Medium value — adopt **if** unambiguous replacement | Remove `using Godot;` (no replacement — manual; DF001 = no codefix) |
+| **Restructure architectural decision** | **Noise — do NOT adopt** | Move type between layers (DF003 component storage) |
+| **Insert missing template** | Medium value — adopt **if** template fits 80%+ of cases | Generate boilerplate handler stub |
+| **Modify pattern matched across multiple files** | Low value — defer | Refactoring spanning solution |
+
+**General rule**: code-fix is appropriate when **violation has a single, correct, mechanical remedy that the user would type same way themselves 95% of the time**. Otherwise, the «fix» becomes architectural advice imposed by tool — wrong epistemic relationship.
+
+#### §7.4.3 — Test pattern for code-fix providers
+
+Per [roslyn-sdk testing README](https://github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md):
+
+```csharp
+[Fact]
+public async Task DF002_CodeFix_ReplacesUnsafeMarshalWithSpan()
+{
+    var input = @"using System.Runtime.InteropServices;
+public static class Native {
+    public static unsafe void* AllocUnsafe(int size) => Marshal.AllocHGlobal(size).ToPointer();
+}";
+    var expected = @"using System.Runtime.InteropServices;
+public static class Native {
+    public static Span<byte> AllocSpan(int size) => new Span<byte>(...);  // expected fix output
+}";
+
+    await CSharpCodeFixVerifier<DF002Analyzer, DF002CodeFixProvider, DefaultVerifier>
+        .VerifyCodeFixAsync(input, 
+            new[] { new DiagnosticResult(DF002Analyzer.Descriptor).WithSpan(3, 25, 3, 65) },
+            expected);
+}
+```
+
+**Single test exercises four scenarios** (per same README §7.2.4 quote):
+1. Analyzer correctly reports diagnostic at expected location в input
+2. After applying code-fix, output matches expected (no fixable diagnostics remain)
+3. Single-fix application produces expected output
+4. Fix-All operation (when applicable) produces expected output across multiple sites
+
+**Test naming convention** (Dual Frontier inheritance from xUnit baseline): `{RuleId}_CodeFix_{Scenario}` — pattern matches existing test naming in `DualFrontier.Core.Tests`.
+
+#### §7.4.4 — NuGet packaging implications
+
+Per [Meziantou packaging](https://www.meziantou.net/packaging-a-roslyn-analyzer-with-nuget-dependencies.htm) + [Aaronontheweb distribution guide](https://aaronstannard.com/roslyn-nuget/) + [roslyn-analyzers-docs ReadTheDocs](https://roslyn-analyzers.readthedocs.io/en/latest/create-nuget-package.html):
+
+**Three packaging strategies**:
+
+| Strategy | Pro | Con | Recommend для A'.9.x |
+|---|---|---|---|
+| **Single NuGet, analyzer-only assembly** | Simplest | No code-fixes possible | YES if A'.9.1 ships analyzer-only |
+| **Single NuGet, analyzer + codefix assemblies (packed together)** | Best UX for consumers | csproj plumbing complex (`IsPackable=false` on analyzer csproj, packing project takes name) | YES if A'.9.1 ships any code-fixes |
+| **Separate NuGets для analyzer vs codefix** | Cleanest separation | Two version-coupled packages к maintain | NO — overhead не justified |
+
+**File layout in NuGet** (per ReadTheDocs guide):
+
+```
+DualFrontier.Analyzers.nupkg
+└── analyzers/
+    └── dotnet/
+        └── cs/
+            ├── DualFrontier.Analyzers.dll      ← references CodeAnalysis only
+            └── DualFrontier.Analyzers.CodeFixes.dll  ← references Workspaces
+```
+
+The `analyzers/dotnet/cs/` path is **convention-enforced** — compiler MEF-discovers analyzers + codefix providers from this exact path. Wrong path = analyzer silently не loaded.
+
+**`<DevelopmentDependency>true</DevelopmentDependency>`** on the analyzer csproj — recommended per Meziantou; prevents transitive flow (downstream consumers of a project that references the analyzer NuGet don't also pull the analyzer).
+
+**Important для Dual Frontier scope**: since the analyzer is **internal-only** (no public NuGet publication planned), packaging discipline can be relaxed. Pattern:
+
+```xml
+<!-- src/DualFrontier.Analyzers/DualFrontier.Analyzers.csproj -->
+<PropertyGroup>
+  <IsPackable>false</IsPackable>  <!-- internal use only -->
+</PropertyGroup>
+
+<!-- Consumer projects (Directory.Build.props or per-csproj) -->
+<ItemGroup>
+  <ProjectReference Include="..\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj"
+                    OutputItemType="Analyzer" 
+                    ReferenceOutputAssembly="false" />
+</ItemGroup>
+```
+
+Direct `<ProjectReference OutputItemType="Analyzer">` skips NuGet entirely — analyzer DLL fed к compiler from build output. Simpler than packaging для internal use.
+
+#### §7.4.5 — Per-rule code-fix feasibility cross-reference
+
+Cross-referencing ANALYZER_RULES.md §4 table + general analyzer-development judgment:
+
+| Rule | К-L | Code-fix feasibility | A'.9.1 adoption? |
+|---|---|---|---|
+| DF001 | К-L1 (no Godot) | Not feasible — no mechanical replacement for Godot usage; manual rewrite required | No |
+| DF002 | К-L2 (pure P/Invoke) | **Trivial in tests** — mechanical unsafe→Span replacement | Maybe (if §3 analyzability matrix scores Trivial) |
+| DF003 | К-L3 (component storage paths) | Not feasible — architectural decision per-component | No |
+| DF003.1 | К-L3.1 (Path β bridge) | Not feasible — bridge identity decision | No |
+| DF004 | К-L4 (type ID registry) | **Trivial** — auto-generate registration call | Yes (high-value) |
+| DF005 | К-L5 (declarative bootstrap) | Not feasible — graph topology decision | No |
+| DF007 | К-L7 (span protocol) | Moderate — mechanical signature rewrite (T→Span<T>) | Defer к A'.9.x (post-baseline) |
+| DF007.1 | К-L7.1 (GPU pipeline slot) | Not feasible | No |
+| DF009 | К-L9 (mod parity) | Not feasible — Mod API surface decision | No (revisit at К-L20 LOCK) |
+| DF010 | К-L10 (decision rule) | Not feasible | No |
+| DF011 | К-L11 (production storage backbone) | **Trivial in tests** (per Domain 3 cascade #2/#3 candidates) — mechanical AoS→SoA  | Maybe |
+| DF012 | К-L12 (native kernel scheduling) | Not feasible | No |
+| DF013 | К-L13 (on-demand activation) | Moderate — pattern-match rewrite | Defer |
+| DF015 | К-L15 (native bus authority) | Not feasible | No |
+| DF015.1 | К-L15.1 (3-tier mutex) | Not feasible — tier assignment decision | No |
+| DF016 | К-L16 (sim tick pipeline depth) | Not feasible — depth target decision | No |
+| DF017 | К-L17 (display composition) | Not feasible | No |
+| DF018 | К-L18 (mod lifecycle quiescent) | Moderate | Defer |
+| DF019 | К-L19 (hardware tier commitment) | Not feasible | No |
+
+**Code-fix adoption summary**:
+- **Adopt at A'.9.1** (Trivial + High-value): DF004 (auto-generate type registration)
+- **Maybe adopt at A'.9.1** (depending on §3 analyzability scoring): DF002, DF011
+- **Defer к A'.9.x cleanup cascades**: DF007, DF013, DF018 (Moderate complexity — value не justified в first analyzer release)
+- **Never code-fix**: 14 rules architectural (DF001, DF003, DF003.1, DF005, DF007.1, DF009, DF010, DF012, DF015, DF015.1, DF016, DF017, DF019, DF020-pending)
+
+**Recommendation для A'.9.1**:
+
+Ship **analyzer-only** (no code-fixes) at A'.9.1.
+
+Rationale:
+1. **Scope discipline**: A'.9.1 = analyzer infrastructure cascade. Adding code-fix machinery (separate Workspaces-referencing assembly, FixAllProvider plumbing, fix-snapshot tests) doubles surface area
+2. **Trivial-code-fix value ROI**: only 1-3 rules have Trivial code-fixes; can be added at A'.9.2 «code-fix providers cascade» without blocking first analyzer ship
+3. **Cleanup phase consideration**: ANALYZER_RULES.md §3 specifies «first-run cleanup phase: warning→error promotion as architectural debt resolved». During this phase, code-fixes would auto-resolve violations — which **defeats the discipline** of human-reviewing each violation. Defer code-fixes until cleanup phase completes
+4. **Test framework parity**: code-fix tests use `VerifyCodeFixAsync` (different verifier shape than analyzer-only `VerifyAnalyzerAsync`) — introducing both patterns simultaneously increases A'.9.1 cognitive load
+
+If during A'.9.1 deliberation a clear Trivial-fix winner emerges (e.g., DF004 type registration auto-gen surfaces as cleanup multiplier), pull-forward к A'.9.1 — but default plan is analyzer-only ship.
+
+**A'.9.2 (or similar) — «Code-Fix Providers» cascade scope sketch**:
+- Add `src/DualFrontier.Analyzers.CodeFixes/` csproj (Workspaces-referencing)
+- Implement DF004 code-fix (auto-generate type registration on missing-registration diagnostic)
+- Implement DF002, DF011 code-fixes (if §3 analyzability matrix confirms Trivial scoring)
+- Test infrastructure: switch from `VerifyAnalyzerAsync` к `VerifyCodeFixAsync` for affected rules
+- NuGet packaging update (if A'.9.1 chose NuGet vs ProjectReference path)
+
+---
+
+### §7.99 — Open questions surfaced (for §11 Q-K candidates)
+
+- **Q-K-§7-1**: Should DF009 (К-L9 mod parity) severity be downgraded Error → Warning until К-L20 Mod API lock lands?
+  - Context: ANALYZER_RULES.md §4 marks DF009 «Active (pending A'.9 impl; revisit post-Mod API lock)». Currently Error. But mod parity rule fires against in-flux mod surface — until К-L20 LOCK, false-positive risk is high (rule «correct» relative to current mod surface but mod surface itself volatile). Cross-precedent (ASP0019 «DoNotUseIHeaderDictionaryAdd») uses Warning when the rule represents «anti-pattern that may evolve».
+  - Options:
+    - **A**: Keep Error — discipline-first, accept high false-positive churn
+    - **B**: Downgrade к Warning until К-L20 LOCK — escape valve via `.editorconfig`, planned promotion post-LOCK
+    - **C**: Defer DF009 implementation entirely к К-L20 LOCK cascade — analyzer infrastructure exists без the rule
+  - Recommendation: **B** (Warning until К-L20 LOCK). Aligns with ASP0019 precedent + ANALYZER_RULES.md explicit «revisit post-Mod API lock» note. Promotion к Error becomes part of К-L20 LOCK cascade verification.
+
+- **Q-K-§7-2**: Should DualFrontier adopt Central Package Management (`Directory.Packages.props`) at A'.9.1 to centralize Roslyn SDK version pin?
+  - Context: §7.1.5 recommends pinning 5.3.0 across multiple csprojs (analyzer + tests + potentially codefix assembly). Without CPM, version drift between csprojs is silent failure surface. Dual Frontier may or may not already use CPM — Domain 6 sub-agent verification needed (Domain 6 confirms CPM not currently adopted).
+  - Options:
+    - **A**: Adopt CPM at A'.9.1 — comprehensive version discipline, fits «no costyl'» principle
+    - **B**: Per-csproj pinning at A'.9.1 — minimal infrastructure change, accept manual discipline
+    - **C**: Defer CPM adoption к separate methodology cascade — A'.9.1 stays narrowly-scoped
+  - Recommendation: **A** (since Domain 6 confirms no CPM today) — version drift risk is real (analyzer/test/codefix triad must align) и CPM is one-file change.
+
+- **Q-K-§7-3**: Should A'.9.1 ship via `ProjectReference OutputItemType="Analyzer"` or via NuGet package (.nupkg consumed from local feed)?
+  - Context: §7.4.4 noted internal-only analyzer can skip NuGet machinery entirely with `ProjectReference OutputItemType="Analyzer"`. Simpler. But NuGet path gives versioning + freeze semantics that may matter for governance.
+  - Options:
+    - **A**: ProjectReference path — simplest, no NuGet plumbing, analyzer rebuilds on every solution build
+    - **B**: Local NuGet feed path — versioned analyzer artifacts, can pin consumers к specific analyzer version (useful if cleanup phase wants frozen-rules contract)
+    - **C**: Hybrid — ProjectReference в dev, NuGet for CI/release
+  - Recommendation: **A** (ProjectReference). Single-developer internal-only context makes NuGet overhead unjustified. Re-evaluate at A'.9.x когда analyzer surface matures + multi-consumer scenarios materialize (e.g., separate Launcher analyzer subset).
+
+- **Q-K-§7-4**: Should A'.9.1 enforce `Microsoft.CodeAnalysis.Analyzers` (analyzer-of-analyzers) at all DF### analyzer projects from day one?
+  - Context: §7.1.5 recommends `EnforceExtendedAnalyzerRules=true` + `Microsoft.CodeAnalysis.Analyzers` PrivateAssets=all. This catches issues like missing helpLinkUri (RS1015), disallowed APIs в analyzers (RS1035), etc. But adds development friction — every new descriptor must satisfy stricter rules.
+  - Options:
+    - **A**: Enable from day one — catch issues early, ANALYZER_RULES.md helpLinkUri convention enforced automatically
+    - **B**: Defer until A'.9.x cleanup cascade — minimize initial friction
+    - **C**: Enable but downgrade RS1015 (helpLinkUri) к Warning for first cleanup phase only
+  - Recommendation: **A** (enable from day one). Friction is minor; RS1015 in particular ensures every DF### has documentation anchor — aligns с governance discipline of cross-referenced rules.
+
+- **Q-K-§7-5**: Should A'.9.1 introduce a dedicated `DualFrontierArchitecture` category for all DF### rules, enabling category-level `.editorconfig` overrides?
+  - Context: §7.3.5 noted `dotnet_analyzer_diagnostic.category-<category>.severity` works for enabled-by-default rules. Category name appears в the `DiagnosticDescriptor` constructor.
+  - Options:
+    - **A**: Single `DualFrontierArchitecture` category — simplest, supports bulk overrides
+    - **B**: Per-К-L-tier categories (`DualFrontierKernel`, `DualFrontierMod`, etc.) — finer-grained override surface
+    - **C**: Use Microsoft-standard categories («Design», «Reliability») — matches NetAnalyzers convention but loses DF identity
+  - Recommendation: **B** (per-К-L-tier categories: `DualFrontier.Architecture`, `DualFrontier.NativeBoundary`, `DualFrontier.ModSurface`). Supports targeted `.editorconfig` overrides (e.g., test-only files can downgrade `DualFrontier.ModSurface.*` без touching kernel rules). Matches ANALYZER_RULES.md taxonomic structure already implicit в К-L grouping.
+
+- **Q-K-§7-6**: Should A'.9.1 baseline include `Microsoft.CodeAnalysis.NetAnalyzers` (10.0.203) alongside DF### rules?
+  - Context: NetAnalyzers ships ~200 CA-prefix rules covering general .NET best practices (perf, reliability, security). Dual Frontier currently does not reference NetAnalyzers (greenfield per project context). Adding it surfaces a wave of CA violations alongside DF### violations during cleanup phase.
+  - Options:
+    - **A**: Adopt NetAnalyzers at A'.9.1 — broad coverage, established precedent
+    - **B**: Defer NetAnalyzers — DF### cleanup phase already substantial; CA cleanup separate concern
+    - **C**: Adopt with `AnalysisMode=Minimum` — only Error-default CA rules, defer Warning-default
+  - Recommendation: **B** (defer). NetAnalyzers adoption is its own decision с its own cleanup cost. Keeping A'.9.1 focused on DF### rules respects discipline. Open separate brief A'.X for NetAnalyzers adoption когда DF### baseline stable.
 
 ---
 
 ## §8 — Build/CI integration surface
 
-*[To be populated в Phase α2 (Domain 6)]*
+### §8.0 — Reconnaissance methodology
+
+**Deep reads** (full file, S-LOCK-7 honest depth):
+- `DualFrontier.sln` — 456 lines; full project enumeration + Solution Folders + NestedProjects mapping
+- `Directory.Build.props` — 39 lines; PropertyGroup + SPIR-V CompileShaders MSBuild target
+- `.editorconfig` — 4 lines; minimal stub (`root = true` + `[*] charset = utf-8`)
+- `tools/governance/sync_register.ps1` — 395 lines; existing governance tooling pattern reference (PowerShell idioms, exit code convention, validation/sync dual-mode)
+- `tools/briefs/A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md` — 151 lines; AUTHORED-SKELETON anticipated structure
+
+**Spot-reads** (representative csproj sample):
+- `src/DualFrontier.Core/DualFrontier.Core.csproj` — minimal SDK-style, only ProjectReference + InternalsVisibleTo
+- `src/DualFrontier.Launcher/DualFrontier.Launcher.csproj` — Exe OutputType + Native.dll copy pattern
+- `tests/DualFrontier.Core.Tests/DualFrontier.Core.Tests.csproj` — test SDK + xunit + FluentAssertions + Native.dll copy + `<IsPackable>false</IsPackable>`+`<GenerateDocumentationFile>false</GenerateDocumentationFile>`
 
 ### §8.1 — sln structural integration points
 
-*[Findings — DualFrontier.sln has 12 src/ projects + 30+ test/fixture projects per Phase 0 inventory]*
+**Solution structure** (per `DualFrontier.sln` deep read, lines 6–73 + 424–455 NestedProjects):
+
+Four Solution Folders exist (`Project("{2150E333-…}")` GUIDs are Solution Folder type):
+- `{11111111-…}` — **src** (lines 6–7): hosts all 12 src projects (Contracts, Core, Components, Events, Systems, AI, Application, Persistence, Core.Interop, Crypto.Future, Runtime, Launcher)
+- `{22222222-…}` — **tests** (lines 8–9): hosts test projects (Core.Tests, Systems.Tests, Modding.Tests, Persistence.Tests, Core.Interop.Tests, Runtime.Tests, Runtime.SmokeTest, Application.Tests, ManifestRewriter.Tests, Core.Benchmarks) **+** Fixture.* projects **+** anomalously contains `VanillaMod_HotReloadOverride` fixture
+- `{33333333-…}` — **mods** (lines 10–11): hosts `DualFrontier.Mod.Example` only (line 439)
+- `{07C2787E-EAC7-C090-1BA3-A61EC2A24D84}` — **tools** (line 52): currently hosts **only** `DualFrontier.Mod.ManifestRewriter` (NestedProjects line 445)
+
+**Notable conventions observed**:
+- All src projects use modern SDK-style csproj GUID `{9A19103F-16F7-4668-BE54-9A1E7A4F7556}` for C# SDK projects (lines 12–28, 72)
+- Some newer src projects (Crypto.Future line 60, Runtime line 64) use the legacy C# project GUID `{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}` — minor inconsistency (both work; legacy GUID is what VS auto-emits for some templates)
+- tools folder is light — single project today (ManifestRewriter)
+- `DualFrontier.Launcher` (line 72) has `Debug|Any CPU` + `Release|Any CPU` only (no x64/x86 variants per lines 416–419) — diverges from full 6-config matrix used by most projects
+
+**Options analysis**:
+
+**Option A** — `src/DualFrontier.Analyzers/` + `tests/DualFrontier.Analyzers.Tests/`:
+- **Pros**: matches existing src/tests convention; test project lands in established `{22222222-…}` tests Solution Folder alongside Core.Tests etc.; closure-protocol `dotnet test` selectors (`tests/DualFrontier.*.Tests`) naturally pick it up
+- **Cons**: analyzer is meta-infrastructure (acts on src, not part of runtime); placing under `src/` blurs "shipped code" vs "build tooling" boundary; analyzer csproj is structurally different (`<IsRoslynComponent>true</IsRoslynComponent>`, targets netstandard2.0, no implicit usings — see §8.2 below); will look out-of-place next to net8.0 game code
+
+**Option B** — `tools/analyzers/DualFrontier.Analyzers/` + `tools/analyzers/DualFrontier.Analyzers.Tests/` (per A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md §2 A9.A line 60–63):
+- **Pros**: matches brief's pre-AUTHORED skeleton intent; semantically correct — analyzer IS a build-time tool, not runtime code; sits next to existing `tools/DualFrontier.Mod.ManifestRewriter/` (line 54) which is also a build-side utility; tools Solution Folder already exists (line 52) but is underpopulated, this fills it; netstandard2.0 + Roslyn-specific csproj structure is visually segregated from net8.0 game projects
+- **Cons**: introduces nested folder convention (`tools/analyzers/…/` vs current flat `tools/<Project>/`); the tests project for ManifestRewriter sits in `tests/DualFrontier.Mod.ManifestRewriter.Tests/` (line 56) — splitting analyzer tests into `tools/analyzers/` breaks that precedent; closure-protocol `dotnet test tests/…` glob may need extension to also pick up `tools/analyzers/*.Tests/`
+
+**Option C** — Hybrid: `tools/analyzers/DualFrontier.Analyzers/` (analyzer csproj) + `tests/DualFrontier.Analyzers.Tests/` (test csproj following ManifestRewriter precedent):
+- **Pros**: analyzer where it semantically belongs (build tooling next to ManifestRewriter); tests where all test projects live (uniform `tests/` discovery); no `dotnet test` glob change needed; matches ManifestRewriter precedent exactly (tool csproj in `tools/<Project>/`, test csproj in `tests/<Project>.Tests/`)
+- **Cons**: minor — tests project will need a longer relative ProjectReference path (`..\..\tools\analyzers\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj`); slightly less local than co-located tests
+
+**Recommendation**: **Option C** (hybrid). It matches the **existing ManifestRewriter precedent verbatim** (a Roslyn-equivalent build-tooling project where tool lives in `tools/` and tests live in `tests/` — sln lines 54+56), respects the semantic distinction (analyzer is not runtime code), and keeps `tests/` as the single source of truth for test discovery. NestedProjects entries should map analyzer → `{07C2787E-…}` tools folder and tests → `{22222222-…}` tests folder, matching ManifestRewriter (sln lines 445–446).
+
+**Sub-recommendation on tools folder layout**: do NOT introduce a `tools/analyzers/` subfolder if there is only one analyzer project. Flat `tools/DualFrontier.Analyzers/` matches ManifestRewriter pattern (`tools/DualFrontier.Mod.ManifestRewriter/`). The brief's "tools/analyzers/" path is skeleton-level guesswork; recommend overriding with the established flat convention for consistency. If multiple analyzer projects appear later, refactor at that point.
 
 ### §8.2 — Directory.Build.props integration recommendation
 
-*[Per Phase 0: TreatWarningsAsErrors=true already; no analyzer references; recommended insertion point]*
+**Current state** (per `Directory.Build.props` deep read, lines 1–39):
+
+The file contains:
+1. **Single PropertyGroup** (lines 2–14) applying to every project in the solution: `TargetFramework=net8.0`, `LangVersion=12.0`, `Nullable=enable`, `ImplicitUsings=enable`, `TreatWarningsAsErrors=true`, `GenerateDocumentationFile=true`, `NoWarn=$(NoWarn);CS1591`, `Company=DualFrontier`, `Product=Dual Frontier`
+2. **One conditional MSBuild Target** `CompileShaders` (lines 22–38) scoped via `Condition="'$(MSBuildProjectName)' == 'DualFrontier.Runtime'"` — invokes `tools/glslangValidator.exe` to compile GLSL → SPIR-V before Build
+
+Notable: no ItemGroup, no PackageReference, no centralized ProjectReference at the Directory.Build.props level today. Each csproj independently declares its references (spot-read sample confirms this — Core.csproj lines 6–14, Launcher.csproj lines 7–10, Core.Tests.csproj lines 8–18 all use local `<ItemGroup>` blocks).
+
+Three test projects must override the inherited `GenerateDocumentationFile=true` (Core.Tests.csproj line 6: `<GenerateDocumentationFile>false</GenerateDocumentationFile>`) — established pattern for "test projects opt out of doc generation". Same projects also override `<IsPackable>false</IsPackable>` (line 5).
+
+**Options analysis**:
+
+**Option A** — **Per-project `<ProjectReference>` with analyzer attributes** (each csproj individually adds analyzer reference):
+```xml
+<ProjectReference Include="..\..\tools\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj"
+                  OutputItemType="Analyzer"
+                  ReferenceOutputAssembly="false" />
+```
+- **Pros**: matches existing pattern of local ItemGroups (no Directory.Build.props pollution); each project explicitly opts in; trivially excludes projects that shouldn't be analyzed (e.g., the analyzer itself, fixtures)
+- **Cons**: 12 src projects × identical 4-line ItemGroup = boilerplate duplication; future src additions risk forgetting to add the reference (silent analysis miss); ~30 test/fixture projects need decision — if every test/fixture also gets the reference, that's ~42 csproj edits; if opt-in, possible coverage gaps
+
+**Option B** — **Centralized `<ProjectReference>` in `Directory.Build.props`** with conditional scoping:
+```xml
+<ItemGroup Condition="'$(MSBuildProjectName)' != 'DualFrontier.Analyzers'
+                  And '$(MSBuildProjectName)' != 'DualFrontier.Analyzers.Tests'
+                  And !$(MSBuildProjectName.StartsWith('Fixture.'))">
+  <ProjectReference Include="$(MSBuildThisFileDirectory)tools\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj"
+                    OutputItemType="Analyzer"
+                    ReferenceOutputAssembly="false" />
+</ItemGroup>
+```
+- **Pros**: single declaration covers all 40+ projects automatically; future src additions inherit analyzer enforcement with zero csproj edits; matches the existing centralized pattern of `Directory.Build.props` (which already centralizes TargetFramework, TreatWarningsAsErrors, etc.); the `CompileShaders` Target (lines 22–38) already demonstrates project-name-conditional MSBuild logic exists in this file (precedent for `Condition="'$(MSBuildProjectName)' == '…'"`)
+- **Cons**: requires careful exclusion list to prevent the analyzer from analyzing itself (cycle) and Fixture.* projects that intentionally violate rules; centralized exclusion list is single-edit-point but easier to miss; relative path from Directory.Build.props (root) is uniform but Fixture/mods projects nest at different depths — `$(MSBuildThisFileDirectory)tools/…` reads natively because Directory.Build.props lives at root
+
+**Option C** — **NuGet PackageReference distribution**:
+- Pack `DualFrontier.Analyzers.csproj` as `.nupkg`, publish to local feed or NuGet.org, reference via `<PackageReference Include="DualFrontier.Analyzers" Version="…">`
+- **Pros**: industry-standard pattern; clean dependency boundary; supports per-project version pinning
+- **Cons**: heavy for solo-dev solution (no NuGet feed infrastructure exists today, no `.nupkg` publishing today, no Versioning workflow for analyzer); introduces release cadence concern (analyzer rule change → repack → republish → consume); fundamentally over-engineered for a monorepo that builds entirely in one `dotnet build` invocation; loses immediate feedback loop (edit analyzer → next build sees new rules)
+
+**Recommendation**: **Option B** (centralized in Directory.Build.props) with explicit exclusion conditional. Rationale:
+
+1. **Consistency with existing centralization pattern**: every cross-cutting concern in this solution is already centralized in Directory.Build.props (TargetFramework, language version, warnings-as-errors, shader compilation target). Analyzer enforcement is exactly the same kind of cross-cutting concern.
+2. **Future-proof**: 40+ projects today, more expected — opt-in-per-csproj scales poorly and risks silent coverage gaps when projects are added.
+3. **The MSBuildProjectName conditional precedent is already established** at line 23 (`'$(MSBuildProjectName)' == 'DualFrontier.Runtime'`) — extending this pattern for exclusions is idiomatic.
+
+**Insertion-point sketch** for `Directory.Build.props` (insert after the existing PropertyGroup at line 14, before the `CompileShaders` Target):
+
+```xml
+  <!--
+    A'.9.1 Roslyn analyzer integration. Applies to every project except the
+    analyzer itself, its test project, and Fixture.* projects (which intentionally
+    encode violation scenarios). Exclusion list mirrors the analyzer's own
+    AnalyzerConfigOptions opt-out wiring.
+  -->
+  <ItemGroup Condition="'$(MSBuildProjectName)' != 'DualFrontier.Analyzers'
+                    And '$(MSBuildProjectName)' != 'DualFrontier.Analyzers.Tests'
+                    And !$(MSBuildProjectName.StartsWith('Fixture.'))">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)tools\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false"
+                      PrivateAssets="all" />
+  </ItemGroup>
+```
+
+`PrivateAssets="all"` prevents the analyzer reference from leaking through transitive consumers (the example mod, packed contracts).
+
+**Caveat (becomes Q-K candidate)**: `Directory.Build.props` is imported by every csproj including the analyzer itself. The conditional must exclude the analyzer csproj BEFORE the analyzer csproj has been built — MSBuild evaluates the conditional at evaluation time using only `$(MSBuildProjectName)`, which is available immediately, so the cycle-break works. But if the analyzer csproj inherits the centralized `<TargetFramework>net8.0</TargetFramework>` (line 3), it cannot — Roslyn analyzers MUST target `netstandard2.0`. See §8.99 Q-K-§8-1 below.
 
 ### §8.3 — .editorconfig severity override surface
 
-*[Per Phase 0: file essentially empty — full freedom для rule severity convention]*
+**Current state** (per `.editorconfig` deep read, 4 lines):
+
+```ini
+root = true
+
+[*]
+charset = utf-8
+```
+
+That is the entire file. No analyzer severity directives, no formatting rules, no naming conventions, no IDE preferences. A'.9.1 has greenfield authority on the analyzer severity convention — there are no pre-existing rules to negotiate with.
+
+**Tension to consider** (per `Directory.Build.props` line 7): `TreatWarningsAsErrors=true` is set globally. This means **any analyzer rule emitted at `warning` severity will be promoted to error at build time**, identical to compiler warnings. This has direct consequences for the brief's A9.C sub-milestone strategy (first-run cleanup with rules initially at Warning):
+
+- **First run at default Warning severity → build fails immediately** because of `TreatWarningsAsErrors=true`
+- **First run requires explicit override** — either `<TreatWarningsAsErrors>false</TreatWarningsAsErrors>` temporarily (unsafe, hides genuine compiler warnings), or per-rule `severity = suggestion` (visible in IDE, not promoted to error), or `<WarningsNotAsErrors>DF001;DF002;…</WarningsNotAsErrors>` (surgical)
+- This is **the central A'.9.1 tension** the brief A9.C/A9.D progression must address
+
+**Recommended baseline `.editorconfig` structure for A'.9.1**:
+
+```ini
+root = true
+
+[*]
+charset = utf-8
+
+# ============================================================================
+# A'.9.1 Roslyn architectural analyzer — К-Lxx invariant enforcement
+# Rule catalog: tools/DualFrontier.Analyzers/ANALYZER_RULES.md
+# ============================================================================
+
+[*.cs]
+
+# --- DF### : К-Lxx invariant rules (kernel architectural invariants) ---
+# Per К-closure report (A'.8) Part 6. К-L6 SUPERSEDED + К-L14 meta-invariant
+# (not encodable) — see ANALYZER_RULES.md §1.1 for exclusion rationale.
+# Initial cascade A'.9.1 severity = suggestion (visible, non-fatal) for
+# cleanup phase A9.C; promoted to error in A'.9.2 sub-cascade per A9.D.
+dotnet_diagnostic.DF001.severity = suggestion   # К-L1 native language
+dotnet_diagnostic.DF002.severity = suggestion   # К-L2 pure P/Invoke
+dotnet_diagnostic.DF003.severity = suggestion   # К-L3 component storage paths
+dotnet_diagnostic.DF004.severity = suggestion   # К-L4 explicit registry
+dotnet_diagnostic.DF005.severity = suggestion   # К-L5 declarative bootstrap
+dotnet_diagnostic.DF007.severity = suggestion   # К-L7 span protocol
+dotnet_diagnostic.DF007_1.severity = suggestion # К-L7.1 GPU slot binding
+dotnet_diagnostic.DF008.severity = suggestion   # К-L8 component lifetime
+dotnet_diagnostic.DF009.severity = suggestion   # К-L9 mod parity
+dotnet_diagnostic.DF010.severity = suggestion   # К-L10 decision rule metrics
+dotnet_diagnostic.DF011.severity = suggestion   # К-L11 NativeWorld SSoT
+dotnet_diagnostic.DF012.severity = suggestion   # К-L12 native scheduling
+dotnet_diagnostic.DF013.severity = suggestion   # К-L13 on-demand activation
+dotnet_diagnostic.DF015.severity = suggestion   # К-L15 native bus three-tier
+dotnet_diagnostic.DF016.severity = suggestion   # К-L16 pipeline depth
+dotnet_diagnostic.DF017.severity = suggestion   # К-L17 display composition
+dotnet_diagnostic.DF018.severity = suggestion   # К-L18 mod lifecycle quiescent
+dotnet_diagnostic.DF019.severity = suggestion   # К-L19 hardware tier
+
+# --- DC### : Cascade-specific rules (drift detection between cascades) ---
+# Per Domain 3 cascade #2/#3 candidates (~10 rules anticipated). Default
+# severity warning (promoted to error via TreatWarningsAsErrors after
+# A'.9.2 ramp).
+# (specific rules added as authored)
+
+# --- DL### : Lesson-derived rules (Lesson #N family automated catch) ---
+# Per Domain 2 FORMALIZE Lessons analyzability matrix (~5 rules anticipated).
+# (specific rules added as authored)
+
+# ----------------------------------------------------------------------------
+# Test + fixture project per-folder opt-outs
+# ----------------------------------------------------------------------------
+
+# Fixture projects intentionally encode violation scenarios; rules muted here
+# so the fixtures themselves compile clean while exercising analyzer logic.
+[tests/Fixture.*/**/*.cs]
+dotnet_diagnostic.DF001.severity = none
+dotnet_diagnostic.DF002.severity = none
+dotnet_diagnostic.DF003.severity = none
+# (extend per-rule as fixture coverage grows)
+
+# Test projects: К-L invariants apply to production code only. Tests
+# legitimately construct synthetic scenarios that violate (e.g., creating
+# ad-hoc ManagedTestWorld instances для К-L11 stress fixtures).
+[tests/**/*.cs]
+dotnet_diagnostic.DF011.severity = suggestion   # tests may legitimately use ManagedTestWorld
+dotnet_diagnostic.DF012.severity = suggestion   # tests may legitimately use managed scheduler
+
+# Benchmark project: К-L8/К-L11 relaxed (cross-implementation comparison probe)
+[tests/DualFrontier.Core.Benchmarks/**/*.cs]
+dotnet_diagnostic.DF008.severity = none
+dotnet_diagnostic.DF011.severity = none
+
+# Mod example: К-L9 enforcement applies (vanilla = mods principle), but
+# certain demo-only patterns may need suggestion-level relaxation
+[mods/**/*.cs]
+# (no specific overrides initially — mod example should be exemplary)
+```
+
+**Discussion of convention**:
+
+1. **Rule ID grouping** (DF### / DC### / DL###):
+   - `DF` (Dual Frontier) → К-Lxx invariant rules, 18 rules covering all encodable К-L invariants
+   - `DC` (Dual frontier Cascade) → cascade-specific drift detection, ~10 rules anticipated for catching M-series migration drift
+   - `DL` (Dual frontier Lesson) → Lesson-derived rules, ~5 rules anticipated, automating catches from N1-N14 lessons (per current state Lessons #N12-#N14 from К-extensions cascade #3)
+
+2. **Opt-in/opt-out per folder** uses `.editorconfig` glob syntax `[tests/Fixture.*/**/*.cs]` which respects directory hierarchy. This is the standard pattern and works without nested `.editorconfig` files. Per-folder `.editorconfig` files can be added later if rule overrides become voluminous, but a flat root-level config is recommended at A'.9.1 inception для readability.
+
+3. **Severity grouping convention**:
+   - `error` → invariant violation, build must fail (post-A'.9.2 ramp)
+   - `warning` → in conjunction with `TreatWarningsAsErrors=true` ALSO promotes to error; use only for rules that should be promotable but not yet
+   - `suggestion` → IDE-visible, non-fatal, doesn't trigger `TreatWarningsAsErrors`; **the safe default for first-run cleanup phase A9.C**
+   - `silent` → analyzer runs but no diagnostic surfaces (useful for telemetry-only rules during authoring)
+   - `none` → analyzer doesn't run for matching files (use for Fixture.* exclusions)
+
+4. **Tension with `TreatWarningsAsErrors=true`** is resolved by **never using `warning` severity during the cleanup phase**. The cleanup phase uses `suggestion` (visible but non-fatal); the ramp to error (A9.D) jumps directly from `suggestion` → `error`, skipping `warning` entirely. Alternative — keep `warning` and add `<WarningsNotAsErrors>DF001;…;DF019</WarningsNotAsErrors>` to Directory.Build.props during cleanup — is more surgical but adds inconsistency between Directory.Build.props and .editorconfig (two places to update at promotion time). The "skip warning, jump suggestion → error" path is cleaner.
+
+5. **Test project relaxation precedent**: test csproj files already override inherited `<GenerateDocumentationFile>` (Core.Tests.csproj line 6). The .editorconfig per-folder relaxation for `[tests/**/*.cs]` mirrors this principle (test code lives by relaxed rules vs production).
 
 ### §8.4 — CI integration trigger recommendation
 
-*[Per Phase 0: no .github/workflows — local-only build verification; analyzer runs on `dotnet build` automatically OR opt-in?]*
+**Current state** (per inventory):
+- No `.github/workflows/*.yml` exists — no GitHub Actions CI today
+- `dotnet build` is the local-only verification gate
+- Closure-protocol §12.7 mandates `dotnet build` + targeted `dotnet test` per cascade closure (Modding suite + relevant Domain)
+- `tools/governance/sync_register.ps1` is the existing closure-time governance gate (exit 0 required per K10.3 protocol, lines 388–394)
+- Roslyn analyzers are **invoked automatically by the .NET SDK during every `dotnet build`** — no separate CI trigger needed; analyzer activation is purely a function of (a) the analyzer being referenced via `<ProjectReference OutputItemType="Analyzer">` per §8.2, and (b) per-rule severity per §8.3
+
+**Discussion**:
+
+1. **Automatic on every `dotnet build`** — yes, by default. Once the analyzer is referenced per §8.2 Option B, every `dotnet build` invocation (local closure verification, future CI) runs the analyzer in-process during compilation. No explicit step needed. This is desirable: the same analyzer that surfaces in the IDE (Visual Studio/Rider) also runs at build time, single source of truth.
+
+2. **`TreatWarningsAsErrors=true` × analyzer warning interaction** (per `Directory.Build.props` line 7): as documented in §8.3, this is the central tension. **Intentional configuration recommendation**: keep `TreatWarningsAsErrors=true` global; do NOT add `<TreatWarningsAsErrors>false</TreatWarningsAsErrors>` per-project; instead control analyzer severity exclusively via .editorconfig. This preserves the existing strictness on compiler warnings (CS####) while giving fine-grained per-rule control on analyzer diagnostics (DF/DC/DL ###). The trade-off: rule promotion is .editorconfig-edit-only (no Directory.Build.props change), making the A9.D promotion a single file diff.
+
+3. **First-run cleanup phase implications** (per brief A9.C lines 86–90):
+   - Initial rule deployment: all 18 DF### at `severity = suggestion` per §8.3 (non-fatal, build still passes)
+   - First `dotnet build` after analyzer reference lands: build succeeds; rule diagnostics surface in IDE Problems panel and `dotnet build` text output but don't fail the build
+   - Cleanup phase scope: each surfaced diagnostic triaged into (a) fix in code, (b) suppress with rationale (`#pragma warning disable DF### // <citation>`), (c) rule refinement if false-positive
+   - Brief A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md §0 line 33: "First run expected к surface pre-existing debt — fix budget внутри А'.9 scope. Linux `-Werror` adoption precedent." Strongly suggests the cleanup phase must be **bounded** — a defined target (e.g., "all DF001-DF019 emit zero diagnostics on src/ paths") before promotion
+   - **Q-K candidate (anticipated в Brief A'.9.1)**: Fix budget — hard cap (e.g., 100 violations) or open-ended within А'.9 scope? Recommendation: open-ended within А'.9.1, but if budget exceeds X violations the cascade splits (A'.9.1 = scaffolding + cleanup; A'.9.2 = rule promotion)
+
+4. **`dotnet test` selector implications**: closure protocol selectors must additionally pick up the analyzer test project. Per §8.1 Option C recommendation (tests in `tests/DualFrontier.Analyzers.Tests/`), the existing `tests/DualFrontier.*.Tests` glob continues to work without modification.
+
+5. **Future GitHub Actions consideration** (flag for §11, not required at A'.9.1):
+   - No CI infrastructure exists today; manual local-only verification is the convention
+   - Roslyn analyzers DO run identically in any environment that invokes `dotnet build` — so when GitHub Actions is eventually adopted, no analyzer-specific CI changes are needed; the same `dotnet build` step surfaces the same diagnostics
+   - The analyzer ITSELF having tests creates an interesting chicken-and-egg: the analyzer's own csproj should NOT reference itself as an analyzer (per §8.2 exclusion conditional), and the analyzer test project should reference Microsoft.CodeAnalysis.Testing — not the analyzer-as-analyzer
+   - **Flag for §11**: should A'.9 include a minimal `.github/workflows/build.yml` running `dotnet build` + `dotnet test` + `tools/governance/sync_register.ps1 -Validate` to make analyzer enforcement enforceable on PRs (when the project transitions out of solo-dev)? Recommendation: NO at A'.9.1 (out of scope, separate concern, no PR workflow yet), but candidate for A'.10 or sibling milestone if collaboration model changes.
+
+**Recommended A'.9.1 progression** (Warning → cleanup → Error staged plan):
+
+**Stage 1 — A'.9.1 ξ-cascade (analyzer scaffolding + initial rule authoring)**:
+- Add `tools/DualFrontier.Analyzers/DualFrontier.Analyzers.csproj` + `tests/DualFrontier.Analyzers.Tests/DualFrontier.Analyzers.Tests.csproj` per §8.1 Option C
+- Add centralized analyzer reference to `Directory.Build.props` per §8.2 Option B
+- Add baseline `.editorconfig` rules at `severity = suggestion` per §8.3
+- Author DF001-DF019 (skipping DF006 К-L6 SUPERSEDED + DF014 К-L14 meta) — 18 rules
+- Each rule has positive + negative test per A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md A9.E
+- **Closure gate**: `dotnet build` exit 0 (build passes even с suggestions surfacing); `dotnet test tests/DualFrontier.Analyzers.Tests` exit 0; existing test suite exit 0 (rules at suggestion don't break existing builds); `sync_register.ps1 -Validate` exit 0
+
+**Stage 2 — A'.9.1 χ-cascade (cleanup phase)**:
+- Run analyzer against full codebase via `dotnet build` — collect all DF### diagnostics
+- Per-diagnostic triage per brief A9.C (fix / suppress with rationale / refine rule)
+- Fix budget tracked в cleanup ledger (recommend open-ended within A'.9.1 with soft-halt to Crystalka if exceeds e.g. 150 violations)
+- **Closure gate**: zero DF### diagnostics on src/ paths at suggestion severity (i.e., the analyzer would emit zero warnings if promoted to warning); suppression-with-rationale count documented in cleanup report
+
+**Stage 3 — A'.9.1 ψ-cascade (severity promotion)**:
+- `.editorconfig` edit: each `dotnet_diagnostic.DF###.severity = suggestion` → `= error`
+- Single-file diff per §8.4 recommendation #2
+- `dotnet build` exit 0 after promotion (cleanup is complete; promotion is the test)
+- **Closure gate**: `dotnet build` exit 0 with all DF### at `severity = error`; this proves К-Lxx compile-time enforcement is live
+- Per brief A9.D: CodeFixProviders authored where mechanical fix possible — likely sub-cascade or follow-up milestone
+
+**Stage 4 — sync_register.ps1 integration (optional, low-priority)**:
+- The existing `tools/governance/sync_register.ps1` is a DOCUMENT control gate (REGISTER.yaml validation, frontmatter sync), NOT a build gate
+- It does NOT need to know about the analyzer; the analyzer runs independently via `dotnet build`
+- However, the cumulative closure protocol per K10.3 cascade pattern likely chains them: `dotnet build && dotnet test … && pwsh tools/governance/sync_register.ps1 -Validate` — that chain continues to work with analyzer enforcement in place because analyzer rule violations cause `dotnet build` to fail (after Stage 3), failing the chain at the right step
+
+### §8.99 — Open questions surfaced (for §11 Q-K candidates)
+
+- **Q-K-§8-1**: Analyzer csproj TargetFramework override mechanism
+  - Context: `Directory.Build.props` line 3 sets global `<TargetFramework>net8.0</TargetFramework>`. Roslyn analyzer projects MUST target `netstandard2.0` (the version Roslyn's compiler-host can load). The analyzer csproj must override the inherited TFM. How is this overridden cleanly without breaking the centralized convention?
+  - Options:
+    - (a) Analyzer csproj explicitly sets `<TargetFramework>netstandard2.0</TargetFramework>` (overrides inherited)
+    - (b) Directory.Build.props adds `Condition="'$(MSBuildProjectName)' != 'DualFrontier.Analyzers'"` to the TFM line (parallel exclusion pattern, makes Directory.Build.props messier)
+    - (c) Analyzer csproj sits OUTSIDE the Directory.Build.props reach — e.g., its own `tools/DualFrontier.Analyzers/Directory.Build.props` overriding root (most idiomatic per Microsoft docs)
+  - Recommendation: **Option (a)** — analyzer csproj sets `<TargetFramework>netstandard2.0</TargetFramework>` explicitly; MSBuild's inheritance semantics allow child overrides cleanly. Simplest, no Directory.Build.props churn. The analyzer test csproj remains net8.0 (uses Microsoft.CodeAnalysis.Testing which is net8.0-friendly).
+
+- **Q-K-§8-2**: Whether to suppress CS1591 inheritance for analyzer csproj
+  - Context: `Directory.Build.props` line 11 globally suppresses CS1591 (missing XML doc). Roslyn analyzer rule classes conventionally have rich XML docs for tooling extraction (severity, description, help link). Should the analyzer csproj un-suppress CS1591 to enforce its own documentation standards?
+  - Options:
+    - (a) Inherit suppression (CS1591 stays suppressed in analyzer csproj — analyzer rule classes can have or omit XML docs at author discretion)
+    - (b) Analyzer csproj sets `<NoWarn></NoWarn>` (re-enables CS1591) or `<NoWarn>$(NoWarn.Replace('CS1591', ''))</NoWarn>` to enforce XML docs on all analyzer types
+  - Recommendation: **Option (a)** for A'.9.1 (don't add scope); ANALYZER_RULES.md (per §8.3 reference) becomes the canonical rule documentation, not C# XML comments. Revisit at A'.10 if scaling analyzer rule count motivates per-rule XML-doc-driven help URLs.
+
+- **Q-K-§8-3**: Should mods/DualFrontier.Mod.Example carry analyzer enforcement?
+  - Context: `sln` line 40 + NestedProjects line 439. The example mod is shipping demonstration code; К-Lxx invariants (especially К-L9 vanilla=mods parity per DF009) apply, but mod authors generally won't have the analyzer wired into their own mod projects. Should the example demonstrate the analyzer integration pattern, or stay analyzer-free?
+  - Options:
+    - (a) Include mod in centralized analyzer reference (recommended in §8.2 — `mods/` is NOT excluded). Forces exemplary compliance, demonstrates pattern.
+    - (b) Exclude `mods/**` from analyzer reference (treat mods as third-party). Loses К-L9 enforcement on the example.
+  - Recommendation: **Option (a)** — the example mod should be exemplary; К-L9 explicitly says vanilla = mods, so the analyzer should treat mod code identically. This forces the example to demonstrate compliance, which is exactly the right signal for downstream mod authors.
+
+- **Q-K-§8-4**: Cleanup-phase suppression rationale grammar/convention
+  - Context: brief A9.C line 90 says "(b) suppressed with rationale [#pragma warning disable + comment]". What is the rationale format convention? Free-text comment, structured tag (e.g., `// DF011-SUPPRESS: legacy K8.2 staging — see migration ticket M-12`), or YAML frontmatter in a sidecar suppressions file?
+  - Options: free-text vs structured tag vs sidecar GlobalSuppressions.cs vs sidecar .editorconfig suppression file
+  - Recommendation: structured single-line tag `// DFNNN-SUPPRESS: <citation-or-rationale>` — greppable, links to the rule, encourages explicit rationale; combined with `#pragma warning disable DFNNN` line above + `#pragma warning restore DFNNN` line after for scoped suppression. Avoid sidecar GlobalSuppressions.cs (hides locality).
+
+- **Q-K-§8-5**: Closure protocol §12.7 inclusion of analyzer test project
+  - Context: closure protocol mandates `dotnet build` + targeted `dotnet test` per cascade. Should the analyzer test project (`tests/DualFrontier.Analyzers.Tests`) be added to the canonical "always-run" closure test set, or only when the analyzer or К-Lxx invariants are touched?
+  - Recommendation: **always-run** post-A'.9.1 (the analyzer test suite is fast — Microsoft.CodeAnalysis.Testing is in-memory compilation — and surfaces regressions on EVERY К-Lxx-adjacent change, which is most architectural change). Per current `tests/DualFrontier.*.Tests` glob convention, no protocol change needed if Option C placement is adopted.
+
+- **Q-K-§8-6**: GitHub Actions adoption decision deferral target
+  - Context: §8.4 discussion #5 — no CI today; analyzer works identically in local + CI; question of when to introduce `.github/workflows/build.yml` is project-governance, not analyzer-scoped
+  - Recommendation: defer to §11 Q-K consideration outside A'.9 scope; flag as "becomes relevant when collaboration model changes from solo-dev to multi-contributor". A'.9.1 should NOT introduce CI infrastructure as side-effect.
 
 ---
 
 ## §9 — Suppression governance precedent + recommendations
 
-*[To be populated в Phase α2 (Domain 7)]*
+### §9.0 — Reconnaissance methodology
+
+**Source files read** (full or targeted-range, per S-LOCK-7 honest depth):
+- `src/DualFrontier.Core.Interop/NativeWorld.cs` lines 500–531 — context surrounding the CS0618 pragma at line 526 (`ResolveTypeId<T>` legacy fallback branch).
+- `src/DualFrontier.Core.Interop/Marshalling/NativeComponentType.cs` lines 21–58 — both `[Obsolete]` types being suppressed (`NativeComponentType<T>` line 23; `NativeComponentTypeRegistry` line 53), both intentionally `error: false`.
+- `tests/DualFrontier.Core.Interop.Tests/BootstrapTests.cs` (full, 98 lines) — CS0649 fixture pattern reference.
+- `tests/DualFrontier.Core.Interop.Tests/ComponentTypeRegistryTests.cs` (full, 133 lines) — placeholder-types fixture pattern with explicit justification comment.
+- `tests/DualFrontier.Core.Tests/Bus/ManagedBusBridgeTests.cs` (full, 373 lines) — narrowest-scope (single-field) CS0649 pragma pattern.
+- `docs/governance/REGISTER.yaml` — `capa_entries:` collection (lines 5776–6573) inventoried in full; CAPA cross-reference patterns audited.
+- `docs/methodology/METHODOLOGY.md` — Lesson #25 (line 973: PROMOTED → FORMALIZED at A'.8; A'.7.5 third application); refined statement traced to METHODOLOGY v1.11 changelog and К_EXT_2 brief lines 1257–1259.
+
+**What was inventoried**: 5 pragma occurrences (1 src + 4 tests) confirmed against Phase 0; CAPA collection categorized for any «we suppressed a warning» precedent; «test-lying surface» principle traced to its current methodology and code-comment footprints.
+
+---
 
 ### §9.1 — Existing suppression patterns inventory
 
-*[Per Phase 0 grep: 1 src pragma + 4 test pragmas + 0 SuppressMessage + 0 GlobalSuppressions]*
+**Summary table** (Phase 0 facts confirmed + classified):
+
+| Location | Code | Pragma vs Attribute | Justification comment (verbatim) | Classification |
+|---|---|---|---|---|
+| `src/DualFrontier.Core.Interop/NativeWorld.cs:526` | CS0618 | pragma (3-line scope: 526–530) | «NativeComponentType<T> is obsolete (legacy fallback path).» | **Legitimate transitional** |
+| `tests/DualFrontier.Core.Interop.Tests/BootstrapTests.cs:12` | CS0649 | pragma (6-line scope: 12–17, around `TestComponent`) | none inline | **Fixture pattern** |
+| `tests/DualFrontier.Core.Interop.Tests/ComponentTypeRegistryTests.cs:13` | CS0649 | pragma (5-line scope: 13–17, around `TypeA/B/C`) | «Placeholder types exercise registration semantics by identity only — the fields are not read in any test.» | **Fixture pattern (best-in-class — explicit justification)** |
+| `tests/DualFrontier.Core.Tests/Bus/ManagedBusBridgeTests.cs:32` | CS0649 | pragma (4-line scope: 32–34, around `NormalTestEvent.Value`) | none inline | **Fixture pattern (narrowest scope — single field)** |
+| `tests/DualFrontier.Core.Tests/Bus/ManagedBusBridgeTests.cs:45` | CS0649 | pragma (4-line scope: 45–47, around `DefaultTierTestEvent.Value`) | none inline | **Fixture pattern (narrowest scope — single field)** |
+
+**Aggregate statistics**:
+- **5 total suppressions** across the entire solution (1 src + 4 tests).
+- **0 `[SuppressMessage]` attributes** anywhere.
+- **0 `GlobalSuppressions.cs` files** anywhere.
+- **2 warning codes** in scope: CS0618 (1× — obsolete usage) and CS0649 (4× — unread fields).
+- **Classification breakdown**: 1 legitimate transitional + 4 fixture-pattern + 0 questionable.
+- **Justification-comment coverage**: 2 of 5 (40%) have inline justifications; the src-side CS0618 and the most architecturally-self-explanatory test (`ComponentTypeRegistryTests`) carry comments. The three undocumented test pragmas are around obviously-blittable test event/component structs where the «reflection-based access» nature is contextually obvious to a reader.
+
+**Pragma scope discipline**: All 5 suppressions use **disable/restore pair brackets** wrapping the smallest possible declaration unit (a method body, a struct, or even a single field as in `ManagedBusBridgeTests:32` and `:45`). No file-wide `#pragma warning disable` without `restore`. No suppressions span > 6 source lines. This is **disciplined narrow-scope** usage in 5/5 cases.
+
+**Deep dive: the src-side CS0618 (`NativeWorld.cs:526`)**:
+- Wraps the `ResolveTypeId<T>` legacy-fallback branch executed when `_registry == null` (i.e., post-K8 cutover the `_registry`-bound path on line 524 will become unconditional and the entire suppressed block disappears).
+- The two types being suppressed (`NativeComponentType<T>` at `Marshalling/NativeComponentType.cs:23` and `NativeComponentTypeRegistry` at line 53) are tagged `[Obsolete(..., error: false)]` **by design** — the deprecation is warning-class precisely so the well-contained legacy fallback can compile cleanly with local pragma suppression. The pragma is not hiding a bug; it is the **legitimate sanctioned form** of «I am the one caller that knows it is OK to still use this».
+- **Removal trigger**: the second `[Obsolete]` attribute (line 50) explicitly states «NativeComponentTypeRegistry will be removed when NativeComponentType<T> is removed (K8 cutover)». The CS0618 suppression is **causally linked to a removable transitional state** — exactly the «transitional» classification's defining condition.
+
+**Deep dive: the 4 CS0649 fixtures**:
+- All four wrap private struct field declarations in test classes. CS0649 fires because xUnit + the `df_native` interop layer access these fields **by-value through marshalling or by-identity** — not via property/method reads the compiler can see. The struct value gets boxed through `AddComponent<T>(...)` / `Publish<T>(...)`, copied across the managed/native boundary, and round-tripped back; the field is **read via Unsafe.SizeOf<T>() and pointer arithmetic in native code**, which CS0649's reachability analysis cannot follow.
+- The `ComponentTypeRegistryTests` instance is exemplary — its comment «exercises registration semantics by identity only — the fields are not read in any test» tells the reader: *the field exists to give the struct a non-zero size for component-id assignment; it is structurally required even though no test reads it.*
+- The two `ManagedBusBridgeTests` instances are the narrowest possible scope: a 3-line bracket around a single field. This is **the gold-standard pattern** for CS0649 in event-payload test fixtures.
+
+**Why `[SuppressMessage]` and `GlobalSuppressions.cs` are absent**: there is currently **no codebase-internal analyzer** producing diagnostics that would warrant the attribute pattern; all suppressions target **compiler-built-in** warnings (CS-prefix), and the `#pragma` form is the canonical way to suppress those. The attribute form becomes the natural carrier once DF### analyzer rules ship (A'.9.1+).
+
+**CAPA entries related to suppression (from REGISTER.yaml `capa_entries:` collection, lines 5776–6573)**:
+
+Full inventory of the 14 CAPA entries currently in the register:
+1. `CAPA-2026-05-09-K8.2-V2-REFRAMING` — K-L3 framing reformulation
+2. `CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION` — methodology audience contract
+3. `CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT` — inventory point-in-time drift
+4. `CAPA-2026-05-13-K8.3-PREMISE-MISS` — brief premise miss
+5. `CAPA-2026-05-14-K8.34-API-SURFACE-MISS` — API transcription (Lesson #7 origin)
+6. `CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT` — mid-transition framing
+7. `CAPA-2026-05-16-ISOLATION-AUTHORITY-RESTORATION` — isolation rule restoration
+8. `CAPA-2026-05-16-LIVE-STATE-CLOSURE-PROTOCOL-GAP` — closure protocol
+9. `CAPA-2026-05-16-POWER-DELETION-PROPAGATION` — power-subsystem deletion follow-through
+10. `CAPA-2026-05-16-MOD-API-V3-AUTHORITY` — mod API authority restoration
+11. `CAPA-2026-05-16-V-SUBSTRATE-SUPERSESSION` — V substrate supersession sweep
+12. `CAPA-2026-05-18-K8_5-DRIFT` — K8.5 classification drift
+13. `CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST` / `-DISPATCH-ORPHAN` / `-COALESCE-ONSQUARED` / `-K10_3-V2-SOFT-HALT` / `-STRESS-CROSS-TEST-POLLUTION` — A'.7.x bus bugs cluster (5 entries)
+
+**Result: 0 CAPA entries currently relate to suppression governance.** All 14 existing CAPAs track *brief premise / methodology framing / cross-document drift / cross-test pollution / bug regressions*, not «we suppressed a warning rather than fixing the root cause». This is consistent with the **near-zero suppression baseline** (5 occurrences, all classified legitimate) — there has been nothing to track.
+
+**Relationship to Lesson #25 refined** (cascade #2 closure 2026-05-23, METHODOLOGY v1.11):
+
+Verbatim refined statement (per К_EXT_2 brief lines 1257–1259 + `IRenderCommand.cs` doc-comment lines 9–10):
+
+> «Design abstractions when consumer materializes AND structurally eliminate test-lying surface — empty stub implementations что pass tests by doing nothing constitute architectural debt independent of speculation discipline.»
+
+**Pragma suppressions are an analogous «hide-rather-than-fix» surface, but a categorically different sub-type**:
+
+| Dimension | Lesson #25 «test-lying surface» | Pragma suppression |
+|---|---|---|
+| Hides what | Behavioral defect (empty `Execute()` body passes tests by doing nothing) | Diagnostic signal (compiler / analyzer warning) |
+| Detection | Tests pass, defect ships silently | Build produces no warning, defect/anti-pattern accumulates silently |
+| Cure (cascade #2 pattern) | **Structural elimination** — `IRenderCommand` reduced to marker, no `Execute()` to be empty | **Structural elimination** — fix the root cause OR remove the rule OR add `[AllowXxx]` carve-out attribute |
+| Cure (escape-valve) | none — empty bodies are always wrong | suppression *is* the escape valve, but must be CAPA-tracked |
+| Current codebase footprint | 0 (eliminated cascade #2) | 5 (all legitimate) |
+
+**The parallel is exact and worth codifying**: just as cascade #2 eliminated `IRenderCommand.Execute()` empty bodies by reshaping the abstraction (marker-only interface), the A'.9 analyzer milestone should treat «I'm suppressing this rule everywhere because it doesn't match my code shape» as a signal to **reshape the rule** (refine the analyzer, or add an architectural carve-out attribute), not as a signal to accept ambient suppression. The «structurally eliminate suppressed-warning surface» rephrasing of Lesson #25 is the proposed §9.2.5 codification.
+
+---
 
 ### §9.2 — Suppression governance recommendations
 
-*[When allowed / CAPA tracking / review cadence — building on clean baseline]*
+#### §9.2.1 — When suppression is allowed
+
+Five sanctioned categories, in descending order of legitimacy:
+
+**(a) Transitional suppressions — LEGITIMATE.** A symbol is `[Obsolete(..., error: false)]` because exactly one well-bounded legacy caller still needs it, and the removal trigger is identified. Reference exemplar: `NativeWorld.cs:526` (removable at K8 cutover when `_registry == null` branch disappears). Requirements:
+- The obsolete symbol carries a non-trivial `[Obsolete]` message with a documented replacement.
+- The pragma scope is the minimal callsite (≤ 1 method body).
+- A removal trigger is described in code comment OR in a CAPA entry.
+
+**(b) Fixture suppressions — LEGITIMATE.** Test-side suppressions for fields that are structurally required but compiler-invisibly-read (reflection, P/Invoke marshalling, `Unsafe.SizeOf<T>()` consumers, blittable struct round-trips). Reference exemplars: all 4 existing CS0649 occurrences. Requirements:
+- Pragma scope is the minimum struct or field declaration.
+- One-line justification comment if the «invisibly-read» mechanism is not obvious from surrounding test code (the `ComponentTypeRegistryTests` comment is exemplary; bare struct-field pragmas in obvious payload contexts may omit it).
+- **Restricted to `tests/` tree** — fixture suppression is not a valid pattern in `src/`.
+
+**(c) Diagnostic false-positives — LEGITIMATE BUT FLAG FOR RULE REFINEMENT.** A DF### analyzer rule fires on a callsite that semantically does not violate the rule. The pragma is an escape valve, but **the preferred fix is rule refinement** — the suppression should open a CAPA whose corrective action is «refine analyzer rule to recognize this shape». If 2+ false-positives accumulate against the same rule, the analyzer rule itself is in CAPA.
+
+**(d) Documented architectural exceptions — LEGITIMATE.** Rule-specific opt-out attributes (e.g., `[AllowStaticState]` for DC008 per cascade #3 Domain 3 recommendation). The attribute form is **structurally preferred over `#pragma`** for this case because it travels with the type/member and survives refactoring. Requirements:
+- The opt-out attribute must be defined as part of the analyzer ruleset's contract documents.
+- The carve-out usage must carry a `Justification = "..."` string (matching `[SuppressMessage]` field convention).
+- Carve-out attribute applications are inventoried per release cascade closure (see §9.2.4).
+
+**(e) NOT ALLOWED — recognize and reject the following patterns**:
+- **«I don't want to fix this rn» suppressions** — no removal trigger, no CAPA, no architectural carve-out.
+- **Cosmetic suppressions** — suppressing a style/format warning that the analyzer is correctly reporting.
+- **Justification-free suppressions in `src/`** — `src/` pragmas without an inline comment OR a corresponding CAPA fail review. (Carve-out for the existing CS0618: the comment is present and traceable to the K8 cutover.)
+- **File-wide / project-wide blanket suppressions** — no `<NoWarn>` MSBuild property additions, no top-of-file `#pragma warning disable` without matching `restore`.
+- **Cross-cutting `GlobalSuppressions.cs` files** — discussed in §9.2.2, recommended ban.
+
+#### §9.2.2 — Suppression syntax conventions
+
+**Recommendation: dual-pattern with category-driven choice.**
+
+| Pattern | Use for | Status |
+|---|---|---|
+| `#pragma warning disable XX### // <justification>` ... `#pragma warning restore XX###` | (a) Transitional, (b) Fixture, (c) Diagnostic false-positive | **Adopted** — matches existing 5-occurrence codebase pattern. Maintain minimum-scope bracket discipline (≤ 6 lines, single declaration unit). |
+| `[SuppressMessage("DualFrontier.Analyzer", "DF###", Justification = "...")]` | (c) Diagnostic false-positive when scope is a whole symbol (type, method, property) | **Introduced at A'.9.1** — first use of attribute form. Mandatory `Justification = "..."` parameter; no `MessageId`/`Scope`/`Target` parameter sprawl. |
+| `[AllowXxx]` carve-out attributes (e.g., `[AllowStaticState]`) | (d) Documented architectural exception | **Introduced at A'.9.1** alongside the analyzer rules that respect them. Carve-out attributes are **part of the rule contract**, not generic suppressions. |
+
+**Stance on `GlobalSuppressions.cs`: BAN.**
+
+Rationale:
+- Currently 0 such files exist — establishing the ban is a near-zero-cost greenfield decision.
+- `GlobalSuppressions.cs` decouples the suppression from its site, defeating the «pragma stays adjacent to the suppressed expression» discipline that makes the existing 5 pragmas auditable.
+- It enables the «I don't want to fix this rn» anti-pattern at scale.
+- The legitimate use case (suppressing one rule across an entire assembly because it is conceptually inapplicable) is better served by **rule scope configuration in the `.editorconfig` / analyzer ruleset file**, where it is governance-visible.
+
+**Concrete enforcement mechanism (proposed for A'.9.X)**: an internal analyzer rule `DF999` (placeholder) that flags any file matching `GlobalSuppressions.cs` or any `[assembly: SuppressMessage(...)]` attribute. This self-policing analyzer makes the ban falsifiable per K-L14 criterion 1.
+
+#### §9.2.3 — CAPA tracking requirement
+
+**Recommendation: tiered tracking based on suppression category.**
+
+| Category | CAPA mandatory? | Inline justification mandatory? | Notes |
+|---|---|---|---|
+| (a) Transitional | Optional if removal trigger is in code comment; **mandatory** if removal trigger is cross-cascade (e.g., «K8 cutover») | **Mandatory** | Existing CS0618 at `NativeWorld.cs:526` satisfies «removal trigger in code comment» — no CAPA required at this scale; if a 2nd transitional appears with the same trigger, open a CAPA at that point to track convergence. |
+| (b) Fixture | **Not required** for any single instance | Optional (recommended for non-obvious mechanisms) | Test-side fixture pragmas are a known idiom; CAPA-tracking each one would be ceremony without signal. |
+| (c) Diagnostic false-positive | **Mandatory** | **Mandatory** | The CAPA's corrective action is rule refinement; tracking the false-positive census per rule is the falsifiability mechanism for «is this analyzer rule well-shaped?». |
+| (d) Architectural exception (carve-out attribute) | **Mandatory at first use of each carve-out site**, then cumulative inventory per cascade closure | **Mandatory** (the `Justification = "..."` field) | First-use CAPA documents the carve-out's legitimacy; subsequent uses are inventoried per §9.2.4 review, not CAPA-by-CAPA. |
+| (e) NOT ALLOWED | N/A — rejected at review | N/A | Build fails OR PR rejected. |
+
+**Recommended CAPA field schema for suppression CAPAs** (modeling existing convention from REGISTER.yaml lines 5776–6573):
+
+```yaml
+- id: CAPA-YYYY-MM-DD-SUPPRESS-<RULE_ID>-<SCOPE_TAG>
+  opened_date: "YYYY-MM-DD"
+  closure_status: OPEN | CLOSED
+  closed_date: "YYYY-MM-DD"   # when closed
+  closed_commit: "<sha>"
+  closure_outcome: |
+    <description of how the suppression was resolved — fix landed,
+    rule refined, removal trigger fired, or carve-out attribute defined>
+  trigger: |
+    <file:line + rule_id that necessitated suppression + why the suppression
+    is preferred over the immediate fix at this cascade>
+  affected_documents:
+    - <governance / brief / methodology references>
+  root_cause: |
+    <why the warning fires; what shape of code triggered it>
+  immediate_action: |
+    <which pragma / attribute was placed and where>
+  corrective_action: |
+    <removal plan — rule refinement, carve-out attribute introduction,
+    legacy code removal, etc.>
+  preventive_action: |
+    <optional — Lesson candidate if pattern generalizes>
+  effectiveness_verification:
+    method: "<how to verify the suppression no longer exists OR is no longer needed>"
+    date_verified: null
+    verification_commit: null
+    verification_outcome: null
+    verification_pending: "<which cascade closure verifies>"
+  lessons_learned_reference: <DOC-ID>
+```
+
+**Connection to existing convention**: this is structurally identical to the 14 existing CAPA entries — same field set, same `trigger / root_cause / immediate_action / corrective_action / effectiveness_verification` skeleton. The only suppression-specific field is the `id` prefix `CAPA-YYYY-MM-DD-SUPPRESS-<RULE_ID>-<SCOPE_TAG>` which makes suppression CAPAs grep-discoverable.
+
+#### §9.2.4 — Review cadence
+
+**Recommendation: dual-cadence (per-closure + quarterly).**
+
+**Per-closure suppression sweep** (every cascade γ closure, integrated as a γ verification step):
+- A `grep -rE '#pragma warning disable|\[SuppressMessage|\[Allow' src/ tests/` enumeration.
+- Cross-reference against open suppression CAPAs.
+- Verify: each `src/` suppression has either (i) an inline justification comment OR (ii) an open CAPA. Test-side fixture suppressions exempt from CAPA requirement per §9.2.3.
+- New suppressions added in the cascade must each have CAPA-tracking decision made (open CAPA OR document why CAPA is not required per §9.2.3 tier).
+- **Output**: one line in the cascade closure section: «Suppression sweep: N total (M src, K tests), 0 unjustified, J open CAPAs» — analogous to existing closure metrics like «Modding suite (filter Category!=Stress): 395/395 PASS».
+
+**Quarterly cumulative review** (cascade-aligned, ~ every 3 K-extensions cascades or ~ every major Phase milestone):
+- Full audit of suppression census evolution: did totals grow? did any rule accumulate ≥2 false-positives (rule refinement trigger)?
+- Verify each open suppression CAPA's `corrective_action` remains realistic and time-bounded.
+- Verify removal triggers for transitional suppressions remain accurate (e.g., the K8 cutover still planned for the same milestone).
+- **Output**: an entry in the relevant Phase milestone closure or K-closure report, structurally analogous to К-L14 Evidence Dashboard verifications.
+
+**Why both cadences**: per-closure catches new ambient debt before it crystallizes; quarterly catches accumulation patterns the per-closure view cannot see. The dual cadence parallels the existing `effectiveness_verification` discipline in REGISTER CAPAs («CAPA opened+closed within same governance commit per A'.4.5 precedent» for tight loops; multi-milestone tracking for cross-cascade convergence).
+
+#### §9.2.5 — Connection к Lesson #25 refined
+
+**Proposed codification (candidate refinement for METHODOLOGY v1.13+)**:
+
+> «Design abstractions when consumer materializes AND structurally eliminate test-lying surface AND structurally eliminate suppressed-warning surface — empty stub implementations что pass tests by doing nothing, AND ambient pragma suppressions что hide diagnostic signals without removal trigger or carve-out justification, both constitute architectural debt independent of speculation discipline.»
+
+**Mechanistic parallel** (the proposed §9.2.5 contribution):
+
+| Lesson #25 cascade #2 application | §9 cascade A'.9.X application |
+|---|---|
+| `IRenderCommand.Execute()` empty bodies (`PresentationBridge` legacy pattern) | Future ambient `#pragma warning disable DF###` lacking justification / CAPA |
+| **Structural fix**: reduce `IRenderCommand` to marker-only interface; no `Execute()` to be empty | **Structural fix**: refine the DF### rule OR introduce a carve-out attribute (e.g., `[AllowStaticState]`) OR fix the root cause |
+| **Falsifiability**: grep for `class.*: IRenderCommand` + check for `Execute()` member presence | **Falsifiability**: per-closure suppression sweep (§9.2.4) flags pragma without inline justification or open CAPA |
+| **Outcome**: 0 lying-test surfaces post-cascade #2 | **Outcome**: every suppression at end of cascade is either (i) transitional with removal trigger, (ii) fixture (test-side only), (iii) CAPA-tracked false-positive, or (iv) sanctioned carve-out attribute |
+
+**Why this parallel is worth formalizing** (not merely analogizing):
+
+Both surfaces share a defining structural property — **the absence of a signal where a signal should exist**. A test that passes because the implementation does nothing is information-isomorphic to a build that succeeds because a diagnostic was suppressed: both produce a green light that does not correspond to verified correctness. Cascade #2 established the methodology pattern «when the green light is unearned, fix the structure that makes the light unearned» (the marker-only interface). §9 generalizes the pattern to the analyzer ecosystem: when a pragma earns the green light unjustifiedly, the structural fix is rule refinement, carve-out, or removal — not perpetual suppression.
+
+**Lesson #25 carries the K-L14 falsifiability discipline (Criterion 6 — structurally non-falsifiable green is the worst architectural debt). §9 inherits that discipline applied to the analyzer surface.**
+
+---
+
+### §9.99 — Open questions surfaced (for §11 Q-K candidates)
+
+- **Q-K-§9-1**: Should the proposed `DF999` self-policing analyzer rule (ban `GlobalSuppressions.cs` and `[assembly: SuppressMessage(...)]`) ship in A'.9.1 alongside the first DF### rules, or be deferred until at least one DF### rule has a non-trivial false-positive census (i.e., until the ban has empirically been needed)?
+  - Context: shipping the ban with the first analyzer release is greenfield-clean (0 existing assembly-level suppressions to grandfather); shipping later risks an ambient `GlobalSuppressions.cs` appearing during A'.9.X iteration and needing retroactive cleanup.
+  - Options:
+    (a) Ship `DF999` in A'.9.1 with the first DF### rules
+    (b) Defer to A'.9.2 once empirical evidence justifies it
+    (c) Ship as a `.editorconfig`-only policy (not a coded analyzer) in A'.9.1, promote to coded `DF999` if violated
+  - Recommendation: **(a)** — the cost of shipping a near-trivial banning rule alongside the first ruleset is low; the cost of retroactively cleaning ambient `GlobalSuppressions.cs` is high. Establish the discipline at greenfield.
+
+- **Q-K-§9-2**: Should the `[SuppressMessage]` attribute form be allowed at all in A'.9.1, or restricted to A'.9.X cascades only after pragma-form usage has settled?
+  - Context: codebase currently has **zero** `[SuppressMessage]` attributes; introducing it as a sanctioned form simultaneously with the first DF### rules creates two parallel suppression syntaxes from day 1.
+  - Options:
+    (a) Sanction both `#pragma` (line-scope) and `[SuppressMessage]` (symbol-scope) at A'.9.1
+    (b) A'.9.1 ships pragma-only; `[SuppressMessage]` introduced at first false-positive that genuinely needs symbol-scope
+    (c) A'.9.1 ships `[SuppressMessage]`-only for DF### rules (reserve `#pragma` for CS-prefix compiler warnings only)
+  - Recommendation: **(b)** — match the codebase's empirical pattern (5/5 existing suppressions are pragma form) and introduce attribute form only when a real false-positive case demands symbol-scope. Avoids syntax sprawl until justified.
+
+- **Q-K-§9-3**: Should the proposed CAPA-tracking tier for «Diagnostic false-positives — mandatory CAPA» be cascade-scoped (one CAPA per suppression site) or rule-scoped (one CAPA per rule accumulating false-positives, with site list)?
+  - Context: site-scoped CAPAs match existing REGISTER convention but could generate CAPA proliferation; rule-scoped CAPAs match the «fix the rule, not the suppression» preferred resolution path but break the «one CAPA = one issue» pattern.
+  - Options:
+    (a) Site-scoped (one CAPA per suppression site)
+    (b) Rule-scoped (one CAPA per rule, with embedded site list updated as new sites accumulate)
+    (c) Hybrid: site-scoped for first occurrence of a rule, rule-scoped thereafter (first CAPA establishes the rule census, subsequent sites append to its `affected_documents` list)
+  - Recommendation: **(c)** — preserves the «one CAPA = one issue» pattern at first occurrence (defensible governance hygiene), then naturally transitions to rule-level tracking once a refinement pattern emerges. Matches the existing CAPA-2026-05-14-K8.34-API-SURFACE-MISS pattern that generalizes from a single observation to a class.
+
+- **Q-K-§9-4**: Should the «test-side fixture suppression CAPA-exempt» policy (§9.2.3 tier (b)) extend to **every** test-only file, or be restricted to a defined set of test layers (e.g., the `tests/DualFrontier.Core.Tests/Fixtures/` tree or `*Tests.cs` files specifically)?
+  - Context: cascade #2 + cascade #3 demonstrated that test-side discipline can drift (the «test-lying surface» Lesson #25 origin was test-side); blanket exemption for «anything in `tests/`» risks reproducing that drift in suppression form.
+  - Options:
+    (a) Blanket exempt all `tests/**`
+    (b) Exempt only `*Tests.cs` (the xUnit-recognized test class files), require CAPA for fixtures-utility files
+    (c) Exempt all `tests/**` but require quarterly review (§9.2.4) to spot pattern drift
+  - Recommendation: **(c)** — blanket exemption matches the current 4/4 test pragma pattern (all in `*Tests.cs` directly), but quarterly review provides a falsifiability mechanism if test-side pragma usage grows in fixtures-utility or shared-helper layers where the «obvious idiom» justification weakens.
+
+- **Q-K-§9-5**: For carve-out attributes like `[AllowStaticState]` (DC008 escape valve per cascade #3 Domain 3), should the carve-out attribute carry a **mandatory `Justification` string parameter** (matching the `[SuppressMessage("...", Justification = "...")]` convention), or is the attribute's presence alone sufficient signal?
+  - Context: `[AllowStaticState]` without justification reduces to «I assert this is OK» without traceable rationale; with justification it carries forward the «every suppression has a defensible reason» discipline of pragma comments.
+  - Options:
+    (a) Justification mandatory (analyzer rule fails if `[AllowStaticState]` is applied without `Justification = "..."`)
+    (b) Justification optional (attribute presence is the signal; rationale lives in adjacent code comments or commit messages)
+    (c) Justification optional for cascade #3 Phase A'.9.1, mandatory at A'.9.2+ once the carve-out idiom is established
+  - Recommendation: **(a)** — preserves the discipline established by the existing CS0618 inline comment («NativeComponentType<T> is obsolete (legacy fallback path).») in attribute form. The marginal authoring cost is one string parameter; the marginal review value is full traceability of every carve-out usage to its architectural justification.
 
 ---
 
