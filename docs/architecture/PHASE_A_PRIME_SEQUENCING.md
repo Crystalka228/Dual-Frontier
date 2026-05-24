@@ -332,14 +332,89 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Executor: Claude Opus 4.7 (deliberation + brief authoring + execution) + Crystalka
   │   (Q-N ratification + mid-cascade S-LOCK-4 amendment ratification).
   │
-  ├─ Phase A'.9 — Architectural analyzer milestone
-  │   Scope: Roslyn analyzer encoding K-Lxx invariants per K-closure report
-  │   Dual purpose: (1) M-series migration verifier (catches drift in M-milestone migrations that tests don't see), (2) architectural debugger (surfaces bugs that compile + pass tests but violate invariants)
-  │   First run on existing post-K8.5 codebase may surface pre-analyzer debt — fix budget included in milestone scope
-  │   M3.4 capability analyzer merge decision: at analyzer brief authoring time
-  │   Track B activation candidate per ROADMAP «Maximum Engineering Refactor» §96-114
-  │   Estimated time: 2-4 weeks hobby pace, undetermined auto-mode (depends on rule scope)
-  │   Executor: Opus (architectural deliberation, rule spec) + Cloud Code (Roslyn implementation)
+  ├─ Phase post-A'.8 — A'.9.0 RECONNAISSANCE / К-extensions cascade #4 (CLOSED 2026-05-24)
+  │   Designation: «A'.9.0 Reconnaissance / К-extensions cascade #4» dual designation per
+  │   brief §0.5 (first A'.9 milestone-internal cascade; К-extensions cascade #5+ continues
+  │   sequence per Q-K-44 recommendation).
+  │   Execution branch: `main` (per Crystalka ratification pre-execution — matches cascade
+  │   #3 pattern; brief literal «feature branch off 8ea0d03» overridden because HEAD had
+  │   advanced к 4981d78 = Crystalka CI logs commit post-cascade-#3).
+  │   Scope: comprehensive 7-domain A'.9 Roslyn analyzer milestone architecture
+  │   reconnaissance via multi-agent dispatch (7 sub-agents per S-LOCK-5: 3 parallel batch
+  │   A in α1 + 3 parallel batch B in α2 + 1 sequential C1 in α3). Produced governance
+  │   artifact `docs/architecture/A_PRIME_9_RECONNAISSANCE_REPORT.md` (Tier 2 Live Category
+  │   A, ~3340 lines).
+  │   **Zero production code changes** per S-LOCK-1 — no analyzer project created, no src/
+  │   modifications, no test changes, no build config changes (all deferred к Brief A'.9.1
+  │   cascade). A'.9.1 Analyzer Infrastructure brief authored post-A'.9.0 closure against
+  │   report §10 prerequisites + §11 Q-K candidates.
+  │   Reconnaissance domains covered:
+  │     • Domain 1 (К-L analyzability): 22-row matrix, 9 P0 / 8 P1 / 3 P2 / 3 P3
+  │     • Domain 2 (FORMALIZE Lessons analyzability): 12-row matrix; 11 T6 + 1 T2 (Lesson
+  │       #8 auxiliary tooling)
+  │     • Domain 3 (cascade #2/#3 surfaced rule candidates): 10 candidates; cross-cascade
+  │       observation Lesson #N12 underlies 4 candidates
+  │     • Domain 4 (Mod OS К-L20 prep): 20 candidate DF020 sub-rules + 6 precursor
+  │       relationships A'.9-era → К-L20 era
+  │     • Domain 5 (Roslyn ecosystem desk research): SDK 5.3.0 + xUnit framework variant
+  │     • Domain 6 (Build/CI surface): Option C hybrid + Directory.Build.props centralized
+  │     • Domain 7 (Suppression governance): near-zero baseline (5 pragmas + 0 attribute)
+  │   Phase 0 anomalies surfaced: pre-existing ANALYZER_RULES.md v0.1 + A_PRIME_9_ROSLYN_
+  │   ANALYZER_BRIEF.md v0.1 AUTHORED-SKELETONs (deliberation agent structural anchor
+  │   missed these; recon scope adapted к score-against-existing-taxonomy).
+  │   Lessons surfaced/refined:
+  │     • Lesson #N14 THIRD application surfaced (HIGH promotion proximity now): cascade-
+  │       level Phase 0 empirical state coverage applied at meta-level (deliberation
+  │       agent gap surfaced by execution agent Phase 0; 3 applications cumulative).
+  │     • Lesson #N13 second application surfaced: commit integrity verification at every
+  │       commit (α0-α4+β diff vs message claims).
+  │     • Observational reconnaissance evidence type FORMALIZED (5th К-L14 evidence type
+  │       NEW category per S-LOCK-6 framing).
+  │   К-L14 verification #13 — first observational reconnaissance evidence (5th evidence
+  │   type NEW category). CLEAN per degenerate criteria (S-LOCK-1 zero-production-code-
+  │   touch preserved К-L14 thesis trivially; observational baseline established for A'.9.1).
+  │   Cumulative К-Lxx series: 21 invariants (unchanged).
+  │   К-L14 evidence active log: 12 entries (9 baseline + #11 + #12 + #13; #10 vacated).
+  │   45 Q-K candidates aggregated for Brief A'.9.1 deliberation (42 sub-agent + 3 cross-
+  │   cutting α4 synthesis).
+  │   Commits: cascade atomic on main (α0 a233639 + α1 baf28dd + α2 98ae26a + α3 1123aac
+  │   + α4 f017455 + β1+β2 bundled + β3 REGISTER + γ1 closure = 8 commits within Q-J-8
+  │   budget 4-8; β1+β2 squashed per brief Q-J-8 «squashing acceptable где compilable»
+  │   allowance).
+  │   Executor: Claude Code Opus 4.7 (Phase 0 + multi-agent dispatch + α4 synthesis +
+  │   Phase β/γ governance + closure) + Crystalka (pre-execution ratification: branch
+  │   strategy + build halt resolution).
+  │   KERNEL v2.5.2 → v2.5.3 patch bump per Q-G-12 LOCKED versioning convention
+  │   (chronicle + cross-ref = patch).
+  │
+  ├─ Phase A'.9 — Architectural analyzer milestone (multi-cascade)
+  │   Scope: Roslyn analyzer encoding K-Lxx invariants per K-closure report + ANALYZER_
+  │   RULES.md v0.1 AUTHORED-SKELETON. Decomposed per A'.9.0 recon report §10 prerequisite
+  │   7 + Q-K-43:
+  │     • A'.9.0 — Reconnaissance (CLOSED 2026-05-24, this entry above)
+  │     • A'.9.1 — Analyzer Infrastructure (К-extensions cascade #5 per Q-K-44): scaffold
+  │       tools/DualFrontier.Analyzers/ + tests/DualFrontier.Analyzers.Tests/, Directory.
+  │       Build.props centralized, .editorconfig baseline, 17 P0+P1 DF### rules + DF999
+  │       self-policing, cleanup phase (suggestion severity)
+  │     • A'.9.2 — Severity promotion (cleanup → error) + optional code-fix providers for
+  │       Trivial-feasibility rules (DF002, DF004, DF011 within tests)
+  │     • A'.9.3+ — DC### cascade-derived rules + DL### Lesson-derived auxiliary tooling +
+  │       M3.4 deferred analyzer milestones materialization
+  │   Dual purpose preserved: (1) M-series migration verifier (catches drift in M-milestone
+  │   migrations that tests don't see), (2) architectural debugger (surfaces bugs that
+  │   compile + pass tests but violate invariants).
+  │   First run on existing post-K8.5 codebase expected к surface pre-analyzer debt — fix
+  │   budget included in A'.9.1 cleanup phase scope.
+  │   Track B activation candidate per ROADMAP «Maximum Engineering Refactor» §96-114.
+  │   Executor: Opus (architectural deliberation, rule spec) + Cloud Code (Roslyn impl).
+  │
+  ├─ Phase post-A'.9 — К-L20 Mod API lock cascade
+  │   Designation: TBD per K_CLOSURE §9.5 Q1-Q8 deliberation
+  │   Scope: К-L20 canonical text LOCKED + DF020 family activation (20 sub-rules per
+  │   A'.9.0 report §6.2) + Mod API surface freeze per A'.9 closure baseline snapshot
+  │   Forward analyzer enforcement: analyzer enables Mod API enforcement automation per
+  │   memory + Domain 4 precursor relationships (DF003.1→DF020.3, DF009→DF020.{1,2,8,9},
+  │   DF012→DF020.8, DF015→DF020.{9,10,11}, DF018→K-L18+K-L20, M3.4→DF020.{10,11,16}).
   │
   └─ [M8.4 begins — Phase B]
       Vanilla.World migration. First M-milestone runs under analyzer protection.

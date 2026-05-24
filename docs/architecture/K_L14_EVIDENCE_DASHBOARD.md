@@ -156,6 +156,69 @@ Mid-cascade brief amendment ratified by Crystalka (S-LOCK-4 silent stubs, 2026-0
 
 **Cumulative post-this-verification**: 11 verifications в active log (9 baseline + #11 cascade #2 + #12 cascade #3; #10 slot vacated). 10 clean + 1 honest soft-halt annotation (#7). К-L14 thesis remains не-falsified by accumulated evidence.
 
+### Verification #13 — A'.9.0 Reconnaissance / К-extensions cascade #4 (Roslyn Analyzer Architecture Discovery)
+
+**Date**: 2026-05-24
+**Cascade**: A'.9.0 Reconnaissance / К-extensions cascade #4 — Roslyn Analyzer Architecture Discovery (Standalone Reconnaissance)
+**Status**: **CLEAN (degenerate pass per observational evidence framing — 5th evidence type, NEW category per S-LOCK-6)**
+**К-L LOCK transitions**: none (К-L count unchanged: 21 final)
+**Performance metric**: N/A (no production tick path changed; no substrate code touched per S-LOCK-1)
+
+**К-L14 contribution narrative**:
+
+A'.9.0 Reconnaissance = **first observational reconnaissance evidence** of К-L14 thesis (5th evidence type, NEW category). Prior verifications established 4 evidence types:
+- **#1-#9 baseline**: forward-add architectural evolution (substrate primitives + scheduler + bus + composition framework + mod lifecycle landed; substrate stable across additions)
+- **#11 cascade #2**: removal-type evidence (substrate stable through consumer scaffold removal + new consumer addition)
+- **#12 cascade #3**: clean additive evidence (substrate completely untouched через consumer materialization)
+
+**Verification #13** adds the **observational evidence type**: cascade produces governance artifact (reconnaissance report) **without touching substrate at all** per S-LOCK-1 zero-production-code discipline. К-L14 thesis is not tested interventionally by this cascade — but empirical baseline is established for Brief A'.9.1 cascade authoring. Observational evidence honestly framed as «substrate unchanged through reconnaissance pass» rather than «substrate stable through architectural change».
+
+**Pass criteria** (degenerate per observational nature):
+| Criterion | Status | Evidence |
+|---|---|---|
+| S-LOCK-1 zero-production-code-touch | ✓ | git diff for cascade commits α0-α4+β shows only docs/architecture/A_PRIME_9_RECONNAISSANCE_REPORT.md + tools/briefs/A_PRIME_9_0_RECONNAISSANCE_BRIEF.md + governance docs |
+| Report deliverable produced | ✓ | A_PRIME_9_RECONNAISSANCE_REPORT.md (Tier 2 Live Category A, ~3340 lines, §1–§12 populated) |
+| All 7 reconnaissance domains covered | ✓ | Domain 1 (К-L) + Domain 2 (Lessons) + Domain 3 (cascade #2/#3 candidates) + Domain 4 (К-L20 prep) + Domain 5 (Roslyn ecosystem) + Domain 6 (Build/CI) + Domain 7 (Suppression governance) |
+| `dotnet build` exit 0 | ✓ | Post-environmental-cleanup (orphan testhost killed); verified at α0/α1/α2/α3 commits |
+| `sync_register.ps1 --validate` exit 0 | ✓ pending β3 | REGISTER cascade at β3 commit |
+| Citation discipline (S-LOCK-10) | ✓ | Sub-agent outputs cite source files + sections per claim; bare assertions excluded |
+| §10 Brief A'.9.1 prerequisites enumerated | ✓ | 10 prerequisites populated с empirical anchors + recommendations + decision pointers |
+| §11 Q-K candidates enumerated | ✓ | 45 Q-K candidates aggregated (42 sub-agent + 3 cross-cutting α4 synthesis) |
+
+**5th evidence type taxonomy (codified post-A'.9.0)**:
+- **Removal evidence** (cascade #2, verification #11): substrate stable через consumer scaffold removal
+- **Reorganization evidence** (cascade #1 A'.7.5, verification #9): substrate stable через source-split reorganization (К-L15.1 compile-time layer materialization без LOCK transition)
+- **Clean-additive evidence** (cascade #3, verification #12): substrate stable через consumer materialization
+- **Behavioral evidence** (cascade #0 A'.7.x, verification #8): substrate stable через behavioral refactor (К-L15.1 LOCKED + bus throughput +45%)
+- **Observational evidence** (cascade #4 A'.9.0, verification #13, NEW): substrate unchanged через reconnaissance pass; observational baseline established без intervention
+
+**Honest framing**: К-L14 thesis is not falsifiability-tested by observational cascade — but evidence type is valid + valuable. Future K-extensions cascades may produce similar observational evidence когда audit/reconnaissance/discovery work surfaces state без changing it (Lesson #N14 Phase 0 empirical state coverage cascade-wide applied at meta-level here).
+
+**Cross-references**:
+- Reconnaissance report: [`docs/architecture/A_PRIME_9_RECONNAISSANCE_REPORT.md`](./A_PRIME_9_RECONNAISSANCE_REPORT.md) (Tier 2 Live Category A)
+- Brief: [`tools/briefs/A_PRIME_9_0_RECONNAISSANCE_BRIEF.md`](../../tools/briefs/A_PRIME_9_0_RECONNAISSANCE_BRIEF.md)
+- К-extensions ledger §3.5: [`K_EXTENSIONS_LEDGER.md`](./K_EXTENSIONS_LEDGER.md) (К-extensions cascade #4 entry)
+- KERNEL chronicle: v2.5.2 → v2.5.3 (patch — chronicle + К-L14 #13 cross-ref)
+- К-L invariants affected: none (К-L count unchanged: 21 final)
+- CAPAs: none opened (no suppressions / no production code changes)
+
+**Falsifiability criteria status post-this-verification**:
+- Criterion 1 (К-extension cascade decreases performance ceiling): NOT falsified — no performance change (no substrate touched)
+- Criterion 2 (Hard-halt rate trends upward): NOT falsified — zero hard-halts; environmental halt (orphan testhost) resolved with Crystalka ratification (Lesson #N13 commit integrity discipline applied)
+- Criterion 3 (Cascade alignment maturity reverses): NOT falsified — Phase 0 honest depth + S-LOCK enumeration + multi-agent dispatch = strongest cascade discipline к date
+- Criterion 4 (Atomic discipline breaks down): NOT falsified — 8-commit cascade within Q-J-8 budget (4-8); β1+β2 bundled to stay within budget per brief allowance
+- Criterion 5 (Architectural completeness costs exceed long-horizon payoff): Deferred (post-Phase B metric TBD)
+- Criterion 6 (Soft-halt rate exceeds X% across N consecutive cascades): NOT falsified — zero soft-halts cascade #4; cumulative soft-halt count remains 1 (verification #7 К10.3 v2)
+
+**Lessons surfaced / refined**:
+- **Lesson #N14 meta-application** (second application surfaced): cascade-level Phase 0 empirical assumed-state coverage applied at meta-level — deliberation agent's structural anchor missed pre-existing ANALYZER_RULES.md + A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md; execution agent Phase 0 surfaced them and brief scope adapted. Promotion proximity raised от MEDIUM-HIGH к HIGH (3 applications now: cascade #2 α1 + cascade #3 α0 + cascade #4 deliberation-agent gap).
+- **Lesson #N13 explicit application** (second application surfaced): cascade-level commit integrity verification applied at every commit (α0 verified Phase 0 anomalies captured before commit; α1-α4 each verified report content matches commit message claims via `git diff --cached --stat`). Promotion proximity raised toward HIGH.
+- **Observational reconnaissance evidence type formalization** (cascade-level): 5th evidence type for К-L14 evidence taxonomy codified per S-LOCK-6 framing. Future reconnaissance/audit cascades may invoke this evidence type.
+
+**Brief amendment events** (cascade-level): none. Brief executed as ratified (with one user-confirmed branching strategy clarification — «continue on main from `4981d78`» matching cascade #3 pattern).
+
+**Cumulative post-this-verification**: 12 verifications в active log (9 baseline + #11 cascade #2 + #12 cascade #3 + #13 cascade #4; #10 slot vacated). 11 clean + 1 honest soft-halt annotation (#7). К-L14 thesis remains не-falsified by accumulated evidence.
+
 ---
 
 ## §3 — Forward verification template
@@ -201,13 +264,21 @@ Mid-cascade brief amendment ratified by Crystalka (S-LOCK-4 silent stubs, 2026-0
 
 ## §5 — Forward expected verifications (cascade pipeline)
 
+**Realized verifications** (entries appended to active log §2.5):
+- Verification #10: VACATED (original Godot branch discarded — see §2.5)
+- Verification #11: К-extensions cascade #2 (Godot Full Deprecation + Launcher Formalization) — CLEAN, first removal-type evidence
+- Verification #12: К-extensions cascade #3 (Launcher Visual Implementation Minimum Scope) — CLEAN, first clean additive evidence
+- Verification #13: A'.9.0 Reconnaissance / К-extensions cascade #4 (Roslyn Analyzer Architecture Discovery) — CLEAN, first observational reconnaissance evidence (5th evidence type NEW category)
+
+**Forward expected verifications** (post-A'.9.0):
+
 | Verification # | Cascade | Expected date | К-L14 evidence type |
 |---|---|---|---|
-| 10 (candidate) | К-extensions cascade #2 Godot removal merge | Post-A'.8 closure (Crystalka discretion) | First removal-type evidence — clean discipline applies symmetrically |
-| 11 (candidate) | V2 amendment + V2 execution | Post-Godot merge | V substrate evolution с V1 lessons applied |
-| 12 (candidate) | A'.9 Roslyn analyzer milestone | Post-V2 | Codebase cleanliness; rule-driven debt resolution |
-| 13 (candidate) | Mod API lock milestone | Post-A'.9 | API surface stability + К-L20 codification |
-| 14+ (candidates) | Phase B M-cycle milestones (M-K1, M-K2, M-V1, M-V2, M-V7, etc.) | Phase B duration | Gameplay realization + «vanilla = mods» К-L9 purity verification |
+| 14 (candidate) | A'.9.1 Analyzer Infrastructure (К-extensions cascade #5 per Q-K-44) | Post-A'.9.0 closure | Production code addition — analyzer NuGet infrastructure + first DF### rules; substrate stability via in-repo build tooling |
+| 15+ (candidates) | A'.9.2/A'.9.3 (cleanup phase + severity promotion + DC###/DL### rule cascades) | A'.9 milestone duration | Codebase cleanliness; rule-driven debt resolution |
+| 16+ (candidate) | V-extension milestone (post-A'.9) | Per Crystalka «расширять V» direction | V substrate evolution с V1 lessons applied |
+| 17+ (candidate) | К-L20 Mod API lock cascade | Post-V-extension | API surface stability + К-L20 codification + DF020 family activation |
+| 18+ (candidates) | Phase B M-cycle milestones (M-K1, M-K2, M-V1, M-V2, M-V7, etc.) | Phase B duration | Gameplay realization + «vanilla = mods» К-L9 purity verification |
 
 ---
 
