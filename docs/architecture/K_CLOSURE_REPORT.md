@@ -44,6 +44,14 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_CLOSURE_REPORT
 - **Cascade #1**: А'.7.5 BUS_SOURCE_SPLIT (CLOSED 2026-05-22) — К-L15.1 compile-time layer materialized (3-layer manifestation complete); 5 atomic commits; 731 baseline preserved; К-L14 verification #9.
 - **Cascade #2**: Godot removal cascade (DEFERRED к post-closure per Q-N-8-6 LOCKED). Branch `claude/godot-removal-deliberation-Vfg2R` carries 1 atomic commit (-1955 LOC) awaiting Crystalka merge discretion. К-L14 verification #10 candidate at merge timestamp = first removal-type evidence (all prior verifications were forward-add).
 
+**Post-closure update (К-extensions cascade #2 closure 2026-05-23)**: Original Godot branch (`2ba8130`) was **discarded as obsolete precursor** (S-LOCK-1) per К-extensions cascade #2 deliberation 2026-05-23 — 18 commits divergence on main since branch base + Crystalka §0.4 expanded scope («физически удалить всё связанное с Godot») made original branch's tracked-file-only scope insufficient. Clean redo on current main (`9ea5dbe`) executed as К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization. **К-L14 verification #11** (first executed removal-type evidence) — verification #10 slot vacated by discarded branch; cascade #2 = first removal-type evidence reaching closure. See [K_EXTENSIONS_LEDGER.md §3.3](K_EXTENSIONS_LEDGER.md#33--к-extensions-cascade-2--godot-full-deprecation--launcher-formalization).
+
+### Post-closure note: К-extensions cascade tracking
+
+К-extensions cascades что execute post-К-closure event boundary are tracked в separate artifact: [`K_EXTENSIONS_LEDGER.md`](K_EXTENSIONS_LEDGER.md) (Tier 2 Live Category A, authored К-extensions cascade #2 2026-05-23). This preserves K_CLOSURE_REPORT.md as strict closure artifact (event boundary semantic intact) while providing natural home для cascade narrative growth.
+
+See [K_EXTENSIONS_LEDGER.md](K_EXTENSIONS_LEDGER.md) для cascade #0 (А'.7.x), cascade #1 (А'.7.5), cascade #2 (Godot deprecation + Launcher), and future cascades.
+
 **К-closure event boundary**: Commit 1 (this document AUTHORED ratification) push к origin/main = formal К-series closure timestamp. EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION audit_trail entry recorded in REGISTER.yaml at Commit 5 (register_version 2.2 → 2.3). К-extensions cascade #2 (Godot) merges post-this-timestamp за forward evolution narrative.
 
 ### §1.2 — К-L14 canonical text (Q-N-8-2 LOCKED 2026-05-23 verbatim)
