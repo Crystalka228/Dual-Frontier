@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.6"
-last_modified: "2026-05-23"
-last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
+register_version: "2.7"
+last_modified: "2026-05-24"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -2097,6 +2097,25 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "A'.9.0 Reconnaissance / К-extensions cascade #4 brief authored 2026-05-24 by Claude Opus 4.7 в A'.9 milestone-entry deliberation session. Two-brief A'.9 entry sequence ratified by Crystalka per «Два брифа первый, он проведет полную разведку архитектуры». Brief 1 (this) = standalone reconnaissance discovery-only cascade per S-LOCK-1; Brief 2 = A'.9.1 Analyzer Infrastructure cascade to be authored separately post-A'.9.0 closure against report findings. 11 Q-J ratified deliberation outcomes covering brief shape (Q-J-0 standalone reconnaissance с no pre-grounding), scope (Q-J-1 7-domain comprehensive), report format (Q-J-2 markdown Tier 2 Live), scoring rubric (Q-J-3/Q-J-4 per S-LOCK-4 T1-T6 + P0-P3 + rule shape), desk research (Q-J-5 Roslyn ecosystem INCLUDED), Mod OS prep (Q-J-6 К-L20 INCLUDED), К-L14 framing (Q-J-7 observational evidence 5th type NEW category), commit budget (Q-J-8 4-8 commits — actual 8 with β1+β2 bundled per squashing allowance), reconnaissance depth (Q-J-9 full file reads), brief prerequisites (Q-J-10 §10 mandatory enumeration). 10 S-LOCK reservations covering zero production code (S-LOCK-1), comprehensive scope (S-LOCK-2), report path/format (S-LOCK-3), scoring rubric (S-LOCK-4), multi-agent dispatch encouraged (S-LOCK-5), К-L14 #13 observational framing (S-LOCK-6), full file reads (S-LOCK-7), Brief A'.9.1 prerequisites enumeration §10 (S-LOCK-8), Q-K candidates §11 enumeration (S-LOCK-9), empirical reads citation discipline (S-LOCK-10). Multi-agent dispatch executed per S-LOCK-5: 7 sub-agents (3 parallel batch A + 3 parallel batch B + 1 sequential C1). Phase 0 anomalies surfaced — pre-existing ANALYZER_RULES.md + A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md AUTHORED-SKELETONs that deliberation agent's structural anchor missed; Lesson #N14 third application surfaced (HIGH promotion now). 45 Q-K candidates aggregated for Brief A'.9.1 deliberation (42 sub-agent + 3 cross-cutting α4 synthesis)."
+
+  - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
+    path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
+    title: "A_PRIME_9_0_AMENDMENTS_LOG — A'.9.0 Reconnaissance Cascade Post-Closure Amendments Log (4 amendments + Option γ Hybrid)"
+    category: D
+    tier: 4
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-24"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS"
+    content_language: mixed
+    review_cadence: on-Brief-A'.9.1-deliberation
+    last_review_date: "2026-05-24"
+    last_review_event: "A'.9.0 post-closure amendments authored 2026-05-24 by Claude Opus 4.7 в deliberation session continuation (post-execution review). 4 amendments captured per Crystalka post-execution review: Amendment #1 (Defect 1 — Q-K count divergence 42 vs 45 — §1.2 executive summary omits 3 cross-cutting Q-Ks; effective total = 45 + Q-K-46 = 46 forward для Brief A'.9.1); Amendment #2 (Defect 2 — §2.1 duplication removal — synthesis artifact; Phase 0 cleanup task); Amendment #3 (5-rule deferral DF009/DF012/DF015/DF018/DF020 family от A'.9.1 first-batch к К-L20 LOCK cascade per Mod-OS-coupling rationale; refined first-batch = 13 rules); Amendment #4 (test exclusion principle formalization per Crystalka direction «исключить из тестирования, так как там нечего тестировать, и это лишь будет врать о проделанной работе»; mechanism = xUnit `[Trait(\"Category\", \"ReservedStub\")]` + `dotnet test --filter \"Category!=ReservedStub\"`; DFL025 family analyzer rules proposed; cascade #3 retroactive empirical check Q3 confirmed Possibility A — cascade #3 К-L14 #12 status remains CLEAN). Option γ Hybrid ratified — preserves A'.9.0 closure integrity без rewriting committed history + provides Brief A'.9.1 single forward-input artifact + sets precedent для future post-closure refinements. К-L14 thesis preserved (zero substrate touch; pure governance artifact addition). Lesson #N13 commit integrity discipline applied (honest discovery + clean correction, не silent fixup). 5 Q lock summary: Q1 Option γ / Q2 (c) defer formal METHODOLOGY codification к Brief A'.9.1 closure / Q3 ran cascade #3 retroactive check now / Q4 (b) xUnit Trait + dotnet test filter / Q5 (i) section-per-amendment format."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Post-closure amendments artifact preserving A'.9.0 cascade closure integrity while capturing 4 refinements forward для Brief A'.9.1 deliberation input. Authored 2026-05-24 by Claude Opus 4.7 в continuation of A'.9.0 deliberation session after Crystalka post-execution review surfaced 4 amendments requiring capture before push к origin/main. Option γ Hybrid amendments log ratified over Option α (in-place edit / history rewrite) and Option β (push as-is + Brief A'.9.1 Phase 0 absorbs) — Option γ preserves committed history integrity, captures amendments timestamped + reasoned (governance discipline), provides Brief A'.9.1 single forward-input artifact (report + amendments log together), and sets precedent для future post-closure refinements likely к recur. Authority chain post-amendments: A_PRIME_9_RECONNAISSANCE_REPORT primary deliverable (historically accurate at execution time) + this amendments log (forward refinements; supersedes для forward sequencing where conflicts arise) + Brief A'.9.1 deliberation input = report + amendments log together. К-L14 thesis preservation: zero production code touched / zero substrate API surface modified / zero test code touched / К-L14 evidence count unchanged at 13 (cascade #3 #12 + A'.9.0 #13 baseline preserved). Cascade #3 retroactive empirical check (Q3) ran via Filesystem MCP: tests/ directory listing (29 directories) + 6 pattern searches (Dispatch/Launcher/PawnState/ItemSpawned/TickAdvanced/RenderCommand — 0 matches all 6); Possibility A confirmed (cascade #3 excluded deferred dispatch arms от testing by absence-based discipline); К-L14 #12 status remains CLEAN; forward fragility concern → Amendment #4 mechanism (xUnit Trait + DFL025 analyzer rules) codifies discipline forward."
 
   - id: DOC-E-A_PRIME_7_X_CLOSURE
     path: docs/scratch/A_PRIME_7_X/CLOSURE_REPORT.md
@@ -9041,3 +9060,208 @@ audit_trail:
         - document: DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF
           from: NOT_ENROLLED
           to: EXECUTED
+
+  - id: EVT-2026-05-24-A_PRIME_9_0_AMENDMENTS
+    date: "2026-05-24"
+    event: "A'.9.0 Reconnaissance Cascade post-closure amendments capture event — Option γ Hybrid amendments log artifact enrolled. 4 amendments captured per Crystalka post-execution review 2026-05-24: (1) Defect 1 Q-K count divergence correction (42 vs 45); (2) Defect 2 §2.1 duplication removal; (3) 5-rule deferral (DF009/DF012/DF015/DF018/DF020 family) от A'.9.1 first-batch к К-L20 LOCK cascade per Mod-OS-coupling rationale; (4) test exclusion principle formalization (xUnit Trait + dotnet test filter + DFL025 family analyzer rules). Cascade #3 retroactive empirical check (Q3) ran via Filesystem MCP — Possibility A confirmed (К-L14 #12 CLEAN status preserved by absence-based discipline). К-L14 thesis preserved (zero substrate touch; pure governance artifact addition). Lesson #N13 commit integrity discipline applied. Brief A'.9.1 deliberation input surface post-push = report + this amendments log together (combined effective scope: 46 Q-K candidates + 10 prerequisites + 4 amendments directives + Phase 0 cleanup task list)."
+    event_type: amendment_landing
+    documents_affected:
+      - DOC-D-A_PRIME_9_0_AMENDMENTS_LOG                # NEW enrollment Tier 4 AUTHORED Category D (post-closure amendments artifact, 649 lines)
+      - DOC-G-REGISTER                                  # register_version 2.6 → 2.7
+    commits:
+      range: "9fcc517..PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS-REGISTER"
+      key_commits:
+        - hash: "9fcc517"
+          summary: "governance(amendments): A_PRIME_9_0_AMENDMENTS_LOG — Post-closure 4-amendment capture. Added docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md (Tier 4 AUTHORED Category D, 649 lines). 4 amendments captured: Defect 1 Q-K count divergence (42 vs 45) + Defect 2 §2.1 duplication removal + 5-rule deferral (DF009/DF012/DF015/DF018/DF020 family Mod-OS-coupled rules к К-L20 LOCK cascade) + test exclusion principle formalization (xUnit Trait + dotnet test filter + DFL025 family analyzer rules). Option γ Hybrid ratified. S-LOCK-1 zero-production-code preserved. К-L14 thesis preserved (governance artifact only). Cascade #3 retroactive empirical check Q3 confirmed Possibility A — cascade #3 К-L14 #12 CLEAN status preserved by absence-based discipline."
+        - hash: "PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS-REGISTER"
+          summary: "governance(register): A_PRIME_9_0 amendments — REGISTER cascade. 1 new DOC enrollment (DOC-D-A_PRIME_9_0_AMENDMENTS_LOG Tier 4 AUTHORED Category D). register_version 2.6 → 2.7. EVT-2026-05-24-A_PRIME_9_0_AMENDMENTS audit_trail entry appended. sync_register.ps1 -Validate gate pass. Frontmatter auto-sync (if applicable). Matches K_EXT_2/K_EXT_3/A'.9.0 governance cascade 2-commit convention (separate amendments log commit + REGISTER cascade commit)."
+    governance_impact: |
+      A'.9.0 RECONNAISSANCE / К-EXTENSIONS CASCADE #4 POST-CLOSURE AMENDMENTS
+      CAPTURE (Option γ Hybrid). Governance refinement artifact capturing 4
+      amendments surfaced by Crystalka post-execution review 2026-05-24 после
+      A'.9.0 closure commit 8a0ec32 + validation report timestamp commit 04e618c.
+
+      5 Q lock summary (continuation deliberation session 2026-05-24):
+      - Q1: Option γ Hybrid amendments log (preserves A'.9.0 closure integrity
+        без rewriting committed history; provides Brief A'.9.1 forward-input
+        artifact; sets precedent для future post-closure refinements likely
+        к recur; К-L14 thesis preserved through pure governance artifact)
+      - Q2: (c) Defer formal METHODOLOGY codification к Brief A'.9.1 closure
+        (promotion criterion requires substantially different second application
+        empirical evidence — cascade #3 = first application by absence;
+        Brief A'.9.1 = second application с formal mechanism)
+      - Q3: Run cascade #3 retroactive empirical check NOW (better discover
+        Possibility C now than during Brief A'.9.1 Phase 0 surprise) —
+        Possibility A CONFIRMED (К-L14 #12 CLEAN preserved by absence)
+      - Q4: (b) xUnit `[Trait("Category", "ReservedStub")]` + dotnet test
+        `--filter "Category!=ReservedStub"` mechanism (self-documenting +
+        standard tooling + no csproj surgery + analyzer rule shape simple +
+        closure protocol integration clean + composable with other Traits)
+      - Q5: (i) Section-per-amendment format (clear per-amendment provenance
+        для future agents)
+
+      4 amendments captured (per amendments log §1-§4):
+
+      Amendment #1 (Defect 1 — Q-K count divergence correction):
+      Report §1.2 executive summary states «42 Q-K candidates» but §11
+      introduction states «45 total Q-K candidates (42 from sub-agents + 3
+      cross-cutting от α4 synthesis)». §11 actual total (45) is correct per
+      Q-K-43/Q-K-44/Q-K-45 enumeration. Risk if uncorrected: Brief A'.9.1
+      deliberation could lock Q-K surface at 42 missing 3 architecturally
+      significant cross-cutting Q-Ks (Q-K-43 cascade shape, Q-K-44 naming
+      convention, Q-K-45 documentation forward propagation). Brief A'.9.1
+      effective Q-K total = 45 + Q-K-46 (Amendment #4 new) = 46.
+
+      Amendment #2 (Defect 2 — §2.1 duplication removal):
+      Report §2 contains §2.1 «Phase 0 anomalies surfaced» duplicated
+      (first instance ~lines 90-117 after §2.0 narrative — natural position;
+      second instance ~lines 186-213 after §2.3 S-LOCK verification —
+      content identical verbatim). Suspected cause: α4 synthesis commit
+      f017455 appended content без deduplication check. Brief A'.9.1 Phase 0
+      cleanup task: delete second instance, keep first. Mechanical correction
+      — no architectural decision required; batchable с other Phase 0 work.
+
+      Amendment #3 (5-rule deferral от A'.9.1 first-batch к К-L20 LOCK cascade):
+      Per Crystalka direction 2026-05-24, 5 rules deferred — DF009 (К-L9
+      Vanilla = mods), DF012 (К-L12 native scheduler sovereignty), DF015 (К-L15
+      bus capability declaration), DF018 (К-L18 mod unload quiescence sequence),
+      DF020 family (К-L20). Common property: all Mod-OS-coupled — depend on
+      Mod API surface stability не formally LOCKED until К-L20 milestone.
+      Per-rule rationale: DF009 IModApi surface volatile pre-К-L20 LOCK;
+      DF012 facade boundary не finalized pre-LOCK; DF015 capability vocabulary
+      не finalized pre-LOCK; DF018 lifecycle sequence may refine при К-L20
+      (cf. К10.3 v2 §9.5 unload chain 8→9 step с V resource cleanup);
+      DF020 family already deferred per K_CLOSURE §7.3 + ANALYZER_RULES.md §1.
+      Architectural cleanliness: foundational rules (storage/span/bootstrap/
+      type-IDs/native-bindings) ship first; Mod-coupled rules wait для К-L20
+      stability. Refined A'.9.1 first-batch = 13 rules (8 P0 + 5 P1) versus
+      original 17 rules (9 P0 + 8 P1). К-L20 LOCK cascade scope = 4 K-L-specific
+      rules + 20 DF020 sub-rules = up to 25 rules; substantial cascade likely
+      multi-stage decomposition analogous к A'.9.1 ξ/χ/ψ progression.
+
+      Amendment #4 (Test exclusion principle formalization):
+      Per Crystalka direction «Все модули с заглушками, которые необходимы для
+      билда требуется исключить из тестирования, так как там нечего тестировать,
+      и это лишь будет врать о проделанной работе». Lesson #25 refined direct
+      extension — tests против reserved-stub modules are vacuous (lying tests).
+      Lying-test taxonomy: Pattern A (defensive throw stubs — test passes
+      testing throw semantics OR fails since failure is expected behavior);
+      Pattern B (silent stubs — test asserts «code did nothing» = 100% false
+      positive green-tick). Cascade #3 precedent: 3 deferred dispatch arms
+      (HandlePawnState/HandleItemSpawned/HandleTickAdvanced) marked as silent
+      stubs (Lesson #N12 sub-pattern B per cascade #3 mid-cascade ratification);
+      cascade #3 achieved exclusion BY ABSENCE (no test classes ever created).
+      Mechanism ratified (Q4 (b)): xUnit `[Trait("Category", "ReservedStub")]`
+      + `dotnet test --filter "Category!=ReservedStub"`. Self-documenting at
+      point of code + standard tooling discoverable + no csproj surgery +
+      analyzer rule shape simple T2 syntax + closure protocol integration
+      clean + composable с other Traits. Analyzer rule shape proposal:
+      DFL025 family (DFL025-A test class trait enforcement T2 P1 Warning
+      Trivial code-fix + DFL025-B standalone Skip method T2 P2 Suggestion
+      Trivial code-fix + DFL025-C closure protocol script lint rule T6 P1
+      Suggestion). METHODOLOGY v1.13+ codification path: (a) Lesson #25
+      refined 3rd extension OR (b) new Lesson #N17 FORMALIZE candidate OR
+      (c) defer formal codification к Brief A'.9.1 closure post-empirical
+      application (default per Q2 ratification).
+
+      Cascade #3 retroactive empirical check (Q3) outcome:
+      Filesystem MCP searches executed 2026-05-24 — tests/ directory listing
+      (29 directories: 10 test projects + 19 Fixture.* projects; no Launcher-
+      specific test project) + tests/DualFrontier.Application.Tests/Bridge/
+      listing (1 file VResourceCleanupTests.cs) + 6 pattern searches
+      (*Dispatch*, *Launcher*, *PawnState*, *ItemSpawned*, *TickAdvanced*,
+      *RenderCommand*). All 6 patterns returned 0 matches. Possibility A
+      CONFIRMED — cascade #3 excluded deferred dispatch arms от testing BY
+      ABSENCE-BASED DISCIPLINE (no test classes exist against deferred arms,
+      RenderCommandDispatcher, or Launcher). Cascade #3 К-L14 #12 status
+      remains CLEAN. No retroactive correction surface. К-L14 thesis
+      preservation stronger than initially read (discipline already applied
+      empirically). Forward concern: absence-based discipline is FRAGILE —
+      future cascades могут drift (developer adds test против reserved-stub
+      без realizing principle). Trait-based mechanism (Amendment #4) is
+      forward discipline strengthening — codifies what cascade #3 achieved
+      by convention.
+
+      К-L14 thesis preservation (cascade #4 amendments addition):
+      - Zero production code touched (amendments log = pure governance artifact)
+      - Zero substrate API surface modified (no К-L change)
+      - Zero test code touched (discipline directive, не test infra change)
+      - К-L14 evidence count unchanged: 13 (cascade #3 #12 clean-additive
+        + A'.9.0 #13 observational baseline preserved)
+      - К-L14 thesis preserved unmodified
+
+      REGISTER amendments:
+      - 1 new DOC enrollment:
+        * DOC-D-A_PRIME_9_0_AMENDMENTS_LOG (Tier 4 AUTHORED Category D;
+          post-closure amendments artifact, 649 lines; review_cadence
+          on-Brief-A'.9.1-deliberation; supersedes report для forward
+          sequencing where conflicts arise)
+      - register_version 2.6 → 2.7
+      - last_modified: 2026-05-23 → 2026-05-24
+      - last_modified_commit: PENDING-COMMIT-K_EXT_3-CLOSURE →
+        PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS
+
+      Brief A'.9.1 deliberation input surface post-push:
+      - A_PRIME_9_RECONNAISSANCE_REPORT.md (empirical reconnaissance baseline,
+        historically accurate at execution time; supersedes when conflicts
+        arise on factual reconnaissance findings)
+      - A_PRIME_9_0_AMENDMENTS_LOG.md (post-closure refinements + directives;
+        supersedes для forward sequencing where conflicts с report arise)
+      - Combined effective scope: 46 Q-K candidates + 10 Brief A'.9.1
+        prerequisites + 4 amendments directives + Phase 0 cleanup task list
+
+      Brief A'.9.1 Phase 0 cleanup tasks (per Amendment #1 + #2):
+      - Defect 1 correction: update report §1.2 Q-K count к 45+ (acknowledging
+        cross-cutting Q-Ks per §11.8)
+      - Defect 2 deduplication: remove second §2.1 instance (lines ~186-213)
+      - Optional §10 + §11 footnote cross-referencing amendments log so future
+        report-only readers find amendments
+
+      A'.9.1 scope refinements per amendments log §5.2:
+      - Refined first-batch = 13 rules (8 P0 + 5 P1), не 17
+      - К-L20 LOCK cascade reservation для 4 K-L-specific deferred rules
+        + 20 DF020 family sub-rules
+      - DFL025 family analyzer rules ship at A'.9.1 (DFL025-A + DFL025-B;
+        DFL025-C deferred к governance tooling cascade)
+      - [ReservedStub] attribute infrastructure mandatory prerequisite для
+        DFL025 detection (analyzer infrastructure cascade includes
+        attribute introduction)
+      - METHODOLOGY v1.13+ codification path для test exclusion principle
+        deferred к Brief A'.9.1 closure per Q2 (c) ratification
+
+      Lessons surfaced/applied:
+      - Lesson #N13 commit integrity discipline applied (honest discovery +
+        clean correction, не silent fixup; amendments log preserves committed
+        history vs rewriting; verified staged content matches commit message
+        claims pre-commit per Lesson #N13)
+      - Lesson #N14 fourth application candidate (empirical state coverage —
+        cascade #3 retroactive check via Filesystem MCP confirms К-L14 #12
+        CLEAN status by absence-based discipline; promotion proximity HIGH
+        post-A'.9.0 third application — fourth application strengthens further)
+      - Lesson #25 refined 3rd extension candidate (test exclusion principle
+        для reserved-stub modules — METHODOLOGY v1.13+ codification target
+        at Brief A'.9.1 closure per Q2 (c) deferral; cascade #3 = first
+        application by absence; Brief A'.9.1 = second application с formal
+        mechanism would trigger promotion)
+
+      Forward sequencing post-amendments:
+      - Brief A'.9.1 (Analyzer Infrastructure cascade) deliberation may
+        start immediately post-push к origin/main
+      - A'.9.1 = К-extensions cascade #5 per Q-K-44 dual-designation
+        recommendation
+      - A'.9.2+ = cleanup phase χ completion + severity promotion +
+        optional code-fix providers
+      - A'.9.3+ = DC###/DL### cascade-derived + Lesson-derived auxiliary rules
+      - Post-A'.9 = V-extension cascade per Crystalka «расширять V» direction
+      - К-L20 LOCK cascade = Mod API lock milestone + 4 K-L-specific deferred
+        rules + 20 DF020 family sub-rules activation (substantial cascade)
+      - Post-К-L20 = RT discussion + implementation (RTX через Vulkan
+        extension, pathfinding + ballistics через RT cores) per Crystalka
+        «позже» direction
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions:
+        - document: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
+          from: NOT_ENROLLED
+          to: AUTHORED
