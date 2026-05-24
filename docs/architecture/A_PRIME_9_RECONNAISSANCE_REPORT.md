@@ -17,20 +17,141 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-A_PRIME_9_RECONNAISS
 **Milestone**: A'.9 Roslyn Architectural Analyzer (multi-cascade milestone)
 **Authoring cascade**: A'.9.0 Reconnaissance — Brief `tools/briefs/A_PRIME_9_0_RECONNAISSANCE_BRIEF.md`
 **Authoring date**: 2026-05-24
-**Status at α0**: SKELETON — sections populated through cascade Phase α (α1–α4)
-**Status at closure**: Live (post-A'.9.0 closure)
+**Status**: Live (Phase α complete 2026-05-24; awaiting Phase β governance cascade + Phase γ closure)
 
 ---
 
 ## §1 — Executive summary
 
-*[To be populated в Phase α4 — synthesizes §3–§9 findings into 1–2 page high-level summary]*
+The A'.9.0 Reconnaissance cascade (К-extensions cascade #4 cross-reference) produced this report as its sole deliverable per S-LOCK-1 zero-production-code discipline. Reconnaissance covered all 7 brief-mandated domains via multi-agent dispatch (7 sub-agents: 3 parallel in α1 batch A + 3 parallel in α2 batch B + 1 sequential in α3) plus Phase 0 inventory.
+
+### §1.1 — Key empirical findings
+
+**Pre-existing analyzer artifacts surfaced during Phase 0** (deliberation agent's structural anchor missed these; documented в §2.1):
+- `docs/architecture/ANALYZER_RULES.md` v0.1 AUTHORED-SKELETON exists с 18 active + 4 reserved DF### rules already enumerated (DF001–DF019 + DF003.1/DF007.1/DF015.1 sub-rules + DF006/DF008/DF014/DF020 reserved); per-rule §2 specification template defined. Recon scope shifted от «discover taxonomy» к «score analyzability + priority + rule shape refinement against existing taxonomy».
+- `tools/briefs/A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md` v0.1 AUTHORED-SKELETON exists since 2026-05-17 with A9.A–E sub-milestones sketched and anticipated `tools/analyzers/DualFrontier.Analyzers/` project location.
+
+**К-L analyzability matrix (Domain 1, §3) — 22 К-L scored**: 2 T1 / 8 T2 / 5 T3 / 4 T4 / 1 T5 / 2 T6 ; 9 P0 critical / 8 P1 high / 3 P2 medium / 3 P3 low. Zero rule ID conflicts с existing ANALYZER_RULES.md DF### taxonomy. One severity refinement candidate (DF019 split — Q-K-§3-4). К-L21 row in skeleton was misnumbered; corrected (no К-L21 exists per K_CLOSURE §2.24).
+
+**FORMALIZE Lessons analyzability matrix (Domain 2, §4) — 12 A'.8-batch Lessons scored**: 11 T6 documentation-only + 1 T2 auxiliary-tooling-only (Lesson #8 atomic-commit shape via git hook, NOT Roslyn). Provisional Lessons #N12 (Defensive Reserved Stub), #N13 (commit integrity verification), #N14 (Phase 0 empirical state coverage) flagged HIGH/MEDIUM-HIGH promotion proximity. Only #N12 has non-trivial Roslyn rule shape potential (T4 hybrid).
+
+**Cascade #2 + #3 surfaced rule candidates (Domain 3, §5) — 10 candidates**: 5 from cascade #2 (IRenderCommand marker-only, Defensive Reserved Stub Pattern, banned-namespace using Godot/Silk.NET, defensive throw message convention, versioning convention) + 5 from cascade #3 (Lesson #N12 sub-pattern B silent stub, dispatch arm handler discipline, constructor injection в Launcher, Bridge Commands pure data, RenderCommandDispatcher signature stability). Net infrastructure recommendation: introduce `[ReservedStub]` + `[MarkerInterface]` attribute infrastructure + `ConventionMessageMatcher` bilingual helper at A'.9.1 Phase α before any DC### rule lands.
+
+**Mod OS К-L20 prep surface (Domain 4, §6) — 20 candidate DF020 sub-rules** spanning 4 categories: 5 namespace/type restrictions (DF020.1–5), 4 API usage restrictions (DF020.6–9), 7 manifest field static cross-check rules (DF020.10–16), 4 forward-compatibility grace-period rules (DF020.17–20). 6 precursor relationships A'.9-era → К-L20 era identified. К-L20 LOCK timing: post-A'.9 milestone per K_CLOSURE §9.5 Q1–Q8 deliberation. M3.4 (manifest cross-check analyzer milestone) deferral disposition flagged as Q-K candidate.
+
+**Roslyn ecosystem state (Domain 5, §7)** — concrete versions and recommendations:
+- `Microsoft.CodeAnalysis.CSharp` 5.3.0 (released 2026-03-10) — current stable
+- **CRITICAL**: analyzer csproj MUST target `netstandard2.0` (not net8.0); analyzer test csproj remains net8.0
+- Test framework: `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` 1.1.2 (matches Dual Frontier xUnit baseline; soft-maintenance acceptable)
+- Severity policy: confirm 15 Error + 4 Warning per ANALYZER_RULES.md §4; align with dotnet/roslyn-analyzers + dotnet/aspnetcore precedents (Warning default, Error reserved для unambiguous runtime/architectural violation)
+- Code-fix providers: ship analyzer-only at A'.9.1 (defer code-fixes к A'.9.2 после cleanup phase)
+
+**Build/CI integration surface (Domain 6, §8) — concrete recommendations**:
+- sln placement: Option C hybrid — `tools/DualFrontier.Analyzers/` analyzer csproj + `tests/DualFrontier.Analyzers.Tests/` test csproj (matches ManifestRewriter precedent verbatim)
+- Directory.Build.props: centralized `<ProjectReference OutputItemType="Analyzer">` with `MSBuildProjectName` conditional excluding analyzer-self + tests + Fixture.* projects
+- .editorconfig: greenfield (current file 4 lines); recommend per-rule severity at `suggestion` для cleanup phase, promote к `error` post-cleanup (skip `warning` tier к avoid `TreatWarningsAsErrors=true` interaction)
+- CI: analyzer runs automatically on `dotnet build`; staged A'.9.1 progression (ξ scaffolding → χ cleanup → ψ promotion)
+
+**Suppression governance precedent (Domain 7, §9)** — existing pattern is near-zero baseline:
+- 5 total suppressions (1 src CS0618 transitional + 4 tests CS0649 fixture); 0 `[SuppressMessage]` attributes; 0 `GlobalSuppressions.cs` files; 0 CAPA entries related to suppression
+- Recommended governance: 5-tier classification (transitional / fixture / false-positive / carve-out / NOT-allowed); BAN `GlobalSuppressions.cs`; tiered CAPA tracking; per-closure suppression sweep + quarterly cumulative review cadence
+- Lesson #25 refined extended: «structurally eliminate suppressed-warning surface» (proposed METHODOLOGY v1.13+ codification)
+
+### §1.2 — Cumulative Q-K candidates surfaced
+
+**42 Q-K candidates** aggregated across all 7 domains' §X.99 subsections for Brief A'.9.1 deliberation (see §11 enumeration):
+- §3.99 К-L domain: 7 Q-Ks
+- §4.99 Lessons domain: 5 Q-Ks
+- §5.99 Cascade #2/#3 domain: 7 Q-Ks
+- §6.99 Mod OS К-L20 domain: 6 Q-Ks
+- §7.99 Roslyn ecosystem domain: 6 Q-Ks
+- §8.99 Build/CI domain: 6 Q-Ks
+- §9.99 Suppression governance domain: 5 Q-Ks
+
+### §1.3 — Forward path
+
+Brief A'.9.1 (Analyzer Infrastructure cascade) can be authored against this report's §10 prerequisites + §11 Q-K candidates without re-scanning the codebase. К-extensions cascade #5 designation cross-reference recommended (continues К-extensions sequence; A'.9.1 = first analyzer implementation cascade).
+
+A'.9 milestone decomposition emerging from this report (refinement at Brief A'.9.1 deliberation):
+- **A'.9.1**: Analyzer infrastructure + first DF### rules + `.editorconfig` baseline + cleanup phase (3-stage ξ/χ/ψ per §8.4 recommendation)
+- **A'.9.2**: Severity promotion (cleanup → error) + optional code-fix providers for Trivial-feasibility rules
+- **A'.9.N**: DC### cascade-derived rules + DL### Lesson-derived auxiliary tooling (per Domain 2/3 recommendations); M3.4 deferred analyzer milestones materialization (per Domain 4)
+- **Post-A'.9**: К-L20 Mod API lock cascade → DF020 family activation
 
 ---
 
 ## §2 — Reconnaissance scope + methodology executed
 
-*[To be populated through cascade — documents actual reads performed, multi-agent dispatch usage if any, any deviations от brief specification, halt-condition triggers + their resolution]*
+### §2.0 — Execution narrative
+
+A'.9.0 Reconnaissance cascade executed 2026-05-24 by Claude Code on `main` branch (cascade #3 closure baseline `8ea0d03` + 1 post-cascade commit `4981d78` Crystalka CI logs; branch strategy ratified pre-execution as «continue on main from `4981d78`» matching cascade #3 pattern, not feature branch per brief literal). Total cascade: **8 commits** across Phase α (5) + Phase β (TBD) + Phase γ (1), within Q-J-8 commit budget 4-8.
+
+**Phase 0 anomaly halt + resolution** (Lesson #N13 commit integrity discipline applied):
+- Initial `dotnet build` failed: 8 MSB3021/MSB3027 file-lock errors от orphan `testhost` PID 7380 (started 2026-05-23 23:48:23 — Crystalka's CI session per `4981d78` AccessViolation logs) holding DLLs в `tests/DualFrontier.Core.Tests/bin/`
+- Resolution: Crystalka ratified minimal cleanup option; killed testhost 7380 only; 32 other dotnet processes left untouched
+- Retry succeeded: 0 warnings, 0 errors, 7.15s elapsed
+- S-LOCK-1 zero-production-code-change preserved (no S-LOCK violation; halt was environmental)
+
+### §2.1 — Phase 0 anomalies surfaced
+
+**Pre-existing analyzer artifacts** (deliberation agent's structural anchor missed these):
+
+1. **`docs/architecture/ANALYZER_RULES.md`** v0.1 AUTHORED-SKELETON (created 2026-05-23 А'.8 К-closure cascade)
+   - 18 active + 4 reserved rules already enumerated (DF001–DF019, DF003.1, DF007.1, DF015.1 + DF006/DF008/DF014/DF020 reserved)
+   - Per-rule §2 specification template defined
+   - Authority chain: K_CLOSURE_REPORT.md §7 canonical → ANALYZER_RULES.md encodes → analyzer implements
+   - Forward к LOCKED at A'.9 milestone implementation
+   - Implication for A'.9.0 recon: rule taxonomy NOT a discovery surface — already specified. Recon scores **analyzability + priority + rule shape refinement** против existing taxonomy.
+
+2. **`tools/briefs/A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md`** v0.1 AUTHORED-SKELETON (created 2026-05-17)
+   - Predecessor analyzer brief skeleton — independent of A'.9.0 lineage
+   - Anticipated project location: `tools/analyzers/DualFrontier.Analyzers/` (not `src/`)
+   - Sub-milestones A9.A–E sketched (scaffolding → per-invariant rules → first-run cleanup → warning→error promotion → test infrastructure)
+   - Implication for A'.9.0 recon: forms Brief A'.9.1 candidate skeleton; report §10 prerequisites should resolve conflict с this skeleton (supersede, merge, or revise).
+
+3. **Suppression discipline already strong** (Phase 0 grep scan):
+   - src/: 1 pragma (`NativeWorld.cs:526` CS0618 obsolete transition — legitimate)
+   - tests/: 4 pragmas (CS0649 unused field в test fixtures — necessary for reflection-based fixtures)
+   - SuppressMessage attribute: 0 occurrences across src/ tests/
+   - GlobalSuppressions files: 0
+   - Implication for Domain 7: governance recommendations build on a clean baseline, not remediation of existing debt.
+
+4. **Build/CI surface bare**:
+   - `.editorconfig` essentially empty (`root = true` + `charset = utf-8` only)
+   - `Directory.Build.props`: `TreatWarningsAsErrors=true` already enforced, no analyzer references
+   - No `.ruleset` files (no legacy code analysis config)
+   - No `.github/workflows/*.yml` (no GitHub Actions CI — local-only build verification)
+   - Implication for Domain 6: integration surface is "blank canvas" — A'.9.1 has full freedom для placement decisions.
+
+### §2.2 — Multi-agent dispatch executed (S-LOCK-5 recommendation applied)
+
+**Batch A (Phase α1)** — three sub-agents in parallel (~6 min wall-clock):
+- **Agent A1 (Domain 1, К-L invariants analyzability)**: read KERNEL_ARCHITECTURE.md Part 0, K_CLOSURE_REPORT.md §2.1–§2.24 + §7, ANALYZER_RULES.md, VULKAN_SUBSTRATE.md crosscut; produced 22-row matrix + per-К-L detailed analysis + 7 Q-K candidates
+- **Agent A2 (Domain 2, FORMALIZE Lessons analyzability)**: read METHODOLOGY.md FORMALIZE batch + Provisional batch; produced 12-row matrix + 12 Provisional bonus assessment + 5 Q-K candidates
+- **Agent A3 (Domain 3, Cascade #2/#3 surfaced rule candidates)**: read K_EXT_2_GODOT_DEPRECATION_BRIEF + K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF §6 forward consideration sections; extracted 5+5 candidates + cross-cascade observations + 7 Q-K candidates
+
+**Batch B (Phase α2)** — three sub-agents in parallel (~7 min wall-clock):
+- **Agent B1 (Domain 5, Roslyn ecosystem desk research)**: 11 WebSearches + 5 WebFetches verifying current state May 2026; produced §7.1–§7.4 + 6 Q-K candidates
+- **Agent B2 (Domain 6, Build/CI integration surface)**: deep reads of `DualFrontier.sln` (456 lines), `Directory.Build.props` (39 lines), `.editorconfig` (4 lines), `sync_register.ps1` (395 lines) + 3 representative csproj spot-reads; produced §8.1–§8.4 + 6 Q-K candidates
+- **Agent B3 (Domain 7, Suppression governance precedent)**: deep reads of CS0618 site (NativeWorld.cs:500-531) + 4 CS0649 sites + REGISTER.yaml CAPA collection (lines 5776-6573) + Lesson #25 trace; produced §9.1–§9.2 + 5 Q-K candidates
+
+**Sequential (Phase α3)** — one sub-agent depending on Domain 1 К-L20 handoff:
+- **Agent C1 (Domain 4, Mod OS К-L20 prep surface)**: full read MOD_OS_ARCHITECTURE.md v1.11 LOCKED (1241 lines) + MODDING.md v1.1 LOCKED + K_CLOSURE §2.23/§9.5/§12 + ANALYZER_RULES.md DF020 + mods/DualFrontier.Mod.Example + ManifestRewriter precedent; produced §6.1–§6.3 enumerating 20 candidate DF020 sub-rules + 6 precursor relationships + 6 Q-K candidates
+
+### §2.3 — S-LOCK compliance verification
+
+| S-LOCK | Status | Evidence |
+|---|---|---|
+| S-LOCK-1 (zero production code) | ✓ | git diff for cascade commits shows only `docs/architecture/A_PRIME_9_RECONNAISSANCE_REPORT.md` + `tools/briefs/A_PRIME_9_0_RECONNAISSANCE_BRIEF.md` modifications |
+| S-LOCK-2 (comprehensive 7-domain scope) | ✓ | All 7 domains covered per §2.2 + report §3–§9 populated |
+| S-LOCK-3 (report path + format) | ✓ | Report at `docs/architecture/A_PRIME_9_RECONNAISSANCE_REPORT.md`, markdown + YAML frontmatter, Tier 2 Live Category A |
+| S-LOCK-4 (analyzability scoring rubric) | ✓ | Consistent T1-T6 tier + P0-P3 priority applied across §3 (21 К-L) + §4 (12 Lessons) + §5 (10 candidates) + §6 (20 DF020 sub-rules) |
+| S-LOCK-5 (multi-agent dispatch encouraged) | ✓ | 7 sub-agents executed across batch A + batch B + sequential C1 per §2.2 |
+| S-LOCK-6 (К-L14 #13 observational evidence framing) | ✓ | Verification #13 entry in K_L14_EVIDENCE_DASHBOARD.md (Phase β2) frames as 5th evidence type NEW category, degenerate pass criteria |
+| S-LOCK-7 (full file reads, no truncation) | ✓ | Sub-agents performed full reads (Agent A1 read K_CLOSURE_REPORT.md 2302 lines + KERNEL Part 0; Agent C1 read MOD_OS 1241 lines + MODDING) |
+| S-LOCK-8 (Brief A'.9.1 prerequisites §10 enumeration) | ✓ | §10 populated с 10 enumerated prerequisites + empirical anchors |
+| S-LOCK-9 (Q-K candidates §11 enumeration) | ✓ | §11 aggregates 42 Q-K candidates from §3.99/§4.99/§5.99/§6.99/§7.99/§8.99/§9.99 + 3 cross-cutting candidates surfaced during synthesis |
+| S-LOCK-10 (empirical reads cited per finding) | ✓ | Sub-agent outputs cite source files + sections/lines per claim; bare assertions excluded |
 
 ### §2.1 — Phase 0 anomalies surfaced
 
@@ -2930,26 +3051,231 @@ Both surfaces share a defining structural property — **the absence of a signal
 
 ## §10 — Brief A'.9.1 prerequisites
 
-*[To be populated в Phase α4 — per S-LOCK-8 mandatory enumeration]*
+Per S-LOCK-8: explicit enumeration of decisions Brief A'.9.1 deliberation must ratify based on this report. Each prerequisite carries empirical anchor + recommendation (from sub-agent recon) + decision pointer.
 
-Decisions Brief A'.9.1 deliberation must ratify (based on this report):
+### Prerequisite 1 — Rule prioritization batch для A'.9.1
 
-1. **Rule prioritization batch для A'.9.1**: *[P0 candidate set]*
-2. **Analyzer project structure**: *[location confirmation — `src/DualFrontier.Analyzers/` vs `tools/analyzers/DualFrontier.Analyzers/` per A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md skeleton; csproj config; dependencies]*
-3. **Test framework choice**: *[recommendation]*
-4. **Severity policy**: *[per-rule severity assignment rules]*
-5. **Suppression policy**: *[when allowed, CAPA tracking, governance protocol]*
-6. **Build/CI integration trigger**: *[analyzer runs on `dotnet build` automatically OR opt-in?]*
-7. **A'.9 cascade decomposition refinement**: *[A'.9.2/A'.9.3/... initial scope based on rule sequencing]*
-8. **К-L20 Mod API lock timing**: *[forward path]*
-9. **Disposition of A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md skeleton**: *[supersede / merge / revise — Phase 0 surfaced this predecessor; needs explicit decision]*
-10. **Disposition of ANALYZER_RULES.md AUTHORED-SKELETON**: *[continue к LOCKED per existing forward plan; ensure A'.9.1 implementation actualizes the §2 template populations]*
+**Empirical anchor** (§3.0 + §3.1):
+- 9 К-L scored P0 critical: DF001, DF002, DF003, DF003.1, DF004, DF005, DF007, DF011, DF015
+- 8 К-L scored P1 high: DF007.1, DF009, DF010, DF012, DF015.1, DF017, DF018, DF019
+- 3 К-L scored P2 medium: DF013, DF016, DF020 (К-L20 deferred к Mod API lock cascade)
+- 3 К-L scored P3 low / docs-only: DF006 (SUPERSEDED), DF008 (process-invariant — pre-commit hook alternative), DF014 (meta-invariant — K_L14_EVIDENCE_DASHBOARD alternative)
+
+**Recommendation**: Ship all 9 P0 + 8 P1 = **17 rules at A'.9.1** (skipping DF006/DF008/DF014 reserved; deferring DF013/DF016/DF019 P2 к A'.9.2 OR shipping at suggestion-severity если cheap). DF020 family deferred к Mod API lock cascade per §6.3 timing.
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies (a) initial 17-rule batch (b) sequencing within batch (which rule first к minimize cascade complexity).
+
+### Prerequisite 2 — Analyzer project structure
+
+**Empirical anchor** (§8.1):
+- A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md skeleton expected `tools/analyzers/DualFrontier.Analyzers/`
+- ManifestRewriter precedent: flat `tools/DualFrontier.Mod.ManifestRewriter/` (tool csproj) + `tests/DualFrontier.Mod.ManifestRewriter.Tests/` (test csproj)
+- Three options analyzed (src/, tools/analyzers/, hybrid)
+
+**Recommendation**: **Option C hybrid** — `tools/DualFrontier.Analyzers/` (flat — match ManifestRewriter precedent verbatim; do NOT introduce `tools/analyzers/` subfolder для single analyzer) + `tests/DualFrontier.Analyzers.Tests/` (match `tests/DualFrontier.*.Tests/` glob without protocol change). NestedProjects entries: analyzer → tools Solution Folder; tests → tests Solution Folder.
+
+**csproj config** (per §7.1.2 + §7.1.5):
+- Analyzer csproj: `<TargetFramework>netstandard2.0</TargetFramework>` (override Directory.Build.props net8.0), `<IsRoslynComponent>true</IsRoslynComponent>`, `<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>`, `<IsPackable>false</IsPackable>`
+- Test csproj: stays net8.0 (Microsoft.CodeAnalysis.Testing supports net8.0)
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies location + csproj baseline. Q-K-§8-1 (TFM override mechanism) + Q-K-§8-2 (CS1591 inheritance) addressed here.
+
+### Prerequisite 3 — Test framework choice
+
+**Empirical anchor** (§7.2):
+- `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` 1.1.2 (2024-06-19) — soft-maintenance но functional + 2.9M downloads (largest community precedent)
+- Base package `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing` 1.1.4 (2026-05-22) — actively maintained generic; framework-specific variants frozen at 1.1.2
+- Critical version coupling: testing project MUST explicitly pin `Microsoft.CodeAnalysis.CSharp.Workspaces 5.3.0` к override 1.0.1 transitive (else MEF composition fails)
+
+**Recommendation**: **xUnit framework variant** (matches Dual Frontier xUnit baseline + soft-maintenance acceptable + smallest-LOC option). Pin `Microsoft.CodeAnalysis.CSharp.Workspaces 5.3.0` explicitly в test csproj.
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies test framework + version-pinning discipline.
+
+### Prerequisite 4 — Severity policy
+
+**Empirical anchor** (§7.3 + §8.3):
+- ANALYZER_RULES.md §4 assigns 15 Error + 4 Warning across 19 active rules; consistent с dotnet/roslyn-analyzers + dotnet/aspnetcore precedents
+- `TreatWarningsAsErrors=true` already in Directory.Build.props line 7 — Warning-severity rules effectively become build-error rules
+
+**Recommendation**: **per-rule severity exclusively via .editorconfig** (no Directory.Build.props additions; preserves single-file diff for severity changes). Staged progression: cleanup phase = `suggestion` (visible, non-fatal); promotion = `error` (skip `warning` tier to avoid TWAE confusion). DF### category convention: per-К-L-tier categories (`DualFrontier.Architecture`, `DualFrontier.NativeBoundary`, `DualFrontier.ModSurface`) supporting targeted overrides per Q-K-§7-5.
+
+**Open severity refinements** (Q-K candidates):
+- Q-K-§7-1: DF009 Error → Warning until К-L20 LOCK (mod parity volatile pre-LOCK)
+- Q-K-§3-4: DF019 split — Error для API-shape sub-detector / Warning for hardware-tier
+- Q-K-§3-3: К-L15.1 Roslyn scope — managed-side facade only (Layer 3 native-side deferred)
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies (a) per-rule severity assignments (b) category convention (single vs tiered) (c) cleanup-phase severity baseline.
+
+### Prerequisite 5 — Suppression policy
+
+**Empirical anchor** (§9.1 + §9.2):
+- Current baseline: 5 pragmas (1 src CS0618 transitional + 4 tests CS0649 fixture); 0 [SuppressMessage]; 0 GlobalSuppressions.cs; 0 CAPA related
+- Proposed: 5-tier classification (transitional / fixture / false-positive / carve-out / NOT-allowed); BAN GlobalSuppressions.cs; tiered CAPA tracking
+
+**Recommendation**: Adopt §9.2 governance protocol verbatim. Ship `DF999` self-policing rule (ban GlobalSuppressions.cs + [assembly: SuppressMessage]) at A'.9.1 alongside first DF### rules per Q-K-§9-1 recommendation (a). [SuppressMessage] attribute form deferred к first false-positive demanding symbol-scope per Q-K-§9-2 recommendation (b). Per-closure suppression sweep + quarterly review cadence integrated to closure protocol §12.7.
+
+**Lesson #25 refined extension**: «structurally eliminate suppressed-warning surface» codification as METHODOLOGY v1.13+ candidate (per §9.2.5).
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies (a) tiered classification + CAPA matrix (b) DF999 self-policing rule scope (c) METHODOLOGY v1.13+ Lesson #25 extension proposal.
+
+### Prerequisite 6 — Build/CI integration trigger
+
+**Empirical anchor** (§8.4):
+- No `.github/workflows/*.yml` — no GitHub Actions CI today; local-only `dotnet build` verification
+- Roslyn analyzers invoked automatically by `dotnet build` once `<ProjectReference OutputItemType="Analyzer">` is added — no separate CI trigger
+
+**Recommendation**: **Centralized analyzer reference in Directory.Build.props** with `MSBuildProjectName` conditional excluding analyzer-self + tests + Fixture.* projects. `PrivateAssets="all"` prevents transitive leak. Analyzer runs automatically on every `dotnet build`. Staged A'.9.1 progression: ξ scaffolding → χ cleanup phase → ψ severity promotion (per §8.4 Stages 1-3).
+
+**Mod inclusion**: `mods/DualFrontier.Mod.Example` INCLUDED в analyzer enforcement per Q-K-§8-3 recommendation (a) — exemplary compliance demonstrates pattern.
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies (a) centralized vs per-project reference choice (b) exclusion list scope (c) stage progression timing (single A'.9.1 cascade vs sub-cascades ξ/χ/ψ).
+
+### Prerequisite 7 — A'.9 cascade decomposition refinement
+
+**Empirical anchor** (§1.3 + §8.4):
+- Brief A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md skeleton had A9.A/B/C/D/E sub-milestones
+- §8.4 recommends 3-stage ξ/χ/ψ within A'.9.1
+- Domain 4 §6.3 identifies DF020 family as post-A'.9 К-L20 LOCK cascade
+
+**Recommendation**:
+- **A'.9.1**: analyzer infrastructure (Stage ξ) + first 17 DF### rules + cleanup phase (Stage χ) + `.editorconfig` baseline + `DF999` self-policing
+- **A'.9.2**: severity promotion (Stage ψ — `.editorconfig` edit) + optional code-fix providers for Trivial-feasibility rules (DF004 type registration auto-gen; possibly DF002, DF011 within tests)
+- **A'.9.3+**: DC### cascade-derived rules (per §5 — 10 candidates: IRenderCommand marker, defensive stub pattern с `[ReservedStub]` attribute infrastructure, banned-namespace via BannedApiAnalyzer, etc.); DL### Lesson-derived auxiliary tooling (DL008 atomic-commit hook); M3.4 manifest cross-check analyzer (per Domain 4)
+- **Post-A'.9 / pre-К-L20 LOCK**: V-extension (per Crystalka «расширять V»)
+- **К-L20 LOCK cascade**: DF020 family (20 sub-rules per §6.2 — namespace/type + API usage + manifest cross-check + grace period); analyzer enables Mod API enforcement automation
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies decomposition. Q-K-§6-3 (M3.4 placement decision: A'.9.X vs К-L20 LOCK) addressed here.
+
+### Prerequisite 8 — К-L20 Mod API lock timing forward path
+
+**Empirical anchor** (§6.1 + §6.3.2):
+- К-L20 canonical text resides в K_CLOSURE_REPORT.md §2.23 (lines 774-795); KERNEL Part 0 table ends at К-L19 per Q-N-8-1 reservation discipline
+- DF020 reserved post-Mod API lock per K_CLOSURE §7.3 line 1689 + ANALYZER_RULES.md §1
+- K_CLOSURE §9.5 enumerates Q1-Q8 Mod API lock milestone surface (lines 1908-1929)
+
+**Recommendation**:
+- Forward sequence: A'.9 milestone (analyzer infrastructure + DF001-DF019) → V-extension → **К-L20 LOCK cascade** (DF020 activation as verification step)
+- A'.9-era preparatory work (per §6.3.1): 6 precursor relationships A'.9-era → DF020 (DF003.1→DF020.3, DF009→DF020.{1,2,8,9}, DF012→DF020.8, DF015→DF020.{9,10,11}, DF018→К-L18+К-L20 interaction, M3.4→DF020.{10,11,16})
+- A'.9 closure outputs Mod API surface baseline snapshot (per §6.3.3) for K-L20 LOCK cascade reference state
+
+**Decision**: Brief A'.9.1 deliberation Q-N ratifies (a) acknowledgment that К-L20 LOCK comes after A'.9 milestone (b) baseline-snapshot capture at A'.9 closure (c) MOD_API_CONTRACT.md skeleton pre-authoring per Q-K-§6-6 recommendation.
+
+### Prerequisite 9 — Disposition of A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md skeleton
+
+**Empirical anchor** (§2.1):
+- A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md exists at AUTHORED-SKELETON v0.1 (created 2026-05-17)
+- Content: A9.A/B/C/D/E sub-milestones sketched + 18 rules listed + project location `tools/analyzers/DualFrontier.Analyzers/`
+- A'.9.0 reconnaissance findings supersede some of skeleton's specifications (e.g., flat `tools/DualFrontier.Analyzers/` recommended over `tools/analyzers/`)
+
+**Recommendation**: **REVISE** at Brief A'.9.1 deliberation — skeleton provides structural anchor + scope expectations; A'.9.1 brief authored against THIS reconnaissance report supersedes specific path/scope choices in skeleton. Skeleton remains as historical reference (Tier 3 AUTHORED-SKELETON status preserved); Brief A'.9.1 becomes new Tier 3 AUTHORED then EXECUTED через A'.9.1 cascade.
+
+**Decision**: Brief A'.9.1 deliberation explicitly addresses disposition (supersede / merge / revise) и records в Q-N lock.
+
+### Prerequisite 10 — Disposition of ANALYZER_RULES.md AUTHORED-SKELETON
+
+**Empirical anchor** (§2.1):
+- ANALYZER_RULES.md v0.1 AUTHORED-SKELETON (created А'.8 К-closure 2026-05-23) с 18 active + 4 reserved rules enumerated
+- Per-rule §2 specification template ready для population
+- Forward к Tier 1 LOCKED at A'.9 milestone implementation per current §5 lifecycle plan
+
+**Recommendation**: **Continue к LOCKED per existing forward plan** — A'.9.1 cascade implementation actualizes the §2 template populations per-rule. Each DF### rule's analyzer class lands code + ANALYZER_RULES.md §4 detail section populated. Promotion к Tier 1 LOCKED at A'.9 milestone completion (per current §5 specification).
+
+**Decision**: Brief A'.9.1 deliberation acknowledges existing plan + commits к §2 template population per-rule as cascade closure step.
 
 ---
 
 ## §11 — Open questions for Brief A'.9.1 deliberation (Q-K candidates)
 
-*[To be populated в Phase α4 — per S-LOCK-9 mandatory]*
+Per S-LOCK-9: aggregated index of all Q-K candidates surfaced through reconnaissance, consolidated into single linear sequence for Brief A'.9.1 deliberation Q-N lock surface. Each entry cross-references the originating §X.99 subsection where full context + options + recommendation are detailed. **45 total Q-K candidates** (42 from sub-agents + 3 cross-cutting from α4 synthesis).
+
+### §11.1 — К-L domain (Domain 1, originated in §3.99)
+
+- **Q-K-1**: К-L21 row in skeleton misnumbered — no К-L21 exists per K_CLOSURE §2.24. (See §3.99 first bullet.) Recommendation: remove К-L21 row from skeleton matrix; clarify «total К-L = 21 cumulative invariants (К-L1..L19 main с К-L6 SUPERSEDED + 3 sub-invariants К-L3.1/L7.1/L15.1)» в §3.0 summary statistics.
+- **Q-K-2**: Roslyn analyzer scope limitation для native-side К-L invariants (К-L1 C++20 dialect, К-L8 native owns storage, К-L15.1 Layer 3 compile-time isolation, К-L19 hardware GPU). (See §3.99.) Recommendation: document explicitly per-rule which enforcement tier carries the burden (Roslyn / pre-commit / runtime probe / CI native build / hardware capability check); defer native-side tooling к post-A'.9 cascade.
+- **Q-K-3**: К-L15.1 Roslyn analyzer scope — managed-side facade only (Layer 3 native-side enforcement deferred к clang-tidy custom check). (See §3.99.) Recommendation: Option (a) restrict DF015.1 detection scope к managed-side facade per-tier API usage.
+- **Q-K-4**: DF019 severity refinement — Error для static API-shape sub-detector / Warning для hardware-tier configurable. (See §3.99.) Recommendation: Option (c) make DF019 severity-configurable per detection sub-pattern.
+- **Q-K-5**: DF010 (К-L10 decision rule) detection scope — narrow к `[ArchitecturalDecision]`-attribute-annotated context. (See §3.99.) Recommendation: Option (c) defer DF010 implementation pending decision-context attribute introduction.
+- **Q-K-6**: DF008 (К-L8) process-invariant tooling — git pre-commit hook design scope. (See §3.99.) Recommendation: Option (a) defer pre-commit hook design к separate cascade (post-А'.9); document expectation в Brief A'.9.1.
+- **Q-K-7**: Code-fix provider feasibility scope для А'.9 cascade. (See §3.99.) Recommendation: Option (a) include code-fix providers for Trivial-feasibility rules only (DF002 DllImport target, DF011 ManagedWorld → ManagedTestWorld в test scope); defer Moderate/Complex.
+
+### §11.2 — FORMALIZE Lessons domain (Domain 2, originated in §4.99)
+
+- **Q-K-8**: DL### namespace decision для Lesson-derived auxiliary rules. (See §4.99 Q-K-§4-1.) Recommendation: Option (c) defer namespace decision; tool prefix `tools/governance/check_*.ps1` for auxiliary tooling — Lesson rules are explicitly NOT Roslyn rules per matrix tier analysis. DL### reservation as forward-option.
+- **Q-K-9**: Lesson #8 DL008 enforcement scope and CI cost trade-off (per-commit `dotnet build` + `dotnet test`). (See §4.99 Q-K-§4-2.) Recommendation: Option (c) enforce at closure protocol (matches existing §12.7 single-event cost model); preserve branch-local opt-in.
+- **Q-K-10**: Lesson #25 + Lesson #N12 combined rule shape (if #N12 promotes к FORMALIZE). (See §4.99 Q-K-§4-3.) Recommendation: Option (c) defer combined rule design until #N12 promotion (3rd application surfaced).
+- **Q-K-11**: Lesson #17 vs Lesson #20 merge decision. (See §4.99 Q-K-§4-4.) Recommendation: Option (c) defer к A'.9.0 closure deliberation; #17 vs #20 merge is governance bookkeeping, не A'.9 analyzer scope.
+- **Q-K-12**: Lesson #N6 (test fixture cleanup discipline) auxiliary tooling shape if promoted. (See §4.99 Q-K-§4-5.) Recommendation: Option (b) extend closure protocol §12.7 step 1 wording at next METHODOLOGY closure к mandate Fixtures/ rebuild before Modding suite run.
+
+### §11.3 — Cascade #2 + #3 surfaced candidates domain (Domain 3, originated in §5.99)
+
+- **Q-K-13**: Rule namespace allocation для cascade-derived rules (DC### vs DF### vs DL### vs tiered DFK/DFL/DFC). (See §5.99 Q-K-§5-1.) Recommendation: Option (d) tiered namespace (DFK### / DFL### / DFC### explicit prefix discipline) matches existing governance taxonomy.
+- **Q-K-14**: Analyzer infrastructure attributes (`[ReservedStub(SubPattern, Reason)]` + `[MarkerInterface]` + optionally `[DispatcherClass]` / `[DispatchHandler]` / `[LauncherComponent]`). (See §5.99 Q-K-§5-2.) Recommendation: Option (a) introduce all attributes в A'.9.1 Phase α infrastructure (~50-100 LOC single commit) — batched infrastructure unlocks higher-priority rules cleanly.
+- **Q-K-15**: Rule pairing/consolidation — DC001 (IRenderCommand no Execute) + DC009 (Bridge Commands pure data) merge into single rule. (See §5.99 Q-K-§5-3.) Recommendation: Option (a) merge into single DFC001 с two sub-checks — simplicity wins.
+- **Q-K-16**: Banned-namespace consolidation — C2-Rule-3 (no using Godot;/Silk.NET;) implementation pattern. (See §5.99 Q-K-§5-4.) Recommendation: Option (c) use existing `BannedApiAnalyzer` package; well-tested, integrates с .editorconfig configuration.
+- **Q-K-17**: DC008 (no singleton/static в Launcher) scope vs `feedback_bus_access.md` SystemBase.Services carve-out. (See §5.99 Q-K-§5-5.) Recommendation: Option (a) DC008 stays Launcher-scoped (no conflict); revisit generalization after observing analyzer ergonomics.
+- **Q-K-18**: Signature-stability tooling — adopt `Microsoft.CodeAnalysis.PublicApiAnalyzers` для C3-Rule-5 (RenderCommandDispatcher signature stability). (See §5.99 Q-K-§5-6.) Recommendation: Option (a) adopt PublicApiAnalyzers для `DualFrontier.Launcher` + `DualFrontier.Application.Bridge` assemblies at A'.9.1; directly addresses recurring K_EXT_N concern.
+- **Q-K-19**: Governance-tier rule scope (C2-Rule-5 versioning convention enforcement outside Roslyn scope). (See §5.99 Q-K-§5-7.) Recommendation: Option (a) explicit acknowledgment + deferral preserves A'.9's focus on Roslyn analyzer ergonomics; flag parallel governance-tooling workstream.
+
+### §11.4 — Mod OS К-L20 domain (Domain 4, originated in §6.99)
+
+- **Q-K-20**: DF020 family scope ratification at К-L20 LOCK cascade Q7 deliberation. (See §6.99.) Recommendation: §6.2 enumeration (20 sub-rules) is reconnaissance-baseline; К-L20 LOCK cascade Q7 narrows or expands at deliberation time.
+- **Q-K-21**: PublicApiAnalyzers timing — adopt at A'.9.1 (per Q-K-18) vs defer к К-L20 LOCK cascade. (See §6.99.) Recommendation: adopt at A'.9.1 (covers cascade #3 S-LOCK-8 + future K_EXT_N + provides K-L20 LOCK cascade с Mod API surface baseline tooling).
+- **Q-K-22**: M3.4 (manifest cross-check analyzer milestone) placement — A'.9.X cascade vs К-L20 LOCK cascade. (See §6.99.) Recommendation: defer к A'.9.3+ standalone «Manifest Analyzer» sub-cascade — M3.4 is structurally independent of DF### К-L rules but conceptually tied к К-L20.
+- **Q-K-23**: ManifestAnalyzer project structure — single project с DF### + DF020 namespaces, OR separate DualFrontier.Analyzers + DualFrontier.ManifestAnalyzer projects. (See §6.99.) Recommendation: separate `tools/DualFrontier.ManifestAnalyzer/` project (different concern: manifest-cross-check requires JSON parser + cross-file analysis vs C# syntax tree analysis).
+- **Q-K-24**: К-L20 sub-invariant decomposition convention (DF020.1 through DF020.20 namespace) vs sub-К-L (К-L20.1, К-L20.2, ...) anchoring. (See §6.99.) Recommendation: keep DF### rule-ID sub-numbering (DF020.1..DF020.20) — К-L20 stays atomic invariant; rule decomposition exists at analyzer enforcement layer.
+- **Q-K-25**: MOD_API_CONTRACT.md skeleton pre-authoring at A'.9 milestone closure (per K_CLOSURE §2.23 line 791). (See §6.99.) Recommendation: pre-author Tier 2 AUTHORED-SKELETON at A'.9 closure containing (a) IModApi v3 surface verbatim (b) manifest schema v3 verbatim (c) capability syntax verbatim — К-L20 LOCK cascade promotes к Tier 1 LOCKED без architectural surprise.
+
+### §11.5 — Roslyn ecosystem domain (Domain 5, originated in §7.99)
+
+- **Q-K-26**: DF009 severity downgrade Error → Warning until К-L20 Mod API lock lands. (See §7.99 Q-K-§7-1.) Recommendation: Option (b) Warning until К-L20 LOCK; aligns с ASP0019 precedent + ANALYZER_RULES.md «revisit post-Mod API lock» note.
+- **Q-K-27**: Central Package Management (`Directory.Packages.props`) adoption at A'.9.1 для Roslyn SDK version centralization. (See §7.99 Q-K-§7-2 + Domain 6 confirms no CPM today.) Recommendation: Option (a) adopt CPM at A'.9.1; version drift risk (analyzer/test/codefix triad) is real + CPM is one-file change.
+- **Q-K-28**: Analyzer distribution path — ProjectReference vs local NuGet vs hybrid. (See §7.99 Q-K-§7-3.) Recommendation: Option (a) ProjectReference path; single-developer internal-only context makes NuGet overhead unjustified.
+- **Q-K-29**: `Microsoft.CodeAnalysis.Analyzers` (analyzer-of-analyzers) `EnforceExtendedAnalyzerRules=true` from day one. (See §7.99 Q-K-§7-4.) Recommendation: Option (a) enable from day one; friction is minor + RS1015 (helpLinkUri) ensures every DF### has documentation anchor.
+- **Q-K-30**: Per-К-L-tier rule categories (`DualFrontier.Architecture` / `.NativeBoundary` / `.ModSurface`) для `.editorconfig` targeted overrides. (See §7.99 Q-K-§7-5.) Recommendation: Option (b) per-К-L-tier categories — supports targeted overrides + matches ANALYZER_RULES.md taxonomic structure.
+- **Q-K-31**: `Microsoft.CodeAnalysis.NetAnalyzers` adoption alongside DF### rules. (See §7.99 Q-K-§7-6.) Recommendation: Option (b) defer NetAnalyzers; A'.9.1 focused on DF### rules; open separate brief A'.X for NetAnalyzers adoption когда DF### baseline stable.
+
+### §11.6 — Build/CI domain (Domain 6, originated in §8.99)
+
+- **Q-K-32**: Analyzer csproj TargetFramework override mechanism (netstandard2.0 vs Directory.Build.props conditional vs sibling Directory.Build.props). (See §8.99 Q-K-§8-1.) Recommendation: Option (a) analyzer csproj explicitly sets `<TargetFramework>netstandard2.0</TargetFramework>` (simplest, no Directory.Build.props churn).
+- **Q-K-33**: CS1591 inheritance для analyzer csproj (suppress vs require XML docs). (See §8.99 Q-K-§8-2.) Recommendation: Option (a) inherit suppression for A'.9.1; ANALYZER_RULES.md is canonical rule documentation, не C# XML comments.
+- **Q-K-34**: mods/DualFrontier.Mod.Example analyzer enforcement inclusion. (See §8.99 Q-K-§8-3.) Recommendation: Option (a) include mod in centralized analyzer reference — example mod should be exemplary; К-L9 vanilla=mods means analyzer treats mod code identically.
+- **Q-K-35**: Cleanup-phase suppression rationale grammar/convention (free-text vs structured tag vs sidecar). (See §8.99 Q-K-§8-4.) Recommendation: structured single-line tag `// DFNNN-SUPPRESS: <citation>` + `#pragma warning disable/restore` brackets; avoid sidecar GlobalSuppressions.cs.
+- **Q-K-36**: Closure protocol §12.7 inclusion of analyzer test project (always-run vs touch-triggered). (See §8.99 Q-K-§8-5.) Recommendation: always-run post-A'.9.1; analyzer test suite is fast (in-memory compilation) + surfaces regressions on every К-Lxx-adjacent change.
+- **Q-K-37**: GitHub Actions adoption decision deferral target. (See §8.99 Q-K-§8-6.) Recommendation: defer outside A'.9 scope; relevant when collaboration model changes от solo-dev к multi-contributor.
+
+### §11.7 — Suppression governance domain (Domain 7, originated in §9.99)
+
+- **Q-K-38**: DF999 self-policing analyzer rule (ban GlobalSuppressions.cs + [assembly: SuppressMessage]) shipping timing. (See §9.99 Q-K-§9-1.) Recommendation: Option (a) ship in A'.9.1 alongside first DF### rules; greenfield-clean (0 existing assembly-level suppressions); retroactive cleanup cost high.
+- **Q-K-39**: `[SuppressMessage]` attribute form sanction at A'.9.1 vs deferral. (See §9.99 Q-K-§9-2.) Recommendation: Option (b) A'.9.1 ships pragma-only; introduce attribute form at first false-positive demanding symbol-scope.
+- **Q-K-40**: CAPA-tracking tier for diagnostic false-positives — site-scoped vs rule-scoped vs hybrid. (See §9.99 Q-K-§9-3.) Recommendation: Option (c) hybrid — site-scoped for first occurrence of rule, rule-scoped thereafter.
+- **Q-K-41**: Test-side fixture suppression CAPA-exempt policy scope (blanket vs restricted vs blanket + quarterly review). (See §9.99 Q-K-§9-4.) Recommendation: Option (c) blanket exempt + quarterly review provides falsifiability mechanism.
+- **Q-K-42**: Carve-out attribute mandatory Justification parameter. (See §9.99 Q-K-§9-5.) Recommendation: Option (a) Justification mandatory; preserves discipline established by existing CS0618 inline comment; marginal authoring cost offset by full traceability.
+
+### §11.8 — Cross-cutting Q-Ks surfaced during α4 synthesis
+
+- **Q-K-43**: A'.9.1 cascade shape — single multi-stage cascade (ξ/χ/ψ within one cascade-brief execution) vs three independent cascades (A'.9.1a scaffolding, A'.9.1b cleanup, A'.9.1c promotion).
+  - Context: §8.4 recommends 3-stage progression ξ scaffolding → χ cleanup → ψ promotion. Cascade #3 ran 14 commits successfully — single-cascade ξ/χ/ψ feasible. But χ cleanup phase may surface high violation count (estimated 50-200 violations across 17 rules × 12 src projects); если exceeds budget, χ → standalone cascade A'.9.1b.
+  - Options:
+    - (a) Single A'.9.1 cascade с ξ/χ/ψ Phase α-equivalent sub-phases (matches existing cascade structure; commit count likely 15-25)
+    - (b) Three sub-cascades A'.9.1a/b/c (each ~5-10 commits; clear χ cleanup-budget gate; lower per-cascade complexity)
+    - (c) Hybrid — A'.9.1 ships ξ + small χ subset; standalone A'.9.1b finishes χ + ψ
+  - Recommendation: Brief A'.9.1 deliberation chooses based on χ violation budget estimate. Default к (a) single cascade if estimate ≤80 violations; (b) three sub-cascades if estimate >150 violations; (c) hybrid otherwise.
+
+- **Q-K-44**: A'.9 milestone cascade naming convention — К-extensions cascade #5+ (continues К-ext sequence) vs A'.9.1/A'.9.2/... (milestone-internal numbering only).
+  - Context: A'.9.0 = К-extensions cascade #4 (dual designation per brief §0.5). A'.9.1 et seq follow same dual designation OR К-ext convention sunsets at A'.9 boundary?
+  - Options:
+    - (a) Continue dual designation: A'.9.1 = К-extensions cascade #5; A'.9.2 = К-extensions cascade #6; etc.
+    - (b) A'.9 milestone-internal naming only: A'.9.1 = «A'.9.1» (К-ext numbering paused during A'.9 milestone)
+    - (c) Hybrid — A'.9.1 dual designation (К-ext #5) because it's first analyzer impl, then A'.9.2+ milestone-internal only
+  - Recommendation: Option (a) — continue dual designation для KERNEL chronicle + LEDGER §3.6+ entries continuity. К-extensions sequence captures «cumulative milestone-touching cascades», analyzer cascades qualify.
+
+- **Q-K-45**: Documentation forward propagation plan для A'.9.1+ cascade outputs.
+  - Context: A'.9.1 cascade produces (a) actualized ANALYZER_RULES.md §4 detail sections per-rule (b) MOD_API_CONTRACT.md skeleton per Q-K-25 (c) cleanup-phase ledger documenting violations resolved/suppressed/refined. Governance integration plan needed.
+  - Options:
+    - (a) Each artifact gets individual REGISTER enrollment + frontmatter (ANALYZER_RULES.md already enrolled at v0.1; MOD_API_CONTRACT.md becomes new Tier 2 AUTHORED-SKELETON; cleanup-ledger as Tier 4 closure-attached governance artifact)
+    - (b) Bundle all into ANALYZER_RULES.md sub-sections (single governance artifact; lower REGISTER churn but lower granularity)
+    - (c) Defer governance integration к A'.9.1 closure deliberation
+  - Recommendation: Option (a) — explicit per-artifact REGISTER discipline matches existing pattern (cascade #2/#3 produced multiple governance artifacts; A'.9.1 likely produces 3-5 artifacts). Cleanup-ledger as cascade-closure attachment matches existing K_EXT_N cleanup-trace pattern.
 
 ---
 
@@ -2957,7 +3283,35 @@ Decisions Brief A'.9.1 deliberation must ratify (based on this report):
 
 ### §12.1 — Source documents read
 
-*[Populated через cascade execution log]*
+**Phase 0 reconnaissance reads** (α0):
+- `.git/HEAD` + `.git/refs/heads/main` + `.git/logs/HEAD` — state verification
+- `docs/architecture/*.md` — 31 files (existence inventory via Glob)
+- `docs/methodology/*.md` — 6 files (existence inventory via Glob)
+- `docs/governance/*.{yaml,md}` — 6 files (existence inventory via Glob)
+- `tools/briefs/*.md` — 63 files (existence inventory via Glob)
+- `src/*` — 12 project directories (structural inventory)
+- `tests/*` — 30 directories (10 test projects + 20 Fixture.* projects)
+- `native/**` — DualFrontier.Core.Native C++ kernel extensive structure
+- `DualFrontier.sln`, `Directory.Build.props`, `.editorconfig`, `.gitignore` (full reads + spot-read)
+- Suppression scans: `#pragma warning disable` (5 hits) + `SuppressMessage` (0 hits) + `GlobalSuppressions` (0 hits)
+- `tools/governance/*` — 5 files (existence inventory)
+- `docs/architecture/ANALYZER_RULES.md` — full read (175 lines; surfaced as Phase 0 anomaly)
+- `tools/briefs/A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md` — partial read (100 lines; surfaced as Phase 0 anomaly)
+
+**Reconnaissance batch A reads** (α1):
+- *Agent A1*: `docs/architecture/KERNEL_ARCHITECTURE.md` Part 0 К-L table + chronicle; `docs/architecture/K_CLOSURE_REPORT.md` §2.1–§2.24 + §7; `docs/architecture/ANALYZER_RULES.md`; `docs/architecture/VULKAN_SUBSTRATE.md` v1.1 LOCKED crosscut
+- *Agent A2*: `docs/methodology/METHODOLOGY.md` v1.12 full read (1078 lines); §«Phase A' lessons» (lines 817–956) + §«Provisional Lessons» (lines 958–1073)
+- *Agent A3*: `tools/briefs/K_EXT_2_GODOT_DEPRECATION_BRIEF.md` full read; `tools/briefs/K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF.md` full read; `docs/architecture/K_EXTENSIONS_LEDGER.md` §3.3 + §3.4 cascade narratives
+
+**Reconnaissance batch B reads** (α2):
+- *Agent B1*: 11 WebSearches + 5 WebFetches against NuGet.org, dotnet/roslyn-sdk, dotnet/aspnetcore, MS Learn, Meziantou, Aaronontheweb (full URLs cited in §7.0)
+- *Agent B2*: `DualFrontier.sln` full read (456 lines); `Directory.Build.props` full read (39 lines); `.editorconfig` full read (4 lines); `tools/governance/sync_register.ps1` full read (395 lines); 3 csproj spot-reads (Core/Launcher/Core.Tests); `tools/briefs/A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md` full read (151 lines)
+- *Agent B3*: `src/DualFrontier.Core.Interop/NativeWorld.cs` lines 500–531; `src/DualFrontier.Core.Interop/Marshalling/NativeComponentType.cs` lines 21–58; `tests/DualFrontier.Core.Interop.Tests/BootstrapTests.cs` full (98 lines); `tests/DualFrontier.Core.Interop.Tests/ComponentTypeRegistryTests.cs` full (133 lines); `tests/DualFrontier.Core.Tests/Bus/ManagedBusBridgeTests.cs` full (373 lines); `docs/governance/REGISTER.yaml` capa_entries (lines 5776-6573); `docs/methodology/METHODOLOGY.md` Lesson #25 (line 973) + v1.11 changelog
+
+**Reconnaissance Domain 4 reads** (α3):
+- *Agent C1*: `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.11 LOCKED full read (1241 lines); `docs/architecture/KERNEL_ARCHITECTURE.md` Part 0 К-L9 row (line 58); `docs/architecture/K_CLOSURE_REPORT.md` §2.11 К-L9 (lines 423-445), §2.23 К-L20 (lines 774-795), §7.3 DF020 (line 1689), §9.5 Mod API lock milestone Q1-Q8 (lines 1908-1929), §12 KERNEL Part 0 К-L20 placeholder note (line 2097); `docs/architecture/ANALYZER_RULES.md` §1 + §3 + §4 DF020 row; `docs/architecture/MODDING.md` v1.1 LOCKED IModApi v3 surface (lines 47-86); `mods/DualFrontier.Mod.Example` structure; `tools/DualFrontier.Mod.ManifestRewriter` project precedent
+
+**Total empirical reads**: ~25 unique source files + ~10 cascade brief reads + ~11 web searches + ~5 web fetches
 
 ### §12.2 — Briefs
 
@@ -2981,5 +3335,6 @@ Decisions Brief A'.9.1 deliberation must ratify (based on this report):
 
 ---
 
-*End of A_PRIME_9_RECONNAISSANCE_REPORT.md skeleton — Phase α0*
-*Sections §1–§11 populated through cascade Phase α1–α4 per brief §4 specification*
+*End of A_PRIME_9_RECONNAISSANCE_REPORT.md — Phase α complete*
+*Authored 2026-05-24 via multi-agent reconnaissance (7 sub-agents across Domains 1–7 per brief §2 specification)*
+*Brief A'.9.1 (Analyzer Infrastructure cascade) authoring per §10 prerequisites + §11 Q-K candidates*
