@@ -124,6 +124,8 @@ internal sealed class LauncherRenderer : IRenderer, IDisposable
             _imageAvailable!.Handle, IntPtr.Zero, out bool outOfDate);
         if (outOfDate)
         {
+            // Window may be closing — skip recreation if surface gone (shutdown race).
+            if (!_runtime.Window.IsOpen) return;
             _runtime.VulkanDevice.WaitIdle();
             _runtime.Swapchain.Recreate((uint)_runtime.Window.Width, (uint)_runtime.Window.Height);
             _runtime.RecreateFramebuffersForSwapchain();
@@ -169,8 +171,19 @@ internal sealed class LauncherRenderer : IRenderer, IDisposable
 
         bool presentOutOfDate = _runtime.Swapchain.Present(
             _runtime.VulkanDevice.GraphicsQueue, renderFinishedHandle, imageIndex);
+
+        // 5. Wait + reset fence для next frame BEFORE swapchain recreation (К-L7
+        // atomic-from-observer simple form — fence guards GPU completion of the
+        // submission we just issued; safe к do even if outOfDate triggered).
+        _frameFence!.Wait();
+        _frameFence.Reset();
+
         if (presentOutOfDate)
         {
+            // Window may be closing — skip recreation if surface gone (shutdown race
+            // protection: vkGetPhysicalDeviceSurfaceCapabilitiesKHR fails VK_ERROR_UNKNOWN
+            // when surface destroyed mid-frame).
+            if (!_runtime.Window.IsOpen) return;
             _runtime.VulkanDevice.WaitIdle();
             _runtime.Swapchain.Recreate((uint)_runtime.Window.Width, (uint)_runtime.Window.Height);
             _runtime.RecreateFramebuffersForSwapchain();
@@ -181,10 +194,6 @@ internal sealed class LauncherRenderer : IRenderer, IDisposable
             _runtime.Camera.ViewportSize = new Vector2(vw, vh);
             _runtime.Camera.Zoom = MathF.Min(vw / mapWorldWidth, vh / mapWorldHeight);
         }
-
-        // 5. Wait + reset fence для next frame (К-L7 atomic-from-observer simple form).
-        _frameFence!.Wait();
-        _frameFence.Reset();
     }
 
     public void Shutdown()
