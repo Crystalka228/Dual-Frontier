@@ -211,6 +211,53 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Executor: Claude Opus 4.7 (brief authoring + Q-N deliberation) + Claude Code (execution) +
   │   Crystalka (Q-N ratification).
   │
+  ├─ Phase post-A'.8 — К-extensions cascade #2 — GODOT FULL DEPRECATION + LAUNCHER FORMALIZATION (CLOSED 2026-05-23)
+  │   Brief: tools/briefs/K_EXT_2_GODOT_DEPRECATION_BRIEF.md (AUTHORED → EXECUTED)
+  │   Designation: «К-extensions cascade #2» per A'.8 К-closure Q-N-8-11 forward sequencing
+  │   + Q-N-8-6 LOCKED post-closure deferral. Original Godot branch
+  │   `claude/godot-removal-deliberation-Vfg2R` (2ba8130, single commit) discarded as
+  │   obsolete precursor (S-LOCK-1) — clean redo on current main (9ea5dbe).
+  │   Scope (per Q-G-0 Option X single large cascade):
+  │   - Phase α: Physical purge — DualFrontier.Presentation.Native removed (5 files); tracked
+  │     DualFrontier.Presentation removed (32 files including project.godot + Nodes/UI/addons +
+  │     Scenes/main.tscn); Kenney assets rescued via git mv к assets/kenney/ (12 files).
+  │   - Phase β: Documentation cleanup tiered (Q-G-10) — Tier 1 mandatory 16 Application/* files
+  │     (brief expected 8; expanded к include Commands/README + SimStateLayer + DevKitOnlyAttribute
+  │     surfacing Presentation.Native textual references); Tier 2 mandatory 6 active arch docs
+  │     (ARCHITECTURE, ECS, ISOLATION, THREADING, KERNEL, VULKAN_SUBSTRATE v1.1→v1.1.1 patch);
+  │     Tier 3/4 not triggered; β5 historical archives (GODOT_INTEGRATION + VISUAL_ENGINE
+  │     closure addendum).
+  │   - Phase γ: Architectural decisions ratified (Q-G-1 IDevKitRenderer dormant; Q-G-2
+  │     Presentation.Native removed; Q-G-3 IRenderCommand pure marker — Execute() stripped
+  │     from 6 Command records; Q-G-5 no new К-L + Lesson #N12 candidate captured).
+  │   - Phase δ: Launcher project scaffold (DualFrontier.Launcher infrastructure-only per
+  │     Q-G-6 (b1) с Defensive Reserved Stub dispatcher — Lesson #N12 first application;
+  │     brief amendment Crystalka Option A mid-cascade — Program.cs adapted к existing
+  │     GameLoop self-ticking background-thread architecture; Application.csproj
+  │     InternalsVisibleTo Presentation → Launcher).
+  │   - Phase ε: Governance cascade (KERNEL v2.5 → v2.5.1 patch bump + versioning convention
+  │     codified Q-G-12; METHODOLOGY v1.10 → v1.11 Lesson #N12 + #25 refined; new
+  │     K_EXTENSIONS_LEDGER.md companion artifact per Q-G-11; REGISTER 3-commit cascade
+  │     hybrid per Q-G-13; brief AUTHORED → EXECUTED + closure section per Q-G-14
+  │     verification protocol).
+  │   К-L impact: zero (К-L count unchanged: 21 final).
+  │   Lessons surfaced:
+  │     • Lesson #N12 (Provisional, NEW): «Defensive Reserved Stub Pattern» — paired discipline
+  │       с Lesson #25 refined; first application captured cascade #2.
+  │     • Lesson #25 refined per Crystalka 2026-05-23 framing: lying-test prevention principle
+  │       («не тестировать пустые интерфейсы и пустую реализацию которые врут в тестах»).
+  │     • Lesson #14 PROMOTED third application (Godot deprecation arc completion як pre-existing
+  │     • drift cleanup на separate branch claude/k-ext-2-godot-deprecation).
+  │   К-L14 verification #11 (first removal-type evidence per Q-G-14 honest-framed protocol):
+  │     • Substrate (DualFrontier.Runtime) primitives unchanged through removal of dead consumer
+  │     • scaffold (Presentation.Native + Presentation) + addition of new consumer (Launcher).
+  │     • К-L14 thesis preservation: substrate exhibits stability across consumer churn.
+  │   Cumulative К-Lxx series: 21 invariants (unchanged from A'.8 closure).
+  │   Commits: cascade atomic on claude/k-ext-2-godot-deprecation branch (α0 + α1 + α1.5 +
+  │   β1 + β2 + β5 + δ1 + δ3 + ε1-ε7 = ~16 commits).
+  │   Executor: Claude Opus 4.7 (deliberation + brief authoring + execution) + Crystalka
+  │   (Q-N ratification + mid-cascade Option A amendment ratification).
+  │
   ├─ Phase A'.9 — Architectural analyzer milestone
   │   Scope: Roslyn analyzer encoding K-Lxx invariants per K-closure report
   │   Dual purpose: (1) M-series migration verifier (catches drift in M-milestone migrations that tests don't see), (2) architectural debugger (surfaces bugs that compile + pass tests but violate invariants)
