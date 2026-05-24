@@ -1512,19 +1512,307 @@ This batched infrastructure work fits naturally as A'.9.1 Phase α (analyzer fou
 
 ## §6 — Mod OS К-L20 prep surface
 
-*[To be populated в Phase α3 (Domain 4) — depends on Domain 1 results]*
+### §6.0 — Reconnaissance methodology
 
-### §6.1 — К-L20 statement (from KERNEL Part 0)
+**Source documents read (Domain 4, Sub-Agent C1, 2026-05-24)**:
 
-*[Verbatim quote]*
+- `docs/architecture/MOD_OS_ARCHITECTURE.md` v1.11 LOCKED — full read (1241 lines): manifest v2 schema (§2), capability model (§3 incl. К10.2 tier extensions + К10.3 v2 К-L17 layer extensions), IModApi v3 strict surface (§4 incl. §4.6 / §4.6.1 / §4.6.3 v3-strict backward-incompat statement), type-sharing protocol (§5), three-level contracts (§6), bridge replacement (§7), three-axis versioning (§8 incl. caret-subset §8.4 LOCKED), lifecycle (§9 incl. К10.2/К10.3 v2 amendments), threat model (§10 caught/uncaught threats), migration plan (§11 incl. M3.4 + M3.5 deferred analyzer milestones), seven locked decisions (§12 D-1..D-7), and «Modding с native ECS kernel» trailer.
+- `docs/architecture/KERNEL_ARCHITECTURE.md` v2.5.2 LOCKED Part 0 — К-L9 (line 58) + К-L20 row absence in Part 0 table (table ends at К-L19, line 68; К-L20 lives in K_CLOSURE §2.23 per Q-N-8-1 reservation discipline) confirmed. Implication of K-L9 (line 84) read («No vanilla privilege»).
+- `docs/architecture/K_CLOSURE_REPORT.md` AUTHORED Tier 1 — §2.11 К-L9 entry (lines 423-445), §2.23 К-L20 entry (lines 774-795), §7.3 reserved rules table DF020 row (line 1689), §9.5 Mod API lock milestone Q1-Q8 surface (lines 1908-1929), §12 KERNEL Part 0 К-L20 placeholder note (line 2097).
+- `docs/architecture/ANALYZER_RULES.md` v0.1 AUTHORED-SKELETON — §1 18-active + 4-reserved enumeration (lines 26-53), §3 forward implementation plan including «DF020 post-Mod API lock» bullet block (lines 111-114), §4 reserved-rules table DF020 row (line 155).
+- `docs/architecture/MODDING.md` v1.1 LOCKED — IModApi v3 strict surface verbatim (lines 47-86), Allowed/Not-Allowed table (lines 91-104), AssemblyLoadContext block list (lines 106-114), manifest schema example (lines 156-188).
+- `docs/architecture/MOD_PIPELINE.md` (spot reads) — RestrictedModApi v3 strict declaration (line 122-123), Phase A ContractsVersion gate (line 61), validation error enum entries (line 82).
+- `docs/methodology/METHODOLOGY.md` — Provisional pool §16.X bullet block (line 984: «Lesson #N3 — К-L9 mod-facing boundary Contracts/Application (carried)»); full Lesson #N3 detailed narrative resides in v1.7+ post-А'.0 Methodology body (not extracted in this reconnaissance because Provisional bullet text is the source-of-truth handle for tracking, full narrative lives in METHODOLOGY body and is bookmarked as «carried Provisional» per Q-N-8-6 forward sequencing).
+- `tools/briefs/MOD_OS_V16_AMENDMENT_BRIEF.md` + `tools/briefs/MOD_OS_V16_AMENDMENT_CLOSURE.md` — historical context for v1.6 GPU compute integration amendment (Phase 1-7 execution; 11-commit cascade `260103b..d5dcdde`); informs §6.2.4 grace-period evolution baseline.
+- `tools/DualFrontier.Mod.ManifestRewriter/ManifestRewriter.cs` (127 lines) — `hotReload: true → false` build-time rewriter per D-7 LOCKED. Source preservation contract + idempotency contract documented in XML doc comments. Establishes precedent for a future `DualFrontier.Mod.ManifestAnalyzer` (separate Roslyn analyzer project) following the same project-structure pattern (one-purpose tool, deterministic, library + thin CLI wrapper).
+- `mods/DualFrontier.Mod.Example/ExampleMod.cs` + `mod.manifest.json` — current Mod API surface usage pattern: minimal IMod implementation (Initialize-stub + Unload-stub); manifest `manifestVersion: "3"` (strict per K8.3+K8.4 cutover), no `capabilities`/`kind`/`apiVersion`/`replaces` fields (uses §2.2 defaults).
+- `mods/DualFrontier.Mod.Vanilla.{Pawn,Combat,Magic,Inventory,Core,World}/*.cs` + `mod.manifest.json` — vanilla mod skeleton state; all five vanilla regular mods + Vanilla.Core shared mod register-empty per M8 skeleton; manifests carry full v3 surface including `capabilities: { required: [], provided: [] }` (registration content lands М9/M10 per §11.1 migration plan).
+
+**Cross-references к other Domain reports**:
+
+- Domain 1 (Agent A1) К-L20 row in §3.1 matrix (line 121): «**DEEP ANALYSIS DEFERRED TO DOMAIN 4 (Agent C1)** per brief discipline». This §6 is the deferred analysis target.
+- Domain 1 К-L9 deep analysis in §3.2 (lines 375-396): DF009 «revisit post-Mod API lock» — DF009/DF020 forward-design relationship motivates §6.3.1 precursor table below.
+- Domain 1 К-L3.1 deep analysis (lines 201-223): ALC isolation enforcement model informs §6.2.1 namespace/type restriction surface (cross-mod managed-path access is structurally impossible per К-L3.1; this is the load-bearing primitive on which §6.2.1 restrictions rest).
+
+**Honest deferral statement**: К-L20 is RESERVED post-Mod API lock per K_CLOSURE §7.3 + §9.5. Canonical text is TBD at Mod API lock deliberation (Q1-Q8 surface enumerated K_CLOSURE §9.5, lines 1910-1918). This §6 enumerates analyzer-enforceable restrictions **derivable from current MOD_OS v1.11 LOCKED surface + KERNEL Part 0 implications**; restrictions whose canonical formulation depends on Mod API lock deliberation outcome (Bridge mechanism design, grace period semantics evolution post-v1/v2-grace-sunset, manifest schema v3 freeze policy specifics) are flagged «pending Mod API lock canonical text».
+
+---
+
+### §6.1 — К-L20 statement (from KERNEL Part 0 + K_CLOSURE §2.23)
+
+**KERNEL Part 0 К-L20 row** (verbatim from `docs/architecture/KERNEL_ARCHITECTURE.md` Part 0 table, lines 48-69):
+
+> [К-L20 row is **NOT present** in the Part 0 table. Part 0 table runs К-L1..К-L19 (terminating at line 68). The К-L20 row in KERNEL Part 0 is the «RESERVED placeholder» referenced by `K_CLOSURE_REPORT.md` §12 line 2097: «К-L20: KERNEL_ARCHITECTURE.md Part 0 К-L20 row (RESERVED placeholder; populated at Mod API lock)». KERNEL v2.5.2 prose header line 17 confirms «К-L20 reserved post-Mod API lock excluded from main count» and «cumulative К-Lxx series total post-А'.7.x: 21 invariants» — К-L20 is the 22nd invariant reserved as such.]
+
+**K_CLOSURE §2.23 entry** (verbatim from `docs/architecture/K_CLOSURE_REPORT.md` §2.23, lines 774-795):
+
+> **§2.23 — К-L20: Mod API forward-compatibility [RESERVED]**
+>
+> **Status**: RESERVED (target: Mod API lock milestone post-А'.9)
+> **LOCK history**: Pre-AUTHORED. Text TBD at Mod API lock deliberation.
+> **Canonical text**: [TBD at Mod API lock milestone — К-L20 represents architectural commitment future-cascade for mod ecosystem stability через grace period mechanism]
+>
+> **Reservation rationale**:
+> - Mod API lock is downstream milestone post-A'.9 (per Q-N-8-6 LOCKED forward sequencing)
+> - К-L20 text requires Q-N deliberation at Mod API lock milestone (Q1-Q8 surfaces: Bridge mechanism, manifest freeze policy, grace period semantics, deprecation cadence, etc.)
+> - Pre-AUTHORED state preserved here as architectural placeholder + commitment
+>
+> **Falsifiability commitment**: TBD at Mod API lock deliberation. Expected criteria: Mod API v3 + manifest grace period semantics; mod authoring against locked API stays compatible; Bridge mechanism for forward-compatible amendments.
+>
+> **Production manifestation post-LOCK** (planned):
+> - `src/DualFrontier.Modding/IModApi.cs` — version-frozen surface
+> - `src/DualFrontier.Modding/ModManifest.cs` — manifest schema v3 frozen
+> - `src/DualFrontier.Modding/ModApiBridge.cs` — Bridge mechanism implementation
+> - `docs/architecture/MOD_API_CONTRACT.md` — Tier 1 LOCKED authored at Mod API lock milestone
+> - `docs/architecture/MOD_AUTHORING_GUIDE.md` — Tier 2 authored at Mod API lock milestone
+> - DF### rule: **DF020** RESERVED (reserved post-Mod API lock; will activate at Mod API lock milestone landing)
+>
+> **К-extensions tracking**: К-L20 forward к Mod API lock milestone. Phase B M-cycle migration verifies К-L20 + К-L9 «Vanilla = mods» purity combined. Mod API lock cascade is hard gate before Phase B (per Q-N-8-6 LOCKED forward sequencing).
+
+**Current status** (2026-05-24, A'.9.0 reconnaissance): **RESERVED post-Mod API lock**. Canonical К-L20 text TBD at Mod API lock deliberation. DF020 analyzer rule reserved per ANALYZER_RULES.md §1.1 (line 53) and K_CLOSURE §7.3 (line 1689). К-L20 LOCK + DF020 activation will land in Mod API lock cascade post-A'.9 per Q-N-8-6 LOCKED forward sequencing.
+
+**Source citations consolidated**:
+
+- KERNEL_ARCHITECTURE.md Part 0 К-L20 row: absent from main table (lines 48-69 cover К-L1..К-L19); placeholder commitment in header prose (line 17) + summary row in K_CLOSURE_REPORT §2.24 table (line 825).
+- K_CLOSURE_REPORT.md §2.23 (lines 774-795): canonical narrative + reservation rationale + falsifiability commitment + production manifestation plan.
+- K_CLOSURE_REPORT.md §7.3 (line 1689): DF020 reserved-rules table row — «Expected detection scope: Mod API surface deviation от locked v3 manifest, Bridge mechanism bypass attempt, manifest grace period semantics violation».
+- K_CLOSURE_REPORT.md §9.5 (lines 1908-1929): Mod API lock milestone Q1-Q8 deliberation surface — Q1 Bridge mechanism design, Q2 manifest freeze policy, Q3 grace period semantics, Q4 deprecation cadence, Q5 К-L9 «Vanilla = mods» purity verification, Q6 К-L20 codification, Q7 DF020 scope, Q8 MOD_API_CONTRACT.md authoring scope.
+- ANALYZER_RULES.md §1.1 + §3 + §4 reserved rules (lines 53, 111-114, 155): DF020 reserved entry consistent across analyzer-rules document.
+- MOD_OS_ARCHITECTURE.md §1 LOCK (line 60) confirms IModApi v3 strict cutover: «v2 IModApi deleted entirely — no backward compatibility».
+
+---
 
 ### §6.2 — Mod API restrictions analyzer-enforceable
 
-*[Per Domain 4 methodology output]*
+This sub-section enumerates analyzer-enforceable Mod API surface restrictions derivable from the current MOD_OS v1.11 LOCKED surface. Restrictions are organized into four sub-sub-sections per the brief scope. Each restriction carries: source citation (MOD_OS section), analyzability tier (T1-T6 per S-LOCK-4 rubric inherited from Domain 1), priority (P0-P3), rule shape proposal (existing rule extension / new sub-rule / DF020.X), and notes.
+
+**Tier rubric reminder** (per S-LOCK-4 / Domain 1 §3.0):
+- T1: Trivially analyzable via simple pattern match
+- T2: Static analysis (symbol shape + attribute presence + reference assemblies)
+- T3: Semantic analysis (assembly identity, namespace scoping, module boundary)
+- T4: Hybrid (static + runtime fence / probe)
+- T5: Runtime-primary (hardware / timing / nondeterminism)
+- T6: Not analyzer-scoped (process invariant / meta-invariant)
+
+**Priority rubric reminder** (per S-LOCK-4):
+- P0: Foundational; ship within A'.9 analyzer infrastructure
+- P1: Important; ship within A'.9 or Mod API lock cascade
+- P2: Useful; ship at Mod API lock cascade or post-lock
+- P3: Deferred / reserved indefinitely
+
+#### §6.2.1 — Namespace / type restrictions (what Mod assemblies may NOT reference)
+
+| Restriction | Source | Tier | Priority | Rule shape | Notes |
+|---|---|---|---|---|---|
+| Mod assemblies must NOT P/Invoke directly to native — must use IModApi facade (К-L9 + К-L12 + К-L15 facade mandate; К-L2 single-DLL preserved) | MOD_OS_ARCHITECTURE.md §4.4 (RestrictedModApi cast prevention D-3 LOCKED) + §10.1 (caught threats table); KERNEL Part 0 К-L9 line 58 + К-L12 line 61 + К-L15 line 64 | T3 | P0 | **DF020.1 / extends DF009 + DF012 + DF015** | Static: detect `[DllImport]` declarations in assemblies whose root namespace matches mod-namespace pattern (`Vanilla.*` or third-party `mod.*` per shared-mod naming §5.5). DF009 currently scopes vanilla-namespace direct-kernel-reference; DF020.1 generalizes к ALL mod assemblies (including non-vanilla regular and shared mods). |
+| Mod regular-ALC assemblies must NOT reference `DualFrontier.Core.*` / `DualFrontier.Application.*` / `DualFrontier.Systems.*` / `DualFrontier.Components.*` / `DualFrontier.Events.*` — only `DualFrontier.Contracts.*` permitted | MOD_OS_ARCHITECTURE.md §5.4 «Restrictions on shared mods» (line 666-669) extended к regular mods via §5.3 loader rules; MODDING.md AssemblyLoadContext block list (lines 106-114) | T2 | P0 | **DF020.2 / new** | Static: reference-assembly scan for forbidden production assembly references in mod project (.csproj `<ProjectReference>` / `<Reference>` whitelist). Currently enforced at runtime by `ModLoadContext.Load` returning null for non-Contracts assemblies (MODDING.md line 111-112: «refused»); analyzer adds compile-time signal. Code-fix feasibility: **High** — suggest remove reference + replace with IModApi-mediated equivalent. |
+| Mod regular-ALC assemblies must NOT reach into another mod's regular ALC via reflection (`Type.GetType("Vanilla.Pawn.JobQueueComponent", "Vanilla.Pawn.dll")` cross-mod load) | MOD_OS_ARCHITECTURE.md §1.4 «invariants» (lines 185-190): «A regular mod's ALC may resolve types from the shared ALC, but never from another regular ALC»; §10.2 «not caught» line 1034 acknowledges reflection-based bypass as out-of-scope for runtime sandbox, but static analyzer CAN catch the documented anti-pattern at compile time | T3 | P1 | **DF020.3 / new** | Semantic: detect `Type.GetType(string)` / `Assembly.Load(string)` call sites within mod assembly where string literal argument matches another mod's identity (FQN starts with `Vanilla.` other than self-mod, or `DualFrontier.Mod.*` cross-mod pattern). Conservative: emit Warning (not Error) because reflection patterns admit false positives (dynamic plugin discovery via own-assembly types is legitimate). |
+| Mod assemblies must NOT subclass kernel-sealed types (`RestrictedModApi`, `ModLoadContext`, `SystemExecutionContext`, etc.); cast `IModApi → RestrictedModApi` forbidden per D-3 LOCKED | MOD_OS_ARCHITECTURE.md §4.4 (lines 459-463); MODDING.md «not allowed» table (lines 101-104) | T2 | P0 | **DF020.4 / new** | Static: pattern detect `(RestrictedModApi)api` / `api is RestrictedModApi` / inheritance `: RestrictedModApi`. Per D-3 LOCKED, structural barrier is the primary defense (`internal sealed` + ALC isolation); analyzer is defensive secondary per «(a) is held in reserve for v1.x if a real bypass attempt is observed». Pending Mod API lock canonical text: whether D-3 LOCKED defers analyzer rule indefinitely or activates as DF020.4 at Mod API lock cascade. |
+| Shared mod assemblies must NOT export types implementing `IModContract` or `IEvent` from a non-shared assembly — those types must live in the shared ALC (D-4 LOCKED active scan) | MOD_OS_ARCHITECTURE.md §6.5 «Anti-pattern: type in regular mod» + D-4 LOCKED (§12, lines 1167-1179): «The loader actively scans every regular-mod assembly via reflection for types implementing `IModContract` or `IEvent`. Detection rejects the mod with `ValidationErrorKind.ContractTypeInRegularMod`» | T2 | P0 | **DF020.5 / extends D-4 LOCKED loader scan to compile-time** | Static: scan mod assembly for types implementing `IModContract` / `IEvent`; if assembly manifest declares `kind: "regular"`, emit Error. Currently load-time enforcement (D-4 LOCKED, §6.5); analyzer adds compile-time signal so author catches mistake before publication. Pre-existing precedent: M4 added `ContractTypeInRegularMod` validation error (§11.2). |
+
+**Notes on §6.2.1 surface**:
+- К-L20 + К-L9 are intertwined: К-L9 mandates «Vanilla = mods» (one IModApi surface for vanilla and third-party); К-L20 will lock that surface (no covert extensions for vanilla privileged access). DF020.1 explicitly extends DF009's vanilla-only scope to ALL mods.
+- Restrictions DF020.2 and DF020.5 mirror existing load-time enforcement (`ModLoadContext.Load` refusal + D-4 active scan); analyzer adds compile-time signal per author-experience improvement (consistent with M3.4 «CI Roslyn analyzer for `[ModCapabilities]` honesty» pattern from MOD_OS §11.1).
+
+#### §6.2.2 — API usage restrictions (what Mod assemblies may NOT call)
+
+| Restriction | Source | Tier | Priority | Rule shape | Notes |
+|---|---|---|---|---|---|
+| Reflection-based bypass of IModApi facade (e.g., direct `Services.X.Publish<T>` invocation outside `IModApi.Publish<T>` proxy) | MOD_OS_ARCHITECTURE.md §3.6 hybrid enforcement runtime layer (lines 372-376): «Reflection-based bypass of `[ModCapabilities]` declarations (deliberate violation rather than accident)»; §10.2 «not caught» (line 1034) acknowledges determined reflection bypass as out-of-runtime-scope | T4 | P1 | **DF020.6 / new (hybrid)** | Static: detect reflection patterns (`MethodInfo.Invoke` / `Activator.CreateInstance` / `Expression.Call`) targeting `DualFrontier.Application.*` member names from within mod assembly. Runtime aspect: `RestrictedModApi.EnforceCapability` already runtime-checks (per §3.6 hot path lookup); analyzer extends compile-time visibility. Conservative severity Warning per false-positive risk (legitimate reflection on mod-internal types). |
+| Bridge mechanism bypass attempt — mod calls into Bridge surface other than through IModApi-exposed `replaces` declaration | K_CLOSURE §7.3 DF020 expected scope (line 1689): «Bridge mechanism bypass attempt» | T3 | P1 | **DF020.7 / new (pending Mod API lock canonical text)** | **Pending Mod API lock canonical text** — Bridge mechanism design itself is Q1 of Mod API lock deliberation (K_CLOSURE §9.5 line 1911). Current MOD_OS §7 documents `[BridgeImplementation(Replaceable = true)]` + manifest `replaces` field — analyzer scope will likely include detecting code paths that invoke `[BridgeImplementation]` systems directly (bypassing scheduler dispatch) or that bypass the `replaces` declaration to silently shadow a kernel system. |
+| Native scheduler direct access by mods (К-L12 prohibition specifically applied к mods) | KERNEL Part 0 К-L12 line 61; K_CLOSURE §7.2 DF012 entry (line 1673): «К-L9 facade bypass (mods accessing native scheduler directly bypassing managed facade)» | T3 | P0 | **DF020.8 / extends DF012** | Static: namespace-scoped analyzer — assembly identity check at `df_scheduler_*` P/Invoke call sites; mods (any assembly outside `DualFrontier.Application.*` + `DualFrontier.Core.*`) must NOT carry these P/Invoke declarations. Currently DF012 (K_CLOSURE §7.2) detects «К-L9 facade bypass»; DF020.8 sharpens к Mod-API-lock semantic (vanilla mod has identical restriction). |
+| Native bus direct access by mods (К-L15 facade bypass specifically applied к mods) | KERNEL Part 0 К-L15 line 64; K_CLOSURE §7.2 DF015 entry (line 1675): «capability declaration bypass (mod publish/subscribe without per-FQN per-tier capability declaration)» | T3 | P0 | **DF020.9 / extends DF015** | Static: assembly identity check at `df_bus_*` P/Invoke call sites; mods must NOT carry these declarations. Currently DF015 detects managed-side sovereign routing; DF020.9 sharpens к Mod-API-lock semantic. К-L15.1 three-tier independence preserved (DF015.1 separate concern). |
+| Mod uses `IModApi.Publish` / `Subscribe` for an event type whose `[EventTier]` attribute names a tier the mod's manifest doesn't declare capability for (К-L15 + К-L17 per-FQN per-tier capability mandate) | MOD_OS_ARCHITECTURE.md §3.2 tier verb semantics (lines 311-318) + §3.8 D-2 LOCKED hybrid enforcement (lines 396-399); К10.2 `BusTierMismatch` validation error per §11.2 (line 1102) | T2 | P0 | **DF020.10 / extends D-2 LOCKED CI static analysis** | Static: per-system `[ModCapabilities]` attribute cross-referenced with `Services.X.Publish<T>` / `Subscribe<T>` call site event type's `[EventTier]` attribute. D-2 LOCKED Hybrid already promises CI static analysis pass; DF020.10 lands that pass at Mod API lock cascade (after A'.9 analyzer infrastructure is in place). |
+
+**Notes on §6.2.2 surface**:
+- DF020.6 (reflection bypass) is a fundamental analyzer scope limitation: a determined mod can always defeat static analysis via dynamic code generation. К-L20 canonical text should acknowledge this limit explicitly — the analyzer guarantees catching ACCIDENTAL violations, not DELIBERATE ones (consistent with §10.3 «best-effort structural isolation»).
+- DF020.7 (Bridge mechanism) is the largest pending-Mod-API-lock-canonical-text item — Bridge mechanism Q1 deliberation outcome will determine whether DF020.7 is single rule or sub-family DF020.7.{a,b,c}.
+
+#### §6.2.3 — Manifest field enforcement (static cross-check between code and mod.json)
+
+| Restriction | Source | Tier | Priority | Rule shape | Notes |
+|---|---|---|---|---|---|
+| Mod uses a Bus tier without declaring capability in manifest (e.g., code calls `api.Publish<FastTierEvent>` but manifest lacks `kernel.fast.publish:FastTierEvent`) | MOD_OS_ARCHITECTURE.md §3.2 К10.2 tier verbs (lines 311-318); §11.2 `BusTierMismatch` (line 1102) | T2 | P0 | **DF020.11 / extends D-2 LOCKED + extends DF015** | Static: cross-check manifest `capabilities.required` against `[EventTier]` attributes of event types in `Services.X.Publish<T>` / `Subscribe<T>` call sites within mod assembly. Read manifest JSON as analyzer additional file. **Manifest analyzer infrastructure precedent**: `tools/DualFrontier.Mod.ManifestRewriter/` (build-time JSON tool) demonstrates idempotent manifest manipulation pattern — a `DualFrontier.Mod.ManifestAnalyzer` Roslyn project would follow same one-purpose-tool structure. |
+| Mod assembly targets Mod API version other than `"3"` (manifest `manifestVersion` field) | MOD_OS_ARCHITECTURE.md §4.6.3 strict v3 LOCK (lines 586-590); MODDING.md mandatory `"manifestVersion": "3"` (lines 158, 181) | T1 | P0 | **DF020.12 / new** | Trivial: read manifest as analyzer additional file; check `manifestVersion == "3"` literal. Per K8.3+K8.4 cutover (2026-05-14): «the manifest parser rejects any `manifestVersion` other than `"3"`». Analyzer adds compile-time signal. Code-fix feasibility: **Trivial** — suggest `"manifestVersion": "3"`. |
+| Mod replaces vanilla mod without manifest `replaces` declaration (mod registers a system whose type matches an existing `[BridgeImplementation(Replaceable = true)]` system without declaring the FQN in manifest `replaces` field) | MOD_OS_ARCHITECTURE.md §7.1 explicit `replaces` LOCKED (lines 766-783); §7.4 `Replaceable` flag (lines 794-803) | T3 | P1 | **DF020.13 / new** | Semantic: scan mod assembly for `RegisterSystem<T>` calls where T matches existing `[BridgeImplementation(Replaceable = true)]` system in kernel reference assemblies; cross-check manifest `replaces` field contains T's FQN. Currently load-time enforcement via `ContractValidator`; analyzer adds compile-time signal. |
+| Mod implements `IHotReloadOverride` (hypothetical future interface) without manifest `hotReload: true` declaration | MOD_OS_ARCHITECTURE.md §9.2 hot reload LOCKED (lines 940-950) + §9.6 `hotReload: false` semantics (lines 994-995) + D-7 LOCKED build-time rewriter (lines 1202-1212) | T2 | P2 | **DF020.14 / new (pending Mod API lock canonical text — interface itself TBD)** | **Pending Mod API lock canonical text** — `IHotReloadOverride` is hypothetical placeholder; Mod API lock deliberation will determine whether hot-reload override needs interface or remains pure manifest flag. Current D-7 LOCKED contract is the precedent (vanilla mods declare `hotReload: true` in source; build-time rewriter flips к `false` in release). DF020.14 sits in the «manifest schema vs. code» cross-check family — analyzer infrastructure should land at Mod API lock cascade. |
+| Mod declares capability under another mod's namespace (`mod.<other-id>.publish:...`) | MOD_OS_ARCHITECTURE.md §3.3 reserved namespaces (lines 333-335): «Mods cannot claim to provide capabilities under another mod's namespace; the loader rejects such manifests» | T2 | P0 | **DF020.15 / new** | Static: read manifest as analyzer additional file; check each capability string in `capabilities.provided`; assert prefix `mod.<self-id>.*` matches manifest's own `id` field. Currently load-time enforcement; analyzer adds compile-time signal. |
+| Mod manifest `capabilities.required` capability cannot be satisfied by kernel-provided set OR a dependency's `capabilities.provided` | MOD_OS_ARCHITECTURE.md §3.4 static check at load time (lines 337-345): «A required capability cannot be satisfied by a mod *not* listed in `dependencies`. This is a hard rule» | T2 | P0 | **DF020.16 / new** | Static: cross-check manifest `capabilities.required` against kernel-provided set + dependency manifests' `capabilities.provided`; emit `MissingCapability` analog at compile time. Currently load-time enforcement; analyzer adds compile-time signal per M3.4 «CI Roslyn analyzer for `[ModCapabilities]` honesty» pattern (deferred milestone, MOD_OS §11.1 line 1073). |
+
+**Notes on §6.2.3 surface**:
+- Manifest-vs-code cross-checks all require analyzer access to `mod.manifest.json` as an additional file (Roslyn `AdditionalFiles` MSBuild item). Domain 5 (Roslyn ecosystem state) recommendations for additional-files reading should apply directly.
+- All §6.2.3 restrictions mirror existing load-time enforcement (per MOD_OS §3.4 + §3.3 + §7.1 + §11.2 baseline). DF020 family adds compile-time signal — same architectural philosophy as M3.4 (D-2 LOCKED hybrid completion).
+- The `DualFrontier.Mod.ManifestAnalyzer` project skeleton precedent (per `DualFrontier.Mod.ManifestRewriter` pattern) is the recommended infrastructure landing target. ManifestRewriter has 127 LOC + Library entry point shape + Idempotency contract + Source preservation contract — same discipline applies к ManifestAnalyzer.
+
+#### §6.2.4 — Forward-compatibility («grace period») semantics — analyzer-enforceable
+
+| Restriction | Source | Tier | Priority | Rule shape | Notes |
+|---|---|---|---|---|---|
+| Deprecated IModApi types/methods still legal during grace period but flagged Warning | MOD_OS_ARCHITECTURE.md §4.5 v1 grace period (line 467): «log a v1-API warning. The mod author updates capability declarations in the manifest to migrate to functional v2 semantics. This grace period closes at kernel API version `2.0.0`»; K_CLOSURE §9.5 Q3 (line 1913): «Grace period semantics» | T2 | P2 | **DF020.17 / new (pending Mod API lock canonical text)** | **Pending Mod API lock canonical text** — current v1 grace-period semantic is documented (§4.5) but К-L20 will codify the FORWARD policy (deprecation cadence Q4, sunset criteria Q3-Q4). Static: detect calls к types/methods annotated `[Obsolete("...", error: false)]` on IModApi surface, emit DF020.17 Warning. Standard Roslyn `CS0618` pattern (`Obsolete` attribute) is the analyzer foundation; DF020.17 adds project-specific severity/messaging discipline. |
+| Removed IModApi types/methods (post-grace) — illegal | MOD_OS_ARCHITECTURE.md §4.6.3 v3 strict cutover (line 588): «v2 IModApi was deleted entirely» — pattern; K_CLOSURE §9.5 Q2 «Manifest freeze policy» + Q4 «Deprecation cadence» (lines 1912-1914) | T2 | P1 | **DF020.18 / new (pending Mod API lock canonical text)** | **Pending Mod API lock canonical text** — current strict v3 cutover (no backward compat) is the precedent; К-L20 codification will determine whether future API evolution permits Bridge-mediated deprecation OR strict cutover. Static: detect calls к types/methods removed in current Mod API version surface; standard «compilation error» — DF020.18 catches the same error with project-specific diagnostic. |
+| Manifest schema version compatibility (mod manifest schema version vs. kernel supported version) | MOD_OS_ARCHITECTURE.md §4.6.3 strict v3 LOCK (line 588): «the manifest parser rejects any `manifestVersion` other than `"3"`»; pending Mod API lock Q2 «Manifest freeze policy» (K_CLOSURE §9.5 line 1912) | T1 | P0 | **DF020.19 / extends DF020.12** | Trivial extension of DF020.12 (manifestVersion literal check) к forward versioning. Pending Mod API lock canonical text: whether v3 is permanent freeze («Manifest v3 frozen forever» per K_CLOSURE §9.5 line 1926) OR whether v4+ becomes possible via Bridge mechanism (Q1 deliberation outcome). |
+| Mod uses Mod API surface element NOT present in baseline (`PublicApiAnalyzers`-style baseline file enforcement per Cascade #3 Q-K-§5-6 recommendation surfaced в Domain 6) | K_CLOSURE §9.5 Q1 Bridge mechanism design (line 1911); Cascade #3 Q-K candidate from §5.99 (forward design intent) | T2 | P1 | **DF020.20 / new (pending Mod API lock canonical text + leverages PublicApiAnalyzers)** | Static: maintain `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` baseline files (standard Roslyn `Microsoft.CodeAnalysis.PublicApiAnalyzers` pattern); DF020.20 leverages PublicApiAnalyzers infrastructure with project-specific severity к catch additions/removals from Mod API surface. **Cross-references Cascade #3 Q-K candidate** — Cascade #3 Q-K-§5-6 (per Domain 6 Reconnaissance Report §5.99) recommends expose IModApi surface as machine-readable baseline. |
+
+**Notes on §6.2.4 surface**:
+- Grace-period semantics are the LEAST analyzer-determinable surface in §6.2 because the semantic itself (how long is grace, what triggers sunset, whether Bridge mechanism mediates deprecation) is the Mod API lock deliberation Q1-Q4 outcome.
+- DF020.17 + DF020.18 leverage standard Roslyn `[Obsolete]` attribute infrastructure; project-specific layer adds diagnostic messaging tying к К-L20 canonical text.
+- DF020.20 (PublicApiAnalyzers integration) is the «highest-leverage» rule because it provides automated regression detection on Mod API surface changes — a single file diff in `PublicAPI.Shipped.txt` is a 1-line review for «did this PR add/remove anything on the Mod API surface?» discipline.
+
+---
 
 ### §6.3 — A'.9-era preparatory rules (helping К-L20 era)
 
-*[Forward-planning insights]*
+This sub-section identifies A'.9-era rules (not К-L20-specific) that LATER become foundations for К-L20 enforcement. The argument is: А'.9 analyzer infrastructure ships 18 active rules including DF003.1 / DF009 / DF012 / DF015 / DF015.1 — each carries domain knowledge (assembly identity, namespace scoping, P/Invoke call site detection, manifest cross-reference) that DF020 family inherits.
+
+#### §6.3.1 — Precursor A'.9 rules → К-L20 forward-compat foundations
+
+| A'.9.1-era rule | Becomes foundation for | Forward design notes |
+|---|---|---|
+| **DF003.1** (К-L3.1 Path β bridge — semantic analyzer covering ALC isolation, cross-mod ManagedStore access detection, dual SystemBase API enforcement) | **DF020.3** (cross-mod regular-ALC reflection access detection) | DF003.1 already implements assembly-identity analysis at `ManagedStore<T>` call sites; DF020.3 inherits the same assembly-identity primitive and applies к reflection-based cross-mod load attempts. Per Domain 1 §3.2 К-L3.1 entry (line 218): «cross-mod ALC boundary detection requires understanding of assembly load context which is runtime concept; static analysis may need conservative approximation» — DF020.3 inherits the same approximation discipline. |
+| **DF009** (К-L9 mod parity — vanilla namespace direct-kernel-reference detection) | **DF020.1 / DF020.2 / DF020.8 / DF020.9** (Mod API surface deviation, kernel/native scheduler/native bus direct access by ANY mod assembly) | DF009 scope is «vanilla mods accessing non-IModApi surface»; DF020 family generalizes к ALL mod assemblies (vanilla and third-party). Per K_CLOSURE §7.2 DF009 row: «Active (revisit post-Mod API lock)» — the revisit means: at Mod API lock cascade, DF009's narrow vanilla-scope assembly-identity check expands к full mod-namespace assembly-identity check, becoming DF020.1's foundation. **Cross-references Domain 1 §3.2 К-L9 analysis line 395**: «К-L20 (Mod API lock will refine К-L9 surface)». |
+| **DF012** (К-L12 native kernel scheduling — managed-side sovereign-authority detection + facade bypass detection) | **DF020.8** (native scheduler direct access by mods specifically) | DF012 currently detects «mods accessing native scheduler directly bypassing managed facade» (K_CLOSURE §7.2 line 1673). DF020.8 sharpens that detection с Mod-API-lock canonical semantic (vanilla mod gets identical restriction per К-L9 + К-L20 combined). DF012's `df_scheduler_*` P/Invoke call-site detection is the load-bearing primitive. |
+| **DF015** (К-L15 native bus authority — managed-side sovereign routing + capability declaration bypass + tier-FQN registration violations detection) | **DF020.9** (native bus direct access by mods) + **DF020.10** + **DF020.11** (tier capability cross-check) | DF015 currently detects per-FQN per-tier capability declaration bypass. DF020.9 sharpens к mod-specific scope. DF020.10/DF020.11 inherit DF015's `[EventTier]` attribute cross-reference infrastructure for manifest-vs-code tier consistency check. |
+| **DF015.1** (К-L15.1 three-tier independence — per-tier mutex isolation, tier-bit subscription ID isolation, fixed-order acquire) | **(weakly related, K-L20-orthogonal)** | DF015.1 is native-side concern primarily; minimal К-L20 relationship. Listed here for completeness — DF015.1 inherits multi-layer sub-rule precedent (Layer 1 state, Layer 2 runtime, Layer 3 compile-time) and DF020 family may adopt similar multi-layer structure (DF020.X.{namespace, manifest, runtime} sub-rules if К-L20 deliberation surfaces multi-aspect enforcement need). |
+| **DF018** (К-L18 mod lifecycle quiescent state — sim-paused + pipeline-quiescent precondition detection) | **(К-L18 + К-L20 combined at Mod API lock cascade)** | DF018 detects mod load/unload bypassing the K-L18 quiescent state precondition. К-L20 lock adds: Mod API surface evolution requires K-L18 quiescent state for hot reload (Bridge mechanism's grace-period semantics interact with hot-reload). DF018's `PauseAsync → WaitForQuiescenceAsync → operation → ResumeAsync` sequence detection becomes the foundation for К-L20's «mod-API-version-upgrade-via-hot-reload» enforcement (if Mod API lock deliberation surfaces such mechanism). |
+| **«CI Roslyn analyzer for `[ModCapabilities]` honesty»** (D-2 LOCKED hybrid completion, MOD_OS §11.1 M3.4 deferred milestone, NOT in 18-active list) | **DF020.10 / DF020.11 / DF020.16** (manifest-vs-code cross-check family) | M3.4 is currently deferred per MOD_OS §11.1: «Standalone analyzer package; runs in mod-publication CI, not at game load» + «unblocked when the first external mod author appears». Per A'.9 brief discipline: M3.4 may land at A'.9 (covering D-2 LOCKED hybrid completion) OR at Mod API lock cascade (combined с DF020.10/.11/.16). Decision deferred к A'.9.1 brief authoring. |
+
+#### §6.3.2 — К-L20 LOCK timing estimate
+
+Per K_CLOSURE §9 forward sequencing (lines 1822-1856) + memory entry [`project_a_prime_8_k_closure.md`] + ANALYZER_RULES.md §3:
+
+```
+[Current state 2026-05-24 — A'.9.0 Reconnaissance]
+         ↓
+[A'.9.1 brief authored — analyzer infrastructure + 18 active rules scope]
+         ↓
+[A'.9.X cascades — DF### rules implemented + first-run cleanup phase]
+         ↓ — К-L14 verification #12 candidate (per K_CLOSURE §3.2)
+         ↓ — 18 active rules + 4 reserved per S-LOCK-10
+[A'.9 milestone CLOSED — analyzer infrastructure operational]
+         ↓
+[Mod API lock cascade — Q1-Q8 deliberation surface]
+         ↓ — Q1 Bridge mechanism design (forward-compatible API evolution mechanism)
+         ↓ — Q2 Manifest freeze policy (manifest schema v3 frozen; v1/v2 grace period sunset)
+         ↓ — Q3 Grace period semantics (deprecation timeline; backwards-compatible operation duration)
+         ↓ — Q4 Deprecation cadence (when к sunset deprecated API; semver implications)
+         ↓ — Q5 К-L9 «Vanilla = mods» purity verification (vanilla mods using locked API for sustained period)
+         ↓ — Q6 К-L20 invariant codification (Mod API forward-compatibility guarantee text)
+         ↓ — Q7 DF020 analyzer rule scope (detection patterns for К-L20 violations)
+         ↓ — Q8 MOD_API_CONTRACT.md authoring scope (Tier 1 LOCKED document)
+[Mod API lock cascade CLOSED]
+         ↓ — К-L20 LOCKED
+         ↓ — DF020 family activated (DF020.1..DF020.20 per §6.2 enumeration; subset to be ratified by Q7 deliberation)
+         ↓ — MOD_API_CONTRACT.md authored Tier 1 LOCKED
+         ↓ — MOD_AUTHORING_GUIDE.md authored Tier 2
+         ↓ — Manifest v1 grace period sunset
+         ↓ — Manifest v3 frozen forever (or Bridge-mechanism-mediated v4+ — Q1 outcome)
+         ↓ — К-L14 verification #N candidate (per K_CLOSURE §3.2 line 171)
+[Phase B M-cycle vanilla content migration]
+         ↓ — К-L20 + К-L9 «Vanilla = mods» combined verification via empirical mod authoring
+```
+
+**Estimated К-L20 LOCK timing** (per K_CLOSURE §9.4 estimated А'.9 duration ~10-15 hours auto-mode + Mod API lock cascade single cascade per §10.2 table line 2006):
+
+- A'.9 milestone duration: ~10-15 hours auto-mode (per K_CLOSURE §9.4 line 1906)
+- Mod API lock cascade duration: estimated comparable scope (Q1-Q8 deliberation + DF020 implementation + MOD_API_CONTRACT.md + MOD_AUTHORING_GUIDE.md) — likely 15-25 hours auto-mode given 8-Q surface
+- **К-L20 LOCK timing**: post-A'.9 (hard gate per K_CLOSURE §9.5 line 1929: «Mod API lock complete before Phase B M-cycle begins»). Calendar-wise: weeks after A'.9.1 brief authoring at current hobby pace; no specific date commitment per «no commit-to-date discipline» (per K_CLOSURE §3.3).
+
+**Implementation surface materialization sequence**:
+- A'.9 ships analyzer infrastructure (Roslyn project, test harness, CI integration, 18 active rules, .editorconfig severity overrides per Domain 6 Reconnaissance Report)
+- A'.9-era DF003.1 / DF009 / DF012 / DF015 / DF018 implementations encode reusable primitives (assembly-identity analysis, namespace scoping, P/Invoke call-site detection, manifest cross-reference)
+- Mod API lock cascade activates DF020 family — implementation is incremental on top of A'.9 primitives
+- Per К-L14 default-inclusion bias: DF020 family fully ratified at Mod API lock cascade may be a SUPERSET of §6.2 enumeration (DF020.1..DF020.20) depending on Q7 deliberation outcome
+
+#### §6.3.3 — Mod API surface freeze prep
+
+This sub-section addresses what А'.9.1-era can do к make К-L20 LOCK cascade easier. Surface enumerated per §6.3.1 precursor relationships + Domain 6 Cascade #3 Q-K-§5-6 baseline-file recommendation.
+
+**А'.9.1-era preparation actions** (analyzer-side discipline that smooths Mod API lock cascade):
+
+1. **Expose IModApi surface as machine-readable baseline via `PublicApiAnalyzers`** (per Cascade #3 Q-K-§5-6 surfaced в Domain 6):
+    - Adopt `Microsoft.CodeAnalysis.PublicApiAnalyzers` NuGet package в `src/DualFrontier.Contracts/Modding/` project
+    - Maintain `PublicAPI.Shipped.txt` (current public API surface) + `PublicAPI.Unshipped.txt` (additions pending shipping)
+    - At Mod API lock cascade, `PublicAPI.Shipped.txt` becomes the К-L20 canonical surface manifest — automated regression detection on any addition/removal
+    - **Rule infrastructure**: PublicApiAnalyzers provides RS0016 (missing PublicAPI entry) + RS0017 (removed PublicAPI entry); DF020.20 adds project-specific severity/messaging layer
+
+2. **Implement DF003.1 / DF009 / DF012 / DF015 / DF018 with reusable primitives**:
+    - Assembly-identity analysis (assembly attribute scan, namespace-prefix matching) — extract к shared analyzer infrastructure
+    - Namespace scoping (`Vanilla.*` / `DualFrontier.Mod.*` / `DualFrontier.Core.*` / `DualFrontier.Application.*` whitelists) — externalize к `.editorconfig`-driven configuration per Domain 6 §8.3 severity-override surface
+    - P/Invoke call-site detection (`[DllImport]` declarations targeting `DualFrontier.Core.Native.dll`) — reusable across DF002 / DF012 / DF015 / DF020.8 / DF020.9
+
+3. **Adopt manifest-additional-file analyzer pattern**:
+    - Configure Roslyn `AdditionalFiles` MSBuild item to expose `mod.manifest.json` к analyzer
+    - Implement manifest-parsing utility (small helper, shared across DF020.10..DF020.16 + DF020.19)
+    - Precedent: `tools/DualFrontier.Mod.ManifestRewriter/ManifestRewriter.cs` demonstrates idempotent JSON manipulation pattern — `DualFrontier.Mod.ManifestAnalyzer` follows same one-purpose-tool discipline
+
+4. **Document IModApi surface explicitly в `MOD_API_CONTRACT.md` skeleton at A'.9 cascade**:
+    - Pre-author skeleton (Tier 2 AUTHORED-SKELETON status) at A'.9 milestone closure
+    - Mod API lock cascade promotes skeleton к Tier 1 LOCKED (per K_CLOSURE §2.23 line 791: «`docs/architecture/MOD_API_CONTRACT.md` — Tier 1 LOCKED authored at Mod API lock milestone»)
+    - Skeleton at A'.9 provides structural anchor: IModApi v3 surface verbatim (already present в MODDING.md lines 47-86), manifest schema v3 verbatim (already present в MOD_OS §2.1), capability syntax verbatim (already present в MOD_OS §3.2)
+
+5. **Capture Mod API surface state at A'.9 closure as baseline snapshot**:
+    - At A'.9 milestone closure, commit current `IModApi.cs` + `ModManifest.cs` + capability-strings list as «A'.9 Mod API surface baseline» artifact
+    - Mod API lock cascade Q2 (manifest freeze policy) + Q3 (grace period semantics) deliberation uses this snapshot as the reference state
+    - Falsifiability anchor: any К-L20 LOCK-cascade-era change к the snapshot is recorded as Mod API evolution event (Bridge-mediated change OR grace-period sunset OR strict cutover)
+
+**Forward-design implication for §6.2 enumeration**:
+
+The §6.2 DF020.1..DF020.20 enumeration is reconnaissance-baseline scope; Q7 (K_CLOSURE §9.5 line 1917 «DF020 analyzer rule scope») deliberation at Mod API lock cascade will ratify the final DF020 family. Probable outcomes:
+
+- **Subset ratification**: Q7 narrows §6.2 enumeration к 8-12 most-load-bearing rules (DF020.1..DF020.5 namespace/type + DF020.10..DF020.16 manifest cross-check + DF020.20 PublicApiAnalyzers integration)
+- **Superset ratification**: Q7 expands §6.2 enumeration с rules specific to Bridge mechanism design (Q1) outcome — e.g., DF020.21 «Bridge invocation outside `replaces`-declared system» (if Bridge mechanism is invocation-based per Q1 deliberation)
+- **Sub-rule structure**: Q7 adopts DF015.1-style multi-layer sub-rule pattern — DF020.X.{namespace, manifest, runtime} sub-rules
+
+---
+
+### §6.99 — Open questions surfaced (for §11 Q-K candidates)
+
+- **Q-K-§6-1**: **Scope of DF020 family at Mod API lock cascade — subset or superset of §6.2 enumeration?**
+  - Context: §6.2 enumerates 20 candidate restrictions (DF020.1..DF020.20). K_CLOSURE §9.5 Q7 «DF020 analyzer rule scope» is the deliberation surface that ratifies the final DF020 family.
+  - Options:
+    - (a) Subset — narrow к 8-12 most-load-bearing rules (foundational namespace/type + manifest cross-check + PublicApiAnalyzers)
+    - (b) Full — ratify all 20 §6.2 candidates as DF020 family
+    - (c) Superset — ratify §6.2 plus Bridge mechanism-specific rules (Q1 outcome dependent)
+    - (d) Multi-layer sub-rules — DF020.X.{namespace, manifest, runtime} per DF015.1 pattern
+  - Recommendation: **Defer к Mod API lock cascade Q7 deliberation**. А'.9.1-era brief should NOT pre-commit DF020 family scope; A'.9 ships analyzer infrastructure that DF020 family inherits, but DF020-specific implementation lands at Mod API lock cascade.
+
+- **Q-K-§6-2**: **Should `PublicApiAnalyzers` be adopted at A'.9 cascade OR at Mod API lock cascade?**
+  - Context: Cascade #3 Q-K-§5-6 recommendation surfaces baseline-file approach (per Domain 6 Reconnaissance Report). PublicApiAnalyzers provides RS0016/RS0017 infrastructure that DF020.20 leverages.
+  - Options:
+    - (a) Adopt at A'.9 cascade — sets up baseline tracking earlier; DF020.20 becomes incremental at Mod API lock
+    - (b) Defer к Mod API lock cascade — combined adoption with К-L20 codification; one cascade contains all Mod API surface freeze infrastructure
+  - Recommendation: **(a) Adopt at A'.9 cascade**. Early adoption provides empirical baseline data (which IModApi surface elements churn between A'.9 closure and Mod API lock cascade) — informs Q2 manifest freeze policy + Q3 grace period semantics deliberation with real data, not hypothesis.
+
+- **Q-K-§6-3**: **Should `M3.4 — CI Roslyn analyzer for `[ModCapabilities]` honesty` (D-2 LOCKED hybrid completion per MOD_OS §11.1) land at A'.9 cascade OR at Mod API lock cascade?**
+  - Context: M3.4 is MOD_OS §11.1 deferred milestone. It implements D-2 LOCKED hybrid completion (per-system `[ModCapabilities]` attribute manifest cross-check). It's adjacent к DF020.10/.11/.16 manifest-vs-code cross-check family.
+  - Options:
+    - (a) Land at A'.9 cascade — manifest-vs-code cross-check primitive available для DF020 family к inherit
+    - (b) Land at Mod API lock cascade — combined с DF020.10/.11/.16
+  - Recommendation: **(a) Land at A'.9 cascade**. M3.4 is а straightforward standalone analyzer; landing it early provides D-2 LOCKED hybrid completion + reusable manifest-cross-check infrastructure для DF020 family. Per MOD_OS §11.1 «unblocked when the first external mod author appears» — A'.9 timing is forward-compatible с that trigger.
+
+- **Q-K-§6-4**: **Should `DualFrontier.Mod.ManifestAnalyzer` be a separate Roslyn analyzer project (per `DualFrontier.Mod.ManifestRewriter` precedent) OR integrated into the main `DualFrontier.Analyzer` package?**
+  - Context: ManifestRewriter is а standalone build-time tool (127 LOC, library + thin CLI). ManifestAnalyzer is а Roslyn analyzer (compile-time). One-purpose-tool discipline (per ManifestRewriter precedent) suggests separation; package count minimization suggests integration.
+  - Options:
+    - (a) Separate project `tools/DualFrontier.Mod.ManifestAnalyzer/` mirroring ManifestRewriter structure
+    - (b) Integrate into `DualFrontier.Analyzer` Roslyn package (single NuGet package, multiple analyzers внутри)
+    - (c) Hybrid — separate test/development project, but ship combined в single NuGet package for distribution
+  - Recommendation: **(b) Integrate into `DualFrontier.Analyzer` Roslyn package**. Manifest cross-check rules (DF020.10..DF020.16) need same `AdditionalFiles` infrastructure + same shared primitives (assembly identity, namespace scoping) as code-pattern rules. Per Domain 5 recommendation (Roslyn analyzer NuGet package conventions): one analyzer package per logical analyzer set. ManifestRewriter is build-time tool (different lifecycle); ManifestAnalyzer is compile-time tool (same lifecycle as DF### rules).
+
+- **Q-K-§6-5**: **К-L20 canonical text scope — narrow (Mod API surface deviation detection only) OR wide (Mod API surface deviation + Bridge mechanism semantics + grace period semantics + manifest freeze policy combined)?**
+  - Context: K_CLOSURE §2.23 falsifiability commitment text reads «Mod API v3 + manifest grace period semantics; mod authoring against locked API stays compatible; Bridge mechanism for forward-compatible amendments» — suggests wide scope. К-L9 «vanilla = mods» is the precedent narrow-scope (single architectural claim).
+  - Options:
+    - (a) Narrow К-L20: «Mod API surface element removal requires Bridge mechanism mediation OR grace period sunset; mods authored against API v3 stay compatible» — single claim, parallel к К-L9
+    - (b) Wide К-L20: full forward-compatibility policy (Bridge mechanism design + grace period semantics + manifest freeze policy + deprecation cadence) — combined claim
+    - (c) К-L20 + sub-invariants — К-L20.1 Bridge mechanism, К-L20.2 grace period semantics, К-L20.3 manifest freeze policy (per К-L3.1 / К-L7.1 / К-L15.1 sub-invariant precedent pattern)
+  - Recommendation: **(c) К-L20 + sub-invariants**. Per К-L3.1 / К-L7.1 / К-L15.1 precedent (sub-invariant pattern adopted А'.0 + А'.7.x + К10.3 v2), wide-scope architectural concerns naturally decompose into parent invariant + 2-3 sub-invariants. Allows incremental LOCK transition (К-L20.1 Bridge mechanism could LOCK at Mod API lock cascade while К-L20.3 manifest freeze policy stays AUTHORED pending empirical verification).
+
+- **Q-K-§6-6**: **Should А'.9.1 brief pre-author `MOD_API_CONTRACT.md` Tier 2 AUTHORED-SKELETON at A'.9 closure?**
+  - Context: K_CLOSURE §2.23 plans MOD_API_CONTRACT.md as Tier 1 LOCKED at Mod API lock cascade. Per ANALYZER_RULES.md precedent (Tier 1 AUTHORED-SKELETON at А'.8 closure, populated к LOCKED at A'.9 cascade), early skeleton anchors the canonical artifact.
+  - Options:
+    - (a) Pre-author Tier 2 AUTHORED-SKELETON at A'.9 closure — anchors canonical artifact early; Mod API lock cascade promotes к Tier 1 LOCKED
+    - (b) Defer all authoring к Mod API lock cascade — preserves Mod API lock cascade scope (Q1-Q8 deliberation determines canonical structure)
+    - (c) Pre-author Tier 3 informal sketch at A'.9 closure — even lighter precommitment than (a)
+  - Recommendation: **(a) Pre-author Tier 2 AUTHORED-SKELETON at A'.9 closure**. Per ANALYZER_RULES.md / K_L14_EVIDENCE_DASHBOARD.md skeleton precedent (А'.8 closure new DOC enrolled pattern), Tier 2 AUTHORED-SKELETON provides structural anchor с minimal scope commitment. Mod API lock cascade Q-N deliberation enriches к Tier 1 LOCKED without architectural surprise.
 
 ---
 
