@@ -17,8 +17,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_0_RECONNAI
 **Milestone**: A'.9 Roslyn Architectural Analyzer (overall multi-cascade milestone)  
 **Authoring date**: 2026-05-24  
 **Authoring session**: Deliberation Session 2026-05-24 (Crystalka + Claude Opus 4.7)  
-**Status**: AUTHORED — pending Crystalka RATIFICATION + Claude Code execution  
-**Execution branch**: New feature branch off cascade-#3 closure commit (`8ea0d03` per cascade #3 closure report)
+**Status**: **EXECUTED — A'.9.0 Reconnaissance cascade closed 2026-05-24** (8 atomic commits a233639..γ1 final; К-L14 verification #13 CLEAN per degenerate observational evidence criteria; see §9 closure section below)  
+**Execution branch**: `main` (per Crystalka pre-execution ratification — brief literal «New feature branch off cascade-#3 closure commit (`8ea0d03`)» overridden; cascade #3 itself executed directly on main + HEAD had advanced к `4981d78` Crystalka CI logs commit. Decision: «Continue on main from 4981d78» matches cascade #3 pattern.)
 
 **Brief shape**: Standalone reconnaissance cascade — discovery-only, no production code changes. Produces governance artifact (reconnaissance report) что Brief A'.9.1 will be authored against.
 
@@ -1540,6 +1540,85 @@ Per deliberation session 2026-05-24:
 
 ---
 
+---
+
+## §9 — Closure section (A'.9.0 Reconnaissance execution outcomes)
+
+**Executed**: 2026-05-24
+**Closure timestamp**: [final γ1 commit hash к be filled at push]
+**Pushed к origin/main**: pending Crystalka ratification + push authorization
+
+### §9.1 — Atomic commit summary
+
+8 commits total (within Q-J-8 budget 4-8; β1+β2 bundled per brief Q-J-8 «squashing acceptable где compilable» allowance):
+
+| Phase | Commit | Scope |
+|---|---|---|
+| α0 | `a233639` | Brief enrollment + Phase 0 reads + report skeleton |
+| α1 | `baf28dd` | Reconnaissance batch A (Domains 1+2+3) via 3-agent parallel dispatch |
+| α2 | `98ae26a` | Reconnaissance batch B (Domains 5+6+7) via 3-agent parallel dispatch |
+| α3 | `1123aac` | Reconnaissance Domain 4 (Mod OS К-L20 prep) via sequential Agent C1 |
+| α4 | `f017455` | Report synthesis (§1+§2+§10+§11+§12.1) |
+| β1+β2 | `eb5d692` | Governance cascade docs (KERNEL v2.5.3 + LEDGER §3.5 + SEQUENCING + K_L14 #13) |
+| β3 | `a9855fa` | REGISTER cascade (enrollments + register_version 2.5→2.6 + EVT + frontmatter sync) |
+| γ1 | (this commit) | Brief AUTHORED → EXECUTED + §9 closure section |
+
+### §9.2 — К-L14 verification #13 outcome (observational evidence)
+
+**Status**: **CLEAN (degenerate pass per observational evidence framing — 5th evidence type, NEW category per S-LOCK-6)**
+
+| Criterion | Status | Evidence |
+|---|---|---|
+| S-LOCK-1 zero-production-touch | ✓ | git diff for cascade commits shows only docs/architecture/A_PRIME_9_RECONNAISSANCE_REPORT.md + docs/architecture/KERNEL_ARCHITECTURE.md (chronicle) + docs/architecture/K_L14_EVIDENCE_DASHBOARD.md (#13 entry) + docs/architecture/K_EXTENSIONS_LEDGER.md (§3.5) + docs/architecture/PHASE_A_PRIME_SEQUENCING.md (A'.9.0 entry) + docs/governance/REGISTER.yaml (enrollments + version + EVT) + tools/briefs/A_PRIME_9_0_RECONNAISSANCE_BRIEF.md (this brief) — zero src/ modifications, zero test changes, zero build config changes |
+| Report deliverable produced | ✓ | A_PRIME_9_RECONNAISSANCE_REPORT.md (Tier 2 Live Category A, ~3340 lines, §1–§12 populated) |
+| All 7 reconnaissance domains covered | ✓ | Domain 1 (К-L matrix §3) + Domain 2 (Lessons matrix §4) + Domain 3 (cascade #2/#3 candidates §5) + Domain 4 (К-L20 prep §6) + Domain 5 (Roslyn ecosystem §7) + Domain 6 (Build/CI §8) + Domain 7 (Suppression governance §9) |
+| `dotnet build` exit 0 | ✓ | Verified at α0/α1/α2/α3/α4/β1+β2/β3 commits; post-environmental-cleanup (orphan testhost killed pre-α0) |
+| `sync_register.ps1 -Validate` exit 0 | ✓ | β3 commit verification; 22 advisory warnings (pre-existing orphan files unrelated к A'.9.0); event_type schema validation passed after correction (cascade_closure → execution_milestone per existing convention) |
+| Citation discipline (S-LOCK-10) | ✓ | Sub-agent outputs cite source files + sections/lines per claim; bare assertions excluded |
+| §10 Brief A'.9.1 prerequisites enumerated | ✓ | 10 prerequisites populated с empirical anchors + recommendations + decision pointers |
+| §11 Q-K candidates enumerated | ✓ | 45 Q-K candidates aggregated (42 sub-agent surfaced from §3.99/§4.99/§5.99/§6.99/§7.99/§8.99/§9.99 + 3 cross-cutting α4 synthesis) |
+
+### §9.3 — Reconnaissance findings summary (forward к A'.9.1)
+
+**High-level findings**:
+- **К-L analyzability matrix**: 22 К-L scored (T1=2 / T2=8 / T3=5 / T4=4 / T5=1 / T6=2; P0=9 / P1=8 / P2=3 / P3=3). Zero rule ID conflicts с existing ANALYZER_RULES.md DF### taxonomy. К-L21 row corrected (was misnumbered — no К-L21 exists).
+- **FORMALIZE Lessons analyzability**: 12 A'.8-batch Lessons scored (11 T6 documentation-only + 1 T2 auxiliary tooling — Lesson #8 atomic-commit shape via git hook). #N12/#N13 HIGH promotion + #N14 MEDIUM-HIGH (now HIGH after A'.9.0 third application).
+- **Cascade #2 + #3 surfaced rule candidates**: 10 candidates (5 cascade #2 + 5 cascade #3). Cross-cascade observation: Lesson #N12 underlies 4 candidates — `[ReservedStub]` attribute infrastructure recommended at A'.9.1 Phase α.
+- **Mod OS К-L20 prep surface**: 20 candidate DF020 sub-rules + 6 precursor relationships A'.9-era → К-L20 era. К-L20 LOCK timing post-A'.9 milestone per K_CLOSURE §9.5 Q1-Q8.
+- **Roslyn ecosystem state (May 2026)**: SDK Microsoft.CodeAnalysis.CSharp 5.3.0 (2026-03-10); xUnit testing framework variant 1.1.2 recommended; severity policy precedents documented (dotnet/roslyn-analyzers + dotnet/aspnetcore).
+- **Build/CI integration surface**: Option C hybrid `tools/DualFrontier.Analyzers/` + `tests/DualFrontier.Analyzers.Tests/` (ManifestRewriter precedent); Directory.Build.props centralized analyzer reference; .editorconfig per-rule severity progressive (suggestion → error post-cleanup).
+- **Suppression governance precedent**: near-zero baseline (5 pragmas + 0 [SuppressMessage] + 0 GlobalSuppressions + 0 CAPA related). 5-tier classification + BAN GlobalSuppressions.cs + tiered CAPA tracking + Lesson #25 refined extension proposal («structurally eliminate suppressed-warning surface» METHODOLOGY v1.13+ candidate).
+
+**Brief A'.9.1 prerequisites enumerated** (per S-LOCK-8): 10 items с empirical anchors — rule prioritization batch (17 P0+P1 rules), analyzer project structure (Option C hybrid), test framework choice (xUnit variant 1.1.2 + Workspaces version pin discipline), severity policy (per-rule via .editorconfig, suggestion→error staged), suppression policy (5-tier + DF999 self-policing), build/CI trigger (centralized in Directory.Build.props), A'.9 cascade decomposition (3-stage ξ/χ/ψ per §8.4), К-L20 timing (post-A'.9 milestone), predecessor brief disposition (revise — see §9), ANALYZER_RULES.md disposition (continue к LOCKED per existing forward plan).
+
+**Open Q-K candidates surfaced** (per S-LOCK-9): 45 candidates organized into 8 subsections (§11.1 К-L domain + §11.2 Lessons + §11.3 cascade #2/#3 + §11.4 Mod OS К-L20 + §11.5 Roslyn ecosystem + §11.6 Build/CI + §11.7 Suppression governance + §11.8 cross-cutting).
+
+### §9.4 — Lessons reaffirmed/refined
+
+- **Lesson #N14 THIRD application surfaced (HIGH promotion proximity now)**: cascade-level Phase 0 empirical assumed-state coverage applied at meta-level — deliberation agent's structural anchor missed pre-existing ANALYZER_RULES.md + A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md; execution agent Phase 0 surfaced them and brief scope adapted. 3 applications cumulative (cascade #2 α1 directory state divergence + cascade #3 α0 production composition divergence + cascade #4 deliberation-agent infrastructure-absence gap).
+- **Lesson #N13 SECOND application surfaced explicit**: cascade-level commit integrity verification applied at every commit (α0 verified Phase 0 anomalies captured before commit; α1-α4+β1β2+β3 each verified report content + diff matches commit message claims via `git diff --cached --stat`).
+- **Observational reconnaissance evidence type FORMALIZED** (cascade-level): 5th К-L14 evidence type codified per S-LOCK-6 framing — establishes new evidence category honestly rather than forcing reconnaissance into ill-fitting existing categories. Future reconnaissance/audit cascades may invoke this evidence type.
+
+### §9.5 — Convention divergences ratified
+
+Two convention divergences from brief literal flagged + ratified:
+
+1. **Branch strategy** (pre-execution, Crystalka ratified): brief literal «New feature branch off cascade-#3 closure commit (`8ea0d03`)» overridden because (a) cascade #3 itself executed directly on main per established project pattern, (b) HEAD had advanced к `4981d78` (Crystalka's CI logs commit added post-cascade-#3). Decision: «Continue on main from 4981d78».
+
+2. **REGISTER enrollment categories** (β3 self-decision, flagged in commit message): brief literal specified `DOC-T-A_PRIME_9_0_RECONNAISSANCE_BRIEF Tier 4 Category T`; adopted `DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF Tier 3 Category D` instead per existing cascade brief convention (K_EXT_2/K_EXT_3 precedent). Category T is not an established codebase category. Similarly, brief literal `event_type: cascade_closure` adopted as `event_type: execution_milestone` per sync_register.ps1 schema validation (K_EXT_2/K_EXT_3/А'.8 closure EVT all use execution_milestone).
+
+### §9.6 — Cascade closure ratification + forward task
+
+Crystalka ratification: pending (this commit lands brief AUTHORED → EXECUTED transition; Crystalka final ratification + push к origin/main authorization).
+
+Final commit pushed к origin/main: pending Crystalka ratification.
+
+**A'.9.0 Reconnaissance formally CLOSED upon push к origin/main.**
+
+**Forward task**: Brief A'.9.1 (Analyzer Infrastructure cascade) authoring в new deliberation session, using A_PRIME_9_RECONNAISSANCE_REPORT.md §10 prerequisites + §11 Q-K candidates as deliberation input. A'.9.1 = К-extensions cascade #5 per Q-K-44 recommendation (continue dual designation для KERNEL chronicle + LEDGER §3.6+ entries continuity).
+
+---
+
 **End of brief**
 
 **Authoring metadata**:
@@ -1550,5 +1629,13 @@ Per deliberation session 2026-05-24:
 - Project: Dual Frontier (Crystalka228/Dual-Frontier)
 - Pre-authoring empirical anchor: Minimal structural reads via Filesystem MCP (src/ + tools/ directory listings) к verify analyzer infrastructure absent; deep reconnaissance reserved for execution-agent multi-agent dispatch (per Crystalka direction)
 
+**Execution metadata**:
+- Executed: 2026-05-24 by Claude Code (Opus 4.7)
+- Execution branch: main (per Crystalka pre-execution ratification — cascade #3 pattern matched)
+- Multi-agent dispatch: 7 sub-agents (3 parallel batch A α1 + 3 parallel batch B α2 + 1 sequential C1 α3) per S-LOCK-5 recommendation
+- Total cascade duration: ~2 hours wall-clock (Phase 0 inventory + 3 sub-agent waves + α4 synthesis + Phase β governance cascade + Phase γ closure)
+- Commit count: 8 (within Q-J-8 budget 4-8; β1+β2 bundled per squashing allowance)
+
 **Status at authoring**: AUTHORED — pending Crystalka RATIFICATION + Claude Code execution  
-**Status transitions**: AUTHORED → RATIFIED (Crystalka) → EXECUTING → EXECUTED → CLOSED
+**Status at closure**: **EXECUTED — A'.9.0 Reconnaissance cascade closed 2026-05-24** (per §9 closure section)
+**Status transitions executed**: AUTHORED → RATIFIED (Crystalka pre-execution: branch strategy + build halt resolution + reconnaissance scope) → EXECUTING (cascade commits α0..β3) → EXECUTED (γ1 closure section appended) → CLOSED (pending push к origin/main + Crystalka final ratification)
