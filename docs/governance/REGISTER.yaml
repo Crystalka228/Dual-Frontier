@@ -39,13 +39,13 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.5.1"
+    version: "2.5.2"
     last_modified: "2026-05-23"
-    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-23"
-    last_review_event: "К-extensions cascade #2 ε1 — KERNEL_ARCHITECTURE.md v2.5 → v2.5.1 patch bump per Q-G-12 LOCKED (cleanup/chronicle = patch; new К-L = minor; structural reorganization = major). Versioning convention codified в-line. Cascade #2 chronicle entry appended к status footnote (Godot Full Deprecation + Launcher Formalization, К-L impact zero, К-L14 verification #11 first removal-type evidence). Catch-up of А'.8 closure body bump v2.4 → v2.5 (А'.8 Commit 2 5b77b5a) which was NOT reflected в REGISTER DOC-A-KERNEL.version at А'.8 closure time (REGISTER governance-lag fixed here). К-L count unchanged: 21 final."
+    last_review_event: "К-extensions cascade #3 δ1 — KERNEL_ARCHITECTURE.md v2.5.1 → v2.5.2 patch bump per Q-G-12 LOCKED versioning convention (chronicle + cross-ref = patch). Cascade #3 chronicle entry appended к status footnote (Launcher Visual Implementation Minimum Scope, К-L impact zero, К-L14 verification #12 first clean additive evidence). Pawn-3 dispatch arms real implementations; 3 deferred arms silent stubs per S-LOCK-4 amendment (Crystalka mid-cascade ratification 2026-05-23 — defensive throws would crash Launcher в production composition flow; Lesson #N12 semantic refined с sub-pattern A test-only-fires + sub-pattern B production-fires). К-L count unchanged: 21 final. Prior context: К-extensions cascade #2 ε1 — v2.5 → v2.5.1 patch bump per Q-G-12 LOCKED + cascade #2 chronicle (Godot Full Deprecation + Launcher Formalization, К-L14 #11 first removal-type evidence); А'.8 v2.4 → v2.5 catch-up для governance-lag from А'.8 closure."
     next_review_due: "2027-05-21"
     reviewer: Crystalka
     requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19]
@@ -437,18 +437,18 @@ documents:
     path: docs/methodology/METHODOLOGY.md
     title: "Dual Frontier development methodology"
     category: B
-    # version bumped к 1.11 per К-extensions cascade #2 ε2 (Lesson #N12 added + Lesson #25 refined);
-    # catches up А'.8 closure body bump v1.9 → v1.10 not reflected в REGISTER at А'.8 closure time.
+    # version bumped к 1.12 per К-extensions cascade #3 δ2 (#N12 semantic refined +
+    # #N13 + #N14 NEW Provisional candidates surfaced).
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.11"
+    version: "1.12"
     last_modified: "2026-05-23"
-    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-05-21"
-    last_review_event: "А'.7.x δ5 closure 2026-05-21 — §12.7 closure protocol step 1 «Run final verification» expanded к per-test-suite checklist; Modding suite now MANDATORY at every closure (CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c)). K10.3 v2 closure ran only the Core suite; a transient fixture-copy build-state issue (missing Fixture.RegularMod_* / Fixture.PublisherMod manifest artifacts) shipped undetected, initially mis-framed as K-L18 regression в А'.7.x brief Hypothesis 1. v1.9 §12.7 expansion closes the gap forward. Lessons batch (#N5/#N6/#27 promotions) deferred к A'.8 closure (METHODOLOGY v1.9 → v1.10) per Q-N-7X-11 split — A'.7.x covers only the §12.7 amendment."
+    last_review_event: "К-extensions cascade #3 δ2 — METHODOLOGY v1.11 → v1.12 minor bump (Lesson #N12 semantic refined с sub-pattern A test-only-fires + sub-pattern B production-fires per Crystalka mid-cascade ratification 2026-05-23; 2 NEW Provisional candidates: #N13 commit integrity verification before commit + #N14 Phase 0 reads empirical assumed-state coverage). 12 DEFER candidates Provisional pool post-cascade-#3 (#18/#19/#N3/#N5-N10/#N12/#N13/#N14). FORMALIZE 12 → 12 (unchanged — #N12 refinement не FORMALIZE bump). SUNSET 1 (unchanged). Prior context: К-extensions cascade #2 ε2 (v1.10 → v1.11 — Lesson #N12 + Lesson #25 refined); А'.7.x δ5 (v1.8 → v1.9 — §12.7 Modding suite mandatory)."
     next_review_due: "2027-05-21"
     reviewer: Crystalka
     requirements_authored: [REQ-Q-A07-6]
@@ -2041,6 +2041,25 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "К-extensions cascade #2 brief authored 2026-05-23 by Claude Opus 4.7 в post-A'.8 closure deliberation session per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral. Brief operationalized 15 Q-G ratified deliberation outcomes + 10 S-LOCK reservations. Original Godot branch claude/godot-removal-deliberation-Vfg2R (2ba8130 single commit) discarded as obsolete precursor per S-LOCK-1 — 18 commits divergence on main + scope expansion («физически удалить всё» per Crystalka §0.4) made original branch insufficient. Clean redo на current main (9ea5dbe) executed as К-extensions cascade #2. Lesson #N12 «Defensive Reserved Stub Pattern» first application captured (Launcher's RenderCommandDispatcher 6 defensive throws). Lesson #25 refined с Crystalka 2026-05-23 framing («не тестировать пустые интерфейсы и пустую реализацию которые врут в тестах»). Brief size note: K_EXT_2 brief is ~50KB (2103 lines committed at α0) covering 9 sections + appendix Q-N lock summary."
+
+  - id: DOC-D-K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF
+    path: tools/briefs/K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF.md
+    title: "K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF — К-extensions cascade #3: Launcher Visual Implementation (Minimum Scope)"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-23"
+    last_review_event: "К-extensions cascade #3 authored + executed 2026-05-23. Brief authored 2026-05-23 by Claude Opus 4.7 в post-cascade-#2 closure deliberation session (16 Q-H deliberated, 11 LOCKED + 6 DISSOLVED + 1 CHECKPOINT-DEFERRED per appendix Q-H lock summary; 10 S-LOCKs reserved). Crystalka ratified execution 2026-05-23 («ладно миниту. все теперь на меин можешь продолжить создав ветку»). Execution agent: Claude Code (Opus 4.7) on branch claude/k-ext-3-launcher-visual off cascade #2 closure merge к origin/main (12512d0). Mid-cascade brief amendment ratified (Crystalka 2026-05-23 α0) — S-LOCK-4 amended от defensive throws к silent stubs для 3 deferred dispatch arms after Phase 0 §2.5 + §2.8 reads surfaced production-fires conflict (GameBootstrap publishes ~255 ItemSpawnedCommand at startup + GameLoop emits TickAdvancedCommand every 33ms + PawnStateReporterSystem emits PawnStateCommand periodically — defensive throws would crash Launcher); Lesson #N12 semantic refined с sub-pattern A test-only-fires + sub-pattern B production-fires. Cascade scope: pawn-3 dispatch arms real implementations (PawnSpawned/Moved/Died); 3 deferred arms silent stubs; SceneState + PawnSpriteEntry minimum sprite registry per Q-H-2; LauncherProceduralAtlas Option C copy per Q-H-17 (S-LOCK-2 preservation); LauncherRenderer Vulkan integration via Runtime.RecordSpritesFrame V0.C.2 batched API (per §2.0 empirical finding — simpler than brief's manual draft); governance cascade (KERNEL v2.5.1→v2.5.2, METHODOLOGY v1.11→v1.12, K_EXTENSIONS_LEDGER §3.4 added, K_L14_EVIDENCE_DASHBOARD #12 added, PHASE_A_PRIME_SEQUENCING cascade #3 entry, REGISTER 2-commit cascade). К-L impact: zero. К-L14 verification #12 (first clean additive evidence — substrate untouched через consumer materialization)."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "К-extensions cascade #3 brief authored 2026-05-23 by Claude Opus 4.7 в post-cascade-#2 closure deliberation session per cascade #2 §4 forward roadmap. Brief operationalized 11 Q-H ratified deliberation outcomes (Q-H-0 through Q-H-10 LOCKED; Q-H-11 through Q-H-16 DISSOLVED via Phase 0 empirical grounding; Q-H-17 CHECKPOINT-DEFERRED — Option C ratified during execution). 10 S-LOCK reservations. Path B Hybrid shape (Phase 0 fully-locked + execution intent architecturally specified + mid-cascade checkpoint allowed) per honest match with doubly-new territory. Mid-cascade S-LOCK-4 amendment (silent stubs replacing defensive throws) demonstrates Path B Hybrid value — Phase 0 empirical reads surfaced design conflict; brief amendment + Lesson #N12 semantic refinement captured inline. Lesson #N12 second application + sub-pattern split documented. 2 NEW Provisional Lessons surfaced (#N13 commit integrity verification + #N14 Phase 0 empirical assumed-state coverage). Brief size note: K_EXT_3 brief is ~80KB (initial enrollment + α0 amendment inline)."
 
   - id: DOC-E-A_PRIME_7_X_CLOSURE
     path: docs/scratch/A_PRIME_7_X/CLOSURE_REPORT.md
@@ -3683,12 +3702,46 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-05-23"
-    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
     content_language: en
     review_cadence: phase-led
     last_review_date: "2026-05-23"
-    last_review_event: "К-extensions cascade #2 δ3 — Launcher project README authored (infrastructure-only per Q-G-6 (b1); Defensive Reserved Stub dispatcher per Lesson #N12 first application; brief amendment Crystalka Option A mid-cascade 2026-05-23 adapted Program.cs к existing GameLoop self-ticking background-thread architecture). Forward cascade #3 (Launcher Visual Implementation) will exercise dispatcher arms (replacing defensive throws с real visual implementations)."
-    next_review_due: "TBD — after cascade #3 closure"
+    last_review_event: "К-extensions cascade #3 β — Launcher dispatcher pawn-3 real implementations (HandlePawnSpawned/Moved/Died) + 3 deferred arms (PawnState/ItemSpawned/TickAdvanced) silent stubs per S-LOCK-4 amendment (Crystalka mid-cascade ratification 2026-05-23 — defensive throws would crash Launcher в production composition flow). LauncherRenderer Vulkan integration via Runtime.RecordSpritesFrame V0.C.2 batched API. Program.cs composition root extended с atlas upload (LauncherProceduralAtlas → SpriteTexture) + SceneState constructor injection per S-LOCK-10. Lesson #N12 semantic refined через cascade #3 (sub-pattern A test-only-fires + sub-pattern B production-fires)."
+    next_review_due: "TBD — after Vanilla mods consumer materialization OR substrate palette decoder extension cascade"
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-LAUNCHER-PROCEDURAL-ATLAS
+    path: src/DualFrontier.Launcher/LauncherProceduralAtlas.cs
+    title: "Launcher Procedural Atlas — Cascade #3 Path γ-A Asset Source"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
+    content_language: en
+    review_cadence: phase-led
+    last_review_date: "2026-05-23"
+    last_review_event: "К-extensions cascade #3 α1 — Option C copy от SmokeTest's ProceduralAtlas per Q-H-17 ratification (production-side copy preserves S-LOCK-2 substrate isolation; minor code duplication acceptable until palette decoder extension materializes). 256×256 RGBA8 atlas с 16×16 tile grid (256 distinct tiles), 4 pattern types (solid/checker/gradient/ring). Forward consolidation candidate captured в file header comment when substrate palette decoder extension materializes (Lesson #N15 first-application opportunity reserved)."
+    next_review_due: "TBD — substrate palette decoder cascade"
+    reviewer: Crystalka
+
+  - id: DOC-F-SRC-LAUNCHER-SCENE-STATE
+    path: src/DualFrontier.Launcher/SceneState.cs
+    title: "Launcher SceneState — Cascade #3 Minimum Scope Sprite Registry"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_3-CLOSURE"
+    content_language: en
+    review_cadence: phase-led
+    last_review_date: "2026-05-23"
+    last_review_event: "К-extensions cascade #3 α2 — minimum scope sprite registry per Q-H-2 LOCKED + S-LOCK-3 (no camera/HUD/layer/animation state). API: RegisterPawn/MovePawn/DespawnPawn/EnumerateActiveSprites. Read/write split: RenderCommandDispatcher writes via handlers; LauncherRenderer reads per frame. Composition (S-LOCK-10): instance constructed в Program.Main(), passed к both dispatcher и renderer via constructor injection. Silent miss tolerance: domain may emit Moved before Spawned в edge races. PawnSpriteEntry record co-located в same module (PawnSpriteEntry.cs) carrying EntityId+AtlasRegion+Position+Scale."
+    next_review_due: "TBD — cascade #4 if scene state scope expands (camera/HUD/layer/animation)"
     reviewer: Crystalka
 
   - id: DOC-F-SRC-SYSTEMS
