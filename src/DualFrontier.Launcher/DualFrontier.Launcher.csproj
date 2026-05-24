@@ -8,4 +8,15 @@
     <ProjectReference Include="..\DualFrontier.Application\DualFrontier.Application.csproj" />
     <ProjectReference Include="..\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
   </ItemGroup>
+
+  <!-- Native DLL copy step — same pattern as test projects. Required for
+       GameBootstrap.CreateLoop's NativeWorld bootstrap call (df_engine_bootstrap).
+       Cascade #3 γ0 fix per discovered cascade #2 omission. -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.dll</Link>
+    </None>
+  </ItemGroup>
 </Project>
