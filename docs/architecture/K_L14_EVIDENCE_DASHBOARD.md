@@ -108,6 +108,54 @@ Mid-cascade brief amendment ratified by Crystalka (Option A, 2026-05-23):
 
 **Cumulative post-this-verification**: 10 verifications в active log (9 baseline + #11 cascade #2; #10 slot vacated). 9 clean + 1 honest soft-halt annotation (#7). К-L14 thesis remains не-falsified by accumulated evidence.
 
+### Verification #12 — К-extensions cascade #3 (Launcher Visual Implementation Minimum Scope)
+
+**Date**: 2026-05-23
+**Cascade**: К-extensions cascade #3 — Launcher Visual Implementation (Minimum Scope)
+**Brief**: `tools/briefs/K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF.md` (EXECUTED)
+**Status**: **CLEAN** (per Q-H-7 LOCKED framing; first clean additive evidence)
+**К-L LOCK transitions**: None (К-L count unchanged: 21)
+
+**К-L14 contribution narrative**:
+
+К-extensions cascade #3 = **first clean additive evidence** of К-L14 thesis. Cascade #2 (verification #11) was first removal-type evidence (substrate stable через consumer scaffold removal + new consumer addition). Cascade #3 inverts the additive polarity within the same thesis: substrate (DualFrontier.Runtime + PngDecoder + SpriteRenderer + ProceduralAtlas) primitives completely untouched через addition of substantial new consumer functionality (3 real dispatch arm implementations + SceneState minimum sprite registry + LauncherRenderer Vulkan recording integration + Program.cs composition root extension с atlas upload).
+
+К-L14 thesis preservation: substrate exhibits stability **across consumer materialization** — not just across architectural addition (verifications #1-#9 forward-add) либо consumer removal/addition swap (verification #11). Performance impact: zero (consumer materialization only; no production tick path change; sim continues к run on background thread per existing GameLoop; LauncherRenderer adds render-thread Vulkan recording per V0.C.2 batched API with no observable substrate cost). Falsifiability commitment: cascade #3 evidence recorded honestly per Q-H-7 LOCKED — no soft-halt observed; no К-L14 falsifying observation.
+
+Note on Lesson #N12 semantic refinement (cascade #3 mid-cascade Crystalka ratification): brief originally specified defensive throws для 3 deferred dispatch arms (PawnState/ItemSpawned/TickAdvanced) per Lesson #N12 first-application pattern from cascade #2. Phase 0 §2.5 + §2.8 reads surfaced empirical conflict — these command types fire actively в production composition flow (GameBootstrap.PublishItemSpawnedEvents queues ~255 ItemSpawnedCommand at startup + GameLoop.RunLoop emits TickAdvancedCommand every 33ms + PawnStateReporterSystem emits PawnStateCommand periodically). Defensive throws would crash Launcher на first frame. Crystalka ratified S-LOCK-4 amendment (silent stubs + DO NOT TEST documentation). Lesson #N12 promotion criterion refined to require sub-pattern differentiation. **Critical К-L14 framing point**: this amendment is **not** a К-L14 falsifying observation — it does not weaken К-L14 thesis. Substrate stability preserved через amendment process; amendment refines a Lesson (cascade-level discipline), не invariant.
+
+**Performance metric**: N/A (consumer materialization; no production substrate metric impact). Pawn-3 dispatch arm execution overhead negligible (Dictionary lookups + Vector2 construction). Vulkan render path uses existing V0.C.2 RecordSpritesFrame batched API без modification.
+
+**Cross-references**:
+- Cascade closure report: [K_EXTENSIONS_LEDGER.md §3.4](K_EXTENSIONS_LEDGER.md#34--к-extensions-cascade-3--launcher-visual-implementation-minimum-scope)
+- Brief: `tools/briefs/K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF.md`
+- Relevant CAPAs: None opened
+- К-L invariants affected: None (cascade focused on consumer materialization; К-L count unchanged)
+- К-L17.1 sub-invariant candidacy noted per brief §6.2 — deferred к когда composition framework actually consumed by Launcher (later cascade — likely multi-layer rendering OR HUD overlay surface)
+
+**Falsifiability criteria status post-this-verification**:
+- Criterion 1 (К-extension cascade decreases performance ceiling): NOT falsified — zero substrate code path change; consumer-side additions only
+- Criterion 2 (К-extension cascade requires reverting prior К-L invariant): NOT falsified — К-L count unchanged
+- Criterion 3 (forward К-L invariant directly conflicts с established invariant): NOT falsified — no new К-L
+- Criterion 4 (architectural addition fails к improve, observably regresses, performance metric): NOT falsified — zero substrate metric impact
+- Criterion 5 (К-L14 default-inclusion bias rejected via observable architectural cost too high): NOT falsified — cascade favored default-include (Lesson #N12 silent stub pattern protects production composition без compromising structural test discipline)
+- Criterion 6 (Provisional Q-N-8-7: soft-halt rate exceeds X% across N consecutive cascades): NOT falsified — zero soft-halts cascade #3; cumulative soft-halt count remains 1 (verification #7 К10.3 v2)
+
+**Lessons surfaced**:
+- Lesson #N12 SEMANTIC REFINED: second application + sub-pattern split (test-only-fires defensive throws + production-fires silent stubs); promotion criterion amended.
+- Lesson #N13 (Provisional, NEW): Commit integrity verification before commit (first observation cascade #2 α1; explicit application cascade #3 α0).
+- Lesson #N14 (Provisional, NEW): Phase 0 reads empirical assumed-state coverage (first observations cascade #2 α1 + cascade #3 §2.0).
+
+**Brief amendment narrative** (per closure section §9):
+Mid-cascade brief amendment ratified by Crystalka (S-LOCK-4 silent stubs, 2026-05-23 α0):
+1. Brief original S-LOCK-4: defensive throws с updated messages для 3 deferred arms (per Lesson #N12 cascade #2 first-app pattern).
+2. Phase 0 empirical conflict: §2.5 read of GameBootstrap.CreateLoop showed PublishItemSpawnedEvents queues ~255 ItemSpawnedCommand at composition; §2.8 read of GameLoop.RunLoop showed TickAdvancedCommand fires every 33ms (30 TPS); PawnStateReporterSystem source emits PawnStateCommand periodically. All 3 deferred command types fire actively в production composition flow.
+3. Crystalka ratification (2026-05-23): «ситуация такая для сапуска можно поставить заглушку, главное не включать в тесты участки с заглушками, а вдруг появится тест то он должен падать на заглушке так как там нечего тестировать и тест будет врать» — silent stub pattern + DO NOT TEST discipline + tests that try к exercise stubs should fail because nothing к assert.
+4. Amendment captured inline в brief §1 S-LOCK-4 с original text preserved для audit trail.
+5. Lesson #N12 promotion criterion refined accordingly (sub-pattern split documented в METHODOLOGY v1.12).
+
+**Cumulative post-this-verification**: 11 verifications в active log (9 baseline + #11 cascade #2 + #12 cascade #3; #10 slot vacated). 10 clean + 1 honest soft-halt annotation (#7). К-L14 thesis remains не-falsified by accumulated evidence.
+
 ---
 
 ## §3 — Forward verification template

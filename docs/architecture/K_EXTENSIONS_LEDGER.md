@@ -128,17 +128,58 @@ scaffold (Presentation.Native + Presentation) + addition of new consumer (Launch
 - K_EXTENSIONS_LEDGER.md authored (this document — ε4)
 - К-extensions cascade #3 scope split к separate brief (Launcher Visual Implementation)
 
+### §3.4 — К-extensions cascade #3 — Launcher Visual Implementation (Minimum Scope)
+
+**Designation**: К-extensions cascade #3
+**Dates**: Authored 2026-05-23 (deliberation session, Claude Opus 4.7 architect mode + Crystalka direction), Executed 2026-05-23, Closed 2026-05-23
+**Brief**: `tools/briefs/K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF.md` (AUTHORED → EXECUTED)
+**Execution branch**: `claude/k-ext-3-launcher-visual` off cascade #2 closure merge к origin/main (12512d0).
+
+**Scope summary**: Replace cascade #2 defensive throws с real visual implementations для pawn-3 dispatch arms (PawnSpawned/Moved/Died). 3 deferred arms (PawnState/ItemSpawned/TickAdvanced) silent stubs per S-LOCK-4 amendment (Crystalka mid-cascade ratification — defensive throws would crash Launcher в production composition; cascade #2 application was valid because R-2 не run, cascade #3 Phase 0 §2.5 + §2.8 reads surfaced production-fires conflict). SceneState + PawnSpriteEntry minimum sprite registry per Q-H-2. LauncherProceduralAtlas Option C copy (Q-H-17) preserves S-LOCK-2 substrate isolation. LauncherRenderer Vulkan integration via Runtime.RecordSpritesFrame V0.C.2 batched API one-liner.
+
+**К-L impact**: zero (consumer materialization only). К-L count unchanged: 21 final.
+
+**Lessons surfaced**:
+- **Lesson #N12 SEMANTIC REFINED** — second application + sub-pattern split:
+  - Sub-pattern A (test-only-fires) — defensive throws (cascade #2 first app preserved)
+  - Sub-pattern B (production-fires, NEW cascade #3) — silent stubs с DO NOT TEST doc
+  - Promotion criterion amended к require substantially-different sub-pattern OR different domain
+- **Lesson #N13 (Provisional, NEW)** — Commit integrity verification before commit (first observation cascade #2 α1 sln mutation claim/diff mismatch; cascade #3 α0 explicit application)
+- **Lesson #N14 (Provisional, NEW)** — Phase 0 reads empirical assumed-state coverage (first observations cascade #2 α1 directory state divergence + cascade #3 §2.0 production composition divergence)
+
+**К-L14 verification**: #12 — first clean additive evidence (cascade #2 #11 = removal-type; cascade #3 #12 = additive-type — substrate primitives untouched через consumer materialization).
+
+**Cascade #2 retroactive ratification**: R-1 + R-2 Phase 0 gates inheritance — R-2 resolved analytically (defensive throws would crash Launcher; mid-cascade ratification ratified silent stub fix); R-1 outcome captured в δ7 closure section (background run during cascade execution).
+
+**Atomic commits**: ~12 (within Q-H-10 budget 12-15). Cascade structure: α0 brief amendment + α1 ProceduralAtlas + α2 SceneState/PawnSpriteEntry + β atomic dispatcher/renderer/program + δ1 KERNEL + δ2 METHODOLOGY + δ3 sequencing + δ4 LEDGER + δ5/δ6 REGISTER + δ7 brief closure.
+
+**Closure notes**:
+- KERNEL v2.5.1 → v2.5.2 (patch bump per Q-G-12 + chronicle + К-L14 #12 cross-ref)
+- METHODOLOGY v1.11 → v1.12 (minor — #N12 semantic refined + #N13 + #N14 NEW Provisionals)
+- K_EXTENSIONS_LEDGER §3.4 added (this entry) + §4 forward roadmap updated
+- K_L14_EVIDENCE_DASHBOARD verification #12 entry appended
+- PHASE_A_PRIME_SEQUENCING cascade #3 entry appended
+- register_version 2.4 → 2.5 (δ6)
+- Brief AUTHORED → EXECUTED + §9 closure section appended (δ7)
+
 ---
 
 ## §4 — Forward roadmap
 
 Anticipated К-extensions cascades:
-- **К-extensions cascade #3** — Launcher Visual Implementation (separate brief
-  authored 2026-05-DD; executes post-cascade-#2 closure per Crystalka direction:
-  «после исполнения в сесии claude code я приложу отчёт и мы продолжим уже
-  делать второй»)
-- **Future К-extensions cascades** — emergent per V-series, FO-series, Phase B
-  needs (no predetermined timeline)
+- **Pre-existing pollution cleanup cascade** — flaky test stabilization
+  (`CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` + 9 other known
+  flaky tests per cascade #2 closure annotation; future cascade authoring TBD)
+- **Substrate palette decoder extension cascade** — when Vanilla mods materialize
+  consumer need для kenney-format PNG asset loading либо HUD font sprite atlas;
+  first К-L14 substrate-extension-evidence opportunity (Lesson #N15 reserved
+  для first-application). Path γ-A Option C copy of ProceduralAtlas + future
+  consolidation point.
+- **К-extensions cascade #4+** — emergent per V-series, FO-series, Phase B
+  needs (no predetermined timeline). Likely candidates: HUD primitives reserved
+  skeleton (Lesson #N12 third application opportunity), input bridge wiring
+  (cascade #3 deferred input forwarding), camera control mechanism (cascade
+  #3 hard-coded assumed-map-fit defaults).
 
 ---
 <!-- Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY -->
