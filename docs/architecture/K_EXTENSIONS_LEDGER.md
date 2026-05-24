@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-A-K_EXTENSIONS_LEDGER
+category: A
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_EXTENSIONS_LEDGER
+---
 # К-extensions Cascade Ledger — Dual Frontier
 
 **Document role**: Thematic narrative tracking of К-extensions cascades executed

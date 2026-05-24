@@ -55,6 +55,61 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_L14_EVIDENCE_DASHB
 
 ---
 
+## §2.5 — Post-closure verifications appended (К-extensions cascades + V substrate + A'.9 + Phase B)
+
+### Verification #10 — VACATED (original Godot branch discarded)
+
+**Date**: 2026-05-23 (decision)
+**Cascade**: Original К-extensions cascade #2 candidate — branch `claude/godot-removal-deliberation-Vfg2R` (commit `2ba8130`)
+**Status**: VACATED per S-LOCK-1 (К-extensions cascade #2 deliberation 2026-05-23)
+**Rationale**: K_CLOSURE_REPORT.md §1.3 designated this slot as «К-L14 verification #10 candidate at merge timestamp». Original branch discarded as obsolete precursor per S-LOCK-1 — 18 commits divergence on main + Crystalka §0.4 expanded scope («физически удалить всё связанное с Godot») made original branch's tracked-file-only scope (67 files, +394/-2349) insufficient. Clean redo executed as К-extensions cascade #2 (verification #11). Slot vacated, не filled by another cascade.
+
+### Verification #11 — К-extensions cascade #2 (Godot Full Deprecation + Launcher Formalization)
+
+**Date**: 2026-05-23
+**Cascade**: К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization
+**Brief**: `tools/briefs/K_EXT_2_GODOT_DEPRECATION_BRIEF.md` (EXECUTED)
+**Status**: **CLEAN** (per Q-G-14 honest-framed protocol; first removal-type evidence)
+**К-L LOCK transitions**: None (К-L count unchanged: 21)
+
+**К-L14 contribution narrative**:
+
+К-extensions cascade #2 = **first removal-type evidence** of К-L14 thesis. All prior verifications (#1-#9) were forward-add (substrate primitives + scheduler + bus + composition framework + mod lifecycle). Cascade #2 inverts the polarity: substrate (DualFrontier.Runtime) primitives unchanged through (a) removal of dead consumer scaffold (DualFrontier.Presentation.Native + tracked DualFrontier.Presentation) + (b) addition of new consumer (DualFrontier.Launcher с defensive throws per Lesson #N12 first application).
+
+К-L14 thesis preservation: substrate exhibits stability across consumer churn — not just across architectural addition cascades. Performance impact: zero (cleanup + new scaffold, no production tick path change; sim continues к run on background thread per existing GameLoop). Falsifiability commitment: cascade #2 evidence recorded honestly per Q-G-14 LOCKED — no soft-halt observed; no К-L14 falsifying observation.
+
+**Performance metric**: N/A (zero production code path change; new Launcher infrastructure ships defensive throws, не visual implementation).
+
+**Cross-references**:
+- Cascade closure report: [K_EXTENSIONS_LEDGER.md §3.3](K_EXTENSIONS_LEDGER.md#33--к-extensions-cascade-2--godot-full-deprecation--launcher-formalization)
+- Brief: `tools/briefs/K_EXT_2_GODOT_DEPRECATION_BRIEF.md`
+- Relevant CAPAs: None opened
+- К-L invariants affected: None (cascade focused on cleanup + Launcher scaffold; К-L count unchanged)
+- К-L17.1 sub-invariant candidacy noted per brief §6.1 — deferred к cascade #3 (Launcher Visual Implementation) when CompositionFramework binding actually exercised
+
+**Falsifiability criteria status post-this-verification**:
+- Criterion 1 (К-extension cascade decreases performance ceiling): NOT falsified — zero production code path change (cleanup + new scaffold)
+- Criterion 2 (К-extension cascade requires reverting prior К-L invariant): NOT falsified — К-L count unchanged
+- Criterion 3 (forward К-L invariant directly conflicts с established invariant): NOT falsified — no new К-L
+- Criterion 4 (architectural addition fails к improve, observably regresses, performance metric): NOT falsified — zero metric impact
+- Criterion 5 (К-L14 default-inclusion bias rejected via observable architectural cost too high): NOT falsified — cascade favored default-include (Lesson #14 third application — Godot deprecation arc completion як separate-branch atomic cleanup, supporting drift cleanup principle)
+- Criterion 6 (Provisional Q-N-8-7: soft-halt rate exceeds X% across N consecutive cascades): NOT falsified — zero soft-halts cascade #2; cumulative soft-halt count remains 1 (verification #7 К10.3 v2)
+
+**Lessons surfaced**:
+- Lesson #N12 (Provisional, NEW): «Defensive Reserved Stub Pattern» — Launcher's RenderCommandDispatcher 6 defensive throws first application. Promotion gate: second application с reusable pattern.
+- Lesson #25 refined: lying-test prevention principle per Crystalka 2026-05-23 framing.
+- Lesson #14 PROMOTED third application: pre-existing drift cleanup as separate-branch cascade.
+
+**Brief amendment narrative** (per closure section §9.3):
+Mid-cascade brief amendment ratified by Crystalka (Option A, 2026-05-23):
+1. α1 scope expansion: brief §2.9 assumed Presentation/ untracked-only; empirically ~45 tracked files. Lesson #N2 second observation pattern.
+2. δ Program.cs amendment: brief assumed external `gameContext.GameLoop.Tick()`; empirically GameLoop self-ticks on background thread (Start/Stop API only). Q-G-7 (d) hybrid orchestration intent preserved — Program.cs still explicitly drives lifecycle just не sim tick.
+3. ε5 REGISTER scope expansion: 6 additional Presentation/* DOC entries retired per sync_register --validate empirical surface.
+
+**Cumulative post-this-verification**: 10 verifications в active log (9 baseline + #11 cascade #2; #10 slot vacated). 9 clean + 1 honest soft-halt annotation (#7). К-L14 thesis remains не-falsified by accumulated evidence.
+
+---
+
 ## §3 — Forward verification template
 
 **Template for new verifications**:

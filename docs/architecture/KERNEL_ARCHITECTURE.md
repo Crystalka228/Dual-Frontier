@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.4"
+version: "2.5.1"
 next_review_due: 2027-05-21
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL
 ---

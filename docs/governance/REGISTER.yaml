@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.3"
+register_version: "2.4"
 last_modified: "2026-05-23"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -39,13 +39,13 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.4"
-    last_modified: "2026-05-21"
-    last_modified_commit: "08d0bba"
+    version: "2.5.1"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-21"
-    last_review_event: "А'.7.x γ4 LOAD-BEARING commit 2026-05-21 — К-L15.1 «Three-tier independence» AUTHORED → LOCKED (2-layer sub-invariant к К-L15: state isolation + runtime isolation + cross-tier re-entrant publish safe; falsifiability committed). Mirrors К-L7.1 / К-L3.1 sub-invariant precedent (К-L15.1 LOCKS while К-L15 parent stays AUTHORED candidate until A'.8 closure). KERNEL_ARCHITECTURE.md Part 0 К-L15 row updated к «К-L15 (+К-L15.1)» pattern; status footnote extended с А'.7.x К-extensions cascade #0 entry. Cumulative К-Lxx series 20 → 21 post-A'.7.x. К-L15.1 closes investigation Bug #4 (48-way single-mutex contention) + cross-tier re-entrancy deadlock hazard (S10 cross-tier probe в SchedulerExtremeTests.cs:1007 PASS post-split). Source split deferred к А'.7.5 sub-milestone per Q-N-7X-2 Option C hybrid (К-L15.1 в 2-layer form does not require compile-time isolation as a 3rd layer). KFNS v2.0 unchanged per Q-N-7X-14 Option C Phase 0 read (no «shared mutex» refs that would be misleading without sub-invariant qualifier). MOD_OS v1.11 unchanged (К-L15 capability semantics per-FQN per-tier orthogonal к sub-invariant behavioral contract)."
+    last_review_date: "2026-05-23"
+    last_review_event: "К-extensions cascade #2 ε1 — KERNEL_ARCHITECTURE.md v2.5 → v2.5.1 patch bump per Q-G-12 LOCKED (cleanup/chronicle = patch; new К-L = minor; structural reorganization = major). Versioning convention codified в-line. Cascade #2 chronicle entry appended к status footnote (Godot Full Deprecation + Launcher Formalization, К-L impact zero, К-L14 verification #11 first removal-type evidence). Catch-up of А'.8 closure body bump v2.4 → v2.5 (А'.8 Commit 2 5b77b5a) which was NOT reflected в REGISTER DOC-A-KERNEL.version at А'.8 closure time (REGISTER governance-lag fixed here). К-L count unchanged: 21 final."
     next_review_due: "2027-05-21"
     reviewer: Crystalka
     requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19]
@@ -96,11 +96,13 @@ documents:
     category: A
     tier: 1
     lifecycle: LOCKED
+    # version bumped к 1.1.1 per К-extensions cascade #2 ε2 patch bump (Q-G-10 Tier 2 cleanup);
+    # last_modified/last_review_event updated к match cascade #2 closure context.
     supersedes: [DOC-D-G0, DOC-D-G1, DOC-D-G2, DOC-D-G3, DOC-D-G4, DOC-D-G5, DOC-D-G6, DOC-D-G7, DOC-D-G8, DOC-D-G9, DOC-A-VISUAL_ENGINE, DOC-A-GODOT_INTEGRATION]
     owner: Crystalka
-    version: "1.1"
-    last_modified: "2026-05-20"
-    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L18-LOAD-BEARING"
+    version: "1.1.1"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
@@ -435,12 +437,14 @@ documents:
     path: docs/methodology/METHODOLOGY.md
     title: "Dual Frontier development methodology"
     category: B
+    # version bumped к 1.11 per К-extensions cascade #2 ε2 (Lesson #N12 added + Lesson #25 refined);
+    # catches up А'.8 closure body bump v1.9 → v1.10 not reflected в REGISTER at А'.8 closure time.
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.9"
-    last_modified: "2026-05-21"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_7_X-CLOSURE"
+    version: "1.11"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-05-21"
@@ -8419,3 +8423,185 @@ audit_trail:
         - document: DOC-D-K_CLOSURE_AUTHORING_BRIEF
           from: AUTHORED
           to: EXECUTED
+
+  - id: EVT-2026-05-23-K_EXT_2-GODOT_FULL_DEPRECATION
+    date: "2026-05-23"
+    event: "К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization closure event (post-А'.8 К-closure execution per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral)"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-A-K_EXTENSIONS_LEDGER                      # NEW enrollment, Live Tier 2 (companion artifact per Q-G-11)
+      - DOC-F-SRC-LAUNCHER                             # NEW enrollment, Live Tier 4 (new Launcher project README)
+      - DOC-D-K_EXT_2_GODOT_DEPRECATION_BRIEF          # NEW enrollment, EXECUTED Tier 3 (cascade #2 brief)
+      - DOC-F-SRC-PRESENTATION-NATIVE                  # RETIRED — Silk.NET+OpenGL stub project removed (Q-G-2)
+      - DOC-F-SRC-PRESENTATION                         # RETIRED — Godot DevKit project removed (α1 scope expansion)
+      - DOC-F-SRC-PRESENTATION-INPUT                   # RETIRED — Presentation/Input/ removed (α1)
+      - DOC-F-SRC-PRESENTATION-NODES                   # RETIRED — Presentation/Nodes/ removed (α1)
+      - DOC-F-SRC-PRESENTATION-SCENES                  # RETIRED — Presentation/Scenes/ removed (α1)
+      - DOC-F-SRC-PRESENTATION-UI                      # RETIRED — Presentation/UI/ removed (α1)
+      - DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT           # RETIRED — Presentation/addons/df_devkit/ removed (α1)
+      - DOC-A-KERNEL                                   # v2.4 → v2.5.1 (А'.8 v2.5 catch-up + cascade #2 patch bump per Q-G-12)
+      - DOC-B-METHODOLOGY                              # v1.9 → v1.11 (А'.8 v1.10 catch-up + cascade #2 Lesson #N12 + #25 refined)
+      - DOC-A-VULKAN_SUBSTRATE                         # v1.1 → v1.1.1 (cascade #2 patch bump per Q-G-12 + Q-G-10 Tier 2 cleanup)
+      - DOC-A-K_CLOSURE_REPORT                         # cross-reference paragraph added (post-closure note section pointing к K_EXTENSIONS_LEDGER)
+      - DOC-A-PHASE_A_PRIME_SEQUENCING                 # Live update — cascade #2 entry added between A'.8 + A'.9
+      - DOC-G-REGISTER                                 # register_version 2.3 → 2.4
+    commits:
+      range: "2022bc1..PENDING-COMMIT-K_EXT_2-CLOSURE-RATIFICATION"
+      key_commits:
+        - hash: "2022bc1"
+          summary: "α0 — К-extensions cascade #2 brief authored on dedicated execution branch claude/k-ext-2-godot-deprecation off main 9ea5dbe"
+        - hash: "a52996d"
+          summary: "α1 — Physical purge: DualFrontier.Presentation.Native + tracked DualFrontier.Presentation removed (49 files, -2328 LOC); Kenney assets rescued via git mv к assets/kenney/ (12 files). Q-G-2 + scope amendment ratified mid-cascade (Crystalka)."
+        - hash: "8a8e507"
+          summary: "α1.5 — sln integrity fix: α1 commit message claimed sln mutation but git status revealed sln was unstaged at commit time; α1.5 corrects integrity gap (Lesson #8 atomicity)"
+        - hash: "339ed3a"
+          summary: "β1 — Tier 1 Application/* documentation cleanup (16 files; expanded scope from brief's 8 к include Commands/README + SimStateLayer + DevKitOnlyAttribute; Q-G-1 IDevKitRenderer dormant + Q-G-3 IRenderCommand pure marker applied)"
+        - hash: "1aaf167"
+          summary: "β2 — Tier 2 active arch docs cleanup (6 files: ARCHITECTURE, ECS, ISOLATION, THREADING, KERNEL, VULKAN_SUBSTRATE v1.1→v1.1.1 patch); Tier 3/4 not triggered; 5 chronicle/historical docs preserved unchanged per S-LOCK-8 default-include bias + classification"
+        - hash: "fc311eb"
+          summary: "β5 — Historical archives closure addendum (GODOT_INTEGRATION + VISUAL_ENGINE); SUPERSEDED lifecycle preserved; cascade-specific architectural intent preservation narrative + cross-references к active artifacts added"
+        - hash: "9c9829e"
+          summary: "δ1 (combined δ1+δ2) — Launcher project scaffold: csproj + sln entry + Application.csproj InternalsVisibleTo Presentation → Launcher amendment + Program.cs + LauncherRenderer.cs + RenderCommandDispatcher.cs (6 defensive throws per Lesson #N12 first application). Brief amendment Crystalka Option A mid-cascade — Program.cs adapted к existing GameLoop self-ticking background-thread architecture (brief assumed external Tick() call empirically wrong). Q-G-7 (d) hybrid orchestration intent preserved."
+        - hash: "e534ecc"
+          summary: "δ3 — Launcher README authored"
+        - hash: "032a9b6"
+          summary: "ε1 — KERNEL v2.5 → v2.5.1 patch bump per Q-G-12; versioning convention codified в-line (minor/patch/major semantics)"
+        - hash: "c8a4e77"
+          summary: "ε2 — METHODOLOGY v1.10 → v1.11; Lesson #N12 «Defensive Reserved Stub Pattern» captured as Provisional candidate с first-application evidence; Lesson #25 refined per Crystalka 2026-05-23 framing"
+        - hash: "594dbce"
+          summary: "ε3 — PHASE_A_PRIME_SEQUENCING cascade #2 chronological entry added between A'.8 + A'.9"
+        - hash: "7cee007"
+          summary: "ε4 — K_EXTENSIONS_LEDGER.md authored (Tier 2 Live Category A companion artifact per Q-G-11) + K_CLOSURE_REPORT.md cross-reference paragraph added"
+        - hash: "bd5bdac"
+          summary: "ε5 — REGISTER Commit α: 3 new DOC enrollments (DOC-A-K_EXTENSIONS_LEDGER + DOC-F-SRC-LAUNCHER + DOC-D-K_EXT_2_GODOT_DEPRECATION_BRIEF) + 7 retirements (PRESENTATION-NATIVE + 6 Presentation sub-entries per sync_register --validate empirical scope expansion)"
+        - hash: "PENDING-COMMIT-K_EXT_2-EPSILON_6"
+          summary: "ε6 (this commit) — REGISTER Commits β + γ combined: DOC version bumps (KERNEL 2.4→2.5.1, METHODOLOGY 1.9→1.11, VULKAN_SUBSTRATE 1.1→1.1.1; А'.8 governance-lag versions caught up + cascade #2 bumps applied) + register_version 2.3 → 2.4 + EVT-2026-05-23-K_EXT_2-GODOT_FULL_DEPRECATION audit_trail entry + K_L14_EVIDENCE_DASHBOARD.md verification #11 entry appended"
+        - hash: "PENDING-COMMIT-K_EXT_2-CLOSURE-RATIFICATION"
+          summary: "ε7 — Brief AUTHORED → EXECUTED + closure section с verification #11 evidence table (final ratification commit)"
+    governance_impact: |
+      К-EXTENSIONS CASCADE #2 — GODOT FULL DEPRECATION + LAUNCHER FORMALIZATION
+      closure event (post-А'.8 К-closure execution per Q-N-8-11 forward sequencing +
+      Q-N-8-6 LOCKED post-closure deferral). К-closure event boundary preserved
+      (cascade #2 closes post-event, not at-event).
+
+      Q-G deliberation Session 2026-05-23 ratified 15/15 Q-G seeds (per brief §8
+      appendix Q-N lock summary):
+      - Q-G-0: Option X (single large cascade, no split)
+      - Q-G-1: (c) Keep IDevKitRenderer dormant, decoupled от Godot
+      - Q-G-2: (a) Remove Presentation.Native outright
+      - Q-G-3: (a) IRenderCommand as pure marker, drop Execute()
+      - Q-G-4: SUBSUMED by Q-G-3
+      - Q-G-5: (a) No new К-L + Lesson #N12 candidate captured
+      - Q-G-6: (b)+(i)+(b1) Standard launcher infrastructure-only
+      - Q-G-7: (d) Hybrid orchestration в Program.cs
+      - Q-G-8: (b) Executable-focused config (2 configs)
+      - Q-G-9: (a) Keep SmokeTest as is
+      - Q-G-10: (d) Tiered scan с conditional expansion
+      - Q-G-11: (d) Separate K_EXTENSIONS_LEDGER.md companion
+      - Q-G-12: (b) Patch bump v2.5 → v2.5.1 + versioning convention codified
+      - Q-G-13: (d) Hybrid 3-commit REGISTER cascade
+      - Q-G-14: (d) Honest-framed removal-type evidence
+
+      Mid-cascade brief amendments ratified by Crystalka 2026-05-23:
+      - α1 scope expansion: brief §2.9 assumed Presentation/ untracked-only;
+        empirically Presentation/ had ~45 tracked Godot files. Expanded α1 scope
+        к include both Presentation.Native + tracked Presentation removal с
+        Kenney asset rescue. Brief §0.4 intent verbatim («физически удалить всё»)
+        honored. Lesson #N2 second observation pattern (per project_a_prime_7_x_state.md).
+      - δ Program.cs amendment Option A: brief assumed external gameContext.GameLoop.Tick()
+        callable; empirically GameLoop runs on its own background thread (Start/Stop
+        API only). Q-G-7 (d) hybrid orchestration intent preserved — Program.cs
+        still explicitly drives lifecycle just не sim tick (which is background thread).
+        Added InternalsVisibleTo("DualFrontier.Launcher") к Application.csproj.
+      - ε5 REGISTER scope expansion: brief originally listed только DOC-F-SRC-PRESENTATION-NATIVE
+        retirement; sync_register --validate empirically surfaced 5 additional
+        Presentation/* DOC entries pointing к removed files. Retired all 6
+        Presentation* DOC entries (consistent с α1 scope expansion).
+
+      К-L impact: zero (К-L count unchanged: 21 final). Cascade scope focused
+      на cleanup + Launcher infrastructure; no К-L invariant introduced либо
+      modified. К-L17.1 «Renderer-к-CompositionFramework binding» sub-invariant
+      candidacy noted в brief §6.1 forward consideration — deferred к cascade #3
+      when LauncherRenderer's real visual implementation exercises CompositionFramework
+      binding.
+
+      К-L14 verification #11 contribution (first removal-type evidence per Q-G-14
+      honest-framed protocol; verification #10 slot vacated by discarded original
+      Godot branch 2ba8130 per S-LOCK-1): substrate (DualFrontier.Runtime) primitives
+      unchanged through removal of dead consumer scaffold (Presentation.Native +
+      Presentation) + addition of new consumer (Launcher). К-L14 thesis preservation:
+      substrate exhibits stability across consumer churn. Pre-existing pollution
+      status preserved (CreateLoop_RunningLoop_PawnStateCommandCarriesRealName
+      failure pattern unchanged from baseline; не caused by cascade #2 changes).
+
+      Lessons surfaced (3, per METHODOLOGY v1.11 ε2):
+      - Lesson #N12 (NEW Provisional): «Defensive Reserved Stub Pattern» — paired
+        discipline с Lesson #25 refined; first application captured (Launcher's
+        RenderCommandDispatcher 6 defensive throws). Promotion gate: second
+        application с reusable pattern (different reserved stub surface).
+      - Lesson #25 refined: lying-test prevention principle added per Crystalka
+        2026-05-23 framing («не тестировать пустые интерфейсы и пустую реализацию
+        которые врут в тестах»).
+      - Lesson #14 PROMOTED third application (Godot deprecation arc completion
+        на separate branch claude/k-ext-2-godot-deprecation, consistent с А'.7.x
+        bus refactor + А'.7.5 source split prior applications).
+
+      REGISTER amendments:
+      - 3 new DOC enrollments:
+        * DOC-A-K_EXTENSIONS_LEDGER (Tier 2 Live Category A; companion artifact per Q-G-11)
+        * DOC-F-SRC-LAUNCHER (Tier 4 Live Category F; new Launcher project README)
+        * DOC-D-K_EXT_2_GODOT_DEPRECATION_BRIEF (Tier 3 EXECUTED Category D; cascade #2 brief)
+      - 7 DOC retirements (Presentation.Native + 6 Presentation sub-entries)
+      - DOC-A-KERNEL version 2.4 → 2.5.1 (А'.8 governance-lag catch-up + cascade #2 patch)
+      - DOC-B-METHODOLOGY version 1.9 → 1.11 (А'.8 governance-lag catch-up + cascade #2 minor-equivalent)
+      - DOC-A-VULKAN_SUBSTRATE version 1.1 → 1.1.1 (Q-G-12 patch bump)
+      - DOC-A-K_CLOSURE_REPORT cross-reference paragraph added (post-closure note к K_EXTENSIONS_LEDGER)
+      - DOC-A-PHASE_A_PRIME_SEQUENCING Live update — cascade #2 entry added
+      - register_version 2.3 → 2.4
+
+      Forward cascade #3 prerequisites confirmed:
+      - ✓ Launcher project exists с infrastructure-only scaffold
+      - ✓ RenderCommandDispatcher с 6 defensive throws (ready для replacement)
+      - ✓ IRenderCommand pure marker (data records ready для dispatch)
+      - ✓ PresentationBridge ↔ Launcher wiring connected (per amended Program.cs)
+      - ✓ Runtime substrate primitives accessible
+      - ✓ К-L14 baseline established (verification #11 evidence)
+
+      К-extensions cascade #3 brief authoring deferred к post-cascade-#2 closure
+      session per Crystalka direction («после исполнения в сесии claude code я
+      приложу отчёт и мы продолжим уже делать второй»).
+    cross_references:
+      capa_entries: []
+      risks:
+        - RISK-013                          # rendering substrate cross-cutting
+      lifecycle_transitions:
+        - document: DOC-A-K_EXTENSIONS_LEDGER
+          from: NOT_ENROLLED
+          to: Live
+        - document: DOC-F-SRC-LAUNCHER
+          from: NOT_ENROLLED
+          to: Live
+        - document: DOC-D-K_EXT_2_GODOT_DEPRECATION_BRIEF
+          from: NOT_ENROLLED
+          to: EXECUTED
+        - document: DOC-F-SRC-PRESENTATION-NATIVE
+          from: Live
+          to: RETIRED
+        - document: DOC-F-SRC-PRESENTATION
+          from: Live
+          to: RETIRED
+        - document: DOC-F-SRC-PRESENTATION-INPUT
+          from: Live
+          to: RETIRED
+        - document: DOC-F-SRC-PRESENTATION-NODES
+          from: Live
+          to: RETIRED
+        - document: DOC-F-SRC-PRESENTATION-SCENES
+          from: Live
+          to: RETIRED
+        - document: DOC-F-SRC-PRESENTATION-UI
+          from: Live
+          to: RETIRED
+        - document: DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
+          from: Live
+          to: RETIRED
