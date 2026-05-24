@@ -722,6 +722,24 @@ documents:
     reviewer: Crystalka
     special_case_rationale: "Category A + Tier 2 + AUTHORED-SKELETON override: forward-evolving dashboard appended per cascade closure; populated к Tier 2 Live при 3+ post-closure verifications appended"
 
+  - id: DOC-A-K_EXTENSIONS_LEDGER
+    path: docs/architecture/K_EXTENSIONS_LEDGER.md
+    title: "К-extensions Cascade Ledger — Dual Frontier"
+    category: A
+    tier: 2
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
+    content_language: mixed
+    review_cadence: on-change+quarterly
+    last_review_date: "2026-05-23"
+    last_review_event: "К-extensions cascade #2 authored ε4 — initial AUTHORED entry с retroactive cascades #0 (А'.7.x) + #1 (А'.7.5) + #2 (this cascade — Godot Full Deprecation + Launcher Formalization). Sister artifact к K_CLOSURE_REPORT.md (closure event boundary preserved) + K_L14_EVIDENCE_DASHBOARD.md (metrics) + PHASE_A_PRIME_SEQUENCING.md (chronology). К-L14 verification #11 cross-referenced per honest-framed Q-G-14 protocol (first removal-type evidence; substrate preservation across consumer churn)."
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "Companion artifact к K_CLOSURE_REPORT.md tracking К-extensions cascade narratives post-А'.8 closure event boundary. Created К-extensions cascade #2 ε4 per Q-G-11 LOCKED (d) — separate companion document over inline expansion of closure report. Sister к K_L14_EVIDENCE_DASHBOARD.md (metrics) + PHASE_A_PRIME_SEQUENCING.md (chronology)."
+
   # === Tier 2 Project meta (Category G) ===
 
   - id: DOC-G-README
@@ -2000,6 +2018,25 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "K_CLOSURE_AUTHORING_BRIEF authored 2026-05-22 by Claude Opus 4.7 post-A'.7.5 closure deliberation session. Q-N ratified Session 2 Day 2 (2026-05-23 Crystalka deliberation) с 10/10 Q-N LOCKED including Q-N-8-4 AUTHORED amendment к Meta-Q1 Session 1 LOCKED commitment. Brief executes К-series formal closure cascade (6-commit atomic per Q-N-8-9 LOCKED). К-extensions designation operationalized per Q-N-8-10 LOCKED — cascade #0 (А'.7.x) + #1 (А'.7.5) closed pre-closure architecturally as К-extensions; cascade #2 (Godot removal) deferred к post-closure for clean event boundary preservation. К-L14 evidence baseline 9 verifications с #7 honest soft-halt annotation preserves falsifiability commitment per Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2."
+
+  - id: DOC-D-K_EXT_2_GODOT_DEPRECATION_BRIEF
+    path: tools/briefs/K_EXT_2_GODOT_DEPRECATION_BRIEF.md
+    title: "K_EXT_2_GODOT_DEPRECATION_BRIEF — К-extensions cascade #2: Godot Full Deprecation + Launcher Formalization"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
+    content_language: mixed
+    review_cadence: on-status-transition
+    last_review_date: "2026-05-23"
+    last_review_event: "К-extensions cascade #2 authored + executed 2026-05-23. Brief authored 2026-05-23 by Claude Opus 4.7 в post-A'.8 closure deliberation session (15 Q-G ratified, 10 S-LOCKs reserved). Crystalka ratified execution 2026-05-23. Execution agent: Claude Code (Opus 4.7) on branch claude/k-ext-2-godot-deprecation. Mid-cascade brief amendment ratified (Crystalka Option A 2026-05-23) — Program.cs adapted к existing GameLoop self-ticking background-thread architecture (brief assumed external Tick() call empirically wrong); Q-G-7 (d) hybrid orchestration intent preserved. Cascade scope: physical purge (Presentation.Native + tracked Presentation removed); documentation cleanup tiered (16 Application/* + 6 active arch docs + 2 historical archives addendum); Launcher project scaffold (infrastructure-only с Defensive Reserved Stub dispatcher per Lesson #N12 first application); governance cascade (KERNEL v2.5→v2.5.1, METHODOLOGY v1.10→v1.11, VULKAN_SUBSTRATE v1.1→v1.1.1, K_EXTENSIONS_LEDGER authored, REGISTER 3-commit cascade hybrid per Q-G-13). К-L impact: zero. К-L14 verification #11 (first executed removal-type evidence per Q-G-14 honest-framed protocol)."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "К-extensions cascade #2 brief authored 2026-05-23 by Claude Opus 4.7 в post-A'.8 closure deliberation session per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral. Brief operationalized 15 Q-G ratified deliberation outcomes + 10 S-LOCK reservations. Original Godot branch claude/godot-removal-deliberation-Vfg2R (2ba8130 single commit) discarded as obsolete precursor per S-LOCK-1 — 18 commits divergence on main + scope expansion («физически удалить всё» per Crystalka §0.4) made original branch insufficient. Clean redo на current main (9ea5dbe) executed as К-extensions cascade #2. Lesson #N12 «Defensive Reserved Stub Pattern» first application captured (Launcher's RenderCommandDispatcher 6 defensive throws). Lesson #25 refined с Crystalka 2026-05-23 framing («не тестировать пустые интерфейсы и пустую реализацию которые врут в тестах»). Brief size note: K_EXT_2 brief is ~50KB (2103 lines committed at α0) covering 9 sections + appendix Q-N lock summary."
 
   - id: DOC-E-A_PRIME_7_X_CLOSURE
     path: docs/scratch/A_PRIME_7_X/CLOSURE_REPORT.md
@@ -3633,102 +3670,21 @@ documents:
     review_cadence: on-source-commit+quarterly
     reviewer: Crystalka
 
-  - id: DOC-F-SRC-PRESENTATION
-    path: src/DualFrontier.Presentation/README.md
-    title: "DualFrontier.Presentation module"
+  - id: DOC-F-SRC-LAUNCHER
+    path: src/DualFrontier.Launcher/README.md
+    title: "DualFrontier.Launcher — Production Launch Entry Point"
     category: F
     tier: 4
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-05-23"
+    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
     content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
-
-  - id: DOC-F-SRC-PRESENTATION-INPUT
-    path: src/DualFrontier.Presentation/Input/README.md
-    title: "Presentation Input submodule"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
-
-  - id: DOC-F-SRC-PRESENTATION-NODES
-    path: src/DualFrontier.Presentation/Nodes/README.md
-    title: "Presentation Nodes submodule"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
-
-  - id: DOC-F-SRC-PRESENTATION-SCENES
-    path: src/DualFrontier.Presentation/Scenes/README.md
-    title: "Presentation Scenes submodule"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
-
-  - id: DOC-F-SRC-PRESENTATION-UI
-    path: src/DualFrontier.Presentation/UI/README.md
-    title: "Presentation UI submodule"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
-
-  - id: DOC-F-SRC-PRESENTATION-ADDONS-DEVKIT
-    path: src/DualFrontier.Presentation/addons/df_devkit/README.md
-    title: "Presentation addons df_devkit"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
-    reviewer: Crystalka
-
-  - id: DOC-F-SRC-PRESENTATION-NATIVE
-    path: src/DualFrontier.Presentation.Native/README.md
-    title: "DualFrontier.Presentation.Native module"
-    category: F
-    tier: 4
-    lifecycle: Live
-    owner: Crystalka
-    version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
-    content_language: en
-    review_cadence: on-source-commit+quarterly
+    review_cadence: phase-led
+    last_review_date: "2026-05-23"
+    last_review_event: "К-extensions cascade #2 δ3 — Launcher project README authored (infrastructure-only per Q-G-6 (b1); Defensive Reserved Stub dispatcher per Lesson #N12 first application; brief amendment Crystalka Option A mid-cascade 2026-05-23 adapted Program.cs к existing GameLoop self-ticking background-thread architecture). Forward cascade #3 (Launcher Visual Implementation) will exercise dispatcher arms (replacing defensive throws с real visual implementations)."
+    next_review_due: "TBD — after cascade #3 closure"
     reviewer: Crystalka
 
   - id: DOC-F-SRC-SYSTEMS
