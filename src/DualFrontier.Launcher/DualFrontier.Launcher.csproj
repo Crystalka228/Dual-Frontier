@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>DualFrontier.Launcher</AssemblyName>
+    <RootNamespace>DualFrontier.Launcher</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DualFrontier.Application\DualFrontier.Application.csproj" />
+    <ProjectReference Include="..\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
+  </ItemGroup>
+</Project>

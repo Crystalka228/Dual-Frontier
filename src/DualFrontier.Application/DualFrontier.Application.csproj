@@ -17,7 +17,7 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="DualFrontier.Modding.Tests" />
-    <InternalsVisibleTo Include="DualFrontier.Presentation" />
+    <InternalsVisibleTo Include="DualFrontier.Launcher" />
     <!-- K7 — benchmark project re-uses RandomPawnFactory + ItemFactory to
          spawn the same workload as production GameBootstrap. The factories
          stay internal to the Application layer; the benchmark project is the
