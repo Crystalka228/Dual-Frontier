@@ -258,6 +258,80 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │   Executor: Claude Opus 4.7 (deliberation + brief authoring + execution) + Crystalka
   │   (Q-N ratification + mid-cascade Option A amendment ratification).
   │
+  ├─ Phase post-A'.8 — К-extensions cascade #3 — LAUNCHER VISUAL IMPLEMENTATION (CLOSED 2026-05-23)
+  │   Brief: tools/briefs/K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF.md (AUTHORED → EXECUTED)
+  │   Designation: «К-extensions cascade #3» per cascade #2 closure forward sequencing
+  │   (cascade #2 §4 forward roadmap + Crystalka direction «после исполнения в сесcии claude code
+  │   я приложу отчёт и мы продолжим уже делать второй»). Executed on new branch
+  │   `claude/k-ext-3-launcher-visual` off cascade #2 closure merge к origin/main (12512d0).
+  │   Brief shape: Path B Hybrid (Phase 0 fully-locked + execution intent architecturally
+  │   specified + mid-cascade checkpoint allowed) per honest match between doubly-new
+  │   territory (visual implementation + Vulkan recording integration + scene state) and
+  │   uncertainty.
+  │   Scope (per Q-H-1 LOCKED minimum-scope + Q-H-3 Path γ-A procedural-only asset strategy):
+  │   - Phase α0: Brief amendment commit (S-LOCK-4 silent stubs per Crystalka mid-cascade
+  │     ratification 2026-05-23 — Phase 0 §2.5 + §2.8 reads surfaced production-fires
+  │     conflict с defensive throw design; GameBootstrap publishes ~255 ItemSpawnedCommand
+  │     at composition + GameLoop emits TickAdvancedCommand every 33ms + PawnStateReporterSystem
+  │     emits PawnStateCommand periodically). R-2 verification gate resolved analytically
+  │     (skip empirical R-2 на cascade #2 state since defensive throws would crash; Phase γ
+  │     smoke replaces). R-1 verification gate executed in parallel; outcome documented
+  │     в δ7 closure section.
+  │   - Phase α1: LauncherProceduralAtlas (Q-H-17 Option C copy) — production-side copy
+  │     of SmokeTest's ProceduralAtlas preserves S-LOCK-2 substrate isolation (no PngDecoder
+  │     palette extension; deferred к когда Vanilla mods consumer need materializes —
+  │     Lesson #N15 first-application opportunity reserved).
+  │   - Phase α2: SceneState + PawnSpriteEntry types (Q-H-2 + S-LOCK-3) — minimum scope
+  │     sprite registry only, no camera/HUD/layer machinery.
+  │   - Phase β: Atomic dispatcher + renderer + program commit (Lesson #8 compilable unit) —
+  │     RenderCommandDispatcher pawn-3 real implementations (HandlePawnSpawned/Moved/Died
+  │     с deterministic per-PawnId tile assignment) + 3 deferred arms silent stubs
+  │     (HandlePawnState/ItemSpawned/TickAdvanced с DO NOT TEST comments per S-LOCK-4
+  │     amended + Q-H-6 test discipline); LauncherRenderer Vulkan integration via
+  │     Runtime.RecordSpritesFrame V0.C.2 batched API one-liner (per §2.0 empirical
+  │     finding — replaces brief's manual ~80-line draft с ~10 lines); Program.cs
+  │     composition root extended с atlas upload (LauncherProceduralAtlas →
+  │     VulkanImage.CreateFromPngImage → SpriteTexture) + SceneState constructor injection
+  │     per S-LOCK-10. gameContext.Loop.Start() (NOT gameContext.GameLoop.* per cascade #2
+  │     Crystalka Option A amendment).
+  │   - Phase γ: Launcher visual smoke verification (manual interaction — pawns visible
+  │     as procedural-colored 16×16 tiles, movement observed on PawnMoved dispatch,
+  │     despawn observed on PawnDied dispatch, graceful close).
+  │   - Phase δ: Governance cascade (KERNEL v2.5.1 → v2.5.2 patch + cascade #3 chronicle +
+  │     К-L14 #12 cross-ref; METHODOLOGY v1.11 → v1.12 minor — Lesson #N12 semantic refined
+  │     с production-fires/test-only-fires sub-pattern split + #N13 commit integrity +
+  │     #N14 Phase 0 empirical Provisional candidates; K_EXTENSIONS_LEDGER §3.4 entry;
+  │     PHASE_A_PRIME_SEQUENCING cascade #3 entry; REGISTER 2-commit cascade + sync;
+  │     brief AUTHORED → EXECUTED + closure section).
+  │   К-L impact: zero (К-L count unchanged: 21 final). Cascade focused on consumer
+  │   materialization, не invariant extension.
+  │   Lessons surfaced:
+  │     • Lesson #N12 SEMANTIC REFINED — second application + sub-pattern split into
+  │       (A) test-only-fires defensive throws + (B) production-fires silent stubs.
+  │       Promotion criterion amended к require substantially-different sub-pattern OR
+  │       different domain.
+  │     • Lesson #N13 (Provisional, NEW) — Commit integrity verification before commit
+  │       (first observation cascade #2 α1 sln mutation claim/diff mismatch; explicit
+  │       application cascade #3 α0 verified git status matched message).
+  │     • Lesson #N14 (Provisional, NEW) — Phase 0 reads empirical assumed-state coverage
+  │       (first observations cascade #2 α1 directory state divergence + cascade #3 §2.0
+  │       production composition divergence).
+  │   К-L14 verification #12 — first clean additive evidence (substrate primitives
+  │   completely untouched через consumer materialization; cascade #2 #11 = removal-type
+  │   evidence; cascade #3 #12 = additive-type evidence).
+  │     • Substrate (Runtime + PngDecoder + SpriteRenderer + ProceduralAtlas) primitives
+  │       unchanged через addition of 3 dispatch arm implementations + SceneState +
+  │       LauncherRenderer Vulkan integration.
+  │     • К-L14 thesis preservation: substrate stability через consumer churn empirically
+  │       verified by additive consumer materialization without substrate API touches.
+  │   Cumulative К-Lxx series: 21 invariants (unchanged).
+  │   Commits: cascade atomic on claude/k-ext-3-launcher-visual branch (α0 brief
+  │   amendment + α1 ProceduralAtlas + α2 SceneState/PawnSpriteEntry + β dispatcher/
+  │   renderer/program + δ1 KERNEL + δ2 METHODOLOGY + δ3 sequencing entry + δ4 LEDGER +
+  │   δ5/δ6 REGISTER cascade + δ7 closure = ~12 commits).
+  │   Executor: Claude Opus 4.7 (deliberation + brief authoring + execution) + Crystalka
+  │   (Q-N ratification + mid-cascade S-LOCK-4 amendment ratification).
+  │
   ├─ Phase A'.9 — Architectural analyzer milestone
   │   Scope: Roslyn analyzer encoding K-Lxx invariants per K-closure report
   │   Dual purpose: (1) M-series migration verifier (catches drift in M-milestone migrations that tests don't see), (2) architectural debugger (surfaces bugs that compile + pass tests but violate invariants)
