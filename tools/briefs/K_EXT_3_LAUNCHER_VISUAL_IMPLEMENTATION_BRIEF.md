@@ -153,34 +153,79 @@ public sealed record PawnSpriteEntry(
 
 **Halt condition**: If execution agent adds camera manipulation, HUD state, layer ordering, OR animation primitives, halt + Crystalka ratification required.
 
-### S-LOCK-4 — Defensive throw updates для deferred arms
+### S-LOCK-4 — Silent stubs для deferred arms (AMENDED 2026-05-23 mid-cascade)
 
-**Statement**: 3 deferred dispatch arms get updated `NotImplementedException` messages reflecting post-Vanilla-mods deferral:
+**Status**: AMENDED 2026-05-23 mid-cascade per Crystalka ratification (К-extensions cascade #3 α0 — Phase 0 §2.5 + §2.8 empirical findings surfaced production-fires conflict). Original text preserved at end of section for audit trail.
+
+**Amended statement** (post-Crystalka 2026-05-23 mid-cascade ratification): 3 deferred dispatch arms get **silent stub bodies** (empty method body — accept the command, do nothing visible) с honest documentation что (a) stub exists pending post-Vanilla-mods materialization, (b) production composition fires these commands so defensive throws would crash Launcher, (c) Q-H-6 test discipline preserves: DO NOT TEST stub paths (tests would lie by passing trivially — there is no observable behavior к assert).
 
 ```csharp
-private void HandlePawnState(PawnStateCommand cmd) =>
-    throw new NotImplementedException(
-        "PawnState dispatch pending post-Vanilla-mods cascade. " +
-        "HUD pawn detail panel (name, needs, mood, job label, top skills) requires " +
-        "Vanilla mods к define pawn structure first. Lesson #N12 Defensive Reserved " +
-        "Stub Pattern second application.");
+private void HandlePawnState(PawnStateCommand cmd)
+{
+    // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
+    // HUD pawn detail panel (name, needs, mood, job label, top skills) requires
+    // Vanilla mods к define pawn structure first. Silent accept в production
+    // composition (PawnStateReporterSystem emits these periodically; defensive
+    // throw would crash Launcher on first tick). DO NOT TEST — stub has no
+    // observable behavior; tests would lie by passing trivially (Q-H-6 discipline).
+}
 
-private void HandleItemSpawned(ItemSpawnedCommand cmd) =>
-    throw new NotImplementedException(
-        "ItemSpawned dispatch pending post-Vanilla-mods cascade. " +
-        "Item visuals require Vanilla mods к define item registry first. " +
-        "Lesson #N12 second application.");
+private void HandleItemSpawned(ItemSpawnedCommand cmd)
+{
+    // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
+    // Item visuals require Vanilla mods к define item registry first. Silent
+    // accept в production composition (GameBootstrap emits ~255 ItemSpawnedCommand
+    // at startup для initial food/water/bed/decoration; defensive throw would
+    // crash Launcher on first frame). DO NOT TEST.
+}
 
-private void HandleTickAdvanced(TickAdvancedCommand cmd) =>
-    throw new NotImplementedException(
-        "TickAdvanced dispatch pending post-architecture cascade. " +
-        "HUD tick label requires HUD primitives которые not yet materialized. " +
-        "Lesson #N12 second application.");
+private void HandleTickAdvanced(TickAdvancedCommand cmd)
+{
+    // CASCADE #3 STUB — pending post-architecture cascade.
+    // HUD tick label requires HUD primitives which не yet materialized. Silent
+    // accept в production composition (GameLoop emits this every 33ms at 30 TPS;
+    // defensive throw would crash Launcher within milliseconds). DO NOT TEST.
+}
 ```
 
-**Rationale**: Q-H-1 LOCKED + Lesson #N12 second application. Defensive throws preserved + updated к reflect honest deferral reason (Vanilla mods architecture prerequisite, не arbitrary timing).
+**Amended rationale**: Q-H-1 LOCKED (pawn-3 active, 3 deferred) preserved. Lesson #N12 application semantic refined через amendment: defensive throws appropriate ONLY when command type cannot fire в production composition flow; otherwise silent stub pattern с honest "DO NOT TEST" documentation. Cascade #2 defensive throw application was valid because cascade #2 не executed Launcher main loop (R-2 verification deferred к cascade #3); cascade #3 attempted same pattern but Phase 0 §2.5 + §2.8 empirical reads surfaced что GameBootstrap.PublishItemSpawnedEvents queues ~255 ItemSpawnedCommand at composition + GameLoop.RunLoop emits TickAdvancedCommand every 33ms + PawnStateReporterSystem emits PawnStateCommand periodically — all 3 deferred command types fire actively в production flow.
 
-**Halt condition**: If execution agent leaves cascade-#2-era throw messages unchanged OR removes defensive throws, halt + brief amendment required.
+**Amended halt condition**: If execution agent uses defensive throws for any of the 3 deferred arms (the original S-LOCK-4 specification, now superseded), halt — defensive throws would crash Launcher на first frame. If execution agent adds real visual implementation для any of 3 deferred arms (real impl, не stub body), halt per S-LOCK-1. If execution agent writes any test exercising the 3 deferred arm paths, halt per Q-H-6 + Lesson #25 refined (lying-test surface — there is no observable behavior к verify in stubs).
+
+**Lesson #N12 promotion criterion amended**: requires differentiating "production-fires" (silent stub pattern) vs "test-only-fires" (defensive throw pattern) sub-applications. Cascade #3 application = first observation of "production-fires" sub-pattern; substantially-different third application для promotion к FORMALIZE requires either (a) different sub-pattern (defensive throw in a new domain where test-only-fires holds), or (b) different domain entirely.
+
+**R-2 verification gate resolution**: R-2 на cascade #2 state confirmed analytically to FAIL (defensive throws would crash Launcher on first frame). Per Crystalka mid-cascade ratification: skip empirical R-2 execution на cascade #2 state since outcome known + fix path ratified; R-2 equivalent verification deferred к Phase γ smoke на cascade #3 post-implementation state (silent stubs + pawn-3 real impl). Cascade #2 К-L14 verification #11 retroactive ratification deferred к Phase γ outcome: if Phase γ smoke PASSES, cascade #2 К-L14 #11 stays CLEAN (defensive throw design was non-falsifying since cascade #2 didn't expose it); if Phase γ smoke FAILS for other reasons, separate amendment.
+
+---
+
+**Original statement** (cascade #3 deliberation 2026-05-23, superseded mid-cascade — preserved для audit trail):
+
+> **Statement**: 3 deferred dispatch arms get updated `NotImplementedException` messages reflecting post-Vanilla-mods deferral:
+>
+> ```csharp
+> private void HandlePawnState(PawnStateCommand cmd) =>
+>     throw new NotImplementedException(
+>         "PawnState dispatch pending post-Vanilla-mods cascade. " +
+>         "HUD pawn detail panel (name, needs, mood, job label, top skills) requires " +
+>         "Vanilla mods к define pawn structure first. Lesson #N12 Defensive Reserved " +
+>         "Stub Pattern second application.");
+>
+> private void HandleItemSpawned(ItemSpawnedCommand cmd) =>
+>     throw new NotImplementedException(
+>         "ItemSpawned dispatch pending post-Vanilla-mods cascade. " +
+>         "Item visuals require Vanilla mods к define item registry first. " +
+>         "Lesson #N12 second application.");
+>
+> private void HandleTickAdvanced(TickAdvancedCommand cmd) =>
+>     throw new NotImplementedException(
+>         "TickAdvanced dispatch pending post-architecture cascade. " +
+>         "HUD tick label requires HUD primitives которые not yet materialized. " +
+>         "Lesson #N12 second application.");
+> ```
+>
+> **Rationale**: Q-H-1 LOCKED + Lesson #N12 second application. Defensive throws preserved + updated к reflect honest deferral reason (Vanilla mods architecture prerequisite, не arbitrary timing).
+>
+> **Halt condition**: If execution agent leaves cascade-#2-era throw messages unchanged OR removes defensive throws, halt + brief amendment required.
 
 ### S-LOCK-5 — R-1 + R-2 verification gates = Phase 0 entry conditions
 
