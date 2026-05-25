@@ -1,0 +1,35 @@
+<Project>
+  <!--
+    src/-scoped Directory.Build.props — wires DualFrontier.Analyzers as an
+    OutputItemType="Analyzer" ProjectReference for all 12 managed src/ projects.
+    Per Q-L-5 (managed-side enforcement scope) + Crystalka A'.9.1 Phase β-prep
+    Commit β4 ratification 2026-05-25 (Directory.Build.props централизация over
+    per-csproj duplication).
+
+    MSBuild Directory.Build.props auto-discovery uses «first found wins» walking
+    up toward repo root. This src/-scoped file overrides root auto-load, so we
+    explicitly Import the repo-root Directory.Build.props к inherit canonical
+    project properties (net8.0 + TreatWarningsAsErrors + Nullable + ImplicitUsings
+    + GenerateDocumentationFile + CS1591 suppression + Company/Product metadata +
+    V0.B SPIR-V shader compilation target).
+
+    Applies к 12 managed src/ projects:
+      AI, Components, Contracts, Core, Core.Interop, Crypto.Future, Events,
+      Launcher, Persistence, Runtime, Systems, Application
+    Tests/ and tools/ projects не affected (out of scope per src/-scoped placement).
+
+    Forward: analyzer detection logic populated at Phase β cleanup-phase per
+    K_CLOSURE_REPORT.md §7 canonical narratives + brief §10.3 per-rule order.
+    Per-rule severity tunable via .editorconfig at cleanup-phase entry.
+
+    К-L14 thesis: tooling addition; zero substrate touch.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
+
+  <ItemGroup Label="DualFrontier.Analyzers (К-extensions cascade #5)">
+    <ProjectReference
+      Include="$(MSBuildThisFileDirectory)..\tools\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+</Project>
