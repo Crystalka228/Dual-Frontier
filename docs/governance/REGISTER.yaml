@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.9"
+register_version: "2.10"
 last_modified: "2026-05-25"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-AXIOM-CODIFICATION"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CROSSREFS"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -554,15 +554,15 @@ documents:
     is_meta_entry: true
     meta_role: register_specification
     owner: Crystalka
-    version: "1.1"
+    version: "1.1.1"
     first_authored: "2026-05-12"
-    last_modified: "2026-05-17"
-    last_modified_commit: "15ffa0a"
+    last_modified: "2026-05-25"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CROSSREFS"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-17"
-    last_review_event: "Schema extension AUTHORED-SKELETON lifecycle value per К10 forward planning skeleton framework"
-    next_review_due: "2027-05-17"
+    last_review_date: "2026-05-25"
+    last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 9 — FRAMEWORK v1.1 → v1.1.1 PATCH bump для §13 «See also» PROJECT_AXIOMS.md cross-reference addition (Axiom Option (VII) completion per Brief A'.9.1 batch 2 deliberation 2026-05-24; PROJECT_AXIOMS.md v1.0 LOCKED at Phase α Commit 8). Three-document governance trio now mutually discoverable. No schema change."
+    next_review_due: "2027-05-25"
     reviewer: Crystalka
     requirements_authored: [REQ-Q-A45-X5]
     risks_referenced: [RISK-010, RISK-012]
@@ -576,15 +576,15 @@ documents:
     is_meta_entry: true
     meta_role: register_provenance
     owner: Crystalka
-    version: "1.0"
+    version: "1.0.1"
     first_authored: "2026-05-12"
-    last_modified: "2026-05-12"
-    last_modified_commit: "c7dca3e"
+    last_modified: "2026-05-25"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CROSSREFS"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-12"
-    last_review_event: "A'.4.5 closure"
-    next_review_due: "2027-05-12"
+    last_review_date: "2026-05-25"
+    last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 9 — SYNTHESIS_RATIONALE v1.0 → v1.0.1 PATCH bump для §7 «Cross-references» PROJECT_AXIOMS.md cross-reference addition (Axiom Option (VII) completion). No schema change."
+    next_review_due: "2027-05-25"
     reviewer: Crystalka
 
   - id: DOC-A-PROJECT_AXIOMS
@@ -9610,3 +9610,76 @@ audit_trail:
         - document: DOC-A-PROJECT_AXIOMS
           from: NOT_ENROLLED
           to: LOCKED
+
+  - id: EVT-2026-05-25-A_PRIME_9_1-PHASE_ALPHA-COMMIT9-CROSSREFS
+    timestamp: "2026-05-25T00:00:00Z"
+    type: governance_patch_bump
+    cascade: A'.9.1 Analyzer Infrastructure / К-extensions cascade #5
+    phase: Phase α Commit 9
+    title: "FRAMEWORK + SYNTHESIS_RATIONALE PATCH bumps для PROJECT_AXIOMS cross-references"
+    summary: |
+      Phase α Commit 9 closes the Axiom Option (VII) governance update by
+      adding bidirectional cross-references к PROJECT_AXIOMS.md в both
+      sibling governance documents. PATCH-level version bumps per FRAMEWORK
+      §7.1 versioning ruleset (cross-reference addition, no schema change).
+      Three-document governance trio at docs/governance/ now mutually
+      discoverable от any entry point.
+    governance_impact: |
+      FRAMEWORK.md v1.1 → v1.1.1 (PATCH bump):
+      - §13 «See also» entry для PROJECT_AXIOMS.md added at top of list
+      - Header version block extended с v1.1.1 patch annotation
+      - Q-A07-6 inheritance note updated с PA-001 cross-reference
+      - Rationale: FRAMEWORK provides schema; PROJECT_AXIOMS provides framing
+
+      SYNTHESIS_RATIONALE.md v1.0 → v1.0.1 (PATCH bump):
+      - §7 «Cross-references» entry для PROJECT_AXIOMS.md added between
+        FRAMEWORK and REGISTER entries
+      - Header version block extended с v1.0.1 patch annotation
+      - Q-A07-6 inheritance note updated с PA-001 PERMANENT cross-reference
+      - Rationale: SYNTHESIS_RATIONALE traces framework derivation от 5
+        industry standards; PROJECT_AXIOMS traces framework MOTIVATION
+        (solo-developer + AI-pipeline audience profile per PA-003)
+
+      Three-document governance trio at docs/governance/ now mutually discoverable:
+      - FRAMEWORK.md (schema/protocol) ↔ PROJECT_AXIOMS.md ↔ SYNTHESIS_RATIONALE.md
+      - Each document has explicit cross-reference к the other two
+
+      REGISTER amendments:
+      - DOC-A-FRAMEWORK version 1.1 → 1.1.1 (last_modified 2026-05-17 → 2026-05-25;
+        last_modified_commit 15ffa0a → PENDING-COMMIT-A_PRIME_9_1-CROSSREFS;
+        last_review_event extended)
+      - DOC-A-SYNTHESIS_RATIONALE version 1.0 → 1.0.1 (last_modified 2026-05-12 →
+        2026-05-25; last_modified_commit c7dca3e → PENDING-COMMIT-A_PRIME_9_1-CROSSREFS;
+        last_review_event extended)
+      - register_version 2.9 → 2.10
+      - last_modified: 2026-05-25 (unchanged)
+      - last_modified_commit: PENDING-COMMIT-A_PRIME_9_1-AXIOM-CODIFICATION →
+        PENDING-COMMIT-A_PRIME_9_1-CROSSREFS
+
+      Phase α exit gate post-Commit 9:
+      - All 9 atomic Phase α commits landed (csproj + tests + CPM + rename +
+        restructure + ReservedStub + annotations + axioms + crossrefs)
+      - dotnet build DualFrontier.sln exit 0
+      - dotnet test tests/DualFrontier.Analyzers.Tests exit 0
+      - sync_register.ps1 -Validate exit 0
+      - Working tree clean
+      - 11 commits ahead of origin/main (Phase 0 cascade 2 + Phase α 9)
+      - Phase β kickoff pending (Q-L-1 adaptive gate decision per 16-17 stub
+        analyzer violation count enumeration)
+
+      К-L14 thesis preservation:
+      - Zero production code touched (governance refinement only)
+      - Zero substrate API surface modified (no К-L change)
+      - Zero test code touched
+      - К-L14 evidence count unchanged at Commit 9; cascade closure at Phase δ
+        produces К-L14 Evidence #14 (Type 6 NEW category — tooling addition)
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions:
+        - document: DOC-A-FRAMEWORK
+          from: LOCKED_v1_1
+          to: LOCKED_v1_1_1
+        - document: DOC-A-SYNTHESIS_RATIONALE
+          from: LOCKED_v1_0
+          to: LOCKED_v1_0_1

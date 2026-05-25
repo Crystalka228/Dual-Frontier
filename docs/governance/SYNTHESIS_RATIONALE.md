@@ -6,8 +6,8 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
+version: "1.0.1"
+next_review_due: 2027-05-25
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-SYNTHESIS_RATIONALE
 ---
 # Document Control Register — Synthesis Rationale
@@ -16,7 +16,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-SYNTHESIS_RATIONALE
 
 *Version: 1.0 (2026-05-12). Authored at A'.4.5 closure subordinate to [FRAMEWORK.md](./FRAMEWORK.md) v1.0. Status: AUTHORITATIVE LOCKED.*
 
-*Audience: agent-primary (Q-A07-6 inheritance). Secondary: human reader interested in provenance / marketing signaling of «engineered selection from 5 sources».*
+*Version: 1.0.1 (2026-05-25). Patch bump — §7 «Cross-references» entry для [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) added (Axiom Option (VII) completion per A'.9.1 / К-extensions cascade #5 Phase α Commit 9). No schema change.*
+
+*Audience: agent-primary (Q-A07-6 inheritance — codified at [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) §1 as PA-001 PERMANENT). Secondary: human reader interested in provenance / marketing signaling of «engineered selection from 5 sources».*
 
 ---
 
@@ -324,6 +326,7 @@ This document is **subordinate to FRAMEWORK**: amendments must follow Tier 1 LOC
 ## 7. Cross-references
 
 - [FRAMEWORK.md](./FRAMEWORK.md) — governance framework specification (this document is provenance layer for it)
+- [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) — foundational project axioms (PA-001..PA-004). SYNTHESIS_RATIONALE traces framework derivation от 5 industry standards; PROJECT_AXIOMS traces framework MOTIVATION (solo-developer + AI-pipeline audience profile justifies the governance complexity per PA-003).
 - [REGISTER.yaml](./REGISTER.yaml) — operational SoT (schema implements selected elements)
 - [REGISTER_RENDER.md](./REGISTER_RENDER.md) — human-readable rendered derivative
 

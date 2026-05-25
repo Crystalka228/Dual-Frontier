@@ -6,8 +6,8 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1"
-next_review_due: 2027-05-17
+version: "1.1.1"
+next_review_due: 2027-05-25
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FRAMEWORK
 ---
 # Document Control Register — Governance Framework
@@ -18,7 +18,9 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FRAMEWORK
 
 *Version: 1.1 (2026-05-17). Schema extension AUTHORED-SKELETON lifecycle added per К10 forward planning skeleton framework. §3.3 eight → nine lifecycle values; §3.3.1 transition matrix extended с four new transitions; §3.4 allowed-combinations matrix updated Category D row; §3.4.1 forbidden combinations extended. Schema version stays 1.0 (minor change, no breaking enum removal); tooling forward-compatible.*
 
-*Authored under agent-as-primary-reader assumption per Q-A07-6 lock 2026-05-10. Provenance for source-standard borrowings documented in [SYNTHESIS_RATIONALE.md](./SYNTHESIS_RATIONALE.md).*
+*Version: 1.1.1 (2026-05-25). Patch bump — §13 «See also» cross-reference к [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) added (Axiom Option (VII) completion per A'.9.1 / К-extensions cascade #5 Phase α Commit 9; PROJECT_AXIOMS.md v1.0 LOCKED at Phase α Commit 8). No schema change.*
+
+*Authored under agent-as-primary-reader assumption per Q-A07-6 lock 2026-05-10 (codified at [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) §1 as PA-001). Provenance for source-standard borrowings documented in [SYNTHESIS_RATIONALE.md](./SYNTHESIS_RATIONALE.md); foundational framing axioms (PA-001..PA-004) codified at [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md).*
 
 ---
 
@@ -717,6 +719,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 
 ## 13. See also
 
+- [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) — DualFrontier project axioms (PA-001..PA-004) codifying foundational framing distinct от К-L architectural invariants. Authored at A'.9.1 Phase α Commit 8 per Axiom Option (VII) ratification (Brief A'.9.1 batch 2 deliberation 2026-05-24). FRAMEWORK provides schema; PROJECT_AXIOMS provides framing.
 - [SYNTHESIS_RATIONALE.md](./SYNTHESIS_RATIONALE.md) — 5-standard provenance for selected elements
 - [REGISTER.yaml](./REGISTER.yaml) — operational SoT
 - [REGISTER_RENDER.md](./REGISTER_RENDER.md) — human-readable rendered derivative
