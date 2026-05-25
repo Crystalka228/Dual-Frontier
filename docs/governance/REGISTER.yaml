@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.8"
-last_modified: "2026-05-24"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER"
+register_version: "2.9"
+last_modified: "2026-05-25"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-AXIOM-CODIFICATION"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -585,6 +585,26 @@ documents:
     last_review_date: "2026-05-12"
     last_review_event: "A'.4.5 closure"
     next_review_due: "2027-05-12"
+    reviewer: Crystalka
+
+  - id: DOC-A-PROJECT_AXIOMS
+    path: docs/governance/PROJECT_AXIOMS.md
+    title: "DualFrontier Project Axioms"
+    category: A
+    tier: 1
+    lifecycle: LOCKED
+    is_meta_entry: true
+    meta_role: register_framing
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-25"
+    last_modified: "2026-05-25"
+    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-AXIOM-CODIFICATION"
+    content_language: en
+    review_cadence: on-change+annual
+    last_review_date: "2026-05-25"
+    last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 8 — PROJECT_AXIOMS.md v1.0 Tier 1 LOCKED initial codification per Axiom Option (VII) ratification (batch 2 deliberation 2026-05-24). PA-001..PA-004 codified. AI-agent-first consumer profile permanent (PA-001). Без костылей (PA-002). Сложность архитектуры всегда оправдана (PA-003). К-L14 thesis preservation (PA-004). Anchor references verified against codebase reality per Phase 0 Task 3 (Phase 0 closure report §2.3)."
+    next_review_due: "2027-05-25"
     reviewer: Crystalka
 
   # === Tier 1 Architecture (addendum — root-level placement) ===
@@ -9479,3 +9499,114 @@ audit_trail:
         - document: DOC-B-METHODOLOGY
           from: LOCKED_v1_12
           to: LOCKED_v1_12_1
+
+  - id: EVT-2026-05-25-A_PRIME_9_1-PHASE_ALPHA-COMMIT8-PROJECT_AXIOMS
+    timestamp: "2026-05-25T00:00:00Z"
+    type: governance_axiom_codification
+    cascade: A'.9.1 Analyzer Infrastructure / К-extensions cascade #5
+    phase: Phase α Commit 8
+    title: "PROJECT_AXIOMS.md v1.0 Tier 1 LOCKED initial codification (Axiom Option (VII))"
+    summary: |
+      Phase α Commit 8 codifies foundational project axioms PA-001..PA-004 в
+      new docs/governance/PROJECT_AXIOMS.md (Tier 1 LOCKED Category A v1.0).
+      Three-document governance trio at docs/governance/ now complete:
+      FRAMEWORK (schema) + SYNTHESIS_RATIONALE (provenance) + PROJECT_AXIOMS
+      (framing). Per Axiom Option (VII) ratification (Brief A'.9.1 batch 2
+      deliberation 2026-05-24); separate-document approach per Crystalka
+      direction §1.4 batch 2 (single responsibility per governance document;
+      predictable AI agent discovery location).
+    governance_impact: |
+      Foundational governance artifact codifying PA-001..PA-004 axioms that drive
+      project scope, priority, and trade-off decisions across all cascades.
+
+      Axiom inventory:
+
+      PA-001 — AI-agent-first consumer profile (PERMANENT):
+      The primary and permanent consumer profile для DualFrontier artifacts is
+      AI agents operating in session-mode pipelines, not human developers. Human
+      review essential at decision points (Crystalka deliberation, ratification
+      gates) but bulk consumer is the AI agent. Audience evolution (community
+      emergence / commercial product / multi-developer team) is NOT roadmap
+      reality. Anchors: FRAMEWORK §0 + SYNTHESIS_RATIONALE §0 Q-A07-6
+      inheritance (LOCKED 2026-05-10). Q-L-15 code-fix providers PERMANENTLY
+      dropped + Q-L-13 PublicApiAnalyzers audience-driven deferred reference
+      PA-001 as anchor.
+
+      PA-002 — Без костылей (no shortcuts):
+      Architectural complexity acceptable when serving correctness /
+      falsifiability / long-horizon maintainability. Shortcuts producing «works
+      for now» / «we'll fix later» artifacts are forbidden — they accumulate
+      as kostyl debt corrupting K-L14 architectural integrity. Anchors:
+      Crystalka direction 2026-05-24 verbatim («Ни каких костылей, сложность
+      архитектуры всегда оправдана»); amendments log §3.2 honest scoping
+      rationale; Lesson #N12 sub-pattern A + B (defensive throws + silent stubs
+      ARE acceptable when marked, the kostyl is the *unmarked* shortcut). Q-L-9
+      DFK010 dropped (methodology-layer outside Roslyn scope) + Q-L-11 DFC001
+      deferred (Mod-API-coupled moving target) + Q-L-13 (community absent)
+      reference PA-002.
+
+      PA-003 — Сложность архитектуры всегда оправдана (long-horizon over efficiency):
+      When trading architectural simplicity vs soundness, DualFrontier chooses
+      soundness. Optimization target: decade-horizon maintainability per solo-
+      developer + AI-pipeline context, NOT short-term shipping efficiency.
+      Anchors: FRAMEWORK §0 «Bespoke framework fitted к solo-developer +
+      AI-pipeline + decade-horizon planning context»; K-extensions cascade #1
+      K-L15.1 three-tier mutex split (compile-time guarantees over runtime
+      simplicity). Q-L-3 tiered DFK/DFL/DFC namespace + three-graph + two-
+      scheduler architecture reference PA-003.
+
+      PA-004 — К-L14 thesis preservation:
+      Every cascade preserves К-L14 meta-invariant «Performance derives from
+      clean complex architecture: substrate minimal; falsifiability tracked
+      through defect rate, architectural integrity, pipeline economics».
+      Substrate cascade vs tooling cascade vs governance cascade taxonomy.
+      Anchors: KERNEL Part 0 K-L14 canonical text; K_L14_EVIDENCE_DASHBOARD
+      cumulative evidence ledger (13 evidence entries pre-A'.9.1). Brief A'.9.1
+      = tooling cascade adding 17 analyzer rules enforcing existing substrate;
+      K-L14 Evidence #14 expected at A'.9.1 closure (Type 6 NEW category —
+      tooling addition).
+
+      Anchor verification (Phase 0 §2.3 codebase reality check at 2026-05-24):
+      - PA-001 ✓ VERIFIED — FRAMEWORK §0 + SYNTHESIS_RATIONALE §0 Q-A07-6
+      - PA-002 ✓ VERIFIED — Crystalka direction 2026-05-24 + amendments §3.2
+      - PA-003 ✓ VERIFIED — FRAMEWORK §0 + K_EXTENSIONS_LEDGER §3.1
+      - PA-004 ✓ VERIFIED — KERNEL Part 0 K-L14 + K_L14_EVIDENCE_DASHBOARD
+
+      Amendment protocol: PROJECT_AXIOMS.md is Tier 1 LOCKED. Amendments require
+      FRAMEWORK §7.2 Tier 1 LOCKED amendment protocol (Crystalka direction +
+      documented deliberation + lifecycle transition + REGISTER cascade + cross-
+      document propagation). PA-001 «PERMANENT» qualifier has highest bar —
+      audience evolution must be empirical reality, not roadmap aspiration.
+
+      Brief A'.9.1 §0.2 «Project axioms applied» framing = first explicit cascade-
+      brief axiom application reference. ANALYZER_RULES.md §7 + §8 PA anchors
+      documented inline (PA-002 outside Roslyn scope; PA-001 audience-driven
+      deferred).
+
+      REGISTER amendments:
+      - 1 new DOC enrollment:
+        * DOC-A-PROJECT_AXIOMS (Tier 1 LOCKED Category A v1.0; meta_role
+          register_framing — distinct from FRAMEWORK register_specification +
+          SYNTHESIS_RATIONALE register_provenance; review_cadence on-change+annual)
+      - register_version 2.8 → 2.9
+      - last_modified: 2026-05-24 → 2026-05-25
+      - last_modified_commit: PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER →
+        PENDING-COMMIT-A_PRIME_9_1-AXIOM-CODIFICATION
+
+      Phase α Commit 9 forward: FRAMEWORK + SYNTHESIS_RATIONALE PATCH-level
+      bumps (v1.1 → v1.1.1 + v1.0 → v1.0.1) для bidirectional cross-reference
+      visibility (governance trio mutually discoverable от any entry point).
+
+      К-L14 thesis preservation:
+      - Zero production code touched (governance artifact only)
+      - Zero substrate API surface modified (no К-L change)
+      - Zero test code touched
+      - К-L14 evidence count unchanged at this commit; cascade closure at Phase δ
+        produces К-L14 Evidence #14 first analyzer implementation evidence
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions:
+        - document: DOC-A-PROJECT_AXIOMS
+          from: NOT_ENROLLED
+          to: LOCKED
