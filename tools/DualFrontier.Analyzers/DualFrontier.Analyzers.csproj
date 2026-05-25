@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- CRITICAL: override Directory.Build.props net8.0 default per Q-L-4 + S-LOCK-2 + recon §7.1.2 -->
+    <!-- Roslyn analyzer host loads compatibility requires netstandard2.0 -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+
+    <AssemblyName>DualFrontier.Analyzers</AssemblyName>
+    <RootNamespace>DualFrontier.Analyzers</RootNamespace>
+
+    <!-- Roslyn analyzer machinery -->
+    <IsRoslynComponent>true</IsRoslynComponent>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+
+    <!-- Internal-only — no NuGet publication per recon §7.4.4 -->
+    <IsPackable>false</IsPackable>
+
+    <!-- Inherits Nullable=enable, ImplicitUsings=enable, TreatWarningsAsErrors=true, GenerateDocumentationFile=true -->
+    <!-- from Directory.Build.props (RS1015 helpLinkUri enforced per recon §7.1.5) -->
+  </PropertyGroup>
+
+  <!--
+    Per Q-L-6 CPM (introduced Commit 3 of this cascade): explicit Version="5.3.0" pins below
+    are TRANSITIONAL — they exist between Commit 1 (this scaffolding) and Commit 3 (CPM
+    adoption). Commit 3 migrates this csproj to centralized PackageVersion alongside the
+    ~30-csproj sweep. Until then, explicit Version attributes are required for dotnet
+    restore to succeed at this commit's verification gate.
+
+    Per recon §7.1.5: Microsoft.CodeAnalysis.CSharp 5.3.0 pinned baseline.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.3.0" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!--
+    NOTE on [ReservedStub] attribute access (Q-L-10 + S-LOCK-12):
+    Brief §6.1 specified a ProjectReference к DualFrontier.Contracts here. That was an
+    architectural over-specification — netstandard2.0 (mandatory per Q-L-4 for Roslyn host
+    load compat) cannot ProjectReference net8.0 (Contracts target per Directory.Build.props)
+    even with ReferenceOutputAssembly="false"; the framework compatibility check fires before
+    the assembly-output skip.
+
+    The reference is also architecturally unnecessary: Roslyn analyzers detect attributes
+    via the SemanticModel by fully-qualified name string comparison, not by compile-time
+    CLR type reference. The Phase β DFL025-A detection logic will use:
+
+        attr.AttributeClass?.ToDisplayString() == "DualFrontier.Contracts.Analyzer.ReservedStubAttribute"
+
+    This is the canonical Roslyn analyzer pattern (every published analyzer in the .NET
+    ecosystem operates this way — analyzers run in the compiler host, the analyzed code
+    is a separate Compilation surface accessed via Microsoft.CodeAnalysis APIs).
+
+    К-L14 thesis: tooling addition. PA-002 axiom: dropping the unnecessary ProjectReference
+    avoids a kostyl-shaped framework-version workaround.
+  -->
+
+</Project>
