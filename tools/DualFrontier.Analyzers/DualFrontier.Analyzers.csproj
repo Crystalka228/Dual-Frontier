@@ -31,6 +31,21 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <!--
+      RS2008 release tracking infrastructure per Roslyn canonical authoring pattern.
+      Added at A'.9.1 Phase β-prep Commit β1 (К-extensions cascade #5).
+
+      Governance benefit per PA-002 (canonical pattern over NoWarn kostyl) + PA-003 (long-horizon
+      complexity justified): AnalyzerReleases tracks per-cascade rule additions/changes/removals.
+      Unshipped.md updates per Phase β-prep commit (β1 9 Architecture; β2 5 NativeBoundary;
+      β3 3 Discipline). Shipped.md becomes populated at A'.9.1 closure when ruleset «ships»
+      per Phase γ severity promotion.
+    -->
+    <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
+    <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+  </ItemGroup>
+
   <!--
     NOTE on [ReservedStub] attribute access (Q-L-10 + S-LOCK-12):
     Brief §6.1 specified a ProjectReference к DualFrontier.Contracts here. That was an
