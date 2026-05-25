@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Components.Magic;
@@ -49,6 +50,12 @@ public sealed class ManaSystem : SystemBase
     /// <c>ManaRefused</c>.
     /// </summary>
     /// <param name="intent">Intent to spend mana.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 1 roadmap stub (Lesson #N12 sub-pattern A) — ManaIntent validation + " +
+        "discrete drain (step 1 of two-step model). Publishes ManaGranted on success, " +
+        "ManaRefused on insufficient mana. " +
+        "Activation: Phase 1 mana baseline implementation.")]
     public void OnManaIntent(ManaIntent intent)
     {
         throw new NotImplementedException("TODO: Phase 1 — validate and drain mana per ManaIntent");
@@ -60,6 +67,11 @@ public sealed class ManaSystem : SystemBase
     /// a golem).
     /// </summary>
     /// <param name="evt">Mana drain confirmation.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 1 roadmap stub (Lesson #N12 sub-pattern A) — ManaSystem-as-client reaction " +
+        "к ManaGranted response (e.g., for sustaining a golem via two-step model). " +
+        "Activation: Phase 1 mana baseline implementation.")]
     public void OnManaGranted(ManaGranted evt)
     {
         throw new NotImplementedException("TODO: Phase 1 — react to ManaGranted");
@@ -73,6 +85,12 @@ public sealed class ManaSystem : SystemBase
     /// with the appropriate <see cref="RefusalReason"/>.
     /// </summary>
     /// <param name="req">Request to open a continuous mana lease.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 roadmap stub (Lesson #N12 sub-pattern A) — continuous mana lease open: " +
+        "reads Mana.Current N-1 snapshot per §12.3, opens via ManaLeaseRegistry.Open + " +
+        "publishes ManaLeaseOpened on success, ManaLeaseRefused (с RefusalReason) otherwise. " +
+        "Activation: Phase 5 continuous lease model.")]
     public void OnManaLeaseOpenRequest(ManaLeaseOpenRequest req)
     {
         throw new NotImplementedException("TODO: Phase 5 — open the mana lease and publish ManaLeaseOpened/Refused");
@@ -83,6 +101,11 @@ public sealed class ManaSystem : SystemBase
     /// <see cref="ManaLeaseRegistry.DrainTick"/>, receives the list of
     /// expired leases, and publishes <see cref="ManaLeaseClosed"/> for each.
     /// </summary>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 roadmap stub (Lesson #N12 sub-pattern A) — per-tick active lease drain " +
+        "via ManaLeaseRegistry.DrainTick + ManaLeaseClosed publication for each expired lease. " +
+        "Activation: Phase 5 continuous lease model.")]
     public void DrainActiveLeases()
     {
         throw new NotImplementedException("TODO: Phase 5 — per-tick drain of active leases and publication of expired ones");
@@ -96,6 +119,12 @@ public sealed class ManaSystem : SystemBase
     /// </summary>
     /// <param name="id">Identifier of the lease to close.</param>
     /// <param name="reason">Close reason.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 roadmap stub (Lesson #N12 sub-pattern A) — explicit lease close handler " +
+        "(spell aborted externally OR golem deactivated). Delegates к ManaLeaseRegistry.Close + " +
+        "publishes ManaLeaseClosed с supplied CloseReason. " +
+        "Activation: Phase 5 continuous lease model.")]
     public void OnManaLeaseCloseRequest(LeaseId id, CloseReason reason)
     {
         throw new NotImplementedException("TODO: Phase 5 — explicit mana lease close on request");

@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Events.Magic;
 
@@ -79,6 +80,12 @@ internal sealed class ManaLease
     /// </summary>
     /// <param name="actualDrain">Mana actually drained this tick (may differ
     /// from <see cref="DrainPerTick"/> when the pool is exhausted).</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 internal roadmap stub (Lesson #N12 sub-pattern A) — per-tick mana drain " +
+        "accumulation + TicksElapsed advance. Returns true if lease reached MaxDurationTicks " +
+        "(force-close signal к ManaLeaseRegistry). " +
+        "Activation: Phase 5 continuous lease model.")]
     public bool AdvanceTick(float actualDrain)
     {
         throw new NotImplementedException("TODO: Phase 5 — drain mana and advance the lease tick");

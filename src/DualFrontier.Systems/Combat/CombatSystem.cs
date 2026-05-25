@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Components.Shared;
@@ -51,6 +52,11 @@ public sealed class CombatSystem : SystemBase
     /// </summary>
     /// <param name="intent">Ready intent to publish (in the future — shot
     /// parameters from which the intent is built internally).</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — CombatSystem CompoundShotIntent " +
+        "publication (v0.2 two-phase commit replaces v0.1 direct AmmoIntent). " +
+        "Activation: Phase 4 combat resolution integration.")]
     public void OnCompoundShotIntent(CompoundShotIntent intent)
     {
         throw new NotImplementedException("TODO: Phase 4 — delegate the shot via CompoundShotIntent");

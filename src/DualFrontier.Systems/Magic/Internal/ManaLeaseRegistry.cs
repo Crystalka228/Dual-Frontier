@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Events.Magic;
 
@@ -31,6 +32,11 @@ internal sealed class ManaLeaseRegistry
     /// <param name="drainPerTick">Mana drain per tick.</param>
     /// <param name="min">Minimum lease duration in ticks.</param>
     /// <param name="max">Maximum lease duration in ticks.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 internal roadmap stub (Lesson #N12 sub-pattern A) — register new mana lease " +
+        "+ issue LeaseId. Validates drainPerTick > 0 and min ≤ max invariants. " +
+        "Activation: Phase 5 continuous lease model.")]
     public LeaseId Open(EntityId caster, float drainPerTick, int min, int max)
     {
         throw new NotImplementedException("TODO: Phase 5 — register a new mana lease and issue a LeaseId");
@@ -45,6 +51,11 @@ internal sealed class ManaLeaseRegistry
     /// <param name="id">Identifier of the lease to close.</param>
     /// <param name="reason">Close reason — propagated outward into the
     /// corresponding event.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 internal roadmap stub (Lesson #N12 sub-pattern A) — remove lease " +
+        "from internal collection + return TotalDrained для ManaLeaseClosed event payload. " +
+        "Activation: Phase 5 continuous lease model.")]
     public float Close(LeaseId id, CloseReason reason)
     {
         throw new NotImplementedException("TODO: Phase 5 — remove the lease and return TotalDrained");
@@ -56,6 +67,12 @@ internal sealed class ManaLeaseRegistry
     /// tick (reached <c>MaxDurationTicks</c> or the caster ran out of mana)
     /// — <c>ManaSystem</c> publishes <c>ManaLeaseClosed</c> for each of them.
     /// </summary>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 internal roadmap stub (Lesson #N12 sub-pattern A) — per-tick iteration " +
+        "over active leases (drain DrainPerTick mana each + surface IDs of leases that have " +
+        "reached MaxDurationTicks or caster's pool exhausted). " +
+        "Activation: Phase 5 continuous lease model.")]
     public IReadOnlyList<LeaseId> DrainTick()
     {
         throw new NotImplementedException("TODO: Phase 5 — iterate every active lease, drain mana, surface expired ones");
@@ -68,6 +85,11 @@ internal sealed class ManaLeaseRegistry
     /// </summary>
     /// <param name="id">Identifier of the lease to find.</param>
     /// <param name="lease">Lease record, if found.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 internal roadmap stub (Lesson #N12 sub-pattern A) — lease lookup by " +
+        "LeaseId с out-param semantics. Returns true if open, false с lease=null otherwise. " +
+        "Activation: Phase 5 continuous lease model.")]
     public bool TryGet(LeaseId id, out ManaLease? lease)
     {
         throw new NotImplementedException("TODO: Phase 5 — look up the lease in the internal collection");
@@ -79,6 +101,11 @@ internal sealed class ManaLeaseRegistry
     /// (<c>RefusalReason.LeaseCapExceeded</c>).
     /// </summary>
     /// <param name="caster">Caster mage.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 5 internal roadmap stub (Lesson #N12 sub-pattern A) — per-caster open " +
+        "lease count used by ManaSystem к enforce LeaseCapExceeded RefusalReason. " +
+        "Activation: Phase 5 continuous lease model.")]
     public int ActiveCountForCaster(EntityId caster)
     {
         throw new NotImplementedException("TODO: Phase 5 — count open leases for the caster");

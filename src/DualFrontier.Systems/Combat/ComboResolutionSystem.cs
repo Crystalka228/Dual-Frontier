@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.ECS;
@@ -49,6 +50,11 @@ public sealed class ComboResolutionSystem : SystemBase
     /// collected.
     /// </summary>
     /// <param name="intent">Intent to deal damage, from any source system.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — DamageIntent tick-queue " +
+        "accumulation for deterministic resolution. " +
+        "Activation: Phase 4 damage application sequencing (deterministic sort per TechArch §12.4).")]
     public void OnDamageIntent(DamageIntent intent)
     {
         throw new NotImplementedException("TODO: Phase 4 — queue DamageIntent for the tick");
@@ -60,6 +66,11 @@ public sealed class ComboResolutionSystem : SystemBase
     /// and publishes the resulting <see cref="DamageEvent"/> to
     /// <c>DamageSystem</c>. The current tick's queue is cleared after the call.
     /// </summary>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — deterministic sort by " +
+        "(EntityId, DamageKind ordinal) + sequential DamageEvent publication к DamageSystem. " +
+        "Activation: Phase 4 damage application sequencing (replay determinism per §12.4).")]
     public void ResolvePending()
     {
         throw new NotImplementedException("TODO: Phase 4 — deterministic sort and publication of DamageEvent");

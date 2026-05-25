@@ -1,4 +1,5 @@
 using System;
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Persistence.Snapshots;
 
 namespace DualFrontier.Persistence.Compression;
@@ -29,6 +30,12 @@ public static class DfCompressor
     /// where header framing, section ordering and delta encoding are decided
     /// jointly with the on-disk format.
     /// </summary>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Persistence Phase 5+ roadmap stub (Lesson #N12 sub-pattern A) — aggregate WorldSnapshot " +
+        "encode pipeline with header framing and incremental deltas. " +
+        "Activation: Phase 5+ save-system integration (header framing, section ordering, " +
+        "delta encoding decided jointly with on-disk format).")]
     public static byte[] Compress(WorldSnapshot snapshot)
         => throw new NotImplementedException(
             "Phase 5+: aggregate encode pipeline with header framing and incremental deltas.");
@@ -36,6 +43,11 @@ public static class DfCompressor
     /// <summary>
     /// Inverse of <see cref="Compress"/>. Same phase ownership.
     /// </summary>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Persistence Phase 5+ roadmap stub (Lesson #N12 sub-pattern A) — aggregate WorldSnapshot " +
+        "decode pipeline (inverse of Compress; pairs in same phase ownership). " +
+        "Activation: Phase 5+ save-system integration.")]
     public static WorldSnapshot Decompress(byte[] data)
         => throw new NotImplementedException(
             "Phase 5+: aggregate decode pipeline; pairs with Compress.");

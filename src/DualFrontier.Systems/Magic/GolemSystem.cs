@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
@@ -45,6 +46,12 @@ public sealed class GolemSystem : SystemBase
     /// on the next tick.
     /// </summary>
     /// <param name="req">Request to transfer/change golem ownership.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 6 roadmap stub (Lesson #N12 sub-pattern A) — golem owner change validation " +
+        "+ GolemBondComponent update + GolemOwnershipChanged publication (marked [Deferred] — " +
+        "subscriber mutations on next tick). " +
+        "Activation: Phase 6 golem system integration.")]
     public void OnGolemOwnershipTransferRequest(GolemOwnershipTransferRequest req)
     {
         throw new NotImplementedException("TODO: Phase 6 — handle golem owner change and publish GolemOwnershipChanged");
@@ -58,6 +65,12 @@ public sealed class GolemSystem : SystemBase
     /// the current tick by GolemSystem, and vice versa.
     /// </summary>
     /// <param name="mage">Owner mage of the golem whose mana state is read.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Magic Phase 6 internal roadmap stub (Lesson #N12 sub-pattern A) — Mana[N-1] " +
+        "buffered state snapshot per v02 §12.3 feedback-loop prevention (concurrent ManaSystem " +
+        "must не see GolemSystem's current-tick changes, и vice versa). " +
+        "Activation: Phase 6 golem system integration.")]
     private float ReadPreviousTickManaState(EntityId mage)
     {
         throw new NotImplementedException("TODO: Phase 6 — read Mana[N-1] snapshot to prevent the feedback loop");

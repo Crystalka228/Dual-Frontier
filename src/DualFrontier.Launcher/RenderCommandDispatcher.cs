@@ -2,6 +2,7 @@ using System;
 using System.Numerics;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Bridge.Commands;
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Runtime.Sprite;
 
 namespace DualFrontier.Launcher;
@@ -82,6 +83,14 @@ internal sealed class RenderCommandDispatcher
     // commands fire actively at startup / every tick / per pawn state change).
     // ===========================================================================
 
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — pending post-Vanilla-mods cascade. " +
+        "HUD pawn detail panel (name, needs, mood, job label, top skills) requires Vanilla mods к " +
+        "define pawn structure first. Silent accept в production composition per S-LOCK-4 amendment " +
+        "(Crystalka mid-cascade ratification 2026-05-23); defensive throw would crash Launcher on " +
+        "first tick from PawnStateReporterSystem. " +
+        "Activation: HUD pawn detail consumer materialization (M-series migration).")]
     private void HandlePawnState(PawnStateCommand cmd)
     {
         // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
@@ -92,6 +101,13 @@ internal sealed class RenderCommandDispatcher
         // observable behavior; tests would lie by passing trivially (Q-H-6 discipline).
     }
 
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — pending post-Vanilla-mods cascade. " +
+        "Item visuals require Vanilla mods к define item registry first. Silent accept в production " +
+        "composition per S-LOCK-4 amendment (Crystalka mid-cascade ratification 2026-05-23); " +
+        "defensive throw would crash Launcher at startup from ~255 GameBootstrap-emitted commands. " +
+        "Activation: Item visual consumer materialization (Vanilla-mods cascade).")]
     private void HandleItemSpawned(ItemSpawnedCommand cmd)
     {
         // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
@@ -101,6 +117,14 @@ internal sealed class RenderCommandDispatcher
         // crash Launcher on first frame). DO NOT TEST.
     }
 
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — pending post-architecture cascade. " +
+        "HUD tick label requires HUD primitives which не yet materialized. Silent accept в " +
+        "production composition per S-LOCK-4 amendment (Crystalka mid-cascade ratification " +
+        "2026-05-23); defensive throw would crash Launcher within milliseconds от GameLoop's " +
+        "33ms tick cadence (30 TPS). " +
+        "Activation: HUD primitives cascade materialization.")]
     private void HandleTickAdvanced(TickAdvancedCommand cmd)
     {
         // CASCADE #3 STUB — pending post-architecture cascade.

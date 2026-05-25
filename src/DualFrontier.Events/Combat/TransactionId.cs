@@ -1,3 +1,5 @@
+using DualFrontier.Contracts.Analyzer;
+
 namespace DualFrontier.Events.Combat;
 
 /// <summary>
@@ -13,5 +15,10 @@ public readonly record struct TransactionId(ulong Value)
     /// TODO: Phase 4 — implement the counter (Interlocked.Increment on a private
     /// field); for now <see cref="NotImplementedException"/> is thrown.
     /// </summary>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — TransactionId monotonic counter " +
+        "via Interlocked.Increment on private static field. Used by CompoundShotIntent two-phase commit. " +
+        "Activation: Phase 4 combat resolution integration.")]
     public static TransactionId New() => throw new NotImplementedException("TODO: Phase 4 — implement the monotonic TransactionId counter.");
 }

@@ -1,3 +1,4 @@
+using DualFrontier.Contracts.Analyzer;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Core.ECS;
@@ -52,6 +53,11 @@ public sealed class CompositeResolutionSystem : SystemBase
     /// requests on the Inventory and Magic buses.
     /// </summary>
     /// <param name="intent">Compound shot intent received from CombatSystem.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — CompoundShotIntent two-phase " +
+        "commit initiation per TechArch v0.2 §12.4. " +
+        "Activation: Phase 4 combat resolution integration.")]
     public void OnCompoundShotIntent(CompoundShotIntent intent)
     {
         throw new NotImplementedException("TODO: Phase 4 — initiate two-phase commit for CompoundShotIntent");
@@ -63,6 +69,11 @@ public sealed class CompositeResolutionSystem : SystemBase
     /// present, calls <see cref="TryResolve"/>.
     /// </summary>
     /// <param name="evt">Ammo issuance confirmation from InventoryBus.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — partial AmmoGranted " +
+        "registration in pending-transaction table keyed by TransactionId. " +
+        "Activation: Phase 4 two-phase commit completion.")]
     public void OnAmmoGranted(AmmoGranted evt)
     {
         throw new NotImplementedException("TODO: Phase 4 — register partial AmmoGranted by TxId");
@@ -73,6 +84,11 @@ public sealed class CompositeResolutionSystem : SystemBase
     /// <see cref="ShootRefused"/> with reason <see cref="ShotRefusalReason.NoAmmo"/>.
     /// </summary>
     /// <param name="evt">Refusal from InventoryBus.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — partial AmmoRefused " +
+        "caching keyed by TransactionId (final transaction outcome will be ShootRefused/NoAmmo). " +
+        "Activation: Phase 4 two-phase commit completion.")]
     public void OnAmmoRefused(AmmoRefused evt)
     {
         throw new NotImplementedException("TODO: Phase 4 — register partial AmmoRefused by TxId");
@@ -84,6 +100,12 @@ public sealed class CompositeResolutionSystem : SystemBase
     /// transaction is resolved via <see cref="TryResolve"/>.
     /// </summary>
     /// <param name="evt">Mana drain confirmation from MagicBus.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — partial ManaGranted " +
+        "registration in pending-transaction table keyed by TransactionId; triggers TryResolve " +
+        "if both partial responses present. " +
+        "Activation: Phase 4 two-phase commit completion.")]
     public void OnManaGranted(ManaGranted evt)
     {
         throw new NotImplementedException("TODO: Phase 4 — register partial ManaGranted by TxId");
@@ -94,6 +116,11 @@ public sealed class CompositeResolutionSystem : SystemBase
     /// <see cref="ShootRefused"/> with reason <see cref="ShotRefusalReason.NoMana"/>.
     /// </summary>
     /// <param name="evt">Refusal from MagicBus.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — partial ManaRefused " +
+        "caching keyed by TransactionId (final transaction outcome will be ShootRefused/NoMana). " +
+        "Activation: Phase 4 two-phase commit completion.")]
     public void OnManaRefused(ManaRefused evt)
     {
         throw new NotImplementedException("TODO: Phase 4 — register partial ManaRefused by TxId");
@@ -107,6 +134,12 @@ public sealed class CompositeResolutionSystem : SystemBase
     /// it is a no-op.
     /// </summary>
     /// <param name="id">Transaction identifier to resolve.</param>
+    [ReservedStub(
+        ReservedStubPurpose.BuildComposition,
+        "Combat Phase 4 roadmap stub (Lesson #N12 sub-pattern A) — combine Ammo* and Mana* " +
+        "partial responses into ShootGranted (both Granted) OR ShootRefused (any Refused); " +
+        "removes entry from pending table; no-op if both responses not yet present. " +
+        "Activation: Phase 4 two-phase commit completion.")]
     private void TryResolve(TransactionId id)
     {
         throw new NotImplementedException("TODO: Phase 4 — combine Ammo* and Mana* responses into the final ShootGranted/ShootRefused");
