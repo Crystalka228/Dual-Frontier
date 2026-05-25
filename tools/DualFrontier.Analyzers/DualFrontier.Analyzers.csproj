@@ -21,17 +21,12 @@
   </PropertyGroup>
 
   <!--
-    Per Q-L-6 CPM (introduced Commit 3 of this cascade): explicit Version="5.3.0" pins below
-    are TRANSITIONAL — they exist between Commit 1 (this scaffolding) and Commit 3 (CPM
-    adoption). Commit 3 migrates this csproj to centralized PackageVersion alongside the
-    ~30-csproj sweep. Until then, explicit Version attributes are required for dotnet
-    restore to succeed at this commit's verification gate.
-
-    Per recon §7.1.5: Microsoft.CodeAnalysis.CSharp 5.3.0 pinned baseline.
+    Per Q-L-6 CPM: package versions resolved via repo-root Directory.Packages.props.
+    Per recon §7.1.5: Microsoft.CodeAnalysis.CSharp 5.3.0 pinned baseline (centralized).
   -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="5.3.0" PrivateAssets="all">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
