@@ -1,15 +1,13 @@
----
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF
 category: D
 tier: 4
 lifecycle: AUTHORED
 owner: Crystalka
 version: "1.0"
-last_modified: "2026-05-24"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-BRIEF-AUTHORING"
-content_language: en
-review_cadence: on-cascade-execution
-next_review_due: post-A'.9.1 closure
+next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF
 ---
 # Brief A'.9.1 — Analyzer Infrastructure Cascade (К-extensions cascade #5)

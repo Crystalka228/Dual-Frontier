@@ -1,15 +1,13 @@
----
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-D-A_PRIME_9_1_PHASE_0_CLOSURE_REPORT
 category: D
 tier: 4
 lifecycle: AUTHORED
 owner: Crystalka
 version: "1.0"
-last_modified: "2026-05-24"
-last_modified_commit: "UNTRACKED-PRE-PHASE-ALPHA"
-content_language: en
-review_cadence: on-Phase-alpha-handoff
-next_review_due: post-A'.9.1 Phase α
+next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_1_PHASE_0_CLOSURE_REPORT
 ---
 # Phase 0 Closure Report — A'.9.1 Analyzer Infrastructure Cascade
