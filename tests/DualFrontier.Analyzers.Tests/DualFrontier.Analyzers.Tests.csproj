@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Inherits net8.0 + Nullable=enable + ImplicitUsings=enable + TreatWarningsAsErrors=true -->
+    <!-- from Directory.Build.props. Test project per established tests/*.Tests/ convention. -->
+    <AssemblyName>DualFrontier.Analyzers.Tests</AssemblyName>
+    <RootNamespace>DualFrontier.Analyzers.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!--
+    Per Q-L-17 + recon §7.2.4: Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit 1.1.2 +
+    Workspaces 5.3.0 explicit override (per recon §7.2.3 — без the override, MEF
+    composition fails at first test run because the testing package's transitive
+    Workspaces 1.0.1 wins resolution).
+
+    Per Q-L-6 CPM (introduced Commit 3 of this cascade): explicit Version pins below
+    are TRANSITIONAL only. Commit 3 removes the Version attributes alongside the
+    ~30-csproj migration. xUnit + FluentAssertions + Microsoft.NET.Test.Sdk versions
+    match the existing tests/*.Tests/ baseline (per empirical inventory of
+    tests/DualFrontier.Application.Tests/DualFrontier.Application.Tests.csproj).
+  -->
+  <ItemGroup>
+    <!-- Roslyn analyzer test harness -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="1.1.2" />
+
+    <!-- CRITICAL: explicit Workspaces 5.3.0 к override transitive 1.0.1 (recon §7.2.3) -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="5.3.0" />
+
+    <!-- xUnit baseline matches tests/DualFrontier.Application.Tests/ pinning -->
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+
+    <!-- FluentAssertions matches existing test-project convention -->
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      ProjectReference к analyzer for Phase α assembly-identity verifier test.
+      net8.0 → netstandard2.0 is forward-compat (newer .NET consumes older standard),
+      so this works without the framework-version issue seen в Commit 1's csproj.
+    -->
+    <ProjectReference Include="..\..\tools\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj" />
+  </ItemGroup>
+
+</Project>
