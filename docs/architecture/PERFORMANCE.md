@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1"
+version: "1.1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERFORMANCE
 ---
@@ -68,6 +68,13 @@ Workload analysis identifies the following hot paths — in descending order of 
 
 ### ComponentStore.Get / Query
 
+> **Code-truth note (2026-06-02):** the managed `ComponentStore<T>` / SparseSet hot path below
+> describes the **pre-K8 managed era**. Production storage is now the **native** kernel
+> (`native/DualFrontier.Core.Native/src/component_store.cpp`, NativeWorld SSoT per К-L11); systems
+> read/write via `NativeWorld` span/batch (К-L7). The managed `ComponentStore<T>` microbenchmark is
+> historical. Full re-baseline of this section against the native storage path is tracked under DD-1
+> (spec-truth restoration), separate from this DD-2 roadmap pass.
+
 Called thousands of times per phase. Implemented on SparseSet: one array for lookup, one for dense storage. Target: 5 ns per `Get`, 30 ns per `Query<T1, T2>` per-entity.
 
 ### DomainEventBus.Publish
@@ -84,12 +91,16 @@ A\* through the navigation graph. The most expensive operation (1–5 ms per pat
 The current implementation (`AStarPathfinding`) is synchronous A* with a
 2000-iteration cap per call; on overflow, `TryFindPath` returns `false` and
 the pawn re-requests on the next tick. A path cache between frequently used
-pairs of points is not yet implemented (TODO — would give 10×).
+pairs of points is *not yet implemented — **forward / NON-NORMATIVE** (would give ~10×;
+code-confirmed absent in `AStarPathfinding` 2026-06-02)*.
 
-Long-term: pathfinding migrates to GPU flow fields under the K9 + G6/G7
-roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Domain A extension). Per-pawn cost
+*Forward / NON-NORMATIVE (roadmap):* pathfinding migrates to GPU flow fields under the
+K9 + G6/G7 roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Domain A extension). Per-pawn cost
 collapses to one field read + arithmetic; pathfinding cost decouples from
-pawn count. A\* preserved as fallback for unique destinations only.
+pawn count. A\* preserved as fallback for unique destinations only. *(Status 2026-06-02:
+K9 field storage + the diffusion compute pipeline have shipped (`compute_pipeline.cpp`,
+`FieldStorageBinding`, CPU diffusion kernels); the **flow-field / V2 wave** layer this depends on
+is still pending — see [ROADMAP](./../ROADMAP.md) «Native foundation tracks → V substrate».)*
 
 ### GPU compute — Domain A (fields) and Domain B (entity-keyed bulk)
 
@@ -111,7 +122,7 @@ scenario, but native kernel + Vulkan rendering layer pivots collapse the dispatc
 overhead from 0.5–2 ms (managed) to microseconds (native), so the threshold may
 shift downward in practice.
 
-TODO (G5+): BenchmarkDotNet scenario `ProjectileStressBenchmark` with parameter
+*Forward / NON-NORMATIVE (G5+, roadmap — not yet created):* BenchmarkDotNet scenario `ProjectileStressBenchmark` with parameter
 `[Params(100, 500, 1000, 5000)]` for projectile count. Compare `CpuProjectileCompute`
 vs `GpuProjectileCompute` on the post-pivot architecture. Pin the switchover
 threshold in [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Domain B timing budget.

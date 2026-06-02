@@ -6,13 +6,20 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "0.2"
+version: "0.2.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMBO_RESOLUTION
 ---
 # Combo damage resolution
 
 The same target in one tick often takes damage from several systems: physical from `CombatSystem`, magical from `SpellSystem`, status from `StatusEffectSystem`. If each system writes `HealthComponent` directly in publish order, the combat outcome depends on the thread scheduler. v0.2 introduces deterministic ordering through `ComboResolutionSystem`.
+
+> **Implementation status — _design specification, NON-NORMATIVE_ (verified against code 2026-06-02):**
+> this document is the **design contract**, not implemented behavior. `ComboResolutionSystem`
+> (`src/DualFrontier.Systems/Combat/ComboResolutionSystem.cs`) currently exists as a **stub that
+> throws `NotImplementedException`**; `DamageKind.cs` and the `ComboResolutionTests` replay suite are
+> **not yet created**. The present-tense prose below describes intended behavior. Forward milestone:
+> [ROADMAP](./../ROADMAP.md) → Phase 5 / M9 (combat). Phase markers (4/5) inline below are forward roadmap, not current state.
 
 ## Problem
 

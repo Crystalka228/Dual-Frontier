@@ -6,13 +6,20 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.0.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-OWNERSHIP_TRANSITION
 ---
 # Golem ownership transitions
 
 A golem belongs to a mage through `GolemBondComponent`. The bond is not a binary "exists / does not exist" — it passes through several states: active, contested, abandoned, transferred. v0.2 pins the full list of states, the permitted transitions, and the rules for executing them.
+
+> **Implementation status (verified against code 2026-06-02):** the golem ownership system is
+> **shipped** — `GolemBondComponent`, `GolemSystem`, `GolemOwnershipChanged`,
+> `GolemOwnershipTransferRequest`, `OwnershipMode` all exist; the states/transitions described
+> below are implemented. **Two items remain _forward / NON-NORMATIVE (Phase 6)_** — code-confirmed
+> not yet present: the `GolemOwnershipRefused` reply event and the `GolemBondStrength` formula.
+> Both are flagged inline below. Forward milestone: [ROADMAP](./../ROADMAP.md) → Phase 6 (Magic).
 
 ## States
 

@@ -6,13 +6,13 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1"
+version: "1.1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ISOLATION
 ---
 # System isolation
 
-A silent isolation violation is worse than a crash: corrupted state surfaces an hour into play as an inexplicable bug. Dual Frontier enforces system isolation at **compile time** via the `[SystemAccess]` attribute and the `DependencyGraph` that consumes it for parallel scheduling. The future A'.9 Roslyn analyzer extends this enforcement to call sites — flagging undeclared component access as a build error rather than a runtime exception.
+A silent isolation violation is worse than a crash: corrupted state surfaces an hour into play as an inexplicable bug. Dual Frontier enforces system isolation at **compile time** via the `[SystemAccess]` attribute and the `DependencyGraph` that consumes it for parallel scheduling. The Roslyn analyzer (infrastructure shipped A'.9.1; detection logic pending Phase β — see §Enforcement model item 3) extends this enforcement to call sites — flagging undeclared component access as a build error rather than a runtime exception.
 
 ## Enforcement model
 
@@ -20,9 +20,9 @@ Isolation is enforced by three mechanisms operating at different stages:
 
 1. **Compile-time declarations** — every `SystemBase` subclass must carry a `[SystemAccess(reads, writes, bus)]` attribute. The attribute is the single source of truth for what components the system reads, writes, and which event bus it publishes to.
 2. **DependencyGraph edge-building** — `ParallelSystemScheduler` reads `[SystemAccess]` declarations to compute the system dependency graph: writers-vs-readers edges, bus contention, phase ordering. Systems with no edge between them run on parallel scheduler threads; systems with read-write conflicts on the same component run sequentially.
-3. **A'.9 Roslyn analyzer (planned)** — call-site enforcement: any `NativeWorld.AcquireSpan<T>()` or `BeginBatch<T>()` whose `T` is not declared in the enclosing system's `[SystemAccess]` raises a build error. The analyzer milestone lands in A'.9 per [PHASE_A_PRIME_SEQUENCING](./PHASE_A_PRIME_SEQUENCING.md).
+3. **Roslyn analyzer — _forward / NON-NORMATIVE_** — call-site enforcement: any `NativeWorld.AcquireSpan<T>()` or `BeginBatch<T>()` whose `T` is not declared in the enclosing system's `[SystemAccess]` raises a build error. *Status (2026-06-02): analyzer **infrastructure shipped** at A'.9.1 (17 rule stubs incl. DFK011 NativeWorld-SSoT / DFK003 storage-ownership, `tools/DualFrontier.Analyzers/`); **detection logic pending Phase β** (stubs currently emit zero diagnostics). Forward milestone tracked in [ROADMAP](./../ROADMAP.md).*
 
-The runtime guard methods that previously threw `IsolationViolationException` from `SystemExecutionContext.GetComponent` / `SetComponent` were **deleted in K8.3+K8.4 cutover (A'.5 closure 2026-05-14)**. Systems now read and write component storage exclusively through `NativeWorld`'s span/batch API (see [ECS](./ECS.md)). The compile-time + analyzer model replaces the runtime check; until A'.9 lands, undeclared access is caught by manual review and by integration tests that exercise the scheduler.
+The runtime guard methods that previously threw `IsolationViolationException` from `SystemExecutionContext.GetComponent` / `SetComponent` were **deleted in K8.3+K8.4 cutover (A'.5 closure 2026-05-14)**. Systems now read and write component storage exclusively through `NativeWorld`'s span/batch API (see [ECS](./ECS.md)). The compile-time + analyzer model replaces the runtime check; until the analyzer's detection logic lands (Phase β — infrastructure already shipped at A'.9.1), undeclared access is caught by manual review and by integration tests that exercise the scheduler.
 
 ## SystemExecutionContext
 
@@ -93,7 +93,7 @@ Before `git commit` for a new system, run through the checklist:
 1. The class inherits from `SystemBase`.
 2. The `[SystemAccess(reads: [...], writes: [...], bus: ...)]` attribute is present.
 3. The `[TickRate(TickRates.XXX)]` attribute is set explicitly.
-4. EVERY component the system uses in `Update` is listed in `reads` / `writes` — the future A'.9 analyzer will enforce this at build time; until then, manual review and integration tests catch gaps.
+4. EVERY component the system uses in `Update` is listed in `reads` / `writes` — the Roslyn analyzer (infrastructure shipped A'.9.1; detection logic pending Phase β) will enforce this at build time; until then, manual review and integration tests catch gaps.
 5. `Bus` matches the actual publication inside handlers.
 6. `OnInitialize()` is overridden for subscriptions; `OnDispose()` unsubscribes on unload.
 7. No `async` / `await` / `Task` inside system code — would break the per-thread context model.

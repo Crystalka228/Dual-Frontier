@@ -6,13 +6,20 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.0.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMPOSITE_REQUESTS
 ---
 # Composite requests
 
 A one-step Intent solves the problem when exactly one resource on one bus is required. But even a "mana arrow" shot needs two confirmations at once: a bullet on `IInventoryBus` and mana on `IMagicBus`. A direct "get both responses and act" approach produces race conditions inside a multithreaded phase. v0.2 introduces two-phase commit through a single mediator.
+
+> **Implementation status — _design specification, NON-NORMATIVE_ (verified against code 2026-06-02):**
+> this document is the **design contract**, not implemented behavior. `CompositeResolutionSystem`
+> (`src/DualFrontier.Systems/Combat/CompositeResolutionSystem.cs`) currently exists as a **stub that
+> throws `NotImplementedException`**; `AmmoRefunded`, `CompoundCraftIntent`, and `CompoundRitualIntent`
+> are **not yet created**. The present-tense prose below describes intended behavior. Forward milestone:
+> [ROADMAP](./../ROADMAP.md) → Phase 5. Phase markers (4/6) inline below are forward roadmap, not current state.
 
 ## Problem
 

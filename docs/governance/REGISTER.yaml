@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.12"
+register_version: "2.13"
 last_modified: "2026-06-02"
-last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-KERNEL"
+last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-SUBSTRATE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -138,8 +138,8 @@ documents:
     tier: 1
     lifecycle: Live
     owner: Crystalka
-    version: "0.1"
-    last_modified: "2026-05-11"
+    version: "0.1.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "80c9ba6"
     content_language: en
     review_cadence: on-change+annual
@@ -188,8 +188,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1"
-    last_modified: "2026-05-16"
+    version: "1.1.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -313,8 +313,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1"
-    last_modified: "2026-05-16"
+    version: "1.1.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -328,8 +328,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-04-XX"
+    version: "1.0.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -390,8 +390,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "0.2"
-    last_modified: "2026-04-XX"
+    version: "0.2.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -406,8 +406,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-04-XX"
+    version: "1.0.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -9832,6 +9832,60 @@ audit_trail:
       - К-L count unchanged at 21
       - Architectural-integrity restoration (root dual-load generator removed from
         the #1 specimen — spec and roadmap now have distinct homes)
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: []
+
+  - id: EVT-2026-06-02-DOC_DRIFT_DD2-SUBSTRATE-ROADMAP-FENCING
+    timestamp: "2026-06-02T00:00:00Z"
+    type: doc_refactor
+    cascade: Documentation Dual-Load Drift Reconnaissance refactor — DD-2 (spec/roadmap separation)
+    phase: DD-2 increment 2 (substrate architecture docs)
+    title: "Code-grounded roadmap fencing + realized-label fixes across 6 substrate architecture docs"
+    summary: |
+      Second DD-2 increment per Crystalka directive «изъять из архитектурных
+      документов дорожную составляющую» + «сначала ревью на коде чтобы было
+      понято что уже готово а что потом». Each roadmap/forward claim in six
+      substrate architecture docs was VERIFIED AGAINST CODE, then either fixed to
+      code-truth (realized) or fenced in place as NON-NORMATIVE forward roadmap
+      (Option ε γ-convention — small inline threads stay co-located, fenced;
+      only KERNEL-scale blocks relocate to ROADMAP.md, done in increment 1).
+    governance_impact: |
+      DOC-A-FIELDS 0.1 → 0.1.1: three «TBD — lands at K9 implementation» labels
+        corrected to «Shipped at K9 (2026-05-11)» (tile_field.*, FieldRegistry.cs,
+        FieldHandle.cs code-confirmed); Save/load remains the one genuinely-pending
+        item; «KERNEL Part 2 §K9» See-also ref repointed (Part 2 relocated in incr.1).
+      DOC-A-ISOLATION 1.1 → 1.1.1: «A'.9 Roslyn analyzer (planned)» threads
+        re-grounded — infrastructure shipped A'.9.1 (17 stubs), detection logic
+        pending Phase β (code-confirmed: zero ReportDiagnostic in stubs).
+      DOC-A-PERFORMANCE 1.1 → 1.1.1: managed ComponentStore<T> hot-path flagged as
+        pre-K8 (native component_store.cpp authoritative; full re-baseline = DD-1);
+        path-cache + GPU-flow-field + ProjectileStressBenchmark fenced NON-NORMATIVE
+        (diffusion compute shipped, flow-field/V2 pending — code-confirmed).
+      DOC-A-COMBO_RESOLUTION 0.2 → 0.2.1: NON-NORMATIVE design-status banner —
+        ComboResolutionSystem is a NotImplementedException stub; DamageKind.cs +
+        ComboResolutionTests not yet created (code-confirmed). Phase 4/5 = forward.
+      DOC-A-COMPOSITE_REQUESTS 1.0 → 1.0.1: NON-NORMATIVE design-status banner —
+        CompositeResolutionSystem is a stub; AmmoRefunded/CompoundCraftIntent/
+        CompoundRitualIntent not yet created (code-confirmed). Phase 4/6 = forward.
+      DOC-A-OWNERSHIP_TRANSITION 1.0 → 1.0.1: status banner — golem ownership system
+        SHIPPED (GolemBondComponent/GolemSystem/GolemOwnershipChanged/...); two items
+        genuinely forward Phase 6 (GolemOwnershipRefused, GolemBondStrength — code-
+        confirmed absent), fenced inline.
+      register_version 2.12 → 2.13. All bumps PATCH (NON-NORMATIVE status annotation
+      / cross-ref per Q-G-12 LOCKED versioning convention). Frontmatter mirrors synced.
+      ANALYZER_RULES.md NOT touched (deferred until after A'.9.1 Phase β per report Q-DD-8).
+
+      TOOLING NOTE: pwsh unavailable — sync_register.ps1 -Validate + render deferred к
+      a Crystalka environment; REGISTER + frontmatter mirrors authored manually,
+      YAML-validated structurally.
+
+      К-L14 thesis preservation:
+      - Zero production code touched (documentation refactor only)
+      - Zero К-L invariant / behavioral change (count unchanged 21)
+      - Architectural-integrity restoration: forward content now carries code-grounded
+        labels (shipped vs pending) instead of the docs' stale future-tense framing
     cross_references:
       capa_entries: []
       risks: []
