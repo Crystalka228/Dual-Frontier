@@ -20,7 +20,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 
 ## Status overview
 
-*Updated: 2026-05-03 (M7 closed; M8 (Vanilla skeletons) is the next phase; §9.2 v1.6 ratification candidate registered; UI redesign with Kenney+Cinzel pending; .sln gap fix pending; Phase 5 backlog tracked).*
+*Updated: 2026-05-03 (M7 closed; M8 next). Partial re-sync 2026-06-02 (DD-2): K-series + K9 rows retired to Closed and the KERNEL_ARCHITECTURE.md Part 2/3 roadmap relocated into «Native foundation tracks» below; remaining M8/V status rows pending full DD-1 re-sync.*
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -44,8 +44,8 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | M8 — Vanilla skeletons (M-K bucket) | ⏭ Pending | — | Five empty mod assemblies. Composite namespace: M-K bucket per Q-M-2 LOCK; specific identifiers within bucket deferred to per-mod authoring per FHE-style reserved pattern. |
 | M9 — Vanilla.Combat — DEFERRED | ⏭ Excluded from cascade | — | Per Q-V-2 LOCK + deliberation §4 (deferred items registry): Combat is a consumer mod, identity discussion deferred until V substrate ready. Original Phase 5 scope preserved as historical context. M9 namespace freed under composite namespace (Q-R-2 LOCK — no remaining collision with runtime M9.x). |
 | M10 — Remaining vanilla (M-K bucket; V-side reserved for multi-substrate mods) | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental. K-side under M-K bucket per Q-M-2. Multi-substrate mods (Magic, Electricity, Water, Movement) carry compound marker `M-K{N} / M-V` with V-side identifier deferred to V substrate authoring time per Q-V-2 FHE-pattern. |
-| **K-series — Native ECS kernel** | ⏭ Pending | — | K0–K8 per [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) v1.0 LOCKED, 5–8 weeks |
-| **K9 — Field storage abstraction** | ⏭ Pending | — | `RawTileField<T>` + conductivity / storage flags, CPU functional first; gates V substrate compute primitives V1/V2 ([VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) v1.0) |
+| **K-series — Native ECS kernel** | ✅ Closed | — | K0–K10.3 shipped (native scheduler К10.1, native bus К10.2, pipeline/display/quiescent К10.3 v2); K8.5 + K10.4 (TLA+) pending. Detail relocated to «Native foundation tracks» below per DD-2. |
+| **K9 — Field storage abstraction** | ✅ Closed | — | `RawTileField<T>` shipped 2026-05-11 (conductivity / storage flags, CPU functional path); unblocks V substrate compute primitives V1/V2. |
 | **V substrate — Vulkan rendering + compute** | ⏭ Pending | — | V0 (foundation: rendering use case incl. former M9.0..M9.8 + compute use case plumbing) → V1 (diffusion shader, isotropic + anisotropic) → V2 (wave shader, routed + distance/direction side products) per [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) v1.0 LOCKED. Consolidates former runtime (RUNTIME_ARCHITECTURE.md v1.0) + GPU compute (GPU_COMPUTE.md v2.0) per Q-G-1 LOCK. Substrate primitives reduced from G0..G6+G9 (seven items) to V0/V1/V2 (three items) per Q-G-2 reductions (G3 storage cells → gameplay node config; G4 multi-field → V close criterion; G6 flow field → V2 side products; G5 projectile + G9 eikonal deferred). Rendering use case migration phases R.0..R.8 (formerly M9.0..M9.8) cutover at R.5; Godot deletion at R.8. M-V demonstrations (M-V1 mana, M-V2 electricity, M-V7 movement, M-V8 local avoidance) per Q-R-1 format. |
 | Phase 9 — Native Runtime | ⏭ Post-launch | — | Separate large project (now decomposed into K-series + V substrate above per Q-G-1 LOCK). |
 
@@ -543,21 +543,249 @@ Goal: incremental delivery of the four remaining vanilla mods, in any order the 
 
 The post-Phase-4 architectural pivots committed in [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) v1.0 and [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) v1.0 (supersedes prior RUNTIME_ARCHITECTURE.md v1.0 + GPU_COMPUTE.md v2.0) decompose the original "Phase 9 — Native Runtime" endpoint into two coordinated tracks. Each track has its own brief; this section is the execution-sequence summary.
 
-### K-series — Native ECS kernel (5–8 weeks)
+### K-series — Native ECS kernel — CLOSED (K0–K10.3 shipped; K8.5 + K10.4 pending)
 
-Per [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) Part 2:
+> **Relocated here 2026-06-02 (DD-2 spec/roadmap separation).** The detailed K-series
+> milestone roadmap + migration strategy below were moved verbatim from
+> KERNEL_ARCHITECTURE.md Part 2/3, so that kernel document is now pure architecture
+> specification. **Status: K0–K10.3 CLOSED** (shipped — native scheduler К10.1, native
+> bus К10.2, pipeline/display/quiescent К10.3 v2 all landed). **Pending: K8.5** (mod
+> ecosystem migration prep) **+ K10.4** (TLA+ formal verification). The time/LOC
+> estimates in the relocated detail are historical pre-execution planning figures
+> (most milestones have since shipped); the К-L invariants these milestones produced
+> live — and stay authoritative — in KERNEL_ARCHITECTURE.md Part 0.
 
-- **K0** — cherry-pick + cleanup from `claude/cpp-core-experiment-cEsyH` branch.
-- **K1** — batching primitive (bulk Add/Get + `Span<T>` access).
-- **K2** — type-id registry + bridge tests (`DualFrontier.Core.Interop.Tests`).
-- **K3** — native bootstrap graph + thread pool.
-- **K4** — component struct refactor (Path α, ~50–80 components).
-- **K5** — `Span<T>` protocol + write command batching.
-- **K6** — second-graph rebuild on mod change.
-- **K7** — performance measurement (tick-loop), report → `PERFORMANCE_REPORT_K7.md`.
-- **K8** — decision step + production cutover (managed `World` retired or retained per §8 metrics).
+#### Relocated — Part 2: Roadmap (K-series)
 
-### K9 — Field storage abstraction (1–2 weeks)
+##### Master plan
+
+| Milestone | Title | Estimated time | LOC delta |
+|---|---|---|---|
+| K0 | Cherry-pick + cleanup от branch | 1-2 days | +1637 (existing) + cleanup |
+| K1 | Batching primitive (bulk Add/Get + Span<T>) | 3-5 days | +500-800 |
+| K2 | Type-id registry + bridge tests | 2-3 days | +400-600 |
+| K3 | Native bootstrap graph + thread pool | 5-7 days | +600-900 |
+| K4 | Component struct refactor (Path α) | 2-3 weeks | +/- (mostly conversion) |
+| K5 | Span<T> protocol + write command batching | 1 week | +500-700 |
+| K6 | Second-graph rebuild on mod change | 3-5 days | +200-400 |
+| K7 | Performance measurement (tick-loop) | 3-5 days | +200-400 |
+| K8.0 | Architectural decision recording (Solution A) | 1-2 days | +/- (docs only) |
+| K8.1 | Native-side reference handling primitives | 1-2 weeks | +600-1000 |
+| K8.2 | K-L3 selective per-component closure (post-K-L3.1 reframing): K8.1 wrapper value-type refactor (NativeMap/NativeSet/NativeComposite to readonly struct + IComparable<InternedString> + per-instance id allocation) + 6 class→struct conversions on Path α via K8.1 primitives (Identity/Workbench/Faction/Skills/Storage/Movement) + 6 empty TODO stub deletions per METHODOLOGY §7.1 (Ammo/Shield/Weapon/School/Social/Biome — content deferred to M-series, authored on appropriate path per K-L3.1) + 12 ModAccessible annotation completeness pass on already-struct components | 6-12 hours auto-mode (3-5 days hobby) | +800/-1500 |
+| K8.3 | **CLOSED 2026-05-14** (combined w/ K8.4 in A'.5): 10 vanilla systems migrated to SpanLease/WriteBatch (Power 2 deleted as disposable CPU systems — electricity moves to GPU compute) | combined w/ K8.4 | actual -4481/+1211 |
+| K8.4 | **CLOSED 2026-05-14** (combined w/ K8.3 in A'.5): ManagedWorld retired from production as `ManagedTestWorld` (test-project fixture); Mod API v3 ships (Path β bridge: `RegisterManagedComponent<T>` + `ManagedStore<T>`); compile-time isolation enforcement (runtime guard removed) | combined w/ K8.3 | (see K8.3 row) |
+| K8.5 | Mod ecosystem migration prep | 3-5 days | +500 (docs) |
+| K9 | Field storage abstraction (`RawTileField<T>`) | 1-2 weeks | +600-900 |
+| K10 | Native kernel scheduler (К-L6 SUPERSEDED + К-L12/L13/L14 AUTHORED in K10.1; K-L15 AUTHORED in K10.2; К-L19 AUTHORED V0.B inheritance; К-L7.1/L16/L17/L18 AUTHORED in K10.3 v2) | 4 sub-milestones (K10.1 = kernel scheduler core CLOSED 2026-05-18; K10.2 = native bus + mod ALC lifecycle CLOSED 2026-05-18; K10.3 v2 = pipeline + display composition + quiescent CLOSED 2026-05-20; K10.4 = TLA+ formal verification pending) | K10.1 ~16 commits +3000-4000 (kernel core); K10.2 ~14 commits +4000-5000 (native bus + ALC); К10.3 v2 ~14 commits (pipeline + display + quiescent); К10.4 future brief |
+
+**Cumulative K0-K8**: 5-8 weeks at hobby pace.
+**Cumulative K0-K9**: 6-10 weeks at hobby pace (K9 prerequisite for V substrate primitives per Q-G-2 LOCK).
+**Cumulative K0-K10.1**: K10.1 execution closure 2026-05-18 — native scheduler core landed (17 of 46 K10 items). K10 master closure waits for K10.4 (TLA+).
+**Cumulative K0-K10.2**: K10.2 execution closure 2026-05-18 — native bus three-tier dispatch + mod ALC lifecycle native primitives landed (25 of 46 K10 items cumulative). K-L15 AUTHORED architecturally; sovereign authority switch deferred к K10.4 / А'.8 per managed-facade-preserved strategy.
+
+**Combined с VULKAN_SUBSTRATE.md R.0-R.8 rendering migration + V0/V1/V2 substrate primitives**: 16-25 weeks total для full architectural foundation. K-series gates K9; K9 gates V substrate primitives. See [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Roadmap for V0/V1/V2 detail и combined timeline (per Q-G-1/Q-G-2 LOCKs unifying former R-bucket + G-bucket into V substrate).
+
+##### K0 — Cherry-pick + cleanup от branch
+
+**Goal**: experimental branch contents preserved on current main as fresh feature branch. Hygiene fixes applied.
+
+**Source**: `claude/cpp-core-experiment-cEsyH` per `docs/reports/CPP_KERNEL_BRANCH_REPORT.md` Section 11.6.
+
+**Cherry-pick sequence** (7 substantive commits, skipping 4 doc commits):
+````
+7b5cf78 — CMake scaffold
+a8d235e — SparseSet template
+cf0eed3 — World + C API
+6eac732 — Interop project
+80178c2 — Benchmark
+f59492a — build files (cleaned)
+e2bc2d9 — DLL loading fix
+````
+
+**Cleanup commits после cherry-pick**:
+- `.gitignore` widening (exclude `native/*/out/`, `BenchmarkDotNet.Artifacts/`, committed `.dll`)
+- Dead code removal (`SparseSet<T>` unused — delete OR wire к `RawComponentStore`)
+- `.vscode/settings.json` → relative paths или remove
+- `NATIVE_CORE.md` superseded marker + reference to KERNEL_ARCHITECTURE.md
+- `NATIVE_CORE_EXPERIMENT.md` superseded marker
+
+**Time**: 1-2 days. **LOC**: net +1500 (cherry-pick) - 50 (dead code) = +1450.
+
+##### K1 — Batching primitive
+
+**Goal**: bulk operations + Span<T> access. Validates batching hypothesis quantitatively.
+
+**Deliverables**:
+- C ABI extension: `df_world_add_components_bulk`, `df_world_acquire_span`, `df_world_release_span`, `df_world_get_components_bulk`
+- Managed bridge: `AddComponents<T>(ReadOnlySpan<EntityId>, ReadOnlySpan<T>)`, `AcquireSpan<T>()`, `WriteCommandBuffer` skeleton
+- Native side: span acquisition с atomic counter
+- Selftest extension: bulk add scenario, span access scenario
+- Benchmark: `NativeBulkAddBenchmark` (target ≤200μs vs current 400μs unbatched, vs managed 218μs)
+
+**Success criteria**:
+- Bulk add 10k components в single P/Invoke
+- Span<T> iteration zero P/Invoke per element
+- Mutation rejection during active span verified
+- Validation: zero memory leaks (selftest)
+
+**Time**: 3-5 days. **LOC**: +500-800.
+
+##### K2 — Type-id registry + bridge tests
+
+**Goal**: replace FNV-1a hash с explicit deterministic registry. Comprehensive bridge test coverage.
+
+**Deliverables**:
+- `ComponentTypeRegistry` class (sequential IDs, idempotent registration)
+- `df_world_register_component_type(type_id, size)` C ABI function
+- `DualFrontier.Core.Interop.Tests` project (xUnit, ~30-40 tests)
+- Tests cover: NativeWorld CRUD equivalence, packing roundtrip, registry idempotency, span lease invariants, write buffer serialization
+
+**Success criteria**:
+- All bridge tests passing
+- Hash collision risk eliminated (deterministic IDs)
+- 472 + ~30 = ~500 tests passing
+
+**Time**: 2-3 days. **LOC**: +400-600.
+
+##### K3 — Native bootstrap graph + thread pool
+
+**Goal**: declarative startup task graph executed parallel где deps allow. Native scheduler used ONLY for bootstrap.
+
+**Deliverables**:
+- `bootstrap_graph.h/cpp` — declarative `kStartupTasks` array, Kahn topological sort
+- `thread_pool.h/cpp` — std::thread pool (N cores), work-stealing OR fixed-partitioned
+- `df_engine_bootstrap()` C ABI entry point (replaces direct `df_world_create`)
+- Selftest extension: bootstrap graph correctness
+- Benchmark: `BootstrapTimeBenchmark` (parallel vs sequential)
+
+**Success criteria**:
+- Engine bootstraps в ~5-15ms typical hardware
+- Parallel tasks demonstrably parallel (e.g. AllocateMemoryPools then InitWorld + InitThreadPool в parallel)
+- All bootstrap tasks complete before SignalEngineReady
+- Validation clean
+
+**Time**: 5-7 days. **LOC**: +600-900.
+
+##### K4 — Component struct refactor (Path α)
+
+**Goal**: convert all class-based components к `unmanaged` structs.
+
+**Scope**: ~50-80 components в `DualFrontier.Components/`. Each conversion:
+- `class XComponent : IComponent` → `struct XComponent : IComponent`
+- Update field access patterns
+- Update systems that mutate (struct semantics — must use `ref` для mutation)
+- Update tests
+
+**Some components may need refactor**:
+- Components с complex behavior (methods) — split к pure data + separate behavior class
+- Components с reference fields — replace с EntityId references или separate storage
+
+**Time**: 2-3 weeks (substantial scope, mostly mechanical).
+**LOC**: +/- (conversion, не net additive).
+
+**Success criteria**:
+- All components are `unmanaged` structs
+- All systems compile and tests pass
+- Allocation profile: zero managed heap allocations during component access
+- Existing 472 tests still passing
+
+##### K5 — Span<T> protocol + write command batching
+
+**Goal**: production-grade span lifetime + write batching infrastructure.
+
+**Deliverables**:
+- `SpanLease<T>` (`IDisposable`) wrapping native span pointer
+- `WriteCommandBuffer` full implementation (Add/Remove/Destroy/Spawn commands)
+- Native side: command buffer parser в C++ (parses byte stream from managed)
+- `df_world_flush_write_batch(world, buffer, size)` C ABI function
+- Native side: mutation rejection during active spans (atomic counter)
+- Tests: span lifetime, write batch round-trip, mutation rejection
+
+**Time**: 1 week. **LOC**: +500-700.
+
+##### K6 — Second-graph rebuild on mod change
+
+**Goal**: managed dependency graph rebuilds when mods load/unload. AssemblyLoadContext integration.
+
+**Deliverables** (v1.1 — reconciled with M7-era implementation; pre-M7 wording kept in git history under v1.0):
+- Graph rebuild primitive: `DependencyGraph.Reset() + AddSystem + Build()` invoked from `ModIntegrationPipeline.UnloadMod` step 4 and `Apply` steps [5-7]
+- `ModLoader.UnloadMod(modId)` per `MOD_OS_ARCHITECTURE.md` §9.5 step 6; reload composition: `Pause + UnloadMod + Apply([newPath]) + Resume`
+- Pause-rebuild-resume pattern composed across `GameLoop.SetPaused` and `ModIntegrationPipeline.Pause/Resume/Apply`; gate via `ModIntegrationPipeline.IsRunning` per `MOD_OS_ARCHITECTURE.md` §9.3
+- Tests: `M71PauseResumeTests`, `M72UnloadChainTests`, `M73Step7Tests`, `M73Phase2DebtTests`, `RegularModTopologicalSortTests`, plus `M51`/`M52`/`M62` integration tests
+- Adjacent debt closed during K6: `ModFaultHandler` implementing `IModFaultSink` (Application-side), wired through `ModLoader.HandleModFault` and `ModIntegrationPipeline` deferred drain
+
+**Time**: 3-5 days. **LOC**: +200-400.
+
+##### K7 — Performance measurement (tick-loop)
+
+**Goal**: representative-load benchmark applying §8 metrics rule.
+
+**Deliverables**:
+- `TickLoopBenchmark` — 50 pawns × full component set × 10k ticks
+- Variants: managed-current, managed-with-structs (validates К7 conversion value), native-with-batching
+- Metrics: p50/p95/p99 tick time, GC pause count + duration, total allocations, drift over time
+- Run on weak hardware (Docker cpu-limit container OR secondary machine)
+- Report file `docs/reports/PERFORMANCE_REPORT_K7.md` documenting findings
+
+**Time**: 3-5 days. **LOC**: +200-400 (mostly benchmark code).
+
+##### K8 — Production storage cutover (Solution A: NativeWorld backbone)
+
+**Decision** (recorded by K8.0 closure, 2026-05-09; see `docs/MIGRATION_PROGRESS.md` K8.0 closure section): Solution A — single NativeWorld backbone (per K-L11). Choice rationale in Part 4 Decisions log.
+
+**Sub-milestone series**:
+- **K8.0** — Architectural decision recording (this milestone; LOCKED v1.2)
+- **K8.1** — Native-side reference handling primitives (string interning, keyed maps, composite components)
+- **K8.2** — Per-component redesign + K8.1 wrapper value-type refactor + empty TODO stub deletions; K-L3 selective per-component closure achieved (v2 brief, single milestone; post-K-L3.1 reframing)
+- **K8.3** — Production system migration (12 vanilla systems → SpanLease/WriteBatch)
+- **K8.4** — ManagedWorld retired as production; Mod API v3 ships
+- **K8.5** — Mod ecosystem migration prep (documentation + migration guide)
+
+**Cumulative time**: 4-8 weeks at hobby pace.
+
+**LOC delta**: substantial — K8.1 adds ~600-1000 LOC (native + bridge); K8.2 modifies 7 component files plus their consumers; K8.3 modifies 12 system files plus tests; K8.4 deletes managed World production path; K8.5 adds documentation.
+
+##### K9 — Field storage abstraction
+
+**Goal**: native `RawTileField<T>` storage as a parallel abstraction alongside `RawComponentStore`. Prerequisite for the V substrate primitives roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v1.0 LOCKED — V0/V1/V2 per Q-G-2). Ships CPU functional path first; no Vulkan compute dependency.
+
+**Authoritative spec**: [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) "Architectural integration → Native kernel (KERNEL_ARCHITECTURE.md K9)" + "Roadmap → K9 — Field storage abstraction".
+
+**Deliverables**:
+- `RawTileField<T>` C++ class (data + back buffer + conductivity map + storage flags)
+- C ABI: `df_world_register_field`, `df_world_field_read_cell`, `df_world_field_acquire_span`, `df_world_field_set_conductivity`, `df_world_field_set_storage_flag`
+- Managed bridge: `FieldRegistry`, `FieldHandle<T>` в `DualFrontier.Core.Interop`
+- CPU-side reference implementation of basic diffusion (also serves as G1+ shader equivalence oracle and as CPU fallback per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Failure modes → CPU fallback")
+- Selftest: round-trip, span access, mutation, conductivity update, storage flag toggle
+
+**Success criteria**:
+- Any field type registrable / readable / writeable from managed
+- CPU diffusion produces correct results on test grids
+- No GPU dependency (G-series can take over later without API churn)
+
+**Time**: 1-2 weeks. **LOC**: +600-900.
+
+---
+
+#### Relocated — Part 3: Migration strategy
+
+**Approach: parallel development through K7; LOCKED commitment from K8.0 onward.**
+
+Managed `World` stayed functional throughout K0-K7. K8.0 closure (2026-05-09) recorded the architectural decision per K-L11: **Solution A — single NativeWorld backbone**. Migration executes via the K8.1-K8.5 sub-milestone series:
+- K8.1 — native-side reference handling primitives (string interning, keyed maps, composite components)
+- K8.2 — K-L3 selective per-component closure (post-K-L3.1 reframing): K8.1 wrapper value-type refactor + 6 class→struct conversions using K8.1 primitives + 6 empty TODO stub deletions per METHODOLOGY §7.1
+- K8.3 — 12 vanilla systems migrated to `SpanLease<T>` reads + `WriteBatch<T>` writes
+- K8.4 — managed `World` retired as production path; Mod API v3 ships
+- K8.5 — mod ecosystem migration prep (documentation + migration guide)
+
+**Operating principle**: «honest state always available» — managed World stayed working through K0-K7 so the K7 evidence base could be collected; the K-L11 commitment then settles the decision permanently. Reversal trigger documented in `docs/MIGRATION_PROGRESS.md` D5 (Solution A rationale and reversal trigger).
+
+Mirrors VULKAN_SUBSTRATE.md historical migration approach (parallel Godot + Vulkan until R.8 cutover; cutover completed К-extensions cascade #2, 2026-05-23 — Godot paths fully retired).
+
+---
+
+
+### K9 — Field storage abstraction — CLOSED (RawTileField shipped 2026-05-11)
 
 Prerequisite for V substrate compute primitives V1/V2; ships CPU functional path first. Per [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) "Storage interaction" + [KERNEL_ARCHITECTURE](/docs/architecture/KERNEL_ARCHITECTURE.md) K9.
 

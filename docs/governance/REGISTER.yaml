@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.11"
+register_version: "2.12"
 last_modified: "2026-06-02"
-last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-ENROLLMENT"
+last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-KERNEL"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -34,18 +34,18 @@ documents:
 
   - id: DOC-A-KERNEL
     path: docs/architecture/KERNEL_ARCHITECTURE.md
-    title: "DualFrontier Kernel — Architecture & Roadmap"
+    title: "DualFrontier Kernel — Architecture"
     category: A
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.5.3"
-    last_modified: "2026-05-24"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_0-CLOSURE"
+    version: "2.6.0"
+    last_modified: "2026-06-02"
+    last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-KERNEL"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-24"
-    last_review_event: "A'.9.0 Reconnaissance / К-extensions cascade #4 β1+β2 (bundled per brief Q-J-8 squashing allowance) — KERNEL_ARCHITECTURE.md v2.5.2 → v2.5.3 patch bump per Q-G-12 LOCKED versioning convention (chronicle + cross-ref = patch). A'.9.0 / К-extensions cascade #4 chronicle entry appended к status footnote (Standalone Reconnaissance produced A_PRIME_9_RECONNAISSANCE_REPORT.md ~3340 lines covering 7 domains via multi-agent dispatch — Domain 1 К-L analyzability 22-row matrix, Domain 2 FORMALIZE Lessons 12-row matrix, Domain 3 cascade #2/#3 surfaced rule candidates 10 candidates, Domain 4 Mod OS К-L20 prep 20 candidate DF020 sub-rules + 6 precursor relationships, Domain 5 Roslyn ecosystem desk research SDK 5.3.0, Domain 6 Build/CI surface Option C hybrid placement, Domain 7 suppression governance near-zero baseline). К-L impact: zero. К-L14 verification #13 first observational reconnaissance evidence — 5th evidence type NEW category per S-LOCK-6 framing (substrate completely untouched per S-LOCK-1 zero-production-code; degenerate pass criteria; observational baseline established for A'.9.1). 45 Q-K candidates aggregated for Brief A'.9.1 deliberation. К-L count unchanged: 21 final. Prior context: К-extensions cascade #3 δ1 — v2.5.1 → v2.5.2 patch bump (Launcher Visual Implementation, К-L14 #12 first clean additive evidence); cascade #2 ε1 — v2.5 → v2.5.1 (Godot Full Deprecation, К-L14 #11 first removal-type evidence); А'.8 v2.4 → v2.5 catch-up для governance-lag from А'.8 closure."
+    last_review_event: "A'.9.0 Reconnaissance / К-extensions cascade #4 β1+β2 (bundled per brief Q-J-8 squashing allowance) — KERNEL_ARCHITECTURE.md v2.5.2 → v2.5.3 patch bump per Q-G-12 LOCKED versioning convention (chronicle + cross-ref = patch). A'.9.0 / К-extensions cascade #4 chronicle entry appended к status footnote (Standalone Reconnaissance produced A_PRIME_9_RECONNAISSANCE_REPORT.md ~3340 lines covering 7 domains via multi-agent dispatch — Domain 1 К-L analyzability 22-row matrix, Domain 2 FORMALIZE Lessons 12-row matrix, Domain 3 cascade #2/#3 surfaced rule candidates 10 candidates, Domain 4 Mod OS К-L20 prep 20 candidate DF020 sub-rules + 6 precursor relationships, Domain 5 Roslyn ecosystem desk research SDK 5.3.0, Domain 6 Build/CI surface Option C hybrid placement, Domain 7 suppression governance near-zero baseline). К-L impact: zero. К-L14 verification #13 first observational reconnaissance evidence — 5th evidence type NEW category per S-LOCK-6 framing (substrate completely untouched per S-LOCK-1 zero-production-code; degenerate pass criteria; observational baseline established for A'.9.1). 45 Q-K candidates aggregated for Brief A'.9.1 deliberation. К-L count unchanged: 21 final. Prior context: К-extensions cascade #3 δ1 — v2.5.1 → v2.5.2 patch bump (Launcher Visual Implementation, К-L14 #12 first clean additive evidence); cascade #2 ε1 — v2.5 → v2.5.1 (Godot Full Deprecation, К-L14 #11 first removal-type evidence); А'.8 v2.4 → v2.5 catch-up для governance-lag from А'.8 closure. **DD-2 spec/roadmap separation 2026-06-02 (Documentation Dual-Load Drift Reconnaissance refactor, increment 1) — v2.5.3 → v2.6.0: Part 2 (Roadmap K-series) + Part 3 (Migration strategy) RELOCATED verbatim к docs/ROADMAP.md «Native foundation tracks» section; KERNEL_ARCHITECTURE.md now pure architecture specification (title «Architecture & Roadmap» → «Architecture», scope «+ milestone roadmap» dropped). Part 0 К-L invariants UNTOUCHED (S-LOCK-1 / halt-6 preserved); zero К-L impact (count unchanged 21). Fenced NON-NORMATIVE pointer left at former Part 2/3 location. MINOR bump chosen (documentation-structure change, content relocated not deleted, zero substrate/behavioral/invariant impact) — per the doc's own versioning convention «structural reorganization = major», Crystalka may escalate к v3.0.0 if a major bump is preferred for the structural relocation."
     next_review_due: "2027-05-21"
     reviewer: Crystalka
     requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19]
@@ -690,11 +690,12 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-10"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-06-02"
+    last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-KERNEL"
     content_language: en
     review_cadence: on-closure+quarterly
-    next_review_due: "2026-Q3"
+    last_review_date: "2026-06-02"
+    last_review_event: "DD-2 spec/roadmap separation increment 1 (Documentation Dual-Load Drift Reconnaissance refactor) — received the K-series milestone roadmap + migration strategy relocated verbatim from KERNEL_ARCHITECTURE.md Part 2/3 into the «Native foundation tracks (K-series + V substrate)» section (nested under «K-series — Native ECS kernel — CLOSED»). Status-overview K-series + K9 rows retired ⏭ Pending → ✅ Closed; «Updated» stamp annotated with partial 2026-06-02 re-sync note (remaining M8/V status rows pending full DD-1 re-sync). docs/ROADMAP.md is the canonical roadmap-layer consolidation home per accepted Option ε target architecture."
     reviewer: Crystalka
 
   - id: DOC-C-IDEAS_RESERVOIR
@@ -9782,3 +9783,56 @@ audit_trail:
         - document: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF
           from: AUTHORED
           to: EXECUTED
+
+  - id: EVT-2026-06-02-DOC_DRIFT_DD2-KERNEL-ROADMAP-EXTRACTION
+    timestamp: "2026-06-02T00:00:00Z"
+    type: doc_refactor
+    cascade: Documentation Dual-Load Drift Reconnaissance refactor — DD-2 (spec/roadmap separation)
+    phase: DD-2 increment 1 (KERNEL_ARCHITECTURE.md)
+    title: "Extract KERNEL_ARCHITECTURE.md Part 2/3 roadmap → docs/ROADMAP.md (spec/roadmap separation)"
+    summary: |
+      First refactor increment executing the Documentation Dual-Load Drift
+      Reconnaissance recommendation (Option ε: consolidate roadmap into the
+      existing docs/ROADMAP.md). KERNEL_ARCHITECTURE.md — the #1 dual-load
+      specimen, self-titled «Architecture & Roadmap» — had its Part 2 (Roadmap
+      K-series) + Part 3 (Migration strategy) relocated verbatim к the canonical
+      roadmap layer, leaving the kernel document as pure architecture
+      specification. Crystalka directive 2026-06-02: «изъять из архитектурных
+      документов дорожную составляющую перенося всё на ... существующую дорожную
+      карту»; Godot confirmed removed; recommendations accepted.
+    governance_impact: |
+      DOC-A-KERNEL: v2.5.3 → v2.6.0 (MINOR); title «DualFrontier Kernel —
+        Architecture & Roadmap» → «DualFrontier Kernel — Architecture»; Part 2/3
+        removed (relocated), replaced with a fenced NON-NORMATIVE pointer; scope
+        line «+ milestone roadmap» dropped. Part 0 К-L invariants UNTOUCHED
+        (S-LOCK-1 / halt-6). 1123 → 912 lines.
+      DOC-C-ROADMAP: received the relocated K-series roadmap + migration strategy
+        (verbatim, headers demoted to nest under «Native foundation tracks → K-series
+        — Native ECS kernel — CLOSED»); status-overview K-series + K9 rows retired
+        ⏭ Pending → ✅ Closed; «Updated» stamp annotated (partial 2026-06-02 re-sync;
+        M8/V rows pending full DD-1 re-sync). 634 → 862 lines.
+      register_version 2.11 → 2.12.
+      last_modified_commit PENDING-COMMIT-DOC_DRIFT_RECON-ENROLLMENT →
+        PENDING-COMMIT-DOC_DRIFT_RECON-DD2-KERNEL.
+
+      Versioning note: per KERNEL's own convention «structural reorganization =
+      major», this relocation could warrant v3.0.0; MINOR (v2.6.0) was chosen
+      because the change is documentation-structure only — content relocated (not
+      deleted), zero substrate/behavioral/К-L-invariant impact. Crystalka may
+      escalate к v3.0.0 if a major bump is preferred.
+
+      TOOLING NOTE: pwsh unavailable — sync_register.ps1 -Validate + render_register.ps1
+      NOT run; REGISTER edits + the two docs' frontmatter mirrors authored manually
+      and YAML-validated structurally. PowerShell validation + REGISTER_RENDER
+      regeneration deferred к a Crystalka environment.
+
+      К-L14 thesis preservation:
+      - Zero production code touched (documentation refactor only)
+      - Zero substrate API surface modified (KERNEL Part 0 invariants untouched)
+      - К-L count unchanged at 21
+      - Architectural-integrity restoration (root dual-load generator removed from
+        the #1 specimen — spec and roadmap now have distinct homes)
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: []
