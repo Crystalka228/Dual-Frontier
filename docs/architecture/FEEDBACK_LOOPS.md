@@ -6,13 +6,20 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "0.2"
+version: "0.2.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FEEDBACK_LOOPS
 ---
 # Feedback-loop resolution
 
 The system dependency graph does not allow cycles over the same components — otherwise the scheduler cannot build phases. But game logic regularly demands feedback: one system writes a resource and another reads that same resource to make a decision. v0.2 resolves such loops with a single technique — reading a snapshot of the previous tick.
+
+> **Code-truth note — DD-1 (2026-06-02).** The cycle/snapshot rule is current. One reference below may be stale:
+> the §rule sentence states a registration-time `IsolationViolationException` is thrown for cycle violations.
+> The **runtime per-access** isolation guard (`GetComponent`/`SetComponent`) was removed at К8.3+К8.4 (2026-05-14);
+> whether the **registration-time** cycle check still throws that specific type needs verification against the
+> current `DependencyGraph` (the type is still referenced in `src/DualFrontier.Core/ECS/`). Authoritative:
+> [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) + native source.
 
 ## Problem
 

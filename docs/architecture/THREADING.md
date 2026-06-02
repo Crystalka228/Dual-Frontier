@@ -6,13 +6,23 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1"
+version: "1.1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-THREADING
 ---
 # Multithreading
 
 RimWorld is single-threaded: every system runs in sequence. On multi-core hardware 7 of 8 cores sit idle. Dual Frontier builds the dependency graph once at startup and runs unrelated systems in parallel. With no changes to game code — purely through the `[SystemAccess]` declaration.
+
+> **⚠ Code-truth notice — DD-1 (2026-06-02, Documentation Dual-Load Drift Reconnaissance).**
+> This document describes the **managed** scheduling path (`DependencyGraph` + `ParallelSystemScheduler` +
+> `Parallel.ForEach`). After К10.1 (2026-05) the **authoritative scheduler is native**
+> (`native/DualFrontier.Core.Native/src/system_graph.cpp`); the managed graph is retained as an **adapter facade**
+> (`src/DualFrontier.Application/Scheduler/SchedulerAdapter.cs`, `ManagedSystemDispatcher.cs` — К-L12 batched
+> callback). The runtime per-access isolation guard was removed at К8.3+К8.4; note that some managed source comments
+> are themselves stale (e.g. «one core for Godot's main thread» — Godot retired, cascade #2). **Authoritative:**
+> [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0/1 + native source. Full rewrite tracked in the
+> [DD refactor progress report](/docs/reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REFACTOR_PROGRESS.md).
 
 ## DependencyGraph
 

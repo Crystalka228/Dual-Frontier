@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1.1"
+version: "1.1.2"
 next_review_due: 2027-05-16
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 ---
@@ -17,6 +17,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 **Supersedes:** prior `RUNTIME_ARCHITECTURE.md` v1.0 LOCKED (rendering layer spec) + `GPU_COMPUTE.md` v2.0 LOCKED (compute layer spec). Both source documents were physically describing **one** Vulkan device with two use cases; the documentation drift introduced separate substrate identities for what is one physical layer. Per Q-G-1 LOCK in `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md` §3.1, R (runtime) and G (GPU compute) substrate buckets merged into unified Vulkan substrate **V**.
 
 **Companion documents:** [METHODOLOGY](/docs/methodology/METHODOLOGY.md), [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [ARCHITECTURE](./ARCHITECTURE.md), [THREADING](./THREADING.md), [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md), [FIELDS](./FIELDS.md), [ROADMAP](/docs/ROADMAP.md).
+
+> **⚠ Code-truth notice — DD-1 (2026-06-02, Documentation Dual-Load Drift Reconnaissance).**
+> **Godot is fully retired** (К-extensions cascade #2, 2026-05-23): `DualFrontier.Presentation*` projects deleted;
+> `DualFrontier.Launcher` (Vulkan/Silk.NET) is the live render host. Sections below (notably the §migration body
+> and §6 R-milestones) still contain **present-tense «current Godot / dual-backend» framing** that is stale — the
+> R.0–R.8 cutover completed at cascade #2. These passages need scrubbing to Vulkan-only present tense (tracked as
+> remaining DD-1 body work in the [DD refactor progress report](/docs/reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REFACTOR_PROGRESS.md)).
+> **Residual:** a `project.godot` file still exists at the repo root (contradicts the §6 R.8 «grep godot empty»
+> criterion) — flagged for Crystalka's decision, not deleted autonomously. Authoritative current state:
+> `src/DualFrontier.Launcher/` + `native/DualFrontier.Core.Native/` (Vulkan).
 
 **Scope:** Full architectural specification for the Vulkan substrate (V) — single `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage serving both 2D rendering and compute. Defines substrate primitives V0/V1/V2 (compute-side), rendering use case implementation, compute use case implementation, threading model, asset pipeline, shader strategy, mod-driven compute pipeline registration, mathematical models for field-based gameplay mechanics, failure modes, and the unified roadmap toward full architectural foundation. The Domain layer ([ARCHITECTURE §Domain](./ARCHITECTURE.md), [ECS](./ECS.md), [EVENT_BUS](./EVENT_BUS.md), [ISOLATION](./ISOLATION.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) is preserved verbatim by this layer — see L10 in §0.
 

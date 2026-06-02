@@ -6,13 +6,23 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "0.4"
+version: "0.4.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ARCHITECTURE
 ---
 # Dual Frontier architecture
 
 The project is built around one rigid principle: a system MUST NOT access another system's data directly. Interaction happens only through contracts. Any deviation is caught by the isolation guard and produces an immediate crash with diagnostics, not silent state corruption.
+
+> **⚠ Code-truth notice — DD-1 spec-truth restoration (2026-06-02, Documentation Dual-Load Drift Reconnaissance).**
+> This document describes the **pre-kernel managed-ECS architecture**. It predates the К8.3+К8.4 managed-world
+> retirement (2026-05-14) and the К10.1–К10.3 native-kernel migration (2026-05); it does **not** describe the native
+> C++ kernel (`NativeWorld` SSoT per К-L11, native `system_graph` scheduler, native tiered bus), the 21 К-L
+> invariants, or the current native/managed split. **Authoritative current architecture:**
+> [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0 (К-L invariants) + Part 1, and the native source
+> `native/DualFrontier.Core.Native/`. A full body rewrite is tracked as remaining DD-1 work
+> (see [DD-2/DD-1 refactor progress report](/docs/reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REFACTOR_PROGRESS.md)).
+> Where this document disagrees with KERNEL_ARCHITECTURE or the native source, **the latter governs**.
 
 ## Change history
 

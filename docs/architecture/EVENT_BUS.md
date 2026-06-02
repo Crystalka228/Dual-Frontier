@@ -6,13 +6,23 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1"
+version: "1.1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-EVENT_BUS
 ---
 # Event buses
 
 The event bus is the central mechanism for system interaction. Direct calls between systems are forbidden by the isolation guard, so every horizontal link runs through a bus. The right choice of delivery model and bus type directly determines the performance and correctness of multithreaded code.
+
+> **⚠ Code-truth notice — DD-1 (2026-06-02, Documentation Dual-Load Drift Reconnaissance).**
+> This document describes the **managed** `DomainEventBus` three-mode model. After К10.2 (К-L15) the **native
+> tiered bus** is the authoritative dispatch path: `native/DualFrontier.Core.Native/src/bus_fast.cpp` /
+> `bus_normal.cpp` / `bus_background.cpp`, fronted managed-side by `src/DualFrontier.Application/Bus/BusFacade.cs` +
+> `FastTierContractMonitor.cs` + `src/DualFrontier.Contracts/Bus/EventTierAttribute.cs`; the managed `DomainEventBus`
+> is retained as a facade. The `SetComponent` mutation path referenced in older sections was removed at К8.3+К8.4
+> (component writes now go through `NativeWorld` span/batch). **Authoritative:**
+> [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0/1 + native source. Full rewrite tracked in the
+> [DD refactor progress report](/docs/reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REFACTOR_PROGRESS.md).
 
 ## Why domain buses, not a global one
 

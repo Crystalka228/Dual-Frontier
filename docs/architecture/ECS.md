@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1"
+version: "1.1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ECS
 ---
@@ -18,7 +18,7 @@ Dual Frontier uses the classical ECS approach: an entity is an identifier, compo
 
 ### NativeWorld
 
-`NativeWorld` is the sole production component-storage backend after A'.5 K8.3+K8.4 (2026-05-14). Storage layout is span/batch-oriented for cache locality and parallelism. The prior managed `World` registry is retired from production and survives only as `ManagedTestWorld` — a test fixture for scenarios that don't yet need the native path. `NativeWorld` is constructed in `GameBootstrap.CreateLoop` (see [src/DualFrontier.Application/Loop/GameBootstrap.cs](../../src/DualFrontier.Application/Loop/GameBootstrap.cs)) and handed to `ParallelSystemScheduler`. Systems access it through `SystemBase.NativeWorld`, which routes through the active `SystemExecutionContext`.
+`NativeWorld` is the sole production component-storage backend after A'.5 K8.3+K8.4 (2026-05-14). Storage layout is span/batch-oriented for cache locality and parallelism. The prior managed `World` registry is retired from production and survives only as `ManagedTestWorld` — a test fixture for scenarios that don't yet need the native path. `NativeWorld` is constructed in `GameBootstrap.CreateLoop` (see [src/DualFrontier.Application/Loop/GameBootstrap.cs](../../src/DualFrontier.Application/Loop/GameBootstrap.cs)) and handed to the scheduler — the managed `ParallelSystemScheduler`, which post-К10.1 (2026-05) acts as an **adapter facade** over the authoritative native `system_graph` scheduler (see [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0/1 + `native/DualFrontier.Core.Native/src/system_graph.cpp`). Systems access it through `SystemBase.NativeWorld`, which routes through the active `SystemExecutionContext`.
 
 ```csharp
 // Public surface visible to systems via SystemBase.NativeWorld.

@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.13"
+register_version: "2.14"
 last_modified: "2026-06-02"
-last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-SUBSTRATE"
+last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD1-BANNERS"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -100,8 +100,8 @@ documents:
     # last_modified/last_review_event updated к match cascade #2 closure context.
     supersedes: [DOC-D-G0, DOC-D-G1, DOC-D-G2, DOC-D-G3, DOC-D-G4, DOC-D-G5, DOC-D-G6, DOC-D-G7, DOC-D-G8, DOC-D-G9, DOC-A-VISUAL_ENGINE, DOC-A-GODOT_INTEGRATION]
     owner: Crystalka
-    version: "1.1.1"
-    last_modified: "2026-05-23"
+    version: "1.1.2"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
     content_language: en
     review_cadence: on-change+annual
@@ -157,8 +157,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "0.4"
-    last_modified: "2026-05-16"
+    version: "0.4.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -203,8 +203,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1"
-    last_modified: "2026-05-16"
+    version: "1.1.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -218,8 +218,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1"
-    last_modified: "2026-05-16"
+    version: "1.1.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -233,8 +233,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1"
-    last_modified: "2026-05-16"
+    version: "1.1.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -616,8 +616,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "0.2"
-    last_modified: "2026-05-12"
+    version: "0.2.1"
+    last_modified: "2026-06-02"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -9886,6 +9886,50 @@ audit_trail:
       - Zero К-L invariant / behavioral change (count unchanged 21)
       - Architectural-integrity restoration: forward content now carries code-grounded
         labels (shipped vs pending) instead of the docs' stale future-tense framing
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: []
+
+  - id: EVT-2026-06-02-DOC_DRIFT_DD1-SPEC_TRUTH-BANNERS
+    timestamp: "2026-06-02T00:00:00Z"
+    type: doc_refactor
+    cascade: Documentation Dual-Load Drift Reconnaissance refactor — DD-1 (spec-truth restoration)
+    phase: DD-1 increment 1 (code-truth banners on stale architecture docs)
+    title: "Code-truth banners + surgical fixes on 6 pre-kernel / pre-Godot-removal architecture docs"
+    summary: |
+      Per Crystalka «выполнить полностью». The four large SPEC-STALE docs describe the
+      pre-К10 managed-ECS / pre-Godot-removal architecture, but the real current state is a
+      managed-facade/native-authoritative COEXISTENCE that is genuinely nuanced (even the
+      managed source comments are themselves stale). To avoid introducing new errors into
+      LOCKED Tier-1 specs during autonomous operation, DD-1 increment 1 adds CODE-TRUTH
+      BANNERS (pointing to the authoritative native sources + KERNEL_ARCHITECTURE Part 0/1,
+      enumerating known divergences) rather than speculative body rewrites. Two small
+      high-confidence clauses were surgically corrected (ECS scheduler-facade; FEEDBACK
+      flag). Full body rewrites tracked as remaining DD-1 work in the progress report.
+    governance_impact: |
+      DOC-A-ARCHITECTURE 0.4 → 0.4.1: banner — wholesale pre-kernel managed-ECS snapshot;
+        authoritative = KERNEL_ARCHITECTURE Part 0/1 + native source. Full rewrite pending.
+      DOC-A-THREADING 1.1 → 1.1.1: banner — native system_graph authoritative (К10.1);
+        managed ParallelSystemScheduler/DependencyGraph = adapter facade (SchedulerAdapter,
+        ManagedSystemDispatcher К-L12); stale Godot source-comments noted.
+      DOC-A-EVENT_BUS 1.1 → 1.1.1: banner — native tiered bus authoritative (К10.2/К-L15:
+        bus_fast/normal/background + BusFacade + EventTierAttribute + FastTierContractMonitor);
+        SetComponent path removed К8.3+К8.4.
+      DOC-A-ECS 1.1 → 1.1.1: surgical — «handed to ParallelSystemScheduler» clarified as
+        adapter-facade over the authoritative native system_graph (doc otherwise current).
+      DOC-A-FEEDBACK_LOOPS 0.2 → 0.2.1: code-truth note — registration-time
+        IsolationViolationException claim flagged for verification (runtime per-access guard
+        removed К8.3+К8.4; registration-time cycle check may differ).
+      DOC-A-VULKAN_SUBSTRATE 1.1.1 → 1.1.2: banner — Godot fully retired (cascade #2);
+        Launcher/Vulkan live; §4/§6 present-tense Godot framing flagged for scrubbing;
+        residual project.godot at repo root flagged for Crystalka (NOT deleted autonomously).
+      register_version 2.13 → 2.14. All PATCH (NON-NORMATIVE banner/cross-ref per Q-G-12).
+      Frontmatter mirrors synced. project.godot deliberately left in place.
+
+      К-L14 thesis preservation: zero production code touched; zero К-L invariant change
+      (count 21); architectural-integrity restoration — stale docs no longer «read as
+      current truth» (banner + authoritative-source pointer) without fabricating new spec.
     cross_references:
       capa_entries: []
       risks: []
