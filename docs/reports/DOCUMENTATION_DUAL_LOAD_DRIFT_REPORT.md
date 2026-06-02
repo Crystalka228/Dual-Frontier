@@ -6,9 +6,9 @@ lifecycle: AUTHORED
 owner: Crystalka
 version: "1.0"
 last_modified: "2026-06-02"
-last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-REPORT"
+last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-ENROLLMENT"
 content_language: en
-review_cadence: post-reconnaissance closure
+review_cadence: on-refactor-cascade-execution
 next_review_due: on-refactor-cascade-execution
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
 source_brief: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF

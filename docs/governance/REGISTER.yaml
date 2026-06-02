@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.10"
-last_modified: "2026-05-25"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CROSSREFS"
+register_version: "2.11"
+last_modified: "2026-06-02"
+last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-ENROLLMENT"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -991,6 +991,26 @@ documents:
     next_review_due: "2026-Q3"
     reviewer: Crystalka
     special_case_rationale: "E + Tier 2 Live override per Pass 2 §2.2"
+
+  - id: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
+    path: docs/reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md
+    title: "Documentation Dual-Load Drift Reconnaissance — Report"
+    category: E
+    tier: 2
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-06-02"
+    last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-ENROLLMENT"
+    content_language: en
+    review_cadence: on-refactor-cascade-execution
+    last_review_date: "2026-06-02"
+    last_review_event: "Documentation Dual-Load Drift Reconnaissance executed 2026-06-02 by Claude Code (Opus) on branch claude/doc-drift-reconnaissance-503aH (tip f94bb84 at R0) per DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF. Read-only multi-agent reconnaissance R0-R4: REGISTER inventoried (267 docs confirmed, no halt-1 mismatch); code-truth manifest established (12 src projects, native kernel, 17 analyzer rule stubs, 21 К-L invariants, key-type locations verified); 10 read-only sub-agents dispatched по category cluster (8 deep + 2 quick-pass, two waves). Aggregate: ~105 living-spec drift line-items (SPEC-STALE ~35, ROADMAP-PENDING ~21, ROADMAP-REALIZED ~19, MIXED-INTERWOVEN ~14, ORPHAN-REFERENCE ~16); 139-doc snapshot population (Category D+E) confirmed clean (0 hard misclassifications); 7-doc misclassification cluster surfaced as structural governance meta-finding (§9 halt-3). Five systemic drift generators identified: (1) un-propagated structural events (Godot deprecation cascade #2 + К8.3/8.4 managed-world retirement + К10 native scheduler), (2) A'.9.1 analyzer ROADMAP-REALIZED wave (9 docs narrate shipped stubs as future; ANALYZER_RULES §4 simultaneously over-claims them as active enforcement — zero-diagnostic Info stubs, detection Phase β PENDING), (3) DF###→DFK### orphan-reference chain, (4) misclassification cluster, (5) count/version desync. Recommended target architecture: Option ε (δ REGISTER doc_role schema + γ fenced NON-NORMATIVE sections) anchored on existing docs/ROADMAP.md, decomposed into 3 refactor cascades (DD-1 spec-truth restoration / DD-2 spec-roadmap structural separation / DD-3 misclassification+orphan+desync hygiene). К-L impact: zero. К-L14 architectural-integrity instrumentation — KERNEL Part 0 untouched (halt-6 preserved); read-only discipline held (report + brief only artifacts)."
+    next_review_due: "on-refactor-cascade-execution"
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Documentation Dual-Load Drift Reconnaissance report — governance reconnaissance deliverable enabling Crystalka к determine refactor work-volume FROM the report (spec/roadmap separation). Category E (docs/reports/ folder convention); Tier 2 override (governance-leverage reconnaissance artifact driving a multi-cascade refactor decision — parallels DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT Tier 2 precedent) rather than the default Tier 3 для performance/investigation reports. Lifecycle AUTHORED (one-shot deliverable awaiting Crystalka refactor work-volume determination, not a mutating Live report). Source brief: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF. Enrolled per Q-DD-7 default (enroll). NOTE: pwsh unavailable in execution environment — sync_register.ps1 -Validate + render_register.ps1 NOT run; frontmatter mirror authored manually to match this entry; PowerShell validation + REGISTER_RENDER regeneration deferred к Crystalka environment."
 
   # === Tier 3 Briefs (Category D) — K-series ===
 
@@ -2122,6 +2142,25 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "A'.9.0 Reconnaissance / К-extensions cascade #4 brief authored 2026-05-24 by Claude Opus 4.7 в A'.9 milestone-entry deliberation session. Two-brief A'.9 entry sequence ratified by Crystalka per «Два брифа первый, он проведет полную разведку архитектуры». Brief 1 (this) = standalone reconnaissance discovery-only cascade per S-LOCK-1; Brief 2 = A'.9.1 Analyzer Infrastructure cascade to be authored separately post-A'.9.0 closure against report findings. 11 Q-J ratified deliberation outcomes covering brief shape (Q-J-0 standalone reconnaissance с no pre-grounding), scope (Q-J-1 7-domain comprehensive), report format (Q-J-2 markdown Tier 2 Live), scoring rubric (Q-J-3/Q-J-4 per S-LOCK-4 T1-T6 + P0-P3 + rule shape), desk research (Q-J-5 Roslyn ecosystem INCLUDED), Mod OS prep (Q-J-6 К-L20 INCLUDED), К-L14 framing (Q-J-7 observational evidence 5th type NEW category), commit budget (Q-J-8 4-8 commits — actual 8 with β1+β2 bundled per squashing allowance), reconnaissance depth (Q-J-9 full file reads), brief prerequisites (Q-J-10 §10 mandatory enumeration). 10 S-LOCK reservations covering zero production code (S-LOCK-1), comprehensive scope (S-LOCK-2), report path/format (S-LOCK-3), scoring rubric (S-LOCK-4), multi-agent dispatch encouraged (S-LOCK-5), К-L14 #13 observational framing (S-LOCK-6), full file reads (S-LOCK-7), Brief A'.9.1 prerequisites enumeration §10 (S-LOCK-8), Q-K candidates §11 enumeration (S-LOCK-9), empirical reads citation discipline (S-LOCK-10). Multi-agent dispatch executed per S-LOCK-5: 7 sub-agents (3 parallel batch A + 3 parallel batch B + 1 sequential C1). Phase 0 anomalies surfaced — pre-existing ANALYZER_RULES.md + A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md AUTHORED-SKELETONs that deliberation agent's structural anchor missed; Lesson #N14 third application surfaced (HIGH promotion now). 45 Q-K candidates aggregated for Brief A'.9.1 deliberation (42 sub-agent + 3 cross-cutting α4 synthesis)."
+
+  - id: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF
+    path: tools/briefs/DOCUMENTATION_DUAL_LOAD_DRIFT_RECONNAISSANCE_BRIEF.md
+    title: "Documentation Dual-Load Drift Reconnaissance — Brief"
+    category: D
+    tier: 4
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-06-02"
+    last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-ENROLLMENT"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-06-02"
+    last_review_event: "Brief authored 2026-05-25 by Claude Opus 4.7 (deliberation session) per Crystalka root-cause drift identification («архитектурные документы выполняют ещё роль дорожной карты»). EXECUTED 2026-06-02 by Claude Code (Opus): read-only multi-agent reconnaissance (R0-R4) across all 267 REGISTER docs via 10 category-cluster sub-agents; produced DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT (~105 living-spec drift line-items; 7-doc misclassification meta-finding; Option ε target architecture; 3-cascade refactor decomposition DD-1/DD-2/DD-3). К-L impact: zero per S-LOCK-1 (read-only; refactor execution deferred к Crystalka work-volume determination)."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Documentation Dual-Load Drift Reconnaissance brief — standalone reconnaissance cascade addressing the root documentation drift source (living-spec documents serving dual descriptive+roadmap roles). Authored 2026-05-25; EXECUTED 2026-06-02 (reconnaissance discovery-only per §0.5 read-only discipline — refactor is a separate future cascade determined FROM the report). DOC-D Category D Tier 4 follows existing reconnaissance-brief convention (sister к DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF). Paired deliverable: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT. Q-DD ratification surface (§11) — defaults taken at execution (Q-DD-1 standalone, Q-DD-3 hybrid grounding, Q-DD-6 single report, Q-DD-7 enroll, Q-DD-9 Option ε freely recommended, Q-DD-10 existing docs/reports/ folder). §9 halt-3 (misclassification → governance issue) TRIGGERED + surfaced; halt-6 (LOCKED Tier-1 substrate) respected — zero К-L invariant text edits."
 
   - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
     path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
@@ -9683,3 +9722,63 @@ audit_trail:
         - document: DOC-A-SYNTHESIS_RATIONALE
           from: LOCKED_v1_0
           to: LOCKED_v1_0_1
+
+  - id: EVT-2026-06-02-DOC_DRIFT_RECONNAISSANCE-ENROLLMENT
+    timestamp: "2026-06-02T00:00:00Z"
+    type: doc_enrollment
+    cascade: Documentation Dual-Load Drift Reconnaissance (standalone — no К-ext number)
+    phase: R4 closure + REGISTER enrollment
+    title: "Documentation Dual-Load Drift Reconnaissance — report + brief enrollment"
+    summary: |
+      Read-only multi-agent documentation drift reconnaissance executed per
+      DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF (Crystalka root-cause drift
+      identification: «архитектурные документы выполняют ещё роль дорожной
+      карты»). Orchestrator (Opus) + 10 read-only sub-agents (category-cluster
+      decomposition, 8 deep + 2 quick-pass) scanned all 267 REGISTER documents,
+      deep-analyzed the LIVING-SPEC subset against an empirical code-truth
+      manifest. Produced a single comprehensive report; this commit enrolls the
+      report + its source brief and bumps register_version.
+    governance_impact: |
+      2 new DOC enrollments:
+      - DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT (Tier 2 AUTHORED Category E;
+        docs/reports/ — governance reconnaissance deliverable; Tier 2 override
+        parallels DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT precedent)
+      - DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF (Tier 4 EXECUTED Category D;
+        tools/briefs/ — reconnaissance brief, sister к A'.9.0 recon brief)
+      register_version 2.10 → 2.11.
+      last_modified 2026-05-25 → 2026-06-02.
+      last_modified_commit PENDING-COMMIT-A_PRIME_9_1-CROSSREFS →
+        PENDING-COMMIT-DOC_DRIFT_RECON-ENROLLMENT.
+
+      Reconnaissance findings (informational — refactor is a FUTURE cascade):
+      - ~105 living-spec drift line-items (SPEC-STALE ~35 / ROADMAP-PENDING ~21 /
+        ROADMAP-REALIZED ~19 / MIXED-INTERWOVEN ~14 / ORPHAN-REFERENCE ~16)
+      - 139-doc snapshot population (Category D+E) confirmed clean — 0 hard
+        misclassifications (snapshot-exemption contract validated)
+      - 7-doc misclassification cluster surfaced as structural governance
+        meta-finding (§9 halt-3): roadmap/forward-contract/deliberation
+        artifacts registered as Tier-1 descriptive Category-A specs
+      - Recommended target architecture: Option ε (δ REGISTER doc_role schema +
+        γ fenced NON-NORMATIVE sections) anchored on existing docs/ROADMAP.md;
+        3-cascade refactor decomposition (DD-1 spec-truth / DD-2 structural
+        separation / DD-3 hygiene)
+
+      TOOLING NOTE: pwsh unavailable in execution environment — sync_register.ps1
+      -Validate and render_register.ps1 NOT run this commit. REGISTER edits +
+      frontmatter mirrors authored manually to match. PowerShell validation
+      (sync_register.ps1 -Validate exit 0) + REGISTER_RENDER.md regeneration
+      deferred к a Crystalka environment with PowerShell. (REGISTER_RENDER.md is
+      independently flagged STALE by this reconnaissance — see report §6.3.4.)
+
+      К-L14 thesis preservation:
+      - Zero production code touched (read-only reconnaissance + enrollment)
+      - Zero substrate API surface modified (no К-L change; KERNEL Part 0 untouched)
+      - Zero existing-document content edits (only REGISTER enrollment rows added)
+      - К-L14 architectural-integrity instrumentation applied к documentation layer
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions:
+        - document: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF
+          from: AUTHORED
+          to: EXECUTED
