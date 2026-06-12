@@ -6,7 +6,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.0.0"
+version: "2.1.0"
 next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-CODING_STANDARDS
 ---
@@ -491,6 +491,40 @@ the numeric ID must be exact (`К-L14` and `K-L14` denote the same invariant;
 `K-L4` is a different one). No narration-of-what comments; no decorative
 banners.
 
+### §6.1 — Citation form
+
+Internal citations — from code comments, XML docs, and living documents — use
+**stable identifiers and section topics**:
+
+- a law/invariant/decision ID alone where one exists: `К-L13`, `PA-002`,
+  `Q-L-10`, `F-5`, `Lesson #N12`;
+- a document name plus section anchor *with the section's topic in words*:
+  `MOD_OS_ARCHITECTURE §3.2 (capability verbs)`, `ANALYZER_RULES §4 (rule
+  registry)`, `TESTING_STRATEGY §4.1 (reserved-surface census pin)`. The topic
+  keeps the citation resolvable when the owning document renumbers — the same
+  rule `RESERVED_SURFACE_MUTABILITY.md` §3 (mutable catalog, doc-section item)
+  states for cascade briefs.
+
+**Forbidden** in living prose and in code comments:
+
+1. **Version pins of living documents** (`MOD_OS_ARCHITECTURE.md v1.7 §4.6`,
+   `VULKAN_SUBSTRATE v2.0 LOCKED`) — the register owns versions; a pinned
+   citation goes stale the moment the cited document moves, then silently
+   misdirects every later reader. Pins are permitted only inside dated
+   snapshots and records (change-history rows, EXECUTED briefs, closure
+   reports), where they describe a moment in time.
+2. **URL-fragment anchors** (`…/ANALYZER_RULES.md#4--…`) — heading slugs break
+   under restructure; the v0.2.0 ANALYZER_RULES restructure broke both
+   anchor-class citations in `ReservedStubAttribute.cs` (recon Anomaly 4,
+   2026-06-11). Cite by section number + topic instead. The auto-generated
+   `register_view_url` frontmatter line is the sanctioned exception
+   (machine-maintained, regenerated with the render).
+
+Enforcement: review-bound today — no analyzer rule detects citation form; any
+future detection appears first as `Planned — see docs/ROADMAP.md §Analyzer
+track`. This rule landed in the same cascade that fixed the found instances of
+both classes (METHODOLOGY §12.7 step 9, SYNTH-2 same-cascade obligation).
+
 ## §7 — Exception & Error Discipline
 
 The codebase distinguishes three throw shapes, and keeping them distinct is what
@@ -642,6 +676,7 @@ here **before** the brief locks.
 
 | Version | Date | Change |
 |---|---|---|
+| **2.1.0** | 2026-06-12 | §6.1 citation-form rule added (Architecture Truth Cascade, D11): internal citations use stable identifiers + section topics; version pins of living documents and URL-fragment anchors forbidden in living prose and code comments (pins live only inside dated records). Codifies the two breakage classes the 2026-06-11 ARCHITECTURE TRUTH RECON surfaced, in the same cascade that fixed the found instances (SYNTH-2). **MINOR.** |
 | **2.0.0** | 2026-06-11 | Full rewrite to code-truth: marker-family registry (§5: `[ReservedStub]`, doc-tag families, the new `DFK-WAIVER` suppression law superseding `A_PRIME_9_1_…BRIEF` §7.3), C++ ABI-boundary discipline (§3), build-config quoted verbatim (§4), enforcement claims reduced to existing artifacts (§9 — analyzer stated as 17 non-detecting stubs; CI stated absent). **MAJOR.** Authored per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md`. |
 | 1.0 | 2026-05-12 (era) | Initial codification — naming, file-scoped namespaces, nullability, one-class-per-file, member order, stack-frame retention discipline. Preserved as historical; superseded by 2.0.0. |
 
