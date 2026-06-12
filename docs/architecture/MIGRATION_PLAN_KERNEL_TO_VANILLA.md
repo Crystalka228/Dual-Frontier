@@ -6,23 +6,25 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.4"
+version: "1.4.1"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
 ---
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)
 
-**Version**: 1.3 LOCKED (v1.3 = composite milestone namespace ratification 2026-05-16 — bucket prefixes M-K (vanilla on K) + M-V (vanilla on V) introduced; multi-substrate mods carry compound marker `M-K{N} / M-V`; specific identifiers within M-K bucket deferred to per-mod authoring per FHE-style reserved pattern (Q-M-2 + Q-V-2 LOCKs); pre-namespace M0..M7 closed phases preserved as historical record (Q-M-1 LOCK); Vanilla.Combat excluded from cascade entirely (deferred to post-substrate deliberation); cross-references to RUNTIME_ARCHITECTURE.md and GPU_COMPUTE.md updated to VULKAN_SUBSTRATE.md per Q-G-1 LOCK)
-**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`); amended 2026-05-10 (K-L3.1 bridge formalization, Decision #9 added, line 62 reframed, K8.3-K8.5 sub-section extensions); amended 2026-05-14 (v1.2 — A'.5 closure); amended 2026-05-16 (v1.3 — composite namespace ratification per `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md`)
+> **Document class: planning-record.** Forward state authority: [docs/ROADMAP.md](../ROADMAP.md). This document is not a roadmap.
+
+**Version**: 1.4.1 LOCKED (body-version reconciliation 2026-06-12 — the frontmatter had advanced to v1.4 without a matching body record; v1.4.1 = Architecture Truth Cascade PATCH for reclassification banner + stale authority-pin removal. Last substantive amendment v1.3 = composite milestone namespace ratification 2026-05-16 — bucket prefixes M-K (vanilla on K) + M-V (vanilla on V) introduced; multi-substrate mods carry compound marker `M-K{N} / M-V`; specific identifiers within M-K bucket deferred to per-mod authoring per FHE-style reserved pattern (Q-M-2 + Q-V-2 LOCKs); pre-namespace M0..M7 closed phases preserved as historical record (Q-M-1 LOCK); Vanilla.Combat excluded from cascade entirely (deferred to post-substrate deliberation); cross-references to RUNTIME_ARCHITECTURE.md and GPU_COMPUTE.md updated to VULKAN_SUBSTRATE.md per Q-G-1 LOCK)
+**Authored**: 2026-05-09 (post-K-Lessons closure `9df2709..071ae11`); amended 2026-05-10 (K-L3.1 bridge formalization, Decision #9 added, line 62 reframed, K8.3-K8.5 sub-section extensions); amended 2026-05-14 (v1.2 — A'.5 closure); amended 2026-05-16 (v1.3 — composite namespace ratification per `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md`); amended 2026-06-12 (v1.4.1 — Architecture Truth Cascade: reclassification banner, stale authority-pin removal, body/frontmatter version reconciliation)
 **Locked**: 2026-05-09 (Crystalka acceptance during K8.2 v2 session)
-**Status**: AUTHORITATIVE LOCKED — architectural roadmap for K-series and M-series
+**Status**: AUTHORITATIVE LOCKED — architectural plan for K-series and M-series (historically self-described as a roadmap; forward/live milestone state is authoritative in [docs/ROADMAP.md](../ROADMAP.md), not here)
 **Strategy**: Option (II) "Struct-first sequential" — kernel-track closes completely before mod-OS-track mass migration begins
 **Sequencing parent**: β6 (kernel-first sequential per K2 closure 2026-05-07; Option c per K8.0 closure for K9 placement)
 
 **Authoritative documents this plan integrates and reformulates**:
-- `KERNEL_ARCHITECTURE.md` v1.3 LOCKED — K-series specification (Part 0, Part 2 master plan)
-- `MOD_OS_ARCHITECTURE.md` v1.6 LOCKED — M-series specification (§1.3 strategic LOCKED #4, §11 migration phases)
-- `METHODOLOGY.md` v1.5 — pipeline closure lessons reference
+- `KERNEL_ARCHITECTURE.md` — K-series architecture specification (Part 0 К-L invariants; K-series roadmap relocated to `docs/ROADMAP.md`)
+- `MOD_OS_ARCHITECTURE.md` — M-series specification (§1.3 strategic LOCKED decision #4, §11 migration phases)
+- `METHODOLOGY.md` — pipeline closure lessons reference
 - `MIGRATION_PROGRESS.md` (live tracker) — current state snapshot
 - `tools/briefs/*` — milestone brief precedents (K8.1, K8.1.1, K-Lessons)
 
@@ -256,7 +258,7 @@ The "12 vanilla systems" in the old wording was either a slice-count approximati
 
 **Reformulation (this plan refines)**: K8.5 is the **gate document milestone** between Phase A and Phase B. It does not start vanilla mod content migration (that's M8.4 onward). K8.5 deliverables:
 
-- **Migration guide for mod authors**: how to register components, systems, services in vanilla mod assemblies. Documents the IModApi v3 surface end-to-end with worked examples. Lives at `docs/MODDING_MIGRATION_GUIDE.md` (or similar).
+- **Migration guide for mod authors**: how to register components, systems, services in vanilla mod assemblies. Documents the IModApi v3 surface end-to-end with worked examples. Planned deliverable at `docs/MODDING_MIGRATION_GUIDE.md` (not yet authored; tracked in [docs/ROADMAP.md](../ROADMAP.md)).
 
 - **Vanilla mod scaffolding readiness verification**: confirms every M8.1 skeleton (commit `cafedcf`) compiles against the post-K8.4 `IModApi` v3, manifests parse under v2 schema, capability strings validate. No skeleton gets new code; the verification is that the skeletons can be populated when M-series runs.
 

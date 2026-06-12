@@ -6,15 +6,20 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.0.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FHE_INTEGRATION_CONTRACT
 ---
 # FHE Integration Contract
 
+> **Document class: forward-design-contract.** Forward state authority: [docs/ROADMAP.md](../ROADMAP.md). This document is not a roadmap.
+
 *Architectural contract specifying the integration of fully homomorphic encryption between Dual Frontier's deterministic simulation core and a future cheat-resistant multiplayer compute layer. This document follows the same discipline as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md): decisions are enumerated, ratified, and locked. Implementation is deferred pending technological maturity of the underlying libraries; the contract itself is binding from v1.0 onward.*
 
 *Version: 1.0 (2026-05-06). RATIFIED. Activation pending §D1 conditions.*
+*Version: 1.0.1 (2026-06-12). Architecture Truth Cascade — reclassification banner + ROADMAP pointer added; contract decisions unchanged.*
+
+*Status: ratified and dormant. Activation tracking and any forward scheduling are authoritative in [docs/ROADMAP.md](../ROADMAP.md), gated on the §D1 conditions below.*
 
 ---
 

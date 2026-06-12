@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: Draft
 owner: Crystalka
-version: "0.1"
+version: "0.1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ARCHITECTURE_TYPE_SYSTEM
 ---
@@ -17,15 +17,19 @@ nav_order: 110
 
 # Architecture Type System — Attribute-as-Declaration Verification
 
-**Version**: 0.1
+> **Document class: design-draft.** Forward state authority: [docs/ROADMAP.md](../ROADMAP.md). This document is not a roadmap.
+
+**Version**: 0.1.1
 **Date**: 2026-05-09
 **Status**: LOCKED v0.1 — specification ratified ahead of activation; activation gated on K-series migration closure per §6.2. Implementation work begins only after K-series closure produces a stable target corpus.
+**Forward/activation status**: analyzer-family activation and sequencing are authoritative in [docs/ROADMAP.md](../ROADMAP.md) («Analyzer track»); this document specifies the verification design, not live state.
 **Companion documents**: `MAXIMUM_ENGINEERING_REFACTOR.md` (parent Track B specification), `MOD_OS_ARCHITECTURE.md` (capability model anchored here), `KERNEL_ARCHITECTURE.md` (post-migration corpus that anchors the verification target), `METHODOLOGY.md` (ratification process inherited).
 **Scope**: Formal specification of the *attribute-as-declaration* invariant family used throughout the Dual Frontier corpus, the verification discipline that enforces these invariants at compile time via Roslyn analyzers, and the operational rules — severity, suppression policy, drift policy, anchoring rule — under which the analyzer family operates. Specifies the first two analyzers (`SystemAccessCompletenessAnalyzer`, `ModCapabilitiesHonestyAnalyzer`) as a composite pilot; subsequent analyzers (`LayerDependencyAnalyzer`, `BusChannelCorrectnessAnalyzer`, …) extend this specification in dedicated revisions.
 
 **Version history:**
 
-- v0.1 (this version, 2026-05-09) — initial ratification. Composite pilot (`SystemAccessCompletenessAnalyzer` + `ModCapabilitiesHonestyAnalyzer`) selected over the `MAXIMUM_ENGINEERING_REFACTOR.md` v1.0 §3 recommendation of B1 (`LayerDependencyAnalyzer`) on the structural-isomorphism rationale documented in §4.2. Activation deferred until K-series migration closure (§6.2) so the pilot operates on a stable post-migration corpus rather than a moving target. Strict over-declaration policy locked (§3.4 / TS-D-3) — declarations must match facts exactly, no forward-declaration is admitted. No-suppression discipline locked (§5.3 / TS-D-5). Severity = `error` from day one (§5.2 / TS-D-4) — no warning-mode transition period. Closes `MOD_OS_ARCHITECTURE.md` v1.2 §11.1 M3.4 deferred milestone (capability analyzer subsumed into pilot per §4.3).
+- v0.1.1 (this version, 2026-06-12) — Architecture Truth Cascade PATCH: reclassification banner (design-draft) + ROADMAP forward-state pointer added; specification content unchanged.
+- v0.1 (2026-05-09) — initial ratification. Composite pilot (`SystemAccessCompletenessAnalyzer` + `ModCapabilitiesHonestyAnalyzer`) selected over the `MAXIMUM_ENGINEERING_REFACTOR.md` v1.0 §3 recommendation of B1 (`LayerDependencyAnalyzer`) on the structural-isomorphism rationale documented in §4.2. Activation deferred until K-series migration closure (§6.2) so the pilot operates on a stable post-migration corpus rather than a moving target. Strict over-declaration policy locked (§3.4 / TS-D-3) — declarations must match facts exactly, no forward-declaration is admitted. No-suppression discipline locked (§5.3 / TS-D-5). Severity = `error` from day one (§5.2 / TS-D-4) — no warning-mode transition period. Closes `MOD_OS_ARCHITECTURE.md` v1.2 §11.1 M3.4 deferred milestone (capability analyzer subsumed into pilot per §4.3).
 
 ---
 

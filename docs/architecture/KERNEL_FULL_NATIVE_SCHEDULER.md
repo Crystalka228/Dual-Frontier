@@ -6,20 +6,24 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.0"
+version: "2.0.1"
 next_review_due: 2027-05-17
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
 ---
 # Kernel Full Native Scheduler — Architectural Specification
 
-**Version: 2.0 (2026-05-17, this version)** — K10 architectural deliberation complete (all 9 S surfaces ratified). Major amendment per S deliberation arc: К-Lxx invariant series extended 11 → 20 (К-L6 SUPERSEDED + К-L7.1 sub + К-L12-К-L19); К10 scope extended 25 → 46 items; performance predictions restructured §5.1.A К10 + §5.1.B К11+; Q-N surface extended Q-N-1 through Q-N-49+; cross-document amendment list 9 documents; risk register extended с R-K10-6 through R-K10-9; Tier 1 LOCKED status (post-amendment).
+> **Document class: deliberation-record.** Forward state authority: [docs/ROADMAP.md](../ROADMAP.md). This document is not a roadmap.
+
+**Version: 2.0.1 (2026-06-12, this version)** — Architecture Truth Cascade PATCH: reclassification banner + ROADMAP pointer; internal К10 self-status corrected to realized (К10.1–К10.3 shipped, native scheduler live); dangling `K_SERIES_CLOSURE_REPORT.md` → `K_CLOSURE_REPORT.md` and `K10_DELIBERATION_STATE.md` external-archive references repaired. No specification change.
+
+**Version: 2.0 (2026-05-17)** — K10 architectural deliberation complete (all 9 S surfaces ratified). Major amendment per S deliberation arc: К-Lxx invariant series extended 11 → 20 (К-L6 SUPERSEDED + К-L7.1 sub + К-L12-К-L19); К10 scope extended 25 → 46 items; performance predictions restructured §5.1.A К10 + §5.1.B К11+; Q-N surface extended Q-N-1 through Q-N-49+; cross-document amendment list 9 documents; risk register extended с R-K10-6 through R-K10-9; Tier 1 LOCKED status (post-amendment).
 
 **Version: 1.0 (2026-05-16)** — Initial К10 specification authored (deliberation-grade, pre-ratification).
 
 **Document type**: Architectural specification (Tier 1 LOCKED, post-К10 deliberation closure)
 **Scope**: К10 native kernel scheduler extension; К-series completion logic; new К-Lxx invariants
-**Status**: LOCKED (Tier 1) — К10 deliberation arc 2026-05-16..2026-05-17 closed, all 9 S surfaces ratified
-**Companion documents**: `KERNEL_ARCHITECTURE.md` (existing kernel authority — extended by this doc), `VULKAN_SUBSTRATE.md` (V substrate — interlocks with K10 scheduler for cross-layer dispatch), `MOD_OS_ARCHITECTURE.md` (Mod-OS metaphor — this doc realizes the kernel-space half), `K10_DELIBERATION_STATE.md` (Project file sister — deliberation rationale for all 9 S surfaces)
+**Status**: LOCKED (Tier 1) — К10 deliberation arc 2026-05-16..2026-05-17 closed, all 9 S surfaces ratified. К10 implementation state (К10.1–К10.3 shipped; К10.4 TLA+ pending) is authoritative in [docs/ROADMAP.md](../ROADMAP.md) «Native foundation tracks», not in this deliberation record.
+**Companion documents**: `KERNEL_ARCHITECTURE.md` (existing kernel authority — extended by this doc), `VULKAN_SUBSTRATE.md` (V substrate — interlocks with K10 scheduler for cross-layer dispatch), `MOD_OS_ARCHITECTURE.md` (Mod-OS metaphor — this doc realizes the kernel-space half), `K10_DELIBERATION_STATE` (external deliberation archive — not in repository; deliberation rationale for all 9 S surfaces)
 **Authority**: Crystalka direction 2026-05-16 «делаем как настоящий OS, производительность растёт от сложной архитектуры и чистоты»; К10 deliberation arc closure 2026-05-17
 
 ---
@@ -86,7 +90,7 @@ Sister artifacts expected to accompany this document through К10 deliberation a
 
 **К10 architectural deliberation complete** (2026-05-17). All 9 S surfaces ratified. К-Lxx invariant series expanded 11 → 20 (К-L6 SUPERSEDED + К-L12 through К-L19 + К-L7.1 sub-invariant). К10 scope expanded 25 → 46 items. Performance predictions restructured §5.1.A (К10 architecture) + §5.1.B (К11+ measurement). TLA+ specification authoring included as К10 deliverable per S-TLA Option (e) + Option (c) targeted verification scope.
 
-Deliberation state preserved in `K10_DELIBERATION_STATE.md` sister document (Project file, not committed). Full lock rationale and Lesson candidates documented therein.
+Deliberation state preserved in `K10_DELIBERATION_STATE` (external deliberation archive — not in repository). Full lock rationale and Lesson candidates documented therein.
 
 ---
 
@@ -819,7 +823,7 @@ public static class ManagedSystemDispatcher
 2. Roslyn analyzer rule specification surface: each К-Lxx invariant maps к analyzer rules in А'.9
 
 **Implementation surface (А'.8 milestone, post-К10)**:
-- Document at `docs/architecture/K_SERIES_CLOSURE_REPORT.md` (Tier 1 LOCKED)
+- Document at `K_CLOSURE_REPORT.md`
 - Per-invariant format:
   - Formal statement (verbatim from KERNEL_ARCHITECTURE.md v2.0 Part 0)
   - Rationale (why this invariant exists)
@@ -1207,7 +1211,7 @@ struct PipelineSlot {
 | K9 | Field storage abstraction | CLOSED 2026-05-11 | (V substrate prerequisite) |
 | K8.3+K8.4 (combined A'.5) | Storage cutover | CLOSED 2026-05-14 | К-L11 realized |
 | K8.5 | Mod ecosystem migration prep | PENDING A'.6/A'.7 | (mod ecosystem guide) |
-| **К10** | **Native kernel scheduler** | **AUTHORED (this doc)** | **К-L12, К-L13, К-L14 + К-L6 supersession** |
+| **К10** | **Native kernel scheduler** | **К10.1–К10.3 shipped (native scheduler live — `native/DualFrontier.Core.Native/src/system_graph.cpp`); К10.4 (TLA+) pending — see [docs/ROADMAP.md](../ROADMAP.md) «Native foundation tracks»** | **К-L12, К-L13, К-L14 + К-L6 supersession** |
 | K-closure report | К-series formal closure | PENDING A'.8 | (closure record) |
 
 ### 4.2 Why К10 properly closes К-series
@@ -1656,10 +1660,10 @@ Upon К10 deliberation closure (achieved 2026-05-17), the following documents re
 ### 7.11 New documents К10 produces
 
 - `KERNEL_FULL_NATIVE_SCHEDULER.md` (this — promoted к Tier 1 LOCKED post-amendment) ✅
-- `K10_DELIBERATION_STATE.md` (Project file, sister к this doc; not register-tracked) ✅
+- `K10_DELIBERATION_STATE` (external deliberation archive — not in repository) ✅
 - `K10_EXECUTION_BRIEF.md` (forthcoming, separate session — execution brief for Claude Code) ⏳
 - `SCHEDULER_TLA_PLUS.tla` (forthcoming, К10 deliverable — Item 18) ⏳
-- `K_SERIES_CLOSURE_REPORT.md` (А'.8, after К10 implementation closure) ⏳
+- `K_CLOSURE_REPORT.md` (А'.8, after К10 implementation closure) ⏳
 
 ---
 
@@ -1864,7 +1868,7 @@ Hot-path debugging:
 
 **Reading order для К10 implementation brief authoring**:
 1. This document (KERNEL_FULL_NATIVE_SCHEDULER.md, post-amendment v2.0)
-2. K10_DELIBERATION_STATE.md (Project file, deliberation rationale)
+2. K10_DELIBERATION_STATE (external deliberation archive — not in repository; deliberation rationale)
 3. SESSION_LOG_2026_05_17_K10_DELIBERATION.md (Project file, session transfer log)
 4. METHODOLOGY.md v1.8 (post-amendment, Lessons #11/#20/#22 + Provisional Lessons)
 5. VULKAN_SUBSTRATE.md (post-amendment, V-side К-L7.1/К-L16/К-L17/К-L18/К-L19 integration)
@@ -1884,4 +1888,4 @@ The «no shortcuts» commitment applied к К-series: 11 K-Lxx invariants pre-К
 
 «Без костылей.» Each invariant principled. Each architectural decision recorded с rationale. К-series serves as case study для research framework claim about LLM pipeline + solo developer + non-trivial systems software.
 
-**Document end. Tier 1 LOCKED post-amendment landing 2026-05-17. Companion deliberation state document (`K10_DELIBERATION_STATE.md`, Project file) carries Q-by-Q lock rationale and Lesson candidates.**
+**Document end. Tier 1 LOCKED post-amendment landing 2026-05-17. Companion deliberation state document (`K10_DELIBERATION_STATE`, external deliberation archive — not in repository) carries Q-by-Q lock rationale and Lesson candidates.**

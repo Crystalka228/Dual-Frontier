@@ -12,8 +12,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PHASE_A_PRIME_SEQUEN
 ---
 # Phase A' sequencing — K-L3.1 to M-series begins
 
+> **Document class: planning-record.** Forward state authority: [docs/ROADMAP.md](../ROADMAP.md). This document is not a roadmap.
+
 **Authored**: 2026-05-10 (Opus, post-K8.2 v2 closure cleanup session)
-**Status**: REFERENCE document for future Opus sessions and Crystalka deliberations
+**Status**: REFERENCE document for future Opus sessions and Crystalka deliberations — current phase/milestone state is authoritative in [docs/ROADMAP.md](../ROADMAP.md), not here
 **Purpose**: anchor sequencing logic between K-series closure (K8.2 v2) and Phase B (M-series migration) start. Document is read at the beginning of any K-series-related session as orienting reference; it is not a brief, not LOCKED architecture, not deliberation surface.
 **Authority**: Crystalka declarations 2026-05-10:
 - «Без костылей у меня много времени, а также требуется архитектурная чистота, чтобы проект жил десятилетиями»
@@ -354,7 +356,7 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │       #8 auxiliary tooling)
   │     • Domain 3 (cascade #2/#3 surfaced rule candidates): 10 candidates; cross-cascade
   │       observation Lesson #N12 underlies 4 candidates
-  │     • Domain 4 (Mod OS К-L20 prep): 20 candidate DF020 sub-rules + 6 precursor
+  │     • Domain 4 (Mod OS К-L20 prep): 20 candidate DFK020 sub-rules + 6 precursor
   │       relationships A'.9-era → К-L20 era
   │     • Domain 5 (Roslyn ecosystem desk research): SDK 5.3.0 + xUnit framework variant
   │     • Domain 6 (Build/CI surface): Option C hybrid + Directory.Build.props centralized
@@ -397,7 +399,7 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │       Build.props centralized, .editorconfig baseline, 17 P0+P1 DF### rules + DF999
   │       self-policing, cleanup phase (suggestion severity)
   │     • A'.9.2 — Severity promotion (cleanup → error) + optional code-fix providers for
-  │       Trivial-feasibility rules (DF002, DF004, DF011 within tests)
+  │       Trivial-feasibility rules (DFK002, DFK004, DFK011 within tests)
   │     • A'.9.3+ — DC### cascade-derived rules + DL### Lesson-derived auxiliary tooling +
   │       M3.4 deferred analyzer milestones materialization
   │   Dual purpose preserved: (1) M-series migration verifier (catches drift in M-milestone
@@ -410,11 +412,11 @@ K-L3.1 architectural decision session **also** belongs to Phase A' (it precedes 
   │
   ├─ Phase post-A'.9 — К-L20 Mod API lock cascade
   │   Designation: TBD per K_CLOSURE §9.5 Q1-Q8 deliberation
-  │   Scope: К-L20 canonical text LOCKED + DF020 family activation (20 sub-rules per
+  │   Scope: К-L20 canonical text LOCKED + DFK020 family activation (20 sub-rules per
   │   A'.9.0 report §6.2) + Mod API surface freeze per A'.9 closure baseline snapshot
   │   Forward analyzer enforcement: analyzer enables Mod API enforcement automation per
-  │   memory + Domain 4 precursor relationships (DF003.1→DF020.3, DF009→DF020.{1,2,8,9},
-  │   DF012→DF020.8, DF015→DF020.{9,10,11}, DF018→K-L18+K-L20, M3.4→DF020.{10,11,16}).
+  │   memory + Domain 4 precursor relationships (DFK003.1→DFK020.3, DFK009→DFK020.{1,2,8,9},
+  │   DFK012→DFK020.8, DFK015→DFK020.{9,10,11}, DFK018→K-L18+K-L20, M3.4→DFK020.{10,11,16}).
   │
   └─ [M8.4 begins — Phase B]
       Vanilla.World migration. First M-milestone runs under analyzer protection.
@@ -528,7 +530,7 @@ ROADMAP currently «Updated 2026-05-03» (stale; M8.0/M8.1/M8.2 closures and K0-
 
 ### §5.7 New documents Phase A' may produce
 
-- **K-closure report** (A'.8) — likely at `docs/architecture/K_SERIES_CLOSURE_REPORT.md` or analog
+- **K-closure report** (A'.8) — shipped at `docs/architecture/K_CLOSURE_REPORT.md`
 - **Analyzer specification document** (A'.9 input) — likely at `docs/architecture/ARCHITECTURAL_ANALYZER_SPEC.md` or analog
 - **Possibly: MOD_OS_ARCHITECTURE.md v2.0** if K-L3.1 synthesis is structurally significant — may warrant fresh document version rather than continued v1.x corrections
 

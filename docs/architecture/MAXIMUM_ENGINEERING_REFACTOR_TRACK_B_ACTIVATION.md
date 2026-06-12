@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: Draft
 owner: Crystalka
-version: "0.1"
+version: "0.1.1"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MAX_ENG_REFACTOR_TRACK_B
 ---
@@ -17,15 +17,19 @@ nav_order: 111
 
 # Track B Activation — Type System Verification
 
-**Version**: 0.1
+> **Document class: design-draft.** Forward state authority: [docs/ROADMAP.md](../ROADMAP.md). This document is not a roadmap.
+
+**Version**: 0.1.1
 **Date**: 2026-05-09
 **Status**: RATIFIED v0.1 — activation brief authored ahead of activation per `MAXIMUM_ENGINEERING_REFACTOR.md` v1.0 §5.3. Activation gated on K-series closure per §3. Brief stands as the canonical specification of the M-phase scope; the M-phase itself opens at the activation trigger.
+**Forward/activation status**: the activation trigger and sequencing are authoritative in [docs/ROADMAP.md](../ROADMAP.md) («Analyzer track»); this document specifies the M-phase design, not live state.
 **Companion documents**: [MAXIMUM_ENGINEERING_REFACTOR](/docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md) (parent v1.0; this brief realises §3 Track B), [ARCHITECTURE_TYPE_SYSTEM](./ARCHITECTURE_TYPE_SYSTEM.md) (v0.1 LOCKED specification of the analyzer family this brief activates), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) (K-series progression that determines activation timing), [METHODOLOGY](/docs/methodology/METHODOLOGY.md) (§2.4 atomicity rule applied to repair-pass closure), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) (v1.2 §11.1 M3.4 closed by §4.3 of this brief).
 **Scope**: Activation specification for Track B of the Maximum Engineering Refactor. Defines the activation trigger, the M-phase shape, the deliverables, the acceptance criteria for the composite pilot (`SystemAccessCompletenessAnalyzer` + `ModCapabilitiesHonestyAnalyzer`) and the structured repair-pass that follows. Does **not** redefine the analyzer family — the family is specified in `ARCHITECTURE_TYPE_SYSTEM.md` v0.1 and consumed here.
 
 **Version history:**
 
-- **v0.1** (this version, 2026-05-09) — initial ratification. Activation trigger fixed at K-series closure (post-K9). Composite pilot scope inherits from `ARCHITECTURE_TYPE_SYSTEM.md` §4. M-phase decomposition at activation time (Sonnet's responsibility, per pipeline conventions). Repair-pass discipline locked. Closes `MOD_OS_ARCHITECTURE.md` v1.2 §11.1 M3.4 by integration into the composite pilot.
+- **v0.1.1** (this version, 2026-06-12) — Architecture Truth Cascade PATCH: reclassification banner (design-draft) + ROADMAP forward-state pointer added; activation specification unchanged.
+- **v0.1** (2026-05-09) — initial ratification. Activation trigger fixed at K-series closure (post-K9). Composite pilot scope inherits from `ARCHITECTURE_TYPE_SYSTEM.md` §4. M-phase decomposition at activation time (Sonnet's responsibility, per pipeline conventions). Repair-pass discipline locked. Closes `MOD_OS_ARCHITECTURE.md` v1.2 §11.1 M3.4 by integration into the composite pilot.
 
 ---
 
