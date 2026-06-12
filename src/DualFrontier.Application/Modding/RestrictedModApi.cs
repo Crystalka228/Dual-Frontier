@@ -18,15 +18,18 @@ namespace DualFrontier.Application.Modding;
 /// and routes <see cref="Publish{T}"/>/<see cref="Subscribe{T}"/> through
 /// <see cref="ModBusRouter"/> to the correct domain bus.
 ///
-/// A mod MUST NOT cast <see cref="IModApi"/> to this concrete type;
-/// <see cref="ModLoader"/> detects such attempts and unloads the mod with a
-/// <see cref="ModIsolationException"/>.
+/// A mod MUST NOT cast <see cref="IModApi"/> to this concrete type. The
+/// defense is structural, not a runtime check (MOD_OS_ARCHITECTURE §4.4):
+/// the type is <c>internal sealed</c> with internal construction and is
+/// unresolvable from a regular mod's AssemblyLoadContext.
 ///
-/// Capability gates are enforced from the v2 manifest: a mod must declare
+/// Capability gates are enforced from the manifest (strict v3 —
+/// <see cref="ManifestParser"/> rejects earlier schemas): a mod must declare
 /// <c>kernel.publish:&lt;FQN&gt;</c> / <c>kernel.subscribe:&lt;FQN&gt;</c> in
 /// <see cref="ManifestCapabilities.Required"/> for every event type it
-/// publishes or subscribes. v1 manifests (empty <see cref="ManifestCapabilities"/>)
-/// bypass the gate with a deprecation warning to <see cref="Console"/>.
+/// publishes or subscribes. Manifests with an empty
+/// <see cref="ManifestCapabilities"/> set bypass the gate with a warning to
+/// <see cref="Console"/> (empty-capability leniency).
 ///
 /// Subscriptions registered through <see cref="Subscribe{T}"/> are tracked
 /// per instance so <see cref="UnsubscribeAll"/> can release them when the

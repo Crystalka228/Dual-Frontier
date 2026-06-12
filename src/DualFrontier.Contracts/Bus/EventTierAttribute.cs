@@ -3,7 +3,7 @@ using System;
 namespace DualFrontier.Contracts.Bus;
 
 /// <summary>
-/// Three-tier dispatch enum per К-L15 (KERNEL_ARCHITECTURE.md v2.1, К10.2).
+/// Three-tier dispatch enum per К-L15 (KERNEL_ARCHITECTURE Part 0; К10.2).
 /// Wire format: <see cref="int"/> matching native <c>dualfrontier::BusTier</c>.
 /// </summary>
 public enum BusTier

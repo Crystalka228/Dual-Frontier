@@ -15,9 +15,11 @@ namespace DualFrontier.Application.Display;
 /// в the К-L17 composition order at <see cref="LayerType.Intent"/> tier.
 ///
 /// К10.3 v2 boundary: layer slot established с the latency contract; concrete
-/// input event queue integration lives в presentation backends (Native: Silk.NET
-/// input poll; Godot: Input singleton) per К10.3 v2 §1.5 S-LOCK-11 — Application
-/// layer stays substrate-agnostic.
+/// input event queue integration lives в presentation backends per К10.3 v2
+/// §1.5 S-LOCK-11 — Application layer stays substrate-agnostic. (The era
+/// examples — Silk.NET input poll, Godot Input singleton — were retired with
+/// К-extensions cascade #2; the Launcher Win32 InputQueue is the current
+/// backend seam.)
 /// </summary>
 public class IntentOverlayLayer : Layer
 {

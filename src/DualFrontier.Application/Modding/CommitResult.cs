@@ -8,7 +8,7 @@ namespace DualFrontier.Application.Modding;
 /// across the per-removed-mod <c>UnloadMod</c> calls and the single
 /// <c>Apply</c> call for added mods. On success the simulation has been
 /// resumed; on failure it stays paused so the user can fix the pending
-/// state and retry (per MOD_OS_ARCHITECTURE v1.5 §9.2 + the M7.5.A AD #4
+/// state and retry (per MOD_OS_ARCHITECTURE §9.2 + the M7.5.A AD #4
 /// deliberate interpretation registered in ROADMAP).
 /// </summary>
 /// <param name="Success">

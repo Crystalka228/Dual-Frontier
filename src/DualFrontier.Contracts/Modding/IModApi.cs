@@ -110,15 +110,18 @@ public interface IModApi
     void Log(ModLogLevel level, string message);
 
     /// <summary>
-    /// Field-storage sub-API per MOD_OS_ARCHITECTURE.md v1.7 §4.6.
-    /// Returns null on builds without K9 field storage support; mods check
-    /// for null and degrade gracefully.
+    /// Field-storage sub-API per MOD_OS_ARCHITECTURE §4.6 (Fields and
+    /// Compute Pipelines). Returns null on builds without K9 field storage
+    /// support; mods check for null and degrade gracefully.
     /// </summary>
     IModFieldApi? Fields { get; }
 
     /// <summary>
-    /// Compute-pipeline sub-API per MOD_OS_ARCHITECTURE.md v1.7 §4.6.
-    /// Returns null on K9 (lands at G0). Mods check for null.
+    /// Compute-pipeline sub-API per MOD_OS_ARCHITECTURE §4.6 (Fields and
+    /// Compute Pipelines). Returns null — the mod-facing compute surface is
+    /// unwired (the former G0 milestone was superseded by the V substrate
+    /// per Q-G-2; V0/V1 shipped kernel-side). Planned — see docs/ROADMAP.md
+    /// §V substrate (M-V demonstrations). Mods check for null.
     /// </summary>
     IModComputePipelineApi? ComputePipelines { get; }
 }

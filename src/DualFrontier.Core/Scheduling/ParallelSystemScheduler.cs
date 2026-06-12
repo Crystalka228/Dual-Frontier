@@ -30,12 +30,14 @@ namespace DualFrontier.Core.Scheduling;
 /// Exceptions from <c>SystemBase.Update</c> are not caught here — they
 /// propagate through <c>Parallel.ForEach</c> as an <c>AggregateException</c>.
 /// This is deliberate: during development we want system faults to surface
-/// immediately. Future phases introduce <c>ModFaultHandler</c>, which wraps
-/// mod-origin systems; Core systems continue to propagate.
+/// immediately. Mod-fault handling lives in the Application layer
+/// (realized — <c>ModFaultHandler</c>, fed via <c>ModLoader.HandleModFault</c>);
+/// Core-system exceptions propagate.
 ///
 /// The <c>MaxDegreeOfParallelism</c> follows the documented N-2 rule —
-/// reserving one core for Godot's main thread and one for the OS and
-/// background work. See <c>docs/THREADING.md</c>.
+/// leaving headroom for the presentation main thread (Launcher render loop)
+/// and for the OS and background work. See
+/// <c>docs/architecture/THREADING.md</c> (managed dispatch facade).
 /// </summary>
 internal sealed class ParallelSystemScheduler
 {
@@ -239,8 +241,10 @@ internal sealed class ParallelSystemScheduler
         // construction. Systems not present in the table default to Core/null
         // (covers core systems registered via local arrays in tests, and any
         // future system path that doesn't go through ModRegistry). Mod systems
-        // registered through ModRegistry carry their owning modId so
-        // SystemExecutionContext.RouteAndThrow routes faults correctly.
+        // registered through ModRegistry carry their owning modId so the
+        // context can resolve their Path β managed stores
+        // (SystemExecutionContext.ResolveManagedStore<T>) and attribute the
+        // system to the right mod.
         SystemOrigin origin = SystemOrigin.Core;
         string? modId = null;
         if (_systemMetadata.TryGetValue(system, out SystemMetadata? meta))

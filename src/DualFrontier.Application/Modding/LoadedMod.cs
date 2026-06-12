@@ -31,7 +31,7 @@ internal sealed record LoadedMod(
     /// <summary>
     /// The <see cref="RestrictedModApi"/> instance issued to this mod by
     /// <see cref="ModIntegrationPipeline.Apply"/> step [4]. Retained on the
-    /// mod so the unload chain (MOD_OS_ARCHITECTURE v1.4 §9.5 step 1) can
+    /// mod so the unload chain (MOD_OS_ARCHITECTURE §9.5 step 1) can
     /// invoke <see cref="RestrictedModApi.UnsubscribeAll"/> to drop bus
     /// subscriptions before the assembly is released.
     ///

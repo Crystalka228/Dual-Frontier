@@ -3,12 +3,15 @@ using System;
 namespace DualFrontier.Core.ECS;
 
 /// <summary>
-/// Sink for mod-system faults reported from the isolation guard.
-/// Implemented in the Application layer by {ModFaultHandler} (Phase 2 completion
-/// is scheduled later — for now a no-op sink is enough). Core never crashes a
-/// mod's host process directly; it hands the fault off through this sink and
-/// throws {IsolationViolationException} with a mod-specific message, and the
-/// scheduler's caller decides what to do.
+/// Sink for mod-system fault reports. Implemented in the Application layer
+/// by {ModFaultHandler} (realized — K6-era work); faults arrive through the
+/// public <c>ModLoader.HandleModFault</c> entry point and the offending mod
+/// is queued for deferred unload at the next menu open. Core never crashes a
+/// mod's host process directly — it hands the fault off through this sink
+/// and the upper layer decides what to do. The К8.3+К8.4 runtime isolation
+/// guard (which called this sink and threw IsolationViolationException from
+/// inside SystemExecutionContext) is deleted; isolation is now compile-time
+/// via [SystemAccess].
 /// </summary>
 internal interface IModFaultSink
 {
@@ -24,15 +27,16 @@ internal interface IModFaultSink
 /// <summary>
 /// Default no-op {IModFaultSink} used when no Application-layer handler is
 /// wired in — keeps {SystemExecutionContext} functional in tests and Core-only
-/// scenarios. Production code in Application should replace this with the
-/// real {ModFaultHandler}.
+/// scenarios. Production wiring (GameBootstrap) passes the real
+/// {ModFaultHandler} instead.
 /// </summary>
 internal sealed class NullModFaultSink : IModFaultSink
 {
     /// <summary>
-    /// No-op: silently discards the fault. The {IsolationViolationException}
-    /// that the guard throws alongside this call still propagates, so faults
-    /// are never truly silent — the exception carries the diagnostic message.
+    /// No-op: silently discards the fault. Post-К8.3+К8.4 no Core call site
+    /// invokes the sink (the runtime guard that did is deleted); this null
+    /// implementation exists to satisfy the scheduler/context constructor
+    /// contract in tests and Core-only scenarios.
     /// </summary>
     /// <param name="modId">Ignored.</param>
     /// <param name="message">Ignored.</param>

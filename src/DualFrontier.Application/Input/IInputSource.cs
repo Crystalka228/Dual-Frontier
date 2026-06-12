@@ -1,10 +1,13 @@
 namespace DualFrontier.Application.Input;
 
 /// <summary>
-/// The ingress point for user input events. Each presentation backend
-/// implements this: Godot polls <c>Input</c> via its main thread, Native
-/// polls via Silk.NET input. Regardless of source, the implementation
-/// publishes normalised <c>InputEvent</c>s onto the appropriate domain bus.
+/// The ingress point for user input events. Reserved presentation-backend
+/// seam — no implementation is currently wired: the Launcher pumps raw
+/// Win32 input into its own <c>InputQueue</c> and Application-side
+/// forwarding is pending (the prior Godot <c>Input</c> / Silk.NET poll
+/// backends were retired with К-extensions cascade #2). Per the seam
+/// contract, an implementation publishes normalised <c>InputEvent</c>s
+/// onto the appropriate domain bus regardless of source.
 /// </summary>
 public interface IInputSource
 {

@@ -19,9 +19,12 @@ namespace DualFrontier.Core.ECS;
 public abstract class SystemBase
 {
     /// <summary>
-    /// Gets the execution context, which provides system access to component data and event buses.
-    /// This property is set by ParallelSystemScheduler after construction.
-    /// Internal setter — only scheduler assigns this.
+    /// Reserved per-instance execution-context slot. Not assigned by the
+    /// current scheduler: <c>ParallelSystemScheduler</c> routes contexts
+    /// through the thread-local <c>SystemExecutionContext.PushContext</c> /
+    /// <c>PopContext</c> pair instead, and systems reach the active context
+    /// via <c>SystemExecutionContext.Current</c> (as the <see cref="Services"/> /
+    /// <see cref="NativeWorld"/> accessors below do).
     /// </summary>
     public SystemExecutionContext Context { get; internal set; } = null!;
 
@@ -59,9 +62,10 @@ public abstract class SystemBase
     /// events (<c>Services.Pawns.Publish(...)</c>) and subscribing in
     /// <see cref="OnInitialize"/>. Reads route through the active
     /// <see cref="SystemExecutionContext"/> so out-of-context calls
-    /// (e.g. from the Godot main thread) fail loudly, and tests that build
-    /// a context without supplying services receive a diagnostic instead of
-    /// a silent NullReferenceException.
+    /// (e.g. from a non-scheduler thread such as the Launcher render
+    /// thread) fail loudly, and tests that build a context without
+    /// supplying services receive a diagnostic instead of a silent
+    /// NullReferenceException.
     /// </summary>
     protected IGameServices Services
     {
@@ -111,7 +115,8 @@ public abstract class SystemBase
     ///         via <c>IModApi.RegisterManagedComponent&lt;T&gt;</c>.</item>
     /// </list>
     /// Throws <see cref="InvalidOperationException"/> when called outside
-    /// an active scheduler context (e.g. from the Godot main thread).
+    /// an active scheduler context (e.g. from a non-scheduler thread such
+    /// as the Launcher render thread).
     /// </summary>
     /// <typeparam name="T">
     /// Class IComponent type previously registered via

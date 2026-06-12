@@ -4,9 +4,9 @@ namespace DualFrontier.Application.Scene;
 
 /// <summary>
 /// Engine-neutral representation of a game scene: tilemap, entity spawns,
-/// named markers, and metadata. Produced by the Godot DevKit plugin or
-/// authored by hand; consumed by any <see cref="ISceneLoader"/>
-/// implementation.
+/// named markers, and metadata. Authored by hand (the prior Godot DevKit
+/// plugin producer was retired with К-extensions cascade #2); consumed by
+/// any <see cref="ISceneLoader"/> implementation.
 /// </summary>
 public sealed record SceneDef(
     int                              Version,

@@ -9,9 +9,10 @@ internal static class ManifestParser
 {
     /// <summary>
     /// Parses a mod manifest JSON string and returns a fully populated
-    /// <see cref="ModManifest"/>. Supports both the v1 (legacy, string-array
-    /// dependencies, no <c>kind</c>/<c>apiVersion</c>/<c>hotReload</c>/
-    /// <c>capabilities</c>/<c>replaces</c>) and v2 schemas transparently.
+    /// <see cref="ModManifest"/>. Strict v3 only (К8.3+К8.4 cutover,
+    /// MOD_OS_ARCHITECTURE §2 / §4.5): a manifest whose
+    /// <c>manifestVersion</c> is missing or not <c>"3"</c> is rejected —
+    /// no grace period, no v1/v2 backward compatibility.
     /// </summary>
     /// <param name="json">Raw JSON content of <c>mod.manifest.json</c>.</param>
     /// <param name="sourcePath">

@@ -293,7 +293,7 @@ public sealed class ModLoader
     /// isolation is now enforced at compile time by <c>[SystemAccess]</c>
     /// + the future A'.9 analyzer. This method is the surviving fault
     /// entry point. See <see cref="ModIsolationException"/> and
-    /// <c>docs/MOD_PIPELINE.md</c>.
+    /// <c>docs/architecture/MOD_PIPELINE.md</c>.
     ///
     /// Idempotent: handling the same fault twice is harmless; the handler
     /// deduplicates internally. When no handler is installed

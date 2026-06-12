@@ -5,8 +5,9 @@ namespace DualFrontier.Application.Bridge.Commands;
 /// <c>GameLoop</c> publishes one of these onto the <see cref="PresentationBridge"/>
 /// after every successful <c>ParallelSystemScheduler.ExecuteTick</c> call inside
 /// its fixed-step accumulator loop. The presentation layer (Launcher's
-/// <c>RenderCommandDispatcher</c>) drains the command on the main render thread
-/// and forwards <see cref="Tick"/> к the HUD's tick label. Per К-extensions
+/// <c>RenderCommandDispatcher</c>) drains the command on the main render thread;
+/// the <c>HandleTickAdvanced</c> arm is currently a reserved silent stub —
+/// HUD tick-label consumption lands with HUD primitives. Per К-extensions
 /// cascade #2 (2026-05-23): dispatch handled centrally by Launcher.
 /// </summary>
 /// <param name="Tick">

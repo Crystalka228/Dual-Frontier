@@ -11,11 +11,13 @@ namespace DualFrontier.Application.Loop
     /// <summary>
     /// Fixed-step simulation loop running on a dedicated background thread.
     /// Ticks at TargetTps (30 Hz) independent of render FPS.
-    /// Communicates with Presentation only through PresentationBridge: per
-    /// fixed-step tick the loop enqueues a <see cref="TickAdvancedCommand"/>
-    /// carrying the current <c>TickScheduler.CurrentTick</c> value so the
-    /// HUD's tick label can update on the Godot main thread.
-    /// Internal — created by GameBootstrap, not exposed to Presentation.
+    /// Communicates with the presentation tier only through PresentationBridge:
+    /// per fixed-step tick the loop enqueues a <see cref="TickAdvancedCommand"/>
+    /// carrying the current <c>TickScheduler.CurrentTick</c> value; the Launcher
+    /// render thread drains the bridge per frame (the TickAdvanced dispatch arm
+    /// is currently a reserved silent stub pending HUD primitives — see
+    /// <c>RenderCommandDispatcher.HandleTickAdvanced</c>).
+    /// Internal — created by GameBootstrap, not exposed to the presentation tier.
     ///
     /// After each fixed step the loop also drains the native Background-tier
     /// event queue (К-L15 §3.8 Item 30 idle-slot dispatch) within the

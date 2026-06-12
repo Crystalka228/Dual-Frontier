@@ -10,7 +10,7 @@ public enum ToggleResult
 
     /// <summary>
     /// The mod is currently active and has <c>hotReload: false</c>;
-    /// per MOD_OS_ARCHITECTURE v1.5 §9.6 it cannot be toggled
+    /// per MOD_OS_ARCHITECTURE §9.6 it cannot be toggled
     /// mid-session. UI should grey out the button and show the
     /// restart-required tooltip.
     /// </summary>

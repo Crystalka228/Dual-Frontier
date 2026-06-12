@@ -8,14 +8,16 @@ namespace DualFrontier.Contracts.Modding;
 ///
 /// Without this attribute, <c>RegisterManagedComponent&lt;T&gt;</c> raises
 /// <c>ValidationErrorKind.MissingManagedStorageAttribute</c> at registration
-/// time (per MOD_OS_ARCHITECTURE.md v1.8 §11.2 enum extension).
+/// time (per MOD_OS_ARCHITECTURE §11.2, ValidationErrorKind registry).
 ///
 /// Path β components are runtime-only (Q4.b K-L3.1 lock) — not persisted
-/// by save system; reconstructed on load post-G-series. Storage lives in
-/// per-mod <c>RestrictedModApi.ManagedStore&lt;T&gt;</c> instance; reclaimed on
+/// by the save system (save-system reconstruction is future work; the
+/// former G-series that carried it was superseded by the V substrate per
+/// Q-G-2). Storage lives in per-mod
+/// <c>RestrictedModApi.ManagedStore&lt;T&gt;</c> instance; reclaimed on
 /// <c>AssemblyLoadContext.Unload</c> per MOD_OS_ARCHITECTURE §9.5 unload chain.
 ///
-/// Authority: KERNEL_ARCHITECTURE.md v1.5+ Part 0 K-L3 implication post-K-L3.1;
+/// Authority: KERNEL_ARCHITECTURE Part 0 (K-L3 implication post-K-L3.1);
 /// K-L3.1 amendment plan at docs/architecture/K_L3_1_AMENDMENT_PLAN.md.
 ///
 /// Lives in <c>DualFrontier.Contracts.Modding</c> because mod assemblies

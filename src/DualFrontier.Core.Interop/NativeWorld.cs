@@ -16,8 +16,9 @@ namespace DualFrontier.Core.Interop;
 /// Constraints:
 ///   * Component type <c>T</c> must be <c>unmanaged</c>. Reference-type
 ///     components cannot cross the P/Invoke boundary without GCHandle
-///     pinning, which was deliberately deferred — see
-///     <c>docs/NATIVE_CORE.md</c> for the rationale.
+///     pinning, which was deliberately rejected — managed-class components
+///     live mod-side per Path β. See KERNEL_ARCHITECTURE Part 0
+///     (K-L3 / K-L3.1 component storage paths) for the rationale.
 ///   * Not thread-safe. The native world matches the managed one's API but
 ///     drops the <c>ConcurrentDictionary</c> guard; do not share an instance
 ///     between threads for the PoC.

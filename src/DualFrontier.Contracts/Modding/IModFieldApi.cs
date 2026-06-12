@@ -1,10 +1,11 @@
 namespace DualFrontier.Contracts.Modding;
 
 /// <summary>
-/// Field-storage sub-API per <c>MOD_OS_ARCHITECTURE.md</c> v1.7 §4.6. Mods
-/// register named dense 2D grids (one cell type per field) and access them
-/// via point read/write or zero-copy span lease. The K9 brief defines the
-/// field storage contract (see <c>docs/architecture/FIELDS.md</c>).
+/// Field-storage sub-API per MOD_OS_ARCHITECTURE §4.6 (Fields and Compute
+/// Pipelines). Mods register named dense 2D grids (one cell type per field)
+/// and access them via point read/write or zero-copy span lease. The K9
+/// brief defines the field storage contract (see
+/// <c>docs/architecture/FIELDS.md</c>).
 /// </summary>
 /// <remarks>
 /// Capability gating happens at the boundary: every <see cref="RegisterField{T}"/>

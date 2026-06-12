@@ -4,11 +4,14 @@ namespace DualFrontier.Contracts.Attributes;
 
 /// <summary>
 /// Declares the system's access boundaries: which component types it reads,
-/// which it writes, and which domain bus it publishes events on.
-/// <c>ParallelSystemScheduler</c> uses this declaration to build the
-/// dependency graph, while <c>SystemExecutionContext</c> (the isolation
-/// guard) uses it for DEBUG-build checks. See <c>/docs/THREADING.md</c>
-/// and <c>/docs/ISOLATION.md</c> (TechArch sections 11.6 and 11.7).
+/// which it writes, and which domain bus it publishes events on. The managed
+/// <c>DependencyGraph</c> consumes the declaration for edge-building (the
+/// native <c>system_graph</c> mirrors the same edge semantics), and
+/// <c>ParallelSystemScheduler</c> reads the bus list when constructing each
+/// system's execution context. The К8.3+К8.4 runtime isolation guard that
+/// consumed it for per-access checks is deleted — enforcement is
+/// compile-time. See <c>docs/architecture/THREADING.md</c> and
+/// <c>docs/architecture/ISOLATION.md</c> (TechArch sections 11.6 and 11.7).
 ///
 /// The attribute is not inheritable — every system must declare its
 /// contract explicitly.
@@ -17,8 +20,9 @@ namespace DualFrontier.Contracts.Attributes;
 public sealed class SystemAccessAttribute : Attribute
 {
     /// <summary>
-    /// Component types the system is allowed to read through
-    /// <c>SystemBase.GetComponent&lt;T&gt;</c>.
+    /// Component types the system is allowed to read (post-К8.3+К8.4:
+    /// through the <c>NativeWorld</c> span/batch surface — the former
+    /// <c>SystemBase.GetComponent&lt;T&gt;</c> path is deleted).
     /// </summary>
     public Type[] Reads { get; }
 

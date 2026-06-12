@@ -10,7 +10,8 @@ namespace DualFrontier.Application.Modding;
 /// to a single mod through <see cref="IModApi.Fields"/>. Each
 /// <see cref="RegisterField{T}"/> and <see cref="GetField{T}"/> call is
 /// gated against the mod's manifest capabilities per
-/// <c>MOD_OS_ARCHITECTURE.md</c> v1.7 §3.2 / §4.6.
+/// MOD_OS_ARCHITECTURE §3.2 (capability syntax) / §4.6 (Fields and
+/// Compute Pipelines).
 /// </summary>
 /// <remarks>
 /// Per-cell <c>ReadCell</c> / <c>WriteCell</c> traffic through the returned

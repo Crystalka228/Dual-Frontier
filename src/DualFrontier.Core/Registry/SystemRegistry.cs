@@ -4,7 +4,11 @@ using DualFrontier.Core.ECS;
 
 /// <summary>
 /// A registry that tracks all SystemBase instances registered for the game loop.
-/// Used by ParallelSystemScheduler to build the dependency graph.
+/// Currently unreferenced by production wiring: GameBootstrap registers core
+/// systems directly with the managed <c>DependencyGraph</c> (which produces the
+/// phases <c>ParallelSystemScheduler</c> dispatches) and with the native system
+/// graph; mod systems are tracked by <c>ModRegistry</c>. Retained as legacy
+/// surface.
 /// </summary>
 internal sealed class SystemRegistry
 {

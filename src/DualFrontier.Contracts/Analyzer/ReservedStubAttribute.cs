@@ -27,10 +27,11 @@ namespace DualFrontier.Contracts.Analyzer;
 /// <para>
 /// The <see cref="Reason"/> field is MANDATORY per Q-L-10 + PA-002 axiom («без
 /// костылей» / no marker without justification). The constructor throws
-/// <see cref="ArgumentException"/> when <c>reason</c> is null or whitespace.
-/// The DFL025-A analyzer rule (Phase β implementation) enforces presence at
-/// compile time + restricts behavior invocation against tagged members
-/// (reflection-only access permitted).
+/// <see cref="ArgumentException"/> when <c>reason</c> is null or whitespace —
+/// the only enforcement that exists today. The DFL025-A analyzer rule is
+/// registered as a non-detecting stub; compile-time presence checking and
+/// behavior-invocation restriction land at Phase β (Planned — see
+/// docs/ROADMAP.md §Analyzer track).
 /// </para>
 /// <para>
 /// К-extensions cascade #3 precedent: deferred dispatch arms (HandlePawnState,
@@ -39,7 +40,7 @@ namespace DualFrontier.Contracts.Analyzer;
 /// </para>
 /// </remarks>
 /// <seealso cref="ReservedStubPurpose"/>
-/// <seealso href="https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#4--a91-active-rules--first-batch-enforcement-surface">DFL025 family detection (ANALYZER_RULES.md §4.4)</seealso>
+/// <seealso href="https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md">ANALYZER_RULES §4 (rule registry) — DFL025 family</seealso>
 [AttributeUsage(
     AttributeTargets.Class
     | AttributeTargets.Struct

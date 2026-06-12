@@ -18,7 +18,8 @@ namespace DualFrontier.Core.Scheduling;
 /// Write-write collisions on the same component type are reported as errors
 /// at <see cref="Build"/> time. Cycles are detected after the topological
 /// sort drains and are likewise reported as errors.
-/// Diagnostic messages follow the format documented in <c>docs/THREADING.md</c>.
+/// Diagnostic messages follow the format documented in
+/// <c>docs/architecture/THREADING.md</c> (Debugging conflicts).
 /// </summary>
 internal sealed class DependencyGraph
 {

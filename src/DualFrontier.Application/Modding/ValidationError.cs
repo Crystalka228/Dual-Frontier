@@ -86,7 +86,7 @@ public enum ValidationErrorKind
     /// <c>IModApi.RegisterManagedComponent&lt;T&gt;</c> without the
     /// <c>[ManagedStorage]</c> attribute. Path β (K-L3.1 bridge) requires
     /// the attribute as an opt-in marker per
-    /// MOD_OS_ARCHITECTURE.md v1.8 §11.2 — absent attribute is a brief-
+    /// MOD_OS_ARCHITECTURE §11.2 — absent attribute is a brief-
     /// authoring miss in the mod, caught at <c>RegisterManagedComponent</c>
     /// time before the per-mod <c>ManagedStore&lt;T&gt;</c> is created.
     /// Introduced at K8.3+K8.4 combined milestone (2026-05-14).

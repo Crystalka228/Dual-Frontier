@@ -3,20 +3,21 @@ using System;
 namespace DualFrontier.Application.Modding;
 
 /// <summary>
-/// Thrown when a mod attempts to break isolation — for example, casting
-/// <see cref="DualFrontier.Contracts.Modding.IModApi"/> to the concrete
-/// <see cref="RestrictedModApi"/> implementation, or reaching into the
-/// core's internals bypassing the API.
+/// Typed payload of a mod isolation fault. Carried by the surviving fault
+/// entry point <see cref="ModLoader.HandleModFault"/>, which reports it to
+/// <see cref="ModFaultHandler"/> so the offending mod is queued for deferred
+/// unload at the next menu open — the core does not crash and the game
+/// continues running (TechArch 11.8; MOD_OS_ARCHITECTURE §10.3).
 ///
-/// This exception is also thrown by <c>SystemExecutionContext</c> when a
-/// mod system breaks isolation: accesses an undeclared component, publishes
-/// to a foreign bus, reaches into <c>World</c>/<c>ComponentStore</c>
-/// directly, or tries to obtain a reference to another system through
-/// <c>GetSystem</c>.
-///
-/// Per TechArch 11.8 such a mod is immediately unloaded by the
-/// <c>ModFaultHandler</c> — the core does not crash and the game continues
-/// running.
+/// History: <c>SystemExecutionContext</c> previously threw this class of
+/// exception at runtime for undeclared component access, foreign-bus
+/// publication, direct <c>World</c>/<c>ComponentStore</c> reach-in, and
+/// <c>GetSystem</c> calls. That runtime guard route was deleted at the
+/// К8.3+К8.4 cutover; isolation is now enforced at compile time via
+/// <c>[SystemAccess]</c>, and the <see cref="RestrictedModApi"/>
+/// cast-prevention rule is a structural barrier (internal sealed type,
+/// unresolvable from a mod ALC — MOD_OS_ARCHITECTURE §4.4), not a runtime
+/// check.
 /// </summary>
 public sealed class ModIsolationException : Exception
 {

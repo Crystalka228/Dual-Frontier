@@ -56,7 +56,7 @@ public sealed record PipelineResult(
 /// registration and leaves the scheduler untouched. Shared mods, once
 /// loaded, persist for the session.
 ///
-/// Per-mod unload discipline (M7.2 + M7.3, per MOD_OS_ARCHITECTURE v1.4 §9.5):
+/// Per-mod unload discipline (M7.2 + M7.3, per MOD_OS_ARCHITECTURE §9.5):
 /// <see cref="UnloadMod"/> implements the full §9.5 chain. Steps 1–6
 /// (UnsubscribeAll → RevokeAll → RemoveMod → graph rebuild → scheduler
 /// swap → ALC.Unload, M7.2) are each wrapped in best-effort try/catch per
@@ -102,8 +102,8 @@ internal sealed class ModIntegrationPipeline
     /// <c>DualFrontier.Modding.Tests</c> and preserves the M3–M6 boundary
     /// discipline of leaving <c>DualFrontier.Core</c> untouched. If a future
     /// closure review finds the wording is materially incompatible with
-    /// pipeline-mediated state, the resolution is a v1.5 ratification — not
-    /// a silent move into the scheduler.
+    /// pipeline-mediated state, the resolution is a ratified
+    /// MOD_OS_ARCHITECTURE amendment — not a silent move into the scheduler.
     ///
     /// Default <c>false</c> ("paused") is load-bearing: every M0–M6 test
     /// constructs a fresh pipeline and calls <see cref="Apply"/> without ever
@@ -112,7 +112,7 @@ internal sealed class ModIntegrationPipeline
     /// </summary>
     private bool _isRunning;
 
-    // M7.3 step 7 (MOD_OS_ARCHITECTURE v1.4 §9.5 step 7) — default cadence
+    // M7.3 step 7 (MOD_OS_ARCHITECTURE §9.5 step 7) — default cadence
     // for the WeakReference spin loop after ALC.Unload. 100 iterations of
     // 100 ms = 10 s timeout, the value the spec calls out verbatim.
     private const int Step7TimeoutMs = 10_000;
@@ -499,7 +499,7 @@ internal sealed class ModIntegrationPipeline
     }
 
     /// <summary>
-    /// Unloads a single mod by id per MOD_OS_ARCHITECTURE v1.4 §9.5 steps
+    /// Unloads a single mod by id per MOD_OS_ARCHITECTURE §9.5 steps
     /// 1–7 + §9.5.1 best-effort failure discipline. Steps 1–6 are wrapped
     /// in <see cref="TryUnloadStep"/>; on exception a non-blocking
     /// <see cref="ValidationWarning"/> is recorded with
@@ -511,7 +511,7 @@ internal sealed class ModIntegrationPipeline
     /// predecessor failed (e.g. <see cref="ModRegistry.RemoveMod"/> on a
     /// mod with no registered systems is harmless).
     ///
-    /// Step 7 (M7.3, MOD_OS_ARCHITECTURE v1.4 §9.5 step 7) is timeout-
+    /// Step 7 (M7.3, MOD_OS_ARCHITECTURE §9.5 step 7) is timeout-
     /// based, not exception-based, so it lives in a dedicated helper
     /// (<see cref="TryStep7AlcVerification"/>) rather than the
     /// <see cref="TryUnloadStep"/> wrapper. The order is:
@@ -551,8 +551,8 @@ internal sealed class ModIntegrationPipeline
     /// when every step succeeded or when the mod was not active.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    /// If <see cref="IsRunning"/> is true. Per v1.4 §9.3, mods cannot be
-    /// unloaded while the scheduler is ticking.
+    /// If <see cref="IsRunning"/> is true. Per MOD_OS_ARCHITECTURE §9.3,
+    /// mods cannot be unloaded while the scheduler is ticking.
     /// </exception>
     public IReadOnlyList<ValidationWarning> UnloadMod(string modId)
     {
@@ -588,7 +588,7 @@ internal sealed class ModIntegrationPipeline
     }
 
     /// <summary>
-    /// Runs MOD_OS_ARCHITECTURE v1.4 §9.5 steps 1–6 + captures a
+    /// Runs MOD_OS_ARCHITECTURE §9.5 steps 1–6 + captures a
     /// <see cref="WeakReference"/> to the mod's
     /// <see cref="ModLoadContext"/> + removes the mod from
     /// <c>_activeMods</c>. Returns the captured WR, or
@@ -764,7 +764,7 @@ internal sealed class ModIntegrationPipeline
     /// Shared mods are not unloaded: the shared ALC is non-collectible
     /// per MOD_OS_ARCHITECTURE §5.1.
     ///
-    /// Per v1.4 §9.5.1, best-effort: warnings from individual
+    /// Per MOD_OS_ARCHITECTURE §9.5.1, best-effort: warnings from individual
     /// <see cref="UnloadMod"/> calls are accumulated and returned. The
     /// bulk-unload semantics are preserved (every active mod is removed
     /// from <c>_activeMods</c> regardless of step-level failures).
@@ -840,7 +840,7 @@ internal sealed class ModIntegrationPipeline
 
     /// <summary>
     /// Wraps a single unload-chain step in best-effort try/catch per
-    /// MOD_OS_ARCHITECTURE v1.4 §9.5.1. On exception, records a
+    /// MOD_OS_ARCHITECTURE §9.5.1. On exception, records a
     /// <see cref="ValidationWarning"/> attributed to <paramref name="modId"/>
     /// with the failing step number and message, then returns so the next
     /// step in <see cref="UnloadMod"/> can run. The mod is removed from
@@ -875,14 +875,14 @@ internal sealed class ModIntegrationPipeline
     /// <see cref="UnloadMod"/> stack frame — without this, the spin in
     /// <see cref="TryStep7AlcVerification"/> can keep the assembly alive
     /// indefinitely on real mods (Microsoft's "Use collectible assembly
-    /// load contexts" pattern, MOD_OS_ARCHITECTURE v1.4 §9.5 step 7).
+    /// load contexts" pattern, MOD_OS_ARCHITECTURE §9.5 step 7).
     /// </summary>
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static WeakReference CaptureAlcWeakReference(LoadedMod mod)
         => new WeakReference(mod.Context);
 
     /// <summary>
-    /// MOD_OS_ARCHITECTURE v1.4 §9.5 step 7 — spins on
+    /// MOD_OS_ARCHITECTURE §9.5 step 7 — spins on
     /// <see cref="WeakReference.IsAlive"/> with the mandatory double-
     /// collect GC pump bracket each iteration. Cadence per spec:
     /// 100 iterations × 100 ms = 10 s timeout. On timeout appends a

@@ -8,7 +8,7 @@ namespace DualFrontier.Crypto.Future;
 /// is reserved for future binding when conditions in §D1 of the
 /// FHE Integration Contract are met.
 ///
-/// See <c>docs/FHE_INTEGRATION_CONTRACT.md</c> for the full contract.
+/// See <c>docs/architecture/FHE_INTEGRATION_CONTRACT.md</c> for the full contract.
 ///
 /// Implementations MUST satisfy all decisions in
 /// FHE_INTEGRATION_CONTRACT.md version 1.0 or successor.
@@ -27,7 +27,7 @@ public interface IHomomorphicComputeProvider
 /// but has no enforcement. Enforcement activates concurrently
 /// with provider binding.
 ///
-/// See <c>docs/FHE_INTEGRATION_CONTRACT.md</c> §D3 for the
+/// See <c>docs/architecture/FHE_INTEGRATION_CONTRACT.md</c> §D3 for the
 /// boundary placement decision.
 /// </summary>
 public interface IFheBoundaryParticipant
