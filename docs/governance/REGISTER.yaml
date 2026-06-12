@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.16"
-last_modified: "2026-06-11"
-last_modified_commit: "fe1fa61"
+register_version: "2.17"
+last_modified: "2026-06-12"
+last_modified_commit: "PENDING-COMMIT-ARCH_TRUTH-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -39,9 +39,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.6.0"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-KERNEL"
+    version: "2.6.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "3fc90c5"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-24"
@@ -78,9 +78,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.11"
-    last_modified: "2026-05-20"
-    last_modified_commit: "PENDING-COMMIT-K10_3-V2-K_L18-LOAD-BEARING"
+    version: "1.12.0"
+    last_modified: "2026-06-12"
+    last_modified_commit: "9676f54"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
@@ -100,9 +100,9 @@ documents:
     # last_modified/last_review_event updated к match cascade #2 closure context.
     supersedes: [DOC-D-G0, DOC-D-G1, DOC-D-G2, DOC-D-G3, DOC-D-G4, DOC-D-G5, DOC-D-G6, DOC-D-G7, DOC-D-G8, DOC-D-G9, DOC-A-VISUAL_ENGINE, DOC-A-GODOT_INTEGRATION]
     owner: Crystalka
-    version: "1.1.2"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-COMMIT-K_EXT_2-CLOSURE"
+    version: "1.2.0"
+    last_modified: "2026-06-12"
+    last_modified_commit: "60175a1"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
@@ -119,9 +119,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.4"
-    last_modified: "2026-05-16"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "1.4.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "f2e6df2"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-10"
@@ -157,12 +157,12 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "0.4.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "1.0.0"
+    last_modified: "2026-06-12"
+    last_modified_commit: "31b013e"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "2027-06-12"
     reviewer: Crystalka
 
   - id: DOC-A-CONTRACTS
@@ -203,12 +203,12 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "2.0.0"
+    last_modified: "2026-06-12"
+    last_modified_commit: "5d28529"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "2027-06-12"
     reviewer: Crystalka
 
   - id: DOC-A-ECS
@@ -233,12 +233,12 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "2.0.0"
+    last_modified: "2026-06-12"
+    last_modified_commit: "e6dcb46"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "2027-06-12"
     reviewer: Crystalka
 
   - id: DOC-A-MODDING
@@ -343,9 +343,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-05-06"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "1.0.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "f2e6df2"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-05-12"
@@ -358,9 +358,9 @@ documents:
     tier: 1
     lifecycle: Draft
     owner: Crystalka
-    version: "0.1"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "0.1.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "f2e6df2"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-05-12"
@@ -374,9 +374,9 @@ documents:
     tier: 1
     lifecycle: Draft
     owner: Crystalka
-    version: "0.1"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "0.1.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "f2e6df2"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-05-12"
@@ -471,9 +471,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.0.0"
-    last_modified: "2026-06-11"
-    last_modified_commit: "4e584b3"
+    version: "2.1.0"
+    last_modified: "2026-06-12"
+    last_modified_commit: "bdb5283"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -582,10 +582,10 @@ documents:
     is_meta_entry: true
     meta_role: register_specification
     owner: Crystalka
-    version: "1.1.1"
+    version: "1.1.2"
     first_authored: "2026-05-12"
-    last_modified: "2026-05-25"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CROSSREFS"
+    last_modified: "2026-06-12"
+    last_modified_commit: "7a074e4"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-25"
@@ -661,9 +661,9 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-05-23"
-    last_modified_commit: "044855c"
+    version: "1.0.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "3fc90c5"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-05-23"
@@ -680,9 +680,9 @@ documents:
     tier: 1
     lifecycle: AUTHORED-SKELETON
     owner: Crystalka
-    version: "0.2.0"
-    last_modified: "2026-06-11"
-    last_modified_commit: "4a67a22"
+    version: "0.2.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "3fc90c5"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -701,8 +701,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-12"
-    last_modified_commit: "fe35f00"
+    last_modified: "2026-06-12"
+    last_modified_commit: "061fbc0"
     content_language: mixed
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-12"
@@ -718,8 +718,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-06-11"
-    last_modified_commit: "5ebc24b"
+    last_modified: "2026-06-12"
+    last_modified_commit: "365f8e9"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-06-11"
@@ -752,8 +752,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-24"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_0-CLOSURE"
+    last_modified: "2026-06-12"
+    last_modified_commit: "f2e6df2"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-24"
@@ -769,9 +769,9 @@ documents:
     tier: 2
     lifecycle: AUTHORED-SKELETON
     owner: Crystalka
-    version: "0.1"
-    last_modified: "2026-05-24"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_0-CLOSURE"
+    version: "0.1.1"
+    last_modified: "2026-06-12"
+    last_modified_commit: "3fc90c5"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-05-24"
@@ -788,8 +788,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-24"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_0-CLOSURE"
+    last_modified: "2026-06-12"
+    last_modified_commit: "3fc90c5"
     content_language: mixed
     review_cadence: on-change+quarterly
     last_review_date: "2026-05-24"
@@ -803,7 +803,7 @@ documents:
     title: "A'.9 Reconnaissance Report — Roslyn Analyzer Architecture Discovery"
     category: A
     tier: 2
-    lifecycle: Live
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "Live"
     last_modified: "2026-05-24"
@@ -2229,6 +2229,25 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "Standing-Law Cascade execution brief — converts the drifted methodology layer (v1.0 sketches claiming phantom enforcement) into standing law that briefs cite instead of restating, carrying zero roadmap load, with every normative claim naming an on-disk enforcer (brief §8 truth law). Clears the A'.9.1 Phase β runway: the suppression law (CODING_STANDARDS §5.3 DFK-WAIVER) and the mutability license (RESERVED_SURFACE_MUTABILITY) must pre-exist Phase β triage or it reproduces Phase α's halt traffic at larger scale (brief §1). DOC-D Category D Tier 4 per the empirical execution-brief register convention (sister к DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF; the brief frontmatter self-declared tier 3 — enrolled at the observed DOC-D tier 4 convention, Skeleton-revisions-class deviation recorded in the C9 commit body). Single PENDING-COMMIT exception this cascade: the register header self-reference (C9's own hash), backfilled at C10 per the established Option-B amendment-integrity practice — zero other placeholders created; C1-C8 hashes recorded real."
+
+  - id: DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF
+    path: tools/briefs/ARCHITECTURE_TRUTH_CASCADE_BRIEF.md
+    title: "ARCHITECTURE TRUTH CASCADE — Execution Brief (architecture docs → code-truth: 5 rewrites + reclassification ×6 + ROADMAP reconciliation + DD-3 hygiene + comment citation pass + CODING_STANDARDS §6.1 citation-form rule + register closure)"
+    category: D
+    tier: 4
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-06-12"
+    last_modified_commit: "0890645"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-06-12"
+    last_review_event: "Brief authored 2026-06-11 by Claude Opus (deliberation session) from ARCHITECTURE TRUTH RECON 2026-06-11 (R1-R8; supplied as in-session input — no on-disk copy); ratified by Crystalka via invocation; EXECUTED 2026-06-12 by Claude Code (Fable 5, local Skarlet session) per §4 topology — Phase 0 (base state b38929e verified exactly, H1 clean; baseline gates; REGISTER vocabulary read per Lesson #N14; validate exit 0 folded into C1) → Wave W 4 parallel writer agents on disjoint grants (W1 MOD_OS 1.12.0 / W2 VULKAN 1.2.0 / W3 THREADING+EVENT_BUS 2.0.0 + ARCHITECTURE 1.0.0 / W4 reclass ×6 + trackers + DD-3 hygiene) → checkpoint C-W (truth-law sample audit incl. two recon-vs-code corrections resolved in code's favor: SystemExecutionContext survives, К-L19 fail-fast restored; zero-roadmap-load + citation-form greps clean; KERNEL word-diff = exactly the sanctioned tokens) → CF comment agent (36 managed + 3 native files, comment-only, R4/R5 verdicts) → serial closure C2-C17. Per-file commit regrouping recorded per RESERVED_SURFACE_MUTABILITY §5 (C7 carries SEQ/MIGRATION_PLAN/KFNS riders; C14 landed before C12/C13)."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Architecture Truth Cascade execution brief — after this cascade no architecture document answers «what's next» (ROADMAP.md alone carries forward state), the five drifted bodies are code-truth, and the citation-form rule (CODING_STANDARDS §6.1) closes the version-pin/anchor breakage classes. DOC-D Category D Tier 4 per the empirical execution-brief convention (sister к DOC-D-STANDING_LAW_CASCADE_BRIEF). Single PENDING-COMMIT exception this cascade: the register header self-reference (C16's own hash), backfilled at C17 per the established Option-B practice — zero other placeholders created; C1-C15 hashes recorded real. The recon report itself remains chat-tier input (not enrolled; the brief §2 digest is its durable record), matching the STANDING-LAW RECON precedent."
 
   - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
     path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
@@ -10090,3 +10109,80 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-D-STANDING_LAW_CASCADE_BRIEF → EXECUTED]
+
+  - id: EVT-2026-06-12-ARCH_TRUTH-CLOSURE
+    timestamp: "2026-06-12T00:00:00Z"
+    type: doc_refactor
+    cascade: Architecture Truth Cascade (architecture docs → code-truth)
+    phase: cascade closure (C16 of C1-C17)
+    title: "Architecture Truth Cascade REGISTER closure — 5 code-truth rewrites + reclassification banner ×6 + ROADMAP reconciliation + DD-3 hygiene + comment citation pass + CODING_STANDARDS §6.1 (2.16 → 2.17)"
+    summary: |
+      Cures the architecture layer's documentation drift per
+      tools/briefs/ARCHITECTURE_TRUTH_CASCADE_BRIEF.md (authored 2026-06-11 by Claude
+      Opus from ARCHITECTURE TRUTH RECON R1-R8, supplied in-session; ratified by
+      Crystalka via invocation; executed 2026-06-12 by Claude Code Fable 5, local
+      Skarlet session). Topology: Phase 0 (base b38929e exact, tree clean, H1 clean;
+      validate exit 0 folded into C1; REGISTER vocabulary read per Lesson #N14;
+      baseline gates on the pristine tree) → Wave W 4 parallel writers on disjoint
+      grants → checkpoint C-W (truth-law sample audit; recon-vs-code conflicts
+      resolved in code's favor; zero-roadmap-load + citation-form greps clean) →
+      CF comment agent (36 managed + 3 native files, comment-only) → serial closure.
+      Commits: C1 0890645 (brief enrollment + validation checkpoint); C2 9676f54
+      (MOD_OS 1.12.0 sectional code-truth rewrite + ROADMAP M3.5 payload — strict-v3
+      manifest truth, real IModApi signatures, current fault model, §11 dedup,
+      changelog backfill v1.9-v1.11); C3 60175a1 (VULKAN 1.2.0 body scrub + ROADMAP
+      V-row split V0✅/V1✅/V2⏭/M-V⏭ with evidence); C4 5d28529 (THREADING 2.0.0
+      native-truth rewrite — system_graph.cpp scheduling spec, managed dispatch
+      facade honesty); C5 e6dcb46 (EVENT_BUS 2.0.0 + the previously missing native
+      three-tier bus spec authored from bus_fast/normal/background/common.cpp);
+      C6 31b013e (ARCHITECTURE 1.0.0 thin overview, 106 lines, real 12-project set);
+      C7 f2e6df2 (reclassification banner batch ×6 + per-file D8/D9 riders:
+      MIGRATION_PLAN 1.4.1 desync cure, SEQ DF renames + dangling refs, KFNS
+      self-status realized); C8 7d94433 (ROADMAP reconciliation — M8 honest state
+      with in-session build attempt 6×exit-0, К-extensions block #0-#5 with
+      empirical hashes incl. the #2 correction 2022bc1..21a1054, version pins
+      removed); C9 061fbc0 (MIGRATION_PROGRESS chronicle catch-up А'.8→present +
+      snapshot truth incl. test-count 620→1034/1036); C10 3fc90c5 (DF→DFK living
+      rename per ANALYZER_RULES §4 + K_CLOSURE archival mapping banner — 85 in-body
+      snapshot instances NOT edited; KERNEL 2.6.1 version-pair alignment);
+      C11 7a074e4 (FRAMEWORK §8.1 four→five meta-entries, 1.1.2); C12 89d34f6
+      (managed comment citation truth pass, 36 files — IVE fault-path truth, Godot
+      stale-claims 0, ReservedStub enforcement-verb fix + anchor fix, version-pin
+      unpins, build gate 0W/0E); C13 476757b (native comment pass — thread_pool
+      sizing truth, NATIVE_CORE.md → KERNEL Part 0 К-L3/К-L3.1 repoint with
+      coverage verified; native build + selftest ALL PASSED); C14 bdb5283
+      (CODING_STANDARDS 2.1.0 §6.1 citation-form rule, SYNTH-2 same-cascade);
+      C15 365f8e9 (F-ledger: F-2/F-7 amended, F-5 scope note, F-14..F-19 seeded
+      CLOSED with closing hashes, F-20..F-24 seeded OPEN).
+    governance_impact: |
+      DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF enrolled EXECUTED (Tier 4 per the
+        empirical execution-brief convention; real C1 hash 0890645).
+      Documents 272 → 273; audit_trail 39 → 40.
+      Version bumps: DOC-A-MOD_OS 1.11 → 1.12.0 (MINOR); DOC-A-VULKAN_SUBSTRATE
+        1.1.2 → 1.2.0 (MINOR); DOC-A-THREADING 1.1.1 → 2.0.0 (MAJOR); DOC-A-EVENT_BUS
+        1.1.1 → 2.0.0 (MAJOR); DOC-A-ARCHITECTURE 0.4.1 → 1.0.0 (MAJOR);
+        DOC-A-MIGRATION_PLAN 1.4 → 1.4.1; DOC-A-KERNEL_FULL_NATIVE_SCHEDULER 2.0 →
+        2.0.1; DOC-A-FHE_INTEGRATION_CONTRACT 1.0 → 1.0.1; DOC-A-ARCHITECTURE_TYPE_SYSTEM
+        0.1 → 0.1.1; DOC-A-MAX_ENG_REFACTOR_TRACK_B 0.1 → 0.1.1; DOC-A-KERNEL 2.6.0 →
+        2.6.1; DOC-A-K_CLOSURE_REPORT 1.0 → 1.0.1; DOC-A-K_L14_EVIDENCE_DASHBOARD
+        0.1 → 0.1.1; DOC-A-ANALYZER_RULES 0.2.0 → 0.2.1; DOC-A-FRAMEWORK 1.1.1 →
+        1.1.2; DOC-B-CODING_STANDARDS 2.0.0 → 2.1.0 (MINOR). Live-touch: DOC-C-ROADMAP,
+        DOC-C-MIGRATION_PROGRESS, DOC-A-PHASE_A_PRIME_SEQUENCING, DOC-A-K_EXTENSIONS_LEDGER.
+      Lifecycle: DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT Live → EXECUTED (brief Д-5,
+        F-19 closed); DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF Draft → EXECUTED.
+      register_version 2.16 → 2.17; header last_modified_commit set to the single
+        sanctioned PENDING-COMMIT-ARCH_TRUTH-CLOSURE self-reference, backfilled with
+        C16's real hash at C17 (Option B). C1-C15 hashes recorded REAL — zero other
+        placeholders created; 14 legacy PENDING-COMMIT placeholders on touched
+        entries were overwritten by this cascade's real hashes (F-2 population
+        shrinks accordingly; re-measure recorded in the closure report).
+      Findings ledger at closure: F-14..F-19 CLOSED (this cascade); F-20..F-24
+        seeded OPEN; F-2/F-7 amended; F-5 scope note. F-10 pair re-verified
+        pre-existing (closure gates table).
+      К-L impact: zero (К-L count unchanged: 21 final). Production code untouched
+        except comment-only C12/C13 (build + selftest gates green).
+      Zero pushes performed (pushes are Crystalka's act per the closure checklist).
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF → EXECUTED, DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT → EXECUTED]
