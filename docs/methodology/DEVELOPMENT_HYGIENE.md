@@ -1,4 +1,4 @@
-﻿---
+---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-B-DEVELOPMENT_HYGIENE
@@ -6,180 +6,227 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
+version: "2.0.0"
+next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-DEVELOPMENT_HYGIENE
 ---
 # Development hygiene
 
-The project is deliberately developed along two parallel tracks: the **game** Dual Frontier (Phases 0–7, main branch) and the **engine** — a generic ECS core that forks into a separate product after the game ships (see [ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)). To make the fork cheap, the engine/game boundary must stay clean through Phases 4–7, when the temptation to "cut corners" is at its highest.
+Operational truth for working in this repository: what is on disk, which commands actually build it, which scripts have which side effects, and which policies bind the executor.
+Every claim below names its on-disk artifact or its verified invocation.
+Architecture lives in `docs/architecture/`; code law lives in `CODING_STANDARDS.md`; test law lives in `TESTING_STRATEGY.md`; this document is the layer between them and the keyboard.
 
-This document is not architectural theory (that lives in [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) and [CODING_STANDARDS](./CODING_STANDARDS.md)) — it is an **applied checklist for every PR**. If every item is green, the boundary does not degrade. If anything is red, it stops the merge — not "we'll fix it later."
+## §1 — Repository map
 
-## Core invariant
+Top two levels, one phrase each (verified 2026-06-11):
 
-Engine assemblies never reference game assemblies. Everything else in this document is a way to verify that the invariant has not been broken by accident.
-
-| Engine (generic, reusable)              | Game (specific to Dual Frontier)            |
-|-----------------------------------------|---------------------------------------------|
-| `DualFrontier.Contracts`                | `DualFrontier.Components`                   |
-| `DualFrontier.Core`                     | `DualFrontier.Events`                       |
-| `DualFrontier.Core.Interop`             | `DualFrontier.Systems`                      |
-| `native/DualFrontier.Core.Native/`      | `DualFrontier.AI`                           |
-| `DualFrontier.Presentation.Native`      | `DualFrontier.Presentation` (Godot DevKit)  |
-| Modding section of `DualFrontier.Application` | Game-loop part of `DualFrontier.Application` |
-
-Full list and rationale: [ARCHITECTURE §"Dependency rules"](/docs/architecture/ARCHITECTURE.md#dependency-rules).
-
-## Checklist for every PR
-
-Five checks. They run sequentially; one red one and the PR does not ship.
-
-### 1. The engine does not import the game
-
-```bash
-grep -rn "using DualFrontier\.\(Components\|Systems\|Events\|AI\)" \
-    src/DualFrontier.Contracts/ \
-    src/DualFrontier.Core/ \
-    src/DualFrontier.Core.Interop/ \
-    src/DualFrontier.Presentation.Native/ \
-    src/DualFrontier.Application/Modding/
+```
+.claude/ .vs/ .vscode/        IDE + session configuration (machine-local state)
+assets/                       Kenney art packs, Cinzel font, scenes/, shaders/
+BenchmarkDotNet.Artifacts/    gitignored benchmark outputs
+docs/
+  architecture/               substrate specs (KERNEL, MOD_OS, VULKAN, ...) + historical/ quarantine
+  audit/                      closure reviews
+  benchmarks/                 performance measurement records
+  governance/                 REGISTER.yaml + FRAMEWORK + PROJECT_AXIOMS + validation/render outputs
+  ideas/ learning/ mechanics/ design + study material
+  methodology/                this document + CODING_STANDARDS + TESTING_STRATEGY + METHODOLOGY
+                              + RESERVED_SURFACE_MUTABILITY
+  prompts/                    execution prompts (e.g. PHASE_BETA_PREP_EXECUTION_PROMPT.md)
+  reports/                    reconnaissance + drift reports
+  research/ scratch/          study material; working notes
+  ROADMAP.md                  the single roadmap target for all future-work content
+mods/                         DualFrontier.Mod.Example (sln) + 6 Vanilla.* mods (disk-only)
+                              + Directory.Build.targets
+native/
+  DualFrontier.Core.Native/   C++ kernel: CMakeLists.txt, src/, include/,
+                              build/ (canonical MSVC tree), out/ (VS-IDE preset tree — non-canonical)
+src/                          12 managed projects + src/Directory.Build.props (analyzer wiring)
+tests/                        11 test/benchmark projects + 19 fixture projects
+tools/
+  governance/                 sync_register.ps1, render_register.ps1, query_register.ps1,
+                              SCOPE_EXCLUSIONS.yaml
+  DualFrontier.Analyzers/     Roslyn analyzer project (17 rule stubs under Rules/)
+  DualFrontier.Mod.ManifestRewriter/   mod-manifest tooling
+  briefs/                     Category D cascade briefs + closure reports
+  shaders/                    shader sources for the CompileShaders target
+  glslangValidator.exe        committed shader-compiler binary
+  scaffold-runtime.ps1        idempotent runtime-directory materializer
+  scratch/                    working notes
+DualFrontier.sln              the managed solution (§2)
+Directory.Build.props         root MSBuild props (TreatWarningsAsErrors=true; CompileShaders target)
+Directory.Packages.props      Central Package Management (single version source, A'.9.1 Phase α Commit 3)
+project.godot                 tracked legacy file — Crystalka-owned, do not delete (§7)
 ```
 
-Expected output: empty. A single line and the PR does not merge.
+## §2 — Project set truth (sln vs disk)
 
-### 2. `dotnet build` is green
+`DualFrontier.sln` contains **32 projects** plus 4 solution folders (`src`, `tests`, `tools`, `mods`) — counted from `Project(` entries with the solution-folder GUID `{2150E333-…}` excluded. Composition:
 
-```bash
-./tools/build-all.sh --config Release          # Linux / WSL / macOS
-.\tools\build-all.ps1 -Configuration Release   # Windows
+**12 src projects** (all wired to the analyzer via `src/Directory.Build.props`):
+
+- `DualFrontier.AI`
+- `DualFrontier.Application`
+- `DualFrontier.Components`
+- `DualFrontier.Contracts`
+- `DualFrontier.Core`
+- `DualFrontier.Core.Interop`
+- `DualFrontier.Crypto.Future`
+- `DualFrontier.Events`
+- `DualFrontier.Launcher`
+- `DualFrontier.Persistence`
+- `DualFrontier.Runtime`
+- `DualFrontier.Systems`
+
+**17 projects under `tests/`**:
+
+- 9 test projects: `DualFrontier.Analyzers.Tests`, `DualFrontier.Application.Tests`, `DualFrontier.Core.Interop.Tests`, `DualFrontier.Core.Tests`, `DualFrontier.Mod.ManifestRewriter.Tests`, `DualFrontier.Modding.Tests`, `DualFrontier.Persistence.Tests`, `DualFrontier.Runtime.Tests`, `DualFrontier.Systems.Tests`;
+- 2 executables: `DualFrontier.Core.Benchmarks` (BenchmarkDotNet) and `DualFrontier.Runtime.SmokeTest`;
+- 6 fixture projects: `Fixture.BadRegularMod`, `Fixture.BadSharedMod_WithIMod`, `Fixture.PublisherMod`, `Fixture.SharedEvents`, `Fixture.SubscriberMod`, `Fixture.VanillaMod_HotReloadOverride`.
+
+**2 tools projects**: `DualFrontier.Analyzers`, `DualFrontier.Mod.ManifestRewriter`.
+
+**1 mods project**: `DualFrontier.Mod.Example`.
+
+**Disk-only by design — do not "fix" by enrolling into the sln:**
+
+- **6 Vanilla mods** (`mods/DualFrontier.Mod.Vanilla.{Combat,Core,Inventory,Magic,Pawn,World}`) — runtime-loaded through the mod pipeline like any third-party mod (К-L9 «Vanilla = mods»); they are deliberately not solution members.
+- **13 `Fixture.RegularMod_*` projects** under `tests/` — transitively built via 13 `ProjectReference` entries in `tests/DualFrontier.Modding.Tests/DualFrontier.Modding.Tests.csproj` (verified count), then consumed as runtime fixture artifacts by the Modding suite. Solution membership would add nothing and bloat the build matrix.
+- **`native/DualFrontier.Core.Native`** — C++ CMake project, not representable in the managed sln; built per §3.
+
+Disk total under `tests/` is therefore 11 + 19 = 30 project directories, of which 17 are sln members.
+
+## §3 — Build commands (verified invocations only)
+
+**Managed solution:**
+
 ```
-
-These wrappers run two builds back-to-back: `dotnet build DualFrontier.sln` and `dotnet build src/DualFrontier.Presentation/DualFrontier.Presentation.csproj`. The Godot project is deliberately not in `.sln` — the `Godot.NET.Sdk` reference is dev-machine-specific and would break a `dotnet build DualFrontier.sln` on any machine without Godot installed (CI runners included). Top-level `.sln` build silently skips `Presentation`; the wrapper scripts close that gap.
-
-`TreatWarningsAsErrors=true` in [Directory.Build.props](../Directory.Build.props). Any warning is a blocker. Nullable warnings, CS warnings — they all count.
-
-Manual invocation without the wrapper is two commands:
-
-```bash
 dotnet build DualFrontier.sln -c Release
-dotnet build src/DualFrontier.Presentation/DualFrontier.Presentation.csproj -c Release
 ```
 
-Full build (both surfaces) is **mandatory** before:
+- Compile-clean: 0 warnings, 0 errors (`TreatWarningsAsErrors=true` in root `Directory.Build.props` — any warning is a build break).
+- Known caveat: **MSB3026/MSB3027 copy-step failures occur when stale `testhost.exe` processes hold test output binaries.** Close test runners first, or wait out MSBuild's retry loop. This is environmental (RISK-011, §6), not a code defect.
 
-- Any commit touching `src/DualFrontier.Presentation/` directly.
-- Any commit touching kernel surface that `Presentation` depends on (`DualFrontier.Application` public API; `DualFrontier.Contracts` types referenced by the bridge).
-- Closure review of any M-phase that exercised `Presentation` (M7.5.B.2 onwards).
-- F5 manual verification handoff.
+**Native kernel:**
 
-The split was registered in [docs/audit/M7_CLOSURE_REVIEW.md §10.3](./audit/M7_CLOSURE_REVIEW.md) and resolved by the TD-2 housekeeping commit that introduced the wrapper scripts. Adding `Presentation` to `.sln` was rejected to keep the solution CI-portable on machines without Godot SDK.
-
-### 3. All tests pass
-
-```bash
-dotnet test DualFrontier.sln -c Release
+```
+"D:\Visual Studio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --build native\DualFrontier.Core.Native\build --config Release
 ```
 
-Numbers grow, they do not shrink. If main was at 82/82, the branch is expected at ≥82/82. A regression is a blocker.
+- cmake 4.2.3-msvc3 is **VS-bundled, NOT on PATH** — the absolute path above is the verified invocation; the install root is discoverable via `vswhere.exe` (`${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe`).
+- Outputs land at `native\DualFrontier.Core.Native\build\Release\`: `DualFrontier.Core.Native.dll` plus `df_native_selftest.exe`.
+- The sibling `native\DualFrontier.Core.Native\out\` directory is the **VS-IDE CMake-preset Debug tree — it is NOT the canonical build tree.** The canonical tree is `build\`.
 
-### 4. Commits carry scope prefixes
+**Single project:**
 
-```bash
-git fetch origin main
-git log origin/main..HEAD --no-merges --format='%s' \
-    | grep -v '^\(contracts\|core\|interop\|native\|modding\|presentation-native\|experiment\|feat\|fix\|docs\|test\|chore\|build\|refactor\)[(:]'
+```
+dotnet build src\DualFrontier.Launcher\DualFrontier.Launcher.csproj -c Release
 ```
 
-Expected output: empty. Any line means a commit without a scope; rewrite it via `git rebase -i`. The prefixes are documented in [CODING_STANDARDS §"Commit messages"](./CODING_STANDARDS.md#commit-messages).
+**How Native.dll reaches managed output:**
 
-`--no-merges` is needed so that merge commits (`Merge pull request #…`) do not count as violations. `origin/main..HEAD` after `git fetch` guarantees the comparison runs against the current main, not against a stale local branch.
+- `src/DualFrontier.Launcher/DualFrontier.Launcher.csproj` carries a `<None>` item with `CopyToOutputDirectory=PreserveNewest` pointing at `native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll` (the К-extensions cascade #3 γ0 fix).
+- The item has an `Exists(...)` `Condition` guard — **if only the `out\` tree was built, the copy silently skips** and the Launcher starts without its kernel. Build the canonical `build\` tree first.
 
-### 5. Commits do not mix engine and game
+**Observed durations** (R3 survey, 2026-06-11, this machine — calibration data, not contract):
 
-Manual review: every commit on the branch must touch either only engine assemblies (prefix `core:`, `contracts:`, `interop:`, `native:`, `modding:`, `presentation-native:`) or only game assemblies (`feat(pawn):`, `feat(combat):`, `feat(presentation):`, …). A mixed commit must be split in two:
+- full sln ≈ 36 s when fighting testhost lock contention; faster on a clean process table;
+- native kernel ≈ 7 s;
+- Launcher single-project ≈ 5 s, 0 warnings / 0 errors.
 
-```bash
-git log origin/main..HEAD --no-merges --stat | less
-# visually verify each commit touches one side of the boundary
+**Tests:** invocation law lives in `TESTING_STRATEGY.md` §8 — cited, not restated here.
+
+## §4 — Tooling reality
+
+**Shell substrate:**
+
+- Windows PowerShell **5.1** (5.1.26100.8655). `pwsh` (PowerShell 7+) is **absent** on this machine — scripts and invocation forms must be 5.1-compatible.
+- Module `powershell-yaml` **0.4.12** is installed and required by the governance scripts.
+
+**Governance suite** (`tools/governance/`; `SCOPE_EXCLUSIONS.yaml` is consumed by sync and render):
+
+- **`sync_register.ps1 -Validate`** — validates REGISTER consistency **and unconditionally rewrites `docs/governance/VALIDATION_REPORT.md`** (`Set-Content -Path $REPORT_PATH …` at line 380 — it runs on every invocation, pass or fail).
+  Consequence: **every validate run is folded into a commit** — run validate, then stage the refreshed report with the governance commit it verifies.
+  A validate run that leaves a dirty report in the tree is a protocol violation.
+- **`sync_register.ps1 -Sync`** — strips and rewrites the frontmatter mirrors **in place across all registered `.md` files**.
+  **FORBIDDEN outside ratified register cascades.** It only runs when validation is clean, but its blast radius is every registered document — never run it casually.
+- **Default no-switch mode runs both** validate and sync. **Never use it.** Always pass an explicit switch.
+- **`render_register.ps1`** — writes `docs/governance/REGISTER_RENDER.md` from REGISTER.yaml.
+  Run **only at register-cascade closure**; between closures the render is allowed to go stale, and the staleness is recorded explicitly (Findings ledger) rather than silently re-rendered.
+- **`query_register.ps1`** — read-only register queries (`-Tier`/`-Lifecycle`/`-Category`/`-Stale`/`-CapaOpen` filters). Safe at any time.
+
+**Working invocation forms** (PowerShell 5.1, this machine):
+
+```
+& .\tools\governance\sync_register.ps1 -Validate
 ```
 
-This costs a minute. After the fork, that minute pays back as the ability to pull the entire engine history with one command: `git log --grep "^\(core\|contracts\|interop\|native\|modding\): "`.
+— in-session form: proven, complies with machine policy. Subprocess form:
 
-## Typical situations
+```
+powershell -NoProfile -File tools\governance\sync_register.ps1 -Validate
+```
 
-### Adding a new game system (Phases 4–7)
+— policy-dependent. Note: `-ExecutionPolicy Bypass` is **declined by the auto-mode permission classifier on this machine** — use the in-session form.
 
-Example: `HaulSystem` in Phase 4.
+**Other tools:**
 
-- Files go **only** in game assemblies: `DualFrontier.Systems/`, with new components in `DualFrontier.Components/` and events in `DualFrontier.Events/` as needed.
-- The system inherits from `SystemBase` (engine API). No changes to `SystemBase` for the sake of this system. If `SystemBase` is missing something, it is a signal from §"Red flags" below.
-- Access declaration through `[SystemAccess(reads: …, writes: …, buses: …)]` (engine attribute, in `Contracts.Attributes`).
-- Commit: `feat(inventory): add HaulSystem`.
+- `tools/scaffold-runtime.ps1` — idempotent runtime-directory materializer.
+- `tools/glslangValidator.exe` + `tools/shaders/` — shader compilation; wired through the `CompileShaders` target in root `Directory.Build.props` (runs `BeforeTargets="Build"` using the in-repo committed binary).
+- `tools/briefs/` — Category D cascade briefs and closure reports (governance artifacts, not scripts).
 
-### Extending the ECS API
+## §5 — Branch and push policy
 
-Example: a new method is needed on `SystemExecutionContext`.
+- **The executor NEVER pushes.** Pushes to origin are Crystalka's act, with expected auto-mode re-confirmation.
+  An execution session ends with local commits and a closure report; the push is a separate human step.
+- **Fast-forward-only merges** for linear cascades (`git merge --ff-only`).
+  A cascade branch that cannot fast-forward onto `main` halts for adjudication instead of generating a merge commit.
+- **Atomic commits** per `CODING_STANDARDS.md` §8 — one conceptual change per commit, structured body, no squash, no history rewrite.
+  Surface revisions ride inside commits as `Skeleton revisions:` records per `RESERVED_SURFACE_MUTABILITY.md` §5.
+- **Branch census (2026-06-11):** 44 local branches besides `main`; **41 are fully merged into `main`** and are pruning candidates — tracked as a ROADMAP Findings-ledger entry, **NOT pruned in this cascade.**
+  The 3 unmerged branches, by name:
+  - `claude/cpp-core-experiment-cEsyH` — the original C++ kernel experiment; **К-L source-of-truth reference** (cited by KERNEL_ARCHITECTURE.md) — keep;
+  - `claude/godot-removal-deliberation-Vfg2R` — deliberation record branch;
+  - `feat/m0-m3-mod-os-migration` — historical migration branch.
 
-- The method MUST be **generic** — no mention of `HealthComponent`, `PawnComponent`, etc.
-- Add it to `DualFrontier.Core/ECS/SystemExecutionContext.cs`.
-- If a new attribute is needed, it lives in `DualFrontier.Contracts/Attributes/`.
-- Commit: `core: add <something>` or `contracts: add <something>`.
+## §6 — Environment notes (Skarlet)
 
-### Adding Intent/Granted/Refused to an existing bus
+- **OS:** Windows 11 Home 10.0.26200.
+- **.NET:** dotnet SDK **10.0.204** — the single installed SDK.
+  Projects target `net8.0`; the 10.x SDK builds them forward-compatibly. Do not add `global.json` pinning without deliberation.
+- **MSVC toolchain:** Visual Studio at `D:\Visual Studio` (MSBuild 18.5.4).
+  cmake is VS-bundled, not on PATH — see §3 for the exact invocation path.
+- **Known failure pattern — testhost.exe locks (RISK-011):** stale `testhost.exe` processes from previous `dotnet test` runs hold test-bin files and break the solution build's copy steps (MSB3026/MSB3027).
+  Mitigation: close test runners / kill stale testhosts, or let MSBuild's retry window expire and rebuild.
+  Treat as environmental noise, not regression, unless it reproduces with a clean process table.
 
-- Records (`record struct`) go in `DualFrontier.Events/` (game assembly). That is fine — events are already game-side.
-- The bus in `DualFrontier.Contracts/Bus/` is **not** extended, unless this is generic infrastructure (for example, `IDeferredBus<T>`). Concrete Intents do not land in Contracts.
-- Commit: `feat(combat): add ShieldRefillIntent to combat bus`.
+## §7 — Godot status
 
-### Adding a new component
+Godot is **fully deprecated** — physically purged at К-extensions cascade #2 (2026-05-23). Current state, verified against disk:
 
-- The file goes in `DualFrontier.Components/<Area>/<Name>Component.cs`.
-- POCO, no logic.
-- If a component is potentially generic (e.g., `PositionComponent`, `FactionComponent`), it still lives in `Components`. Components do not belong to the engine; only the `IComponent` marker does.
+- **Zero Godot package or SDK references** in any `.csproj` or `Directory.Build.props` (repo-wide grep clean).
+- Remaining `Godot` mentions in `src/**/*.cs` are **retirement-notice / historical-context comments only** (e.g., the deprecation note in `src/DualFrontier.Application/Bridge/PresentationBridge.cs`) — no code references.
+- Historical Godot documentation is quarantined under `docs/architecture/historical/`.
+- **`project.godot` REMAINS TRACKED at the repo root.** Its fate is a **Crystalka-owned decision** recorded as Findings-ledger entry F-5 (see `docs/ROADMAP.md` §Findings ledger). **Do not delete it** in any cascade until that entry closes.
 
-### Temptation: "I'll just import `Components` into `Core` this once"
+Rendering today is the in-house Vulkan substrate (`VULKAN_SUBSTRATE.md`) consumed by `DualFrontier.Launcher`; there is no engine dependency.
 
-This is **always** a blocker. Examples of how to properly solve a task that pushes toward this import:
+## §8 — Amendment protocol
 
-- **"`Core` must know the format of `HealthComponent` to do X."** No, it must not. If an operation over an arbitrary component is needed, express it through `IComponent` + reflection/generics. If the operation is only over one concrete type, it lives in a system, not in `Core`.
-- **"I need `DamageEvent` in `Core` for logging."** Logging goes through the engine's `IEventBus.Subscribe<T>` — `T` is parameterized in Systems, not in Core.
-- **"Performance: generics are slow, I want a concrete type."** Measure it. In 95% of cases the JIT removes the overhead. If the remaining 5% really is critical, that is a reason to discuss, not a reason to break the boundary.
+This document is Category B, **Tier 1, LOCKED**. It states operational truth, so it amends whenever the truth moves:
 
-## Red flags
+1. **Trigger** — a verified change in repository layout, project set, build invocation, tooling behavior, branch policy, or environment.
+2. **Rationale** — the commit (or cascade) that changed the underlying reality is named in the change-history entry.
+3. **Semver** — PATCH for corrections within a section (counts, paths); MINOR for new sections or new tooling; MAJOR for a rewrite or an operational-model change.
+4. **Register update** — per `METHODOLOGY.md` §12.5 post-session update protocol; closure-grade changes per §12.7.
+5. **Cross-document propagation** — `CODING_STANDARDS.md` §9 (verification gates) and `TESTING_STRATEGY.md` §8 (invocations) are re-checked whenever §3/§4 here change.
 
-Early symptoms that the architecture is starting to degrade. Each is not a disaster on its own, but a signal to stop and discuss.
+Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_AXIOMS.md` §5 chain).
 
-| Symptom                                                                  | Meaning                                                | What to do                                                                                       |
-|--------------------------------------------------------------------------|--------------------------------------------------------|--------------------------------------------------------------------------------------------------|
-| `SystemBase` accumulates methods for specific scenarios                  | Game patterns are migrating into the engine            | Extract the pattern into a helper under `Systems/Shared/`; keep `SystemBase` generic             |
-| A `switch` over the `Type` of a concrete component appears in `Core`     | The engine has started to know domain types            | Move the logic into a system, or generalize through `IComponent` + a marker attribute            |
-| `Contracts` is growing faster than `Systems`                             | Contracts are being published for tasks that do not yet exist | Roll it back; add the contract only when a second consumer actually needs it              |
-| Example mods are not updated for months                                  | Modding infrastructure evolves in a vacuum             | Either add at least one real mod as a second customer, or freeze modding development             |
-| `native/` lags behind `Core`                                             | The C++ experiment is dead but still in the repo       | Either catch it up, or close the experiment and split it into a separate artifact branch         |
-| Commits like "core: fix X, also feat(pawn): Y" in one                    | The boundary is blurring in the author's head          | Demand splitting at review time, even if it costs a `git rebase -i`                              |
-| `DualFrontier.Presentation` contains business logic                      | The game is reaching into the Godot layer with gameplay decisions | Business logic goes in `Systems`; `Presentation` only translates commands into Godot calls |
+## Change history
 
-## Quick reference — commit scope prefixes
-
-Full list with examples: [CODING_STANDARDS §"Commit messages"](./CODING_STANDARDS.md#commit-messages).
-
-**Engine** (will move to the fork after release):
-- `contracts:`, `core:`, `interop:`, `native:`, `modding:`, `presentation-native:`
-- `experiment:` — research branches before merge
-
-**Game** (stay with the game after the fork):
-- `feat(pawn):`, `feat(combat):`, `feat(magic):`, `feat(world):`, `feat(inventory):`, `feat(ai):`
-- `fix(…):` — bug fixes in the same areas
-- `feat(application):` — game loop; `feat(presentation):` — Godot DevKit
-- `feat(bootstrap):` — wiring when a new system appears
-
-**Neutral**: `docs:`, `test:`, `chore:`, `build:`, `refactor:`.
-
-## See also
-
-- [ARCHITECTURE §"Dependency rules"](/docs/architecture/ARCHITECTURE.md#dependency-rules)
-- [CODING_STANDARDS §"Commit messages"](./CODING_STANDARDS.md#commit-messages)
-- [ROADMAP §"Phase 9 — Native Runtime"](./ROADMAP.md#phase-9--native-runtime)
-- [ISOLATION](/docs/architecture/ISOLATION.md)
-- [MODDING](/docs/architecture/MODDING.md)
+- **v2.0.0 (2026-06-11)** — Full rewrite to post-Godot operational truth per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` §7-W3 (Standing-Law Cascade).
+  v1.0's Godot-era engine/game project table, phantom `tools/build-all.sh|.ps1` wrappers, and `DualFrontier.Presentation` projects (none of which exist on disk) purged.
+  Replaced with the verified sln/disk project census (§2), verified build invocations (§3), governance-script side-effect law (§4), branch/push policy with census (§5), environment notes (§6), and Godot end-state (§7).
+  All enforcement claims name on-disk artifacts.
+- **v1.0 (2026-05-12, historical)** — Initial engine/game-boundary PR checklist, authored in the Godot two-track era; superseded in full by v2.0.0.
