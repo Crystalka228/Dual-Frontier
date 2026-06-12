@@ -2,12 +2,17 @@
 register_id: DOC-D-STANDING_LAW_CASCADE_BRIEF
 project: Dual Frontier
 category: D
-tier: 3
-lifecycle: Draft (→ LOCKED on Crystalka ratification → EXECUTED at cascade closure)
-owner: Volodymyr (Crystalka)
+tier: 4
+lifecycle: EXECUTED
+owner: Crystalka
 version: '1.0'
 first_authored: '2026-06-11'
+last_modified: '2026-06-11'
+last_modified_commit: 'd90b522'
 content_language: en
+review_cadence: on-cascade-execution
+next_review_due: 'null'
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-STANDING_LAW_CASCADE_BRIEF
 authored_by: Claude Opus (deliberation session, Standing-Law Cascade prep)
 basis: STANDING-LAW RECON REPORT 2026-06-11 (R1–R8)
 ---

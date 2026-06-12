@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.15"
-last_modified: "2026-06-02"
-last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-PROGRESS"
+register_version: "2.16"
+last_modified: "2026-06-11"
+last_modified_commit: "PENDING-COMMIT-STANDING_LAW-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -444,17 +444,21 @@ documents:
     # pool + Lesson #N14 4th application surfaced (А'.9.1 Phase 0 F1 + F4 + F7) — PROMOTION
     # CRITERION MET. FORMALIZE codification deferred к A'.9.1 Phase δ closure per Q-L-26
     # default (c); at Phase δ closure v1.12.1 → v1.13 MINOR bump expected.
+    # version MINOR bumped к 1.13.0 per Standing-Law cascade 2026-06-11 (§12.8
+    # brief-integration boundary rule + §12.9 governance-cascade closure protocol +
+    # §12.7 step 9 SYNTH-2 + F-3 changelog backfill). Phase δ Lessons codification
+    # (#N17/#N18 FORMALIZE) remains a subsequent bump per Q-L-26 default (c).
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.12.1"
-    last_modified: "2026-05-24"
-    last_modified_commit: "bb6807c"
+    version: "1.13.0"
+    last_modified: "2026-06-11"
+    last_modified_commit: "b58eed4"
     content_language: mixed
     review_cadence: on-change+annual
-    last_review_date: "2026-05-21"
-    last_review_event: "К-extensions cascade #3 δ2 — METHODOLOGY v1.11 → v1.12 minor bump (Lesson #N12 semantic refined с sub-pattern A test-only-fires + sub-pattern B production-fires per Crystalka mid-cascade ratification 2026-05-23; 2 NEW Provisional candidates: #N13 commit integrity verification before commit + #N14 Phase 0 reads empirical assumed-state coverage). 12 DEFER candidates Provisional pool post-cascade-#3 (#18/#19/#N3/#N5-N10/#N12/#N13/#N14). FORMALIZE 12 → 12 (unchanged — #N12 refinement не FORMALIZE bump). SUNSET 1 (unchanged). Prior context: К-extensions cascade #2 ε2 (v1.10 → v1.11 — Lesson #N12 + Lesson #25 refined); А'.7.x δ5 (v1.8 → v1.9 — §12.7 Modding suite mandatory)."
-    next_review_due: "2027-05-21"
+    last_review_date: "2026-06-11"
+    last_review_event: "Standing-Law cascade C7 (b58eed4) — METHODOLOGY v1.12.1 → v1.13.0 MINOR: NEW §12.8 «Brief-integration boundary rule» (briefs cite standing documents by §-anchor instead of restating; carries-vs-cites split mirrors TESTING_STRATEGY §6; anti-pattern rule — a brief contradicting a standing document is wrong by default, corrected or the doc amended BEFORE the brief locks) + NEW §12.9 «Session closure protocol — governance/documentation cascades» (tracker write-back → REGISTER+validate with report folded into the commit → render or recorded staleness deferral → findings → F-ledger never chat-only → closure report) + §12.7 step 9 SYNTH-2 cascade-impact propagation check + v1.12.1 changelog line backfilled (finding F-3). Two new sections + one checklist item; no existing rule inverted; §1–§11 substance unchanged. Prior context: К-extensions cascade #3 δ2 (v1.11 → v1.12 — Lesson #N12 semantic refined); A'.9.1 Phase 0 (v1.12 → v1.12.1 PATCH — Lesson #N17 Provisional + #N14 4th application); А'.7.x δ5 (v1.8 → v1.9 — §12.7 Modding suite mandatory)."
+    next_review_due: "2027-06-11"
     reviewer: Crystalka
     requirements_authored: [REQ-Q-A07-6]
     risks_referenced: [RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014]
@@ -467,12 +471,14 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "2.0.0"
+    last_modified: "2026-06-11"
+    last_modified_commit: "4e584b3"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    last_review_date: "2026-06-11"
+    last_review_event: "Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth per STANDING_LAW_CASCADE_BRIEF §7-W1 + §8 truth law: C#/C++ conventions codified from observed practice (R1 survey); build organization with Directory.Build.props chain quoted verbatim + CPM truth; §5 marker family registry ([ReservedStub] census pin 34 application sites / 13 files with verbatim rg composition rule; 5 doc-tag families with verbatim patterns + baselines; NEW DFK-WAIVER suppression law — load-bearing for A'.9.1 Phase β, supersedes the brief §7.3 DFK###-SUPPRESS sketch); §8 atomic-commit law (7-section body incl. Skeleton revisions per RESERVED_SURFACE_MUTABILITY); §9 verification gates reduced to existing artifacts (analyzer stated as 17 non-detecting Info stubs — zero enforcement; CI stated absent). v1.0 phantom enforcement claims (analyzer checks, CI) cured per drift report §6.3.5."
+    next_review_due: "2027-06-11"
     reviewer: Crystalka
 
   - id: DOC-B-DEVELOPMENT_HYGIENE
@@ -482,14 +488,16 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "2.0.0"
+    last_modified: "2026-06-11"
+    last_modified_commit: "9da4760"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    last_review_date: "2026-06-11"
+    last_review_event: "Standing-Law cascade C5 (9da4760) — full rewrite v1.0 → v2.0.0 MAJOR to post-Godot operational truth per STANDING_LAW_CASCADE_BRIEF §7-W3 (D4) + §8 truth law: repo map; project-set truth (32 sln projects = 12 src + 17 tests-folder + 2 tools + 1 mods; 6 Vanilla.* mods + 13 Fixture.RegularMod_* disk-only BY DESIGN); verified-only build commands (managed sln; native via VS-bundled cmake full path — NOT on PATH; Launcher; Native.dll PreserveNewest copy mechanics); tooling reality (PS 5.1 / pwsh absent / powershell-yaml 0.4.12; sync_register.ps1 -Validate unconditional VALIDATION_REPORT.md write at line 380 → commit-folding protocol; -Sync forbidden outside ratified register cascades; render staleness recorded explicitly); branch/push policy (executor never pushes; 41 merged stale branches → F-11); Skarlet environment; Godot status (project.godot tracked = F-5 Crystalka-owned). v1.0 phantoms purged (build-all.sh/.ps1 wrappers, DualFrontier.Presentation projects) per drift report §6.3.5 near-rewrite class. Closes finding F-6."
+    next_review_due: "2027-06-11"
     reviewer: Crystalka
-    risks_referenced: [RISK-011]
+    risks_referenced: [RISK-011, RISK-012]
 
   - id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
     path: docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md
@@ -535,13 +543,33 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.0"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    version: "2.0.0"
+    last_modified: "2026-06-11"
+    last_modified_commit: "fcce199"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    last_review_date: "2026-06-11"
+    last_review_event: "Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR per STANDING_LAW_CASCADE_BRIEF §7-W2 + §8 truth law: test-landscape truth (9 dotnet-test projects, 1036 tests / 1034 passing at the 2026-06-11 survey; Analyzers.Tests called placeholder plainly; 2 non-test exe projects; 19 fixture projects; native df_native_selftest; 2 pre-existing failing tests on main → F-10, recorded not absorbed); 8-layer taxonomy incl. the Roslyn analyzer-test convention (law now, population = Phase β) + meta layer (currently NONE — stated); §4 census contracts (ReservedStub pin 34/13 exactness-not-monotonicity; 5 doc-tag family pins; DFK-WAIVER census baseline 0; S-LOCK→verifying-artifact obligation with the 2026-06-11 audit result — no hard gaps → F-8 closed empty); §5 machine-checkable vs architect-audited honesty + no-lying-stubs law (Lesson #25/#N12, DFL025-A Trait convention); §6 brief-integration pattern (carries vs cites + boundary rule + anti-pattern rule); §7 closure-audit obligation extending METHODOLOGY §12.7. v1.0 phantoms named and purged (SchedulerFixture builder API, EvilMod, PerformanceGates.cs, CI gates, 4-project layout)."
+    next_review_due: "2027-06-11"
     reviewer: Crystalka
+
+  - id: DOC-B-RESERVED_SURFACE_MUTABILITY
+    path: docs/methodology/RESERVED_SURFACE_MUTABILITY.md
+    title: "Reserved-surface mutability license"
+    category: B
+    tier: 2
+    lifecycle: LOCKED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-06-11"
+    last_modified_commit: "f576eb7"
+    content_language: en
+    review_cadence: on-closure+quarterly
+    last_review_date: "2026-06-11"
+    last_review_event: "Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3 (D1) — the mutability license adapted from the News Intelligence Hub PHASE_0_SKELETON_MUTABILITY mechanism onto DF reality. Principle: a property is mutable iff changing it changes no answer in any Tier-1 LOCKED authority. Mutable catalog (reserved-stub/analyzer-rule symbol names; file layout below project level; annotation surface forms; brief csproj wiring lists; grep/census expressions; §-numbering in citations) vs immutable catalog (К-L invariants per KERNEL Part 0's own «21 final» composition pinned verbatim — К-L1..5 + К-L7..11 + subs К-L3.1/7.1/15.1 + К-L12..19, К-L6 SUPERSEDED excluded, К-L20 reserved excluded, Latin/Cyrillic bi-script grep rule per F-4; PA-001..004; locked Q-series; declared S-LOCKs; register_id permanence; lifecycle state machine; atomic-commit discipline; К-L20 additive-semver law). Commit-body `Skeleton revisions:` form (one conceptual change = one entry). A'.9.1 Phase α 5 mid-cascade deltas retrospectively classified: 4 surface (CPM-count 16436b7, rule-count d0b4c41, seealso-URL fc66156, annotation-census f4a94e6) + 1 architectural correctly halted (ProjectReference-drop 5030fa2, PA-002 anchor)."
+    next_review_due: "2026-Q3"
+    reviewer: Crystalka
+    special_case_rationale: "Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate)."
 
   # === Tier 1 Governance (Category A, meta-entries) ===
 
@@ -652,14 +680,14 @@ documents:
     tier: 1
     lifecycle: AUTHORED-SKELETON
     owner: Crystalka
-    version: "0.1"
-    last_modified: "2026-05-23"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION"
+    version: "0.2.0"
+    last_modified: "2026-06-11"
+    last_modified_commit: "4a67a22"
     content_language: en
     review_cadence: on-change+annual
-    last_review_date: "2026-05-23"
-    last_review_event: "A'.8 К-series formal closure (Commit 5) — DOC-A-ANALYZER_RULES enrolled at A'.8 closure per S-LOCK-10 LOCKED Session 2. 18 active rule specs (DF001-DF019 + DF015.1 NEW А'.7.x) + 4 reserved (DF006 SUPERSEDED, DF008 process, DF014 meta, DF020 post-Mod API lock). Initial entry references K_CLOSURE_REPORT.md §7.2 для canonical detection narratives. Populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade с per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase."
-    next_review_due: "2027-05-23"
+    last_review_date: "2026-06-11"
+    last_review_event: "Standing-Law cascade C6 (4a67a22) — v0.1 → v0.2.0 structural separation per drift report §6.3.2 (the prime dual-load specimen, bidirectional drift): §4 rewritten to stub-truth «17 stubs — detection PENDING Phase β» single registry (shipped Info + clearly-labeled Phase-γ-target columns; descriptor-ID convention DFK003.1/DFL025-A vs underscore file names; composition 8 P0 + 4 P1 + DFK013 + DFK016 + 2 DFL + DF999 = 17 per S-LOCK-4); roadmap load EXTRACTED → docs/ROADMAP.md NEW «Analyzer track» section (§4.1/§4.2 promotion columns, §5 К-L20 family, §6 hardware tier, §10.5 forward plan, §11 lifecycle forward — one-line pointers left at each site); §7/§8 reframed as realized decision records; NEW §12 Suppression defers by citation to CODING_STANDARDS §5.3 DFK-WAIVER; phantom MOD_API_CONTRACT reference resolved to an explicit forward-reference (К-L20 LOCK cascade authors it). DFK019.A Phase-γ target recorded Warning per canonical K_CLOSURE §7.2 (v0.1 internal §4.2-vs-§10.1 conflict resolved + footnoted → F-12 Crystalka ratification before Phase γ). Lifecycle stays AUTHORED-SKELETON — Phase β mutates §4 next. Prior context: A'.8 enrollment (Commit 5, S-LOCK-10); A'.9.1 Phase α Commit 5 structural reorganization."
+    next_review_due: "2027-06-11"
     reviewer: Crystalka
     special_case_rationale: "Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification."
 
@@ -690,12 +718,12 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-COMMIT-DOC_DRIFT_RECON-DD2-KERNEL"
+    last_modified: "2026-06-11"
+    last_modified_commit: "5ebc24b"
     content_language: en
     review_cadence: on-closure+quarterly
-    last_review_date: "2026-06-02"
-    last_review_event: "DD-2 spec/roadmap separation increment 1 (Documentation Dual-Load Drift Reconnaissance refactor) — received the K-series milestone roadmap + migration strategy relocated verbatim from KERNEL_ARCHITECTURE.md Part 2/3 into the «Native foundation tracks (K-series + V substrate)» section (nested under «K-series — Native ECS kernel — CLOSED»). Status-overview K-series + K9 rows retired ⏭ Pending → ✅ Closed; «Updated» stamp annotated with partial 2026-06-02 re-sync note (remaining M8/V status rows pending full DD-1 re-sync). docs/ROADMAP.md is the canonical roadmap-layer consolidation home per accepted Option ε target architecture."
+    last_review_date: "2026-06-11"
+    last_review_event: "Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — received the NEW «⏭ Analyzer track (A'.9.1 Phase β/γ/δ + deferred rule families)» section (analyzer forward-sequencing extracted from ANALYZER_RULES v0.1 §4.1-4.2/§5/§6/§10.5/§11 per the Standing-Law spec/roadmap separation; Phase β detection + Q-L-1 adaptive gate, Phase γ severity promotion, Phase δ governance, К-L20 LOCK rule family, hardware tier expansion, PublicApiAnalyzers activation conditions) + the NEW «Findings ledger (F-series)» section seeded F-1..F-12 (brief §13 seed + session findings F-10 pre-existing test failures / F-11 stale-branch pruning candidates / F-12 DFK019.A Phase-γ severity discrepancy). Prior context: DD-2 spec/roadmap separation increment 1 (2026-06-02) — K-series roadmap relocated from KERNEL Part 2/3 into «Native foundation tracks»; status-overview K-series + K9 rows retired to Closed; remaining M8/V status rows pending full DD-1 re-sync. docs/ROADMAP.md is the canonical roadmap-layer consolidation home per accepted Option ε target architecture."
     reviewer: Crystalka
 
   - id: DOC-C-IDEAS_RESERVOIR
@@ -2182,6 +2210,25 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "Documentation Dual-Load Drift Reconnaissance brief — standalone reconnaissance cascade addressing the root documentation drift source (living-spec documents serving dual descriptive+roadmap roles). Authored 2026-05-25; EXECUTED 2026-06-02 (reconnaissance discovery-only per §0.5 read-only discipline — refactor is a separate future cascade determined FROM the report). DOC-D Category D Tier 4 follows existing reconnaissance-brief convention (sister к DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF). Paired deliverable: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT. Q-DD ratification surface (§11) — defaults taken at execution (Q-DD-1 standalone, Q-DD-3 hybrid grounding, Q-DD-6 single report, Q-DD-7 enroll, Q-DD-9 Option ε freely recommended, Q-DD-10 existing docs/reports/ folder). §9 halt-3 (misclassification → governance issue) TRIGGERED + surfaced; halt-6 (LOCKED Tier-1 substrate) respected — zero К-L invariant text edits."
+
+  - id: DOC-D-STANDING_LAW_CASCADE_BRIEF
+    path: tools/briefs/STANDING_LAW_CASCADE_BRIEF.md
+    title: "STANDING-LAW CASCADE — Execution Brief (methodology layer → standing law: 4 rewrites + RESERVED_SURFACE_MUTABILITY NEW + METHODOLOGY v1.13.0 amendment + ANALYZER_RULES restructure + ROADMAP Analyzer track + Findings ledger + register closure)"
+    category: D
+    tier: 4
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-06-11"
+    last_modified_commit: "d90b522"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-06-11"
+    last_review_event: "Brief authored 2026-06-11 by Claude Opus (deliberation session) from STANDING-LAW RECON 2026-06-11 (R1-R8); ratified by Crystalka via invocation; EXECUTED same day by Claude Code (Fable 5, local Skarlet session) per §4 topology — Phase 0 (recon facts verified exactly; ff-only merge f94bb84 → 954f590; validate exit 0 folded into C1; REGISTER schema vocabulary read empirically per Lesson #N14; §2.3 mandatory reads) → Wave R 4 parallel read-only survey agents (R1 enforcement reality / R2 test landscape / R3 operational truth / R4 reserved-surface census — canonical [ReservedStub pin 34 application sites / 13 files; DFK-WAIVER baseline 0; recon deltas explained as measurement-method differences) → C-R reconcile (H4 not triggered) → Wave W 4 parallel writer agents on disjoint files → C-W audit (truth law sampled / zero roadmap load / cross-citations resolve / zero NIH residue) → serial closure C1-C10. Deliverables: C1 d90b522 brief enrollment + validation checkpoint; C2 f576eb7 RESERVED_SURFACE_MUTABILITY v1.0 NEW; C3 4e584b3 CODING_STANDARDS v2.0.0 (marker registry + DFK-WAIVER suppression law); C4 fcce199 TESTING_STRATEGY v2.0.0 (census pins + brief-integration pattern); C5 9da4760 DEVELOPMENT_HYGIENE v2.0.0 (post-Godot operational truth); C6 4a67a22 ANALYZER_RULES v0.2.0 (stub-truth + roadmap extraction → ROADMAP «Analyzer track»); C7 b58eed4 METHODOLOGY v1.13.0 (§12.8 + §12.9 + §12.7 step 9 SYNTH-2 + F-3 backfill); C8 5ebc24b ROADMAP «Findings ledger (F-series)» F-1..F-12. К-L impact: zero (К-L count unchanged: 21 final); zero production code; News Intelligence Hub reference corpus read-only (H8 honored); zero pushes (Crystalka's act)."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Standing-Law Cascade execution brief — converts the drifted methodology layer (v1.0 sketches claiming phantom enforcement) into standing law that briefs cite instead of restating, carrying zero roadmap load, with every normative claim naming an on-disk enforcer (brief §8 truth law). Clears the A'.9.1 Phase β runway: the suppression law (CODING_STANDARDS §5.3 DFK-WAIVER) and the mutability license (RESERVED_SURFACE_MUTABILITY) must pre-exist Phase β triage or it reproduces Phase α's halt traffic at larger scale (brief §1). DOC-D Category D Tier 4 per the empirical execution-brief register convention (sister к DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF; the brief frontmatter self-declared tier 3 — enrolled at the observed DOC-D tier 4 convention, Skeleton-revisions-class deviation recorded in the C9 commit body). Single PENDING-COMMIT exception this cascade: the register header self-reference (C9's own hash), backfilled at C10 per the established Option-B amendment-integrity practice — zero other placeholders created; C1-C8 hashes recorded real."
 
   - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
     path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
@@ -9981,3 +10028,65 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: []
+
+  - id: EVT-2026-06-11-STANDING_LAW-CLOSURE
+    timestamp: "2026-06-11T00:00:00Z"
+    type: doc_refactor
+    cascade: Standing-Law Cascade (methodology layer → standing law)
+    phase: cascade closure (C9 of C1-C10)
+    title: "Standing-Law Cascade REGISTER closure — 4 standing-law rewrites + RESERVED_SURFACE_MUTABILITY NEW + METHODOLOGY v1.13.0 + ANALYZER_RULES v0.2.0 + ROADMAP Analyzer track + Findings ledger (2.15 → 2.16)"
+    summary: |
+      Converts the methodology layer from drifted v1.0 sketches into standing law per
+      tools/briefs/STANDING_LAW_CASCADE_BRIEF.md (authored 2026-06-11 from
+      STANDING-LAW RECON R1-R8; ratified by Crystalka via invocation; executed by
+      Claude Code Fable 5, local Skarlet session). Topology: Phase 0 (recon facts
+      verified exactly; ff-only merge f94bb84 → 954f590 — drift branch absorbed, no
+      merge commit; validate exit 0 folded into C1; REGISTER schema vocabulary read
+      empirically per Lesson #N14) → Wave R, 4 parallel read-only survey agents
+      (enforcement reality / test landscape / operational truth / reserved-surface
+      census — canonical pin: 34 [ReservedStub application sites / 13 files via
+      verbatim rg rule; DFK-WAIVER baseline 0; doc-tag family baselines registered;
+      all recon deltas explained as measurement-method differences) → checkpoint C-R
+      (H4 not triggered) → Wave W, 4 parallel writer agents on disjoint files →
+      checkpoint C-W (truth-law sampling, zero roadmap load outside ROADMAP pointers,
+      cross-citation integrity, zero NIH stack residue — all clean) → serial closure.
+      Commits: C1 d90b522 (brief enrollment + post-merge validation checkpoint);
+      C2 f576eb7 (RESERVED_SURFACE_MUTABILITY v1.0 NEW — mutable/immutable catalogs,
+      «21 final» composition pin, Skeleton-revisions form, Phase α 5-delta
+      retrospective); C3 4e584b3 (CODING_STANDARDS v2.0.0 — marker family registry +
+      DFK-WAIVER suppression law, load-bearing for A'.9.1 Phase β); C4 fcce199
+      (TESTING_STRATEGY v2.0.0 — landscape truth + census pins + brief-integration
+      pattern + S-LOCK audit); C5 9da4760 (DEVELOPMENT_HYGIENE v2.0.0 — post-Godot
+      operational truth, closes F-6); C6 4a67a22 (ANALYZER_RULES v0.2.0 — stub-truth
+      §4 + roadmap extraction → ROADMAP «Analyzer track»; MOD_API_CONTRACT phantom
+      resolved; suppression defers to CODING_STANDARDS §5.3); C7 b58eed4 (METHODOLOGY
+      v1.13.0 — §12.8 brief-integration boundary rule + §12.9 governance-cascade
+      closure protocol + §12.7 step 9 SYNTH-2 + F-3 changelog backfill); C8 5ebc24b
+      (ROADMAP «Findings ledger (F-series)» seeded F-1..F-12, incl. session findings
+      F-10 two pre-existing test failures on main, F-11 41 merged stale branches,
+      F-12 DFK019.A Phase-γ severity discrepancy → Crystalka ratification gate).
+    governance_impact: |
+      DOC-B-RESERVED_SURFACE_MUTABILITY enrolled (Category B Tier 2 LOCKED v1.0).
+      DOC-D-STANDING_LAW_CASCADE_BRIEF enrolled EXECUTED (Tier 4 per the empirical
+        execution-brief convention; brief self-declared tier 3 — Skeleton-revisions
+        deviation recorded in the C9 commit body).
+      Documents 270 → 272; audit_trail 38 → 39.
+      Version bumps: DOC-B-CODING_STANDARDS 1.0 → 2.0.0 (MAJOR); DOC-B-TESTING_STRATEGY
+        1.0 → 2.0.0 (MAJOR); DOC-B-DEVELOPMENT_HYGIENE 1.0 → 2.0.0 (MAJOR);
+        DOC-B-METHODOLOGY 1.12.1 → 1.13.0 (MINOR); DOC-A-ANALYZER_RULES 0.1 → 0.2.0
+        (lifecycle stays AUTHORED-SKELETON — Phase β mutates §4 next); DOC-C-ROADMAP
+        Live (received Analyzer track + Findings ledger).
+      register_version 2.15 → 2.16; header last_modified_commit set to the single
+        sanctioned PENDING-COMMIT-STANDING_LAW-CLOSURE self-reference, backfilled
+        with C9's real hash at C10 (Option B per established amendment-integrity
+        practice). C1-C8 hashes recorded REAL — zero other placeholders created.
+      Findings ledger states at closure: F-3 CLOSED (C7), F-6 CLOSED (C5), F-8 CLOSED
+        (audit empty); F-1 closes at C10; F-2/F-4/F-5/F-7/F-9/F-10/F-11/F-12 OPEN
+        with owners assigned.
+      К-L impact: zero (К-L count unchanged: 21 final). Zero production code touched.
+      News Intelligence Hub reference corpus untouched (read-only, H8 honored).
+      Zero pushes performed (pushes are Crystalka's act per the closure checklist).
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-D-STANDING_LAW_CASCADE_BRIEF → EXECUTED]
