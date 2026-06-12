@@ -926,6 +926,32 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 
 ---
 
+## Findings ledger (F-series)
+
+> Seeded 2026-06-11 (Standing-Law cascade, brief §13; shape adapted from the News
+> Intelligence Hub findings-ledger mechanism). One row per finding; findings land
+> here at the closure that surfaces them — **never chat-only** (METHODOLOGY §12.9
+> (d)). Severity: S0 critical / S1 high / S2 medium / S3 low / N note. State:
+> OPEN / CLOSED / ACCEPTED-NO-ACTION. Closing a finding records the closing
+> commit hash in its resolution cell.
+
+| F-# | Finding | Severity | State | Resolution / owner |
+|---|---|---|---|---|
+| F-1 | `REGISTER_RENDER.md` self-declares register v2.0 — 15+ versions stale vs SoT (incl. render-script variable-expansion artifact in the prior render) | S2 | OPEN | Closes at this cascade's C10 render regeneration (hash recorded at closure) |
+| F-2 | 124 `PENDING-COMMIT` placeholders across REGISTER.yaml; backfill discipline systemically open | S2 | OPEN | Future register-tooling cascade (hybrid reverse-register, Q-T-2) |
+| F-3 | METHODOLOGY v1.12.1 lacked a body changelog entry (frontmatter↔changelog desync class) | S3 | CLOSED | Backfilled at C7 `b58eed4` (METHODOLOGY v1.13.0) |
+| F-4 | KERNEL Part 0 invariant-ID script inconsistency: table rows Latin "K-L", prose Cyrillic «К-L» — any census/grep must match BOTH scripts (code shows the same duality: 140 Cyrillic / 38 Latin citation sites in src/) | S3 | OPEN | KERNEL amendment (architect); interim mitigation: bi-script rule pinned in RESERVED_SURFACE_MUTABILITY §4 + CODING_STANDARDS §6 |
+| F-5 | `project.godot` still tracked at repo root post-Godot-deprecation (cascade #2); contradicts VULKAN_SUBSTRATE R.8 closure criterion | S3 | OPEN | Crystalka-owned decision; do not delete autonomously (DEVELOPMENT_HYGIENE §7) |
+| F-6 | Tooling reality undocumented: pwsh absent (PS 5.1 + powershell-yaml 0.4.12 is the actual substrate); `sync_register.ps1 -Validate` unconditionally rewrites VALIDATION_REPORT.md (line 380) → commit-folding protocol required | S2 | CLOSED | Documented at C5 `9da4760` (DEVELOPMENT_HYGIENE v2.0.0 §4) |
+| F-7 | METHODOLOGY lesson numbering gap: #N15/#N16 absent (pool tops at #N17); #N18 referenced by the DD recon brief but never codified | N | OPEN | Architect — assign the numbers or declare the gap intentional; #N18 formalization timing-locked to A'.9.1 Phase δ |
+| F-8 | S-LOCK coverage audit (TESTING_STRATEGY §4.4 obligation) — A'.9.1 S-LOCK set audited 2026-06-11 | N | CLOSED | Audit empty: all artifact-checkable S-LOCKs verified on disk (S-LOCK-4 = 17 rule files; S-LOCK-10 = no DFK010 file; 6/7/8/9/11/12 confirmed); no gap entries required. Analyzers test gate is placeholder-level by Phase α design (Phase β scope) |
+| F-9 | KERNEL Part 0 counting-convention divergence risk (table composition vs doc-stated «21 final») | S3 | OPEN | Mitigated by the composition pin (RESERVED_SURFACE_MUTABILITY §4); full in-document reconciliation = KERNEL amendment (architect; may merge with F-4) |
+| F-10 | Two pre-existing test failures on `main`, observed 2026-06-11 (full-suite run, 1034/1036): `Core.Tests SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError` (TickBegin failure at tick 2692, testhost crash; reproduced twice under survey load, Category=Stress) + `Modding.Tests GameBootstrapIntegrationTests.CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` (timing-sensitive, empty stateCommands). Production code untouched by this cascade — recorded, not absorbed (TESTING_STRATEGY §2.6) | S1 | OPEN | Crystalka / next code cascade: reproduce in isolation (no concurrent build load), then fix or reclassify as load-flake with an isolation gate |
+| F-11 | 41 of 44 local branches besides `main` are fully merged — pruning candidates (3 unmerged keepers: `claude/cpp-core-experiment-cEsyH` К-L source-of-truth, `claude/godot-removal-deliberation-Vfg2R`, `feat/m0-m3-mod-os-migration`) | N | OPEN | Crystalka — prune at leisure; no pruning performed this cascade (DEVELOPMENT_HYGIENE §5) |
+| F-12 | DFK019.A Phase-γ severity target discrepancy: K_CLOSURE §7.2 + ANALYZER_RULES v0.1 §10.1 say Warning; A'.9.1 brief §8.1 blanket promotion reads Error. v0.2.0 registry records Warning per the canonical Tier-1 source, footnoted in ANALYZER_RULES §4.1 + ROADMAP «Analyzer track» | S2 | OPEN | Crystalka ratifies before Phase γ promotion executes |
+
+---
+
 ## See also
 
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.
