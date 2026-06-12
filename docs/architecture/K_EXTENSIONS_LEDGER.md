@@ -177,7 +177,7 @@ scaffold (Presentation.Native + Presentation) + addition of new consumer (Launch
 - **Domain 1 (К-L invariants analyzability)**: 22-row matrix (21 К-L + К-L20 reserved row); 2 T1 / 8 T2 / 5 T3 / 4 T4 / 1 T5 / 2 T6; 9 P0 / 8 P1 / 3 P2 / 3 P3
 - **Domain 2 (FORMALIZE Lessons analyzability)**: 12-row matrix (А'.8 batch); 11 T6 + 1 T2 (Lesson #8 auxiliary tooling, NOT Roslyn); 12 Provisional Lessons bonus scoring (HIGH promotion: #N12, #N13; MEDIUM-HIGH: #N14)
 - **Domain 3 (Cascade #2 + #3 surfaced rule candidates)**: 10 candidates (5 cascade #2 + 5 cascade #3); cross-cascade observation: Lesson #N12 underlies 4 candidates — [ReservedStub] + [MarkerInterface] attribute infrastructure recommended as A'.9.1 prerequisite
-- **Domain 4 (Mod OS К-L20 prep surface)**: 20 candidate DF020 sub-rules (5 namespace/type + 4 API usage + 7 manifest cross-check + 4 forward-compat grace period); 6 precursor relationships A'.9-era → К-L20 era identified
+- **Domain 4 (Mod OS К-L20 prep surface)**: 20 candidate DFK020 sub-rules (5 namespace/type + 4 API usage + 7 manifest cross-check + 4 forward-compat grace period); 6 precursor relationships A'.9-era → К-L20 era identified
 - **Domain 5 (Roslyn ecosystem desk research)**: Microsoft.CodeAnalysis.CSharp 5.3.0 (2026-03-10) confirmed; xUnit testing framework variant 1.1.2 recommended; severity policy precedents documented (dotnet/roslyn-analyzers + dotnet/aspnetcore)
 - **Domain 6 (Build/CI integration surface)**: Option C hybrid `tools/DualFrontier.Analyzers/` + `tests/DualFrontier.Analyzers.Tests/` (ManifestRewriter precedent); Directory.Build.props centralized `<ProjectReference OutputItemType="Analyzer">`; .editorconfig per-rule severity при suggestion → error progression
 - **Domain 7 (Suppression governance precedent)**: near-zero baseline (5 pragmas + 0 [SuppressMessage] + 0 GlobalSuppressions + 0 CAPA related); 5-tier classification + BAN GlobalSuppressions.cs + tiered CAPA tracking + per-closure suppression sweep cadence
@@ -227,7 +227,7 @@ Anticipated К-extensions cascades:
 - **К-extensions cascade #5 = A'.9.1 Analyzer Infrastructure** — first analyzer implementation cascade. Authored post-A'.9.0 closure against report §10 prerequisites + §11 Q-K candidates. Scope: analyzer project scaffold (tools/DualFrontier.Analyzers/ + tests/DualFrontier.Analyzers.Tests/) + Directory.Build.props centralized reference + .editorconfig baseline + first DF### rule batch (17 candidates per report §10 prerequisite 1) + cleanup phase + suppression governance protocol.
 - **К-extensions cascade #6+** — A'.9.2/A'.9.3 (severity promotion + DC###/DL### rule cascades) per report §10 prerequisite 7 decomposition recommendation
 - **Post-A'.9 cascade**: V-extension (per Crystalka «расширять V» direction)
-- **К-L20 LOCK cascade**: Mod API lock milestone + DF020 family activation (20 sub-rules per report §6.2)
+- **К-L20 LOCK cascade**: Mod API lock milestone + DFK020 family activation (20 sub-rules per report §6.2)
 
 ---
 <!-- Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY -->

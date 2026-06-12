@@ -6,14 +6,14 @@ category: A
 tier: 2
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.1"
+version: "0.1.1"
 next_review_due: 2026-Q3
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_L14_EVIDENCE_DASHBOARD
 ---
 # К-L14 Evidence Dashboard
 
-**Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23)
-**Version**: 0.1
+**Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; v0.1.1 PATCH 2026-06-12 — Architecture Truth Cascade old-form `DF###` → `DFK###` rename; lifecycle unchanged)
+**Version**: 0.1.1
 **Date created**: 2026-05-23 (А'.8 К-series formal closure cascade Commit 5 REGISTER enrollment)
 **Purpose**: Forward tracking instrument for К-L14 thesis empirical evidence accumulation per Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2 Day 2 falsifiability commitment.
 
@@ -277,7 +277,7 @@ A'.9.0 Reconnaissance = **first observational reconnaissance evidence** of К-L1
 | 14 (candidate) | A'.9.1 Analyzer Infrastructure (К-extensions cascade #5 per Q-K-44) | Post-A'.9.0 closure | Production code addition — analyzer NuGet infrastructure + first DF### rules; substrate stability via in-repo build tooling |
 | 15+ (candidates) | A'.9.2/A'.9.3 (cleanup phase + severity promotion + DC###/DL### rule cascades) | A'.9 milestone duration | Codebase cleanliness; rule-driven debt resolution |
 | 16+ (candidate) | V-extension milestone (post-A'.9) | Per Crystalka «расширять V» direction | V substrate evolution с V1 lessons applied |
-| 17+ (candidate) | К-L20 Mod API lock cascade | Post-V-extension | API surface stability + К-L20 codification + DF020 family activation |
+| 17+ (candidate) | К-L20 Mod API lock cascade | Post-V-extension | API surface stability + К-L20 codification + DFK020 family activation |
 | 18+ (candidates) | Phase B M-cycle milestones (M-K1, M-K2, M-V1, M-V2, M-V7, etc.) | Phase B duration | Gameplay realization + «vanilla = mods» К-L9 purity verification |
 
 ---

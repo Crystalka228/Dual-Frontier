@@ -6,11 +6,13 @@ category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "1.0"
+version: "1.0.1"
 next_review_due: 2027-05-23
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_CLOSURE_REPORT
 ---
 # DualFrontier К-Series Formal Closure Report
+
+> **Archival note (2026-06-12):** rule IDs in this report use the pre-A'.9.1 `DF###` namespace as shipped at А'.8; the current rule namespace and mapping live in ANALYZER_RULES §4 (rule registry).
 
 **Version**: 1.0 (AUTHORED 2026-05-23 at A'.8 К-series formal closure event)
 **Date**: 2026-05-23

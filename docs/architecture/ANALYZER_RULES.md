@@ -6,14 +6,14 @@ category: A
 tier: 1
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.2.0"
+version: "0.2.1"
 next_review_due: 2027-05-23
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ANALYZER_RULES
 ---
 # DualFrontier Roslyn Analyzer Rule Specifications
 
 **Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; structural reorganization at A'.9.1 Phase α Commit 5 2026-05-25; Standing-Law restructure 2026-06-11 — lifecycle unchanged: Phase β mutates §4 again)
-**Version**: 0.2.0
+**Version**: 0.2.1
 **Date created**: 2026-05-23 (А'.8 К-series formal closure cascade Commit 5 REGISTER enrollment)
 **Date restructured**: 2026-05-25 (A'.9.1 / К-extensions cascade #5 Phase α Commit 5); 2026-06-11 (Standing-Law cascade — roadmap-load extraction + stub-truth correction per [DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md §6.3.2](../reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md))
 **Purpose**: Roslyn analyzer rule specifications encoding К-Lxx invariants. This document states what exists; scheduled futures live in [ROADMAP.md «Analyzer track»](../ROADMAP.md). Populated к LOCKED at A'.9.1+ Roslyn analyzer milestone implementation cascade.
@@ -152,7 +152,7 @@ tools/DualFrontier.Analyzers/Rules/
 
 ¹ «Phase-γ target» is the severity the rule is **specified to receive at A'.9.1 Phase γ promotion** — it is not the current behavior. Promotion sequencing and the `.editorconfig` mechanics are owned by [ROADMAP.md «Analyzer track»](../ROADMAP.md). Until Phase γ executes, every rule ships `Info` and emits nothing.
 
-² Registry-drift resolution (v0.2.0): v0.1 carried two parallel registries (§4.1–4.5 and §10.1–10.3) whose columns drifted — §4.2 grouped DFK019.A under an «Error severity post-promotion» header while §10.1 listed Warning. Resolved to **Warning** per canonical [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications) DF019 row (Warning, V substrate contract — configurable). v0.2.0 keeps exactly one registry — this table.
+² Registry-drift resolution (v0.2.0): v0.1 carried two parallel registries (§4.1–4.5 and §10.1–10.3) whose columns drifted — §4.2 grouped DFK019.A under an «Error severity post-promotion» header while §10.1 listed Warning. Resolved to **Warning** per canonical [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications) DFK019 row (Warning, V substrate contract — configurable). v0.2.0 keeps exactly one registry — this table.
 
 **Intended detection notes** (Phase β targets — none implemented at v0.2.0; canonical narratives: K_CLOSURE_REPORT.md §7.2):
 
@@ -304,6 +304,7 @@ Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned 
 | Version | Date | Change |
 |---|---|---|
 | 0.1 | 2026-05-23 / 2026-05-25 | Initial AUTHORED-SKELETON at А'.8 closure (Commit 5 REGISTER enrollment); structural reorganization at A'.9.1 Phase α Commit 5. |
+| 0.2.1 | 2026-06-12 | Architecture Truth Cascade PATCH: §4.1 footnote ² cross-reference old-form `DF019` → `DFK019` (current namespace; aligns with the DFK019.A registry row). No spec change. |
 | 0.2.0 | 2026-06-11 | Structural separation per [DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md §6.3.2](../reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md) + Standing-Law cascade: roadmap load → [ROADMAP.md «Analyzer track»](../ROADMAP.md) (§4.1/§4.2 promotion columns + implementation order, §5 К-L20 family, §6 hardware tier, §10.5 forward plan, §11 forward, frontmatter «Forward sequencing»); §4 stub-truth correction (enforcement-surface overclaim cured — 17 non-detecting Info stubs, zero diagnostics, detection PENDING Phase β); single registry (v0.1 §10.1–10.3 duplicates collapsed; DFK019.A target resolved к Warning per K_CLOSURE §7.2); §7/§8 reframed as realized decision records; `MOD_API_CONTRACT.md` phantom reference resolved to explicit forward-reference; suppression law deferred к CODING_STANDARDS.md §5.3 «DFK-WAIVER» (§12 NEW). |
 
 ---
