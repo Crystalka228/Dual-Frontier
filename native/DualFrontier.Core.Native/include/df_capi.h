@@ -31,7 +31,8 @@ extern "C" {
  * type's full name) and declares the component's byte size. The native side
  * copies `size` bytes on Add and on Get. For the PoC we assume blittable
  * structs; reference-type components remain on the C# side and are not
- * supported by this API (see docs/NATIVE_CORE.md).
+ * supported by this API (see docs/architecture/KERNEL_ARCHITECTURE.md
+ * Part 0, K-L3 / K-L3.1 component storage paths).
  *
  * Return codes:
  *   0 — failure / not found

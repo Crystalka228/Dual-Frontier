@@ -19,8 +19,9 @@ namespace dualfrontier {
 //
 // For the PoC we assume blittable structs on the C# side. Reference-type
 // components (class-based IComponent) are not supported through this store —
-// they require GCHandle marshalling and stay on the managed side. See
-// docs/NATIVE_CORE.md for the rationale.
+// GCHandle marshalling was rejected and they stay on the managed side
+// (mod-side Path β stores). See docs/architecture/KERNEL_ARCHITECTURE.md
+// Part 0 (K-L3 / K-L3.1 component storage paths) for the rationale.
 class RawComponentStore {
 public:
     explicit RawComponentStore(int32_t component_size)

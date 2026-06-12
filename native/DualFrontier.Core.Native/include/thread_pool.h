@@ -21,9 +21,12 @@ namespace dualfrontier {
 // → scheduler mode transition is an atomic flag flip; worker loop semantics
 // are unchanged (tasks drain the same queue in either mode).
 //
-// Pool sizing follows the N-2 rule preserved from managed
-// ParallelSystemScheduler (Environment.ProcessorCount - 2, minimum 1):
-// reserves one core for Godot's main thread and one for OS/background.
+// Pool sizing is caller-supplied: the engine pool is constructed with full
+// std::thread::hardware_concurrency() (fallback 4 when it reports 0) — see
+// capi.cpp InitThreadPool; the short-lived bootstrap pool caps at 4. No core
+// is reserved at this tier (the managed ParallelSystemScheduler keeps its own
+// N-2 rule for its Parallel.ForEach dispatch). See
+// docs/architecture/THREADING.md.
 //
 // Thread-safe: submit() and shutdown() callable from any thread.
 //
