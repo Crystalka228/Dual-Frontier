@@ -6,33 +6,34 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1.2"
+version: "1.2.0"
 next_review_due: 2027-05-16
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 ---
 # Vulkan Substrate (V) — Dual Frontier
 
-**Status:** AUTHORITATIVE LOCKED v1.0 — unified Vulkan substrate spec covering rendering + compute use cases.
+**Status:** AUTHORITATIVE LOCKED — unified Vulkan substrate spec covering rendering + compute use cases. Version and lifecycle are owned by the document register (frontmatter mirror above).
 
 **Supersedes:** prior `RUNTIME_ARCHITECTURE.md` v1.0 LOCKED (rendering layer spec) + `GPU_COMPUTE.md` v2.0 LOCKED (compute layer spec). Both source documents were physically describing **one** Vulkan device with two use cases; the documentation drift introduced separate substrate identities for what is one physical layer. Per Q-G-1 LOCK in `docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md` §3.1, R (runtime) and G (GPU compute) substrate buckets merged into unified Vulkan substrate **V**.
 
-**Companion documents:** [METHODOLOGY](/docs/methodology/METHODOLOGY.md), [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [ARCHITECTURE](./ARCHITECTURE.md), [THREADING](./THREADING.md), [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md), [FIELDS](./FIELDS.md), [ROADMAP](/docs/ROADMAP.md).
+**Companion documents:** [METHODOLOGY](../methodology/METHODOLOGY.md), [CODING_STANDARDS](../methodology/CODING_STANDARDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [ARCHITECTURE](./ARCHITECTURE.md), [THREADING](./THREADING.md), [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) (historical), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md) (historical), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md), [FIELDS](./FIELDS.md), [ROADMAP](../ROADMAP.md).
 
-> **⚠ Code-truth notice — DD-1 (2026-06-02, Documentation Dual-Load Drift Reconnaissance).**
-> **Godot is fully retired** (К-extensions cascade #2, 2026-05-23): `DualFrontier.Presentation*` projects deleted;
-> `DualFrontier.Launcher` (Vulkan/Silk.NET) is the live render host. Sections below (notably the §migration body
-> and §6 R-milestones) still contain **present-tense «current Godot / dual-backend» framing** that is stale — the
-> R.0–R.8 cutover completed at cascade #2. These passages need scrubbing to Vulkan-only present tense (tracked as
-> remaining DD-1 body work in the [DD refactor progress report](/docs/reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REFACTOR_PROGRESS.md)).
-> **Residual:** a `project.godot` file still exists at the repo root (contradicts the §6 R.8 «grep godot empty»
-> criterion) — flagged for Crystalka's decision, not deleted autonomously. Authoritative current state:
-> `src/DualFrontier.Launcher/` + `native/DualFrontier.Core.Native/` (Vulkan).
+> **Presentation reality.** Godot is fully retired (К-extensions cascade #2, 2026-05-23): the `DualFrontier.Presentation*`
+> projects were deleted and `DualFrontier.Launcher` (pure Win32 + Vulkan P/Invoke through `DualFrontier.Runtime`) is the
+> production render host. Authoritative on-disk state: `src/DualFrontier.Launcher/` + `src/DualFrontier.Runtime/` +
+> `native/DualFrontier.Core.Native/`. **Residual:** a `project.godot` file still exists at the repo root
+> (Crystalka-owned, not deleted autonomously — [DEVELOPMENT_HYGIENE §7 (Godot status)](../methodology/DEVELOPMENT_HYGIENE.md);
+> tracked as Findings-ledger item F-5 in [ROADMAP](../ROADMAP.md)).
 
-**Scope:** Full architectural specification for the Vulkan substrate (V) — single `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage serving both 2D rendering and compute. Defines substrate primitives V0/V1/V2 (compute-side), rendering use case implementation, compute use case implementation, threading model, asset pipeline, shader strategy, mod-driven compute pipeline registration, mathematical models for field-based gameplay mechanics, failure modes, and the unified roadmap toward full architectural foundation. The Domain layer ([ARCHITECTURE §Domain](./ARCHITECTURE.md), [ECS](./ECS.md), [EVENT_BUS](./EVENT_BUS.md), [ISOLATION](./ISOLATION.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) is preserved verbatim by this layer — see L10 in §0.
+**Scope:** Full architectural specification for the Vulkan substrate (V) — single `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage serving both 2D rendering and compute. Defines substrate primitives V0/V1/V2 (compute-side), rendering use case implementation, compute use case implementation, threading model, asset pipeline, shader strategy, mod-driven compute pipeline registration, mathematical models for field-based gameplay mechanics, and failure modes. This document answers what the substrate **is**; substrate status and sequencing live in [ROADMAP §Native foundation tracks](../ROADMAP.md). The Domain layer ([ARCHITECTURE §Domain](./ARCHITECTURE.md), [ECS](./ECS.md), [EVENT_BUS](./EVENT_BUS.md), [ISOLATION](./ISOLATION.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) is preserved verbatim by this layer — see L10 in §0.
 
 **Version history:**
 
-- **v1.1.1 (2026-05-23, this version)** — К-extensions cascade #2 closure patch bump per Q-G-12 LOCKED. Substantive content unchanged; cleanup-only patch records Godot deprecation + Launcher formalization status. R.8 «Migration cutover (delete Godot)» step in §6 marked complete (К-extensions cascade #2 closure: tracked Godot files removed, DualFrontier.Launcher production renderer formalized per Q-G-6 (b1) infrastructure-only). Migration narrative throughout §4 retained as historical record of pre-cascade-#2 state — readers should treat "parallel Godot+Vulkan" framing as past-tense reference к the pre-cascade migration approach.
+- **v1.2.0 (2026-06-12, this version)** — Architecture Truth Cascade body scrub (D2 per `tools/briefs/ARCHITECTURE_TRUTH_CASCADE_BRIEF.md` §5-W2). Body rewritten to realized state: V0 + V1 substrate primitives recorded as shipped with evidence (V0 close 2026-05-19 per Q8 ratification; V1 close PR #40 merge `88aebf2`); V2 reduced to design rationale with pending status pointed at ROADMAP; §2.1 tree replaced with the verified on-disk tree (Launcher in, Presentation out, real shader set, real mod set); §2.2–§2.4 Presentation/scheduler residues fixed to Launcher/native-scheduler truth; §4.1–§4.2 migration narrative converted to completed record; §6 forward tables converted to evidence-marked status records with ROADMAP as single status authority; §7.1 CPU-fallback claim corrected to К-L19 fail-fast truth; phantom `tools/build-all.ps1` corrected to the `CompileShaders` MSBuild target; closing-note and Part 12 self-version pins removed; stale companion labels marked historical. Forward state authority: `docs/ROADMAP.md`.
+
+- **v1.1.2 (2026-06-02)** — DD-1 code-truth banner + surgical fixes (commit `6480df1`, Documentation Dual-Load Drift Reconnaissance batch across 6 architecture docs). Banner superseded by the v1.2.0 body scrub.
+
+- **v1.1.1 (2026-05-23)** — К-extensions cascade #2 closure patch bump per Q-G-12 LOCKED. Substantive content unchanged; cleanup-only patch records Godot deprecation + Launcher formalization status. R.8 «Migration cutover (delete Godot)» step in §6 marked complete (К-extensions cascade #2 closure: tracked Godot files removed, DualFrontier.Launcher production renderer formalized per Q-G-6 (b1) infrastructure-only). Migration narrative throughout §4 retained as historical record of pre-cascade-#2 state — readers should treat "parallel Godot+Vulkan" framing as past-tense reference к the pre-cascade migration approach.
 
 - **v1.1 (2026-05-20)** — К10.3 v2 load-bearing commit 1/3 reconciliation per S-LOCK-14. Consolidates: (a) К-L19 deferred V0.B amendments (§0 L1 Vulkan 1.3 + async compute queue mandate notation; §0 L7 К-L19 hardware tier baseline note; §3.4 К-L19 mandate documentation); (b) К10.3 v2 К-L7.1/L16 amendments (§2 pipeline depth architecture subsection; §2.3 threading model pipeline depth + queue family roles subsection; §7.2 pipeline drain semantics; §7.3 pipeline slot tail read pattern). К-L17 + К-L18 amendments land в subsequent К10.3 v2 load-bearing commits.
 
@@ -42,7 +43,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 
 ## Preamble — How to use this document
 
-**Authority.** This document is the single architectural authority for the Dual Frontier Vulkan substrate (V) — window management, GPU rendering, input, sprite batching, text, asset loading, diagnostic tooling, compute pipeline plumbing, field-based compute mechanics. During implementation of substrate primitives V0/V1/V2 and the rendering use case migration, every interface, P/Invoke declaration, struct layout, and lifecycle step traces back to a section here. Disagreement with the specification is escalated to the human (via §4 open decisions) — never resolved by improvisation in code, mirroring the discipline established for the modding layer in [MOD_OS_ARCHITECTURE Preamble](./MOD_OS_ARCHITECTURE.md).
+**Authority.** This document is the single architectural authority for the Dual Frontier Vulkan substrate (V) — window management, GPU rendering, input, sprite batching, text, asset loading, diagnostic tooling, compute pipeline plumbing, field-based compute mechanics. Every shipped interface, P/Invoke declaration, struct layout, and lifecycle step in the substrate traces back to a section here; the same rule binds the remaining substrate work (V2). Disagreement with the specification is escalated to the human (via §8.2 open decisions) — never resolved by improvisation in code, mirroring the discipline established for the modding layer in [MOD_OS_ARCHITECTURE Preamble](./MOD_OS_ARCHITECTURE.md).
 
 **Scope.** The specification governs:
 
@@ -53,8 +54,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
 - The PNG decoder and shader compilation pipeline.
 - The threading model on top of [THREADING](./THREADING.md) (window+render thread merged with simulation thread preserved).
 - The compute pipeline plumbing (V0 substrate primitive) for both Domain A (field updates) and Domain B (entity-keyed bulk computation).
-- Scalar field primitives V1 (diffusion shader) and V2 (wave shader) — substrate-level abstractions consumed by vanilla mods as gameplay mechanics.
-- The migration sequencing from the current dual-backend Godot+Silk.NET state ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) toward the locked Vulkan target — historically tracked as M9.0..M9.8 runtime milestones, now unified within V substrate (Q-R-2 LOCK).
+- Scalar field primitives V1 (diffusion shader, shipped) and V2 (wave shader, pending) — substrate-level abstractions designed for consumption by vanilla mods as gameplay mechanics.
+- The completed migration from the dual-backend Godot+Silk.NET state ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md), both historical) to the Vulkan-only target — historically tracked as M9.0..M9.8 runtime milestones, unified within V substrate (Q-R-2 LOCK), cutover completed at К-extensions cascade #2 (2026-05-23). §4 records this as a realized migration.
 
 The specification does **not** govern:
 
@@ -62,9 +63,9 @@ The specification does **not** govern:
 - The mod system — covered by [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [MODDING](./MODDING.md), [MOD_PIPELINE](./MOD_PIPELINE.md). V substrate exposes presentation + compute primitives only; mods cannot reach the substrate layer directly except through `IModApi` v3 surface (`Fields`, `ComputePipelines` sub-APIs).
 - Game-design questions (balance, narrative, pacing).
 - Field storage data layout — owned by [FIELDS](./FIELDS.md) and [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) K9 (`RawTileField<T>`). V substrate consumes the field storage primitives; it does not define them.
-- Methodology of the development pipeline — covered by [METHODOLOGY](/docs/methodology/METHODOLOGY.md).
+- Methodology of the development pipeline — covered by [METHODOLOGY](../methodology/METHODOLOGY.md).
 
-**The "stop, escalate, lock" rule.** When implementation encounters a design question not answered here, the response is "stop, document in §4, wait for the human to lock" — not "guess." Same discipline as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) Preamble.
+**The "stop, escalate, lock" rule.** When implementation encounters a design question not answered here, the response is "stop, document in §8.2, wait for the human to lock" — not "guess." Same discipline as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) Preamble.
 
 ---
 
@@ -72,10 +73,10 @@ The specification does **not** govern:
 
 Dual Frontier's Vulkan substrate (V) is a **unified Vulkan 1.3 layer** serving two use cases on one `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage:
 
-- **Rendering use case** — Win32 window, swapchain, sprite batching, bitmap text, atlas-based 2D rendering. Migration target replacing Godot 4 + C# Presentation layer ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)).
-- **Compute use case** — field-based GPU compute (Domain A) + entity-keyed bulk computation (Domain B). Substrate-level abstraction for diffusion / wave / flow field gameplay mechanics. Mod-driven shader registration.
+- **Rendering use case** — Win32 window, swapchain, batched sprite rendering, atlas-based 2D rendering. Shipped as `DualFrontier.Runtime`, consumed by the production host `DualFrontier.Launcher`. It replaced the Godot 4 + C# Presentation layer ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md), both historical) — Godot was physically removed at К-extensions cascade #2 (2026-05-23). Text rendering and UI primitives have not shipped yet (Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md)).
+- **Compute use case** — field-based GPU compute (Domain A) + entity-keyed bulk computation (Domain B). Substrate-level abstraction for diffusion / wave / flow field gameplay mechanics. V0 compute plumbing and the V1 diffusion primitive are shipped (`src/DualFrontier.Runtime/Compute/`); mod-driven shader registration is a designed contract, not yet wired to mods (§3.3).
 
-The Domain layer ([ARCHITECTURE](./ARCHITECTURE.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [THREADING](./THREADING.md), [ISOLATION](./ISOLATION.md)) is preserved verbatim — zero touch by V substrate work. Only the Presentation layer ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md), [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) is rewritten on the new foundation.
+The Domain layer ([ARCHITECTURE](./ARCHITECTURE.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [THREADING](./THREADING.md), [ISOLATION](./ISOLATION.md)) was preserved verbatim — zero touch by V substrate work. Only the presentation layer was rebuilt on the new foundation: the Godot-era `DualFrontier.Presentation` projects were deleted and `DualFrontier.Launcher` now hosts the game on `DualFrontier.Runtime`.
 
 **Foundation philosophy** — «без компромиссов»:
 
@@ -90,7 +91,7 @@ Total ownership: every line above OS API surface is project's own code.
 
 **Architectural insight (Q-G-1 + Q-G-2):** Rendering and compute share one Vulkan device. Treating them as separate substrates (R-bucket and G-bucket) was documentation drift. Compute substrate primitives reduce to three items (V0 plumbing, V1 diffusion, V2 wave) once gameplay mechanics are recognized as **configurations** of physical primitives rather than substrate primitives in their own right (cf. Lesson #12 candidate, deliberation document §6.3). Distribution networks (mana, electricity, water, heat), navigation (flow-field pathfinding), and crowd behavior all reduce to V1+V2 configuration — substrate stays small, gameplay stays expressive.
 
-**Estimated scope:** Rendering use case migration to full M8.x parity on Vulkan — 4–7 weeks at hobby pace (~1h/day). V substrate compute primitives V0/V1/V2 — 3–5 weeks at hobby pace. M-V demonstration mods (M-V1 mana, M-V2 electricity, M-V5 projectile, M-V7 movement, M-V8 local avoidance) — additional 3–5 weeks combined.
+**Realized state (evidence record):** V0 foundation closed 2026-05-19 (Q8 ratification; `docs/MIGRATION_PROGRESS.md` V-series table). V1 diffusion closed 2026-05-19 (PR #40, merge `88aebf2`). Rendering cutover (Godot deletion) completed at К-extensions cascade #2, 2026-05-23. V2 wave, the M-V demonstration mods, and the remaining rendering scope (text/UI) are pending — status authority: [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
 ---
 
@@ -115,58 +116,56 @@ The following decisions are committed as architectural foundation. Departures re
 
 **Implication of L1 (К-L19 V0.B + К-L16 К10.3 v2).** Async compute queue family mandatory at startup per К-L19 hardware tier commitment (V0.B closure 2026-05-18). К10.3 v2 К-L16 pipeline depth (D=1-3, default 2) consumes the async compute queue для pipeline-managed dispatches (Phase.Compute scheduler integration per native phase_compute.h). К-L7.1 sub-invariant binds pipeline-managed FieldStorageSnapshot к slot tail — sim-thread reads see one-tick lag (К-L7 atomic-from-observer preserved within slot boundary). К-L9 «Vanilla = mods» — opt-in per field; V1 К-L7 sync dispatch_compute_field path preserved для existing consumers.
 
-**Implication of L10.** All existing namespaces under `DualFrontier.Core`, `DualFrontier.Contracts`, `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Systems`, `DualFrontier.Application`, `DualFrontier.Modding`, `DualFrontier.Persistence` are untouched. The existing test suite passes throughout migration ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md)). Mod system contracts ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) remain unchanged — V substrate is not visible from a mod's `AssemblyLoadContext` directly; mods reach Vulkan compute via `IModApi.ComputePipelines` and field storage via `IModApi.Fields` (v3 surface, K8.4 closure).
+**Implication of L10.** All existing Domain namespaces — `DualFrontier.Core`, `DualFrontier.Contracts` (including `DualFrontier.Contracts.Modding`), `DualFrontier.Components`, `DualFrontier.Events`, `DualFrontier.Systems`, `DualFrontier.Application` (including `DualFrontier.Application.Modding`), `DualFrontier.Persistence`, `DualFrontier.AI` — are untouched by substrate work. The existing test suite passed throughout the migration ([TESTING_STRATEGY](../methodology/TESTING_STRATEGY.md) owns the census). Mod system contracts ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md)) remain unchanged — V substrate is not visible from a mod's `AssemblyLoadContext` directly. The mod-facing compute surface (v3, K8.4 closure): `IModApi.Fields` (`IModFieldApi`, wired in production via `RestrictedFieldApi` when native field storage is present) and `IModApi.ComputePipelines` (`IModComputePipelineApi` contract placeholder — the production implementation currently returns `null`; the real registration surface is Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md)).
 
 ---
 
 ## 1. V substrate primitives (Q-G-2 LOCK)
 
-The V substrate is built from three primitives, in correct order. Each primitive is a **substrate-building milestone**; closure of all three plus multi-field-coexistence acceptance criterion (the former G4, now subsumed) constitutes V substrate close.
+The V substrate is built from three primitives, in dependency order. Each primitive is a **substrate-building milestone**; closure of all three plus the multi-field-coexistence acceptance criterion (the former G4, now subsumed) constitutes V substrate close. Realized so far: **V0 and V1 are shipped** (closure evidence in the respective sections below); **V2 is pending** (no wave shader on disk). Status authority: [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-### 1.1 V0 — Vulkan substrate foundation
+### 1.1 V0 — Vulkan substrate foundation (shipped)
 
 **Scope:** All Vulkan plumbing shared by rendering and compute use cases. Single `VkInstance`/`VkDevice` linkage to `vulkan-1.dll`. Validation layer setup. SPIR-V toolchain. Memory allocator. Compute pipeline plumbing. Render pipeline plumbing. Win32 window + surface + swapchain. Threading model (window+render thread merged, simulation thread preserved).
 
 **Historical context:** Pre-Q-G-1, this scope was split across `RUNTIME_ARCHITECTURE.md` (rendering side: Win32, swapchain, sprite/text/atlas plumbing) and `GPU_COMPUTE.md` G0 (compute-pipeline-only plumbing). Q-G-1 LOCK recognizes that both sides share one `VkInstance`/`VkDevice` physically; the substrate identity is one (V0), the use cases are two (rendering, compute).
 
-**Rendering side deliverables** (former M9.0..M9.7 work, now V0 rendering use case implementation phases — see §6 Roadmap):
+**Rendering side deliverables** (former M9.0..M9.7 work, executed as V0 sub-milestones V0.A/V0.B/V0.C.1/V0.C.2 — realized record):
 
-- Win32 window + surface (`vkCreateWin32SurfaceKHR`)
-- Vulkan instance + physical/logical device + queue family selection
-- Validation layer (`VK_LAYER_KHRONOS_validation`) enabled in DEBUG
-- Swapchain + recreation on `WM_SIZE`
-- Render pass + graphics pipeline + command pool/buffer
-- Vertex buffer + image + memory allocator (bumper allocator initially)
-- PNG decoder + asset manager
-- Sprite atlas + sprite batcher + `Camera2D` orthographic projection
-- Bitmap font + text renderer (sprite-pipeline-based)
-- Input event queue (Win32 messages → typed events)
-- Debug overlay + frame timer + validation log
+- Win32 window + surface (`vkCreateWin32SurfaceKHR`) — shipped (`Window/Window.cs`, `Graphics/VulkanSurface.cs`).
+- Vulkan instance + physical/logical device + queue family selection — shipped (`Graphics/VulkanInstance.cs`, `Graphics/VulkanDevice.cs`, `Graphics/QueueFamilyInfo.cs`).
+- Validation layer (`VK_LAYER_KHRONOS_validation`) enabled in DEBUG — shipped (`Graphics/ValidationLayer.cs`; default per `RuntimeOptions.EnableValidationLayer`).
+- Swapchain + recreation — shipped (`Graphics/VulkanSwapchain.cs`; `Runtime.RecreateFramebuffersForSwapchain`).
+- Render pass + graphics pipeline + command pool/buffer — shipped (`Graphics/VulkanRenderPass.cs`, `Graphics/VulkanGraphicsPipeline.cs`, `Graphics/VulkanCommandPool.cs`, `Graphics/VulkanCommandBuffer.cs`).
+- Vertex buffer + image + memory allocator (bumper allocator) — shipped (`Graphics/VulkanBuffer.cs`, `Graphics/VulkanImage.cs`, `Graphics/MemoryAllocator.cs`).
+- PNG decoder + asset manager — shipped (`Assets/PngDecoder.cs`, `Assets/AssetManager.cs`).
+- Batched sprite renderer + `Camera2D` orthographic projection + `TileMap` — shipped (`Sprite/SpriteRenderer.cs` batched BeginFrame/Submit/EndFrame API, `Sprite/Camera2D.cs`, `Sprite/TileMap.cs`).
+- Input event queue (Win32 messages → typed events) — shipped (`Window/InputEventQueue.cs`, `Input/` event types, `Input/VirtualKeyMapper.cs`). Forwarding of drained events into Domain is not yet wired in the Launcher (Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md)).
+- Validation log — shipped (`Diagnostic/ValidationLog.cs`).
+- **Not shipped within V0:** bitmap font + text renderer, debug overlay + frame timer (no `Text/` module, no `DebugOverlay`/`FrameTimer` types on disk). These remain rendering-scope work — Planned, see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-**Compute side deliverables** (former G0 work, now V0 compute use case implementation):
+**Compute side deliverables** (former G0 work, executed within V0.B — realized record):
 
-- Compute pipeline (`VkPipeline` with `VK_PIPELINE_BIND_POINT_COMPUTE`)
-- Compute descriptor set layout + descriptor pool + pipeline layout
-- Storage buffer / storage image creation for fields marked compute-managed
-- Compute pipeline registration C ABI (`df_world_register_compute_pipeline`)
-- Compute dispatch C ABI (`df_world_field_dispatch_compute`)
-- Fence-based sync between CPU writes (conductivity updates) and GPU dispatch
-- Build-time compute shader compilation extending §3.2 shader strategy (same `glslangValidator.exe` toolchain)
-- Tests: empty dispatch (no-op pipeline) executes without error; pipeline registration round-trip
+- Compute pipeline (`VkPipeline` with `VK_PIPELINE_BIND_POINT_COMPUTE`) — shipped (`Compute/VulkanComputePipeline.cs`; native `compute_pipeline.cpp`).
+- Compute descriptor set layout + descriptor pool + pipeline layout — shipped (`Compute/VulkanComputeDescriptors.cs`).
+- Storage buffer binding for fields — shipped (`Compute/FieldStorageBinding.cs` — K9 `RawTileField<T>` → SSBO).
+- Compute pipeline registration C ABI (`df_world_register_compute_pipeline`) — shipped (`native/DualFrontier.Core.Native/include/df_capi.h`).
+- Compute dispatch C ABI (`df_world_field_dispatch_compute`) — shipped (same header; `compute_dispatch.cpp`).
+- Fence-based sync between CPU writes (conductivity updates) and GPU dispatch — shipped (К-L7 sync path; `Graphics/VulkanFence.cs`).
+- Build-time compute shader compilation — shipped (`CompileShaders` MSBuild target in root `Directory.Build.props`; `noop.comp` + `diffusion.comp` compiled via `tools/glslangValidator.exe`).
+- Tests — shipped (`tests/DualFrontier.Runtime.Tests/Compute/ComputePipelineRegistrationTests.cs`: registration round-trip + no-op dispatch).
 
-**Exit criteria:**
+**Exit criteria — met (closure record, V0 close 2026-05-19 per Q8 ratification; chronicle: `docs/MIGRATION_PROGRESS.md` V-series table):**
 
-- Window opens (Win32), Vulkan instance + device live, validation layer reports zero errors.
-- Clear color rendered at 60+ FPS.
-- Compute pipeline registration round-trip works; empty dispatch executes without error.
-- All existing Domain tests pass (Domain layer untouched).
-- Clean shutdown (no leaked Vulkan handles per validation).
+- Window opens (Win32), Vulkan instance + device live, validation layer reports zero errors — V0.A closure 2026-05-18.
+- Sprite/tile rendering at 60+ FPS — V0.C.1 smoke run: 820 frames at 164 FPS (AMD RX 7600S, 2026-05-19); V0.C.2 added the 10K-sprite stress scene and the 200×200 TileMap scene.
+- Compute pipeline registration round-trip + empty dispatch without error — V0.B closure 2026-05-18 (native selftest compute roundtrip scenario).
+- All existing Domain tests pass (Domain layer untouched) — held at every V0 sub-closure (875 tests at V0.C.1).
+- Clean shutdown (no leaked Vulkan handles per validation) — `Runtime.Create` disposes partially-constructed components on failure; validation-clean exit verified in the closure smoke runs.
 
-**Estimated:** 4–6 weeks at hobby pace combining rendering + compute foundation work.
+### 1.2 V1 — Scalar field + diffusion shader (environmental layer, shipped)
 
-### 1.2 V1 — Scalar field + diffusion shader (environmental layer)
-
-**Scope:** First substrate-level compute primitive. Scalar field type backed by `RawTileField<T>` (K9 storage) with **isotropic diffusion shader** describing environmental distribution.
+**Scope:** First substrate-level compute primitive. Scalar field type backed by `RawTileField<T>` (K9 storage) with **isotropic diffusion shader** describing environmental distribution. Shipped 2026-05-19 (PR #40 V1-series, merge `88aebf2`): `tools/shaders/diffusion.comp` (+ compiled `assets/shaders/diffusion.comp.spv`), `src/DualFrontier.Runtime/Compute/V1DiffusionPipeline.cs` + `DiffusionPushConstants.cs`, `Runtime.CreateFieldStorageBinding` / `Runtime.CreateV1DiffusionPipeline` factories, CPU oracle kernels `IsotropicDiffusionKernel` + `AnisotropicDiffusionKernel` (`src/DualFrontier.Core.Interop/CpuKernels/`).
 
 **Mathematical model** (isotropic diffusion, ~30 LOC GLSL):
 
@@ -188,18 +187,20 @@ Per-cell `D` varies. Wire/pipe tiles have `D ≈ 10.0`; off-path tiles have `D �
 
 **Storage interaction:** V1 consumes `RawTileField<T>` from K9 (see [FIELDS](./FIELDS.md), [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) K9 section). Per-field conductivity map enables anisotropic variants. Per-field storage flags (former G3 storage cell feature) handled at gameplay-level node configuration — V1 substrate primitive does not include shader-level capacitance.
 
-**M-V1 demonstration:** Vanilla.Magic mod (`ManaField`) — see §6 Roadmap and Q-R-1 format. Mana diffusion is the first production-shaped V1 use case.
+**M-V1 demonstration:** Vanilla.Magic mod (`ManaField`) — the first production-shaped V1 use case. Pending: `mods/DualFrontier.Mod.Vanilla.Magic` is a strict-v3 skeleton with an empty `Initialize`. Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-**Exit criteria:**
+**Exit criteria — substrate-level criteria met (closure record, V1 close 2026-05-19; commits `7ad0560` closure + `88aebf2` merge):**
 
-- Mana sources spread spatially per shader; CPU reference (for shader equivalence testing) and GPU output match within tolerance.
-- Spell-casting systems can read local mana via point query.
-- Anisotropic variant (electricity) propagates along wire paths; off-wire decay matches expectation.
-- Conductivity update API exercised (player build action triggers wire layout change).
+- Sources spread spatially per shader; CPU oracle and GPU output match within tolerance — `V1DiffusionEquivalenceTests` (isotropic vs `IsotropicDiffusionKernel`, anisotropic vs `AnisotropicDiffusionKernel`), plus isotropic and anisotropic-wire-path 200×200 smoke scenes (commits `34d85e0`, `2f00a8f`).
+- Local point query reads — `FieldHandle<T>.ReadCell` (shipped, `src/DualFrontier.Core.Interop/FieldHandle.cs`); consumed by the equivalence and smoke tests.
+- Anisotropic variant propagates along wire paths; insulator blocking holds — anisotropic insulator-equivalence scenarios (commit `59dfc72`) + wire-path smoke scene.
+- Conductivity update API — `FieldHandle<T>.SetConductivity` shipped and exercised by tests; the *player-build-action* trigger is a mod-level (M-V2) concern, pending with the demonstration mods.
 
-**Estimated:** 1–2 weeks at hobby pace (substrate primitive itself; per-mod gameplay configurations are separate M-V milestones).
+Mod-level demonstration criteria (mana spell-casting reads, player wire-building) belong to M-V1/M-V2 — Planned, see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-### 1.3 V2 — Scalar field + wave shader (routed layer)
+### 1.3 V2 — Scalar field + wave shader (routed layer, pending — design rationale)
+
+**Status:** Not implemented. No wave shader exists on disk (`tools/shaders/` contains no `wave.comp`; `assets/shaders/` contains no `wave.comp.spv`). This section is the authored design rationale; scheduling and status live in [ROADMAP §Native foundation tracks (V substrate)](../ROADMAP.md).
 
 **Scope:** Second substrate-level compute primitive. Scalar field type with **wave-propagation shader** through discrete topology overlay. Routed (not isotropic). **Breakable** — wave propagation respects walls / cliffs / closed pipes / cut cables. Distance and direction fields produced as **side products** of wave propagation; no separate flow-field-infrastructure primitive needed (former G6 folded into V2).
 
@@ -277,18 +278,14 @@ Stored as `vec2` per cell (8 bytes per tile × 200×200 = 320 KB per field). Tri
 
 **Hybrid coupling note** (TBD — deferred to amendment authoring): how diffusion (V1) picks up from a broken wave node (V2). Example: water in pipes propagates via V2 wave shader respecting pipe topology, but on break the water diffuses ambient via V1. Coupling spec lives in V substrate authoring at amendment time.
 
-**M-V2 demonstration:** Vanilla.Electricity mod — see §6 Roadmap and Q-R-1 format. Wave through cables with breakable propagation.
+**M-V2 / M-V7 demonstrations:** Vanilla.Electricity (wave through cables with breakable propagation) and Vanilla.Movement (pathfinding via V2 routed flow field). Neither mod exists on disk yet. Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-**M-V7 demonstration:** Vanilla.Movement pathfinding via V2 routed flow field — see §6 Roadmap.
-
-**Exit criteria:**
+**Exit criteria (design contract — to be evidenced at V2 closure):**
 
 - Distance field converges to correct gradient on representative grids.
 - Direction field extraction produces walkable gradient toward target.
 - Wave propagation respects walls / closed-pipe / cut-cable barriers (verified in synthetic obstacle scenarios).
 - M-V2 (electricity through cables) and M-V7 (pawn navigation via flow field) demonstrate V2 use cases.
-
-**Estimated:** 2–3 weeks at hobby pace (substrate primitive itself plus distance/direction shader integration).
 
 #### 1.3.1 G9 eikonal upgrade (deferred TBD)
 
@@ -300,14 +297,7 @@ Per-entity bulk computation (the original `ProjectileSystem` GPU path, Domain B 
 
 ### 1.4 V substrate close acceptance criteria
 
-V substrate is **closed** when:
-
-- V0 (foundation) — rendering use case at full M8.x parity on Vulkan; compute use case empty-dispatch + pipeline registration round-trip working.
-- V1 (diffusion) — M-V1 mana diffusion demonstration shipping; anisotropic variant (M-V2 electricity wire propagation) shipping.
-- V2 (wave) — M-V7 routed flow field pathfinding demonstration shipping.
-- **Multi-field coexistence** (former G4, now acceptance criterion) — V1 mana + V1-anisotropic electricity + V2 routed-water-pressure all active simultaneously without interference, within performance budget (~1 ms/tick per active field on mid-range GPU).
-
-V substrate close gates Phase B M-cycle vanilla content mass migration. Future V-N primitives (V3+) reserved for post-substrate compute needs (G5 projectile resolution, G9 eikonal upgrade if evidence justifies, modder-driven primitives).
+V substrate close criteria, gating, and current standing are tracked in [ROADMAP §Native foundation tracks (V substrate)](../ROADMAP.md) — the single forward-state authority. The multi-field-coexistence acceptance criterion (former G4) closes the substrate together with V0/V1/V2. Future V-N primitive identifiers (V3+) remain reserved for post-substrate compute needs (G5 projectile resolution per §1.3.2, G9 eikonal upgrade per §1.3.1 if evidence justifies, modder-driven primitives).
 
 ---
 
@@ -342,181 +332,120 @@ Display thread reads from CurrentSimTick - D для pipeline-managed display sta
 
 **К-L7 sync coexistence (S-LOCK-10 + S-LOCK-13)**: V1's existing `V1DiffusionPipeline.ExecuteIteration` synchronous dispatch path (К-L7 atomic-from-observer per `compute_dispatch.h`) remains operational orthogonal к К-L16. К-L7.1 is opt-in для new pipeline-managed consumers; К-L7 is default для existing V1 consumers. К-L9 «Vanilla = mods» preserved — author choice per field.
 
-### 2.1 Project structure (post-migration target)
+### 2.1 Project structure (on-disk, verified 2026-06-12)
 
 ```
 src/
-  // ====== Domain layer (preserved verbatim — zero touch) ======
-  DualFrontier.Core/
-  DualFrontier.Contracts/
+  // ====== Domain layer (preserved verbatim — zero substrate touch) ======
+  DualFrontier.AI/                            // pathfinding (AStarPathfinding, IPathfindingService)
+  DualFrontier.Application/                   // bootstrap, GameLoop, PresentationBridge, Display/, Modding/
   DualFrontier.Components/
+  DualFrontier.Contracts/                     // incl. Contracts/Modding (IModApi v3) + Contracts/Display
+  DualFrontier.Core/                          // ECS, Bus, Scheduling (managed side)
+  DualFrontier.Core.Interop/                  // native kernel bridge: NativeWorld, FieldRegistry,
+                                              //   FieldHandle<T>, NativeMethods.{Compute,Fields,…},
+                                              //   CpuKernels/{Isotropic,Anisotropic}DiffusionKernel
+  DualFrontier.Crypto.Future/
   DualFrontier.Events/
-  DualFrontier.Systems/
-  DualFrontier.Application/
-  DualFrontier.Modding/
   DualFrontier.Persistence/
+  DualFrontier.Systems/
 
-  // ====== V substrate (NEW — Vulkan + Win32 foundation) ======
+  // ====== V substrate (Vulkan + Win32 foundation) ======
   DualFrontier.Runtime/
-    DualFrontier.Runtime.csproj
-    MODULE.md                                 // module purpose + dependencies
-    Runtime.cs                                // top-level facade — entry point
+    DualFrontier.Runtime.csproj               // references exactly one project: DualFrontier.Core.Interop
+    MODULE.md
+    Runtime.cs                                // top-level facade (composition + frame + compute factories)
+    RuntimeOptions.cs                         // window options, assets dir, validation-layer default
 
-    Native/
-      MODULE.md
-      Win32/
-        MODULE.md
-        Win32Api.cs                           // [LibraryImport] declarations
-        Win32Constants.cs                     // WM_*, WS_*, CS_* constants
-        Win32Structs.cs                       // WNDCLASSEX, MSG, RECT, POINT
-        WindowProc.cs                         // window procedure callback
-      Vulkan/
-        MODULE.md
-        VkApi.cs                              // [LibraryImport] vk* functions
-        VkEnums.cs                            // VkResult, VkFormat, VkImageLayout
-        VkStructs.cs                          // VkInstanceCreateInfo, etc.
-        VkConstants.cs                        // VK_API_VERSION_1_3, VK_NULL_HANDLE
-        VkDelegates.cs                        // function pointer signatures
+    Native/                                   // MODULE.md per directory (here and below)
+      Win32/   Win32Api.cs / Win32Constants.cs / Win32Structs.cs / WindowProc.cs
+      Vulkan/  VkApi.cs / VkEnums.cs / VkStructs.cs / VkConstants.cs / VkDelegates.cs
 
-    Window/
-      MODULE.md
-      IWindow.cs                              // interface — window contract
-      Window.cs                               // Win32 implementation
-      WindowOptions.cs                        // creation parameters
-      InputEventQueue.cs                      // raw OS events → typed events
-
-    Input/
-      MODULE.md
-      IInputEvent.cs                          // marker interface
-      KeyPressedEvent.cs / KeyReleasedEvent.cs
-      MouseMovedEvent.cs / MouseButtonEvent.cs / MouseWheelEvent.cs
-      WindowResizedEvent.cs / WindowFocusEvent.cs
-      Key.cs / MouseButton.cs                 // enums
+    Window/  IWindow.cs / Window.cs / WindowOptions.cs / InputEventQueue.cs
+    Input/   IInputEvent.cs / KeyPressedEvent.cs / KeyReleasedEvent.cs / MouseMovedEvent.cs
+             MouseButtonEvent.cs / MouseWheelEvent.cs / WindowResizeEvent.cs / WindowFocusEvent.cs
+             Key.cs / MouseButton.cs / VirtualKeyMapper.cs
 
     Graphics/
-      MODULE.md
-      VulkanInstance.cs                       // VkInstance lifecycle (shared with compute)
-      VulkanDevice.cs                         // physical/logical device (shared with compute)
-      VulkanSurface.cs                        // VkSurfaceKHR (Win32) — rendering use case
-      VulkanSwapchain.cs                      // swapchain + recreation
-      VulkanCommandPool.cs                    // command pool/buffer mgmt
-      VulkanRenderPass.cs                     // render pass abstraction
-      VulkanPipeline.cs                       // graphics pipeline state
-      VulkanBuffer.cs                         // VkBuffer + memory allocation
-      VulkanImage.cs                          // VkImage + memory + view
-      VulkanShaderModule.cs                   // SPIR-V shader loading (graphics + compute)
-      ValidationLayer.cs                      // debug messenger setup
-      MemoryAllocator.cs                      // VkDeviceMemory bumper allocator
+      VulkanInstance.cs / VulkanDevice.cs / VulkanSurface.cs / VulkanSwapchain.cs / SwapchainImage.cs
+      VulkanRenderPass.cs / VulkanFramebuffer.cs / VulkanGraphicsPipeline.cs / VulkanPipelineLayout.cs
+      VulkanCommandPool.cs / VulkanCommandBuffer.cs / VulkanShaderModule.cs
+      VulkanBuffer.cs / VulkanImage.cs / VulkanSampler.cs / VulkanSemaphore.cs / VulkanFence.cs
+      TextureUploader.cs / MemoryAllocator.cs / ValidationLayer.cs
+      HardwareCapabilityCheck.cs / HardwareCapabilityException.cs        // К-L19 fail-fast
+      PhysicalDeviceInfo.cs / PhysicalDeviceType.cs / QueueFamilyInfo.cs
 
-    Compute/
-      MODULE.md
-      VulkanComputePipeline.cs                // VkPipeline (compute bind point)
-      VulkanComputeDescriptors.cs             // descriptor set layout + pool + pipeline layout
-      ComputeDispatch.cs                      // dispatch command recording + fence sync
-      FieldStorageBinding.cs                  // K9 RawTileField → SSBO binding
+    Compute/                                  // V0 compute side + V1 primitive
+      VulkanComputePipeline.cs / VulkanComputeDescriptors.cs / ComputeDispatch.cs
+      ComputePipelineRegistry.cs / FieldStorageBinding.cs               // K9 RawTileField → SSBO
+      V1DiffusionPipeline.cs / DiffusionPushConstants.cs                // V1 primitive (shipped)
 
     Sprite/
-      MODULE.md
-      Sprite.cs                               // sprite handle struct
-      SpriteAtlas.cs                          // atlas region definitions
-      SpriteBatcher.cs                        // dynamic VBO, single-batch draw
-      Camera2D.cs                             // orthographic projection
-      AtlasRegion.cs                          // rect + atlas reference
+      Sprite.cs / AtlasRegion.cs / SpriteVertex.cs / SpriteTransform.cs / SpriteTexture.cs
+      SpriteIndexBuffer.cs / VertexBufferRing.cs / SpriteDescriptorSetLayout.cs
+      VulkanSpritePipeline.cs / SpriteRenderer.cs                       // batched Begin/Submit/End
+      TileMap.cs / Camera2D.cs
 
-    Text/
-      MODULE.md
-      BitmapFont.cs                           // pre-rendered glyph atlas
-      Glyph.cs                                // glyph metrics struct
-      TextRenderer.cs                         // text → glyph quad batch
+    Assets/  PngDecoder.cs / PngImage.cs / PngChunk.cs / PngDecoderException.cs
+             AssetManager.cs / AssetPath.cs
+    Diagnostic/  ValidationLog.cs             // FrameTimer/DebugOverlay never shipped — see §1.1
 
-    Assets/
-      MODULE.md
-      PngDecoder.cs                           // manual PNG decoder
-      AssetManager.cs                         // path resolution + caching
-      AssetPath.cs                            // typed path wrapper
+  // ====== Presentation host (replaced the deleted DualFrontier.Presentation) ======
+  DualFrontier.Launcher/
+    DualFrontier.Launcher.csproj              // references Application + Runtime; copies Native.dll
+    Program.cs                                // Main(): Runtime.Create + GameBootstrap + main loop
+    LauncherRenderer.cs                       // IRenderer impl: drains PresentationBridge, records frame
+    RenderCommandDispatcher.cs                // bridge commands → SceneState
+    SceneState.cs                             // composition-root scene model
+    LauncherProceduralAtlas.cs / PawnSpriteEntry.cs
 
-    Diagnostic/
-      MODULE.md
-      FrameTimer.cs                           // FPS measurement
-      DebugOverlay.cs                         // FPS/tick/queue overlay
-      ValidationLog.cs                        // captures validation messages
-
-  // ====== Adapter (REWRITE from Godot to Runtime) ======
-  DualFrontier.Presentation/
-    DualFrontier.Presentation.csproj
-    MODULE.md
-    Program.cs                                // Main() entry point
-    GameRoot.cs                               // bootstrap, replaces Godot scene
-
-    Bridge/
-      MODULE.md
-      RenderCommandDispatcher.cs              // existing pattern, retargeted
-
-    Visuals/
-      MODULE.md
-      PawnVisual.cs / ItemVisual.cs / TileMapVisual.cs
-      VisualRegistry.cs                       // EntityId → Visual lookup
-
-    UI/
-      MODULE.md
-      ColonyPanel.cs / PawnDetail.cs
-      DebugOverlayAdapter.cs                  // bridges Runtime DebugOverlay
-
-tests/
-  DualFrontier.Tests/                         // existing tests (unchanged)
-  DualFrontier.Runtime.Tests/                 // new — non-GPU runtime tests
-    MODULE.md
-    Assets/PngDecoderTests.cs
-    Sprite/{Camera2DTests.cs, SpriteBatcherTests.cs}
-    Input/InputEventQueueTests.cs
+tests/                                        // full census: DEVELOPMENT_HYGIENE §2
+  DualFrontier.Runtime.Tests/                 // non-GPU + GPU-gated runtime tests (see §2.8)
+  DualFrontier.Runtime.SmokeTest/             // manual GPU smoke executable (Program.cs + ProceduralAtlas.cs)
 
 tools/
-  shaders/                                    // GLSL source files (graphics + compute)
-    sprite.vert / sprite.frag / text.vert / text.frag
-    diffusion.comp / wave.comp                // V1 + V2 substrate shaders
-  glslangValidator.exe                        // Khronos shader compiler (build-time)
-  scaffold-runtime.ps1                        // generator (committed)
+  shaders/                                    // GLSL sources — the complete current set:
+    clearcolor.vert / clearcolor.frag         //   V0 foundation clear pass
+    sprite.vert / sprite.frag                 //   sprite pipeline
+    noop.comp                                 //   V0 empty-dispatch test shader
+    diffusion.comp                            //   V1 substrate shader
+                                              //   (wave.comp does not exist — V2 pending, see §1.3)
+  glslangValidator.exe                        // committed Khronos compiler (build-time)
+  scaffold-runtime.ps1                        // idempotent runtime-directory materializer
 
 assets/
-  kenney/                                     // existing PNG atlas (preserved)
-    terrain/roguelikeSheet_transparent.png
-  shaders/                                    // pre-compiled SPIR-V output
-    sprite.vert.spv / sprite.frag.spv / text.vert.spv / text.frag.spv
-    diffusion.comp.spv / wave.comp.spv        // V1 + V2 substrate shaders
-  fonts/
-    default.png / default.fnt                 // glyph metrics file
+  shaders/                                    // compiled SPIR-V mirror of tools/shaders/ (six .spv files)
+  kenney/ …                                   // art packs incl. kenney/terrain/roguelikeSheet_transparent.png
+  cinzel/                                     // font asset pack (no runtime text renderer consumes it yet)
 
-mods/                                         // unchanged — see MOD_OS_ARCHITECTURE
-  Vanilla.{Core,Combat,Magic,Inventory,Pawn,World,Electricity,Water,Movement}/
+mods/                                         // strict-v3 skeletons + example — see MOD_OS_ARCHITECTURE
+  DualFrontier.Mod.Example/
+  DualFrontier.Mod.Vanilla.{Combat,Core,Inventory,Magic,Pawn,World}/
+  Directory.Build.targets                     // manifest copy + hotReload Release rewrite (no shader builds)
 
-docs/
-  architecture/
-    VULKAN_SUBSTRATE.md                       // THIS DOCUMENT (V substrate spec)
-    KERNEL_ARCHITECTURE.md / MOD_OS_ARCHITECTURE.md / FIELDS.md
-    ARCHITECTURE.md / THREADING.md / historical/VISUAL_ENGINE.md / historical/GODOT_INTEGRATION.md
-  methodology/
-    METHODOLOGY.md / CODING_STANDARDS.md / ...
-  ROADMAP.md
+native/
+  DualFrontier.Core.Native/                   // C++ kernel (CMake) — includes compute_pipeline.cpp,
+                                              //   compute_dispatch.cpp, tile_field.cpp, system_graph.cpp
 ```
 
-The scaffolding in `tools/scaffold-runtime.ps1` materializes the rendering hierarchy mechanically; commit `81fea13`. The `Compute/` submodule under `DualFrontier.Runtime/` is a Q-G-1 cascade addition (V0 compute side); scaffolding generator extends correspondingly when V0 compute primitives ship.
+Differences from the original post-migration plan, recorded for traceability: `SpriteBatcher`/`SpriteAtlas` materialized as `SpriteRenderer` + `SpriteTexture`/`AtlasRegion`; the `Text/` module, `fonts/` assets, `FrameTimer`, and `DebugOverlay` never shipped (Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md)); the adapter landed as `DualFrontier.Launcher`, not as a rewritten `DualFrontier.Presentation`; the planned `Vanilla.{Electricity,Water,Movement}` mods do not exist yet. The repository-level census authority is [DEVELOPMENT_HYGIENE §1–§2](../methodology/DEVELOPMENT_HYGIENE.md).
+
+The scaffolding in `tools/scaffold-runtime.ps1` materialized the rendering hierarchy mechanically (commit `81fea13`); the `Compute/` submodule under `DualFrontier.Runtime/` is a Q-G-1 cascade addition (V0 compute side), filled in by the V0.B and V1 cascades.
 
 ### 2.2 Module purposes
 
 #### `DualFrontier.Runtime` (top-level)
 
-**Purpose:** Generic 2D Vulkan substrate — window management, Vulkan instance/device/queues, rendering primitives, sprite batching, texture loading, input events, UI primitives, compute pipeline plumbing, scalar field compute primitives. Knows nothing of Domain. Could be open-sourced separately.
+**Purpose:** Generic 2D Vulkan substrate — window management, Vulkan instance/device/queues, rendering primitives, batched sprite rendering, texture loading, input events, compute pipeline plumbing, scalar field compute primitives. Knows nothing of Domain gameplay.
 
-**Public API surface:** `Runtime.cs` facade exposes:
+**Public API surface:** `Runtime.cs` facade exposes (verified against `src/DualFrontier.Runtime/Runtime.cs`):
 
-- Window creation (rendering use case)
-- Sprite registration (rendering use case)
-- Frame submission (rendering use case)
-- Input event polling (rendering use case)
-- Compute pipeline registration (compute use case, called by `IModApi.ComputePipelines`)
-- Compute dispatch (compute use case, called by `IModApi.Fields.DispatchCompute`)
+- `Runtime.Create(RuntimeOptions)` — full V0.A/B/C composition with fail-safe disposal and the К-L19 `HardwareCapabilityCheck.Verify` fail-fast.
+- Window + input: `Window` (`IWindow`, message pump), `InputQueue` (`InputEventQueue`).
+- Frame recording: `RecordSpritesFrame` (batched, `Camera2D`-driven — the production path), `BeginRenderPassForSprites`/`EndSpriteRenderPass` (multi-cycle), `RecordSpriteFrame` (single-sprite V0.C.1 backward-compat shim), `RecreateFramebuffersForSwapchain`.
+- Compute: `ComputePipelines` (`ComputePipelineRegistry`), `CreateFieldStorageBinding(NativeWorld)` and `CreateV1DiffusionPipeline(...)` factories (V1-14).
 
-**Dependencies:** `System` (BCL), `System.Numerics`, `System.IO.Compression`. No third-party. Compare to the strict layering rules of [ARCHITECTURE](./ARCHITECTURE.md).
+**Dependencies:** `System` (BCL), `System.Numerics`, `System.IO.Compression`, plus exactly one project reference — `DualFrontier.Core.Interop` (native kernel bridge for `NativeWorld`/field compute binding; a V1 addition). No Domain gameplay projects, no third-party packages. Compare to the strict layering rules of [ARCHITECTURE](./ARCHITECTURE.md).
 
 #### `DualFrontier.Runtime.Native.Win32`
 
@@ -544,9 +473,9 @@ The scaffolding in `tools/scaffold-runtime.ps1` materializes the rendering hiera
 
 #### `DualFrontier.Runtime.Input`
 
-**Purpose:** Typed input events + event queue. Events posted by Window, consumed by clients via polling. Supersedes the Godot `IInputSource` adapter ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) §Contracts) once rendering cutover lands.
+**Purpose:** Typed input events + event queue. Events posted by Window, consumed by clients via polling. Superseded the Godot `IInputSource` adapter ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) §Contracts, historical) at the rendering cutover. Note: the Launcher currently drains the queue without forwarding events into Domain — forwarding is Planned, see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-**Public API surface:** `IInputEvent` + concrete event types + `InputEventQueue`.
+**Public API surface:** `IInputEvent` + concrete event types + `VirtualKeyMapper` + `InputEventQueue` (the queue type lives in `Window/`).
 
 **Dependencies:** `System` (BCL).
 
@@ -558,29 +487,25 @@ The scaffolding in `tools/scaffold-runtime.ps1` materializes the rendering hiera
 
 **Dependencies:** `Native.Vulkan`, `Window` (for surface creation).
 
-#### `DualFrontier.Runtime.Compute` (V0 compute side, V1, V2)
+#### `DualFrontier.Runtime.Compute` (V0 compute side + V1; V2 pending)
 
-**Purpose:** Vulkan compute primitives — compute pipeline, descriptor sets, dispatch, fence sync, K9 field storage binding. Substrate primitives V1 (diffusion) and V2 (wave) shaders managed here. Mod-driven shader registration flows through this module via `IModApi.ComputePipelines`.
+**Purpose:** Vulkan compute primitives — compute pipeline, descriptor sets, dispatch, fence sync, K9 field storage binding. The shipped V1 diffusion primitive lives here; the V2 wave primitive lands here when authored (§1.3). Mod-driven shader registration is designed to flow through this module via `IModApi.ComputePipelines` (contract placeholder today — §3.3).
 
-**Public API surface:** `VulkanComputePipeline`, `VulkanComputeDescriptors`, `ComputeDispatch`, `FieldStorageBinding`.
+**Public API surface:** `VulkanComputePipeline`, `VulkanComputeDescriptors`, `ComputeDispatch`, `ComputePipelineRegistry`, `FieldStorageBinding`, `V1DiffusionPipeline`, `DiffusionPushConstants`.
 
-**Dependencies:** `Graphics` (shared instance/device), `Native.Vulkan`.
+**Dependencies:** `Graphics` (shared instance/device), `Native.Vulkan`, `DualFrontier.Core.Interop` (`NativeWorld` field storage).
 
 #### `DualFrontier.Runtime.Sprite`
 
-**Purpose:** 2D sprite rendering — atlas-based, batched draw calls. `Camera2D` for orthographic projection.
+**Purpose:** 2D sprite rendering — atlas-based, batched draw calls. `Camera2D` for orthographic projection; `TileMap` for grid rendering.
 
-**Public API surface:** `Sprite`, `SpriteAtlas`, `SpriteBatcher`, `Camera2D`.
+**Public API surface:** `Sprite`, `AtlasRegion`, `SpriteTexture`, `SpriteRenderer` (batched `BeginFrame`/`Submit`/`EndFrame`), `TileMap`, `Camera2D`.
 
 **Dependencies:** `Graphics`, `Assets`, `System.Numerics`.
 
-#### `DualFrontier.Runtime.Text`
+#### Text rendering — not shipped
 
-**Purpose:** Bitmap font text rendering. Reuses sprite pipeline (text = textured quads from glyph atlas).
-
-**Public API surface:** `BitmapFont`, `TextRenderer`.
-
-**Dependencies:** `Sprite`, `Assets`.
+No `Text/` module exists on disk. Bitmap-font text rendering (design: glyph-atlas quads reusing the sprite pipeline) is rendering-scope work that did not ship with V0. Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md); the font-system design decision is held open in §8.2.
 
 #### `DualFrontier.Runtime.Assets`
 
@@ -592,29 +517,29 @@ The scaffolding in `tools/scaffold-runtime.ps1` materializes the rendering hiera
 
 #### `DualFrontier.Runtime.Diagnostic`
 
-**Purpose:** Performance + debug tooling — FPS measurement, debug overlay, validation log capture. Targets and budgets governed by [PERFORMANCE](./PERFORMANCE.md).
+**Purpose:** Debug tooling — validation log capture. Targets and budgets governed by [PERFORMANCE](./PERFORMANCE.md). `FrameTimer`/`DebugOverlay` never shipped (Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md)); FPS measurement currently lives in the smoke-test executable.
 
-**Public API surface:** `FrameTimer`, `DebugOverlay`, `ValidationLog`.
+**Public API surface:** `ValidationLog`.
 
-**Dependencies:** `Sprite`, `Text`, `Graphics`.
+**Dependencies:** `Graphics`.
 
-#### `DualFrontier.Presentation` (rewritten adapter)
+#### `DualFrontier.Launcher` (presentation host)
 
-**Purpose:** Bridge from Domain to Runtime. Translates `RenderCommands` (from existing `PresentationBridge`, see [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) to Runtime API calls. Owns «what to draw» logic.
+**Purpose:** Production entry point bridging Domain to Runtime. `Program.Main()` composes `Runtime.Create` + `GameBootstrap.CreateLoop(PresentationBridge)` + `SceneState` + `RenderCommandDispatcher` + `LauncherRenderer`, then drives the main loop (message pump → input drain → `LauncherRenderer.RenderFrame`). `LauncherRenderer` implements the Domain-side `IRenderer` contract (`DualFrontier.Application.Rendering`): it drains `PresentationBridge` per frame, dispatches commands through `RenderCommandDispatcher` into `SceneState`, and records the Vulkan frame via `Runtime.RecordSpritesFrame`. Owns «what to draw» logic. Formalized at К-extensions cascade #2; pawn visuals landed at К-extensions cascade #3 (commit `97f4573`).
 
-**Public API surface:** `Program.Main()`, `GameRoot`. Internal classes wire bridge to Runtime.
+**Public API surface:** `Program.Main()`; all other classes `internal`.
 
-**Dependencies:** `DualFrontier.Runtime`, `DualFrontier.Application`, `DualFrontier.Events`, `DualFrontier.Components`.
+**Dependencies:** `DualFrontier.Application`, `DualFrontier.Runtime` (project references; the csproj also copies `DualFrontier.Core.Native.dll` from the canonical native build tree — [DEVELOPMENT_HYGIENE §3](../methodology/DEVELOPMENT_HYGIENE.md)).
 
 ### 2.3 Threading model
 
-The substrate extends [THREADING](./THREADING.md) — domain `ParallelSystemScheduler` and tick rate are unchanged; the substrate contributes a single render thread merged with the OS message pump (per L8). Compute dispatches happen on the simulation thread (managed-side `IModApi.Fields.DispatchCompute` call), executed asynchronously by the GPU; fence-based sync ensures next-tick reads see consistent state without blocking the simulation thread.
+The substrate extends [THREADING](./THREADING.md) (the concurrency authority) — Domain tick scheduling is untouched by substrate work: the native kernel owns the scheduling architecture per К-L12 (`native/DualFrontier.Core.Native/src/system_graph.cpp`, with К-L13 runnable-subset wake semantics), and the managed `ParallelSystemScheduler` (`src/DualFrontier.Core/Scheduling/`) executes managed systems as the adapter facade above it. The substrate contributes a single render thread merged with the OS message pump (per L8) — in production this is the `DualFrontier.Launcher` main thread. Compute dispatches happen on the simulation thread through the substrate's typed dispatch surface (`V1DiffusionPipeline.ExecuteIteration` → native `df_world_field_dispatch_compute`), executed by the GPU on the async compute queue; the К-L7 sync path returns after the fence signals, so subsequent reads see consistent state.
 
 #### 2.3.1 Pipeline depth and queue family roles (К-L16/L19/L7.1, К10.3 v2 amendment)
 
 Sim thread coordinates с three Vulkan queues:
 - **Graphics queue** — display rendering (existing — preserved verbatim).
-- **Async compute queue** (К-L19 V0.B amendment) — К-L16 pipeline depth dispatches per Phase.Compute (К10.3 v2 Item 35 — see `native/include/phase_compute.h`); V1 sync `dispatch_compute_field` also uses this queue.
+- **Async compute queue** (К-L19 V0.B amendment) — К-L16 pipeline depth dispatches per Phase.Compute (К10.3 v2 Item 35 — see `native/DualFrontier.Core.Native/include/phase_compute.h`); V1 sync `dispatch_compute_field` also uses this queue.
 - **Copy/transfer queue** (К-L19 V0.B amendment) — asset transfers (existing semantics).
 
 Pipeline depth D=2 default (К-L16): sim thread allocates new slot at start of pipeline-managed tick; Phase.Compute dispatches к async compute queue; fence orchestration tracks slot transitions Empty→Dispatched→FenceCompleted→ReadableAsTail. K-L13 wake registry extended с slot transition counter (К10.3 v2 Item 37 — `WakeOnSlotTransitionAttribute` consumer surface, full subscriber registry integration deferred к К-extensions).
@@ -625,60 +550,62 @@ V1's `dispatch_compute_field` sync path (К-L7 baseline): preserved unchanged; c
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│ Process Threads                                              │
+│ Process Threads (production composition — Launcher)          │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
-│  Main Thread (Window + Render — MERGED)                      │
+│  Main Thread (Launcher: Window + Render — MERGED)            │
 │  ┌────────────────────────────────────────────────────┐      │
-│  │ Win32 message pump (PeekMessage / DispatchMessage) │      │
+│  │ Win32 message pump (Window.PumpMessages)           │      │
 │  │   → input event queue                              │      │
 │  │   → window lifecycle (close, resize, focus)        │      │
-│  │ Focus events → loop.SetPaused()                    │      │
-│  │ Vulkan rendering                                   │      │
-│  │   → drain PresentationBridge (existing pattern)    │      │
-│  │   → record command buffer                          │      │
-│  │   → submit + present                               │      │
-│  │ DebugOverlay update                                │      │
+│  │ InputQueue drain (Domain forwarding not yet wired) │      │
+│  │ LauncherRenderer.RenderFrame                       │      │
+│  │   → drain PresentationBridge                       │      │
+│  │   → RenderCommandDispatcher → SceneState           │      │
+│  │   → Runtime.RecordSpritesFrame (record + submit    │      │
+│  │     + present; per-image semaphores + frame fence) │      │
 │  │ ~60 FPS target                                     │      │
 │  └────────────────────────────────────────────────────┘      │
 │                                                              │
-│  Simulation Thread (GameLoop — preserved verbatim)           │
+│  Simulation Thread (GameLoop — self-ticking background       │
+│  thread per Q-G-7 (d) hybrid orchestration)                  │
 │  ┌────────────────────────────────────────────────────┐      │
-│  │ ParallelSystemScheduler.ExecuteTick()              │      │
-│  │   30 TPS fixed step (THREADING §Phases)            │      │
+│  │ GameLoop tick — 30 TPS fixed step                  │      │
+│  │   scheduling: native system_graph per К-L12/К-L13; │      │
+│  │   managed ParallelSystemScheduler = adapter facade │      │
+│  │   (THREADING owns the full model)                  │      │
 │  │   ↓ writes to PresentationBridge.Enqueue()         │      │
-│  │   ↑ reads input events from InputEventQueue        │      │
-│  │   ↻ dispatches compute (V1/V2) via IModApi.Fields  │      │
-│  │     — fence-based async sync, no block             │      │
-│  │ SetPaused() coupling from Main thread              │      │
+│  │   ↻ V1 compute dispatch (К-L7 sync path —          │      │
+│  │     returns after fence signal)                    │      │
 │  └────────────────────────────────────────────────────┘      │
 │                                                              │
 │  GPU (asynchronous to CPU)                                   │
 │  ┌────────────────────────────────────────────────────┐      │
-│  │ Compute queue executes dispatched shaders          │      │
+│  │ Async compute queue executes dispatched shaders    │      │
 │  │ Graphics queue executes recorded command buffers   │      │
-│  │ Fence signals back to CPU on completion            │      │
+│  │ Fences signal back to CPU on completion            │      │
 │  └────────────────────────────────────────────────────┘      │
 │                                                              │
-│  Worker Threads (existing — used by ParallelSystemScheduler) │
+│  Worker Threads (native kernel thread pool + managed         │
+│  phase parallelism — THREADING)                              │
 │                                                              │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 **Cross-thread synchronization:**
 
-- `PresentationBridge` (existing `ConcurrentQueue<IRenderCommand>`, see [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)) preserved as primary domain → render channel.
-- New: `InputEventQueue` (`ConcurrentQueue<IInputEvent>`) for render → domain input events.
-- Pause coupling: Main thread detects focus loss, calls `loop.SetPaused(true)`. Domain thread sleeps. Pattern proven from M8.10 (focus notifications) — extended Vulkan way (Win32 `WM_KILLFOCUS`/`WM_SETFOCUS` messages — clean semantics, no `tree.paused` surprises).
-- Compute dispatch: simulation thread calls `FieldHandle<T>.DispatchCompute(pipeline, params, iterations)` → native kernel records command buffer, submits to compute queue, returns immediately. Fence-based sync ensures subsequent `ReadCell` sees consistent state; one-tick lag acceptable for continuous field values (see §5.5 async sync hazards).
+- `PresentationBridge` (`ConcurrentQueue`-backed command bridge, `src/DualFrontier.Application/Bridge/PresentationBridge.cs`) — the primary domain → render channel, preserved from the pre-cutover architecture.
+- `InputEventQueue` (`Window/InputEventQueue.cs`) for render → domain input events. The Launcher drains it each frame; forwarding into Domain (input bridge) is not yet wired — Planned, see [ROADMAP §Native foundation tracks](../ROADMAP.md).
+- Pause coupling (design, not yet wired on the Vulkan path): main thread detects focus loss via Win32 `WM_KILLFOCUS`/`WM_SETFOCUS` and calls `loop.SetPaused(true)`. The pattern was proven on the Godot path at M8.10; `WindowFocusEvent` exists in `Input/`, but the Launcher does not couple it to the loop yet — Planned, see [ROADMAP §Native foundation tracks](../ROADMAP.md).
+- Compute dispatch: simulation-side code calls `V1DiffusionPipeline.ExecuteIteration(...)` → native `df_world_field_dispatch_compute` records and submits to the async compute queue; the К-L7 sync path returns after the fence signals, so a subsequent `FieldHandle<T>.ReadCell` sees the dispatched result. The opt-in К-L7.1 pipeline-managed path (bounded one-tick slot-tail lag) is specified in §2.3.1 and §7.3.0.
 
 ### 2.4 Dependency rules (locked invariants)
 
-These rules are mechanically verifiable; the build fails if any is violated. They mirror the dependency-direction discipline of [ARCHITECTURE §Four layers](./ARCHITECTURE.md).
+These rules are mechanically verifiable via the project reference graph. They mirror the dependency-direction discipline of [ARCHITECTURE §Four layers](./ARCHITECTURE.md).
 
-**Rule 1.** `DualFrontier.Runtime` MUST compile and tests pass without any reference to Domain projects. Verify via project reference graph.
+**Rule 1.** `DualFrontier.Runtime` MUST compile and tests pass without any reference to Domain gameplay projects (`Core`, `Components`, `Systems`, `Events`, `Application`, …). Its only permitted project reference is `DualFrontier.Core.Interop` (the native kernel bridge — required for K9 field storage binding). Verified state: the csproj carries exactly that one reference.
 
-**Rule 2.** Domain ↔ Runtime communication ONLY through `DualFrontier.Presentation` adapter and through `IModApi` (compute pipelines + field dispatch). Domain knows nothing of Runtime; Runtime knows nothing of Domain.
+**Rule 2.** Domain ↔ Runtime communication ONLY through the `DualFrontier.Launcher` presentation host (consumer chain: `PresentationBridge` drain → `RenderCommandDispatcher` → `SceneState` → `Runtime.RecordSpritesFrame`) and through the field/compute bridge (`DualFrontier.Core.Interop` + the `IModApi` v3 surface for mods). Domain knows nothing of Runtime; Runtime knows nothing of Domain gameplay.
 
 **Rule 3.** Within Runtime, dependency direction respects layering:
 
@@ -689,18 +616,20 @@ Window / Input / Assets
     ↓
 Graphics
     ↓
-Compute  (shares Graphics's VkInstance/VkDevice)
+Compute  (shares Graphics's VkInstance/VkDevice; binds Core.Interop fields)
     ↓
-Sprite / Text
+Sprite
     ↓
 Diagnostic
     ↓
 Runtime.cs (facade — top)
 ```
 
+(The planned `Text` layer slots between `Sprite` and `Diagnostic` when it ships — §2.2.)
+
 **Rule 4.** No layer skipping (Diagnostic does not import Native.Vulkan directly; goes through Graphics).
 
-**Rule 5.** Runtime exposes minimal public API. Internal implementation details `internal`. Naming follows [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md).
+**Rule 5.** Runtime exposes minimal public API. Internal implementation details `internal`. Naming follows [CODING_STANDARDS](../methodology/CODING_STANDARDS.md).
 
 ### 2.5 Native interop patterns
 
@@ -749,11 +678,11 @@ disk PNG file
   ↓ FileStream.Read
 PNG bytes (compressed)
   ↓ PngDecoder.Decode (DualFrontier.Runtime.Assets)
-RGBA byte[] + width + height
-  ↓ VulkanImage.CreateFromBytes
-VkImage + VkImageView + VkDescriptorSet
-  ↓ SpriteAtlas.RegisterRegion(rect)
-sprite handle (used by Visuals)
+PngImage (RGBA bytes + width + height)
+  ↓ VulkanImage.CreateFromPngImage (staging upload via TextureUploader)
+VkImage + VkImageView
+  ↓ SpriteTexture (image + sampler) + AtlasRegion rects
+Sprite instances → SpriteRenderer.Submit (consumed by the Launcher's SceneState)
 ```
 
 **Manual PNG decoder scope** (~500–700 lines):
@@ -766,42 +695,32 @@ sprite handle (used by Visuals)
 
 ### 2.7 Shader strategy
 
-**Build-time SPIR-V compilation** via MSBuild target in `Directory.Build.props`. Same toolchain compiles both graphics shaders (vertex, fragment) and compute shaders (V1 diffusion, V2 wave) — single `glslangValidator.exe` invocation set per project build.
+**Build-time SPIR-V compilation** via the `CompileShaders` MSBuild target in the root `Directory.Build.props` (runs `BeforeTargets="Build"`, conditioned on the `DualFrontier.Runtime` project; uses the committed `tools/glslangValidator.exe` so developer machines need no Vulkan SDK for shader compilation — [DEVELOPMENT_HYGIENE §4](../methodology/DEVELOPMENT_HYGIENE.md)). One toolchain compiles both graphics and compute shaders. Current compilation set (verified against `Directory.Build.props`): `clearcolor.vert`/`clearcolor.frag`, `noop.comp`, `sprite.vert`/`sprite.frag`, `diffusion.comp` — sources in `tools/shaders/`, `.spv` outputs in `assets/shaders/`. The V2 `wave.comp` line is added to this target when V2 ships (§1.3).
 
-```xml
-<Target Name="CompileShaders" BeforeTargets="Build"
-        Condition="'$(MSBuildProjectName)' == 'DualFrontier.Runtime'">
-  <Exec Command="$(SolutionDir)tools\glslangValidator.exe -V $(SolutionDir)tools\shaders\sprite.vert -o $(SolutionDir)assets\shaders\sprite.vert.spv" />
-  <Exec Command="$(SolutionDir)tools\glslangValidator.exe -V $(SolutionDir)tools\shaders\sprite.frag -o $(SolutionDir)assets\shaders\sprite.frag.spv" />
-  <Exec Command="$(SolutionDir)tools\glslangValidator.exe -V $(SolutionDir)tools\shaders\diffusion.comp -o $(SolutionDir)assets\shaders\diffusion.comp.spv" />
-  <Exec Command="$(SolutionDir)tools\glslangValidator.exe -V $(SolutionDir)tools\shaders\wave.comp -o $(SolutionDir)assets\shaders\wave.comp.spv" />
-</Target>
-```
-
-**Mod-side compute shader compilation** (per K-L9 vanilla = mods): each vanilla mod compiles its compute shader during the mod build process, embeds the resulting `.spv` bytes into mod assets, registers via `IModApi.ComputePipelines.RegisterPipeline(name, spirvBytes)` at mod startup. Same toolchain (extends §2.7 build target into mod projects). See §3.3 mod-driven shader registration.
+**Mod-side compute shader compilation** (design per К-L9 «vanilla = mods», not yet realized): each vanilla mod compiles its compute shader during the mod build, embeds the resulting `.spv` bytes into mod assets, and registers via the `IModApi.ComputePipelines` registration surface at mod startup — same toolchain, extended into mod projects. Today `mods/Directory.Build.targets` performs only manifest copy + Release `hotReload` rewrite (no shader builds), and the registration surface is a contract placeholder (§3.3). Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
 **Production binary depends on:** `vulkan-1.dll` + pre-compiled `*.spv` files. No shader compiler dependency.
 
 ### 2.8 Testing strategy
 
-The existing Domain tests are preserved verbatim — Domain layer is untouched (L10). [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) governs the test pyramid; substrate additions slot in as new unit-test categories without altering the pyramid shape.
+The existing Domain tests are preserved verbatim — Domain layer is untouched (L10). [TESTING_STRATEGY](../methodology/TESTING_STRATEGY.md) governs test law and the census method; substrate additions slot in as test categories without altering the suite structure.
 
-**New tests in `DualFrontier.Runtime.Tests`** (non-GPU, JIT-runnable):
+**Tests in `tests/DualFrontier.Runtime.Tests`** (realized census, verified 2026-06-12):
 
-- `PngDecoder` tests (~20–30): synthetic PNG inputs → expected RGBA output.
-- `SpriteBatcher` logic tests (~10): batch sorting, atlas grouping, vertex math.
-- `Camera2D` math tests (~10): orthographic projection, screen ↔ world conversion.
-- `InputEventQueue` tests (~5): cross-thread enqueue/dequeue semantics.
-- Compute pipeline registration tests (~5): round-trip register/dispatch/release.
-- CPU reference vs GPU equivalence tests (V1 diffusion, V2 wave) — synthetic grids, tolerance-bounded comparison.
+- Assets: `PngDecoderTests`, `AssetManagerTests` — synthetic PNG inputs → expected RGBA output; path smart-resolve.
+- Sprite: `SpriteRendererTests`, `SpriteVertexTests`, `SpriteIndexBufferTests`, `AtlasRegionTests`, `Camera2DTests` — batching, vertex math, orthographic projection, screen ↔ world conversion.
+- Input: `VirtualKeyMapperTests`.
+- Graphics: marshalling/layout suites (`VulkanInstanceMarshallingTests`, `VulkanDeviceMarshallingTests`, …), `HardwareCapabilityCheckTests`, `AsyncComputeQueueSelectionTests`, `ShaderCompilationTests`, plus per-wrapper lifecycle suites.
+- Compute: `ComputePipelineRegistrationTests` (round-trip register/dispatch), `FieldStorageBindingTests`, `DiffusionPushConstantsTests`, `V1DiffusionFactoryTests`, `V1DiffusionIntegrationTests`, and `V1DiffusionEquivalenceTests` — CPU oracle (`IsotropicDiffusionKernel`/`AnisotropicDiffusionKernel` in `DualFrontier.Core.Interop.CpuKernels`) vs GPU output on synthetic grids, tolerance-bounded. The V2 equivalence suite lands with V2 (§1.3).
+- `RuntimeCompositionTests` — facade composition.
 
-**GPU-dependent tests:** F5 manual visual verification per established M8.8/M8.9 protocol. Validation layer output captured to console — clean output is success criterion. The protocol mirrors the [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) red-flag checklist for visual changes.
+**GPU-dependent verification:** the `tests/DualFrontier.Runtime.SmokeTest` executable (stress + tile-map scenes) plus manual visual verification per the committed protocols (V0.C.2 protocol, commit `f6ff03b`; V1 protocol, commit `94335eb`) — continuing the M8.8/M8.9 visual-verification practice. Validation layer output captured to console — clean output is the success criterion (§11 pre-flight check; this document owns that check).
 
 ### 2.9 Naming conventions
 
-Continued from [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md):
+Continued from [CODING_STANDARDS](../methodology/CODING_STANDARDS.md):
 
-- All identifiers English (Russian glossary unchanged — see [TRANSLATION_GLOSSARY](./TRANSLATION_GLOSSARY.md)).
+- All identifiers English (Russian glossary unchanged — see [TRANSLATION_GLOSSARY](../TRANSLATION_GLOSSARY.md)).
 - Vulkan struct types: keep canonical `VkInstanceCreateInfo` naming (matches Vulkan spec).
 - Win32 struct types: keep canonical `WNDCLASSEX` naming (matches Win32 docs).
 - Pascal case for C# wrapper classes: `VulkanInstance`, `Win32Window`, `VulkanComputePipeline`.
@@ -869,11 +788,13 @@ Domain B (entity-keyed bulk compute) retains a deferral story: still threshold-d
 
 ### 3.3 Mod-driven shader registration
 
-Per K-L9 (vanilla = mods), compute shaders are owned by mods, not the engine. `Vanilla.Magic` ships `ManaField` + diffusion shader (V1 configuration). `Vanilla.Electricity` ships `PowerField` + anisotropic diffusion shader (V1 configuration). `Vanilla.Movement` ships flow field configurations on V2 (routed paths to destinations). Third-party mods extend through the same registration API.
+Per К-L9 (vanilla = mods), compute shaders are owned by mods, not the engine — this is the design allocation: `Vanilla.Magic` owns `ManaField` + diffusion shader (V1 configuration), `Vanilla.Electricity` owns `PowerField` + anisotropic diffusion shader (V1 configuration), `Vanilla.Movement` owns flow field configurations on V2 (routed paths to destinations). Third-party mods extend through the same registration API.
 
-Build pipeline (§2.7) already compiles GLSL to SPIR-V via `glslangValidator.exe` for graphics shaders. Compute shaders use the same toolchain. Mod build process embeds compiled SPIR-V into mod assets.
+**Status:** design contract, not yet wired. On disk today: `Vanilla.Magic` is a strict-v3 skeleton with an empty `Initialize`; `Vanilla.Electricity`/`Vanilla.Movement` do not exist; the production `IModApi.ComputePipelines` implementation returns `null` (placeholder per `IModComputePipelineApi`); the V1 diffusion pipeline is constructed engine-side via the `Runtime` factories (§2.2). Mod-facing wiring is Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-Mod startup code (illustrative — exact API per `IModApi` v3 surface in [MOD_OS_ARCHITECTURE §4.6](./MOD_OS_ARCHITECTURE.md)):
+Build pipeline (§2.7) already compiles GLSL to SPIR-V via `glslangValidator.exe` for engine shaders; mod builds extend the same toolchain when the registration surface lands.
+
+Mod startup code (illustrative design sketch — exact API per `IModApi` v3 surface in [MOD_OS_ARCHITECTURE §4.6](./MOD_OS_ARCHITECTURE.md); the `ComputePipelines`/`Systems.RegisterFieldUpdate` calls shown do not exist yet):
 
 ```csharp
 public class MagicMod : IMod
@@ -937,24 +858,32 @@ DF_API int32_t df_world_register_compute_pipeline(
     const uint8_t* spirv_bytes, int32_t spirv_size);
 ```
 
-Managed bridge (`DualFrontier.Core.Interop`) wraps these into typed APIs:
+Managed bridge (`DualFrontier.Core.Interop`) wraps these into typed APIs — shipped shape (verified against `FieldRegistry.cs` / `FieldHandle.cs`):
 
 ```csharp
-public sealed class FieldRegistry
+public sealed class FieldRegistry   // reached via NativeWorld.Fields
 {
-    public FieldHandle<T> RegisterField<T>(string name, int width, int height) where T : unmanaged;
-    public ComputePipelineHandle RegisterComputePipeline(string name, byte[] spirvBytes);
+    public FieldHandle<T> Register<T>(string id, int width, int height) where T : unmanaged;
+    public FieldHandle<T> Get<T>(string id) where T : unmanaged;
+    public bool TryGet<T>(string id, out FieldHandle<T>? handle) where T : unmanaged;
+    public bool IsRegistered(string id);
+    public void Unregister(string id);
 }
 
-public sealed class FieldHandle<T> where T : unmanaged
+public sealed class FieldHandle<T> : IFieldHandle where T : unmanaged
 {
     public T ReadCell(int x, int y);
-    public ReadOnlySpan<T> AcquireSpan(out int width, out int height);
+    public void WriteCell(int x, int y, T value);
+    public FieldSpanLease<T> AcquireSpan();          // ref-struct lease over the dense span
     public void SetConductivity(int x, int y, float value);
+    public float GetConductivity(int x, int y);
     public void SetStorageFlag(int x, int y, bool enabled);
-    public void DispatchCompute(ComputePipelineHandle pipeline, ReadOnlySpan<byte> pushConstants, int iterations);
+    public bool GetStorageFlag(int x, int y);
+    public void SwapBuffers();                       // ping-pong advance
 }
 ```
+
+Compute pipeline registration and dispatch sit one layer up, in the substrate (`DualFrontier.Runtime.Compute`): `FieldStorageBinding.Register` wraps `df_world_register_compute_pipeline`, and `V1DiffusionPipeline.ExecuteIteration` wraps `df_world_field_dispatch_compute` with a typed `DiffusionPushConstants` payload (§2.2 Runtime factories).
 
 ### 3.4.1 `df_vulkan_unload_mod_resources` C ABI primitive (К-L18, К10.3 v2 placeholder per S-LOCK-12 spec scope)
 
@@ -982,9 +911,9 @@ Managed wrapper lives at `src/DualFrontier.Application/Bridge/VResourceCleanup.c
 
 ---
 
-## 4. Rendering use case (V0 rendering side)
+## 4. Rendering use case (V0 rendering side — realized record)
 
-The rendering use case rebuilds presentation functionality from Godot 4 onto the V substrate. Existing Godot path runs in parallel until cutover; substrate rendering side reaches full M8.x parity before Godot deletion.
+The rendering use case rebuilt presentation functionality from Godot 4 onto the V substrate. The Godot path ran in parallel until cutover; Godot was deleted at К-extensions cascade #2 (2026-05-22/23) with the Launcher formalized as the production renderer (infrastructure-only per Q-G-6 (b1)), and real pawn visuals landed at К-extensions cascade #3 (2026-05-23, commit `97f4573`). Full M8.x UI parity (text, HUD panels) was **not** reached before deletion and remains pending — Planned, see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
 ### 4.0 Display composition (К-L17, К10.3 v2 amendment)
 
@@ -1005,133 +934,37 @@ Per К-L9 «Vanilla = mods», vanilla layers (built-in intent cursor, combat hit
 
 V substrate exposes rendering primitives (`SpriteRenderer`, `Camera2D`, `TileMap`); layer composition lives one architectural layer above per S-LOCK-11. Existing `IRenderer`/`IDevKitRenderer` interfaces в `DualFrontier.Application.Rendering` preserved unchanged — composition framework operates above them, не extending.
 
-### 4.1 Migration approach
+### 4.1 Migration approach (completed)
 
-**Strategy: parallel development.**
+**Strategy: parallel development — executed as designed.**
 
-Keep `DualFrontier.Presentation` (Godot) functional through the rendering cutover phase (formerly M9.5). New Runtime project develops in parallel. Cutover phase migrates Presentation to Runtime. Final Godot deletion phase deletes remnants.
+`DualFrontier.Presentation` (Godot) was kept functional through the rendering cutover phase (formerly M9.5). The Runtime project developed in parallel; the cutover replaced Presentation with the `DualFrontier.Launcher` host on Runtime; the final deletion phase removed the Godot remnants (К-extensions cascade #2, commit `2ba8130`).
 
-**Operating principle:** «honest state always available». No blind period where game does not run. The same discipline as the parallel mod-system migration in [MOD_OS_ARCHITECTURE §11](./MOD_OS_ARCHITECTURE.md) — every phase ends with a runnable build.
+**Operating principle:** «honest state always available». No blind period where the game did not run — every phase ended with a runnable build, the same discipline as the parallel mod-system migration ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) migration discipline).
 
-### 4.2 Rendering use case implementation phases
+### 4.2 Rendering use case implementation phases (realized record)
 
-The rendering side is implemented as a sequence of sub-phases within V substrate work. Pre-Q-G-1 these were labeled M9.0..M9.8 runtime milestones; post-Q-G-1 they are V substrate rendering use case implementation phases (V0 rendering side). Phase IDs preserved historically in commits and `MIGRATION_PROGRESS.md` closure entries; reference convention in new artifacts uses descriptive names rather than numerical M9.x labels.
+The rendering side was designed as a sequence of sub-phases within V substrate work. Pre-Q-G-1 these were labeled M9.0..M9.8 runtime milestones; post-Q-G-1 they are V substrate rendering use case implementation phases (V0 rendering side). Phase IDs are preserved historically in commits and `docs/MIGRATION_PROGRESS.md` closure entries; in practice the work shipped as the V0.A/V0.B/V0.C.1/V0.C.2 sub-milestones plus the К-extensions cascades #2/#3. The R.x labels are descriptive identifiers within V0 work — not formal namespace bucket assignments; they introduce no additional V-numbered substrate primitives.
 
-Estimated cumulative: ~37–52 hours = **4–7 weeks at hobby pace** (~1h/day).
+Design decomposition and realized outcome (status detail authority: [ROADMAP §Native foundation tracks](../ROADMAP.md)):
 
-| Phase | Title                                                | Estimated time | LOC delta            |
-| ----- | ---------------------------------------------------- | -------------- | -------------------- |
-| R.0   | Foundation: Win32 window + Vulkan clear color        | 4–5h           | +800–1000            |
-| R.1   | First textured quad: PNG → VkImage → sprite render   | 5–7h           | +1000–1500           |
-| R.2   | Batched sprite renderer                              | 4–6h           | +500–700             |
-| R.3   | TileMap parity + Camera2D                            | 3–4h           | +400–600             |
-| R.4   | Input system (Win32 → InputEventQueue)               | 3–4h           | +400–500             |
-| R.5   | Domain integration (Presentation port)               | 6–8h           | +800–1200            |
-| R.6   | UI primitives (text + panels)                        | 8–12h          | +1000–1500           |
-| R.7   | Coupled lifecycle + DebugOverlay                     | 2–3h           | +200–300             |
-| R.8   | Migration cutover (delete Godot)                     | 2–3h           | -2000+ (deletion)    |
+| Phase | Design goal                                          | Realized — evidence |
+| ----- | ---------------------------------------------------- | ------------------- |
+| R.0   | Foundation: Win32 window + Vulkan clear color        | ✅ V0.A closure 2026-05-18 (+ V0.B infrastructure 2026-05-18) — `clearcolor.*` shaders, `Runtime.Create` V0.A/V0.B composition |
+| R.1   | First textured quad: PNG → VkImage → sprite render   | ✅ V0.C.1 closure 2026-05-19 — `PngDecoder` + `TextureUploader` + `VulkanSpritePipeline`; smoke 820 frames @ 164 FPS |
+| R.2   | Batched sprite renderer (10K sprites, 60+ FPS)       | ✅ V0.C.2 closure 2026-05-19 — batched `SpriteRenderer` (commit `18e6f8e`), 10K stress scene (commit `01d9c1c`) |
+| R.3   | TileMap parity + Camera2D                            | ✅ V0.C.2 closure 2026-05-19 — `TileMap` (commit `b72cd7e`), `Camera2D` (commit `bd2c8eb`), 200×200 smoke scene (commit `655e6c0`) |
+| R.4   | Input system (Win32 → InputEventQueue)               | ◐ Infrastructure shipped at V0.C.1 (event types + queue + Win32 dispatch); Domain forwarding not wired — Launcher drains and discards. Planned — ROADMAP |
+| R.5   | Domain integration (Presentation port)               | ✅ Realized in altered form: not a Presentation rewrite but the `DualFrontier.Launcher` host — formalized at К-ext #2, pawn visuals at К-ext #3 (commit `97f4573`; pawn-3 dispatch arms real, 3 arms deferred silent stubs) |
+| R.6   | UI primitives (text + panels)                        | ✗ Not shipped — no `Text/` module, no panel primitives on disk. Planned — ROADMAP |
+| R.7   | Coupled lifecycle + DebugOverlay                     | ◐ Partial: swapchain/framebuffer recreation support shipped (`Runtime.RecreateFramebuffersForSwapchain`); focus→pause coupling and `DebugOverlay` not wired/shipped. Planned — ROADMAP |
+| R.8   | Migration cutover (delete Godot)                     | ✅ К-extensions cascade #2 (commit `2ba8130`, 2026-05-22; cascade closed 2026-05-23) — tracked Godot files removed, pure Vulkan/.NET stack. Residual: root `project.godot` kept deliberately (Crystalka-owned — [DEVELOPMENT_HYGIENE §7 (Godot status)](../methodology/DEVELOPMENT_HYGIENE.md); ROADMAP F-5) |
 
-These R.0..R.8 phases are V0 rendering side implementation sequence; they do not introduce additional V-numbered substrate primitives (V0/V1/V2 numbering covers substrate primitives, not implementation sub-phases). The R.x labels are descriptive identifiers within V0 work — convenient for commit messages and progress tracking — not formal namespace bucket assignments.
+Corrections to the original phase definitions, recorded for traceability:
 
-#### R.0 — Foundation: Win32 window + Vulkan clear color
-
-**Goal:** empty window opens, Vulkan initializes correctly, clear color renders every frame, no validation errors.
-
-**Deliverables:**
-
-- New project `src/DualFrontier.Runtime/`
-- New project `tests/DualFrontier.Runtime.Tests/`
-- `Native/Win32/` — minimal P/Invoke set (~14 functions)
-- `Native/Vulkan/` — minimal P/Invoke set (~30 functions)
-- `Window/Window.cs` — wraps `WNDCLASSEX` + `CreateWindowEx` + message pump
-- `Graphics/{VulkanInstance,VulkanDevice,VulkanSwapchain,VulkanCommandPool}.cs`
-- `Graphics/ValidationLayer.cs` — `VK_LAYER_KHRONOS_validation` enabled in DEBUG
-- `Runtime.cs` — top-level facade
-- Standalone test executable
-
-**Success criteria:** Window opens; sizable, closeable. Clear color rendered every frame. FPS measurable. Validation layers report zero errors in DEBUG mode. Clean shutdown (no leaked Vulkan handles per validation).
-
-**Time:** 4–5 hours. **LOC:** ~800–1000.
-
-#### R.1 — First textured quad
-
-**Goal:** Kenney pawn sprite rendered at center of window.
-
-**Deliverables:** `PngDecoder` full implementation + `VulkanBuffer`/`VulkanImage` abstractions + Pipeline + RenderPass + sprite shaders compiled to SPIR-V + single sprite render.
-
-**Success criteria:** Kenney pawn sprite displayed centered. PNG decoder tests passing.
-
-**Time:** 5–7 hours. **LOC:** ~1000–1500.
-
-#### R.2 — Batched sprite renderer
-
-**Goal:** 10 000 sprites rendered at 60+ FPS via single draw call.
-
-**Deliverables:** Dynamic vertex buffer + per-sprite vertex data + atlas-shared batching + stress test.
-
-**Success criteria:** 10 000 sprites at 60+ FPS. Single draw call in RenderDoc. [PERFORMANCE](./PERFORMANCE.md) budget for sprite pass adopted.
-
-**Time:** 4–6 hours. **LOC:** ~500–700.
-
-#### R.3 — TileMap parity + Camera2D
-
-**Goal:** 200 × 200 tile grid rendered, camera pannable, full M8.8 visual parity.
-
-**Deliverables:** `TileMapBatch` + `Camera2D` + atlas regions for terrain.
-
-**Success criteria:** 200 × 200 tile map visible. 60+ FPS sustained (was 17 on Godot).
-
-**Time:** 3–4 hours. **LOC:** ~400–600.
-
-#### R.4 — Input system
-
-**Goal:** keyboard and mouse events from Win32 delivered to domain.
-
-**Deliverables:** `InputEventQueue` + event types + Win32 message handler dispatching. Replaces the Godot `InputRouter` ([VISUAL_ENGINE](./historical/VISUAL_ENGINE.md)) for new code path; Godot path stays alive until cutover phase R.8.
-
-**Success criteria:** smooth camera pan, key bindings work.
-
-**Time:** 3–4 hours. **LOC:** ~400–500.
-
-#### R.5 — Domain integration (Presentation port)
-
-**Goal:** full M8.9 visual parity on Vulkan stack.
-
-**Deliverables:** Rewrite Presentation layer to target Runtime API. `PawnVisual` / `ItemVisual` / `TileMapVisual` on sprite handles. `RenderCommandDispatcher` retargeted (existing pattern from [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md)).
-
-**Success criteria:** 50 pawns + 255 items + terrain. 60+ FPS. Domain tests passing ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) gate).
-
-**Time:** 6–8 hours. **LOC:** ~800–1200 (rewrite).
-
-#### R.6 — UI primitives
-
-**Goal:** full HUD parity — `ColonyPanel` + `PawnDetail` + `DebugOverlay` on Runtime UI.
-
-**Deliverables:** `BitmapFont` + `TextRenderer` + Panel/Label/ProgressBar primitives + `ColonyPanel` + `PawnDetail` port.
-
-**Success criteria:** HUD matches M8.9 visual.
-
-**Time:** 8–12 hours. **LOC:** ~1000–1500.
-
-#### R.7 — Coupled lifecycle + DebugOverlay
-
-**Goal:** parity with M8.10 — focus events couple to loop pause, no desync drift possible.
-
-**Deliverables:** `WM_KILLFOCUS`/`WM_SETFOCUS` hooks + `WM_SIZE` swapchain recreation + `DebugOverlay`.
-
-**Success criteria:** alt-tab pauses simulation. Window resize works. No 298-tick desync.
-
-**Time:** 2–3 hours. **LOC:** ~200–300.
-
-#### R.8 — Migration cutover
-
-**Goal:** Godot completely removed. Only Vulkan stack running.
-
-**Deliverables:** Delete `.godot/`, `project.godot`, `*.import`, Godot-specific gitignore entries. Update `tools/build-all.ps1`. Update `README.md`.
-
-**Success criteria:** `dotnet build` clean without Godot. `grep -r godot` returns empty. `dotnet run` launches game. [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md) marked deprecated; superseded by §2.2 of this document.
-
-**Time:** 2–3 hours. **LOC:** -2000+ (net deletion).
+- The R.8 deliverable list cited a `tools/build-all.ps1` script that never existed; the real build wiring is the `CompileShaders` MSBuild target in the root `Directory.Build.props` plus the verified build commands in [DEVELOPMENT_HYGIENE §3](../methodology/DEVELOPMENT_HYGIENE.md).
+- The R.8 «`grep -r godot` returns empty» success criterion is not met literally: the root `project.godot` file and `*.import` residues under `assets/` survive deliberately (Crystalka-owned residual; see above).
+- R.3's «full M8.8 visual parity» and R.5's «full M8.9 visual parity» were met at the sprite/tile-map level; HUD-level parity belongs to the unshipped R.6 scope.
 
 ---
 
@@ -1197,7 +1030,7 @@ One V1 compute shader pattern (~50–80 LOC GLSL) handles isotropic + anisotropi
 
 Pathfinding is mathematically isomorphic to wave propagation: a target spike, an anisotropic propagation respecting walkable terrain, an agent reading the gradient. Same V2 wave shader template, same field infrastructure, different gameplay interpretation. Adds pathfinding capability to Dual Frontier without expanding the architectural surface — a structural pattern unification between pathfinding and supply networks. Former G6 flow field infrastructure folded into V2 wave shader side products per Q-G-2 LOCK.
 
-**Per-agent A* (current DF approach via `PathfindingService` / `AStarPathfinding`):**
+**Per-agent A* (current Dual Frontier approach via `IPathfindingService` / `AStarPathfinding` in `DualFrontier.AI`):**
 
 ```
 For each pawn:
@@ -1241,16 +1074,16 @@ Identical pattern, different interpretation:
 
 Same shader templates with different parameters. This is the architectural compound effect — new pathfinding capability through existing infrastructure.
 
-### 5.4 Engine vs mod placement
+### 5.4 Engine vs mod placement (design allocation)
 
 **V substrate provides infrastructure:**
 
-- Field types as `RawTileField<T>` (K9) bound to V0 compute pipeline
-- V1 diffusion shader template (isotropic + anisotropic via per-cell D)
-- V2 wave shader template (routed + distance/direction extraction)
-- Compute dispatch + fence sync + read-cell point queries
+- Field types as `RawTileField<T>` (K9) bound to V0 compute pipeline — shipped
+- V1 diffusion shader template (isotropic + anisotropic via per-cell D) — shipped
+- V2 wave shader template (routed + distance/direction extraction) — pending (§1.3)
+- Compute dispatch + fence sync + read-cell point queries — shipped
 
-**Mods provide gameplay:**
+**Mods provide gameplay** (design allocation — none of these mods carry content yet; Planned, see [ROADMAP §Native foundation tracks](../ROADMAP.md)):
 
 - `Vanilla.Movement` defines pawns following V2 flow fields (M-V7)
 - `Vanilla.Movement` registers flow field types per target category
@@ -1348,7 +1181,7 @@ foreach (var pawn in pawns)
 
 Mode C navigation visibility latency is governed по К-L17 composition framework (§4.0). Player commands → IntentOverlayLayer (≤16ms render latency, sub-pipeline-latency input surface); pawn responses → SimStateLayer (pipeline-managed К-L16 D=2 lag для async dispatches, либо К-L7 sync для V1 path); combat feedback на encounter → CombatFeedbackLayer (К-L15 Fast tier ≤1ms + display ≤16ms ≈ ≤17ms event-к-visible per Prediction 15).
 
-No special-case visibility mechanism — К-L17 composition framework handles latency separation uniformly across навигation modes.
+No special-case visibility mechanism — К-L17 composition framework handles latency separation uniformly across navigation modes.
 
 ### 5.6 Domain B kernel (deferred)
 
@@ -1385,85 +1218,61 @@ Dispatched once per tick. One-tick lag for visual representation (asynchronous r
 
 ---
 
-## 6. Roadmap
+## 6. Status record (realized / pending)
 
-### 6.1 V substrate primitive sequencing
+Forward state, sequencing, and gating for everything below are owned by [ROADMAP §Native foundation tracks (V substrate)](../ROADMAP.md) — the single status authority. This section is an evidence-marked record, not a roadmap.
 
-| Primitive | Title                                                                | Estimated time | Status |
-| --------- | -------------------------------------------------------------------- | -------------- | ------ |
-| V0        | Vulkan substrate foundation (rendering + compute plumbing)           | 4–6 weeks      | Pending |
-| V1        | Scalar field + diffusion shader (isotropic + anisotropic)            | 1–2 weeks      | Pending (gates on V0) |
-| V2        | Scalar field + wave shader (routed, breakable, distance/direction)   | 2–3 weeks      | Pending (gates on V0) |
-| V close   | Multi-field coexistence acceptance criterion (former G4)             | included       | (V substrate close gate) |
+### 6.1 V substrate primitive record
 
-Future V-N primitives reserved for post-substrate compute needs (G5 Domain B disposition, G9 eikonal upgrade if evidence justifies, modder-driven primitives).
+| Primitive | Title                                                                | State — evidence |
+| --------- | -------------------------------------------------------------------- | ---------------- |
+| V0        | Vulkan substrate foundation (rendering + compute plumbing)           | ✅ Realized — V0.A/V0.B closures 2026-05-18, V0.C.1/V0.C.2 closures 2026-05-19; V0 substrate close 2026-05-19 per Q8 ratification (`docs/MIGRATION_PROGRESS.md` V-series table). Text/overlay scope excluded — §1.1 |
+| V1        | Scalar field + diffusion shader (isotropic + anisotropic)            | ✅ Realized — closure 2026-05-19, PR #40 merge `88aebf2`; `V1DiffusionPipeline.cs` + `diffusion.comp(.spv)` on disk — §1.2 |
+| V2        | Scalar field + wave shader (routed, breakable, distance/direction)   | ⏭ Pending — no `wave.comp` on disk; design rationale in §1.3 |
+| V close   | Multi-field coexistence acceptance criterion (former G4)             | ⏭ Pending — gated on V2; criteria tracked in ROADMAP (§1.4) |
+
+Future V-N primitive identifiers remain reserved (G5 Domain B disposition, G9 eikonal upgrade if evidence justifies, modder-driven primitives) — §1.3.1/§1.3.2.
 
 ### 6.2 Rendering use case implementation phases (R.0..R.8)
 
-Listed in §4.2 above. Sub-phases of V0 work; do not introduce additional V-numbered primitives.
+Realized record in §4.2. Sub-phases of V0 work; they introduce no additional V-numbered primitives.
 
-### 6.3 M-V demonstrations (per Q-R-1 format)
+### 6.3 M-V demonstrations record (per Q-R-1 format)
 
-Per Q-R-1 LOCK and Q-V-2 LOCK, mods that demonstrate V substrate primitives carry `M-V{original G number}` identifiers preserving traceability to G-skeleton briefs. Mods with multi-substrate dependencies (K-side + V-side) carry compound marker `M-K{N} / M-V` with V-side identifier deferred to V-side authoring time per FHE-style reserved pattern.
+Per Q-R-1 LOCK and Q-V-2 LOCK, mods that demonstrate V substrate primitives carry `M-V{original G number}` identifiers preserving traceability to G-skeleton briefs; multi-substrate mods carry the compound `M-K{N} / M-V` marker with the V-side identifier assigned at V-side authoring time (FHE-style reserved pattern).
 
-| Demo identifier | Title                                                  | Substrate primitive | Status |
-|-----------------|---------------------------------------------------------|---------------------|--------|
-| M-V1            | Vanilla.Magic mana diffusion (V1 isotropic)             | V1                  | Pending (gates on V1) |
-| M-V2            | Vanilla.Electricity power field (V1 anisotropic)        | V1                  | Pending (gates on V1) |
-| ~~M-V3~~        | (gap — former G3 storage cells, reduced to gameplay)    | n/a                 | Reduced |
-| ~~M-V4~~        | (gap — former G4 multi-field, now V close criterion)    | n/a                 | Reduced |
-| M-V5            | Vanilla.Combat projectile Domain B reactivation         | TBD (deferred)      | Deferred — substrate disposition TBD |
-| ~~M-V6~~        | (gap — former G6 flow field infrastructure, folded V2)  | n/a                 | Folded |
-| M-V7            | Vanilla.Movement integration (V2 routed flow field)     | V2                  | Pending (gates on V2) |
-| M-V8            | Vanilla.Movement local avoidance extension              | mod-level (not substrate) | Pending (gates on M-V7) |
-| ~~M-V9~~        | (gap — former G9 eikonal, deferred as V2 tunable TBD)   | V2 tunable or V3    | Deferred — evidence-gated |
+All M-V demonstrations are **pending** — the vanilla mods on disk are strict-v3 skeletons with empty `Initialize` bodies, and `Vanilla.Electricity`/`Vanilla.Water`/`Vanilla.Movement` do not exist yet. One line per item (evidence = current disk state; status detail in ROADMAP):
 
-Gaps M-V3, M-V4, M-V6, M-V9 reflect Q-G-2 reductions; identifier slots reserved but unused.
+- M-V1 Vanilla.Magic mana diffusion (V1 isotropic) — pending; `mods/DualFrontier.Mod.Vanilla.Magic` skeleton only.
+- M-V2 Vanilla.Electricity power field (V1 anisotropic) — pending; mod absent.
+- M-V5 Vanilla.Combat projectile Domain B reactivation — deferred; substrate disposition TBD (§1.3.2).
+- M-V7 Vanilla.Movement routed flow field (V2) — pending; mod absent, gates on V2.
+- M-V8 Vanilla.Movement local avoidance (mod-level, not substrate) — pending; gates on M-V7.
+- M-V3 / M-V4 / M-V6 / M-V9 — identifier gaps from the Q-G-2 reductions; slots reserved, unused.
 
-### 6.4 Multi-substrate vanilla mods (Q-V-2 LOCK)
+### 6.4 Multi-substrate vanilla mod markers (Q-V-2 LOCK)
 
-Mods that span both K substrate and V substrate carry compound markers per Q-V-2 LOCK:
-
-| Mod                     | K-side identifier (bucket M-K) | V-side identifier (reserved) | Substrate primitive consumed |
-|-------------------------|--------------------------------|------------------------------|------------------------------|
-| Vanilla.Magic           | M-K{N} (deferred to author)    | M-V1                         | V1 isotropic diffusion        |
-| Vanilla.Electricity     | M-K{N} (deferred)              | M-V2                         | V1 anisotropic diffusion      |
-| Vanilla.Water           | M-K{N} (deferred)              | M-V (deferred — V1+V2 hybrid) | V1 + V2 hybrid                |
-| Vanilla.Movement        | M-K{N} (deferred)              | M-V7 + M-V8                  | V2 routed flow field           |
-
-K-side milestone authored first; V-side authored after V substrate ready. V-side concrete identifier within the M-V bucket appears at V-side authoring time per FHE-style reserved pattern (Q-V-2 precedent, IHomomorphicComputeProvider model).
-
-K-only mods (single milestone) — no compound marker:
-
-- Vanilla.World (M-K bucket, identifier deferred)
-- Vanilla.Pawn (M-K bucket, 3 sub-milestones, identifiers deferred)
-- Vanilla.Inventory (M-K bucket, deferred)
-- Vanilla.Core (M-K bucket, deferred)
+Compound `M-K{N} / M-V` marker assignments and the K-only mod list are tracked in [ROADMAP §Mod-OS Migration and §Native foundation tracks](../ROADMAP.md). The design rule recorded here: K-side milestone authored first; V-side authored after the V substrate is ready; the concrete V-side identifier appears at V-side authoring time (Q-V-2 precedent, `IHomomorphicComputeProvider` model).
 
 ### 6.5 Hybrid coupling spec (deferred TBD)
 
-How V1 diffusion picks up from a broken V2 wave node — example: water in pipes propagates via V2 wave respecting pipe topology; on pipe break, water diffuses ambient via V1. Coupling spec deferred to V substrate amendment authoring; deliberation §3.2 surfaced this as deferred-to-amendment item. M-V Water demonstration is the first integration point requiring resolution.
+How V1 diffusion picks up from a broken V2 wave node — example: water in pipes propagates via V2 wave respecting pipe topology; on pipe break, water diffuses ambient via V1. Coupling spec deferred to V substrate amendment authoring (deliberation §3.2 deferred-to-amendment item); the M-V Water demonstration is the first integration point requiring resolution. Held in §8.2 open decisions.
 
-### 6.6 Combined timeline
+### 6.6 Sequencing
 
-V0 substrate foundation (rendering side + compute side) ≈ 4–6 weeks. V1 + V2 ≈ 3–5 weeks. M-V demonstrations (M-V1, M-V2, M-V7, M-V8) ≈ 3–5 weeks. Combined V substrate work ≈ 10–16 weeks. Combined with kernel work (K-series → A' bridge → M-cycle Phase B) per [MIGRATION_PLAN_KERNEL_TO_VANILLA](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md), the full architectural foundation is ~20–30 weeks at hobby pace.
+Owned by [ROADMAP §Native foundation tracks](../ROADMAP.md) (combined K/V timeline and cross-track gating).
 
 ---
 
 ## 7. Failure modes and fallbacks
 
-### 7.1 CPU fallback for compute shaders
+### 7.1 Hardware capability policy and CPU reference kernels
 
-Not all hardware supports Vulkan 1.3 compute reliably. Some integrated GPUs and older laptops have driver issues. Pure software environments (CI, headless build agents) may lack GPU access entirely.
+Not all hardware supports Vulkan 1.3 compute reliably; pure software environments (CI, headless build agents) may lack GPU access entirely. The shipped policy resolves this by **exclusion, not fallback**:
 
-Each compute shader has a CPU reference implementation in managed code (originally written for shader equivalence testing during V1+). At startup, native kernel detects compute capability:
-
-- Vulkan 1.3 + compute queue available: use GPU dispatch path
-- Compute unavailable or disabled by config: managed scheduler invokes CPU reference implementation per tick
-
-Performance on CPU fallback is significantly worse (orders of magnitude for large grids), but functionality is preserved. Game still runs; users see degraded performance rather than crashes.
-
-CPU fallback is also mandatory for deterministic save snapshots (see below) if GPU determinism cannot be guaranteed across hardware.
+- **К-L19 fail-fast (shipped):** `Runtime.Create` runs `HardwareCapabilityCheck.Verify` at startup and throws `HardwareCapabilityException` if the Vulkan 1.3 + async-compute-queue hardware tier is absent. The hardware-tier exclusion is an accepted architectural choice — `KERNEL_ARCHITECTURE Part 0 (К-L invariants)`, К-L19 row.
+- **CPU reference kernels (shipped, test-oracle role):** each shipped compute shader has a managed CPU reference implementation — `IsotropicDiffusionKernel` + `AnisotropicDiffusionKernel` in `src/DualFrontier.Core.Interop/CpuKernels/` — used by the V1 equivalence suites (§2.8) and runnable without any GPU (this is how field logic is exercised on CI).
+- **Runtime CPU-fallback dispatch (design option, not wired):** a config-selected per-tick CPU execution path for fields exists only as design; no fallback dispatcher is on disk. Reopening it (e.g. for a broader hardware audience) is a hardware-tier-expansion concern — see [ROADMAP §Hardware tier expansion cascade](../ROADMAP.md).
 
 ### 7.2 Determinism considerations
 
@@ -1483,9 +1292,9 @@ GPU compute results may vary across hardware/driver combinations due to floating
 - Save/load must produce reproducible state on load
 - Network multiplayer (not currently scoped) would require strict determinism
 
-Mitigation: CPU reference implementation produces canonical state for save snapshots. Save process pauses GPU dispatch, runs one CPU iteration to produce canonical field state, serializes that. On load, fields restored from canonical state; GPU dispatch resumes.
+Design mitigation (not implemented — no field save path exists yet): the CPU reference kernels (§7.1) produce canonical state for save snapshots — save pauses GPU dispatch, runs one CPU iteration to produce canonical field state, serializes that; on load, fields restore from canonical state and GPU dispatch resumes. Integration with the persistence layer is Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
-For hobby-scale single-player, slight non-determinism between sessions is acceptable. The CPU canonical save path is implemented but minimally exercised.
+For hobby-scale single-player, slight non-determinism between sessions is acceptable.
 
 ### 7.3 Async sync hazards
 
@@ -1544,20 +1353,17 @@ The «stop, escalate, lock» rule applies; opening any item below requires a bri
 
 ## 9. Risk register
 
-**R1 — Pure P/Invoke binding tedium exceeds tolerance.**
-
-- Probability: Medium.
-- Mitigation: if grinding feels unbearable after ~1000 lines, switch to Vortice.Vulkan (lateral move). Decision recorded as a §8 amendment.
+**R1 — Pure P/Invoke binding tedium exceeds tolerance.** *Resolved moot post-V0:* the full V0 foundation shipped on hand-written `[LibraryImport]` bindings (`Native/Vulkan/VkApi.cs`, `Native/Win32/Win32Api.cs`) without switching to a binding library; the Vortice.Vulkan lateral-move option was never needed.
 
 **R2 — Vulkan complexity bugs (synchronization, layout transitions, compute fence sync).**
 
 - Probability: High.
-- Mitigation: validation layers ALWAYS on in development. RenderDoc for visual debugging. Validation-clean output added to the [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) checklist. Compute fence-sync invariants explicitly tested with controlled dispatch sequences.
+- Mitigation: validation layers ALWAYS on in development (DEBUG default per `RuntimeOptions`). RenderDoc for visual debugging. Validation-clean output is a pre-commit check owned by §11 of this document. Compute fence-sync invariants explicitly tested with controlled dispatch sequences.
 
 **R3 — PNG decoder edge cases.**
 
 - Probability: Medium.
-- Mitigation: extensive test suite with synthetic + real PNG inputs ([TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) §unit).
+- Mitigation: extensive test suite with synthetic + real PNG inputs ([TESTING_STRATEGY](../methodology/TESTING_STRATEGY.md) unit tier; realized — `PngDecoderTests`).
 
 **R4 — Bitmap font tooling bottleneck.**
 
@@ -1583,9 +1389,9 @@ The «stop, escalate, lock» rule applies; opening any item below requires a bri
 
 ## 10. Operational considerations
 
-**Required tooling — install before V0:**
+**Required tooling (in use since V0):**
 
-- Vulkan SDK (LunarG, current 1.3.x).
+- Vulkan SDK (LunarG, 1.3.x) — for development/debugging; shader compilation itself uses the committed `tools/glslangValidator.exe` and needs no SDK install ([DEVELOPMENT_HYGIENE §4](../methodology/DEVELOPMENT_HYGIENE.md)).
 - RenderDoc (graphics debugger; compute debugging via NVIDIA Nsight or similar).
 - Visual Studio 2022 17.8+ (for `[LibraryImport]` source generators).
 
@@ -1600,14 +1406,14 @@ The scaffolding generator `tools/scaffold-runtime.ps1` is committed and idempote
 
 ## 11. Methodology adjustments for V substrate work
 
-The existing methodology ([METHODOLOGY](/docs/methodology/METHODOLOGY.md)) carries forward with the following adjustments. None of these adjustments alter the pipeline shape; they extend its pre-flight + verification stages for the Vulkan-specific failure modes (both rendering and compute).
+The existing methodology ([METHODOLOGY](../methodology/METHODOLOGY.md)) carries forward with the following adjustments. None of these adjustments alter the pipeline shape; they extend its pre-flight + verification stages for the Vulkan-specific failure modes (both rendering and compute).
 
 **Pre-flight checks adapted:**
 
 - Write-conflict table — applies to Domain commits, not Runtime.
-- Project reference direction sanity check — extended: Runtime may not reference Domain (§2.4 Rule 1).
-- New: **Validation layer output check** — clean validation output mandatory before commit. Added to [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) checklist.
-- New: **CPU/GPU equivalence test** — every new compute shader must have a CPU reference implementation; before commit, verify equivalence on representative inputs within tolerance.
+- Project reference direction sanity check — extended: Runtime may not reference Domain gameplay projects (§2.4 Rule 1).
+- **Validation layer output check** — clean validation output mandatory before commit. This document owns the check; it is exercised through the smoke-test runs and the committed manual verification protocols (§2.8).
+- **CPU/GPU equivalence test** — every new compute shader must have a CPU reference implementation; before commit, verify equivalence on representative inputs within tolerance. Realized for V1 (`V1DiffusionEquivalenceTests` + `CpuKernels`); binds V2 when it ships.
 
 **Brief structure:**
 
@@ -1629,28 +1435,28 @@ V substrate consolidates rendering + compute into a single Vulkan layer per Q-G-
 
 **«Features only on demand»:** Vulkan API surface is enormous. Resist temptation to build «complete» renderer or «complete» compute framework. Each feature must trace to specific Domain requirement or gameplay mechanic.
 
-This document is **v1.0**, authoritative until amended via explicit decision. Amendments require a commit with rationale, in the same style as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) version-history block.
+This document is authoritative until amended via explicit decision; its current version is owned by the document register (frontmatter mirror). Amendments require a commit with rationale, recorded in the version-history block, in the same style as [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md).
 
 ---
 
 ## See also
 
-- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the development pipeline; the V substrate adjustments in §11 keep this architecture inside the same methodology.
-- [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order; V substrate adheres verbatim.
-- [ARCHITECTURE](./ARCHITECTURE.md) — the four layers; V substrate extends the Presentation layer (rendering use case) and provides compute primitives consumable from Domain via `IModApi` (compute use case).
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — companion architectural authority for the modding subsystem; `IModApi.Fields` + `IModApi.ComputePipelines` are the compute consumption surface.
-- [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — native ECS kernel; K9 `RawTileField<T>` is the storage primitive V substrate compute consumes.
-- [FIELDS](./FIELDS.md) — field storage contract; consumed by V substrate compute (V1/V2 primitives bind `RawTileField<T>` as SSBO/storage image).
-- [THREADING](./THREADING.md) — domain `ParallelSystemScheduler`; the Window+Render thread merge in §2.3 is the only addition. Compute dispatch is fence-async on simulation thread.
-- [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) — current dual-backend (Godot DevKit + Silk.NET Native); superseded for production by this document at rendering cutover R.8.
-- [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md) — current `PresentationBridge` and Godot-specific glue; deprecated at R.8.
-- [MIGRATION_PLAN_KERNEL_TO_VANILLA](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md) — Phase A K-series + Phase B M-cycle sequencing; V substrate work runs in parallel with K-series per β6 sequencing, gates Phase B M-V demonstrations.
-- [ROADMAP](/docs/ROADMAP.md) — phase ordering; §6 of this document is the authoritative sequence for the V substrate work.
-- [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — test pyramid; §2.8 slots V substrate tests into the existing structure.
-- [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) — pre-commit checklist; §11 adds the validation-layer-clean check + CPU/GPU equivalence check.
-- [PERFORMANCE](./PERFORMANCE.md) — target metrics; sprite/tile budgets adopted in R.2 / R.3; field compute budgets adopted in V1/V2.
+- [METHODOLOGY](../methodology/METHODOLOGY.md) — the development pipeline; the V substrate adjustments in §11 keep this architecture inside the same methodology.
+- [CODING_STANDARDS](../methodology/CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order; V substrate adheres verbatim.
+- [ARCHITECTURE](./ARCHITECTURE.md) — the layer overview; V substrate is the presentation/compute foundation consumed by `DualFrontier.Launcher`, with compute primitives reachable from Domain via the `Core.Interop` bridge and (when wired) `IModApi`.
+- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — companion architectural authority for the modding subsystem; `IModApi.Fields` + `IModApi.ComputePipelines` are the designed compute consumption surface (§3.3 status).
+- [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — native ECS kernel; K9 `RawTileField<T>` is the storage primitive V substrate compute consumes; Part 0 owns the К-L invariants cited here (К-L7/L7.1, К-L9, К-L12/L13, К-L15–К-L19).
+- [FIELDS](./FIELDS.md) — field storage contract; consumed by V substrate compute (V1 binds `RawTileField<T>` as SSBO; V2 follows the same binding when authored).
+- [THREADING](./THREADING.md) — concurrency authority: native scheduler (К-L12/К-L13) + managed adapter facade; the Window+Render thread merge in §2.3 is the substrate's only addition. V1 compute dispatch is К-L7 sync on the simulation thread.
+- [VISUAL_ENGINE](./historical/VISUAL_ENGINE.md) — **historical**: the retired dual-backend (Godot DevKit + Silk.NET Native) spec; superseded for production by this document at the rendering cutover.
+- [GODOT_INTEGRATION](./historical/GODOT_INTEGRATION.md) — **historical**: the retired Godot glue spec (the `PresentationBridge` pattern it described lives on in `DualFrontier.Application.Bridge`); deprecated at the R.8 cutover.
+- [MIGRATION_PLAN_KERNEL_TO_VANILLA](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md) — planning record for Phase A K-series + Phase B M-cycle sequencing; forward state lives in ROADMAP.
+- [ROADMAP](../ROADMAP.md) — **the single forward-state authority**: V substrate status, sequencing, gating, and the Findings ledger.
+- [TESTING_STRATEGY](../methodology/TESTING_STRATEGY.md) — test law and census method; §2.8 slots V substrate tests into the existing structure.
+- [DEVELOPMENT_HYGIENE](../methodology/DEVELOPMENT_HYGIENE.md) — operational truth: repository map, verified build commands (incl. the native kernel build the Launcher depends on), tooling reality, Godot end-state.
+- [PERFORMANCE](./PERFORMANCE.md) — target metrics; sprite/tile budgets adopted with the batched renderer and TileMap work; field compute budgets adopted in V1 (V2 pending).
 - [COMPOSITE_NAMESPACE_DELIBERATION_STATE](./COMPOSITE_NAMESPACE_DELIBERATION_STATE.md) — ratification authority for Q-G-1 + Q-G-2 LOCK (substrate consolidation and primitive reductions).
-- [CPP_KERNEL_BRANCH_REPORT](/docs/reports/CPP_KERNEL_BRANCH_REPORT.md) — Discovery report establishing K0 cherry-pick scope.
+- [CPP_KERNEL_BRANCH_REPORT](../reports/CPP_KERNEL_BRANCH_REPORT.md) — Discovery report establishing K0 cherry-pick scope.
 
 ## Part 12: Relationship to KERNEL_ARCHITECTURE.md
 
@@ -1665,8 +1471,8 @@ VULKAN_SUBSTRATE.md (this) and KERNEL_ARCHITECTURE.md describe two halves of a s
 
 **Independent layers**: rendering knows nothing about ECS storage; ECS kernel knows nothing about Vulkan. Both reachable from managed Application layer through respective bridges. Compute use case of V bridges to K through `RawTileField<T>` (K9 storage primitive) — the storage is in K, the compute is in V, the binding is `FieldStorageBinding.cs` in V0.
 
-**Combined timeline**: see KERNEL_ARCHITECTURE.md Part 2 for K-series sequencing; this document §6 for V substrate sequencing. V work can proceed in parallel with K-series (independent layers), with the integration point at K9 + V0 (field storage abstraction + Vulkan compute plumbing).
+**Combined sequencing**: K-series and V-substrate sequencing both live in [ROADMAP §Native foundation tracks](../ROADMAP.md) (the former KERNEL_ARCHITECTURE Part 2 roadmap content was relocated there); this document §6 is the V-side evidence record. The parallel-tracks design held in practice: V work proceeded alongside the К-series, with the integration point at K9 + V0 (field storage abstraction + Vulkan compute plumbing) — realized as `FieldStorageBinding` over `RawTileField<T>`.
 
-**Cross-document invariants**: «без компромиссов», operating principle (data exists/doesn't), single ownership boundary, direction-discipline, long-horizon planning. See KERNEL_ARCHITECTURE.md Part 8 for full invariant list.
+**Cross-document invariants**: «без компромиссов», operating principle (data exists/doesn't), single ownership boundary, direction-discipline, long-horizon planning. See `KERNEL_ARCHITECTURE Part 8 (cross-document invariants)` for the full list.
 
-**LOCKED v1.0** — supersedes prior `RUNTIME_ARCHITECTURE.md` v1.0 + `GPU_COMPUTE.md` v2.0. Departures require explicit re-architecture milestone and updates to dependent K9/V-series briefs.
+**LOCKED** — supersedes prior `RUNTIME_ARCHITECTURE.md` v1.0 + `GPU_COMPUTE.md` v2.0 (supersession record; current version owned by the register). Departures require an explicit re-architecture milestone and updates to dependent K9/V-series briefs.
