@@ -1,4 +1,4 @@
-﻿---
+---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-B-TESTING_STRATEGY
@@ -6,210 +6,407 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
+version: "2.0.0"
+next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-TESTING_STRATEGY
 ---
-# Testing strategy
 
-Tests in Dual Frontier are the first line of defense for architectural guarantees. The isolation guard, the dependency graph, the event bus — all of these are useless without tests that fail on regression. The project uses xUnit + FluentAssertions; mocks appear only where a real component cannot be substituted. Test projects are grouped by the assemblies they verify.
+# Testing strategy — Dual Frontier
 
-## Unit tests
+## §1 — Authority and why this document exists
 
-Scope: one class, or one pair of classes, in isolation. Goal: catch logic errors on the minimum surface.
+Testing in Dual Frontier is an architectural discipline, not a collection of conventions. Tests exist so that the architectural guarantees — native ECS storage ownership, the ALC mod-isolation boundary, bus delivery semantics, the К-Lxx invariant series — are verified at every cascade closure rather than merely documented. This document is the project's standing test LAW: the single source of truth for test layers, census contracts, brief integration, and invocation reality.
 
-### ComponentStore
+**Briefs cite this document; they do not restate it.** From this cascade onward, every brief that specifies tests references `TESTING_STRATEGY.md §N` by section anchor for any pattern codified here. A brief that re-specifies a pattern inline duplicates law and is defective per §6.4.
+
+### §1.1 — What this document governs
+
+- The test-layer taxonomy (§3) and the layer assignment of every test in the repository.
+- The census contracts for reserved surface, marker families, and waivers (§4) — what is counted, by which exact expression, and what a count change obligates.
+- The mapping discipline between validation criteria and named tests (§5), including the prohibition on testing lying stubs.
+- The division of labor between briefs and this document (§6).
+- The closure-audit obligations every cascade owes (§7).
+- The invocation commands that actually run the suites (§8).
+
+### §1.2 — What this document does not govern
+
+- Per-cascade test specifications — those live in the owning brief (Category D), in the §6.1 carry format.
+- Source-code style, marker syntax, and commit discipline — `CODING_STANDARDS.md` (cited where load-bearing).
+- The closure protocol itself — `METHODOLOGY.md §12.7` is canonical; §7 here extends it with test-law obligations and does not duplicate it.
+- Architecture content — `KERNEL_ARCHITECTURE.md`, `ANALYZER_RULES.md`, and peers define what is true; this document defines how truth is verified.
+
+When execution encounters a testing question this document does not answer, the response is: stop, propose an amendment per §9.1, obtain ratification — not improvise per file.
+
+### §1.3 — Stack truth
+
+The managed test stack is **xUnit 2.9.2 + FluentAssertions 6.12.1 + Microsoft.NET.Test.Sdk 17.11.1 + xunit.runner.visualstudio 2.8.2**, all version-resolved through Central Package Management (`Directory.Packages.props` at repo root). The analyzer-test project additionally references **Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit 1.1.2** plus an explicit **Microsoft.CodeAnalysis.CSharp.Workspaces 5.3.0** override (the override forces the CPM-pinned Workspaces to win over the testing package's transitive 1.0.1 — without it MEF composition fails at first run; recorded in `tests/DualFrontier.Analyzers.Tests/DualFrontier.Analyzers.Tests.csproj`). The native test stack is a standalone C++ selftest executable built by CMake (§2.5).
+
+There is **no CI pipeline**. Every gate named in this document is executed locally — by the executing agent during a cascade and at closure per §7. Any future CI claim must name its on-disk workflow artifact before it may appear here.
+
+### §1.4 — Authority chain
+
+This document derives from and interlocks with:
+
+- `docs/methodology/METHODOLOGY.md` — §12.7 closure protocol (canonical); §12.8 brief-integration boundary (cross-document form of §6.3/§6.4).
+- `docs/methodology/CODING_STANDARDS.md` — §5 «Marker family registry» (census expressions registered there), §5.3 DFK-WAIVER law, §8 atomic commit discipline.
+- `docs/methodology/RESERVED_SURFACE_MUTABILITY.md` — the census-delta / `Skeleton revisions` commit-body law that makes §4 pin updates auditable.
+- `docs/architecture/ANALYZER_RULES.md` — rule specifications the §3.5 analyzer-test convention will verify.
+- `docs/ROADMAP.md` — §«Analyzer track» (Phase β scope pointers) and §«Findings ledger (F-series)» (open defects, including §2.6).
+
+## §2 — Test landscape truth
+
+Surveyed 2026-06-11 against `main` at `d90b522`. Every count below was measured by `rg`/`dotnet test` against the working tree; this section states what exists, not what is intended.
+
+### §2.1 — dotnet-test-invocable projects (9)
+
+All nine live under `tests/`, are members of `DualFrontier.sln`, and target the §1.3 stack.
+
+| Project | .cs files | `[Fact]`/`[Theory]` sites | 2026-06-11 Release run | Verdict |
+|---|---:|---:|---|---|
+| `DualFrontier.Core.Tests` | 18 | 96 | 83 passed / 1 failed / 84 reported | Real. Managed ECS, bus, scheduler, math. Run truncated by testhost crash after `SchedulerStressTests` (§2.6). |
+| `DualFrontier.Core.Interop.Tests` | 26 | 199 | 202 / 202 | Real. P/Invoke boundary suite (§3.2). |
+| `DualFrontier.Modding.Tests` | 45 | 382 | 398 / 399 | Real. Largest suite; ALC isolation + fixture projection (§3.4). 1 timing-sensitive failure (§2.6). |
+| `DualFrontier.Runtime.Tests` | 36 | 251 | 292 / 292 | Real. Runtime substrate suite. |
+| `DualFrontier.Application.Tests` | 5 | 45 | 45 / 45 | Real. Bootstrap/loop application layer. |
+| `DualFrontier.Mod.ManifestRewriter.Tests` | 1 | 7 | 7 / 7 | Real. Tooling suite for the manifest rewriter. |
+| `DualFrontier.Persistence.Tests` | 4 | 4 | 4 / 4 | Nascent. Real but thin; persistence scaffold scale. |
+| `DualFrontier.Systems.Tests` | 2 | 2 | 2 / 2 | Thin real. `SmokeTests` + `NativeWorldTestFixture`. |
+| `DualFrontier.Analyzers.Tests` | 1 | 1 | 1 / 1 | **PLACEHOLDER.** Single assembly-identity `[Fact]` in `PlaceholderTests.cs` confirming `DualFrontier.Analyzers` loads in the Roslyn test host. Per A'.9.1 Phase α design; per-rule verifier tests land at Phase β (its own XML doc says so). |
+
+Run-reported totals exceed attribute-site counts where `[Theory]` rows expand (Modding, Runtime, Core.Interop); `Core.Tests` reports fewer than its 96 sites because the 2026-06-11 run crashed before full reporting (§2.6).
+
+### §2.2 — Non-test executables under tests/ (2)
+
+Two projects live under `tests/` but are **not dotnet-test-invocable** (`OutputType=Exe`, no test SDK wiring):
+
+- `tests/DualFrontier.Core.Benchmarks` — BenchmarkDotNet 0.13.12 console executable. Run via `dotnet run -c Release`, never via `dotnet test`. Benchmarks measure; they do not gate — no regression-gate artifact exists (any future gate appears first as `Planned — see docs/ROADMAP.md`).
+- `tests/DualFrontier.Runtime.SmokeTest` — standalone smoke executable for manual runtime verification.
+
+A closure report that says «all tests pass» refers to the nine §2.1 projects plus the native selftest (§2.5); it makes no claim about these two executables unless it ran them and says so.
+
+### §2.3 — Fixture mod projects (19)
+
+Nineteen `tests/Fixture.*` projects feed the Modding suite:
+
+- **6 in the solution**: `Fixture.SharedEvents`, `Fixture.PublisherMod`, `Fixture.SubscriberMod`, `Fixture.BadRegularMod`, `Fixture.BadSharedMod_WithIMod`, `Fixture.VanillaMod_HotReloadOverride`.
+- **13 disk-only** (`Fixture.RegularMod_*`, pulled transitively when `DualFrontier.Modding.Tests` builds): `BadApiVersion`, `CyclicA`, `CyclicB`, `DependedOn`, `DependsOnAnother`, `DependsOnBadApi`, `DepsBadVersion`, `MissingOptional`, `MissingRequired`, `ReplacesCombat`, `ReplacesCombat_Alt`, `ReplacesProtected`, `ReplacesUnknown`.
+
+The wiring is the **cross-ALC projection pattern**: `DualFrontier.Modding.Tests.csproj` references fixtures with `<ReferenceOutputAssembly>false</ReferenceOutputAssembly>`, so fixture binaries are built and copied for the suite to load through real `AssemblyLoadContext` machinery while their types stay out of the test assembly's compile-time graph. This is what makes the isolation tests honest — the test project cannot accidentally hold compile-time references to what the ALC boundary is supposed to block.
+
+### §2.4 — Mod projects (7)
+
+`mods/` holds 7 mod projects: `DualFrontier.Mod.Example` (in solution) and 6 disk-only `DualFrontier.Mod.Vanilla.*` (Combat, Core, Inventory, Magic, Pawn, World). They are production mod surface, not test fixtures; they appear here because Phase β analyzer sweeps include them (brief A'.9.1 §7.2 violation inventory counts `mod_violations` separately).
+
+### §2.5 — Native selftest
+
+`df_native_selftest.exe` — a CMake target in `native/DualFrontier.Core.Native`, source `native/DualFrontier.Core.Native/test/selftest.cpp`. It is a standalone executable running `DF_CHECK`-macro scenario functions; it prints `ALL PASSED` and exits 0 on success, or prints the failure count and exits 1. It is **not under `dotnet test`** and is invoked as an exe (§8). Binaries exist on disk for both configurations: `native/DualFrontier.Core.Native/build/Debug/df_native_selftest.exe` and `.../build/Release/df_native_selftest.exe`.
+
+### §2.6 — Honesty register: known-failing tests
+
+Two tests fail on `main` as of the 2026-06-11 survey. They are **pre-existing on main**, recorded as an OPEN finding in the ROADMAP Findings ledger (`docs/ROADMAP.md §Findings ledger (F-series)`), and are not silently absorbed by any cascade:
+
+1. `SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError` (`tests/DualFrontier.Core.Tests/Scheduling/SchedulerStressTests.cs`) — Stress-category test; native `TickBegin` failure at tick 2692, followed by a testhost crash that truncates the remainder of the Core.Tests run.
+2. `GameBootstrapIntegrationTests.CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` (`tests/DualFrontier.Modding.Tests/Bootstrap/GameBootstrapIntegrationTests.cs`) — timing-sensitive integration test; intermittent.
+
+A cascade that touches the implicated surfaces either fixes the finding (closing the F-entry) or re-confirms it as pre-existing in its closure report. Declaring «all tests pass» while these are open is a truth-law violation; the honest closure statement is «all tests pass except the F-ledger-recorded known failures, re-verified unchanged».
+
+### §2.7 — Grand total at survey
+
+**1036 tests reported / 1034 passing** across the nine §2.1 projects (2026-06-11, Release, per-project invocations). This number is a survey snapshot, not a pin: test counts move with every cascade and are tracked per-brief via the §6.1 count delta.
+
+## §3 — Layer taxonomy (DF-adapted)
+
+Eight layers. Layer assignment is structural, not stylistic: the layer determines isolation requirements, invocation route, and which closure gate exercises the test. Every test a brief names carries a layer assignment from this list (§6.1).
+
+### §3.1 — Managed unit
+
+Pure managed logic in isolation: ECS value types, bus delivery semantics, dependency-graph math, spatial math, serialization. No native handles, no ALC loading, no disk beyond fixture input. Exemplars: `tests/DualFrontier.Core.Tests/ECS/EntityIdTests.cs`, `.../Math/SpatialGridTests.cs`. The default layer — anything that can be a unit test must be.
+
+Forbidden in managed unit: P/Invoke or native handle acquisition (that is §3.2), `AssemblyLoadContext` loading (that is §3.4), booting the production composition (that is §3.3), filesystem writes. Reading a fixture file as parser input is permitted — the file is input, not I/O under test. A test whose setup needs any forbidden item is not a unit test and moves layer; relabeling instead of restructuring is the defect this rule exists to catch.
+
+### §3.2 — Interop boundary
+
+Tests that exercise the P/Invoke surface against the real native DLL: marshalling shape, handle lifetime, error-code propagation, span protocol. The suite is `DualFrontier.Core.Interop.Tests` (199 attribute sites across 26 files) — the canonical pattern for any new `[DllImport]` surface. A new interop entry point without a boundary test in this suite is a review defect.
+
+### §3.3 — Integration
+
+Several real components composed through the real bus/bootstrap, no mocks of project-owned surfaces. Exemplar: `GameBootstrapIntegrationTests` (`tests/DualFrontier.Modding.Tests/Bootstrap/`) — boots the real `GameBootstrap` composition and asserts cross-component behavior. Integration tests carry `[Trait("Category", "Integration")]` (§3.7 lists the measured trait census). The composition under test must be the production composition; a test passing against a wiring that production does not use verifies nothing.
+
+### §3.4 — Modding-ALC isolation
+
+The project's strongest suite: `DualFrontier.Modding.Tests` (382 attribute sites across 45 files) plus the 19-fixture projection of §2.3. Verifies that `AssemblyLoadContext` boundaries actually hold: load/unload lifecycles, capability enforcement, dependency-graph resolution, hot reload, manifest validation, shared-ALC semantics. Internal harness: `tests/DualFrontier.Modding.Tests/Fixtures/SchedulerTestFixture.cs` (an internal static helper — note for history: the public builder-style `SchedulerFixture` API described by v1.0 of this document never existed). New mod-facing surface gets its isolation tests here, against real fixture mods, never against in-assembly stand-ins.
+
+### §3.5 — Analyzer tests
+
+**The convention is standing law now; its population is A'.9.1 Phase β scope; the current state is a placeholder (§2.1).**
+
+Convention: every active analyzer rule (`DFK###`/`DFL###`/`DF999`, specified in `docs/architecture/ANALYZER_RULES.md`) receives, at the cascade that lands its detection logic, a per-rule verifier class in `DualFrontier.Analyzers.Tests` built on the `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` harness, with at minimum:
+
+- one **positive case** — a minimal code sample that MUST trigger the diagnostic, asserting ID, severity, and location;
+- one **negative case** — the closest compliant sample that MUST NOT trigger it.
+
+Rules with sub-cases (e.g. dotted/hyphenated descriptor variants such as `DFK003.1`, `DFL025-A`) get positive+negative pairs per sub-case. A Phase β commit that lands detection logic without the paired verifier tests is incomplete by definition of this section.
+
+Convention shape (illustrative — **no such test exists today**; §2.1 placeholder truth stands until Phase β):
 
 ```csharp
-public class ComponentStoreTests
+// tests/DualFrontier.Analyzers.Tests/Rules/Architecture/Dfk003StorageOwnershipVerifierTests.cs
+// Harness: Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit 1.1.2 (§1.3).
+public sealed class Dfk003StorageOwnershipVerifierTests
 {
     [Fact]
-    public void Add_then_Get_returns_same_instance()
+    public async Task Positive_MinimalViolatingSample_ReportsDfk003()
     {
-        var store = new ComponentStore<HealthComponent>();
-        var entity = new EntityId(42, 1);
-        var health = new HealthComponent { Maximum = 100 };
-
-        store.Add(entity, health);
-
-        store.Get(entity).Should().BeSameAs(health);
+        // Minimal source that MUST trigger DFK003; asserts diagnostic ID,
+        // severity, and span via the harness's expected-diagnostic markup.
     }
 
     [Fact]
-    public void Remove_then_Get_returns_null()
+    public async Task Negative_ClosestCompliantSample_ReportsNothing()
     {
-        // ...
-    }
-
-    [Fact]
-    public void Destroyed_entity_with_old_version_returns_null()
-    {
-        // ...
+        // The nearest-compliant variant of the same source; zero diagnostics.
     }
 }
 ```
 
-Coverage: Add, Remove, Get, Has, Count, iteration, SparseSet growth, version mismatch.
+Current truth: 17 rule stubs exist under `tools/DualFrontier.Analyzers/Rules/`, none registers detection logic (§5.2), and the test project contains exactly one assembly-identity placeholder Fact — population is `Planned — see docs/ROADMAP.md §Analyzer track` and brief `tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md §7`.
 
-### EventBus
+### §3.6 — Native selftest
 
-- `Publish` delivers the event to every subscriber.
-- `Unsubscribe` removes the handler; the next `Publish` does not call it.
-- `Subscribe` during `Publish` does not break iteration.
-- A `[Deferred]` event is not delivered synchronously — only after `FlushDeferred`.
-- An `[Immediate]` event preempts processing and is delivered ahead of others.
+`DF_CHECK` scenario functions in `native/DualFrontier.Core.Native/test/selftest.cpp`, compiled into the standalone `df_native_selftest.exe` (§2.5). Native kernel invariants (storage ownership, pipeline state machine, mod-unload quiescence, etc.) are tested here, at the layer that owns them. A native-touching cascade adds its scenarios here and runs the exe in both configurations at closure (METHODOLOGY §12.7 step 1).
 
-### DependencyGraph
+### §3.7 — Stress and extreme
 
-- Two systems without shared WRITES land in the same phase.
-- A writer and a reader of the same component land in different phases.
-- A cycle in the graph is detected and throws `CyclicDependencyException`.
-- A write conflict between two systems in one phase is an error.
+Heavy tests are partitioned by xUnit traits so default runs stay fast and closure runs stay complete. Measured trait census (2026-06-11):
 
-## Bus-driven integration tests
+| Trait value | Sites | Files |
+|---|---:|---|
+| `Stress` | 4 | `SchedulerStressTests.cs` (×2), `ModDependencyGraphStressTests.cs` (×2) |
+| `Extreme` | 1 | `SchedulerExtremeTests.cs` |
+| `Integration` | 6 | `GameBootstrapIntegrationTests.cs` (×3), `M74BuildPipelineTests.cs` (×3) |
 
-Scope: several systems work together through the bus, without mocking the bus. Goal: confirm that the access declaration and the phase order genuinely produce the expected scenario.
+These three are the only `[Trait("Category", …)]` values in the repository. Inclusion/exclusion is via `--filter` (§8). New heavy tests MUST carry `Stress` or `Extreme`; untagged heavy tests that slow the default sweep are review defects. New trait values are introduced only by amending this table (§9.1).
 
-```csharp
-[Fact]
-public void CombatSystem_publishes_AmmoIntent_InventorySystem_responds_with_Granted()
-{
-    using var fixture = new SchedulerFixture()
-        .AddSystem<CombatSystem>()
-        .AddSystem<InventorySystem>()
-        .Build();
+### §3.8 — Meta (repo-discipline)
 
-    var shooter = fixture.World.CreateEntity();
-    fixture.World.AddComponent(shooter, new WeaponComponent { RequiredAmmo = AmmoType.Rifle });
-    fixture.World.AddComponent(shooter, new PositionComponent { Position = new GridVector(0, 0) });
+Tests whose subject is the repository itself: census pins, marker-family counts, waiver counts, structural invariants (§4). They read the source tree and assert shape, not behavior.
 
-    fixture.Tick(3); // 3 phases: Intent → Granted → ShootAttempt
-    fixture.PublishedEvents<AmmoGranted>().Should().ContainSingle(e => e.RequesterId == shooter);
-}
-```
+**Current state: NONE exist.** Verified 2026-06-11: no test in `tests/` performs census logic (zero hits for census-style file enumeration in test code; zero hits for `ReservedStub` under `tests/`). The §4 contracts are law executed today by registered `rg` expressions run at closure (§7); their compiled meta-test materialization is Phase β scope. This document does not pretend otherwise.
 
-`SchedulerFixture` builds a mini scheduler from the real `ParallelSystemScheduler` and the real `World`. No mocks. This is heavier than a unit test, but it covers real interaction.
+## §4 — Meta-test and census patterns
 
-## Isolation tests — the guard catches
+The core graft of v2.0.0. Each census below is a CONTRACT: an exact pin, a registered measuring expression, and a same-commit update obligation. Censuses keep the repository's declared debt honest — the point is not to prevent reserved surface, but to make its every change deliberate and recorded.
 
-A critically important test class: it confirms that `SystemExecutionContext` actually crashes violators.
+### §4.1 — Reserved-surface census pin
+
+**Composition rule (canonical, quoted by briefs verbatim):** The reserved-surface census counts `[ReservedStub` attribute application sites in `src/**/*.cs` (rg --type cs), excluding the attribute definition file `src/DualFrontier.Contracts/Analyzer/ReservedStubAttribute.cs`, matching rg pattern `\[ReservedStub`; current pin: **34 application sites across 13 files**.
+
+(Measured 2026-06-11; the definition file contributes 0 matches to the pattern, so the exclusion is currently vacuous but remains part of the rule.)
+
+**The meta-test contract:**
+
+1. A census meta-test asserts the **EXACT** pin — `34/13` today — not a bound.
+2. Any commit that changes the count updates the pin **in the same commit**, with a `Skeleton revisions` / census-delta record in the commit body, per `RESERVED_SURFACE_MUTABILITY.md` and `CODING_STANDARDS.md §8`.
+3. **Monotonicity is NOT asserted.** Reserved stubs close per-feature as consumers materialize (Lesson #25), and reserved surface may legitimately grow when a cascade ships new structural-ahead-of-implementation surface (Lesson #N12). EXACTNESS, not direction, is the invariant — a census that only forbids growth would incentivize hiding stubs; a census that pins exactly forces every delta through a recorded decision.
+
+Contract shape of the compiled meta-test (illustrative — **no such test exists today**; §3.8):
 
 ```csharp
 [Fact]
-public void System_reading_undeclared_component_throws_IsolationViolation()
+public void ReservedSurfaceCensus_MatchesExactPin()
 {
-    var fixture = new SchedulerFixture().AddSystem<WrongSystem>().Build();
-    var action = () => fixture.Tick(1);
-
-    action.Should()
-          .Throw<IsolationViolationException>()
-          .WithMessage("*WrongSystem*HealthComponent*")
-          .Which.Message.Should().Contain("Add: [SystemAccess");
-}
-
-[Fact]
-public void System_requesting_GetSystem_throws_in_Release_too()
-{
-    // Even with DEBUG_SYMBOLS_OFF the test must fail.
-}
-
-[Fact]
-public void System_publishing_to_wrong_bus_throws()
-{
-    // ...
+    // Count [ReservedStub application sites under src/**/*.cs per the §4.1
+    // composition rule (definition file excluded).
+    // Assert sites == 34 AND files == 13 — EXACT equality, not a bound.
+    // Failure message instructs: update the pin AND record the census delta
+    // (Skeleton revisions) in the same commit — per RESERVED_SURFACE_MUTABILITY.md.
 }
 ```
 
-Every violation listed in [ISOLATION](/docs/architecture/ISOLATION.md) MUST have a paired test. Without these tests the architectural guarantee remains marketing.
+**Implementation state (truth):** the census today is executed by running the rg expression above at every closure (§7); the expression is registered in `CODING_STANDARDS.md §5`. The compiled meta-test asserting the pin from inside the test suite materializes with the Phase β analyzer-test buildout — `Planned — Phase β, see docs/ROADMAP.md §Analyzer track`. Until then, no test asserts this pin; the §7 closure table is the enforcement record.
 
-## Modding tests — the mod sees no internals
+### §4.2 — Marker-family censuses
 
-These verify that `AssemblyLoadContext` physically blocks access to the core.
+One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Patterns verbatim; baselines registered as of 2026-06-11:
+
+| Family | Census expression | Baseline (matches / files) |
+|---|---|---|
+| `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 48 / 18 |
+| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 79 / 48 |
+| `TODO` (case-sensitive) | `rg --count-matches '\bTODO\b' src/ --type cs` | 136 / 53 |
+| `Phase 6` (literal) | `rg --count-matches 'Phase 6' src/ --type cs` | 23 / 11 |
+| `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 8 / 7 |
+
+Same exactness-pin contract as §4.1: a commit that moves a family's count records the delta in its commit body (`CODING_STANDARDS.md §8`); the closure audit re-measures all five (§7). The baselines impose **no retroactive cleanup obligation** — existing sites are baseline-registered and normalized opportunistically; the census exists so that drift is visible, not to manufacture work. Implementation state: rg-executed at closure; compiled meta-tests are the same `Planned — Phase β` item as §4.1.
+
+### §4.3 — DFK-WAIVER census
+
+**Baseline: 0.** Verified 2026-06-11:
+
+- `rg '#pragma warning disable (DFK|DFL|DF9)'` over `.cs` → 0 matches;
+- `[SuppressMessage]` over `src/` and `tests/` → 0 matches;
+- no `GlobalSuppressions.cs` exists anywhere in the repository.
+
+Every increase from 0 requires the full waiver form and authority citation of `CODING_STANDARDS.md §5.3` (waiver comment with a resolvable authority — Q-L-#, К-L#, F-#, or refinement reference — immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β, which will surface real diagnostics, is exactly when this census starts moving — the baseline is registered now so that every Phase β suppression is a recorded decision, not background noise.
+
+### §4.4 — S-LOCK → verification obligation
+
+Every S-LOCK declared by an active brief names its **verifying artifact**: a test, a grep-gate (registered expression), or a build property. An S-LOCK whose verifying artifact does not exist on disk is a gap; gaps become F-ledger entries (`docs/ROADMAP.md §Findings ledger (F-series)`) at the closure that detects them — never silent debt.
+
+**2026-06-11 audit result (recorded):** the A'.9.1 S-LOCK set was audited against disk. All artifact-checkable locks verified: S-LOCK-4 — 17 rule files present under `tools/DualFrontier.Analyzers/Rules/`; S-LOCK-10 — no DFK010 file exists; S-LOCK-6/7/8/9/11/12 — required absences/presences confirmed on disk. No hard gaps. The `DualFrontier.Analyzers.Tests` gate is placeholder-level pending Phase β — **by design** (Phase α scoped it to assembly identity; §3.5 governs its population), so it is recorded here as known state, not as a gap.
+
+## §5 — Validation-criteria mapping
+
+### §5.1 — One criterion → one named test
+
+Every testable validation criterion a brief declares maps to **one named test** (a `Fact`/`Theory` whose name appears in the brief's §6.1 test list, or a named native selftest scenario). The mapping is mechanical: the closure audit can walk criterion → test name → green run. A criterion mapped to «covered by the suite generally» is not mapped.
+
+Worked examples from the surveyed tree (real artifacts, both verified on disk 2026-06-11):
+
+| Criterion | Named test | Layer (§3) |
+|---|---|---|
+| К-L18 — mod unload refused while pipeline holds a dispatched slot | `scenario_mod_unload_fails_when_pipeline_has_dispatched_slot` (`native/DualFrontier.Core.Native/test/selftest.cpp`) | §3.6 native selftest |
+| К-L18 — unload succeeds once pipeline is quiescent after tail transition | `scenario_mod_unload_succeeds_when_pipeline_quiescent_after_tail_transition` (same file) | §3.6 native selftest |
+| Bootstrap pawn naming reaches the render command stream | `GameBootstrapIntegrationTests.CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` | §3.3 integration — currently an F-ledger known failure (§2.6); the mapping stands, the criterion is honestly OPEN |
+
+### §5.2 — К-L invariants: machine-checkable vs architect-audited
+
+К-Lxx invariants split by verification mode, and the split is stated explicitly — no fake coverage claims:
+
+- **Machine-checkable (future):** invariants with a specified analyzer rule in `docs/architecture/ANALYZER_RULES.md`. Current truth: the 17 rules on disk are **non-detecting stubs** — every `Initialize` configures the context and registers zero analysis actions (verified: 0 `context.Register*` calls under `tools/DualFrontier.Analyzers/Rules/`); all descriptors are Info severity; `AnalyzerReleases.Shipped.md` is empty and `Unshipped.md` lists all 17. **Zero enforcement exists today.** Detection logic plus §3.5 verifier tests are Phase β scope. Meta-test census contracts (§4) are the second machine-checkable channel, with the same `Planned — Phase β` compiled-test status.
+- **Architect-audited (now):** invariants not machine-checkable are verified by explicit architect audit with recorded evidence. The exemplar is `docs/architecture/K_L14_EVIDENCE_DASHBOARD.md` — К-L14 holds because each verification event is individually recorded with its outcome (including honest soft-halts), not because a test claims it. A document that says an invariant «is enforced» must name either the artifact (rule + verifier test, meta-test, build property) or the audit record; otherwise the claim is removed.
+
+### §5.3 — The lying-stub law (Lesson #25 / Lesson #N12)
+
+**Never test lying stubs.** A `[ReservedStub]` surface has no real behavior; a test that exercises it and passes is a lie that inflates coverage and masks the stub's eventual realization. Per METHODOLOGY.md Provisional Lessons #25 (implementation depth follows consumer materialization) and #N12 (defensive reserved-stub pattern, sub-patterns A/B):
+
+1. **Default: do not test.** A reserved stub with no observable behavior carries the honest DO-NOT-TEST documentation pattern at the stub site («DO NOT TEST — stub has no observable behavior; tests would lie by passing trivially»), and no test touches it. Sub-pattern A stubs (test-only invocation paths, defensive `NotImplementedException` throw) need no passing test either — the throw is the guard.
+2. **When a test class must touch reserved surface** (e.g. a composition test that transits a stub), the touching test carries `[Trait("Category", "ReservedStub")]` so the contact is declared and filterable. This is the **DFL025-A convention**; its analyzer detection (`DFL025-A` rule) is Phase β scope — today the convention binds by review, and the trait census is part of the §7 audit when such tests first appear. Current truth: zero tests carry this trait (consistent with §3.8 — no meta/stub-touching tests exist yet).
+3. When a stub gains real behavior, its realization commit brings the real tests and drops the trait — the census delta (§4.1) and the test-count delta (§6.1) record the closure together.
+
+## §6 — Brief integration pattern
+
+The mechanism by which briefs consume this law without duplicating it.
+
+### §6.1 — What a brief CARRIES
+
+For each commit that adds or modifies tests, the owning brief specifies:
+
+1. **Test files created/modified** — explicit paths.
+2. **Named test list** — every test as the `Fact`/`Theory` method name it will bear, one line each (native scenarios likewise by function name).
+3. **Layer assignment per §3** — explicit, e.g. «4 interop boundary + 2 modding-ALC + 1 native selftest scenario». A test whose name implies one layer but is listed under another is a halt-grade brief defect.
+4. **Coverage anchors** — which validation criteria, К-L invariants, S-LOCKs, or F-ledger entries the commit's tests cover (§5.1 mapping, stated per test or per group).
+5. **1–2 representative test bodies** — full code for the trickiest case(s) only; the executor expands the rest from the named list using this document's layer patterns.
+6. **Count delta** — «+N tests this commit; suite total before → after», making the closure count audit mechanical.
+
+Mandatory carry format (per-commit, inside the brief's test section):
+
+````markdown
+**Test plan** (`<test file path>` — <§3 layer>, N tests):
+
+1. <MethodName_Scenario_ExpectedOutcome>
+2. <MethodName_Scenario_ExpectedOutcome>
+   ... N. <MethodName_Scenario_ExpectedOutcome>
+
+Representative test body — <name of the one critical test>:
 
 ```csharp
-[Fact]
-public void Mod_cannot_load_DualFrontierCore_assembly()
-{
-    using var loader = new ModLoader();
-    var action = () => loader.Load("tests/fixtures/EvilMod/EvilMod.dll");
-
-    action.Should()
-          .Throw<ModIsolationException>()
-          .WithMessage("*DualFrontier.Core*");
-}
-
-[Fact]
-public void Mod_calling_World_directly_throws_at_compile_time() { /* ... */ }
-
-[Fact]
-public void Mod_can_use_IModApi_to_register_system()
-{
-    using var loader = new ModLoader();
-    loader.Load("tests/fixtures/GoodMod/GoodMod.dll");
-
-    loader.RegisteredSystems.Should().Contain(s => s.Name == "MyModSystem");
-}
-
-[Fact]
-public void Mod_Unload_releases_AssemblyLoadContext()
-{
-    var weakRef = LoadAndUnloadMod();
-    GC.Collect();
-    GC.WaitForPendingFinalizers();
-    GC.Collect();
-    weakRef.IsAlive.Should().BeFalse();
-}
+// full code of the trickiest case only; the executor expands the rest
+// from the named list using the §3 layer patterns.
 ```
 
-Fixture mods live in `tests/fixtures/*` and are built in CI before the main test run.
+**Coverage anchors:** <К-L# / S-LOCK-# / Q-series criterion / F-# per test or group>
+**Test count delta:** +N this commit; <project> total <before> → <after>.
+````
 
-## Performance tests
+The format makes test scope auditable per commit and makes the §7 count reconciliation mechanical. A brief whose test section cannot be read in this shape is returned for correction before lock.
 
-Benchmarks (BenchmarkDotNet) live in a separate `tests/DualFrontier.Core.Benchmarks` project. Zero overhead on a regular test run: benchmarks are not invoked through `dotnet test`, only through `dotnet run -c Release`.
+### §6.2 — What a brief CITES (never restates)
 
-Regression gates in CI: `PerformanceGates.cs` compares results to the baseline and fails when degradation exceeds 10%. Details: [PERFORMANCE](/docs/architecture/PERFORMANCE.md).
+- Layer definitions and isolation requirements — `§3`.
+- Fixture/ALC harness construction and the cross-ALC projection pattern — `§2.3`, `§3.4`.
+- The analyzer-test convention — `§3.5`.
+- Census contracts and pin-update obligations — `§4` (and `CODING_STANDARDS.md §5` for the expressions).
+- Waiver discipline — `§4.3` / `CODING_STANDARDS.md §5.3`.
+- Invocation commands and filters — `§8`.
+- Closure obligations — `§7` / `METHODOLOGY.md §12.7`.
 
-## dotnet test
+Citation is by section anchor (`TESTING_STRATEGY.md §4.1`), so renumber-stable wording («the reserved-surface census pin») accompanies the anchor.
 
-Layout:
+### §6.3 — Boundary rule
+
+**Reusable-across-cascades → this document. Cascade-specific → the brief. Doubt → refactor into this document.** A pattern that two briefs would both need is law and belongs here before the second brief is authored; patterns spreading across briefs without codification here is the failure mode this section exists to prevent.
+
+### §6.4 — Anti-pattern rule
+
+A brief that contradicts this document is **wrong by default**. Resolution: either the brief is corrected to comply, or this document is amended per §9.1 — **before the brief locks**. A locked brief executing a contradiction is a halt condition, not a precedent. `METHODOLOGY.md §12.8` carries the cross-document form of this rule (brief-vs-standing-law boundary); this section is its test-law instantiation.
+
+## §7 — Closure-audit obligation
+
+Every cascade closure includes, in its closure report, in addition to — extending, not replacing — the canonical `METHODOLOGY.md §12.7` protocol:
+
+1. **Census table** — all §4 pins re-measured by their registered expressions: reserved-surface pin (§4.1), the five marker families (§4.2), waiver count (§4.3). Each row: expression, expected pin, measured value, delta disposition (unchanged | updated-in-commit-X with census-delta record).
+2. **S-LOCK coverage check** (§4.4) — every S-LOCK active in the cascade's brief mapped to its verifying artifact, gaps filed as F-ledger entries.
+3. **Waiver audit** (§4.3) — count plus, for any non-zero delta, the per-waiver authority citations.
+4. **Test-suite runs** — per `METHODOLOGY.md §12.7` step 1 (cited, not restated here: per-suite Release runs, native selftest, the Modding-suite mandatory-run rule). Known-failing F-ledger tests are re-verified and reported per §2.6's honest-statement form.
+5. **Count reconciliation** — the brief's cumulative §6.1 count deltas against the measured suite totals; unexplained drift is a closure defect.
+
+## §8 — Test invocation truth
+
+Commands verified working as of 2026-06-11. These exact strings are the law of invocation; briefs cite, sessions copy-paste.
+
+**Full solution:**
 
 ```
-tests/
-  DualFrontier.Core.Tests/            # unit + isolation
-    DualFrontier.Core.Tests.csproj
-    ECS/
-      ComponentStoreTests.cs
-      WorldTests.cs
-      QueryTests.cs
-    Scheduling/
-      DependencyGraphTests.cs
-      ParallelSchedulerTests.cs
-    Bus/
-      DomainEventBusTests.cs
-    Isolation/
-      IsolationViolationTests.cs
-
-  DualFrontier.Systems.Tests/         # integration
-    DualFrontier.Systems.Tests.csproj
-
-  DualFrontier.Modding.Tests/         # modding/assembly isolation
-    DualFrontier.Modding.Tests.csproj
-
-  DualFrontier.Core.Benchmarks/       # BenchmarkDotNet
+dotnet test DualFrontier.sln -c Release --logger "console;verbosity=minimal"
 ```
 
-Local run:
+Testhost file-lock caveat: a stale `testhost.exe` (left by an IDE test runner or a concurrent run) holds `DualFrontier.Modding.Tests` bin files and produces MSB3026/MSB3027 retry warnings or copy failures — close other runners before solution-wide runs.
+
+**Per-suite** (the closure-protocol route, per `METHODOLOGY.md §12.7` step 1):
 
 ```
-dotnet test                          # all tests
-dotnet test tests/DualFrontier.Core.Tests
-dotnet test --filter "FullyQualifiedName~Isolation"
+dotnet test tests/DualFrontier.Core.Tests/ -c Release
+dotnet test tests/DualFrontier.Modding.Tests/ -c Release
+# ... one invocation per §2.1 project as the closure scope requires
 ```
 
-CI gate: red build on any test failure or any performance-threshold violation. Skipping tests with `[Skip]` is not allowed without a documented issue.
+**Stress exclusion** (fast default sweep) and inclusion:
 
-## See also
+```
+dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category!=Stress"
+dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Stress"
+```
 
-- [ISOLATION](/docs/architecture/ISOLATION.md)
-- [PERFORMANCE](/docs/architecture/PERFORMANCE.md)
-- [CODING_STANDARDS](./CODING_STANDARDS.md)
+Trait values available for filtering are exactly those of §3.7: `Stress`, `Extreme`, `Integration`.
+
+**Native selftest** (standalone exe, not dotnet test):
+
+```
+native/DualFrontier.Core.Native/build/Release/df_native_selftest.exe
+native/DualFrontier.Core.Native/build/Debug/df_native_selftest.exe
+```
+
+Success criterion: prints `ALL PASSED`, exit code 0 (§2.5).
+
+**Benchmarks** (not a test run; §2.2): `dotnet run -c Release --project tests/DualFrontier.Core.Benchmarks`.
+
+## §9 — Amendment protocol and change history
+
+### §9.1 — Amendment protocol
+
+Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
+
+1. **Surface** — which §/pin/table changes (census pin updates under their same-commit contract of §4 are the routine case; taxonomy or contract changes are the deliberative case).
+2. **Rationale** — the driving decision, citing its authority (Q-series, К-L, F-entry, lesson, brief).
+3. **Semver** — PATCH (pin/baseline refresh, cross-reference fix), MINOR (new layer, new census family, new convention — additive), MAJOR (contract change: pin semantics, boundary rule, closure obligations).
+4. **REGISTER update** — `docs/governance/REGISTER.yaml` version bump + audit-trail event; frontmatter here follows by sync.
+5. **Propagation** — citing documents checked and updated. Known citers to check on amendment: active briefs (§6 consumers), `CODING_STANDARDS.md` (§5 census expression registry), `RESERVED_SURFACE_MUTABILITY.md` (census-delta law), `METHODOLOGY.md` (§12.7/§12.8 interlock), `ANALYZER_RULES.md` (§3.5 convention consumer), `docs/ROADMAP.md` (Analyzer track + F-ledger).
+
+Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
+
+### §9.2 — Change history
+
+**v2.0.0 — 2026-06-11 — Full rewrite to standing test law (MAJOR).** Per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` (W2 deliverable). Replaced the v1.0 aspirational text with code-truth: the nine-project landscape with measured counts and verdicts (§2), the placeholder suite named as such, the known-failing-test honesty register (§2.6), the eight-layer DF taxonomy (§3), census pin contracts with 2026-06-11 baselines — reserved-surface 34/13, marker families 48/18 · 79/48 · 136/53 · 23/11 · 8/7, waivers 0 (§4), the S-LOCK verification obligation with the recorded A'.9.1 audit (§4.4), the validation-mapping and lying-stub law (§5), the brief-integration boundary (§6), the closure-audit extension of METHODOLOGY §12.7 (§7), and verified invocation commands (§8). Removed v1.0 phantom surfaces that never existed on disk: the builder-style `SchedulerFixture` API, `EvilMod`/`GoodMod` fixtures, `PerformanceGates.cs`, CI gates, and the four-project test layout (nine exist). Tier 1 LOCKED; owner Crystalka.
+
+**v1.0 — 2026-05-12 — Initial authoring (historical).** Aspirational test strategy: xUnit + FluentAssertions stack statement, intended unit/integration/isolation/modding layers, intended CI gating. Superseded in full by v2.0.0; retained in git history.
