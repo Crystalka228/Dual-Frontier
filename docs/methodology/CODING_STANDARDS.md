@@ -1,4 +1,4 @@
-﻿---
+---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-B-CODING_STANDARDS
@@ -6,228 +6,202 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
+version: "2.0.0"
+next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-CODING_STANDARDS
 ---
-# Coding standards
 
-A single code style is not aesthetics — it is a navigation tool: when reading another file, a developer does not spend attention decoding someone else's habits. In Dual Frontier the standards are formalized and checked by the analyzer; deviations are caught by `dotnet build` with `TreatWarningsAsErrors`.
+# Coding Standards
 
-## Naming
+A single code style is not aesthetics — it is a navigation tool. The primary and
+permanent reader of this codebase is an AI agent operating in session-mode
+pipelines (PA-001): executor sessions, survey agents, and audit passes all read
+the repository top-down, file-by-file, with no prior context. Every habit a
+reader must decode is attention spent on style instead of architecture. The rules
+below codify the **real, observed** norm of the Dual Frontier source tree, and
+every claim of enforcement names the on-disk artifact that realizes it. Where the
+codebase is not yet internally consistent, the inconsistency is recorded as a
+non-normative observation, never retro-fitted into an obligation.
 
-### Public and protected members — PascalCase
+## §1 — Authority & Scope
+
+This document is the standing law for how Dual Frontier code is written. It is
+Tier 1 LOCKED (REGISTER `DOC-B-CODING_STANDARDS`). It is the single source of
+truth for naming, file organization, nullability, comment language, marker
+families, exception discipline, and commit shape across:
+
+- the **C# managed layer** (`src/**`, `tests/**`, `tools/**` C# projects);
+- the **C++20 native kernel** (`native/DualFrontier.Core.Native/**`);
+- **tooling scripts** (`tools/**`, PowerShell 5.1);
+- **commit discipline** (subject/body shape, trailers, push policy).
+
+This document does **not** govern, and defers to, the following authorities —
+cite them, do not restate them here:
+
+- **Architecture** — substrate invariants (К-Lxx), kernel design, the analyzer
+  rule catalogue: `docs/architecture/KERNEL_ARCHITECTURE.md`,
+  `docs/architecture/ANALYZER_RULES.md`. ANALYZER_RULES owns the rule inventory;
+  it defers the suppression law to this document §5.3.
+- **Brief / methodology content** — how cascades are scoped, deliberated, and
+  closed: `docs/methodology/METHODOLOGY.md`.
+- **Test methodology** — layer taxonomy, census meta-tests, isolation patterns,
+  coverage philosophy: `docs/methodology/TESTING_STRATEGY.md` (cited from §5 and
+  §9; never restated).
+- **Reserved-surface mutability** — which symbols/paths a cascade may revise and
+  the `Skeleton revisions:` commit-body record:
+  `docs/methodology/RESERVED_SURFACE_MUTABILITY.md` (cited from §8).
+- **Future analyzer capability** — every not-yet-built detection, severity
+  promotion, or rule-family activation: `docs/ROADMAP.md` §Analyzer track.
+
+### §1.1 — Stop, escalate, lock
+
+When implementation meets a style question this document does not answer, the
+response is **amend this document** (per §10) and obtain ratification — never
+improvise a per-file answer. An unanswered style question resolved ad hoc in code
+is a latent drift source: the next agent reads the improvisation as precedent.
+The structural strength of the codebase depends on this document being the only
+place where style truth is decided. This rule is the direct application of
+PA-002 («без костылей») to the documentation layer: an unmarked, undocumented
+local convention is a shortcut.
+
+## §2 — C# Conventions
+
+### §2.1 — Naming
+
+| Surface | Convention | Example |
+|---|---|---|
+| Public / protected members, types | `PascalCase` | `HealthComponent`, `TakeDamage` |
+| Constants | `PascalCase` | `public const int MaxPawnsPerColony = 100;` |
+| Private fields | `_camelCase` | `private readonly World _world;` |
+| Interfaces | `I`-prefix | `IComponentStore`, `IEventBus` |
+| Generic parameters | `T` / `TContext`-style | `IComponentStore<T>`, `Dispatch<TEvent>` |
+| Namespaces / files | mirror the path | `src/DualFrontier.Core/ECS/World.cs` → `namespace DualFrontier.Core.ECS;` |
+
+The leading underscore distinguishes a private field from a parameter or local
+at a glance in a `git diff`, where IDE colouring is absent. Namespace mirrors the
+physical directory; the reverse holds too — a type lives where its namespace
+says it does.
+
+### §2.2 — File-scoped namespaces
+
+New code uses only the file-scoped form (`namespace X;`). The convention is the
+prevailing norm of the tree (~250 files). Less indentation, more code on screen.
 
 ```csharp
-public sealed class HealthComponent : IComponent
-{
-    public float Current;
-    public float Maximum;
-    public void TakeDamage(float amount) { /* ... */ }
-}
-```
-
-### Private fields — `_camelCase`
-
-```csharp
-private readonly Dictionary<Type, IComponentStore> _stores = new();
-private int _nextEntityId;
-```
-
-The underscore tells a private field apart from a method parameter or a local variable at a glance. The IDE highlights them differently, but the code still must be readable in `git diff` and `github review`.
-
-### Constants — PascalCase
-
-```csharp
-public const int MaxPawnsPerColony = 100;
-```
-
-### Interfaces — `I` prefix
-
-```csharp
-public interface IEventBus { /* ... */ }
-public interface IComponent { }
-```
-
-### Generic parameters — `T` or `TContext`-style
-
-```csharp
-public interface IComponentStore<T> where T : IComponent { /* ... */ }
-```
-
-### Files and namespaces match the path
-
-The file `src/DualFrontier.Core/ECS/World.cs` contains `namespace DualFrontier.Core.ECS;` and a single `World` type. The reverse holds too: a namespace always mirrors the physical directory structure.
-
-## File-scoped namespaces
-
-Only the file-scoped syntax (C# 10+) is used:
-
-```csharp
-// CORRECT
+// Convention
 namespace DualFrontier.Core.ECS;
 
 public sealed class World { /* ... */ }
-
-// WRONG — an extra nesting level
-namespace DualFrontier.Core.ECS
-{
-    public sealed class World { /* ... */ }
-}
 ```
 
-Less indentation → more useful code on screen. Checked by analyzer IDE0161.
+This is a **convention**, not a machine-checked rule: `.editorconfig` is
+charset-only (no IDE0161 severity), so the build does not reject a block-braced
+namespace. One historical exception survives (`GameLoop.cs`, see §2.8); new code
+does not add a second.
 
-## Nullable enabled
+### §2.3 — One class per file
 
-Every project is built with `<Nullable>enable</Nullable>` in `Directory.Build.props`. No `#nullable disable`; no `!` without justification.
+Open the IDE, type the class name, see the file. The narrow exceptions: a small
+paired enum or `readonly struct` logically inseparable from the main type, and
+`private` nested types owned by their enclosing class. No multi-class dumping
+grounds; no 500-line `Helpers.cs`.
 
-```csharp
-// CORRECT
-public string? OptionalName { get; init; }
-public string RequiredName { get; init; } = "";
+### §2.4 — Member order
 
-// BAD
-public string SomeName { get; init; } = null!;  // only in a DTO with required and init-only.
-```
+The prevailing top-down order, by what the reader needs first:
 
-If an API must return `null`, it returns `T?`. If it must not, it returns `T`. A `null` in an unmarked field is grounds for a bug report.
+1. `const` fields
+2. `static readonly` fields
+3. `private readonly` fields
+4. `private` mutable fields
+5. Constructors
+6. `public` properties
+7. `public` methods
+8. `protected` methods
+9. `private` methods
+10. Nested types
 
-## Code comments are English
+The reviewer sees, in one pass: which constants are baked in, what the type
+holds, how it is built, what callers can reach, then how the work is done.
 
-All code comments — inline, block, and XML doc — are in English. This applies uniformly to public API, internal implementation, domain logic, and game-design notes. The i18n campaign that closed in v0.3 made this a hard rule: no Russian in source files except inside `SESSION_PHASE_4_CLOSURE_REVIEW.md`, which is preserved verbatim as audit trail.
+### §2.5 — Explicit types over `var`
 
-Domain terminology that has a Russian origin (pawn, golem, ether node, ritual, ammo crystal) is referenced by its English name everywhere in code; the canonical Russian↔English mapping lives in `TRANSLATION_GLOSSARY.md`.
+New code uses explicit types. `var` is not part of the observed style of the
+tree; an explicit type carries the contract at the read site without an inference
+hop. (This is the codified real norm, not an imported preference.)
 
-```csharp
-// Ether breakdown: a mage works a crystal above their tier.
-// Formula from GDD 4.2: fail chance = (crystalTier - mageLevel) × 0.25.
-if (crystal.Tier > mage.EtherLevel)
-{
-    var failChance = (crystal.Tier - mage.EtherLevel) * 0.25f;
-    // ...
-}
-```
+### §2.6 — Nullable reference types
 
-## English XML docs — public API
+Every project builds with `<Nullable>enable</Nullable>`
+(`Directory.Build.props`). An API that may return absence returns `T?`; one that
+may not returns `T`. No `#nullable disable`; no `!` (null-forgiving) without an
+inline justification.
 
-The public API is everything visible outside the assembly. Its XML documentation is written in English: docs are generated into `bin/` and shipped with the NuGet package, where any third-party developer may read them.
+**Enforced.** Nullable violations surface as compiler warnings, and
+`<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` (`Directory.Build.props`)
+promotes every warning to a build-breaking error. A nullability annotation
+mismatch fails `dotnet build` (§9).
 
-```csharp
-/// <summary>
-/// Publishes an event to the domain bus. The event is delivered synchronously
-/// to all subscribers within the current scheduler phase. Use [Deferred] for
-/// cross-phase delivery, [Immediate] to interrupt the phase.
-/// </summary>
-/// <typeparam name="T">Event type; must implement IEvent.</typeparam>
-/// <param name="evt">The event instance to publish.</param>
-public void Publish<T>(T evt) where T : IEvent;
-```
+### §2.7 — No LINQ, no async in system / hot-path code
 
-XML docs use the `<summary>` / `<remarks>` / `<param>` / `<returns>` / `<exception>` set; inline `//` comments cover formulas, game-design notes, and reasoning that does not belong in the public contract. Both stay English.
+System code in `src/` does not use LINQ and does not use `async`. The kernel is a
+fixed-timestep simulation substrate; query allocation and continuation
+scheduling are both alien to the per-tick hot path. New `src/` system code holds
+this line by convention.
 
-## One class per file
+This is a **convention** today — no analyzer enforces it (detection of forbidden
+namespaces and async surfaces is `Planned — see docs/ROADMAP.md §Analyzer
+track`).
 
-Navigation principle: open the IDE → type the class name → see the file. The exceptions are very narrow:
+### §2.8 — Observed inconsistencies (non-normative)
 
-- An enum or `readonly struct` up to 10 lines, logically paired with the main class (for example, `HealthComponent` and its related `HealthStatus` enum).
-- A private nested class logically inseparable from its owner (state-machine sub-classes).
+These are baseline observations of the tree as it stands, recorded so a future
+reader does not mistake them for sanctioned patterns or for hidden rules. They
+impose **no** retroactive obligation and are normalized opportunistically:
 
-No files with 5+ classes. No "utility" dumping grounds like a 500-line `Helpers.cs`.
+- `src/DualFrontier.Application/Loop/GameLoop.cs` is the **sole** block-braced
+  namespace among ~250 file-scoped files.
+- `src/DualFrontier.Core/Math/SpatialGrid.cs` carries the **sole**
+  `using System.Linq;` in `src/`.
+- `SimulationStateController.WaitForQuiescenceAsync`
+  (`src/DualFrontier.Application/Loop/SimulationStateController.cs`) is the
+  **sole** production `async` method — a lifecycle controller polling for
+  scheduler quiescence, not a per-tick system; it is the named exception to §2.7,
+  not a counterexample to it.
+- `TickRates` constants use `SCREAMING_CASE` rather than the §2.1 `PascalCase`
+  constant form.
 
-## Class member order
+### §2.9 — Stack-frame retention for collected resources
 
-A single order, top-down by what the reader needs first:
+Some code paths must give the GC a chance to reclaim a resource —
+`AssemblyLoadContext` unload, finalizer cleanup, weak-reference cache eviction —
+and run only after **every** strong reference has left the executing thread's
+stack frames. Two C# constructs silently retain such references: a `foreach`
+iteration variable (in DEBUG, until the method returns) and — always, in any
+build — **lambda closure display classes**. A lambda capturing a local makes the
+compiler synthesize a heap `<>c__DisplayClass` holding that local, rooted from
+the enclosing frame for the whole method scope, however out-of-scope the local
+looks textually.
 
-1. `const` fields.
-2. `static readonly` fields.
-3. `private readonly` fields.
-4. `private` mutable fields.
-5. Constructors.
-6. `public` properties.
-7. `public` methods.
-8. `protected` methods.
-9. `private` methods.
-10. Nested types.
-
-```csharp
-public sealed class DomainEventBus : IEventBus
-{
-    private const int InitialCapacity = 16;
-
-    private static readonly object SubscribeLock = new();
-
-    private readonly ConcurrentDictionary<Type, Delegate> _subscribers = new();
-    private int _publishCount;
-
-    public DomainEventBus() { }
-
-    public int PublishCount => _publishCount;
-
-    public void Publish<T>(T evt) where T : IEvent { /* ... */ }
-    public void Subscribe<T>(Action<T> handler) where T : IEvent { /* ... */ }
-
-    private void RecordMetric() { /* ... */ }
-}
-```
-
-The reviewer sees at once — which fields, which constructor, which public API. No need to scroll.
-
-## Additional rules
-
-- `using` — sorted: `System.*` first, then `DualFrontier.*`, then the rest. IDE auto-format.
-- `var` — when the type is obvious from the RHS (`new`, cast, factory). Otherwise an explicit type.
-- `async` is forbidden in Domain (see [THREADING](/docs/architecture/THREADING.md)). Allowed in Application and Presentation.
-- Magic numbers go into a `const` with a name that describes the meaning. `4.2f` in code without a comment is a mortal sin.
-- Returning `null` from a public API only when it is an explicit part of the contract (`TryGet` and `T? FindBy(...)`).
-
-## Stack-frame retention for collected resources
-
-Some code paths must give the GC an opportunity to collect a resource — `AssemblyLoadContext` unload, finalizer-based cleanup, weak-reference-based cache eviction. These paths run after every strong reference to the resource has been dropped from the executing thread's stack frames. Two C# constructs silently retain strong refs in ways that defeat such code paths if not handled with discipline: the iteration variable of a `foreach` loop (in DEBUG builds, until the enclosing method returns) and **lambda closure display classes** (always, in any build).
-
-A lambda capturing a local variable causes the C# compiler to synthesize a heap `<>c__DisplayClass` object containing that variable as a field. The display class is allocated on entry to the enclosing method and rooted from that method's stack frame for the entire method scope. Any local captured by even one lambda is strongly reachable until the enclosing method returns, regardless of how out-of-scope the local appears textually.
+**Rule.** A method that must let the GC collect a resource it referenced splits
+into **(a)** a non-inlined helper that captures, uses, and releases the strong
+references, returning only a `WeakReference`, and **(b)** the caller, which runs
+the wait/spin phase with no resource-holding locals or lambdas in its frame.
+`[MethodImpl(MethodImplOptions.NoInlining)]` is non-negotiable on the helper —
+without it the JIT may inline it back and recreate the display class in the
+caller's frame.
 
 ```csharp
-// BAD — the display class for the step lambdas is allocated in this
-// method's frame and keeps `mod` (and thereby mod.Context) alive
-// through the spin. WR.IsAlive never flips to false on real mods;
-// the spin times out on every invocation and emits ModUnloadTimeout.
 public IReadOnlyList<ValidationWarning> UnloadMod(string modId)
 {
     if (!_activeMods.TryGetValue(modId, out LoadedMod? mod)) return [];
 
     var warnings = new List<ValidationWarning>();
-    TryUnloadStep(1, modId, warnings, () => mod.Api?.UnsubscribeAll());
-    // ... more lambdas capturing mod ...
-
-    var alcRef = new WeakReference(mod.Context);
-    _activeMods.Remove(mod);
-
-    // Display class still rooted by this frame; mod.Context still strongly reachable.
-    for (int i = 0; i < 100; i++)
-    {
-        GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect();
-        if (!alcRef.IsAlive) return warnings;
-        Thread.Sleep(100);
-    }
-    warnings.Add(new ValidationWarning(modId, "ModUnloadTimeout: ..."));
-    return warnings;
-}
-```
-
-```csharp
-// CORRECT — the work-with-refs phase is isolated in a non-inlined
-// helper that returns only the WeakReference. The caller's frame
-// holds nothing strong, so the spin can observe the release.
-public IReadOnlyList<ValidationWarning> UnloadMod(string modId)
-{
-    if (!_activeMods.TryGetValue(modId, out LoadedMod? mod)) return [];
-
-    var warnings = new List<ValidationWarning>();
+    // Steps that capture `mod` in lambdas are confined to the helper's frame.
     WeakReference alcRef = RunUnloadSteps1Through6AndCaptureAlc(modId, mod, warnings);
 
-    // mod is no longer referenced here; the display class lives only
-    // in the helper's frame, which has returned. Frame is clean.
+    // mod is unreferenced here; the display class lived only in the returned
+    // helper frame. This frame is clean, so the spin can observe the release.
     TryStep7AlcVerification(modId, alcRef, warnings);
     return warnings;
 }
@@ -237,29 +211,440 @@ private WeakReference RunUnloadSteps1Through6AndCaptureAlc(
     string modId, LoadedMod mod, List<ValidationWarning> warnings)
 {
     TryUnloadStep(1, modId, warnings, () => mod.Api?.UnsubscribeAll());
-    // Lambdas captured here are confined to THIS frame's display class.
     var alcRef = new WeakReference(mod.Context);
     _activeMods.Remove(mod);
     return alcRef;
 }
-
-[MethodImpl(MethodImplOptions.NoInlining)]
-private static void TryStep7AlcVerification(
-    string modId, WeakReference alcRef, List<ValidationWarning> warnings)
-{ /* spin with the GC pump bracket; signature carries no resource ref */ }
 ```
 
-The pattern surfaced empirically in M7.3 (commit `9bed1a4`): an initial implementation kept `mod` as a local in `UnloadMod`, and three of the M7.2 regression tests started emitting `ModUnloadTimeout` warnings the assertions were not expecting. The root cause was not the JIT retaining the explicit local — it was the C# compiler's display-class hoisting for the lambdas passed to `TryUnloadStep`. Step 1's lambda captures `mod` (`mod.Api?.UnsubscribeAll()`), so the compiler synthesized a heap `<>c__DisplayClass` holding `mod` as a field, allocated on entry to `UnloadMod` and rooted from `UnloadMod`'s stack frame for the entire method scope. The same pathology surfaced in `UnloadAll`'s `foreach (LoadedMod mod in _activeMods)` snapshot loop: the iteration variable's last value persisted in the DEBUG stack slot through the rest of the method (fixed by extracting `SnapshotActiveModIds`).
+The pattern surfaced empirically in M7.3 (commit `9bed1a4`): keeping `mod` as a
+local in `UnloadMod` let Step 1's lambda (`mod.Api?.UnsubscribeAll()`) hoist
+`mod` into a display class rooted by `UnloadMod`'s frame, so the ALC spin never
+observed release and emitted spurious `ModUnloadTimeout` warnings. The same
+discipline applies to finalizer cleanup, weak-reference caches, and any
+GC-dependent assertion; test helpers follow it identically. The rule is live:
+NoInlining helpers exist in
+`src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs` and
+`tests/DualFrontier.Modding.Tests/Pipeline/ModUnloadAssertions.cs` (verified at
+this rewrite).
 
-Rule of thumb: if a method needs to give the GC a chance to collect a resource it referenced, that method's body must split into **(a)** a non-inlined helper that captures, works with, and releases its strong refs to the resource, returning only a `WeakReference` (or nothing at all), and **(b)** the caller, which invokes the wait/spin phase with no resource-holding locals or lambdas in its frame.
+## §3 — C++20 Native Kernel Conventions
 
-The `[MethodImpl(MethodImplOptions.NoInlining)]` attribute is non-negotiable on both helpers — without it the JIT may inline the helper back into the caller, recreating the display class in the caller's frame and defeating the discipline. The attribute MUST sit on every helper that exists for the sole purpose of containing strong refs to a resource that subsequently must be released.
+The native kernel (`native/DualFrontier.Core.Native/`) follows its own
+language-idiomatic style, distinct from the managed layer.
 
-Reuse this pattern for any future code path with similar shape: ALC unload (M7.x), finalizer-driven cleanup, weak-reference-based caches, or any GC-dependent test assertion. Test-side helpers (e.g. `ModUnloadAssertions.AssertAlcReleasedWithin`) follow the same discipline as production-side helpers (`TryStep7AlcVerification`).
+- **`snake_case` throughout** — types, functions, variables, free functions.
+- **Trailing-underscore private members** (`registry_`, `entities_`).
+- **`namespace dualfrontier`** wraps the implementation.
+- **Header guards**: the public C API header (`include/df_capi.h`) uses an
+  include guard; internal headers use `#pragma once`.
 
-## See also
+### §3.1 — The `extern "C"` ABI boundary
 
-- [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md)
-- [TESTING_STRATEGY](./TESTING_STRATEGY.md)
-- [ISOLATION](/docs/architecture/ISOLATION.md)
-- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md)
+The native kernel exposes a flat C ABI. Error vocabulary is plain `int32` status
+codes and handle-or-null returns; **C++ exceptions never cross the boundary**.
+Every exported `DF_API` entry point follows one shape: null-guard the handle →
+`try { real work } catch (...) { swallow, return 0 / nullptr / no-op }`. The
+caller observes a rejected request through the return value, never through an
+exception that would be undefined behaviour across the `extern "C"` line.
+
+```cpp
+DF_API void df_world_destroy_entity(df_world_handle world, uint64_t entity) {
+    if (!world) return;
+    try {
+        as_world(world)->destroy_entity(unpack_entity(entity));
+    } catch (...) {
+        // K1: destroy_entity now throws if spans are active. Swallow to keep
+        // the C ABI noexcept-equivalent — the caller saw the request rejected.
+    }
+}
+```
+
+(Verbatim from `native/DualFrontier.Core.Native/src/capi.cpp`.) A throw and its
+boundary catch are **inseparable**: any native method reachable across the ABI
+that can throw must have its catch at the boundary. This is the
+"ABI boundary exception completeness" obligation; the architectural rationale
+lives in `METHODOLOGY.md` — cite it, do not restate it.
+
+## §4 — Project & Build Organization
+
+### §4.1 — The twelve managed src projects
+
+The managed substrate is twelve `src/` projects: **AI, Application, Components,
+Contracts, Core, Core.Interop, Crypto.Future, Events, Launcher, Persistence,
+Runtime, Systems**. Project-to-layer assignment is immutable structure (see
+RESERVED_SURFACE_MUTABILITY.md); symbol names and file layout below the project
+level are mutable surface.
+
+### §4.2 — The `Directory.Build.props` chain
+
+The repo-root `Directory.Build.props` carries the canonical project properties
+for the whole solution:
+
+```xml
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <LangVersion>12.0</LangVersion>
+  <Nullable>enable</Nullable>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  <!-- CS1591: Missing XML comment for publicly visible type or member. -->
+  <!-- Отключаем на уровне всего решения — XML docs обязательны только для публичных контрактов. -->
+  <NoWarn>$(NoWarn);CS1591</NoWarn>
+  <Company>DualFrontier</Company>
+  <Product>Dual Frontier</Product>
+</PropertyGroup>
+```
+
+`CS1591` (missing XML comment) is the **only** suppressed warning, and it is a
+compiler documentation warning — not a DFK/DFL analyzer diagnostic. The root file
+also carries a `CompileShaders` MSBuild target (glslangValidator, conditioned to
+the `DualFrontier.Runtime` build only).
+
+The `src/`-scoped `Directory.Build.props` imports the root, then wires the
+analyzer to all twelve src projects:
+
+```xml
+<Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
+
+<ItemGroup Label="DualFrontier.Analyzers (К-extensions cascade #5)">
+  <ProjectReference
+    Include="$(MSBuildThisFileDirectory)..\tools\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj"
+    OutputItemType="Analyzer"
+    ReferenceOutputAssembly="false" />
+</ItemGroup>
+```
+
+(Header comment cites Q-L-5 + the β4 ratification 2026-05-25.) Tests and tools
+projects sit outside `src/` and do not inherit the analyzer wiring.
+
+### §4.3 — Central Package Management
+
+`Directory.Packages.props` sets `<ManagePackageVersionsCentrally>true</…>`;
+package versions live in exactly one file. The nine pinned packages:
+
+| Package | Version | Role |
+|---|---|---|
+| Microsoft.CodeAnalysis.CSharp | 5.3.0 | analyzer host |
+| Microsoft.CodeAnalysis.CSharp.Workspaces | 5.3.0 | analyzer host |
+| Microsoft.CodeAnalysis.Analyzers | 5.3.0 | analyzer host |
+| Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit | 1.1.2 | analyzer test harness |
+| Microsoft.NET.Test.Sdk | 17.11.1 | test platform |
+| xunit | 2.9.2 | test framework |
+| xunit.runner.visualstudio | 2.8.2 | test runner |
+| FluentAssertions | 6.12.1 | assertion library |
+| BenchmarkDotNet | 0.13.12 | benchmark harness |
+
+Three deliberate exclusions are recorded in the file with their locked
+rationale: **PublicApiAnalyzers** (Q-L-13 — audience-driven deferral, community
+ecosystem absent per PA-001), **code-fix testing** (Q-L-15 — code-fix providers
+permanently dropped, AI-agent-first profile per PA-001), and
+**BannedApiAnalyzers** (Q-L-12 — closed historical concern, Godot removed).
+
+## §5 — Marker Family Registry
+
+A marker family is a textual convention with a defined form, semantics,
+introduction rule, closure semantics, and a **verbatim census method** so the
+population is reproducibly measurable. Census meta-tests are the enforcement
+mechanism and live in `TESTING_STRATEGY.md` §4 (cited, not restated). The counts
+below are the measured baseline at this rewrite and are pinned there.
+
+### §5.1 — `[ReservedStub]` attribute
+
+**Form.** `[ReservedStub(ReservedStubPurpose purpose, string reason)]` —
+declared at `src/DualFrontier.Contracts/Analyzer/ReservedStubAttribute.cs` with
+the purpose enum at `…/ReservedStubPurpose.cs` (`BuildComposition` /
+`ArchitecturalSketch`). The `reason` argument is mandatory; the constructor
+throws `ArgumentException` on null/whitespace (Q-L-10 + PA-002).
+
+**Semantics.** Marks a type, method, or property as a **structurally-present,
+functionally-inert** surface — required for build composition or architectural
+sketching, not a runtime implementation. This is the canonical "skeleton" marker
+of the codebase (METHODOLOGY Lesson #N12, Defensive Reserved Stub Pattern;
+Lesson #25 on lying tests — cite, do not restate).
+
+**Introduction rule.** Every reserved surface carries the attribute with a
+specific `reason` naming its activation trigger (e.g. a К-L LOCK cascade or a
+milestone). All 34 current sites use the parameterized form — there are no
+bare `[ReservedStub]` applications.
+
+**Closure semantics.** A site closes when the per-feature realization commit
+replaces the inert surface with a real implementation and removes the attribute.
+Closure is per-feature; the census is therefore **not** monotonic — new reserved
+surface may legitimately raise the count.
+
+**Census method (verbatim).** The reserved-surface census counts `[ReservedStub`
+attribute application sites in `src/**/*.cs` (rg `--type cs`), excluding the
+attribute definition file
+`src/DualFrontier.Contracts/Analyzer/ReservedStubAttribute.cs`, matching rg
+pattern `\[ReservedStub`; **current pin: 34 application sites across 13 files**.
+(The definition file contributes 0 under this pattern and is excluded by rule
+regardless.) The meta-test asserting the exact pin lives in
+`TESTING_STRATEGY.md` §4.
+
+Compile-time enforcement of attribute presence (rule **DFL025-A**) and
+behaviour-invocation restriction against tagged members is
+`Planned — see docs/ROADMAP.md §Analyzer track`.
+
+### §5.2 — Doc-tag families
+
+These are free-text tags in comments and XML docs. They are registered **as-is**
+with their verbatim census patterns and baseline counts. The baseline imposes
+**no retroactive obligation** on existing sites — they are baseline-registered
+and normalized opportunistically. **Forward rule:** a new deferral marker names
+its closing phase or cascade.
+
+| Family | Census pattern (rg, on `src/ --type cs`) | Baseline |
+|---|---|---|
+| `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 48 matches / 18 files |
+| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 79 matches / 48 files |
+| `TODO` | `rg --count-matches '\bTODO\b' src/ --type cs` (case-sensitive) | 136 matches / 53 files |
+| `Phase 6` | `rg --count-matches 'Phase 6' src/ --type cs` | 23 matches / 11 files |
+| `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 8 matches / 7 files |
+
+### §5.3 — `DFK-WAIVER` — the suppression law
+
+**Status.** NEW with this rewrite; load-bearing for A'.9.1 Phase β, where
+analyzer detection lands and per-diagnostic triage (fix / suppress / refine)
+begins. This section is the standing law for **how** a DFK/DFL diagnostic may be
+suppressed once detection exists.
+
+**Form.**
+
+```csharp
+// DFK-WAIVER(DFK013): <one-line reason citing authority — Q-L-#, К-L#, F-#, or
+//                     "false positive pending rule refinement, see ROADMAP.md §Analyzer track">
+#pragma warning disable DFK013
+...minimal scope...
+#pragma warning restore DFK013
+```
+
+**Rules.**
+
+1. **Adjacency.** The `// DFK-WAIVER(...)` comment immediately precedes the
+   `#pragma warning disable`.
+2. **Narrow scope.** The disable spans the narrowest possible region and is
+   **always** paired with a matching `restore`. Never disable a diagnostic for
+   the remainder of a file.
+3. **Allowed reason classes** — a waiver's authority citation must be one of:
+   - *false-positive pending refinement* — must reference the ROADMAP
+     Analyzer-track refinement entry that will fix the rule;
+   - *sanctioned architectural exception* — must cite the locked decision ID
+     (Q-L-#, К-L#);
+   - *generated or interop-mandated code* — the diagnostic does not apply to
+     machine-generated or ABI-shaped surface.
+4. **No blanket suppression.** File-scope or project-scope `<NoWarn>` for any
+   DFK/DFL diagnostic is **forbidden**. (The one existing root-props `NoWarn`
+   entry is `CS1591` only — a compiler documentation warning, not a DFK/DFL
+   diagnostic; see §4.2.)
+5. **Census-tracked.** Every waiver is counted by the DFK-WAIVER census
+   (`TESTING_STRATEGY.md` §4). **Baseline = 0** as of this cascade, verified:
+   `rg '#pragma warning disable (DFK|DFL|DF9)'` over `*.cs` returns 0, and
+   `[SuppressMessage]` over `src` + `tests` returns 0. Every increase from 0
+   requires a citation satisfying rule 3.
+6. **No orphan waivers.** A waiver whose authority citation does not resolve
+   (dangling Q-L/К-L/F-# or a refinement entry that does not exist) fails review.
+
+**Diagnostic-ID form.** A waiver names the **descriptor ID string** — dots for
+DFK sub-rules, hyphens for DFL families (e.g. `DFK003.1`, `DFL025-A`) — not the
+file/class underscore form (`DFK003_1`, `DFL025_A`).
+
+**Supersession.** This law **supersedes** the `// DFK###-SUPPRESS:` suppression
+sketch in `tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md` §7.3. That
+brief is execution-context tier (a derived plan); this document is standing law.
+Where the §7.3 sketch and this section differ, this section governs: the marker
+keyword is `DFK-WAIVER(<id>)` (not `DFK###-SUPPRESS`), the comment **precedes**
+the disable, and the authority-citation classes of rule 3 are mandatory.
+
+**GlobalSuppressions ban.** A `GlobalSuppressions.cs` file (assembly-level
+`[assembly: SuppressMessage]`) is **forbidden** — it is the file-scope blanket of
+rule 4 at assembly granularity. The ban is law **now**; no `GlobalSuppressions.cs`
+exists in the tree. The self-policing analyzer detection (rule DF999) is a stub —
+its detection logic is `Planned — see docs/ROADMAP.md §Analyzer track`.
+
+## §6 — Comments & Documentation Language
+
+All new artifacts — code comments, XML docs, commit bodies, governance prose —
+are **English**. English is the lowest-friction shared encoding for the
+agent-primary reader (PA-001) and for `git diff`, search, and string equality.
+
+**Comments explain WHY, not WHAT.** The code already shows what it does. A
+comment earns its place by explaining why the code exists, which edge case it
+guards, what would break if it were removed, and **which internal law it answers
+to**. Authority is cited by ID, and the chain stays unbroken: `К-L#`, `PA-00#`,
+`Q-L-#`, `F-#`, `Lesson #N…`, or a document section. A surface with no citable
+authority is a surface whose justification has not been authored — which usually
+means the code is premature.
+
+```csharp
+// Per К-L1 the native kernel owns entity lifetime; this managed wrapper only
+// translates the int32 status. Returning the raw handle here would leak the
+// ABI boundary into Application — see §3.1.
+```
+
+**Bi-script citation reality (finding F-4).** Existing code cites invariant IDs
+in both scripts: Cyrillic «К-L» (140 occurrences across 43 files) and Latin
+"K-L" (38 across 19). Any census or grep over invariant citations **must match
+both scripts**. Forward convention for new code: either script is acceptable, but
+the numeric ID must be exact (`К-L14` and `K-L14` denote the same invariant;
+`K-L4` is a different one). No narration-of-what comments; no decorative
+banners.
+
+## §7 — Exception & Error Discipline
+
+The codebase distinguishes three throw shapes, and keeping them distinct is what
+keeps the §5.1 census clean:
+
+1. **Guard-clause throws** — `InvalidOperationException` (or `ArgumentException`)
+   with a diagnostic message describing the violated precondition. These are
+   ordinary defensive validation and are **not** a stub signal.
+   `ManifestParser` is the exemplar, with ~32 such guards. A guard throw never
+   carries `[ReservedStub]`.
+2. **Reserved-stub throws** — an inert surface that throws to signal "not yet
+   realized" **always** carries `[ReservedStub]` (§5.1). The attribute is what
+   separates a deliberate skeleton from a guard clause in any census; an
+   unmarked "not implemented" throw is a §1.1 / PA-002 violation.
+3. **Native boundary** — native error codes (`int32`, handle-or-null) cross the
+   `extern "C"` ABI per §3.1. The managed interop wrapper translates `0` /
+   `nullptr` into a typed managed exception **at the boundary**, so managed
+   callers never see a raw native status code leak past `Core.Interop`.
+
+## §8 — Atomic Commit Discipline
+
+A commit is the smallest unit of architectural reasoning that survives in
+history. **In a falsifiable research framework the commit history IS the
+dataset:** defect rate, pipeline economics, and the architectural-integrity
+claims of К-L14 are all measured from it. History integrity is therefore
+research-data integrity — this is why the prohibitions below are absolute, not
+stylistic.
+
+### §8.1 — Subject line
+
+```
+<scope>(<sub-scope>): <imperative description>
+```
+
+The observed `<scope>` vocabulary, codified: **`analyzer`, `chore`, `docs`,
+`feat`, `fix`, `governance`, `perf`, `refactor`, `reports`, `test`**.
+Parenthesized `<sub-scope>` is used when the scope has internal structure —
+observed values include `standing-law`, `register`, `brief`, `axioms`, `cpm`,
+`tests`, `stubs-architecture`, `rename`, `dd-1`, `dd-2`. The legacy engine
+prefixes `core:` / `contracts:` / `interop:` / `native:` / `modding:` are
+historical (visible in old history); they are not forbidden but **new commits use
+the `prefix(sub-scope):` form**. A new scope prefix requires a `governance` commit
+that amends this section first.
+
+### §8.2 — Body — seven sections
+
+Every non-trivial commit carries a structured body:
+
+1. **Authority** — the document section(s) or locked decision the change answers
+   to.
+2. **Scope** — files touched, with NEW / MODIFIED / DELETED markers.
+3. **Rationale** — why this approach, especially when alternatives were weighed.
+4. **Scope boundaries** — what is deliberately **not** touched (this is what
+   makes the commit auditably atomic).
+5. **Skeleton revisions** — *when applicable*, the reserved-surface deltas, one
+   conceptual change per entry (`<from> → <to>` + one-line rationale), per
+   `RESERVED_SURFACE_MUTABILITY.md`.
+6. **Verification** — the exact gates run (§9) and their results.
+7. **References** — documents cited, with versions/sections.
+
+Followed by a `Co-Authored-By:` trailer naming the model that produced the
+commit (e.g. `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>` or the
+`Claude Opus 4.7` form). Other body elements seen in history — `register_version
+X.Y -> X.Z` lines, `К-L impact` lines, a bare claude.ai session URL, verbatim
+Crystalka direction quotes — are **observed conventions**, recorded here as
+descriptive, not mandated.
+
+### §8.3 — Hard prohibitions
+
+- **No force-push** (`--force` or `--force-with-lease`) — once a branch is
+  pushed, its history is append-only.
+- **No history rewrite on pushed branches** — interactive rebase, amend, or
+  filter only on local, never-pushed commits.
+- **No squash** — if the work is fifteen commits, fifteen commits ship; the
+  reviewer's view of the reasoning is exactly the sequence as authored.
+
+### §8.4 — Executor never pushes
+
+Pushes to `origin` are the **architect's** act (Crystalka). An execution session
+authors commits locally and stops at the closure boundary; the push to the
+remote is a deliberate human ratification step, never an automated tail of a
+cascade.
+
+## §9 — Verification Gates
+
+These are the gates that **exist**. Each names its artifact. (Operational depth —
+exact invocation forms, PowerShell 5.1 specifics — lives in
+`DEVELOPMENT_HYGIENE.md`; test law lives in `TESTING_STRATEGY.md`. Cited, not
+restated.)
+
+- **Managed build.** `dotnet build DualFrontier.sln -c Release`. Compile-clean is
+  expected; `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`
+  (`Directory.Build.props`) makes any warning a failure. Caveat: a running test
+  host file-locks output assemblies — close test runners before building.
+- **Native build.** The VS-bundled CMake is not on `PATH`; invoke by full path:
+  `"D:\Visual Studio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe"
+  --build native\DualFrontier.Core.Native\build --config Release`.
+- **Native selftest.** `df_native_selftest.exe` (built from
+  `native/DualFrontier.Core.Native/test/selftest.cpp`).
+- **Solution tests.** Run per `TESTING_STRATEGY.md` (the test-law authority);
+  this document does not restate the test layer taxonomy or run command.
+- **Register validation.** `& .\tools\governance\sync_register.ps1 -Validate`
+  (PowerShell 5.1). **Side-effect:** the script unconditionally rewrites
+  `docs/governance/VALIDATION_REPORT.md` (around line 380), so **every** validate
+  run produces a tracked change that must be folded into the same commit — see
+  `DEVELOPMENT_HYGIENE.md` §4 for the commit-folding protocol. Never run
+  `sync_register.ps1 -Sync` outside a ratified register cascade.
+
+**Analyzer enforcement: none today.** The DualFrontier.Analyzers project is
+wired to all twelve src projects (§4.2) but ships **17 non-detecting `Info`
+stubs** (9 Architecture / 3 Discipline / 5 NativeBoundary) — each has an empty
+`Initialize` with no `Register*` calls, `AnalyzerReleases.Shipped` is empty, and
+`AnalyzerReleases.Unshipped` lists all 17. The build therefore reports **zero**
+DFK/DFL diagnostics. `.editorconfig` is charset-only and sets no DFK/DFL
+severities. The rule inventory authority is `ANALYZER_RULES.md`; detection logic
+and severity promotion are `Planned — see docs/ROADMAP.md §Analyzer track`.
+
+**CI: none.** No CI exists; none is currently scheduled. There are no
+`.github/workflows`, Azure Pipelines, or AppVeyor configurations in the tree, and
+no CI item appears on the roadmap — the truthful present-tense state, not a
+deferred capability.
+
+## §10 — Amendment Protocol & Change History
+
+### §10.1 — Amendment protocol
+
+This document is Tier 1 LOCKED. An amendment proceeds:
+
+1. **Surface** — propose the change to the owner (Crystalka) as an explicit
+   direction; the agent does not default-amend a LOCKED standing law.
+2. **Rationale** — document what changes, why, and what it deprecates.
+3. **Semver** — PATCH for clarification/correction, MINOR for a new rule or
+   family, MAJOR for inverting an existing rule.
+4. **REGISTER update** — bump `version` and `next_review_due` in the frontmatter
+   mirror; the change rides a `governance(...)` commit (§8) with a validate run
+   folded in (§9).
+5. **Cross-doc propagation** — when an amendment touches a rule cited elsewhere,
+   update those citations in the same cascade. Documents that cite this one:
+   `TESTING_STRATEGY.md` (census meta-tests, §5/§9), `DEVELOPMENT_HYGIENE.md`
+   (build/validate gates, §9), `ANALYZER_RULES.md` (defers suppression law to
+   §5.3), `RESERVED_SURFACE_MUTABILITY.md` (the `Skeleton revisions` body law,
+   §8.2), and `METHODOLOGY.md` (commit-discipline and brief-integration rules).
+
+An amendment that contradicts a brief does not lose: a brief contradicting this
+standing law is wrong by default — correct the brief, or ratify the amendment
+here **before** the brief locks.
+
+### §10.2 — Change history
+
+| Version | Date | Change |
+|---|---|---|
+| **2.0.0** | 2026-06-11 | Full rewrite to code-truth: marker-family registry (§5: `[ReservedStub]`, doc-tag families, the new `DFK-WAIVER` suppression law superseding `A_PRIME_9_1_…BRIEF` §7.3), C++ ABI-boundary discipline (§3), build-config quoted verbatim (§4), enforcement claims reduced to existing artifacts (§9 — analyzer stated as 17 non-detecting stubs; CI stated absent). **MAJOR.** Authored per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md`. |
+| 1.0 | 2026-05-12 (era) | Initial codification — naming, file-scoped namespaces, nullability, one-class-per-file, member order, stack-frame retention discipline. Preserved as historical; superseded by 2.0.0. |
+
+---
+
+**End of CODING_STANDARDS.md v2.0.0 LOCKED**
