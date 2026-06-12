@@ -12,7 +12,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-ROADMAP
 ---
 # Roadmap
 
-The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) v1.5 LOCKED; this roadmap is the execution sequence derived from it.
+The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) (LOCKED; the register owns its version); this roadmap is the execution sequence derived from it.
 
 The reorganisation follows the project's central methodological claim: **engine and methodology are the main research result, the game is a test case for the hypothesis** ([METHODOLOGY](/docs/methodology/METHODOLOGY.md)). By implementing combat, magic, and world content through the modding system rather than alongside it, we make every gameplay feature also a test of the modding architecture. A combat system that ships as a vanilla mod is the strongest possible falsifiable claim that the contract surface for mods is complete.
 
@@ -20,7 +20,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 
 ## Status overview
 
-*Updated: 2026-05-03 (M7 closed; M8 next). Partial re-sync 2026-06-02 (DD-2): K-series + K9 rows retired to Closed and the KERNEL_ARCHITECTURE.md Part 2/3 roadmap relocated into «Native foundation tracks» below; remaining M8/V status rows pending full DD-1 re-sync.*
+*Updated: 2026-05-03 (M7 closed; M8 next). Partial re-sync 2026-06-02 (DD-2): K-series + K9 rows retired to Closed and the KERNEL_ARCHITECTURE.md Part 2/3 roadmap relocated into «Native foundation tracks» below. Full re-sync 2026-06-12 (Architecture Truth Cascade): M8 row verified to honest state (build criterion attempted in-session), V-row split into V0 ✅ / V1 ✅ / V2 ⏭ / M-V ⏭ with evidence, К-extensions cascade block added (#0–#5), M3.5 relocated in from MOD_OS §11, stale version pins removed per the citation-form rule (CODING_STANDARDS §6).*
 
 | Phase | Status | Tests | Notes |
 |---|---|---|---|
@@ -42,7 +42,7 @@ Phases do not overlap in code ownership. Closed phases retain their entries here
 | **M6 — Bridge replacement** | ✅ Closed | added (`PhaseHBridgeReplacementTests`, `Phase5BridgeAnnotationsTests`, `CollectReplacedFqnsTests`, `M62IntegrationTests`) | M6.1 `[BridgeImplementation(Replaceable)]` + Phase 5 combat stubs annotated + `ContractValidator` Phase H bridge replacement validation; M6.2 `ModIntegrationPipeline` skip-on-replace graph build + integration tests across all §7.5 scenarios |
 | **M7 — Hot reload** | ✅ Closed | 437/437 (50 commits) | M7.1 ✅ Pause/Resume + `IsRunning`; M7.2 ✅ ALC unload chain steps 1–6 + §9.5.1 best-effort failure semantics; M7.3 ✅ step 7 `WeakReference` + GC pump + `ModUnloadTimeout` + Phase 2 carried-debt closure; M7.4 ✅ D-7 build-pipeline `hotReload` override; M7.5.A ✅ `ModMenuController` editing-session lifecycle + `IModDiscoverer` + `Pipeline.GetActiveMods`; M7.5.B.1 ✅ production `GameBootstrap` integration via `GameContext`; M7.5.B.2 ✅ Godot `ModMenuPanel` modal overlay + F10 hotkey + menu-lifecycle pauses simulation. 6 housekeeping passes ✅ (TICK display, TickScheduler.ShouldRun race, real pawn data, NeedsSystem decay direction, ModMenuPanel position + assets gitignore, menu-pauses-simulation). Closure verified — see [M7_CLOSURE_REVIEW](./audit/M7_CLOSURE_REVIEW.md). §9.2 v1.6 ratification candidate registered for future cycle. |
 | **— pre-namespace boundary —** | | | **Composite namespace applies M8.x forward only.** Closed M0..M7 phases preserved under pre-composite-namespace nomenclature per Q-M-1 LOCK (`docs/architecture/COMPOSITE_NAMESPACE_DELIBERATION_STATE.md` §3.7). Closure reviews `docs/audit/M*_CLOSURE_REVIEW.md`, audit passes `docs/audit/AUDIT_PASS_*.md`, and historical prompts `docs/prompts/M*.md` retain original names as shipped (not renamed retroactively). |
-| M8 — Vanilla skeletons (M-K bucket) | ⏭ Pending | — | Five empty mod assemblies. Composite namespace: M-K bucket per Q-M-2 LOCK; specific identifiers within bucket deferred to per-mod authoring per FHE-style reserved pattern. |
+| M8 — Vanilla skeletons (M-K bucket) | ⏭ Pending | — | Honest state (verified 2026-06-12, Architecture Truth Cascade): six mod projects on disk (5 regular + `Vanilla.Core` shared) as strict-v3 skeletons (`manifestVersion: "3"`, empty `Initialize`); all six build clean (`dotnet build -c Release` per project, exit 0, zero warnings under `TreatWarningsAsErrors`). The build-pipeline `hotReload` override criterion is covered green by `M74BuildPipelineTests`. REMAINING for closure: the full-set pipeline smoke-load criterion (all vanilla mods loaded into `ModIntegrationPipeline` + one kernel tick, no exceptions) — no harness exists today; the menu-driven load path needs a manual session or a dedicated integration test. No faked flip. Composite namespace: M-K bucket per Q-M-2 LOCK; specific identifiers within bucket deferred to per-mod authoring per FHE-style reserved pattern. |
 | M9 — Vanilla.Combat — DEFERRED | ⏭ Excluded from cascade | — | Per Q-V-2 LOCK + deliberation §4 (deferred items registry): Combat is a consumer mod, identity discussion deferred until V substrate ready. Original Phase 5 scope preserved as historical context. M9 namespace freed under composite namespace (Q-R-2 LOCK — no remaining collision with runtime M9.x). |
 | M10 — Remaining vanilla (M-K bucket; V-side reserved for multi-substrate mods) | ⏭ Pending | — | Magic, Inventory, Pawn, World — incremental. K-side under M-K bucket per Q-M-2. Multi-substrate mods (Magic, Electricity, Water, Movement) carry compound marker `M-K{N} / M-V` with V-side identifier deferred to V substrate authoring time per Q-V-2 FHE-pattern. |
 | **K-series — Native ECS kernel** | ✅ Closed | — | K0–K10.3 shipped (native scheduler К10.1, native bus К10.2, pipeline/display/quiescent К10.3 v2); K8.5 + K10.4 (TLA+) pending. Detail relocated to «Native foundation tracks» below per DD-2. |
@@ -790,6 +790,20 @@ Mirrors VULKAN_SUBSTRATE.md historical migration approach (parallel Godot + Vulk
 
 ---
 
+### К-extensions cascades (#0–#5)
+
+Post-К-closure architectural cascades extending К-series invariants beyond the А'.8 closure boundary. Detail authority: [K_EXTENSIONS_LEDGER](/docs/architecture/K_EXTENSIONS_LEDGER.md) (cascade narratives) + K_L14_EVIDENCE_DASHBOARD (К-L14 verification log). Representation added 2026-06-12 (Architecture Truth Cascade — these cascades previously had no roadmap rows):
+
+| # | Cascade | Date | Commits | Outcome |
+|---|---|---|---|---|
+| #0 | А'.7.x bus architecture amendment | 2026-05-21 | 13 (closure `ad3ff4f`) | Per-tier mutex split + O(N) coalesce + S10 cross-tier probe + 5 bug fixes; К-L15.1 LOCKED (2-layer); К-L14 #8 clean |
+| #1 | А'.7.5 bus source split | 2026-05-22 | 5 (`c1d10b0..fe5a871`) | К-L15.1 compile-time layer (bus_native.cpp → 4-TU split); К-L14 #9 clean |
+| #2 | Godot full deprecation + Launcher formalization | 2026-05-23 | ~16 (`2022bc1..21a1054`) | Presentation physically purged; `DualFrontier.Launcher` scaffold (Lesson #N12 first application); К-L14 #11 first removal-type evidence |
+| #3 | Launcher visual implementation | 2026-05-23/24 | ~12 (`e1bbc6a..8ea0d03`) | Pawn-3 dispatch arms real + 3 silent stubs per S-LOCK-4 amended; К-L14 #12 first clean additive evidence |
+| #4 | A'.9.0 reconnaissance | 2026-05-24 | 8 (`a233639..8a0ec32`) | 7-domain analyzer milestone recon (A_PRIME_9_RECONNAISSANCE_REPORT, ~3340 lines); К-L14 #13 first observational evidence |
+| #5 | A'.9.1 analyzer infrastructure | 2026-05-25 | Phase 0 `bb6807c`; α `5030fa2..a23556f`; β-prep `588c667..a213954` | 17 rule stubs + CPM + PROJECT_AXIOMS v1.0 LOCKED; Phase β/γ/δ pending — see «Analyzer track» below |
+
+К-L count unchanged across all six cascades: **21 final**.
 
 ### K9 — Field storage abstraction — CLOSED (RawTileField shipped 2026-05-11)
 
@@ -961,7 +975,7 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — v1.5 LOCKED specification driving M1–M10.
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the LOCKED specification driving M1–M10 (the register owns its version).
 - [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the pipeline; M1–M10 are exercised through it.
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
 - [CONTRACTS](/docs/architecture/CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
