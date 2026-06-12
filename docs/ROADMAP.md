@@ -937,7 +937,8 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 
 | F-# | Finding | Severity | State | Resolution / owner |
 |---|---|---|---|---|
-| F-1 | `REGISTER_RENDER.md` self-declares register v2.0 — 15+ versions stale vs SoT (incl. render-script variable-expansion artifact in the prior render) | S2 | OPEN | Closes at this cascade's C10 render regeneration (hash recorded at closure) |
+| F-1 | `REGISTER_RENDER.md` self-declares register v2.0 — 15+ versions stale vs SoT | S2 | CLOSED | Render regenerated at C10 (this cascade's final commit) against register 2.16 / C9 `fe1fa61`; header self-reference backfilled in the same commit. The render-script defect observed in the stale render persists in the fresh output → split off as F-13 |
+| F-13 | `render_register.ps1` variable-expansion defect: every document row in the regenerated render emits the literal `$(System.Collections.Hashtable.last_modified_commit)` (272 occurrences in the 2026-06-11 render) instead of the commit value — the script bug the drift report §6.3.4 flagged; regeneration alone does not cure it | S3 | OPEN | Register-tooling cascade (fix alongside F-2 backfill discipline; script code change — out of Standing-Law scope by file grant) |
 | F-2 | 124 `PENDING-COMMIT` placeholders across REGISTER.yaml; backfill discipline systemically open | S2 | OPEN | Future register-tooling cascade (hybrid reverse-register, Q-T-2) |
 | F-3 | METHODOLOGY v1.12.1 lacked a body changelog entry (frontmatter↔changelog desync class) | S3 | CLOSED | Backfilled at C7 `b58eed4` (METHODOLOGY v1.13.0) |
 | F-4 | KERNEL Part 0 invariant-ID script inconsistency: table rows Latin "K-L", prose Cyrillic «К-L» — any census/grep must match BOTH scripts (code shows the same duality: 140 Cyrillic / 38 Latin citation sites in src/) | S3 | OPEN | KERNEL amendment (architect); interim mitigation: bi-script rule pinned in RESERVED_SURFACE_MUTABILITY §4 + CODING_STANDARDS §6 |
