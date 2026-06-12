@@ -6,13 +6,17 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.12.1"
+version: "1.13.0"
 next_review_due: 2027-05-21
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*
+
+*Version: 1.13.0 (2026-06-11). Standing-Law cascade closure — methodology layer converted to standing law. NEW §12.8 «Brief-integration boundary rule»: briefs cite standing documents by §-anchor instead of restating their content; carries-vs-cites split (mirrors [TESTING_STRATEGY §6](./TESTING_STRATEGY.md)); boundary rule (reusable-across-phases → standing document; phase-specific → brief; doubt → refactor into the standing document); anti-pattern rule (a brief contradicting a standing document is wrong by default — the brief is corrected or the document amended BEFORE the brief locks). NEW §12.9 «Session closure protocol — governance/documentation cascades»: (a) tracker write-back → (b) REGISTER mutations + validate with the rewritten VALIDATION_REPORT.md folded into the same commit → (c) render regeneration or an explicit recorded staleness deferral → (d) findings → ROADMAP «Findings ledger (F-series)», never chat-only → (e) closure report per the active brief's schema. §12.7 protocol extended with step 9 cascade-impact propagation check (SYNTH-2 item). Companion standing-law artifacts this cascade: CODING_STANDARDS v2.0.0, TESTING_STRATEGY v2.0.0, DEVELOPMENT_HYGIENE v2.0.0, RESERVED_SURFACE_MUTABILITY v1.0 (NEW), ANALYZER_RULES v0.2.0. MINOR (two new sections + one checklist item; no existing rule inverted). §1–§11 substance unchanged.*
+
+*Version: 1.12.1 (2026-05-24). PATCH per A'.9.1 Phase 0 governance addition — Lesson #N17 (audience-driven tooling deferral) appended к Provisional pool + Lesson #N14 4th application surfaced (PROMOTION CRITERION MET; FORMALIZE codification deferred к A'.9.1 Phase δ closure per Q-L-26 default (c)). (Changelog line backfilled 2026-06-11 at Standing-Law cascade closure — finding F-3; dated from register data.)*
 
 *Version: 1.12 (2026-05-23). К-extensions cascade #3 closure — Launcher Visual Implementation (Minimum Scope). Lesson #N12 «Defensive Reserved Stub Pattern» **semantic refined** через cascade #3 mid-cascade Crystalka ratification: defensive throws appropriate ONLY when command type cannot fire в production composition flow; otherwise silent stub pattern с honest «DO NOT TEST» documentation. Cascade #2 defensive throw application was valid because cascade #2 не executed Launcher main loop (R-2 verification deferred к cascade #3); cascade #3 Phase 0 §2.5 + §2.8 reads surfaced что GameBootstrap.PublishItemSpawnedEvents queues ~255 ItemSpawnedCommand at composition + GameLoop.RunLoop emits TickAdvancedCommand every 33ms + PawnStateReporterSystem emits PawnStateCommand periodically — all 3 deferred command types fire actively в production flow, so defensive throws would crash Launcher. Cascade #3 deferred arms use silent stub pattern. Lesson #N12 promotion criterion amended к require differentiating «production-fires» (silent stub) vs «test-only-fires» (defensive throw) sub-applications. **2 new Provisional candidates surfaced**: #N13 «Commit integrity verification before commit» + #N14 «Phase 0 reads empirical assumed-state coverage» (both surfaced cascade #2 α1 + cascade #3 §2.0). 12 DEFER candidates Provisional pool post-cascade-#3 (#18, #19, #N3, #N5, #N6, #N7, #N8, #N9, #N10, #N12, #N13, #N14). FORMALIZE: 12 → 12 (unchanged — #N12 semantic refinement не FORMALIZE bump; refinement within Provisional lesson; second application observed but promotion criterion amended к require differentiated sub-pattern). SUNSET: 1 (unchanged). §1-§11 substance unchanged.*
 
@@ -568,13 +572,47 @@ The closure protocol previously documented in `MIGRATION_PROGRESS.md` is extende
 8. NEW — If REGISTER.yaml or any meta-entry modified during milestone:
    - Final commit incorporates REGISTER.yaml updates
    - Bootstrap pattern for self-referential `last_modified_commit` field per FRAMEWORK §8.3
+9. NEW (v1.13.0) — Cascade-impact propagation check (SYNTH-2 item): «Does this
+   change alter behavior described in the prose of any Tier-1/standing document?
+   If yes, that document receives its PATCH in the same cascade.» Propagation is
+   a closure step, not a later audit (see §12.9 (d)/(e) for the governance-cascade
+   form).
 ```
 
-The new steps (5-8) constitute the post-session update protocol per §12.5. They are strict by default (validation blocks commit); bypass mechanism (§12.5) provides explicit-and-logged escape hatch when register state cannot be reconciled within the closing session.
+The new steps (5-8) constitute the post-session update protocol per §12.5; step 9 (v1.13.0, SYNTH-2) extends the same protocol — Tier-1/standing-document prose invalidated by a cascade receives its PATCH inside that cascade. They are strict by default (validation blocks commit); bypass mechanism (§12.5) provides explicit-and-logged escape hatch when register state cannot be reconciled within the closing session.
 
 **v1.9 expansion rationale**: К10.3 v2 closure (2026-05-20) ran the Core suite + native selftest + F5 verification but did not exercise the Modding suite explicitly. A transient fixture-copy build-state issue (missing Fixture.RegularMod_* / Fixture.PublisherMod manifest artifacts в `tests/DualFrontier.Modding.Tests/bin/Release/net8.0/Fixtures/`) was therefore not caught at closure ratification time. Crystalka's А'.7.x BUS_DESIGN_INVESTIGATION 2026-05-21 surfaced the resulting 14 fails (M51 ×4 + M52 ×3 + M62 ×5 + M73 ×2). A'.7.x Phase 0 «Pre-flight B» repro on the same branch с the same WT changes но a freshly-rebuilt Fixtures/ tree showed 0 fails — the build state, not the code, was the regression. К-L14 verification #7 was initially mis-annotated as a soft-halt against K10.3 v2's K-L18 amendment (Hypothesis 1 в А'.7.x brief §8.3); the closure-protocol gap is the actual root cause, не a К-L18 regression. The new step 1 wording explicitly enumerates Modding suite to prevent recurrence (CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c)).
 
+### 12.8 Brief-integration boundary rule (v1.13.0)
 
+Briefs cite standing documents by §-anchor instead of restating their content. The standing-law corpus — [CODING_STANDARDS](./CODING_STANDARDS.md) (code + commit law, marker registry, DFK-WAIVER suppression law), [TESTING_STRATEGY](./TESTING_STRATEGY.md) (test law, census pins, brief-integration test instantiation), [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) (operational truth), [RESERVED_SURFACE_MUTABILITY](./RESERVED_SURFACE_MUTABILITY.md) (mutable/immutable catalogs, Skeleton-revisions form), this document (pipeline + governance law) — is the authority a brief builds on, not material it transcribes.
+
+What a brief **carries**: the phase-specific surface — named deliverables (test lists in Fact/Theory form, file grants, commit plan), coverage anchors, count deltas, 1–2 representative bodies, halt conditions, intended forms per [RESERVED_SURFACE_MUTABILITY §2](./RESERVED_SURFACE_MUTABILITY.md). What a brief **cites** (by document + §-anchor): conventions, harness/isolation patterns, census contracts and their verbatim expressions, waiver discipline, commit-body law, closure obligations. The test-law instantiation of this split lives in [TESTING_STRATEGY §6](./TESTING_STRATEGY.md); this section is its cross-document generalization.
+
+**Boundary rule**: reusable-across-phases → standing document; phase-specific → brief; doubt → refactor into the standing document (then cite it).
+
+**Anti-pattern rule**: a brief contradicting a standing document is **wrong by default** — either the brief is corrected, or the standing document is amended through its own amendment protocol, BEFORE the brief locks. A locked brief executing a known contradiction is a halt condition, not a precedent. An already-EXECUTED brief later found to contradict standing law stays immutable (execution-context tier, historical snapshot); the standing document wins, and the discrepancy is recorded in the ROADMAP «Findings ledger (F-series)».
+
+### 12.9 Session closure protocol — governance/documentation cascades (v1.13.0)
+
+§12.7 governs code-milestone closure (its step 1 test-suite checklist presumes substrate was touched). Documentation/governance cascades — standing-doc rewrites, register cascades, drift refactors — close with the following sequence. Propagation is a protocol step, not a later audit:
+
+```
+(a) Tracker write-back: ROADMAP/brief lifecycle flips, DONE marks with real
+    commit hashes; the executed brief's register entry → EXECUTED.
+(b) REGISTER mutations + validate: sync_register.ps1 -Validate exit 0 mandatory;
+    the unconditionally rewritten VALIDATION_REPORT.md is staged INTO the same
+    commit (commit-folding protocol per DEVELOPMENT_HYGIENE §4).
+(c) Render regeneration (render_register.ps1) — or an explicit recorded
+    staleness deferral (F-ledger entry / commit-body note), never silent.
+(d) Findings → ROADMAP «Findings ledger (F-series)» entries — never chat-only.
+(e) Closure report per the active brief's schema: commits table, versions table,
+    census pins re-measured (TESTING_STRATEGY §7), F-ledger final states,
+    Skeleton-revisions consolidated list (RESERVED_SURFACE_MUTABILITY §5),
+    gates table, self-attestation.
+```
+
+Step 9 of §12.7 (SYNTH-2) applies to both closure forms: any Tier-1/standing-document prose invalidated by the cascade receives its PATCH inside the cascade.
 
 Kernel и runtime native layers introduce specific methodology adjustments documented в:
 - `KERNEL_ARCHITECTURE.md` Part 7 (kernel-specific adjustments)
