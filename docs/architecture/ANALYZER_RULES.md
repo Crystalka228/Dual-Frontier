@@ -1,4 +1,4 @@
-﻿---
+---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-A-ANALYZER_RULES
@@ -6,37 +6,37 @@ category: A
 tier: 1
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.1"
+version: "0.2.0"
 next_review_due: 2027-05-23
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ANALYZER_RULES
 ---
 # DualFrontier Roslyn Analyzer Rule Specifications
 
-**Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; structural reorganization at A'.9.1 Phase α Commit 5 2026-05-25)
-**Version**: 0.1
+**Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; structural reorganization at A'.9.1 Phase α Commit 5 2026-05-25; Standing-Law restructure 2026-06-11 — lifecycle unchanged: Phase β mutates §4 again)
+**Version**: 0.2.0
 **Date created**: 2026-05-23 (А'.8 К-series formal closure cascade Commit 5 REGISTER enrollment)
-**Date restructured**: 2026-05-25 (A'.9.1 / К-extensions cascade #5 Phase α Commit 5)
-**Purpose**: Roslyn analyzer rule specifications encoding К-Lxx invariants. Populated к LOCKED at A'.9.1+ Roslyn analyzer milestone implementation cascade.
+**Date restructured**: 2026-05-25 (A'.9.1 / К-extensions cascade #5 Phase α Commit 5); 2026-06-11 (Standing-Law cascade — roadmap-load extraction + stub-truth correction per [DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md §6.3.2](../reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md))
+**Purpose**: Roslyn analyzer rule specifications encoding К-Lxx invariants. This document states what exists; scheduled futures live in [ROADMAP.md «Analyzer track»](../ROADMAP.md). Populated к LOCKED at A'.9.1+ Roslyn analyzer milestone implementation cascade.
 
 **Authority**: This document specifies analyzer rules. Canonical rule narratives + detection patterns + diagnostic messages reside в [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications). К-Lxx invariant authority resides в [KERNEL_ARCHITECTURE.md Part 0](KERNEL_ARCHITECTURE.md#part-0-locked-foundational-decisions). PA-001..PA-004 axiom anchors reside в [PROJECT_AXIOMS.md](../governance/PROJECT_AXIOMS.md) (introduced A'.9.1 Phase α Commit 8).
 
-**Forward sequencing**: A'.9.1 Analyzer Infrastructure cascade implements first-batch active rules per §4. К-L20 LOCK cascade activates DFK009/DFK012/DFK015/DFK018/DFK020 family + DFC001 (per §5). Hardware tier expansion cascade activates DFK019.B (per §6).
+**Forward sequencing**: relocated — see [ROADMAP.md «Analyzer track»](../ROADMAP.md) for all analyzer sequencing (A'.9.1 Phase β/γ/δ) and the deferred rule families (К-L20 LOCK cascade, hardware tier expansion).
 
 ---
 
 ## §1 — Document framing + authority chain
 
-This document is the authoritative specification for the DualFrontier Roslyn analyzer rule surface.
+This document is the authoritative specification for the DualFrontier Roslyn analyzer rule surface: rule IDs, namespaces, categories, the per-rule template, and the realized scope decisions. What the rules **do today** is stated in §4 (ground truth: 17 non-detecting stubs, zero diagnostics). What the rules **are scheduled to become** is owned by [ROADMAP.md «Analyzer track»](../ROADMAP.md) — spec/roadmap separation per Standing-Law cascade 2026-06-11. §7 and §8 are **realized decision records** (closed Q-L outcomes), not forward plans.
 
 **Authority chain**:
 - [KERNEL_ARCHITECTURE.md Part 0](KERNEL_ARCHITECTURE.md#part-0-locked-foundational-decisions) — К-Lxx invariant canonical text (Tier 1 LOCKED)
 - [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications) — canonical detection narratives for each rule (Tier 1 LOCKED)
 - [PROJECT_AXIOMS.md](../governance/PROJECT_AXIOMS.md) — PA-001..PA-004 axiom anchors driving rule scope decisions (Tier 1 LOCKED, NEW A'.9.1)
-- **This document** — analyzer rule specifications, severity, category, lifecycle (Tier 1, lifecycle AUTHORED-SKELETON → LOCKED at A'.9.1+ closure)
+- **This document** — analyzer rule specifications: IDs, namespaces, categories, templates, realized decision records (Tier 1, lifecycle AUTHORED-SKELETON; forward lifecycle sequencing in [ROADMAP.md «Analyzer track»](../ROADMAP.md))
 
 **Q-L ratifications history** (forward-locked at Brief A'.9.1 batch 1 + 2 deliberation 2026-05-24):
 - Q-L-3 — Tiered namespaces (DFK###/DFL###/DFC###) per §3
-- Q-L-7 — 3 active categories (Architecture/NativeBoundary/Discipline) + ModSurface reserved per §4
+- Q-L-7 — 3 categories (Architecture/NativeBoundary/Discipline) + ModSurface reserved per §4
 - Q-L-8 — DFK019 split (DFK019.A ships A'.9.1; DFK019.B deferred к hardware tier expansion cascade) per §6
 - Q-L-9 — DFK010 PERMANENTLY DROPPED (methodology-layer; PA-002 anchor) per §7
 - Q-L-11 — DFC001 deferred к К-L20 LOCK cascade (Bridge surface Mod-API-coupled) per §5
@@ -50,15 +50,15 @@ This document is the authoritative specification for the DualFrontier Roslyn ana
 
 ## §2 — Per-rule specification template
 
-**Per-rule specification format**:
+**Per-rule specification format** (entries populated into §10 as each rule's Phase β implementation lands):
 
 ```markdown
 ### DFK### — <К-L invariant title>
 
 **К-L invariant**: <К-L# reference + canonical text link к KERNEL_ARCHITECTURE.md Part 0>
 **Category**: DualFrontier.Architecture / DualFrontier.NativeBoundary / DualFrontier.Discipline
-**Severity**: Error / Warning / Suggestion
-**Status**: Active / Reserved / Outside-Roslyn-scope
+**Severity (Phase-γ promotion target)**: Error / Warning / Suggestion — shipped stubs carry `Info` until Phase γ (see ROADMAP.md «Analyzer track»)
+**Status**: Stub / Detecting / Reserved / Outside-Roslyn-scope
 **Implementation status**: Pending A'.9.1 Phase β / Implemented at A'.9.1 / Active post-A'.9.1
 
 **Detection narrative** (3-5 sentences per Q5.3 LOCKED Session 1):
@@ -72,9 +72,8 @@ This document is the authoritative specification for the DualFrontier Roslyn ana
 - <code pattern 2 that triggers diagnostic>
 
 **Suppression policy**:
-- When suppression appropriate: <rare cases с justification>
-- Suppression syntax: `#pragma warning disable DFK###` OR `[SuppressMessage("DualFrontier.<Category>", "DFK###")]`
-- Suppression requires architectural justification comment
+- Governed by CODING_STANDARDS.md §5.3 «DFK-WAIVER — the suppression law» (see §12) — cite the law, do not restate syntax
+- When suppression appropriate: <rare cases с justification per the DFK-WAIVER form>
 
 **Test cases** (positive + negative examples):
 - Positive: <code pattern that должно triggered diagnostic>
@@ -95,119 +94,117 @@ Three-tier rule ID namespace convention forward-locked at Brief A'.9.1 batch 1 d
 
 - **DFK###** — К-Lxx invariant rules (architectural). Each rule encodes a specific К-Lxx kernel invariant from [KERNEL_ARCHITECTURE.md Part 0](KERNEL_ARCHITECTURE.md#part-0-locked-foundational-decisions). Numbering aligned 1:1 with К-L# (e.g., DFK001 encodes К-L1).
 - **DFL###** — Lesson-derived rules (discipline). Each rule encodes a specific [METHODOLOGY.md](../methodology/METHODOLOGY.md) Lesson. Numbering follows Lesson number (e.g., DFL025 family encodes Lesson #25 refined extension).
-- **DFC###** — Cascade-specific rules (drift detection). Reserved для rules surfaced by individual cascade execution to detect specific drift patterns. Inactive at A'.9.1 per Q-L-11 (DFC001 deferred к К-L20 LOCK cascade).
+- **DFC###** — Cascade-specific rules (drift detection). Reserved для rules surfaced by individual cascade execution to detect specific drift patterns. No DFC### stub exists at A'.9.1 per Q-L-11 (DFC001 deferred к К-L20 LOCK cascade — see §5 pointer).
 
-**Self-policing**: DF999 (analyzer rule that bans solution-wide GlobalSuppressions / `[assembly: SuppressMessage]` per Q-L-18 default — pending batch 3 governance). Ships at A'.9.1 per default.
+**Self-policing**: DF999 (analyzer rule that bans solution-wide GlobalSuppressions / `[assembly: SuppressMessage]` per Q-L-18 default — pending batch 3 governance ratification). Shipped as a non-detecting stub at A'.9.1 Phase β-prep per the default.
 
 ---
 
-## §4 — A'.9.1 active rules — first-batch enforcement surface
+## §4 — A'.9.1 first-batch rule registry (17 stubs — detection PENDING Phase β)
 
-**Categories per Q-L-7** (3 active + 1 reserved):
+**Ground truth (v0.2.0, verified on disk 2026-06-11):** all 17 first-batch rules exist as **non-detecting stubs**. Every stub declares its `DiagnosticDescriptor` with `DiagnosticSeverity.Info`; every `Initialize()` calls `ConfigureGeneratedCodeAnalysis` + `EnableConcurrentExecution` and registers **no** analysis actions; **zero diagnostics are emitted by design** (Phase α / Phase β-prep scaffolding). Detection logic lands at A'.9.1 Phase β — see [ROADMAP.md «Analyzer track»](../ROADMAP.md). No rule detects or blocks anything today; nothing in this section is an enforcement claim.
+
+On-disk layout (9 Architecture + 3 Discipline + 5 NativeBoundary):
+
+```
+tools/DualFrontier.Analyzers/Rules/
+├── Architecture/    DFK003StorageOwnershipAnalyzer · DFK003_1StorageBridgeAnalyzer ·
+│                    DFK004TypeIdRegistryAnalyzer · DFK005DeclarativeBootstrapAnalyzer ·
+│                    DFK007SpanProtocolAnalyzer · DFK011NativeWorldSsotAnalyzer ·
+│                    DFK013WakeTypeDisciplineAnalyzer · DFK016PipelineDepthAnalyzer ·
+│                    DFK017DisplayCompositionAnalyzer
+├── Discipline/      DF999GlobalSuppressionBanAnalyzer · DFL025_AReservedStubInvocationAnalyzer ·
+│                    DFL025_BStandaloneSkipAnalyzer
+└── NativeBoundary/  DFK001NativeLanguageAnalyzer · DFK002PInvokeBindingsAnalyzer ·
+                     DFK007_1GpuPipelineSlotAnalyzer · DFK015_1ThreeTierMutexFacadeAnalyzer ·
+                     DFK019_AStaticVulkanApiAnalyzer
+```
+
+**Naming convention** (stated once): descriptor ID strings use **dots** for DFK sub-rules (`DFK003.1`, `DFK007.1`, `DFK015.1`, `DFK019.A`) and **hyphens** for DFL variants (`DFL025-A`, `DFL025-B`); file and class names substitute **underscores** (`DFK003_1StorageBridgeAnalyzer`, `DFL025_AReservedStubInvocationAnalyzer`) — C# identifiers admit neither dots nor hyphens.
+
+**Categories per Q-L-7** (3 in use by shipped stub descriptors + 1 reserved):
 - `DualFrontier.Architecture` — DFK### kernel architectural invariants
 - `DualFrontier.NativeBoundary` — DFK### native interop discipline (P/Invoke surface, GPU pipeline slot)
 - `DualFrontier.Discipline` — DFL### Lesson-derived discipline (NEW category at A'.9.1)
-- `DualFrontier.ModSurface` — RESERVED (no active rules at A'.9.1; activates at К-L20 LOCK cascade per §5)
+- `DualFrontier.ModSurface` — RESERVED (no stub carries it; scheduled for the К-L20 LOCK cascade — see §5 pointer)
 
-### §4.1 — P0 Critical (8 rules — Error severity post-promotion)
+### §4.1 — Registry (single source — 17 rules)
 
-| Rule | К-L | Category | Phase β implementation order |
-|---|---|---|---|
-| DFK001 | К-L1 | NativeBoundary | 1 |
-| DFK002 | К-L2 | NativeBoundary | 2 |
-| DFK003 | К-L3 | Architecture | 3 |
-| DFK003.1 | К-L3.1 | Architecture | 4 |
-| DFK004 | К-L4 | Architecture | 5 |
-| DFK005 | К-L5 | Architecture | 6 |
-| DFK007 | К-L7 | Architecture | 7 |
-| DFK011 | К-L11 | Architecture | 8 |
+| Rule ID | К-L / Lesson anchor | Tier | Category | Shipped severity | Phase-γ target¹ | Status |
+|---|---|---|---|---|---|---|
+| DFK001 | К-L1 | P0 | NativeBoundary | Info | Error | stub |
+| DFK002 | К-L2 | P0 | NativeBoundary | Info | Error | stub |
+| DFK003 | К-L3 | P0 | Architecture | Info | Error | stub |
+| DFK003.1 | К-L3.1 | P0 | Architecture | Info | Error | stub |
+| DFK004 | К-L4 | P0 | Architecture | Info | Error | stub |
+| DFK005 | К-L5 | P0 | Architecture | Info | Error | stub |
+| DFK007 | К-L7 | P0 | Architecture | Info | Error | stub |
+| DFK011 | К-L11 | P0 | Architecture | Info | Error | stub |
+| DFK007.1 | К-L7.1 | P1 | NativeBoundary (GPU pipeline slot) | Info | Error | stub |
+| DFK015.1 | К-L15.1 | P1 | NativeBoundary (three-tier mutex managed facade) | Info | Error | stub |
+| DFK017 | К-L17 | P1 | Architecture (display composition multi-layer) | Info | Error | stub |
+| DFK019.A | К-L19 static API surface | P1 | NativeBoundary | Info | Warning² | stub |
+| DFK013 | К-L13 | β-secondary | Architecture | Info | Warning | stub |
+| DFK016 | К-L16 (retain α — Phase 0 ratified per Q-L-16) | β-secondary | Architecture | Info | Warning | stub |
+| DFL025-A | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Warning | stub |
+| DFL025-B | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Suggestion | stub |
+| DF999 | analyzer self-discipline (Q-L-18 default) | Self-policing | Discipline | Info | Warning | stub |
 
-### §4.2 — P1 High (4 rules — Error severity post-promotion)
+¹ «Phase-γ target» is the severity the rule is **specified to receive at A'.9.1 Phase γ promotion** — it is not the current behavior. Promotion sequencing and the `.editorconfig` mechanics are owned by [ROADMAP.md «Analyzer track»](../ROADMAP.md). Until Phase γ executes, every rule ships `Info` and emits nothing.
 
-| Rule | К-L | Category | Phase β implementation order |
-|---|---|---|---|
-| DFK007.1 | К-L7.1 | NativeBoundary (GPU pipeline slot) | 9 |
-| DFK015.1 | К-L15.1 | NativeBoundary (three-tier mutex managed facade) | 10 |
-| DFK017 | К-L17 | Architecture (display composition multi-layer) | 12 |
-| DFK019.A | К-L19 static API surface | NativeBoundary | 13 |
+² Registry-drift resolution (v0.2.0): v0.1 carried two parallel registries (§4.1–4.5 and §10.1–10.3) whose columns drifted — §4.2 grouped DFK019.A under an «Error severity post-promotion» header while §10.1 listed Warning. Resolved to **Warning** per canonical [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications) DF019 row (Warning, V substrate contract — configurable). v0.2.0 keeps exactly one registry — this table.
 
-**Audit note on P1 count**: Brief §1.2 + amendments log §3.3 specify «P1 (5 rules) per amendments log §3.3» enumerating `[DF007.1, DF010, DF015.1, DF017, DF019]`. Per **Q-L-9 supersession** (Brief A'.9.1 batch 2 deliberation): DFK010 PERMANENTLY DROPPED (methodology-layer outside Roslyn scope; PA-002 axiom anchor) — moved к §7. Effective post-Q-L-9 P1 = **4 rules** (Q-L-9 supersedes the amendments log enumeration). DFK019 split per Q-L-8 — only DFK019.A here; DFK019.B at §6.
+**Intended detection notes** (Phase β targets — none implemented at v0.2.0; canonical narratives: K_CLOSURE_REPORT.md §7.2):
 
-### §4.3 — Phase β secondary (2 rules — Warning severity, retain α per Phase 0)
+- **DFK013** — on-demand activation discipline (efficiency-not-correctness): `SystemBase` subclass без `[WakeOn*]` AND без `[TickRate]`, OR eager-init в `Initialize()`.
+- **DFK016** — pipeline depth D ∈ {1, 2, 3} hardcoded vs `PipelineSlotInterop.DefaultDepth` / `.MaxDepth` constants. Phase 0 ratified retain α (managed surface stable per closure report §3.3).
+- **DFL025-A** — test class invoking `[ReservedStub]`-tagged type MUST carry `[Trait("Category", "ReservedStub")]`; T2 syntax tree + SemanticModel attribute check via fully-qualified name match.
+- **DFL025-B** — standalone test methods против reserved-stub modules SHOULD use `[Fact(Skip="...")]`; edge-case discipline.
+- **DF999** — bans solution-wide `GlobalSuppressions.cs` / `[assembly: SuppressMessage]` (Q-L-18 default, pending batch 3 governance ratification); forces per-site suppression discipline (Q-L-20).
+- **DFL025-C** — closure-protocol shell-level rule (`--filter "Category!=ReservedStub"` в `dotnet test` invocation) — **NOT a Roslyn analyzer**; deferred к governance tooling cascade per amendments §4.5. Listed here as a scope exclusion only.
 
-| Rule | К-L | Category | Severity | Notes |
-|---|---|---|---|---|
-| DFK013 | К-L13 | Architecture | Warning | On-demand activation discipline (efficiency-not-correctness). Detection: SystemBase subclass без [WakeOn*] AND без [TickRate] OR eager-init in Initialize(). |
-| DFK016 | К-L16 | Architecture | Warning | Pipeline depth D ∈ {1, 2, 3} hardcoded vs PipelineSlotInterop.DefaultDepth / .MaxDepth constants. Phase 0 ratified retain α (managed surface stable per closure report §3.3). |
+### §4.2 — Composition + S-LOCK-4 count audit (trimmed)
 
-### §4.4 — Lesson-derived Discipline (2 rules — DFL025 family per amendments §4)
+Composition reconciled to on-disk truth: **8 P0 + 4 P1 + DFK013 + DFK016 (retain α — Phase 0 ratified) + DFL025-A/B + DF999 = 17 stubs.**
 
-| Rule | Lesson | Category | Severity | Notes |
-|---|---|---|---|---|
-| DFL025-A | #25 refined 3rd extension | Discipline | Warning | Test class invoking [ReservedStub]-tagged type MUST carry `[Trait("Category", "ReservedStub")]`. Detection: T2 syntax tree + SemanticModel attribute check via fully-qualified name match. |
-| DFL025-B | #25 refined 3rd extension | Discipline | Suggestion | Standalone test methods против reserved-stub modules SHOULD use `[Fact(Skip="...")]`. Edge case discipline. |
+**S-LOCK-4 count audit (essentials)**: Brief §6.5 narrative stated «Total A'.9.1 enforcement surface: 15-16 own rules» — arithmetic carryover from pre-Q-L-9 / pre-Phase-0 drafting (DFK010 still counted as P1; DFK016 still a Phase-0 conditional). Post-supersession arithmetic = 17, matching the 17 files on disk. Surfaced for forward-cascade audit trail. The v0.1 phrase «enforcement surface» itself was an overclaim — at v0.2.0 the accurate term is **stub surface** (detection PENDING Phase β).
 
-**DFL025-C** — closure-protocol shell-level rule (`--filter "Category!=ReservedStub"` in `dotnet test` invocation) — **NOT a Roslyn analyzer**, defer к governance tooling cascade per amendments §4.5.
+### §4.3 — Infrastructure ground truth
 
-### §4.5 — Self-policing (1 rule per Q-L-18 default)
-
-| Rule | Lesson | Category | Severity | Notes |
-|---|---|---|---|---|
-| DF999 | (analyzer self-discipline) | Discipline | Warning | Bans solution-wide `GlobalSuppressions.cs` / `[assembly: SuppressMessage]` per Q-L-18 default (pending batch 3 governance ratification; ships at A'.9.1 per default). Forces per-site suppression discipline (Q-L-20). |
-
-### §4.6 — Enforcement surface total
-
-**A'.9.1 first-batch active enforcement surface: 17 own rules.**
-
-Composition: 8 P0 + 4 P1 + 2 Phase β secondary (DFK013 + DFK016 retain α) + 2 DFL### Discipline + 1 DF999 self-policing = **17 rules**.
-
-**S-LOCK-4 count audit**: Brief §6.5 §4 narrative text states «Total A'.9.1 enforcement surface: 15-16 own rules» — this appears to be arithmetic carryover from pre-Q-L-9 / pre-Phase-0 drafting (when DFK010 was P1 and DFK016 was «pending Phase 0 empirical decision»). Post-supersession arithmetic:
-- 8 P0 + 5 P1 (pre-Q-L-9) + DFK013 secondary + 2 DFL + 1 DF999 + Phase 0 DFK016 conditional → 16 own rules pre-Phase-0 + 0..1 conditional = «15-16» surface estimate.
-- 8 P0 + 4 P1 (post-Q-L-9) + DFK013 + DFK016 retain α (Phase 0 ratified) + 2 DFL + 1 DF999 = **17 rules**.
-
-Surfaced for forward-cascade audit trail. Phase β stub implementation (Phase α exit gate) will materialize all 17 rules per §10.3 implementation order.
+- **Wiring**: `src/Directory.Build.props` adds `tools/DualFrontier.Analyzers/DualFrontier.Analyzers.csproj` as a `ProjectReference` with `OutputItemType="Analyzer"` to all 12 `src/` projects — the stub assembly loads at every build; loading is not detecting.
+- **Release tracking**: `AnalyzerReleases.Shipped.md` is empty (header only — first release entry lands at A'.9.1 closure); `AnalyzerReleases.Unshipped.md` lists all 17 rules in its New Rules table.
+- **Tests**: `tests/DualFrontier.Analyzers.Tests` contains a single placeholder Fact; per-rule positive/negative suites land at Phase β (see [ROADMAP.md «Analyzer track»](../ROADMAP.md)).
 
 ---
 
-## §5 — К-L20 LOCK cascade deferred (Mod-API-coupled)
+## §5 — К-L20 LOCK cascade deferred family — relocated
 
-Per amendments log §3 (5-rule deferral) + Crystalka direction §1.1 batch 2 (Brief A'.9.1 deliberation 2026-05-24), the following are deferred к К-L20 LOCK cascade — pre-emptive enforcement against moving Mod API target violates PA-002 axiom («без костылей»):
+Planned — see [ROADMAP.md «Analyzer track»](../ROADMAP.md), subsection «К-L20 LOCK cascade rule family».
 
-| Rule | К-L | Deferral rationale |
-|---|---|---|
-| DFK009 | К-L9 Vanilla=mods | IModApi surface volatile pre-К-L20 LOCK; mod parity surface defines what «IModApi» means — undefined pre-LOCK. |
-| DFK012 | К-L12 native scheduler sovereignty | Managed scheduler facade boundary not finalized pre-К-L20 LOCK; facade contract (К-L9 «facade preserves Vanilla = mods») depends on К-L20 LOCK for definition. |
-| DFK015 | К-L15 bus capability declaration | Capability vocabulary (К-L15 tier registration, capability tokens, FQN scoping) ties tightly к К-L20 mod API surface; pre-LOCK не finalized. |
-| DFK018 | К-L18 mod unload quiescence | Lifecycle sequence (PauseAsync → WaitForQuiescenceAsync → operation → ResumeAsync) part of К-L20 Mod API contract; refinement at К-L20 LOCK pending (К10.3 v2 §9.5 8-step → 9-step с V resource cleanup placeholder per K_CLOSURE §2.21). |
-| DFK020 family | К-L20 | 20 candidate sub-rules per recon §6.2: namespace/type restrictions, API usage restrictions, manifest field static cross-check, forward-compatibility grace period semantics. К-L20 canonical text post-LOCK. |
-| DFC001.A | Bridge IRenderCommand marker purity | Bridge surface = Mod API-coupled per Q-L-11. К-L20 LOCK clarifies Bridge contract; pre-LOCK marker enforcement = pre-emptive kostyl. |
-| DFC001.B | Bridge Command record purity | Same rationale as DFC001.A. Record purity (no mutable members) part of К-L20 Mod API immutability contract. |
+> **Relocated 2026-06-11 (Standing-Law cascade spec/roadmap separation).** The deferral
+> table — DFK009 / DFK012 / DFK015 / DFK018 + DFK020 family (~20 sub-rules) + DFC001.A /
+> DFC001.B, with per-rule deferral rationales (PA-002 «без костылей» anchor, Q-L-11) and
+> the activation note — moved to ROADMAP.md. The §1 Q-L references («per §5») resolve
+> through this pointer.
 
-**Activation**: К-L20 LOCK cascade post-A'.9 milestone per K_CLOSURE §9.5 Q1-Q8 deliberation timing. Cascade likely multi-stage decomposition (substantial 5 K-L-specific + 20 DFK020 sub-rules surface per amendments log §3.4).
+**`MOD_API_CONTRACT.md` — not yet authored; lands with the К-L20 LOCK cascade — see [ROADMAP.md «Analyzer track»](../ROADMAP.md).** Pre-v0.2.0 text in this family's orbit (K_CLOSURE-derived «К-L20 Mod API contract» wording) read as if a contract document existed; no such document exists in the repository. Every reference to it is a forward reference until that cascade authors it (per K_CLOSURE §2.23 + §9.5 Q8).
 
 ---
 
-## §6 — Hardware tier expansion cascade deferred
+## §6 — Hardware tier expansion cascade deferred — relocated
 
-Per Q-L-8 split + Crystalka direction §1.6 batch 2 + recon Q-K-4 — multi-hardware-tier audience absent at current cascade. Activation when audience materializes:
-
-| Rule | К-L | Deferral rationale |
-|---|---|---|
-| DFK019.B | К-L19 hardware tier capability runtime check | Requires runtime hardware capability probe (Vulkan extension query, GPU memory tier detection). Multi-tier hardware audience absent — single tier (T1 high-end Vulkan 1.3) is current substrate baseline. Audience-driven deferral per Lesson #N17 Provisional. |
-| DFK016 threshold customization API | К-L16 configurable depth | Optional follow-on if DFK016 retain α surface needs runtime customization API beyond compile-time PipelineSlotInterop constants. Currently NOT activated — Phase 0 retain α is sufficient (compile-time constants stable). |
-
-**Activation**: hardware tier expansion cascade (timing TBD when multi-tier hardware audience materializes — Crystalka direction §1.6 batch 2 «расширять V» post-A'.9 V-extension cascade may surface this).
+Planned — see [ROADMAP.md «Analyzer track»](../ROADMAP.md), subsection «Hardware tier expansion cascade». The deferral table — DFK019.B (hardware tier capability runtime check) + DFK016 threshold customization API, with rationales and the audience-driven activation trigger (Q-L-8 split, Lesson #N17 Provisional) — moved there 2026-06-11.
 
 ---
 
-## §7 — Outside Roslyn scope (alternative enforcement)
+## §7 — Outside Roslyn scope — decision record (realized)
 
-Per K_CLOSURE §7.3 + Brief A'.9.1 Q-L-9 ratification — rules requiring alternative enforcement mechanisms (PA-002 anchor «без костылей» — Roslyn pretending к enforce methodology-layer = kostyl):
+**Framing**: this section is a **closed decision record**, not a forward plan. Per K_CLOSURE §7.3 + Brief A'.9.1 Q-L-9 ratification, the rules below are settled as requiring alternative (non-Roslyn) enforcement mechanisms (PA-002 anchor «без костылей» — Roslyn pretending к enforce methodology-layer = kostyl). No Roslyn implementation is scheduled for any of them at any phase.
 
-| Rule | К-L | Reason outside Roslyn scope | Alternative mechanism |
+| Rule | К-L | Reason outside Roslyn scope | Designated alternative mechanism |
 |---|---|---|---|
 | DFK006 | К-L6 SUPERSEDED | К-L6 displaced by К-L12 native scheduler sovereignty (К10 cascade) — historical traceability only; never activates | Reserved historical entry; no enforcement |
-| DFK008 | К-L8 component lifetime | Process-invariant (storage path discipline); pre-commit hook OR runtime probe more appropriate | Git pre-commit hook (per K_CLOSURE §7.3) |
+| DFK008 | К-L8 component lifetime | Process-invariant (storage path discipline); pre-commit hook OR runtime probe more appropriate | Git pre-commit hook (designated per K_CLOSURE §7.3) |
 | DFK010 | К-L10 decision rule | **PERMANENTLY DROPPED per Q-L-9 + PA-002 axiom**. К-L10 governs decision attribution at document/methodology layer, NOT code layer. Code-layer marker masquerading doc-layer reasoning = kostyl pattern. | FRAMEWORK + METHODOLOGY documentation discipline only |
 | DFK014 | К-L14 meta-invariant | Meta-invariant tracking «defect rate / architectural integrity / pipeline economics» — not pattern detectable in syntax tree | [K_L14_EVIDENCE_DASHBOARD.md](K_L14_EVIDENCE_DASHBOARD.md) cumulative evidence tracking |
 
@@ -215,20 +212,17 @@ Per K_CLOSURE §7.3 + Brief A'.9.1 Q-L-9 ratification — rules requiring altern
 
 ---
 
-## §8 — Audience-driven deferred (community emergence)
+## §8 — Dropped / deferred tooling — decision record (realized)
 
-Per Q-L-13 + Q-L-15 + Q-L-12 — Brief A'.9.1 batch 2 deliberation 2026-05-24. PA-001 axiom anchor: current audience profile = AI agents permanently; community ecosystem absent.
+**Framing**: closed Q-L outcomes (Q-L-12 / Q-L-13 / Q-L-15 — Brief A'.9.1 batch 2 deliberation 2026-05-24) — decision records, not forward work. PA-001 axiom anchor: current audience profile = AI agents permanently; community ecosystem absent.
 
-### §8.1 — PublicApiAnalyzers (RS0016/RS0017/RS0024) — Q-L-13 + PA-001
+### §8.1 — PublicApiAnalyzers (RS0016/RS0017/RS0024) — Q-L-13 + PA-001 — DEFERRED
 
 **Status**: DEFERRED entirely. Not in `Directory.Packages.props`.
 
 **Rationale**: Community ecosystem absent (PA-001 anchor). All candidate assemblies (Contracts/Application/Bridge/Launcher) = Mod API surface volatile pre-К-L20 LOCK OR not mod-facing.
 
-**Activation conditions** (any of):
-- Community emergence (third-party developers consuming public API surface)
-- Public API stability commitment к external consumers
-- Specific cascade brief explicitly requesting PublicApiAnalyzers adoption (would re-trigger Q-L deliberation)
+**Activation conditions**: relocated to [ROADMAP.md «Analyzer track»](../ROADMAP.md), subsection «PublicApiAnalyzers deferral — activation conditions». The deferral decision itself is closed here; only the re-activation trigger list lives on the roadmap.
 
 ### §8.2 — Code-fix providers — Q-L-15 + PA-001 PERMANENT
 
@@ -250,98 +244,70 @@ Per Q-L-13 + Q-L-15 + Q-L-12 — Brief A'.9.1 batch 2 deliberation 2026-05-24. P
 
 ## §9 — Reserved namespaces
 
-- **DFC###** namespace — RESERVED at A'.9.1 (no active rules; activates at К-L20 LOCK cascade per Q-L-11 DFC001 deferral). Forward designation для cascade-specific drift detection rules.
-- **DFL###** namespace — ACTIVE at A'.9.1 (DFL025-A + DFL025-B ship; future DFL### rules added как additional Lessons materialize forward).
-- **DualFrontier.ModSurface** category — RESERVED at A'.9.1 (no active rules; activates at К-L20 LOCK cascade per Q-L-11 + §5 deferral).
+- **DFC###** namespace — RESERVED at A'.9.1 (no DFC### stub exists; scheduled for the К-L20 LOCK cascade per Q-L-11 DFC001 deferral — see §5 pointer). Forward designation для cascade-specific drift detection rules.
+- **DFL###** namespace — in use at A'.9.1 (DFL025-A + DFL025-B shipped as non-detecting stubs; future DFL### rules added как additional Lessons materialize forward).
+- **DualFrontier.ModSurface** category — RESERVED at A'.9.1 (no stub carries it; scheduled for the К-L20 LOCK cascade per Q-L-11 + §5 pointer).
 
 ---
 
-## §10 — Per-rule detail specifications (populated post-Phase-β implementation)
+## §10 — Per-rule detail specifications (populated as Phase β lands)
 
-This section absorbs the prior §3 (Forward implementation plan) + §4 (Initial rule list table) from the AUTHORED-SKELETON v0.1 baseline. Per-rule detailed specifications per §2 template are populated as each rule's Phase β implementation lands.
+Landing zone for per-rule §2-template entries. **Empty at v0.2.0** — all 17 rules are non-detecting stubs, so no per-rule detail exists beyond the §4.1 registry. Entries are added here as each rule's Phase β detection implementation lands.
 
-### §10.1 — Initial rule list (per K_CLOSURE_REPORT.md §7.2)
+**Registry consolidation (v0.2.0)**: the v0.1 §10.1–§10.3 tables restated the §4 registry a second time with an independent Status column («Active (pending A'.9.1 Phase β impl)») that overstated ground truth and drifted from §4 (see §4.1 footnote ²). One registry now exists — §4.1.
 
-| Rule | К-L | Severity | Category | Status |
-|---|---|---|---|---|
-| DFK001 | К-L1 | Error | NativeBoundary | Active (pending A'.9.1 Phase β impl) |
-| DFK002 | К-L2 | Error | NativeBoundary | Active (pending A'.9.1 Phase β impl) |
-| DFK003 | К-L3 | Error | Architecture | Active (pending A'.9.1 Phase β impl) |
-| DFK003.1 | К-L3.1 | Error | Architecture | Active (pending A'.9.1 Phase β impl) |
-| DFK004 | К-L4 | Error | Architecture | Active (pending A'.9.1 Phase β impl) |
-| DFK005 | К-L5 | Error | Architecture | Active (pending A'.9.1 Phase β impl) |
-| DFK007 | К-L7 | Error | Architecture | Active (pending A'.9.1 Phase β impl) |
-| DFK007.1 | К-L7.1 | Error | NativeBoundary | Active (pending A'.9.1 Phase β impl) |
-| DFK011 | К-L11 | Error | Architecture | Active (pending A'.9.1 Phase β impl) |
-| DFK013 | К-L13 | Warning | Architecture | Active (Phase β secondary; efficiency-not-correctness) |
-| **DFK015.1** | **К-L15.1** | **Error** | **NativeBoundary** | **Active (NEW А'.7.x; pending A'.9.1 Phase β impl)** |
-| DFK016 | К-L16 | Warning | Architecture | Active (Phase β secondary; Phase 0 retain α — managed surface stable) |
-| DFK017 | К-L17 | Error | Architecture | Active (pending A'.9.1 Phase β impl) |
-| DFK019.A | К-L19 static API surface | Warning | NativeBoundary | Active (Q-L-8 split — pending A'.9.1 Phase β impl) |
+### §10.4 — Deferred rules summary (cross-reference)
 
-### §10.2 — Lesson-derived (DFL### family)
+Compact cross-reference only — rationales live at the pointed-to locations.
 
-| Rule | Lesson | Severity | Category | Status |
-|---|---|---|---|---|
-| DFL025-A | #25 refined 3rd extension | Warning | Discipline | Active (pending A'.9.1 Phase β impl; requires [ReservedStub] attribute from Commit 6) |
-| DFL025-B | #25 refined 3rd extension | Suggestion | Discipline | Active (pending A'.9.1 Phase β impl) |
-
-### §10.3 — Self-policing
-
-| Rule | Severity | Category | Status |
+| Rule | К-L / scope | Disposition | Where |
 |---|---|---|---|
-| DF999 | Warning | Discipline | Active (Q-L-18 default; pending A'.9.1 Phase β impl) — bans GlobalSuppressions / `[assembly: SuppressMessage]` |
+| DFK006 | К-L6 SUPERSEDED | Never activates (historical traceability) | §7 |
+| DFK008 | К-L8 process invariant | Outside Roslyn scope (pre-commit hook designated) | §7 |
+| DFK009 | К-L9 Vanilla=mods | Deferred к К-L20 LOCK cascade | [ROADMAP.md «Analyzer track»](../ROADMAP.md) |
+| DFK010 | К-L10 decision rule | PERMANENTLY DROPPED (Q-L-9 + PA-002) | §7 |
+| DFK012 | К-L12 native scheduler sovereignty | Deferred к К-L20 LOCK cascade | [ROADMAP.md «Analyzer track»](../ROADMAP.md) |
+| DFK014 | К-L14 meta-invariant | Outside Roslyn scope (evidence dashboard) | §7 |
+| DFK015 | К-L15 bus capability declaration | Deferred к К-L20 LOCK cascade | [ROADMAP.md «Analyzer track»](../ROADMAP.md) |
+| DFK018 | К-L18 mod unload quiescence | Deferred к К-L20 LOCK cascade | [ROADMAP.md «Analyzer track»](../ROADMAP.md) |
+| DFK019.B | К-L19 hardware tier runtime check | Deferred к hardware tier expansion cascade | [ROADMAP.md «Analyzer track»](../ROADMAP.md) |
+| DFK020 family | К-L20 (~20 sub-rules) | Deferred к К-L20 LOCK cascade | [ROADMAP.md «Analyzer track»](../ROADMAP.md) |
+| DFC001.A / DFC001.B | Bridge marker / record purity | Deferred к К-L20 LOCK cascade (Q-L-11) | [ROADMAP.md «Analyzer track»](../ROADMAP.md) |
+| DFL025-C | Lesson #25 shell-level rule | Not a Roslyn analyzer (scope exclusion) | §4.1 notes |
 
-### §10.4 — Deferred rules (К-L20 LOCK cascade or hardware tier expansion or outside Roslyn scope)
+### §10.5 — Forward implementation plan — relocated
 
-| Rule | К-L | Deferral target | Reference |
-|---|---|---|---|
-| DFK006 | К-L6 SUPERSEDED | NEVER activates (historical) | §7 |
-| DFK008 | К-L8 process invariant | Outside Roslyn scope (git pre-commit hook) | §7 |
-| DFK009 | К-L9 Vanilla=mods | К-L20 LOCK cascade | §5 |
-| DFK010 | К-L10 decision rule | PERMANENTLY DROPPED (PA-002) — outside Roslyn scope | §7 |
-| DFK012 | К-L12 native scheduler sovereignty | К-L20 LOCK cascade | §5 |
-| DFK014 | К-L14 meta-invariant | Outside Roslyn scope (K_L14_EVIDENCE_DASHBOARD) | §7 |
-| DFK015 | К-L15 bus capability declaration | К-L20 LOCK cascade | §5 |
-| DFK018 | К-L18 mod unload quiescence | К-L20 LOCK cascade | §5 |
-| DFK019.B | К-L19 hardware tier capability runtime check | Hardware tier expansion cascade | §6 |
-| DFK020 family | К-L20 family | К-L20 LOCK cascade (20 sub-rules per recon §6.2) | §5 |
-| DFC001.A | Bridge IRenderCommand marker purity | К-L20 LOCK cascade (Mod-API-coupled) | §5 |
-| DFC001.B | Bridge Command record purity | К-L20 LOCK cascade (Mod-API-coupled) | §5 |
-
-### §10.5 — Forward implementation plan (A'.9.1 Phase β + γ)
-
-**A'.9.1 Phase β scope** (post-Phase-α stub-analyzer violation count gate per Q-L-1 adaptive):
-- Per-rule analyzer class (one per active DFK### / DFL### / DF999 rule)
-- Test project с positive + negative cases per rule (via `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit`)
-- Suppression governance: per-rule severity baseline at `suggestion` (cleanup phase mode)
-- Cleanup-phase χ violation triage: (a) fix in code, (b) suppress with `// DFK###-SUPPRESS: <citation>`, (c) rule refinement if false-positive
-
-**A'.9.1 Phase γ scope** (severity promotion):
-- Per-rule `.editorconfig` baseline promotion `suggestion` → `error`
-- `dotnet build` exit 0 with all DFK### at `severity = error` — proves К-Lxx compile-time enforcement live
-
-**Cleanup phase discipline**:
-- Per-rule cleanup discipline (one rule's violations resolved at a time per Lesson #8 atomic discipline)
-- Cumulative debt resolution across 17 active rules
-- Codebase audit may surface architectural debt unrelated к rule (handled per Lesson #14 separate cleanup cascade)
+Planned — see [ROADMAP.md «Analyzer track»](../ROADMAP.md) (Phase β detection implementation + tests + violation triage + adaptive gate; Phase γ severity promotion; cleanup-phase discipline). Relocated 2026-06-11. The v0.1 `DFK###-SUPPRESS` comment-marker sketch that lived here is **superseded** by the DFK-WAIVER form — see §12.
 
 ---
 
-## §11 — Lifecycle forward
+## §11 — Lifecycle
 
-**Current**: AUTHORED-SKELETON v0.1 (А'.8 closure 2026-05-23; structural reorganization at A'.9.1 Phase α Commit 5 2026-05-25).
+**Current**: AUTHORED-SKELETON v0.2.0 (А'.8 closure 2026-05-23; A'.9.1 Phase α structural reorganization 2026-05-25; Standing-Law restructure 2026-06-11). 17 rule stubs shipped; zero detection logic; zero diagnostics.
 
-**Forward к LOCKED at A'.9.1 closure**:
-- Per-rule §2 template populated через A'.9.1 Phase β cascade
-- Roslyn analyzer infrastructure shipped (Phase α Commits 1-3 — csproj + tests + CPM)
-- Test coverage per rule (positive + negative cases) at Phase β
-- Phase γ severity promotion executed
-- Cleanup-phase outcomes recorded per CAPA cascade
-- Promotion к Tier 1 LOCKED при completed implementation + first-run cleanup phase
+**Forward**: lifecycle sequencing (Phase β population → Phase γ promotion → Phase δ closure/governance → promotion к Tier 1 LOCKED) relocated — see [ROADMAP.md «Analyzer track»](../ROADMAP.md).
 
 ---
 
-**End of ANALYZER_RULES.md v0.1 AUTHORED-SKELETON (post-A'.9.1 Phase α Commit 5 structural reorganization)**
+## §12 — Suppression (deferred by citation)
 
-**Forward maintenance**: A'.9.1 Phase β cascade implements 17 active rules per §2 template + §10.5 implementation plan. DFK020 family + DFK009/DFK012/DFK015/DFK018 added at К-L20 LOCK cascade. DFK019.B added at hardware tier expansion cascade. PROJECT_AXIOMS.md (NEW A'.9.1) provides PA-001..PA-004 anchor authority. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md; this document encodes К-Lxx invariants as analyzer rule specifications.
+Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned by [CODING_STANDARDS.md §5.3 «DFK-WAIVER — the suppression law»](../methodology/CODING_STANDARDS.md) (authored in the same Standing-Law cascade). ANALYZER_RULES.md does not own marker or suppression law:
+
+- The §2 template's per-rule «Suppression policy» rows **cite** the DFK-WAIVER form; they do not restate syntax.
+- The v0.1 §2 syntax sketch (`#pragma warning disable DFK###` / `[SuppressMessage("DualFrontier.<Category>", "DFK###")]`) and the v0.1 §10.5 `DFK###-SUPPRESS` comment-marker sketch are **superseded** by the DFK-WAIVER form.
+- Baseline at v0.2.0: **zero waivers** in the solution (no DFK/DFL/DF9 suppression markers in any `.cs`).
+
+---
+
+## Change history
+
+| Version | Date | Change |
+|---|---|---|
+| 0.1 | 2026-05-23 / 2026-05-25 | Initial AUTHORED-SKELETON at А'.8 closure (Commit 5 REGISTER enrollment); structural reorganization at A'.9.1 Phase α Commit 5. |
+| 0.2.0 | 2026-06-11 | Structural separation per [DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md §6.3.2](../reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md) + Standing-Law cascade: roadmap load → [ROADMAP.md «Analyzer track»](../ROADMAP.md) (§4.1/§4.2 promotion columns + implementation order, §5 К-L20 family, §6 hardware tier, §10.5 forward plan, §11 forward, frontmatter «Forward sequencing»); §4 stub-truth correction (enforcement-surface overclaim cured — 17 non-detecting Info stubs, zero diagnostics, detection PENDING Phase β); single registry (v0.1 §10.1–10.3 duplicates collapsed; DFK019.A target resolved к Warning per K_CLOSURE §7.2); §7/§8 reframed as realized decision records; `MOD_API_CONTRACT.md` phantom reference resolved to explicit forward-reference; suppression law deferred к CODING_STANDARDS.md §5.3 «DFK-WAIVER» (§12 NEW). |
+
+---
+
+**End of ANALYZER_RULES.md v0.2.0 AUTHORED-SKELETON (Standing-Law cascade restructure 2026-06-11)**
+
+**Maintenance**: §4.1 is the single rule registry; §10 receives per-rule detail as Phase β lands; all sequencing and futures live in [ROADMAP.md «Analyzer track»](../ROADMAP.md). К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; canonical detection narratives в K_CLOSURE_REPORT.md §7; PA-001..PA-004 anchors в PROJECT_AXIOMS.md.

@@ -825,6 +825,85 @@ Original "post-launch" framing is preserved as the outer envelope, but K/V track
 
 ---
 
+## ⏭ Analyzer track (A'.9.1 Phase β/γ/δ + deferred rule families)
+
+> **Relocated here 2026-06-11 (Standing-Law cascade spec/roadmap separation).** The
+> analyzer forward-sequencing load was moved from [ANALYZER_RULES](/docs/architecture/ANALYZER_RULES.md)
+> v0.1 — the §4.1/§4.2 severity-promotion columns + implementation order, §5 (К-L20 LOCK
+> cascade deferral family), §6 (hardware tier expansion), §10.5 (forward implementation
+> plan), §11 (lifecycle forward), and the frontmatter «Forward sequencing» line — so that
+> document is now pure rule specification (registry, namespaces, templates, realized
+> decision records). ANALYZER_RULES.md stays the rule-spec authority; **this section owns
+> analyzer sequencing and futures.**
+
+**Ground state (2026-06-11):** A'.9.1 Phase α + Phase β-prep shipped **17 rule stubs** at `tools/DualFrontier.Analyzers/Rules/{Architecture,Discipline,NativeBoundary}/` — every descriptor `DiagnosticSeverity.Info`, every `Initialize()` registers no analysis actions, zero diagnostics by design. The analyzer is wired into all 12 `src/` projects via `src/Directory.Build.props` (`ProjectReference` with `OutputItemType="Analyzer"`). Registry + stub anatomy: [ANALYZER_RULES](/docs/architecture/ANALYZER_RULES.md) §4. Everything below is scheduled, not shipped.
+
+### A'.9.1 Phase β — detection implementation
+
+Populates detection logic into the 17 stubs (canonical per-rule narratives: [K_CLOSURE_REPORT](/docs/architecture/K_CLOSURE_REPORT.md) §7.2):
+
+- **Rule set by category** — Architecture (9): DFK003, DFK003.1, DFK004, DFK005, DFK007, DFK011, DFK013, DFK016, DFK017. NativeBoundary (5): DFK001, DFK002, DFK007.1, DFK015.1, DFK019.A. Discipline (3): DFL025-A, DFL025-B, DF999.
+- **Implementation order** (relocated v0.1 §4.1/§4.2 column): P0 first — 1 DFK001, 2 DFK002, 3 DFK003, 4 DFK003.1, 5 DFK004, 6 DFK005, 7 DFK007, 8 DFK011; then P1 — 9 DFK007.1, 10 DFK015.1, 12 DFK017, 13 DFK019.A (slot 11 vacated by the Q-L-9 DFK010 drop; v0.1 numbering preserved verbatim); β-secondary (DFK013, DFK016) + Discipline (DFL025-A/B) + self-policing (DF999) follow without pinned integers.
+- **Per-rule tests**: positive + negative cases via `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` into `tests/DualFrontier.Analyzers.Tests` (currently a single placeholder Fact).
+- **Working severity baseline**: per-rule `.editorconfig` baseline at `suggestion` for the cleanup phase (triage mode), ahead of Phase γ promotion.
+- **Violation triage** (cleanup phase): (a) fix in code; (b) suppress per the DFK-WAIVER form — [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) §5.3 (supersedes the v0.1 `DFK###-SUPPRESS` sketch); (c) rule refinement on false positive.
+- **Adaptive gate per Q-L-1**: total first-run violation count ≤ 80 → continue in a single cascade; > 150 → split into sub-cascades; 81–150 → Crystalka decision.
+- **Cleanup discipline** (relocated v0.1 §10.5): one rule's violations resolved at a time (Lesson #8 atomic discipline); cumulative debt resolution across all 17 rules; architectural debt unrelated к a rule handled per Lesson #14 as a separate cleanup cascade.
+
+### A'.9.1 Phase γ — severity promotion
+
+- Per-rule severity lines land in `.editorconfig` — the repo file is currently charset-only (`root = true` + `[*] charset = utf-8`); the per-rule severity surface does not exist yet.
+- **Promotion map** (relocated v0.1 §4.1/§4.2 «post-promotion» columns, reconciled к canonical K_CLOSURE §7.2): `suggestion` → `error` for the correctness rules — P0 (DFK001, DFK002, DFK003, DFK003.1, DFK004, DFK005, DFK007, DFK011) + P1 (DFK007.1, DFK015.1, DFK017). DFK019.A → `warning` (K_CLOSURE §7.2 DF019 row; v0.1 §4.2 grouped it under Error by carryover — resolved at ANALYZER_RULES v0.2.0). DFK013 / DFK016 → `warning` per К-L13/К-L16 efficiency-class (efficiency-not-correctness). DFL025-A → `warning`; DFL025-B → `suggestion`; DF999 → `warning`.
+- **Exit gate**: `dotnet build` exit 0 with every correctness DFK### at `severity = error` — the moment К-Lxx compile-time enforcement goes live (until then, no «enforced» claim is true anywhere in the doc set).
+- `AnalyzerReleases.Shipped.md` receives its first release entry at A'.9.1 closure (currently header-only; `AnalyzerReleases.Unshipped.md` carries all 17).
+
+### A'.9.1 Phase δ — closure + governance
+
+- K_EXTENSIONS_LEDGER §3.6 cascade #5 entry (realization + Phase β/γ outcomes).
+- K_L14_EVIDENCE_DASHBOARD verification #14 (A'.9.1) recorded.
+- KERNEL_ARCHITECTURE chronicle entry.
+- METHODOLOGY Lessons: #N17 / #N18 FORMALIZE-candidacy evaluation timing-locked to this phase.
+- REGISTER governance cascade (enrollment/version sync); ANALYZER_RULES.md lifecycle promotion AUTHORED-SKELETON → Tier 1 LOCKED gated on completed implementation + first-run cleanup phase (relocated v0.1 §11 criteria: per-rule §2 templates populated, per-rule test coverage, Phase γ promotion executed, cleanup outcomes recorded per CAPA cascade).
+
+### К-L20 LOCK cascade rule family (deferred — post-A'.9 milestone)
+
+Relocated v0.1 §5. Per amendments log §3 (5-rule deferral) + Crystalka direction §1.1 batch 2 (Brief A'.9.1 deliberation 2026-05-24) + Q-L-11: pre-emptive enforcement against a moving Mod API target violates PA-002 («без костылей»).
+
+| Rule | К-L | Deferral rationale |
+|---|---|---|
+| DFK009 | К-L9 Vanilla=mods | IModApi surface volatile pre-К-L20 LOCK; mod parity surface defines what «IModApi» means — undefined pre-LOCK. |
+| DFK012 | К-L12 native scheduler sovereignty | Managed scheduler facade boundary not finalized pre-К-L20 LOCK; facade contract (К-L9 «facade preserves Vanilla = mods») depends on К-L20 LOCK for definition. |
+| DFK015 | К-L15 bus capability declaration | Capability vocabulary (К-L15 tier registration, capability tokens, FQN scoping) ties tightly к К-L20 mod API surface; pre-LOCK не finalized. |
+| DFK018 | К-L18 mod unload quiescence | Lifecycle sequence (PauseAsync → WaitForQuiescenceAsync → operation → ResumeAsync) part of the К-L20 Mod API contract surface; refinement at К-L20 LOCK pending (К10.3 v2 §9.5 8-step → 9-step с V resource cleanup placeholder per K_CLOSURE §2.21). |
+| DFK020 family | К-L20 | 20 candidate sub-rules per recon §6.2: namespace/type restrictions, API usage restrictions, manifest field static cross-check, forward-compatibility grace period semantics. К-L20 canonical text post-LOCK. |
+| DFC001.A | Bridge IRenderCommand marker purity | Bridge surface = Mod API-coupled per Q-L-11. К-L20 LOCK clarifies Bridge contract; pre-LOCK marker enforcement = pre-emptive kostyl. |
+| DFC001.B | Bridge Command record purity | Same rationale as DFC001.A. Record purity (no mutable members) part of К-L20 Mod API immutability contract surface. |
+
+**Activation**: К-L20 LOCK cascade post-A'.9 milestone per K_CLOSURE §9.5 Q1–Q8 deliberation timing. Cascade likely multi-stage decomposition (5 К-L-specific rules + ~20 DFK020 sub-rules per amendments log §3.4 / recon §6.2). The reserved `DFC###` namespace and the reserved `DualFrontier.ModSurface` category ([ANALYZER_RULES](/docs/architecture/ANALYZER_RULES.md) §9) activate here.
+
+**`MOD_API_CONTRACT.md`** — authored **within this cascade** (Tier 1 LOCKED per K_CLOSURE §2.23 + §9.5 Q8); the document does not exist yet. References to it anywhere in the doc set are forward references until then.
+
+### Hardware tier expansion cascade (deferred — audience-driven)
+
+Relocated v0.1 §6. Per Q-L-8 split + Crystalka direction §1.6 batch 2 + recon Q-K-4 — multi-hardware-tier audience absent at current cascade; audience-driven deferral per Lesson #N17 Provisional.
+
+| Rule | К-L | Deferral rationale |
+|---|---|---|
+| DFK019.B | К-L19 hardware tier capability runtime check | Requires runtime hardware capability probe (Vulkan extension query, GPU memory tier detection). Multi-tier hardware audience absent — single tier (T1 high-end Vulkan 1.3) is current substrate baseline. |
+| DFK016 threshold customization API | К-L16 configurable depth | Optional follow-on if the DFK016 retain-α surface needs a runtime customization API beyond compile-time `PipelineSlotInterop` constants. Not activated — Phase 0 retain α is sufficient (compile-time constants stable). |
+
+**Activation**: when a multi-tier hardware audience materializes (Crystalka direction §1.6 batch 2 «расширять V» — a post-A'.9 V-extension cascade may surface this).
+
+### PublicApiAnalyzers deferral — activation conditions (Q-L-13)
+
+The deferral decision record (Q-L-13 + PA-001 rationale) stays in [ANALYZER_RULES](/docs/architecture/ANALYZER_RULES.md) §8.1; the re-activation triggers live here (any of):
+
+- Community emergence (third-party developers consuming the public API surface).
+- A public-API stability commitment к external consumers.
+- A specific cascade brief explicitly requesting PublicApiAnalyzers adoption (re-triggers Q-L deliberation).
+
+---
+
 ## Beyond ship
 
 After Phase 7 closure — game shipped, baseline performance measured, full vanilla mod set live — development continues in the form of post-release updates. These updates are **not** part of the M0–M10 milestone sequence and do not have a formal plan inside this roadmap. The active scope through Phase 7 is the Mod-OS Migration plus dynamic map expansion (tracked in [Backlog](#backlog)); everything else is deferred.
