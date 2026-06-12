@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1.1"
+version: "1.1.2"
 next_review_due: 2027-05-25
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FRAMEWORK
 ---
@@ -19,6 +19,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FRAMEWORK
 *Version: 1.1 (2026-05-17). Schema extension AUTHORED-SKELETON lifecycle added per К10 forward planning skeleton framework. §3.3 eight → nine lifecycle values; §3.3.1 transition matrix extended с four new transitions; §3.4 allowed-combinations matrix updated Category D row; §3.4.1 forbidden combinations extended. Schema version stays 1.0 (minor change, no breaking enum removal); tooling forward-compatible.*
 
 *Version: 1.1.1 (2026-05-25). Patch bump — §13 «See also» cross-reference к [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) added (Axiom Option (VII) completion per A'.9.1 / К-extensions cascade #5 Phase α Commit 9; PROJECT_AXIOMS.md v1.0 LOCKED at Phase α Commit 8). No schema change.*
+
+*Version: 1.1.2 (2026-06-12). Patch bump — §8.1 meta-entry count corrected Four → Five (DOC-A-PROJECT_AXIOMS, meta_role register_framing, enrolled A'.9.1) per Architecture Truth Cascade. No schema change.*
 
 *Authored under agent-as-primary-reader assumption per Q-A07-6 lock 2026-05-10 (codified at [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) §1 as PA-001). Provenance for source-standard borrowings documented in [SYNTHESIS_RATIONALE.md](./SYNTHESIS_RATIONALE.md); foundational framing axioms (PA-001..PA-004) codified at [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md).*
 
@@ -595,15 +597,16 @@ Example: schema_version stays "1.0" for many closures while register_version bum
 
 REGISTER.yaml describes documents. REGISTER.yaml is a document. Therefore REGISTER.yaml describes itself.
 
-### 8.1 Four meta-entries
+### 8.1 Five meta-entries
 
-At A'.4.5 closure, four meta-entries flagged with `is_meta_entry: true`:
+Five meta-entries are flagged with `is_meta_entry: true` (four at A'.4.5 closure; DOC-A-PROJECT_AXIOMS added at A'.9.1 Phase α per Axiom Option (VII)):
 
 | ID | Path | Category | Tier | Lifecycle | meta_role |
 |---|---|---|---|---|---|
 | DOC-G-REGISTER | docs/governance/REGISTER.yaml | G | 2 | Live | register_source_of_truth |
 | DOC-A-FRAMEWORK | docs/governance/FRAMEWORK.md | A | 1 | LOCKED | register_specification |
 | DOC-A-SYNTHESIS_RATIONALE | docs/governance/SYNTHESIS_RATIONALE.md | A | 1 | LOCKED | register_provenance |
+| DOC-A-PROJECT_AXIOMS | docs/governance/PROJECT_AXIOMS.md | A | 1 | LOCKED | register_framing |
 | DOC-G-REGISTER_RENDER | docs/governance/REGISTER_RENDER.md | G | 2 | Live | register_rendered_derivative |
 
 VALIDATION_REPORT.md and BYPASS_LOG.md are operational artifacts (regular Tier 2), not meta-entries.
@@ -714,6 +717,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 |---|---|---|---|
 | 1.0 | 2026-05-12 | A'.4.5 | Initial framework lock from A'.4.5 deliberation closure |
 | 1.1 | 2026-05-17 | Brief skeleton framework | AUTHORED-SKELETON lifecycle value added per К10 forward planning skeleton framework — §3.3 8→9 states, §3.3.1 transition matrix extended с 4 new transitions, §3.4 Category D row updated, §3.4.1 forbidden combinations extended с 4 entries. Schema version 1.0 preserved (minor extension, no breaking enum removal). |
+| 1.1.2 | 2026-06-12 | Architecture Truth Cascade | §8.1 «Four meta-entries» → «Five» — DOC-A-PROJECT_AXIOMS (meta_role register_framing) enrolled as 5th meta-entry at A'.9.1; §8.1 sentence + table updated to match REGISTER.yaml (`is_meta_entry: true` count = 5). PATCH, no schema change. (Note: the v1.1.1 row was recorded only in the header version block, not here.) |
 
 ---
 
