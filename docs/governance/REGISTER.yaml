@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.17"
 last_modified: "2026-06-12"
-last_modified_commit: "PENDING-COMMIT-ARCH_TRUTH-CLOSURE"
+last_modified_commit: "bc3a87a"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
