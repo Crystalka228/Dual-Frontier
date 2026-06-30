@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.17"
-last_modified: "2026-06-12"
-last_modified_commit: "bc3a87a"
+register_version: "2.18"
+last_modified: "2026-06-29"
+last_modified_commit: "PENDING-COMMIT-GODOT-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -488,9 +488,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.0.0"
-    last_modified: "2026-06-11"
-    last_modified_commit: "9da4760"
+    version: "2.0.1"
+    last_modified: "2026-06-29"
+    last_modified_commit: "27807f7"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -718,8 +718,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-06-12"
-    last_modified_commit: "70469c6"
+    last_modified: "2026-06-29"
+    last_modified_commit: "7a7f26e"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-06-11"
@@ -2254,11 +2254,11 @@ documents:
     title: "GODOT ERADICATION CASCADE — Execution Brief (dead Godot host/comment cleanup + living-doc de-Godot + inert file-artifact deletion: project.godot + icon.svg + icon.svg.import + 11 .import + 204 .cs.uid + .gitignore/SCOPE_EXCLUSIONS Godot blocks; F-5 closure)"
     category: D
     tier: 4
-    lifecycle: Draft
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-06-29"
-    last_modified_commit: "PENDING-COMMIT-GODOT-ENROLL"
+    last_modified_commit: "077a8c8"
     content_language: en
     review_cadence: on-cascade-execution
     last_review_date: "2026-06-29"
@@ -2273,11 +2273,11 @@ documents:
     title: "GODOT ERADICATION BRIEF — PATCH 1 (folds the pre-ratification pressure-test's 8 findings: F-1 .uid-class blocker + F-2..F-8)"
     category: D
     tier: 4
-    lifecycle: Draft
+    lifecycle: EXECUTED
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-06-29"
-    last_modified_commit: "PENDING-COMMIT-GODOT-ENROLL"
+    last_modified_commit: "077a8c8"
     content_language: en
     review_cadence: on-cascade-execution
     last_review_date: "2026-06-29"
@@ -4429,8 +4429,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "8ee27fe"
+    last_modified: "2026-06-29"
+    last_modified_commit: "192a4e3"
     content_language: en
     review_cadence: on-source-commit+quarterly
     reviewer: Crystalka
@@ -10224,3 +10224,74 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF → EXECUTED, DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT → EXECUTED]
+
+  - id: EVT-2026-06-29-GODOT_ERADICATION-CLOSURE
+    timestamp: "2026-06-29T00:00:00Z"
+    event_type: execution_milestone
+    cascade: Godot Eradication Cascade (residual Godot tails → eradicated; F-5 closed)
+    phase: cascade closure (C7 of C1-C8)
+    title: "Godot Eradication REGISTER closure — 7 dead-comment sites + living-doc de-Godot (assets README + ROADMAP) + inert file-artifact deletion (project.godot + icon.svg/.import + 11 .import + 204 .cs.uid + .gitignore/SCOPE_EXCLUSIONS Godot blocks) + DEVELOPMENT_HYGIENE §7 flip + F-5 closure + F-26 seed (2.17 → 2.18)"
+    summary: |
+      Eradicates the Godot tails left after К-extensions cascade #2 deprecated the
+      engine, per tools/briefs/GODOT_ERADICATION_BRIEF.md (authored 2026-06-29 by
+      Claude Opus from GODOT ERADICATION RECON R1-R8, supplied in-session) and its
+      PATCH 1 (folding a pre-ratification pressure-test's 8 findings — F-1 the blocker:
+      204 untracked .cs.uid Godot sidecars the recon's extension-list sweep missed).
+      Ratified by Crystalka 2026-06-29 (F-5 deletion authorization + PATCH; F-1 default
+      DELETE); executed 2026-06-29 by Claude Opus, local Skarlet session. Topology:
+      Phase 0 (base 187c46c verified, H1 clean; baseline managed+native build 0W/0E +
+      fast test suites green; REGISTER vocabulary read per Lesson #N14; validate exit 0
+      folded into C1) → serial single-hand execution (light cascade, no parallel writer
+      wave — small sequential surface, the deletion class wants one careful hand).
+      Commits: C1 077a8c8 (brief + PATCH 1 enrolled Draft + validation checkpoint);
+      C2 0d701cd (7 dead-comment sites GameContext.cs:8/:16 +
+      GameBootstrapIntegrationTests.cs:23/:34/:146/:288 + ModMenuControllerTests.cs:33
+      → live truth: Launcher Program / the real InternalsVisibleTo set /
+      RenderCommandDispatcher.HandleTickAdvanced; build 0W/0E, marker census unmoved);
+      C3 192a4e3 (de-Godot living docs — assets/scenes README engine-neutral + no
+      invented tool; ROADMAP:98 Launcher/Vulkan UI + :166 historicized sparing the live
+      IRenderer/ISceneLoader/IInputSource seams; PIPELINE_METRICS + MAX_ENG:153 LEAVE
+      per the §3 LOCKED-doc determination); C4 be7d4c2 (delete the inert Godot file
+      surface — 3 git rm + 11 .import via assets/**/*.import + 204 .cs.uid + the
+      .gitignore Godot block + .godot/**/.gdignore SCOPE_EXCLUSIONS; INERTNESS PROOF
+      build 0W/0E); C5 27807f7 (DEVELOPMENT_HYGIENE 2.0.0 → 2.0.1, §7 flipped to
+      fully-eradicated + §1 project.godot repo-map line retired, F-4); C6 7a7f26e
+      (F-5 S3 OPEN → CLOSED + scope-closure + F-26 seed with the Lesson #N20 candidate).
+    governance_impact: |
+      DOC-D-GODOT_ERADICATION_BRIEF + DOC-D-GODOT_ERADICATION_BRIEF_PATCH enrolled
+        EXECUTED (Category D Tier 4 per the empirical execution-brief convention,
+        special_case_rationale present; real C1 hash 077a8c8). The patch is a
+        first-class delta artifact (DOC-D-K9_BRIEF_REFRESH_PATCH precedent).
+      Documents 273 → 275 (+2: brief + patch); audit_trail 40 → 41. No registered doc
+        deleted — the deleted FILES carry no register_id (H6 holds; verified).
+      Version bumps: DOC-B-DEVELOPMENT_HYGIENE 2.0.0 → 2.0.1 (PATCH — §7 Godot-status
+        flip + §1 census-line scrub). last_modified touch (no semver): DOC-C-ROADMAP
+        (Live; :98/:166 de-Godot + F-ledger), DOC-F-ASSETS-SCENES (Live; README
+        de-Godot — last_modified touch NOT a PATCH per F-7, version stays "Live").
+      Lifecycle: DOC-D-GODOT_ERADICATION_BRIEF Draft → EXECUTED;
+        DOC-D-GODOT_ERADICATION_BRIEF_PATCH Draft → EXECUTED.
+      Determinations: PIPELINE_METRICS.md + MAXIMUM_ENGINEERING_REFACTOR.md:153 (both
+        tier-1 LOCKED) Godot refs are HISTORICAL era-record — LEAVE (H5 inverse-error
+        avoidance), confirmed against the live charters. F-6 HISTORICAL-KEEP set named:
+        DOC-E-M75B2_GODOT_UI_SCENE + DOC-E-UI_REVIEW_PRE_M75B2 are EXECUTED prompt /
+        review records of work-done-then-retired (NOT deletion targets); the tracked
+        docs/prompts/M75B2_GODOT_UI_SCENE.md is a historical prompt snapshot — KEEP.
+      register_version 2.17 → 2.18; header last_modified_commit set to the single
+        sanctioned PENDING-COMMIT-GODOT-CLOSURE self-reference, backfilled with C7's
+        real hash at C8 (Option B). C1-C6 hashes recorded REAL; the 2 brief/patch
+        enrollment placeholders overwritten with the real
+        C1 hash 077a8c8 at this closure — zero other placeholders created.
+      Findings ledger at closure: F-5 CLOSED (S3); F-26 seeded CLOSED (S2; recon
+        extension-list gap missed the .uid class — Lesson #N20 candidate). F-10 pair
+        re-verified pre-existing (closure gates table).
+      Census: src \bgodot\b = 9 HISTORICAL (unchanged — the reserved seams); native
+        \bgodot\b = 0; using Godot / Godot. qualifiers = 0; tracked Godot file artifacts
+        = 0; .uid = 0; .import = 0. SOFT marker pins unmoved (stub 51/20, deferred 82/51,
+        TODO 136/53, Phase 6 23/11, not yet 8/7 — no census-delta).
+      К-L impact: zero. Production code untouched (C2 comment-only; C4 deletes only
+        inert Godot artifacts — build green throughout).
+      Zero pushes performed (pushes are Crystalka's act per the closure checklist).
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-D-GODOT_ERADICATION_BRIEF → EXECUTED, DOC-D-GODOT_ERADICATION_BRIEF_PATCH → EXECUTED]
