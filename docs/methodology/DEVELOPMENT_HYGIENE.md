@@ -6,7 +6,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.0.0"
+version: "2.0.1"
 next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-DEVELOPMENT_HYGIENE
 ---
@@ -56,7 +56,6 @@ tools/
 DualFrontier.sln              the managed solution (§2)
 Directory.Build.props         root MSBuild props (TreatWarningsAsErrors=true; CompileShaders target)
 Directory.Packages.props      Central Package Management (single version source, A'.9.1 Phase α Commit 3)
-project.godot                 tracked legacy file — Crystalka-owned, do not delete (§7)
 ```
 
 ## §2 — Project set truth (sln vs disk)
@@ -202,12 +201,12 @@ powershell -NoProfile -File tools\governance\sync_register.ps1 -Validate
 
 ## §7 — Godot status
 
-Godot is **fully deprecated** — physically purged at К-extensions cascade #2 (2026-05-23). Current state, verified against disk:
+Godot is **fully eradicated** — deprecated and physically purged at К-extensions cascade #2 (2026-05-23), with the residual inert file surface deleted at the Godot Eradication Cascade (2026-06-29; F-5 authorized + closed). Current state, verified against disk:
 
 - **Zero Godot package or SDK references** in any `.csproj` or `Directory.Build.props` (repo-wide grep clean).
-- Remaining `Godot` mentions in `src/**/*.cs` are **retirement-notice / historical-context comments only** (e.g., the deprecation note in `src/DualFrontier.Application/Bridge/PresentationBridge.cs`) — no code references.
+- Remaining `Godot` mentions in `src/**/*.cs` are the **9 retirement-notice / historical-context comments only** on the reserved seams (e.g., the deprecation note in `src/DualFrontier.Application/Bridge/PresentationBridge.cs`) — no code references.
 - Historical Godot documentation is quarantined under `docs/architecture/historical/`.
-- **`project.godot` REMAINS TRACKED at the repo root.** Its fate is a **Crystalka-owned decision** recorded as Findings-ledger entry F-5 (see `docs/ROADMAP.md` §Findings ledger). **Do not delete it** in any cascade until that entry closes.
+- **The Godot file surface is gone.** `project.godot`, `icon.svg` / `icon.svg.import`, the 11 `assets/**/*.import` image sidecars, and the 204 `.cs.uid` resource-UID sidecars were deleted (the build stayed green, proving inertness); the Godot-specific `.gitignore` block and the `.godot/**` / `.gdignore` SCOPE_EXCLUSIONS entries were removed with them.
 
 Rendering today is the in-house Vulkan substrate (`VULKAN_SUBSTRATE.md`) consumed by `DualFrontier.Launcher`; there is no engine dependency.
 
@@ -225,6 +224,7 @@ Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_A
 
 ## Change history
 
+- **v2.0.1 (2026-06-29)** — Godot Eradication Cascade (F-5 closed). §7 flipped from "tails remain, gated by F-5" to "fully eradicated": `project.godot`, `icon.svg` / `icon.svg.import`, the 11 `assets/**/*.import` + 204 `.cs.uid` sidecars deleted (build stayed green — inertness proven); the Godot-specific `.gitignore` block + `.godot/**` / `.gdignore` SCOPE_EXCLUSIONS exclusions removed. §1 repo-map `project.godot` line retired (the file is gone). PATCH per §8 (corrections within sections).
 - **v2.0.0 (2026-06-11)** — Full rewrite to post-Godot operational truth per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` §7-W3 (Standing-Law Cascade).
   v1.0's Godot-era engine/game project table, phantom `tools/build-all.sh|.ps1` wrappers, and `DualFrontier.Presentation` projects (none of which exist on disk) purged.
   Replaced with the verified sln/disk project census (§2), verified build invocations (§3), governance-script side-effect law (§4), branch/push policy with census (§5), environment notes (§6), and Godot end-state (§7).
