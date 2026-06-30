@@ -30,7 +30,7 @@ namespace DualFrontier.Modding.Tests.Menu;
 ///   <item>Commit — no-op success, add-only, remove-only,
 ///   add-and-remove, AD #4 failure-stays-paused, retry recovery.</item>
 /// </list>
-/// Out of scope (M7.5.B / M8 / future): Godot UI scene tests, real
+/// Out of scope (M7.5.B / M8 / future): Launcher UI smoke tests, real
 /// disk discovery against vanilla mod paths, save-game policy.
 /// </summary>
 public sealed class ModMenuControllerTests

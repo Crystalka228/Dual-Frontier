@@ -19,8 +19,8 @@ namespace DualFrontier.Modding.Tests.Bootstrap;
 /// <see cref="GameBootstrap.CreateLoop"/>. The harness is
 /// <c>CreateLoop</c> itself: production wiring is the unit under test,
 /// no separate harness is needed. Tests construct the full simulation
-/// graph + modding stack via the same code path
-/// <see cref="DualFrontier.Presentation.Nodes.GameRoot"/> consumes in
+/// graph + modding stack via the same <see cref="GameBootstrap.CreateLoop"/>
+/// code path the DualFrontier.Launcher Program consumes in
 /// production, then assert the returned <see cref="GameContext"/> shape
 /// and the controller's behavior under representative <c>modsRoot</c>
 /// inputs (default literal "mods", empty temp dir, non-existent path,
@@ -31,7 +31,7 @@ namespace DualFrontier.Modding.Tests.Bootstrap;
 /// scope here is "the production constructor chain produces a working
 /// controller wired to the same scheduler/services/pipeline state."
 ///
-/// Out of scope (M7.5.B.2): Godot UI scene smoke tests, manual click-
+/// Out of scope (M7.5.B.2): Launcher UI smoke tests, manual click-
 /// through of the menu → controller → pipeline → scheduler path, real
 /// end-to-end mod toggling through <c>mods/DualFrontier.Mod.Example/</c>.
 /// </summary>
@@ -142,8 +142,8 @@ public sealed class GameBootstrapIntegrationTests
     public void CreateLoop_DefaultModsRoot_IsLiteralStringMods()
     {
         // AD #3 lock — the default modsRoot must be the literal
-        // string "mods" (not "./mods", not absolute). Production
-        // Godot launches with cwd = project root, so this resolves
+        // string "mods" (not "./mods", not absolute). The Launcher
+        // process launches with cwd = project root, so this resolves
         // to <project>/mods/. Reflection on the parameter's
         // DefaultValue keeps an accidental refactor (e.g. someone
         // changing the default to an absolute path during a quick
@@ -285,7 +285,7 @@ public sealed class GameBootstrapIntegrationTests
     {
         // TICK display housekeeping — locks the production publishing
         // path GameLoop → PresentationBridge → (RenderCommandDispatcher
-        // → GameHUD.SetTick on the Godot main thread). Construct the
+        // → HandleTickAdvanced on the main render thread). Construct the
         // production context, run the loop briefly, then drain the
         // bridge and assert at least two TickAdvancedCommand publishes
         // observed with strictly monotonic Tick values. The window is
