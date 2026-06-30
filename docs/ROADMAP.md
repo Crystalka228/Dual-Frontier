@@ -95,7 +95,7 @@ Phase 3.5 / Phase 4 / Phase 5 carry-forward items surfaced during housekeeping p
 
 - **Combat command dispatch (re-create).** `ProjectileSpawnedCommand` and `SpellCastCommand` were deleted as dead code in housekeeping `9141bd6` (no dispatcher case, no event subscriber). They will be re-created with real fire-and-forget rendering when the projectile / spell systems land. **Addressed by:** Phase 5 / M9 (combat) and Phase 5 / M10.B (magic).
 
-- **Stub UI re-creation.** `BuildMenu`, `AlertPanel`, `ManaBar`, `PawnInspector`, and `ProjectileVisual` were deleted as dead code in housekeeping `9141bd6`. Phase 5 introduces them as real `Godot.Control` / `Godot.Node2D` subclasses with real data sources when the corresponding gameplay systems land (placement mode, alert/notification system, magic system, expanded pawn inspector). **Addressed by:** Phase 5.
+- **Stub UI re-creation.** `BuildMenu`, `AlertPanel`, `ManaBar`, `PawnInspector`, and `ProjectileVisual` were deleted as dead code in housekeeping `9141bd6`. Phase 5 introduces them as real Launcher UI elements (Vulkan-backed presentation layer) with real data sources when the corresponding gameplay systems land (placement mode, alert/notification system, magic system, expanded pawn inspector). **Addressed by:** Phase 5.
 
 - **`UIUpdateCommand` (re-create).** Generic notification surface; deleted in housekeeping `9141bd6` because no event subscriber published it. Reintroduce when the alert/notification system lands. **Addressed by:** Phase 5.
 
@@ -163,7 +163,7 @@ Tests: 1/1 (high-level integration); the system-level coverage moves to M9/M10 w
 
 ### ✅ Phase 3.5 — Godot DevKit (closed)
 
-Result: Godot works as both editor and temporary runtime. `DfDevKitPlugin`, `SceneExporter`, `EntityExporter` enable scene authoring and `.dfscene` export. `IRenderer`, `ISceneLoader`, `IInputSource` contracts exist with both Godot and Native backends. F5 in Godot starts the game with the loaded scene.
+Result: Phase 3.5 used Godot as both editor and temporary runtime — `DfDevKitPlugin`, `SceneExporter`, `EntityExporter` enabled scene authoring and `.dfscene` export, and F5 in Godot started the game with the loaded scene. The `IRenderer` / `ISceneLoader` / `IInputSource` contracts remain as reserved seams (their Godot backends retired at cascade #2, 2026-05-23; rendering is now the in-house Vulkan substrate via the Launcher).
 
 Architectural context: [VISUAL_ENGINE (historical)](/docs/architecture/historical/VISUAL_ENGINE.md), superseded by [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) per Q-G-1 LOCK. The decoupling work here unblocks Phase 9 (Native Runtime) without committing to its timeline.
 
