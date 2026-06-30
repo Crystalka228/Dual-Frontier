@@ -1,12 +1,5 @@
-# Godot 4+ specific ignores
-.godot/
-.import/
-/android/
-export_presets.cfg
-*.translation
+# Editor / OS temporary files
 *.tmp
-*.uid
-*.import
 
 # .NET build output
 bin/

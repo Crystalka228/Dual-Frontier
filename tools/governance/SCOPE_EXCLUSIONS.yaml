@@ -8,8 +8,6 @@ schema_version: "1.0"
 
 # Glob patterns for excluded paths
 excluded_paths:
-  - pattern: ".godot/**"
-    rationale: "Godot generated artifacts"
   - pattern: ".git/**"
     rationale: "Git internals"
   - pattern: "bin/**"
@@ -26,8 +24,6 @@ excluded_paths:
     rationale: "Legal documents, not project documentation"
   - pattern: "**/*.csproj.lscache"
     rationale: "Lscache files"
-  - pattern: "**/.gdignore"
-    rationale: "Godot internal markers"
   - pattern: "node_modules/**"
     rationale: "If npm dependencies introduced in future"
   - pattern: ".vs/**"
