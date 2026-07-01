@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 
@@ -74,7 +75,33 @@ public sealed class DFK015_1ThreeTierMutexFacadeAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L15.1: where native-owned synchronization applies, managed code uses the
+        // three-tier mutex facade — not a raw heavyweight OS primitive. A `new Mutex`
+        // / `new Semaphore` is the bypass. ("Native-owned territory" namespace scoping
+        // is a documented refinement; the codebase has zero such sites today.)
+        context.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ObjectCreation);
+    }
+
+    private static readonly string[] NativeOwnedSyncFqns =
+    {
+        "System.Threading.Mutex",
+        "System.Threading.Semaphore",
+    };
+
+    private static void AnalyzeObjectCreation(OperationAnalysisContext context)
+    {
+        var creation = (IObjectCreationOperation)context.Operation;
+        string? typeFqn = creation.Type?.ToDisplayString();
+
+        foreach (string sync in NativeOwnedSyncFqns)
+        {
+            if (typeFqn == sync)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    Rule, creation.Syntax.GetLocation(),
+                    $"raw '{typeFqn}' bypasses the three-tier mutex facade (К-L15.1)"));
+                return;
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 
@@ -68,7 +69,37 @@ public sealed class DFK001NativeLanguageAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L1 managed-side complement of DFK002 (native C++20 is outside Roslyn per
+        // S-LOCK-2): a managed→native bridge mechanism OTHER than static P/Invoke —
+        // dynamic loading (NativeLibrary.*) or function-pointer marshalling
+        // (Marshal.GetDelegateForFunctionPointer) — outside the §8 sanctioned interop
+        // surface (SanctionedInteropSurface).
+        context.RegisterOperationAction(AnalyzeInvocation, OperationKind.Invocation);
+    }
+
+    private const string MarshalFqn = "System.Runtime.InteropServices.Marshal";
+    private const string NativeLibraryFqn = "System.Runtime.InteropServices.NativeLibrary";
+
+    private static void AnalyzeInvocation(OperationAnalysisContext context)
+    {
+        var invocation = (IInvocationOperation)context.Operation;
+        IMethodSymbol target = invocation.TargetMethod;
+        string? owner = target.ContainingType?.ToDisplayString();
+
+        bool isDynamicInterop =
+            (owner == MarshalFqn && target.Name == "GetDelegateForFunctionPointer")
+            || (owner == NativeLibraryFqn
+                && (target.Name == "Load" || target.Name == "TryLoad"
+                    || target.Name == "GetExport" || target.Name == "TryGetExport"));
+
+        if (!isDynamicInterop
+            || SanctionedInteropSurface.IsSanctioned(context.ContainingSymbol?.ContainingNamespace))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule, invocation.Syntax.GetLocation(),
+            $"'{owner}.{target.Name}' native bridge outside the sanctioned interop surface (К-L1)"));
     }
 }

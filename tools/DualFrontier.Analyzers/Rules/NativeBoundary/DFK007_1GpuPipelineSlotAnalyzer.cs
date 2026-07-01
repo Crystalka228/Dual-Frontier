@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 
@@ -70,7 +72,34 @@ public sealed class DFK007_1GpuPipelineSlotAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L7.1: ReadSlotTail is the sanctioned managed read of the GPU pipeline slot
+        // ring. GetSlot returns a raw slot pointer; a managed consumer outside the
+        // interop layer calling it is the direct-slot-indexing bypass.
+        context.RegisterOperationAction(AnalyzeInvocation, OperationKind.Invocation);
+    }
+
+    private const string PipelineSlotInteropFqn = "DualFrontier.Core.Interop.PipelineSlotInterop";
+    private const string SanctionedNamespace = "DualFrontier.Core.Interop";
+
+    private static void AnalyzeInvocation(OperationAnalysisContext context)
+    {
+        var invocation = (IInvocationOperation)context.Operation;
+        IMethodSymbol target = invocation.TargetMethod;
+        if (target.Name != "GetSlot"
+            || target.ContainingType?.ToDisplayString() != PipelineSlotInteropFqn)
+        {
+            return;
+        }
+
+        string ns = context.ContainingSymbol?.ContainingNamespace?.ToDisplayString() ?? string.Empty;
+        if (ns == SanctionedNamespace
+            || ns.StartsWith(SanctionedNamespace + ".", StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule, invocation.Syntax.GetLocation(),
+            "direct PipelineSlotInterop.GetSlot bypasses the sanctioned ReadSlotTail read (К-L7.1)"));
     }
 }
