@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.18"
-last_modified: "2026-06-29"
-last_modified_commit: "d2d0901"
+register_version: "2.19"
+last_modified: "2026-07-01"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -680,9 +680,9 @@ documents:
     tier: 1
     lifecycle: AUTHORED-SKELETON
     owner: Crystalka
-    version: "0.2.1"
-    last_modified: "2026-06-12"
-    last_modified_commit: "3fc90c5"
+    version: "0.2.2"
+    last_modified: "2026-07-01"
+    last_modified_commit: "d7cff93"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -2286,6 +2286,44 @@ documents:
     risks_referenced: []
     capa_entries_referenced: []
     special_case_rationale: "First-class brief-refresh delta artifact (patch precedent DOC-D-K9_BRIEF_REFRESH_PATCH / DOC-D-K8_3_BRIEF_REFRESH_PATCH); patches DOC-D-GODOT_ERADICATION_BRIEF v1.0 and folds into it at ratification, both transitioning to EXECUTED together at closure. DOC-D Category D Tier 4 per the empirical execution-brief convention (matches the patched brief's tier)."
+
+  - id: DOC-D-PHASE_BETA_BRIEF
+    path: tools/briefs/PHASE_BETA_BRIEF.md
+    title: "PHASE β CLEANUP CASCADE (A'.9.1) — Execution Brief (populate the 17 first-batch Roslyn analyzer stubs with real detection at Info severity / Unshipped; ≥1 positive + ≥1 negative test per rule; census meta-tests; Q-L-1 adaptive gate on the real Info-diagnostic count; real-violation triage; REGISTER closure 2.18 → 2.19 — NO severity promotion / NO AnalyzerReleases.Shipped / NO .editorconfig, all Phase γ / F-12)"
+    category: D
+    tier: 4
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-01"
+    last_modified_commit: "1bc0df2"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-07-01"
+    last_review_event: "Authored 2026-07-01 by Claude Opus (deliberation session) from PHASE BETA RECON R1-R8 (DOC-D-PHASE_BETA_RECON_REPORT). Federated DFK002 §8 interop surface + Task 7 supersession + Info-only Phase-β scope ratified by Crystalka 2026-07-01. Executed 2026-07-01 by Claude Code (flagship, LOCAL Skarlet), C1-C12 cascade: 17 stubs populated with real detection at Info (Unshipped, zero promotion), ≥1 pos/neg test per rule (54 analyzer tests), census meta-tests (reserved-surface 34/13 EXACT), Q-L-1 gate on the real count (23 → CONTINUE), ManagedBusBridge §8 triage + DFK001 2-site DFK-WAIVER + DFK007/DFK017 refine, descriptor-ID underscore normalization (H6 adjudication, Crystalka-ratified). Enrolled EXECUTED at the C11 register closure. See EVT-2026-07-01-A_PRIME_9_1-PHASE_BETA-CLOSURE."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "A'.9.1 Phase β cleanup-phase execution brief — populates the 17 first-batch Roslyn analyzer stubs (enrolled AUTHORED-SKELETON at А'.8, build-wired at К-extensions cascade #5) with real detection logic held at Info severity / Unshipped; severity promotion + AnalyzerReleases.Shipped + .editorconfig priming are Phase γ / F-12, explicitly out of scope (any Warning/Error = H-severity halt). DOC-D Category D Tier 4 per the empirical execution-brief convention (sister to DOC-D-GODOT_ERADICATION_BRIEF + DOC-D-STANDING_LAW_CASCADE_BRIEF + DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF). Built on DOC-D-PHASE_BETA_RECON_REPORT (R1-R8). Single PENDING-COMMIT this cascade: the register header self-reference (C11's own hash), backfilled at C12 render per Option-B; C1-C10 recorded real."
+
+  - id: DOC-D-PHASE_BETA_RECON_REPORT
+    path: tools/briefs/PHASE_BETA_RECON_REPORT.md
+    title: "PHASE β RECON REPORT (R1-R8) — ground-truth reconnaissance feeding the A'.9.1 Phase β execution brief (analyzer stub inventory + harness state + the 5 marker censuses + reserved-surface 34/13 + §8 federated interop surface + Q-L-1 gate parameters + the ManagedBusBridge DFK002 DllImport cluster)"
+    category: D
+    tier: 4
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-01"
+    last_modified_commit: "1bc0df2"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-07-01"
+    last_review_event: "PHASE BETA RECON R1-R8 — captured in the deliberation session preceding A'.9.1 Phase β, persisted on-disk at C1 (1bc0df2) as the brief's empirical basis (analyzer project state, the test-harness gap, the 5 marker censuses, reserved-surface 34/13, the §8 federated interop surface, the ManagedBusBridge 13-DllImport DFK002 cluster, the Q-L-1 gate thresholds). Enrolled EXECUTED at the C11 register closure alongside its brief."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Reconnaissance report feeding DOC-D-PHASE_BETA_BRIEF (recon-artifact enrollment precedent: DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF + DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF; the sister DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT is a durable architecture-tier reference, whereas this recon is execution-context for a single cascade → DOC-D Tier 4, matching the brief it feeds). On-disk .md persisted at C1; enrolled at closure to clear its since-C1 advisory orphan warning and complete the cascade's provenance chain."
 
   - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
     path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
@@ -10295,3 +10333,106 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-D-GODOT_ERADICATION_BRIEF → EXECUTED, DOC-D-GODOT_ERADICATION_BRIEF_PATCH → EXECUTED]
+
+  - id: EVT-2026-07-01-A_PRIME_9_1-PHASE_BETA-CLOSURE
+    timestamp: "2026-07-01T00:00:00Z"
+    event_type: execution_milestone
+    cascade: A'.9.1 Phase β cleanup cascade (17 Roslyn analyzer stubs → real detection at Info; Q-L-1 gate CONTINUE)
+    phase: cascade closure (C11 of C1-C12)
+    title: "Phase β REGISTER closure — 17 analyzer stubs populated with real detection at Info severity (Unshipped; zero severity promotion, zero Shipped, zero .editorconfig — all Phase γ / F-12) + ≥1 pos/neg test per rule (54 analyzer tests) + census meta-tests (reserved-surface 34/13 EXACT) + Q-L-1 adaptive gate (23 real Info diagnostics → CONTINUE) + real-violation triage (ManagedBusBridge 13-DllImport DFK002 cluster relocated to Core.Interop + DFK001 2-site DFK-WAIVER + DFK007/DFK017 refined) + descriptor-ID underscore normalization (ANALYZER_RULES 0.2.1 → 0.2.2) + brief/recon enrolled (2.18 → 2.19)"
+    summary: |
+      Populates the 17 first-batch Roslyn analyzer stubs (enrolled AUTHORED-SKELETON
+      at А'.8 closure, build-wired at К-extensions cascade #5) with real detection
+      logic, per tools/briefs/PHASE_BETA_BRIEF.md (authored 2026-07-01 by Claude Opus
+      from PHASE BETA RECON R1-R8) — every rule held at Info severity, Unshipped:
+      severity promotion, AnalyzerReleases.Shipped, and .editorconfig priming are
+      Phase γ / F-12 and were untouched (any Warning/Error would have been an
+      H-severity halt). Ratified by Crystalka 2026-07-01 (federated DFK002 §8 interop
+      surface + Task 7 supersession + Info-only scope); executed 2026-07-01 by Claude
+      Code (flagship, LOCAL Skarlet). Topology: Phase 0 ground-truth (base verified,
+      baseline managed build 0W/0E + Debug fast sweep 1082 green + REGISTER vocabulary
+      read per Lesson #N14) → writer wave populating detection by tier (W1 syntax /
+      W2 FQN-string / W3 semantic Architecture / W4 semantic NativeBoundary) → census
+      meta-tests → Q-L-1 gate barrier → triage → governance close.
+      Commits: C1 1bc0df2 (brief + recon enrolled-as-files + validation checkpoint);
+      C2 e07f8cd (harness upgrade — CSharpAnalyzerVerifier / DefaultVerifier, the
+      obsolete XUnitVerifier retired under CPM-pinned CodeAnalysis 5.3.0);
+      C3 d7cff93 (W1 SYNTAX-tier detection + the adjudicated descriptor-ID underscore
+      normalization — Roslyn ReportDiagnostic rejects dotted/hyphenated IDs as invalid
+      identifiers, H6 escalated + Crystalka-ratified «Underscore-normalize»: DFK003_1 /
+      DFK007_1 / DFK015_1 / DFK019_A / DFL025_A / DFL025_B across stubs +
+      AnalyzerReleases.Unshipped.md + ANALYZER_RULES §4.1);
+      C4 666c369 (W2 FQN-string — DFL025_A, DFK011, DFK003_1, DFK019_A);
+      C5 f1a37c7 (W3 semantic Architecture — DFK003, DFK004, DFK007, DFK013, DFK017);
+      C6 77ae9e0 (W4 semantic NativeBoundary — DFK001, DFK007_1, DFK015_1);
+      C7 2707a4b (census meta-tests — reserved-surface 34/13 EXACT, 5 marker families,
+      DFK-WAIVER=0 pin at C7); C8 ac43624 (Q-L-1 gate evaluation + the required §7
+      per-rule violation-inventory docs/reports/PHASE_BETA_VIOLATION_INVENTORY.yaml);
+      C9 c74ede7 (real-violation triage — see governance_impact); C10 fdc85ac
+      (citation-drift fix — the 17 stub doc-comments + AnalyzerEntryPoint + src
+      Directory.Build.props «Brief §10.3/§10.5» → «ROADMAP Analyzer track», the live
+      home after the 2026-06-11 Standing-Law relocation).
+    governance_impact: |
+      DOC-D-PHASE_BETA_BRIEF + DOC-D-PHASE_BETA_RECON_REPORT enrolled EXECUTED
+        (Category D Tier 4 per the empirical execution-brief convention,
+        special_case_rationale present; real C1 hash 1bc0df2). The recon is enrolled as
+        the brief's empirical basis (recon-artifact precedent
+        DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF), which also clears its since-C1 advisory
+        orphan warning.
+      Documents 275 → 277 (+2: brief + recon); audit_trail 41 → 42.
+      Violation-inventory assessment (brief §13 «enroll if it warrants a register_id»):
+        docs/reports/PHASE_BETA_VIOLATION_INVENTORY.yaml is a .yaml, outside the
+        SCOPE_EXCLUSIONS .md-only enrollment allow-list — it is never orphan-flagged and
+        does NOT warrant a register_id; it is EVT-referenced gate evidence, not a
+        registered doc. NOT enrolled (assessed).
+      Version bump: DOC-A-ANALYZER_RULES 0.2.1 → 0.2.2 (PATCH). The descriptor-ID
+        underscore-normalization §4.1 amendment landed at C3 (d7cff93); the file
+        change-history 0.2.2 entry, added at C3, deferred the frontmatter version-field
+        sync to this register cascade — folded here. Stub-truth wording preserved (NOT
+        rewritten to «enforced»; detection is Info-only) per brief §6 truth-law;
+        lifecycle stays AUTHORED-SKELETON (LOCK is Phase γ / F-12). last_modified_commit
+        → d7cff93 (the §4.1 content change of record; no new PENDING per brief §13). The
+        brief §13 «no bump if untouched» clause is superseded by the ratified in-cascade
+        §4.1 touch the brief could not anticipate.
+      Q-L-1 adaptive gate (brief §7.4): violation_count = 23 real Info diagnostics on
+        src\ paths (the count the non-detecting stubs could never produce) → 23 ≤ 80 →
+        CONTINUE. Per-rule: DFK002 13 (ManagedBusBridge private [DllImport] cluster),
+        DFK017 5, DFK007 3, DFK001 2 — 15 genuine (DFK002 13 + DFK001 2) + 8 heuristic
+        false-positives (DFK007 3 + DFK017 5).
+      Triage (C9 c74ede7): DFK002 13 → the 13 df_bus_* [DllImport] relocated from
+        src/DualFrontier.Application/Bus/ManagedBusBridge.cs to a new
+        src/DualFrontier.Core.Interop/NativeMethods.Bus.cs (partial NativeMethods, the
+        §8-sanctioned canonical P/Invoke surface; Application already references
+        Core.Interop + has InternalsVisibleTo — behavior-neutral, Debug fast sweep
+        1082/1082 held). Brief §8 named «Runtime.Native.Bus» as the target, but
+        Application does not reference Runtime (a backwards dependency) → relocated to
+        Core.Interop instead (Application-referenced, §8-sanctioned, owns the df_bus_*
+        boundary in DualFrontier.Core.Native.dll); recorded as an H6-adjacent target
+        deviation, behavior verified. DFK001 2 → the two ValidationLayer
+        Marshal.GetDelegateForFunctionPointer sites (sanctioned Vulkan VK_EXT_debug_utils
+        debug-messenger interop, К-L19) DFK-WAIVER'd per Crystalka «DFK-WAIVER the 2
+        sites» (// DFK-WAIVER(DFK001) + #pragma disable/restore); SARIF confirms 0 active
+        + 2 suppressed. DFK007 3 + DFK017 5 → heuristic false-positives refined out
+        (DFK007 class-only — a transient struct enumerator holding a lease is not
+        retained storage; DFK017 [Layer]-attribute-without-Layer-base). Post-triage:
+        0 active Info diagnostics + 2 DFK-WAIVER.
+      Test census: 54 analyzer tests green (≥1 positive + ≥1 negative per detecting rule
+        + harness + census meta-tests); Debug fast sweep 1082/1082
+        (Category!=Stress&Category!=Extreme). Severities all Info (H-severity clean); no
+        rule ID changed post-normalization; AnalyzerReleases.Shipped.md + .editorconfig
+        untouched (Phase γ).
+      Census pins: reserved-surface 34/13 EXACT (meta-test asserted); DFK-WAIVER 0 → 2
+        (both cited); SOFT marker families unmoved (stub / deferred / TODO / Phase 6 /
+        not-yet) — analyzer + test additions carry no src comment-marker delta.
+      register_version 2.18 → 2.19; header last_modified_commit set to the single
+        sanctioned PENDING-COMMIT-A_PRIME_9_1-CLOSURE self-reference, backfilled with
+        C11's real hash at C12 render (Option B). C1-C10 recorded REAL; zero other
+        placeholders.
+      К-L impact: zero substrate touch (К-L14 thesis) — tooling + tests + one
+        behavior-neutral P/Invoke relocation; production behavior unchanged (fast suite
+        green throughout). Zero pushes performed (pushes are Crystalka's act per the
+        closure checklist).
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-D-PHASE_BETA_BRIEF → EXECUTED, DOC-D-PHASE_BETA_RECON_REPORT → EXECUTED]

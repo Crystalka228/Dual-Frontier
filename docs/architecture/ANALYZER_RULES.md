@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.2.1"
+version: "0.2.2"
 next_review_due: 2027-05-23
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ANALYZER_RULES
 ---
