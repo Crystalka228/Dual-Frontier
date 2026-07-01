@@ -73,6 +73,15 @@ public sealed class DFK007SpanProtocolAnalyzer : DiagnosticAnalyzer
 
     private static void AnalyzeMember(SymbolAnalysisContext context)
     {
+        // Only a class field/property is long-lived storage. A struct enumerator
+        // (readonly struct / ref struct) that holds a lease for the duration of
+        // iteration is transient — its lifetime is bounded by the lease — so it is
+        // NOT the retained-storage violation.
+        if (context.Symbol.ContainingType?.TypeKind != TypeKind.Class)
+        {
+            return;
+        }
+
         ITypeSymbol? memberType = context.Symbol switch
         {
             IFieldSymbol field => field.Type,

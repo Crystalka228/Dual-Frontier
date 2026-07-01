@@ -136,14 +136,18 @@ public sealed class CensusMetaTests
     }
 
     [Fact]
-    public void DfkWaiverCensus_IsZero()
+    public void DfkWaiverCensus_MatchesPin()
     {
-        // TESTING_STRATEGY §4.3 — DFK-WAIVER baseline 0. Every increase requires the
-        // pin bump AND each waiver's CODING_STANDARDS §5.3 authority citation. C9 triage
-        // updates this pin if it introduces waivers.
-        var (sites, _) = Census(text => RegexCount(text, @"#pragma warning disable (DFK|DFL|DF9)", RegexOptions.None));
+        // TESTING_STRATEGY §4.3 — DFK-WAIVER census. Pin 2 as of A'.9.1 Phase β C9:
+        // the two DFK001 waivers in ValidationLayer.cs (VK_EXT_debug_utils Vulkan
+        // interop, К-L19), each carrying its CODING_STANDARDS §5.3 authority citation.
+        // §4.4: every `// DFK-WAIVER(` marker pairs with a `#pragma warning disable`;
+        // every future increase updates this pin + adds a citation.
+        var (disables, _) = Census(text => RegexCount(text, @"#pragma warning disable (DFK|DFL|DF9)", RegexOptions.None));
+        var (markers, _) = Census(text => LiteralCount(text, "// DFK-WAIVER("));
 
-        sites.Should().Be(0, "DFK-WAIVER census baseline (TESTING_STRATEGY §4.3)");
+        disables.Should().Be(2, "DFK-WAIVER census pin (TESTING_STRATEGY §4.3) — 2 DFK001 Vulkan-interop waivers");
+        markers.Should().Be(disables, "every '#pragma warning disable DFK/DFL/DF9' pairs with a '// DFK-WAIVER(' marker");
     }
 
     [Fact]

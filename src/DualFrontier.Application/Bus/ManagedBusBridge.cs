@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 using DualFrontier.Contracts.Bus;
+using DualFrontier.Core.Interop;
 
 namespace DualFrontier.Application.Bus;
 
@@ -35,48 +36,15 @@ public sealed class ManagedBusBridge
 
     // =====================================================================
     // Forward (managed → native) — publish per tier
+    //
+    // К-L15 native bus P/Invoke (df_bus_*) relocated to
+    // DualFrontier.Core.Interop.NativeMethods at A'.9.1 Phase β C9 (DFK002
+    // triage): the bindings belong on the §8-sanctioned Core.Interop kernel
+    // boundary — df_bus_* lives in DualFrontier.Core.Native.dll — not the
+    // Application layer. Reached via the existing
+    // InternalsVisibleTo(DualFrontier.Application) grant, the same pattern
+    // the scheduler adapter uses for the native scheduler.
     // =====================================================================
-
-    private const string DllName = "DualFrontier.Core.Native";
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_publish_fast(uint type_id, IntPtr payload, uint payload_size);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_publish_normal(uint type_id, IntPtr payload, uint payload_size);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_publish_background(uint type_id, IntPtr payload, uint payload_size, uint coalesce_key);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern ulong df_bus_subscribe_fast(uint type_id, uint mod_id, IntPtr callback, IntPtr user_data);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern ulong df_bus_subscribe_normal(uint type_id, uint mod_id, IntPtr callback, IntPtr user_data);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern ulong df_bus_subscribe_background(uint type_id, uint mod_id, IntPtr callback, IntPtr user_data);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_unsubscribe(ulong subscription_id);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_drain_normal_batch();
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_background_queue_dispatch_idle_slot(ulong available_budget_micros);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_subscriber_count_fast(uint type_id);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_subscriber_count_normal(uint type_id);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int df_bus_subscriber_count_background(uint type_id);
-
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void df_bus_clear();
 
     /// <summary>
     /// Publishes a fixed-blittable-payload event to the native bus via the
@@ -88,9 +56,9 @@ public sealed class ManagedBusBridge
     {
         return tier switch
         {
-            BusTier.Fast       => df_bus_publish_fast(typeId, payloadPtr, payloadSize),
-            BusTier.Normal     => df_bus_publish_normal(typeId, payloadPtr, payloadSize),
-            BusTier.Background => df_bus_publish_background(typeId, payloadPtr, payloadSize, coalesceKey),
+            BusTier.Fast       => NativeMethods.df_bus_publish_fast(typeId, payloadPtr, payloadSize),
+            BusTier.Normal     => NativeMethods.df_bus_publish_normal(typeId, payloadPtr, payloadSize),
+            BusTier.Background => NativeMethods.df_bus_publish_background(typeId, payloadPtr, payloadSize, coalesceKey),
             _ => 0,
         };
     }
@@ -104,28 +72,28 @@ public sealed class ManagedBusBridge
     /// </summary>
     public ulong SubscribeFast(uint typeId, uint modId, IntPtr callbackPtr, GCHandle userDataHandle)
     {
-        ulong sid = df_bus_subscribe_fast(typeId, modId, callbackPtr, GCHandle.ToIntPtr(userDataHandle));
+        ulong sid = NativeMethods.df_bus_subscribe_fast(typeId, modId, callbackPtr, GCHandle.ToIntPtr(userDataHandle));
         if (sid != 0) _handles[sid] = userDataHandle;
         return sid;
     }
 
     public ulong SubscribeNormal(uint typeId, uint modId, IntPtr callbackPtr, GCHandle userDataHandle)
     {
-        ulong sid = df_bus_subscribe_normal(typeId, modId, callbackPtr, GCHandle.ToIntPtr(userDataHandle));
+        ulong sid = NativeMethods.df_bus_subscribe_normal(typeId, modId, callbackPtr, GCHandle.ToIntPtr(userDataHandle));
         if (sid != 0) _handles[sid] = userDataHandle;
         return sid;
     }
 
     public ulong SubscribeBackground(uint typeId, uint modId, IntPtr callbackPtr, GCHandle userDataHandle)
     {
-        ulong sid = df_bus_subscribe_background(typeId, modId, callbackPtr, GCHandle.ToIntPtr(userDataHandle));
+        ulong sid = NativeMethods.df_bus_subscribe_background(typeId, modId, callbackPtr, GCHandle.ToIntPtr(userDataHandle));
         if (sid != 0) _handles[sid] = userDataHandle;
         return sid;
     }
 
     public bool Unsubscribe(ulong subscriptionId)
     {
-        int rc = df_bus_unsubscribe(subscriptionId);
+        int rc = NativeMethods.df_bus_unsubscribe(subscriptionId);
         if (_handles.TryRemove(subscriptionId, out GCHandle handle) && handle.IsAllocated)
             handle.Free();
         return rc == 1;
@@ -135,7 +103,7 @@ public sealed class ManagedBusBridge
     /// Drains the Normal tier batched dispatch (invoked by scheduler at phase
     /// boundary). Returns count of dispatched batches.
     /// </summary>
-    public int DrainNormalBatch() => df_bus_drain_normal_batch();
+    public int DrainNormalBatch() => NativeMethods.df_bus_drain_normal_batch();
 
     /// <summary>
     /// Drains the Background tier coalesce + dispatch loop within the supplied
@@ -146,21 +114,21 @@ public sealed class ManagedBusBridge
     /// </summary>
     /// <returns>Count of background events dispatched in this call.</returns>
     public int DrainBackgroundBatch(ulong availableBudgetMicros)
-        => df_background_queue_dispatch_idle_slot(availableBudgetMicros);
+        => NativeMethods.df_background_queue_dispatch_idle_slot(availableBudgetMicros);
 
     /// <summary>Diagnostic: count of native subscribers per tier per type.</summary>
     public int SubscriberCount(BusTier tier, uint typeId) => tier switch
     {
-        BusTier.Fast       => df_bus_subscriber_count_fast(typeId),
-        BusTier.Normal     => df_bus_subscriber_count_normal(typeId),
-        BusTier.Background => df_bus_subscriber_count_background(typeId),
+        BusTier.Fast       => NativeMethods.df_bus_subscriber_count_fast(typeId),
+        BusTier.Normal     => NativeMethods.df_bus_subscriber_count_normal(typeId),
+        BusTier.Background => NativeMethods.df_bus_subscriber_count_background(typeId),
         _ => 0,
     };
 
     /// <summary>Test-only: clears all native bus state. Releases GC handles too.</summary>
     public void ClearForTesting()
     {
-        df_bus_clear();
+        NativeMethods.df_bus_clear();
         foreach (var kvp in _handles)
         {
             if (kvp.Value.IsAllocated) kvp.Value.Free();

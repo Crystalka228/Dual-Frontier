@@ -87,7 +87,12 @@ public sealed class ValidationLayer : IDisposable
                 "vkCreateDebugUtilsMessengerEXT not available. " +
                 "VK_EXT_debug_utils extension not loaded or validation layer absent.");
         }
+        // DFK-WAIVER(DFK001): sanctioned Vulkan debug-messenger interop
+        // (VK_EXT_debug_utils, К-L19) — function-pointer marshalling is intrinsic to
+        // the Vulkan extension ABI; Runtime.Graphics is the Vulkan presentation layer.
+#pragma warning disable DFK001
         var createFn = Marshal.GetDelegateForFunctionPointer<CreateDebugUtilsMessengerDelegate>(createFnPtr);
+#pragma warning restore DFK001
 
         var createInfo = new VkDebugUtilsMessengerCreateInfoEXT
         {
@@ -129,7 +134,12 @@ public sealed class ValidationLayer : IDisposable
             IntPtr destroyFnPtr = VkApi.vkGetInstanceProcAddr(_instance, "vkDestroyDebugUtilsMessengerEXT");
             if (destroyFnPtr != IntPtr.Zero)
             {
+                // DFK-WAIVER(DFK001): sanctioned Vulkan debug-messenger interop
+                // (VK_EXT_debug_utils, К-L19) — function-pointer marshalling is
+                // intrinsic to the Vulkan extension ABI.
+#pragma warning disable DFK001
                 var destroyFn = Marshal.GetDelegateForFunctionPointer<DestroyDebugUtilsMessengerDelegate>(destroyFnPtr);
+#pragma warning restore DFK001
                 destroyFn(_instance, _messenger, IntPtr.Zero);
             }
             _messenger = IntPtr.Zero;

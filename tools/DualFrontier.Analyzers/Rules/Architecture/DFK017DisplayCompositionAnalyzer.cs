@@ -64,16 +64,18 @@ public sealed class DFK017DisplayCompositionAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // К-L17: display layers register their composition tier via [Layer(LayerType)].
-        // A class that holds instance LayerType state but carries no [Layer(...)] is the
-        // vanilla-privilege bypass (participates in composition without registration).
-        // Phase-β heuristic — full cross-layer / out-of-order draw analysis is a
-        // documented refinement; recon real ≈ 0 (no [Layer] classes on disk yet).
+        // К-L17: display layers register by subclassing the abstract Layer base
+        // (overriding `LayerType Type`) + CompositionFramework — [Layer(...)] is the
+        // alternate registration surface. A class carrying [Layer(...)] that does NOT
+        // derive from the Layer base is the vanilla-privilege bypass (registering as an
+        // alternate surface). Real ≈ 0 ([Layer] has no applications on disk; the Layer
+        // hierarchy registers via the base). Full cross-layer / out-of-order draw
+        // analysis is a documented refinement.
         context.RegisterSymbolAction(AnalyzeLayer, SymbolKind.NamedType);
     }
 
-    private const string LayerTypeFqn = "DualFrontier.Contracts.Display.LayerType";
     private const string LayerAttributeFqn = "DualFrontier.Contracts.Display.LayerAttribute";
+    private const string LayerBaseFqn = "DualFrontier.Application.Display.Layer";
 
     private static void AnalyzeLayer(SymbolAnalysisContext context)
     {
@@ -83,41 +85,31 @@ public sealed class DFK017DisplayCompositionAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        bool hasLayerAttribute = false;
         foreach (AttributeData attribute in type.GetAttributes())
         {
             if (attribute.AttributeClass?.ToDisplayString() == LayerAttributeFqn)
             {
-                return; // registered layer -> compliant
-            }
-        }
-
-        bool declaresLayerState = false;
-        foreach (ISymbol member in type.GetMembers())
-        {
-            if (member.IsStatic)
-            {
-                continue;
-            }
-
-            ITypeSymbol? memberType = member switch
-            {
-                IFieldSymbol field => field.Type,
-                IPropertySymbol property => property.Type,
-                _ => null,
-            };
-
-            if (memberType?.ToDisplayString() == LayerTypeFqn)
-            {
-                declaresLayerState = true;
+                hasLayerAttribute = true;
                 break;
             }
         }
 
-        if (declaresLayerState)
+        if (!hasLayerAttribute)
         {
-            context.ReportDiagnostic(Diagnostic.Create(
-                Rule, type.Locations[0],
-                $"'{type.Name}' holds LayerType state without [Layer(...)] registration (К-L17)"));
+            return; // layers register via the Layer base, not [Layer]
         }
+
+        for (INamedTypeSymbol? baseType = type.BaseType; baseType is not null; baseType = baseType.BaseType)
+        {
+            if (baseType.ToDisplayString() == LayerBaseFqn)
+            {
+                return; // proper Layer subclass -> compliant
+            }
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule, type.Locations[0],
+            $"'{type.Name}' carries [Layer(...)] without deriving from the Layer base (К-L17 alternate surface)"));
     }
 }
