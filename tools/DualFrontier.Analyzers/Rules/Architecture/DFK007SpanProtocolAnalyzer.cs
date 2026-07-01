@@ -61,7 +61,31 @@ public sealed class DFK007SpanProtocolAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L7: a SpanLease<T> is a transient per-tick lease (acquire → read → dispose
+        // within the batch). Retaining it as field/property storage state escapes the
+        // span protocol. Mutation-through-read-span is compile-prevented (SpanLease
+        // exposes ReadOnlySpan<T>); write-outside-batch is a documented refinement.
+        // General Span<> use (207 legitimate sites) is NOT flagged.
+        context.RegisterSymbolAction(AnalyzeMember, SymbolKind.Field, SymbolKind.Property);
+    }
+
+    private const string SpanLeaseFqn = "DualFrontier.Core.Interop.SpanLease<T>";
+
+    private static void AnalyzeMember(SymbolAnalysisContext context)
+    {
+        ITypeSymbol? memberType = context.Symbol switch
+        {
+            IFieldSymbol field => field.Type,
+            IPropertySymbol property => property.Type,
+            _ => null,
+        };
+
+        if (memberType is INamedTypeSymbol named
+            && named.OriginalDefinition.ToDisplayString() == SpanLeaseFqn)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(
+                Rule, context.Symbol.Locations[0],
+                $"'{context.Symbol.Name}' retains a SpanLease<T> as storage state — spans are transient (К-L7)"));
+        }
     }
 }

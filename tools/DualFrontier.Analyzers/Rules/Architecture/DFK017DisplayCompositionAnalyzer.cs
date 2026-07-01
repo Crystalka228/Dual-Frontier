@@ -64,7 +64,60 @@ public sealed class DFK017DisplayCompositionAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L17: display layers register their composition tier via [Layer(LayerType)].
+        // A class that holds instance LayerType state but carries no [Layer(...)] is the
+        // vanilla-privilege bypass (participates in composition without registration).
+        // Phase-β heuristic — full cross-layer / out-of-order draw analysis is a
+        // documented refinement; recon real ≈ 0 (no [Layer] classes on disk yet).
+        context.RegisterSymbolAction(AnalyzeLayer, SymbolKind.NamedType);
+    }
+
+    private const string LayerTypeFqn = "DualFrontier.Contracts.Display.LayerType";
+    private const string LayerAttributeFqn = "DualFrontier.Contracts.Display.LayerAttribute";
+
+    private static void AnalyzeLayer(SymbolAnalysisContext context)
+    {
+        var type = (INamedTypeSymbol)context.Symbol;
+        if (type.TypeKind != TypeKind.Class)
+        {
+            return;
+        }
+
+        foreach (AttributeData attribute in type.GetAttributes())
+        {
+            if (attribute.AttributeClass?.ToDisplayString() == LayerAttributeFqn)
+            {
+                return; // registered layer -> compliant
+            }
+        }
+
+        bool declaresLayerState = false;
+        foreach (ISymbol member in type.GetMembers())
+        {
+            if (member.IsStatic)
+            {
+                continue;
+            }
+
+            ITypeSymbol? memberType = member switch
+            {
+                IFieldSymbol field => field.Type,
+                IPropertySymbol property => property.Type,
+                _ => null,
+            };
+
+            if (memberType?.ToDisplayString() == LayerTypeFqn)
+            {
+                declaresLayerState = true;
+                break;
+            }
+        }
+
+        if (declaresLayerState)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(
+                Rule, type.Locations[0],
+                $"'{type.Name}' holds LayerType state without [Layer(...)] registration (К-L17)"));
+        }
     }
 }

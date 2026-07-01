@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace DualFrontier.Analyzers.Rules.Architecture;
@@ -60,7 +62,39 @@ public sealed class DFK004TypeIdRegistryAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L4: component type ids are explicit (ComponentTypeRegistry), never derived
+        // implicitly. The violation shape is a hash taken over a typeof(...) expression:
+        // typeof(X).GetHashCode() / typeof(X).FullName.GetHashCode() / .Name.GetHashCode().
+        // Plain typeof(X) (137 legitimate sites) is NOT flagged.
+        context.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.InvocationExpression);
+    }
+
+    private static void AnalyzeInvocation(SyntaxNodeAnalysisContext context)
+    {
+        var invocation = (InvocationExpressionSyntax)context.Node;
+        if (invocation.Expression is not MemberAccessExpressionSyntax memberAccess
+            || memberAccess.Name.Identifier.Text != "GetHashCode")
+        {
+            return;
+        }
+
+        bool derivesFromTypeOf = false;
+        foreach (SyntaxNode node in memberAccess.Expression.DescendantNodesAndSelf())
+        {
+            if (node is TypeOfExpressionSyntax)
+            {
+                derivesFromTypeOf = true;
+                break;
+            }
+        }
+
+        if (!derivesFromTypeOf)
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule, invocation.GetLocation(),
+            "hash-derived type id (typeof(...).GetHashCode()) bypasses ComponentTypeRegistry"));
     }
 }

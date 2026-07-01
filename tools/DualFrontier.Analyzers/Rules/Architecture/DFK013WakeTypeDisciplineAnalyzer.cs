@@ -67,7 +67,63 @@ public sealed class DFK013WakeTypeDisciplineAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L13 (efficiency, not correctness): a concrete SystemBase subclass declares
+        // its activation via [TickRate] or a [WakeOn*] attribute. One lacking all of
+        // them relies on full-inventory dispatch. Abstract intermediates are exempt.
+        // The codebase is thoroughly annotated (recon real = 0; the lone proxy hit is a
+        // doc-comment example, which is not a symbol and stays silent here).
+        context.RegisterSymbolAction(AnalyzeSystem, SymbolKind.NamedType);
+    }
+
+    private const string SystemBaseFqn = "DualFrontier.Core.ECS.SystemBase";
+
+    private static readonly string[] WakeAttributeFqns =
+    {
+        "DualFrontier.Contracts.Attributes.TickRateAttribute",
+        "DualFrontier.Contracts.Scheduling.WakeOnEventAttribute",
+        "DualFrontier.Contracts.Scheduling.WakeOnStateAttribute",
+        "DualFrontier.Contracts.Scheduling.WakeOnInitAttribute",
+        "DualFrontier.Contracts.Scheduling.WakeOnExplicitAttribute",
+        "DualFrontier.Contracts.Scheduling.WakeOnSlotTransitionAttribute",
+    };
+
+    private static void AnalyzeSystem(SymbolAnalysisContext context)
+    {
+        var type = (INamedTypeSymbol)context.Symbol;
+        if (type.TypeKind != TypeKind.Class || type.IsAbstract)
+        {
+            return;
+        }
+
+        bool isSystem = false;
+        for (INamedTypeSymbol? baseType = type.BaseType; baseType is not null; baseType = baseType.BaseType)
+        {
+            if (baseType.ToDisplayString() == SystemBaseFqn)
+            {
+                isSystem = true;
+                break;
+            }
+        }
+
+        if (!isSystem)
+        {
+            return;
+        }
+
+        foreach (AttributeData attribute in type.GetAttributes())
+        {
+            string? fqn = attribute.AttributeClass?.ToDisplayString();
+            foreach (string wake in WakeAttributeFqns)
+            {
+                if (fqn == wake)
+                {
+                    return; // annotated -> compliant
+                }
+            }
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule, type.Locations[0],
+            $"'{type.Name}' : SystemBase lacks [TickRate]/[WakeOn*] activation discipline (К-L13)"));
     }
 }

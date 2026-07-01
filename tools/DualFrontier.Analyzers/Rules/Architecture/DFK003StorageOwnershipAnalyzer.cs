@@ -60,7 +60,57 @@ public sealed class DFK003StorageOwnershipAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L3 Path α/β: a struct IComponent is Path α (native storage, no
+        // [ManagedStorage]); a class IComponent is Path β (managed store, requires
+        // [ManagedStorage]). The two mismatches are the storage-ownership violations.
+        // Compile-time isolation (A'.6) already keeps this small.
+        context.RegisterSymbolAction(AnalyzeComponentType, SymbolKind.NamedType);
+    }
+
+    private const string IComponentFqn = "DualFrontier.Contracts.Core.IComponent";
+    private const string ManagedStorageFqn = "DualFrontier.Contracts.Modding.ManagedStorageAttribute";
+
+    private static void AnalyzeComponentType(SymbolAnalysisContext context)
+    {
+        var type = (INamedTypeSymbol)context.Symbol;
+        if (type.TypeKind != TypeKind.Class)
+        {
+            return;
+        }
+
+        bool isComponent = false;
+        foreach (INamedTypeSymbol iface in type.AllInterfaces)
+        {
+            if (iface.ToDisplayString() == IComponentFqn)
+            {
+                isComponent = true;
+                break;
+            }
+        }
+
+        if (!isComponent)
+        {
+            return;
+        }
+
+        bool hasManagedStorage = false;
+        foreach (AttributeData attribute in type.GetAttributes())
+        {
+            if (attribute.AttributeClass?.ToDisplayString() == ManagedStorageFqn)
+            {
+                hasManagedStorage = true;
+                break;
+            }
+        }
+
+        // A struct IComponent is Path α by construction: [ManagedStorage] is
+        // AttributeUsage(Class)-only, so a struct cannot carry it (compile-prevented,
+        // CS0592). The reachable violation is a class IComponent missing [ManagedStorage].
+        if (type.TypeKind == TypeKind.Class && !hasManagedStorage)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(
+                Rule, type.Locations[0],
+                $"class component '{type.Name}' must carry [ManagedStorage] (Path β = managed store)"));
+        }
     }
 }
