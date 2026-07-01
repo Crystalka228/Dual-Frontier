@@ -1,0 +1,103 @@
+# A'.9.1 Phase β — Q-L-1 Violation Inventory
+#
+# The A'.9.1 §7 required per-rule violation inventory and the Q-L-1 gate evidence
+# (PHASE_BETA_BRIEF §11). Enumerated at C8 (the barrier) from the Roslyn SARIF
+# error-log of a `--no-incremental` Release build with all 17 rules detecting at
+# Info severity (Info diagnostics do not surface in normal build output). The
+# ErrorLog wiring in src/Directory.Build.props was reverted immediately after.
+
+phase: "A'.9.1 Phase beta"
+generated: "2026-07-01"
+measurement: "Roslyn SARIF error-log (ErrorLog=...,version=2.1) over 12 src projects; --no-incremental Release build; 0W/0E"
+
+gate:
+  q_l_1: "<=80 continue | 80<count<=150 halt-to-Crystalka | >150 split"
+  violation_count: 23
+  branch: continue
+  scenario: "B (recon-predicted ~23-45: DFK002 federated -> ManagedBusBridge residual + interop residuals; landed at the bottom of the range)"
+  note: >
+    Of the 23 raw Info diagnostics, 15 are genuine architectural violations
+    (DFK002 ManagedBusBridge 13 + DFK001 ValidationLayer 2); the remaining 8
+    (DFK007 3 + DFK017 5) are false positives from over-broad semantic scoping,
+    dispositioned `refine` at C9. All 13 non-listed rules fire zero.
+
+totals_by_rule:
+  DFK002: 13
+  DFK017: 5
+  DFK007: 3
+  DFK001: 2
+  # DF999, DFK001*, DFK003, DFK003_1, DFK004, DFK005, DFK007_1, DFK011, DFK013,
+  # DFK015_1, DFK016, DFK019_A, DFL025_A, DFL025_B : 0
+
+violations:
+  - rule: DFK002
+    count: 13
+    disposition: relocate-or-waiver
+    genuine: true
+    sites:
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:43
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:46
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:49
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:52
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:55
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:58
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:61
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:64
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:67
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:70
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:73
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:76
+      - src/DualFrontier.Application/Bus/ManagedBusBridge.cs:79
+    triage: >
+      The one genuine DFK002 cluster (§8). Preferred: relocate the 13 [DllImport]
+      into a Runtime.Native.Bus surface (extends the §8 federated set to a 4th
+      native namespace), IF a clean move without ripple beyond the file. Fallback:
+      a DFK-WAIVER citing the bus design (§5.3). Escalate (H6) if relocation ripples
+      into the bus contract.
+
+  - rule: DFK001
+    count: 2
+    disposition: refine-surface-or-waiver
+    genuine: true
+    sites:
+      - src/DualFrontier.Runtime/Graphics/ValidationLayer.cs:90
+      - src/DualFrontier.Runtime/Graphics/ValidationLayer.cs:132
+    triage: >
+      Legitimate Vulkan debug-messenger function-pointer marshalling
+      (Marshal.GetDelegateForFunctionPointer), but located in Runtime.Graphics —
+      outside the §8 Runtime.Native surface. Options: extend §8 to include the
+      Vulkan-adjacent Runtime.Graphics interop, OR a DFK-WAIVER (sanctioned Vulkan
+      interop, K-L19). Architect call.
+
+  - rule: DFK007
+    count: 3
+    disposition: refine
+    genuine: false
+    sites:
+      - src/DualFrontier.Core.Interop/SpanLease.cs:89   # PairsEnumerable._lease — transient enumerator
+      - src/DualFrontier.Core.Interop/SpanLease.cs:96   # PairsEnumerator._lease — transient ref-struct enumerator
+      - src/DualFrontier.Core.Interop/WriteBatch.cs:200 # per-batch lease holder — assess at triage
+    triage: >
+      False positives. The SpanLease.cs sites are the type's own nested
+      enumerator structs whose lifetime is bounded by the lease (transient, not
+      retained storage). Refine DFK007 to exclude nested enumerator/ref-struct
+      holders and the SpanLease-defining type itself; re-assess WriteBatch:200.
+
+  - rule: DFK017
+    count: 5
+    disposition: refine
+    genuine: false
+    sites:
+      - src/DualFrontier.Application/Display/Layer.cs:18            # abstract Layer base
+      - src/DualFrontier.Application/Display/SimStateLayer.cs:30    # concrete layer (property-registered)
+      - src/DualFrontier.Application/Display/IntentOverlayLayer.cs:24
+      - src/DualFrontier.Application/Display/CombatFeedbackLayer.cs:24
+      - src/DualFrontier.Contracts/Display/LayerAttribute.cs:24     # the [Layer] attribute definition itself
+    triage: >
+      False positives. Display layers register by subclassing the abstract Layer
+      base (overriding `LayerType Type`) + CompositionFramework — NOT via
+      [Layer(...)], which has zero real applications on disk. The Phase-β heuristic
+      (LayerType instance member without [Layer]) mis-models the mechanism and even
+      flags the LayerAttribute definition. Refine DFK017 to the real registration
+      model, or narrow to a genuinely-detectable K-L17 shape (silent on the Layer
+      hierarchy).
