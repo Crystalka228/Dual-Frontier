@@ -19,7 +19,8 @@
     Tests/ and tools/ projects не affected (out of scope per src/-scoped placement).
 
     Forward: analyzer detection logic populated at Phase β cleanup-phase per
-    K_CLOSURE_REPORT.md §7 canonical narratives + brief §10.3 per-rule order.
+    K_CLOSURE_REPORT.md §7 canonical narratives + the ROADMAP Analyzer track
+    per-rule order.
     Per-rule severity tunable via .editorconfig at cleanup-phase entry.
 
     К-L14 thesis: tooling addition; zero substrate touch.

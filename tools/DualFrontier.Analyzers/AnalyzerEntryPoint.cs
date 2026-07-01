@@ -4,7 +4,7 @@ namespace DualFrontier.Analyzers;
 /// Placeholder marker type used by the analyzer test verifier to confirm the
 /// DualFrontier.Analyzers assembly loads in the Roslyn host context. Real
 /// <c>DiagnosticAnalyzer</c> subclasses (DFK### / DFL### families) are added
-/// during Phase β per-rule implementation cascade per Brief A'.9.1 §6 + §10.
+/// during Phase β per-rule implementation cascade per the ROADMAP Analyzer track.
 /// </summary>
 /// <remarks>
 /// <para>

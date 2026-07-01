@@ -18,7 +18,7 @@ namespace DualFrontier.Analyzers.Rules.Discipline;
 /// <para>
 /// Phase β-prep stub — declares <c>DiagnosticDescriptor</c> for build-time
 /// wiring + violation count enumeration (Q-L-1 adaptive gate). Detection
-/// logic populated at Phase β cleanup-phase per Brief A'.9.1 §10.5 +
+/// logic populated at Phase β cleanup-phase per the ROADMAP Analyzer track +
 /// ANALYZER_RULES.md §4.5.
 /// </para>
 /// <para>
