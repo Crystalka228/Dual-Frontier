@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace DualFrontier.Analyzers.Rules.Architecture;
 
@@ -65,7 +66,51 @@ public sealed class DFK016PipelineDepthAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L16: pipeline depth D ∈ {1,2,3} is canonical surface via
+        // PipelineSlotInterop.DefaultDepth (2) / .MaxDepth (3). A hardcoded integer
+        // literal 1/2/3 passed as the depth argument bypasses that surface. A named
+        // constant reference (DefaultDepth) is a field reference, not a literal, so
+        // the compliant call stays silent.
+        context.RegisterOperationAction(AnalyzeInvocation, OperationKind.Invocation);
+    }
+
+    private const string PipelineSlotInteropFqn = "DualFrontier.Core.Interop.PipelineSlotInterop";
+    private const string DepthMethodName = "Init";
+    private const string DepthParameterName = "depth";
+
+    private static void AnalyzeInvocation(OperationAnalysisContext context)
+    {
+        var invocation = (IInvocationOperation)context.Operation;
+        IMethodSymbol target = invocation.TargetMethod;
+
+        if (target.Name != DepthMethodName
+            || target.ContainingType?.ToDisplayString() != PipelineSlotInteropFqn)
+        {
+            return;
+        }
+
+        foreach (IArgumentOperation argument in invocation.Arguments)
+        {
+            // Only explicitly-passed arguments — an omitted optional parameter's
+            // default value surfaces as a synthesized literal in the operation tree
+            // and must NOT be flagged (that is the compliant Init() default path).
+            if (argument.Parameter?.Name != DepthParameterName
+                || argument.ArgumentKind != ArgumentKind.Explicit)
+            {
+                continue;
+            }
+
+            // A literal 1/2/3 (not a named-constant field reference) is the violation.
+            if (argument.Value is ILiteralOperation literal
+                && literal.ConstantValue.HasValue
+                && literal.ConstantValue.Value is int depth
+                && depth is 1 or 2 or 3)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    Rule,
+                    argument.Value.Syntax.GetLocation(),
+                    depth));
+            }
+        }
     }
 }

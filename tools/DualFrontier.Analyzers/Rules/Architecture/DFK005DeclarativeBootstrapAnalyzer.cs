@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -65,7 +66,43 @@ public sealed class DFK005DeclarativeBootstrapAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L5: managed bootstrap composes through the single canonical GameBootstrap.
+        // An additional managed class named *Bootstrap fragments the entry surface.
+        // Sanctioned exclusions: GameBootstrap itself, and the native-runtime bootstrap
+        // boundary in DualFrontier.Core.Interop (the kernel-interop entry, like DFK002).
+        context.RegisterSymbolAction(AnalyzeType, SymbolKind.NamedType);
+    }
+
+    private const string CanonicalBootstrap = "GameBootstrap";
+    private const string SanctionedBootstrapNamespaceRoot = "DualFrontier.Core.Interop";
+    private const string BootstrapSuffix = "Bootstrap";
+
+    private static void AnalyzeType(SymbolAnalysisContext context)
+    {
+        var type = (INamedTypeSymbol)context.Symbol;
+
+        if (type.TypeKind != TypeKind.Class
+            || !type.Name.EndsWith(BootstrapSuffix, StringComparison.Ordinal)
+            || type.Name == CanonicalBootstrap)
+        {
+            return;
+        }
+
+        INamespaceSymbol? ns = type.ContainingNamespace;
+        if (ns is { IsGlobalNamespace: false })
+        {
+            string nsName = ns.ToDisplayString();
+            if (nsName == SanctionedBootstrapNamespaceRoot
+                || nsName.StartsWith(SanctionedBootstrapNamespaceRoot + ".", StringComparison.Ordinal))
+            {
+                return;
+            }
+        }
+
+        Location location = type.Locations.Length > 0 ? type.Locations[0] : Location.None;
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule,
+            location,
+            $"'{type.Name}' is an additional managed bootstrap entry — compose through GameBootstrap"));
     }
 }

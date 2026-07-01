@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 
 /// <summary>
-/// DFK015.1 — К-L15.1 three-tier mutex managed facade invariant (К-L15 sub-invariant
+/// DFK015_1 — К-L15.1 three-tier mutex managed facade invariant (К-L15 sub-invariant
 /// established at А'.7.x К-extensions cascade #0 closure 2026-05-21). Managed
 /// concurrency surface respects the three-tier mutex hierarchy (Layer 1 native
 /// compile-time isolation + Layer 2 native runtime + Layer 3 managed facade).
@@ -24,8 +24,9 @@ namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 /// usage patterns that bypass three-tier discipline.
 /// </para>
 /// <para>
-/// Class name convention: underscore substitution для dotted ID (DFK015.1
-/// → DFK015_1...). Consistent с DFK003_1/007_1/019_A.
+/// Descriptor ID and class name both use the underscore form (DFK015_1). A
+/// dotted or hyphenated diagnostic ID is rejected by Roslyn ReportDiagnostic
+/// as an invalid identifier — adjudicated 2026-07-01 (ANALYZER_RULES §4.1).
 /// </para>
 /// <para>
 /// Canonical К-L invariant text: KERNEL_ARCHITECTURE.md Part 0 К-L15.1 row
@@ -38,7 +39,7 @@ namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class DFK015_1ThreeTierMutexFacadeAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "DFK015.1";
+    public const string DiagnosticId = "DFK015_1";
 
     private static readonly LocalizableString Title =
         "К-L15.1 three-tier mutex managed facade — concurrency surface respects layer hierarchy";
@@ -63,7 +64,7 @@ public sealed class DFK015_1ThreeTierMutexFacadeAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
         description: Description,
-        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfk015-1");
+        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfk015_1");
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
         ImmutableArray.Create(Rule);

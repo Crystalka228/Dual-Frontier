@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace DualFrontier.Analyzers.Rules.Discipline;
 
 /// <summary>
-/// DFL025-A — Lesson #25 (refined 3rd extension) ReservedStub behavior invocation
+/// DFL025_A — Lesson #25 (refined 3rd extension) ReservedStub behavior invocation
 /// discipline. Test classes invoking a <c>[ReservedStub]</c>-tagged type for
 /// behavior assertions MUST carry <c>[Trait("Category", "ReservedStub")]</c> at
 /// either class or method level — enabling closure-protocol shell-level filter
@@ -42,7 +42,7 @@ namespace DualFrontier.Analyzers.Rules.Discipline;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class DFL025_AReservedStubInvocationAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "DFL025-A";
+    public const string DiagnosticId = "DFL025_A";
 
     /// <summary>
     /// Fully-qualified name of the <c>DualFrontier.Contracts.Analyzer.ReservedStubAttribute</c>
@@ -52,7 +52,7 @@ public sealed class DFL025_AReservedStubInvocationAnalyzer : DiagnosticAnalyzer
     public const string ReservedStubAttributeFqn = "DualFrontier.Contracts.Analyzer.ReservedStubAttribute";
 
     private static readonly LocalizableString Title =
-        "DFL025-A — test classes invoking [ReservedStub]-tagged behavior need [Trait(\"Category\", \"ReservedStub\")]";
+        "DFL025_A — test classes invoking [ReservedStub]-tagged behavior need [Trait(\"Category\", \"ReservedStub\")]";
 
     private static readonly LocalizableString MessageFormat =
         "Test class '{0}' invokes [ReservedStub]-tagged type '{1}' without [Trait(\"Category\", \"ReservedStub\")]";
@@ -74,7 +74,7 @@ public sealed class DFL025_AReservedStubInvocationAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
         description: Description,
-        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfl025-a");
+        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfl025_a");
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
         ImmutableArray.Create(Rule);

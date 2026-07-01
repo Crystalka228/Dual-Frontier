@@ -4,6 +4,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 
+// §8 federated interop-surface list is shared with DFK001 via SanctionedInteropSurface.
+
 /// <summary>
 /// DFK002 — К-L2 P/Invoke bindings invariant. Native interop flows through the
 /// canonical P/Invoke surface in <c>DualFrontier.Core.Interop</c>; no ad-hoc
@@ -64,7 +66,44 @@ public sealed class DFK002PInvokeBindingsAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // A P/Invoke method ([DllImport]/[LibraryImport]) is compliant iff its
+        // containing namespace is under a sanctioned interop surface (§8 federated
+        // model — SanctionedInteropSurface). ManagedBusBridge
+        // (DualFrontier.Application.Bus) is the one genuine violation, triaged at C9.
+        context.RegisterSymbolAction(AnalyzePInvokeMethod, SymbolKind.Method);
+    }
+
+    private const string DllImportFqn = "System.Runtime.InteropServices.DllImportAttribute";
+    private const string LibraryImportFqn = "System.Runtime.InteropServices.LibraryImportAttribute";
+
+    private static void AnalyzePInvokeMethod(SymbolAnalysisContext context)
+    {
+        var method = (IMethodSymbol)context.Symbol;
+
+        bool isPInvoke = false;
+        foreach (AttributeData attribute in method.GetAttributes())
+        {
+            string? fqn = attribute.AttributeClass?.ToDisplayString();
+            if (fqn == DllImportFqn || fqn == LibraryImportFqn)
+            {
+                isPInvoke = true;
+                break;
+            }
+        }
+
+        if (!isPInvoke || SanctionedInteropSurface.IsSanctioned(method.ContainingNamespace))
+        {
+            return;
+        }
+
+        Location location = method.Locations.Length > 0 ? method.Locations[0] : Location.None;
+        string ns = method.ContainingNamespace is { IsGlobalNamespace: false } declared
+            ? declared.ToDisplayString()
+            : "<global>";
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule,
+            location,
+            $"'{method.Name}' declares P/Invoke in non-sanctioned namespace '{ns}'"));
     }
 }

@@ -120,7 +120,7 @@ tools/DualFrontier.Analyzers/Rules/
                      DFK019_AStaticVulkanApiAnalyzer
 ```
 
-**Naming convention** (stated once): descriptor ID strings use **dots** for DFK sub-rules (`DFK003.1`, `DFK007.1`, `DFK015.1`, `DFK019.A`) and **hyphens** for DFL variants (`DFL025-A`, `DFL025-B`); file and class names substitute **underscores** (`DFK003_1StorageBridgeAnalyzer`, `DFL025_AReservedStubInvocationAnalyzer`) — C# identifiers admit neither dots nor hyphens.
+**Naming convention** (stated once; amended 2026-07-01 — descriptor-ID adjudication): descriptor ID strings, file names, and class names **all use underscores** for sub-rules and variants (`DFK003_1`, `DFK007_1`, `DFK015_1`, `DFK019_A`, `DFL025_A`, `DFL025_B`; class `DFK003_1StorageBridgeAnalyzer`). A **dotted or hyphenated diagnostic ID is rejected by Roslyn `ReportDiagnostic` as an invalid identifier** (Phase β empirical finding) and would also break the `.editorconfig` `dotnet_diagnostic.<id>.severity` key form; the pre-2026-07-01 dotted/hyphenated forms (still visible in the recon and the Phase β brief) are the **superseded** convention. `DFL025-C` is a shell-level filter category, not a Roslyn descriptor id, and is unaffected.
 
 **Categories per Q-L-7** (3 in use by shipped stub descriptors + 1 reserved):
 - `DualFrontier.Architecture` — DFK### kernel architectural invariants
@@ -135,31 +135,31 @@ tools/DualFrontier.Analyzers/Rules/
 | DFK001 | К-L1 | P0 | NativeBoundary | Info | Error | stub |
 | DFK002 | К-L2 | P0 | NativeBoundary | Info | Error | stub |
 | DFK003 | К-L3 | P0 | Architecture | Info | Error | stub |
-| DFK003.1 | К-L3.1 | P0 | Architecture | Info | Error | stub |
+| DFK003_1 | К-L3.1 | P0 | Architecture | Info | Error | stub |
 | DFK004 | К-L4 | P0 | Architecture | Info | Error | stub |
 | DFK005 | К-L5 | P0 | Architecture | Info | Error | stub |
 | DFK007 | К-L7 | P0 | Architecture | Info | Error | stub |
 | DFK011 | К-L11 | P0 | Architecture | Info | Error | stub |
-| DFK007.1 | К-L7.1 | P1 | NativeBoundary (GPU pipeline slot) | Info | Error | stub |
-| DFK015.1 | К-L15.1 | P1 | NativeBoundary (three-tier mutex managed facade) | Info | Error | stub |
+| DFK007_1 | К-L7.1 | P1 | NativeBoundary (GPU pipeline slot) | Info | Error | stub |
+| DFK015_1 | К-L15.1 | P1 | NativeBoundary (three-tier mutex managed facade) | Info | Error | stub |
 | DFK017 | К-L17 | P1 | Architecture (display composition multi-layer) | Info | Error | stub |
-| DFK019.A | К-L19 static API surface | P1 | NativeBoundary | Info | Warning² | stub |
+| DFK019_A | К-L19 static API surface | P1 | NativeBoundary | Info | Warning² | stub |
 | DFK013 | К-L13 | β-secondary | Architecture | Info | Warning | stub |
 | DFK016 | К-L16 (retain α — Phase 0 ratified per Q-L-16) | β-secondary | Architecture | Info | Warning | stub |
-| DFL025-A | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Warning | stub |
-| DFL025-B | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Suggestion | stub |
+| DFL025_A | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Warning | stub |
+| DFL025_B | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Suggestion | stub |
 | DF999 | analyzer self-discipline (Q-L-18 default) | Self-policing | Discipline | Info | Warning | stub |
 
 ¹ «Phase-γ target» is the severity the rule is **specified to receive at A'.9.1 Phase γ promotion** — it is not the current behavior. Promotion sequencing and the `.editorconfig` mechanics are owned by [ROADMAP.md «Analyzer track»](../ROADMAP.md). Until Phase γ executes, every rule ships `Info` and emits nothing.
 
-² Registry-drift resolution (v0.2.0): v0.1 carried two parallel registries (§4.1–4.5 and §10.1–10.3) whose columns drifted — §4.2 grouped DFK019.A under an «Error severity post-promotion» header while §10.1 listed Warning. Resolved to **Warning** per canonical [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications) DFK019 row (Warning, V substrate contract — configurable). v0.2.0 keeps exactly one registry — this table.
+² Registry-drift resolution (v0.2.0): v0.1 carried two parallel registries (§4.1–4.5 and §10.1–10.3) whose columns drifted — §4.2 grouped DFK019_A under an «Error severity post-promotion» header while §10.1 listed Warning. Resolved to **Warning** per canonical [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications) DFK019 row (Warning, V substrate contract — configurable). v0.2.0 keeps exactly one registry — this table.
 
 **Intended detection notes** (Phase β targets — none implemented at v0.2.0; canonical narratives: K_CLOSURE_REPORT.md §7.2):
 
 - **DFK013** — on-demand activation discipline (efficiency-not-correctness): `SystemBase` subclass без `[WakeOn*]` AND без `[TickRate]`, OR eager-init в `Initialize()`.
 - **DFK016** — pipeline depth D ∈ {1, 2, 3} hardcoded vs `PipelineSlotInterop.DefaultDepth` / `.MaxDepth` constants. Phase 0 ratified retain α (managed surface stable per closure report §3.3).
-- **DFL025-A** — test class invoking `[ReservedStub]`-tagged type MUST carry `[Trait("Category", "ReservedStub")]`; T2 syntax tree + SemanticModel attribute check via fully-qualified name match.
-- **DFL025-B** — standalone test methods против reserved-stub modules SHOULD use `[Fact(Skip="...")]`; edge-case discipline.
+- **DFL025_A** — test class invoking `[ReservedStub]`-tagged type MUST carry `[Trait("Category", "ReservedStub")]`; T2 syntax tree + SemanticModel attribute check via fully-qualified name match.
+- **DFL025_B** — standalone test methods против reserved-stub modules SHOULD use `[Fact(Skip="...")]`; edge-case discipline.
 - **DF999** — bans solution-wide `GlobalSuppressions.cs` / `[assembly: SuppressMessage]` (Q-L-18 default, pending batch 3 governance ratification); forces per-site suppression discipline (Q-L-20).
 - **DFL025-C** — closure-protocol shell-level rule (`--filter "Category!=ReservedStub"` в `dotnet test` invocation) — **NOT a Roslyn analyzer**; deferred к governance tooling cascade per amendments §4.5. Listed here as a scope exclusion only.
 
@@ -303,6 +303,7 @@ Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned 
 
 | Version | Date | Change |
 |---|---|---|
+| 0.2.2 | 2026-07-01 | Descriptor-ID adjudication (Phase β empirical finding, ratified by Crystalka): the dotted DFK sub-rule IDs (DFK003.1/DFK007.1/DFK015.1/DFK019.A) and hyphenated DFL variant IDs (DFL025-A/DFL025-B) are rejected by Roslyn `ReportDiagnostic` as invalid identifiers, so all descriptor IDs are normalized to the underscore form already used by the file/class names (DFK003_1 … DFL025_B). §4.1 naming convention amended; registry table + `AnalyzerReleases.Unshipped.md` rule IDs + the six stub descriptor consts/help-anchors updated in the same change. DFL025-C (shell-level filter, not a Roslyn rule) unaffected. Register version bump folded at Phase β REGISTER cascade. |
 | 0.1 | 2026-05-23 / 2026-05-25 | Initial AUTHORED-SKELETON at А'.8 closure (Commit 5 REGISTER enrollment); structural reorganization at A'.9.1 Phase α Commit 5. |
 | 0.2.1 | 2026-06-12 | Architecture Truth Cascade PATCH: §4.1 footnote ² cross-reference old-form `DF019` → `DFK019` (current namespace; aligns with the DFK019.A registry row). No spec change. |
 | 0.2.0 | 2026-06-11 | Structural separation per [DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md §6.3.2](../reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md) + Standing-Law cascade: roadmap load → [ROADMAP.md «Analyzer track»](../ROADMAP.md) (§4.1/§4.2 promotion columns + implementation order, §5 К-L20 family, §6 hardware tier, §10.5 forward plan, §11 forward, frontmatter «Forward sequencing»); §4 stub-truth correction (enforcement-surface overclaim cured — 17 non-detecting Info stubs, zero diagnostics, detection PENDING Phase β); single registry (v0.1 §10.1–10.3 duplicates collapsed; DFK019.A target resolved к Warning per K_CLOSURE §7.2); §7/§8 reframed as realized decision records; `MOD_API_CONTRACT.md` phantom reference resolved to explicit forward-reference; suppression law deferred к CODING_STANDARDS.md §5.3 «DFK-WAIVER» (§12 NEW). |

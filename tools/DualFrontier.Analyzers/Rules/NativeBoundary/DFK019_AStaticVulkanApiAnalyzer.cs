@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 
 /// <summary>
-/// DFK019.A — К-L19 static Vulkan API surface (split per Q-L-8: DFK019.A ships
+/// DFK019_A — К-L19 static Vulkan API surface (split per Q-L-8: DFK019_A ships
 /// A'.9.1 — static API surface; DFK019.B hardware-tier runtime capability check
 /// deferred к hardware tier expansion cascade).
 /// </summary>
@@ -23,8 +23,9 @@ namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 /// Lesson #N17 candidate audience-driven deferral).
 /// </para>
 /// <para>
-/// Class name convention: underscore substitution для dotted ID (DFK019.A
-/// → DFK019_A...). Consistent с DFK003_1/007_1/015_1.
+/// Descriptor ID and class name both use the underscore form (DFK019_A). A
+/// dotted or hyphenated diagnostic ID is rejected by Roslyn ReportDiagnostic
+/// as an invalid identifier — adjudicated 2026-07-01 (ANALYZER_RULES §4.1).
 /// </para>
 /// <para>
 /// Canonical К-L invariant text: KERNEL_ARCHITECTURE.md Part 0 К-L19 row
@@ -37,7 +38,7 @@ namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class DFK019_AStaticVulkanApiAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "DFK019.A";
+    public const string DiagnosticId = "DFK019_A";
 
     private static readonly LocalizableString Title =
         "К-L19 static Vulkan API surface — Vulkan 1.3 baseline + async compute";
@@ -63,7 +64,7 @@ public sealed class DFK019_AStaticVulkanApiAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
         description: Description,
-        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfk019-a");
+        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfk019_a");
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
         ImmutableArray.Create(Rule);

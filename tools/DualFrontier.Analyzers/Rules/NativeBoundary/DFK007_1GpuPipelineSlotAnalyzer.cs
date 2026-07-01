@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 
 /// <summary>
-/// DFK007.1 — К-L7.1 GPU pipeline slot invariant (К-L7 sub-invariant established
+/// DFK007_1 — К-L7.1 GPU pipeline slot invariant (К-L7 sub-invariant established
 /// at К10.3 v2 closure). Managed access к GPU pipeline slot ring goes through
 /// <c>PipelineSlotInterop</c> ReadSlotTail API; no direct slot indexing.
 /// </summary>
@@ -21,8 +21,9 @@ namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 /// (ReadSlotTail К-L7.1 API per Phase 0 closure report §2.1).
 /// </para>
 /// <para>
-/// Class name convention: underscore substitution для dotted ID (DFK007.1
-/// → DFK007_1...). Consistent с DFK003_1/015_1/019_A.
+/// Descriptor ID and class name both use the underscore form (DFK007_1). A
+/// dotted or hyphenated diagnostic ID is rejected by Roslyn ReportDiagnostic
+/// as an invalid identifier — adjudicated 2026-07-01 (ANALYZER_RULES §4.1).
 /// </para>
 /// <para>
 /// Canonical К-L invariant text: KERNEL_ARCHITECTURE.md Part 0 К-L7.1 row.
@@ -35,7 +36,7 @@ namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class DFK007_1GpuPipelineSlotAnalyzer : DiagnosticAnalyzer
 {
-    public const string DiagnosticId = "DFK007.1";
+    public const string DiagnosticId = "DFK007_1";
 
     private static readonly LocalizableString Title =
         "К-L7.1 GPU pipeline slot — managed access via PipelineSlotInterop.ReadSlotTail";
@@ -59,7 +60,7 @@ public sealed class DFK007_1GpuPipelineSlotAnalyzer : DiagnosticAnalyzer
         defaultSeverity: DiagnosticSeverity.Info,
         isEnabledByDefault: true,
         description: Description,
-        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfk007-1");
+        helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfk007_1");
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics =>
         ImmutableArray.Create(Rule);

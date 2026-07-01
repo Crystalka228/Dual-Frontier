@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
 
 namespace DualFrontier.Analyzers.Rules.Discipline;
 
@@ -69,7 +73,82 @@ public sealed class DF999GlobalSuppressionBanAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // [assembly: SuppressMessage] anywhere, and any GlobalSuppressions.cs file
+        // (the conventional assembly-suppression container), violate DF999. Per-site
+        // DFK-WAIVER is the sanctioned alternative (CODING_STANDARDS §5.3).
+        context.RegisterSyntaxNodeAction(AnalyzeAssemblyAttribute, SyntaxKind.Attribute);
+        context.RegisterSyntaxTreeAction(AnalyzeSyntaxTree);
+    }
+
+    private const string SuppressMessageFqn =
+        "System.Diagnostics.CodeAnalysis.SuppressMessageAttribute";
+
+    private const string GlobalSuppressionsFileName = "GlobalSuppressions.cs";
+
+    private static void AnalyzeAssemblyAttribute(SyntaxNodeAnalysisContext context)
+    {
+        var attribute = (AttributeSyntax)context.Node;
+
+        // Only assembly-target attributes: [assembly: ...].
+        if (attribute.Parent is not AttributeListSyntax list
+            || list.Target is null
+            || !list.Target.Identifier.IsKind(SyntaxKind.AssemblyKeyword))
+        {
+            return;
+        }
+
+        // A GlobalSuppressions.cs file is reported once by the tree-level check;
+        // avoid double-reporting each assembly attribute inside it.
+        if (EndsWithFileName(attribute.SyntaxTree.FilePath, GlobalSuppressionsFileName))
+        {
+            return;
+        }
+
+        ISymbol? constructed =
+            context.SemanticModel.GetSymbolInfo(attribute, context.CancellationToken).Symbol;
+        if ((constructed as IMethodSymbol)?.ContainingType?.ToDisplayString() != SuppressMessageFqn)
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule,
+            attribute.GetLocation(),
+            "[assembly: SuppressMessage] — use a per-site DFK-WAIVER instead"));
+    }
+
+    private static void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
+    {
+        if (!EndsWithFileName(context.Tree.FilePath, GlobalSuppressionsFileName))
+        {
+            return;
+        }
+
+        Location location = Location.Create(context.Tree, new TextSpan(0, 0));
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule,
+            location,
+            "GlobalSuppressions.cs — solution-wide suppression file banned"));
+    }
+
+    private static bool EndsWithFileName(string? path, string fileName)
+    {
+        if (string.IsNullOrEmpty(path) || path!.Length < fileName.Length)
+        {
+            return false;
+        }
+
+        if (!path.EndsWith(fileName, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (path.Length == fileName.Length)
+        {
+            return true;
+        }
+
+        char separator = path[path.Length - fileName.Length - 1];
+        return separator == '/' || separator == '\\';
     }
 }
