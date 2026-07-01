@@ -80,15 +80,15 @@ internal static class ReservedStubAnalysis
     }
 
     /// <summary>
-    /// True if any symbol referenced in <paramref name="method"/>'s body is owned by
-    /// (or is) a <c>[ReservedStub]</c>-tagged type.
+    /// The first <c>[ReservedStub]</c>-tagged type that <paramref name="method"/>'s body
+    /// references (via a member owned by it, or the type itself), or null.
     /// </summary>
-    public static bool MethodTouchesReservedStub(
+    public static ITypeSymbol? FirstTouchedReservedStub(
         SemanticModel model, MethodDeclarationSyntax method, CancellationToken cancellationToken)
     {
         if (method.Body is null && method.ExpressionBody is null)
         {
-            return false;
+            return null;
         }
 
         foreach (SyntaxNode node in method.DescendantNodes())
@@ -111,12 +111,22 @@ internal static class ReservedStubAnalysis
 
             if (HasReservedStub(owner))
             {
-                return true;
+                return owner;
             }
         }
 
-        return false;
+        return null;
     }
+
+    /// <summary>
+    /// True if any symbol referenced in <paramref name="method"/>'s body is owned by
+    /// (or is) a <c>[ReservedStub]</c>-tagged type. (Reflection-only exemption per
+    /// DFL025_A is a documented refinement — not yet distinguished; harmless while the
+    /// stub-touching-test baseline is 0.)
+    /// </summary>
+    public static bool MethodTouchesReservedStub(
+        SemanticModel model, MethodDeclarationSyntax method, CancellationToken cancellationToken)
+        => FirstTouchedReservedStub(model, method, cancellationToken) is not null;
 
     private static bool SymbolHasReservedStubTrait(ISymbol symbol)
     {

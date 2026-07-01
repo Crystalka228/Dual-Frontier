@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace DualFrontier.Analyzers.Rules.NativeBoundary;
@@ -74,7 +76,44 @@ public sealed class DFK019_AStaticVulkanApiAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // К-L19: Vulkan 1.3 is the sole sanctioned graphics substrate. A `using` of an
+        // alternate-graphics-API root namespace is the static-surface violation. The
+        // 871-occurrence Vulkan 1.3 interop surface (Runtime.Native.Vulkan) is SILENT.
+        // (Pre-1.3 Vulkan-version-constant usage is a documented refinement — the
+        // VkConstants definition of VK_API_VERSION_1_0 must not be flagged.)
+        context.RegisterSyntaxNodeAction(AnalyzeUsingDirective, SyntaxKind.UsingDirective);
+    }
+
+    private static readonly string[] AlternateGraphicsRoots =
+    {
+        "OpenGL", "OpenTK", "DirectX", "Direct3D", "SharpDX", "Vortice", "Metal",
+    };
+
+    private static void AnalyzeUsingDirective(SyntaxNodeAnalysisContext context)
+    {
+        var directive = (UsingDirectiveSyntax)context.Node;
+        if (directive.Name is null)
+        {
+            return;
+        }
+
+        string root = directive.Name.ToString();
+        int dot = root.IndexOf('.');
+        if (dot >= 0)
+        {
+            root = root.Substring(0, dot);
+        }
+
+        foreach (string alternate in AlternateGraphicsRoots)
+        {
+            if (root == alternate)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    Rule,
+                    directive.GetLocation(),
+                    $"alternate graphics API '{root}' — Vulkan 1.3 is the sole sanctioned substrate (К-L19)"));
+                return;
+            }
+        }
     }
 }

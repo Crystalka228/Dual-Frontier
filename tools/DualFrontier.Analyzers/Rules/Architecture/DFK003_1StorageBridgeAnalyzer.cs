@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace DualFrontier.Analyzers.Rules.Architecture;
 
@@ -66,7 +68,35 @@ public sealed class DFK003_1StorageBridgeAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // Direct `new ManagedStore<T>(...)` is sanctioned only in the per-mod storage
+        // provider (RestrictedModApi, DualFrontier.Application.Modding). Anywhere else
+        // bypasses the SystemBase.ManagedStore<T>() / resolver API — the К-L3.1 bridge
+        // discipline. (Save-path persistence + cross-mod access are documented refinements.)
+        context.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ObjectCreation);
+    }
+
+    private const string ManagedStoreFqn = "DualFrontier.Contracts.Modding.ManagedStore<T>";
+    private const string SanctionedProviderNamespace = "DualFrontier.Application.Modding";
+
+    private static void AnalyzeObjectCreation(OperationAnalysisContext context)
+    {
+        var creation = (IObjectCreationOperation)context.Operation;
+        if (creation.Type is not INamedTypeSymbol type
+            || type.OriginalDefinition.ToDisplayString() != ManagedStoreFqn)
+        {
+            return;
+        }
+
+        string ns = context.ContainingSymbol?.ContainingNamespace?.ToDisplayString() ?? string.Empty;
+        if (ns == SanctionedProviderNamespace
+            || ns.StartsWith(SanctionedProviderNamespace + ".", StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule,
+            creation.Syntax.GetLocation(),
+            $"direct 'new ManagedStore<T>' bypasses the SystemBase.ManagedStore<T>() API (in '{ns}')"));
     }
 }

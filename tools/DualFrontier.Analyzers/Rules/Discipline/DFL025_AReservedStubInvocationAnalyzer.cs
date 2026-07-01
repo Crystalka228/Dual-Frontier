@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace DualFrontier.Analyzers.Rules.Discipline;
@@ -84,7 +86,40 @@ public sealed class DFL025_AReservedStubInvocationAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // A [Fact]/[Theory] test method that exercises a [ReservedStub]-tagged type,
+        // without [Trait("Category","ReservedStub")] on the method or its class, breaks
+        // the closure-protocol filter discipline. Reserved-stub + trait identity is
+        // resolved by ReservedStubAnalysis (FQN matching, Lesson #N19).
+        context.RegisterSyntaxNodeAction(AnalyzeTestMethod, SyntaxKind.MethodDeclaration);
+    }
+
+    private static void AnalyzeTestMethod(SyntaxNodeAnalysisContext context)
+    {
+        var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+
+        if (context.SemanticModel.GetDeclaredSymbol(methodDeclaration, context.CancellationToken)
+            is not IMethodSymbol method)
+        {
+            return;
+        }
+
+        if (ReservedStubAnalysis.GetXunitTestAttribute(method) is null
+            || ReservedStubAnalysis.HasReservedStubTrait(method))
+        {
+            return;
+        }
+
+        ITypeSymbol? stub = ReservedStubAnalysis.FirstTouchedReservedStub(
+            context.SemanticModel, methodDeclaration, context.CancellationToken);
+        if (stub is null)
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule,
+            methodDeclaration.Identifier.GetLocation(),
+            method.ContainingType?.Name ?? method.Name,
+            stub.Name));
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace DualFrontier.Analyzers.Rules.Architecture;
 
@@ -65,7 +66,31 @@ public sealed class DFK011NativeWorldSsotAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // Phase β cleanup-phase populates detection logic here.
-        // Stub returns zero diagnostics при build time.
+        // ManagedWorld is the retired managed storage backbone (test-fixture-only per
+        // К-L11); NativeWorld is the process SSoT. A `new ManagedWorld(...)` in non-test
+        // production code is the shadow-world / dual-backbone reintroduction.
+        context.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ObjectCreation);
+    }
+
+    private const string ShadowWorldTypeName = "ManagedWorld";
+
+    private static void AnalyzeObjectCreation(OperationAnalysisContext context)
+    {
+        var creation = (IObjectCreationOperation)context.Operation;
+        if (creation.Type?.Name != ShadowWorldTypeName)
+        {
+            return;
+        }
+
+        string ns = context.ContainingSymbol?.ContainingNamespace?.ToDisplayString() ?? string.Empty;
+        if (ns.Contains("Test"))
+        {
+            return;
+        }
+
+        context.ReportDiagnostic(Diagnostic.Create(
+            Rule,
+            creation.Syntax.GetLocation(),
+            $"'{ShadowWorldTypeName}' shadow-world reintroduced in production — NativeWorld is the SSoT"));
     }
 }
