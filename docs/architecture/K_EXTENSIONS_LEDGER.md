@@ -211,6 +211,57 @@ scaffold (Presentation.Native + Presentation) + addition of new consumer (Launch
 - A'.9.1 brief authoring prerequisites enumerated в report §10 (10 items с empirical anchors + recommendations + decision pointers)
 - К-extensions cascade #5 (= A'.9.1 Analyzer Infrastructure) anticipated next per Q-K-44 recommendation (continue dual designation)
 
+### §3.6 — К-extensions cascade #5 — A'.9.1 Analyzer Infrastructure (Roslyn Analyzer Implementation)
+
+**Cascade designation**: К-extensions cascade #5 + A'.9.1 milestone-internal dual designation per Q-L-2 (Q-K-44 recommendation realized)
+**Dates**: Authored 2026-05-24 (Phase 0), Executed 2026-05-24 → 2026-07-02 (five phases), Closed 2026-07-02 (Phase δ governance cascade)
+**Brief**: [`tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md`](../../tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md) v1.0 (EXECUTED at Phase δ); phase sub-briefs PHASE_BETA_BRIEF / PHASE_GAMMA_BRIEF / PHASE_DELTA_BRIEF authored from durable recon reports (docs/reports/ convention) and EXECUTED at their closures
+**Predecessor**: К-ext #4 (A'.9.0 Reconnaissance) — `tools/briefs/A_PRIME_9_0_RECONNAISSANCE_BRIEF.md` v1.0 EXECUTED (§3.5)
+**Authoring deliberation**: Two-session pre-authoring 2026-05-24 — batch 1 Q-L-1..Q-L-7 + batch 2 Q-L-8..Q-L-17 + Axiom Option (VII) (PROJECT_AXIOMS codification)
+
+#### §3.6.1 — Cascade outcome summary
+
+A'.9.1 shipped the in-repo Roslyn analyzer infrastructure (К-extensions cascade #5) across five phases:
+
+- **Phase 0 (recon + brief)** — `bb6807c`→`4fa76ed` (2 commits, 2026-05-24): brief AUTHORED + Phase 0 closure report + Lesson #N17 Provisional (METHODOLOGY 1.12.1).
+- **Phase α (scaffolding)** — `5030fa2`→`a23556f` (9 atomic commits, 2026-05-24): tools/DualFrontier.Analyzers/ netstandard2.0 csproj + tests/DualFrontier.Analyzers.Tests/ + CPM via Directory.Packages.props + ANALYZER_RULES DF→DFK rename + structural reorganization + [ReservedStub] attribute infrastructure (DualFrontier.Contracts.Analyzer) + cascade #3 dispatch-arm annotation pass + PROJECT_AXIOMS.md v1.0 Tier 1 LOCKED + FRAMEWORK/SYNTHESIS_RATIONALE cross-refs.
+- **Phase β-prep** — `588c667`→`a213954` (4 commits + `f94bb84` prompt artifact, 2026-05-25): 17 rule stubs (descriptor-only, Info) + src/Directory.Build.props centralized `OutputItemType="Analyzer"` wiring to all 12 src projects.
+- **Phase β (detection)** — `1bc0df2`→`b116727` (12 commits, 2026-07-01): detection populated into all 17 rules (SYNTAX / FQN-STRING per Lesson #N19 / SEMANTIC tiers); 54-test verifier suite + census meta-tests (CensusMetaTests); first-run violation count 23 → Q-L-1 adaptive gate 23 ≤ 80 → CONTINUE single-cascade; triage closed 15 genuine violations in 2 clusters (incl. the ManagedBusBridge 13-DllImport relocation к Core.Interop per the DFK002 federated §8 surface) + 2 DFK-WAIVER suppressions census-pinned (К-L19-sanctioned DFK001, ValidationLayer.cs); descriptor-ID underscore adjudication Crystalka-ratified (ANALYZER_RULES 0.2.2).
+- **Phase γ (promotion)** — `524dd31`→`cc2f71a` (8 commits, 2026-07-01) + residue `4cc5e7e`: 17 descriptors Info → ratified shipped severities (11 Error + 5 Warning build-breaking under TreatWarningsAsErrors; DFL025_B descriptor Info ≡ `.editorconfig` suggestion, IDE-only); AnalyzerReleases Release 1.0 (Unshipped → Shipped, RS-tracked); root .editorconfig primed (17 descriptor-identical keys); ANALYZER_RULES 0.4.0 enforcement truth-up; F-12 CLOSED (DFK019_A = Warning); F-25 CLOSED (census baseline fold); SYNTH-2 standing-law PATCH (CODING_STANDARDS 2.1.1 + TESTING_STRATEGY 2.0.1).
+- **Phase δ (governance closure)** — this cascade (2026-07-02): METHODOLOGY 1.14.0 (#N17/#N18/#N19/#N20 FORMALIZED + #N14 PROMOTED + F-7 registry note); К-L14 Evidence #14 + dashboard Live promotion; KERNEL 2.6.2 chronicle; this entry; F-27 + F-7 CLOSED; REGISTER 2.20 → 2.21.
+
+**Total cascade commits**: 37 pre-δ (2 + 9 + 4(+1 prompt artifact) + 12 + 8(+1 residue)) + the Phase δ governance cascade.
+
+#### §3.6.2 — Rules shipped
+
+**A'.9.1 shipped enforcement surface** (17 rules at Release 1.0 severities):
+
+| Category | Rules | Count | Shipped severity |
+|---|---|---|---|
+| Architecture | DFK003, DFK003_1, DFK004, DFK005, DFK007, DFK011, DFK013, DFK016, DFK017 | 9 | 7 Error; DFK013 + DFK016 Warning (К-L13/К-L16 efficiency-class) |
+| NativeBoundary | DFK001, DFK002, DFK007_1, DFK015_1, DFK019_A | 5 | 4 Error; DFK019_A Warning (F-12 ratified) |
+| Discipline | DFL025_A, DFL025_B, DF999 | 3 | DFL025_A + DF999 Warning; DFL025_B suggestion-tier (descriptor Info, IDE-only) |
+| **TOTAL** | | **17** | 11 Error + 5 Warning (16 build-breaking under TreatWarningsAsErrors) + 1 IDE-only |
+
+#### §3.6.3 — Forward implications
+
+- **К-L20 LOCK cascade** (deferred, Mod-API-coupled per Q-L-11): DFK009 / DFK012 / DFK015 / DFK018 + DFK020 family (~20 sub-rules) + DFC001.A/.B; the reserved DFC### namespace + DualFrontier.ModSurface category activate there ([ROADMAP «Analyzer track»](../ROADMAP.md)).
+- **Hardware tier expansion cascade** (deferred, audience-driven per Lesson #N17 FORMALIZED): DFK019_B runtime tier check + DFK016 threshold customization API.
+- **PublicApiAnalyzers** re-activation conditions per Q-L-13 live in [ROADMAP «Analyzer track»](../ROADMAP.md).
+- **PERMANENTLY ABSENT** (PA-001/PA-002 anchors): code-fix providers (Q-L-15), BannedApiAnalyzer (Q-L-12), DFK010 (Q-L-9).
+- **ANALYZER_RULES lifecycle**: stays AUTHORED-SKELETON — Tier 1 LOCKED promotion re-gated on the §10 per-rule-template population pass (a future dedicated cascade; honest deferral recorded at the ROADMAP δ row).
+
+#### §3.6.4 — К-L14 thesis preservation
+
+- **Substrate touch**: zero across all five phases (S-LOCK-1 held arc-wide)
+- **К-L14 evidence increment**: verification #14 — first analyzer-implementation evidence (Type 6 NEW category, tooling addition); evidence dashboard promoted AUTHORED-SKELETON → Live at the #14 gate
+- **К-L count unchanged**: 21 final (zero LOCK transitions across the arc)
+- **Falsifiability mechanism shift**: manual cross-document audit → automated compile-time analyzer pass (the Roslyn-expressible К-L subset machine-enforced at build time)
+
+#### §3.6.5 — Lessons surfaced/applied
+
+Lesson outcomes landed at METHODOLOGY 1.14.0 (Phase δ) — the pointer of record: four FORMALIZE entries (#N17 audience-driven tooling deferral, #N18 pre-flight empirical scope verification, #N19 analyzer detection via canonical FQN strings, #N20 classification-derived eradication class) + Lesson #N14 PROMOTED (Phase 0 empirical assumed-state coverage; #N16 recorded absorbed) + the lesson-number registry note (F-7 adjudication).
+
 ---
 
 ## §4 — Forward roadmap
@@ -224,7 +275,7 @@ Anticipated К-extensions cascades:
   first К-L14 substrate-extension-evidence opportunity (Lesson #N15 reserved
   для first-application). Path γ-A Option C copy of ProceduralAtlas + future
   consolidation point.
-- **К-extensions cascade #5 = A'.9.1 Analyzer Infrastructure** — first analyzer implementation cascade. Authored post-A'.9.0 closure against report §10 prerequisites + §11 Q-K candidates. Scope: analyzer project scaffold (tools/DualFrontier.Analyzers/ + tests/DualFrontier.Analyzers.Tests/) + Directory.Build.props centralized reference + .editorconfig baseline + first DF### rule batch (17 candidates per report §10 prerequisite 1) + cleanup phase + suppression governance protocol.
+- **К-extensions cascade #5 = A'.9.1 Analyzer Infrastructure** — **REALIZED 2026-07-02, see §3.6** (17 rules shipped at Release 1.0 severities; cleanup + severity promotion executed within the cascade as Phases β/γ).
 - **К-extensions cascade #6+** — A'.9.2/A'.9.3 (severity promotion + DC###/DL### rule cascades) per report §10 prerequisite 7 decomposition recommendation
 - **Post-A'.9 cascade**: V-extension (per Crystalka «расширять V» direction)
 - **К-L20 LOCK cascade**: Mod API lock milestone + DFK020 family activation (20 sub-rules per report §6.2)
