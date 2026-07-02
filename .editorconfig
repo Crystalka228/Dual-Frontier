@@ -2,3 +2,31 @@ root = true
 
 [*]
 charset = utf-8
+
+[*.cs]
+# DualFrontier analyzer shipped severities — Release 1.0 (A'.9.1 Phase γ; F-12
+# ratified 2026-07-01). Explicit restatement of the 17 descriptor defaultSeverity
+# values (descriptor-as-truth; no override semantics — a key differing from its
+# descriptor is a defect). Registry: ANALYZER_RULES §4.1 (rule registry); release
+# record: tools/DualFrontier.Analyzers/AnalyzerReleases.Shipped.md.
+# `suggestion` here == DiagnosticSeverity.Info (DFL025_B — IDE-only).
+# DualFrontier.Architecture
+dotnet_diagnostic.DFK003.severity = error
+dotnet_diagnostic.DFK003_1.severity = error
+dotnet_diagnostic.DFK004.severity = error
+dotnet_diagnostic.DFK005.severity = error
+dotnet_diagnostic.DFK007.severity = error
+dotnet_diagnostic.DFK011.severity = error
+dotnet_diagnostic.DFK013.severity = warning
+dotnet_diagnostic.DFK016.severity = warning
+dotnet_diagnostic.DFK017.severity = error
+# DualFrontier.NativeBoundary
+dotnet_diagnostic.DFK001.severity = error
+dotnet_diagnostic.DFK002.severity = error
+dotnet_diagnostic.DFK007_1.severity = error
+dotnet_diagnostic.DFK015_1.severity = error
+dotnet_diagnostic.DFK019_A.severity = warning
+# DualFrontier.Discipline
+dotnet_diagnostic.DFL025_A.severity = warning
+dotnet_diagnostic.DFL025_B.severity = suggestion
+dotnet_diagnostic.DF999.severity = warning
