@@ -43,8 +43,7 @@ public sealed class DFK005DeclarativeBootstrapAnalyzer : DiagnosticAnalyzer
         "Per К-L5, bootstrap composition is declared в <c>bootstrap_graph.h</c> and " +
         "managed consumers (<c>Bootstrap.cs</c>) bind к the declaration. Multiple bootstrap " +
         "entry points, managed-only system composition, or imperative bootstrap construction " +
-        "outside the declared graph violate К-L5. Phase β cleanup-phase will populate detection " +
-        "patterns per K_CLOSURE_REPORT.md §7.";
+        "outside the declared graph violate К-L5. Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 

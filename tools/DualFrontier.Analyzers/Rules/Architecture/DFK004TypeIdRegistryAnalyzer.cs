@@ -40,7 +40,7 @@ public sealed class DFK004TypeIdRegistryAnalyzer : DiagnosticAnalyzer
         "Per К-L4, ComponentTypeRegistry is the canonical mapping between managed " +
         "component type and native type ID. Direct numeric literal type IDs, alternate " +
         "registry surfaces, or per-system type ID caching outside the registry violate К-L4. " +
-        "Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 

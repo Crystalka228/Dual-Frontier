@@ -63,8 +63,7 @@ public sealed class DFL025_AReservedStubInvocationAnalyzer : DiagnosticAnalyzer
         "Per Lesson #25 refined 3rd extension, test classes invoking [ReservedStub]-tagged " +
         "types для behavior assertions must carry [Trait(\"Category\", \"ReservedStub\")] " +
         "for closure-protocol filter discipline. Reflection-only access against reserved " +
-        "stubs is permitted без trait. Phase β cleanup-phase will populate detection patterns " +
-        "per K_CLOSURE_REPORT.md §7.";
+        "stubs is permitted без trait. Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Discipline";
 

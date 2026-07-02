@@ -6,7 +6,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "0.2"
+version: "0.2.1"
 next_review_due: 2027-05-10
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-PIPELINE_METRICS
 ---
@@ -241,7 +241,7 @@ A machine with a discrete GPU and 8 GB VRAM, or Apple Silicon with 16 GB unified
 
 **Annotation** (A'.0.7, 2026-05-10): `[transfers с reframing]`
 
-.NET 8.0 SDK + Godot 4.3+ survive across era boundary (project tech stack). VS Code+Cline + LM Studio+Gemma are v1.x-specific tooling that doesn't transfer. Anthropic Claude desktop app survives across boundary; subscription-tier guidance same (Max 5×). See §6 Forward measurement plan for v1.6 reformulation.
+.NET 8.0 SDK + Godot 4.3+ survive across era boundary (project tech stack). VS Code+Cline + LM Studio+Gemma are v1.x-specific tooling that doesn't transfer. Anthropic Claude desktop app survives across boundary; subscription-tier guidance same (Max 5×). See §6 Forward measurement plan for v1.6 reformulation. [Superseded 2026-05-23 / 2026-06-30: Godot fully deprecated at K-extensions cascade #2 and eradicated at the Godot Eradication Cascade (F-5 CLOSED `be7d4c2`); surviving v1.6+ stack = .NET 8.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.]
 
 ### §5.3 Subscription tier
 
@@ -272,7 +272,7 @@ Per Q10.a annotations (A'.0.7 amendment, 2026-05-10), the following sections req
 | §1.3 Hardware reference | Reframe «local model host» к v1.6 reality (cloud-tier model via Claude Desktop client; no local inference; minimum hardware reduces к Claude Desktop runtime + project IDE) | Post-A'.0.7 amendment landing |
 | §3.2 Subscription headroom | Collect v1.6 era subscription utilization data — first data points: A'.0.5 closure (2026-05-10, single execution session), A'.0.7 deliberation session (2026-05-10, single deliberation session), subsequent Phase A' milestones | Phase A' execution cadence |
 | §5.1 Minimum hardware | Reframe — Claude Desktop client minimum hardware (modest), no GPU/VRAM-for-local-inference requirement | Post-A'.0.7 amendment landing |
-| §5.2 Software dependencies | Reframe tool stack — Claude Desktop client primary; VS Code+Cline + LM Studio v1.x-specific (removed for v1.6); Godot 4.3+ + .NET 8.0 survive | Post-A'.0.7 amendment landing |
+| §5.2 Software dependencies | Reframe tool stack — Claude Desktop client primary; VS Code+Cline + LM Studio v1.x-specific (removed for v1.6); Godot 4.3+ + .NET 8.0 survive [Superseded 2026-05-23 / 2026-06-30: Godot fully deprecated at K-extensions cascade #2 and eradicated at the Godot Eradication Cascade (F-5 CLOSED `be7d4c2`); surviving v1.6+ stack = .NET 8.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.] | Post-A'.0.7 amendment landing |
 | §5.3 Subscription tier | Verify «API access not required» under v1.6 Claude Desktop subscription; update subscription tier guidance with v1.6-era practical experience | Post-A'.0.7 amendment landing |
 
 Task completion lifts content from this backlog к main document body; this section itself stays present с completed rows marked or condensed format as historical record of A'.0.7-era forward-measurement plan.
@@ -285,6 +285,7 @@ Task completion lifts content from this backlog к main document body; this sect
 |---|---|---|
 | 0.1 | 2026-04-28 | Initial collection covering Phases 0–4 baseline plus M0–M3 Mod-OS migration; gathered under v1.x era pipeline (4-agent model-tier boundary: human + Gemma local executor + Sonnet prompt generator + Opus architect). |
 | 0.2 | 2026-05-10 | Per-metric annotations added per A'.0.7 amendment (Q10.a-with-standardized-labels): 5 standardized transferability labels applied к each section; top-of-document era frame note; new §6 Forward measurement plan tracks v1.6 era data collection backlog. v1.x era measurements preserved verbatim. |
+| 0.2.1 | 2026-07-02 | A'.9.1 Phase δ rider — era annotations appended at the §5.2 annotation paragraph and the §6 forward-plan §5.2 row: the «Godot 4.3+ survives across era boundary» forward-claims superseded (Godot deprecated at К-extensions cascade #2 2026-05-23; eradicated at the Godot Eradication Cascade 2026-06-30, F-5 CLOSED `be7d4c2`). Annotation-only under the document's own era charter; §1–§5 historical bodies untouched. |
 
 ---
 

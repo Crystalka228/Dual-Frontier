@@ -38,7 +38,7 @@ public sealed class DFK003StorageOwnershipAnalyzer : DiagnosticAnalyzer
         "Native side owns ECS storage allocation, layout, and lifetime per К-L3. " +
         "Managed code may only access storage через stable spans exposed by Span protocol (К-L7). " +
         "Direct managed allocation of ECS-shaped storage or unsanctioned ownership transfer violates К-L3. " +
-        "Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 

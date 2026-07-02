@@ -47,8 +47,7 @@ public sealed class DFL025_BStandaloneSkipAnalyzer : DiagnosticAnalyzer
         "Per Lesson #25 refined 3rd extension edge case discipline, standalone test methods " +
         "against modules tagged with [ReservedStub] should declare [Fact(Skip=\"<reason>\")] " +
         "rather than relying on closure-protocol filter exclusion. Suggestion severity — " +
-        "informational only. Phase β cleanup-phase will populate detection patterns per " +
-        "K_CLOSURE_REPORT.md §7.";
+        "informational only. Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Discipline";
 

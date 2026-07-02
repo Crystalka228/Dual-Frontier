@@ -53,10 +53,11 @@ The following are mutable and may be revised by any cascade commit with a §5 re
 
 1. **Symbol names of reserved stubs and analyzer rule classes.**
    The diagnostic **descriptor ID string is the contract; the file/class name is surface.**
-   On-disk proof of the sanctioned duality:
-   - `tools/DualFrontier.Analyzers/Rules/Architecture/DFK003_1StorageBridgeAnalyzer.cs` declares `DiagnosticId = "DFK003.1"` (underscore file/class form, dot descriptor form);
-   - `tools/DualFrontier.Analyzers/Rules/Discipline/DFL025_AReservedStubInvocationAnalyzer.cs` declares `DiagnosticId = "DFL025-A"` (underscore file/class form, hyphen descriptor form).
-   Renaming the file or class is surface; changing the descriptor ID string is a contract change (immutable-or-adjudicate).
+   Since the A'.9.1 Phase β descriptor-ID adjudication (Crystalka-ratified 2026-07-01), every descriptor ID uses the underscore form identical to the file/class form — on-disk truth:
+   - `tools/DualFrontier.Analyzers/Rules/Architecture/DFK003_1StorageBridgeAnalyzer.cs` declares `DiagnosticId = "DFK003_1"`;
+   - `tools/DualFrontier.Analyzers/Rules/Discipline/DFL025_AReservedStubInvocationAnalyzer.cs` declares `DiagnosticId = "DFL025_A"`.
+   The earlier dot/hyphen descriptor duality (`"DFK003.1"` / `"DFL025-A"`) was retired through the contract channel, not as a surface move: Roslyn `ReportDiagnostic` rejects dotted/hyphenated IDs as invalid identifiers, so the duality was Roslyn-illegal (ANALYZER_RULES §4 naming convention; CODING_STANDARDS §5.3 diagnostic-ID form).
+   Renaming the file or class is surface; changing the descriptor ID string is a contract change (immutable-or-adjudicate) — the underscore normalization is the worked example of the adjudicate path.
 2. **File and directory layout below the project level.**
    Placement of sub-files within a project may be revised freely.
    The **project-to-layer assignment is NOT mutable** — a type belonging to `DualFrontier.Contracts` cannot migrate to `DualFrontier.Systems` as a "surface" move; layer boundaries are К-L / architecture territory.
@@ -164,4 +165,5 @@ Principle changes (§2) additionally require Crystalka ratification.
 
 ## Change history
 
+- **v1.0.1 (2026-07-02)** — F-27(a) PATCH at the A'.9.1 Phase δ rider: §3 item 1's on-disk-proof bullets updated from the superseded dot/hyphen descriptor duality to the underscore truth (Phase β descriptor-ID adjudication, Crystalka-ratified 2026-07-01); the item's principle (descriptor ID = contract, file/class name = surface) unchanged. Catalog clarification per the amendment protocol's PATCH class.
 - **v1.0 (2026-06-11)** — Initial authoring at the Standing-Law Cascade, per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` §7-W3. Mechanism adapted from a proven external skeleton-mutability governance document (read-only reference corpus) onto Dual Frontier's substrate; §6 retrospective classifies the A'.9.1 Phase α deltas from on-disk commit-body evidence.

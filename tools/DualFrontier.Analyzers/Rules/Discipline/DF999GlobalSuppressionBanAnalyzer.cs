@@ -51,7 +51,7 @@ public sealed class DF999GlobalSuppressionBanAnalyzer : DiagnosticAnalyzer
         "([assembly: SuppressMessage]) and GlobalSuppressions.cs files hide " +
         "violation locus. Per-site suppression discipline preserves locus + audit " +
         "trail per Q-L-20 hybrid site-scoped suppression CAPA tracking. " +
-        "Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Discipline";
 

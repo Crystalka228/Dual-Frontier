@@ -50,7 +50,7 @@ public sealed class DFK007_1GpuPipelineSlotAnalyzer : DiagnosticAnalyzer
         "Per К-L7.1, managed access к GPU pipeline slot ring flows through " +
         "PipelineSlotInterop.ReadSlotTail API. Direct slot indexing, alternate ring " +
         "buffer surfaces, или raw slot pointer arithmetic violate К-L7.1. " +
-        "Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.NativeBoundary";
 

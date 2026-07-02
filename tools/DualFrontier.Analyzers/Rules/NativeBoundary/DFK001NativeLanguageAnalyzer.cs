@@ -46,8 +46,7 @@ public sealed class DFK001NativeLanguageAnalyzer : DiagnosticAnalyzer
         "Per К-L1, native side uses C++20 dialect with canonical P/Invoke binding " +
         "к managed side. Managed code must not bypass canonical surface (e.g., via " +
         "alternate interop libraries, unsanctioned DllImport, or non-canonical native " +
-        "symbol bindings). Phase β cleanup-phase will populate detection patterns per " +
-        "K_CLOSURE_REPORT.md §7.";
+        "symbol bindings). Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.NativeBoundary";
 

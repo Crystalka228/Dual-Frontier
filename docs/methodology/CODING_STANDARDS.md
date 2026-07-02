@@ -577,9 +577,17 @@ Parenthesized `<sub-scope>` is used when the scope has internal structure —
 observed values include `standing-law`, `register`, `brief`, `axioms`, `cpm`,
 `tests`, `stubs-architecture`, `rename`, `dd-1`, `dd-2`. The legacy engine
 prefixes `core:` / `contracts:` / `interop:` / `native:` / `modding:` are
-historical (visible in old history); they are not forbidden but **new commits use
-the `prefix(sub-scope):` form**. A new scope prefix requires a `governance` commit
-that amends this section first.
+historical (visible in old history). The full pre-law census (recon 2026-07-01,
+1054-commit history at `4cc5e7e`) additionally observed the scope tokens
+`tests`, `native`, `sprite`, `experiment`, `interop`, `compute`, `bench`,
+`vulkan`, `src`, `shaders`, `scaffold`, `runtime`, `revert`, `kernels`,
+`build`, `UI` — 53 commits, every one predating the 2026-06-11 v2.0.0
+codification — plus 81 unprefixed subjects from the same pre-law era (42 merge
+commits + 39 plain GitHub-web-era subjects, including one hybrid
+`native+compute:` form that escapes the scope grammar). Post-codification
+history is 100% in-vocabulary. None of the historical forms are forbidden
+retroactively, but **new commits use the `prefix(sub-scope):` form**. A new
+scope prefix requires a `governance` commit that amends this section first.
 
 ### §8.2 — Body — seven sections
 
@@ -691,6 +699,7 @@ here **before** the brief locks.
 
 | Version | Date | Change |
 |---|---|---|
+| **2.1.2** | 2026-07-02 | A'.9.1 Phase δ rider — commit-vocabulary historical reconciliation: §8.1 historical-prefix note extended with the full pre-law observed scope-token census (16 tokens over 53 commits, all predating the 2026-06-11 codification) + the unprefixed-era note (81 subjects: 42 merges + 39 plain). Descriptive correction of the incomplete observation — no normative change; post-codification history is 100% in-vocabulary (no live violation). **PATCH.** |
 | **2.1.1** | 2026-07-01 | A'.9.1 Phase γ propagation PATCH (METHODOLOGY §12.7 step 9 / SYNTH-2 + §10.1 rule 5 cross-doc propagation): §9 «Analyzer enforcement: none today» → live Release 1.0 enforcement (16 build-breaking + 1 IDE-only; `.editorconfig` primed; `Shipped.md` populated); §5.1 + §5.3 DFL025_A / DF999 «Planned»-stub claims → detecting-since-β, enforcing-since-γ; §5.3 Diagnostic-ID form → underscore per the Phase β Crystalka-ratified descriptor-ID adjudication (the dotted/hyphen forms are Roslyn-invalid — the paragraph as written would have produced no-op waivers); §5.3 rule 5 waiver census → current pin 2 (dated); §5.2 `stub`/`deferred` baselines 48/18 → 51/20, 79/48 → 82/51 (the F-25 owed fold; live values carried by the compiled meta-tests since Phase β); stale v2.0.0 end-marker synced. **PATCH.** |
 | **2.1.0** | 2026-06-12 | §6.1 citation-form rule added (Architecture Truth Cascade, D11): internal citations use stable identifiers + section topics; version pins of living documents and URL-fragment anchors forbidden in living prose and code comments (pins live only inside dated records). Codifies the two breakage classes the 2026-06-11 ARCHITECTURE TRUTH RECON surfaced, in the same cascade that fixed the found instances (SYNTH-2). **MINOR.** |
 | **2.0.0** | 2026-06-11 | Full rewrite to code-truth: marker-family registry (§5: `[ReservedStub]`, doc-tag families, the new `DFK-WAIVER` suppression law superseding `A_PRIME_9_1_…BRIEF` §7.3), C++ ABI-boundary discipline (§3), build-config quoted verbatim (§4), enforcement claims reduced to existing artifacts (§9 — analyzer stated as 17 non-detecting stubs; CI stated absent). **MAJOR.** Authored per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md`. |
@@ -698,4 +707,4 @@ here **before** the brief locks.
 
 ---
 
-**End of CODING_STANDARDS.md v2.1.1 LOCKED**
+**End of CODING_STANDARDS.md v2.1.2 LOCKED**

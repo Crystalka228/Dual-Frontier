@@ -44,7 +44,7 @@ public sealed class DFK002PInvokeBindingsAnalyzer : DiagnosticAnalyzer
     private static readonly LocalizableString Description =
         "Per К-L2, native interop is centralized в DualFrontier.Core.Interop; ad-hoc " +
         "[DllImport] declarations или [LibraryImport] sources outside this assembly violate " +
-        "К-L2. Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "К-L2. Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.NativeBoundary";
 

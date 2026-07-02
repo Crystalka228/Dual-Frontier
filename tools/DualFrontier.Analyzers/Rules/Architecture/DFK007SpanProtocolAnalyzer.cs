@@ -38,8 +38,7 @@ public sealed class DFK007SpanProtocolAnalyzer : DiagnosticAnalyzer
     private static readonly LocalizableString Description =
         "Per К-L7, managed access к native storage flows through Span<T>/ReadOnlySpan<T> " +
         "contracts. Storage may not be copied to managed arrays, exposed via IEnumerable, " +
-        "or retained across span lifetimes. Phase β cleanup-phase will populate detection " +
-        "patterns per K_CLOSURE_REPORT.md §7.";
+        "or retained across span lifetimes. Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 

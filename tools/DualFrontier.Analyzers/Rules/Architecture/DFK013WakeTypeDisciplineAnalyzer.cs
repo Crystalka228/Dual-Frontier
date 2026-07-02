@@ -45,7 +45,7 @@ public sealed class DFK013WakeTypeDisciplineAnalyzer : DiagnosticAnalyzer
         "or [TickRate] default к Timer rate 1 (eager every-tick activation). " +
         "Initialize() performing component-iteration outside wake-triggered flow is the same " +
         "anti-pattern. Severity warning post-promotion (К-L13 is efficiency discipline, не correctness). " +
-        "Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 

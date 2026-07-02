@@ -245,7 +245,7 @@ Planned — see [ROADMAP.md «Analyzer track»](../ROADMAP.md), subsection «Har
 ## §9 — Reserved namespaces
 
 - **DFC###** namespace — RESERVED at A'.9.1 (no DFC### stub exists; scheduled for the К-L20 LOCK cascade per Q-L-11 DFC001 deferral — see §5 pointer). Forward designation для cascade-specific drift detection rules.
-- **DFL###** namespace — in use at A'.9.1 (DFL025-A + DFL025-B shipped as non-detecting stubs; future DFL### rules added как additional Lessons materialize forward).
+- **DFL###** namespace — in use at A'.9.1 (DFL025_A + DFL025_B shipped as non-detecting stubs at Phase α/β-prep; detection landed at Phase β; enforced since Phase γ Release 1.0 — DFL025_A at Warning, DFL025_B descriptor Info ≡ `.editorconfig` suggestion, IDE-only; future DFL### rules added как additional Lessons materialize forward).
 - **DualFrontier.ModSurface** category — RESERVED at A'.9.1 (no stub carries it; scheduled for the К-L20 LOCK cascade per Q-L-11 + §5 pointer).
 
 ---
@@ -303,6 +303,7 @@ Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned 
 
 | Version | Date | Change |
 |---|---|---|
+| 0.4.1 | 2026-07-02 | A'.9.1 Phase δ rider — F-27(c) PATCH: §9 DFL### note gains the realized tail (past-tense stub provenance kept; detection landed Phase β; enforcement since Phase γ Release 1.0) + underscore rule-ID forms on the touched line. No spec change. |
 | 0.4.0 | 2026-07-01 | A'.9.1 Phase γ severity promotion (F-12 ratified 2026-07-01 — DFK019_A = Warning): 16 descriptors flipped Info → shipped severities (11 Error + 5 Warning; DFL025_B stays descriptor Info ≡ editorconfig «suggestion»); AnalyzerReleases Release 1.0 (Unshipped → Shipped, RS-tracked); root .editorconfig primed with the 17 identical keys. Document truthed-up from stub/detection-pending wording to the enforcement state: §1/§4/§4.1 (Status → enforcing; target column collapsed into «Shipped severity (Release 1.0)»), §2 template, §3, §4.2, §4.3 (Release 1.0 tables, 54-test suite), §10, §11, §12 (waiver census 0 → 2 current). In-body version markers (the stale 0.2.1 Version line + v0.2.0 end-marker, recon Anomaly 4) synced. Register-mirror version field sync folded at the Phase γ REGISTER cascade. |
 | 0.2.2 | 2026-07-01 | Descriptor-ID adjudication (Phase β empirical finding, ratified by Crystalka): the dotted DFK sub-rule IDs (DFK003.1/DFK007.1/DFK015.1/DFK019.A) and hyphenated DFL variant IDs (DFL025-A/DFL025-B) are rejected by Roslyn `ReportDiagnostic` as invalid identifiers, so all descriptor IDs are normalized to the underscore form already used by the file/class names (DFK003_1 … DFL025_B). §4.1 naming convention amended; registry table + `AnalyzerReleases.Unshipped.md` rule IDs + the six stub descriptor consts/help-anchors updated in the same change. DFL025-C (shell-level filter, not a Roslyn rule) unaffected. Register version bump folded at Phase β REGISTER cascade. |
 | 0.1 | 2026-05-23 / 2026-05-25 | Initial AUTHORED-SKELETON at А'.8 closure (Commit 5 REGISTER enrollment); structural reorganization at A'.9.1 Phase α Commit 5. |
@@ -311,6 +312,6 @@ Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned 
 
 ---
 
-**End of ANALYZER_RULES.md v0.4.0 AUTHORED-SKELETON (A'.9.1 Phase γ severity promotion 2026-07-01)**
+**End of ANALYZER_RULES.md v0.4.1 AUTHORED-SKELETON (A'.9.1 Phase δ F-27 rider 2026-07-02)**
 
 **Maintenance**: §4.1 is the single rule registry; §10 receives per-rule detail as Phase β lands; all sequencing and futures live in [ROADMAP.md «Analyzer track»](../ROADMAP.md). К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; canonical detection narratives в K_CLOSURE_REPORT.md §7; PA-001..PA-004 anchors в PROJECT_AXIOMS.md.

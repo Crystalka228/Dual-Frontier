@@ -52,8 +52,8 @@ public sealed class DFK019_AStaticVulkanApiAnalyzer : DiagnosticAnalyzer
         "Per К-L19, GPU baseline = Vulkan 1.3 + async compute (single tier at " +
         "current cascade). Managed code referencing Vulkan API versions older than 1.3, " +
         "vendor-specific extensions outside Vulkan core, или alternate graphics APIs " +
-        "violate К-L19. Phase β cleanup-phase will populate detection patterns per " +
-        "K_CLOSURE_REPORT.md §7. Hardware-tier runtime capability check deferred к " +
+        "violate К-L19. Detection shipped at A'.9.1 (Phase beta); severity per " +
+        "Release 1.0. Hardware-tier runtime capability check deferred к " +
         "DFK019.B (hardware tier expansion cascade).";
 
     private const string Category = "DualFrontier.NativeBoundary";

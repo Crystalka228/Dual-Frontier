@@ -53,7 +53,7 @@ public sealed class DFK015_1ThreeTierMutexFacadeAnalyzer : DiagnosticAnalyzer
         "isolation + Layer 2 native runtime + Layer 3 managed facade. Managed code " +
         "must use Layer 3 facade APIs only; raw lock/Monitor против native-owned " +
         "resources или alternate locking surfaces violate К-L15.1. " +
-        "Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.NativeBoundary";
 

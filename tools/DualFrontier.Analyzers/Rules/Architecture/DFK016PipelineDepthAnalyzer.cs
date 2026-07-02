@@ -44,7 +44,7 @@ public sealed class DFK016PipelineDepthAnalyzer : DiagnosticAnalyzer
         "Per К-L16, pipeline depth D ∈ {1, 2, 3} is canonical surface exposed via " +
         "PipelineSlotInterop.DefaultDepth (2) and PipelineSlotInterop.MaxDepth (3). " +
         "Managed paths hardcoding literal 1/2/3 для pipeline depth bypass the canonical surface. " +
-        "Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 

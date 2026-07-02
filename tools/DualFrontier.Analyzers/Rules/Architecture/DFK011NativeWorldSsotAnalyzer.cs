@@ -43,8 +43,7 @@ public sealed class DFK011NativeWorldSsotAnalyzer : DiagnosticAnalyzer
     private static readonly LocalizableString Description =
         "Per К-L11, NativeWorld is instantiated once per process at bootstrap; managed " +
         "consumers observe through the canonical handle. Repeated instantiation, shadow " +
-        "world types, or per-system world caches violate К-L11. Phase β cleanup-phase will " +
-        "populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "world types, or per-system world caches violate К-L11. Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 

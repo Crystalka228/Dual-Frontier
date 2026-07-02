@@ -46,7 +46,7 @@ public sealed class DFK003_1StorageBridgeAnalyzer : DiagnosticAnalyzer
         "Storage bridge facade binds native-owned storage к managed read surface " +
         "per К-L3.1. Bridge must not allocate, copy, or mutate native storage outside " +
         "the sanctioned span/buffer protocol. Bridge contract preserved across mod load/unload " +
-        "lifecycles. Phase β cleanup-phase will populate detection patterns per K_CLOSURE_REPORT.md §7.";
+        "lifecycles. Detection shipped at A'.9.1 (Phase beta); severity per Release 1.0.";
 
     private const string Category = "DualFrontier.Architecture";
 
