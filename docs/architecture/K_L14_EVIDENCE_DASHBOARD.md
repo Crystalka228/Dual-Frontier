@@ -6,14 +6,14 @@ category: A
 tier: 2
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.1.1"
+version: "0.2.0"
 next_review_due: 2026-Q3
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_L14_EVIDENCE_DASHBOARD
 ---
 # К-L14 Evidence Dashboard
 
-**Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; v0.1.1 PATCH 2026-06-12 — Architecture Truth Cascade old-form `DF###` → `DFK###` rename; lifecycle unchanged)
-**Version**: 0.1.1
+**Lifecycle**: Live (initial entry AUTHORED-SKELETON at A'.8 closure 2026-05-23; v0.1.1 PATCH 2026-06-12 — Architecture Truth Cascade old-form `DF###` → `DFK###` rename; promoted to Live at A'.9.1 Phase delta 2026-07-02 — §6 gate satisfied at #14)
+**Version**: 0.2.0
 **Date created**: 2026-05-23 (А'.8 К-series formal closure cascade Commit 5 REGISTER enrollment)
 **Purpose**: Forward tracking instrument for К-L14 thesis empirical evidence accumulation per Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2 Day 2 falsifiability commitment.
 
@@ -219,6 +219,45 @@ A'.9.0 Reconnaissance = **first observational reconnaissance evidence** of К-L1
 
 **Cumulative post-this-verification**: 12 verifications в active log (9 baseline + #11 cascade #2 + #12 cascade #3 + #13 cascade #4; #10 slot vacated). 11 clean + 1 honest soft-halt annotation (#7). К-L14 thesis remains не-falsified by accumulated evidence.
 
+### Verification #14 — A'.9.1 Analyzer Infrastructure (К-extensions cascade #5)
+
+**Date**: 2026-07-02
+**Cascade**: A'.9.1 Analyzer Infrastructure (К-extensions cascade #5 per Q-K-44) — brief `tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md` v1.0 (EXECUTED at Phase δ). Commit ranges, all five phases: Phase 0 `bb6807c`→`4fa76ed` (2 commits, 2026-05-24); Phase α `5030fa2`→`a23556f` (9 commits, 2026-05-24); Phase β-prep `588c667`→`a213954` (4 commits + `f94bb84` prompt artifact, 2026-05-25); Phase β `1bc0df2`→`b116727` (12 commits, 2026-07-01); Phase γ `524dd31`→`cc2f71a` (8 commits, 2026-07-01) + execution residue `4cc5e7e`; Phase δ = the governance-closure cascade recording this entry.
+**Status**: **CLEAN** (zero soft-halts across the entire arc)
+**К-L LOCK transitions**: none (К-L count unchanged: 21 final)
+**Performance metric**: analyzer build-time cost. The arc brief §3.1 carried «+1-3s per `dotnet build`» (and «+5-10s per `dotnet test`» for the analyzer suite) as the pipeline-economics expectation; the per-pass cost was not separately instrumented at β/γ — full-solution build and test gates ran green within the normal wall-clock envelope at every phase boundary. Honest status: expectation carried forward, no measured per-pass baseline claimed.
+
+**К-L14 contribution narrative**:
+
+A'.9.1 = **first analyzer-implementation evidence** of К-L14 thesis — **Type 6, tooling addition (NEW category)**, extending the five-type taxonomy codified at #13 (removal / reorganization / clean-additive / behavioral / observational). The arc shipped the in-repo Roslyn analyzer — 17 rules (9 Architecture + 5 NativeBoundary + 3 Discipline) wired to all 12 src projects via `src/Directory.Build.props` — detecting since Phase β and enforcing at the ratified shipped severities since Phase γ Release 1.0 (11 Error + 5 Warning, build-breaking under `TreatWarningsAsErrors`; DFL025_B IDE-only). Substrate touch: zero across all five phases (S-LOCK-1 held arc-wide). The falsifiability mechanism for the Roslyn-expressible К-L subset shifts from manual cross-document audit to automated compile-time enforcement — trust-by-discipline → trust-by-enforcement (arc brief §3.2 architectural-integrity framing).
+
+Direct К-L14 evidence: first-run detection over the 394-file src/ surface measured 23 diagnostics (Q-L-1 adaptive gate: 23 ≤ 80 → CONTINUE in a single cascade); triage confirmed **15 genuine violations concentrated in 2 clusters** — a near-clean pre-analyzer codebase is itself discipline evidence for the thesis (architectural cleanliness preceded its enforcement mechanism). Cleanup closed with exactly 2 DFK-WAIVER suppressions, census-pinned (both К-L19-sanctioned DFK001 interop sites in `ValidationLayer.cs`). Pipeline economics per the arc brief §3.2: the per-commit analyzer pass amortizes the manual audit cost with an immediate feedback loop; the defect-rate expectation (zero post-cleanup src/ violations) is realized — the Phase γ exit gate (build exit 0 with every correctness DFK### at `error`) passed, and К-Lxx compile-time enforcement is live.
+
+**Cross-references**:
+- Arc-closure report: [`docs/reports/A_PRIME_9_1_ARC_CLOSURE_REPORT.md`](../reports/A_PRIME_9_1_ARC_CLOSURE_REPORT.md)
+- Brief: `tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md` (EXECUTED)
+- Cascade ledger: [K_EXTENSIONS_LEDGER.md §3.6](K_EXTENSIONS_LEDGER.md) (cascade #5 entry)
+- KERNEL chronicle: v2.6.1 → v2.6.2 (A'.9.1 arc chronicle entry)
+- Relevant CAPAs: none opened across the arc
+- К-L invariants affected: none (tooling layer only; К-L count unchanged: 21 final)
+
+**Falsifiability criteria status post-this-verification**:
+- Criterion 1 (К-extension cascade decreases performance ceiling): NOT falsified — zero substrate code path change (tooling layer only); build/test gates green at every phase boundary
+- Criterion 2 (Hard-halt rate trends upward): NOT falsified — zero hard-halts across all five phases
+- Criterion 3 (Cascade alignment maturity reverses): NOT falsified — recon-first two-session rhythm + durable-report protocol held; mid-arc adjudications (descriptor-ID underscore normalization, F-12 severity discrepancy) resolved by Crystalka ratification, not halts
+- Criterion 4 (Atomic discipline breaks down при substantial cascades): NOT falsified — 37 atomic commits across the five phases (2 + 9 + 4(+1 prompt artifact) + 12 + 8(+1 residue)), each compilable; zero squash, zero history rewrite
+- Criterion 5 (Architectural completeness costs exceed long-horizon payoff): Deferred (post-Phase B metric TBD)
+- Criterion 6 (Soft-halt rate exceeds X% across N consecutive cascades): NOT falsified — zero soft-halts across the arc; cumulative soft-halt count remains 1 (verification #7 К10.3 v2)
+
+**Lessons surfaced**:
+- Lesson #N17 FORMALIZED at Phase δ (audience-driven tooling deferral — five simultaneous Q-L applications at this arc's deliberation; F-27(e) dotted-forms fix folded at formalization)
+- Lesson #N18 FORMALIZED (pre-flight empirical scope verification — five-instance track record including this arc's rename 531, CPM 11, and the Phase β phantom projects)
+- Lesson #N19 FORMALIZED (analyzer detection via canonical FQN strings — the Phase β W2 global writer law)
+- Lesson #N20 FORMALIZED (eradication class derived from the repository's own classification — the F-26 mandate)
+- Lesson #N14 PROMOTED (Phase 0 empirical assumed-state coverage — 4-application promotion criterion met; #N16 recorded absorbed per the METHODOLOGY registry note)
+
+**Cumulative post-this-verification**: 13 verifications в active log (9 baseline + #11 cascade #2 + #12 cascade #3 + #13 cascade #4 + #14 cascade #5; #10 slot vacated). 12 clean + 1 honest soft-halt annotation (#7). К-L14 thesis remains не-falsified by accumulated evidence.
+
 ---
 
 ## §3 — Forward verification template
@@ -269,12 +308,12 @@ A'.9.0 Reconnaissance = **first observational reconnaissance evidence** of К-L1
 - Verification #11: К-extensions cascade #2 (Godot Full Deprecation + Launcher Formalization) — CLEAN, first removal-type evidence
 - Verification #12: К-extensions cascade #3 (Launcher Visual Implementation Minimum Scope) — CLEAN, first clean additive evidence
 - Verification #13: A'.9.0 Reconnaissance / К-extensions cascade #4 (Roslyn Analyzer Architecture Discovery) — CLEAN, first observational reconnaissance evidence (5th evidence type NEW category)
+- Verification #14: A'.9.1 Analyzer Infrastructure / К-extensions cascade #5 — CLEAN, first analyzer-implementation evidence (Type 6 tooling addition, NEW category)
 
-**Forward expected verifications** (post-A'.9.0):
+**Forward expected verifications** (post-A'.9.1):
 
 | Verification # | Cascade | Expected date | К-L14 evidence type |
 |---|---|---|---|
-| 14 (candidate) | A'.9.1 Analyzer Infrastructure (К-extensions cascade #5 per Q-K-44) | Post-A'.9.0 closure | Production code addition — analyzer NuGet infrastructure + first DF### rules; substrate stability via in-repo build tooling |
 | 15+ (candidates) | A'.9.2/A'.9.3 (cleanup phase + severity promotion + DC###/DL### rule cascades) | A'.9 milestone duration | Codebase cleanliness; rule-driven debt resolution |
 | 16+ (candidate) | V-extension milestone (post-A'.9) | Per Crystalka «расширять V» direction | V substrate evolution с V1 lessons applied |
 | 17+ (candidate) | К-L20 Mod API lock cascade | Post-V-extension | API surface stability + К-L20 codification + DFK020 family activation |
@@ -284,17 +323,17 @@ A'.9.0 Reconnaissance = **first observational reconnaissance evidence** of К-L1
 
 ## §6 — Skeleton expansion forward
 
-This dashboard is **AUTHORED-SKELETON v0.1** at A'.8 closure. Expansion к Tier 2 Live or Tier 1 LOCKED depends on:
+This dashboard was **AUTHORED-SKELETON v0.1** at A'.8 closure and holds **Tier 2 Live** since A'.9.1 Phase delta (2026-07-02). Expansion к Tier 1 LOCKED depends on:
 - К-L14 evidence accumulation maturity (5+ post-closure verifications)
 - К-L14 falsification criterion 6 (soft-halt rate) threshold determination
 - Forward cascade closure quality (atomic discipline + honest framing preserved)
 
 **Promotion gates**:
-- AUTHORED-SKELETON → Tier 2 Live: 3+ post-closure verifications appended; dashboard schema stable
+- AUTHORED-SKELETON → Tier 2 Live: 3+ post-closure verifications appended; dashboard schema stable — **gate satisfied at #14 (four post-closure entries #11/#12/#13/#14; schema stable since #11); promoted to Live at A'.9.1 Phase delta (2026-07-02)**
 - Tier 2 Live → Tier 1 LOCKED: К-L14 thesis credibility maturity (post-Phase B+ empirical evidence accumulation; criterion 5 deferred status resolved)
 
 ---
 
-**End of K_L14_EVIDENCE_DASHBOARD.md v0.1 AUTHORED-SKELETON**
+**End of K_L14_EVIDENCE_DASHBOARD.md v0.2.0 Live**
 
 **Forward maintenance**: per-cascade closure appends verification entry per §3 template. Cross-references к K_CLOSURE_REPORT.md §3 (initial baseline) + KERNEL_ARCHITECTURE.md Part 0 К-L14 row (abbreviated form + cross-reference per Q-N-8-2 hybrid Q2 (c) policy).
