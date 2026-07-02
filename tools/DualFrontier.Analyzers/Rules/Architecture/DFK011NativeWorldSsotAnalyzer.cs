@@ -53,7 +53,7 @@ public sealed class DFK011NativeWorldSsotAnalyzer : DiagnosticAnalyzer
         title: DiagTitle,
         messageFormat: MessageFormat,
         category: Category,
-        defaultSeverity: DiagnosticSeverity.Info,
+        defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true,
         description: Description,
         helpLinkUri: "https://github.com/Crystalka228/Dual-Frontier/blob/main/docs/architecture/ANALYZER_RULES.md#dfk011");
