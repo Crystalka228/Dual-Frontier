@@ -6,7 +6,7 @@ category: B
 tier: 2
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: "1.0.1"
 next_review_due: 2026-Q3
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-RESERVED_SURFACE_MUTABILITY
 ---

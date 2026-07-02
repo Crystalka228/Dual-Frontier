@@ -4,7 +4,7 @@
 register_id: DOC-A-K_L14_EVIDENCE_DASHBOARD
 category: A
 tier: 2
-lifecycle: AUTHORED-SKELETON
+lifecycle: Live
 owner: Crystalka
 version: "0.2.0"
 next_review_due: 2026-Q3
