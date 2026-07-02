@@ -2,15 +2,15 @@
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-07-01  |  Schema version: 1.0  |  Register version: 2.20*
+*Last generated: 2026-07-02  |  Schema version: 1.0  |  Register version: 2.21*
 
 ---
 
 ## Statistics
 
-- Total documents: 279
-- Tier 1: 36  |  Tier 2: 20  |  Tier 3: 140  |  Tier 4: 83  |  Tier 5: 0
-- Per category: A=37  |  B=7  |  C=3  |  D=85  |  E=65  |  F=72  |  G=8  |  H=2  |  I=0  |  J=0
+- Total documents: 282
+- Tier 1: 36  |  Tier 2: 20  |  Tier 3: 142  |  Tier 4: 84  |  Tier 5: 0
+- Per category: A=37  |  B=7  |  C=3  |  D=86  |  E=67  |  F=72  |  G=8  |  H=2  |  I=0  |  J=0
 - Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
@@ -20,8 +20,8 @@
 - [Category A (37 documents)](#category-A)
 - [Category B (7 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
-- [Category D (85 documents)](#category-D)
-- [Category E (65 documents)](#category-E)
+- [Category D (86 documents)](#category-D)
+- [Category E (67 documents)](#category-E)
 - [Category F (72 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
 - [Category H (2 documents)](#category-H)
@@ -57,9 +57,9 @@
 ### DOC-A-ANALYZER_RULES — DualFrontier Roslyn Analyzer Rule Specifications
 
 - **Path**: `docs/architecture/ANALYZER_RULES.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.4.0
+- **Tier**: 1  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.4.1
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-01 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-06-11
 - **Special-case rationale**: Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification.
 
@@ -200,18 +200,18 @@
 - **Path**: `docs/architecture/K_EXTENSIONS_LEDGER.md`
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-06-12 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
 - **Special-case rationale**: Companion artifact к K_CLOSURE_REPORT.md tracking К-extensions cascade narratives post-А'.8 closure event boundary. Created К-extensions cascade #2 ε4 per Q-G-11 LOCKED (d) — separate companion document over inline expansion of closure report. Sister к K_L14_EVIDENCE_DASHBOARD.md (metrics) + PHASE_A_PRIME_SEQUENCING.md (chronology).
 
 ### DOC-A-K_L14_EVIDENCE_DASHBOARD — К-L14 Evidence Dashboard
 
 - **Path**: `docs/architecture/K_L14_EVIDENCE_DASHBOARD.md`
-- **Tier**: 2  |  **Lifecycle**: AUTHORED-SKELETON  |  **Version**: 0.1.1
+- **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: 0.2.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-06-12 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
-- **Special-case rationale**: Category A + Tier 2 + AUTHORED-SKELETON override: forward-evolving dashboard appended per cascade closure; populated к Tier 2 Live при 3+ post-closure verifications appended
+- **Special-case rationale**: Category A + Tier 2 Live: forward-evolving dashboard appended per cascade closure. The original AUTHORED-SKELETON override (populated к Tier 2 Live при 3+ post-closure verifications) resolved at A'.9.1 Phase δ (2026-07-02) — §6 gate satisfied at verification #14 (four post-closure entries #11/#12/#13/#14; schema stable since #11); promoted to Live. Tier 2 Live → Tier 1 LOCKED remains gated on К-L14 thesis credibility maturity (post-Phase B+; criterion 5 deferred status resolved).
 
 ### DOC-A-K_L3_1_AMENDMENT_PLAN — K-L3.1 Amendment Plan — old/new text pairs
 
@@ -225,9 +225,9 @@
 ### DOC-A-KERNEL — DualFrontier Kernel — Architecture
 
 - **Path**: `docs/architecture/KERNEL_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.6.1
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.6.2
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-06-12 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-21
 - **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19
 - **Risks referenced**: RISK-001, RISK-002, RISK-003, RISK-004, RISK-013
@@ -376,9 +376,9 @@
 ### DOC-B-CODING_STANDARDS — Coding standards
 
 - **Path**: `docs/methodology/CODING_STANDARDS.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.1.1
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.1.2
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-01 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-06-11
 
 ### DOC-B-DEVELOPMENT_HYGIENE — Development hygiene
@@ -402,9 +402,9 @@
 ### DOC-B-METHODOLOGY — Dual Frontier development methodology
 
 - **Path**: `docs/methodology/METHODOLOGY.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.13.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.14.0
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-06-11 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-06-11
 - **Requirements authored**: REQ-Q-A07-6
 - **Risks referenced**: RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014
@@ -413,9 +413,9 @@
 ### DOC-B-PIPELINE_METRICS — Pipeline metrics — empirical record
 
 - **Path**: `docs/methodology/PIPELINE_METRICS.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 0.2
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 0.2.1
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-05-10 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-05-10
 - **Risks referenced**: RISK-014
 - **CAPA referenced**: CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
@@ -423,18 +423,18 @@
 ### DOC-B-RESERVED_SURFACE_MUTABILITY — Reserved-surface mutability license
 
 - **Path**: `docs/methodology/RESERVED_SURFACE_MUTABILITY.md`
-- **Tier**: 2  |  **Lifecycle**: LOCKED  |  **Version**: 1.0
+- **Tier**: 2  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.1
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-06-11 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
 - **Special-case rationale**: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 
 ### DOC-B-TESTING_STRATEGY — Testing strategy
 
 - **Path**: `docs/methodology/TESTING_STRATEGY.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.0.1
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 2.0.2
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-01 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2027-06-11
 
 ---
@@ -456,7 +456,7 @@
 - **Path**: `docs/MIGRATION_PROGRESS.md`
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-06-12 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 - **Next review due**: 2026-Q3
 
 ### DOC-C-ROADMAP — Roadmap
@@ -464,7 +464,7 @@
 - **Path**: `docs/ROADMAP.md`
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-01 ($(System.Collections.Hashtable.last_modified_commit))
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
 
 ---
 
@@ -588,7 +588,7 @@
 ### DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF — A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF — A'.9.1 Analyzer Infrastructure Cascade brief (К-extensions cascade #5; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md; 9 Phase α atomic commits + Phase β/γ/δ closure protocol)
 
 - **Path**: `tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md`
-- **Tier**: 4  |  **Lifecycle**: AUTHORED  |  **Version**: 1.0
+- **Tier**: 4  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-24 ($(System.Collections.Hashtable.last_modified_commit))
 - **Special-case rationale**: Brief A'.9.1 Analyzer Infrastructure cascade (К-extensions cascade #5) — first analyzer implementation cascade. Authored 2026-05-24 by Claude Opus 4.7 в authoring session following two-batch pre-authoring deliberation 2026-05-24. Brief lineage: A'.9.0 Reconnaissance / К-extensions cascade #4 EXECUTED 2026-05-24 → A'.9.0 amendments log AUTHORED 2026-05-24 (4 amendments captured Option γ Hybrid) → A'.9.1 brief two-batch deliberation 2026-05-24 → Brief A'.9.1 AUTHORED (this artifact). Status transitions expected: AUTHORED → RATIFIED (Crystalka) → HANDOFF к execution session (fresh context per S-LOCK-3) → EXECUTED (post-Phase δ cascade closure). Brief size ~2356 lines spanning §0 framing + §1 milestone surface + §2 cascade architectural scope + §3 К-L14 framework + §4 prerequisites + §5 S-LOCK enumeration (14 S-LOCKs) + §6 Phase α atomic commit specifications (9 commits) + §7 Phase β cleanup-phase specifications + §8 Phase γ closure protocol + §9 K-extensions ledger + KERNEL chronicle + LEDGER entry templates + §10 ANALYZER_RULES.md scope-split detail + §11 forward references (К-L20 LOCK + hardware tier expansion + A'.9.2 + A'.9.3 + FO-1..FO-4) + §12 cross-references + §13 authoring metadata. К-L14 thesis preservation: brief artifact only; cascade target #14 first analyzer implementation evidence (Type 6 NEW category tooling addition; substrate completely untouched; falsifiability mechanism shifts от manual cross-document audit к automated compile-time invariant enforcement). Brief §13.3 enumerates 9-point Crystalka ratification checklist surface.
@@ -600,6 +600,14 @@
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-24 ($(System.Collections.Hashtable.last_modified_commit))
 - **Special-case rationale**: Phase 0 closure report for A'.9.1 Analyzer Infrastructure cascade — pre-execution reconnaissance findings + Phase α handoff package. Authored 2026-05-24 by Claude Code в same context as brief receipt (S-LOCK-3 advisory recommending fresh-context execution overridden by Crystalka direction). Report purpose: make Phase α handoff clean — execution agent reads brief + this Phase 0 report + amendments log + ANALYZER_RULES baseline и has everything needed без re-running Phase 0. 14/14 brief §4.1 mandatory reads complete (8 directly in main context + 5 bonus reads + 4 delegated к Explore agent for massive artifacts: recon report 335KB + REGISTER 524KB + KERNEL Part 0 + K_CLOSURE §7). 6 of 7 brief §4.2 empirical scans complete: Task 1 DFK016 feasibility = retain α; Task 2 DFK013 wake_type detection scope = WakeAttributes.cs 4 managed attributes mapping native 5 wake types; Task 3 PROJECT_AXIOMS.md draft refinement = all 4 PA anchors verified (FRAMEWORK §0 + SYNTHESIS_RATIONALE §0 + Crystalka direction + KERNEL Part 0); Task 4 Lesson #N17 candidate = Option B METHODOLOGY inline; Task 5 standard reads per Lesson #N14 = completed (Lesson #N14 4th application surfaced); Task 6 DF→DFK scope = 531 occurrences across 15 files. Task 7 (violation count estimate) deferred к Phase α exit per circular dependency (requires Phase α scaffolding first — analyzer csproj + tests csproj + CPM + 16 stub rules). Phase 0 §3 surfaced 10 findings F1-F10 + 4 surface decisions ratified by Crystalka via session interaction 2026-05-24. Forward к Phase α: fresh-context execution session reads brief + this Phase 0 report + amendments log + ANALYZER_RULES baseline → executes 9 Phase α atomic commits per brief §6 → Phase β violation triage → Phase γ severity promotion (if ≤80 violations per Q-L-1 adaptive gate) → Phase δ closure cascade. К-L14 thesis preservation: zero production code touched / zero substrate API surface modified / zero test code touched / К-L14 evidence count unchanged at 13 (Phase 0 produces no К-L14 evidence; cascade closure at Phase δ produces #14).
+
+### DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF — PHASE_DELTA_BRIEF — A'.9.1 Phase δ governance-closure execution brief (arc closure: METHODOLOGY 1.14.0 four FORMALIZE + #N14 promotion + F-7 registry note; К-L14 Evidence #14 + dashboard Live; KERNEL 2.6.2; K_EXTENSIONS_LEDGER §3.6; F-27 riders; ROADMAP/tracker closure flips; REGISTER 2.20 → 2.21)
+
+- **Path**: `tools/briefs/PHASE_DELTA_BRIEF.md`
+- **Tier**: 4  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Category D Tier 4 execution-brief convention (precedents: DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF, DOC-D-PHASE_BETA_BRIEF). Entry id follows the brief's own frontmatter register_id (DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF), consistent with the DOC-D-A_PRIME_9_1_* family naming. On-disk .md persisted at C1 (f2841c1); enrolled at closure alongside its recon basis and the arc-closure report, completing the arc's provenance chain. This brief closes the ENTIRE A'.9.1 arc — the parent DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF transitions EXECUTED in the same cascade.
 
 ### DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF — PHASE_GAMMA_BRIEF — A'.9.1 Phase γ severity-promotion execution brief (17 rules Info → ratified shipped severities 11 Error + 5 Warning + 1 Suggestion; AnalyzerReleases Release 1.0; .editorconfig priming; ANALYZER_RULES enforcement truth-up; F-12 closure; REGISTER 2.19 → 2.20)
 
@@ -1239,6 +1247,22 @@
 - **Owner**: Crystalka  |  **Content language**: mixed
 - **Last modified**: 2026-05-21 ($(System.Collections.Hashtable.last_modified_commit))
 - **Special-case rationale**: Closure report для А'.7.x К-extensions cascade #0. Records: 13-commit cascade hash range, cascade metrics (test deltas, throughput delta, native selftest count), К-L14 verification #8 evidence (clean cascade + retroactive correction of verification #7 framing), 5 CAPAs closed within cascade, source split deferral к А'.7.5, sequencing impact (А'.7.5 inserted before A'.8 К-closure). Companion к brief DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT (brief EXECUTED + closure report archives execution outcome).
+
+### DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT — A'.9.1 ARC CLOSURE REPORT — Analyzer Infrastructure (К-extensions cascade #5) — the arc's durable record (git-verified phase table + per-phase deliverables; Q-L-1 gate 23 → CONTINUE, 15 genuine in 2 clusters; Release 1.0 severity matrix; census pins final state; lessons formalized; falsifiability-anchor readout; operator ratifications ledger; Phase δ execution record + self-attestation)
+
+- **Path**: `docs/reports/A_PRIME_9_1_ARC_CLOSURE_REPORT.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-02 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Durable arc-closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (the γ-recon precedent class). The arc's citable closure record — replaces the chat-only closure-report precedent of the β/γ phase closures for the arc-level record per the delta brief §3 ratified decision 8.
+
+### DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT — PHASE DELTA RECON REPORT — 2026-07-01 (R1-R8) — pre-brief reconnaissance for the A'.9.1 Phase δ governance closure (base state; METHODOLOGY lesson-entry shapes + #N census + per-lesson source tables + the #N17 transcription source; dashboard #14 shape + Live gate arithmetic; arc-closure surface + phase-hash table + ANALYZER_RULES promotion blocker; F-ledger sweep F-7/F-27 full texts; rider shapes; 12 anomalies + scale estimate)
+
+- **Path**: `docs/reports/PHASE_DELTA_RECON_REPORT.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-01 ($(System.Collections.Hashtable.last_modified_commit))
+- **Special-case rationale**: Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedent: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT — the first durable-report recon; this is the second). Basis of DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF; substituted for a survey wave per the brief preamble.
 
 ### DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT — PHASE GAMMA RECON REPORT — 2026-07-01 (R1-R8) — pre-brief reconnaissance for A'.9.1 Phase γ severity promotion (promotion-safety SARIF measure 0 active + 2 suppressed; ratified severity-matrix cross-check; the three severity surfaces; waiver-under-promotion; citation anchors + F-12; anomalies + descriptor-as-truth design-fork recommendation)
 
@@ -2354,18 +2378,19 @@
 |  |  |  |  |
 |  |  |  |  |
 |  |  |  |  |
+|  |  |  |  |
 |  |  | execution_milestone |  |
 |  |  | execution_milestone |  |
 |  |  | execution_milestone |  |
 |  |  |  |  |
 |  |  |  |  |
-|  |  |  |  |
+|  |  | execution_milestone |  |
 | 2026-05-10 | K-L3.1 bridge formalization deliberation | deliberation_milestone | pre-2df5921 |
 | 2026-05-10 | A'.0.5 documentation reorganization + cross-ref refresh | execution_milestone | 27523ac..4e332bb |
 | 2026-05-10 | K-L3.1 amendment plan execution (A'.1.K) | amendment_landing | 2df5921..0789bd4 |
-| 2026-05-10 | A'.0.7 methodology pipeline restructure deliberation | deliberation_milestone | pre-86b721a |
 | 2026-05-10 | A'.3 push to origin | governance_event | all backlog through 38c2e19 |
 | 2026-05-10 | A'.0.7 methodology rewrite landing (A'.1.M) | amendment_landing | 86b721a..9d4da64 |
+| 2026-05-10 | A'.0.7 methodology pipeline restructure deliberation | deliberation_milestone | pre-86b721a |
 | 2026-05-11 | A'.4 K9 field storage execution | execution_milestone | ce4dba8..80c9ba6 |
 | 2026-05-12 | A'.4.5 register execution closure | execution_milestone | TBD |
 | 2026-05-12 | A'.4.5 document control register deliberation | deliberation_milestone | 7448267..411c284 |
@@ -2380,16 +2405,16 @@
 | 2026-05-18 | V0.B sub-milestone closure — V substrate foundation completion (swapchain + render pass + framebuffer + command infrastructure + minimal graphics pipeline + memory allocator + SPIR-V toolchain + compute pipeline plumbing + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); К-L19 hardware tier invariant LOCKED с full implementation backing; smoke test exit criteria operational на real К-L19 hardware; К10.3 brief restart pathway opens | execution_milestone | d2c6627..PENDING-COMMIT-V0_B-CLOSURE |
 | 2026-05-18 | V0.A sub-milestone closure — V substrate foundation prerequisite layer (Win32 + Vulkan instance + device + queue families + validation); первая Vulkan code на проекте; unblocks K10.3 brief restart pathway after V0.B compute plumbing closure | execution_milestone | 1a1c772..PENDING-COMMIT-V0_A-CLOSURE |
 | 2026-05-19 | V1 sub-milestone closure (PR #40) — V substrate primitive: scalar field + isotropic + anisotropic diffusion compute shader operational; AnisotropicDiffusionKernel CPU reference + diffusion.comp GLSL + DiffusionPushConstants alignment-audited (S-LOCK-7) + native VkCmdDispatch с per-field shadow VkBuffers + V1DiffusionPipeline managed wrapper + V1DiffusionPipeline Runtime factories + CPU/GPU equivalence gates (isotropic uniform D + corner reflective + decay-only + combined D+K + iteration count Theory + anisotropic wire-path + insulator column + insulator-with-gap + long-run mass-conservation 50-iter) + V1 200×200 isotropic + anisotropic wire-path smoke scenes + V1 dispatch latency benchmark + Compute MODULE.md V1 extension + V1 manual visual verification protocol; fifth consecutive zero-hard-gate-halt cascade on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1) — К-L14 thesis fifth verification accumulated. | execution_milestone | 9cbaed3..PENDING-COMMIT-V1-CLOSURE |
-| 2026-05-19 | V0.C.2 sub-milestone closure — V substrate R.2 (batched sprite renderer 10K sprites at 60+ FPS target) + R.3 (TileMap + Camera2D 200×200 grid at 60+ FPS target) operational; VertexBufferRing N-frame ring buffer + SpriteIndexBuffer pre-populated uint16 pattern + Camera2D standard scope + TileMap one-sprite-per-tile + SpriteRenderer batched BeginFrame/Submit/EndFrame rewrite + AtlasRegion.FromPixels hardening + Runtime facade extension с Camera + RecordSpritesFrame batched + multi-cycle render pass helpers; V0 substrate close achieved per Q8 ratification — V1 + V2 brief authoring + Phase B M-cycle vanilla migration unblocked (latter also gated on Roslyn analyzer A'.9); 4 consecutive zero-hard-gate-halt cascades on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2) — К-L14 thesis empirically validated | execution_milestone | b4084f1..PENDING-COMMIT-V0_C_2-CLOSURE |
 | 2026-05-19 | V0.C.1 sub-milestone closure — V substrate R.1 (first textured quad) + R.4 (input system) operational; PngDecoder + AssetManager + VulkanSampler + TextureUploader + sprite shaders + VulkanSpritePipeline + SpriteRenderer + 6 input event types + Win32 dispatch + Runtime facade composition; smoke test exit criteria operational на real К-L19 hardware (820 frames at 164 FPS, validation log 0 errors); V0.C.2 brief restart pathway opens | execution_milestone | 4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE |
+| 2026-05-19 | V0.C.2 sub-milestone closure — V substrate R.2 (batched sprite renderer 10K sprites at 60+ FPS target) + R.3 (TileMap + Camera2D 200×200 grid at 60+ FPS target) operational; VertexBufferRing N-frame ring buffer + SpriteIndexBuffer pre-populated uint16 pattern + Camera2D standard scope + TileMap one-sprite-per-tile + SpriteRenderer batched BeginFrame/Submit/EndFrame rewrite + AtlasRegion.FromPixels hardening + Runtime facade extension с Camera + RecordSpritesFrame batched + multi-cycle render pass helpers; V0 substrate close achieved per Q8 ratification — V1 + V2 brief authoring + Phase B M-cycle vanilla migration unblocked (latter also gated on Roslyn analyzer A'.9); 4 consecutive zero-hard-gate-halt cascades on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2) — К-L14 thesis empirically validated | execution_milestone | b4084f1..PENDING-COMMIT-V0_C_2-CLOSURE |
 | 2026-05-20 | К10.3 v2 sub-milestone closure — pipeline depth (К-L7.1 sub-invariant + К-L16) + display composition (К-L17) + mod lifecycle quiescent state (К-L18) ALL AUTHORED. 4 К-L invariants landed; cumulative К-Lxx series 20 invariants post-К10.3 v2. К-L7 sync coexistence preserved per S-LOCK-10/13 (V1 dispatch_compute_field path orthogonal к pipeline-managed dispatches). К-L17 display composition framework lives в src/DualFrontier.Application/Display/ per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces preserved). К-L18 UI = SimulationStateController + ModMenuController pause hook only per S-LOCK-12 (settings menu deferred к V-cycle / К-extensions). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. К-L19 inherited V0.B (no re-implementation). 15-commit cascade на branch claude/k10_3-v2-pipeline-display-quiescent (1982351..PENDING-CLOSURE-COMMIT). К-L14 thesis seventh verification window: К0..К8 + V0.A..V0.C.2 + V1 (6 closures) + К10.3 v2 = seven consecutive zero-hard-gate-halt cascades. | execution_milestone | 1982351..PENDING-COMMIT-K10_3-V2-CLOSURE |
 | 2026-05-21 | А'.7.x BUS_ARCHITECTURE_AMENDMENT cascade closure (К-extensions cascade #0) | amendment_landing | b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE |
 | 2026-05-22 | А'.7.5 BUS_SOURCE_SPLIT sub-milestone closure (К-L15.1 compile-time layer materialization) | execution_milestone | c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE |
 | 2026-05-23 | А'.8 К-series formal closure event — Phase A' formal closure event boundary | execution_milestone | 044855c..PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION |
-| 2026-05-23 | К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization closure event (post-А'.8 К-closure execution per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral) | execution_milestone | 2022bc1..PENDING-COMMIT-K_EXT_2-CLOSURE-RATIFICATION |
 | 2026-05-23 | К-extensions cascade #3 — Launcher Visual Implementation (Minimum Scope) closure event (post-cascade-#2 closure execution per cascade #2 §4 forward roadmap + Crystalka direction «после исполнения в сесии claude code я приложу отчёт и мы продолжим уже делать второй») | execution_milestone | e1bbc6a..PENDING-COMMIT-K_EXT_3-CLOSURE-RATIFICATION |
-| 2026-05-24 | A'.9.1 Analyzer Infrastructure cascade pre-execution governance addition — Brief AUTHORED + Phase 0 closure report + Lesson #N17 Provisional. К-extensions cascade #5 pre-execution package: brief two-batch deliberation 2026-05-24 outcome encoded as AUTHORED brief (2356 lines; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md codification at Phase α Commit 8; 9 Phase α atomic commits + Phase β/γ/δ closure protocol); Phase 0 reconnaissance per brief §4.1 (14/14 mandatory reads + 5 bonus reads) + §4.2 (6 of 7 empirical scans; Task 7 violation count deferred к Phase α exit per circular dependency); 10 findings F1-F10 captured + 4 surface decisions ratified by Crystalka (F1 brief path corrections applied in-place; F7 Lesson #N17 = METHODOLOGY inline Option B; F8 session logs uncommitted; next action = commit + spawn Phase α fresh context). Lesson #N17 (Provisional NEW А'.9.1) — Audience-driven tooling deferral appended к METHODOLOGY.md Provisional pool (5 empirical applications enumerated: code-fix providers PA-001 PERMANENT + PublicApiAnalyzers community-absent + BannedApiAnalyzer closed concern + DFK019.B hardware tier split + DFK016 threshold customization API). Lesson #N14 4th application surfaced (A'.9.1 Phase 0 F1 + F4 + F7 — PROMOTION CRITERION MET). К-L14 thesis preserved (zero production code; zero substrate API surface; zero test code; pre-execution governance artifact only). | governance_event | bb6807c..PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER |
+| 2026-05-23 | К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization closure event (post-А'.8 К-closure execution per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral) | execution_milestone | 2022bc1..PENDING-COMMIT-K_EXT_2-CLOSURE-RATIFICATION |
 | 2026-05-24 | A'.9.0 Reconnaissance / К-extensions cascade #4 closure event — first A'.9 milestone-internal cascade per Crystalka two-brief direction («Два брифа первый, он проведет полную разведку архитектуры что бы по отчёту смогли написать бриф для внедрения анализатора»). Standalone reconnaissance discovery-only cascade per S-LOCK-1 zero-production-code discipline. | execution_milestone | a233639..PENDING-COMMIT-A_PRIME_9_0-CLOSURE |
 | 2026-05-24 | A'.9.0 Reconnaissance Cascade post-closure amendments capture event — Option γ Hybrid amendments log artifact enrolled. 4 amendments captured per Crystalka post-execution review 2026-05-24: (1) Defect 1 Q-K count divergence correction (42 vs 45); (2) Defect 2 §2.1 duplication removal; (3) 5-rule deferral (DF009/DF012/DF015/DF018/DF020 family) от A'.9.1 first-batch к К-L20 LOCK cascade per Mod-OS-coupling rationale; (4) test exclusion principle formalization (xUnit Trait + dotnet test filter + DFL025 family analyzer rules). Cascade #3 retroactive empirical check (Q3) ran via Filesystem MCP — Possibility A confirmed (К-L14 #12 CLEAN status preserved by absence-based discipline). К-L14 thesis preserved (zero substrate touch; pure governance artifact addition). Lesson #N13 commit integrity discipline applied. Brief A'.9.1 deliberation input surface post-push = report + this amendments log together (combined effective scope: 46 Q-K candidates + 10 prerequisites + 4 amendments directives + Phase 0 cleanup task list). | amendment_landing | 9fcc517..PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS-REGISTER |
+| 2026-05-24 | A'.9.1 Analyzer Infrastructure cascade pre-execution governance addition — Brief AUTHORED + Phase 0 closure report + Lesson #N17 Provisional. К-extensions cascade #5 pre-execution package: brief two-batch deliberation 2026-05-24 outcome encoded as AUTHORED brief (2356 lines; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md codification at Phase α Commit 8; 9 Phase α atomic commits + Phase β/γ/δ closure protocol); Phase 0 reconnaissance per brief §4.1 (14/14 mandatory reads + 5 bonus reads) + §4.2 (6 of 7 empirical scans; Task 7 violation count deferred к Phase α exit per circular dependency); 10 findings F1-F10 captured + 4 surface decisions ratified by Crystalka (F1 brief path corrections applied in-place; F7 Lesson #N17 = METHODOLOGY inline Option B; F8 session logs uncommitted; next action = commit + spawn Phase α fresh context). Lesson #N17 (Provisional NEW А'.9.1) — Audience-driven tooling deferral appended к METHODOLOGY.md Provisional pool (5 empirical applications enumerated: code-fix providers PA-001 PERMANENT + PublicApiAnalyzers community-absent + BannedApiAnalyzer closed concern + DFK019.B hardware tier split + DFK016 threshold customization API). Lesson #N14 4th application surfaced (A'.9.1 Phase 0 F1 + F4 + F7 — PROMOTION CRITERION MET). К-L14 thesis preserved (zero production code; zero substrate API surface; zero test code; pre-execution governance artifact only). | governance_event | bb6807c..PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER |
 
 

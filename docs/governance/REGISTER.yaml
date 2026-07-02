@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.21"
 last_modified: "2026-07-02"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CASCADE-CLOSURE"
+last_modified_commit: "8ec64c5"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -2517,7 +2517,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-07-02"
-    last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-CASCADE-CLOSURE"
+    last_modified_commit: "8ec64c5"
     content_language: en
     review_cadence: none-historical-record
     last_review_date: "2026-07-02"
