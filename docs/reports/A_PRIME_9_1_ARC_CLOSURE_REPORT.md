@@ -198,9 +198,17 @@ two matches). The pins are defined on `--count-matches` — no delta.
   Ordered`, `SchedulerExtremeTests.S3_Bus_FiveMillionEventsPerTier_HoldsAll
   DeliveryContracts`, `SchedulerExtremeTests.S6_Bus_FastTier_SixtySecond
   Marathon_ThroughputStable`) — pre-existing class on the pre-cascade tree by
-  construction (F-10; recorded, not absorbed). The Modding suite run's
-  terminal state is recorded in the C8 commit body (in flight at report
-  authoring; wedge-class behavior is itself a documented F-10 shape). The
+  construction (F-10; recorded, not absorbed). The Modding suite finished
+  **398/398 green** (15 m 8 s) — its summary was released only after the
+  session force-killed the shutdown-wedged Modding testhost (~50 minutes of
+  zero-output hang past suite completion; the documented F-10 zombie-testhost
+  wedge shape — the run was complete, the zombie held the pipe). Terminal
+  state recorded here by the C10 correction commit; the sentence originally
+  pointed to the C8 commit body, authored while the suite was still in
+  flight — that pointer was never fulfilled and is corrected to this inline
+  record. Sweep totals: 1093 passed across the nine suites / 4 known-class
+  stress failures / Core.Tests truncated at the §2.6 crash; the known Modding
+  F-10 flake (CreateLoop_RunningLoop_…) did not manifest this run. The
   β/γ-gate fast sweep record (1082/1082) remains the arc's green-suite
   anchor; no production code was touched by Phase δ.
 - **Skeleton revisions (consolidated)**: arc brief §8/§9 template stale values
