@@ -138,16 +138,16 @@ The project's strongest suite: `DualFrontier.Modding.Tests` (382 attribute sites
 
 ### §3.5 — Analyzer tests
 
-**The convention is standing law now; its population is A'.9.1 Phase β scope; the current state is a placeholder (§2.1).**
+**The convention is standing law; its population landed at A'.9.1 Phase β (the 54-test suite — §2.1's one-Fact placeholder row is the dated 2026-06-11 survey record).**
 
 Convention: every active analyzer rule (`DFK###`/`DFL###`/`DF999`, specified in `docs/architecture/ANALYZER_RULES.md`) receives, at the cascade that lands its detection logic, a per-rule verifier class in `DualFrontier.Analyzers.Tests` built on the `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` harness, with at minimum:
 
 - one **positive case** — a minimal code sample that MUST trigger the diagnostic, asserting ID, severity, and location;
 - one **negative case** — the closest compliant sample that MUST NOT trigger it.
 
-Rules with sub-cases (e.g. dotted/hyphenated descriptor variants such as `DFK003.1`, `DFL025-A`) get positive+negative pairs per sub-case. A Phase β commit that lands detection logic without the paired verifier tests is incomplete by definition of this section.
+Rules with sub-cases (the underscore descriptor variants `DFK003_1`, `DFL025_A` — the dotted/hyphen forms were superseded by the Phase β descriptor-ID adjudication) get positive+negative pairs per sub-case. A Phase β commit that lands detection logic without the paired verifier tests is incomplete by definition of this section.
 
-Convention shape (illustrative — **no such test exists today**; §2.1 placeholder truth stands until Phase β):
+Convention shape (realized at Phase β across the 17-rule suite; illustrative sample):
 
 ```csharp
 // tests/DualFrontier.Analyzers.Tests/Rules/Architecture/Dfk003StorageOwnershipVerifierTests.cs
@@ -169,7 +169,7 @@ public sealed class Dfk003StorageOwnershipVerifierTests
 }
 ```
 
-Current truth: 17 rule stubs exist under `tools/DualFrontier.Analyzers/Rules/`, none registers detection logic (§5.2), and the test project contains exactly one assembly-identity placeholder Fact — population is `Planned — see docs/ROADMAP.md §Analyzer track` and brief `tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md §7`.
+Current truth: all 17 rules under `tools/DualFrontier.Analyzers/Rules/` carry detection logic (§5.2), enforced at their shipped severities since Phase γ, and `DualFrontier.Analyzers.Tests` carries the 54-test Phase β suite — per-rule positive/negative verifiers + harness + census meta-tests. The verifier classes are severity-transparent: expected severities derive from the descriptors, so a severity promotion is test-neutral by construction.
 
 ### §3.6 — Native selftest
 
@@ -209,7 +209,7 @@ The core graft of v2.0.0. Each census below is a CONTRACT: an exact pin, a regis
 2. Any commit that changes the count updates the pin **in the same commit**, with a `Skeleton revisions` / census-delta record in the commit body, per `RESERVED_SURFACE_MUTABILITY.md` and `CODING_STANDARDS.md §8`.
 3. **Monotonicity is NOT asserted.** Reserved stubs close per-feature as consumers materialize (Lesson #25), and reserved surface may legitimately grow when a cascade ships new structural-ahead-of-implementation surface (Lesson #N12). EXACTNESS, not direction, is the invariant — a census that only forbids growth would incentivize hiding stubs; a census that pins exactly forces every delta through a recorded decision.
 
-Contract shape of the compiled meta-test (illustrative — **no such test exists today**; §3.8):
+Contract shape of the compiled meta-test (realized at Phase β — `CensusMetaTests.ReservedSurfaceCensus_MatchesExactPin`; §3.8):
 
 ```csharp
 [Fact]
@@ -223,31 +223,33 @@ public void ReservedSurfaceCensus_MatchesExactPin()
 }
 ```
 
-**Implementation state (truth):** the census today is executed by running the rg expression above at every closure (§7); the expression is registered in `CODING_STANDARDS.md §5`. The compiled meta-test asserting the pin from inside the test suite materializes with the Phase β analyzer-test buildout — `Planned — Phase β, see docs/ROADMAP.md §Analyzer track`. Until then, no test asserts this pin; the §7 closure table is the enforcement record.
+**Implementation state (truth):** the compiled meta-test (`CensusMetaTests`, landed at Phase β) asserts the pin from inside the suite at every run; the rg expression above (registered in `CODING_STANDARDS.md §5`) remains the closure-audit cross-check (§7).
 
 ### §4.2 — Marker-family censuses
 
-One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Patterns verbatim; baselines registered as of 2026-06-11:
+One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Patterns verbatim; baselines registered 2026-06-11, `stub`/`deferred` refreshed 2026-07-01 (the F-25 owed fold — drift from the 2026-06-12 comment-citation pass; the compiled meta-tests have carried the live values since Phase β):
 
 | Family | Census expression | Baseline (matches / files) |
 |---|---|---|
-| `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 48 / 18 |
-| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 79 / 48 |
+| `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 51 / 20 |
+| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 82 / 51 |
 | `TODO` (case-sensitive) | `rg --count-matches '\bTODO\b' src/ --type cs` | 136 / 53 |
 | `Phase 6` (literal) | `rg --count-matches 'Phase 6' src/ --type cs` | 23 / 11 |
 | `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 8 / 7 |
 
-Same exactness-pin contract as §4.1: a commit that moves a family's count records the delta in its commit body (`CODING_STANDARDS.md §8`); the closure audit re-measures all five (§7). The baselines impose **no retroactive cleanup obligation** — existing sites are baseline-registered and normalized opportunistically; the census exists so that drift is visible, not to manufacture work. Implementation state: rg-executed at closure; compiled meta-tests are the same `Planned — Phase β` item as §4.1.
+Same exactness-pin contract as §4.1: a commit that moves a family's count records the delta in its commit body (`CODING_STANDARDS.md §8`); the closure audit re-measures all five (§7). The baselines impose **no retroactive cleanup obligation** — existing sites are baseline-registered and normalized opportunistically; the census exists so that drift is visible, not to manufacture work. Implementation state: compiled meta-tests assert all five families since Phase β; the rg expressions remain the closure-audit cross-check (§7).
 
 ### §4.3 — DFK-WAIVER census
 
-**Baseline: 0.** Verified 2026-06-11:
+**Baseline: 0** (2026-06-11). **Current pin: 2** since the A'.9.1 Phase β triage — the two DFK001 waivers in `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs` (К-L19-sanctioned Vulkan debug-messenger interop), asserted by `CensusMetaTests.DfkWaiverCensus_MatchesPin`. The 2026-06-11 verification record:
 
 - `rg '#pragma warning disable (DFK|DFL|DF9)'` over `.cs` → 0 matches;
 - `[SuppressMessage]` over `src/` and `tests/` → 0 matches;
 - no `GlobalSuppressions.cs` exists anywhere in the repository.
 
-Every increase from 0 requires the full waiver form and authority citation of `CODING_STANDARDS.md §5.3` (waiver comment with a resolvable authority — Q-L-#, К-L#, F-#, or refinement reference — immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β, which will surface real diagnostics, is exactly when this census starts moving — the baseline is registered now so that every Phase β suppression is a recorded decision, not background noise.
+(Since Phase β the `tests/` tree contains `SuppressMessage` as string literals inside analyzer-test fixtures; attribute usage in `src/` remains 0 and no `GlobalSuppressions.cs` exists — the compiled meta-tests assert both.)
+
+Every increase requires the full waiver form and authority citation of `CODING_STANDARDS.md §5.3` (waiver comment with a resolvable authority — Q-L-#, К-L#, F-#, or refinement reference — immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β surfaced real diagnostics and moved the census exactly as designed — 0 → 2, both waivers carrying their §5.3 citations (the recorded-decision discipline held).
 
 ### §4.4 — S-LOCK → verification obligation
 
@@ -273,7 +275,7 @@ Worked examples from the surveyed tree (real artifacts, both verified on disk 20
 
 К-Lxx invariants split by verification mode, and the split is stated explicitly — no fake coverage claims:
 
-- **Machine-checkable (future):** invariants with a specified analyzer rule in `docs/architecture/ANALYZER_RULES.md`. Current truth: the 17 rules on disk are **non-detecting stubs** — every `Initialize` configures the context and registers zero analysis actions (verified: 0 `context.Register*` calls under `tools/DualFrontier.Analyzers/Rules/`); all descriptors are Info severity; `AnalyzerReleases.Shipped.md` is empty and `Unshipped.md` lists all 17. **Zero enforcement exists today.** Detection logic plus §3.5 verifier tests are Phase β scope. Meta-test census contracts (§4) are the second machine-checkable channel, with the same `Planned — Phase β` compiled-test status.
+- **Machine-checkable (live since A'.9.1 Phase β/γ):** invariants with a specified analyzer rule in `docs/architecture/ANALYZER_RULES.md` §4.1 (rule registry). Current truth: the 17 rules detect (Phase β) and are **enforced at their shipped severities** (Phase γ, Release 1.0) — 11 Error + 5 Warning fail the build under `TreatWarningsAsErrors`; DFL025_B is IDE-only (descriptor Info / `.editorconfig` `suggestion`). `AnalyzerReleases.Shipped.md` records Release 1.0; the root `.editorconfig` restates the same severities; per-rule positive/negative verifier tests run in `tests/DualFrontier.Analyzers.Tests` (§3.5, severity-transparent). Meta-test census contracts (§4) are the second machine-checkable channel — the compiled census meta-tests assert the pins from inside the suite.
 - **Architect-audited (now):** invariants not machine-checkable are verified by explicit architect audit with recorded evidence. The exemplar is `docs/architecture/K_L14_EVIDENCE_DASHBOARD.md` — К-L14 holds because each verification event is individually recorded with its outcome (including honest soft-halts), not because a test claims it. A document that says an invariant «is enforced» must name either the artifact (rule + verifier test, meta-test, build property) or the audit record; otherwise the claim is removed.
 
 ### §5.3 — The lying-stub law (Lesson #25 / Lesson #N12)
@@ -406,6 +408,8 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.0.1 — 2026-07-01 — A'.9.1 Phase γ propagation PATCH.** METHODOLOGY §12.7 step 9 (SYNTH-2) + the F-25 owed fold, per §9.1 PATCH class (pin/baseline refresh + cross-reference truth): §5.2 machine-checkable channel «non-detecting stubs / zero enforcement» → live Release 1.0 enforcement (11 Error + 5 Warning build-breaking under `TreatWarningsAsErrors`, DFL025_B IDE-only; `Shipped.md` + `.editorconfig` agreeing severity surfaces); §4.1/§4.2 «Planned — Phase β» compiled-meta-test wording → realized (`CensusMetaTests`, Phase β); §3.5 analyzer-test layer «placeholder / no such test exists» state claims → the realized 54-test suite (severity-transparent verifiers), sub-case ID examples → underscore forms per the Phase β adjudication; §4.2 `stub`/`deferred` baselines 48/18 → 51/20, 79/48 → 82/51 (F-25 — the ledger's 81/51 was the 2026-06-12 measure, 82/51 is the Phase β meta-test value); §4.3 waiver census current pin 2 (0-baseline kept as dated history; `SuppressMessage` string-literal precision note). No taxonomy, contract, or pin-semantics change.
 
 **v2.0.0 — 2026-06-11 — Full rewrite to standing test law (MAJOR).** Per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` (W2 deliverable). Replaced the v1.0 aspirational text with code-truth: the nine-project landscape with measured counts and verdicts (§2), the placeholder suite named as such, the known-failing-test honesty register (§2.6), the eight-layer DF taxonomy (§3), census pin contracts with 2026-06-11 baselines — reserved-surface 34/13, marker families 48/18 · 79/48 · 136/53 · 23/11 · 8/7, waivers 0 (§4), the S-LOCK verification obligation with the recorded A'.9.1 audit (§4.4), the validation-mapping and lying-stub law (§5), the brief-integration boundary (§6), the closure-audit extension of METHODOLOGY §12.7 (§7), and verified invocation commands (§8). Removed v1.0 phantom surfaces that never existed on disk: the builder-style `SchedulerFixture` API, `EvilMod`/`GoodMod` fixtures, `PerformanceGates.cs`, CI gates, and the four-project test layout (nine exist). Tier 1 LOCKED; owner Crystalka.
 

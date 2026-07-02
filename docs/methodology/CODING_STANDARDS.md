@@ -383,9 +383,10 @@ pattern `\[ReservedStub`; **current pin: 34 application sites across 13 files**.
 regardless.) The meta-test asserting the exact pin lives in
 `TESTING_STRATEGY.md` §4.
 
-Compile-time enforcement of attribute presence (rule **DFL025-A**) and
-behaviour-invocation restriction against tagged members is
-`Planned — see docs/ROADMAP.md §Analyzer track`.
+Compile-time enforcement: rule **DFL025_A** (behavior invocation against tagged
+members requires the declaring `[Trait]`) detects since A'.9.1 Phase β and
+enforces at Warning — build-breaking under `TreatWarningsAsErrors` — since
+Phase γ (Release 1.0).
 
 ### §5.2 — Doc-tag families
 
@@ -397,11 +398,16 @@ its closing phase or cascade.
 
 | Family | Census pattern (rg, on `src/ --type cs`) | Baseline |
 |---|---|---|
-| `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 48 matches / 18 files |
-| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 79 matches / 48 files |
+| `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 51 matches / 20 files |
+| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 82 matches / 51 files |
 | `TODO` | `rg --count-matches '\bTODO\b' src/ --type cs` (case-sensitive) | 136 matches / 53 files |
 | `Phase 6` | `rg --count-matches 'Phase 6' src/ --type cs` | 23 matches / 11 files |
 | `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 8 matches / 7 files |
+
+Baselines refreshed 2026-07-01 (the F-25 owed fold): `stub` 48/18 → 51/20 and
+`deferred` 79/48 → 82/51 had drifted at the 2026-06-12 comment-citation pass
+(F-25 census-delta record); the compiled census meta-tests have carried the live
+values since Phase β. `TODO` / `Phase 6` / `not yet` unchanged.
 
 ### §5.3 — `DFK-WAIVER` — the suppression law
 
@@ -439,16 +445,21 @@ suppressed once detection exists.
    entry is `CS1591` only — a compiler documentation warning, not a DFK/DFL
    diagnostic; see §4.2.)
 5. **Census-tracked.** Every waiver is counted by the DFK-WAIVER census
-   (`TESTING_STRATEGY.md` §4). **Baseline = 0** as of this cascade, verified:
-   `rg '#pragma warning disable (DFK|DFL|DF9)'` over `*.cs` returns 0, and
-   `[SuppressMessage]` over `src` + `tests` returns 0. Every increase from 0
-   requires a citation satisfying rule 3.
+   (`TESTING_STRATEGY.md` §4 — expressions and the live pin). Baseline = 0 at
+   this section's authoring (2026-06-11); **current pin = 2** since the A'.9.1
+   Phase β triage — the two К-L19-sanctioned DFK001 waivers in
+   `ValidationLayer.cs`, asserted by the compiled census meta-test. Every
+   increase requires a citation satisfying rule 3.
 6. **No orphan waivers.** A waiver whose authority citation does not resolve
    (dangling Q-L/К-L/F-# or a refinement entry that does not exist) fails review.
 
-**Diagnostic-ID form.** A waiver names the **descriptor ID string** — dots for
-DFK sub-rules, hyphens for DFL families (e.g. `DFK003.1`, `DFL025-A`) — not the
-file/class underscore form (`DFK003_1`, `DFL025_A`).
+**Diagnostic-ID form.** A waiver names the **descriptor ID string** — the
+**underscore form** for sub-rules and variants (`DFK003_1`, `DFL025_A`),
+identical to the file/class form since the Phase β descriptor-ID adjudication
+(Crystalka-ratified 2026-07-01; ANALYZER_RULES §4 naming convention). The
+superseded dotted/hyphen forms (`DFK003.1`, `DFL025-A`) are rejected by Roslyn
+`ReportDiagnostic` as invalid identifiers — a pragma naming them would suppress
+nothing.
 
 **Supersession.** This law **supersedes** the `// DFK###-SUPPRESS:` suppression
 sketch in `tools/briefs/A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF.md` §7.3. That
@@ -460,8 +471,9 @@ the disable, and the authority-citation classes of rule 3 are mandatory.
 **GlobalSuppressions ban.** A `GlobalSuppressions.cs` file (assembly-level
 `[assembly: SuppressMessage]`) is **forbidden** — it is the file-scope blanket of
 rule 4 at assembly granularity. The ban is law **now**; no `GlobalSuppressions.cs`
-exists in the tree. The self-policing analyzer detection (rule DF999) is a stub —
-its detection logic is `Planned — see docs/ROADMAP.md §Analyzer track`.
+exists in the tree. The self-policing analyzer rule DF999 detects the pattern
+since A'.9.1 Phase β and enforces at Warning (build-breaking under
+`TreatWarningsAsErrors`) since Phase γ (Release 1.0).
 
 ## §6 — Comments & Documentation Language
 
@@ -633,14 +645,17 @@ restated.)
   `DEVELOPMENT_HYGIENE.md` §4 for the commit-folding protocol. Never run
   `sync_register.ps1 -Sync` outside a ratified register cascade.
 
-**Analyzer enforcement: none today.** The DualFrontier.Analyzers project is
-wired to all twelve src projects (§4.2) but ships **17 non-detecting `Info`
-stubs** (9 Architecture / 3 Discipline / 5 NativeBoundary) — each has an empty
-`Initialize` with no `Register*` calls, `AnalyzerReleases.Shipped` is empty, and
-`AnalyzerReleases.Unshipped` lists all 17. The build therefore reports **zero**
-DFK/DFL diagnostics. `.editorconfig` is charset-only and sets no DFK/DFL
-severities. The rule inventory authority is `ANALYZER_RULES.md`; detection logic
-and severity promotion are `Planned — see docs/ROADMAP.md §Analyzer track`.
+**Analyzer enforcement: live (A'.9.1 Phase γ, Release 1.0).** The
+DualFrontier.Analyzers project is wired to all twelve src projects (§4.2) and
+ships **17 detecting rules** (9 Architecture / 3 Discipline / 5 NativeBoundary)
+at their shipped severities: 11 Error + 5 Warning — both build-breaking under
+`TreatWarningsAsErrors` — plus DFL025_B at descriptor Info (`.editorconfig`
+`suggestion`, IDE-only). `AnalyzerReleases.Shipped.md` records Release 1.0 and
+RS release tracking cross-checks it against the descriptors; the root
+`.editorconfig` restates all 17 severities as `dotnet_diagnostic.<ID>.severity`
+keys, values identical to the descriptors. A DFK/DFL/DF999 violation therefore
+fails the build; suppression only per the §5.3 DFK-WAIVER law (census pin: 2).
+The rule inventory authority is `ANALYZER_RULES.md` §4.1 (rule registry).
 
 **CI: none.** No CI exists; none is currently scheduled. There are no
 `.github/workflows`, Azure Pipelines, or AppVeyor configurations in the tree, and
@@ -676,10 +691,11 @@ here **before** the brief locks.
 
 | Version | Date | Change |
 |---|---|---|
+| **2.1.1** | 2026-07-01 | A'.9.1 Phase γ propagation PATCH (METHODOLOGY §12.7 step 9 / SYNTH-2 + §10.1 rule 5 cross-doc propagation): §9 «Analyzer enforcement: none today» → live Release 1.0 enforcement (16 build-breaking + 1 IDE-only; `.editorconfig` primed; `Shipped.md` populated); §5.1 + §5.3 DFL025_A / DF999 «Planned»-stub claims → detecting-since-β, enforcing-since-γ; §5.3 Diagnostic-ID form → underscore per the Phase β Crystalka-ratified descriptor-ID adjudication (the dotted/hyphen forms are Roslyn-invalid — the paragraph as written would have produced no-op waivers); §5.3 rule 5 waiver census → current pin 2 (dated); §5.2 `stub`/`deferred` baselines 48/18 → 51/20, 79/48 → 82/51 (the F-25 owed fold; live values carried by the compiled meta-tests since Phase β); stale v2.0.0 end-marker synced. **PATCH.** |
 | **2.1.0** | 2026-06-12 | §6.1 citation-form rule added (Architecture Truth Cascade, D11): internal citations use stable identifiers + section topics; version pins of living documents and URL-fragment anchors forbidden in living prose and code comments (pins live only inside dated records). Codifies the two breakage classes the 2026-06-11 ARCHITECTURE TRUTH RECON surfaced, in the same cascade that fixed the found instances (SYNTH-2). **MINOR.** |
 | **2.0.0** | 2026-06-11 | Full rewrite to code-truth: marker-family registry (§5: `[ReservedStub]`, doc-tag families, the new `DFK-WAIVER` suppression law superseding `A_PRIME_9_1_…BRIEF` §7.3), C++ ABI-boundary discipline (§3), build-config quoted verbatim (§4), enforcement claims reduced to existing artifacts (§9 — analyzer stated as 17 non-detecting stubs; CI stated absent). **MAJOR.** Authored per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md`. |
 | 1.0 | 2026-05-12 (era) | Initial codification — naming, file-scoped namespaces, nullability, one-class-per-file, member order, stack-frame retention discipline. Preserved as historical; superseded by 2.0.0. |
 
 ---
 
-**End of CODING_STANDARDS.md v2.0.0 LOCKED**
+**End of CODING_STANDARDS.md v2.1.1 LOCKED**
