@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.19"
+register_version: "2.20"
 last_modified: "2026-07-01"
-last_modified_commit: "7d1fdb9"
+last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-PHASE_GAMMA-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -471,9 +471,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.1.0"
-    last_modified: "2026-06-12"
-    last_modified_commit: "bdb5283"
+    version: "2.1.1"
+    last_modified: "2026-07-01"
+    last_modified_commit: "d5d6fe2"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -543,9 +543,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.0.0"
-    last_modified: "2026-06-11"
-    last_modified_commit: "fcce199"
+    version: "2.0.1"
+    last_modified: "2026-07-01"
+    last_modified_commit: "d5d6fe2"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -680,9 +680,9 @@ documents:
     tier: 1
     lifecycle: AUTHORED-SKELETON
     owner: Crystalka
-    version: "0.2.2"
+    version: "0.4.0"
     last_modified: "2026-07-01"
-    last_modified_commit: "d7cff93"
+    last_modified_commit: "b0d9480"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -718,8 +718,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-06-29"
-    last_modified_commit: "7a7f26e"
+    last_modified: "2026-07-01"
+    last_modified_commit: "5c97885"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-06-11"
@@ -2325,6 +2325,25 @@ documents:
     capa_entries_referenced: []
     special_case_rationale: "Reconnaissance report feeding DOC-D-PHASE_BETA_BRIEF (recon-artifact enrollment precedent: DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF + DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF; the sister DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT is a durable architecture-tier reference, whereas this recon is execution-context for a single cascade → DOC-D Tier 4, matching the brief it feeds). On-disk .md persisted at C1; enrolled at closure to clear its since-C1 advisory orphan warning and complete the cascade's provenance chain."
 
+  - id: DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF
+    path: tools/briefs/PHASE_GAMMA_BRIEF.md
+    title: "PHASE_GAMMA_BRIEF — A'.9.1 Phase γ severity-promotion execution brief (17 rules Info → ratified shipped severities 11 Error + 5 Warning + 1 Suggestion; AnalyzerReleases Release 1.0; .editorconfig priming; ANALYZER_RULES enforcement truth-up; F-12 closure; REGISTER 2.19 → 2.20)"
+    category: D
+    tier: 4
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-01"
+    last_modified_commit: "524dd31"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-07-01"
+    last_review_event: "Phase γ brief authored by Claude Opus (deliberation session, Phase γ prep; brief frontmatter carries first_authored 2026-07-02 — ahead of the 2026-07-01 execution date, recorded as-is) from the durable recon docs/reports/PHASE_GAMMA_RECON_REPORT.md (R1-R8); F-12 authorization Crystalka 2026-07-01 (DFK019_A = Warning). Executed 2026-07-01 by Claude Code (Fable 5, LOCAL Skarlet), single-pass serial topology, C1-C8 (intended-form C1-C7 + the SYNTH-2 standing-law propagation PATCH inserted per METHODOLOGY §12.7 step 9). Enrolled EXECUTED at the Phase γ REGISTER closure."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Category D Tier 4 execution-brief convention (precedent: DOC-D-PHASE_BETA_BRIEF, special_case_rationale class). Entry id follows the brief's own frontmatter register_id (DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF) — file self-declaration honored over the shorter β-sibling id form (DOC-D-PHASE_BETA_BRIEF), consistent with the DOC-D-A_PRIME_9_1_* family naming. On-disk .md persisted at C1 (524dd31); enrolled at closure alongside its recon basis, completing the cascade provenance chain."
+
   - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
     path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
     title: "A_PRIME_9_0_AMENDMENTS_LOG — A'.9.0 Reconnaissance Cascade Post-Closure Amendments Log (4 amendments + Option γ Hybrid)"
@@ -2432,6 +2451,23 @@ documents:
     last_review_event: "Stress test suite scaffold + 2026-05-21 prog баseline + investigation outcome documented; retroactively enrolled at А'.7.x δ5 governance commit. β7 commit (d179631) extended +173 LOC with investigation findings + refactor outcome + Group A/B reports."
     reviewer: Crystalka
     special_case_rationale: "Crystalka-authored 2026-05-21 stress test suite reference document — 8 xUnit scenarios (4 Core stress + 4 mod-graph stress) + BDN benchmarks (5 methods × 3 sizes); Trait Category=Stress for CI opt-out. Baseline numbers Win11 .NET 8.0.27 AVX2 GC Concurrent Workstation. Input artifact + ongoing reference; retroactively enrolled. β7 commit extends с investigation findings + refactor outcome + Group A/B reports + BDN tables (cumulative ~400 LOC at А'.7.x closure)."
+
+  - id: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT
+    path: docs/reports/PHASE_GAMMA_RECON_REPORT.md
+    title: "PHASE GAMMA RECON REPORT — 2026-07-01 (R1-R8) — pre-brief reconnaissance for A'.9.1 Phase γ severity promotion (promotion-safety SARIF measure 0 active + 2 suppressed; ratified severity-matrix cross-check; the three severity surfaces; waiver-under-promotion; citation anchors + F-12; anomalies + descriptor-as-truth design-fork recommendation)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-01"
+    last_modified_commit: "524dd31"
+    content_language: en
+    review_cadence: none-historical-record
+    last_review_date: "2026-07-01"
+    last_review_event: "Read-only recon session 2026-07-01 — the first durable-report recon: persisted to docs/reports/ at authoring time (instead of the tools/briefs/ β-sibling location), substituting for a brief survey wave per PHASE_GAMMA_BRIEF preamble. R2 promotion-safety measure re-verified at Phase 0 of the execution session: 0 active + 2 suppressed(inSource), exact match. Enrolled at the Phase γ REGISTER closure."
+    reviewer: Crystalka
+    special_case_rationale: "Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-BUS_INVESTIGATION_2026_05_21, DOC-E-SCHEDULER_STRESS_TEST_SUITE), per PHASE_GAMMA_BRIEF §10 (DOC-C/E reports form; the PHASE_BETA_VIOLATION_INVENTORY.yaml precedent named there was itself assessed OUT of the register — the followed convention is the docs/reports/ .md class). Basis of DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF."
 
   - id: DOC-D-A_PRIME_8_K_CLOSURE_REPORT
     path: tools/briefs/A_PRIME_8_K_CLOSURE_REPORT_BRIEF.md
@@ -10436,3 +10472,80 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-D-PHASE_BETA_BRIEF → EXECUTED, DOC-D-PHASE_BETA_RECON_REPORT → EXECUTED]
+
+  - id: EVT-2026-07-01-A_PRIME_9_1-PHASE_GAMMA-CLOSURE
+    timestamp: "2026-07-01T00:00:00Z"
+    event_type: execution_milestone
+    cascade: A'.9.1 Phase γ severity promotion (17 analyzer rules Info → ratified shipped severities; ruleset ships Release 1.0)
+    phase: cascade closure (C7 of C1-C8)
+    title: "Phase γ REGISTER closure — 17 rules promoted to the ratified matrix (11 Error + 5 Warning + 1 Suggestion/Info: 16 BUILD-BREAKING under TreatWarningsAsErrors + 1 IDE-only) + AnalyzerReleases Release 1.0 (Unshipped → Shipped, RS-tracked) + .editorconfig primed (17 descriptor-identical keys) + ANALYZER_RULES 0.4.0 enforcement truth-up + SYNTH-2 standing-law PATCH (CODING_STANDARDS 2.1.1 + TESTING_STRATEGY 2.0.1) + F-12 CLOSED (DFK019_A = Warning ratified 2026-07-01) + F-25 CLOSED (baseline fold) + ROADMAP dotted-ID migration + brief/recon enrolled (2.19 → 2.20)"
+    summary: |
+      Promotes the 17 detecting first-batch rules (Phase β) from Info to the
+      ratified shipped severities per tools/briefs/PHASE_GAMMA_BRIEF.md (authored
+      by Claude Opus from the durable recon docs/reports/PHASE_GAMMA_RECON_REPORT.md;
+      F-12 authorization: Crystalka ratified DFK019_A = Warning on 2026-07-01).
+      Executed 2026-07-01 by Claude Code (Fable 5, LOCAL Skarlet); serial topology,
+      no writer wave (the durable recon substituted for the survey wave).
+      Ratified matrix as landed: Error (11) — DFK001, DFK002, DFK003, DFK003_1,
+      DFK004, DFK005, DFK007, DFK007_1, DFK011, DFK015_1, DFK017; Warning (5) —
+      DFK013, DFK016, DFK019_A, DFL025_A, DF999; Suggestion (1) — DFL025_B
+      (descriptor Info — DiagnosticSeverity has no Suggestion member; realized as
+      .editorconfig `suggestion`, IDE-only). 16 BUILD-BREAKING + 1 IDE-ONLY.
+      Empirical promotion proof: post-flip full-solution --no-incremental Release
+      rebuild 0W/0E with all 16 build-breaking rules live (after C2 and re-run
+      after C3); Debug fast sweep (Category!=Stress&Category!=Extreme) 1082/1082
+      green at baseline, post-C2, and post-C3 (severity-transparent tests —
+      CSharpAnalyzerVerifier derives expected severity from descriptors). Phase 0
+      promotion-safety gate: SARIF 2.1.0 over the 12 src projects → 0 active + 2
+      suppressed(inSource) DFK001 (the two К-L19 ValidationLayer waivers, pragma
+      suppression severity-agnostic — held at Error, build green proves it).
+      ROADMAP Phase γ exit gate satisfied: build exit 0 with every correctness
+      DFK### at error — К-Lxx compile-time enforcement is LIVE.
+      Commits: C1 524dd31 (brief + recon + validation checkpoint); C2 3272d74
+      (D1+D2 atomic: 16 descriptor flips + AnalyzerReleases Release 1.0 — RS
+      release tracking makes the pair same-commit-coupled under TWAE); C3 18a4dac
+      (.editorconfig [*.cs] block, 17 keys identical to descriptors); C4 b0d9480
+      (ANALYZER_RULES 0.2.2 → 0.4.0 — status column stub → enforcing, target
+      column collapsed, enforcement wording truth-law compliant now that the
+      enforcer exists); C5 d5d6fe2 (SYNTH-2 propagation PATCH per METHODOLOGY
+      §12.7 step 9: CODING_STANDARDS 2.1.0 → 2.1.1 — §9 enforcement-live + §5.3
+      Diagnostic-ID form → underscore per the Phase β Crystalka-ratified
+      adjudication + §5.2 F-25 fold; TESTING_STRATEGY 2.0.0 → 2.0.1 — §5.2
+      machine-checkable-live + §4.2 F-25 fold + §3.5/§4.1/§4.3 realized-state
+      truth-up); C6 5c97885 (F-12 + F-25 CLOSED with closing hashes; 4 living
+      dotted-ID lines → underscore forms; deferred-rule names DFK019.B /
+      DFC001.A/B untouched by design).
+      Census pins: reserved-surface 34/13 EXACT held; DFK-WAIVER 2 unchanged
+      (both К-L19-cited); marker families measured unchanged end-to-end — stub
+      51/20, deferred 82/51, TODO 136/53, Phase 6 23/11, not yet 8/7 (doc
+      baselines refreshed TO these long-standing values at C5 per F-25; measured
+      counts moved zero; compiled meta-tests green throughout).
+      Skeleton revisions (consolidated): brief §2 "43 EVT" → empirical 42 (this
+      event is 42 → 43); brief §2 ".editorconfig [*.cs] present" → section
+      created at C3 (file was 4-line charset-only); brief D1 "17 flips" → 16
+      files (DFL025_B already at its shipped descriptor severity); brief D4
+      "0.3.0 → 0.4.0" → executed 0.2.2 → 0.4.0 (live from-version); commit plan
+      +1 (the C5 standing-law PATCH — METHODOLOGY §12.7 step 9 obligation the
+      intended-form plan did not enumerate); C6 subject + F-25 rider; EVT id
+      dated form per convention (brief intended-form "EVT-PHASE_GAMMA-CLOSURE");
+      ROADMAP promotion-map mechanism wording refreshed on the D6-touched line
+      (recon R7 recommendation — no `suggestion` baseline ever existed).
+      Register: documents 277 → 279 (brief DOC-D Tier 4 EXECUTED + recon DOC-E
+      Tier 3 EXECUTED per the docs/reports/ convention); ANALYZER_RULES → 0.4.0
+      (b0d9480); CODING_STANDARDS → 2.1.1 + TESTING_STRATEGY → 2.0.1 (d5d6fe2);
+      ROADMAP Live-touch (5c97885); frontmatter mirrors hand-synced in this
+      commit (Godot-DEV_HYGIENE precedent). register_version 2.19 → 2.20; header
+      last_modified_commit set to the single sanctioned
+      PENDING-COMMIT-A_PRIME_9_1-PHASE_GAMMA-CLOSURE self-reference, backfilled
+      with C7's real hash at C8 render (Option B). C1-C6 recorded REAL; zero
+      other placeholders.
+      К-L impact: zero substrate touch (К-L14 thesis) — severity flips in
+      tooling descriptors + release tables + .editorconfig + docs + governance;
+      production src/ untouched; behavior unchanged (fast suite green at every
+      gate). Zero pushes performed (pushes are Crystalka's act per the closure
+      checklist). Phase δ (governance closure: lessons #N17/#N18/#N19/#N20,
+      К-L14 Evidence #14, A'.9.1 brief EXECUTED transition) is next.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF → EXECUTED, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT → EXECUTED]
