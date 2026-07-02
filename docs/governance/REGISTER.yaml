@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.20"
 last_modified: "2026-07-01"
-last_modified_commit: "PENDING-COMMIT-A_PRIME_9_1-PHASE_GAMMA-CLOSURE"
+last_modified_commit: "8b26925"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
