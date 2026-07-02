@@ -12,8 +12,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ANALYZER_RULES
 ---
 # DualFrontier Roslyn Analyzer Rule Specifications
 
-**Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; structural reorganization at A'.9.1 Phase α Commit 5 2026-05-25; Standing-Law restructure 2026-06-11 — lifecycle unchanged: Phase β mutates §4 again)
-**Version**: 0.2.1
+**Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; structural reorganization at A'.9.1 Phase α Commit 5 2026-05-25; Standing-Law restructure 2026-06-11; Phase β detection + Phase γ severity promotion 2026-07-01 — lifecycle unchanged: LOCK criteria per ROADMAP «Analyzer track» Phase δ)
+**Version**: 0.4.0
 **Date created**: 2026-05-23 (А'.8 К-series formal closure cascade Commit 5 REGISTER enrollment)
 **Date restructured**: 2026-05-25 (A'.9.1 / К-extensions cascade #5 Phase α Commit 5); 2026-06-11 (Standing-Law cascade — roadmap-load extraction + stub-truth correction per [DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md §6.3.2](../reports/DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT.md))
 **Purpose**: Roslyn analyzer rule specifications encoding К-Lxx invariants. This document states what exists; scheduled futures live in [ROADMAP.md «Analyzer track»](../ROADMAP.md). Populated к LOCKED at A'.9.1+ Roslyn analyzer milestone implementation cascade.
@@ -26,7 +26,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ANALYZER_RULES
 
 ## §1 — Document framing + authority chain
 
-This document is the authoritative specification for the DualFrontier Roslyn analyzer rule surface: rule IDs, namespaces, categories, the per-rule template, and the realized scope decisions. What the rules **do today** is stated in §4 (ground truth: 17 non-detecting stubs, zero diagnostics). What the rules **are scheduled to become** is owned by [ROADMAP.md «Analyzer track»](../ROADMAP.md) — spec/roadmap separation per Standing-Law cascade 2026-06-11. §7 and §8 are **realized decision records** (closed Q-L outcomes), not forward plans.
+This document is the authoritative specification for the DualFrontier Roslyn analyzer rule surface: rule IDs, namespaces, categories, the per-rule template, and the realized scope decisions. What the rules **do today** is stated in §4 (ground truth: 17 detecting rules enforced at shipped severities — 16 build-breaking under `TreatWarningsAsErrors`, 1 IDE-only). What the rules **are scheduled to become** is owned by [ROADMAP.md «Analyzer track»](../ROADMAP.md) — spec/roadmap separation per Standing-Law cascade 2026-06-11. §7 and §8 are **realized decision records** (closed Q-L outcomes), not forward plans.
 
 **Authority chain**:
 - [KERNEL_ARCHITECTURE.md Part 0](KERNEL_ARCHITECTURE.md#part-0-locked-foundational-decisions) — К-Lxx invariant canonical text (Tier 1 LOCKED)
@@ -57,7 +57,7 @@ This document is the authoritative specification for the DualFrontier Roslyn ana
 
 **К-L invariant**: <К-L# reference + canonical text link к KERNEL_ARCHITECTURE.md Part 0>
 **Category**: DualFrontier.Architecture / DualFrontier.NativeBoundary / DualFrontier.Discipline
-**Severity (Phase-γ promotion target)**: Error / Warning / Suggestion — shipped stubs carry `Info` until Phase γ (see ROADMAP.md «Analyzer track»)
+**Severity (shipped, Release 1.0)**: Error / Warning / Suggestion (= descriptor Info, IDE-only) — per the §4.1 registry
 **Status**: Stub / Detecting / Reserved / Outside-Roslyn-scope
 **Implementation status**: Pending A'.9.1 Phase β / Implemented at A'.9.1 / Active post-A'.9.1
 
@@ -96,13 +96,13 @@ Three-tier rule ID namespace convention forward-locked at Brief A'.9.1 batch 1 d
 - **DFL###** — Lesson-derived rules (discipline). Each rule encodes a specific [METHODOLOGY.md](../methodology/METHODOLOGY.md) Lesson. Numbering follows Lesson number (e.g., DFL025 family encodes Lesson #25 refined extension).
 - **DFC###** — Cascade-specific rules (drift detection). Reserved для rules surfaced by individual cascade execution to detect specific drift patterns. No DFC### stub exists at A'.9.1 per Q-L-11 (DFC001 deferred к К-L20 LOCK cascade — see §5 pointer).
 
-**Self-policing**: DF999 (analyzer rule that bans solution-wide GlobalSuppressions / `[assembly: SuppressMessage]` per Q-L-18 default — pending batch 3 governance ratification). Shipped as a non-detecting stub at A'.9.1 Phase β-prep per the default.
+**Self-policing**: DF999 (analyzer rule that bans solution-wide GlobalSuppressions / `[assembly: SuppressMessage]` per Q-L-18 default — pending batch 3 governance ratification). Shipped as a non-detecting stub at A'.9.1 Phase β-prep per the default; detecting since Phase β, enforcing at Warning since Phase γ (Release 1.0).
 
 ---
 
-## §4 — A'.9.1 first-batch rule registry (17 stubs — detection PENDING Phase β)
+## §4 — A'.9.1 first-batch rule registry (17 rules — enforced at shipped severities)
 
-**Ground truth (v0.2.0, verified on disk 2026-06-11):** all 17 first-batch rules exist as **non-detecting stubs**. Every stub declares its `DiagnosticDescriptor` with `DiagnosticSeverity.Info`; every `Initialize()` calls `ConfigureGeneratedCodeAnalysis` + `EnableConcurrentExecution` and registers **no** analysis actions; **zero diagnostics are emitted by design** (Phase α / Phase β-prep scaffolding). Detection logic lands at A'.9.1 Phase β — see [ROADMAP.md «Analyzer track»](../ROADMAP.md). No rule detects or blocks anything today; nothing in this section is an enforcement claim.
+**Ground truth (v0.4.0, verified on disk 2026-07-01):** all 17 first-batch rules carry real detection logic (landed at A'.9.1 Phase β) and are **enforced at their shipped severities** (promoted at A'.9.1 Phase γ; F-12 ratified 2026-07-01). The three severity surfaces agree and are structurally locked: the descriptors declare the shipped `defaultSeverity` (11 Error + 5 Warning + DFL025_B Info); the root `.editorconfig` restates the same values as `dotnet_diagnostic.<ID>.severity` keys (no override semantics — a key differing from its descriptor is a defect); `AnalyzerReleases.Shipped.md` records them under Release 1.0, cross-checked against the descriptors by RS release tracking. The enforcer: the analyzer loads at every build of the 12 wired src projects (§4.3) and `TreatWarningsAsErrors=true` (root `Directory.Build.props`) makes Error AND Warning diagnostics fail the build — **16 rules are build-breaking; DFL025_B (descriptor Info ≡ editorconfig `suggestion`) is IDE-only**. Suppression only per the DFK-WAIVER law (§12); current census: 2 waivers (both DFK001, К-L19-sanctioned Vulkan debug-messenger interop).
 
 On-disk layout (9 Architecture + 3 Discipline + 5 NativeBoundary):
 
@@ -130,31 +130,31 @@ tools/DualFrontier.Analyzers/Rules/
 
 ### §4.1 — Registry (single source — 17 rules)
 
-| Rule ID | К-L / Lesson anchor | Tier | Category | Shipped severity | Phase-γ target¹ | Status |
-|---|---|---|---|---|---|---|
-| DFK001 | К-L1 | P0 | NativeBoundary | Info | Error | stub |
-| DFK002 | К-L2 | P0 | NativeBoundary | Info | Error | stub |
-| DFK003 | К-L3 | P0 | Architecture | Info | Error | stub |
-| DFK003_1 | К-L3.1 | P0 | Architecture | Info | Error | stub |
-| DFK004 | К-L4 | P0 | Architecture | Info | Error | stub |
-| DFK005 | К-L5 | P0 | Architecture | Info | Error | stub |
-| DFK007 | К-L7 | P0 | Architecture | Info | Error | stub |
-| DFK011 | К-L11 | P0 | Architecture | Info | Error | stub |
-| DFK007_1 | К-L7.1 | P1 | NativeBoundary (GPU pipeline slot) | Info | Error | stub |
-| DFK015_1 | К-L15.1 | P1 | NativeBoundary (three-tier mutex managed facade) | Info | Error | stub |
-| DFK017 | К-L17 | P1 | Architecture (display composition multi-layer) | Info | Error | stub |
-| DFK019_A | К-L19 static API surface | P1 | NativeBoundary | Info | Warning² | stub |
-| DFK013 | К-L13 | β-secondary | Architecture | Info | Warning | stub |
-| DFK016 | К-L16 (retain α — Phase 0 ratified per Q-L-16) | β-secondary | Architecture | Info | Warning | stub |
-| DFL025_A | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Warning | stub |
-| DFL025_B | Lesson #25 refined 3rd extension | Discipline | Discipline | Info | Suggestion | stub |
-| DF999 | analyzer self-discipline (Q-L-18 default) | Self-policing | Discipline | Info | Warning | stub |
+| Rule ID | К-L / Lesson anchor | Tier | Category | Shipped severity (Release 1.0)¹ | Status |
+|---|---|---|---|---|---|
+| DFK001 | К-L1 | P0 | NativeBoundary | Error | enforcing |
+| DFK002 | К-L2 | P0 | NativeBoundary | Error | enforcing |
+| DFK003 | К-L3 | P0 | Architecture | Error | enforcing |
+| DFK003_1 | К-L3.1 | P0 | Architecture | Error | enforcing |
+| DFK004 | К-L4 | P0 | Architecture | Error | enforcing |
+| DFK005 | К-L5 | P0 | Architecture | Error | enforcing |
+| DFK007 | К-L7 | P0 | Architecture | Error | enforcing |
+| DFK011 | К-L11 | P0 | Architecture | Error | enforcing |
+| DFK007_1 | К-L7.1 | P1 | NativeBoundary (GPU pipeline slot) | Error | enforcing |
+| DFK015_1 | К-L15.1 | P1 | NativeBoundary (three-tier mutex managed facade) | Error | enforcing |
+| DFK017 | К-L17 | P1 | Architecture (display composition multi-layer) | Error | enforcing |
+| DFK019_A | К-L19 static API surface | P1 | NativeBoundary | Warning² | enforcing |
+| DFK013 | К-L13 | β-secondary | Architecture | Warning | enforcing |
+| DFK016 | К-L16 (retain α — Phase 0 ratified per Q-L-16) | β-secondary | Architecture | Warning | enforcing |
+| DFL025_A | Lesson #25 refined 3rd extension | Discipline | Discipline | Warning | enforcing |
+| DFL025_B | Lesson #25 refined 3rd extension | Discipline | Discipline | Suggestion (descriptor Info) | detecting (IDE-only) |
+| DF999 | analyzer self-discipline (Q-L-18 default) | Self-policing | Discipline | Warning | enforcing |
 
-¹ «Phase-γ target» is the severity the rule is **specified to receive at A'.9.1 Phase γ promotion** — it is not the current behavior. Promotion sequencing and the `.editorconfig` mechanics are owned by [ROADMAP.md «Analyzer track»](../ROADMAP.md). Until Phase γ executes, every rule ships `Info` and emits nothing.
+¹ Shipped at A'.9.1 Phase γ (2026-07-01): the pre-promotion registry carried a «Phase-γ target» column beside a uniform Info shipped column; Phase γ executed the targets and collapsed the pair into this single live column. «Enforcing» = build-breaking under `TreatWarningsAsErrors` (Error and Warning both fail the build). DFL025_B ships descriptor `Info` (`DiagnosticSeverity` has no Suggestion member), restated as `.editorconfig` `suggestion` — IDE-only. Promotion history: [ROADMAP.md «Analyzer track»](../ROADMAP.md).
 
 ² Registry-drift resolution (v0.2.0): v0.1 carried two parallel registries (§4.1–4.5 and §10.1–10.3) whose columns drifted — §4.2 grouped DFK019_A under an «Error severity post-promotion» header while §10.1 listed Warning. Resolved to **Warning** per canonical [K_CLOSURE_REPORT.md §7](K_CLOSURE_REPORT.md#7--roslyn-analyzer-rule-specifications) DFK019 row (Warning, V substrate contract — configurable). v0.2.0 keeps exactly one registry — this table.
 
-**Intended detection notes** (Phase β targets — none implemented at v0.2.0; canonical narratives: K_CLOSURE_REPORT.md §7.2):
+**Detection notes** (implemented at Phase β; canonical narratives: K_CLOSURE_REPORT.md §7.2):
 
 - **DFK013** — on-demand activation discipline (efficiency-not-correctness): `SystemBase` subclass без `[WakeOn*]` AND без `[TickRate]`, OR eager-init в `Initialize()`.
 - **DFK016** — pipeline depth D ∈ {1, 2, 3} hardcoded vs `PipelineSlotInterop.DefaultDepth` / `.MaxDepth` constants. Phase 0 ratified retain α (managed surface stable per closure report §3.3).
@@ -165,15 +165,15 @@ tools/DualFrontier.Analyzers/Rules/
 
 ### §4.2 — Composition + S-LOCK-4 count audit (trimmed)
 
-Composition reconciled to on-disk truth: **8 P0 + 4 P1 + DFK013 + DFK016 (retain α — Phase 0 ratified) + DFL025-A/B + DF999 = 17 stubs.**
+Composition reconciled to on-disk truth: **8 P0 + 4 P1 + DFK013 + DFK016 (retain α — Phase 0 ratified) + DFL025_A/B + DF999 = 17 rules.**
 
-**S-LOCK-4 count audit (essentials)**: Brief §6.5 narrative stated «Total A'.9.1 enforcement surface: 15-16 own rules» — arithmetic carryover from pre-Q-L-9 / pre-Phase-0 drafting (DFK010 still counted as P1; DFK016 still a Phase-0 conditional). Post-supersession arithmetic = 17, matching the 17 files on disk. Surfaced for forward-cascade audit trail. The v0.1 phrase «enforcement surface» itself was an overclaim — at v0.2.0 the accurate term is **stub surface** (detection PENDING Phase β).
+**S-LOCK-4 count audit (essentials)**: Brief §6.5 narrative stated «Total A'.9.1 enforcement surface: 15-16 own rules» — arithmetic carryover from pre-Q-L-9 / pre-Phase-0 drafting (DFK010 still counted as P1; DFK016 still a Phase-0 conditional). Post-supersession arithmetic = 17, matching the 17 files on disk. Surfaced for forward-cascade audit trail. The v0.1 phrase «enforcement surface» was an overclaim at v0.1–v0.2.x (stub surface, detection pending); since Phase β detection and the Phase γ promotion (v0.4.0), **enforcement surface** is the accurate, empirical term.
 
 ### §4.3 — Infrastructure ground truth
 
-- **Wiring**: `src/Directory.Build.props` adds `tools/DualFrontier.Analyzers/DualFrontier.Analyzers.csproj` as a `ProjectReference` with `OutputItemType="Analyzer"` to all 12 `src/` projects — the stub assembly loads at every build; loading is not detecting.
-- **Release tracking**: `AnalyzerReleases.Shipped.md` is empty (header only — first release entry lands at A'.9.1 closure); `AnalyzerReleases.Unshipped.md` lists all 17 rules in its New Rules table.
-- **Tests**: `tests/DualFrontier.Analyzers.Tests` contains a single placeholder Fact; per-rule positive/negative suites land at Phase β (see [ROADMAP.md «Analyzer track»](../ROADMAP.md)).
+- **Wiring**: `src/Directory.Build.props` adds `tools/DualFrontier.Analyzers/DualFrontier.Analyzers.csproj` as a `ProjectReference` with `OutputItemType="Analyzer"` to all 12 `src/` projects — the analyzer assembly loads at every build; since Phase β it detects, since Phase γ it enforces (16 build-breaking rules under `TreatWarningsAsErrors`).
+- **Release tracking**: `AnalyzerReleases.Shipped.md` carries Release 1.0 — all 17 rules at their shipped severities (transitioned at Phase γ); `AnalyzerReleases.Unshipped.md` is empty-with-header. RS release tracking cross-checks descriptor ↔ Shipped-table severity mechanically; any future severity change requires the «Changed Rules» ceremony in `Shipped.md`, making severity drift structurally visible.
+- **Tests**: `tests/DualFrontier.Analyzers.Tests` carries the Phase β suite — 54 tests (≥1 positive + ≥1 negative per detecting rule + harness + census meta-tests), severity-transparent (expected severities derive from the descriptors).
 
 ---
 
@@ -252,7 +252,7 @@ Planned — see [ROADMAP.md «Analyzer track»](../ROADMAP.md), subsection «Har
 
 ## §10 — Per-rule detail specifications (populated as Phase β lands)
 
-Landing zone for per-rule §2-template entries. **Empty at v0.2.0** — all 17 rules are non-detecting stubs, so no per-rule detail exists beyond the §4.1 registry. Entries are added here as each rule's Phase β detection implementation lands.
+Landing zone for per-rule §2-template entries. **Empty at v0.4.0** — the §4.1 registry is the single live surface; per-rule §2-template population was deferred through Phase β/γ and is a Phase δ+ item (see [ROADMAP.md «Analyzer track»](../ROADMAP.md)).
 
 **Registry consolidation (v0.2.0)**: the v0.1 §10.1–§10.3 tables restated the §4 registry a second time with an independent Status column («Active (pending A'.9.1 Phase β impl)») that overstated ground truth and drifted from §4 (see §4.1 footnote ²). One registry now exists — §4.1.
 
@@ -283,7 +283,7 @@ Planned — see [ROADMAP.md «Analyzer track»](../ROADMAP.md) (Phase β detecti
 
 ## §11 — Lifecycle
 
-**Current**: AUTHORED-SKELETON v0.2.0 (А'.8 closure 2026-05-23; A'.9.1 Phase α structural reorganization 2026-05-25; Standing-Law restructure 2026-06-11). 17 rule stubs shipped; zero detection logic; zero diagnostics.
+**Current**: AUTHORED-SKELETON v0.4.0 (А'.8 closure 2026-05-23; A'.9.1 Phase α structural reorganization 2026-05-25; Standing-Law restructure 2026-06-11; Phase β detection + Phase γ severity promotion 2026-07-01). 17 detecting rules shipped at Release 1.0 severities — 16 build-breaking under `TreatWarningsAsErrors`, DFL025_B IDE-only; 2 DFK-WAIVER suppressions (census-pinned).
 
 **Forward**: lifecycle sequencing (Phase β population → Phase γ promotion → Phase δ closure/governance → promotion к Tier 1 LOCKED) relocated — see [ROADMAP.md «Analyzer track»](../ROADMAP.md).
 
@@ -295,7 +295,7 @@ Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned 
 
 - The §2 template's per-rule «Suppression policy» rows **cite** the DFK-WAIVER form; they do not restate syntax.
 - The v0.1 §2 syntax sketch (`#pragma warning disable DFK###` / `[SuppressMessage("DualFrontier.<Category>", "DFK###")]`) and the v0.1 §10.5 `DFK###-SUPPRESS` comment-marker sketch are **superseded** by the DFK-WAIVER form.
-- Baseline at v0.2.0: **zero waivers** in the solution (no DFK/DFL/DF9 suppression markers in any `.cs`).
+- Baseline at v0.2.0: **zero waivers** in the solution (no DFK/DFL/DF9 suppression markers in any `.cs`). Current since the Phase β triage: **2 waivers** — both DFK001, `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs` (К-L19-sanctioned VK_EXT_debug_utils debug-messenger interop), census-pinned by the compiled meta-test (TESTING_STRATEGY §4.3 — DFK-WAIVER census).
 
 ---
 
@@ -303,6 +303,7 @@ Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned 
 
 | Version | Date | Change |
 |---|---|---|
+| 0.4.0 | 2026-07-01 | A'.9.1 Phase γ severity promotion (F-12 ratified 2026-07-01 — DFK019_A = Warning): 16 descriptors flipped Info → shipped severities (11 Error + 5 Warning; DFL025_B stays descriptor Info ≡ editorconfig «suggestion»); AnalyzerReleases Release 1.0 (Unshipped → Shipped, RS-tracked); root .editorconfig primed with the 17 identical keys. Document truthed-up from stub/detection-pending wording to the enforcement state: §1/§4/§4.1 (Status → enforcing; target column collapsed into «Shipped severity (Release 1.0)»), §2 template, §3, §4.2, §4.3 (Release 1.0 tables, 54-test suite), §10, §11, §12 (waiver census 0 → 2 current). In-body version markers (the stale 0.2.1 Version line + v0.2.0 end-marker, recon Anomaly 4) synced. Register-mirror version field sync folded at the Phase γ REGISTER cascade. |
 | 0.2.2 | 2026-07-01 | Descriptor-ID adjudication (Phase β empirical finding, ratified by Crystalka): the dotted DFK sub-rule IDs (DFK003.1/DFK007.1/DFK015.1/DFK019.A) and hyphenated DFL variant IDs (DFL025-A/DFL025-B) are rejected by Roslyn `ReportDiagnostic` as invalid identifiers, so all descriptor IDs are normalized to the underscore form already used by the file/class names (DFK003_1 … DFL025_B). §4.1 naming convention amended; registry table + `AnalyzerReleases.Unshipped.md` rule IDs + the six stub descriptor consts/help-anchors updated in the same change. DFL025-C (shell-level filter, not a Roslyn rule) unaffected. Register version bump folded at Phase β REGISTER cascade. |
 | 0.1 | 2026-05-23 / 2026-05-25 | Initial AUTHORED-SKELETON at А'.8 closure (Commit 5 REGISTER enrollment); structural reorganization at A'.9.1 Phase α Commit 5. |
 | 0.2.1 | 2026-06-12 | Architecture Truth Cascade PATCH: §4.1 footnote ² cross-reference old-form `DF019` → `DFK019` (current namespace; aligns with the DFK019.A registry row). No spec change. |
@@ -310,6 +311,6 @@ Suppression and waiver law for all DFK### / DFL### / DF999 diagnostics is owned 
 
 ---
 
-**End of ANALYZER_RULES.md v0.2.0 AUTHORED-SKELETON (Standing-Law cascade restructure 2026-06-11)**
+**End of ANALYZER_RULES.md v0.4.0 AUTHORED-SKELETON (A'.9.1 Phase γ severity promotion 2026-07-01)**
 
 **Maintenance**: §4.1 is the single rule registry; §10 receives per-rule detail as Phase β lands; all sequencing and futures live in [ROADMAP.md «Analyzer track»](../ROADMAP.md). К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; canonical detection narratives в K_CLOSURE_REPORT.md §7; PA-001..PA-004 anchors в PROJECT_AXIOMS.md.
