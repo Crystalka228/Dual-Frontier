@@ -101,14 +101,34 @@ The wiring is the **cross-ALC projection pattern**: `DualFrontier.Modding.Tests.
 
 `df_native_selftest.exe` — a CMake target in `native/DualFrontier.Core.Native`, source `native/DualFrontier.Core.Native/test/selftest.cpp`. It is a standalone executable running `DF_CHECK`-macro scenario functions; it prints `ALL PASSED` and exits 0 on success, or prints the failure count and exits 1. It is **not under `dotnet test`** and is invoked as an exe (§8). Binaries exist on disk for both configurations: `native/DualFrontier.Core.Native/build/Debug/df_native_selftest.exe` and `.../build/Release/df_native_selftest.exe`.
 
-### §2.6 — Honesty register: known-failing tests
+### §2.6 -- Honesty register: known-failing and quarantined tests
 
-Two tests fail on `main` as of the 2026-06-11 survey. They are **pre-existing on main**, recorded as an OPEN finding in the ROADMAP Findings ledger (`docs/ROADMAP.md §Findings ledger (F-series)`), and are not silently absorbed by any cascade:
+As of the F-10 isolation cascade (2026-07-02) the F-10 pre-existing failures are resolved; this
+register states the current honest state. No test fails deterministically in per-project isolation.
+Two categories are declared here so no cascade silently absorbs them (F-ledger: docs/ROADMAP.md
+Findings ledger).
 
-1. `SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError` (`tests/DualFrontier.Core.Tests/Scheduling/SchedulerStressTests.cs`) — Stress-category test; native `TickBegin` failure at tick 2692, followed by a testhost crash that truncates the remainder of the Core.Tests run.
-2. `GameBootstrapIntegrationTests.CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` (`tests/DualFrontier.Modding.Tests/Bootstrap/GameBootstrapIntegrationTests.cs`) — timing-sensitive integration test; intermittent.
+1. Quarantined -- do not run (native scale pathology, F-29(b)). Three SchedulerExtremeTests scenarios
+   do not complete within any CI budget on the reference machine: S1 (50,000 systems x 3,000 ticks),
+   S2 (200,000 ticks), S7 (250,000 systems). They are compute-bound in the native/managed scheduler at
+   scale (the class's own diagnostic hypothesizes an O(N^2) register-conflict scan or a native mutex
+   above ~90k entries). They carry [Fact(Skip = "...F-29...")] and are run by no sweep until F-29(b) is
+   resolved; the fixing cascade removes the Skip and brings the completion evidence. Recorded, not
+   absorbed.
 
-A cascade that touches the implicated surfaces either fixes the finding (closing the F-entry) or re-confirms it as pre-existing in its closure report. Declaring «all tests pass» while these are open is a truth-law violation; the honest closure statement is «all tests pass except the F-ledger-recorded known failures, re-verified unchanged».
+2. Load-sensitive (F-29(a)). SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError
+   (Category=Stress) passes green in per-project isolation but has produced a native TickBegin crash
+   (testhost crash) under concurrent build/test load. That crash is a native concurrency signature
+   (F-29(a)), not a deterministic assertion failure; the test stays under Category=Stress and runs only
+   in the dedicated serial no-load Stress pass (§8). Declaring an unqualified "all Stress pass" while
+   F-29(a) is open is a truth-law violation; the honest form is "Stress passes in the serial isolation
+   pass; the F-29(a) load-crash is re-verified as pre-existing".
+
+The now-resolved F-10 members are in git history and the F-ledger (F-10 CLOSED): the three
+GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* tests were flaky under xUnit intra-suite
+parallelism and are fixed (serial GameLoopSerial collection + poll-until-condition, replacing fixed
+Thread.Sleep windows); the shutdown "wedge" was root-caused as a stdout-pipe deadlock -- an invocation
+hazard, not a test hang -- and is codified in §8.
 
 ### §2.7 — Grand total at survey
 
@@ -187,11 +207,20 @@ Heavy tests are partitioned by xUnit traits so default runs stay fast and closur
 
 These three are the only `[Trait("Category", …)]` values in the repository. Inclusion/exclusion is via `--filter` (§8). New heavy tests MUST carry `Stress` or `Extreme`; untagged heavy tests that slow the default sweep are review defects. New trait values are introduced only by amending this table (§9.1).
 
-### §3.8 — Meta (repo-discipline)
+### §3.8 -- Meta (repo-discipline)
 
-Tests whose subject is the repository itself: census pins, marker-family counts, waiver counts, structural invariants (§4). They read the source tree and assert shape, not behavior.
+Tests whose subject is the repository itself: census pins, marker-family counts, waiver counts,
+structural invariants (§4), and deployment shape. They read the source tree or the build output and
+assert shape, not behavior.
 
-**Current state: NONE exist.** Verified 2026-06-11: no test in `tests/` performs census logic (zero hits for census-style file enumeration in test code; zero hits for `ReservedStub` under `tests/`). The §4 contracts are law executed today by registered `rg` expressions run at closure (§7); their compiled meta-test materialization is Phase β scope. This document does not pretend otherwise.
+Current state (2026-07-02): realized. CensusMetaTests (tests/DualFrontier.Analyzers.Tests/CensusMetaTests.cs,
+landed at A'.9.1 Phase beta) asserts the §4 census pins -- reserved-surface (§4.1), the five marker
+families (§4.2), and the DFK-WAIVER count (§4.3) -- from inside the compiled suite at every run; the
+registered rg expressions remain the closure-audit cross-check (§7). The fixture-deployment guard
+(FixtureDeploymentTests, tests/DualFrontier.Modding.Tests/Sharing/, F-10 cascade) asserts that every
+fixture the Modding suite consumes is staged under Fixtures/ -- a fail-fast structural check that turns
+a missing-fixture deployment gap into one clear failure instead of many cryptic assembly-load errors
+(§2.3). (Supersedes the dated "NONE exist" record -- the pre-beta survey state, closed as F-28(a).)
 
 ## §4 — Meta-test and census patterns
 
@@ -365,6 +394,33 @@ dotnet test DualFrontier.sln -c Release --logger "console;verbosity=minimal"
 
 Testhost file-lock caveat: a stale `testhost.exe` (left by an IDE test runner or a concurrent run) holds `DualFrontier.Modding.Tests` bin files and produces MSB3026/MSB3027 retry warnings or copy failures — close other runners before solution-wide runs.
 
+Invocation safety -- never pipe dotnet test (the shutdown-pipe-deadlock law).
+
+Under load a testhost can linger in shutdown holding the write end of an inherited stdout pipe; a
+`dotnet test ... | <consumer>` pipeline then blocks forever on an EOF that never arrives (observed as
+a ~50-minute shell wedge on an all-passing suite -- no crash or hang required, F-10 recon 2026-07-02).
+The durable result is the TRX, written independently of stdout: on a killed run the pass/fail verdict
+is in the TRX, not the lost piped console.
+
+Standing rule: never pipe dotnet test into a shell consumer (| Add-Content, | Tee-Object, | Out-File
+via pipe). Run it under a process launcher with file redirection and a watchdog that snapshots and
+kills lingering testhosts on timeout, and read results from --logger "trx". Verified-working harness
+shape (PowerShell 5.1):
+
+    $p = Start-Process dotnet -ArgumentList @('test', <proj>, '-c', <cfg>, '--no-build',
+             '--logger', 'trx;LogFileName=<label>.trx', '--results-directory', <dir>) `
+             -RedirectStandardOutput <out.log> -RedirectStandardError <err.log> `
+             -NoNewWindow -PassThru
+    if (-not $p.WaitForExit(<timeoutMs>)) {
+        # timeout: kill the tree, then sweep orphans
+        Stop-Process -Id $p.Id -Force
+        Get-Process testhost*, vstest* -ErrorAction SilentlyContinue | Stop-Process -Force
+    }
+    # verdict comes from <dir>\<label>.trx, not from the console
+
+This is invocation law: briefs cite §8, sessions copy the harness. It composes with the file-lock
+caveat above (close other runners before solution-wide runs).
+
 **Per-suite** (the closure-protocol route, per `METHODOLOGY.md §12.7` step 1):
 
 ```
@@ -373,14 +429,16 @@ dotnet test tests/DualFrontier.Modding.Tests/ -c Release
 # ... one invocation per §2.1 project as the closure scope requires
 ```
 
-**Stress exclusion** (fast default sweep) and inclusion:
+Heavy-test exclusion (fast default sweep) and inclusion:
 
-```
-dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category!=Stress"
-dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Stress"
-```
+    dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category!=Stress&Category!=Extreme"
+    dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Stress"
+    dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Extreme"
 
-Trait values available for filtering are exactly those of §3.7: `Stress`, `Extreme`, `Integration`.
+The fast default sweep excludes both Stress and Extreme (both are heavy). The Extreme scale
+non-completers S1/S2/S7 are additionally Skip-guarded (§2.6), so even an explicit Category=Extreme run
+completes (8 pass / 3 skipped) rather than hanging. Trait values available for filtering are exactly
+those of §3.7: Stress, Extreme, Integration.
 
 **Native selftest** (standalone exe, not dotnet test):
 
@@ -408,6 +466,18 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.1.0 -- 2026-07-02 -- F-10 isolation cascade (MINOR).** Per tools/briefs/F10_TEST_ISOLATION_BRIEF.md.
+Added the invocation-safety (no-pipe / TRX-is-truth) law to §8 -- the stdout-pipe shutdown deadlock the
+F-10 recon root-caused (a ~50-minute wedge on an all-passing suite; the "zombie testhost wedge" was an
+invocation hazard, not a test hang) -- and the verified Start-Process + file-redirect + watchdog harness
+(new invocation convention -> MINOR). §8 fast default sweep corrected to exclude both Stress and Extreme
+(was Stress only; it would otherwise run the heavy Extreme suite, including the scale non-completers). §2.6
+honesty register refreshed to the post-F-10 state: the RunningLoop family fixed (serial collection +
+poll-until-condition), the Stress load-crash reclassified under F-29(a), the Extreme scale non-completers
+S1/S2/S7 Skip-quarantined under F-29(b). §3.8 corrected from "NONE exist" to the realized meta layer
+(CensusMetaTests since Phase beta + the new FixtureDeploymentTests) -- closes F-28(a). No taxonomy,
+contract, or pin-semantics change.
 
 **v2.0.2 — 2026-07-02 — A'.9.1 Phase δ rider (F-27(b) PATCH).** §5.3 item 2's stale forward-claim («analyzer detection is Phase β scope — today the convention binds by review») replaced with the realized tail: DFL025_A detection landed at Phase β and binds at Warning (build-breaking under `TreatWarningsAsErrors`) since Phase γ Release 1.0; rule-ID tokens underscore-normalized on the touched sentence; the zero-trait census re-verified 2026-07-02 (sole textual occurrence = DFL025_A verifier fixture source). The §3.8-consistency parenthetical dropped — §3.8's own «NONE exist» claim is superseded by the Phase β census meta-tests and is ledgered separately at this cascade's F-sweep (ROADMAP Findings ledger). No taxonomy, contract, or pin-semantics change.
 
