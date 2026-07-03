@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.21"
-last_modified: "2026-07-02"
-last_modified_commit: "8ec64c5"
+register_version: "2.22"
+last_modified: "2026-07-03"
+last_modified_commit: "PENDING-COMMIT-F10_TEST_ISOLATION-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -546,9 +546,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.0.2"
-    last_modified: "2026-07-02"
-    last_modified_commit: "0411bb0"
+    version: "2.1.0"
+    last_modified: "2026-07-03"
+    last_modified_commit: "87ceb90"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -2366,6 +2366,25 @@ documents:
     capa_entries_referenced: []
     special_case_rationale: "Category D Tier 4 execution-brief convention (precedents: DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF, DOC-D-PHASE_BETA_BRIEF). Entry id follows the brief's own frontmatter register_id (DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF), consistent with the DOC-D-A_PRIME_9_1_* family naming. On-disk .md persisted at C1 (f2841c1); enrolled at closure alongside its recon basis and the arc-closure report, completing the arc's provenance chain. This brief closes the ENTIRE A'.9.1 arc — the parent DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF transitions EXECUTED in the same cascade."
 
+  - id: DOC-D-F10_TEST_ISOLATION_BRIEF
+    path: tools/briefs/F10_TEST_ISOLATION_BRIEF.md
+    title: "F10_TEST_ISOLATION_BRIEF — F-10 test-isolation cascade execution brief (FIX + RECLASSIFY/QUARANTINE + CODIFY: RunningLoop determinism closes F-10 #2; 13 Fixture.RegularMod_* -> DualFrontier.sln + fixture-deployment guard; Extreme S1/S2/S7 Skip-quarantine; TESTING_STRATEGY 2.1.0 invocation-safety law; F-10 CLOSED / F-29 seeded / F-28(a) folded; REGISTER 2.21 -> 2.22)"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-03"
+    last_modified_commit: "88b6f58"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-07-03"
+    last_review_event: "F-10 isolation brief authored by Claude Opus (deliberation session, F10_TEST_ISOLATION prep) from the durable recon docs/reports/F10_TEST_ISOLATION_RECON_REPORT.md (2026-07-02, R1-R9); ratified by Crystalka 2026-07-03 (Draft -> LOCKED). Executed 2026-07-03 by Claude Code (Opus 4.8, LOCAL Skarlet), single-orchestrator serial C1-C10 (C5/D4 deferred -- H(gov): Fixture.VanillaMod_HotReloadOverride carries no DeployToTestFixtures target, byte-identity precondition unmet); H1/H2/H3 gates clear; zero halts. Enrolled EXECUTED at the F-10 REGISTER closure."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §8 invocation-safety convention), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id."
+
   - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
     path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
     title: "A_PRIME_9_0_AMENDMENTS_LOG — A'.9.0 Reconnaissance Cascade Post-Closure Amendments Log (4 amendments + Option γ Hybrid)"
@@ -2524,6 +2543,23 @@ documents:
     last_review_event: "Authored at Phase δ C8 (the D7 deliverable per PHASE_DELTA_BRIEF §9) and enrolled in the same REGISTER cascade; its last_modified_commit shares the single sanctioned Option-B self-reference (the report ships in the register-closure commit, whose hash is backfilled at C9 render together with the header). Facts cited from the phase EVTs, the durable recon reports, and the execution session's git-verified measurements."
     reviewer: Crystalka
     special_case_rationale: "Durable arc-closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (the γ-recon precedent class). The arc's citable closure record — replaces the chat-only closure-report precedent of the β/γ phase closures for the arc-level record per the delta brief §3 ratified decision 8."
+
+  - id: DOC-E-F10_TEST_ISOLATION_RECON_REPORT
+    path: docs/reports/F10_TEST_ISOLATION_RECON_REPORT.md
+    title: "F10_TEST_ISOLATION RECON REPORT — 2026-07-02 (R1-R9) — pre-brief measurement recon for the F-10 test-isolation cascade (full failure census Debug + Release; Stress/Extreme/thread-safety characterization; bootstrap-timing sweep; the zombie-testhost stdout-pipe deadlock A/B; fixture-copy MSBuild wiring root-cause; anomalies + scale estimate + proposed decision surface)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-02"
+    last_modified_commit: "88b6f58"
+    content_language: en
+    review_cadence: none-historical-record
+    last_review_date: "2026-07-03"
+    last_review_event: "Read-only measurement recon 2026-07-02 (executor session, flagship model, LOCAL Skarlet; validate deliberately NOT run -- the known write-trap; REGISTER.yaml read directly; every census/harness expression recorded verbatim). Its R2/R3 failure censuses, R6 stdout-pipe A/B, and R7 fixture-copy root-cause were the load-bearing brief inputs; the §2 [RV] re-verify set confirmed at Phase 0 of the execution session (HEAD e44c27b = origin/main, register 2.21 / 282 DOC / 44 EVT -- H1 clear). Enrolled at the F-10 REGISTER closure."
+    reviewer: Crystalka
+    special_case_rationale: "Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT). Basis of DOC-D-F10_TEST_ISOLATION_BRIEF; substituted for a survey wave per the brief basis line."
 
   - id: DOC-D-A_PRIME_8_K_CLOSURE_REPORT
     path: tools/briefs/A_PRIME_8_K_CLOSURE_REPORT_BRIEF.md
@@ -10715,3 +10751,67 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF → EXECUTED, DOC-A-K_L14_EVIDENCE_DASHBOARD → Live, DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF → EXECUTED (enrolled), DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT → EXECUTED (enrolled), DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT → EXECUTED (enrolled)]
+
+  - id: EVT-2026-07-02-F10_TEST_ISOLATION-CLOSURE
+    timestamp: "2026-07-02T00:00:00Z"
+    event_type: execution_milestone
+    cascade: F-10 test-isolation cascade (FIX + RECLASSIFY/QUARANTINE + CODIFY -- RunningLoop determinism + fixture Release-staging + Extreme scale quarantine + invocation-safety standing law)
+    phase: cascade closure (C9 of C1-C10; C5/D4 deferred)
+    title: "F10_TEST_ISOLATION CLOSURE -- F-10 CLOSED (recon proved zero deterministic failures): #2 RunningLoop FIXED (serial GameLoopSerial collection + poll-until-condition) + fixture Release-staging gap FIXED (13 Fixture.RegularMod_* -> DualFrontier.sln, Modding Release 384 -> 399) + fixture-deployment guard + Extreme S1/S2/S7 Skip-quarantined (F-29(b)) + TESTING_STRATEGY 2.1.0 (invocation-safety no-pipe law + Stress&Extreme fast-sweep filter + honesty register + F-28(a)) + F-29 seeded (REGISTER 2.21 -> 2.22)"
+    summary: |
+      Resolves finding F-10 per tools/briefs/F10_TEST_ISOLATION_BRIEF.md v1.0
+      (authored by Claude Opus from the durable recon
+      docs/reports/F10_TEST_ISOLATION_RECON_REPORT.md, 2026-07-02, R1-R9; ratified
+      by Crystalka 2026-07-03). Executed 2026-07-03 by Claude Code (Opus 4.8, LOCAL
+      Skarlet); single-orchestrator serial topology; H1/H2/H3 gates clear; zero
+      halts. All edits tests/ + docs/ + DualFrontier.sln -- no src/ (production).
+      Commits: C1 88b6f58 (brief + recon enrolled-as-files + validation
+      checkpoint); C2 fc8f6b9 (D1 -- serialize + poll-stabilize the three
+      GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* tests: new
+      GameLoopSerial DisableParallelization collection + poll-until-condition
+      replacing fixed Thread.Sleep windows; closes F-10 #2; 20/20 consecutive
+      full-Modding runs green vs the ~80% pre-fix flake); C3 ff51dca (D2 -- 13
+      Fixture.RegularMod_* added to DualFrontier.sln so a solution Release build
+      stages all 18 fixtures; Modding -c Release --no-build 384 -> 399); C4 7ece148
+      (D3 -- FixtureDeploymentTests fail-fast deployment guard; Modding 399 -> 400);
+      C5/D4 DEFERRED (H(gov) -- Fixture.VanillaMod_HotReloadOverride carries no
+      DeployToTestFixtures target, so the byte-identity precondition for hoisting
+      into tests/Directory.Build.targets is unmet; the per-fixture targets stay);
+      C6 d8fc56c (D5 -- Extreme S1/S2/S7 static [Fact(Skip)] quarantine + S1 name
+      truth-up FiftyThousandSystems_ThreeThousandTicks; Category=Extreme run 8
+      pass / 3 skipped, no hang); C7 87ceb90 (D6 -- TESTING_STRATEGY 2.0.2 -> 2.1.0
+      body: §2.6 honesty register + §3.8 realized meta layer + §8 invocation-safety
+      no-pipe law and Stress+Extreme fast-sweep filter + §9.2); C8 9fda156 (D7 --
+      ROADMAP F-ledger: F-10 CLOSED + F-29 NEW + F-28(a) folded + the stdout-pipe /
+      TRX-is-truth invocation-law Lesson candidate); C9 = this commit (REGISTER
+      2.21 -> 2.22 + validate folded); C10 = render + Option-B backfill.
+      Register: documents 282 -> 284 -- DOC-D-F10_TEST_ISOLATION_BRIEF (Tier 3
+      EXECUTED, the clean Category-D Tier-3 combo / design tier -- this brief
+      authors standing law) + DOC-E-F10_TEST_ISOLATION_RECON_REPORT (Tier 3
+      EXECUTED, the docs/reports/ durable-recon convention). audit_trail 44 -> 45.
+      Version sync: TESTING_STRATEGY 2.0.2 -> 2.1.0 (87ceb90; frontmatter mirror
+      hand-synced in this commit per the A'.9.1 precedent).
+      Census pins (regression anchor, all UNCHANGED -- no src/ touch):
+      reserved-surface 34/13 HARD EXACT; DFK-WAIVER 2 (both K-L19-cited); marker
+      families stub 51/20, deferred 82/51, TODO 136/53, Phase 6 23/11, not yet 8/7.
+      CensusMetaTests green.
+      Skeleton revisions (consolidated): DualFrontier.sln membership +13
+      Fixture.RegularMod_* (mutable build surface); S1 method rename
+      HundredThousandSystems_TwoThousandTicks -> FiftyThousandSystems_ThreeThousandTicks
+      (body truth-up); D4 target-hoist deferred (per-fixture DeployToTestFixtures
+      targets retained).
+      Gates (safe no-pipe harness -- the F-10-codified invocation law, dogfooded):
+      Phase 0 baseline all 9 suites + Stress-isolated green, Extreme excluded (H2
+      anchor); D1 20/20 Modding green; D2 solution Release stages 18/18, Modding
+      Release 399/399; D3 Modding 400/400; D5 Extreme 8 pass / 3 skipped; this
+      commit's validate exit 0 (H3) with VALIDATION_REPORT.md folded.
+      Product defects seeded not fixed (F-29): native scheduler crash-under-load
+      (a) + scale non-completion (b) -- architect / dedicated native-scheduler
+      cascade. Zero pushes (Crystalka's act per the closure checklist). Header
+      last_modified_commit set to the single sanctioned
+      PENDING-COMMIT-F10_TEST_ISOLATION-CLOSURE self-reference, backfilled with
+      C9's real hash at C10 render (Option B); C1-C8 recorded REAL.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-D-F10_TEST_ISOLATION_BRIEF → EXECUTED (enrolled), DOC-E-F10_TEST_ISOLATION_RECON_REPORT → EXECUTED (enrolled)]
