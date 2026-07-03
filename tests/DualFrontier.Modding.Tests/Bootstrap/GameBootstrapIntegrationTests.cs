@@ -15,6 +15,21 @@ using Xunit;
 namespace DualFrontier.Modding.Tests.Bootstrap;
 
 /// <summary>
+/// Serializes the GameLoop integration tests against the rest of the Modding
+/// assembly. The CreateLoop_RunningLoop_* tests start the real GameLoop
+/// background thread and assert on commands published within a bounded wall
+/// budget; under xUnit intra-assembly parallelism the CPU-heavy Modding classes
+/// can starve that thread and empty a fixed sleep window. DisableParallelization
+/// keeps this collection from running concurrently with other collections so the
+/// loop always gets a quiet CPU (F-10 #2 fix; pairs with the poll-until-condition
+/// bodies below that replace the former fixed Thread.Sleep windows).
+/// </summary>
+[CollectionDefinition("GameLoopSerial", DisableParallelization = true)]
+public sealed class GameLoopSerialCollection
+{
+}
+
+/// <summary>
 /// M7.5.B.1 — production-side smoke coverage of
 /// <see cref="GameBootstrap.CreateLoop"/>. The harness is
 /// <c>CreateLoop</c> itself: production wiring is the unit under test,
@@ -35,6 +50,7 @@ namespace DualFrontier.Modding.Tests.Bootstrap;
 /// through of the menu → controller → pipeline → scheduler path, real
 /// end-to-end mod toggling through <c>mods/DualFrontier.Mod.Example/</c>.
 /// </summary>
+[Collection("GameLoopSerial")]
 public sealed class GameBootstrapIntegrationTests
 {
     [Fact]
@@ -208,27 +224,34 @@ public sealed class GameBootstrapIntegrationTests
         // + surname pair, so the published PawnStateCommand must carry
         // a non-empty space-separated name. Locks the end-to-end name
         // wiring (component → reporter → event → bridge → command).
+        // Poll-until-condition (F-10 #2): DrainCommands drains, so accumulate
+        // into stateCommands and poll on a short interval up to a generous wall
+        // budget rather than asserting after a single fixed sleep — robust to
+        // CPU starvation without a brittle timing window (pairs with the
+        // GameLoopSerial collection).
         var bridge = new PresentationBridge();
         GameContext context = GameBootstrap.CreateLoop(bridge);
+        var stateCommands = new List<PawnStateCommand>();
 
         try
         {
             context.Loop.Start();
-            Thread.Sleep(500);
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            while (DateTime.UtcNow < deadline && stateCommands.Count == 0)
+            {
+                bridge.DrainCommands(c => { if (c is PawnStateCommand ps) stateCommands.Add(ps); });
+                if (stateCommands.Count == 0) Thread.Sleep(25);
+            }
         }
         finally
         {
             context.Loop.Stop();
         }
-
-        var stateCommands = new List<PawnStateCommand>();
-        bridge.DrainCommands(c =>
-        {
-            if (c is PawnStateCommand ps) stateCommands.Add(ps);
-        });
+        // Final drain to catch anything published between the last poll and Stop.
+        bridge.DrainCommands(c => { if (c is PawnStateCommand ps) stateCommands.Add(ps); });
 
         stateCommands.Should().NotBeEmpty(
-            "expected at least one PawnStateCommand publish during the loop window");
+            "the loop must publish at least one PawnStateCommand within the 5s budget");
         foreach (var ps in stateCommands)
         {
             ps.Name.Should().NotBeNullOrWhiteSpace(
@@ -245,27 +268,30 @@ public sealed class GameBootstrapIntegrationTests
         // SkillsComponent.Levels. The RandomPawnFactory populates all
         // 13 SkillKind values, so every PawnStateCommand must carry
         // exactly 3 entries in descending level order.
+        // Poll-until-condition (F-10 #2): accumulate drained commands and poll
+        // up to a generous wall budget instead of a single fixed sleep.
         var bridge = new PresentationBridge();
         GameContext context = GameBootstrap.CreateLoop(bridge);
+        var stateCommands = new List<PawnStateCommand>();
 
         try
         {
             context.Loop.Start();
-            Thread.Sleep(500);
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            while (DateTime.UtcNow < deadline && stateCommands.Count == 0)
+            {
+                bridge.DrainCommands(c => { if (c is PawnStateCommand ps) stateCommands.Add(ps); });
+                if (stateCommands.Count == 0) Thread.Sleep(25);
+            }
         }
         finally
         {
             context.Loop.Stop();
         }
-
-        var stateCommands = new List<PawnStateCommand>();
-        bridge.DrainCommands(c =>
-        {
-            if (c is PawnStateCommand ps) stateCommands.Add(ps);
-        });
+        bridge.DrainCommands(c => { if (c is PawnStateCommand ps) stateCommands.Add(ps); });
 
         stateCommands.Should().NotBeEmpty(
-            "expected at least one PawnStateCommand publish during the loop window");
+            "the loop must publish at least one PawnStateCommand within the 5s budget");
         foreach (var ps in stateCommands)
         {
             ps.TopSkills.Should().NotBeNull();
@@ -291,22 +317,17 @@ public sealed class GameBootstrapIntegrationTests
         // observed with strictly monotonic Tick values. The window is
         // generous (250 ms targets ~6 ticks at 30 TPS) but the
         // assertion floor is just >= 2 so slow-CI does not flake.
+        // Poll-until-condition (F-10 #2): DrainCommands drains, so accumulate
+        // the count and the last tick across polls until >= 2 are observed or a
+        // generous wall budget elapses — replaces the former fixed 250 ms sleep
+        // so a loaded run does not flake (pairs with the GameLoopSerial
+        // collection).
         var bridge = new PresentationBridge();
         GameContext context = GameBootstrap.CreateLoop(bridge);
 
-        try
-        {
-            context.Loop.Start();
-            Thread.Sleep(250);
-        }
-        finally
-        {
-            context.Loop.Stop();
-        }
-
         int tickCommandCount = 0;
         int lastTickValue = -1;
-        bridge.DrainCommands(cmd =>
+        void Drain() => bridge.DrainCommands(cmd =>
         {
             if (cmd is TickAdvancedCommand tac)
             {
@@ -314,6 +335,23 @@ public sealed class GameBootstrapIntegrationTests
                 lastTickValue = tac.Tick;
             }
         });
+
+        try
+        {
+            context.Loop.Start();
+            var deadline = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+            while (DateTime.UtcNow < deadline && tickCommandCount < 2)
+            {
+                Drain();
+                if (tickCommandCount < 2) Thread.Sleep(25);
+            }
+        }
+        finally
+        {
+            context.Loop.Stop();
+        }
+        // Final drain to catch anything published between the last poll and Stop.
+        Drain();
 
         tickCommandCount.Should().BeGreaterThanOrEqualTo(2,
             $"expected at least 2 TickAdvancedCommand publishes, observed {tickCommandCount}");
