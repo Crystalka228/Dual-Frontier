@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.22"
 last_modified: "2026-07-03"
-last_modified_commit: "PENDING-COMMIT-F10_TEST_ISOLATION-CLOSURE"
+last_modified_commit: "8aad388"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
