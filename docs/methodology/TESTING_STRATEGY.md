@@ -6,7 +6,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.1.0"
+version: "2.2.0"
 next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-TESTING_STRATEGY
 ---
@@ -103,26 +103,36 @@ The wiring is the **cross-ALC projection pattern**: `DualFrontier.Modding.Tests.
 
 ### §2.6 -- Honesty register: known-failing and quarantined tests
 
-As of the F-10 isolation cascade (2026-07-02) the F-10 pre-existing failures are resolved; this
-register states the current honest state. No test fails deterministically in per-project isolation.
-Two categories are declared here so no cascade silently absorbs them (F-ledger: docs/ROADMAP.md
-Findings ledger).
+As of the F-29 native-scheduler cascade (2026-07-04) the F-29 defects are resolved and this register
+states the current honest state. No test fails deterministically in per-project isolation, and the full
+Core.Tests run is green + stable. Two quarantine categories remain, declared here so no cascade silently
+absorbs them (F-ledger: docs/ROADMAP.md Findings ledger).
 
-1. Quarantined -- do not run (native scale pathology, F-29(b)). Three SchedulerExtremeTests scenarios
-   do not complete within any CI budget on the reference machine: S1 (50,000 systems x 3,000 ticks),
-   S2 (200,000 ticks), S7 (250,000 systems). They are compute-bound in the native/managed scheduler at
-   scale (the class's own diagnostic hypothesizes an O(N^2) register-conflict scan or a native mutex
-   above ~90k entries). They carry [Fact(Skip = "...F-29...")] and are run by no sweep until F-29(b) is
-   resolved; the fixing cascade removes the Skip and brings the completion evidence. Recorded, not
-   absorbed.
+1. Quarantined -- do not run (managed marathon, F-30). One SchedulerExtremeTests scenario: S2
+   (S2_ParallelSystemScheduler_..., 200,000-tick TPL steady-state over a pre-built 80-system phase
+   list). It is a managed ParallelSystemScheduler marathon, NOT a native-scale scenario -- the native
+   graph is trivial and built once; its non-completion is the 200k-tick wall-clock, unrelated to the
+   native scheduler. Carries [Fact(Skip = "F-30: ...")]; disposition (tick-trim vs opt-in marathon
+   excluded from the default sweep) is architect-owned. Recorded, not absorbed.
 
-2. Load-sensitive (F-29(a)). SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError
-   (Category=Stress) passes green in per-project isolation but has produced a native TickBegin crash
-   (testhost crash) under concurrent build/test load. That crash is a native concurrency signature
-   (F-29(a)), not a deterministic assertion failure; the test stays under Category=Stress and runs only
-   in the dedicated serial no-load Stress pass (§8). Declaring an unqualified "all Stress pass" while
-   F-29(a) is open is a truth-law violation; the honest form is "Stress passes in the serial isolation
-   pass; the F-29(a) load-crash is re-verified as pre-existing".
+2. Quarantined -- do not run (extreme-bus-load runtime-stress artifact, F-31). Four SchedulerExtremeTests
+   bus ceiling-probes: S3 (5M events / 3 tiers), S4 (12.8M events x 64 producer threads), S5a/S5b
+   (~1.6M latency samples). Co-resident with SchedulerStressTests in one testhost they cumulatively
+   over-stress the .NET runtime (thread-pool / GC) into a managed-heap corruption that crashes the test
+   host -- root-caused at the F-29 cascade as NOT a project memory-safety bug (native bus/scheduler paths
+   and the managed-output-buffer interops audit clean; an AddressSanitizer-instrumented native DLL finds
+   no per-op overrun; it is a cumulative-load threshold, each probe passing in isolation and alongside
+   the lighter bus tests). Carry [Fact(Skip = "F-31: ...")]; re-tuning (down-scale, or a process-isolated
+   harness) is architect-owned. Recorded, not absorbed.
+
+RESOLVED at the F-29 cascade (both were recorded here at 2.1.0). (a) The F-29(b) scale non-completers S1
+(50k x 3k) and S7 (250k) now complete and are un-quarantined -- the O(N^2) graph rebuild is O(N+E)
+index-keyed (system_graph.cpp); the "native mutex above ~90k" hypothesis was REFUTED (there is no lock
+on the compute/tick path; the wall was pure compute). (b) The F-29(a) load-sensitive crash was a data
+race across the lock-free scheduler-graph and wake-registry process-global singletons (NOT a "bus
+TickBegin path"), closed by the shared-native-singleton xUnit collection (§2.8, serialising the
+singleton-touching test classes) plus a native fail-loud concurrency detector on those two singletons;
+SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_... passes.
 
 The now-resolved F-10 members are in git history and the F-ledger (F-10 CLOSED): the three
 GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* tests were flaky under xUnit intra-suite
@@ -133,6 +143,37 @@ hazard, not a test hang -- and is codified in §8.
 ### §2.7 — Grand total at survey
 
 **1036 tests reported / 1034 passing** across the nine §2.1 projects (2026-06-11, Release, per-project invocations). This number is a survey snapshot, not a pin: test counts move with every cascade and are tracked per-brief via the §6.1 count delta.
+
+### §2.8 — Shared-native-singleton test isolation
+
+The native kernel exposes several process-global singletons — the system-scheduler graph, the wake
+registry, the scheduling-policies registry, the event-type registry, and the native event bus. Their
+design contract is single-threaded registration and compute; concurrent reads of already-computed,
+immutable state are safe, but concurrent mutation or compute is undefined behaviour. Any test class that
+mutates one of these singletons (including calling its Clear / reset for isolation) MUST join the single
+shared xUnit collection reserved for them (`SharedNativeSingletonCollection`, name `"SharedNativeSingleton"`),
+so that no two such classes ever run in parallel. An xUnit `[Collection]` serialises only its own members;
+placing two singleton-touching classes in different collections lets them run concurrently and corrupt
+shared native state — this was the F-29(a) race.
+
+The law is enforced structurally on two on-disk fronts:
+
+1. **The shared collection** prevents the parallel schedule. It additionally carries
+   `DisableParallelization = true` so the collection — the project's heaviest suites — runs isolated from
+   every other collection (the `GameLoopSerial` precedent), which also removes the thread-pool contention
+   that otherwise failed the scheduler fan-out assertions.
+2. **A native fail-loud concurrency detector** on the two genuinely lock-free singletons — the scheduler
+   graph and the wake registry — returns a distinct violation code
+   (`SystemGraphInterop.ComputeResult.ConcurrencyViolation`) rather than corrupting memory if concurrent
+   entry ever occurs, so an incomplete collection surfaces as a loud, localised failure naming the
+   offending path, not a silent heap corruption.
+
+The native event bus is already internally synchronised (per-tier mutexes) and is designed for concurrent
+multi-producer publish, so it is not detector-guarded (an acquire-or-fail detector there would reject
+legitimate publishers); its cross-test disruption was a semantic issue fully closed by the shared
+collection. The scheduling-policies and event-type registries are covered by the collection requirement;
+extending the native detector to them is a candidate future hardening (the K-L20 analyzer-rule family —
+see docs/ROADMAP.md).
 
 ## §3 — Layer taxonomy (DF-adapted)
 
@@ -435,9 +476,10 @@ Heavy-test exclusion (fast default sweep) and inclusion:
     dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Stress"
     dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Extreme"
 
-The fast default sweep excludes both Stress and Extreme (both are heavy). The Extreme scale
-non-completers S1/S2/S7 are additionally Skip-guarded (§2.6), so even an explicit Category=Extreme run
-completes (8 pass / 3 skipped) rather than hanging. Trait values available for filtering are exactly
+The fast default sweep excludes both Stress and Extreme (both are heavy). Five Extreme scenarios are
+additionally Skip-guarded (§2.6) -- S2 under F-30 (managed marathon) and the S3/S4/S5 bus ceiling-probes
+under F-31 (runtime-stress artifact) -- so even an explicit Category=Extreme run completes (6 pass /
+5 skipped) rather than hanging or crashing the host. Trait values available for filtering are exactly
 those of §3.7: Stress, Extreme, Integration.
 
 **Native selftest** (standalone exe, not dotnet test):
@@ -466,6 +508,17 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.2.0 -- 2026-07-04 -- F-29 native-scheduler cascade (MINOR).** Per tools/briefs/F29_NATIVE_SCHEDULER_BRIEF.md.
+New shared-native-singleton test-isolation law (§2.8): singleton-touching classes join one shared xUnit
+collection (DisableParallelization = true), enforced by a native fail-loud concurrency detector on the
+lock-free scheduler graph + wake registry (the bus is mutex-synchronised, not detector-guarded). Honesty
+register (§2.6) refreshed to the post-F-29 state: S1/S7 un-quarantined (F-29(b) O(N^2)->O(N+E) index-keyed
+rebuild resolved), S2 re-pointed to F-30 (managed ParallelSystemScheduler marathon), the refuted "native
+mutex above ~90k" hypothesis removed, F-29(a) closed (a scheduler + wake singleton race, not a bus
+TickBegin path), and F-31 seeded (extreme-bus-load runtime-stress artifact -- S3/S4/S5 quarantined). §8
+Category=Extreme count corrected (8 pass / 3 skipped -> 6 pass / 5 skipped). Additive law + honesty
+refresh; no taxonomy, contract, or pin-semantics change.
 
 **v2.1.0 -- 2026-07-02 -- F-10 isolation cascade (MINOR).** Per tools/briefs/F10_TEST_ISOLATION_BRIEF.md.
 Added the invocation-safety (no-pipe / TRX-is-truth) law to §8 -- the stdout-pipe shutdown deadlock the
