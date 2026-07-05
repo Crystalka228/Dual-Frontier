@@ -16,6 +16,10 @@ bool SystemGraph::register_system(uint32_t system_id,
                                   std::vector<uint32_t> writes,
                                   int32_t priority_class,
                                   int32_t wake_type) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) {
+        return false;  // F-29(a): concurrent entry — refuse without touching state
+    }
     if (fqn.empty()) {
         return false;
     }
@@ -38,6 +42,10 @@ bool SystemGraph::register_system(uint32_t system_id,
 }
 
 bool SystemGraph::unregister_system(uint32_t system_id) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) {
+        return false;  // F-29(a): concurrent entry
+    }
     for (auto it = systems_.begin(); it != systems_.end(); ++it) {
         if (it->id == system_id) {
             systems_.erase(it);
@@ -67,6 +75,10 @@ int32_t SystemGraph::get_phase_barrier(int32_t phase_index) const noexcept {
 }
 
 void SystemGraph::clear() noexcept {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) {
+        return;  // F-29(a): concurrent entry — refuse (no-op)
+    }
     systems_.clear();
     static_phases_.clear();
     per_tick_phases_.clear();
@@ -75,6 +87,10 @@ void SystemGraph::clear() noexcept {
 }
 
 int32_t SystemGraph::compute_static_graph() {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) {
+        return kConcurrencyViolation;  // F-29(a): concurrent entry
+    }
     last_error_.clear();
     std::vector<const SystemEntry*> all;
     all.reserve(systems_.size());
@@ -86,6 +102,10 @@ int32_t SystemGraph::compute_static_graph() {
 
 int32_t SystemGraph::compute_per_tick_graph(const uint32_t* runnable_ids,
                                             uint32_t runnable_count) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) {
+        return kConcurrencyViolation;  // F-29(a): concurrent entry
+    }
     last_error_.clear();
     per_tick_phases_.clear();
     if (runnable_count == 0) {

@@ -68,6 +68,7 @@ set(DF_NATIVE_HEADERS
     include/composite.h
     include/set_primitive.h
     include/tile_field.h
+    include/singleton_guard.h
     include/system_graph.h
     include/wake_registry.h
     include/scheduling_policies.h

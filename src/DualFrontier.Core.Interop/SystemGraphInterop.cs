@@ -35,6 +35,15 @@ public static class SystemGraphInterop
         WriteConflict = -1,
         /// <summary>Cyclic dependency detected after Kahn drains.</summary>
         Cycle = -2,
+        /// <summary>
+        /// Concurrency violation (F-29(a)): the native fail-loud guard detected
+        /// concurrent entry into a single-threaded mutation/compute entry point
+        /// and refused to touch shared state (returning without corrupting the
+        /// scheduler graph). A distinct, non-swallowed outcome so a real
+        /// production contract violation surfaces loudly instead of silently
+        /// corrupting memory. Additive/append-only; no existing value renumbered.
+        /// </summary>
+        ConcurrencyViolation = -3,
     }
 
     /// <summary>

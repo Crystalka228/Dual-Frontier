@@ -8,32 +8,44 @@ WakeRegistry::WakeRegistry() = default;
 WakeRegistry::~WakeRegistry() = default;
 
 bool WakeRegistry::subscribe_timer(uint32_t system_id, uint32_t ticks_per_update) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return false;  // F-29(a): concurrent entry
     if (ticks_per_update == 0) return false;
     timer_subs_.push_back({system_id, ticks_per_update});
     return true;
 }
 
 bool WakeRegistry::subscribe_event(uint32_t system_id, uint32_t event_type_id) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return false;  // F-29(a): concurrent entry
     event_subs_.push_back({system_id, event_type_id});
     return true;
 }
 
 bool WakeRegistry::subscribe_state(uint32_t system_id, uint32_t component_type_id) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return false;  // F-29(a): concurrent entry
     state_subs_.push_back({system_id, component_type_id});
     return true;
 }
 
 bool WakeRegistry::subscribe_init(uint32_t system_id) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return false;  // F-29(a): concurrent entry
     init_subs_.push_back({system_id, /*fired*/false});
     return true;
 }
 
 bool WakeRegistry::subscribe_explicit(uint32_t system_id, uint32_t wake_id) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return false;  // F-29(a): concurrent entry
     explicit_subs_.push_back({system_id, wake_id});
     return true;
 }
 
 int32_t WakeRegistry::unsubscribe(uint32_t system_id, WakeType type) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return kConcurrencyViolation;  // F-29(a): concurrent entry
     int32_t removed = 0;
     auto remove_matching = [&](auto& vec, auto predicate) {
         auto before = vec.size();
@@ -75,6 +87,8 @@ void WakeRegistry::add_to_runqueue(uint32_t system_id) {
 }
 
 int32_t WakeRegistry::fire_timer(uint64_t current_tick) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return kConcurrencyViolation;  // F-29(a): concurrent entry
     int32_t fired = 0;
     for (const TimerSubscription& s : timer_subs_) {
         if (s.ticks_per_update != 0 && (current_tick % s.ticks_per_update) == 0) {
@@ -86,6 +100,8 @@ int32_t WakeRegistry::fire_timer(uint64_t current_tick) {
 }
 
 int32_t WakeRegistry::fire_event(uint32_t event_type_id) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return kConcurrencyViolation;  // F-29(a): concurrent entry
     int32_t fired = 0;
     for (const EventSubscription& s : event_subs_) {
         if (s.event_type_id == event_type_id) {
@@ -98,6 +114,8 @@ int32_t WakeRegistry::fire_event(uint32_t event_type_id) {
 
 int32_t WakeRegistry::fire_state_change(uint32_t component_type_id,
                                         uint32_t /*entity_id*/) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return kConcurrencyViolation;  // F-29(a): concurrent entry
     // K10.1: condition evaluation is delegated к Item 17 write-through hook
     // (Commit 12). The K10.1 registry simply enumerates type-wide subscribers
     // and adds them к the runqueue. K10.2+ amend k-component-condition
@@ -113,6 +131,8 @@ int32_t WakeRegistry::fire_state_change(uint32_t component_type_id,
 }
 
 int32_t WakeRegistry::fire_init() {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return kConcurrencyViolation;  // F-29(a): concurrent entry
     int32_t fired = 0;
     for (InitSubscription& s : init_subs_) {
         if (!s.fired) {
@@ -125,6 +145,8 @@ int32_t WakeRegistry::fire_init() {
 }
 
 int32_t WakeRegistry::fire_explicit(uint32_t target_system_id, uint32_t wake_id) {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return kConcurrencyViolation;  // F-29(a): concurrent entry
     int32_t fired = 0;
     for (const ExplicitSubscription& s : explicit_subs_) {
         if (s.system_id == target_system_id && s.wake_id == wake_id) {
@@ -136,6 +158,12 @@ int32_t WakeRegistry::fire_explicit(uint32_t target_system_id, uint32_t wake_id)
 }
 
 int32_t WakeRegistry::drain_runqueue(uint32_t* out_buffer, int32_t out_capacity) {
+    SingletonGuard guard(busy_);
+    // F-29(a) concurrent entry: refuse without touching the runqueue. Return 0
+    // (empty drain), NOT the negative violation sentinel -- df_scheduler_tick_begin
+    // casts drain's return straight to the compute count, so a negative value
+    // would overflow to a huge unsigned count and read out of bounds.
+    if (!guard.acquired()) return 0;
     if (out_buffer == nullptr || out_capacity <= 0) {
         runqueue_.clear();
         return 0;
@@ -185,6 +213,8 @@ int32_t WakeRegistry::wake_subscriptions_for(uint32_t system_id) const noexcept 
 }
 
 void WakeRegistry::clear() noexcept {
+    SingletonGuard guard(busy_);
+    if (!guard.acquired()) return;  // F-29(a): concurrent entry — refuse (no-op)
     timer_subs_.clear();
     event_subs_.clear();
     state_subs_.clear();

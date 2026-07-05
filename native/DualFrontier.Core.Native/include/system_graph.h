@@ -1,8 +1,11 @@
 #pragma once
 
+#include <atomic>
 #include <cstdint>
 #include <string>
 #include <vector>
+
+#include "singleton_guard.h"
 
 namespace dualfrontier {
 
@@ -72,6 +75,8 @@ public:
     //    0 — generic failure
     //   -1 — write-write conflict (last_error() carries detail)
     //   -2 — cycle detected (last_error() carries detail)
+    //   -3 — concurrency violation (F-29(a): concurrent entry detected; no
+    //        shared state was touched — kConcurrencyViolation)
     int32_t compute_static_graph();
 
     // Number of static phases after a successful compute_static_graph().
@@ -110,6 +115,13 @@ public:
     void clear() noexcept;
 
 private:
+    // F-29(a) — fail-loud single-thread guard (see SingletonGuard). The design
+    // contract is single-threaded mutation/compute; this atomic turns a
+    // concurrent-entry violation into a visible rejection (kConcurrencyViolation
+    // / false / no-op) instead of a silent heap corruption. Read-only phase
+    // accessors are NOT guarded — concurrent reads of computed state are safe.
+    std::atomic<bool> busy_{false};
+
     std::vector<SystemEntry> systems_;
     std::vector<std::vector<uint32_t>> static_phases_;
     std::vector<std::vector<uint32_t>> per_tick_phases_;

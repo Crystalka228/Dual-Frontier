@@ -1,8 +1,11 @@
 #pragma once
 
+#include <atomic>
 #include <cstdint>
 #include <unordered_set>
 #include <vector>
+
+#include "singleton_guard.h"
 
 namespace dualfrontier {
 
@@ -113,6 +116,13 @@ public:
     [[nodiscard]] int32_t wake_subscriptions_for(uint32_t system_id) const noexcept;
 
 private:
+    // F-29(a) — fail-loud single-thread guard (see SingletonGuard). The mutation
+    // / fire / drain / clear entry points reject concurrent entry instead of
+    // corrupting the subscription vectors / runqueue. Read-only diagnostics
+    // (runqueue_size, subscription_count, peek_runqueue, *_subs accessors) are
+    // not guarded.
+    std::atomic<bool> busy_{false};
+
     std::vector<TimerSubscription> timer_subs_;
     std::vector<EventSubscription> event_subs_;
     std::vector<StateSubscription> state_subs_;
