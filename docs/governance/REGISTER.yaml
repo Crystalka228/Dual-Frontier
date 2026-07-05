@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.22"
-last_modified: "2026-07-03"
-last_modified_commit: "8aad388"
+register_version: "2.23"
+last_modified: "2026-07-04"
+last_modified_commit: "PENDING-COMMIT-F29_NATIVE_SCHEDULER-CLOSURE"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -546,9 +546,9 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "2.1.0"
-    last_modified: "2026-07-03"
-    last_modified_commit: "87ceb90"
+    version: "2.2.0"
+    last_modified: "2026-07-04"
+    last_modified_commit: "73954ef"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -2385,6 +2385,25 @@ documents:
     capa_entries_referenced: []
     special_case_rationale: "Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §8 invocation-safety convention), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id."
 
+  - id: DOC-D-F29_NATIVE_SCHEDULER_BRIEF
+    path: tools/briefs/F29_NATIVE_SCHEDULER_BRIEF.md
+    title: "F29_NATIVE_SCHEDULER_BRIEF — F-29 native-scheduler cascade execution brief (FIX defect (b) O(N^2) -> O(N+E) index-keyed graph rebuild + FIX defect (a) fail-loud native concurrency detector on the lock-free scheduler-graph + wake-registry singletons + a shared xUnit collection over the singleton-touching classes; un-quarantine S1/S7; re-point S2 -> F-30; S3/S4/S5 bus-load artifact -> F-31; TESTING_STRATEGY 2.1.0 -> 2.2.0 §2.8 isolation law; F-29 CLOSED / F-30 + F-31 seeded; REGISTER 2.22 -> 2.23)"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-04"
+    last_modified_commit: "c0ab964"
+    content_language: en
+    review_cadence: on-cascade-execution
+    last_review_date: "2026-07-04"
+    last_review_event: "F-29 native-scheduler brief authored by Claude Opus from the durable recon docs/reports/F29_NATIVE_SCHEDULER_RECON_REPORT.md (2026-07-04, R1-R7); ratified by Crystalka 2026-07-04 (AskUserQuestion -> Execute now; Draft -> LOCKED). Executed 2026-07-04 by Claude Code (Opus 4.8, LOCAL Skarlet), single-orchestrator serial C1-C10; H1/H2/H3 gates clear; zero hard halts (one in-flight reclassification: the S3/S4/S5 extreme-bus-load probes root-caused a .NET-runtime-stress artifact -> new finding F-31, +1 commit vs the 9-commit intended form). Enrolled EXECUTED at the F-29 REGISTER closure."
+    reviewer: Crystalka
+    risks_referenced: []
+    capa_entries_referenced: []
+    special_case_rationale: "Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series + F-10 DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §2.8 shared-native-singleton isolation law), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id."
+
   - id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
     path: docs/architecture/A_PRIME_9_0_AMENDMENTS_LOG.md
     title: "A_PRIME_9_0_AMENDMENTS_LOG — A'.9.0 Reconnaissance Cascade Post-Closure Amendments Log (4 amendments + Option γ Hybrid)"
@@ -2560,6 +2579,23 @@ documents:
     last_review_event: "Read-only measurement recon 2026-07-02 (executor session, flagship model, LOCAL Skarlet; validate deliberately NOT run -- the known write-trap; REGISTER.yaml read directly; every census/harness expression recorded verbatim). Its R2/R3 failure censuses, R6 stdout-pipe A/B, and R7 fixture-copy root-cause were the load-bearing brief inputs; the §2 [RV] re-verify set confirmed at Phase 0 of the execution session (HEAD e44c27b = origin/main, register 2.21 / 282 DOC / 44 EVT -- H1 clear). Enrolled at the F-10 REGISTER closure."
     reviewer: Crystalka
     special_case_rationale: "Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT). Basis of DOC-D-F10_TEST_ISOLATION_BRIEF; substituted for a survey wave per the brief basis line."
+
+  - id: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT
+    path: docs/reports/F29_NATIVE_SCHEDULER_RECON_REPORT.md
+    title: "F29_NATIVE_SCHEDULER RECON REPORT — 2026-07-04 (R1-R7) — pre-brief measurement recon for the F-29 native-scheduler cascade (scheduler code-surface map: SystemGraph / WakeRegistry / native-bus singleton topology + lock-free vs mutex audit; defect (a) crash-under-load reproduced with SEH signatures; defect (b) N -> time scale curves confirming the O(N^2) rebuild; root-cause hypotheses + fix directions; the S1/S2/S7 re-enable prospect; the S2 managed-vs-native mis-grouping)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-04"
+    last_modified_commit: "c0ab964"
+    content_language: en
+    review_cadence: none-historical-record
+    last_review_date: "2026-07-04"
+    last_review_event: "Read-only measurement recon 2026-07-04 (executor session, flagship model, LOCAL Skarlet). Its scheduler-surface map, the lock-free-singleton audit (bus excluded -- per-tier std::mutex, concurrent-publish by design), and the N -> time scale curves were the load-bearing brief inputs; consumed by the F-29 cascade execution 2026-07-04. Enrolled at the F-29 REGISTER closure."
+    reviewer: Crystalka
+    special_case_rationale: "Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line."
 
   - id: DOC-D-A_PRIME_8_K_CLOSURE_REPORT
     path: tools/briefs/A_PRIME_8_K_CLOSURE_REPORT_BRIEF.md
@@ -10815,3 +10851,79 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-D-F10_TEST_ISOLATION_BRIEF → EXECUTED (enrolled), DOC-E-F10_TEST_ISOLATION_RECON_REPORT → EXECUTED (enrolled)]
+
+  - id: EVT-2026-07-04-F29_NATIVE_SCHEDULER-CLOSURE
+    timestamp: "2026-07-04T00:00:00Z"
+    event_type: execution_milestone
+    cascade: F-29 native-scheduler cascade (FIX defect (b) O(N^2) -> O(N+E) index-keyed rebuild + FIX defect (a) fail-loud concurrency detector on the lock-free scheduler-graph + wake-registry singletons + shared xUnit collection; un-quarantine S1/S7; S2 -> F-30; S3/S4/S5 -> F-31; TESTING_STRATEGY 2.2.0 §2.8 isolation law)
+    phase: cascade closure (C9 of C1-C10)
+    title: "F29_NATIVE_SCHEDULER CLOSURE -- F-29 CLOSED (both defects fixed): (a) lock-free SystemGraph + WakeRegistry singleton race -> D3 shared SharedNativeSingleton xUnit collection + D2 fail-loud SingletonGuard detector (kConcurrencyViolation=-3); (b) O(N^2) rebuild -> D1 index-keyed O(N+E) (50k DAG ~21 ms), S1/S7 un-quarantined; S2 -> F-30 (managed marathon) + S3/S4/S5 -> F-31 (extreme-bus-load runtime-stress artifact) seeded; TESTING_STRATEGY 2.1.0 -> 2.2.0 (REGISTER 2.22 -> 2.23)"
+    summary: |
+      Resolves finding F-29 (native/managed scheduler pathology surfaced by the
+      F-10 recon) per tools/briefs/F29_NATIVE_SCHEDULER_BRIEF.md v1.0 (authored by
+      Claude Opus from the durable recon
+      docs/reports/F29_NATIVE_SCHEDULER_RECON_REPORT.md, 2026-07-04, R1-R7; ratified
+      by Crystalka 2026-07-04 -> Execute now). Executed 2026-07-04 by Claude Code
+      (Opus 4.8, LOCAL Skarlet); single-orchestrator serial topology; H1/H2/H3 gates
+      clear; zero hard halts. The sole src/ (production) edit was the additive
+      ComputeResult.ConcurrencyViolation enum value; all other edits native/ +
+      tests/ + docs/.
+      Commits: C1 c0ab964 (brief + recon enrolled-as-files + validation checkpoint);
+      C2 3c63b1f (D3 -- shared SharedNativeSingleton DisableParallelization xUnit
+      collection over the 3 singleton-touching classes SchedulerStressTests +
+      SchedulerExtremeTests + ManagedBusBridgeTests; the soft managed-heap
+      corruption gone); C3 d9915ce (F-31 -- Skip-quarantine the extreme-bus-load
+      ceiling-probes S3/S4/S5); C4 e1f6485 (D2 -- fail-loud SingletonGuard RAII
+      concurrency detector on SystemGraph + WakeRegistry, acquire-or-fail atomic;
+      kConcurrencyViolation=-3 + ComputeResult.ConcurrencyViolation; the native bus
+      EXCLUDED -- it is per-tier-mutex-synchronised); C5 c990755 (D1 -- index-keyed
+      O(N^2)->O(N+E) rebuild: writer_of component->writer index + system_ids_ O(1)
+      dedup + layer-BFS Kahn; byte-identical phases/codes/last_error); C6 997bcb4
+      (D4 -- selftest concurrency-detector + 50k-scale scenarios, 99 total); C7
+      47252e7 (D5 -- un-quarantine S1 + S7 to plain [Fact], re-point S2 -> F-30);
+      C8 73954ef (D6 -- TESTING_STRATEGY 2.1.0 -> 2.2.0 §2.8 isolation law + §2.6
+      honesty refresh); C9 = this commit (REGISTER 2.22 -> 2.23 + validate folded);
+      C10 = render + Option-B backfill.
+      Register: documents 284 -> 286 -- DOC-D-F29_NATIVE_SCHEDULER_BRIEF (Tier 3
+      EXECUTED, the clean Category-D Tier-3 combo / design tier -- this brief
+      authors the §2.8 standing law) + DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT
+      (Tier 3 EXECUTED, the docs/reports/ durable-recon convention). audit_trail
+      45 -> 46. Version sync: TESTING_STRATEGY 2.1.0 -> 2.2.0 (73954ef; frontmatter
+      mirror hand-synced in C8 per the F-10 precedent).
+      Census pins (regression anchor, all UNCHANGED -- the only src/ touch was the
+      additive ComputeResult.ConcurrencyViolation enum value): reserved-surface
+      34/13 HARD EXACT; DFK-WAIVER 2; marker families stub 51/20, deferred 82/51,
+      TODO 136/53, Phase 6 23/11, not yet 8/7. CensusMetaTests green in the gate.
+      Skeleton revisions (consolidated, code-wins over brief): (1) D2 bus EXCLUDED
+      from the detector -- the native bus is per-tier-mutex-synchronised +
+      concurrent-publish by design, unlike the lock-free graph/wake singletons;
+      (2) D3 collection carries DisableParallelization -- the heavy suites
+      over-subscribed the thread pool, so within-collection serialization alone was
+      insufficient; (3) F-31 NEW finding -- the S3/S4/S5 extreme-bus-load probes
+      root-caused a cumulative .NET-runtime-stress artifact (ASan clean + interop
+      audit clean + pass-in-isolation), Skip-quarantined -> +1 commit C3, 10 total
+      vs the 9-commit intended form; (4) drain_runqueue returns 0 (not -3) on
+      guard-fail because df_scheduler_tick_begin casts its return to an unsigned
+      count (a -3 would overflow to an OOB read); (5) brief §3.3 stale claim
+      corrected -- SchedulerStressTests.Dispose already clears the bus (A'.7.x
+      delta4), so no new teardown was added.
+      Gates: native df_native_selftest ALL PASSED (99 scenarios; the concurrency
+      hammer surfaced 2889 reader-violations + 1.02M writer-rejections with the
+      graph usable after; the 50k static build ran ~21 ms vs the prior 120-180 s
+      non-completion); full Core.Tests green + stable across the cascade (C2 5/5
+      checkpoint, C4 guard-dormant single-thread, C5 behaviour-preserve, C7 91 pass
+      / 0 fail / 5 skip x2); closure gate all 9 solution suites green -- Core 91p/5s,
+      Interop 202, Application 45, Modding 400, Runtime 292, Systems 2, Persistence
+      4, ManifestRewriter 7, Analyzers 54 (1097 pass / 0 fail / 5 skip); this
+      commit's validate exit 0 (H3) with VALIDATION_REPORT.md folded.
+      Product defects seeded not fixed (architect-owned): F-30 (S2 managed
+      ParallelSystemScheduler 200k-tick marathon -- not native scale) + F-31
+      (S3/S4/S5 extreme-bus-load .NET-runtime-stress artifact -- not a memory bug).
+      Zero pushes (Crystalka's act per the closure checklist). Header
+      last_modified_commit set to the single sanctioned
+      PENDING-COMMIT-F29_NATIVE_SCHEDULER-CLOSURE self-reference, backfilled with
+      C9's real hash at C10 render (Option B); C1-C8 recorded REAL.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-D-F29_NATIVE_SCHEDULER_BRIEF → EXECUTED (enrolled), DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT → EXECUTED (enrolled), DOC-B-TESTING_STRATEGY → 2.2.0]
