@@ -18,6 +18,7 @@ namespace DualFrontier.Core.Tests.Bus;
 // К-L9 uniformity contract: IModApi surface preserved by facade (mod authors
 // don't see native bus directly; tier dispatch transparent based on event's
 // [EventTier] attribute).
+[Collection("SharedNativeSingleton")]  // F-29(a): serialise with every shared-native-singleton class — this class mutates the native bus + event-type registry (see SharedNativeSingletonCollection)
 public sealed class ManagedBusBridgeTests : IDisposable
 {
     [EventTier(BusTier.Fast)]

@@ -33,13 +33,15 @@ namespace DualFrontier.Core.Tests.Scheduling;
 /// are calibrated for 8c/16t. xUnit Skip is not used (it requires throwing);
 /// the early-return surface the reason in test output instead.
 ///
-/// All scenarios reset native globals AND the managed bus bridge in
-/// ctor/Dispose — closing the cross-test pollution gap noted on 2026-05-21
-/// (<see cref="SchedulerStressTests"/>.Dispose currently does not call
-/// <see cref="ManagedBusBridge.ClearForTesting"/>).
+/// Each scenario resets the native scheduler/wake/policies/event-type
+/// singletons in ctor/Dispose (<see cref="ResetAllGlobals"/>) and clears the
+/// managed bus bridge per-test in its own finally. Cross-class isolation from
+/// the other singleton-touching classes is provided by the shared
+/// <c>[Collection("SharedNativeSingleton")]</c> membership (F-29(a)); it is no
+/// longer inferred from a per-class collection.
 /// </summary>
 [Trait("Category", "Extreme")]
-[Collection("ExtremeSerial")]  // forces serial execution + isolation from other classes
+[Collection("SharedNativeSingleton")]  // F-29(a): serialise with every shared-native-singleton class; was "ExtremeSerial", which serialised only within itself and so raced sibling classes (see SharedNativeSingletonCollection)
 public sealed class SchedulerExtremeTests : IDisposable
 {
     private readonly ITestOutputHelper _out;

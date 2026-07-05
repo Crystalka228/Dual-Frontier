@@ -41,6 +41,7 @@ namespace DualFrontier.Core.Tests.Scheduling;
 /// extreme ceiling-probe suite (<c>SchedulerExtremeTests</c>) can share them.
 /// </summary>
 [Trait("Category", "Stress")]
+[Collection("SharedNativeSingleton")]  // F-29(a): serialise with every shared-native-singleton class (see SharedNativeSingletonCollection)
 public sealed class SchedulerStressTests : IDisposable
 {
     public SchedulerStressTests()
