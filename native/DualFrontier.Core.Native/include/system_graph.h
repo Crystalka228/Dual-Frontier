@@ -3,6 +3,7 @@
 #include <atomic>
 #include <cstdint>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "singleton_guard.h"
@@ -123,6 +124,7 @@ private:
     std::atomic<bool> busy_{false};
 
     std::vector<SystemEntry> systems_;
+    std::unordered_set<uint32_t> system_ids_;  // D1 — O(1) duplicate-id check, kept in lock-step with systems_
     std::vector<std::vector<uint32_t>> static_phases_;
     std::vector<std::vector<uint32_t>> per_tick_phases_;
     std::vector<int32_t> static_phase_barriers_;  // K10.1 Item 13
