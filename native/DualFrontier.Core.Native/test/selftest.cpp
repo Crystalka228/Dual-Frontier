@@ -32,6 +32,7 @@
 #include "mod_unload.h"
 #include "phase_compute.h"
 #include "pipeline_slot.h"
+#include "singleton_guard.h"
 #include "thread_pool.h"
 
 namespace {
@@ -1125,6 +1126,118 @@ void scenario_system_graph_cycle_detection() {
     df_scheduler_register_system(2, "B", b_r, 1, b_w, 1, 2, 0);
     int32_t r = df_scheduler_compute_static_graph();
     DF_CHECK(r == -2, "cycle detected (-2)");
+}
+
+// F-29(a) — fail-loud concurrency detector: acquire-or-fail guard + no corruption
+// under a forced compute-vs-clear race (this exact race crashed 3/3 pre-guard).
+void scenario_system_graph_concurrency_detector() {
+    std::printf("scenario_system_graph_concurrency_detector\n");
+
+    // Part A -- deterministic acquire-or-fail on a local flag (no threads).
+    {
+        std::atomic<bool> flag{false};
+        dualfrontier::SingletonGuard g1(flag);
+        DF_CHECK(g1.acquired(), "first guard acquires the free flag");
+        {
+            dualfrontier::SingletonGuard g2(flag);
+            DF_CHECK(!g2.acquired(), "second concurrent guard fails to acquire");
+        }
+        DF_CHECK(flag.load(), "loser's destructor left g1's hold intact");
+    }
+    {
+        std::atomic<bool> flag{false};
+        { dualfrontier::SingletonGuard g(flag); DF_CHECK(g.acquired(), "acquire free flag"); }
+        dualfrontier::SingletonGuard again(flag);
+        DF_CHECK(again.acquired(), "guard re-acquires after the holder releases");
+    }
+
+    // Part B -- integration: a reader thread loops compute_static_graph while a
+    // writer thread loops clear + re-register on the process-global graph. With
+    // the guard the loser of each overlap is rejected (kConcurrencyViolation on
+    // compute; a rejected clear leaves duplicates so re-register returns 0) and
+    // no shared state is corrupted -- pre-guard this raced the heap 3/3.
+    df_scheduler_clear();
+    constexpr uint32_t N = 3000;
+    for (uint32_t i = 0; i < N; ++i) {
+        uint32_t w = i + 1;
+        df_scheduler_register_system(i, "concurrent", nullptr, 0, &w, 1, 2, 0);
+    }
+    std::atomic<bool> stop{false};
+    std::atomic<int> writer_rejections{0};
+    std::thread writer([&]() {
+        while (!stop.load(std::memory_order_relaxed)) {
+            df_scheduler_clear();
+            for (uint32_t i = 0; i < N; ++i) {
+                uint32_t w = i + 1;
+                if (df_scheduler_register_system(i, "c", nullptr, 0, &w, 1, 2, 0) != 1) {
+                    writer_rejections.fetch_add(1, std::memory_order_relaxed);
+                }
+            }
+        }
+    });
+    int reader_violations = 0;
+    for (int iter = 0; iter < 3000; ++iter) {
+        if (df_scheduler_compute_static_graph() == dualfrontier::kConcurrencyViolation) {
+            ++reader_violations;
+        }
+    }
+    stop.store(true, std::memory_order_relaxed);
+    writer.join();
+    std::printf("  reader concurrency-violations=%d, writer rejections=%d\n",
+                reader_violations, writer_rejections.load());
+    // Continuous hammering forces overlap, so the detector fires in at least one
+    // direction; reaching this line proves no access violation occurred (the
+    // pre-guard race terminated the process here).
+    DF_CHECK(reader_violations + writer_rejections.load() > 0,
+             "concurrency detector fired under forced overlap (loser rejected, not corrupted)");
+    // Shared state intact: a fresh single-threaded compute succeeds.
+    df_scheduler_clear();
+    df_scheduler_register_system(0, "final", nullptr, 0, nullptr, 0, 2, 0);
+    DF_CHECK(df_scheduler_compute_static_graph() == 1,
+             "scheduler graph usable after concurrent hammering -- no corruption");
+    df_scheduler_clear();
+}
+
+// F-29(b) — scale: a 50k-system forward DAG must rebuild in O(N+E). The legacy
+// O(N^2) build took ~39 s at 50k; a generous 10 s budget fails on a quadratic
+// regression while tolerating machine noise.
+void scenario_system_graph_scale_fifty_thousand() {
+    std::printf("scenario_system_graph_scale_fifty_thousand\n");
+    df_scheduler_clear();
+    constexpr uint32_t N = 50000;
+    for (uint32_t i = 0; i < N; ++i) {
+        uint32_t w = i + 1;  // unique write -> no write-write conflict
+        uint32_t reads[1];
+        uint32_t rc = 0;
+        if (i >= 2) {
+            reads[0] = (i / 2) + 1;  // component written by system i/2 (< i): forward edge, acyclic
+            rc = 1;
+        }
+        char fqn[32];
+        std::snprintf(fqn, sizeof(fqn), "Scale.Sys.%u", i);
+        int32_t ok = df_scheduler_register_system(i, fqn, reads, rc, &w, 1, 2, 0);
+        DF_CHECK(ok == 1, "register system at 50k scale");
+    }
+    DF_CHECK(df_scheduler_system_count() == static_cast<int32_t>(N), "50k systems registered");
+
+    auto t0 = std::chrono::steady_clock::now();
+    int32_t r = df_scheduler_compute_static_graph();
+    auto t1 = std::chrono::steady_clock::now();
+    double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+    std::printf("  compute_static_graph(50k) = %d in %.1f ms, %d phases\n",
+                r, ms, df_scheduler_static_phase_count());
+    DF_CHECK(r == 1, "50k static compute succeeds");
+    DF_CHECK(df_scheduler_static_phase_count() > 0, "50k produced phases");
+    DF_CHECK(ms < 10000.0, "50k compute within O(N+E) budget (a quadratic regression would exceed 10 s)");
+
+    // Bounded per-tick recompute over a runnable subset (same Kahn path).
+    std::vector<uint32_t> runnable;
+    runnable.reserve(5000);
+    for (uint32_t i = 0; i < 5000; ++i) runnable.push_back(i);
+    int32_t pr = df_scheduler_compute_per_tick_graph(runnable.data(),
+                                                     static_cast<uint32_t>(runnable.size()));
+    DF_CHECK(pr == 1, "per-tick recompute over a 5000-system subset succeeds");
+    df_scheduler_clear();
 }
 
 // =============================================================================
@@ -2855,6 +2968,8 @@ int main() {
     scenario_system_graph_write_conflict();
     scenario_system_graph_cycle_detection();
     scenario_system_graph_per_tick_subset();
+    scenario_system_graph_concurrency_detector();
+    scenario_system_graph_scale_fifty_thousand();
     scenario_thread_pool_mode_transition();
     scenario_thread_pool_submit_batch();
     scenario_thread_pool_phase_barrier();
