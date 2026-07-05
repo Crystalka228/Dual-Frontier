@@ -124,14 +124,14 @@ public sealed class SchedulerExtremeTests : IDisposable
 
     // ════════════════════════════════════════════════════════════════════════
     // S1 — Native scheduler stress at proven scale. 50 000 systems × 3 000 ticks.
-    //   Diagnostic: at 100k systems on 8c/16t the native graph hangs between
-    //   sysIdx 90k-100k (CPU goes to 0; suspect O(N²) growth in
-    //   RegisterSystem write-conflict scan or a native mutex deadlock above
-    //   ~90k entries). 50k is the proven safe ceiling — bumped tick count
-    //   to 3k for longer wall time without crossing the hang boundary.
+    //   F-29(b) RESOLVED: the scale wall was the O(N^2) graph rebuild (the
+    //   write-conflict + edge scans plus the register dup-scan), now O(N+E)
+    //   index-keyed (system_graph.cpp). The "native mutex above ~90k" hypothesis
+    //   was REFUTED -- there is no lock on the compute/tick path; the wall was
+    //   pure compute. 50k now rebuilds in ~tens of ms; un-quarantined here.
     // ════════════════════════════════════════════════════════════════════════
 
-    [Fact(Skip = "F-29(b): ExtremeScale non-completer -- native scheduler scale pathology; does not complete within CI budget. See docs/ROADMAP.md F-29.")]
+    [Fact]
     public void S1_NativeGraph_FiftyThousandSystems_ThreeThousandTicks_HoldsWithoutError()
     {
         LogProgress("### S1 BODY ENTER");
@@ -239,7 +239,7 @@ public sealed class SchedulerExtremeTests : IDisposable
     //   variance stays bounded.
     // ════════════════════════════════════════════════════════════════════════
 
-    [Fact(Skip = "F-29(b): ExtremeScale non-completer -- native scheduler scale pathology; does not complete within CI budget. See docs/ROADMAP.md F-29.")]
+    [Fact(Skip = "F-30: managed ParallelSystemScheduler marathon (200k-tick TPL steady-state over a pre-built 80-system phase list) -- not native-scale; disposition (tick-trim vs opt-in marathon excluded from the default sweep) pending. See docs/ROADMAP.md F-30.")]
     public void S2_ParallelSystemScheduler_TwoHundredThousandTicks_SteadyStateStable()
     {
         LogProgress("### S2 BODY ENTER");
@@ -795,7 +795,7 @@ public sealed class SchedulerExtremeTests : IDisposable
     //   secret cap.
     // ════════════════════════════════════════════════════════════════════════
 
-    [Fact(Skip = "F-29(b): ExtremeScale non-completer -- native scheduler scale pathology; does not complete within CI budget. See docs/ROADMAP.md F-29.")]
+    [Fact]
     public void S7_NativeGraph_QuarterMillionSystems_RegisterAndBuildOnly()
     {
         LogProgress("### S7 BODY ENTER");
