@@ -10900,8 +10900,12 @@ audit_trail:
       (2) D3 collection carries DisableParallelization -- the heavy suites
       over-subscribed the thread pool, so within-collection serialization alone was
       insufficient; (3) F-31 NEW finding -- the S3/S4/S5 extreme-bus-load probes
-      root-caused a cumulative .NET-runtime-stress artifact (ASan clean + interop
-      audit clean + pass-in-isolation), Skip-quarantined -> +1 commit C3, 10 total
+      root-caused a cumulative .NET-runtime-stress artifact (interop audit clean +
+      pass-in-isolation + a post-closure standalone native ASan selftest --
+      df_native_selftest under /fsanitize=address, dumpbin-confirmed linkage, 99
+      scenarios / 0 AddressSanitizer errors -- confirming no native memory bug; the
+      crash site is managed ParallelSystemScheduler / ThreadLocal, outside native
+      ASan's reach), Skip-quarantined -> +1 commit C3, 10 total
       vs the 9-commit intended form; (4) drain_runqueue returns 0 (not -3) on
       guard-fail because df_scheduler_tick_begin casts its return to an unsigned
       count (a -3 would overflow to an OOB read); (5) brief §3.3 stale claim
