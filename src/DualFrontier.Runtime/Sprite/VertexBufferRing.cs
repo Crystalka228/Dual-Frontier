@@ -21,6 +21,7 @@ public sealed class VertexBufferRing : IDisposable
     private readonly int _maxSpritesPerFrame;
     private readonly ulong _chunkSize;
     private uint _activeFrame;
+    private uint _lastBegunFrameIndex = uint.MaxValue;
     private IntPtr _mappedPtr;
     private ulong _writeOffset;
     private int _spritesSubmittedThisFrame;
@@ -82,6 +83,22 @@ public sealed class VertexBufferRing : IDisposable
             throw new InvalidOperationException("VertexBufferRing.BeginFrame called twice without EndFrame.");
         }
 
+        // F02 guard: each ring chunk is selected purely by frameIndex % frameCount and is
+        // sized for exactly one batch (maxSpritesPerFrame). Beginning two consecutive frames
+        // on the same frameIndex — the ">10K sprites → multiple BeginFrame/EndFrame cycles"
+        // path — remaps the same chunk and rewrites from offset 0, silently overwriting the
+        // prior batch's vertices before its draw is submitted. Fail fast instead of corrupting:
+        // the caller must raise maxSpritesPerFrame to fit the scene in one batch, or submit +
+        // present (advancing the swapchain image) between batches.
+        if (frameIndex == _lastBegunFrameIndex)
+        {
+            throw new InvalidOperationException(
+                $"VertexBufferRing.BeginFrame reused ring slot {frameIndex % (uint)_frameCount} for two " +
+                "consecutive frames without the swapchain image advancing; a second sprite batch would " +
+                "overwrite the first batch's vertices before submission (F02). Raise maxSpritesPerFrame to " +
+                "fit the scene in one batch, or submit + present between batches.");
+        }
+
         _activeFrame = frameIndex % (uint)_frameCount;
         ulong chunkOffset = (ulong)_activeFrame * _chunkSize;
 
@@ -99,6 +116,7 @@ public sealed class VertexBufferRing : IDisposable
 
         _writeOffset = 0;
         _spritesSubmittedThisFrame = 0;
+        _lastBegunFrameIndex = frameIndex;
     }
 
     /// <summary>

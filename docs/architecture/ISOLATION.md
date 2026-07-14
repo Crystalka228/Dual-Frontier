@@ -6,13 +6,13 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1.1"
+version: "1.1.2"
 next_review_due: 2027-05-12
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ISOLATION
 ---
 # System isolation
 
-A silent isolation violation is worse than a crash: corrupted state surfaces an hour into play as an inexplicable bug. Dual Frontier enforces system isolation at **compile time** via the `[SystemAccess]` attribute and the `DependencyGraph` that consumes it for parallel scheduling. The Roslyn analyzer (infrastructure shipped A'.9.1; detection logic pending Phase β — see §Enforcement model item 3) extends this enforcement to call sites — flagging undeclared component access as a build error rather than a runtime exception.
+A silent isolation violation is worse than a crash: corrupted state surfaces an hour into play as an inexplicable bug. Dual Frontier declares system isolation at **compile time** via the `[SystemAccess]` attribute and the `DependencyGraph` that consumes it for parallel scheduling. The Roslyn analyzer (infrastructure shipped A'.9.1; detection logic pending Phase β — see §Enforcement model item 3) **will extend** this enforcement to call sites — flagging undeclared component access as a build error rather than a runtime exception — once its detection logic lands. Until then that call-site check is non-normative (stubs emit zero diagnostics); undeclared `AcquireSpan`/`BeginBatch` access is caught by manual review and integration tests, not yet by the build.
 
 ## Enforcement model
 

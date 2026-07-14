@@ -83,6 +83,30 @@ public sealed class AssetManagerTests : IDisposable
     }
 
     [Fact]
+    public void ResolvePath_CaseVariantOfRoot_RejectedOnCaseSensitiveHost()
+    {
+        // F03: the containment check must track the host filesystem's case sensitivity. A path that
+        // resolves to a case-variant of the root (".../assetroot" vs root ".../AssetRoot") is a
+        // DIFFERENT directory on a case-sensitive filesystem, so it must be rejected there — the old
+        // unconditional OrdinalIgnoreCase check accepted it and let the path escape the root.
+        string root = Path.Combine(_tempRoot, "AssetRoot");
+        Directory.CreateDirectory(root);
+        using var assets = new AssetManager(root);
+
+        Action act = () => assets.ResolvePath(new AssetPath(Path.Combine("..", "assetroot", "secret.png")));
+
+        if (OperatingSystem.IsWindows())
+        {
+            // Case-insensitive host: "../assetroot" is the same directory as the root — not an escape.
+            act.Should().NotThrow();
+        }
+        else
+        {
+            act.Should().Throw<InvalidOperationException>().WithMessage("*escapes root*");
+        }
+    }
+
+    [Fact]
     public void ClearCache_NextLoadReDecodes()
     {
         WriteSyntheticPng(Path.Combine(_tempRoot, "test.png"), 2, 2);

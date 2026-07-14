@@ -9,8 +9,12 @@ namespace DualFrontier.Persistence.Snapshots;
 /// </summary>
 public sealed record SaveMeta
 {
-    /// <summary>Snapshot format version. Bump when on-disk layout changes.</summary>
-    public required int Version { get; init; } = 1;
+    /// <summary>
+    /// Snapshot format version. Bump when on-disk layout changes.
+    /// v2 (F21): <c>TerrainKind</c> gained explicit values with <c>Unknown = 0</c>, shifting every
+    /// tile's persisted RLE byte by one; the format is not byte-compatible with v1 snapshots.
+    /// </summary>
+    public required int Version { get; init; } = 2;
 
     /// <summary>Simulation tick at which the snapshot was taken.</summary>
     public required long Tick { get; init; }

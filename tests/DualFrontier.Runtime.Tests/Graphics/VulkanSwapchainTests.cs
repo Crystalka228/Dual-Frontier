@@ -35,13 +35,13 @@ public sealed class VulkanSwapchainTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Surface_construct_returns_non_zero_handle()
     {
         _surface.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Swapchain_construct_enumerates_images_with_views()
     {
         using var swapchain = new VulkanSwapchain(_device, _surface, 640, 480);
@@ -57,7 +57,7 @@ public sealed class VulkanSwapchainTests : IDisposable
         swapchain.Height.Should().BeGreaterThan(0u);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Swapchain_recreate_succeeds_with_new_extent()
     {
         using var swapchain = new VulkanSwapchain(_device, _surface, 640, 480);
@@ -72,7 +72,7 @@ public sealed class VulkanSwapchainTests : IDisposable
         swapchain.ImageCount.Should().BeGreaterThan(0);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Swapchain_dispose_idempotent()
     {
         var swapchain = new VulkanSwapchain(_device, _surface, 640, 480);

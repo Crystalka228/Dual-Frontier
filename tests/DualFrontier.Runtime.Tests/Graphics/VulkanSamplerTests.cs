@@ -30,7 +30,7 @@ public sealed class VulkanSamplerTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Default_options_create_sampler_with_nearest_repeat()
     {
         using var sampler = new VulkanSampler(_device);
@@ -42,7 +42,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Options.EnableAnisotropy.Should().BeFalse();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Linear_filter_creates_sampler()
     {
         var options = new SamplerOptions
@@ -54,7 +54,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void ClampToEdge_wrap_creates_sampler()
     {
         var options = new SamplerOptions
@@ -66,7 +66,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void MirroredRepeat_wrap_creates_sampler()
     {
         var options = new SamplerOptions
@@ -78,7 +78,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Dispose_zeros_handle_and_idempotent()
     {
         var sampler = new VulkanSampler(_device);
@@ -86,7 +86,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Dispose();    // idempotent
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Null_device_throws()
     {
         Action act = () => new VulkanSampler(null!);

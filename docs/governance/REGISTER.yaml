@@ -188,8 +188,8 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1.1"
-    last_modified: "2026-06-02"
+    version: "1.1.2"
+    last_modified: "2026-07-14"
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
@@ -2596,6 +2596,23 @@ documents:
     last_review_event: "Read-only measurement recon 2026-07-04 (executor session, flagship model, LOCAL Skarlet). Its scheduler-surface map, the lock-free-singleton audit (bus excluded -- per-tier std::mutex, concurrent-publish by design), and the N -> time scale curves were the load-bearing brief inputs; consumed by the F-29 cascade execution 2026-07-04. Enrolled at the F-29 REGISTER closure."
     reviewer: Crystalka
     special_case_rationale: "Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line."
+
+  - id: DOC-E-CODEX_REVIEW_REMEDIATION_20260714
+    path: docs/audit/CODEX_REVIEW_REMEDIATION_20260714.md
+    title: "Codex Review Remediation — closed-PR findings cascade — 2026-07-14 (verification + remediation of the 21 Codex inline review comments inventoried across the 42 closed PRs; base main @ c8fa0e58; branch claude/closed-pr-accessibility-2yxtu8; 16 findings fixed, F07 accepted-latent, F20 arch-closed, F10/F12/F16/F17/F18 confirmed already-closed)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    last_modified: "2026-07-14"
+    last_modified_commit: "PENDING-INITIAL"
+    content_language: en
+    review_cadence: none-historical-record
+    last_review_date: "2026-07-14"
+    last_review_event: "Verification + remediation cascade executed 2026-07-14 by Claude Code (Opus, Claude-Code-on-the-web Linux session) against main @ c8fa0e58. All 21 Codex closed-PR findings independently re-verified (inventory held on all 21); 16 fixed on branch claude/closed-pr-accessibility-2yxtu8, F07 documented accepted-latent (no x86 target), F20 architecturally closed (existing ContractTypeInRegularMod coverage), F10/F12/F16/F17/F18 confirmed already-closed. Managed logic fixes runtime-tested; Vulkan/Win32 fixes compile-verified against a clean TreatWarningsAsErrors build; sprite.frag.spv regenerated via glslang; stress tests not run per instruction. F13 (mis-resolved risk-reference drift) and DOC-A-ISOLATION F11 wording also corrected in REGISTER.yaml."
+    reviewer: Crystalka
+    special_case_rationale: "Durable audit/closure record enrolled DOC-E Tier 3 per the docs/audit/ convention (precedents: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, docs/audit AUDIT_PASS_* discovery/closure artifacts). Retrospective 'what was done' remediation closure for the Codex closed-PR review inventory; REGISTER_RENDER.md regeneration + frontmatter-mirror sync + last_modified_commit backfill pending sync_register.ps1 on a PowerShell + powershell-yaml host (unavailable in the Linux session)."
 
   - id: DOC-D-A_PRIME_8_K_CLOSURE_REPORT
     path: tools/briefs/A_PRIME_8_K_CLOSURE_REPORT_BRIEF.md
@@ -6048,7 +6065,7 @@ risks:
         event: "Each new native artifact extends mitigation; D3 native organicity pattern keeps risk per-artifact bounded"
 
   - id: RISK-004
-    title: "Cross-document drift between LOCKED specs (KERNEL/MOD_OS/RUNTIME/MIGRATION_PLAN)"
+    title: "Cross-document drift between LOCKED specs (KERNEL/MOD_OS/VULKAN_SUBSTRATE/MIGRATION_PLAN)"
     likelihood: Medium-High
     impact: High
     risk_type: Architectural
@@ -6056,7 +6073,7 @@ risks:
     affected_documents:
       - DOC-A-KERNEL
       - DOC-A-MOD_OS
-      - DOC-A-RUNTIME
+      - DOC-A-VULKAN_SUBSTRATE
       - DOC-A-MIGRATION_PLAN
     mitigation:
       strategy: "Amendment plans cross-reference all affected docs; K-L3.1 amendment audit precedent (§K.12.2); register §3 traceability matrix detects when requirement changes don't propagate"
@@ -6226,12 +6243,11 @@ risks:
     risk_type: External
     status: ACTIVE
     affected_documents:
-      - DOC-A-GPU_COMPUTE
-      - DOC-A-RUNTIME
+      - DOC-A-VULKAN_SUBSTRATE
       - DOC-D-G0
     mitigation:
       strategy: "Compute disabled gracefully when device features insufficient; CPU reference kernel for compute domains (precedent K9 IsotropicDiffusionKernel); D3 native organicity allows compute as separate optional artifact"
-      mitigation_artifact: DOC-A-GPU_COMPUTE
+      mitigation_artifact: DOC-A-VULKAN_SUBSTRATE
       mitigation_status: PARTIAL
     history:
       - date: "Pre-K-L3.1"

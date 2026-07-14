@@ -51,7 +51,7 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
         return Path.Combine(dir.FullName, "assets", "shaders", name);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Noop_pipeline_register_and_dispatch_round_trip()
     {
         using var registry = new ComputePipelineRegistry(_device);
@@ -67,7 +67,7 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
         // No exception = success (fence signaled + queue idle for synchronous dispatch).
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Duplicate_registration_throws()
     {
         using var registry = new ComputePipelineRegistry(_device);
@@ -78,7 +78,7 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
         act.Should().Throw<InvalidOperationException>().WithMessage("*already registered*");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Unknown_pipeline_lookup_returns_null()
     {
         using var registry = new ComputePipelineRegistry(_device);

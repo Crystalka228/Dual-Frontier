@@ -56,14 +56,14 @@ public sealed class VulkanGraphicsPipelineTests : IDisposable
         return Path.Combine(dir.FullName, "assets", "shaders", name);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void PipelineLayout_empty_constructs_non_zero()
     {
         using var layout = new VulkanPipelineLayout(_device);
         layout.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void GraphicsPipeline_clearcolor_constructs_successfully()
     {
         using var layout = new VulkanPipelineLayout(_device);

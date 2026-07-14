@@ -364,10 +364,14 @@ internal sealed class ModIntegrationPipeline
         // [3] Validation: contract versions + write-write conflicts +
         // regular-mod contract scan + shared-mod compliance (Phase F).
         IReadOnlyList<SystemBase> coreSystems = GetCoreSystemInstances();
+        // F15: pass the kernel capability registry (already built at construction and used below
+        // for RestrictedModApi) into load-time validation. Passing null here silently skipped the
+        // Phase C/D capability-satisfiability and [ModCapabilities] cross-checks, so mods declaring
+        // capabilities the kernel does not provide passed validation and only failed later at runtime.
         ValidationReport report = _validator.Validate(
             loaded,
             coreSystems,
-            kernelCapabilities: null,
+            kernelCapabilities: _kernelCapabilities,
             sharedMods: sharedLoaded);
 
         IReadOnlyList<ValidationWarning> mergedWarnings =

@@ -31,7 +31,7 @@ public sealed class VulkanCommandBufferTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void CommandPool_construct_returns_non_zero_handle()
     {
         using var pool = new VulkanCommandPool(_device, _device.GraphicsQueueFamilyIndex);
@@ -39,7 +39,7 @@ public sealed class VulkanCommandBufferTests : IDisposable
         pool.QueueFamilyIndex.Should().Be(_device.GraphicsQueueFamilyIndex);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void CommandBuffer_allocate_begin_end_round_trip()
     {
         using var pool = new VulkanCommandPool(_device, _device.GraphicsQueueFamilyIndex);
@@ -50,7 +50,7 @@ public sealed class VulkanCommandBufferTests : IDisposable
         buffer.End();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Fence_create_wait_with_signaled_start_returns_immediately()
     {
         using var fence = new VulkanFence(_device, startSignaled: true);
@@ -59,14 +59,14 @@ public sealed class VulkanCommandBufferTests : IDisposable
         fence.Reset();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Semaphore_create_returns_non_zero_handle()
     {
         using var semaphore = new VulkanSemaphore(_device);
         semaphore.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Submit_empty_command_buffer_to_graphics_queue_with_fence_signals_fence()
     {
         using var pool = new VulkanCommandPool(_device, _device.GraphicsQueueFamilyIndex);

@@ -36,14 +36,14 @@ public sealed class SpriteIndexBufferTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constants_Are_Expected_Values()
     {
         SpriteIndexBuffer.IndicesPerQuad.Should().Be(6);
         SpriteIndexBuffer.MaxUint16Quads.Should().Be(10_000);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Valid_Capacity_Succeeds()
     {
         using var idx = new SpriteIndexBuffer(_device, _allocator, quadCapacity: 100);
@@ -52,21 +52,21 @@ public sealed class SpriteIndexBufferTests : IDisposable
         idx.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Zero_Capacity_Throws()
     {
         Action act = () => new SpriteIndexBuffer(_device, _allocator, quadCapacity: 0);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Negative_Capacity_Throws()
     {
         Action act = () => new SpriteIndexBuffer(_device, _allocator, quadCapacity: -1);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_Beyond_MaxUint16Quads_Throws()
     {
         Action act = () => new SpriteIndexBuffer(_device, _allocator,
@@ -74,7 +74,7 @@ public sealed class SpriteIndexBufferTests : IDisposable
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_At_MaxUint16Quads_Succeeds()
     {
         using var idx = new SpriteIndexBuffer(_device, _allocator,
@@ -83,7 +83,7 @@ public sealed class SpriteIndexBufferTests : IDisposable
         idx.IndexCount.Should().Be(60_000);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void IndexCount_Equals_QuadCapacity_Times_Six()
     {
         using var idx = new SpriteIndexBuffer(_device, _allocator, quadCapacity: 1234);

@@ -84,6 +84,32 @@ public sealed class Runtime : IDisposable
 
             // V0.B primitives.
             runtime.Surface = new VulkanSurface(runtime.VulkanInstance, runtime.Window);
+
+            // F06: VulkanDevice selects the physical device + graphics queue family before the
+            // surface exists, on graphics capability alone. Vulkan does NOT guarantee the graphics
+            // family can also present to this surface — on split graphics/present topologies it may
+            // not, and vkQueuePresentKHR on a non-present-capable family is a spec violation. Now
+            // that the surface exists, validate present support explicitly (fail fast) before the
+            // swapchain is built on the assumption. Full present-family *selection* (which requires
+            // creating the surface before final device selection) is a follow-up.
+            VkResult presentSupportResult = VkApi.vkGetPhysicalDeviceSurfaceSupportKHR(
+                runtime.VulkanDevice.PhysicalDevice,
+                runtime.VulkanDevice.GraphicsQueueFamilyIndex,
+                runtime.Surface.Handle,
+                out uint graphicsFamilyPresentSupport);
+            if (presentSupportResult != VkResult.VK_SUCCESS)
+            {
+                throw new InvalidOperationException(
+                    $"vkGetPhysicalDeviceSurfaceSupportKHR failed: {presentSupportResult}");
+            }
+            if (graphicsFamilyPresentSupport == 0)
+            {
+                throw new InvalidOperationException(
+                    $"Selected graphics queue family {runtime.VulkanDevice.GraphicsQueueFamilyIndex} cannot " +
+                    "present to the window surface. Dual Frontier currently requires a graphics queue that " +
+                    "also supports present; a separate present-queue family is not yet selected (F06).");
+            }
+
             runtime.Swapchain = new VulkanSwapchain(
                 runtime.VulkanDevice, runtime.Surface,
                 (uint)options.Window.Width, (uint)options.Window.Height);
@@ -182,8 +208,9 @@ public sealed class Runtime : IDisposable
     /// <summary>
     /// V0.C.1 convenience preserved as V0.C.2 backward-compat shim: routes through the new
     /// batched SpriteRenderer API (BeginFrame/Submit/EndFrame). The <paramref name="mvp"/>
-    /// parameter is treated as identity (V0.C.1 smoke test passed identity matrix only;
-    /// V0.C.2 callers should use RecordSpritesFrame с Camera2D instead).
+    /// parameter is applied as the vertex MVP push constant (pass Matrix4x4.Identity for the
+    /// original V0.C.1 smoke-test behaviour; V0.C.2 callers should prefer RecordSpritesFrame
+    /// с Camera2D).
     /// </summary>
     public unsafe void RecordSpriteFrame(
         VulkanCommandBuffer commandBuffer,
@@ -192,16 +219,11 @@ public sealed class Runtime : IDisposable
         Matrix4x4 mvp,
         Vector4 clearColor)
     {
-        // V0.C.2 backward-compat: single sprite via batched infrastructure.
-        // Internally constructs a temporary Camera2D matching swapchain viewport;
-        // smoke test caller previously passed Matrix4x4.Identity (no MVP transform applied).
-        var tempCam = new Camera2D
-        {
-            Position = new Vector2(0, 0),
-            ViewportSize = new Vector2(2, 2),  // ±1 maps к NDC ±1 = effectively identity ortho
-            Zoom = 1.0f,
-        };
-        RecordSpritesFrame(commandBuffer, imageIndex, new[] { sprite }, tempCam, clearColor);
+        // V0.C.2 backward-compat: single sprite via batched infrastructure. The caller-supplied
+        // MVP is now honoured (previously this shim discarded `mvp` and rendered through a fixed
+        // identity-ortho Camera2D — F01). Passing Matrix4x4.Identity reproduces the original
+        // V0.C.1 smoke-test behaviour exactly.
+        RecordSpritesFrame(commandBuffer, imageIndex, new[] { sprite }, mvp, clearColor);
     }
 
     /// <summary>
@@ -283,9 +305,24 @@ public sealed class Runtime : IDisposable
         Camera2D camera,
         Vector4 clearColor)
     {
+        ArgumentNullException.ThrowIfNull(camera);
+        RecordSpritesFrame(commandBuffer, imageIndex, sprites, camera.ViewProjectionMatrix, clearColor);
+    }
+
+    /// <summary>
+    /// V0.C.2 batched rendering with an explicit MVP matrix rather than a <see cref="Camera2D"/>.
+    /// Shared core for the camera overload above and for the V0.C.1 backward-compat
+    /// <see cref="RecordSpriteFrame"/> shim, which supplies its own matrix.
+    /// </summary>
+    public unsafe void RecordSpritesFrame(
+        VulkanCommandBuffer commandBuffer,
+        int imageIndex,
+        IEnumerable<Sprite.Sprite> sprites,
+        Matrix4x4 mvp,
+        Vector4 clearColor)
+    {
         ArgumentNullException.ThrowIfNull(commandBuffer);
         ArgumentNullException.ThrowIfNull(sprites);
-        ArgumentNullException.ThrowIfNull(camera);
         if ((uint)imageIndex >= _framebuffers.Count)
         {
             throw new ArgumentOutOfRangeException(nameof(imageIndex));
@@ -336,7 +373,7 @@ public sealed class Runtime : IDisposable
         {
             SpriteRenderer.Submit(sprite);
         }
-        SpriteRenderer.EndFrame(commandBuffer, camera);
+        SpriteRenderer.EndFrame(commandBuffer, mvp);
 
         VkApi.vkCmdEndRenderPass(commandBuffer.Handle);
     }

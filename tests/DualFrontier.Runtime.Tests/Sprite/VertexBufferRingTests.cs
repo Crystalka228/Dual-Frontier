@@ -39,7 +39,7 @@ public sealed class VertexBufferRingTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Valid_Args_Computes_ChunkSize_Correctly()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -50,21 +50,21 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Zero_FrameCount_Throws()
     {
         Action act = () => new VertexBufferRing(_device, _allocator, frameCount: 0, maxSpritesPerFrame: 100);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Zero_MaxSpritesPerFrame_Throws()
     {
         Action act = () => new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 0);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void WriteSprite_Without_BeginFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -73,7 +73,7 @@ public sealed class VertexBufferRingTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void EndFrame_Without_BeginFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -81,7 +81,7 @@ public sealed class VertexBufferRingTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void BeginFrame_Twice_Without_EndFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -97,7 +97,7 @@ public sealed class VertexBufferRingTests : IDisposable
         }
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void WriteSprite_Within_Capacity_Succeeds()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);
@@ -111,7 +111,7 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.EndFrame();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void WriteSprite_Beyond_Capacity_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 5);
@@ -132,7 +132,7 @@ public sealed class VertexBufferRingTests : IDisposable
         }
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void EndFrame_Returns_Correct_Chunk_Offset_For_Each_Frame()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);
@@ -151,7 +151,7 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.EndFrame().Should().Be(0UL);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Use_After_Dispose_Throws()
     {
         var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);

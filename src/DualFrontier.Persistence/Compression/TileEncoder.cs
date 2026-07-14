@@ -12,6 +12,10 @@ namespace DualFrontier.Persistence.Compression;
 /// + 500 rock"). The encoder never mixes runs across the row break — same
 /// terrain across a row boundary continues a single run, which lets large
 /// homogeneous biomes collapse maximally.
+///
+/// The <c>kind</c> byte is the explicit numeric value of <see cref="TerrainKind"/> (save format
+/// v2, where <c>Unknown = 0</c>); those values are contractually stable, so renumbering the enum
+/// requires a <see cref="DualFrontier.Persistence.Snapshots.SaveMeta.Version"/> bump + migration.
 /// </summary>
 public static class TileEncoder
 {

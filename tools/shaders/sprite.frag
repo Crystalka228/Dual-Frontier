@@ -12,9 +12,14 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
     vec4 sampled = texture(atlas, vUv);
-    outColor = sampled * vColor;
-    // S-LOCK-5: premultiplied alpha workflow; discard near-zero alpha к save blend cost.
-    if (outColor.a < 0.01) {
+    vec4 straight = sampled * vColor;
+    // S-LOCK-5: premultiplied-alpha workflow. The sprite pipeline blends with
+    // ONE / ONE_MINUS_SRC_ALPHA, which requires the source RGB already scaled by alpha.
+    // The atlas is uploaded straight-alpha and the tint is straight, so premultiply here —
+    // otherwise semi-transparent texels over-contribute their own colour (F04). Discard
+    // near-zero alpha к save blend cost.
+    if (straight.a < 0.01) {
         discard;
     }
+    outColor = vec4(straight.rgb * straight.a, straight.a);
 }

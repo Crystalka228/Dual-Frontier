@@ -37,7 +37,7 @@ public sealed class V1DiffusionIntegrationTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Single_iteration_spreads_source_spike_к_neighbours()
     {
         var binding = new FieldStorageBinding(_world);
@@ -92,7 +92,7 @@ public sealed class V1DiffusionIntegrationTests : IDisposable
         total.Should().BeApproximately(100f, 0.001f, "no decay = mass conserved");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Dispatch_on_unregistered_field_returns_false()
     {
         var binding = new FieldStorageBinding(_world);

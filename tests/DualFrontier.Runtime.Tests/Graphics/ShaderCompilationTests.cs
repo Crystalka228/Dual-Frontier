@@ -50,7 +50,7 @@ public sealed class ShaderCompilationTests : IDisposable
         return Path.Combine(dir.FullName, "assets", "shaders", name);
     }
 
-    [Theory]
+    [WindowsOnlyTheory]
     [InlineData("clearcolor.vert.spv")]
     [InlineData("clearcolor.frag.spv")]
     [InlineData("noop.comp.spv")]
@@ -63,7 +63,7 @@ public sealed class ShaderCompilationTests : IDisposable
         (len % 4).Should().Be(0L, "SPIR-V bytecode is uint32 aligned");
     }
 
-    [Theory]
+    [WindowsOnlyTheory]
     [InlineData("clearcolor.vert.spv")]
     [InlineData("clearcolor.frag.spv")]
     [InlineData("noop.comp.spv")]

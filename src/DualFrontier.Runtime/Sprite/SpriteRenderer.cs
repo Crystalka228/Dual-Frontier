@@ -158,12 +158,23 @@ public sealed class SpriteRenderer : IDisposable
     /// </summary>
     public unsafe void EndFrame(VulkanCommandBuffer commandBuffer, Camera2D camera)
     {
+        ArgumentNullException.ThrowIfNull(camera);
+        EndFrame(commandBuffer, camera.ViewProjectionMatrix);
+    }
+
+    /// <summary>
+    /// Record draw commands using an explicit MVP push constant instead of deriving it from a
+    /// <see cref="Camera2D"/>. Lets callers that already hold a matrix — e.g. the V0.C.1
+    /// backward-compat single-sprite shim — pass it straight through. One vkCmdDrawIndexed per
+    /// atlas group.
+    /// </summary>
+    public unsafe void EndFrame(VulkanCommandBuffer commandBuffer, Matrix4x4 mvp)
+    {
         if (!_frameActive)
         {
             throw new InvalidOperationException("SpriteRenderer.EndFrame called without BeginFrame.");
         }
         ArgumentNullException.ThrowIfNull(commandBuffer);
-        ArgumentNullException.ThrowIfNull(camera);
 
         try
         {
@@ -195,7 +206,6 @@ public sealed class SpriteRenderer : IDisposable
                 VkPipelineBindPoint.VK_PIPELINE_BIND_POINT_GRAPHICS,
                 _pipeline.Handle);
 
-            Matrix4x4 mvp = camera.ViewProjectionMatrix;
             VkApi.vkCmdPushConstants(
                 commandBuffer.Handle,
                 _pipeline.Layout.Handle,

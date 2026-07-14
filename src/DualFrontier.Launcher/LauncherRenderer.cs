@@ -16,7 +16,7 @@ namespace DualFrontier.Launcher;
 /// frame from SceneState's active sprites.
 ///
 /// К-extensions cascade #3 (2026-05-23): real visual implementation для pawn-3
-/// dispatch arms via <see cref="Runtime.Runtime.RecordSpritesFrame"/> batched
+/// dispatch arms via <c>Runtime.RecordSpritesFrame</c> batched
 /// API (V0.C.2 per S-LOCK-9). Camera2D default-configured к view a 200×200 tile
 /// map (assumption documented in <see cref="Initialize"/>; cascade-#3-minimum-
 /// scope choice; future cascade ratifies camera control mechanism).

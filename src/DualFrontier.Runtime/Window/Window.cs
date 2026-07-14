@@ -56,49 +56,86 @@ public sealed class Window : IWindow
         _wndProc = WindowProcedure;
         _wndProcHandle = GCHandle.Alloc(_wndProc);
 
-        var wndClass = new WNDCLASSEX
+        // Everything after the GCHandle allocation may throw (class registration, window
+        // creation). Because a throwing constructor never hands the instance to the caller,
+        // Dispose() is unreachable for it — so we must roll back every resource acquired so
+        // far here, or the pinned delegate + registered class leak for the process lifetime (F08).
+        try
         {
-            cbSize = (uint)Marshal.SizeOf<WNDCLASSEX>(),
-            style = Win32Constants.CS_OWNDC | Win32Constants.CS_HREDRAW | Win32Constants.CS_VREDRAW,
-            lpfnWndProc = Marshal.GetFunctionPointerForDelegate(_wndProc),
-            cbClsExtra = 0,
-            cbWndExtra = 0,
-            hInstance = _hinstance,
-            hIcon = Win32Api.LoadIcon(IntPtr.Zero, Win32Constants.IDI_APPLICATION),
-            hCursor = Win32Api.LoadCursor(IntPtr.Zero, Win32Constants.IDC_ARROW),
-            hbrBackground = IntPtr.Zero,
-            lpszMenuName = null,
-            lpszClassName = _className,
-            hIconSm = IntPtr.Zero,
-        };
+            var wndClass = new WNDCLASSEX
+            {
+                cbSize = (uint)Marshal.SizeOf<WNDCLASSEX>(),
+                style = Win32Constants.CS_OWNDC | Win32Constants.CS_HREDRAW | Win32Constants.CS_VREDRAW,
+                lpfnWndProc = Marshal.GetFunctionPointerForDelegate(_wndProc),
+                cbClsExtra = 0,
+                cbWndExtra = 0,
+                hInstance = _hinstance,
+                hIcon = Win32Api.LoadIcon(IntPtr.Zero, Win32Constants.IDI_APPLICATION),
+                hCursor = Win32Api.LoadCursor(IntPtr.Zero, Win32Constants.IDC_ARROW),
+                hbrBackground = IntPtr.Zero,
+                lpszMenuName = null,
+                lpszClassName = _className,
+                hIconSm = IntPtr.Zero,
+            };
 
-        if (Win32Api.RegisterClassEx(in wndClass) == 0)
-        {
-            throw new InvalidOperationException(
-                $"RegisterClassEx failed: Win32 error {Win32Api.GetLastError()}");
+            if (Win32Api.RegisterClassEx(in wndClass) == 0)
+            {
+                throw new InvalidOperationException(
+                    $"RegisterClassEx failed: Win32 error {Win32Api.GetLastError()}");
+            }
+
+            _hwnd = Win32Api.CreateWindowEx(
+                dwExStyle: 0,
+                lpClassName: _className,
+                lpWindowName: _options.Title,
+                dwStyle: Win32Constants.WS_OVERLAPPEDWINDOW,
+                X: Win32Constants.CW_USEDEFAULT,
+                Y: Win32Constants.CW_USEDEFAULT,
+                nWidth: _options.Width,
+                nHeight: _options.Height,
+                hWndParent: IntPtr.Zero,
+                hMenu: IntPtr.Zero,
+                hInstance: _hinstance,
+                lpParam: IntPtr.Zero);
+
+            if (_hwnd == IntPtr.Zero)
+            {
+                throw new InvalidOperationException(
+                    $"CreateWindowEx failed: Win32 error {Win32Api.GetLastError()}");
+            }
+
+            _isOpen = true;
         }
-
-        _hwnd = Win32Api.CreateWindowEx(
-            dwExStyle: 0,
-            lpClassName: _className,
-            lpWindowName: _options.Title,
-            dwStyle: Win32Constants.WS_OVERLAPPEDWINDOW,
-            X: Win32Constants.CW_USEDEFAULT,
-            Y: Win32Constants.CW_USEDEFAULT,
-            nWidth: _options.Width,
-            nHeight: _options.Height,
-            hWndParent: IntPtr.Zero,
-            hMenu: IntPtr.Zero,
-            hInstance: _hinstance,
-            lpParam: IntPtr.Zero);
-
-        if (_hwnd == IntPtr.Zero)
+        catch
         {
-            throw new InvalidOperationException(
-                $"CreateWindowEx failed: Win32 error {Win32Api.GetLastError()}");
+            RollbackWin32Initialization();
+            throw;
         }
+    }
 
-        _isOpen = true;
+    /// <summary>
+    /// Frees every Win32 resource acquired by <see cref="InitializeWin32"/> when initialization
+    /// fails partway. Mirrors <see cref="Dispose"/> but is reachable from the failing constructor,
+    /// which never exposes the instance to the caller.
+    /// </summary>
+    private void RollbackWin32Initialization()
+    {
+        if (_hwnd != IntPtr.Zero)
+        {
+            Win32Api.DestroyWindow(_hwnd);
+            _hwnd = IntPtr.Zero;
+        }
+        if (!string.IsNullOrEmpty(_className) && _hinstance != IntPtr.Zero)
+        {
+            Win32Api.UnregisterClass(_className, _hinstance);
+            _className = string.Empty;
+        }
+        if (_wndProcHandle.IsAllocated)
+        {
+            _wndProcHandle.Free();
+        }
+        _wndProc = null;
+        _isOpen = false;
     }
 
     private IntPtr WindowProcedure(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
@@ -130,7 +167,6 @@ public sealed class Window : IWindow
 
             // V0.C.1: keyboard input
             case Win32Constants.WM_KEYDOWN:
-            case Win32Constants.WM_SYSKEYDOWN:
             {
                 int vk = (int)wParam.ToInt64();
                 Key key = VirtualKeyMapper.Map(vk);
@@ -141,7 +177,6 @@ public sealed class Window : IWindow
                 return IntPtr.Zero;
             }
             case Win32Constants.WM_KEYUP:
-            case Win32Constants.WM_SYSKEYUP:
             {
                 int vk = (int)wParam.ToInt64();
                 Key key = VirtualKeyMapper.Map(vk);
@@ -150,6 +185,31 @@ public sealed class Window : IWindow
                     InputQueue.Enqueue(new KeyReleasedEvent(key));
                 }
                 return IntPtr.Zero;
+            }
+
+            // System keys (Alt-combinations, F10) are recorded for gameplay but MUST fall
+            // through to DefWindowProc — otherwise Windows never processes Alt+F4 (→ WM_CLOSE),
+            // Alt+Space (system menu), or F10 (menu activation). Returning zero here swallowed
+            // them (F05); returning DefWindowProc preserves system behaviour.
+            case Win32Constants.WM_SYSKEYDOWN:
+            {
+                int vk = (int)wParam.ToInt64();
+                Key key = VirtualKeyMapper.Map(vk);
+                if (key != Key.Unknown)
+                {
+                    InputQueue.Enqueue(new KeyPressedEvent(key));
+                }
+                return Win32Api.DefWindowProc(hWnd, msg, wParam, lParam);
+            }
+            case Win32Constants.WM_SYSKEYUP:
+            {
+                int vk = (int)wParam.ToInt64();
+                Key key = VirtualKeyMapper.Map(vk);
+                if (key != Key.Unknown)
+                {
+                    InputQueue.Enqueue(new KeyReleasedEvent(key));
+                }
+                return Win32Api.DefWindowProc(hWnd, msg, wParam, lParam);
             }
 
             // V0.C.1: mouse input

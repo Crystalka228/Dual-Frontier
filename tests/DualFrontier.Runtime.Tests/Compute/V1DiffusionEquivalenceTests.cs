@@ -52,7 +52,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Isotropic_uniform_D_matches_CPU_kernel_within_tolerance()
     {
         const int W = 32, H = 32;
@@ -110,7 +110,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
             $"Max abs diff observed: {maxAbsDiff:F6}");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Isotropic_corner_source_reflective_boundary_matches_CPU_within_tolerance()
     {
         // V1-8 edge case: source at corner (0,0) exercises the reflective-boundary
@@ -152,7 +152,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
         AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, "iso corner reflective");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Isotropic_decay_only_no_diffusion_matches_CPU_within_tolerance()
     {
         // V1-8 edge case: D=0 ⇒ no flow, every cell decays independently
@@ -197,7 +197,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
         AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, "iso decay-only");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Isotropic_combined_diffusion_and_decay_matches_CPU_within_tolerance()
     {
         // V1-8 edge case: both terms active simultaneously. Verifies the combined
@@ -237,7 +237,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
         AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, "iso combined D+K");
     }
 
-    [Theory]
+    [WindowsOnlyTheory]
     [InlineData(1)]
     [InlineData(5)]
     [InlineData(10)]
@@ -281,7 +281,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
         AssertCellWiseEquivalent(cpuField, gpuField, W, H, IsotropicTolerance, $"iso iter={iterations}");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Anisotropic_wire_path_matches_CPU_kernel_within_tolerance()
     {
         const int W = 32, H = 32;
@@ -344,7 +344,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
             $"Max abs diff observed: {maxAbsDiff:F6}");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Isotropic_long_run_mass_conserved_and_matches_CPU_within_tolerance()
     {
         // V1-11 multi-iteration evolution + mass conservation invariant.
@@ -425,7 +425,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
             "after 50 iterations the field range has narrowed from the initial 100→0 spike");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Anisotropic_insulator_column_blocks_propagation_matches_CPU_within_tolerance()
     {
         // V1-10: full insulator column (D=0) blocks propagation на one side.
@@ -481,7 +481,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
         }
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Anisotropic_insulator_with_gap_propagates_through_gap_matches_CPU_within_tolerance()
     {
         // V1-10 extension: wall с gap. Flow channels through gap; CPU + GPU agree.

@@ -39,7 +39,7 @@ public sealed class TextureUploaderTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Upload_2x2Rgba_completes_without_error()
     {
         using var image = new VulkanImage(
@@ -64,7 +64,7 @@ public sealed class TextureUploaderTests : IDisposable
         image.ViewHandle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Upload_NullImage_Throws()
     {
         var uploader = new TextureUploader(_device, _allocator, _commandPool);
@@ -72,7 +72,7 @@ public sealed class TextureUploaderTests : IDisposable
         act.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Upload_EmptyPixels_Throws()
     {
         using var image = new VulkanImage(
@@ -86,7 +86,7 @@ public sealed class TextureUploaderTests : IDisposable
         act.Should().Throw<ArgumentException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void CreateFromPngImage_4x4_works()
     {
         // Synthetic decoded PNG with known RGBA pattern.

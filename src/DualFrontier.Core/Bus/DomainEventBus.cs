@@ -31,7 +31,7 @@ internal sealed class DomainEventBus
     /// Subscribes a handler for events of type <typeparamref name="TEvent"/>.
     /// Captures the calling thread's <see cref="SystemExecutionContext"/> (if
     /// any) so deferred dispatch can re-push the right guard. Duplicate
-    /// subscriptions (same handler reference) are ignored.
+    /// subscriptions (same handler — matched by delegate value equality) are ignored.
     /// </summary>
     public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
     {
@@ -47,7 +47,10 @@ internal sealed class DomainEventBus
         {
             for (int i = 0; i < list.Count; i++)
             {
-                if (ReferenceEquals(list[i].Original, handler))
+                // Delegate value equality (Target + Method), not ReferenceEquals: a method-group
+                // handler (e.g. OnFoo) allocates a fresh delegate instance on every conversion, so
+                // reference identity would never match and duplicates would accumulate (F19).
+                if (list[i].Original.Equals(handler))
                     return;
             }
             list.Add(sub);
@@ -55,8 +58,9 @@ internal sealed class DomainEventBus
     }
 
     /// <summary>
-    /// Unsubscribes a previously registered handler by reference equality.
-    /// No-op if the handler was never registered.
+    /// Unsubscribes a previously registered handler by delegate value equality, so a method-group
+    /// handler unsubscribes correctly even though each conversion produces a distinct delegate
+    /// instance. No-op if the handler was never registered.
     /// </summary>
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
     {
@@ -68,7 +72,8 @@ internal sealed class DomainEventBus
         {
             for (int i = list.Count - 1; i >= 0; i--)
             {
-                if (ReferenceEquals(list[i].Original, handler))
+                // Delegate value equality (Target + Method), not ReferenceEquals — see Subscribe (F19).
+                if (list[i].Original.Equals(handler))
                 {
                     list.RemoveAt(i);
                     return;

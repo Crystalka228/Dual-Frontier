@@ -31,7 +31,7 @@ public sealed class VulkanPipelineLayoutTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Empty_layout_creates_successfully()
     {
         // V0.B regression: empty layout (no descriptor sets, no push constants) must still work.
@@ -39,7 +39,7 @@ public sealed class VulkanPipelineLayoutTests : IDisposable
         layout.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Push_constant_range_creates_successfully()
     {
         // S-LOCK-8: push constant range for Camera MVP (vertex stage, 64 bytes = mat4).
@@ -54,7 +54,7 @@ public sealed class VulkanPipelineLayoutTests : IDisposable
         layout.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Multiple_push_constant_ranges_create_successfully()
     {
         var ranges = new[]
@@ -66,7 +66,7 @@ public sealed class VulkanPipelineLayoutTests : IDisposable
         layout.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Dispose_idempotent()
     {
         var layout = new VulkanPipelineLayout(_device);

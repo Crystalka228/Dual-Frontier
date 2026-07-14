@@ -59,7 +59,7 @@ public sealed class TileMapTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Valid_Args_Succeeds()
     {
         using var map = new TileMap(width: 10, height: 5, tileSize: 16f, atlas: _testAtlas);
@@ -69,35 +69,35 @@ public sealed class TileMapTests : IDisposable
         map.TotalTiles.Should().Be(50);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Zero_Width_Throws()
     {
         Action act = () => new TileMap(width: 0, height: 5, tileSize: 16f, atlas: _testAtlas);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Zero_Height_Throws()
     {
         Action act = () => new TileMap(width: 5, height: 0, tileSize: 16f, atlas: _testAtlas);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Zero_TileSize_Throws()
     {
         Action act = () => new TileMap(width: 5, height: 5, tileSize: 0f, atlas: _testAtlas);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_Null_Atlas_Throws()
     {
         Action act = () => new TileMap(width: 5, height: 5, tileSize: 16f, atlas: null!);
         act.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void SetTile_With_OutOfBounds_X_Throws()
     {
         using var map = new TileMap(width: 5, height: 5, tileSize: 16f, atlas: _testAtlas);
@@ -105,7 +105,7 @@ public sealed class TileMapTests : IDisposable
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void SetTile_With_OutOfBounds_Y_Throws()
     {
         using var map = new TileMap(width: 5, height: 5, tileSize: 16f, atlas: _testAtlas);
@@ -113,7 +113,7 @@ public sealed class TileMapTests : IDisposable
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void SetTile_With_Negative_Coords_Throws()
     {
         using var map = new TileMap(width: 5, height: 5, tileSize: 16f, atlas: _testAtlas);
@@ -121,7 +121,7 @@ public sealed class TileMapTests : IDisposable
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void GetTile_ReturnsSetValue()
     {
         using var map = new TileMap(width: 5, height: 5, tileSize: 16f, atlas: _testAtlas);
@@ -130,7 +130,7 @@ public sealed class TileMapTests : IDisposable
         map.GetTile(2, 3).Should().Be(region);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Default_Tints_Are_Opaque_White()
     {
         using var map = new TileMap(width: 5, height: 5, tileSize: 16f, atlas: _testAtlas);
@@ -138,7 +138,7 @@ public sealed class TileMapTests : IDisposable
         map.GetTint(4, 4).Should().Be(SpriteVertex.WhiteTint);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void SetTile_With_Tint_Preserves_Tint()
     {
         using var map = new TileMap(width: 5, height: 5, tileSize: 16f, atlas: _testAtlas);
@@ -147,7 +147,7 @@ public sealed class TileMapTests : IDisposable
         map.GetTint(0, 0).Should().Be(customTint);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Use_After_Dispose_Throws_On_Submit()
     {
         var map = new TileMap(width: 5, height: 5, tileSize: 16f, atlas: _testAtlas);

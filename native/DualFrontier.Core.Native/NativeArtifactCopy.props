@@ -1,0 +1,40 @@
+<Project>
+  <!--
+    Shared copy of the DualFrontier.Core.Native runtime artifact into each consumer's output
+    directory for non-Windows hosts (F14). The Windows .dll is already copied by every consumer's
+    own <None> item; this file adds the Linux .so and macOS .dylib so managed test / benchmark /
+    launcher projects can P/Invoke the native library on Linux and macOS too — previously only the
+    .dll was copied, so every non-Windows run failed with DllNotFoundException.
+
+    Paths resolve relative to THIS file (native/DualFrontier.Core.Native/), so every importer sees
+    the same location regardless of its own directory depth. Both the multi-config (build/Release/)
+    and single-config (build/) CMake output layouts are covered. Every item is Exists-gated: when a
+    platform's artifact has not been built, the item is simply skipped, so importing this file is a
+    no-op on hosts (and in CI stages) where only the .dll — or nothing — is present.
+  -->
+  <ItemGroup>
+    <!-- Linux shared object (CMake output: lib<name>.so). -->
+    <None Include="$(MSBuildThisFileDirectory)build\Release\libDualFrontier.Core.Native.so"
+          Condition="Exists('$(MSBuildThisFileDirectory)build\Release\libDualFrontier.Core.Native.so')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>libDualFrontier.Core.Native.so</Link>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)build\libDualFrontier.Core.Native.so"
+          Condition="Exists('$(MSBuildThisFileDirectory)build\libDualFrontier.Core.Native.so')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>libDualFrontier.Core.Native.so</Link>
+    </None>
+
+    <!-- macOS dynamic library (CMake output: lib<name>.dylib). -->
+    <None Include="$(MSBuildThisFileDirectory)build\Release\libDualFrontier.Core.Native.dylib"
+          Condition="Exists('$(MSBuildThisFileDirectory)build\Release\libDualFrontier.Core.Native.dylib')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>libDualFrontier.Core.Native.dylib</Link>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)build\libDualFrontier.Core.Native.dylib"
+          Condition="Exists('$(MSBuildThisFileDirectory)build\libDualFrontier.Core.Native.dylib')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>libDualFrontier.Core.Native.dylib</Link>
+    </None>
+  </ItemGroup>
+</Project>

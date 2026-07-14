@@ -111,8 +111,15 @@ public sealed class AssetManager : IDisposable
     {
         ThrowIfDisposed();
         string combined = Path.GetFullPath(Path.Combine(_rootDirectory, path.RelativePath));
-        // Path traversal protection — combined must be inside root (case-insensitive on Windows).
-        if (!combined.StartsWith(_rootDirectory, StringComparison.OrdinalIgnoreCase))
+        // Path traversal protection — combined must stay inside root. The comparison's case
+        // sensitivity must track the host filesystem: Windows paths are case-insensitive, but on
+        // case-sensitive volumes (Linux, case-sensitive macOS) an unconditional OrdinalIgnoreCase
+        // check treats a case-variant path as inside the root when it actually resolves elsewhere,
+        // letting it escape (F03). Ordinal on non-Windows can only reject more, never admit an escape.
+        StringComparison pathComparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+        if (!combined.StartsWith(_rootDirectory, pathComparison))
         {
             throw new InvalidOperationException(
                 $"Asset path escapes root directory: {path.RelativePath}");

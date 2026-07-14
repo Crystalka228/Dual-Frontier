@@ -110,4 +110,6 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
+  <!-- F14: also copy the Linux .so / macOS .dylib native artifact (Exists-gated). -->
+  <Import Project="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\NativeArtifactCopy.props" />
 </Project>

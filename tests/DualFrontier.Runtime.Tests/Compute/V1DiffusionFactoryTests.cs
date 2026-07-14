@@ -13,7 +13,7 @@ namespace DualFrontier.Runtime.Tests.Compute;
 /// </summary>
 public sealed class V1DiffusionFactoryTests
 {
-    [Fact]
+    [WindowsOnlyFact]
     public void CreateFieldStorageBinding_attaches_caller_world_к_runtime_Vulkan()
     {
         var options = new RuntimeOptions
@@ -31,7 +31,7 @@ public sealed class V1DiffusionFactoryTests
         binding.PipelineCount.Should().Be(0);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void CreateFieldStorageBinding_throws_for_null_world()
     {
         var options = new RuntimeOptions
@@ -46,7 +46,7 @@ public sealed class V1DiffusionFactoryTests
         act.Should().Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void CreateV1DiffusionPipeline_registers_pipeline_with_nonzero_id()
     {
         var options = new RuntimeOptions
@@ -65,7 +65,7 @@ public sealed class V1DiffusionFactoryTests
         binding.PipelineCount.Should().Be(1);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void CreateV1DiffusionPipeline_caches_SPIRV_across_calls()
     {
         // Second call should reuse cached bytecode и still produce а distinct pipeline.
@@ -85,7 +85,7 @@ public sealed class V1DiffusionFactoryTests
         binding.PipelineCount.Should().Be(2);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void CreateV1DiffusionPipeline_dispatch_round_trip_works_via_factory()
     {
         // End-to-end through the factory: register pipeline + register field + dispatch.

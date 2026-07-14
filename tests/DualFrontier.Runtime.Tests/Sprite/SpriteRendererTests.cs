@@ -73,7 +73,7 @@ public sealed class SpriteRendererTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Renderer_constructs_with_descriptor_pool_and_vertex_buffer()
     {
         using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -82,7 +82,7 @@ public sealed class SpriteRendererTests : IDisposable
         renderer.MaxSpritesPerFrame.Should().Be(100);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Disposed_renderer_throws_on_use()
     {
         var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -92,7 +92,7 @@ public sealed class SpriteRendererTests : IDisposable
         act.Should().Throw<ObjectDisposedException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Submit_Without_BeginFrame_Throws()
     {
         using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -101,7 +101,7 @@ public sealed class SpriteRendererTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void BeginFrame_Twice_Without_EndFrame_Throws()
     {
         using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -119,7 +119,7 @@ public sealed class SpriteRendererTests : IDisposable
         }
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Constructor_With_MaxSpritesPerFrame_Over_MaxUint16_Throws()
     {
         Action act = () => new SpriteRenderer(_device, _allocator, _pipeline,

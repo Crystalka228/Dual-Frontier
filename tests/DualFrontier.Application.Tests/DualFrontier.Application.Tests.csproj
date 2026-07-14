@@ -33,4 +33,6 @@
       <Link>DualFrontier.Core.Native.dll</Link>
     </None>
   </ItemGroup>
+  <!-- F14: also copy the Linux .so / macOS .dylib native artifact (Exists-gated). -->
+  <Import Project="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\NativeArtifactCopy.props" />
 </Project>

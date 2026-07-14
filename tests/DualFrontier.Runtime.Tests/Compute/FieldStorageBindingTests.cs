@@ -38,7 +38,7 @@ public sealed class FieldStorageBindingTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Attach_then_register_then_dispatch_round_trip()
     {
         var binding = new FieldStorageBinding(_world);
@@ -63,7 +63,7 @@ public sealed class FieldStorageBindingTests : IDisposable
         dispatched.Should().BeTrue("V1+ dispatch through async compute queue + fence wait completes");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Attach_without_async_compute_throws()
     {
         // Defense-in-depth: if AsyncComputeQueueFamilyIndex is null (К-L19 hardware tier
@@ -79,7 +79,7 @@ public sealed class FieldStorageBindingTests : IDisposable
         act.Should().NotThrow("К-L19 hardware satisfies the precondition");
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Register_without_attach_returns_zero()
     {
         var binding = new FieldStorageBinding(_world);

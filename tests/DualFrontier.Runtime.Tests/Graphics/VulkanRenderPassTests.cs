@@ -38,14 +38,14 @@ public sealed class VulkanRenderPassTests : IDisposable
         _window.Dispose();
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void RenderPass_construct_returns_non_zero_handle()
     {
         using var renderPass = new VulkanRenderPass(_device, _swapchain.Format);
         renderPass.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void Framebuffer_per_swapchain_image_constructs_successfully()
     {
         using var renderPass = new VulkanRenderPass(_device, _swapchain.Format);
