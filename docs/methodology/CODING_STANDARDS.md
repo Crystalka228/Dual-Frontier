@@ -6,7 +6,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.1.2"
+version: "2.1.3"
 next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-CODING_STANDARDS
 ---
@@ -402,12 +402,15 @@ its closing phase or cascade.
 | `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 82 matches / 51 files |
 | `TODO` | `rg --count-matches '\bTODO\b' src/ --type cs` (case-sensitive) | 136 matches / 53 files |
 | `Phase 6` | `rg --count-matches 'Phase 6' src/ --type cs` | 23 matches / 11 files |
-| `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 8 matches / 7 files |
+| `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 10 matches / 9 files |
 
 Baselines refreshed 2026-07-01 (the F-25 owed fold): `stub` 48/18 → 51/20 and
 `deferred` 79/48 → 82/51 had drifted at the 2026-06-12 comment-citation pass
 (F-25 census-delta record); the compiled census meta-tests have carried the live
-values since Phase β. `TODO` / `Phase 6` / `not yet` unchanged.
+values since Phase β. `not yet` refreshed 2026-07-15: 8/7 → 10/9 — the CX-06 +
+CX-21 fix-comment markers landed at Codex `61f08ef` without a same-commit delta,
+recorded here as the F-33 census-delta (CODEX_CLOSURE C2). `TODO` / `Phase 6`
+unchanged.
 
 ### §5.3 — `DFK-WAIVER` — the suppression law
 
@@ -699,6 +702,7 @@ here **before** the brief locks.
 
 | Version | Date | Change |
 |---|---|---|
+| **2.1.3** | 2026-07-15 | CODEX_CLOSURE cascade census-pin refresh (§5.2): `not yet` 8/7 → 10/9 — the CX-06 + CX-21 fix-comment markers landed at Codex `61f08ef` without a same-commit census-delta; recorded here + as ROADMAP F-33 (operator-ruled FOLD of the Skarlet-gate H2b). CensusMetaTests green post-refresh. **PATCH.** |
 | **2.1.2** | 2026-07-02 | A'.9.1 Phase δ rider — commit-vocabulary historical reconciliation: §8.1 historical-prefix note extended with the full pre-law observed scope-token census (16 tokens over 53 commits, all predating the 2026-06-11 codification) + the unprefixed-era note (81 subjects: 42 merges + 39 plain). Descriptive correction of the incomplete observation — no normative change; post-codification history is 100% in-vocabulary (no live violation). **PATCH.** |
 | **2.1.1** | 2026-07-01 | A'.9.1 Phase γ propagation PATCH (METHODOLOGY §12.7 step 9 / SYNTH-2 + §10.1 rule 5 cross-doc propagation): §9 «Analyzer enforcement: none today» → live Release 1.0 enforcement (16 build-breaking + 1 IDE-only; `.editorconfig` primed; `Shipped.md` populated); §5.1 + §5.3 DFL025_A / DF999 «Planned»-stub claims → detecting-since-β, enforcing-since-γ; §5.3 Diagnostic-ID form → underscore per the Phase β Crystalka-ratified descriptor-ID adjudication (the dotted/hyphen forms are Roslyn-invalid — the paragraph as written would have produced no-op waivers); §5.3 rule 5 waiver census → current pin 2 (dated); §5.2 `stub`/`deferred` baselines 48/18 → 51/20, 79/48 → 82/51 (the F-25 owed fold; live values carried by the compiled meta-tests since Phase β); stale v2.0.0 end-marker synced. **PATCH.** |
 | **2.1.0** | 2026-06-12 | §6.1 citation-form rule added (Architecture Truth Cascade, D11): internal citations use stable identifiers + section topics; version pins of living documents and URL-fragment anchors forbidden in living prose and code comments (pins live only inside dated records). Codifies the two breakage classes the 2026-06-11 ARCHITECTURE TRUTH RECON surfaced, in the same cascade that fixed the found instances (SYNTH-2). **MINOR.** |
@@ -707,4 +711,4 @@ here **before** the brief locks.
 
 ---
 
-**End of CODING_STANDARDS.md v2.1.2 LOCKED**
+**End of CODING_STANDARDS.md v2.1.3 LOCKED**

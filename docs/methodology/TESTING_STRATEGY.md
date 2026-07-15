@@ -6,7 +6,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.2.0"
+version: "2.2.1"
 next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-TESTING_STRATEGY
 ---
@@ -305,7 +305,7 @@ One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Pattern
 | `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 82 / 51 |
 | `TODO` (case-sensitive) | `rg --count-matches '\bTODO\b' src/ --type cs` | 136 / 53 |
 | `Phase 6` (literal) | `rg --count-matches 'Phase 6' src/ --type cs` | 23 / 11 |
-| `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 8 / 7 |
+| `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 10 / 9 |
 
 Same exactness-pin contract as §4.1: a commit that moves a family's count records the delta in its commit body (`CODING_STANDARDS.md §8`); the closure audit re-measures all five (§7). The baselines impose **no retroactive cleanup obligation** — existing sites are baseline-registered and normalized opportunistically; the census exists so that drift is visible, not to manufacture work. Implementation state: compiled meta-tests assert all five families since Phase β; the rg expressions remain the closure-audit cross-check (§7).
 
@@ -508,6 +508,13 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.2.1 -- 2026-07-15 -- CODEX_CLOSURE cascade (PATCH).** Per tools/briefs/CODEX_CLOSURE_BRIEF.md.
+Census-pin refresh (§4.2): `not yet` 8/7 -> 10/9. The two new markers are the CX-06
+(`Runtime.cs` present-family "not yet selected") and CX-21 (`TerrainKind.cs` "not yet
+set") fix comments that landed at Codex `61f08ef` without a same-commit census-delta record
+(operator-ruled FOLD of the Skarlet-gate H2b; recorded as ROADMAP F-33). CensusMetaTests
+green post-refresh. Pin-baseline refresh only; no taxonomy, contract, or semantics change.
 
 **v2.2.0 -- 2026-07-04 -- F-29 native-scheduler cascade (MINOR).** Per tools/briefs/F29_NATIVE_SCHEDULER_BRIEF.md.
 New shared-native-singleton test-isolation law (§2.8): singleton-touching classes join one shared xUnit

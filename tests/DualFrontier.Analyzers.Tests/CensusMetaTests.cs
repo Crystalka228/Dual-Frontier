@@ -112,7 +112,7 @@ public sealed class CensusMetaTests
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
     [InlineData("deferred", @"\bdeferred\b", true, 82, 51)]
     [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
-    [InlineData("not yet", "not yet", true, 8, 7)]
+    [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
     {
         // TESTING_STRATEGY §4.2 — marker-family census. Live pins as of Phase β. The
