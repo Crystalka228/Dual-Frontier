@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.1"
+version: "0.1.2"
 next_review_due: post-ratification closure
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-CONCURRENCY_AND_MEMORY_MODEL
 ---
@@ -256,7 +256,7 @@ Priority on ratification: (1) the deferred-catch asymmetry fix + its regression 
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — Part 0 invariants, §1.4 threading model, §1.7 span protocol, Part 7 error semantics.
 - [KERNEL_FULL_NATIVE_SCHEDULER](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) — Items 15 (batched callback ABI), 18 (TLA+), 32 (T0-T7 teardown).
 - [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — render-thread merge, fence sync, `waitIdle` policy (§2/§6 fold target).
-- [FIELDS](./FIELDS.md) · [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) · [ISOLATION](./ISOLATION.md) · [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.5 · [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) (the A0 sibling contract).
+- [FIELDS](./FIELDS.md) · [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) · [ISOLATION](./historical/ISOLATION.md) · [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.5 · [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) (the A0 sibling contract).
 
 ## Change history
 

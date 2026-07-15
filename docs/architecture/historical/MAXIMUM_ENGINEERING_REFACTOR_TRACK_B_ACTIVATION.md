@@ -4,10 +4,10 @@
 register_id: DOC-A-MAX_ENG_REFACTOR_TRACK_B
 category: A
 tier: 1
-lifecycle: Draft
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "0.1.1"
-next_review_due: 2027-05-12
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MAX_ENG_REFACTOR_TRACK_B
 ---
 ---

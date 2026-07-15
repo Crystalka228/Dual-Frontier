@@ -4,10 +4,10 @@
 register_id: DOC-A-MOD_PIPELINE
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "0.3"
-next_review_due: 2027-05-12
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_PIPELINE
 ---
 # Dual Frontier — MOD_PIPELINE

@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.1"
+version: "0.1.2"
 next_review_due: post-ratification closure
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
 ---
@@ -14,7 +14,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERSISTENCE_SNAPSHOT
 
 > **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** Produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Becomes normative only upon Crystalka ratification per FRAMEWORK.md §7. Until then no document may cite it as authority; conflicts resolve in favor of existing LOCKED docs.
 >
-> **Scope note.** This skeleton constrains; it does not schedule. Save-system implementation remains deferred to its milestone. The purpose is that ECS, Fields, Event Bus, Mod OS and GPU pipeline stop choosing mutually incompatible persistence semantics before that milestone. The deferral itself is ratified and correct: `SaveSystem.cs` `throw new NotImplementedException` is "**deliberate** state", and the save system "will design against the fully-completed kernel + runtime + mod foundation, not against the migration-in-progress moving target" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md §8.1](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md), lines 652–659). This contract holds invariants and boundaries only — no file formats, no I/O design, no implementation.
+> **Scope note.** This skeleton constrains; it does not schedule. Save-system implementation remains deferred to its milestone. The purpose is that ECS, Fields, Event Bus, Mod OS and GPU pipeline stop choosing mutually incompatible persistence semantics before that milestone. The deferral itself is ratified and correct: `SaveSystem.cs` `throw new NotImplementedException` is "**deliberate** state", and the save system "will design against the fully-completed kernel + runtime + mod foundation, not against the migration-in-progress moving target" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md §8.1](./historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md), lines 652–659). This contract holds invariants and boundaries only — no file formats, no I/O design, no implementation.
 
 **Ratification path.** Either of two destinations is acceptable; the invariants must not fork:
 
@@ -35,7 +35,7 @@ Normative statements below carry `PS-n` ids so later documents can cite a specif
 Persistence is deferred everywhere, yet every subsystem has already chosen lifetime/consistency semantics that a future save system must compose with:
 
 - [FIELDS.md](./FIELDS.md) §Save/load (lines 296–305): blob = primary buffer + conductivity + flags; back buffer not serialized; width/height mismatch = load error.
-- K-L3.1: Path β managed components are "runtime-only (Q4.b lock) — not persisted by save system" ([K_L3_1_AMENDMENT_PLAN.md](./K_L3_1_AMENDMENT_PLAN.md) line 91); "save system reconstructs on load post-G-series" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md) line 245).
+- K-L3.1: Path β managed components are "runtime-only (Q4.b lock) — not persisted by save system" ([K_L3_1_AMENDMENT_PLAN.md](./K_L3_1_AMENDMENT_PLAN.md) line 91); "save system reconstructs on load post-G-series" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md](./historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md) line 245).
 - KFNS Item 31 ([KERNEL_FULL_NATIVE_SCHEDULER.md](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) lines 924–933): background tier event queue persists with the save file (`df_scheduler_serialize_background_queue`); [EVENT_BUS.md](./EVENT_BUS.md) line 59: "versioned wire format, schema v1".
 - K-L16 ([KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) line 65): "Pipeline drain orderly at save/pause; pipeline refill orderly at load/resume" — versus [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) §7.2.0 (line 1281): save snapshots display tick state, "pipeline drain не required at save time". §1 reconciles these.
 - VULKAN §7.2.1 (lines 1292–1295): "Save/load must produce reproducible state on load"; CPU reference kernels "produce canonical state for save snapshots" (design mitigation, explicitly not implemented).
@@ -140,7 +140,7 @@ Persistent identity is where today's code actively contradicts the invariants th
 3. **Path β reconstruction contract** (§2): "save system reconstructs on load post-G-series" (MIGRATION_PLAN line 245) names no mechanism — mod-driven rebuild during load-time registration, event replay, or lazy fault-in. Must be pinned before any gameplay state of consequence lands in Path β.
 4. **Background queue at saturation:** interaction of the persisted queue with the size cap and drop-oldest policy (KFNS Q-N-45; EVENT_BUS line 59 — 10 MB default cap) at the snapshot boundary.
 5. **Incremental/delta saves — out of scope for this contract.** The codec README plans delta encoding (`src/DualFrontier.Persistence/README.md:60–62`); nothing here forbids it, but the §1 boundary invariant applies to every delta base and every delta alike.
-6. **Orphaned codec layer disposition.** `DualFrontier.Persistence` (RLE, quantization, range encoding, string pool + snapshot records) is functional but production-orphaned — only tests reference it; its "architectural redesign… happens when save system implementation begins" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md) §8.5, lines 687–689). Note the §3.1 tension: `EntityEncoder`'s version-0 range encoding is exactly the compression trick the generation law breaks — the redesign must resolve that (e.g., ranges + parallel version array), not inherit it.
+6. **Orphaned codec layer disposition.** `DualFrontier.Persistence` (RLE, quantization, range encoding, string pool + snapshot records) is functional but production-orphaned — only tests reference it; its "architectural redesign… happens when save system implementation begins" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md](./historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md) §8.5, lines 687–689). Note the §3.1 tension: `EntityEncoder`'s version-0 range encoding is exactly the compression trick the generation law breaks — the redesign must resolve that (e.g., ranges + parallel version array), not inherit it.
 7. **Async/copy-on-write saves.** Baseline assumption is a blocking save inside the quiesce window (bounded by KFNS Prediction 17's <100 ms initiation target); saving off a copied snapshot while simulation resumes is a later optimization that must not weaken §1.
 
 ## Invariant index

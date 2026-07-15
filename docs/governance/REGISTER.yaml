@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.27"
+register_version: "2.28"
 last_modified: "2026-07-15"
-last_modified_commit: "PENDING-R1"
+last_modified_commit: "PENDING-R2"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -75,23 +75,25 @@ documents:
     special_case_rationale: "Superseded by DOC-A-SCHEDULER_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_FULL_NATIVE_SCHEDULER.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: К10 specification document. Sister к K10_DELIBERATION_STATE.md (Project file, not register-tracked). Major amendment landed 2026-05-17 (v1.0 → v2.0) per К10 deliberation arc — 9 S surfaces ratified, 8 new К-L invariants + 2 sub-invariants (К-L6 SUPERSEDED + К-L7.1 sub + К-L12 through К-L19), 46 items, TLA+ scope. Tier 1 LOCKED status promoted at this enrollment. Requirements (К-L12 through К-L19) not yet enrolled as REQ entries; deferred к К-closure report (А'.8)."
 
   - id: DOC-A-MOD_OS
-    path: docs/architecture/MOD_OS_ARCHITECTURE.md
-    title: "Mod OS Architecture — Dual Frontier"
+    path: docs/architecture/historical/MOD_OS_ARCHITECTURE.md
+    title: "Mod OS Architecture — Dual Frontier (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-MOD_OS_ARCHITECTURE
     owner: Crystalka
     version: "1.12.0"
-    last_modified: "2026-06-12"
-    last_modified_commit: "9676f54"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
     last_review_event: "К10.3 v2 load-bearing commit 3/3 2026-05-20 — К-L18 amendments landed: §9.5 ALC unload chain extended 8-step → 9-step с Step 3.6 V resource cleanup placeholder (К10.3 v2 Item 42; managed wrapper VResourceCleanup returns vacuous success, native df_vulkan_unload_mod_resources lands V-cycle / К-extensions); §9.5.1 failure semantics extended с Step 3.6 inclusion + К-L18 quiescent state precondition rejection note; §9.7 «Hot reload К-L18 compliance» subsection added (SimulationStateController.PauseAsync + WaitForQuiescenceAsync + ResumeAsync pattern; mod management UI и hot reload tooling share enforcement). §11.2 ValidationErrorKind enum extended с 4 К10.3 v2 entries: QuiescentStatePreconditionViolated (К-L18; mod operation attempted while sim не paused либо pipeline in-flight); PipelineQuiescenceTimeout (К-L18; quiescence wait timeout); LayerCapabilityMismatch (К-L17; layer attribute/Type mismatch); VulkanModResourceCleanupFailed (К-L18 V scope; Step 3.6 placeholder; full implementation V-cycle). Predecessor commits 1/3 (К-L7.1+К-L16 reconciliation) + 2/3 (К-L17 §3.2 capability syntax) intact."
-    next_review_due: "2027-05-18"
+    next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-002, RISK-004, RISK-005, RISK-006]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+    special_case_rationale: "Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_OS_ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-VULKAN_SUBSTRATE
     path: docs/architecture/VULKAN_SUBSTRATE.md
@@ -116,23 +118,25 @@ documents:
     special_case_rationale: "Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases. Additionally supersedes G-series briefs DOC-D-G0..G9 per Q-G-2 LOCK + CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16). Additionally supersedes DOC-A-VISUAL_ENGINE + DOC-A-GODOT_INTEGRATION (visual-runtime authority moved to docs/architecture/historical/) per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16). Bidirectional integrity per FRAMEWORK §3.3.2."
 
   - id: DOC-A-MIGRATION_PLAN
-    path: docs/architecture/MIGRATION_PLAN_KERNEL_TO_VANILLA.md
-    title: "Migration Plan — Kernel-to-Vanilla (K-series → M-series)"
+    path: docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md
+    title: "Migration Plan — Kernel-to-Vanilla (K-series → M-series) (historical; executed portion is history, forward state lives in ROADMAP)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-C-ROADMAP
     owner: Crystalka
     version: "1.4.1"
-    last_modified: "2026-06-12"
-    last_modified_commit: "f2e6df2"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-10"
     last_review_event: "K-L3.1 amendment landing"
-    next_review_due: "2027-05-10"
+    next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-004]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING]
+    special_case_rationale: "Partially executed migration plan retired per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: executed K8.x portions are historical record; unexecuted forward state already lives in docs/ROADMAP.md «Native foundation tracks» (DD-2 precedent). superseded_by: DOC-C-ROADMAP — Crystalka acknowledgement of this scalar target is a ratification-checklist item (EVT-R4). Full text preserved at docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md."
 
   - id: DOC-A-FIELDS
     path: docs/architecture/FIELDS.md
@@ -171,35 +175,39 @@ documents:
     special_case_rationale: "Superseded by DOC-A-ARCHITECTURE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-CONTRACTS
-    path: docs/architecture/CONTRACTS.md
-    title: "Contract system"
+    path: docs/architecture/historical/CONTRACTS.md
+    title: "Contract system (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-CONTRACTS_V2
     owner: Crystalka
     version: "1.1"
-    last_modified: "2026-05-16"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-003]
+    special_case_rationale: "Superseded by DOC-A-CONTRACTS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/CONTRACTS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-ISOLATION
-    path: docs/architecture/ISOLATION.md
-    title: "System isolation"
+    path: docs/architecture/historical/ISOLATION.md
+    title: "System isolation (historical; merged into the MOD_OS authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-MOD_OS_ARCHITECTURE
     owner: Crystalka
     version: "1.1.2"
-    last_modified: "2026-07-14"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ISOLATION.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-THREADING
     path: docs/architecture/historical/THREADING.md
@@ -251,35 +259,39 @@ documents:
     reviewer: Crystalka
 
   - id: DOC-A-MODDING
-    path: docs/architecture/MODDING.md
-    title: "Writing mods"
+    path: docs/architecture/historical/MODDING.md
+    title: "Writing mods (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-MODDING_V2
     owner: Crystalka
     version: "1.1"
-    last_modified: "2026-05-16"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-005]
+    special_case_rationale: "Superseded by DOC-A-MODDING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MODDING.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-MOD_PIPELINE
-    path: docs/architecture/MOD_PIPELINE.md
-    title: "Mod Pipeline"
+    path: docs/architecture/historical/MOD_PIPELINE.md
+    title: "Mod Pipeline (historical; merged into the MOD_OS authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-MOD_OS_ARCHITECTURE
     owner: Crystalka
     version: "0.3"
-    last_modified: "2026-05-16"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_PIPELINE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-GODOT_INTEGRATION
     path: docs/architecture/historical/GODOT_INTEGRATION.md
@@ -361,36 +373,38 @@ documents:
     reviewer: Crystalka
 
   - id: DOC-A-ARCHITECTURE_TYPE_SYSTEM
-    path: docs/architecture/ARCHITECTURE_TYPE_SYSTEM.md
-    title: "Architecture Type System — Attribute-as-Declaration Verification"
+    path: docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md
+    title: "Architecture Type System — Attribute-as-Declaration Verification (historical; DF_TS program retired — superseded by the ANALYZER_RULES authored rework)"
     category: A
     tier: 1
-    lifecycle: Draft
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-ANALYZER_RULES_V2
     owner: Crystalka
     version: "0.1.1"
-    last_modified: "2026-06-12"
-    last_modified_commit: "f2e6df2"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
-    special_case_rationale: "Draft (not LOCKED) — Track B verification activation pending; v0.1 sketch authoring stage"
+    special_case_rationale: "DF_TS analyzer program retired per session finding N-13 (anchored on the runtime guard deleted 2026-05-14; zero DF_TS rules ever built; shipped DFK regime structurally incompatible). Superseded by DOC-A-ANALYZER_RULES_V2 §5 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Full text preserved at docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md. Prior rationale: Draft (not LOCKED) — Track B verification activation pending; v0.1 sketch authoring stage"
 
   - id: DOC-A-MAX_ENG_REFACTOR_TRACK_B
-    path: docs/architecture/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md
-    title: "Track B Activation — Type System Verification"
+    path: docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md
+    title: "Track B Activation — Type System Verification (historical; DF_TS program retired — superseded by the ANALYZER_RULES authored rework)"
     category: A
     tier: 1
-    lifecycle: Draft
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-ANALYZER_RULES_V2
     owner: Crystalka
     version: "0.1.1"
-    last_modified: "2026-06-12"
-    last_modified_commit: "f2e6df2"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
-    special_case_rationale: "Draft — Track B activation pending Phase A'.9 analyzer milestone; v0.1 conceptual draft"
+    special_case_rationale: "Track B activation brief retired with the DF_TS program per session finding N-13 (pre-activation invariant falsified by A'.9.1; trigger event stale after Option-c reordering). Superseded by DOC-A-ANALYZER_RULES_V2 §5 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Full text preserved at docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md. Prior rationale: Draft — Track B activation pending Phase A'.9 analyzer milestone; v0.1 conceptual draft"
 
   - id: DOC-A-COMBO_RESOLUTION
     path: docs/architecture/COMBO_RESOLUTION.md
@@ -686,22 +700,23 @@ documents:
     special_case_rationale: "Tier 1 AUTHORED override per Q-N-8-4 LOCKED 2026-05-23 amendment к Meta-Q1 Session 1 LOCKED commitment. К-closure report carries load-bearing material (К-L14 canonical text §1.2 + К-Lxx invariants enumeration §2 + К-L14 evidence baseline 9 verifications §3 + К-extensions designation §4.3 + Lessons promotion §6 + Roslyn rules §7 + forward sequencing §9) = architectural authority surface, NOT pure history. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy. Initial lifecycle AUTHORED (not LOCKED); LOCKED transition deferred к downstream review when forward evidence accumulates (e.g., 6 months post-closure across К-extensions cascades + V substrate evolution + A'.9 Roslyn analyzer milestone + Mod API lock). К-L14 canonical text content (per Q-N-8-2 verbatim) is LOCKED within AUTHORED document body — sub-element LOCK within parent AUTHORED parallel к К-L7+К-L7.1 / К-L15+К-L15.1 sub-invariant precedent."
 
   - id: DOC-A-ANALYZER_RULES
-    path: docs/architecture/ANALYZER_RULES.md
-    title: "DualFrontier Roslyn Analyzer Rule Specifications"
+    path: docs/architecture/historical/ANALYZER_RULES.md
+    title: "DualFrontier Roslyn Analyzer Rule Specifications (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: AUTHORED-SKELETON
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-ANALYZER_RULES_V2-SKELETON
     owner: Crystalka
     version: "0.4.1"
-    last_modified: "2026-07-02"
-    last_modified_commit: "0411bb0"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
     last_review_event: "Standing-Law cascade C6 (4a67a22) — v0.1 → v0.2.0 structural separation per drift report §6.3.2 (the prime dual-load specimen, bidirectional drift): §4 rewritten to stub-truth «17 stubs — detection PENDING Phase β» single registry (shipped Info + clearly-labeled Phase-γ-target columns; descriptor-ID convention DFK003.1/DFL025-A vs underscore file names; composition 8 P0 + 4 P1 + DFK013 + DFK016 + 2 DFL + DF999 = 17 per S-LOCK-4); roadmap load EXTRACTED → docs/ROADMAP.md NEW «Analyzer track» section (§4.1/§4.2 promotion columns, §5 К-L20 family, §6 hardware tier, §10.5 forward plan, §11 lifecycle forward — one-line pointers left at each site); §7/§8 reframed as realized decision records; NEW §12 Suppression defers by citation to CODING_STANDARDS §5.3 DFK-WAIVER; phantom MOD_API_CONTRACT reference resolved to an explicit forward-reference (К-L20 LOCK cascade authors it). DFK019.A Phase-γ target recorded Warning per canonical K_CLOSURE §7.2 (v0.1 internal §4.2-vs-§10.1 conflict resolved + footnoted → F-12 Crystalka ratification before Phase γ). Lifecycle stays AUTHORED-SKELETON — Phase β mutates §4 next. Prior context: A'.8 enrollment (Commit 5, S-LOCK-10); A'.9.1 Phase α Commit 5 structural reorganization."
-    next_review_due: "2027-06-11"
+    next_review_due: "null"
     reviewer: Crystalka
-    special_case_rationale: "Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification."
+    special_case_rationale: "Superseded by DOC-A-ANALYZER_RULES_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ANALYZER_RULES.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification."
 
   # === Tier 2 Live trackers (Category C) ===
 
@@ -728,6 +743,7 @@ documents:
     category: C
     tier: 2
     lifecycle: Live
+    supersedes: [DOC-A-MIGRATION_PLAN]
     owner: Crystalka
     version: "Live"
     last_modified: "2026-07-15"
@@ -4789,10 +4805,10 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "0.1.1"
+    version: "0.1.2"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4874,10 +4890,10 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "0.1.1"
+    version: "0.1.2"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "PENDING-R2"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4973,6 +4989,78 @@ documents:
     next_review_due: "post-ratification closure"
     reviewer: Crystalka
     special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ECS (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Fixes the session C10 teaching defect (no EntityId(index,0) fabrication in examples; defect + fix documented per IDENTITY_AND_ABI_CONTRACT draft §2). Verified against code at HEAD 35364c2; predecessor remains the last-ratified reference."
+
+  - id: DOC-A-MOD_OS_ARCHITECTURE
+    path: docs/architecture/MOD_OS_ARCHITECTURE.md
+    title: "Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-MOD_OS, DOC-A-MOD_PIPELINE, DOC-A-ISOLATION]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor MERGING DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Cross-doc conflicts resolved by code truth at HEAD 35364c2: one unload chain (ModIntegrationPipeline order), one fault timing (accumulate-then-drain-at-next-Apply), one capability grammar (compiled regex), 15-member ValidationErrorKind; atomic-vs-best-effort reframed via the ENGINE_LIFECYCLE draft commit/reclaim split. Predecessors remain the last-ratified reference."
+
+  - id: DOC-A-MODDING_V2
+    path: docs/architecture/MODDING.md
+    title: "Writing mods (authored rework; guide, non-normative — every example passes the real v3 schema)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-MODDING]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-MODDING (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Guide role (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); manifest examples corrected to the real v3 schema; fictitious ALC refusal list replaced by the verified boundary (ModLoadContext.cs:29-54 — no blocklist); quickstart rebuilt on the fixture-proven shared-mod pattern. Verified at HEAD 35364c2."
+
+  - id: DOC-A-CONTRACTS_V2
+    path: docs/architecture/CONTRACTS.md
+    title: "Contract system (authored rework; evolution rules tightened, version-gate truth corrected)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-CONTRACTS]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-CONTRACTS (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Evolution rules tightened (new IGameServices property = breaking-for-implementers; record init-field caveated); version gate corrected against code (ContractsVersion.IsCompatible: exact-major both directions + minor.patch floor, production-wired — deeper than the session report's one-directional claim). Verified at HEAD 35364c2."
+
+  - id: DOC-A-ANALYZER_RULES_V2
+    path: docs/architecture/ANALYZER_RULES.md
+    title: "Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-ANALYZER_RULES, DOC-A-ARCHITECTURE_TYPE_SYSTEM, DOC-A-MAX_ENG_REFACTOR_TRACK_B]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R2"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (DOC-A-ARCHITECTURE_TYPE_SYSTEM + DOC-A-MAX_ENG_REFACTOR_TRACK_B → historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM — resolves session finding N-13. Family authority AS SHIPPED: 17 verified rules, Warning-tier + DFK-WAIVER law, 13 deferred with named gates; [SystemAccess]-completeness re-registered as a DEFERRED candidate. Verified at HEAD 35364c2 (census corrections: 57 test methods; stale SanctionedInteropSurface comment flagged)."
 
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
@@ -11449,3 +11537,50 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-A-ARCHITECTURE → SUPERSEDED, DOC-A-KERNEL → SUPERSEDED, DOC-A-KERNEL_FULL_NATIVE_SCHEDULER → SUPERSEDED, DOC-A-THREADING → SUPERSEDED, DOC-A-ECS → SUPERSEDED, DOC-A-ARCHITECTURE_V2 → AUTHORED (enrolled), DOC-A-KERNEL_ARCHITECTURE → AUTHORED (enrolled), DOC-A-SCHEDULER_ARCHITECTURE → AUTHORED (enrolled), DOC-A-THREADING_V2 → AUTHORED (enrolled), DOC-A-ECS_V2 → AUTHORED (enrolled)]
+
+  - id: EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM
+    date: "2026-07-15"
+    event: "Corpus rework cascade R2 (platform) — MOD_OS merge (3→1), ANALYZER family authority (DF_TS program retired), MIGRATION_PLAN retired to ROADMAP; 9 predecessors historical/SUPERSEDED, 4 successors AUTHORED"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-A-MOD_OS
+      - DOC-A-MOD_PIPELINE
+      - DOC-A-ISOLATION
+      - DOC-A-MODDING
+      - DOC-A-CONTRACTS
+      - DOC-A-ANALYZER_RULES
+      - DOC-A-ARCHITECTURE_TYPE_SYSTEM
+      - DOC-A-MAX_ENG_REFACTOR_TRACK_B
+      - DOC-A-MIGRATION_PLAN
+      - DOC-A-MOD_OS_ARCHITECTURE
+      - DOC-A-MODDING_V2
+      - DOC-A-CONTRACTS_V2
+      - DOC-A-ANALYZER_RULES_V2
+      - DOC-C-ROADMAP
+      - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+      - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+    commits:
+      range: "PENDING-R2"
+      key_commits: []
+    governance_impact: |
+      Owner-ratified corpus rework, cascade 2 of 4 (platform cluster). MOD_OS successor merges
+      three predecessors, resolving the recorded cross-doc conflicts by code truth (one unload
+      chain per ModIntegrationPipeline; one fault timing — accumulate-then-drain-at-next-Apply,
+      the three prior stories were all fiction vs code; one capability grammar; 15-member
+      ValidationErrorKind). ANALYZER_RULES successor becomes the single analyzer family authority
+      as shipped and formally retires the never-built DF_TS program (TYPE_SYSTEM + TRACK_B →
+      historical/SUPERSEDED; resolves N-13). MIGRATION_PLAN retired: executed portion historical,
+      forward state in ROADMAP «Native foundation tracks» (DD-2 precedent); DOC-C-ROADMAP gains
+      supersedes: [DOC-A-MIGRATION_PLAN] — scalar-target acknowledgement queued on the
+      ratification checklist. Deliberate authority-gap window extends to the platform cluster
+      (predecessors SUPERSEDED, successors AUTHORED; historical predecessors prevail on conflict
+      until ratification per FRAMEWORK §7).
+      Link-only patches (0.1.1 → 0.1.2): two AUTHORED drafts retargeted to historical/ for the
+      moved ISOLATION (CONCURRENCY_AND_MEMORY_MODEL) and MIGRATION_PLAN (PERSISTENCE_SNAPSHOT_CONTRACT).
+      ROADMAP mirror refresh surfaced a stale next_review_due (entry has no field; mirror said
+      2026-Q3) — mirror now reflects the entry; the missing-date gap is queued for ratification.
+      register_version 2.27 → 2.28; 305 → 309 documents; EVT 50 → 51.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-A-MOD_OS → SUPERSEDED, DOC-A-MOD_PIPELINE → SUPERSEDED, DOC-A-ISOLATION → SUPERSEDED, DOC-A-MODDING → SUPERSEDED, DOC-A-CONTRACTS → SUPERSEDED, DOC-A-ANALYZER_RULES → SUPERSEDED, DOC-A-ARCHITECTURE_TYPE_SYSTEM → SUPERSEDED, DOC-A-MAX_ENG_REFACTOR_TRACK_B → SUPERSEDED, DOC-A-MIGRATION_PLAN → SUPERSEDED, DOC-A-MOD_OS_ARCHITECTURE → AUTHORED (enrolled), DOC-A-MODDING_V2 → AUTHORED (enrolled), DOC-A-CONTRACTS_V2 → AUTHORED (enrolled), DOC-A-ANALYZER_RULES_V2 → AUTHORED (enrolled)]

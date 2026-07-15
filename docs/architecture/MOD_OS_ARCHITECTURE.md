@@ -1,219 +1,105 @@
 ﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-MOD_OS
+register_id: DOC-A-MOD_OS_ARCHITECTURE
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: AUTHORED
 owner: Crystalka
-version: "1.12.0"
-next_review_due: 2027-05-18
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_OS
+version: "0.1.0"
+next_review_due: post-ratification closure
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_OS_ARCHITECTURE
 ---
----
-title: Mod OS Architecture
-nav_order: 25
----
+# Mod OS Architecture
 
-# Mod OS Architecture — Dual Frontier
+The mod platform of Dual Frontier — topology, manifest, capabilities, `IModApi`, contracts, versioning, the integration pipeline, the lifecycle (one apply transaction, one unload chain, one fault path), the isolation model, and the threat model, stated once and verified against code.
 
-**Status:** LOCKED v1.12.0 — Phase 0 closed; the full amendment chronicle is in the version history below. Every architectural decision in this document is binding input to mod-system implementation work. Migration state authority is [docs/ROADMAP.md](../ROADMAP.md) (Mod-OS M-rows; see §11.1). Items marked **✓ LOCKED** reflect decisions taken during Phase 0 deliberation; deviation in implementation requires reopening this document, not improvisation in code.
+> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS, now SUPERSEDED), `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE, now SUPERSEDED), and `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION, now SUPERSEDED) — the three documents are **merged** here because they described one subsystem in three voices and had drifted into mutual contradiction (unload step order, fault-unload timing, enum size, capability grammar; session report §3 C7/C8, §6.1 N-8/N-9/N-11). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessors remain the last-ratified reference and prevail on conflict.
+> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated (all three predecessors) · [ ] D-1…D-7 lock texts re-verified against §§3–9 · [ ] §9 commit/reclaim framing cross-checked against the ENGINE_LIFECYCLE_AND_TRANSACTIONS ratification outcome.
 
-**Version history:**
+**Resolution law used throughout.** Where the three predecessors disagreed, the code is the truth. Every resolved conflict in this document names the winning behavior with a `file:line` anchor and retires the losing wording; the retirement is recorded in one line at the point of resolution, not in a chronicle.
 
-- v0.1 (initial draft) — initial specification of the mod-as-process model. Five strategic decisions locked; seven detail decisions (D-1 through D-7) collected in §12 as ⚠ DECISION pending human resolution.
-- v1.0 — Phase 0 closed. All seven open decisions resolved and locked. Implementation phases M1–M10 may begin.
-- v1.1 — non-semantic corrections from the first independent audit (M1–M3.1):
-  - §4.1: `Log()` parameter type is `ModLogLevel`, not `LogLevel`. The original name collided with `Microsoft.Extensions.Logging.LogLevel`; the implementation correctly chose a kernel-namespaced enum, and the spec is brought in line.
-  - §2.2: `dependencies[i].optional` (bool, default `false`) documented as a recognised optional flag on inter-mod dependencies. Discovered as `ModDependency.IsOptional` in the M1 implementation, kept on the strength of utility, and now ratified.
-  - No semantic changes. No locked decision is altered. M1–M3.1 implementations continue to comply.
-- v1.2 — non-semantic corrections from the M3 closure review:
-  - §3.6: hybrid enforcement formulation. The v1.0/v1.1 wording described capability checks as load-time only and the hot path as "free of permission lookups." The M2 implementation (commits `35dc5b2`, `0d5b32f`) added a runtime per-call check inside `RestrictedModApi.EnforceCapability` — a hash-set lookup measured negligible on the hot path — which is exactly what §4.2 and §4.3 already specify. v1.2 brings §3.6 in line with §4.2/§4.3 and the implementation: enforcement is hybrid, load-time as primary gate plus runtime as second-layer defence.
-  - §3.5 + §2.1: production components consumed by the §2.1 example manifest (`WeaponComponent`, `ArmorComponent`, `AmmoComponent`, `ShieldComponent`, `HealthComponent`) annotated with `[ModAccessible]` per D-1 LOCKED. The §2.1 example itself was expanded to include `kernel.read:AmmoComponent` and `kernel.read:ShieldComponent` — Vanilla.Combat requires both (ammo accounting per §11 of the original Phase 5 spec, shield damage routing per §6.4 of the GDD), but the v1.0/v1.1 example listed only three components as a sketch. v1.2 brings the example in line with what a real combat mod actually needs. Without these annotations the §2.1 example manifest would fail Phase C with `MissingCapability` — the spec example is now end-to-end loadable.
-  - §11.1: M3.4 added as deferred milestone (CI Roslyn analyzer per D-2 hybrid completion). M3.1, M3.2, M3.3 closed by M3 closure review; M3.4 unblocked when the first external (non-vanilla) mod author appears — runtime `CapabilityViolationException` already catches dishonest `[ModCapabilities]` attributes, so the analyzer is developer-experience tooling for early feedback before publication, not a runtime safety boundary.
-  - No semantic changes. No locked decision (D-1 through D-7) is altered. M3 implementations continue to comply.
-- v1.3 — non-semantic correction from the M4.3 implementation review:
-  - §2.2: `entryAssembly` and `entryType` rows in the manifest field reference table reworded from "ignored for `kind=shared`" to "must be empty for `kind=shared`". The v1.0–v1.2 wording contradicted §5.2 step 1, which explicitly requires these fields to be empty for shared mods. The M4.3 implementation (`ContractValidator` Phase F, commit `e0151d8`) enforces §5.2 wording — non-empty `entryAssembly` or `entryType` on a shared mod manifest produces `ValidationErrorKind.SharedModWithEntryPoint`. v1.3 brings §2.2 in line with §5.2 and the implementation.
-  - No semantic changes. No locked decision (D-1 through D-7) is altered. M4 implementations continue to comply.
-- v1.4 — non-semantic clarifications from the M7 pre-flight readiness review:
-  - §9.5 step 7: explicit GC pump protocol added. Each iteration of the `WeakReference` spin loop performs `GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect()` before re-checking `WeakReference.IsAlive`. The double-collect bracket is required because `WaitForPendingFinalizers` can resurrect finalizable graph nodes the first collect would have removed; the second collect picks those up, restoring monotonic progress. Default cadence: 100 iterations × 100 ms = 10 s timeout (matches the §9.5 step 7 v1.0 wording). The cadence is implementation-tunable; the GC pump bracket is mandatory. Without this clarification the v1.0 wording «spins on `WeakReference`» admits flaky implementations, and the §11.4 stop condition («WeakReference unload tests are flaky — any failure rate above 0%») would trigger spuriously. v1.4 brings §9.5 step 7 in line with the only stable implementation pattern.
-  - §9.5: new sub-section §9.5.1 «Failure semantics» added, locking the best-effort discipline already implicit in the chain. Steps 1–6 are sequential and best-effort: if any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. The `ModLoader.UnloadMod` swallowed `try/catch` around `mod.Instance.Unload()` (in place since M0) is consistent with this discipline. After step 6, if step 7 times out, the existing `ModUnloadTimeout` warning fires; the mod is removed from the active set regardless. There is no atomic-unload guarantee — `Unload` is conceptually irreversible (subscriptions removed cannot be re-attached without re-running `Subscribe`); the chain is structured so each step is a no-op if its predecessor failed (e.g. `RemoveSystems` on a mod with no registered systems is harmless). This formalises a discipline the M0–M6 implementation already follows; no new state is introduced to §9.1.
-  - No semantic changes. No locked decision (D-1 through D-7) is altered. No state added to §9.1. M0–M6 implementations continue to comply.
-- v1.5 — non-semantic correction from Audit Campaign Pass 2 (cumulative drift audit, 2026-05-01):
-  - §11.2: baseline enumeration of `ValidationErrorKind` expanded to include `IncompatibleContractsVersion` and `WriteWriteConflict` alongside `MissingDependency` and `CyclicDependency`. The v1.0–v1.4 wording «The current enum has `MissingDependency` and `CyclicDependency`» is declarative without a non-exhaustive qualifier (no `e.g.`, no `among others`); on a strict reading it implies a complete 2-member baseline. The actual baseline at every v1.x snapshot is 4 members — `IncompatibleContractsVersion` is used by `ContractValidator` Phase A (`ValidateContractsVersions`) for `RequiresContractsVersion` failures, and `WriteWriteConflict` is used by Phase B (`ValidateWriteWriteConflicts`) for component write-collision detection per §10.1 («Mod registers a system that conflicts with another mod's system»). Both errors existed before any M-phase migration; the spec wording understated the baseline. v1.5 brings §11.2 in line with `src/DualFrontier.Application/Modding/ValidationError.cs:9–83` (11 enum members total: 4 baseline + 7 migration additions, matching the §11.2 «migration adds» list).
-  - No semantic changes. No locked decision (D-1 through D-7) is altered. No state added to §9.1. M0–M7.3 implementations continue to comply.
-- v1.6 — ratification of GPU compute integration capabilities, gating K9 (field storage abstraction) and G0–G9 (Vulkan compute integration) milestones per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 LOCKED:
-  - §3.2: capability syntax extended with `field.*` and `pipeline.*` verbs. The `read`/`write` verbs apply only to entity-keyed components; field operations require dedicated verbs because the access pattern (point queries, dense spans, compute dispatch) is structurally distinct from entity component access. Pipeline registration is mod-side; pipeline dispatch is implicit through field dispatch and does not require a separate verb in v1.6 (deferred to v1.7 if cross-mod pipeline reuse becomes a feature).
-  - §3.5: kernel-provided capability set extended via new `[FieldAccessible]` annotation. Field types ship in vanilla mod assemblies (not the kernel), so kernel-provided field capabilities are the *infrastructure verbs* (e.g. `kernel.field.acquire`, `kernel.field.dispatch`); concrete field tokens (e.g. `mod.dualfrontier.vanilla.magic.field.read:vanilla.magic.mana`) are mod-provided and resolve through the dependency chain established in §3.4.
-  - §3.7: cross-check extended for `[FieldAccess]` and `[ComputePipelineAccess]` attributes on systems. The drift-prevention principle from §3.7 is preserved — manifest-vs-code mismatches surface as load-time errors, never silent.
-  - §4.6 NEW: `IModApi` v3 surface — `Fields` and `ComputePipelines` sub-APIs. (Historical note v1.6 framed v3 as additive over v2 with v2 mods continuing to load. v3 was subsequently made strict in K8.3+K8.4 cutover — v2 IModApi deleted entirely, manifest parser rejects any version other than `"3"`. See v1.8 amendment below.)
-  - §11.2: six new `ValidationErrorKind` entries (`FieldRegistrationConflict`, `InvalidFieldDimensions`, `FieldCapabilityMismatch`, `ComputePipelineCompilationFailed`, `ComputePipelineRegistrationConflict`, `ComputeUnsupportedWarning`). The first five are blocking errors; the sixth is a non-blocking warning when Vulkan 1.3 compute is unavailable and CPU fallback engages per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) "Failure modes → CPU fallback".
-  - §11.1: M3.5 added as deferred milestone — capability registry refresh for field types via `[FieldAccessible]` scan extension to `KernelCapabilityRegistry`. Unblocked at K9 in-progress.
-  - No semantic changes to v1.5 decisions. No locked decision (D-1 through D-7) is altered. K9 + G0–G9 implementations begin against this surface.
-- v1.7 — K-L3.1 bridge formalization applied (session 2026-05-10):
-  - §«Modding с native ECS kernel» (lines 1149–1150 v1.6): rewritten to reflect K-L3.1 — Path α (`unmanaged struct` via `RegisterComponent<T>`) and Path β (managed `class` via `[ManagedStorage]` + `RegisterManagedComponent<T>`) as first-class peers; cross-mod direct managed-path access structurally impossible by ALC isolation; within-mod cross-path access via dual `SystemBase` API.
-  - §3.5 D-1 LOCKED note: path orthogonality clarified — `[ModAccessible]` (already `Class | Struct` per K4 prerequisite) and capability strings function uniformly across paths.
-  - §4.6 IModApi v3 surface: `RegisterManagedComponent<T> where T : class, IComponent` added alongside existing `RegisterComponent<T>` (Path α) and `Fields`/`ComputePipelines` v1.6 additions.
-  - §11.1: M3.5 deferred milestone description extended (analyzer covers Path α/β consistency in addition to `[FieldAccessible]` scan extension); analyzer ships post-migration per Q5.b deferral.
-  - No semantic changes to v1.6 decisions. No locked decision (D-1 through D-7) is altered. Authority: K-L3.1 amendment plan at `docs/architecture/K_L3_1_AMENDMENT_PLAN.md`.
-- v1.8 — IModApi v3 strict (K8.3+K8.4 cutover 2026-05-14, audit cleanup 2026-05-16):
-  - §4.6 + §4.6.3: v3 reframed from additive-over-v2 to **strict v3-only**. Per `src/DualFrontier.Contracts/Modding/IModApi.cs` lines 16-27 (canonical): «v2 IModApi deleted entirely — no backward compatibility. Mods that registered class-shape components without `RegisterManagedComponent` fail to compile post-K8.3+K8.4; the manifest parser also rejects any `manifestVersion` other than `"3"`.» `RegisterComponent<T>` carries `where T : unmanaged, IComponent` (Path α — NativeWorld struct storage); `RegisterManagedComponent<T>` carries `where T : class, IComponent` (Path β — per-mod managed storage, requires `[ManagedStorage]`).
-  - §4.6.3 «Backward compatibility» section: rewritten to remove v2-continues-to-load claim. v2 grace-period text deleted per §1.4 LOCK (no historical subsection in current Tier 1 doc).
-  - No semantic changes to v1.7 decisions. No locked decision (D-1 through D-7) is altered. Authority: `IModApi.cs` verbatim + CLEANUP_CASCADE_BRIEF §3 Commit 11.
-- v1.9 — К10.2 native bus closure amendments (2026-05-18, commit `a09aaba`; entry backfilled 2026-06-12 from git history — the v1.9 commit bumped the register version without updating this changelog):
-  - §3.2: tier-prefixed bus capability verbs (`fast`/`normal`/`background` × `publish`/`subscribe`) per К-L15 + S-LOCK-4; `kernel.publish:`/`kernel.subscribe:` retained as Normal-tier aliases.
-  - §9.5: step 3.5 added (`df_scheduler_unload_mod_native_state` native unload primitive); §9.5.1 extended to cover it.
-  - §11.2: `FastTierContractViolation`, `BusTierMismatch`, `BackgroundCoalesceMissing` added (landed in `ValidationErrorKind`).
-- v1.10 — К10.3 v2 К-L17 display composition amendment (2026-05-20, commit `9c660d9`; entry backfilled 2026-06-12 from git history):
-  - §3.2: К-L17 layer capability verbs (`layer.intent`, `layer.combat_feedback`) + `[Layer(LayerType.…)]` registration pattern; `LayerCapabilityMismatch` named in §11.2 as reserved.
-- v1.11 — К10.3 v2 К-L18 quiescent state amendment (2026-05-20, commit `f09055a`; entry backfilled 2026-06-12 from git history):
-  - §9.5: step 3.5 extended with the pipeline-slot quiescence check; step 3.6 added (V resource cleanup placeholder); §9.5.1 К-L18 rejection semantics; §9.7 added (hot reload К-L18 compliance).
-  - §11.2: `QuiescentStatePreconditionViolated`, `PipelineQuiescenceTimeout`, `VulkanModResourceCleanupFailed` named (reserved).
-- v1.12.0 (2026-06-12) — sectional code-truth rewrite per ARCHITECTURE_TRUTH_CASCADE_BRIEF D1:
-  - §0: OS-mapping matrix rewritten from target-state to realized state with on-disk evidence names (publish/subscribe, capability model, shared library, package-manager semantics, hot reload — all shipped M2–M7).
-  - §2: retitled «Manifest v3». `manifestVersion: "3"` documented as a required field; strict-v3 parse gate (`ManifestParser`) replaces the «backward-compatible v2 extension» framing; §2.2 field table corrected against the parser (`apiVersion` optional with `requiresContractsVersion` fallback per `ModManifest.EffectiveApiVersion`); §2.3 split into parse-time vs batch-time validation with the capability grammar quoted from `ManifestCapabilities`.
-  - §3.5: capability-set mechanism corrected to the startup reflection scan (`KernelCapabilityRegistry.BuildFromKernelAssemblies`) — the «generated at build time, embedded as a resource» wording never matched the implementation. §3.6 case 3: v1-grace-period residue replaced with the real empty-capability short-circuit behavior. §3.8: load-time mechanism aligned with D-2 LOCKED (attribute cross-check; no load-time Roslyn scan exists).
-  - §4: retitled «IModApi» (single strict surface). §4.1 re-quoted from `IModApi.cs` (`RegisterComponent<T> where T : unmanaged, IComponent`; `RegisterSystem<T> where T : class`). §4.2 marker corrected to `[EventBus("…")]`. §4.4 intro aligned with D-3 LOCKED (structural barrier, no analyzer). §4.5 grace-period section replaced with the strict-v3 statement (DRIFT-011 residue removed). §4.6.1 sub-API surfaces re-quoted from the real contracts (`IModFieldApi`/`IFieldHandle`/placeholder `IModComputePipelineApi`) with explicit nullability truth; §4.6.2 corrected (runtime gating only — the `[FieldAccess]`/`[ComputePipelineAccess]` load-time attributes do not exist); §4.6.4 example corrected to the real entry point and surface.
-  - §10.1: threat table rewritten to the current fault model (`ModIsolationException` + `ModFaultHandler` deferred-unload path; runtime isolation-guard route removed at К8.3+К8.4). §10.4: WeakReference unload tests marked closed at M7.3 (`M73Phase2DebtTests`); test bullets updated to realized suites.
-  - §11: deduplicated against docs/ROADMAP.md — the migration-phase table removed (ROADMAP M-rows are the migration state authority); §11.2 rewritten as the realized 15-member `ValidationErrorKind` registry with reserved-but-absent names called out explicitly; stop conditions renumbered §11.4 → §11.3.
-  - See-also: ROADMAP link corrected to `../ROADMAP.md`; §9.4 Persistence README link depth fixed; VULKAN_SUBSTRATE version pins removed from living prose (citation form: stable identifiers + section topics).
-  - No semantic changes. No locked decision (D-1 through D-7) is altered; no К-series amendment is altered. Drift-to-code corrections only.
+| | |
+|---|---|
+| **Role** | normative-current-candidate |
+| **Successor of** | `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS) · `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE) · `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION) |
+| **Scope** | Structural relationship kernel ↔ mod; manifest schema and parser behavior; capability declaration/grammar/enforcement; `IModApi` surface and semantics; type sharing across `AssemblyLoadContext` boundaries; inter-mod contracts; bridge replacement; three-axis versioning; the integration pipeline (`Apply`), the unload chain, the fault path; system isolation enforcement; the threat model; the `ValidationErrorKind` registry. |
+| **Non-goals** | Gameplay content and balance (mod authors' domain); per-system performance budgets ([PERFORMANCE.md](./PERFORMANCE.md)); bus dispatch semantics ([EVENT_BUS.md](./EVENT_BUS.md)); author-facing tutorials and the Mod SDK reference-set statement ([MODDING.md](./MODDING.md)); migration/milestone state ([docs/ROADMAP.md](../ROADMAP.md)); persistence of mod data (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). |
+| **Authority domains** | mod-lifecycle (load, apply, unload, fault, hot reload) · boundary/layering **for mods** (ALC model, compile surface, cast prevention) · error-handling **for mod faults** (fault path, `ValidationErrorKind`, warning discipline) |
+| **Defers to** | [MODDING.md](./MODDING.md) → mod-author guidance and the SDK assembly set · [EVENT_BUS.md](./EVENT_BUS.md) → bus tiers, delivery and flush semantics · [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) Part 0 → К-L9 (vanilla = mods), К-L18 (quiescent state), К-L3/К-L3.1 (storage paths) · ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) → transition vocabulary (prepare/validate/quiesce/commit/reclaim/recover/resume) · [ANALYZER_RULES.md](./ANALYZER_RULES.md) → shipped analyzer surface · [docs/ROADMAP.md](../ROADMAP.md) → migration state, deferred milestones |
+
+**Strategic locked decisions** (Phase 0, unchanged by this rework): (1) capability granularity is per-event-type and per-component-type; (2) bridge replacement is explicit via `replaces`; (3) hot reload only through the mod menu with the simulation paused; (4) vanilla ships as multiple mods; (5) three-tier SemVer versioning. The seven detail locks D-1…D-7 are preserved inline in the sections that own them (D-1/D-2 → §3, D-3 → §4, D-4/D-5 → §5, D-6/D-7 → §9); their Question/Options deliberation history is preserved in the historical predecessor only. The "stop, escalate, lock" rule stands: a design question this document does not answer is documented and escalated, never improvised in code.
 
 ---
 
-## Preamble — How to use this document
+## §0 Executive summary — the OS mapping
 
-**Authority.** This document is the single architectural authority for the mod system of Dual Frontier. During implementation, every interface, attribute, manifest field, and lifecycle step traces back to a section here. Disagreement with the specification is escalated to the human (via §12 open decisions) — never resolved by improvisation in code.
-
-**Scope.** The specification governs:
-
-- The structural relationship between the kernel (`DualFrontier.Core` + `DualFrontier.Contracts`) and a loaded mod.
-- The manifest schema and the loader pipeline that consumes it.
-- The `IModApi` surface and its semantic guarantees.
-- Capability declaration, capability checking, and capability granularity.
-- Type sharing across `AssemblyLoadContext` boundaries.
-- Bridge replacement and conflict resolution.
-- Versioning across three independent axes (kernel API, mod self, inter-mod).
-- The mod lifecycle, including hot reload through the mod menu.
-- The threat model, distinguishing what mods can and cannot do.
-
-The specification does **not** govern:
-
-- Specific gameplay content (weapons, recipes, biomes) — these are decided by the mod author within the architecture.
-- Game-design questions (balance, narrative, pacing).
-- Performance budgets for individual systems — covered by [PERFORMANCE](./PERFORMANCE.md).
-- Methodology of the development pipeline — covered by [METHODOLOGY](/docs/methodology/METHODOLOGY.md).
-
-**Strategic locked decisions.** Five top-level decisions taken during Phase 0; the seven detail decisions (D-1 through D-7) are listed in §12:
-
-1. **✓ LOCKED.** Capability granularity is **per-event-type and per-component-type**.
-2. **✓ LOCKED.** Bridge replacement is **explicit** via the manifest's `replaces` field.
-3. **✓ LOCKED.** Hot reload is fully supported, but **only through the mod menu** with the simulation paused.
-4. **✓ LOCKED.** Vanilla content ships as **multiple mods** mirroring the existing `DualFrontier.Systems.*` structure.
-5. **✓ LOCKED.** Versioning is a **three-tier model**: kernel API SemVer (existing `ContractsVersion`), mod self SemVer, inter-mod dependency SemVer with caret-prefix support.
-
-**The "stop, escalate, lock" rule.** When implementation encounters a design question not answered here, the response is "stop, document in §12, wait for the human to lock" — not "guess." The structural strength of the mod system depends on the specification being the only source of architectural truth.
-
----
-
-## 0. Executive summary and OS mapping
-
-The design treats Dual Frontier as a small operating system and each mod as a process running on top of it. The mapping below is not decorative — every row names the counterpart the engine provides and the on-disk artifact that realizes it.
+The design treats Dual Frontier as a small operating system and each mod as a process running on top of it. Every row names the engine counterpart and the on-disk artifact that realizes it; every row is shipped.
 
 | OS concept | Dual Frontier counterpart | Realized by |
 |---|---|---|
-| Kernel | Native ECS core (К-series) behind `DualFrontier.Core` + `DualFrontier.Contracts` | `NativeWorld` interop surface; see [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) |
-| Process | A mod loaded into its own `AssemblyLoadContext` | `ModLoadContext` (collectible ALC per regular mod) |
-| Process isolation (MMU) | Structural isolation: a mod ALC cannot resolve `DualFrontier.Core`/`DualFrontier.Application`; component storage is reachable only through `NativeWorld`; `[SystemAccess]` declarations feed scheduler edge-building | `ModLoadContext` resolution rules; `SystemExecutionContext` (per-system context carrier); `DependencyGraph` |
-| Syscall | `IModApi` | `RestrictedModApi` (M2) — real `Publish`/`Subscribe` routed via `ModBusRouter` to the `IGameServices` domain buses |
-| IPC between processes | `IModContract` via `IModContractStore` | `ModContractStore`; three contract levels (§6) |
+| Kernel | Native ECS core behind `DualFrontier.Core` + `DualFrontier.Contracts` | `NativeWorld` interop surface; [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) |
+| Process | A mod loaded into its own `AssemblyLoadContext` | `ModLoadContext` (collectible per regular mod; `ModLoadContext.cs:29-33`) |
+| Process isolation | Structural: Contracts-only compile surface, `internal sealed` implementation types, `[SystemAccess]`-driven scheduling | §1.4 boundary statement; `DependencyGraph`; `SystemExecutionContext` |
+| Syscall | `IModApi` | `RestrictedModApi` (`RestrictedModApi.cs:38`); `Publish`/`Subscribe` routed via `ModBusRouter` to the `IGameServices` domain buses |
+| IPC between processes | `IModContract` via `IModContractStore` | `ModContractStore`; three contract levels (§5.6) |
 | Device driver | A mod-supplied system registered via `RegisterSystem` | `ModRegistry` + scheduler graph rebuild |
-| Register a new "syscall" or new device | Mod adding new event/contract types | Shared mods (M4) + `capabilities.provided` resolution (`ContractValidator` Phase C) |
-| Shared library (`.so` / `.dll`) | A library-only mod with shared types, no entry point | `SharedModLoadContext` (M4) |
-| `dlopen` / hot reload | Pause-aware reload via the mod menu | `ModIntegrationPipeline.Pause()`/`Apply()`/`Resume()` + §9.5 unload chain (M7) |
-| Capability model | Manifest `capabilities` list + load-time and runtime checks | `KernelCapabilityRegistry`, `[ModAccessible]`, `ContractValidator` Phases C+D, `CapabilityViolationException` (M3) |
-| Package manager dependency resolution | Manifest `dependencies` with SemVer constraints | `VersionConstraint`, `ContractValidator` Phases A+G, topological load order (M5) |
+| Registering a new "syscall"/device | Mod adding new event/contract types | Shared mods + `capabilities.provided` resolution (`ContractValidator` Phase C) |
+| Shared library | A library-only mod with shared types, no entry point | `SharedModLoadContext` (`SharedModLoadContext.cs:21`) |
+| `dlopen` / hot reload | Pause-aware reload via the mod menu | `ModIntegrationPipeline.Pause()/Apply()/Resume()` + the §9.4 unload chain |
+| Capability model | Manifest `capabilities` + load-time and runtime checks | `KernelCapabilityRegistry`, `[ModAccessible]`, `ContractValidator` Phases C+D, `CapabilityViolationException` |
+| Package-manager dependency resolution | Manifest `dependencies` with SemVer constraints | `VersionConstraint`, `ContractValidator` Phases A+G, topological load order |
 
-Sections 1–10 specify the architecture; every row above is shipped. Migration state (which milestones are closed, pending, or deferred) is tracked in [docs/ROADMAP.md](../ROADMAP.md), not here (§11.1).
-
----
-
-## 1. Mod topology — three mod kinds
-
-Mods are not uniform. The architecture distinguishes three categories, each with a different role in the load graph and different rules at the loader.
-
-### 1.1 Regular mod
-
-The default kind. Has an entry point (`IMod` implementation), runs `Initialize(api)` to register components, systems, and subscriptions, may publish and consume contracts.
-
-- Lives in its own `AssemblyLoadContext`.
-- May depend on shared mods.
-- May not depend on regular mods directly — only on contracts they publish.
-- Manifest: `kind: "regular"`. Default when omitted.
-
-### 1.2 Shared mod (library)
-
-Defines types — `record`s, `interface`s, `enum`s — that other mods reference at compile time. Has **no `IMod` implementation** and registers no systems. The loader places its assembly in a **shared `AssemblyLoadContext`** so dependent mods see the same `Type` instances.
-
-- Lives in the shared ALC, separate from regular mods.
-- Cannot subscribe, publish, or register — it is a pure type vendor.
-- Loaded before any dependent regular mod.
-- Manifest: `kind: "shared"`. Required.
-
-The shared mod is the solution to the type-sharing problem (§5). Without it, Mod A defining `record FireballCastEvent : IEvent` and Mod B subscribing to that event cannot interoperate — the two ALCs produce two distinct `Type` instances even when the assembly bytes are identical.
-
-### 1.3 Vanilla mod
-
-A regular mod authored by the engine team that ships with the base game. Architecturally identical to a third-party regular mod — same manifest schema, same `IModApi` surface, same isolation rules. The distinction is editorial: vanilla mods are the canonical reference implementations and the test polygon for the mod system itself.
-
-- Manifest: `kind: "regular"` (vanilla is not a separate kind).
-- Convention: id begins with `dualfrontier.vanilla.` (e.g. `dualfrontier.vanilla.combat`).
-- Convention: shipped in `mods/` directory under `DualFrontier.Mod.Vanilla.<Slice>/`.
-
-The split into multiple vanilla mods follows the existing `DualFrontier.Systems.*` decomposition. Initial set: `Vanilla.Combat`, `Vanilla.Magic`, `Vanilla.Inventory`, `Vanilla.Pawn`, `Vanilla.World`. Each may depend on `Vanilla.Core` (a shared mod with definition records used across slices).
-
-### 1.4 Load graph
-
-```
-                 ┌────────────────────────────────┐
-                 │  shared ALC                    │
-                 │  ┌──────────────────────────┐  │
-                 │  │ DualFrontier.Mod.        │  │
-                 │  │   Vanilla.Core (shared)  │  │
-                 │  │ DualFrontier.Mod.        │  │
-                 │  │   MagicProtocol (shared) │  │
-                 │  └──────────────────────────┘  │
-                 └────────────────────────────────┘
-                          ▲                ▲
-                          │ references     │
-   ┌──────────────────────┴┐              ┌┴───────────────────────┐
-   │ regular ALC            │              │ regular ALC            │
-   │ Vanilla.Combat (mod)   │              │ Vanilla.Magic (mod)    │
-   └────────────────────────┘              └────────────────────────┘
-                          ▲                ▲
-                          │  depends-on    │
-                          └────────┬───────┘
-                                   │
-                          ┌────────┴───────────┐
-                          │ regular ALC        │
-                          │ Vanilla.Inventory  │
-                          └────────────────────┘
-```
-
-**Invariants:**
-
-- Shared ALC is loaded once at game start and never unloaded during the session.
-- Each regular mod has its own ALC with `IsCollectible = true`, allowing unload.
-- A regular mod's ALC may resolve types from the shared ALC, but never from another regular ALC.
-- Cycles between regular mods are forbidden; cycles in the shared ALC dependency graph are forbidden.
+Migration state (which milestones are closed, pending, or deferred) is tracked in [docs/ROADMAP.md](../ROADMAP.md), not here.
 
 ---
 
-## 2. Manifest v3
+## §1 Mod topology and the ALC model
 
-The manifest schema is **strict v3**. Every `mod.manifest.json` must declare `"manifestVersion": "3"`; `ManifestParser` rejects a missing field or any other value at parse time (the К8.3+К8.4 cutover removed v1/v2 manifest acceptance together with the v2 `IModApi` — §4.6.3). There is no backward-compatible extension path and no grace period. The vanilla mod skeletons under `mods/DualFrontier.Mod.Vanilla.*/mod.manifest.json` are the on-disk reference instances of this schema.
+### §1.1 Three mod kinds
 
-### 2.1 Schema (v3)
+**Regular mod** — the default kind. Has an entry point (`IMod` implementation), runs `Initialize(api)` to register components, systems, and subscriptions, may publish and consume contracts. Lives in its own collectible `AssemblyLoadContext`. May depend on shared mods; may not depend on regular mods directly — only on contracts they publish. Manifest `kind: "regular"` (default when omitted; `ManifestParser.cs:167-190`).
+
+**Shared mod (library)** — defines types (`record`s, `interface`s, `enum`s) that other mods reference at compile time. Has **no `IMod` implementation** and registers no systems; it is a pure type vendor. The loader places its assembly in the single shared ALC so dependent mods see the same `Type` instances (§5). Manifest `kind: "shared"`, required. `ModLoader.LoadSharedMod` defensively rejects a non-shared manifest routed to it (`ModLoader.cs:140-143`); architectural compliance (no entry point, no `IMod`) is enforced by `ContractValidator` Phase F as `SharedModWithEntryPoint` (§12).
+
+**Vanilla mod** — a regular mod authored by the engine team, shipped with the base game. Architecturally identical to a third-party regular mod: same manifest schema, same `IModApi`, same isolation rules, per К-L9 «vanilla = mods» (KERNEL_ARCHITECTURE.md Part 0). Conventions: id begins `dualfrontier.vanilla.`; shipped under `mods/DualFrontier.Mod.Vanilla.<Slice>/`. On-disk set: `Vanilla.Combat`, `Vanilla.Core` (shared), `Vanilla.Inventory`, `Vanilla.Magic`, `Vanilla.Pawn`, `Vanilla.World`, plus `Mod.Example` — seven projects, each referencing exactly one engine assembly (§1.4).
+
+### §1.2 Load graph invariants
+
+- The shared ALC is created once per pipeline instance and never unloaded during the session (`isCollectible: false`, name `"shared"` — `SharedModLoadContext.cs:31-34`; owned singleton at `ModIntegrationPipeline.cs:84`).
+- Each regular mod gets its own ALC with `IsCollectible = true` (`ModLoadContext.cs:29-33`), allowing unload.
+- A regular mod's ALC may resolve types from the shared ALC, never from another regular ALC (§1.3).
+- Cycles between regular mods are forbidden; cycles among shared mods are forbidden (D-5, §5.5). Both are rejected before any assembly load (`ModIntegrationPipeline.cs:270-310`).
+- Shared mods load before any dependent regular mod: the pipeline runs two passes in topological order (`ModIntegrationPipeline.cs:320-362`).
+
+### §1.3 What the mod ALC actually does — resolution semantics
+
+Code truth (`ModLoadContext.Load`, `ModLoadContext.cs:45-54`):
+
+1. If the requested simple name is cached in the shared ALC, return that assembly — this preserves cross-mod type identity (§5).
+2. Otherwise return `null`, which hands resolution to the runtime's default logic — in practice the **Default ALC**, where `DualFrontier.Contracts` (and the rest of the engine) is loaded.
+3. The mod's own assemblies, loaded via `LoadFromAssemblyPath` (`ModLoader.cs:89`), stay inside the private context — isolated from other mods and collectible on unload.
+
+`SharedModLoadContext.Load` behaves the same way for shared mods: cached shared assemblies resolve locally; everything else — notably `DualFrontier.Contracts` — falls through to the Default ALC (`SharedModLoadContext.cs:84-92`). Duplicate simple names are rejected at shared load time (`SharedModLoadContext.cs:59-61`).
+
+### §1.4 The boundary statement (definitive; replaces the predecessor "refusal list")
+
+The retired MODDING.md and ISOLATION.md texts described the mod ALC as **refusing** to resolve `DualFrontier.Core`, `DualFrontier.Systems`, `DualFrontier.Components`, `DualFrontier.Events`, and `DualFrontier.Application` ("the load attempt fails… `ModLoadContext` will not supply the assembly"). **That mechanism does not exist.** There is no name-based blocklist anywhere in `ModLoadContext` or `SharedModLoadContext`; a mod assembly that ships a reference to a kernel assembly will resolve it at runtime through the Default-ALC fall-through described in §1.3. The session report records this as the C8 incoherence; the resolution is to state the real boundary, which is layered and load-bearing without any refusal list:
+
+1. **Compile surface (primary).** Mods compile against `DualFrontier.Contracts` and nothing else. Verified census at HEAD: all seven mod projects reference exactly one engine project (`mods/DualFrontier.Mod.Vanilla.Combat/DualFrontier.Mod.Vanilla.Combat.csproj:9` and siblings; likewise every test fixture, with fixture→fixture references only for the shared-mod pattern). A mod additionally references the shared mods it depends on. This — not the ALC — is what makes `DualFrontier.Core`/`Application` types unnameable from a mod's compilation unit. The authoritative author-facing statement of the SDK reference set lives in [MODDING.md](./MODDING.md).
+2. **Implementation visibility (second layer).** The concrete API type is `internal sealed` with internal construction (`RestrictedModApi.cs:38,67`), so even a mod that somehow obtained `DualFrontier.Application.dll` cannot compile a cast against it (D-3, §4.5).
+3. **Declaration-driven scheduling (third layer).** `[SystemAccess]` declarations feed `DependencyGraph` edge-building; component access flows through `NativeWorld` span/batch APIs or per-mod Path β stores (§10.1).
+4. **Honesty (threat model).** A *determined* mod running in-process can still reach kernel types via reflection over loaded assemblies. That is accepted and documented in §11 — the boundary is structural, not security-grade.
+
+The ALC's real contributions are exactly two: **collectibility** (a regular mod can be physically unloaded) and **type identity** (shared types resolve to one `Type` instance across mods). Isolation claims beyond those two properties in the predecessor documents are retired.
+
+---
+
+## §2 Manifest v3
+
+The manifest schema is **strict v3**: every `mod.manifest.json` must declare `"manifestVersion": "3"`, and `ManifestParser.Parse` rejects a missing field or any other value at parse time (`ManifestParser.cs:53-59`). There is no backward-compatible extension path and no grace period — the К8.3+К8.4 cutover removed v1/v2 manifest acceptance together with the v2 `IModApi` (§4.4). The vanilla mod skeletons under `mods/DualFrontier.Mod.Vanilla.*/mod.manifest.json` are the on-disk reference instances.
+
+### §2.1 Schema
 
 ```json
 {
@@ -230,24 +116,18 @@ The manifest schema is **strict v3**. Every `mod.manifest.json` must declare `"m
 
   "dependencies": [
     { "id": "dualfrontier.vanilla.core", "version": "^1.0.0" },
-    { "id": "dualfrontier.vanilla.inventory", "version": "^1.0.0" }
+    { "id": "dualfrontier.vanilla.inventory", "version": "^1.0.0", "optional": false }
   ],
 
   "replaces": [
-    "DualFrontier.Systems.Combat.CombatSystem",
-    "DualFrontier.Systems.Combat.DamageSystem",
-    "DualFrontier.Systems.Combat.ProjectileSystem"
+    "DualFrontier.Systems.Combat.CombatSystem"
   ],
 
   "capabilities": {
     "required": [
       "kernel.publish:DualFrontier.Events.Combat.DamageEvent",
-      "kernel.publish:DualFrontier.Events.Combat.DeathEvent",
       "kernel.subscribe:DualFrontier.Events.Combat.ShootGranted",
       "kernel.read:DualFrontier.Components.Combat.WeaponComponent",
-      "kernel.read:DualFrontier.Components.Combat.ArmorComponent",
-      "kernel.read:DualFrontier.Components.Combat.AmmoComponent",
-      "kernel.read:DualFrontier.Components.Combat.ShieldComponent",
       "kernel.write:DualFrontier.Components.Shared.HealthComponent"
     ],
     "provided": [
@@ -257,203 +137,136 @@ The manifest schema is **strict v3**. Every `mod.manifest.json` must declare `"m
 }
 ```
 
-### 2.2 Field reference
+### §2.2 Field reference
+
+Field names below are the parsed truth (`ModManifest`, `src/DualFrontier.Contracts/Modding/ModManifest.cs:50-145`; reader behavior per `ManifestParser.cs`). Property lookup is **case-insensitive** (`ManifestParser.cs:98-110`); JSON comments and trailing commas are tolerated (`ManifestParser.cs:31-35`).
 
 | Field | Type | Required | Default | Notes |
 |---|---|---|---|---|
-| `manifestVersion` | string | yes | — | Must be exactly `"3"`. A missing field or any other value is rejected by `ManifestParser` at parse time. |
-| `id` | string | yes | — | Reverse-domain. Must be globally unique. |
+| `manifestVersion` | string | yes | — | Must be exactly `"3"`; anything else is rejected at parse time with the `ValidationErrorKind.IncompatibleContractsVersion` semantic in the message (`ManifestParser.cs:53-59`). |
+| `id` | string | yes | — | Reverse-domain, globally unique. Empty id also rejected at load (`ModLoader.cs:71-73`). |
 | `name` | string | yes | — | Human-readable. |
-| `version` | string (SemVer) | yes | — | Mod self-version. Strict `MAJOR.MINOR.PATCH`. |
-| `author` | string | no | `""` | Free-form. |
-| `kind` | enum | no | `"regular"` | One of `regular`, `shared`. |
-| `apiVersion` | string (SemVer with caret) | no | — | Compatibility against `ContractsVersion.Current`. When absent, the loader falls back to `requiresContractsVersion` via `ModManifest.EffectiveApiVersion`. |
-| `requiresContractsVersion` | string (SemVer) | no | `"1.0.0"` | v1-era field retained as the `apiVersion` fallback consumed by `EffectiveApiVersion`. New manifests should declare `apiVersion`. |
-| `entryAssembly` | string | conditional | `"{id}.dll"` | Required for `kind=regular`; **must be empty for `kind=shared`** (per §5.2 step 1). |
-| `entryType` | string | conditional | scan-for-IMod | Required for `kind=regular`; **must be empty for `kind=shared`** (per §5.2 step 1). |
-| `hotReload` | bool | no | `false` | When `false`, mod loads only at session start; menu refuses to reload it. |
-| `dependencies` | array of `{id, version, optional}` | no | `[]` | Each `version` is a SemVer constraint (§8). The optional `optional` boolean (default `false`) marks a dependency that the loader may treat as soft: when the named mod is absent, an optional dependency emits a warning rather than a `MissingDependency` error. Required (default) dependencies still hard-fail. Entries may alternatively be plain strings (id only, no constraint); string and object entries cannot be mixed within one array. |
-| `replaces` | array of string (FQN) | no | `[]` | Fully-qualified type names of systems this mod replaces. Only meaningful for `kind=regular`. |
-| `capabilities.required` | array of string | no | `[]` | See §3 for capability syntax. |
-| `capabilities.provided` | array of string | no | `[]` | See §3. |
+| `version` | string (SemVer) | yes | — | Mod self-version, strict `MAJOR.MINOR.PATCH` (axis 2, §7.2). |
+| `author` | string | no | `""` | Free-form (`ManifestParser.cs:65`). |
+| `kind` | enum | no | `"regular"` | `regular` or `shared`; unknown values rejected (`ManifestParser.cs:167-190`). |
+| `apiVersion` | string (SemVer, optional `^`) | no | — | Compatibility constraint against `ContractsVersion.Current`. When absent, the loader falls back to `requiresContractsVersion` via `ModManifest.EffectiveApiVersion` (`ModManifest.cs:145`). |
+| `requiresContractsVersion` | string (SemVer) | no | `"1.0.0"` | v1-era field retained solely as the `apiVersion` fallback (`ManifestParser.cs:66`). New manifests should declare `apiVersion`. |
+| `entryAssembly` | string | conditional | `"{id}.dll"` | Required for `kind=regular` (default derived from id at load — `ModLoader.cs:81-83`); **must be empty for `kind=shared`** — enforced by `ContractValidator` Phase F, not the parser. |
+| `entryType` | string | conditional | scan-for-`IMod` | For `kind=regular`: when omitted the loader reflection-scans; multiple `IMod` implementations without an explicit `entryType` are rejected (`ModLoader.cs:328-346`). **Must be empty for `kind=shared`** (Phase F). |
+| `hotReload` | bool | no | `false` | When `false`, the menu refuses to toggle a currently-active instance of the mod (§9.7; `EditableModInfo.CanToggle`). |
+| `dependencies` | array | no | `[]` | Entries are **all strings** (id only) or **all objects** `{id, version, optional}` — mixing forms in one array is rejected (`ManifestParser.cs:274-285`). `version` is a `VersionConstraint` (§7.4); `optional` (default `false`) downgrades a missing dependency from `MissingDependency` error to a non-blocking warning (`ModIntegrationPipeline.cs:1146-1170`). |
+| `replaces` | array of string (FQN) | no | `[]` | Fully-qualified system type names this mod replaces (§6). Meaningful for `kind=regular` only; Phase F rejects shared mods that populate it. |
+| `capabilities.required` / `.provided` | array of string | no | `[]` | Every token must match the §3.2 grammar; the offending token is named in the parse error (`ManifestParser.cs:361-385`, `ManifestCapabilities.cs:83-94,175-190`). |
 
-### 2.3 Validation — parse time and batch time
+### §2.3 Validation — parse time vs batch time
 
-**Parse time** (`ManifestParser.Parse`; a failure throws `InvalidOperationException` naming the manifest path):
+**Parse time** (`ManifestParser.Parse`; any failure throws `InvalidOperationException` naming the manifest path): the strict-v3 gate; `id`/`name`/`version` present and non-empty; `apiVersion` and object-form dependency `version`s parse as `VersionConstraint` (`^`-caret or exact; tilde rejected with a directive to use caret — `VersionConstraint.cs:56-60`); `kind` is `regular` or `shared`; dependency array unmixed with non-empty ids; every capability token matches the §3.2 grammar.
 
-1. `manifestVersion` present and exactly `"3"` (the strict-v3 gate; the rejection message carries the `ValidationErrorKind.IncompatibleContractsVersion` semantic).
-2. `id`, `name`, `version` present and non-empty.
-3. `apiVersion` (when present) and every object-form `dependencies[i].version` (when present) parses as a `VersionConstraint` — `[^]MAJOR.MINOR.PATCH`; tilde is rejected with a directive to use caret (§8.4).
-4. `kind` (when present) is `regular` or `shared`.
-5. `dependencies` entries are all strings or all objects (no mixed arrays); every entry has a non-empty id.
-6. Every capability token matches the authoritative pattern (`ManifestCapabilities.Parse`; the offending token is named in the error):
-
-   ```
-   ^(kernel|mod\.[a-z0-9.]+)\.((?:fast|normal|background)\.(?:publish|subscribe)|publish|subscribe|read|write|field\.(read|write|acquire|conductivity|storage|dispatch)|pipeline\.register):[A-Za-z][A-Za-z0-9_.]+$
-   ```
-
-   Note: the К-L17 layer tokens (§3.2) are emitted into the kernel-provided set by `KernelCapabilityRegistry`, but `layer.*` is not part of this manifest grammar — a manifest cannot currently declare layer tokens in `capabilities.required`.
-
-**Batch time** (`ContractValidator`, producing typed `ValidationError`s per §11.2): kernel API version compatibility (Phase A), write-write conflicts (Phase B), capability resolution against kernel + listed dependencies (Phase C), `[ModCapabilities]` cross-check (Phase D), contract-type placement (Phase E), shared-mod compliance incl. the §5.2 empty-entry-point rule (Phase F), inter-mod dependency versions (Phase G), and `replaces` validation incl. the cross-batch conflict check per §7 (Phase H).
+**Batch time** (`ContractValidator.Validate` — `ContractValidator.cs:76`; produces typed `ValidationError`s per §12): Phase A kernel API version compatibility (`:124`), Phase B write-write conflicts (`:196`), Phase E contract-type placement per D-4 (`:329`), Phase C capability resolution against kernel + listed dependencies (`:398`), Phase D `[ModCapabilities]` cross-check (`:442`), Phase G inter-mod dependency versions (`:496`), Phase H `replaces` validation including the cross-batch conflict check (`:566`), Phase F shared-mod compliance including the empty-entry-point rule (`:698`). Additionally the pipeline itself performs shared- and regular-mod cycle detection and dependency-presence checks before any assembly loads (§8.2 steps [0.5]/[0.6]).
 
 ---
 
-## 3. Capability model
+## §3 Capability model
 
-Capabilities are **named, declared, and statically checked permissions**. Every operation a mod performs that touches the kernel or another mod must be backed by an entry in `capabilities.required`. Capabilities that the mod itself adds to the system (new event types, new contracts) appear in `capabilities.provided`.
+Capabilities are **named, declared, statically checked permissions**. Every operation a mod performs against the kernel or another mod must be backed by an entry in `capabilities.required`; capabilities the mod adds to the system (new event types, contracts, fields) appear in `capabilities.provided`.
 
-### 3.1 Granularity ✓ LOCKED
+### §3.1 Granularity ✓ LOCKED (D-1 companion)
 
-Granularity is **per-event-type and per-component-type**. A capability never applies to a category, namespace, or wildcard:
+Granularity is **per-event-type and per-component-type**. A capability never applies to a category, namespace, or wildcard: `kernel.publish:DualFrontier.Events.Combat.DamageEvent` is permitted; `kernel.publish:DualFrontier.Events.Combat.*`, `kernel.publish:combat`, and `kernel.publish:*` are forbidden (and fail the §3.2 grammar). The cost is verbose manifests for content-rich mods; the benefit is that a `git diff` of a manifest reveals exactly which new kernel surface the mod began touching.
 
-- Permitted: `kernel.publish:DualFrontier.Events.Combat.DamageEvent`
-- Forbidden: `kernel.publish:DualFrontier.Events.Combat.*`
-- Forbidden: `kernel.publish:combat`
-- Forbidden: `kernel.publish:*`
+### §3.2 The grammar — one authority
 
-The cost is verbose manifests for content-rich mods. The benefit is that a `git diff` of a manifest reveals exactly which new kernel surface the mod began touching, enabling reviewable security and change control.
-
-### 3.2 Syntax
+There is exactly **one** capability grammar, and it is the compiled pattern in `ManifestCapabilities` (`src/DualFrontier.Contracts/Modding/ManifestCapabilities.cs:24-26`), applied to every token in both manifest lists at parse time:
 
 ```
-<provider>.<verb>:<fully-qualified-type-name>
+^(kernel|mod\.[a-z0-9.]+)\.((?:fast|normal|background)\.(?:publish|subscribe)
+  |publish|subscribe|read|write
+  |field\.(read|write|acquire|conductivity|storage|dispatch)
+  |pipeline\.register)
+:[A-Za-z][A-Za-z0-9_.]+$
 ```
 
-- `provider`:
-  - `kernel` — provided by `DualFrontier.Contracts` itself.
-  - `mod.<modId>` — provided by another loaded mod (typically a shared mod publishing event types).
-- `verb`: one of `publish`, `subscribe`, `read`, `write`, `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch`, `pipeline.register`, **(K10.2)** tier-prefixed bus verbs `fast.publish`, `fast.subscribe`, `normal.publish`, `normal.subscribe`, `background.publish`, `background.subscribe`, or **(К10.3 v2)** К-L17 display composition layer verbs `layer.intent`, `layer.combat_feedback`.
-- `fully-qualified-type-name`: the C# FQN of the event or component type, or the namespaced field/pipeline id for the `field.*` and `pipeline.*` verbs.
+(line-wrapped here for readability; the source is a single-line regex). Decomposed:
 
-The `read` and `write` verbs apply to entity-keyed components (`IComponent`). The `publish` and `subscribe` verbs apply to events (`IEvent`). The `field.*` verbs apply to spatial fields (`RawTileField<T>` per [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) K9 — dense 2D grids with conductivity map and storage flags). The `pipeline.register` verb applies to mod-owned compute pipelines registered via `IModApi.ComputePipelines` (§4.6).
+- **provider** — `kernel` (provided by the kernel surface, §3.4) or `mod.<modId>` (provided by another loaded mod, typically a shared mod).
+- **verb** — one of: `publish`, `subscribe` (Normal-tier aliases); tier-prefixed `fast.publish`, `fast.subscribe`, `normal.publish`, `normal.subscribe`, `background.publish`, `background.subscribe`; `read`, `write` (entity-keyed components); `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch` (spatial fields); `pipeline.register` (reserved for the compute surface, §4.3).
+- **subject** — the C# FQN of the event or component type, or the namespaced field/pipeline id for `field.*`/`pipeline.*`.
 
-Field verb semantics:
+**Resolved (was the §3.2-vs-§2.3 self-contradiction, session N-11):** `layer.intent` and `layer.combat_feedback` are **not capability verbs and cannot appear in a manifest** — the grammar above has no `layer` alternative, so `ManifestCapabilities.Parse` rejects any such token and the manifest fails to parse. What does exist: `KernelCapabilityRegistry` **emits** `kernel.layer.intent:{FQN}` / `kernel.layer.combat_feedback:{FQN}` tokens into the kernel-provided set for `[Layer(LayerType.Intent|CombatFeedback)]`-annotated classes (`KernelCapabilityRegistry.cs:152-170`, per К-L17, KERNEL_ARCHITECTURE.md Part 0), and mods can observe those strings through `GetKernelCapabilities()`. They are registry-emitted descriptors of the display-composition surface, not declarable permissions. The predecessor's listing of `layer.*` among manifest verbs is retired.
 
-- `field.read:<id>` — point query (`ReadCell(x, y)`) returning a single cell value.
-- `field.write:<id>` — single cell mutation (`WriteCell(x, y, value)`).
-- `field.acquire:<id>` — dense span access (`AcquireSpan()`) for bulk reads or batch updates.
-- `field.conductivity:<id>` — modify the conductivity map (per-cell diffusion coefficient `D`); used by mods that own the field to wire physical infrastructure (wires, pipes).
-- `field.storage:<id>` — modify the per-cell storage flag (capacitance marker); used to designate batteries, tanks, thermal mass cells.
-- `field.dispatch:<id>` — issue a compute dispatch on the field via a registered pipeline. The pipeline itself does not require a separate `pipeline.dispatch` capability — the field-side dispatch verb covers it. Pipelines registered by other mods are reachable through the dependency chain (§3.4).
+Tier semantics (declaration side only; dispatch semantics are owned by [EVENT_BUS.md](./EVENT_BUS.md)): `fast.*` marks Fast-tier (bounded-execution contract, `FastTierContractViolation` §12), `background.*` marks Background-tier (coalesce declaration required, `BackgroundCoalesceMissing` §12), and un-prefixed `publish`/`subscribe` remain valid Normal-tier aliases. A manifest tier not matching the event type's `[EventTier]` is `BusTierMismatch` (§12).
 
-Bus tier verb semantics (K10.2, per K-L15 + S-LOCK-4):
+Field verb semantics (storage contract owned by [FIELDS.md](./FIELDS.md)): `field.read`/`field.write` — point access; `field.acquire` — dense span lease; `field.conductivity`/`field.storage` — per-cell diffusion/capacitance maps; `field.dispatch` — issue a compute dispatch through a registered pipeline (no separate `pipeline.dispatch` verb exists — the field-side verb covers it).
 
-- `kernel.fast.publish:<FQN>` / `kernel.fast.subscribe:<FQN>` — Fast tier (≤1ms latency target). Synchronous bypass dispatch; bounded execution contract enforced via runtime monitor (`FastTierContractMonitor`).
-- `kernel.normal.publish:<FQN>` / `kernel.normal.subscribe:<FQN>` — Normal tier (batched callback per-phase). К-L7 atomic-from-observer preserved within batch.
-- `kernel.background.publish:<FQN>` / `kernel.background.subscribe:<FQN>` — Background tier (coalesce + idle-slot dispatch). Background tier event types require coalesce function declaration via `[EventTier(BusTier.Background, CoalesceFunctionTypeName = "...")]`; missing declaration emits `BackgroundCoalesceMissing` validation error (§11.2).
+### §3.3 Reserved namespaces
 
-**Backward-compatible aliases** (S-LOCK-4): `kernel.publish:<FQN>` / `kernel.subscribe:<FQN>` continue к function for Normal-tier events. Mods authored prior к K10.2 require no manifest changes; tier-explicit tokens are opt-in for Fast/Background tier semantics.
+`kernel.*` is reserved for the kernel's own provided set (§3.4); a mod cannot list `kernel.*` tokens in `capabilities.provided`. `mod.<modId>.*` is reserved for the mod with that exact id; mods cannot provide capabilities under another mod's namespace (Phase C resolves provider namespaces against actual mod ids).
 
-Tier mismatch (manifest declares tier-specific capability но event type's `[EventTier]` attribute names a different tier) is caught at load time via `BusTierMismatch` (§11.2).
+### §3.4 Kernel-provided capability set
 
-**К-L17 display composition layer capabilities** (К10.3 v2 Items 39+40, per S3-Q5 + S8-Q3 granular FQN pattern):
+The kernel's provided set is built **once at pipeline construction** by a reflection scan — `KernelCapabilityRegistry.BuildFromKernelAssemblies()` over `DualFrontier.Contracts`, `DualFrontier.Components`, and `DualFrontier.Events` (`KernelCapabilityRegistry.cs:82-89`; instantiated at `ModIntegrationPipeline.cs:83`). Emission rules (`KernelCapabilityRegistry.cs:91-171`):
 
-- `kernel.layer.intent:<FQN>` — mod registers an intent overlay layer (sub-pipeline-latency input surface; ≤16ms render latency contract).
-- `kernel.layer.combat_feedback:<FQN>` — mod registers a combat feedback layer (К-L15 Fast tier consumer; ≤17ms event-к-visible latency contract).
+- Public, concrete `IEvent` implementer → tier-prefixed `kernel.<tier>.publish/subscribe:{FQN}` per its `[EventTier]` (Normal when unattributed), plus the legacy un-prefixed `kernel.publish/subscribe:{FQN}` aliases for Normal-tier types.
+- Public, concrete `IComponent` implementer annotated `[ModAccessible(Read/Write)]` → `kernel.read:{FQN}` / `kernel.write:{FQN}`.
+- `[Layer]`-annotated class → the К-L17 layer tokens (observable, not declarable — §3.2).
+- Generic and nested types (FQN containing `` ` `` or `+`) are silently skipped.
 
-Layer registration uses the `[Layer(LayerType.Intent | CombatFeedback)]` attribute on a concrete `DualFrontier.Application.Display.Layer` subclass; `KernelCapabilityRegistry` scans loaded assemblies and emits the corresponding capability tokens. Granular per FQN per tier — same uniformity as К10.2 bus tier tokens.
+No `field.*` token is kernel-emitted: field capabilities are mod-namespace tokens (`mod.<modId>.field.*:<id>`) enforced at the field API boundary (§4.3). The predecessor's v1.6 sketch of kernel-provided "infrastructure field verbs" (`kernel.field.acquire` etc.) never matched the implementation and is retired.
 
-SimState and Static layer tiers use existing renderer-level capabilities (V substrate primitives) and do не surface layer capability tokens here. Vanilla layers register through the same attribute + capability pattern per К-L9 «Vanilla = mods».
+Mods read the resulting set through `IModApi.GetKernelCapabilities()` (`RestrictedModApi.cs:203`).
 
-Layer mismatch (attribute declares one `LayerType` но runtime layer instance reports a different `Type`) is reserved для validation error `LayerCapabilityMismatch` (§11.2 К10.3 v2 amendment, finalized в К-L18 load-bearing commit).
+> **✓ LOCKED (D-1).** `read`/`write` capabilities apply only to a **curated, opt-in subset** of public components: a component is reachable from a mod only when annotated `[ModAccessible(Read = …, Write = …)]`. The component author actively decides what mods can touch; everything else is invisible to the capability resolver and produces `MissingCapability` if requested. Path orthogonality (K-L3.1): the attribute targets `Class | Struct` (`ModAccessibleAttribute.cs:15`) and applies uniformly across Path α (`unmanaged struct`, `NativeWorld` storage) and Path β (managed `class` via `[ManagedStorage]`); capability strings are path-blind — the provider prefix differs by ownership (kernel vs mod), never by storage path.
 
-### 3.3 Reserved namespaces
+### §3.5 Static check at load time
 
-- `kernel.*` is reserved for capabilities the kernel itself provides. Only the kernel may list these in `capabilities.provided` (as part of its own internal manifest — see §3.5).
-- `mod.<modId>.*` is reserved for the mod with that exact `id`. Mods cannot claim to provide capabilities under another mod's namespace; the loader rejects such manifests.
+For every `capabilities.required` token of a mod, an identical string must exist in the kernel-provided set **or** in the `capabilities.provided` set of a mod listed in this mod's `dependencies` (Phase C, `ContractValidator.cs:398`). A required capability cannot be satisfied by a mod *not* listed in `dependencies` — implicit dependency through shared capability is forbidden. Failure: `MissingCapability`, naming each unsatisfied token. The pipeline passes the kernel registry into validation explicitly (`ModIntegrationPipeline.cs:366-375`) — omitting it once silently skipped Phases C/D, which is why the parameter is now required on the production path.
 
-### 3.4 Static check at load time
+### §3.6 Hybrid enforcement — load-time plus runtime
 
-When a mod loads, the loader validates:
+**Load-time (primary gate, before the mod's systems reach the scheduler):** Phase C token satisfiability (§3.5); Phase D `[ModCapabilities]` attribute cross-check (§3.7); Phase B/E/F/G/H structural checks (§2.3).
 
-- For every `capabilities.required` entry of the mod, an entry with the same string exists in either:
-  - The kernel's own provided set (§3.5), **or**
-  - The `capabilities.provided` set of an already-loaded shared mod or regular mod listed in this mod's `dependencies`.
-- A required capability cannot be satisfied by a mod *not* listed in `dependencies`. This is a hard rule — implicit dependency through shared capability is forbidden.
+**Runtime (second-layer defence inside `RestrictedModApi.EnforceCapability`, `RestrictedModApi.cs:230-247`):** `Publish<T>` and `Subscribe<T>` check the per-mod required set at call/subscribe time and throw `CapabilityViolationException` on a miss. The check is a hash-set lookup against the token `kernel.<verb>:<FQN>` — O(1), measured negligible on the hot path.
 
-Failure produces a `ValidationError` of new kind `MissingCapability`, listing each unsatisfied capability and the mod that needs it.
+The runtime layer covers what the load-time gate cannot reach: reflection-constructed event types, deliberately dishonest `[ModCapabilities]` attributes, and the **empty-capability leniency**: when a manifest declares no capabilities at all (`ManifestCapabilities.IsEmpty` — both lists empty or absent, `ManifestCapabilities.cs:55-57`), `EnforceCapability` short-circuits with a console warning instead of throwing (`RestrictedModApi.cs:234-241`). This keeps capability-less skeleton mods (the on-disk vanilla skeletons ship empty lists) loadable and publishing; a manifest that declares at least one capability is fully enforced on every call. (Code honesty note: the console warning's wording still speaks of a "v1 manifest grace period" — text drift from the pre-cutover era; the *behavior* is the empty-capability short-circuit described here, and v1/v2 manifests cannot reach it because the parser rejects them.)
 
-### 3.5 Kernel-provided capability set
+Runtime field-capability enforcement is separate and unconditional (§4.3).
 
-The kernel exposes a fixed list of capabilities derived from public types in the kernel-surface assemblies. The list is built once at startup by `KernelCapabilityRegistry.BuildFromKernelAssemblies()` — a reflection scan over `DualFrontier.Contracts`, `DualFrontier.Components`, and `DualFrontier.Events`: public concrete `IEvent` implementers yield `publish`/`subscribe` tokens per their `[EventTier]` (Normal when unattributed, with the legacy un-prefixed aliases per §3.2); `IComponent` implementers annotated `[ModAccessible]` yield `read`/`write` tokens; `[Layer]`-annotated classes yield the К-L17 layer tokens. Generic and nested types are skipped. Mods read the resulting set through `IModApi.GetKernelCapabilities()`.
+### §3.7 `[SystemAccess]` and `[ModCapabilities]` cross-checks
 
-> **✓ LOCKED (D-1).** `read` and `write` capabilities apply only to a **curated, opt-in subset** of public components. A component is reachable from a mod only when annotated with `[ModAccessible(Read = true, Write = false)]`. The component author actively decides what mods can touch; everything else is invisible to the capability resolver and produces a `MissingCapability` error if requested. Aligns with the project's structural-isolation philosophy: tighter blast radius, falsifiable surface.
+A mod's `capabilities.required` must be a superset of every registered system's declared surface. Two mechanisms:
+
+- `[SystemAccess]` declares component reads/writes and buses per system; `ModRegistry.RegisterSystem` requires the attribute's presence (with `[TickRate]`) at registration time, and the declarations drive scheduler edge-building (§10.1).
+- `[ModCapabilities("publish:DamageEvent", …)]` on each mod system carries the per-system bus tokens; Phase D verifies every attribute token appears in the manifest's `capabilities.required` (`ContractValidator.cs:442`). Drift between manifest and code is a load-time error, never silent.
+
+> **✓ LOCKED (D-2).** Hybrid enforcement: the per-system `[ModCapabilities(…)]` attribute is cross-checked against the manifest at load time (cheap, no Roslyn dependency); a separate static-analysis pass verifying the attribute is honest against actual `Publish`/`Subscribe` call sites runs in CI before mod publication.
 >
-> **Path orthogonality (K-L3.1, 2026-05-10).** `[ModAccessible]` annotation applies uniformly across Path α (`unmanaged struct`) and Path β (managed `class` via `[ManagedStorage]`). The attribute's `AttributeUsage` already targets `Class | Struct` (widened in K4 prerequisite commit). Capability strings carry verb + FQN (e.g. `kernel.read:Vanilla.Pawn.JobQueueComponent` or `mod.dualfrontier.vanilla.pawn.read:JobQueueComponent`) and are path-orthogonal — provider namespace prefix differs by ownership (kernel vs mod), not by storage path. The capability resolver dispatches internally to `NativeWorld` span access (Path α) or per-mod `ManagedStore<T>` lookup (Path β) per-T. See `KERNEL_ARCHITECTURE.md` Part 0 K-L3 implication post-K-L3.1 for the storage-path decision criterion.
-
-### 3.6 Hybrid enforcement — load-time + runtime
-
-Capability enforcement operates on two layers.
-
-**Load-time** (primary gate, before the mod reaches `Active` state §9.1):
-
-- §3.4 — every `capabilities.required` token must be provided by the kernel or by a listed dependency. Failure: `MissingCapability`.
-- §3.7 — every registered system's `[SystemAccess]` declarations must be a subset of the mod's `capabilities.required`.
-- §3.8 / D-2 — every registered system's `[ModCapabilities]` tokens must appear in the manifest's `capabilities.required`.
-
-**Runtime** (second-layer defence inside `RestrictedModApi`):
-
-- §4.2 — `Publish<T>` checks the per-mod required set; mismatch raises `CapabilityViolationException`. Hash-set lookup, `O(1)`, measured negligible on the hot path.
-- §4.3 — `Subscribe<T>` checks the same set at subscribe time. Same exception, same cost.
-
-Enforcement on isolated component access (`SystemExecutionContext` reads/writes via `[SystemAccess]`) and on bus delivery (subscribers receive only events for types they declared) operates independently of the capability layer and continues to function as in v1.
-
-The runtime layer covers three cases the load-time gate cannot reach:
-
-1. Reflection-based bypass of `[ModCapabilities]` declarations (deliberate violation rather than accident).
-2. Event types constructed at runtime via generics or reflection.
-3. Empty-capability manifests — when a manifest declares no capabilities at all (`capabilities` block absent, or both lists empty), `RestrictedModApi.EnforceCapability` short-circuits with a console warning instead of throwing. This leniency keeps capability-less skeleton mods (the vanilla skeletons on disk ship empty `required`/`provided` lists) loadable and publishing; a manifest that declares at least one capability is fully enforced on every `Publish`/`Subscribe` call.
-
-### 3.7 Cross-check with `[SystemAccess]`
-
-A mod's `capabilities.required` must be a **superset** of every `[SystemAccess]` declaration on every system the mod registers. The loader performs this cross-check after `Initialize(api)` returns:
-
-```
-for each system S registered by the mod:
-    for each component C in S.[SystemAccess].Reads:
-        require "kernel.read:<FQN of C>" or "mod.<provider>.read:<FQN of C>"
-        in mod.capabilities.required
-    for each component C in S.[SystemAccess].Writes:
-        require "kernel.write:<FQN of C>" or "mod.<provider>.write:<FQN of C>"
-    for each bus B in S.[SystemAccess].Buses:
-        require capabilities consistent with what the system actually publishes (§3.8)
-```
-
-A drift between the manifest and the code is a load-time error, never silent.
-
-### 3.8 Bus capability mapping
-
-`[SystemAccess]` declares buses by name, not by event type. Capabilities are by event type. The loader cross-references via the per-system `[ModCapabilities(…)]` attribute (D-2 below): a system declaring `buses: ["Combat"]` and publishing `DamageEvent` must carry `publish:DamageEvent` in its attribute, and the attribute tokens must appear in the manifest's `capabilities.required` (`ContractValidator` Phase D). No load-time static analysis of call sites exists; the CI-side Roslyn honesty scan is the deferred D-2 completion — Planned, see [docs/ROADMAP.md](../ROADMAP.md) §Mod-OS Migration (M3.4).
-
-> **✓ LOCKED (D-2).** Hybrid enforcement. Each mod-supplied system carries a `[ModCapabilities("publish:DamageEvent", "subscribe:ShootGranted")]` attribute; the loader cross-checks this attribute against the manifest at load time (cheap, no Roslyn dependency). A separate static-analysis pass runs in CI before mod publication, scanning `Services.X.Publish<T>` call sites and verifying the attribute is honest. Load-time check stays fast; CI catches drift between attribute and code reality.
+> **FENCED (target / planned — not current truth):** the CI-side Roslyn honesty scan (D-2 completion, historically "M3.4") does not exist on disk; no load-time static analysis of call sites exists either. Runtime `CapabilityViolationException` already catches dishonest attributes, so the scan is developer-experience tooling, not a safety boundary. Tracked in [docs/ROADMAP.md](../ROADMAP.md) §Analyzer track / Mod-OS rows.
 
 ---
 
-## 4. IModApi
+## §4 IModApi
 
-`IModApi` is a single, strict surface — version 3 (§4.6.3); a manifest's `manifestVersion: "3"` declares compatibility with exactly this surface. The interface below is condensed from `src/DualFrontier.Contracts/Modding/IModApi.cs` (the source of truth); signatures are verbatim.
-
-### 4.1 Surface
+`IModApi` is a single, strict surface — version 3. A manifest's `manifestVersion: "3"` declares compatibility with exactly this surface. The interface below is quoted from `src/DualFrontier.Contracts/Modding/IModApi.cs:28-127` (the source of truth); signatures verbatim, comments condensed.
 
 ```csharp
 public interface IModApi
 {
-    // ── Component registration — Path α / Path β (K-L3.1) ─────────────────
+    // ── Component registration — Path α / Path β (K-L3 / K-L3.1) ──────────
     // Path α: NativeWorld-backed struct storage; unmanaged so the type
     // crosses the P/Invoke boundary without GCHandle pinning.
     void RegisterComponent<T>() where T : unmanaged, IComponent;
     // Path β: per-mod managed-class storage; T must carry [ManagedStorage],
-    // absence raises ValidationErrorKind.MissingManagedStorageAttribute.
+    // absence raises the MissingManagedStorageAttribute semantic (§12).
     void RegisterManagedComponent<T>() where T : class, IComponent;
 
     // ── System registration ────────────────────────────────────────────────
     void RegisterSystem<T>() where T : class;
 
-    // ── Bus operations (capability-gated; §4.2/§4.3) ───────────────────────
+    // ── Bus operations (capability-gated; §4.2) ────────────────────────────
     void Publish<T>(T evt) where T : IEvent;
     void Subscribe<T>(Action<T> handler) where T : IEvent;
 
-    // ── Inter-mod contracts (§6) ───────────────────────────────────────────
+    // ── Inter-mod contracts (§5.6) ─────────────────────────────────────────
     void PublishContract<T>(T contract) where T : IModContract;
     bool TryGetContract<T>(out T? contract) where T : class, IModContract;
 
@@ -462,64 +275,38 @@ public interface IModApi
     ModManifest GetOwnManifest();
     void Log(ModLogLevel level, string message);
 
-    // ── Sub-APIs (§4.6) — nullable; mods check for null and degrade ───────
+    // ── Sub-APIs (§4.3) — nullable; mods check for null and degrade ───────
     IModFieldApi? Fields { get; }
     IModComputePipelineApi? ComputePipelines { get; }
 }
 ```
 
-### 4.2 `Publish<T>` semantics
+### §4.1 Registration semantics
 
-- The implementation routes the event to the bus named by the event type's `[EventBus("…")]` marker (`EventBusAttribute.BusName`), resolved by `ModBusRouter` against the matching `IGameServices` bus property. An event type without the marker, or naming an unknown bus, resolves to no bus and the publish is a no-op.
-- If the mod did not declare `publish:<FQN of T>` in its manifest, the call throws `CapabilityViolationException`. This is enforced via the per-mod capability set held inside `RestrictedModApi` (`EnforceCapability`). Exception: a manifest with an entirely empty capability block short-circuits with a warning — §3.6 runtime case 3.
-- Delivery semantics (deferred vs immediate dispatch, bus tiers) are specified in [EVENT_BUS](./EVENT_BUS.md).
+`RegisterComponent<T>` records the type in `ModRegistry` under the calling mod's id; a type already registered by another mod is an `InvalidOperationException` naming both owners. `RegisterManagedComponent<T>` first verifies `[ManagedStorage]` on `T` (violation throws with the `MissingManagedStorageAttribute` semantic), is idempotent per type, creates the per-mod `ManagedStore<T>`, and records the type in the registry for resolver dispatch (`RestrictedModApi.cs:99-123`). Path β data is runtime-only (K-L3.1 lock) — not persisted; reclaimed with the mod (§9.4 step 3). `RegisterSystem<T>` requires `[SystemAccess]` and `[TickRate]` on the type; registration order is preserved, and `ModRegistry.GetAllSystems` returns core systems first, then mod systems (`ModRegistry.cs:145-153`).
 
-### 4.3 `Subscribe<T>` semantics
+### §4.2 `Publish<T>` / `Subscribe<T>` semantics
 
-- The handler is wrapped to capture the calling thread's `SystemExecutionContext` at subscribe time (when one is current); the wrapper pushes that context around handler invocation, so the handler observes the same per-system context as the code that subscribed.
-- A subscription is bound to the mod's lifetime: `RestrictedModApi.UnsubscribeAll` (called from the unload chain) removes every wrapper from the bus dispatcher.
-- A capability check on `subscribe:<FQN of T>` runs at subscribe time. Without the capability, the call throws `CapabilityViolationException` (same §3.6 case-3 empty-manifest exception as `Publish`).
-- Multiple subscriptions to the same `T` from the same mod are permitted; each handler runs.
+- The event routes to the bus named by the event type's `[EventBus("…")]` marker, resolved by `ModBusRouter` against the matching `IGameServices` bus property (`ModBusRouter.cs:28-35`). An event type without the marker, or naming an unknown bus, resolves to no bus — the publish is a **no-op** and the subscribe registers nothing (`RestrictedModApi.cs:163-164,174-175`).
+- Both calls run the §3.6 capability gate first (`kernel.publish:<FQN>` / `kernel.subscribe:<FQN>`); a miss throws `CapabilityViolationException`, except under the empty-capability leniency.
+- `Subscribe<T>` wraps the handler to capture the calling thread's `SystemExecutionContext` when one is current; the wrapper pushes that context around handler invocation, so the handler observes the same per-system context as the subscribing code (`RestrictedModApi.cs:177-188`).
+- Subscriptions are tracked per API instance in `_subscriptions` so `UnsubscribeAll` can release every wrapper on unload (`RestrictedModApi.cs:47,223-228`). Multiple subscriptions to the same `T` from one mod are permitted; each handler runs.
+- Delivery semantics (deferred vs immediate dispatch, tier behavior) are owned by [EVENT_BUS.md](./EVENT_BUS.md).
 
-### 4.4 The cast-prevention rule
+### §4.3 Sub-APIs: `Fields` and `ComputePipelines` — nullability truths
 
-A mod is forbidden from casting `IModApi` to a concrete type. The `RestrictedModApi` class is `internal sealed` with internal construction, and a regular mod's `AssemblyLoadContext` cannot resolve `DualFrontier.Application.*` types — the concrete type is structurally unreachable from a mod's compilation unit. No Roslyn analyzer and no runtime cast check exist for this rule; the structural barrier is the defense, per D-3:
-
-> **✓ LOCKED (D-3).** `RestrictedModApi` is `internal sealed` with `internal` constructors. Combined with the rule that a regular mod's `AssemblyLoadContext` cannot resolve `DualFrontier.Application.*` types (the assembly is loaded only into the kernel's default ALC), the type is structurally unreachable from a mod's compilation unit. No Roslyn analyzer or runtime check is required in v1. If a real bypass attempt is observed in the wild, a defensive analyzer is added as v1.x amendment — but the structural barrier is the primary defense.
-
-### 4.5 No backward compatibility — strict v3
-
-There is no grace period and no backward compatibility with earlier `IModApi` versions. The v2 surface was deleted entirely at the К8.3+К8.4 cutover (2026-05-14), and `ManifestParser` rejects any `manifestVersion` other than `"3"` at parse time (§2). §4.6.3 carries the canonical statement.
-
-### 4.6 IModApi v3 — Fields and Compute Pipelines (NEW in v1.6, made strict in v1.8)
-
-v3 carries two sub-APIs: `Fields` (K9 field storage abstraction — contracts and registry shipped; see nullability truth in §4.6.1) and `ComputePipelines` (compute substrate — placeholder interface, no implementation) per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) (architectural integration; Q-G-1 + Q-G-2). The sub-APIs are part of strict v3 — see §4.6.3 for the K8.3+K8.4 cutover that deleted v2 IModApi entirely (no backward compatibility).
-
-### 4.6.1 Surface
-
-The v3 members on `IModApi` itself are quoted in §4.1 (`RegisterManagedComponent<T>`, `Fields`, `ComputePipelines`). The sub-API contracts, quoted from `src/DualFrontier.Contracts/Modding/` (signatures verbatim; comments condensed):
+Sub-API contracts, quoted from `src/DualFrontier.Contracts/Modding/` (signatures verbatim):
 
 ```csharp
 public interface IModFieldApi
 {
-    // Registers a new field in the calling mod's namespace. T must be
-    // unmanaged (blittable). The id must start with "<modId>." — registering
-    // outside the mod's own namespace throws CapabilityViolationException,
-    // as does a missing "mod.<modId>.field.write:<id>" manifest token.
     IFieldHandle RegisterField<T>(string id, int width, int height) where T : unmanaged;
-
-    // Retrieves a previously registered field. Own-namespace access requires
-    // "mod.<modId>.field.read:<id>"; cross-mod access requires the read token
-    // against the foreign mod's namespace.
     IFieldHandle GetField<T>(string id) where T : unmanaged;
-
-    // True if a field with the given id is registered. No capability required.
     bool IsRegistered(string id);
 }
 
-public interface IModComputePipelineApi
+public interface IModComputePipelineApi   // placeholder — no implementation exists
 {
-    // Placeholder surface — no implementation exists in the codebase.
     string Name { get; }
 }
 
@@ -532,642 +319,397 @@ public interface IFieldHandle
 }
 ```
 
-Returns are typed as the type-erased `IFieldHandle` because the concrete `FieldHandle<T>` lives in `DualFrontier.Core.Interop`, which already references Contracts (the reverse reference would invert the dependency direction); mods downcast at the call site. The concrete `FieldHandle<T>` surface: `ReadCell(x, y)` / `WriteCell(x, y, value)` point access; `AcquireSpan()` returning a `FieldSpanLease<T>` (zero-copy span lease with indexer and `Dispose`); `SetConductivity`/`GetConductivity`; `SetStorageFlag`/`GetStorageFlag`; `SwapBuffers()`. Field operation failures raise `FieldOperationFailedException` (`DualFrontier.Core.Interop`); capability misses raise `CapabilityViolationException` from the `RestrictedFieldApi` wrapper.
+(`IModFieldApi.cs:23-49`, `IModComputePipelineApi.cs`, `IFieldHandle.cs:20-26`.) Returns are the type-erased `IFieldHandle` because the concrete `FieldHandle<T>` lives in `DualFrontier.Core.Interop` (a reverse Contracts→Interop reference would invert the dependency direction); mods downcast at the call site. The concrete handle surface and field failure modes are owned by [FIELDS.md](./FIELDS.md); field operation failures raise `FieldOperationFailedException` (`DualFrontier.Core.Interop`).
 
-**Nullability (code truth).** `Fields` is non-null only when the loader supplies a `FieldRegistry` to `RestrictedModApi` at construction. The production `ModIntegrationPipeline` currently constructs the API without one, so mods loaded through the pipeline observe `Fields == null` and must degrade gracefully; the field stack (`FieldRegistry`, `RestrictedFieldApi`, `FieldHandle<T>`) is exercised by tests. `ComputePipelines` is unconditionally `null` — `RestrictedModApi.ComputePipelines` is hardwired to return `null`, and `IModComputePipelineApi` is a placeholder with no implementing type. The real compute-pipeline surface (SPIR-V registration, dispatch) is Planned — see [docs/ROADMAP.md](../ROADMAP.md) §V substrate.
+**Capability gating at the field boundary** (runtime-only; no `[FieldAccess]`-style load-time attribute exists): `RegisterField` demands the id start with `<modId>.` and the manifest token `mod.<modId>.field.write:<id>`; `GetField` demands `mod.<modId>.field.read:<id>` for own-namespace ids and `mod.<foreignMod>.field.read:<id>` for cross-mod ids; violations raise `CapabilityViolationException` (`RestrictedFieldApi.cs:41-52,63-74`). Per-cell traffic through an acquired handle is not re-checked — gating is at acquisition, mirroring how bus traffic is gated at publish/subscribe rather than per event.
 
-### 4.6.2 Capability cross-check
+**Nullability (code truth):**
 
-Every acquisition operation on `IModFieldApi` is gated by a manifest capability declaration per §3.2: `RegisterField` requires the mod's own-namespace `field.write` token, `GetField` requires the applicable `field.read` token, and a mismatch raises `CapabilityViolationException` (hash-set lookup inside `RestrictedFieldApi`). Per-cell traffic through an acquired handle is not re-checked — the handle is capability-gated at acquisition, mirroring how `RestrictedModApi` gates event traffic at the publish/subscribe boundary rather than per event. For field access this enforcement is runtime-only: no `[FieldAccess]`-style load-time attribute cross-check exists (the load-time attribute layer covers `[ModCapabilities]` bus tokens per §3.8/D-2).
+- `Fields` is non-null only when a `FieldRegistry` is supplied to `RestrictedModApi` at construction (`RestrictedModApi.cs:74,83-85`). The production pipeline constructs the API **without one** (six-argument call, `ModIntegrationPipeline.cs:399`), so mods loaded through the pipeline observe `Fields == null` and must degrade gracefully. The field stack (`FieldRegistry` — `src/DualFrontier.Core.Interop/FieldRegistry.cs:22`, `RestrictedFieldApi`, `FieldHandle<T>`) is real and test-exercised.
+- `ComputePipelines` is unconditionally `null` — hardwired (`RestrictedModApi.cs:216`); `IModComputePipelineApi` has no implementing type.
 
-### 4.6.3 Backward compatibility
+> **FENCED (target / planned — not current truth):** wiring a production `FieldRegistry` into the pipeline, and the mod-facing compute surface (SPIR-V registration/dispatch behind `pipeline.register` / `field.dispatch`), are Planned — see [docs/ROADMAP.md](../ROADMAP.md) §V substrate. Until then a correct mod checks both properties for null (the [MODDING.md](./MODDING.md) startup pattern).
 
-**Strict v3 only — no backward compatibility.** Per [src/DualFrontier.Contracts/Modding/IModApi.cs](../../src/DualFrontier.Contracts/Modding/IModApi.cs) lines 16-27 (canonical statement): v2 `IModApi` was deleted entirely in K8.3+K8.4 cutover (2026-05-14). Mods compiled against v2 fail to load — the `RegisterComponent<T>` surface now carries `where T : unmanaged, IComponent` (was unconstrained in v2), and class-shape components must use `RegisterManagedComponent<T>` (Path β, K-L3.1 bridge) with the `[ManagedStorage]` attribute. The manifest parser rejects any `manifestVersion` other than `"3"`.
+### §4.4 Strict v3 — no backward compatibility
 
-The `Fields` and `ComputePipelines` properties are nullable by contract — mods that opt into those sub-APIs check for null and degrade gracefully (nullability truth in §4.6.1; startup example in §4.6.4). This is forward-compatibility within v3, not backward-compatibility with prior IModApi versions.
+The v2 `IModApi` was deleted entirely at the К8.3+К8.4 cutover (2026-05-14); there is no grace period. Mods that registered class-shape components without `RegisterManagedComponent` fail to compile post-cutover — `RegisterComponent<T>` carries `where T : unmanaged, IComponent` — and `ManifestParser` rejects any `manifestVersion` other than `"3"` (§2). The canonical statement lives in the interface header (`IModApi.cs:16-27`). The nullable sub-APIs are forward-compatibility *within* v3, not backward-compatibility with prior versions.
 
-### 4.6.4 Mod startup example
+### §4.5 Cast prevention ✓ LOCKED (D-3)
 
-```csharp
-public class MagicMod : IMod
-{
-    public void Initialize(IModApi api)
-    {
-        if (api.Fields is null)
-        {
-            // No field registry wired on this build — degrade gracefully.
-            api.Log(ModLogLevel.Warning, "Field API unavailable; mana mechanics disabled");
-            return;
-        }
-
-        var manaField = (FieldHandle<float>)api.Fields.RegisterField<float>(
-            "vanilla.magic.mana", 200, 200);
-
-        api.RegisterSystem<ManaFieldUpdateSystem>();
-    }
-}
-```
-
-(`ComputePipelines` is checked the same way once a compute implementation exists; today it is always `null` — §4.6.1.) The full motivation for the field abstraction, Domain A vs Domain B distinction, and shader registration model is in [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) (architectural integration; mod-driven shader registration).
+A mod is forbidden from casting `IModApi` to a concrete type. Enforcement is **structural only**: `RestrictedModApi` is `internal sealed` with internal construction (`RestrictedModApi.cs:38,67`), and its assembly (`DualFrontier.Application`) is outside the mod compile surface (§1.4) — the cast cannot compile against the kernel's actual type. No Roslyn analyzer and no runtime cast check exist for this rule; if a real bypass attempt is observed in the wild, a defensive analyzer is the sanctioned v1.x response. (The interface's own doc-comment claim that "the ModLoader detects the attempt and unloads the mod" — `IModApi.cs:14` — describes no shipped mechanism and is superseded by this statement.)
 
 ---
 
-## 5. Type-sharing protocol
+## §5 Type sharing and the three contract levels
 
-Without a shared `AssemblyLoadContext`, two mods that both reference a third assembly load that assembly twice and obtain two distinct `Type` instances. `typeof(FireballCastEvent)` in mod A and mod B refers to two different runtime types, and a subscription registered with the bus in one mod cannot be matched against an event published from another. Every interesting cross-mod scenario breaks at this boundary.
+### §5.1 The problem
 
-### 5.1 The shared ALC
+Without a shared `AssemblyLoadContext`, two mods that both reference a third assembly load it twice and obtain two distinct `Type` instances: `typeof(FireballCastEvent)` in mod A and mod B are different runtime types, and a subscription registered in one cannot match an event published from the other. Every interesting cross-mod scenario breaks at this boundary.
 
-The kernel creates a single `AssemblyLoadContext` named `"shared"` at startup. Its `IsCollectible = false` (the shared ALC never unloads while the game runs). Its `Resolving` event delegates to the kernel's own context for `DualFrontier.*` references.
+### §5.2 The shared ALC
 
-```csharp
-internal sealed class SharedModLoadContext : AssemblyLoadContext
-{
-    public SharedModLoadContext() : base("shared", isCollectible: false) { }
+One process-wide `AssemblyLoadContext` named `"shared"`, `IsCollectible = false`, owned by the pipeline and reused across every `Apply` (`SharedModLoadContext.cs:21-34`; `ModIntegrationPipeline.cs:84`). `LoadSharedAssembly` indexes each shared assembly by simple name and rejects duplicates (`SharedModLoadContext.cs:50-65`); resolution consults the cache and otherwise defers to the runtime (§1.3).
 
-    protected override Assembly? Load(AssemblyName assemblyName)
-    {
-        // 1. DualFrontier.Contracts and friends — resolve via Default ALC.
-        // 2. Other shared-mod assemblies — resolve from the shared cache.
-        // 3. Otherwise — return null and let the runtime pick.
-        ...
-    }
-}
-```
+### §5.3 Loader rules
 
-### 5.2 Loader rules for shared mods
+**Shared mods** (`ModLoader.LoadSharedMod`, `ModLoader.cs:122-176`): manifest validated (§2.3) with `kind=shared` asserted; assembly loaded into the shared ALC; exported types enumerated (an unloadable exported type fails the load); the mod's `capabilities.provided` join the resolver's world at validation time. Architectural compliance — no `IMod` implementation, empty `entryAssembly`/`entryType`/`replaces` — surfaces as Phase F `SharedModWithEntryPoint` errors.
 
-When the loader encounters a manifest with `kind: "shared"`:
+**Regular mods that depend on shared mods** (`ModLoader.LoadRegularMod`, `ModLoader.cs:64-102`): listed shared dependencies are loaded first (topological pass 1, §8.2); a new collectible `ModLoadContext` is created wired to the shared ALC; the entry assembly loads; the `IMod` type resolves via `entryType` or reflection scan; `Initialize` is **not** called by the loader — the pipeline runs it after validation (§8.2 step [4]).
 
-1. Validate manifest as in §2.3, plus: `entryAssembly` and `entryType` must be empty.
-2. Load the assembly **into the shared ALC**, not a new one.
-3. Verify the assembly contains no `IMod` implementation. A shared mod with an entry point is a manifest-code mismatch and is rejected.
-4. Run a reflection pass to enumerate public exported types. Cache by FQN.
-5. Add the mod's `capabilities.provided` to the global capability resolver.
-6. The shared mod is now loaded; dependent regular mods can begin loading.
+### §5.4 Restrictions on shared mods
 
-### 5.3 Loader rules for regular mods that depend on shared mods
+- A shared mod exports only types (`record`/`class`/`interface`/`enum`/`struct`); public methods only as members of those types.
+- A shared mod references only `DualFrontier.Contracts` and other shared mods — same compile surface as regular mods (§1.4).
+- No static constructors touching mutable state (initialization order across shared mods is not guaranteed); no environment/file/network access at type-load time. Detection is best-effort; violations belong to the threat model (§11).
+- Naming convention `<base>.protocol` / `<base>.types` (e.g. `dualfrontier.vanilla.core`, `dualfrontier.magic.protocol`) — a loader warning, not an error.
 
-When loading a regular mod whose `dependencies` include a shared mod:
+### §5.5 Cycle rules ✓ LOCKED (D-5)
 
-1. Verify all listed shared dependencies are already loaded.
-2. Create a new collectible `AssemblyLoadContext` for the mod.
-3. Configure the context's `Resolving` event to delegate to the shared ALC for any FQN that begins with the prefix of a depended-on shared assembly.
-4. Load the mod's entry assembly.
-5. Continue with the standard `IMod.Initialize` flow.
+Cycles in the shared-mod dependency graph are forbidden; the loader rejects them with `CyclicDependency` **before any assembly load** (`ModIntegrationPipeline.TopoSortSharedMods`, `ModIntegrationPipeline.cs:270-283,1091-1099`). Cycles between regular mods are rejected the same way (`TopoSortRegularMods`, `:1110-1118`). Kahn's algorithm produces the load order; cycle members are excluded from the sorted set and surfaced one error per affected mod (`TopoSortByPredicate`, `:1211-1303`).
 
-### 5.4 Restrictions on shared mods
+### §5.6 Three contract levels
 
-- A shared mod must export only types: `record`, `class`, `interface`, `enum`, `struct`. Public methods are permitted only as members of these types.
-- A shared mod cannot reference `DualFrontier.Core` or `DualFrontier.Application` (the same isolation rule as regular mods). It can reference only `DualFrontier.Contracts` and other shared mods.
-- A shared mod cannot have a static constructor that touches mutable state. Loaders cannot guarantee initialization order across shared mods.
-- A shared mod cannot read environment variables, files, or network resources at type-load time. Detection is best-effort; violations are documented in the threat model (§10).
+Mods communicate with the kernel and each other through three distinct levels. Mixing levels (e.g. using a data contract for service dispatch) is a design error caught at review.
 
-### 5.5 Naming convention
+| Level | Shape | Where the type lives | Where the implementation lives | Consumer reach |
+|---|---|---|---|---|
+| **1 — Data** | pure `record : IModContract`, no behavior | shared mod | publishing regular mod | `TryGetContract<T>` returns the instance |
+| **2 — Service** | interface `: IModContract` + implementation class | interface in shared mod | implementation in regular mod | `TryGetContract<T>` returns the implementation |
+| **3 — Protocol** | `IEvent` type with publish/subscribe | shared mod | publishers/subscribers in regular mods | bus dispatch via `Publish`/`Subscribe` |
 
-Shared mods follow the convention `id: "<base>.protocol"` or `id: "<base>.types"`. Examples:
+Level 1 examples: weapon/recipe/biome definitions published at registration time. Level 2: pluggable single-provider behaviors (`ICookingService`) — consumers fetch with `TryGetContract` and degrade gracefully on `false`. Level 3: cross-mod gameplay protocols (a magic mod publishes spell events; defensive mods subscribe). The store surface is `IModContractStore` (`IModContractStore.cs:19-33`): `Publish<T>(modId, contract)`, `TryGet<T>`, and `RevokeAll(modId)` — revocation runs in the unload chain (§9.4 step 2), after which `TryGetContract` returns `false` for the departed provider's contracts.
 
-- `dualfrontier.vanilla.core` — shared types used by every vanilla slice (e.g., `WeaponDef`, `RecipeDef`).
-- `dualfrontier.magic.protocol` — shared types for a magic-system protocol used by multiple magic mods.
+### §5.7 Contract types must live in shared mods ✓ LOCKED (D-4)
 
-The convention is enforced by the loader as a warning, not an error.
+A type used at any contract level **must** live in a shared mod — a `WeaponDef` defined in a regular mod's assembly is unreachable from another regular mod (different ALC, different `Type`). The loader actively scans every regular-mod assembly for exported `IModContract`/`IEvent` implementers and rejects the mod with `ContractTypeInRegularMod`, naming the offending type (Phase E, `ContractValidator.cs:329`). The one reflection pass per load is negligible against the architectural signal: contracts in regular mods break interoperability *silently*, and silent breakage is what this architecture exists to prevent.
 
 ---
 
-## 6. Three-level contracts
+## §6 Bridge replacement ✓ LOCKED
 
-Mods communicate with the kernel and with each other through three distinct contract levels. Mixing levels (e.g. using a data contract for service dispatch) is a design error caught at review.
+Kernel bridge systems exist as `[BridgeImplementation(Phase = N)]` stubs that keep the dependency graph valid for downstream phases referencing the system identity. When a mod ships the real implementation, the bridge steps aside — explicitly.
 
-### 6.1 Level 1: Data contracts
+### §6.1 Mechanism: explicit `replaces`
 
-A pure record describing a thing. No methods, no behavior, no inheritance other than `IModContract`.
+A mod listing a fully-qualified type name in `replaces` declares that **its** registered system supersedes the named kernel system. At apply time (`ModIntegrationPipeline.cs:432-457,1063-1072`):
 
-```csharp
-// In a shared mod (e.g. dualfrontier.vanilla.core):
-public sealed record WeaponDef(
-    string Id,
-    int BaseDamage,
-    DamageKind Kind,
-    float Range,
-    int AmmoPerShot
-) : IModContract;
-```
+1. Every `replaces` entry across the batch is collected into the `replacedFqns` set (Phase H has already vetted each entry — see below).
+2. During graph construction, every **core-origin** system whose FQN is in the set is **skipped**: the bridge stays compiled but is never registered.
+3. The mod's replacement system, registered through `RegisterSystem` during `Initialize`, enters the graph as a mod-origin system like any other.
 
-Use cases: weapon definitions, recipe definitions, biome parameters, faction templates. Mods publish instances via `IModApi.PublishContract`. The kernel and other mods read them via `TryGetContract`, typically iterating over the contract store at registration time.
+### §6.2 Conflict resolution and protection
 
-### 6.2 Level 2: Service contracts
+Phase H (`ContractValidator.cs:566`) rejects, per §12: two mods in one batch replacing the same FQN (`BridgeReplacementConflict` — the user must disable one; there is no automatic priority, because silent precedence is a debugging nightmare); a `replaces` entry naming a system not annotated `[BridgeImplementation(Replaceable = true)]` (`ProtectedSystemReplacement` — the kernel's escape hatch for systems that must remain authoritative); an FQN found in no loaded assembly (`UnknownSystemReplacement`).
 
-An interface a mod provides as a callable service. Implementations live in a regular mod; the interface lives in a shared mod so other mods can reference it at compile time.
+### §6.3 Rationale and reversal
 
-```csharp
-// In a shared mod (dualfrontier.cooking.protocol):
-public interface ICookingService : IModContract
-{
-    bool TryCook(EntityId chef, RecipeId recipe, out CookResult result);
-}
+Implicit replacement was rejected in Phase 0: a user investigating "why is combat acting strangely" must be able to discover, from manifests alone, which mod is responsible; explicit `replaces` extends the write-write-conflict philosophy ("conflicts are surfaced, never resolved silently") to system identity. Unloading a replacing mod reverts the skip: the next graph rebuild re-registers the kernel bridge (the skip-set is recomputed per apply from the *loaded* batch).
 
-// In a regular mod (dualfrontier.vanilla.cooking):
-internal sealed class VanillaCookingService : ICookingService
-{
-    public bool TryCook(EntityId chef, RecipeId recipe, out CookResult result) { /* ... */ }
-}
+---
 
-// Registered at Initialize:
-api.PublishContract<ICookingService>(new VanillaCookingService());
-```
+## §7 Versioning — three SemVer axes ✓ LOCKED
 
-Use cases: pluggable behaviors where exactly one provider answers (cooking, smithing, lockpicking). Rule: the service interface is in a shared mod; the implementation is in a regular mod. A consumer fetches via `TryGetContract<ICookingService>(out var svc)` and gracefully degrades when `svc` is null.
-
-### 6.3 Level 3: Protocol contracts
-
-A new `IEvent` type defined by a mod, with publish/subscribe semantics. The event lives in a shared mod; publishers and subscribers are regular mods.
-
-```csharp
-// In a shared mod (dualfrontier.magic.protocol):
-[Combat]
-[Deferred]
-public sealed record FireballCastEvent(EntityId Caster, GridVector Target, int ManaCost) : IEvent;
-
-// Publisher (regular mod, dualfrontier.vanilla.magic):
-api.Publish(new FireballCastEvent(caster, target, 25));
-
-// Subscriber (another regular mod, dualfrontier.community.fireshield):
-api.Subscribe<FireballCastEvent>(OnFireballCast);
-```
-
-Use cases: cross-mod gameplay protocols. A magic mod publishes spell events; defensive mods subscribe to add countermeasures.
-
-### 6.4 Level matrix
-
-| Level | Where the type lives | Where the implementation lives | How a consumer reaches it |
+| Axis | Field | Question it answers | Constraint kinds |
 |---|---|---|---|
-| Data | shared mod | publishing regular mod | `TryGetContract<T>` returns instance |
-| Service | shared mod | publishing regular mod | `TryGetContract<T>` returns implementation |
-| Protocol | shared mod | publisher and subscribers in regular mods | bus dispatch via `Publish` / `Subscribe` |
+| 1 — Kernel API | `apiVersion` (fallback `requiresContractsVersion`) | "does this mod fit this engine build?" | Exact or Caret |
+| 2 — Mod self | `version` | identity, reload lineage, save records | Exact value (not a constraint) |
+| 3 — Inter-mod | `dependencies[i].version` | "does my dependency fit?" | Exact or Caret |
 
-### 6.5 Anti-pattern: type in regular mod
+**Axis 1.** The version of `DualFrontier.Contracts`, existing as `ContractsVersion.Current` — currently `1.0.0` (`ContractsVersion.cs:17`). Bumped manually: Major for breaking changes to `IModApi`/manifest schema/attribute set/public Contracts signatures; Minor for additive changes; Patch for fixes that do not touch the public surface. Phase A evaluates the manifest's `EffectiveApiVersion` against `Current` (`ContractValidator.cs:110-124`).
 
-A type used in any contract level **must** live in a shared mod. A `WeaponDef` defined in a regular mod's assembly is unreachable from another regular mod (different ALC, different `Type`). The loader rejects mods that declare contract types in non-shared assemblies.
+**Axis 2.** Used for hot-reload lineage (downgrade warns, equal re-applies, higher proceeds), user-visible identity in the menu, and save records `(modId, modVersion)` (§9.8).
 
-> **✓ LOCKED (D-4).** The loader actively scans every regular-mod assembly via reflection for types implementing `IModContract` or `IEvent`. Detection rejects the mod with `ValidationErrorKind.ContractTypeInRegularMod`, naming the offending type and directing the author to the shared-mod pattern (§5). The cost (one reflection pass per load) is negligible compared to the architectural signal: contracts in regular mods break cross-mod interoperability silently, and silent breakage is what this architecture exists to prevent.
+**Axis 3.** Verified by Phase G for every dependency edge (`ContractValidator.cs:482-496`); presence (as opposed to version fit) is checked earlier by the pipeline with optional-dependency downgrade to warning (`ModIntegrationPipeline.cs:1138-1173`).
 
----
+**Constraint syntax — caret subset.** `"1.2.3"` exact; `"^1.2.3"` caret — `>= 1.2.3 < 2.0.0` (major pinned); `"~1.2.3"` tilde **rejected** with a `FormatException` directing the author to caret (`VersionConstraint.cs:56-60`). Ranges and OR-syntax are not supported; a mod needing a non-caret constraint escalates per the stop rule. `VersionConstraint` carries `{Kind: Exact|Caret, floor}` with `IsSatisfiedBy` evaluating per kind (`VersionConstraint.cs:7-35`).
 
-## 7. Bridge replacement ✓ LOCKED
-
-Phase 5 systems (`CombatSystem`, `DamageSystem`, `ProjectileSystem`) currently exist in the kernel as `[BridgeImplementation(Phase = 5)]` stubs with empty `Update()` bodies. The bridge mechanism keeps the dependency graph valid for downstream phases that reference the system identity. When a vanilla mod ships with a real implementation, the bridge must step aside.
-
-### 7.1 Mechanism: explicit `replaces` ✓ LOCKED
-
-A mod listing a fully-qualified type name in `replaces`:
-
-```json
-"replaces": ["DualFrontier.Systems.Combat.CombatSystem"]
-```
-
-declares that **its** registered system supersedes the named kernel system. The loader, when applying the mod set:
-
-1. Reads every `replaces` entry from every mod in the batch.
-2. Builds the `replacedSystems` set.
-3. When the kernel's bootstrap system list is being added to the dependency graph, every entry in `replacedSystems` is **skipped**. The bridge stays compiled, but never registered.
-4. The mod's replacement system is registered in its place.
-
-### 7.2 Conflict resolution
-
-If two mods in the same load batch both list the same FQN in `replaces`, the loader rejects the batch with `ValidationError` of new kind `BridgeReplacementConflict`. The user is presented with the conflict in the mod menu and asked to disable one of the conflicting mods.
-
-There is no automatic priority. Two combat mods cannot coexist if both replace `CombatSystem`. This is intentional: silent precedence is a debugging nightmare; explicit user choice is the architectural answer.
-
-### 7.3 Rationale
-
-Implicit replacement (silently letting mod systems shadow kernel systems) was rejected during Phase 0 deliberation because:
-
-- A user investigating "why is combat acting strangely" must be able to discover, from manifests alone, which mod is responsible.
-- A mod author adding combat mechanics deliberately (rather than accidentally) signals intent through `replaces`.
-- The `ContractValidator` already detects write-write conflicts on components; explicit `replaces` extends the same philosophy ("conflicts are surfaced, never resolved silently") to system identity.
-
-### 7.4 Bridge metadata
-
-The existing `[BridgeImplementation(Phase = N)]` attribute is extended with a `Replaceable` flag:
-
-```csharp
-[BridgeImplementation(Phase = 5, Replaceable = true)]
-public sealed class CombatSystem : SystemBase { /* ... */ }
-```
-
-A bridge with `Replaceable = false` cannot be replaced. The loader rejects mods that list it in `replaces`. This is the kernel's escape hatch for systems that must remain authoritative (e.g. `SystemExecutionContext` itself if it were a registered system).
-
-### 7.5 Tests
-
-The integration test set extends with:
-
-- "Mod replaces a `Replaceable = true` bridge — bridge skipped, mod system runs."
-- "Two mods replace same bridge — batch rejected with `BridgeReplacementConflict`."
-- "Mod replaces `Replaceable = false` system — mod rejected with `ProtectedSystemReplacement`."
-- "Mod replaces non-existent FQN — mod rejected with `UnknownSystemReplacement`."
-- "Mod is unloaded — replacement skip is reverted, kernel bridge re-registers, dependency graph rebuilds."
+**Resolution algorithm.** Build the dependency graph → topologically sort (cycle ⇒ `CyclicDependency`) → in topological order verify axis 1, then each axis-3 constraint; failures accumulate and the affected mods cascade-fail. There is no version-resolution backtracking: the loader takes manifests at face value — an unsatisfied constraint is a user-resolvable error, not a solver problem. In the shipped pipeline the whole batch fails together on any error (§8.3), so "cascade" is currently subsumed by batch atomicity.
 
 ---
 
-## 8. Versioning ✓ LOCKED
+## §8 The integration pipeline and the Apply transaction
 
-Three independent SemVer axes govern the mod system. Each axis answers a distinct compatibility question.
+### §8.1 Components
 
-### 8.1 Axis 1 — Kernel API version
+| Component | Role | Canonical source |
+|---|---|---|
+| `ModIntegrationPipeline` | Orchestrator: classify → load → validate → initialize → rebuild → swap; unload chains; fault-set drain | `src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs` |
+| `ModLoader` | Manifest read, ALC creation, `IMod` resolution, per-mod unload of instance + context | `ModLoader.cs` |
+| `ContractValidator` | Phases A–H batch validation (§2.3) → `ValidationReport` | `ContractValidator.cs` |
+| `ModRegistry` | Registry of mod components/systems; core-first enumeration; per-mod removal incl. Path β store reclamation | `ModRegistry.cs` |
+| `RestrictedModApi` | The `IModApi` v3 implementation handed to `IMod.Initialize` (§4) | `RestrictedModApi.cs` |
+| `IModContractStore` / `ModContractStore` | Inter-mod contracts, revocable per mod | `IModContractStore.cs`, `ModContractStore.cs` |
+| `ModFaultHandler` | Thread-safe faulted-mod accumulator drained by `Apply` (§9.5) | `ModFaultHandler.cs` |
+| `ModMenuController` | Menu editing session: `BeginEditing`/`Toggle`/`Commit`/`Cancel` over pipeline snapshots (§9.2) | `ModMenuController.cs` |
+| `KernelCapabilityRegistry` | Kernel-provided capability set (§3.4) | `KernelCapabilityRegistry.cs` |
 
-The version of the `DualFrontier.Contracts` assembly. Already exists as `ContractsVersion.Current`; currently `1.0.0`. Bumped manually:
+Construction and ownership (K6.1): `GameBootstrap` constructs the `ModFaultHandler` before the scheduler so the scheduler ctor takes it as an immutable `IModFaultSink`, and installs it into the loader (`GameBootstrap.cs:186-187`); the pipeline receives all collaborators by injection (`ModIntegrationPipeline.cs:138-154`) and owns the singleton shared ALC.
 
-- **Major** — breaking change to `IModApi`, manifest schema, attribute set, or any public type signature in `Contracts`.
-- **Minor** — additive change (new method on `IModApi` with a default fallback, new optional manifest field, new attribute).
-- **Patch** — bug fix that does not touch the public surface.
+### §8.2 `Apply` — the stages as coded
 
-The mod's manifest declares the required kernel API version in `apiVersion`. The loader uses `ContractsVersion.IsCompatible(required, ContractsVersion.Current)`. Caret prefix support is added (§8.4).
+`public PipelineResult Apply(IReadOnlyList<string> modPaths)` (`ModIntegrationPipeline.cs:209`). Executed from the mod menu; the simulation must be paused — a running pipeline throws `InvalidOperationException("Pause the scheduler before applying mods")` (`:212-214`, §9.7).
 
-### 8.2 Axis 2 — Mod self version
+| Stage | What happens | Anchor |
+|---|---|---|
+| [-1] Fault drain | Every mod queued by `ModFaultHandler` since the last apply is unloaded through the full §9.4 chain, then cleared; warnings fold into the result | `:222-228` |
+| [0] Classify | Pre-injected mods taken as regular; on-disk manifests parsed and split by `ModKind`; manifest-read failures become errors (recorded under `MissingDependency` — see note below) | `:233-268` |
+| [0.5] Shared cycle check | D-5 topological sort of shared manifests; cycle members error out before any assembly load | `:270-283` |
+| [0.6] Regular sort + presence | Regular-mod topological sort (`CyclicDependency` for cycles); dependency-presence check (required missing ⇒ `MissingDependency` error; optional missing ⇒ warning) | `:291-318` |
+| [1] Pass 1 — shared | Shared mods load into the shared ALC in topological order | `:320-339` |
+| [2] Pass 2 — regular | Regular mods load, each `ModLoadContext` wired to the shared ALC | `:341-362` |
+| [3] Validate | `ContractValidator.Validate(loaded, coreSystems, kernelCapabilities, sharedMods)` — Phases A–H; on any error (or any earlier load error) the batch **rolls back** and returns failure | `:364-392` |
+| [4] Initialize | Per mod: construct `RestrictedModApi` (six args — no field registry, §4.3) and call `IMod.Initialize(api)`; the API instance is retained on the mod for the unload chain; any throw ⇒ full rollback | `:394-430` |
+| [5-7] Local graph build | A **local** `DependencyGraph` receives every registered system, skipping core systems whose FQN is in the replaces set (§6.1); `Build()` proves the graph; a throw ⇒ full rollback, scheduler untouched | `:432-480` |
+| [8] Commit | `_activeMods`/`_activeShared` extended; `SystemMetadataBuilder.Build(_registry)` snapshots origin/modId per system; `_scheduler.Rebuild(localGraph.GetPhases(), newMetadata)` swaps phases, metadata, and context cache together | `:482-502`; `ParallelSystemScheduler.cs:191-222` |
 
-The mod's own `version` field. Used for:
+Error-kind note (code truth): stage [0]/[1]/[2] load failures and stage [4] `Initialize` throws are reported under `ValidationErrorKind.MissingDependency` with a descriptive message (`:263-266,334-337,357-360,408-411`) — the enum has no dedicated "load failed"/"init threw" kinds; the message, not the kind, carries the diagnosis.
 
-- Hot-reload lineage. When the menu reloads a mod, the loader compares the new manifest's `version` against the loaded one. A lower version triggers a warning ("you are downgrading"); equal versions are permitted (re-apply); higher versions proceed.
-- User-visible identity in the mod menu.
-- Save-game compatibility: each save records the set of `(modId, modVersion)` it used. Loading a save with a mod at a major version below what the save expects warns the user.
+### §8.3 Graph-rebuild atomicity — the commit guarantee
 
-### 8.3 Axis 3 — Inter-mod dependency version
+`DependencyGraph` construction and `Build()` run on a **local variable**; the scheduler is replaced only after `Build()` succeeds. On any error the old scheduler stays active — phases, metadata, and per-system execution contexts swap in one assignment sequence inside `Rebuild` (`ParallelSystemScheduler.cs:200-221`). A partially built graph never exists from the scheduler's point of view. This is the engine's model prepare/commit transaction — the vocabulary mapping (prepare/validate/quiesce/commit) is per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft), which uses this exact flow as its conformant example.
 
-Each entry in `dependencies` is `{id, version}`, where `version` is a SemVer constraint. The loader verifies that for every dependency, the loaded mod with that id satisfies the constraint.
+Rollback inventory on the failure paths: `RollbackLoaded` physically unloads every regular mod that reached memory (`:984-992`, swallowing rollback-time errors); `_registry.ResetModSystems()` clears mod systems and component ownership (`ModRegistry.cs:160-164`); `_contractStore.RevokeAll(modId)` per mod. Registry/contract rollback runs on the stage [4]/[5-7] paths — after stage [3] failures nothing has registered yet.
 
-### 8.4 Constraint syntax: caret subset ✓ LOCKED
-
-Three syntaxes are supported, all are subsets of npm/Cargo conventions:
-
-- **Exact**: `"1.2.3"` — matches `1.2.3` only.
-- **Caret**: `"^1.2.3"` — matches any version `>= 1.2.3` and `< 2.0.0`. The major number is pinned; minor and patch may be higher.
-- **Tilde** (rejected): `"~1.2.3"` — explicitly **not supported** in v1. Reserved syntax; the parser rejects with a clear error message pointing to caret.
-
-Range syntaxes (`">=1.0 <2.0"`) and OR (`"1.x || 2.x"`) are not supported. If a mod author needs a non-caret constraint, the design escalates to §12 for case-by-case handling.
-
-### 8.5 Parser
-
-`ContractsVersion.Parse` already handles strict `MAJOR.MINOR.PATCH` and silently strips a leading caret/tilde. The v2 parser:
-
-1. Detects the prefix (`^`, exact, or `~`).
-2. For `~`, throws `FormatException` with a directive to use caret instead.
-3. Returns a new `VersionConstraint` struct: `{ ContractsVersion Version, ConstraintKind Kind }`.
-4. `VersionConstraint.IsSatisfiedBy(ContractsVersion candidate)` evaluates per kind.
+### §8.4 `PipelineResult` — partial-success semantics
 
 ```csharp
-public readonly struct VersionConstraint
+public sealed record PipelineResult(
+    bool Success,                                // true only when the scheduler was rebuilt
+    IReadOnlyList<ValidationError> Errors,       // empty on success
+    IReadOnlyList<string> LoadedModIds,          // active after the apply
+    IReadOnlyList<string> FailedModIds)          // ids (or paths) that failed
 {
-    public ContractsVersion Version { get; }
-    public ConstraintKind Kind { get; } // Exact, Caret
-
-    public bool IsSatisfiedBy(ContractsVersion candidate) => Kind switch
-    {
-        ConstraintKind.Exact => candidate == Version,
-        ConstraintKind.Caret =>
-            candidate.Major == Version.Major
-            && (candidate.Minor > Version.Minor
-                || (candidate.Minor == Version.Minor && candidate.Patch >= Version.Patch)),
-        _ => throw new InvalidOperationException()
-    };
+    public IReadOnlyList<ValidationWarning> Warnings { get; init; }  // both paths
 }
 ```
 
-### 8.6 Where each axis applies
+(`ModIntegrationPipeline.cs:21-36`.) The nuances that matter:
 
-| Field | Axis | Constraint kinds allowed |
+- **The regular-mod batch is all-or-nothing.** Errors accumulate across stages; if any error fires, the entire batch rolls back and `Success = false` — no mod is silently skipped (`:299-300,380-392`). `FailedModIds` distinguishes *which* inputs caused it.
+- **Shared mods are the partial-success exception.** Once loaded into the non-collectible shared ALC they persist for the session even when the batch fails (`:56-57` design comment; nothing in the rollback paths unloads them — only `_activeShared` bookkeeping is withheld until commit, `:490`). A retry of the same batch therefore finds the shared assemblies already cached; re-loading the same shared simple name is rejected (`SharedModLoadContext.cs:59-61`, surfaced through the stage-[1] error path).
+- **Warnings ride both outcomes** — optional-dependency advisories, fault-drain unload warnings, and validator warnings are merged and attached to success and failure results alike (`:377-378` and every return).
+
+### §8.5 `UnloadAll`
+
+`public IReadOnlyList<ValidationWarning> UnloadAll()` (`ModIntegrationPipeline.cs:780-824`) delegates to `UnloadMod` per active mod (snapshot-by-id through a non-inlined helper for GC-cleanliness) and, when no mod was active, still rebuilds the kernel-only graph with fresh metadata. Shared mods are never unloaded. **Code truth: no production call site invokes `UnloadAll`** — the menu path unloads removed mods individually and applies additions (`ModMenuController.Commit`, `ModMenuController.cs:236` region); `UnloadAll` is exercised by tests. It is retained as the bulk-teardown surface pending the shutdown-transaction design (ENGINE_LIFECYCLE_AND_TRANSACTIONS.md, AUTHORED draft — world shutdown row).
+
+---
+
+## §9 Lifecycle
+
+### §9.1 The commit/reclaim split — one law instead of a contradiction
+
+The predecessor stated both "transitions between states are atomic; failure mid-transition rolls back" (old §9) and "there is no atomic-unload guarantee; `Unload` is conceptually irreversible" (old §9.5.1) — the session's C7 finding. Both sentences were correct **about different stages**, and this document adopts the split explicitly, per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) §1:
+
+- **Atomic applies to the desired-state commit.** Apply commits by a single scheduler swap after a locally proven graph (§8.3); unload commits by removing the mod from the active set and swapping in the rebuilt graph. Before the commit point, failure rolls the candidate back and the old state stands (§8.3 rollback inventory). After it, the new desired state is published — never a mixture.
+- **Best-effort applies to reclamation of the old state.** The unload chain's cleanup steps (unsubscribe, revoke, remove, native teardown, ALC unload, GC pump) are sequential, best-effort, and monotonic: a step's failure logs a warning and the chain continues; nothing un-commits (§9.4). Reclamation can end in "leaked — restart advised" while the desired state honestly reads "disabled".
+
+**States as coded — say it plainly:** there is no mod-state enum and no `Degraded` state anywhere on disk. Current state is carried by booleans and set membership: the pipeline's `_activeMods`/`_activeShared` lists, the `_isRunning` flag (`ModIntegrationPipeline.cs:113`), the loader's `_loaded` map, the menu's per-row flags `IsCurrentlyActive`/`IsPendingActive`/`CanToggle` (`EditableModInfo.cs:31-36`), and the fault handler's queued set. The predecessor's six-state diagram (Disabled → Pending → Loaded → Active → Stopping → Disabled) survives only as a *reading* of those booleans along the happy path; it is not code, and the fault path (§9.5) and the leaked-reclamation terminal were never representable in it. Separated desired-state/reclamation-state variables are the draft's proposal, not current truth.
+
+> **FENCED (target / planned — not current truth):** ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) §3 proposes named state machines (`DesiredState` incl. `LogicallyDisabled(faulted)`; `ReclamationState` incl. `Reclaiming/Reclaimed/ReclaimFailed(leaked)`) and a recover stage (bounded pump retry, Degraded reason). None of that exists in code; adopting it is that draft's ratification question, not this document's.
+
+### §9.2 Hot reload through the menu ✓ LOCKED
+
+Hot reload is supported **only** via the mod menu with the simulation paused. Flow (menu implementation: `ModMenuController`, `ModMenuController.cs:102-320`):
+
+1. The menu opens an editing session: `BeginEditing` snapshots the active set (`GetActiveMods`, `ModIntegrationPipeline.cs:177-183`) and pauses via `Pause()` (run flag false — `:191`).
+2. The user toggles mods (`Toggle`/`CanToggle`, honoring §9.7 restrictions); `GetEditableState` renders the §9.1 boolean flags.
+3. `Commit` unloads every removed mod via `UnloadMod`, then applies added paths via `Apply` (skipped entirely when nothing was added), then `Resume()` (`ModMenuController.cs:236` region). `Cancel` discards the pending set.
+4. The simulation continues from the current world state against the new graph.
+
+Reloading a mod (same id, possibly different version) is unload-then-load in one session. Version lineage warnings per §7 axis 2.
+
+### §9.3 No live-tick reload ✓ LOCKED
+
+Reloading during a tick is forbidden. `Apply`, `UnloadMod`, and `UnloadAll` all throw `InvalidOperationException("Pause the scheduler before …")` while the run flag is up (`ModIntegrationPipeline.cs:212-214,564-566,782-784`). The flag lives on the pipeline rather than the scheduler — a recorded M7.1 interpretation (`:93-113`); its default `false` ("paused") is load-bearing for every construct-then-Apply flow.
+
+### §9.4 THE unload chain — single, code-verified
+
+One chain exists: `ModIntegrationPipeline.UnloadMod(modId)` (`ModIntegrationPipeline.cs:561-592`, steps in `:612-759`). It is idempotent (unknown id returns an empty warning list) and rejects calls while running (§9.3). Steps, in the coded order and with the coded numbering:
+
+| Step | Action | Anchor |
 |---|---|---|
-| `apiVersion` | 1 (Kernel API) | Exact or Caret |
-| `version` | 2 (Mod self) | Exact only (it's a single value, not a constraint) |
-| `dependencies[i].version` | 3 (Inter-mod) | Exact or Caret |
+| 1 | `RestrictedModApi.UnsubscribeAll()` — every tracked bus subscription removed | `:630-633`; `RestrictedModApi.cs:223-228` |
+| 2 | `IModContractStore.RevokeAll(modId)` — inter-mod contracts revoked | `:637-640` |
+| 3 | `ModRegistry.RemoveMod(modId)` — the mod's systems and component ownerships removed; **includes Path β reclamation**: `ClearManagedStores()` empties and drops every per-mod `ManagedStore<T>` and the resolver entry before system removal | `:646-649`; `ModRegistry.cs:173-200` (`:179-183`) |
+| 3.5 | Native scheduler-state teardown: `df_scheduler_unload_mod_native_state(hash)` clears per-tier subscriber registries, capability registrations, wake-registry subscriptions, shared-memory registrations inside one native critical section, returning `ModUnloadResult` with per-tier metrics; native failure messages surface as step-3.5 warnings; then the per-mod `ModSubScheduler` is torn down (`RemoveSubScheduler`) | `:665-691`; `src/DualFrontier.Core.Interop/ModUnloadInterop.cs:73,92,112-116` |
+| 3.6 | V (Vulkan) resource cleanup — `VResourceCleanup.UnloadModResources(modId)`, today a managed placeholder returning vacuous success (no pipeline-managed mod resources are registered); failures would surface as step-3.6 warnings | `:705-717`; `src/DualFrontier.Application/Bridge/VResourceCleanup.cs:27,52-62` |
+| 4 (fused 4+5) | Graph rebuild **and** scheduler swap, coupled in one step: a local `DependencyGraph` over the post-removal registry, fresh `SystemMetadata` snapshot, `_scheduler.Rebuild(...)` — coupled so the scheduler never briefly references systems whose types are being collected in step 6 | `:719-737` |
+| 6 | `ModLoader.UnloadMod(modId)`: `mod.Instance.Unload()` inside a swallowed try/catch (**no timeout, no abort** — the M0-era discipline), then `ModLoadContext.Unload()` (asynchronous, collaborative), then removal from the loader map | `:744-747`; `ModLoader.cs:212-231` |
+| — | `WeakReference` to the mod's ALC captured in a non-inlined frame; the mod is removed from `_activeMods` — **this is the desired-state commit**: it happens regardless of any step's outcome | `:749-757` |
+| 7 | Reclamation verification: spin on `WeakReference.IsAlive`, each iteration running the mandatory GC pump bracket `GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect()` (the double collect restores monotonic progress because `WaitForPendingFinalizers` can resurrect finalizable graph nodes); cadence 100 × 100 ms = 10 s (`Step7TimeoutMs`, `:115-120`). On timeout a `ModUnloadTimeout` warning is appended — "the mod has been removed from the active set; restart the game to fully reclaim memory" — i.e. **leaked ⇒ advise restart** | `:585-589,912-935` |
 
-### 8.7 Resolution algorithm
+**Failure semantics (per-step best-effort).** Steps 1–3.6 and 4 and 6 are each wrapped by `TryUnloadStep`: on exception the loader records a non-blocking `ValidationWarning` carrying `(modId, stepNumber)` and the message, and continues to the next step (`:853-872`). The chain is structured so each step is a no-op if its predecessor failed (removing systems from a mod that registered none is harmless). Step 7 is timeout-based, not exception-based, and runs even after a step-6 failure. A native step-3.5 rejection (e.g. the К-L18 precondition, §9.6) surfaces through the same warning pipeline and the chain **continues** — the shipped behavior matches the predecessor's §9.5.1 wording, and tightening it to abort-on-quiesce-failure is the lifecycle draft's proposal, fenced above. There is no atomic-unload guarantee: subscriptions removed in step 1 cannot be re-attached without re-running `Subscribe`.
 
-Given a load batch (a list of mod manifests):
+Contract-adjacent GC engineering (it is what makes step 7 pass): steps 1–6, the WR capture, and the active-set removal all run in `NoInlining` helpers so no stack frame or lambda display class roots the `LoadedMod`/`ModLoadContext` during the spin; the spin helper takes only `(modId, WR, warnings)` (`:611-614,884-916`; same pattern in `UnloadAll`'s id snapshot, `:836-843`).
 
-1. Build the dependency graph.
-2. Topologically sort. A cycle is `ValidationError.CyclicDependency`.
-3. In topological order, for each mod:
-   a. Verify `apiVersion` against `ContractsVersion.Current`.
-   b. For each dependency, verify the loaded version satisfies the constraint.
-   c. If any check fails, the mod is added to the failed set; mods that depend on it cascade-fail.
-4. The failed set is presented to the user; the success set proceeds to load.
+**Resolved (was N-9 — the three-document step-order conflict):** the coded order above — *unsubscribe first*, then contracts, then registry removal — is the truth; the retired MOD_PIPELINE listing (RemoveSystems first, `IMod.Unload` as its own step 4, ClearManagedStores as its own step 5, a trailing `ModDisabledEvent` publish) does not match the code: `IMod.Unload` lives *inside* step 6 via `ModLoader.UnloadMod`, Path β reclamation lives *inside* step 3 via `ModRegistry.RemoveMod`, spec-steps 4 and 5 are fused into one coded step, and **no `ModDisabledEvent` type exists in the codebase** (repo-wide grep at HEAD).
 
-There is no version-resolution backtracking ("find a combination that works"). The loader takes manifests at face value. A cycle or unsatisfied constraint is a user-resolvable error, not a solver problem.
+### §9.5 THE fault path — single, code-verified timing
 
----
+What actually happens when a mod fault is reported, in full (this is the entire mechanism):
 
-## 9. Lifecycle
+1. **Entry point.** `ModLoader.HandleModFault(modId, ModIsolationException)` — the surviving public fault surface post-К8.3+К8.4 (`ModLoader.cs:303-309`). It routes to the installed handler; with no handler installed it is a no-op.
+2. **Recording.** `ModFaultHandler.ReportFault(modId, message)` adds the id to a deduplicating `HashSet` under a lock — nothing else (`ModFaultHandler.cs:65-72`). No unsubscribe, no scheduler eviction, no graph change, no log file, no UI event happens at fault time. Rationale (retained design comment, `:29-37`): a fault arrives mid-tick on a worker thread; rebuilding the graph synchronously would race with other workers.
+3. **Deferred unload.** At the next menu-open `Apply`, stage [-1] drains the faulted set: each queued mod goes through the full §9.4 chain, then `ClearFault` (`ModIntegrationPipeline.cs:222-228`). Reentrance is harmless (the set deduplicates; the handler never calls back into the pipeline at fault time).
 
-The mod lifecycle has six well-defined states. Transitions between states are atomic; failure mid-transition rolls back to the previous state.
+**Detection is the honest gap.** No production code path invokes `HandleModFault` or `ReportFault` today: `ParallelSystemScheduler.ExecutePhase` wraps `system.Update` in try/**finally** only (context pop — `ParallelSystemScheduler.cs:149-164`), the game loop has no mod-fault catch, and the deleted runtime isolation guard was the previous caller (`NullModFaultSink` doc: "post-К8.3+К8.4 no Core call site invokes the sink", `IModFaultSink.cs`). Consequently a mod system that throws during `Update` today propagates exactly like a core system's exception (through `Parallel.ForEach` as `AggregateException`) — the designed core-crash/mod-unload split (§10.3) is plumbed (origin metadata, sink, drain) but not triggered anywhere. The plumbing is real and test-exercised via `ReportFault` directly.
 
-### 9.1 States
+**Resolved (was N-8 — the three-way timing conflict):** the predecessors specified this event three ways — MOD_OS §10.1 *queued-to-next-menu-open*; MOD_PIPELINE *chain-now-with-deferred-rebuild plus "systems marked Disabled in the scheduler"*; ISOLATION *immediate six-step sequence with an abort-on-timeout `IMod.Unload`*. The code implements the first: queue at fault time, full chain at next `Apply`. The other two are retired — no "Disabled" marking exists in the scheduler, no immediate sequence exists, no `IMod.Unload` timeout/abort exists (the call is a swallowed try/catch with no time bound — `ModLoader.cs:219-227`), no `logs/mods/<mod-id>.log` writer exists, and no `ModDisabledEvent` exists.
 
-```
-        ┌──────────┐
-        │ Disabled │  ← user toggled off in menu, or never enabled
-        └────┬─────┘
-             │ user enables
-             ▼
-        ┌──────────┐
-        │ Pending  │  ← manifest read, not yet validated
-        └────┬─────┘
-             │ validate
-             ▼
-        ┌──────────┐
-        │  Loaded  │  ← assembly in ALC, IMod.Initialize ran
-        └────┬─────┘
-             │ scheduler.Rebuild
-             ▼
-        ┌──────────┐
-        │  Active  │  ← system is in the dependency graph, ticking
-        └────┬─────┘
-             │ user disables (or HotReload)
-             ▼
-        ┌──────────┐
-        │ Stopping │  ← graph rebuild excludes this mod
-        └────┬─────┘
-             │ ALC.Unload
-             ▼
-        ┌──────────┐
-        │ Disabled │
-        └──────────┘
-```
+> **FENCED (target / planned — not current truth):** the missing detection stage — a per-system catch in `ExecutePhase` dispatching on `SystemOrigin` (core → rethrow, mod → quarantine skip-set at the tick boundary + `ReportFault`) — and the fault-time quarantine commit are specified in ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) §2.3. User-facing surfacing (banner, per-mod fault log, "disabled due to error" persistence across restarts) ships with that work; until then the §11 threat-model row for runtime misbehavior reads "reported faults are honored; unreported faults propagate".
 
-### 9.2 Hot reload through the menu ✓ LOCKED
+### §9.6 К-L18 quiescence
 
-Hot reload is supported only via the mod menu, with the simulation paused. The user flow:
+Per К-L18 (KERNEL_ARCHITECTURE.md Part 0): mod load/unload operations require *simulation paused + pipeline slots quiescent* (all fences completed; no compute dispatches in flight). Where that stands in code:
 
-1. User opens the mod menu. The menu calls `ModIntegrationPipeline.Pause()` which sets the scheduler's run flag to false.
-2. User toggles mods, edits versions, clicks "Apply."
-3. The menu invokes `ModIntegrationPipeline.Apply(newModSet)`. This call:
-   - Builds the new graph in a local variable (existing behavior).
-   - On success, calls `_scheduler.Rebuild(newPhases)`.
-   - Calls `ALC.Unload()` on every mod in the previous set that is not in the new set.
-4. The menu calls `ModIntegrationPipeline.Resume()` and the simulation continues from the current world state.
+- **Managed helper layer (helpers-only per S-LOCK-12):** `SimulationStateController` provides `PauseAsync()` → `WaitForQuiescenceAsync(timeout)` → operation → `ResumeAsync()`; quiescence timeout is typed as `PipelineQuiescenceTimeoutException` (`src/DualFrontier.Application/Loop/SimulationStateController.cs:35,71,110,142`). **Zero production callers today** — the menu path enforces pause through the pipeline's `_isRunning` flag only (§9.3); the controller is the sanctioned hookup point when the settings/menu UI work lands.
+- **Native precondition:** the step-3.5 primitive checks sim-paused + pipeline quiescence natively (К10.2 stub + К10.3 v2 Item 41, `df_pipeline_is_quiescent`) and returns failure with diagnostics instead of partial teardown; the managed wrapper converts that to step-3.5 warnings (`ModUnloadInterop.UnloadModNativeState`, `ModUnloadInterop.cs:112-116`; §9.4 failure semantics).
+- **Vacuity note:** while the native bus carries no production subscribers (dispatch default managed — see [EVENT_BUS.md](./EVENT_BUS.md) current/target wiring), the native teardown is vacuously successful; it becomes load-bearing at the native-bus authority switch (per EXECUTION_AUTHORITY_MATRIX.md §3, AUTHORED draft).
 
-Reloading a mod (same id, possibly different version) follows the same flow: old version unloads, new version loads, replacement systems re-register if listed in `replaces`.
+### §9.7 Hot-reload-disabled mods ✓ LOCKED (D-7)
 
-### 9.3 No live-tick reload ✓ LOCKED
+A mod with `"hotReload": false` cannot be reloaded or disabled mid-session: the menu grays the toggle (`EditableModInfo.CanToggle`) and `Toggle` rejects defensively (`ModMenuController.cs:152-201`); the user restarts instead.
 
-The architecture explicitly forbids reloading a mod during a tick. Attempts to call `Apply` while the scheduler is running throw `InvalidOperationException("Pause the scheduler before applying mods")`. This is enforced by `ModIntegrationPipeline` checking the scheduler's run flag.
+> **✓ LOCKED (D-7).** Hybrid by build flavor: vanilla mods declare `hotReload: true` in source; the shipping build pipeline rewrites this to `false` in release manifests — development gets free hot-reload testing of vanilla mechanics, shipped builds get session stability.
+> **FENCED (target / planned — not current truth):** the release-manifest rewrite step exists in no build script at HEAD; the vanilla manifests on disk carry their source-time values. The lock binds the shipping pipeline when one exists.
 
-### 9.4 Save-game implications
+### §9.8 Save-game implications ✓ LOCKED (D-6)
 
-A save records `(modId, modVersion)` for every active mod at the time of save. On load:
+A save records `(modId, modVersion)` for every active mod. On load: a missing recorded mod ⇒ warn and load without it; a higher-major recorded mod ⇒ warn (may misbehave); lower-or-equal ⇒ proceed.
 
-- If a recorded mod is missing → user warned, save loads with that mod absent (entities with components from that mod are removed; this is destructive but explicit).
-- If a recorded mod is at a higher major version → user warned, save may behave incorrectly.
-- If a recorded mod is at a lower or equal version → load proceeds.
-
-The fine-grained handling of component data from missing mods is delegated to the persistence layer ([PERSISTENCE](../../src/DualFrontier.Persistence/README.md)) and is out of scope for this document.
-
-### 9.5 ALC unload protocol
-
-`AssemblyLoadContext.Unload()` is asynchronous; the runtime waits for all references to the assembly to be released. The unload chain:
-
-1. `RestrictedModApi.UnsubscribeAll()` — drops bus subscriptions.
-2. `IModContractStore.RevokeAll(modId)` — drops contract registrations.
-3. `ModRegistry.RemoveSystems(modId)` — drops system instances.
-3.5. **(К10.2)** `df_scheduler_unload_mod_native_state(modId)` — native primitive encapsulating T0-T7 internal sequence: clears native scheduler state (subscriber registries per tier, capability registrations, wake registry subscriptions, shared memory registrations); returns `ModUnloadResult` с per-tier metrics. Best-effort sequential per §9.5.1; native primitive internal critical section atomicity (per S3-Q1 L3 layering, single primitive contract per S3-Q6). К10.3 v2 Item 41 extends с pipeline slot quiescence check (К-L18 invariant) — primitive rejects unload if any pipeline slot is `Dispatched` или `FenceCompleted`. Also tears down per-mod `ModSubScheduler` (К10.2 Item 21).
-3.6. **(К10.3 v2 Item 42)** V (Vulkan) resource cleanup — wraps `df_vulkan_unload_mod_resources(mod_id)` C ABI primitive per VULKAN_SUBSTRATE.md §3.4 К10.3 v2 amendment. К10.3 v2 lands the managed wrapper (`DualFrontier.Application.Bridge.VResourceCleanup`) returning vacuous success when no pipeline-managed mod resources are registered; full native implementation (`VkDestroyPipeline` / `VkFreeDescriptorSets` / `vkDestroyBuffer` / `vkDestroyImage` для mod-registered Vulkan handles) lands V-cycle или К-extensions per managed-facade-preserved strategy. К-L18 quiescent state precondition already satisfied (Step 3.5 verified sim paused + pipeline quiescent per К-L18 invariant). Best-effort sequential per §9.5.1.
-4. The dependency graph is rebuilt without this mod's systems.
-5. The scheduler swaps to the new phase list.
-6. `ALC.Unload()` is called.
-7. The loader spins on `WeakReference.IsAlive`, polling each iteration. Before every poll the loader performs `GC.Collect(); GC.WaitForPendingFinalizers(); GC.Collect()` — the double-collect bracket is required because `WaitForPendingFinalizers` can resurrect finalizable graph nodes the first collect would have removed; the second collect picks those up, restoring monotonic progress. Default cadence: 100 iterations × 100 ms = 10 s timeout. On timeout, a `ModUnloadTimeout` warning fires; the mod is marked as a leaked reference and the user is advised to restart.
-
-WeakReference-based unload tests are mandatory for every regular mod (§10.4).
-
-### 9.5.1 Failure semantics
-
-Steps 1–6 (including К10.2 Step 3.5 — `df_scheduler_unload_mod_native_state` — и К10.3 v2 Step 3.6 — V resource cleanup placeholder) of the unload protocol (§9.5) are sequential and best-effort. If any step throws, the loader logs the exception with `(modId, stepNumber)`, surfaces a non-blocking `ValidationWarning`, and continues to the next step. After step 6, if step 7 times out, the `ModUnloadTimeout` warning per §9.5 fires; the mod is removed from the active set regardless of whether the assembly actually unloaded.
-
-Step 3.5 may reject the entire unload if К-L18 quiescent state precondition is not satisfied (sim не paused, либо pipeline slots в `Dispatched`/`FenceCompleted` state). In that case the native primitive returns failure + error message; Steps 3.6 onward proceed best-effort consuming the same warning pipeline, но the upstream К-L18 violation surfaces as `QuiescentStatePreconditionViolated` (§11.2 К10.3 v2 amendment) carrying the rejection reason.
-
-There is no atomic-unload guarantee. `Unload` is conceptually irreversible: subscriptions removed in step 1 cannot be re-attached without re-running `Subscribe`. The chain is structured so each step is a no-op if its predecessor failed (e.g. `RemoveSystems` on a mod with no registered systems is harmless), making best-effort progression safe. The `ModLoader.UnloadMod` swallowed `try/catch` around `mod.Instance.Unload()` is the canonical example of this discipline, in place since M0.
-
-### 9.6 Hot-reload disabled mods
-
-A mod with `"hotReload": false` cannot be reloaded mid-session. The menu disables the reload button for that mod and presents a tooltip. To change such a mod, the user must restart the game.
-
-### 9.7 Hot reload К-L18 compliance (К10.3 v2 amendment)
-
-Hot reload preserves game state through managed dependency graph swap (§9.2/§9.5). К-L18 «mod lifecycle quiescent state» mandates the simulation be paused и pipeline slots quiescent before unload/reload operations proceed:
-
-- `DualFrontier.Application.Loop.SimulationStateController.PauseAsync()` sets the К-L18 sim-paused flag (consumed by native `df_scheduler_unload_mod_native_state` Step 3.5 precondition check per К10.2 + К10.3 v2 Item 41 extension).
-- `WaitForQuiescenceAsync(timeout)` polls pipeline slot state (К10.3 v2 Item 33 — all slots `Empty` или `ReadableAsTail`) until quiescent или timeout. Timeout surfaces as `PipelineQuiescenceTimeout` validation error (§11.2 К10.3 v2 amendment).
-- `ResumeAsync()` clears the sim-paused flag после the mod operation completes.
-
-Mod management UI и hot reload tooling share this enforcement pattern. Per S-LOCK-12 К10.3 v2 scope: helpers only land; full settings menu / preferences UI deferred к V-cycle или К-extensions.
+> **✓ LOCKED (D-6).** Default policy for missing mods: **strip the missing mod's components, keep the entities**, with a clear warning naming each missing mod; a user-toggleable "strict mod compatibility" setting refuses the load instead. Workshop reality is that mods get abandoned; strict-by-default would block too many real loads.
+> **FENCED (target / planned — not current truth):** no persistence implementation consumes this policy yet — the fine-grained handling belongs to PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) and the save milestone; Path β components are runtime-only by K-L3.1 lock regardless (§4.1).
 
 ---
 
-## 10. Threat model
+## §10 Enforcement and the isolation model
+
+A silent isolation violation is worse than a crash: corrupted state surfaces an hour into play as an inexplicable bug. Dual Frontier declares system isolation at **compile time** and enforces it structurally.
+
+### §10.1 The three mechanisms
+
+1. **Compile-time declarations.** Every `SystemBase` subclass carries `[SystemAccess(reads, writes, bus)]` — the single source of truth for what the system reads, writes, and publishes. Registration without it (or without `[TickRate]`) is rejected (`ModRegistry.RegisterSystem`; the scheduler independently refuses to build a context for an undeclared system — `ParallelSystemScheduler.cs:233-238`).
+2. **DependencyGraph edge-building.** The scheduler consumes `[SystemAccess]` to compute writer-vs-reader edges, bus contention, and phase ordering: systems with no edge run on parallel scheduler threads; conflicting systems run sequentially. Detailed model in [THREADING.md](./THREADING.md).
+3. **Roslyn analyzers — shipped and enforcing.** 17 rules carry real detection logic and are enforced at shipped severities: 11 Error + 5 Warning are build-breaking under `TreatWarningsAsErrors=true`; one (DFL025_B) is IDE-only — per [ANALYZER_RULES.md](./ANALYZER_RULES.md) §4 (ground truth verified on disk; `tools/DualFrontier.Analyzers/Rules/{Architecture,Discipline,NativeBoundary}`). **This supersedes the retired ISOLATION.md statement that the analyzer stubs "emit zero diagnostics"** — that was true pre-A'.9.1 Phase β and is stale.
+
+> **FENCED (target / planned — not current truth):** the *specific* call-site completeness rule ISOLATION promised — flag any `NativeWorld.AcquireSpan<T>()`/`BeginBatch<T>()` whose `T` is undeclared in the enclosing `[SystemAccess]` — is **not** among the 17 (the shipped set encodes К-L invariants; the access-completeness family sits in the deferred DFK009/012/015/018/020 groups per ANALYZER_RULES deferral tables and [docs/ROADMAP.md](../ROADMAP.md) §Analyzer track). Until it lands, undeclared component access is caught by manual review and scheduler integration tests, not by the build.
+
+The runtime guard methods that previously threw `IsolationViolationException` from `SystemExecutionContext.GetComponent/SetComponent` were **deleted at the К8.3+К8.4 cutover (2026-05-14)**; systems reach component storage exclusively through `NativeWorld` span/batch APIs (Path α — see [ECS.md](./ECS.md)) or `SystemBase.ManagedStore<T>()` (Path β). The compile-time + structural model replaced the runtime check; the enforcement-gap window until the call-site analyzer lands is stated above, not hidden.
+
+### §10.2 SystemExecutionContext
+
+Still active per tick as the *context carrier* (not a guard). It holds: the system name and declared buses (diagnostics), `SystemOrigin` (`Core`/`Mod`) and `ModId` for mod-origin systems, the `IModFaultSink`, the `NativeWorld` handle, the `IGameServices` aggregator, and the Path β `IManagedStorageResolver` (`src/DualFrontier.Core/ECS/SystemExecutionContext.cs:33-73`). The scheduler pushes it before each `Update` and pops in `finally` (`ParallelSystemScheduler.cs:154-163`); it lives in a `ThreadLocal` slot per scheduler thread (`SystemExecutionContext.cs:35`); systems reach it through `SystemBase.NativeWorld`/`Services`/`ManagedStore<T>()`. Out-of-context calls fail loudly with `InvalidOperationException`. `async`/`await` inside system code is forbidden per [THREADING.md](./THREADING.md) — suspension would resume on a thread whose slot is null. Origin/modId flow from the `SystemMetadata` snapshot built at every apply/unload commit (`SystemMetadataBuilder`; `ParallelSystemScheduler.cs:240-264`).
+
+### §10.3 Two response modes: core crash vs mod soft-unload
+
+The designed split, keyed on `SystemOrigin` stamped at registration (`ModRegistry.cs:137`; enum in `src/DualFrontier.Core/ECS/SystemOrigin.cs`):
+
+| Origin | Designed behavior | Reason |
+|---|---|---|
+| `Core` (engine systems) | Exception propagates → **process crashes** | A developer bug; must be fixed, not survived |
+| `Mod` (loaded via ModLoader) | Fault reported → **mod queued and unloaded at next menu open**, game continues | User content must not take the session down |
+
+Current wiring honesty (one line, per §9.5): the mod row's *reporting* step has no production trigger — an uncaught mod-system exception today propagates like a core one; the split becomes operational with the fenced detection stage. The trigger definition is already generalized post-cutover from the deleted guard's `IsolationViolationException` to "any unhandled exception originating in mod code", carried as `ModIsolationException` through `HandleModFault` (`ModIsolationException.cs`, `ModLoader.cs:303-309`).
+
+### §10.4 System addition checklist (engine and mod authors)
+
+Before committing a new system: inherits `SystemBase`; carries `[SystemAccess(reads, writes, bus)]` and an explicit `[TickRate]`; every component touched in `Update` is listed in reads/writes (build-time enforcement pending the fenced call-site rule — review and integration tests until then); `bus` matches actual publications; subscriptions in `OnInitialize`, released in `OnDispose`; no `async`/`await`/`Task`; no direct references to other systems (buses only); component access via `NativeWorld.AcquireSpan<T>()`/`BeginBatch<T>()` (Path α) or `SystemBase.ManagedStore<T>()` (Path β) — never a managed `World` (none exists in production post-cutover); integration test under `ParallelSystemScheduler`. Unsatisfied items reject the PR.
+
+---
+
+## §11 Threat model
 
 The mod system is not a sandbox. A mod runs in-process with full .NET access. Isolation is **structural and architectural**, not security-grade. The threat model documents what the architecture catches and what it does not.
 
-### 10.1 Architectural threats: caught
+### §11.1 Architectural threats: caught
 
-| Threat | Mechanism that catches it |
+| Threat | Mechanism |
 |---|---|
-| Mod reaches for component storage outside its `[SystemAccess]` declaration | Structural: post-К8.3+К8.4 there is no managed component-access surface to misuse — systems reach storage only through `NativeWorld`, and `[SystemAccess]` declarations drive scheduler edge-building (`DependencyGraph`). The former runtime guard (`SystemExecutionContext` throwing on undeclared access) was deleted at К8.3+К8.4; analyzer-grade detection is Planned — see [docs/ROADMAP.md](../ROADMAP.md) §Analyzer track. |
-| Mod system misbehaves at runtime (isolation breach reported as a fault) | `ModLoader.HandleModFault(modId, ModIsolationException)` → `ModFaultHandler.ReportFault` (the `IModFaultSink` implementation); the mod is queued and unloaded via the §9.5 chain at the next menu open (`ModIntegrationPipeline.Apply` drains the faulted set) — the core does not crash. |
-| Mod calls `GetSystem<T>()` directly | Surface removed at К8.3+К8.4 — no `GetSystem` exists on any mod-reachable type. |
-| Mod casts `IModApi` to `RestrictedModApi` | Structural unreachability (§4.4, D-3): `internal sealed`, internal construction, `DualFrontier.Application` not resolvable from a mod ALC. `ModIsolationException` is the fault type carried through `ModLoader.HandleModFault` when an isolation breach is reported. |
-| Mod registers a system that conflicts with another mod's system | `ContractValidator` write-write check (Phase B) |
-| Mod replaces a system also replaced by another mod | `BridgeReplacementConflict` (Phase H) |
-| Mod requires a capability not provided by kernel or dependencies | `MissingCapability` (Phase C) |
-| Mod publishes or subscribes without the declared capability | `CapabilityViolationException` from `RestrictedModApi.EnforceCapability` (empty-capability manifests short-circuit with a warning — §3.6 case 3) |
+| Mod reaches for component storage outside its `[SystemAccess]` declaration | Structural: no managed component-access surface exists to misuse post-cutover — storage is reached through `NativeWorld`/`ManagedStore<T>()`, and declarations drive scheduler edges (§10.1). Build-time call-site detection is the fenced analyzer rule. |
+| Mod system misbehaves at runtime and is **reported** | `ModLoader.HandleModFault` → `ModFaultHandler.ReportFault` → queued → unloaded via the §9.4 chain at the next menu open; the core does not crash (§9.5; detection gap stated there). |
+| Mod calls `GetSystem<T>()` | Surface removed at К8.3+К8.4 — no `GetSystem` exists on any mod-reachable type. |
+| Mod casts `IModApi` to `RestrictedModApi` | Structural unreachability (D-3, §4.5): `internal sealed`, internal construction, assembly outside the mod compile surface. |
+| Mod registers a system conflicting with another mod's writes | `ContractValidator` Phase B `WriteWriteConflict`, naming both mods and the component. |
+| Two mods replace the same system | Phase H `BridgeReplacementConflict` (§6.2). |
+| Mod requires a capability nobody provides | Phase C `MissingCapability` (§3.5). |
+| Mod publishes/subscribes without the declared capability | `CapabilityViolationException` from `EnforceCapability` (empty-capability manifests short-circuit with a warning — §3.6). |
+| Mod defines contract/event types in a regular assembly | Phase E `ContractTypeInRegularMod` (D-4, §5.7). |
 
-### 10.2 Architectural threats: not caught
+### §11.2 Architectural threats: not caught (explicitly out of scope)
 
-These are explicitly out of scope and documented:
+- **`Process.Kill(0)` / `Environment.Exit(1)`.** The .NET runtime gives mods full process access; no AppDomain or process isolation (would break the in-process performance assumptions).
+- **Network sockets, arbitrary file reads, shell commands.** Same reason.
+- **Unbounded memory or CPU consumption.** Performance budgets are advisory, not enforced.
+- **State mutation through legitimately acquired spans.** A mod holding a `kernel.write:` capability writes whatever it wants into those cells; correctness of *values* is review territory, not runtime enforcement.
+- **Reflection over loaded assemblies.** A determined mod can locate kernel types in the Default ALC at runtime (§1.4 honesty) — the cost of in-process execution.
 
-- **Mod calls `Process.Kill(0)` or `Environment.Exit(1)`.** The .NET runtime gives mods full process access. We do not sandbox via AppDomain (deprecated in .NET 8) or process isolation (would break the in-process performance assumptions).
-- **Mod opens network sockets, reads arbitrary files, executes shell commands.** Same reason.
-- **Mod consumes unbounded memory or CPU.** Performance budgets are advisory, not enforced.
-- **Mod mutates `IComponent` instances obtained via `GetComponent` after the call returns.** Component records are returned by reference for performance. A mod ignoring the [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) immutability convention can corrupt state. This is caught at code review, not at runtime.
-- **Mod uses reflection to access internal types.** A mod that calls `Type.GetType("DualFrontier.Core.ECS.World")` and casts to it bypasses the contract surface. The `ALC.Resolving` event refuses to load `DualFrontier.Core` into the mod's context, but a determined mod can still find loaded instances via static lookups in shared types. This is the cost of in-process execution.
+### §11.3 The contract: best-effort structural isolation
 
-### 10.3 The contract: best-effort structural isolation
+Dual Frontier's mod system promises: a well-behaved mod cannot *accidentally* crash the engine, corrupt state, or break other mods; a misbehaving mod can be detected, named, and unloaded with high probability; a malicious mod can break the game, and the user accepts that risk by installing it. This is the contract operating systems offer processes, scaled down: ring 3 is enforced; ring 0 is reachable through deliberate effort.
 
-Dual Frontier's mod system promises:
+### §11.4 Required tests
 
-- A well-behaved mod (one not deliberately attempting to subvert the architecture) cannot accidentally crash the engine, corrupt state, or break other mods.
-- A misbehaving mod can be detected, named, and unloaded with high probability.
-- A malicious mod can break the game; the user accepts this risk by installing the mod.
-
-This is the same contract operating systems offer to processes, scaled down: ring 3 is enforced; ring 0 is reachable through deliberate effort.
-
-### 10.4 Required tests
-
-The mod system test set (`tests/DualFrontier.Modding.Tests/`) covers:
-
-- **Capability tests.** `KernelCapabilityRegistryTests` + `CapabilityValidationTests` (`Capability/`) — registry token emission and the violation path (`CapabilityViolationException` on undeclared publish/subscribe).
-- **Bridge replacement tests.** `PhaseHBridgeReplacementTests` (`Validator/`) — the §7.5 scenarios.
-- **Type-sharing tests.** `CrossAlcTypeIdentityTests` (`Sharing/`) — a type loaded through the shared ALC resolves to the same `Type` instance across regular-mod ALCs.
-- **WeakReference unload tests.** Closed at M7.3: `M73Step7Tests` + `M73Phase2DebtTests` (`Pipeline/`) assert `WeakReference.IsAlive == false` within the timeout for real-mod fixtures, with `ModUnloadAssertions` mirroring the production GC-pump spin pattern (§9.5 step 7) for reuse by later fixtures. The historical Phase 2 backlog item this closed is recorded in docs/ROADMAP.md (M7 row).
-- **Cross-mod cycle tests.** `RegularModTopologicalSortTests` (`Pipeline/`) — a load batch with `A → B → A` is rejected with `CyclicDependency`.
-- **Version constraint tests.** `PhaseGInterModVersionTests` (`Validator/`) — caret satisfaction and major-mismatch rejection per §8.
-
-The isolation-guard runtime suite of the Phase 2 era was retired together with the runtime guard at К8.3+К8.4 (§10.1 row 1); isolation is exercised structurally through the loader/ALC suites above.
+The realized suites (`tests/DualFrontier.Modding.Tests/`): capability registry emission + violation path (`Capability/`); bridge-replacement Phase H scenarios (`Validator/PhaseHBridgeReplacementTests`); cross-ALC type identity (`Sharing/CrossAlcTypeIdentityTests`); WeakReference unload — closed at M7.3, asserting `IsAlive == false` within timeout on real-mod fixtures with the production GC-pump pattern mirrored (`Pipeline/M73Step7Tests`, `M73Phase2DebtTests`); regular-mod cycle rejection (`Pipeline/RegularModTopologicalSortTests`); inter-mod version constraints (`Validator/PhaseGInterModVersionTests`); pipeline atomicity (`Pipeline/ModIntegrationPipelineTests` — build failure leaves the old scheduler intact; unload removes mod systems); pause/resume and unload-chain step failures (`Pipeline/M71PauseResumeTests`, `M72UnloadChainTests`). The Phase-2-era runtime isolation-guard suite was retired with the guard; isolation is exercised structurally through the loader/ALC suites. Standing stop conditions (Phase 0 re-entry, unchanged): capability cross-check cost > 5 s per mod load; WeakReference unload tests flaky at any rate above 0%; capability enforcement bypassed using documented .NET features.
 
 ---
 
-## 11. Migration plan
+## §12 Error kinds — the `ValidationErrorKind` registry
 
-### 11.1 Migration state
+`ValidationErrorKind` (`src/DualFrontier.Application/Modding/ValidationError.cs:9-125`) has **exactly fifteen members**. (Resolved: the retired MOD_PIPELINE quoted a 4-member Phase-2-era snapshot of the same file; the 15-member listing is the code truth.) Carriers: `ValidationError(ModId, Kind, Message, ConflictingModId?, ConflictingComponent?)` — blocking; `ValidationWarning(ModId, Message)` — non-blocking advisory shown alongside success (`ValidationError.cs:136-151`).
 
-Migration state authority is **[docs/ROADMAP.md](../ROADMAP.md)** — the Mod-OS Migration M-rows (M0–M10, including the deferred M3.x analyzer milestones) and the «Native foundation tracks» section. This document does not track which milestone is open, closed, or deferred; it specifies the architecture those milestones implement. The standing sequencing rule the migration runs under — the engine remains buildable and the test suite green at every step — continues to bind any remaining M-row work.
+| Member | Introduced | Meaning / producing check |
+|---|---|---|
+| `IncompatibleContractsVersion` | baseline | `requiresContractsVersion`/`apiVersion` unsatisfiable by the current build (Phase A); the strict-v3 parse gate reuses this semantic in its rejection message (§2.2). |
+| `WriteWriteConflict` | baseline | Two systems declare writes to the same component type (Phase B). |
+| `CyclicDependency` | baseline | Dependency cycle among shared or regular mods (§5.5); also the kind used when a local `DependencyGraph.Build()` fails at apply (`ModIntegrationPipeline.cs:466-474`). |
+| `MissingDependency` | baseline | Required mod id absent from the load batch (optional deps downgrade to warnings); also the umbrella kind for manifest-read/assembly-load/`Initialize` failures (§8.2 note). |
+| `IncompatibleVersion` | M5 | `apiVersion` or `dependencies[i].version` constraint not satisfied (Phases A+G). |
+| `MissingCapability` | M3 | A `capabilities.required` token provided by neither kernel nor listed dependency (Phase C). |
+| `SharedModWithEntryPoint` | M4 | `kind: "shared"` with a non-empty entry point or an `IMod` implementation (Phase F). |
+| `ContractTypeInRegularMod` | M4 | Regular mod exports `IModContract`/`IEvent` types (Phase E, D-4). |
+| `BridgeReplacementConflict` | M6 | Two mods in one batch replace the same FQN (Phase H, §6.2). |
+| `ProtectedSystemReplacement` | M6 | `replaces` names a system not `Replaceable = true` (§6.2). |
+| `UnknownSystemReplacement` | M6 | `replaces` names an FQN found in no loaded assembly (§6.2). |
+| `MissingManagedStorageAttribute` | К8.3+К8.4 | `RegisterManagedComponent<T>` without `[ManagedStorage]` — caught at registration before the store is created (§4.1). |
+| `FastTierContractViolation` | К10.2 | Fast-tier subscriber violates the bounded-execution contract (tier semantics: [EVENT_BUS.md](./EVENT_BUS.md)). |
+| `BusTierMismatch` | К10.2 | Manifest tier-specific capability vs the event type's `[EventTier]` disagree (§3.2). |
+| `BackgroundCoalesceMissing` | К10.2 | Background-tier event type missing its coalesce-function declaration (§3.2). |
 
-### 11.2 `ValidationErrorKind` registry
+**Not every violation is a `ValidationErrorKind`.** Runtime capability misses surface as `CapabilityViolationException` (§3.6, §4.3); field operation failures as `FieldOperationFailedException` (`DualFrontier.Core.Interop`); parse and registration failures as `InvalidOperationException` naming the path/type (§2.3, §4.1); quiescence timeout exists as `PipelineQuiescenceTimeoutException` (`SimulationStateController.cs:142`).
 
-`ValidationErrorKind` (`src/DualFrontier.Application/Modding/ValidationError.cs`) has fifteen members. Each entry names the milestone that introduced it:
-
-- `IncompatibleContractsVersion` (baseline) — `RequiresContractsVersion`/`apiVersion` not satisfiable by the current build (`ContractValidator` Phase A); the strict-v3 manifest gate reuses this semantic in its parse-time rejection message (§2.3).
-- `WriteWriteConflict` (baseline) — two systems declare writes to the same component type (Phase B).
-- `CyclicDependency` (baseline) — dependency cycle in the mod graph (§8.7).
-- `MissingDependency` (baseline) — required mod id absent from the load set; optional dependencies downgrade to a warning (§2.2).
-- `IncompatibleVersion` (M5) — `apiVersion` or `dependencies[i].version` constraint not satisfied (Phases A+G).
-- `MissingCapability` (M3) — a `capabilities.required` token provided by neither the kernel nor a listed dependency (Phase C).
-- `SharedModWithEntryPoint` (M4) — `kind: "shared"` with a non-empty entry point or an `IMod` implementation (Phase F).
-- `ContractTypeInRegularMod` (M4) — a regular mod exports `IModContract`/`IEvent` types (Phase E, D-4).
-- `BridgeReplacementConflict` (M6) — two mods in one batch replace the same FQN (Phase H, §7.2).
-- `ProtectedSystemReplacement` (M6) — `replaces` names a system not marked `Replaceable = true` (§7.4).
-- `UnknownSystemReplacement` (M6) — `replaces` names an FQN found in no loaded assembly.
-- `MissingManagedStorageAttribute` (К8.3+К8.4, K-L3.1) — `RegisterManagedComponent<T>` called for a class without `[ManagedStorage]`; caught at registration time before the per-mod `ManagedStore<T>` is created.
-- `FastTierContractViolation` (К10.2) — Fast tier subscriber violates the bounded-execution contract (К-L15 ≤1ms); runtime monitoring via `FastTierContractMonitor`.
-- `BusTierMismatch` (К10.2) — manifest declares a tier-specific capability while the event type's `[EventTier]` names a different tier (§3.2).
-- `BackgroundCoalesceMissing` (К10.2) — Background tier event type missing its coalesce-function declaration (§3.2).
-
-Not every violation in the mod system is a `ValidationErrorKind`. Runtime capability misses at `Publish`/`Subscribe` and at field acquisition surface as `CapabilityViolationException` (§3.6 runtime layer, §4.6.2); field operation failures surface as `FieldOperationFailedException` (`DualFrontier.Core.Interop`).
-
-**Documented-but-reserved names.** The К10.3 v2 amendments (chronicled at v1.10/v1.11) reserved `QuiescentStatePreconditionViolated` (§9.5.1), `PipelineQuiescenceTimeout` (§9.7), `LayerCapabilityMismatch` (§3.2), and `VulkanModResourceCleanupFailed` (the §9.5 step 3.6 cleanup primitive's failure kind); the K9/compute era reserved `FieldRegistrationConflict`, `InvalidFieldDimensions`, `FieldCapabilityMismatch`, `ComputePipelineCompilationFailed`, `ComputePipelineRegistrationConflict`, and `ComputeUnsupportedWarning`. None of these is a `ValidationErrorKind` member today. `PipelineQuiescenceTimeout` exists as `PipelineQuiescenceTimeoutException` (`DualFrontier.Application.Loop.SimulationStateController`); the others have no on-disk artifact — their enum entries land with the implementations that need them (compute substrate and К-L17/К-L18 surfacing work — see [docs/ROADMAP.md](../ROADMAP.md) §V substrate / §Native foundation tracks).
-
-### 11.3 Stop conditions
-
-Mod-system work halts and escalates to the human if:
-
-- The cost of the capability cross-check (§3.7) exceeds 5 seconds per mod load.
-- WeakReference unload tests are flaky (any failure rate above 0%).
-- A mod author successfully bypasses capability enforcement using documented .NET features.
-
-Each stop is a Phase 0 re-entry: the architecture is amended in this document before code resumes. (Renumbered from §11.4 at v1.12.0; pre-v1.12.0 change-history entries reference these conditions as §11.4.)
+**Documented-but-reserved names (no enum member exists):** `QuiescentStatePreconditionViolated`, `PipelineQuiescenceTimeout`, `LayerCapabilityMismatch`, `VulkanModResourceCleanupFailed` (К10.3 v2 era) and `FieldRegistrationConflict`, `InvalidFieldDimensions`, `FieldCapabilityMismatch`, `ComputePipelineCompilationFailed`, `ComputePipelineRegistrationConflict`, `ComputeUnsupportedWarning` (K9/compute era). Their enum entries land with the implementations that need them — [docs/ROADMAP.md](../ROADMAP.md) §V substrate / §Native foundation tracks.
 
 ---
 
-## 12. Locked decisions
+## Cross-references
 
-These items were unresolved in v0.1 and were locked during Phase 0 closure (v1.0). Each is referenced from the section that introduced it. The full Question/Options/Locked-resolution structure is preserved verbatim — Options are kept for traceability, so future re-opens of any decision can read the alternatives that were considered.
+| Document | Relation | Note |
+|---|---|---|
+| [MODDING.md](./MODDING.md) | defers-to | Mod-author guide; owns the SDK reference-set statement and tutorials; its examples must satisfy §2/§3 here. |
+| [EVENT_BUS.md](./EVENT_BUS.md) | defers-to | Bus tiers, dispatch/flush semantics, current/target native-bus wiring; §3.2/§12 declare only the capability-side of tiers. |
+| [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) | defers-to | Part 0 К-L9 (vanilla = mods), К-L18 (quiescent state), К-L3/К-L3.1 (storage paths), К-L17 (layer tokens). |
+| ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) | cites | Transition vocabulary; the §9.1 commit/reclaim law framing; fenced state-machine and fault-quarantine targets. |
+| [ANALYZER_RULES.md](./ANALYZER_RULES.md) | defers-to | Shipped analyzer registry (17 detecting; severities); deferral tables for the access-completeness family. |
+| [ECS.md](./ECS.md) | cites | `NativeWorld` span/batch access surface referenced by §10. |
+| [THREADING.md](./THREADING.md) | cites | Scheduler thread model, `DependencyGraph` edge-building, async ban. |
+| [FIELDS.md](./FIELDS.md) | defers-to | Field storage contract behind `IModFieldApi`; field failure modes. |
+| [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) | cites | V resource cleanup primitive (step 3.6), compute substrate that will implement `ComputePipelines`. |
+| [CONTRACTS.md](./CONTRACTS.md) | cites | Bus/marker conventions; `ContractsVersion` evolution rules. |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | cites | Layer map; mods live above Domain through `IModApi`. |
+| EXECUTION_AUTHORITY_MATRIX.md (AUTHORED draft) | cites | Cutover gates for the native-bus authority switch referenced in §9.6. |
+| PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) | cites | Owner of the D-6 missing-mod policy implementation (§9.8). |
+| [docs/ROADMAP.md](../ROADMAP.md) | defers-to | Migration state authority; deferred milestones (analyzer scan, field registry wiring, compute surface). |
+| [FRAMEWORK.md](../governance/FRAMEWORK.md) | governance | Ratification and amendment protocol. |
 
-### D-1. `read`/`write` capability scope
+## Amendment protocol
 
-**Question.** Does a mod's `kernel.read:<Component>` capability apply to *every* public component in `DualFrontier.Components`, or only to components opted in via `[ModAccessible(Read = true)]`?
+This document changes by ratified amendment per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7: propose the diff with code anchors re-verified at the amendment HEAD, obtain Crystalka ratification, bump the register version. Deviation discovered in implementation is escalated ("stop, document, wait for the lock") — never resolved by improvisation in code. Locked decisions (the five strategic locks and D-1…D-7) reopen only by explicit amendment naming the lock.
 
-**Options.**
-- **a) Blanket.** Every public component is reachable; capability is a reservation, not a gate. Simpler manifest semantics, broader access surface.
-- **b) Curated, opt-in.** Only components annotated `[ModAccessible(Read = true, Write = false)]` can be requested by mods. Tighter security, requires every component author to opt in.
-- **c) Curated, opt-out.** Every public component is accessible *except* those marked `[ModRestricted]`. Middle ground.
+## Change history
 
-**✓ LOCKED.** (b) Curated, opt-in via `[ModAccessible(Read = true, Write = false)]`. Aligns with the project's structural-isolation philosophy. A component author actively decides what mods can touch; everything else is unreachable.
+| Version | Date | Change |
+|---|---|---|
+| (candidate) | 2026-07-15 | Authored as the merged successor of MOD_OS_ARCHITECTURE v1.12.0 + MOD_PIPELINE v0.3 + ISOLATION v1.1.2; one unload chain, one fault timing, one capability grammar, one enum registry, commit/reclaim split adopted; all code claims re-verified at HEAD `35364c2`. |
 
-**Blocking phase.** M3 (unblocked).
-
-### D-2. `[SystemAccess]` ↔ capability cross-check enforcement
-
-**Question.** How does the loader verify that a registered mod system's `[SystemAccess]` declarations are a subset of the mod's manifest capabilities?
-
-**Options.**
-- **a) Static analysis at load time.** Roslyn-based scan of every `Services.X.Publish<T>` call site in the mod assembly. Heavyweight (multi-second on large mods), authoritative, no drift.
-- **b) Per-system attribute.** `[ModCapabilities("publish:DamageEvent")]` on each system, manually maintained by the mod author. Lightweight, drift-prone.
-- **c) Hybrid.** Attribute at load time, static analysis only as a CI check before publication.
-
-**✓ LOCKED.** (c) Hybrid. Per-system `[ModCapabilities(...)]` attribute checked at load time; CI static analysis verifies the attribute matches actual `Publish`/`Subscribe` call sites in the assembly. Load-time stays fast; CI catches drift before release.
-
-**Blocking phase.** M3 (unblocked).
-
-### D-3. Cast-prevention enforcement
-
-**Question.** How is the rule "a mod cannot cast `IModApi` to a concrete type" enforced?
-
-**Options.**
-- **a) Roslyn analyzer at load time.** Scans for `(RestrictedModApi)api` and similar patterns. Slow, requires shipping the analyzer.
-- **b) Runtime check on first use.** Cheaper but allows the cast to compile and run before being detected.
-- **c) Make `RestrictedModApi` `internal sealed` and rely on the type being unreachable from a mod's ALC.** This is structurally true today.
-
-**✓ LOCKED.** (c) Structural barrier only in v1. `RestrictedModApi` is `internal sealed`; its containing assembly (`DualFrontier.Application`) is not resolvable from a mod's ALC. The cast cannot compile against the kernel's actual type. (a) is held in reserve for v1.x if a real bypass attempt is observed.
-
-**Blocking phase.** M2 (unblocked).
-
-### D-4. Loader scan for `IModContract`/`IEvent` in regular mods
-
-**Question.** Does the loader actively scan a regular mod's exported types for `IModContract` or `IEvent` implementations and reject the mod if found?
-
-**Options.**
-- **a) Active scan, reject.** Strong signal to mod authors that contracts belong in shared mods.
-- **b) Passive: warn but load.** Mods with mistakes still work, with a runtime warning.
-- **c) Documentation-only.** Rely on review and code style.
-
-**✓ LOCKED.** (a) Active scan and reject. The reflection cost is negligible; the architectural signal — that contract types belong in shared mods, period — is large enough to justify load-time enforcement.
-
-**Blocking phase.** M4 (unblocked).
-
-### D-5. Shared-mod cycle detection
-
-**Question.** Are cycles in the shared-mod dependency graph forbidden? The architecture in §1.4 says yes, but enforcement requires the loader to refuse such configurations explicitly.
-
-**✓ LOCKED.** Forbidden. The loader rejects shared-mod cycles with `ValidationErrorKind.CyclicDependency`. Cycles break compilation order at the mod author's IDE before reaching the loader, but explicit runtime rejection is cheaper than implicit failure further downstream.
-
-**Blocking phase.** M4 (unblocked).
-
-### D-6. Save-game compatibility policy when a mod is missing
-
-**Question.** When loading a save that recorded a mod no longer present, what happens to entity components owned by that mod?
-
-**Options.**
-- **a) Strip components, keep entities.** The entity continues to exist with reduced state.
-- **b) Strip entities entirely.** The world loses everything tied to the absent mod.
-- **c) Refuse to load.** Save is bound to its mod set; missing mods make it unloadable.
-
-**✓ LOCKED.** (a) Default: strip components owned by the missing mod, keep entities; load with a clear warning naming each missing mod. (c) Available as a user-toggle "strict mod compatibility" setting; when enabled, the save refuses to load. Workshop reality is that mods get abandoned, and the community patches around them — strict-by-default would block too many real save loads.
-
-**Blocking phase.** Out of M0–M10 scope. Tracked here for the persistence rework that will implement the component-stripping logic.
-
-### D-7. `hotReload: false` semantics for vanilla mods
-
-**Question.** Vanilla mods are the engine team's reference implementation. Does it make sense to allow them to be hot-reloaded? A hot-reload of `Vanilla.Combat` changes core combat math during a session.
-
-**Options.**
-- **a) Vanilla mods are hot-reloadable like any other.** Maximum testability of the mod system.
-- **b) Vanilla mods set `hotReload: false` by default.** Stable session experience.
-
-**✓ LOCKED.** Hybrid by build flavor. Vanilla mods declare `hotReload: true` in source; the shipping build pipeline rewrites this to `hotReload: false` in release manifests. Development gets free hot-reload testing of vanilla mechanics; shipped builds get stable session experience. Override is a single flag in the build script — no code branching needed.
-
-**Blocking phase.** M7 (unblocked).
-
----
-
-## See also
-
-- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the development pipeline; this architecture is the artifact of the same methodology applied to the engine's modding layer.
-- [ARCHITECTURE](./ARCHITECTURE.md) — the four layers; mods live above Domain through `IModApi`.
-- [MODDING](./MODDING.md) — the mod-author guide («Writing mods»).
-- [MOD_PIPELINE](./MOD_PIPELINE.md) — the pipeline implementation notes; extended through M2–M7.
-- [CONTRACTS](./CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
-- [ISOLATION](./ISOLATION.md) — `SystemExecutionContext` and the structural isolation rules.
-- [ROADMAP](../ROADMAP.md) — migration state authority; the Mod-OS M-rows track what is closed, pending, or deferred (§11.1).
-- `src/DualFrontier.Contracts/Modding/` — the source-of-truth surface for `IMod`, `IModApi`, `IModContract`, `ContractsVersion`, `ModManifest`.
-- [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — field-based GPU compute as a foundational architectural capability. Per К-L9 mod parity, vanilla and third-party mods register fields — and, once the compute surface lands, pipelines — through the same `IModApi` (mod-driven shader registration).
-
-## Modding с native ECS kernel
-
-The kernel is native (К-series; see `KERNEL_ARCHITECTURE.md`). Consequences for modding:
-- Mod component types are either Path α (`unmanaged struct`, kernel-side `NativeWorld` storage) or Path β (managed `class` annotated with `[ManagedStorage]`, mod-side `ManagedStore<T>` storage). Path α is default; Path β is per-component opt-in for shapes where unmanaged conversion forces structural compromise (managed-only references, lazy state graphs, complex object graphs not blittable). See `KERNEL_ARCHITECTURE.md` Part 0 K-L3 implication post-K-L3.1 for the decision criterion.
-- Path α registers via `IModApi.RegisterComponent<T> where T : unmanaged, IComponent`. Path β registers via `IModApi.RegisterManagedComponent<T> where T : class, IComponent` (Mod API v3 surface, shipped at the К8.3+К8.4 cutover, 2026-05-14). Both registration entries are uniform across vanilla and third-party mods (K-L9 «vanilla = mods» preserved).
-- Cross-mod managed-path direct access is structurally impossible by `AssemblyLoadContext` isolation: a regular mod's ALC cannot resolve types from another regular mod's ALC, so `Vanilla.Combat` cannot reference `Vanilla.Pawn.JobQueueComponent` at compile time. Cross-mod data flow uses event/intent contracts per §6 three-level contracts (publish/subscribe via shared protocol mods).
-- Within-mod cross-path access (one system reads native + managed components on same entity) is supported via dual `SystemBase` API: `SystemBase.NativeWorld.AcquireSpan<T>()` for Path α; `SystemBase.ManagedStore<T>()` for Path β. The accessor resolves to the system's owning mod's per-mod store via `SystemMetadata.ModId` (K6.1 plumbing). Performance characteristics visible per-call: native-path is zero-allocation span iteration; managed-path is Dictionary-shaped lookup.
-- Mod replacement triggers second-graph rebuild (managed) — native side untouched. Per-mod `ManagedStore<T>` instances reclaim deterministically with the mod's `AssemblyLoadContext.Unload` per §9.5 unload chain.
-- Vanilla mods register components, systems, fields, and compute pipelines through the same IModApi as third-party (vanilla = mods principle preserved per K-L9).
-- Mod fields (`RawTileField<T>`) register through `api.Fields` (§4.6.1 — including its current production nullability); `api.ComputePipelines` is the reserved compute entry point, a placeholder until the V substrate lands its implementation. See [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) (mod-driven shader registration).
-- `[ModAccessible]` annotation and capability strings (`kernel.read:`, `mod.<id>.read:`) function uniformly across Path α and Path β (Q6.a path-blind capability lock per K-L3.1). The capability resolver dispatches internally to `NativeWorld` span access or `ManagedStore` lookup per-T.
-
-See `KERNEL_ARCHITECTURE.md` §1.9 (mod system registration) и §1.10 (component type registry) для full detail. See [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) (mod parity, К-L9) для GPU compute mod-parity invariant.
+Pre-merge history lives in git and in the three historical predecessors; per-decision provenance (D-1…D-7 options) is preserved verbatim in `historical/MOD_OS_ARCHITECTURE.md` §12.

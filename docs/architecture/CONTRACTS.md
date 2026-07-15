@@ -1,41 +1,43 @@
 ﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-CONTRACTS
+register_id: DOC-A-CONTRACTS_V2
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: AUTHORED
 owner: Crystalka
-version: "1.1"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-CONTRACTS
+version: "0.1.0"
+next_review_due: post-ratification closure
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-CONTRACTS_V2
 ---
 # Contract system
 
-The `DualFrontier.Contracts` assembly is the only module visible to every layer: the core, the systems, the mods, and external tools. A contract is a public interface that declares intent (what can be done) with no hints about implementation. A contract does not change for convenience: either add a new event, or cut a new interface version.
+`DualFrontier.Contracts` is the only assembly every layer can see: core, systems, mods, external tools. A contract declares intent with no hint of implementation; it does not change for convenience — add a new type, or cut a new interface version.
 
-## Marker interfaces
+> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/CONTRACTS.md` (DOC-A-CONTRACTS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
+> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
 
-Four base marker interfaces have no methods and serve only for typing. They let the scheduler and the event bus operate generically, without depending on concrete game types.
+| Field | Value |
+|---|---|
+| Role | normative-current-candidate |
+| Successor of | `docs/architecture/historical/CONTRACTS.md` (DOC-A-CONTRACTS, now SUPERSEDED) |
+| Scope | Contract-surface census: marker interfaces, five-bus canon, mod-to-mod channel, evolution and versioning rules |
+| Non-goals | Bus delivery/phase mechanics (EVENT_BUS.md); mod capability grammar, ALC lifecycle (MOD_OS_ARCHITECTURE.md, MODDING.md); ECS rules (ECS.md); analyzer implementation detail (ANALYZER_RULES.md) |
+| Authority domains | Contract-surface type census; breaking-vs-non-breaking classification; `IModContract` channel; version-gate semantics |
+| Defers to | EVENT_BUS.md → delivery/phase semantics · MOD_OS_ARCHITECTURE.md → capability grammar, ALC · MODDING.md → author guide · ANALYZER_RULES.md → enforcement reality · KERNEL_ARCHITECTURE.md Part 0 → К-L4/К-L9 law |
 
-### IEvent
+## §1 Marker interfaces
 
-Marker for any message traveling on a bus. Events are `record`s with `init` properties, immutable. Examples: `ShootAttemptEvent`, `AmmoIntent`, `ManaGranted`, `DeathEvent`.
+Five base interfaces in `src/DualFrontier.Contracts/Core/` carry no members, letting the scheduler and buses stay generic.
 
-### IQuery and IQueryResult
-
-A synchronous bus request with a typed response. Used sparingly — only for reading aggregated data (for example, `GetPawnsInRadiusQuery`). Most interactions go through the two-step Intent→Granted model.
-
-### ICommand
-
-An imperative intent to change state. Unlike an event, an `ICommand` is addressed — it has an expected handler. In Dual Frontier, commands live mostly in the Application layer for `IRenderCommand` (Domain → Presentation). Domain logic prefers events.
-
-### IComponent
-
-Marker for pure data attached to an `EntityId`. No logic in components. Example declaration:
+- **`IEvent`** (`IEvent.cs`) — a message on a domain bus; immutable `record`s. `[Deferred]` (`Attributes/DeferredAttribute.cs`) queues delivery to the next phase; `[Immediate]` (`Attributes/ImmediateAttribute.cs`) interrupts the current one — honored by the mode resolver, though no shipped event carries it yet. Default is synchronous, within-phase.
+- **`IQuery`** / **`IQueryResult`** (`IQuery.cs`, `IQueryResult.cs`) — synchronous request/typed-response, used sparingly; most interactions use the two-step Intent → Granted/Refused model instead (`AmmoIntent.cs:6-11` names it, citing "TechArch 11.5"; mechanics in [EVENT_BUS.md](./EVENT_BUS.md)).
+- **`ICommand`** (`ICommand.cs`) — addressed, imperative "do X"; mostly `IRenderCommand` (Domain → Presentation). Domain logic prefers events.
+- **`IComponent`** (`IComponent.cs`) — pure data on an `EntityId`, no logic. Real example:
 
 ```csharp
-public sealed class HealthComponent : IComponent
+[ModAccessible(Read = true, Write = true)]
+public struct HealthComponent : IComponent
 {
     public float Current;
     public float Maximum;
@@ -43,9 +45,11 @@ public sealed class HealthComponent : IComponent
 }
 ```
 
-## Five domain buses
+(`src/DualFrontier.Components/Shared/HealthComponent.cs:10-16`.) A `struct`, not a `class`: per К-L3 (KERNEL_ARCHITECTURE.md Part 0), unmanaged-struct storage is the default Path α; a `class` component needs the opt-in `[ManagedStorage]` Path β.
 
-A single bus for everything is a bottleneck under load. Lock contention at 100+ systems. The solution: a separate bus per domain. Less contention, easier to debug, easier to profile.
+## §2 Five domain buses
+
+`IGameServices` (`Bus/IGameServices.cs:13-49`) aggregates one bus per gameplay domain — a single bus is a lock-contention bottleneck past ~100 systems.
 
 ```csharp
 public interface IGameServices
@@ -58,86 +62,87 @@ public interface IGameServices
 }
 ```
 
-| Bus           | Writers                          | Readers                              | Key events                                        |
-|---------------|----------------------------------|--------------------------------------|---------------------------------------------------|
-| CombatBus     | CombatSystem, ProjectileSystem   | DamageSystem, StatusEffectSystem     | ShootAttempt, DamageEvent, DeathEvent             |
-| InventoryBus  | HaulSystem, CraftSystem          | InventorySystem, JobSystem           | AmmoIntent/Granted, ItemAdded/Removed/Reserved    |
-| MagicBus      | SpellSystem, GolemSystem         | ManaSystem, EtherGrowthSystem        | ManaIntent/Granted, SpellCast, EtherSurge         |
-| PawnBus       | NeedsSystem, MoodSystem          | JobSystem, SocialSystem              | MoodBreak, DeathReaction, SkillGain               |
-| WorldBus      | BiomeSystem, WeatherSystem       | RaidSystem                           | EtherNodeChanged, WeatherChanged, RaidIncoming    |
+| Bus | Writers | Readers | Key events |
+|---|---|---|---|
+| Combat | CombatSystem, ProjectileSystem | DamageSystem, StatusEffectSystem | ShootAttempt, DamageEvent, DeathEvent |
+| Inventory | HaulSystem, CraftSystem | InventorySystem, JobSystem | AmmoIntent/Granted/Refused, ItemAdded/Removed |
+| Magic | SpellSystem, GolemSystem | ManaSystem, EtherGrowthSystem | ManaRequest/Result, SpellCast, EtherSurge |
+| Pawns | NeedsSystem, MoodSystem | JobSystem, SocialSystem | MoodBreak, DeathReaction, SkillGain |
+| World | BiomeSystem, WeatherSystem | RaidSystem | EtherNodeChanged, WeatherChanged, RaidIncoming |
 
-Each bus is its own `ConcurrentDictionary` of subscribers. `CombatSystem` writes only to `Combat`; `InventorySystem` writes only to `Inventory`. There is no shared lock point. A system declares the bus it uses inside `[SystemAccess]`, and the dependency graph + future A'.9 Roslyn analyzer verify that publication targets only that bus.
+A system declares its bus(es) via `[SystemAccess(..., bus: nameof(IGameServices.Combat))]`; `ParallelSystemScheduler` reads it when building each system's execution context.
 
-The bus list is canonical per [src/DualFrontier.Contracts/Bus/IGameServices.cs](../../src/DualFrontier.Contracts/Bus/IGameServices.cs).
+**Canonicity note.** The bus *list* is canonical per `IGameServices.cs:13-49`. Once this document reaches LOCKED, **the lock follows the doc** — a future bus-list change is governed by this document's amendment protocol, and the source file is expected to follow, not lead. Writers/Readers/Key-events are census, **sourced from that file's own doc comments** (`:15-48`); Key-events is corrected here to shipped type names where they diverge from the source comment's shorthand (Inventory's comment says "AmmoRequest/Result"; shipped types are `AmmoIntent`/`AmmoGranted`/`AmmoRefused`).
 
-## IModContract — API between mods
+## §3 IModContract — the mod-to-mod channel
 
-Mods MUST NOT reference each other directly: that creates a loading cycle and hard dependencies. Instead, a mod can publish a contract interface that implements `IModContract`. Another mod requests the contract by type:
+Mods cannot reference each other's assemblies — each loads into its own `AssemblyLoadContext` ([MODDING.md](./MODDING.md)). `IModContract` (`Modding/IModContract.cs`) is the sanctioned alternative: publish via `IModApi.PublishContract<T>`, retrieve via `IModApi.TryGetContract<T>(out T? contract)` (`IModApi.cs:85-93`) — `false` means degrade gracefully, not crash:
 
 ```csharp
-public interface IVoidMagicContract : IModContract
-{
-    bool CanCastVoid(EntityId caster);
-    void EmitVoidSurge(EntityId source);
-}
+public interface IVoidMagicContract : IModContract { bool CanCastVoid(EntityId caster); }
 
 public class ArtifactMod : IMod
 {
     public void Initialize(IModApi api)
     {
-        if (api.TryGetContract<IVoidMagicContract>(out var voidMagic))
-        {
+        if (api.TryGetContract<IVoidMagicContract>(out var vm))
             api.Subscribe<VoidSpellCastEvent>(OnVoidMagicDetected);
-        }
-        // VoidMagic mod is not loaded — simply do not subscribe.
-        // No crash, no hard dependency.
+        // Not loaded: simply don't subscribe. No crash, no hard dependency.
     }
 }
 ```
 
-A contract is the same public interface, but housed in an assembly both mods know. Typically this is a separate `ModName.Contracts` assembly, published as a NuGet package or sitting alongside in the `mods/` directory.
+The contract interface lives where both mods can see it — typically a `ModName.Contracts` package, or (per `ModKind.Shared`, `ModManifest.cs:7-17`) a type-vendor assembly in the shared ALC. Both are structurally legal; only the fixture test suite exercises the Shared path today — all seven shipped mods reference `DualFrontier.Contracts` alone.
 
-## Contract evolution
+## §4 Contract evolution
 
-Contracts are long-lived. Every change is either breaking or non-breaking.
+Every change is breaking or non-breaking. Two predecessor classifications were optimistic; both corrected here.
 
-### Non-breaking (always allowed)
+**Non-breaking (verified safe).** A new `IEvent`/`IQuery`/`ICommand`/`IComponent` type — no existing consumer references a type that doesn't exist yet. A new **optional** `init` property on a property-body `record` (no positional constructor), via object-initializer syntax — every production event record verified here uses this shape (`PawnSpawnedEvent.cs:10-20`: `PawnId`/`X`/`Y` are `{ get; init; }`, not positional). Safe only while the record stays property-body (a positional record's constructor signature changing breaks binary compat for old callers) and the new property is not `required` (that forces every site, including existing ones, to set it). An interface method with a C# 8+ default implementation.
 
-- Adding a new `IEvent`, `IQuery`, `ICommand`, or `IComponent`.
-- Adding a new `init` field to a `record` (old `record`s that do not mention it do not break).
-- Adding a method to an interface with a `default` implementation (C# 8+).
-- Adding a new domain bus (a new property on `IGameServices`).
+**Breaking (major bump required).** Removing/renaming an `IEvent`/`IQuery`/`ICommand`/`IComponent` field. Removing an interface method or changing a parameter type. **Adding a property to `IGameServices`** (or any contract interface without a default implementation) — the predecessor called a new bus non-breaking; it is not. `IGameServices`'s five properties have no default bodies; its one production implementer, `GameServices` (`src/DualFrontier.Core/Bus/GameServices.cs:14`), would fail to compile without the match, and so would any mod-side test double implementing the interface directly. Minor-safe only if the new member ships a default implementation from day one — and even then a silently-inherited default is the correctness risk the version bump exists to flag. Changing phase semantics (`[Deferred]` ⇄ synchronous): [EVENT_BUS.md](./EVENT_BUS.md) owns phase-semantics truth; land the change there first.
 
-### Breaking (only with a major version bump)
+## §5 Versioning and the version gate
 
-- Removing or renaming a field on an `IEvent`.
-- Removing a method from an interface.
-- Changing the type of a parameter on an existing method.
-- Changing phase semantics (was `[Deferred]`, became synchronous).
+`DualFrontier.Contracts` versions as `MAJOR.MINOR.PATCH` (`Modding/ContractsVersion.cs`); the running build is the hardcoded `ContractsVersion.Current` (`:17`, presently `1.0.0`), bumped manually per breaking release.
 
-Breaking changes require bumping the assembly's major version and updating the migration document.
+Two declaration paths, both wired into production (not test-only):
 
-## Versioning
+- **v1 legacy** — `RequiresContractsVersion` (JSON key `requiresContractsVersion`, not `requiresContracts`; `ManifestParser.cs:66`), checked by `ContractsVersion.IsCompatible` (`:84-94`).
+- **v2 typed** — optional `ApiVersion` (JSON key `apiVersion`), a `VersionConstraint` (caret or exact; tilde rejected, `VersionConstraint.cs:56-61`), checked by `IsSatisfiedBy` (`:100-110`).
 
-`DualFrontier.Contracts` uses semantic versioning `MAJOR.MINOR.PATCH`.
+Both run inside `ContractValidator.ValidateContractsVersions` (`ContractValidator.cs:124-178`), invoked from `ModIntegrationPipeline`'s production `Apply` (`:371`) — real, wired Phase-A enforcement, unit-tested (`ContractValidatorTests.cs`), though nothing in-repo re-runs those tests on every change (there is no CI).
 
-- `MAJOR` — breaking changes. Old mods require rebuilding.
-- `MINOR` — added contracts. Old mods continue to work.
-- `PATCH` — documentation, XML comments, internal fixes.
-
-A mod manifest (`mod.manifest.json`) declares the minimum required contracts version. The loader refuses to load a mod built against a major version newer than the core.
+State the direction precisely: **not** "refuses newer major only." Both paths require the running build's major to **exactly equal** the mod's required major — a mismatch either direction is refused. Within a matching major it is a genuine floor: required minor.patch must be ≤ the running build's, with no way to express a ceiling short of the next major.
 
 ```json
-{
-  "id": "com.example.voidmagic",
-  "name": "Void Magic",
-  "version": "1.2.0",
-  "requiresContracts": "^1.0.0"
-}
+{ "id": "com.example.voidmagic", "requiresContractsVersion": "^1.0.0" }
 ```
 
-## See also
+## §6 Enforcement reality
 
-- [EVENT_BUS](./EVENT_BUS.md)
-- [MODDING](./MODDING.md)
-- [ECS](./ECS.md)
+The predecessor pointed to a "future A'.9 Roslyn analyzer" verifying that bus publications match `[SystemAccess]`. A'.9 has since shipped: [ANALYZER_RULES.md](./ANALYZER_RULES.md) documents 17 enforced rules, wired into all 12 `src/` projects. None of the 17 is a bus-publish-scoping check, and none of the deferred IDs (DFK012, DFK015, DFK018, the DFK020 family) names one either. That verification remains dependency-graph-only today — a real gap, not a stale pointer to rename.
+
+## Cross-references
+
+| Doc | Relation | Note |
+|---|---|---|
+| EVENT_BUS.md | defers-to | delivery/phase semantics |
+| MOD_OS_ARCHITECTURE.md | defers-to | capability grammar, ALC, manifest schema |
+| MODDING.md | cites | author guide, ALC refusal list |
+| ECS.md | defers-to | component storage/access rules |
+| ANALYZER_RULES.md | cites | shipped enforcement (17 rules, A'.9.1) |
+| KERNEL_ARCHITECTURE.md | cites | К-L3/К-L4 storage-path + type-id law, К-L9 |
+| ARCHITECTURE.md | cites | umbrella census; sibling document |
+| EXECUTION_AUTHORITY_MATRIX.md | cites (AUTHORED draft) | R5/R6 event-routing cutover context |
+
+## Amendment protocol
+
+Tier 1, AUTHORED pending ratification. Amendment: surface the change to the owner (Crystalka); semver per FRAMEWORK.md §7.2 (PATCH correction, MINOR additive, MAJOR breaking-surface/evolution-rule change); propagate to citing documents.
+
+## Change history
+
+| Version | Date | Change |
+|---|---|---|
+| **0.1.0** (AUTHORED, pending ratification) | 2026-07-15 | Reclassified `IGameServices`-property and record-field evolution as breaking/caveated (§4); stated the version gate's true exact-major-both-directions behavior, fixed the stale JSON key (§5); replaced the stale "future A'.9 analyzer" pointer with verified enforcement reality (§6); real `HealthComponent` struct example (§1). |
+| 1.1 | 2026-05-12 | Predecessor's last LOCKED version. See `historical/CONTRACTS.md`. |
