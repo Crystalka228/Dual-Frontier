@@ -996,12 +996,12 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 
 ## See also
 
-- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the LOCKED specification driving M1–M10 (the register owns its version).
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the specification driving M1–M10 (the register owns its version and lifecycle).
 - [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the pipeline; M1–M10 are exercised through it.
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — the four layers; the Mod-OS migration touches only Application and below.
 - [CONTRACTS](/docs/architecture/CONTRACTS.md) — bus and marker conventions; capability syntax mirrors bus naming.
 - [MODDING](/docs/architecture/MODDING.md) — v1 mod-author guide; M-phase outputs supersede this document for v2.
-- [MOD_PIPELINE](/docs/architecture/MOD_PIPELINE.md) — `ModIntegrationPipeline` mechanics; M2, M5, M6, M7 extend it.
+- [MOD_OS_ARCHITECTURE §8](/docs/architecture/MOD_OS_ARCHITECTURE.md) — `ModIntegrationPipeline` mechanics (absorbed the former MOD_PIPELINE document); M2, M5, M6, M7 extend it.
 - [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md) — test discipline; M-phase acceptance criteria slot into the existing isolation/modding/integration tiers.
 - [DEVELOPMENT_HYGIENE](/docs/methodology/DEVELOPMENT_HYGIENE.md) — PR hygiene; the Mod-OS migration is exercised through the same checklist.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — post-release ideas reservoir; populated, not scheduled. Read after Phase 7 closure.
