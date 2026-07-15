@@ -1,196 +1,167 @@
 ﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-ECS
+register_id: DOC-A-ECS_V2
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: AUTHORED
 owner: Crystalka
-version: "1.1.1"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ECS
+version: "0.1.0"
+next_review_due: post-ratification closure
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ECS_V2
 ---
 # Entity Component System
 
-Dual Frontier uses the classical ECS approach: an entity is an identifier, components are pure data, systems are logic. The ECS core lives in the `DualFrontier.Core` assembly. `IComponent` and `EntityId` are the public contracts; `NativeWorld` is the production component-storage backend exposed to systems via `SystemBase.NativeWorld`.
+The entity/component storage model: `NativeWorld` as the single production backend, dense sparse-set storage, the span/batch access protocol, entity identity and lifecycle semantics, and `SystemBase`.
 
-## NativeWorld, EntityId, Component
+> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/ECS.md` (DOC-A-ECS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
+> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
 
-### NativeWorld
+## Status
 
-`NativeWorld` is the sole production component-storage backend after A'.5 K8.3+K8.4 (2026-05-14). Storage layout is span/batch-oriented for cache locality and parallelism. The prior managed `World` registry is retired from production and survives only as `ManagedTestWorld` — a test fixture for scenarios that don't yet need the native path. `NativeWorld` is constructed in `GameBootstrap.CreateLoop` (see [src/DualFrontier.Application/Loop/GameBootstrap.cs](../../src/DualFrontier.Application/Loop/GameBootstrap.cs)) and handed to the scheduler — the managed `ParallelSystemScheduler`, which post-К10.1 (2026-05) acts as an **adapter facade** over the authoritative native `system_graph` scheduler (see [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0/1 + `native/DualFrontier.Core.Native/src/system_graph.cpp`). Systems access it through `SystemBase.NativeWorld`, which routes through the active `SystemExecutionContext`.
+| Field | Value |
+|---|---|
+| Role | normative-current-candidate |
+| Successor of | `docs/architecture/historical/ECS.md` (DOC-A-ECS) |
+| Scope | Entity/component storage as it exists in code: `NativeWorld` surface, dense-storage rationale, span/batch protocol, identity/lifecycle semantics (including the fabricated-version defect), `SystemBase`, anti-patterns |
+| Non-goals | Field storage (FIELDS.md); scheduling ([THREADING.md](./THREADING.md)); Path β mod-API detail (MOD_OS_ARCHITECTURE.md); target identity/ABI law (IDENTITY_AND_ABI_CONTRACT.md, AUTHORED draft); persistence (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft) |
+| Authority domains | storage access-pattern teaching; entity lifecycle semantics (descriptive, code-anchored). Storage-path invariant text (К-L3/К-L3.1/К-L8/К-L11) stays [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md)'s |
+| Defers to | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) storage invariants · [THREADING.md](./THREADING.md) phase/dispatch law · [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) Path β / mod lifecycle · [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) target identity law |
+
+## §1 NativeWorld — the single production backend
+
+Dual Frontier uses classical ECS: an entity is an identifier, components are pure data, systems are logic. `NativeWorld` (`src/DualFrontier.Core.Interop/NativeWorld.cs:28`) is the **sole production component-storage backend** after the К8.3+К8.4 cutover (A'.5 closure 2026-05-14) — the К-L11 single-source-of-truth invariant, analyzer-policed by DFK011 ([ANALYZER_RULES.md](./ANALYZER_RULES.md) §4.1). The prior managed `World` is retired and survives only as a test fixture (`tests/DualFrontier.Core.Tests/Fixtures/ManagedTestWorld.cs`). Production constructs the world via `Bootstrap.Run(useRegistry: true)` (`GameBootstrap.cs:76`) and hands it to `ParallelSystemScheduler` (`:192-199`); systems reach it through `SystemBase.NativeWorld` (§6).
+
+The surface systems use — signatures verified; the constraint is `unmanaged`, not `unmanaged, IComponent` (the `IComponent` marker sits on component types, not on this API):
 
 ```csharp
-// Public surface visible to systems via SystemBase.NativeWorld.
-public sealed class NativeWorld
-{
-    public SpanLease<T> AcquireSpan<T>() where T : unmanaged, IComponent;
-    public WriteBatch<T> BeginBatch<T>() where T : unmanaged, IComponent;
-    public bool HasComponent<T>(EntityId id) where T : unmanaged, IComponent;
-    public bool TryGetComponent<T>(EntityId id, out T value)
-        where T : unmanaged, IComponent;
-
-    // K8.1 primitives for component-owned reference fields
-    public InternedString InternString(string value);
-    public NativeMap<TK, TV> CreateMap<TK, TV>()
-        where TK : unmanaged where TV : unmanaged;
-    public NativeSet<T> CreateSet<T>() where T : unmanaged;
-    public NativeComposite<T> CreateComposite<T>() where T : unmanaged;
-}
+// Verified against src/DualFrontier.Core.Interop/NativeWorld.cs at HEAD.
+public SpanLease<T> AcquireSpan<T>() where T : unmanaged;              // :345
+public WriteBatch<T> BeginBatch<T>() where T : unmanaged;              // :376
+public bool TryGetComponent<T>(EntityId id, out T v) where T : unmanaged; // :166
+public bool HasComponent<T>(EntityId id) where T : unmanaged;          // :190
+public EntityId CreateEntity();                                        // :120
+public void DestroyEntity(EntityId id);      // :127   IsAlive :133   FlushDestroyedEntities :148
+public void AddComponents<T>(…entities, …components);                  // :225 (bulk, one P/Invoke)
+public InternedString InternString(string value);                      // :549 — K8.1 primitives:
+public NativeMap<TK,TV> CreateMap<TK,TV>();  // :720   CreateSet :730  CreateComposite :738
 ```
 
-Path β managed-class storage (K-L3.1 bridge) lives in per-mod `ManagedStore<T>` reached via `SystemBase.ManagedStore<T>()` — see [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.5.
+Path β managed-class storage (К-L3.1 bridge) lives in per-mod `ManagedStore<T>` via `SystemBase.ManagedStore<T>()` — see [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md), Path β section.
 
-### EntityId
+## §2 EntityId and components
 
-`EntityId` is a `readonly struct` with two fields: `int Index` and `int Version`. The version is incremented when an entity is destroyed, which makes old references safely invalid. A stale reference simply fails the `TryGetComponent` check and the system skips it rather than crashing.
+**EntityId** is `readonly record struct EntityId(int Index, int Version)` (`src/DualFrontier.Contracts/Core/EntityId.cs:21`), sentinel `Invalid = default` (0, 0) (`:28`). The version increments on destroy (§6), making cached references safely invalid: a stale id fails `TryGetComponent` and the system skips it — no crash. Verified drift: managed `IsValid => Index > 0 || Version > 0` (`EntityId.cs:38`) accepts ids like `(0, 5)` that native `is_alive` rejects unconditionally (`index <= 0` permanently dead, `world.cpp:75`); the alignment fix is [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) §2's. `IsValid` is syntactic only — aliveness is answered exclusively by `NativeWorld.IsAlive`.
 
-### Component
+**Components** carry no logic, only data. Path α (preferred): an `unmanaged` struct implementing `IComponent` (`src/DualFrontier.Contracts/Core/IComponent.cs:10`) — POCO-serializable, batch-readable concurrently while no one writes. Path β: a class with `[ManagedStorage]` (`ManagedStorageAttribute.cs`) in per-mod managed storage — runtime-only, never persisted (К-L3.1 lock). Validation and arithmetic live in systems.
 
-A component is a `struct` (Path α — preferred, `where T : unmanaged, IComponent`) or a class (Path β — for components with reference-typed fields living in per-mod managed storage, `where T : class, IComponent` with `[ManagedStorage]` attribute). No logic, only data. Validation, arithmetic, and checks all live in systems. Path α components serialize freely as POCOs and can be safely batch-read by several systems simultaneously as long as no one writes; Path β components live in per-mod managed storage and are runtime-only (not persisted by the save system — see K-L3.1 lock).
+## §3 Dense storage — why not an array
 
-## SparseSet — why not an array
+A naive `T[]` per component wastes memory (most entities lack a given component); a sorted list costs O(log n). The kernel stores components in a **sparse set** — the EnTT/bevy_ecs/flecs pattern: `sparse_[entity_index]` → dense slot or −1; `dense_` packs live values contiguously; `dense_to_index_` maps back for swap-with-last erase (`native/DualFrontier.Core.Native/include/sparse_set.h:20-23`). Insert O(1), remove O(1), iteration O(N) with no gaps. The C ABI store is the type-erased `RawComponentStore` over this pattern (`component_store.h:13-25`). Iteration is what matters at 10-20k entities: `acquire_span` hands systems `dense_data()` plus the parallel entity-index array directly (`world.cpp:231-248`) — zero copies.
 
-A naive `T[]` array for components wastes memory: most entities do not have a given component. A dense `List<T>` requires binary search by `EntityId` — O(log n). SparseSet solves both problems.
+## §4 Span/batch access pattern
 
-SparseSet keeps two structures:
+`AcquireSpan<T>()` returns a `SpanLease<T>`: `Span` (read-only dense component view, `SpanLease.cs:50`), `Indices` (parallel entity-**index** array — indices only, no versions, `:63`), `Count` (`:44`). `BeginBatch<T>()` returns a `WriteBatch<T>` recording commands (`Update`/`Add`/`Remove`, `WriteBatch.cs:79,93,106`) applied atomically at `Flush` (`:122`) or auto-flushed on `Dispose` (`:163-170`); `Cancel` discards (`:139`).
 
-- `sparse[index]` — an array of length `maxEntityCount` that stores the component's position in the dense array, or `-1`.
-- `dense[]` — the dense array of components and a parallel array of `EntityId`s.
+**Mutation-rejection contract.** While any span or batch is active, direct mutations (`AddComponent`/`RemoveComponent`/`DestroyEntity`/`FlushDestroyedEntities`/`AddComponents`) are silently no-op'd — the native throw is caught at the C ABI boundary (`NativeWorld.cs:337`; `WriteBatch.cs:39-47`; rejection sites `world.cpp:85-88,96-98,111-113`). Dispose leases before mutating. Recorded batch commands are invisible until `Flush` (`WriteBatch.cs:196`).
 
-Insertion is O(1), removal is O(1) via swap-with-last, iteration is O(N) over the dense array with no gaps. This pattern is adopted by every modern ECS engine (EnTT, bevy_ecs, flecs).
-
-Iteration is what matters for Dual Frontier: systems walk every entity with the required component set inside `Update`. The dense array gives good cache locality — a substantial win at 10–20 thousand entities. `NativeWorld.AcquireSpan<T>()` returns a `SpanLease<T>` that exposes the dense storage directly (read-only span + parallel `EntityId` index array).
-
-## Span/Batch access pattern
-
-`NativeWorld.AcquireSpan<T>()` returns a `SpanLease<T>` — a read-only span into the dense storage. `BeginBatch<T>()` returns a `WriteBatch<T>` that buffers mutations for application at phase boundaries.
+The canonical read pattern — **bulk work walks the span without entity identity; per-entity identity operations use ids the world actually issued** (factory returns, event payloads), validated via `TryGetComponent`/`IsAlive`:
 
 ```csharp
-[SystemAccess(reads: new[] { typeof(HealthComponent), typeof(PositionComponent) })]
-public class HealthReporterSystem : SystemBase
+[SystemAccess(reads: new[] { typeof(HealthComponent), typeof(PositionComponent) },
+              writes: Array.Empty<Type>(), bus: nameof(IGameServices.Combat))]
+public sealed class HealthReporterSystem : SystemBase
 {
+    private readonly List<EntityId> _wounded = new(); // ids from DamageEvent payloads
+
     public override void Update(float delta)
     {
-        using SpanLease<HealthComponent> healthLease = NativeWorld.AcquireSpan<HealthComponent>();
-        ReadOnlySpan<HealthComponent> health = healthLease.Components;
-        ReadOnlySpan<int> indices = healthLease.Indices;
-
-        for (int i = 0; i < healthLease.Count; i++)
+        // Bulk pass: dense span walk. No EntityId is needed — and none is
+        // available: lease.Indices exposes entity INDICES only, without
+        // versions. Do not manufacture an EntityId from an index (§5).
+        using (SpanLease<HealthComponent> lease = NativeWorld.AcquireSpan<HealthComponent>())
         {
-            var id = new EntityId(indices[i], 0);
-            if (!NativeWorld.TryGetComponent<PositionComponent>(id, out PositionComponent pos))
-                continue;
-            // Access is permitted — both components are declared in reads.
+            ReadOnlySpan<HealthComponent> health = lease.Span;
+            for (int i = 0; i < lease.Count; i++)
+            { /* aggregate over health[i]; lease.Indices[i] names the slot, not an identity */ }
         }
+
+        // Per-entity pass: identity came from the world (event payload).
+        foreach (EntityId id in _wounded)
+        {
+            if (!NativeWorld.TryGetComponent(id, out PositionComponent pos))
+                continue; // destroyed since the event — stale id fails closed
+            // report pos …
+        }
+        _wounded.Clear();
     }
 }
 ```
 
-For writes, `BeginBatch<T>` returns a `WriteBatch<T>` that stages writes; the scheduler flushes the batch at the next phase boundary so parallel systems observe a consistent snapshot during their span walks.
+Enforcement note: there is **no runtime permission check** relating this code to the `[SystemAccess]` declaration — the per-access runtime guard was deleted at К8.3+К8.4. The declaration is consumed at registration for graph edge-building; call-site conformance is convention plus the analyzer program, which does not yet police `[SystemAccess]` completeness ([THREADING.md](./THREADING.md), execution-contexts section). The predecessor's example comment "Access is permitted — both components are declared in reads" implied a runtime check and is removed; its `Components` property and reads-only `[SystemAccess]` overload never existed either (`Span`, `SpanLease.cs:50`; ctors require `reads`/`writes`/`bus`, `SystemAccessAttribute.cs:55-74`).
 
-## Entity lifecycle
+## §5 Known defect: fabricated entity versions (C10 / N-22)
 
-### Creation
+The span ABI does not return versions, and the current codebase — including this document's predecessor and `KERNEL_ARCHITECTURE.md` §1.7, which taught the pattern — fabricates them: 13+ production sites across 10 systems plus `GameBootstrap.cs:241` construct `new EntityId(indices[i], 0)` (e.g. `NeedsSystem.cs:93`); `EntityEncoder.cs:85` decodes saved ranges to version 0; `SpanLease<T>.Pairs` and the `WriteBatch<T>` enumerator fabricate `Version = 1` with an in-code caveat (`SpanLease.cs:76-84,112`; `WriteBatch.cs:221`).
 
-Entities are created through `NativeWorld.CreateEntity()` and equivalent factory paths used by `RandomPawnFactory`, `ItemFactory`, etc. in production. Components are attached separately via `WriteBatch<T>` or at bootstrap through the registry handoff in `Bootstrap.Run`.
+**What the kernel actually enforces (N-22).** The generation machinery is real and fails closed: `is_alive` demands exact version equality — `id.version == versions_[id.index]` (`world.cpp:74-78`) — `destroy_entity` bumps the version before the slot can recycle (`world.cpp:90`), and every accessor and mutation gates on it (e.g. `add_component`, `world.cpp:116`). But a fabricated version-0 id matches only a slot whose version is still 0 — never destroyed — so for these callers the ABA guarantee collapses to "this index was never recycled." The defect is latent only because production is creation-only today: no `src/` code calls `DestroyEntity` or `FlushDestroyedEntities` at HEAD (grep-verified; destruction is exercised by tests), so no recycled slot exists yet. The day destruction ships, every fabrication site becomes a stale-read hazard.
 
-### Destruction
+**Wrong version of a live entity: fails closed.** Because `is_alive` is exact equality, an id with the right index but wrong version — too low *or* too high — is indistinguishable from dead: `TryGetComponent` returns `false`, writes are silently dropped. No index-only or nearest-version fallback exists. (`Pairs`' fabricated version 1 therefore mismatches a fresh entity's true version 0 — the in-code caveat scopes it to snapshot-then-record flows where flush revalidates.)
 
-`NativeWorld.DestroyEntity(id)` does not free the index immediately — component removal happens at the next scheduler phase boundary so that parallel systems finish their span walk without observing partial state. The entity version is incremented. Subsequent `TryGetComponent<T>(oldId)` calls return `false`; writes against a dead `EntityId` are silently dropped at flush time.
+This is a **known defect of the current ABI**, not a sanctioned pattern. Do not add fabrication sites; the fix is [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) §2's.
 
-### Versioning
+> **FENCED (target / planned — not current truth):** per IDENTITY_AND_ABI_CONTRACT.md §2 — an additive `df_world_acquire_versions` entry point exposes a read-only view of the native `versions_` table under the same acquire/release discipline as component spans; `SpanLease<T>` acquires it alongside the span and loops reconstruct `new EntityId(idx, versions[idx])` with true generations; fabrication becomes analyzer-detectable; this document's §4 example gains the versions-view idiom when it ships.
 
-An entity with an old version is the indicator of a dead reference. Systems check validity through `NativeWorld.IsAlive(id)` (or implicitly via `TryGetComponent`). No `null` panics: immutable event records carry an `EntityId`, and if the entity has already been destroyed by the time the handler runs, the handler simply returns. This makes the event bus resilient to races.
+## §6 Entity lifecycle
 
-## SystemBase
+**Creation.** `NativeWorld.CreateEntity()` (`:120`), or the production bulk path — `RandomPawnFactory`/`ItemFactory` create entities and attach components via `AddComponents` in one P/Invoke (`ItemFactory.cs:144-150`). Natively the id comes from the free list (recycled index, current version) or `next_index_++` (`world.cpp:57-72`); index 0 is never live (`world.cpp:75`).
 
-`SystemBase` is the base class for every game system. It defines three lifecycle hooks plus accessors for the production storage path.
+**Destruction.** `DestroyEntity(id)` marks: the version increments immediately (`world.cpp:90`) — `IsAlive`/`TryGetComponent` fail from that moment — and the id joins a pending queue. Component removal and index recycling are deferred to `flush_destroyed` (`world.cpp:95-108`) via `FlushDestroyedEntities` (`NativeWorld.cs:148`); both are rejected while any span or batch is active (§4). The predecessor tied removal to "the next scheduler phase boundary" — no such scheduler hook exists; flush runs when a caller invokes it, and today no production code does (§5).
 
-```csharp
-public abstract class SystemBase
-{
-    // Called once when the system is registered.
-    // Use for bus subscriptions or other one-time setup.
-    protected virtual void OnInitialize() { }
+**Versioning law.** A given `(Index, Version)` pair is issued at most once per world lifetime. Stale references fail closed everywhere: reads return `false`, batch commands are dropped at flush ("entities still alive at flush time", `WriteBatch.cs:114-117`), event handlers holding a dead `EntityId` simply return. The law is only as strong as the versions callers present (§5).
 
-    // Called by the scheduler at the rate set by [TickRate].
-    public abstract void Update(float delta);
+## §7 SystemBase
 
-    // Called when the system is unloaded. Unsubscribe from buses, release resources.
-    protected virtual void OnDispose() { }
-
-    // Production storage access — sole path post-K8.3+K8.4.
-    protected NativeWorld NativeWorld { get; }
-
-    // Domain-bus aggregator for cross-system communication.
-    protected IGameServices Services { get; }
-
-    // Path β bridge accessor — returns null when no managed storage registered
-    // for this mod (Core origin systems always get null; mods without
-    // RegisterManagedComponent<T> get null).
-    protected ManagedStore<T>? ManagedStore<T>() where T : class, IComponent;
-}
-```
-
-`SystemBase.NativeWorld` and `SystemBase.Services` throw `InvalidOperationException` when accessed outside an active scheduler context (for example from the renderer main thread, or after an illegal `async`/`await` resumed on a different thread). The K8.3+K8.4 cutover removed the managed-World access surface (`GetComponent` / `SetComponent` / `Query` / `GetSystem`) — see [src/DualFrontier.Core/ECS/SystemBase.cs](../../src/DualFrontier.Core/ECS/SystemBase.cs) lines 9-17 for the canonical statement.
-
-An access declaration is mandatory: `[SystemAccess(reads: [...], writes: [...], bus: nameof(IGameServices.Combat))]`. The scheduler reads the attribute once at startup and builds the dependency graph. Compile-time isolation enforcement is described in [ISOLATION](./ISOLATION.md); the future A'.9 Roslyn analyzer extends enforcement to call sites.
-
-## Anti-patterns
-
-### Caching a `NativeWorld` reference in system state
+`SystemBase` (`src/DualFrontier.Core/ECS/SystemBase.cs`) defines three lifecycle hooks plus the storage/bus accessors. The К8.3+К8.4 cutover statement is canonical in its class doc comment (`:12-17`): the managed-`World` surface (`GetComponent`/`SetComponent`/`Query`/`GetSystem`) is removed; systems use span/batch exclusively.
 
 ```csharp
-// BAD — bypasses the per-tick context, breaks parallelism guarantees.
-public class BadSystem : SystemBase
-{
-    private NativeWorld _world;
-    public BadSystem(NativeWorld w) { _world = w; }
-}
+// Abridged from src/DualFrontier.Core/ECS/SystemBase.cs (verified at HEAD).
+protected virtual void OnInitialize() { }    // :35 — bus subscriptions, one-time setup
+public abstract void Update(float delta);    // :41 — called per [TickRate]
+protected virtual void OnDispose() { }       // :48 — unsubscribe, release
+protected IGameServices Services { get; }    // :70 — domain-bus aggregator
+protected NativeWorld NativeWorld { get; }   // :93 — sole production storage path
+protected ManagedStore<T>? ManagedStore<T>() // :126 — Path β; null for Core origin,
+    where T : class, IComponent;             //   missing resolver, or unregistered T
 ```
 
-Systems receive `NativeWorld` only through `SystemExecutionContext` (via `SystemBase.NativeWorld`) and must not cache the reference. A graph rebuild or a mod hot-reload may invalidate cached state.
+`Services` and `NativeWorld` route through the active `SystemExecutionContext` and throw `InvalidOperationException` outside a scheduler context (`:74-76`, `:97-99`) — e.g. from the renderer main thread, or after an illegal `async` resumption ([THREADING.md](./THREADING.md), async-ban section). An access declaration is mandatory: `[SystemAccess(reads: […], writes: […], bus: nameof(IGameServices.X))]`, read once at registration for graph building ([THREADING.md](./THREADING.md)).
 
-### Direct call to another system
+## §8 Anti-patterns
 
-```csharp
-// BAD — bypasses the bus, creates an implicit dependency.
-var inventory = GetSystem<InventorySystem>();  // method does not exist after K8.3+K8.4
-```
+- **Caching a `NativeWorld` reference in system state** (e.g. a constructor parameter stored in a field). Systems receive the world only through the execution context; a cached reference survives graph rebuilds and mod hot-reloads that invalidate it.
+- **Fabricating an `EntityId` from a span index.** `new EntityId(indices[i], 0)` is the §5 defect. Existing sites are inventoried for the IDENTITY_AND_ABI_CONTRACT.md (AUTHORED draft) §2 fix; new code must not add more.
+- **Calling another system directly.** `GetSystem<T>()` does not exist post-К8.3+К8.4. Cross-system communication routes through the domain buses — `Services.Combat.Publish(…)` etc. ([CONTRACTS.md](./CONTRACTS.md)).
+- **Logic in a component.** Damage math lives in `DamageSystem`; the component stays data. Post-cutover motivation: Path α components must remain `unmanaged` structs to cross the native boundary.
+- **Recording a write and reading it back in the same scope.** Batch commands are invisible until `Flush` (`WriteBatch.cs:196`) — `TryGetComponent` immediately after `batch.Add(id, …)` reads pre-flush state. Record in this pass, read next pass (or `Flush` first). The predecessor's version of this example called `batch.Set(…)`, which does not exist — the recording surface is `Update`/`Add`/`Remove` (§4).
 
-There is no `GetSystem` accessor on `SystemBase` post-K8.3+K8.4 — the managed-World access surface was deleted entirely. Cross-system communication routes through `Services.Combat.Publish(...)` / `Services.Inventory.Publish(...)` / etc. — see [CONTRACTS](./CONTRACTS.md).
+## Cross-references
 
-### Logic in a component
+| Document | Relation | Note |
+|---|---|---|
+| [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) | defers-to | К-L3/К-L3.1/К-L8/К-L11 storage invariants; §1.7 span protocol (its version-0 example is amended by the same C10 fix) |
+| [THREADING.md](./THREADING.md) | cites | Phases, dispatch, execution contexts, `[SystemAccess]` enforcement state, async ban |
+| [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) | defers-to | Path β / `RegisterManagedComponent`, mod fault lifecycle, enforcement model |
+| [FIELDS.md](./FIELDS.md) · [ARCHITECTURE.md](./ARCHITECTURE.md) · [CONTRACTS.md](./CONTRACTS.md) | cites | Orthogonal spatial storage (identity `(field_id, x, y)`); layer map; domain buses |
+| [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) | defers-to | Target identity law: §2 versions surface, `IsValid` alignment, analyzer rule (§5 here) |
+| [PERSISTENCE_SNAPSHOT_CONTRACT.md](./PERSISTENCE_SNAPSHOT_CONTRACT.md) (AUTHORED draft) | cites | Whether saves persist versions (`EntityEncoder` waiver) is decided there |
 
-```csharp
-// BAD — the component is not pure data.
-public sealed class HealthComponent : IComponent
-{
-    public float Current;
-    public void TakeDamage(float amount) { Current -= amount; }  // no.
-}
-```
+## Amendment protocol
 
-Damage logic lives in `DamageSystem`. The component stays a POCO. Additional motivation post-K8.3+K8.4: Path α components must be `unmanaged` structs to cross the native storage boundary; methods on the struct are fine as long as they don't capture references.
+Amendments surface to the owner (Crystalka) with rationale before landing — no default amendments to standing law. Semver: PATCH for correction, MINOR for additive sections, MAJOR for inverting described architecture; propagate to citing documents in the same change.
 
-### Creating an entity in `Update` with an immediate read
+## Change history
 
-```csharp
-// BAD — parallel readers will not see the new entity until the WriteBatch is
-// flushed at the phase boundary.
-using WriteBatch<HealthComponent> batch = NativeWorld.BeginBatch<HealthComponent>();
-var id = NativeWorld.CreateEntity();
-batch.Set(id, new HealthComponent { Maximum = 100 });
-if (NativeWorld.TryGetComponent<HealthComponent>(id, out _)) { /* race */ }
-```
-
-New entities become visible to parallel readers only at the next phase boundary (after `WriteBatch` flush). Split the logic: create + write in this phase, read in the next.
-
-## See also
-
-- [ARCHITECTURE](./ARCHITECTURE.md) — the four layers and dependency rules.
-- [FIELDS](./FIELDS.md) — the orthogonal storage system; spatial scalar/vector grids alongside per-entity components. Same kernel, separate access model.
-- [ISOLATION](./ISOLATION.md) — compile-time enforcement model + ModFaultHandler lifecycle.
-- [THREADING](./THREADING.md) — scheduler phases, dependency graph, `async` ban.
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — Mod API v3, `RegisterManagedComponent`, Path α/β semantics.
+| Version | Date | Change |
+|---|---|---|
+| 0.1.0 (unreleased, AUTHORED) | 2026-07-15 | Successor of DOC-A-ECS v1.1.1: §4 canonical example rewritten without version fabrication and without the deleted-runtime-check comment (C10/N19); new §5 documents fabricated versions as a known defect with the N-22 collapse mechanism and the IDENTITY_AND_ABI_CONTRACT §2 fix fenced; §6 states wrong-version-of-live-entity fails-closed semantics and corrects the phase-boundary destruction claim; API sketches re-verified (constraints, `Span` vs `Components`, `batch.Set` removed). |

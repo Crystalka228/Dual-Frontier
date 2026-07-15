@@ -4,10 +4,10 @@
 register_id: DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: SUPERSEDED
 owner: Crystalka
-version: "2.0.1"
-next_review_due: 2027-05-17
+version: "2.0"
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
 ---
 # Kernel Full Native Scheduler — Architectural Specification

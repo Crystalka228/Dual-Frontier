@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.26"
+register_version: "2.27"
 last_modified: "2026-07-15"
-last_modified_commit: "8960085"
+last_modified_commit: "PENDING-R1"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -33,43 +33,46 @@ documents:
   # === Tier 1 Architecture (Category A) ===
 
   - id: DOC-A-KERNEL
-    path: docs/architecture/KERNEL_ARCHITECTURE.md
-    title: "DualFrontier Kernel — Architecture"
+    path: docs/architecture/historical/KERNEL_ARCHITECTURE.md
+    title: "DualFrontier Kernel — Architecture (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-KERNEL_ARCHITECTURE
     owner: Crystalka
     version: "2.6.2"
-    last_modified: "2026-07-02"
-    last_modified_commit: "11f82bb"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-07-02"
     last_review_event: "A'.9.1 Phase δ C4 (11f82bb) — KERNEL_ARCHITECTURE.md v2.6.1 → v2.6.2 patch bump per Q-G-12 LOCKED versioning convention (chronicle + cross-ref = patch). A'.9.1 / К-extensions cascade #5 arc chronicle segment appended к the Status footnote chain: five phase ranges with real hashes (Phase 0 bb6807c..4fa76ed; α 5030fa2..a23556f; β-prep 588c667..a213954; β 1bc0df2..b116727; γ 524dd31..cc2f71a + 4cc5e7e); 17 detecting rules at Release 1.0 severities (11 Error + 5 Warning + DFL025_B IDE-only); DFK002 federated interop model (SanctionedInteropSurface: Core.Interop + Runtime.Native roots, shared with DFK001); Q-L-1 gate 23 → CONTINUE → 15 genuine in 2 clusters; deferral map (К-L20 family + DFK019_B hardware tier); PA-anchored permanent absences; К-L impact zero (21 final; S-LOCK-1 held arc-wide); К-L14 verification #14 (Type 6 NEW category) + dashboard Live cross-ref. Part 0 untouched (F-4/F-9 architect-owned). Prior context: A'.9.0 / К-extensions cascade #4 chronicle entry appended к status footnote (Standalone Reconnaissance produced A_PRIME_9_RECONNAISSANCE_REPORT.md ~3340 lines covering 7 domains via multi-agent dispatch — Domain 1 К-L analyzability 22-row matrix, Domain 2 FORMALIZE Lessons 12-row matrix, Domain 3 cascade #2/#3 surfaced rule candidates 10 candidates, Domain 4 Mod OS К-L20 prep 20 candidate DF020 sub-rules + 6 precursor relationships, Domain 5 Roslyn ecosystem desk research SDK 5.3.0, Domain 6 Build/CI surface Option C hybrid placement, Domain 7 suppression governance near-zero baseline). К-L impact: zero. К-L14 verification #13 first observational reconnaissance evidence — 5th evidence type NEW category per S-LOCK-6 framing (substrate completely untouched per S-LOCK-1 zero-production-code; degenerate pass criteria; observational baseline established for A'.9.1). 45 Q-K candidates aggregated for Brief A'.9.1 deliberation. К-L count unchanged: 21 final. Prior context: К-extensions cascade #3 δ1 — v2.5.1 → v2.5.2 patch bump (Launcher Visual Implementation, К-L14 #12 first clean additive evidence); cascade #2 ε1 — v2.5 → v2.5.1 (Godot Full Deprecation, К-L14 #11 first removal-type evidence); А'.8 v2.4 → v2.5 catch-up для governance-lag from А'.8 closure. **DD-2 spec/roadmap separation 2026-06-02 (Documentation Dual-Load Drift Reconnaissance refactor, increment 1) — v2.5.3 → v2.6.0: Part 2 (Roadmap K-series) + Part 3 (Migration strategy) RELOCATED verbatim к docs/ROADMAP.md «Native foundation tracks» section; KERNEL_ARCHITECTURE.md now pure architecture specification (title «Architecture & Roadmap» → «Architecture», scope «+ milestone roadmap» dropped). Part 0 К-L invariants UNTOUCHED (S-LOCK-1 / halt-6 preserved); zero К-L impact (count unchanged 21). Fenced NON-NORMATIVE pointer left at former Part 2/3 location. MINOR bump chosen (documentation-structure change, content relocated not deleted, zero substrate/behavioral/invariant impact) — per the doc's own versioning convention «structural reorganization = major», Crystalka may escalate к v3.0.0 if a major bump is preferred for the structural relocation."
-    next_review_due: "2027-05-21"
+    next_review_due: "null"
     reviewer: Crystalka
     requirements_authored: [REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19]
     risks_referenced: [RISK-001, RISK-002, RISK-003, RISK-004, RISK-013]
     capa_entries_referenced: [CAPA-2026-05-09-K8.2-V2-REFRAMING, CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST, CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN, CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED]
+    special_case_rationale: "Superseded by DOC-A-KERNEL_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
-    path: docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md
-    title: "К10 Native Kernel Scheduler — Architecture Specification"
+    path: docs/architecture/historical/KERNEL_FULL_NATIVE_SCHEDULER.md
+    title: "К10 Native Kernel Scheduler — Architecture Specification (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-SCHEDULER_ARCHITECTURE
     owner: Crystalka
     version: "2.0"
-    last_modified: "2026-05-17"
-    last_modified_commit: "195b530"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-05-17"
     last_review_event: "К10 deliberation arc closure 2026-05-17 — all 9 S surfaces ratified"
-    next_review_due: "2027-05-17"
+    next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-002, RISK-003, RISK-004, RISK-013]
-    special_case_rationale: "К10 specification document. Sister к K10_DELIBERATION_STATE.md (Project file, not register-tracked). Major amendment landed 2026-05-17 (v1.0 → v2.0) per К10 deliberation arc — 9 S surfaces ratified, 8 new К-L invariants + 2 sub-invariants (К-L6 SUPERSEDED + К-L7.1 sub + К-L12 through К-L19), 46 items, TLA+ scope. Tier 1 LOCKED status promoted at this enrollment. Requirements (К-L12 through К-L19) not yet enrolled as REQ entries; deferred к К-closure report (А'.8)."
+    special_case_rationale: "Superseded by DOC-A-SCHEDULER_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_FULL_NATIVE_SCHEDULER.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: К10 specification document. Sister к K10_DELIBERATION_STATE.md (Project file, not register-tracked). Major amendment landed 2026-05-17 (v1.0 → v2.0) per К10 deliberation arc — 9 S surfaces ratified, 8 new К-L invariants + 2 sub-invariants (К-L6 SUPERSEDED + К-L7.1 sub + К-L12 through К-L19), 46 items, TLA+ scope. Tier 1 LOCKED status promoted at this enrollment. Requirements (К-L12 through К-L19) not yet enrolled as REQ entries; deferred к К-closure report (А'.8)."
 
   - id: DOC-A-MOD_OS
     path: docs/architecture/MOD_OS_ARCHITECTURE.md
@@ -151,19 +154,21 @@ documents:
     risks_referenced: [RISK-003]
 
   - id: DOC-A-ARCHITECTURE
-    path: docs/architecture/ARCHITECTURE.md
-    title: "Dual Frontier architecture (umbrella)"
+    path: docs/architecture/historical/ARCHITECTURE.md
+    title: "Dual Frontier architecture (umbrella) (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-ARCHITECTURE_V2
     owner: Crystalka
     version: "1.0.0"
-    last_modified: "2026-06-12"
-    last_modified_commit: "31b013e"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-06-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-ARCHITECTURE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-CONTRACTS
     path: docs/architecture/CONTRACTS.md
@@ -197,34 +202,38 @@ documents:
     reviewer: Crystalka
 
   - id: DOC-A-THREADING
-    path: docs/architecture/THREADING.md
-    title: "Multithreading"
+    path: docs/architecture/historical/THREADING.md
+    title: "Multithreading (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-THREADING_V2
     owner: Crystalka
     version: "2.0.0"
-    last_modified: "2026-06-12"
-    last_modified_commit: "5d28529"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-06-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-THREADING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/THREADING.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-ECS
-    path: docs/architecture/ECS.md
-    title: "Entity Component System"
+    path: docs/architecture/historical/ECS.md
+    title: "Entity Component System (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-ECS_V2
     owner: Crystalka
     version: "1.1.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-ECS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ECS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-EVENT_BUS
     path: docs/architecture/EVENT_BUS.md
@@ -4780,10 +4789,10 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "0.1.0"
+    version: "0.1.1"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "8960085"
+    last_modified_commit: "PENDING-R1"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4831,10 +4840,10 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "0.1.0"
+    version: "0.1.1"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "8960085"
+    last_modified_commit: "PENDING-R1"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4865,15 +4874,105 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "0.1.0"
+    version: "0.1.1"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "8960085"
+    last_modified_commit: "PENDING-R1"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
     reviewer: Crystalka
     special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal SKELETON of the missing A7 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7 — invariants and boundaries only; save-system implementation stays deferred to its milestone (that deferral is ratified per MIGRATION_PLAN §8.1). Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7."
+
+  - id: DOC-A-ARCHITECTURE_V2
+    path: docs/architecture/ARCHITECTURE.md
+    title: "Dual Frontier architecture (umbrella; authored rework)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-ARCHITECTURE]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ARCHITECTURE (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Current-truth candidate verified against code at HEAD 35364c2; becomes LOCKED authority upon Crystalka ratification per FRAMEWORK §7; predecessor remains the last-ratified reference."
+
+  - id: DOC-A-KERNEL_ARCHITECTURE
+    path: docs/architecture/KERNEL_ARCHITECTURE.md
+    title: "DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-KERNEL]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-KERNEL (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Part 0 consolidates the К-L canonical texts verbatim from K_CLOSURE_REPORT §2 (resolves session finding N-1) with Annex A было→стало rows A-1..A-4 for ratification. Verified against code at HEAD 35364c2; REQ-K-L* transfer from DOC-A-KERNEL is a ratification-checklist item; predecessor remains the last-ratified reference."
+
+  - id: DOC-A-SCHEDULER_ARCHITECTURE
+    path: docs/architecture/SCHEDULER_ARCHITECTURE.md
+    title: "Scheduler Architecture — К10 substrate model and current/target wiring (authored rework)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-KERNEL_FULL_NATIVE_SCHEDULER]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-KERNEL_FULL_NATIVE_SCHEDULER (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE — law/model/wiring distilled; deliberation record (46 items, Q-N-1..56, predictions, risks) preserved verbatim in the historical original. English-only (predecessor was mixed). Verified against code at HEAD 35364c2; predecessor remains the last-ratified reference."
+
+  - id: DOC-A-THREADING_V2
+    path: docs/architecture/THREADING.md
+    title: "Multithreading (authored rework; absorbs the FEEDBACK_LOOPS engine cycle/snapshot rule)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-THREADING]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-THREADING (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Absorbs the engine cycle/snapshot rule from DOC-A-FEEDBACK_LOOPS (gameplay residue moves to DOC-J-FEEDBACK_LOOPS at cascade R4 — a benign duplicate-statement window until then; LOCKED predecessor prevails). Verified against code at HEAD 35364c2; predecessor remains the last-ratified reference."
+
+  - id: DOC-A-ECS_V2
+    path: docs/architecture/ECS.md
+    title: "Entity Component System (authored rework; version-0 identity defect documented)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-ECS]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R1"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ECS (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Fixes the session C10 teaching defect (no EntityId(index,0) fabrication in examples; defect + fix documented per IDENTITY_AND_ABI_CONTRACT draft §2). Verified against code at HEAD 35364c2; predecessor remains the last-ratified reference."
 
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
@@ -11303,3 +11402,50 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION → EXECUTED (enrolled), DOC-E-ARCHITECTURE_DECOMPOSITION_REVIEW_EXTERNAL → EXECUTED (enrolled), DOC-A-EXECUTION_AUTHORITY_MATRIX → AUTHORED (enrolled), DOC-A-CONCURRENCY_AND_MEMORY_MODEL → AUTHORED (enrolled), DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME → AUTHORED (enrolled), DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS → AUTHORED (enrolled), DOC-A-TIME_AND_CONSISTENCY_MODEL → AUTHORED (enrolled), DOC-A-IDENTITY_AND_ABI_CONTRACT → AUTHORED (enrolled), DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT → AUTHORED (enrolled)]
+
+  - id: EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE
+    date: "2026-07-15"
+    event: "Corpus rework cascade R1 (kernel-core) — 5 predecessors to historical/ (LOCKED → SUPERSEDED), 5 authored-rework successors enrolled Tier 1 AUTHORED"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-A-ARCHITECTURE
+      - DOC-A-KERNEL
+      - DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
+      - DOC-A-THREADING
+      - DOC-A-ECS
+      - DOC-A-ARCHITECTURE_V2
+      - DOC-A-KERNEL_ARCHITECTURE
+      - DOC-A-SCHEDULER_ARCHITECTURE
+      - DOC-A-THREADING_V2
+      - DOC-A-ECS_V2
+      - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+      - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+      - DOC-A-TIME_AND_CONSISTENCY_MODEL
+    commits:
+      range: "PENDING-R1"
+      key_commits: []
+    governance_impact: |
+      Owner-ratified corpus rework, cascade 1 of 4 (kernel-core cluster). Mechanism per the
+      GODOT/VISUAL_ENGINE precedent: predecessors moved verbatim to docs/architecture/historical/
+      with lifecycle LOCKED → SUPERSEDED and scalar superseded_by; clean authored-rework
+      successors (unified style passport, current-truth verified at HEAD 35364c2) take their
+      paths at Tier 1 AUTHORED with special_case_rationale. KERNEL successor Part 0 becomes the
+      sole canonical К-L carrier (texts consolidated verbatim from K_CLOSURE_REPORT §2 — resolves
+      session finding N-1) with Annex A было→стало rows (Rule 5 batched-trampoline reconciliation;
+      К-L12/К-L15 current/target wiring subsections; Part 0 metadata corrections). KFNS becomes a
+      historical deliberation record; its law/model lives in SCHEDULER_ARCHITECTURE.md. THREADING
+      successor absorbs the FEEDBACK_LOOPS engine cycle/snapshot rule (gameplay residue moves at
+      R4; benign duplicate window until then — LOCKED predecessor prevails on conflict).
+      Deliberate authority-gap window: as of this cascade the FRAMEWORK §14.7 surface no longer
+      contains the kernel-core engine docs (predecessors SUPERSEDED, successors AUTHORED). Interim
+      precedence: historical SUPERSEDED predecessors remain the last-ratified reference and
+      prevail over their AUTHORED successors on conflict, per the standing 2026-07-15 draft-set
+      precedent. Window closes per-document at Crystalka ratification (FRAMEWORK §7).
+      Link-only patches (0.1.0 → 0.1.1): three AUTHORED drafts' markdown links to the moved
+      KFNS retargeted to historical/ (CONCURRENCY_AND_MEMORY_MODEL, PERSISTENCE_SNAPSHOT_CONTRACT,
+      TIME_AND_CONSISTENCY_MODEL); textual evidence citations left as-is by design.
+      register_version 2.26 → 2.27; 300 → 305 documents; EVT 49 → 50.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-A-ARCHITECTURE → SUPERSEDED, DOC-A-KERNEL → SUPERSEDED, DOC-A-KERNEL_FULL_NATIVE_SCHEDULER → SUPERSEDED, DOC-A-THREADING → SUPERSEDED, DOC-A-ECS → SUPERSEDED, DOC-A-ARCHITECTURE_V2 → AUTHORED (enrolled), DOC-A-KERNEL_ARCHITECTURE → AUTHORED (enrolled), DOC-A-SCHEDULER_ARCHITECTURE → AUTHORED (enrolled), DOC-A-THREADING_V2 → AUTHORED (enrolled), DOC-A-ECS_V2 → AUTHORED (enrolled)]

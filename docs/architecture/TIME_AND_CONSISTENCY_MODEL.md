@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.0"
+version: "0.1.1"
 next_review_due: post-ratification closure
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-TIME_AND_CONSISTENCY_MODEL
 ---
@@ -51,7 +51,7 @@ Seven terms. Every statement about time or visibility in the architecture corpus
 
 **PipelineGeneration** — the `sim_tick` stamped into a `PipelineSlot` at dispatch.
 
-- Source: `native/DualFrontier.Core.Native/include/pipeline_slot.h`; [KERNEL_FULL_NATIVE_SCHEDULER](./KERNEL_FULL_NATIVE_SCHEDULER.md) §3.10 Item 33 (:969-977).
+- Source: `native/DualFrontier.Core.Native/include/pipeline_slot.h`; [KERNEL_FULL_NATIVE_SCHEDULER](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) §3.10 Item 33 (:969-977).
 - Slot lifecycle: `Empty → Dispatched → FenceCompleted → ReadableAsTail` (`pipeline_slot.h:10-11,47-50`).
 - The *declared tail* differs per consumer: a sim-thread read of a pipeline-managed field at tick T+D sees generation T+D−1 (K-L7.1 row, [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md):56); the display thread sees generation SimTick−D (K-L16).
 
@@ -253,7 +253,7 @@ D1 requires exactly this much. Option B of §5.2 additionally requires the damag
 
 - [THREADING](./THREADING.md) — scheduler, phase barriers, deferred flush; fold-in target for §1–§3.
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0 — the K-L7/L7.1/L16/L17/L18 invariant rows this contract composes.
-- [KERNEL_FULL_NATIVE_SCHEDULER](./KERNEL_FULL_NATIVE_SCHEDULER.md) — Items 31–35, 41 (slots, drain/refill, quiescence).
+- [KERNEL_FULL_NATIVE_SCHEDULER](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) — Items 31–35, 41 (slots, drain/refill, quiescence).
 - [EVENT_BUS](./EVENT_BUS.md), [ECS](./ECS.md), [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — per-mechanism visibility sources for §2.
 - [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §2.0, §7 — pipeline depth, save/drain semantics, determinism notes.
 - [FIELDS](./FIELDS.md), [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — the two named amendment targets (§7.1, §7.2).

@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.0"
+version: "0.1.1"
 next_review_due: post-ratification closure
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
 ---
@@ -36,7 +36,7 @@ Persistence is deferred everywhere, yet every subsystem has already chosen lifet
 
 - [FIELDS.md](./FIELDS.md) §Save/load (lines 296–305): blob = primary buffer + conductivity + flags; back buffer not serialized; width/height mismatch = load error.
 - K-L3.1: Path β managed components are "runtime-only (Q4.b lock) — not persisted by save system" ([K_L3_1_AMENDMENT_PLAN.md](./K_L3_1_AMENDMENT_PLAN.md) line 91); "save system reconstructs on load post-G-series" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md](./MIGRATION_PLAN_KERNEL_TO_VANILLA.md) line 245).
-- KFNS Item 31 ([KERNEL_FULL_NATIVE_SCHEDULER.md](./KERNEL_FULL_NATIVE_SCHEDULER.md) lines 924–933): background tier event queue persists with the save file (`df_scheduler_serialize_background_queue`); [EVENT_BUS.md](./EVENT_BUS.md) line 59: "versioned wire format, schema v1".
+- KFNS Item 31 ([KERNEL_FULL_NATIVE_SCHEDULER.md](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) lines 924–933): background tier event queue persists with the save file (`df_scheduler_serialize_background_queue`); [EVENT_BUS.md](./EVENT_BUS.md) line 59: "versioned wire format, schema v1".
 - K-L16 ([KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) line 65): "Pipeline drain orderly at save/pause; pipeline refill orderly at load/resume" — versus [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) §7.2.0 (line 1281): save snapshots display tick state, "pipeline drain не required at save time". §1 reconciles these.
 - VULKAN §7.2.1 (lines 1292–1295): "Save/load must produce reproducible state on load"; CPU reference kernels "produce canonical state for save snapshots" (design mitigation, explicitly not implemented).
 - [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) §9.4 / §12 D-6: save records `(modId, modVersion)` per active mod; missing mod → strip its components, keep entities (LOCKED, line 1131).
@@ -169,7 +169,7 @@ One line per law, for citation by later documents and by the save-milestone brie
 
 - [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (draft, this session) — the quiesce/transaction machinery PS-13 delegates to.
 - [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) (draft, this session) — tick commitment, visibility, reproducibility classes, RNG law.
-- [FIELDS.md](./FIELDS.md) §Save/load, [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) §9.4/§12, [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) §7.2, [KERNEL_FULL_NATIVE_SCHEDULER.md](./KERNEL_FULL_NATIVE_SCHEDULER.md) Items 31/34 — the owning fragments this contract composes.
+- [FIELDS.md](./FIELDS.md) §Save/load, [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) §9.4/§12, [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) §7.2, [KERNEL_FULL_NATIVE_SCHEDULER.md](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) Items 31/34 — the owning fragments this contract composes.
 - `src/DualFrontier.Persistence/` — the orphaned codec scaffold (inventory for the milestone, not a design commitment).
 
 ---
