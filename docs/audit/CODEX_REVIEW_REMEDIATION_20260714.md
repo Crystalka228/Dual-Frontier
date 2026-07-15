@@ -6,7 +6,7 @@ category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: "1.1"
 last_modified: "2026-07-14"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-CODEX_REVIEW_REMEDIATION_20260714
 ---
@@ -25,6 +25,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-CODEX_REVIEW_REMEDIA
 ---
 
 ## 1. Result
+
+> **Amended 2026-07-14** -- the outcome arithmetic in this section and the CX-14 outcome are corrected by the Amendment section at the end of this report.
 
 All 21 Codex findings were independently re-verified, then remediated to the extent the runtime
 environment allows. **16 findings changed code/docs; 1 (F07) is documented as accepted-latent; 4 are
@@ -163,3 +165,65 @@ is **SPIR-V-regenerated**; portability/test-infra fixes are **inspection-verifie
 Windows-specific behaviour (F02/F04/F06 on a GPU; F05/F08 Win32 message flow) warrants a confirming
 pass on the target platform, and the native `.so`/`.dylib` copy (F14) warrants confirmation on a
 Linux/macOS CI that builds the native artifact.
+
+---
+
+## 8. Amendment -- 2026-07-14 (v1.1)
+
+Appended per the closure-integrity convention (an EXECUTED report is corrected by
+amendment, never by rewriting its body). Three corrections and one namespace ruling.
+
+### 8.1 Finding-series namespace
+
+To end the collision with the repository's own ROADMAP F-ledger (F-1..F-32), the 21
+findings of this report are hereafter referenced as **CX-01..CX-21** (CX-NN = this
+report's FNN). The body above retains its original FNN labels as published history.
+
+### 8.2 Corrected outcome arithmetic
+
+Section 1 above states 16 + 5 + 1 + 1 = 23 outcome slots for 21 findings. The
+correct, mutually-exclusive split per this report's own section-3 table:
+
+| Outcome | Count | Findings |
+| --- | ---: | --- |
+| Changed code/docs in this cascade | 14 | CX-01..06, 08, 09, 11, 13, 14, 15, 19, 21 |
+| Confirmed already-closed, no change | 5 | CX-10, 12, 16, 17, 18 |
+| Architecturally closed, existing coverage, no change | 1 | CX-20 |
+| Accepted-latent, no change | 1 | CX-07 |
+
+Verification strength of the 14 changed items (from the section-3 verified-by
+column): runtime-tested 4 (CX-03, 15, 19, 21); SPIR-V-regenerated 1 (CX-04);
+compile-verified 6 (CX-01, 02, 05, 06, 08, 09); doc/YAML-checked 2 (CX-11, 13);
+inspection-only 1 (CX-14). Outcome category and verification strength are distinct
+axes and are not conflated hereafter.
+
+Definitive diff stat, computed from git at amendment time: 52 files, +742/-197,
+over the single squashed merge commit `61f08ef` (range `c8fa0e5..61f08ef`). Scope:
+the count includes this report file (`docs/audit/CODEX_REVIEW_REMEDIATION_20260714.md`,
++165, created in the commit) and `docs/governance/REGISTER.yaml` (+30/-7, the DOC-E
+enrollment plus the F13 risk-reference and DOC-A-ISOLATION edits); there is no
+separate frontmatter-mirror file -- the report's inline frontmatter is its mirror.
+The section-1 self-count of 51 files / +560 excluded this report file and the
+register artifacts.
+
+### 8.3 CX-14 outcome correction (was counted "fixed"; actual: structural no-op, now retired)
+
+The CX-14 change (`NativeArtifactCopy.props`) could never copy anything:
+`CMakeLists.txt` sets `PREFIX ""`, so the non-Windows artifacts are
+`DualFrontier.Core.Native.so` / `.dylib` WITHOUT the `lib` prefix, while the props
+searched exclusively `lib`-prefixed names; `Exists`-gating turned the mismatch into a
+silent no-op. Verified by line-read 2026-07-14. Under the operator ratification of
+the same date -- **the product is Windows-only per L7**; Linux is a limited host for
+managed unit tests only -- the props is RETIRED in the CODEX_CLOSURE cascade rather
+than repaired. CX-14's outcome is reclassified: not "fixed" but
+"retired-out-of-scope (Windows-only), original change was inoperative".
+
+### 8.4 Standing accepted records
+
+- **CX-07** (Vulkan callback calling convention on x86): accepted-latent -- no
+  project targets x86; harden to `Winapi` only if a real Win32-x86 target is added.
+- **CX-20 residual** (`ValidateRegularModContractTypes` scans `GetExportedTypes()`
+  only; a non-public `internal IEvent` in a regular mod would slip past):
+  accepted-theoretical -- the bus is `internal` to Core, so a regular mod has no
+  sanctioned publish path. Re-open on demand as defense-in-depth.
+- **CX-02 + CX-06** GPU-validated follow-ups: tracked as ROADMAP **F-32** (OPEN).
