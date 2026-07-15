@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.25"
 last_modified: "2026-07-15"
-last_modified_commit: "PENDING-REGISTER_INVERSION_A"
+last_modified_commit: "a78fce8"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -11092,7 +11092,7 @@ audit_trail:
       - DOC-E-REGISTER_INVERSION_A_MEASURE_REPORT
       - DOC-C-ROADMAP
     commits:
-      range: "817921d..PENDING-REGISTER_INVERSION_A"
+      range: "817921d..a78fce8"
       key_commits:
         - hash: "7449ba8"
           summary: "C2 — FRAMEWORK schema 2.0, the register inversion law (§14)"
