@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.30"
 last_modified: "2026-07-15"
-last_modified_commit: "PENDING-R4"
+last_modified_commit: "0145f1b"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -42,7 +42,7 @@ documents:
     owner: Crystalka
     version: "2.6.2"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-07-02"
@@ -64,7 +64,7 @@ documents:
     owner: Crystalka
     version: "2.0"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-05-17"
@@ -84,7 +84,7 @@ documents:
     owner: Crystalka
     version: "1.12.0"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
@@ -108,7 +108,7 @@ documents:
     owner: Crystalka
     version: "1.2.0"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
@@ -128,7 +128,7 @@ documents:
     owner: Crystalka
     version: "1.4.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-10"
@@ -149,7 +149,7 @@ documents:
     owner: Crystalka
     version: "0.1.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-11"
@@ -169,7 +169,7 @@ documents:
     owner: Crystalka
     version: "1.0.0"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -186,7 +186,7 @@ documents:
     owner: Crystalka
     version: "1.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -204,7 +204,7 @@ documents:
     owner: Crystalka
     version: "1.1.2"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -221,7 +221,7 @@ documents:
     owner: Crystalka
     version: "2.0.0"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -238,7 +238,7 @@ documents:
     owner: Crystalka
     version: "1.1.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -255,7 +255,7 @@ documents:
     owner: Crystalka
     version: "2.0.0"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -272,7 +272,7 @@ documents:
     owner: Crystalka
     version: "1.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -290,7 +290,7 @@ documents:
     owner: Crystalka
     version: "0.3"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -341,7 +341,7 @@ documents:
     owner: Crystalka
     version: "1.1.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -358,7 +358,7 @@ documents:
     owner: Crystalka
     version: "1.0.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -375,7 +375,7 @@ documents:
     owner: Crystalka
     version: "1.0.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -392,7 +392,7 @@ documents:
     owner: Crystalka
     version: "0.1.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -409,7 +409,7 @@ documents:
     owner: Crystalka
     version: "0.1.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -426,7 +426,7 @@ documents:
     owner: Crystalka
     version: "0.2.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -443,7 +443,7 @@ documents:
     owner: Crystalka
     version: "1.0.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -460,7 +460,7 @@ documents:
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "null"
@@ -686,7 +686,7 @@ documents:
     owner: Crystalka
     version: "0.2.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-12"
@@ -724,7 +724,7 @@ documents:
     owner: Crystalka
     version: "0.4.1"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-06-11"
@@ -917,7 +917,7 @@ documents:
     version: "1.0"
     first_authored: "2026-05-12"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -4823,7 +4823,7 @@ documents:
     version: "0.1.2"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4840,7 +4840,7 @@ documents:
     version: "0.1.1"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4874,7 +4874,7 @@ documents:
     version: "0.1.2"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4908,7 +4908,7 @@ documents:
     version: "0.1.2"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4926,7 +4926,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4944,7 +4944,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4962,7 +4962,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4980,7 +4980,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4998,7 +4998,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "fe27fbe"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5016,7 +5016,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5034,7 +5034,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5052,7 +5052,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5070,7 +5070,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R2"
+    last_modified_commit: "6888246"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5088,7 +5088,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5106,7 +5106,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5124,7 +5124,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5142,7 +5142,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5160,7 +5160,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R3"
+    last_modified_commit: "fcbfe5b"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5181,7 +5181,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-07-15"
@@ -5199,7 +5199,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-07-15"
@@ -5217,7 +5217,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-07-15"
@@ -5235,7 +5235,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-07-15"
@@ -5253,7 +5253,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R4"
+    last_modified_commit: "0145f1b"
     content_language: en
     review_cadence: on-change+annual
     next_review_due: "2027-07-15"
@@ -11707,7 +11707,7 @@ audit_trail:
       - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
       - DOC-A-TIME_AND_CONSISTENCY_MODEL
     commits:
-      range: "PENDING-R1"
+      range: "fe27fbe"
       key_commits: []
     governance_impact: |
       Owner-ratified corpus rework, cascade 1 of 4 (kernel-core cluster). Mechanism per the
@@ -11757,7 +11757,7 @@ audit_trail:
       - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
       - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
     commits:
-      range: "PENDING-R2"
+      range: "6888246"
       key_commits: []
     governance_impact: |
       Owner-ratified corpus rework, cascade 2 of 4 (platform cluster). MOD_OS successor merges
@@ -11798,7 +11798,7 @@ audit_trail:
       - DOC-A-PERFORMANCE_V2
       - DOC-A-FHE_INTEGRATION_CONTRACT_V2
     commits:
-      range: "PENDING-R3"
+      range: "fcbfe5b"
       key_commits: []
     governance_impact: |
       Owner-ratified corpus rework, cascade 3 of 4 (substrate cluster). VULKAN successor
@@ -11837,7 +11837,7 @@ audit_trail:
       - DOC-A-TIME_AND_CONSISTENCY_MODEL
       - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
     commits:
-      range: "PENDING-R4"
+      range: "0145f1b"
       key_commits: []
     governance_impact: |
       Owner-ratified corpus rework, cascade 4 of 4 (mechanics cluster) — closes the A'.4.5
