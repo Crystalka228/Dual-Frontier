@@ -102,7 +102,7 @@ foreach ($cat in @('A','B','C','D','E','F','G','H','I','J')) {
         [void]$sb.AppendLine("- **Path**: ``$($d.path)``")
         [void]$sb.AppendLine("- **Tier**: $($d.tier)  |  **Lifecycle**: $($d.lifecycle)  |  **Version**: $($d.version)")
         [void]$sb.AppendLine("- **Owner**: $($d.owner)  |  **Content language**: $($d.content_language)")
-        if ($d.last_modified)        { [void]$sb.AppendLine("- **Last modified**: $($d.last_modified) (`$($d.last_modified_commit)`)") }
+        if ($d.last_modified)        { [void]$sb.AppendLine("- **Last modified**: $($d.last_modified) (``$($d.last_modified_commit)``)") }
         if ($d.next_review_due)      { [void]$sb.AppendLine("- **Next review due**: $($d.next_review_due)") }
         if ($d.special_case_rationale) { [void]$sb.AppendLine("- **Special-case rationale**: $($d.special_case_rationale)") }
         if ($d.requirements_authored -and $d.requirements_authored.Count -gt 0) {
