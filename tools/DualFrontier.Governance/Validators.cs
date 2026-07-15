@@ -80,7 +80,9 @@ public static class Validators
         "4+LOCKED", "4+AUTHORED-SKELETON", "5+STALE", "5+AUTHORED-SKELETON",
     };
 
-    private static readonly Regex RegisterIdPattern = new(@"^DOC-[A-J]-[A-Z0-9_]+$", RegexOptions.Compiled);
+    // DF ids are path-flattened with hyphens (FRAMEWORK 5: DOC-F-SRC-CORE,
+    // DOC-J-COMBAT-RESOLUTION), unlike NIH's underscore-only ids -- hyphens allowed.
+    private static readonly Regex RegisterIdPattern = new(@"^DOC-[A-J]-[A-Z0-9_-]+$", RegexOptions.Compiled);
     private static readonly Regex IsoDate = new(@"^\d{4}-\d{2}-\d{2}$", RegexOptions.Compiled);
     private static readonly Regex Quarter = new(@"^\d{4}-Q[1-4]$", RegexOptions.Compiled);
     private static readonly Regex PostClosure = new(@"^post-.+ closure$", RegexOptions.Compiled);
@@ -355,7 +357,10 @@ public static class Validators
     /// invariant, FRAMEWORK 14.1).
     /// </summary>
     public static string RenderArchive(
-        IReadOnlyList<Frontmatter> docs, GlobalsCollections globals, string registerVersion)
+        IReadOnlyList<Frontmatter> docs,
+        GlobalsCollections globals,
+        string registerVersion,
+        IReadOnlyList<Dictionary<string, object?>>? supplementDocs = null)
     {
         var entries = new List<Dictionary<string, object?>>();
         foreach (Frontmatter fm in docs)
@@ -374,6 +379,16 @@ public static class Validators
             }
 
             entries.Add(entry);
+        }
+
+        // Non-.md enrolled entries carried forward from the provisional supplement
+        // (FRAMEWORK 14.9 -- architect-ruling for Cascade B).
+        if (supplementDocs is not null)
+        {
+            foreach (Dictionary<string, object?> supplement in supplementDocs)
+            {
+                entries.Add(new Dictionary<string, object?>(supplement));
+            }
         }
 
         entries.Add(RegisterSelfEntry());

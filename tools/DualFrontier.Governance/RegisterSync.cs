@@ -75,7 +75,7 @@ public static class RegisterSync
             return ReportAndExit(findings, armed, load, output, "sync", wrote: false);
         }
 
-        string archive = Validators.RenderArchive(load.Docs, globals, registerVersion);
+        string archive = Validators.RenderArchive(load.Docs, globals, registerVersion, LoadSupplement(repoRoot));
         string surface = Validators.RenderAuthoritySurface(load.Docs);
         bool wroteArchive = WriteIfChanged(RepoPaths.RegisterPath(repoRoot), archive);
         bool wroteSurface = WriteIfChanged(RepoPaths.AuthoritySurfacePath(repoRoot), surface);
@@ -97,6 +97,27 @@ public static class RegisterSync
         return true;
 
         static string Normalize(string? s) => s is null ? "\0(absent)" : s.Replace("\r\n", "\n");
+    }
+
+    private static readonly YamlDotNet.Serialization.IDeserializer SupplementDeserializer =
+        new YamlDotNet.Serialization.DeserializerBuilder().IgnoreUnmatchedProperties().Build();
+
+    /// <summary>Loads the provisional non-.md supplement's documents, or an empty list when absent.</summary>
+    private static IReadOnlyList<Dictionary<string, object?>> LoadSupplement(string repoRoot)
+    {
+        string path = Path.Combine(RepoPaths.GovernanceDir(repoRoot), "REGISTER_SUPPLEMENT.yaml");
+        if (!File.Exists(path))
+        {
+            return Array.Empty<Dictionary<string, object?>>();
+        }
+
+        var file = SupplementDeserializer.Deserialize<SupplementFile>(File.ReadAllText(path));
+        return file?.documents ?? new List<Dictionary<string, object?>>();
+    }
+
+    private sealed class SupplementFile
+    {
+        public List<Dictionary<string, object?>>? documents { get; set; }
     }
 
     private static List<Finding> CollectFindings(CorpusLoad load, string repoRoot, GlobalsCollections? globals = null)

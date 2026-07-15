@@ -48,4 +48,13 @@ public sealed class SchemaGateTests
     {
         Validators.ValidateSchema(Fixture.Doc(("last_modified_commit", "f0f76a8"))).Should().BeEmpty();
     }
+
+    [Theory]
+    [InlineData("DOC-F-SRC-AI-JOBS", "F")]        // path-flattened, hyphenated (FRAMEWORK 5)
+    [InlineData("DOC-J-COMBAT-RESOLUTION", "J")]
+    [InlineData("DOC-D-K_L3_1_BRIDGE", "D")]      // underscored
+    public void Green_HyphenatedAndUnderscoredIds_AreValid(string id, string category)
+    {
+        Validators.ValidateSchema(Fixture.Doc(("register_id", id), ("category", category))).Should().BeEmpty();
+    }
 }
