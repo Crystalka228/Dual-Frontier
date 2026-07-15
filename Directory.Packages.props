@@ -50,4 +50,10 @@
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.12" />
   </ItemGroup>
 
+  <ItemGroup Label="Governance tool (REGISTER_INVERSION cascade — DualFrontier.Governance)">
+    <!-- Lossless YAML round-trip for the register corpus (recon R6: 248 ms).
+         net10.0 tool per brief 7.2; version cached locally at Phase 0. -->
+    <PackageVersion Include="YamlDotNet" Version="16.3.0" />
+  </ItemGroup>
+
 </Project>
