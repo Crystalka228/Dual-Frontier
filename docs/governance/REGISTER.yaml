@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.29"
+register_version: "2.30"
 last_modified: "2026-07-15"
-last_modified_commit: "PENDING-R3"
+last_modified_commit: "PENDING-R4"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -349,19 +349,21 @@ documents:
     special_case_rationale: "Superseded by DOC-A-PERFORMANCE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/PERFORMANCE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-OWNERSHIP_TRANSITION
-    path: docs/architecture/OWNERSHIP_TRANSITION.md
-    title: "Golem ownership transitions"
+    path: docs/architecture/historical/OWNERSHIP_TRANSITION.md
+    title: "Golem ownership transitions (historical; reclassified Category J as GOLEM_OWNERSHIP — docs/mechanics)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-J-GOLEM_OWNERSHIP
     owner: Crystalka
     version: "1.0.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Reclassified Category A → J per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS (gameplay golem-bond protocol; session finding N-6 title collision with architecture vocabulary — successor renamed GOLEM_OWNERSHIP). Category change requires a new ID per FRAMEWORK §5 immutability + G-NAMESPACE; sanctioned path = supersession (I→A promotion precedent §3.1.1). Full text preserved at docs/architecture/historical/OWNERSHIP_TRANSITION.md."
 
   - id: DOC-A-FHE_INTEGRATION_CONTRACT
     path: docs/architecture/historical/FHE_INTEGRATION_CONTRACT.md
@@ -415,52 +417,55 @@ documents:
     special_case_rationale: "Track B activation brief retired with the DF_TS program per session finding N-13 (pre-activation invariant falsified by A'.9.1; trigger event stale after Option-c reordering). Superseded by DOC-A-ANALYZER_RULES_V2 §5 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Full text preserved at docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md. Prior rationale: Draft — Track B activation pending Phase A'.9 analyzer milestone; v0.1 conceptual draft"
 
   - id: DOC-A-COMBO_RESOLUTION
-    path: docs/architecture/COMBO_RESOLUTION.md
-    title: "Combo damage resolution"
+    path: docs/architecture/historical/COMBO_RESOLUTION.md
+    title: "Combo damage resolution (historical; reclassified Category J — docs/mechanics)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-J-COMBO_RESOLUTION
     owner: Crystalka
     version: "0.2.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
-    special_case_rationale: "A vs J borderline classified as A by A'.4.5 execution agent — predominantly architectural pattern (deterministic ordering via ComboResolutionSystem); mechanic-design intent minimal. Cross-referenced from docs/mechanics/ index when future J-category combat-design doc authored"
+    special_case_rationale: "Superseded by DOC-J-COMBO_RESOLUTION per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMBO_RESOLUTION.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — predominantly architectural pattern (deterministic ordering via ComboResolutionSystem); mechanic-design intent minimal. Cross-referenced from docs/mechanics/ index when future J-category combat-design doc authored"
 
   - id: DOC-A-COMPOSITE_REQUESTS
-    path: docs/architecture/COMPOSITE_REQUESTS.md
-    title: "Composite requests"
+    path: docs/architecture/historical/COMPOSITE_REQUESTS.md
+    title: "Composite requests (historical; reclassified Category J — docs/mechanics)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-J-COMPOSITE_REQUESTS
     owner: Crystalka
     version: "1.0.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
-    special_case_rationale: "A vs J borderline classified as A by A'.4.5 execution agent — engine-level composite request resolution pattern; design intent minimal"
+    special_case_rationale: "Superseded by DOC-J-COMPOSITE_REQUESTS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMPOSITE_REQUESTS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — engine-level composite request resolution pattern; design intent minimal"
 
   - id: DOC-A-RESOURCE_MODELS
-    path: docs/architecture/RESOURCE_MODELS.md
-    title: "Resource models"
+    path: docs/architecture/historical/RESOURCE_MODELS.md
+    title: "Resource models (historical; reclassified Category J — docs/mechanics)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-J-RESOURCE_MODELS
     owner: Crystalka
     version: "1.0"
-    last_modified: "2026-04-XX"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
-    special_case_rationale: "A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored"
+    special_case_rationale: "Superseded by DOC-J-RESOURCE_MODELS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/RESOURCE_MODELS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored"
 
   # === Tier 1 Methodology (Category B) ===
 
@@ -672,21 +677,23 @@ documents:
   # === Tier 1 Architecture (addendum — root-level placement) ===
 
   - id: DOC-A-FEEDBACK_LOOPS
-    path: docs/architecture/FEEDBACK_LOOPS.md
-    title: "Feedback-loop resolution"
+    path: docs/architecture/historical/FEEDBACK_LOOPS.md
+    title: "Feedback-loop resolution (historical; engine rule → THREADING, gameplay residue reclassified Category J)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-J-FEEDBACK_LOOPS
     owner: Crystalka
     version: "0.2.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-12"
     last_review_event: "Relocated docs/ root → docs/architecture/ to align with Category A default location (post-A'.4.5 cleanup)"
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Split per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS: the engine cycle/snapshot rule is normative in DOC-A-THREADING_V2 §7 (absorbed at cascade R1); the gameplay residue is DOC-J-FEEDBACK_LOOPS in docs/mechanics/. Scalar superseded_by points to the J residue; the THREADING absorption is recorded in both EVTs. Full text preserved at docs/architecture/historical/FEEDBACK_LOOPS.md."
 
   - id: DOC-A-K_CLOSURE_REPORT
     path: docs/architecture/K_CLOSURE_REPORT.md
@@ -909,8 +916,8 @@ documents:
     owner: Crystalka
     version: "1.0"
     first_authored: "2026-05-12"
-    last_modified: "2026-05-12"
-    last_modified_commit: "8ee27fe"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -4830,10 +4837,10 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "0.1.0"
+    version: "0.1.1"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "8960085"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4864,10 +4871,10 @@ documents:
     tier: 1
     lifecycle: AUTHORED
     owner: Crystalka
-    version: "0.1.1"
+    version: "0.1.2"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-R1"
+    last_modified_commit: "PENDING-R4"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -5159,6 +5166,98 @@ documents:
     next_review_due: "post-ratification closure"
     reviewer: Crystalka
     special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-FHE_INTEGRATION_CONTRACT (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Light passport restyle; D1-D8 preserved faithfully as ratified-and-dormant law ('The dormant period is unbounded.' verbatim); footprint pinned to verified reality (2 empty reserved interfaces, zero consumers; D7 fourth version field = forward spec, not present wiring); ISOLATION refs redirected to the MOD_OS merge successor. Verified at HEAD 35364c2."
+
+  # === Tier 1 Mechanics (Category J) — corpus rework R4, first J enrollments ===
+
+  - id: DOC-J-COMBO_RESOLUTION
+    path: docs/mechanics/COMBO_RESOLUTION.md
+    title: "Combo resolution — damage-merge mechanic design (Category J; reclassified from DOC-A-COMBO_RESOLUTION)"
+    category: J
+    tier: 1
+    lifecycle: Draft
+    supersedes: [DOC-A-COMBO_RESOLUTION]
+    constrains: [DOC-A-EVENT_BUS_V2, DOC-A-ECS_V2]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-07-15"
+    reviewer: Crystalka
+
+  - id: DOC-J-COMPOSITE_REQUESTS
+    path: docs/mechanics/COMPOSITE_REQUESTS.md
+    title: "Composite requests — multi-bus transaction mechanic design (Category J; reclassified from DOC-A-COMPOSITE_REQUESTS)"
+    category: J
+    tier: 1
+    lifecycle: Draft
+    supersedes: [DOC-A-COMPOSITE_REQUESTS]
+    constrains: [DOC-A-EVENT_BUS_V2, DOC-A-CONTRACTS_V2]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-07-15"
+    reviewer: Crystalka
+
+  - id: DOC-J-RESOURCE_MODELS
+    path: docs/mechanics/RESOURCE_MODELS.md
+    title: "Resource models — Intent vs Lease mechanic design (Category J; reclassified from DOC-A-RESOURCE_MODELS; honesty banner added per N-7)"
+    category: J
+    tier: 1
+    lifecycle: Draft
+    supersedes: [DOC-A-RESOURCE_MODELS]
+    constrains: [DOC-A-EVENT_BUS_V2]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-07-15"
+    reviewer: Crystalka
+
+  - id: DOC-J-GOLEM_OWNERSHIP
+    path: docs/mechanics/GOLEM_OWNERSHIP.md
+    title: "Golem ownership — mage-golem bond mechanic design (Category J; renamed successor of DOC-A-OWNERSHIP_TRANSITION; shipped-claim corrected to stub truth)"
+    category: J
+    tier: 1
+    lifecycle: Draft
+    supersedes: [DOC-A-OWNERSHIP_TRANSITION]
+    constrains: [DOC-A-ECS_V2, DOC-A-THREADING_V2]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-07-15"
+    reviewer: Crystalka
+
+  - id: DOC-J-FEEDBACK_LOOPS
+    path: docs/mechanics/FEEDBACK_LOOPS.md
+    title: "Feedback loops — mechanic applications of the cycle/snapshot rule (Category J; engine rule normative in DOC-A-THREADING_V2)"
+    category: J
+    tier: 1
+    lifecycle: Draft
+    supersedes: [DOC-A-FEEDBACK_LOOPS]
+    constrains: [DOC-A-THREADING_V2]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R4"
+    content_language: en
+    review_cadence: on-change+annual
+    next_review_due: "2027-07-15"
+    reviewer: Crystalka
 
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
@@ -11717,3 +11816,63 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-A-VULKAN_SUBSTRATE → SUPERSEDED, DOC-A-FIELDS → SUPERSEDED, DOC-A-EVENT_BUS → SUPERSEDED, DOC-A-PERFORMANCE → SUPERSEDED, DOC-A-FHE_INTEGRATION_CONTRACT → SUPERSEDED, DOC-A-VULKAN_SUBSTRATE_V2 → AUTHORED (enrolled), DOC-A-FIELDS_V2 → AUTHORED (enrolled), DOC-A-EVENT_BUS_V2 → AUTHORED (enrolled), DOC-A-PERFORMANCE_V2 → AUTHORED (enrolled), DOC-A-FHE_INTEGRATION_CONTRACT_V2 → AUTHORED (enrolled)]
+
+  - id: EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS
+    date: "2026-07-15"
+    event: "Corpus rework cascade R4 (mechanics) — five gameplay protocols reclassified Category A → J (docs/mechanics/, Tier 1 Draft); rework closure with ratification checklist"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-A-COMBO_RESOLUTION
+      - DOC-A-COMPOSITE_REQUESTS
+      - DOC-A-RESOURCE_MODELS
+      - DOC-A-OWNERSHIP_TRANSITION
+      - DOC-A-FEEDBACK_LOOPS
+      - DOC-J-COMBO_RESOLUTION
+      - DOC-J-COMPOSITE_REQUESTS
+      - DOC-J-RESOURCE_MODELS
+      - DOC-J-GOLEM_OWNERSHIP
+      - DOC-J-FEEDBACK_LOOPS
+      - DOC-G-MECHANICS_README
+      - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+      - DOC-A-TIME_AND_CONSISTENCY_MODEL
+      - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+    commits:
+      range: "PENDING-R4"
+      key_commits: []
+    governance_impact: |
+      Owner-ratified corpus rework, cascade 4 of 4 (mechanics cluster) — closes the A'.4.5
+      borderline surface exactly as docs/mechanics/README.md anticipated. First Category J
+      enrollments (5 docs, Tier 1 Draft per the J-row legal set — no special_case needed);
+      each carries constrains: [...] per FRAMEWORK §3.4.3 and a mechanic-design preamble.
+      OWNERSHIP_TRANSITION renamed GOLEM_OWNERSHIP (N-6 title collision); its shipped-claim
+      corrected to stub truth (types exist, behaviors NotImplementedException; declared
+      [SystemAccess] differs from doc; ManaSnapshotComponent nonexistent). FEEDBACK_LOOPS
+      split: engine cycle/snapshot rule normative in DOC-A-THREADING_V2 §7 (R1), gameplay
+      residue here — closes the R1-declared duplicate window. RESOURCE_MODELS gains the
+      missing honesty banner (N-7). mechanics/README borderline section rewritten as executed.
+      Link-only patches: CONCURRENCY 0.1.3, TIME 0.1.2, RESOURCE_OWNERSHIP 0.1.1 (retargeted
+      to ../mechanics/). register_version 2.29 → 2.30; 314 → 319 documents; EVT 52 → 53.
+      CORPUS REWORK CLOSURE — RATIFICATION CHECKLIST (owner; per-doc FRAMEWORK §7):
+      [1] 14 A-successors: AUTHORED → LOCKED + version 1.0.0 + next_review_due date + predecessor
+          rationale cleanup: ARCHITECTURE_V2, KERNEL_ARCHITECTURE, SCHEDULER_ARCHITECTURE,
+          THREADING_V2, ECS_V2, MOD_OS_ARCHITECTURE, MODDING_V2, CONTRACTS_V2, ANALYZER_RULES_V2,
+          VULKAN_SUBSTRATE_V2, FIELDS_V2, EVENT_BUS_V2, PERFORMANCE_V2, FHE_INTEGRATION_CONTRACT_V2.
+      [2] KERNEL_ARCHITECTURE extra gates: approve Annex A rows A-1..A-4 (Rule 5 trampoline
+          reconciliation; К-L12/К-L15 current/target subsections; Part 0 metadata corrections);
+          transfer REQ-K-L1..K-L19 from DOC-A-KERNEL; K_CLOSURE_REPORT rationale update
+          (canon carrier moved — К_CLOSURE stays closure evidence).
+      [3] 5 J-docs: Draft → LOCKED when each mechanic ships (or stay Draft); confirm constrains
+          lists; confirm SCREAMING_SNAKE continuity naming vs kebab-case convention note.
+      [4] MIGRATION_PLAN superseded_by: DOC-C-ROADMAP — acknowledge scalar target (or redirect).
+      [5] DOC-C-ROADMAP: restore a real next_review_due (entry field currently absent; stale
+          mirror surfaced at R2).
+      [6] 7 cross-cutting drafts (2026-07-15 set): ratification order recommendation stands —
+          EXECUTION_AUTHORITY_MATRIX first, then LIFECYCLE+OWNERSHIP, TIME+IDENTITY-ABI,
+          PERSISTENCE last-before-save-milestone; update their preambles at ratification
+          ("LOCKED docs prevail" wording predates the corpus rework).
+      [7] Authority-gap window closes per-document as [1]/[3] land; until then historical
+          SUPERSEDED predecessors remain the last-ratified reference and prevail on conflict.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-A-COMBO_RESOLUTION → SUPERSEDED, DOC-A-COMPOSITE_REQUESTS → SUPERSEDED, DOC-A-RESOURCE_MODELS → SUPERSEDED, DOC-A-OWNERSHIP_TRANSITION → SUPERSEDED, DOC-A-FEEDBACK_LOOPS → SUPERSEDED, DOC-J-COMBO_RESOLUTION → Draft (enrolled), DOC-J-COMPOSITE_REQUESTS → Draft (enrolled), DOC-J-RESOURCE_MODELS → Draft (enrolled), DOC-J-GOLEM_OWNERSHIP → Draft (enrolled), DOC-J-FEEDBACK_LOOPS → Draft (enrolled)]

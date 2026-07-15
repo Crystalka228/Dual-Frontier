@@ -24,14 +24,16 @@ Per-document `tier` field in REGISTER.yaml entry. `constrains: [DOC-A-XXX]` cros
 
 New mechanic: `docs/mechanics/<slug>.md` (kebab-case). Register ID `DOC-J-<SLUG_UPPER>`. Tier assignment per the architecture-constraint test above.
 
-## Borderline architecture-vs-mechanics
+## Borderline architecture-vs-mechanics — migration executed (2026-07-15)
 
-A'.4.5 deliberation flagged three documents currently in `docs/architecture/` as borderline:
-- [COMBO_RESOLUTION.md](../architecture/COMBO_RESOLUTION.md)
-- [COMPOSITE_REQUESTS.md](../architecture/COMPOSITE_REQUESTS.md)
-- [RESOURCE_MODELS.md](../architecture/RESOURCE_MODELS.md)
+The A'.4.5 borderline surface was resolved by the corpus rework (EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS): five gameplay-protocol documents migrated here as Category J Tier 1 Draft, superseding their Category-A predecessors (now `docs/architecture/historical/`):
+- [COMBO_RESOLUTION.md](./COMBO_RESOLUTION.md)
+- [COMPOSITE_REQUESTS.md](./COMPOSITE_REQUESTS.md)
+- [RESOURCE_MODELS.md](./RESOURCE_MODELS.md)
+- [GOLEM_OWNERSHIP.md](./GOLEM_OWNERSHIP.md) (renamed from OWNERSHIP_TRANSITION — architecture-vocabulary collision)
+- [FEEDBACK_LOOPS.md](./FEEDBACK_LOOPS.md) (engine cycle/snapshot rule moved to [THREADING.md](../architecture/THREADING.md); gameplay residue here)
 
-Inline classification by execution agent at A'.4.5 enrollment with `special_case_rationale` populated. Future surface for migration if review confirms primarily-mechanic content.
+Naming note: the migrated five keep their established SCREAMING_SNAKE names for citation continuity; newly authored mechanics follow the kebab-case convention above.
 
 ## See also
 

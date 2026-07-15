@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.0"
+version: "0.1.1"
 next_review_due: post-ratification closure
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
 ---
@@ -138,7 +138,7 @@ Consequences of a single leaked lease, today:
 3. Count rejected mutations per world and surface the counter through diagnostics, so silent rejection is at least visible in RELEASE (the native bus already sets the observability precedent).
 4. Replace the silent underflow clamp with a DEBUG assert on release-without-acquire.
 
-*Vocabulary note:* the EVENT_BUS «Lease model» (`EVENT_BUS.md:89-101`) is a *gameplay* protocol — mana reserve-then-consume, Open/Active/Closed, refusal reasons. Same lifecycle shape, different layer. This section governs storage leases only; [RESOURCE_MODELS](./RESOURCE_MODELS.md) owns the gameplay selection rules.
+*Vocabulary note:* the EVENT_BUS «Lease model» (`EVENT_BUS.md:89-101`) is a *gameplay* protocol — mana reserve-then-consume, Open/Active/Closed, refusal reasons. Same lifecycle shape, different layer. This section governs storage leases only; [RESOURCE_MODELS](../mechanics/RESOURCE_MODELS.md) owns the gameplay selection rules.
 
 ## §4 Shutdown law (target)
 

@@ -6,7 +6,7 @@ category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.1"
+version: "0.1.2"
 next_review_due: post-ratification closure
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-TIME_AND_CONSISTENCY_MODEL
 ---
@@ -22,10 +22,10 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-TIME_AND_CONSISTENCY
 | §3 consistency rules | [THREADING](./THREADING.md), same amendment |
 | §5 determinism classes | [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0 (a determinism-class note against the K-L rows) or [PERFORMANCE](./PERFORMANCE.md) |
 | §7.1 FIELDS wording fix | [FIELDS](./FIELDS.md) — named amendment (PATCH: correction) |
-| §5.2 / §7.2 COMBO re-scoping | [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) (+ [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §7.2.1 if Option B) — named amendment |
+| §5.2 / §7.2 COMBO re-scoping | [COMBO_RESOLUTION](../mechanics/COMBO_RESOLUTION.md) (+ [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §7.2.1 if Option B) — named amendment |
 | §4, §6 | Remain here; document then transitions authored-proposal → AUTHORED → LOCKED |
 
-Every subsystem already answers "when does my write become visible, and to whom?" — but each answers in its own dialect: K-L16 speaks in display lag, [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) in previous-tick snapshots, [ECS](./ECS.md) in phase-boundary batch flushes, [EVENT_BUS](./EVENT_BUS.md) in flushes and drains, [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) in fences and slot tails. This document normalizes the vocabulary (§1), tabulates every publication boundary in one place (§2), states which observer-consistency guarantees hold across those boundaries (§3), pins the pause/save/load boundaries (§4), and resolves the determinism vocabulary mess by defining explicit determinism classes (§5) plus the RNG law they require (§6).
+Every subsystem already answers "when does my write become visible, and to whom?" — but each answers in its own dialect: K-L16 speaks in display lag, [FEEDBACK_LOOPS](../mechanics/FEEDBACK_LOOPS.md) in previous-tick snapshots, [ECS](./ECS.md) in phase-boundary batch flushes, [EVENT_BUS](./EVENT_BUS.md) in flushes and drains, [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) in fences and slot tails. This document normalizes the vocabulary (§1), tabulates every publication boundary in one place (§2), states which observer-consistency guarantees hold across those boundaries (§3), pins the pause/save/load boundaries (§4), and resolves the determinism vocabulary mess by defining explicit determinism classes (§5) plus the RNG law they require (§6).
 
 File:line anchors below are as of HEAD `6f39903` (2026-07-15); doc anchors cite section + line of the current LOCKED/Live texts.
 
@@ -42,7 +42,7 @@ Seven terms. Every statement about time or visibility in the architecture corpus
 
 - Managed phases are the ordered `SystemPhase` lists computed by `DependencyGraph`; the count is data-dependent, not fixed — the historical five-phase scaffold was removed from THREADING at v2.0.0 ([THREADING](./THREADING.md):141, change history).
 - Native scheduling adds the per-tick macro-phases `Phase_Update = 0`, `Phase_Compute = 1`, `Phase_Display = 2` (`native/DualFrontier.Core.Native/include/phase_compute.h:49-51`).
-- The *tick-finalization phase* is the last PhaseId of a tick, where previous-tick snapshot copies happen. [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md):40 calls it "Phase 5 — Feedback snapshot" — a dangling reference, see §7.5.
+- The *tick-finalization phase* is the last PhaseId of a tick, where previous-tick snapshot copies happen. [FEEDBACK_LOOPS](../mechanics/FEEDBACK_LOOPS.md):40 calls it "Phase 5 — Feedback snapshot" — a dangling reference, see §7.5.
 
 **DisplayTick** — `SimTick − D` for pipeline-managed state.
 
@@ -254,6 +254,6 @@ D1 requires exactly this much. Option B of §5.2 additionally requires the damag
 - [THREADING](./THREADING.md) — scheduler, phase barriers, deferred flush; fold-in target for §1–§3.
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0 — the K-L7/L7.1/L16/L17/L18 invariant rows this contract composes.
 - [KERNEL_FULL_NATIVE_SCHEDULER](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) — Items 31–35, 41 (slots, drain/refill, quiescence).
-- [EVENT_BUS](./EVENT_BUS.md), [ECS](./ECS.md), [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — per-mechanism visibility sources for §2.
+- [EVENT_BUS](./EVENT_BUS.md), [ECS](./ECS.md), [FEEDBACK_LOOPS](../mechanics/FEEDBACK_LOOPS.md) — per-mechanism visibility sources for §2.
 - [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §2.0, §7 — pipeline depth, save/drain semantics, determinism notes.
-- [FIELDS](./FIELDS.md), [COMBO_RESOLUTION](./COMBO_RESOLUTION.md) — the two named amendment targets (§7.1, §7.2).
+- [FIELDS](./FIELDS.md), [COMBO_RESOLUTION](../mechanics/COMBO_RESOLUTION.md) — the two named amendment targets (§7.1, §7.2).
