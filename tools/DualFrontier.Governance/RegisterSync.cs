@@ -158,6 +158,16 @@ public static class RegisterSync
             output.WriteLine($"  report {group.Key} : {group.Count()}");
         }
 
+        foreach (Finding r in reports.Take(80))
+        {
+            output.WriteLine($"  REPORT {r}");
+        }
+
+        if (reports.Count > 80)
+        {
+            output.WriteLine($"  ... (+{reports.Count - 80} more report findings)");
+        }
+
         foreach (Finding m in monitors)
         {
             output.WriteLine($"  monitor {m}");
