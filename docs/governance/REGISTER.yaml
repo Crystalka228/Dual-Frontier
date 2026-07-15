@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.25"
+register_version: "2.26"
 last_modified: "2026-07-15"
-last_modified_commit: "a78fce8"
+last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -4722,6 +4722,158 @@ documents:
     review_cadence: on-status-transition
     next_review_due: "null"
     reviewer: Crystalka
+
+  - id: DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION
+    path: docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md
+    title: "Architecture Decomposition & Contracts Session — 2026-07-15 (verdicts on external review; corpus role map; 27 new findings; 7 authored model drafts)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "null"
+    reviewer: Crystalka
+
+  - id: DOC-E-ARCHITECTURE_DECOMPOSITION_REVIEW_EXTERNAL
+    path: docs/reports/DUAL_FRONTIER_ARCHITECTURE_DECOMPOSITION_REVIEW_20260715.md
+    title: "Dual Frontier — анализ архитектурной декомпозиции по Tier 1–2 (external agent review; input artifact)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: ru
+    review_cadence: none-historical-record
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "External-origin review artifact (authored by an external agent against the same HEAD 6f39903) committed verbatim as the claims source for DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION — the session report's verdict tables are unreadable without the claims in-repo. Enrolled per the docs/reports Category E convention; content_language ru preserved as received (first ru entry in docs/reports/)."
+
+  - id: DOC-A-EXECUTION_AUTHORITY_MATRIX
+    path: docs/architecture/EXECUTION_AUTHORITY_MATRIX.md
+    title: "Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (A0 draft)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A0 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Content is architecture-contract law (FRAMEWORK §3.4 hierarchy → Tier 1); lifecycle AUTHORED because unratified — mandatory preamble marks it normative-target, NOT current truth; conflicts resolve in favor of LOCKED docs until Crystalka ratification per FRAMEWORK §7."
+
+  - id: DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+    path: docs/architecture/CONCURRENCY_AND_MEMORY_MODEL.md
+    title: "Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (A1 draft)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A1 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7."
+
+  - id: DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+    path: docs/architecture/RESOURCE_OWNERSHIP_AND_LIFETIME.md
+    title: "Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (A2 draft)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A2 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7."
+
+  - id: DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+    path: docs/architecture/ENGINE_LIFECYCLE_AND_TRANSACTIONS.md
+    title: "Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (A3+A8 draft)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A3 (+A8 recovery) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7."
+
+  - id: DOC-A-TIME_AND_CONSISTENCY_MODEL
+    path: docs/architecture/TIME_AND_CONSISTENCY_MODEL.md
+    title: "Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (A4 draft)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A4 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7."
+
+  - id: DOC-A-IDENTITY_AND_ABI_CONTRACT
+    path: docs/architecture/IDENTITY_AND_ABI_CONTRACT.md
+    title: "Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (A5+A6+A8 draft)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A5+A6 (+A8 error-taxonomy) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7."
+
+  - id: DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+    path: docs/architecture/PERSISTENCE_SNAPSHOT_CONTRACT.md
+    title: "Persistence Snapshot Contract — snapshot boundary, inclusion/exclusion, identity serialization law (A7 draft skeleton; invariants only)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal SKELETON of the missing A7 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7 — invariants and boundaries only; save-system implementation stays deferred to its milestone (that deferral is ratified per MIGRATION_PLAN §8.1). Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7."
 
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
@@ -11116,3 +11268,38 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-D-REGISTER_INVERSION_A_BRIEF → EXECUTED (enrolled), DOC-A-FRAMEWORK → 2.0.0, DOC-E-VALIDATOR_2_RECON_REPORT → EXECUTED (enrolled), DOC-E-REGISTER_INVERSION_A_MEASURE_REPORT → EXECUTED (enrolled)]
+
+  - id: EVT-2026-07-15-ARCH_DECOMPOSITION_SESSION
+    date: "2026-07-15"
+    event: "Architecture Decomposition & Contracts session — external review verified (10/12 contradictions confirmed, 1 refuted, 1 reclassified; A0–A8 gaps confirmed), 27 new findings, 7 cross-cutting model drafts authored Tier 1 AUTHORED"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION
+      - DOC-E-ARCHITECTURE_DECOMPOSITION_REVIEW_EXTERNAL
+      - DOC-A-EXECUTION_AUTHORITY_MATRIX
+      - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+      - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+      - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+      - DOC-A-TIME_AND_CONSISTENCY_MODEL
+      - DOC-A-IDENTITY_AND_ABI_CONTRACT
+      - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+    commits:
+      range: "PENDING-ARCH_DECOMPOSITION_SESSION"
+      key_commits: []
+    governance_impact: |
+      Session executed read-only over existing docs and code (8 reader agents over the full
+      active Tier 1-2 Category A corpus, ~1.49M chars; 3 code verifiers, 15 probes). No
+      existing document or source file modified. Deliverables additive: session report
+      (verdict matrix on the external review; corpus role map CURRENT/TARGET/EVIDENCE/MIXED
+      with §14.7 authority classification; doc-code conformance matrix; findings N-1..N-27
+      incl. canonical К-L12/К-L15 texts residing in non-authoritative K_CLOSURE_REPORT,
+      analyzer program schism DF_TS vs DFK, fictional PerformanceGate/no-CI, shutdown gap
+      cascade), the external review artifact committed verbatim (content_language ru), and
+      seven authored-proposal drafts of missing cross-cutting contracts (A0-A7, A8
+      distributed), each Tier 1 AUTHORED with special_case_rationale and a mandatory
+      normative-target preamble (LOCKED docs prevail until ratification).
+      register_version 2.25 → 2.26; 291 → 300 documents; EVT 48 → 49.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION → EXECUTED (enrolled), DOC-E-ARCHITECTURE_DECOMPOSITION_REVIEW_EXTERNAL → EXECUTED (enrolled), DOC-A-EXECUTION_AUTHORITY_MATRIX → AUTHORED (enrolled), DOC-A-CONCURRENCY_AND_MEMORY_MODEL → AUTHORED (enrolled), DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME → AUTHORED (enrolled), DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS → AUTHORED (enrolled), DOC-A-TIME_AND_CONSISTENCY_MODEL → AUTHORED (enrolled), DOC-A-IDENTITY_AND_ABI_CONTRACT → AUTHORED (enrolled), DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT → AUTHORED (enrolled)]
