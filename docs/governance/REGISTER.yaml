@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.30"
+register_version: "2.31"
 last_modified: "2026-07-15"
-last_modified_commit: "0145f1b"
+last_modified_commit: "1b420e0"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -487,12 +487,15 @@ documents:
     # version MINOR bumped к 1.14.0 per A'.9.1 Phase δ closure 2026-07-02:
     # #N17/#N18/#N19/#N20 FORMALIZED + #N14 PROMOTED + F-7 lesson-number registry
     # note; pool restructured (promotion markers replace promoted bullets).
+    # version PATCH bumped to 1.14.1 per corpus rework post-closure repair 2026-07-15:
+    # dangling ISOLATION cross-reference retargeted to historical/ (meaning-preserving
+    # path repair, no prose change; EVT-2026-07-15-CORPUS_REWORK_POST_CLOSURE_REPAIR).
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.14.0"
-    last_modified: "2026-07-02"
-    last_modified_commit: "5a5bf75"
+    version: "1.14.1"
+    last_modified: "2026-07-15"
+    last_modified_commit: "1b420e0"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-07-02"
@@ -545,9 +548,12 @@ documents:
     tier: 1
     lifecycle: LOCKED
     owner: Crystalka
-    version: "1.1"
-    last_modified: "2026-05-10"
-    last_modified_commit: "9d4da64"
+    # version PATCH bumped to 1.1.1 per corpus rework post-closure repair 2026-07-15:
+    # dangling ISOLATION cross-reference retargeted to historical/ (meaning-preserving
+    # path repair, no prose change; EVT-2026-07-15-CORPUS_REWORK_POST_CLOSURE_REPAIR).
+    version: "1.1.1"
+    last_modified: "2026-07-15"
+    last_modified_commit: "1b420e0"
     content_language: mixed
     review_cadence: on-change+annual
     last_review_date: "2026-05-10"
@@ -720,7 +726,7 @@ documents:
     category: A
     tier: 1
     lifecycle: SUPERSEDED
-    superseded_by: DOC-A-ANALYZER_RULES_V2-SKELETON
+    superseded_by: DOC-A-ANALYZER_RULES_V2
     owner: Crystalka
     version: "0.4.1"
     last_modified: "2026-07-15"
@@ -762,7 +768,7 @@ documents:
     owner: Crystalka
     version: "Live"
     last_modified: "2026-07-15"
-    last_modified_commit: "a7dc558"
+    last_modified_commit: "9b4968a"
     content_language: en
     review_cadence: on-closure+quarterly
     last_review_date: "2026-06-11"
@@ -884,8 +890,8 @@ documents:
     lifecycle: Live
     owner: Crystalka
     version: "Live"
-    last_modified: "2026-05-10"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "9b4968a"
     content_language: en
     review_cadence: on-closure+quarterly
     next_review_due: "2026-Q3"
@@ -11876,3 +11882,47 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-A-COMBO_RESOLUTION → SUPERSEDED, DOC-A-COMPOSITE_REQUESTS → SUPERSEDED, DOC-A-RESOURCE_MODELS → SUPERSEDED, DOC-A-OWNERSHIP_TRANSITION → SUPERSEDED, DOC-A-FEEDBACK_LOOPS → SUPERSEDED, DOC-J-COMBO_RESOLUTION → Draft (enrolled), DOC-J-COMPOSITE_REQUESTS → Draft (enrolled), DOC-J-RESOURCE_MODELS → Draft (enrolled), DOC-J-GOLEM_OWNERSHIP → Draft (enrolled), DOC-J-FEEDBACK_LOOPS → Draft (enrolled)]
+
+  - id: EVT-2026-07-15-CORPUS_REWORK_POST_CLOSURE_REPAIR
+    date: "2026-07-15"
+    event: "Corpus rework post-closure repair — ANALYZER_RULES superseded_by corruption fixed; live-index links retargeted to rework successors"
+    event_type: governance_event
+    documents_affected:
+      - DOC-A-ANALYZER_RULES
+      - DOC-G-DOCS_README
+      - DOC-C-ROADMAP
+      - DOC-B-METHODOLOGY
+      - DOC-B-MAXIMUM_ENGINEERING_REFACTOR
+    commits:
+      range: "9b4968a + 1b420e0"
+      key_commits: []
+    governance_impact: |
+      Final rework verification found two defects; both repaired before push. (1) The R2
+      cascade mutation (EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM) glued the predecessor's
+      AUTHORED-SKELETON lifecycle suffix onto the successor pointer, leaving DOC-A-ANALYZER_RULES
+      with superseded_by: DOC-A-ANALYZER_RULES_V2-SKELETON — a nonexistent ID (tooling regex
+      matched only the AUTHORED token of the compound lifecycle). Repaired to
+      DOC-A-ANALYZER_RULES_V2, the value R2 intended; supersession is now bidirectional for
+      all 24 rework pairs. (2) The live index documents still linked eight pre-rework paths:
+      docs/README.md carried ISOLATION and MOD_PIPELINE bullets (retargeted to the
+      MOD_OS_ARCHITECTURE merge successor — §10 isolation model, §8 integration pipeline)
+      and the v0.2-addendum five (retargeted to docs/mechanics/; OWNERSHIP_TRANSITION →
+      GOLEM_OWNERSHIP rename surfaced; FEEDBACK_LOOPS bullet now notes the engine
+      cycle/snapshot rule lives in THREADING; its old relative link predates the rework as
+      already-dangling); docs/ROADMAP.md carried one MOD_PIPELINE see-also row (same
+      retarget). Stale "v1.5 LOCKED"/"v1.0 LOCKED" status prefixes dropped from index
+      bullets — the register owns versions and lifecycle, and the documents now at those
+      paths are AUTHORED rework candidates inside the declared authority-gap window.
+      (3) Two Tier 1 LOCKED methodology documents (METHODOLOGY §cross-refs,
+      MAXIMUM_ENGINEERING_REFACTOR §cross-refs) also carried dangling ISOLATION links;
+      repaired meaning-preservingly to the historical/ location of the exact artifact the
+      ratified text cited (PATCH bumps 1.14.0 → 1.14.1 and 1.1 → 1.1.1; no prose change).
+      Retarget tiering applied: Live index docs point FORWARD to successors (current
+      reading guidance); LOCKED docs point to historical/ (last-ratified reference —
+      forward retarget is ratification-scope); EXECUTED records (A_PRIME_0_7 link-audit
+      table) keep verbatim old-path citations as historical evidence.
+      No lifecycle transitions; document count unchanged (319). register_version 2.30 → 2.31.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: []

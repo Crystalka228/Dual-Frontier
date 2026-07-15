@@ -6,8 +6,8 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.14.0"
-next_review_due: 2027-05-21
+version: "1.14.1"
+next_review_due: 2027-06-11
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
 ---
 # Dual Frontier development methodology

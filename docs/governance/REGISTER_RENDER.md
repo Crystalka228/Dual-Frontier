@@ -2,7 +2,7 @@
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-07-15  |  Schema version: 1.0  |  Register version: 2.30*
+*Last generated: 2026-07-15  |  Schema version: 1.0  |  Register version: 2.31*
 
 ---
 
@@ -598,18 +598,18 @@
 ### DOC-B-MAXIMUM_ENGINEERING_REFACTOR — Maximum Engineering Refactor — Discipline Escalation Brief
 
 - **Path**: `docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.1
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.1.1
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-05-10 (`9d4da64`)
+- **Last modified**: 2026-07-15 (`1b420e0`)
 - **Next review due**: 2027-05-10
 - **CAPA referenced**: CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
 
 ### DOC-B-METHODOLOGY — Dual Frontier development methodology
 
 - **Path**: `docs/methodology/METHODOLOGY.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.14.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.14.1
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-07-02 (`5a5bf75`)
+- **Last modified**: 2026-07-15 (`1b420e0`)
 - **Next review due**: 2027-06-11
 - **Requirements authored**: REQ-Q-A07-6
 - **Risks referenced**: RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014
@@ -669,7 +669,7 @@
 - **Path**: `docs/ROADMAP.md`
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`a7dc558`)
+- **Last modified**: 2026-07-15 (`9b4968a`)
 
 ---
 
@@ -2490,7 +2490,7 @@
 - **Path**: `docs/README.md`
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-05-10 (`PENDING-INITIAL`)
+- **Last modified**: 2026-07-15 (`9b4968a`)
 - **Next review due**: 2026-Q3
 
 ### DOC-G-IDEAS_README — docs/ideas — Ideas Bank index
@@ -2758,11 +2758,12 @@
 | 2026-05-24 | A'.9.0 Reconnaissance Cascade post-closure amendments capture event — Option γ Hybrid amendments log artifact enrolled. 4 amendments captured per Crystalka post-execution review 2026-05-24: (1) Defect 1 Q-K count divergence correction (42 vs 45); (2) Defect 2 §2.1 duplication removal; (3) 5-rule deferral (DF009/DF012/DF015/DF018/DF020 family) от A'.9.1 first-batch к К-L20 LOCK cascade per Mod-OS-coupling rationale; (4) test exclusion principle formalization (xUnit Trait + dotnet test filter + DFL025 family analyzer rules). Cascade #3 retroactive empirical check (Q3) ran via Filesystem MCP — Possibility A confirmed (К-L14 #12 CLEAN status preserved by absence-based discipline). К-L14 thesis preserved (zero substrate touch; pure governance artifact addition). Lesson #N13 commit integrity discipline applied. Brief A'.9.1 deliberation input surface post-push = report + this amendments log together (combined effective scope: 46 Q-K candidates + 10 prerequisites + 4 amendments directives + Phase 0 cleanup task list). | amendment_landing | 9fcc517..PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS-REGISTER |
 | 2026-05-24 | A'.9.0 Reconnaissance / К-extensions cascade #4 closure event — first A'.9 milestone-internal cascade per Crystalka two-brief direction («Два брифа первый, он проведет полную разведку архитектуры что бы по отчёту смогли написать бриф для внедрения анализатора»). Standalone reconnaissance discovery-only cascade per S-LOCK-1 zero-production-code discipline. | execution_milestone | a233639..PENDING-COMMIT-A_PRIME_9_0-CLOSURE |
 | 2026-05-24 | A'.9.1 Analyzer Infrastructure cascade pre-execution governance addition — Brief AUTHORED + Phase 0 closure report + Lesson #N17 Provisional. К-extensions cascade #5 pre-execution package: brief two-batch deliberation 2026-05-24 outcome encoded as AUTHORED brief (2356 lines; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md codification at Phase α Commit 8; 9 Phase α atomic commits + Phase β/γ/δ closure protocol); Phase 0 reconnaissance per brief §4.1 (14/14 mandatory reads + 5 bonus reads) + §4.2 (6 of 7 empirical scans; Task 7 violation count deferred к Phase α exit per circular dependency); 10 findings F1-F10 captured + 4 surface decisions ratified by Crystalka (F1 brief path corrections applied in-place; F7 Lesson #N17 = METHODOLOGY inline Option B; F8 session logs uncommitted; next action = commit + spawn Phase α fresh context). Lesson #N17 (Provisional NEW А'.9.1) — Audience-driven tooling deferral appended к METHODOLOGY.md Provisional pool (5 empirical applications enumerated: code-fix providers PA-001 PERMANENT + PublicApiAnalyzers community-absent + BannedApiAnalyzer closed concern + DFK019.B hardware tier split + DFK016 threshold customization API). Lesson #N14 4th application surfaced (A'.9.1 Phase 0 F1 + F4 + F7 — PROMOTION CRITERION MET). К-L14 thesis preserved (zero production code; zero substrate API surface; zero test code; pre-execution governance artifact only). | governance_event | bb6807c..PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER |
-| 2026-07-15 | Corpus rework cascade R3 (substrate) — VULKAN/FIELDS/EVENT_BUS/PERFORMANCE/FHE successors AUTHORED; 5 predecessors historical/SUPERSEDED | execution_milestone | fcbfe5b |
+| 2026-07-15 | Corpus rework cascade R4 (mechanics) — five gameplay protocols reclassified Category A → J (docs/mechanics/, Tier 1 Draft); rework closure with ratification checklist | execution_milestone | 0145f1b |
 | 2026-07-15 | REGISTER_INVERSION Cascade A closure — inverted-register instrument built + dry-run-proven; FRAMEWORK schema 1.0 → 2.0 | amendment_landing | 817921d..a78fce8 |
 | 2026-07-15 | Architecture Decomposition & Contracts session — external review verified (10/12 contradictions confirmed, 1 refuted, 1 reclassified; A0–A8 gaps confirmed), 27 new findings, 7 cross-cutting model drafts authored Tier 1 AUTHORED | execution_milestone | 8960085 |
 | 2026-07-15 | Corpus rework cascade R1 (kernel-core) — 5 predecessors to historical/ (LOCKED → SUPERSEDED), 5 authored-rework successors enrolled Tier 1 AUTHORED | execution_milestone | fe27fbe |
 | 2026-07-15 | Corpus rework cascade R2 (platform) — MOD_OS merge (3→1), ANALYZER family authority (DF_TS program retired), MIGRATION_PLAN retired to ROADMAP; 9 predecessors historical/SUPERSEDED, 4 successors AUTHORED | execution_milestone | 6888246 |
-| 2026-07-15 | Corpus rework cascade R4 (mechanics) — five gameplay protocols reclassified Category A → J (docs/mechanics/, Tier 1 Draft); rework closure with ratification checklist | execution_milestone | 0145f1b |
+| 2026-07-15 | Corpus rework cascade R3 (substrate) — VULKAN/FIELDS/EVENT_BUS/PERFORMANCE/FHE successors AUTHORED; 5 predecessors historical/SUPERSEDED | execution_milestone | fcbfe5b |
+| 2026-07-15 | Corpus rework post-closure repair — ANALYZER_RULES superseded_by corruption fixed; live-index links retargeted to rework successors | governance_event | 9b4968a + 1b420e0 |
 
 
