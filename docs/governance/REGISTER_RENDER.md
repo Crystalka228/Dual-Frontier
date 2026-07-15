@@ -2,26 +2,26 @@
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-07-15  |  Schema version: 1.0  |  Register version: 2.25*
+*Last generated: 2026-07-15  |  Schema version: 1.0  |  Register version: 2.26*
 
 ---
 
 ## Statistics
 
-- Total documents: 291
-- Tier 1: 36  |  Tier 2: 20  |  Tier 3: 151  |  Tier 4: 84  |  Tier 5: 0
-- Per category: A=37  |  B=7  |  C=3  |  D=90  |  E=72  |  F=72  |  G=8  |  H=2  |  I=0  |  J=0
+- Total documents: 300
+- Tier 1: 43  |  Tier 2: 20  |  Tier 3: 153  |  Tier 4: 84  |  Tier 5: 0
+- Per category: A=44  |  B=7  |  C=3  |  D=90  |  E=74  |  F=72  |  G=8  |  H=2  |  I=0  |  J=0
 - Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
 
 ## Table of contents
 
-- [Category A (37 documents)](#category-A)
+- [Category A (44 documents)](#category-A)
 - [Category B (7 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
 - [Category D (90 documents)](#category-D)
-- [Category E (72 documents)](#category-E)
+- [Category E (74 documents)](#category-E)
 - [Category F (72 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
 - [Category H (2 documents)](#category-H)
@@ -106,6 +106,15 @@
 - **Next review due**: 2027-05-12
 - **Special-case rationale**: A vs J borderline classified as A by A'.4.5 execution agent — engine-level composite request resolution pattern; design intent minimal
 
+### DOC-A-CONCURRENCY_AND_MEMORY_MODEL — Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (A1 draft)
+
+- **Path**: `docs/architecture/CONCURRENCY_AND_MEMORY_MODEL.md`
+- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: post-ratification closure
+- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A1 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.
+
 ### DOC-A-CONTRACTS — Contract system
 
 - **Path**: `docs/architecture/CONTRACTS.md`
@@ -123,6 +132,15 @@
 - **Last modified**: 2026-06-02 (`PENDING-INITIAL`)
 - **Next review due**: 2027-05-12
 
+### DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS — Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (A3+A8 draft)
+
+- **Path**: `docs/architecture/ENGINE_LIFECYCLE_AND_TRANSACTIONS.md`
+- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: post-ratification closure
+- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A3 (+A8 recovery) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.
+
 ### DOC-A-EVENT_BUS — Event buses
 
 - **Path**: `docs/architecture/EVENT_BUS.md`
@@ -130,6 +148,15 @@
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-06-12 (`e6dcb46`)
 - **Next review due**: 2027-06-12
+
+### DOC-A-EXECUTION_AUTHORITY_MATRIX — Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (A0 draft)
+
+- **Path**: `docs/architecture/EXECUTION_AUTHORITY_MATRIX.md`
+- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: post-ratification closure
+- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A0 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Content is architecture-contract law (FRAMEWORK §3.4 hierarchy → Tier 1); lifecycle AUTHORED because unratified — mandatory preamble marks it normative-target, NOT current truth; conflicts resolve in favor of LOCKED docs until Crystalka ratification per FRAMEWORK §7.
 
 ### DOC-A-FEEDBACK_LOOPS — Feedback-loop resolution
 
@@ -176,6 +203,15 @@
 - **Last modified**: 2026-05-16 (`PENDING-INITIAL`)
 - **Next review due**: 2027-05-12
 - **Special-case rationale**: Superseded by VULKAN_SUBSTRATE.md v1.0 LOCKED per Q-G-1 LOCK (composite namespace deliberation 2026-05-15). Pre-V-substrate authority preserved at docs/architecture/historical/ for historical record. Moved per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16).
+
+### DOC-A-IDENTITY_AND_ABI_CONTRACT — Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (A5+A6+A8 draft)
+
+- **Path**: `docs/architecture/IDENTITY_AND_ABI_CONTRACT.md`
+- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: post-ratification closure
+- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A5+A6 (+A8 error-taxonomy) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.
 
 ### DOC-A-ISOLATION — System isolation
 
@@ -305,6 +341,15 @@
 - **Last modified**: 2026-06-02 (`PENDING-INITIAL`)
 - **Next review due**: 2027-05-12
 
+### DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT — Persistence Snapshot Contract — snapshot boundary, inclusion/exclusion, identity serialization law (A7 draft skeleton; invariants only)
+
+- **Path**: `docs/architecture/PERSISTENCE_SNAPSHOT_CONTRACT.md`
+- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: post-ratification closure
+- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal SKELETON of the missing A7 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7 — invariants and boundaries only; save-system implementation stays deferred to its milestone (that deferral is ratified per MIGRATION_PLAN §8.1). Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.
+
 ### DOC-A-PHASE_A_PRIME_SEQUENCING — Phase A' sequencing — K-L3.1 to M-series begins
 
 - **Path**: `docs/architecture/PHASE_A_PRIME_SEQUENCING.md`
@@ -332,6 +377,15 @@
 - **Next review due**: 2027-05-12
 - **Special-case rationale**: A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored
 
+### DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME — Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (A2 draft)
+
+- **Path**: `docs/architecture/RESOURCE_OWNERSHIP_AND_LIFETIME.md`
+- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: post-ratification closure
+- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A2 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.
+
 ### DOC-A-SYNTHESIS_RATIONALE — Document Control Register — Synthesis Rationale
 
 - **Path**: `docs/governance/SYNTHESIS_RATIONALE.md`
@@ -348,6 +402,15 @@
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-06-12 (`5d28529`)
 - **Next review due**: 2027-06-12
+
+### DOC-A-TIME_AND_CONSISTENCY_MODEL — Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (A4 draft)
+
+- **Path**: `docs/architecture/TIME_AND_CONSISTENCY_MODEL.md`
+- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: post-ratification closure
+- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A4 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.
 
 ### DOC-A-VISUAL_ENGINE — Visual engine — DevKit and Native (historical; superseded by V substrate)
 
@@ -1303,6 +1366,23 @@
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-01 (`524dd31`)
 - **Special-case rationale**: Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-BUS_INVESTIGATION_2026_05_21, DOC-E-SCHEDULER_STRESS_TEST_SUITE), per PHASE_GAMMA_BRIEF §10 (DOC-C/E reports form; the PHASE_BETA_VIOLATION_INVENTORY.yaml precedent named there was itself assessed OUT of the register — the followed convention is the docs/reports/ .md class). Basis of DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF.
+
+### DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION — Architecture Decomposition & Contracts Session — 2026-07-15 (verdicts on external review; corpus role map; 27 new findings; 7 authored model drafts)
+
+- **Path**: `docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: null
+
+### DOC-E-ARCHITECTURE_DECOMPOSITION_REVIEW_EXTERNAL — Dual Frontier — анализ архитектурной декомпозиции по Tier 1–2 (external agent review; input artifact)
+
+- **Path**: `docs/reports/DUAL_FRONTIER_ARCHITECTURE_DECOMPOSITION_REVIEW_20260715.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: ru
+- **Last modified**: 2026-07-15 (`8960085`)
+- **Next review due**: null
+- **Special-case rationale**: External-origin review artifact (authored by an external agent against the same HEAD 6f39903) committed verbatim as the claims source for DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION — the session report's verdict tables are unreadable without the claims in-repo. Enrolled per the docs/reports Category E convention; content_language ru preserved as received (first ru entry in docs/reports/).
 
 ### DOC-E-ARCHITECTURE_RECON_REPORT — Architecture Reconnaissance Report
 
@@ -2425,47 +2505,47 @@
 | CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION | 2026-05-10 | CLOSED | Methodology corpus (METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR) |
 | CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT | 2026-05-12 | CLOSED | A'.0.5 INVENTORY.md baseline ~135 .md files. A'.4.5 deliberation pre-flight |
 | CAPA-2026-05-13-K8.3-PREMISE-MISS | 2026-05-13 | CLOSED | K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52) |
-| CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 §6.5 split the storage cutover into 12 incremental |
 | CAPA-2026-05-14-K8.34-API-SURFACE-MISS | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 (2026-05-14) prescribed `new ComponentTypeRegistry()` — |
-| CAPA-2026-05-16-MOD-API-V3-AUTHORITY | 2026-05-16 | CLOSED | Audit DRIFT-011 (S4) + DRIFT-012 (S4): MOD_OS_ARCHITECTURE §4.6 + §4.6.3 framed |
+| CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 §6.5 split the storage cutover into 12 incremental |
 | CAPA-2026-05-16-V-SUBSTRATE-SUPERSESSION | 2026-05-16 | CLOSED | Audit DRIFT-009 (S4) + DRIFT-013 (S3) + DRIFT-014 (S3) + DRIFT-015 (S3): |
+| CAPA-2026-05-16-MOD-API-V3-AUTHORITY | 2026-05-16 | CLOSED | Audit DRIFT-011 (S4) + DRIFT-012 (S4): MOD_OS_ARCHITECTURE §4.6 + §4.6.3 framed |
 | CAPA-2026-05-16-POWER-DELETION-PROPAGATION | 2026-05-16 | CLOSED | Audit DRIFT-006 (S4) + DRIFT-007 (S4) + DRIFT-008 (S4): CONTRACTS + EVENT_BUS |
-| CAPA-2026-05-16-ISOLATION-AUTHORITY-RESTORATION | 2026-05-16 | CLOSED | Audit DRIFT-003 (S5) + DRIFT-005 (S5): README + ISOLATION + THREADING + PERFORMANCE |
 | CAPA-2026-05-16-LIVE-STATE-CLOSURE-PROTOCOL-GAP | 2026-05-16 | CLOSED | Audit DRIFT-001 (S4): MIGRATION_PROGRESS.md last_updated 2026-05-12 pre-A'.5; |
+| CAPA-2026-05-16-ISOLATION-AUTHORITY-RESTORATION | 2026-05-16 | CLOSED | Audit DRIFT-003 (S5) + DRIFT-005 (S5): README + ISOLATION + THREADING + PERFORMANCE |
 | CAPA-2026-05-18-K8_5-DRIFT | 2026-05-18 | CLOSED | K8.5 brief reconnaissance per Lesson #22 (read existing code before brief authoring) surfaced |
-| CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT | 2026-05-21 | CLOSED | К10.3 v2 PR #41 closure 2026-05-20 ratified «1022/1022 PASS» but Crystalka's |
-| CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION | 2026-05-21 | CLOSED | Crystalka stress investigation 2026-05-21 surfaced 2 GameBootstrapIntegrationTests |
-| CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #3» (Bug #3). |
 | CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #1» (Bug #1). |
 | CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #2» (Bug #2). |
+| CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #3» (Bug #3). |
+| CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT | 2026-05-21 | CLOSED | К10.3 v2 PR #41 closure 2026-05-20 ratified «1022/1022 PASS» but Crystalka's |
+| CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION | 2026-05-21 | CLOSED | Crystalka stress investigation 2026-05-21 surfaced 2 GameBootstrapIntegrationTests |
 
 <a name="global-audit-trail"></a>
 ## Global: Audit trail
 
 | Date | Event | Type | Commits |
 |---|---|---|---|
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  | execution_milestone |  |
+|  |  | execution_milestone |  |
+|  |  | execution_milestone |  |
+|  |  | execution_milestone |  |
+|  |  | execution_milestone |  |
 |  |  | execution_milestone |  |
 |  |  | execution_milestone |  |
-|  |  |  |  |
-|  |  | execution_milestone |  |
-|  |  | execution_milestone |  |
-|  |  | execution_milestone |  |
-|  |  | execution_milestone |  |
-|  |  | execution_milestone |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
 |  |  |  |  |
 | 2026-05-10 | K-L3.1 bridge formalization deliberation | deliberation_milestone | pre-2df5921 |
-| 2026-05-10 | A'.3 push to origin | governance_event | all backlog through 38c2e19 |
-| 2026-05-10 | A'.0.7 methodology rewrite landing (A'.1.M) | amendment_landing | 86b721a..9d4da64 |
+| 2026-05-10 | K-L3.1 amendment plan execution (A'.1.K) | amendment_landing | 2df5921..0789bd4 |
 | 2026-05-10 | A'.0.5 documentation reorganization + cross-ref refresh | execution_milestone | 27523ac..4e332bb |
 | 2026-05-10 | A'.0.7 methodology pipeline restructure deliberation | deliberation_milestone | pre-86b721a |
-| 2026-05-10 | K-L3.1 amendment plan execution (A'.1.K) | amendment_landing | 2df5921..0789bd4 |
+| 2026-05-10 | A'.0.7 methodology rewrite landing (A'.1.M) | amendment_landing | 86b721a..9d4da64 |
+| 2026-05-10 | A'.3 push to origin | governance_event | all backlog through 38c2e19 |
 | 2026-05-11 | A'.4 K9 field storage execution | execution_milestone | ce4dba8..80c9ba6 |
 | 2026-05-12 | A'.4.5 document control register deliberation | deliberation_milestone | 7448267..411c284 |
 | 2026-05-12 | A'.4.5 register execution closure | execution_milestone | TBD |
@@ -2474,23 +2554,24 @@
 | 2026-05-16 | Cleanup cascade closing 18 of 19 audit findings; 5 CAPAs opened+closed within same governance event; DRIFT-016 halted per SC-4 | governance_event | e68d799..PENDING-COMMIT-16 |
 | 2026-05-17 | Brief skeleton framework — schema extension AUTHORED-SKELETON + 4 К/А' forward planning skeleton briefs authored | governance_event | 15ffa0a..PENDING-COMMIT-8 |
 | 2026-05-17 | К10 deliberation amendments application — METHODOLOGY v1.8 + KERNEL_FULL_NATIVE_SCHEDULER v2.0 landed; new Tier 1 LOCKED enrollment | amendment_landing | 8c3cf5a..PENDING-COMMIT-5 |
-| 2026-05-18 | V0.B sub-milestone closure — V substrate foundation completion (swapchain + render pass + framebuffer + command infrastructure + minimal graphics pipeline + memory allocator + SPIR-V toolchain + compute pipeline plumbing + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); К-L19 hardware tier invariant LOCKED с full implementation backing; smoke test exit criteria operational на real К-L19 hardware; К10.3 brief restart pathway opens | execution_milestone | d2c6627..PENDING-COMMIT-V0_B-CLOSURE |
-| 2026-05-18 | К10.2 sub-milestone closure — native bus three-tier dispatch + mod ALC lifecycle (8 of 46 К10 items; 25 cumulative) | execution_milestone | a677388..PENDING-COMMIT-K10_2-CLOSURE |
-| 2026-05-18 | К10.1 sub-milestone closure — kernel scheduler core (17 of 46 К10 items) | execution_milestone | f439b74..PENDING-COMMIT-K10_1-CLOSURE |
 | 2026-05-18 | V0.A sub-milestone closure — V substrate foundation prerequisite layer (Win32 + Vulkan instance + device + queue families + validation); первая Vulkan code на проекте; unblocks K10.3 brief restart pathway after V0.B compute plumbing closure | execution_milestone | 1a1c772..PENDING-COMMIT-V0_A-CLOSURE |
 | 2026-05-18 | K8.5 deferral cascade — DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON, Phase A'.6 slot SKIPPED, milestone deferred к post-Phase B | governance_event | 4bc34c1..PENDING-COMMIT-K8_5-CLOSURE |
-| 2026-05-19 | V0.C.1 sub-milestone closure — V substrate R.1 (first textured quad) + R.4 (input system) operational; PngDecoder + AssetManager + VulkanSampler + TextureUploader + sprite shaders + VulkanSpritePipeline + SpriteRenderer + 6 input event types + Win32 dispatch + Runtime facade composition; smoke test exit criteria operational на real К-L19 hardware (820 frames at 164 FPS, validation log 0 errors); V0.C.2 brief restart pathway opens | execution_milestone | 4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE |
+| 2026-05-18 | К10.1 sub-milestone closure — kernel scheduler core (17 of 46 К10 items) | execution_milestone | f439b74..PENDING-COMMIT-K10_1-CLOSURE |
+| 2026-05-18 | V0.B sub-milestone closure — V substrate foundation completion (swapchain + render pass + framebuffer + command infrastructure + minimal graphics pipeline + memory allocator + SPIR-V toolchain + compute pipeline plumbing + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); К-L19 hardware tier invariant LOCKED с full implementation backing; smoke test exit criteria operational на real К-L19 hardware; К10.3 brief restart pathway opens | execution_milestone | d2c6627..PENDING-COMMIT-V0_B-CLOSURE |
+| 2026-05-18 | К10.2 sub-milestone closure — native bus three-tier dispatch + mod ALC lifecycle (8 of 46 К10 items; 25 cumulative) | execution_milestone | a677388..PENDING-COMMIT-K10_2-CLOSURE |
 | 2026-05-19 | V1 sub-milestone closure (PR #40) — V substrate primitive: scalar field + isotropic + anisotropic diffusion compute shader operational; AnisotropicDiffusionKernel CPU reference + diffusion.comp GLSL + DiffusionPushConstants alignment-audited (S-LOCK-7) + native VkCmdDispatch с per-field shadow VkBuffers + V1DiffusionPipeline managed wrapper + V1DiffusionPipeline Runtime factories + CPU/GPU equivalence gates (isotropic uniform D + corner reflective + decay-only + combined D+K + iteration count Theory + anisotropic wire-path + insulator column + insulator-with-gap + long-run mass-conservation 50-iter) + V1 200×200 isotropic + anisotropic wire-path smoke scenes + V1 dispatch latency benchmark + Compute MODULE.md V1 extension + V1 manual visual verification protocol; fifth consecutive zero-hard-gate-halt cascade on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1) — К-L14 thesis fifth verification accumulated. | execution_milestone | 9cbaed3..PENDING-COMMIT-V1-CLOSURE |
 | 2026-05-19 | V0.C.2 sub-milestone closure — V substrate R.2 (batched sprite renderer 10K sprites at 60+ FPS target) + R.3 (TileMap + Camera2D 200×200 grid at 60+ FPS target) operational; VertexBufferRing N-frame ring buffer + SpriteIndexBuffer pre-populated uint16 pattern + Camera2D standard scope + TileMap one-sprite-per-tile + SpriteRenderer batched BeginFrame/Submit/EndFrame rewrite + AtlasRegion.FromPixels hardening + Runtime facade extension с Camera + RecordSpritesFrame batched + multi-cycle render pass helpers; V0 substrate close achieved per Q8 ratification — V1 + V2 brief authoring + Phase B M-cycle vanilla migration unblocked (latter also gated on Roslyn analyzer A'.9); 4 consecutive zero-hard-gate-halt cascades on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2) — К-L14 thesis empirically validated | execution_milestone | b4084f1..PENDING-COMMIT-V0_C_2-CLOSURE |
+| 2026-05-19 | V0.C.1 sub-milestone closure — V substrate R.1 (first textured quad) + R.4 (input system) operational; PngDecoder + AssetManager + VulkanSampler + TextureUploader + sprite shaders + VulkanSpritePipeline + SpriteRenderer + 6 input event types + Win32 dispatch + Runtime facade composition; smoke test exit criteria operational на real К-L19 hardware (820 frames at 164 FPS, validation log 0 errors); V0.C.2 brief restart pathway opens | execution_milestone | 4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE |
 | 2026-05-20 | К10.3 v2 sub-milestone closure — pipeline depth (К-L7.1 sub-invariant + К-L16) + display composition (К-L17) + mod lifecycle quiescent state (К-L18) ALL AUTHORED. 4 К-L invariants landed; cumulative К-Lxx series 20 invariants post-К10.3 v2. К-L7 sync coexistence preserved per S-LOCK-10/13 (V1 dispatch_compute_field path orthogonal к pipeline-managed dispatches). К-L17 display composition framework lives в src/DualFrontier.Application/Display/ per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces preserved). К-L18 UI = SimulationStateController + ModMenuController pause hook only per S-LOCK-12 (settings menu deferred к V-cycle / К-extensions). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. К-L19 inherited V0.B (no re-implementation). 15-commit cascade на branch claude/k10_3-v2-pipeline-display-quiescent (1982351..PENDING-CLOSURE-COMMIT). К-L14 thesis seventh verification window: К0..К8 + V0.A..V0.C.2 + V1 (6 closures) + К10.3 v2 = seven consecutive zero-hard-gate-halt cascades. | execution_milestone | 1982351..PENDING-COMMIT-K10_3-V2-CLOSURE |
 | 2026-05-21 | А'.7.x BUS_ARCHITECTURE_AMENDMENT cascade closure (К-extensions cascade #0) | amendment_landing | b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE |
 | 2026-05-22 | А'.7.5 BUS_SOURCE_SPLIT sub-milestone closure (К-L15.1 compile-time layer materialization) | execution_milestone | c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE |
-| 2026-05-23 | А'.8 К-series formal closure event — Phase A' formal closure event boundary | execution_milestone | 044855c..PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION |
 | 2026-05-23 | К-extensions cascade #3 — Launcher Visual Implementation (Minimum Scope) closure event (post-cascade-#2 closure execution per cascade #2 §4 forward roadmap + Crystalka direction «после исполнения в сесии claude code я приложу отчёт и мы продолжим уже делать второй») | execution_milestone | e1bbc6a..PENDING-COMMIT-K_EXT_3-CLOSURE-RATIFICATION |
 | 2026-05-23 | К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization closure event (post-А'.8 К-closure execution per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral) | execution_milestone | 2022bc1..PENDING-COMMIT-K_EXT_2-CLOSURE-RATIFICATION |
+| 2026-05-23 | А'.8 К-series formal closure event — Phase A' formal closure event boundary | execution_milestone | 044855c..PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION |
 | 2026-05-24 | A'.9.0 Reconnaissance Cascade post-closure amendments capture event — Option γ Hybrid amendments log artifact enrolled. 4 amendments captured per Crystalka post-execution review 2026-05-24: (1) Defect 1 Q-K count divergence correction (42 vs 45); (2) Defect 2 §2.1 duplication removal; (3) 5-rule deferral (DF009/DF012/DF015/DF018/DF020 family) от A'.9.1 first-batch к К-L20 LOCK cascade per Mod-OS-coupling rationale; (4) test exclusion principle formalization (xUnit Trait + dotnet test filter + DFL025 family analyzer rules). Cascade #3 retroactive empirical check (Q3) ran via Filesystem MCP — Possibility A confirmed (К-L14 #12 CLEAN status preserved by absence-based discipline). К-L14 thesis preserved (zero substrate touch; pure governance artifact addition). Lesson #N13 commit integrity discipline applied. Brief A'.9.1 deliberation input surface post-push = report + this amendments log together (combined effective scope: 46 Q-K candidates + 10 prerequisites + 4 amendments directives + Phase 0 cleanup task list). | amendment_landing | 9fcc517..PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS-REGISTER |
 | 2026-05-24 | A'.9.0 Reconnaissance / К-extensions cascade #4 closure event — first A'.9 milestone-internal cascade per Crystalka two-brief direction («Два брифа первый, он проведет полную разведку архитектуры что бы по отчёту смогли написать бриф для внедрения анализатора»). Standalone reconnaissance discovery-only cascade per S-LOCK-1 zero-production-code discipline. | execution_milestone | a233639..PENDING-COMMIT-A_PRIME_9_0-CLOSURE |
 | 2026-05-24 | A'.9.1 Analyzer Infrastructure cascade pre-execution governance addition — Brief AUTHORED + Phase 0 closure report + Lesson #N17 Provisional. К-extensions cascade #5 pre-execution package: brief two-batch deliberation 2026-05-24 outcome encoded as AUTHORED brief (2356 lines; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md codification at Phase α Commit 8; 9 Phase α atomic commits + Phase β/γ/δ closure protocol); Phase 0 reconnaissance per brief §4.1 (14/14 mandatory reads + 5 bonus reads) + §4.2 (6 of 7 empirical scans; Task 7 violation count deferred к Phase α exit per circular dependency); 10 findings F1-F10 captured + 4 surface decisions ratified by Crystalka (F1 brief path corrections applied in-place; F7 Lesson #N17 = METHODOLOGY inline Option B; F8 session logs uncommitted; next action = commit + spawn Phase α fresh context). Lesson #N17 (Provisional NEW А'.9.1) — Audience-driven tooling deferral appended к METHODOLOGY.md Provisional pool (5 empirical applications enumerated: code-fix providers PA-001 PERMANENT + PublicApiAnalyzers community-absent + BannedApiAnalyzer closed concern + DFK019.B hardware tier split + DFK016 threshold customization API). Lesson #N14 4th application surfaced (A'.9.1 Phase 0 F1 + F4 + F7 — PROMOTION CRITERION MET). К-L14 thesis preserved (zero production code; zero substrate API surface; zero test code; pre-execution governance artifact only). | governance_event | bb6807c..PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER |
 | 2026-07-15 | REGISTER_INVERSION Cascade A closure — inverted-register instrument built + dry-run-proven; FRAMEWORK schema 1.0 → 2.0 | amendment_landing | 817921d..a78fce8 |
+| 2026-07-15 | Architecture Decomposition & Contracts session — external review verified (10/12 contradictions confirmed, 1 refuted, 1 reclassified; A0–A8 gaps confirmed), 27 new findings, 7 cross-cutting model drafts authored Tier 1 AUTHORED | execution_milestone | 8960085 |
 
 

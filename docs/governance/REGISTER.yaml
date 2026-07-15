@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.26"
 last_modified: "2026-07-15"
-last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+last_modified_commit: "8960085"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -4733,7 +4733,7 @@ documents:
     version: "1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "null"
@@ -4749,7 +4749,7 @@ documents:
     version: "1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: ru
     review_cadence: none-historical-record
     next_review_due: "null"
@@ -4766,7 +4766,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4783,7 +4783,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4800,7 +4800,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4817,7 +4817,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4834,7 +4834,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4851,7 +4851,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -4868,7 +4868,7 @@ documents:
     version: "0.1.0"
     first_authored: "2026-07-15"
     last_modified: "2026-07-15"
-    last_modified_commit: "PENDING-ARCH_DECOMPOSITION_SESSION"
+    last_modified_commit: "8960085"
     content_language: en
     review_cadence: on-status-transition
     next_review_due: "post-ratification closure"
@@ -11284,7 +11284,7 @@ audit_trail:
       - DOC-A-IDENTITY_AND_ABI_CONTRACT
       - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
     commits:
-      range: "PENDING-ARCH_DECOMPOSITION_SESSION"
+      range: "8960085"
       key_commits: []
     governance_impact: |
       Session executed read-only over existing docs and code (8 reader agents over the full
