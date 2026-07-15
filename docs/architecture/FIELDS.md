@@ -1,377 +1,191 @@
 ﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-FIELDS
+register_id: DOC-A-FIELDS_V2
 category: A
 tier: 1
-lifecycle: Live
+lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.1"
-next_review_due: 2027-05-11
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FIELDS
+version: "0.1.0"
+next_review_due: post-ratification closure
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FIELDS_V2
 ---
 # Field Storage
 
-Dual Frontier carries two orthogonal data systems under the same managed Application layer. The Entity Component System ([ECS](./ECS.md)) stores per-entity state as sparse component arrays; the Field Storage system stores spatial scalar/vector state as dense 2D grids. Neither subsumes the other. A pawn is an entity with components; a mana density is a field with cells. Code that reads pawn health does not touch fields; code that reads local mana does not touch components. The two systems share the native kernel ([KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md)) as the storage owner and `IModApi` ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §4.6) as the registration surface, but their access patterns, lifecycle rules, and capability verbs are distinct.
+The storage contract for spatial scalar/vector fields: native `RawTileField` layout, the `df_world_field_*` C ABI, the managed `FieldRegistry`/`FieldHandle<T>` bridge, field identity, capability verbs, and lifecycle — the substrate the Vulkan compute layer sits on top of.
+
+> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/FIELDS.md` (DOC-A-FIELDS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
+> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated · [ ] VULKAN_SUBSTRATE.md (successor) ratified — §9/§10 cite its exclusion-policy and К-L7.1 sections as pointers, not restatements.
 
 ## Status
 
-**Live — populated by K9 closure (A'.4, 2026-05-10).** Storage contract is concrete and stable; G-series amendments will not change the K9-defined surface. The Save/load section keeps **TBD** until the persistence-integration milestone.
+| Field | Value |
+|---|---|
+| Role | normative-current-candidate |
+| Successor of | `docs/architecture/historical/FIELDS.md` (DOC-A-FIELDS, Live v0.1.1, now SUPERSEDED) |
+| Scope | Native `RawTileField` layout/mutation rules; the `df_world_field_*` C ABI; the managed `FieldRegistry`/`FieldHandle<T>`/`FieldSpanLease<T>` bridge; field identity/namespacing; the `field.*` capability grammar and its enforcement points; field lifecycle as actually wired. |
+| Non-goals | Field mathematics, compute pipeline registration/dispatch, hardware exclusion policy detail (VULKAN_SUBSTRATE.md). Save-file format/I/O (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). Mod-specific gameplay decisions. |
+| Authority domains | **storage/memory**, field-slice (layout, ping-pong, conductivity, storage flags, mutation-rejection). **entity-identity**, field-slice (string field-id namespacing, distinct from `EntityId`). **mod-lifecycle**, capability-slice (`field.*` grammar and enforcement). |
+| Defers to | VULKAN_SUBSTRATE.md · KERNEL_ARCHITECTURE.md Part 0 · MOD_OS_ARCHITECTURE.md · PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) · ECS.md — full table in Cross-references. |
 
-## Why two systems, not one
+---
 
-A single «World» entity model that absorbed both per-entity components and per-cell field values would force a representation choice that loses to both:
+## §1 Why two systems, not one
 
-- A field encoded as «one entity per cell» bloats the entity table by `width × height` per field (200×200 = 40 000 entities per field, ten fields = 400 000 entities — orders of magnitude over typical pawn count) and forces sparse-set machinery to walk a dense 2D grid.
-- An entity encoded as «a row in some grid» loses the per-entity state model where a pawn carries unrelated components (Health, Position, Job, Skills) without grid alignment.
+Two orthogonal data systems live under the managed Application layer. ECS ([ECS.md](./ECS.md)) stores per-entity state as sparse component arrays; Field Storage stores spatial state as dense 2D grids. A pawn is an entity with components; a mana density is a field with cells — code reading one never touches the other. Both share the native kernel (KERNEL_ARCHITECTURE.md Part 0) as storage owner and `IModApi` (MOD_OS_ARCHITECTURE.md §4.6) as registration surface, but access, lifecycle, and capability verbs are disjoint. A single "World" model absorbing both loses either way: "one entity per cell" bloats the entity table by `width×height` per field (a 200×200 field is 40,000 entities), while "an entity as a grid row" loses the per-entity model where a pawn carries unrelated, ungridded components.
 
-The two systems target different access shapes:
+| Aspect | ECS | Field Storage |
+|---|---|---|
+| Identity | `EntityId` (index + version) | `(field_id, x, y)` cell coordinate |
+| Storage layout | SparseSet | Dense 2D array, every cell present |
+| Mutation | `WriteBatch<T>` stages, flushed at phase boundary | Point write (rejected during active spans) or compute dispatch |
+| Capability verbs | `read`, `write` | `field.read/write/acquire/conductivity/storage/dispatch` |
 
-| Aspect           | ECS                                     | Field Storage                                  |
-|------------------|-----------------------------------------|------------------------------------------------|
-| Identity         | `EntityId` (index + version)            | `(field_id, x, y)` cell coordinate             |
-| Storage layout   | SparseSet — sparse indices, dense data  | Dense 2D array — every cell present            |
-| Allocation       | Per-component-type store, grows on Add  | Per-field, fixed at registration               |
-| Per-element work | Iterate dense entities matching a query | Iterate cells, optionally with stencil         |
-| Mutation         | `WriteCommandBuffer` records intent     | Direct point write or compute dispatch         |
-| Lifetime         | Entity destroyed → version bumped       | Field destroyed → buffer released              |
-| GPU mapping      | Span exposed as SSBO (Domain B)         | Buffer exposed as SSBO or storage image (Domain A) |
-| Capability verbs | `read`, `write`                         | `field.read`, `field.write`, `field.acquire`, `field.conductivity`, `field.storage`, `field.dispatch` |
+(`WriteBatch<T>` — `src/DualFrontier.Core.Interop/WriteBatch.cs:49` — is current; the predecessor's `WriteCommandBuffer` name does not exist on disk.)
 
-The two systems remain decoupled at every layer above storage: managed bridges live in different files, capability verbs are disjoint, registration paths are disjoint, lifetimes are managed by separate kernel structures.
+## §2 Scope
 
-## Scope
+This is the **storage contract**: the substrate VULKAN_SUBSTRATE.md's compute primitives (V0/V1/V2) sit on. The storage path has no GPU dependency itself — a field is a plain native allocation whether or not a shader touches it. Out of band: **field mathematics** (VULKAN_SUBSTRATE.md is the spec layer); **compute pipeline registration/dispatch** (`IModApi.ComputePipelines`, unwired for mods — §10–§11); **mod-specific gameplay decisions**.
 
-This document specifies the **storage contract** for fields. It is the substrate that the V substrate primitives ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) V0/V1/V2 per Q-G-2 LOCK) sit on top of. The storage path is required to function on CPU alone — every shader has a CPU reference implementation that operates on the same `RawTileField<T>` instances, and the `IModApi.Fields` surface is identical regardless of GPU availability.
+## §3 Field — the unit of storage
 
-Three scopes are out of band for this document:
+A field is a typed dense 2D array bound to a registered string id, fixed structural shape regardless of element type (`tile_field.h:1-30`, allocation `tile_field.cpp:5-19`):
 
-- **Mathematical models** (diffusion, anisotropy, capacitance, cliff thresholds, eikonal). These live in [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) as the spec layer; the storage layer carries the data the math operates on, not the math itself.
-- **Compute pipeline registration** (`IModApi.ComputePipelines`). Pipelines are registered alongside fields but are a separate API; only field-side verbs (`field.dispatch`) reach pipelines transitively.
-- **Mod-specific gameplay decisions** (which fields ship in which vanilla mod, which decay rates, which colour ramps). These live in mod assemblies, not architectural docs.
+- **Primary buffer** — `width×height×cell_size` bytes, zero-filled at construction.
+- **Back buffer** — identical layout, ping-pong target for compute kernels.
+- **Conductivity map** — `width×height` floats, default `1.0` (uniform isotropic).
+- **Storage-flag bitmap** — `(width×height+7)/8` bytes, byte-packed, default clear; marks capacitance-retaining cells.
 
-## Field — the unit of storage
+Element type `T` is `unmanaged` (K-L3's blittable-layout requirement, KERNEL_ARCHITECTURE.md Part 0): `float`, `Vector2`, `int32` are common; modder types are accepted if blittable. Dimensions/cell-size must be positive or the constructor throws `std::invalid_argument`.
 
-A field is a typed dense 2D array bound to a registered string id. Every field has the same structural shape regardless of element type:
+**Why ping-pong from day one.** Reading and writing the same buffer during a diffusion update produces order-dependent Gauss-Seidel semantics; GPU compute parallelises across cells with no order guarantee (Jacobi), and the CPU reference kernel serving as the shader equivalence oracle (§10) must match it. Ping-pong is the only model that survives that requirement — the back buffer is allocated at registration, never lazily.
 
-- A primary buffer (`width × height × sizeof(T)` bytes) holding the current cell values.
-- A back buffer of identical layout used for ping-pong updates by compute kernels (CPU or GPU) that read from one buffer and write to the other.
-- A conductivity map (`width × height × sizeof(float)` bytes) carrying per-cell diffusion coefficients. Wires, pipes, walls, insulators all express themselves through this map. Default value is 1.0 (uniform isotropic diffusion); mods that don't need anisotropy never touch it.
-- A storage flag bitmap (`width × height` bits, byte-aligned) marking cells that retain capacitance state across ticks. Batteries, tanks, thermal mass cells set their flag; ordinary cells leave it clear.
+**Why conductivity map and storage flags from day one.** Retrofitting anisotropy onto an isotropic-only field forces a storage migration (buffer growth, new C ABI entry, new managed method, every field-aware test updated). The fixed cost of carrying both from the start (roughly +25% footprint over a bare `float` field — VULKAN_SUBSTRATE.md §7.4 has current budget figures) beats a flag-day migration later.
 
-Element type `T` is constrained to `unmanaged` (matches K-L3 from the kernel — blittable layout, no GC reachability, direct memory copy). Common types are `float` (most scalar fields), `Vector2` (flow field directions), `int32` (discrete labels). Modder-defined types are accepted as long as they are blittable.
+## §4 Identity and namespacing
 
-### Why ping-pong from day one, not «add later»
+A field id is `<mod-namespace>.<field-name>`, e.g. `vanilla.magic.mana`; `<mod-namespace>` must equal the registering mod's manifest id (MOD_OS_ARCHITECTURE.md §3.3; enforced at `RestrictedFieldApi.cs:41-46` — `RegisterField<T>` throws `CapabilityViolationException` if the id doesn't start with `_modId + "."`).
 
-A diffusion update reads four neighbours and writes the current cell. If the read and write target the same buffer, the update sees partially-applied results from earlier cells in the same pass — Gauss-Seidel rather than Jacobi semantics. The two converge to the same equilibrium but with different transient behaviour, and the choice is not free: GPU compute pipelines parallelise across cells, which forces Jacobi (no order guarantee), and the CPU reference implementation that serves as the shader equivalence oracle ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) «Failure modes → CPU fallback») must produce bit-equivalent output.
+Identity is string-, not numeric-, keyed on purpose: component type ids are kernel-local sequential integers assigned by mod-load-order and are **not** stable across a mod reload (a mod reloaded twice could see its field assigned id 7, then 9); string ids are (`world.cpp:576-597`, `FieldRegistry.cs`). PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) PS-7 holds this up as the identity model the rest of the corpus should converge to.
 
-Ping-pong is therefore not an optimisation; it's the only update model that survives the CPU↔GPU equivalence requirement. The back buffer is allocated at field registration time, not lazily on first dispatch — there is no «field without back buffer» state.
+**Registration conflict — corrected.** Two *different* mods cannot collide on an id, but not via a dedicated exception: `RegisterField<T>` rejects any id outside the caller's own namespace before the registry is reached, and manifest `id` is asserted globally unique (MOD_OS_ARCHITECTURE.md §2.2), so no two mods can share a prefix. The only real collision is the *same* mod re-registering its own id with different type/dimensions: `FieldRegistry.Register<T>` (`:42-51`) treats an identical `(id, width, height, type)` re-registration as an idempotent no-op returning the cached handle, and throws `InvalidOperationException` on mismatch — before native is called. Native `World::register_field` enforces the same rule independently (`std::invalid_argument`, `world.cpp:585-593`), caught at the ABI boundary and reported as `0` (`capi.cpp:742-747`).
 
-### Why conductivity map and storage flags from day one
+MOD_OS_ARCHITECTURE.md §11.2 lists `FieldRegistrationConflict` only among "documented-but-reserved" `ValidationErrorKind` names (`:1044`) — **not a member of the shipped enum.** The conflict is real and structurally prevented as above; the named exception type does not exist.
 
-K9 ships isotropic mana diffusion (`Vanilla.Magic` per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G1) where a uniform conductivity = 1.0 suffices. Adding anisotropy retroactively (G2 — `Vanilla.Electricity` wires) would force a storage layout migration: the existing buffer must grow by `width × height × 4` bytes, the C ABI surface gains `set_conductivity`, the managed bridge gains `SetConductivity(x, y, value)`, and every field-aware test must be updated to expect the new layout.
+Other mods reach a field via `IModApi.Fields.GetField<T>(id)` (§7): the accessing mod must declare the applicable `field.read` capability and list the owning mod in `dependencies` (MOD_OS_ARCHITECTURE.md §3.4).
 
-Same logic for storage flags (G3 — batteries). The cost of including both from K9 is fixed memory (`width × height × 5` bytes per field, ~200 KB for a 200×200 field) and a few extra C ABI functions; the cost of adding them later is a flag day across native, bridge, tests, and mod code. The «no compromises» rule resolves this trivially — pay the cost once at K9.
+## §5 Native layer — `RawTileField`
 
-### Identity and namespacing
+Shipped (`tile_field.h`/`.cpp`). Surface: `width()`/`height()`/`cell_size()`; `read_cell`/`write_cell` (bounds-checked point access, `0` on failure); `acquire_span`/`release_span` (atomic-counted); `set/get_conductivity`, `set/get_storage_flag`; `swap_buffers` (throws if any span active). Private state: `data_`, `back_buffer_`, `conductivity_`, `storage_flags_` (`std::vector`), plus `std::atomic<int32_t> active_spans_{0}` (`tile_field.h:32-83`). No `gpu_buffer_`/`gpu_descriptor_` members exist — GPU-side buffer binding is external orchestration owned by the Runtime/Compute layer (§10), not a field of this class.
 
-Field id is a string of the form `<mod-namespace>.<field-name>`, e.g. `vanilla.magic.mana`, `vanilla.electricity.power`, `vanilla.water.pressure`. The `<mod-namespace>` segment must match the registering mod's manifest id (per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §3.3 — reserved namespace rule). Two mods cannot register the same id; the second registration fails with `FieldRegistrationConflict` ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §11.2).
+`World` (`world.h`) carries the field registry alongside its component-store map — `stores_` (`:166`) and `fields_: unordered_map<string, unique_ptr<RawTileField>>` (`:180`, K9) — with `register_field`/`get_field`/`unregister_field`/`field_count` as `World` methods (`:119-125`, bodies `world.cpp:576-617`).
 
-Other mods reach a field by id through `IModApi.Fields.GetField<T>(id)`. The accessing mod must declare the appropriate `field.*` capability against the foreign id in its manifest, and must list the owning mod in `dependencies` — the same chain that governs cross-mod contract access ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §3.4).
+**Mutation rejection contract.** While any span is acquired (`active_spans_ > 0`), `write_cell`, `set_conductivity`, `set_storage_flag`, and `swap_buffers` throw `std::logic_error` (`throw_if_spans_active`, `tile_field.cpp:21-26`, checked at `:43,70,87,112`). All ten `df_world_field_*` C ABI entry points wrap their native call in `catch (...) { return 0; }` (`capi.cpp:737-899`) — the exception never crosses the DLL boundary. Same span/mutation-exclusion discipline K-L7 establishes for components: a span is a read view, mutations are explicit, races are structurally impossible. Compute dispatches are **not** gated by `active_spans_` — a dispatch has its own fence-based sync (§10).
 
-## Native layer — `RawTileField<T>`
+**Span lifetime.** `acquire_span` returns a pointer to the primary buffer and increments `active_spans_`; valid until `release_span` decrements it or a mutating call throws (fails before any state change, `tile_field.cpp:51-65`). The managed wrapper exposes it read-only (`FieldSpanLease<T>.Span : ReadOnlySpan<T>`, §7). Bulk writes go through compute dispatch, not span mutation.
 
-**Shipped at K9** (2026-05-11; `native/DualFrontier.Core.Native/include/tile_field.h` + `tile_field.cpp`). The contract as implemented:
+## §6 C ABI extension — `df_world_field_*`
 
-```cpp
-// native/DualFrontier.Core.Native/include/tile_field.h (K9 deliverable)
+Shipped, `df_capi.h:454-523`: `df_world_register_field`, `_field_unregister`, `_read_cell`, `_write_cell`, `_acquire_span`, `_release_span`, `_set_conductivity`, `_get_conductivity`, `_set_storage_flag`, `_get_storage_flag`, `_swap_buffers`, `_count` — twelve entry points, all taking `df_world_handle world, const char* field_id` plus operation-specific arguments, all returning `int32_t` (`float` for the conductivity getter).
 
-class RawTileField {
-public:
-    int32_t width() const noexcept;
-    int32_t height() const noexcept;
-    int32_t cell_size() const noexcept;
+**Field id is `const char*`, verified.** The predecessor's own listing already matched this. A numeric `uint32_t field_id` sketch survives only inside VULKAN_SUBSTRATE.md §3.4's illustrative C ABI block (an internal drift in *that* document); it does not change the shipped signature, independently confirmed against `df_capi.h` and the managed P/Invoke layer (`NativeMethods.Fields.cs:19-83`, marshalling every field id as a stackalloc'd UTF-8 `byte*`).
 
-    // Point access (validation: bounds check; out-of-bounds returns 0).
-    int32_t read_cell(int32_t x, int32_t y, void* out, int32_t size) const;
-    int32_t write_cell(int32_t x, int32_t y, const void* in, int32_t size);
+All bounds/size/not-found/active-span failures return `0` (`0.0f` for the float getter); every function bounds-checks before touching memory (`tile_field.cpp:28-108`) and is exception-wrapped at the ABI (§5). Naming (`df_world_field_*`) distinguishes field-bound calls from `df_world_*_component` calls.
 
-    // Span access (atomic counter; mutations rejected while spans active).
-    int32_t acquire_span(const void** out_data, int32_t* out_width, int32_t* out_height);
-    void    release_span();
+Compute-dispatch/pipeline-registration entry points (`df_world_field_dispatch_compute`, `df_world_register_compute_pipeline`, `df_world_attach_vulkan`, same header, `:551-577`) are V0.B/V1 substrate primitives, not field-storage primitives — see §10.
 
-    // Conductivity map (per-cell float coefficient).
-    int32_t set_conductivity(int32_t x, int32_t y, float value);
-    float   get_conductivity(int32_t x, int32_t y) const;
+## §7 Managed bridge — `FieldRegistry` and `FieldHandle<T>`
 
-    // Storage flag (per-cell bit).
-    int32_t set_storage_flag(int32_t x, int32_t y, int32_t enabled);
-    int32_t get_storage_flag(int32_t x, int32_t y) const;
+Shipped (`FieldRegistry.cs`, `FieldHandle.cs`). `FieldRegistry` (per-`NativeWorld`, constructed at `NativeWorld.cs:88,109`, guarded by a plain `lock` since the kernel is single-threaded per K-L7): `Register<T>`, `Get<T>`, `TryGet<T>`, `IsRegistered`, `Unregister` (§9 — no production caller). `FieldHandle<T> : IFieldHandle`: `ReadCell`/`WriteCell`, `AcquireSpan()` → `FieldSpanLease<T>`, `SetConductivity`/`GetConductivity`, `SetStorageFlag`/`GetStorageFlag`, `SwapBuffers()`. **No `DispatchCompute` method exists on this type** — see §10.
 
-    // Ping-pong buffer swap (called by update kernels).
-    void    swap_buffers() noexcept;
+Every field id crosses the ABI as a stackalloc'd or heap UTF-8 buffer (`FieldRegistry.cs:55-64`, every `FieldHandle.cs` method). A non-success native return raises `FieldOperationFailedException` uniformly for out-of-bounds, size mismatch, not-found, and active-span mutation (`FieldHandle.cs:246-249`).
 
-private:
-    int32_t width_;
-    int32_t height_;
-    int32_t cell_size_;
-    std::vector<uint8_t>  data_;            // primary buffer
-    std::vector<uint8_t>  back_buffer_;     // ping-pong target
-    std::vector<float>    conductivity_;    // per-cell D
-    std::vector<uint8_t>  storage_flags_;   // per-cell bit (byte-packed)
-    std::atomic<int32_t>  active_spans_{0};
-
-    // GPU resources lazily allocated by G-series; null on K9.
-    void* gpu_buffer_   = nullptr;
-    void* gpu_descriptor_ = nullptr;
-};
-```
-
-The `World` class (already extant per K0–K5) gains a parallel registry alongside `stores_`:
-
-```cpp
-class World {
-    std::unordered_map<uint32_t, std::unique_ptr<RawComponentStore>> stores_;
-    std::unordered_map<std::string, std::unique_ptr<RawTileField>>   fields_;  // K9 NEW
-    // ...
-};
-```
-
-Field registration is keyed by string id (not numeric type id) because field identity is namespaced per-mod and must remain stable across mod reload cycles, while component type ids are kernel-local and assigned sequentially. Numeric field ids are not stable across mod reload (mod A reloaded twice could see its field assigned id 7 then id 9); string ids are.
-
-### Mutation rejection contract
+`FieldSpanLease<T>` (`:195-239`) is a stack-only `ref struct`: `ReadOnlySpan<T> Span`, an indexer, manual `Dispose()` (a `ref struct` cannot implement `IDisposable`) calling `df_world_field_release_span`.
 
-A field follows the same atomic-counter pattern as `RawComponentStore`: while any span is acquired (`active_spans_ > 0`), point writes (`write_cell`), conductivity updates (`set_conductivity`), storage flag updates (`set_storage_flag`), and ping-pong swap (`swap_buffers`) all throw `std::logic_error` caught at the C ABI boundary and reported as a 0 return code. The contract aligns with K-L7 (read-only spans + write batching) — a span is a read view, mutations are explicit, races are structurally impossible.
-
-Compute dispatches are not gated by `active_spans_` but by their own dispatch synchronisation (GPU fence-based; CPU reference implementation is single-threaded). A dispatch in flight does not increment `active_spans_` because the dispatch has its own buffer ownership model — fence wait before subsequent reads guarantees consistency.
+Mods never see `FieldHandle<T>` directly — the contract type is `IFieldHandle` (`Id`, `Width`, `Height`, `ElementType`), since the concrete generic lives in `Core.Interop`, which `Contracts` cannot reference without inverting the dependency direction. Mods downcast at the call site.
 
-### Span lifetime
-
-`acquire_span` returns a pointer to the primary buffer's contiguous bytes, valid until `release_span` is called or any mutating operation throws (which fails before any state change). The returned pointer is `const` — spans are read-only. Bulk writes go through compute dispatch, not span mutation. This matches the «mutations are explicit, batched, validated» discipline established by K5 (`WriteCommandBuffer` for entity component writes).
-
-## C ABI extension — `df_world_field_*`
-
-**Shipped at K9** (2026-05-11; `df_capi.h` field extensions). The contract as implemented, per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) «Architectural integration → Native compute dispatch (G-series)»:
-
-```c
-// native/DualFrontier.Core.Native/include/df_capi.h (K9 extension)
-
-DF_API int32_t df_world_register_field(
-    df_world_handle world,
-    const char* field_id,
-    int32_t width,
-    int32_t height,
-    int32_t cell_size);
+## §8 IModApi wiring — Fields and Compute Pipelines
 
-DF_API int32_t df_world_field_read_cell(
-    df_world_handle world,
-    const char* field_id,
-    int32_t x,
-    int32_t y,
-    void* out_value,
-    int32_t size);
+The capability grammar carries **one** shape: `<provider>.field.<verb>:<field-id>`, `provider` = `kernel` or `mod.<modId>`, `verb` ∈ `{read, write, acquire, conductivity, storage, dispatch}` — verbatim from the validated pattern (`ManifestCapabilities.cs:25`, MOD_OS_ARCHITECTURE.md §3.2/§2.3 step 6). The predecessor carried two incompatible shapes across its own sections (a bare `field.*:<id>` with no provider, and a `mod.<id>.field.read:<id>` form); the form above is the sole one the parser accepts and the sole one `RestrictedFieldApi` ever constructs.
 
-DF_API int32_t df_world_field_write_cell(
-    df_world_handle world,
-    const char* field_id,
-    int32_t x,
-    int32_t y,
-    const void* value,
-    int32_t size);
-
-DF_API int32_t df_world_field_acquire_span(
-    df_world_handle world,
-    const char* field_id,
-    const void** out_data,
-    int32_t* out_width,
-    int32_t* out_height);
+`kernel.field.*` is grammar-legal but semantically dead: MOD_OS_ARCHITECTURE.md's changelog frames it as an "infrastructure verb" for a hypothetical kernel-owned field, but `KernelCapabilityRegistry.BuildFromKernelAssemblies()` (§3.5) never emits a field token, and `RestrictedFieldApi` never checks one — it always resolves `mod.<owning-modId>.field.<verb>:<field-id>` (`RestrictedFieldApi.cs:41-46,58-84`), consistent with §9's "no engine-special field."
 
-DF_API int32_t df_world_field_release_span(
-    df_world_handle world,
-    const char* field_id);
+**Enforcement is two-point, not three.** The predecessor described a third, load-time `[FieldAccess]` attribute paralleling `[SystemAccess]`; no such attribute exists on disk. Real points: **(1) manifest parse** — every token validated against the regex above (`ManifestCapabilities.Parse`, MOD_OS_ARCHITECTURE.md §2.3 step 6); **(2) runtime, at acquisition** — `RegisterField<T>` requires the caller's own-namespace `field.write` token, `GetField<T>` requires `field.read` against the owning namespace (`RestrictedFieldApi.cs:36-84`), a miss throws `CapabilityViolationException`. Per-cell traffic through an already-acquired handle is **not** re-checked — gated once, at acquisition (MOD_OS_ARCHITECTURE.md §4.6.2: "no `[FieldAccess]`-style load-time attribute cross-check exists").
 
-DF_API int32_t df_world_field_set_conductivity(
-    df_world_handle world,
-    const char* field_id,
-    int32_t x,
-    int32_t y,
-    float value);
+**Nullability, verified.** `IModApi.Fields` is non-null only when the loader supplies a `FieldRegistry`; production `ModIntegrationPipeline` constructs `RestrictedModApi` without one today, so mods loaded through the live pipeline observe `Fields == null` (§4.6.1) — the field stack is exercised by tests, not the production mod-load path. `IModApi.ComputePipelines` is unconditionally `null`: hardwired at `RestrictedModApi.cs:216`; `IModComputePipelineApi` has zero implementing types in the solution.
 
-DF_API int32_t df_world_field_set_storage_flag(
-    df_world_handle world,
-    const char* field_id,
-    int32_t x,
-    int32_t y,
-    int32_t enabled);
-```
+> **FENCED (target/planned):** a load-time `[FieldAccess]`-equivalent cross-check is not scheduled by name in any reviewed document — unscoped design space, not a near-term commitment.
 
-Compute dispatch (`df_world_field_dispatch_compute`) and pipeline registration (`df_world_register_compute_pipeline`) are **not** part of K9 — they land in G0 with the Vulkan compute plumbing. K9 ships a CPU-only path; mods that want field updates run a CPU reference kernel registered as an ordinary system (no compute API needed).
+## §9 Lifecycle
 
-Naming convention (`df_world_field_*` — three-token prefix) follows the existing kernel pattern (`df_world_*` for world-wide, `df_batch_*` for batch-handle-bound). It distinguishes field-bound calls from component-bound calls (`df_world_*_component`) at a glance.
+**Designed contract.** A mod registers fields during `IMod.Initialize(api)`; fields persist while loaded; on mod unload the registry deregisters every field the mod owned and native releases the buffers; on shutdown, `World::fields_` releases every field through ordinary C++ destruction. The kernel owns no field itself — "vanilla = mods" means even mana/electricity/water fields belong to vanilla mods.
 
-## Managed bridge — `FieldRegistry` and `FieldHandle<T>`
+**Verified wiring — the unload half is not built.** `FieldRegistry.Unregister(string)` (`:104-120`) is exercised only by `FieldRegistryTests.cs:91,102` — no call site exists anywhere in production `src/`. The real §9.5 unload chain, `ModIntegrationPipeline.UnloadMod` (`:561-592`), unsubscribes buses, clears managed component stores, invokes the native per-mod bus/wake cleanup primitive (EVENT_BUS.md), and unloads the ALC — it never touches `FieldRegistry`. A mod's fields remain registered, content intact, straight through an ALC unload.
 
-**Shipped at K9** (2026-05-11; `src/DualFrontier.Core.Interop/FieldRegistry.cs` + `FieldHandle.cs`). The contract as implemented, per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §4.6:
+**Corollary for reload.** Since nothing clears a field on unload, and `Register<T>` treats an identical re-registration as an idempotent no-op returning the existing handle, a mod reloading with the same field shape does not get a fresh field — `Initialize` re-runs, calls `RegisterField`, and receives the *same* handle over the *same*, still-populated buffer. This is the reverse of "content does not survive reload": content survives *by omission*, not by design — the same shape of gap the corpus documents for mod/engine shutdown generally, not fields-specific.
 
-```csharp
-// src/DualFrontier.Core.Interop/FieldRegistry.cs (K9 deliverable)
+A field is destroyed today only by explicit `FieldRegistry.Unregister` (design-available, production-unused) or whole-process/native-`World` teardown via RAII (not deterministically triggered in production — an engine-lifecycle concern, out of scope here).
 
-public sealed class FieldRegistry
-{
-    private readonly NativeWorld _world;
-    private readonly Dictionary<string, IFieldHandle> _handles = new();
+## §10 CPU and GPU paths — exclusion, not fallback
 
-    public FieldHandle<T> Register<T>(string id, int width, int height) where T : unmanaged;
-    public FieldHandle<T> Get<T>(string id) where T : unmanaged;
-    public bool IsRegistered(string id);
-}
+The predecessor described a transparent runtime choice ("the runtime decides whether `DispatchCompute` issues a Vulkan compute dispatch or runs the CPU reference kernel. The mod doesn't care."). **That is not the shipped policy** — VULKAN_SUBSTRATE.md §7.1: "The shipped policy resolves this by **exclusion, not fallback**."
 
-public sealed class FieldHandle<T> where T : unmanaged
-{
-    public string Id { get; }
-    public int Width { get; }
-    public int Height { get; }
+- **K-L19 fail-fast (shipped).** `Runtime.Create` runs `HardwareCapabilityCheck.Verify` at startup and throws `HardwareCapabilityException` if the Vulkan 1.3 + async-compute-queue tier is absent (`HardwareCapabilityCheck.cs`, `HardwareCapabilityException.cs`). The game does not start on excluded hardware — no per-dispatch runtime choice exists.
+- **`CpuKernels/*` are an equivalence oracle, not a runtime path.** `IsotropicDiffusionKernel`/`AnisotropicDiffusionKernel` (`src/DualFrontier.Core.Interop/CpuKernels/`) drive the V1 equivalence test suites, runnable without a GPU: "this kernel exists as the GPU equivalence oracle, not as a performance target" (`IsotropicDiffusionKernel.cs:20-23`). Also the intended source of CPU-canonical field state for future saves (§12; PS-15) — never a config-selected alternate dispatch path, which is design-only and not on disk.
 
-    public T ReadCell(int x, int y);
-    public void WriteCell(int x, int y, T value);
+**Sync dispatch blocks; it does not return early.** The predecessor's "field dispatches are non-blocking" claim inverts the shipped fence semantics: the К-L7 default sync path "returns after the fence signals, so a subsequent `FieldHandle<T>.ReadCell` sees the dispatched result" (VULKAN_SUBSTRATE.md §2.3/§2.3.1) — the calling thread blocks until the GPU signals completion. An opt-in К-L7.1 pipeline-managed path trades that per-call fence wait for a bounded one-tick slot-tail lag; that mechanism belongs entirely to К-L7.1 (KERNEL_ARCHITECTURE.md Part 0) and VULKAN_SUBSTRATE.md §2.3.1/§7.3.0 — not restated here.
 
-    public FieldSpanLease<T> AcquireSpan();   // IDisposable, calls release_span on Dispose
+A field remains a single native allocation regardless of GPU involvement — `RawTileField` carries no GPU handles (§5). GPU-side buffer binding is external orchestration owned by the Runtime/Compute layer (`FieldStorageBinding.cs`, `ComputePipelineRegistry`) — mechanism in VULKAN_SUBSTRATE.md §3.4, not restated here.
 
-    public void SetConductivity(int x, int y, float value);
-    public float GetConductivity(int x, int y);
+## §11 Compute dispatch — mod-facing surface
 
-    public void SetStorageFlag(int x, int y, bool enabled);
-    public bool GetStorageFlag(int x, int y);
-}
+> **FENCED (target/planned — not current truth):** design intent is a mod-owned field calling a mod-registered pipeline (`field.DispatchCompute(pipeline, pushConstants, iterations)`), symmetric across excluded-at-startup and present hardware.
+>
+> **Verified current state:** `FieldHandle<T>` carries no `DispatchCompute` method (§7). `IModApi.ComputePipelines` is hardwired `null` (§8). `IModComputePipelineApi` has zero implementing types. `docs/ROADMAP.md`'s "V substrate — M-V demonstrations" row names the same gap: "mod-facing compute surface unwired (`RestrictedModApi.ComputePipelines => null`)". The native C ABI and the engine-internal V1 diffusion pipeline exist and are exercised by engine code/tests — the gap is specifically the *mod-facing* surface. Full detail: VULKAN_SUBSTRATE.md §3.3/§3.4.
 
-public readonly ref struct FieldSpanLease<T> where T : unmanaged
-{
-    public ReadOnlySpan<T> Span { get; }
-    public int Width { get; }
-    public int Height { get; }
-    public void Dispose();
-}
-```
+## §12 Save / load
 
-`FieldHandle<T>` carries the bound type at compile time; element-typed `ReadCell` / `WriteCell` use `Unsafe.As` for the unmanaged conversion. `FieldSpanLease<T>` mirrors the existing `SpanLease<T>` from K5 — `ref struct` to keep it stack-bound, `IDisposable` semantics through `Dispose` (manual, since `ref struct` cannot implement `IDisposable`).
+> **FENCED (target/planned — not current truth).** No field save/load path exists on disk. PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) is the normative-target composition; this section carries forward field-specific intents as fenced candidates, superseded on conflict:
+>
+> - One blob per field: `(field_id, owning_mod_id, width, height, cell_size, blob)` — primary buffer + conductivity + storage flags. Back buffer is **not** serialized; restores to zero on load — PERSISTENCE_SNAPSHOT_CONTRACT.md §2 rows "Fields: primary buffer…"/"…back buffers", both citing this document's predecessor as originating authority.
+> - Width/height mismatch between save and current registration is a load error (§2 "Config / map dimensions" row).
+> - Serialized bytes are the §10 equivalence-oracle CPU-canonical state, not raw GPU output — PS-15 (§6), since GPU compute is not bit-exact across hardware/drivers (VULKAN_SUBSTRATE.md §7.2.1). Explicitly **not implemented** today.
+> - Field ids are cited at PS-7 (§3) as the identity model the rest of the corpus's serialized-identity law should converge to.
+>
+> No independent authority; PERSISTENCE_SNAPSHOT_CONTRACT.md §2/§3/§6 is normative once ratified.
 
-The registry is per-`NativeWorld`. Mod loader supplies the registry to `RestrictedModApi`'s `IModApi.Fields` accessor; the registry routes registrations to native and tracks managed-side handles for capability cross-check.
+## §13 Anti-patterns
 
-## IModApi v3 wiring
+**A field per entity.** A naive "one mana value per pawn" needs a component plus an ambient field plus linking arithmetic. The field model dissolves this: one mana field; a caster reads `mana.ReadCell(pawn.x, pawn.y)`. Same for electricity, water, heat, sound, scent.
 
-The capability cross-check happens at three points:
+**A component holding a `FieldHandle<T>`.** Registry-bound; caching it ties component memory to mod-managed lifetime, and — per §9's verified gap — an unloaded-then-reloaded mod's cached handle may point at stale data rather than fail cleanly. Fetch through `IModApi.Fields` per call instead.
 
-1. **Manifest parse** — every `field.*:<id>` capability string in `capabilities.required` is validated against the regex (per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §2.3 step 6).
-2. **Load-time** — if the mod registers a system carrying `[FieldAccess(...)]` attributes, the loader verifies each declared field id appears in the manifest's `capabilities.required` (per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §3.7 cross-check).
-3. **Runtime** — every call to `FieldHandle<T>.ReadCell` / `WriteCell` / `AcquireSpan` / `SetConductivity` / `SetStorageFlag` consults the calling mod's per-mod capability set (`HashSet<string>`); a missing entry raises `CapabilityViolationException` (per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §3.6 hybrid enforcement).
+**Direct point-write loop instead of compute dispatch.** A per-cell `WriteCell` loop over a 200×200 grid is 40,000 P/Invoke crossings. Bulk updates belong on the compute path (§10–§11); point writes are for genuinely sparse mutations.
 
-Layer 2 is conceptually new for K9 — the `[FieldAccess]` attribute on systems is added alongside `[SystemAccess]` to carry field id declarations. Layer 3 reuses the existing `RestrictedModApi.EnforceCapability` machinery (added in M3); the per-call cost is a hash-set lookup, measured negligible.
+**A mod that registers a field without providing it.** Registering without declaring `mod.<id>.field.read:<id>` in `capabilities.provided` makes the field invisible to every other mod — the declaration is the only path another mod's `GetField` can resolve through (§4, §8). Enforced by the loader's static check (MOD_OS_ARCHITECTURE.md §3.4).
 
-The full attribute scheme:
+---
 
-```csharp
-[FieldAccess(
-    reads: new[] { "vanilla.magic.mana" },
-    writes: new[] { "vanilla.magic.mana" },
-    conductivity: new[] { },
-    storage: new[] { },
-    dispatch: new[] { "vanilla.magic.mana" })]
-public class ManaFieldUpdateSystem : SystemBase { /* ... */ }
-```
+## Cross-references
 
-The attribute is enforced by `SystemExecutionContext` in the same way it enforces `[SystemAccess]` for components (per [ECS](./ECS.md) and [ISOLATION](./ISOLATION.md)). A system that calls a field operation without declaring the verb-id pair throws `IsolationViolationException` even in Release builds.
+| Doc | Relation | Note |
+|---|---|---|
+| [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) | defers-to | Field math; compute pipeline mechanics; hardware exclusion (К-L19); К-L7/К-L7.1 sync and slot-tail semantics. |
+| [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) | defers-to | Part 0: К-L3 (unmanaged constraint), К-L7/К-L7.1, К-L19 (hardware tier). |
+| [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) | defers-to | Capability grammar (§3.2), manifest validation (§2.3), namespaces (§3.3), `IModApi` v3 (§4.6), `ValidationErrorKind` (§11.2), unload chain (§9.5). |
+| [PERSISTENCE_SNAPSHOT_CONTRACT](./PERSISTENCE_SNAPSHOT_CONTRACT.md) (AUTHORED draft) | defers-to | Normative-target save/load composition; supersedes §12 on conflict. |
+| [ECS](./ECS.md) | cites | The orthogonal storage system — entities, components, `WriteBatch<T>`. |
+| [EVENT_BUS](./EVENT_BUS.md) | cites | The native per-mod unload primitive in §9 also clears bus/wake state. |
+| [PERFORMANCE](./PERFORMANCE.md) | cites | Field memory budget, dispatch timing targets. |
+| [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) (AUTHORED draft) | cites | Any future §11 mod-facing compute cutover gate belongs there. |
 
-## Lifecycle
+## Amendment protocol
 
-Field lifecycle parallels mod lifecycle. A mod registers fields during `IMod.Initialize(api)`; the fields persist as long as the mod is loaded. On mod unload, the registry deregisters every field owned by the unloading mod and the native side releases the buffers. Mod reload (per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.2) re-registers the fields from scratch — content does not survive across reload, since the data is mod-managed and the new instance might disagree about cell semantics.
+A correction to a verified code claim (file:line, exception type, wiring state) may be spot-fixed against current HEAD without a version bump beyond PATCH. A change to the storage contract itself (buffer layout, C ABI shape, capability grammar) is MINOR/MAJOR and requires re-verifying every citing document plus owner sign-off per FRAMEWORK.md §7.
 
-The kernel does not own any field. Vanilla = mods means there is no engine-special field; even the canonical mana, electricity, water fields belong to vanilla mods (`Vanilla.Magic`, `Vanilla.Electricity`, `Vanilla.Water`).
+## Change history
 
-A field is destroyed by:
-
-- The owning mod calling `FieldRegistry.Unregister(id)` explicitly (e.g. dynamic field lifetime — flow field eviction per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G7).
-- The owning mod being unloaded (loader sweeps mod-namespaced ids).
-- World destruction (kernel shutdown sweeps all fields).
-
-## Save / load
-
-**TBD** — persistence integration lands as a separate milestone (currently «out of M0–M10 scope» per [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §12 D-6). The intended contract:
-
-- Field data serialises as a single blob per field (raw bytes from primary buffer + conductivity map + storage flags). Back buffer is not serialised — restored to zero on load (any in-flight ping-pong state is lost).
-- Save records `(field_id, owning_mod_id, width, height, cell_size, blob)`.
-- On load, fields are re-registered by the owning mod's startup, then the loader streams the blob into the registered field's buffers.
-- Width / height mismatch between save and current registration is a load error — fields cannot resize across sessions.
-
-Save format and per-field opt-out (some fields might be ephemeral, e.g. flow fields per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) G7) are deferred к persistence-integration milestone.
-
-## CPU and GPU paths share the same field
-
-A field is a single allocation in native memory. The GPU path (G0+) lazily allocates a `VkBuffer` mirror of the primary buffer when the field is first dispatched; subsequent dispatches reuse the buffer. Read-back to CPU happens through `acquire_span` after a fence wait — the managed code never sees a partially-applied dispatch.
-
-The CPU reference path operates directly on the native buffers. A CPU-only build (Vulkan unavailable, per [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) «Failure modes → CPU fallback») runs the same shaders translated to managed C# — diffusion math is straightforward, the equivalence is testable cell-by-cell.
-
-The mod author writes the same code regardless of backend:
-
-```csharp
-public class ManaFieldUpdateSystem : SystemBase
-{
-    [FieldAccess(reads: new[] { "vanilla.magic.mana" },
-                 dispatch: new[] { "vanilla.magic.mana" })]
-    public override void Update(float delta)
-    {
-        var mana = Fields.Get<float>("vanilla.magic.mana");
-        var pipeline = Pipelines.Get("vanilla.magic.mana_diffusion");
-        mana.DispatchCompute(pipeline, pushConstants, iterations: 5);
-    }
-}
-```
-
-The runtime decides whether `DispatchCompute` issues a Vulkan compute dispatch or runs the CPU reference kernel. The mod doesn't care.
-
-## Anti-patterns
-
-### A field per entity
-
-A naive «one mana value per pawn» encoding stores `ManaComponent` on every entity that has mana, plus a separate field for ambient mana, plus arithmetic linking them. The field model dissolves this: there is exactly one mana field; a pawn casting a spell reads `mana.ReadCell(pawn.x, pawn.y)` to determine local availability and writes back the deficit through a write op or contributes to a sink map. No per-pawn component.
-
-The same logic applies to electricity, water, heat, sound, scent. Per-entity components capture entity-specific state (a battery's stored charge, a generator's output level); the field captures the spatial distribution.
-
-### A component holding a `FieldHandle<T>`
-
-```csharp
-// BAD — the handle outlives the component if the mod unregisters the field.
-public struct ManaCasterComponent : IComponent
-{
-    public FieldHandle<float> ManaField;
-}
-```
-
-A `FieldHandle<T>` is registry-bound; storing it in component state ties component memory to mod-managed lifetime. On mod reload, the handle becomes invalid but the component still holds it. Systems should fetch the handle through `IModApi.Fields.Get` per-tick (cheap — registry lookup is `O(1)`), not cache it in components.
-
-### Direct point-write loop instead of compute dispatch
-
-```csharp
-// BAD — 40 000 P/Invoke crossings per tick on a 200×200 grid.
-for (int x = 0; x < width; x++)
-    for (int y = 0; y < height; y++)
-        mana.WriteCell(x, y, decay(mana.ReadCell(x, y)));
-```
-
-Bulk updates go through compute dispatch (CPU reference or GPU). Point writes are for sparse mutations (a generator placed at one cell sets its source value; a battery stores per-tick excess at its location). The cost-difference is structural: a dispatch is one P/Invoke + one shader execution; a per-cell loop is `width × height` P/Invokes.
-
-### A modding mod that doesn't list its fields
-
-A mod registering a field without declaring `mod.<id>.field.read:<id>` (or equivalent) in `capabilities.provided` is invisible to other mods. The capability declaration is the only way another mod can resolve the field through the dependency chain. This is enforced by the loader's cross-check ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §3.4).
-
-## See also
-
-- [ECS](./ECS.md) — the orthogonal system; entities, components, sparse-set storage. Same kernel, separate access model.
-- [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — v2.0 LOCKED. Field math models (diffusion, anisotropy, capacitance, eikonal). The mathematics fields exist to carry.
-- [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — Part 0/1 native-kernel spec. (K9 milestone roadmap relocated to [ROADMAP](./../ROADMAP.md) «Native foundation tracks» per DD-2.)
-- [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) — §3.2 (capability syntax for `field.*` verbs), §4.6 (`IModApi` v3 — `Fields` and `ComputePipelines` sub-APIs), §11.2 (validation error kinds for field operations).
-- [THREADING](./THREADING.md) — fence-based GPU sync; field dispatches are non-blocking.
-- [PERFORMANCE](./PERFORMANCE.md) — field memory budget, dispatch timing.
-- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — pipeline patterns; «data exists or it doesn't» applies to field cells (out-of-bounds reads return zero, not undefined).
-- `tools/briefs/K9_FIELD_STORAGE_BRIEF.md` — the executable contract for the K9 implementation milestone.
-
-**Document end.** K9 storage layer shipped 2026-05-11 (`tile_field.*`, `FieldRegistry.cs`, `FieldHandle.cs`). The one remaining **TBD** is Save/load (persistence-integration milestone) — fenced above as genuinely-pending forward work.
+| Version | Date | Change |
+|---|---|---|
+| 0.1.0 (this doc) | 2026-07-15 | Corpus rework: killed the transparent CPU/GPU fallback framing (exclusion-not-fallback); fixed "non-blocking dispatch" to the verified sync-blocks-until-fence truth; corrected the capability grammar to the single code-verified shape; corrected `FieldRegistrationConflict` to its reserved-not-implemented status; corrected the mod-unload sweep and reload-survival claims against a verified zero-call-site finding; corrected the C ABI field-id type and `WriteCommandBuffer`→`WriteBatch<T>` naming; fenced mod-facing compute-dispatch and save/load as target-only. |
+| 0.1.1 | pre-rework | Last state of predecessor `DOC-A-FIELDS` (see historical/) — Live, K9 storage contract HOLDS, GPU-facing sections stale pre-Q-G-2. |

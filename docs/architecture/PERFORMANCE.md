@@ -1,182 +1,109 @@
 ﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-A-PERFORMANCE
+register_id: DOC-A-PERFORMANCE_V2
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: AUTHORED
 owner: Crystalka
-version: "1.1.1"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERFORMANCE
+version: "0.1.0"
+next_review_due: post-ratification closure
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERFORMANCE_V2
 ---
 # Performance
 
-Performance is an architectural property, not a late-stage optimization. Dual Frontier aims at specific numbers from day one; the dependency graph, domain buses, and invalidating caches are the direct tools for hitting them.
+Where Dual Frontier's frame and tick budgets attach on the current native substrate — and an honest accounting of what enforces them today: nothing does, yet.
 
-## Target metrics
+> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/PERFORMANCE.md` (DOC-A-PERFORMANCE, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
+> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
 
-Comparison with RimWorld shows which operations specifically must be cheaper and how that is achieved.
+## Status block
 
-| Operation                          | RimWorld             | Dual Frontier target  | How it is achieved                 |
-|------------------------------------|----------------------|-----------------------|------------------------------------|
-| Storage item lookup                | O(n) per tick        | O(1)                  | Invalidating cache                 |
-| 100 pawns × ammo request           | 6000 scans/sec       | ≤100 scans/sec        | Intent batching                    |
-| Parallel systems                   | 1 thread             | N-2 threads           | Dependency graph                   |
-| Mod loading                        | Restart              | Hot reload            | `AssemblyLoadContext`              |
-| Isolation violation                | Silent bug           | Crash + diagnostics   | `SystemExecutionContext`           |
-| Mood-system tick                   | Every tick           | 1× per second         | `TickScheduler` SLOW               |
-| `InventorySystem` cache for 100 storages | —              | ≤1 scan/tick after warm-up | `_freeSlotCache` with a `_cacheDirty` flag |
+| Field | Value |
+|---|---|
+| Role | **normative-current-candidate.** Budget numbers below are the intended law; §4 states plainly that no enforcement exists yet — the numbers bind engineering judgment, not CI. |
+| Successor of | `docs/architecture/historical/PERFORMANCE.md` (DOC-A-PERFORMANCE) |
+| Scope | Frame/tick budgets on the native substrate; cache-invalidation discipline; the real benchmark inventory. |
+| Non-goals | Scheduling law, bus-tier semantics (KERNEL_ARCHITECTURE), the GPU substrate itself (VULKAN_SUBSTRATE) — only the budgets attaching to them. |
+| Authority domains | Performance budget numbers; cache-invalidation discipline; benchmark-authoring practice. |
+| Defers to | KERNEL_ARCHITECTURE.md — К-L15 bus-tier law. VULKAN_SUBSTRATE.md — GPU substrate, own timing budgets. ECS.md / THREADING.md — phase-boundary write-visibility. |
 
-Targets are formulated per operation. The frame budget is 16.6 ms at 60 FPS on a 30-pawn / 10,000-tile scene; 33 ms at 30 FPS on a 100-pawn scene. These values are pinned in CI through `PerformanceGate` — tests fail when regression exceeds 10%.
+## 1. Philosophy
 
-## dotTrace and BenchmarkDotNet
+Performance is architectural, not a late-stage pass: К-L14 names it directly — "performance derives from architectural cleanliness" (KERNEL_ARCHITECTURE.md Part 0, abbreviated row). The dependency graph, native storage, and invalidating caches are the tools; a budget without a documented invalidation source or an "unenforced" label is not a budget, it's a wish.
 
-### dotTrace
+## 2. Frame budget
 
-The primary in-game profiling tool. Used in two modes:
+`GameLoop` ticks the simulation at a fixed `TargetTps = 30f` (`GameLoop.cs:29`), independent of render FPS — a 33 ms/tick budget. Display-side latency invariants (intent-overlay ≤16 ms, combat-feedback event-to-visible ≈≤17 ms) are К-L15/К-L16/К-L17 law living in KERNEL_ARCHITECTURE.md/VULKAN_SUBSTRATE.md; this doc only inherits the 33 ms simulation figure that every row in §3 divides.
 
-- **Sampling** (`--profiling-mode=Sampling`) — low overhead, suitable for a full 60-second run. Result: exactly where CPU is spent.
-- **Timeline** — bus events and scheduler phases pinned to a time axis. For Dual Frontier this is the primary mode: it shows which phases finish too late, which bus is holding the thread, and where the `[Deferred]` queue grows.
+## 3. Budgets on the current substrate
 
-Every scheduler phase is tagged via `Activity` / `EventSource`; each domain bus emits `BusPublished` markers. dotTrace builds a clear map: "phase 2, 8 ms, 6 systems in parallel, 2 idle".
+> **FENCED (target / planned — not current truth):** the timing numbers in this table are design targets — none is pinned to a measured baseline or gated by CI (§4). Treat each as engineering intent, not a passing test. The mechanisms in the third column, and the A* iteration cap (a literal code constant), are current truth.
 
-### BenchmarkDotNet
+| Layer | Budget | Mechanism (current, verified) |
+|---|---|---|
+| Native storage (`RawComponentStore`) | O(1) add/remove/get | Sparse-set, swap-remove on delete (`native/DualFrontier.Core.Native/include/component_store.h:39-116`); no per-op ns target is pinned anywhere in the corpus — none is claimed here either. |
+| Span/batch protocol | Zero-copy reads; atomic batched writes | `SpanLease<T>` hands out a read-only span, rejects mutation while any lease is open (`SpanLease.cs:16-21`); `WriteBatch<T>` stages writes, flushes atomically (`WriteBatch.cs:9-14`). Flush is currently **one P/Invoke per recorded command** — bulk transmission is explicitly deferred pending measurement (`WriteBatch.cs:31-32`). Lease pooling is likewise deferred (`SpanLease.cs:13-14`). |
+| Phase commit | Writes visible at next phase boundary | `WriteBatch` flush and entity destruction both defer to the next scheduler phase boundary (ECS.md); native `BarrierType` (Full/Partial/None, `phase_barrier.h:12-22`) governs how strictly one phase waits on the last. No numeric commit-latency budget exists anywhere in the corpus — an honest gap. |
+| Bus — fast tier | Subscriber response ≤1 ms | К-L15 law (KERNEL_ARCHITECTURE.md Part 0: "К-L15 fast tier latency invariant (subscriber response ≤1ms)"), reused by VULKAN_SUBSTRATE.md's CombatFeedbackLayer budget. Bus semantics are KERNEL_ARCHITECTURE.md's domain; this row only inherits the number. |
+| GPU dispatch — V1 diffusion | <1 ms for 3 fields × 200×200 × 5–10 iterations, mid-range GPU | Shipped: `V1DiffusionPipeline.ExecuteIteration` → native `df_world_field_dispatch_compute` (`src/DualFrontier.Runtime/Compute/V1DiffusionPipeline.cs`), synchronous К-L7 dispatch, fence-gated. No benchmark project measures this number; carried forward as a target, not a result. |
+| A* pathfinding | Cap 2000 iterations/call | `AStarPathfinding.cs:14`: `private const int MaxIterations = 2000;` — verified exact. Overflow returns `false` and the caller retries next tick. No path cache exists (§6). |
 
-Microbenchmarks for hot paths: `ComponentStore` (Add/Remove/Query), `DependencyGraph` (BuildGraph), `SpatialGrid` (QueryRadius). Results are stored in `tests/DualFrontier.Core.Benchmarks/Results` and compared across versions.
+Dropped without replacement, mechanisms gone: `ComponentStore<T>`/SparseSet managed-era targets (5 ns `Get`, 30 ns `Query<T1,T2>`) — the managed store and its benchmark no longer exist; `DomainEventBus.Publish` 50 ns — managed-era, never re-baselined against the native bus; `SpatialGrid.QueryRadius` — renamed `GetInRadius` (`SpatialGrid.cs:127`) and, verified this pass, **not instantiated anywhere in production** (`grep "new SpatialGrid"` matches only the constructor) — `ComfortAuraSystem` runs an explicit O(N×M) brute-force scan instead, comment and all: "SpatialGrid integration deferred to backlog" (`ComfortAuraSystem.cs:26-29`); the "Isolation violation → crash via `SystemExecutionContext`" row — that runtime guard was deleted at the K8.3+K8.4 cutover, so the row asserted a mechanism that no longer exists.
 
-```csharp
-[MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net80)]
-public class ComponentStoreBenchmark
-{
-    private ComponentStore<HealthComponent> _store = null!;
-    [GlobalSetup] public void Setup() { /* ... */ }
+Also worth naming: the managed `DependencyGraph` facade is the only scheduling structure with any budget-shaped treatment in this corpus; the authoritative native `system_graph.cpp` graph has none — a documentation gap, not a claim resolved here.
 
-    [Benchmark] public HealthComponent Get10k()
-    {
-        // typical hot path.
-    }
-}
-```
+## 4. Enforcement honesty
 
-Benchmarks run in CI once a week, plus ad-hoc locally when the core is edited.
+> **FENCED (target / planned — not current truth):** a CI-backed enforcement layer for the budgets in §3 is an **open obligation** (session report AD-5), not a shipped mechanism. Nothing below the line is aspirational; it is what exists today.
 
-## Hot paths
+The predecessor doc stated: "these values are pinned in CI through `PerformanceGate` — tests fail when regression exceeds 10%," and told authors to add a rule "in `tests/DualFrontier.Core.Benchmarks/PerformanceGates.cs`." Neither symbol exists anywhere in the repository — `grep -r PerformanceGate` outside documentation returns zero code matches. There is no `.github/` directory and no CI configuration of any kind, anywhere in the tree. The benchmark suite says so about itself, `SchedulerStressBenchmarks.cs:15-16`: "xUnit tests give pass/fail invariants; these benchmarks give numbers — per-op latency, Gen0/1/2 collections, lock contentions, completed work items." Every budget in §3 is, today, an unenforced engineering obligation, not a gate anything currently fails.
 
-Workload analysis identifies the following hot paths — in descending order of call frequency.
+## 5. Benchmark reality census
 
-### ComponentStore.Get / Query
+What exists, verified against `tests/DualFrontier.Core.Benchmarks/` this pass (`DualFrontier.Core.Benchmarks.csproj`, BenchmarkDotNet-based, `dotnet run -c Release --project tests/DualFrontier.Core.Benchmarks`):
 
-> **Code-truth note (2026-06-02):** the managed `ComponentStore<T>` / SparseSet hot path below
-> describes the **pre-K8 managed era**. Production storage is now the **native** kernel
-> (`native/DualFrontier.Core.Native/src/component_store.cpp`, NativeWorld SSoT per К-L11); systems
-> read/write via `NativeWorld` span/batch (К-L7). The managed `ComponentStore<T>` microbenchmark is
-> historical. Full re-baseline of this section against the native storage path is tracked under DD-1
-> (spec-truth restoration), separate from this DD-2 roadmap pass.
+| Class | File | Measures |
+|---|---|---|
+| `BenchHealthComponent` | `BenchHealthComponent.cs` | Benchmark-only blittable struct — like-for-like stand-in for reference-type production `HealthComponent`, which cannot cross P/Invoke without GCHandle pinning. |
+| `BootstrapTimeBenchmark` | `BootstrapTimeBenchmark.cs` | `Bootstrap.Run(useRegistry: false)` end-to-end; target 5–15 ms per KERNEL_ARCHITECTURE §K3 (comment-documented, not gated). |
+| `NativeBulkAddBenchmark` | `NativeBulkAddBenchmark.cs` | `NativeAdd10k_PerEntity` (10,000 P/Invoke crossings) vs. `NativeBulkAdd10k_SinglePInvoke` (one crossing) — the bulk-add hypothesis from `CPP_KERNEL_BRANCH_REPORT.md` §10.4. |
+| `SchedulerStressBenchmarks` + `ModDependencyGraphBenchmarks` | `Stress/SchedulerStressBenchmarks.cs` | Native scheduler one-tick cost, static-graph rebuild, priority ordering (500/2,000/5,000 systems); managed mod-dependency topo-sort/presence-check throughput (500/2,000/5,000 mods) — same file, two classes. |
+| `TickLoopBenchmark` + scenarios | `TickLoop/TickLoopBenchmark.cs`, `V3NativeBatchedScenario.cs`, `TickLoopScenarioBase.cs`, `MetricsCollector.cs` | Per-tick wall-clock, allocation rate, gen0/1/2 collections for the V3 native-batched scenario (50 pawns, 30 Hz). V2's managed-structs scenario was removed with the managed `World` at K8.3+K8.4; the class comment says so directly. |
 
-Called thousands of times per phase. Implemented on SparseSet: one array for lookup, one for dense storage. Target: 5 ns per `Get`, 30 ns per `Query<T1, T2>` per-entity.
+Results live under `tests/DualFrontier.Core.Benchmarks/Results`, compared by hand across runs — no automated regression comparison (§4).
 
-### DomainEventBus.Publish
+## 6. Cache invalidation discipline
 
-Publishing an event walks the subscriber list synchronously. The implementation uses a delegate array (not `List<T>`), allocation-free. Target: 50 ns per publication with 3 subscribers.
+A cache without a documented invalidation source is worse than no cache. Verified examples only — the predecessor's `PathfindingService` cache subsection is dropped: it describes a cache that was never built. `AStarPathfinding` is a stateless synchronous A* (`IPathfindingService.TryFindPath`) with no cache field anywhere in `DualFrontier.AI`, a fact the predecessor's own Hot Paths section already admitted ("code-confirmed absent... 2026-06-02") while its Caches section contradicted that by describing invalidation events for a structure that does not exist.
 
-### SpatialGrid.QueryRadius
+### `InventorySystem._freeSlotCache`
 
-Find entities within radius R from a point. Implementation: a cell grid, each cell holds `List<EntityId>`. Target: a walk over ≤9 cells instead of all 10,000 entities.
+`Dictionary<int, List<string>>` — exact verified type (`InventorySystem.cs:27`), keyed by storage entity index, valued by free item-slot keys. Invalidated by a `_cacheDirty` flag (`:29`) set from three handlers — `ItemAddedEvent`, `ItemRemovedEvent`, `ItemReservedEvent` (`:36-38`, `:59`, `:74`, `:90`) — rebuilt lazily on next `Update` (`:41-48`). Single writer of `StorageComponent`, `[TickRate(TickRates.FAST)]`.
 
-### PathfindingService
+### System graph cache (managed facade only)
 
-A\* through the navigation graph. The most expensive operation (1–5 ms per path).
-The current implementation (`AStarPathfinding`) is synchronous A* with a
-2000-iteration cap per call; on overflow, `TryFindPath` returns `false` and
-the pawn re-requests on the next tick. A path cache between frequently used
-pairs of points is *not yet implemented — **forward / NON-NORMATIVE** (would give ~10×;
-code-confirmed absent in `AStarPathfinding` 2026-06-02)*.
+The managed `DependencyGraph` used by the mod-integration pipeline is built on a local instance, swapped in only after `Build()` succeeds (`ModIntegrationPipeline.cs:444`, `:726`, `:811`) — rebuilt on mod apply, not per tick. This is the managed facade's cache only; per §3, the authoritative native `system_graph.cpp` graph carries no documented budget or invalidation table of its own.
 
-*Forward / NON-NORMATIVE (roadmap):* pathfinding migrates to GPU flow fields under the
-K9 + G6/G7 roadmap ([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Domain A extension). Per-pawn cost
-collapses to one field read + arithmetic; pathfinding cost decouples from
-pawn count. A\* preserved as fallback for unique destinations only. *(Status 2026-06-02:
-K9 field storage + the diffusion compute pipeline have shipped (`compute_pipeline.cpp`,
-`FieldStorageBinding`, CPU diffusion kernels); the **flow-field / V2 wave** layer this depends on
-is still pending — see [ROADMAP](./../ROADMAP.md) «Native foundation tracks → V substrate».)*
+Rule, unchanged because it is sound: every cache is documented as `(key → value, invalidation sources, verified against code)`. An entry without that table does not belong in this section.
 
-### GPU compute — Domain A (fields) and Domain B (entity-keyed bulk)
+## Cross-references
 
-GPU compute is now a foundational architectural capability with two workload domains
-([VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) v2.0 LOCKED).
+| Doc | Relation | Note |
+|---|---|---|
+| [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) | defers-to | К-L15 bus-tier law (§3); К-L14 performance-from-cleanliness framing (§1). |
+| [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) | defers-to | GPU substrate, V1 diffusion internals, display-latency invariants (§2, §3). |
+| [ECS](./ECS.md) | cites | Phase-boundary write-visibility semantics the "phase commit" row (§3) inherits. |
+| [THREADING](./THREADING.md) | cites | `Parallel.ForEach` phase barrier that phase-commit visibility depends on. |
+| [TESTING_STRATEGY](../methodology/TESTING_STRATEGY.md) | cites | Test/benchmark authoring practice generally. |
 
-**Domain A — fields** (mana, electricity, water, heat, sound, scent). Dense 2D grids
-updated by 4-neighbor stencil compute shaders. No CPU/GPU crossover threshold — field
-math is GPU-suitable from the first cell. Per-tick budget for 3 fields × 200×200 ×
-5–10 iterations: <1 ms on mid-range GPU vs several ms CPU. Performance benchmarks
-land per G-milestone (G1 mana, G2 electricity, G3 storage, G4 multi-field) and pin
-CPU-fallback ratios for environments without Vulkan 1.3 compute.
+## Amendment protocol
 
-**Domain B — entity-keyed bulk compute** (`ProjectileSystem` and similar). Phase 3
-deferral preserved as a special case: still threshold-driven, still benchmarked
-against CPU baseline. "Battle of the Gods" stress test (500 mages × spell-spam =
-~5,000 simultaneous projectiles, ~50,000 collisions/sec) remains the calibration
-scenario, but native kernel + Vulkan rendering layer pivots collapse the dispatch
-overhead from 0.5–2 ms (managed) to microseconds (native), so the threshold may
-shift downward in practice.
+Budget numbers change by direct edit plus re-verification against the cited code anchors; no ratification required pre-LOCK. Post-ratification, a budget change is a version bump citing the new anchor; adding or removing enforcement (§4) should trigger a fresh reading of AD-5's status in the session report.
 
-*Forward / NON-NORMATIVE (G5+, roadmap — not yet created):* BenchmarkDotNet scenario `ProjectileStressBenchmark` with parameter
-`[Params(100, 500, 1000, 5000)]` for projectile count. Compare `CpuProjectileCompute`
-vs `GpuProjectileCompute` on the post-pivot architecture. Pin the switchover
-threshold in [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) Domain B timing budget.
+## Change history
 
-## Caches and invalidation
-
-A cache without invalidation is worse than no cache: the game starts to lie. In Dual Frontier every cache explicitly declares its invalidation source.
-
-### `InventorySystem` cache
-
-A `Dictionary<ItemType, List<EntityId>>`. Invalidated by `ItemAddedEvent` and `ItemRemovedEvent`. Correctness check in DEBUG: every 100 ticks a full scan is compared against the cache.
-
-### `PathfindingService` cache
-
-Two-layer: terrain blocks (do NOT change between builds) and the path between anchor points. Invalidated by `BuildingPlacedEvent`, `BuildingDestroyedEvent`, `TileChangedEvent`.
-
-### `SpatialGrid` cache
-
-Updated on every `PositionChangedEvent`. Not invalidated but updated incrementally — the entity is removed from the old cell and added to the new one.
-
-### System graph cache
-
-`DependencyGraph` is built once and does not change. Invalidated only on mod load/unload — at that moment the graph is rebuilt and the scheduler recomputes phases.
-
-Rule: every cache is documented with the table `(key → value, invalidation sources, DEBUG check)`. Without that table the cache review does not pass.
-
-## How to add a benchmark
-
-1. **Define what is measured.** A benchmark without a target is noise. A good formulation: "`ComponentStore.Get` on 10k entities must hold ≤10 ns per call".
-2. **Create a class in `tests/DualFrontier.Core.Benchmarks`.**
-
-    ```csharp
-    [MemoryDiagnoser]
-    [SimpleJob(RuntimeMoniker.Net80)]
-    public class MyBenchmark
-    {
-        [Params(1000, 10000, 100000)] public int N;
-        // ...
-
-        [GlobalSetup] public void Setup() { /* ... */ }
-
-        [Benchmark] public void HotPath() { /* ... */ }
-    }
-    ```
-
-3. **Run it locally.** `dotnet run -c Release --project tests/DualFrontier.Core.Benchmarks`.
-4. **Pin the baseline.** Results are stored in `Results/MyBenchmark.json`.
-5. **Add a CI gate.** In `tests/DualFrontier.Core.Benchmarks/PerformanceGates.cs` add a rule: "method X must be no slower than baseline + 10%". CI fails on regression.
-6. **Document.** Add a row to the "Hot paths" table with the expected number.
-
-A benchmark without a pinned baseline does not land in main — otherwise anyone could quietly degrade performance.
-
-## See also
-
-- [THREADING](./THREADING.md)
-- [EVENT_BUS](./EVENT_BUS.md)
-- [TESTING_STRATEGY](/docs/methodology/TESTING_STRATEGY.md)
+| Version | Date | Change |
+|---|---|---|
+| 0.1.0 (this doc) | 2026-07-15 | Corpus rework: budgets re-attached to the native substrate in place of deleted managed-era rows; added §4 enforcement-honesty (no CI, no `PerformanceGate` anywhere); added §5 benchmark census; dropped the fictional `PathfindingService` cache; corrected `SpatialGrid` to its real unwired production status. |
+| 1.1.1 | pre-rework | Last state of predecessor `DOC-A-PERFORMANCE` (see historical/). |

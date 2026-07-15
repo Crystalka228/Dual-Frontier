@@ -8,9 +8,9 @@
 
 # === Schema metadata ===
 schema_version: "1.0"
-register_version: "2.28"
+register_version: "2.29"
 last_modified: "2026-07-15"
-last_modified_commit: "PENDING-R2"
+last_modified_commit: "PENDING-R3"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -96,26 +96,27 @@ documents:
     special_case_rationale: "Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_OS_ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-VULKAN_SUBSTRATE
-    path: docs/architecture/VULKAN_SUBSTRATE.md
-    title: "Vulkan Substrate (V) — Dual Frontier"
+    path: docs/architecture/historical/VULKAN_SUBSTRATE.md
+    title: "Vulkan Substrate (V) — Dual Frontier (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-VULKAN_SUBSTRATE_V2
     # version bumped к 1.1.1 per К-extensions cascade #2 ε2 patch bump (Q-G-10 Tier 2 cleanup);
     # last_modified/last_review_event updated к match cascade #2 closure context.
     supersedes: [DOC-D-G0, DOC-D-G1, DOC-D-G2, DOC-D-G3, DOC-D-G4, DOC-D-G5, DOC-D-G6, DOC-D-G7, DOC-D-G8, DOC-D-G9, DOC-A-VISUAL_ENGINE, DOC-A-GODOT_INTEGRATION]
     owner: Crystalka
     version: "1.2.0"
-    last_modified: "2026-06-12"
-    last_modified_commit: "60175a1"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-20"
     last_review_event: "К10.3 v2 load-bearing commit 3/3 2026-05-20 — К-L18 final amendment landed: §3.4.1 «df_vulkan_unload_mod_resources C ABI primitive (К-L18, К10.3 v2 placeholder)» subsection (struct shape + signature + К10.3 v2 placeholder behavior + full implementation reservation для V-cycle / К-extensions). К10.3 v2 cascade complete: §0 L1/L7 К-L19 cleanup + §2.0 pipeline depth + §2.3 threading model К-L7.1/L16 + §3.4 К-L19 mandate cleanup + §3.4.1 df_vulkan_unload_mod_resources placeholder + §4.0 display composition К-L17 + §5.5 Mode C visibility К-L17 + §7.2 drain semantics К-L16 + §7.3 К-L7.1 slot tail read pattern."
-    next_review_due: "2027-05-16"
+    next_review_due: "null"
     reviewer: Crystalka
     risks_referenced: [RISK-004, RISK-013]
-    special_case_rationale: "Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases. Additionally supersedes G-series briefs DOC-D-G0..G9 per Q-G-2 LOCK + CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16). Additionally supersedes DOC-A-VISUAL_ENGINE + DOC-A-GODOT_INTEGRATION (visual-runtime authority moved to docs/architecture/historical/) per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16). Bidirectional integrity per FRAMEWORK §3.3.2."
+    special_case_rationale: "Superseded by DOC-A-VULKAN_SUBSTRATE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/VULKAN_SUBSTRATE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases. Additionally supersedes G-series briefs DOC-D-G0..G9 per Q-G-2 LOCK + CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16). Additionally supersedes DOC-A-VISUAL_ENGINE + DOC-A-GODOT_INTEGRATION (visual-runtime authority moved to docs/architecture/historical/) per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16). Bidirectional integrity per FRAMEWORK §3.3.2."
 
   - id: DOC-A-MIGRATION_PLAN
     path: docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md
@@ -139,22 +140,23 @@ documents:
     special_case_rationale: "Partially executed migration plan retired per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: executed K8.x portions are historical record; unexecuted forward state already lives in docs/ROADMAP.md «Native foundation tracks» (DD-2 precedent). superseded_by: DOC-C-ROADMAP — Crystalka acknowledgement of this scalar target is a ratification-checklist item (EVT-R4). Full text preserved at docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md."
 
   - id: DOC-A-FIELDS
-    path: docs/architecture/FIELDS.md
-    title: "Field Storage"
+    path: docs/architecture/historical/FIELDS.md
+    title: "Field Storage (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: Live
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-FIELDS_V2
     owner: Crystalka
     version: "0.1.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "80c9ba6"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
     content_language: en
     review_cadence: on-change+annual
     last_review_date: "2026-05-11"
     last_review_event: "K9 closure populated FIELDS storage contract"
-    next_review_due: "2027-05-11"
+    next_review_due: "null"
     reviewer: Crystalka
-    special_case_rationale: "Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone"
+    special_case_rationale: "Superseded by DOC-A-FIELDS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FIELDS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone"
     risks_referenced: [RISK-003]
 
   - id: DOC-A-ARCHITECTURE
@@ -244,19 +246,21 @@ documents:
     special_case_rationale: "Superseded by DOC-A-ECS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ECS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-EVENT_BUS
-    path: docs/architecture/EVENT_BUS.md
-    title: "Event buses"
+    path: docs/architecture/historical/EVENT_BUS.md
+    title: "Event buses (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-EVENT_BUS_V2
     owner: Crystalka
     version: "2.0.0"
-    last_modified: "2026-06-12"
-    last_modified_commit: "e6dcb46"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-06-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-EVENT_BUS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/EVENT_BUS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-MODDING
     path: docs/architecture/historical/MODDING.md
@@ -328,19 +332,21 @@ documents:
     special_case_rationale: "Superseded by VULKAN_SUBSTRATE.md v1.0 LOCKED per Q-G-1 LOCK (composite namespace deliberation 2026-05-15). Pre-V-substrate authority preserved at docs/architecture/historical/ for historical record. Moved per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16)."
 
   - id: DOC-A-PERFORMANCE
-    path: docs/architecture/PERFORMANCE.md
-    title: "Performance"
+    path: docs/architecture/historical/PERFORMANCE.md
+    title: "Performance (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-PERFORMANCE_V2
     owner: Crystalka
     version: "1.1.1"
-    last_modified: "2026-06-02"
-    last_modified_commit: "PENDING-INITIAL"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-PERFORMANCE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/PERFORMANCE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-OWNERSHIP_TRANSITION
     path: docs/architecture/OWNERSHIP_TRANSITION.md
@@ -358,19 +364,21 @@ documents:
     reviewer: Crystalka
 
   - id: DOC-A-FHE_INTEGRATION_CONTRACT
-    path: docs/architecture/FHE_INTEGRATION_CONTRACT.md
-    title: "FHE Integration Contract"
+    path: docs/architecture/historical/FHE_INTEGRATION_CONTRACT.md
+    title: "FHE Integration Contract (historical; superseded by authored rework)"
     category: A
     tier: 1
-    lifecycle: LOCKED
+    lifecycle: SUPERSEDED
+    superseded_by: DOC-A-FHE_INTEGRATION_CONTRACT_V2
     owner: Crystalka
     version: "1.0.1"
-    last_modified: "2026-06-12"
-    last_modified_commit: "f2e6df2"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
+    special_case_rationale: "Superseded by DOC-A-FHE_INTEGRATION_CONTRACT_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FHE_INTEGRATION_CONTRACT.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7)."
 
   - id: DOC-A-ARCHITECTURE_TYPE_SYSTEM
     path: docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md
@@ -5061,6 +5069,96 @@ documents:
     next_review_due: "post-ratification closure"
     reviewer: Crystalka
     special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (DOC-A-ARCHITECTURE_TYPE_SYSTEM + DOC-A-MAX_ENG_REFACTOR_TRACK_B → historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM — resolves session finding N-13. Family authority AS SHIPPED: 17 verified rules, Warning-tier + DFK-WAIVER law, 13 deferred with named gates; [SystemAccess]-completeness re-registered as a DEFERRED candidate. Verified at HEAD 35364c2 (census corrections: 57 test methods; stale SanctionedInteropSurface comment flagged)."
+
+  - id: DOC-A-VULKAN_SUBSTRATE_V2
+    path: docs/architecture/VULKAN_SUBSTRATE.md
+    title: "Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-VULKAN_SUBSTRATE]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-VULKAN_SUBSTRATE (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Slot machine/oracle framing preserved verbatim; §3.4 uint32 field-id sketch corrected to the shipped string-id ABI; six additional verification corrections pinned (no transfer queue/async aliasing; check_fences stub; native df_vulkan_unload_mod_resources symbol absent — managed placeholder only; waitIdle census; bit-packed flags budget; V1 zero production consumers). Predecessor supersession chain (GODOT/VISUAL_ENGINE) untouched. Verified at HEAD 35364c2."
+
+  - id: DOC-A-FIELDS_V2
+    path: docs/architecture/FIELDS.md
+    title: "Field storage (authored rework; exclusion-not-fallback truth, G-numbering retired)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-FIELDS]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-FIELDS (Live → SUPERSEDED, now historical/) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Session C6 fix (transparent CPU/GPU promise removed — exclusion-not-fallback per К-L19; CpuKernels = equivalence oracles); superseded G-numbering and stale VULKAN v2.0 pin killed; sync-dispatch-blocks-until-fence truth; two new code-verified corrections (FieldRegistrationConflict reserved-not-shipped; mod-unload field sweep designed-but-unwired). Verified at HEAD 35364c2."
+
+  - id: DOC-A-EVENT_BUS_V2
+    path: docs/architecture/EVENT_BUS.md
+    title: "Event buses (authored rework; fault-isolation asymmetry and capacity truths pinned)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-EVENT_BUS]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-EVENT_BUS (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Light-touch restyle of the code-truth v2.0.0 body plus session N-21/N-32 facts with anchors: deferred-handler faults uncaught vs sync per-subscriber catch; managed queues unbounded; Background 10MB cap only in force_coalesce (BACKPRESSURE/EXPAND unimplemented); observability inversion; [Immediate] unused. Verified at HEAD 35364c2."
+
+  - id: DOC-A-PERFORMANCE_V2
+    path: docs/architecture/PERFORMANCE.md
+    title: "Performance (authored rework; current-substrate budgets, enforcement honesty — no CI, PerformanceGate fictional)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-PERFORMANCE]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-PERFORMANCE (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Session C12 rewrite: budgets re-attached to the native substrate; managed-era rows and fictional caches dropped (pathfinding cache never built; SpatialGrid unwired — renamed GetInRadius, zero production instantiation); enforcement honesty fenced (no CI anywhere, PerformanceGate/PerformanceGates.cs nonexistent — AD-5 open obligation); verified benchmark census. Verified at HEAD 35364c2."
+
+  - id: DOC-A-FHE_INTEGRATION_CONTRACT_V2
+    path: docs/architecture/FHE_INTEGRATION_CONTRACT.md
+    title: "FHE Integration Contract (authored rework; dormant-contract role, D1-D8 preserved)"
+    category: A
+    tier: 1
+    lifecycle: AUTHORED
+    supersedes: [DOC-A-FHE_INTEGRATION_CONTRACT]
+    owner: Crystalka
+    version: "0.1.0"
+    first_authored: "2026-07-15"
+    last_modified: "2026-07-15"
+    last_modified_commit: "PENDING-R3"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "post-ratification closure"
+    reviewer: Crystalka
+    special_case_rationale: "Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-FHE_INTEGRATION_CONTRACT (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Light passport restyle; D1-D8 preserved faithfully as ratified-and-dormant law ('The dormant period is unbounded.' verbatim); footprint pinned to verified reality (2 empty reserved interfaces, zero consumers; D7 fourth version field = forward spec, not present wiring); ISOLATION refs redirected to the MOD_OS merge successor. Verified at HEAD 35364c2."
 
 # === requirements collection (Q12 — 13 entries; pre-authored from Pass 5 §2) ===
 requirements:
@@ -11584,3 +11682,38 @@ audit_trail:
       capa_entries: []
       risks: []
       lifecycle_transitions: [DOC-A-MOD_OS → SUPERSEDED, DOC-A-MOD_PIPELINE → SUPERSEDED, DOC-A-ISOLATION → SUPERSEDED, DOC-A-MODDING → SUPERSEDED, DOC-A-CONTRACTS → SUPERSEDED, DOC-A-ANALYZER_RULES → SUPERSEDED, DOC-A-ARCHITECTURE_TYPE_SYSTEM → SUPERSEDED, DOC-A-MAX_ENG_REFACTOR_TRACK_B → SUPERSEDED, DOC-A-MIGRATION_PLAN → SUPERSEDED, DOC-A-MOD_OS_ARCHITECTURE → AUTHORED (enrolled), DOC-A-MODDING_V2 → AUTHORED (enrolled), DOC-A-CONTRACTS_V2 → AUTHORED (enrolled), DOC-A-ANALYZER_RULES_V2 → AUTHORED (enrolled)]
+
+  - id: EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE
+    date: "2026-07-15"
+    event: "Corpus rework cascade R3 (substrate) — VULKAN/FIELDS/EVENT_BUS/PERFORMANCE/FHE successors AUTHORED; 5 predecessors historical/SUPERSEDED"
+    event_type: execution_milestone
+    documents_affected:
+      - DOC-A-VULKAN_SUBSTRATE
+      - DOC-A-FIELDS
+      - DOC-A-EVENT_BUS
+      - DOC-A-PERFORMANCE
+      - DOC-A-FHE_INTEGRATION_CONTRACT
+      - DOC-A-VULKAN_SUBSTRATE_V2
+      - DOC-A-FIELDS_V2
+      - DOC-A-EVENT_BUS_V2
+      - DOC-A-PERFORMANCE_V2
+      - DOC-A-FHE_INTEGRATION_CONTRACT_V2
+    commits:
+      range: "PENDING-R3"
+      key_commits: []
+    governance_impact: |
+      Owner-ratified corpus rework, cascade 3 of 4 (substrate cluster). VULKAN successor
+      preserves the strong predecessor content (slot machine, oracle framing, exclusion-not-
+      fallback) with the identity-drift fix (string field ids) and six pinned verification
+      corrections incl. the native unload primitive existing as design only. FIELDS successor
+      resolves session C6 (no transparent CPU/GPU promise; fail-fast floor) and retires the
+      superseded G-numbering. EVENT_BUS successor pins the fault-isolation asymmetry and
+      capacity truths (N-21). PERFORMANCE successor implements the C12 rewrite with fenced
+      enforcement honesty (no CI; PerformanceGate fictional — AD-5 obligation). FHE successor
+      is a dormant-contract restyle, D1-D8 faithful. Authority-gap window extends to the
+      substrate cluster (historical predecessors prevail on conflict until ratification).
+      register_version 2.28 → 2.29; 309 → 314 documents; EVT 51 → 52.
+    cross_references:
+      capa_entries: []
+      risks: []
+      lifecycle_transitions: [DOC-A-VULKAN_SUBSTRATE → SUPERSEDED, DOC-A-FIELDS → SUPERSEDED, DOC-A-EVENT_BUS → SUPERSEDED, DOC-A-PERFORMANCE → SUPERSEDED, DOC-A-FHE_INTEGRATION_CONTRACT → SUPERSEDED, DOC-A-VULKAN_SUBSTRATE_V2 → AUTHORED (enrolled), DOC-A-FIELDS_V2 → AUTHORED (enrolled), DOC-A-EVENT_BUS_V2 → AUTHORED (enrolled), DOC-A-PERFORMANCE_V2 → AUTHORED (enrolled), DOC-A-FHE_INTEGRATION_CONTRACT_V2 → AUTHORED (enrolled)]
