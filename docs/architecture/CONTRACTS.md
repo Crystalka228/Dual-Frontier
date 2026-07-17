@@ -144,7 +144,7 @@ The predecessor pointed to a "future A'.9 Roslyn analyzer" verifying that bus pu
 | ANALYZER_RULES.md | cites | shipped enforcement (17 rules, A'.9.1) |
 | KERNEL_ARCHITECTURE.md | cites | К-L3/К-L4 storage-path + type-id law, К-L9 |
 | ARCHITECTURE.md | cites | umbrella census; sibling document |
-| EXECUTION_AUTHORITY_MATRIX.md | cites (AUTHORED draft) | R5/R6 event-routing cutover context |
+| EXECUTION_AUTHORITY_MATRIX.md | cites | R5/R6 event-routing cutover context |
 
 ## Amendment protocol
 

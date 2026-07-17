@@ -34,7 +34,7 @@ Dual Frontier is a colony simulation built as a native C++ kernel under a manage
 | Scope | Cross-cutting orientation: project census, layer boundaries, csproj-verified dependency graph, runtime thread shape, pointers to subsystem authorities |
 | Non-goals | Scheduling/bus mechanics (SCHEDULER_ARCHITECTURE.md, THREADING.md, EVENT_BUS.md); mod capability grammar (MOD_OS_ARCHITECTURE.md, MODDING.md); contract evolution rules (CONTRACTS.md); domain-authority precedence beyond citing the matrix |
 | Authority domains | Project census; inter-assembly reference legality; layer-boundary rule; Presentation/Domain crossing rule |
-| Defers to | KERNEL_ARCHITECTURE.md → К-L law · SCHEDULER_ARCHITECTURE.md → native scheduler design · THREADING.md → managed dispatch · EVENT_BUS.md → bus mechanics · MOD_OS_ARCHITECTURE.md → mod lifecycle/ALC · CONTRACTS.md → contract rules · EXECUTION_AUTHORITY_MATRIX.md (AUTHORED draft) → cutover gates |
+| Defers to | KERNEL_ARCHITECTURE.md → К-L law · SCHEDULER_ARCHITECTURE.md → native scheduler design · THREADING.md → managed dispatch · EVENT_BUS.md → bus mechanics · MOD_OS_ARCHITECTURE.md → mod lifecycle/ALC · CONTRACTS.md → contract rules · EXECUTION_AUTHORITY_MATRIX.md → cutover gates |
 
 ## §1 Layer map (the real assembly set)
 
@@ -96,7 +96,7 @@ Scheduling and event routing have not cut over. Today, in production:
 - **Scheduling.** Phases are planned by the managed `DependencyGraph` (`GameBootstrap.cs:145-148`) and executed via `Parallel.ForEach` (`ParallelSystemScheduler.cs:149`, MaxDegreeOfParallelism = ProcessorCount − 2, `:90`). Every Core system is *also* registered with the native `SystemGraph` (`GameBootstrap.cs:162-181`), with empty read/write component-id sets (`:173-174`) and a blanket Timer wake at rate 1 for every system (`:179`) — the native graph holds the systems but has no edges to decide with. The reverse-P/Invoke bridge that would let native dispatch drive managed execution (`ManagedSystemDispatcher.OnBatch`, `[UnmanagedCallersOnly]`, `ManagedSystemDispatcher.cs:75`; registered via `SchedulerAdapter.Register`, `SchedulerAdapter.cs:22`) is on disk and exercised only by `BatchedCallbackTests.cs` — zero production call sites, verified.
 - **Event routing.** Every production event travels one of five managed `DomainEventBus` instances behind `IGameServices` (`GameServices.cs:14-113`, constructed `GameBootstrap.cs:79`). `BusFacade.UseNativeBusForDispatch` defaults `false` (`BusFacade.cs:49`); no production code constructs a `BusFacade`. The only live native-bus touchpoint in production is the Background-tier idle-slot drain each tick (`GameLoop.cs:120-128`, via `ManagedBusBridge.DrainBackgroundBatch`).
 
-> **FENCED (target / planned — not current truth):** the cutover to native sovereignty is gated, not scheduled — no date, only conditions. Gate conditions, the equivalence-proof obligation, and the deletion triggers for the managed `DependencyGraph` and the per-bus `DomainEventBus` internals are specified in [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) §3 (AUTHORED draft). Until those gates close, dual registration — every system in both graphs, every event representable on both bus vocabularies — is mandatory per that document's §3.3; a system or event visible to only one plane would make the equivalence gates untestable.
+> **FENCED (target / planned — not current truth):** the cutover to native sovereignty is gated, not scheduled — no date, only conditions. Gate conditions, the equivalence-proof obligation, and the deletion triggers for the managed `DependencyGraph` and the per-bus `DomainEventBus` internals are specified in [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) §3. Until those gates close, dual registration — every system in both graphs, every event representable on both bus vocabularies — is mandatory per that document's §3.3; a system or event visible to only one plane would make the equivalence gates untestable.
 
 ## §4 Governed vs ungoverned subsystems
 
@@ -142,7 +142,7 @@ Mods load into per-mod `AssemblyLoadContext`s in the same process; a faulting mo
 | VULKAN_SUBSTRATE.md | defers-to | GPU substrate |
 | ECS.md | defers-to | storage access protocol |
 | CONTRACTS.md | cites | sibling umbrella document |
-| EXECUTION_AUTHORITY_MATRIX.md | constrains (AUTHORED draft) | §3 cutover gates and deletion triggers |
+| EXECUTION_AUTHORITY_MATRIX.md | constrains | §3 cutover gates and deletion triggers |
 | docs/ROADMAP.md | cites | forward state |
 
 ## Amendment protocol

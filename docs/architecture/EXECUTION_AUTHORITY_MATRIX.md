@@ -3,36 +3,40 @@ register_id: DOC-A-EXECUTION_AUTHORITY_MATRIX
 project: Dual Frontier
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: 0.1.1
+version: 1.0.0
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
-next_review_due: post-ratification closure
-title: Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (A0 draft)
-last_modified_commit: 8960085
-review_cadence: on-status-transition
+next_review_due: 2027-Q3
+title: Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (the A0 contract)
+last_modified_commit: b4bcfa4
+review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION Phase B (C2): HALT-1-ratified retargets EAM-1..EAM-8 — §6.1 cite re-homing onto the post-rework LOCKED successors; gate-status re-verified (all 8 gates OPEN at 48983c4); §6.1 conflict inventory refreshed (3 of 5 resolved in-corpus, 1 resolved by retirement); vacant-row rewording; truth-pin re-verification stamps; S10 anchor harmonized.'
+last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all 8 cutover gates OPEN as written; §5 enforcement claims real; code anchors EXACT) + HALT-1-ratified retargets EAM-1..EAM-8 at b4bcfa4; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6] of the EVT-R4 checklist widened per ORC-3). Standalone LOCK — §2/§3/§4 folds recorded as forward amendment queue, NOT executed; §4 P1–P3 ADVISORY until the FRAMEWORK §14.7 amendment.'
 reviewer: Crystalka
-special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A0 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Content is architecture-contract law (FRAMEWORK §3.4 hierarchy → Tier 1); lifecycle AUTHORED because unratified — mandatory preamble marks it normative-target, NOT current truth; conflicts resolve in favor of LOCKED docs until Crystalka ratification per FRAMEWORK §7.'
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A0 cross-cutting contract — sole-authority matrix, cutover gates GATE-S1..S4/GATE-B1..B4, deletion triggers; ratified standalone with the fold path recorded as a forward amendment queue (ARCHITECTURE §2-fold, KERNEL Part 0 §3-annotations, FRAMEWORK §14.7 §4-amendment).'
 ---
 
 # Execution Authority Matrix (the A0 contract)
 
-> **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** Produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Becomes normative only upon Crystalka ratification per FRAMEWORK.md §7. Until then no document may cite it as authority; conflicts resolve in favor of existing LOCKED docs.
+> **Document class: LOCKED law (standalone).** Ratified authored-proposal → LOCKED v1.0.0 on 2026-07-17 by the DRAFTS_RATIFICATION cascade (EVT-2026-07-17-DRAFTS_RATIFICATION), per FRAMEWORK.md §7 (ratification protocol) / §7.2 (Tier-1 amendment-milestone protocol). This document is the A0 cross-cutting contract — the sole-authority map, the cutover gates and deletion triggers (§3), and the precedence proposal (§4). It joins the FRAMEWORK.md §14.7 (authority-surface predicate) surface as a Tier-1 LOCKED document.
 
-**Ratification path** (per FRAMEWORK.md §7.2 Tier 1 amendment protocol; each destination bumps per its own amendment protocol):
+**Status of the cutover claims.** Every "today" claim was authored against HEAD `6f39903` (2026-07-15) and re-verified against ratification HEAD `48983c4` (`= 2309f9b`) by this cascade: all code anchors held EXACT; all cross-document anchors were re-homed to the post-rework LOCKED successors and now cite by stable section + topic per CODING_STANDARDS.md §6.1 (citation form). At ratification all eight cutover gates (§3 GATE-S1…S4, GATE-B1…B4) were confirmed OPEN.
 
-| This document's section | Folds into, on ratification |
-|---|---|
-| §2 The matrix | [ARCHITECTURE.md](./ARCHITECTURE.md) — the umbrella gains a normative "who decides what" section (MINOR: additive) |
-| §3 Cutover gates + deletion triggers | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) — Part 0 annotations on the K-L12 / K-L15 rows + a chronicle entry (the gates are kernel-side law) |
-| §4 Precedence rule | [FRAMEWORK.md](../governance/FRAMEWORK.md) — a §14.7 amendment (governance law, not architecture; §14.7 self-declares "a change to it is an amendment of this section") |
-| §1 definitions, §5 observability, §6 open questions | Remain standalone here; this document then transitions authored-proposal → AUTHORED → LOCKED |
+**Conflict rule (in force).** Where this document's §2 names the sole authority for a domain, that authority's document governs that domain (subject to §4, which is ADVISORY — see below). This document's own recorded conflicts with standing LOCKED law (§6.1) are an honest inventory to be closed by the named amendments, not a grant of precedence to this document over any LOCKED text; three of the originally-recorded conflicts were already resolved in-corpus by the 2026-07-15 KERNEL_ARCHITECTURE.md rework (§6.1 records their disposition).
 
-Baseline for every "today" claim: working tree at HEAD `6f39903`, 2026-07-15; re-verified at ratification HEAD `48983c4` (`= 2309f9b`) by the DRAFTS_RATIFICATION cascade, 2026-07-17 — code unchanged, doc anchors re-homed to the LOCKED successors per §6.1 form.
+**Deferred fold path (forward amendment queue — NOT executed by this cascade).** The DRAFTS_RATIFICATION cascade ratifies this document **standalone**; it does **not** execute the section folds below. They are recorded as a forward amendment queue, each to be carried by its own amendment protocol when scheduled (tracked in docs/ROADMAP.md):
+
+| Section | Deferred destination | Carrying protocol |
+|---|---|---|
+| §2 The matrix | [ARCHITECTURE.md](./ARCHITECTURE.md) — normative "who decides what" section | FRAMEWORK.md §7.2 (MINOR, additive) |
+| §3 Cutover gates + deletion triggers | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) Part 0 — К-L12/К-L15 row annotations + chronicle entry | FRAMEWORK.md §7.2 |
+| §4 Precedence rule (P1–P3) | [FRAMEWORK.md](../governance/FRAMEWORK.md) §14.7 amendment | FRAMEWORK.md §7.2 schema-amendment |
+| §1, §5, §6 | remain standalone here | — |
+
+Until the §4 fold lands as a FRAMEWORK.md §14.7 amendment, **§4 P1–P3 remain ADVISORY** and conflicts between §14.7 surface members remain formally unarbitrable (§4 already states this — preserved unchanged). Until the §2/§3 folds land, ARCHITECTURE.md and KERNEL_ARCHITECTURE.md continue to cite this document as the cutover-gate authority (the citations upgraded from "(AUTHORED draft)" to LOCKED at ratification).
 
 ---
 

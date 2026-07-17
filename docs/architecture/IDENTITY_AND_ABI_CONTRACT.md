@@ -3,33 +3,33 @@ register_id: DOC-A-IDENTITY_AND_ABI_CONTRACT
 project: Dual Frontier
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: 0.1.1
+version: 1.0.0
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
-next_review_due: post-ratification closure
-title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (A5+A6+A8 draft)
-last_modified_commit: 8960085
-review_cadence: on-status-transition
+next_review_due: 2027-Q3
+title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
+last_modified_commit: b38d95a
+review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION Phase B (C4): HALT-1-ratified retargets IAC-1..IAC-5 — version-0 census corrected (nine systems ≈20 sites, +ComfortAuraSystem/HaulSystem sites, WriteBatch.cs:221 sibling noted); teaching-texts claims re-marked (successors now teach the corrected form, code defect persists); §7 items 1/2 closed-by-rework; device-lost claim softened (VULKAN OQ-V1 exists); §6.1 cite reform. 72 catch(...) recount EXACT at 48983c4.'
+last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
 reviewer: Crystalka
-special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A5+A6 (+A8 error-taxonomy) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.'
 ---
 
 # Identity and ABI Contract (the A5+A6 contract)
 
-> **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** Produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). It closes gaps A5 (identity contract) and A6 (C ABI protocol) and supplies the error-taxonomy portion of A8. Becomes normative only upon Crystalka ratification per [FRAMEWORK](../governance/FRAMEWORK.md) §7 (amendment milestone protocol, §7.2). Until then no document may cite it as authority; **conflicts resolve in favor of existing LOCKED docs** (enumerated honestly in §7).
+> **Document class: RATIFIED — normative law in force (EVT-2026-07-17-DRAFTS_RATIFICATION).** The A5+A6+A8 identity/ABI contract, produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). It closes gaps A5 (identity contract) and A6 (C ABI protocol) and supplies the error-taxonomy portion of A8; documents may now cite it as authority. Baseline anchors authored at HEAD `6f39903`; code re-verified unchanged at `48983c4`, doc anchors retargeted to the LOCKED v1.0.0 successors. **Carve-out:** the named LOCKED texts govern their specific points until the §7 forward amendments land; §7 items 1 & 2 were resolved in place by the corpus rework and are recorded closed.
 
-**Ratification path** (per FRAMEWORK.md §7.2 Tier 1 amendment protocol):
+**Forward amendment queue** (recorded in docs/ROADMAP.md; folds NOT executed at ratification):
 
-| This document's section | Folds into, on ratification |
+| This document's section | Deferred destination |
 |---|---|
-| §1 identity registry table | [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — new part ("Part 9: Identity registry"), plus per-doc amendments: [ECS](./ECS.md) span example, [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) §1.7 example, [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §3.4 `uint32` fix, [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §2.3/§3.2 capability grammar unification |
-| §2 version-0 resolution | [ECS](./ECS.md) + [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) §1.7 amendments; `EntityId.cs` / `entity_id.h` code change; new DFK rule in [ANALYZER_RULES](./ANALYZER_RULES.md) |
-| §3 C ABI protocol + §4 error contract + §5 compatibility | [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 7 expansion (the existing error-semantics convention grows into a full ABI protocol) |
+| §1 identity registry table | [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — new part ("Part 9: Identity registry"), plus per-doc amendments ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) capability-grammar `layer.*` half; the VULKAN/ECS halves landed with the rework) |
+| §2 version-0 resolution | [ECS](./ECS.md) + [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) §1.7 versions-view examples; `EntityId.cs` / `entity_id.h` code change; new DFK-entity-identity rule in [ANALYZER_RULES](./ANALYZER_RULES.md) — the seeded engineering work order |
+| §3 C ABI protocol + §4 error contract + §5 compatibility | [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) §5 expansion (the successor already freezes 1/0 and forward-references §3–§4 here) |
 | §6 enforcement | [ANALYZER_RULES](./ANALYZER_RULES.md) registry additions + `df_native_selftest` extension |
 
 Baseline for every "today" claim: working tree at HEAD `6f39903`, 2026-07-15; code anchors re-verified unchanged at ratification HEAD `48983c4` (EVT-2026-07-17-DRAFTS_RATIFICATION); doc anchors retargeted to the LOCKED v1.0.0 successors per CODING_STANDARDS §6.1 form.
@@ -145,7 +145,7 @@ Scope: every `extern "C"` entry point exported by `DualFrontier.Core.Native` (`d
 - **Endianness.** Little-endian assumed and now stated. The entity packing (`entity_id.h:19-23`) is defined in value space (shifts and masks), not byte space, so it is safe wherever both sides agree on integer representation — which the LE statement pins.
 - **No `bool` at the boundary.** Truthiness travels as `int32_t` 0/1 — already universal practice (`df_world_is_alive`, every `*_enabled` accessor). Marshaling C# `bool` is ambiguous (1 vs 4 bytes depending on context) and is forbidden.
 
-### 3.3 Ownership law (per-call rules; the ownership *tree* lives in the A2 draft)
+### 3.3 Ownership law (per-call rules; the ownership *tree* lives in RESOURCE_OWNERSHIP_AND_LIFETIME.md, the A2 contract)
 
 - **Allocation symmetry.** Native never frees managed memory; managed never frees native memory. Handle ownership follows the documented owner per handle class: world handles — caller, via `df_world_destroy`; batch handles — caller, via `df_batch_destroy` (destroy auto-flushes, `df_capi.h:196-198`); K8.1 primitive handles — the World, "Caller never frees" (`df_capi.h:254-258`). Cross-cutting dispose order is [RESOURCE_OWNERSHIP_AND_LIFETIME](./RESOURCE_OWNERSHIP_AND_LIFETIME.md)'s jurisdiction.
 - **Out-buffers are caller-allocated.** The iterate/snapshot family takes caller buffers plus capacity and returns count written, clipped (`df_keyed_map_iterate` `df_capi.h:272-276`; `df_world_resolve_string` `:290-295`; `df_scheduler_trace_dump`, `df_scheduler_snapshot` `:778`). New entry points MUST follow this pattern; a native-allocated return requires a paired `df_*_free` and explicit rationale in the header comment.
@@ -238,7 +238,7 @@ typedef int32_t df_status;
 
 **Vulkan result mapping — OPEN.** Nothing maps `VkResult` into any error class today; device-lost has no mapping — the VULKAN successor now carries it as an open question (OQ-V1 / §6.3), still unresolved. Placeholder classification pending a V-cycle decision: `VK_ERROR_DEVICE_LOST` → fatal-subsystem (with recreate-or-die unresolved); `VK_ERROR_OUT_OF_DATE_KHR` / `VK_SUBOPTIMAL_KHR` → retryable (swapchain recreation is shipped behavior). Tracked in §7 item 7.
 
-**Downstream propagation** — which faults quarantine a mod, restart a subsystem, or end the process, and how per-mod fault budgets work — is the jurisdiction of the `ENGINE_LIFECYCLE_AND_TRANSACTIONS.md` session draft (A3/A8 proper). This section defines only the code space and its managed projection, so that draft has a stable vocabulary to consume.
+**Downstream propagation** — which faults quarantine a mod, restart a subsystem, or end the process, and how per-mod fault budgets work — is the jurisdiction of `ENGINE_LIFECYCLE_AND_TRANSACTIONS.md` (A3/A8 proper). This section defines only the code space and its managed projection, so that draft has a stable vocabulary to consume.
 
 ## 5. Compatibility policy
 
@@ -293,7 +293,7 @@ typedef int32_t df_status;
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0 (K-L2/K-L4/K-L8), §1.7, §1.10, Part 7 — primary ratification target.
 - [ECS](./ECS.md), [FIELDS](./FIELDS.md), [EVENT_BUS](./EVENT_BUS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — per-doc amendment targets enumerated in §7.
 - [ANALYZER_RULES](./ANALYZER_RULES.md) — DFK registry receiving the §6 additions.
-- [RESOURCE_OWNERSHIP_AND_LIFETIME](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) (A2 draft) — ownership tree and dispose order; §3.3 here states only per-call ABI rules.
+- [RESOURCE_OWNERSHIP_AND_LIFETIME](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) (the A2 contract) — ownership tree and dispose order; §3.3 here states only per-call ABI rules.
 - [PERSISTENCE_SNAPSHOT_CONTRACT](./PERSISTENCE_SNAPSHOT_CONTRACT.md) (A7 draft) — save-side halves of §1 notes 2 and §7 item 4.
-- `ENGINE_LIFECYCLE_AND_TRANSACTIONS.md` (session draft) — fault taxonomy consuming §4's code space.
+- `ENGINE_LIFECYCLE_AND_TRANSACTIONS.md` — fault taxonomy consuming §4's code space.
 - [docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md) — session report; verdict ids cited throughout (C10, N13, N14, N19, N20, N29, N38, N39, A5, A6, A8) resolve there.

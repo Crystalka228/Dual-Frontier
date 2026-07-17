@@ -187,7 +187,7 @@ A field remains a single native allocation regardless of GPU involvement — `Ra
 | [ECS](./ECS.md) | cites | The orthogonal storage system — entities, components, `WriteBatch<T>`. |
 | [EVENT_BUS](./EVENT_BUS.md) | cites | The native per-mod unload primitive in §9 also clears bus/wake state. |
 | [PERFORMANCE](./PERFORMANCE.md) | cites | Field memory budget, dispatch timing targets. |
-| [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) (AUTHORED draft) | cites | Any future §11 mod-facing compute cutover gate belongs there. |
+| [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) | cites | Any future §11 mod-facing compute cutover gate belongs there. |
 
 ## Amendment protocol
 

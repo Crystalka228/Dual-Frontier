@@ -34,9 +34,9 @@ The dual bus architecture: five managed domain buses carrying every production e
 | Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/EVENT_BUS.md` (DOC-A-EVENT_BUS, LOCKED v2.0.0, now SUPERSEDED) |
 | Scope | Managed `DomainEventBus` delivery (sync/`[Deferred]`/`[Immediate]`); the native three-tier bus as implemented; today's managed/native division of labor; fault-isolation and capacity truths as coded; Intent and Lease models; subscription lifecycle. |
-| Non-goals | К-L15/К-L15.1 canonical text (KERNEL_ARCHITECTURE.md Part 0); backpressure/fault-crossing law (CONCURRENCY_AND_MEMORY_MODEL.md, AUTHORED draft); visibility/determinism law (TIME_AND_CONSISTENCY_MODEL.md, AUTHORED draft); scheduler phase mechanics (THREADING.md); background-queue persistence design (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). |
+| Non-goals | К-L15/К-L15.1 canonical text (KERNEL_ARCHITECTURE.md Part 0); backpressure/fault-crossing law (CONCURRENCY_AND_MEMORY_MODEL.md); visibility/determinism law (TIME_AND_CONSISTENCY_MODEL.md); scheduler phase mechanics (THREADING.md); background-queue persistence design (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). |
 | Authority domains | **event-routing** — current managed delivery mechanics and current native-bus wiring. Native-bus *sovereignty* itself remains К-L15's domain: this document reports the wiring under that law, it does not set the law. |
-| Defers to | KERNEL_ARCHITECTURE.md Part 0 · CONCURRENCY_AND_MEMORY_MODEL.md (AUTHORED draft) · TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft) · THREADING.md · MOD_OS_ARCHITECTURE.md · PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) — full table in Cross-references. |
+| Defers to | KERNEL_ARCHITECTURE.md Part 0 · CONCURRENCY_AND_MEMORY_MODEL.md · TIME_AND_CONSISTENCY_MODEL.md · THREADING.md · MOD_OS_ARCHITECTURE.md · PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) — full table in Cross-references. |
 
 ---
 
@@ -88,7 +88,7 @@ What actually routes where, verified on disk:
 - **The managed→native routing facade exists but is dormant.** `BusFacade` (`src/DualFrontier.Application/Bus/BusFacade.cs`) maps event types to FNV-1a type ids (`Fnv1a32`, `:176-187`), reads the tier, and publishes through `ManagedBusBridge` — but only when `UseNativeBusForDispatch` is set, and it **defaults `false`** (`:49`). No production code constructs a `BusFacade`; the native dispatch path is exercised only by the scheduler stress/extreme test suites (e.g. S10, §3).
 - **Two native-bus touchpoints are live in production.** (1) `GameLoop` drains the Background tier after every fixed step with whatever tick budget remains (`ManagedBusBridge.DrainBackgroundBatch`, called at `GameLoop.cs:118-128`). (2) The mod-unload chain invokes the native unload primitive: `ModIntegrationPipeline.cs:668` calls `ModUnloadInterop.UnloadModNativeState`, which wraps native `df_scheduler_unload_mod_native_state` (`mod_unload.cpp:45-121`) — its T1/T2/T3 steps call the three per-tier `_by_mod` unsubscribes (`:83,87-89,93`), vacuously today since production registers no native subscribers.
 
-> **FENCED (target / planned — not current truth):** the sovereign-authority switch — native tiers becoming the dispatch path for managed events per К-L15 — is Planned; scheduling in `docs/ROADMAP.md`, cutover gates per EXECUTION_AUTHORITY_MATRIX.md §3 (AUTHORED draft). `BusFacade` and the bridge are the cutover scaffolding for that switch, not cruft — they carry their deletion trigger with the gates, not before.
+> **FENCED (target / planned — not current truth):** the sovereign-authority switch — native tiers becoming the dispatch path for managed events per К-L15 — is Planned; scheduling in `docs/ROADMAP.md`, cutover gates per EXECUTION_AUTHORITY_MATRIX.md §3. `BusFacade` and the bridge are the cutover scaffolding for that switch, not cruft — they carry their deletion trigger with the gates, not before.
 
 ## §5 Fault isolation is asymmetric across delivery modes
 
@@ -96,7 +96,7 @@ Sync delivery isolates a faulting subscriber; deferred delivery does not. `Deliv
 
 This is not hypothetical: `DeathEvent` and the Inventory trio are all `[Deferred]` (§2) — the exact events chosen for cross-system ordering are the ones with no per-handler fault isolation. Even the "good" sync path under-reports: its catch logs to `Console.WriteLine` (`:164`), not to any fault sink, so a caught fault is invisible to diagnostics too (§7).
 
-The normative fix — symmetric per-subscriber isolation in both modes, mod-origin faults routed to a fault sink — is CONCURRENCY_AND_MEMORY_MODEL.md §7 (AUTHORED draft), which independently confirmed the same behavior at overlapping anchors (`:156-166`/`:169-187`). This document states the fact; that document states the law.
+The normative fix — symmetric per-subscriber isolation in both modes, mod-origin faults routed to a fault sink — is CONCURRENCY_AND_MEMORY_MODEL.md §7, which independently confirmed the same behavior at overlapping anchors (`:156-166`/`:169-187`). This document states the fact; that document states the law.
 
 ## §6 Capacity truths
 
@@ -106,7 +106,7 @@ The normative fix — symmetric per-subscriber isolation in both modes, mod-orig
 
 **BACKPRESSURE and EXPAND are accepted parameters, not implemented behavior.** `df_background_queue_configure` validates and stores the `strategy` enum (`:118-137`), but per the in-source comment (`:125-130`, verbatim): "К10.2 default: only DROP_OLDEST is implemented. BACKPRESSURE / EXPAND deferred к К-extensions… Configuration accepted (records intent) но behavior remains drop-oldest […until К-extensions implementation lands]." Requesting either strategy silently gets drop-oldest semantics whenever `force_coalesce` happens to run.
 
-Full resource × operation matrix and the normative backpressure law: CONCURRENCY_AND_MEMORY_MODEL.md §3.3 (AUTHORED draft) — facts here, law there.
+Full resource × operation matrix and the normative backpressure law: CONCURRENCY_AND_MEMORY_MODEL.md §3.3 — facts here, law there.
 
 ## §7 Observability is inverted
 
@@ -147,8 +147,8 @@ Mods do not manage this manually: `RestrictedModApi.Subscribe` wraps the handler
 | Doc | Relation | Note |
 |---|---|---|
 | [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) | defers-to | Part 0 canonical texts: К-L15 (native bus authority), К-L15.1 (tier independence), К-L9 (vanilla=mods facade uniformity). |
-| [CONCURRENCY_AND_MEMORY_MODEL](./CONCURRENCY_AND_MEMORY_MODEL.md) (AUTHORED draft) | defers-to | §3.3 resource×operation matrix, §5 lock-order law, §7 fault-crossing law — normative resolution of §5–§6's facts. |
-| [TIME_AND_CONSISTENCY_MODEL](./TIME_AND_CONSISTENCY_MODEL.md) (AUTHORED draft) | defers-to | Visibility table, deferred-flush happens-before edges, determinism classes. |
+| [CONCURRENCY_AND_MEMORY_MODEL](./CONCURRENCY_AND_MEMORY_MODEL.md) | defers-to | §3.3 resource×operation matrix, §5 lock-order law, §7 fault-crossing law — normative resolution of §5–§6's facts. |
+| [TIME_AND_CONSISTENCY_MODEL](./TIME_AND_CONSISTENCY_MODEL.md) | defers-to | Visibility table, deferred-flush happens-before edges, determinism classes. |
 | [THREADING](./THREADING.md) | defers-to | Phase barrier mechanics that `FlushDeferred`'s sole call site depends on. |
 | [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) | defers-to | Capability grammar, unload chain consuming the native per-mod unsubscribe. |
 | [PERSISTENCE_SNAPSHOT_CONTRACT](./PERSISTENCE_SNAPSHOT_CONTRACT.md) (AUTHORED draft) | defers-to | Background-queue wire-format inclusion and versioning at the save boundary. |

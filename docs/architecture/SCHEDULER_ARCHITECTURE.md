@@ -38,7 +38,7 @@ The native kernel scheduler: its law, its mechanical model, and the honest wirin
 | Scope | Scheduling mechanics and wiring: the native scheduler substrate (system graph, wake registry, phases, barriers, priority classes, thread pool, intrinsics, batched callback ABI), the current-vs-target dispatch wiring, the mod↔scheduler interaction surface, and the scheduler verification surface |
 | Non-goals | Invariant **text** ownership (К-L canon is KERNEL_ARCHITECTURE.md Part 0 — this doc quotes and elaborates, never redefines); bus mechanics and tier semantics (EVENT_BUS.md); thread census and memory-ordering law (THREADING.md); deliberation history, Q-N questions, performance predictions, risk register (historical original); cutover sequencing (ROADMAP) |
 | Authority domains | Scheduler **mechanics** (what the native scheduling substrate contains and how its pieces compose) and scheduler **wiring truth** (which plane plans phases, which plane dispatches, what is installed versus deciding) |
-| Defers to | KERNEL_ARCHITECTURE.md → К-L12/К-L13 (and К-L14, К-L18) canonical invariant text, Part 0; THREADING.md → managed dispatch facade, thread model, execution contexts; EVENT_BUS.md → bus tiers, EventWake traffic reality, background drain; EXECUTION_AUTHORITY_MATRIX.md (AUTHORED draft) → cutover gates and deletion triggers for the split scheduling rows |
+| Defers to | KERNEL_ARCHITECTURE.md → К-L12/К-L13 (and К-L14, К-L18) canonical invariant text, Part 0; THREADING.md → managed dispatch facade, thread model, execution contexts; EVENT_BUS.md → bus tiers, EventWake traffic reality, background drain; EXECUTION_AUTHORITY_MATRIX.md → cutover gates and deletion triggers for the split scheduling rows |
 
 ---
 
@@ -173,13 +173,13 @@ Consequences, stated plainly:
 - The per-tick machinery is production-idle: `ComputePerTickGraph` and `DrainRunqueue` have **zero production call sites** (registration in `GameBootstrap` is the only production consumer of the scheduler interop; the per-tick paths are exercised by stress/extreme suites and `df_native_selftest`).
 - The StateChange write-through hook is not wired into the production write path: `df_native_world_commit_hook`'s only callers are selftest scenarios (`native/DualFrontier.Core.Native/test/selftest.cpp:1445`).
 
-**Production dispatch is managed end-to-end.** `GameLoop` drives `ExecuteTick` on the dedicated simulation thread at a fixed 30 Hz step (`src/DualFrontier.Application/Loop/GameLoop.cs:115`); per phase, `ParallelSystemScheduler.ExecutePhase` runs due systems via `Parallel.ForEach` with `MaxDegreeOfParallelism = max(1, ProcessorCount − 2)` (`ParallelSystemScheduler.cs:149`, `:90`); the runnable filter is the managed `TickScheduler.ShouldRun` `[TickRate]` check consulted inside the loop (`ParallelSystemScheduler.cs:151`; `src/DualFrontier.Core/Scheduling/TickScheduler.cs`); the blocking join of `Parallel.ForEach` forms the phase barrier; deferred events flush after it (`ParallelSystemScheduler.cs:166-167`; semantics in EVENT_BUS.md). THREADING.md names `ParallelSystemScheduler` the **managed dispatch facade** — with the honest caveat (recorded in EXECUTION_AUTHORITY_MATRIX.md (AUTHORED draft), row notes) that a facade selecting the runnable subset is performing a К-L13 scheduling decision, which is precisely what the cutover retires.
+**Production dispatch is managed end-to-end.** `GameLoop` drives `ExecuteTick` on the dedicated simulation thread at a fixed 30 Hz step (`src/DualFrontier.Application/Loop/GameLoop.cs:115`); per phase, `ParallelSystemScheduler.ExecutePhase` runs due systems via `Parallel.ForEach` with `MaxDegreeOfParallelism = max(1, ProcessorCount − 2)` (`ParallelSystemScheduler.cs:149`, `:90`); the runnable filter is the managed `TickScheduler.ShouldRun` `[TickRate]` check consulted inside the loop (`ParallelSystemScheduler.cs:151`; `src/DualFrontier.Core/Scheduling/TickScheduler.cs`); the blocking join of `Parallel.ForEach` forms the phase barrier; deferred events flush after it (`ParallelSystemScheduler.cs:166-167`; semantics in EVENT_BUS.md). THREADING.md names `ParallelSystemScheduler` the **managed dispatch facade** — with the honest caveat (recorded in EXECUTION_AUTHORITY_MATRIX.md, row notes) that a facade selecting the runnable subset is performing a К-L13 scheduling decision, which is precisely what the cutover retires.
 
 **The batched callback ABI is on disk and test-exercised only.** The sole call site of `SchedulerAdapter.Register` in the repository is the test fixture (`tests/DualFrontier.Core.Tests/Scheduler/BatchedCallbackTests.cs:30`). Production per-phase dispatch does not route through `OnBatch`; the switch is forward-scheduled (docs/ROADMAP.md, «Native foundation tracks»).
 
 **Where the cutover condition lived until this rework**: a code comment (`GameBootstrap.cs:150-159` — "К10.2 mechanical dispatch switch routes through the batched callback ABI … once mod ALC lifecycle context surrounds the call sites"). A comment is not a gate; the named gates are §3.3.
 
-Summary table (mirrors the scheduling rows of EXECUTION_AUTHORITY_MATRIX.md (AUTHORED draft) §2):
+Summary table (mirrors the scheduling rows of EXECUTION_AUTHORITY_MATRIX.md §2):
 
 | Decision | К-L12 target owner | De-facto owner today |
 |---|---|---|
@@ -195,7 +195,7 @@ Summary table (mirrors the scheduling rows of EXECUTION_AUTHORITY_MATRIX.md (AUT
 
 ### §3.3 Cutover gates and the deletion trigger
 
-The gate set is specified per EXECUTION_AUTHORITY_MATRIX.md §3 (AUTHORED draft) — advisory until ratified, cited here because it is the only named cutover contract in the corpus. A split scheduling plane is tolerable only under three elements: named falsifiable gate conditions, an equivalence-proof obligation on the production workload, and a deletion trigger named in advance. Condensed:
+The gate set is specified per EXECUTION_AUTHORITY_MATRIX.md §3, cited here because it is the only named cutover contract in the corpus. A split scheduling plane is tolerable only under three elements: named falsifiable gate conditions, an equivalence-proof obligation on the production workload, and a deletion trigger named in advance. Condensed:
 
 - **GATE-S1 — real access sets.** Native registration receives `[SystemAccess]`-derived ids instead of `ReadOnlySpan<uint>.Empty`. Open while any production `RegisterSystem` call passes empty spans (`GameBootstrap.cs:173-174`).
 - **GATE-S2 — phase-composition equivalence on the production set.** Managed `GetPhases()` and native static + per-tick graphs produce equivalent partitions for the real Core set over N ≥ 1000 ticks. Open while no test under `tests/` compares the two planes on the production system set (today's only native-graph exercise is `df_native_selftest` with synthetic systems).
@@ -206,7 +206,7 @@ The gate set is specified per EXECUTION_AUTHORITY_MATRIX.md §3 (AUTHORED draft)
 
 **DELETION TRIGGER:** when S1–S4 have held for one full release cycle, the managed `DependencyGraph` leaves production planning — removed from `GameBootstrap.cs:145-148`, demoted to test oracle or deleted — and `ParallelSystemScheduler` reduces or is deleted per §3.2. The equivalence tests then retire in the same cascade (a zombie oracle comparing against a deleted implementation is its own debt).
 
-**Interim coexistence rules** (in force while the rows stay split, per EXECUTION_AUTHORITY_MATRIX.md §3 (AUTHORED draft)): dual registration stays mandatory for every production system; `[SystemAccess]`/`[TickRate]`/`[WakeOn*]`/`[Priority]` remain the single declarer set both planes derive from — neither plane may grow a private side-channel declaration; no new consumers of the losing plane's internals (`DependencyGraph` phase lists); semantics changes land on both planes in one commit or not at all.
+**Interim coexistence rules** (in force while the rows stay split, per EXECUTION_AUTHORITY_MATRIX.md §3): dual registration stays mandatory for every production system; `[SystemAccess]`/`[TickRate]`/`[WakeOn*]`/`[Priority]` remain the single declarer set both planes derive from — neither plane may grow a private side-channel declaration; no new consumers of the losing plane's internals (`DependencyGraph` phase lists); semantics changes land on both planes in one commit or not at all.
 
 ## §4 Mod ↔ scheduler interaction
 
@@ -218,7 +218,7 @@ Each mod ALC owns a `ModSubScheduler` (`src/DualFrontier.Application/Modding/Mod
 
 ### §4.2 Graph rebuild under quiescence (К-L18)
 
-Scheduler-graph mutation happens only through the mod pipeline's prepare/commit transaction: `ModIntegrationPipeline.Apply` builds a new graph on a local, and only after `Build()` succeeds swaps the scheduler's phase list via `ParallelSystemScheduler.Rebuild` (`src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs:493`; `ParallelSystemScheduler.cs:191`) — the graph is always the old consistent one or the new fully-built one. Transaction vocabulary for this pattern: per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft).
+Scheduler-graph mutation happens only through the mod pipeline's prepare/commit transaction: `ModIntegrationPipeline.Apply` builds a new graph on a local, and only after `Build()` succeeds swaps the scheduler's phase list via `ParallelSystemScheduler.Rebuild` (`src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs:493`; `ParallelSystemScheduler.cs:191`) — the graph is always the old consistent one or the new fully-built one. Transaction vocabulary for this pattern: per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md.
 
 The precondition is К-L18 (canonical text: KERNEL_ARCHITECTURE.md Part 0): mod load/unload requires **simulation paused + pipeline slots quiescent**. Enforcement is layered:
 
@@ -245,7 +245,7 @@ What can catch this document's claims — and the invariants behind them — bei
 - **Native selftest.** `df_native_selftest` exercises the graph, wake registry, pool, intrinsics, and filter through `scenario_system_graph_*` and neighbors (`native/DualFrontier.Core.Native/test/selftest.cpp:1034` ff.). Synthetic systems only — it proves the substrate's mechanics, not managed/native equivalence on the production set (that absence is exactly GATE-S2's open condition, §3.3).
 - **Managed suites.** `BatchedCallbackTests` (the ABI round-trip, sole `SchedulerAdapter.Register` exerciser — `tests/DualFrontier.Core.Tests/Scheduler/BatchedCallbackTests.cs:30`); `SchedulerStressTests` / `SchedulerExtremeTests` (native-path stress across graph/wake/policy interop); the `ManagedTestScheduler` fixture for managed-plane tests.
 - **S10 cross-tier re-entrancy probe.** `S10_Bus_CrossTier_FastCallback_PublishesNormal_NoDeadlock` (`tests/DualFrontier.Core.Tests/Scheduling/SchedulerExtremeTests.cs:1010`) — the standing regression guard for К-L15.1's re-entrancy claim at the scheduler/bus seam.
-- **Analyzer rules** (shipped, per ANALYZER_RULES.md): **DFK013** — К-L13 wake-discipline (flags `SystemBase` subclasses with neither `[WakeOn*]` nor `[TickRate]`, and eager init) — Warning, enforcing; **DFK016** — К-L16 pipeline-depth constant discipline — Warning, enforcing. The К-L12 rule **DFK012 is deferred** to the К-L20 LOCK cascade — today no tooling detects the managed planner deciding, which is the enforcement gap behind §3's split rows (pattern noted in EXECUTION_AUTHORITY_MATRIX.md (AUTHORED draft) §5).
+- **Analyzer rules** (shipped, per ANALYZER_RULES.md): **DFK013** — К-L13 wake-discipline (flags `SystemBase` subclasses with neither `[WakeOn*]` nor `[TickRate]`, and eager init) — Warning, enforcing; **DFK016** — К-L16 pipeline-depth constant discipline — Warning, enforcing. The К-L12 rule **DFK012 is deferred** to the К-L20 LOCK cascade — today no tooling detects the managed planner deciding, which is the enforcement gap behind §3's split rows (pattern noted in EXECUTION_AUTHORITY_MATRIX.md §5).
 
 > **FENCED (target / planned — not current truth):** **TLA+ formal verification** (old Item 18 / К10.4) — specifications for the scheduler-relevant invariant set (К-L12 progress, К-L13 wake dispatch, filter consistency, К-L16 drain, К-L18 quiescence, among the 12 targeted), a safety CI gate, and targeted liveness models. Pending per docs/ROADMAP.md («Native foundation tracks», K10.4 row). No `.tla` artifact exists in the repository at HEAD `35364c2` — and note there is currently no CI of any kind in-repo to host such a gate (session report §6.4 N-25).
 
@@ -260,8 +260,8 @@ The predecessor's lock rationale (all 9 S-surface deliberations, Q-by-Q) lives i
 | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) | defers-to | Canonical text of К-L12/К-L13 (and К-L6-SUPERSEDED, К-L14, К-L15, К-L16, К-L18) — Part 0; Rule 5 reconciled wording; current/target wiring annex on the К-L12 row |
 | [THREADING.md](./THREADING.md) | defers-to | Thread model, execution contexts, managed dispatch facade description, slot-transition wake mechanism |
 | [EVENT_BUS.md](./EVENT_BUS.md) | defers-to | Bus tiers, deferred-flush semantics at the phase barrier, EventWake/background-drain traffic reality |
-| [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) | cites (AUTHORED draft) | Cutover gates GATE-S1..S4, deletion trigger, interim coexistence rules, authority-row definitions — advisory until ratified |
-| [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) | cites (AUTHORED draft) | Transaction vocabulary for the Apply/Rebuild prepare-commit and unload chain |
+| [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) | cites | Cutover gates GATE-S1..S4, deletion trigger, interim coexistence rules, authority-row definitions |
+| [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) | cites | Transaction vocabulary for the Apply/Rebuild prepare-commit and unload chain |
 | [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) | cites | Mod lifecycle state machine and the unload chain that hosts Steps 3.5/3.6 |
 | [ANALYZER_RULES.md](./ANALYZER_RULES.md) | cites | DFK013/DFK016 shipped status; DFK012 deferral to the К-L20 cascade |
 | [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) | cites | GPU-side semantics of Phase.Compute, pipeline slots, async compute queue (К-L19) |

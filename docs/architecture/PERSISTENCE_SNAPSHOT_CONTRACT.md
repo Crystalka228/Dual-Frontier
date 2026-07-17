@@ -9,7 +9,7 @@ version: 0.1.3
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
-next_review_due: post-ratification closure
+next_review_due: post-persistence-milestone closure
 title: Persistence Snapshot Contract — snapshot boundary, inclusion/exclusion, identity serialization law (A7 draft skeleton; invariants only)
 last_modified_commit: 6888246
 review_cadence: on-status-transition
@@ -22,6 +22,8 @@ special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC
 # Persistence and Snapshot Contract (the A7 contract)
 
 > **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** Produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Becomes normative only upon Crystalka ratification per FRAMEWORK.md §7. Until then no document may cite it as authority; conflicts resolve in favor of existing LOCKED docs.
+>
+> **Anchor re-verification (EVT-2026-07-17-DRAFTS_RATIFICATION).** This skeleton is **held AUTHORED — not ratified** per the standing item-[6] recommendation; the save-system milestone still owns implementation. Its anchors, authored against HEAD `6f39903`, were re-verified and retargeted at the DRAFTS_RATIFICATION cascade: all code cites (`EntityEncoder.cs:68-85`, `SaveMeta.cs:17`, `GameBootstrap.cs:96`, `PipelineSlotInterop.cs:202`, the `DualFrontier.Persistence` production-orphan) confirmed EXACT at HEAD `48983c4`; doc cites retargeted to the LOCKED v1.0.0 successors (notably EVENT_BUS §6 for the background-queue wire format — the predecessor's "schema v1" line was retired, the claim is code truth at `background_queue.cpp:209`; MOD_OS §9.8 for D-6; FIELDS §12 and VULKAN §7, both of which now forward-reference this contract). Six sibling contracts (A0–A6, A8) ratified LOCKED at the same event; their citations here no longer carry draft qualifiers. `next_review_due` → 'post-persistence-milestone closure'.
 >
 > **Scope note.** This skeleton constrains; it does not schedule. Save-system implementation remains deferred to its milestone. The purpose is that ECS, Fields, Event Bus, Mod OS and GPU pipeline stop choosing mutually incompatible persistence semantics before that milestone. The deferral itself is ratified and correct: `SaveSystem.cs` `throw new NotImplementedException` is "**deliberate** state", and the save system "will design against the fully-completed kernel + runtime + mod foundation, not against the migration-in-progress moving target" ([MIGRATION_PLAN_KERNEL_TO_VANILLA.md §8.1](./historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md), lines 652–659). This contract holds invariants and boundaries only — no file formats, no I/O design, no implementation.
 
@@ -95,7 +97,7 @@ Normative-target composition of one snapshot. "Authority" names the fragment tha
 | Pending entity destructions | **Flushed pre-snapshot** | ECS line 100; §1 item 2 | The snapshot never contains a destroy-in-flight. |
 | Bus subscriptions (managed + native, incl. wake registrations) | **No** | MOD_OS §9.4 (inverse — the unload chain); EVENT_BUS §3 | Re-established by systems/mods during load-time registration, exactly as at boot/mod-load. |
 | Active mod set | **Yes (metadata)** | MOD_OS §9.8 (save-game implications) | `(modId, modVersion)` for every active mod. §4 governs mismatches. |
-| RNG streams | **Yes, once the RNG law lands** | [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) (draft, this session) | Today no RNG service exists — only scattered seeded `Random` instances (e.g. `GameBootstrap.cs:96`). Serialized RNG state is a precondition for the §6 reproducibility class. |
+| RNG streams | **Yes, once the RNG law lands** | [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) | Today no RNG service exists — only scattered seeded `Random` instances (e.g. `GameBootstrap.cs:96`). Serialized RNG state is a precondition for the §6 reproducibility class. |
 | Config / map dimensions | **Yes** | FIELDS §12; `SaveMeta.cs` (MapWidth/MapHeight) | "Width / height mismatch between save and current registration is a load error — fields cannot resize across sessions." |
 | `ContractsVersion` + FHE fourth version field | **Yes (metadata)** | FHE D7 (lines 96–100, 161) | Persistence layer pins `ContractsVersion.Current`; FHE library version appended as fourth field, ignored when the library is absent. |
 
@@ -137,9 +139,9 @@ Persistent identity is where today's code actively contradicts the invariants th
 
 ## §6. Coordination — who orchestrates, and what "reproducible" means
 
-- **PS-13 — Save is a quiesce + read transaction.** The orchestrator is the engine lifecycle owner, not the persistence layer: pause simulation, reach the §1 boundary via the K-L18 machinery, read/serialize, resume. See [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (draft, this session) — save is the read-only instance of the same prepare/commit discipline mod-apply already exhibits. The persistence layer receives a quiesced world; it never negotiates quiescence itself.
+- **PS-13 — Save is a quiesce + read transaction.** The orchestrator is the engine lifecycle owner, not the persistence layer: pause simulation, reach the §1 boundary via the K-L18 machinery, read/serialize, resume. See [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) — save is the read-only instance of the same prepare/commit discipline mod-apply already exhibits. The persistence layer receives a quiesced world; it never negotiates quiescence itself.
 - **Hard sync is legitimate here and only here:** the predecessor's "`waitIdle` … only used for save snapshots and shutdown" phrasing was corrected by the successor — the live census is VULKAN §5.4 (vkDeviceWaitIdle policy: shutdown-path calls plus swapchain recreation; no save path exists yet); the save-snapshot use remains the sanctioned future use this contract inherits.
-- **PS-14 — Load lands in reproducibility class D1** per [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) (draft, this session): "Save/load must produce reproducible state on load" (VULKAN §7.2 — which cedes the class vocabulary to TIME_AND_CONSISTENCY_MODEL) — same snapshot + same mod set ⇒ identical committed state, independent of GPU/driver.
+- **PS-14 — Load lands in reproducibility class D1** per [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md): "Save/load must produce reproducible state on load" (VULKAN §7.2 — which cedes the class vocabulary to TIME_AND_CONSISTENCY_MODEL) — same snapshot + same mod set ⇒ identical committed state, independent of GPU/driver.
 - **PS-15 — CPU kernels produce the canonical field state for saves**, because GPU compute is not bit-exact across hardware/driver combinations: "the CPU reference kernels produce canonical state for save snapshots — save pauses GPU dispatch, runs one CPU iteration to produce canonical field state, serializes that" (VULKAN §7.2 — design mitigation, explicitly not implemented). This contract adopts it as the normative target: serialized field bytes are CPU-canonical.
 
 ## §7. Open questions
@@ -176,8 +178,8 @@ One line per law, for citation by later documents and by the save-milestone brie
 
 ## See also
 
-- [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (draft, this session) — the quiesce/transaction machinery PS-13 delegates to.
-- [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) (draft, this session) — tick commitment, visibility, reproducibility classes, RNG law.
+- [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) — the quiesce/transaction machinery PS-13 delegates to.
+- [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) — tick commitment, visibility, reproducibility classes, RNG law.
 - [FIELDS.md](./FIELDS.md) §Save/load, [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) §9.4/§12, [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) §7.2, [KERNEL_FULL_NATIVE_SCHEDULER.md](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) Items 31/34 — the owning fragments this contract composes.
 - `src/DualFrontier.Persistence/` — the orphaned codec scaffold (inventory for the milestone, not a design commitment).
 

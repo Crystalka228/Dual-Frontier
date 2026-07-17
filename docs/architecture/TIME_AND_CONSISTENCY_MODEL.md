@@ -3,36 +3,35 @@ register_id: DOC-A-TIME_AND_CONSISTENCY_MODEL
 project: Dual Frontier
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: 0.1.3
+version: 1.0.0
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
-next_review_due: post-ratification closure
-title: Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (A4 draft)
-last_modified_commit: 0145f1b
-review_cadence: on-status-transition
+next_review_due: 2027-Q3
+title: Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (the A4 contract)
+last_modified_commit: b38d95a
+review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION Phase B (C4): HALT-1-ratified retargets TCM-1..TCM-4 — R4-7 dangling-phase cites re-homed (THREADING §7 tick-boundary; COMBO §2 footnote; FEEDBACK_LOOPS §2); R4-10 RNG census corrected (FOUR fixed-seed sites, semantic-analyzer nuance added); §7.1/§7.5 re-marked RESOLVED by rework, §7.2 reframed (both LOCKED texts now defer to this contract); §6.1 cite reform.'
+last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; R4-10 RNG census corrected to four fixed-seed sites) + HALT-1-ratified retargets TCM-1..TCM-4 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7.1/§7.5 resolved by the rework; §5.2 Option A/B decision owned here; RNG-service work order seeded in ROADMAP.'
 reviewer: Crystalka
-special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A4 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A4 time/consistency contract — canonical time vocabulary, visibility table, cross-boundary consistency rules, pause/save/load boundaries, determinism classes D0/D1/D2, RNG law; VULKAN §7.2 and the COMBO/FEEDBACK successors already defer to its vocabulary; the RNG service (four fixed-seed sites) is the seeded engineering work order.'
 ---
 
 # Time and Consistency Model (the A4 contract)
 
-> **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** This is the missing "A4" contract identified by the Architecture Decomposition & Contracts session 2026-07-15 (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md), HEAD `6f39903`): a single time/visibility model for semantics the corpus currently ships scattered across six-plus documents in local vocabularies, with at least one direct contradiction (§7.1). It becomes normative only upon Crystalka ratification per [FRAMEWORK](../governance/FRAMEWORK.md) §7 (amendment milestone protocol, §7.2). **Until each named amendment lands, any conflict between this draft and a LOCKED document resolves in favor of the LOCKED document** (conflicts are enumerated honestly in §7).
+> **Document class: RATIFIED — normative law in force (EVT-2026-07-17-DRAFTS_RATIFICATION).** The A4 time/consistency contract, produced by the Architecture Decomposition & Contracts session 2026-07-15 (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Every architecture statement about time or visibility MUST be expressible in the §1 vocabulary, and every determinism claim MUST cite a §5 class. Anchors authored against HEAD `6f39903`; code re-verified unchanged and doc anchors retargeted to the LOCKED v1.0.0 successors at ratification HEAD `48983c4`. **Carve-out:** where a specifically-named LOCKED text still carries a conflicting sentence (§7 inventory), that text governs its specific point until the named forward amendment lands; §7.1 and §7.5 were resolved in place by the corpus rework and are recorded closed.
 
-**Ratification path** (per FRAMEWORK.md §7.2; each destination bumps per its own amendment protocol):
+**Forward amendment queue** (recorded in docs/ROADMAP.md as named forward work; folds NOT executed at ratification):
 
-| This document's section | Folds into, on ratification |
+| This document's section | Deferred destination |
 |---|---|
-| §1 canonical vocabulary + §2 visibility table | [THREADING](./THREADING.md) — additive sections (MINOR per its amendment protocol) |
-| §3 consistency rules | [THREADING](./THREADING.md), same amendment |
+| §1 canonical vocabulary + §2 visibility table + §3 consistency rules | [THREADING](./THREADING.md) — additive sections (MINOR per its amendment protocol) |
 | §5 determinism classes | [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0 (a determinism-class note against the K-L rows) or [PERFORMANCE](./PERFORMANCE.md) |
-| §7.1 FIELDS wording fix | [FIELDS](./FIELDS.md) — named amendment (PATCH: correction) |
-| §5.2 / §7.2 COMBO re-scoping | [COMBO_RESOLUTION](../mechanics/COMBO_RESOLUTION.md) (+ [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §7.2.1 if Option B) — named amendment |
-| §4, §6 | Remain here; document then transitions authored-proposal → AUTHORED → LOCKED |
+| §7.1 FIELDS wording fix | **DONE** — FIELDS §10 already carries the correction (landed in the corpus rework) |
+| §5.2 / §7.2 COMBO re-scoping (Option A/B) | [COMBO_RESOLUTION](../mechanics/COMBO_RESOLUTION.md) (+ [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) §7.2 if Option B) — named amendment; the decision is owned here |
+| §4, §6 | Remain standalone here |
 
 Every subsystem already answers "when does my write become visible, and to whom?" — but each answers in its own dialect: K-L16 speaks in display lag, [FEEDBACK_LOOPS](../mechanics/FEEDBACK_LOOPS.md) in previous-tick snapshots, [ECS](./ECS.md) in phase-boundary batch flushes, [EVENT_BUS](./EVENT_BUS.md) in flushes and drains, [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) in fences and slot tails. This document normalizes the vocabulary (§1), tabulates every publication boundary in one place (§2), states which observer-consistency guarantees hold across those boundaries (§3), pins the pause/save/load boundaries (§4), and resolves the determinism vocabulary mess by defining explicit determinism classes (§5) plus the RNG law they require (§6).
 

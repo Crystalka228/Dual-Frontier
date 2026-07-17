@@ -3,27 +3,27 @@ register_id: DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
 project: Dual Frontier
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: 0.1.1
+version: 1.0.0
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
-next_review_due: post-ratification closure
-title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (A3+A8 draft)
-last_modified_commit: 8960085
-review_cadence: on-status-transition
+next_review_due: 2027-Q3
+title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
+last_modified_commit: d6f1e9a
+review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION Phase B (C3): HALT-1-ratified retargets ELT-1..ELT-6 — historical/ prefixes + verified offsets for ISOLATION/MOD_PIPELINE/KFNS/MIGRATION_PLAN/OWNERSHIP_TRANSITION cites (R4-11); §9.1/§9.5-resolved re-anchoring (the successor adopted this draft''s §1 law); §9.6 quiescence §-fix; §6 conflicts 1/2/6 re-marked RESOLVED.'
+last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all defect claims TRUE; zero honesty slips) + HALT-1-ratified retargets ELT-1..ELT-6 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). The §1 commit/reclaim law was already absorbed by MOD_OS_ARCHITECTURE §9.1 (which cites this contract by name); forward queue (state machines, swapchain transaction, shutdown transaction + fault taxonomy) recorded in ROADMAP.'
 reviewer: Crystalka
-special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A3 (+A8 recovery) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.'
 ---
 
 # Engine Lifecycle and Transactions
 
 **The A3 transition contract, plus the fault-and-recovery portion of A8.** One vocabulary for every state transition the engine performs, one law reconciling "atomic" with "best-effort", one fault taxonomy with named owners.
 
-> **Status: AUTHORED PROPOSAL — a normative target, NOT current truth.** Produced by the 2026-07-15 architecture decomposition session (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md), HEAD `6f39903`). Nothing in this document is binding until ratified per [FRAMEWORK.md §7](../governance/FRAMEWORK.md) (amendment milestone protocol, §7.2). Intended ratification path: the §1 vocabulary and §3 state machines fold into `MOD_OS_ARCHITECTURE.md` §9 as the amendment that resolves the §9 / §9.5.1 contradiction, plus a new MOD_OS shutdown section; the §4 fault taxonomy could fold into `ISOLATION.md`. Until that ratification, wherever this document contradicts a LOCKED document, the LOCKED document wins.
+> **Status: RATIFIED-IN-FORCE as a forward contract (EVT-2026-07-17-DRAFTS_RATIFICATION).** The A3+A8 transition/fault contract, produced by the 2026-07-15 architecture decomposition session (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Authored against HEAD `6f39903`; code-truth re-verified at HEAD `48983c4`, 2026-07-17 (src/native unchanged). **Fold status:** the §1 commit/reclaim law was **already absorbed** into MOD_OS_ARCHITECTURE §9.1 during the corpus rework (which cites this contract by name); the §2.3 fault-timing and unload-chain reconciliations likewise landed in MOD_OS §9.5/§9.4 (was N-8/N-9). **Forward amendment queue** (folds NOT yet executed — recorded in docs/ROADMAP.md as named work): §3 named state machines (`DesiredState`/`ReclamationState`) → MOD_OS §9.1; §2.5 swapchain transaction → VULKAN_SUBSTRATE; §2.6 shutdown transaction + §4 fault taxonomy / Degraded → MOD_OS §10-family (successor of the retired ISOLATION) or a standalone shutdown-law document. **Conflict carve-out:** of the §6 inventory, conflicts 1/2/6 are RESOLVED in the LOCKED successor; conflicts 3/4/5 remain open — until their named amendments land, the specific LOCKED texts (MOD_OS §9.4 best-effort semantics; §9.6 native quiesce) govern those points.
 
 Scope: runtime state transitions of the engine process — mod apply/unload/fault, scheduler rebuild, swapchain recreation, world shutdown, save boundary. Register/governance lifecycle transitions (REGISTER.yaml states per FRAMEWORK.md §3.3) live on a different substrate (git) and are out of scope.
 

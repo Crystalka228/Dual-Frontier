@@ -3,25 +3,25 @@ register_id: DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
 project: Dual Frontier
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: 0.1.2
+version: 1.0.0
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
-next_review_due: post-ratification closure
-title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (A2 draft)
-last_modified_commit: 0145f1b
-review_cadence: on-status-transition
+next_review_due: 2027-Q3
+title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (the A2 contract)
+last_modified_commit: d6f1e9a
+review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION Phase B (C3): HALT-1-ratified retargets ROL-1..ROL-4 — VULKAN §5.4 waitIdle-policy correction (the predecessor "only save/shutdown" phrasing was retired by the successor); MOD_OS §9.6 quiescence §-fix + §9.4 chain renaming; §6.1 cite reform; §7.1-1 re-marked RESOLVED (MOD_OS §9.1 adopted this draft''s logical/physical split). G1–G6 re-verified TRUE at 48983c4.'
+last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
 reviewer: Crystalka
-special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A2 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.'
 ---
 
 # Resource Ownership and Lifetime (A2)
 
-> **Status: authored proposal (normative target) — NOT current truth.** This document was produced by the architecture decomposition session of 2026-07-15 (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md), HEAD `6f39903`). It is the missing "A2" contract: no document in the corpus today defines an ownership tree, a dispose order, or a rule for a parent dying while a child is live — the vocabulary exists only as ~31 scattered per-domain fragments. Sections marked **(current truth)** describe verified code state; everything else is a normative target requiring ratification per [FRAMEWORK](../governance/FRAMEWORK.md) §7 (amendment milestone protocol, §7.2: deliberation milestone → amendment plan → execution → CAPA entry → audit-trail event). Ratification path: the ownership tree (§1) plus the dispose and destruction laws (§4, §6) become a new LOCKED document; the per-resource rows of §2 fold into [ECS](./ECS.md), [FIELDS](./FIELDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) and [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) as amendments to those documents. Until ratified, any conflict between this text and a Tier 1 LOCKED document resolves in favor of the LOCKED document (conflicts are inventoried, not silently resolved — see §7).
+> **Status: RATIFIED-IN-FORCE as a forward contract (EVT-2026-07-17-DRAFTS_RATIFICATION).** The A2 ownership/lifetime/dispose contract, produced by the architecture decomposition session of 2026-07-15 (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Authored against HEAD `6f39903`; code-truth (the ownership tree's current-truth sections, the G1–G6 shutdown gaps) re-verified TRUE at HEAD `48983c4`, 2026-07-17. Sections marked **(current truth)** describe verified code state; the normative-target sections are now ratified law with their implementation recorded as forward work. **Forward amendment queue** (folds recorded in docs/ROADMAP.md, not yet executed): ownership tree §1 + dispose/destruction laws §4/§6 → a new LOCKED shutdown-law doc (or MOD_OS §10-family); §2 per-resource rows → [ECS](./ECS.md), [FIELDS](./FIELDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md), [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) as additive amendments. **Conflict carve-out:** §7.1-1 is RESOLVED in the LOCKED successor (which adopts this contract's logical/physical split). §7.1 conflicts 2–5 remain open — until their amendments land, the named LOCKED texts govern (К-L18 mod-only scope; `bus_native.h` test-only `df_bus_clear`; KERNEL Part 7 `void df_world_destroy`; ECS/FIELDS lease-destruction silence). Conflicts are inventoried, never silently resolved — see §7.
 
 Scope: every resource whose lifetime exceeds one function call — native world storage, spans and batches, fields, ALCs, subscriptions, GCHandles, GPU handles, queues. Fragments that already legislate locally, and which this contract composes rather than replaces:
 
@@ -230,7 +230,7 @@ This requires one small ABI addition — a status-returning destroy (`df_world_d
 
 ## §7 Open questions and conflicts with LOCKED texts
 
-### §7.1 Conflicts (LOCKED prevails until ratified)
+### §7.1 Conflicts (the named LOCKED texts prevail until the forward amendments land)
 
 1. **MOD_OS §9.1 vs §9.5.1 — RESOLVED.** MOD_OS_ARCHITECTURE §9.1 already resolves the predecessor's §9.1-vs-§9.5.1 contradiction (adopting this draft's logical/physical split); the fold of §5 no longer needs to resolve it — cite MOD_OS §9.1 as the resolved home (session finding C7, closed).
 2. **K-L18 scope.** K-L18 defines quiescence for *mod lifecycle* operations only. §4 generalizes quiesce points to process shutdown — that needs a K-L18 amendment or a new К-L invariant; until then §4 is proposal-only.
@@ -251,7 +251,7 @@ This requires one small ABI addition — a status-returning destroy (`df_world_d
 
 ### §7.3 Relationship to the sibling contracts
 
-Drafted in the same session; boundaries as follows.
+Drafted in the same 2026-07-15 session; five siblings ratified LOCKED at DRAFTS_RATIFICATION (2026-07-17), A7 held AUTHORED. Boundaries as follows.
 
 - **A1 — [Concurrency and Memory Model](./CONCURRENCY_AND_MEMORY_MODEL.md).** Owns threads and happens-before. A2's quiesce points Q1/Q2 are lifetime *states*; A1 owns the memory-ordering proof that they are actually reached (e.g. what `Join` publishes). The S2 abandoned-thread gap appears in both by design — thread lifetime is the one resource jointly owned.
 - **A0 — [Execution Authority Matrix](./EXECUTION_AUTHORITY_MATRIX.md).** Owns *who decides*; A2 owns *who frees*. The R5/R6 dual-scheduler rows stay lifetime-only here; cutover and deletion triggers are A0's.
@@ -262,4 +262,4 @@ Drafted in the same session; boundaries as follows.
 
 ---
 
-*Drafted 2026-07-15 against HEAD `6f39903`. Companion drafts from the same session cover the remaining decomposition contracts (A0–A8); see the session report for the full matrix.*
+*Drafted 2026-07-15 against HEAD `6f39903`; ratified LOCKED at DRAFTS_RATIFICATION (2026-07-17), code-truth re-verified at `48983c4`. Companion contracts from the same session cover the remaining decomposition areas (A0–A8; A7 held AUTHORED); see the session report for the full matrix.*

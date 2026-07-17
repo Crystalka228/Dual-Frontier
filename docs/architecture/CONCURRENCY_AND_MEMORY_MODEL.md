@@ -3,33 +3,35 @@ register_id: DOC-A-CONCURRENCY_AND_MEMORY_MODEL
 project: Dual Frontier
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: 0.1.4
+version: 1.0.0
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
-next_review_due: post-ratification closure
-title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (A1 draft)
-last_modified_commit: 6888246
-review_cadence: on-status-transition
+next_review_due: 2027-Q3
+title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
+last_modified_commit: d6f1e9a
+review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION Phase B (C3): HALT-1-ratified retargets CMM-1..CMM-5 — R4-8 snapshot-rule re-homed to THREADING §7; R4-9 analyzer truth corrected (17 detecting rules, not stubs — the wave''s one honesty slip); R4-12 version/change-history reconciled per OD-3 (rows 0.1.1–0.1.3 backfilled, this edit = 0.1.4); §9.1/§9.3 conflicts re-marked RESOLVED; §6.1 cite reform + historical/ KFNS prefixes.'
+last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; the R4-9 analyzer honesty slip corrected — 17 detecting rules, not stubs) + HALT-1-ratified retargets CMM-1..CMM-5 at d6f1e9a (incl. the OD-3 version reconciliation 0.1.1–0.1.4); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (§3/§4 → THREADING MAJOR; §2/§6 → VULKAN MINOR; deferred-catch fix; shutdown quiesce fence; TLA+ Item 18) recorded in ROADMAP.'
 reviewer: Crystalka
-special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A1 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.'
 ---
 
 # Concurrency and Memory Model (the A1 contract)
 
-> **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** Produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Becomes normative only upon Crystalka ratification per FRAMEWORK.md §7. Until then no document may cite it as authority; conflicts resolve in favor of existing LOCKED docs.
+> **Document class: RATIFIED-IN-FORCE forward contract (EVT-2026-07-17-DRAFTS_RATIFICATION).** The A1 concurrency/memory model, produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Authored against HEAD `6f39903`; code-truth re-verified at HEAD `48983c4`, 2026-07-17 (src/native unchanged). If an edge is not in the §4 catalog, cross-thread visibility is not guaranteed — that rule is now law. Where a specific point still conflicts with a LOCKED doc, the carve-out below governs.
 
-**Ratification path** (per FRAMEWORK.md §7.2 Tier 1 amendment protocol; each destination bumps per its own amendment protocol):
+**Forward amendment queue** (recorded in docs/ROADMAP.md; folds NOT executed by this cascade):
 
-| This document's section | Folds into, on ratification |
+| Section | Deferred destination |
 |---|---|
-| §3 Resource × operation matrix, §4 Happens-before catalog | [THREADING.md](./THREADING.md) — the concurrency authority gains its missing formal core (MAJOR: the model becomes law, not description) |
-| §2 Vulkan external-synchronization rows, §6 fence/teardown steps | [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) — queue thread-affinity and shutdown-fence law join the substrate spec (MINOR: additive) |
-| §1 census, §2 owner table (non-Vulkan), §5 lock order, §6-§9 | Remain standalone here; this document then transitions authored-proposal → AUTHORED → LOCKED |
+| §3 Resource × operation matrix, §4 Happens-before catalog | [THREADING.md](./THREADING.md) — the concurrency authority gains its missing formal core (MAJOR) — note §4 edge 4 is re-homed to THREADING §7, already the rule's normative owner |
+| §2 Vulkan external-synchronization rows, §6 fence/teardown steps | [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) — queue thread-affinity and shutdown-fence law (MINOR: additive) |
+| §1 census, §2 owner table (non-Vulkan), §5 lock order, §6-§9 | Remain standalone here |
+
+**Conflict carve-out (re-verified at ratification):** §9.1 (KERNEL §1.4) and §9.3 (FIELDS "non-blocking") are RESOLVED — the LOCKED successors already retired/corrected those texts. §9.4's dangling snapshot anchor is re-homed to THREADING §7 (mechanism still unbuilt). Genuinely open — the named LOCKED texts govern until amended: §9.2 dual-executor (К-L12 cutover), §9.6 bounded-queue ownership, §9.7 C-ABI per-entry thread affinity (A6), §9.8 production native teardown (a build item).
 
 Why A1 exists: the corpus has **no** formal concurrency/memory model — zero corpus-wide hits for happens-before / memory model / lock order / data race vocabulary at HEAD `6f39903`. What exists is fragments: the implicit phase barrier and the N−2 rule (THREADING §3 (phase barrier)), the native fixed mutex order (EVENT_BUS §3 (К-L15.1 lock order)), the span mutation-rejection counters (KERNEL_ARCHITECTURE §1.7; FIELDS §5 (span-lifetime law)), the declaration-based no-concurrent-writes rule (K-L11), and a pending TLA+ item (historical/KERNEL_FULL_NATIVE_SCHEDULER.md Item 18). This document composes those fragments into one model and names every edge the fragments leave implicit. Invariant wording for K-L7/K-L7.1, K-L11, K-L12, K-L15/K-L15.1, K-L16, K-L18 remains owned by [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0.
 
@@ -265,7 +267,7 @@ Priority on ratification: (1) the deferred-catch asymmetry fix + its regression 
 - [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) — Part 0 invariants, §1.4 threading model, §1.7 span protocol, Part 7 error semantics.
 - [KERNEL_FULL_NATIVE_SCHEDULER](./historical/KERNEL_FULL_NATIVE_SCHEDULER.md) — Items 15 (batched callback ABI), 18 (TLA+), 32 (T0-T7 teardown).
 - [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) — render-thread merge, fence sync, `waitIdle` policy (§2/§6 fold target).
-- [FIELDS](./FIELDS.md) · [FEEDBACK_LOOPS](../mechanics/FEEDBACK_LOOPS.md) · [ISOLATION](./historical/ISOLATION.md) · [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.4 · [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) (the A0 sibling contract).
+- [FIELDS](./FIELDS.md) · [FEEDBACK_LOOPS](../mechanics/FEEDBACK_LOOPS.md) · [ISOLATION](./historical/ISOLATION.md) · [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §9.4 · [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) (the A0 contract).
 
 ## Change history
 
