@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -18,7 +18,7 @@ supersedes:
 last_modified_commit: 4a36abe
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: "CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (141 anchors — the wave's largest) + HALT-1-ratified corrections R2-4..R2-8 at 4a36abe (EffectiveApiVersion mechanism truth; phantom loader warning retired; Path β reclamation honesty); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION); EVT-54 rider executed at 717641b (METHODOLOGY/MAX_ENG ISOLATION links retargeted forward)."
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 ---
@@ -27,14 +27,13 @@ special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CO
 
 The mod platform of Dual Frontier — topology, manifest, capabilities, `IModApi`, contracts, versioning, the integration pipeline, the lifecycle (one apply transaction, one unload chain, one fault path), the isolation model, and the threat model, stated once and verified against code.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS, now SUPERSEDED), `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE, now SUPERSEDED), and `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION, now SUPERSEDED) — the three documents are **merged** here because they described one subsystem in three voices and had drifted into mutual contradiction (unload step order, fault-unload timing, enum size, capability grammar; session report §3 C7/C8, §6.1 N-8/N-9/N-11). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessors remain the last-ratified reference and prevail on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated (all three predecessors) · [ ] D-1…D-7 lock texts re-verified against §§3–9 · [ ] §9 commit/reclaim framing cross-checked against the ENGINE_LIFECYCLE_AND_TRANSACTIONS ratification outcome.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS, now SUPERSEDED), `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE, now SUPERSEDED), and `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION, now SUPERSEDED) — the three documents are **merged** here because they described one subsystem in three voices and had drifted into mutual contradiction (unload step order, fault-unload timing, enum size, capability grammar; session report §3 C7/C8, §6.1 N-8/N-9/N-11). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 **Resolution law used throughout.** Where the three predecessors disagreed, the code is the truth. Every resolved conflict in this document names the winning behavior with a `file:line` anchor and retires the losing wording; the retirement is recorded in one line at the point of resolution, not in a chronicle.
 
 | | |
 |---|---|
-| **Role** | normative-current-candidate |
+| **Role** | normative (ratified successor) |
 | **Successor of** | `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS) · `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE) · `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION) |
 | **Scope** | Structural relationship kernel ↔ mod; manifest schema and parser behavior; capability declaration/grammar/enforcement; `IModApi` surface and semantics; type sharing across `AssemblyLoadContext` boundaries; inter-mod contracts; bridge replacement; three-axis versioning; the integration pipeline (`Apply`), the unload chain, the fault path; system isolation enforcement; the threat model; the `ValidationErrorKind` registry. |
 | **Non-goals** | Gameplay content and balance (mod authors' domain); per-system performance budgets ([PERFORMANCE.md](./PERFORMANCE.md)); bus dispatch semantics ([EVENT_BUS.md](./EVENT_BUS.md)); author-facing tutorials and the Mod SDK reference-set statement ([MODDING.md](./MODDING.md)); migration/milestone state ([docs/ROADMAP.md](../ROADMAP.md)); persistence of mod data (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). |

@@ -10,43 +10,43 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-ARCHITECTURE_V2
   path: docs/architecture/ARCHITECTURE.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-CONTRACTS_V2
   path: docs/architecture/CONTRACTS.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-ECS_V2
   path: docs/architecture/ECS.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-EVENT_BUS_V2
   path: docs/architecture/EVENT_BUS.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-FHE_INTEGRATION_CONTRACT_V2
   path: docs/architecture/FHE_INTEGRATION_CONTRACT.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-FIELDS_V2
   path: docs/architecture/FIELDS.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-FRAMEWORK
   path: docs/governance/FRAMEWORK.md
   category: A
@@ -58,7 +58,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-K_EXTENSIONS_LEDGER
   path: docs/architecture/K_EXTENSIONS_LEDGER.md
   category: A
@@ -76,19 +76,19 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-MOD_OS_ARCHITECTURE
   path: docs/architecture/MOD_OS_ARCHITECTURE.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-PERFORMANCE_V2
   path: docs/architecture/PERFORMANCE.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-PHASE_A_PRIME_SEQUENCING
   path: docs/architecture/PHASE_A_PRIME_SEQUENCING.md
   category: A
@@ -106,7 +106,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-SYNTHESIS_RATIONALE
   path: docs/governance/SYNTHESIS_RATIONALE.md
   category: A
@@ -118,13 +118,13 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-VULKAN_SUBSTRATE_V2
   path: docs/architecture/VULKAN_SUBSTRATE.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-B-CODING_STANDARDS
   path: docs/methodology/CODING_STANDARDS.md
   category: B

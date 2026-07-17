@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 6497ed5
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~124 anchors) + HALT-1 decisions — SEED-1/F-9 variant (b) recomposition at d8f1db3 (census-delta 0), Annex A rows A-1..A-4 APPROVED, corrections R1-3..R1-10 at 6497ed5; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 requirements_authored:
 - REQ-K-L1
@@ -47,14 +47,13 @@ special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CO
 
 The native ECS kernel contract: the К-L invariant canon (Part 0) plus the current-truth architecture of storage, identity, boundaries, and the C ABI between the C++20 kernel and the managed layers.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/KERNEL_ARCHITECTURE.md` (DOC-A-KERNEL, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated · [ ] Annex A (было→стало) approved · [ ] REQ-K-L1..K-L19 transferred from DOC-A-KERNEL.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/KERNEL_ARCHITECTURE.md` (DOC-A-KERNEL, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 ## Status
 
 | Field | Value |
 |---|---|
-| Role | normative-current-candidate |
+| Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/KERNEL_ARCHITECTURE.md` (DOC-A-KERNEL, LOCKED v2.6.2, now SUPERSEDED) |
 | Scope | К-L invariant canon (Part 0, sole carrier); two-phase bootstrap; NativeWorld storage + span/batch protocol; type-id registry; dependency rules 1–5; C ABI error conventions; threading summary |
 | Non-goals | Scheduling/bus/mod-lifecycle/Vulkan mechanism detail; roadmap history; per-rule analyzer specs; performance budgets |

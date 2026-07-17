@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 5d71a8e
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (91 anchors) + HALT-1-ratified corrections R3-1..R3-8 at 5d71a8e (anchor precision; test-count wiring truth; layer-token observability wording); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
@@ -25,12 +25,11 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 The architectural authority for Dual Frontier's unified Vulkan 1.3 layer — one `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage serving two use cases (2D rendering and field compute) — covering device and queue policy, swapchain and presentation, compute pipelines, pipeline slots, synchronization, and the GPU-side failure-mode law.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/VULKAN_SUBSTRATE.md` (DOC-A-VULKAN_SUBSTRATE, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/VULKAN_SUBSTRATE.md` (DOC-A-VULKAN_SUBSTRATE, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 | Status field | Value |
 |---|---|
-| **Role** | normative-current-candidate |
+| **Role** | normative (ratified successor) |
 | **Successor of** | `docs/architecture/historical/VULKAN_SUBSTRATE.md` (DOC-A-VULKAN_SUBSTRATE, LOCKED v1.2.0) |
 | **Scope** | The V substrate: Vulkan instance/device/queue policy (К-L19 hardware mandate), Win32 window + input event surface, swapchain + recreation, render pipeline + batched sprite path, compute pipeline plumbing + the V1 diffusion primitive, pipeline slots (К-L16/К-L7.1 GPU side), GPU synchronization and visibility law, mod-facing GPU surface status, GPU failure modes, GPU-side save-boundary behavior. Everything in §§0–7 is current truth unless inside a FENCED block. |
 | **Non-goals** | Field storage layout and span law (FIELDS.md); К-L invariant canon text (KERNEL_ARCHITECTURE.md Part 0); the process-wide threading model (THREADING.md); mod lifecycle, manifests, capabilities (MOD_OS_ARCHITECTURE.md); scheduler phases and dispatch authority (SCHEDULER_ARCHITECTURE.md); game-design content; forward sequencing (docs/ROADMAP.md). |

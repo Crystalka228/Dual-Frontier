@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 1556a18
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (46 anchors, 0 WRONG) + HALT-1-ratified corrections R3-15/16/17 at 1556a18 (§9 lease-model wiring truth over the all-stub registry; quote precision); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 ---
@@ -25,14 +25,13 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 The dual bus architecture: five managed domain buses carrying every production event today, and the sovereign native three-tier kernel bus (К-L15) that exists fully behind a C ABI but carries almost none of that traffic yet.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/EVENT_BUS.md` (DOC-A-EVENT_BUS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated · [ ] the CONCURRENCY/TIME draft sections cited in §5–§7 still stand at ratification.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/EVENT_BUS.md` (DOC-A-EVENT_BUS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 ## Status
 
 | Field | Value |
 |---|---|
-| Role | normative-current-candidate |
+| Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/EVENT_BUS.md` (DOC-A-EVENT_BUS, LOCKED v2.0.0, now SUPERSEDED) |
 | Scope | Managed `DomainEventBus` delivery (sync/`[Deferred]`/`[Immediate]`); the native three-tier bus as implemented; today's managed/native division of labor; fault-isolation and capacity truths as coded; Intent and Lease models; subscription lifecycle. |
 | Non-goals | К-L15/К-L15.1 canonical text (KERNEL_ARCHITECTURE.md Part 0); backpressure/fault-crossing law (CONCURRENCY_AND_MEMORY_MODEL.md, AUTHORED draft); visibility/determinism law (TIME_AND_CONSISTENCY_MODEL.md, AUTHORED draft); scheduler phase mechanics (THREADING.md); background-queue persistence design (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). |

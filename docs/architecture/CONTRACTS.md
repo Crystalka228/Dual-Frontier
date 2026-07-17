@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 8896d32
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (32/32 anchors EXACT) + HALT-1-ratified corrections at 8896d32 — SEED-2 cross-reference row (refusal-list retirement) + R2-2/R2-3; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
 ---
@@ -25,12 +25,11 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 `DualFrontier.Contracts` is the only assembly every layer can see: core, systems, mods, external tools. A contract declares intent with no hint of implementation; it does not change for convenience — add a new type, or cut a new interface version.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/CONTRACTS.md` (DOC-A-CONTRACTS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/CONTRACTS.md` (DOC-A-CONTRACTS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 | Field | Value |
 |---|---|
-| Role | normative-current-candidate |
+| Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/CONTRACTS.md` (DOC-A-CONTRACTS, now SUPERSEDED) |
 | Scope | Contract-surface census: marker interfaces, five-bus canon, mod-to-mod channel, evolution and versioning rules |
 | Non-goals | Bus delivery/phase mechanics (EVENT_BUS.md); mod capability grammar, ALC lifecycle (MOD_OS_ARCHITECTURE.md, MODDING.md); ECS rules (ECS.md); analyzer implementation detail (ANALYZER_RULES.md) |
@@ -149,7 +148,7 @@ The predecessor pointed to a "future A'.9 Roslyn analyzer" verifying that bus pu
 
 ## Amendment protocol
 
-Tier 1, AUTHORED pending ratification. Amendment: surface the change to the owner (Crystalka); semver per FRAMEWORK.md §7.2 (PATCH correction, MINOR additive, MAJOR breaking-surface/evolution-rule change); propagate to citing documents.
+Tier 1, LOCKED — amendments via FRAMEWORK.md §7.2 protocol. Amendment: surface the change to the owner (Crystalka); semver per FRAMEWORK.md §7.2 (PATCH correction, MINOR additive, MAJOR breaking-surface/evolution-rule change); propagate to citing documents.
 
 ## Change history
 
