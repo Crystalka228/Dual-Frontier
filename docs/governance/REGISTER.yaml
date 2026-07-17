@@ -364,7 +364,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -373,7 +373,7 @@ documents:
   last_modified_commit: b4bcfa4
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all 8 cutover gates OPEN as written; §5 enforcement claims real; code anchors EXACT) + HALT-1-ratified retargets EAM-1..EAM-8 at b4bcfa4; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6] of the EVT-R4 checklist widened per ORC-3). Standalone LOCK — §2/§3/§4 folds recorded as forward amendment queue, NOT executed; §4 P1–P3 ADVISORY until the FRAMEWORK §14.7 amendment.'
+  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): R9/R11 rows + reading rule + section-2.2 aligned with the ratified reality - the doc-space owners (ELT+ROL; IAC) are LOCKED law, code-side implementation pending per ROADMAP EQ-a/EQ-b; vacant set narrowed to R12/R13. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A0 cross-cutting contract — sole-authority matrix, cutover gates GATE-S1..S4/GATE-B1..B4, deletion triggers; ratified standalone with the fold path recorded as a forward amendment queue (ARCHITECTURE §2-fold, KERNEL Part 0 §3-annotations, FRAMEWORK §14.7 §4-amendment).
 - register_id: DOC-A-FEEDBACK_LOOPS
@@ -862,7 +862,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -875,7 +875,7 @@ documents:
   last_modified_commit: 4a36abe
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
   reviewer: Crystalka
   special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -1205,7 +1205,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -1216,7 +1216,7 @@ documents:
   last_modified_commit: 5d71a8e
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and the section-6.3 device-lost fence no longer gate on ELT ratification (ratified law, EVT-2026-07-17-DRAFTS_RATIFICATION) - remaining gates are the deferred substrate amendment and the OQ-3 decision. PATCH 1.0.1 to 1.0.2.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 - register_id: DOC-B-CODING_STANDARDS
@@ -15015,7 +15015,7 @@ audit_trail:
   - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT
   - DOC-D-DRAFTS_RATIFICATION_BRIEF
   commits:
-    range: 48983c4..HEAD (closure commit carries this append)
+    range: 48983c4..3e4e53c (inclusive both ends, 11 commits; the closure commit 760684b carries this append)
     key_commits:
     - hash: 48983c4
       summary: H3 exclusion-rider (operator-ruled) - two architect scaffolds excluded exact-file; armed gate restored

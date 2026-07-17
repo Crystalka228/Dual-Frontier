@@ -52,7 +52,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-FHE_INTEGRATION_CONTRACT_V2
   path: docs/architecture/FHE_INTEGRATION_CONTRACT.md
   category: A
@@ -106,7 +106,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-A-PERFORMANCE_V2
   path: docs/architecture/PERFORMANCE.md
   category: A
@@ -160,7 +160,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-B-CODING_STANDARDS
   path: docs/methodology/CODING_STANDARDS.md
   category: B

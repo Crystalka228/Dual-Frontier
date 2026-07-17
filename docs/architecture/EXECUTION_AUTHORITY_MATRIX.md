@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -14,7 +14,7 @@ title: Execution Authority Matrix — sole-authority map, cutover gates, deletio
 last_modified_commit: b4bcfa4
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all 8 cutover gates OPEN as written; §5 enforcement claims real; code anchors EXACT) + HALT-1-ratified retargets EAM-1..EAM-8 at b4bcfa4; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6] of the EVT-R4 checklist widened per ORC-3). Standalone LOCK — §2/§3/§4 folds recorded as forward amendment queue, NOT executed; §4 P1–P3 ADVISORY until the FRAMEWORK §14.7 amendment.'
+last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): R9/R11 rows + reading rule + section-2.2 aligned with the ratified reality - the doc-space owners (ELT+ROL; IAC) are LOCKED law, code-side implementation pending per ROADMAP EQ-a/EQ-b; vacant set narrowed to R12/R13. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A0 cross-cutting contract — sole-authority matrix, cutover gates GATE-S1..S4/GATE-B1..B4, deletion triggers; ratified standalone with the fold path recorded as a forward amendment queue (ARCHITECTURE §2-fold, KERNEL Part 0 §3-annotations, FRAMEWORK §14.7 §4-amendment).'
 ---
@@ -83,13 +83,13 @@ Column semantics: **Sole authority (target)** is the ratification-target owner. 
 | R6 | Event delivery invocation (when handlers actually run) | Per K-L15: publisher-thread sync (Fast), phase-boundary batched callbacks (Normal), idle-slot budget drain (Background) | `DomainEventBus.Publish` sync + `IDeferredFlush.FlushDeferred` after each phase barrier (EVENT_BUS.md §2 (deferred delivery; captured-context)); the single live native invocation is `GameLoop`'s Background drain each tick (`GameLoop.cs:127`) | `GameServices` aggregator (`IDeferredFlush`) | Two flush drivers for the same queue class; a facade that re-times delivery |
 | R7 | Vulkan resources, queues, swapchain | `DualFrontier.Runtime` composition — `Runtime.Create` owns `VulkanInstance`/`VulkanDevice`/`Surface`/`Swapchain` (`src/DualFrontier.Runtime/Runtime.cs:63-89`), K-L19 fail-fast at `Runtime.cs:83` | **Same** — Runtime, per VULKAN_SUBSTRATE.md §2 | `LauncherRenderer` (Launcher); `df_vulkan_unload_mod_resources` K-L18 Step 3.6 placeholder (vacuous success today) | The C++ kernel DLL — `DualFrontier.Core.Native` owns zero GPU objects |
 | R8 | Window & input pump | Launcher main thread — `runtime.Window.PumpMessages()` (`src/DualFrontier.Launcher/Program.cs:77`) | **Same**, with an honesty note: input is drained-and-discarded (`Program.cs:81-84`) | `InputQueue` (Runtime) | A second message pump anywhere; the simulation thread touching the window |
-| R9 | Engine lifecycle & composition | Proposed: the Application composition root (`GameBootstrap.CreateLoop`, `GameBootstrap.cs:70`) plus a to-be-named shutdown owner | De-facto `Program.Main` + `GameBootstrap.CreateLoop`; **no ratified (LOCKED) owner** — the lifecycle/shutdown law is drafted in ENGINE_LIFECYCLE_AND_TRANSACTIONS.md + RESOURCE_OWNERSHIP_AND_LIFETIME.md (ratified this cascade) | `GameContext` (carries loop + mod controller out of the factory) | A second composition root; subsystems self-composing at static-init time |
+| R9 | Engine lifecycle & composition | Proposed: the Application composition root (`GameBootstrap.CreateLoop`, `GameBootstrap.cs:70`) plus a to-be-named shutdown owner | De-facto `Program.Main` + `GameBootstrap.CreateLoop`; **doc-space owner is LOCKED law** — ENGINE_LIFECYCLE_AND_TRANSACTIONS.md + RESOURCE_OWNERSHIP_AND_LIFETIME.md (ratified 2026-07-17); the CODE owner (`EngineSession` + the shutdown transaction) is unbuilt — ROADMAP EQ-a | `GameContext` (carries loop + mod controller out of the factory) | A second composition root; subsystems self-composing at static-init time |
 | R10 | Simulation time & tick | `GameLoop` fixed-step, `TargetTps = 30f` (`GameLoop.cs:29`) + `TickScheduler` monotonic counter | **Same** — managed; the native side holds no tick counter authority | Render loop reads via `PresentationBridge`; K-L16 slot tail defines the *display's view* of time, not its owner | The render loop ticking the sim (`Program.cs` step-3 comment already forbids); any second tick counter |
-| R11 | Identity registries (entity / component-type / event-type / field / mod ids) | One umbrella identity contract — drafted in IDENTITY_AND_ABI_CONTRACT.md (ratified this cascade); no LOCKED owner until its amendments land | Fragmented across five minting rules (see note below); no umbrella owner | n/a | A second mint for any of the five id spaces |
+| R11 | Identity registries (entity / component-type / event-type / field / mod ids) | IDENTITY_AND_ABI_CONTRACT.md — the **LOCKED umbrella authority** (ratified 2026-07-17, citable as law) | Fragmented across five minting rules (see note below) — the mint implementations converge on the umbrella as its §1/§2 amendments land (ROADMAP EQ-b) | n/a | A second mint for any of the five id spaces |
 | R12 | Persistence snapshot (what is saved, when, by whom) | **Contract skeleton at PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED, held).** An implementation owner must still be named before any save cascade | Nobody (see note below) | Snapshot records exist unused (`src/DualFrontier.Persistence/Snapshots/`) | Everything, until an owner is named — two snapshot formats emerging independently is the failure this row exists to forbid |
 | R13 | Configuration constants | **TBD — ownerless today**; every tunable is hardcoded | Scattered consts (see note below) | None | Per-subsystem config files introduced piecemeal without a named owner |
 
-Reading rule: a row where target = de-facto and an owner is named is **settled** (R1, R4, R7, R8, R10). A row where they differ is **split** and demands §3 (R2, R3, R5, R6). A row marked TBD/ownerless is **vacant** and demands an ownership decision before any feature lands in it (R9, R11, R12, R13).
+Reading rule: a row where target = de-facto and an owner is named is **settled** (R1, R4, R7, R8, R10). A row where they differ is **split** and demands §3 (R2, R3, R5, R6). R9 and R11 are **doc-owned, implementation pending** — the authority documents are LOCKED (this ratification) while the code-side owners remain unbuilt (ROADMAP EQ-a/EQ-b). A row marked TBD/ownerless is **vacant** and demands an ownership decision before any feature lands in it (R12, R13).
 
 ### 2.1 Row notes (the honest fine print)
 
@@ -107,7 +107,7 @@ Scope boundaries, to prevent this document being over-read:
 
 - It does not choose *implementations* — R2's authority column says the native `SystemGraph` decides, not how Kahn's sort is coded. Implementation truth stays with the subsystem docs (THREADING, EVENT_BUS, VULKAN_SUBSTRATE).
 - It does not schedule the cutovers — §3 defines *what must be true*, never *when*. Sequencing is ROADMAP territory ("Architecture documents answer 'what is'; the roadmap alone answers 'what's next'", ARCHITECTURE.md §6 (where the truth lives)).
-- It does not resolve the vacant rows — R9/R11/R12/R13 record that a decision is missing; making it is a deliberation, not an edit to this file.
+- It does not resolve the vacant rows — R12/R13 record that a decision is missing (making it is a deliberation, not an edit to this file); R9/R11 carry ratified doc-owners whose code-side implementation is ROADMAP work, not a missing decision.
 - It does not govern gameplay-protocol documents (COMBO_RESOLUTION, RESOURCE_MODELS, FEEDBACK_LOOPS) except where they touch a row's domain (e.g. deterministic ordering claims eventually collide with R2/R10).
 
 ## 3. Cutover contract for the split rows

@@ -6020,7 +6020,7 @@ audit_trail:
   - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT
   - DOC-D-DRAFTS_RATIFICATION_BRIEF
   commits:
-    range: 48983c4..HEAD (closure commit carries this append)
+    range: 48983c4..3e4e53c (inclusive both ends, 11 commits; the closure commit 760684b carries this append)
     key_commits:
     - hash: 48983c4
       summary: H3 exclusion-rider (operator-ruled) - two architect scaffolds excluded exact-file; armed gate restored

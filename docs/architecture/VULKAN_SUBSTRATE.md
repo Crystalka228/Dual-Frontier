@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 5d71a8e
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and the section-6.3 device-lost fence no longer gate on ELT ratification (ratified law, EVT-2026-07-17-DRAFTS_RATIFICATION) - remaining gates are the deferred substrate amendment and the OQ-3 decision. PATCH 1.0.1 to 1.0.2.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
@@ -312,7 +312,7 @@ while (runtime.InputQueue.TryDequeue(out IInputEvent? _))
 
 **Honest limitation.** Swapchain recreation is shipped **without a transactional protocol**: the shipped stage order is quiesce → *reclaim → prepare* → implicit commit — `RecreateFramebuffersForSwapchain` disposes every old framebuffer and clears the list *before* constructing the new ones (`Runtime.cs:195-205`), so a constructor failure mid-rebuild leaves the runtime with zero framebuffers and no rollback. This document records the mechanism as current truth and does not claim transaction safety for it.
 
-> **FENCED (target / planned — not current truth):** A prepare-before-reclaim recreation transaction (build new swapchain/views/framebuffers alongside via Vulkan's `oldSwapchain`, fence-quiesce, commit by single-assignment swap, then best-effort reclaim of the old set) is specified in [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §2.5, using that draft's seven-stage lifecycle vocabulary. Adopting it is a ratification decision of that draft, then a substrate amendment here.
+> **FENCED (target / planned — not current truth):** A prepare-before-reclaim recreation transaction (build new swapchain/views/framebuffers alongside via Vulkan's `oldSwapchain`, fence-quiesce, commit by single-assignment swap, then best-effort reclaim of the old set) is specified in [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §2.5, using its seven-stage lifecycle vocabulary — ratified law as of EVT-2026-07-17-DRAFTS_RATIFICATION. Adopting it here is the deferred substrate amendment (ROADMAP forward queue).
 
 ### 2.4 Threading model
 
@@ -626,7 +626,7 @@ Not all hardware supports Vulkan 1.3 compute reliably, and pure software environ
 
 ### 6.3 Device-lost — unhandled, open
 
-> **FENCED (open question — no current-truth handling exists):** **`VK_ERROR_DEVICE_LOST` is unspecified and unhandled.** The result code is defined (`src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`) and there are **zero handlers repo-wide** — no code path, in substrate or Launcher, tests for or reacts to device loss; a lost device today surfaces as whatever `InvalidOperationException` the first failing wrapper throws, with undefined subsequent behavior. **Proposed v1 resolution (not ratified):** fail-fast with a user-facing diagnostic, consistent with the К-L19 startup posture — crash cleanly rather than render garbage — with device re-creation deferred as a separate epic. The fault-taxonomy row and the open question are owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §4 (class 6) and §6 (OQ-3); ratifying that draft, then amending this section to the ratified behavior, closes the gap. Until then this substrate makes **no** claim about post-device-lost behavior.
+> **FENCED (open question — no current-truth handling exists):** **`VK_ERROR_DEVICE_LOST` is unspecified and unhandled.** The result code is defined (`src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`) and there are **zero handlers repo-wide** — no code path, in substrate or Launcher, tests for or reacts to device loss; a lost device today surfaces as whatever `InvalidOperationException` the first failing wrapper throws, with undefined subsequent behavior. **Proposed v1 resolution (not ratified):** fail-fast with a user-facing diagnostic, consistent with the К-L19 startup posture — crash cleanly rather than render garbage — with device re-creation deferred as a separate epic. The fault-taxonomy row and the open question are owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §4 (class 6) and §6 (OQ-3) — ratified law as of EVT-2026-07-17-DRAFTS_RATIFICATION, with OQ-3 (fail-fast v1 vs device re-creation) still an open decision; deciding OQ-3, then amending this section to the decided behavior, closes the gap. Until then this substrate makes **no** claim about post-device-lost behavior.
 
 ### 6.4 Verification law and live risks
 

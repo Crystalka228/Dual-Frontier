@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -18,7 +18,7 @@ supersedes:
 last_modified_commit: 4a36abe
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 ---
@@ -518,7 +518,7 @@ The predecessor stated both "transitions between states are atomic; failure mid-
 
 **States as coded — say it plainly:** there is no mod-state enum and no `Degraded` state anywhere on disk. Current state is carried by booleans and set membership: the pipeline's `_activeMods`/`_activeShared` lists, the `_isRunning` flag (`ModIntegrationPipeline.cs:113`), the loader's `_loaded` map, the menu's per-row flags `IsCurrentlyActive`/`IsPendingActive`/`CanToggle` (`EditableModInfo.cs:31-36`), and the fault handler's queued set. The predecessor's six-state diagram (Disabled → Pending → Loaded → Active → Stopping → Disabled) survives only as a *reading* of those booleans along the happy path; it is not code, and the fault path (§9.5) and the leaked-reclamation terminal were never representable in it. Separated desired-state/reclamation-state variables are the draft's proposal, not current truth.
 
-> **FENCED (target / planned — not current truth):** ENGINE_LIFECYCLE_AND_TRANSACTIONS.md §3 proposes named state machines (`DesiredState` incl. `LogicallyDisabled(faulted)`; `ReclamationState` incl. `Reclaiming/Reclaimed/ReclaimFailed(leaked)`) and a recover stage (bounded pump retry, Degraded reason). None of that exists in code; adopting it is that draft's ratification question, not this document's.
+> **FENCED (target / planned — not current truth):** ENGINE_LIFECYCLE_AND_TRANSACTIONS.md §3 proposes named state machines (`DesiredState` incl. `LogicallyDisabled(faulted)`; `ReclamationState` incl. `Reclaiming/Reclaimed/ReclaimFailed(leaked)`) and a recover stage (bounded pump retry, Degraded reason). None of that exists in code; the contract is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION) — adopting the machines here is its deferred §9.1 amendment (ROADMAP forward queue), not this document's current truth.
 
 ### §9.2 Hot reload through the menu ✓ LOCKED
 
