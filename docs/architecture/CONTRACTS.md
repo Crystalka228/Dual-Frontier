@@ -113,10 +113,10 @@ Two declaration paths, both wired into production (not test-only):
 
 Both run inside `ContractValidator.ValidateContractsVersions` (`ContractValidator.cs:124-178`), invoked from `ModIntegrationPipeline`'s production `Apply` (`:371`) — real, wired Phase-A enforcement, unit-tested (`ContractValidatorTests.cs`), though nothing in-repo re-runs those tests on every change (there is no CI).
 
-State the direction precisely: **not** "refuses newer major only." Both paths require the running build's major to **exactly equal** the mod's required major — a mismatch either direction is refused. Within a matching major it is a genuine floor: required minor.patch must be ≤ the running build's, with no way to express a ceiling short of the next major.
+State the direction precisely: **not** "refuses newer major only." Both paths require the running build's major to **exactly equal** the mod's required major — a mismatch either direction is refused. Within a matching major it is a genuine floor: required minor.patch must be ≤ the running build's, with no way to express a ceiling short of the next major — except the v2 exact form (`apiVersion` without `^`), which pins the version outright.
 
 ```json
-{ "id": "com.example.voidmagic", "requiresContractsVersion": "^1.0.0" }
+{ "manifestVersion": "3", "id": "com.example.voidmagic", "apiVersion": "^1.0.0" }
 ```
 
 ## §6 Enforcement reality
@@ -129,7 +129,7 @@ The predecessor pointed to a "future A'.9 Roslyn analyzer" verifying that bus pu
 |---|---|---|
 | EVENT_BUS.md | defers-to | delivery/phase semantics |
 | MOD_OS_ARCHITECTURE.md | defers-to | capability grammar, ALC, manifest schema |
-| MODDING.md | cites | author guide, ALC refusal list |
+| MODDING.md | cites | ALC resolution truth (no refusal list) + author guide |
 | ECS.md | defers-to | component storage/access rules |
 | ANALYZER_RULES.md | cites | shipped enforcement (17 rules, A'.9.1) |
 | KERNEL_ARCHITECTURE.md | cites | К-L3/К-L4 storage-path + type-id law, К-L9 |
@@ -144,5 +144,6 @@ Tier 1, AUTHORED pending ratification. Amendment: surface the change to the owne
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R2-1/R2-2/R2-3): SEED-2 cross-reference row reworded to the refusal-list-retirement truth ("ALC resolution truth (no refusal list) + author guide", matching ARCHITECTURE.md's row); §5 floor claim gains the v2 exact-pin exception; §5 JSON illustration upgraded to a valid v3 manifest fragment (`manifestVersion` + `apiVersion`). |
 | **0.1.0** (AUTHORED, pending ratification) | 2026-07-15 | Reclassified `IGameServices`-property and record-field evolution as breaking/caveated (§4); stated the version gate's true exact-major-both-directions behavior, fixed the stale JSON key (§5); replaced the stale "future A'.9 analyzer" pointer with verified enforcement reality (§6); real `HealthComponent` struct example (§1). |
 | 1.1 | 2026-05-12 | Predecessor's last LOCKED version. See `historical/CONTRACTS.md`. |
