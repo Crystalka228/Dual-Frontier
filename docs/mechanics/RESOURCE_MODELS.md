@@ -74,7 +74,7 @@ The lifecycle and events are [EVENT_BUS.md](../architecture/EVENT_BUS.md)'s "Lea
 |---------------------------------------|------------------|--------------------------------------------------|
 | Shot, single bullet                   | Intent           | `AmmoIntent` → `AmmoGranted`                     |
 | Instant spell, fixed mana             | Intent           | `ManaIntent` → `ManaGranted`                     |
-| Target request for a job              | Intent           | `TargetIntent` → `TargetGranted`                 |
+| Target request for a job              | Intent           | `TargetIntent` → `TargetGranted` (design-only; see banner) |
 | Spell channel, mana drain per tick    | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
 | Shield maintenance                    | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
 | Active ritual                         | Lease            | `ManaLeaseOpenRequest` → `ManaLeaseOpened`       |
@@ -119,4 +119,5 @@ While Draft, revise freely as the resource-economy design evolves (FRAMEWORK §3
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review correction (CORPUS_CLOSURE_INVERSION_B, D1 R4-5): §2 choice-table Target-request cell gains the design-only marker matching the §1 bullet's flag (a table-only reader no longer misses it). |
 | 0.1.0 | 2026-07-15 | Reclassified from Category A (`DOC-A-RESOURCE_MODELS`, now historical) to Category J per FRAMEWORK §3.1; **added the implementation-status banner the predecessor lacked** (session finding N-7), with a per-claim verified status for the Intent and Lease surfaces; engine-law statements (bus mechanics) removed and rerouted to EVENT_BUS.md. |
