@@ -26,7 +26,7 @@ The ratified, currently-dormant contract governing how fully homomorphic encrypt
 | Scope | The boundary between the deterministic simulation core and any future FHE-based multiplayer compute layer: what crosses it, in what form, under what failure discipline. |
 | Non-goals | Save-file encryption (Persistence), transport encryption (TLS), mod signing (MOD_OS_ARCHITECTURE.md capability system). Not a schedule — activation timing is [ROADMAP](../ROADMAP.md)'s domain, gated on §D1. |
 | Authority domains | FHE integration decisions D1–D8: activation gate, determinism class, boundary placement, operation-set floor, failure mode, mod-capability interaction, versioning, export-control posture. |
-| Defers to | MOD_OS_ARCHITECTURE.md — capability model (§D6), SemVer model (§D7), structural-boundary discipline §D3/§D5 mirror. [METHODOLOGY](../methodology/METHODOLOGY.md) — determinism invariant (§D2), ratification process. |
+| Defers to | MOD_OS_ARCHITECTURE.md — capability model (§D6), SemVer model (§D7), structural-boundary discipline §D3/§D5 mirror. [METHODOLOGY](../methodology/METHODOLOGY.md) — ratification process. Determinism commitment: this contract's own §1 scope (§D2); class vocabulary: TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft). |
 
 > **Ratified and dormant.** Binding law today; activation is gated on §D1, which depends on external industry conditions Dual Frontier does not control — not on anything this project schedules. Current runtime footprint, verified this pass at HEAD `35364c2`: `DualFrontier.Crypto.Future` (`src/DualFrontier.Crypto.Future/IHomomorphicComputeProvider.cs`) contains exactly two reserved interfaces, `IHomomorphicComputeProvider` and `IFheBoundaryParticipant`, both empty, **zero consumers** anywhere in the solution — no `ProjectReference` to `DualFrontier.Crypto.Future.csproj` exists outside its own project file. Dormant is not a defect; it is this contract doing exactly what it was ratified to do.
 
@@ -60,7 +60,7 @@ Until all three hold, the contract remains active but dormant — the specified 
 
 The FHE layer MUST preserve simulation determinism. Where homomorphic operations introduce floating-point ambiguity — notably CKKS-family schemes — the integration MUST use exact-arithmetic schemes (BGV, BFV, or successor) for any operation participating in the deterministic core. Approximate schemes are permissible only for operations explicitly marked non-deterministic in the simulation contract; at v1.0 ratification, no such operations exist.
 
-Determinism is non-negotiable per [METHODOLOGY](../methodology/METHODOLOGY.md) §7.1. CKKS approximation compounds over simulation ticks; over a long session two clients on identical input would diverge indistinguishably from a desync bug. The contract treats this as disqualifying.
+Determinism is non-negotiable per this contract's own §1 scope commitment ("determinism MUST be preserved"); determinism-class vocabulary: TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft). CKKS approximation compounds over simulation ticks; over a long session two clients on identical input would diverge indistinguishably from a desync bug. The contract treats this as disqualifying.
 
 ### D3. Boundary placement (structural, not optional)
 
@@ -102,7 +102,7 @@ Some jurisdictions classify FHE as dual-use cryptography. The shipped product MU
 
 ## 3. Interface specification
 
-The reserved interfaces live in `DualFrontier.Crypto.Future` (verified against `src/DualFrontier.Crypto.Future/IHomomorphicComputeProvider.cs` at HEAD `35364c2`, reproduced exactly):
+The reserved interfaces live in `DualFrontier.Crypto.Future` (verified against `src/DualFrontier.Crypto.Future/IHomomorphicComputeProvider.cs` at HEAD `35364c2` — interface names and empty bodies reproduced exactly; doc comments abridged in this excerpt, and the file uses a file-scoped namespace):
 
 ```csharp
 namespace DualFrontier.Crypto.Future
@@ -135,7 +135,7 @@ namespace DualFrontier.Crypto.Future
 | ID | Decision | Rationale |
 |---|---|---|
 | D1 | Three-condition activation gate | Single-condition gates have historically produced premature integration of immature primitives; three independent conditions are structural protection against wishful activation. |
-| D2 | Exact-arithmetic schemes only for the deterministic core | CKKS-family approximation compounds non-determinism over ticks. Non-negotiable per METHODOLOGY §7.1. |
+| D2 | Exact-arithmetic schemes only for the deterministic core | CKKS-family approximation compounds non-determinism over ticks. Non-negotiable per §1's scope commitment (see §D2). |
 | D3 | Structural boundary, not optional | Optional boundaries decay under performance pressure; structural ones do not. Mirrors the mod-isolation structural-barrier discipline (MOD_OS_ARCHITECTURE.md). |
 | D4 | Minimum operation set, not maximum | Minimums prevent feature creep at integration time; maximums invite scope expansion. |
 | D5 | No silent plaintext fallback | Silent fallback is the industry's standard cryptographic-integration failure mode. Read-only spectator state is the documented degradation. |
@@ -166,7 +166,7 @@ That third point is intentional. Inconvenient decisions in LOCKED specs are not 
 |---|---|---|
 | [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) | defers-to | Capability model (§D6), SemVer/versioning model (§D7), structural-boundary/isolation discipline (§D3, §D5) — successor of the old ISOLATION.md this contract used to cite directly. |
 | [MODDING](./MODDING.md) | cites | Worked capability-declaration examples a §D6-compliant mod would follow. |
-| [METHODOLOGY](../methodology/METHODOLOGY.md) | defers-to | Determinism invariant (§D2); ratification process (Amendment protocol below). |
+| [METHODOLOGY](../methodology/METHODOLOGY.md) | defers-to | Ratification process (Amendment protocol below). Determinism commitment lives in this contract's §1 scope (§D2); class vocabulary in TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft). |
 | [ROADMAP](../ROADMAP.md) | cites | Forward scheduling and activation tracking authority — this document is not a roadmap. |
 
 ## Amendment protocol
@@ -177,6 +177,7 @@ This contract amends only through the [METHODOLOGY](../methodology/METHODOLOGY.m
 
 | Version | Date | Change |
 |---|---|---|
-| 0.1.0 (this doc) | 2026-07-15 | Corpus rework: restyled to the passport format (Status block, dormant-contract role, verified-footprint banner); D1–D8 decisions preserved faithfully; ISOLATION.md cross-references redirected to MOD_OS_ARCHITECTURE.md (merge target); §D7 corrected to note `ContractsVersion` currently has no fourth field and Persistence does not reference it — forward specification, not present wiring; `IHomomorphicComputeProvider`/`IFheBoundaryParticipant` re-verified verbatim against `src/DualFrontier.Crypto.Future/IHomomorphicComputeProvider.cs`, zero consumers confirmed. |
+| 0.1.1 (this doc) | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R3-22/R3-23): the four "METHODOLOGY §7.1 determinism invariant" citations (Defers-to, §D2 body, §4 D2 row, cross-ref table) re-anchored — no determinism invariant exists in the live METHODOLOGY; the commitment lives in this contract's own §1 scope, class vocabulary in the TCM draft; §3 transcription claim scoped to names+empty-bodies-exact (doc comments abridged; file-scoped namespace), and the 0.1.0 row's "re-verified verbatim" wording aligned below. |
+| 0.1.0 (this doc) | 2026-07-15 | Corpus rework: restyled to the passport format (Status block, dormant-contract role, verified-footprint banner); D1–D8 decisions preserved faithfully; ISOLATION.md cross-references redirected to MOD_OS_ARCHITECTURE.md (merge target); §D7 corrected to note `ContractsVersion` currently has no fourth field and Persistence does not reference it — forward specification, not present wiring; `IHomomorphicComputeProvider`/`IFheBoundaryParticipant` re-verified against `src/DualFrontier.Crypto.Future/IHomomorphicComputeProvider.cs` (names + empty bodies exact; excerpt abridged), zero consumers confirmed. |
 | 1.0.1 | 2026-06-12 | Predecessor: Architecture Truth Cascade — reclassification banner + ROADMAP pointer added, contract decisions unchanged. |
 | 1.0 | 2026-05-06 | Predecessor: RATIFIED. Activation pending §D1 conditions. |
