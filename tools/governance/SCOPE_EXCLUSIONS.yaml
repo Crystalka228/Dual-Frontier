@@ -44,6 +44,10 @@ excluded_paths:
     rationale: "Manual verification protocol — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
   - pattern: "docs/scratch/V1_V2/V1_MANUAL_VERIFICATION_PROTOCOL.md"
     rationale: "Manual verification protocol — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
+  - pattern: "docs/methodology/BRIEF_TEMPLATE.md"
+    rationale: "Architect authoring scaffold (execution-brief template) — meta-tooling, non-governed (DRAFTS_RATIFICATION H3 exclusion-rider, operator-ruled 2026-07-17: exclude; exact-file form)"
+  - pattern: "docs/methodology/RECON_KICKOFF_TEMPLATE.md"
+    rationale: "Architect authoring scaffold (recon-kickoff template) — meta-tooling, non-governed (DRAFTS_RATIFICATION H3 exclusion-rider, operator-ruled 2026-07-17: exclude; exact-file form)"
 
 # Allow-list inverse: only .md extensions registered.
 # All other extensions excluded by default (tooling scripts like .ps1, configs like
