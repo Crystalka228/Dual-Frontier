@@ -34,3 +34,4 @@ tests/DualFrontier.Core.Benchmarks/DualFrontier.Core.Native.dll
 # captures via PowerShell Tee-Object). Local-only ephemeral artifacts; the
 # authoritative outcome lives in the closure commit message and MIGRATION_PROGRESS.md.
 /.k*_*_dotnet_test.log
+.claude/scheduled_tasks.lock
