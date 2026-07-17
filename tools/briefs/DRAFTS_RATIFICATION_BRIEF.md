@@ -3,13 +3,15 @@ register_id: DOC-D-DRAFTS_RATIFICATION_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.0'
 first_authored: '2026-07-17'
 last_modified: '2026-07-17'
 content_language: en
-next_review_due: 'post-DRAFTS_RATIFICATION closure'
+next_review_due: 'null'
+last_review_date: '2026-07-17'
+last_review_event: 'DRAFTS_RATIFICATION executed 2026-07-17 (EVT-2026-07-17-DRAFTS_RATIFICATION): H3 exclusion-rider 48983c4; C1 c3e77a8 (enroll); HALT-1 en-bloc ratification; Phase B C2 b4bcfa4 / C3 d6f1e9a / C4 b38d95a / C5 fde5072; Phase C C6 bd199da (six flips + PSC hold + qualifier sweep) + C7 closure (this commit) + C8 F-39 rider. Deviations recorded in the closure report.'
 title: DRAFTS_RATIFICATION execution brief (item [6] widened; first cascade under register schema 2.0)
 ---
 

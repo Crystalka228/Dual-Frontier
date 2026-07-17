@@ -1418,7 +1418,7 @@ documents:
   - DOC-A-MIGRATION_PLAN
   last_modified_commit: 9b4968a
   review_cadence: on-closure+quarterly
-  last_review_date: 2026-06-11
+  last_review_date: 2026-07-17
   last_review_event: "Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — received the NEW «⏭ Analyzer track (A'.9.1 Phase β/γ/δ + deferred rule families)» section (analyzer forward-sequencing extracted from ANALYZER_RULES v0.1 §4.1-4.2/§5/§6/§10.5/§11 per the Standing-Law spec/roadmap separation; Phase β detection + Q-L-1 adaptive gate, Phase γ severity promotion, Phase δ governance, К-L20 LOCK rule family, hardware tier expansion, PublicApiAnalyzers activation conditions) + the NEW «Findings ledger (F-series)» section seeded F-1..F-12 (brief §13 seed + session findings F-10 pre-existing test failures / F-11 stale-branch pruning candidates / F-12 DFK019.A Phase-γ severity discrepancy). Prior context: DD-2 spec/roadmap separation increment 1 (2026-06-02) — K-series roadmap relocated from KERNEL Part 2/3 into «Native foundation tracks»; status-overview K-series + K9 rows retired to Closed; remaining M8/V status rows pending full DD-1 re-sync. docs/ROADMAP.md is the canonical roadmap-layer consolidation home per accepted Option ε target architecture."
   reviewer: Crystalka
 - register_id: DOC-D-ARCHITECTURE_RECON_BRIEF
@@ -1959,13 +1959,15 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Volodymyr (Crystalka)
   version: 1.0
   first_authored: 2026-07-17
   last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-DRAFTS_RATIFICATION closure
+  next_review_due: null
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION executed 2026-07-17 (EVT-2026-07-17-DRAFTS_RATIFICATION): H3 exclusion-rider 48983c4; C1 c3e77a8 (enroll); HALT-1 en-bloc ratification; Phase B C2 b4bcfa4 / C3 d6f1e9a / C4 b38d95a / C5 fde5072; Phase C C6 bd199da (six flips + PSC hold + qualifier sweep) + C7 closure (this commit) + C8 F-39 rider. Deviations recorded in the closure report.'
   title: DRAFTS_RATIFICATION execution brief (item [6] widened; first cascade under register schema 2.0)
 - register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
   path: tools/briefs/F10_TEST_ISOLATION_BRIEF.md
@@ -14994,3 +14996,50 @@ audit_trail:
     - DOC-A-FHE_INTEGRATION_CONTRACT_V2 → LOCKED
     - DOC-E-CORPUS_REWORK_REVIEW_REPORT → EXECUTED (enrolled)
     - DOC-D-CORPUS_CLOSURE_INVERSION_B_BRIEF → EXECUTED (enrolled)
+- id: EVT-2026-07-17-DRAFTS_RATIFICATION
+  date: 2026-07-17
+  event: DRAFTS_RATIFICATION cascade — EVT-R4 checklist item [6] executed (widened per ORC-3); six cross-cutting contracts ratified LOCKED
+  event_type: lifecycle_transition
+  documents_affected:
+  - DOC-A-EXECUTION_AUTHORITY_MATRIX
+  - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+  - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+  - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+  - DOC-A-TIME_AND_CONSISTENCY_MODEL
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+  - the 14 corpus-rework successors (candidate-banner class retired, PATCH 1.0.0 -> 1.0.1)
+  - DOC-C-ROADMAP
+  - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT
+  - DOC-D-DRAFTS_RATIFICATION_BRIEF
+  commits:
+    range: 48983c4..HEAD (closure commit carries this append)
+    key_commits:
+    - hash: 48983c4
+      summary: H3 exclusion-rider (operator-ruled) - two architect scaffolds excluded exact-file; armed gate restored
+    - hash: c3e77a8
+      summary: C1 - brief D/3/Draft + review report E/3/EXECUTED enrolled; sync
+    - hash: b4bcfa4
+      summary: C2 - EAM retargets (EAM-1..8); all 8 cutover gates re-verified OPEN at 48983c4
+    - hash: d6f1e9a
+      summary: C3 - ELT/ROL/CMM retargets (R4-8/9/11/12 family; the R4-9 analyzer honesty slip corrected)
+    - hash: b38d95a
+      summary: C4 - TCM/IAC/PSC retargets (R4-7/10 family; RNG census corrected to four sites)
+    - hash: fde5072
+      summary: C5 - candidate-banner class retired across the 14 successors (MC-1)
+    - hash: bd199da
+      summary: C6 - six flips AUTHORED -> LOCKED v1.0.0; PSC held AUTHORED; qualifier sweep (MC-2)
+  governance_impact: >
+    First cascade closed under register schema 2.0: every mutation was a frontmatter edit + tool sync; this entry is the first post-migration append to the hand-edited AUDIT_TRAIL.yaml SoT (FRAMEWORK 14.6). The seven 2026-07-15 cross-cutting drafts were re-verified claim-by-claim at 48983c4 (Wave R, 4 read-only agents; ~200 anchor verdicts; code layer EXACT wholesale; six READY-WITH-FIX, PSC retarget-only, zero NOT-READY) and retargeted onto the post-rework LOCKED successors per CODING_STANDARDS 6.1 citation form. HALT-1 (operator, en bloc per OD-9): all 41 fix ids + both mechanical classes FIX-NOW; OD-1..OD-7 leans accepted (incl. CMM version reconciliation 0.1.1-0.1.4 per R4-12); OD-8 F-39 rider RIDDEN. Six contracts ratified LOCKED v1.0.0 in the confirmed order (EAM; ELT+ROL+CMM; TCM+IAC) with fold paths recorded as forward amendment queues, NOT executed - EAM section-4 P1-P3 stay ADVISORY pending the FRAMEWORK 14.7 amendment. PSC retargeted and HELD AUTHORED until the save milestone ('post-persistence-milestone closure'). Both mechanical staleness classes cleared: candidate banners 14 -> 0 (all marker forms; OD-2 changelog cells recorded as sanctioned survivors), AUTHORED-draft qualifiers -> PSC-only (17 lines). Authority surface 24 -> 30 LOCKED (128 -> 128+2 enrolled docs earlier at C1). Meta-finding ratified into the record: the corpus rework had already resolved most draft conflict inventories and the LOCKED successors forward-cite these contracts (MOD_OS 9.1 adopts ELT section-1 law; THREADING section-7 re-homes CMM's snapshot rule; VULKAN cedes determinism vocabulary to TCM; ECS section-5 defers the IsValid fix to IAC section-2) - ratification closed the loop the rework opened. ROADMAP: item-[6] queue entry closed; the post-ratification ENGINEERING QUEUE seeded (EQ-a shutdown-law family, EQ-b identity versions surface, EQ-c GATE-S/GATE-B preparatory work, EQ-d wiring queue); F-42 (RNG service) + F-43 (ABI hardening) seeded; F-39 closes at the C8 rider. Baseline gates held throughout: build 0W/0E; full-sln tests 1166/0/5 exact (F-40 did not recur); validate --armed exit 0 after every frontmatter-touching commit.
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-EXECUTION_AUTHORITY_MATRIX → LOCKED
+    - DOC-A-CONCURRENCY_AND_MEMORY_MODEL → LOCKED
+    - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME → LOCKED
+    - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS → LOCKED
+    - DOC-A-TIME_AND_CONSISTENCY_MODEL → LOCKED
+    - DOC-A-IDENTITY_AND_ABI_CONTRACT → LOCKED
+    - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT → EXECUTED (enrolled at C1)
+    - DOC-D-DRAFTS_RATIFICATION_BRIEF → EXECUTED
