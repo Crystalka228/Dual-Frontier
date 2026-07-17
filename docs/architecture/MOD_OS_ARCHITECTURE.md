@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -18,7 +18,7 @@ supersedes:
 last_modified_commit: 4a36abe
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: "CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (141 anchors — the wave's largest) + HALT-1-ratified corrections R2-4..R2-8 at 4a36abe (EffectiveApiVersion mechanism truth; phantom loader warning retired; Path β reclamation honesty); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION); EVT-54 rider executed at 717641b (METHODOLOGY/MAX_ENG ISOLATION links retargeted forward)."
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 ---
@@ -27,19 +27,18 @@ special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CO
 
 The mod platform of Dual Frontier — topology, manifest, capabilities, `IModApi`, contracts, versioning, the integration pipeline, the lifecycle (one apply transaction, one unload chain, one fault path), the isolation model, and the threat model, stated once and verified against code.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS, now SUPERSEDED), `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE, now SUPERSEDED), and `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION, now SUPERSEDED) — the three documents are **merged** here because they described one subsystem in three voices and had drifted into mutual contradiction (unload step order, fault-unload timing, enum size, capability grammar; session report §3 C7/C8, §6.1 N-8/N-9/N-11). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessors remain the last-ratified reference and prevail on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated (all three predecessors) · [ ] D-1…D-7 lock texts re-verified against §§3–9 · [ ] §9 commit/reclaim framing cross-checked against the ENGINE_LIFECYCLE_AND_TRANSACTIONS ratification outcome.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS, now SUPERSEDED), `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE, now SUPERSEDED), and `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION, now SUPERSEDED) — the three documents are **merged** here because they described one subsystem in three voices and had drifted into mutual contradiction (unload step order, fault-unload timing, enum size, capability grammar; session report §3 C7/C8, §6.1 N-8/N-9/N-11). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 **Resolution law used throughout.** Where the three predecessors disagreed, the code is the truth. Every resolved conflict in this document names the winning behavior with a `file:line` anchor and retires the losing wording; the retirement is recorded in one line at the point of resolution, not in a chronicle.
 
 | | |
 |---|---|
-| **Role** | normative-current-candidate |
+| **Role** | normative (ratified successor) |
 | **Successor of** | `docs/architecture/historical/MOD_OS_ARCHITECTURE.md` (DOC-A-MOD_OS) · `docs/architecture/historical/MOD_PIPELINE.md` (DOC-A-MOD_PIPELINE) · `docs/architecture/historical/ISOLATION.md` (DOC-A-ISOLATION) |
 | **Scope** | Structural relationship kernel ↔ mod; manifest schema and parser behavior; capability declaration/grammar/enforcement; `IModApi` surface and semantics; type sharing across `AssemblyLoadContext` boundaries; inter-mod contracts; bridge replacement; three-axis versioning; the integration pipeline (`Apply`), the unload chain, the fault path; system isolation enforcement; the threat model; the `ValidationErrorKind` registry. |
 | **Non-goals** | Gameplay content and balance (mod authors' domain); per-system performance budgets ([PERFORMANCE.md](./PERFORMANCE.md)); bus dispatch semantics ([EVENT_BUS.md](./EVENT_BUS.md)); author-facing tutorials and the Mod SDK reference-set statement ([MODDING.md](./MODDING.md)); migration/milestone state ([docs/ROADMAP.md](../ROADMAP.md)); persistence of mod data (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). |
 | **Authority domains** | mod-lifecycle (load, apply, unload, fault, hot reload) · boundary/layering **for mods** (ALC model, compile surface, cast prevention) · error-handling **for mod faults** (fault path, `ValidationErrorKind`, warning discipline) |
-| **Defers to** | [MODDING.md](./MODDING.md) → mod-author guidance and the SDK assembly set · [EVENT_BUS.md](./EVENT_BUS.md) → bus tiers, delivery and flush semantics · [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) Part 0 → К-L9 (vanilla = mods), К-L18 (quiescent state), К-L3/К-L3.1 (storage paths) · ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) → transition vocabulary (prepare/validate/quiesce/commit/reclaim/recover/resume) · [ANALYZER_RULES.md](./ANALYZER_RULES.md) → shipped analyzer surface · [docs/ROADMAP.md](../ROADMAP.md) → migration state, deferred milestones |
+| **Defers to** | [MODDING.md](./MODDING.md) → mod-author guidance and the SDK assembly set · [EVENT_BUS.md](./EVENT_BUS.md) → bus tiers, delivery and flush semantics · [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) Part 0 → К-L9 (vanilla = mods), К-L18 (quiescent state), К-L3/К-L3.1 (storage paths) · ENGINE_LIFECYCLE_AND_TRANSACTIONS.md → transition vocabulary (prepare/validate/quiesce/commit/reclaim/recover/resume) · [ANALYZER_RULES.md](./ANALYZER_RULES.md) → shipped analyzer surface · [docs/ROADMAP.md](../ROADMAP.md) → migration state, deferred milestones |
 
 **Strategic locked decisions** (Phase 0, unchanged by this rework): (1) capability granularity is per-event-type and per-component-type; (2) bridge replacement is explicit via `replaces`; (3) hot reload only through the mod menu with the simulation paused; (4) vanilla ships as multiple mods; (5) three-tier SemVer versioning. The seven detail locks D-1…D-7 are preserved inline in the sections that own them (D-1/D-2 → §3, D-3 → §4, D-4/D-5 → §5, D-6/D-7 → §9); their Question/Options deliberation history is preserved in the historical predecessor only. The "stop, escalate, lock" rule stands: a design question this document does not answer is documented and escalated, never improvised in code.
 
@@ -479,7 +478,7 @@ Error-kind note (code truth): stage [0]/[1]/[2] load failures and stage [4] `Ini
 
 ### §8.3 Graph-rebuild atomicity — the commit guarantee
 
-`DependencyGraph` construction and `Build()` run on a **local variable**; the scheduler is replaced only after `Build()` succeeds. On any error the old scheduler stays active — phases, metadata, and per-system execution contexts swap in one assignment sequence inside `Rebuild` (`ParallelSystemScheduler.cs:200-221`). A partially built graph never exists from the scheduler's point of view. This is the engine's model prepare/commit transaction — the vocabulary mapping (prepare/validate/quiesce/commit) is per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft), which uses this exact flow as its conformant example.
+`DependencyGraph` construction and `Build()` run on a **local variable**; the scheduler is replaced only after `Build()` succeeds. On any error the old scheduler stays active — phases, metadata, and per-system execution contexts swap in one assignment sequence inside `Rebuild` (`ParallelSystemScheduler.cs:200-221`). A partially built graph never exists from the scheduler's point of view. This is the engine's model prepare/commit transaction — the vocabulary mapping (prepare/validate/quiesce/commit) is per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md, which uses this exact flow as its conformant example.
 
 Rollback inventory on the failure paths: `RollbackLoaded` physically unloads every regular mod that reached memory (`:984-992`, swallowing rollback-time errors); `_registry.ResetModSystems()` clears mod systems and component ownership (`ModRegistry.cs:160-164`); `_contractStore.RevokeAll(modId)` per mod. Registry/contract rollback runs on the stage [4]/[5-7] paths — after stage [3] failures nothing has registered yet.
 
@@ -504,7 +503,7 @@ public sealed record PipelineResult(
 
 ### §8.5 `UnloadAll`
 
-`public IReadOnlyList<ValidationWarning> UnloadAll()` (`ModIntegrationPipeline.cs:780-824`) delegates to `UnloadMod` per active mod (snapshot-by-id through a non-inlined helper for GC-cleanliness) and, when no mod was active, still rebuilds the kernel-only graph with fresh metadata. Shared mods are never unloaded. **Code truth: no production call site invokes `UnloadAll`** — the menu path unloads removed mods individually and applies additions (`ModMenuController.Commit`, `ModMenuController.cs:236` region); `UnloadAll` is exercised by tests. It is retained as the bulk-teardown surface pending the shutdown-transaction design (ENGINE_LIFECYCLE_AND_TRANSACTIONS.md, AUTHORED draft — world shutdown row).
+`public IReadOnlyList<ValidationWarning> UnloadAll()` (`ModIntegrationPipeline.cs:780-824`) delegates to `UnloadMod` per active mod (snapshot-by-id through a non-inlined helper for GC-cleanliness) and, when no mod was active, still rebuilds the kernel-only graph with fresh metadata. Shared mods are never unloaded. **Code truth: no production call site invokes `UnloadAll`** — the menu path unloads removed mods individually and applies additions (`ModMenuController.Commit`, `ModMenuController.cs:236` region); `UnloadAll` is exercised by tests. It is retained as the bulk-teardown surface pending the shutdown-transaction design (ENGINE_LIFECYCLE_AND_TRANSACTIONS.md — world shutdown row).
 
 ---
 
@@ -512,14 +511,14 @@ public sealed record PipelineResult(
 
 ### §9.1 The commit/reclaim split — one law instead of a contradiction
 
-The predecessor stated both "transitions between states are atomic; failure mid-transition rolls back" (old §9) and "there is no atomic-unload guarantee; `Unload` is conceptually irreversible" (old §9.5.1) — the session's C7 finding. Both sentences were correct **about different stages**, and this document adopts the split explicitly, per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) §1:
+The predecessor stated both "transitions between states are atomic; failure mid-transition rolls back" (old §9) and "there is no atomic-unload guarantee; `Unload` is conceptually irreversible" (old §9.5.1) — the session's C7 finding. Both sentences were correct **about different stages**, and this document adopts the split explicitly, per ENGINE_LIFECYCLE_AND_TRANSACTIONS.md §1:
 
 - **Atomic applies to the desired-state commit.** Apply commits by a single scheduler swap after a locally proven graph (§8.3); unload commits by removing the mod from the active set and swapping in the rebuilt graph. Before the commit point, failure rolls the candidate back and the old state stands (§8.3 rollback inventory). After it, the new desired state is published — never a mixture.
 - **Best-effort applies to reclamation of the old state.** The unload chain's cleanup steps (unsubscribe, revoke, remove, native teardown, ALC unload, GC pump) are sequential, best-effort, and monotonic: a step's failure logs a warning and the chain continues; nothing un-commits (§9.4). Reclamation can end in "leaked — restart advised" while the desired state honestly reads "disabled".
 
 **States as coded — say it plainly:** there is no mod-state enum and no `Degraded` state anywhere on disk. Current state is carried by booleans and set membership: the pipeline's `_activeMods`/`_activeShared` lists, the `_isRunning` flag (`ModIntegrationPipeline.cs:113`), the loader's `_loaded` map, the menu's per-row flags `IsCurrentlyActive`/`IsPendingActive`/`CanToggle` (`EditableModInfo.cs:31-36`), and the fault handler's queued set. The predecessor's six-state diagram (Disabled → Pending → Loaded → Active → Stopping → Disabled) survives only as a *reading* of those booleans along the happy path; it is not code, and the fault path (§9.5) and the leaked-reclamation terminal were never representable in it. Separated desired-state/reclamation-state variables are the draft's proposal, not current truth.
 
-> **FENCED (target / planned — not current truth):** ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) §3 proposes named state machines (`DesiredState` incl. `LogicallyDisabled(faulted)`; `ReclamationState` incl. `Reclaiming/Reclaimed/ReclaimFailed(leaked)`) and a recover stage (bounded pump retry, Degraded reason). None of that exists in code; adopting it is that draft's ratification question, not this document's.
+> **FENCED (target / planned — not current truth):** ENGINE_LIFECYCLE_AND_TRANSACTIONS.md §3 proposes named state machines (`DesiredState` incl. `LogicallyDisabled(faulted)`; `ReclamationState` incl. `Reclaiming/Reclaimed/ReclaimFailed(leaked)`) and a recover stage (bounded pump retry, Degraded reason). None of that exists in code; adopting it is that draft's ratification question, not this document's.
 
 ### §9.2 Hot reload through the menu ✓ LOCKED
 
@@ -570,7 +569,7 @@ What actually happens when a mod fault is reported, in full (this is the entire 
 
 **Resolved (was N-8 — the three-way timing conflict):** the predecessors specified this event three ways — MOD_OS §10.1 *queued-to-next-menu-open*; MOD_PIPELINE *chain-now-with-deferred-rebuild plus "systems marked Disabled in the scheduler"*; ISOLATION *immediate six-step sequence with an abort-on-timeout `IMod.Unload`*. The code implements the first: queue at fault time, full chain at next `Apply`. The other two are retired — no "Disabled" marking exists in the scheduler, no immediate sequence exists, no `IMod.Unload` timeout/abort exists (the call is a swallowed try/catch with no time bound — `ModLoader.cs:219-227`), no `logs/mods/<mod-id>.log` writer exists, and no `ModDisabledEvent` exists.
 
-> **FENCED (target / planned — not current truth):** the missing detection stage — a per-system catch in `ExecutePhase` dispatching on `SystemOrigin` (core → rethrow, mod → quarantine skip-set at the tick boundary + `ReportFault`) — and the fault-time quarantine commit are specified in ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) §2.3. User-facing surfacing (banner, per-mod fault log, "disabled due to error" persistence across restarts) ships with that work; until then the §11 threat-model row for runtime misbehavior reads "reported faults are honored; unreported faults propagate".
+> **FENCED (target / planned — not current truth):** the missing detection stage — a per-system catch in `ExecutePhase` dispatching on `SystemOrigin` (core → rethrow, mod → quarantine skip-set at the tick boundary + `ReportFault`) — and the fault-time quarantine commit are specified in ENGINE_LIFECYCLE_AND_TRANSACTIONS.md §2.3. User-facing surfacing (banner, per-mod fault log, "disabled due to error" persistence across restarts) ships with that work; until then the §11 threat-model row for runtime misbehavior reads "reported faults are honored; unreported faults propagate".
 
 ### §9.6 К-L18 quiescence
 
@@ -578,7 +577,7 @@ Per К-L18 (KERNEL_ARCHITECTURE.md Part 0): mod load/unload operations require *
 
 - **Managed helper layer (helpers-only per S-LOCK-12):** `SimulationStateController` provides `PauseAsync()` → `WaitForQuiescenceAsync(timeout)` → operation → `ResumeAsync()`; quiescence timeout is typed as `PipelineQuiescenceTimeoutException` (`src/DualFrontier.Application/Loop/SimulationStateController.cs:35,71,110,142`). **Zero production callers today** — the menu path enforces pause through the pipeline's `_isRunning` flag only (§9.3); the controller is the sanctioned hookup point when the settings/menu UI work lands.
 - **Native precondition:** the step-3.5 primitive checks sim-paused + pipeline quiescence natively (К10.2 stub + К10.3 v2 Item 41, `df_pipeline_is_quiescent`) and returns failure with diagnostics instead of partial teardown; the managed wrapper converts that to step-3.5 warnings (`ModUnloadInterop.UnloadModNativeState`, `ModUnloadInterop.cs:112-116`; §9.4 failure semantics).
-- **Vacuity note:** while the native bus carries no production subscribers (dispatch default managed — see [EVENT_BUS.md](./EVENT_BUS.md) current/target wiring), the native teardown is vacuously successful; it becomes load-bearing at the native-bus authority switch (per EXECUTION_AUTHORITY_MATRIX.md §3, AUTHORED draft).
+- **Vacuity note:** while the native bus carries no production subscribers (dispatch default managed — see [EVENT_BUS.md](./EVENT_BUS.md) current/target wiring), the native teardown is vacuously successful; it becomes load-bearing at the native-bus authority switch (per EXECUTION_AUTHORITY_MATRIX.md §3).
 
 ### §9.7 Hot-reload-disabled mods ✓ LOCKED (D-7)
 
@@ -702,7 +701,7 @@ The realized suites (`tests/DualFrontier.Modding.Tests/`): capability registry e
 | [MODDING.md](./MODDING.md) | defers-to | Mod-author guide; owns the SDK reference-set statement and tutorials; its examples must satisfy §2/§3 here. |
 | [EVENT_BUS.md](./EVENT_BUS.md) | defers-to | Bus tiers, dispatch/flush semantics, current/target native-bus wiring; §3.2/§12 declare only the capability-side of tiers. |
 | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) | defers-to | Part 0 К-L9 (vanilla = mods), К-L18 (quiescent state), К-L3/К-L3.1 (storage paths), К-L17 (layer tokens). |
-| ENGINE_LIFECYCLE_AND_TRANSACTIONS.md (AUTHORED draft) | cites | Transition vocabulary; the §9.1 commit/reclaim law framing; fenced state-machine and fault-quarantine targets. |
+| ENGINE_LIFECYCLE_AND_TRANSACTIONS.md | cites | Transition vocabulary; the §9.1 commit/reclaim law framing; fenced state-machine and fault-quarantine targets. |
 | [ANALYZER_RULES.md](./ANALYZER_RULES.md) | defers-to | Shipped analyzer registry (17 detecting; severities); deferral tables for the access-completeness family. |
 | [ECS.md](./ECS.md) | cites | `NativeWorld` span/batch access surface referenced by §10. |
 | [THREADING.md](./THREADING.md) | cites | Scheduler thread model, `DependencyGraph` edge-building, async ban. |
@@ -710,7 +709,7 @@ The realized suites (`tests/DualFrontier.Modding.Tests/`): capability registry e
 | [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) | cites | V resource cleanup primitive (step 3.6), compute substrate that will implement `ComputePipelines`. |
 | [CONTRACTS.md](./CONTRACTS.md) | cites | Bus/marker conventions; `ContractsVersion` evolution rules. |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | cites | Layer map; mods live above Domain through `IModApi`. |
-| EXECUTION_AUTHORITY_MATRIX.md (AUTHORED draft) | cites | Cutover gates for the native-bus authority switch referenced in §9.6. |
+| EXECUTION_AUTHORITY_MATRIX.md | cites | Cutover gates for the native-bus authority switch referenced in §9.6. |
 | PERSISTENCE_SNAPSHOT_CONTRACT.md (AUTHORED draft) | cites | Owner of the D-6 missing-mod policy implementation (§9.8). |
 | [docs/ROADMAP.md](../ROADMAP.md) | defers-to | Migration state authority; deferred milestones (analyzer scan, field registry wiring, compute surface). |
 | [FRAMEWORK.md](../governance/FRAMEWORK.md) | governance | Ratification and amendment protocol. |

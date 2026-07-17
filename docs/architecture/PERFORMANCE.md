@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 6c696db
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (29 anchors; §4 enforcement-honesty verified exemplary) + HALT-1-ratified corrections R3-18..R3-21 at 6c696db (results location; К-L14 quote fidelity); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-PERFORMANCE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; enforcement honesty stands (no CI; PerformanceGate fictional — AD-5 open obligation).
 ---
@@ -25,14 +25,13 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 Where Dual Frontier's frame and tick budgets attach on the current native substrate — and an honest accounting of what enforces them today: nothing does, yet.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/PERFORMANCE.md` (DOC-A-PERFORMANCE, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/PERFORMANCE.md` (DOC-A-PERFORMANCE, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 ## Status block
 
 | Field | Value |
 |---|---|
-| Role | **normative-current-candidate.** Budget numbers below are the intended law; §4 states plainly that no enforcement exists yet — the numbers bind engineering judgment, not CI. |
+| Role | **normative (ratified successor).** Budget numbers below are the intended law; §4 states plainly that no enforcement exists yet — the numbers bind engineering judgment, not CI. |
 | Successor of | `docs/architecture/historical/PERFORMANCE.md` (DOC-A-PERFORMANCE) |
 | Scope | Frame/tick budgets on the native substrate; cache-invalidation discipline; the real benchmark inventory. |
 | Non-goals | Scheduling law, bus-tier semantics (KERNEL_ARCHITECTURE), the GPU substrate itself (VULKAN_SUBSTRATE) — only the budgets attaching to them. |

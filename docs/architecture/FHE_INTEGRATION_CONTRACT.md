@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: d66e02e
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: "CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (14 anchors) + HALT-1-ratified corrections R3-22/R3-23 at d66e02e (dangling METHODOLOGY §7.1 determinism citation re-anchored to the contract's own §1 scope; transcription-claim honesty); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION)."
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FHE_INTEGRATION_CONTRACT per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; dormant-contract role, D1-D8 preserved ('The dormant period is unbounded.').
 ---
@@ -25,8 +25,7 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 The ratified, currently-dormant contract governing how fully homomorphic encryption would integrate with Dual Frontier's deterministic simulation core, if and when the three conditions in §D1 are ever simultaneously met.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/FHE_INTEGRATION_CONTRACT.md` (DOC-A-FHE_INTEGRATION_CONTRACT, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/FHE_INTEGRATION_CONTRACT.md` (DOC-A-FHE_INTEGRATION_CONTRACT, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. (The contract itself was first ratified LOCKED v1.0 on 2026-05-06 and remained in force through v1.0.1; the 2026-07-17 event ratifies this reworked successor text — the dormant-contract Role below is unchanged law.)
 
 ## Status block
 
@@ -37,7 +36,7 @@ The ratified, currently-dormant contract governing how fully homomorphic encrypt
 | Scope | The boundary between the deterministic simulation core and any future FHE-based multiplayer compute layer: what crosses it, in what form, under what failure discipline. |
 | Non-goals | Save-file encryption (Persistence), transport encryption (TLS), mod signing (MOD_OS_ARCHITECTURE.md capability system). Not a schedule — activation timing is [ROADMAP](../ROADMAP.md)'s domain, gated on §D1. |
 | Authority domains | FHE integration decisions D1–D8: activation gate, determinism class, boundary placement, operation-set floor, failure mode, mod-capability interaction, versioning, export-control posture. |
-| Defers to | MOD_OS_ARCHITECTURE.md — capability model (§D6), SemVer model (§D7), structural-boundary discipline §D3/§D5 mirror. [METHODOLOGY](../methodology/METHODOLOGY.md) — ratification process. Determinism commitment: this contract's own §1 scope (§D2); class vocabulary: TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft). |
+| Defers to | MOD_OS_ARCHITECTURE.md — capability model (§D6), SemVer model (§D7), structural-boundary discipline §D3/§D5 mirror. [METHODOLOGY](../methodology/METHODOLOGY.md) — ratification process. Determinism commitment: this contract's own §1 scope (§D2); class vocabulary: TIME_AND_CONSISTENCY_MODEL.md. |
 
 > **Ratified and dormant.** Binding law today; activation is gated on §D1, which depends on external industry conditions Dual Frontier does not control — not on anything this project schedules. Current runtime footprint, verified this pass at HEAD `35364c2`: `DualFrontier.Crypto.Future` (`src/DualFrontier.Crypto.Future/IHomomorphicComputeProvider.cs`) contains exactly two reserved interfaces, `IHomomorphicComputeProvider` and `IFheBoundaryParticipant`, both empty, **zero consumers** anywhere in the solution — no `ProjectReference` to `DualFrontier.Crypto.Future.csproj` exists outside its own project file. Dormant is not a defect; it is this contract doing exactly what it was ratified to do.
 
@@ -71,7 +70,7 @@ Until all three hold, the contract remains active but dormant — the specified 
 
 The FHE layer MUST preserve simulation determinism. Where homomorphic operations introduce floating-point ambiguity — notably CKKS-family schemes — the integration MUST use exact-arithmetic schemes (BGV, BFV, or successor) for any operation participating in the deterministic core. Approximate schemes are permissible only for operations explicitly marked non-deterministic in the simulation contract; at v1.0 ratification, no such operations exist.
 
-Determinism is non-negotiable per this contract's own §1 scope commitment ("determinism MUST be preserved"); determinism-class vocabulary: TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft). CKKS approximation compounds over simulation ticks; over a long session two clients on identical input would diverge indistinguishably from a desync bug. The contract treats this as disqualifying.
+Determinism is non-negotiable per this contract's own §1 scope commitment ("determinism MUST be preserved"); determinism-class vocabulary: TIME_AND_CONSISTENCY_MODEL.md. CKKS approximation compounds over simulation ticks; over a long session two clients on identical input would diverge indistinguishably from a desync bug. The contract treats this as disqualifying.
 
 ### D3. Boundary placement (structural, not optional)
 
@@ -177,7 +176,7 @@ That third point is intentional. Inconvenient decisions in LOCKED specs are not 
 |---|---|---|
 | [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) | defers-to | Capability model (§D6), SemVer/versioning model (§D7), structural-boundary/isolation discipline (§D3, §D5) — successor of the old ISOLATION.md this contract used to cite directly. |
 | [MODDING](./MODDING.md) | cites | Worked capability-declaration examples a §D6-compliant mod would follow. |
-| [METHODOLOGY](../methodology/METHODOLOGY.md) | defers-to | Ratification process (Amendment protocol below). Determinism commitment lives in this contract's §1 scope (§D2); class vocabulary in TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft). |
+| [METHODOLOGY](../methodology/METHODOLOGY.md) | defers-to | Ratification process (Amendment protocol below). Determinism commitment lives in this contract's §1 scope (§D2); class vocabulary in TIME_AND_CONSISTENCY_MODEL.md. |
 | [ROADMAP](../ROADMAP.md) | cites | Forward scheduling and activation tracking authority — this document is not a roadmap. |
 
 ## Amendment protocol

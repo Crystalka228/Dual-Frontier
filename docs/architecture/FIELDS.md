@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 96338ff
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (59 anchors; 11 stale predecessor §-pointers found, content TRUE) + HALT-1-ratified batch re-point R3-9..R3-14 at 96338ff (successor section maps; footprint ≈+52%; twelve-entry-point census); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FIELDS (Live → SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; exclusion-not-fallback (session C6) stands.
 ---
@@ -25,14 +25,13 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 The storage contract for spatial scalar/vector fields: native `RawTileField` layout, the `df_world_field_*` C ABI, the managed `FieldRegistry`/`FieldHandle<T>` bridge, field identity, capability verbs, and lifecycle — the substrate the Vulkan compute layer sits on top of.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/FIELDS.md` (DOC-A-FIELDS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated · [ ] VULKAN_SUBSTRATE.md (successor) ratified — §9/§10 cite its exclusion-policy and К-L7.1 sections as pointers, not restatements.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/FIELDS.md` (DOC-A-FIELDS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 ## Status
 
 | Field | Value |
 |---|---|
-| Role | normative-current-candidate |
+| Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/FIELDS.md` (DOC-A-FIELDS, Live v0.1.1, now SUPERSEDED) |
 | Scope | Native `RawTileField` layout/mutation rules; the `df_world_field_*` C ABI; the managed `FieldRegistry`/`FieldHandle<T>`/`FieldSpanLease<T>` bridge; field identity/namespacing; the `field.*` capability grammar and its enforcement points; field lifecycle as actually wired. |
 | Non-goals | Field mathematics, compute pipeline registration/dispatch, hardware exclusion policy detail (VULKAN_SUBSTRATE.md). Save-file format/I/O (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft). Mod-specific gameplay decisions. |
@@ -188,7 +187,7 @@ A field remains a single native allocation regardless of GPU involvement — `Ra
 | [ECS](./ECS.md) | cites | The orthogonal storage system — entities, components, `WriteBatch<T>`. |
 | [EVENT_BUS](./EVENT_BUS.md) | cites | The native per-mod unload primitive in §9 also clears bus/wake state. |
 | [PERFORMANCE](./PERFORMANCE.md) | cites | Field memory budget, dispatch timing targets. |
-| [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) (AUTHORED draft) | cites | Any future §11 mod-facing compute cutover gate belongs there. |
+| [EXECUTION_AUTHORITY_MATRIX](./EXECUTION_AUTHORITY_MATRIX.md) | cites | Any future §11 mod-facing compute cutover gate belongs there. |
 
 ## Amendment protocol
 

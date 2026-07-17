@@ -32,7 +32,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -45,7 +45,7 @@ documents:
   last_modified_commit: edb267a
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (41 anchors) + HALT-1-ratified corrections R2-15..R2-19 at edb267a (self-referential staleness vs the same-rework THREADING/CONTRACTS successors fixed; test-tree census 20); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 - register_id: DOC-A-ARCHITECTURE
@@ -91,7 +91,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -102,7 +102,7 @@ documents:
   last_modified_commit: f5c5e97
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (41/41 anchors EXACT) + HALT-1-ratified correction R1-1 at f5c5e97; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 - register_id: DOC-A-A_PRIME_0_7_AMENDMENT_PLAN
@@ -205,18 +205,20 @@ documents:
   project: Dual Frontier
   category: A
   tier: 1
-  lifecycle: AUTHORED
+  lifecycle: LOCKED
   owner: Crystalka
-  version: 0.1.2
+  version: 1.0.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-ratification closure
-  title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (A1 draft)
-  last_modified_commit: 6888246
-  review_cadence: on-status-transition
+  next_review_due: 2027-Q3
+  title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
+  last_modified_commit: d6f1e9a
+  review_cadence: on-change+annual
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; the R4-9 analyzer honesty slip corrected — 17 detecting rules, not stubs) + HALT-1-ratified retargets CMM-1..CMM-5 at d6f1e9a (incl. the OD-3 version reconciliation 0.1.1–0.1.4); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (§3/§4 → THREADING MAJOR; §2/§6 → VULKAN MINOR; deferred-catch fix; shutdown quiesce fence; TLA+ Item 18) recorded in ROADMAP.'
   reviewer: Crystalka
-  special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A1 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+  special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.
 - register_id: DOC-A-CONTRACTS
   path: docs/architecture/historical/CONTRACTS.md
   project: Dual Frontier
@@ -244,7 +246,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -255,7 +257,7 @@ documents:
   last_modified_commit: 8896d32
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (32/32 anchors EXACT) + HALT-1-ratified corrections at 8896d32 — SEED-2 cross-reference row (refusal-list retirement) + R2-2/R2-3; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
 - register_id: DOC-A-ECS
@@ -283,7 +285,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -294,7 +296,7 @@ documents:
   last_modified_commit: 5e1f412
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~72 anchors) + HALT-1-ratified corrections R1-15/16/17 at 5e1f412; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ECS per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; session C10 teaching defect fixed (no EntityId(index,0) fabrication in examples).
 - register_id: DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
@@ -302,18 +304,20 @@ documents:
   project: Dual Frontier
   category: A
   tier: 1
-  lifecycle: AUTHORED
+  lifecycle: LOCKED
   owner: Crystalka
-  version: 0.1.0
+  version: 1.0.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-ratification closure
-  title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (A3+A8 draft)
-  last_modified_commit: 8960085
-  review_cadence: on-status-transition
+  next_review_due: 2027-Q3
+  title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
+  last_modified_commit: d6f1e9a
+  review_cadence: on-change+annual
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all defect claims TRUE; zero honesty slips) + HALT-1-ratified retargets ELT-1..ELT-6 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). The §1 commit/reclaim law was already absorbed by MOD_OS_ARCHITECTURE §9.1 (which cites this contract by name); forward queue (state machines, swapchain transaction, shutdown transaction + fault taxonomy) recorded in ROADMAP.'
   reviewer: Crystalka
-  special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A3 (+A8 recovery) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+  special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.
 - register_id: DOC-A-EVENT_BUS
   path: docs/architecture/historical/EVENT_BUS.md
   project: Dual Frontier
@@ -339,7 +343,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -350,7 +354,7 @@ documents:
   last_modified_commit: 1556a18
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (46 anchors, 0 WRONG) + HALT-1-ratified corrections R3-15/16/17 at 1556a18 (§9 lease-model wiring truth over the all-stub registry; quote precision); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 - register_id: DOC-A-EXECUTION_AUTHORITY_MATRIX
@@ -358,18 +362,20 @@ documents:
   project: Dual Frontier
   category: A
   tier: 1
-  lifecycle: AUTHORED
+  lifecycle: LOCKED
   owner: Crystalka
-  version: 0.1.0
+  version: 1.0.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-ratification closure
-  title: Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (A0 draft)
-  last_modified_commit: 8960085
-  review_cadence: on-status-transition
+  next_review_due: 2027-Q3
+  title: Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (the A0 contract)
+  last_modified_commit: b4bcfa4
+  review_cadence: on-change+annual
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all 8 cutover gates OPEN as written; §5 enforcement claims real; code anchors EXACT) + HALT-1-ratified retargets EAM-1..EAM-8 at b4bcfa4; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6] of the EVT-R4 checklist widened per ORC-3). Standalone LOCK — §2/§3/§4 folds recorded as forward amendment queue, NOT executed; §4 P1–P3 ADVISORY until the FRAMEWORK §14.7 amendment.'
   reviewer: Crystalka
-  special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A0 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Content is architecture-contract law (FRAMEWORK §3.4 hierarchy → Tier 1); lifecycle AUTHORED because unratified — mandatory preamble marks it normative-target, NOT current truth; conflicts resolve in favor of LOCKED docs until Crystalka ratification per FRAMEWORK §7.'
+  special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A0 cross-cutting contract — sole-authority matrix, cutover gates GATE-S1..S4/GATE-B1..B4, deletion triggers; ratified standalone with the fold path recorded as a forward amendment queue (ARCHITECTURE §2-fold, KERNEL Part 0 §3-annotations, FRAMEWORK §14.7 §4-amendment).
 - register_id: DOC-A-FEEDBACK_LOOPS
   path: docs/architecture/historical/FEEDBACK_LOOPS.md
   project: Dual Frontier
@@ -415,7 +421,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -426,7 +432,7 @@ documents:
   last_modified_commit: d66e02e
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: "CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (14 anchors) + HALT-1-ratified corrections R3-22/R3-23 at d66e02e (dangling METHODOLOGY §7.1 determinism citation re-anchored to the contract's own §1 scope; transcription-claim honesty); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION)."
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FHE_INTEGRATION_CONTRACT per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; dormant-contract role, D1-D8 preserved ('The dormant period is unbounded.').
 - register_id: DOC-A-FIELDS
@@ -458,7 +464,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -469,7 +475,7 @@ documents:
   last_modified_commit: 96338ff
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (59 anchors; 11 stale predecessor §-pointers found, content TRUE) + HALT-1-ratified batch re-point R3-9..R3-14 at 96338ff (successor section maps; footprint ≈+52%; twelve-entry-point census); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FIELDS (Live → SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; exclusion-not-fallback (session C6) stands.
 - register_id: DOC-A-FRAMEWORK
@@ -519,18 +525,20 @@ documents:
   project: Dual Frontier
   category: A
   tier: 1
-  lifecycle: AUTHORED
+  lifecycle: LOCKED
   owner: Crystalka
-  version: 0.1.0
+  version: 1.0.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-ratification closure
-  title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (A5+A6+A8 draft)
-  last_modified_commit: 8960085
-  review_cadence: on-status-transition
+  next_review_due: 2027-Q3
+  title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
+  last_modified_commit: b38d95a
+  review_cadence: on-change+annual
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
   reviewer: Crystalka
-  special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A5+A6 (+A8 error-taxonomy) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+  special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.
 - register_id: DOC-A-ISOLATION
   path: docs/architecture/historical/ISOLATION.md
   project: Dual Frontier
@@ -587,7 +595,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -598,7 +606,7 @@ documents:
   last_modified_commit: 6497ed5
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~124 anchors) + HALT-1 decisions — SEED-1/F-9 variant (b) recomposition at d8f1db3 (census-delta 0), Annex A rows A-1..A-4 APPROVED, corrections R1-3..R1-10 at 6497ed5; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1
@@ -806,7 +814,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -817,7 +825,7 @@ documents:
   last_modified_commit: 6a67da5
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (48 anchors) + HALT-1-ratified corrections R2-9..R2-14 at 6a67da5 (apiVersion census 6-of-7; v1-field floor truth; verbatim regex restored); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 - register_id: DOC-A-MOD_OS
@@ -854,7 +862,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -867,7 +875,7 @@ documents:
   last_modified_commit: 4a36abe
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: "CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (141 anchors — the wave's largest) + HALT-1-ratified corrections R2-4..R2-8 at 4a36abe (EffectiveApiVersion mechanism truth; phantom loader warning retired; Path β reclamation honesty); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION); EVT-54 rider executed at 717641b (METHODOLOGY/MAX_ENG ISOLATION links retargeted forward)."
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -931,7 +939,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -942,7 +950,7 @@ documents:
   last_modified_commit: 6c696db
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (29 anchors; §4 enforcement-honesty verified exemplary) + HALT-1-ratified corrections R3-18..R3-21 at 6c696db (results location; К-L14 quote fidelity); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-PERFORMANCE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; enforcement honesty stands (no CI; PerformanceGate fictional — AD-5 open obligation).
 - register_id: DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
@@ -952,14 +960,16 @@ documents:
   tier: 1
   lifecycle: AUTHORED
   owner: Crystalka
-  version: 0.1.2
+  version: 0.1.3
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-ratification closure
+  next_review_due: post-persistence-milestone closure
   title: Persistence Snapshot Contract — snapshot boundary, inclusion/exclusion, identity serialization law (A7 draft skeleton; invariants only)
   last_modified_commit: 6888246
   review_cadence: on-status-transition
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION Phase B (C4): HALT-1-ratified retargets PSC-1/PSC-2 — "schema v1" re-anchored (predecessor EVENT_BUS line retired; code truth background_queue.cpp:209 + EVENT_BUS §6 + historical/ KFNS Item 31); MOD_OS D-6 → §9.8; FIELDS save/load → §12 (FENCED, defers here); VULKAN → §7.1/§7.2/§5.4; §6.1 cite reform. Held AUTHORED per the standing item-[6] recommendation; hold note + sentinel flip land at the Phase C ratification commit.'
   reviewer: Crystalka
   special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal SKELETON of the missing A7 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7 — invariants and boundaries only; save-system implementation stays deferred to its milestone (that deferral is ratified per MIGRATION_PLAN §8.1). Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 - register_id: DOC-A-PHASE_A_PRIME_SEQUENCING
@@ -1023,18 +1033,20 @@ documents:
   project: Dual Frontier
   category: A
   tier: 1
-  lifecycle: AUTHORED
+  lifecycle: LOCKED
   owner: Crystalka
-  version: 0.1.1
+  version: 1.0.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-ratification closure
-  title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (A2 draft)
-  last_modified_commit: 0145f1b
-  review_cadence: on-status-transition
+  next_review_due: 2027-Q3
+  title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (the A2 contract)
+  last_modified_commit: d6f1e9a
+  review_cadence: on-change+annual
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
   reviewer: Crystalka
-  special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A2 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+  special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.
 - register_id: DOC-A-SCHEDULER_ARCHITECTURE
   path: docs/architecture/SCHEDULER_ARCHITECTURE.md
   project: Dual Frontier
@@ -1042,7 +1054,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -1053,7 +1065,7 @@ documents:
   last_modified_commit: 3993dc9
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~96 anchors, 0 WRONG) + HALT-1-ratified nano-fixes R1-11 at 3993dc9; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-KERNEL_FULL_NATIVE_SCHEDULER per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE — law/model/wiring distilled; the deliberation record (46 items, Q-N-1..56, predictions, risks) is preserved verbatim in the historical original.
 - register_id: DOC-A-SYNTHESIS_RATIONALE
@@ -1100,7 +1112,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -1111,7 +1123,7 @@ documents:
   last_modified_commit: ff24980
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~78 anchors) + HALT-1-ratified corrections R1-12/13/14 at ff24980; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
 - register_id: DOC-A-TIME_AND_CONSISTENCY_MODEL
@@ -1119,18 +1131,20 @@ documents:
   project: Dual Frontier
   category: A
   tier: 1
-  lifecycle: AUTHORED
+  lifecycle: LOCKED
   owner: Crystalka
-  version: 0.1.2
+  version: 1.0.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
-  next_review_due: post-ratification closure
-  title: Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (A4 draft)
-  last_modified_commit: 0145f1b
-  review_cadence: on-status-transition
+  next_review_due: 2027-Q3
+  title: Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (the A4 contract)
+  last_modified_commit: b38d95a
+  review_cadence: on-change+annual
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; R4-10 RNG census corrected to four fixed-seed sites) + HALT-1-ratified retargets TCM-1..TCM-4 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7.1/§7.5 resolved by the rework; §5.2 Option A/B decision owned here; RNG-service work order seeded in ROADMAP.'
   reviewer: Crystalka
-  special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A4 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
+  special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A4 time/consistency contract — canonical time vocabulary, visibility table, cross-boundary consistency rules, pause/save/load boundaries, determinism classes D0/D1/D2, RNG law; VULKAN §7.2 and the COMBO/FEEDBACK successors already defer to its vocabulary; the RNG service (four fixed-seed sites) is the seeded engineering work order.
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md
   project: Dual Frontier
@@ -1191,7 +1205,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -1202,7 +1216,7 @@ documents:
   last_modified_commit: 5d71a8e
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (91 anchors) + HALT-1-ratified corrections R3-1..R3-8 at 5d71a8e (anchor precision; test-count wiring truth; layer-token observability wording); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 - register_id: DOC-B-CODING_STANDARDS
@@ -1251,7 +1265,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.2
+  version: 1.1.3
   first_authored: 2026-07-17
   last_modified: 2026-07-17
   content_language: mixed
@@ -1259,7 +1273,7 @@ documents:
   title: Maximum Engineering Refactor — Discipline Escalation Brief
   last_modified_commit: 717641b
   review_cadence: on-change+annual
-  last_review_date: 2026-05-10
+  last_review_date: 2026-07-17
   last_review_event: A'.0.7 methodology rewrite
   reviewer: Crystalka
   capa_entries_referenced:
@@ -1360,13 +1374,15 @@ documents:
   tier: 2
   lifecycle: Live
   owner: Crystalka
-  version: 0.1
+  version: 0.1.1
   first_authored: 2026-05-06
-  last_modified: 2026-05-06
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2026-Q3
   title: Ideas Reservoir (index for docs/ideas/ Category I bank)
   review_cadence: on-closure+quarterly
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION C8 (F-39 rider): three dangling "METHODOLOGY §7.1 determinism" citations re-anchored to TIME_AND_CONSISTENCY_MODEL §5 (ratified LOCKED this cascade). PATCH 0.1 → 0.1.1.'
   reviewer: Crystalka
   special_case_rationale: Post-A'.4.5 functions as index for Category I docs/ideas/ folder; existing content preserved verbatim; individual ideas grow as separate files in docs/ideas/ over time
 - register_id: DOC-C-MIGRATION_PROGRESS
@@ -1404,7 +1420,7 @@ documents:
   - DOC-A-MIGRATION_PLAN
   last_modified_commit: 9b4968a
   review_cadence: on-closure+quarterly
-  last_review_date: 2026-06-11
+  last_review_date: 2026-07-17
   last_review_event: "Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — received the NEW «⏭ Analyzer track (A'.9.1 Phase β/γ/δ + deferred rule families)» section (analyzer forward-sequencing extracted from ANALYZER_RULES v0.1 §4.1-4.2/§5/§6/§10.5/§11 per the Standing-Law spec/roadmap separation; Phase β detection + Q-L-1 adaptive gate, Phase γ severity promotion, Phase δ governance, К-L20 LOCK rule family, hardware tier expansion, PublicApiAnalyzers activation conditions) + the NEW «Findings ledger (F-series)» section seeded F-1..F-12 (brief §13 seed + session findings F-10 pre-existing test failures / F-11 stale-branch pruning candidates / F-12 DFK019.A Phase-γ severity discrepancy). Prior context: DD-2 spec/roadmap separation increment 1 (2026-06-02) — K-series roadmap relocated from KERNEL Part 2/3 into «Native foundation tracks»; status-overview K-series + K9 rows retired to Closed; remaining M8/V status rows pending full DD-1 re-sync. docs/ROADMAP.md is the canonical roadmap-layer consolidation home per accepted Option ε target architecture."
   reviewer: Crystalka
 - register_id: DOC-D-ARCHITECTURE_RECON_BRIEF
@@ -1940,6 +1956,21 @@ documents:
   risks_referenced: []
   capa_entries_referenced: []
   special_case_rationale: 'Documentation Dual-Load Drift Reconnaissance brief — standalone reconnaissance cascade addressing the root documentation drift source (living-spec documents serving dual descriptive+roadmap roles). Authored 2026-05-25; EXECUTED 2026-06-02 (reconnaissance discovery-only per §0.5 read-only discipline — refactor is a separate future cascade determined FROM the report). DOC-D Category D Tier 4 follows existing reconnaissance-brief convention (sister к DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF). Paired deliverable: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT. Q-DD ratification surface (§11) — defaults taken at execution (Q-DD-1 standalone, Q-DD-3 hybrid grounding, Q-DD-6 single report, Q-DD-7 enroll, Q-DD-9 Option ε freely recommended, Q-DD-10 existing docs/reports/ folder). §9 halt-3 (misclassification → governance issue) TRIGGERED + surfaced; halt-6 (LOCKED Tier-1 substrate) respected — zero К-L invariant text edits.'
+- register_id: DOC-D-DRAFTS_RATIFICATION_BRIEF
+  path: tools/briefs/DRAFTS_RATIFICATION_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: null
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION executed 2026-07-17 (EVT-2026-07-17-DRAFTS_RATIFICATION): H3 exclusion-rider 48983c4; C1 c3e77a8 (enroll); HALT-1 en-bloc ratification; Phase B C2 b4bcfa4 / C3 d6f1e9a / C4 b38d95a / C5 fde5072; Phase C C6 bd199da (six flips + PSC hold + qualifier sweep) + C7 closure (this commit) + C8 F-39 rider. Deviations recorded in the closure report.'
+  title: DRAFTS_RATIFICATION execution brief (item [6] widened; first cascade under register schema 2.0)
 - register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
   path: tools/briefs/F10_TEST_ISOLATION_BRIEF.md
   project: Dual Frontier
@@ -3807,6 +3838,21 @@ documents:
   risks_referenced: []
   capa_entries_referenced: []
   special_case_rationale: Live progress report (continuously updated as refactor increments land) tracking the multi-cascade execution of the spec/roadmap separation. Category E (docs/reports/), Tier 2 (governance-leverage, companion к the Tier-2 reconnaissance report). Referenced by the DD-1 code-truth banners placed in ARCHITECTURE/THREADING/EVENT_BUS/VULKAN_SUBSTRATE as the remaining-work tracker. pwsh unavailable — frontmatter mirror authored manually; sync_register.ps1 -Validate + render deferred к Crystalka environment.
+- register_id: DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT
+  path: docs/reports/DRAFTS_RATIFICATION_REVIEW_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Crystalka
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: 
+  title: 'Drafts Ratification Review Report — Phase A of DRAFTS_RATIFICATION (D1: seven drafts re-verified at 48983c4 — code anchors EXACT wholesale, ~200 anchor verdicts; 41 fix ids + 2 mechanical classes; six READY-WITH-FIX, PSC retarget-only, zero NOT-READY; HALT-1 decision basis)'
+  review_cadence: on-status-transition
+  reviewer: Crystalka
 - register_id: DOC-E-F10_TEST_ISOLATION_RECON_REPORT
   path: docs/reports/F10_TEST_ISOLATION_RECON_REPORT.md
   project: Dual Frontier
@@ -14952,3 +14998,50 @@ audit_trail:
     - DOC-A-FHE_INTEGRATION_CONTRACT_V2 → LOCKED
     - DOC-E-CORPUS_REWORK_REVIEW_REPORT → EXECUTED (enrolled)
     - DOC-D-CORPUS_CLOSURE_INVERSION_B_BRIEF → EXECUTED (enrolled)
+- id: EVT-2026-07-17-DRAFTS_RATIFICATION
+  date: 2026-07-17
+  event: DRAFTS_RATIFICATION cascade — EVT-R4 checklist item [6] executed (widened per ORC-3); six cross-cutting contracts ratified LOCKED
+  event_type: lifecycle_transition
+  documents_affected:
+  - DOC-A-EXECUTION_AUTHORITY_MATRIX
+  - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+  - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+  - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+  - DOC-A-TIME_AND_CONSISTENCY_MODEL
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+  - the 14 corpus-rework successors (candidate-banner class retired, PATCH 1.0.0 -> 1.0.1)
+  - DOC-C-ROADMAP
+  - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT
+  - DOC-D-DRAFTS_RATIFICATION_BRIEF
+  commits:
+    range: 48983c4..HEAD (closure commit carries this append)
+    key_commits:
+    - hash: 48983c4
+      summary: H3 exclusion-rider (operator-ruled) - two architect scaffolds excluded exact-file; armed gate restored
+    - hash: c3e77a8
+      summary: C1 - brief D/3/Draft + review report E/3/EXECUTED enrolled; sync
+    - hash: b4bcfa4
+      summary: C2 - EAM retargets (EAM-1..8); all 8 cutover gates re-verified OPEN at 48983c4
+    - hash: d6f1e9a
+      summary: C3 - ELT/ROL/CMM retargets (R4-8/9/11/12 family; the R4-9 analyzer honesty slip corrected)
+    - hash: b38d95a
+      summary: C4 - TCM/IAC/PSC retargets (R4-7/10 family; RNG census corrected to four sites)
+    - hash: fde5072
+      summary: C5 - candidate-banner class retired across the 14 successors (MC-1)
+    - hash: bd199da
+      summary: C6 - six flips AUTHORED -> LOCKED v1.0.0; PSC held AUTHORED; qualifier sweep (MC-2)
+  governance_impact: >
+    First cascade closed under register schema 2.0: every mutation was a frontmatter edit + tool sync; this entry is the first post-migration append to the hand-edited AUDIT_TRAIL.yaml SoT (FRAMEWORK 14.6). The seven 2026-07-15 cross-cutting drafts were re-verified claim-by-claim at 48983c4 (Wave R, 4 read-only agents; ~200 anchor verdicts; code layer EXACT wholesale; six READY-WITH-FIX, PSC retarget-only, zero NOT-READY) and retargeted onto the post-rework LOCKED successors per CODING_STANDARDS 6.1 citation form. HALT-1 (operator, en bloc per OD-9): all 41 fix ids + both mechanical classes FIX-NOW; OD-1..OD-7 leans accepted (incl. CMM version reconciliation 0.1.1-0.1.4 per R4-12); OD-8 F-39 rider RIDDEN. Six contracts ratified LOCKED v1.0.0 in the confirmed order (EAM; ELT+ROL+CMM; TCM+IAC) with fold paths recorded as forward amendment queues, NOT executed - EAM section-4 P1-P3 stay ADVISORY pending the FRAMEWORK 14.7 amendment. PSC retargeted and HELD AUTHORED until the save milestone ('post-persistence-milestone closure'). Both mechanical staleness classes cleared: candidate banners 14 -> 0 (all marker forms; OD-2 changelog cells recorded as sanctioned survivors), AUTHORED-draft qualifiers -> PSC-only (17 lines). Authority surface 24 -> 30 LOCKED (128 -> 128+2 enrolled docs earlier at C1). Meta-finding ratified into the record: the corpus rework had already resolved most draft conflict inventories and the LOCKED successors forward-cite these contracts (MOD_OS 9.1 adopts ELT section-1 law; THREADING section-7 re-homes CMM's snapshot rule; VULKAN cedes determinism vocabulary to TCM; ECS section-5 defers the IsValid fix to IAC section-2) - ratification closed the loop the rework opened. ROADMAP: item-[6] queue entry closed; the post-ratification ENGINEERING QUEUE seeded (EQ-a shutdown-law family, EQ-b identity versions surface, EQ-c GATE-S/GATE-B preparatory work, EQ-d wiring queue); F-42 (RNG service) + F-43 (ABI hardening) seeded; F-39 closes at the C8 rider. Baseline gates held throughout: build 0W/0E; full-sln tests 1166/0/5 exact (F-40 did not recur); validate --armed exit 0 after every frontmatter-touching commit.
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-EXECUTION_AUTHORITY_MATRIX → LOCKED
+    - DOC-A-CONCURRENCY_AND_MEMORY_MODEL → LOCKED
+    - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME → LOCKED
+    - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS → LOCKED
+    - DOC-A-TIME_AND_CONSISTENCY_MODEL → LOCKED
+    - DOC-A-IDENTITY_AND_ABI_CONTRACT → LOCKED
+    - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT → EXECUTED (enrolled at C1)
+    - DOC-D-DRAFTS_RATIFICATION_BRIEF → EXECUTED

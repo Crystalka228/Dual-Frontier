@@ -5,13 +5,15 @@ category: C
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 0.1
+version: 0.1.1
 first_authored: 2026-05-06
-last_modified: 2026-05-06
+last_modified: 2026-07-17
 content_language: en
 next_review_due: 2026-Q3
 title: Ideas Reservoir (index for docs/ideas/ Category I bank)
 review_cadence: on-closure+quarterly
+last_review_date: 2026-07-17
+last_review_event: 'DRAFTS_RATIFICATION C8 (F-39 rider): three dangling "METHODOLOGY §7.1 determinism" citations re-anchored to TIME_AND_CONSISTENCY_MODEL §5 (ratified LOCKED this cascade). PATCH 0.1 → 0.1.1.'
 reviewer: Crystalka
 special_case_rationale: Post-A'.4.5 functions as index for Category I docs/ideas/ folder; existing content preserved verbatim; individual ideas grow as separate files in docs/ideas/ over time
 ---
@@ -60,7 +62,7 @@ Colony and faction borders emerge from weighted Voronoi geometry rather than bei
 
 The algorithm is Jump Flooding on the GPU, which runs in O(log n) parallel passes. Multi-level partitioning (civilizational → regional → local) lets the same machinery serve different zoom levels. Landmark anchoring contributes weight to specific points, so player-significant locations exert a gravitational pull on their region's borders.
 
-The dependency that bites is GPU determinism. Floating-point reduction order, driver versions, and vendor differences (NVIDIA / AMD / Intel) all conspire against bit-identical output. Determinism is non-negotiable per [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7.1, so any GPU-compute integration that this idea depends on must be preceded by a determinism verification pass.
+The dependency that bites is GPU determinism. Floating-point reduction order, driver versions, and vendor differences (NVIDIA / AMD / Intel) all conspire against bit-identical output. Determinism commitments are class-scoped per [TIME_AND_CONSISTENCY_MODEL](/docs/architecture/TIME_AND_CONSISTENCY_MODEL.md) §5 (the engine is D0 today; save-reproducibility D1 is the target class, with CPU-canonical state as the save-path mitigation for GPU float variance), so any GPU-compute integration that this idea depends on must be preceded by a determinism verification pass.
 
 ### 2.3 Topological data analysis for social dynamics
 
@@ -139,7 +141,7 @@ Some ideas were considered and rejected at this stage. The rejections are record
 
 - **Online leaderboards or social features.** Conflicts with the local-only data discipline that the player model and AI opponent training rely on. The same discipline that enables those features specifically forecloses leaderboards.
 - **Microtransactions.** Incompatible with the project's commercial model and with the methodology's positioning ([METHODOLOGY](/docs/methodology/METHODOLOGY.md) §0). Not an architectural objection — a values objection.
-- **Procedural narrative through a runtime LLM.** Slow, non-deterministic, and incompatible with the deterministic-replay invariant in [METHODOLOGY](/docs/methodology/METHODOLOGY.md) §7.1. The AI mod assistant in §2.1 is build-time; runtime narrative generation is a different shape of problem.
+- **Procedural narrative through a runtime LLM.** Slow, non-deterministic, and incompatible with any deterministic-replay ambition (replay is class D2 per [TIME_AND_CONSISTENCY_MODEL](/docs/architecture/TIME_AND_CONSISTENCY_MODEL.md) §5 — currently not scoped). The AI mod assistant in §2.1 is build-time; runtime narrative generation is a different shape of problem.
 - **Blockchain anything.** No architectural need that another mechanism does not already address. The capability system handles authorization; the deterministic simulation handles reproducibility; the mod-signing system handles authorship. There is no remaining problem for which a distributed ledger is the answer.
 
 These are not moral judgments. They are architectural fit decisions. The same ideas in different projects can be implemented correctly; they do not fit Dual Frontier specifically.
@@ -162,5 +164,5 @@ The reservoir lives by these conventions, which are deliberately lighter than th
 
 - [ROADMAP](./ROADMAP.md) — the active surface, including the "Beyond ship" section that links here.
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the modding architecture every reservoir entry is required to fit within.
-- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the determinism invariant, the discipline of locking sensitive contracts before implementation, and the boundary against speculative metrics.
+- [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the discipline of locking sensitive contracts before implementation and the boundary against speculative metrics. Determinism law: [TIME_AND_CONSISTENCY_MODEL](/docs/architecture/TIME_AND_CONSISTENCY_MODEL.md) §5–§6.
 - [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — the one reservoir idea that has already crossed the line into formal ratification.

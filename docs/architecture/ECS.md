@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 5e1f412
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~72 anchors) + HALT-1-ratified corrections R1-15/16/17 at 5e1f412; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ECS per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; session C10 teaching defect fixed (no EntityId(index,0) fabrication in examples).
 ---
@@ -25,19 +25,18 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 The entity/component storage model: `NativeWorld` as the single production backend, dense sparse-set storage, the span/batch access protocol, entity identity and lifecycle semantics, and `SystemBase`.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/ECS.md` (DOC-A-ECS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/ECS.md` (DOC-A-ECS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 ## Status
 
 | Field | Value |
 |---|---|
-| Role | normative-current-candidate |
+| Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/ECS.md` (DOC-A-ECS) |
 | Scope | Entity/component storage as it exists in code: `NativeWorld` surface, dense-storage rationale, span/batch protocol, identity/lifecycle semantics (including the fabricated-version defect), `SystemBase`, anti-patterns |
-| Non-goals | Field storage (FIELDS.md); scheduling ([THREADING.md](./THREADING.md)); Path β mod-API detail (MOD_OS_ARCHITECTURE.md); target identity/ABI law (IDENTITY_AND_ABI_CONTRACT.md, AUTHORED draft); persistence (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft) |
+| Non-goals | Field storage (FIELDS.md); scheduling ([THREADING.md](./THREADING.md)); Path β mod-API detail (MOD_OS_ARCHITECTURE.md); target identity/ABI law (IDENTITY_AND_ABI_CONTRACT.md); persistence (PERSISTENCE_SNAPSHOT_CONTRACT.md, AUTHORED draft) |
 | Authority domains | storage access-pattern teaching; entity lifecycle semantics (descriptive, code-anchored). Storage-path invariant text (К-L3/К-L3.1/К-L8/К-L11) stays [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md)'s |
-| Defers to | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) storage invariants · [THREADING.md](./THREADING.md) phase/dispatch law · [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) Path β / mod lifecycle · [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) target identity law |
+| Defers to | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) storage invariants · [THREADING.md](./THREADING.md) phase/dispatch law · [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) Path β / mod lifecycle · [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) target identity law |
 
 ## §1 NativeWorld — the single production backend
 
@@ -62,7 +61,7 @@ Path β managed-class storage (К-L3.1 bridge) lives in per-mod `ManagedStore<T>
 
 ## §2 EntityId and components
 
-**EntityId** is `readonly record struct EntityId(int Index, int Version)` (`src/DualFrontier.Contracts/Core/EntityId.cs:21`), sentinel `Invalid = default` (0, 0) (`:28`). The version increments on destroy (§6), making cached references safely invalid: a stale id fails `TryGetComponent` and the system skips it — no crash. Verified drift: managed `IsValid => Index > 0 || Version > 0` (`EntityId.cs:38`) accepts ids like `(0, 5)` that native `is_alive` rejects unconditionally (`index <= 0` permanently dead, `world.cpp:75`); the alignment fix is [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) §2's. `IsValid` is syntactic only — aliveness is answered exclusively by `NativeWorld.IsAlive`.
+**EntityId** is `readonly record struct EntityId(int Index, int Version)` (`src/DualFrontier.Contracts/Core/EntityId.cs:21`), sentinel `Invalid = default` (0, 0) (`:28`). The version increments on destroy (§6), making cached references safely invalid: a stale id fails `TryGetComponent` and the system skips it — no crash. Verified drift: managed `IsValid => Index > 0 || Version > 0` (`EntityId.cs:38`) accepts ids like `(0, 5)` that native `is_alive` rejects unconditionally (`index <= 0` permanently dead, `world.cpp:75`); the alignment fix is [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) §2's. `IsValid` is syntactic only — aliveness is answered exclusively by `NativeWorld.IsAlive`.
 
 **Components** carry no logic, only data. Path α (preferred): an `unmanaged` struct implementing `IComponent` (`src/DualFrontier.Contracts/Core/IComponent.cs:10`) — POCO-serializable, batch-readable concurrently while no one writes. Path β: a class with `[ManagedStorage]` (`ManagedStorageAttribute.cs`) in per-mod managed storage — runtime-only, never persisted (К-L3.1 lock). Validation and arithmetic live in systems.
 
@@ -119,7 +118,7 @@ The span ABI does not return versions, and the current codebase — including th
 
 **Wrong version of a live entity: fails closed.** Because `is_alive` is exact equality, an id with the right index but wrong version — too low *or* too high — is indistinguishable from dead: `TryGetComponent` returns `false`, writes are silently dropped. No index-only or nearest-version fallback exists. (`Pairs`' fabricated version 1 therefore mismatches a fresh entity's true version 0 — the in-code caveat scopes it to snapshot-then-record flows where flush revalidates.)
 
-This is a **known defect of the current ABI**, not a sanctioned pattern. Do not add fabrication sites; the fix is [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) §2's.
+This is a **known defect of the current ABI**, not a sanctioned pattern. Do not add fabrication sites; the fix is [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) §2's.
 
 > **FENCED (target / planned — not current truth):** per IDENTITY_AND_ABI_CONTRACT.md §2 — an additive `df_world_acquire_versions` entry point exposes a read-only view of the native `versions_` table under the same acquire/release discipline as component spans; `SpanLease<T>` acquires it alongside the span and loops reconstruct `new EntityId(idx, versions[idx])` with true generations; fabrication becomes analyzer-detectable; this document's §4 example gains the versions-view idiom when it ships.
 
@@ -151,7 +150,7 @@ protected ManagedStore<T>? ManagedStore<T>() // :126 — Path β; null for Core 
 ## §8 Anti-patterns
 
 - **Caching a `NativeWorld` reference in system state** (e.g. a constructor parameter stored in a field). Systems receive the world only through the execution context; a cached reference survives graph rebuilds and mod hot-reloads that invalidate it.
-- **Fabricating an `EntityId` from a span index.** `new EntityId(indices[i], 0)` is the §5 defect. Existing sites are inventoried for the IDENTITY_AND_ABI_CONTRACT.md (AUTHORED draft) §2 fix; new code must not add more.
+- **Fabricating an `EntityId` from a span index.** `new EntityId(indices[i], 0)` is the §5 defect. Existing sites are inventoried for the IDENTITY_AND_ABI_CONTRACT.md §2 fix; new code must not add more.
 - **Calling another system directly.** `GetSystem<T>()` does not exist post-К8.3+К8.4. Cross-system communication routes through the domain buses — `Services.Combat.Publish(…)` etc. ([CONTRACTS.md](./CONTRACTS.md)).
 - **Logic in a component.** Damage math lives in `DamageSystem`; the component stays data. Post-cutover motivation: Path α components must remain `unmanaged` structs to cross the native boundary.
 - **Recording a write and reading it back in the same scope.** Batch commands are invisible until `Flush` (`WriteBatch.cs:196`) — `TryGetComponent` immediately after `batch.Add(id, …)` reads pre-flush state. Record in this pass, read next pass (or `Flush` first). The predecessor's version of this example called `batch.Set(…)`, which does not exist — the recording surface is `Update`/`Add`/`Remove` (§4).
@@ -164,7 +163,7 @@ protected ManagedStore<T>? ManagedStore<T>() // :126 — Path β; null for Core 
 | [THREADING.md](./THREADING.md) | cites | Phases, dispatch, execution contexts, `[SystemAccess]` enforcement state, async ban |
 | [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) | defers-to | Path β / `RegisterManagedComponent`, mod fault lifecycle, enforcement model |
 | [FIELDS.md](./FIELDS.md) · [ARCHITECTURE.md](./ARCHITECTURE.md) · [CONTRACTS.md](./CONTRACTS.md) | cites | Orthogonal spatial storage (identity `(field_id, x, y)`); layer map; domain buses |
-| [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) (AUTHORED draft) | defers-to | Target identity law: §2 versions surface, `IsValid` alignment, analyzer rule (§5 here) |
+| [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) | defers-to | Target identity law: §2 versions surface, `IsValid` alignment, analyzer rule (§5 here) |
 | [PERSISTENCE_SNAPSHOT_CONTRACT.md](./PERSISTENCE_SNAPSHOT_CONTRACT.md) (AUTHORED draft) | cites | Whether saves persist versions (`EntityEncoder` waiver) is decided there |
 
 ## Amendment protocol

@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 5d71a8e
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (91 anchors) + HALT-1-ratified corrections R3-1..R3-8 at 5d71a8e (anchor precision; test-count wiring truth; layer-token observability wording); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
@@ -25,12 +25,11 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 The architectural authority for Dual Frontier's unified Vulkan 1.3 layer — one `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage serving two use cases (2D rendering and field compute) — covering device and queue policy, swapchain and presentation, compute pipelines, pipeline slots, synchronization, and the GPU-side failure-mode law.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/VULKAN_SUBSTRATE.md` (DOC-A-VULKAN_SUBSTRATE, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/VULKAN_SUBSTRATE.md` (DOC-A-VULKAN_SUBSTRATE, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 | Status field | Value |
 |---|---|
-| **Role** | normative-current-candidate |
+| **Role** | normative (ratified successor) |
 | **Successor of** | `docs/architecture/historical/VULKAN_SUBSTRATE.md` (DOC-A-VULKAN_SUBSTRATE, LOCKED v1.2.0) |
 | **Scope** | The V substrate: Vulkan instance/device/queue policy (К-L19 hardware mandate), Win32 window + input event surface, swapchain + recreation, render pipeline + batched sprite path, compute pipeline plumbing + the V1 diffusion primitive, pipeline slots (К-L16/К-L7.1 GPU side), GPU synchronization and visibility law, mod-facing GPU surface status, GPU failure modes, GPU-side save-boundary behavior. Everything in §§0–7 is current truth unless inside a FENCED block. |
 | **Non-goals** | Field storage layout and span law (FIELDS.md); К-L invariant canon text (KERNEL_ARCHITECTURE.md Part 0); the process-wide threading model (THREADING.md); mod lifecycle, manifests, capabilities (MOD_OS_ARCHITECTURE.md); scheduler phases and dispatch authority (SCHEDULER_ARCHITECTURE.md); game-design content; forward sequencing (docs/ROADMAP.md). |
@@ -313,7 +312,7 @@ while (runtime.InputQueue.TryDequeue(out IInputEvent? _))
 
 **Honest limitation.** Swapchain recreation is shipped **without a transactional protocol**: the shipped stage order is quiesce → *reclaim → prepare* → implicit commit — `RecreateFramebuffersForSwapchain` disposes every old framebuffer and clears the list *before* constructing the new ones (`Runtime.cs:195-205`), so a constructor failure mid-rebuild leaves the runtime with zero framebuffers and no rollback. This document records the mechanism as current truth and does not claim transaction safety for it.
 
-> **FENCED (target / planned — not current truth):** A prepare-before-reclaim recreation transaction (build new swapchain/views/framebuffers alongside via Vulkan's `oldSwapchain`, fence-quiesce, commit by single-assignment swap, then best-effort reclaim of the old set) is specified in [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (AUTHORED draft) §2.5, using that draft's seven-stage lifecycle vocabulary. Adopting it is a ratification decision of that draft, then a substrate amendment here.
+> **FENCED (target / planned — not current truth):** A prepare-before-reclaim recreation transaction (build new swapchain/views/framebuffers alongside via Vulkan's `oldSwapchain`, fence-quiesce, commit by single-assignment swap, then best-effort reclaim of the old set) is specified in [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §2.5, using that draft's seven-stage lifecycle vocabulary. Adopting it is a ratification decision of that draft, then a substrate amendment here.
 
 ### 2.4 Threading model
 
@@ -353,7 +352,7 @@ while (runtime.InputQueue.TryDequeue(out IInputEvent? _))
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-**Cross-thread channels.** Exactly two substrate-adjacent queues cross threads: `PresentationBridge` (simulation → render, drained per frame) and `InputEventQueue` (window → consumer; today drained and discarded on the same thread that fills it — §2.2). Compute dispatch, when a consumer exists, is a *synchronous* call on the dispatching thread: `V1DiffusionPipeline.ExecuteIteration` → native `dispatch_compute_field` → returns after the fence signals (§5.1) — so a subsequent `FieldHandle<T>.ReadCell` on that thread sees the dispatched result. The opt-in К-L7.1 pipeline-managed alternative (bounded one-tick slot-tail lag) is §2.5/§5.2. Thread-ownership rows for every GPU-adjacent object are tabulated in [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) (AUTHORED draft) §2.3.
+**Cross-thread channels.** Exactly two substrate-adjacent queues cross threads: `PresentationBridge` (simulation → render, drained per frame) and `InputEventQueue` (window → consumer; today drained and discarded on the same thread that fills it — §2.2). Compute dispatch, when a consumer exists, is a *synchronous* call on the dispatching thread: `V1DiffusionPipeline.ExecuteIteration` → native `dispatch_compute_field` → returns after the fence signals (§5.1) — so a subsequent `FieldHandle<T>.ReadCell` on that thread sees the dispatched result. The opt-in К-L7.1 pipeline-managed alternative (bounded one-tick slot-tail lag) is §2.5/§5.2. Thread-ownership rows for every GPU-adjacent object are tabulated in [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) §2.3.
 
 ### 2.5 Pipeline depth and slots (К-L16, К-L7.1)
 
@@ -469,7 +468,7 @@ The mod-unload chain (MOD_OS_ARCHITECTURE.md §9-series law) includes a V-substr
 - **No native primitive exists.** `df_vulkan_unload_mod_resources` has **no symbol in the native tree** (grep over `native/` headers and sources: zero hits) — the predecessor presented the C signature and `VulkanModUnloadResult` struct as a landed ABI; on disk they are design-only, mirrored in shape by the managed `Result` class. This document records the C-level surface as design, not shipped.
 - **Precondition already real.** The К-L18 quiescent-state check that must precede Step 3.6 *is* shipped — `df_pipeline_is_quiescent` (§2.5) — so the ordering contract holds even while the cleanup body is vacuous.
 
-> **FENCED (target / planned — not current truth):** Full implementation lands when mod-registered Vulkan resources exist to clean: the native `df_vulkan_unload_mod_resources(const char* mod_id, VulkanModUnloadResult* out)` primitive performing `vkDestroyPipeline` / `vkFreeDescriptorSets` / `vkDestroyBuffer` / `vkDestroyImage` over per-mod-tracked handles, best-effort sequential, error messages surfaced in the result struct; the managed wrapper switches from placeholder to P/Invoke translation. Per-mod resource tracking parallels the pipeline-registration bookkeeping of §4.3. Sequenced with the mod-facing registration surface (§3.1) — see [ROADMAP §Native foundation tracks](../ROADMAP.md); resource-ownership rows for these handles belong to [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) (AUTHORED draft) at its ratification.
+> **FENCED (target / planned — not current truth):** Full implementation lands when mod-registered Vulkan resources exist to clean: the native `df_vulkan_unload_mod_resources(const char* mod_id, VulkanModUnloadResult* out)` primitive performing `vkDestroyPipeline` / `vkFreeDescriptorSets` / `vkDestroyBuffer` / `vkDestroyImage` over per-mod-tracked handles, best-effort sequential, error messages surfaced in the result struct; the managed wrapper switches from placeholder to P/Invoke translation. Per-mod resource tracking parallels the pipeline-registration bookkeeping of §4.3. Sequenced with the mod-facing registration surface (§3.1) — see [ROADMAP §Native foundation tracks](../ROADMAP.md); resource-ownership rows for these handles belong to [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) at its ratification.
 
 ---
 
@@ -601,7 +600,7 @@ The production frame loop uses the smoke-test-proven pattern (`LauncherRenderer.
 
 ### 5.4 Device-wide waitIdle census
 
-`vkDeviceWaitIdle` is deliberately rare. Every **production** call site at HEAD, exhaustively (the manual SmokeTest executable additionally device-idles between scenes): swapchain recreation, both triggers (`LauncherRenderer.cs:129,187`); renderer shutdown (`LauncherRenderer.cs:205`); runtime disposal (`Runtime.cs:446`). The tick path never device-idles — compute uses the per-dispatch fence (§5.1), graphics the per-frame fence (§5.3). The predecessor's phrasing "waitIdle … only used for save snapshots and shutdown" is corrected on both ends: **no save path exists to use it** (§7), and **recreation uses it** in addition to shutdown. The two shutdown-path calls (renderer, runtime) are, per the session shutdown audit (N-19), the only real quiesce waits in the entire process shutdown sequence — the process-wide shutdown gap is owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (AUTHORED draft) §2.6, not this document.
+`vkDeviceWaitIdle` is deliberately rare. Every **production** call site at HEAD, exhaustively (the manual SmokeTest executable additionally device-idles between scenes): swapchain recreation, both triggers (`LauncherRenderer.cs:129,187`); renderer shutdown (`LauncherRenderer.cs:205`); runtime disposal (`Runtime.cs:446`). The tick path never device-idles — compute uses the per-dispatch fence (§5.1), graphics the per-frame fence (§5.3). The predecessor's phrasing "waitIdle … only used for save snapshots and shutdown" is corrected on both ends: **no save path exists to use it** (§7), and **recreation uses it** in addition to shutdown. The two shutdown-path calls (renderer, runtime) are, per the session shutdown audit (N-19), the only real quiesce waits in the entire process shutdown sequence — the process-wide shutdown gap is owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §2.6, not this document.
 
 ### 5.5 Why relaxed read visibility is acceptable (carried rationale)
 
@@ -627,7 +626,7 @@ Not all hardware supports Vulkan 1.3 compute reliably, and pure software environ
 
 ### 6.3 Device-lost — unhandled, open
 
-> **FENCED (open question — no current-truth handling exists):** **`VK_ERROR_DEVICE_LOST` is unspecified and unhandled.** The result code is defined (`src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`) and there are **zero handlers repo-wide** — no code path, in substrate or Launcher, tests for or reacts to device loss; a lost device today surfaces as whatever `InvalidOperationException` the first failing wrapper throws, with undefined subsequent behavior. **Proposed v1 resolution (not ratified):** fail-fast with a user-facing diagnostic, consistent with the К-L19 startup posture — crash cleanly rather than render garbage — with device re-creation deferred as a separate epic. The fault-taxonomy row and the open question are owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (AUTHORED draft) §4 (class 6) and §6 (OQ-3); ratifying that draft, then amending this section to the ratified behavior, closes the gap. Until then this substrate makes **no** claim about post-device-lost behavior.
+> **FENCED (open question — no current-truth handling exists):** **`VK_ERROR_DEVICE_LOST` is unspecified and unhandled.** The result code is defined (`src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`) and there are **zero handlers repo-wide** — no code path, in substrate or Launcher, tests for or reacts to device loss; a lost device today surfaces as whatever `InvalidOperationException` the first failing wrapper throws, with undefined subsequent behavior. **Proposed v1 resolution (not ratified):** fail-fast with a user-facing diagnostic, consistent with the К-L19 startup posture — crash cleanly rather than render garbage — with device re-creation deferred as a separate epic. The fault-taxonomy row and the open question are owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §4 (class 6) and §6 (OQ-3); ratifying that draft, then amending this section to the ratified behavior, closes the gap. Until then this substrate makes **no** claim about post-device-lost behavior.
 
 ### 6.4 Verification law and live risks
 
@@ -655,7 +654,7 @@ The GPU-side save law, per the shipped slot machinery (`pipeline_slot.h`, Item-3
 
 ### 7.2 Determinism posture
 
-GPU compute results may vary across hardware/driver combinations (floating-point ordering, parallel reduction, driver optimization). The shipped posture: **realtime simulation does not require bit-exact determinism** (single-player, no replays); **save/load must produce reproducible state on load**; network multiplayer (unscoped) would require strict determinism and is not promised by this substrate. Determinism *classes* as corpus vocabulary are [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md)'s (AUTHORED draft) to define; this document only pins the substrate facts above.
+GPU compute results may vary across hardware/driver combinations (floating-point ordering, parallel reduction, driver optimization). The shipped posture: **realtime simulation does not require bit-exact determinism** (single-player, no replays); **save/load must produce reproducible state on load**; network multiplayer (unscoped) would require strict determinism and is not promised by this substrate. Determinism *classes* as corpus vocabulary are [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md)'s to define; this document only pins the substrate facts above.
 
 > **FENCED (target / planned — not current truth):** **Canonical-CPU-state save mitigation — designed, explicitly not implemented** (no field save path exists at all): at save time, pause GPU dispatch and run one CPU-oracle iteration (§6.2) to produce canonical field state; serialize that; on load, restore fields from canonical state and resume GPU dispatch. This makes saves hardware-independent while leaving the realtime path free. Integration is sequenced with the persistence milestone — [PERSISTENCE_SNAPSHOT_CONTRACT.md](./PERSISTENCE_SNAPSHOT_CONTRACT.md) (AUTHORED draft) carries the invariant; [ROADMAP](../ROADMAP.md) carries the schedule. For hobby-scale single-player, slight cross-session non-determinism remains acceptable in the interim.
 
@@ -698,12 +697,12 @@ The «stop, escalate, lock» rule applies: when implementation meets a design qu
 | [EVENT_BUS.md](./EVENT_BUS.md) | cites | Fast-tier consumption by the fenced CombatFeedbackLayer (§2.6) |
 | [PERFORMANCE.md](./PERFORMANCE.md) | cites | Sprite/tile and field-compute budgets |
 | [ROADMAP](../ROADMAP.md) | defers-to (forward state) | Single authority for V2, M-V demonstrations, text/UI, input bridge, hardware-tier expansion, sequencing |
-| [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (AUTHORED draft) | cites | Swapchain recreation transaction (§2.5 there ↔ §2.3 here); fault taxonomy incl. device-lost (§4/OQ-3 there ↔ §6.3 here); shutdown transaction (§2.6 there ↔ §5.4 note) |
+| [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) | cites | Swapchain recreation transaction (§2.5 there ↔ §2.3 here); fault taxonomy incl. device-lost (§4/OQ-3 there ↔ §6.3 here); shutdown transaction (§2.6 there ↔ §5.4 note) |
 | [PERSISTENCE_SNAPSHOT_CONTRACT.md](./PERSISTENCE_SNAPSHOT_CONTRACT.md) (AUTHORED draft) | cites | Cross-system snapshot boundary above the GPU line (§7) |
-| [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) (AUTHORED draft) | cites | Owner-thread rows for GPU/presentation objects; pipeline-slot operation matrix |
-| [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) (AUTHORED draft) | cites | Determinism-class vocabulary consumed by §7.2; visibility-table home for the §5 rules |
-| [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) (AUTHORED draft) | cites | Vulkan handle ownership/dispose-order rows (§2.1 teardown, §3.3 mod handles) |
-| [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) (AUTHORED draft) | cites | gpu-domain ownership row; cutover-gate discipline referenced for pipeline-managed activation (§2.5) |
+| [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) | cites | Owner-thread rows for GPU/presentation objects; pipeline-slot operation matrix |
+| [TIME_AND_CONSISTENCY_MODEL.md](./TIME_AND_CONSISTENCY_MODEL.md) | cites | Determinism-class vocabulary consumed by §7.2; visibility-table home for the §5 rules |
+| [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) | cites | Vulkan handle ownership/dispose-order rows (§2.1 teardown, §3.3 mod handles) |
+| [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) | cites | gpu-domain ownership row; cutover-gate discipline referenced for pipeline-managed activation (§2.5) |
 | [FRAMEWORK.md](../governance/FRAMEWORK.md) | governance | Ratification path (§7), authority predicate (§14.7) |
 
 Historical inputs (superseded; not linked per rework law): the predecessor `VULKAN_SUBSTRATE.md` v1.2.0 and, through it, `RUNTIME_ARCHITECTURE.md` v1.0 + `GPU_COMPUTE.md` v2.0 and the retired dual-backend-era specs. Q-G-1/Q-G-2 ratification provenance lives in the register and the historical corpus.

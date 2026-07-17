@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: ff24980
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~78 anchors) + HALT-1-ratified corrections R1-12/13/14 at ff24980; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
 ---
@@ -25,19 +25,18 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 How Dual Frontier schedules and dispatches systems across the native kernel and the managed runtime — the К-L12 dependency graph, the managed dispatch facade that executes it today, execution contexts, tick rates, the feedback-cycle rule, and the async ban.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of `docs/architecture/historical/THREADING.md` (DOC-A-THREADING, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then the predecessor remains the last-ratified reference and prevails on conflict.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] predecessor register rationale updated.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/THREADING.md` (DOC-A-THREADING, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
 ## Status
 
 | Field | Value |
 |---|---|
-| Role | normative-current-candidate |
+| Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/THREADING.md` (DOC-A-THREADING) |
 | Scope | Native `SystemGraph`/wake-registry/thread-pool; the managed dispatch facade (`DependencyGraph` + `ParallelSystemScheduler`); `[SystemAccess]`; execution contexts; tick rates; the feedback-cycle rule; the async ban |
 | Non-goals | К-L invariant text (KERNEL_ARCHITECTURE.md Part 0); happens-before/lock-order model (target draft: CONCURRENCY_AND_MEMORY_MODEL.md); shutdown law (target draft: RESOURCE_OWNERSHIP_AND_LIFETIME.md); gameplay feedback-loop catalogue (FEEDBACK_LOOPS.md, Category J) |
 | Authority domains | threading (dispatch mechanics, execution contexts, phase barrier, tick rates, async ban); descriptive authority over current wiring state only — the К-L12 text stays [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md)'s |
-| Defers to | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) К-L text · [EVENT_BUS.md](./EVENT_BUS.md) flush/tiers · [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) enforcement/fault lifecycle · [ECS.md](./ECS.md) storage · [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md)/[RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) (AUTHORED drafts) target law |
+| Defers to | [KERNEL_ARCHITECTURE.md](./KERNEL_ARCHITECTURE.md) К-L text · [EVENT_BUS.md](./EVENT_BUS.md) flush/tiers · [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) enforcement/fault lifecycle · [ECS.md](./ECS.md) storage · [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md)/[RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) target law |
 
 ## §1 Scheduling model overview
 
@@ -72,7 +71,7 @@ The production tick path runs through `ParallelSystemScheduler` (`src/DualFronti
 
 The cross-layer **batched callback ABI** for native-driven managed dispatch (the К-L12 bridge) is on disk and test-exercised: `SchedulerAdapter.Register` (`SchedulerAdapter.cs:22`) registers `ManagedSystemDispatcher.OnBatch`, an `[UnmanagedCallersOnly]` reverse-P/Invoke entry point (`ManagedSystemDispatcher.cs:75`) — the single sanctioned reverse-callback path under Rule 5 (KERNEL_ARCHITECTURE.md §1.5). Its only callers today are `BatchedCallbackTests.cs`.
 
-> **FENCED (target / planned):** production dispatch is planned to route through this adapter, gated per [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) §3 (AUTHORED draft) cutover conditions; today dispatch runs exclusively through `Parallel.ForEach` above, and no **ratified** deletion trigger for the managed `DependencyGraph` exists (EXECUTION_AUTHORITY_MATRIX.md §3 names one, advisory until ratified).
+> **FENCED (target / planned):** production dispatch is planned to route through this adapter, gated per [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) §3 cutover conditions; today dispatch runs exclusively through `Parallel.ForEach` above, the deletion trigger for the managed `DependencyGraph` is ratified law at EXECUTION_AUTHORITY_MATRIX.md §3 (fires when GATE-S1..S4 have held for one full release cycle — all four gates OPEN at ratification).
 
 Mod systems are tracked per-mod by `ModSubScheduler` (`ModSubScheduler.cs`): each mod ALC owns a sub-scheduler holding its registered systems, torn down on unload alongside native per-mod state (К-L12 kernel/user split).
 
@@ -127,7 +126,7 @@ The dependency graph forbids cycles over the same components, or neither graph (
 
 **DD-1, resolved false.** The predecessor self-flagged an unverified claim: `DependencyGraph` "marks every cycle and requires at least one side to use a `*Snapshot` component," throwing `IsolationViolationException` at registration otherwise. Checked against `DependencyGraph.cs` at HEAD: **false as stated.** `Build()` reports a cycle once, via `BuildCycleException` (`:239-260`) — a plain `InvalidOperationException` with no component-name inspection anywhere in the file. `IsolationViolationException` is thrown by nothing in the current tree; the type no longer exists as a throwable class — its only surviving mentions are past-tense doc comments (`SystemExecutionContext.cs:30`, `IModFaultSink.cs:12`, `SystemOrigin.cs:12`) describing the runtime guard deleted at К8.3+К8.4 (§5). The rule holds only because a distinct type structurally prevents the cycle, never because the graph recognizes "Snapshot" cycles specially — a real cycle fails the build like any other, regardless of naming.
 
-**Not implemented.** No `*Snapshot` component exists anywhere in `src/DualFrontier.Components` (zero matches, repo-wide). The illustrating example is itself unbuilt — `GolemSystem.Update` is a `// TODO` no-op and `ReadPreviousTickManaState` throws `NotImplementedException` (`GolemSystem.cs:36-39,60-77`); `ManaSystem.Update` is likewise a stub — and no real cycle exists between them today: `ManaSystem` reads only `ManaLeaseOpenRequest`, so `GolemSystem` reading `ManaComponent` is a plain write→read edge, not a cycle. No generic snapshot-copy primitive exists in `NativeWorld` or the scheduler; a system using this rule must write its own copy. The predecessor's "Phase 5 — Feedback snapshot" anchor is stale — 2.0.0 removed the fixed five-phase scaffold (§3), and CONCURRENCY_AND_MEMORY_MODEL.md (AUTHORED draft) independently flags this as dangling (§9 item 4). If built, the correct anchor is the **tick boundary**, not a numbered phase — phase count is data-dependent (§2). Applicability, per the predecessor and unverified against running code: `GolemSystem`/`ManaSnapshot`, `EtherSurgeSystem`/`EtherSnapshot`, `ShieldBreakSystem`/`ManaSnapshot`. Gameplay detail: [FEEDBACK_LOOPS.md](../mechanics/FEEDBACK_LOOPS.md) (Category J).
+**Not implemented.** No `*Snapshot` component exists anywhere in `src/DualFrontier.Components` (zero matches, repo-wide). The illustrating example is itself unbuilt — `GolemSystem.Update` is a `// TODO` no-op and `ReadPreviousTickManaState` throws `NotImplementedException` (`GolemSystem.cs:36-39,60-77`); `ManaSystem.Update` is likewise a stub — and no real cycle exists between them today: `ManaSystem` reads only `ManaLeaseOpenRequest`, so `GolemSystem` reading `ManaComponent` is a plain write→read edge, not a cycle. No generic snapshot-copy primitive exists in `NativeWorld` or the scheduler; a system using this rule must write its own copy. The predecessor's "Phase 5 — Feedback snapshot" anchor is stale — 2.0.0 removed the fixed five-phase scaffold (§3), and CONCURRENCY_AND_MEMORY_MODEL.md independently flags this as dangling (§9 item 4). If built, the correct anchor is the **tick boundary**, not a numbered phase — phase count is data-dependent (§2). Applicability, per the predecessor and unverified against running code: `GolemSystem`/`ManaSnapshot`, `EtherSurgeSystem`/`EtherSnapshot`, `ShieldBreakSystem`/`ManaSnapshot`. Gameplay detail: [FEEDBACK_LOOPS.md](../mechanics/FEEDBACK_LOOPS.md) (Category J).
 
 ## §8 Rule: async is forbidden
 
@@ -167,7 +166,7 @@ Runtime faults follow the origin split (MOD_OS_ARCHITECTURE.md, mod fault lifecy
 
 `GameLoop.Stop` cancels and joins the sim thread with a 2-second bound whose result is discarded (`GameLoop.cs:73-77`); on timeout the thread is abandoned, possibly mid-tick, while `NativeWorld` and the native scheduler/bus are never deterministically torn down in production. No system's `OnDispose` runs at process exit; no production code calls native teardown outside tests.
 
-> **FENCED (target / planned):** the quiesce → fence → teardown law and eight-step shutdown order are specified in [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) (AUTHORED draft) §6-7 and [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) (AUTHORED draft) §4 — neither ratified nor implemented.
+> **FENCED (target / planned):** the quiesce → fence → teardown law and eight-step shutdown order are specified in [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) §6-7 and [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) §4 — neither ratified nor implemented.
 
 ## Cross-references
 
@@ -178,7 +177,7 @@ Runtime faults follow the origin split (MOD_OS_ARCHITECTURE.md, mod fault lifecy
 | [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) | defers-to | Enforcement model, Path β resolver, mod fault lifecycle |
 | [EVENT_BUS.md](./EVENT_BUS.md) · [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) | cites | Deferred flush/bus tiers; fence-based GPU sync |
 | [ANALYZER_RULES.md](./ANALYZER_RULES.md) | cites | Shipped 17-rule registry and severities (§8) |
-| [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) / [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) / [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) (AUTHORED drafts) | defers-to | Target concurrency/shutdown law (§10); cutover gates (§3) |
+| [CONCURRENCY_AND_MEMORY_MODEL.md](./CONCURRENCY_AND_MEMORY_MODEL.md) / [RESOURCE_OWNERSHIP_AND_LIFETIME.md](./RESOURCE_OWNERSHIP_AND_LIFETIME.md) / [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) | defers-to | Target concurrency/shutdown law (§10); cutover gates (§3) |
 | [FEEDBACK_LOOPS.md](../mechanics/FEEDBACK_LOOPS.md) / [COMPOSITE_REQUESTS.md](../mechanics/COMPOSITE_REQUESTS.md) / [COMBO_RESOLUTION.md](../mechanics/COMBO_RESOLUTION.md) (Category J) | cites | Gameplay applications for §7; multi-bus responses; `DamageIntent` ordering |
 
 ## Amendment protocol

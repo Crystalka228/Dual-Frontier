@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -18,7 +18,7 @@ supersedes:
 last_modified_commit: edb267a
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (41 anchors) + HALT-1-ratified corrections R2-15..R2-19 at edb267a (self-referential staleness vs the same-rework THREADING/CONTRACTS successors fixed; test-tree census 20); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 ---
@@ -27,14 +27,13 @@ special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-COR
 
 Specifies the shipped Roslyn analyzer rule surface — IDs, namespaces, severities, and suppression law as released — and formally retires the never-built DF_TS analyzer program.
 
-> **Document class: authored-rework (current-truth candidate).** Successor of three predecessors, all now SUPERSEDED: `docs/architecture/historical/ANALYZER_RULES.md` (DOC-A-ANALYZER_RULES — the shipped-rule-surface authority, AUTHORED-SKELETON, "states what exists"); `docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md` (DOC-A-ARCHITECTURE_TYPE_SYSTEM — Draft, the never-built DF_TS family specification); `docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md` (DOC-A-MAX_ENG_REFACTOR_TRACK_B — Draft, that family's activation brief). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md) §3 C5, §6.1 N-13/N-14, §6.4 N-26); content verified against code at HEAD `35364c2`. Becomes the LOCKED authority upon Crystalka ratification per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7; until then ANALYZER_RULES (the predecessor) remains the last-ratified current-truth reference for the shipped surface and prevails on conflict — the two Draft predecessors were never on the FRAMEWORK §14.7 authority surface, and this document's §5 is their formal retirement record, not a promotion of their content.
-> **Ratification checklist:** [ ] content spot-audit at ratification HEAD · [ ] lifecycle AUTHORED → LOCKED, version → 1.0.0 · [ ] `next_review_due` set · [ ] all three predecessor register entries' rationale updated · [ ] DOC-A-ARCHITECTURE_TYPE_SYSTEM and DOC-A-MAX_ENG_REFACTOR_TRACK_B register lifecycle flipped to reflect retirement, not mere supersession.
+> **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of three predecessors, all now SUPERSEDED: `docs/architecture/historical/ANALYZER_RULES.md` (DOC-A-ANALYZER_RULES — the shipped-rule-surface authority, AUTHORED-SKELETON, "states what exists"); `docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md` (DOC-A-ARCHITECTURE_TYPE_SYSTEM — Draft, the never-built DF_TS family specification); `docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md` (DOC-A-MAX_ENG_REFACTOR_TRACK_B — Draft, that family's activation brief). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md) §3 C5, §6.1 N-13/N-14, §6.4 N-26); content verified against code at HEAD `35364c2`. The two Draft predecessors were never on the FRAMEWORK §14.7 authority surface; this document's §5 is their formal retirement record, not a promotion of their content.
 
 ## Status
 
 | Field | Value |
 |---|---|
-| Role | normative-current-candidate |
+| Role | normative (ratified successor) |
 | Successor of | `docs/architecture/historical/ANALYZER_RULES.md` (DOC-A-ANALYZER_RULES) · `docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md` (DOC-A-ARCHITECTURE_TYPE_SYSTEM) · `docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md` (DOC-A-MAX_ENG_REFACTOR_TRACK_B) — all SUPERSEDED |
 | Scope | The shipped DualFrontier Roslyn analyzer rule surface: rule IDs, namespaces, categories, the per-rule template, severities and suppression law as released at Release 1.0, the deferred-rule registry with named activation gates, and the formal retirement record of the DF_TS analyzer program that never built. |
 | Non-goals | Does not restate К-Lxx invariant canonical text (KERNEL_ARCHITECTURE.md Part 0 and K_CLOSURE_REPORT.md §7 own that). Does not restate DFK-WAIVER pragma syntax as law (CODING_STANDARDS.md §5.3 owns it; this document cites, never restates). Does not schedule new analyzer work (ROADMAP.md «Analyzer track» owns sequencing). Does not adjudicate MOD_OS_ARCHITECTURE.md's own §3.7 (D-2, historically "M3.4") capability-analyzer milestone — that milestone is unrelated to, and unclosed by, this document or either retired predecessor. |
