@@ -178,7 +178,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 1.1.2
+  version: 1.1.3
 - register_id: DOC-B-METHODOLOGY
   path: docs/methodology/METHODOLOGY.md
   category: B
@@ -208,7 +208,7 @@ documents:
   category: C
   tier: 2
   lifecycle: Live
-  version: 0.1
+  version: 0.1.1
 - register_id: DOC-C-MIGRATION_PROGRESS
   path: docs/MIGRATION_PROGRESS.md
   category: C
