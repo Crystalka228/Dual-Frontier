@@ -3120,6 +3120,21 @@ documents:
   last_modified_commit: 817921d
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-D-STACK_UPDATE_BRIEF
+  path: tools/briefs/STACK_UPDATE_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: 
+  title: STACK_UPDATE execution brief (net10.0 + C# 14 + C++23 amendment + package hygiene + AwesomeAssertions + doc census)
+  last_review_event: Enrolled EXECUTED at cascade closure 2026-07-17 (EVT-2026-07-17-STACK_UPDATE). Executed in the cloud Linux sandbox per the operator ruling recorded in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT; all D1-D8 deliverables landed, Phase G without escape; closure report DOC-E-STACK_UPDATE_CLOSURE_REPORT.
+  reviewer: Volodymyr (Crystalka)
 - register_id: DOC-D-STANDING_LAW_CASCADE_BRIEF
   path: tools/briefs/STANDING_LAW_CASCADE_BRIEF.md
   project: Dual Frontier
@@ -4483,6 +4498,21 @@ documents:
   title: Session Phase 4 — Closure Review
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-STACK_UPDATE_CLOSURE_REPORT
+  path: docs/reports/STACK_UPDATE_CLOSURE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: STACK_UPDATE CLOSURE REPORT — 2026-07-17 — net10.0 + C# 14 + C++23 (К-L1 v1.1.0) + triad hygiene + global.json pin + AwesomeAssertions 9.4.0 landed (no escape) + doc census; executed in the cloud Linux sandbox; all gates green, F-40 carve-out exercised once
+  special_case_rationale: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT). Companion of DOC-D-STACK_UPDATE_BRIEF section 9; the environment-shift ground truth lives in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT.'
 - register_id: DOC-E-TD1_SONNET_BRIEF
   path: docs/prompts/TD1_SONNET_BRIEF.md
   project: Dual Frontier
