@@ -73,7 +73,7 @@ The 25 orphans auto-excluded on the scratch decompose per the ratified triage:
 
 | Verdict | Count | CD2 action |
 |---|---|---|
-| enroll F/4 | 13 | hand-author v2 frontmatter: the 12 `src/DualFrontier.Runtime/**/MODULE.md` + `tests/DualFrontier.Runtime.Tests/Vulkan/MODULE.md` |
+| enroll F/4 | 12 | the 11 `src/DualFrontier.Runtime/**/MODULE.md` + `tests/DualFrontier.Runtime.Tests/Vulkan/MODULE.md` (register entries at CD2; the migrator injects their frontmatter at CD3) |
 | enroll per **ruling (b)** | 5 | 4 `tools/briefs/*` (BRIEF_SKELETON_FRAMEWORK, K10_3_EXECUTION, K10_AMENDMENTS_APPLICATION, K8_5_DEFERRAL_CASCADE) → **D/3/EXECUTED**; `docs/prompts/PHASE_BETA_PREP_EXECUTION_PROMPT.md` → **E/3/EXECUTED** |
 | exclude | 8 | `SCOPE_EXCLUSIONS.yaml` entries with real rationales: 2 `tools/DualFrontier.Analyzers/AnalyzerReleases.*.md` (analyzer release-tracking ceremony files, tool-owned) + 6 `docs/scratch/**` (HALT reports ×4, manual-verification protocols ×2 — working notes) |
 

@@ -309,7 +309,7 @@ documents:
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
     special_case_rationale: "Superseded by VULKAN_SUBSTRATE.md v1.0 LOCKED per Q-G-1 LOCK (composite namespace deliberation 2026-05-15). Pre-V-substrate authority preserved at docs/architecture/historical/ for historical record. Moved per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16)."
 
@@ -326,7 +326,7 @@ documents:
     last_modified_commit: "PENDING-INITIAL"
     content_language: en
     review_cadence: on-change+annual
-    next_review_due: "2027-05-12"
+    next_review_due: "null"
     reviewer: Crystalka
     special_case_rationale: "Superseded by VULKAN_SUBSTRATE.md v1.0 LOCKED per Q-G-1 LOCK (composite namespace deliberation 2026-05-15). Pre-V-substrate authority preserved at docs/architecture/historical/ for historical record. Moved per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16)."
 
@@ -867,7 +867,7 @@ documents:
     review_cadence: on-change+phase-led
     last_review_date: "2026-05-24"
     last_review_event: "A'.9.0 Reconnaissance / К-extensions cascade #4 — initial AUTHORED entry. Standalone reconnaissance produced ~3340-line governance artifact covering 7 domains via multi-agent dispatch (7 sub-agents: 3 parallel batch A in α1 + 3 parallel batch B in α2 + 1 sequential C1 in α3 per S-LOCK-5). Domain 1 К-L analyzability 22-row matrix scored per S-LOCK-4 rubric (9 P0/8 P1/3 P2/3 P3). Domain 2 FORMALIZE Lessons analyzability 12-row matrix (11 T6 + 1 T2 — Lesson #8 auxiliary tooling). Domain 3 cascade #2/#3 surfaced rule candidates (10 candidates с cross-cascade observation Lesson #N12 underlies 4 candidates → [ReservedStub] attribute infrastructure recommended). Domain 4 Mod OS К-L20 prep surface (20 candidate DF020 sub-rules + 6 precursor relationships A'.9-era → К-L20 era). Domain 5 Roslyn ecosystem desk research (SDK Microsoft.CodeAnalysis.CSharp 5.3.0 2026-03-10 + xUnit testing framework variant 1.1.2 recommended). Domain 6 Build/CI integration surface (Option C hybrid tools/+tests/ + Directory.Build.props centralized + .editorconfig per-rule severity progressive). Domain 7 suppression governance precedent (near-zero baseline: 5 pragmas + 0 [SuppressMessage] + 0 GlobalSuppressions + 0 CAPA related; 5-tier classification + BAN GlobalSuppressions.cs + tiered CAPA tracking). §10 Brief A'.9.1 prerequisites enumerated (10 items с empirical anchors). §11 Q-K candidates aggregated (45 total: 42 sub-agent + 3 cross-cutting α4 synthesis). §12 cross-references complete. K-L impact: zero. К-L14 verification #13 first observational reconnaissance evidence."
-    next_review_due: "post-A'.9.1 closure"
+    next_review_due: "null"
     reviewer: Crystalka
     special_case_rationale: "A'.9 Roslyn analyzer milestone reconnaissance artifact — comprehensive architecture discovery enabling A'.9.1 brief evidence-grounded authoring per Crystalka direction («Два брифа первый, он проведет полную разведку архитектуры»). Tier 2 Live Category A consistent with sister governance artifacts (K_EXTENSIONS_LEDGER + K_L14_EVIDENCE_DASHBOARD + PHASE_A_PRIME_SEQUENCING) — companion artifacts к K_CLOSURE_REPORT.md tracking post-А'.8 milestone evolution. Special review cadence (on-change+phase-led) supports phase milestone integration (A'.9.1 closure triggers next review)."
 
@@ -1090,7 +1090,7 @@ documents:
     review_cadence: on-refactor-cascade-execution
     last_review_date: "2026-06-02"
     last_review_event: "Documentation Dual-Load Drift Reconnaissance executed 2026-06-02 by Claude Code (Opus) on branch claude/doc-drift-reconnaissance-503aH (tip f94bb84 at R0) per DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF. Read-only multi-agent reconnaissance R0-R4: REGISTER inventoried (267 docs confirmed, no halt-1 mismatch); code-truth manifest established (12 src projects, native kernel, 17 analyzer rule stubs, 21 К-L invariants, key-type locations verified); 10 read-only sub-agents dispatched по category cluster (8 deep + 2 quick-pass, two waves). Aggregate: ~105 living-spec drift line-items (SPEC-STALE ~35, ROADMAP-PENDING ~21, ROADMAP-REALIZED ~19, MIXED-INTERWOVEN ~14, ORPHAN-REFERENCE ~16); 139-doc snapshot population (Category D+E) confirmed clean (0 hard misclassifications); 7-doc misclassification cluster surfaced as structural governance meta-finding (§9 halt-3). Five systemic drift generators identified: (1) un-propagated structural events (Godot deprecation cascade #2 + К8.3/8.4 managed-world retirement + К10 native scheduler), (2) A'.9.1 analyzer ROADMAP-REALIZED wave (9 docs narrate shipped stubs as future; ANALYZER_RULES §4 simultaneously over-claims them as active enforcement — zero-diagnostic Info stubs, detection Phase β PENDING), (3) DF###→DFK### orphan-reference chain, (4) misclassification cluster, (5) count/version desync. Recommended target architecture: Option ε (δ REGISTER doc_role schema + γ fenced NON-NORMATIVE sections) anchored on existing docs/ROADMAP.md, decomposed into 3 refactor cascades (DD-1 spec-truth restoration / DD-2 spec-roadmap structural separation / DD-3 misclassification+orphan+desync hygiene). К-L impact: zero. К-L14 architectural-integrity instrumentation — KERNEL Part 0 untouched (halt-6 preserved); read-only discipline held (report + brief only artifacts)."
-    next_review_due: "on-refactor-cascade-execution"
+    next_review_due: "post-doc-drift-refactor-cascade closure"
     reviewer: Crystalka
     risks_referenced: []
     capa_entries_referenced: []
@@ -1110,7 +1110,7 @@ documents:
     review_cadence: on-refactor-cascade-execution
     last_review_date: "2026-06-02"
     last_review_event: "Refactor progress record for the Documentation Dual-Load Drift Reconnaissance refactor. Captures all work executed autonomously 2026-06-02 (DD-2 KERNEL roadmap relocation + 6-substrate-doc fencing; DD-1 increment 1 code-truth banners on 6 stale docs; REGISTER cascade rv 2.10→2.14) and itemises remaining work with recommendations (deep DD-1 body rewrites, DD-3 reclassification + doc_role schema, DF→DFK orphan cleanup, ANALYZER_RULES post-A'.9.1-Phase-β, count/version desyncs, pwsh validation + REGISTER_RENDER regen, project.godot decision). Companion к DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT. К-L impact: zero."
-    next_review_due: "on-refactor-cascade-execution"
+    next_review_due: "post-doc-drift-refactor-cascade closure"
     reviewer: Crystalka
     risks_referenced: []
     capa_entries_referenced: []
@@ -1349,6 +1349,74 @@ documents:
     review_cadence: on-status-transition
     reviewer: Crystalka
 
+  - id: DOC-D-BRIEF_SKELETON_FRAMEWORK
+    path: tools/briefs/BRIEF_SKELETON_FRAMEWORK_BRIEF.md
+    title: "Brief Skeleton Framework — Execution Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-17"
+    last_modified: "2026-05-17"
+    last_modified_commit: "bfb1227"
+    content_language: mixed
+    review_cadence: on-cascade-execution
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): briefs D/3/EXECUTED; real git provenance."
+
+  - id: DOC-D-K10_3_EXECUTION
+    path: tools/briefs/K10_3_EXECUTION_BRIEF.md
+    title: "K10.3 — Pipeline depth + display composition + mod lifecycle quiescent + hardware tier (execution brief)"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-20"
+    last_modified_commit: "1982351"
+    content_language: mixed
+    review_cadence: on-cascade-execution
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance. Note: the file head carries a relict mirror block naming DOC-D-K10_3 (the sibling brief's id) — the schema-2.0 migration strips it and injects this entry's own frontmatter."
+
+  - id: DOC-D-K10_AMENDMENTS_APPLICATION
+    path: tools/briefs/K10_AMENDMENTS_APPLICATION_BRIEF.md
+    title: "K10 Deliberation Amendments — Application Execution Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-17"
+    last_modified: "2026-05-17"
+    last_modified_commit: "a1a7f9b"
+    content_language: mixed
+    review_cadence: on-cascade-execution
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance."
+
+  - id: DOC-D-K8_5_DEFERRAL_CASCADE
+    path: tools/briefs/K8_5_DEFERRAL_CASCADE_BRIEF.md
+    title: "K8.5 Deferral Cascade — Execution Brief"
+    category: D
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-17"
+    last_modified: "2026-05-17"
+    last_modified_commit: "a145548"
+    content_language: mixed
+    review_cadence: on-cascade-execution
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance."
+
   - id: DOC-D-K8_2_V1_DEPRECATED
     path: tools/briefs/historical/K8_2_COMPONENT_CONVERSION_BRIEF_V1_DEPRECATED.md
     title: "K8.2 — Component Conversion v1 (DEPRECATED)"
@@ -1356,6 +1424,7 @@ documents:
     tier: 3
     lifecycle: DEPRECATED
     deprecated_by: DOC-D-K8_2_V2
+    superseded_by: DOC-D-K8_2_V2
     owner: Crystalka
     version: "1.0"
     last_modified: "2026-05-16"
@@ -4298,8 +4367,212 @@ documents:
     review_cadence: phase-led
     last_review_date: "2026-05-23"
     last_review_event: "К-extensions cascade #3 β — Launcher dispatcher pawn-3 real implementations (HandlePawnSpawned/Moved/Died) + 3 deferred arms (PawnState/ItemSpawned/TickAdvanced) silent stubs per S-LOCK-4 amendment (Crystalka mid-cascade ratification 2026-05-23 — defensive throws would crash Launcher в production composition flow). LauncherRenderer Vulkan integration via Runtime.RecordSpritesFrame V0.C.2 batched API. Program.cs composition root extended с atlas upload (LauncherProceduralAtlas → SpriteTexture) + SceneState constructor injection per S-LOCK-10. Lesson #N12 semantic refined через cascade #3 (sub-pattern A test-only-fires + sub-pattern B production-fires)."
-    next_review_due: "TBD — after Vanilla mods consumer materialization OR substrate palette decoder extension cascade"
+    next_review_due: "post-Vanilla-mods-consumer-materialization closure"
     reviewer: Crystalka
+
+  - id: DOC-F-SRC-RUNTIME
+    path: src/DualFrontier.Runtime/MODULE.md
+    title: "DualFrontier.Runtime — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "5c6a064"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (REGISTER_INVERSION_A_MEASURE_REPORT §4, verdict: enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-ASSETS
+    path: src/DualFrontier.Runtime/Assets/MODULE.md
+    title: "DualFrontier.Runtime.Assets — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-19"
+    last_modified: "2026-05-19"
+    last_modified_commit: "76e027a"
+    content_language: en
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-COMPUTE
+    path: src/DualFrontier.Runtime/Compute/MODULE.md
+    title: "DualFrontier.Runtime / Compute — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-19"
+    last_modified_commit: "6758298"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-DIAGNOSTIC
+    path: src/DualFrontier.Runtime/Diagnostic/MODULE.md
+    title: "DualFrontier.Runtime.Diagnostic — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "b7cfea0"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-GRAPHICS
+    path: src/DualFrontier.Runtime/Graphics/MODULE.md
+    title: "DualFrontier.Runtime.Graphics — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "d854b8f"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-INPUT
+    path: src/DualFrontier.Runtime/Input/MODULE.md
+    title: "DualFrontier.Runtime.Input — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "b2ba32d"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-NATIVE
+    path: src/DualFrontier.Runtime/Native/MODULE.md
+    title: "DualFrontier.Runtime.Native — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "0cc72ca"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-NATIVE-VULKAN
+    path: src/DualFrontier.Runtime/Native/Vulkan/MODULE.md
+    title: "DualFrontier.Runtime.Native.Vulkan — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "e6aedb0"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-NATIVE-WIN32
+    path: src/DualFrontier.Runtime/Native/Win32/MODULE.md
+    title: "DualFrontier.Runtime.Native.Win32 — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "0cc72ca"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-SPRITE
+    path: src/DualFrontier.Runtime/Sprite/MODULE.md
+    title: "DualFrontier.Runtime.Sprite — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-19"
+    last_modified: "2026-05-19"
+    last_modified_commit: "ff58b9b"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-SRC-RUNTIME-WINDOW
+    path: src/DualFrontier.Runtime/Window/MODULE.md
+    title: "DualFrontier.Runtime.Window — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "b2ba32d"
+    content_language: mixed
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
+
+  - id: DOC-F-TESTS-RUNTIME-VULKAN
+    path: tests/DualFrontier.Runtime.Tests/Vulkan/MODULE.md
+    title: "DualFrontier.Runtime.Tests / Vulkan — module doc"
+    category: F
+    tier: 4
+    lifecycle: Live
+    owner: Crystalka
+    version: "Live"
+    first_authored: "2026-05-18"
+    last_modified: "2026-05-18"
+    last_modified_commit: "a9e5ebb"
+    content_language: en
+    review_cadence: phase-led
+    next_review_due: "2026-Q4"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance."
 
   - id: DOC-F-SRC-LAUNCHER-PROCEDURAL-ATLAS
     path: src/DualFrontier.Launcher/LauncherProceduralAtlas.cs
@@ -4808,6 +5081,23 @@ documents:
     review_cadence: on-status-transition
     next_review_due: "null"
     reviewer: Crystalka
+
+  - id: DOC-E-PHASE_BETA_PREP_EXECUTION_PROMPT
+    path: docs/prompts/PHASE_BETA_PREP_EXECUTION_PROMPT.md
+    title: "Phase β-prep Execution Prompt — A'.9.1 Analyzer Infrastructure Cascade"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-05-25"
+    last_modified: "2026-05-25"
+    last_modified_commit: "f94bb84"
+    content_language: mixed
+    review_cadence: on-status-transition
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): the prompt E/3/EXECUTED; real git provenance."
 
   - id: DOC-E-CORPUS_REWORK_REVIEW_REPORT
     path: docs/reports/CORPUS_REWORK_REVIEW_REPORT.md
