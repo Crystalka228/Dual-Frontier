@@ -31,6 +31,8 @@ Game-mechanic catalogue of which systems participate in a same-tick feedback cyc
 The system dependency graph does not allow cycles over the same components — otherwise the scheduler cannot build phases. But game logic regularly demands feedback: one system writes a resource and another reads that same resource to make a decision. This document catalogues where that shows up in Dual Frontier's mechanics and what it costs the player; the fix itself is engine law owned elsewhere.
 
 > **The engine rule has moved.** The normative statement of the cycle/snapshot rule — *any cycle-closing read goes through a `_Previous` snapshot of the previous tick* — used to be stated and half-owned by this document (including a predecessor self-flagged note, DD-1, about whether its specific enforcement exception type still applies after a runtime isolation guard was removed). As of this rework, [THREADING.md](../architecture/THREADING.md) is the sole normative home for the rule, its enforcement mechanism, and the DD-1 question. This document is downstream of it: it exists to catalogue which *mechanics* rely on the rule and what relying on it costs the player, and does not restate, re-derive, or re-verify the rule's enforcement mechanism (see §3).
+>
+> **Implementation status (verified at HEAD `35364c2`, 2026-07-15):** no `*Snapshot` component and no scheduler snapshot-copy pass exist anywhere in the repository (THREADING.md §7, "Not implemented"); §2 describes the design shape only — see §6 for per-example build status.
 
 ## 1. Problem
 
@@ -62,10 +64,10 @@ The rule — *any read that closes a cycle in the dependency graph must go throu
 
 ## 4. Cost
 
-- **+1 tick latency.** The golem reacts to mana exhaustion with a one-tick delay. At `TickRates.NORMAL` (15 frames, ~250 ms at 30 Hz) this is invisible to the player and does not break balance.
+- **+1 tick latency.** The golem reacts to mana exhaustion with a one-tick delay. At `TickRates.NORMAL` (15 SimTicks per NORMAL update, ~500 ms at the 30 Hz sim rate — `GameLoop.TargetTps = 30f`) this stays below the threshold where a player attributes cause and effect separately, though at half a second the "invisible" judgement is a design bet to re-verify in playtesting, not a settled fact. (The code comment "(~1/sec)" on `TickRates.SLOW` carries the same stale 60 Hz-era assumption this figure previously did.)
 - **+1 copy pass** per tick for each component participating in a cycle. The snapshot is a flat copy of the data structure, O(N) in the entity count for that component — on a real profile, a cost smaller than frame-time noise.
 
-The game-design trade-off this document owns: determinism is worth a tick of delay. A single tick of reaction lag is the price for reproducible combat, correct replay, and stable tests — the engine mechanism that delivers the reproducibility is THREADING's law (§3); this is the design decision to pay for it.
+The game-design trade-off this document owns: determinism is worth a tick of delay. A single tick of reaction lag is the price for reproducible combat, correct replay, and stable tests — read under the same determinism-class caveat as COMBO_RESOLUTION §4: aspirational D2, effective D0, per TIME_AND_CONSISTENCY_MODEL.md (AUTHORED draft) §5.1/§5.2. The engine mechanism that delivers the reproducibility is THREADING's law (§3); this is the design decision to pay for it.
 
 ## 5. Alternatives considered
 
@@ -100,4 +102,5 @@ While Draft, revise freely as the set of cycle-participating mechanics grows (FR
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R4-2/3/4): §4 latency arithmetic corrected — 15 SimTicks at the code-true 30 Hz rate is ~500 ms, not ~250 (the 250 figure was a 60 Hz-era residue; the "invisible" judgement flagged as a playtest bet); family-standard implementation-status banner added (no *Snapshot component / no scheduler copy-pass exists); §4 payoff sentence gains the COMBO-matching determinism-class caveat (aspirational D2, effective D0, TCM §5.1/§5.2). |
 | 0.1.0 | 2026-07-15 | Reclassified from Category A (`DOC-A-FEEDBACK_LOOPS`, now historical) to Category J per FRAMEWORK §3.1; the engine cycle/snapshot rule (formerly stated here, including the DD-1 self-flagged enforcement question) removed and rerouted to THREADING.md as sole normative owner; worked examples re-verified against code and annotated with current build status; document scope narrowed to gameplay applications only. |
