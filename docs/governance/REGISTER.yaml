@@ -32,7 +32,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -45,7 +45,7 @@ documents:
   last_modified_commit: edb267a
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §1.2 wiring-truth inherit list net8.0 → net10.0; one sentence added at §1.2 closing the recon gap — the analyzer project TFM (netstandard2.0, Roslyn host load compat, deliberately unmoved by the solution-wide net10.0 move) was nowhere asserted on this LOCKED surface, now stated together with LangVersion pinned explicit 14.0 (was floating latest; STACK_UPDATE D2); §6 kernel-boundary parenthetical C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0) (EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 - register_id: DOC-A-ARCHITECTURE
@@ -814,7 +814,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -825,7 +825,7 @@ documents:
   last_modified_commit: 6a67da5
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §10 quickstart external copy-paste commands, both steps, -f net8.0 → -f net10.0 (the two only stale TFM sites in this guide; solution TFM moved at EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 - register_id: DOC-A-MOD_OS
@@ -1205,7 +1205,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.0.3
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -1216,7 +1216,7 @@ documents:
   last_modified_commit: 5d71a8e
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and the section-6.3 device-lost fence no longer gate on ELT ratification (ratified law, EVT-2026-07-17-DRAFTS_RATIFICATION) - remaining gates are the deferred substrate amendment and the OQ-3 decision. PATCH 1.0.1 to 1.0.2.'
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 - register_id: DOC-B-CODING_STANDARDS
@@ -1226,16 +1226,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.3
+  version: 2.1.4
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2027-06-11
   title: Coding standards
   last_modified_commit: 673f815
   review_cadence: on-change+annual
-  last_review_date: 2026-06-11
-  last_review_event: "Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth per STANDING_LAW_CASCADE_BRIEF §7-W1 + §8 truth law: C#/C++ conventions codified from observed practice (R1 survey); build organization with Directory.Build.props chain quoted verbatim + CPM truth; §5 marker family registry ([ReservedStub] census pin 34 application sites / 13 files with verbatim rg composition rule; 5 doc-tag families with verbatim patterns + baselines; NEW DFK-WAIVER suppression law — load-bearing for A'.9.1 Phase β, supersedes the brief §7.3 DFK###-SUPPRESS sketch); §8 atomic-commit law (7-section body incl. Skeleton revisions per RESERVED_SURFACE_MUTABILITY); §9 verification gates reduced to existing artifacts (analyzer stated as 17 non-detecting Info stubs — zero enforcement; CI stated absent). v1.0 phantom enforcement claims (analyzer checks, CI) cured per drift report §6.3.5."
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase H doc census — v2.1.3 → v2.1.4 PATCH: §1 scope bullet + §3 heading C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0); §4.2 Directory.Build.props hand-mirror net8.0 → net10.0 + LangVersion 12.0 → 14.0, and the new repo-root global.json SDK pin stated (10.0.204, rollForward latestFeature); §4.3 CPM hand-mirror rows Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit 2.9.2 → 2.9.3, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial) (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth…'
   reviewer: Crystalka
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
@@ -1315,16 +1315,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 0.2.1
+  version: 0.2.2
   first_authored: 2026-07-02
-  last_modified: 2026-07-02
+  last_modified: 2026-07-17
   content_language: mixed
   next_review_due: 2027-05-10
   title: Pipeline metrics — empirical record
   last_modified_commit: 0411bb0
   review_cadence: on-change+annual
-  last_review_date: 2026-05-10
-  last_review_event: A'.0.7 methodology rewrite
+  last_review_date: 2026-07-17
+  last_review_event: "STACK_UPDATE Phase H doc census — v0.2.1 → v0.2.2 PATCH: era-annotation supersession note appended at the §5.2 annotation paragraph only (the ratified edit surface) — surviving v1.6+ stack .NET 8.0 SDK (C# 12) → .NET 10.0 (SDK 10.0.204 via repo-root global.json, C# 14) (EVT-2026-07-17-STACK_UPDATE); frozen v1.x metrics bodies byte-identical per the era charter. Prior context: A'.0.7 methodology rewrite…"
   reviewer: Crystalka
   risks_referenced:
   - RISK-014
@@ -1337,16 +1337,16 @@ documents:
   tier: 2
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-02
-  last_modified: 2026-07-02
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2026-Q3
   title: Reserved-surface mutability license
   last_modified_commit: 0411bb0
   review_cadence: on-closure+quarterly
-  last_review_date: 2026-06-11
-  last_review_event: "Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3 (D1) — the mutability license adapted from the News Intelligence Hub PHASE_0_SKELETON_MUTABILITY mechanism onto DF reality. Principle: a property is mutable iff changing it changes no answer in any Tier-1 LOCKED authority. Mutable catalog (reserved-stub/analyzer-rule symbol names; file layout below project level; annotation surface forms; brief csproj wiring lists; grep/census expressions; §-numbering in citations) vs immutable catalog (К-L invariants per KERNEL Part 0's own «21 final» composition pinned verbatim — К-L1..5 + К-L7..11 + subs К-L3.1/7.1/15.1 + К-L12..19, К-L6 SUPERSEDED excluded, К-L20 reserved excluded, Latin/Cyrillic bi-script grep rule per F-4; PA-001..004; locked Q-series; declared S-LOCKs; register_id permanence; lifecycle state machine; atomic-commit discipline; К-L20 additive-semver law). Commit-body `Skeleton revisions:` form (one conceptual change = one entry). A'.9.1 Phase α 5 mid-cascade deltas retrospectively classified: 4 surface (CPM-count 16436b7, rule-count d0b4c41, seealso-URL fc66156, annotation-census f4a94e6) + 1 architectural correctly halted (ProjectReference-drop 5030fa2, PA-002 anchor)."
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §6 delta-1 row framework-compatibility clause netstandard2.0-cannot-reference-net8.0 → net10.0, tracking the landed solution TFM (the clause follows the live Contracts target, as the analyzer csproj comment now does); sole stale token in this document, all other §6 historical delta records untouched (EVT-2026-07-17-STACK_UPDATE). Prior context: Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3…'
   reviewer: Crystalka
   special_case_rationale: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 - register_id: DOC-B-TESTING_STRATEGY
@@ -1356,16 +1356,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.2.1
+  version: 2.2.2
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2027-06-11
   title: Testing strategy
   last_modified_commit: 673f815
   review_cadence: on-change+annual
-  last_review_date: 2026-06-11
-  last_review_event: 'Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR per STANDING_LAW_CASCADE_BRIEF §7-W2 + §8 truth law: test-landscape truth (9 dotnet-test projects, 1036 tests / 1034 passing at the 2026-06-11 survey; Analyzers.Tests called placeholder plainly; 2 non-test exe projects; 19 fixture projects; native df_native_selftest; 2 pre-existing failing tests on main → F-10, recorded not absorbed); 8-layer taxonomy incl. the Roslyn analyzer-test convention (law now, population = Phase β) + meta layer (currently NONE — stated); §4 census contracts (ReservedStub pin 34/13 exactness-not-monotonicity; 5 doc-tag family pins; DFK-WAIVER census baseline 0; S-LOCK→verifying-artifact obligation with the 2026-06-11 audit result — no hard gaps → F-8 closed empty); §5 machine-checkable vs architect-audited honesty + no-lying-stubs law (Lesson #25/#N12, DFL025-A Trait convention); §6 brief-integration pattern (carries vs cites + boundary rule + anti-pattern rule); §7 closure-audit obligation extending METHODOLOGY §12.7. v1.0 phantoms named and purged (SchedulerFixture builder API, EvilMod, PerformanceGates.cs, CI gates, 4-project layout).'
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase H doc census — v2.2.1 → v2.2.2 PATCH: §1.3 stack-truth mirror sentence updated to the landed test triad — xUnit 2.9.2 → 2.9.3, Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial); sole live site, v1.0 changelog stack mention left as historical record (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR…'
   reviewer: Crystalka
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md

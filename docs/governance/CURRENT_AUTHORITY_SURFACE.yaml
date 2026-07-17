@@ -10,7 +10,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-A-ARCHITECTURE_V2
   path: docs/architecture/ARCHITECTURE.md
   category: A
@@ -100,7 +100,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-A-MOD_OS_ARCHITECTURE
   path: docs/architecture/MOD_OS_ARCHITECTURE.md
   category: A
@@ -160,13 +160,13 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.2
+  version: 1.0.3
 - register_id: DOC-B-CODING_STANDARDS
   path: docs/methodology/CODING_STANDARDS.md
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.1.3
+  version: 2.1.4
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
   category: B
@@ -190,19 +190,19 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 0.2.1
+  version: 0.2.2
 - register_id: DOC-B-RESERVED_SURFACE_MUTABILITY
   path: docs/methodology/RESERVED_SURFACE_MUTABILITY.md
   category: B
   tier: 2
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-B-TESTING_STRATEGY
   path: docs/methodology/TESTING_STRATEGY.md
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.2.1
+  version: 2.2.2
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md
   category: C

@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.2.1
+version: 2.2.2
 first_authored: 2026-07-15
-last_modified: 2026-07-15
+last_modified: 2026-07-17
 content_language: en
 next_review_due: 2027-06-11
 title: Testing strategy
 last_modified_commit: 673f815
 review_cadence: on-change+annual
-last_review_date: 2026-06-11
-last_review_event: 'Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR per STANDING_LAW_CASCADE_BRIEF §7-W2 + §8 truth law: test-landscape truth (9 dotnet-test projects, 1036 tests / 1034 passing at the 2026-06-11 survey; Analyzers.Tests called placeholder plainly; 2 non-test exe projects; 19 fixture projects; native df_native_selftest; 2 pre-existing failing tests on main → F-10, recorded not absorbed); 8-layer taxonomy incl. the Roslyn analyzer-test convention (law now, population = Phase β) + meta layer (currently NONE — stated); §4 census contracts (ReservedStub pin 34/13 exactness-not-monotonicity; 5 doc-tag family pins; DFK-WAIVER census baseline 0; S-LOCK→verifying-artifact obligation with the 2026-06-11 audit result — no hard gaps → F-8 closed empty); §5 machine-checkable vs architect-audited honesty + no-lying-stubs law (Lesson #25/#N12, DFL025-A Trait convention); §6 brief-integration pattern (carries vs cites + boundary rule + anti-pattern rule); §7 closure-audit obligation extending METHODOLOGY §12.7. v1.0 phantoms named and purged (SchedulerFixture builder API, EvilMod, PerformanceGates.cs, CI gates, 4-project layout).'
+last_review_date: 2026-07-17
+last_review_event: 'STACK_UPDATE Phase H doc census — v2.2.1 → v2.2.2 PATCH: §1.3 stack-truth mirror sentence updated to the landed test triad — xUnit 2.9.2 → 2.9.3, Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial); sole live site, v1.0 changelog stack mention left as historical record (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR…'
 reviewer: Crystalka
 ---
 
@@ -46,7 +46,7 @@ When execution encounters a testing question this document does not answer, the 
 
 ### §1.3 — Stack truth
 
-The managed test stack is **xUnit 2.9.2 + FluentAssertions 6.12.1 + Microsoft.NET.Test.Sdk 17.11.1 + xunit.runner.visualstudio 2.8.2**, all version-resolved through Central Package Management (`Directory.Packages.props` at repo root). The analyzer-test project additionally references **Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit 1.1.2** plus an explicit **Microsoft.CodeAnalysis.CSharp.Workspaces 5.3.0** override (the override forces the CPM-pinned Workspaces to win over the testing package's transitive 1.0.1 — without it MEF composition fails at first run; recorded in `tests/DualFrontier.Analyzers.Tests/DualFrontier.Analyzers.Tests.csproj`). The native test stack is a standalone C++ selftest executable built by CMake (§2.5).
+The managed test stack is **xUnit 2.9.3 + AwesomeAssertions 9.4.0 + Microsoft.NET.Test.Sdk 18.8.1 + xunit.runner.visualstudio 3.1.5** (AwesomeAssertions is the Apache-2.0 community fork that replaced FluentAssertions 6.12.1 at the 2026-07-17 STACK_UPDATE cascade — the FluentAssertions package id is never used again; its 8.x line is paid-commercial), all version-resolved through Central Package Management (`Directory.Packages.props` at repo root). The analyzer-test project additionally references **Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit 1.1.2** plus an explicit **Microsoft.CodeAnalysis.CSharp.Workspaces 5.3.0** override (the override forces the CPM-pinned Workspaces to win over the testing package's transitive 1.0.1 — without it MEF composition fails at first run; recorded in `tests/DualFrontier.Analyzers.Tests/DualFrontier.Analyzers.Tests.csproj`). The native test stack is a standalone C++ selftest executable built by CMake (§2.5).
 
 There is **no CI pipeline**. Every gate named in this document is executed locally — by the executing agent during a cascade and at closure per §7. Any future CI claim must name its on-disk workflow artifact before it may appear here.
 
@@ -515,6 +515,14 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.2.2 -- 2026-07-17 -- STACK_UPDATE Phase H doc census (PATCH).** Per the STACK_UPDATE cascade
+(EVT-2026-07-17-STACK_UPDATE). §1.3 stack-truth mirror sentence updated to the landed test triad:
+xUnit 2.9.2 -> 2.9.3, Microsoft.NET.Test.Sdk 17.11.1 -> 18.8.1, xunit.runner.visualstudio 2.8.2 -> 3.1.5,
+and FluentAssertions 6.12.1 -> AwesomeAssertions 9.4.0 (the Apache-2.0 community fork; the FluentAssertions
+package id is never used again -- its 8.x line is paid-commercial). Sole live site in this document; the
+v1.0 changelog entry's stack mention stays as historical record. Cross-reference truth only; no taxonomy,
+contract, or pin-semantics change.
 
 **v2.2.1 -- 2026-07-15 -- CODEX_CLOSURE cascade (PATCH).** Per tools/briefs/CODEX_CLOSURE_BRIEF.md.
 Census-pin refresh (§4.2): `not yet` 8/7 -> 10/9. The two new markers are the CX-06

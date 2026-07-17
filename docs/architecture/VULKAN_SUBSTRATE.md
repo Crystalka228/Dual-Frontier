@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.0.3
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 5d71a8e
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and the section-6.3 device-lost fence no longer gate on ELT ratification (ratified law, EVT-2026-07-17-DRAFTS_RATIFICATION) - remaining gates are the deferred substrate amendment and the OQ-3 decision. PATCH 1.0.1 to 1.0.2.'
+last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
@@ -635,7 +635,7 @@ Two binding checks carried from the predecessor's methodology adjustments — th
 1. **Validation-clean output is a pre-commit check owned by this document.** Development runs with `VK_LAYER_KHRONOS_validation` on (DEBUG default — §2.1); the smoke-test protocols capture output through `ValidationLog`, and `ErrorCount == 0` is the exit criterion (§1.5).
 2. **Every new compute shader ships with a CPU reference implementation and an equivalence test** on representative inputs within tolerance, before commit. Realized for V1; binds V2 and every subsequent shader.
 
-Risk register, pruned to what is still live: **Vulkan complexity bugs** (synchronization, layout transitions, compute fence sync) remain high-probability and are mitigated by the two checks above plus RenderDoc/Nsight debugging; **scope creep into engine-building** remains the standing cultural risk, answered by the features-only-on-demand rule (§0.2); **compute determinism across hardware** is a live, accepted property with its save-time mitigation deliberately deferred (§7.2). Resolved-moot risks (binding tedium, PNG decoder edge cases, font tooling) are historical record. Required tooling in use since V0: LunarG Vulkan SDK for development/debugging (not for shader builds — §1.4), RenderDoc, VS 2022 17.8+ for `[LibraryImport]` source generators.
+Risk register, pruned to what is still live: **Vulkan complexity bugs** (synchronization, layout transitions, compute fence sync) remain high-probability and are mitigated by the two checks above plus RenderDoc/Nsight debugging; **scope creep into engine-building** remains the standing cultural risk, answered by the features-only-on-demand rule (§0.2); **compute determinism across hardware** is a live, accepted property with its save-time mitigation deliberately deferred (§7.2). Resolved-moot risks (binding tedium, PNG decoder edge cases, font tooling) are historical record. Required tooling in use since V0: LunarG Vulkan SDK for development/debugging (not for shader builds — §1.4), RenderDoc, Visual Studio 2026 (18.0)+ for `[LibraryImport]` source generators.
 
 ---
 

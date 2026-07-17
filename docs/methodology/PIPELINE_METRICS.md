@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 0.2.1
+version: 0.2.2
 first_authored: 2026-07-02
-last_modified: 2026-07-02
+last_modified: 2026-07-17
 content_language: mixed
 next_review_due: 2027-05-10
 title: Pipeline metrics — empirical record
 last_modified_commit: 0411bb0
 review_cadence: on-change+annual
-last_review_date: 2026-05-10
-last_review_event: A'.0.7 methodology rewrite
+last_review_date: 2026-07-17
+last_review_event: 'STACK_UPDATE Phase H doc census — v0.2.1 → v0.2.2 PATCH: era-annotation supersession note appended at the §5.2 annotation paragraph only (the ratified edit surface) — surviving v1.6+ stack .NET 8.0 SDK (C# 12) → .NET 10.0 (SDK 10.0.204 via repo-root global.json, C# 14) (EVT-2026-07-17-STACK_UPDATE); frozen v1.x metrics bodies byte-identical per the era charter. Prior context: A''.0.7 methodology rewrite…'
 reviewer: Crystalka
 risks_referenced:
 - RISK-014
@@ -253,7 +253,7 @@ A machine with a discrete GPU and 8 GB VRAM, or Apple Silicon with 16 GB unified
 
 **Annotation** (A'.0.7, 2026-05-10): `[transfers с reframing]`
 
-.NET 8.0 SDK + Godot 4.3+ survive across era boundary (project tech stack). VS Code+Cline + LM Studio+Gemma are v1.x-specific tooling that doesn't transfer. Anthropic Claude desktop app survives across boundary; subscription-tier guidance same (Max 5×). See §6 Forward measurement plan for v1.6 reformulation. [Superseded 2026-05-23 / 2026-06-30: Godot fully deprecated at K-extensions cascade #2 and eradicated at the Godot Eradication Cascade (F-5 CLOSED `be7d4c2`); surviving v1.6+ stack = .NET 8.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.]
+.NET 8.0 SDK + Godot 4.3+ survive across era boundary (project tech stack). VS Code+Cline + LM Studio+Gemma are v1.x-specific tooling that doesn't transfer. Anthropic Claude desktop app survives across boundary; subscription-tier guidance same (Max 5×). See §6 Forward measurement plan for v1.6 reformulation. [Superseded 2026-05-23 / 2026-06-30: Godot fully deprecated at K-extensions cascade #2 and eradicated at the Godot Eradication Cascade (F-5 CLOSED `be7d4c2`); surviving v1.6+ stack = .NET 8.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.] [Superseded 2026-07-17: the .NET tier of the surviving stack moved at the STACK_UPDATE cascade (EVT-2026-07-17-STACK_UPDATE) — .NET 8.0 SDK (C# 12) → .NET 10.0 (SDK 10.0.204 pinned by repo-root `global.json`, C# 14); surviving v1.6+ stack = .NET 10.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.]
 
 ### §5.3 Subscription tier
 
@@ -298,6 +298,7 @@ Task completion lifts content from this backlog к main document body; this sect
 | 0.1 | 2026-04-28 | Initial collection covering Phases 0–4 baseline plus M0–M3 Mod-OS migration; gathered under v1.x era pipeline (4-agent model-tier boundary: human + Gemma local executor + Sonnet prompt generator + Opus architect). |
 | 0.2 | 2026-05-10 | Per-metric annotations added per A'.0.7 amendment (Q10.a-with-standardized-labels): 5 standardized transferability labels applied к each section; top-of-document era frame note; new §6 Forward measurement plan tracks v1.6 era data collection backlog. v1.x era measurements preserved verbatim. |
 | 0.2.1 | 2026-07-02 | A'.9.1 Phase δ rider — era annotations appended at the §5.2 annotation paragraph and the §6 forward-plan §5.2 row: the «Godot 4.3+ survives across era boundary» forward-claims superseded (Godot deprecated at К-extensions cascade #2 2026-05-23; eradicated at the Godot Eradication Cascade 2026-06-30, F-5 CLOSED `be7d4c2`). Annotation-only under the document's own era charter; §1–§5 historical bodies untouched. |
+| 0.2.2 | 2026-07-17 | STACK_UPDATE Phase H doc census (EVT-2026-07-17-STACK_UPDATE) — supersession note appended at the §5.2 annotation paragraph (the ratified edit surface): the .NET tier of the surviving v1.6+ stack moved, .NET 8.0 SDK (C# 12) → .NET 10.0 (SDK 10.0.204 pinned by repo-root `global.json`, C# 14). Annotation-only under the document's own era charter; §1–§5 historical bodies and the §6 forward-plan row's dated record untouched. |
 
 ---
 
