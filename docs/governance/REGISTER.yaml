@@ -527,14 +527,16 @@ documents:
   tier: 1
   lifecycle: AUTHORED
   owner: Crystalka
-  version: 0.1.0
+  version: 0.1.1
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-ratification closure
   title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (A5+A6+A8 draft)
   last_modified_commit: 8960085
   review_cadence: on-status-transition
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION Phase B (C4): HALT-1-ratified retargets IAC-1..IAC-5 — version-0 census corrected (nine systems ≈20 sites, +ComfortAuraSystem/HaulSystem sites, WriteBatch.cs:221 sibling noted); teaching-texts claims re-marked (successors now teach the corrected form, code defect persists); §7 items 1/2 closed-by-rework; device-lost claim softened (VULKAN OQ-V1 exists); §6.1 cite reform. 72 catch(...) recount EXACT at 48983c4.'
   reviewer: Crystalka
   special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A5+A6 (+A8 error-taxonomy) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 - register_id: DOC-A-ISOLATION
@@ -958,14 +960,16 @@ documents:
   tier: 1
   lifecycle: AUTHORED
   owner: Crystalka
-  version: 0.1.2
+  version: 0.1.3
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-ratification closure
   title: Persistence Snapshot Contract — snapshot boundary, inclusion/exclusion, identity serialization law (A7 draft skeleton; invariants only)
   last_modified_commit: 6888246
   review_cadence: on-status-transition
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION Phase B (C4): HALT-1-ratified retargets PSC-1/PSC-2 — "schema v1" re-anchored (predecessor EVENT_BUS line retired; code truth background_queue.cpp:209 + EVENT_BUS §6 + historical/ KFNS Item 31); MOD_OS D-6 → §9.8; FIELDS save/load → §12 (FENCED, defers here); VULKAN → §7.1/§7.2/§5.4; §6.1 cite reform. Held AUTHORED per the standing item-[6] recommendation; hold note + sentinel flip land at the Phase C ratification commit.'
   reviewer: Crystalka
   special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal SKELETON of the missing A7 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7 — invariants and boundaries only; save-system implementation stays deferred to its milestone (that deferral is ratified per MIGRATION_PLAN §8.1). Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 - register_id: DOC-A-PHASE_A_PRIME_SEQUENCING
@@ -1129,14 +1133,16 @@ documents:
   tier: 1
   lifecycle: AUTHORED
   owner: Crystalka
-  version: 0.1.2
+  version: 0.1.3
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-ratification closure
   title: Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (A4 draft)
   last_modified_commit: 0145f1b
   review_cadence: on-status-transition
+  last_review_date: 2026-07-17
+  last_review_event: 'DRAFTS_RATIFICATION Phase B (C4): HALT-1-ratified retargets TCM-1..TCM-4 — R4-7 dangling-phase cites re-homed (THREADING §7 tick-boundary; COMBO §2 footnote; FEEDBACK_LOOPS §2); R4-10 RNG census corrected (FOUR fixed-seed sites, semantic-analyzer nuance added); §7.1/§7.5 re-marked RESOLVED by rework, §7.2 reframed (both LOCKED texts now defer to this contract); §6.1 cite reform.'
   reviewer: Crystalka
   special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A4 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 - register_id: DOC-A-VISUAL_ENGINE
