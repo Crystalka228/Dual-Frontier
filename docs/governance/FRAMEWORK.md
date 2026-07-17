@@ -1,15 +1,30 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-FRAMEWORK
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.0.0"
+version: 2.0.0
+first_authored: 2026-05-12
+last_modified: 2026-07-15
+content_language: en
 next_review_due: 2027-05-25
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FRAMEWORK
+title: Document Control Register — Governance Framework
+is_meta_entry: true
+meta_role: register_specification
+last_modified_commit: 7449ba8
+review_cadence: on-change+annual
+last_review_date: 2026-05-25
+last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 9 — FRAMEWORK v1.1 → v1.1.1 PATCH bump для §13 «See also» PROJECT_AXIOMS.md cross-reference addition (Axiom Option (VII) completion per Brief A'.9.1 batch 2 deliberation 2026-05-24; PROJECT_AXIOMS.md v1.0 LOCKED at Phase α Commit 8). Three-document governance trio now mutually discoverable. No schema change."
+reviewer: Crystalka
+requirements_authored:
+- REQ-Q-A45-X5
+risks_referenced:
+- RISK-010
+- RISK-012
 ---
+
 # Document Control Register — Governance Framework
 
 *Project synthesis from DO-178C / ISO 9001 / ISO 26262 / IEC 61508 / FDA 21 CFR Part 11. Bespoke framework fitted to solo-developer + AI-pipeline + decade-horizon planning context.*

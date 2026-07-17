@@ -1,15 +1,27 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-K_L3_1_AMENDMENT_PLAN
+project: Dual Frontier
 category: A
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_L3_1_AMENDMENT_PLAN
+version: 1.0
+first_authored: 2026-05-10
+last_modified: 2026-05-10
+content_language: mixed
+next_review_due: null
+title: K-L3.1 Amendment Plan — old/new text pairs
+last_modified_commit: 0789bd4
+review_cadence: on-status-transition
+last_review_date: 2026-05-10
+last_review_event: K-L3.1 amendment landing
+reviewer: Crystalka
+special_case_rationale: Amendment plans behave like briefs (EXECUTED post-landing, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3
+risks_referenced:
+- RISK-004
+- RISK-008
 ---
+
 # K-L3.1 Amendment Plan — old/new text pairs
 
 **Status**: AUTHORED 2026-05-10 (Phase 4 deliverable of K-L3.1 session)

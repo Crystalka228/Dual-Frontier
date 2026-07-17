@@ -1,3 +1,22 @@
+---
+register_id: DOC-F-SRC-RUNTIME-ASSETS
+project: Dual Frontier
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: Live
+first_authored: 2026-05-19
+last_modified: 2026-05-19
+content_language: en
+next_review_due: 2026-Q4
+title: DualFrontier.Runtime.Assets — module doc
+last_modified_commit: 76e027a
+review_cadence: phase-led
+reviewer: Crystalka
+special_case_rationale: Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance.
+---
+
 # DualFrontier.Runtime.Assets
 
 Asset loading + decoding module. V0.C.1 scope: PNG decoder + AssetManager (path resolution + caching).

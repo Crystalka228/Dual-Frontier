@@ -1,15 +1,28 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-MOD_OS_ARCHITECTURE
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_OS_ARCHITECTURE
+title: Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
+supersedes:
+- DOC-A-MOD_OS
+- DOC-A-MOD_PIPELINE
+- DOC-A-ISOLATION
+last_modified_commit: 4a36abe
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: "CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (141 anchors — the wave's largest) + HALT-1-ratified corrections R2-4..R2-8 at 4a36abe (EffectiveApiVersion mechanism truth; phantom loader warning retired; Path β reclamation honesty); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION); EVT-54 rider executed at 717641b (METHODOLOGY/MAX_ENG ISOLATION links retargeted forward)."
+reviewer: Crystalka
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 ---
+
 # Mod OS Architecture
 
 The mod platform of Dual Frontier — topology, manifest, capabilities, `IModApi`, contracts, versioning, the integration pipeline, the lifecycle (one apply transaction, one unload chain, one fault path), the isolation model, and the threat model, stated once and verified against code.

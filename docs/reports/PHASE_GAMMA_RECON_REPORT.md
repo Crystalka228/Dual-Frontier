@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT
+version: 1.0
+first_authored: 2026-07-01
+last_modified: 2026-07-01
+content_language: en
+next_review_due: null
+title: PHASE GAMMA RECON REPORT — 2026-07-01 (R1-R8) — pre-brief reconnaissance for A'.9.1 Phase γ severity promotion (promotion-safety SARIF measure 0 active + 2 suppressed; ratified severity-matrix cross-check; the three severity surfaces; waiver-under-promotion; citation anchors + F-12; anomalies + descriptor-as-truth design-fork recommendation)
+last_modified_commit: 524dd31
+review_cadence: none-historical-record
+last_review_date: 2026-07-01
+last_review_event: 'Read-only recon session 2026-07-01 — the first durable-report recon: persisted to docs/reports/ at authoring time (instead of the tools/briefs/ β-sibling location), substituting for a brief survey wave per PHASE_GAMMA_BRIEF preamble. R2 promotion-safety measure re-verified at Phase 0 of the execution session: 0 active + 2 suppressed(inSource), exact match. Enrolled at the Phase γ REGISTER closure.'
+reviewer: Crystalka
+special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-BUS_INVESTIGATION_2026_05_21, DOC-E-SCHEDULER_STRESS_TEST_SUITE), per PHASE_GAMMA_BRIEF §10 (DOC-C/E reports form; the PHASE_BETA_VIOLATION_INVENTORY.yaml precedent named there was itself assessed OUT of the register — the followed convention is the docs/reports/ .md class). Basis of DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF.'
 ---
+
 # PHASE GAMMA RECON REPORT — 2026-07-01
 
 Pre-brief reconnaissance for A'.9.1 Phase γ severity promotion. Read-only session;

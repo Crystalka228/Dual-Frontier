@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-CONTRACTS_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-CONTRACTS_V2
+title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
+supersedes:
+- DOC-A-CONTRACTS
+last_modified_commit: 8896d32
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (32/32 anchors EXACT) + HALT-1-ratified corrections at 8896d32 — SEED-2 cross-reference row (refusal-list retirement) + R2-2/R2-3; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
 ---
+
 # Contract system
 
 `DualFrontier.Contracts` is the only assembly every layer can see: core, systems, mods, external tools. A contract declares intent with no hint of implementation; it does not change for convenience — add a new type, or cut a new interface version.

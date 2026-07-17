@@ -1,3 +1,22 @@
+---
+register_id: DOC-D-BRIEF_SKELETON_FRAMEWORK
+project: Dual Frontier
+category: D
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: 1.0
+first_authored: 2026-05-17
+last_modified: 2026-05-17
+content_language: mixed
+next_review_due: null
+title: Brief Skeleton Framework — Execution Brief
+last_modified_commit: bfb1227
+review_cadence: on-cascade-execution
+reviewer: Crystalka
+special_case_rationale: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): briefs D/3/EXECUTED; real git provenance.'
+---
+
 # Brief Skeleton Framework — Execution Brief
 
 **Brief authored**: 2026-05-17 (Claude Opus 4.7, deliberation mode)

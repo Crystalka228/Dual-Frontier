@@ -1,15 +1,28 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K10_3
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "2.0"
+version: 2.0
+first_authored: 2026-05-20
+last_modified: 2026-05-20
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_3
+title: К10.3 v2 — Pipeline depth + display composition + mod lifecycle quiescent (К-L7.1/L16/L17/L18)
+review_cadence: on-status-transition
+last_review_date: 2026-05-20
+last_review_event: "К10.3 v2 brief AUTHORED + ratified 2026-05-19 per Option D execution. Supersedes К10.3 v1 brief (tools/briefs/K10_3_EXECUTION_BRIEF.md, AUTHORED 2026-05-18 from К10 deliberation arc closure но never enrolled). v1 halted Phase 0 twice: (1) 2026-05-18 SC-14 V substrate absent → Crystalka Option B (build V substrate first); V0.A/V0.B/V0.C.1/V0.C.2/V1 cascades landed 2026-05-18..2026-05-19 (5 closure PRs, main 070be85 → 88aebf2); V0.B landed К-L19 + Items 43+44 inline per cross-stream prerequisite resolution per KERNEL_ARCHITECTURE.md line 65-67. (2) 2026-05-19 SC-1+SC-3+SC-14 post-V substrate cascade — v1 brief Commits 3/4/5 duplicate landed work; remaining items 33-42 valid но need path/integration revisions. Crystalka chose Option D per HALT_REPORT_ADDENDUM_2026_05_19 §6 — revised brief authored from current state. v2 authored Opus 4.7 (Crystalka auto-mode 2026-05-19 session) with all 5 PENDING-RATIFICATION S-LOCKs ratified by Crystalka same day (Q1+Q5 coexistence opt-in для К-L7/L7.1 + V1 sync parallel paths; Q2 combined VULKAN_SUBSTRATE.md v1.0→v1.1 reconciliation; Q3 src/DualFrontier.Application/Display/ NEW location для К-L17; Q4 helpers-only scope для К-L18 UI integration). ~14-15 atomic commits planned, 4 К-L additions (К-L7.1 sub + К-L16/L17/L18; К-L19 inherited V0.B). Revised scope 10 items (33-42) vs v1's 12 items (43-44 done V0.B)."
+reviewer: Crystalka
+risks_referenced:
+- RISK-002
+- RISK-003
+- RISK-004
+- RISK-013
+special_case_rationale: "К10.3 v2 standalone execution brief — third of four К10 sub-milestones under Option III standalone-briefs structure. v2 supersedes v1 (AUTHORED 2026-05-18 from K10 deliberation arc closure, never enrolled, halted Phase 0 twice). К10.3 v2 implements 10 of 46 К10 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.10 Items 33-37 (pipeline depth К-L16 + sub-invariant К-L7.1), §3.11 Items 38-40 (display composition К-L17), §3.12 Items 41-42 (mod lifecycle quiescent К-L18). Items 43-44 already landed V0.B as cross-stream prerequisite resolution (К-L19 + HardwareCapabilityCheck + QueueFamilyInfo + README hardware section). Cumulative К10 progress post-К10.3 v2 (if executed): 35 of 46 К10 items closed (К10.1 К-L12/L13/L14 12 items + К10.2 К-L15 8 items + V0.B К-L19 2 items + К10.3 v2 К-L7.1/L16/L17/L18 10 items = 32; + К10.4 3 items pending; + Item 14 deferred К11+; + Item 25 cross-cutting А'.8; + Items 10/22/23 К-extensions scope = 11 remaining). Strategy: managed-facade-preserved per К10.1+К10.2+V0.B precedent — К10.3 v2 architecture landings + helper wirings; full UI / pipeline-managed mod adoption deferred к К-closure or К-extensions. К-L7.1 introduces opt-in pipeline-managed pattern coexisting с V1 К-L7 sync (per К-L9 «Vanilla = mods» author choice per field). К-L17 display composition lives в src/DualFrontier.Application/Display/ NEW directory per S-LOCK-11 Crystalka 2026-05-19 lock. К-L18 UI integration scope = SimulationStateController helper + ModMenuController pause hook only per S-LOCK-12 (full settings menu deferred). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. v1 brief retained on disk (tools/briefs/K10_3_EXECUTION_BRIEF.md) с superseded_by annotation per Commit 1 enrollment design."
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: K10_3_EXECUTION_BRIEF_v2

@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_9_1_PHASE_0_CLOSURE_REPORT
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: AUTHORED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_1_PHASE_0_CLOSURE_REPORT
+version: 1.0
+first_authored: 2026-05-24
+last_modified: 2026-05-24
+content_language: en
+next_review_due: null
+title: A_PRIME_9_1_PHASE_0_CLOSURE_REPORT — A'.9.1 Phase 0 reconnaissance findings + Phase α handoff package (14 reads + 6 of 7 empirical scans + 10 findings F1-F10)
+last_modified_commit: bb6807c
+review_cadence: on-Phase-alpha-handoff
+last_review_date: 2026-05-24
+last_review_event: "A'.9.1 Phase 0 closure report authored 2026-05-24 by Claude Code (Opus 4.7, 1M context) in same context as brief receipt (S-LOCK-3 advisory overridden by Crystalka direction 2026-05-24 — Phase 0 reads + scans executed in current context window). Captures brief §4.1 14 mandatory reads completion + brief §4.2 7 empirical scans (6 complete + Task 7 violation count correctly deferred к Phase α exit per circular dependency). 10 findings F1-F10 documented + 4 surface decisions ratified by Crystalka: F1 path corrections applied к brief (edit in-place vs document-only); F7 Lesson #N17 candidate location = METHODOLOGY inline (Option B); F8 session logs = leave uncommitted; next action = commit Phase 0 + spawn Phase α in fresh context. Key Phase 0 outcomes: Q-L-16 closes Option α (DFK016 retained at Warning severity — managed surface stable at PipelineSlotInterop.cs); DF→DFK rename scope = 531 occurrences across 15 files (brief estimate ~195 — 2.7× off); S-LOCK-4 phase α exit count = 16 own rules within Q-L-16 «+0 or +1» bound; cascade #3 deferred dispatch arms confirmed at src/DualFrontier.Launcher/RenderCommandDispatcher.cs:85,95,104 with existing DO NOT TEST comments translating directly into [ReservedStub] Reason field drafts; predecessor brief A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md disposition = SUPERSEDED per recon §10 Prerequisite 9 (Phase δ lifecycle transition recommended); A_PRIME_7_X_LESSON_CANDIDATES.md does not exist on disk (Option B METHODOLOGY inline chosen for Lesson #N17). К-L14 thesis preserved (zero substrate touch; Phase 0 reconnaissance output only; cascade closure at Phase δ produces К-L14 Evidence #14 not Phase 0)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Phase 0 closure report for A'.9.1 Analyzer Infrastructure cascade — pre-execution reconnaissance findings + Phase α handoff package. Authored 2026-05-24 by Claude Code в same context as brief receipt (S-LOCK-3 advisory recommending fresh-context execution overridden by Crystalka direction). Report purpose: make Phase α handoff clean — execution agent reads brief + this Phase 0 report + amendments log + ANALYZER_RULES baseline и has everything needed без re-running Phase 0. 14/14 brief §4.1 mandatory reads complete (8 directly in main context + 5 bonus reads + 4 delegated к Explore agent for massive artifacts: recon report 335KB + REGISTER 524KB + KERNEL Part 0 + K_CLOSURE §7). 6 of 7 brief §4.2 empirical scans complete: Task 1 DFK016 feasibility = retain α; Task 2 DFK013 wake_type detection scope = WakeAttributes.cs 4 managed attributes mapping native 5 wake types; Task 3 PROJECT_AXIOMS.md draft refinement = all 4 PA anchors verified (FRAMEWORK §0 + SYNTHESIS_RATIONALE §0 + Crystalka direction + KERNEL Part 0); Task 4 Lesson #N17 candidate = Option B METHODOLOGY inline; Task 5 standard reads per Lesson #N14 = completed (Lesson #N14 4th application surfaced); Task 6 DF→DFK scope = 531 occurrences across 15 files. Task 7 (violation count estimate) deferred к Phase α exit per circular dependency (requires Phase α scaffolding first — analyzer csproj + tests csproj + CPM + 16 stub rules). Phase 0 §3 surfaced 10 findings F1-F10 + 4 surface decisions ratified by Crystalka via session interaction 2026-05-24. Forward к Phase α: fresh-context execution session reads brief + this Phase 0 report + amendments log + ANALYZER_RULES baseline → executes 9 Phase α atomic commits per brief §6 → Phase β violation triage → Phase γ severity promotion (if ≤80 violations per Q-L-1 adaptive gate) → Phase δ closure cascade. К-L14 thesis preservation: zero production code touched / zero substrate API surface modified / zero test code touched / К-L14 evidence count unchanged at 13 (Phase 0 produces no К-L14 evidence; cascade closure at Phase δ produces #14)."
 ---
+
 # Phase 0 Closure Report — A'.9.1 Analyzer Infrastructure Cascade
 
 **Cascade**: A'.9.1 / К-extensions cascade #5

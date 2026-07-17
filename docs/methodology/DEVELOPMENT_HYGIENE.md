@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-B-DEVELOPMENT_HYGIENE
+project: Dual Frontier
 category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.0.1"
+version: 2.0.1
+first_authored: 2026-06-29
+last_modified: 2026-06-29
+content_language: en
 next_review_due: 2027-06-11
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-DEVELOPMENT_HYGIENE
+title: Development hygiene
+last_modified_commit: 27807f7
+review_cadence: on-change+annual
+last_review_date: 2026-06-11
+last_review_event: 'Standing-Law cascade C5 (9da4760) — full rewrite v1.0 → v2.0.0 MAJOR to post-Godot operational truth per STANDING_LAW_CASCADE_BRIEF §7-W3 (D4) + §8 truth law: repo map; project-set truth (32 sln projects = 12 src + 17 tests-folder + 2 tools + 1 mods; 6 Vanilla.* mods + 13 Fixture.RegularMod_* disk-only BY DESIGN); verified-only build commands (managed sln; native via VS-bundled cmake full path — NOT on PATH; Launcher; Native.dll PreserveNewest copy mechanics); tooling reality (PS 5.1 / pwsh absent / powershell-yaml 0.4.12; sync_register.ps1 -Validate unconditional VALIDATION_REPORT.md write at line 380 → commit-folding protocol; -Sync forbidden outside ratified register cascades; render staleness recorded explicitly); branch/push policy (executor never pushes; 41 merged stale branches → F-11); Skarlet environment; Godot status (project.godot tracked = F-5 Crystalka-owned). v1.0 phantoms purged (build-all.sh/.ps1 wrappers, DualFrontier.Presentation projects) per drift report §6.3.5 near-rewrite class. Closes finding F-6.'
+reviewer: Crystalka
+risks_referenced:
+- RISK-011
+- RISK-012
 ---
+
 # Development hygiene
 
 Operational truth for working in this repository: what is on disk, which commands actually build it, which scripts have which side effects, and which policies bind the executor.

@@ -1,15 +1,29 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-MIGRATION_PLAN
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.4.1"
+version: 1.4.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
+title: Migration Plan — Kernel-to-Vanilla (K-series → M-series) (historical; executed portion is history, forward state lives in ROADMAP)
+superseded_by: DOC-C-ROADMAP
+last_modified_commit: 6888246
+review_cadence: on-change+annual
+last_review_date: 2026-05-10
+last_review_event: K-L3.1 amendment landing
+reviewer: Crystalka
+risks_referenced:
+- RISK-004
+capa_entries_referenced:
+- CAPA-2026-05-09-K8.2-V2-REFRAMING
+special_case_rationale: 'Partially executed migration plan retired per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: executed K8.x portions are historical record; unexecuted forward state already lives in docs/ROADMAP.md «Native foundation tracks» (DD-2 precedent). superseded_by: DOC-C-ROADMAP — scalar target ACKNOWLEDGED by Crystalka at CORPUS_CLOSURE_INVERSION_B HALT-1 (checklist item [4]; EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION). Full text preserved at docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md.'
 ---
+
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)
 
 > **Document class: planning-record.** Forward state authority: [docs/ROADMAP.md](../ROADMAP.md). This document is not a roadmap.

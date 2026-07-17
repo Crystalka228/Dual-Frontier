@@ -1,0 +1,36 @@
+# REGISTER_SUPPLEMENT -- PROVISIONAL. Enrolled artifacts that cannot carry
+# .md frontmatter (non-.md governed docs). Architect-ruling for Cascade B
+# (exclude / relocate to MODULE.md / formalize). Merged into the derived archive by sync.
+documents:
+- register_id: DOC-F-SRC-LAUNCHER-PROCEDURAL-ATLAS
+  path: src/DualFrontier.Launcher/LauncherProceduralAtlas.cs
+  title: 'Launcher Procedural Atlas — Cascade #3 Path γ-A Asset Source'
+  category: F
+  tier: 4
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  last_modified: 2026-05-23
+  last_modified_commit: PENDING-COMMIT-K_EXT_3-CLOSURE
+  content_language: en
+  review_cadence: phase-led
+  last_review_date: 2026-05-23
+  last_review_event: "К-extensions cascade #3 α1 — Option C copy от SmokeTest's ProceduralAtlas per Q-H-17 ratification (production-side copy preserves S-LOCK-2 substrate isolation; minor code duplication acceptable until palette decoder extension materializes). 256×256 RGBA8 atlas с 16×16 tile grid (256 distinct tiles), 4 pattern types (solid/checker/gradient/ring). Forward consolidation candidate captured в file header comment when substrate palette decoder extension materializes (Lesson #N15 first-application opportunity reserved)."
+  next_review_due: TBD — substrate palette decoder cascade
+  reviewer: Crystalka
+- register_id: DOC-F-SRC-LAUNCHER-SCENE-STATE
+  path: src/DualFrontier.Launcher/SceneState.cs
+  title: 'Launcher SceneState — Cascade #3 Minimum Scope Sprite Registry'
+  category: F
+  tier: 4
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  last_modified: 2026-05-23
+  last_modified_commit: PENDING-COMMIT-K_EXT_3-CLOSURE
+  content_language: en
+  review_cadence: phase-led
+  last_review_date: 2026-05-23
+  last_review_event: 'К-extensions cascade #3 α2 — minimum scope sprite registry per Q-H-2 LOCKED + S-LOCK-3 (no camera/HUD/layer/animation state). API: RegisterPawn/MovePawn/DespawnPawn/EnumerateActiveSprites. Read/write split: RenderCommandDispatcher writes via handlers; LauncherRenderer reads per frame. Composition (S-LOCK-10): instance constructed в Program.Main(), passed к both dispatcher и renderer via constructor injection. Silent miss tolerance: domain may emit Moved before Spawned в edge races. PawnSpriteEntry record co-located в same module (PawnSpriteEntry.cs) carrying EntityId+AtlasRegion+Position+Scale.'
+  next_review_due: 'TBD — cascade #4 if scene state scope expands (camera/HUD/layer/animation)'
+  reviewer: Crystalka

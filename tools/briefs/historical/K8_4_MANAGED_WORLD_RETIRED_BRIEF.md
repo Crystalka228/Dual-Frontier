@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K8_4
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_4
+version: 1.0
+first_authored: 2026-05-16
+last_modified: 2026-05-16
+content_language: en
+next_review_due: null
+title: K8.4 — Managed World Retired
+superseded_by: DOC-D-K8_34_COMBINED_V2
+review_cadence: on-status-transition
+reviewer: Crystalka
+risks_referenced:
+- RISK-005
+- RISK-007
+special_case_rationale: Absorbed into K8_34_COMBINED_V2 (EXECUTED at A'.5 closure 2026-05-14 commit 54c6658). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 (Crystalka lock 2026-05-16).
 ---
+
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16 by `K8_34_COMBINED_KERNEL_CUTOVER_BRIEF_V2.md` (EXECUTED at A'.5 closure 2026-05-14).
 > Original lifecycle: AUTHORED. Disposition per CLEANUP_CASCADE_BRIEF §1.2 (A'.5 K8.3+K8.4 absorption).
 > Preserved for historical record. Do not execute as current brief.

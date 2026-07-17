@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-H-TRANSLATION_PLAN
+project: Dual Frontier
 category: H
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: mixed
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-H-TRANSLATION_PLAN
+title: Dual Frontier translation plan (Russian → English)
+last_modified_commit: 8ee27fe
+review_cadence: on-closure+quarterly
+reviewer: Crystalka
 ---
+
 ---
 title: Translation Plan
 nav_order: 100

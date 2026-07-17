@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-V0_C_2
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-19
+last_modified: 2026-05-19
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V0_C_2
+title: V0.C.2 — Batched sprite renderer + Camera2D + TileMap (V substrate R.2 + R.3)
+review_cadence: on-status-transition
+last_review_date: 2026-05-19
+last_review_event: V0.C.2 sub-milestone closure 2026-05-19 — 17 atomic commits b4084f1..PENDING-COMMIT-V0_C_2-CLOSURE; V substrate R.2 (batched sprite renderer 10K at 60+ FPS target) + R.3 (TileMap + Camera2D 200×200 at 60+ FPS) operational; V0 substrate close achieved per Q8 ratification — V1 + V2 brief authoring + Phase B M-cycle vanilla migration unblocked (latter also gated on Roslyn analyzer A'.9); К-L14 thesis fourth verification window pattern preserved if smoke test on Skarlet passes per Manual Visual Verification Protocol
+reviewer: Crystalka
+risks_referenced:
+- RISK-013
+special_case_rationale: "V0.C.2 standalone execution brief — fourth and final sub-milestone of V0 series under V substrate foundation split (V0.A → V0.B → V0.C.1 → V0.C.2). Authored 2026-05-19 post-V0.C.1 closure (PR #38 merged) per Crystalka V0.C split ratification 2026-05-19. Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §4.2 R.2 (batched sprite renderer 10K sprites at 60+ FPS) + R.3 (TileMap + Camera2D 200×200 grid at 60+ FPS). V0.C.2 closure = V0 substrate close per Q8 ratification — unlocks V1 (scalar field + diffusion shader) + V2 (scalar field + wave shader) brief authoring + Phase B M-cycle vanilla content mass migration (also gated on Roslyn analyzer A'.9). К10.3 brief restart pathway independent — runs parallel в V substrate stream; V0.C.2 не gates К10.3. 11 S-LOCKs enumerate scope: S-LOCK-1 (V0.C.2 scope = batched sprite renderer + Camera2D + TileMap per VULKAN_SUBSTRATE §4.2 R.2 + R.3); S-LOCK-2 (vertex buffer = N-frame ring buffer per Q1c ratification — production-standard pattern matching swapchain image count); S-LOCK-3 (indexed quad rendering per Q2b ratification — 4 vertices + 6 uint16 indices per quad, ~33% vertex memory reduction); S-LOCK-3a (10K hard cap per BeginFrame/EndFrame cycle — uint16 index limit); S-LOCK-4 (Camera2D standard scope per Q3b ratification — position + zoom + rotation + viewport + matrices + transforms, ~150 LOC; culling deferred); S-LOCK-5 (TileMap one-sprite-per-tile per Q4a ratification — reuses batched infrastructure, 200×200 = 40K = 4× R.2 stress); S-LOCK-5a (multi-cycle BeginFrame/EndFrame для grids exceeding 10K cap); S-LOCK-6 (atlas regions code-defined per Q5a ratification — AtlasRegion.FromPixels static factory с validation guards; JSON manifest deferred к V0.C.2.1/V0.D); S-LOCK-7 (SpriteRenderer batched API rewrite — BeginFrame/Submit/EndFrame replaces single-sprite DrawSprite); S-LOCK-8 (K-L19 hardware capability preserved verbatim + Lesson #7 alignment audit continues); S-LOCK-9 (atomic cascade preserves V0.A + V0.B + V0.C.1 discipline + multi-session pause provision per Lesson #8 + Lesson #26); S-LOCK-10 (validation layer ALWAYS-ON DEBUG preserved); S-LOCK-11 (REGISTER governance discipline preserved per A'.4.5). Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): same V0.A + V0.B + V0.C.1 patterns inherited; mixed [LibraryImport]/[DllImport] formalized continues; ALWAYS-ON validation discipline в DEBUG preserved; .NET 8 target preserved; default-inclusion bias per К-L14 preserved through scope coherence (substantial cohesive scope, не aggregation). К-L14 thesis fourth verification window: V0.A + V0.B + V0.C.1 closed с three consecutive zero-hard-gate-halt cascades; V0.C.2 closure = fourth verification + V0 substrate close pattern reliability empirically validated."
 ---
+
 ---
 register_id: DOC-D-V0_C_2
 category: D

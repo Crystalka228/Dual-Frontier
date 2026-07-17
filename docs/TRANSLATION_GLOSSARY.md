@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-H-TRANSLATION_GLOSSARY
+project: Dual Frontier
 category: H
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-04-26
+last_modified: 2026-04-26
+content_language: mixed
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-H-TRANSLATION_GLOSSARY
+title: Translation Glossary — Dual Frontier
+last_modified_commit: b655d4b
+review_cadence: on-closure+quarterly
+reviewer: Crystalka
+special_case_rationale: Content LOCKED v1.0 (lexical commitments final); lifecycle Live because H category allows Live/EXECUTED only — content-stability tracked via version pinning rather than LOCKED lifecycle
 ---
+
 ---
 title: Translation Glossary
 nav_order: 99

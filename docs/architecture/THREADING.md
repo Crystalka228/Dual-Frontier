@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-THREADING_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-THREADING_V2
+title: Multithreading (authored rework; absorbs the FEEDBACK_LOOPS engine cycle/snapshot rule)
+supersedes:
+- DOC-A-THREADING
+last_modified_commit: ff24980
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~78 anchors) + HALT-1-ratified corrections R1-12/13/14 at ff24980; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
 ---
+
 # Multithreading
 
 How Dual Frontier schedules and dispatches systems across the native kernel and the managed runtime — the К-L12 dependency graph, the managed dispatch facade that executes it today, execution contexts, tick rates, the feedback-cycle rule, and the async ban.

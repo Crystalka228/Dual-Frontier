@@ -1,0 +1,268 @@
+# risks -- hand-edited source of truth (FRAMEWORK 14.6). Validated by the
+# governance tool and merged into the derived REGISTER.yaml archive.
+risks:
+- id: RISK-001
+  title: Component struct refactor scope underestimated
+  likelihood: Medium-High
+  impact: Medium
+  risk_type: Architectural
+  status: CLOSED
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-D-K4
+  - DOC-D-K8_2_V2
+  mitigation:
+    strategy: Incremental conversion (5-10 components per commit), tests verify each commit
+    mitigation_artifact: DOC-D-K4
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-07
+    event: Risk surfaced at K0 brief authoring
+  - date: 2026-05-08
+    event: Risk realized at K4 execution; mitigation worked (24 components × 7 batches)
+  - date: 2026-05-09
+    event: Risk closed; K8.2 v2 verification 0789bd4
+- id: RISK-002
+  title: P/Invoke marshalling correctness (UTF-8 strings, byte* patterns, pinning)
+  likelihood: Medium
+  impact: High
+  risk_type: Technical
+  status: RESIDUAL
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-A-MOD_OS
+  - DOC-D-K1
+  - DOC-D-K5
+  - DOC-D-K9
+  mitigation:
+    strategy: 'Native selftest scenarios per primitive type; managed bridge tests verify roundtrip; K-Lessons #1 ABI boundary exception completeness rule'
+    mitigation_artifact: DOC-B-METHODOLOGY
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-07
+    event: Risk surfaced K1 closure (ABI boundary exception lesson)
+  - date: 2026-05-09
+    event: 'K8.1 closure: byte* UTF-8 P/Invoke pattern established as project convention'
+  - date: Active
+    event: Status RESIDUAL — pattern stable but new native artifacts must follow convention
+- id: RISK-003
+  title: Native ↔ Managed ownership boundary leaks (handle lifetime, span escape)
+  likelihood: Medium
+  impact: Critical
+  risk_type: Technical
+  status: ACTIVE
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-A-CONTRACTS
+  - DOC-D-K5
+  - DOC-D-K8_1
+  mitigation:
+    strategy: K-L7 read-only spans + write batching enforced via SpanLease/WriteBatch pattern; lifetime contracts in IFieldHandle interface
+    mitigation_artifact: DOC-A-FIELDS
+    mitigation_status: PARTIAL
+  history:
+  - date: 2026-05-08
+    event: Risk identified K5 span protocol design
+  - date: 2026-05-09
+    event: K8.1 native primitives shipped; ownership contract tightened
+  - date: Active
+    event: Each new native artifact extends mitigation; D3 native organicity pattern keeps risk per-artifact bounded
+- id: RISK-004
+  title: Cross-document drift between LOCKED specs (KERNEL/MOD_OS/VULKAN_SUBSTRATE/MIGRATION_PLAN)
+  likelihood: Medium-High
+  impact: High
+  risk_type: Architectural
+  status: ACTIVE
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-A-MOD_OS
+  - DOC-A-VULKAN_SUBSTRATE
+  - DOC-A-MIGRATION_PLAN
+  mitigation:
+    strategy: Amendment plans cross-reference all affected docs; K-L3.1 amendment audit precedent (§K.12.2); register §3 traceability matrix detects when requirement changes don't propagate
+    mitigation_artifact: DOC-A-K_L3_1_AMENDMENT_PLAN
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-07
+    event: OQ3 originally surfaced this risk
+  - date: 2026-05-10
+    event: K-L3.1 closure demonstrated cross-document audit pattern works
+  - date: Active
+    event: Register §3 traceability strengthens detection going forward
+- id: RISK-005
+  title: Mod ecosystem compatibility breakage on IModApi version bumps
+  likelihood: Medium
+  impact: High
+  risk_type: Architectural
+  status: ACTIVE
+  affected_documents:
+  - DOC-A-MOD_OS
+  - DOC-D-K8_4
+  - DOC-D-K8_5
+  mitigation:
+    strategy: ContractsVersion declared; mod manifest version_constraint matching; K8.5 migration prep includes mod ecosystem readiness gate
+    mitigation_artifact: DOC-D-K8_5
+    mitigation_status: PARTIAL
+  history:
+  - date: 2026-05-09
+    event: Risk identified K8.0 Solution A decision (IModApi v3 ships at K8.4)
+  - date: Active
+    event: Mitigation completes at K8.5 closure; M-series further hardens
+- id: RISK-006
+  title: Path α / Path β bridge complexity exceeds mental model for mod authors
+  likelihood: Medium
+  impact: Medium
+  risk_type: Architectural
+  status: ACTIVE
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-A-MOD_OS
+  - DOC-D-K_L3_1_BRIDGE
+  mitigation:
+    strategy: MOD_OS §4.6 documents both paths with explicit decision flowchart; example mods demonstrate Path β usage; K8.4 IModApi v3 surface keeps Path β opt-in (not default)
+    mitigation_artifact: DOC-A-K_L3_1_AMENDMENT_PLAN
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-10
+    event: Risk surfaced at K-L3.1 deliberation as Q5
+  - date: 2026-05-10
+    event: 'Mitigation: ManagedStorage attribute opt-in (not default); Path α remains default; ships K8.4'
+- id: RISK-007
+  title: Brief staleness density grows with subsequent milestone closures
+  likelihood: High
+  impact: Medium
+  risk_type: Methodological
+  status: ACTIVE
+  affected_documents:
+  - DOC-D-K9
+  - DOC-D-K8_3
+  - DOC-D-K8_4
+  - DOC-D-K8_5
+  - DOC-B-METHODOLOGY
+  mitigation:
+    strategy: Patch brief pattern (K9_BRIEF_REFRESH_PATCH precedent) for stale active briefs; register §5 internal audit cadence catches stale Tier 1 docs; future briefs author against latest spec versions
+    mitigation_artifact: DOC-D-K9_BRIEF_REFRESH_PATCH
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-10
+    event: Lesson learned from K9 execution closure
+  - date: Active
+    event: Each authored brief inherits awareness; register tracks last_modified vs subsequent milestone closures
+- id: RISK-008
+  title: Amendment plan completeness gap (incomplete enumeration of edits required)
+  likelihood: Medium
+  impact: Medium
+  risk_type: Methodological
+  status: ACTIVE
+  affected_documents:
+  - DOC-A-K_L3_1_AMENDMENT_PLAN
+  - DOC-A-A_PRIME_0_7_AMENDMENT_PLAN
+  mitigation:
+    strategy: Surgical scrub pattern at execution time when amendment plan misses edits; closure report records the gap as lesson for next amendment plan; register §3 traceability narrows scope
+    mitigation_artifact: DOC-B-METHODOLOGY
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-10
+    event: Surfaced as Phase A' execution operational lesson
+- id: RISK-009
+  title: Lesson-applier latency (lessons learned not propagated to subsequent briefs)
+  likelihood: Medium
+  impact: Low
+  risk_type: Methodological
+  status: ACTIVE
+  affected_documents:
+  - DOC-B-METHODOLOGY
+  mitigation:
+    strategy: K-Lessons section in METHODOLOGY accumulates structurally; new briefs Phase 0 reads include METHODOLOGY §K-Lessons; register §5 audit cadence on Tier 1 includes METHODOLOGY review
+    mitigation_artifact: DOC-B-METHODOLOGY
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-10
+    event: Surfaced as Phase A' execution operational lesson
+- id: RISK-010
+  title: Register itself degrades into stale artifact if post-session protocol not enforced
+  likelihood: Medium
+  impact: Critical
+  risk_type: Methodological
+  status: ACTIVE
+  affected_documents:
+  - DOC-G-REGISTER
+  - DOC-A-FRAMEWORK
+  - DOC-B-METHODOLOGY
+  mitigation:
+    strategy: Q-A45-X5 post-session update protocol mandatory; sync_register.ps1 --validate gate; BYPASS_LOG.md tracks bypasses; A'.4.5.bis upgrades to pre-commit hook
+    mitigation_artifact: DOC-A-FRAMEWORK
+    mitigation_status: PARTIAL
+  history:
+  - date: 2026-05-12
+    event: Risk identified during A'.4.5 deliberation Q-A45-X5 lock
+  - date: Active
+    event: Mitigation ships at A'.4.5 closure; effectiveness measured at A'.5 K8.3 first post-register milestone closure
+- id: RISK-011
+  title: Environmental incidents (testhost.exe file lock, dotnet test verbosity gotcha, tooling drift)
+  likelihood: Medium-High
+  impact: Low
+  risk_type: Operational
+  status: ACTIVE
+  affected_documents:
+  - DOC-B-METHODOLOGY
+  - DOC-B-DEVELOPMENT_HYGIENE
+  mitigation:
+    strategy: Operational reminders in every execution brief Phase 0 (testhost cleanup pattern, --logger console verbosity); pattern documented in METHODOLOGY
+    mitigation_artifact: DOC-B-METHODOLOGY
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-05-XX
+    event: Recurring pattern across K-series execution sessions
+- id: RISK-012
+  title: Cross-platform tooling debt (PowerShell-only governance tooling locks Windows-only ops)
+  likelihood: Medium
+  impact: Low
+  risk_type: Operational
+  status: ACCEPTED
+  affected_documents:
+  - DOC-G-REGISTER
+  - DOC-A-FRAMEWORK
+  mitigation:
+    strategy: Schema is language-agnostic YAML; future Python port tracked as candidate work; current solo-Windows context makes PowerShell adequate
+    mitigation_artifact: 
+    mitigation_status: ACCEPTED
+  history:
+  - date: 2026-05-12
+    event: Risk identified at A'.4.5 Q10 tooling design
+- id: RISK-013
+  title: Vulkan driver compatibility on weak hardware (compute pipeline rollout G-series)
+  likelihood: Medium
+  impact: High
+  risk_type: External
+  status: ACTIVE
+  affected_documents:
+  - DOC-A-VULKAN_SUBSTRATE
+  - DOC-D-G0
+  mitigation:
+    strategy: Compute disabled gracefully when device features insufficient; CPU reference kernel for compute domains (precedent K9 IsotropicDiffusionKernel); D3 native organicity allows compute as separate optional artifact
+    mitigation_artifact: DOC-A-VULKAN_SUBSTRATE
+    mitigation_status: PARTIAL
+  history:
+  - date: Pre-K-L3.1
+    event: Risk identified at GPU_COMPUTE v2.0 LOCKED spec authoring
+  - date: Active
+    event: Mitigation completes through G0..G9 execution; first measurement at G0 closure
+- id: RISK-014
+  title: Long-horizon pipeline degradation (single-developer methodology over 6-12 months)
+  likelihood: Medium
+  impact: Critical
+  risk_type: Methodological
+  status: ACTIVE
+  affected_documents:
+  - DOC-B-METHODOLOGY
+  - DOC-B-PIPELINE_METRICS
+  mitigation:
+    strategy: Pipeline metrics measured continuously; METHODOLOGY §9 open questions track degradation indicators; self-teaching ritual §4.5 prevents architectural-understanding drift; register provides navigation aid that scales beyond human memory
+    mitigation_artifact: DOC-B-METHODOLOGY
+    mitigation_status: APPLIED
+  history:
+  - date: 2026-04-25
+    event: Identified in METHODOLOGY §9 at v1.0 publication
+  - date: Active
+    event: Mitigation continuously applied; PIPELINE_METRICS records empirical evidence; A'.4.5 register adds navigation scalability

@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-COMBO_RESOLUTION
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "0.2.1"
+version: 0.2.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMBO_RESOLUTION
+title: Combo damage resolution (historical; reclassified Category J — docs/mechanics)
+superseded_by: DOC-J-COMBO_RESOLUTION
+last_modified_commit: 0145f1b
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: "Superseded by DOC-J-COMBO_RESOLUTION per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMBO_RESOLUTION.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — predominantly architectural pattern (deterministic ordering via ComboResolutionSystem); mechanic-design intent minimal. Cross-referenced from docs/mechanics/ index when future J-category combat-design doc authored"
 ---
+
 # Combo damage resolution
 
 The same target in one tick often takes damage from several systems: physical from `CombatSystem`, magical from `SpellSystem`, status from `StatusEffectSystem`. If each system writes `HealthComponent` directly in publish order, the combat outcome depends on the thread scheduler. v0.2 introduces deterministic ordering through `ComboResolutionSystem`.

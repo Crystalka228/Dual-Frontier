@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-K_EXTENSIONS_LEDGER
+project: Dual Frontier
 category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-07-02
+last_modified: 2026-07-02
+content_language: mixed
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_EXTENSIONS_LEDGER
+title: К-extensions Cascade Ledger — Dual Frontier
+last_modified_commit: 59c1802
+review_cadence: on-change+quarterly
+last_review_date: 2026-05-24
+last_review_event: "A'.9.0 Reconnaissance / К-extensions cascade #4 β1+β2 (bundled per brief Q-J-8 squashing allowance) — §3.5 К-extensions cascade #4 entry added (A'.9.0 Reconnaissance, dual designation, execution branch main per Crystalka ratification, comprehensive 7-domain reconnaissance via multi-agent dispatch, Phase 0 anomalies — pre-existing ANALYZER_RULES.md + A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md AUTHORED-SKELETONs, Lessons surfaced including #N14 third application + #N13 second application + observational reconnaissance evidence type formalized, К-L14 verification #13 first observational reconnaissance evidence). §4 forward roadmap updated (К-extensions cascade #5 = A'.9.1 Analyzer Infrastructure first analyzer implementation cascade; cascade #6+ A'.9.2/A'.9.3; V-extension + К-L20 LOCK cascade enumeration). Sister artifact к K_CLOSURE_REPORT.md (closure event boundary preserved) + K_L14_EVIDENCE_DASHBOARD.md (metrics — verification #13) + PHASE_A_PRIME_SEQUENCING.md (chronology — A'.9.0 entry). Prior context: К-extensions cascade #2 authored ε4 — initial AUTHORED entry с retroactive cascades #0 (А'.7.x) + #1 (А'.7.5) + #2 (Godot Full Deprecation); cascade #3 δ4 — §3.4 cascade #3 entry."
+reviewer: Crystalka
+special_case_rationale: "Companion artifact к K_CLOSURE_REPORT.md tracking К-extensions cascade narratives post-А'.8 closure event boundary. Created К-extensions cascade #2 ε4 per Q-G-11 LOCKED (d) — separate companion document over inline expansion of closure report. Sister к K_L14_EVIDENCE_DASHBOARD.md (metrics) + PHASE_A_PRIME_SEQUENCING.md (chronology)."
 ---
+
 # К-extensions Cascade Ledger — Dual Frontier
 
 **Document role**: Thematic narrative tracking of К-extensions cascades executed

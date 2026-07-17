@@ -1,15 +1,35 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-B-METHODOLOGY
+project: Dual Frontier
 category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.14.2"
+version: 1.14.2
+first_authored: 2026-07-17
+last_modified: 2026-07-17
+content_language: mixed
 next_review_due: 2027-06-11
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-METHODOLOGY
+title: Dual Frontier development methodology
+last_modified_commit: 717641b
+review_cadence: on-change+annual
+last_review_date: 2026-07-02
+last_review_event: "A'.9.1 Phase δ C2 (5a5bf75) — METHODOLOGY v1.13.0 → v1.14.0 MINOR (the v1.10 12-lesson-batch precedent class): five H4 entries landed in the formalized-lessons area per PHASE_DELTA_BRIEF Appendix A — Lesson #N14 PROMOTED (Phase 0 empirical assumed-state coverage; 4-application criterion met; pool text TRANSCRIBED per Lesson #7, PROMOTION-MET tail → Status block) + Lesson #N17 FORMALIZED (audience-driven tooling deferral; transcribed; dotted DFK019.A/.B → DFK019_A/_B per F-27(e)) + Lesson #N18 NEW (pre-flight empirical scope verification; five-instance track record) + Lesson #N19 NEW (analyzer detection via canonical FQN strings — the Phase β W2 writer law) + Lesson #N20 NEW (eradication class derived from the repository's own classification — the F-26 mandate); lesson-number registry note (F-7 adjudication: #N1/#N11 free; #N4/#N15/#N16 reserved-with-semantics; #Nxx form mandatory) in the Provisional-Lessons preamble; pool bullets #N14/#N17 → one-line promotion markers; changelog v1.14.0 + frontmatter bump. §1-§11 substance unchanged; LOCKED lifecycle unchanged (amendment under §10's own law). Prior context: Standing-Law cascade C7 (b58eed4) — METHODOLOGY v1.12.1 → v1.13.0 MINOR: NEW §12.8 «Brief-integration boundary rule» (briefs cite standing documents by §-anchor instead of restating; carries-vs-cites split mirrors TESTING_STRATEGY §6; anti-pattern rule — a brief contradicting a standing document is wrong by default, corrected or the doc amended BEFORE the brief locks) + NEW §12.9 «Session closure protocol — governance/documentation cascades» (tracker write-back → REGISTER+validate with report folded into the commit → render or recorded staleness deferral → findings → F-ledger never chat-only → closure report) + §12.7 step 9 SYNTH-2 cascade-impact propagation check + v1.12.1 changelog line backfilled (finding F-3). Two new sections + one checklist item; no existing rule inverted; §1–§11 substance unchanged. Prior context: К-extensions cascade #3 δ2 (v1.11 → v1.12 — Lesson #N12 semantic refined); A'.9.1 Phase 0 (v1.12 → v1.12.1 PATCH — Lesson #N17 Provisional + #N14 4th application); А'.7.x δ5 (v1.8 → v1.9 — §12.7 Modding suite mandatory)."
+reviewer: Crystalka
+requirements_authored:
+- REQ-Q-A07-6
+risks_referenced:
+- RISK-007
+- RISK-008
+- RISK-009
+- RISK-010
+- RISK-011
+- RISK-014
+capa_entries_referenced:
+- CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
+- CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT
 ---
+
 # Dual Frontier development methodology
 
 *The project's central methodology document. Describes the architect-executor split with contracts as IPC across context boundaries, the verification cycle, economics, threat model, empirical results, and boundaries of applicability.*

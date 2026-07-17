@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K8_2_V1_DEPRECATED
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: DEPRECATED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_2_V1_DEPRECATED
+version: 1.0
+first_authored: 2026-05-16
+last_modified: 2026-05-16
+content_language: en
+next_review_due: null
+title: K8.2 — Component Conversion v1 (DEPRECATED)
+deprecated_by: DOC-D-K8_2_V2
+superseded_by: DOC-D-K8_2_V2
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: Already register-DEPRECATED (deprecated_by DOC-D-K8_2_V2). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts (Crystalka lock 2026-05-16).
 ---
+
 > **HISTORICAL DOCUMENT**: Register-DEPRECATED before 2026-05-16 (deprecated_by DOC-D-K8_2_V2). Moved to `tools/briefs/historical/` per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts.
 > Preserved for historical record. Do not execute as current brief.
 # K8.2 — Component class → struct conversion + ModAccessible annotation completeness pass

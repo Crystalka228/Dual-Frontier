@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
+version: 1.0
+first_authored: 2026-05-13
+last_modified: 2026-05-13
+content_language: en
+next_review_due: null
+title: A'.5 K8.3 v2.0 execution halt — partial-investigation artifact
+last_modified_commit: b46a6c6
+review_cadence: on-status-transition
+last_review_date: 2026-05-13
+last_review_event: K8.3 v2.0 execution halt 2026-05-13 — METHODOLOGY §3 stop-escalate-lock first invocation post-A'.4.5
+reviewer: Crystalka
+capa_entries_referenced:
+- CAPA-2026-05-13-K8.3-PREMISE-MISS
 ---
+
 # A'.5 K8.3 execution halt report
 
 **Status**: HALT 2026-05-13 — K8.3 v2.0 brief execution halted at Phase 0.2 per METHODOLOGY §3 «stop, escalate, lock». No code commits. Working tree clean. Investigation captured here. **Resolution**: Crystalka ratified Option 2 (swap K8.3/K8.4 order) via patch brief at `tools/briefs/K8_3_BRIEF_REFRESH_PATCH.md` 2026-05-13; this halt report sits alongside the patch as historical artifact of the «stop, escalate, lock» invocation.

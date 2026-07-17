@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K9
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K9
+version: 1.0
+first_authored: 2026-05-11
+last_modified: 2026-05-11
+content_language: en
+next_review_due: null
+title: K9 — Field Storage
+last_modified_commit: 80c9ba6
+review_cadence: on-status-transition
+last_review_date: 2026-05-11
+last_review_event: K9 closure
+reviewer: Crystalka
+risks_referenced:
+- RISK-002
+- RISK-007
 ---
+
 # K9 — Field Storage Abstraction (Full Brief)
 
 **Status**: AUTHORED — awaiting K6, K7, K8 closure per β6 sequencing before execution
@@ -2194,4 +2205,3 @@ The full brief was authored read-first / brief-second per the methodology pivot 
 - **RegisterManagedComponent<T> pre-flight check (per patch §Phase 8.2 override)**: `IModApi.cs` did NOT contain `RegisterManagedComponent<T>` at execution time (it ships at K8.4 per Phase A' sequencing, not K-L3.1 amendment). K9 did not add it — only `Fields` and `ComputePipelines` properties.
 - **FieldRegistry plumbing through ModIntegrationPipeline**: K9 exposes `FieldRegistry` on `NativeWorld.Fields`, but `ModIntegrationPipeline` does not currently carry a `NativeWorld` reference (mod loading is decoupled from world lifecycle). `RestrictedModApi` accepts a nullable `FieldRegistry?`; K9 passes `null` at the existing call site and `Fields` returns `null`. Mods degrade gracefully per the IModApi.Fields docstring contract («Returns null on builds without K9 field storage support»). Production wiring (passing the live `FieldRegistry` from a configured `NativeWorld`) lands at A'.5 K8.3 or A'.6 K8.4 when the kernel-world / mod-loader integration matures.
 - **CPU kernel write performance**: the IsotropicDiffusionKernel uses per-cell `WriteCell` after reading the span (40 000 P/Invokes per iteration on 200×200). Acceptable for K9 (GPU equivalence oracle), not for production. G1 replaces with Vulkan compute dispatch. Brief explicitly documents this design choice; no surprise.
-

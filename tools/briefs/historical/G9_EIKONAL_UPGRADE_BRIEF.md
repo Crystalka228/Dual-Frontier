@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-G9
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-G9
+version: 1.0
+first_authored: 2026-05-16
+last_modified: 2026-05-16
+content_language: en
+next_review_due: null
+title: G9 — Eikonal Upgrade (historical; deferred — V2 tunable or V3)
+superseded_by: DOC-A-VULKAN_SUBSTRATE
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: 'Q-G-2 LOCK: G9 eikonal upgrade deferred — possibly folded into V2 tunable parameter (Option A vs Option B), or becomes separate V-N primitive — evidence-gated at amendment authoring. Brief content cross-referenced from VULKAN_SUBSTRATE.md §1.3 + §1.3.1 + §5.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
+
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).
 > Original lifecycle: AUTHORED. Disposition per Q-G-2 LOCK (composite namespace deliberation 2026-05-15).
 > Preserved for historical record. Do not execute as current brief.

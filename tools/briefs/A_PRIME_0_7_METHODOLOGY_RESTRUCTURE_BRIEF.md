@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_0_7_METHODOLOGY_RESTRUCTURE
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_0_7_METHODOLOGY_RESTRUCTURE
+version: 1.0
+first_authored: 2026-05-10
+last_modified: 2026-05-10
+content_language: mixed
+next_review_due: null
+title: A'.0.7 — Methodology Restructure
+last_modified_commit: 9d4da64
+review_cadence: on-status-transition
+last_review_date: 2026-05-10
+last_review_event: A'.0.7 landing
+reviewer: Crystalka
+capa_entries_referenced:
+- CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
 ---
+
 # A'.0.7 — Methodology pipeline restructure (architectural deliberation session brief)
 
 **Brief type**: Architectural decision brief (fourth brief type, precedent K8.0 / K-L3.1)

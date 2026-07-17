@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-Q_K_1_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: Live
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-Q_K_1_REPORT
+version: 1.0
+first_authored: 2026-05-16
+last_modified: 2026-05-16
+content_language: en
+next_review_due: null
+title: Q-K-1 Execution Report — Verbatim Reconciliation Findings
+review_cadence: on-status-transition
+last_review_date: 2026-05-16
+last_review_event: Report shipped 2026-05-16 — verbatim findings for Q-K-1 retroactive lock per COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §5; awaiting subsequent deliberation ratification
+reviewer: Crystalka
 ---
+
 # Q-K-1 Execution Report
 
 **Date**: 2026-05-16 (composite namespace ratification execution session)

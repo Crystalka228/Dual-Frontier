@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-CORPUS_CLOSURE_INVERSION_B_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-CORPUS_CLOSURE_INVERSION_B_BRIEF
+version: 1.0
+first_authored: 2026-07-16
+last_modified: 2026-07-17
+content_language: en
+next_review_due: null
+title: 'CORPUS_CLOSURE_INVERSION_B -- Execution Brief (closes the 2026-07-15 corpus rework: full-corpus Wave-R review D1, HALT-1-ratified corrections, 14 A-successors AUTHORED -> LOCKED 1.0.0, register 2.31 -> 2.32; then REGISTER_INVERSION Cascade B (F-34) schema-2.0 migration on post-merge main)'
+last_modified_commit: 98906ea
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-17
+last_review_event: "CORPUS_CLOSURE_INVERSION_B executed 2026-07-16/17 by Claude Code (Fable 5, LOCAL Skarlet) per the operator-ratified brief (plan approval = ratification signal 2026-07-16). Phase 0: (R) facts exact; baseline build 0W/0E + native selftest ALL PASSED + full-sln tests 1166/0/5; validate exit 0 (25 baseline orphans); governance-tool smoke = expected pre-migration §14.2 shape (1249 exit-affecting errors on the unmigrated corpus; instrument proven, suite 64/64). Phase A: Wave R (R1-R4, 4 read-only agents, ~1014 anchors, zero NOT-READY) -> D1 at C1 0380dbf. HALT-1 (operator, in-chat 2026-07-17): SEED-1 variant (b) recompose-keeping-21 (closes F-9); Annex A A-1..A-4 APPROVED; MIGRATION_PLAN scalar ACKNOWLEDGED; fix list EN BLOC FIX-NOW; R2-20 FRAMEWORK-§7 banner ratified as established shorthand (zero edits); next_review_due '2027-Q3'. Phase B: C2 d8f1db3 (SEED-1, census-delta 0) + C3 8896d32 (SEED-2) + 17 per-doc correction commits f5c5e97..4016c62; C-B gate build 0W/0E, tests 1166/0/5 (one cross-suite native-state flake isolated-run-refuted 202/202), DFK-WAIVER pin 2. Phase C: EVT-54 rider 717641b; ratification cascade this commit (14 flips, 16 gap-window closures, REQ-K-L transfer, items [3][4][5] closed); Phase D (F-34 inversion) follows on post-merge main per brief §7."
+reviewer: Crystalka
+special_case_rationale: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series + F-10 + F-29 + CODEX DOC-D Tier-3 briefs). Standalone execution brief carrying this cascade's authority; enrolled at the design tier per the D-brief convention. Entry id follows the brief's own frontmatter register_id; the brief FILE frontmatter is hand-authored, not synced. The PENDING-COMMIT self-reference is the single sanctioned new placeholder of this cascade (brief §12), backfilled at the render commit.
 ---
+
 ---
 register_id: DOC-D-CORPUS_CLOSURE_INVERSION_B_BRIEF
 project: Dual Frontier

@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-ARCHITECTURE
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ARCHITECTURE
+title: Dual Frontier architecture (umbrella) (historical; superseded by authored rework)
+superseded_by: DOC-A-ARCHITECTURE_V2
+last_modified_commit: fe27fbe
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: Superseded by DOC-A-ARCHITECTURE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
+
 # Dual Frontier architecture
 
 Dual Frontier is a colony simulation built as a native C++ kernel under a managed shell: component storage, kernel scheduling decisions, and event routing are native authority; game rules, the mod OS, and orchestration are C#. A system never touches another system's data directly — every interaction runs through declared contracts (`[SystemAccess]`, domain buses, mod capability tokens). This page is the orientation map; each subsystem's truth lives in the document the pointers section names.

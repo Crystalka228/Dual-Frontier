@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-PHASE_BETA_RECON_REPORT
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-PHASE_BETA_RECON_REPORT
+version: 1.0
+first_authored: 2026-07-01
+last_modified: 2026-07-01
+content_language: en
+next_review_due: null
+title: PHASE β RECON REPORT (R1-R8) — ground-truth reconnaissance feeding the A'.9.1 Phase β execution brief (analyzer stub inventory + harness state + the 5 marker censuses + reserved-surface 34/13 + §8 federated interop surface + Q-L-1 gate parameters + the ManagedBusBridge DFK002 DllImport cluster)
+last_modified_commit: 1bc0df2
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-01
+last_review_event: PHASE BETA RECON R1-R8 — captured in the deliberation session preceding A'.9.1 Phase β, persisted on-disk at C1 (1bc0df2) as the brief's empirical basis (analyzer project state, the test-harness gap, the 5 marker censuses, reserved-surface 34/13, the §8 federated interop surface, the ManagedBusBridge 13-DllImport DFK002 cluster, the Q-L-1 gate thresholds). Enrolled EXECUTED at the C11 register closure alongside its brief.
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Reconnaissance report feeding DOC-D-PHASE_BETA_BRIEF (recon-artifact enrollment precedent: DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF + DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF; the sister DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT is a durable architecture-tier reference, whereas this recon is execution-context for a single cascade → DOC-D Tier 4, matching the brief it feeds). On-disk .md persisted at C1; enrolled at closure to clear its since-C1 advisory orphan warning and complete the cascade's provenance chain."
 ---
+
 # PHASE BETA RECON REPORT — 2026-07-01
 
 Repository: `D:\Colony_Simulator\Colony_Simulator` @ `02be616` · read-only session · census discipline per `TESTING_STRATEGY` §4 (every count carries its verbatim expression; UPPER-BOUND proxies in R3 are explicitly labelled, never presented as actual violation counts).

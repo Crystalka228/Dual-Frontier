@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.1"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_CROSS_DOC_AMENDMENTS_CASCADE
+version: 0.1
+first_authored: 2026-05-17
+last_modified: 2026-05-17
+content_language: en
+next_review_due: null
+title: К10 Cross-Document Amendments Cascade (SKELETON)
+last_modified_commit: 30bd613
+review_cadence: on-status-transition
+last_review_date: 2026-05-17
+last_review_event: Skeleton authored per К10 forward planning skeleton framework brief
+reviewer: Crystalka
+risks_referenced:
+- RISK-004
+special_case_rationale: Skeleton brief for К10 architectural propagation across 8 dependent documents per KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 Part 7. Awaits full brief authoring at К10 execution closure (А'.7) timing or earlier per Crystalka prioritization.
 ---
+
 # К10 Cross-Document Amendments Cascade — Execution Brief (SKELETON)
 
 **Brief authored**: 2026-05-17 (skeleton; К10 amendments closure cascade)

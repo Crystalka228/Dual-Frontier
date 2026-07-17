@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K_EXT_2_GODOT_DEPRECATION_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K_EXT_2_GODOT_DEPRECATION_BRIEF
+version: 1.0
+first_authored: 2026-05-23
+last_modified: 2026-05-23
+content_language: mixed
+next_review_due: null
+title: 'K_EXT_2_GODOT_DEPRECATION_BRIEF — К-extensions cascade #2: Godot Full Deprecation + Launcher Formalization'
+review_cadence: on-status-transition
+last_review_date: 2026-05-23
+last_review_event: "К-extensions cascade #2 authored + executed 2026-05-23. Brief authored 2026-05-23 by Claude Opus 4.7 в post-A'.8 closure deliberation session (15 Q-G ratified, 10 S-LOCKs reserved). Crystalka ratified execution 2026-05-23. Execution agent: Claude Code (Opus 4.7) on branch claude/k-ext-2-godot-deprecation. Mid-cascade brief amendment ratified (Crystalka Option A 2026-05-23) — Program.cs adapted к existing GameLoop self-ticking background-thread architecture (brief assumed external Tick() call empirically wrong); Q-G-7 (d) hybrid orchestration intent preserved. Cascade scope: physical purge (Presentation.Native + tracked Presentation removed); documentation cleanup tiered (16 Application/* + 6 active arch docs + 2 historical archives addendum); Launcher project scaffold (infrastructure-only с Defensive Reserved Stub dispatcher per Lesson #N12 first application); governance cascade (KERNEL v2.5→v2.5.1, METHODOLOGY v1.10→v1.11, VULKAN_SUBSTRATE v1.1→v1.1.1, K_EXTENSIONS_LEDGER authored, REGISTER 3-commit cascade hybrid per Q-G-13). К-L impact: zero. К-L14 verification #11 (first executed removal-type evidence per Q-G-14 honest-framed protocol)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "К-extensions cascade #2 brief authored 2026-05-23 by Claude Opus 4.7 в post-A'.8 closure deliberation session per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral. Brief operationalized 15 Q-G ratified deliberation outcomes + 10 S-LOCK reservations. Original Godot branch claude/godot-removal-deliberation-Vfg2R (2ba8130 single commit) discarded as obsolete precursor per S-LOCK-1 — 18 commits divergence on main + scope expansion («физически удалить всё» per Crystalka §0.4) made original branch insufficient. Clean redo на current main (9ea5dbe) executed as К-extensions cascade #2. Lesson #N12 «Defensive Reserved Stub Pattern» first application captured (Launcher's RenderCommandDispatcher 6 defensive throws). Lesson #25 refined с Crystalka 2026-05-23 framing («не тестировать пустые интерфейсы и пустую реализацию которые врут в тестах»). Brief size note: K_EXT_2 brief is ~50KB (2103 lines committed at α0) covering 9 sections + appendix Q-N lock summary."
 ---
+
 # К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization
 
 **Brief designation**: `K_EXT_2_GODOT_DEPRECATION_BRIEF`  

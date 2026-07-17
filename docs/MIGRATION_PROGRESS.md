@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-C-MIGRATION_PROGRESS
+project: Dual Frontier
 category: C
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-07-02
+last_modified: 2026-07-02
+content_language: mixed
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-MIGRATION_PROGRESS
+title: Native Migration — Progress Tracker
+last_modified_commit: c4119b0
+review_cadence: on-closure+quarterly
+last_review_date: 2026-05-12
+last_review_event: A'.4.5 closure entry + canonical closure protocol cross-ref to METHODOLOGY §12.7
+reviewer: Crystalka
 ---
+
 # Native Migration — Progress Tracker
 
 **Status**: LIVE document (не LOCKED) — обновляется при каждом milestone closure

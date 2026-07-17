@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-THREADING
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "2.0.0"
+version: 2.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-THREADING
+title: Multithreading (historical; superseded by authored rework)
+superseded_by: DOC-A-THREADING_V2
+last_modified_commit: fe27fbe
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: Superseded by DOC-A-THREADING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/THREADING.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
+
 # Multithreading
 
 Scheduling in Dual Frontier is split across the kernel boundary the way an OS splits it: **kernel scheduling decisions are made natively** — dependency-graph construction, runqueue maintenance, wake dispatch, phase composition — per К-L12, while system execution bodies remain managed and are dispatched from the managed side. On-demand activation (К-L13) means only runnable systems enter phase dispatch. The invariant wording is owned by [KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md) Part 0 (К-L invariants); this document describes the mechanism as it exists in code.

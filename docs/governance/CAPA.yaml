@@ -1,0 +1,1053 @@
+# capa_entries -- hand-edited source of truth (FRAMEWORK 14.6). Validated by the
+# governance tool and merged into the derived REGISTER.yaml archive.
+capa_entries:
+- id: CAPA-2026-05-09-K8.2-V2-REFRAMING
+  opened_date: 2026-05-09
+  closure_status: CLOSED
+  trigger: >
+    K-L3 «без exception» framing surfaced as misalignment at K8.2 v2 closure verification.
+
+    Crystalka observation 2026-05-10 «там был частичный перенос то что можно легко
+
+    преобразовывать в struct было преобразовано» revealed closure outcome was selective
+
+    per-component judgment, not universal mandate.
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-A-MOD_OS
+  - DOC-A-MIGRATION_PLAN
+  - DOC-D-K8_2_V2
+  root_cause: >
+    K8.2 v1 brief authored 2026-05-08 against pre-K-L3.1 framing. Closure entry
+
+    «K-L3 «без exception» state achieved» encoded universal-mandate reading. Closure
+
+    verification did not surface selective-judgment outcome because amendment plan
+
+    tracking didn't enumerate per-component disposition.
+  immediate_action: >
+    Halt K-series progress; surface K-L3 wording for retroactive principle reformulation.
+  corrective_action: >
+    K-L3.1 bridge formalization deliberation milestone (A'.0) + amendment plan (Phase 4
+
+    deliverable) + amendment landing milestones (A'.1.K). Reformulated K-L3 as «Path α
+
+    default + Path β opt-in», added per-component decision capture.
+  effectiveness_verification:
+    method: Post-amendment cross-document audit per K-L3.1 §K.12.2
+    date_verified: 2026-05-10
+    verification_commit: 0789bd4
+    verification_outcome: >
+      All «без exception» / «class-based prohibited» wording reformulated or moved to
+
+      historical/version-quote context. KERNEL v1.3 → v1.5; MOD_OS v1.6 → v1.7;
+
+      MIGRATION_PLAN v1.0 → v1.1. K-L3.1 amendment plan §K.12.2 cross-document drift
+
+      audit clean.
+  lessons_learned_reference: DOC-D-K9_BRIEF_REFRESH_PATCH
+- id: CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
+  opened_date: 2026-05-10
+  closure_status: CLOSED
+  trigger: >
+    Methodology corpus (METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR)
+
+    v1.x era authored under human-as-primary-reader assumption. v1.6 pipeline restructure
+
+    surfaced inversion: solo developer's effective methodology audience is the AI agent
+
+    reading at brief authoring + execution time, not human readers.
+  affected_documents:
+  - DOC-B-METHODOLOGY
+  - DOC-B-PIPELINE_METRICS
+  - DOC-B-MAXIMUM_ENGINEERING_REFACTOR
+  root_cause: >
+    v1.x era methodology authored before session-mode pipeline stabilization. Audience
+
+    contract was implicit, defaulted to «engineering blog audience» framing. Pipeline
+
+    restructure made assumption visible; required explicit lock.
+  immediate_action: >
+    Surface audience contract as Q-A07-6 explicit deliberation lock.
+  corrective_action: >
+    A'.0.7 deliberation milestone + Q-A07-1..12 lock pass + amendment plan + landing
+
+    milestone A'.1.M. Methodology rewritten with agent-primary framing; v1.x era
+
+    empirical record preserved with per-era transferability annotations.
+  effectiveness_verification:
+    method: Methodology corpus version bumps + cross-references intact
+    date_verified: 2026-05-10
+    verification_commit: 9d4da64
+    verification_outcome: >
+      METHODOLOGY v1.6 ships with §0 footnote declaring agent-primary; §2.1.1
+
+      current-configuration table; §3 economics restructured; §4 throughput
+
+      parallel-form case studies. Cross-references intact.
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT
+  opened_date: 2026-05-12
+  closure_status: CLOSED
+  closed_date: 2026-05-14
+  closed_commit: PENDING-COMMIT-4
+  closure_outcome: A'.5 K8.3+K8.4 combined closure (commits 24e5f56..54c6658) is the second post-register milestone (after A'.4.5 itself); register-driven inventory survived the milestone with no count drift; sync_register.ps1 --validate runs cleanly post-closure. CAPA's effectiveness verification met.
+  trigger: >
+    A'.0.5 INVENTORY.md baseline ~135 .md files. A'.4.5 deliberation pre-flight
+
+    (2026-05-12) revealed actual count ~220 (after K9 closure + K8.3/4/5 briefs authored
+
+    + governance docs new). Drift between inventory baseline and reality discovered
+
+    during A'.4.5 deliberation §0.2 verification.
+  affected_documents:
+  - DOC-E-INVENTORY
+  - DOC-A-PHASE_A_PRIME_SEQUENCING
+  root_cause: >
+    INVENTORY.md authored at A'.0.5 closure 2026-05-10 as point-in-time snapshot. No
+
+    mechanism existed for tracking inventory drift between A'.0.5 closure and subsequent
+
+    milestone closures. PHASE_A_PRIME_SEQUENCING.md similarly authored as point-in-time;
+
+    A'.0.7 status remained «NEXT» after A'.0.7 closure.
+  immediate_action: >
+    Surface drift in A'.4.5 deliberation pre-flight report. Defer correction to A'.4.5
+
+    execution Claude Code session (mechanical inventory pass with filesystem tooling).
+  corrective_action: >
+    A'.4.5 register itself is the structural fix. REGISTER.yaml as living inventory;
+
+    sync_register.ps1 --validate flags orphans and missing entries on every run.
+
+    PHASE_A_PRIME_SEQUENCING.md and INVENTORY.md become superseded by register at A'.4.5
+
+    closure.
+  effectiveness_verification:
+    method: A'.5 K8.4 first post-register closure runs sync validation cleanly (verification milestone shifted from K8.3 to K8.4 per K8.3_BRIEF_REFRESH_PATCH §3.3 ordering swap)
+    date_verified: 
+    verification_commit: 
+    verification_outcome: 
+    verification_pending: A'.5 K8.4 closure (post K8.3/K8.4 order swap)
+  lessons_learned_reference: DOC-A-FRAMEWORK
+- id: CAPA-2026-05-13-K8.3-PREMISE-MISS
+  opened_date: 2026-05-13
+  closure_status: CLOSED
+  closed_date: 2026-05-14
+  closed_commit: 54c6658
+  closure_outcome: "A'.5 K8.3+K8.4 combined v2.0 closed cleanly with the storage cutover atom — the original K8.3 premise (component storage already in NativeWorld) was inverted into the v2.0 design (component storage moves to NativeWorld in this milestone, atomically). v2.0 brief authored from a fresh deep-read of GameBootstrap/factories/SystemBase/SystemExecutionContext per Lesson candidate from this CAPA's HALT_REPORT.md §7; that lesson formalized as Lesson #7 (transcribe the API, not paraphrase) at v2.0 closure. Effectiveness evidence: zero further premise misses across the 4-commit execution arc (24e5f56..PENDING-COMMIT-4)."
+  trigger: >
+    K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52)
+
+    presupposed component storage already in NativeWorld at K8.3 execution time
+
+    («post-K8.2 v2 closure, all production components are unmanaged structs (Path α)»
+
+    framing in brief §1). Claude Code execution attempt same day surfaced premise
+
+    defect at Phase 0.2: GameBootstrap.cs:85-90 inline comment explicitly states
+
+    «component storage stays on the managed World through K8.3; the registry-based
+
+    path lights up at K8.4 when component storage moves.» Brief authoring conflated
+
+    K-L3 «struct shape» (achieved K8.2 v2 2026-05-09) with K-L8/K-L11 «native
+
+    storage» (scheduled K8.4 per MIGRATION_PLAN §1.3).
+  affected_documents:
+  - DOC-D-K8_3
+  - DOC-D-K8_3_BRIEF_REFRESH_PATCH
+  - DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION
+  - DOC-A-MIGRATION_PLAN
+  - DOC-A-KERNEL
+  - DOC-A-PHASE_A_PRIME_SEQUENCING
+  root_cause: >
+    Brief authoring read GameBootstrap.cs primarily for Q-K8.3-1 coreSystems
+
+    verification (12-system count + names). Comment block at lines 85-90 about
+
+    storage path activation was not surfaced during scope verification. Brief
+
+    authoring relied on architecture-document target-state wording
+
+    (MIGRATION_PLAN §1.2 K8.3 row, KERNEL_ARCHITECTURE Part 0 K-L3 implication
+
+    «default storage path is unmanaged struct») without empirical verification
+
+    against current production wiring. Architecture docs describe target state;
+
+    production wiring describes current state — divergence silent until execution
+
+    attempt. RISK-008 (amendment plan completeness gap) reproduction.
+  immediate_action: >
+    Halt K8.3 v2.0 execution at Cloud Code session 2026-05-13 Phase 0.2 per
+
+    METHODOLOGY §3 «stop, escalate, lock». Surface 4 resolution options
+
+    (A: re-deliberate fully; B: swap K8.3/K8.4 order; C: re-scope in-flight;
+
+    D: managed-only protocol). Crystalka selects Option B (swap K8.3/K8.4
+
+    order) via patch brief direction («Да давай писать дополнение как и раньше
+
+    было отправить в ту сессию K8.3v2 как патч»).
+  corrective_action: >
+    (1) Halt artifact authored at docs/scratch/A_PRIME_5/HALT_REPORT.md
+        (DOC-E-A_PRIME_5_K8_3_HALT_INVESTIGATION) preserving investigation
+        + diagnosis + deliberation surface; landed in commit b46a6c6.
+    (2) Patch brief authored at tools/briefs/K8_3_BRIEF_REFRESH_PATCH.md
+        (DOC-D-K8_3_BRIEF_REFRESH_PATCH) carrying Option B resolution
+        (K8.4-first, then K8.3, then K8.5); landed in commit 8cf94b3.
+    (3) K8.4 v2 brief authoring scheduled for next Opus deliberation
+        session; absorbs storage migration scope + orphan .uid cleanup +
+        Mod API v3 surface (Fields/ComputePipelines/RegisterManagedComponent).
+    (4) K8.5 v2 brief authoring scheduled subsequently; absorbs managed
+        World retirement from original K8.4 scope.
+    (5) PHASE_A_PRIME_SEQUENCING.md amendment scheduled at K8.4 closure
+        (A'.5 revised): A'.5 = K8.4; A'.6 = K8.3; A'.7 = K8.5.
+    (6) Future brief authoring protocol enhancement candidate:
+        deep-read entry-point files (GameBootstrap.cs, Bootstrap.cs,
+        factory classes, SystemExecutionContext) in Phase 0 alongside
+        architecture-doc reads — empirical ground truth verification.
+        Lesson candidate for METHODOLOGY §K-Lessons next revision
+        (drafted in HALT_REPORT.md §7).
+  effectiveness_verification:
+    method: K8.4 → K8.3 → K8.5 cascade lands cleanly in revised order; no further premise miss at any of the three closures
+    date_verified: 2026-05-14
+    verification_commit: 54c6658
+    verification_outcome: K8.3+K8.4 absorbed into A'.5 combined milestone (rather than A'.5/A'.6 cascade); v2.0 atomic cutover landed cleanly. The original cascade plan was reformulated by the combined brief; the underlying premise miss the CAPA tracks did not recur.
+    verification_pending: 
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-14-K8.34-API-SURFACE-MISS
+  opened_date: 2026-05-14
+  closure_status: CLOSED
+  closed_date: 2026-05-14
+  closed_commit: 54c6658
+  trigger: >
+    K8.3+K8.4 combined brief v1.0 (2026-05-14) prescribed `new ComponentTypeRegistry()` —
+
+    no such constructor existed. Brief invented a helper that already existed; gave a
+
+    wrong sln path; the factory bulk-write shape was incompatible with the real K8.1-
+
+    primitive structure (NativeMap/NativeSet/NativeComposite per-instance ids). Caught
+
+    at execution time by Cloud Code reading the kernel files. Five total findings.
+  affected_documents:
+  - DOC-D-K8_34_COMBINED
+  - DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH
+  - DOC-D-K8_34_COMBINED_V2
+  - DOC-B-METHODOLOGY
+  root_cause: >
+    Brief v1.0 authored Phase 4+5 wiring from architecture-document target-state wording
+
+    (KERNEL_ARCHITECTURE Part 0 K-L8 / K-L11 implications) without empirically verifying
+
+    against the actual API surface in `src/DualFrontier.Core.Interop/`. The K-L3
+
+    «struct shape» / K-L11 «native storage» framing told the brief author *what should
+
+    exist*; the actual ctor signatures, helper names, and factory shapes were never read.
+
+    Generalization of CAPA-2026-05-13's «read entry-point files in full» — that CAPA
+
+    addressed transitional-state comments (production wiring vs target wording); this
+
+    CAPA addresses the API-surface dimension (signatures vs paraphrased framing).
+  immediate_action: >
+    Halt v1.0 execution. Author refresh patch (DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH)
+
+    with 5 findings + corrections; land Phases 0-3 against patched brief. Phases 0-3
+
+    shipped cleanly to commit b903b91 (8 atomic commits) without further API-surface
+
+    halts during patch v1 execution.
+  corrective_action: >
+    (1) Patch v1 (5 findings) authored 2026-05-14; absorbed into v2.0 brief.
+
+    (2) v2.0 brief §4.0 mandatory deep-reads list — every kernel/scheduler/factory/test
+        file the brief paraphrases must be re-read before Commit 2 authoring; a
+        contradiction is an automatic halt (SC-3).
+    (3) METHODOLOGY Lesson #7 («A brief that prescribes an API must transcribe the
+        API, not paraphrase it») added at v2.0 closure (this commit batch).
+    (4) v2.0 brief itself authored from a session-long deep-read of every load-bearing
+        file in the cutover scope — verified zero API-surface halts during v2.0
+        execution.
+  effectiveness_verification:
+    method: v2.0 execution lands the cutover commit (Commit 2) without any halt traceable to API-surface paraphrasing
+    date_verified: 2026-05-14
+    verification_commit: 54c6658
+    verification_outcome: 'Commit 2 landed cleanly with all 620 tests green. No API-surface halt during execution. Corrective action (Lesson #7 + brief-internal §4.0 deep-read mandate) demonstrably effective.'
+    verification_pending: 
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT
+  opened_date: 2026-05-14
+  closure_status: CLOSED
+  closed_date: 2026-05-14
+  closed_commit: 54c6658
+  trigger: >
+    K8.3+K8.4 combined brief v1.0 §6.5 split the storage cutover into 12 incremental
+
+    per-system commits with a dual-write bridge between them. Empirical analysis during
+
+    Phase 4 Commit 9 (ConsumeSystem) preparation surfaced that the increments were
+
+    never independently valid: factory dual-write at bootstrap aligns the two stores,
+
+    but per-system migration breaks alignment per tick — Tier 1 systems read components
+
+    Tier 3 systems write, with a 7-commit gap between them. After 100 sim ticks, the
+
+    worlds diverge. The dual-write bridge was load-bearing costyl, not transition
+
+    scaffolding.
+  affected_documents:
+  - DOC-D-K8_34_COMBINED
+  - DOC-D-K8_34_COMBINED_V2
+  - DOC-B-METHODOLOGY
+  root_cause: >
+    Brief v1.0 authored the Phase 4+5 *shape* (12 incremental commits) from the
+
+    architecture-doc principle «atomic commit as compilable unit» (METHODOLOGY K-Lesson)
+
+    without simulating each of the 11 intermediate per-commit states. The simulation
+
+    would have surfaced that storage backend is a *binary* property of a component
+
+    type, not divisible into N steps with valid intermediate states. The compilable-unit
+
+    lesson was correctly applied to commit *boundaries* but incorrectly extended to
+
+    cutover *atomicity*.
+  immediate_action: >
+    Halt v1.0 Phase 4 at session 2026-05-14 (3rd halt of the milestone). Author
+
+    HALT_REPORT_PHASE_4.md (preserved across the v2.0 revert). v2.0 brief re-designed
+
+    Phase 4+5 as a single atomic cutover (§1.4 «storage backend is binary» + §6.4
+
+    «no dual-write phase»). v1.0's 24-commit plan replaced by v2.0's 4-commit plan.
+  corrective_action: >
+    (1) v2.0 brief authored with explicit «one-atom» Phase 4+5 design — Commit 2 does
+        not compile until the entire cutover is complete; no incremental commits.
+    (2) METHODOLOGY Lesson #8 («A brief that splits a change into N steps must prove
+        each of the N-1 intermediate states is valid») added at v2.0 closure (this
+        commit batch). Falsifiable claim: briefs authored under this lesson will not
+        incur mid-transition-drift halts.
+    (3) v2.0 brief §3 reverts the v1.0 deviation cleanly to b903b91 before Commit 2
+        starts — no carry-over of the broken dual-write bridge.
+  effectiveness_verification:
+    method: v2.0 atomic cutover (Commit 2) lands without any per-system divergence; tests green at completion
+    date_verified: 2026-05-14
+    verification_commit: 54c6658
+    verification_outcome: Commit 2 (one atom, 81 files) landed with build clean and 620 tests green. No mid-transition state existed because there was no mid-transition. Corrective action demonstrably effective.
+    verification_pending: 
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-16-ISOLATION-AUTHORITY-RESTORATION
+  opened_date: 2026-05-16
+  closure_status: CLOSED
+  closed_commit: PENDING-COMMIT-15
+  trigger: >
+    Audit DRIFT-003 (S5) + DRIFT-005 (S5): README + ISOLATION + THREADING + PERFORMANCE
+
+    + MODDING described a runtime isolation guard mechanism (IsolationViolationException
+
+    from SystemExecutionContext.GetComponent / SetComponent / Query / GetSystem) that was
+
+    deleted in K8.3+K8.4 cutover 2026-05-14. Doc-vs-code divergence on a safety boundary.
+  affected_documents:
+  - DOC-G-README
+  - DOC-A-ISOLATION
+  - DOC-A-THREADING
+  - DOC-A-PERFORMANCE
+  - DOC-A-MODDING
+  root_cause: >
+    K8.3+K8.4 brief v2.0 §6 amendment scope covered KERNEL + MIGRATION_PLAN +
+
+    METHODOLOGY + PHASE_A_PRIME_SEQUENCING; it did not enumerate ISOLATION /
+
+    THREADING / PERFORMANCE which were upstream consumers of the deleted runtime
+
+    guard surface. The cutover changed the enforcement model (runtime → compile-time
+
+    + future A'.9 Roslyn analyzer); the consequent Tier 1 doc rewrites were not
+
+    surfaced as in-scope amendments at closure time.
+  immediate_action: >
+    Documentation drift audit (codex pass 2026-05-15, commit 53697da) classified
+
+    DRIFT-003 + DRIFT-005 as S5 «block isolation-related executor work until cleaned».
+  corrective_action: >
+    CLEANUP_CASCADE_BRIEF §3 Commits 3-6 + Commit 12 executed targeted rewrites:
+
+    Commit 3 (438de49) README; Commit 4 (f5e27f3) ISOLATION; Commit 5 (6cf1d77) THREADING;
+
+    Commit 6 (613e5ef) PERFORMANCE; Commit 12 (f7fe134) MODDING isolation-guard wording.
+
+    Wording transcribed verbatim from SystemExecutionContext.cs lines 24-31 per Lesson #7.
+  effectiveness_verification:
+    method: Tier 1 docs (ISOLATION, THREADING, PERFORMANCE, ECS, MODDING, MOD_PIPELINE) and Tier 2 nav (README) describe compile-time enforcement; grep for IsolationViolationException in Tier 1 architecture returns zero stale references
+    date_verified: 2026-05-16
+    verification_commit: PENDING-COMMIT-15
+    verification_outcome: Safety-critical drift closed across DRIFT-003 + DRIFT-005 cluster.
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-16-LIVE-STATE-CLOSURE-PROTOCOL-GAP
+  opened_date: 2026-05-16
+  closure_status: CLOSED
+  closed_commit: PENDING-COMMIT-15
+  trigger: >
+    Audit DRIFT-001 (S4): MIGRATION_PROGRESS.md last_updated 2026-05-12 pre-A'.5;
+
+    «Last completed milestone» showed A'.4.5; «Next milestone» showed A'.5 K8.3 —
+
+    both wrong (A'.5 closed 2026-05-14; namespace ratification 2026-05-16).
+
+    Audit DRIFT-010 (S4): REGISTER_RENDER.md stale relative to REGISTER.yaml
+
+    (DOC-A-RUNTIME + DOC-A-GPU_COMPUTE listed as Tier 1 LOCKED; filesystem confirms
+
+    files don't exist post-V-unification).
+  affected_documents:
+  - DOC-C-MIGRATION_PROGRESS
+  - DOC-G-REGISTER_RENDER
+  root_cause: >
+    A'.5 closure protocol included MIGRATION_PROGRESS update intent but the update
+
+    was deferred (Phase 6 commit 23 of 24+ partial-closure note in commit 4503b40).
+
+    Composite namespace ratification cascade (PR #34, 2026-05-16) did not include
+
+    MIGRATION_PROGRESS sync. REGISTER_RENDER stale because PR #34 updated REGISTER.yaml
+
+    but did not run render_register.ps1.
+  immediate_action: >
+    Documentation drift audit (2026-05-15, commit 53697da) classified DRIFT-001 +
+
+    DRIFT-010 as S4 authority conflict on primary navigation surfaces.
+  corrective_action: >
+    Cleanup cascade Commit 13 (fa88f12) synced MIGRATION_PROGRESS through A'.5 +
+
+    ratification cascade + cleanup cascade. Cleanup cascade Commit 16 (PENDING) runs
+
+    render_register.ps1 to regenerate REGISTER_RENDER.md.
+
+    Pattern surfaced: live-tracker sync + generated-derivative regen must be explicit
+
+    closure-protocol steps. METHODOLOGY §12.7 revision deferred to post-cleanup
+
+    A'.8 K-closure report timing per brief.
+  effectiveness_verification:
+    method: MIGRATION_PROGRESS reflects A'.5 + ratification + cleanup; REGISTER_RENDER regenerated and reflects current REGISTER.yaml (V-substrate present, RUNTIME/GPU_COMPUTE absent, G-series at historical paths)
+    date_verified: 2026-05-16
+    verification_commit: PENDING-COMMIT-16
+    verification_outcome: Live tracker + generated derivative synchronized with REGISTER.yaml. DRIFT-001 + DRIFT-010 closed.
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-16-POWER-DELETION-PROPAGATION
+  opened_date: 2026-05-16
+  closure_status: CLOSED
+  closed_commit: PENDING-COMMIT-15
+  trigger: >
+    Audit DRIFT-006 (S4) + DRIFT-007 (S4) + DRIFT-008 (S4): CONTRACTS + EVENT_BUS
+
+    documented IPowerBus as current (deleted in A'.5); ROADMAP M10.B promised migration
+
+    of ElectricGridSystem + ConverterSystem (deleted in A'.5); MIGRATION_PLAN internal
+
+    conflict — line 196 correctly noted Power deletion but lines 211, 461, 698 still
+
+    listed Power slice as in-scope migration target.
+  affected_documents:
+  - DOC-A-CONTRACTS
+  - DOC-A-EVENT_BUS
+  - DOC-C-ROADMAP
+  - DOC-A-MIGRATION_PLAN
+  - DOC-F-SRC-CONTRACTS-BUS
+  - DOC-F-SRC-COMPONENTS-BUILDING
+  root_cause: >
+    A'.5 K8.3+K8.4 brief v2.0 §6 amendment scope covered KERNEL + MIGRATION_PLAN
+
+    §0.3 Decision #4 closure note but did not propagate the deletion through downstream
+
+    contracts (CONTRACTS, EVENT_BUS) or the migration plan internal mapping tables
+
+    (lines 211, 461, 698). Module-local READMEs lagged the deletion.
+  immediate_action: >
+    Audit DRIFT-006 + DRIFT-007 + DRIFT-008 surfaced executor-facing drift on deleted
+
+    systems/buses. S4 severity.
+  corrective_action: >
+    Commit 8 (1a88ece) removed IPowerBus from CONTRACTS + EVENT_BUS;
+
+    Commit 9 (73c7bbf) reconciled ROADMAP M10.B + MIGRATION_PLAN lines 211/461/698
+
+    to match line 196 closure note (authoritative); Commit 14 (08e4fde) cleaned
+
+    module-local READMEs (Building + Bus).
+  effectiveness_verification:
+    method: 'grep -i (power|electric|converter|ipowerbus) on current Tier 1/2 docs returns matches only in: historical closure narratives, this CAPA cluster, K8_34_COMBINED_V2 brief (EXECUTED), CLEANUP_CASCADE_BRIEF itself'
+    date_verified: 2026-05-16
+    verification_commit: PENDING-COMMIT-15
+    verification_outcome: Power deletion fully propagated across current Tier 1/2/4 surfaces. DRIFT-006 + DRIFT-007 + DRIFT-008 closed.
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-16-MOD-API-V3-AUTHORITY
+  opened_date: 2026-05-16
+  closure_status: CLOSED
+  closed_commit: PENDING-COMMIT-15
+  trigger: >
+    Audit DRIFT-011 (S4) + DRIFT-012 (S4): MOD_OS_ARCHITECTURE §4.6 + §4.6.3 framed
+
+    v3 as additive-over-v2 with v2 mods continuing to load — false per IModApi.cs
+
+    lines 16-27 (v2 deleted entirely, manifest parser strict v3-only). MODDING +
+
+    MOD_PIPELINE showed old API (RegisterComponent<T> where T : IComponent without
+
+    unmanaged constraint, Unsubscribe<T>, split LogWarning/LogError) + outdated
+
+    unload chain.
+  affected_documents:
+  - DOC-A-MOD_OS
+  - DOC-A-MODDING
+  - DOC-A-MOD_PIPELINE
+  - DOC-F-SRC-CONTRACTS-MODDING
+  root_cause: >
+    MOD_OS §4.6 added v3 sub-APIs in v1.6 as additive-over-v2; K8.3+K8.4 cutover
+
+    subsequently made v3 strict (deleted v2 IModApi entirely, manifest parser
+
+    rejects non-«3» versions) but did not propagate that semantic change through
+
+    MOD_OS §4.6.3 (Backward compatibility) or downstream MODDING + MOD_PIPELINE
+
+    Tier 1 authoring docs. Module-local Modding README lagged similarly.
+  immediate_action: >
+    Audit DRIFT-011 + DRIFT-012 surfaced executor-facing drift on v3 strict
+
+    authority. S4 severity (mod-pipeline executor could implement deleted
+
+    backward compatibility).
+  corrective_action: >
+    Commit 11 (c926382) rewrote MOD_OS §4.6 intro + §4.6.3 per IModApi.cs verbatim
+
+    (v3 strict, no v2 compat); Commit 12 (f7fe134) rewrote MODDING + MOD_PIPELINE
+
+    against v3 + current §9.5 unload chain; Commit 14 (08e4fde) cleaned
+
+    module-local DualFrontier.Contracts/Modding README.
+  effectiveness_verification:
+    method: Tier 1 mod-OS authority docs (MOD_OS, MODDING, MOD_PIPELINE) all describe v3 strict surface; IModApi.cs verbatim cited as canonical statement; RestrictedModApi.cs constructor + member list match MOD_PIPELINE §4 description
+    date_verified: 2026-05-16
+    verification_commit: PENDING-COMMIT-15
+    verification_outcome: Mod API v3 strict authority restored across Tier 1 + Tier 4. DRIFT-011 + DRIFT-012 closed.
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-16-V-SUBSTRATE-SUPERSESSION
+  opened_date: 2026-05-16
+  closure_status: CLOSED
+  closed_commit: PENDING-COMMIT-15
+  trigger: >
+    Audit DRIFT-009 (S4) + DRIFT-013 (S3) + DRIFT-014 (S3) + DRIFT-015 (S3):
+
+    ARCHITECTURE Tier 1 + Silk.NET production references + G-series namespace tail
+
+    + G0-G9 brief AUTHORED-lifecycle overstating execution readiness + Architecture
+
+    Recon report citing superseded RUNTIME/GPU_COMPUTE as authority. Post-Q-G-1
+
+    (RUNTIME + GPU_COMPUTE → V substrate) + Q-G-2 (G-series reduced to V0/V1/V2)
+
+    LOCKs ratified in PR #34 (merged 2026-05-16), residual references remained.
+  affected_documents:
+  - DOC-A-ARCHITECTURE
+  - DOC-A-VISUAL_ENGINE
+  - DOC-A-GODOT_INTEGRATION
+  - DOC-A-FIELDS
+  - DOC-A-KERNEL
+  - DOC-A-MIGRATION_PLAN
+  - DOC-A-MOD_OS
+  - DOC-D-G0
+  - DOC-D-G1
+  - DOC-D-G2
+  - DOC-D-G3
+  - DOC-D-G4
+  - DOC-D-G5
+  - DOC-D-G6
+  - DOC-D-G7
+  - DOC-D-G8
+  - DOC-D-G9
+  - DOC-E-ARCHITECTURE_RECON_REPORT
+  root_cause: >
+    Q-G-1 + Q-G-2 LOCK ratification cascade (PR #34) executed VULKAN_SUBSTRATE.md
+
+    v1.0 authoring + RUNTIME/GPU_COMPUTE deletion from REGISTER + LOCKED-doc
+
+    amendments (KERNEL, MIGRATION_PLAN, ROADMAP) but did not propagate through:
+
+    (a) ARCHITECTURE.md (separate Tier 1 doc with Silk.NET production framing);
+
+    (b) visual-runtime doc family (VISUAL_ENGINE + GODOT_INTEGRATION still LOCKED at
+
+    original paths); (c) residual G-series tail in FIELDS/KERNEL/MIGRATION_PLAN/
+
+    MOD_OS; (d) G-series brief lifecycle (AUTHORED — overstates execution readiness
+
+    per ARCHITECTURE_RECON_REPORT §188 self-note); (e) ARCHITECTURE_RECON_REPORT
+
+    itself (Live, authored 2026-05-15 pre-V-unification).
+  immediate_action: >
+    Audit DRIFT-009 (S4) + DRIFT-013/014/015 (S3) surfaced supersession-propagation
+
+    gaps. Crystalka cleanup-lock §1.3 directs visual-runtime authority move to
+
+    historical/ (not amend-in-place).
+  corrective_action: >
+    Commit 1 (e68d799) moved G-series briefs to historical/ + AUTHORED → SUPERSEDED
+
+    + bidirectional supersedes on DOC-A-VULKAN_SUBSTRATE; Commit 2 (253c7ab) moved
+
+    VISUAL_ENGINE + GODOT_INTEGRATION to historical/ + LOCKED → SUPERSEDED +
+
+    bidirectional supersedes; Commit 10 (3aa3585) rewrote ARCHITECTURE.md
+
+    §Presentation + §Dependency rules; Commit 14 (08e4fde) cleaned G→V namespace
+
+    tail in FIELDS/KERNEL/MIGRATION_PLAN/MOD_OS + annotated ARCHITECTURE_RECON_REPORT.
+  effectiveness_verification:
+    method: VULKAN_SUBSTRATE.md is sole current Tier 1 visual-runtime + GPU compute authority; visual-runtime predecessors at docs/architecture/historical/ with HISTORICAL banner; G-series briefs at tools/briefs/historical/ with SUPERSEDED lifecycle + superseded_by DOC-A-VULKAN_SUBSTRATE bidirectional; G→V namespace tail cleaned; ARCHITECTURE_RECON_REPORT annotated
+    date_verified: 2026-05-16
+    verification_commit: PENDING-COMMIT-15
+    verification_outcome: V substrate supersession fully propagated. DRIFT-009 + DRIFT-013 + DRIFT-014 + DRIFT-015 closed.
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-18-K8_5-DRIFT
+  title: 'DOC-D-K8_5 lifecycle classification drift surfaced via Lesson #22 reconnaissance'
+  opened_date: 2026-05-18
+  closure_status: CLOSED
+  closed_date: 2026-05-18
+  closed_commit: PENDING-COMMIT-K8_5-CLOSURE
+  trigger: >
+    K8.5 brief reconnaissance per Lesson #22 (read existing code before brief authoring) surfaced
+
+    that DOC-D-K8_5 register entry classified lifecycle AUTHORED, but actual brief content
+
+    (tools/briefs/K8_5_MOD_ECOSYSTEM_MIGRATION_PREP_BRIEF.md) is skeleton-grade:
+
+    - File header: «Status: SKELETON»
+
+    - First TODO line: «Author full brief»
+
+    - Trigger note: «Brief authoring trigger: after K8.4 closure»
+
+
+    Register classification did not reflect actual document state. Additionally, brief content
+
+    premise (v2-to-v3 mod authors migration) mismatched current reality (vanilla mods deferred
+
+    к Phase B per composite namespace ratification PR #34, 2026-05-16, no v2 codebase exists).
+  affected_documents:
+  - DOC-D-K8_5
+  - DOC-A-PHASE_A_PRIME_SEQUENCING
+  - DOC-G-REGISTER
+  - DOC-B-METHODOLOGY
+  root_cause: >
+    Register classification (DOC-D-K8_5 lifecycle: AUTHORED) was applied at enrollment time
+
+    (A'.4.5 closure, 2026-05-12) based on enrollment evidence (brief file exists, brief
+
+    authored by Opus). Actual content state (skeleton vs full) was not verified during
+
+    enrollment.
+
+
+    Additionally, post-enrollment events (composite namespace ratification PR #34 deferring
+
+    vanilla mods к Phase B, 2026-05-16) drifted brief's premise from reality without
+
+    triggering register classification review.
+
+
+    No tooling currently detects register classification vs actual content state mismatch.
+  immediate_action: >
+    Surface drift via K8.5 deferral cascade brief authoring session 2026-05-18. Crystalka
+
+    direction («просто пропускаем и двигаемся дальше только лишь фиксируем что K8.5 пропущен»)
+
+    adopted as authoritative resolution path.
+  corrective_action: >
+    DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON per K8.5 deferral cascade
+
+    (commit 4bc34c1, Phase 1). Phase A'.6 slot marked SKIPPED with deferral marker in
+
+    PHASE_A_PRIME_SEQUENCING.md (commit 235ad57, Phase 2). K8.5 promotion trigger updated к
+
+    post-Phase B initial M-series sprint.
+  preventive_action: >
+    Lesson #23 candidate authored в METHODOLOGY.md Provisional Lessons pool: «Register
+
+    classification can drift from actual document state. Lesson #22 (read existing code
+
+    before authoring) extended: read register entry AND open document content before
+
+    assuming register classification accurate. Especially after schema extensions
+
+    (AUTHORED-SKELETON post-FRAMEWORK v1.1) — pre-existing entries may need reclassification
+
+    к match actual state.»
+
+
+    Lesson formalization deferred к А'.8 K-closure report per existing timing lock
+
+    (S6 lock 2026-05-17).
+
+
+    Architectural analyzer milestone (А'.9) may encode register classification verification
+
+    rules per К-closure report Roslyn analyzer rule specification (К-closure report
+
+    authoring decision).
+  effectiveness_verification:
+    method: sync_register.ps1 --validate exit 0 post K8.5 cascade closure; DOC-D-K8_5 frontmatter mirror reflects AUTHORED-SKELETON + version 0.1; PHASE_A_PRIME_SEQUENCING.md §2 sequence shows А'.6 SKIPPED + А'.7 К10
+    date_verified: 2026-05-18
+    verification_commit: PENDING-COMMIT-K8_5-CLOSURE
+    verification_outcome: "Register classification drift surfaced + corrected within single cascade. CAPA opened+closed within same governance commit per A'.4.5 precedent. Lesson #23 candidate captured for К-closure report formalization review."
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST
+  opened_date: 2026-05-21
+  closure_status: CLOSED
+  closed_date: 2026-05-21
+  closed_commit: c1d06f2
+  closure_outcome: BusFacade.Publish<T>(T, uint coalesceKey) overload landed at А'.7.x γ1 with runtime tier validation (throws InvalidOperationException if non-Background) + 4 unit tests in ManagedBusBridgeTests.
+  trigger: >
+    Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #1» (Bug #1).
+
+    BusFacade.Publish<T>(T evt) routes к ManagedBusBridge.PublishViaNative which
+
+    has `uint coalesceKey = 0` default parameter. BusFacade never threads coalesce
+
+    key through, так что every Background event of the same type_id structurally
+
+    collapses к one dispatch via the key=0 coalesce path. The native registry rejects
+
+    Background-tier registration без coalesce_fn, but the facade itself silently
+
+    drops semantic distinction.
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+  root_cause: >
+    Managed bus facade API surface incomplete — coalesce_key existed на native ABI
+
+    (`df_bus_publish_background(uint32_t type_id, const void* payload, uint32_t
+
+    payload_size, uint32_t coalesce_key)`) и on the bridge boundary
+
+    (PublishViaNative с `coalesceKey = 0` default), но not at the facade layer where
+
+    mod authors call Publish<T>. K10.2 cascade landed the facade без the Background-
+
+    tier-specific overload; Q-N-34 coalesce semantics required но never reachable
+
+    from production callers.
+  immediate_action: >
+    Surface defect через А'.7.x cascade Phase 0 read + γ1 fix.
+  corrective_action: >
+    Add `BusFacade.Publish<T>(T evt, uint coalesceKey) where T : unmanaged, IEvent`
+
+    overload (Q-N-7X-6 LOCKED Option A — overload, not interface convention). Runtime
+
+    tier validation throws InvalidOperationException for non-Background tier events
+
+    caught at the managed boundary (Fast/Normal tiers don't use coalesce_key per
+
+    К-L15 + Q-N-34). Existing Publish<T>(T evt) overload preserved untouched.
+  preventive_action: >
+    Lesson #N7 candidate (managed API completeness verification at cascade closure):
+
+    every native primitive с semantic parameters must have a directly-addressable
+
+    managed API surface, не just an internal-default bridge path. Deferred к Lessons
+
+    batch at A'.8 closure per Q-N-7X-11 split.
+  effectiveness_verification:
+    method: 'ManagedBusBridgeTests passes 4 new γ1 tests: distinct-keys-distinct-dispatches (100 events / 100 keys = 100 callbacks), same-key-collapses (100 events / key 7 = 1 callback), Fast tier throws, Normal tier throws.'
+    date_verified: 2026-05-21
+    verification_commit: c1d06f2
+    verification_outcome: 12/12 ManagedBusBridgeTests PASS post-γ1 (8 pre-existing + 4 new). Managed boundary correctly forwards coalesce_key к native; tier validation catches misuse.
+  lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+- id: CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN
+  opened_date: 2026-05-21
+  closure_status: CLOSED
+  closed_date: 2026-05-21
+  closed_commit: 9bcced0
+  closure_outcome: ManagedBusBridge.DrainBackgroundBatch wrapper + GameLoop tick-end integration landed at А'.7.x γ2; idle-budget computation per К-L15 §3.8 Item 30 (FixedDelta - elapsed - 10% safety margin).
+  trigger: >
+    Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #2» (Bug #2).
+
+    `df_background_queue_dispatch_idle_slot(uint64_t budget_micros)` native C ABI
+
+    exists and is implemented, но grep на all of src/ returned 0 call sites. Test-
+
+    only references at native/.../selftest.cpp:1910+1961. Background events
+
+    accumulate в pending_background_ forever, never dispatched в production. К-L15
+
+    §3.8 Item 30 specified «scheduler invokes dispatch at phase boundary с idle
+
+    budget» — never wired pre-А'.7.x.
+  affected_documents:
+  - DOC-A-KERNEL
+  - DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+  root_cause: >
+    Production wiring incomplete — K10.2 closure landed native dispatch primitive
+
+    + selftest coverage без the managed-side wire-up. Background-tier consumers
+
+    were anticipated к be vanilla mods (per Crystalka direction: «потребители это
+
+    vanilla моды, и они ещё не реализованы — нативная сторона готова заранее»), но
+
+    the test-only invocation path и production scheduler integration were both
+
+    missing. К10.2 brief assumed scheduler hook would land при mod-consumer
+
+    materialization; the hook itself is а universal mechanism, not consumer-specific.
+  immediate_action: >
+    Surface defect during А'.7.x Phase 0 (grep_check evidence) + γ2 wiring fix.
+  corrective_action: >
+    Three-part landing per Q-N-7X-7 LOCKED Option A (end-of-Reporting phase →
+
+    end-of-fixed-step in GameLoop):
+      1. ManagedBusBridge.DrainBackgroundBatch(ulong availableBudgetMicros) P/Invoke
+         wrapper. 0 budget = unbounded drain.
+      2. GameLoop.RunLoop while(accumulator>=FixedDelta) iteration extended:
+         Stopwatch.GetTimestamp() before _scheduler.ExecuteTick; after
+         _bridge.Enqueue(TickAdvancedCommand), compute idle_budget = FixedDeltaMicros
+         - elapsed - safety_margin (safety = 10% of FixedDelta); if budget > 0 and
+         busBridge != null, _busBridge.DrainBackgroundBatch(budget).
+      3. GameBootstrap constructs a single ManagedBusBridge and threads it через
+         GameLoop ctor (optional param, default null for test/legacy callers).
+    К-L18 compatibility verified via Bug2_BackgroundDispatch_AfterModUnload integration
+
+    test: publish 50 BG events для mod 999, bulk-unsubscribe via
+
+    df_bus_unsubscribe_background_by_mod, then drain — no crash, queue drains к
+
+    nothing per S3-Q3/Q4 untargeted persistence.
+  preventive_action: >
+    Same Lesson #N7 candidate as CAPA-BUS-COALESCE-KEY-LOST (managed API completeness
+
+    verification at cascade closure).
+  effectiveness_verification:
+    method: 'ManagedBusBridgeTests γ2 pair PASS: ManagedBusBridge_DrainBackgroundBatch_DispatchesAccumulatedEvents (50 events / 50 keys = 50 dispatched + 50 callbacks), Bug2_BackgroundDispatch_AfterModUnload_DoesNotCrashAndDrainsToNothing.'
+    date_verified: 2026-05-21
+    verification_commit: 9bcced0
+    verification_outcome: 12/12 ManagedBusBridgeTests PASS. GameLoop integration verified at solution build level; F5 verification deferred к δ6 closure.
+  lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+- id: CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
+  opened_date: 2026-05-21
+  closure_status: CLOSED
+  closed_date: 2026-05-21
+  closed_commit: faa4c73
+  closure_outcome: O(N²) nested-iterator coalesce_pending_locked rewritten к O(N) single-pass hash-index в β5; native selftest preserves ALL PASSED.
+  trigger: >
+    Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #3» (Bug #3).
+
+    coalesce_pending_locked в background_queue.cpp:42-64 used a nested begin()/erase()
+
+    iteration: for each event, scanned ALL prior events looking for (type_id,
+
+    coalesce_key) duplicates. Complexity O(N²); empirically ~16 ms at N=1000 but
+
+    effectively infinite at N=5_000_000 (S3 stress probe hung native thread for
+
+    multiple minutes; CPU=0, killed via process kill).
+  affected_documents:
+  - DOC-A-KERNEL
+  root_cause: >
+    Algorithm choice during K10.2 implementation favored simplicity (nested loop
+
+    mirrors the conceptual description «look back for prior with same key») без
+
+    performance analysis at extreme N. K10.2 stress coverage was 1000-event ceiling;
+
+    no test exercised the 10k+ regime where O(N²) starts to bite.
+  immediate_action: >
+    Surface через А'.7.x investigation S3 probe + β5 algorithm rewrite.
+  corrective_action: >
+    Hash-index single-pass algorithm: compact 64-bit key = (type_id << 32) | coalesce_key.
+
+    std::unordered_map<uint64_t, size_t> first_index tracks the first occurrence index
+
+    в a result vector. Duplicates merge into first via registry-resolved coalesce_fn;
+
+    no-coalesce-fn fallback preserves the latest event as new first-occurrence
+
+    (latest-wins semantics for empty/missing-fn cases). Single pass, amortised O(1)
+
+    per event = O(N) total. Empirically: 1000 events / ~14 ms (linear); 5M events
+
+    extrapolates к ~70 seconds (vs effectively infinite pre-fix).
+  preventive_action: >
+    Lesson candidate already covered by existing Lesson #N (stress-test scale beyond
+
+    production ceiling surfaces algorithmic ceilings cheaply).
+  effectiveness_verification:
+    method: df_native_selftest ALL PASSED post-faa4c73; investigation S8/S9 probes verify coalesce semantics preserved (1000 events / key=0 = 1 dispatch; 1000 events / keys 1..1000 = 1000 dispatches).
+    date_verified: 2026-05-21
+    verification_commit: faa4c73
+    verification_outcome: Native selftest 33 scenarios ALL PASSED. Behavior preserved; complexity flipped.
+  lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+- id: CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT
+  opened_date: 2026-05-21
+  closure_status: CLOSED
+  closed_date: 2026-05-21
+  closed_commit: PENDING-COMMIT-A_PRIME_7_X-CLOSURE
+  closure_outcome: >
+    Three-step CAPA, all closed within А'.7.x cascade:
+      (a) К-L14 verification #7 evidence-baseline annotation: К10.3 v2 split к
+          verifications #6 (Commits 1-8 clean) + #7 (Commits 9-15 — initially
+          framed soft-halted, see correction below). A'.7.x = verification #8
+          clean cascade. К-L14 falsifiability discipline preserved per Q-N-7X-3
+          Option A framing AS AUTHORED. **Correction during execution**: Pre-flight
+          B repro (Modding suite on current+WT) returned 0 fails, 395/395 PASS.
+          Inspection of Crystalka's docs/reports/stress_run_2026-05-21/07_modding_
+          nostress.log confirmed the 14 fails THEN were missing
+          Fixture.RegularMod_* / Fixture.PublisherMod manifest artifacts in test
+          bin dir (`mod.manifest.json not found in 'Fixtures/Fixture.RegularMod_
+          DependedOn'`) — а transient fixture-copy build-state issue, NOT a K-L18
+          quiescent state regression as brief Hypothesis 1 framed. The 14 fails
+          do not exist в current state; they were build-time, not code-time.
+          А'.7.x δ1-δ3 Group A fix commits were therefore not executed per
+          Crystalka Option A direction («Drop δ1-δ3, proceed»).
+      (b) Group A 14 fails fixed retroactively — re-framed к: the «14 fails»
+          were transient build state; Modding suite verification gate (step (c)
+          below) catches both real regressions AND transient build-state issues
+          going forward, which is the load-bearing protection. No δ1-δ3 commits
+          authored.
+      (c) METHODOLOGY.md v1.8 → v1.9 §12.7 closure protocol amendment adds
+          mandatory Modding-suite verification at every closure (every test
+          project enumerated explicitly, not just «dotnet test»). Closes the gap
+          that let the К10.3 v2 closure ratify без exercising Modding tests.
+  trigger: >
+    К10.3 v2 PR #41 closure 2026-05-20 ratified «1022/1022 PASS» but Crystalka's
+
+    independent 2026-05-21 stress investigation discovered 14 Modding tests failing
+
+    on the same main commit (28b64fb5). Brief authoring time the 14 fails were
+
+    framed as latent K-L18 regression that escaped detection at closure (brief §8
+
+    Hypothesis 1). А'.7.x execution Pre-flight B disproved that framing: the 14
+
+    fails were missing fixture artifacts in Crystalka's specific test run, NOT
+
+    production-code regression. The real, surviving issue is that К10.3 v2 closure
+
+    protocol did не exercise the Modding suite explicitly, so neither a real
+
+    regression NOR transient build state would have been caught.
+  affected_documents:
+  - DOC-D-K10_3
+  - DOC-A-KERNEL
+  - DOC-B-METHODOLOGY
+  root_cause: >
+    §12.7 closure protocol step 1 «Run final verification: dotnet build, dotnet
+
+    test, native selftest, F5 verification» was textually ambiguous — «dotnet
+
+    test» applied к whichever subset the executor remembered. К10.3 v2 closure
+
+    ran Core suite + native selftest + F5 but не the Modding suite explicitly.
+
+    A transient missing-fixture-artifact issue therefore shipped on main without
+
+    being caught at closure ratification.
+  immediate_action: >
+    Surface gap during А'.7.x Phase 0 «Pre-flight B» discovery. Halt-and-investigate
+
+    per brief §8.1 wording, then resolve via Crystalka Option A direction («Drop
+
+    δ1-δ3, proceed»).
+  corrective_action: >
+    Three-step (a) + (b) + (c) per closure_outcome above; all closed within А'.7.x
+
+    cascade. METHODOLOGY v1.9 §12.7 expansion makes per-test-suite enumeration
+
+    mandatory at every closure going forward. К10.4 / V2 / future closures protected
+
+    immediately by the explicit step 1 wording (Q-N-7X-11 LOCKED Option B split).
+  preventive_action: >
+    К-L14 falsification criterion 6 PROVISIONAL added per Q-N-7X-8 LOCKED Option A:
+
+    «Soft-halt rate exceeds X% across N consecutive cascades» (X and N pending
+
+    second observation для meaningful baseline; review trigger: next soft-halt
+
+    event OR V2 closure, whichever first). А'.7.x records raw soft-halt count = 1
+
+    (К10.3 v2 verification #7 framing). Note: the «soft-halt» framing of #7 itself
+
+    is correction-load-bearing — the real soft-halt was «closure didn't exercise
+
+    Modding suite», not «K-L18 regression slipped through». Future verifications
+
+    should distinguish closure-protocol-gap soft-halts from production-regression
+
+    soft-halts.
+  effectiveness_verification:
+    method: METHODOLOGY.md v1.9 §12.7 amendment landed at А'.7.x δ5; next closure cascade (А'.7.5 OR A'.8) must execute the expanded step 1 verbatim to validate effectiveness.
+    date_verified: 2026-05-21
+    verification_commit: PENDING-COMMIT-A_PRIME_7_X-CLOSURE
+    verification_outcome: Closure protocol amendment landed; effectiveness verification deferred к next cascade closure where the new step 1 wording is applied operationally.
+  lessons_learned_reference: DOC-B-METHODOLOGY
+- id: CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION
+  opened_date: 2026-05-21
+  closure_status: CLOSED
+  closed_date: 2026-05-21
+  closed_commit: 0998bb1
+  closure_outcome: SchedulerStressTests.Dispose extended с bus state cleanup (drain Normal + Background queues + ClearForTesting + df_bus_clear belt-and-suspenders). Group B 2 cross-test pollution tests no longer exposed к stress-test bus state leakage.
+  trigger: >
+    Crystalka stress investigation 2026-05-21 surfaced 2 GameBootstrapIntegrationTests
+
+    failing only в the full Modding-tests run, passing в isolation:
+      - CreateLoop_RunningLoop_PawnStateCommandCarriesTopSkills
+      - CreateLoop_RunningLoop_PublishesTickAdvancedCommandsThroughBridge
+    Classic cross-test pollution signature.
+  affected_documents:
+  - DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+  root_cause: >
+    SchedulerStressTests.Dispose reset 4 native singletons (SystemGraphInterop,
+
+    WakeRegistryInterop, SchedulingPoliciesInterop, EventTypeRegistryInterop) но
+
+    did не reset ManagedBusBridge state (subscribers map, pending queues) или the
+
+    native bus state (df_bus_clear). Failures during stress test bodies leaked
+
+    subscriber registrations + pending events into the next test, polluting the
+
+    bus's process-global state.
+  immediate_action: >
+    Surface defect через А'.7.x Phase 0 investigation + δ4 Dispose extension.
+  corrective_action: >
+    ResetNativeGlobals now: drain Normal + Background pending queues (last-chance
+
+    dispatch) → ManagedBusBridge.ClearForTesting (releases held GCHandles + clears
+
+    bridge instance's _handles dict) → defensive direct df_bus_clear() P/Invoke
+
+    (wipes subscriber maps + next_seq + pending для any other bridge instance the
+
+    test forgot к clean) → original 4-singleton reset preserved.
+  preventive_action: >
+    Lesson #N6 candidate (test fixture cleanup discipline as invariant): every test
+
+    class with native singleton mutation must enumerate ALL singletons touched in
+
+    Dispose; «we reset what we obviously touched» loses к invisible cross-tier
+
+    pollution. Deferred к Lessons batch at A'.8 closure per Q-N-7X-11 split.
+  effectiveness_verification:
+    method: 'Group B isolation: GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* PASS в full Modding-suite run (test ordering pollution path closed).'
+    date_verified: 2026-05-21
+    verification_commit: 0998bb1
+    verification_outcome: Effectiveness verified at δ6 closure full-suite run (Modding 395/395 PASS — Group B passes in full suite alongside the other 393 non-stress tests).
+  lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT

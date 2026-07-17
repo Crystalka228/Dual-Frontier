@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-G-BYPASS_LOG
+project: Dual Frontier
 category: G
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-05-12
+last_modified: 2026-05-12
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-BYPASS_LOG
+title: Register Validation Bypass Tracking
+last_modified_commit: b655d4b
+review_cadence: on-closure+quarterly
+reviewer: Crystalka
 ---
+
 # BYPASS_LOG — Register Validation Bypass Tracking
 
 *Tier 2 Live document per A'.4.5 governance framework. Tracks instances where `sync_register.ps1 --validate` was bypassed via `git commit --no-verify`.*

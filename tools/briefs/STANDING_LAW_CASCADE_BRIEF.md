@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-STANDING_LAW_CASCADE_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-STANDING_LAW_CASCADE_BRIEF
+version: 1.0
+first_authored: 2026-06-11
+last_modified: 2026-06-11
+content_language: en
+next_review_due: null
+title: 'STANDING-LAW CASCADE — Execution Brief (methodology layer → standing law: 4 rewrites + RESERVED_SURFACE_MUTABILITY NEW + METHODOLOGY v1.13.0 amendment + ANALYZER_RULES restructure + ROADMAP Analyzer track + Findings ledger + register closure)'
+last_modified_commit: d90b522
+review_cadence: on-cascade-execution
+last_review_date: 2026-06-11
+last_review_event: "Brief authored 2026-06-11 by Claude Opus (deliberation session) from STANDING-LAW RECON 2026-06-11 (R1-R8); ratified by Crystalka via invocation; EXECUTED same day by Claude Code (Fable 5, local Skarlet session) per §4 topology — Phase 0 (recon facts verified exactly; ff-only merge f94bb84 → 954f590; validate exit 0 folded into C1; REGISTER schema vocabulary read empirically per Lesson #N14; §2.3 mandatory reads) → Wave R 4 parallel read-only survey agents (R1 enforcement reality / R2 test landscape / R3 operational truth / R4 reserved-surface census — canonical [ReservedStub pin 34 application sites / 13 files; DFK-WAIVER baseline 0; recon deltas explained as measurement-method differences) → C-R reconcile (H4 not triggered) → Wave W 4 parallel writer agents on disjoint files → C-W audit (truth law sampled / zero roadmap load / cross-citations resolve / zero NIH residue) → serial closure C1-C10. Deliverables: C1 d90b522 brief enrollment + validation checkpoint; C2 f576eb7 RESERVED_SURFACE_MUTABILITY v1.0 NEW; C3 4e584b3 CODING_STANDARDS v2.0.0 (marker registry + DFK-WAIVER suppression law); C4 fcce199 TESTING_STRATEGY v2.0.0 (census pins + brief-integration pattern); C5 9da4760 DEVELOPMENT_HYGIENE v2.0.0 (post-Godot operational truth); C6 4a67a22 ANALYZER_RULES v0.2.0 (stub-truth + roadmap extraction → ROADMAP «Analyzer track»); C7 b58eed4 METHODOLOGY v1.13.0 (§12.8 + §12.9 + §12.7 step 9 SYNTH-2 + F-3 backfill); C8 5ebc24b ROADMAP «Findings ledger (F-series)» F-1..F-12. К-L impact: zero (К-L count unchanged: 21 final); zero production code; News Intelligence Hub reference corpus read-only (H8 honored); zero pushes (Crystalka's act)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Standing-Law Cascade execution brief — converts the drifted methodology layer (v1.0 sketches claiming phantom enforcement) into standing law that briefs cite instead of restating, carrying zero roadmap load, with every normative claim naming an on-disk enforcer (brief §8 truth law). Clears the A'.9.1 Phase β runway: the suppression law (CODING_STANDARDS §5.3 DFK-WAIVER) and the mutability license (RESERVED_SURFACE_MUTABILITY) must pre-exist Phase β triage or it reproduces Phase α's halt traffic at larger scale (brief §1). DOC-D Category D Tier 4 per the empirical execution-brief register convention (sister к DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF; the brief frontmatter self-declared tier 3 — enrolled at the observed DOC-D tier 4 convention, Skeleton-revisions-class deviation recorded in the C9 commit body). Single PENDING-COMMIT exception this cascade: the register header self-reference (C9's own hash), backfilled at C10 per the established Option-B amendment-integrity practice — zero other placeholders created; C1-C8 hashes recorded real."
 ---
+
 ---
 register_id: DOC-D-STANDING_LAW_CASCADE_BRIEF
 project: Dual Frontier

@@ -1,15 +1,41 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-VULKAN_SUBSTRATE
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.2.0"
+version: 1.2.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE
+title: Vulkan Substrate (V) — Dual Frontier (historical; superseded by authored rework)
+superseded_by: DOC-A-VULKAN_SUBSTRATE_V2
+supersedes:
+- DOC-D-G0
+- DOC-D-G1
+- DOC-D-G2
+- DOC-D-G3
+- DOC-D-G4
+- DOC-D-G5
+- DOC-D-G6
+- DOC-D-G7
+- DOC-D-G8
+- DOC-D-G9
+- DOC-A-VISUAL_ENGINE
+- DOC-A-GODOT_INTEGRATION
+last_modified_commit: fcbfe5b
+review_cadence: on-change+annual
+last_review_date: 2026-05-20
+last_review_event: 'К10.3 v2 load-bearing commit 3/3 2026-05-20 — К-L18 final amendment landed: §3.4.1 «df_vulkan_unload_mod_resources C ABI primitive (К-L18, К10.3 v2 placeholder)» subsection (struct shape + signature + К10.3 v2 placeholder behavior + full implementation reservation для V-cycle / К-extensions). К10.3 v2 cascade complete: §0 L1/L7 К-L19 cleanup + §2.0 pipeline depth + §2.3 threading model К-L7.1/L16 + §3.4 К-L19 mandate cleanup + §3.4.1 df_vulkan_unload_mod_resources placeholder + §4.0 display composition К-L17 + §5.5 Mode C visibility К-L17 + §7.2 drain semantics К-L16 + §7.3 К-L7.1 slot tail read pattern.'
+reviewer: Crystalka
+risks_referenced:
+- RISK-004
+- RISK-013
+special_case_rationale: 'Superseded by DOC-A-VULKAN_SUBSTRATE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/VULKAN_SUBSTRATE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases. Additionally supersedes G-series briefs DOC-D-G0..G9 per Q-G-2 LOCK + CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16). Additionally supersedes DOC-A-VISUAL_ENGINE + DOC-A-GODOT_INTEGRATION (visual-runtime authority moved to docs/architecture/historical/) per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16). Bidirectional integrity per FRAMEWORK §3.3.2.'
 ---
+
 # Vulkan Substrate (V) — Dual Frontier
 
 **Status:** AUTHORITATIVE LOCKED — unified Vulkan substrate spec covering rendering + compute use cases. Version and lifecycle are owned by the document register (frontmatter mirror above).

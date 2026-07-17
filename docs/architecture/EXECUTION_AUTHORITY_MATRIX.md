@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-EXECUTION_AUTHORITY_MATRIX
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.0"
+version: 0.1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: post-ratification closure
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-EXECUTION_AUTHORITY_MATRIX
+title: Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (A0 draft)
+last_modified_commit: 8960085
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A0 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Content is architecture-contract law (FRAMEWORK §3.4 hierarchy → Tier 1); lifecycle AUTHORED because unratified — mandatory preamble marks it normative-target, NOT current truth; conflicts resolve in favor of LOCKED docs until Crystalka ratification per FRAMEWORK §7.'
 ---
+
 # Execution Authority Matrix (the A0 contract)
 
 > **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** Produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Becomes normative only upon Crystalka ratification per FRAMEWORK.md §7. Until then no document may cite it as authority; conflicts resolve in favor of existing LOCKED docs.

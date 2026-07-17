@@ -1,15 +1,28 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K10_1
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-18
+last_modified: 2026-05-18
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_1
+title: К10.1 — Kernel Scheduler Core Execution
+review_cadence: on-status-transition
+last_review_date: 2026-05-18
+last_review_event: К10.1 sub-milestone closure 2026-05-18 — 16 atomic commits f439b74..PENDING-COMMIT-K10_1-CLOSURE; K-L6 SUPERSEDED + K-L12/L13/L14 AUTHORED; 17 of 46 K10 items landed; 624 tests green baseline preserved
+reviewer: Crystalka
+risks_referenced:
+- RISK-002
+- RISK-003
+- RISK-004
+- RISK-013
+special_case_rationale: "К10.1 standalone execution brief — first of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 = kernel scheduler core; К10.2 = native bus + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 17 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.1 Items 1-5, §3.2 Items 6-8, §3.3 Items 9 + 11-13 (Item 10 NUMA deferred к К-extensions), §3.4 Items 15-16 (Item 14 К11+), §3.5 Items 17 + 19-20, §3.7 Item 24. Ratifies К-L6 SUPERSEDED + К-L12/L13/L14 architecturally established at Commit 14 (load-bearing). К10 as whole closes only after К10.4 sub-milestone; К-closure report (А'.8) waits for all four К10 sub-milestones. Brief authored from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified). Distinct from DOC-D-K10_EXECUTION (skeleton brief for original 10-sub-milestone partitioning, retained as historical record under Option III restructuring)."
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: K10_1_EXECUTION_BRIEF

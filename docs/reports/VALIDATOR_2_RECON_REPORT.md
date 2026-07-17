@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-VALIDATOR_2_RECON_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-VALIDATOR_2_RECON_REPORT
+title: VALIDATOR_2 Recon Report — governance validator gap census
+last_modified_commit: 817921d
+review_cadence: on-status-transition
+reviewer: Crystalka
 ---
+
 # VALIDATOR_2 RECON REPORT — 2026-07-15
 
 *Pre-brief reconnaissance (read-only) for the VALIDATOR_2 cascade. Executor: Claude Code (flagship), LOCAL session on SKARLET. Repository `D:\Colony_Simulator\Colony_Simulator`. This report is the landing artifact for the recon's findings per METHODOLOGY §12.9 (d) (findings land in ledgers, never chat-only); every count carries its verbatim measuring expression per TESTING_STRATEGY §4. Fix DESIGN is not this recon's mandate — R7 carries directions only.*

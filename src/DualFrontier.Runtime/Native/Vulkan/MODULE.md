@@ -1,3 +1,22 @@
+---
+register_id: DOC-F-SRC-RUNTIME-NATIVE-VULKAN
+project: Dual Frontier
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: Live
+first_authored: 2026-05-18
+last_modified: 2026-05-18
+content_language: mixed
+next_review_due: 2026-Q4
+title: DualFrontier.Runtime.Native.Vulkan — module doc
+last_modified_commit: e6aedb0
+review_cadence: phase-led
+reviewer: Crystalka
+special_case_rationale: Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance.
+---
+
 # DualFrontier.Runtime.Native.Vulkan
 
 **Purpose:** Pure P/Invoke to Vulkan API. `[LibraryImport]` (source-generated marshalling) +

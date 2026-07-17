@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT
+version: 1.0
+first_authored: 2026-07-04
+last_modified: 2026-07-04
+content_language: en
+next_review_due: null
+title: 'F29_NATIVE_SCHEDULER RECON REPORT — 2026-07-04 (R1-R7) — pre-brief measurement recon for the F-29 native-scheduler cascade (scheduler code-surface map: SystemGraph / WakeRegistry / native-bus singleton topology + lock-free vs mutex audit; defect (a) crash-under-load reproduced with SEH signatures; defect (b) N -> time scale curves confirming the O(N^2) rebuild; root-cause hypotheses + fix directions; the S1/S2/S7 re-enable prospect; the S2 managed-vs-native mis-grouping)'
+last_modified_commit: c0ab964
+review_cadence: none-historical-record
+last_review_date: 2026-07-04
+last_review_event: Read-only measurement recon 2026-07-04 (executor session, flagship model, LOCAL Skarlet). Its scheduler-surface map, the lock-free-singleton audit (bus excluded -- per-tier std::mutex, concurrent-publish by design), and the N -> time scale curves were the load-bearing brief inputs; consumed by the F-29 cascade execution 2026-07-04. Enrolled at the F-29 REGISTER closure.
+reviewer: Crystalka
+special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line.'
 ---
+
 # F29_NATIVE_SCHEDULER RECON REPORT -- 2026-07-04
 
 > Read-only reconnaissance for finding **F-29** (native/managed scheduler pathology).

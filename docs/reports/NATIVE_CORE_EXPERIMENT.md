@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-NATIVE_CORE_EXPERIMENT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-NATIVE_CORE_EXPERIMENT
+title: Native Core Experiment
+review_cadence: on-closure+quarterly
+reviewer: Crystalka
+special_case_rationale: E + Tier 2 Live override per Pass 2 §2.2
 ---
+
 > **SUPERSEDED v2026-05-07** — заменён `KERNEL_ARCHITECTURE.md` (v1.0 LOCKED).
 > Сохраняется для исторического контекста. §8 decision rule из этого документа
 > признан authoritative и зафиксирован как K-L10 в `KERNEL_ARCHITECTURE.md`.

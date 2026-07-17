@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K6_VERIFICATION_LOG
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K6_VERIFICATION_LOG
+version: 1.0
+first_authored: 2026-05-09
+last_modified: 2026-05-09
+content_language: en
+next_review_due: null
+title: K6 — Verification Log
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: Verification log is closure-style artifact but housed in briefs/ — classified D Tier 3 per location
 ---
+
 # K6 verification log
 
 **Generated**: 2026-05-09 by K6 brief execution session (Phase 1)

@@ -1,15 +1,32 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K8_34_COMBINED
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_34_COMBINED
+version: 1.0
+first_authored: 2026-05-14
+last_modified: 2026-05-14
+content_language: en
+next_review_due: null
+title: K8.3+K8.4 Combined Kernel Cutover (v1.0) — SUPERSEDED
+superseded_by: DOC-D-K8_34_COMBINED_V2
+last_modified_commit: 54c6658
+review_cadence: on-status-transition
+last_review_date: 2026-05-14
+last_review_event: Brief v1.0 superseded by v2.0 at A'.5 closure — Phases 0-3 executed correctly on disk; Phase 4+5 design replaced by v2.0's atomic single-commit cutover
+reviewer: Crystalka
+risks_referenced:
+- RISK-005
+- RISK-007
+- RISK-008
+capa_entries_referenced:
+- CAPA-2026-05-13-K8.3-PREMISE-MISS
+- CAPA-2026-05-14-K8.34-API-SURFACE-MISS
+- CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT
 ---
+
 # K8.3+K8.4 — Combined Kernel Cutover Brief
 
 **Status**: AUTHORED 2026-05-13 (combined milestone authoring per Crystalka direction same session as K8.3 v2.0 halt resolution).

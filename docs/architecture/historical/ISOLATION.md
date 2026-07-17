@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-ISOLATION
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.1.2"
+version: 1.1.2
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ISOLATION
+title: System isolation (historical; merged into the MOD_OS authored rework)
+superseded_by: DOC-A-MOD_OS_ARCHITECTURE
+last_modified_commit: 6888246
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ISOLATION.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
+
 # System isolation
 
 A silent isolation violation is worse than a crash: corrupted state surfaces an hour into play as an inexplicable bug. Dual Frontier declares system isolation at **compile time** via the `[SystemAccess]` attribute and the `DependencyGraph` that consumes it for parallel scheduling. The Roslyn analyzer (infrastructure shipped A'.9.1; detection logic pending Phase β — see §Enforcement model item 3) **will extend** this enforcement to call sites — flagging undeclared component access as a build error rather than a runtime exception — once its detection logic lands. Until then that call-site check is non-normative (stubs emit zero diagnostics); undeclared `AcquireSpan`/`BeginBatch` access is caught by manual review and integration tests, not yet by the build.

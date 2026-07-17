@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-VISUAL_ENGINE
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0"
-next_review_due: 2027-05-12
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VISUAL_ENGINE
+version: 1.0
+first_authored: 2026-05-16
+last_modified: 2026-05-16
+content_language: en
+next_review_due: null
+title: Visual engine — DevKit and Native (historical; superseded by V substrate)
+superseded_by: DOC-A-VULKAN_SUBSTRATE
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: Superseded by VULKAN_SUBSTRATE.md v1.0 LOCKED per Q-G-1 LOCK (composite namespace deliberation 2026-05-15). Pre-V-substrate authority preserved at docs/architecture/historical/ for historical record. Moved per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16).
 ---
+
 > **HISTORICAL DOCUMENT**: Superseded by `docs/architecture/VULKAN_SUBSTRATE.md` v1.0 LOCKED 2026-05-16 per Q-G-1 LOCK. Pre-V-substrate authority preserved for historical record.
 > Original lifecycle: LOCKED. The dual-backend Godot DevKit + Silk.NET OpenGL production model documented here is not the current production direction. V substrate is the unified Vulkan rendering + compute target. Final retirement: К-extensions cascade #2 closure 2026-05-23 (tracked Godot files removed, DualFrontier.Launcher production renderer formalized per Q-G-6 (b1) infrastructure-only).
 >

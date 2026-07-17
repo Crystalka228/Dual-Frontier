@@ -1,15 +1,20 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-SESSION_PHASE_4_CLOSURE_REVIEW
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-SESSION_PHASE_4_CLOSURE_REVIEW
+version: 1.0
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Session Phase 4 — Closure Review
+review_cadence: on-status-transition
+reviewer: Crystalka
 ---
+
 # Phase 4 closure review — pipeline session log
 
 *Лог сессии архитектурного ревью и закрытия Phase 4 силами Opus 4.7 в роли архитектора/QA.*

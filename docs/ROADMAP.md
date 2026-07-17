@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-C-ROADMAP
+project: Dual Frontier
 category: C
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: 2026-Q4
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-ROADMAP
+title: Roadmap
+supersedes:
+- DOC-A-MIGRATION_PLAN
+last_modified_commit: 9b4968a
+review_cadence: on-closure+quarterly
+last_review_date: 2026-06-11
+last_review_event: "Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — received the NEW «⏭ Analyzer track (A'.9.1 Phase β/γ/δ + deferred rule families)» section (analyzer forward-sequencing extracted from ANALYZER_RULES v0.1 §4.1-4.2/§5/§6/§10.5/§11 per the Standing-Law spec/roadmap separation; Phase β detection + Q-L-1 adaptive gate, Phase γ severity promotion, Phase δ governance, К-L20 LOCK rule family, hardware tier expansion, PublicApiAnalyzers activation conditions) + the NEW «Findings ledger (F-series)» section seeded F-1..F-12 (brief §13 seed + session findings F-10 pre-existing test failures / F-11 stale-branch pruning candidates / F-12 DFK019.A Phase-γ severity discrepancy). Prior context: DD-2 spec/roadmap separation increment 1 (2026-06-02) — K-series roadmap relocated from KERNEL Part 2/3 into «Native foundation tracks»; status-overview K-series + K9 rows retired to Closed; remaining M8/V status rows pending full DD-1 re-sync. docs/ROADMAP.md is the canonical roadmap-layer consolidation home per accepted Option ε target architecture."
+reviewer: Crystalka
 ---
+
 # Roadmap
 
 The Dual Frontier implementation has reorganised after the closure of Phase 4. The original Phase 5 (Combat), Phase 6 (Magic), and Phase 7 (World) are dissolved into a broader **Mod-OS Migration** (M1–M10) that simultaneously builds the modding kernel and ships gameplay content as vanilla mods. The architecture for this migration is specified in [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) (LOCKED; the register owns its version); this roadmap is the execution sequence derived from it.

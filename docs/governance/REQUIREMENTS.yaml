@@ -1,0 +1,1581 @@
+# requirements -- hand-edited source of truth (FRAMEWORK 14.6). Validated by the
+# governance tool and merged into the derived REGISTER.yaml archive.
+requirements:
+- id: REQ-K-L1
+  title: 'Native language: C++20'
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L1
+  requirement_text: >
+    Native kernel implementation language fixed as C++20.
+
+    No legacy C or C++17 fallback paths.
+  verified_by:
+  - file: native/DualFrontier.Core.Native/CMakeLists.txt
+    test_method: set(CMAKE_CXX_STANDARD 20)
+    verification_type: build_configuration
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: all scenarios compile-and-run
+    verification_type: build_evidence
+  verification_status: VERIFIED
+  verification_date: 2026-05-07
+  verification_milestone: K0 closure
+- id: REQ-K-L2
+  title: 'Bindings: Pure P/Invoke'
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L2
+  requirement_text: >
+    Native → Managed bindings exclusively via P/Invoke.
+
+    No SWIG, no C++/CLI bridge, no third-party generator.
+  verified_by:
+  - file: src/DualFrontier.Core.Interop/NativeMethods.cs
+    test_method: All DllImport declarations
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Core.Interop.Tests/NativeWorldTests.cs
+    test_method: '*'
+    verification_type: behavioral
+  verification_status: VERIFIED
+  verification_date: 2026-05-07
+  verification_milestone: K0 closure
+- id: REQ-K-L3
+  title: 'Component storage paths: Path α default + Path β opt-in'
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L3 (reformulated by K-L3.1)
+  requirement_text: >
+    Components in production storage are: Path α (unmanaged struct in NativeWorld, default)
+
+    OR Path β (managed class via [ManagedStorage] in mod-side ManagedStore, opt-in).
+
+    Path α/β decision is per-component-type, declared at registration time.
+  verified_by:
+  - file: src/DualFrontier.Contracts/Modding/IModApi.cs
+    test_method: RegisterManagedComponent<T>
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Modding.Tests/ManagedStorageTests.cs
+    test_method: '*'
+    verification_type: behavioral
+    verification_pending: tests author at K8.4 execution
+  verification_status: PARTIAL
+  verification_date: 2026-05-10
+  verification_milestone: K-L3.1 bridge formalization
+- id: REQ-K-L4
+  title: Explicit component registry (no reflection-driven)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L4
+  requirement_text: >
+    Component types are explicitly registered via ComponentTypeRegistry.
+
+    No reflection-based auto-discovery in production code paths.
+  verified_by:
+  - file: src/DualFrontier.Core.Interop/Marshalling/ComponentTypeRegistry.cs
+    test_method: code structure
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Core.Interop.Tests/ComponentTypeRegistryTests.cs
+    test_method: '*'
+    verification_type: behavioral
+  verification_status: VERIFIED
+  verification_date: 2026-05-08
+  verification_milestone: K4 closure
+- id: REQ-K-L5
+  title: Span protocol (zero-copy enumeration)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L5
+  requirement_text: >
+    Component enumeration via Span<T> with lifetime-scoped SpanLease;
+
+    no per-iteration allocation; no GC pressure on hot path.
+  verified_by:
+  - file: src/DualFrontier.Core.Interop/SpanLease.cs
+    test_method: lifetime semantics
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Core.Interop.Tests/SpanLeaseTests.cs
+    test_method: '*'
+    verification_type: behavioral
+  - file: docs/reports/PERFORMANCE_REPORT_K7.md
+    test_method: V3 metrics
+    verification_type: empirical_evidence
+  verification_status: VERIFIED
+  verification_date: 2026-05-08
+  verification_milestone: K5 closure
+- id: REQ-K-L6
+  title: Mod rebuild capability (load/unload/reload without process restart)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L6
+  requirement_text: >
+    Mods can be loaded, unloaded, and reloaded at runtime via ALC isolation;
+
+    pause-rebuild-resume contract via ModIntegrationPipeline.
+  verified_by:
+  - file: src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs
+    test_method: Apply/UnloadMod
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Modding.Tests/ModLifecycleTests.cs
+    test_method: '*'
+    verification_type: behavioral
+  verification_status: VERIFIED
+  verification_date: 2026-05-09
+  verification_milestone: K6 closure
+- id: REQ-K-L7
+  title: Read-only spans + write batching
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L7
+  requirement_text: >
+    Reads via Span<T> (read-only on hot path); writes batched via WriteBatch
+
+    with explicit commit. No interleaved read/write within system iteration.
+  verified_by:
+  - file: src/DualFrontier.Core.Interop/WriteBatch.cs
+    test_method: batching semantics
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Core.Interop.Tests/WriteBatchTests.cs
+    test_method: '*'
+    verification_type: behavioral
+  - file: tests/DualFrontier.Core.Interop.Tests/BulkOperationsTests.cs
+    test_method: '*'
+    verification_type: behavioral
+  verification_status: VERIFIED
+  verification_date: 2026-05-08
+  verification_milestone: K5 closure
+- id: REQ-K-L8
+  title: Native scheduler (parallel system execution)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L8
+  requirement_text: >
+    System scheduler runs in native code; parallel execution per
+
+    dependency graph; no managed thread-pool overhead on hot path.
+  verified_by:
+  - file: native/DualFrontier.Core.Native/src/scheduler.cpp
+    test_method: implementation
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: scenario_parallel_execution
+    verification_type: native_equivalence
+  - file: docs/reports/PERFORMANCE_REPORT_K7.md
+    test_method: scheduler benchmarks
+    verification_type: empirical_evidence
+  verification_status: VERIFIED
+  verification_date: 2026-05-08
+  verification_milestone: K3 closure
+- id: REQ-K-L9
+  title: Performance threshold met (V3 dominates V2 by 4-32× across metrics)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L9
+  requirement_text: >
+    K7 performance evaluation demonstrates native kernel dominates
+
+    managed baseline by factor 4-32× across §8 metrics on weak-hardware target.
+  verified_by:
+  - file: docs/reports/PERFORMANCE_REPORT_K7.md
+    test_method: §8 V2 vs V3 comparison
+    verification_type: empirical_evidence
+  - file: docs/benchmarks/k7-bdn-tick-report.md
+    test_method: long-run data
+    verification_type: empirical_evidence
+  verification_status: VERIFIED
+  verification_date: 2026-05-09
+  verification_milestone: K7 closure
+- id: REQ-K-L10
+  title: Native organicity Lvl 1 (each native artifact independent)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L10 (foundational pattern from D3)
+  requirement_text: >
+    Each native artifact: independent .dll, independent CMake, independent C ABI,
+
+    independent managed bridge. No shared native infrastructure between artifacts.
+
+    Coordination only on managed side via interfaces.
+  verified_by:
+  - file: native/DualFrontier.Core.Native/CMakeLists.txt
+    test_method: standalone build
+    verification_type: build_evidence
+  - file: docs/MIGRATION_PROGRESS.md
+    test_method: D3 decision rationale
+    verification_type: spec_inspection
+  verification_status: VERIFIED
+  verification_date: 2026-05-07
+  verification_milestone: K0 closure (D3 codification)
+- id: REQ-K-L11
+  title: Single NativeWorld backbone — production storage
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L11
+  requirement_text: >
+    Production storage = NativeWorld single source of truth;
+
+    ManagedWorld retained as test fixture only.
+  verified_by:
+  - file: tests/DualFrontier.Core.Interop.Tests/NativeWorldTests.cs
+    test_method: NativeWorld_CRUD_FullRoundTrip
+    verification_type: behavioral
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: scenario_basic_crud
+    verification_type: native_equivalence
+  - file: docs/reports/PERFORMANCE_REPORT_K7.md
+    test_method: V3 metrics
+    verification_type: empirical_evidence
+  verification_status: VERIFIED
+  verification_date: 2026-05-09
+  verification_milestone: K8.2 v2 closure
+- id: REQ-Q-A07-6
+  title: 'Audience contract: methodology corpus agent-as-primary-reader'
+  source_document: DOC-B-METHODOLOGY
+  source_section: §0 Abstract v1.6 footnote + Q-A07-6 lock
+  requirement_text: >
+    Methodology and governance documents authored under agent-as-primary-reader
+
+    assumption; human-readable rendering derivative via tooling.
+  verified_by:
+  - file: docs/methodology/METHODOLOGY.md
+    test_method: v1.6 §0 footnote presence
+    verification_type: spec_inspection
+  - file: docs/governance/FRAMEWORK.md
+    test_method: agent-primary design inherited
+    verification_type: spec_inspection
+  verification_status: VERIFIED
+  verification_date: 2026-05-12
+  verification_milestone: A'.0.7 closure (methodology); A'.4.5 closure (governance inheritance)
+- id: REQ-Q-A45-X5
+  title: Post-session update protocol mandatory
+  source_document: DOC-A-FRAMEWORK
+  source_section: Q-A45-X5 lock / FRAMEWORK §6
+  requirement_text: >
+    Every agent execution session closing a milestone OR modifying any document
+
+    in register scope must execute post-session update protocol before commit closure.
+
+    Validation gate via sync_register.ps1 --validate. Bypass logged in BYPASS_LOG.md.
+  verified_by:
+  - file: tools/governance/sync_register.ps1
+    test_method: validation invocation in closure protocol
+    verification_type: tooling_evidence
+  - file: docs/methodology/METHODOLOGY.md
+    test_method: §12.7 closure protocol integration
+    verification_type: spec_inspection
+  verification_status: PENDING
+  verification_date: 
+  verification_milestone: A'.4.5 closure
+- id: REQ-K-L12
+  title: Native kernel scheduling — sovereign per-tick scheduling for kernel-space systems
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L12 (K10.1 AUTHORED)
+  requirement_text: >
+    Native kernel owns sovereign per-tick scheduling for kernel-space systems (Core).
+
+    Managed scheduler exists only for user-space (mod) systems within mod ALCs. Kernel
+
+    scheduling decisions are made natively: dependency graph construction, runqueue
+
+    maintenance, wake-up dispatch, phase composition, parallelism scheduling, priority
+
+    arbitration, resource quota enforcement. Cross-layer communication uses C ABI with
+
+    batched callbacks (managed adapter receives batched managed-system dispatches from
+
+    kernel scheduler).
+  verified_by:
+  - file: native/DualFrontier.Core.Native/include/system_graph.h
+    test_method: SystemGraph class + default_scheduler_graph singleton
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: scenario_system_graph_basic_register + linear_chain + write_conflict + cycle_detection + per_tick_subset
+    verification_type: native_evidence
+  - file: src/DualFrontier.Application/Scheduler/SchedulerAdapter.cs
+    test_method: Register / DispatchBatch / batched callback ABI
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Core.Tests/Scheduler/BatchedCallbackTests.cs
+    test_method: all 4 BatchedCallbackTests
+    verification_type: behavioral
+  - file: src/DualFrontier.Application/Loop/GameBootstrap.cs
+    test_method: Core systems registered с native scheduler at startup
+    verification_type: code_inspection
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: K10.1 closure
+- id: REQ-K-L13
+  title: On-demand system activation — 5 wake types
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L13 (K10.1 AUTHORED)
+  requirement_text: >
+    Kernel scheduler activates systems on-demand based on wake-up registration, not by
+
+    global tick clock. Five wake-up types supported: Timer (periodic by [TickRate]), Event
+
+    (bus publication subscription), StateChange (component value condition crossing), Init
+
+    (one-shot at startup), Explicit (API-driven wake by another system). Systems not
+
+    satisfying any wake condition for current tick remain blocked; only runnable systems
+
+    enter phase dispatch. Per-tick dependency graph computed on runnable subset.
+  verified_by:
+  - file: native/DualFrontier.Core.Native/include/wake_registry.h
+    test_method: WakeRegistry class + 5 wake type structs + default_wake_registry
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: scenario_wake_registry_subscription_lifecycle + fire_timer + fire_event_and_state + fire_init_one_shot + fire_explicit
+    verification_type: native_evidence
+  - file: src/DualFrontier.Contracts/Scheduling/WakeAttributes.cs
+    test_method: '[WakeOnEvent], [WakeOnState], [WakeOnInit], [WakeOnExplicit] attributes'
+    verification_type: code_inspection
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: K10.1 closure
+- id: REQ-K-L14
+  title: Performance derives from architectural cleanliness
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L14 (K10.1 AUTHORED)
+  requirement_text: >
+    Performance is causally derived from clean complex architecture, not traded against
+
+    simplicity. Each architectural addition that is principled (matches real OS pattern,
+
+    serves cleanness, satisfies invariant cohesion) increases performance ceiling. Tactical
+
+    reasoning («overengineered», «YAGNI», «premature optimization») does not argue against
+
+    strategic architectural completeness in research framework context. Burden of proof on
+
+    exclusion of architectural items, not inclusion.
+  verified_by:
+  - file: docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md
+    test_method: Part 2 §2.3 K-L14 verbatim text + rationale
+    verification_type: spec_inspection
+  - file: docs/architecture/KERNEL_ARCHITECTURE.md
+    test_method: Part 0 K-L14 row (post-K10.1 amendment)
+    verification_type: spec_inspection
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: 'K10.1 closure (architecturally established; measurable evidence pending К11+ per S4 lock — К10.1 brief authoring section §6.1 #6 measurement plan)'
+- id: REQ-K-L15
+  title: Native bus authority + three-tier event dispatch
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L15 (K10.2 AUTHORED)
+  requirement_text: >
+    Native kernel owns sovereign event routing for kernel-space and cross-layer events.
+
+    Bus implementation native: type registry, subscriber registry, payload dispatch,
+
+    wake firing, tier-based delivery semantics all native authority. Bus supports
+
+    three-tier dispatch (fast / normal / background) with tier declared per event
+
+    type. Managed bus facade preserved as IModApi-exposed surface (K-L9 uniformity);
+
+    implementation routes through C ABI bridge к native bus. Fast/background event
+
+    publish/subscribe requires per-FQN per-tier capability declarations. Cross-layer
+
+    event delivery uses batched callback ABI (normal/background tiers) or immediate
+
+    synchronous callback (fast tier).
+  verified_by:
+  - file: docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md
+    test_method: Part 2 §2.4 K-L15 verbatim text
+    verification_type: spec_inspection
+  - file: docs/architecture/KERNEL_ARCHITECTURE.md
+    test_method: Part 0 K-L15 row (post-K10.2 amendment, v2.1)
+    verification_type: spec_inspection
+  - file: native/DualFrontier.Core.Native/include/event_type_registry.h
+    test_method: Item 28 — per-event tier metadata; native registry C ABI
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/include/bus_native.h
+    test_method: Item 26 — three-tier dispatcher (Fast/Normal/Background) с per-tier publish + subscribe + bulk-unsubscribe ABI
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/include/background_queue.h
+    test_method: Item 30 — coalesce + idle-slot dispatch + saturation policy + save-integrated storage (Item 31)
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Bus/BusFacade.cs
+    test_method: Item 27 — managed bus facade routing through C ABI bridge
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Modding/SubscriberContractValidator.cs
+    test_method: Item 29 — per-tier load-time validation; BusTierMismatch / BackgroundCoalesceMissing diagnostics
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: К10.2 bus scenarios — fast publish/subscribe roundtrip, normal batched drain, background coalesce, per-mod bulk unsubscribe, save-integrated round-trip
+    verification_type: native_test
+  - file: tests/DualFrontier.Core.Tests/Bus/ManagedBusBridgeTests.cs
+    test_method: Managed bus facade tier-aware dispatch verification (6 scenarios)
+    verification_type: managed_test
+  - file: tests/DualFrontier.Modding.Tests/Capability/SubscriberContractTests.cs
+    test_method: Per-tier subscriber contract enforcement + tier-prefixed token parsing (13 scenarios)
+    verification_type: managed_test
+  - file: tests/DualFrontier.Modding.Tests/Capability/KernelCapabilityRegistryTierTests.cs
+    test_method: Tier-prefixed token generation + S-LOCK-4 backward compatibility (4 scenarios)
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: K10.2 closure (architecturally established; sovereign authority switch deferred к K10.4 closure / А'.8 per managed-facade-preserved strategy — К10.1 precedent applied)
+- id: REQ-K-L15_1
+  title: Three-tier independence (К-L15.1 sub-invariant, 2-layer formulation)
+  source_document: DOC-A-KERNEL
+  source_section: "Part 0, K-L15 (+К-L15.1) row + Part 0 status footnote (v2.4 amendment, А'.7.x К-extensions cascade #0)"
+  requirement_text: >
+    Каждый bus tier (Fast / Normal / Background) maintains architectural isolation
+
+    at two structural layers:
+
+
+    STATE LAYER. Each tier owns its own state struct (FastTierState, NormalTierState,
+
+    BackgroundTierState — bus_native_internal.h) with separate std::mutex, separate
+
+    next_seq counter, separate subscriber map (std::unordered_map<uint32_t,
+
+    std::vector<SubscriberRecord>>), and where applicable separate pending queue.
+
+    No shared mutable state between tiers. Types co-located в shared internal header
+
+    для accessor visibility к cross-tier consumers (mod_unload.cpp per-mod
+
+    unsubscribe + background_queue.cpp policy layer); shared header does NOT
+
+    introduce shared state, only shared type visibility.
+
+
+    RUNTIME LAYER. Tier subscription ID space uses high 8 bits = tier identifier +
+
+    low 56 bits = per-tier sequential counter. Cross-tier collisions structurally
+
+    impossible — tier-bit disambiguates. `df_bus_unsubscribe` single-ID API reads
+
+    tier-bit and dispatches к per-tier unsubscribe path. `df_bus_clear` acquires
+
+    three tier mutexes в fixed fast→normal→background order для deadlock safety,
+
+    clears each tier state. Cross-tier publish semantics: Fast tier subscriber
+
+    callback MAY publish events к any tier (re-entrant safe through mutex
+
+    isolation — Fast publish acquires only fast mutex; Normal/Background publish
+
+    from Fast callback acquires only the destination tier mutex). Cross-tier re-
+
+    entrancy was structural deadlock hazard pre-А'.7.x (single shared mutex
+
+    prevented re-entrant publish); post-А'.7.x re-entrancy is safe и tested (S10
+
+    cross-tier re-entrancy probe at SchedulerExtremeTests.cs:1007).
+
+
+    K-L15 parent invariants preserved: single DLL (К-L2 unchanged), single C ABI
+
+    surface (bus_native.h 16 functions unchanged), native bus authority, three-
+
+    tier dispatch semantics (Fast synchronous / Normal batched / Background
+
+    coalesced idle-slot). К-L15.1 strengthens К-L15 by making tier independence
+
+    explicit at behavioral level (state isolation + runtime isolation + cross-
+
+    tier re-entrancy safety).
+
+
+    Falsifiability: К-L15.1 falsified if a subsequent cascade demonstrates tier
+
+    dependence at state level (e.g., shared mutex between tiers reintroduced),
+
+    tier dependence at runtime level (e.g., shared subscription ID counter, tier-
+
+    bit disambiguation broken), or cross-tier re-entrancy deadlock (S10 probe
+
+    regresses). Each falsification mode is observable behavioral condition,
+
+    recordable в cascade closure metrics. Compile-time isolation via per-tier
+
+    source files was considered as а 3rd layer at brief-authoring time, но
+
+    rejected per gap audit G-2 Option B 2026-05-21 — К-L invariants describe
+
+    load-bearing behavior, not aspirational code organization. The investigation
+
+    empirically verified state + runtime isolation; compile-time isolation lives
+
+    в А'.7.5 sub-milestone as engineering-aesthetic follow-up без К-L impact.
+
+
+    Sub-invariant LOCK semantics: К-L15.1 LOCKS at А'.7.x closure while К-L15
+
+    (parent) stays AUTHORED candidate until A'.8 closure (mirrors К-L7.1 precedent).
+
+    If К-L15 is modified или superseded at A'.8 closure, К-L15.1 inherits the
+
+    scope change; sub-invariant text is conditionally bound к parent invariant
+
+    semantics.
+  verified_by:
+  - test: tests/DualFrontier.Core.Tests/Scheduling/SchedulerExtremeTests.S10_Bus_CrossTier_FastCallback_PublishesNormal_NoDeadlock
+    test_method: S10 cross-tier re-entrancy probe — Fast subscriber callback publishes Normal event; must not deadlock and must complete ≤100 ms (was deadlock-prone pre-А'.7.x single mutex split).
+    verification_type: behavioral
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: bus scenarios — fast publish/subscribe roundtrip, normal batched drain, background coalesce, per-mod bulk unsubscribe, save-integrated round-trip; post per-tier split all 33 scenarios ALL PASSED.
+    verification_type: native_test
+  - test: tests/DualFrontier.Core.Benchmarks/Stress/SchedulerStressBenchmarks
+    test_method: S3 throughput probe pre vs post bus refactor — +45% empirical at 16 producers × 3 tiers / 5M events.
+    verification_type: empirical_evidence
+  - file: native/DualFrontier.Core.Native/src/bus_native_internal.h
+    test_method: state isolation inspection — 3 separate TierState structs (FastTierState/NormalTierState/BackgroundTierState) each с own mutex + next_seq + subscribers + pending where applicable; BusNative::fast()/normal()/background() accessors replace prior BusNative::instance() singleton.
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/src/bus_native.cpp
+    test_method: runtime isolation inspection — encode_id() uses (TierTag << 56) | (seq & ID_MASK); df_bus_unsubscribe dispatches by decode_tier(); df_bus_clear acquires lf/ln/lb in fixed fast→normal→background order; per-tier publish/subscribe acquires only the tier mutex.
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/src/background_queue.cpp
+    test_method: cross-tier consumer inspection — background_queue.cpp uses BusNative::background() directly (not BusNative::instance()), acquires only tier.mutex; df_background_queue_dispatch_idle_slot drains via Background tier accessor.
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/src/mod_unload.cpp
+    test_method: cross-tier consumer inspection — mod_unload calls df_bus_unsubscribe_*_by_mod public C ABI (each acquires only relevant tier mutex); BusNative::background() direct access for diagnostic event-preserved count; no shared bus mutex critical section across tiers anywhere.
+    verification_type: code_inspection
+  verification_status: VERIFIED
+  verification_date: 2026-05-21
+  verification_milestone: "А'.7.x К-extensions cascade #0 closure (К-L15.1 sub-invariant LOCKED at γ4 LOAD-BEARING commit 08d0bba; falsifiability committed in canonical text)"
+- id: REQ-K-L19
+  title: Hardware tier commitment (Vulkan 1.3 + async compute queue family mandate)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L19 (V0.B LOCKED 2026-05-18 — implementation backing operational at landing)
+  requirement_text: >
+    Dual Frontier requires Vulkan 1.3 hardware с async compute queue family support.
+
+    Target hardware tier: NVIDIA Turing+ (GeForce GTX 1660 / RTX 20-series и newer),
+
+    AMD RDNA 1+ (Radeon RX 5500 и newer), Intel Arc Alchemist+ (Arc A380 и newer).
+
+    Async compute queue family used для compute-side pipeline depth dispatches
+
+    (К-L16 reserved для К10.3 elaboration); graphics queue for display rendering;
+
+    copy/transfer queue for asset transfers. Kernel mandates queue family availability
+
+    at startup; failure to detect async compute queue family is fail-fast condition
+
+    с user-facing diagnostic message pointing к README hardware requirements section.
+
+    Hardware exclusion of pre-Turing NVIDIA, pre-RDNA AMD, pre-Arc Intel, и most
+
+    integrated GPUs accepted as architectural choice supporting clean implementation
+
+    per K-L14 («performance derives from architectural cleanliness»); not a hardware-
+
+    discrimination decision. By Dual Frontier release timeline, target hardware tier
+
+    represents majority of gaming hardware.
+  verified_by:
+  - file: docs/architecture/KERNEL_ARCHITECTURE.md
+    test_method: Part 0 K-L19 row (V0.B amendment, v2.2)
+    verification_type: spec_inspection
+  - file: README.md
+    test_method: Hardware requirements section (V0.B amendment)
+    verification_type: spec_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanDevice.cs
+    test_method: FindAsyncComputeQueueFamilyIndex + SelectPhysicalDevice integration — async compute QF selection с distinct-family preference
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/HardwareCapabilityCheck.cs
+    test_method: Verify(VulkanInstance, VulkanDevice) — VerifyVulkanApiVersion + VerifyAsyncComputeQueueFamily fail-fast at Runtime.Create
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Runtime.cs
+    test_method: Runtime.Create invokes HardwareCapabilityCheck.Verify after VulkanDevice construction
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/AsyncComputeQueueSelectionTests.cs
+    test_method: Algorithm tests (4 mock scenarios) + integration test verifies AMD RX 7600S exposes QF 1 dedicated compute
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/HardwareCapabilityCheckTests.cs
+    test_method: Vulkan 1.0 below 1.3 throws; null async compute QF throws с GPU name + hardware tier message; integration on real К-L19 hardware succeeds (5 scenarios)
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.Tests/Compute/ComputePipelineRegistrationTests.cs
+    test_method: noop.comp register + ExecuteSync round-trip уpon async compute queue (К-L19 hardware baseline exercised live)
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: 'V0.B closure (full implementation backing operational at landing per Lesson #8 + Lesson #11 — no architectural commitment без implementation behind it)'
+- id: REQ-K-L7_1
+  title: GPU compute pipeline slot binding (sub-invariant к K-L7; opt-in coexistence)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L7 (+К-L7.1 К10.3 v2 load-bearing 2026-05-20)
+  requirement_text: >
+    GPU compute writes к RawTileField storage are bound к pipeline slot (К-L16).
+
+    Sim-thread reads of compute-managed fields see slot-tail state — sim tick T+D
+
+    reads dispatched-at-(T+D-1) state. One-tick lag from sim-perspective bounded
+
+    и deterministic. К-L7 atomic-from-observer invariant preserved within pipeline
+
+    slot boundary; cross-slot reads see different snapshots.
+
+
+    S-LOCK-10 coexistence: К-L7.1 opt-in per field per К-L9 «Vanilla = mods» author
+
+    choice. V1's existing V1DiffusionPipeline.ExecuteIteration synchronous dispatch
+
+    path (К-L7 atomic-from-observer per compute_dispatch.h) remains operational
+
+    orthogonal к К-L7.1. К-L7 default preserved для existing FieldHandle consumers.
+
+
+    Mirrors K-L3.1 sub-invariant precedent pattern (К-L3 preserved + К-L3.1 sub
+
+    specifies opt-in extension).
+  verified_by:
+  - file: docs/architecture/KERNEL_ARCHITECTURE.md
+    test_method: Part 0 K-L7 (+K-L7.1) row (К10.3 v2 load-bearing amendment, v2.3 partial)
+    verification_type: spec_inspection
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §2.0 pipeline depth architecture subsection (К-L7.1 coexistence note); §2.3.1 threading model К-L7.1 sim-thread read pattern; §7.3.0 pipeline slot tail read pattern
+    verification_type: spec_inspection
+  - file: native/DualFrontier.Core.Native/include/pipeline_slot.h
+    test_method: PipelineSlot.fields_snapshot_ptr К-L7.1 binding subject; df_pipeline_read_slot_tail tail read API (offset=-1 = sim-thread К-L7.1 read pattern)
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/src/pipeline_slot.cpp
+    test_method: Slot state validation (read rejected pre-FenceCompleted/ReadableAsTail); К-L7 atomic-from-observer preserved within slot boundary
+    verification_type: code_inspection
+  - file: src/DualFrontier.Core.Interop/PipelineSlotInterop.cs
+    test_method: ReadSlotTail managed wrapper exposes К-L7.1 opt-in read pattern; К10.3 v2 boundary doc о FieldHandle K-L7.1 dispatch flag deferred к К-extensions
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: scenario_pipeline_read_slot_tail_K_L7_1 — verifies Dispatched rejection + fields_snapshot_ptr roundtrip + sim_tick roundtrip + tail offset returns prior sim_tick (К-L7.1 one-tick lag)
+    verification_type: native_test
+  - file: tests/DualFrontier.Core.Interop.Tests/PipelineSlotInteropTests.cs
+    test_method: ReadSlotTail_K_L7_1_Pattern — managed-side roundtrip
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-20
+  verification_milestone: К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C — pipeline depth + sub-invariant share physical reality «GPU pipeline slots»)
+- id: REQ-K-L16
+  title: Simulation tick pipeline depth (D=2 default; configurable 1-3)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L16 (К10.3 v2 load-bearing 2026-05-20)
+  requirement_text: >
+    Simulation tick pipeline depth D ≥ 1 (configurable 1-3, default 2). Simulation
+
+    thread runs D ticks ahead of display thread для pipeline-managed dispatches.
+
+    Cross-layer async operations (GPU compute pipeline-managed, network, disk I/O)
+
+    have full pipeline-depth window к complete без blocking simulation thread.
+
+    Display thread reads results от simulation tick (CurrentSimTick - D). Pipeline
+
+    drain orderly at save/pause; pipeline refill orderly at load/resume. К-L16
+
+    establishes display latency invariant (D × tick_period); К-L15 fast tier latency
+
+    invariant (subscriber response ≤1ms) preserved independently.
+
+
+    S-LOCK-13 coexistence: governs pipeline-managed dispatches; V1's K-L7 sync
+
+    dispatch_compute_field path orthogonal и preserved для existing consumers per
+
+    K-L9 «Vanilla = mods» author choice per field.
+
+
+    Save protocol per S8-Q1.5: snapshot display tick state (CurrentSimTick - D).
+
+    Display already sees coherent world; pipeline drain не required at save time.
+
+    Faster save (no waiting для in-flight compute completion).
+
+
+    Pause protocol: natural convergence — sim thread completes current tick, no
+
+    new dispatch. Pipeline depth naturally absorbs already-dispatched work. К-L18
+
+    quiescent state precondition (Item 41, subsequent load-bearing commit) verifies
+
+    pipeline quiesced before mod operations.
+  verified_by:
+  - file: docs/architecture/KERNEL_ARCHITECTURE.md
+    test_method: Part 0 K-L16 row (К10.3 v2 load-bearing amendment, v2.3 partial)
+    verification_type: spec_inspection
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §2.0 pipeline depth architecture; §2.3.1 threading model pipeline depth + queue family roles; §7.2.0 pipeline drain semantics
+    verification_type: spec_inspection
+  - file: native/DualFrontier.Core.Native/include/pipeline_slot.h
+    test_method: PipelineSlot struct verbatim from spec §3.10 Item 33; D=1-3 configurable per DF_PIPELINE_MAX_DEPTH=3 + DF_PIPELINE_DEFAULT_DEPTH=2; state machine Empty→Dispatched→FenceCompleted→ReadableAsTail; drain/refill protocols (serialize/deserialize/pause/resume)
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/src/pipeline_slot.cpp
+    test_method: Atomic state transitions + cycling cursor + bounded backpressure (allocate fails when all slots in-flight); pause rejects new allocations; serialize captures sim_tick + state per slot; deserialize restores state + validates depth match
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/include/phase_compute.h
+    test_method: 'Phase enum (Update/Compute/Display) + df_scheduler_register_compute_dispatch + VkQueueSubmit batching scaffold (К10.3 v2 boundary: real submit wired в V-cycle integration)'
+    verification_type: code_inspection
+  - file: src/DualFrontier.Core.Interop/PipelineSlotInterop.cs
+    test_method: Managed wrapper exposing Init/Reset/GetDepth/AllocateSlot/GetSlot/SetFence/CheckFences/ForceFenceCompleted/TransitionToTail/IsQuiescent/ReadSlotTail/Serialize+Deserialize/Pause/Resume/IsPaused/GetWakeFireCount surface; struct layout 40 bytes verified via unsafe sizeof
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: 6 pipeline_slot scenarios (init/depth, state machine, D=2 cycling, get_slot offsets, is_quiescent, backpressure) + 4 phase_compute scenarios + 3 drain/refill scenarios + 1 wake fire scenario — total 14 К10.3 v2 native scenarios
+    verification_type: native_test
+  - file: tests/DualFrontier.Core.Interop.Tests/PipelineSlotInteropTests.cs
+    test_method: 7 managed-side roundtrip tests (struct layout 40 bytes, init/depth, out-of-range rejection, state transitions, get_slot offsets, ReadSlotTail K-L7.1, is_quiescent K-L18 precondition)
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-20
+  verification_milestone: К10.3 v2 load-bearing commit 1/3 (К-L7.1 + К-L16 grouped per Approach C)
+- id: REQ-K-L17
+  title: Display composition multi-layer (К-L17, К10.3 v2 load-bearing 2/3)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L17 (К10.3 v2 load-bearing 2026-05-20)
+  requirement_text: >
+    Display tick T composites multi-layer state where layers carry independent
+
+    latency contracts:
+      - SimState layer — К-L16 pipeline tail for pipeline-managed display state,
+        либо current sim state for К-L7 sync default (V1 path). Latency
+        D × tick_period or sub-tick.
+      - Intent overlay — current input state (≤16ms latency at 60 FPS).
+      - Combat feedback — К-L15 Fast tier consumers (≤17ms event-к-visible
+        per Prediction 15: ≤1ms К-L15 + ≤16ms display).
+      - Static — loaded assets, composited last.
+
+    Composition order: SimState first, intent + combat overlays composited
+
+    on top, static last. Framework lives в src/DualFrontier.Application/Display/
+
+    per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces
+
+    preserved unchanged).
+
+
+    Mod-registered layers declare via [Layer(LayerType.Intent | CombatFeedback)]
+
+    attribute (DualFrontier.Contracts.Display.LayerAttribute) + capability tokens:
+      - kernel.layer.intent:{FQN}
+      - kernel.layer.combat_feedback:{FQN}
+    granular per FQN per tier per S3-Q5 + S8-Q3 pattern. SimState/Static tiers
+
+    use existing renderer-level capabilities (V substrate primitives) и do не
+
+    surface layer capability tokens here.
+
+
+    Per К-L9 «Vanilla = mods», vanilla layers register through the same attribute
+
+    + capability pattern as third-party mods.
+  verified_by:
+  - file: docs/architecture/KERNEL_ARCHITECTURE.md
+    test_method: Part 0 K-L17 row (К10.3 v2 load-bearing amendment, v2.3 partial)
+    verification_type: spec_inspection
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §4.0 Display composition (К-L17) three-layer model + composition order + capability tokens + S-LOCK-11 boundary; §5.5 Mode C visibility latency через К-L17
+    verification_type: spec_inspection
+  - file: docs/architecture/MOD_OS_ARCHITECTURE.md
+    test_method: §3.2 К-L17 display composition layer capability verbs (kernel.layer.intent + kernel.layer.combat_feedback) + [Layer] attribute pattern + granular per FQN per tier
+    verification_type: spec_inspection
+  - file: src/DualFrontier.Contracts/Display/LayerType.cs
+    test_method: Enum LayerType { SimState=0, Intent=1, CombatFeedback=2, Static=3 } lives в Contracts so mod assemblies can reference
+    verification_type: code_inspection
+  - file: src/DualFrontier.Contracts/Display/LayerAttribute.cs
+    test_method: '[Layer(LayerType)] attribute с optional CompositionOrder init property'
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Display/CompositionFramework.cs
+    test_method: Layer registry с deterministic composition order (LayerType primary, CompositionOrder secondary, FQN tertiary tie-break); RegisterLayer/UnregisterLayer/GetLayer/GetLayersInCompositionOrder/RenderFrame surface
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Display/Layer.cs
+    test_method: Abstract base с Type + Fqn + CompositionOrder + Render + OnUnregistered hook
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Display/SimStateLayer.cs
+    test_method: Default SimState layer slot wrapping presentation backend render delegate (no-op default; full integration deferred per managed-facade-preserved)
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Display/IntentOverlayLayer.cs
+    test_method: LayerType.Intent slot с render delegate; ≤16ms latency contract documented; reads current input state, не pipeline slot tail
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Display/CombatFeedbackLayer.cs
+    test_method: LayerType.CombatFeedback slot с thread-safe EnqueueFeedback Fast tier sink + drain-on-render snapshot semantics; ≤17ms event-к-visible contract
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Modding/KernelCapabilityRegistry.cs
+    test_method: Scans for [Layer] attribute; emits kernel.layer.intent:{FQN} or kernel.layer.combat_feedback:{FQN}; SimState/Static emit no layer token
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Application.Tests/Display/CompositionFrameworkTests.cs
+    test_method: '12 tests: layer registration (duplicate FQN, empty FQN, unregister callback), composition order (primary by type, secondary by composition order, tertiary by FQN), RenderFrame order, SimStateLayer no-op + delegate'
+    verification_type: managed_test
+  - file: tests/DualFrontier.Application.Tests/Display/IntentOverlayLayerTests.cs
+    test_method: '9 tests: tier identity, default+custom FQN, no-op default, delegate invocation, null-context throw, composition order after SimState'
+    verification_type: managed_test
+  - file: tests/DualFrontier.Application.Tests/Display/CombatFeedbackLayerTests.cs
+    test_method: '11 tests: tier identity, EnqueueFeedback queue, drain-on-render snapshot, no-delegate drain, OnUnregistered clear, concurrent-writer thread safety (8 writers × 250 events), composition order after Intent'
+    verification_type: managed_test
+  - file: tests/DualFrontier.Modding.Tests/Capability/KernelCapabilityRegistryLayerTests.cs
+    test_method: '6 tests: Intent/CombatFeedback emit correct tokens; SimState/Static emit none; types without attribute emit none; granular per FQN per tier'
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-20
+  verification_milestone: К10.3 v2 load-bearing commit 2/3 (К-L17 display composition framework + Items 38-40 implementation backing)
+- id: REQ-K-L18
+  title: Mod lifecycle quiescent state (К-L18, К10.3 v2 load-bearing 3/3)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0, K-L18 (К10.3 v2 load-bearing 2026-05-20)
+  requirement_text: >
+    Mod load/unload operations require simulation paused state + pipeline
+
+    slots quiescent (all fences completed; no concurrent compute dispatches
+
+    in-flight) per К-L18 spec verbatim.
+
+
+    Native enforcement: df_scheduler_unload_mod_native_state checks the
+
+    К10.2 sim-paused flag (rejected с error если 0) AND the К10.3 v2 Item 41
+
+    extension df_pipeline_is_quiescent (rejected с error если any slot
+
+    Dispatched/FenceCompleted). Pre-init pipeline (depth=0) treated as
+
+    quiescent (no in-flight compute by definition).
+
+
+    Managed UI helper layer (per S-LOCK-12 helpers-only scope):
+
+    - DualFrontier.Application.Loop.SimulationStateController.PauseAsync —
+      sets К-L18 sim-paused flag via ModUnloadInterop.SetSimPaused;
+      invokes optional notification delegate.
+    - SimulationStateController.WaitForQuiescenceAsync(timeout) — polls
+      PipelineSlotInterop.IsQuiescent until true or timeout.
+    - SimulationStateController.ResumeAsync — clears К-L18 sim-paused flag.
+
+
+    Mod unload chain extended 8-step → 9-step с Step 3.6 V (Vulkan) resource
+
+    cleanup placeholder (К10.3 v2 Item 42; managed wrapper
+
+    DualFrontier.Application.Bridge.VResourceCleanup returns vacuous success;
+
+    native df_vulkan_unload_mod_resources C ABI primitive lands V-cycle /
+
+    К-extensions). К-L18 quiescent state precondition already satisfied
+
+    before Step 3.6 invocation (Step 3.5 native primitive verified).
+
+
+    Full settings menu / preferences UI deferred к V-cycle / К-extensions
+
+    per S-LOCK-12 К10.3 v2 scope discipline; К10.3 v2 lands helpers + Step
+
+    3.6 placeholder only.
+  verified_by:
+  - file: docs/architecture/KERNEL_ARCHITECTURE.md
+    test_method: Part 0 K-L18 row (К10.3 v2 load-bearing amendment, v2.3 final)
+    verification_type: spec_inspection
+  - file: docs/architecture/MOD_OS_ARCHITECTURE.md
+    test_method: §9.5 ALC unload chain extended 8-step → 9-step (Step 3.5 К-L18 precondition + Step 3.6 V resource cleanup); §9.5.1 failure semantics с Step 3.6 + К-L18 rejection note; §9.7 Hot reload К-L18 compliance subsection; §11.2 new ValidationErrorKinds (QuiescentStatePreconditionViolated, PipelineQuiescenceTimeout, LayerCapabilityMismatch, VulkanModResourceCleanupFailed)
+    verification_type: spec_inspection
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §3.4.1 df_vulkan_unload_mod_resources C ABI primitive placeholder (struct shape + signature + К10.3 v2 placeholder behavior + V-cycle/К-extensions reservation)
+    verification_type: spec_inspection
+  - file: native/DualFrontier.Core.Native/src/mod_unload.cpp
+    test_method: К-L18 precondition check extended с df_pipeline_is_quiescent (К10.3 v2 Item 41); rejects unload с descriptive error message if pipeline has Dispatched/FenceCompleted slots; pre-init pipeline treated as quiescent
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/include/mod_unload.h
+    test_method: Header comment updated к document К10.3 v2 Item 41 pipeline quiescence extension + Item 42 UI hookup forward reference
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Loop/SimulationStateController.cs
+    test_method: PauseAsync/ResumeAsync wire к ModUnloadInterop.SetSimPaused + notification delegate; IsPipelineQuiescent treats pre-init as quiescent (matches native); WaitForQuiescenceAsync polls until true or timeout с cancellation support; PipelineQuiescenceTimeoutException runtime-path counterpart к §11.2 PipelineQuiescenceTimeout
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Bridge/VResourceCleanup.cs
+    test_method: Step 3.6 placeholder managed wrapper; UnloadModResources returns Result.Success=true + zero counts; full native impl reserved для V-cycle / К-extensions
+    verification_type: code_inspection
+  - file: src/DualFrontier.Application/Modding/ModIntegrationPipeline.cs
+    test_method: Step 3.6 added к UnloadModInternal chain после Step 3.5; invokes _vResourceCleanup.UnloadModResources(modId); failures surface as ValidationWarning entries per §9.5.1 best-effort
+    verification_type: code_inspection
+  - file: native/DualFrontier.Core.Native/test/selftest.cpp
+    test_method: '4 К-L18 integration scenarios: unload fails on Dispatched slot, fails on FenceCompleted slot, succeeds after ReadableAsTail transition, succeeds when pipeline uninitialized'
+    verification_type: native_test
+  - file: tests/DualFrontier.Application.Tests/Loop/SimulationStateControllerTests.cs
+    test_method: '10 helper tests: Pause/Resume sim-paused flag + callback; IsPipelineQuiescent override; WaitForQuiescenceAsync immediate/eventual/timeout/cancellation paths + parameter validation'
+    verification_type: managed_test
+  - file: tests/DualFrontier.Application.Tests/Bridge/VResourceCleanupTests.cs
+    test_method: '3 placeholder tests: success + zero counts; null-modId throw; empty-modId vacuous success'
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-20
+  verification_milestone: К10.3 v2 load-bearing commit 3/3 (К-L18 mod lifecycle quiescent state + Items 41-42 implementation backing)
+- id: REQ-V0-A-WIN32_WINDOW
+  title: Win32 window lifecycle + message pump (V0.A foundation)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §1.1 V0 rendering side deliverables — Win32 window + surface; §2.2 Window module; §2.5 Win32 P/Invoke template
+  requirement_text: >
+    Win32 window lifecycle implemented via pure P/Invoke к user32.dll + kernel32.dll
+
+    (no third-party binding per L3). Window can open, show, hide, destroy cleanly.
+
+    Message pump (PeekMessage/TranslateMessage/DispatchMessage loop) drains the OS
+
+    message queue without blocking. WM_CLOSE handler triggers DestroyWindow → WM_DESTROY
+
+    handler calls PostQuitMessage which sets IsOpen=false. Window class registration
+
+    uses unique GUID-suffixed name to prevent multi-instance collision. WindowProc
+
+    delegate pinned via GCHandle.Alloc to prevent GC collection of the function pointer
+
+    thunk during native lifetime. Surface creation hooks (vkCreateWin32SurfaceKHR) deferred
+
+    к V0.B alongside swapchain.
+  verified_by:
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §1.1 V0 rendering side first bullet — «Win32 window + surface»
+    verification_type: spec_inspection
+  - file: src/DualFrontier.Runtime/Native/Win32/Win32Api.cs
+    test_method: '14 P/Invoke functions: RegisterClassEx [DllImport], UnregisterClass + CreateWindowEx + DestroyWindow + ShowWindow + GetModuleHandle + message pump (Peek/Translate/Dispatch/DefWindow/PostQuit) + LoadCursor + LoadIcon + GetLastError'
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Window/Window.cs
+    test_method: Lifecycle InitializeWin32 + WindowProcedure dispatch (WM_CLOSE/WM_DESTROY) + Show/Hide/PumpMessages + idempotent Dispose с GCHandle.Free
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Window/WindowOptionsTests.cs
+    test_method: WindowOptions defaults + record syntax + value equality (3 scenarios)
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.Tests/RuntimeCompositionTests.cs
+    test_method: Window_plus_VulkanInstance_compose_without_crash + Window lifecycle через Runtime.Create
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    test_method: V0.A smoke test — Window opened, 3-sec message pump, clean shutdown verified empirically
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.A closure
+- id: REQ-V0-A-VULKAN_INSTANCE
+  title: Vulkan instance с К-L19 Vulkan 1.3 verification + DEBUG validation layer (V0.A)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §0 L1 (Vulkan 1.3) + §0 L2 (pure P/Invoke к vulkan-1.dll) + §1.1 V0 rendering side — Vulkan instance + queue family selection; §2.5 Vulkan P/Invoke template; §11 validation discipline
+  requirement_text: >
+    VulkanInstance lifecycle implemented via pure P/Invoke к vulkan-1.dll (no third-party
+
+    C# binding per L2). К-L19 hardware tier enforcement (partial — V0.A scope only): на
+
+    instance creation, vkEnumerateInstanceVersion queried; если reported API version <
+
+    VK_API_VERSION_1_3 throws diagnostic exception referencing K-L19 rationale. Hardware
+
+    capability check at startup (К10.3 brief Item 44) deferred к V0.B alongside async
+
+    compute queue selection. Validation layer (VK_LAYER_KHRONOS_validation) + debug utils
+
+    extension (VK_EXT_debug_utils) activated conditionally on enableValidation flag —
+
+    DEBUG builds default к true per S-LOCK-4 (validation discipline ALWAYS-ON в DEBUG).
+
+    Surface extensions (VK_KHR_surface + VK_KHR_win32_surface) always enabled (consumed
+
+    V0.B при swapchain creation). UTF-8 marshalling for layer/extension names via
+
+    Marshal.StringToCoTaskMemUTF8 (Vulkan uses UTF-8, не Win32 UTF-16). All allocated
+
+    native strings freed via try/finally regardless of exception path.
+  verified_by:
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §0 L1+L2 + §1.1 V0 + §11 validation discipline verbatim
+    verification_type: spec_inspection
+  - file: docs/architecture/KERNEL_FULL_NATIVE_SCHEDULER.md
+    test_method: К-L19 hardware tier verbatim — Vulkan 1.3 minimum + async compute queue family commitment
+    verification_type: spec_inspection
+  - file: src/DualFrontier.Runtime/Native/Vulkan/VkApi.cs
+    test_method: vkCreateInstance + vkDestroyInstance + vkEnumerateInstanceVersion + vkGetInstanceProcAddr P/Invoke surface
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanInstance.cs
+    test_method: VerifyVulkanApiVersion (К-L19 partial enforcement) + CreateInstance (UTF-8 marshalling + extension/layer activation + memory cleanup) + idempotent Dispose
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanInstanceMarshallingTests.cs
+    test_method: VkApplicationInfo 48 bytes + VkInstanceCreateInfo 64 bytes + UTF-8 roundtrip + VK_API_VERSION_1_3 == 0x403000 (4 scenarios)
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    test_method: V0.A smoke test — vkCreateInstance succeeds на AMD Radeon RX 7600S; API version 0x403000 reported
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.A closure (К-L19 surface partial; hardware capability check startup logic deferred к V0.B alongside async compute queue selection)
+- id: REQ-V0-A-VULKAN_DEVICE
+  title: Vulkan physical + logical device + graphics queue family selection (V0.A)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §1.1 V0 rendering side — physical/logical device + queue family selection; §2.2 Graphics module
+  requirement_text: >
+    VulkanDevice lifecycle implemented via pure P/Invoke. EnumeratePhysicalDevices uses
+
+    two-pass vkEnumeratePhysicalDevices pattern (count query c null pointer, then fill).
+
+    For each physical device — vkGetPhysicalDeviceProperties + vkGetPhysicalDeviceQueueFamilyProperties.
+
+    Device name marshalled UTF-8 via Marshal.PtrToStringUTF8. PhysicalDeviceInfo +
+
+    QueueFamilyInfo records expose diagnostic info с public API surface (VkPhysicalDeviceType
+
+    mapped к public PhysicalDeviceType enum per Rule 5 — Native.Vulkan types stay internal).
+
+    SelectPhysicalDevice prefers discrete GPU c graphics queue family; fallback к first
+
+    device c graphics. LINQ-free foreach implementation per project «no LINQ в src/» rule.
+
+    CreateLogicalDevice creates VkDevice с single graphics queue (priority 1.0, count 1).
+
+    Async compute queue family selection deferred к V0.B (per S-LOCK-3 + К10.3 brief
+
+    Item 43). VkPhysicalDeviceProperties C# struct layout c explicit 4-byte padding
+
+    between pipelineCacheUUID и limits + trailing 4-byte padding (total 824 bytes vs
+
+    naive 816) к match MSVC x64 alignment ABI — VkPhysicalDeviceLimits contains
+
+    VkDeviceSize fields requiring 8-byte alignment.
+  verified_by:
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §1.1 V0 — physical/logical device + queue family selection
+    verification_type: spec_inspection
+  - file: src/DualFrontier.Runtime/Native/Vulkan/VkStructs.cs
+    test_method: VkPhysicalDeviceProperties с explicit padding (_padBeforeLimits[4] + _padTrailing[4]) к 824 bytes total per MSVC x64 ABI
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanDevice.cs
+    test_method: EnumeratePhysicalDevices two-pass + SelectPhysicalDevice (foreach, prefer discrete + graphics; fallback к first c graphics) + CreateLogicalDevice + idempotent Dispose
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/PhysicalDeviceInfo.cs
+    test_method: Public record с DeviceType wrapped в public PhysicalDeviceType enum (Native.Vulkan internal accessibility preserved per Rule 5)
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/QueueFamilyInfo.cs
+    test_method: Public record c QueueFlags decomposed в 4 capability bool fields (avoids exposing internal VkQueueFlags enum)
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanDeviceMarshallingTests.cs
+    test_method: VkPhysicalDeviceProperties 824 bytes + VkQueueFamilyProperties 24 bytes + VkDeviceCreateInfo 72 bytes (3 scenarios)
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    test_method: V0.A smoke test — AMD Radeon RX 7600S enumerated, graphics QF 0 selected, logical device created clean
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.A closure
+- id: REQ-V0-A-VALIDATION_LAYER
+  title: Vulkan validation layer ALWAYS-ON в DEBUG + ValidationLog ring buffer (V0.A)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §11 methodology adjustments — validation layer output check; V0.A brief §1.4 S-LOCK-4
+  requirement_text: >
+    Vulkan validation layer (VK_LAYER_KHRONOS_validation) ALWAYS-ON в DEBUG builds per
+
+    S-LOCK-4. Debug messenger created via vkCreateDebugUtilsMessengerEXT (extension
+
+    function loaded via vkGetInstanceProcAddr — не direct vulkan-1.dll export). Severity
+
+    filter excludes VERBOSE + INFO (noise reduction); only WARNING + ERROR captured.
+
+    Validation messages stored в thread-safe ring buffer (1024 message capacity, FIFO
+
+    eviction on overflow; per-severity counters preserve total recorded count даже после
+
+    buffer overflow). Per-message severity converted from VkDebugUtilsMessageSeverityFlagsEXT
+
+    к managed ValidationSeverity enum. Debug callback uses [UnmanagedCallersOnly] static
+
+    method с CallConvCdecl (canonical .NET 5+ pattern); cannot capture instance fields,
+
+    so uses static _staticLog (single-instance design — multi-instance would race, V0.A
+
+    scope не exercises). Callback swallows managed exceptions — must не propagate across
+
+    native boundary. Returns VK_FALSE (0) к let Vulkan continue triggering call.
+
+    vkCreateDebugUtilsMessengerCreateInfoEXT chained к VkInstanceCreateInfo.pNext deferred
+
+    к V0.B alongside more robust messenger setup; V0.A uses simpler post-instance creation
+
+    pattern.
+  verified_by:
+  - file: docs/architecture/VULKAN_SUBSTRATE.md
+    test_method: §11 validation layer output check discipline verbatim
+    verification_type: spec_inspection
+  - file: tools/briefs/V0_A_EXECUTION_BRIEF.md
+    test_method: §1.4 S-LOCK-4 verbatim — validation discipline ALWAYS-ON в DEBUG
+    verification_type: spec_inspection
+  - file: src/DualFrontier.Runtime/Graphics/ValidationLayer.cs
+    test_method: CreateMessenger via vkGetInstanceProcAddr extension load + DebugCallback с [UnmanagedCallersOnly(CallConvCdecl)] + severity conversion + idempotent Dispose
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Diagnostic/ValidationLog.cs
+    test_method: Thread-safe ring buffer (1024 capacity, lock-protected Record/Snapshot/Clear, per-severity counters preserved on eviction)
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Diagnostic/ValidationLogTests.cs
+    test_method: Record increments + Snapshot ordering + Clear reset + ring buffer eviction at 1024 capacity (4 scenarios)
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    test_method: V0.A smoke test — validation layer activated, 0 errors + 0 warnings reported during instance + device lifecycle (К-L19 + S-LOCK-4 satisfied на AMD Radeon RX 7600S)
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.A closure
+- id: REQ-V0-B-SWAPCHAIN
+  title: VkSwapchainKHR + Win32 surface + recreation on resize (V0.B)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §1.1 V0 rendering deliverables 4-5 (surface + swapchain) + §4.2 R.0; V0.B brief Commit 7
+  requirement_text: >
+    VkSurfaceKHR (Win32, via vkCreateWin32SurfaceKHR) + VkSwapchainKHR lifecycle.
+
+    Swapchain selects format (B8G8R8A8_SRGB + SRGB_NONLINEAR_KHR preferred), present mode
+
+    (MAILBOX preferred, FIFO fallback), extent (respects surface.currentExtent, clamps
+
+    requested к min/max capabilities), image count (minImageCount + 1, clamped к maxImageCount),
+
+    composite alpha OPAQUE. Per-swapchain-image VkImageView created (color aspect, identity
+
+    swizzle, 2D type). Recreation API receives new extent, passes oldSwapchain к driver,
+
+    destroys old after success. AcquireNextImage + Present surfaces для render loop.
+
+    WindowResizeEvent emitted by Window.WindowProcedure (WM_SIZE) flows through InputEventQueue
+
+    к consumer (smoke test exercises live recreate).
+  verified_by:
+  - file: src/DualFrontier.Runtime/Graphics/VulkanSurface.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanSwapchain.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanSwapchainTests.cs
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.B closure
+- id: REQ-V0-B-RENDER_PASS
+  title: VkRenderPass + VkFramebuffer + command infrastructure (V0.B)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §1.1 V0 rendering deliverables 6-7; V0.B brief Commits 8 + 9 + 11
+  requirement_text: >
+    Minimal V0.B render pass: 1 color attachment, no depth/stencil, CLEAR loadOp + STORE
+
+    storeOp, UNDEFINED → PRESENT_SRC_KHR layout transition, single graphics subpass с
+
+    external-to-0 dependency на COLOR_ATTACHMENT_OUTPUT stage. Per-swapchain-image
+
+    VkFramebuffer. VkCommandPool с RESET_COMMAND_BUFFER flag (per-frame reset pattern).
+
+    Per-pool primary VkCommandBuffer allocation. VkFence + VkSemaphore wrappers для
+
+    CPU-GPU + GPU-GPU sync. Minimal graphics pipeline (clearcolor) via vkCreateGraphicsPipelines
+
+    consuming compiled SPIR-V (fullscreen triangle vertex + solid color fragment),
+
+    empty pipeline layout, dynamic viewport + scissor.
+  verified_by:
+  - file: src/DualFrontier.Runtime/Graphics/VulkanRenderPass.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanFramebuffer.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanCommandPool.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanCommandBuffer.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanGraphicsPipeline.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanRenderPassTests.cs
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanCommandBufferTests.cs
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanGraphicsPipelineTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.B closure
+- id: REQ-V0-B-COMPUTE_PIPELINE
+  title: VkPipeline (compute) + descriptor sets + dispatch (V0.B)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §1.1 V0 compute + §3.4 compute dispatch; V0.B brief Commit 12 + 15
+  requirement_text: >
+    VK_PIPELINE_BIND_POINT_COMPUTE pipeline lifecycle wrapped в VulkanComputePipeline
+
+    consuming compute shader module + VulkanComputeDescriptors (descriptor set layout +
+
+    descriptor pool + pipeline layout bundle). Empty descriptor set supported для noop
+
+    round-trip; ComputeDescriptorBinding record + ComputeDescriptorType public mirror
+
+    ensure managed-side type safety. ComputeDispatch wraps synchronous record + submit
+
+    к async compute queue + fence wait per К-L7 atomic-from-observer. ComputePipelineRegistry
+
+    named-pipeline lookup owns lifetimes + disposed на Runtime teardown. Round-trip
+
+    exercised на real К-L19 hardware: noop.comp registered, ExecuteSync completes без error
+
+    via async compute queue family (Crystalka «Skarlet» QF 1).
+  verified_by:
+  - file: src/DualFrontier.Runtime/Compute/VulkanComputePipeline.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Compute/VulkanComputeDescriptors.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Compute/ComputeDispatch.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Compute/ComputePipelineRegistry.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Compute/FieldStorageBinding.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Compute/ComputePipelineRegistrationTests.cs
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.Tests/Compute/FieldStorageBindingTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.B closure
+- id: REQ-V0-B-MEMORY_ALLOCATOR
+  title: Bumper linear memory allocator + VulkanBuffer + VulkanImage primitives (V0.B)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §1.1 V0 rendering deliverable 9 + S-LOCK-4 of V0.B brief
+  requirement_text: >
+    Linear bumper allocator (per S-LOCK-4: simplest viable allocator per VULKAN_SUBSTRATE.md
+
+    verbatim «bumper allocator initially»). One VkDeviceMemory block per memory type index
+
+    (64 MB default). Allocations bump pointer forward, aligned к requested alignment;
+
+    no free list. Reset rewinds offsets. MemoryAllocation descriptor returned для caller
+
+    vkBindXxxMemory binding. VulkanBuffer + VulkanImage wrappers handle vkCreateXxx +
+
+    vkGetXxxMemoryRequirements + allocator.Allocate + vkBindXxxMemory. Public-facing enum
+
+    mirrors (VkMemoryPropertyFlagsPublic, VkBufferUsageFlagsPublic, VkImageUsageFlagsPublic,
+
+    VkFormatPublic) avoid leaking internal Vulkan enums к public API. Free-list /
+
+    pool allocator deferred к V0.C+ or later (К-extensions scope).
+  verified_by:
+  - file: src/DualFrontier.Runtime/Graphics/MemoryAllocator.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanBuffer.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanImage.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/MemoryAllocatorTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.B closure
+- id: REQ-V0-B-SPIRV_TOOLCHAIN
+  title: In-repo SPIR-V toolchain integration (V0.B)
+  source_document: DOC-A-VULKAN_SUBSTRATE
+  source_section: §2.7 shader strategy; V0.B brief S-LOCK-5
+  requirement_text: >
+    tools/glslangValidator.exe committed (binary discipline в .gitattributes) per
+
+    S-LOCK-5 — in-repo toolchain so clone-and-build does не require VULKAN_SDK install
+
+    на developer or CI machine. MSBuild CompileShaders target (Directory.Build.props,
+
+    conditional на DualFrontier.Runtime project) invokes glslangValidator BeforeTargets="Build"
+
+    and writes assets/shaders/*.spv (committed для clone-and-run convenience).
+
+    Minimal shaders (V0.B S-LOCK-6): clearcolor.vert (fullscreen triangle), clearcolor.frag
+
+    (solid blue), noop.comp (empty compute). Sprite shaders deferred к V0.C.
+
+    VulkanShaderModule loads SPIR-V byte arrays (4-byte alignment validated), creates
+
+    VkShaderModule via vkCreateShaderModule, disposed via vkDestroyShaderModule.
+  verified_by:
+  - file: tools/glslangValidator.exe
+    verification_type: artifact_inspection
+  - file: tools/shaders/clearcolor.vert
+    verification_type: artifact_inspection
+  - file: tools/shaders/clearcolor.frag
+    verification_type: artifact_inspection
+  - file: tools/shaders/noop.comp
+    verification_type: artifact_inspection
+  - file: Directory.Build.props
+    verification_type: spec_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanShaderModule.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/ShaderCompilationTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.B closure
+- id: REQ-V0-B-ASYNC_COMPUTE_QUEUE
+  title: Async compute queue family selection (V0.B, K-L19 Item 43)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0 K-L19; V0.B brief Commit 4
+  requirement_text: >
+    VulkanDevice extends V0.A graphics-only queue family selection с async compute queue
+
+    family selection. Algorithm: prefer dedicated compute-only queue family (parallel
+
+    compute alongside graphics, К-L16 pipeline depth dispatches per К-L19 architectural
+
+    intent), fallback к compute-capable graphics queue family (shared queue). null
+
+    when no compute-capable family — HardwareCapabilityCheck fail-fast in that case.
+
+    VkDeviceCreateInfo extended к request both queues when distinct families; single
+
+    VkDeviceQueueCreateInfo otherwise. VK_KHR_swapchain device extension activated.
+
+    AsyncComputeQueue + AsyncComputeQueueFamilyIndex public surface used by smoke test
+
+    + downstream compute pipelines.
+  verified_by:
+  - file: src/DualFrontier.Runtime/Graphics/VulkanDevice.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/AsyncComputeQueueSelectionTests.cs
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.B closure
+- id: REQ-V0-B-HARDWARE_CHECK
+  title: HardwareCapabilityCheck.Verify startup fail-fast (V0.B, K-L19 Item 44)
+  source_document: DOC-A-KERNEL
+  source_section: Part 0 K-L19; V0.B brief Commit 5
+  requirement_text: >
+    HardwareCapabilityCheck.Verify(VulkanInstance, VulkanDevice) invoked by Runtime.Create
+
+    after VulkanDevice construction. Two sub-checks expose internal entry points (VerifyVulkanApiVersion +
+
+    VerifyAsyncComputeQueueFamily) for unit-testing failure paths без mocking Vulkan handles.
+
+    Failures throw HardwareCapabilityException с user-facing diagnostic message containing
+
+    target hardware tier requirements (NVIDIA Turing+ / AMD RDNA 1+ / Intel Arc Alchemist+)
+
+    и pointer к README hardware requirements section. Defense-in-depth integration via
+
+    FieldStorageBinding.Attach (additional throw if AsyncComputeQueueFamilyIndex null
+
+    reaches that path).
+  verified_by:
+  - file: src/DualFrontier.Runtime/Graphics/HardwareCapabilityCheck.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/HardwareCapabilityException.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Runtime.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/HardwareCapabilityCheckTests.cs
+    verification_type: managed_test
+  - file: README.md
+    test_method: Hardware requirements section (К-L19 + this REQ user-facing reference)
+    verification_type: spec_inspection
+  verification_status: VERIFIED
+  verification_date: 2026-05-18
+  verification_milestone: V0.B closure
+- id: REQ-V0-C-1-PNG_DECODER
+  title: Manual PNG decoder (8-bit RGB/RGBA, non-interlaced, all 4 filter predictors)
+  source_document: DOC-D-V0_C_1
+  source_section: S-LOCK-2; V0.C.1 brief Commit 3-4
+  requirement_text: >
+    DualFrontier.Runtime.Assets.PngDecoder implements RFC 2083 PNG decoding for 8-bit
+
+    RGB (color type 2) и RGBA (color type 6) non-interlaced PNG files. Supports все 4 filter
+
+    predictors (None/Sub/Up/Average/Paeth per RFC 2083 §6.2-6.6). Uses System.IO.Compression.DeflateStream
+
+    для DEFLATE decompression (BCL per §0 L5). Mandatory CRC32 verification per RFC 2083 §5.3.
+
+    Unsupported variants (interlaced, palette/color type 3, grayscale/color type 0/4, 16-bit channels)
+
+    throw explicit PngDecoderException — produces wrong pixels never per Lesson #20 «no improvisation».
+
+    RGB → RGBA conversion at decode time с alpha = 255 (fully opaque) per Q2 (a) ratification.
+  verified_by:
+  - file: src/DualFrontier.Runtime/Assets/PngDecoder.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Assets/PngImage.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Assets/PngDecoderTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-19
+  verification_milestone: V0.C.1 closure
+- id: REQ-V0-C-1-SAMPLER
+  title: VulkanSampler primitive (nearest+repeat default per S-LOCK-6 pixel art aesthetic)
+  source_document: DOC-D-V0_C_1
+  source_section: S-LOCK-6; V0.C.1 brief Commit 6
+  requirement_text: >
+    DualFrontier.Runtime.Graphics.VulkanSampler wraps VkSampler lifecycle с configurable
+
+    SamplerOptions (MagFilter/MinFilter Nearest|Linear, WrapU/WrapV Repeat|ClampToEdge|
+
+    ClampToBorder|MirroredRepeat, EnableAnisotropy bool). Default = nearest filter +
+
+    repeat wrap per Q3 (b) ratification (pixel art preservation + atlas/tilemap compatibility).
+
+    Mipmaps disabled (maxLod=0); anisotropy disabled (requires VkPhysicalDeviceFeatures
+
+    opt-in not currently requested).
+  verified_by:
+  - file: src/DualFrontier.Runtime/Graphics/VulkanSampler.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanSamplerTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-19
+  verification_milestone: V0.C.1 closure
+- id: REQ-V0-C-1-TEXTURE_UPLOAD
+  title: TextureUploader staging-buffer → device-local image transfer + layout transitions
+  source_document: DOC-D-V0_C_1
+  source_section: V0.C.1 brief Commit 7
+  requirement_text: >
+    DualFrontier.Runtime.Graphics.TextureUploader.Upload(VulkanImage, byte[]) orchestrates
+
+    synchronous texture upload: host-visible staging VulkanBuffer + vkMapMemory/vkUnmapMemory
+
+    + one-shot command buffer recording (vkCmdPipelineBarrier UNDEFINED→TRANSFER_DST_OPTIMAL +
+
+    vkCmdCopyBufferToImage + vkCmdPipelineBarrier TRANSFER_DST_OPTIMAL→SHADER_READ_ONLY_OPTIMAL)
+
+    + SubmitTo graphics queue с fence + fence.Wait per К-L7 atomic-from-observer.
+
+    VulkanImage.CreateFromPngImage convenience method: creates VulkanImage с Sampled|TransferDst
+
+    usage + device-local memory, uploads PngImage pixels through TextureUploader, disposes
+
+    image on upload failure к prevent leaks.
+  verified_by:
+  - file: src/DualFrontier.Runtime/Graphics/TextureUploader.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanImage.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/TextureUploaderTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-19
+  verification_milestone: V0.C.1 closure
+- id: REQ-V0-C-1-SPRITE_PIPELINE
+  title: VulkanSpritePipeline (vertex input + alpha blending + descriptor sets + push constants)
+  source_document: DOC-D-V0_C_1
+  source_section: S-LOCK-3, S-LOCK-4, S-LOCK-5, S-LOCK-8; V0.C.1 brief Commit 9-11
+  requirement_text: >
+    DualFrontier.Runtime.Sprite.VulkanSpritePipeline extends V0.B VulkanGraphicsPipeline pattern с:
+
+    (a) Vertex input description: binding 0 stride 20 bytes (SpriteVertex), 3 attributes
+        (Position R32G32_SFLOAT offset 0, Uv R32G32_SFLOAT offset 8, TintRgba R8G8B8A8_UNORM offset 16).
+    (b) Alpha blending enabled (premultiplied alpha workflow per S-LOCK-5):
+        srcColor=ONE, dstColor=ONE_MINUS_SRC_ALPHA, blendOp=ADD; same для alpha channel.
+    (c) SpriteDescriptorSetLayout с 1 binding (COMBINED_IMAGE_SAMPLER, FRAGMENT_BIT, count 1)
+        matches sprite.frag layout(set = 0, binding = 0) uniform sampler2D atlas.
+    (d) VulkanPipelineLayout backward-compatibly extended с pushConstantRanges parameter; sprite
+        pipeline uses 64-byte VERTEX_BIT range для Camera2D MVP mat4.
+    sprite.vert + sprite.frag GLSL sources committed; MSBuild CompileShaders target regenerates
+
+    .spv outputs on every Runtime project build per S-LOCK-5.
+  verified_by:
+  - file: src/DualFrontier.Runtime/Sprite/SpriteVertex.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Sprite/VulkanSpritePipeline.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Sprite/SpriteDescriptorSetLayout.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Graphics/VulkanPipelineLayout.cs
+    verification_type: code_inspection
+  - file: tools/shaders/sprite.vert
+    verification_type: spec_inspection
+  - file: tools/shaders/sprite.frag
+    verification_type: spec_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Sprite/VulkanSpritePipelineTests.cs
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.Tests/Graphics/VulkanPipelineLayoutTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-19
+  verification_milestone: V0.C.1 closure
+- id: REQ-V0-C-1-SPRITE_RENDERER
+  title: SpriteRenderer single-sprite-per-draw API с descriptor set caching
+  source_document: DOC-D-V0_C_1
+  source_section: V0.C.1 brief Commit 12
+  requirement_text: >
+    DualFrontier.Runtime.Sprite.SpriteRenderer orchestrates V0.C.1 sprite drawing:
+
+    (a) Dynamic vertex buffer (64 KB host-visible+host-coherent, VertexBuffer usage)
+        sized for V0.C.2 batched expansion without resize churn.
+    (b) Descriptor pool sized for 32 textures (COMBINED_IMAGE_SAMPLER).
+
+    (c) DrawSprite(Sprite, VulkanCommandBuffer, Matrix4x4 mvp):
+         - Build 6 vertices (2 triangles forming quad, CCW)
+         - Upload via vkMapMemory + Buffer.MemoryCopy + vkUnmapMemory
+         - Get-or-allocate descriptor set per SpriteTexture (caching)
+         - Record vkCmdBindPipeline + vkCmdBindDescriptorSets + vkCmdPushConstants (MVP)
+           + vkCmdBindVertexBuffers + vkCmdDraw(6, 1, 0, 0).
+    V0.C.2 will refactor к batched (one draw call per atlas, 10,000+ sprites at 60+ FPS).
+  verified_by:
+  - file: src/DualFrontier.Runtime/Sprite/SpriteRenderer.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Sprite/SpriteTexture.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Sprite/AtlasRegion.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Sprite/SpriteTransform.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Sprite/Sprite.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Sprite/SpriteRendererTests.cs
+    verification_type: managed_test
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-19
+  verification_milestone: V0.C.1 closure
+- id: REQ-V0-C-1-INPUT_EVENTS
+  title: Input event types complete (Key/MouseButton enums + 6 event records + VirtualKeyMapper)
+  source_document: DOC-D-V0_C_1
+  source_section: S-LOCK-10; V0.C.1 brief Commit 13
+  requirement_text: >
+    DualFrontier.Runtime.Input module event surface:
+
+    (a) Key enum: Unknown + Left/Right/Up/Down + Shift/Control/Alt + Escape/Space/Enter/Tab/
+        Backspace/Delete/Home/End/PageUp/PageDown + F1-F12 + A-Z + Digit0-Digit9.
+    (b) MouseButton enum: Left, Right, Middle.
+
+    (c) 6 event records implementing IInputEvent:
+         KeyPressedEvent(Key), KeyReleasedEvent(Key), MouseMovedEvent(int X, int Y),
+         MouseButtonEvent(MouseButton, bool Pressed), MouseWheelEvent(int Delta),
+         WindowFocusEvent(bool Focused).
+    (d) VirtualKeyMapper.Map(int vkCode) → Key: maps Win32 virtual key codes к Key enum via
+         switch с range patterns for letters (0x41-0x5A) + digits (0x30-0x39); unmapped → Key.Unknown.
+  verified_by:
+  - file: src/DualFrontier.Runtime/Input/Key.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/MouseButton.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/KeyPressedEvent.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/KeyReleasedEvent.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/MouseMovedEvent.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/MouseButtonEvent.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/MouseWheelEvent.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/WindowFocusEvent.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Input/VirtualKeyMapper.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.Tests/Input/VirtualKeyMapperTests.cs
+    verification_type: managed_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-19
+  verification_milestone: V0.C.1 closure
+- id: REQ-V0-C-1-WIN32_INPUT_DISPATCH
+  title: Win32 message dispatch (WM_KEYDOWN/UP/MOUSEMOVE/L|R|MBUTTONDOWN/UP/MOUSEWHEEL/SETFOCUS/KILLFOCUS → InputEventQueue)
+  source_document: DOC-D-V0_C_1
+  source_section: S-LOCK-10; V0.C.1 brief Commit 14
+  requirement_text: >
+    Window.cs WindowProcedure extended с keyboard/mouse/focus dispatch:
+
+    (a) WM_KEYDOWN/WM_SYSKEYDOWN → VirtualKeyMapper.Map(vk) → KeyPressedEvent (if not Unknown).
+
+    (b) WM_KEYUP/WM_SYSKEYUP → KeyReleasedEvent.
+
+    (c) WM_MOUSEMOVE → MouseMovedEvent с signed cursor coordinates from lParam (cast через
+        short к preserve sign).
+    (d) WM_L|R|MBUTTONDOWN/UP → MouseButtonEvent с (MouseButton, Pressed=true|false).
+
+    (e) WM_MOUSEWHEEL → MouseWheelEvent с normalized delta (rawDelta / WHEEL_DELTA=120).
+
+    (f) WM_SETFOCUS → WindowFocusEvent(true); WM_KILLFOCUS → WindowFocusEvent(false).
+
+    Win32Constants.cs extended с WM_SYSKEYDOWN/UP, WM_RBUTTONDOWN/UP, WM_MBUTTONDOWN/UP,
+
+    WM_MOUSEWHEEL, VK_BACK/TAB/RETURN/SHIFT/CONTROL/MENU/ESCAPE/SPACE/PRIOR/NEXT/END/HOME/
+
+    LEFT/UP/RIGHT/DOWN/DELETE/F1-F12, WHEEL_DELTA.
+  verified_by:
+  - file: src/DualFrontier.Runtime/Window/Window.cs
+    verification_type: code_inspection
+  - file: src/DualFrontier.Runtime/Native/Win32/Win32Constants.cs
+    verification_type: code_inspection
+  - file: tests/DualFrontier.Runtime.SmokeTest/Program.cs
+    verification_type: smoke_test
+  verification_status: VERIFIED
+  verification_date: 2026-05-19
+  verification_milestone: V0.C.1 closure

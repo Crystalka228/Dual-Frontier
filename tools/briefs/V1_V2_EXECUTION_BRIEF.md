@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-V1_V2
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: AUTHORED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-19
+last_modified: 2026-05-19
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V1_V2
+title: V1+V2 — Scalar field + diffusion shader + wave shader (V substrate primitives, combined deliberation, sequential execution)
+review_cadence: on-status-transition
+last_review_date: 2026-05-19
+last_review_event: "V1+V2 combined deliberation brief authored 2026-05-19 by Opus 4.7 deliberation post-V0.C.2 closure (PR #39 merged) per V substrate authoring stream. Successor brief к V0.C.2; V1 portion (Phase A'.10) targets isotropic + anisotropic diffusion shader substrate primitive per VULKAN_SUBSTRATE.md §1.2; V2 portion (Phase A'.11) targets wave shader (diffusion-based distance per Q7a Option B baseline) + direction extraction per §1.3. V2 closure achieves V substrate full close per §1.4 multi-field coexistence acceptance criterion (V0 ✓ + V1 ✓ + V2 ✓ + multi-field-coexistence verified) — unlocks M-V demonstration mod paths + Phase B M-cycle vanilla content migration (gated also on Roslyn analyzer А'.9). К-L14 thesis fifth + sixth verification window opens (V0.A → V0.B → V0.C.1 → V0.C.2 → V1 → V2 = 6 consecutive zero-hard-gate-halt cascades expected)."
+reviewer: Crystalka
+risks_referenced:
+- RISK-013
+special_case_rationale: "V1+V2 combined deliberation execution brief — fifth + sixth sub-milestones of V substrate stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1 → V2). Authored 2026-05-19 post-V0.C.2 closure (PR #39 merged) per Crystalka substrate authoring stream protocol. Implements V substrate primitives per VULKAN_SUBSTRATE.md v1.0 §1.2 (V1 isotropic + anisotropic diffusion shader) + §1.3 (V2 wave shader baseline + direction extraction) + §1.4 (V substrate close acceptance — multi-field coexistence). V2 closure = V substrate FULL close per §1.4 — unlocks M-V demonstration mod paths (M-V1 Vanilla.Magic, M-V2 Vanilla.Electricity, M-V7 Vanilla.Movement) + Phase B M-cycle vanilla content mass migration (also gated on Roslyn analyzer A'.9). К10.3 brief restart pathway independent — runs parallel в V substrate stream; V1+V2 не gates К10.3. Q1-Q8 ratification 2026-05-19 (Crystalka): hybrid sub-milestone structure (Q1c — V1 monolithic + V2.A wave/distance + V2.B direction extraction split); minimal CPU reference scope (Q2a — single-iteration small grid synthetic tests); direct K9 consumption (Q3a — no new C ABI extensions); extend Directory.Build.props CompileShaders target (Q4a — substrate-side compilation); standard smoke test scenes (Q5b — minimal + multi-field coexistence); combined deliberation + sequential execution (Q6c — V1 PR #40 → V2 PR #41); diffusion baseline для V2 (Q7a — eikonal upgrade deferred TBD per spec); Phase A' naming А'.10 V1 + А'.11 V2 (Q8 — sequential post-V0 sub-milestones). 11 S-LOCKs enumerate scope: S-LOCK-1 (V1+V2 combined scope = scalar field substrate primitives per VULKAN_SUBSTRATE §1.2 + §1.3 + §1.4); S-LOCK-2 (compute shader sourcing = substrate-side compilation per Q4a — extends Directory.Build.props CompileShaders target); S-LOCK-3 (CPU/GPU equivalence test mandatory per §11 — every compute shader has CPU reference, tolerance-bounded comparison gates correctness); S-LOCK-4 (direct K9 consumption — no new C ABI extensions per Q3a; consumes existing FieldHandle<T> + FieldRegistry + V0.B compute pipeline surface verbatim); S-LOCK-5 (ping-pong buffer management via FieldHandle<T>.SwapBuffers — K9 contract preserved); S-LOCK-6 (V0 substrate inheritance preserved — K-L19, validation layer ALWAYS-ON, per-image semaphore, framebuffer recreation, mixed [LibraryImport]/[DllImport]); S-LOCK-7 (alignment audit mandatory per Lesson #7 strengthening — V0.A 1 + V0.B 5 + V0.C.1 0 + V0.C.2 1 maturity curve continues; new push constant structs DiffusionPushConstants/WavePushConstants/DirectionExtractPushConstants get Marshal.SizeOf test gates); S-LOCK-8 (atomic cascade discipline preserves V substrate stream pattern с V1→V2 pause point); S-LOCK-9 (validation layer ALWAYS-ON DEBUG preserved — zero validation messages tolerated as commit gate); S-LOCK-10 (REGISTER.yaml governance discipline preserved — EVT-V1-CLOSURE + EVT-V2-CLOSURE + EVT-V-SUBSTRATE-CLOSE audit_trail events); S-LOCK-11 (CPU reference inheritance + extension per Lesson #11 redundancy check — IsotropicDiffusionKernel inherited verbatim, AnisotropicDiffusionKernel + WaveKernel + DirectionExtractKernel new CPU references follow same pattern). Per Lesson #22 (read existing code first) + Lesson #11 (redundancy check) + Lesson #25 (consumer materialization): V1+V2 inherits substantial existing infrastructure — K9 FieldHandle<T> production-ready, V0.B compute pipeline registration round-trip verified, IsotropicDiffusionKernel CPU reference existing K9-era code consumed verbatim. К-L14 thesis fifth + sixth verification window: V0.A + V0.B + V0.C.1 + V0.C.2 closed с four consecutive zero-hard-gate-halt cascades; V1 + V2 = fifth + sixth verifications; V substrate full close per §1.4 = pattern reliability empirically validated across 6 consecutive substrate sub-milestones."
 ---
+
 # V1+V2 — Scalar field + diffusion shader + wave shader (V substrate primitives, combined deliberation, sequential execution)
 
 **Brief lifecycle**: AUTHORED 2026-05-19 by Opus deliberation. EXECUTED post-V2 closure (two sub-PRs expected — V1 closure + V2 closure). Author: Crystalka (judicial role) + Claude Opus 4.7 (deliberation pipeline). Successor brief к V0.C.2 (closed PR #39 merged) per V substrate authoring stream. **Closure achieves V substrate full close** per VULKAN_SUBSTRATE.md §1.4 multi-field coexistence acceptance criterion (V0 ✓ + V1 ✓ + V2 ✓ + multi-field-coexistence verified) — unlocks Phase B M-cycle vanilla content migration (gated also on Roslyn analyzer А'.9).

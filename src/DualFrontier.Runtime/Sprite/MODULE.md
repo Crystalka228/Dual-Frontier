@@ -1,3 +1,22 @@
+---
+register_id: DOC-F-SRC-RUNTIME-SPRITE
+project: Dual Frontier
+category: F
+tier: 4
+lifecycle: Live
+owner: Crystalka
+version: Live
+first_authored: 2026-05-19
+last_modified: 2026-05-19
+content_language: mixed
+next_review_due: 2026-Q4
+title: DualFrontier.Runtime.Sprite — module doc
+last_modified_commit: ff58b9b
+review_cadence: phase-led
+reviewer: Crystalka
+special_case_rationale: Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance.
+---
+
 # DualFrontier.Runtime.Sprite
 
 Sprite rendering module. V0.C.1 scope: vertex format + sprite primitive types (texture handle +

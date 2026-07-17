@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-B-CODING_STANDARDS
+project: Dual Frontier
 category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.1.3"
+version: 2.1.3
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: 2027-06-11
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-CODING_STANDARDS
+title: Coding standards
+last_modified_commit: 673f815
+review_cadence: on-change+annual
+last_review_date: 2026-06-11
+last_review_event: "Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth per STANDING_LAW_CASCADE_BRIEF §7-W1 + §8 truth law: C#/C++ conventions codified from observed practice (R1 survey); build organization with Directory.Build.props chain quoted verbatim + CPM truth; §5 marker family registry ([ReservedStub] census pin 34 application sites / 13 files with verbatim rg composition rule; 5 doc-tag families with verbatim patterns + baselines; NEW DFK-WAIVER suppression law — load-bearing for A'.9.1 Phase β, supersedes the brief §7.3 DFK###-SUPPRESS sketch); §8 atomic-commit law (7-section body incl. Skeleton revisions per RESERVED_SURFACE_MUTABILITY); §9 verification gates reduced to existing artifacts (analyzer stated as 17 non-detecting Info stubs — zero enforcement; CI stated absent). v1.0 phantom enforcement claims (analyzer checks, CI) cured per drift report §6.3.5."
+reviewer: Crystalka
 ---
+
 # Coding Standards
 
 A single code style is not aesthetics — it is a navigation tool. The primary and

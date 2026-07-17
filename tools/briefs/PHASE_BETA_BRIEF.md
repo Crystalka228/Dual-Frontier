@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-PHASE_BETA_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-PHASE_BETA_BRIEF
+version: 1.0
+first_authored: 2026-07-01
+last_modified: 2026-07-01
+content_language: en
+next_review_due: null
+title: PHASE β CLEANUP CASCADE (A'.9.1) — Execution Brief (populate the 17 first-batch Roslyn analyzer stubs with real detection at Info severity / Unshipped; ≥1 positive + ≥1 negative test per rule; census meta-tests; Q-L-1 adaptive gate on the real Info-diagnostic count; real-violation triage; REGISTER closure 2.18 → 2.19 — NO severity promotion / NO AnalyzerReleases.Shipped / NO .editorconfig, all Phase γ / F-12)
+last_modified_commit: 1bc0df2
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-01
+last_review_event: 'Authored 2026-07-01 by Claude Opus (deliberation session) from PHASE BETA RECON R1-R8 (DOC-D-PHASE_BETA_RECON_REPORT). Federated DFK002 §8 interop surface + Task 7 supersession + Info-only Phase-β scope ratified by Crystalka 2026-07-01. Executed 2026-07-01 by Claude Code (flagship, LOCAL Skarlet), C1-C12 cascade: 17 stubs populated with real detection at Info (Unshipped, zero promotion), ≥1 pos/neg test per rule (54 analyzer tests), census meta-tests (reserved-surface 34/13 EXACT), Q-L-1 gate on the real count (23 → CONTINUE), ManagedBusBridge §8 triage + DFK001 2-site DFK-WAIVER + DFK007/DFK017 refine, descriptor-ID underscore normalization (H6 adjudication, Crystalka-ratified). Enrolled EXECUTED at the C11 register closure. See EVT-2026-07-01-A_PRIME_9_1-PHASE_BETA-CLOSURE.'
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "A'.9.1 Phase β cleanup-phase execution brief — populates the 17 first-batch Roslyn analyzer stubs (enrolled AUTHORED-SKELETON at А'.8, build-wired at К-extensions cascade #5) with real detection logic held at Info severity / Unshipped; severity promotion + AnalyzerReleases.Shipped + .editorconfig priming are Phase γ / F-12, explicitly out of scope (any Warning/Error = H-severity halt). DOC-D Category D Tier 4 per the empirical execution-brief convention (sister to DOC-D-GODOT_ERADICATION_BRIEF + DOC-D-STANDING_LAW_CASCADE_BRIEF + DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF). Built on DOC-D-PHASE_BETA_RECON_REPORT (R1-R8). Single PENDING-COMMIT this cascade: the register header self-reference (C11's own hash), backfilled at C12 render per Option-B; C1-C10 recorded real."
 ---
+
 ---
 register_id: DOC-D-A_PRIME_9_1_PHASE_BETA_BRIEF
 project: Dual Frontier

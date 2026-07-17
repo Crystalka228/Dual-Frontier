@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-J-GOLEM_OWNERSHIP
+project: Dual Frontier
 category: J
 tier: 1
 lifecycle: Draft
 owner: Crystalka
-version: "0.1.0"
+version: 0.1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: 2027-07-15
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-J-GOLEM_OWNERSHIP
+title: Golem ownership — mage-golem bond mechanic design (Category J; renamed successor of DOC-A-OWNERSHIP_TRANSITION; shipped-claim corrected to stub truth)
+supersedes:
+- DOC-A-OWNERSHIP_TRANSITION
+constrains:
+- DOC-A-ECS_V2
+- DOC-A-THREADING_V2
+last_modified_commit: 0145f1b
+review_cadence: on-change+annual
+reviewer: Crystalka
 ---
+
 # Golem ownership
 
 Game-design state machine for the mage-golem bond: who owns a golem, how ownership contests and transfers, and the single-writer rule that protects the bond component. (Renamed from "Golem ownership transitions" — the old title collided with the architecture corpus's own "ownership/lifetime" vocabulary; see Status.)

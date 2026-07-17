@@ -1,15 +1,20 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-LEARNING_PHASE_1
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-LEARNING_PHASE_1
+version: 1.0
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: ru
+next_review_due: null
+title: Self-teaching ritual artifact — Phase 1 (Самообучение фаза 1)
+review_cadence: on-status-transition
+reviewer: Crystalka
 ---
+
 # Learning artifact: C# and multithreading for Dual Frontier (Phase 1)
 
 > **Note:** This document was originally written in Russian as a self-teaching

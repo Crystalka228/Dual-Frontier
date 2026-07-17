@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-CLEANUP_CASCADE_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-CLEANUP_CASCADE_BRIEF
+version: 1.0
+first_authored: 2026-05-16
+last_modified: 2026-05-16
+content_language: en
+next_review_due: null
+title: Cleanup Cascade Execution Brief — 18 of 19 audit findings
+review_cadence: on-status-transition
+last_review_date: 2026-05-16
+last_review_event: Brief authored + executed 2026-05-16 on branch claude/cleanup-cascade. 16 atomic commits e68d799..7bd7b4e closed 17 of 19 audit findings (DRIFT-001..018 except DRIFT-016 HALTED per SC-4); 5 CAPAs opened+closed within EVT-2026-05-16-CLEANUP-CASCADE; register_version 1.2→1.4; sync_register --validate exit 0; dotnet build clean (0 warnings, 0 errors); dotnet test 620 passed 0 failed.
+reviewer: Crystalka
+special_case_rationale: "Execution-mode brief addressing 18 of 19 findings from DOC-E-DOCUMENTATION_DRIFT_AUDIT_REPORT (DRIFT-019 historical residue no-action per audit; DRIFT-016 HALTED per CLEANUP_CASCADE_BRIEF §4 SC-4 — Q-K-1 A'-cycle renumbering deferral surfaced to Crystalka for K8.5-brief-time decision). Authority chain: audit findings + Crystalka 4 cleanup locks (§1.1-1.4) + VULKAN_SUBSTRATE.md v1.0 LOCKED + SystemExecutionContext.cs/IGameServices.cs/IModApi.cs canonical statements."
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: CLEANUP_CASCADE_BRIEF

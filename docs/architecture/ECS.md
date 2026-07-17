@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-ECS_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ECS_V2
+title: Entity Component System (authored rework; version-0 identity defect documented)
+supersedes:
+- DOC-A-ECS
+last_modified_commit: 5e1f412
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~72 anchors) + HALT-1-ratified corrections R1-15/16/17 at 5e1f412; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ECS per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; session C10 teaching defect fixed (no EntityId(index,0) fabrication in examples).
 ---
+
 # Entity Component System
 
 The entity/component storage model: `NativeWorld` as the single production backend, dense sparse-set storage, the span/batch access protocol, entity identity and lifecycle semantics, and `SystemBase`.

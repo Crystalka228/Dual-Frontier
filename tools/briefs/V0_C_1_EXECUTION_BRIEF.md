@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-V0_C_1
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-19
+last_modified: 2026-05-19
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V0_C_1
+title: V0.C.1 — PNG decoder + textured sprite pipeline + input event types (R.1 + R.4)
+review_cadence: on-status-transition
+last_review_date: 2026-05-19
+last_review_event: 'V0.C.1 sub-milestone closure 2026-05-19 — 17 atomic commits 4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE; V substrate R.1 (first textured quad) + R.4 (input system) operational per VULKAN_SUBSTRATE.md v1.0 §4.2 phase mapping; 7 REQs authored (REQ-V0-C-1-PNG_DECODER, REQ-V0-C-1-SAMPLER, REQ-V0-C-1-TEXTURE_UPLOAD, REQ-V0-C-1-SPRITE_PIPELINE, REQ-V0-C-1-SPRITE_RENDERER, REQ-V0-C-1-INPUT_EVENTS, REQ-V0-C-1-WIN32_INPUT_DISPATCH); 121 V0.B Runtime.Tests baseline preserved + 89 V0.C.1 additive (210 total Runtime.Tests) — full sln tests 786 V0.B baseline + 89 V0.C.1 = 875 total managed; AMD Radeon RX 7600S verified К-L19 hardware tier at smoke test (sprite render loop 820 frames at 164 FPS over 5 seconds, validation log 0 errors/warnings/info — S-LOCK-4 preserved); 8 Marshal.SizeOf alignment hypotheses ALL VERIFIED on first attempt (vs V0.B 5 corrections — Lesson #7 strengthening continues robust); V0.C.2 brief pending (R.2 batched sprite renderer 10,000 sprites at 60+ FPS + R.3 TileMap + Camera2D); К10.3 brief restart pathway independent of V0.C.1 closure — Crystalka prerogative on timing'
+reviewer: Crystalka
+risks_referenced:
+- RISK-013
+special_case_rationale: 'V0.C.1 standalone execution brief — third sub-milestone of V0 series under V substrate foundation split (V0.A → V0.B → V0.C.1 → V0.C.2). Authored 2026-05-19 post-V0.B closure (PR #37 merged) per Crystalka split ratification 2026-05-19 (V0.C → V0.C.1 + V0.C.2). Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering bullets 5-9 partial coverage — specifically R.1 (first textured quad) + R.4 (input system) per §4.2 phase mapping. Excludes R.2 (batched sprite renderer at 10,000 sprites), R.3 (TileMap + Camera2D), R.5+ (Domain integration, UI primitives, lifecycle, cutover) — those belong V0.C.2 + post-V substrate close briefs. К10.3 brief restart pathway already open post-V0.B closure; V0.C.1 не gates К10.3 — runs parallel в same V substrate stream. 11 S-LOCKs enumerate scope: S-LOCK-1 (deliverables order: Vulkan struct + functions → PngDecoder → AssetManager → VulkanSampler → TextureUploader → VulkanPipelineLayout extension → sprite shaders → SpriteVertex + types → VulkanSpritePipeline → SpriteRenderer → input event types → Win32 dispatch → Runtime facade → smoke test → closure); S-LOCK-2 (PNG decoder scope = RGBA8 + RGB8 8-bit non-interlaced minimum coverage; interlaced + palette + 16-bit deferred к Lesson #25 pattern); S-LOCK-3 (sprite vertex format = pos+UV+color packed 20 bytes per S-LOCK-3); S-LOCK-4 (sprite shader scope = textured + tinted + camera MVP push constant); S-LOCK-5 (alpha blending = premultiplied alpha workflow standard); S-LOCK-6 (VulkanSampler default = nearest+repeat per pixel art aesthetic); S-LOCK-7 (threading model unchanged — V0.C.1 single-threaded; PresentationBridge + Domain integration R.5 post-V substrate close); S-LOCK-8 (push constants для Camera MVP; VulkanPipelineLayout backward-compat extension); S-LOCK-9 (C ABI alignment audit mandatory per Lesson #7 strengthening — 5 brief-estimate corrections V0.B precedent); S-LOCK-10 (input event types + Win32 dispatch completion per VULKAN_SUBSTRATE §2.2); S-LOCK-11 (atomic cascade preserves V0.A + V0.B discipline). Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): same V0.B patterns inherited; mixed [LibraryImport]/[DllImport] formalized continues; ALWAYS-ON validation discipline в DEBUG preserved; .NET 8 target preserved; default-inclusion bias per К-L14 (all 4 PNG filter predictors, sprite shader vertex+UV+color, premultiplied blending production-shape).'
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: V0_C_1_EXECUTION_BRIEF

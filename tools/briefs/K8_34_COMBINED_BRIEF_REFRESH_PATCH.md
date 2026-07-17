@@ -1,15 +1,30 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH
+version: 1.0
+first_authored: 2026-05-14
+last_modified: 2026-05-14
+content_language: en
+next_review_due: null
+title: K8.3+K8.4 Combined Brief Refresh Patch (v1) — SUPERSEDED
+superseded_by: DOC-D-K8_34_COMBINED_V2
+last_modified_commit: 54c6658
+review_cadence: on-status-transition
+last_review_date: 2026-05-14
+last_review_event: 'Patch v1 absorbed into v2.0 — its 5 findings (API-surface corrections for Phases 0-3) executed cleanly to b903b91; its NativeWorldTestFixture-delegates-to-RegisterAll decision (§7.3) and Lesson #7 carried forward'
+reviewer: Crystalka
+risks_referenced:
+- RISK-005
+- RISK-007
+- RISK-008
+capa_entries_referenced:
+- CAPA-2026-05-14-K8.34-API-SURFACE-MISS
 ---
+
 # K8.3+K8.4 Combined Brief Refresh Patch — Companion to K8_34_COMBINED_KERNEL_CUTOVER_BRIEF.md v1.0
 
 **Status**: AUTHORED 2026-05-14 — companion patch to `tools/briefs/K8_34_COMBINED_KERNEL_CUTOVER_BRIEF.md` v1.0 (authored 2026-05-13).

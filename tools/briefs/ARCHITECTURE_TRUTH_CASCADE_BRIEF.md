@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF
+version: 1.0
+first_authored: 2026-06-12
+last_modified: 2026-06-12
+content_language: en
+next_review_due: null
+title: 'ARCHITECTURE TRUTH CASCADE — Execution Brief (architecture docs → code-truth: 5 rewrites + reclassification ×6 + ROADMAP reconciliation + DD-3 hygiene + comment citation pass + CODING_STANDARDS §6.1 citation-form rule + register closure)'
+last_modified_commit: 0890645
+review_cadence: on-cascade-execution
+last_review_date: 2026-06-12
+last_review_event: "Brief authored 2026-06-11 by Claude Opus (deliberation session) from ARCHITECTURE TRUTH RECON 2026-06-11 (R1-R8; supplied as in-session input — no on-disk copy); ratified by Crystalka via invocation; EXECUTED 2026-06-12 by Claude Code (Fable 5, local Skarlet session) per §4 topology — Phase 0 (base state b38929e verified exactly, H1 clean; baseline gates; REGISTER vocabulary read per Lesson #N14; validate exit 0 folded into C1) → Wave W 4 parallel writer agents on disjoint grants (W1 MOD_OS 1.12.0 / W2 VULKAN 1.2.0 / W3 THREADING+EVENT_BUS 2.0.0 + ARCHITECTURE 1.0.0 / W4 reclass ×6 + trackers + DD-3 hygiene) → checkpoint C-W (truth-law sample audit incl. two recon-vs-code corrections resolved in code's favor: SystemExecutionContext survives, К-L19 fail-fast restored; zero-roadmap-load + citation-form greps clean; KERNEL word-diff = exactly the sanctioned tokens) → CF comment agent (36 managed + 3 native files, comment-only, R4/R5 verdicts) → serial closure C2-C17. Per-file commit regrouping recorded per RESERVED_SURFACE_MUTABILITY §5 (C7 carries SEQ/MIGRATION_PLAN/KFNS riders; C14 landed before C12/C13)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Architecture Truth Cascade execution brief — after this cascade no architecture document answers «what's next» (ROADMAP.md alone carries forward state), the five drifted bodies are code-truth, and the citation-form rule (CODING_STANDARDS §6.1) closes the version-pin/anchor breakage classes. DOC-D Category D Tier 4 per the empirical execution-brief convention (sister к DOC-D-STANDING_LAW_CASCADE_BRIEF). Single PENDING-COMMIT exception this cascade: the register header self-reference (C16's own hash), backfilled at C17 per the established Option-B practice — zero other placeholders created; C1-C15 hashes recorded real. The recon report itself remains chat-tier input (not enrolled; the brief §2 digest is its durable record), matching the STANDING-LAW RECON precedent."
 ---
+
 ---
 register_id: DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF
 project: Dual Frontier

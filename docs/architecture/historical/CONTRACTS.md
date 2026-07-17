@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-CONTRACTS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.1"
+version: 1.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-CONTRACTS
+title: Contract system (historical; superseded by authored rework)
+superseded_by: DOC-A-CONTRACTS_V2
+last_modified_commit: 6888246
+review_cadence: on-change+annual
+reviewer: Crystalka
+risks_referenced:
+- RISK-003
+special_case_rationale: Superseded by DOC-A-CONTRACTS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/CONTRACTS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
+
 # Contract system
 
 The `DualFrontier.Contracts` assembly is the only module visible to every layer: the core, the systems, the mods, and external tools. A contract is a public interface that declares intent (what can be done) with no hints about implementation. A contract does not change for convenience: either add a new event, or cut a new interface version.

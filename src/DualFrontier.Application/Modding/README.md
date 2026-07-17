@@ -1,4 +1,4 @@
-﻿# Modding — Mod loader
+# Modding — Mod loader
 
 ## Purpose
 Infrastructure for loading, unloading, and isolating mods. Each mod lives in
@@ -45,14 +45,18 @@ loader.UnloadMod("dualfrontier.example");
 - [ ] Phase 3 — hot reload (Unload + repeat LoadMod).
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-APPLICATION-MODDING
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-MODDING
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Application Modding submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

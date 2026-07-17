@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-B-TESTING_STRATEGY
+project: Dual Frontier
 category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "2.2.1"
+version: 2.2.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: 2027-06-11
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-TESTING_STRATEGY
+title: Testing strategy
+last_modified_commit: 673f815
+review_cadence: on-change+annual
+last_review_date: 2026-06-11
+last_review_event: 'Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR per STANDING_LAW_CASCADE_BRIEF §7-W2 + §8 truth law: test-landscape truth (9 dotnet-test projects, 1036 tests / 1034 passing at the 2026-06-11 survey; Analyzers.Tests called placeholder plainly; 2 non-test exe projects; 19 fixture projects; native df_native_selftest; 2 pre-existing failing tests on main → F-10, recorded not absorbed); 8-layer taxonomy incl. the Roslyn analyzer-test convention (law now, population = Phase β) + meta layer (currently NONE — stated); §4 census contracts (ReservedStub pin 34/13 exactness-not-monotonicity; 5 doc-tag family pins; DFK-WAIVER census baseline 0; S-LOCK→verifying-artifact obligation with the 2026-06-11 audit result — no hard gaps → F-8 closed empty); §5 machine-checkable vs architect-audited honesty + no-lying-stubs law (Lesson #25/#N12, DFL025-A Trait convention); §6 brief-integration pattern (carries vs cites + boundary rule + anti-pattern rule); §7 closure-audit obligation extending METHODOLOGY §12.7. v1.0 phantoms named and purged (SchedulerFixture builder API, EvilMod, PerformanceGates.cs, CI gates, 4-project layout).'
+reviewer: Crystalka
 ---
+
 # Testing strategy — Dual Frontier
 
 ## §1 — Authority and why this document exists

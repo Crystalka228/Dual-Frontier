@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-ARCHITECTURE_DECOMPOSITION_REVIEW_EXTERNAL
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: ru
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-ARCHITECTURE_DECOMPOSITION_REVIEW_EXTERNAL
+title: Dual Frontier — анализ архитектурной декомпозиции по Tier 1–2 (external agent review; input artifact)
+last_modified_commit: 8960085
+review_cadence: none-historical-record
+reviewer: Crystalka
+special_case_rationale: External-origin review artifact (authored by an external agent against the same HEAD 6f39903) committed verbatim as the claims source for DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION — the session report's verdict tables are unreadable without the claims in-repo. Enrolled per the docs/reports Category E convention; content_language ru preserved as received (first ru entry in docs/reports/).
 ---
+
 # Dual Frontier — анализ архитектурной декомпозиции по Tier 1–2
 
 **Дата:** 2026-07-15  

@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-RESOURCE_MODELS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-RESOURCE_MODELS
+title: Resource models (historical; reclassified Category J — docs/mechanics)
+superseded_by: DOC-J-RESOURCE_MODELS
+last_modified_commit: 0145f1b
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: "Superseded by DOC-J-RESOURCE_MODELS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/RESOURCE_MODELS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored"
 ---
+
 # Resource models
 
 A resource in Dual Frontier is any quantity that one system spends and another tracks: ammunition in inventory, a mage's mana, shield durability, ritual slots. Previously every system picked a request style by feel, and the same scenario ended up written differently in different places. v0.2 pins two models and a rule for choosing between them.

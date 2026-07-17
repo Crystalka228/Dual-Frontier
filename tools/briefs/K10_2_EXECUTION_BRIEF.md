@@ -1,15 +1,28 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K10_2
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-18
+last_modified: 2026-05-18
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_2
+title: К10.2 — Native bus three-tier dispatch + mod ALC lifecycle native primitives
+review_cadence: on-status-transition
+last_review_date: 2026-05-18
+last_review_event: 'К10.2 sub-milestone closure 2026-05-18 — 14 atomic commits a677388..PENDING-COMMIT-K10_2-CLOSURE; K-L15 «Native bus authority + three-tier event dispatch» AUTHORED + cross-document amendments propagated (KERNEL_ARCHITECTURE v2.0→v2.1, MOD_OS v1.8→v1.9); 8 of 46 K10 items landed (cumulative с K10.1: 25 of 46); 665 tests green baseline preserved + К10.2 additive'
+reviewer: Crystalka
+risks_referenced:
+- RISK-002
+- RISK-003
+- RISK-004
+- RISK-013
+special_case_rationale: "К10.2 standalone execution brief — second of four К10 sub-milestones under Option III standalone-briefs structure (К10.1 closed 2026-05-18; К10.2 = native bus three-tier dispatch + mod ALC lifecycle native primitives; К10.3 = pipeline depth + display composition + hardware tier; К10.4 = TLA+ formal verification). Implements 8 of 46 items from KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 LOCKED: §3.8 Items 26-30 (native bus three-tier dispatcher + event type registry + subscriber contract + background queue), §3.9 Items 31-32 (background queue save-integrated storage + native unload primitive), §3.6 Item 21 (mod scheduler authority per-mod sub-schedulers). К-L15 «Native bus authority + three-tier event dispatch» AUTHORED at Commit 13 (load-bearing). Strategy: managed-facade-preserved per К10.1 precedent — native bus parallel infrastructure landed; managed bus remains dispatch authority; sovereign authority switch deferred к К10.4 / А'.8. Cumulative с К10.1: 25 of 46 К10 items closed; remaining 21 items distributed across К10.3 (12 items: 33-44), К10.4 (3 items: 18, 45, 46), Item 14 deferred к К11+, Item 25 cross-cutting к А'.8. Brief authored 2026-05-18 from К10 deliberation arc 2026-05-16..2026-05-17 (9 S-locks ratified) + К10.1 closure precedent (managed-facade-preserved pattern + native test convention + DF_CHECK runner + selftest infrastructure)."
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: K10_2_EXECUTION_BRIEF

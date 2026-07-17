@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-ARCHITECTURE_RECON_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: Live
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-ARCHITECTURE_RECON_REPORT
+version: 1.0
+first_authored: 2026-05-15
+last_modified: 2026-05-15
+content_language: en
+next_review_due: null
+title: Architecture Reconnaissance Report
+review_cadence: on-status-transition
+last_review_date: 2026-05-15
+last_review_event: Recon shipped 2026-05-15 — broad architecture audit, input to composite namespace deliberation + cascade map recon
+reviewer: Crystalka
 ---
+
 # Architecture Reconnaissance — DualFrontier Engine Audit
 
 > **NOTE (added 2026-05-16, CLEANUP_CASCADE_BRIEF §3 Commit 14 / DRIFT-015):** This report was authored 2026-05-15, before Q-G-1/Q-G-2 LOCKs unified RUNTIME + GPU_COMPUTE into V substrate. References below to `RUNTIME_ARCHITECTURE.md` and `GPU_COMPUTE.md` as Tier 1 LOCKED authority (lines 196-198, 366-368) are **superseded** by [VULKAN_SUBSTRATE.md](../architecture/VULKAN_SUBSTRATE.md) v1.0 LOCKED 2026-05-16 per composite namespace ratification (PR #34 merged 2026-05-16; commits f3b3d68..ca9483d on main). G-series brief references reduce to V0/V1/V2 substrate primitives per Q-G-2 LOCK. Report preserved as pre-V-unification reconnaissance evidence. For current authority navigate to VULKAN_SUBSTRATE.md.
@@ -1765,7 +1772,3 @@ The recon's job is to make the evidence available. The evidence is here.
 | Any commits | **None** — the user pushes when ready |
 
 **Recon end. The next architectural deliberation reads this report as ground truth and decides what to do.**
-
-
-
-

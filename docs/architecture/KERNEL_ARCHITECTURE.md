@@ -1,15 +1,48 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-KERNEL_ARCHITECTURE
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL_ARCHITECTURE
+title: DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)
+supersedes:
+- DOC-A-KERNEL
+last_modified_commit: 6497ed5
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~124 anchors) + HALT-1 decisions — SEED-1/F-9 variant (b) recomposition at d8f1db3 (census-delta 0), Annex A rows A-1..A-4 APPROVED, corrections R1-3..R1-10 at 6497ed5; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+requirements_authored:
+- REQ-K-L1
+- REQ-K-L2
+- REQ-K-L3
+- REQ-K-L4
+- REQ-K-L5
+- REQ-K-L6
+- REQ-K-L7
+- REQ-K-L7_1
+- REQ-K-L8
+- REQ-K-L9
+- REQ-K-L10
+- REQ-K-L11
+- REQ-K-L12
+- REQ-K-L13
+- REQ-K-L14
+- REQ-K-L15
+- REQ-K-L15_1
+- REQ-K-L16
+- REQ-K-L17
+- REQ-K-L18
+- REQ-K-L19
+special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist items [1]+[2]: Annex A approved; REQ-K-L1..K-L19 carried over from DOC-A-KERNEL at this cascade). Part 0 is the sole К-L canon carrier (consolidated verbatim from K_CLOSURE_REPORT §2, resolves session finding N-1; ratified К-L14 exception: full thesis stays in K_CLOSURE_REPORT §1.2 per Q-N-8-2). Successor of DOC-A-KERNEL per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/.'
 ---
+
 # DualFrontier Kernel — Architecture
 
 The native ECS kernel contract: the К-L invariant canon (Part 0) plus the current-truth architecture of storage, identity, boundaries, and the C ABI between the C++20 kernel and the managed layers.

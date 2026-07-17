@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-ARCHITECTURE_RECON_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-ARCHITECTURE_RECON_BRIEF
+version: 1.0
+first_authored: 2026-05-15
+last_modified: 2026-05-15
+content_language: en
+next_review_due: null
+title: Architecture Reconnaissance Brief
+review_cadence: on-status-transition
+last_review_date: 2026-05-15
+last_review_event: Brief authored + executed 2026-05-15 — recon report shipped at docs/reports/ARCHITECTURE_RECON_REPORT.md; pre-deliberation broad architecture audit
+reviewer: Crystalka
 ---
+
 # Architecture Reconnaissance — Research Brief for Claude Code
 
 **Status**: AUTHORED 2026-05-15.

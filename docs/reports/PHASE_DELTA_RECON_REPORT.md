@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT
+version: 1.0
+first_authored: 2026-07-01
+last_modified: 2026-07-01
+content_language: en
+next_review_due: null
+title: "PHASE DELTA RECON REPORT — 2026-07-01 (R1-R8) — pre-brief reconnaissance for the A'.9.1 Phase δ governance closure (base state; METHODOLOGY lesson-entry shapes + #N census + per-lesson source tables + the #N17 transcription source; dashboard #14 shape + Live gate arithmetic; arc-closure surface + phase-hash table + ANALYZER_RULES promotion blocker; F-ledger sweep F-7/F-27 full texts; rider shapes; 12 anomalies + scale estimate)"
+last_modified_commit: f2841c1
+review_cadence: none-historical-record
+last_review_date: 2026-07-02
+last_review_event: Read-only durable recon 2026-07-01 (validate deliberately NOT run — the known write-trap; REGISTER.yaml read directly; every census expression recorded verbatim). Its R2.4 per-lesson source tables and R4.3 phase-hash table were load-bearing brief inputs (brief preamble names them); the §2 re-verify set confirmed at Phase 0 of the execution session (HEAD 4cc5e7e = origin/main, register 2.20 / 279 DOC / 43 EVT — H1 clear). Enrolled at the arc-closure REGISTER cascade.
+reviewer: Crystalka
+special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedent: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT — the first durable-report recon; this is the second). Basis of DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF; substituted for a survey wave per the brief preamble.'
 ---
+
 # PHASE DELTA RECON REPORT -- 2026-07-01
 
 Pre-brief reconnaissance for the A'.9.1 Phase delta governance closure. Read-only session;

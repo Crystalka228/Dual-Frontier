@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-F-TOOLS-GOVERNANCE
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TOOLS-GOVERNANCE
+version: 1.0
+first_authored: 2026-05-12
+last_modified: 2026-05-12
+content_language: en
+next_review_due: null
+title: Tools governance module (register tooling)
+last_modified_commit: 8ee27fe
+review_cadence: on-source-commit+quarterly
+last_review_date: 2026-05-12
+last_review_event: A'.4.5 closure (initial creation)
+reviewer: Crystalka
 ---
+
 # tools/governance — Register tooling module
 
 *Module-local index for governance tooling artifacts. Tier 4 Category F per A'.4.5 governance framework.*

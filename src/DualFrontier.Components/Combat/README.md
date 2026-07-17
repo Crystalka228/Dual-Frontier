@@ -1,4 +1,4 @@
-﻿# Combat
+# Combat
 
 ## Purpose
 Components of the combat subsystem in the spirit of Combat Extended: weapon
@@ -18,14 +18,18 @@ characteristics, armor, magic shields, and ammunition. See GDD 6 "Combat System"
 - [ ] Define the `DamageType` enum (Sharp, Blunt, Heat, Frost, Arcane …) per GDD 6.1.
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-COMPONENTS-COMBAT
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-COMBAT
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Components Combat submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

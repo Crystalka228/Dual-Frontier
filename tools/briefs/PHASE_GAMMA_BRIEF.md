@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF
+version: 1.0
+first_authored: 2026-07-01
+last_modified: 2026-07-01
+content_language: en
+next_review_due: null
+title: PHASE_GAMMA_BRIEF — A'.9.1 Phase γ severity-promotion execution brief (17 rules Info → ratified shipped severities 11 Error + 5 Warning + 1 Suggestion; AnalyzerReleases Release 1.0; .editorconfig priming; ANALYZER_RULES enforcement truth-up; F-12 closure; REGISTER 2.19 → 2.20)
+last_modified_commit: 524dd31
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-01
+last_review_event: Phase γ brief authored by Claude Opus (deliberation session, Phase γ prep; brief frontmatter carries first_authored 2026-07-02 — ahead of the 2026-07-01 execution date, recorded as-is) from the durable recon docs/reports/PHASE_GAMMA_RECON_REPORT.md (R1-R8); F-12 authorization Crystalka 2026-07-01 (DFK019_A = Warning). Executed 2026-07-01 by Claude Code (Fable 5, LOCAL Skarlet), single-pass serial topology, C1-C8 (intended-form C1-C7 + the SYNTH-2 standing-law propagation PATCH inserted per METHODOLOGY §12.7 step 9). Enrolled EXECUTED at the Phase γ REGISTER closure.
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Category D Tier 4 execution-brief convention (precedent: DOC-D-PHASE_BETA_BRIEF, special_case_rationale class). Entry id follows the brief's own frontmatter register_id (DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF) — file self-declaration honored over the shorter β-sibling id form (DOC-D-PHASE_BETA_BRIEF), consistent with the DOC-D-A_PRIME_9_1_* family naming. On-disk .md persisted at C1 (524dd31); enrolled at closure alongside its recon basis, completing the cascade provenance chain."
 ---
+
 ---
 register_id: DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF
 project: Dual Frontier

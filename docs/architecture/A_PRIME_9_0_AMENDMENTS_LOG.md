@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: AUTHORED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_0_AMENDMENTS_LOG
+version: 1.0
+first_authored: 2026-05-24
+last_modified: 2026-05-24
+content_language: mixed
+next_review_due: null
+title: A_PRIME_9_0_AMENDMENTS_LOG — A'.9.0 Reconnaissance Cascade Post-Closure Amendments Log (4 amendments + Option γ Hybrid)
+review_cadence: on-Brief-A'.9.1-deliberation
+last_review_date: 2026-05-24
+last_review_event: "A'.9.0 post-closure amendments authored 2026-05-24 by Claude Opus 4.7 в deliberation session continuation (post-execution review). 4 amendments captured per Crystalka post-execution review: Amendment #1 (Defect 1 — Q-K count divergence 42 vs 45 — §1.2 executive summary omits 3 cross-cutting Q-Ks; effective total = 45 + Q-K-46 = 46 forward для Brief A'.9.1); Amendment #2 (Defect 2 — §2.1 duplication removal — synthesis artifact; Phase 0 cleanup task); Amendment #3 (5-rule deferral DF009/DF012/DF015/DF018/DF020 family от A'.9.1 first-batch к К-L20 LOCK cascade per Mod-OS-coupling rationale; refined first-batch = 13 rules); Amendment #4 (test exclusion principle formalization per Crystalka direction «исключить из тестирования, так как там нечего тестировать, и это лишь будет врать о проделанной работе»; mechanism = xUnit `[Trait(\"Category\", \"ReservedStub\")]` + `dotnet test --filter \"Category!=ReservedStub\"`; DFL025 family analyzer rules proposed; cascade #3 retroactive empirical check Q3 confirmed Possibility A — cascade #3 К-L14 #12 status remains CLEAN). Option γ Hybrid ratified — preserves A'.9.0 closure integrity без rewriting committed history + provides Brief A'.9.1 single forward-input artifact + sets precedent для future post-closure refinements. К-L14 thesis preserved (zero substrate touch; pure governance artifact addition). Lesson #N13 commit integrity discipline applied (honest discovery + clean correction, не silent fixup). 5 Q lock summary: Q1 Option γ / Q2 (c) defer formal METHODOLOGY codification к Brief A'.9.1 closure / Q3 ran cascade #3 retroactive check now / Q4 (b) xUnit Trait + dotnet test filter / Q5 (i) section-per-amendment format."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Post-closure amendments artifact preserving A'.9.0 cascade closure integrity while capturing 4 refinements forward для Brief A'.9.1 deliberation input. Authored 2026-05-24 by Claude Opus 4.7 в continuation of A'.9.0 deliberation session after Crystalka post-execution review surfaced 4 amendments requiring capture before push к origin/main. Option γ Hybrid amendments log ratified over Option α (in-place edit / history rewrite) and Option β (push as-is + Brief A'.9.1 Phase 0 absorbs) — Option γ preserves committed history integrity, captures amendments timestamped + reasoned (governance discipline), provides Brief A'.9.1 single forward-input artifact (report + amendments log together), and sets precedent для future post-closure refinements likely к recur. Authority chain post-amendments: A_PRIME_9_RECONNAISSANCE_REPORT primary deliverable (historically accurate at execution time) + this amendments log (forward refinements; supersedes для forward sequencing where conflicts arise) + Brief A'.9.1 deliberation input = report + amendments log together. К-L14 thesis preservation: zero production code touched / zero substrate API surface modified / zero test code touched / К-L14 evidence count unchanged at 13 (cascade #3 #12 + A'.9.0 #13 baseline preserved). Cascade #3 retroactive empirical check (Q3) ran via Filesystem MCP: tests/ directory listing (29 directories) + 6 pattern searches (Dispatch/Launcher/PawnState/ItemSpawned/TickAdvanced/RenderCommand — 0 matches all 6); Possibility A confirmed (cascade #3 excluded deferred dispatch arms от testing by absence-based discipline); К-L14 #12 status remains CLEAN; forward fragility concern → Amendment #4 mechanism (xUnit Trait + DFL025 analyzer rules) codifies discipline forward."
 ---
+
 # A'.9.0 Reconnaissance Cascade — Post-Closure Amendments Log
 
 **Artifact designation**: `A_PRIME_9_0_AMENDMENTS_LOG`  

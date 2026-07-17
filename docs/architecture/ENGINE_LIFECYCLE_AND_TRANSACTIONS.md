@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.0"
+version: 0.1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: post-ratification closure
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (A3+A8 draft)
+last_modified_commit: 8960085
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A3 (+A8 recovery) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 ---
+
 # Engine Lifecycle and Transactions
 
 **The A3 transition contract, plus the fault-and-recovery portion of A8.** One vocabulary for every state transition the engine performs, one law reconciling "atomic" with "best-effort", one fault taxonomy with named owners.

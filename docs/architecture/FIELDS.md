@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-FIELDS_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FIELDS_V2
+title: Field storage (authored rework; exclusion-not-fallback truth, G-numbering retired)
+supersedes:
+- DOC-A-FIELDS
+last_modified_commit: 96338ff
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (59 anchors; 11 stale predecessor §-pointers found, content TRUE) + HALT-1-ratified batch re-point R3-9..R3-14 at 96338ff (successor section maps; footprint ≈+52%; twelve-entry-point census); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FIELDS (Live → SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; exclusion-not-fallback (session C6) stands.
 ---
+
 # Field Storage
 
 The storage contract for spatial scalar/vector fields: native `RawTileField` layout, the `df_world_field_*` C ABI, the managed `FieldRegistry`/`FieldHandle<T>` bridge, field identity, capability verbs, and lifecycle — the substrate the Vulkan compute layer sits on top of.

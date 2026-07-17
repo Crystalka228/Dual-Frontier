@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-SYNTHESIS_RATIONALE
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.1"
+version: 1.0.1
+first_authored: 2026-05-12
+last_modified: 2026-05-25
+content_language: en
 next_review_due: 2027-05-25
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-SYNTHESIS_RATIONALE
+title: Document Control Register — Synthesis Rationale
+is_meta_entry: true
+meta_role: register_provenance
+review_cadence: on-change+annual
+last_review_date: 2026-05-25
+last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 9 — SYNTHESIS_RATIONALE v1.0 → v1.0.1 PATCH bump для §7 «Cross-references» PROJECT_AXIOMS.md cross-reference addition (Axiom Option (VII) completion). No schema change."
+reviewer: Crystalka
 ---
+
 # Document Control Register — Synthesis Rationale
 
 *Source-standard provenance for the Document Control Register synthesis. Documents which elements were borrowed from which industry standards, why each was selected, and which elements were deliberately rejected.*

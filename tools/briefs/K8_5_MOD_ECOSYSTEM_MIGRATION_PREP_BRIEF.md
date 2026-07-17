@@ -1,15 +1,27 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K8_5
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.1"
+version: 0.1
+first_authored: 2026-05-18
+last_modified: 2026-05-18
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_5
+title: K8.5 — Mod Ecosystem Migration Prep
+last_modified_commit: 4bc34c1
+review_cadence: on-status-transition
+last_review_date: 2026-05-18
+last_review_event: Reclassified AUTHORED → AUTHORED-SKELETON per K8.5 deferral cascade (actual content skeleton-grade; mod authors audience deferred к post-Phase B)
+reviewer: Crystalka
+risks_referenced:
+- RISK-005
+- RISK-007
+special_case_rationale: "Skeleton brief awaiting full brief authoring at proper milestone timing. Content (mod ecosystem migration prep from v2 to v3) premised on external mod authors audience; vanilla mods deferred к Phase B per composite namespace ratification (PR #34, 2026-05-16) means no current audience. Promotion к AUTHORED triggers when Phase B initial M-series sprint begins establishing mod author audience. Deferred from Phase А'.6 slot 2026-05-18 per Crystalka direction."
 ---
+
 # K8.5 — Mod ecosystem migration prep (documentation + guide)
 
 **Status**: SKELETON

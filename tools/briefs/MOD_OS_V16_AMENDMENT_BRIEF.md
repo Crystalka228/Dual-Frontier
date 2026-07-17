@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-MOD_OS_V16_AMENDMENT
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-MOD_OS_V16_AMENDMENT
+version: 1.0
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Mod OS v1.6 — Amendment Brief
+last_modified_commit: 7448267
+review_cadence: on-status-transition
+reviewer: Crystalka
 ---
+
 # MOD_OS v1.6 Amendment — Execution Brief
 
 **Status**: ORIGINAL PROMPT NOT RECOVERABLE — see closure record at `MOD_OS_V16_AMENDMENT_CLOSURE.md` for what was actually executed (12 atomic commits 260103b → ff6e4d4, 2026-05-08).

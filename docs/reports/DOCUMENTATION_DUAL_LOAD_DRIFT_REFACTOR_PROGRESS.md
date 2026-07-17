@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-DOC_DRIFT_REFACTOR_PROGRESS
+project: Dual Frontier
 category: E
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: on-refactor-cascade-execution
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-DOC_DRIFT_REFACTOR_PROGRESS
+version: Live
+first_authored: 2026-06-02
+last_modified: 2026-06-02
+content_language: en
+next_review_due: post-doc-drift-refactor-cascade closure
+title: Documentation Dual-Load Drift — Refactor Progress Report
+review_cadence: on-refactor-cascade-execution
+last_review_date: 2026-06-02
+last_review_event: "Refactor progress record for the Documentation Dual-Load Drift Reconnaissance refactor. Captures all work executed autonomously 2026-06-02 (DD-2 KERNEL roadmap relocation + 6-substrate-doc fencing; DD-1 increment 1 code-truth banners on 6 stale docs; REGISTER cascade rv 2.10→2.14) and itemises remaining work with recommendations (deep DD-1 body rewrites, DD-3 reclassification + doc_role schema, DF→DFK orphan cleanup, ANALYZER_RULES post-A'.9.1-Phase-β, count/version desyncs, pwsh validation + REGISTER_RENDER regen, project.godot decision). Companion к DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT. К-L impact: zero."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: Live progress report (continuously updated as refactor increments land) tracking the multi-cascade execution of the spec/roadmap separation. Category E (docs/reports/), Tier 2 (governance-leverage, companion к the Tier-2 reconnaissance report). Referenced by the DD-1 code-truth banners placed in ARCHITECTURE/THREADING/EVENT_BUS/VULKAN_SUBSTRATE as the remaining-work tracker. pwsh unavailable — frontmatter mirror authored manually; sync_register.ps1 -Validate + render deferred к Crystalka environment.
 ---
+
 ---
 register_id: DOC-E-DOC_DRIFT_REFACTOR_PROGRESS
 category: E

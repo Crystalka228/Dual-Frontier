@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-TIME_AND_CONSISTENCY_MODEL
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.2"
+version: 0.1.2
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: post-ratification closure
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-TIME_AND_CONSISTENCY_MODEL
+title: Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (A4 draft)
+last_modified_commit: 0145f1b
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A4 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 ---
+
 # Time and Consistency Model (the A4 contract)
 
 > **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** This is the missing "A4" contract identified by the Architecture Decomposition & Contracts session 2026-07-15 (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md), HEAD `6f39903`): a single time/visibility model for semantics the corpus currently ships scattered across six-plus documents in local vocabularies, with at least one direct contradiction (§7.1). It becomes normative only upon Crystalka ratification per [FRAMEWORK](../governance/FRAMEWORK.md) §7 (amendment milestone protocol, §7.2). **Until each named amendment lands, any conflict between this draft and a LOCKED document resolves in favor of the LOCKED document** (conflicts are enumerated honestly in §7).
