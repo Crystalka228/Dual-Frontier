@@ -16,7 +16,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-A-CONCURRENCY_AND_MEMORY_MODEL
   path: docs/architecture/CONCURRENCY_AND_MEMORY_MODEL.md
   category: A
@@ -82,7 +82,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.1.0
 - register_id: DOC-A-K_EXTENSIONS_LEDGER
   path: docs/architecture/K_EXTENSIONS_LEDGER.md
   category: A

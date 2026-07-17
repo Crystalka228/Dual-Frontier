@@ -91,7 +91,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -102,7 +102,7 @@ documents:
   last_modified_commit: f5c5e97
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.0.2 PATCH: layer-table kernel row C++20 → C++23, mirroring the К-L1 amendment (KERNEL_ARCHITECTURE v1.1.0, FRAMEWORK §7.2; EVT-2026-07-17-STACK_UPDATE). Single-cell change. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 - register_id: DOC-A-A_PRIME_0_7_AMENDMENT_PLAN
@@ -595,7 +595,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -606,7 +606,7 @@ documents:
   last_modified_commit: 6497ed5
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.1.0 MINOR (behavioral contract change per the §614 versioning law): К-L1 amended C++20 → C++23 under FRAMEWORK §7.2 Tier-1 protocol (operator-ratified 2026-07-17; EVT-2026-07-17-STACK_UPDATE). All seven C++20 sites updated (census: intro line, К-L1 heading/canon/falsifiability/artifacts, Part-4 status row, Rule-1); amendment record added to the К-L1 block honestly stating the MSVC /std:c++23preview status (stable switch = Build Tools 14.52, F-44) and the C-ABI containment rationale (IAC §3); GNU/Clang mode -std=c++23 verified emitted (DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT D6). CMakeLists CMAKE_CXX_STANDARD 20 → 23 in the same commit; native selftest ALL PASSED. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1
