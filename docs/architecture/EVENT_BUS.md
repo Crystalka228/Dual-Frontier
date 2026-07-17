@@ -86,7 +86,7 @@ Sync delivery isolates a faulting subscriber; deferred delivery does not. `Deliv
 
 This is not hypothetical: `DeathEvent` and the Inventory trio are all `[Deferred]` (§2) — the exact events chosen for cross-system ordering are the ones with no per-handler fault isolation. Even the "good" sync path under-reports: its catch logs to `Console.WriteLine` (`:164`), not to any fault sink, so a caught fault is invisible to diagnostics too (§7).
 
-The normative fix — symmetric per-subscriber isolation in both modes, mod-origin faults routed to a fault sink — is CONCURRENCY_AND_MEMORY_MODEL.md §7 (AUTHORED draft), which independently confirmed the same file:line ranges. This document states the fact; that document states the law.
+The normative fix — symmetric per-subscriber isolation in both modes, mod-origin faults routed to a fault sink — is CONCURRENCY_AND_MEMORY_MODEL.md §7 (AUTHORED draft), which independently confirmed the same behavior at overlapping anchors (`:156-166`/`:169-187`). This document states the fact; that document states the law.
 
 ## §6 Capacity truths
 
@@ -94,7 +94,7 @@ The normative fix — symmetric per-subscriber isolation in both modes, mod-orig
 
 **The native Background tier's 10 MB cap is enforced in exactly one function.** `background_queue.cpp` defines `DEFAULT_MAX_BYTES = 10u*1024u*1024u` with an 80% warn threshold (`:15-16`) and an `apply_drop_oldest_locked` helper (`:100-109`) — called **only** inside `df_background_queue_force_coalesce` (`:312-332`). It is **not** on the publish path (`df_bus_publish_background` appends unconditionally, `bus_background.cpp:31-44`) and **not** on the dispatch path (`df_background_queue_dispatch_idle_slot`, `:139-189`, coalesces but checks only a per-event time budget, never the byte cap). Nothing in the tick loop calls `force_coalesce` automatically — §4's live drain touchpoint is `dispatch_idle_slot`. Absent an explicit `force_coalesce` call, the Background queue grows without a size check.
 
-**BACKPRESSURE and EXPAND are accepted parameters, not implemented behavior.** `df_background_queue_configure` validates and stores the `strategy` enum (`:118-137`), but per the in-source comment (`:124-130`, verbatim): "К10.2 default: only DROP_OLDEST is implemented. BACKPRESSURE / EXPAND deferred к К-extensions… Configuration accepted (records intent) но behavior remains drop-oldest." Requesting either strategy silently gets drop-oldest semantics whenever `force_coalesce` happens to run.
+**BACKPRESSURE and EXPAND are accepted parameters, not implemented behavior.** `df_background_queue_configure` validates and stores the `strategy` enum (`:118-137`), but per the in-source comment (`:125-130`, verbatim): "К10.2 default: only DROP_OLDEST is implemented. BACKPRESSURE / EXPAND deferred к К-extensions… Configuration accepted (records intent) но behavior remains drop-oldest […until К-extensions implementation lands]." Requesting either strategy silently gets drop-oldest semantics whenever `force_coalesce` happens to run.
 
 Full resource × operation matrix and the normative backpressure law: CONCURRENCY_AND_MEMORY_MODEL.md §3.3 (AUTHORED draft) — facts here, law there.
 
@@ -117,6 +117,8 @@ Intents target discrete requests (one bullet, one mana charge); a resource drain
 ```
 Open → Active (drain per tick) → Closed
 ```
+
+**Wiring truth:** the lease vocabulary (all four event types) and the `ManaLeaseRegistry`/`ManaLease` types are on disk, but every registry method is an explicit `[ReservedStub]` throwing `NotImplementedException` (Magic Phase 5 roadmap stubs, `ManaLeaseRegistry.cs:40-43,59-62,76-79,93-96,109-112`), and the `ManaSystem` lease handlers are likewise stubs — the reserve-then-consume mechanics below are the designed contract, not executing behavior.
 
 **Open.** The initiator publishes `ManaLeaseOpenRequest` (`DrainPerTick`, `MinDurationTicks`, `MaxDurationTicks`); `ManaLeaseRegistry` (`src/DualFrontier.Systems/Magic/Internal/`) reserves `MinDurationTicks × DrainPerTick` up front (reserve-then-consume) and answers `ManaLeaseOpened` with a `LeaseId` or `ManaLeaseRefused` with a `RefusalReason`. **Active.** Each tick drains `DrainPerTick`; on exhaustion the lease extends or closes. **Closed.** `ManaLeaseClosed` (`[Deferred]`) with a `CloseReason`; the reserve remainder returns to the mana component.
 
@@ -152,5 +154,6 @@ A correction to a verified code claim (file:line, default value, call-site count
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 (this doc) | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R3-15/16/17): §9 gains the wiring-truth sentence — lease mechanics are the designed contract over an all-stub `ManaLeaseRegistry`, mirroring §8's Intent-model disclosure (truth-law repair); §6 comment anchor `:124-130`→`:125-130` with the quote's trailing truncation closed; §5 CMM corroboration reworded to overlapping-anchors truth. |
 | 0.1.0 (this doc) | 2026-07-15 | Corpus rework, light-touch restyle (predecessor HOLDS against code): added the verified fault-isolation asymmetry (sync try/catch vs. deferred uncaught) with pointer to CONCURRENCY_AND_MEMORY_MODEL.md's law; added capacity truths (unbounded managed queues; 10 MB cap enforced only in `force_coalesce`; BACKPRESSURE/EXPAND accepted-but-unimplemented); reframed Diagnostics as observability inversion; anchors refreshed at HEAD `35364c2`. |
 | 2.0.0 | pre-rework | Last state of predecessor `DOC-A-EVENT_BUS` (see historical/) — Native-truth rewrite; LOCKED; code-truth verified HOLDS at this session's audit. |
