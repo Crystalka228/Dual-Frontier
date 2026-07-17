@@ -5,7 +5,7 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop;
 using DualFrontier.Core.Tests.Scheduling.Fixtures;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Bus;

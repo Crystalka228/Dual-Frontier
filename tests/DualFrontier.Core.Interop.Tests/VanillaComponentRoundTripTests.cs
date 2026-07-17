@@ -8,7 +8,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Enums;
 using DualFrontier.Core.Interop;
 using DualFrontier.Core.Interop.Marshalling;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Interop.Tests;

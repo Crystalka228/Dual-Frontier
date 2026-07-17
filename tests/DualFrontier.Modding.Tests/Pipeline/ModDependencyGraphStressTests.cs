@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Modding;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Pipeline;

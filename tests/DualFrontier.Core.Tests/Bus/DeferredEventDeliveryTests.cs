@@ -7,7 +7,7 @@ using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Bus;

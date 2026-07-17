@@ -1,7 +1,7 @@
 using DualFrontier.Runtime.Graphics;
 using DualFrontier.Runtime.Native.Vulkan;
 using DualFrontier.Runtime.Window;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Runtime.Tests.Graphics;

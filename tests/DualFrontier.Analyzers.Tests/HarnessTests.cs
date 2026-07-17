@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using DualFrontier.Analyzers.Rules.Discipline;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 using Verify = DualFrontier.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<
     DualFrontier.Analyzers.Rules.Discipline.DF999GlobalSuppressionBanAnalyzer>;

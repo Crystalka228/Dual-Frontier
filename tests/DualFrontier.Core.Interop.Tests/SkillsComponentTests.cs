@@ -1,7 +1,7 @@
 using System;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Core.Interop;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Interop.Tests;

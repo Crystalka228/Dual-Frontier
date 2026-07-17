@@ -8,7 +8,7 @@ using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Modding.Tests.Fixtures;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Menu;

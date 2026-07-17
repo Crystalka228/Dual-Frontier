@@ -3,7 +3,7 @@ using DualFrontier.Core.Interop.CpuKernels;
 using DualFrontier.Runtime.Compute;
 using DualFrontier.Runtime.Graphics;
 using DualFrontier.Runtime.Window;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Runtime.Tests.Compute;

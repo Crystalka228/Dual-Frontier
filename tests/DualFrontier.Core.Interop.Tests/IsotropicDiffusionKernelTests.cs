@@ -1,6 +1,6 @@
 using System;
 using DualFrontier.Core.Interop.CpuKernels;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Interop.Tests;

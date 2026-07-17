@@ -1,7 +1,7 @@
 using DualFrontier.Runtime.Input;
 using DualFrontier.Runtime.Native.Win32;
 using DualFrontier.Runtime.Window;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Runtime.Tests.Window;

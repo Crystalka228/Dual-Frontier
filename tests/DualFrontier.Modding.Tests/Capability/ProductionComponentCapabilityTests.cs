@@ -1,5 +1,5 @@
 using DualFrontier.Application.Modding;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Capability;

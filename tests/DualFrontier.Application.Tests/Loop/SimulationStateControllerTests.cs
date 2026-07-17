@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using DualFrontier.Application.Loop;
 using DualFrontier.Core.Interop;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Application.Tests.Loop;
@@ -114,7 +114,7 @@ public sealed class SimulationStateControllerTests
             pollInterval: TimeSpan.FromMilliseconds(10));
 
         quiesced.Should().BeTrue();
-        callCount.Should().BeGreaterOrEqualTo(3);
+        callCount.Should().BeGreaterThanOrEqualTo(3);
     }
 
     [Fact]

@@ -2,7 +2,7 @@ using System;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
 using DualFrontier.Core.Math;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Math;

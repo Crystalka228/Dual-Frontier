@@ -10,7 +10,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Scenario;

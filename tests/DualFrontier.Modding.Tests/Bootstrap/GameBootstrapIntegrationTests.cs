@@ -9,7 +9,7 @@ using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Loop;
 using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Modding;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Bootstrap;

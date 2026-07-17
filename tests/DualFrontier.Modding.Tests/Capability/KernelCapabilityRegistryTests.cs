@@ -3,7 +3,7 @@ using System.Reflection;
 using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Capability;

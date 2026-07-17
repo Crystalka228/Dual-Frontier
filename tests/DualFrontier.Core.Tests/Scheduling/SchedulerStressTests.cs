@@ -14,7 +14,7 @@ using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Core.Tests.Scheduling.Fixtures;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Scheduling;
@@ -382,8 +382,8 @@ public sealed class SchedulerStressTests : IDisposable
             // hooking the native idle-dispatch path which is out of scope
             // for a managed-only stress test.
             int expectedBackgroundCeiling = ProducerThreads * PerThreadBackground;
-            s_backgroundCount.Should().BeGreaterOrEqualTo(0);
-            s_backgroundCount.Should().BeLessOrEqualTo(expectedBackgroundCeiling,
+            s_backgroundCount.Should().BeGreaterThanOrEqualTo(0);
+            s_backgroundCount.Should().BeLessThanOrEqualTo(expectedBackgroundCeiling,
                 "Background tier delivery count cannot exceed published count");
 
             bridge.Unsubscribe(fastSid);

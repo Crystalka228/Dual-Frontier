@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using DualFrontier.Application.Display;
 using DualFrontier.Contracts.Display;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Application.Tests.Display;

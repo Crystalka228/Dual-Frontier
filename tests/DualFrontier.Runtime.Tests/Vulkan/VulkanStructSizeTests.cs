@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using DualFrontier.Runtime.Native.Vulkan;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Runtime.Tests.Vulkan;

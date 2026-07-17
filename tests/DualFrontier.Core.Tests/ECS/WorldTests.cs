@@ -1,5 +1,5 @@
 using Xunit;
-using FluentAssertions;
+using AwesomeAssertions;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Tests.Fixtures;
 
