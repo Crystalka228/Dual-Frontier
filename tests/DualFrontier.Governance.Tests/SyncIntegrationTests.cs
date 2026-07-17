@@ -90,14 +90,17 @@ public sealed class SyncIntegrationTests
     }
 
     [Fact]
-    public void Validate_AgainstLiveTree_FailsLoudly()
+    public void Validate_AgainstLiveTree_Succeeds()
     {
-        // The live corpus still runs the forward regime: mirrors lack the v2
-        // required fields and 8 enrolled docs + orphans have no frontmatter, so
-        // validate must be exit-affecting (brief 7.2 -- this failure is CORRECT).
+        // Post-Cascade-B steady state: the live corpus is migrated (frontmatter
+        // is the SoT, CORPUS_CLOSURE_INVERSION_B CD3), so validate against the
+        // live tree must be green. The pre-migration inverse of this test
+        // ("FailsLoudly", Cascade A brief 7.2) was correct until the CD3 flip;
+        // the fail-closed proof it carried lives on in
+        // LoadCorpus_InScopeDocWithoutFrontmatter_IsAnError (synthetic fixture).
         int exit = RegisterSync.Validate(RepoPaths.RepoRoot(), armed: false, TextWriter.Null);
 
-        exit.Should().Be(1, "the un-migrated live tree carries no-frontmatter + missing-v2-field errors");
+        exit.Should().Be(0, "the migrated live corpus carries schema-2.0 frontmatter throughout");
     }
 
     private sealed class TempCorpus : IDisposable

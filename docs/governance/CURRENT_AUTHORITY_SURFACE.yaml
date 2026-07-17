@@ -52,7 +52,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 2.0.0
+  version: 2.0.1
 - register_id: DOC-A-KERNEL_ARCHITECTURE
   path: docs/architecture/KERNEL_ARCHITECTURE.md
   category: A
@@ -755,12 +755,6 @@ documents:
   tier: 2
   lifecycle: Live
   version: Live
-- register_id: DOC-G-REGISTER_RENDER
-  path: docs/governance/REGISTER_RENDER.md
-  category: G
-  tier: 2
-  lifecycle: Live
-  version: 1.0
 - register_id: DOC-G-VALIDATION_REPORT
   path: docs/governance/VALIDATION_REPORT.md
   category: G

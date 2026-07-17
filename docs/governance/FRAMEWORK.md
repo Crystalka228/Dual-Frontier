@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.0.0
+version: 2.0.1
 first_authored: 2026-05-12
-last_modified: 2026-07-15
+last_modified: 2026-07-17
 content_language: en
 next_review_due: 2027-05-25
 title: Document Control Register — Governance Framework
@@ -835,4 +835,6 @@ Gates deploy **measure → align → arm** (§14.2). In Cascade A the semantic g
 
 ### 14.9 Transition status — both regimes, honestly labeled
 
-Cascade A builds the instrument and mutates no governed state; the live corpus still runs the **pre-2.0 forward regime** described in §§0–1, 4.1, 6, 8 (`REGISTER.yaml` hand-edited as SoT; `sync_register.ps1` writing frontmatter mirrors). Those sections remain operative until **Cascade B (F-34)** migrates the corpus to frontmatter-SoT, arms the gates, and retires the PowerShell writers. At that point the forward-regime sections are superseded in fact, and the meta-entry roles update (`DOC-G-REGISTER` `register_source_of_truth` → a derived-archive role; `CURRENT_AUTHORITY_SURFACE.yaml` joins as a meta-entry). Until then the framework describes both regimes deliberately: §14 is the target law, the earlier sections are the operative law, and the discrepancy is intentional and time-boxed to the REGISTER_INVERSION program.
+Cascade A builds the instrument and mutates no governed state; the live corpus ran the **pre-2.0 forward regime** described in §§0–1, 4.1, 6, 8 (`REGISTER.yaml` hand-edited as SoT; `sync_register.ps1` writing frontmatter mirrors) until Cascade B.
+
+**COMPLETED — Cascade B (F-34) executed 2026-07-17** (CORPUS_CLOSURE_INVERSION_B Phase D, on `main` post-PR-#43): the corpus is migrated to frontmatter-as-SoT (337 documents), the semantic gates are armed, and the PowerShell writers (`sync_register.ps1`, `render_register.ps1`) are retired. The forward-regime sections §§0–1, 4.1, 6, 8 are **superseded in fact** and remain in the body as the historical record of the 1.x regime; §14 is the operative law. Meta-entry roles updated: `DOC-G-REGISTER` carries `meta_role: register_derived_archive` (the tool's deterministic self-entry); `CURRENT_AUTHORITY_SURFACE.yaml` joined as a meta-entry (`DOC-G-CURRENT_AUTHORITY_SURFACE`, enrolled through the ruling-(a) standing `REGISTER_SUPPLEMENT.yaml`); `REGISTER_RENDER.md` is historical (generator retired). This completion note is the pre-authorized PATCH recorded by the CORPUS_CLOSURE_INVERSION_B brief (§7/§8); wording is state-recording, not new law.
