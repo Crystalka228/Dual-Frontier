@@ -54,6 +54,13 @@ else
   log ".NET 8 runtime present"
 fi
 run_root ln -sf "$DOTNET_ROOT/dotnet" /usr/local/bin/dotnet
+# Register the install location so framework-dependent apphosts (dotnet tools)
+# resolve the runtime without DOTNET_ROOT in the environment.
+if [ -w /etc ] || [ "${EUID:-$(id -u)}" -eq 0 ] || command -v sudo >/dev/null 2>&1; then
+  run_root mkdir -p /etc/dotnet
+  printf '%s\n' "$DOTNET_ROOT" | run_root tee /etc/dotnet/install_location >/dev/null
+  printf '%s\n' "$DOTNET_ROOT" | run_root tee /etc/dotnet/install_location_x64 >/dev/null
+fi
 
 # --- 3. shell profile (manual/interactive shells) ---
 BLOCK_MARK="dual-frontier sandbox toolchain"
@@ -64,6 +71,9 @@ for f in "$HOME/.bashrc" "$HOME/.profile"; do
       echo "export DOTNET_ROOT=\"$DOTNET_ROOT\""
       echo 'export PATH="$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH"'
       echo "export DOTNET_CLI_TELEMETRY_OPTOUT=1"
+      # Persistent nodeReuse MSBuild nodes inherit redirected pipes and deadlock
+      # tests that spawn child dotnet builds (M74BuildPipelineTests WaitForExit).
+      echo "export MSBUILDDISABLENODEREUSE=1"
       echo "export LD_LIBRARY_PATH=\"$NATIVE_BUILD\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\""
       echo "# <<< $BLOCK_MARK <<<"
     } >> "$f"
@@ -87,6 +97,7 @@ fi
 # --- 5. NuGet warm-up (first build/test becomes instant; cached with the container) ---
 export PATH="$DOTNET_ROOT:$PATH"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export MSBUILDDISABLENODEREUSE=1
 log "restoring NuGet packages"
 dotnet restore "$REPO_ROOT/DualFrontier.sln" >/dev/null
 log "restore done"
@@ -96,6 +107,7 @@ if [ -n "${CLAUDE_ENV_FILE:-}" ] && ! grep -q "DOTNET_ROOT" "$CLAUDE_ENV_FILE" 2
   { echo "export DOTNET_ROOT=\"$DOTNET_ROOT\""
     echo 'export PATH="$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH"'
     echo "export DOTNET_CLI_TELEMETRY_OPTOUT=1"
+    echo "export MSBUILDDISABLENODEREUSE=1"
     echo "export LD_LIBRARY_PATH=\"$NATIVE_BUILD\${LD_LIBRARY_PATH:+:\$LD_LIBRARY_PATH}\""
   } >> "$CLAUDE_ENV_FILE"
 fi
