@@ -36,7 +36,7 @@ special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DR
 | §4 Precedence rule (P1–P3) | [FRAMEWORK.md](../governance/FRAMEWORK.md) §14.7 amendment | FRAMEWORK.md §7.2 schema-amendment |
 | §1, §5, §6 | remain standalone here | — |
 
-Until the §4 fold lands as a FRAMEWORK.md §14.7 amendment, **§4 P1–P3 remain ADVISORY** and conflicts between §14.7 surface members remain formally unarbitrable (§4 already states this — preserved unchanged). Until the §2/§3 folds land, ARCHITECTURE.md and KERNEL_ARCHITECTURE.md continue to cite this document as the cutover-gate authority (the citations upgraded from "(AUTHORED draft)" to LOCKED at ratification).
+Until the §4 fold lands as a FRAMEWORK.md §14.7 amendment, **§4 P1–P3 remain ADVISORY** and conflicts between §14.7 surface members remain formally unarbitrable (§4 already states this — preserved unchanged). Until the §2/§3 folds land, ARCHITECTURE.md and KERNEL_ARCHITECTURE.md continue to cite this document as the cutover-gate authority (their citations upgraded from draft-qualified to LOCKED at ratification).
 
 ---
 
