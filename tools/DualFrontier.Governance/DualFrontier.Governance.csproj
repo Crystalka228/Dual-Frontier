@@ -10,8 +10,9 @@
     <IsPackable>false</IsPackable>
     <!--
       net10.0 per REGISTER_INVERSION brief 7.2 (project-native substrate; SDK
-      10.0.204 + runtime 10.0.8 confirmed present at Phase 0). The rest of the
-      solution targets net8.0; the installed SDK builds both TFMs in one build.
+      10.0.204 + runtime 10.0.8 confirmed present at Phase 0). As of the
+      STACK_UPDATE cascade the whole solution targets net10.0; this explicit
+      override predates that bump and is retained as documentation.
     -->
   </PropertyGroup>
 
