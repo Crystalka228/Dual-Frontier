@@ -36,7 +36,7 @@ The native ECS kernel contract: the К-L invariant canon (Part 0) plus the curre
 
 Series state: **21 invariants** — К-L1..К-L19 (К-L6 SUPERSEDED listed for traceability, excluded from the count) + sub-invariants К-L3.1/К-L7.1/К-L15.1; К-L20 reserved separately. (The Part 0 table carries 22 canonical-text rows — the 21 active plus the superseded К-L6, retained verbatim.) Departures require an explicit re-architecture milestone (К-extensions cascade or supersession event recorded in the register), never spec-level adjustment mid-implementation.
 
-Per-invariant format: status/LOCK-history line → canonical text (verbatim blockquote) → falsifiability commitments → implementation artifacts corrected to the tree at HEAD `35364c2` → DF-rule row stating the shipped analyzer truth per [ANALYZER_RULES.md](./ANALYZER_RULES.md) §4.1 (no rule is claimed Active that does not exist on disk).
+Per-invariant format: status/LOCK-history line → canonical text (verbatim blockquote) → falsifiability commitments → implementation artifacts corrected to the tree at HEAD `35364c2` → DF-rule row stating the shipped analyzer truth per [ANALYZER_RULES.md](./ANALYZER_RULES.md) §1.1 (no rule is claimed Active that does not exist on disk).
 
 ### К-L1 — Native language C++20
 
@@ -46,7 +46,7 @@ Per-invariant format: status/LOCK-history line → canonical text (verbatim bloc
 
 **Falsifiability**: production code regressing к pre-C++20 dialect; a third-party C++ library introduced без explicit deliberation; managed C# bypassing the kernel via an alternative native binding.
 
-**Implementation artifacts**: `native/DualFrontier.Core.Native/CMakeLists.txt:4-5` (`CMAKE_CXX_STANDARD 20` + `CMAKE_CXX_STANDARD_REQUIRED ON`); the kernel tree `native/DualFrontier.Core.Native/{include,src}/` uses C++20 stdlib only.
+**Implementation artifacts**: `native/DualFrontier.Core.Native/CMakeLists.txt:4-5` (`CMAKE_CXX_STANDARD 20` + `CMAKE_CXX_STANDARD_REQUIRED ON`); the kernel tree `native/DualFrontier.Core.Native/{include,src}/` uses C++20 stdlib plus the Vulkan SDK link required by the V1 compute substrate (`CMakeLists.txt:12,99`); no other third-party dependency.
 
 **DF rule**: **DFK001** — Error, enforcing (shipped Release 1.0). Suppression census: exactly 2 DFK-WAIVERs, both DFK001, `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs` (К-L19-sanctioned VK_EXT_debug_utils interop), census-pinned by meta-test.
 
@@ -126,7 +126,7 @@ Per-invariant format: status/LOCK-history line → canonical text (verbatim bloc
 
 **Supersession rationale** (К10.1, 2026-05-18): the К10 arc ratified that К-L9 «Vanilla = mods» does not require a managed scheduler — the invariant survives through the facade pattern while native authority owns kernel scheduling decisions (К-L12 kernel/user split). К-L6 no longer manifests in production; К-L12 carries the invariant forward.
 
-**DF rule**: **DFK006** — never activates; reserved historical entry, no enforcement (ANALYZER_RULES §7 realized decision record).
+**DF rule**: **DFK006** — never activates; reserved historical entry, no enforcement (ANALYZER_RULES §4 realized decision record).
 
 ### К-L7 — Span protocol (parent invariant)
 
@@ -168,7 +168,7 @@ Per-invariant format: status/LOCK-history line → canonical text (verbatim bloc
 
 **Implementation artifacts**: `src/DualFrontier.Core.Interop/NativeWorld.cs` (opaque handle; `Dispose` :486, finalizer :496); `src/DualFrontier.Application/Loop/GameBootstrap.cs:76` (production construction); `tests/DualFrontier.Core.Tests/Fixtures/ManagedTestWorld.cs` (fixture only). Known lifetime gap: deterministic disposal never runs in production — §1.
 
-**DF rule**: **DFK008** — outside Roslyn scope; process-invariant with a git pre-commit hook designated as the alternative mechanism (ANALYZER_RULES §7). No Roslyn rule exists or is scheduled.
+**DF rule**: **DFK008** — outside Roslyn scope; process-invariant with a git pre-commit hook designated as the alternative mechanism (ANALYZER_RULES §4). No Roslyn rule exists or is scheduled.
 
 ### К-L9 — Mod parity («Vanilla = mods»)
 
@@ -258,11 +258,11 @@ Per-invariant format: status/LOCK-history line → canonical text (verbatim bloc
 
 Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causality + Empirical + Falsifiability + Default-inclusion bias + Burden of proof sub-clauses) resides in [K_CLOSURE_REPORT.md §1.2](K_CLOSURE_REPORT.md) — the one К-L text this Part does not carry in full.
 
-**Falsifiability** (tracked in [K_L14_EVIDENCE_DASHBOARD.md](K_L14_EVIDENCE_DASHBOARD.md), 14 verifications at HEAD): six criteria — performance-ceiling decrease under К-extension cascades (NOT falsified; А'.7.x +45% confirming), systematic hard-halt trend (NOT falsified; 1 soft-halt honestly annotated, retroactively closed), alignment-maturity reversal (NOT falsified), atomic-discipline breakdown (NOT falsified), completeness cost exceeding long-horizon payoff (deferred — metric TBD post-Phase B), soft-halt rate over threshold (provisional, threshold TBD per Q-N-8-7).
+**Falsifiability** (tracked in [K_L14_EVIDENCE_DASHBOARD.md](K_L14_EVIDENCE_DASHBOARD.md), verification log through #14 at HEAD — 13 in active log, #10 vacated): six criteria — performance-ceiling decrease under К-extension cascades (NOT falsified; А'.7.x +45% confirming), systematic hard-halt trend (NOT falsified; 1 soft-halt honestly annotated, retroactively closed), alignment-maturity reversal (NOT falsified), atomic-discipline breakdown (NOT falsified), completeness cost exceeding long-horizon payoff (deferred — metric TBD post-Phase B), soft-halt rate over threshold (provisional, threshold TBD per Q-N-8-7).
 
 **Implementation artifacts**: none direct (meta-invariant); manifests through the other invariants' surfaces and the evidence dashboard.
 
-**DF rule**: **DFK014** — outside Roslyn scope; the evidence dashboard is the designated mechanism (ANALYZER_RULES §7). No Roslyn rule exists or is scheduled.
+**DF rule**: **DFK014** — outside Roslyn scope; the evidence dashboard is the designated mechanism (ANALYZER_RULES §4). No Roslyn rule exists or is scheduled.
 
 ### К-L15 — Native bus authority + three-tier event dispatch (parent invariant)
 
@@ -389,7 +389,7 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 
 **Falsifiability**: hardware-tier expansion becoming empirically necessary; Vulkan 1.3 proving insufficient; the fail-fast condition bypassed (silent graphics-queue fallback).
 
-**Implementation artifacts**: `src/DualFrontier.Runtime/Graphics/HardwareCapabilityCheck.cs:23` (`VerifyVulkanApiVersion`, fail-fast `HardwareCapabilityException`); `Graphics/VulkanDevice.cs` (async compute queue family selection); `VulkanInstance.cs:26-40`; `Runtime.cs` (`Runtime.Create` integration). Correction: the predecessor evidence record listed native `vulkan_device.cpp` / `hardware_capability_check.cpp` — the Vulkan layer is **managed** P/Invoke per the substrate L2 commitment; no Vulkan code exists in `native/`. Empirical baseline: AMD RX 7600S. Detail defers to [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md).
+**Implementation artifacts**: `src/DualFrontier.Runtime/Graphics/HardwareCapabilityCheck.cs:23` (`VerifyVulkanApiVersion`, fail-fast `HardwareCapabilityException`); `Graphics/VulkanDevice.cs` (async compute queue family selection); `VulkanInstance.cs:26-40`; `Runtime.cs` (`Runtime.Create` integration). Correction: the predecessor evidence record listed native `vulkan_device.cpp` / `hardware_capability_check.cpp` — device selection and capability checking are **managed** P/Invoke per the substrate L2 commitment; no device-ownership or rendering code exists in `native/`. The kernel does host the V1 compute-dispatch substrate (`compute_dispatch.cpp`, `compute_pipeline.{h,cpp}`, direct vk* calls; `CMakeLists.txt:12,99` links `Vulkan::Vulkan`) against an externally attached device (`VulkanAttachment`). Empirical baseline: AMD RX 7600S. Detail defers to [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md).
 
 **DF rule**: **DFK019_A** — Warning, enforcing (static Vulkan API surface discipline). **DFK019.B** (hardware-tier runtime check) — DEFERRED to the hardware tier expansion cascade (audience-driven).
 
@@ -429,13 +429,13 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 | К-L19 | Hardware tier (Vulkan 1.3 + async compute) | LOCKED (V0.B) | DFK019_A Warning, enforcing; DFK019.B deferred |
 | К-L20 | Mod API forward-compatibility | RESERVED (post-Mod API lock) | DFK020 family RESERVED |
 
-Shipped analyzer census (2026-07-01, ANALYZER_RULES §4.1): **17 detecting rules** at Release 1.0 severities (11 Error + 5 Warning build-breaking under `TreatWarningsAsErrors`; DFL025_B IDE-only); the deferred families have **no implementation on disk**.
+Shipped analyzer census (2026-07-01, ANALYZER_RULES §1.1): **17 detecting rules** at Release 1.0 severities (11 Error + 5 Warning build-breaking under `TreatWarningsAsErrors`; DFL025_B IDE-only); the deferred families have **no implementation on disk**.
 
 ---
 
 ## §1 — Bootstrap flow (two-phase, per К-L5)
 
-**Phase N — native bootstrap (one-shot, atomic).** `DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true)` (`src/DualFrontier.Core.Interop/Bootstrap.cs`) calls `df_engine_bootstrap`: the native side builds the declarative startup task graph (`bootstrap_graph.cpp`), Kahn-sorts it, and executes it in parallel on the thread pool's Bootstrap mode (`thread_pool.cpp`; its Scheduler mode arms after `SignalEngineReady` — [THREADING.md](./THREADING.md)). Single-entry atomic: a fully initialized world handle returns, or the native side rolls back completely and returns null → `BootstrapFailedException`. `useRegistry: true` (production default) constructs the `ComponentTypeRegistry` against the returned handle (§3).
+**Phase N — native bootstrap (one-shot, atomic).** `DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true)` (`src/DualFrontier.Core.Interop/Bootstrap.cs`) calls `df_engine_bootstrap`: the native side builds the declarative startup task graph (`bootstrap_graph.cpp`), Kahn-sorts it, and executes it in parallel on the thread pool's Bootstrap mode (`thread_pool.cpp`; its Scheduler mode is designed to arm after `SignalEngineReady` (`transition_to_scheduler_mode`, `thread_pool.cpp:63`) — the flip is selftest-exercised only today (`selftest.cpp:1699`); [THREADING.md](./THREADING.md)). Single-entry atomic: a fully initialized world handle returns, or the native side rolls back completely and returns null → `BootstrapFailedException`. `useRegistry: true` (production default) constructs the `ComponentTypeRegistry` against the returned handle (§3).
 
 **Phase M — managed composition.** Production entry point: `GameBootstrap.CreateLoop(PresentationBridge bridge, string modsRoot = "mods")` (`src/DualFrontier.Application/Loop/GameBootstrap.cs:70`). Verified sequence:
 
@@ -476,7 +476,7 @@ for (int i = 0; i < lease.Count; i++)
 }
 ```
 
-The predecessor §1.7 taught `new EntityId(lease.Indices[i], 0)` and production followed it (ten systems plus `GameBootstrap.cs:241`; `SpanLease.Pairs` fabricates `Version = 1` with an honest caveat, `SpanLease.cs:76-84,112`) — a defect, not a convention (session verdicts C10/N-22). The fix — a parallel read-only versions view (`df_world_acquire_versions`) under the same acquire/release discipline, plus the `EntityId.IsValid`/native `is_alive` alignment — is specified in IDENTITY_AND_ABI_CONTRACT.md (AUTHORED draft) §2. Until that ratifies, the rule stands: **managed code must not construct an `EntityId` whose `Version` it did not receive from the world.**
+The predecessor §1.7 taught `new EntityId(lease.Indices[i], 0)` and production followed it (nine systems plus `GameBootstrap.cs:241`; `SpanLease.Pairs` fabricates `Version = 1` with an honest caveat, `SpanLease.cs:76-84,112`) — a defect, not a convention (session verdicts C10/N-22). The fix — a parallel read-only versions view (`df_world_acquire_versions`) under the same acquire/release discipline, plus the `EntityId.IsValid`/native `is_alive` alignment — is specified in IDENTITY_AND_ABI_CONTRACT.md (AUTHORED draft) §2. Until that ratifies, the rule stands: **managed code must not construct an `EntityId` whose `Version` it did not receive from the world.**
 
 **Fields.** Tile-field storage (`RawTileField`, K9) is a separate dense surface with its own string-id registry and span discipline (`src/DualFrontier.Core.Interop/{FieldRegistry,FieldHandle}.cs`, native `tile_field.cpp`) — contract in [FIELDS.md](./FIELDS.md); GPU-side writes bind to pipeline slots per К-L7.1.
 
@@ -495,7 +495,7 @@ Load-order-dependent numeric ids **must not cross the save boundary** — the sa
 
 Verified against csproj truth at HEAD; the table under Rule 3 is the enforceable statement.
 
-**Rule 1 — kernel standalone.** `DualFrontier.Core.Native` (C++) contains no project-specific business logic: pure ECS storage, scheduler/bus/field primitives, bootstrap graph, thread pool; C++20 stdlib only. It could compile and ship standalone.
+**Rule 1 — kernel standalone.** `DualFrontier.Core.Native` (C++) contains no project-specific business logic: pure ECS storage, scheduler/bus/field primitives, bootstrap graph, thread pool; C++20 stdlib plus the Vulkan SDK link required by the V1 compute substrate (`CMakeLists.txt:12,99`) — no other third-party dependency. It could compile and ship standalone.
 
 **Rule 2 — federated P/Invoke surface.** All P/Invoke to `DualFrontier.Core.Native.dll` lives in `DualFrontier.Core.Interop`; all P/Invoke to OS/driver DLLs (vulkan-1, user32, kernel32) lives in `DualFrontier.Runtime.Native` (`VkApi.cs`, `Win32Api.cs`). No other project declares `[DllImport]` (verified census). This is the DFK002 federated model (A'.9.1 Phase β §8); the predecessor's single-surface wording predates the Runtime split.
 
@@ -509,20 +509,22 @@ Verified against csproj truth at HEAD; the table under Rule 3 is the enforceable
 | Core | Contracts, Core.Interop |
 | Events | Contracts, Components |
 | Systems | Contracts, Core, Components, Events, AI |
-| AI | (leaf domain library) |
+| AI | Contracts, Components |
+| Persistence | Contracts, Components |
+| Crypto.Future | — (reserved; no references) |
 | Runtime | Core.Interop |
 | Application | Contracts, Core, Components, Core.Interop, Events, Systems, AI |
 | Launcher | Application, Runtime (+ copies the native DLL) |
 
 Domain projects reach the kernel through Core.Interop wrapper types (`NativeWorld`, `SpanLease<T>`, `WriteBatch<T>`), never through raw `NativeMethods` (`internal`). The predecessor's "Domain projects don't know about Native existence — they see only `IGameContext`" is retired: no `IGameContext` type exists, and `Components → Core.Interop` is a legal, table-recorded edge (`InternedString`/`NativeMap` field types). Whether domain data structs *should* reference the interop assembly is an open design question (`Kernel.Abstractions` extraction, session report §8 AD-4), not a rule violation.
 
-**Rule 4 — mods compile against Contracts only.** Every mod csproj (all vanilla + Example) references exactly `DualFrontier.Contracts` (verified); mods reach the kernel exclusively through `IModApi` (implementation: `RestrictedModApi`), and the mod ALC refuses kernel assemblies at runtime.
+**Rule 4 — mods compile against Contracts only.** Every mod csproj (all vanilla + Example) references exactly `DualFrontier.Contracts` (verified); mods reach the kernel exclusively through `IModApi` (implementation: `RestrictedModApi`), and the mod ALC provides per-mod collectible isolation plus shared-ALC type identity — it does **not** police references (`ModLoadContext.cs:29-54`; no refusal list — MODDING.md §5); the Contracts-only surface is compile-time convention (ARCHITECTURE.md §2).
 
 **Rule 5 — reverse-invocation discipline.** Native never invokes managed code except through the registered batched C ABI trampoline (`[UnmanagedCallersOnly]` `ManagedSystemDispatcher.OnBatch`, registered via `SchedulerAdapter.Register`) — the single sanctioned reverse path required by К-L12/К-L15 batched-callback dispatch. Ad-hoc reverse P/Invoke, synchronous per-system callbacks, and unregistered function pointers remain forbidden. (Replaces the predecessor's absolute "no callbacks к managed" Rule 5 and its Part 8 "never reverse P/Invoke" restatement, which contradicted Part 0 К-L12 with zero in-document reconciliation — Annex A row A-1. Anchors: `ManagedSystemDispatcher.cs:75`, `SchedulerAdapter.cs:22`.)
 
 ## §5 — C ABI conventions (error semantics)
 
-The Interop layer has two surfaces: the C ABI (`df_capi.h`, `bus_native.h`, `event_type_registry.h`, `mod_unload.h`, `pipeline_slot.h` and peers — 154 `DF_API` entry points at HEAD) and the managed bridge wrappers.
+The Interop layer has two surfaces: the C ABI (`df_capi.h`, `bus_native.h`, `event_type_registry.h`, `mod_unload.h`, `pipeline_slot.h` and peers — 205 `DF_API` declarations across the `include/` headers at HEAD) and the managed bridge wrappers.
 
 **C ABI surface (immutable law).** Every `extern "C"` function returns a status code or sentinel — shipped convention: `0` = failure / not found, `1` = success / present, out-of-range inputs return 0 rather than crashing (`df_capi.h:38-41`) — and swallows all exceptions via `catch (...)` at the boundary (72 sites in `capi.cpp`). The ABI never propagates C++ exceptions across the DLL boundary; the managed side never relies on native exception propagation. Non-negotiable: an uncaught C++ exception across the boundary is undefined behaviour. Reverse-direction symmetry: `[UnmanagedCallersOnly]` callbacks absorb every managed exception before returning (`ManagedSystemDispatcher.OnBatch` catch-all).
 
@@ -564,7 +566,7 @@ Ratification-critical change register for this rework: what the predecessor said
 | [EVENT_BUS.md](./EVENT_BUS.md) | defers-to | Bus mechanics, tiers, diagnostics; К-L15/К-L15.1 texts stay here |
 | [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md) | defers-to | Mod lifecycle chains, capabilities; К-L18 text stays here |
 | [THREADING.md](./THREADING.md) | defers-to | Thread census, execution contexts, barriers |
-| [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) | defers-to | GPU substrate — the other half of the native foundation: the kernel knows nothing of rendering (no Vulkan code in `native/`), the Runtime knows nothing of ECS, and the managed Application layer orchestrates both bridges |
+| [VULKAN_SUBSTRATE.md](./VULKAN_SUBSTRATE.md) | defers-to | GPU substrate — the other half of the native foundation: the kernel knows nothing of rendering (no device ownership or rendering in `native/`; the kernel's Vulkan surface is the К-L7.1 compute-dispatch substrate over an attached device), the Runtime knows nothing of ECS, and the managed Application layer orchestrates both bridges |
 | [ECS.md](./ECS.md) | constrains | Span teaching surface must follow §2's corrected identity example |
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | constrains | Umbrella layer map must match §4's csproj-verified table |
 | [ANALYZER_RULES.md](./ANALYZER_RULES.md) | cites | Shipped rule registry backing every DF-rule row |
@@ -583,5 +585,6 @@ Amendments per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7.2 (Tier 1 protocol
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.2 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R1-3..R1-10): К-L19/Rule-1/cross-ref Vulkan-in-native truth (kernel hosts the V1 compute-dispatch substrate; no device ownership/rendering); Rule 4 ALC-refusal claim retired (isolation + type identity, not reference policing); Rule 3 table corrected (AI → Contracts, Components) and completed (Persistence, Crypto.Future rows); 5 stale ANALYZER_RULES §-pointers retargeted (§4.1→§1.1, §7→§4); DF_API census 154→205 declarations; К-L14 log wording (13 active, #10 vacated); thread-pool Scheduler-mode arming qualified selftest-only; version-0 fabrication census ten→nine systems. |
 | 0.1.1 | 2026-07-17 | SEED-1 / F-9 resolution per HALT-1 variant (b) (CORPUS_CLOSURE_INVERSION_B): Part 0 headline recomposed keeping the ratified count 21 — К-L6 SUPERSEDED listed for traceability, excluded from the count (restores K_CLOSURE_REPORT §Part-0-composition "−1 SUPERSEDED" convention the rework had inverted); 22-row table note added. Census "21 (invariant\|final)" delta: 0. |
 | 0.1.0 | 2026-07-15 | Authored rework successor of DOC-A-KERNEL v2.6.2: Part 0 consolidated as sole К-L canonical carrier (from K_CLOSURE_REPORT §2) with corrected artifact lists and shipped DF-rule truth; §1–§6 rewritten to code truth at HEAD 35364c2; Annex A (было→стало) rows A-1..A-4 applied. |
