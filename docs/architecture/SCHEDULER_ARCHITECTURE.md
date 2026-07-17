@@ -137,7 +137,7 @@ Adjacent kernel primitives registered alongside the scheduler but outside its de
 The cross-layer bridge that lets the native scheduler dispatch managed system batches — К-L12's "C ABI with batched callbacks" — is one boundary crossing per phase per origin, not per system:
 
 - **C ABI**: `df_scheduler_register_managed_callback(cb, user_data)` and `df_scheduler_dispatch_managed_batch(batch)` (`df_capi.h:823-824`).
-- **Batch struct**: `NativeManagedBatch { uint* SystemIds; uint Count; float Delta; void* UserData; }` — blittable, pointer + primitives only (`src/DualFrontier.Core.Interop/Marshalling/NativeManagedBatch.cs:11-19`).
+- **Batch struct**: `NativeManagedBatch { uint* SystemIds; uint Count; float Delta; void* UserData; }` — blittable, pointer + primitives only (`src/DualFrontier.Core.Interop/Marshalling/NativeManagedBatch.cs:11-21`).
 - **Managed entry point**: `ManagedSystemDispatcher.OnBatch`, an `[UnmanagedCallersOnly(CallConvCdecl)]` static method (`src/DualFrontier.Application/Scheduler/ManagedSystemDispatcher.cs:74-75`). It resolves the dispatcher instance from the `GCHandle` passed as `UserData`, wraps the id pointer in a zero-copy `ReadOnlySpan<uint>`, and invokes the pluggable `BatchExecutor` delegate.
 - **Registration**: `SchedulerAdapter.Register(dispatcher)` passes the unmanaged function pointer plus the dispatcher's GCHandle to the native registry (`src/DualFrontier.Application/Scheduler/SchedulerAdapter.cs:22-29`).
 
@@ -213,7 +213,7 @@ Scheduler-graph mutation happens only through the mod pipeline's prepare/commit 
 The precondition is К-L18 (canonical text: KERNEL_ARCHITECTURE.md Part 0): mod load/unload requires **simulation paused + pipeline slots quiescent**. Enforcement is layered:
 
 - Managed guard: the pipeline refuses `Apply`/`UnloadAll` while running (M7.1 `_isRunning` guard with canonical messages).
-- Programmatic helper: `SimulationStateController` — `PauseAsync` → `WaitForQuiescenceAsync(timeout)` → mod operation → `ResumeAsync` (`src/DualFrontier.Application/Loop/SimulationStateController.cs:71,82,95`; default quiescence timeout 5 s, `:38`). Pause state reaches the native side through `df_scheduler_set_sim_paused` (`native/DualFrontier.Core.Native/src/mod_unload.cpp:36`).
+- Programmatic helper: `SimulationStateController` — `PauseAsync` → `WaitForQuiescenceAsync(timeout)` → mod operation → `ResumeAsync` (`src/DualFrontier.Application/Loop/SimulationStateController.cs:71,110,82`; default quiescence timeout 5 s, `:38`). Pause state reaches the native side through `df_scheduler_set_sim_paused` (`native/DualFrontier.Core.Native/src/mod_unload.cpp:36`).
 - Native precondition (below): the unload primitive verifies both conditions itself and refuses to act otherwise.
 
 Honesty note: the native paused flag defaults to **paused** (`mod_unload.cpp:17`) as a К10.2-era stub suitable for the pipeline's own default-paused discipline; wiring it to live sim-thread state end-to-end is К10.3-annotated wire-up, not completed law.
@@ -226,7 +226,7 @@ Honesty note: the native paused flag defaults to **paused** (`mod_unload.cpp:17`
 - **T-sequence** (T0–T7 per `mod_unload.h:6-16`): fast-tier unsubscribe + drop (fast events are never stored, so in-flight-dropped is structurally 0), normal-tier drain-to-commit-boundary then unsubscribe, background-tier unsubscribe with queue contents preserved (untargeted persistence — events outlive their publisher's subscribers), then capability revocation / shm cleanup / wake-registry teardown / access-declaration unregistration.
 - **Honest deltas from the old Item 32 text**: (a) the "single cross-tier critical section" no longer exists — after the 2026-05-21 bus state split each tier owns its own mutex, each unsubscribe acquires only its tier's lock, and the in-code comment explicitly records that the cross-tier critical-section concept is gone and that cross-tier atomicity should be reconsidered at wire-up (`mod_unload.cpp:74-79`); (b) T4–T7 are **stubs** — capability revocation, shm/affinity cleanup, wake-registry teardown (Q-N-48 order: Explicit → Init → StateChange → Event → Timer), and access-declaration unregistration all report zero pending К10.3 wire-up (`mod_unload.cpp:108-117`).
 
-Production call site: unload chain **Step 3.5** (`ModIntegrationPipeline.cs:651-693`) — invokes the primitive via `ModUnloadInterop.UnloadModNativeState` (`:668`), surfaces its error messages as pipeline warnings, then tears down the managed `ModSubScheduler` (`:692`). Because production registers zero native subscribers today (per К-L15 wiring truth in EVENT_BUS.md), the primitive's teardown work is currently vacuous — it becomes load-bearing at the bus/scheduler cutovers. Step 3.6 is the analogous V-resource cleanup placeholder (vacuous success today; chain law in MOD_OS_ARCHITECTURE.md).
+Production call site: unload chain **Step 3.5** (`ModIntegrationPipeline.cs:651-693`) — invokes the primitive via `ModUnloadInterop.UnloadModNativeState` (`:668`), surfaces its error messages as pipeline warnings, then tears down the managed `ModSubScheduler` (`:690`). Because production registers zero native subscribers today (per К-L15 wiring truth in EVENT_BUS.md), the primitive's teardown work is currently vacuous — it becomes load-bearing at the bus/scheduler cutovers. Step 3.6 is the analogous V-resource cleanup placeholder (vacuous success today; chain law in MOD_OS_ARCHITECTURE.md).
 
 ## §5 Verification surface
 
@@ -266,4 +266,5 @@ PATCH for anchor refresh and wiring-truth corrections (every `file:line` claim r
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review correction (CORPUS_CLOSURE_INVERSION_B, D1 R1-11): three anchor nano-drifts — `NativeManagedBatch.cs:11-19`→`:11-21` (UserData at :20); `SimulationStateController.cs:71,82,95`→`:71,110,82` (WaitForQuiescenceAsync at :110, narrative order); sub-scheduler teardown `:692`→`:690`. |
 | 0.1.0 | 2026-07-15 | Initial authored rework: law/model/wiring successor of KERNEL_FULL_NATIVE_SCHEDULER.md; deliberation record (46 items, Q-N surface, predictions, risk register) retired to `historical/`; §3 corrects the predecessor's "native scheduler live" self-status to installed-not-deciding |
