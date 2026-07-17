@@ -172,7 +172,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.0.1
+  version: 2.0.2
 - register_id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
   path: docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md
   category: B

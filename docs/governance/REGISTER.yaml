@@ -1244,16 +1244,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.0.1
+  version: 2.0.2
   first_authored: 2026-06-29
-  last_modified: 2026-06-29
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2027-06-11
   title: Development hygiene
   last_modified_commit: 27807f7
   review_cadence: on-change+annual
-  last_review_date: 2026-06-11
-  last_review_event: 'Standing-Law cascade C5 (9da4760) — full rewrite v1.0 → v2.0.0 MAJOR to post-Godot operational truth per STANDING_LAW_CASCADE_BRIEF §7-W3 (D4) + §8 truth law: repo map; project-set truth (32 sln projects = 12 src + 17 tests-folder + 2 tools + 1 mods; 6 Vanilla.* mods + 13 Fixture.RegularMod_* disk-only BY DESIGN); verified-only build commands (managed sln; native via VS-bundled cmake full path — NOT on PATH; Launcher; Native.dll PreserveNewest copy mechanics); tooling reality (PS 5.1 / pwsh absent / powershell-yaml 0.4.12; sync_register.ps1 -Validate unconditional VALIDATION_REPORT.md write at line 380 → commit-folding protocol; -Sync forbidden outside ratified register cascades; render staleness recorded explicitly); branch/push policy (executor never pushes; 41 merged stale branches → F-11); Skarlet environment; Godot status (project.godot tracked = F-5 Crystalka-owned). v1.0 phantoms purged (build-all.sh/.ps1 wrappers, DualFrontier.Presentation projects) per drift report §6.3.5 near-rewrite class. Closes finding F-6.'
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase E — v2.0.1 → v2.0.2 PATCH: §6 .NET bullet updated to the landed stack truth (projects target net10.0; repo-root global.json added pinning SDK 10.0.204 with rollForward latestFeature per the Q1-beta operator ruling of 2026-07-17) and the «do not add global.json pinning without deliberation» prohibition replaced by the record that the deliberation occurred (EVT-2026-07-17-STACK_UPDATE). Single-bullet amendment; §1-§5/§7 untouched. Prior context: Standing-Law cascade C5 (9da4760) — full rewrite v1.0 → v2.0.0 MAJOR to post-Godot operational truth (repo map, project-set truth, verified-only build commands, tooling reality, branch/push policy, Skarlet environment, Godot status; closes F-6); DRAFTS_RATIFICATION-era PATCH v2.0.0 → v2.0.1.'
   reviewer: Crystalka
   risks_referenced:
   - RISK-011
