@@ -10,7 +10,7 @@
 schema_version: "1.0"
 register_version: "2.32"
 last_modified: "2026-07-17"
-last_modified_commit: "717641b"
+last_modified_commit: "98906ea"
 last_modified_by: "Claude Code"
 
 # === Audit calendar (Q13 anchor) ===
@@ -2485,7 +2485,7 @@ documents:
     version: "1.0"
     first_authored: "2026-07-16"
     last_modified: "2026-07-17"
-    last_modified_commit: "PENDING-COMMIT-CORPUS-CLOSURE-RATIFICATION"
+    last_modified_commit: "98906ea"
     content_language: en
     review_cadence: on-cascade-execution
     last_review_date: "2026-07-17"

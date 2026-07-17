@@ -1,28 +1,16 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-G-REGISTER_RENDER
-category: G
-tier: 2
-lifecycle: Live
-owner: Crystalka
-version: "1.0"
-next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
----
-# DualFrontier Document Control Register — Rendered View
+﻿# DualFrontier Document Control Register — Rendered View
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 
-*Last generated: 2026-07-15  |  Schema version: 1.0  |  Register version: 2.31*
+*Last generated: 2026-07-17  |  Schema version: 1.0  |  Register version: 2.32*
 
 ---
 
 ## Statistics
 
-- Total documents: 319
-- Tier 1: 62  |  Tier 2: 20  |  Tier 3: 153  |  Tier 4: 84  |  Tier 5: 0
-- Per category: A=58  |  B=7  |  C=3  |  D=90  |  E=74  |  F=72  |  G=8  |  H=2  |  I=0  |  J=5
+- Total documents: 321
+- Tier 1: 62  |  Tier 2: 20  |  Tier 3: 155  |  Tier 4: 84  |  Tier 5: 0
+- Per category: A=58  |  B=7  |  C=3  |  D=91  |  E=75  |  F=72  |  G=8  |  H=2  |  I=0  |  J=5
 - Open CAPA: 0  |  Active risks: 12  |  Stale documents: 0
 
 ---
@@ -32,8 +20,8 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - [Category A (58 documents)](#category-A)
 - [Category B (7 documents)](#category-B)
 - [Category C (3 documents)](#category-C)
-- [Category D (90 documents)](#category-D)
-- [Category E (74 documents)](#category-E)
+- [Category D (91 documents)](#category-D)
+- [Category E (75 documents)](#category-E)
 - [Category F (72 documents)](#category-F)
 - [Category G (8 documents)](#category-G)
 - [Category H (2 documents)](#category-H)
@@ -74,16 +62,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`6888246`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-ANALYZER_RULES_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ANALYZER_RULES.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification.
+- **Special-case rationale**: Superseded by DOC-A-ANALYZER_RULES_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ANALYZER_RULES.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification.
 
 ### DOC-A-ANALYZER_RULES_V2 — Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)
 
 - **Path**: `docs/architecture/ANALYZER_RULES.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`6888246`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (DOC-A-ARCHITECTURE_TYPE_SYSTEM + DOC-A-MAX_ENG_REFACTOR_TRACK_B → historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM — resolves session finding N-13. Family authority AS SHIPPED: 17 verified rules, Warning-tier + DFK-WAIVER law, 13 deferred with named gates; [SystemAccess]-completeness re-registered as a DEFERRED candidate. Verified at HEAD 35364c2 (census corrections: 57 test methods; stale SanctionedInteropSurface comment flagged).
+- **Last modified**: 2026-07-17 (`edb267a`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 
 ### DOC-A-ARCHITECTURE — Dual Frontier architecture (umbrella) (historical; superseded by authored rework)
 
@@ -92,7 +80,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fe27fbe`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-ARCHITECTURE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-ARCHITECTURE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-ARCHITECTURE_TYPE_SYSTEM — Architecture Type System — Attribute-as-Declaration Verification (historical; DF_TS program retired — superseded by the ANALYZER_RULES authored rework)
 
@@ -106,11 +94,11 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-ARCHITECTURE_V2 — Dual Frontier architecture (umbrella; authored rework)
 
 - **Path**: `docs/architecture/ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fe27fbe`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ARCHITECTURE (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Current-truth candidate verified against code at HEAD 35364c2; becomes LOCKED authority upon Crystalka ratification per FRAMEWORK §7; predecessor remains the last-ratified reference.
+- **Last modified**: 2026-07-17 (`f5c5e97`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 
 ### DOC-A-COMBO_RESOLUTION — Combo damage resolution (historical; reclassified Category J — docs/mechanics)
 
@@ -154,17 +142,17 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`6888246`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-CONTRACTS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/CONTRACTS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-CONTRACTS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/CONTRACTS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 - **Risks referenced**: RISK-003
 
 ### DOC-A-CONTRACTS_V2 — Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
 
 - **Path**: `docs/architecture/CONTRACTS.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`6888246`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-CONTRACTS (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Evolution rules tightened (new IGameServices property = breaking-for-implementers; record init-field caveated); version gate corrected against code (ContractsVersion.IsCompatible: exact-major both directions + minor.patch floor, production-wired — deeper than the session report's one-directional claim). Verified at HEAD 35364c2.
+- **Last modified**: 2026-07-17 (`8896d32`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
 
 ### DOC-A-ECS — Entity Component System (historical; superseded by authored rework)
 
@@ -173,16 +161,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fe27fbe`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-ECS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ECS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-ECS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ECS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-ECS_V2 — Entity Component System (authored rework; version-0 identity defect documented)
 
 - **Path**: `docs/architecture/ECS.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fe27fbe`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-ECS (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Fixes the session C10 teaching defect (no EntityId(index,0) fabrication in examples; defect + fix documented per IDENTITY_AND_ABI_CONTRACT draft §2). Verified against code at HEAD 35364c2; predecessor remains the last-ratified reference.
+- **Last modified**: 2026-07-17 (`5e1f412`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ECS per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; session C10 teaching defect fixed (no EntityId(index,0) fabrication in examples).
 
 ### DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS — Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (A3+A8 draft)
 
@@ -200,16 +188,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fcbfe5b`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-EVENT_BUS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/EVENT_BUS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-EVENT_BUS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/EVENT_BUS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-EVENT_BUS_V2 — Event buses (authored rework; fault-isolation asymmetry and capacity truths pinned)
 
 - **Path**: `docs/architecture/EVENT_BUS.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fcbfe5b`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-EVENT_BUS (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Light-touch restyle of the code-truth v2.0.0 body plus session N-21/N-32 facts with anchors: deferred-handler faults uncaught vs sync per-subscriber catch; managed queues unbounded; Background 10MB cap only in force_coalesce (BACKPRESSURE/EXPAND unimplemented); observability inversion; [Immediate] unused. Verified at HEAD 35364c2.
+- **Last modified**: 2026-07-17 (`1556a18`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 
 ### DOC-A-EXECUTION_AUTHORITY_MATRIX — Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (A0 draft)
 
@@ -236,16 +224,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fcbfe5b`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-FHE_INTEGRATION_CONTRACT_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FHE_INTEGRATION_CONTRACT.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-FHE_INTEGRATION_CONTRACT_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FHE_INTEGRATION_CONTRACT.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-FHE_INTEGRATION_CONTRACT_V2 — FHE Integration Contract (authored rework; dormant-contract role, D1-D8 preserved)
 
 - **Path**: `docs/architecture/FHE_INTEGRATION_CONTRACT.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fcbfe5b`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-FHE_INTEGRATION_CONTRACT (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Light passport restyle; D1-D8 preserved faithfully as ratified-and-dormant law ('The dormant period is unbounded.' verbatim); footprint pinned to verified reality (2 empty reserved interfaces, zero consumers; D7 fourth version field = forward spec, not present wiring); ISOLATION refs redirected to the MOD_OS merge successor. Verified at HEAD 35364c2.
+- **Last modified**: 2026-07-17 (`d66e02e`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FHE_INTEGRATION_CONTRACT per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; dormant-contract role, D1-D8 preserved ('The dormant period is unbounded.').
 
 ### DOC-A-FIELDS — Field Storage (historical; superseded by authored rework)
 
@@ -254,17 +242,17 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fcbfe5b`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-FIELDS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FIELDS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone
+- **Special-case rationale**: Superseded by DOC-A-FIELDS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FIELDS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone
 - **Risks referenced**: RISK-003
 
 ### DOC-A-FIELDS_V2 — Field storage (authored rework; exclusion-not-fallback truth, G-numbering retired)
 
 - **Path**: `docs/architecture/FIELDS.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fcbfe5b`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-FIELDS (Live → SUPERSEDED, now historical/) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Session C6 fix (transparent CPU/GPU promise removed — exclusion-not-fallback per К-L19; CpuKernels = equivalence oracles); superseded G-numbering and stale VULKAN v2.0 pin killed; sync-dispatch-blocks-until-fence truth; two new code-verified corrections (FieldRegistrationConflict reserved-not-shipped; mod-unload field sweep designed-but-unwired). Verified at HEAD 35364c2.
+- **Last modified**: 2026-07-17 (`96338ff`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FIELDS (Live → SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; exclusion-not-fallback (session C6) stands.
 
 ### DOC-A-FRAMEWORK — Document Control Register — Governance Framework
 
@@ -302,7 +290,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`6888246`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ISOLATION.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ISOLATION.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-K_CLOSURE_REPORT — DualFrontier К-Series Formal Closure Report
 
@@ -311,7 +299,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: mixed
 - **Last modified**: 2026-06-12 (`3fc90c5`)
 - **Next review due**: 2027-05-23
-- **Special-case rationale**: Tier 1 AUTHORED override per Q-N-8-4 LOCKED 2026-05-23 amendment к Meta-Q1 Session 1 LOCKED commitment. К-closure report carries load-bearing material (К-L14 canonical text §1.2 + К-Lxx invariants enumeration §2 + К-L14 evidence baseline 9 verifications §3 + К-extensions designation §4.3 + Lessons promotion §6 + Roslyn rules §7 + forward sequencing §9) = architectural authority surface, NOT pure history. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy. Initial lifecycle AUTHORED (not LOCKED); LOCKED transition deferred к downstream review when forward evidence accumulates (e.g., 6 months post-closure across К-extensions cascades + V substrate evolution + A'.9 Roslyn analyzer milestone + Mod API lock). К-L14 canonical text content (per Q-N-8-2 verbatim) is LOCKED within AUTHORED document body — sub-element LOCK within parent AUTHORED parallel к К-L7+К-L7.1 / К-L15+К-L15.1 sub-invariant precedent.
+- **Special-case rationale**: Tier 1 AUTHORED override per Q-N-8-4 LOCKED 2026-05-23 amendment к Meta-Q1 Session 1 LOCKED commitment. К-closure report carries load-bearing material (К-L14 canonical text §1.2 + К-Lxx invariants enumeration §2 + К-L14 evidence baseline 9 verifications §3 + К-extensions designation §4.3 + Lessons promotion §6 + Roslyn rules §7 + forward sequencing §9) = architectural authority surface, NOT pure history. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy. Initial lifecycle AUTHORED (not LOCKED); LOCKED transition deferred к downstream review when forward evidence accumulates (e.g., 6 months post-closure across К-extensions cascades + V substrate evolution + A'.9 Roslyn analyzer milestone + Mod API lock). К-L14 canonical text content (per Q-N-8-2 verbatim) is LOCKED within AUTHORED document body — sub-element LOCK within parent AUTHORED parallel к К-L7+К-L7.1 / К-L15+К-L15.1 sub-invariant precedent. Canon-carrier update per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [2]): the К-Lxx canonical texts now live in DOC-A-KERNEL_ARCHITECTURE Part 0 (LOCKED v1.0.0, sole carrier — resolves session finding N-1); this report remains the К-closure evidence record and the ratified home of the К-L14 full thesis (§1.2, Q-N-8-2 exception).
 - **Requirements authored**: REQ-K-L14, REQ-K-L7_1, REQ-K-L12, REQ-K-L13, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18
 
 ### DOC-A-K_EXTENSIONS_LEDGER — К-extensions Cascade Ledger — Dual Frontier
@@ -348,19 +336,19 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fe27fbe`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-KERNEL_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
-- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19
+- **Special-case rationale**: Superseded by DOC-A-KERNEL_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed; REQ-K-L1..K-L19 authorship carried over to DOC-A-KERNEL_ARCHITECTURE at the same cascade (checklist item [2]).
 - **Risks referenced**: RISK-001, RISK-002, RISK-003, RISK-004, RISK-013
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING, CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST, CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN, CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
 
 ### DOC-A-KERNEL_ARCHITECTURE — DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)
 
 - **Path**: `docs/architecture/KERNEL_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fe27fbe`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-KERNEL (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Part 0 consolidates the К-L canonical texts verbatim from K_CLOSURE_REPORT §2 (resolves session finding N-1) with Annex A было→стало rows A-1..A-4 for ratification. Verified against code at HEAD 35364c2; REQ-K-L* transfer from DOC-A-KERNEL is a ratification-checklist item; predecessor remains the last-ratified reference.
+- **Last modified**: 2026-07-17 (`6497ed5`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist items [1]+[2]: Annex A approved; REQ-K-L1..K-L19 carried over from DOC-A-KERNEL at this cascade). Part 0 is the sole К-L canon carrier (consolidated verbatim from K_CLOSURE_REPORT §2, resolves session finding N-1; ratified К-L14 exception: full thesis stays in K_CLOSURE_REPORT §1.2 per Q-N-8-2). Successor of DOC-A-KERNEL per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/.
+- **Requirements authored**: REQ-K-L1, REQ-K-L2, REQ-K-L3, REQ-K-L4, REQ-K-L5, REQ-K-L6, REQ-K-L7, REQ-K-L7_1, REQ-K-L8, REQ-K-L9, REQ-K-L10, REQ-K-L11, REQ-K-L12, REQ-K-L13, REQ-K-L14, REQ-K-L15, REQ-K-L15_1, REQ-K-L16, REQ-K-L17, REQ-K-L18, REQ-K-L19
 
 ### DOC-A-KERNEL_FULL_NATIVE_SCHEDULER — К10 Native Kernel Scheduler — Architecture Specification (historical; superseded by authored rework)
 
@@ -369,7 +357,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: mixed
 - **Last modified**: 2026-07-15 (`fe27fbe`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-SCHEDULER_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_FULL_NATIVE_SCHEDULER.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: К10 specification document. Sister к K10_DELIBERATION_STATE.md (Project file, not register-tracked). Major amendment landed 2026-05-17 (v1.0 → v2.0) per К10 deliberation arc — 9 S surfaces ratified, 8 new К-L invariants + 2 sub-invariants (К-L6 SUPERSEDED + К-L7.1 sub + К-L12 through К-L19), 46 items, TLA+ scope. Tier 1 LOCKED status promoted at this enrollment. Requirements (К-L12 through К-L19) not yet enrolled as REQ entries; deferred к К-closure report (А'.8).
+- **Special-case rationale**: Superseded by DOC-A-SCHEDULER_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_FULL_NATIVE_SCHEDULER.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: К10 specification document. Sister к K10_DELIBERATION_STATE.md (Project file, not register-tracked). Major amendment landed 2026-05-17 (v1.0 → v2.0) per К10 deliberation arc — 9 S surfaces ratified, 8 new К-L invariants + 2 sub-invariants (К-L6 SUPERSEDED + К-L7.1 sub + К-L12 through К-L19), 46 items, TLA+ scope. Tier 1 LOCKED status promoted at this enrollment. Requirements (К-L12 through К-L19) not yet enrolled as REQ entries; deferred к К-closure report (А'.8).
 - **Risks referenced**: RISK-002, RISK-003, RISK-004, RISK-013
 
 ### DOC-A-MAX_ENG_REFACTOR_TRACK_B — Track B Activation — Type System Verification (historical; DF_TS program retired — superseded by the ANALYZER_RULES authored rework)
@@ -388,7 +376,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`6888246`)
 - **Next review due**: null
-- **Special-case rationale**: Partially executed migration plan retired per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: executed K8.x portions are historical record; unexecuted forward state already lives in docs/ROADMAP.md «Native foundation tracks» (DD-2 precedent). superseded_by: DOC-C-ROADMAP — Crystalka acknowledgement of this scalar target is a ratification-checklist item (EVT-R4). Full text preserved at docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md.
+- **Special-case rationale**: Partially executed migration plan retired per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: executed K8.x portions are historical record; unexecuted forward state already lives in docs/ROADMAP.md «Native foundation tracks» (DD-2 precedent). superseded_by: DOC-C-ROADMAP — scalar target ACKNOWLEDGED by Crystalka at CORPUS_CLOSURE_INVERSION_B HALT-1 (checklist item [4]; EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION). Full text preserved at docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md.
 - **Risks referenced**: RISK-004
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
 
@@ -399,18 +387,18 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`6888246`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_OS_ARCHITECTURE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_OS_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 - **Risks referenced**: RISK-002, RISK-004, RISK-005, RISK-006
 - **CAPA referenced**: CAPA-2026-05-09-K8.2-V2-REFRAMING
 
 ### DOC-A-MOD_OS_ARCHITECTURE — Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
 
 - **Path**: `docs/architecture/MOD_OS_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`6888246`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor MERGING DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Cross-doc conflicts resolved by code truth at HEAD 35364c2: one unload chain (ModIntegrationPipeline order), one fault timing (accumulate-then-drain-at-next-Apply), one capability grammar (compiled regex), 15-member ValidationErrorKind; atomic-vs-best-effort reframed via the ENGINE_LIFECYCLE draft commit/reclaim split. Predecessors remain the last-ratified reference.
+- **Last modified**: 2026-07-17 (`4a36abe`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.
 
 ### DOC-A-MOD_PIPELINE — Mod Pipeline (historical; merged into the MOD_OS authored rework)
 
@@ -419,7 +407,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`6888246`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_PIPELINE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_PIPELINE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-MODDING — Writing mods (historical; superseded by authored rework)
 
@@ -428,17 +416,17 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`6888246`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-MODDING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MODDING.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-MODDING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MODDING.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 - **Risks referenced**: RISK-005
 
 ### DOC-A-MODDING_V2 — Writing mods (authored rework; guide, non-normative — every example passes the real v3 schema)
 
 - **Path**: `docs/architecture/MODDING.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`6888246`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-MODDING (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Guide role (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); manifest examples corrected to the real v3 schema; fictitious ALC refusal list replaced by the verified boundary (ModLoadContext.cs:29-54 — no blocklist); quickstart rebuilt on the fixture-proven shared-mod pattern. Verified at HEAD 35364c2.
+- **Last modified**: 2026-07-17 (`6a67da5`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 
 ### DOC-A-OWNERSHIP_TRANSITION — Golem ownership transitions (historical; reclassified Category J as GOLEM_OWNERSHIP — docs/mechanics)
 
@@ -456,16 +444,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fcbfe5b`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-PERFORMANCE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/PERFORMANCE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-PERFORMANCE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/PERFORMANCE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-PERFORMANCE_V2 — Performance (authored rework; current-substrate budgets, enforcement honesty — no CI, PerformanceGate fictional)
 
 - **Path**: `docs/architecture/PERFORMANCE.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fcbfe5b`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-PERFORMANCE (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Session C12 rewrite: budgets re-attached to the native substrate; managed-era rows and fictional caches dropped (pathfinding cache never built; SpatialGrid unwired — renamed GetInRadius, zero production instantiation); enforcement honesty fenced (no CI anywhere, PerformanceGate/PerformanceGates.cs nonexistent — AD-5 open obligation); verified benchmark census. Verified at HEAD 35364c2.
+- **Last modified**: 2026-07-17 (`6c696db`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-PERFORMANCE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; enforcement honesty stands (no CI; PerformanceGate fictional — AD-5 open obligation).
 
 ### DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT — Persistence Snapshot Contract — snapshot boundary, inclusion/exclusion, identity serialization law (A7 draft skeleton; invariants only)
 
@@ -515,11 +503,11 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-A-SCHEDULER_ARCHITECTURE — Scheduler Architecture — К10 substrate model and current/target wiring (authored rework)
 
 - **Path**: `docs/architecture/SCHEDULER_ARCHITECTURE.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fe27fbe`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-KERNEL_FULL_NATIVE_SCHEDULER (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE — law/model/wiring distilled; deliberation record (46 items, Q-N-1..56, predictions, risks) preserved verbatim in the historical original. English-only (predecessor was mixed). Verified against code at HEAD 35364c2; predecessor remains the last-ratified reference.
+- **Last modified**: 2026-07-17 (`3993dc9`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-KERNEL_FULL_NATIVE_SCHEDULER per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE — law/model/wiring distilled; the deliberation record (46 items, Q-N-1..56, predictions, risks) is preserved verbatim in the historical original.
 
 ### DOC-A-SYNTHESIS_RATIONALE — Document Control Register — Synthesis Rationale
 
@@ -537,16 +525,16 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fe27fbe`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-THREADING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/THREADING.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7).
+- **Special-case rationale**: Superseded by DOC-A-THREADING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/THREADING.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 
 ### DOC-A-THREADING_V2 — Multithreading (authored rework; absorbs the FEEDBACK_LOOPS engine cycle/snapshot rule)
 
 - **Path**: `docs/architecture/THREADING.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fe27fbe`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-THREADING (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Absorbs the engine cycle/snapshot rule from DOC-A-FEEDBACK_LOOPS (gameplay residue moves to DOC-J-FEEDBACK_LOOPS at cascade R4 — a benign duplicate-statement window until then; LOCKED predecessor prevails). Verified against code at HEAD 35364c2; predecessor remains the last-ratified reference.
+- **Last modified**: 2026-07-17 (`ff24980`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
 
 ### DOC-A-TIME_AND_CONSISTENCY_MODEL — Time & Consistency Model — canonical time vocabulary, visibility table, determinism classes D0/D1/D2, RNG law (A4 draft)
 
@@ -573,17 +561,17 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`fcbfe5b`)
 - **Next review due**: null
-- **Special-case rationale**: Superseded by DOC-A-VULKAN_SUBSTRATE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/VULKAN_SUBSTRATE.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases. Additionally supersedes G-series briefs DOC-D-G0..G9 per Q-G-2 LOCK + CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16). Additionally supersedes DOC-A-VISUAL_ENGINE + DOC-A-GODOT_INTEGRATION (visual-runtime authority moved to docs/architecture/historical/) per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16). Bidirectional integrity per FRAMEWORK §3.3.2.
+- **Special-case rationale**: Superseded by DOC-A-VULKAN_SUBSTRATE_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/VULKAN_SUBSTRATE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Unified V substrate per Q-G-1 LOCK (COMPOSITE_NAMESPACE_DELIBERATION_STATE.md §3.1). Supersedes prior DOC-A-RUNTIME (RUNTIME_ARCHITECTURE.md) + DOC-A-GPU_COMPUTE (GPU_COMPUTE.md); single Vulkan substrate covers rendering + compute use cases. Additionally supersedes G-series briefs DOC-D-G0..G9 per Q-G-2 LOCK + CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16). Additionally supersedes DOC-A-VISUAL_ENGINE + DOC-A-GODOT_INTEGRATION (visual-runtime authority moved to docs/architecture/historical/) per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16). Bidirectional integrity per FRAMEWORK §3.3.2.
 - **Risks referenced**: RISK-004, RISK-013
 
 ### DOC-A-VULKAN_SUBSTRATE_V2 — Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
 
 - **Path**: `docs/architecture/VULKAN_SUBSTRATE.md`
-- **Tier**: 1  |  **Lifecycle**: AUTHORED  |  **Version**: 0.1.0
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.0.0
 - **Owner**: Crystalka  |  **Content language**: en
-- **Last modified**: 2026-07-15 (`fcbfe5b`)
-- **Next review due**: post-ratification closure
-- **Special-case rationale**: Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored-rework successor of DOC-A-VULKAN_SUBSTRATE (now historical/, SUPERSEDED) per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Slot machine/oracle framing preserved verbatim; §3.4 uint32 field-id sketch corrected to the shipped string-id ABI; six additional verification corrections pinned (no transfer queue/async aliasing; check_fences stub; native df_vulkan_unload_mod_resources symbol absent — managed placeholder only; waitIdle census; bit-packed flags budget; V1 zero production consumers). Predecessor supersession chain (GODOT/VISUAL_ENGINE) untouched. Verified at HEAD 35364c2.
+- **Last modified**: 2026-07-17 (`5d71a8e`)
+- **Next review due**: 2027-Q3
+- **Special-case rationale**: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 
 ---
 
@@ -610,18 +598,18 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 ### DOC-B-MAXIMUM_ENGINEERING_REFACTOR — Maximum Engineering Refactor — Discipline Escalation Brief
 
 - **Path**: `docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.1.1
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.1.2
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-07-15 (`1b420e0`)
+- **Last modified**: 2026-07-17 (`717641b`)
 - **Next review due**: 2027-05-10
 - **CAPA referenced**: CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
 
 ### DOC-B-METHODOLOGY — Dual Frontier development methodology
 
 - **Path**: `docs/methodology/METHODOLOGY.md`
-- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.14.1
+- **Tier**: 1  |  **Lifecycle**: LOCKED  |  **Version**: 1.14.2
 - **Owner**: Crystalka  |  **Content language**: mixed
-- **Last modified**: 2026-07-15 (`1b420e0`)
+- **Last modified**: 2026-07-17 (`717641b`)
 - **Next review due**: 2027-06-11
 - **Requirements authored**: REQ-Q-A07-6
 - **Risks referenced**: RISK-007, RISK-008, RISK-009, RISK-010, RISK-011, RISK-014
@@ -682,6 +670,7 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Tier**: 2  |  **Lifecycle**: Live  |  **Version**: Live
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-15 (`9b4968a`)
+- **Next review due**: 2026-Q4
 
 ---
 
@@ -880,6 +869,14 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-05-16 (`PENDING-INITIAL`)
+
+### DOC-D-CORPUS_CLOSURE_INVERSION_B_BRIEF — CORPUS_CLOSURE_INVERSION_B -- Execution Brief (closes the 2026-07-15 corpus rework: full-corpus Wave-R review D1, HALT-1-ratified corrections, 14 A-successors AUTHORED -> LOCKED 1.0.0, register 2.31 -> 2.32; then REGISTER_INVERSION Cascade B (F-34) schema-2.0 migration on post-merge main)
+
+- **Path**: `tools/briefs/CORPUS_CLOSURE_INVERSION_B_BRIEF.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-17 (`98906ea`)
+- **Special-case rationale**: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series + F-10 + F-29 + CODEX DOC-D Tier-3 briefs). Standalone execution brief carrying this cascade's authority; enrolled at the design tier per the D-brief convention. Entry id follows the brief's own frontmatter register_id; the brief FILE frontmatter is hand-authored, not synced. The PENDING-COMMIT self-reference is the single sanctioned new placeholder of this cascade (brief §12), backfilled at the render commit.
 
 ### DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF — Documentation Dual-Load Drift Reconnaissance — Brief
 
@@ -1651,6 +1648,14 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 - **Owner**: Crystalka  |  **Content language**: en
 - **Last modified**: 2026-07-14 (`PENDING-INITIAL`)
 - **Special-case rationale**: Durable audit/closure record enrolled DOC-E Tier 3 per the docs/audit/ convention (precedents: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, docs/audit AUDIT_PASS_* discovery/closure artifacts). Retrospective 'what was done' remediation closure for the Codex closed-PR review inventory; REGISTER_RENDER.md regeneration + frontmatter-mirror sync + last_modified_commit backfill pending sync_register.ps1 on a PowerShell + powershell-yaml host (unavailable in the Linux session).
+
+### DOC-E-CORPUS_REWORK_REVIEW_REPORT — Corpus Rework Review Report — Phase A of CORPUS_CLOSURE_INVERSION_B (D1: ~1014 anchors over 19 successors + 7 drafts; SEED-1/SEED-2 + 60 agent + 4 orchestrator findings; zero NOT-READY; HALT-1 decision basis)
+
+- **Path**: `docs/reports/CORPUS_REWORK_REVIEW_REPORT.md`
+- **Tier**: 3  |  **Lifecycle**: EXECUTED  |  **Version**: 1.0
+- **Owner**: Crystalka  |  **Content language**: en
+- **Last modified**: 2026-07-17 (`0380dbf`)
+- **Next review due**: null
 
 ### DOC-E-CPP_KERNEL_BRANCH_REPORT — C++ Kernel Branch Report
 
@@ -2704,19 +2709,19 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION | 2026-05-10 | CLOSED | Methodology corpus (METHODOLOGY/PIPELINE_METRICS/MAXIMUM_ENGINEERING_REFACTOR) |
 | CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT | 2026-05-12 | CLOSED | A'.0.5 INVENTORY.md baseline ~135 .md files. A'.4.5 deliberation pre-flight |
 | CAPA-2026-05-13-K8.3-PREMISE-MISS | 2026-05-13 | CLOSED | K8.3 v2.0 brief authoring (2026-05-13, Opus deliberation, commit f7e6d52) |
-| CAPA-2026-05-14-K8.34-API-SURFACE-MISS | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 (2026-05-14) prescribed `new ComponentTypeRegistry()` — |
 | CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 §6.5 split the storage cutover into 12 incremental |
-| CAPA-2026-05-16-V-SUBSTRATE-SUPERSESSION | 2026-05-16 | CLOSED | Audit DRIFT-009 (S4) + DRIFT-013 (S3) + DRIFT-014 (S3) + DRIFT-015 (S3): |
+| CAPA-2026-05-14-K8.34-API-SURFACE-MISS | 2026-05-14 | CLOSED | K8.3+K8.4 combined brief v1.0 (2026-05-14) prescribed `new ComponentTypeRegistry()` — |
 | CAPA-2026-05-16-MOD-API-V3-AUTHORITY | 2026-05-16 | CLOSED | Audit DRIFT-011 (S4) + DRIFT-012 (S4): MOD_OS_ARCHITECTURE §4.6 + §4.6.3 framed |
+| CAPA-2026-05-16-V-SUBSTRATE-SUPERSESSION | 2026-05-16 | CLOSED | Audit DRIFT-009 (S4) + DRIFT-013 (S3) + DRIFT-014 (S3) + DRIFT-015 (S3): |
 | CAPA-2026-05-16-POWER-DELETION-PROPAGATION | 2026-05-16 | CLOSED | Audit DRIFT-006 (S4) + DRIFT-007 (S4) + DRIFT-008 (S4): CONTRACTS + EVENT_BUS |
-| CAPA-2026-05-16-LIVE-STATE-CLOSURE-PROTOCOL-GAP | 2026-05-16 | CLOSED | Audit DRIFT-001 (S4): MIGRATION_PROGRESS.md last_updated 2026-05-12 pre-A'.5; |
 | CAPA-2026-05-16-ISOLATION-AUTHORITY-RESTORATION | 2026-05-16 | CLOSED | Audit DRIFT-003 (S5) + DRIFT-005 (S5): README + ISOLATION + THREADING + PERFORMANCE |
+| CAPA-2026-05-16-LIVE-STATE-CLOSURE-PROTOCOL-GAP | 2026-05-16 | CLOSED | Audit DRIFT-001 (S4): MIGRATION_PROGRESS.md last_updated 2026-05-12 pre-A'.5; |
 | CAPA-2026-05-18-K8_5-DRIFT | 2026-05-18 | CLOSED | K8.5 brief reconnaissance per Lesson #22 (read existing code before brief authoring) surfaced |
-| CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #1» (Bug #1). |
-| CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #2» (Bug #2). |
-| CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #3» (Bug #3). |
 | CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT | 2026-05-21 | CLOSED | К10.3 v2 PR #41 closure 2026-05-20 ratified «1022/1022 PASS» but Crystalka's |
 | CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION | 2026-05-21 | CLOSED | Crystalka stress investigation 2026-05-21 surfaced 2 GameBootstrapIntegrationTests |
+| CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #3» (Bug #3). |
+| CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #1» (Bug #1). |
+| CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN | 2026-05-21 | CLOSED | Crystalka BUS_DESIGN_INVESTIGATION 2026-05-21 §«Источник проблемы #2» (Bug #2). |
 
 <a name="global-audit-trail"></a>
 ## Global: Audit trail
@@ -2724,58 +2729,59 @@ register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
 | Date | Event | Type | Commits |
 |---|---|---|---|
 |  |  | execution_milestone |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+|  |  | execution_milestone |  |
 |  |  |  |  |
 |  |  |  |  |
 |  |  | execution_milestone |  |
 |  |  | execution_milestone |  |
 |  |  | execution_milestone |  |
 |  |  | execution_milestone |  |
+|  |  |  |  |
+|  |  |  |  |
 |  |  | execution_milestone |  |
-|  |  | execution_milestone |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
 |  |  |  |  |
 | 2026-05-10 | K-L3.1 bridge formalization deliberation | deliberation_milestone | pre-2df5921 |
-| 2026-05-10 | K-L3.1 amendment plan execution (A'.1.K) | amendment_landing | 2df5921..0789bd4 |
-| 2026-05-10 | A'.0.5 documentation reorganization + cross-ref refresh | execution_milestone | 27523ac..4e332bb |
 | 2026-05-10 | A'.0.7 methodology pipeline restructure deliberation | deliberation_milestone | pre-86b721a |
-| 2026-05-10 | A'.0.7 methodology rewrite landing (A'.1.M) | amendment_landing | 86b721a..9d4da64 |
 | 2026-05-10 | A'.3 push to origin | governance_event | all backlog through 38c2e19 |
+| 2026-05-10 | A'.0.5 documentation reorganization + cross-ref refresh | execution_milestone | 27523ac..4e332bb |
+| 2026-05-10 | A'.0.7 methodology rewrite landing (A'.1.M) | amendment_landing | 86b721a..9d4da64 |
+| 2026-05-10 | K-L3.1 amendment plan execution (A'.1.K) | amendment_landing | 2df5921..0789bd4 |
 | 2026-05-11 | A'.4 K9 field storage execution | execution_milestone | ce4dba8..80c9ba6 |
-| 2026-05-12 | A'.4.5 document control register deliberation | deliberation_milestone | 7448267..411c284 |
 | 2026-05-12 | A'.4.5 register execution closure | execution_milestone | TBD |
+| 2026-05-12 | A'.4.5 document control register deliberation | deliberation_milestone | 7448267..411c284 |
 | 2026-05-13 | K8.3 v2.0 execution halt — storage premise mismatch; first post-A'.4.5 stop-escalate-lock invocation | governance_event | f7e6d52..6c79914 |
 | 2026-05-14 | A'.5 K8.3+K8.4 combined milestone v2.0 closure — atomic storage cutover landed; managed World retired from production | execution_milestone | 24e5f56..PENDING-COMMIT-4 |
 | 2026-05-16 | Cleanup cascade closing 18 of 19 audit findings; 5 CAPAs opened+closed within same governance event; DRIFT-016 halted per SC-4 | governance_event | e68d799..PENDING-COMMIT-16 |
-| 2026-05-17 | Brief skeleton framework — schema extension AUTHORED-SKELETON + 4 К/А' forward planning skeleton briefs authored | governance_event | 15ffa0a..PENDING-COMMIT-8 |
 | 2026-05-17 | К10 deliberation amendments application — METHODOLOGY v1.8 + KERNEL_FULL_NATIVE_SCHEDULER v2.0 landed; new Tier 1 LOCKED enrollment | amendment_landing | 8c3cf5a..PENDING-COMMIT-5 |
-| 2026-05-18 | V0.A sub-milestone closure — V substrate foundation prerequisite layer (Win32 + Vulkan instance + device + queue families + validation); первая Vulkan code на проекте; unblocks K10.3 brief restart pathway after V0.B compute plumbing closure | execution_milestone | 1a1c772..PENDING-COMMIT-V0_A-CLOSURE |
-| 2026-05-18 | K8.5 deferral cascade — DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON, Phase A'.6 slot SKIPPED, milestone deferred к post-Phase B | governance_event | 4bc34c1..PENDING-COMMIT-K8_5-CLOSURE |
-| 2026-05-18 | К10.1 sub-milestone closure — kernel scheduler core (17 of 46 К10 items) | execution_milestone | f439b74..PENDING-COMMIT-K10_1-CLOSURE |
+| 2026-05-17 | Brief skeleton framework — schema extension AUTHORED-SKELETON + 4 К/А' forward planning skeleton briefs authored | governance_event | 15ffa0a..PENDING-COMMIT-8 |
 | 2026-05-18 | V0.B sub-milestone closure — V substrate foundation completion (swapchain + render pass + framebuffer + command infrastructure + minimal graphics pipeline + memory allocator + SPIR-V toolchain + compute pipeline plumbing + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); К-L19 hardware tier invariant LOCKED с full implementation backing; smoke test exit criteria operational на real К-L19 hardware; К10.3 brief restart pathway opens | execution_milestone | d2c6627..PENDING-COMMIT-V0_B-CLOSURE |
 | 2026-05-18 | К10.2 sub-milestone closure — native bus three-tier dispatch + mod ALC lifecycle (8 of 46 К10 items; 25 cumulative) | execution_milestone | a677388..PENDING-COMMIT-K10_2-CLOSURE |
-| 2026-05-19 | V1 sub-milestone closure (PR #40) — V substrate primitive: scalar field + isotropic + anisotropic diffusion compute shader operational; AnisotropicDiffusionKernel CPU reference + diffusion.comp GLSL + DiffusionPushConstants alignment-audited (S-LOCK-7) + native VkCmdDispatch с per-field shadow VkBuffers + V1DiffusionPipeline managed wrapper + V1DiffusionPipeline Runtime factories + CPU/GPU equivalence gates (isotropic uniform D + corner reflective + decay-only + combined D+K + iteration count Theory + anisotropic wire-path + insulator column + insulator-with-gap + long-run mass-conservation 50-iter) + V1 200×200 isotropic + anisotropic wire-path smoke scenes + V1 dispatch latency benchmark + Compute MODULE.md V1 extension + V1 manual visual verification protocol; fifth consecutive zero-hard-gate-halt cascade on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1) — К-L14 thesis fifth verification accumulated. | execution_milestone | 9cbaed3..PENDING-COMMIT-V1-CLOSURE |
+| 2026-05-18 | К10.1 sub-milestone closure — kernel scheduler core (17 of 46 К10 items) | execution_milestone | f439b74..PENDING-COMMIT-K10_1-CLOSURE |
+| 2026-05-18 | V0.A sub-milestone closure — V substrate foundation prerequisite layer (Win32 + Vulkan instance + device + queue families + validation); первая Vulkan code на проекте; unblocks K10.3 brief restart pathway after V0.B compute plumbing closure | execution_milestone | 1a1c772..PENDING-COMMIT-V0_A-CLOSURE |
+| 2026-05-18 | K8.5 deferral cascade — DOC-D-K8_5 reclassified AUTHORED → AUTHORED-SKELETON, Phase A'.6 slot SKIPPED, milestone deferred к post-Phase B | governance_event | 4bc34c1..PENDING-COMMIT-K8_5-CLOSURE |
 | 2026-05-19 | V0.C.1 sub-milestone closure — V substrate R.1 (first textured quad) + R.4 (input system) operational; PngDecoder + AssetManager + VulkanSampler + TextureUploader + sprite shaders + VulkanSpritePipeline + SpriteRenderer + 6 input event types + Win32 dispatch + Runtime facade composition; smoke test exit criteria operational на real К-L19 hardware (820 frames at 164 FPS, validation log 0 errors); V0.C.2 brief restart pathway opens | execution_milestone | 4c4be8f..PENDING-COMMIT-V0_C_1-CLOSURE |
+| 2026-05-19 | V1 sub-milestone closure (PR #40) — V substrate primitive: scalar field + isotropic + anisotropic diffusion compute shader operational; AnisotropicDiffusionKernel CPU reference + diffusion.comp GLSL + DiffusionPushConstants alignment-audited (S-LOCK-7) + native VkCmdDispatch с per-field shadow VkBuffers + V1DiffusionPipeline managed wrapper + V1DiffusionPipeline Runtime factories + CPU/GPU equivalence gates (isotropic uniform D + corner reflective + decay-only + combined D+K + iteration count Theory + anisotropic wire-path + insulator column + insulator-with-gap + long-run mass-conservation 50-iter) + V1 200×200 isotropic + anisotropic wire-path smoke scenes + V1 dispatch latency benchmark + Compute MODULE.md V1 extension + V1 manual visual verification protocol; fifth consecutive zero-hard-gate-halt cascade on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1) — К-L14 thesis fifth verification accumulated. | execution_milestone | 9cbaed3..PENDING-COMMIT-V1-CLOSURE |
 | 2026-05-19 | V0.C.2 sub-milestone closure — V substrate R.2 (batched sprite renderer 10K sprites at 60+ FPS target) + R.3 (TileMap + Camera2D 200×200 grid at 60+ FPS target) operational; VertexBufferRing N-frame ring buffer + SpriteIndexBuffer pre-populated uint16 pattern + Camera2D standard scope + TileMap one-sprite-per-tile + SpriteRenderer batched BeginFrame/Submit/EndFrame rewrite + AtlasRegion.FromPixels hardening + Runtime facade extension с Camera + RecordSpritesFrame batched + multi-cycle render pass helpers; V0 substrate close achieved per Q8 ratification — V1 + V2 brief authoring + Phase B M-cycle vanilla migration unblocked (latter also gated on Roslyn analyzer A'.9); 4 consecutive zero-hard-gate-halt cascades on V substrate authoring stream (V0.A → V0.B → V0.C.1 → V0.C.2) — К-L14 thesis empirically validated | execution_milestone | b4084f1..PENDING-COMMIT-V0_C_2-CLOSURE |
 | 2026-05-20 | К10.3 v2 sub-milestone closure — pipeline depth (К-L7.1 sub-invariant + К-L16) + display composition (К-L17) + mod lifecycle quiescent state (К-L18) ALL AUTHORED. 4 К-L invariants landed; cumulative К-Lxx series 20 invariants post-К10.3 v2. К-L7 sync coexistence preserved per S-LOCK-10/13 (V1 dispatch_compute_field path orthogonal к pipeline-managed dispatches). К-L17 display composition framework lives в src/DualFrontier.Application/Display/ per S-LOCK-11 (above Rendering/IRenderer abstraction; renderer interfaces preserved). К-L18 UI = SimulationStateController + ModMenuController pause hook only per S-LOCK-12 (settings menu deferred к V-cycle / К-extensions). VULKAN_SUBSTRATE.md v1.0 → v1.1 reconciliation per S-LOCK-14 consolidates V0.B-deferred K-L19 amendments + К10.3 v2 amendments. К-L19 inherited V0.B (no re-implementation). 15-commit cascade на branch claude/k10_3-v2-pipeline-display-quiescent (1982351..PENDING-CLOSURE-COMMIT). К-L14 thesis seventh verification window: К0..К8 + V0.A..V0.C.2 + V1 (6 closures) + К10.3 v2 = seven consecutive zero-hard-gate-halt cascades. | execution_milestone | 1982351..PENDING-COMMIT-K10_3-V2-CLOSURE |
 | 2026-05-21 | А'.7.x BUS_ARCHITECTURE_AMENDMENT cascade closure (К-extensions cascade #0) | amendment_landing | b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE |
 | 2026-05-22 | А'.7.5 BUS_SOURCE_SPLIT sub-milestone closure (К-L15.1 compile-time layer materialization) | execution_milestone | c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE |
-| 2026-05-23 | К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization closure event (post-А'.8 К-closure execution per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral) | execution_milestone | 2022bc1..PENDING-COMMIT-K_EXT_2-CLOSURE-RATIFICATION |
 | 2026-05-23 | К-extensions cascade #3 — Launcher Visual Implementation (Minimum Scope) closure event (post-cascade-#2 closure execution per cascade #2 §4 forward roadmap + Crystalka direction «после исполнения в сесии claude code я приложу отчёт и мы продолжим уже делать второй») | execution_milestone | e1bbc6a..PENDING-COMMIT-K_EXT_3-CLOSURE-RATIFICATION |
 | 2026-05-23 | А'.8 К-series formal closure event — Phase A' formal closure event boundary | execution_milestone | 044855c..PENDING-COMMIT-A_PRIME_8_K_CLOSURE-RATIFICATION |
+| 2026-05-23 | К-extensions cascade #2 — Godot Full Deprecation + Launcher Formalization closure event (post-А'.8 К-closure execution per Q-N-8-11 forward sequencing + Q-N-8-6 LOCKED post-closure deferral) | execution_milestone | 2022bc1..PENDING-COMMIT-K_EXT_2-CLOSURE-RATIFICATION |
+| 2026-05-24 | A'.9.1 Analyzer Infrastructure cascade pre-execution governance addition — Brief AUTHORED + Phase 0 closure report + Lesson #N17 Provisional. К-extensions cascade #5 pre-execution package: brief two-batch deliberation 2026-05-24 outcome encoded as AUTHORED brief (2356 lines; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md codification at Phase α Commit 8; 9 Phase α atomic commits + Phase β/γ/δ closure protocol); Phase 0 reconnaissance per brief §4.1 (14/14 mandatory reads + 5 bonus reads) + §4.2 (6 of 7 empirical scans; Task 7 violation count deferred к Phase α exit per circular dependency); 10 findings F1-F10 captured + 4 surface decisions ratified by Crystalka (F1 brief path corrections applied in-place; F7 Lesson #N17 = METHODOLOGY inline Option B; F8 session logs uncommitted; next action = commit + spawn Phase α fresh context). Lesson #N17 (Provisional NEW А'.9.1) — Audience-driven tooling deferral appended к METHODOLOGY.md Provisional pool (5 empirical applications enumerated: code-fix providers PA-001 PERMANENT + PublicApiAnalyzers community-absent + BannedApiAnalyzer closed concern + DFK019.B hardware tier split + DFK016 threshold customization API). Lesson #N14 4th application surfaced (A'.9.1 Phase 0 F1 + F4 + F7 — PROMOTION CRITERION MET). К-L14 thesis preserved (zero production code; zero substrate API surface; zero test code; pre-execution governance artifact only). | governance_event | bb6807c..PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER |
 | 2026-05-24 | A'.9.0 Reconnaissance Cascade post-closure amendments capture event — Option γ Hybrid amendments log artifact enrolled. 4 amendments captured per Crystalka post-execution review 2026-05-24: (1) Defect 1 Q-K count divergence correction (42 vs 45); (2) Defect 2 §2.1 duplication removal; (3) 5-rule deferral (DF009/DF012/DF015/DF018/DF020 family) от A'.9.1 first-batch к К-L20 LOCK cascade per Mod-OS-coupling rationale; (4) test exclusion principle formalization (xUnit Trait + dotnet test filter + DFL025 family analyzer rules). Cascade #3 retroactive empirical check (Q3) ran via Filesystem MCP — Possibility A confirmed (К-L14 #12 CLEAN status preserved by absence-based discipline). К-L14 thesis preserved (zero substrate touch; pure governance artifact addition). Lesson #N13 commit integrity discipline applied. Brief A'.9.1 deliberation input surface post-push = report + this amendments log together (combined effective scope: 46 Q-K candidates + 10 prerequisites + 4 amendments directives + Phase 0 cleanup task list). | amendment_landing | 9fcc517..PENDING-COMMIT-A_PRIME_9_0-AMENDMENTS-REGISTER |
 | 2026-05-24 | A'.9.0 Reconnaissance / К-extensions cascade #4 closure event — first A'.9 milestone-internal cascade per Crystalka two-brief direction («Два брифа первый, он проведет полную разведку архитектуры что бы по отчёту смогли написать бриф для внедрения анализатора»). Standalone reconnaissance discovery-only cascade per S-LOCK-1 zero-production-code discipline. | execution_milestone | a233639..PENDING-COMMIT-A_PRIME_9_0-CLOSURE |
-| 2026-05-24 | A'.9.1 Analyzer Infrastructure cascade pre-execution governance addition — Brief AUTHORED + Phase 0 closure report + Lesson #N17 Provisional. К-extensions cascade #5 pre-execution package: brief two-batch deliberation 2026-05-24 outcome encoded as AUTHORED brief (2356 lines; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md codification at Phase α Commit 8; 9 Phase α atomic commits + Phase β/γ/δ closure protocol); Phase 0 reconnaissance per brief §4.1 (14/14 mandatory reads + 5 bonus reads) + §4.2 (6 of 7 empirical scans; Task 7 violation count deferred к Phase α exit per circular dependency); 10 findings F1-F10 captured + 4 surface decisions ratified by Crystalka (F1 brief path corrections applied in-place; F7 Lesson #N17 = METHODOLOGY inline Option B; F8 session logs uncommitted; next action = commit + spawn Phase α fresh context). Lesson #N17 (Provisional NEW А'.9.1) — Audience-driven tooling deferral appended к METHODOLOGY.md Provisional pool (5 empirical applications enumerated: code-fix providers PA-001 PERMANENT + PublicApiAnalyzers community-absent + BannedApiAnalyzer closed concern + DFK019.B hardware tier split + DFK016 threshold customization API). Lesson #N14 4th application surfaced (A'.9.1 Phase 0 F1 + F4 + F7 — PROMOTION CRITERION MET). К-L14 thesis preserved (zero production code; zero substrate API surface; zero test code; pre-execution governance artifact only). | governance_event | bb6807c..PENDING-COMMIT-A_PRIME_9_1-PHASE_0-REGISTER |
+| 2026-07-15 | Corpus rework cascade R3 (substrate) — VULKAN/FIELDS/EVENT_BUS/PERFORMANCE/FHE successors AUTHORED; 5 predecessors historical/SUPERSEDED | execution_milestone | fcbfe5b |
 | 2026-07-15 | Corpus rework cascade R4 (mechanics) — five gameplay protocols reclassified Category A → J (docs/mechanics/, Tier 1 Draft); rework closure with ratification checklist | execution_milestone | 0145f1b |
+| 2026-07-15 | Corpus rework post-closure repair — ANALYZER_RULES superseded_by corruption fixed; live-index links retargeted to rework successors | governance_event | 9b4968a + 1b420e0 |
+| 2026-07-15 | Corpus rework cascade R2 (platform) — MOD_OS merge (3→1), ANALYZER family authority (DF_TS program retired), MIGRATION_PLAN retired to ROADMAP; 9 predecessors historical/SUPERSEDED, 4 successors AUTHORED | execution_milestone | 6888246 |
 | 2026-07-15 | REGISTER_INVERSION Cascade A closure — inverted-register instrument built + dry-run-proven; FRAMEWORK schema 1.0 → 2.0 | amendment_landing | 817921d..a78fce8 |
 | 2026-07-15 | Architecture Decomposition & Contracts session — external review verified (10/12 contradictions confirmed, 1 refuted, 1 reclassified; A0–A8 gaps confirmed), 27 new findings, 7 cross-cutting model drafts authored Tier 1 AUTHORED | execution_milestone | 8960085 |
 | 2026-07-15 | Corpus rework cascade R1 (kernel-core) — 5 predecessors to historical/ (LOCKED → SUPERSEDED), 5 authored-rework successors enrolled Tier 1 AUTHORED | execution_milestone | fe27fbe |
-| 2026-07-15 | Corpus rework cascade R2 (platform) — MOD_OS merge (3→1), ANALYZER family authority (DF_TS program retired), MIGRATION_PLAN retired to ROADMAP; 9 predecessors historical/SUPERSEDED, 4 successors AUTHORED | execution_milestone | 6888246 |
-| 2026-07-15 | Corpus rework cascade R3 (substrate) — VULKAN/FIELDS/EVENT_BUS/PERFORMANCE/FHE successors AUTHORED; 5 predecessors historical/SUPERSEDED | execution_milestone | fcbfe5b |
-| 2026-07-15 | Corpus rework post-closure repair — ANALYZER_RULES superseded_by corruption fixed; live-index links retargeted to rework successors | governance_event | 9b4968a + 1b420e0 |
+| 2026-07-17 | Corpus rework ratification closure (CORPUS_CLOSURE_INVERSION_B Phases A-C) — 14 A-successors AUTHORED → LOCKED v1.0.0 after full-corpus review + HALT-1-ratified corrections; 16 authority-gap windows closed; REQ-K-L transfer; checklist items [1]-[5]+[7] executed, [3] confirmed, [6] out of scope | execution_milestone | 0380dbf..717641b |
 
 
