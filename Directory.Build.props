@@ -18,9 +18,11 @@
     Compiles GLSL shaders in tools/shaders/ к SPIR-V in assets/shaders/ before the
     Runtime project builds. Uses in-repo tools/glslangValidator.exe (committed binary) —
     developer machine doesn't need VULKAN_SDK installed для shader compilation.
+    On non-Windows hosts the target is skipped: the committed assets/shaders/*.spv
+    are the artifacts (regeneration with a system glslang would byte-drift them).
   -->
   <Target Name="CompileShaders" BeforeTargets="Build"
-          Condition="'$(MSBuildProjectName)' == 'DualFrontier.Runtime'">
+          Condition="'$(MSBuildProjectName)' == 'DualFrontier.Runtime' and '$(OS)' == 'Windows_NT'">
     <PropertyGroup>
       <GlslangValidatorExe>$(MSBuildThisFileDirectory)tools\glslangValidator.exe</GlslangValidatorExe>
       <ShaderSourceDir>$(MSBuildThisFileDirectory)tools\shaders</ShaderSourceDir>
