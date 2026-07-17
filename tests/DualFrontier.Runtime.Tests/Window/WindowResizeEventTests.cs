@@ -20,7 +20,7 @@ public sealed class WindowResizeEventTests
         return new IntPtr((long)((uint)width & 0xFFFF) | (((long)height & 0xFFFF) << 16));
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void WM_SIZE_with_new_dimensions_emits_WindowResizeEvent()
     {
         var opts = new WindowOptions { Title = "Resize A", Width = 400, Height = 300 };
@@ -38,7 +38,7 @@ public sealed class WindowResizeEventTests
         window.Height.Should().Be(600);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void WM_SIZE_with_zero_dimensions_skips_event()
     {
         // Minimize generates WM_SIZE с 0×0 — must NOT enqueue resize event.
@@ -54,7 +54,7 @@ public sealed class WindowResizeEventTests
         window.Height.Should().Be(300);
     }
 
-    [Fact]
+    [WindowsOnlyFact]
     public void WM_SIZE_unchanged_dimensions_skips_event()
     {
         var opts = new WindowOptions { Title = "Resize C", Width = 400, Height = 300 };
