@@ -451,7 +451,7 @@ The document is updated after each substantial phase closes. Substantial methodo
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — layers, dependency rules, scenarios.
 - [CONTRACTS](/docs/architecture/CONTRACTS.md) — the contract system, six domain buses, contract evolution.
 - [DEVELOPMENT_HYGIENE](./DEVELOPMENT_HYGIENE.md) — hygiene checklist for every PR, the engine/game boundary.
-- [ISOLATION](/docs/architecture/historical/ISOLATION.md) — the isolation guard, types of violations, DEBUG vs RELEASE.
+- [MOD_OS_ARCHITECTURE §10](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the isolation model: `SystemExecutionContext`, types of violations, DEBUG vs RELEASE history (absorbed the former ISOLATION document; ratified LOCKED at the corpus-rework closure).
 - [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — negative result of the C++ core, criterion reframing.
 - [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) — **v1.0 LOCKED.** Unified Vulkan substrate (V) covering rendering + compute use cases per Q-G-1 LOCK; consolidates former RUNTIME_ARCHITECTURE.md v1.0 + GPU_COMPUTE.md v2.0. Substrate primitives V0 (foundation) / V1 (diffusion) / V2 (wave) per Q-G-2; M-V demonstrations per Q-R-1 format. Phase 3 `ProjectileSystem` deferral preserved as Domain B special case with substrate disposition TBD at M-V5 amendment.
 - [ROADMAP](/docs/ROADMAP.md) — phases, dependency reasoning, the bridge pattern between Phases 5 and 6.

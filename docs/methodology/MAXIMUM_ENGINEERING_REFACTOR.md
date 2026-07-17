@@ -483,7 +483,7 @@ amended through the same ratification process.
 - [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — capability model that Track A may verify formally; §3 isolation that Track B may enforce via analyzer.
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — layer rules that Track B (B1 analyzer) enforces.
 - [PIPELINE_METRICS](./PIPELINE_METRICS.md) — baseline measurements that Track C aims to enable replication of.
-- [ISOLATION](/docs/architecture/historical/ISOLATION.md) — isolation guard that Track A's pilot (A2) targets.
+- [MOD_OS_ARCHITECTURE §10](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the isolation model Track A's pilot (A2) targets (absorbed the former ISOLATION document; ratified LOCKED at the corpus-rework closure).
 - [NATIVE_CORE_EXPERIMENT](/docs/reports/NATIVE_CORE_EXPERIMENT.md) — precedent for measured commitment with abort criteria; cited in MR-2.
 - [FHE_INTEGRATION_CONTRACT](/docs/architecture/FHE_INTEGRATION_CONTRACT.md) — precedent for ratifying contracts before implementation activates; same discipline applies here.
 - [IDEAS_RESERVOIR](./IDEAS_RESERVOIR.md) — reservoir for post-release ideas; this brief differs by proposing parallel-track work during active development.
