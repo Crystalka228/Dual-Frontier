@@ -34,7 +34,7 @@ The native ECS kernel contract: the К-L invariant canon (Part 0) plus the curre
 
 **This Part is the sole canonical carrier of К-L texts** (consolidated from K_CLOSURE_REPORT §2, which remains the closure-evidence record). One ratified exception: the К-L14 full thesis resides in K_CLOSURE_REPORT.md §1.2 per Q-N-8-2 LOCKED; this Part carries К-L14's abbreviated form, as the predecessor did.
 
-Series state: **21 invariants** — К-L1..К-L19 (К-L6 SUPERSEDED counted) + sub-invariants К-L3.1/К-L7.1/К-L15.1; К-L20 reserved separately. Departures require an explicit re-architecture milestone (К-extensions cascade or supersession event recorded in the register), never spec-level adjustment mid-implementation.
+Series state: **21 invariants** — К-L1..К-L19 (К-L6 SUPERSEDED listed for traceability, excluded from the count) + sub-invariants К-L3.1/К-L7.1/К-L15.1; К-L20 reserved separately. (The Part 0 table carries 22 canonical-text rows — the 21 active plus the superseded К-L6, retained verbatim.) Departures require an explicit re-architecture milestone (К-extensions cascade or supersession event recorded in the register), never spec-level adjustment mid-implementation.
 
 Per-invariant format: status/LOCK-history line → canonical text (verbatim blockquote) → falsifiability commitments → implementation artifacts corrected to the tree at HEAD `35364c2` → DF-rule row stating the shipped analyzer truth per [ANALYZER_RULES.md](./ANALYZER_RULES.md) §4.1 (no rule is claimed Active that does not exist on disk).
 
@@ -583,4 +583,5 @@ Amendments per [FRAMEWORK.md](../governance/FRAMEWORK.md) §7.2 (Tier 1 protocol
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | SEED-1 / F-9 resolution per HALT-1 variant (b) (CORPUS_CLOSURE_INVERSION_B): Part 0 headline recomposed keeping the ratified count 21 — К-L6 SUPERSEDED listed for traceability, excluded from the count (restores K_CLOSURE_REPORT §Part-0-composition "−1 SUPERSEDED" convention the rework had inverted); 22-row table note added. Census "21 (invariant\|final)" delta: 0. |
 | 0.1.0 | 2026-07-15 | Authored rework successor of DOC-A-KERNEL v2.6.2: Part 0 consolidated as sole К-L canonical carrier (from K_CLOSURE_REPORT §2) with corrected artifact lists and shipped DF-rule truth; §1–§6 rewritten to code truth at HEAD 35364c2; Annex A (было→стало) rows A-1..A-4 applied. |
