@@ -30,7 +30,7 @@ Where Dual Frontier's frame and tick budgets attach on the current native substr
 
 ## 1. Philosophy
 
-Performance is architectural, not a late-stage pass: К-L14 names it directly — "performance derives from architectural cleanliness" (KERNEL_ARCHITECTURE.md Part 0, abbreviated row). The dependency graph, native storage, and invalidating caches are the tools; a budget without a documented invalidation source or an "unenforced" label is not a budget, it's a wish.
+Performance is architectural, not a late-stage pass: К-L14 names it directly — "Performance derives from cleanness" (KERNEL_ARCHITECTURE.md Part 0, abbreviated row). The dependency graph, native storage, and invalidating caches are the tools; a budget without a documented invalidation source or an "unenforced" label is not a budget, it's a wish.
 
 ## 2. Frame budget
 
@@ -43,7 +43,7 @@ Performance is architectural, not a late-stage pass: К-L14 names it directly �
 | Layer | Budget | Mechanism (current, verified) |
 |---|---|---|
 | Native storage (`RawComponentStore`) | O(1) add/remove/get | Sparse-set, swap-remove on delete (`native/DualFrontier.Core.Native/include/component_store.h:39-116`); no per-op ns target is pinned anywhere in the corpus — none is claimed here either. |
-| Span/batch protocol | Zero-copy reads; atomic batched writes | `SpanLease<T>` hands out a read-only span, rejects mutation while any lease is open (`SpanLease.cs:16-21`); `WriteBatch<T>` stages writes, flushes atomically (`WriteBatch.cs:9-14`). Flush is currently **one P/Invoke per recorded command** — bulk transmission is explicitly deferred pending measurement (`WriteBatch.cs:31-32`). Lease pooling is likewise deferred (`SpanLease.cs:13-14`). |
+| Span/batch protocol | Zero-copy reads; atomic batched writes | `SpanLease<T>` hands out a read-only span, rejects mutation while any lease is open (`SpanLease.cs:16-21`); `WriteBatch<T>` stages writes, flushes atomically (`WriteBatch.cs:9-14`). Recording is currently **one P/Invoke per command** (`Update`/`Add`/`Remove`); bulk transmission is explicitly deferred pending measurement (`WriteBatch.cs:31-32`). Lease pooling is likewise deferred (`SpanLease.cs:13-14`). |
 | Phase commit | Writes visible at next phase boundary | `WriteBatch` flush and entity destruction both defer to the next scheduler phase boundary (ECS.md); native `BarrierType` (Full/Partial/None, `phase_barrier.h:12-22`) governs how strictly one phase waits on the last. No numeric commit-latency budget exists anywhere in the corpus — an honest gap. |
 | Bus — fast tier | Subscriber response ≤1 ms | К-L15 law (KERNEL_ARCHITECTURE.md Part 0: "К-L15 fast tier latency invariant (subscriber response ≤1ms)"), reused by VULKAN_SUBSTRATE.md's CombatFeedbackLayer budget. Bus semantics are KERNEL_ARCHITECTURE.md's domain; this row only inherits the number. |
 | GPU dispatch — V1 diffusion | <1 ms for 3 fields × 200×200 × 5–10 iterations, mid-range GPU | Shipped: `V1DiffusionPipeline.ExecuteIteration` → native `df_world_field_dispatch_compute` (`src/DualFrontier.Runtime/Compute/V1DiffusionPipeline.cs`), synchronous К-L7 dispatch, fence-gated. No benchmark project measures this number; carried forward as a target, not a result. |
@@ -71,7 +71,7 @@ What exists, verified against `tests/DualFrontier.Core.Benchmarks/` this pass (`
 | `SchedulerStressBenchmarks` + `ModDependencyGraphBenchmarks` | `Stress/SchedulerStressBenchmarks.cs` | Native scheduler one-tick cost, static-graph rebuild, priority ordering (500/2,000/5,000 systems); managed mod-dependency topo-sort/presence-check throughput (500/2,000/5,000 mods) — same file, two classes. |
 | `TickLoopBenchmark` + scenarios | `TickLoop/TickLoopBenchmark.cs`, `V3NativeBatchedScenario.cs`, `TickLoopScenarioBase.cs`, `MetricsCollector.cs` | Per-tick wall-clock, allocation rate, gen0/1/2 collections for the V3 native-batched scenario (50 pawns, 30 Hz). V2's managed-structs scenario was removed with the managed `World` at K8.3+K8.4; the class comment says so directly. |
 
-Results live under `tests/DualFrontier.Core.Benchmarks/Results`, compared by hand across runs — no automated regression comparison (§4).
+Results land in BenchmarkDotNet's default artifact directory (`tests/DualFrontier.Core.Benchmarks/BenchmarkDotNet.Artifacts/results/`, untracked), with curated K7 result sets committed under `docs/benchmarks/` (`k7-bdn-tick.csv`, `k7-long-run-V*.csv`); compared by hand across runs — no automated regression comparison (§4). Census completeness note: `TickLoop/V1ManagedCurrentScenario.cs` is a worktree-placeholder stub (`NotSupportedException` on main, K7 brief §1.6 Option c) and `TickLoop/LongRunDriftRunner.cs` drives the long-run CSV path — both live in the same tree, neither is a BenchmarkDotNet class.
 
 ## 6. Cache invalidation discipline
 
@@ -105,5 +105,6 @@ Budget numbers change by direct edit plus re-verification against the cited code
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 (this doc) | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R3-18..R3-21): §5 results location corrected (untracked `BenchmarkDotNet.Artifacts/` + curated sets in `docs/benchmarks/`; the cited `Results/` directory does not exist) and census completeness note added (V1 placeholder stub + LongRunDriftRunner); §1 К-L14 quote aligned to the Part 0 abbreviated row's actual wording; §3 P/Invoke-per-command attribution moved from Flush to recording. |
 | 0.1.0 (this doc) | 2026-07-15 | Corpus rework: budgets re-attached to the native substrate in place of deleted managed-era rows; added §4 enforcement-honesty (no CI, no `PerformanceGate` anywhere); added §5 benchmark census; dropped the fictional `PathfindingService` cache; corrected `SpatialGrid` to its real unwired production status. |
 | 1.1.1 | pre-rework | Last state of predecessor `DOC-A-PERFORMANCE` (see historical/). |
