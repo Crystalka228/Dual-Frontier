@@ -207,14 +207,16 @@ documents:
   tier: 1
   lifecycle: AUTHORED
   owner: Crystalka
-  version: 0.1.2
+  version: 0.1.4
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-ratification closure
   title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (A1 draft)
   last_modified_commit: 6888246
   review_cadence: on-status-transition
+  last_review_date: 2026-07-17
+  last_review_event: "DRAFTS_RATIFICATION Phase B (C3): HALT-1-ratified retargets CMM-1..CMM-5 — R4-8 snapshot-rule re-homed to THREADING §7; R4-9 analyzer truth corrected (17 detecting rules, not stubs — the wave's one honesty slip); R4-12 version/change-history reconciled per OD-3 (rows 0.1.1–0.1.3 backfilled, this edit = 0.1.4); §9.1/§9.3 conflicts re-marked RESOLVED; §6.1 cite reform + historical/ KFNS prefixes."
   reviewer: Crystalka
   special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A1 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 - register_id: DOC-A-CONTRACTS
@@ -304,14 +306,16 @@ documents:
   tier: 1
   lifecycle: AUTHORED
   owner: Crystalka
-  version: 0.1.0
+  version: 0.1.1
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-ratification closure
   title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (A3+A8 draft)
   last_modified_commit: 8960085
   review_cadence: on-status-transition
+  last_review_date: 2026-07-17
+  last_review_event: "DRAFTS_RATIFICATION Phase B (C3): HALT-1-ratified retargets ELT-1..ELT-6 — historical/ prefixes + verified offsets for ISOLATION/MOD_PIPELINE/KFNS/MIGRATION_PLAN/OWNERSHIP_TRANSITION cites (R4-11); §9.1/§9.5-resolved re-anchoring (the successor adopted this draft's §1 law); §9.6 quiescence §-fix; §6 conflicts 1/2/6 re-marked RESOLVED."
   reviewer: Crystalka
   special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A3 (+A8 recovery) cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 - register_id: DOC-A-EVENT_BUS
@@ -1027,14 +1031,16 @@ documents:
   tier: 1
   lifecycle: AUTHORED
   owner: Crystalka
-  version: 0.1.1
+  version: 0.1.2
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-ratification closure
   title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (A2 draft)
   last_modified_commit: 0145f1b
   review_cadence: on-status-transition
+  last_review_date: 2026-07-17
+  last_review_event: "DRAFTS_RATIFICATION Phase B (C3): HALT-1-ratified retargets ROL-1..ROL-4 — VULKAN §5.4 waitIdle-policy correction (the predecessor \"only save/shutdown\" phrasing was retired by the successor); MOD_OS §9.6 quiescence §-fix + §9.4 chain renaming; §6.1 cite reform; §7.1-1 re-marked RESOLVED (MOD_OS §9.1 adopted this draft's logical/physical split). G1–G6 re-verified TRUE at 48983c4."
   reviewer: Crystalka
   special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A2 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 - register_id: DOC-A-SCHEDULER_ARCHITECTURE
