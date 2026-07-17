@@ -4,10 +4,10 @@
 register_id: DOC-A-OWNERSHIP_TRANSITION
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.0.1"
-next_review_due: 2027-05-12
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-OWNERSHIP_TRANSITION
 ---
 # Golem ownership transitions

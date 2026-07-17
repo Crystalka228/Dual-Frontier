@@ -25,13 +25,13 @@ looks excessive.
 Technical documents describing the engine that stress-tests the methodology: layers, contracts, ECS core, event buses, multithreading, and isolation.
 
 - [ARCHITECTURE](/docs/architecture/ARCHITECTURE.md) — the four layers, dependency rules, assembly diagram.
-- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — **v1.5 LOCKED.** Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model. Drives the M1–M10 migration plan in ROADMAP.
-- [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) — **v1.0 LOCKED.** Unified Vulkan substrate (V) — rendering + compute use cases on one VkInstance/VkDevice per Q-G-1 LOCK (supersedes prior RUNTIME_ARCHITECTURE.md v1.0 + GPU_COMPUTE.md v2.0). Substrate primitives V0 (foundation, includes rendering migration phases R.0..R.8 — formerly M9.0..M9.8) / V1 (diffusion shader) / V2 (wave shader). M-V demonstrations (M-V1 mana, M-V2 electricity, M-V7 movement, M-V8 local avoidance) per Q-R-1 format. Domain layer preserved verbatim.
+- [MOD_OS_ARCHITECTURE](/docs/architecture/MOD_OS_ARCHITECTURE.md) — Mod system as a small operating system: capabilities, shared ALC, three-level contracts, bridge replacement, three-tier versioning, hot reload, threat model; absorbs the former MOD_PIPELINE and ISOLATION documents. Drives the M1–M10 migration plan in ROADMAP. (The register owns its version and lifecycle.)
+- [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) — Unified Vulkan substrate (V) — rendering + compute use cases on one VkInstance/VkDevice per Q-G-1 LOCK (supersedes prior RUNTIME_ARCHITECTURE.md v1.0 + GPU_COMPUTE.md v2.0). Substrate primitives V0 (foundation, includes rendering migration phases R.0..R.8 — formerly M9.0..M9.8) / V1 (diffusion shader) / V2 (wave shader). M-V demonstrations (M-V1 mana, M-V2 electricity, M-V7 movement, M-V8 local avoidance) per Q-R-1 format. Domain layer preserved verbatim.
 - [CONTRACTS](/docs/architecture/CONTRACTS.md) — marker interfaces, six domain buses, evolution and versioning.
 - [ECS](/docs/architecture/ECS.md) — `World`, `EntityId`, `Component`, `SparseSet`, `Query`, `SystemBase`.
 - [EVENT_BUS](/docs/architecture/EVENT_BUS.md) — domain buses, the two-step Intent→Granted/Refused model, batch processing.
 - [THREADING](/docs/architecture/THREADING.md) — `DependencyGraph`, phases, tick rates, the ban on `async`.
-- [ISOLATION](/docs/architecture/ISOLATION.md) — `SystemExecutionContext`, the isolation guard, DEBUG vs RELEASE, types of violations.
+- [MOD_OS_ARCHITECTURE §10](/docs/architecture/MOD_OS_ARCHITECTURE.md) — `SystemExecutionContext`, the isolation guard, DEBUG vs RELEASE, types of violations (absorbed the former ISOLATION document).
 - [GODOT_INTEGRATION (historical)](/docs/architecture/historical/GODOT_INTEGRATION.md) — `PresentationBridge`, `IRenderCommand`, `InputRouter`, the main thread. Superseded by [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) §2.2 per Q-G-1 LOCK.
 - [VISUAL_ENGINE (historical)](/docs/architecture/historical/VISUAL_ENGINE.md) — DevKit vs Native, the `IRenderer` / `ISceneLoader` / `IInputSource` contracts, the `.dfscene` format. Superseded by [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) per Q-G-1 LOCK.
 
@@ -42,7 +42,7 @@ Documents required to reproduce the work or contribute to it: methodology, moddi
 - [METHODOLOGY](/docs/methodology/METHODOLOGY.md) — the pipeline, contracts as IPC between agents, verification cycle, threat model, economics, boundaries of applicability.
 - [PIPELINE_METRICS](/docs/methodology/PIPELINE_METRICS.md) — pipeline configuration, empirical metrics, throughput, subscription headroom, reproducibility requirements. Companion to METHODOLOGY.
 - [MODDING](/docs/architecture/MODDING.md) — `IMod`, `IModApi`, `AssemblyLoadContext`, `IModContract`, the mod manifest.
-- [MOD_PIPELINE](/docs/architecture/MOD_PIPELINE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity.
+- [MOD_OS_ARCHITECTURE §8](/docs/architecture/MOD_OS_ARCHITECTURE.md) — the integration pipeline, `ContractValidator`, `ModRegistry`, atomicity (absorbed the former MOD_PIPELINE document).
 - [PERFORMANCE](/docs/architecture/PERFORMANCE.md) — target metrics, profiling, hot paths, caches.
 - [VULKAN_SUBSTRATE](/docs/architecture/VULKAN_SUBSTRATE.md) §3-§5 — Compute use case of V substrate (consolidates former GPU_COMPUTE.md v2.0 content). Field-based GPU compute as a foundational architectural capability (Domain A: mana / electricity / water / heat / sound / scent on V1/V2 primitives), with `ProjectileSystem` preserved as Domain B (entity-keyed bulk compute, substrate disposition deferred to M-V5 amendment). K9 field storage abstraction + V0/V1/V2 substrate primitives per Q-G-2 reductions.
 - [CODING_STANDARDS](/docs/methodology/CODING_STANDARDS.md) — naming, file-scoped namespaces, nullable, member order.
@@ -72,13 +72,13 @@ Verbatim logs of phase reviews and other key pipeline sessions. Not subject to p
 
 ## v0.2 addendum
 
-Second-revision architecture additions: resource models, composite requests, feedback through tick lag, deterministic damage resolution, golem ownership transitions.
+Second-revision gameplay additions: resource models, composite requests, feedback through tick lag, deterministic damage resolution, golem ownership transitions. Now Category J mechanics documents in [docs/mechanics/](/docs/mechanics/README.md) (migrated 2026-07-15; predecessors in `docs/architecture/historical/`).
 
-- [RESOURCE_MODELS](/docs/architecture/RESOURCE_MODELS.md) — Intent vs Lease, the choice rule, reserve-then-consume.
-- [COMPOSITE_REQUESTS](/docs/architecture/COMPOSITE_REQUESTS.md) — two-phase commit for multi-bus requests, `CompositeResolutionSystem`.
-- [FEEDBACK_LOOPS](./FEEDBACK_LOOPS.md) — `Mana[N-1]`, snapshots of the previous tick.
-- [COMBO_RESOLUTION](/docs/architecture/COMBO_RESOLUTION.md) — `ComboResolutionSystem`, deterministic sort of `DamageIntent`.
-- [OWNERSHIP_TRANSITION](/docs/architecture/OWNERSHIP_TRANSITION.md) — `GolemBondComponent` states, transition table.
+- [RESOURCE_MODELS](/docs/mechanics/RESOURCE_MODELS.md) — Intent vs Lease, the choice rule, reserve-then-consume.
+- [COMPOSITE_REQUESTS](/docs/mechanics/COMPOSITE_REQUESTS.md) — two-phase commit for multi-bus requests, `CompositeResolutionSystem`.
+- [FEEDBACK_LOOPS](/docs/mechanics/FEEDBACK_LOOPS.md) — tick-lag feedback mechanics; the engine cycle/snapshot rule (`Mana[N-1]`, snapshots of the previous tick) now lives in [THREADING](/docs/architecture/THREADING.md).
+- [COMBO_RESOLUTION](/docs/mechanics/COMBO_RESOLUTION.md) — `ComboResolutionSystem`, deterministic sort of `DamageIntent`.
+- [GOLEM_OWNERSHIP](/docs/mechanics/GOLEM_OWNERSHIP.md) — `GolemBondComponent` states, transition table (renamed from OWNERSHIP_TRANSITION).
 
 ## See also
 

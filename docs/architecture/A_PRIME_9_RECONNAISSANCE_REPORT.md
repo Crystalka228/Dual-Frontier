@@ -4,7 +4,7 @@
 register_id: DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT
 category: A
 tier: 2
-lifecycle: Live
+lifecycle: EXECUTED
 owner: Crystalka
 version: "Live"
 next_review_due: post-A'.9.1 closure

@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
+category: E
+tier: 2
+lifecycle: AUTHORED
+owner: Crystalka
+version: "1.0"
+next_review_due: on-refactor-cascade-execution
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
+---
 ---
 register_id: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
 category: E

@@ -4,10 +4,10 @@
 register_id: DOC-A-MIGRATION_PLAN
 category: A
 tier: 1
-lifecycle: LOCKED
+lifecycle: SUPERSEDED
 owner: Crystalka
 version: "1.4.1"
-next_review_due: 2027-05-10
+next_review_due: null
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MIGRATION_PLAN
 ---
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)
