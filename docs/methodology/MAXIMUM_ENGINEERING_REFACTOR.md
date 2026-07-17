@@ -5,7 +5,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.1.2
+version: 1.1.3
 first_authored: 2026-07-17
 last_modified: 2026-07-17
 content_language: mixed
@@ -13,7 +13,8 @@ next_review_due: 2027-05-10
 title: Maximum Engineering Refactor — Discipline Escalation Brief
 last_modified_commit: 717641b
 review_cadence: on-change+annual
-last_review_date: 2026-05-10
+last_review_date: 2026-07-17
+last_review_event: 'DRAFTS_RATIFICATION C8 (F-39 rider): dangling "METHODOLOGY §7.1 determinism invariant" citation re-anchored to TIME_AND_CONSISTENCY_MODEL §5 (ratified LOCKED this cascade) — the FHE-precedent treatment (was R3-22/ORC-2). PATCH 1.1.2 → 1.1.3.'
 last_review_event: A'.0.7 methodology rewrite
 reviewer: Crystalka
 capa_entries_referenced:
@@ -122,7 +123,7 @@ Difficulty: simpler than A1; access declaration is a static attribute lookup.
 Property to verify:
 > Two runs of `ParallelSystemScheduler.Execute()` over the same `World` state with the same input events produce bit-identical output state.
 
-Strength: closes the determinism invariant from [METHODOLOGY](./METHODOLOGY.md) §7.1 formally.
+Strength: closes the determinism commitment formally — the determinism-class law lives at [TIME_AND_CONSISTENCY_MODEL](../architecture/TIME_AND_CONSISTENCY_MODEL.md) §5 (classes D0/D1/D2; the engine is D0 today).
 Difficulty: highest. Requires modeling parallelism and scheduling policy.
 
 **Recommendation**: start with **A2** as pilot integration. Lowest difficulty, still meaningful, establishes the verification toolchain for later application to A1 and A3.
