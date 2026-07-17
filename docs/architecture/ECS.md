@@ -30,7 +30,7 @@ The entity/component storage model: `NativeWorld` as the single production backe
 
 ## §1 NativeWorld — the single production backend
 
-Dual Frontier uses classical ECS: an entity is an identifier, components are pure data, systems are logic. `NativeWorld` (`src/DualFrontier.Core.Interop/NativeWorld.cs:28`) is the **sole production component-storage backend** after the К8.3+К8.4 cutover (A'.5 closure 2026-05-14) — the К-L11 single-source-of-truth invariant, analyzer-policed by DFK011 ([ANALYZER_RULES.md](./ANALYZER_RULES.md) §4.1). The prior managed `World` is retired and survives only as a test fixture (`tests/DualFrontier.Core.Tests/Fixtures/ManagedTestWorld.cs`). Production constructs the world via `Bootstrap.Run(useRegistry: true)` (`GameBootstrap.cs:76`) and hands it to `ParallelSystemScheduler` (`:192-199`); systems reach it through `SystemBase.NativeWorld` (§6).
+Dual Frontier uses classical ECS: an entity is an identifier, components are pure data, systems are logic. `NativeWorld` (`src/DualFrontier.Core.Interop/NativeWorld.cs:28`) is the **sole production component-storage backend** after the К8.3+К8.4 cutover (A'.5 closure 2026-05-14) — the К-L11 single-source-of-truth invariant, analyzer-policed by DFK011 ([ANALYZER_RULES.md](./ANALYZER_RULES.md) §1.1). The prior managed `World` is retired and survives only as a test fixture (`tests/DualFrontier.Core.Tests/Fixtures/ManagedTestWorld.cs`). Production constructs the world via `Bootstrap.Run(useRegistry: true)` (`GameBootstrap.cs:76`) and hands it to `ParallelSystemScheduler` (`:192-199`); systems reach it through `SystemBase.NativeWorld` (§6).
 
 The surface systems use — signatures verified; the constraint is `unmanaged`, not `unmanaged, IComponent` (the `IComponent` marker sits on component types, not on this API):
 
@@ -43,7 +43,7 @@ public bool HasComponent<T>(EntityId id) where T : unmanaged;          // :190
 public EntityId CreateEntity();                                        // :120
 public void DestroyEntity(EntityId id);      // :127   IsAlive :133   FlushDestroyedEntities :148
 public void AddComponents<T>(…entities, …components);                  // :225 (bulk, one P/Invoke)
-public InternedString InternString(string value);                      // :549 — K8.1 primitives:
+public InternedString InternString(string content);                    // :549 — K8.1 primitives:
 public NativeMap<TK,TV> CreateMap<TK,TV>();  // :720   CreateSet :730  CreateComposite :738
 ```
 
@@ -63,7 +63,7 @@ A naive `T[]` per component wastes memory (most entities lack a given component)
 
 `AcquireSpan<T>()` returns a `SpanLease<T>`: `Span` (read-only dense component view, `SpanLease.cs:50`), `Indices` (parallel entity-**index** array — indices only, no versions, `:63`), `Count` (`:44`). `BeginBatch<T>()` returns a `WriteBatch<T>` recording commands (`Update`/`Add`/`Remove`, `WriteBatch.cs:79,93,106`) applied atomically at `Flush` (`:122`) or auto-flushed on `Dispose` (`:163-170`); `Cancel` discards (`:139`).
 
-**Mutation-rejection contract.** While any span or batch is active, direct mutations (`AddComponent`/`RemoveComponent`/`DestroyEntity`/`FlushDestroyedEntities`/`AddComponents`) are silently no-op'd — the native throw is caught at the C ABI boundary (`NativeWorld.cs:337`; `WriteBatch.cs:39-47`; rejection sites `world.cpp:85-88,96-98,111-113`). Dispose leases before mutating. Recorded batch commands are invisible until `Flush` (`WriteBatch.cs:196`).
+**Mutation-rejection contract.** While any span or batch is active, direct mutations (`AddComponent`/`RemoveComponent`/`DestroyEntity`/`FlushDestroyedEntities`/`AddComponents`) are silently no-op'd — the native throw is caught at the C ABI boundary (`NativeWorld.cs:337`; `WriteBatch.cs:39-47`; rejection sites `world.cpp:85-88,96-98,112-115`). Dispose leases before mutating. Recorded batch commands are invisible until `Flush` (`WriteBatch.cs:196`).
 
 The canonical read pattern — **bulk work walks the span without entity identity; per-entity identity operations use ids the world actually issued** (factory returns, event payloads), validated via `TryGetComponent`/`IsAlive`:
 
@@ -102,7 +102,7 @@ Enforcement note: there is **no runtime permission check** relating this code to
 
 ## §5 Known defect: fabricated entity versions (C10 / N-22)
 
-The span ABI does not return versions, and the current codebase — including this document's predecessor and `KERNEL_ARCHITECTURE.md` §1.7, which taught the pattern — fabricates them: 13+ production sites across 10 systems plus `GameBootstrap.cs:241` construct `new EntityId(indices[i], 0)` (e.g. `NeedsSystem.cs:93`); `EntityEncoder.cs:85` decodes saved ranges to version 0; `SpanLease<T>.Pairs` and the `WriteBatch<T>` enumerator fabricate `Version = 1` with an in-code caveat (`SpanLease.cs:76-84,112`; `WriteBatch.cs:221`).
+The span ABI does not return versions, and the current codebase — including this document's predecessor and `KERNEL_ARCHITECTURE.md` §1.7, which taught the pattern — fabricates them: 13+ production sites across 9 systems plus `GameBootstrap.cs:241` construct `new EntityId(indices[i], 0)` (e.g. `NeedsSystem.cs:93`); `EntityEncoder.cs:85` decodes saved ranges to version 0; `SpanLease<T>.Pairs` and the `WriteBatch<T>` enumerator fabricate `Version = 1` with an in-code caveat (`SpanLease.cs:76-84,112`; `WriteBatch.cs:221`).
 
 **What the kernel actually enforces (N-22).** The generation machinery is real and fails closed: `is_alive` demands exact version equality — `id.version == versions_[id.index]` (`world.cpp:74-78`) — `destroy_entity` bumps the version before the slot can recycle (`world.cpp:90`), and every accessor and mutation gates on it (e.g. `add_component`, `world.cpp:116`). But a fabricated version-0 id matches only a slot whose version is still 0 — never destroyed — so for these callers the ABA guarantee collapses to "this index was never recycled." The defect is latent only because production is creation-only today: no `src/` code calls `DestroyEntity` or `FlushDestroyedEntities` at HEAD (grep-verified; destruction is exercised by tests), so no recycled slot exists yet. The day destruction ships, every fabrication site becomes a stale-read hazard.
 
@@ -164,4 +164,5 @@ Amendments surface to the owner (Crystalka) with rationale before landing — no
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R1-15/16/17): §1 DFK011 pointer §4.1→§1.1; §5 fabrication census "10 systems"→"9" (InventorySystem constructs none); §4 rejection-site range :111-113→:112-115; §1 sketch parameter name `value`→`content` (signature-verified caption honored). |
 | 0.1.0 (unreleased, AUTHORED) | 2026-07-15 | Successor of DOC-A-ECS v1.1.1: §4 canonical example rewritten without version fabrication and without the deleted-runtime-check comment (C10/N19); new §5 documents fabricated versions as a known defect with the N-22 collapse mechanism and the IDENTITY_AND_ABI_CONTRACT §2 fix fenced; §6 states wrong-version-of-live-entity fails-closed semantics and corrects the phase-boundary destruction claim; API sketches re-verified (constraints, `Span` vs `Components`, `batch.Set` removed). |
