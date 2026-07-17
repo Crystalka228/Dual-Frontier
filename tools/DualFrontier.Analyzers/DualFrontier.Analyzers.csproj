@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- CRITICAL: override Directory.Build.props net8.0 default per Q-L-4 + S-LOCK-2 + recon §7.1.2 -->
+    <!-- CRITICAL: override Directory.Build.props net10.0 default per Q-L-4 + S-LOCK-2 + recon §7.1.2 -->
     <!-- Roslyn analyzer host loads compatibility requires netstandard2.0 -->
     <TargetFramework>netstandard2.0</TargetFramework>
     <!-- Pinned explicit per STACK_UPDATE D2: 'latest' is machine-dependent (floats

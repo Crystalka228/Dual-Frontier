@@ -46,8 +46,10 @@ public static class CSharpAnalyzerVerifier<TAnalyzer>
     {
         public Test()
         {
-            // Fixtures target the same runtime the src/ projects do (net8.0),
-            // so [LibraryImport] (net7+), Span<T>, etc. resolve in fixture source.
+            // Fixtures compile against the pinned net8.0 reference assemblies.
+            // src/ moved to net10.0 at STACK_UPDATE; the rule surface only needs
+            // [LibraryImport] (net7+), Span<T>, etc. to resolve, which net8.0 refs
+            // provide — a ReferenceAssemblies bump rides the F-46 hygiene bundle.
             ReferenceAssemblies = ReferenceAssemblies.Net.Net80;
         }
     }

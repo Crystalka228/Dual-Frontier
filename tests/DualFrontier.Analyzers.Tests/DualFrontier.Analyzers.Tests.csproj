@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- Inherits net8.0 + Nullable=enable + ImplicitUsings=enable + TreatWarningsAsErrors=true -->
+    <!-- Inherits net10.0 + Nullable=enable + ImplicitUsings=enable + TreatWarningsAsErrors=true -->
     <!-- from Directory.Build.props. Test project per established tests/*.Tests/ convention. -->
     <AssemblyName>DualFrontier.Analyzers.Tests</AssemblyName>
     <RootNamespace>DualFrontier.Analyzers.Tests</RootNamespace>
@@ -36,7 +36,7 @@
   <ItemGroup>
     <!--
       ProjectReference к analyzer for Phase α assembly-identity verifier test.
-      net8.0 → netstandard2.0 is forward-compat (newer .NET consumes older standard),
+      net10.0 → netstandard2.0 is forward-compat (newer .NET consumes older standard),
       so this works without the framework-version issue seen в Commit 1's csproj.
     -->
     <ProjectReference Include="..\..\tools\DualFrontier.Analyzers\DualFrontier.Analyzers.csproj" />
