@@ -30,7 +30,7 @@ A practical guide for mod authors: what `IMod`/`IModApi` let you do, what the ma
 
 ## 1. Why contracts, not references
 
-A mod project has exactly one `ProjectReference`: `DualFrontier.Contracts`. It cannot reference `DualFrontier.Core`, `Systems`, `Components`, `Events`, `AI`, or `Application` — no project file makes `using DualFrontier.Core;` compile. The rule is named in the codebase as **TechArch 11.8** (`mods/DualFrontier.Mod.Example/README.md` §Rules; `ModIsolationException.cs:16-20`; `ModLoader.cs:11-13`) and holds in practice: every one of the 7 mod projects under `mods/` and every test-fixture mod under `tests/Fixture.*` references only `DualFrontier.Contracts.csproj` (the sole exception is fixture-to-fixture, §9).
+A mod project has exactly one `ProjectReference`: `DualFrontier.Contracts`. It cannot reference `DualFrontier.Core`, `Systems`, `Components`, `Events`, `AI`, or `Application` — no project file makes `using DualFrontier.Core;` compile. The rule is named in the codebase as **TechArch 11.8** (`mods/DualFrontier.Mod.Example/README.md` §Rules; `ModIsolationException.cs:10`; `ModLoader.cs:11-13`) and holds in practice: every one of the 7 mod projects under `mods/` and every test-fixture mod under `tests/Fixture.*` references only `DualFrontier.Contracts.csproj` (the sole exception is fixture-to-fixture, §9).
 
 A mod interacts with the running game exclusively through `IModApi`, handed to it in `IMod.Initialize`. Slower to write than RimWorld-style Harmony patching, but a mod that only calls declared, versioned surface keeps working across core and other-mod updates.
 
@@ -127,10 +127,10 @@ Field notes, re-read against `ManifestParser.cs` and `ModManifest.cs`:
 
 - `id`, `name`, `version`, `author` — required strings (`ReadRequiredString`, `ManifestParser.cs:61-63`; `author` optional, defaults `""`).
 - `kind` — `"regular"` (has an `IMod`, default) or `"shared"` (pure type vendor, no entry point — §9).
-- **Contracts-version constraint — two real fields, not one.** `ModManifest.cs` carries both: `RequiresContractsVersion` (line 81), the v1-era field, exact `MAJOR.MINOR.PATCH` only, no caret; and `ApiVersion` (line 115), the v2 field, a `VersionConstraint` that accepts an optional `^` caret prefix. `ManifestParser` reads both (`:66` and `:192-220`); `ModManifest.EffectiveApiVersion` (`:145-146`) prefers `ApiVersion`, falling back to `RequiresContractsVersion` only when `apiVersion` is absent (default `"1.0.0"`). **All 7 shipped mods declare `apiVersion` with a caret** (`"^1.0.0"`) — use that field; `requiresContractsVersion` still parses but has no caret support, and declaring both is pointless since `ApiVersion` wins.
+- **Contracts-version constraint — two real fields, not one.** `ModManifest.cs` carries both: `RequiresContractsVersion` (line 81), the v1-era field — consumed by the legacy Phase-A path, which strips any `^`/`~` prefix (`ContractsVersion.cs:59-61`) and applies floor-within-major semantics via `IsCompatible`; it cannot express an exact pin; and `ApiVersion` (line 115), the v2 field, a `VersionConstraint` that accepts an optional `^` caret prefix. `ManifestParser` reads both (`:66` and `:192-220`); Phase A prefers `ApiVersion`, falling back to `RequiresContractsVersion` only when `apiVersion` is absent (default `"1.0.0"`). **Six of the seven shipped mods declare `apiVersion` with a caret** (`"^1.0.0"`); the Example mod omits it and falls back to the `requiresContractsVersion` default (`"1.0.0"`) — declare `apiVersion` in new manifests; declaring both is pointless since `ApiVersion` wins.
 - `entryAssembly` / `entryType` — required for `kind: "regular"`; must be empty for `kind: "shared"` (`ContractValidator` Phase F, `ContractValidator.cs:687-776`).
 - `hotReload` — opt-in boolean, defaults `false` (`ManifestParser.cs:72`).
-- `dependencies` — bare id strings or `{ "id", "version", "optional" }` objects, not mixable in one manifest (`ManifestParser.cs:274-285`). **No separate `optionalDependencies` array** — optionality is the per-entry `"optional": true` flag (real fixture: `tests/Fixture.RegularMod_MissingOptional/mod.manifest.json:9`; read at `ManifestParser.cs:345-356`). A missing required dependency blocks loading; a missing optional one does not.
+- `dependencies` — bare id strings or `{ "id", "version", "optional" }` objects, not mixable in one manifest (`ManifestParser.cs:274-285`). **No separate `optionalDependencies` array** — optionality is the per-entry `"optional": true` flag (real fixture: `tests/Fixture.RegularMod_MissingOptional/mod.manifest.json:11`; read at `ManifestParser.cs:345-356`). A missing required dependency blocks loading; a missing optional one does not.
 - `replaces` — FQNs of kernel bridge systems this mod supersedes; target must carry `[BridgeImplementation(Replaceable = true)]`; two mods may not replace the same FQN in one batch (`ContractValidator.cs:566-667`; bridge-replacement law in MOD_OS_ARCHITECTURE.md).
 - `capabilities.required` / `.provided` — validated by `ManifestCapabilities.Parse`; grammar in §7.
 
@@ -141,7 +141,7 @@ No `description` field exists in the parsed schema — `ManifestParser` never re
 Capability tokens are validated by `ManifestCapabilities.Parse` against one compiled pattern (`ManifestCapabilities.cs:24-26`):
 
 ```
-^(kernel|mod\.[a-z0-9.]+)\.((fast|normal|background)\.(publish|subscribe)
+^(kernel|mod\.[a-z0-9.]+)\.((?:fast|normal|background)\.(?:publish|subscribe)
    |publish|subscribe|read|write
    |field\.(read|write|acquire|conductivity|storage|dispatch)|pipeline\.register
   ):[A-Za-z][A-Za-z0-9_.]+$
@@ -161,7 +161,7 @@ Mods do not reference each other's assemblies. A mod that wants to expose an API
 
 ## 9. The shared-mod pattern — the only way to share an event type
 
-This is the fix for the old guide's broken quickstart: `DualFrontier.Events`/`Components` are not in a mod's reference surface (§1), and `DualFrontier.Contracts` defines only the `IEvent` marker interface and bus-routing attributes — no concrete event type lives there to subscribe to (verified: `DualFrontier.Contracts` contains only `IEvent.cs`, `EventBusAttribute.cs`, `EventTierAttribute.cs` matching `*Event*`). A mod cannot `Subscribe<DeathEvent>` any core event, and cannot `Subscribe<T>` another mod's event type unless that type comes from somewhere both ALCs agree on.
+This is the fix for the old guide's broken quickstart: `DualFrontier.Events`/`Components` are not in a mod's reference surface (§1), and `DualFrontier.Contracts` defines only the `IEvent` marker interface and bus-routing attributes — no concrete event type lives there to subscribe to (verified: the only `*Event*` files in `DualFrontier.Contracts` are the `IEvent` marker, the `IEventBus` interface, and the two bus-routing attributes `EventBusAttribute.cs`/`EventTierAttribute.cs`). A mod cannot `Subscribe<DeathEvent>` any core event, and cannot `Subscribe<T>` another mod's event type unless that type comes from somewhere both ALCs agree on.
 
 That somewhere is a **shared mod** — `"kind": "shared"`, no `IMod`, no entry point, loaded once into a singleton `SharedModLoadContext` that every regular mod's `ModLoadContext` delegates to for names it recognizes (`ModLoadContext.cs:45-54`). Tested and working (`tests/Fixture.SharedEvents` + `Fixture.PublisherMod` + `Fixture.SubscriberMod`), not a hypothetical:
 
@@ -233,5 +233,6 @@ This guide changes freely under normal review — it carries no independent law,
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R2-9..R2-14): apiVersion census corrected 7→6-of-7 (Example omits it); v1-field characterization corrected to code truth (parser strips `^`/`~`, gate is floor-within-major — no exact pin); `*Event*` census gains `IEventBus.cs`; fixture anchor `:9`→`:11`; TechArch 11.8 naming anchor `:16-20`→`:10`; §7 regex restored verbatim (both `?:` non-capturing markers). |
 | 0.1.0 (this doc) | 2026-07-15 | Corpus rework: reclassified guide/non-normative; manifest examples corrected to the real v3 schema (`apiVersion`/`requiresContractsVersion` dual path, `dependencies[].optional`, no `optionalDependencies`); quickstart replaced with the verified shared-mod pattern; ALC "refusal list" corrected to the actual compile-time-reference-surface model; unload/reload deferred to MOD_OS_ARCHITECTURE.md. |
 | 1.1 | pre-rework | Last state of predecessor `DOC-A-MODDING` (see historical/). |
