@@ -32,8 +32,18 @@ excluded_paths:
     rationale: "Roslyn analyzer release-tracking ceremony file (RS2000 family) — owned by the analyzer toolchain, not project documentation (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
   - pattern: "tools/DualFrontier.Analyzers/AnalyzerReleases.Unshipped.md"
     rationale: "Roslyn analyzer release-tracking ceremony file (RS2000 family) — owned by the analyzer toolchain, not project documentation (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
-  - pattern: "docs/scratch/**"
-    rationale: "Working notes / halt reports / manual-verification protocols — scratch space, non-governed by design (CORPUS_CLOSURE_INVERSION_B CD2; covers the 6 ratified exclude-verdict files, folder-glob form)"
+  - pattern: "docs/scratch/A_PRIME_5_CONTINUED/HALT_REPORT.md"
+    rationale: "Working halt report — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude; exact-file form — docs/scratch/ also hosts governed registered reports, a folder glob would hide them)"
+  - pattern: "docs/scratch/A_PRIME_5_CONTINUED/HALT_REPORT_PHASE_4.md"
+    rationale: "Working halt report — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
+  - pattern: "docs/scratch/A_PRIME_7_K10_3/HALT_REPORT.md"
+    rationale: "Working halt report — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
+  - pattern: "docs/scratch/A_PRIME_7_K10_3/HALT_REPORT_ADDENDUM_2026_05_19.md"
+    rationale: "Working halt report addendum — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
+  - pattern: "docs/scratch/V0_C_2/MANUAL_VISUAL_VERIFICATION_PROTOCOL.md"
+    rationale: "Manual verification protocol — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
+  - pattern: "docs/scratch/V1_V2/V1_MANUAL_VERIFICATION_PROTOCOL.md"
+    rationale: "Manual verification protocol — scratch note, non-governed (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
 
 # Allow-list inverse: only .md extensions registered.
 # All other extensions excluded by default (tooling scripts like .ps1, configs like

@@ -5082,6 +5082,38 @@ documents:
     next_review_due: "null"
     reviewer: Crystalka
 
+  - id: DOC-E-REGISTER_INVERSION_B_MEASURE_REPORT
+    path: docs/reports/REGISTER_INVERSION_B_MEASURE_REPORT.md
+    title: "REGISTER_INVERSION Cascade B — Measure Report (CD1; supersedes the 288-era counts)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-07-17"
+    last_modified: "2026-07-17"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "Authored at CD1 with hand-authored schema-2.0 frontmatter (the 2.0 enrollment discipline); this pre-migration SoT entry mirrors that frontmatter so the migrator carries the file through the live flip (the control dry-run showed frontmatter-only enrollees would be auto-excluded by the migrator's orphan branch)."
+
+  - id: DOC-E-G_RATIO_PER_RULE_BREAKDOWN
+    path: docs/reports/G_RATIO_PER_RULE_BREAKDOWN.md
+    title: "G-RATIO Per-Rule Breakdown (D5; ruling-(e) deliberation input)"
+    category: E
+    tier: 3
+    lifecycle: EXECUTED
+    owner: Crystalka
+    version: "1.0"
+    first_authored: "2026-07-17"
+    last_modified: "2026-07-17"
+    content_language: en
+    review_cadence: on-status-transition
+    next_review_due: "null"
+    reviewer: Crystalka
+    special_case_rationale: "Authored at CD1 with hand-authored schema-2.0 frontmatter (the 2.0 enrollment discipline); this pre-migration SoT entry mirrors that frontmatter so the migrator carries the file through the live flip."
+
   - id: DOC-E-PHASE_BETA_PREP_EXECUTION_PROMPT
     path: docs/prompts/PHASE_BETA_PREP_EXECUTION_PROMPT.md
     title: "Phase β-prep Execution Prompt — A'.9.1 Analyzer Infrastructure Cascade"
