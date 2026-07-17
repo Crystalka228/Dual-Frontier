@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-DOC_DRIFT_REFACTOR_PROGRESS
+category: E
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "Live"
+next_review_due: on-refactor-cascade-execution
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-DOC_DRIFT_REFACTOR_PROGRESS
+---
 ---
 register_id: DOC-E-DOC_DRIFT_REFACTOR_PROGRESS
 category: E

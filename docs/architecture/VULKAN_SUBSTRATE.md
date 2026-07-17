@@ -4,10 +4,10 @@
 register_id: DOC-A-VULKAN_SUBSTRATE_V2
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: "0.1.0"
-next_review_due: post-ratification closure
+version: "1.0.0"
+next_review_due: 2027-Q3
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE_V2
 ---
 # Vulkan Substrate (V)

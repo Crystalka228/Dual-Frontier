@@ -1,4 +1,16 @@
-﻿# DualFrontier Document Control Register — Rendered View
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-G-REGISTER_RENDER
+category: G
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: "1.0"
+next_review_due: 2026-Q3
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-REGISTER_RENDER
+---
+# DualFrontier Document Control Register — Rendered View
 
 *Auto-generated from [REGISTER.yaml](./REGISTER.yaml) by `tools/governance/render_register.ps1`. Do not edit — edit REGISTER.yaml instead.*
 

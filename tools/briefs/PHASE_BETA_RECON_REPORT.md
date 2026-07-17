@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-D-PHASE_BETA_RECON_REPORT
+category: D
+tier: 4
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-PHASE_BETA_RECON_REPORT
+---
 # PHASE BETA RECON REPORT — 2026-07-01
 
 Repository: `D:\Colony_Simulator\Colony_Simulator` @ `02be616` · read-only session · census discipline per `TESTING_STRATEGY` §4 (every count carries its verbatim expression; UPPER-BOUND proxies in R3 are explicitly labelled, never presented as actual violation counts).

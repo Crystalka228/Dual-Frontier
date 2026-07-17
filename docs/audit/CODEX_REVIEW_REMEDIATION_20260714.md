@@ -1,4 +1,4 @@
----
+﻿---
 # Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
 # Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-E-CODEX_REVIEW_REMEDIATION_20260714
@@ -7,7 +7,7 @@ tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
 version: "1.1"
-last_modified: "2026-07-14"
+next_review_due: "null"
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-CODEX_REVIEW_REMEDIATION_20260714
 ---
 # Codex Review Remediation — closed-PR findings cascade — 2026-07-14

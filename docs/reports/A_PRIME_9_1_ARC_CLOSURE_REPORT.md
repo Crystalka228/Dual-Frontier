@@ -1,3 +1,15 @@
+﻿---
+# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
+# Manual edits overwritten by sync_register.ps1 on next sync.
+register_id: DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT
+category: E
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: "1.0"
+next_review_due: "null"
+register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT
+---
 # A'.9.1 ARC CLOSURE REPORT — Analyzer Infrastructure (К-extensions cascade #5) — 2026-07-02
 
 The durable record of the complete A'.9.1 arc, written at Phase δ closure per

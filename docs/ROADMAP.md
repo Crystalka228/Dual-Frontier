@@ -7,7 +7,7 @@ tier: 2
 lifecycle: Live
 owner: Crystalka
 version: "Live"
-next_review_due: "null"
+next_review_due: 2026-Q4
 register_view_url: docs/governance/REGISTER_RENDER.md#DOC-C-ROADMAP
 ---
 # Roadmap

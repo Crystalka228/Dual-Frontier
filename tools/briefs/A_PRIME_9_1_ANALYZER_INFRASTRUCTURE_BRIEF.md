@@ -4,7 +4,7 @@
 register_id: DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF
 category: D
 tier: 4
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
 version: "1.0"
 next_review_due: "null"
