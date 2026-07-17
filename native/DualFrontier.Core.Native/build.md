@@ -5,9 +5,9 @@ category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: 1.0
+version: 1.0.1
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: 2026-07-17
 content_language: en
 next_review_due: null
 title: Native Build Notes
@@ -34,7 +34,7 @@ The CMake target sets `PREFIX ""` so on Windows the output is exactly
 `DualFrontier.Core.Native.dll`. On Linux/macOS the usual `lib` prefix is
 suppressed; the default `SUFFIX` (`.so` / `.dylib`) is retained.
 
-## Windows (Visual Studio 2022)
+## Windows (Visual Studio 2026 (18.0)+)
 
 ```powershell
 cd native/DualFrontier.Core.Native
@@ -42,6 +42,13 @@ cmake -S . -B build -A x64
 cmake --build build --config Release
 # Artifact: build\Release\DualFrontier.Core.Native.dll
 ```
+
+The kernel is C++23 (`CMAKE_CXX_STANDARD 23`; К-L1 as amended 2026-07-17,
+STACK_UPDATE). Honest MSVC status: there is no stable `/std:c++23` switch yet —
+on the Visual Studio 2026 (18.0)+ toolset CMake compiles the standard under
+`/std:c++23preview` (the stable switch arrives with Build Tools 14.52; tracked
+as F-44). On GNU/Clang (the Linux/WSL and macOS builds below) the mode is plain
+`-std=c++23`.
 
 ## Linux / WSL
 
@@ -80,7 +87,7 @@ next to its own assembly at runtime. Post-build copy example (PowerShell):
 
 ```powershell
 Copy-Item native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll `
-         src\DualFrontier.Core.Interop\bin\Release\net8.0\
+         src\DualFrontier.Core.Interop\bin\Release\net10.0\
 ```
 
 Or automate it via an `AfterBuild` target inside

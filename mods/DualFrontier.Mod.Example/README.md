@@ -31,7 +31,7 @@ public sealed class ExampleMod : IMod
 }
 ```
 
-The mod assembly is built into `mods/DualFrontier.Mod.Example/bin/.../net8.0/`;
+The mod assembly is built into `mods/DualFrontier.Mod.Example/bin/.../net10.0/`;
 `mod.manifest.json` sits alongside it.
 
 ## TODO
@@ -47,7 +47,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: 2026-07-17
 content_language: en
 next_review_due: null
 title: Mod Example

@@ -30,7 +30,7 @@ and enables hot reload (see TechArch 11.8).
 ## Usage examples
 ```csharp
 var loader = new ModLoader(services);
-loader.LoadMod("mods/DualFrontier.Mod.Example/bin/Debug/net8.0/");
+loader.LoadMod("mods/DualFrontier.Mod.Example/bin/Debug/net10.0/");
 foreach (var id in loader.GetLoaded())
 {
     Console.WriteLine($"Loaded mod: {id}");
@@ -53,7 +53,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: 2026-07-17
 content_language: en
 next_review_due: null
 title: Application Modding submodule

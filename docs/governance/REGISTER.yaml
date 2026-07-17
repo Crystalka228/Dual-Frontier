@@ -4263,9 +4263,9 @@ documents:
   tier: 3
   lifecycle: EXECUTED
   owner: Crystalka
-  version: 1.0
+  version: 1.0.1
   first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Native Build Notes
@@ -4569,7 +4569,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Mod Example
@@ -4674,7 +4674,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-05-11
-  last_modified: 2026-05-11
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Native Core module
@@ -4874,7 +4874,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Application Modding submodule
@@ -5340,7 +5340,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-05-23
-  last_modified: 2026-05-23
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-Vanilla-mods-consumer-materialization closure
   title: DualFrontier.Launcher — Production Launch Entry Point

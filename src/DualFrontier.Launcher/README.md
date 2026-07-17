@@ -16,8 +16,8 @@ Implements `IRenderer` contract from `DualFrontier.Application.Rendering` via
 - `DualFrontier.Application` — contracts + GameBootstrap + bridge + commands.
 - `DualFrontier.Runtime` — Vulkan substrate primitives.
 
-Inherits `Directory.Build.props` defaults: net8.0 + Nullable enabled +
-LangVersion 12.0 + ImplicitUsings + TreatWarningsAsErrors +
+Inherits `Directory.Build.props` defaults: net10.0 + Nullable enabled +
+LangVersion 14.0 + ImplicitUsings + TreatWarningsAsErrors +
 GenerateDocumentationFile.
 
 ## Contents
@@ -89,7 +89,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-05-23
-last_modified: 2026-05-23
+last_modified: 2026-07-17
 content_language: en
 next_review_due: post-Vanilla-mods-consumer-materialization closure
 title: DualFrontier.Launcher — Production Launch Entry Point
