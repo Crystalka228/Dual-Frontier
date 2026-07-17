@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF
+version: 1.0
+first_authored: 2026-05-24
+last_modified: 2026-05-24
+content_language: mixed
+next_review_due: null
+title: "A_PRIME_9_0_RECONNAISSANCE_BRIEF — A'.9.0 Reconnaissance Cascade / К-extensions cascade #4: Roslyn Analyzer Architecture Discovery"
+review_cadence: on-status-transition
+last_review_date: 2026-05-24
+last_review_event: "A'.9.0 Reconnaissance cascade authored + executed 2026-05-24. Brief authored 2026-05-24 by Claude Opus 4.7 в A'.9 milestone-entry deliberation session (11 Q-J ratified per appendix Q-J lock summary; 10 S-LOCKs reserved). Crystalka direction «Два брифа первый, он проведет полную разведку архитектуры что бы по отчёту смогли написать бриф для внедрения анализатора» — two-brief A'.9 entry sequence ratified (Brief 1 = A'.9.0 Reconnaissance per this brief; Brief 2 = A'.9.1 Analyzer Infrastructure to be authored post-A'.9.0 closure against report §10 prerequisites). Standalone reconnaissance brief shape per Crystalka direction («самостоятельный бриф для поиска и инвентаризации... в сессии Claude Cod для этой задачи инстументрарий лучше в виде мульти агентов и большого контекстного окна в 1 миллион токенов»). Execution agent: Claude Code (Opus 4.7) on branch main (per Crystalka pre-execution ratification — cascade #3 pattern matched; brief literal «feature branch off 8ea0d03» overridden because HEAD had advanced к 4981d78 = Crystalka CI logs commit). Branch strategy clarification ratified pre-execution. Build halt resolution ratified pre-α0 (orphan testhost PID 7380 from Crystalka CI session killed; minimal cleanup option chosen). Cascade scope: 7-domain reconnaissance via multi-agent dispatch (7 sub-agents per S-LOCK-5 recommendation) — Domain 1 К-L analyzability + Domain 2 FORMALIZE Lessons analyzability + Domain 3 cascade #2/#3 surfaced rule candidates + Domain 4 Mod OS К-L20 prep + Domain 5 Roslyn ecosystem desk research + Domain 6 Build/CI integration surface + Domain 7 suppression governance precedent. Produced governance artifact A_PRIME_9_RECONNAISSANCE_REPORT.md (~3340 lines). К-L impact: zero per S-LOCK-1 (no production code changes — analyzer implementation deferred к Brief A'.9.1 cascade). К-L14 verification #13 first observational reconnaissance evidence."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "A'.9.0 Reconnaissance / К-extensions cascade #4 brief authored 2026-05-24 by Claude Opus 4.7 в A'.9 milestone-entry deliberation session. Two-brief A'.9 entry sequence ratified by Crystalka per «Два брифа первый, он проведет полную разведку архитектуры». Brief 1 (this) = standalone reconnaissance discovery-only cascade per S-LOCK-1; Brief 2 = A'.9.1 Analyzer Infrastructure cascade to be authored separately post-A'.9.0 closure against report findings. 11 Q-J ratified deliberation outcomes covering brief shape (Q-J-0 standalone reconnaissance с no pre-grounding), scope (Q-J-1 7-domain comprehensive), report format (Q-J-2 markdown Tier 2 Live), scoring rubric (Q-J-3/Q-J-4 per S-LOCK-4 T1-T6 + P0-P3 + rule shape), desk research (Q-J-5 Roslyn ecosystem INCLUDED), Mod OS prep (Q-J-6 К-L20 INCLUDED), К-L14 framing (Q-J-7 observational evidence 5th type NEW category), commit budget (Q-J-8 4-8 commits — actual 8 with β1+β2 bundled per squashing allowance), reconnaissance depth (Q-J-9 full file reads), brief prerequisites (Q-J-10 §10 mandatory enumeration). 10 S-LOCK reservations covering zero production code (S-LOCK-1), comprehensive scope (S-LOCK-2), report path/format (S-LOCK-3), scoring rubric (S-LOCK-4), multi-agent dispatch encouraged (S-LOCK-5), К-L14 #13 observational framing (S-LOCK-6), full file reads (S-LOCK-7), Brief A'.9.1 prerequisites enumeration §10 (S-LOCK-8), Q-K candidates §11 enumeration (S-LOCK-9), empirical reads citation discipline (S-LOCK-10). Multi-agent dispatch executed per S-LOCK-5: 7 sub-agents (3 parallel batch A + 3 parallel batch B + 1 sequential C1). Phase 0 anomalies surfaced — pre-existing ANALYZER_RULES.md + A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md AUTHORED-SKELETONs that deliberation agent's structural anchor missed; Lesson #N14 third application surfaced (HIGH promotion now). 45 Q-K candidates aggregated for Brief A'.9.1 deliberation (42 sub-agent + 3 cross-cutting α4 synthesis)."
 ---
+
 # A'.9.0 Reconnaissance Cascade — Roslyn Analyzer Architecture Discovery
 
 **Brief designation**: `A_PRIME_9_0_RECONNAISSANCE_BRIEF`  

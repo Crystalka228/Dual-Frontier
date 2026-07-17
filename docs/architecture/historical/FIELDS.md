@@ -1,15 +1,27 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-FIELDS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "0.1.1"
+version: 0.1.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FIELDS
+title: Field Storage (historical; superseded by authored rework)
+superseded_by: DOC-A-FIELDS_V2
+last_modified_commit: fcbfe5b
+review_cadence: on-change+annual
+last_review_date: 2026-05-11
+last_review_event: K9 closure populated FIELDS storage contract
+reviewer: Crystalka
+special_case_rationale: 'Superseded by DOC-A-FIELDS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FIELDS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone'
+risks_referenced:
+- RISK-003
 ---
+
 # Field Storage
 
 Dual Frontier carries two orthogonal data systems under the same managed Application layer. The Entity Component System ([ECS](./ECS.md)) stores per-entity state as sparse component arrays; the Field Storage system stores spatial scalar/vector state as dense 2D grids. Neither subsumes the other. A pawn is an entity with components; a mana density is a field with cells. Code that reads pawn health does not touch fields; code that reads local mana does not touch components. The two systems share the native kernel ([KERNEL_ARCHITECTURE](./KERNEL_ARCHITECTURE.md)) as the storage owner and `IModApi` ([MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) §4.6) as the registration surface, but their access patterns, lifecycle rules, and capability verbs are distinct.

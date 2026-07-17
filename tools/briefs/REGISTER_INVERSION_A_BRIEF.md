@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-REGISTER_INVERSION_A_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-REGISTER_INVERSION_A_BRIEF
+title: REGISTER_INVERSION Cascade A — Execution Brief (the instrument)
+last_modified_commit: 817921d
+review_cadence: on-status-transition
+reviewer: Crystalka
 ---
+
 ---
 register_id: DOC-D-REGISTER_INVERSION_A_BRIEF
 project: Dual Frontier

@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-NORMALIZATION_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-NORMALIZATION_REPORT
+title: Normalization Report
+review_cadence: on-closure+quarterly
+reviewer: Crystalka
+special_case_rationale: E + Tier 2 Live override per Pass 2 §2.2 (live closure report; mutable while series open)
 ---
+
 ---
 title: Normalization Report — Pass 1 of Translation Campaign
 nav_order: 101

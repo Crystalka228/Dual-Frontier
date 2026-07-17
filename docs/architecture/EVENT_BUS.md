@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-EVENT_BUS_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-EVENT_BUS_V2
+title: Event buses (authored rework; fault-isolation asymmetry and capacity truths pinned)
+supersedes:
+- DOC-A-EVENT_BUS
+last_modified_commit: 1556a18
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (46 anchors, 0 WRONG) + HALT-1-ratified corrections R3-15/16/17 at 1556a18 (§9 lease-model wiring truth over the all-stub registry; quote precision); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 ---
+
 # Event Buses
 
 The dual bus architecture: five managed domain buses carrying every production event today, and the sovereign native three-tier kernel bus (К-L15) that exists fully behind a C ABI but carries almost none of that traffic yet.

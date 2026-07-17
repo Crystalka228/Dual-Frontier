@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
+project: Dual Frontier
 category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.1.2"
+version: 1.1.2
+first_authored: 2026-07-17
+last_modified: 2026-07-17
+content_language: mixed
 next_review_due: 2027-05-10
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-MAXIMUM_ENGINEERING_REFACTOR
+title: Maximum Engineering Refactor — Discipline Escalation Brief
+last_modified_commit: 717641b
+review_cadence: on-change+annual
+last_review_date: 2026-05-10
+last_review_event: A'.0.7 methodology rewrite
+reviewer: Crystalka
+capa_entries_referenced:
+- CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
 ---
+
 ---
 title: Maximum Engineering Refactor Brief
 nav_order: 109

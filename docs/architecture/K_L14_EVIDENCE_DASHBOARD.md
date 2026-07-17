@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-K_L14_EVIDENCE_DASHBOARD
+project: Dual Frontier
 category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "0.2.0"
+version: 0.2.0
+first_authored: 2026-07-02
+last_modified: 2026-07-02
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_L14_EVIDENCE_DASHBOARD
+title: К-L14 Evidence Dashboard
+last_modified_commit: 5c34946
+review_cadence: on-closure+quarterly
+last_review_date: 2026-07-02
+last_review_event: "A'.9.1 Phase δ C3 (5c34946) — verification #14 appended (single, arc-wide per the brief §3 ratified decision 5): first analyzer-implementation evidence, Type 6 tooling addition (NEW category extending the #13 five-type taxonomy). All five phase ranges with real hashes; Status CLEAN (zero soft-halts arc-wide); К-L LOCK transitions none (21 final); performance metric honestly expectation-carried (+1-3s build, not separately instrumented); Q-L-1 gate 23 → CONTINUE → 15 genuine violations in 2 clusters; 2 census-pinned DFK-WAIVERs; criteria 1-6 all NOT-falsified (criterion 5 deferred); five lesson dispositions (#N17/#N18/#N19/#N20 FORMALIZED + #N14 PROMOTED); cumulative 13 verifications (12 clean + 1 honest soft-halt #7) — К-L14 thesis не-falsified. §5 forward table realized (#14 candidate row → realized list; arc brief §3.3 reservations #15/#16/#17 superseded — Skeleton revision); §6 Live gate satisfied (four post-closure entries #11-#14 vs 3+ required) → lifecycle AUTHORED-SKELETON → Live (0.2.0) at this REGISTER cascade. Prior context: A'.9.0 Reconnaissance / К-extensions cascade #4 β1+β2 — verification #13 entry appended (first observational reconnaissance evidence — 5th evidence type NEW category per S-LOCK-6 framing; substrate completely untouched per S-LOCK-1 zero-production-code; degenerate pass criteria — К-L14 thesis не tested interventionally but empirical baseline established for A'.9.1; 8-criterion pass table populated). 5th evidence type taxonomy codified (Removal cascade #2 #11 + Reorganization cascade #1 #9 + Clean-additive cascade #3 #12 + Behavioral cascade #0 #8 + Observational cascade #4 #13 NEW). §5 forward expected verifications table updated (realized #11/#12/#13 appended к §2.5; forward candidates renumbered: #14 A'.9.1 Analyzer Infrastructure + #15+ A'.9.2/A'.9.3 + #16+ V-extension + #17+ К-L20 LOCK + #18+ Phase B). Lessons surfaced: #N14 third application (HIGH promotion now — 3 cumulative applications), #N13 second application explicit, observational reconnaissance evidence type formalized. Falsifiability criteria 1-6 status post-#13 documented (all NOT falsified; zero soft-halts cascade #4). Cumulative post-#13: 12 verifications в active log (11 clean + 1 honest soft-halt #7); К-L14 thesis remains не-falsified. Prior context: К-extensions cascade #3 δ4 — verification #12 (first clean additive evidence)."
+reviewer: Crystalka
+special_case_rationale: "Category A + Tier 2 Live: forward-evolving dashboard appended per cascade closure. The original AUTHORED-SKELETON override (populated к Tier 2 Live при 3+ post-closure verifications) resolved at A'.9.1 Phase δ (2026-07-02) — §6 gate satisfied at verification #14 (four post-closure entries #11/#12/#13/#14; schema stable since #11); promoted to Live. Tier 2 Live → Tier 1 LOCKED remains gated on К-L14 thesis credibility maturity (post-Phase B+; criterion 5 deferred status resolved)."
 ---
+
 # К-L14 Evidence Dashboard
 
 **Lifecycle**: Live (initial entry AUTHORED-SKELETON at A'.8 closure 2026-05-23; v0.1.1 PATCH 2026-06-12 — Architecture Truth Cascade old-form `DF###` → `DFK###` rename; promoted to Live at A'.9.1 Phase delta 2026-07-02 — §6 gate satisfied at #14)

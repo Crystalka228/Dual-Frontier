@@ -1,15 +1,29 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K8_2_V2
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "2.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_2_V2
+version: 2.0
+first_authored: 2026-05-09
+last_modified: 2026-05-09
+content_language: en
+next_review_due: null
+title: K8.2 — Component Conversion v2
+supersedes:
+- DOC-D-K8_2_V1_DEPRECATED
+last_modified_commit: 0789bd4
+review_cadence: on-status-transition
+last_review_date: 2026-05-09
+last_review_event: K8.2 v2 closure
+reviewer: Crystalka
+risks_referenced:
+- RISK-001
+capa_entries_referenced:
+- CAPA-2026-05-09-K8.2-V2-REFRAMING
 ---
+
 # K8.2 v2 — Component class→struct conversion + K8.1 wrapper value-type refactor + empty TODO stub deletions
 
 **Brief version**: 2.0 (full rewrite of v1.0 after Cloud Code Phase 2.7 §1 stop)

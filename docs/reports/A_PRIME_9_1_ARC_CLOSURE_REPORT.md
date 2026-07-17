@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT
+version: 1.0
+first_authored: 2026-07-02
+last_modified: 2026-07-02
+content_language: en
+next_review_due: null
+title: "A'.9.1 ARC CLOSURE REPORT — Analyzer Infrastructure (К-extensions cascade #5) — the arc's durable record (git-verified phase table + per-phase deliverables; Q-L-1 gate 23 → CONTINUE, 15 genuine in 2 clusters; Release 1.0 severity matrix; census pins final state; lessons formalized; falsifiability-anchor readout; operator ratifications ledger; Phase δ execution record + self-attestation)"
+last_modified_commit: 8ec64c5
+review_cadence: none-historical-record
+last_review_date: 2026-07-02
+last_review_event: Authored at Phase δ C8 (the D7 deliverable per PHASE_DELTA_BRIEF §9) and enrolled in the same REGISTER cascade; its last_modified_commit shares the single sanctioned Option-B self-reference (the report ships in the register-closure commit, whose hash is backfilled at C9 render together with the header). Facts cited from the phase EVTs, the durable recon reports, and the execution session's git-verified measurements.
+reviewer: Crystalka
+special_case_rationale: Durable arc-closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (the γ-recon precedent class). The arc's citable closure record — replaces the chat-only closure-report precedent of the β/γ phase closures for the arc-level record per the delta brief §3 ratified decision 8.
 ---
+
 # A'.9.1 ARC CLOSURE REPORT — Analyzer Infrastructure (К-extensions cascade #5) — 2026-07-02
 
 The durable record of the complete A'.9.1 arc, written at Phase δ closure per

@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-ECS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.1.1"
+version: 1.1.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ECS
+title: Entity Component System (historical; superseded by authored rework)
+superseded_by: DOC-A-ECS_V2
+last_modified_commit: fe27fbe
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: Superseded by DOC-A-ECS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/ECS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
+
 # Entity Component System
 
 Dual Frontier uses the classical ECS approach: an entity is an identifier, components are pure data, systems are logic. The ECS core lives in the `DualFrontier.Core` assembly. `IComponent` and `EntityId` are the public contracts; `NativeWorld` is the production component-storage backend exposed to systems via `SystemBase.NativeWorld`.

@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-ANALYZER_RULES
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "0.4.1"
+version: 0.4.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ANALYZER_RULES
+title: DualFrontier Roslyn Analyzer Rule Specifications (historical; superseded by authored rework)
+superseded_by: DOC-A-ANALYZER_RULES_V2
+last_modified_commit: 6888246
+review_cadence: on-change+annual
+last_review_date: 2026-06-11
+last_review_event: "Standing-Law cascade C6 (4a67a22) — v0.1 → v0.2.0 structural separation per drift report §6.3.2 (the prime dual-load specimen, bidirectional drift): §4 rewritten to stub-truth «17 stubs — detection PENDING Phase β» single registry (shipped Info + clearly-labeled Phase-γ-target columns; descriptor-ID convention DFK003.1/DFL025-A vs underscore file names; composition 8 P0 + 4 P1 + DFK013 + DFK016 + 2 DFL + DF999 = 17 per S-LOCK-4); roadmap load EXTRACTED → docs/ROADMAP.md NEW «Analyzer track» section (§4.1/§4.2 promotion columns, §5 К-L20 family, §6 hardware tier, §10.5 forward plan, §11 lifecycle forward — one-line pointers left at each site); §7/§8 reframed as realized decision records; NEW §12 Suppression defers by citation to CODING_STANDARDS §5.3 DFK-WAIVER; phantom MOD_API_CONTRACT reference resolved to an explicit forward-reference (К-L20 LOCK cascade authors it). DFK019.A Phase-γ target recorded Warning per canonical K_CLOSURE §7.2 (v0.1 internal §4.2-vs-§10.1 conflict resolved + footnoted → F-12 Crystalka ratification before Phase γ). Lifecycle stays AUTHORED-SKELETON — Phase β mutates §4 next. Prior context: A'.8 enrollment (Commit 5, S-LOCK-10); A'.9.1 Phase α Commit 5 structural reorganization."
+reviewer: Crystalka
+special_case_rationale: "Superseded by DOC-A-ANALYZER_RULES_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/ANALYZER_RULES.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Tier 1 AUTHORED-SKELETON override per S-LOCK-10 LOCKED Session 2 (Q-N-8-1 ratified К-L LOCK batch implies analyzer rules infrastructure document AUTHORED-SKELETON at A'.8 closure). Document specifies Roslyn analyzer rules encoding К-Lxx invariants. К-Lxx invariant authority resides в KERNEL_ARCHITECTURE.md Part 0; this document encodes К-Lxx invariants as analyzer rules. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy (architectural authority surface — Roslyn analyzer rules are normative architectural enforcement). Initial lifecycle AUTHORED-SKELETON; populated к Tier 1 LOCKED at A'.9 Roslyn analyzer milestone implementation cascade through per-rule §2 template specifications + Roslyn analyzer NuGet package implementation + test coverage + CI integration + first-run cleanup phase. DF020 reserved post-Mod API lock; activates at Mod API lock milestone landing с К-L20 codification."
 ---
+
 # DualFrontier Roslyn Analyzer Rule Specifications
 
 **Lifecycle**: AUTHORED-SKELETON (initial entry at A'.8 closure 2026-05-23; structural reorganization at A'.9.1 Phase α Commit 5 2026-05-25; Standing-Law restructure 2026-06-11; Phase β detection + Phase γ severity promotion 2026-07-01 — lifecycle unchanged: LOCK criteria per ROADMAP «Analyzer track» Phase δ)

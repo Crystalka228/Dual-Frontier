@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-NATIVE_BUILD
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-NATIVE_BUILD
+version: 1.0
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Native Build Notes
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: Closure-style notes housed in native/ source tree; tracked as Category E rather than F because content is build/closure narrative not module-local README
 ---
+
 # DualFrontier.Core.Native — Build Instructions
 
 This is the experimental C++ core. It is **not** part of the `.sln`; CMake

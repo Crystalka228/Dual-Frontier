@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-NAMESPACE_CASCADE_RESEARCH_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-NAMESPACE_CASCADE_RESEARCH_BRIEF
+version: 1.0
+first_authored: 2026-05-15
+last_modified: 2026-05-15
+content_language: en
+next_review_due: null
+title: M/G/R Namespace Cascade Map — Research Brief
+last_modified_commit: e3fef89
+review_cadence: on-status-transition
+last_review_date: 2026-05-15
+last_review_event: Brief executed 2026-05-15 — cascade map shipped at docs/research/M_G_R_NAMESPACE_CASCADE_MAP.md (commit e3fef89); no halts; 2 LOCKED renames captured, 10 ambiguities surfaced for ratification proposal
+reviewer: Crystalka
 ---
+
 # M/G/R Namespace Cascade Map — Research Brief for Claude Code
 
 **Status**: AUTHORED 2026-05-15. EXECUTED 2026-05-15 (cascade map shipped at commit `e3fef89`, output `docs/research/M_G_R_NAMESPACE_CASCADE_MAP.md`).

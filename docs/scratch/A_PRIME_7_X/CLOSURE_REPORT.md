@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-A_PRIME_7_X_CLOSURE
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_7_X_CLOSURE
+version: 1.0
+first_authored: 2026-05-21
+last_modified: 2026-05-21
+content_language: mixed
+next_review_due: null
+title: А'.7.x BUS_ARCHITECTURE_AMENDMENT — Closure Report
+review_cadence: none-historical-record
+last_review_date: 2026-05-21
+last_review_event: А'.7.x closure report authored at δ6 closure ratification.
+reviewer: Crystalka
+special_case_rationale: "Closure report для А'.7.x К-extensions cascade #0. Records: 13-commit cascade hash range, cascade metrics (test deltas, throughput delta, native selftest count), К-L14 verification #8 evidence (clean cascade + retroactive correction of verification #7 framing), 5 CAPAs closed within cascade, source split deferral к А'.7.5, sequencing impact (А'.7.5 inserted before A'.8 К-closure). Companion к brief DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT (brief EXECUTED + closure report archives execution outcome)."
 ---
+
 # А'.7.x BUS_ARCHITECTURE_AMENDMENT — Closure Report
 
 **Cascade**: А'.7.x BUS_ARCHITECTURE_AMENDMENT — К-extensions cascade #0

@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
-register_id: DOC-D-K10_3
+---
+register_id: DOC-D-K10_3_EXECUTION
+project: Dual Frontier
 category: D
 tier: 3
-lifecycle: AUTHORED
+lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_3
+version: 1.0
+first_authored: 2026-05-18
+last_modified: 2026-05-20
+content_language: mixed
+next_review_due: null
+title: K10.3 — Pipeline depth + display composition + mod lifecycle quiescent + hardware tier (execution brief)
+last_modified_commit: 1982351
+review_cadence: on-cascade-execution
+reviewer: Crystalka
+special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance. Note: the file head carries a relict mirror block naming DOC-D-K10_3 (the sibling brief's id) — the schema-2.0 migration strips it and injects this entry's own frontmatter."
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: K10_3_EXECUTION_BRIEF

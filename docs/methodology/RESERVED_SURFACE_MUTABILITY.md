@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-B-RESERVED_SURFACE_MUTABILITY
+project: Dual Frontier
 category: B
 tier: 2
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.1"
+version: 1.0.1
+first_authored: 2026-07-02
+last_modified: 2026-07-02
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-B-RESERVED_SURFACE_MUTABILITY
+title: Reserved-surface mutability license
+last_modified_commit: 0411bb0
+review_cadence: on-closure+quarterly
+last_review_date: 2026-06-11
+last_review_event: "Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3 (D1) — the mutability license adapted from the News Intelligence Hub PHASE_0_SKELETON_MUTABILITY mechanism onto DF reality. Principle: a property is mutable iff changing it changes no answer in any Tier-1 LOCKED authority. Mutable catalog (reserved-stub/analyzer-rule symbol names; file layout below project level; annotation surface forms; brief csproj wiring lists; grep/census expressions; §-numbering in citations) vs immutable catalog (К-L invariants per KERNEL Part 0's own «21 final» composition pinned verbatim — К-L1..5 + К-L7..11 + subs К-L3.1/7.1/15.1 + К-L12..19, К-L6 SUPERSEDED excluded, К-L20 reserved excluded, Latin/Cyrillic bi-script grep rule per F-4; PA-001..004; locked Q-series; declared S-LOCKs; register_id permanence; lifecycle state machine; atomic-commit discipline; К-L20 additive-semver law). Commit-body `Skeleton revisions:` form (one conceptual change = one entry). A'.9.1 Phase α 5 mid-cascade deltas retrospectively classified: 4 surface (CPM-count 16436b7, rule-count d0b4c41, seealso-URL fc66156, annotation-census f4a94e6) + 1 architectural correctly halted (ProjectReference-drop 5030fa2, PA-002 anchor)."
+reviewer: Crystalka
+special_case_rationale: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 ---
+
 # Reserved Surface Mutability
 
 ## §1 — Why this document exists

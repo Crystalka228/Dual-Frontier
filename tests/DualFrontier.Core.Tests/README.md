@@ -1,4 +1,4 @@
-﻿# DualFrontier.Core.Tests
+# DualFrontier.Core.Tests
 
 ## Purpose
 Core unit tests: ECS (`World`, `ComponentStore`), scheduler
@@ -29,14 +29,18 @@ Run: `dotnet test tests/DualFrontier.Core.Tests/DualFrontier.Core.Tests.csproj`.
 - [ ] Phase 1 — `ECS/` with the basic entity lifecycle.
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-TESTS-CORE
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-TESTS-CORE
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Core tests
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

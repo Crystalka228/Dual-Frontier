@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-VULKAN_SUBSTRATE_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-VULKAN_SUBSTRATE_V2
+title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
+supersedes:
+- DOC-A-VULKAN_SUBSTRATE
+last_modified_commit: 5d71a8e
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (91 anchors) + HALT-1-ratified corrections R3-1..R3-8 at 5d71a8e (anchor precision; test-count wiring truth; layer-token observability wording); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
+
 # Vulkan Substrate (V)
 
 The architectural authority for Dual Frontier's unified Vulkan 1.3 layer — one `VkInstance` / `VkDevice` / `vulkan-1.dll` linkage serving two use cases (2D rendering and field compute) — covering device and queue policy, swapchain and presentation, compute pipelines, pipeline slots, synchronization, and the GPU-side failure-mode law.

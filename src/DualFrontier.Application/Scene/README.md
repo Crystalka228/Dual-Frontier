@@ -1,4 +1,4 @@
-﻿# Scene — Engine-neutral scene format
+# Scene — Engine-neutral scene format
 
 ## Purpose
 The `SceneDef` DTO hierarchy and the `ISceneLoader` contract for the `.dfscene`
@@ -55,14 +55,18 @@ Versioning policy: any breaking change increments
 - [../Rendering/README.md](../Rendering/README.md) — the `IRenderer` contract.
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-APPLICATION-SCENE
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-APPLICATION-SCENE
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Application Scene submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

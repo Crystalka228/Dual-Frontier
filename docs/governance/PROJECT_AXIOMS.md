@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-PROJECT_AXIOMS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-25
+last_modified: 2026-05-25
+content_language: en
 next_review_due: 2027-05-25
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PROJECT_AXIOMS
+title: DualFrontier Project Axioms
+is_meta_entry: true
+meta_role: register_framing
+review_cadence: on-change+annual
+last_review_date: 2026-05-25
+last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 8 — PROJECT_AXIOMS.md v1.0 Tier 1 LOCKED initial codification per Axiom Option (VII) ratification (batch 2 deliberation 2026-05-24). PA-001..PA-004 codified. AI-agent-first consumer profile permanent (PA-001). Без костылей (PA-002). Сложность архитектуры всегда оправдана (PA-003). К-L14 thesis preservation (PA-004). Anchor references verified against codebase reality per Phase 0 Task 3 (Phase 0 closure report §2.3)."
+reviewer: Crystalka
 ---
+
 # DualFrontier Project Axioms
 
 *Foundational axioms codifying the project framing distinct from K-L architectural invariants. PA-001..PA-004 are the framing axioms that drive scope decisions in every cascade.*

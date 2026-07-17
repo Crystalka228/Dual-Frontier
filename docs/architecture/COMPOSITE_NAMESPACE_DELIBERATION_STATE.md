@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-COMPOSITE_NAMESPACE_DELIBERATION_STATE
+project: Dual Frontier
 category: A
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMPOSITE_NAMESPACE_DELIBERATION_STATE
+version: 1.0
+first_authored: 2026-05-15
+last_modified: 2026-05-15
+content_language: mixed
+next_review_due: null
+title: Composite Milestone Namespace — Deliberation Final State
+review_cadence: on-status-transition
+last_review_date: 2026-05-15
+last_review_event: Deliberation closed 2026-05-15 — 9 of 10 Q explicitly locked, Q-K-1 instruction-only with retroactive lock mechanism; ratified ratification proposal brief execution
+reviewer: Crystalka
+special_case_rationale: Deliberation state document behaves like amendment plan (EXECUTED post-deliberation, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3 precedent (cf. DOC-A-K_L3_1_AMENDMENT_PLAN, DOC-A-A_PRIME_0_7_AMENDMENT_PLAN)
 ---
+
 # Composite Milestone Namespace — Deliberation Final State
 
 **Authored**: 2026-05-15 evening (Claude Opus 4.7, deliberation session)

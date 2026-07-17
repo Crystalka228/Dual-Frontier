@@ -1,15 +1,34 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+version: 1.0
+first_authored: 2026-05-21
+last_modified: 2026-05-21
+content_language: mixed
+next_review_due: null
+title: "А'.7.x BUS_ARCHITECTURE_AMENDMENT — К-extensions cascade #0"
+review_cadence: on-status-transition
+last_review_date: 2026-05-21
+last_review_event: "А'.7.x cascade closure 2026-05-21 — К-L15.1 «Three-tier independence» AUTHORED → LOCKED (2-layer sub-invariant к К-L15). 13 atomic commits on claude/scheduler-stress-test-KmVM3 (b59ab2d..PENDING-COMMIT-A_PRIME_7_X-CLOSURE). Bug #1 (BusFacade.Publish coalesce_key overload) + Bug #2 (df_background_queue_dispatch_idle_slot wired через ManagedBusBridge.DrainBackgroundBatch + GameLoop tick-end) + Bug #3 (O(N²) → O(N) coalesce) + Bug #4 (single-mutex contention closed via per-tier state split) ALL closed. Group B (2 stress-induced cross-test pollution tests) closed via SchedulerStressTests.Dispose extension. KERNEL_ARCHITECTURE.md v2.3 → v2.4, METHODOLOGY.md v1.8 → v1.9 (§12.7 Modding suite verification gate per CAPA-K10_3-V2-SOFT-HALT step (c)). Cumulative К-Lxx series 20 → 21. Source split (bus_native.cpp → 4-file) deferred к А'.7.5 sub-milestone per Q-N-7X-2 Option C hybrid. К-L14 verification #8 clean cascade — К-L14 verification #7 framing corrected: «14 Modding fails on main» soft-halt premise disproved (transient fixture-copy build state, NOT K-L18 regression as brief Hypothesis 1 framed); δ1-δ3 Group A fix scope dropped per Crystalka Option A. Investigation atomization (β1-β7) preserves 39a01be α1 commit provenance per Q-N-7X-13. +45% bus throughput verified empirically; S10 cross-tier re-entrancy probe PASS ≤100 ms."
+reviewer: Crystalka
+risks_referenced:
+- RISK-002
+- RISK-003
+- RISK-004
+- RISK-013
+capa_entries_referenced:
+- CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST
+- CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN
+- CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
+- CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT
+- CAPA-2026-05-21-A_PRIME_7_X-STRESS-CROSS-TEST-POLLUTION
+special_case_rationale: "А'.7.x designated «К-extensions cascade #0» per Q-N-7X-12 LOCKED — chronologically pre-A'.8 closure («#0» signals position в К-extensions numbering), architecturally a К-extension (adds К-L15.1 к К-series surface). К-L15.1 is sub-invariant к К-L15 (mirrors К-L7.1 / К-L3.1 precedent); LOCKS at A'.7.x closure while parent К-L15 stays AUTHORED candidate until A'.8 closure. Authored 2026-05-21 by Claude Opus 4.7 post-investigation surface (Crystalka's BUS_DESIGN_INVESTIGATION_2026-05-21 + SCHEDULER_STRESS_TEST_SUITE input artifacts); gap-audit-amended same day (17 findings 3 critical / 4 major / 10 minor — incorporated in-place); Q-N ratified same day (all 12 Q-N LOCKED via Crystalka Session 2 Day 2 deliberation); executed same day by Claude Code (this cascade). All 12 Q-N references: Q-N-7X-1 К-L15.1 canonical text (§4.1 verbatim, 2-layer), Q-N-7X-2 scope (Option C hybrid: A'.7.x 2-layer К-L15.1 + A'.7.5 source split sub-milestone), Q-N-7X-3 К-L14 soft-halt framing (§1.3 verbatim — later corrected по execution: 14 fails were transient build state, not regression), Q-N-7X-6 Bug #1 style (Option A overload с runtime tier validation), Q-N-7X-7 Bug #2 phase boundary (Option A end-of-Reporting → end-of-fixed-step in this codebase), Q-N-7X-8 К-L14 criterion 6 (provisional, review at next soft-halt OR V2 closure), Q-N-7X-9 atomization count (Option A 14 atomic ± 2 tolerance; actual 13 per Crystalka δ1-δ3 drop = within tolerance), Q-N-7X-10 Group A diagnostic (§8 verbatim — execution surfaced empty Group A scope, no diagnostic doc needed), Q-N-7X-11 METHODOLOGY split (Option B: §12.7 at A'.7.x δ5, Lessons batch at A'.8), Q-N-7X-12 «К-extensions cascade #0» designation, Q-N-7X-13 WT-modification disposition (Option A direct α/β/γ/δ staging, 39a01be preserved as α1), Q-N-7X-14 KFNS amendment scope (Option C Phase 0 read decided NONE — no «shared mutex» refs that would mislead without К-L15.1 qualifier)."
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT_BRIEF

@@ -1,15 +1,32 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-MOD_OS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.12.0"
+version: 1.12.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-MOD_OS
+title: Mod OS Architecture — Dual Frontier (historical; superseded by authored rework)
+superseded_by: DOC-A-MOD_OS_ARCHITECTURE
+last_modified_commit: 6888246
+review_cadence: on-change+annual
+last_review_date: 2026-05-20
+last_review_event: 'К10.3 v2 load-bearing commit 3/3 2026-05-20 — К-L18 amendments landed: §9.5 ALC unload chain extended 8-step → 9-step с Step 3.6 V resource cleanup placeholder (К10.3 v2 Item 42; managed wrapper VResourceCleanup returns vacuous success, native df_vulkan_unload_mod_resources lands V-cycle / К-extensions); §9.5.1 failure semantics extended с Step 3.6 inclusion + К-L18 quiescent state precondition rejection note; §9.7 «Hot reload К-L18 compliance» subsection added (SimulationStateController.PauseAsync + WaitForQuiescenceAsync + ResumeAsync pattern; mod management UI и hot reload tooling share enforcement). §11.2 ValidationErrorKind enum extended с 4 К10.3 v2 entries: QuiescentStatePreconditionViolated (К-L18; mod operation attempted while sim не paused либо pipeline in-flight); PipelineQuiescenceTimeout (К-L18; quiescence wait timeout); LayerCapabilityMismatch (К-L17; layer attribute/Type mismatch); VulkanModResourceCleanupFailed (К-L18 V scope; Step 3.6 placeholder; full implementation V-cycle). Predecessor commits 1/3 (К-L7.1+К-L16 reconciliation) + 2/3 (К-L17 §3.2 capability syntax) intact.'
+reviewer: Crystalka
+risks_referenced:
+- RISK-002
+- RISK-004
+- RISK-005
+- RISK-006
+capa_entries_referenced:
+- CAPA-2026-05-09-K8.2-V2-REFRAMING
+special_case_rationale: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_OS_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
+
 ---
 title: Mod OS Architecture
 nav_order: 25

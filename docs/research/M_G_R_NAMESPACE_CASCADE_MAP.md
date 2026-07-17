@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-NAMESPACE_CASCADE_MAP
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: Live
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-NAMESPACE_CASCADE_MAP
+version: 1.0
+first_authored: 2026-05-15
+last_modified: 2026-05-15
+content_language: en
+next_review_due: null
+title: M/G/R Namespace Cascade Map
+last_modified_commit: e3fef89
+review_cadence: on-status-transition
+last_review_date: 2026-05-15
+last_review_event: Recon shipped 2026-05-15 — mechanical inventory of milestone ID references across LOCKED/Live docs; input to composite namespace deliberation
+reviewer: Crystalka
 ---
+
 # M / G / R Namespace Cascade Map
 
 **Authored**: 2026-05-15 (Claude Opus 4.7, read-only recon session)

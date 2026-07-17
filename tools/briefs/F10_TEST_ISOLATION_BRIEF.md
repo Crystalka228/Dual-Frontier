@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-F10_TEST_ISOLATION_BRIEF
+version: 1.0
+first_authored: 2026-07-03
+last_modified: 2026-07-03
+content_language: en
+next_review_due: null
+title: 'F10_TEST_ISOLATION_BRIEF — F-10 test-isolation cascade execution brief (FIX + RECLASSIFY/QUARANTINE + CODIFY: RunningLoop determinism closes F-10 #2; 13 Fixture.RegularMod_* -> DualFrontier.sln + fixture-deployment guard; Extreme S1/S2/S7 Skip-quarantine; TESTING_STRATEGY 2.1.0 invocation-safety law; F-10 CLOSED / F-29 seeded / F-28(a) folded; REGISTER 2.21 -> 2.22)'
+last_modified_commit: 88b6f58
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-03
+last_review_event: 'F-10 isolation brief authored by Claude Opus (deliberation session, F10_TEST_ISOLATION prep) from the durable recon docs/reports/F10_TEST_ISOLATION_RECON_REPORT.md (2026-07-02, R1-R9); ratified by Crystalka 2026-07-03 (Draft -> LOCKED). Executed 2026-07-03 by Claude Code (Opus 4.8, LOCAL Skarlet), single-orchestrator serial C1-C10 (C5/D4 deferred -- H(gov): Fixture.VanillaMod_HotReloadOverride carries no DeployToTestFixtures target, byte-identity precondition unmet); H1/H2/H3 gates clear; zero halts. Enrolled EXECUTED at the F-10 REGISTER closure.'
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §8 invocation-safety convention), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id.
 ---
+
 ---
 register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
 project: Dual Frontier

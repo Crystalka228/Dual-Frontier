@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K4
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K4
+version: 1.0
+first_authored: 2026-05-08
+last_modified: 2026-05-08
+content_language: en
+next_review_due: null
+title: K4 — Component Struct Refactor
+review_cadence: on-status-transition
+reviewer: Crystalka
+risks_referenced:
+- RISK-001
 ---
+
 # K4 — Component struct refactor (Path α)
 
 **Status**: SKELETON

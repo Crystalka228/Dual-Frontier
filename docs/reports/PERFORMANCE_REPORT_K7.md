@@ -1,15 +1,24 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-PERFORMANCE_REPORT_K7
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-05-09
+last_modified: 2026-05-09
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-PERFORMANCE_REPORT_K7
+title: Performance Report — K7
+last_modified_commit: 8ee27fe
+review_cadence: on-closure+quarterly
+last_review_date: 2026-05-09
+last_review_event: K7 closure
+reviewer: Crystalka
+special_case_rationale: E default Tier 3 EXECUTED; Tier 2 Live override because K-series still open (K8.3/K8.4/K8.5 pending) and report mutates with subsequent measurement updates per Pass 2 §2.2
 ---
+
 # K7 Performance Report — Tick-loop measurements
 
 **Status**: FINAL

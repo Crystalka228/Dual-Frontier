@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-CODEX_CLOSURE_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-CODEX_CLOSURE_BRIEF
+version: 1.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
+next_review_due: null
+title: 'CODEX_CLOSURE -- Execution Brief (properly gates and closes the half-closed Codex closed-PR remediation cascade: FOLD the Skarlet-gate H2b census-delta, fix F-13 at root, retire the CX-14 no-op props, amend the report by APPEND, close the register 2.23 -> 2.24)'
+last_modified_commit: eacf604
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-15
+last_review_event: 'CODEX_CLOSURE cascade executed 2026-07-15 by Claude Code (Opus 4.8, LOCAL Skarlet) per the operator-ratified brief (authored 2026-07-14; Windows-only per L7 + CX-01..CX-21 namespace). Phase-0 Skarlet gate (analyzers ON, all 10 suites): 1101 pass / 1 fail / 5 skip; the single H2b failure (CX-06 + CX-21 not-yet census-delta gap) operator-ruled FOLD, remediated at C2. Commits C1 eacf604 / C2 673f815 (FOLD, not-yet 8/7 -> 10/9) / C3 e025086 (F-13 render fix) / C4 247f88c (CX-14 props retirement) / C5 5967400 (report amendment 1.0 -> 1.1) / C6 ef286cf (F-13 CLOSED + F-32/F-33) / C7 register closure 2.23 -> 2.24 / C8 render + backfill.'
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series + F-10 + F-29 DOC-D Tier-3 briefs). Standalone execution brief carrying this cascade's authority; enrolled at the design tier per the D-brief convention. Entry id follows the brief's own frontmatter register_id; the brief FILE frontmatter is hand-authored, not synced.
 ---
+
 ---
 register_id: DOC-D-CODEX_CLOSURE_BRIEF
 project: Dual Frontier

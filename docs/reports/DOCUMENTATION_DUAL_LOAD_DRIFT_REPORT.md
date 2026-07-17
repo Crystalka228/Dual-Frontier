@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
+project: Dual Frontier
 category: E
 tier: 2
 lifecycle: AUTHORED
 owner: Crystalka
-version: "1.0"
-next_review_due: on-refactor-cascade-execution
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
+version: 1.0
+first_authored: 2026-06-02
+last_modified: 2026-06-02
+content_language: en
+next_review_due: post-doc-drift-refactor-cascade closure
+title: Documentation Dual-Load Drift Reconnaissance — Report
+review_cadence: on-refactor-cascade-execution
+last_review_date: 2026-06-02
+last_review_event: "Documentation Dual-Load Drift Reconnaissance executed 2026-06-02 by Claude Code (Opus) on branch claude/doc-drift-reconnaissance-503aH (tip f94bb84 at R0) per DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF. Read-only multi-agent reconnaissance R0-R4: REGISTER inventoried (267 docs confirmed, no halt-1 mismatch); code-truth manifest established (12 src projects, native kernel, 17 analyzer rule stubs, 21 К-L invariants, key-type locations verified); 10 read-only sub-agents dispatched по category cluster (8 deep + 2 quick-pass, two waves). Aggregate: ~105 living-spec drift line-items (SPEC-STALE ~35, ROADMAP-PENDING ~21, ROADMAP-REALIZED ~19, MIXED-INTERWOVEN ~14, ORPHAN-REFERENCE ~16); 139-doc snapshot population (Category D+E) confirmed clean (0 hard misclassifications); 7-doc misclassification cluster surfaced as structural governance meta-finding (§9 halt-3). Five systemic drift generators identified: (1) un-propagated structural events (Godot deprecation cascade #2 + К8.3/8.4 managed-world retirement + К10 native scheduler), (2) A'.9.1 analyzer ROADMAP-REALIZED wave (9 docs narrate shipped stubs as future; ANALYZER_RULES §4 simultaneously over-claims them as active enforcement — zero-diagnostic Info stubs, detection Phase β PENDING), (3) DF###→DFK### orphan-reference chain, (4) misclassification cluster, (5) count/version desync. Recommended target architecture: Option ε (δ REGISTER doc_role schema + γ fenced NON-NORMATIVE sections) anchored on existing docs/ROADMAP.md, decomposed into 3 refactor cascades (DD-1 spec-truth restoration / DD-2 spec-roadmap structural separation / DD-3 misclassification+orphan+desync hygiene). К-L impact: zero. К-L14 architectural-integrity instrumentation — KERNEL Part 0 untouched (halt-6 preserved); read-only discipline held (report + brief only artifacts)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: 'Documentation Dual-Load Drift Reconnaissance report — governance reconnaissance deliverable enabling Crystalka к determine refactor work-volume FROM the report (spec/roadmap separation). Category E (docs/reports/ folder convention); Tier 2 override (governance-leverage reconnaissance artifact driving a multi-cascade refactor decision — parallels DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT Tier 2 precedent) rather than the default Tier 3 для performance/investigation reports. Lifecycle AUTHORED (one-shot deliverable awaiting Crystalka refactor work-volume determination, not a mutating Live report). Source brief: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF. Enrolled per Q-DD-7 default (enroll). NOTE: pwsh unavailable in execution environment — sync_register.ps1 -Validate + render_register.ps1 NOT run; frontmatter mirror authored manually to match this entry; PowerShell validation + REGISTER_RENDER regeneration deferred к Crystalka environment.'
 ---
+
 ---
 register_id: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT
 category: E

@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_7_5_BUS_SOURCE_SPLIT
+version: 1.0
+first_authored: 2026-05-22
+last_modified: 2026-05-22
+content_language: mixed
+next_review_due: null
+title: "А'.7.5 BUS_SOURCE_SPLIT — К-extensions cascade #1 sub-milestone"
+review_cadence: on-status-transition
+last_review_date: 2026-05-22
+last_review_event: "А'.7.5 sub-milestone closure 2026-05-22 — К-L15.1 «Three-tier independence» compile-time layer materialized through source-level split. К-L15.1 invariant text UNCHANGED (parent A'.7.x γ4 LOCKED 2-layer formulation: state + runtime; ε2 lands the 3rd layer compile-time as implementation depth follow-through). Cumulative К-Lxx series stays 21 invariants (no new sub-invariants). 5 atomic commits on feature/a_prime_7_5-bus-source-split (c1d10b0..PENDING-COMMIT-A_PRIME_7_5-CLOSURE). Scope: bus_native.cpp (240 lines, 15 df_bus_* C ABI functions) → bus_common.cpp (cross-tier surface: BusNative accessors + df_bus_clear all-tier fixed-order lock + df_bus_unsubscribe tier-bit dispatch) + bus_fast.cpp + bus_normal.cpp + bus_background.cpp (per-tier C ABI). background_queue.cpp preserved distinct per A'.7.x §16.5 closure narrative (queue infrastructure + dispatch policy + save/load is a separate architectural concern from bus contract). Helper primitives (TIER_SHIFT/MASK/ID_MASK + TierTag + encode_id/decode_tier + remove_by_*_locked templates) migrated к bus_native_internal.h в ε1 enabling cross-TU visibility (template definitions must live at instantiation site by language rule). Stale comments cleanup в ε3 (SchedulerExtremeTests.cs O(N²) framing post-β5 + bus_native_internal.h header line 4 reference к bus_native.cpp). К-L14 verification #9 clean cascade — pure source reorganization, empirical baseline preserved (97 selftest scenarios ALL PASSED; Core.Tests.Bus 20/20 PASS; pre-existing test pollution failures ManagedBusBridgeTests.BusFacade_PublishEnabled + S6 marathon when combined with stress filter verified pre-existing on ε1 state too, NOT caused by source split). No CAPAs opened or closed (no bugs surfaced). No new REQs (К-L15.1 already has REQ-K-L15_1 from A'.7.x EVT). KERNEL_ARCHITECTURE.md v2.4 unchanged (К-L15.1 invariant text already accommodates source split via state isolation precondition — invariant proves robust under additive materialization). METHODOLOGY.md v1.9 unchanged."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "А'.7.5 designated «К-extensions cascade #1 sub-milestone» per A'.7.x EVT closure governance_impact §16.5 deferral note. Pure source-level reorganization implementing К-L15.1 compile-time layer (parent К-L15.1 LOCKED as 2-layer formulation at A'.7.x γ4; A'.7.5 adds 3rd layer per К-L15.1 «Three-tier independence» implementation depth — state + runtime + compile-time). Authored 2026-05-22 by Claude Opus 4.7 в post-A'.7.x closure deliberation session. ~500 line execution brief per Lesson #16 (brief length scales с deliberation surface, not execution scope — A'.7.5 has 3 Q-N S-LOCKs vs A'.7.x's 14 Q-N reflecting smaller deliberation surface). Q-N ratified same day: S-LOCK-1 (4-file split + background_queue distinct, Option A recommended), S-LOCK-2 (helpers к internal header, Option A recommended), S-LOCK-3 (stale comment cleanup в-scope as ε3, Option A recommended). Executed same day by Claude Code (5-commit atomic cascade ε1..ε5)."
 ---
+
 ---
 brief_id: A_PRIME_7_5_BUS_SOURCE_SPLIT_BRIEF
 status: EXECUTED

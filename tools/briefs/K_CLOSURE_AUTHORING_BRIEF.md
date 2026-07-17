@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K_CLOSURE_AUTHORING_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K_CLOSURE_AUTHORING_BRIEF
+version: 1.0
+first_authored: 2026-05-23
+last_modified: 2026-05-23
+content_language: mixed
+next_review_due: null
+title: K_CLOSURE_AUTHORING_BRIEF — A'.8 К-closure report authoring (Tier 1 AUTHORED creation per Q-N-8-4)
+review_cadence: on-status-transition
+last_review_date: 2026-05-23
+last_review_event: "A'.8 К-series formal closure (cascade EXECUTED 2026-05-23) — 10/10 Q-N LOCKED Session 2 Day 2; Q-N-8-4 amendment к Meta-Q1 Session 1 LOCKED commitment (K_CLOSURE_REPORT.md initial lifecycle Tier 1 AUTHORED не LOCKED; LOCKED transition deferred к downstream review). К-closure event boundary anchored at K_CLOSURE_REPORT.md AUTHORED ratification commit (Commit 1: 044855c) push к origin/main = formal К-series closure timestamp. 6-commit atomic cascade per Q-N-8-9 LOCKED (S-LOCK-8): Commit 1 K_CLOSURE_REPORT.md authoring (LOAD-BEARING ~2296 lines, 12 sections per Q-N-8-8 LOCKED) + Commit 2 KERNEL v2.4 → v2.5 (8 К-L LOCK batch per Q-N-8-1) + Commit 3 METHODOLOGY v1.9 → v1.10 (12 FORMALIZE + 9 DEFER + 1 SUNSET Lessons batch per Q-N-8-5) + Commit 4 PHASE_A_PRIME_SEQUENCING + MIGRATION_PROGRESS chronicle + Commit 5 REGISTER cascade (3 new DOC enrollments + EVT-2026-05-23-A_PRIME_8_K_CLOSURE-RATIFICATION + register_version 2.2 → 2.3) + Commit 6 brief AUTHORED → EXECUTED + closure section. Brief size ~1413 lines (post-Q-N ratification с §11 ratification summary appended). Lifecycle progression: AUTHORED (2026-05-22, Opus authoring) → RATIFIED (2026-05-23 9f3c567 pre-cascade с §11 Q-N ratification summary section) → EXECUTED (2026-05-23 Commit 6 с §12 closure section)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "K_CLOSURE_AUTHORING_BRIEF authored 2026-05-22 by Claude Opus 4.7 post-A'.7.5 closure deliberation session. Q-N ratified Session 2 Day 2 (2026-05-23 Crystalka deliberation) с 10/10 Q-N LOCKED including Q-N-8-4 AUTHORED amendment к Meta-Q1 Session 1 LOCKED commitment. Brief executes К-series formal closure cascade (6-commit atomic per Q-N-8-9 LOCKED). К-extensions designation operationalized per Q-N-8-10 LOCKED — cascade #0 (А'.7.x) + #1 (А'.7.5) closed pre-closure architecturally as К-extensions; cascade #2 (Godot removal) deferred к post-closure for clean event boundary preservation. К-L14 evidence baseline 9 verifications с #7 honest soft-halt annotation preserves falsifiability commitment per Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2."
 ---
+
 ---
 # Brief frontmatter
 brief_id: K_CLOSURE_AUTHORING_BRIEF

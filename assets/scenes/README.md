@@ -1,4 +1,4 @@
-﻿# assets/scenes — Scene fixtures and test data
+# assets/scenes — Scene fixtures and test data
 
 Scenes in the `.dfscene` format are engine-neutral JSON — the project's own
 `SceneDef` format, read through the `ISceneLoader` seam (no engine dependency).
@@ -21,14 +21,19 @@ When raising the version:
 3. Document the breaking change in the live rendering spec (`docs/architecture/VULKAN_SUBSTRATE.md`).
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-ASSETS-SCENES
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-ASSETS-SCENES
+version: Live
+first_authored: 2026-06-29
+last_modified: 2026-06-29
+content_language: en
+next_review_due: null
+title: Assets scenes
+last_modified_commit: 192a4e3
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

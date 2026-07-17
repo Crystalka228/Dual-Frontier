@@ -1,15 +1,28 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-ANALYZER_RULES_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-ANALYZER_RULES_V2
+title: Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)
+supersedes:
+- DOC-A-ANALYZER_RULES
+- DOC-A-ARCHITECTURE_TYPE_SYSTEM
+- DOC-A-MAX_ENG_REFACTOR_TRACK_B
+last_modified_commit: edb267a
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (41 anchors) + HALT-1-ratified corrections R2-15..R2-19 at edb267a (self-referential staleness vs the same-rework THREADING/CONTRACTS successors fixed; test-tree census 20); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 ---
+
 # DualFrontier Roslyn Analyzer Rule Specifications
 
 Specifies the shipped Roslyn analyzer rule surface — IDs, namespaces, severities, and suppression law as released — and formally retires the never-built DF_TS analyzer program.

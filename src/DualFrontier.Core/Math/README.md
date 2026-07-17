@@ -1,4 +1,4 @@
-﻿# Math — Grid math
+# Math — Grid math
 
 ## Purpose
 Math primitives for tile-grid work and spatial indexing. Used by almost every
@@ -35,14 +35,18 @@ foreach (var near in grid.Query(position, radius: 5)) { /* ... */ }
 - [ ] Phase 3 — cover `SpatialGrid` with a benchmark (BenchmarkDotNet).
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-CORE-MATH
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-MATH
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Core Math submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

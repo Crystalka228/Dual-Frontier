@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.2"
+version: 0.1.2
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: post-ratification closure
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERSISTENCE_SNAPSHOT_CONTRACT
+title: Persistence Snapshot Contract — snapshot boundary, inclusion/exclusion, identity serialization law (A7 draft skeleton; invariants only)
+last_modified_commit: 6888246
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal SKELETON of the missing A7 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7 — invariants and boundaries only; save-system implementation stays deferred to its milestone (that deferral is ratified per MIGRATION_PLAN §8.1). Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 ---
+
 # Persistence and Snapshot Contract (the A7 contract)
 
 > **Document class: authored-proposal (normative-target). NOT current truth, NOT enforceable law.** Produced by the Architecture Decomposition & Contracts session 2026-07-15 ([docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)). Becomes normative only upon Crystalka ratification per FRAMEWORK.md §7. Until then no document may cite it as authority; conflicts resolve in favor of existing LOCKED docs.

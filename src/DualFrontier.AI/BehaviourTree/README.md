@@ -1,4 +1,4 @@
-﻿# BehaviourTree
+# BehaviourTree
 
 ## Purpose
 A generic behaviour tree for pawns and units. The BT does not store world
@@ -42,14 +42,18 @@ var status = root.Tick(ctx);
 - [ ] BT JSON parser for mods.
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-AI-BEHAVIOURTREE
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-AI-BEHAVIOURTREE
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: AI BehaviourTree submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

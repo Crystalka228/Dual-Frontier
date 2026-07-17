@@ -1,15 +1,37 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K8_34_COMBINED_V2
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "2.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K8_34_COMBINED_V2
+version: 2.0
+first_authored: 2026-05-14
+last_modified: 2026-05-14
+content_language: en
+next_review_due: null
+title: K8.3+K8.4 Combined Kernel Cutover (v2.0) — EXECUTED
+supersedes:
+- DOC-D-K8_34_COMBINED
+- DOC-D-K8_34_COMBINED_BRIEF_REFRESH_PATCH
+- DOC-D-K8_3
+- DOC-D-K8_4
+- DOC-D-K8_3_BRIEF_REFRESH_PATCH
+last_modified_commit: 54c6658
+review_cadence: on-status-transition
+last_review_date: 2026-05-14
+last_review_event: A'.5 closure — sole execution artifact for K8.3+K8.4; 4 commits landed (24e5f56 revert, 54c6658 cutover atom, b3f6065 LOCKED amendments, this commit's REGISTER closure); managed World retired as ManagedTestWorld; Power deleted; 10 production systems on NativeWorld; 620 tests green
+reviewer: Crystalka
+risks_referenced:
+- RISK-005
+- RISK-007
+- RISK-008
+capa_entries_referenced:
+- CAPA-2026-05-13-K8.3-PREMISE-MISS
+- CAPA-2026-05-14-K8.34-API-SURFACE-MISS
+- CAPA-2026-05-14-K8.34-MID-TRANSITION-DRIFT
 ---
+
 # K8.3+K8.4 — Combined Kernel Cutover Brief v2.0
 
 **Status**: AUTHORED 2026-05-14 — full re-author of `K8_34_COMBINED_KERNEL_CUTOVER_BRIEF.md` v1.0 (2026-05-13) + `K8_34_COMBINED_BRIEF_REFRESH_PATCH.md` (2026-05-14).
@@ -742,4 +764,3 @@ Before executing, the executor confirms:
 The Q-COMBINED locks (§0) are ratified and unchanged. v2.0 changes the *execution shape* of Phase 4+5, not the architecture. The architecture was never the problem — the execution shape was, and v2.0 fixes it: one atom for one indivisible change.
 
 **Brief end. Execution begins at §3 (Phase 0 — the revert), preceded by §4.0's mandatory deep-reads.**
-

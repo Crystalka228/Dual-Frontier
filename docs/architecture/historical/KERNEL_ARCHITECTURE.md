@@ -1,15 +1,36 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-KERNEL
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "2.6.2"
+version: 2.6.2
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-KERNEL
+title: DualFrontier Kernel — Architecture (historical; superseded by authored rework)
+superseded_by: DOC-A-KERNEL_ARCHITECTURE
+last_modified_commit: fe27fbe
+review_cadence: on-change+annual
+last_review_date: 2026-07-02
+last_review_event: "A'.9.1 Phase δ C4 (11f82bb) — KERNEL_ARCHITECTURE.md v2.6.1 → v2.6.2 patch bump per Q-G-12 LOCKED versioning convention (chronicle + cross-ref = patch). A'.9.1 / К-extensions cascade #5 arc chronicle segment appended к the Status footnote chain: five phase ranges with real hashes (Phase 0 bb6807c..4fa76ed; α 5030fa2..a23556f; β-prep 588c667..a213954; β 1bc0df2..b116727; γ 524dd31..cc2f71a + 4cc5e7e); 17 detecting rules at Release 1.0 severities (11 Error + 5 Warning + DFL025_B IDE-only); DFK002 federated interop model (SanctionedInteropSurface: Core.Interop + Runtime.Native roots, shared with DFK001); Q-L-1 gate 23 → CONTINUE → 15 genuine in 2 clusters; deferral map (К-L20 family + DFK019_B hardware tier); PA-anchored permanent absences; К-L impact zero (21 final; S-LOCK-1 held arc-wide); К-L14 verification #14 (Type 6 NEW category) + dashboard Live cross-ref. Part 0 untouched (F-4/F-9 architect-owned). Prior context: A'.9.0 / К-extensions cascade #4 chronicle entry appended к status footnote (Standalone Reconnaissance produced A_PRIME_9_RECONNAISSANCE_REPORT.md ~3340 lines covering 7 domains via multi-agent dispatch — Domain 1 К-L analyzability 22-row matrix, Domain 2 FORMALIZE Lessons 12-row matrix, Domain 3 cascade #2/#3 surfaced rule candidates 10 candidates, Domain 4 Mod OS К-L20 prep 20 candidate DF020 sub-rules + 6 precursor relationships, Domain 5 Roslyn ecosystem desk research SDK 5.3.0, Domain 6 Build/CI surface Option C hybrid placement, Domain 7 suppression governance near-zero baseline). К-L impact: zero. К-L14 verification #13 first observational reconnaissance evidence — 5th evidence type NEW category per S-LOCK-6 framing (substrate completely untouched per S-LOCK-1 zero-production-code; degenerate pass criteria; observational baseline established for A'.9.1). 45 Q-K candidates aggregated for Brief A'.9.1 deliberation. К-L count unchanged: 21 final. Prior context: К-extensions cascade #3 δ1 — v2.5.1 → v2.5.2 patch bump (Launcher Visual Implementation, К-L14 #12 first clean additive evidence); cascade #2 ε1 — v2.5 → v2.5.1 (Godot Full Deprecation, К-L14 #11 first removal-type evidence); А'.8 v2.4 → v2.5 catch-up для governance-lag from А'.8 closure. **DD-2 spec/roadmap separation 2026-06-02 (Documentation Dual-Load Drift Reconnaissance refactor, increment 1) — v2.5.3 → v2.6.0: Part 2 (Roadmap K-series) + Part 3 (Migration strategy) RELOCATED verbatim к docs/ROADMAP.md «Native foundation tracks» section; KERNEL_ARCHITECTURE.md now pure architecture specification (title «Architecture & Roadmap» → «Architecture», scope «+ milestone roadmap» dropped). Part 0 К-L invariants UNTOUCHED (S-LOCK-1 / halt-6 preserved); zero К-L impact (count unchanged 21). Fenced NON-NORMATIVE pointer left at former Part 2/3 location. MINOR bump chosen (documentation-structure change, content relocated not deleted, zero substrate/behavioral/invariant impact) — per the doc's own versioning convention «structural reorganization = major», Crystalka may escalate к v3.0.0 if a major bump is preferred for the structural relocation."
+reviewer: Crystalka
+risks_referenced:
+- RISK-001
+- RISK-002
+- RISK-003
+- RISK-004
+- RISK-013
+capa_entries_referenced:
+- CAPA-2026-05-09-K8.2-V2-REFRAMING
+- CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST
+- CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN
+- CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
+special_case_rationale: Superseded by DOC-A-KERNEL_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed; REQ-K-L1..K-L19 authorship carried over to DOC-A-KERNEL_ARCHITECTURE at the same cascade (checklist item [2]).
 ---
+
 # DualFrontier Kernel — Architecture
 
 **Version**: 2.6.2 (A'.9.1 / К-extensions cascade #5 arc closure 2026-07-02 — Analyzer Infrastructure chronicle entry + К-L14 verification #14 cross-ref; patch per Q-G-12 LOCKED versioning convention, chronicle/cross-ref class. Prior: 2.6.1 — Architecture Truth Cascade 2026-06-12 — chronicle rule-ID namespace alignment DF020 → DFK020 per ANALYZER_RULES §4 (rule registry); patch per Q-G-12 LOCKED versioning convention, chronicle/cross-ref class. Prior: 2.6.0 — DD-2 spec/roadmap separation 2026-06-02 — Part 2 «Roadmap (K-series)» + Part 3 «Migration strategy» relocated к `docs/ROADMAP.md`; this document is now pure architecture specification. Part 0 К-L invariants untouched; zero К-L impact. MINOR bump per documentation-structure-change rationale, see REGISTER EVT-2026-06-02-DOC_DRIFT_DD2-KERNEL-ROADMAP-EXTRACTION. Prior chronicle: A'.9.0 Reconnaissance / К-extensions cascade #4 chronicle + К-L14 verification #13 cross-ref — first observational reconnaissance evidence, 5th evidence type NEW category; patch bump per Q-G-12 LOCKED versioning convention)

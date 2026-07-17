@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF
+version: 1.0
+first_authored: 2026-07-02
+last_modified: 2026-07-02
+content_language: en
+next_review_due: null
+title: "PHASE_DELTA_BRIEF — A'.9.1 Phase δ governance-closure execution brief (arc closure: METHODOLOGY 1.14.0 four FORMALIZE + #N14 promotion + F-7 registry note; К-L14 Evidence #14 + dashboard Live; KERNEL 2.6.2; K_EXTENSIONS_LEDGER §3.6; F-27 riders; ROADMAP/tracker closure flips; REGISTER 2.20 → 2.21)"
+last_modified_commit: f2841c1
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-02
+last_review_event: 'Phase δ brief authored by Claude Opus (deliberation session, Phase δ prep) from the durable recon docs/reports/PHASE_DELTA_RECON_REPORT.md (2026-07-01, R1-R8; read from disk via the durable-report protocol); ratified by Crystalka — ratification of the brief ratifies the §3 delta-set per its own terms (lesson shape H4; #N14/#N18 distinct; F-7 registry-note disposition; ANALYZER_RULES promotion re-gate; single #14 + Live flip; all riders; durable arc-closure report). Executed 2026-07-02 by Claude Code (Fable 5, LOCAL Skarlet), single-pass serial C1-C9; H1/H2/H3 gates clear; zero halts. Enrolled EXECUTED at the arc-closure REGISTER cascade.'
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Category D Tier 4 execution-brief convention (precedents: DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF, DOC-D-PHASE_BETA_BRIEF). Entry id follows the brief's own frontmatter register_id (DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF), consistent with the DOC-D-A_PRIME_9_1_* family naming. On-disk .md persisted at C1 (f2841c1); enrolled at closure alongside its recon basis and the arc-closure report, completing the arc's provenance chain. This brief closes the ENTIRE A'.9.1 arc — the parent DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF transitions EXECUTED in the same cascade."
 ---
+
 ---
 register_id: DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF
 project: Dual Frontier

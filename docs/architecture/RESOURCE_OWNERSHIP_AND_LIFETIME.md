@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "0.1.1"
+version: 0.1.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: post-ratification closure
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (A2 draft)
+last_modified_commit: 0145f1b
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT): authored-proposal draft of the missing A2 cross-cutting contract per ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715 §7. Tier 1 per FRAMEWORK §3.4; AUTHORED because unratified — preamble marks normative-target, NOT current truth; LOCKED docs prevail until ratification per FRAMEWORK §7.'
 ---
+
 # Resource Ownership and Lifetime (A2)
 
 > **Status: authored proposal (normative target) — NOT current truth.** This document was produced by the architecture decomposition session of 2026-07-15 (report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md), HEAD `6f39903`). It is the missing "A2" contract: no document in the corpus today defines an ownership tree, a dispose order, or a rule for a parent dying while a child is live — the vocabulary exists only as ~31 scattered per-domain fragments. Sections marked **(current truth)** describe verified code state; everything else is a normative target requiring ratification per [FRAMEWORK](../governance/FRAMEWORK.md) §7 (amendment milestone protocol, §7.2: deliberation milestone → amendment plan → execution → CAPA entry → audit-trail event). Ratification path: the ownership tree (§1) plus the dispose and destruction laws (§4, §6) become a new LOCKED document; the per-resource rows of §2 fold into [ECS](./ECS.md), [FIELDS](./FIELDS.md), [MOD_OS_ARCHITECTURE](./MOD_OS_ARCHITECTURE.md) and [VULKAN_SUBSTRATE](./VULKAN_SUBSTRATE.md) as amendments to those documents. Until ratified, any conflict between this text and a Tier 1 LOCKED document resolves in favor of the LOCKED document (conflicts are inventoried, not silently resolved — see §7).

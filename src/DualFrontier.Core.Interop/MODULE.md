@@ -1,15 +1,21 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-F-SRC-CORE-INTEROP
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-INTEROP
+version: Live
+first_authored: 2026-05-11
+last_modified: 2026-05-11
+content_language: en
+next_review_due: null
+title: DualFrontier.Core.Interop module
+last_modified_commit: 80c9ba6
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---
+
 # DualFrontier.Core.Interop — Module Documentation
 
 **Purpose**: P/Invoke bridge layer между managed Application и native `DualFrontier.Core.Native.dll`. Translates managed API calls к C ABI invocations с appropriate marshalling.

@@ -1,4 +1,4 @@
-﻿# Building
+# Building
 
 ## Purpose
 Components for buildings and their infrastructure: storages, workbenches.
@@ -28,14 +28,18 @@ batch.Set(crate, new StorageComponent { /* Capacity = 50 */ });
 - [ ] Plan equipment degradation/breakage — a separate `DurabilityComponent`.
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-COMPONENTS-BUILDING
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-COMPONENTS-BUILDING
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Components Building submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_4_5_REGISTER_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_4_5_REGISTER_BRIEF
+version: 1.0
+first_authored: 2026-05-12
+last_modified: 2026-05-12
+content_language: en
+next_review_due: null
+title: A'.4.5 — Document Control Register (deliberation brief)
+last_modified_commit: 7448267
+review_cadence: on-status-transition
+last_review_date: 2026-05-12
+last_review_event: A'.4.5 deliberation closure recorded
+reviewer: Crystalka
 ---
+
 # A'.4.5 — Document Control Register: Project-Synthesized Governance Framework
 
 **Status**: AUTHORED 2026-05-10 — deliberation brief authoring; awaits Crystalka deliberation pass + lock + execution

@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF
+version: 1.0
+first_authored: 2026-05-24
+last_modified: 2026-05-24
+content_language: en
+next_review_due: null
+title: "A_PRIME_9_1_ANALYZER_INFRASTRUCTURE_BRIEF — A'.9.1 Analyzer Infrastructure Cascade brief (К-extensions cascade #5; 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md; 9 Phase α atomic commits + Phase β/γ/δ closure protocol)"
+last_modified_commit: bb6807c
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-02
+last_review_event: "AUTHORED → EXECUTED at the A'.9.1 Phase δ arc closure (2026-07-02, EVT-2026-07-02-A_PRIME_9_1-CASCADE-CLOSURE). Executed across five phases 2026-05-24 → 2026-07-02: Phase 0 bb6807c..4fa76ed; Phase α 5030fa2..a23556f (9 commits, brief §6 executed 1:1); Phase β-prep 588c667..a213954; Phase β 1bc0df2..b116727 per PHASE_BETA_BRIEF; Phase γ 524dd31..cc2f71a + 4cc5e7e per PHASE_GAMMA_BRIEF; Phase δ per PHASE_DELTA_BRIEF (C1-C9). Outcome: 17 rules shipped at Release 1.0 severities (16 build-breaking + DFL025_B IDE-only); К-L14 Evidence #14; METHODOLOGY 1.14.0 lessons; zero soft-halts arc-wide. The §13.3 expected RATIFIED/HANDOFF intermediate states were realized as per-phase sub-brief ratifications (recorded here, not back-dated). The brief file surface is untouched at transition (β/γ brief-file precedent — the register is the lifecycle SoT; its §8/§9 template stale values are recorded Skeleton revisions in the phase EVTs). Durable arc record: docs/reports/A_PRIME_9_1_ARC_CLOSURE_REPORT.md. Prior: brief authored 2026-05-24 by Claude Opus 4.7 в authoring session following two-batch deliberation 2026-05-24 (batch 1 = Q-L-1..Q-L-7 ratifications cascade designation + adaptive gate + namespaces + csproj + sln + CPM + categories; batch 2 = Q-L-8..Q-L-17 + Axiom Option (VII) DFK019 split + DFK010 drop + ReservedStub + DFC001 deferral + BannedApiAnalyzer drop + PublicApiAnalyzers deferral + DF→DFK rename + code-fix permanent drop + DFK016 Phase 0 + test infra naming + PROJECT_AXIOMS codification). 17 forward-locked Q-L decisions + Axiom Option (VII) PROJECT_AXIOMS.md v1.0 Tier 1 LOCKED codification (PA-001 AI-agent-first PERMANENT + PA-002 без костылей + PA-003 сложность архитектуры всегда оправдана + PA-004 К-L14 thesis preservation). 9 Phase α atomic commits specified (csproj scaffolding + tests csproj + CPM adoption + DF→DFK mechanical rename + ANALYZER_RULES structural reorganization + [ReservedStub] attribute infrastructure + cascade #3 deferred dispatch arm annotations + PROJECT_AXIOMS.md authoring + FRAMEWORK+SYNTHESIS_RATIONALE PATCH-level cross-reference additions). Phase β/γ/δ closure protocol: violation triage + cleanup + severity promotion (suggestion → error per Q-L-1 adaptive gate ≤80) + governance cascade (KERNEL chronicle v2.5.4 + LEDGER §3.6 cascade #5 + K_L14_EVIDENCE_DASHBOARD #14 + METHODOLOGY v1.13 + REGISTER cascade). Cascade designation: К-extensions cascade #5 + A'.9.1 milestone-internal dual per Q-L-2 + Q-K-44 recon recommendation. 13 first-batch DFK### rules per amendments log §3.3 + 2 DFL### Lesson-derived per amendments §4 + DF999 self-policing + DFK016 retain α post Phase 0. 6 rule groups deferred к К-L20 LOCK cascade (DFK009/012/015/018 + DFK020 family + DFC001 — Mod-API-coupled per amendments log §3 + Crystalka direction §1.1 batch 2). 4 surfaces PERMANENTLY ABSENT (code-fix providers PA-001 / PublicApiAnalyzers audience-driven PA-001 / BannedApiAnalyzer closed concern / DFK010 PA-002 methodology-layer). DFK019 split: DFK019.A static Vulkan API surface ships A'.9.1; DFK019.B hardware tier deferred к hardware tier expansion cascade. К-L14 thesis preserved (zero substrate touch; brief artifact only). Phase 0 §3.1 F1 path corrections applied к §4.1 + §12.6 (GameBootstrap.cs + Bootstrap.cs actual paths)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Brief A'.9.1 Analyzer Infrastructure cascade (К-extensions cascade #5) — first analyzer implementation cascade. Authored 2026-05-24 by Claude Opus 4.7 в authoring session following two-batch pre-authoring deliberation 2026-05-24. Brief lineage: A'.9.0 Reconnaissance / К-extensions cascade #4 EXECUTED 2026-05-24 → A'.9.0 amendments log AUTHORED 2026-05-24 (4 amendments captured Option γ Hybrid) → A'.9.1 brief two-batch deliberation 2026-05-24 → Brief A'.9.1 AUTHORED (this artifact). Status transitions expected: AUTHORED → RATIFIED (Crystalka) → HANDOFF к execution session (fresh context per S-LOCK-3) → EXECUTED (post-Phase δ cascade closure). Brief size ~2356 lines spanning §0 framing + §1 milestone surface + §2 cascade architectural scope + §3 К-L14 framework + §4 prerequisites + §5 S-LOCK enumeration (14 S-LOCKs) + §6 Phase α atomic commit specifications (9 commits) + §7 Phase β cleanup-phase specifications + §8 Phase γ closure protocol + §9 K-extensions ledger + KERNEL chronicle + LEDGER entry templates + §10 ANALYZER_RULES.md scope-split detail + §11 forward references (К-L20 LOCK + hardware tier expansion + A'.9.2 + A'.9.3 + FO-1..FO-4) + §12 cross-references + §13 authoring metadata. К-L14 thesis preservation: brief artifact only; cascade target #14 first analyzer implementation evidence (Type 6 NEW category tooling addition; substrate completely untouched; falsifiability mechanism shifts от manual cross-document audit к automated compile-time invariant enforcement). Brief §13.3 enumerates 9-point Crystalka ratification checklist surface."
 ---
+
 # Brief A'.9.1 — Analyzer Infrastructure Cascade (К-extensions cascade #5)
 
 **Designation**: A'.9.1 Analyzer Infrastructure cascade — first analyzer implementation cascade

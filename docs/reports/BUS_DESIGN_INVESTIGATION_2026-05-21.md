@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-BUS_INVESTIGATION_2026_05_21
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-BUS_INVESTIGATION_2026_05_21
+version: 1.0
+first_authored: 2026-05-21
+last_modified: 2026-05-21
+content_language: mixed
+next_review_due: null
+title: Three-Tier Bus Design Investigation — 2026-05-21 @ 8c/16t
+review_cadence: none-historical-record
+last_review_date: 2026-05-21
+last_review_event: Investigation authored 2026-05-21 by Crystalka post-stress-suite surface; retroactively enrolled at А'.7.x δ5 governance commit. Source artifact для cascade authoring.
+reviewer: Crystalka
+special_case_rationale: "Crystalka-authored 2026-05-21 investigation surface artifact — 5 bus bugs documented (Bug #1 BusFacade.Publish coalesce_key drop; Bug #2 df_background_queue_dispatch_idle_slot orphan in src/; Bug #3 O(N²) coalesce; Bug #4 single-mutex contention; Bug #5 Fast tier P50→Max ratio explanation). Bus refactor recommendation surface (per-tier state + per-tier mutex + O(N) coalesce). Input artifact для А'.7.x brief authoring; retroactively enrolled при closure to preserve provenance chain."
 ---
+
 # Three-Tier Bus Design Investigation — 2026-05-21 @ 8c/16t
 
 Цель: разобрать, **почему трёхтировая шина (Fast / Normal / Background)** ведёт себя странно в стресс-прогонах. Расследование стартовало после того, как extreme-suite показал две аномалии в S3:
@@ -341,4 +349,3 @@ tools/briefs/K10_2_EXECUTION_BRIEF.md:453:int32_t df_background_queue_dispatch_i
 - [native/DualFrontier.Core.Native/include/bus_native.h](../../native/DualFrontier.Core.Native/include/bus_native.h) — C ABI без изменений
 - [src/DualFrontier.Application/Bus/](../../src/DualFrontier.Application/Bus/) — нулевой managed diff
 - [native/DualFrontier.Core.Native/CMakeLists.txt](../../native/DualFrontier.Core.Native/CMakeLists.txt) — один DLL как был
-

@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF
+version: 1.0
+first_authored: 2026-05-23
+last_modified: 2026-05-23
+content_language: mixed
+next_review_due: null
+title: 'K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF — К-extensions cascade #3: Launcher Visual Implementation (Minimum Scope)'
+review_cadence: on-status-transition
+last_review_date: 2026-05-23
+last_review_event: "К-extensions cascade #3 authored + executed 2026-05-23. Brief authored 2026-05-23 by Claude Opus 4.7 в post-cascade-#2 closure deliberation session (16 Q-H deliberated, 11 LOCKED + 6 DISSOLVED + 1 CHECKPOINT-DEFERRED per appendix Q-H lock summary; 10 S-LOCKs reserved). Crystalka ratified execution 2026-05-23 («ладно миниту. все теперь на меин можешь продолжить создав ветку»). Execution agent: Claude Code (Opus 4.7) on branch claude/k-ext-3-launcher-visual off cascade #2 closure merge к origin/main (12512d0). Mid-cascade brief amendment ratified (Crystalka 2026-05-23 α0) — S-LOCK-4 amended от defensive throws к silent stubs для 3 deferred dispatch arms after Phase 0 §2.5 + §2.8 reads surfaced production-fires conflict (GameBootstrap publishes ~255 ItemSpawnedCommand at startup + GameLoop emits TickAdvancedCommand every 33ms + PawnStateReporterSystem emits PawnStateCommand periodically — defensive throws would crash Launcher); Lesson #N12 semantic refined с sub-pattern A test-only-fires + sub-pattern B production-fires. Cascade scope: pawn-3 dispatch arms real implementations (PawnSpawned/Moved/Died); 3 deferred arms silent stubs; SceneState + PawnSpriteEntry minimum sprite registry per Q-H-2; LauncherProceduralAtlas Option C copy per Q-H-17 (S-LOCK-2 preservation); LauncherRenderer Vulkan integration via Runtime.RecordSpritesFrame V0.C.2 batched API (per §2.0 empirical finding — simpler than brief's manual draft); governance cascade (KERNEL v2.5.1→v2.5.2, METHODOLOGY v1.11→v1.12, K_EXTENSIONS_LEDGER §3.4 added, K_L14_EVIDENCE_DASHBOARD #12 added, PHASE_A_PRIME_SEQUENCING cascade #3 entry, REGISTER 2-commit cascade). К-L impact: zero. К-L14 verification #12 (first clean additive evidence — substrate untouched через consumer materialization)."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: 'К-extensions cascade #3 brief authored 2026-05-23 by Claude Opus 4.7 в post-cascade-#2 closure deliberation session per cascade #2 §4 forward roadmap. Brief operationalized 11 Q-H ratified deliberation outcomes (Q-H-0 through Q-H-10 LOCKED; Q-H-11 through Q-H-16 DISSOLVED via Phase 0 empirical grounding; Q-H-17 CHECKPOINT-DEFERRED — Option C ratified during execution). 10 S-LOCK reservations. Path B Hybrid shape (Phase 0 fully-locked + execution intent architecturally specified + mid-cascade checkpoint allowed) per honest match with doubly-new territory. Mid-cascade S-LOCK-4 amendment (silent stubs replacing defensive throws) demonstrates Path B Hybrid value — Phase 0 empirical reads surfaced design conflict; brief amendment + Lesson #N12 semantic refinement captured inline. Lesson #N12 second application + sub-pattern split documented. 2 NEW Provisional Lessons surfaced (#N13 commit integrity verification + #N14 Phase 0 empirical assumed-state coverage). Brief size note: K_EXT_3 brief is ~80KB (initial enrollment + α0 amendment inline).'
 ---
+
 # К-extensions cascade #3 — Launcher Visual Implementation (Minimum Scope)
 
 **Brief designation**: `K_EXT_3_LAUNCHER_VISUAL_IMPLEMENTATION_BRIEF`  

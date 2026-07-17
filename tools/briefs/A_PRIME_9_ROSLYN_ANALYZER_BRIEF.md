@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-A_PRIME_9_ROSLYN_ANALYZER
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.1"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-A_PRIME_9_ROSLYN_ANALYZER
+version: 0.1
+first_authored: 2026-05-17
+last_modified: 2026-05-17
+content_language: en
+next_review_due: null
+title: А'.9 Roslyn Architectural Analyzer (SKELETON)
+last_modified_commit: 14521b8
+review_cadence: on-status-transition
+last_review_date: 2026-05-17
+last_review_event: Skeleton authored per К10 forward planning skeleton framework brief
+reviewer: Crystalka
+risks_referenced:
+- RISK-004
+special_case_rationale: Skeleton brief for Roslyn architectural analyzer encoding К-Lxx invariants. Dual purpose (M-series migration verifier + К-Lxx compile-time enforcement). 17-18 expected analyzer rules. Awaits full brief authoring at К-closure report (А'.8) landed timing.
 ---
+
 # А'.9 Roslyn Architectural Analyzer — Execution Brief (SKELETON)
 
 **Brief authored**: 2026-05-17 (skeleton; post-К-closure forward planning)

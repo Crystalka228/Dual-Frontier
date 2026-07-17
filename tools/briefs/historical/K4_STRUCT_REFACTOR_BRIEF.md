@@ -1,15 +1,22 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K4_STRUCT_REFACTOR
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "0.1"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K4_STRUCT_REFACTOR
+version: 0.1
+first_authored: 2026-05-16
+last_modified: 2026-05-16
+content_language: en
+next_review_due: null
+title: K4 — Struct Refactor (alternative draft)
+superseded_by: DOC-D-K4
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: Already register-SUPERSEDED (superseded_by DOC-D-K4). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts (Crystalka lock 2026-05-16).
 ---
+
 > **HISTORICAL DOCUMENT**: Register-SUPERSEDED before 2026-05-16 (superseded_by DOC-D-K4). Moved to `tools/briefs/historical/` per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts.
 > Preserved for historical record. Do not execute as current brief.
 # K4 — Component struct refactor (Hybrid path)

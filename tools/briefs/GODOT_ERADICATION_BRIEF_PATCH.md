@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-GODOT_ERADICATION_BRIEF_PATCH
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-GODOT_ERADICATION_BRIEF_PATCH
+version: 1.0
+first_authored: 2026-06-29
+last_modified: 2026-06-29
+content_language: en
+next_review_due: null
+title: "GODOT ERADICATION BRIEF — PATCH 1 (folds the pre-ratification pressure-test's 8 findings: F-1 .uid-class blocker + F-2..F-8)"
+last_modified_commit: 077a8c8
+review_cadence: on-cascade-execution
+last_review_date: 2026-06-29
+last_review_event: 'Authored 2026-06-29 by Claude Opus post pressure-test. First-class delta artifact folding the 8 pressure-test findings into the base brief: F-1 (blocker) extends section 5-C + the F-5 authorization to the 204 .cs.uid class (default DELETE); F-2 full .gitignore Godot block; F-3 recursive .import glob; F-4 DEV_HYGIENE section 2:59 scrub; F-5 lifecycle gate widened to MAX_ENG:153; F-6 M75B2/UI_REVIEW HISTORICAL-KEEP; F-7 DOC-F-ASSETS-SCENES last_modified (not PATCH); F-8 section 1 attribution. Ratified by Crystalka 2026-06-29. Enrolled Draft at C1; flips to EXECUTED at C7.'
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: First-class brief-refresh delta artifact (patch precedent DOC-D-K9_BRIEF_REFRESH_PATCH / DOC-D-K8_3_BRIEF_REFRESH_PATCH); patches DOC-D-GODOT_ERADICATION_BRIEF v1.0 and folds into it at ratification, both transitioning to EXECUTED together at closure. DOC-D Category D Tier 4 per the empirical execution-brief convention (matches the patched brief's tier).
 ---
+
 ---
 register_id: DOC-D-GODOT_ERADICATION_BRIEF_PATCH
 project: Dual Frontier

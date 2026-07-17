@@ -1,15 +1,20 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-A_PRIME_0_5_DISCOVERY_SUMMARY
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-A_PRIME_0_5_DISCOVERY_SUMMARY
+version: 1.0
+first_authored: 2026-05-10
+last_modified: 2026-05-10
+content_language: en
+next_review_due: null
+title: A'.0.5 — Discovery Summary
+review_cadence: on-status-transition
+reviewer: Crystalka
 ---
+
 # A'.0.5 Phase 1 — discovery summary report
 
 **Discovery completed**: 2026-05-10

@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-FEEDBACK_LOOPS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "0.2.1"
+version: 0.2.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FEEDBACK_LOOPS
+title: Feedback-loop resolution (historical; engine rule → THREADING, gameplay residue reclassified Category J)
+superseded_by: DOC-J-FEEDBACK_LOOPS
+last_modified_commit: 0145f1b
+review_cadence: on-change+annual
+last_review_date: 2026-05-12
+last_review_event: Relocated docs/ root → docs/architecture/ to align with Category A default location (post-A'.4.5 cleanup)
+reviewer: Crystalka
+special_case_rationale: 'Split per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS: the engine cycle/snapshot rule is normative in DOC-A-THREADING_V2 §7 (absorbed at cascade R1); the gameplay residue is DOC-J-FEEDBACK_LOOPS in docs/mechanics/. Scalar superseded_by points to the J residue; the THREADING absorption is recorded in both EVTs. Full text preserved at docs/architecture/historical/FEEDBACK_LOOPS.md.'
 ---
+
 # Feedback-loop resolution
 
 The system dependency graph does not allow cycles over the same components — otherwise the scheduler cannot build phases. But game logic regularly demands feedback: one system writes a resource and another reads that same resource to make a decision. v0.2 resolves such loops with a single technique — reading a snapshot of the previous tick.

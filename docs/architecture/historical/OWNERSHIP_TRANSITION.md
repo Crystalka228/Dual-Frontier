@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-OWNERSHIP_TRANSITION
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0.1"
+version: 1.0.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-OWNERSHIP_TRANSITION
+title: Golem ownership transitions (historical; reclassified Category J as GOLEM_OWNERSHIP — docs/mechanics)
+superseded_by: DOC-J-GOLEM_OWNERSHIP
+last_modified_commit: 0145f1b
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: Reclassified Category A → J per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS (gameplay golem-bond protocol; session finding N-6 title collision with architecture vocabulary — successor renamed GOLEM_OWNERSHIP). Category change requires a new ID per FRAMEWORK §5 immutability + G-NAMESPACE; sanctioned path = supersession (I→A promotion precedent §3.1.1). Full text preserved at docs/architecture/historical/OWNERSHIP_TRANSITION.md.
 ---
+
 # Golem ownership transitions
 
 A golem belongs to a mage through `GolemBondComponent`. The bond is not a binary "exists / does not exist" — it passes through several states: active, contested, abandoned, transferred. v0.2 pins the full list of states, the permitted transitions, and the rules for executing them.

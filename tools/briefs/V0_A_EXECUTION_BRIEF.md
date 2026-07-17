@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-V0_A
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-18
+last_modified: 2026-05-18
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V0_A
+title: V0.A — Win32 window + Vulkan instance + device + queue families + validation layer
+review_cadence: on-status-transition
+last_review_date: 2026-05-18
+last_review_event: V0.A sub-milestone closure 2026-05-18 — 11 atomic commits 1a1c772..PENDING-COMMIT-V0_A-CLOSURE; V substrate foundation prerequisite layer операционен (Win32 + Vulkan instance + device + queue families + validation); 4 REQs authored (REQ-V0-A-WIN32_WINDOW + REQ-V0-A-VULKAN_INSTANCE + REQ-V0-A-VULKAN_DEVICE + REQ-V0-A-VALIDATION_LAYER); 665 baseline tests preserved + 20 V0.A additive; AMD Radeon RX 7600S verified at smoke test; К10.3 brief restart pathway unblocked after V0.B closure (compute pipeline plumbing)
+reviewer: Crystalka
+risks_referenced:
+- RISK-013
+special_case_rationale: 'V0.A standalone execution brief — first of three V0 sub-milestones under V substrate foundation split (V0.A = Win32 window + Vulkan instance + device + queue families + validation; V0.B = swapchain + render pass + compute pipeline plumbing + memory allocator + SPIR-V toolchain; V0.C = sprite/text/atlas + PNG decoder + threading model integration + clear color → first textured quad). Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering side baseline (first 4 of 11 rendering deliverables). Authored 2026-05-18 после K10.3 Phase 0 halt SC-14 (V substrate absent — Option B selected: build V substrate foundation first, then К10.3 restarts against real layer). First Vulkan code на проекте; substantial novel architectural surface vs K-series briefs. Per Crystalka ratification 2026-05-18: V substrate authoring stream inserts between K10.2 closure and K10.3 resumption. К10.3 brief restart pathway gated on V0.A + V0.B closure (compute pipeline plumbing lands V0.B). K-L19 hardware tier surface partially landed at V0.A (Vulkan 1.3 instance creation check); async compute queue selection deferred к V0.B. Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): pure P/Invoke к vulkan-1.dll (S-LOCK-6), zero third-party binding, ALWAYS-ON validation discipline в DEBUG (S-LOCK-4), .NET 8 target (S-LOCK-5 verified Phase 0 from Directory.Build.props).'
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: V0_A_EXECUTION_BRIEF

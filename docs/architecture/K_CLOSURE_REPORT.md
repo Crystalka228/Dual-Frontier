@@ -1,15 +1,34 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-K_CLOSURE_REPORT
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: AUTHORED
 owner: Crystalka
-version: "1.0.1"
+version: 1.0.1
+first_authored: 2026-06-12
+last_modified: 2026-06-12
+content_language: mixed
 next_review_due: 2027-05-23
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-K_CLOSURE_REPORT
+title: DualFrontier К-Series Formal Closure Report
+last_modified_commit: 3fc90c5
+review_cadence: on-change+annual
+last_review_date: 2026-05-23
+last_review_event: "A'.8 К-series formal closure (Commit 1) — K_CLOSURE_REPORT.md authored Tier 1 AUTHORED Category A per Q-N-8-4 LOCKED amendment к Meta-Q1 Session 1 LOCKED commitment (initial lifecycle AUTHORED; LOCKED transition deferred к downstream review). 12 sections per Q-N-8-8 LOCKED (S-LOCK-3): exec summary + К-L14 thesis canonical text §1.2 (Q-N-8-2 verbatim per hybrid Q2 (c) policy) + К-Lxx 21 invariants enumeration + К-L14 evidence baseline 9 verifications с #7 honest soft-halt annotation (Q-N-8-3 LOCKED) + cascades closure summaries (включая А'.7.x К-extensions cascade #0 + А'.7.5 К-extensions cascade #1 detailed) + V substrate progress (RT cores V-series scope, NOT FO, per Q-N-8-6 LOCKED) + Lessons promotion individual decisions (12 FORMALIZE с #14 + #27 PROMOTED + 9 DEFER + 1 SUNSET per Q-N-8-5 LOCKED) + Roslyn analyzer rule specifications (18 active с DF015.1 NEW + 4 reserved) + Phase A' sequencing closure (14 cascades А'.0 through А'.8) + forward sequencing (Godot K-extensions #2 post-closure → V2 amendment → V2 → A'.9 → Mod API lock → Phase B per Q-N-8-6 LOCKED) + hypothesis tracking forward (К-L14 falsifiability criteria 1-4 active, 5 deferred, 6 Provisional Q-N-8-7 NEW) + cross-reference integrity verification (Q7.3/7.4 LOCKED hybrid frozen-core + amendment-addenda) + closure metrics + governance state. ~2296 lines. К-closure event boundary anchored here (per Q-N-8-4 amendment к Q8 LOCKED Session 1 — lifecycle anchor adjusted LOCKED → AUTHORED, semantic preserved)."
+reviewer: Crystalka
+requirements_authored:
+- REQ-K-L14
+- REQ-K-L7_1
+- REQ-K-L12
+- REQ-K-L13
+- REQ-K-L15
+- REQ-K-L15_1
+- REQ-K-L16
+- REQ-K-L17
+- REQ-K-L18
+special_case_rationale: "Tier 1 AUTHORED override per Q-N-8-4 LOCKED 2026-05-23 amendment к Meta-Q1 Session 1 LOCKED commitment. К-closure report carries load-bearing material (К-L14 canonical text §1.2 + К-Lxx invariants enumeration §2 + К-L14 evidence baseline 9 verifications §3 + К-extensions designation §4.3 + Lessons promotion §6 + Roslyn rules §7 + forward sequencing §9) = architectural authority surface, NOT pure history. Tier 1 appropriate per FRAMEWORK §3.4 hierarchy. Initial lifecycle AUTHORED (not LOCKED); LOCKED transition deferred к downstream review when forward evidence accumulates (e.g., 6 months post-closure across К-extensions cascades + V substrate evolution + A'.9 Roslyn analyzer milestone + Mod API lock). К-L14 canonical text content (per Q-N-8-2 verbatim) is LOCKED within AUTHORED document body — sub-element LOCK within parent AUTHORED parallel к К-L7+К-L7.1 / К-L15+К-L15.1 sub-invariant precedent. Canon-carrier update per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [2]): the К-Lxx canonical texts now live in DOC-A-KERNEL_ARCHITECTURE Part 0 (LOCKED v1.0.0, sole carrier — resolves session finding N-1); this report remains the К-closure evidence record and the ratified home of the К-L14 full thesis (§1.2, Q-N-8-2 exception)."
 ---
+
 # DualFrontier К-Series Formal Closure Report
 
 > **Archival note (2026-06-12):** rule IDs in this report use the pre-A'.9.1 `DF###` namespace as shipped at А'.8; the current rule namespace and mapping live in ANALYZER_RULES §4 (rule registry).
@@ -2294,11 +2313,3 @@ Three honest framing pillars at А'.8 closure (per §1.5):
 **Forward maintenance**: К-extensions cascades may surface addendum documents per §11.4. К_L14_EVIDENCE_DASHBOARD.md tracks К-L14 thesis evidence forward separately. K_CLOSURE_REPORT.md main body frozen at А'.8 ratification per Q7.4 LOCKED Option iii hybrid frozen-core + amendment-addenda approach.
 
 **К-closure event boundary timestamp**: К_CLOSURE_REPORT.md AUTHORED ratification commit (Commit 1) push к origin/main at А'.8 execution = formal К-series closure event boundary.
-
-
-
-
-
-
-
-

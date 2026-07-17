@@ -1,4 +1,4 @@
-﻿# DualFrontier.Mod.Vanilla.Combat
+# DualFrontier.Mod.Vanilla.Combat
 
 ## Purpose
 Vanilla Combat mod — empty M8 skeleton. Establishes the assembly,
@@ -20,14 +20,18 @@ folds under Combat for the raid pipeline per §1.3).
 M8.1 skeleton — content empty. Migration target: M9 Combat.
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-MODS-VANILLA-COMBAT
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-MODS-VANILLA-COMBAT
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Mod Vanilla Combat
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

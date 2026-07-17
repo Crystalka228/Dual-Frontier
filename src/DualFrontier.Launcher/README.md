@@ -1,4 +1,4 @@
-﻿# DualFrontier.Launcher — Production Launch Entry Point
+# DualFrontier.Launcher — Production Launch Entry Point
 
 ## Purpose
 Production launcher для Dual Frontier. Composes:
@@ -81,14 +81,20 @@ declared в `DualFrontier.Application.csproj`.
 <!-- category: F | tier: 4 | lifecycle: Live | owner: Crystalka -->
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-LAUNCHER
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: TBD — after Vanilla mods consumer materialization OR substrate palette decoder extension cascade
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-LAUNCHER
+version: Live
+first_authored: 2026-05-23
+last_modified: 2026-05-23
+content_language: en
+next_review_due: post-Vanilla-mods-consumer-materialization closure
+title: DualFrontier.Launcher — Production Launch Entry Point
+review_cadence: phase-led
+last_review_date: 2026-05-23
+last_review_event: 'К-extensions cascade #3 β — Launcher dispatcher pawn-3 real implementations (HandlePawnSpawned/Moved/Died) + 3 deferred arms (PawnState/ItemSpawned/TickAdvanced) silent stubs per S-LOCK-4 amendment (Crystalka mid-cascade ratification 2026-05-23 — defensive throws would crash Launcher в production composition flow). LauncherRenderer Vulkan integration via Runtime.RecordSpritesFrame V0.C.2 batched API. Program.cs composition root extended с atlas upload (LauncherProceduralAtlas → SpriteTexture) + SceneState constructor injection per S-LOCK-10. Lesson #N12 semantic refined через cascade #3 (sub-pattern A test-only-fires + sub-pattern B production-fires).'
+reviewer: Crystalka
 ---

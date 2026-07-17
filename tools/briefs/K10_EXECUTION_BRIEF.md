@@ -1,15 +1,28 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-K10_EXECUTION
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: AUTHORED-SKELETON
 owner: Crystalka
-version: "0.1"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-K10_EXECUTION
+version: 0.1
+first_authored: 2026-05-17
+last_modified: 2026-05-17
+content_language: en
+next_review_due: null
+title: К10 Native Kernel Scheduler — Execution (SKELETON)
+last_modified_commit: 07551df
+review_cadence: on-status-transition
+last_review_date: 2026-05-17
+last_review_event: Skeleton authored per К10 forward planning skeleton framework brief
+reviewer: Crystalka
+risks_referenced:
+- RISK-003
+- RISK-004
+- RISK-013
+special_case_rationale: Skeleton brief awaiting full brief authoring at Opus deliberation session post-К8.5 closure. Captures 10 expected sub-milestones (K10.A through K10.J), 4 halt classes, 5 Q-N seeds. К10 specification authority at DOC-A-KERNEL_FULL_NATIVE_SCHEDULER v2.0 LOCKED.
 ---
+
 # К10 Native Kernel Scheduler — Execution Brief (SKELETON)
 
 **Brief authored**: 2026-05-17 (skeleton; Claude Opus 4.7 К10 deliberation arc closure)

@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-GODOT_ERADICATION_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-GODOT_ERADICATION_BRIEF
+version: 1.0
+first_authored: 2026-06-29
+last_modified: 2026-06-29
+content_language: en
+next_review_due: null
+title: 'GODOT ERADICATION CASCADE — Execution Brief (dead Godot host/comment cleanup + living-doc de-Godot + inert file-artifact deletion: project.godot + icon.svg + icon.svg.import + 11 .import + 204 .cs.uid + .gitignore/SCOPE_EXCLUSIONS Godot blocks; F-5 closure)'
+last_modified_commit: 077a8c8
+review_cadence: on-cascade-execution
+last_review_date: 2026-06-29
+last_review_event: "Authored 2026-06-29 by Claude Opus (deliberation session, Godot Eradication prep) from GODOT ERADICATION RECON 2026-06-29 (R1-R8; supplied in-session, no on-disk copy). Pre-ratification read-only pressure-test (Claude Opus, architect seat) re-verified the brief against the live tree at 187c46c — backbone confirmed (every D1/D2 site, census, register count, after-text target) — and surfaced 8 findings, F-1 a blocker: 204 untracked .cs.uid Godot sidecars the recon's extension-list sweep missed (same inert class as the 11 .import). Folded via PATCH 1 (DOC-D-GODOT_ERADICATION_BRIEF_PATCH). Ratified by Crystalka 2026-06-29 (F-5 deletion authorization + PATCH; F-1 default DELETE). Enrolled Draft at C1; flips to EXECUTED at the C7 register closure."
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: "Godot Eradication Cascade execution brief — closes F-5 by deleting the full inert Godot file surface (project.godot + icon.svg + icon.svg.import + 11 .import + 204 .cs.uid + the .gitignore/SCOPE_EXCLUSIONS Godot blocks) and eradicating dead Godot residue (7 comment sites + living-doc refs). DOC-D Category D Tier 4 per the empirical execution-brief convention (sister to DOC-D-ARCHITECTURE_TRUTH_CASCADE_BRIEF + DOC-D-STANDING_LAW_CASCADE_BRIEF). Read alongside its delta PATCH 1 (DOC-D-GODOT_ERADICATION_BRIEF_PATCH); where they differ the patch governs. Single PENDING-COMMIT exception this cascade: the register header self-reference (C7's own hash), backfilled at C8 per Option-B; C1-C6 recorded real."
 ---
+
 ---
 register_id: DOC-D-GODOT_ERADICATION_BRIEF
 project: Dual Frontier

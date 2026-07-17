@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-EVENT_BUS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "2.0.0"
+version: 2.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-EVENT_BUS
+title: Event buses (historical; superseded by authored rework)
+superseded_by: DOC-A-EVENT_BUS_V2
+last_modified_commit: fcbfe5b
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: Superseded by DOC-A-EVENT_BUS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/EVENT_BUS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
+
 # Event buses
 
 Events are the only horizontal link between systems — direct system-to-system calls are forbidden by the architecture (see [ISOLATION](./ISOLATION.md)). Two bus layers exist in code, with distinct authority:

@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-FHE_INTEGRATION_CONTRACT_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-FHE_INTEGRATION_CONTRACT_V2
+title: FHE Integration Contract (authored rework; dormant-contract role, D1-D8 preserved)
+supersedes:
+- DOC-A-FHE_INTEGRATION_CONTRACT
+last_modified_commit: d66e02e
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: "CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (14 anchors) + HALT-1-ratified corrections R3-22/R3-23 at d66e02e (dangling METHODOLOGY §7.1 determinism citation re-anchored to the contract's own §1 scope; transcription-claim honesty); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION)."
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-FHE_INTEGRATION_CONTRACT per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; dormant-contract role, D1-D8 preserved ('The dormant period is unbounded.').
 ---
+
 # FHE Integration Contract
 
 The ratified, currently-dormant contract governing how fully homomorphic encryption would integrate with Dual Frontier's deterministic simulation core, if and when the three conditions in §D1 are ever simultaneously met.

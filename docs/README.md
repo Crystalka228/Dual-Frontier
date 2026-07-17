@@ -1,4 +1,4 @@
-﻿# Dual Frontier documentation
+# Dual Frontier documentation
 
 This directory documents a research artifact: a falsifiable test of
 LLM-augmented systems engineering at one-person scale, operationalized
@@ -87,14 +87,19 @@ Second-revision gameplay additions: resource models, composite requests, feedbac
 - [CONTRACTS](/docs/architecture/CONTRACTS.md)
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-G-DOCS_README
+project: Dual Frontier
 category: G
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "Live"
+version: Live
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-DOCS_README
+title: Dual Frontier documentation index
+last_modified_commit: 9b4968a
+review_cadence: on-closure+quarterly
+reviewer: Crystalka
 ---

@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-PERFORMANCE_V2
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-PERFORMANCE_V2
+title: Performance (authored rework; current-substrate budgets, enforcement honesty — no CI, PerformanceGate fictional)
+supersedes:
+- DOC-A-PERFORMANCE
+last_modified_commit: 6c696db
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (29 anchors; §4 enforcement-honesty verified exemplary) + HALT-1-ratified corrections R3-18..R3-21 at 6c696db (results location; К-L14 quote fidelity); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-PERFORMANCE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; enforcement honesty stands (no CI; PerformanceGate fictional — AD-5 open obligation).
 ---
+
 # Performance
 
 Where Dual Frontier's frame and tick budgets attach on the current native substrate — and an honest accounting of what enforces them today: nothing does, yet.

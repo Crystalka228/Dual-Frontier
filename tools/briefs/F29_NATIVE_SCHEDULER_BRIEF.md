@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-F29_NATIVE_SCHEDULER_BRIEF
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-F29_NATIVE_SCHEDULER_BRIEF
+version: 1.0
+first_authored: 2026-07-04
+last_modified: 2026-07-04
+content_language: en
+next_review_due: null
+title: F29_NATIVE_SCHEDULER_BRIEF — F-29 native-scheduler cascade execution brief (FIX defect (b) O(N^2) -> O(N+E) index-keyed graph rebuild + FIX defect (a) fail-loud native concurrency detector on the lock-free scheduler-graph + wake-registry singletons + a shared xUnit collection over the singleton-touching classes; un-quarantine S1/S7; re-point S2 -> F-30; S3/S4/S5 bus-load artifact -> F-31; TESTING_STRATEGY 2.1.0 -> 2.2.0 §2.8 isolation law; F-29 CLOSED / F-30 + F-31 seeded; REGISTER 2.22 -> 2.23)
+last_modified_commit: c0ab964
+review_cadence: on-cascade-execution
+last_review_date: 2026-07-04
+last_review_event: 'F-29 native-scheduler brief authored by Claude Opus from the durable recon docs/reports/F29_NATIVE_SCHEDULER_RECON_REPORT.md (2026-07-04, R1-R7); ratified by Crystalka 2026-07-04 (AskUserQuestion -> Execute now; Draft -> LOCKED). Executed 2026-07-04 by Claude Code (Opus 4.8, LOCAL Skarlet), single-orchestrator serial C1-C10; H1/H2/H3 gates clear; zero hard halts (one in-flight reclassification: the S3/S4/S5 extreme-bus-load probes root-caused a .NET-runtime-stress artifact -> new finding F-31, +1 commit vs the 9-commit intended form). Enrolled EXECUTED at the F-29 REGISTER closure.'
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series + F-10 DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §2.8 shared-native-singleton isolation law), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id.
 ---
+
 ---
 register_id: DOC-D-F29_NATIVE_SCHEDULER_BRIEF
 project: Dual Frontier

@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-COMPOSITE_REQUESTS
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: SUPERSEDED
 owner: Crystalka
-version: "1.0.1"
+version: 1.0.1
+first_authored: 2026-07-15
+last_modified: 2026-07-15
+content_language: en
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-COMPOSITE_REQUESTS
+title: Composite requests (historical; reclassified Category J — docs/mechanics)
+superseded_by: DOC-J-COMPOSITE_REQUESTS
+last_modified_commit: 0145f1b
+review_cadence: on-change+annual
+reviewer: Crystalka
+special_case_rationale: "Superseded by DOC-J-COMPOSITE_REQUESTS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMPOSITE_REQUESTS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — engine-level composite request resolution pattern; design intent minimal"
 ---
+
 # Composite requests
 
 A one-step Intent solves the problem when exactly one resource on one bus is required. But even a "mana arrow" shot needs two confirmations at once: a bullet on `IInventoryBus` and mana on `IMagicBus`. A direct "get both responses and act" approach produces race conditions inside a multithreaded phase. v0.2 introduces two-phase commit through a single mediator.

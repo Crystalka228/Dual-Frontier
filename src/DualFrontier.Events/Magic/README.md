@@ -1,4 +1,4 @@
-﻿# Magic Events
+# Magic Events
 
 ## Purpose
 Events of the magic subsystem: mana requests (the two-step model), spells,
@@ -50,14 +50,18 @@ Magic-subsystem extension: continuous mana lease and golem ownership transfer.
 Note: `OwnershipMode` lives in `DualFrontier.Contracts.Enums`, since it is used both by components (`GolemBondComponent`) and by magic events.
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-EVENTS-MAGIC
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-EVENTS-MAGIC
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Events Magic submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---

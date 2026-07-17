@@ -1,4 +1,4 @@
-﻿# docs/mechanics — Game Mechanics index
+# docs/mechanics — Game Mechanics index
 
 *This folder contains Category J game mechanics design documents (Tier 1 or Tier 2 per A'.4.5 governance framework).*
 
@@ -41,14 +41,19 @@ Naming note: the migrated five keep their established SCREAMING_SNAKE names for 
 - [docs/governance/REGISTER.yaml](../governance/REGISTER.yaml) operational SoT
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-G-MECHANICS_README
+project: Dual Frontier
 category: G
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-12
+last_modified: 2026-07-15
+content_language: en
 next_review_due: 2026-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-G-MECHANICS_README
+title: docs/mechanics — Game Mechanics index
+last_modified_commit: 0145f1b
+review_cadence: on-closure+quarterly
+reviewer: Crystalka
 ---

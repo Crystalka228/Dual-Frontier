@@ -1,3 +1,22 @@
+---
+register_id: DOC-E-PHASE_BETA_PREP_EXECUTION_PROMPT
+project: Dual Frontier
+category: E
+tier: 3
+lifecycle: EXECUTED
+owner: Crystalka
+version: 1.0
+first_authored: 2026-05-25
+last_modified: 2026-05-25
+content_language: mixed
+next_review_due: null
+title: Phase β-prep Execution Prompt — A'.9.1 Analyzer Infrastructure Cascade
+last_modified_commit: f94bb84
+review_cadence: on-status-transition
+reviewer: Crystalka
+special_case_rationale: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): the prompt E/3/EXECUTED; real git provenance.'
+---
+
 # Phase β-prep Execution Prompt — A'.9.1 Analyzer Infrastructure Cascade
 
 **Target session**: Fresh-context Claude Code (Opus 4.7, 1M context window)

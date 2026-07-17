@@ -1,15 +1,26 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-SCHEDULER_ARCHITECTURE
+project: Dual Frontier
 category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: "1.0.0"
+version: 1.0.0
+first_authored: 2026-07-15
+last_modified: 2026-07-17
+content_language: en
 next_review_due: 2027-Q3
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-SCHEDULER_ARCHITECTURE
+title: Scheduler Architecture — К10 substrate model and current/target wiring (authored rework)
+supersedes:
+- DOC-A-KERNEL_FULL_NATIVE_SCHEDULER
+last_modified_commit: 3993dc9
+review_cadence: on-change+annual
+last_review_date: 2026-07-17
+last_review_event: 'CORPUS_CLOSURE_INVERSION_B: D1 full-corpus review (~96 anchors, 0 WRONG) + HALT-1-ratified nano-fixes R1-11 at 3993dc9; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION).'
+reviewer: Crystalka
+special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-KERNEL_FULL_NATIVE_SCHEDULER per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE — law/model/wiring distilled; the deliberation record (46 items, Q-N-1..56, predictions, risks) is preserved verbatim in the historical original.
 ---
+
 # Scheduler Architecture (К10 substrate)
 
 The native kernel scheduler: its law, its mechanical model, and the honest wiring truth of who plans and who dispatches production ticks today.

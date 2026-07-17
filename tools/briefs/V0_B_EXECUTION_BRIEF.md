@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-V0_B
+project: Dual Frontier
 category: D
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
+version: 1.0
+first_authored: 2026-05-18
+last_modified: 2026-05-18
+content_language: mixed
 next_review_due: null
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-V0_B
+title: V0.B — Swapchain + render pass + compute pipeline + memory allocator + SPIR-V + async compute + hardware check
+review_cadence: on-status-transition
+last_review_date: 2026-05-18
+last_review_event: V0.B sub-milestone closure 2026-05-18 — 18 atomic commits d2c6627..PENDING-COMMIT-V0_B-CLOSURE; V substrate foundation completion операционен (swapchain + render pass + framebuffer + command + compute pipeline + memory allocator + SPIR-V toolchain + async compute queue + HardwareCapabilityCheck + native C ABI extension + FieldStorageBinding); 7 REQs authored (REQ-V0-B-SWAPCHAIN, REQ-V0-B-RENDER_PASS, REQ-V0-B-COMPUTE_PIPELINE, REQ-V0-B-MEMORY_ALLOCATOR, REQ-V0-B-SPIRV_TOOLCHAIN, REQ-V0-B-ASYNC_COMPUTE_QUEUE, REQ-V0-B-HARDWARE_CHECK) + REQ-K-L19 (Commit 13 load-bearing); 685 V0.A baseline tests preserved + 101 V0.B additive (786 total managed); 77 native selftest baseline + 1 V0.B compute roundtrip = 78; AMD Radeon RX 7600S verified K-L19 hardware tier at smoke test (clear color render path operational, compute roundtrip via managed + native C ABI paths, validation log 0 errors); К10.3 brief restart pathway opens (Items 43 + 44 already implemented; K-L16/L17/L18 numbering reserved для К10.3 elaboration)
+reviewer: Crystalka
+risks_referenced:
+- RISK-013
+special_case_rationale: 'V0.B standalone execution brief — second of three V0 sub-milestones under V substrate foundation split. Implements V0 deliverables per VULKAN_SUBSTRATE.md v1.0 §1.1 rendering bullets 4-9 + compute use case implementation foundation. Authored 2026-05-18 post-V0.A closure 2026-05-18 (PR #36 merged; 11 atomic commits 1a1c772..1a56887; 685 tests baseline; AMD RX 7600S verified К-L19 hardware tier; VkPhysicalDeviceProperties alignment fix precedent landed — Lesson #7 strengthening). Per Crystalka ratification 2026-05-18 (V0.A/V0.B/V0.C split ratified post-V0.A closure): V substrate authoring stream continues. К10.3 brief restart pathway: V0.B implementation lands async compute queue selection (Item 43) + HardwareCapabilityCheck (Item 44) — К10.3 restarts post-V0.B closure с surgical amendments where V0.B shape differs from К10.3 brief assumptions. К-L19 invariant LOCKED at Commit 13 (load-bearing — KERNEL_ARCHITECTURE.md amendment + README.md hardware requirements section + REGISTER.yaml DOC-A-KERNEL version bump 2.1 → 2.2 + REQ-K-L19 enrollment all in same commit per Lesson #8). 11 S-LOCKs enumerate scope: S-LOCK-1 (V0.B scope = swapchain + render pass + compute + memory + SPIR-V + async compute + hardware check); S-LOCK-2 (monolithic approach NOT split V0.B.1/V0.B.2); S-LOCK-3 (native C ABI extension lands в existing DualFrontier.Core.Native module); S-LOCK-4 (memory allocator = bumper linear allocator only); S-LOCK-5 (SPIR-V toolchain = in-repo committed glslangValidator.exe); S-LOCK-6 (V0.B shaders = minimal clearcolor + noop only); S-LOCK-7 (mixed [LibraryImport] + [DllImport] convention formalized — V0.A executor precedent); S-LOCK-8 (C ABI alignment audit mandatory per V0.A executor finding — Lesson #7 strengthening); S-LOCK-9 (К-L19 invariant landing on V0.B post-К10.3 halt resolution); S-LOCK-10 (К10.3 brief restart pathway documented); S-LOCK-11 (atomic cascade preserves V0.A discipline). Per Lesson #22 (match existing convention) + Lesson #20 (no improvisation): same V0.A patterns inherited; mixed [LibraryImport]/[DllImport] formalized; pure P/Invoke к vulkan-1.dll + vulkan-1.dll linkage в native module via CMake find_package(Vulkan); ALWAYS-ON validation discipline в DEBUG preserved; .NET 8 target preserved.'
 ---
+
 ---
 # Brief frontmatter (not REGISTER mirror — brief lives in tools/briefs/ as Tier 3 Category D)
 brief_id: V0_B_EXECUTION_BRIEF

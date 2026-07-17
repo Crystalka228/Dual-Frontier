@@ -1,15 +1,25 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF
+project: Dual Frontier
 category: D
 tier: 4
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.0"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF
+version: 1.0
+first_authored: 2026-06-02
+last_modified: 2026-06-02
+content_language: en
+next_review_due: null
+title: Documentation Dual-Load Drift Reconnaissance — Brief
+review_cadence: on-cascade-execution
+last_review_date: 2026-06-02
+last_review_event: 'Brief authored 2026-05-25 by Claude Opus 4.7 (deliberation session) per Crystalka root-cause drift identification («архитектурные документы выполняют ещё роль дорожной карты»). EXECUTED 2026-06-02 by Claude Code (Opus): read-only multi-agent reconnaissance (R0-R4) across all 267 REGISTER docs via 10 category-cluster sub-agents; produced DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT (~105 living-spec drift line-items; 7-doc misclassification meta-finding; Option ε target architecture; 3-cascade refactor decomposition DD-1/DD-2/DD-3). К-L impact: zero per S-LOCK-1 (read-only; refactor execution deferred к Crystalka work-volume determination).'
+reviewer: Crystalka
+risks_referenced: []
+capa_entries_referenced: []
+special_case_rationale: 'Documentation Dual-Load Drift Reconnaissance brief — standalone reconnaissance cascade addressing the root documentation drift source (living-spec documents serving dual descriptive+roadmap roles). Authored 2026-05-25; EXECUTED 2026-06-02 (reconnaissance discovery-only per §0.5 read-only discipline — refactor is a separate future cascade determined FROM the report). DOC-D Category D Tier 4 follows existing reconnaissance-brief convention (sister к DOC-D-A_PRIME_9_0_RECONNAISSANCE_BRIEF). Paired deliverable: DOC-E-DOCUMENTATION_DUAL_LOAD_DRIFT_REPORT. Q-DD ratification surface (§11) — defaults taken at execution (Q-DD-1 standalone, Q-DD-3 hybrid grounding, Q-DD-6 single report, Q-DD-7 enroll, Q-DD-9 Option ε freely recommended, Q-DD-10 existing docs/reports/ folder). §9 halt-3 (misclassification → governance issue) TRIGGERED + surfaced; halt-6 (LOCKED Tier-1 substrate) respected — zero К-L invariant text edits.'
 ---
+
 ---
 register_id: DOC-D-DOC_DRIFT_RECONNAISSANCE_BRIEF
 category: D

@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-E-CODEX_REVIEW_REMEDIATION_20260714
+project: Dual Frontier
 category: E
 tier: 3
 lifecycle: EXECUTED
 owner: Crystalka
-version: "1.1"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-E-CODEX_REVIEW_REMEDIATION_20260714
+version: 1.1
+first_authored: 2026-07-14
+last_modified: 2026-07-14
+content_language: en
+next_review_due: null
+title: Codex Review Remediation — closed-PR findings cascade — 2026-07-14 (verification + remediation of the 21 Codex inline review comments inventoried across the 42 closed PRs; base main @ c8fa0e58; branch claude/closed-pr-accessibility-2yxtu8; 16 findings fixed, F07 accepted-latent, F20 arch-closed, F10/F12/F16/F17/F18 confirmed already-closed)
+review_cadence: none-historical-record
+last_review_date: 2026-07-14
+last_review_event: Verification + remediation cascade executed 2026-07-14 by Claude Code (Opus, Claude-Code-on-the-web Linux session) against main @ c8fa0e58. All 21 Codex closed-PR findings independently re-verified (inventory held on all 21); 16 fixed on branch claude/closed-pr-accessibility-2yxtu8, F07 documented accepted-latent (no x86 target), F20 architecturally closed (existing ContractTypeInRegularMod coverage), F10/F12/F16/F17/F18 confirmed already-closed. Managed logic fixes runtime-tested; Vulkan/Win32 fixes compile-verified against a clean TreatWarningsAsErrors build; sprite.frag.spv regenerated via glslang; stress tests not run per instruction. F13 (mis-resolved risk-reference drift) and DOC-A-ISOLATION F11 wording also corrected in REGISTER.yaml.
+reviewer: Crystalka
+special_case_rationale: "Durable audit/closure record enrolled DOC-E Tier 3 per the docs/audit/ convention (precedents: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, docs/audit AUDIT_PASS_* discovery/closure artifacts). Retrospective 'what was done' remediation closure for the Codex closed-PR review inventory; REGISTER_RENDER.md regeneration + frontmatter-mirror sync + last_modified_commit backfill pending sync_register.ps1 on a PowerShell + powershell-yaml host (unavailable in the Linux session)."
 ---
+
 # Codex Review Remediation — closed-PR findings cascade — 2026-07-14
 
 > Verification + remediation of the 21 Codex inline review comments inventoried across the 42

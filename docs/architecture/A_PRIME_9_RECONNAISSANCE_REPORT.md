@@ -1,15 +1,23 @@
-﻿---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
+---
 register_id: DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT
+project: Dual Frontier
 category: A
 tier: 2
 lifecycle: EXECUTED
 owner: Crystalka
-version: "Live"
-next_review_due: post-A'.9.1 closure
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-A-A_PRIME_9_RECONNAISSANCE_REPORT
+version: Live
+first_authored: 2026-05-24
+last_modified: 2026-05-24
+content_language: mixed
+next_review_due: null
+title: A'.9 Reconnaissance Report — Roslyn Analyzer Architecture Discovery
+review_cadence: on-change+phase-led
+last_review_date: 2026-05-24
+last_review_event: "A'.9.0 Reconnaissance / К-extensions cascade #4 — initial AUTHORED entry. Standalone reconnaissance produced ~3340-line governance artifact covering 7 domains via multi-agent dispatch (7 sub-agents: 3 parallel batch A in α1 + 3 parallel batch B in α2 + 1 sequential C1 in α3 per S-LOCK-5). Domain 1 К-L analyzability 22-row matrix scored per S-LOCK-4 rubric (9 P0/8 P1/3 P2/3 P3). Domain 2 FORMALIZE Lessons analyzability 12-row matrix (11 T6 + 1 T2 — Lesson #8 auxiliary tooling). Domain 3 cascade #2/#3 surfaced rule candidates (10 candidates с cross-cascade observation Lesson #N12 underlies 4 candidates → [ReservedStub] attribute infrastructure recommended). Domain 4 Mod OS К-L20 prep surface (20 candidate DF020 sub-rules + 6 precursor relationships A'.9-era → К-L20 era). Domain 5 Roslyn ecosystem desk research (SDK Microsoft.CodeAnalysis.CSharp 5.3.0 2026-03-10 + xUnit testing framework variant 1.1.2 recommended). Domain 6 Build/CI integration surface (Option C hybrid tools/+tests/ + Directory.Build.props centralized + .editorconfig per-rule severity progressive). Domain 7 suppression governance precedent (near-zero baseline: 5 pragmas + 0 [SuppressMessage] + 0 GlobalSuppressions + 0 CAPA related; 5-tier classification + BAN GlobalSuppressions.cs + tiered CAPA tracking). §10 Brief A'.9.1 prerequisites enumerated (10 items с empirical anchors). §11 Q-K candidates aggregated (45 total: 42 sub-agent + 3 cross-cutting α4 synthesis). §12 cross-references complete. K-L impact: zero. К-L14 verification #13 first observational reconnaissance evidence."
+reviewer: Crystalka
+special_case_rationale: A'.9 Roslyn analyzer milestone reconnaissance artifact — comprehensive architecture discovery enabling A'.9.1 brief evidence-grounded authoring per Crystalka direction («Два брифа первый, он проведет полную разведку архитектуры»). Tier 2 Live Category A consistent with sister governance artifacts (K_EXTENSIONS_LEDGER + K_L14_EVIDENCE_DASHBOARD + PHASE_A_PRIME_SEQUENCING) — companion artifacts к K_CLOSURE_REPORT.md tracking post-А'.8 milestone evolution. Special review cadence (on-change+phase-led) supports phase milestone integration (A'.9.1 closure triggers next review).
 ---
+
 # A'.9 Reconnaissance Report — Roslyn Analyzer Architecture Discovery
 
 **Designation**: A'.9.0 Reconnaissance cascade output (К-extensions cascade #4 cross-reference)

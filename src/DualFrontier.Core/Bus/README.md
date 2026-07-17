@@ -1,4 +1,4 @@
-﻿# Bus — Domain bus implementations
+# Bus — Domain bus implementations
 
 ## Purpose
 Implements the `IEventBus` and `IGameServices` contracts from
@@ -37,14 +37,18 @@ services.Inventory.Subscribe<AmmoIntent>(batcher.Collect);
 - [ ] Phase 2 — add telemetry (events/sec counters per bus).
 
 ---
-# Auto-generated from docs/governance/REGISTER.yaml — DO NOT EDIT MANUALLY
-# Manual edits overwritten by sync_register.ps1 on next sync.
 register_id: DOC-F-SRC-CORE-BUS
+project: Dual Frontier
 category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: "Live"
-next_review_due: "null"
-register_view_url: docs/governance/REGISTER_RENDER.md#DOC-F-SRC-CORE-BUS
+version: Live
+first_authored: 2026-04-XX
+last_modified: 2026-04-XX
+content_language: en
+next_review_due: null
+title: Core Bus submodule
+review_cadence: on-source-commit+quarterly
+reviewer: Crystalka
 ---
