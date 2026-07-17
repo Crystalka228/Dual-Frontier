@@ -79,7 +79,7 @@ Four `InternalsVisibleTo` grants cross project boundaries in production code (`*
 
 ## §3 Scheduling and event routing: one story, not two
 
-Per К-L12 (KERNEL_ARCHITECTURE.md Part 0): native kernel scheduling is sovereign — "dependency graph construction, runqueue maintenance, wake-up dispatch, phase composition, parallelism scheduling, priority arbitration, resource quota enforcement." Per К-L15 (KERNEL_ARCHITECTURE.md Part 0): the native three-tier bus is sovereign event-routing authority — "native kernel owns sovereign event routing for kernel-space and cross-layer events... type registry, subscriber registry, payload dispatch, wake firing, tier-based delivery semantics all native authority." Both are LOCKED law today. Component storage is the one leg already achieved in production — `NativeWorld` has been the sole storage backend since the K8.3+K8.4 cutover (К-L11).
+Per К-L12 (KERNEL_ARCHITECTURE.md Part 0): native kernel scheduling is sovereign — "dependency graph construction, runqueue maintenance, wake-up dispatch, phase composition, parallelism scheduling, priority arbitration, resource quota enforcement." Per К-L15 (KERNEL_ARCHITECTURE.md Part 0): the native three-tier bus is sovereign event-routing authority — "native kernel owns sovereign event routing для kernel-space and cross-layer events... type registry, subscriber registry, payload dispatch, wake firing, tier-based delivery semantics all native authority." Both are LOCKED law today. Component storage is the one leg already achieved in production — `NativeWorld` has been the sole storage backend since the K8.3+K8.4 cutover (К-L11).
 
 Scheduling and event routing have not cut over. Today, in production:
 
@@ -143,5 +143,6 @@ Tier 1, AUTHORED pending ratification. Amendment: surface the change to the owne
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review correction (CORPUS_CLOSURE_INVERSION_B, D1 R1-1): §3 К-L15 quotation restored to canon fidelity — "для" reinstated inside the verbatim quote (the rework had silently anglicized it). |
 | **0.1.0** (AUTHORED, pending ratification) | 2026-07-15 | Corpus rework: one current/target story for scheduling + event routing (§3); corrected mods-row mechanism (§2); added IVT census (§2.1) and governed/ungoverned census (§4); repointed §6 to the post-rework corpus. |
 | 1.0.0 | 2026-06-12 | Predecessor's last LOCKED version (Architecture Truth Cascade rewrite). See `historical/ARCHITECTURE.md` for its full change history. |
