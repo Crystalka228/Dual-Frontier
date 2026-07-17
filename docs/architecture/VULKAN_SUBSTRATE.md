@@ -210,7 +210,7 @@ The scaffolding generator `tools/scaffold-runtime.ps1` remains committed and ide
 | `noop.comp` | V0 empty-dispatch test shader |
 | `diffusion.comp` | V1 substrate shader (one template serving isotropic + anisotropic — §4.3) |
 
-`mods/Directory.Build.targets` performs manifest copy plus the Release `hotReload` rewrite only — **no mod build compiles shaders today** (`mods/Directory.Build.targets:1-30`). The production binary depends on `vulkan-1.dll` + pre-compiled `.spv` files; no shader-compiler dependency ships.
+`mods/Directory.Build.targets` performs manifest copy plus the Release `hotReload` rewrite only — **no mod build compiles shaders today** (`mods/Directory.Build.targets:23-26` manifest copy, `:36-45` Release rewrite). The production binary depends on `vulkan-1.dll` + pre-compiled `.spv` files; no shader-compiler dependency ships.
 
 > **FENCED (target / planned — not current truth):** Mod-side compute shader compilation per К-L9 «vanilla = mods»: each vanilla mod compiles its compute shader during the mod build with the same `glslangValidator.exe` toolchain, embeds the `.spv` bytes into mod assets, and registers through the `IModApi.ComputePipelines` surface at startup (§3.1). A V2 `wave.comp` line joins the `CompileShaders` target when V2 ships. Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
@@ -232,7 +232,7 @@ Things a reader of the predecessor might believe exist, stated plainly as absent
 
 | Absent surface | Truth | Owner section |
 |---|---|---|
-| `Text/` module, bitmap font renderer, font assets | Never shipped; no `Text/` directory, no font asset pack on disk (the predecessor's tree still listed `assets/cinzel/` — since removed) | §8 (font/UI open decisions); ROADMAP |
+| `Text/` module, bitmap font renderer, font assets | Never shipped; no `Text/` directory, no font asset pack on disk (the predecessor's tree still listed `assets/cinzel/` — never committed: git-ignored via `.gitignore` `/assets/Cinzel/`; no font asset is tracked at HEAD, though ignored local copies may persist in working directories) | §8 (font/UI open decisions); ROADMAP |
 | `DebugOverlay`, `FrameTimer` | Never shipped; FPS measurement lives in the smoke-test executable | ROADMAP |
 | `wave.comp` (V2) | Not on disk | §4.4 FENCED |
 | Input forwarding into Domain | Does not exist — the Launcher drains and discards (§2.2) | §2.2; §8 |
@@ -348,7 +348,7 @@ while (runtime.InputQueue.TryDequeue(out IInputEvent? _))
 
 Per К-L16 (KERNEL_ARCHITECTURE.md Part 0), the substrate supports simulation-tick pipeline depth **D = 2 by default, configurable 1–3**, for *pipeline-managed* dispatches: the simulation thread may run D ticks ahead of the display thread for those dispatches, giving cross-layer async operations a full pipeline-depth window to complete without blocking simulation. Per К-L7.1, pipeline-managed field reads bind to the **slot tail**: sim-thread reads of a pipeline-managed field see the slot-tail state (sim_tick − 1) without a per-read fence query; К-L7 atomic-from-observer is preserved *within* a slot boundary, and cross-slot reads see different snapshots. Display reads take `CurrentSimTick − D` for pipeline-managed display state.
 
-**Slot data model — preserved verbatim from the shipped header** (`native/DualFrontier.Core.Native/include/pipeline_slot.h:47-70`):
+**Slot data model — preserved verbatim from the shipped header** (`native/DualFrontier.Core.Native/include/pipeline_slot.h:45-64`):
 
 ```c
 // Slot state machine per spec §3.10 Item 33 verbatim.
@@ -375,7 +375,7 @@ typedef struct {
 
 **Fence orchestration** tracks slot transitions `Empty → Dispatched → FenceCompleted → ReadableAsTail`. The shipped C ABI (`pipeline_slot.h`): `df_pipeline_init(depth)` / `df_pipeline_reset` / `df_pipeline_get_depth`; `df_pipeline_allocate_slot(sim_tick, out_slot)` (cycles through D slots; returns null when all D slots are in flight — the К-L16 backpressure point); `df_pipeline_get_slot(slot_offset, out_slot)` with `0` = current, `-1` = previous (the К-L7.1 sim-thread tail read), `-2..-D` = display tail; `df_pipeline_set_fence(slot, vk_fence)`; `df_pipeline_check_fences(out_transitioned)`; `df_pipeline_force_fence_completed(slot)`; `df_pipeline_transition_to_tail(slot)` (fires the slot-transition wake hook); `df_pipeline_is_quiescent(out)` — the К-L18 precondition primitive: quiescent means every slot is `Empty` or `ReadableAsTail` (no in-flight compute), consumed by the mod-unload chain before mod operations. Save/load slot-metadata serialization primitives also ship (§7.1).
 
-**Wiring truth, stated honestly.** The slot state machine, its C ABI, and the managed mirror (`src/DualFrontier.Core.Interop/PipelineSlotInterop.cs`) are on disk and test-exercised (35 interop tests; 14 native selftest pipeline scenarios recorded at closure). Two integration edges are explicitly *not* live:
+**Wiring truth, stated honestly.** The slot state machine, its C ABI, and the managed mirror (`src/DualFrontier.Core.Interop/PipelineSlotInterop.cs`) are on disk and test-exercised (7 dedicated interop tests on disk — `PipelineSlotInteropTests.cs`; 35 interop tests + 14 native selftest pipeline scenarios recorded at К10.3 v2 closure). Two integration edges are explicitly *not* live:
 
 - `df_pipeline_check_fences` is a **recorded stub**: it returns "zero slots transitioned" without polling — actual `vkGetFenceStatus` integration was deferred to the Phase.Compute commit that has a `VulkanAttachment` context, and callers are directed to `df_pipeline_force_fence_completed` (test path) meanwhile (`native/DualFrontier.Core.Native/src/pipeline_slot.cpp:153-163`).
 - **No production consumer opts in.** Phase.Compute infrastructure (`phase_compute.h/.cpp` — named `Update/Compute/Display` phases, per-tick dispatch registry, single-`VkQueueSubmit` batching of up to 256 dispatches) is scaffold; actual pipeline-managed compute consumers were scoped out of К10.3 v2 and have not arrived since. The `FenceCompleted → ReadableAsTail` wake hook has an observable fire counter, and the `[WakeOnSlotTransition]` consumer attribute exists (`src/DualFrontier.Contracts/Scheduling/WakeOnSlotTransitionAttribute.cs`), but subscriber-registry integration for it is Planned — THREADING.md states the same.
@@ -388,7 +388,7 @@ Per К-L17 (KERNEL_ARCHITECTURE.md Part 0), display output is composed from laye
 
 **Wiring truth.** The composition framework is on disk and test-exercised (`tests/DualFrontier.Application.Tests/Display/`), but the production render path does **not** route through it: `LauncherRenderer` drains the bridge and records sprites directly (§2.2), and `CompositionFramework` has zero production consumers at HEAD. К-L17's three-layer model is therefore framework-shipped, composition-pending.
 
-> **FENCED (target / planned — not current truth):** The К-L17 composed pipeline — (1) **SimStateLayer**: the V substrate render path as the default layer slot, reading slot tail for pipeline-managed display state (К-L16 `D × tick_period` latency) or current state for К-L7 sync fields; (2) **IntentOverlayLayer**: current input state read from `InputEventQueue` at display-tick time, ≤ 16 ms contract (blocked today on the same missing input forwarding as §2.2); (3) **CombatFeedbackLayer**: Fast-tier event consumers per К-L15 (KERNEL_ARCHITECTURE.md Part 0) rendering damage numbers/hit feedback, ≈ ≤ 17 ms event-to-visible. Composition order: SimState first, intent + combat overlays on top, static layers last. Mod-registered layers use `[Layer(LayerType.Intent | CombatFeedback)]` plus `kernel.layer.intent:{FQN}` / `kernel.layer.combat_feedback:{FQN}` capability declarations — vanilla layers register through the identical pattern per К-L9. Wiring the framework into the Launcher path is Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
+> **FENCED (target / planned — not current truth):** The К-L17 composed pipeline — (1) **SimStateLayer**: the V substrate render path as the default layer slot, reading slot tail for pipeline-managed display state (К-L16 `D × tick_period` latency) or current state for К-L7 sync fields; (2) **IntentOverlayLayer**: current input state read from `InputEventQueue` at display-tick time, ≤ 16 ms contract (blocked today on the same missing input forwarding as §2.2); (3) **CombatFeedbackLayer**: Fast-tier event consumers per К-L15 (KERNEL_ARCHITECTURE.md Part 0) rendering damage numbers/hit feedback, ≈ ≤ 17 ms event-to-visible. Composition order: SimState first, intent + combat overlays on top, static layers last. Mod-registered layers use `[Layer(LayerType.Intent | CombatFeedback)]` plus registry-emitted `kernel.layer.intent:{FQN}` / `kernel.layer.combat_feedback:{FQN}` tokens (observable via `GetKernelCapabilities()`, not manifest-declarable — MOD_OS_ARCHITECTURE.md §3.2) — vanilla layers register through the identical pattern per К-L9. Wiring the framework into the Launcher path is Planned — see [ROADMAP §Native foundation tracks](../ROADMAP.md).
 
 ### 2.7 Asset pipeline
 
@@ -500,7 +500,7 @@ DF_API int32_t  df_world_field_set_storage_flag / _get_storage_flag(…, const c
 DF_API int32_t  df_world_field_swap_buffers(df_world_handle, const char* field_id);
 DF_API int32_t  df_world_field_count(df_world_handle);
 
-/* Compute surface (V0.B; df_capi.h:551-575) */
+/* Compute surface (V0.B; df_capi.h:551-577) */
 DF_API int32_t  df_world_attach_vulkan(df_world_handle,
                     void* vk_instance, void* vk_physical_device, void* vk_device,
                     void* vk_async_compute_queue, uint32_t async_compute_queue_family_index);
@@ -590,7 +590,7 @@ The production frame loop uses the smoke-test-proven pattern (`LauncherRenderer.
 
 ### 5.4 Device-wide waitIdle census
 
-`vkDeviceWaitIdle` is deliberately rare. Every call site at HEAD, exhaustively: swapchain recreation, both triggers (`LauncherRenderer.cs:129,187`); renderer shutdown (`LauncherRenderer.cs:205`); runtime disposal (`Runtime.cs:446`). The tick path never device-idles — compute uses the per-dispatch fence (§5.1), graphics the per-frame fence (§5.3). The predecessor's phrasing "waitIdle … only used for save snapshots and shutdown" is corrected on both ends: **no save path exists to use it** (§7), and **recreation uses it** in addition to shutdown. The two shutdown-path calls (renderer, runtime) are, per the session shutdown audit (N-19), the only real quiesce waits in the entire process shutdown sequence — the process-wide shutdown gap is owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (AUTHORED draft) §2.6, not this document.
+`vkDeviceWaitIdle` is deliberately rare. Every **production** call site at HEAD, exhaustively (the manual SmokeTest executable additionally device-idles between scenes): swapchain recreation, both triggers (`LauncherRenderer.cs:129,187`); renderer shutdown (`LauncherRenderer.cs:205`); runtime disposal (`Runtime.cs:446`). The tick path never device-idles — compute uses the per-dispatch fence (§5.1), graphics the per-frame fence (§5.3). The predecessor's phrasing "waitIdle … only used for save snapshots and shutdown" is corrected on both ends: **no save path exists to use it** (§7), and **recreation uses it** in addition to shutdown. The two shutdown-path calls (renderer, runtime) are, per the session shutdown audit (N-19), the only real quiesce waits in the entire process shutdown sequence — the process-wide shutdown gap is owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) (AUTHORED draft) §2.6, not this document.
 
 ### 5.5 Why relaxed read visibility is acceptable (carried rationale)
 
@@ -661,7 +661,7 @@ The «stop, escalate, lock» rule applies: when implementation meets a design qu
 | OQ-V3 | Swapchain recreation transaction (adopt prepare-before-reclaim protocol) — §2.3 | Ratification of the lifecycle draft §2.5; then substrate amendment |
 | OQ-V4 | Present-queue-family selection (surface-aware device selection; today: require graphics-family present, F06) — §0.1 | First hardware report of a split graphics/present topology, or proactive hardening brief |
 | OQ-V5 | Fence-poll integration (`df_pipeline_check_fences` stub → real `vkGetFenceStatus` wiring) — §2.5 | First pipeline-managed consumer (Phase.Compute activation) |
-| OQ-V6 | Mod compute-pipeline registration surface (contract members, per-mod tracking, unload wiring) — §3 | M-V demonstration cascade; MOD_OS §4.6 amendment |
+| OQ-V6 | Mod compute-pipeline registration surface (contract members, per-mod tracking, unload wiring) — §3 | M-V demonstration cascade; MOD_OS §4.3 amendment |
 | OQ-V7 | Eikonal upgrade: V2 tunable vs separate primitive — §4.4 | Evidence-gated at V2 close (Option-B suboptimality measurement) |
 | OQ-V8 | Domain B (entity-keyed bulk compute) substrate disposition — §4.1/§4.7 | Projectile-reactivation amendment authoring |
 | OQ-V9 | Hybrid V1↔V2 broken-node coupling — §4.4 | Water demonstration amendment authoring |
@@ -705,4 +705,5 @@ Amendments follow the «stop, escalate, lock» discipline: open an §8 row (or c
 
 | Date | Change |
 |---|---|
+| 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R3-1..R3-8; register 0.1.0 → 0.1.1): slot-header anchor `:47-70`→`:45-64`; targets anchor split (`:23-26` copy + `:36-45` rewrite); compute-surface range →`:551-577`; §2.5 test-count claim re-anchored to current disk truth (7 dedicated interop tests; 35/14 = К10.3 v2 closure record); §5.4 waitIdle census scoped to production call sites; OQ-V6 pointer §4.6→§4.3 (successor map); cinzel wording → never-committed/git-ignored truth; §2.6 layer tokens corrected to registry-emitted observables (not manifest-declarable, MOD_OS §3.2). |
 | 2026-07-15 | Authored as successor of DOC-A-VULKAN_SUBSTRATE (v1.2.0) per the corpus rework: current-truth/target separation via FENCED blocks; §3.4 field-id sketch corrected to the shipped string-id ABI; device-lost, input-discard, swapchain-protocol, queue-topology, waitIdle-census, unload-placeholder, and memory-budget truths pinned to HEAD `35364c2`; closure-evidence tables and migration narrative retired to the historical predecessor. |
