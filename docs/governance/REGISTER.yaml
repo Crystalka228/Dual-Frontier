@@ -4027,6 +4027,21 @@ documents:
   title: Self-teaching ritual artifact — Phase 1 (Самообучение фаза 1)
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT
+  path: docs/reports/LINUX_SANDBOX_ENV_BASELINE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: LINUX SANDBOX ENV BASELINE REPORT — 2026-07-17 — cloud Linux sandbox provisioned for the STACK_UPDATE cascade; deviation register vs the Windows reference environment (D1-D8) + measured full baseline (build/tests/native selftest/armed validate)
+  special_case_rationale: 'Durable environment-baseline report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-BUS_INVESTIGATION_2026_05_21). Records the operator-sanctioned (2026-07-17 ruling) environment shift: the STACK_UPDATE cascade executes in the cloud Linux sandbox, not the LOCAL Windows machine the brief was authored against; the operator re-runs the gates on the home Windows machine post-merge.'
 - register_id: DOC-E-M3_CLOSURE_REVIEW
   path: docs/audit/M3_CLOSURE_REVIEW.md
   project: Dual Frontier
