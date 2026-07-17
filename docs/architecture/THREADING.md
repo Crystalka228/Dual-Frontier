@@ -30,7 +30,7 @@ How Dual Frontier schedules and dispatches systems across the native kernel and 
 
 ## §1 Scheduling model overview
 
-Scheduling is split across the kernel boundary the way an OS splits it: **kernel scheduling decisions are made natively** — dependency-graph construction, runqueue maintenance, wake dispatch, phase composition — per К-L12 (KERNEL_ARCHITECTURE.md Part 0), while system execution bodies stay managed and dispatch from the managed side. On-demand activation (К-L13) means only runnable systems enter phase dispatch. Invariant wording is owned by KERNEL_ARCHITECTURE.md Part 0; this document describes the mechanism as it exists in code.
+Scheduling is split across the kernel boundary the way an OS splits it: **kernel scheduling decisions are made natively** — dependency-graph construction, runqueue maintenance, wake dispatch, phase composition — per К-L12 (KERNEL_ARCHITECTURE.md Part 0) — that is the invariant's allocation; today's production wiring (§3) plans and dispatches on the managed side — while system execution bodies stay managed and dispatch from the managed side. On-demand activation (К-L13) means only runnable systems enter phase dispatch. Invariant wording is owned by KERNEL_ARCHITECTURE.md Part 0; this document describes the mechanism as it exists in code.
 
 > **FENCED (target / planned — not current truth):** every "Planned" marker below describes scheduled work, not running code.
 
@@ -61,7 +61,7 @@ The production tick path runs through `ParallelSystemScheduler` (`src/DualFronti
 
 The cross-layer **batched callback ABI** for native-driven managed dispatch (the К-L12 bridge) is on disk and test-exercised: `SchedulerAdapter.Register` (`SchedulerAdapter.cs:22`) registers `ManagedSystemDispatcher.OnBatch`, an `[UnmanagedCallersOnly]` reverse-P/Invoke entry point (`ManagedSystemDispatcher.cs:75`) — the single sanctioned reverse-callback path under Rule 5 (KERNEL_ARCHITECTURE.md §1.5). Its only callers today are `BatchedCallbackTests.cs`.
 
-> **FENCED (target / planned):** production dispatch is planned to route through this adapter, gated per [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) §3 (AUTHORED draft) cutover conditions; today dispatch runs exclusively through `Parallel.ForEach` above, and no deletion trigger for the managed `DependencyGraph` exists either.
+> **FENCED (target / planned):** production dispatch is planned to route through this adapter, gated per [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) §3 (AUTHORED draft) cutover conditions; today dispatch runs exclusively through `Parallel.ForEach` above, and no **ratified** deletion trigger for the managed `DependencyGraph` exists (EXECUTION_AUTHORITY_MATRIX.md §3 names one, advisory until ratified).
 
 Mod systems are tracked per-mod by `ModSubScheduler` (`ModSubScheduler.cs`): each mod ALC owns a sub-scheduler holding its registered systems, torn down on unload alongside native per-mod state (К-L12 kernel/user split).
 
@@ -123,7 +123,7 @@ The dependency graph forbids cycles over the same components, or neither graph (
 `async`/`await` are forbidden inside systems. `SystemExecutionContext` lives in `ThreadLocal`, bound to the current thread; `await` resumes on another thread where `SystemExecutionContext.Current` is `null`, so `SystemBase.NativeWorld`/`Services` throw `InvalidOperationException` (§5). Even with a context present, the write would happen outside the dependency graph's synchronization.
 
 - **Law by convention** — [CODING_STANDARDS](../methodology/CODING_STANDARDS.md) §2.7 (no LINQ, no async in system/hot-path code); one named exception, `SimulationStateController.WaitForQuiescenceAsync`, a lifecycle controller, not a per-tick system.
-- **Analyzer infrastructure is real, no longer non-detecting.** `DualFrontier.Analyzers` wires into all 12 managed `src/` projects (`Directory.Build.props:31-32`) and ships 17 rule classes (9 Architecture + 3 Discipline + 5 NativeBoundary, `tools/DualFrontier.Analyzers/Rules/`). Since А'.9.1 (Phase β detection + Phase γ promotion, both 2026-07-01) all 17 carry real detection and fire at shipped severities — 16 build-breaking (11 Error + 5 Warning), 1 IDE-only (`DFL025_B`), 2 census-pinned `DFK001` waivers ([ANALYZER_RULES.md](./ANALYZER_RULES.md) §4). This corrects the predecessor (2026-06-12, pre-Phase β/γ), which called the 17 "non-detecting stubs" reporting zero diagnostics.
+- **Analyzer infrastructure is real, no longer non-detecting.** `DualFrontier.Analyzers` wires into all 12 managed `src/` projects (`src/Directory.Build.props:31-32`) and ships 17 rule classes (9 Architecture + 3 Discipline + 5 NativeBoundary, `tools/DualFrontier.Analyzers/Rules/`). Since А'.9.1 (Phase β detection + Phase γ promotion, both 2026-07-01) all 17 carry real detection and fire at shipped severities — 16 build-breaking (11 Error + 5 Warning), 1 IDE-only (`DFL025_B`), 2 census-pinned `DFK001` waivers ([ANALYZER_RULES.md](./ANALYZER_RULES.md) §1.4). This corrects the predecessor (2026-06-12, pre-Phase β/γ), which called the 17 "non-detecting stubs" reporting zero diagnostics.
 - **None of the 17 is the async-ban rule**, though — they police native-boundary discipline, wake-type/pipeline-depth usage, and test discipline, not `async`/LINQ. CODING_STANDARDS.md §2.7 still says plainly: "no analyzer enforces it."
 
 > **FENCED (target / planned):** detection of forbidden `async`/LINQ surfaces — [ROADMAP.md](../ROADMAP.md) §Analyzer track.
@@ -178,4 +178,5 @@ Amendments surface to the owner (Crystalka) with rationale before landing — no
 
 | Version | Date | Change |
 |---|---|---|
+| 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R1-12/13/14): §1 К-L12 sentence gains the invariant-allocation-vs-production-wiring qualifier; §3 fence corrected to "no ratified deletion trigger" (EAM §3 names an advisory one); §8 waiver-census pointer §4→§1.4 and props anchor qualified to `src/Directory.Build.props` (the root file has unrelated content at those line numbers). |
 | 0.1.0 (unreleased, AUTHORED) | 2026-07-15 | Successor of DOC-A-THREADING v2.0.0: new §7 absorbs the FEEDBACK_LOOPS cycle/snapshot rule (DD-1 resolved false); §8 corrected for reverse-stale analyzer claim; §2/§3 self-inconsistency fixed (native graph has zero edges in production); §10 adds the shutdown-gap pointer to the A1/A2 AUTHORED drafts. |
