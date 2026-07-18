@@ -74,7 +74,10 @@ internal static class GameBootstrap
     private const int InitialDecorationCount = 25;
     private const int ItemFactorySeed        = 43;
 
-    public static EngineSession CreateSession(PresentationBridge bridge, string modsRoot = "mods")
+    public static EngineSession CreateSession(
+        PresentationBridge bridge,
+        string modsRoot = "mods",
+        ShutdownTransactionHooks? shutdownHooks = null)
     {
         // Bootstrap.Run constructs the ComponentTypeRegistry internally and
         // binds it to the returned NativeWorld — registry-based deterministic
@@ -223,7 +226,7 @@ internal static class GameBootstrap
         controller.OnEditingBegan = () => loop.SetPaused(true);
         controller.OnEditingEnded = () => loop.SetPaused(false);
 
-        var session = new EngineSession(nativeWorld, busBridge, pipeline, services, loop, controller);
+        var session = new EngineSession(nativeWorld, busBridge, pipeline, services, loop, controller, shutdownHooks);
 
         // EQ_A2 / M7 — a quarantined mod (the EQ_A1 skip-set) surfaces as a session
         // Degraded reason (ELT §4.1). The scheduler fires OnModQuarantined on the first

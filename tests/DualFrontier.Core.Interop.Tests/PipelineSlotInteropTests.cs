@@ -10,6 +10,7 @@ namespace DualFrontier.Core.Interop.Tests;
 /// roundtrip validation. Per Lesson #7 strengthening pattern: explicit struct
 /// layout size verification catches native↔managed shape drift.
 /// </summary>
+[Collection("SharedNativeSingleton")]
 public sealed class PipelineSlotInteropTests
 {
     /// <summary>

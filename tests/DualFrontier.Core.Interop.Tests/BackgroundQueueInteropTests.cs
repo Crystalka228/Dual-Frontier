@@ -10,6 +10,7 @@ namespace DualFrontier.Core.Interop.Tests;
 /// К10.2 Item 31 — Background queue save-integrated storage tests
 /// (S3-Q3 untargeted persistence).
 /// </summary>
+[Collection("SharedNativeSingleton")]
 public sealed class BackgroundQueueInteropTests
 {
     [Fact]

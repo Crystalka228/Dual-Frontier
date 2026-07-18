@@ -7,6 +7,7 @@ namespace DualFrontier.Core.Interop.Tests;
 /// <summary>
 /// К10.2 Item 32 — native unload primitive managed binding tests.
 /// </summary>
+[Collection("SharedNativeSingleton")]
 public sealed class ModUnloadInteropTests
 {
     [Fact]
