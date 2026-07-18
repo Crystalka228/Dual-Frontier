@@ -69,6 +69,14 @@ internal sealed class ParallelSystemScheduler
     private readonly ModQuarantine _quarantine = new();
 
     /// <summary>
+    /// EQ_A2 / M7 — optional observer fired on the FIRST quarantine of a mod
+    /// (modId, tickId). The Application wires this to <c>EngineSession.ReportDegraded</c>
+    /// so a quarantined mod surfaces as a Degraded reason (ELT §4.1). Invoked from
+    /// inside the parallel phase fan-out, so the handler must be thread-safe.
+    /// </summary>
+    internal Action<string, long>? OnModQuarantined { get; set; }
+
+    /// <summary>
     /// Creates a scheduler bound to the given phase list, tick clock, and
     /// native world. The <c>MaxDegreeOfParallelism</c> is fixed at
     /// construction time to <c>max(1, ProcessorCount - 2)</c>. Execution
@@ -186,7 +194,8 @@ internal sealed class ParallelSystemScheduler
                 // fast (as before, now with a cause). The finally still pops.
                 if (ctx.RouteFault(ex, out string? modId) == FaultDisposition.RethrowCore)
                     throw;
-                _quarantine.Quarantine(modId!);
+                if (_quarantine.Quarantine(modId!))
+                    OnModQuarantined?.Invoke(modId!, (long)_ticks.CurrentTick);
             }
             finally
             {

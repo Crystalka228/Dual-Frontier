@@ -129,6 +129,103 @@ internal sealed class EngineSession : IDisposable
     /// <summary>The mod-menu controller (edit-session hooks for the mod UI).</summary>
     public ModMenuController Controller => _controller;
 
+    // --- M7 EngineHealth (ELT section 4.1): the session-scoped Degraded annotation.
+    // NOT a sixth session/mod state; the LOCKED five-state diagrams are untouched.
+    // Transition-refusal ("a Degraded session refuses transitions whose safety
+    // assumptions the reason invalidates") depends on the section 3.2 session state
+    // machine, which is not built -- this cascade lands the queryable annotation +
+    // the quarantine link + the lifecycle event; enforcement wiring is later scope.
+    private readonly object _healthLock = new();
+    private readonly List<DegradedReason> _degradedReasons = new();
+
+    /// <summary>
+    /// Raised on every Degraded entry/exit (ELT section 4.1 lifecycle event). No UI
+    /// obligation this cascade -- the event is the queryable/observable seam.
+    /// </summary>
+    public event Action<EngineHealthChanged>? HealthChanged;
+
+    /// <summary>
+    /// The current session-health snapshot (ELT section 4.1): Normal, or Degraded
+    /// with the accumulated structured reasons. Queryable by UI and diagnostics.
+    /// </summary>
+    public EngineHealth Health
+    {
+        get
+        {
+            lock (_healthLock)
+            {
+                if (_degradedReasons.Count == 0)
+                    return EngineHealth.Normal;
+                return new EngineHealth(EngineHealthKind.Degraded, _degradedReasons.ToArray());
+            }
+        }
+    }
+
+    /// <summary>
+    /// Records a Degraded reason (ELT section 4.1 escalation entry). Mod-origin
+    /// reasons dedupe by <see cref="DegradedReason.ModId"/> -- a mod contributes one
+    /// reason however many of its systems fault. Fires <see cref="HealthChanged"/>
+    /// with Entered = true on the Normal -&gt; Degraded transition. Thread-safe: the
+    /// scheduler calls this from inside its parallel phase fan-out.
+    /// </summary>
+    public void ReportDegraded(DegradedReason reason)
+    {
+        if (reason is null)
+            throw new ArgumentNullException(nameof(reason));
+
+        bool entered;
+        lock (_healthLock)
+        {
+            if (reason.ModId is not null)
+            {
+                foreach (DegradedReason existing in _degradedReasons)
+                {
+                    if (string.Equals(existing.ModId, reason.ModId, StringComparison.Ordinal))
+                        return; // already recorded for this mod
+                }
+            }
+            entered = _degradedReasons.Count == 0;
+            _degradedReasons.Add(reason);
+        }
+        HealthChanged?.Invoke(new EngineHealthChanged(entered, reason, EngineHealthKind.Degraded));
+    }
+
+    /// <summary>
+    /// Clears every Degraded reason contributed by <paramref name="modId"/> (ELT
+    /// section 4.1 exit path: "exited only by the action named in the advice; a
+    /// successful retry removes its own reason"). Fires <see cref="HealthChanged"/>
+    /// with Entered = false, ResultingKind = Normal when this clears the last reason.
+    /// The caller that resolves a quarantined mod is later-cascade scope; this is the
+    /// exit mechanism the C5 tests drive.
+    /// </summary>
+    public void ClearDegradedForMod(string modId)
+    {
+        if (modId is null)
+            return;
+
+        DegradedReason? removed = null;
+        bool exited = false;
+        lock (_healthLock)
+        {
+            for (int i = _degradedReasons.Count - 1; i >= 0; i--)
+            {
+                if (string.Equals(_degradedReasons[i].ModId, modId, StringComparison.Ordinal))
+                {
+                    removed = _degradedReasons[i];
+                    _degradedReasons.RemoveAt(i);
+                }
+            }
+            exited = removed is not null && _degradedReasons.Count == 0;
+        }
+        if (removed is not null)
+        {
+            HealthChanged?.Invoke(new EngineHealthChanged(
+                Entered: false,
+                removed,
+                exited ? EngineHealthKind.Normal : EngineHealthKind.Degraded));
+        }
+    }
+
     /// <summary>
     /// Runs the world-shutdown transaction and releases every owned engine
     /// resource. Idempotent -- a second call is a no-op.

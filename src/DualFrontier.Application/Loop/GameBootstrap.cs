@@ -223,7 +223,15 @@ internal static class GameBootstrap
         controller.OnEditingBegan = () => loop.SetPaused(true);
         controller.OnEditingEnded = () => loop.SetPaused(false);
 
-        return new EngineSession(nativeWorld, busBridge, pipeline, services, loop, controller);
+        var session = new EngineSession(nativeWorld, busBridge, pipeline, services, loop, controller);
+
+        // EQ_A2 / M7 — a quarantined mod (the EQ_A1 skip-set) surfaces as a session
+        // Degraded reason (ELT §4.1). The scheduler fires OnModQuarantined on the first
+        // quarantine of a mod; the session records the structured reason.
+        scheduler.OnModQuarantined = (modId, tickId) =>
+            session.ReportDegraded(DegradedReason.ForQuarantinedMod(modId, tickId));
+
+        return session;
     }
 
     /// <summary>

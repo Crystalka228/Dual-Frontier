@@ -18,10 +18,12 @@ namespace DualFrontier.Core.Scheduling;
 /// the graph, so their ids are never consulted again. No scheduler-side release API
 /// is wired (that Application-to-scheduler call is later-cascade scope).
 ///
-/// This is the mechanism ONLY. The <c>LogicallyDisabled(faulted)</c> desired-state
-/// annotation and the EngineHealth/Degraded surface (ELT §3.1/§4.1) are deliberately
-/// NOT built here — they are a later cascade's work, and today no Degraded
-/// representation exists in code at all.
+/// This is the quarantine MECHANISM. As of EQ_A2 (Cascade B) it is LINKED to the
+/// session-scoped EngineHealth/Degraded surface (ELT §4.1): on the FIRST quarantine
+/// of a mod the scheduler fires <c>ParallelSystemScheduler.OnModQuarantined</c>, which
+/// the Application wires to <c>EngineSession.ReportDegraded</c> — the quarantined mod
+/// becomes a structured Degraded reason. The reason-removal (exit) path and any UI
+/// surfacing remain later-cascade scope.
 ///
 /// Thread-safe: <see cref="ParallelSystemScheduler.ExecutePhase"/> reads and mutates
 /// this concurrently across the <c>Parallel.ForEach</c> fan-out, so every access is
@@ -38,12 +40,13 @@ internal sealed class ModQuarantine
     /// once.
     /// </summary>
     /// <param name="modId">Owning mod id of the faulted system.</param>
-    internal void Quarantine(string modId)
+    /// <returns><see langword="true"/> iff this call NEWLY quarantined the mod (the first commit); <see langword="false"/> if it was already quarantined or <paramref name="modId"/> is null.</returns>
+    internal bool Quarantine(string modId)
     {
-        if (modId is null) return;
+        if (modId is null) return false;
         lock (_lock)
         {
-            _quarantined.Add(modId);
+            return _quarantined.Add(modId);
         }
     }
 
