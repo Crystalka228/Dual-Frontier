@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.2.0
+version: 1.2.1
 first_authored: 2026-07-15
 last_modified: 2026-07-18
 content_language: en
@@ -15,7 +15,7 @@ supersedes:
 - DOC-A-KERNEL
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
+last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.2.0 -> v1.2.1 PATCH (K-L20 artifacts-line ONLY; canon text byte-unchanged): the checked-destroy pair df_world_active_span_count / df_world_destroy_checked (capi.cpp/df_capi.h) + NativeWorld.DisposeChecked + the EngineSession S7 checked switch join the K-L20 implementation artifacts line. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
 reviewer: Crystalka
 requirements_authored:
 - REQ-K-L1
@@ -434,7 +434,7 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 
 **Falsifiability**: (a) an injected fence timeout must produce abort-not-teardown; (b) a teardown-order assertion must fail if any step runs before the fence passes.
 
-**Implementation artifacts**: `src/DualFrontier.Application/Loop/EngineSession.cs` (`Dispose` = the transaction; the fence reuses the К-L18 `SimulationStateController` pipeline-quiescence gate); the C5 order/abort tests (`tests/DualFrontier.Modding.Tests/Loop/EngineSessionTransactionTests.cs`).
+**Implementation artifacts**: `src/DualFrontier.Application/Loop/EngineSession.cs` (`Dispose` = the transaction; the fence reuses the К-L18 `SimulationStateController` pipeline-quiescence gate; at EQ_A3 S7 tears down via the checked `NativeWorld.DisposeChecked`, routing a `WORLD_BUSY` refusal after a passed fence to Abort); the EQ_A3 checked-destroy ABI pair `df_world_active_span_count` / `df_world_destroy_checked` (`native/DualFrontier.Core.Native/src/capi.cpp`, `include/df_capi.h`); the C5 order/abort tests + the EQ_A3 routing test (`tests/DualFrontier.Modding.Tests/Loop/EngineSessionTransactionTests.cs`) and the real-native detection tests (`tests/DualFrontier.Core.Interop.Tests/CheckedDestroyTests.cs`).
 
 **DF rule**: **DFK020** — no analyzer rule on disk (a managed lifecycle invariant, outside Roslyn scope); falsified by the C5 order/abort tests.
 

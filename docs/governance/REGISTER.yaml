@@ -541,16 +541,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
-  last_modified_commit: b38d95a
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
+  last_review_date: 2026-07-18
+  last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.1.0 MINOR (two new ABI members + the first materialized df_status subset, recorded in sections 3-4): df_world_active_span_count / df_world_destroy_checked exported (capi.cpp/df_capi.h); DF_OK / DF_ERR_INVALID_HANDLE / DF_COND_WORLD_BUSY(6) materialized on disk as a conforming subset, the rest of the sketch staying proposed (F-43). EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.
 - register_id: DOC-A-ISOLATION
@@ -609,7 +608,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.2.0
+  version: 1.2.1
   first_authored: 2026-07-15
   last_modified: 2026-07-18
   content_language: en
@@ -619,7 +618,7 @@ documents:
   - DOC-A-KERNEL
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
+  last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.2.0 -> v1.2.1 PATCH (K-L20 artifacts-line ONLY; canon text byte-unchanged): the checked-destroy pair df_world_active_span_count / df_world_destroy_checked (capi.cpp/df_capi.h) + NativeWorld.DisposeChecked + the EngineSession S7 checked switch join the K-L20 implementation artifacts line. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1
@@ -1048,16 +1047,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (the A2 contract)
-  last_modified_commit: d6f1e9a
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
+  last_review_date: 2026-07-18
+  last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.0.1 PATCH (section 6.2 Realized note): the status-returning destroy ROL section 6.2 called for now exists on disk (df_world_destroy_checked / df_world_active_span_count; NativeWorld.DisposeChecked; EngineSession S7 fail-fast route on a post-fence WORLD_BUSY). Body byte-change is the one Realized note + version. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.
 - register_id: DOC-A-SCHEDULER_ARCHITECTURE

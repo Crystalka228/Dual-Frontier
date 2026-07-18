@@ -5,16 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (the A2 contract)
-last_modified_commit: d6f1e9a
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
+last_review_date: 2026-07-18
+last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.0.1 PATCH (section 6.2 Realized note): the status-returning destroy ROL section 6.2 called for now exists on disk (df_world_destroy_checked / df_world_active_span_count; NativeWorld.DisposeChecked; EngineSession S7 fail-fast route on a post-fence WORLD_BUSY). Body byte-change is the one Realized note + version. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.'
 ---
@@ -227,6 +226,8 @@ Three rules:
 5. The finalizer is never a legitimate teardown path. In DEBUG it reports «world leaked to finalization» with the creation stack; the nominal path is deterministic Dispose at S7, exactly once, idempotent thereafter.
 
 This requires one small ABI addition — a status-returning destroy (`df_world_destroy_checked`) or at minimum the exported span counter of §3.4, since today neither exists — which touches the KERNEL Part 7 status-code convention; recorded as conflict §7.1-4.
+
+**Realized (EQ_A3_CHECKED_DESTROY, 2026-07-18).** The ABI addition this section calls for now exists: `df_world_destroy_checked` refuses (`DF_COND_WORLD_BUSY`) while `active_spans_` OR `active_batches_` is nonzero and reports both live counts, and the read-only `df_world_active_span_count` is exported (`native/DualFrontier.Core.Native/src/capi.cpp`, `include/df_capi.h`). Managed `NativeWorld.DisposeChecked` drives it; `EngineSession` S7 routes a post-fence `WORLD_BUSY` to fail-fast (K-L20). Field-span checked teardown (step 4 above) stays deferred. Commits: C2 `7bc4e07`, C5 `31dfb26`.
 
 ## §7 Open questions and conflicts with LOCKED texts
 

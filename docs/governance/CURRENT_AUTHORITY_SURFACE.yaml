@@ -82,13 +82,13 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.1.0
 - register_id: DOC-A-KERNEL_ARCHITECTURE
   path: docs/architecture/KERNEL_ARCHITECTURE.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.2.0
+  version: 1.2.1
 - register_id: DOC-A-K_EXTENSIONS_LEDGER
   path: docs/architecture/K_EXTENSIONS_LEDGER.md
   category: A
@@ -136,7 +136,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-SCHEDULER_ARCHITECTURE
   path: docs/architecture/SCHEDULER_ARCHITECTURE.md
   category: A

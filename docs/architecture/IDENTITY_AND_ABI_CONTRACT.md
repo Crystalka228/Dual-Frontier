@@ -5,16 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
-last_modified_commit: b38d95a
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
+last_review_date: 2026-07-18
+last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.1.0 MINOR (two new ABI members + the first materialized df_status subset, recorded in sections 3-4): df_world_active_span_count / df_world_destroy_checked exported (capi.cpp/df_capi.h); DF_OK / DF_ERR_INVALID_HANDLE / DF_COND_WORLD_BUSY(6) materialized on disk as a conforming subset, the rest of the sketch staying proposed (F-43). EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.'
 ---
@@ -220,10 +219,13 @@ typedef int32_t df_status;
 #define DF_COND_BUFFER_TOO_SMALL     3   /* required size via out-param */
 #define DF_COND_SATURATED            4
 #define DF_COND_PENDING              5   /* quiescence / fence not yet reached */
+#define DF_COND_WORLD_BUSY           6   /* EQ_A3: live spans/batches on checked destroy */
 /* positive 100-199 — fatal-subsystem; 200-299 — fatal-process */
 #define DF_FAIL_SUBSYSTEM_BASE     100
 #define DF_FAIL_PROCESS_BASE       200
 ```
+
+**Realized (EQ_A3_CHECKED_DESTROY, 2026-07-18).** The checked-destroy pair `df_world_active_span_count` / `df_world_destroy_checked` (`native/DualFrontier.Core.Native/src/capi.cpp`, `include/df_capi.h`) are the first `df_status` entry points on disk. EQ_A3 materialized exactly three constants of the sketch above — `DF_OK`, `DF_ERR_INVALID_HANDLE`, and the new `DF_COND_WORLD_BUSY` (6) — as a conforming subset; the remaining constants stay proposed (F-43 owns the full space + `df_last_error` + affinity/version negotiation). The pair follows the section 3.3 count-via-out-param rule and the section 3.4 no-exception law (the boundary `catch(...)` returns a NEGATIVE status, never 0 = DF_OK). Two new entry points = MINOR (section 5). Commits: C2 `7bc4e07`, C5 `31dfb26`.
 
 **Diagnostic retrieval (proposed).** `int32_t df_last_error(char* out_buffer, int32_t capacity)` — thread-local storage, records the human-readable message of the calling thread's most recent non-OK status, caller-allocated buffer per §3.3, never load-bearing for control flow. This supersedes the fixed `error_messages[8][256]` pattern for new surfaces (which silently drops messages beyond 8, `mod_unload.h:43-47`); the shipped unload structs keep their shape — they are frozen ABI.
 
