@@ -2928,6 +2928,108 @@ void scenario_pipeline_slot_backpressure_on_inflight() {
     df_pipeline_reset();
 }
 
+// =============================================================================
+// EQ_A3 — checked-destroy ABI pair (M5): df_world_active_span_count +
+// df_world_destroy_checked (REFUSE-NOT-FORCE on live spans OR write-batches).
+// =============================================================================
+
+void scenario_active_span_count_accuracy() {
+    std::printf("scenario_active_span_count_accuracy\n");
+    df_world_handle w = df_world_create();
+    DF_CHECK(w != nullptr, "world created");
+
+    int32_t count = -1;
+    DF_CHECK(df_world_active_span_count(w, &count) == DF_OK, "count query returns DF_OK");
+    DF_CHECK(count == 0, "no spans outstanding at start");
+
+    // Acquire a span (empty store still increments the counter, world.cpp).
+    const void* dense = nullptr; const int32_t* idx = nullptr; int32_t sc = 0;
+    df_world_acquire_span(w, kHealthTypeId, &dense, &idx, &sc);
+    DF_CHECK(df_world_active_span_count(w, &count) == DF_OK && count == 1,
+             "count == 1 while span held");
+
+    df_world_release_span(w, kHealthTypeId);
+    DF_CHECK(df_world_active_span_count(w, &count) == DF_OK && count == 0,
+             "count back to 0 after release");
+
+    // Contract-violation path: negative status, never 0 (0 == DF_OK).
+    DF_CHECK(df_world_active_span_count(nullptr, &count) == DF_ERR_INVALID_HANDLE,
+             "null world -> DF_ERR_INVALID_HANDLE");
+    DF_CHECK(df_world_active_span_count(w, nullptr) == DF_ERR_INVALID_HANDLE,
+             "null out_count -> DF_ERR_INVALID_HANDLE");
+
+    df_world_destroy(w);
+}
+
+void scenario_destroy_checked_refuses_live_span() {
+    std::printf("scenario_destroy_checked_refuses_live_span\n");
+    df_world_handle w = df_world_create();
+
+    const void* dense = nullptr; const int32_t* idx = nullptr; int32_t sc = 0;
+    df_world_acquire_span(w, kHealthTypeId, &dense, &idx, &sc);
+
+    int32_t spans = -1, batches = -1;
+    df_status st = df_world_destroy_checked(w, &spans, &batches);
+    DF_CHECK(st == DF_COND_WORLD_BUSY, "refuses while a span is live");
+    DF_CHECK(spans == 1, "reports the live span count");
+    DF_CHECK(batches == 0, "no batches outstanding");
+
+    // A refusal must leave the world intact and still usable.
+    int32_t count = -1;
+    DF_CHECK(df_world_active_span_count(w, &count) == DF_OK && count == 1,
+             "world still valid after refusal");
+
+    df_world_release_span(w, kHealthTypeId);
+    st = df_world_destroy_checked(w, &spans, &batches);
+    DF_CHECK(st == DF_OK, "succeeds once the span is released");
+    DF_CHECK(spans == 0 && batches == 0, "reports zero on success");
+    // w is now freed — do not touch it again.
+}
+
+void scenario_destroy_checked_refuses_live_batch() {
+    std::printf("scenario_destroy_checked_refuses_live_batch\n");
+    df_world_handle w = df_world_create();
+
+    df_batch_handle b = df_world_begin_batch(w, kHealthTypeId, sizeof(BenchHealth));
+    DF_CHECK(b != nullptr, "write-batch opened");
+
+    int32_t spans = -1, batches = -1;
+    df_status st = df_world_destroy_checked(w, &spans, &batches);
+    DF_CHECK(st == DF_COND_WORLD_BUSY, "refuses while a write-batch is live");
+    DF_CHECK(spans == 0, "no spans outstanding");
+    DF_CHECK(batches == 1, "reports the live batch count");
+
+    df_batch_destroy(b);  // auto-flush + release (decrements active_batches_)
+    st = df_world_destroy_checked(w, &spans, &batches);
+    DF_CHECK(st == DF_OK, "succeeds once the batch is released");
+    // w is now freed.
+}
+
+void scenario_destroy_checked_and_unchecked_at_zero() {
+    std::printf("scenario_destroy_checked_and_unchecked_at_zero\n");
+
+    // (c) Checked destroy at zero succeeds and reports zero.
+    df_world_handle w1 = df_world_create();
+    int32_t spans = -1, batches = -1;
+    DF_CHECK(df_world_destroy_checked(w1, &spans, &batches) == DF_OK,
+             "checked destroy at zero returns DF_OK");
+    DF_CHECK(spans == 0 && batches == 0, "zero counts reported at success");
+
+    // Optional out-params: NULL is tolerated.
+    df_world_handle w2 = df_world_create();
+    DF_CHECK(df_world_destroy_checked(w2, nullptr, nullptr) == DF_OK,
+             "checked destroy tolerates NULL out-params");
+
+    // Invalid handle -> negative status (never 0).
+    DF_CHECK(df_world_destroy_checked(nullptr, &spans, &batches) == DF_ERR_INVALID_HANDLE,
+             "null world -> DF_ERR_INVALID_HANDLE");
+
+    // (d) Unchecked backstop still frees, no span/batch check (regression pin).
+    df_world_handle w3 = df_world_create();
+    df_world_destroy(w3);  // must not crash; behaviour unchanged
+    DF_CHECK(true, "unchecked df_world_destroy backstop unchanged");
+}
+
 } // namespace
 
 int main() {
@@ -3042,6 +3144,11 @@ int main() {
     scenario_mod_unload_fails_when_pipeline_has_fence_completed_slot();
     scenario_mod_unload_succeeds_when_pipeline_quiescent_after_tail_transition();
     scenario_mod_unload_succeeds_when_pipeline_uninitialized();
+    // ===== EQ_A3 checked-destroy scenarios (M5) =====
+    scenario_active_span_count_accuracy();
+    scenario_destroy_checked_refuses_live_span();
+    scenario_destroy_checked_refuses_live_batch();
+    scenario_destroy_checked_and_unchecked_at_zero();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;
