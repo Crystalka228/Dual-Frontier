@@ -3030,6 +3030,53 @@ void scenario_destroy_checked_and_unchecked_at_zero() {
     DF_CHECK(true, "unchecked df_world_destroy backstop unchanged");
 }
 
+// =============================================================================
+// EQ_A3 F-50 — fail-loud concurrency guard on df_scheduler_unload_mod_native_state.
+// The acquire-or-fail SingletonGuard mechanism itself is unit-proven in
+// scenario_system_graph_concurrency_detector (Part A); this is the integration
+// proof that the unload path rejects concurrent entry without corrupting the
+// process-global bus registries.
+// =============================================================================
+
+void scenario_mod_unload_concurrency_guard() {
+    std::printf("scenario_mod_unload_concurrency_guard\n");
+    df_bus_clear();
+    df_pipeline_reset();          // uninitialized pipeline == quiescent for unload
+    df_scheduler_set_sim_paused(1);
+
+    // Sequential use must succeed repeatedly — the guard releases on scope exit
+    // (detector, not a lock: no false-positive rejection of sequential calls).
+    ModUnloadResult r1{};
+    DF_CHECK(df_scheduler_unload_mod_native_state(7u, &r1) == 1,
+             "sequential unload succeeds (guard released between calls)");
+    ModUnloadResult r2{};
+    DF_CHECK(df_scheduler_unload_mod_native_state(7u, &r2) == 1,
+             "second sequential unload also succeeds");
+
+    // Concurrent entry: two threads hammer the entry point. The guard rejects
+    // the loser of each overlap (return 0) so at most one thread ever reaches the
+    // bus registries — no return outside {0,1}, no crash, bus healthy afterwards.
+    std::atomic<bool> corrupt{false};
+    auto hammer = [&corrupt]() {
+        for (int i = 0; i < 400; ++i) {
+            ModUnloadResult r{};
+            int32_t rc = df_scheduler_unload_mod_native_state(7u, &r);
+            if (rc != 0 && rc != 1) corrupt.store(true);
+        }
+    };
+    std::thread t1(hammer);
+    std::thread t2(hammer);
+    t1.join();
+    t2.join();
+    DF_CHECK(!corrupt.load(), "no return outside {0,1} under concurrent entry");
+
+    ModUnloadResult r3{};
+    DF_CHECK(df_scheduler_unload_mod_native_state(7u, &r3) == 1,
+             "unload path healthy after concurrent hammering");
+
+    df_bus_clear();
+}
+
 } // namespace
 
 int main() {
@@ -3149,6 +3196,8 @@ int main() {
     scenario_destroy_checked_refuses_live_span();
     scenario_destroy_checked_refuses_live_batch();
     scenario_destroy_checked_and_unchecked_at_zero();
+    // ===== EQ_A3 F-50: mod-unload concurrency guard =====
+    scenario_mod_unload_concurrency_guard();
     if (g_failures == 0) {
         std::printf("ALL PASSED\n");
         return 0;

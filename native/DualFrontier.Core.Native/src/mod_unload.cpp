@@ -7,6 +7,7 @@
 #include "bus_native.h"
 #include "bus_native_internal.h"
 #include "pipeline_slot.h"
+#include "singleton_guard.h"
 
 namespace {
 
@@ -15,6 +16,12 @@ namespace {
 // _isRunning=false check). К10.3 wire-up connects this к the actual sim
 // thread state via settings menu integration.
 std::atomic<int32_t> g_sim_paused{1};
+
+// F-50 — fail-loud single-thread guard flag for the unload entry point below.
+// The unload mutates process-global bus registries and runs under the K-L18
+// sim-paused contract, so concurrent entry is a contract violation to reject,
+// not a legitimate parallel call. Mirrors the F-29 SingletonGuard(busy_) shape.
+std::atomic<bool> g_unload_busy{false};
 
 void copy_error_message(ModUnloadResult* result, const char* msg) {
     if (result == nullptr || msg == nullptr) return;
@@ -47,6 +54,17 @@ DF_API int32_t df_scheduler_unload_mod_native_state(
 {
     if (out_result == nullptr) return 0;
     std::memset(out_result, 0, sizeof(*out_result));
+
+    // F-50 — fail-loud on concurrent entry (a detector, not a lock). This path
+    // mutates process-global bus registries; the single-threaded unload contract
+    // makes concurrent entry a violation to reject rather than corrupt. Return 0
+    // (this shipped entry point keeps its grandfathered 0/1 convention).
+    dualfrontier::SingletonGuard guard(g_unload_busy);
+    if (!guard.acquired()) {
+        copy_error_message(out_result,
+            "concurrent unload rejected: single-threaded unload contract violated");
+        return 0;
+    }
 
     // К-L18 precondition (К10.2 baseline): simulation thread must be paused.
     if (g_sim_paused.load(std::memory_order_acquire) == 0) {

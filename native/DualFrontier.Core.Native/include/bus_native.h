@@ -152,7 +152,7 @@ DF_API int32_t df_bus_subscriber_count_fast(uint32_t type_id);
 DF_API int32_t df_bus_subscriber_count_normal(uint32_t type_id);
 DF_API int32_t df_bus_subscriber_count_background(uint32_t type_id);
 
-DF_API void    df_bus_clear(void);  // test-only
+DF_API void    df_bus_clear(void);  // production teardown (EQ_A2 M8/D6) + test reset
 
 #ifdef __cplusplus
 }
