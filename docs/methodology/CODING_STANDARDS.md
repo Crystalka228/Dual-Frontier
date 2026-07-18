@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.3
+version: 2.1.4
 first_authored: 2026-07-15
-last_modified: 2026-07-15
+last_modified: 2026-07-17
 content_language: en
 next_review_due: 2027-06-11
 title: Coding standards
 last_modified_commit: 673f815
 review_cadence: on-change+annual
-last_review_date: 2026-06-11
-last_review_event: "Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth per STANDING_LAW_CASCADE_BRIEF §7-W1 + §8 truth law: C#/C++ conventions codified from observed practice (R1 survey); build organization with Directory.Build.props chain quoted verbatim + CPM truth; §5 marker family registry ([ReservedStub] census pin 34 application sites / 13 files with verbatim rg composition rule; 5 doc-tag families with verbatim patterns + baselines; NEW DFK-WAIVER suppression law — load-bearing for A'.9.1 Phase β, supersedes the brief §7.3 DFK###-SUPPRESS sketch); §8 atomic-commit law (7-section body incl. Skeleton revisions per RESERVED_SURFACE_MUTABILITY); §9 verification gates reduced to existing artifacts (analyzer stated as 17 non-detecting Info stubs — zero enforcement; CI stated absent). v1.0 phantom enforcement claims (analyzer checks, CI) cured per drift report §6.3.5."
+last_review_date: 2026-07-17
+last_review_event: 'STACK_UPDATE Phase H doc census — v2.1.3 → v2.1.4 PATCH: §1 scope bullet + §3 heading C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0); §4.2 Directory.Build.props hand-mirror net8.0 → net10.0 + LangVersion 12.0 → 14.0, and the new repo-root global.json SDK pin stated (10.0.204, rollForward latestFeature); §4.3 CPM hand-mirror rows Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit 2.9.2 → 2.9.3, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial) (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth…'
 reviewer: Crystalka
 ---
 
@@ -38,7 +38,7 @@ truth for naming, file organization, nullability, comment language, marker
 families, exception discipline, and commit shape across:
 
 - the **C# managed layer** (`src/**`, `tests/**`, `tools/**` C# projects);
-- the **C++20 native kernel** (`native/DualFrontier.Core.Native/**`);
+- the **C++23 native kernel** (`native/DualFrontier.Core.Native/**`);
 - **tooling scripts** (`tools/**`, PowerShell 5.1);
 - **commit discipline** (subject/body shape, trailers, push policy).
 
@@ -235,7 +235,7 @@ NoInlining helpers exist in
 `tests/DualFrontier.Modding.Tests/Pipeline/ModUnloadAssertions.cs` (verified at
 this rewrite).
 
-## §3 — C++20 Native Kernel Conventions
+## §3 — C++23 Native Kernel Conventions
 
 The native kernel (`native/DualFrontier.Core.Native/`) follows its own
 language-idiomatic style, distinct from the managed layer.
@@ -290,8 +290,8 @@ for the whole solution:
 
 ```xml
 <PropertyGroup>
-  <TargetFramework>net8.0</TargetFramework>
-  <LangVersion>12.0</LangVersion>
+  <TargetFramework>net10.0</TargetFramework>
+  <LangVersion>14.0</LangVersion>
   <Nullable>enable</Nullable>
   <ImplicitUsings>enable</ImplicitUsings>
   <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -308,6 +308,10 @@ for the whole solution:
 compiler documentation warning — not a DFK/DFL analyzer diagnostic. The root file
 also carries a `CompileShaders` MSBuild target (glslangValidator, conditioned to
 the `DualFrontier.Runtime` build only).
+
+Since the STACK_UPDATE cascade (2026-07-17) the SDK itself is pinned: the
+repo-root `global.json` sets `10.0.204` with `rollForward: latestFeature`, so
+every build of the solution resolves against the same feature band.
 
 The `src/`-scoped `Directory.Build.props` imports the root, then wires the
 analyzer to all twelve src projects:
@@ -337,10 +341,10 @@ package versions live in exactly one file. The nine pinned packages:
 | Microsoft.CodeAnalysis.CSharp.Workspaces | 5.3.0 | analyzer host |
 | Microsoft.CodeAnalysis.Analyzers | 5.3.0 | analyzer host |
 | Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit | 1.1.2 | analyzer test harness |
-| Microsoft.NET.Test.Sdk | 17.11.1 | test platform |
-| xunit | 2.9.2 | test framework |
-| xunit.runner.visualstudio | 2.8.2 | test runner |
-| FluentAssertions | 6.12.1 | assertion library |
+| Microsoft.NET.Test.Sdk | 18.8.1 | test platform |
+| xunit | 2.9.3 | test framework |
+| xunit.runner.visualstudio | 3.1.5 | test runner |
+| AwesomeAssertions | 9.4.0 | assertion library (Apache-2.0 community fork replacing FluentAssertions 6.12.1 — the FluentAssertions id is never bumped, its 8.x line is paid-commercial) |
 | BenchmarkDotNet | 0.13.12 | benchmark harness |
 
 Three deliberate exclusions are recorded in the file with their locked
@@ -709,6 +713,7 @@ here **before** the brief locks.
 
 | Version | Date | Change |
 |---|---|---|
+| **2.1.4** | 2026-07-17 | STACK_UPDATE Phase H doc census (EVT-2026-07-17-STACK_UPDATE) — toolchain facts to the landed state: §1 scope bullet + §3 heading C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0); §4.2 props hand-mirror net8.0 → net10.0, LangVersion 12.0 → 14.0, plus the new repo-root `global.json` SDK pin stated (`10.0.204`, `rollForward: latestFeature`); §4.3 CPM hand-mirror rows Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit 2.9.2 → 2.9.3, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions id is never used again — its 8.x line is paid-commercial). Hand-mirror refresh only; no rule change. **PATCH.** |
 | **2.1.3** | 2026-07-15 | CODEX_CLOSURE cascade census-pin refresh (§5.2): `not yet` 8/7 → 10/9 — the CX-06 + CX-21 fix-comment markers landed at Codex `61f08ef` without a same-commit census-delta; recorded here + as ROADMAP F-33 (operator-ruled FOLD of the Skarlet-gate H2b). CensusMetaTests green post-refresh. **PATCH.** |
 | **2.1.2** | 2026-07-02 | A'.9.1 Phase δ rider — commit-vocabulary historical reconciliation: §8.1 historical-prefix note extended with the full pre-law observed scope-token census (16 tokens over 53 commits, all predating the 2026-06-11 codification) + the unprefixed-era note (81 subjects: 42 merges + 39 plain). Descriptive correction of the incomplete observation — no normative change; post-codification history is 100% in-vocabulary (no live violation). **PATCH.** |
 | **2.1.1** | 2026-07-01 | A'.9.1 Phase γ propagation PATCH (METHODOLOGY §12.7 step 9 / SYNTH-2 + §10.1 rule 5 cross-doc propagation): §9 «Analyzer enforcement: none today» → live Release 1.0 enforcement (16 build-breaking + 1 IDE-only; `.editorconfig` primed; `Shipped.md` populated); §5.1 + §5.3 DFL025_A / DF999 «Planned»-stub claims → detecting-since-β, enforcing-since-γ; §5.3 Diagnostic-ID form → underscore per the Phase β Crystalka-ratified descriptor-ID adjudication (the dotted/hyphen forms are Roslyn-invalid — the paragraph as written would have produced no-op waivers); §5.3 rule 5 waiver census → current pin 2 (dated); §5.2 `stub`/`deferred` baselines 48/18 → 51/20, 79/48 → 82/51 (the F-25 owed fold; live values carried by the compiled meta-tests since Phase β); stale v2.0.0 end-marker synced. **PATCH.** |
@@ -718,4 +723,4 @@ here **before** the brief locks.
 
 ---
 
-**End of CODING_STANDARDS.md v2.1.3 LOCKED**
+**End of CODING_STANDARDS.md v2.1.4 LOCKED**

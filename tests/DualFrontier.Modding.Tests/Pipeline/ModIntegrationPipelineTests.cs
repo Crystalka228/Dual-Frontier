@@ -11,7 +11,7 @@ using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Modding.Tests.Fixtures;
 using DualFrontier.Modding.Tests.Fixtures.GoodMod;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Pipeline;

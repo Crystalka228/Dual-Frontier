@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -18,7 +18,7 @@ supersedes:
 last_modified_commit: edb267a
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §1.2 wiring-truth inherit list net8.0 → net10.0; one sentence added at §1.2 closing the recon gap — the analyzer project TFM (netstandard2.0, Roslyn host load compat, deliberately unmoved by the solution-wide net10.0 move) was nowhere asserted on this LOCKED surface, now stated together with LangVersion pinned explicit 14.0 (was floating latest; STACK_UPDATE D2); §6 kernel-boundary parenthetical C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0) (EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 ---
@@ -93,7 +93,7 @@ Composition: 9 Architecture + 5 NativeBoundary + 3 Discipline = 17, matching the
 </ItemGroup>
 ```
 
-This `src/`-scoped file explicitly imports the repo-root `Directory.Build.props` (`src/Directory.Build.props:28`) — MSBuild's directory-walk auto-discovery uses "first found wins," so the explicit `<Import>` is what lets this file inherit `net8.0` + `TreatWarningsAsErrors` + `Nullable` + `ImplicitUsings` rather than silently shadowing them. `tools/` and `tests/` projects sit outside `src/`'s scope by placement — the analyzer does not analyze its own source or its own tests. Three independent surfaces must agree on each rule's shipped severity, and were re-checked rule-by-rule this rework: the descriptor's `defaultSeverity` (source), the root `.editorconfig`'s `dotnet_diagnostic.<ID>.severity` key, and `AnalyzerReleases.Shipped.md`'s Release 1.0 row. All 17 agree; a divergence in any one would be a defect, not a valid override (§3).
+This `src/`-scoped file explicitly imports the repo-root `Directory.Build.props` (`src/Directory.Build.props:28`) — MSBuild's directory-walk auto-discovery uses "first found wins," so the explicit `<Import>` is what lets this file inherit `net10.0` + `TreatWarningsAsErrors` + `Nullable` + `ImplicitUsings` rather than silently shadowing them. `tools/` and `tests/` projects sit outside `src/`'s scope by placement — the analyzer does not analyze its own source or its own tests. The analyzer project itself deliberately stays `netstandard2.0` — the Roslyn-host load-compatibility floor (Q-L-4) that the solution-wide net10.0 move (STACK_UPDATE, 2026-07-17) does not lift — with its `LangVersion` pinned explicit `14.0` since that same cascade (STACK_UPDATE D2; previously a machine-dependent `latest`). Three independent surfaces must agree on each rule's shipped severity, and were re-checked rule-by-rule this rework: the descriptor's `defaultSeverity` (source), the root `.editorconfig`'s `dotnet_diagnostic.<ID>.severity` key, and `AnalyzerReleases.Shipped.md`'s Release 1.0 row. All 17 agree; a divergence in any one would be a defect, not a valid override (§3).
 
 ### §1.3 — Tests
 
@@ -182,7 +182,7 @@ One idea survives the retirement: a `[SystemAccess]`-completeness check — veri
 
 ## §6 — DFK002 federated interop model
 
-Per the Phase β §8 ratification (2026-07-01; recorded in the KERNEL_ARCHITECTURE.md chronicle), the sanctioned P/Invoke surface is federated across two namespace roots, defined once in `tools/DualFrontier.Analyzers/Rules/NativeBoundary/SanctionedInteropSurface.cs:30-34` and shared by DFK001 (dynamic-interop bypass, §1.1) and DFK002 (`[DllImport]`/`[LibraryImport]` placement): `DualFrontier.Core.Interop` (the C++20 kernel boundary, К-L1/К-L3) and `DualFrontier.Runtime.Native` (the native runtime boundary — `Runtime.Native.Vulkan` GPU substrate К-L19, `Runtime.Native.Win32` Launcher OS surface), including nested namespaces under either root. At the Phase β triage, the one genuine DFK002 violation on record — a 13-`DllImport` block in `ManagedBusBridge.cs` (`DualFrontier.Application.Bus`, outside both roots) — was relocated into `Core.Interop` (now `NativeMethods.Bus.cs`). A repo-wide re-check at HEAD `35364c2` (every `.cs` file under `src/` declaring `[DllImport]`/`[LibraryImport]`, filtered against both sanctioned roots) finds **zero** declarations outside the federated surface today. `SanctionedInteropSurface.cs:24`'s own in-code comment still names `ManagedBusBridge` in the present tense as "the one genuine DFK002 violation" — that phrasing is stale, describing a state the same Phase β triage already resolved by relocation, not a live finding.
+Per the Phase β §8 ratification (2026-07-01; recorded in the KERNEL_ARCHITECTURE.md chronicle), the sanctioned P/Invoke surface is federated across two namespace roots, defined once in `tools/DualFrontier.Analyzers/Rules/NativeBoundary/SanctionedInteropSurface.cs:30-34` and shared by DFK001 (dynamic-interop bypass, §1.1) and DFK002 (`[DllImport]`/`[LibraryImport]` placement): `DualFrontier.Core.Interop` (the C++23 kernel boundary, К-L1/К-L3) and `DualFrontier.Runtime.Native` (the native runtime boundary — `Runtime.Native.Vulkan` GPU substrate К-L19, `Runtime.Native.Win32` Launcher OS surface), including nested namespaces under either root. At the Phase β triage, the one genuine DFK002 violation on record — a 13-`DllImport` block in `ManagedBusBridge.cs` (`DualFrontier.Application.Bus`, outside both roots) — was relocated into `Core.Interop` (now `NativeMethods.Bus.cs`). A repo-wide re-check at HEAD `35364c2` (every `.cs` file under `src/` declaring `[DllImport]`/`[LibraryImport]`, filtered against both sanctioned roots) finds **zero** declarations outside the federated surface today. `SanctionedInteropSurface.cs:24`'s own in-code comment still names `ManagedBusBridge` in the present tense as "the one genuine DFK002 violation" — that phrasing is stale, describing a state the same Phase β triage already resolved by relocation, not a live finding.
 
 ---
 

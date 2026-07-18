@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Sharing;

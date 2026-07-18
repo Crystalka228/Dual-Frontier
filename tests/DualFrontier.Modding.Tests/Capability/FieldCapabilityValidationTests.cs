@@ -1,6 +1,6 @@
 using System;
 using DualFrontier.Contracts.Modding;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Capability;

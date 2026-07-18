@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <!-- CRITICAL: override Directory.Build.props net8.0 default per Q-L-4 + S-LOCK-2 + recon §7.1.2 -->
+    <!-- CRITICAL: override Directory.Build.props net10.0 default per Q-L-4 + S-LOCK-2 + recon §7.1.2 -->
     <!-- Roslyn analyzer host loads compatibility requires netstandard2.0 -->
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <!-- Pinned explicit per STACK_UPDATE D2: 'latest' is machine-dependent (floats
+         with the installed SDK's compiler); 14.0 is what it resolved to here. -->
+    <LangVersion>14.0</LangVersion>
 
     <AssemblyName>DualFrontier.Analyzers</AssemblyName>
     <RootNamespace>DualFrontier.Analyzers</RootNamespace>
@@ -50,7 +52,7 @@
     NOTE on [ReservedStub] attribute access (Q-L-10 + S-LOCK-12):
     Brief §6.1 specified a ProjectReference к DualFrontier.Contracts here. That was an
     architectural over-specification — netstandard2.0 (mandatory per Q-L-4 for Roslyn host
-    load compat) cannot ProjectReference net8.0 (Contracts target per Directory.Build.props)
+    load compat) cannot ProjectReference net10.0 (Contracts target per Directory.Build.props)
     even with ReferenceOutputAssembly="false"; the framework compatibility check fires before
     the assembly-output skip.
 

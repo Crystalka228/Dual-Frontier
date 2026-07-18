@@ -6077,3 +6077,79 @@ audit_trail:
     - DOC-A-IDENTITY_AND_ABI_CONTRACT → LOCKED
     - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT → EXECUTED (enrolled at C1)
     - DOC-D-DRAFTS_RATIFICATION_BRIEF → EXECUTED
+- id: EVT-2026-07-17-STACK_UPDATE
+  date: 2026-07-17
+  event: STACK_UPDATE cascade — toolchain re-platform (net10.0 + C# 14 + C++23 К-L1 amendment + test-triad hygiene + global.json pin + AwesomeAssertions 9.4.0 + doc census); executed in the cloud Linux sandbox
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-B-DEVELOPMENT_HYGIENE
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-ARCHITECTURE_V2
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-TESTING_STRATEGY
+  - DOC-A-ANALYZER_RULES_V2
+  - DOC-A-MODDING_V2
+  - DOC-A-VULKAN_SUBSTRATE_V2
+  - DOC-B-PIPELINE_METRICS
+  - DOC-B-RESERVED_SURFACE_MUTABILITY
+  - DOC-E-NATIVE_BUILD
+  - DOC-F-NATIVE-CORE
+  - DOC-F-SRC-LAUNCHER
+  - DOC-F-SRC-APPLICATION-MODDING
+  - DOC-F-MODS-EXAMPLE
+  - DOC-C-ROADMAP
+  - DOC-D-STACK_UPDATE_BRIEF
+  - DOC-E-STACK_UPDATE_CLOSURE_REPORT
+  - DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT (pre-cascade environment ground, setup session)
+  commits:
+    range: a20d74a..45d4310 (12 commits; the closure-append commit following 45d4310 carries this entry)
+    key_commits:
+    - hash: a20d74a
+      summary: B - TFM net8.0 -> net10.0 corpus-wide; Phase A measured delta ZERO diagnostics
+    - hash: 00460a8
+      summary: C - LangVersion 14.0; analyzer pin explicit (F-40 flaked once, isolated-pass 202/202)
+    - hash: 8f7f448
+      summary: D - test triad complete (xunit 2.9.3 b82a4d8; runner 3.1.5 2f45215; Test.Sdk 18.8.1)
+    - hash: b526c06
+      summary: E - global.json pin 10.0.204 latestFeature; DEVELOPMENT_HYGIENE v2.0.2 deliberation discharge
+    - hash: 6ec75de
+      summary: F - К-L1 C++23 (KERNEL v1.1.0 MINOR, FRAMEWORK 7.2); CMake 23; H-CXX 59x -std=c++23; selftest ALL PASSED
+    - hash: c7dc164
+      summary: G - AwesomeAssertions 9.4.0 landed NO ESCAPE (usings 142->0; 3 mechanical renames; Apache-2.0 restored)
+    - hash: 18474c0
+      summary: H1 - doc census governed cluster (7 docs PATCH) incl. README recon-mismatch record
+    - hash: d704da8
+      summary: H2 - doc census adjacent cluster + orchestrator rider (3 out-of-worklist current-truth sites)
+    - hash: 22b1fb7
+      summary: closure - ROADMAP stack re-sync + EQ-a next + F-44..F-48 seeded
+    - hash: 45d4310
+      summary: closure - brief enrolled EXECUTED + closure report DOC-E
+  governance_impact: >
+    Second post-migration append to the hand-edited AUDIT_TRAIL.yaml SoT (FRAMEWORK 14.6).
+    The toolchain re-platform landed whole: net10.0 corpus-wide with a measured ZERO
+    diagnostic delta (Phase A empirical step), C# 14 with the analyzer LangVersion pinned
+    explicit, test triad 2.9.3/3.1.5/18.8.1 one-commit-each, the Q1-beta-ratified
+    global.json pin (10.0.204 latestFeature) with the DEVELOPMENT_HYGIENE section-6
+    prohibition discharged by deliberation, К-L1 amended C++20 -> C++23 under FRAMEWORK 7.2
+    (KERNEL v1.1.0 MINOR; the amendment record honestly carries the MSVC /std:c++23preview
+    status until Build Tools 14.52 - F-44 - and the C-ABI containment rationale; GNU/Clang
+    emitted flag verified -std=c++23 across all 59 TU), and the FluentAssertions license
+    freeze dissolved by AwesomeAssertions 9.4.0 (Apache-2.0) landing mechanically - 142->0
+    using census, 3 rename-class fixes, ESCAPE unused. Doc census executed point-wise per
+    the REC-R4 worklist (README recon-mismatch - no stack lines existed at HEAD, code-is-true
+    recorded; three out-of-worklist current-truth sites taken by orchestrator rider).
+    Environment: the cascade ran in the cloud Linux sandbox per the operator ruling grounded
+    in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT (test-shape D5 = 1048/0/116 governs gate
+    readings; F-40 flaked once with its exact recorded profile). Gates held at closure in
+    both configurations (Debug + the METHODOLOGY 12.7 Release checklist): build 0W/0E,
+    native selftest ALL PASSED, full-sln 1048/0/116, validate --armed exit 0 after every
+    frontmatter-touching commit; DFK-WAIVER census 2 = 2. Pushes adapted operator-sanctioned
+    to the feature branch only (ephemeral-container durability); no main push, no PR, no
+    merge. ROADMAP: ENGINEERING QUEUE unblocked, EQ-a next; F-44..F-48 seeded (F-48 carries
+    the session-found M74 nodeReuse hang class - the AA-escape slot was not needed).
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-D-STACK_UPDATE_BRIEF → EXECUTED (enrolled)
+    - DOC-E-STACK_UPDATE_CLOSURE_REPORT → EXECUTED (enrolled)

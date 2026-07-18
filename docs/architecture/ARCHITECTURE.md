@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: f5c5e97
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.0.2 PATCH: layer-table kernel row C++20 → C++23, mirroring the К-L1 amendment (KERNEL_ARCHITECTURE v1.1.0, FRAMEWORK §7.2; EVT-2026-07-17-STACK_UPDATE). Single-cell change. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 ---
@@ -46,7 +46,7 @@ Twelve managed `src/` projects (verified: `src/*/*.csproj` at HEAD, 12 files) pl
 | Application | `Application` — GameBootstrap/GameLoop, Mod OS (loader, registry, capability model, fault handling), PresentationBridge command queue, display composition |
 | Domain | `Systems` · `Components` · `Events` · `AI` · `Persistence` — game rules; multithreaded; renderer-agnostic |
 | Infrastructure | `Core` — domain buses, scheduling dispatch facade; `Core.Interop` — P/Invoke bridge, NativeWorld handle, span/batch protocol; `Crypto.Future` — reserved FHE surface |
-| Native kernel (C++20) | `Core.Native` — NativeWorld storage SSoT (К-L11), scheduler graph + wake registry (К-L12/К-L13), three-tier event bus (К-L15), GPU pipeline slots (К-L16) |
+| Native kernel (C++23) | `Core.Native` — NativeWorld storage SSoT (К-L11), scheduler graph + wake registry (К-L12/К-L13), three-tier event bus (К-L15), GPU pipeline slots (К-L16) |
 
 `DualFrontier.Contracts` sits beside the stack, referenced by every managed layer ([CONTRACTS.md](./CONTRACTS.md)). The Core row places "domain buses" inside managed Infrastructure — not a layering error, but it collides with a claim about *authority* over routing; §3 resolves that as one story.
 

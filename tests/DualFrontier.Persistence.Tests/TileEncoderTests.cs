@@ -1,7 +1,7 @@
 using DualFrontier.Components.World;
 using DualFrontier.Persistence.Compression;
 using DualFrontier.Persistence.Snapshots;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Persistence.Tests;

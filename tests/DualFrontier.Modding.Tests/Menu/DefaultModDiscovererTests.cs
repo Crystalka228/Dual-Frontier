@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DualFrontier.Application.Modding;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Menu;

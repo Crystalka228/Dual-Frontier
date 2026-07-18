@@ -7,7 +7,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-05-11
-last_modified: 2026-05-11
+last_modified: 2026-07-17
 content_language: en
 next_review_due: null
 title: Native Core module
@@ -18,7 +18,7 @@ reviewer: Crystalka
 
 # DualFrontier.Core.Native — Module Documentation
 
-**Purpose**: ECS kernel storage + bootstrap orchestration + thread pool. C++20 implementation built independently от .NET solution via CMake.
+**Purpose**: ECS kernel storage + bootstrap orchestration + thread pool. C++23 implementation built independently от .NET solution via CMake.
 
 **Reference**: `docs/architecture/KERNEL_ARCHITECTURE.md` §1.2, §1.3, §1.4
 
@@ -31,7 +31,7 @@ reviewer: Crystalka
 - `df_world_register_component_type` — type registration (K2)
 
 **Dependencies**:
-- C++20 stdlib only (`<vector>`, `<unordered_map>`, `<thread>`, `<atomic>`)
+- C++23 stdlib only (`<vector>`, `<unordered_map>`, `<thread>`, `<atomic>`)
 - No third-party libraries
 - CMake 3.20+ build system
 

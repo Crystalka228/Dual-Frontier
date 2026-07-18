@@ -5,16 +5,16 @@ category: B
 tier: 2
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-02
-last_modified: 2026-07-02
+last_modified: 2026-07-17
 content_language: en
 next_review_due: 2026-Q3
 title: Reserved-surface mutability license
 last_modified_commit: 0411bb0
 review_cadence: on-closure+quarterly
-last_review_date: 2026-06-11
-last_review_event: "Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3 (D1) — the mutability license adapted from the News Intelligence Hub PHASE_0_SKELETON_MUTABILITY mechanism onto DF reality. Principle: a property is mutable iff changing it changes no answer in any Tier-1 LOCKED authority. Mutable catalog (reserved-stub/analyzer-rule symbol names; file layout below project level; annotation surface forms; brief csproj wiring lists; grep/census expressions; §-numbering in citations) vs immutable catalog (К-L invariants per KERNEL Part 0's own «21 final» composition pinned verbatim — К-L1..5 + К-L7..11 + subs К-L3.1/7.1/15.1 + К-L12..19, К-L6 SUPERSEDED excluded, К-L20 reserved excluded, Latin/Cyrillic bi-script grep rule per F-4; PA-001..004; locked Q-series; declared S-LOCKs; register_id permanence; lifecycle state machine; atomic-commit discipline; К-L20 additive-semver law). Commit-body `Skeleton revisions:` form (one conceptual change = one entry). A'.9.1 Phase α 5 mid-cascade deltas retrospectively classified: 4 surface (CPM-count 16436b7, rule-count d0b4c41, seealso-URL fc66156, annotation-census f4a94e6) + 1 architectural correctly halted (ProjectReference-drop 5030fa2, PA-002 anchor)."
+last_review_date: 2026-07-17
+last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §6 delta-1 row framework-compatibility clause netstandard2.0-cannot-reference-net8.0 → net10.0, tracking the landed solution TFM (the clause follows the live Contracts target, as the analyzer csproj comment now does); sole stale token in this document, all other §6 historical delta records untouched (EVT-2026-07-17-STACK_UPDATE). Prior context: Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3…'
 reviewer: Crystalka
 special_case_rationale: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 ---
@@ -141,7 +141,7 @@ None had to be taken on faith. Classification per §2/§3/§4:
 
 | # | Delta (Phase α commit) | On-disk record | Class under this law |
 |---|---|---|---|
-| 1 | **Commit 1 ProjectReference drop** (`5030fa2`): brief §6.1 specified analyzer→Contracts ProjectReference; netstandard2.0 cannot reference net8.0; reference dropped entirely — Roslyn analyzers detect attributes by FQN string via SemanticModel, no compile-time CLR reference | commit body; `PROJECT_AXIOMS.md` §2.4 last bullet (PA-002 anchor: the kostyl path — overriding framework checks — was rejected) | **Architectural.** Changed a dependency-structure answer of the brief spec. Correctly halted for ratification; this law changes nothing here — this is exactly what halts are reserved for. |
+| 1 | **Commit 1 ProjectReference drop** (`5030fa2`): brief §6.1 specified analyzer→Contracts ProjectReference; netstandard2.0 cannot reference net10.0; reference dropped entirely — Roslyn analyzers detect attributes by FQN string via SemanticModel, no compile-time CLR reference | commit body; `PROJECT_AXIOMS.md` §2.4 last bullet (PA-002 anchor: the kostyl path — overriding framework checks — was rejected) | **Architectural.** Changed a dependency-structure answer of the brief spec. Correctly halted for ratification; this law changes nothing here — this is exactly what halts are reserved for. |
 | 2 | **Commit 3 CPM migration count** (`16436b7`): 11 csproj files migrated vs brief §6.3 estimate ~30 (most projects are ProjectReference-only); surfaced to Crystalka via commit message | commit body; cited as calibration precedent in `PHASE_BETA_PREP_EXECUTION_PROMPT.md` («Phase α Commit 3 CPM migration count 11 vs ~30 estimate») | **Mutable surface** (§3 item 4 — on-disk set is truth, brief lists are intent). Would NOT have needed halt traffic under this law; a §5 record suffices. |
 | 3 | **Commit 5 first-batch rule-count reconciliation** (`d0b4c41`): brief narrative said «15-16 own rules», amendments log §3.3 said 13; both pre-dated Q-L-9 (DFK010 dropped) + Phase 0 DFK016 retain-α; effective arithmetic = 17, recorded as ANALYZER_RULES §4.6 audit note, within S-LOCK-4's own «+0 or +1 only» conditional | commit body | **Mutable surface** (count-narrative reconciliation; the locked decisions and the S-LOCK conditional itself were untouched — §4 note on S-LOCK conditionals). A §5 census-delta record suffices. |
 | 4 | **Commit 6 `<seealso>` URL correction** (`fc66156`): brief §6.6 draft carried pre-rename repo placeholder `Crystalka228/Colony_Simulator`; actual remote is `Crystalka228/Dual-Frontier` per `git remote -v` | commit body («Brief §6.6 spec deviation») | **Mutable surface** (§3 item 3 — annotation surface form). A §5 record suffices. |
@@ -174,5 +174,6 @@ Principle changes (§2) additionally require Crystalka ratification.
 
 ## Change history
 
+- **v1.0.2 (2026-07-17)** — STACK_UPDATE Phase H doc census PATCH (EVT-2026-07-17-STACK_UPDATE): §6 delta-1 row's framework-compatibility clause updated to the landed solution TFM — «netstandard2.0 cannot reference net8.0» → «…net10.0» (the clause tracks the live Contracts target, matching the analyzer csproj's own updated comment); the delta narrative, classification, and every other §6 row unchanged. Catalog clarification per the amendment protocol's PATCH class.
 - **v1.0.1 (2026-07-02)** — F-27(a) PATCH at the A'.9.1 Phase δ rider: §3 item 1's on-disk-proof bullets updated from the superseded dot/hyphen descriptor duality to the underscore truth (Phase β descriptor-ID adjudication, Crystalka-ratified 2026-07-01); the item's principle (descriptor ID = contract, file/class name = surface) unchanged. Catalog clarification per the amendment protocol's PATCH class.
 - **v1.0 (2026-06-11)** — Initial authoring at the Standing-Law Cascade, per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` §7-W3. Mechanism adapted from a proven external skeleton-mutability governance document (read-only reference corpus) onto Dual Frontier's substrate; §6 retrospective classifies the A'.9.1 Phase α deltas from on-disk commit-body evidence.

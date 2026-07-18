@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using DualFrontier.Application.Scene;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Scene;

@@ -1,5 +1,5 @@
 using DualFrontier.Contracts.Core;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.ECS;

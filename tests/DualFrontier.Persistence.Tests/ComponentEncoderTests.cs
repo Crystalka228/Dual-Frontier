@@ -1,6 +1,6 @@
 using System;
 using DualFrontier.Persistence.Compression;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Persistence.Tests;

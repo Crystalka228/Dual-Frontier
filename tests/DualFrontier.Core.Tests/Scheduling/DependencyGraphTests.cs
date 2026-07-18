@@ -3,7 +3,7 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Scheduling;

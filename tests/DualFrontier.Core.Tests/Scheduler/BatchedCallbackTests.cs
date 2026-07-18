@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DualFrontier.Application.Scheduler;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Scheduler;

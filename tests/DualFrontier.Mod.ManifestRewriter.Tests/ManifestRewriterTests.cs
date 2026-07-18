@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Mod.ManifestRewriter.Tests;

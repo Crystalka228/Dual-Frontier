@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 6a67da5
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §10 quickstart external copy-paste commands, both steps, -f net8.0 → -f net10.0 (the two only stale TFM sites in this guide; solution TFM moved at EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 ---
@@ -212,8 +212,8 @@ public sealed class MyFirstMod : IMod
 
 ## 10. Step-by-step: your first mod
 
-1. **Shared-events project** (skip if you only consume events another mod already vends): `dotnet new classlib -n MyFirstMod.Events -f net8.0`, reference only `DualFrontier.Contracts`, add your event type(s), `"kind": "shared"` manifest (§9).
-2. **Mod project**: `dotnet new classlib -n MyFirstMod -f net8.0`. Reference `DualFrontier.Contracts` and, if used, the shared-events project with `Private=false`.
+1. **Shared-events project** (skip if you only consume events another mod already vends): `dotnet new classlib -n MyFirstMod.Events -f net10.0`, reference only `DualFrontier.Contracts`, add your event type(s), `"kind": "shared"` manifest (§9).
+2. **Mod project**: `dotnet new classlib -n MyFirstMod -f net10.0`. Reference `DualFrontier.Contracts` and, if used, the shared-events project with `Private=false`.
 3. **Write the `IMod` implementation** — as in §9.
 4. **Write `mod.manifest.json`** — `manifestVersion: "3"`, `apiVersion` with a caret range, `capabilities.required` naming every event FQN you publish/subscribe (§7).
 5. **Build and place in `mods/com.example.myfirstmod/`** (and `mods/com.example.myfirstmod.events/` if used) — each directory holds its built `.dll` alongside its `mod.manifest.json`.

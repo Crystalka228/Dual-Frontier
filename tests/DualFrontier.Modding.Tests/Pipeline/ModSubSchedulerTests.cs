@@ -1,7 +1,7 @@
 using System;
 using DualFrontier.Application.Modding;
 using DualFrontier.Core.ECS;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Pipeline;

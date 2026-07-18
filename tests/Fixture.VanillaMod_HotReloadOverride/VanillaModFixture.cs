@@ -8,7 +8,7 @@ namespace Fixture.VanillaMod_HotReloadOverride;
 /// project carries `&lt;IsVanillaMod&gt;true&lt;/IsVanillaMod&gt;`,
 /// so a Release build flips its `mod.manifest.json` from
 /// `hotReload: true` to `hotReload: false` in
-/// `bin/Release/net8.0/`. A Debug build leaves the manifest at
+/// `bin/Release/net10.0/`. A Debug build leaves the manifest at
 /// `hotReload: true`.
 /// </summary>
 public sealed class VanillaModFixture : IMod

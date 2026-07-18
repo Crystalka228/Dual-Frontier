@@ -2,7 +2,7 @@ using DualFrontier.Components.Pawn;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop;
 using DualFrontier.Systems.Tests.Fixtures;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Systems.Tests;

@@ -2,7 +2,7 @@ using System.Linq;
 using System.Reflection;
 using DualFrontier.Application.Attributes;
 using DualFrontier.Application.Rendering;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Tests.Rendering;

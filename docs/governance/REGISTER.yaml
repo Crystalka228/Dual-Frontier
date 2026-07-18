@@ -32,7 +32,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -45,7 +45,7 @@ documents:
   last_modified_commit: edb267a
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §1.2 wiring-truth inherit list net8.0 → net10.0; one sentence added at §1.2 closing the recon gap — the analyzer project TFM (netstandard2.0, Roslyn host load compat, deliberately unmoved by the solution-wide net10.0 move) was nowhere asserted on this LOCKED surface, now stated together with LangVersion pinned explicit 14.0 (was floating latest; STACK_UPDATE D2); §6 kernel-boundary parenthetical C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0) (EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 - register_id: DOC-A-ARCHITECTURE
@@ -91,7 +91,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -102,7 +102,7 @@ documents:
   last_modified_commit: f5c5e97
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.0.2 PATCH: layer-table kernel row C++20 → C++23, mirroring the К-L1 amendment (KERNEL_ARCHITECTURE v1.1.0, FRAMEWORK §7.2; EVT-2026-07-17-STACK_UPDATE). Single-cell change. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 - register_id: DOC-A-A_PRIME_0_7_AMENDMENT_PLAN
@@ -595,7 +595,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -606,7 +606,7 @@ documents:
   last_modified_commit: 6497ed5
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.1.0 MINOR (behavioral contract change per the §614 versioning law): К-L1 amended C++20 → C++23 under FRAMEWORK §7.2 Tier-1 protocol (operator-ratified 2026-07-17; EVT-2026-07-17-STACK_UPDATE). All seven C++20 sites updated (census: intro line, К-L1 heading/canon/falsifiability/artifacts, Part-4 status row, Rule-1); amendment record added to the К-L1 block honestly stating the MSVC /std:c++23preview status (stable switch = Build Tools 14.52, F-44) and the C-ABI containment rationale (IAC §3); GNU/Clang mode -std=c++23 verified emitted (DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT D6). CMakeLists CMAKE_CXX_STANDARD 20 → 23 in the same commit; native selftest ALL PASSED. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1
@@ -814,7 +814,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -825,7 +825,7 @@ documents:
   last_modified_commit: 6a67da5
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §10 quickstart external copy-paste commands, both steps, -f net8.0 → -f net10.0 (the two only stale TFM sites in this guide; solution TFM moved at EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 - register_id: DOC-A-MOD_OS
@@ -1205,7 +1205,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.0.3
   first_authored: 2026-07-15
   last_modified: 2026-07-17
   content_language: en
@@ -1216,7 +1216,7 @@ documents:
   last_modified_commit: 5d71a8e
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and the section-6.3 device-lost fence no longer gate on ELT ratification (ratified law, EVT-2026-07-17-DRAFTS_RATIFICATION) - remaining gates are the deferred substrate amendment and the OQ-3 decision. PATCH 1.0.1 to 1.0.2.'
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 - register_id: DOC-B-CODING_STANDARDS
@@ -1226,16 +1226,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.3
+  version: 2.1.4
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2027-06-11
   title: Coding standards
   last_modified_commit: 673f815
   review_cadence: on-change+annual
-  last_review_date: 2026-06-11
-  last_review_event: "Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth per STANDING_LAW_CASCADE_BRIEF §7-W1 + §8 truth law: C#/C++ conventions codified from observed practice (R1 survey); build organization with Directory.Build.props chain quoted verbatim + CPM truth; §5 marker family registry ([ReservedStub] census pin 34 application sites / 13 files with verbatim rg composition rule; 5 doc-tag families with verbatim patterns + baselines; NEW DFK-WAIVER suppression law — load-bearing for A'.9.1 Phase β, supersedes the brief §7.3 DFK###-SUPPRESS sketch); §8 atomic-commit law (7-section body incl. Skeleton revisions per RESERVED_SURFACE_MUTABILITY); §9 verification gates reduced to existing artifacts (analyzer stated as 17 non-detecting Info stubs — zero enforcement; CI stated absent). v1.0 phantom enforcement claims (analyzer checks, CI) cured per drift report §6.3.5."
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase H doc census — v2.1.3 → v2.1.4 PATCH: §1 scope bullet + §3 heading C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0); §4.2 Directory.Build.props hand-mirror net8.0 → net10.0 + LangVersion 12.0 → 14.0, and the new repo-root global.json SDK pin stated (10.0.204, rollForward latestFeature); §4.3 CPM hand-mirror rows Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit 2.9.2 → 2.9.3, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial) (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth…'
   reviewer: Crystalka
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
@@ -1244,16 +1244,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.0.1
+  version: 2.0.2
   first_authored: 2026-06-29
-  last_modified: 2026-06-29
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2027-06-11
   title: Development hygiene
   last_modified_commit: 27807f7
   review_cadence: on-change+annual
-  last_review_date: 2026-06-11
-  last_review_event: 'Standing-Law cascade C5 (9da4760) — full rewrite v1.0 → v2.0.0 MAJOR to post-Godot operational truth per STANDING_LAW_CASCADE_BRIEF §7-W3 (D4) + §8 truth law: repo map; project-set truth (32 sln projects = 12 src + 17 tests-folder + 2 tools + 1 mods; 6 Vanilla.* mods + 13 Fixture.RegularMod_* disk-only BY DESIGN); verified-only build commands (managed sln; native via VS-bundled cmake full path — NOT on PATH; Launcher; Native.dll PreserveNewest copy mechanics); tooling reality (PS 5.1 / pwsh absent / powershell-yaml 0.4.12; sync_register.ps1 -Validate unconditional VALIDATION_REPORT.md write at line 380 → commit-folding protocol; -Sync forbidden outside ratified register cascades; render staleness recorded explicitly); branch/push policy (executor never pushes; 41 merged stale branches → F-11); Skarlet environment; Godot status (project.godot tracked = F-5 Crystalka-owned). v1.0 phantoms purged (build-all.sh/.ps1 wrappers, DualFrontier.Presentation projects) per drift report §6.3.5 near-rewrite class. Closes finding F-6.'
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase E — v2.0.1 → v2.0.2 PATCH: §6 .NET bullet updated to the landed stack truth (projects target net10.0; repo-root global.json added pinning SDK 10.0.204 with rollForward latestFeature per the Q1-beta operator ruling of 2026-07-17) and the «do not add global.json pinning without deliberation» prohibition replaced by the record that the deliberation occurred (EVT-2026-07-17-STACK_UPDATE). Single-bullet amendment; §1-§5/§7 untouched. Prior context: Standing-Law cascade C5 (9da4760) — full rewrite v1.0 → v2.0.0 MAJOR to post-Godot operational truth (repo map, project-set truth, verified-only build commands, tooling reality, branch/push policy, Skarlet environment, Godot status; closes F-6); DRAFTS_RATIFICATION-era PATCH v2.0.0 → v2.0.1.'
   reviewer: Crystalka
   risks_referenced:
   - RISK-011
@@ -1315,16 +1315,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 0.2.1
+  version: 0.2.2
   first_authored: 2026-07-02
-  last_modified: 2026-07-02
+  last_modified: 2026-07-17
   content_language: mixed
   next_review_due: 2027-05-10
   title: Pipeline metrics — empirical record
   last_modified_commit: 0411bb0
   review_cadence: on-change+annual
-  last_review_date: 2026-05-10
-  last_review_event: A'.0.7 methodology rewrite
+  last_review_date: 2026-07-17
+  last_review_event: "STACK_UPDATE Phase H doc census — v0.2.1 → v0.2.2 PATCH: era-annotation supersession note appended at the §5.2 annotation paragraph only (the ratified edit surface) — surviving v1.6+ stack .NET 8.0 SDK (C# 12) → .NET 10.0 (SDK 10.0.204 via repo-root global.json, C# 14) (EVT-2026-07-17-STACK_UPDATE); frozen v1.x metrics bodies byte-identical per the era charter. Prior context: A'.0.7 methodology rewrite…"
   reviewer: Crystalka
   risks_referenced:
   - RISK-014
@@ -1337,16 +1337,16 @@ documents:
   tier: 2
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-02
-  last_modified: 2026-07-02
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2026-Q3
   title: Reserved-surface mutability license
   last_modified_commit: 0411bb0
   review_cadence: on-closure+quarterly
-  last_review_date: 2026-06-11
-  last_review_event: "Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3 (D1) — the mutability license adapted from the News Intelligence Hub PHASE_0_SKELETON_MUTABILITY mechanism onto DF reality. Principle: a property is mutable iff changing it changes no answer in any Tier-1 LOCKED authority. Mutable catalog (reserved-stub/analyzer-rule symbol names; file layout below project level; annotation surface forms; brief csproj wiring lists; grep/census expressions; §-numbering in citations) vs immutable catalog (К-L invariants per KERNEL Part 0's own «21 final» composition pinned verbatim — К-L1..5 + К-L7..11 + subs К-L3.1/7.1/15.1 + К-L12..19, К-L6 SUPERSEDED excluded, К-L20 reserved excluded, Latin/Cyrillic bi-script grep rule per F-4; PA-001..004; locked Q-series; declared S-LOCKs; register_id permanence; lifecycle state machine; atomic-commit discipline; К-L20 additive-semver law). Commit-body `Skeleton revisions:` form (one conceptual change = one entry). A'.9.1 Phase α 5 mid-cascade deltas retrospectively classified: 4 surface (CPM-count 16436b7, rule-count d0b4c41, seealso-URL fc66156, annotation-census f4a94e6) + 1 architectural correctly halted (ProjectReference-drop 5030fa2, PA-002 anchor)."
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §6 delta-1 row framework-compatibility clause netstandard2.0-cannot-reference-net8.0 → net10.0, tracking the landed solution TFM (the clause follows the live Contracts target, as the analyzer csproj comment now does); sole stale token in this document, all other §6 historical delta records untouched (EVT-2026-07-17-STACK_UPDATE). Prior context: Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3…'
   reviewer: Crystalka
   special_case_rationale: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 - register_id: DOC-B-TESTING_STRATEGY
@@ -1356,16 +1356,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.2.1
+  version: 2.2.2
   first_authored: 2026-07-15
-  last_modified: 2026-07-15
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 2027-06-11
   title: Testing strategy
   last_modified_commit: 673f815
   review_cadence: on-change+annual
-  last_review_date: 2026-06-11
-  last_review_event: 'Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR per STANDING_LAW_CASCADE_BRIEF §7-W2 + §8 truth law: test-landscape truth (9 dotnet-test projects, 1036 tests / 1034 passing at the 2026-06-11 survey; Analyzers.Tests called placeholder plainly; 2 non-test exe projects; 19 fixture projects; native df_native_selftest; 2 pre-existing failing tests on main → F-10, recorded not absorbed); 8-layer taxonomy incl. the Roslyn analyzer-test convention (law now, population = Phase β) + meta layer (currently NONE — stated); §4 census contracts (ReservedStub pin 34/13 exactness-not-monotonicity; 5 doc-tag family pins; DFK-WAIVER census baseline 0; S-LOCK→verifying-artifact obligation with the 2026-06-11 audit result — no hard gaps → F-8 closed empty); §5 machine-checkable vs architect-audited honesty + no-lying-stubs law (Lesson #25/#N12, DFL025-A Trait convention); §6 brief-integration pattern (carries vs cites + boundary rule + anti-pattern rule); §7 closure-audit obligation extending METHODOLOGY §12.7. v1.0 phantoms named and purged (SchedulerFixture builder API, EvilMod, PerformanceGates.cs, CI gates, 4-project layout).'
+  last_review_date: 2026-07-17
+  last_review_event: 'STACK_UPDATE Phase H doc census — v2.2.1 → v2.2.2 PATCH: §1.3 stack-truth mirror sentence updated to the landed test triad — xUnit 2.9.2 → 2.9.3, Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial); sole live site, v1.0 changelog stack mention left as historical record (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR…'
   reviewer: Crystalka
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md
@@ -1421,7 +1421,7 @@ documents:
   last_modified_commit: 9b4968a
   review_cadence: on-closure+quarterly
   last_review_date: 2026-07-17
-  last_review_event: "Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — received the NEW «⏭ Analyzer track (A'.9.1 Phase β/γ/δ + deferred rule families)» section (analyzer forward-sequencing extracted from ANALYZER_RULES v0.1 §4.1-4.2/§5/§6/§10.5/§11 per the Standing-Law spec/roadmap separation; Phase β detection + Q-L-1 adaptive gate, Phase γ severity promotion, Phase δ governance, К-L20 LOCK rule family, hardware tier expansion, PublicApiAnalyzers activation conditions) + the NEW «Findings ledger (F-series)» section seeded F-1..F-12 (brief §13 seed + session findings F-10 pre-existing test failures / F-11 stale-branch pruning candidates / F-12 DFK019.A Phase-γ severity discrepancy). Prior context: DD-2 spec/roadmap separation increment 1 (2026-06-02) — K-series roadmap relocated from KERNEL Part 2/3 into «Native foundation tracks»; status-overview K-series + K9 rows retired to Closed; remaining M8/V status rows pending full DD-1 re-sync. docs/ROADMAP.md is the canonical roadmap-layer consolidation home per accepted Option ε target architecture."
+  last_review_event: "STACK_UPDATE closure write-back (2026-07-17) — Update-block stack re-sync sentence appended (net10.0 / C# 14 / SDK 10.0.204 global.json pin / test triad 2.9.3+3.1.5+18.8.1 / AwesomeAssertions 9.4.0 / К-L1 C++23 with the MSVC preview caveat; ENGINEERING QUEUE unblocked, EQ-a next) + Findings ledger rows F-44 (stable /std:c++23 migration), F-45 (xunit v3 own cascade), F-46 (Roslyn/BDN/YamlDotNet hygiene bundle + §4.3 mirror-count nit), F-47 (LINQ convention documentary-not-enforced, SpatialGrid.cs:3), F-48 (M74 nodeReuse test-infra hang class, session finding). F-48 carries the setup-session finding instead of the brief's reserved AA-escape slot — Phase G landed without escape. EVT-2026-07-17-STACK_UPDATE. Prior context: Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — Analyzer track + Findings ledger sections received; DD-2 spec/roadmap separation increment 1."
   reviewer: Crystalka
 - register_id: DOC-D-ARCHITECTURE_RECON_BRIEF
   path: tools/briefs/ARCHITECTURE_RECON_BRIEF.md
@@ -3120,6 +3120,21 @@ documents:
   last_modified_commit: 817921d
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-D-STACK_UPDATE_BRIEF
+  path: tools/briefs/STACK_UPDATE_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: 
+  title: STACK_UPDATE execution brief (net10.0 + C# 14 + C++23 amendment + package hygiene + AwesomeAssertions + doc census)
+  last_review_event: Enrolled EXECUTED at cascade closure 2026-07-17 (EVT-2026-07-17-STACK_UPDATE). Executed in the cloud Linux sandbox per the operator ruling recorded in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT; all D1-D8 deliverables landed, Phase G without escape; closure report DOC-E-STACK_UPDATE_CLOSURE_REPORT.
+  reviewer: Volodymyr (Crystalka)
 - register_id: DOC-D-STANDING_LAW_CASCADE_BRIEF
   path: tools/briefs/STANDING_LAW_CASCADE_BRIEF.md
   project: Dual Frontier
@@ -4027,6 +4042,21 @@ documents:
   title: Self-teaching ritual artifact — Phase 1 (Самообучение фаза 1)
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT
+  path: docs/reports/LINUX_SANDBOX_ENV_BASELINE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: LINUX SANDBOX ENV BASELINE REPORT — 2026-07-17 — cloud Linux sandbox provisioned for the STACK_UPDATE cascade; deviation register vs the Windows reference environment (D1-D8) + measured full baseline (build/tests/native selftest/armed validate)
+  special_case_rationale: 'Durable environment-baseline report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-BUS_INVESTIGATION_2026_05_21). Records the operator-sanctioned (2026-07-17 ruling) environment shift: the STACK_UPDATE cascade executes in the cloud Linux sandbox, not the LOCAL Windows machine the brief was authored against; the operator re-runs the gates on the home Windows machine post-merge.'
 - register_id: DOC-E-M3_CLOSURE_REVIEW
   path: docs/audit/M3_CLOSURE_REVIEW.md
   project: Dual Frontier
@@ -4248,9 +4278,9 @@ documents:
   tier: 3
   lifecycle: EXECUTED
   owner: Crystalka
-  version: 1.0
+  version: 1.0.1
   first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Native Build Notes
@@ -4468,6 +4498,21 @@ documents:
   title: Session Phase 4 — Closure Review
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-STACK_UPDATE_CLOSURE_REPORT
+  path: docs/reports/STACK_UPDATE_CLOSURE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-17
+  last_modified: 2026-07-17
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: STACK_UPDATE CLOSURE REPORT — 2026-07-17 — net10.0 + C# 14 + C++23 (К-L1 v1.1.0) + triad hygiene + global.json pin + AwesomeAssertions 9.4.0 landed (no escape) + doc census; executed in the cloud Linux sandbox; all gates green, F-40 carve-out exercised once
+  special_case_rationale: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT). Companion of DOC-D-STACK_UPDATE_BRIEF section 9; the environment-shift ground truth lives in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT.'
 - register_id: DOC-E-TD1_SONNET_BRIEF
   path: docs/prompts/TD1_SONNET_BRIEF.md
   project: Dual Frontier
@@ -4554,7 +4599,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Mod Example
@@ -4659,7 +4704,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-05-11
-  last_modified: 2026-05-11
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Native Core module
@@ -4859,7 +4904,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: 
   title: Application Modding submodule
@@ -5325,7 +5370,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-05-23
-  last_modified: 2026-05-23
+  last_modified: 2026-07-17
   content_language: en
   next_review_due: post-Vanilla-mods-consumer-materialization closure
   title: DualFrontier.Launcher — Production Launch Entry Point
@@ -15045,3 +15090,58 @@ audit_trail:
     - DOC-A-IDENTITY_AND_ABI_CONTRACT → LOCKED
     - DOC-E-DRAFTS_RATIFICATION_REVIEW_REPORT → EXECUTED (enrolled at C1)
     - DOC-D-DRAFTS_RATIFICATION_BRIEF → EXECUTED
+- id: EVT-2026-07-17-STACK_UPDATE
+  date: 2026-07-17
+  event: STACK_UPDATE cascade — toolchain re-platform (net10.0 + C# 14 + C++23 К-L1 amendment + test-triad hygiene + global.json pin + AwesomeAssertions 9.4.0 + doc census); executed in the cloud Linux sandbox
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-B-DEVELOPMENT_HYGIENE
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-ARCHITECTURE_V2
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-TESTING_STRATEGY
+  - DOC-A-ANALYZER_RULES_V2
+  - DOC-A-MODDING_V2
+  - DOC-A-VULKAN_SUBSTRATE_V2
+  - DOC-B-PIPELINE_METRICS
+  - DOC-B-RESERVED_SURFACE_MUTABILITY
+  - DOC-E-NATIVE_BUILD
+  - DOC-F-NATIVE-CORE
+  - DOC-F-SRC-LAUNCHER
+  - DOC-F-SRC-APPLICATION-MODDING
+  - DOC-F-MODS-EXAMPLE
+  - DOC-C-ROADMAP
+  - DOC-D-STACK_UPDATE_BRIEF
+  - DOC-E-STACK_UPDATE_CLOSURE_REPORT
+  - DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT (pre-cascade environment ground, setup session)
+  commits:
+    range: a20d74a..45d4310 (12 commits; the closure-append commit following 45d4310 carries this entry)
+    key_commits:
+    - hash: a20d74a
+      summary: B - TFM net8.0 -> net10.0 corpus-wide; Phase A measured delta ZERO diagnostics
+    - hash: 00460a8
+      summary: C - LangVersion 14.0; analyzer pin explicit (F-40 flaked once, isolated-pass 202/202)
+    - hash: 8f7f448
+      summary: D - test triad complete (xunit 2.9.3 b82a4d8; runner 3.1.5 2f45215; Test.Sdk 18.8.1)
+    - hash: b526c06
+      summary: E - global.json pin 10.0.204 latestFeature; DEVELOPMENT_HYGIENE v2.0.2 deliberation discharge
+    - hash: 6ec75de
+      summary: F - К-L1 C++23 (KERNEL v1.1.0 MINOR, FRAMEWORK 7.2); CMake 23; H-CXX 59x -std=c++23; selftest ALL PASSED
+    - hash: c7dc164
+      summary: G - AwesomeAssertions 9.4.0 landed NO ESCAPE (usings 142->0; 3 mechanical renames; Apache-2.0 restored)
+    - hash: 18474c0
+      summary: H1 - doc census governed cluster (7 docs PATCH) incl. README recon-mismatch record
+    - hash: d704da8
+      summary: H2 - doc census adjacent cluster + orchestrator rider (3 out-of-worklist current-truth sites)
+    - hash: 22b1fb7
+      summary: closure - ROADMAP stack re-sync + EQ-a next + F-44..F-48 seeded
+    - hash: 45d4310
+      summary: closure - brief enrolled EXECUTED + closure report DOC-E
+  governance_impact: >
+    Second post-migration append to the hand-edited AUDIT_TRAIL.yaml SoT (FRAMEWORK 14.6). The toolchain re-platform landed whole: net10.0 corpus-wide with a measured ZERO diagnostic delta (Phase A empirical step), C# 14 with the analyzer LangVersion pinned explicit, test triad 2.9.3/3.1.5/18.8.1 one-commit-each, the Q1-beta-ratified global.json pin (10.0.204 latestFeature) with the DEVELOPMENT_HYGIENE section-6 prohibition discharged by deliberation, К-L1 amended C++20 -> C++23 under FRAMEWORK 7.2 (KERNEL v1.1.0 MINOR; the amendment record honestly carries the MSVC /std:c++23preview status until Build Tools 14.52 - F-44 - and the C-ABI containment rationale; GNU/Clang emitted flag verified -std=c++23 across all 59 TU), and the FluentAssertions license freeze dissolved by AwesomeAssertions 9.4.0 (Apache-2.0) landing mechanically - 142->0 using census, 3 rename-class fixes, ESCAPE unused. Doc census executed point-wise per the REC-R4 worklist (README recon-mismatch - no stack lines existed at HEAD, code-is-true recorded; three out-of-worklist current-truth sites taken by orchestrator rider). Environment: the cascade ran in the cloud Linux sandbox per the operator ruling grounded in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT (test-shape D5 = 1048/0/116 governs gate readings; F-40 flaked once with its exact recorded profile). Gates held at closure in both configurations (Debug + the METHODOLOGY 12.7 Release checklist): build 0W/0E, native selftest ALL PASSED, full-sln 1048/0/116, validate --armed exit 0 after every frontmatter-touching commit; DFK-WAIVER census 2 = 2. Pushes adapted operator-sanctioned to the feature branch only (ephemeral-container durability); no main push, no PR, no merge. ROADMAP: ENGINEERING QUEUE unblocked, EQ-a next; F-44..F-48 seeded (F-48 carries the session-found M74 nodeReuse hang class - the AA-escape slot was not needed).
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-D-STACK_UPDATE_BRIEF → EXECUTED (enrolled)
+    - DOC-E-STACK_UPDATE_CLOSURE_REPORT → EXECUTED (enrolled)

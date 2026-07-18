@@ -14,7 +14,16 @@
       "Bash(git push *)",
       "PowerShell(.\\\\tools\\\\governance\\\\sync_register.ps1)",
       "Bash(mkdir -p /root/.claude/plans)",
-      "Read(//root/.claude/**)"
+      "Read(//root/.claude/**)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(dotnet --list-runtimes)",
+      "Read(//usr/share/**)",
+      "Bash(cmake --version)",
+      "Bash(ninja --version)",
+      "Bash(gcc --version)",
+      "Bash(g++ --version)",
+      "Bash(clang++ --version)",
+      "Bash(apt-cache policy *)"
     ]
   }
 }

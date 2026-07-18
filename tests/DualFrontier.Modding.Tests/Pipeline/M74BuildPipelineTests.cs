@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Pipeline;
@@ -16,7 +16,7 @@ namespace DualFrontier.Modding.Tests.Pipeline;
 /// rewriter's source-preservation contract end-to-end:
 /// <list type="number">
 ///   <item><c>BuildRelease_VanillaModFixture_RewritesOutputManifest_PreservesSource</c>
-///   — Release build flips bin/Release/net8.0/mod.manifest.json from
+///   — Release build flips bin/Release/net10.0/mod.manifest.json from
 ///   <c>hotReload: true</c> to <c>hotReload: false</c> while leaving
 ///   the source manifest at the project root unchanged.</item>
 ///   <item><c>BuildDebug_VanillaModFixture_DoesNotRewriteOutputManifest</c>
@@ -158,8 +158,8 @@ public sealed class M74BuildPipelineTests
             return new FixturePaths(
                 FixtureCsproj: Path.Combine(fixtureDir, "Fixture.VanillaMod_HotReloadOverride.csproj"),
                 SourceManifest: Path.Combine(fixtureDir, "mod.manifest.json"),
-                DebugOutputManifest: Path.Combine(fixtureDir, "bin", "Debug", "net8.0", "mod.manifest.json"),
-                ReleaseOutputManifest: Path.Combine(fixtureDir, "bin", "Release", "net8.0", "mod.manifest.json"));
+                DebugOutputManifest: Path.Combine(fixtureDir, "bin", "Debug", "net10.0", "mod.manifest.json"),
+                ReleaseOutputManifest: Path.Combine(fixtureDir, "bin", "Release", "net10.0", "mod.manifest.json"));
         }
 
         private static string FindRepoRoot()

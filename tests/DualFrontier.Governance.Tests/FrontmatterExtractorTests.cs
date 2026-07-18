@@ -1,5 +1,5 @@
 using DualFrontier.Governance;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Governance.Tests;

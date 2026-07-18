@@ -1,5 +1,5 @@
 using DualFrontier.Runtime.Window;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Runtime.Tests.Window;

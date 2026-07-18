@@ -5,7 +5,7 @@ using System.Reflection;
 using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Sharing;

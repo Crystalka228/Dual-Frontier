@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Modding;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Manifest;

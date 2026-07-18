@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.1.0
 first_authored: 2026-07-15
 last_modified: 2026-07-17
 content_language: en
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 6497ed5
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.1.0 MINOR (behavioral contract change per the §614 versioning law): К-L1 amended C++20 → C++23 under FRAMEWORK §7.2 Tier-1 protocol (operator-ratified 2026-07-17; EVT-2026-07-17-STACK_UPDATE). All seven C++20 sites updated (census: intro line, К-L1 heading/canon/falsifiability/artifacts, Part-4 status row, Rule-1); amendment record added to the К-L1 block honestly stating the MSVC /std:c++23preview status (stable switch = Build Tools 14.52, F-44) and the C-ABI containment rationale (IAC §3); GNU/Clang mode -std=c++23 verified emitted (DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT D6). CMakeLists CMAKE_CXX_STANDARD 20 → 23 in the same commit; native selftest ALL PASSED. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
 reviewer: Crystalka
 requirements_authored:
 - REQ-K-L1
@@ -45,7 +45,7 @@ special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CO
 
 # DualFrontier Kernel — Architecture
 
-The native ECS kernel contract: the К-L invariant canon (Part 0) plus the current-truth architecture of storage, identity, boundaries, and the C ABI between the C++20 kernel and the managed layers.
+The native ECS kernel contract: the К-L invariant canon (Part 0) plus the current-truth architecture of storage, identity, boundaries, and the C ABI between the C++23 kernel and the managed layers.
 
 > **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/KERNEL_ARCHITECTURE.md` (DOC-A-KERNEL, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
@@ -70,15 +70,17 @@ Series state: **21 invariants** — К-L1..К-L19 (К-L6 SUPERSEDED listed for t
 
 Per-invariant format: status/LOCK-history line → canonical text (verbatim blockquote) → falsifiability commitments → implementation artifacts corrected to the tree at HEAD `35364c2` → DF-rule row stating the shipped analyzer truth per [ANALYZER_RULES.md](./ANALYZER_RULES.md) §1.1 (no rule is claimed Active that does not exist on disk).
 
-### К-L1 — Native language C++20
+### К-L1 — Native language C++23
 
-**Status / LOCK history**: LOCKED at К0 (2026-05-07; foundational — no candidate phase).
+**Status / LOCK history**: LOCKED at К0 (2026-05-07; foundational — no candidate phase); amended C++20 → C++23 at the STACK_UPDATE cascade (2026-07-17, v1.1.0, FRAMEWORK §7.2 Tier-1 protocol, operator-ratified).
 
-> Native language: C++20 (MSVC/GCC/Clang). Compiled native, modern features (concepts, ranges, modules where applicable), no third-party dependencies в production binary.
+> Native language: C++23 (MSVC/GCC/Clang). Compiled native, modern features (concepts, ranges, modules where applicable), no third-party dependencies в production binary.
 
-**Falsifiability**: production code regressing к pre-C++20 dialect; a third-party C++ library introduced без explicit deliberation; managed C# bypassing the kernel via an alternative native binding.
+**Falsifiability**: production code regressing к pre-C++23 dialect; a third-party C++ library introduced без explicit deliberation; managed C# bypassing the kernel via an alternative native binding.
 
-**Implementation artifacts**: `native/DualFrontier.Core.Native/CMakeLists.txt:4-5` (`CMAKE_CXX_STANDARD 20` + `CMAKE_CXX_STANDARD_REQUIRED ON`); the kernel tree `native/DualFrontier.Core.Native/{include,src}/` uses C++20 stdlib plus the Vulkan SDK link required by the V1 compute substrate (`CMakeLists.txt:12,99`); no other third-party dependency.
+**Implementation artifacts**: `native/DualFrontier.Core.Native/CMakeLists.txt:4-5` (`CMAKE_CXX_STANDARD 23` + `CMAKE_CXX_STANDARD_REQUIRED ON`); the kernel tree `native/DualFrontier.Core.Native/{include,src}/` uses C++23 stdlib plus the Vulkan SDK link required by the V1 compute substrate (`CMakeLists.txt:12,99`); no other third-party dependency.
+
+**Amendment record (STACK_UPDATE, 2026-07-17)**: honest toolchain status — MSVC ships no stable `/std:c++23` switch yet; on MSVC, C++23 compiles under **`/std:c++23preview`** (the stable switch arrives with Build Tools 14.52; Microsoft flags preview features as changeable and not guaranteed ABI-compatible across releases). Containment rationale (operator-accepted): the kernel's external boundary is the C ABI (`extern "C"`, [IDENTITY_AND_ABI_CONTRACT.md](./IDENTITY_AND_ABI_CONTRACT.md) §3) — C++ standard-mode ABI does not cross it, and the toolset is pinned by the installed VS. On GNU/Clang the mode is plain `-std=c++23` (no preview split; emitted flag verified empirically at amendment time — DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT D6). F-44 tracks migration to the stable MSVC switch when Build Tools 14.52 becomes the default.
 
 **DF rule**: **DFK001** — Error, enforcing (shipped Release 1.0). Suppression census: exactly 2 DFK-WAIVERs, both DFK001, `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs` (К-L19-sanctioned VK_EXT_debug_utils interop), census-pinned by meta-test.
 
@@ -437,7 +439,7 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 
 | К-L | Title | Status (LOCK cascade) | DF rule (shipped truth) |
 |---|---|---|---|
-| К-L1 | Native language C++20 | LOCKED (К0) | DFK001 Error, enforcing |
+| К-L1 | Native language C++23 | LOCKED (К0); amended v1.1.0 | DFK001 Error, enforcing |
 | К-L2 | Pure P/Invoke bindings | LOCKED (К0) | DFK002 Error, enforcing |
 | К-L3 | Storage paths (α default, β opt-in) | LOCKED (К0); sub К-L3.1 | DFK003 Error, enforcing |
 | К-L3.1 | Path β bridge formalization | LOCKED (А'.0) | DFK003_1 Error, enforcing |
@@ -527,7 +529,7 @@ Load-order-dependent numeric ids **must not cross the save boundary** — the sa
 
 Verified against csproj truth at HEAD; the table under Rule 3 is the enforceable statement.
 
-**Rule 1 — kernel standalone.** `DualFrontier.Core.Native` (C++) contains no project-specific business logic: pure ECS storage, scheduler/bus/field primitives, bootstrap graph, thread pool; C++20 stdlib plus the Vulkan SDK link required by the V1 compute substrate (`CMakeLists.txt:12,99`) — no other third-party dependency. It could compile and ship standalone.
+**Rule 1 — kernel standalone.** `DualFrontier.Core.Native` (C++) contains no project-specific business logic: pure ECS storage, scheduler/bus/field primitives, bootstrap graph, thread pool; C++23 stdlib plus the Vulkan SDK link required by the V1 compute substrate (`CMakeLists.txt:12,99`) — no other third-party dependency. It could compile and ship standalone.
 
 **Rule 2 — federated P/Invoke surface.** All P/Invoke to `DualFrontier.Core.Native.dll` lives in `DualFrontier.Core.Interop`; all P/Invoke to OS/driver DLLs (vulkan-1, user32, kernel32) lives in `DualFrontier.Runtime.Native` (`VkApi.cs`, `Win32Api.cs`). No other project declares `[DllImport]` (verified census). This is the DFK002 federated model (A'.9.1 Phase β §8); the predecessor's single-surface wording predates the Runtime split.
 

@@ -1,6 +1,6 @@
 using System;
 using DualFrontier.Application.Bridge;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Application.Tests.Bridge;

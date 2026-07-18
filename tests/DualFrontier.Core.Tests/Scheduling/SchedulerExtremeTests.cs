@@ -15,7 +15,7 @@ using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;
 using DualFrontier.Core.Tests.Scheduling.Fixtures;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 using Xunit.Abstractions;
 

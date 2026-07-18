@@ -1,9 +1,18 @@
 cmake_minimum_required(VERSION 3.20)
 project(DualFrontier.Core.Native LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(MSVC)
+  # К-L1 as amended (STACK_UPDATE 2026-07-17): C++23 via /std:c++23preview.
+  # The VS-bundled CMake (4.2.3-msvc3) maps CXX_STANDARD 23 to /std:c++latest
+  # (no c++23preview mapping in its MSVC-CXX.cmake) — pin the ratified flag
+  # explicitly. Sunset: F-44 (stable /std:c++23 when Build Tools 14.52 defaults).
+  set(CMAKE_CXX23_STANDARD_COMPILE_OPTION "-std:c++23preview")
+  set(CMAKE_CXX23_EXTENSION_COMPILE_OPTION "-std:c++23preview")
+endif()
 
 # V1 substrate primitive — Vulkan link для compute_pipeline + compute_dispatch wiring
 # per VULKAN_SUBSTRATE.md §1.2 + §3. Found via standard CMake module which honours

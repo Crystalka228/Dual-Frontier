@@ -1,6 +1,6 @@
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop.Marshalling;
-using FluentAssertions;
+using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Interop.Tests;
