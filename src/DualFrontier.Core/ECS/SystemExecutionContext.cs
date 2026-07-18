@@ -123,6 +123,38 @@ public sealed class SystemExecutionContext
     }
 
     /// <summary>
+    /// Routes a fault thrown by the system/subscriber bound to this context under
+    /// the D2 origin-asymmetric policy (CONCURRENCY_AND_MEMORY_MODEL §7): a
+    /// mod-origin fault is reported to the <see cref="IModFaultSink"/> and
+    /// CONTAINED — the caller continues; a core-origin fault (or one from a
+    /// context with no mod identity) is RECORDED on the existing logging surface
+    /// and the caller must RETHROW, so fail-fast is preserved. The record is a
+    /// DEBUG-build diagnostic aid; the rethrow is the config-independent contract
+    /// (ENGINE_LIFECYCLE_AND_TRANSACTIONS §4, fault class 1 — a core bug crashes
+    /// in both DEBUG and RELEASE). This is the single definition of the policy;
+    /// the domain bus (both delivery modes) and the scheduler's per-phase catch
+    /// call it. First read site of <c>_faultSink</c> since the K8.3+K8.4 cutover.
+    /// </summary>
+    /// <param name="ex">The fault to route.</param>
+    /// <param name="modId">The offending mod id when the result is
+    /// <see cref="FaultDisposition.ContainedMod"/>; otherwise null.</param>
+    /// <returns>Whether the fault was contained at the sink or must be rethrown.</returns>
+    internal FaultDisposition RouteFault(Exception ex, out string? modId)
+    {
+        if (_origin == SystemOrigin.Mod && _modId is not null)
+        {
+            _faultSink.ReportFault(_modId, ex.Message);
+            modId = _modId;
+            return FaultDisposition.ContainedMod;
+        }
+
+        modId = null;
+        System.Diagnostics.Debug.WriteLine(
+            $"[EQ-A1] core-origin fault in system '{_systemName}' (origin={_origin}): {ex}");
+        return FaultDisposition.RethrowCore;
+    }
+
+    /// <summary>
     /// Current execution context for the calling thread. Null when the
     /// calling thread does not belong to the scheduler (e.g. the Launcher
     /// render thread, a test that has not pushed a context).
@@ -158,4 +190,19 @@ public sealed class SystemExecutionContext
     {
         _current.Value = null;
     }
+}
+
+/// <summary>
+/// Outcome of <see cref="SystemExecutionContext.RouteFault"/>: whether a fault
+/// was contained at the mod-fault sink (mod origin — caller continues) or must
+/// be rethrown (core origin — fail-fast). The D2 origin-asymmetric policy
+/// (CONCURRENCY_AND_MEMORY_MODEL §7).
+/// </summary>
+internal enum FaultDisposition
+{
+    /// <summary>Mod-origin fault reported to the sink; caller continues.</summary>
+    ContainedMod,
+
+    /// <summary>Core-origin fault recorded; caller must rethrow (fail-fast).</summary>
+    RethrowCore,
 }

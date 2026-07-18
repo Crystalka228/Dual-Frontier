@@ -161,7 +161,18 @@ internal sealed class DomainEventBus
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error publishing event {eventType.Name}: {ex.Message}");
+                // D2 origin-asymmetric fault policy (CONCURRENCY_AND_MEMORY_MODEL §7):
+                // a mod-origin subscriber fault routes to the IModFaultSink and
+                // delivery continues to the remaining subscribers; a core-origin
+                // fault (or one whose subscription captured no system context) is
+                // recorded and rethrown -- fail-fast. Replaces the former
+                // swallow-to-console, which hid every fault from the mod-fault
+                // lifecycle and from diagnostics (CMM §7 "even the good mode
+                // under-reports").
+                SystemExecutionContext? ctx = sub.CapturedContext;
+                if (ctx is not null && ctx.RouteFault(ex, out _) == FaultDisposition.ContainedMod)
+                    continue;
+                throw;
             }
         }
     }
@@ -178,6 +189,20 @@ internal sealed class DomainEventBus
         try
         {
             sub.Invoker(evt);
+        }
+        catch (Exception ex)
+        {
+            // D2 parity with DeliverSync (CONCURRENCY_AND_MEMORY_MODEL §7):
+            // per-subscriber isolation MUST be symmetric across delivery modes.
+            // Previously InvokeDeferred had no catch at all, so a faulting handler
+            // unwound FlushDeferred -> ExecutePhase -> RunLoop and killed the
+            // simulation thread -- a mod's queued-mode handler could crash the game
+            // that its sync handler could not. Mod-origin faults route to the sink
+            // and are contained (remaining subscribers still deliver); core-origin
+            // faults rethrow (fail-fast). The finally still pops the context.
+            if (ctx is not null && ctx.RouteFault(ex, out _) == FaultDisposition.ContainedMod)
+                return;
+            throw;
         }
         finally
         {
