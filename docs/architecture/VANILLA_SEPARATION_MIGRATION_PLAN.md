@@ -5,7 +5,7 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.0.1
+version: 1.1.0
 first_authored: 2026-07-18
 last_modified: 2026-07-18
 content_language: en
@@ -13,16 +13,16 @@ next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 review_cadence: on-change
 last_review_date: 2026-07-18
-last_review_event: 'Ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0, BOUNDARY_W0 cascade C3 (companion to DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY, LOCKED the same commit). W0 row moves to DONE at closure (C6); the document ends SUPERSEDED into ROADMAP at W8.'
+last_review_event: 'MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
 reviewer: Crystalka
 ---
 
 # Vanilla Separation Migration Plan (waves + map)
 
-> **Document class: Draft program document.** Companion to
-> GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md (the law). This plan carries the measured
-> distance from current to target and the wave program that closes it. Flips Live at
-> ratification; rows move to DONE with commit hashes as waves close; the document ends
+> **Document class: Live program document.** Live since 2026-07-18 (EVT-2026-07-18-BOUNDARY_W0).
+> Companion to GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md (the law). This plan carries the measured
+> distance from current to target and the wave program that closes it. Rows move to DONE with commit
+> hashes as waves close; the document ends
 > SUPERSEDED into ROADMAP when Wave 8's proof lands. Evidence base:
 > docs/reports/GAME_ENGINE_BOUNDARY_AUDIT_REPORT.md (HEAD 4c58942) -- every number below
 > is measured there, none is estimated.
@@ -36,6 +36,25 @@ engine "Domain layer". This plan's endpoint is different: the Domain layer DISSO
 The old plan's remaining M-series assumptions (mass `git mv` of prepared systems) are
 retired -- the audit shows a mass move today would force vanilla mods to reference Core
 (C-1) or spawn privileged facades. The SDK is unlocked first; slices move only after.
+
+## 1.1 The scaffolding ruling (2026-07-18)
+
+Operator ruling, ratified in chat 2026-07-18 (recorded via DOC-D-BOUNDARY_BANNER_PATCH_BRIEF): the
+current gameplay logic is NOT a product to preserve -- it is a minimal conditional test harness. The
+separation program may therefore DELETE and REIMPLEMENT rather than migrate-preserve. Consequences:
+equivalence obligations bind ENGINE behavior only, never harness gameplay behavior; there is no
+save-compatibility obligation toward pre-separation saves of the harness; vanilla content is grown
+CLEAN inside mods, not rescued out of src/. The law (Definition of Done section 6, B-1..B-6) is
+unchanged -- only the migration MECHANICS get cheaper.
+
+Wave consequences:
+- **W3 (vertical slice)** is WRITTEN FRESH in the mod: the src/ Weather code is reference material,
+  not a migration source.
+- **W5 (slice replacement)**: implement each slice clean in its owning mod, then DELETE the src/
+  originals in the same closure -- no equivalence proof against harness gameplay behavior; the ratchet
+  census still shrinks by the slice's edge count.
+- **W7 (persistence)** carries NO backward-compatibility obligation toward harness-era saves: the PSC
+  schema starts clean.
 
 ## 2. Measured baseline (audit digest -- re-verify at each wave's Phase 0)
 
@@ -99,8 +118,9 @@ the engine contract (typed hub or channels per BD-3); capability registry -> led
 deterministic type IDs from (providerId, schemaId); manifest capability checked against
 type owner. Gate: kernel capability surface contains zero Pawn/Combat/Magic/Inventory/
 World types; [SystemAccess] no longer binds nameof(IGameServices.X).
-**W3 -- Walking vertical slice.** ONE small mechanic end-to-end as a real mod (candidate:
-Weather -- WeatherSystem + WeatherChangedEvent exist and are leaf-like): component, system,
+**W3 -- Walking vertical slice (written fresh).** ONE small mechanic end-to-end as a real mod, WRITTEN
+FRESH (candidate: Weather -- the src/ WeatherSystem + WeatherChangedEvent are reference material, not a
+migration source; section 1.1): component, system,
 event, initial data, presentation reaction, unload/reload. Purpose: surface every missing
 world/service/asset/input/lifecycle SDK gap BEFORE mass migration. Gate: disabling the mod
 removes the mechanic entirely; engine stays healthy.
@@ -110,18 +130,20 @@ Cascade B decision D3 -- EngineSession is designed ONCE, under this law); compon
 registration, factories, seeds, initial spawn move to vanilla lifecycle stages; distribution
 manifest ships; orphan config deleted. Gate: EngineSession compiles with zero references to
 Components/Events/Systems/AI.
-**W5 -- Atomic slice moves (BD-5, BD-6).** Dependency-aware order: Vanilla.Core shared
-contracts -> World -> Pawn -> Inventory -> Combat -> Magic. Per slice, one closure:
-register schemas -> systems -> tests -> presentation -> unload proof -> DELETE old
-sources/ProjectReferences/capabilities. Never two type identities of one component across
-ALCs. Gate per slice: single mod owner; ratchet census shrinks by the slice's edge count.
+**W5 -- Slice replacement (clean rebuild + delete) (BD-5, BD-6).** Dependency-aware order: Vanilla.Core
+shared contracts -> World -> Pawn -> Inventory -> Combat -> Magic. Per slice, one closure: implement the
+slice CLEAN in its owning mod (register schemas -> systems -> tests -> presentation -> unload proof),
+then DELETE the src/ originals (sources/ProjectReferences/capabilities) in the same closure -- no
+equivalence proof against harness gameplay behavior (section 1.1). Never two type identities of one
+component across ALCs. Gate per slice: single mod owner; ratchet census shrinks by the slice's edge count.
 **W6 -- Presentation, input, assets (BD-9).** Game render commands + HUD to vanilla
 presentation mods; namespaced asset handles, input actions, layer registration,
 deterministic cleanup. Gate: headless engine and a foreign pack load zero Dual Frontier
 presentation types.
 **W7 -- Generic persistence (BD-7; after PSC ratification).** Engine snapshot generic;
 mod-owned sections/codecs/migrations; missing/updated-mod policy; game DTOs + RLE +
-quantisation move to vanilla. Gate: engine saves a blank/foreign distribution with no game
+quantisation are re-authored CLEAN in vanilla (NO backward-compatibility obligation toward harness-era
+saves; the PSC schema starts clean -- section 1.1). Gate: engine saves a blank/foreign distribution with no game
 DTO; vanilla save round-trips only under a compatible mod set or explicit migrations.
 **W8 -- Reuse proof (the falsifiability capstone).** Engine-only boot; full Vanilla
 distribution through the ordinary Mod OS path; ONE foreign-genre probe distribution with

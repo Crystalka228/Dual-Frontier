@@ -509,7 +509,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-18
   last_modified: 2026-07-18
   content_language: en
@@ -517,7 +517,7 @@ documents:
   title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'Ratified LOCKED v1.0.0 2026-07-18 (operator chat act) per EVT-2026-07-18-BOUNDARY_W0, BOUNDARY_W0 cascade C3. Opens the game-vs-engine composition axis grounded in DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT (HEAD 4c58942); companion DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN flips Live the same commit; B-2 (no new gameplay nouns in src/) active from this ratification. Prior: AUTHORED 0.1.0 enrolled at BOUNDARY_W0 C1.'
+  last_review_event: 'Banner PATCH 1.0.0 -> 1.0.1 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): the stale body banner (AUTHORED target-axis law, pending ratification) updated to the ratified-successor LOCKED form; no lifecycle transition. Prior: ratified LOCKED v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (BOUNDARY_W0 C3), opening the game-vs-engine composition axis grounded in DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT (HEAD 4c58942); AUTHORED 0.1.0 enrolled at C1.'
   reviewer: Crystalka
 - register_id: DOC-A-GODOT_INTEGRATION
   path: docs/architecture/historical/GODOT_INTEGRATION.md
@@ -1168,7 +1168,7 @@ documents:
   tier: 2
   lifecycle: Live
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-18
   last_modified: 2026-07-18
   content_language: en
@@ -1176,7 +1176,7 @@ documents:
   title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
   review_cadence: on-change
   last_review_date: 2026-07-18
-  last_review_event: Ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0, BOUNDARY_W0 cascade C3 (companion to DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY, LOCKED the same commit). W0 row moves to DONE at closure (C6); the document ends SUPERSEDED into ROADMAP at W8.
+  last_review_event: 'MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
   reviewer: Crystalka
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md
@@ -1877,6 +1877,20 @@ documents:
   risks_referenced:
   - RISK-004
   special_case_rationale: Skeleton brief for Roslyn architectural analyzer encoding К-Lxx invariants. Dual purpose (M-series migration verifier + К-Lxx compile-time enforcement). 17-18 expected analyzer rules. Awaits full brief authoring at К-closure report (А'.8) landed timing.
+- register_id: DOC-D-BOUNDARY_BANNER_PATCH_BRIEF
+  path: tools/briefs/BOUNDARY_BANNER_PATCH_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  last_review_event: 'Authored + EXECUTED in one commit 2026-07-18 (BOUNDARY_BANNER_PATCH, doc-only micro-patch on main; operator chat ratification 2026-07-18). Self-enrolled via the sync scan (Draft) and flipped EXECUTED in the same commit; no EVT (PR #45 post-merge-PATCH precedent -- provenance lives in the patched docs last_review_event). Patches: law DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY 1.0.0 -> 1.0.1, plan DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN 1.0.1 -> 1.1.0.'
+  title: BOUNDARY_BANNER_PATCH micro-brief -- stale-banner fixes on the two boundary docs + the ratified scaffolding ruling folded into the migration plan (MINOR)
 - register_id: DOC-D-BOUNDARY_W0_BRIEF
   path: tools/briefs/BOUNDARY_W0_BRIEF.md
   project: Dual Frontier
@@ -2030,6 +2044,19 @@ documents:
   content_language: en
   next_review_due: 
   title: EQ_A1_FAULT_SYMMETRY execution brief (Cascade A of the EQ-a shutdown-law family -- M4 deferred-catch parity + M1 ExecutePhase per-system catch, under the ratified D2 origin-asymmetric policy)
+- register_id: DOC-D-EQ_A2_SHUTDOWN_TRANSACTION_BRIEF
+  path: tools/briefs/EQ_A2_SHUTDOWN_TRANSACTION_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  title: EQ_A2_SHUTDOWN_TRANSACTION execution brief (Cascade B of the EQ-a shutdown-law family -- M3 EngineSession + M2 UnloadAll production caller + M7 Degraded/EngineHealth + M8 df_bus_clear promotion, under ratified D3/D4/D5/D6/D8 + riders D9/D10/REC-A1)
 - register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
   path: tools/briefs/F10_TEST_ISOLATION_BRIEF.md
   project: Dual Frontier

@@ -76,7 +76,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-IDENTITY_AND_ABI_CONTRACT
   path: docs/architecture/IDENTITY_AND_ABI_CONTRACT.md
   category: A
@@ -166,7 +166,7 @@ documents:
   category: A
   tier: 2
   lifecycle: Live
-  version: 1.0.1
+  version: 1.1.0
 - register_id: DOC-A-VULKAN_SUBSTRATE_V2
   path: docs/architecture/VULKAN_SUBSTRATE.md
   category: A
