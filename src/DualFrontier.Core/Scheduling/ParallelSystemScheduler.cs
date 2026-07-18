@@ -27,12 +27,19 @@ namespace DualFrontier.Core.Scheduling;
 ///   4. <c>SystemExecutionContext.PopContext</c> clears the guard — always,
 ///      even if <c>Update</c> throws.
 ///
-/// Exceptions from <c>SystemBase.Update</c> are not caught here — they
-/// propagate through <c>Parallel.ForEach</c> as an <c>AggregateException</c>.
-/// This is deliberate: during development we want system faults to surface
-/// immediately. Mod-fault handling lives in the Application layer
-/// (realized — <c>ModFaultHandler</c>, fed via <c>ModLoader.HandleModFault</c>);
-/// Core-system exceptions propagate.
+/// Exceptions from <c>SystemBase.Update</c> are caught per-system under the D2
+/// origin-asymmetric policy (CONCURRENCY_AND_MEMORY_MODEL §7, via the single
+/// <see cref="SystemExecutionContext.RouteFault"/> definition): a mod-origin
+/// fault is reported to the <see cref="IModFaultSink"/> and its mod is committed
+/// to the <see cref="ModQuarantine"/> skip-set, so that mod's systems are skipped
+/// on every subsequent tick this session — the immediate half of the
+/// ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.3 split (the queued unload chain still
+/// runs at the next menu open via <c>ModIntegrationPipeline.Apply</c>). The phase
+/// completes, sibling systems run, and <c>FlushDeferred</c> still runs. A
+/// core-origin fault is recorded and rethrown: it unwinds through
+/// <c>Parallel.ForEach</c> as an <c>AggregateException</c> to fail fast — as
+/// before, but now with a recorded cause. Fail-fast for core bugs holds in both
+/// DEBUG and RELEASE (ELT §4, fault class 1).
 ///
 /// The <c>MaxDegreeOfParallelism</c> follows the documented N-2 rule —
 /// leaving headroom for the presentation main thread (Launcher render loop)
@@ -54,6 +61,12 @@ internal sealed class ParallelSystemScheduler
     private readonly ParallelOptions _parallelOptions;
     private Dictionary<SystemBase, SystemExecutionContext> _contextCache;
     private IReadOnlyDictionary<SystemBase, SystemMetadata> _systemMetadata;
+    // EQ_A1 / M1 — faulted-mod skip-set (ELT §2.3 immediate quarantine). A mod
+    // system that faults commits its modId here; ExecutePhase then skips that
+    // mod's systems on subsequent ticks. Session-lived and NOT reset by Rebuild,
+    // so a mod that faulted before a menu rebuild stays quarantined until its
+    // systems are actually evicted from the graph.
+    private readonly ModQuarantine _quarantine = new();
 
     /// <summary>
     /// Creates a scheduler bound to the given phase list, tick clock, and
@@ -151,11 +164,29 @@ internal sealed class ParallelSystemScheduler
             if (!_ticks.ShouldRun(system))
                 return;
 
+            // EQ_A1 / M1 — ELT §2.3 immediate quarantine: a mod whose system
+            // already faulted this session is skipped (its unload is queued for the
+            // next menu open). Consulted here, before the context push.
+            if (IsQuarantined(system))
+                return;
+
             SystemExecutionContext ctx = _contextCache[system];
             SystemExecutionContext.PushContext(ctx);
             try
             {
                 system.Update(delta);
+            }
+            catch (Exception ex)
+            {
+                // D2 origin dispatch (CONCURRENCY_AND_MEMORY_MODEL §7, via the single
+                // RouteFault definition): mod-origin -> reported to the sink and
+                // committed to the quarantine skip-set, then this iteration ends and
+                // the phase carries on (siblings run, the flush runs); core-origin ->
+                // recorded and rethrown, unwinding as an AggregateException to fail
+                // fast (as before, now with a cause). The finally still pops.
+                if (ctx.RouteFault(ex, out string? modId) == FaultDisposition.RethrowCore)
+                    throw;
+                _quarantine.Quarantine(modId!);
             }
             finally
             {
@@ -227,6 +258,14 @@ internal sealed class ParallelSystemScheduler
     /// remain referentially identical.
     /// </summary>
     internal IReadOnlyList<SystemPhase> Phases => _phases;
+
+    // EQ_A1 / M1 — quarantine consult for ExecutePhase: a system is skipped when
+    // its owning mod (per the metadata table BuildContext reads) is in the
+    // ModQuarantine set. Core systems (no modId) are never quarantined.
+    private bool IsQuarantined(SystemBase system)
+        => _systemMetadata.TryGetValue(system, out SystemMetadata? meta)
+           && meta.ModId is not null
+           && _quarantine.IsQuarantined(meta.ModId);
 
     private SystemExecutionContext BuildContext(SystemBase system)
     {
