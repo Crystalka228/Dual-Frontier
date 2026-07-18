@@ -9,7 +9,7 @@
     MSBuild Directory.Build.props auto-discovery uses «first found wins» walking
     up toward repo root. This src/-scoped file overrides root auto-load, so we
     explicitly Import the repo-root Directory.Build.props к inherit canonical
-    project properties (net8.0 + TreatWarningsAsErrors + Nullable + ImplicitUsings
+    project properties (net10.0 + TreatWarningsAsErrors + Nullable + ImplicitUsings
     + GenerateDocumentationFile + CS1591 suppression + Company/Product metadata +
     V0.B SPIR-V shader compilation target).
 
