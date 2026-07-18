@@ -297,7 +297,12 @@ public sealed class VulkanDevice : IDisposable
     {
         if (_device != IntPtr.Zero)
         {
-            VkApi.vkDeviceWaitIdle(_device);
+            // M9 device-lost v1: classify device loss here (the VkResult was previously discarded
+            // entirely). Other non-success results stay unthrown -- adding a generic throw to this
+            // teardown-path call (Runtime.Dispose / LauncherRenderer.Shutdown) is out of M9 scope and
+            // hazardous during Dispose unwinding; the residual is seeded as a ROADMAP F-finding.
+            VkResult result = VkApi.vkDeviceWaitIdle(_device);
+            DeviceLost.ThrowIfLost(result, new DeviceLostContext(VulkanCall.DeviceWaitIdle));
         }
     }
 

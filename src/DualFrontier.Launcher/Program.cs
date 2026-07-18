@@ -66,6 +66,11 @@ internal static class Program
         session.Loop.Start();
 
         // === Main loop (Q-G-7 (d) hybrid orchestration, cascade #2 Crystalka Option A amendment) ===
+        // Device-loss boundary (M9 / D1): a VK_ERROR_DEVICE_LOST surfaced from inside RenderFrame is
+        // caught here and routed to a structured fail-fast (ELT §4 device-lost class). Null hook =
+        // production fail-fast; no recovery in v1 (device re-creation is future work).
+        var deviceLoss = new DeviceLossBoundary();
+        long frameIndex = 0;
         var lastFrameTime = DateTime.UtcNow;
         while (runtime.Window.IsOpen)
         {
@@ -88,7 +93,7 @@ internal static class Program
             //    PresentationBridge command queue.)
 
             // 4. Render frame (drain bridge + dispatch к SceneState + Vulkan record + present).
-            renderer.RenderFrame(deltaSeconds);
+            deviceLoss.RunGuarded(frameIndex++, () => renderer.RenderFrame(deltaSeconds));
         }
 
         // === Shutdown transaction (RESOURCE_OWNERSHIP_AND_LIFETIME 4.4 / CONCURRENCY 6.2) ===

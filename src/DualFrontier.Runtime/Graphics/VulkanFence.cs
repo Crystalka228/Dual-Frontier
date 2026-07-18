@@ -33,6 +33,7 @@ public sealed class VulkanFence : IDisposable
     {
         IntPtr fence = _fence;
         VkResult result = VkApi.vkWaitForFences(_device, 1, &fence, waitAll: 1, timeoutNs);
+        DeviceLost.ThrowIfLost(result, new DeviceLostContext(VulkanCall.WaitForFences));
         if (result != VkResult.VK_SUCCESS)
         {
             throw new InvalidOperationException($"vkWaitForFences failed: {result}");

@@ -86,6 +86,7 @@ public sealed class VulkanSwapchain : IDisposable
         VkResult result = VkApi.vkAcquireNextImageKHR(
             _device, _swapchain, ulong.MaxValue, signalSemaphore, signalFence, out uint imageIndex);
         outOfDate = result == VkResult.VK_ERROR_OUT_OF_DATE_KHR;
+        DeviceLost.ThrowIfLost(result, DeviceLostContext.ForSwapchain(VulkanCall.AcquireNextImage, this));
         if (result != VkResult.VK_SUCCESS && result != VkResult.VK_SUBOPTIMAL_KHR && !outOfDate)
         {
             throw new InvalidOperationException($"vkAcquireNextImageKHR failed: {result}");
@@ -119,6 +120,7 @@ public sealed class VulkanSwapchain : IDisposable
         {
             return true;
         }
+        DeviceLost.ThrowIfLost(result, DeviceLostContext.ForSwapchain(VulkanCall.QueuePresent, this));
         if (result != VkResult.VK_SUCCESS)
         {
             throw new InvalidOperationException($"vkQueuePresentKHR failed: {result}");

@@ -105,6 +105,7 @@ public sealed class VulkanCommandBuffer : IDisposable
 
         IntPtr fenceHandle = fence?.Handle ?? IntPtr.Zero;
         VkResult result = VkApi.vkQueueSubmit(queue, 1, in submit, fenceHandle);
+        DeviceLost.ThrowIfLost(result, new DeviceLostContext(VulkanCall.QueueSubmit));
         if (result != VkResult.VK_SUCCESS)
         {
             throw new InvalidOperationException($"vkQueueSubmit failed: {result}");
