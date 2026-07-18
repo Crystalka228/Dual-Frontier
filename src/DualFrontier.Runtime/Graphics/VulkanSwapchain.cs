@@ -32,24 +32,49 @@ public sealed class VulkanSwapchain : IDisposable
         _device = device.Handle;
         _physicalDevice = device.PhysicalDevice;
         _surface = surface.Handle;
-        CreateSwapchain(width, height, oldSwapchain: IntPtr.Zero);
+        // First creation: prepare then commit; nothing to reclaim (no prior swapchain).
+        Commit(PrepareSwapchain(width, height, oldSwapchain: IntPtr.Zero));
     }
 
     /// <summary>
-    /// Recreate swapchain с new extent. Tears down image views + VkSwapchain;
-    /// preserves the underlying VkSurfaceKHR. Caller must ensure GPU idle (vkDeviceWaitIdle)
-    /// before invoking.
+    /// Recreate swapchain с new extent as a prepare-before-reclaim transaction
+    /// (ELT §2.5 swapchain recreation): PREPARE the new swapchain + image views alongside the
+    /// old, COMMIT them in one infallible assignment, then RECLAIM the old set. A mid-prepare
+    /// failure leaves the old swapchain + views intact with no field mutated (ELT §1.1
+    /// corollary 1: reclaim MUST NOT begin before commit succeeds). Preserves the underlying
+    /// VkSurfaceKHR. Caller must ensure GPU idle (vkDeviceWaitIdle) before invoking.
     /// </summary>
     public void Recreate(uint width, uint height)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         IntPtr oldSwapchain = _swapchain;
-        DestroyImageViews();
-        CreateSwapchain(width, height, oldSwapchain);
+        SwapchainImage[] oldImages = _images;
+
+        // PREPARE -- the old swapchain is still alive here, so it feeds
+        // VkSwapchainCreateInfoKHR.oldSwapchain (:oldSwapchain hint). A failure throws BEFORE
+        // commit, so the old resources below are never reached and stay intact.
+        SwapchainResources prepared = PrepareSwapchain(width, height, oldSwapchain);
+
+        // COMMIT -- straight-line, no vk calls: publish the new resources atomically.
+        Commit(prepared);
+
+        // RECLAIM -- only after a successful commit (ELT §2.5, best-effort teardown of old set).
+        DestroyImageViews(oldImages);
         if (oldSwapchain != IntPtr.Zero)
         {
             VkApi.vkDestroySwapchainKHR(_device, oldSwapchain, IntPtr.Zero);
         }
+    }
+
+    /// <summary>Publishes prepared swapchain resources onto the instance (the ELT §2.5 commit step; no vk calls, cannot fail).</summary>
+    private void Commit(SwapchainResources prepared)
+    {
+        _swapchain = prepared.Swapchain;
+        _images = prepared.Images;
+        Format = prepared.Format;
+        Width = prepared.Width;
+        Height = prepared.Height;
+        PresentMode = prepared.PresentMode;
     }
 
     /// <summary>
@@ -101,7 +126,13 @@ public sealed class VulkanSwapchain : IDisposable
         return false;
     }
 
-    private unsafe void CreateSwapchain(uint width, uint height, IntPtr oldSwapchain)
+    /// <summary>
+    /// The ELT §2.5 PREPARE step: build a new VkSwapchainKHR (with <paramref name="oldSwapchain"/>
+    /// as the recreation hint) and its per-image views into fresh locals, WITHOUT touching any
+    /// instance field. On any failure the partial new resources are reclaimed and the exception
+    /// propagates -- so the caller's old state is never disturbed.
+    /// </summary>
+    private unsafe SwapchainResources PrepareSwapchain(uint width, uint height, IntPtr oldSwapchain)
     {
         // Query surface capabilities.
         VkResult capResult = VkApi.vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
@@ -184,73 +215,96 @@ public sealed class VulkanSwapchain : IDisposable
             oldSwapchain = oldSwapchain,
         };
 
-        VkResult result = VkApi.vkCreateSwapchainKHR(_device, in createInfo, IntPtr.Zero, out _swapchain);
+        VkResult result = VkApi.vkCreateSwapchainKHR(_device, in createInfo, IntPtr.Zero, out IntPtr newSwapchain);
         if (result != VkResult.VK_SUCCESS)
         {
             throw new InvalidOperationException($"vkCreateSwapchainKHR failed: {result}");
         }
 
-        // Enumerate images.
-        uint count = 0;
-        VkApi.vkGetSwapchainImagesKHR(_device, _swapchain, ref count, null);
-        var rawImages = new IntPtr[count];
-        fixed (IntPtr* imgsPtr = rawImages)
+        try
         {
-            VkApi.vkGetSwapchainImagesKHR(_device, _swapchain, ref count, imgsPtr);
-        }
-
-        // Create per-image view.
-        _images = new SwapchainImage[count];
-        for (int i = 0; i < count; i++)
-        {
-            var viewInfo = new VkImageViewCreateInfo
+            // Enumerate images of the NEW swapchain.
+            uint count = 0;
+            VkApi.vkGetSwapchainImagesKHR(_device, newSwapchain, ref count, null);
+            var rawImages = new IntPtr[count];
+            fixed (IntPtr* imgsPtr = rawImages)
             {
-                sType = VkStructureType.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-                pNext = IntPtr.Zero,
-                flags = 0,
-                image = rawImages[i],
-                viewType = VkImageViewType.VK_IMAGE_VIEW_TYPE_2D,
-                format = chosenFormat.format,
-                components = new VkComponentMapping
-                {
-                    r = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
-                    g = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
-                    b = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
-                    a = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
-                },
-                subresourceRange = new VkImageSubresourceRange
-                {
-                    aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
-                    baseMipLevel = 0,
-                    levelCount = 1,
-                    baseArrayLayer = 0,
-                    layerCount = 1,
-                },
-            };
-            VkResult viewResult = VkApi.vkCreateImageView(_device, in viewInfo, IntPtr.Zero, out IntPtr view);
-            if (viewResult != VkResult.VK_SUCCESS)
-            {
-                throw new InvalidOperationException($"vkCreateImageView failed: {viewResult}");
+                VkApi.vkGetSwapchainImagesKHR(_device, newSwapchain, ref count, imgsPtr);
             }
-            _images[i] = new SwapchainImage(rawImages[i], view);
-        }
 
-        Format = (VkFormatPublic)(int)chosenFormat.format;
-        Width = actualWidth;
-        Height = actualHeight;
-        PresentMode = (VkPresentModePublic)(int)chosenPresent;
+            // Build the per-image views all-or-nothing (ELT §2.5 prepare): a mid-loop
+            // vkCreateImageView failure rolls back the views already built in this call.
+            SwapchainImage[] newImages = PrepareBeforeReclaim.Build(
+                rawImages,
+                build: img => new SwapchainImage(img, CreateImageView(img, chosenFormat.format)),
+                reclaim: si =>
+                {
+                    if (si.ImageViewHandle != IntPtr.Zero)
+                    {
+                        VkApi.vkDestroyImageView(_device, si.ImageViewHandle, IntPtr.Zero);
+                    }
+                });
+
+            return new SwapchainResources(
+                newSwapchain,
+                newImages,
+                (VkFormatPublic)(int)chosenFormat.format,
+                actualWidth,
+                actualHeight,
+                (VkPresentModePublic)(int)chosenPresent);
+        }
+        catch
+        {
+            // Any new views are already reclaimed by Build; drop the new swapchain too so a
+            // failed prepare leaks nothing and leaves the caller's old state fully intact.
+            VkApi.vkDestroySwapchainKHR(_device, newSwapchain, IntPtr.Zero);
+            throw;
+        }
     }
 
-    private void DestroyImageViews()
+    private unsafe IntPtr CreateImageView(IntPtr image, VkFormat format)
     {
-        foreach (SwapchainImage img in _images)
+        var viewInfo = new VkImageViewCreateInfo
+        {
+            sType = VkStructureType.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+            pNext = IntPtr.Zero,
+            flags = 0,
+            image = image,
+            viewType = VkImageViewType.VK_IMAGE_VIEW_TYPE_2D,
+            format = format,
+            components = new VkComponentMapping
+            {
+                r = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
+                g = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
+                b = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
+                a = VkComponentSwizzle.VK_COMPONENT_SWIZZLE_IDENTITY,
+            },
+            subresourceRange = new VkImageSubresourceRange
+            {
+                aspectMask = VkImageAspectFlags.VK_IMAGE_ASPECT_COLOR_BIT,
+                baseMipLevel = 0,
+                levelCount = 1,
+                baseArrayLayer = 0,
+                layerCount = 1,
+            },
+        };
+        VkResult viewResult = VkApi.vkCreateImageView(_device, in viewInfo, IntPtr.Zero, out IntPtr view);
+        if (viewResult != VkResult.VK_SUCCESS)
+        {
+            throw new InvalidOperationException($"vkCreateImageView failed: {viewResult}");
+        }
+        return view;
+    }
+
+    private void DestroyImageViews(SwapchainImage[] images)
+    {
+        foreach (SwapchainImage img in images)
         {
             if (img.ImageViewHandle != IntPtr.Zero)
             {
                 VkApi.vkDestroyImageView(_device, img.ImageViewHandle, IntPtr.Zero);
             }
         }
-        _images = Array.Empty<SwapchainImage>();
     }
 
     public void Dispose()
@@ -259,7 +313,8 @@ public sealed class VulkanSwapchain : IDisposable
         {
             return;
         }
-        DestroyImageViews();
+        DestroyImageViews(_images);
+        _images = Array.Empty<SwapchainImage>();
         if (_swapchain != IntPtr.Zero)
         {
             VkApi.vkDestroySwapchainKHR(_device, _swapchain, IntPtr.Zero);
@@ -267,6 +322,15 @@ public sealed class VulkanSwapchain : IDisposable
         }
         _disposed = true;
     }
+
+    /// <summary>Prepared-but-not-yet-committed swapchain resources (the ELT §2.5 prepare output).</summary>
+    private readonly record struct SwapchainResources(
+        IntPtr Swapchain,
+        SwapchainImage[] Images,
+        VkFormatPublic Format,
+        uint Width,
+        uint Height,
+        VkPresentModePublic PresentMode);
 }
 
 /// <summary>Public-facing mirror of VkPresentModeKHR.</summary>

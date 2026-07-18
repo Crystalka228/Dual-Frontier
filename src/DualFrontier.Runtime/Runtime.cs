@@ -186,22 +186,33 @@ public sealed class Runtime : IDisposable
     }
 
     /// <summary>
-    /// Recreate framebuffers к match current swapchain image views. Caller must invoke after
-    /// <c>Swapchain.Recreate</c> + <c>VulkanDevice.WaitIdle</c> к prevent rendering into stale
-    /// framebuffer references (old image views are destroyed by Swapchain.Recreate).
+    /// Recreate framebuffers к match current swapchain image views as a prepare-before-reclaim
+    /// transaction (ELT §2.5 swapchain recreation): PREPARE the new framebuffers alongside the
+    /// old, COMMIT them in one infallible list swap, then RECLAIM (dispose) the old set. A
+    /// mid-build failure rolls back the partial new set and leaves the existing framebuffers
+    /// intact (ELT §1.1 corollary 1: reclaim MUST NOT begin before commit succeeds). Caller must
+    /// invoke after <c>Swapchain.Recreate</c> + <c>VulkanDevice.WaitIdle</c> к prevent rendering
+    /// into stale framebuffer references (old image views are destroyed by Swapchain.Recreate).
     /// </summary>
     public void RecreateFramebuffersForSwapchain()
     {
-        foreach (VulkanFramebuffer fb in _framebuffers)
+        // PREPARE -- build the new framebuffers without touching _framebuffers; a mid-build
+        // failure rolls back the partial set and throws, leaving the old framebuffers intact.
+        VulkanFramebuffer[] prepared = PrepareBeforeReclaim.Build(
+            Swapchain.Images,
+            build: img => new VulkanFramebuffer(
+                VulkanDevice, RenderPass, img.ImageViewHandle, Swapchain.Width, Swapchain.Height),
+            reclaim: fb => fb.Dispose());
+
+        // COMMIT -- swap the list contents in one infallible step (never left partial).
+        VulkanFramebuffer[] old = _framebuffers.ToArray();
+        _framebuffers.Clear();
+        _framebuffers.AddRange(prepared);
+
+        // RECLAIM -- dispose the old framebuffers only after commit (ELT §2.5, best-effort).
+        foreach (VulkanFramebuffer fb in old)
         {
             fb.Dispose();
-        }
-        _framebuffers.Clear();
-        foreach (SwapchainImage img in Swapchain.Images)
-        {
-            _framebuffers.Add(new VulkanFramebuffer(
-                VulkanDevice, RenderPass, img.ImageViewHandle,
-                Swapchain.Width, Swapchain.Height));
         }
     }
 
