@@ -23,6 +23,9 @@ namespace DualFrontier.Modding.Tests.Pipeline;
 /// post-UnloadMod removal, fresh-list-per-call (snapshot, not live
 /// view).
 /// </summary>
+// EQ_A3 F-50: this suite drives real native mod-unload (df_scheduler_unload_mod_native_state,
+// process-global), now fail-loud-guarded; serialize with the other native-unload suites.
+[Collection("GameLoopSerial")]
 public sealed class PipelineGetActiveModsTests
 {
     // 27

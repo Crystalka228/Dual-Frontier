@@ -32,6 +32,9 @@ namespace DualFrontier.Modding.Tests.Pipeline;
 /// build-pipeline override, and mod-menu UI integration. Those land in
 /// later sub-phases per the M7 decomposition.
 /// </summary>
+// EQ_A3 F-50: this suite drives real native mod-unload (df_scheduler_unload_mod_native_state,
+// process-global), now fail-loud-guarded; serialize with the other native-unload suites.
+[Collection("GameLoopSerial")]
 public sealed class M71PauseResumeTests
 {
     [Fact]

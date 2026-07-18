@@ -40,6 +40,9 @@ public sealed record M72TestContract(string Marker) : IModContract;
 /// per v1.4 §9.5 step 7 — and the <c>ModUnloadTimeout</c> warning surface.
 /// Those land in M7.3 alongside Phase 2's carried-debt unload tests.
 /// </summary>
+// EQ_A3 F-50: this suite drives real native mod-unload (df_scheduler_unload_mod_native_state,
+// process-global), now fail-loud-guarded; serialize with the other native-unload suites.
+[Collection("GameLoopSerial")]
 public sealed class M72UnloadChainTests
 {
     private const string TestModId = "tests.regular.m72fullsurface";

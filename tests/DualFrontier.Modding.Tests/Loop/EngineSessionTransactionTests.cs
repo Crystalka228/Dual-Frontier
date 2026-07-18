@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Loop;
+using DualFrontier.Core.Interop;
 using AwesomeAssertions;
 using Xunit;
 
@@ -100,6 +101,35 @@ public sealed class EngineSessionTransactionTests
         steps.Count.Should().Be(afterFirst, "double-Dispose is a no-op");
         steps.Should().ContainSingle(s => s == ShutdownStep.WorldDisposed,
             "the world is disposed exactly once across repeated Dispose calls");
+    }
+
+    [Fact]
+    public void Dispose_WhenCheckedDestroyReportsBusy_AbortsAfterFence()
+    {
+        // EQ_A3 / К-L20: a WORLD_BUSY refusal AFTER a passed fence is an invariant
+        // violation -> abort-not-force with structured diagnostics (the counts).
+        // Injected via WorldTeardownOverride so the route is asserted without a
+        // real busy native world (the H-SEAM seam). OnAbort observes it so no
+        // Environment.FailFast fires.
+        var steps = new List<ShutdownStep>();
+        ShutdownAbortReport? abort = null;
+        EngineSession session = NewSession(new ShutdownTransactionHooks
+        {
+            WorldTeardownOverride = () => new WorldTeardownResult(Destroyed: false, ActiveSpans: 2, ActiveBatches: 1),
+            OnStep = steps.Add,
+            OnAbort = r => abort = r,
+        });
+
+        session.Dispose();
+
+        steps.Should().Contain(ShutdownStep.FencePassed, "the fence passes before S7 runs");
+        steps.Should().NotContain(ShutdownStep.WorldDisposed,
+            "a busy checked-destroy refusal must NOT record a successful world disposal");
+        steps.Should().Contain(ShutdownStep.Aborted);
+        abort.Should().NotBeNull("a busy checked-destroy after the fence must abort the transaction");
+        abort!.WorldBusy.Should().BeTrue();
+        abort.ActiveSpans.Should().Be(2);
+        abort.ActiveBatches.Should().Be(1);
     }
 }
 

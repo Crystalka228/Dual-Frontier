@@ -28,6 +28,15 @@ internal static partial class NativeMethods
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void df_world_destroy(IntPtr world);
 
+    // EQ_A3 — checked world teardown (returns df_status; see NativeWorld). The
+    // unchecked df_world_destroy above REMAINS as the finalizer backstop.
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_world_active_span_count(IntPtr world, out int outCount);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int df_world_destroy_checked(
+        IntPtr world, out int outActiveSpans, out int outActiveBatches);
+
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern ulong df_world_create_entity(IntPtr world);
 

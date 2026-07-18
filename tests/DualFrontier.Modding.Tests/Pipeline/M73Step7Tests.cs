@@ -46,6 +46,9 @@ namespace DualFrontier.Modding.Tests.Pipeline;
 /// hard-required <c>WeakReference.IsAlive == false</c> check) live in
 /// <c>M73Phase2DebtTests</c>.
 /// </summary>
+// EQ_A3 F-50: this suite drives real native mod-unload (df_scheduler_unload_mod_native_state,
+// process-global), now fail-loud-guarded; serialize with the other native-unload suites.
+[Collection("GameLoopSerial")]
 public sealed class M73Step7Tests
 {
     private const string TestModId = "tests.regular.m73step7";

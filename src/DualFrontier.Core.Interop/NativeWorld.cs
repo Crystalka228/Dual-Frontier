@@ -483,6 +483,71 @@ public sealed class NativeWorld : IDisposable
         return NativeMethods.df_world_compute_pipeline_count(_handle);
     }
 
+    // EQ_A3 — the materialized subset of the df_status space these two exports
+    // use (mirrors df_capi.h). The full space stays proposed in
+    // IDENTITY_AND_ABI_CONTRACT §4 (F-43).
+    private const int DfStatusOk = 0;
+    private const int DfStatusWorldBusy = 6;
+
+    /// <summary>
+    /// Read-only probe of the component active-spans counter
+    /// (<c>df_world_active_span_count</c>). Throws once the handle is retired.
+    /// </summary>
+    public int ActiveSpanCount()
+    {
+        ThrowIfDisposed();
+        int status = NativeMethods.df_world_active_span_count(_handle, out int count);
+        if (status != DfStatusOk)
+        {
+            throw new InvalidOperationException(
+                $"df_world_active_span_count returned df_status {status}");
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// CHECKED world teardown — the deterministic production path (EQ_A3 /
+    /// RESOURCE_OWNERSHIP_AND_LIFETIME §6.2 wait-for-zero; К-L20). Calls
+    /// <c>df_world_destroy_checked</c>: destroys the world and returns
+    /// <see cref="WorldTeardownResult.Destroyed"/> == true only when no component
+    /// span AND no write batch is outstanding; otherwise the world is LEFT INTACT
+    /// (handle still valid) and Destroyed is false with the live counts.
+    /// Idempotent after a successful destroy.
+    ///
+    /// Asymmetry (deliberate): <see cref="Dispose"/> and the finalizer use the
+    /// UNCHECKED <c>df_world_destroy</c> backstop. A finalizer must never observe
+    /// a refusal or fail-fast the finalizer thread; the refuse-not-force contract
+    /// belongs to the shutdown transaction that calls this method (EngineSession
+    /// S7), which routes a busy refusal to fail-fast (К-L20).
+    /// </summary>
+    public WorldTeardownResult DisposeChecked()
+    {
+        if (_handle == IntPtr.Zero)
+        {
+            return new WorldTeardownResult(Destroyed: true, ActiveSpans: 0, ActiveBatches: 0);
+        }
+
+        int status = NativeMethods.df_world_destroy_checked(
+            _handle, out int spans, out int batches);
+        if (status == DfStatusWorldBusy)
+        {
+            // Refused: the world still owns its handle. Do NOT retire it.
+            return new WorldTeardownResult(Destroyed: false, ActiveSpans: spans, ActiveBatches: batches);
+        }
+
+        // DF_OK (destroyed) or an unexpected negative (handle unusable): the world
+        // must not be touched again -- retire the handle and the finalizer.
+        _handle = IntPtr.Zero;
+        GC.SuppressFinalize(this);
+        return new WorldTeardownResult(Destroyed: status == DfStatusOk, ActiveSpans: spans, ActiveBatches: batches);
+    }
+
+    /// <summary>
+    /// Unchecked teardown backstop (IDisposable) — forces <c>df_world_destroy</c>
+    /// regardless of outstanding borrows. The deterministic production teardown
+    /// uses <see cref="DisposeChecked"/> instead; this remains for direct /
+    /// <c>using</c> callers and mirrors the finalizer.
+    /// </summary>
     public void Dispose()
     {
         if (_handle != IntPtr.Zero)
@@ -493,6 +558,8 @@ public sealed class NativeWorld : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    // Leak-reporter backstop only — unchecked, never refuses, never fails the
+    // finalizer thread (the checked contract lives in DisposeChecked / S7).
     ~NativeWorld()
     {
         if (_handle != IntPtr.Zero)

@@ -26,17 +26,39 @@ internal enum ShutdownStep
 }
 
 /// <summary>
-/// Structured diagnostics recorded when the shutdown fence fails (EQ_A2 / D4).
+/// Structured diagnostics recorded when the shutdown transaction aborts: either
+/// the fence failed (EQ_A2 / D4 -- thread not stopped or pipeline not quiescent),
+/// or the CHECKED world teardown refused because borrows were still outstanding
+/// AFTER a passed fence (EQ_A3 / К-L20 -- a quiescence-invariant violation).
 /// </summary>
 /// <param name="ThreadStopped">Whether the sim thread observed cancellation and exited within the fence deadline.</param>
 /// <param name="PipelineQuiescent">Whether the compute pipeline reached quiescence within the fence deadline.</param>
 /// <param name="FenceDeadline">The bounded-join deadline that was applied.</param>
-internal sealed record ShutdownAbortReport(bool ThreadStopped, bool PipelineQuiescent, TimeSpan FenceDeadline)
+/// <param name="WorldBusy">True when the abort is an S7 checked-destroy refusal (spans/batches outstanding after a passed fence).</param>
+/// <param name="ActiveSpans">Live component spans reported by the refusal (0 for a fence abort).</param>
+/// <param name="ActiveBatches">Live write batches reported by the refusal (0 for a fence abort).</param>
+internal sealed record ShutdownAbortReport(
+    bool ThreadStopped,
+    bool PipelineQuiescent,
+    TimeSpan FenceDeadline,
+    bool WorldBusy = false,
+    int ActiveSpans = 0,
+    int ActiveBatches = 0)
 {
+    /// <summary>Busy-world abort AFTER a passed fence (EQ_A3 / К-L20): live borrows despite proven quiescence.</summary>
+    public static ShutdownAbortReport ForBusyWorld(int activeSpans, int activeBatches, TimeSpan fenceDeadline)
+        => new(ThreadStopped: true, PipelineQuiescent: true, fenceDeadline,
+               WorldBusy: true, ActiveSpans: activeSpans, ActiveBatches: activeBatches);
+
     public string Describe() =>
-        $"EngineSession shutdown fence FAILED (thread stopped={ThreadStopped}, pipeline quiescent={PipelineQuiescent}, " +
-        $"deadline={FenceDeadline}); aborting WITHOUT native teardown -- dismantling native state under a live simulation " +
-        "thread is worse than leaking on abort (CONCURRENCY_AND_MEMORY_MODEL section 6.2; К-L20).";
+        WorldBusy
+            ? $"EngineSession shutdown ABORTED at S7 (checked world-destroy REFUSED): {ActiveSpans} span(s) and " +
+              $"{ActiveBatches} write-batch(es) still outstanding AFTER a passed fence -- a К-L20 quiescence-invariant " +
+              "violation (live borrows despite proven quiescence). Failing fast WITHOUT forcing teardown; a forced destroy " +
+              "here would be use-after-free (RESOURCE_OWNERSHIP_AND_LIFETIME section 6.2; К-L20)."
+            : $"EngineSession shutdown fence FAILED (thread stopped={ThreadStopped}, pipeline quiescent={PipelineQuiescent}, " +
+              $"deadline={FenceDeadline}); aborting WITHOUT native teardown -- dismantling native state under a live simulation " +
+              "thread is worse than leaking on abort (CONCURRENCY_AND_MEMORY_MODEL section 6.2; К-L20).";
 }
 
 /// <summary>
@@ -61,6 +83,14 @@ internal sealed class ShutdownTransactionHooks
 
     /// <summary>Optional step recorder for order assertions.</summary>
     public Action<ShutdownStep>? OnStep { get; init; }
+
+    /// <summary>
+    /// Replaces the S7 checked world-teardown (default:
+    /// <see cref="NativeWorld.DisposeChecked"/>). Inject a result with
+    /// <c>Destroyed == false</c> to drive the busy-refusal -> Abort route without
+    /// a real busy native world (EQ_A3 H-SEAM resolution).
+    /// </summary>
+    public Func<WorldTeardownResult>? WorldTeardownOverride { get; init; }
 }
 
 /// <summary>
@@ -274,8 +304,20 @@ internal sealed class EngineSession : IDisposable
         Step(ShutdownStep.NativeBusCleared);
 
         // S7: dispose the native world deterministically on the thread that
-        // observed quiescence. The finalizer stays a leak-reporter backstop only.
-        _world.Dispose();
+        // observed quiescence, via the CHECKED path (EQ_A3 / ROL section 6.2
+        // wait-for-zero; К-L20). A WORLD_BUSY refusal AFTER a passed fence means
+        // live borrows despite proven quiescence -- a К-L20 invariant violation:
+        // record structured diagnostics (incl. the counts) and route through
+        // Abort (fail-fast). NEVER loop-retry -- a spin here would be a kostyl
+        // hiding the breach. The finalizer stays a leak-reporter backstop only.
+        WorldTeardownResult teardown =
+            _hooks?.WorldTeardownOverride?.Invoke() ?? _world.DisposeChecked();
+        if (!teardown.Destroyed)
+        {
+            Abort(ShutdownAbortReport.ForBusyWorld(
+                teardown.ActiveSpans, teardown.ActiveBatches, deadline));
+            return;
+        }
         Step(ShutdownStep.WorldDisposed);
     }
 
