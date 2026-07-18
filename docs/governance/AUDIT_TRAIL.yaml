@@ -6352,3 +6352,65 @@ audit_trail:
     - DOC-A-CONCURRENCY_AND_MEMORY_MODEL → LOCKED (PATCH 1.0.1 -> 1.0.2 at C6; §6.2 D10 cross-ref)
     - DOC-D-EQ_A2_SHUTDOWN_TRANSACTION_BRIEF → EXECUTED (Draft at C1 -> EXECUTED at closure)
     - DOC-E-EQ_A2_SHUTDOWN_TRANSACTION_CLOSURE_REPORT → EXECUTED (enrolled)
+
+- id: EVT-2026-07-18-EQ_A3_CHECKED_DESTROY
+  date: 2026-07-18
+  event: EQ_A3_CHECKED_DESTROY cascade execution (Cascade C of the EQ-a shutdown-law family) -- the native checked-destroy ABI pair df_world_active_span_count + df_world_destroy_checked (REFUSE-NOT-FORCE, D7) + the managed S7 checked switch; F-49/F-50 native riders CLOSED; F-51 seeded
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-D-EQ_A3_CHECKED_DESTROY_BRIEF
+  - DOC-E-EQ_A3_CHECKED_DESTROY_CLOSURE_REPORT
+  - DOC-C-ROADMAP
+  commits:
+    range: 3314684..(the C7 closure-append commit following 3b7ce64 carries this entry)
+    key_commits:
+    - hash: 3314684
+      summary: C1 docs(brief) - EQ_A3 brief enrolled (Draft); REGISTER +1 doc
+    - hash: 7bc4e07
+      summary: C2 feat(native) - df_status subset + df_world_active_span_count / df_world_destroy_checked (REFUSE-NOT-FORCE on spans+batches); exports 205->207
+    - hash: e38e471
+      summary: C3 test(native) - 4 checked-destroy selftest scenarios (99->103)
+    - hash: 934e339
+      summary: C4 fix(native) - F-50 mod_unload SingletonGuard + concurrency scenario (103->104) + F-49 bus_native.h:155 comment
+    - hash: 31dfb26
+      summary: C5 feat(lifecycle) - managed interop + NativeWorld.DisposeChecked + EngineSession S7 checked switch + busy->Abort; 5 tests; F-50 test-isolation via [Collection] x6; full-sln 1186->1191
+    - hash: 3b7ce64
+      summary: C6 governance(abi) - IAC 1.1.0 / ROL 1.0.1 / KERNEL 1.2.1 + ROADMAP M5/F-49/F-50/F-51
+  governance_impact: >
+    Cascade C of the EQ-a shutdown-law family: the NATIVE members, landing last per ROL
+    section 4.4 step 4. df_world_destroy_checked is REFUSE-NOT-FORCE (D7): it refuses
+    (DF_COND_WORLD_BUSY) while active_spans_ OR active_batches_ is nonzero, reporting both
+    counts via out-params, and destroys + returns DF_OK only at zero; the read-only
+    df_world_active_span_count is exported. df_status is materialized on disk for the first
+    time as a minimal conforming subset (DF_OK / DF_ERR_INVALID_HANDLE / DF_COND_WORLD_BUSY);
+    the full space stays proposed (F-43 NOT started). H-CONV (operator-ratified): WORLD_BUSY
+    is positive/retryable per IAC section 4 "not that the world is busy"; EngineSession layers
+    the K-L20 fatal-after-fence policy. Managed: NativeWorld.DisposeChecked is the checked
+    production path (Dispose/finalizer stay unchecked backstops); EngineSession S7 switches to
+    it and routes a post-fence WORLD_BUSY to Abort (structured diagnostics incl. spans/batches,
+    fail-fast, never loop-retry). H-SEAM (operator-ratified): a ShutdownTransactionHooks
+    world-teardown seam makes the busy->Abort route testable in pure-managed code. Riders:
+    F-49 CLOSED (bus_native.h:155 comment) + F-50 CLOSED (mod_unload SingletonGuard) at C4;
+    the F-50 guard exposed a Modding.Tests pipeline-unload race (green in isolation), closed
+    via [Collection("GameLoopSerial")] on the six unload-driving classes (F-29 D2+D3 pattern,
+    operator-ratified) at C5. F-51 SEEDED (Smoke-F02, pre-existing Runtime defect,
+    architect-owned). Gates at closure (Release, METHODOLOGY 12.7): native build 0W/0E both
+    configs; native selftest 99->104 ALL PASSED both configs; managed build 0W/0E; full-sln
+    1186->1191 pass / 0 / 5; validate --armed exit 0 after every frontmatter-touching commit
+    (C1, C6, C7). Census UNMOVED: Console.WriteLine src 2=2, DFK-WAIVER 2=2, BoundaryRatchet
+    4+1; grandfathered df_capi.h:37-40 byte-unchanged; K-L20 canon byte-unchanged (artifacts
+    line only). REGISTER net +2 docs (brief + report); IAC MINOR + ROL/KERNEL PATCH;
+    last_modified_commit dropped from IAC/ROL (real-hashes-only, pre-commit hash unknowable,
+    KERNEL precedent). No push (executor); operator pushes claude/eq-a3-checked-destroy + merges.
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-IDENTITY_AND_ABI_CONTRACT -> LOCKED (MINOR 1.0.0 -> 1.1.0 at C6; 2 ABI members + first materialized df_status subset)
+    - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME -> LOCKED (PATCH 1.0.0 -> 1.0.1 at C6; section 6.2 Realized note)
+    - DOC-A-KERNEL_ARCHITECTURE -> LOCKED (PATCH 1.2.0 -> 1.2.1 at C6; K-L20 artifacts line, canon byte-unchanged)
+    - DOC-D-EQ_A3_CHECKED_DESTROY_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
+    - DOC-E-EQ_A3_CHECKED_DESTROY_CLOSURE_REPORT -> EXECUTED (enrolled)
