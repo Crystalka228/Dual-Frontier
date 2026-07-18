@@ -1971,6 +1971,19 @@ documents:
   last_review_date: 2026-07-17
   last_review_event: 'DRAFTS_RATIFICATION executed 2026-07-17 (EVT-2026-07-17-DRAFTS_RATIFICATION): H3 exclusion-rider 48983c4; C1 c3e77a8 (enroll); HALT-1 en-bloc ratification; Phase B C2 b4bcfa4 / C3 d6f1e9a / C4 b38d95a / C5 fde5072; Phase C C6 bd199da (six flips + PSC hold + qualifier sweep) + C7 closure (this commit) + C8 F-39 rider. Deviations recorded in the closure report.'
   title: DRAFTS_RATIFICATION execution brief (item [6] widened; first cascade under register schema 2.0)
+- register_id: DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF
+  path: tools/briefs/EQ_A1_FAULT_SYMMETRY_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: post-EQ_A1 closure
+  title: EQ_A1_FAULT_SYMMETRY execution brief (Cascade A of the EQ-a shutdown-law family -- M4 deferred-catch parity + M1 ExecutePhase per-system catch, under the ratified D2 origin-asymmetric policy)
 - register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
   path: tools/briefs/F10_TEST_ISOLATION_BRIEF.md
   project: Dual Frontier
@@ -3868,6 +3881,21 @@ documents:
   title: 'Drafts Ratification Review Report — Phase A of DRAFTS_RATIFICATION (D1: seven drafts re-verified at 48983c4 — code anchors EXACT wholesale, ~200 anchor verdicts; 41 fix ids + 2 mechanical classes; six READY-WITH-FIX, PSC retarget-only, zero NOT-READY; HALT-1 decision basis)'
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-EQ_A_SHUTDOWN_RECON_REPORT
+  path: docs/reports/EQ_A_SHUTDOWN_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'EQ_A_SHUTDOWN RECON REPORT — 2026-07-18 (R1–R8) — pre-brief measurement recon for the EQ-a shutdown-law family: managed fault-path census (ExecutePhase no-catch; deferred/sync bus asymmetry), shutdown-path S1–S8 verdicts, ABI export inventory + landing zones, render/device teardown, test-surface placement law, anomalies A1–A9, per-member M1–M9 work-class estimate, cascade split A/B/C/D + the D1–D10 decisions halt'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, DOC-E-F10_TEST_ISOLATION_RECON_REPORT). Basis of DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF; its R2/R6/R7 measurements (the managed fault-path census, the test-placement law, and the cascade split) were the load-bearing brief inputs.'
 - register_id: DOC-E-F10_TEST_ISOLATION_RECON_REPORT
   path: docs/reports/F10_TEST_ISOLATION_RECON_REPORT.md
   project: Dual Frontier
