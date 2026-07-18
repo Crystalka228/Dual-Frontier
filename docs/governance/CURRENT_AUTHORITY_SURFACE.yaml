@@ -166,7 +166,7 @@ documents:
   category: A
   tier: 2
   lifecycle: Live
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-VULKAN_SUBSTRATE_V2
   path: docs/architecture/VULKAN_SUBSTRATE.md
   category: A

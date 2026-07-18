@@ -955,6 +955,26 @@ New F-entries seeded with this queue: F-42 (RNG service), F-43 (ABI protocol har
 
 Remaining EQ-a members **M2/M3/M5–M9** (world-shutdown transaction; `UnloadAll` first production caller; the `df_world_active_span_count` + `df_world_destroy_checked` ABI; `EngineSession : IDisposable`; swapchain prepare-before-reclaim; the Degraded/EngineHealth surface; `df_bus_clear` promotion; device-lost v1) remain OPEN; next is **Cascade B chartering** (the D3–D8 decisions deliberation). **Cascade-B rider (REC-A1):** the ELT §2.6 finalizer misstatement and the stale `NativeWorld.cs:25-26` "no finalizer backstop" doc line are recorded here for correction in Cascade B — NOT touched by EQ_A1.
 
+## ⏭ Vanilla-separation track (W0-W8)
+
+Seeded 2026-07-18 at the BOUNDARY_W0 closure (EVT-2026-07-18-BOUNDARY_W0). The program that dissolves the game-in-engine Domain layer: the engine becomes a simulation OS, the game its first distribution, game code lives only as mods. Governing law: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY (LOCKED 1.0.0 -- the composition law + boundary rules B-1..B-6). Program document: DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN (Live 1.0.1 -- waves, decision catalog BD-1..BD-10, ownership map). Evidence base: DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT (HEAD 4c58942). Each wave is its own recon+brief+gates cascade, chartering only when its BD decisions ratify; the plan owns wave detail, this row tracks status.
+
+| Wave | Scope | Decisions | Gate | State |
+|---|---|---|---|---|
+| W0 | Law + freeze + ratchet | -- | law LOCKED; ratchet red-once-then-green; sln builds the 6 mods | **DONE** 2026-07-18 (da97308 C1 / 4aa1fa0 C2 / b973192 C3 / a26e8ac C4 / c9387c1 C5 / closure C6) |
+| W1 | SDK surface unlock | BD-1, BD-2 (BD-6 test authored) | example mod compiles Contracts-only, registers -> ticks -> faults -> disposes, never names Core | OPEN |
+| W2 | Type/bus/capability ownership | BD-3, BD-10 | kernel capability surface contains zero Pawn/Combat/Magic/Inventory/World types | OPEN |
+| W3 | Walking vertical slice | -- | disabling the mod removes the mechanic; engine stays healthy | OPEN |
+| W4 | Composition root + scenario | BD-4, BD-8 | EngineSession compiles with zero refs to Components/Events/Systems/AI | OPEN |
+| W5 | Atomic slice moves | BD-5, BD-6 | single mod owner per slice; ratchet census shrinks by the slice's edge count | OPEN |
+| W6 | Presentation, input, assets | BD-9 | headless engine + a foreign pack load zero Dual Frontier presentation types | OPEN |
+| W7 | Generic persistence | BD-7 (after PSC ratification) | engine saves a blank/foreign distribution with no game DTO | OPEN |
+| W8 | Reuse proof (falsifiability capstone) | -- | switching the manifest switches the game; engine binaries + source identical across three profiles | OPEN |
+
+- **B-2 freeze ACTIVE** from the W0 ratification (2026-07-18): new gameplay nouns (components, events, systems, config) are born in mods/, never in engine assemblies. The existing inventory (28 components / 53 events / 30 systems / 20 AI types / ~8 game-binding Contracts types) is frozen migration stock -- it may only shrink. Held mechanically by the engine-to-game reference ratchet (tests/DualFrontier.Governance.Tests/BoundaryRatchetTests.cs) until the B-6 analyzer supersedes it.
+- **B-1 interim enforcement**: the ratchet freezes the engine-to-game census at 4 ProjectReference edges + 1 InternalsVisibleTo (audit R3). Deletion trigger: the B-6 boundary analyzer rule, deleted in the same cascade that lands it (EAM 3.0/3.1 transitional-enforcer contract).
+- Audit anomalies feeding the plan (plan inputs, NOT F-ledger rows -- the plan owns them): A5 (Persistence + Crypto.Future production-orphaned -> BD-5), A9 (KernelCapabilityRegistry lives in Application, not a kernel assembly -> BD-10).
+
 ## Beyond ship
 
 After Phase 7 closure — game shipped, baseline performance measured, full vanilla mod set live — development continues in the form of post-release updates. These updates are **not** part of the M0–M10 milestone sequence and do not have a formal plan inside this roadmap. The active scope through Phase 7 is the Mod-OS Migration plus dynamic map expansion (tracked in [Backlog](#backlog)); everything else is deferred.

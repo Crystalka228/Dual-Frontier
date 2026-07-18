@@ -5,7 +5,7 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-18
 last_modified: 2026-07-18
 content_language: en
@@ -84,6 +84,10 @@ build-time dependency test asserting the exact engine->game edge census (4+1+1) 
 only shrink. The ratchet carries its deletion trigger: replaced by the analyzer rule the
 moment one ships (B-6). ROADMAP row seeded. Gate: law LOCKED; ratchet red-once-then-green
 proven; sln builds with the 6 mods.
+> **W0 DONE 2026-07-18** (BOUNDARY_W0; EVT-2026-07-18-BOUNDARY_W0): law LOCKED 1.0.0, this plan
+> Live 1.0.1, BoundaryRatchetTests red-once-then-green, the 6 vanilla mods enrolled + building.
+> Commits da97308 (C1 enroll) / 4aa1fa0 (C2 sln) / b973192 (C3 flips) / a26e8ac (C4 ratchet) /
+> c9387c1 (C5 comment) / closure C6.
 **W1 -- SDK surface unlock (BD-1, BD-2; BD-6 test authored).** New Contracts-level system
 abstraction + ISystemContext; ModRegistry accepts it alongside SystemBase (bridge with
 deletion trigger: SystemBase path deleted when the last src/ system migrates, W5); ONE

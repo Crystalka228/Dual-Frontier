@@ -1168,7 +1168,7 @@ documents:
   tier: 2
   lifecycle: Live
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-18
   last_modified: 2026-07-18
   content_language: en
@@ -1882,7 +1882,7 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Volodymyr (Crystalka)
   version: 1.0
   first_authored: 2026-07-18
@@ -3787,6 +3787,21 @@ documents:
   last_review_event: 'Read-only recon session 2026-07-01 — the first durable-report recon: persisted to docs/reports/ at authoring time (instead of the tools/briefs/ β-sibling location), substituting for a brief survey wave per PHASE_GAMMA_BRIEF preamble. R2 promotion-safety measure re-verified at Phase 0 of the execution session: 0 active + 2 suppressed(inSource), exact match. Enrolled at the Phase γ REGISTER closure.'
   reviewer: Crystalka
   special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-BUS_INVESTIGATION_2026_05_21, DOC-E-SCHEDULER_STRESS_TEST_SUITE), per PHASE_GAMMA_BRIEF §10 (DOC-C/E reports form; the PHASE_BETA_VIOLATION_INVENTORY.yaml precedent named there was itself assessed OUT of the register — the followed convention is the docs/reports/ .md class). Basis of DOC-D-A_PRIME_9_1_PHASE_GAMMA_BRIEF.'
+- register_id: DOC-E-BOUNDARY_W0_CLOSURE_REPORT
+  path: docs/reports/BOUNDARY_W0_CLOSURE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'BOUNDARY_W0 CLOSURE REPORT -- 2026-07-18 -- Wave 0 of the vanilla-separation program: boundary axis enrolled (law LOCKED 1.0.0, plan Live 1.0.1, audit report DOC-E), six vanilla mods enrolled into DualFrontier.sln, engine-to-game reference ratchet (B-1/B-6 interim enforcer) red-once-then-green, stale net8.0 comment fixed; 6-commit cascade da97308..closure; gates build 0W/0E both configs + full-sln 1179/0/5 + validate --armed exit 0 + DFK-WAIVER 2=2; register 349 -> 354, EVT 58 -> 59, surface 134 -> 136'
+  special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT, DOC-E-CODEX_CLOSURE_REPORT). Records the BOUNDARY_W0 (Wave 0, vanilla-separation) execution against the brief DOC-D-BOUNDARY_W0_BRIEF.'
 - register_id: DOC-E-BUS_INVESTIGATION_2026_05_21
   path: docs/reports/BUS_DESIGN_INVESTIGATION_2026-05-21.md
   project: Dual Frontier
@@ -15277,3 +15292,38 @@ audit_trail:
     - DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF → EXECUTED (Draft -> EXECUTED at closure)
     - DOC-E-EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT → EXECUTED (enrolled)
     - DOC-A-CONCURRENCY_AND_MEMORY_MODEL → LOCKED (PATCH 1.0.0 -> 1.0.1, lifecycle unchanged)
+- id: EVT-2026-07-18-BOUNDARY_W0
+  date: 2026-07-18
+  event: BOUNDARY_W0 cascade execution (Wave 0 of the vanilla-separation program) -- boundary axis enrolled, composition law + migration plan ratified, six vanilla mods enrolled into DualFrontier.sln, engine-to-game reference ratchet shipped, stale net8.0 comment fixed
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT
+  - DOC-D-BOUNDARY_W0_BRIEF
+  - DOC-E-BOUNDARY_W0_CLOSURE_REPORT
+  - DOC-C-ROADMAP
+  commits:
+    range: da97308..c9387c1 (5 work commits; the closure-append commit following c9387c1 carries this entry)
+    key_commits:
+    - hash: da97308
+      summary: C1 governance(boundary) - law (AUTHORED)/plan (Draft) moved to docs/architecture/, audit report DOC-E frontmatter lifted appendix -> head, brief enrolled Draft; register 349 -> 353
+    - hash: 4aa1fa0
+      summary: C2 build(mods) - six vanilla mods enrolled into DualFrontier.sln + solution ProjectDependencies build-order fix on DualFrontier.Mod.ManifestRewriter; Debug+Release 0W/0E
+    - hash: b973192
+      summary: C3 governance(boundary) - law AUTHORED -> LOCKED 1.0.0, plan Draft -> Live 1.0.0; authority surface 134 -> 136; B-2 freeze ACTIVE
+    - hash: a26e8ac
+      summary: C4 test(governance) - BoundaryRatchetTests engine-to-game reference ratchet (B-1/B-6 interim enforcer); red-once-then-green failability proof
+    - hash: c9387c1
+      summary: C5 chore(build) - stale net8.0 scope comment -> net10.0 in src/Directory.Build.props (audit A6)
+  governance_impact: >
+    Wave 0 of the vanilla-separation program (the engine is a simulation OS; the game is its first distribution; game code exists only as mods). The boundary axis is enrolled and ratified: the composition law DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY LOCKED 1.0.0 (boundary rules B-1..B-6) and the program document DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN Live 1.0.1 (waves + BD-1..BD-10 + ownership map), both relocated to docs/architecture/ (category-A home); the durable audit DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT enrolled (appendix frontmatter proposal lifted to an active head block). B-2 (no new gameplay nouns in src/) is ACTIVE from the C3 ratification. The six vanilla mods (DualFrontier.Mod.Vanilla.{Core,World,Pawn,Inventory,Combat,Magic}), previously off-solution (audit A1), are enrolled into DualFrontier.sln and build in both configs; a solution-level ProjectDependencies on DualFrontier.Mod.ManifestRewriter fixes the latent Release build-order race the enrollment would otherwise arm (the RewriteHotReloadForRelease Exec), keeping each mod csproj literally Contracts-only. B-1 is held mechanically by a new interim enforcer, BoundaryRatchetTests (tests/DualFrontier.Governance.Tests): two facts freeze the engine-to-game census at the audit-R3 baseline (4 DualFrontier.Application ProjectReference edges + the Core -> Systems InternalsVisibleTo) by exact ordinal set membership; the shrink-only rule and the B-6-analyzer deletion trigger (EAM 3.0/3.1 transitional-enforcer contract) live in the class doc; the red-once-then-green failability proof reddened it with a transient Core -> DualFrontier.AI edge, then reverted green. The stale src/Directory.Build.props net8.0 scope comment was corrected to net10.0 (audit A6, comment-only). Gates at closure (Release, METHODOLOGY 12.7): build 0W/0E both configs; full-sln 1177 -> 1179/0/5 (the Phase-0 tree read 1176/1/5 -- the single failure was SyncIntegrationTests.Validate_AgainstLiveTree_Succeeds, caused by the pre-C1 untracked body-only audit report; C1 restored F4 shape 1177/0/5, +2 = the two new ratchet facts; the 5 skips are the unchanged F-30/F-31 Extreme guards); validate --armed exit 0 after every frontmatter-touching commit (C1, C3, C6); DFK-WAIVER census 2 = 2 (both ValidationLayer.cs DFK001, untouched). Register 349 -> 354 (C1 +3 law+plan+audit and +1 brief Draft = 353; C6 +1 closure report = 354); authority surface 134 -> 136 (law LOCKED tier 1 + plan Live at C3); AUDIT_TRAIL 58 -> 59. Anti-pattern honesty: the brief's C1 estimated "349 -> 352"; measured 349 -> 353 because sync's whole-repo filesystem scan enrolls the on-disk brief -- operator-ruled to fold the brief into C1 as Draft (register consistent with tracked files), flipping it to EXECUTED here at C6; both paths converge on 354. No new gameplay code, no mod-source edits (W1+ scope). No push (executor); operator pushes claude/boundary-w0 + merges. ROADMAP: new Vanilla-separation track (W0-W8) with W0 DONE + hashes and W1-W8 OPEN carrying their BD gates; audit anomalies A5/A9 recorded as plan inputs, not new F-ledger rows. G-RATIO monitor 156/349 (44.7%) standing, report-only.
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY → LOCKED (AUTHORED -> LOCKED, 0.1.0 -> 1.0.0 at C3)
+    - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN → Live (Draft -> Live, 0.1.0 -> 1.0.0 at C3; PATCH -> 1.0.1 at C6 W0 DONE)
+    - DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT → EXECUTED (enrolled at C1)
+    - DOC-D-BOUNDARY_W0_BRIEF → EXECUTED (Draft at C1 -> EXECUTED at closure)
+    - DOC-E-BOUNDARY_W0_CLOSURE_REPORT → EXECUTED (enrolled)
