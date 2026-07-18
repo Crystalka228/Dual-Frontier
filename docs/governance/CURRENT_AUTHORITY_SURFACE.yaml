@@ -22,7 +22,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-CONTRACTS_V2
   path: docs/architecture/CONTRACTS.md
   category: A

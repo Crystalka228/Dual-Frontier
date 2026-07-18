@@ -207,13 +207,12 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
-  last_modified_commit: d6f1e9a
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
   last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; the R4-9 analyzer honesty slip corrected — 17 detecting rules, not stubs) + HALT-1-ratified retargets CMM-1..CMM-5 at d6f1e9a (incl. the OD-3 version reconciliation 0.1.1–0.1.4); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (§3/§4 → THREADING MAJOR; §2/§6 → VULKAN MINOR; deferred-catch fix; shutdown quiesce fence; TLA+ Item 18) recorded in ROADMAP.'

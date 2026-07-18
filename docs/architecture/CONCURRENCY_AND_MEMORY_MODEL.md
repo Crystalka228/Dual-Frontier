@@ -5,13 +5,12 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
-last_modified_commit: d6f1e9a
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; the R4-9 analyzer honesty slip corrected — 17 detecting rules, not stubs) + HALT-1-ratified retargets CMM-1..CMM-5 at d6f1e9a (incl. the OD-3 version reconciliation 0.1.1–0.1.4); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (§3/§4 → THREADING MAJOR; §2/§6 → VULKAN MINOR; deferred-catch fix; shutdown quiesce fence; TLA+ Item 18) recorded in ROADMAP.'
@@ -231,9 +230,10 @@ In short: today `Stop` guarantees **nothing** past the 2-second join — the res
 
 - **Native → managed (exists, keep).** No C++ exception crosses the DLL boundary: every `extern "C"` returns a status code or sentinel and swallows via `catch (...)` (KERNEL_ARCHITECTURE §5 (C ABI conventions) — "immutable"; `capi.cpp` throughout, including the targeted `catch (const std::logic_error&)` at `capi.cpp:392`).
 - **Managed → native (normative, symmetric).** No managed exception may unwind through a reverse-P/Invoke frame: every `[UnmanagedCallersOnly]` entry point (`ManagedSystemDispatcher.OnBatch`, bus drain callbacks) must catch-all and convert to status before returning to native. UB otherwise.
-- **Subscriber fault isolation MUST be symmetric across delivery modes — today it is asymmetric.** Sync delivery wraps each subscriber in try/catch and continues to the remaining subscribers (`DomainEventBus.cs:156-166`). Deferred delivery — `InvokeDeferred` — has **no catch whatsoever** (`DomainEventBus.cs:169-187`): a faulting deferred handler unwinds `FlushDeferred` → `ExecutePhase` → `RunLoop`, killing T2, and an unhandled exception on a background thread is process death. This bypasses the origin split that routes mod faults to `ModFaultHandler` (THREADING.md:120) — a mod's `[Deferred]` handler fault today crashes the game that its sync fault could not. Law: per-subscriber isolation in **both** modes; mod-origin faults route to the `IModFaultSink` in both modes; Core-origin fault policy (propagate vs log) is one explicit recorded decision, not an accident of the `[Deferred]` attribute.
+- **Subscriber fault isolation MUST be symmetric across delivery modes — today it is asymmetric.** Sync delivery wraps each subscriber in try/catch and continues to the remaining subscribers (`DomainEventBus.cs:156-166`). Deferred delivery — `InvokeDeferred` — has **no catch whatsoever** (`DomainEventBus.cs:169-187`): a faulting deferred handler unwinds `FlushDeferred` → `ExecutePhase` → `RunLoop`, killing T2, and an unhandled exception on a background thread is process death. This bypasses the origin split that routes mod faults to `ModFaultHandler` (THREADING.md:120) — a mod's `[Deferred]` handler fault today crashes the game that its sync fault could not. Law: per-subscriber isolation in **both** modes; mod-origin faults route to the `IModFaultSink` in both modes; Core-origin fault policy is the recorded decision **D2** (ratified 2026-07-18; `EVT-2026-07-18-EQ_A1_FAULT_SYMMETRY`): catch, record with full context (origin, system/subscriber identity, exception) on the existing logging surface — no new sink abstraction — then **rethrow**; fail-fast preserved. A half-executed core handler leaves undefined sim state, so masking it is forbidden. This is one explicit decision, not an accident of the `[Deferred]` attribute.
 - **Even the "good" mode under-reports.** The sync-path catch logs to `Console.WriteLine` (`DomainEventBus.cs:164`) — not to the `IModFaultSink` — so a caught subscriber fault is invisible to the mod fault lifecycle and to diagnostics (the managed bus keeps no counters, EVENT_BUS §7 (observability)). The symmetric-isolation law above includes the sink, not just the catch.
 - **Native-side subscriber callbacks** are user code on publisher/kernel threads: batched-callback adapters isolate per batch and report status; the Fast tier's ≤1 ms budget stays advisory-monitored (`FastTierContractMonitor`, EVENT_BUS §3/§7) until a fault-handler consumer lands.
+- **Realized — EQ_A1 / Cascade A (2026-07-18).** The symmetric-isolation law above is implemented at all three managed fault-crossing points through the single `SystemExecutionContext.RouteFault` D2 definition: `DomainEventBus.DeliverSync` and `InvokeDeferred` (M4), and `ParallelSystemScheduler.ExecutePhase` (M1, which additionally commits a faulted mod to the ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.3 quarantine skip-set). Mod faults route to the `IModFaultSink`; core faults record-then-rethrow. The "today it is asymmetric" state above is the recon-time (pre-`da63a93`) motivation, now closed.
 
 ## §8 Verification obligations
 
@@ -273,6 +273,7 @@ Priority on ratification: (1) the deferred-catch asymmetry fix + its regression 
 
 | Version | Date | Change |
 |---|---|---|
+| 1.0.1 | 2026-07-18 | EQ_A1_FAULT_SYMMETRY (Cascade A): §7 records the ratified D2 core-origin policy (catch → record with full context on the existing logging surface → rethrow, fail-fast preserved; `EVT-2026-07-18-EQ_A1_FAULT_SYMMETRY`) and adds the "Realized" note — the symmetric-isolation law is now implemented at all three managed fault-crossing points (M1 + M4). **PATCH** on the LOCKED 1.0.0 baseline (the 0.1.4 content was ratified LOCKED → 1.0.0 on 2026-07-17 per `EVT-2026-07-17-DRAFTS_RATIFICATION`, a lifecycle bump carrying no separate content row). |
 | 0.1.4 | 2026-07-17 | DRAFTS_RATIFICATION Phase B (C3): R4-8 re-homing (snapshot rule → THREADING §7), R4-9 analyzer-truth correction, §9.1/§9.3 re-marked RESOLVED, §6.1 citation reform, historical/ KFNS prefixes. **PATCH.** |
 | 0.1.3 | 2026-07-15 | R4 mechanics corpus rework (`0145f1b`): see-also link `FEEDBACK_LOOPS` → `../mechanics/` (Category J reclassification). Citation-only; no normative change. **PATCH.** (Row backfilled at DRAFTS_RATIFICATION per R4-12.) |
 | 0.1.2 | 2026-07-15 | R2 platform corpus rework (`6888246`): see-also link `ISOLATION` → `./historical/` (MOD_OS merge retired it). Citation-only. **PATCH.** (Backfilled per R4-12.) |
