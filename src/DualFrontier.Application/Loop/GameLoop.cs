@@ -69,12 +69,28 @@ namespace DualFrontier.Application.Loop
             _thread.Start();
         }
 
-        /// <summary>Stop simulation and wait for thread to exit.</summary>
-        public void Stop()
+        /// <summary>
+        /// Cancels the loop and joins the simulation thread within
+        /// <paramref name="deadline"/>. Returns <see langword="true"/> iff the
+        /// thread observed cancellation and exited (or was never started);
+        /// <see langword="false"/> means it is still running past the deadline --
+        /// the caller MUST NOT tear down state under a live mutator
+        /// (CONCURRENCY_AND_MEMORY_MODEL section 6.2 abandoned-thread prohibition).
+        /// This is the checked fence the EQ_A2 shutdown transaction consumes.
+        /// </summary>
+        public bool TryStop(TimeSpan deadline)
         {
             _cts.Cancel();
-            _thread?.Join(2000);
+            Thread? thread = _thread;
+            return thread is null || thread.Join(deadline);
         }
+
+        /// <summary>
+        /// Stop simulation and wait for the thread to exit (bounded 2s, result
+        /// ignored). Legacy/test convenience; the shutdown transaction uses the
+        /// checked <see cref="TryStop"/>.
+        /// </summary>
+        public void Stop() => _ = TryStop(TimeSpan.FromMilliseconds(2000));
 
         /// <summary>Pause or resume simulation.</summary>
         public void SetPaused(bool paused) => _paused = paused;

@@ -49,7 +49,7 @@ internal sealed class ModMenuController
     /// editing) does NOT re-fire the hook — the no-op early return path
     /// skips both the pipeline call and the hook.
     ///
-    /// Wired by <see cref="Loop.GameBootstrap.CreateLoop"/> to also pause
+    /// Wired by <see cref="Loop.GameBootstrap.CreateSession"/> to also pause
     /// the background simulation thread (<c>GameLoop.SetPaused(true)</c>)
     /// per MOD_OS_ARCHITECTURE §9.2 step 1, since
     /// <see cref="ModIntegrationPipeline.Pause"/> only gates the

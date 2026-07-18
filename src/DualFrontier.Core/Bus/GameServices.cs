@@ -60,6 +60,17 @@ internal sealed class GameServices : IGameServices, IDeferredFlush
         _worldBus.FlushDeferred();
         _pawnBus.FlushDeferred();
     }
+
+    /// <summary>
+    /// Drops the deferred queue of every owned bus without dispatching, returning
+    /// the total count discarded. Shutdown-transaction step S3 (EQ_A2).
+    /// </summary>
+    public int DropDeferred()
+        => _combatBus.DropDeferred()
+         + _inventoryBus.DropDeferred()
+         + _magicBus.DropDeferred()
+         + _worldBus.DropDeferred()
+         + _pawnBus.DropDeferred();
 }
 
 internal sealed class CombatBus : ICombatBus
@@ -70,6 +81,7 @@ internal sealed class CombatBus : ICombatBus
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
     public void FlushDeferred() => _bus.FlushDeferred();
+    public int DropDeferred() => _bus.DropDeferred();
 }
 
 internal sealed class InventoryBus : IInventoryBus
@@ -80,6 +92,7 @@ internal sealed class InventoryBus : IInventoryBus
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
     public void FlushDeferred() => _bus.FlushDeferred();
+    public int DropDeferred() => _bus.DropDeferred();
 }
 
 internal sealed class MagicBus : IMagicBus
@@ -90,6 +103,7 @@ internal sealed class MagicBus : IMagicBus
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
     public void FlushDeferred() => _bus.FlushDeferred();
+    public int DropDeferred() => _bus.DropDeferred();
 }
 
 internal sealed class WorldBus : IWorldBus
@@ -100,6 +114,7 @@ internal sealed class WorldBus : IWorldBus
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
     public void FlushDeferred() => _bus.FlushDeferred();
+    public int DropDeferred() => _bus.DropDeferred();
 }
 
 internal sealed class PawnBus : IPawnBus
@@ -110,4 +125,5 @@ internal sealed class PawnBus : IPawnBus
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
     public void Clear() => _bus.Clear();
     public void FlushDeferred() => _bus.FlushDeferred();
+    public int DropDeferred() => _bus.DropDeferred();
 }

@@ -16,7 +16,7 @@ namespace DualFrontier.Modding.Tests.Bootstrap;
 
 /// <summary>
 /// Serializes the GameLoop integration tests against the rest of the Modding
-/// assembly. The CreateLoop_RunningLoop_* tests start the real GameLoop
+/// assembly. The CreateSession_RunningLoop_* tests start the real GameLoop
 /// background thread and assert on commands published within a bounded wall
 /// budget; under xUnit intra-assembly parallelism the CPU-heavy Modding classes
 /// can starve that thread and empty a fixed sleep window. DisableParallelization
@@ -31,12 +31,12 @@ public sealed class GameLoopSerialCollection
 
 /// <summary>
 /// M7.5.B.1 — production-side smoke coverage of
-/// <see cref="GameBootstrap.CreateLoop"/>. The harness is
-/// <c>CreateLoop</c> itself: production wiring is the unit under test,
+/// <see cref="GameBootstrap.CreateSession"/>. The harness is
+/// <c>CreateSession</c> itself: production wiring is the unit under test,
 /// no separate harness is needed. Tests construct the full simulation
-/// graph + modding stack via the same <see cref="GameBootstrap.CreateLoop"/>
+/// graph + modding stack via the same <see cref="GameBootstrap.CreateSession"/>
 /// code path the DualFrontier.Launcher Program consumes in
-/// production, then assert the returned <see cref="GameContext"/> shape
+/// production, then assert the returned <see cref="EngineSession"/> shape
 /// and the controller's behavior under representative <c>modsRoot</c>
 /// inputs (default literal "mods", empty temp dir, non-existent path,
 /// temp dir containing a single fixture manifest).
@@ -54,14 +54,14 @@ public sealed class GameLoopSerialCollection
 public sealed class GameBootstrapIntegrationTests
 {
     [Fact]
-    public void CreateLoop_ReturnsContextWithLoopAndController()
+    public void CreateSession_ReturnsContextWithLoopAndController()
     {
-        // Smoke test of the new GameContext return shape: every
-        // member must be populated by CreateLoop. Locks AD #1
+        // Smoke test of the new EngineSession return shape: every
+        // member must be populated by CreateSession. Locks AD #1
         // (atomic refactor of the bootstrap signature) at the API
         // surface so an accidental future change to the return type
         // is visible.
-        GameContext context = GameBootstrap.CreateLoop(new PresentationBridge());
+        EngineSession context = GameBootstrap.CreateSession(new PresentationBridge());
 
         context.Should().NotBeNull();
         context.Loop.Should().NotBeNull();
@@ -69,16 +69,16 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_ReturnedController_BeginEditingSucceedsAndPauses()
+    public void CreateSession_ReturnedController_BeginEditingSucceedsAndPauses()
     {
         // The pipeline starts in its default paused state per M7.1's
         // load-bearing default; calling BeginEditing on the controller
         // must succeed and flip IsEditing to true. The controller's
         // internal Pause call is not directly observable from the
-        // GameContext surface (no pipeline accessor), so the contract
+        // EngineSession surface (no pipeline accessor), so the contract
         // we lock here is the controller-side observable side-effect:
         // BeginEditing does not throw and IsEditing becomes true.
-        GameContext context = GameBootstrap.CreateLoop(new PresentationBridge());
+        EngineSession context = GameBootstrap.CreateSession(new PresentationBridge());
 
         Action act = () => context.Controller.BeginEditing();
 
@@ -87,7 +87,7 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_WithEmptyModsRoot_GetEditableStateReturnsEmpty()
+    public void CreateSession_WithEmptyModsRoot_GetEditableStateReturnsEmpty()
     {
         // Production wiring through the discoverer: an existing-but-
         // empty modsRoot directory must produce an empty editing
@@ -96,7 +96,7 @@ public sealed class GameBootstrapIntegrationTests
         // the user has not yet placed any mods under mods/.
         using var temp = TempDir.New();
 
-        GameContext context = GameBootstrap.CreateLoop(
+        EngineSession context = GameBootstrap.CreateSession(
             new PresentationBridge(), modsRoot: temp.Path);
         context.Controller.BeginEditing();
 
@@ -105,7 +105,7 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_WithModsRootContainingFixture_GetEditableStateReturnsFixture()
+    public void CreateSession_WithModsRootContainingFixture_GetEditableStateReturnsFixture()
     {
         // End-to-end discovery through the production wiring: a
         // single valid manifest under modsRoot becomes one
@@ -117,7 +117,7 @@ public sealed class GameBootstrapIntegrationTests
         const string id = "tests.bootstrap.fixture";
         WriteValidManifest(Path.Combine(temp.Path, id), id);
 
-        GameContext context = GameBootstrap.CreateLoop(
+        EngineSession context = GameBootstrap.CreateSession(
             new PresentationBridge(), modsRoot: temp.Path);
         context.Controller.BeginEditing();
 
@@ -131,10 +131,10 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_WithNonExistentModsRoot_GetEditableStateReturnsEmpty_NoThrow()
+    public void CreateSession_WithNonExistentModsRoot_GetEditableStateReturnsEmpty_NoThrow()
     {
         // First-launch safety: if the user has no mods/ directory
-        // at all, CreateLoop must succeed and the discoverer must
+        // at all, CreateSession must succeed and the discoverer must
         // return an empty list rather than throw. DefaultModDiscoverer
         // (M7.5.A) handles this case by returning an empty list when
         // Directory.Exists is false. Locks the production wiring
@@ -144,8 +144,8 @@ public sealed class GameBootstrapIntegrationTests
         Directory.Exists(nonexistent).Should().BeFalse(
             "Guid.NewGuid path must not collide with an existing directory");
 
-        GameContext context = null!;
-        Action createAct = () => context = GameBootstrap.CreateLoop(
+        EngineSession context = null!;
+        Action createAct = () => context = GameBootstrap.CreateSession(
             new PresentationBridge(), modsRoot: nonexistent);
         createAct.Should().NotThrow();
 
@@ -155,7 +155,7 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_DefaultModsRoot_IsLiteralStringMods()
+    public void CreateSession_DefaultModsRoot_IsLiteralStringMods()
     {
         // AD #3 lock — the default modsRoot must be the literal
         // string "mods" (not "./mods", not absolute). The Launcher
@@ -165,10 +165,10 @@ public sealed class GameBootstrapIntegrationTests
         // changing the default to an absolute path during a quick
         // local test) from silently shipping.
         MethodInfo method = typeof(GameBootstrap).GetMethod(
-            nameof(GameBootstrap.CreateLoop),
+            nameof(GameBootstrap.CreateSession),
             BindingFlags.Public | BindingFlags.Static)!;
         method.Should().NotBeNull(
-            "CreateLoop must remain the public bootstrap entry point");
+            "CreateSession must remain the public bootstrap entry point");
 
         ParameterInfo modsRootParam = method.GetParameters()[1];
         modsRootParam.Name.Should().Be("modsRoot");
@@ -177,14 +177,14 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_ReturnedLoop_StartStopRoundTripsCleanly()
+    public void CreateSession_ReturnedLoop_StartStopRoundTripsCleanly()
     {
-        // Regression floor on the new GameContext shape — the loop
+        // Regression floor on the new EngineSession shape — the loop
         // must behave identically to the previous direct-return
         // shape on the simulation side. Start spins up the background
         // thread; Stop cancels and joins. Zero exception is the
         // observable contract.
-        GameContext context = GameBootstrap.CreateLoop(new PresentationBridge());
+        EngineSession context = GameBootstrap.CreateSession(new PresentationBridge());
 
         Action roundTrip = () =>
         {
@@ -196,17 +196,17 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void CreateLoop_Spawns50PawnsByDefault()
+    public void CreateSession_Spawns50PawnsByDefault()
     {
         // M8.2 — production factory emits a PawnSpawnedCommand per
         // colonist via the Pawns bus → bridge subscription wired in
-        // CreateLoop. Locks the 50-pawn baseline (scaled from 10 to
+        // CreateSession. Locks the 50-pawn baseline (scaled from 10 to
         // stress-test the scheduler under bigger pawn counts on the
         // 200×200 map per AD-6) at the bridge surface.
         var bridge = new PresentationBridge();
         var observedSpawns = new List<PawnSpawnedCommand>();
 
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
         bridge.DrainCommands(c =>
         {
             if (c is PawnSpawnedCommand sp) observedSpawns.Add(sp);
@@ -217,7 +217,7 @@ public sealed class GameBootstrapIntegrationTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public void CreateLoop_RunningLoop_PawnStateCommandCarriesRealName()
+    public void CreateSession_RunningLoop_PawnStateCommandCarriesRealName()
     {
         // PawnStateReporterSystem reads IdentityComponent.Name; the
         // RandomPawnFactory always populates that field with a forename
@@ -230,7 +230,7 @@ public sealed class GameBootstrapIntegrationTests
         // CPU starvation without a brittle timing window (pairs with the
         // GameLoopSerial collection).
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
         var stateCommands = new List<PawnStateCommand>();
 
         try
@@ -262,7 +262,7 @@ public sealed class GameBootstrapIntegrationTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public void CreateLoop_RunningLoop_PawnStateCommandCarriesTopSkills()
+    public void CreateSession_RunningLoop_PawnStateCommandCarriesTopSkills()
     {
         // PawnStateReporterSystem computes top-3 skills from
         // SkillsComponent.Levels. The RandomPawnFactory populates all
@@ -271,7 +271,7 @@ public sealed class GameBootstrapIntegrationTests
         // Poll-until-condition (F-10 #2): accumulate drained commands and poll
         // up to a generous wall budget instead of a single fixed sleep.
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
         var stateCommands = new List<PawnStateCommand>();
 
         try
@@ -307,7 +307,7 @@ public sealed class GameBootstrapIntegrationTests
 
     [Fact]
     [Trait("Category", "Integration")]
-    public void CreateLoop_RunningLoop_PublishesTickAdvancedCommandsThroughBridge()
+    public void CreateSession_RunningLoop_PublishesTickAdvancedCommandsThroughBridge()
     {
         // TICK display housekeeping — locks the production publishing
         // path GameLoop → PresentationBridge → (RenderCommandDispatcher
@@ -323,7 +323,7 @@ public sealed class GameBootstrapIntegrationTests
         // so a loaded run does not flake (pairs with the GameLoopSerial
         // collection).
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
 
         int tickCommandCount = 0;
         int lastTickValue = -1;
@@ -370,7 +370,7 @@ public sealed class GameBootstrapIntegrationTests
         // branch; this test locks the controller-level invariant the UI
         // relies on (IsEditing flips from true → false on Commit success).
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
 
         context.Controller.BeginEditing();
         context.Controller.IsEditing.Should().BeTrue();
@@ -388,7 +388,7 @@ public sealed class GameBootstrapIntegrationTests
         // sets Visible = false; this test locks the controller-level
         // invariant (IsEditing flips from true → false on Cancel).
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
 
         context.Controller.BeginEditing();
         context.Controller.IsEditing.Should().BeTrue();
@@ -406,7 +406,7 @@ public sealed class GameBootstrapIntegrationTests
         // editing-stays-live invariant M7.5.B.2's panel relies on
         // between OpenAndBegin and the next Apply/Cancel.
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
 
         context.Controller.BeginEditing();
         context.Controller.IsEditing.Should().BeTrue();
@@ -420,12 +420,12 @@ public sealed class GameBootstrapIntegrationTests
     public void MenuFlow_BeginEditing_PausesGameLoop()
     {
         // Second-housekeeping wiring (MOD_OS_ARCHITECTURE §9.2 step 1) —
-        // GameBootstrap.CreateLoop wires controller.OnEditingBegan to
+        // GameBootstrap.CreateSession wires controller.OnEditingBegan to
         // loop.SetPaused(true). Locks the controller-driven simulation
         // pause: the user-visible behavior the F5 verification surfaced
         // as missing (TICK counter kept advancing with the menu open).
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
 
         context.Loop.IsPaused.Should().BeFalse(
             "loop is unpaused at construction");
@@ -444,7 +444,7 @@ public sealed class GameBootstrapIntegrationTests
         // Locks loop.IsPaused flipping back to false on Cancel so closing
         // the menu without Apply restores tick advance.
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
         context.Controller.BeginEditing();
         context.Loop.IsPaused.Should().BeTrue(
             "loop should be paused after BeginEditing (precondition for this test)");
@@ -464,7 +464,7 @@ public sealed class GameBootstrapIntegrationTests
         // by M7.5.A's Commit_ValidationFailure_LeavesSessionOpen plus
         // the controller's success-only RaiseHook placement).
         var bridge = new PresentationBridge();
-        GameContext context = GameBootstrap.CreateLoop(bridge);
+        EngineSession context = GameBootstrap.CreateSession(bridge);
         context.Controller.BeginEditing();
         context.Loop.IsPaused.Should().BeTrue(
             "loop should be paused after BeginEditing (precondition for this test)");

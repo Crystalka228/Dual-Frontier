@@ -58,7 +58,7 @@ public sealed class SchedulerStressTests : IDisposable
     // SchedulerStressTests.Dispose was missing managed bus bridge cleanup +
     // native bus state reset, so stress-test subscriber registrations + pending
     // events leaked into the next test in the suite (the two
-    // GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* tests pass в
+    // GameBootstrapIntegrationTests.CreateSession_RunningLoop_* tests pass в
     // isolation, were failing only в the full Modding-tests run per Crystalka
     // 2026-05-21 investigation). Defence layers, top к bottom:
     //   1. Drain Normal + Background pending queues (last-chance dispatch).

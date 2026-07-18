@@ -13,7 +13,7 @@ namespace DualFrontier.Launcher;
 /// <summary>
 /// Production launcher entry point for Dual Frontier. Composes Vulkan
 /// substrate (<see cref="Runtime.Runtime"/>) + Domain layer
-/// (<see cref="GameContext"/> via <see cref="GameBootstrap"/>) +
+/// (<see cref="EngineSession"/> via <see cref="GameBootstrap"/>) +
 /// <see cref="LauncherRenderer"/> bridge between them. Drives main loop
 /// per Q-G-7 (d) hybrid orchestration (cascade #2 amendment Crystalka
 /// Option A — GameLoop self-ticks on background thread).
@@ -52,7 +52,7 @@ internal static class Program
         using var atlasTexture = new SpriteTexture(atlasVkImage, atlasSampler);
 
         var bridge = new PresentationBridge();
-        GameContext gameContext = GameBootstrap.CreateLoop(bridge);
+        using EngineSession session = GameBootstrap.CreateSession(bridge);
 
         // S-LOCK-10 composition root: SceneState constructed here, passed к
         // both dispatcher (writes) и renderer (reads) via constructor injection.
@@ -63,7 +63,7 @@ internal static class Program
         // === Lifecycle init ===
         renderer.Initialize();
         runtime.Window.Show();
-        gameContext.Loop.Start();
+        session.Loop.Start();
 
         // === Main loop (Q-G-7 (d) hybrid orchestration, cascade #2 Crystalka Option A amendment) ===
         var lastFrameTime = DateTime.UtcNow;
@@ -91,8 +91,14 @@ internal static class Program
             renderer.RenderFrame(deltaSeconds);
         }
 
-        // === Shutdown ===
-        gameContext.Loop.Stop();
+        // === Shutdown transaction (RESOURCE_OWNERSHIP_AND_LIFETIME 4.4 / CONCURRENCY 6.2) ===
+        // Fence the sim + tear down engine state FIRST (the session's transaction:
+        // bounded checked join + pipeline quiescence, then mods -> bus -> world),
+        // THEN the GPU (renderer.Shutdown), THEN the device + window (the
+        // using-unwind of renderer/atlasTexture/runtime). The self-contained fence
+        // proves quiescence before world disposal, so this order closes the CMM
+        // section 6.1 "WaitIdle while T2 still dispatching" race.
+        session.Dispose();
         renderer.Shutdown();
         return 0;
     }

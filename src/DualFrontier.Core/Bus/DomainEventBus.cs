@@ -144,6 +144,20 @@ internal sealed class DomainEventBus
         while (_deferred.TryDequeue(out _)) { }
     }
 
+    /// <summary>
+    /// Drops every queued deferred event without dispatching, returning the count
+    /// discarded. Shutdown-transaction step S3 (RESOURCE_OWNERSHIP_AND_LIFETIME
+    /// section 4.1): after the quiesce fence no handler may run, so pending
+    /// deferred work is dropped -- counted for exit diagnostics -- not flushed.
+    /// Handlers are left intact (nothing publishes post-quiesce).
+    /// </summary>
+    public int DropDeferred()
+    {
+        int dropped = 0;
+        while (_deferred.TryDequeue(out _)) dropped++;
+        return dropped;
+    }
+
     private void DeliverSync(Type eventType, IEvent evt)
     {
         if (!_handlers.TryGetValue(eventType, out List<Subscription>? list))

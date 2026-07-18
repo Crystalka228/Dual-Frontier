@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 82, 51)]
+    [InlineData("deferred", @"\bdeferred\b", true, 86, 52)]
     [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -119,6 +119,9 @@ public sealed class CensusMetaTests
         // stub (48→51) / deferred (79→82) drift from the 2026-06-11 dated snapshot is
         // the F-25 owed refresh, materialized here. A future move updates the pin AND
         // records a census-delta (CODING_STANDARDS §8 / RESERVED_SURFACE §5).
+        // EQ_A2 (Cascade B): deferred 82->86 / 51->52 -- the S3 shutdown-transaction
+        // deferred-drop primitive (DomainEventBus.DropDeferred, GameServices.DropDeferred,
+        // EngineSession.Dispose; EngineSession.cs is the +1 file).
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 

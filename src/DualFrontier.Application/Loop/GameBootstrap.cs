@@ -30,7 +30,14 @@ namespace DualFrontier.Application.Loop;
 /// the appropriate buses. Constructs the modding stack
 /// (<see cref="ModIntegrationPipeline"/> + <see cref="ModMenuController"/>
 /// + <see cref="DefaultModDiscoverer"/>) atop the same scheduler /
-/// services and returns both via <see cref="GameContext"/>.
+/// services and hands the whole engine to an <see cref="EngineSession"/>
+/// (the composition root, GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY B-5).
+///
+/// This bootstrap is the SACRIFICIAL harness (EQ_A2 / D3): the only holder of
+/// vanilla-content knowledge (Components/Events/Systems/AI). EngineSession itself
+/// stays game-vocabulary-free; harness gameplay wiring carries no behavioral-
+/// equivalence obligation and may be freely cut as the vanilla-separation waves
+/// proceed.
 ///
 /// Tests bypass this factory and wire their own scheduler so they can
 /// register only the systems under test. Smoke coverage of the production
@@ -67,7 +74,7 @@ internal static class GameBootstrap
     private const int InitialDecorationCount = 25;
     private const int ItemFactorySeed        = 43;
 
-    public static GameContext CreateLoop(PresentationBridge bridge, string modsRoot = "mods")
+    public static EngineSession CreateSession(PresentationBridge bridge, string modsRoot = "mods")
     {
         // Bootstrap.Run constructs the ComponentTypeRegistry internally and
         // binds it to the returned NativeWorld — registry-based deterministic
@@ -216,7 +223,7 @@ internal static class GameBootstrap
         controller.OnEditingBegan = () => loop.SetPaused(true);
         controller.OnEditingEnded = () => loop.SetPaused(false);
 
-        return new GameContext(loop, controller);
+        return new EngineSession(nativeWorld, busBridge, pipeline, services, loop, controller);
     }
 
     /// <summary>

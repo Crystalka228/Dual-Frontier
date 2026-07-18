@@ -125,8 +125,16 @@ public sealed class ManagedBusBridge
         _ => 0,
     };
 
-    /// <summary>Test-only: clears all native bus state. Releases GC handles too.</summary>
-    public void ClearForTesting()
+    /// <summary>
+    /// Production teardown (shutdown-transaction step S5; EQ_A2 / D6): clears all
+    /// native bus state via <c>df_bus_clear</c> -- promoted out of test-only per
+    /// EVENT_BUS.md -- and frees every tracked subscription <see cref="GCHandle"/>.
+    /// Fast-tier-on-clearing-thread semantics: <c>df_bus_clear</c> takes the three
+    /// tier mutexes in fixed fast->normal->background order and no callback runs
+    /// under a bus mutex (К-L15.1), so a post-fence caller on the shutdown thread
+    /// races nothing. Managed caller only; the native export is unchanged.
+    /// </summary>
+    public void Shutdown()
     {
         NativeMethods.df_bus_clear();
         foreach (var kvp in _handles)
@@ -135,4 +143,10 @@ public sealed class ManagedBusBridge
         }
         _handles.Clear();
     }
+
+    /// <summary>
+    /// Test-only alias for <see cref="Shutdown"/>. The ~6 managed test call sites
+    /// keep this name; the native selftest owns <c>df_bus_clear</c> directly.
+    /// </summary>
+    public void ClearForTesting() => Shutdown();
 }
