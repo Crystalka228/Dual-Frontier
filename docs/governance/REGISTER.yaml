@@ -502,6 +502,20 @@ documents:
   risks_referenced:
   - RISK-010
   - RISK-012
+- register_id: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
+  path: docs/architecture/GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md
+  project: Dual Frontier
+  category: A
+  tier: 1
+  lifecycle: AUTHORED
+  owner: Crystalka
+  version: 0.1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: post-ratification closure
+  title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
+  special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored as the boundary law for the operator-ratified target composition model, pending per-document ratification to LOCKED. Grounded in docs/reports/GAME_ENGINE_BOUNDARY_AUDIT_REPORT.md (HEAD 4c58942). Until ratified, the current LOCKED corpus (ARCHITECTURE.md Domain layer, MOD_OS_ARCHITECTURE.md section 3.4) remains the operative present-tense law.'
 - register_id: DOC-A-GODOT_INTEGRATION
   path: docs/architecture/historical/GODOT_INTEGRATION.md
   project: Dual Frontier
@@ -1144,6 +1158,19 @@ documents:
   last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; R4-10 RNG census corrected to four fixed-seed sites) + HALT-1-ratified retargets TCM-1..TCM-4 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7.1/§7.5 resolved by the rework; §5.2 Option A/B decision owned here; RNG-service work order seeded in ROADMAP.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A4 time/consistency contract — canonical time vocabulary, visibility table, cross-boundary consistency rules, pause/save/load boundaries, determinism classes D0/D1/D2, RNG law; VULKAN §7.2 and the COMBO/FEEDBACK successors already defer to its vocabulary; the RNG service (four fixed-seed sites) is the seeded engineering work order.
+- register_id: DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  path: docs/architecture/VANILLA_SEPARATION_MIGRATION_PLAN.md
+  project: Dual Frontier
+  category: A
+  tier: 2
+  lifecycle: Draft
+  owner: Crystalka
+  version: 0.1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: post-ratification closure
+  title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md
   project: Dual Frontier
@@ -1843,6 +1870,19 @@ documents:
   risks_referenced:
   - RISK-004
   special_case_rationale: Skeleton brief for Roslyn architectural analyzer encoding К-Lxx invariants. Dual purpose (M-series migration verifier + К-Lxx compile-time enforcement). 17-18 expected analyzer rules. Awaits full brief authoring at К-closure report (А'.8) landed timing.
+- register_id: DOC-D-BOUNDARY_W0_BRIEF
+  path: tools/briefs/BOUNDARY_W0_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  title: BOUNDARY_W0 execution brief -- boundary-axis enrollment + ratification flips + vanilla-mods solution enrollment + the engine-to-game reference ratchet (Wave 0 of VANILLA_SEPARATION_MIGRATION_PLAN)
 - register_id: DOC-D-BRIEF_SKELETON_FRAMEWORK
   path: tools/briefs/BRIEF_SKELETON_FRAMEWORK_BRIEF.md
   project: Dual Frontier
@@ -3948,6 +3988,21 @@ documents:
   last_review_event: Read-only measurement recon 2026-07-04 (executor session, flagship model, LOCAL Skarlet). Its scheduler-surface map, the lock-free-singleton audit (bus excluded -- per-tier std::mutex, concurrent-publish by design), and the N -> time scale curves were the load-bearing brief inputs; consumed by the F-29 cascade execution 2026-07-04. Enrolled at the F-29 REGISTER closure.
   reviewer: Crystalka
   special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line.'
+- register_id: DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT
+  path: docs/reports/GAME_ENGINE_BOUNDARY_AUDIT_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'GAME/ENGINE BOUNDARY AUDIT REPORT — 2026-07-18 (R1–R7) — full mechanical verification of the game/engine composition boundary at HEAD 4c58942: ten coupling-claims C-1..C-10 all SUPPORTED (none WRONG); 4 engine→game ProjectReference edges (all in DualFrontier.Application) + 1 engine→game IVT (Core→Systems) + 1 test-fixture leak; native tree + C ABI CLEAN; T3 type inventory (Components 28 / Events 53 / Systems 30 / AI 20); Contracts 65 public types (game-binding subset ≈ 8); decision list D1–D10 + anomalies A1–A9; framing = current→target distance, no kickoff↔law conflict'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A_SHUTDOWN_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT). Basis for the forthcoming game/engine boundary-law document + migration plan; produced read-only at HEAD 4c58942 (post-EQ_A1_FAULT_SYMMETRY).'
 - register_id: DOC-E-G_RATIO_PER_RULE_BREAKDOWN
   path: docs/reports/G_RATIO_PER_RULE_BREAKDOWN.md
   project: Dual Frontier
