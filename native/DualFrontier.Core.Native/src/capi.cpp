@@ -61,6 +61,42 @@ DF_API void df_world_destroy(df_world_handle world) {
     delete as_world(world);
 }
 
+DF_API df_status df_world_active_span_count(df_world_handle world,
+                                            int32_t* out_count) {
+    if (!world || !out_count) return DF_ERR_INVALID_HANDLE;
+    try {
+        *out_count = as_world(world)->active_spans_count();
+        return DF_OK;
+    } catch (...) {
+        // df_status polarity: a boundary catch returns a NEGATIVE code, never 0
+        // (0 == DF_OK). The body is effectively noexcept (one atomic load).
+        return DF_ERR_INVALID_HANDLE;
+    }
+}
+
+DF_API df_status df_world_destroy_checked(df_world_handle world,
+                                          int32_t* out_active_spans,
+                                          int32_t* out_active_batches) {
+    if (!world) return DF_ERR_INVALID_HANDLE;
+    try {
+        World* w = as_world(world);
+        const int32_t spans = w->active_spans_count();
+        const int32_t batches = w->active_batches_count();
+        if (out_active_spans) *out_active_spans = spans;
+        if (out_active_batches) *out_active_batches = batches;
+        if (spans > 0 || batches > 0) {
+            // REFUSE-NOT-FORCE (D7): live borrows outstanding -> do not delete.
+            // A WORLD_BUSY after a passed shutdown fence is a K-L20 violation the
+            // managed EngineSession routes to fail-fast; the ABI just reports it.
+            return DF_COND_WORLD_BUSY;
+        }
+        delete w;
+        return DF_OK;
+    } catch (...) {
+        return DF_ERR_INVALID_HANDLE;
+    }
+}
+
 DF_API uint64_t df_world_create_entity(df_world_handle world) {
     if (!world) return 0;
     try {

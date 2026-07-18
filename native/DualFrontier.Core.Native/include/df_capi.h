@@ -40,10 +40,44 @@ extern "C" {
  * Out-of-range inputs return 0 rather than crashing.
  */
 
+/*
+ * df_status — materialized subset of the IDENTITY_AND_ABI_CONTRACT.md §4 status
+ * space. New entry points return int32_t df_status: 0 = success; negative =
+ * contract violation (caller bug, never retried); positive = runtime condition.
+ * EQ_A3 materializes only the three constants its checked-destroy pair needs;
+ * the full space stays proposed in that contract (F-43). The grandfathered 1/0
+ * return-code block above is unchanged and continues to govern shipped entry
+ * points — a df_status function must NEVER return 0 to signal failure.
+ */
+typedef int32_t df_status;
+
+#define DF_OK                   0    /* success (DF_OK) */
+#define DF_ERR_INVALID_HANDLE  -1    /* negative: contract violation (bad handle) */
+#define DF_COND_WORLD_BUSY      6    /* positive/retryable: live spans or batches */
+
 typedef void* df_world_handle;
 
 DF_API df_world_handle df_world_create(void);
 DF_API void            df_world_destroy(df_world_handle world);
+
+/*
+ * Checked world teardown (EQ_A3; ROL §6.2 wait-for-zero; K-L20 shutdown
+ * transaction). df_world_destroy (above) REMAINS the unchecked finalizer
+ * backstop primitive; the pair below is the production checked path.
+ *
+ * df_world_active_span_count — read-only probe of the component active-spans
+ *   counter. Returns DF_OK with *out_count set, or DF_ERR_INVALID_HANDLE.
+ * df_world_destroy_checked — REFUSE-NOT-FORCE. Destroys the world and returns
+ *   DF_OK only when no component span AND no write batch is outstanding;
+ *   otherwise the world is left intact and it returns DF_COND_WORLD_BUSY with
+ *   *out_active_spans / *out_active_batches reporting the live counts. The two
+ *   out-params are optional (caller-allocated, IAC §3.3); pass NULL to ignore.
+ */
+DF_API df_status       df_world_active_span_count(df_world_handle world,
+                                                  int32_t* out_count);
+DF_API df_status       df_world_destroy_checked(df_world_handle world,
+                                                int32_t* out_active_spans,
+                                                int32_t* out_active_batches);
 
 DF_API uint64_t        df_world_create_entity(df_world_handle world);
 DF_API void            df_world_destroy_entity(df_world_handle world, uint64_t entity);
