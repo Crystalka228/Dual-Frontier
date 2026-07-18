@@ -2065,6 +2065,19 @@ documents:
   content_language: en
   next_review_due: 
   title: EQ_A3_CHECKED_DESTROY execution brief (Cascade C of the EQ-a shutdown-law family -- M5 native ABI pair df_world_active_span_count + df_world_destroy_checked under ratified D7, + F-49 comment fix, F-50 SingletonGuard, F-51 ledger seed)
+- register_id: DOC-D-EQ_A4_RENDER_TAIL_BRIEF
+  path: tools/briefs/EQ_A4_RENDER_TAIL_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  title: EQ_A4_RENDER_TAIL execution brief (Cascade D, the EQ-a family CLOSER -- M6 swapchain prepare-before-reclaim + M9 device-lost v1 under ratified D1 fail-fast+diagnostic)
 - register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
   path: tools/briefs/F10_TEST_ISOLATION_BRIEF.md
   project: Dual Frontier
