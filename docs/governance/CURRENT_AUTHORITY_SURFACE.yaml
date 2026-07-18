@@ -22,7 +22,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-A-CONTRACTS_V2
   path: docs/architecture/CONTRACTS.md
   category: A
@@ -40,13 +40,13 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.0
+  version: 1.0.1
 - register_id: DOC-A-EVENT_BUS_V2
   path: docs/architecture/EVENT_BUS.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.1.0
 - register_id: DOC-A-EXECUTION_AUTHORITY_MATRIX
   path: docs/architecture/EXECUTION_AUTHORITY_MATRIX.md
   category: A
@@ -88,7 +88,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.1.0
+  version: 1.2.0
 - register_id: DOC-A-K_EXTENSIONS_LEDGER
   path: docs/architecture/K_EXTENSIONS_LEDGER.md
   category: A

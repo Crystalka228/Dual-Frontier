@@ -5,16 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.0
+version: 1.0.1
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
-last_modified_commit: d6f1e9a
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all defect claims TRUE; zero honesty slips) + HALT-1-ratified retargets ELT-1..ELT-6 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). The §1 commit/reclaim law was already absorbed by MOD_OS_ARCHITECTURE §9.1 (which cites this contract by name); forward queue (state machines, swapchain transaction, shutdown transaction + fault taxonomy) recorded in ROADMAP.'
+last_review_date: 2026-07-18
+last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.0 → v1.0.1 PATCH: §2.6 world-shutdown transaction marked Realized (EngineSession.Dispose) + the REC-A1 finalizer correction (the "no finalizer backstop" line was wrong — NativeWorld.cs:496-503 exists) + the abnormal-exit (fence-abort) paragraph owned here (D10); §4.1 Degraded/EngineHealth marked Realized (EngineHealth.cs + the quarantine link). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.'
 ---
@@ -147,7 +146,7 @@ Proposed protocol: **prepare** (build new swapchain + image views + framebuffers
 
 ### 2.6 World shutdown — no transaction at all
 
-Today (`src/DualFrontier.Launcher/Program.cs:95-97`): window closes → `gameContext.Loop.Stop()` → `renderer.Shutdown()` → return. `GameLoop.Stop` is `_cts.Cancel(); _thread?.Join(2000);` with the `Join` result **ignored** (`GameLoop.cs:73-77`) — on timeout the background sim thread (`IsBackground = true`, `GameLoop.cs:64-69`) is abandoned, possibly inside `ExecuteTick`, racing teardown. Nothing calls `ModIntegrationPipeline.UnloadAll` (defined `ModIntegrationPipeline.cs:780`; **zero production call sites** — only tests). Nothing disposes the `NativeWorld` — it is created inside `GameBootstrap` (`src/DualFrontier.Application/Loop/GameBootstrap.cs:76`), never surfaced on `GameContext` (no `Dispose` exists there), and "Disposal is mandatory. Dropping a `NativeWorld` without calling `Dispose` leaks the underlying C++ world" (`src/DualFrontier.Core.Interop/NativeWorld.cs:25-26`) — there is no finalizer backstop. No native bus/scheduler teardown runs either.
+Today (`src/DualFrontier.Launcher/Program.cs:95-97`): window closes → `gameContext.Loop.Stop()` → `renderer.Shutdown()` → return. `GameLoop.Stop` is `_cts.Cancel(); _thread?.Join(2000);` with the `Join` result **ignored** (`GameLoop.cs:73-77`) — on timeout the background sim thread (`IsBackground = true`, `GameLoop.cs:64-69`) is abandoned, possibly inside `ExecuteTick`, racing teardown. Nothing calls `ModIntegrationPipeline.UnloadAll` (defined `ModIntegrationPipeline.cs:780`; **zero production call sites** — only tests). Nothing disposes the `NativeWorld` — it is created inside `GameBootstrap` (`src/DualFrontier.Application/Loop/GameBootstrap.cs:76`), never surfaced on `GameContext` (no `Dispose` exists there), and "Disposal is mandatory. Dropping a `NativeWorld` without calling `Dispose` leaks the underlying C++ world" (`src/DualFrontier.Core.Interop/NativeWorld.cs:25-26`) — corrected at EQ_A2 (REC-A1): that doc line was stale. A finalizer backstop DOES exist (`NativeWorld.cs:496-503`, `~NativeWorld` → `df_world_destroy`), so a dropped world is reclaimed non-deterministically at finalization rather than leaked outright; the finalizer is a leak-reporter backstop, never a teardown path (CONCURRENCY_AND_MEMORY_MODEL §6.2). The stale `NativeWorld.cs:25-26` doc was rewritten at EQ_A2 C3. No native bus/scheduler teardown runs either.
 
 Proposed shutdown transaction (full seven-stage; prepare/validate vacuous):
 
@@ -156,6 +155,10 @@ Proposed shutdown transaction (full seven-stage; prepare/validate vacuous):
 3. **Reclaim (ordered, best-effort)** — mods (`UnloadAll`, giving the method its first production caller), then managed↔native bridges (bus drain, GC handles), then `NativeWorld.Dispose()`, then renderer/runtime (`WaitIdle` before Vulkan handle destruction), then window.
 4. **Recover** — a failed reclaim step logs `(step, reason)` and continues; every wait is bounded. The process is terminating; Degraded is meaningless here, hangs are the only failure that matters.
 5. **Terminal commit** — session state `ShuttingDown → Terminated`; process exit code reflects reclaim outcome (0 clean, nonzero with count of failed steps).
+
+**Realized — EQ_A2 / Cascade B (2026-07-18).** The transaction above is implemented as `EngineSession.Dispose` (RESOURCE_OWNERSHIP_AND_LIFETIME §4.4): quiesce → fence (bounded checked join + the К-L18 pipeline-quiescence gate) → teardown (`UnloadAll` → native scheduler/graph/wake clears + the promoted `df_bus_clear` → `NativeWorld.Dispose`). Seats К-L20 (KERNEL_ARCHITECTURE Part 0).
+
+**Abnormal exit (fence abort) — owned here (D10).** A missed fence is a class-1 fault (§2.6 stage 2): the transaction records structured diagnostics and fails fast via `Environment.FailFast` WITHOUT any native teardown. This is deliberate — dismantling native state under a possibly-live simulation thread is worse than leaking on abort, so the world/bus/scheduler are left for process reclamation. The exit is abnormal (WER / the event log), distinct from the clean terminal-commit exit (stage 5); the abort diagnostics never route through `Console.WriteLine`. CONCURRENCY_AND_MEMORY_MODEL §6.2 carries the bounded-join-abort rule and cross-references this paragraph.
 
 ### 2.7 Save snapshot
 
@@ -232,6 +235,8 @@ Classes 2, 4 and 7 all terminate in "enter Degraded" — a state that exists now
 - Queryable by UI and diagnostics; every entry/exit emits a §5 lifecycle event. A `Degraded` session refuses transitions whose safety assumptions the reason invalidates (e.g. `ReclaimFailed(leaked)` refuses re-enabling that mod, §3.1).
 
 This is deliberately *not* a sixth mod state or a sixth session state — it is an annotation, so the LOCKED five-state diagrams survive ratification untouched.
+
+**Realized — EQ_A2 / Cascade B (2026-07-18).** `EngineHealth` (`Normal | Degraded(reasons)`, each reason `(source, faultClass, tickId, advice)`) is `src/DualFrontier.Application/Loop/EngineHealth.cs`, owned by `EngineSession` — `Health` (queryable snapshot), `HealthChanged` (the entry/exit lifecycle event), `ReportDegraded` / `ClearDegradedForMod`. A quarantined mod (the EQ_A1 skip-set) is linked in as a structured Degraded reason via `ParallelSystemScheduler.OnModQuarantined` → `EngineSession.ReportDegraded`. The transition-REFUSAL clause depends on the §3.2 session state machine (not yet built); this cascade lands the queryable annotation, the quarantine link, and the lifecycle event (no UI).
 
 ---
 

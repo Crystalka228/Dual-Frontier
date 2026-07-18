@@ -5,18 +5,17 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.1.0
+version: 1.2.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)
 supersedes:
 - DOC-A-KERNEL
-last_modified_commit: 6497ed5
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.1.0 MINOR (behavioral contract change per the §614 versioning law): К-L1 amended C++20 → C++23 under FRAMEWORK §7.2 Tier-1 protocol (operator-ratified 2026-07-17; EVT-2026-07-17-STACK_UPDATE). All seven C++20 sites updated (census: intro line, К-L1 heading/canon/falsifiability/artifacts, Part-4 status row, Rule-1); amendment record added to the К-L1 block honestly stating the MSVC /std:c++23preview status (stable switch = Build Tools 14.52, F-44) and the C-ABI containment rationale (IAC §3); GNU/Clang mode -std=c++23 verified emitted (DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT D6). CMakeLists CMAKE_CXX_STANDARD 20 → 23 in the same commit; native selftest ALL PASSED. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
+last_review_date: 2026-07-18
+last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
 reviewer: Crystalka
 requirements_authored:
 - REQ-K-L1
@@ -66,7 +65,7 @@ The native ECS kernel contract: the К-L invariant canon (Part 0) plus the curre
 
 **This Part is the sole canonical carrier of К-L texts** (consolidated from K_CLOSURE_REPORT §2, which remains the closure-evidence record). One ratified exception: the К-L14 full thesis resides in K_CLOSURE_REPORT.md §1.2 per Q-N-8-2 LOCKED; this Part carries К-L14's abbreviated form, as the predecessor did.
 
-Series state: **21 invariants** — К-L1..К-L19 (К-L6 SUPERSEDED listed for traceability, excluded from the count) + sub-invariants К-L3.1/К-L7.1/К-L15.1; К-L20 reserved separately. (The Part 0 table carries 22 canonical-text rows — the 21 active plus the superseded К-L6, retained verbatim.) Departures require an explicit re-architecture milestone (К-extensions cascade or supersession event recorded in the register), never spec-level adjustment mid-implementation.
+Series state: **22 invariants** — К-L1..К-L20 (К-L6 SUPERSEDED listed for traceability, excluded from the count) + sub-invariants К-L3.1/К-L7.1/К-L15.1; К-L21 reserved separately. (The Part 0 table carries 23 canonical-text rows — the 22 active plus the superseded К-L6, retained verbatim.) Departures require an explicit re-architecture milestone (К-extensions cascade or supersession event recorded in the register), never spec-level adjustment mid-implementation.
 
 Per-invariant format: status/LOCK-history line → canonical text (verbatim blockquote) → falsifiability commitments → implementation artifacts corrected to the tree at HEAD `35364c2` → DF-rule row stating the shipped analyzer truth per [ANALYZER_RULES.md](./ANALYZER_RULES.md) §1.1 (no rule is claimed Active that does not exist on disk).
 
@@ -216,7 +215,7 @@ Per-invariant format: status/LOCK-history line → canonical text (verbatim bloc
 
 **Implementation artifacts**: `src/DualFrontier.Contracts/Modding/IModApi.cs` (v3 unified surface); `mods/DualFrontier.Mod.Vanilla.{Core,Combat,Magic,Inventory,Pawn,World}/` — vanilla mods compile against Contracts only, identically to `mods/DualFrontier.Mod.Example/` (csproj-verified; predecessor's `vanilla/Vanilla.*` layout corrected). No `ManagedSchedulerFacade.cs` exists — the facade role is carried by `ParallelSystemScheduler` (`src/DualFrontier.Core/Scheduling/`) plus `BusFacade` (`src/DualFrontier.Application/Bus/`).
 
-**DF rule**: **DFK009** — DEFERRED to the К-L20 LOCK cascade; no rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4).
+**DF rule**: **DFK009** — DEFERRED to the К-L21 LOCK cascade; no rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4).
 
 ### К-L10 — Decision rule (§8 metrics authority)
 
@@ -264,7 +263,7 @@ Per-invariant format: status/LOCK-history line → canonical text (verbatim bloc
 
 **Implementation artifacts (on disk; dispatch switch pending)**: `native/DualFrontier.Core.Native/src/system_graph.cpp` (static + per-tick Kahn graphs), `wake_registry.cpp`, `scheduling_policies.cpp`, `state_change_filter.cpp` (write-through wake hook), `managed_callback.cpp` (batched-callback ABI), `scheduler_trace.cpp`, `scheduler_intrinsics.cpp`, `thread_pool.cpp`; managed adapter `src/DualFrontier.Application/Scheduler/SchedulerAdapter.cs:22` + `ManagedSystemDispatcher.cs:75` (`[UnmanagedCallersOnly]` `OnBatch`). (Predecessor's `scheduler_native.cpp` / `scheduler_graph.cpp` / `scheduler_runqueue.cpp` / `scheduler_wake.cpp` / `ManagedSchedulerFacade.cs` never existed.)
 
-**DF rule**: **DFK012** — DEFERRED to the К-L20 LOCK cascade; no rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4). Mechanism detail defers to [SCHEDULER_ARCHITECTURE.md](./SCHEDULER_ARCHITECTURE.md).
+**DF rule**: **DFK012** — DEFERRED to the К-L21 LOCK cascade; no rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4). Mechanism detail defers to [SCHEDULER_ARCHITECTURE.md](./SCHEDULER_ARCHITECTURE.md).
 
 ### К-L13 — On-demand system activation (five wake types)
 
@@ -319,7 +318,7 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 
 **Implementation artifacts (on disk; dispatch switch pending)**: `native/DualFrontier.Core.Native/include/bus_native.h` (single C ABI surface, unchanged through А'.7.x + А'.7.5); `bus_fast.cpp`, `bus_normal.cpp`, `bus_background.cpp`, `bus_common.cpp` (+ `background_queue.cpp`, `event_type_registry.cpp`); `src/DualFrontier.Application/Bus/BusFacade.cs` + `ManagedBusBridge.cs`.
 
-**DF rule**: **DFK015** — DEFERRED to the К-L20 LOCK cascade; no base rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4). Sub-rule DFK015_1 is shipped — see К-L15.1. Bus semantics defer to [EVENT_BUS.md](./EVENT_BUS.md).
+**DF rule**: **DFK015** — DEFERRED to the К-L21 LOCK cascade; no base rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4). Sub-rule DFK015_1 is shipped — see К-L15.1. Bus semantics defer to [EVENT_BUS.md](./EVENT_BUS.md).
 
 ### К-L15.1 — Three-tier independence (sub-invariant of К-L15)
 
@@ -399,7 +398,7 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 
 **Implementation artifacts**: `native/DualFrontier.Core.Native/src/mod_unload.cpp` (+ `include/mod_unload.h` — T0–T7 sequence, T0 = scheduler critical section); `include/pipeline_slot.h:117` (`df_pipeline_is_quiescent`); `src/DualFrontier.Application/Loop/SimulationStateController.cs` (helper API); `Application/Modding/ModMenuController.cs` (pause hook; predecessor's `Application/UI/` path corrected); `Application/Bridge/VResourceCleanup.cs` (Step 3.6 V placeholder — managed-side; predecessor's native `vulkan_mod_cleanup.cpp` does not exist). Chain detail defers to [MOD_OS_ARCHITECTURE.md](./MOD_OS_ARCHITECTURE.md).
 
-**DF rule**: **DFK018** — DEFERRED to the К-L20 LOCK cascade; no rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4).
+**DF rule**: **DFK018** — DEFERRED to the К-L21 LOCK cascade; no rule on disk (predecessor "Error, Active" claim withdrawn — Annex A-4).
 
 ### К-L19 — Hardware tier commitment (Vulkan 1.3 + async compute queue)
 
@@ -427,13 +426,25 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 
 **DF rule**: **DFK019_A** — Warning, enforcing (static Vulkan API surface discipline). **DFK019.B** (hardware-tier runtime check) — DEFERRED to the hardware tier expansion cascade (audience-driven).
 
-### К-L20 — Mod API forward-compatibility [RESERVED]
+### К-L20 — Shutdown-transaction quiescence
 
-**Status / LOCK history**: RESERVED, pre-AUTHORED (target: Mod API lock milestone post-А'.9); text TBD at that deliberation (Bridge mechanism, manifest freeze, grace-period semantics, deprecation cadence).
+**Status / LOCK history**: AUTHORED at EQ_A2 (Cascade B, 2026-07-18; D5 governance act, option B — seated into the К-L20 slot, with the Mod-API-forward-compatibility reservation relocated to К-L21).
 
-> **FENCED (target / planned — not current truth):** post-LOCK manifestation: version-frozen `IModApi`, frozen manifest schema, a Bridge amendment mechanism, `MOD_API_CONTRACT.md` authored at that milestone (no such document exists today). The DFK020 family (~20 sub-rules) and DFK009/DFK012/DFK015/DFK018 activate in the same cascade — [docs/ROADMAP.md](../ROADMAP.md) «Analyzer track».
+> Shutdown-transaction quiescence: Process shutdown is a TRANSACTION. No native teardown step may execute while simulation work can still run. Order: QUIESCE (no new ticks admitted; deferred work drained or deliberately cleared) → FENCE (simulation thread joined within a named deadline; scheduler phase barrier passed) → TEARDOWN (steps in reverse acquisition order, ending with `df_world_destroy`). A failed fence ABORTS the transaction: record structured diagnostics and fail-fast WITHOUT native teardown. Generalizes К-L18's unload-quiescence principle from mod scope to process scope; К-L18 itself is unchanged.
 
-**DF rule**: **DFK020 family** — RESERVED; deferred to the К-L20 LOCK cascade.
+**Falsifiability**: (a) an injected fence timeout must produce abort-not-teardown; (b) a teardown-order assertion must fail if any step runs before the fence passes.
+
+**Implementation artifacts**: `src/DualFrontier.Application/Loop/EngineSession.cs` (`Dispose` = the transaction; the fence reuses the К-L18 `SimulationStateController` pipeline-quiescence gate); the C5 order/abort tests (`tests/DualFrontier.Modding.Tests/Loop/EngineSessionTransactionTests.cs`).
+
+**DF rule**: **DFK020** — no analyzer rule on disk (a managed lifecycle invariant, outside Roslyn scope); falsified by the C5 order/abort tests.
+
+### К-L21 — Mod API forward-compatibility [RESERVED]
+
+**Status / LOCK history**: RESERVED, pre-AUTHORED (target: Mod API lock milestone post-А'.9); text TBD at that deliberation (Bridge mechanism, manifest freeze, grace-period semantics, deprecation cadence). Relocated from the К-L20 slot at EQ_A2 (D5 option B); semantics unchanged.
+
+> **FENCED (target / planned — not current truth):** post-LOCK manifestation: version-frozen `IModApi`, frozen manifest schema, a Bridge amendment mechanism, `MOD_API_CONTRACT.md` authored at that milestone (no such document exists today). The DFK021 family (~20 sub-rules) and DFK009/DFK012/DFK015/DFK018 activate in the same cascade — [docs/ROADMAP.md](../ROADMAP.md) «Analyzer track».
+
+**DF rule**: **DFK021 family** — RESERVED; deferred to the К-L21 LOCK cascade.
 
 ### Part 0 summary table
 
@@ -449,19 +460,20 @@ Canonical-text location is the ratified Q-N-8-2 hybrid: the full thesis (Causali
 | К-L7 | Span protocol | LOCKED (К0); sub К-L7.1 | DFK007 Error, enforcing |
 | К-L7.1 | GPU pipeline slot binding | LOCKED (A'.8; AUTHORED К10.3 v2) | DFK007_1 Error, enforcing |
 | К-L8 | Component lifetime | LOCKED (К0) | DFK008 outside Roslyn scope |
-| К-L9 | Mod parity («Vanilla = mods») | LOCKED (К0) | DFK009 DEFERRED (К-L20 cascade) |
+| К-L9 | Mod parity («Vanilla = mods») | LOCKED (К0) | DFK009 DEFERRED (К-L21 cascade) |
 | К-L10 | Decision rule (§8 metrics) | LOCKED (К0) | DFK010 PERMANENTLY DROPPED |
 | К-L11 | NativeWorld production backbone | LOCKED (К8.4 v2 / А'.5) | DFK011 Error, enforcing |
-| К-L12 | Full native kernel scheduling | LOCKED (A'.8; AUTHORED К10.1) | DFK012 DEFERRED (К-L20 cascade) |
+| К-L12 | Full native kernel scheduling | LOCKED (A'.8; AUTHORED К10.1) | DFK012 DEFERRED (К-L21 cascade) |
 | К-L13 | On-demand activation (5 wake types) | LOCKED (A'.8; AUTHORED К10.1) | DFK013 Warning, enforcing |
 | К-L14 | Performance derives from cleanness (meta) | LOCKED (A'.8; AUTHORED К10.1) | DFK014 outside Roslyn scope |
-| К-L15 | Native bus authority + three tiers | LOCKED (A'.8; AUTHORED К10.2); sub К-L15.1 | DFK015 DEFERRED (К-L20 cascade) |
+| К-L15 | Native bus authority + three tiers | LOCKED (A'.8; AUTHORED К10.2); sub К-L15.1 | DFK015 DEFERRED (К-L21 cascade) |
 | К-L15.1 | Three-tier independence (3-layer) | LOCKED (А'.7.x; compile-time А'.7.5) | DFK015_1 Error, enforcing |
 | К-L16 | Tick pipeline depth D≥1 (default 2) | LOCKED (A'.8; AUTHORED К10.3 v2) | DFK016 Warning, enforcing |
 | К-L17 | Display composition multi-layer | LOCKED (A'.8; AUTHORED К10.3 v2) | DFK017 Error, enforcing |
-| К-L18 | Mod lifecycle quiescent state | LOCKED (A'.8; AUTHORED К10.3 v2) | DFK018 DEFERRED (К-L20 cascade) |
+| К-L18 | Mod lifecycle quiescent state | LOCKED (A'.8; AUTHORED К10.3 v2) | DFK018 DEFERRED (К-L21 cascade) |
 | К-L19 | Hardware tier (Vulkan 1.3 + async compute) | LOCKED (V0.B) | DFK019_A Warning, enforcing; DFK019.B deferred |
-| К-L20 | Mod API forward-compatibility | RESERVED (post-Mod API lock) | DFK020 family RESERVED |
+| К-L20 | Shutdown-transaction quiescence | AUTHORED (EQ_A2) | DFK020 no rule on disk (C5 test-falsified) |
+| К-L21 | Mod API forward-compatibility | RESERVED (post-Mod API lock) | DFK021 family RESERVED |
 
 Shipped analyzer census (2026-07-01, ANALYZER_RULES §1.1): **17 detecting rules** at Release 1.0 severities (11 Error + 5 Warning build-breaking under `TreatWarningsAsErrors`; DFL025_B IDE-only); the deferred families have **no implementation on disk**.
 

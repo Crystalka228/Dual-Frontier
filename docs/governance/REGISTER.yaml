@@ -207,15 +207,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; the R4-9 analyzer honesty slip corrected — 17 detecting rules, not stubs) + HALT-1-ratified retargets CMM-1..CMM-5 at d6f1e9a (incl. the OD-3 version reconciliation 0.1.1–0.1.4); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (§3/§4 → THREADING MAJOR; §2/§6 → VULKAN MINOR; deferred-catch fix; shutdown quiesce fence; TLA+ Item 18) recorded in ROADMAP.'
+  last_review_date: 2026-07-18
+  last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.1 → v1.0.2 PATCH: §6.2 gains a cross-reference to the abnormal-exit (fence-abort) contract now owned by ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.6 (D10). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior: EQ_A1 D2 fault-symmetry (v1.0.0 → v1.0.1); DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.
 - register_id: DOC-A-CONTRACTS
@@ -305,16 +305,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.0
+  version: 1.0.1
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
-  last_modified_commit: d6f1e9a
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (all defect claims TRUE; zero honesty slips) + HALT-1-ratified retargets ELT-1..ELT-6 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). The §1 commit/reclaim law was already absorbed by MOD_OS_ARCHITECTURE §9.1 (which cites this contract by name); forward queue (state machines, swapchain transaction, shutdown transaction + fault taxonomy) recorded in ROADMAP.'
+  last_review_date: 2026-07-18
+  last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.0 → v1.0.1 PATCH: §2.6 world-shutdown transaction marked Realized (EngineSession.Dispose) + the REC-A1 finalizer correction (the "no finalizer backstop" line was wrong — NativeWorld.cs:496-503 exists) + the abnormal-exit (fence-abort) paragraph owned here (D10); §4.1 Degraded/EngineHealth marked Realized (EngineHealth.cs + the quarantine link). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.
 - register_id: DOC-A-EVENT_BUS
@@ -342,18 +341,17 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: Event buses (authored rework; fault-isolation asymmetry and capacity truths pinned)
   supersedes:
   - DOC-A-EVENT_BUS
-  last_modified_commit: 1556a18
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_date: 2026-07-18
+  last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B (D6) — v1.0.1 → v1.1.0 MINOR: df_bus_clear promoted from test-only to a production shutdown-transaction teardown step (ManagedBusBridge.Shutdown in EngineSession.Dispose S5, managed caller only — the native export is unchanged); §3 records the Fast-tier-on-clearing-thread semantics (post-fence, no publisher races the clear; Fast callbacks fire outside the per-tier mutex, К-L15.1) and §4 now lists three live native-bus touchpoints. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: DRAFTS_RATIFICATION MC-1 (PATCH 1.0.0 → 1.0.1).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 - register_id: DOC-A-EXECUTION_AUTHORITY_MATRIX
@@ -611,18 +609,17 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.0
+  version: 1.2.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)
   supersedes:
   - DOC-A-KERNEL
-  last_modified_commit: 6497ed5
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.1.0 MINOR (behavioral contract change per the §614 versioning law): К-L1 amended C++20 → C++23 under FRAMEWORK §7.2 Tier-1 protocol (operator-ratified 2026-07-17; EVT-2026-07-17-STACK_UPDATE). All seven C++20 sites updated (census: intro line, К-L1 heading/canon/falsifiability/artifacts, Part-4 status row, Rule-1); amendment record added to the К-L1 block honestly stating the MSVC /std:c++23preview status (stable switch = Build Tools 14.52, F-44) and the C-ABI containment rationale (IAC §3); GNU/Clang mode -std=c++23 verified emitted (DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT D6). CMakeLists CMAKE_CXX_STANDARD 20 → 23 in the same commit; native selftest ALL PASSED. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
+  last_review_date: 2026-07-18
+  last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1

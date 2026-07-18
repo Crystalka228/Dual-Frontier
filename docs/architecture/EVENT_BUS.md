@@ -5,18 +5,17 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: Event buses (authored rework; fault-isolation asymmetry and capacity truths pinned)
 supersedes:
 - DOC-A-EVENT_BUS
-last_modified_commit: 1556a18
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_date: 2026-07-18
+last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B (D6) — v1.0.1 → v1.1.0 MINOR: df_bus_clear promoted from test-only to a production shutdown-transaction teardown step (ManagedBusBridge.Shutdown in EngineSession.Dispose S5, managed caller only — the native export is unchanged); §3 records the Fast-tier-on-clearing-thread semantics (post-fence, no publisher races the clear; Fast callbacks fire outside the per-tier mutex, К-L15.1) and §4 now lists three live native-bus touchpoints. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: DRAFTS_RATIFICATION MC-1 (PATCH 1.0.0 → 1.0.1).'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 ---
@@ -76,6 +75,8 @@ The kernel owns sovereign event routing for kernel-space and cross-layer events 
 
 **К-L15.1 — three-tier independence**, at three structural layers: **(1) state** — each tier owns its own `std::mutex`, `next_seq`, subscriber map, and pending queue where applicable (`FastTierState`/`NormalTierState`/`BackgroundTierState`, `bus_native_internal.h:57-78`); no shared mutable state. **(2) runtime** — subscription ids encode tier in the high 8 bits, per-tier sequence in the low 56 (`TIER_SHIFT = 56`, `:96-112`; `bus_native.h:67`) — cross-tier id collisions structurally impossible; `df_bus_unsubscribe` decodes the tier bit (`bus_common.cpp:44-64`); `df_bus_clear` locks the three tier mutexes in fixed **fast → normal → background** order (`:68-85`). **(3) compile-time** — the four-TU split itself.
 
+**EQ_A2 / D6 — `df_bus_clear` promoted to a production teardown step.** The clear is no longer test-only: `EngineSession.Dispose` calls `ManagedBusBridge.Shutdown` → `df_bus_clear` as shutdown-transaction step S5 (RESOURCE_OWNERSHIP_AND_LIFETIME §4.4; managed caller only — the native export is unchanged). *Fast-tier-on-clearing-thread semantics*: the clear runs on the shutdown thread AFTER the fence, so the simulation is stopped and no publisher races it; and because Fast callbacks fire outside the per-tier mutex (no callback runs under a bus mutex, К-L15.1), clearing the Fast tier on the clearing thread is safe. The `// test-only` marker at the ABI (`bus_native.h:155`) is now stale — its correction is native-file scope, deferred to Cascade C.
+
 Cross-tier re-entrancy is safe by construction: a Fast subscriber may publish to any tier from inside its callback because Fast callbacks fire outside the per-tier mutex — the pre-split single shared mutex made this a deadlock hazard, closed at А'.7.x and held by the S10 probe (`tests/DualFrontier.Core.Tests/Scheduling/SchedulerExtremeTests.cs:1009-1010`).
 
 Every subscriber record carries a `mod_id` (`0` for Core/vanilla), enabling per-mod bulk unsubscribe (`df_bus_unsubscribe_{fast,normal,background}_by_mod`) — consumed by the native mod-unload primitive (§10). Fast/Background publish/subscribe additionally require per-FQN per-tier capability tokens in the manifest (MOD_OS_ARCHITECTURE.md §3.2; token construction in `KernelCapabilityRegistry`).
@@ -86,7 +87,7 @@ What actually routes where, verified on disk:
 
 - **Managed events take the managed path.** Systems publish through `SystemBase.Services` → domain bus; mods publish/subscribe through `IModApi`, routed by `ModBusRouter` (reflects `IGameServices` properties against each event's `[EventBus]` attribute, `ModBusRouter.cs`) to the correct bus after a capability check in `RestrictedModApi.Publish`/`Subscribe` (`RestrictedModApi.cs:157-190`). Every delivery mechanic in §2 is live production behavior.
 - **The managed→native routing facade exists but is dormant.** `BusFacade` (`src/DualFrontier.Application/Bus/BusFacade.cs`) maps event types to FNV-1a type ids (`Fnv1a32`, `:176-187`), reads the tier, and publishes through `ManagedBusBridge` — but only when `UseNativeBusForDispatch` is set, and it **defaults `false`** (`:49`). No production code constructs a `BusFacade`; the native dispatch path is exercised only by the scheduler stress/extreme test suites (e.g. S10, §3).
-- **Two native-bus touchpoints are live in production.** (1) `GameLoop` drains the Background tier after every fixed step with whatever tick budget remains (`ManagedBusBridge.DrainBackgroundBatch`, called at `GameLoop.cs:118-128`). (2) The mod-unload chain invokes the native unload primitive: `ModIntegrationPipeline.cs:668` calls `ModUnloadInterop.UnloadModNativeState`, which wraps native `df_scheduler_unload_mod_native_state` (`mod_unload.cpp:45-121`) — its T1/T2/T3 steps call the three per-tier `_by_mod` unsubscribes (`:83,87-89,93`), vacuously today since production registers no native subscribers.
+- **Three native-bus touchpoints are live in production.** (1) `GameLoop` drains the Background tier after every fixed step with whatever tick budget remains (`ManagedBusBridge.DrainBackgroundBatch`, called at `GameLoop.cs:118-128`). (2) The mod-unload chain invokes the native unload primitive: `ModIntegrationPipeline.cs:668` calls `ModUnloadInterop.UnloadModNativeState`, which wraps native `df_scheduler_unload_mod_native_state` (`mod_unload.cpp:45-121`) — its T1/T2/T3 steps call the three per-tier `_by_mod` unsubscribes (`:83,87-89,93`), vacuously today since production registers no native subscribers. (3) `EngineSession.Dispose` (the EQ_A2 shutdown transaction) clears the native bus via `ManagedBusBridge.Shutdown` → `df_bus_clear` (promoted out of test-only) as teardown step S5 — the first production caller of the clear.
 
 > **FENCED (target / planned — not current truth):** the sovereign-authority switch — native tiers becoming the dispatch path for managed events per К-L15 — is Planned; scheduling in `docs/ROADMAP.md`, cutover gates per EXECUTION_AUTHORITY_MATRIX.md §3. `BusFacade` and the bridge are the cutover scaffolding for that switch, not cruft — they carry their deletion trigger with the gates, not before.
 

@@ -5,15 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
 last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; the R4-9 analyzer honesty slip corrected — 17 detecting rules, not stubs) + HALT-1-ratified retargets CMM-1..CMM-5 at d6f1e9a (incl. the OD-3 version reconciliation 0.1.1–0.1.4); ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (§3/§4 → THREADING MAJOR; §2/§6 → VULKAN MINOR; deferred-catch fix; shutdown quiesce fence; TLA+ Item 18) recorded in ROADMAP.'
+last_review_date: 2026-07-18
+last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.1 → v1.0.2 PATCH: §6.2 gains a cross-reference to the abnormal-exit (fence-abort) contract now owned by ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.6 (D10). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior: EQ_A1 D2 fault-symmetry (v1.0.0 → v1.0.1); DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.'
 ---
@@ -219,7 +219,7 @@ In short: today `Stop` guarantees **nothing** past the 2-second join — the res
 
 ### 6.2 The law (normative target): quiesce → fence → teardown
 
-1. **Quiesce.** Stop request → T2 finishes the in-flight `ExecuteTick` *including* the deferred flush and the Background drain, then exits `RunLoop`. The join is unbounded after cancellation. If a bounded join is ever justified, its expiry is a **fail-fast process abort with diagnostics** — never silent continuation past a live simulation thread.
+1. **Quiesce.** Stop request → T2 finishes the in-flight `ExecuteTick` *including* the deferred flush and the Background drain, then exits `RunLoop`. The join is unbounded after cancellation. If a bounded join is ever justified, its expiry is a **fail-fast process abort with diagnostics** — never silent continuation past a live simulation thread. (The abnormal-exit contract — fail-fast WITHOUT native teardown, leak-on-abort — is owned by ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.6, D10.)
 2. **Fence the GPU.** Pipeline slots quiescent — every slot `Empty` or `ReadableAsTail`, the same predicate K-L18 uses (`df_pipeline_is_quiescent`; К-L18; `pipeline_slot.h:24-25`) — then `vkDeviceWaitIdle`, per the VULKAN_SUBSTRATE §5.4 policy census.
 3. **Teardown order.** Mods (`UnloadAll` under K-L18) → managed scheduler/graph release → native system graph + wake registry clear → native bus clear (`df_bus_clear`, promoted out of test-only) → `NativeWorld.Dispose()` executed **deterministically on the thread that observed quiescence** → renderer/device last.
 4. **Abandoned-thread prohibition.** No thread that can reach `NativeWorld`, field storage, or a native queue may exist past step 3's dispose. The finalizer is a leak detector, not a teardown path; a finalizer-run `df_world_destroy` in a healthy shutdown is itself a defect.

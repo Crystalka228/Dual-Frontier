@@ -3,15 +3,18 @@ using System;
 namespace DualFrontier.Core.ECS;
 
 /// <summary>
-/// Sink for mod-system fault reports. Implemented in the Application layer
-/// by {ModFaultHandler} (realized — K6-era work); faults arrive through the
-/// public <c>ModLoader.HandleModFault</c> entry point and the offending mod
-/// is queued for deferred unload at the next menu open. Core never crashes a
-/// mod's host process directly — it hands the fault off through this sink
-/// and the upper layer decides what to do. The К8.3+К8.4 runtime isolation
-/// guard (which called this sink and threw IsolationViolationException from
-/// inside SystemExecutionContext) is deleted; isolation is now compile-time
-/// via [SystemAccess].
+/// Sink for mod-system fault reports. Implemented in the Application layer by
+/// {ModFaultHandler}. Faults arrive through <c>SystemExecutionContext.RouteFault</c>
+/// — the single EQ_A1 D2 origin-dispatch definition: a mod-origin fault caught in
+/// <c>ParallelSystemScheduler.ExecutePhase</c> (or in <c>DomainEventBus</c> delivery,
+/// either mode) is reported here via <c>ReportFault</c>, the offending mod is
+/// committed to the session quarantine skip-set, and its deferred unload is drained by
+/// <c>ModIntegrationPipeline.Apply</c> at the next menu open. Core never crashes a
+/// mod's host process directly — it hands the fault off through this sink and the
+/// upper layer decides what to do. (The prior "faults arrive through
+/// <c>ModLoader.HandleModFault</c>" description was stale — corrected at EQ_A2, REC-A1.)
+/// The К8.3+К8.4 runtime isolation guard that once called this sink is deleted;
+/// isolation is now compile-time via [SystemAccess].
 /// </summary>
 internal interface IModFaultSink
 {
