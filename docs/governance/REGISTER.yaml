@@ -2046,7 +2046,7 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Volodymyr (Crystalka)
   version: 1.0
   first_authored: 2026-07-18
@@ -3981,6 +3981,19 @@ documents:
   review_cadence: none-historical-record
   title: EQ_A1_FAULT_SYMMETRY CLOSURE REPORT — 2026-07-18 — M4 bus + M1 scheduler fault-crossing parity under the ratified D2 origin-asymmetric policy; ModQuarantine skip-set (ELT 2.3 immediate quarantine); CMM section 7 PATCH recording D2; all gates green, full-sln 1166 -> 1177/0/5
   special_case_rationale: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-STACK_UPDATE_CLOSURE_REPORT, DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT). Companion of DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF section 9; the recon ground truth lives in DOC-E-EQ_A_SHUTDOWN_RECON_REPORT.'
+- register_id: DOC-E-EQ_A2_SHUTDOWN_TRANSACTION_CLOSURE_REPORT
+  path: docs/reports/EQ_A2_SHUTDOWN_TRANSACTION_CLOSURE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  title: EQ_A2_SHUTDOWN_TRANSACTION closure report (Cascade B — EngineSession + world-shutdown transaction + Degraded/EngineHealth + df_bus_clear promotion + К-L20 seating)
 - register_id: DOC-E-EQ_A_SHUTDOWN_RECON_REPORT
   path: docs/reports/EQ_A_SHUTDOWN_RECON_REPORT.md
   project: Dual Frontier
@@ -15351,3 +15364,40 @@ audit_trail:
     - DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT → EXECUTED (enrolled at C1)
     - DOC-D-BOUNDARY_W0_BRIEF → EXECUTED (Draft at C1 -> EXECUTED at closure)
     - DOC-E-BOUNDARY_W0_CLOSURE_REPORT → EXECUTED (enrolled)
+- id: EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION
+  date: 2026-07-18
+  event: EQ_A2_SHUTDOWN_TRANSACTION cascade execution (Cascade B of the EQ-a shutdown-law family) -- EngineSession composition root + world-shutdown transaction, Degraded/EngineHealth surface, df_bus_clear production promotion, К-L20 seated as shutdown-quiescence (Mod-API relocated to К-L21)
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-EVENT_BUS_V2
+  - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+  - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+  - DOC-D-EQ_A2_SHUTDOWN_TRANSACTION_BRIEF
+  - DOC-E-EQ_A2_SHUTDOWN_TRANSACTION_CLOSURE_REPORT
+  - DOC-C-ROADMAP
+  commits:
+    range: 41a78fe..e733797 (5 work commits C1-C6, C2+C3 folded; the closure-append commit following e733797 carries this entry)
+    key_commits:
+    - hash: 41a78fe
+      summary: C1 docs(brief) - EQ_A2 brief enrolled (Draft) + Option-B H-LAW correction folded (D5/C6a)
+    - hash: f207f02
+      summary: C2+C3 feat(lifecycle) - EngineSession composition root + world-shutdown transaction (quiesce->fence->teardown + abort); TryStop/DropDeferred/Shutdown primitives; GameContext deleted; Launcher rewired fence-first
+    - hash: 1e07c2d
+      summary: C4 feat(lifecycle) - Degraded/EngineHealth surface (ELT 4.1) + ModQuarantine -> Degraded link
+    - hash: 3e63416
+      summary: C5 test(lifecycle) - 7 transaction/Degraded tests + D9 Interop serialising collection (F-40 eliminated)
+    - hash: e733797
+      summary: C6 governance(kernel) - К-L20 seated shutdown-quiescence (Option B) + EVENT_BUS D6 + ELT/CMM + IModFaultSink REC-A1
+  governance_impact: >
+    Cascade B of the EQ-a shutdown-law family. The engine gains a world-shutdown TRANSACTION and the composition root that owns it. EngineSession : IDisposable (DualFrontier.Application, boundary law B-5) owns the native world / bus bridge / mod pipeline / domain-bus aggregator / loop / controller; its Dispose runs quiesce -> fence -> teardown (ROL §4.4 / CMM §6.2 / ELT §2.6): a bounded CHECKED join of the sim thread + the К-L18 pipeline-quiescence gate, then reverse-order teardown (UnloadAll -- its FIRST production caller, M2 -- then the native scheduler/graph/wake clears + the promoted df_bus_clear, then NativeWorld.Dispose). A missed fence ABORTS: structured diagnostics + Environment.FailFast WITHOUT native teardown (leak-on- abort beats racing world finalization under a live sim thread, D4). GameContext is DELETED; the Launcher disposes the session BEFORE renderer.Shutdown, closing the CMM §6.1 "WaitIdle while T2 still dispatching" race. Degraded/EngineHealth (ELT §4.1, M7) is real: a session- scoped annotation with structured reasons + a lifecycle event, linked to the EQ_A1 quarantine skip-set (a quarantined mod -> a Degraded reason via ParallelSystemScheduler.OnModQuarantined). df_bus_clear (M8/D6) is promoted from test-only to a managed production teardown step (the native export unchanged). Governance: К-L20 SEATED as shutdown-transaction quiescence under the operator's informed Option-B ruling (Phase-0 H-LAW: the К-L20 slot was pre-reserved for Mod-API-forward-compatibility) -- the Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family -> DFK021; the four DFK009/012/015/018 "К-L20 cascade" DF-rule pointers re-pointed to К-L21, DF-rule SURFACE only, the four LOCKED canons byte-unchanged); count headline 21 -> 22 active. EVENT_BUS (D6), ELT (§2.6/§4.1 Realized + REC-A1 finalizer correction + the D10 abnormal-exit paragraph), CMM (§6.2 D10 cross-ref), and the IModFaultSink header (REC-A1 RouteFault reality) amended. MANAGED-ONLY: no native files touched; the native ABI pair (M5), swapchain (M6), device-lost (M9), and the native mod_unload SingletonGuard are fenced to Cascades C/D (new rows F-49, F-50). D9: a serialising [Collection] on the cross-class native- state Interop.Tests classes ELIMINATED the F-40 flake (202/0/0 across three runs + single-test 1/1); F-40 CLOSED. Gates at closure (Release, METHODOLOGY 12.7): build 0W/0E both configs; full-sln 1179 -> 1186/0/5 (+7 = the C5 transaction/Degraded tests; 5 skips the unchanged F-30/F-31 Extreme guards); validate --armed exit 0 after every frontmatter-touching commit (C1, C6, C7); deferred marker census 82 -> 86 sites / 51 -> 52 files (the S3 drop primitive, same-commit pin update at C2+C3); Console.WriteLine src 2 = 2 (the abort uses Environment. FailFast, never console); DFK-WAIVER 2 = 2; BoundaryRatchet 4+1 UNMOVED (EngineSession is game-vocabulary-free by discipline; GameBootstrap, the sacrificial harness, keeps the game refs). REGISTER 4 architecture-doc metadata bumps (no doc add/remove); last_modified_commit dropped from KERNEL/EVENT_BUS/ELT (pre-commit hash unknowable; the EQ_A1-on-CMM precedent). No push (executor); operator pushes claude/eq-a2-shutdown-transaction + merges.
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-KERNEL_ARCHITECTURE → LOCKED (MINOR 1.1.0 -> 1.2.0 at C6; К-L20 seated shutdown-quiescence, К-L21 reserved Mod-API)
+    - DOC-A-EVENT_BUS_V2 → LOCKED (MINOR 1.0.1 -> 1.1.0 at C6; D6 df_bus_clear production role)
+    - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS → LOCKED (PATCH 1.0.0 -> 1.0.1 at C6; §2.6/§4.1 Realized + REC-A1 + D10)
+    - DOC-A-CONCURRENCY_AND_MEMORY_MODEL → LOCKED (PATCH 1.0.1 -> 1.0.2 at C6; §6.2 D10 cross-ref)
+    - DOC-D-EQ_A2_SHUTDOWN_TRANSACTION_BRIEF → EXECUTED (Draft at C1 -> EXECUTED at closure)
+    - DOC-E-EQ_A2_SHUTDOWN_TRANSACTION_CLOSURE_REPORT → EXECUTED (enrolled)
