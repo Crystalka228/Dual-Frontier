@@ -1411,7 +1411,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2026-Q4
   title: Roadmap
@@ -1975,13 +1975,13 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Volodymyr (Crystalka)
   version: 1.0
   first_authored: 2026-07-18
   last_modified: 2026-07-18
   content_language: en
-  next_review_due: post-EQ_A1 closure
+  next_review_due: 
   title: EQ_A1_FAULT_SYMMETRY execution brief (Cascade A of the EQ-a shutdown-law family -- M4 deferred-catch parity + M1 ExecutePhase per-system catch, under the ratified D2 origin-asymmetric policy)
 - register_id: DOC-D-F10_TEST_ISOLATION_BRIEF
   path: tools/briefs/F10_TEST_ISOLATION_BRIEF.md
@@ -3880,6 +3880,21 @@ documents:
   title: 'Drafts Ratification Review Report — Phase A of DRAFTS_RATIFICATION (D1: seven drafts re-verified at 48983c4 — code anchors EXACT wholesale, ~200 anchor verdicts; 41 fix ids + 2 mechanical classes; six READY-WITH-FIX, PSC retarget-only, zero NOT-READY; HALT-1 decision basis)'
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT
+  path: docs/reports/EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-18
+  last_modified: 2026-07-18
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: EQ_A1_FAULT_SYMMETRY CLOSURE REPORT — 2026-07-18 — M4 bus + M1 scheduler fault-crossing parity under the ratified D2 origin-asymmetric policy; ModQuarantine skip-set (ELT 2.3 immediate quarantine); CMM section 7 PATCH recording D2; all gates green, full-sln 1166 -> 1177/0/5
+  special_case_rationale: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-STACK_UPDATE_CLOSURE_REPORT, DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT). Companion of DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF section 9; the recon ground truth lives in DOC-E-EQ_A_SHUTDOWN_RECON_REPORT.'
 - register_id: DOC-E-EQ_A_SHUTDOWN_RECON_REPORT
   path: docs/reports/EQ_A_SHUTDOWN_RECON_REPORT.md
   project: Dual Frontier
@@ -15172,3 +15187,31 @@ audit_trail:
     lifecycle_transitions:
     - DOC-D-STACK_UPDATE_BRIEF → EXECUTED (enrolled)
     - DOC-E-STACK_UPDATE_CLOSURE_REPORT → EXECUTED (enrolled)
+- id: EVT-2026-07-18-EQ_A1_FAULT_SYMMETRY
+  date: 2026-07-18
+  event: EQ_A1_FAULT_SYMMETRY cascade execution (M4 bus + M1 scheduler fault-crossing parity under the ratified D2 origin-asymmetric policy) -- EQ-a Cascade A
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF
+  - DOC-E-EQ_A_SHUTDOWN_RECON_REPORT
+  - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+  - DOC-E-EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT
+  - DOC-C-ROADMAP
+  commits:
+    range: 4d8b8cd..df97639
+    key_commits:
+    - hash: c72d3b9
+      summary: C2 fix(bus) - DeliverSync re-routed off Console.WriteLine + InvokeDeferred catch added; SystemExecutionContext.RouteFault single D2 definition; 6 bus tests
+    - hash: 4dae07b
+      summary: C3 fix(scheduler) - ExecutePhase per-system catch + origin dispatch + ModQuarantine skip-set (ELT 2.3 immediate quarantine); 5 scheduler tests
+    - hash: df97639
+      summary: C4 docs(cmm) - section 7 records the ratified D2 core-origin policy (PATCH 1.0.0 -> 1.0.1, LOCKED preserved)
+  governance_impact: >
+    First engineering cascade off the ratified contracts (EQ-a family, Cascade A). The two managed fault-crossing points the EQ-a work order names as the lead edge are closed under the operator-ratified D2 origin-asymmetric policy (CMM section 7) -- a mod-origin fault is reported to the IModFaultSink and CONTAINED, a core-origin fault is recorded and RETHROWN (fail-fast preserved). M4 (DomainEventBus): the deferred path gained the catch it never had and the sync path re-routed off its Console.WriteLine swallow -- symmetric per-subscriber isolation across both delivery modes, the recon's stated top priority. M1 (ParallelSystemScheduler.ExecutePhase): the currently-missing per-system catch with origin dispatch, plus the new ModQuarantine skip-set that skips a faulted mod's systems on subsequent ticks (the immediate half of the ELT 2.3 two-stage split; the section 9.5 queued unload via ModIntegrationPipeline.Apply is unchanged). The single D2 policy definition lives on SystemExecutionContext.RouteFault (its _faultSink field's first read site since the K8.3+K8.4 cutover); this is the first RUNTIME feeder of the mod-fault route. D2 recorded in CMM section 7 (Q3: the doc it governs, PATCH-only 1.0.0 -> 1.0.1, LOCKED preserved). Ratified behavior change (not a regression -- CMM section 7 "even the good mode under-reports" executed): the sync bus path's former swallow-everything now rethrows a core-origin subscriber fault. Scope: Q1 built the ModQuarantine mechanism ONLY -- the LogicallyDisabled desired-state annotation and the EngineHealth/Degraded surface (ELT 3.1/4.1) stay Cascade B; Q2 added SystemExecutionContext.RouteFault as a recorded Skeleton revision. Recorded discrepancies (code-truth): no ModFault struct exists (routing uses the existing IModFaultSink.ReportFault); REC-A8 corrected -- HandleModFault has zero PRODUCTION callers but one test caller (ModFaultHandlerTests), and this cascade adds the first runtime feeder. Gates at closure (Release, METHODOLOGY 12.7): build 0W/0E; full-sln 1166 -> 1177/0/5 (+11 = the 11 new fault tests; F-40 did not recur; 5 skips are the unchanged F-30/F-31 Extreme guards); native selftest ALL PASSED; validate --armed exit 0 after every frontmatter-touching commit (C1, C4, C5); CensusMetaTests 8/8. Census delta (TESTING_STRATEGY section 4): Console.WriteLine src 3 -> 2 (bus site re-routed); Debug.WriteLine src 1 -> 2 (core-record surface, not a pinned marker); DFK-WAIVER 2 = 2 HARD; reserved-surface 34/13 and the five marker families UNCHANGED. Register 346 -> 349 documents (C1 +2 brief+recon; C5 +1 closure report), authority surface 134 unchanged in count (CMM 1.0.0 -> 1.0.1 at C4). Two untracked df-cascade-authoring template scaffolds (docs/methodology/BRIEF_TEMPLATE.md, RECON_KICKOFF_TEMPLATE.md) appeared mid-session, excluded from the register, left untracked -- NOT part of this cascade. No push (executor); operator pushes the feature branch + merges. ROADMAP EQ-a annotated: M1+M4 DONE; M2/M3/M5-M9 remain; REC-A1 (ELT 2.6 finalizer misstatement + stale NativeWorld.cs:25-26 doc) recorded as a Cascade-B rider. Next: Cascade B chartering (D3-D8 deliberation). G-RATIO monitor 154/344 (44.8%) standing, report-only.
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF → EXECUTED (Draft -> EXECUTED at closure)
+    - DOC-E-EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT → EXECUTED (enrolled)
+    - DOC-A-CONCURRENCY_AND_MEMORY_MODEL → LOCKED (PATCH 1.0.0 -> 1.0.1, lifecycle unchanged)

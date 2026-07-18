@@ -3,13 +3,13 @@ register_id: DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.0'
 first_authored: '2026-07-18'
 last_modified: '2026-07-18'
 content_language: en
-next_review_due: 'post-EQ_A1 closure'
+next_review_due: null
 title: EQ_A1_FAULT_SYMMETRY execution brief (Cascade A of the EQ-a shutdown-law family -- M4 deferred-catch parity + M1 ExecutePhase per-system catch, under the ratified D2 origin-asymmetric policy)
 ---
 

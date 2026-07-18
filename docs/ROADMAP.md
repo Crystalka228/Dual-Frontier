@@ -7,7 +7,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2026-Q4
 title: Roadmap
@@ -946,6 +946,14 @@ The deferral decision record (Q-L-13 + PA-001 rationale) stays in [ANALYZER_RULE
 | EQ-d | **Wiring/comment queue** | F-35..F-38 (standing ledger rows) + smaller records from the ratification review | `EffectiveApiVersion` wire-or-delete; `RegisterRestrictedModApi` wiring gap; `TickRates.SLOW` comment class; bounded-queue law owner (CMM §9.6); no-config-contract gap (EAM R13 / TCM §6 rule 3); input-bridge (EAM Q5 / TCM §7.3, existing Native-foundation track) |
 
 New F-entries seeded with this queue: F-42 (RNG service), F-43 (ABI protocol hardening) — see the Findings ledger.
+
+**EQ-a progress — Cascade A (EQ_A1_FAULT_SYMMETRY) EXECUTED 2026-07-18** (commits `4d8b8cd..df97639`; `EVT-2026-07-18-EQ_A1_FAULT_SYMMETRY`). The two managed fault-crossing members of the EQ-a row are DONE under the ratified D2 origin-asymmetric policy:
+
+- **M4** — `DomainEventBus` deferred/sync catch symmetry + fault-sink routing (the "deferred-handler catch symmetry + regression test" the row calls CMM's stated top priority): `c72d3b9`.
+- **M1** — `ParallelSystemScheduler.ExecutePhase` per-system catch + origin dispatch + the ELT §2.3 immediate-quarantine skip-set (`ModQuarantine`): `4dae07b`.
+- D2 recorded in CMM §7 (PATCH 1.0.0 → 1.0.1, LOCKED preserved): `df97639`.
+
+Remaining EQ-a members **M2/M3/M5–M9** (world-shutdown transaction; `UnloadAll` first production caller; the `df_world_active_span_count` + `df_world_destroy_checked` ABI; `EngineSession : IDisposable`; swapchain prepare-before-reclaim; the Degraded/EngineHealth surface; `df_bus_clear` promotion; device-lost v1) remain OPEN; next is **Cascade B chartering** (the D3–D8 decisions deliberation). **Cascade-B rider (REC-A1):** the ELT §2.6 finalizer misstatement and the stale `NativeWorld.cs:25-26` "no finalizer backstop" doc line are recorded here for correction in Cascade B — NOT touched by EQ_A1.
 
 ## Beyond ship
 
