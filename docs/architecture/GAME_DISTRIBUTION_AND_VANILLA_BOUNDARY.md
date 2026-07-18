@@ -3,15 +3,18 @@ register_id: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
 project: Dual Frontier
 category: A
 tier: 1
-lifecycle: AUTHORED
+lifecycle: LOCKED
 owner: Crystalka
-version: 0.1.0
+version: 1.0.0
 first_authored: 2026-07-18
 last_modified: 2026-07-18
 content_language: en
-next_review_due: 'post-ratification closure'
+next_review_due: 2027-Q3
 title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
-special_case_rationale: 'Tier 1 AUTHORED override (forbidden pair; precedent DOC-A-K_CLOSURE_REPORT + the 2026-07-15 draft set): authored as the boundary law for the operator-ratified target composition model, pending per-document ratification to LOCKED. Grounded in docs/reports/GAME_ENGINE_BOUNDARY_AUDIT_REPORT.md (HEAD 4c58942). Until ratified, the current LOCKED corpus (ARCHITECTURE.md Domain layer, MOD_OS_ARCHITECTURE.md section 3.4) remains the operative present-tense law.'
+review_cadence: on-change+annual
+last_review_date: 2026-07-18
+last_review_event: 'Ratified LOCKED v1.0.0 2026-07-18 (operator chat act) per EVT-2026-07-18-BOUNDARY_W0, BOUNDARY_W0 cascade C3. Opens the game-vs-engine composition axis grounded in DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT (HEAD 4c58942); companion DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN flips Live the same commit; B-2 (no new gameplay nouns in src/) active from this ratification. Prior: AUTHORED 0.1.0 enrolled at BOUNDARY_W0 C1.'
+reviewer: Crystalka
 ---
 
 # Game Distribution & Vanilla Boundary (the composition law)

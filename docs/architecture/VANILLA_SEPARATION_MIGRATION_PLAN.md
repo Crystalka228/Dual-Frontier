@@ -3,14 +3,18 @@ register_id: DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
 project: Dual Frontier
 category: A
 tier: 2
-lifecycle: Draft
+lifecycle: Live
 owner: Crystalka
-version: 0.1.0
+version: 1.0.0
 first_authored: 2026-07-18
 last_modified: 2026-07-18
 content_language: en
-next_review_due: 'post-ratification closure'
+next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
+review_cadence: on-change
+last_review_date: 2026-07-18
+last_review_event: 'Ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0, BOUNDARY_W0 cascade C3 (companion to DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY, LOCKED the same commit). W0 row moves to DONE at closure (C6); the document ends SUPERSEDED into ROADMAP at W8.'
+reviewer: Crystalka
 ---
 
 # Vanilla Separation Migration Plan (waves + map)

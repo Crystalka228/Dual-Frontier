@@ -71,6 +71,12 @@ documents:
   tier: 1
   lifecycle: LOCKED
   version: 2.0.1
+- register_id: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
+  path: docs/architecture/GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md
+  category: A
+  tier: 1
+  lifecycle: LOCKED
+  version: 1.0.0
 - register_id: DOC-A-IDENTITY_AND_ABI_CONTRACT
   path: docs/architecture/IDENTITY_AND_ABI_CONTRACT.md
   category: A
@@ -154,6 +160,12 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
+  version: 1.0.0
+- register_id: DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  path: docs/architecture/VANILLA_SEPARATION_MIGRATION_PLAN.md
+  category: A
+  tier: 2
+  lifecycle: Live
   version: 1.0.0
 - register_id: DOC-A-VULKAN_SUBSTRATE_V2
   path: docs/architecture/VULKAN_SUBSTRATE.md
