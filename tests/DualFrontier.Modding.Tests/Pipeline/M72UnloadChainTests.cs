@@ -15,7 +15,6 @@ using Xunit;
 
 namespace DualFrontier.Modding.Tests.Pipeline;
 
-[EventBus("Combat")]
 public sealed record M72UnloadTestEvent(int Value) : IEvent;
 
 public sealed record M72TestContract(string Marker) : IModContract;

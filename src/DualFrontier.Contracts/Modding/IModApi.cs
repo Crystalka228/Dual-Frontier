@@ -66,8 +66,9 @@ public interface IModApi
     void RegisterSystem<T>() where T : class;
 
     /// <summary>
-    /// Publishes an event on the matching domain bus. The bus is resolved
-    /// from the event type's <c>[EventBus]</c> marker attribute.
+    /// Publishes an event on the single managed event dispatch. W2/BD-3 removed the
+    /// genre taxonomy, so events route by type -- no <c>[EventBus]</c> marker or bus
+    /// resolution. Gated first by the mod's declared capabilities (kernel.publish:&lt;FQN&gt;).
     /// </summary>
     void Publish<T>(T evt) where T : IEvent;
 

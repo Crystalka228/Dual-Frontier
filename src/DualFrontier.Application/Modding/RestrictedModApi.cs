@@ -15,8 +15,9 @@ namespace DualFrontier.Application.Modding;
 /// Implementation of <see cref="IModApi"/> that <see cref="ModLoader"/> hands
 /// to each mod in <c>IMod.Initialize</c>. Proxies calls into the core
 /// through <see cref="ModRegistry"/> and <see cref="IModContractStore"/>,
-/// and routes <see cref="Publish{T}"/>/<see cref="Subscribe{T}"/> through
-/// <see cref="ModBusRouter"/> to the correct domain bus.
+/// and routes <see cref="Publish{T}"/>/<see cref="Subscribe{T}"/> to the single
+/// managed event dispatch (W2/BD-3: the genre taxonomy and ModBusRouter are gone;
+/// every event routes by type to the one bus, gated first by the capability check).
 ///
 /// A mod MUST NOT cast <see cref="IModApi"/> to this concrete type. The
 /// defense is structural, not a runtime check (MOD_OS_ARCHITECTURE §4.4):
@@ -153,6 +154,15 @@ internal sealed class RestrictedModApi : IModApi
     public void RegisterSystem<T>() where T : class
         => _registry.RegisterSystem(_modId, typeof(T));
 
+    /// <summary>
+    /// The single managed event dispatch. W2/BD-3 collapsed the five genre buses into
+    /// one type-keyed <c>DomainEventBus</c> behind <see cref="IGameServices"/>, so every
+    /// getter now returns that same unified bus; the mod path publishes and subscribes on
+    /// it directly -- no <c>[EventBus]</c> genre resolution, no ModBusRouter. Reaching it
+    /// through a genre getter is a bridge detail that retires at W5 with the taxonomy.
+    /// </summary>
+    private IEventBus ManagedBus => _services.Pawns;
+
     /// <inheritdoc />
     public void Publish<T>(T evt) where T : IEvent
     {
@@ -160,8 +170,7 @@ internal sealed class RestrictedModApi : IModApi
 
         EnforceCapability("publish", typeof(T));
 
-        if (ModBusRouter.Resolve(typeof(T), _services) is IEventBus bus)
-            bus.Publish(evt);
+        ManagedBus.Publish(evt);
     }
 
     /// <inheritdoc />
@@ -171,8 +180,7 @@ internal sealed class RestrictedModApi : IModApi
 
         EnforceCapability("subscribe", typeof(T));
 
-        if (ModBusRouter.Resolve(typeof(T), _services) is not IEventBus bus)
-            return;
+        IEventBus bus = ManagedBus;
 
         SystemExecutionContext? captured = SystemExecutionContext.Current;
         Action<T> wrapped = captured is null

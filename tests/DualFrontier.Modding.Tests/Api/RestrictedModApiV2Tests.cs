@@ -13,10 +13,7 @@ using Xunit;
 
 namespace DualFrontier.Modding.Tests.Api;
 
-[EventBus("Combat")]
 public sealed record TestCombatEvent(int Value) : IEvent;
-
-public sealed record TestUnboundEvent(int Value) : IEvent;
 
 public sealed class RestrictedModApiV2Tests
 {
@@ -30,40 +27,9 @@ public sealed class RestrictedModApiV2Tests
         ex.Message.Should().Be("custom msg");
     }
 
-    // 2
-    [Fact]
-    public void EventBusAttribute_EmptyName_ThrowsArgumentException()
-    {
-        Action act = () => _ = new EventBusAttribute("");
-        act.Should().Throw<ArgumentException>();
-    }
-
-    // 3
-    [Fact]
-    public void EventBusAttribute_ValidName_ExposesBusName()
-    {
-        var attr = new EventBusAttribute("Combat");
-        attr.BusName.Should().Be("Combat");
-    }
-
-    // 4
-    [Fact]
-    public void ModBusRouter_EventWithAttribute_ResolvesCombatBus()
-    {
-        var services = new GameServices();
-        object? bus = ModBusRouter.Resolve(typeof(TestCombatEvent), services);
-        bus.Should().NotBeNull();
-        bus.Should().BeSameAs(services.Combat);
-    }
-
-    // 5
-    [Fact]
-    public void ModBusRouter_EventWithoutAttribute_ReturnsNull()
-    {
-        var services = new GameServices();
-        object? bus = ModBusRouter.Resolve(typeof(TestUnboundEvent), services);
-        bus.Should().BeNull();
-    }
+    // 2 (former tests 2-5 removed at W2 C3: EventBusAttribute + ModBusRouter are deleted
+    // with the genre taxonomy -- the mod path now routes by type to the unified dispatch,
+    // proven by the round-trip test below rather than by attribute/router resolution.)
 
     // 6
     [Fact]

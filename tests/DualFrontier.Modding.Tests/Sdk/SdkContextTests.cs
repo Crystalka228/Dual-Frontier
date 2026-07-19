@@ -27,7 +27,6 @@ internal struct SdkTestComponent : IComponent
     public int Value;
 }
 
-[EventBus("Combat")]
 public sealed record SdkTestEvent(int Value) : IEvent;
 
 [SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]

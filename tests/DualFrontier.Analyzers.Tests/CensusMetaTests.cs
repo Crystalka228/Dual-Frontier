@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
+    [InlineData("deferred", @"\bdeferred\b", true, 88, 54)]
     [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -128,6 +128,10 @@ public sealed class CensusMetaTests
         // the two documentation sites and shipped before this census (Analyzers.Tests) ran.
         // W1-fix (Codex review): deferred 88->89 / 54->55 -- Sdk/ISystemServices.cs now
         // records that the mod-facing IModApi factory overload is deferred (N17).
+        // W2/BD-3 (C3): deferred 89->88 / 55->54 -- EventBusAttribute.cs deleted with the
+        // genre taxonomy; its /// [Deferred] doc-example line (line 15) was the file's only
+        // deferred site. ModBusRouter.cs was also deleted this commit but carried no census
+        // markers, so no other pin moves.
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 
