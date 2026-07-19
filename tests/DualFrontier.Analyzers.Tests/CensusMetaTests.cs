@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 88, 54)]
+    [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
     [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -132,6 +132,10 @@ public sealed class CensusMetaTests
         // genre taxonomy; its /// [Deferred] doc-example line (line 15) was the file's only
         // deferred site. ModBusRouter.cs was also deleted this commit but carried no census
         // markers, so no other pin moves.
+        // W2/BD-10 (C5): deferred 88->89 / 54->55 -- the capability ledger relocated to
+        // Core/Modding/KernelCapabilityRegistry.cs documents that live per-mod owner-registration
+        // is DEFERRED to the wave that moves gameplay types into the vanilla mods; that one
+        // sentence is the +1 deferred site in the new ledger file.
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
@@ -153,7 +154,7 @@ public sealed class RestrictedModApiV2Tests
             new ModRegistry(),
             new ModContractStore(),
             new GameServices(),
-            KernelCapabilityRegistry.BuildFromKernelAssemblies());
+            new KernelCapabilityRegistry());
         api.GetOwnManifest().Should().BeSameAs(manifest);
     }
 
@@ -300,7 +301,7 @@ public sealed class RestrictedModApiV2Tests
             new ModRegistry(),
             new ModContractStore(),
             services,
-            KernelCapabilityRegistry.BuildFromKernelAssemblies());
+            new KernelCapabilityRegistry());
         return (api, services);
     }
 

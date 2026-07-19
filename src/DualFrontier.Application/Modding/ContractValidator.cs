@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Modding;
 
 namespace DualFrontier.Application.Modding;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using AwesomeAssertions;
@@ -70,7 +71,7 @@ public sealed class CrossAlcTypeIdentityTests
         var registry = new ModRegistry();
         var contractStore = new ModContractStore();
         var services = new GameServices();
-        KernelCapabilityRegistry capabilities = KernelCapabilityRegistry.BuildFromKernelAssemblies();
+        KernelCapabilityRegistry capabilities = new KernelCapabilityRegistry();
 
         // Pass 1 — shared mod first so subsequent regular contexts can
         // delegate to its ALC.

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
@@ -242,7 +243,7 @@ public sealed class SdkContextTests
             registry,
             new ModContractStore(),
             new GameServices(),
-            KernelCapabilityRegistry.BuildFromKernelAssemblies());
+            new KernelCapabilityRegistry());
         registry.RegisterRestrictedModApi("test.mod", api);
     }
 }

@@ -6,6 +6,7 @@ using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
+using DualFrontier.Core.Modding;
 // IManagedStore + ManagedStore<T> live in DualFrontier.Contracts.Modding
 // (same namespace as IModApi) so mods can receive them from SystemBase.
 // The using directive above brings them into scope.
@@ -238,6 +239,13 @@ internal sealed class RestrictedModApi : IModApi
 
     private void EnforceCapability(string verb, Type eventType)
     {
+        // Self-access auto-grant (W2/BD-10): a mod is never required to declare a capability
+        // for a type it registered itself; cross-owner access still runs the manifest check
+        // below. Mechanism this wave -- vanilla mods register no types yet, so Owns is false in
+        // production and the grace path / declared-token check governs; tests exercise the grant.
+        if (_kernelCapabilities.Owns($"mod.{_modId}", eventType.FullName!))
+            return;
+
         string token = $"kernel.{verb}:{eventType.FullName}";
 
         if (_manifest.Capabilities.IsEmpty)

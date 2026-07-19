@@ -8,6 +8,7 @@ using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
+using DualFrontier.Core.Modding;
 using DualFrontier.Core.Scheduling;
 
 namespace DualFrontier.Application.Modding;
@@ -81,7 +82,10 @@ internal sealed class ModIntegrationPipeline
     private readonly IGameServices _services;
     private readonly ParallelSystemScheduler _scheduler;
     private readonly ModFaultHandler _faultHandler;
-    private readonly KernelCapabilityRegistry _kernelCapabilities = KernelCapabilityRegistry.BuildFromKernelAssemblies();
+    // W2/BD-10: the ledger no longer scans Components/Events -- the kernel provides zero
+    // gameplay-type capabilities (the engine owns none). Starts empty; owner registration is
+    // the mechanism (not live-wired this wave -- vanilla mods define no types yet).
+    private readonly KernelCapabilityRegistry _kernelCapabilities = new();
     private readonly SharedModLoadContext _sharedAlc = new();
     private readonly List<LoadedMod> _activeMods = new();
     private readonly List<LoadedSharedMod> _activeShared = new();

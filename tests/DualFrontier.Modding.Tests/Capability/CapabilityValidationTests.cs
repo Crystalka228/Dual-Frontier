@@ -4,6 +4,7 @@ using DualFrontier.Application.Modding;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.ECS;
+using DualFrontier.Core.Modding;
 using AwesomeAssertions;
 using Xunit;
 
@@ -44,7 +45,13 @@ public sealed class CapabilityValidationTests
         "mod.com.example.unknown.publish:Foo.Bar";
 
     private static KernelCapabilityRegistry BuildKernelRegistry()
-        => new(new[] { typeof(CapabilityValidationTests).Assembly });
+    {
+        // W2/BD-10: register the test assembly under "kernel" to exercise Phase C/D against the
+        // emission logic; the kernel-assembly scan (BuildFromKernelAssemblies) is retired.
+        var registry = new KernelCapabilityRegistry();
+        registry.RegisterOwner("kernel", typeof(CapabilityValidationTests).Assembly);
+        return registry;
+    }
 
     // --- Phase C ------------------------------------------------------------
 
