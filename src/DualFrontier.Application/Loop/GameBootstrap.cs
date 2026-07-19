@@ -138,19 +138,25 @@ internal static class GameBootstrap
         // bridge wiring above can hand each one to ItemLayer.
         PublishItemSpawnedEvents(nativeWorld, services);
 
-        var coreSystems = new SystemBase[]
-        {
-            new NeedsSystem(),
-            new MoodSystem(),
-            new JobSystem(),
-            new ConsumeSystem(),
-            new SleepSystem(),
-            new ComfortAuraSystem(),
-            new MovementSystem(pathfinding),
-            new PawnStateReporterSystem(),
-            new InventorySystem(),
-            new HaulSystem(),
-        };
+        // W1 BD-2 — the ModRegistry owns construction now. Core systems register
+        // through the SAME unified factory path as mods (killing the hand-new
+        // bifurcation); MovementSystem resolves pathfinding from ISystemServices.
+        var modRegistry = new ModRegistry();
+        modRegistry.SetSystemServices(new SystemServices(pathfinding));
+        modRegistry.SetTickSource(() => ticks.CurrentTick);
+
+        modRegistry.RegisterSystem<NeedsSystem>(_ => new NeedsSystem());
+        modRegistry.RegisterSystem<MoodSystem>(_ => new MoodSystem());
+        modRegistry.RegisterSystem<JobSystem>(_ => new JobSystem());
+        modRegistry.RegisterSystem<ConsumeSystem>(_ => new ConsumeSystem());
+        modRegistry.RegisterSystem<SleepSystem>(_ => new SleepSystem());
+        modRegistry.RegisterSystem<ComfortAuraSystem>(_ => new ComfortAuraSystem());
+        modRegistry.RegisterSystem<MovementSystem>(s => new MovementSystem(s.Pathfinding));
+        modRegistry.RegisterSystem<PawnStateReporterSystem>(_ => new PawnStateReporterSystem());
+        modRegistry.RegisterSystem<InventorySystem>(_ => new InventorySystem());
+        modRegistry.RegisterSystem<HaulSystem>(_ => new HaulSystem());
+
+        IReadOnlyList<SystemBase> coreSystems = modRegistry.GetCoreSystemInstances();
 
         var graph = new DependencyGraph();
         foreach (SystemBase s in coreSystems)
@@ -169,9 +175,9 @@ internal static class GameBootstrap
         // scheduler scenarios.
         SystemGraphInterop.Clear();
         WakeRegistryInterop.Clear();
-        for (uint i = 0; i < coreSystems.Length; i++)
+        for (uint i = 0; i < coreSystems.Count; i++)
         {
-            SystemBase s = coreSystems[i];
+            SystemBase s = coreSystems[(int)i];
             // К10.1 minimal: register с empty reads/writes (К10.2 will marshal
             // the [SystemAccess] component type ids к the native registry once
             // a per-system component-id resolver is wired). Default Priority
@@ -191,8 +197,6 @@ internal static class GameBootstrap
         SystemGraphInterop.ComputeStaticGraph();
 
         var modLoader = new ModLoader();
-        var modRegistry = new ModRegistry();
-        modRegistry.SetCoreSystems(coreSystems);
         var faultHandler = new ModFaultHandler();
         modLoader.SetFaultHandler(faultHandler);
 

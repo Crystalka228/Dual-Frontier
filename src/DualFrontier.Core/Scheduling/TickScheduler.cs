@@ -56,8 +56,12 @@ internal sealed class TickScheduler
         if (system is null)
             throw new ArgumentNullException(nameof(system));
 
-        Type systemType = system.GetType();
-        int ticksPerUpdate = _tickRateCache.GetOrAdd(systemType, ResolveTicksPerUpdate);
+        // Cache by concrete type (stable per type, incl. each distinct
+        // SystemAdapter<T> instantiation), but resolve the rate through the
+        // SystemBase hook so a wrapped SDK system forwards its inner [TickRate]
+        // (W1 BD-1) — a generic adapter type carries no [TickRate] of its own.
+        int ticksPerUpdate = _tickRateCache.GetOrAdd(
+            system.GetType(), static (_, s) => ResolveTicksPerUpdate(s), system);
 
         return _currentTick % ticksPerUpdate == 0;
     }
@@ -72,10 +76,9 @@ internal sealed class TickScheduler
         _tickRateCache.Clear();
     }
 
-    private static int ResolveTicksPerUpdate(Type systemType)
+    private static int ResolveTicksPerUpdate(SystemBase system)
     {
-        TickRateAttribute? attribute =
-            systemType.GetCustomAttribute<TickRateAttribute>(inherit: false);
+        TickRateAttribute? attribute = system.TickRateDeclaration;
         if (attribute is null)
             return TickRates.REALTIME;
 
