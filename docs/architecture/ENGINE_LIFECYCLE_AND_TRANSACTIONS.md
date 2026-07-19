@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
 last_modified: 2026-07-18
 content_language: en
@@ -13,7 +13,7 @@ next_review_due: 2027-Q3
 title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.0 → v1.0.1 PATCH: §2.6 world-shutdown transaction marked Realized (EngineSession.Dispose) + the REC-A1 finalizer correction (the "no finalizer backstop" line was wrong — NativeWorld.cs:496-503 exists) + the abnormal-exit (fence-abort) paragraph owned here (D10); §4.1 Degraded/EngineHealth marked Realized (EngineHealth.cs + the quarantine link). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
+last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.1 → v1.0.2 PATCH: §2.5 swapchain recreation marked Realized (prepare-before-reclaim — VulkanSwapchain.Recreate + Runtime.RecreateFramebuffersForSwapchain + PrepareBeforeReclaim, C2 f28b3f4; device-free ordering test C3 ae4dc48); §4 class-6 device-lost row + §6 OQ-3 CLOSED by D1 (fail-fast v1 — DeviceLossBoundary → Environment.FailFast, no recovery in v1; M9 C4 41cdef4); §5 swapchain commit-atomicity coverage noted. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B (v1.0.0 → v1.0.1 PATCH).'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.'
 ---
@@ -144,6 +144,8 @@ Today's stage order is quiesce → **reclaim → prepare** → implicit commit: 
 
 Proposed protocol: **prepare** (build new swapchain + image views + framebuffers alongside, where the surface API permits; retire into a candidate list) → **quiesce** (fence-based: wait per-frame fences or `WaitIdle` — the acknowledged GPU boundary) → **commit** (swap the framebuffer list and swapchain reference in one assignment) → **reclaim** (destroy old views/framebuffers/swapchain, best-effort with `ReclaimFailed` logging) → **resume**. Vulkan's `oldSwapchain` parameter exists precisely for prepare-before-reclaim.
 
+**Realized — EQ_A4 / Cascade D (2026-07-18).** The protocol above is implemented as a prepare-before-reclaim transaction. `VulkanSwapchain.Recreate` (`src/DualFrontier.Runtime/Graphics/VulkanSwapchain.cs`) PREPAREs a new swapchain + per-image views into locals (with `oldSwapchain` as the recreation hint), COMMITs them onto the instance in one infallible field assignment, then RECLAIMs the old views + old swapchain; `Runtime.RecreateFramebuffersForSwapchain` (`src/DualFrontier.Runtime/Runtime.cs`) does the same for the framebuffer list. Both reuse the all-or-nothing `PrepareBeforeReclaim.Build` primitive, which rolls back any partial new work on a mid-prepare failure so the old set stays intact — satisfying §1.1 corollary 1 (the counter-example above is retired). The swapchain handle already honored the `oldSwapchain` handoff; this closes the remaining image-views + framebuffers gap. VULKAN_SUBSTRATE §2.3 (swapchain recreation) carries the substrate-side truth; device-free ordering proof is `tests/DualFrontier.Runtime.Tests/Graphics/PrepareBeforeReclaimTests.cs`, real-handle leak-clean via the Cascade-D real-GPU run. (Cascade D C2 `f28b3f4`, test C3 `ae4dc48`.)
+
 ### 2.6 World shutdown — no transaction at all
 
 Today (`src/DualFrontier.Launcher/Program.cs:95-97`): window closes → `gameContext.Loop.Stop()` → `renderer.Shutdown()` → return. `GameLoop.Stop` is `_cts.Cancel(); _thread?.Join(2000);` with the `Join` result **ignored** (`GameLoop.cs:73-77`) — on timeout the background sim thread (`IsBackground = true`, `GameLoop.cs:64-69`) is abandoned, possibly inside `ExecuteTick`, racing teardown. Nothing calls `ModIntegrationPipeline.UnloadAll` (defined `ModIntegrationPipeline.cs:780`; **zero production call sites** — only tests). Nothing disposes the `NativeWorld` — it is created inside `GameBootstrap` (`src/DualFrontier.Application/Loop/GameBootstrap.cs:76`), never surfaced on `GameContext` (no `Dispose` exists there), and "Disposal is mandatory. Dropping a `NativeWorld` without calling `Dispose` leaks the underlying C++ world" (`src/DualFrontier.Core.Interop/NativeWorld.cs:25-26`) — corrected at EQ_A2 (REC-A1): that doc line was stale. A finalizer backstop DOES exist (`NativeWorld.cs:496-503`, `~NativeWorld` → `df_world_destroy`), so a dropped world is reclaimed non-deterministically at finalization rather than leaked outright; the finalizer is a leak-reporter backstop, never a teardown path (CONCURRENCY_AND_MEMORY_MODEL §6.2). The stale `NativeWorld.cs:25-26` doc was rewritten at EQ_A2 C3. No native bus/scheduler teardown runs either.
@@ -221,7 +223,7 @@ Mod transitions (§2.1-§2.3 reclaim phase) are legal **only** in `Paused` (ackn
 | 3 | Mod fault | unhandled exception from a mod ALC (MOD_OS_ARCHITECTURE §10); isolation breach report | `ModFaultHandler` | **quarantine (commit) + queued reclaim** per §2.3 | banner (MOD_OS_ARCHITECTURE §10.3; predecessor form at `historical/ISOLATION.md`); disabled on next start |
 | 4 | Subsystem degradation | `ReclaimFailed(leaked)` ALC; background drain starved; retry budget exhausted | engine session | enter **Degraded(reason)** — proposed as a real, queryable session annotation (today: nothing) | persistent status indicator; restart advice |
 | 5 | Process-fatal kernel corruption | native invariant breach — cycle despite Kahn check, RT-class quota violation (`historical/KERNEL_FULL_NATIVE_SCHEDULER.md` §panic path) | native kernel | **fail-fast** — no best-effort continuation over corrupt state | crash with native diagnostic |
-| 6 | Device-lost / platform | `VK_ERROR_DEVICE_LOST` (defined `src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`; **zero handlers repo-wide**) | **TODAY UNSPECIFIED — open (§6 OQ-3)** | proposed v1: fail-fast with diagnostic, consistent with К-L19 startup posture; device re-creation deferred | crash with diagnostic (v1) |
+| 6 | Device-lost / platform | `VK_ERROR_DEVICE_LOST` (defined `src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`; classified at the 5 wrapper sites by `DeviceLost.ThrowIfLost`, EQ_A4) | **RESOLVED by D1 (EQ_A4; §6 OQ-3 CLOSED)** | fail-fast v1: a detected loss throws `DeviceLostException`, caught at the render-loop boundary (`DeviceLossBoundary`) → `Environment.FailFast` with a structured diagnostic; NO recovery in v1 (device re-creation is a separate epic) | crash with diagnostic (v1) |
 | 7 | Quota exceedance | `[CpuQuota]` budget exceeded (`historical/KERNEL_FULL_NATIVE_SCHEDULER.md` Item 7 (CpuQuota)) | native scheduler → configured handler | mod system → class 3 ("ModFaultHandler invoked, system unloaded per existing pipeline"); core system → logged/throttled = a class-4 Degraded reason, never silent | mod banner / Degraded indicator |
 
 > **LAW.** Every `#if DEBUG`-throw / RELEASE-silent fork MUST be justified against this table, per class. Silent RELEASE handling is legal only for a class whose row already names an owner, a counter, and a user-visible surface. Counter-example to eliminate: `historical/OWNERSHIP_TRANSITION.md` §"Transition table" closing rule — "attempting one throws `InvalidOwnershipTransitionException` in DEBUG and is silently ignored in RELEASE (with an error counter increment for diagnostics)". (Content relocated: the doc is superseded by DOC-J-GOLEM_OWNERSHIP; the pattern's canonical statement is preserved in the historical file.) An illegal transition is class 1 (a bug); class-1 faults get the same response in both configurations — a bug does not become acceptable because the build is RELEASE.
@@ -254,7 +256,7 @@ Coverage today, per transition:
 | Mod unload | **exists** (`Pipeline_unload_removes_mod_systems_from_scheduler`) | **exists** (`M72UnloadChainTests.cs` step-throw seams) | **exists** (throw at `ModIntegrationPipeline.cs:566`) |
 | Mod fault | missing — no catch seam exists to test | missing | n/a (fault arrives mid-tick by definition; quarantine commits at the boundary) |
 | Graph rebuild | **exists** (shared with Apply; `ParallelSystemScheduler.Phases` exposed for it, `ParallelSystemScheduler.cs:224-229`) | n/a | flag-check only |
-| Swapchain recreation | missing | missing | missing |
+| Swapchain recreation | **exists** (device-free — `PrepareBeforeReclaimTests`, EQ_A4) | device-dependent (real-GPU run) | n/a (`WaitIdle` quiesce) |
 | World shutdown | missing | missing | missing |
 | Save snapshot | deferred with A7 | — | — |
 
@@ -263,7 +265,7 @@ Coverage today, per transition:
 - `UnloadAll` has zero production call sites (`ModIntegrationPipeline.cs:780`; only tests invoke it) — shutdown never exercises mod reclamation at all.
 - No shutdown tests exist: nothing asserts `Join` success, `NativeWorld` disposal, or teardown ordering (§2.6). The world-shutdown transition currently has zero of its three required tests.
 - No per-system catch exists in `ExecutePhase` (`ParallelSystemScheduler.cs:149-164`), so the ISOLATION origin-dispatch table has no enforcement point and no testable seam — the fault transition fails test (a) trivially.
-- Swapchain recreation has no failure-injection test; a framebuffer-constructor throw mid-recreate is unobserved (§2.5).
+- Swapchain recreation's transaction ordering is now covered device-free (`PrepareBeforeReclaimTests`, EQ_A4 — a mid-prepare failure rolls back and leaves the old set intact); real-handle leak-clean under validation layers is verified by the Cascade-D real-GPU run rather than a unit test (§2.5).
 
 ---
 
@@ -273,7 +275,7 @@ Coverage today, per transition:
 
 - **OQ-1** Quarantine granularity: evict a faulted mod's systems at the next tick boundary (proposed) or the next phase barrier (needs scheduler skip-set support mid-tick)?
 - **OQ-2** Does `ReclaimFailed(leaked)` force session-level `Degraded`, or remain per-mod with only the restart advisory? (Proposed: session-level, since a leaked ALC affects the whole process.)
-- **OQ-3** Device-lost: is fail-fast v1 (§4 class 6) acceptable to ratify, with device re-creation as a separate epic?
+- **OQ-3** Device-lost: is fail-fast v1 (§4 class 6) acceptable to ratify, with device re-creation as a separate epic? **CLOSED by D1 (EQ_A4, 2026-07-18): yes — fail-fast v1 ratified and Realized (§4 class 6; `DeviceLossBoundary` → `Environment.FailFast`, no recovery in v1); device re-creation is a separate future epic.**
 - **OQ-4** Retry policies for class 2: per-subsystem constants or a config surface? (No config layer exists anywhere today.)
 - **OQ-5** Shutdown quiesce timeout: fail-fast in both configurations (proposed — never abandon a live sim thread silently), or DEBUG-fail-fast / RELEASE-log-and-exit-nonzero? Must be justified under the §4 law either way.
 - **OQ-6** Where do lifecycle events live long-term — managed log only, or the native observability API (`historical/KERNEL_FULL_NATIVE_SCHEDULER.md` Item 19)?

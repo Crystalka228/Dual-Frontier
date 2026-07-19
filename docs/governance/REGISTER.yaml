@@ -305,7 +305,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
   last_modified: 2026-07-18
   content_language: en
@@ -313,7 +313,7 @@ documents:
   title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.0 → v1.0.1 PATCH: §2.6 world-shutdown transaction marked Realized (EngineSession.Dispose) + the REC-A1 finalizer correction (the "no finalizer backstop" line was wrong — NativeWorld.cs:496-503 exists) + the abnormal-exit (fence-abort) paragraph owned here (D10); §4.1 Degraded/EngineHealth marked Realized (EngineHealth.cs + the quarantine link). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
+  last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.1 → v1.0.2 PATCH: §2.5 swapchain recreation marked Realized (prepare-before-reclaim — VulkanSwapchain.Recreate + Runtime.RecreateFramebuffersForSwapchain + PrepareBeforeReclaim, C2 f28b3f4; device-free ordering test C3 ae4dc48); §4 class-6 device-lost row + §6 OQ-3 CLOSED by D1 (fail-fast v1 — DeviceLossBoundary → Environment.FailFast, no recovery in v1; M9 C4 41cdef4); §5 swapchain commit-atomicity coverage noted. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B (v1.0.0 → v1.0.1 PATCH).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.
 - register_id: DOC-A-EVENT_BUS
@@ -541,7 +541,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.0
+  version: 1.1.1
   first_authored: 2026-07-15
   last_modified: 2026-07-18
   content_language: en
@@ -549,7 +549,7 @@ documents:
   title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.1.0 MINOR (two new ABI members + the first materialized df_status subset, recorded in sections 3-4): df_world_active_span_count / df_world_destroy_checked exported (capi.cpp/df_capi.h); DF_OK / DF_ERR_INVALID_HANDLE / DF_COND_WORLD_BUSY(6) materialized on disk as a conforming subset, the rest of the sketch staying proposed (F-43). EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
+  last_review_event: 'EQ_A4_RENDER_TAIL Cascade D -- v1.1.0 -> v1.1.1 PATCH (sections 4 + 7 aligned to landed truth): the Vulkan result mapping (section 4) + section 7 item 7 device-lost/VkResult question RESOLVED by D1 -- VK_ERROR_DEVICE_LOST is now mapped to fail-fast v1 (managed DeviceLossBoundary -> Environment.FailFast, no recovery), owned by ELT section 4 class 6 / OQ-3 (CLOSED) and VULKAN section 6.3; a MANAGED mapping, not a native df_status code. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A3_CHECKED_DESTROY Cascade C (v1.0.0 -> v1.1.0 MINOR).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.
 - register_id: DOC-A-ISOLATION
@@ -1233,18 +1233,17 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.3
+  version: 1.0.4
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-18
   content_language: en
   next_review_due: 2027-Q3
   title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
   supersedes:
   - DOC-A-VULKAN_SUBSTRATE
-  last_modified_commit: 5d71a8e
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
+  last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.3 → v1.0.4 PATCH: section 2.3 swapchain recreation unfenced to current truth (prepare-before-reclaim Realized, M6) + section 6.3 device-lost unfenced (fail-fast v1 Realized, M9) + section 8 OQ-V1/OQ-V3 CLOSED; owned by ELT section 2.5 / section 4 class 6 / OQ-3 and IAC section 4/7 (EVT-2026-07-18-EQ_A4_RENDER_TAIL). Prior review: STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 - register_id: DOC-B-CODING_STANDARDS
@@ -1446,7 +1445,6 @@ documents:
   title: Roadmap
   supersedes:
   - DOC-A-MIGRATION_PLAN
-  last_modified_commit: 9b4968a
   review_cadence: on-closure+quarterly
   last_review_date: 2026-07-17
   last_review_event: "STACK_UPDATE closure write-back (2026-07-17) — Update-block stack re-sync sentence appended (net10.0 / C# 14 / SDK 10.0.204 global.json pin / test triad 2.9.3+3.1.5+18.8.1 / AwesomeAssertions 9.4.0 / К-L1 C++23 with the MSVC preview caveat; ENGINEERING QUEUE unblocked, EQ-a next) + Findings ledger rows F-44 (stable /std:c++23 migration), F-45 (xunit v3 own cascade), F-46 (Roslyn/BDN/YamlDotNet hygiene bundle + §4.3 mirror-count nit), F-47 (LINQ convention documentary-not-enforced, SpatialGrid.cs:3), F-48 (M74 nodeReuse test-infra hang class, session finding). F-48 carries the setup-session finding instead of the brief's reserved AA-escape slot — Phase G landed without escape. EVT-2026-07-17-STACK_UPDATE. Prior context: Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — Analyzer track + Findings ledger sections received; DD-2 spec/roadmap separation increment 1."

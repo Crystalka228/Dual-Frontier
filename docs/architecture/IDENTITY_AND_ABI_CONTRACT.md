@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.1.0
+version: 1.1.1
 first_authored: 2026-07-15
 last_modified: 2026-07-18
 content_language: en
@@ -13,7 +13,7 @@ next_review_due: 2027-Q3
 title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.1.0 MINOR (two new ABI members + the first materialized df_status subset, recorded in sections 3-4): df_world_active_span_count / df_world_destroy_checked exported (capi.cpp/df_capi.h); DF_OK / DF_ERR_INVALID_HANDLE / DF_COND_WORLD_BUSY(6) materialized on disk as a conforming subset, the rest of the sketch staying proposed (F-43). EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (version-0 site list EXACT line-by-line; census corrected to nine systems ≈20 sites; 72 catch(...) recount EXACT) + HALT-1-ratified retargets IAC-1..IAC-5 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7 items 1/2 resolved by the rework; the §2 version-0 resolution + ABI hardening are the seeded engineering work orders.'
+last_review_event: 'EQ_A4_RENDER_TAIL Cascade D -- v1.1.0 -> v1.1.1 PATCH (sections 4 + 7 aligned to landed truth): the Vulkan result mapping (section 4) + section 7 item 7 device-lost/VkResult question RESOLVED by D1 -- VK_ERROR_DEVICE_LOST is now mapped to fail-fast v1 (managed DeviceLossBoundary -> Environment.FailFast, no recovery), owned by ELT section 4 class 6 / OQ-3 (CLOSED) and VULKAN section 6.3; a MANAGED mapping, not a native df_status code. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A3_CHECKED_DESTROY Cascade C (v1.0.0 -> v1.1.0 MINOR).'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.'
 ---
@@ -238,7 +238,7 @@ typedef int32_t df_status;
 | fatal-subsystem (100–199) | typed exception (`HardwareCapabilityException` precedent, VULKAN §7.1) routed to the mod/system fault handler |
 | fatal-process (200–299) | fault-log write, then fail-fast |
 
-**Vulkan result mapping — OPEN.** Nothing maps `VkResult` into any error class today; device-lost has no mapping — the VULKAN successor now carries it as an open question (OQ-V1 / §6.3), still unresolved. Placeholder classification pending a V-cycle decision: `VK_ERROR_DEVICE_LOST` → fatal-subsystem (with recreate-or-die unresolved); `VK_ERROR_OUT_OF_DATE_KHR` / `VK_SUBOPTIMAL_KHR` → retryable (swapchain recreation is shipped behavior). Tracked in §7 item 7.
+**Vulkan result mapping — device-lost RESOLVED by D1 (EQ_A4).** `VK_ERROR_DEVICE_LOST` is now mapped: the managed render stack classifies it at the 5 wrapper sites (`DeviceLost.ThrowIfLost` → `DeviceLostException`) and fail-fasts with a structured diagnostic at the render-loop boundary (`DeviceLossBoundary` → `Environment.FailFast`) — v1 policy is crash-with-diagnostic, NO recovery (device re-creation is a separate epic). This supersedes the earlier placeholder "`VK_ERROR_DEVICE_LOST` → fatal-subsystem, recreate-or-die unresolved". Note it stays a MANAGED mapping — device-lost does not flow through the native `df_status` taxonomy. `VK_ERROR_OUT_OF_DATE_KHR` / `VK_SUBOPTIMAL_KHR` → retryable (swapchain recreation, now the prepare-before-reclaim transaction of ELT §2.5). Owned by ELT §4 class 6 / OQ-3 (CLOSED) and VULKAN_SUBSTRATE §6.3; §7 item 7 resolved.
 
 **Downstream propagation** — which faults quarantine a mod, restart a subsystem, or end the process, and how per-mod fault budgets work — is the jurisdiction of `ENGINE_LIFECYCLE_AND_TRANSACTIONS.md` (A3/A8 proper). This section defines only the code space and its managed projection, so that draft has a stable vocabulary to consume.
 
@@ -284,7 +284,7 @@ typedef int32_t df_status;
 
 **Open — no current owner:**
 
-7. Device-lost / `VkResult` mapping (§4) — needs a V-cycle decision; the VULKAN successor now carries the question (OQ-V1 / §6.3), still unresolved.
+7. Device-lost / `VkResult` mapping (§4) — **RESOLVED by D1 (EQ_A4, 2026-07-18): `VK_ERROR_DEVICE_LOST` → fail-fast v1 (managed `DeviceLossBoundary` → `Environment.FailFast`, no recovery), owned by ELT §4 class 6 / OQ-3 (CLOSED) and VULKAN §6.3 / OQ-V1.**
 8. Event-id reserved-range boundaries, and whether the event registry stores FQN *copies* (prerequisite for both collision detection, §1 note 3, and retiring the store-by-pointer exception, §3.3).
 9. Wake-id namespace owner for Explicit wakes (§1 row 11) — allocation registry vs capability-token gating.
 10. Whether `SpanLease.Pairs` keeps its synthetic-version escape hatch during the §2 migration window, or the versions view ships atomically with the teaching-doc amendments (recommended: atomic — a migration window here recreates the defect under a smaller flag).

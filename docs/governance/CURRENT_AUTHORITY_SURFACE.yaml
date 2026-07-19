@@ -40,7 +40,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-A-EVENT_BUS_V2
   path: docs/architecture/EVENT_BUS.md
   category: A
@@ -82,7 +82,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.1.0
+  version: 1.1.1
 - register_id: DOC-A-KERNEL_ARCHITECTURE
   path: docs/architecture/KERNEL_ARCHITECTURE.md
   category: A
@@ -172,7 +172,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.3
+  version: 1.0.4
 - register_id: DOC-B-CODING_STANDARDS
   path: docs/methodology/CODING_STANDARDS.md
   category: B

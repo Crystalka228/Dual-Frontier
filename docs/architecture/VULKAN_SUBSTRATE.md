@@ -5,18 +5,17 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.3
+version: 1.0.4
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-18
 content_language: en
 next_review_due: 2027-Q3
 title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
 supersedes:
 - DOC-A-VULKAN_SUBSTRATE
-last_modified_commit: 5d71a8e
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
+last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.3 → v1.0.4 PATCH: section 2.3 swapchain recreation unfenced to current truth (prepare-before-reclaim Realized, M6) + section 6.3 device-lost unfenced (fail-fast v1 Realized, M9) + section 8 OQ-V1/OQ-V3 CLOSED; owned by ELT section 2.5 / section 4 class 6 / OQ-3 and IAC section 4/7 (EVT-2026-07-18-EQ_A4_RENDER_TAIL). Prior review: STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
@@ -250,7 +249,7 @@ Things a reader of the predecessor might believe exist, stated plainly as absent
 | Mod compute-pipeline registration | Contract placeholder; production returns `null` (§3.2) | §3 |
 | Native `df_vulkan_unload_mod_resources` | No native symbol on disk; managed placeholder only (§3.3) | §3.3 |
 | Runtime CPU-fallback dispatcher | Design option only, never built (§6.1) | §6.1 FENCED |
-| `VK_ERROR_DEVICE_LOST` handling | Zero handlers repo-wide (§6.3) | §6.3 FENCED open question |
+| `VK_ERROR_DEVICE_LOST` handling | Fail-fast v1 (M9, EQ_A4): classified at 5 sites → `DeviceLossBoundary` → `Environment.FailFast` (§6.3) | §6.3 (Realized); §8 OQ-V1 CLOSED |
 | Field save/serialization path | No field save path exists; `SaveSystem` is a stub (§7) | §7 |
 | Godot residue | None — fully eradicated 2026-06-29/30 (F-5 CLOSED) | §0.2 L9 |
 
@@ -310,9 +309,9 @@ while (runtime.InputQueue.TryDequeue(out IInputEvent? _))
 
 **Production recreation flow.** `LauncherRenderer.RenderFrame` handles both out-of-date sites — acquire (`LauncherRenderer.cs:123-139`) and present (`LauncherRenderer.cs:172-196`) — with the same inline sequence: skip if the window is closing (shutdown-race guard), `VulkanDevice.WaitIdle()`, `Swapchain.Recreate(w,h)`, `RecreateFramebuffersForSwapchain()`, then re-fit `Camera2D` viewport/zoom to the new extent.
 
-**Honest limitation.** Swapchain recreation is shipped **without a transactional protocol**: the shipped stage order is quiesce → *reclaim → prepare* → implicit commit — `RecreateFramebuffersForSwapchain` disposes every old framebuffer and clears the list *before* constructing the new ones (`Runtime.cs:195-205`), so a constructor failure mid-rebuild leaves the runtime with zero framebuffers and no rollback. This document records the mechanism as current truth and does not claim transaction safety for it.
+**Recreation transaction (Realized — EQ_A4 / Cascade D).** Swapchain recreation is a prepare-before-reclaim transaction. `VulkanSwapchain.Recreate` builds the new swapchain + image views into locals (with `oldSwapchain` as the hint), commits them onto the instance in one infallible field assignment, then reclaims the old set; `Runtime.RecreateFramebuffersForSwapchain` builds the new framebuffer list, swaps it in, then disposes the old set (`Runtime.cs:193-206`). Both reuse the all-or-nothing `PrepareBeforeReclaim.Build` primitive, so a mid-prepare failure rolls back the partial new work and leaves the old set intact — no zero-framebuffer window, no rollback gap. The seven-stage transaction law is owned by ELT §2.5 (Realized at EQ_A4).
 
-> **FENCED (target / planned — not current truth):** A prepare-before-reclaim recreation transaction (build new swapchain/views/framebuffers alongside via Vulkan's `oldSwapchain`, fence-quiesce, commit by single-assignment swap, then best-effort reclaim of the old set) is specified in [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §2.5, using its seven-stage lifecycle vocabulary — ratified law as of EVT-2026-07-17-DRAFTS_RATIFICATION. Adopting it here is the deferred substrate amendment (ROADMAP forward queue).
+The prepare-before-reclaim recreation transaction (build new swapchain/views/framebuffers alongside via Vulkan's `oldSwapchain`, quiesce, commit by single-assignment swap, then best-effort reclaim of the old set) is specified in [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §2.5 (seven-stage vocabulary) and **Realized at EQ_A4 / Cascade D** — §8 OQ-V3 CLOSED. (Converted from FENCED to current truth: code on disk at the amending HEAD, anchors re-verified.)
 
 ### 2.4 Threading model
 
@@ -624,9 +623,9 @@ Not all hardware supports Vulkan 1.3 compute reliably, and pure software environ
 
 `IsotropicDiffusionKernel` and `AnisotropicDiffusionKernel` (`src/DualFrontier.Core.Interop/CpuKernels/`) are **the GPU equivalence oracle, not a performance target and not a fallback** — the framing is load-bearing and preserved verbatim from the code's own law: "this kernel exists as the GPU equivalence oracle, not as a performance target" (`IsotropicDiffusionKernel.cs:21-22`; same statement `AnisotropicDiffusionKernel.cs:27`). They serve three purposes and no others: (1) the V1 equivalence suites compare GPU output against them within tolerance on synthetic grids (`V1DiffusionEquivalenceTests`); (2) they exercise field logic in GPU-less environments; (3) they are the *designed* source of canonical field state for future save snapshots (§7.2 — that use is design, not implemented). They must not grow into a runtime dispatcher; that would be the §6.1 fenced decision by the back door.
 
-### 6.3 Device-lost — unhandled, open
+### 6.3 Device-lost — fail-fast v1 (M9, EQ_A4)
 
-> **FENCED (open question — no current-truth handling exists):** **`VK_ERROR_DEVICE_LOST` is unspecified and unhandled.** The result code is defined (`src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`) and there are **zero handlers repo-wide** — no code path, in substrate or Launcher, tests for or reacts to device loss; a lost device today surfaces as whatever `InvalidOperationException` the first failing wrapper throws, with undefined subsequent behavior. **Proposed v1 resolution (not ratified):** fail-fast with a user-facing diagnostic, consistent with the К-L19 startup posture — crash cleanly rather than render garbage — with device re-creation deferred as a separate epic. The fault-taxonomy row and the open question are owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §4 (class 6) and §6 (OQ-3) — ratified law as of EVT-2026-07-17-DRAFTS_RATIFICATION, with OQ-3 (fail-fast v1 vs device re-creation) still an open decision; deciding OQ-3, then amending this section to the decided behavior, closes the gap. Until then this substrate makes **no** claim about post-device-lost behavior.
+**Device-lost is handled — fail-fast v1 (D1, EQ_A4).** `VK_ERROR_DEVICE_LOST` (defined `src/DualFrontier.Runtime/Native/Vulkan/VkEnums.cs:14`) is classified at the 5 render-stack wrapper sites — `DeviceLost.ThrowIfLost` throws `DeviceLostException` at submit / present / wait-fence / acquire / device-wait-idle (`src/DualFrontier.Runtime/Graphics/`). At the render-loop boundary `DeviceLossBoundary.RunGuarded` (wired in `Program.cs`) catches it, composes a structured diagnostic (failed call, frame index, swapchain state) and terminates deliberately via `Environment.FailFast` — crash cleanly rather than render garbage, consistent with the К-L19 startup posture. **No recovery in v1**: device re-creation is a separate future epic. The fault-taxonomy row and the decision are owned by [ENGINE_LIFECYCLE_AND_TRANSACTIONS.md](./ENGINE_LIFECYCLE_AND_TRANSACTIONS.md) §4 (class 6) and §6 OQ-3 (**CLOSED by D1**); IAC §4/§7 carries the VkResult mapping. Device-free tests: `tests/DualFrontier.Runtime.Tests/Graphics/DeviceLostTests.cs`; real-GPU behavior via the Cascade-D run. §8 OQ-V1 CLOSED. (Converted from FENCED to current truth: code on disk at the amending HEAD.)
 
 ### 6.4 Verification law and live risks
 
@@ -666,9 +665,9 @@ The «stop, escalate, lock» rule applies: when implementation meets a design qu
 
 | # | Decision | Trigger to resolve |
 |---|---|---|
-| OQ-V1 | Device-lost policy (fail-fast v1 vs device re-creation) — §6.3 | Ratification of the lifecycle draft's fault taxonomy (its OQ-3); then substrate amendment |
+| OQ-V1 | Device-lost policy (fail-fast v1 vs device re-creation) — §6.3 | **CLOSED by D1 (EQ_A4): fail-fast v1 ratified and Realized (§6.3); no recovery in v1** |
 | OQ-V2 | Input routing contract (forwarding, ownership, ordering, queue bounding) + focus→pause wiring — §2.2 | Input-bridge cascade authoring |
-| OQ-V3 | Swapchain recreation transaction (adopt prepare-before-reclaim protocol) — §2.3 | Ratification of the lifecycle draft §2.5; then substrate amendment |
+| OQ-V3 | Swapchain recreation transaction (adopt prepare-before-reclaim protocol) — §2.3 | **CLOSED by M6 (EQ_A4): §2.3 prepare-before-reclaim Realized** |
 | OQ-V4 | Present-queue-family selection (surface-aware device selection; today: require graphics-family present, F06) — §0.1 | First hardware report of a split graphics/present topology, or proactive hardening brief |
 | OQ-V5 | Fence-poll integration (`df_pipeline_check_fences` stub → real `vkGetFenceStatus` wiring) — §2.5 | First pipeline-managed consumer (Phase.Compute activation) |
 | OQ-V6 | Mod compute-pipeline registration surface (contract members, per-mod tracking, unload wiring) — §3 | M-V demonstration cascade; MOD_OS §4.3 amendment |
@@ -715,5 +714,6 @@ Amendments follow the «stop, escalate, lock» discipline: open an §8 row (or c
 
 | Date | Change |
 |---|---|
+| 2026-07-18 | EQ_A4_RENDER_TAIL Cascade D (v1.0.3 → v1.0.4 PATCH): §2.3 swapchain recreation unfenced to current truth — prepare-before-reclaim Realized (M6: VulkanSwapchain.Recreate + Runtime.RecreateFramebuffersForSwapchain + PrepareBeforeReclaim); §6.3 device-lost unfenced — fail-fast v1 Realized (M9: DeviceLost.ThrowIfLost → DeviceLossBoundary → Environment.FailFast, no recovery); §8 OQ-V1 + OQ-V3 CLOSED; owned by ELT §2.5 / §4 class 6 / OQ-3 and IAC §4/§7. |
 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R3-1..R3-8; register 0.1.0 → 0.1.1): slot-header anchor `:47-70`→`:45-64`; targets anchor split (`:23-26` copy + `:36-45` rewrite); compute-surface range →`:551-577`; §2.5 test-count claim re-anchored to current disk truth (7 dedicated interop tests; 35/14 = К10.3 v2 closure record); §5.4 waitIdle census scoped to production call sites; OQ-V6 pointer §4.6→§4.3 (successor map); cinzel wording → never-committed/git-ignored truth; §2.6 layer tokens corrected to registry-emitted observables (not manifest-declarable, MOD_OS §3.2). |
 | 2026-07-15 | Authored as successor of DOC-A-VULKAN_SUBSTRATE (v1.2.0) per the corpus rework: current-truth/target separation via FENCED blocks; §3.4 field-id sketch corrected to the shipped string-id ABI; device-lost, input-discard, swapchain-protocol, queue-topology, waitIdle-census, unload-placeholder, and memory-budget truths pinned to HEAD `35364c2`; closure-evidence tables and migration narrative retired to the historical predecessor. |
