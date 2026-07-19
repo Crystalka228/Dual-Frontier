@@ -3,7 +3,7 @@ register_id: DOC-D-W1_SDK_UNLOCK_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.0'
 first_authored: '2026-07-19'
