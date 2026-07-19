@@ -179,7 +179,7 @@ public sealed class DeferredEventDeliveryTests : IDisposable
 
     // ── Test fixture systems ────────────────────────────────────────────────
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(EmitterMarker) }, bus: nameof(DualFrontier.Contracts.Bus.IGameServices.Pawns))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(EmitterMarker) })]
     internal sealed class DeferredEmitterSystem : SystemBase
     {
         public override void Update(float delta)
@@ -188,7 +188,7 @@ public sealed class DeferredEventDeliveryTests : IDisposable
         }
     }
 
-    [SystemAccess(reads: new[] { typeof(EmitterMarker) }, writes: new[] { typeof(ListenerMarker) }, bus: nameof(DualFrontier.Contracts.Bus.IGameServices.Pawns))]
+    [SystemAccess(reads: new[] { typeof(EmitterMarker) }, writes: new[] { typeof(ListenerMarker) })]
     internal sealed class DeferredListenerSystem : SystemBase
     {
         public int Received;
@@ -201,7 +201,7 @@ public sealed class DeferredEventDeliveryTests : IDisposable
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(PublisherMarker) }, bus: nameof(DualFrontier.Contracts.Bus.IGameServices.Pawns))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(PublisherMarker) })]
     internal sealed class DeferredPublisherSystem : SystemBase
     {
         private readonly EntityId _target;
@@ -213,7 +213,7 @@ public sealed class DeferredEventDeliveryTests : IDisposable
         }
     }
 
-    [SystemAccess(reads: new[] { typeof(PublisherMarker) }, writes: new[] { typeof(DeferredMutableComponent) }, bus: nameof(DualFrontier.Contracts.Bus.IGameServices.Pawns))]
+    [SystemAccess(reads: new[] { typeof(PublisherMarker) }, writes: new[] { typeof(DeferredMutableComponent) })]
     internal sealed class DeferredMutatorSystem : SystemBase
     {
         protected override void OnInitialize()

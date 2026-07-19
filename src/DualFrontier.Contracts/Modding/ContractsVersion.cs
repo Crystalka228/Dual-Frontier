@@ -12,9 +12,12 @@ public readonly struct ContractsVersion : IEquatable<ContractsVersion>
 {
     /// <summary>
     /// Version currently exported by this build of the contracts assembly.
-    /// Bumped manually whenever a breaking change ships.
+    /// Bumped manually whenever a breaking change ships. W2/BD-3 bumped 1.0.0 -> 2.0.0
+    /// (MAJOR): the five genre bus interfaces (ICombatBus/IInventoryBus/IMagicBus/IPawnBus/
+    /// IWorldBus) and IGameServices left DualFrontier.Contracts for the engine-internal
+    /// harness bridge -- a breaking interface removal per CONTRACTS.md §4.
     /// </summary>
-    public static readonly ContractsVersion Current = new(1, 0, 0);
+    public static readonly ContractsVersion Current = new(2, 0, 0);
 
     /// <summary>
     /// Major component: bumped on breaking changes.

@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "author": "Dual Frontier Team",
   "kind": "shared",
-  "apiVersion": "^1.0.0",
+  "apiVersion": "^2.0.0",
   "entryAssembly": "",
   "entryType": "",
   "hotReload": false,

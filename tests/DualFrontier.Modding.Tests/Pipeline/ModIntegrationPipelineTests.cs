@@ -52,7 +52,7 @@ public sealed class ModIntegrationPipelineTests
 
         LoadedMod mod = InjectMod(h, "com.example.future", new GoodMod(),
             new[] { typeof(GoodSystem) },
-            requiresVersion: "2.0.0");
+            requiresVersion: "3.0.0");
         PipelineResult result = h.Pipeline.Apply(new[] { mod.ModId });
 
         result.Success.Should().BeFalse();
@@ -183,7 +183,7 @@ public sealed class ModIntegrationPipelineTests
         string modId,
         IMod instance,
         IReadOnlyList<Type> declaredSystemTypes,
-        string requiresVersion = "1.0.0")
+        string requiresVersion = "2.0.0")
     {
         var manifest = new ModManifest
         {
@@ -218,7 +218,7 @@ public sealed class ModIntegrationPipelineTests
     public sealed class CoreComponentY : IComponent { public int Y { get; init; } }
     public sealed class ConflictComponent : IComponent { public int V { get; init; } }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CoreComponentX) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CoreComponentX) })]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class CoreSystemA : SystemBase
     {
@@ -228,7 +228,7 @@ public sealed class ModIntegrationPipelineTests
     // For the build-failure test: Core reads ComponentY and writes ComponentX.
     // The mod system reads ComponentX and writes ComponentY. This creates a
     // Core → Mod → Core cycle in the graph that Build() catches.
-    [SystemAccess(reads: new[] { typeof(CycleModComponent) }, writes: new[] { typeof(CoreComponentX) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new[] { typeof(CycleModComponent) }, writes: new[] { typeof(CoreComponentX) })]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class CoreReadsBWritesA : SystemBase
     {
@@ -237,7 +237,7 @@ public sealed class ModIntegrationPipelineTests
 
     public struct CycleModComponent : IComponent { public int C; }
 
-    [SystemAccess(reads: new[] { typeof(CoreComponentX) }, writes: new[] { typeof(CycleModComponent) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new[] { typeof(CoreComponentX) }, writes: new[] { typeof(CycleModComponent) })]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class CycleModSystem : SystemBase
     {
@@ -256,14 +256,14 @@ public sealed class ModIntegrationPipelineTests
 
     // --- Write-write conflict stubs -----------------------------------------
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ConflictComponent) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ConflictComponent) })]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class WriteAMod1System : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ConflictComponent) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ConflictComponent) })]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class WriteAMod2System : SystemBase
     {

@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using AwesomeAssertions;
@@ -41,7 +41,13 @@ public sealed class KernelCapabilityRegistryTests
     private static readonly Assembly TestAssembly = typeof(TestPublishEvent).Assembly;
 
     private static KernelCapabilityRegistry BuildFromTestAssembly()
-        => new(new[] { TestAssembly });
+    {
+        // W2/BD-10: register the test assembly under the "kernel" owner to exercise the
+        // emission logic; the kernel-assembly scan (BuildFromKernelAssemblies) itself is retired.
+        var registry = new KernelCapabilityRegistry();
+        registry.RegisterOwner("kernel", TestAssembly);
+        return registry;
+    }
 
     // --- IEvent scanning ----------------------------------------------------
 
@@ -131,21 +137,24 @@ public sealed class KernelCapabilityRegistryTests
     // --- Deduplication ------------------------------------------------------
 
     [Fact]
-    public void DuplicateAssemblies_DoNotDoubleCountTokens()
+    public void DuplicateRegistration_DoesNotDoubleCountTokens()
     {
-        KernelCapabilityRegistry single = new(new[] { TestAssembly });
-        KernelCapabilityRegistry doubled = new(new[] { TestAssembly, TestAssembly });
+        KernelCapabilityRegistry single = new();
+        single.RegisterOwner("kernel", TestAssembly);
+
+        KernelCapabilityRegistry doubled = new();
+        doubled.RegisterOwner("kernel", TestAssembly);
+        doubled.RegisterOwner("kernel", TestAssembly);
 
         doubled.Capabilities.Count.Should().Be(single.Capabilities.Count);
     }
 
     [Fact]
-    public void BuildFromKernelAssemblies_DoesNotThrow_WhenMarkersShareAssembly()
+    public void FreshLedger_IsEmpty()
     {
-        // IEvent and IComponent currently live in DualFrontier.Contracts —
-        // the constructor must dedupe to avoid scanning the same assembly twice.
-        Action act = () => KernelCapabilityRegistry.BuildFromKernelAssemblies();
-        act.Should().NotThrow();
+        // W2/BD-10: a ledger scans nothing at construction — the kernel-assembly scan
+        // (BuildFromKernelAssemblies) is retired; the engine owns no gameplay capabilities.
+        new KernelCapabilityRegistry().Capabilities.Should().BeEmpty();
     }
 
     // --- Capabilities property ----------------------------------------------
@@ -155,5 +164,54 @@ public sealed class KernelCapabilityRegistryTests
     {
         KernelCapabilityRegistry registry = BuildFromTestAssembly();
         registry.Capabilities.Should().BeSameAs(registry.Capabilities);
+    }
+
+    // --- Owner-namespacing + self-access predicate (W2/BD-10) ---
+
+    [Fact]
+    public void RegisterOwner_EmitsOwnerNamespacedTokens_AndRecordsOwnership()
+    {
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner("mod.example", TestAssembly);
+        string fqn = typeof(TestPublishEvent).FullName!;
+
+        // Tokens are namespaced to the owner, NOT to kernel.
+        ledger.Provides($"mod.example.publish:{fqn}").Should().BeTrue();
+        ledger.Provides($"mod.example.subscribe:{fqn}").Should().BeTrue();
+        ledger.Provides($"kernel.publish:{fqn}").Should().BeFalse();
+
+        // Ownership is recorded for the self-access predicate; a different owner does not own it.
+        ledger.Owns("mod.example", fqn).Should().BeTrue();
+        ledger.Owns("mod.other", fqn).Should().BeFalse();
+    }
+
+    // --- Kernel/mod token isolation + owner resolution (W2/BD-10, PR #48 Codex review) ---
+
+    [Fact]
+    public void ProvidesKernel_IsTrueForKernelTokensOnly_NotModTokens()
+    {
+        string fqn = typeof(TestPublishEvent).FullName!;
+
+        var kernelReg = new KernelCapabilityRegistry();
+        kernelReg.RegisterOwner("kernel", TestAssembly);
+        kernelReg.ProvidesKernel($"kernel.publish:{fqn}").Should().BeTrue();
+
+        var modReg = new KernelCapabilityRegistry();
+        modReg.RegisterOwner("mod.example", TestAssembly);
+        // The mod token IS registered, but ProvidesKernel rejects it (the Phase-C kernel fast path
+        // must not admit a mod-owned token -- it needs a declared dependency instead).
+        modReg.Provides($"mod.example.publish:{fqn}").Should().BeTrue();
+        modReg.ProvidesKernel($"mod.example.publish:{fqn}").Should().BeFalse();
+    }
+
+    [Fact]
+    public void OwnerOf_ReturnsRegisteringOwner_OrNullWhenUnregistered()
+    {
+        string fqn = typeof(TestPublishEvent).FullName!;
+        var registry = new KernelCapabilityRegistry();
+        registry.RegisterOwner("mod.example", TestAssembly);
+
+        registry.OwnerOf(fqn).Should().Be("mod.example");
+        registry.OwnerOf("No.Such.Type.Registered.Anywhere").Should().BeNull();
     }
 }

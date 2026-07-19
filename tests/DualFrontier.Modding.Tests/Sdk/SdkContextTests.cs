@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
@@ -27,10 +28,9 @@ internal struct SdkTestComponent : IComponent
     public int Value;
 }
 
-[EventBus("Combat")]
 public sealed record SdkTestEvent(int Value) : IEvent;
 
-[SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new Type[0], writes: new Type[0])]
 [TickRate(TickRates.REALTIME)]
 public sealed class FaultingSdkSystem : ISimulationSystem
 {
@@ -39,14 +39,14 @@ public sealed class FaultingSdkSystem : ISimulationSystem
     public void OnDispose() { }
 }
 
-[SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new Type[0], writes: new Type[0])]
 [TickRate(TickRates.NORMAL)]
 public sealed class SdkStubSystemA : SystemBase
 {
     public override void Update(float delta) { }
 }
 
-[SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new Type[0], writes: new Type[0])]
 [TickRate(TickRates.NORMAL)]
 public sealed class SdkStubSystemB : SystemBase
 {
@@ -97,7 +97,7 @@ public sealed class SdkContextTests
 
         var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
         var ctx = new SystemExecutionContext(
-            "T", new[] { "World" }, SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
+            "T", SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
 
         SystemExecutionContext.PushContext(ctx);
         try
@@ -243,7 +243,7 @@ public sealed class SdkContextTests
             registry,
             new ModContractStore(),
             new GameServices(),
-            KernelCapabilityRegistry.BuildFromKernelAssemblies());
+            new KernelCapabilityRegistry());
         registry.RegisterRestrictedModApi("test.mod", api);
     }
 }

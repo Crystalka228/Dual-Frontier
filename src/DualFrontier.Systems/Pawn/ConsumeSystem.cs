@@ -33,8 +33,7 @@ namespace DualFrontier.Systems.Pawn;
     writes: new[]
     {
         typeof(ConsumableComponent),
-    },
-    bus: nameof(IGameServices.Pawns)
+    }
 )]
 [TickRate(TickRates.NORMAL)]
 public sealed class ConsumeSystem : SystemBase

@@ -155,10 +155,10 @@ public sealed class BusFaultIsolationTests : IDisposable
     // ── Fixtures ─────────────────────────────────────────────────────────────
 
     private SystemExecutionContext ModContext(IModFaultSink sink, string modId = "test.mod.alpha")
-        => new("test.mod.system", new[] { "Pawns" }, SystemOrigin.Mod, modId, sink, _nw);
+        => new("test.mod.system", SystemOrigin.Mod, modId, sink, _nw);
 
     private SystemExecutionContext CoreContext(IModFaultSink sink)
-        => new("test.core.system", new[] { "Pawns" }, SystemOrigin.Core, null, sink, _nw);
+        => new("test.core.system", SystemOrigin.Core, null, sink, _nw);
 
     private static void SubscribeUnder<TEvent>(
         DomainEventBus bus, SystemExecutionContext? ctx, Action<TEvent> handler)

@@ -15,7 +15,6 @@ using Xunit;
 
 namespace DualFrontier.Modding.Tests.Pipeline;
 
-[EventBus("Combat")]
 public sealed record M72UnloadTestEvent(int Value) : IEvent;
 
 public sealed record M72TestContract(string Marker) : IModContract;
@@ -461,14 +460,14 @@ public sealed class M72UnloadChainTests
         public void Unload() { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.Combat))]
+    [SystemAccess(reads: new Type[0], writes: new Type[0])]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class M72TestSystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new Type[0])]
     [TickRate(DualFrontier.Contracts.Attributes.TickRates.NORMAL)]
     public sealed class CoreSurvivorSystem : SystemBase
     {

@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Reflection;
-using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using AwesomeAssertions;
@@ -28,7 +28,11 @@ public sealed class K10_2_KCR_DefaultTokenEvent : IEvent { }
 public sealed class KernelCapabilityRegistryTierTests
 {
     private static KernelCapabilityRegistry RegistryForTestAssembly()
-        => new(new[] { Assembly.GetExecutingAssembly() });
+    {
+        var reg = new KernelCapabilityRegistry();
+        reg.RegisterOwner("kernel", Assembly.GetExecutingAssembly());
+        return reg;
+    }
 
     [Fact]
     public void FastEvent_EmitsFastPrefixedTokens()

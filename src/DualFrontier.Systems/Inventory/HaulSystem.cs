@@ -29,8 +29,7 @@ namespace DualFrontier.Systems.Inventory;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(StorageComponent), typeof(PositionComponent), typeof(JobComponent) },
-    writes: new Type[0],
-    bus:    nameof(IGameServices.Inventory)
+    writes: new Type[0]
 )]
 [TickRate(TickRates.NORMAL)]
 public sealed class HaulSystem : SystemBase

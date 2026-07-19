@@ -20,8 +20,7 @@ namespace Fixture.RegularMod_ReplacesCombat;
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
-    writes: new Type[0],
-    bus:    nameof(IGameServices.Combat))]
+    writes: new Type[0])]
 [TickRate(TickRates.NORMAL)]
 public sealed class ReplacementCombatSystem : ISimulationSystem
 {

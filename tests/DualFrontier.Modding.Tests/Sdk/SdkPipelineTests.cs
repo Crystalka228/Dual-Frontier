@@ -16,7 +16,7 @@ using TickRates = DualFrontier.Contracts.Attributes.TickRates;
 
 namespace DualFrontier.Modding.Tests.Sdk;
 
-[SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new Type[0], writes: new Type[0])]
 [TickRate(TickRates.NORMAL)]
 public sealed class DisposeRecordingSdkSystem : ISimulationSystem
 {

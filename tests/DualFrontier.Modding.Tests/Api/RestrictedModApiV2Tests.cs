@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
@@ -13,10 +14,7 @@ using Xunit;
 
 namespace DualFrontier.Modding.Tests.Api;
 
-[EventBus("Combat")]
 public sealed record TestCombatEvent(int Value) : IEvent;
-
-public sealed record TestUnboundEvent(int Value) : IEvent;
 
 public sealed class RestrictedModApiV2Tests
 {
@@ -30,40 +28,9 @@ public sealed class RestrictedModApiV2Tests
         ex.Message.Should().Be("custom msg");
     }
 
-    // 2
-    [Fact]
-    public void EventBusAttribute_EmptyName_ThrowsArgumentException()
-    {
-        Action act = () => _ = new EventBusAttribute("");
-        act.Should().Throw<ArgumentException>();
-    }
-
-    // 3
-    [Fact]
-    public void EventBusAttribute_ValidName_ExposesBusName()
-    {
-        var attr = new EventBusAttribute("Combat");
-        attr.BusName.Should().Be("Combat");
-    }
-
-    // 4
-    [Fact]
-    public void ModBusRouter_EventWithAttribute_ResolvesCombatBus()
-    {
-        var services = new GameServices();
-        object? bus = ModBusRouter.Resolve(typeof(TestCombatEvent), services);
-        bus.Should().NotBeNull();
-        bus.Should().BeSameAs(services.Combat);
-    }
-
-    // 5
-    [Fact]
-    public void ModBusRouter_EventWithoutAttribute_ReturnsNull()
-    {
-        var services = new GameServices();
-        object? bus = ModBusRouter.Resolve(typeof(TestUnboundEvent), services);
-        bus.Should().BeNull();
-    }
+    // 2 (former tests 2-5 removed at W2 C3: EventBusAttribute + ModBusRouter are deleted
+    // with the genre taxonomy -- the mod path now routes by type to the unified dispatch,
+    // proven by the round-trip test below rather than by attribute/router resolution.)
 
     // 6
     [Fact]
@@ -187,7 +154,7 @@ public sealed class RestrictedModApiV2Tests
             new ModRegistry(),
             new ModContractStore(),
             new GameServices(),
-            KernelCapabilityRegistry.BuildFromKernelAssemblies());
+            new KernelCapabilityRegistry());
         api.GetOwnManifest().Should().BeSameAs(manifest);
     }
 
@@ -314,11 +281,101 @@ public sealed class RestrictedModApiV2Tests
         SystemExecutionContext.Current.Should().BeNull();
     }
 
+    // 23 — W2/BD-10 self-access: a mod is auto-granted its OWN registered types.
+    [Fact]
+    public void Publish_SelfOwnedType_IsAutoGranted_WithoutManifestDeclaration()
+    {
+        // A ledger where THIS mod owns TestCombatEvent (registered under its owner namespace).
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner($"mod.{TestModId}", typeof(TestCombatEvent).Assembly);
+
+        // A NON-empty manifest (so not the grace path) that declares only an UNRELATED token --
+        // it does NOT declare kernel.publish:TestCombatEvent.
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(new[] { "kernel.publish:Some.Other.Event" }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), ledger);
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().NotThrow(
+            "a mod is auto-granted its own registered types (self-access) without declaring them");
+    }
+
+    // 24 — W2/BD-10: a type that is neither self-owned nor declared is still gated.
+    [Fact]
+    public void Publish_NotSelfOwned_AndUndeclared_StillThrows()
+    {
+        // Empty ledger -> the mod owns nothing; non-empty manifest that does not declare the type.
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(new[] { "kernel.publish:Some.Other.Event" }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), new KernelCapabilityRegistry());
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().Throw<CapabilityViolationException>(
+            "cross-owner access without a declared capability is still gated");
+    }
+
+    // 25 — W2/BD-10 (PR #48 Codex review): a cross-owner event declared with the correct
+    // owner-namespaced token is admitted (the gate resolves the registered owner, not hard-coded kernel).
+    [Fact]
+    public void Publish_CrossOwnerEvent_WithOwnerNamespacedToken_IsAdmitted()
+    {
+        // TestCombatEvent is registered under a DIFFERENT owner (a provider mod) -- not this mod
+        // (so self-access does NOT fire) and not kernel. The consumer declares the owner token.
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner("mod.provider", typeof(TestCombatEvent).Assembly);
+        string ownerToken = $"mod.provider.publish:{typeof(TestCombatEvent).FullName}";
+
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(new[] { ownerToken }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), ledger);
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().NotThrow(
+            "the gate resolves the event's registered owner and admits the owner-namespaced token");
+    }
+
+    // 26 — the same cross-owner event with ONLY the kernel token declared is still rejected:
+    // a mod-owned event needs its owner token, and the pre-fix hard-coded kernel.* no longer masks that.
+    [Fact]
+    public void Publish_CrossOwnerEvent_WithKernelTokenOnly_StillThrows()
+    {
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner("mod.provider", typeof(TestCombatEvent).Assembly);
+
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(
+                new[] { $"kernel.publish:{typeof(TestCombatEvent).FullName}" }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), ledger);
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().Throw<CapabilityViolationException>(
+            "a mod-owned event is gated on its owner token, not the kernel token");
+    }
+
     private static SystemExecutionContext BuildTestContext(string name = "TestSystem")
     {
         return new SystemExecutionContext(
             name,
-            new[] { "TestBus" },
             SystemOrigin.Core,
             modId: null,
             faultSink: new NullModFaultSink(),
@@ -335,7 +392,7 @@ public sealed class RestrictedModApiV2Tests
             new ModRegistry(),
             new ModContractStore(),
             services,
-            KernelCapabilityRegistry.BuildFromKernelAssemblies());
+            new KernelCapabilityRegistry());
         return (api, services);
     }
 

@@ -5,125 +5,75 @@ using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 
 /// <summary>
-/// Aggregates all domain event buses into a single service locator pattern,
-/// implementing the IGameServices interface. This class provides access points
-/// for various core game systems' event buses. Also implements internal
-/// <see cref="IDeferredFlush"/> so the scheduler can drain deferred events
-/// per phase without downcasting.
+/// Aggregates the managed domain-event dispatch behind the <see cref="IGameServices"/>
+/// service-locator surface. W2/BD-3 collapsed the former five genre buses
+/// (Combat/Inventory/Magic/Pawns/World) into ONE type-keyed <see cref="DomainEventBus"/>:
+/// the genre taxonomy no longer partitions routing, and every <see cref="IGameServices"/>
+/// getter returns the same unified dispatch through <see cref="UnifiedGenreBus"/>. The
+/// getters survive only as an engine-internal harness bridge, so the live harness systems
+/// keep their <c>Services.&lt;Bus&gt;.Publish</c> call shape until W5, when <c>SystemBase</c>
+/// (and this bridge) retires. Delivery is type-keyed, so merging the five per-genre
+/// subscriber tables into one preserves every existing publisher/subscriber pair -- no
+/// production event type spans genres -- while letting mod publication reach subscribers
+/// uniformly. Also implements internal <see cref="IDeferredFlush"/> so the scheduler can
+/// drain deferred events per phase without downcasting.
 /// </summary>
 internal sealed class GameServices : IGameServices, IDeferredFlush
 {
-    private readonly CombatBus _combatBus = new();
-    private readonly InventoryBus _inventoryBus = new();
-    private readonly MagicBus _magicBus = new();
-    private readonly WorldBus _worldBus = new();
-    private readonly PawnBus _pawnBus = new();
+    private readonly DomainEventBus _bus = new();
+    private readonly UnifiedGenreBus _genre;
+
+    public GameServices() => _genre = new UnifiedGenreBus(_bus);
 
     /// <inheritdoc/>
-    public ICombatBus Combat => _combatBus;
+    public ICombatBus Combat => _genre;
 
     /// <inheritdoc/>
-    public IInventoryBus Inventory => _inventoryBus;
+    public IInventoryBus Inventory => _genre;
 
     /// <inheritdoc/>
-    public IMagicBus Magic => _magicBus;
+    public IMagicBus Magic => _genre;
 
     /// <inheritdoc/>
-    public IWorldBus World => _worldBus;
+    public IPawnBus Pawns => _genre;
 
     /// <inheritdoc/>
-    public IPawnBus Pawns => _pawnBus;
+    public IWorldBus World => _genre;
 
     /// <summary>
-    /// Clears all underlying event buses. Should be called between scenes or during testing
+    /// Clears the unified event bus. Should be called between scenes or during testing
     /// to prevent stale events from affecting subsequent game states.
     /// </summary>
-    public void Clear()
-    {
-        _combatBus.Clear();
-        _inventoryBus.Clear();
-        _magicBus.Clear();
-        _worldBus.Clear();
-        _pawnBus.Clear();
-    }
+    public void Clear() => _bus.Clear();
 
     /// <summary>
-    /// Drains the deferred queue of every owned bus. Called by
-    /// <c>ParallelSystemScheduler.ExecutePhase</c> after the parallel barrier
-    /// of each phase. See <see cref="DomainEventBus.FlushDeferred"/>.
+    /// Drains the deferred queue of the unified bus. Called by
+    /// <c>ParallelSystemScheduler.ExecutePhase</c> after the parallel barrier of each
+    /// phase. See <see cref="DomainEventBus.FlushDeferred"/>.
     /// </summary>
-    public void FlushDeferred()
-    {
-        _combatBus.FlushDeferred();
-        _inventoryBus.FlushDeferred();
-        _magicBus.FlushDeferred();
-        _worldBus.FlushDeferred();
-        _pawnBus.FlushDeferred();
-    }
+    public void FlushDeferred() => _bus.FlushDeferred();
 
     /// <summary>
-    /// Drops the deferred queue of every owned bus without dispatching, returning
-    /// the total count discarded. Shutdown-transaction step S3 (EQ_A2).
+    /// Drops the deferred queue of the unified bus without dispatching, returning the
+    /// total count discarded. Shutdown-transaction step S3 (EQ_A2).
     /// </summary>
-    public int DropDeferred()
-        => _combatBus.DropDeferred()
-         + _inventoryBus.DropDeferred()
-         + _magicBus.DropDeferred()
-         + _worldBus.DropDeferred()
-         + _pawnBus.DropDeferred();
-}
-
-internal sealed class CombatBus : ICombatBus
-{
-    private readonly DomainEventBus _bus = new();
-    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
-    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
-    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
-    public void Clear() => _bus.Clear();
-    public void FlushDeferred() => _bus.FlushDeferred();
     public int DropDeferred() => _bus.DropDeferred();
 }
 
-internal sealed class InventoryBus : IInventoryBus
+/// <summary>
+/// The single managed dispatch behind all five <see cref="IGameServices"/> genre getters
+/// after the W2/BD-3 taxonomy collapse. It implements the five (empty) genre marker
+/// interfaces so the harness bridge's <c>Services.Combat</c> / <c>Services.Pawns</c> / ...
+/// call sites keep compiling unchanged, but each routes to the same type-keyed
+/// <see cref="DomainEventBus"/>. Retires with the genre markers at W5.
+/// </summary>
+internal sealed class UnifiedGenreBus : ICombatBus, IInventoryBus, IMagicBus, IPawnBus, IWorldBus
 {
-    private readonly DomainEventBus _bus = new();
-    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
-    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
-    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
-    public void Clear() => _bus.Clear();
-    public void FlushDeferred() => _bus.FlushDeferred();
-    public int DropDeferred() => _bus.DropDeferred();
-}
+    private readonly DomainEventBus _bus;
 
-internal sealed class MagicBus : IMagicBus
-{
-    private readonly DomainEventBus _bus = new();
-    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
-    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
-    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
-    public void Clear() => _bus.Clear();
-    public void FlushDeferred() => _bus.FlushDeferred();
-    public int DropDeferred() => _bus.DropDeferred();
-}
+    public UnifiedGenreBus(DomainEventBus bus) => _bus = bus;
 
-internal sealed class WorldBus : IWorldBus
-{
-    private readonly DomainEventBus _bus = new();
     public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
     public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
-    public void Clear() => _bus.Clear();
-    public void FlushDeferred() => _bus.FlushDeferred();
-    public int DropDeferred() => _bus.DropDeferred();
-}
-
-internal sealed class PawnBus : IPawnBus
-{
-    private readonly DomainEventBus _bus = new();
-    public void Subscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Subscribe(handler);
-    public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent => _bus.Unsubscribe(handler);
-    public void Publish<TEvent>(TEvent evt) where TEvent : IEvent => _bus.Publish(evt);
-    public void Clear() => _bus.Clear();
-    public void FlushDeferred() => _bus.FlushDeferred();
-    public int DropDeferred() => _bus.DropDeferred();
 }

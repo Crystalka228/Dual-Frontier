@@ -40,7 +40,7 @@ public struct GoodComponent : IComponent
 }
 
 /// <summary>System that writes to <see cref="GoodComponent"/> every tick.</summary>
-[SystemAccess(reads: new[] { typeof(GoodComponent) }, writes: new[] { typeof(GoodComponent) }, bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new[] { typeof(GoodComponent) }, writes: new[] { typeof(GoodComponent) })]
 [TickRate(TickRates.NORMAL)]
 public sealed class GoodSystem : SystemBase
 {

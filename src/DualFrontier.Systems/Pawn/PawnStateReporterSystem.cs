@@ -25,8 +25,7 @@ namespace DualFrontier.Systems.Pawn;
 [SystemAccess(
     reads:  new[] { typeof(NeedsComponent), typeof(MindComponent), typeof(JobComponent),
                     typeof(IdentityComponent), typeof(SkillsComponent) },
-    writes: new Type[0],
-    bus:    nameof(IGameServices.Pawns)
+    writes: new Type[0]
 )]
 [TickRate(TickRates.SLOW)]
 public sealed class PawnStateReporterSystem : SystemBase

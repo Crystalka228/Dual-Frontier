@@ -1,5 +1,5 @@
 using System.Reflection;
-using DualFrontier.Application.Modding;
+using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Display;
 using AwesomeAssertions;
 using Xunit;
@@ -30,7 +30,11 @@ public sealed class K10_3_KCR_NoLayerAttributeType { }
 public sealed class KernelCapabilityRegistryLayerTests
 {
     private static KernelCapabilityRegistry RegistryForTestAssembly()
-        => new(new[] { Assembly.GetExecutingAssembly() });
+    {
+        var reg = new KernelCapabilityRegistry();
+        reg.RegisterOwner("kernel", Assembly.GetExecutingAssembly());
+        return reg;
+    }
 
     [Fact]
     public void IntentLayer_EmitsIntentToken()

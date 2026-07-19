@@ -39,8 +39,7 @@ namespace DualFrontier.Systems.Pawn;
         typeof(PositionComponent),
         typeof(NeedsComponent),
     },
-    writes: new Type[0],
-    bus:    nameof(IGameServices.Pawns)
+    writes: new Type[0]
 )]
 [TickRate(TickRates.SLOW)]
 public sealed class ComfortAuraSystem : SystemBase

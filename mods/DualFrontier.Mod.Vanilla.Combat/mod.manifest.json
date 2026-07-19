@@ -5,7 +5,7 @@
   "version": "0.1.0",
   "author": "Dual Frontier Team",
   "kind": "regular",
-  "apiVersion": "^1.0.0",
+  "apiVersion": "^2.0.0",
   "entryAssembly": "DualFrontier.Mod.Vanilla.Combat.dll",
   "entryType": "DualFrontier.Mod.Vanilla.Combat.CombatMod",
   "hotReload": true,

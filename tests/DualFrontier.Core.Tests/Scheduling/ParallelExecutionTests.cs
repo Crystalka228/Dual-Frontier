@@ -107,7 +107,7 @@ public sealed class ParallelExecutionTests
 
     // ── Test fixture systems ────────────────────────────────────────────────
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ThreadRecordingComponentA) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ThreadRecordingComponentA) })]
     internal sealed class ThreadRecorderASystem : SystemBase
     {
         public ConcurrentBag<int> ObservedThreads { get; } = new();
@@ -118,7 +118,7 @@ public sealed class ParallelExecutionTests
         }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ThreadRecordingComponentB) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ThreadRecordingComponentB) })]
     internal sealed class ThreadRecorderBSystem : SystemBase
     {
         public ConcurrentBag<int> ObservedThreads { get; } = new();
@@ -129,7 +129,7 @@ public sealed class ParallelExecutionTests
         }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ThreadRecordingComponentC) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ThreadRecordingComponentC) })]
     internal sealed class ThreadRecorderCSystem : SystemBase
     {
         public ConcurrentBag<int> ObservedThreads { get; } = new();
@@ -140,7 +140,7 @@ public sealed class ParallelExecutionTests
         }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ProducerComponent) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ProducerComponent) })]
     internal sealed class TimestampProducerSystem : SystemBase
     {
         private readonly TimelineRecorder _timeline;
@@ -158,7 +158,7 @@ public sealed class ParallelExecutionTests
         }
     }
 
-    [SystemAccess(reads: new[] { typeof(ProducerComponent) }, writes: new[] { typeof(ConsumerComponent) }, bus: "TestBus")]
+    [SystemAccess(reads: new[] { typeof(ProducerComponent) }, writes: new[] { typeof(ConsumerComponent) })]
     internal sealed class TimestampConsumerSystem : SystemBase
     {
         private readonly TimelineRecorder _timeline;
@@ -176,7 +176,7 @@ public sealed class ParallelExecutionTests
         }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(BarrierComponentFast) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(BarrierComponentFast) })]
     internal sealed class CompletionCounterSystem : SystemBase
     {
         private readonly int _spinMs;

@@ -128,6 +128,14 @@ public sealed class CensusMetaTests
         // the two documentation sites and shipped before this census (Analyzers.Tests) ran.
         // W1-fix (Codex review): deferred 88->89 / 54->55 -- Sdk/ISystemServices.cs now
         // records that the mod-facing IModApi factory overload is deferred (N17).
+        // W2/BD-3 (C3): deferred 89->88 / 55->54 -- EventBusAttribute.cs deleted with the
+        // genre taxonomy; its /// [Deferred] doc-example line (line 15) was the file's only
+        // deferred site. ModBusRouter.cs was also deleted this commit but carried no census
+        // markers, so no other pin moves.
+        // W2/BD-10 (C5): deferred 88->89 / 54->55 -- the capability ledger relocated to
+        // Core/Modding/KernelCapabilityRegistry.cs documents that live per-mod owner-registration
+        // is DEFERRED to the wave that moves gameplay types into the vanilla mods; that one
+        // sentence is the +1 deferred site in the new ledger file.
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 

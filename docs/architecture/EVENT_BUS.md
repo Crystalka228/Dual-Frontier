@@ -5,24 +5,24 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.1.0
+version: 1.2.0
 first_authored: 2026-07-15
-last_modified: 2026-07-18
+last_modified: 2026-07-19
 content_language: en
 next_review_due: 2027-Q3
 title: Event buses (authored rework; fault-isolation asymmetry and capacity truths pinned)
 supersedes:
 - DOC-A-EVENT_BUS
 review_cadence: on-change+annual
-last_review_date: 2026-07-18
-last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B (D6) — v1.0.1 → v1.1.0 MINOR: df_bus_clear promoted from test-only to a production shutdown-transaction teardown step (ManagedBusBridge.Shutdown in EngineSession.Dispose S5, managed caller only — the native export is unchanged); §3 records the Fast-tier-on-clearing-thread semantics (post-fence, no publisher races the clear; Fast callbacks fire outside the per-tier mutex, К-L15.1) and §4 now lists three live native-bus touchpoints. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: DRAFTS_RATIFICATION MC-1 (PATCH 1.0.0 → 1.0.1).'
+last_review_date: 2026-07-19
+last_review_event: 'W2_BUS_CAPABILITY C7 (BD-3b) — v1.1.0 → v1.2.0 MINOR: the five-genre managed split collapsed to one generic router. §1 inverted from "why domain buses, not a global one" to "one router" — the contention rationale never materialized and genre-keyed routing silently dropped cross-genre mod deliveries; the five IGameServices getters survive as cosmetic bridges over one DomainEventBus (relocated to Core.Bus at BD-3a, CONTRACTS.md §2 2.0.0). §4 mod path: ModBusRouter + the [EventBus] attribute deleted — mods route by event type to the one dispatch. Delivery SEMANTICS (§2 sync/[Deferred]/[Immediate]) unchanged; the native FENCE (:92) and §5 untouched. EVT-2026-07-19-W2_BUS_CAPABILITY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION (MINOR 1.0.1 → 1.1.0).'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 ---
 
 # Event Buses
 
-The dual bus architecture: five managed domain buses carrying every production event today, and the sovereign native three-tier kernel bus (К-L15) that exists fully behind a C ABI but carries almost none of that traffic yet.
+The dual bus architecture: one managed `DomainEventBus` carrying every production event today (five cosmetic `IGameServices` getters bridge to it — the genre split was retired at W2/BD-3), and the sovereign native three-tier kernel bus (К-L15) that exists fully behind a C ABI but carries almost none of that traffic yet.
 
 > **Ratified successor (LOCKED v1.0.0 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION, 2026-07-17).** Successor of `docs/architecture/historical/EVENT_BUS.md` (DOC-A-EVENT_BUS, now SUPERSEDED). Produced by the corpus rework of 2026-07-15 (session report: [ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715](../reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md)); content verified against code at HEAD `35364c2`.
 
@@ -39,19 +39,14 @@ The dual bus architecture: five managed domain buses carrying every production e
 
 ---
 
-## §1 Why domain buses, not a global one
+## §1 One generic router (the domain split was retired at W2/BD-3)
 
-Events are the only horizontal link between systems — direct system-to-system calls are forbidden by the architecture (ISOLATION.md). A single global bus becomes a single lock point at scale: one subscriber table for every event type concentrates contention in one structure. Dual Frontier splits the managed bus by game domain — each is a self-contained `DomainEventBus` with its own subscriber table and deferred queue:
+Events are the only horizontal link between systems — direct system-to-system calls are forbidden by the architecture (MOD_OS_ARCHITECTURE.md §1.4). Through W1 the managed bus was **split by game domain** into five `DomainEventBus` instances behind `IGameServices` (`ICombatBus`/`IInventoryBus`/`IMagicBus`/`IPawnBus`/`IWorldBus`), on the theory that a single global bus concentrates lock contention at scale. **At W2/BD-3b that split collapsed to one generic router.** Two reasons the theory did not hold:
 
-```csharp
-public interface IGameServices {
-    ICombatBus Combat { get; }       IInventoryBus Inventory { get; }
-    IMagicBus Magic { get; }         IPawnBus Pawns { get; }
-    IWorldBus World { get; }
-}
-```
+- **The contention never materialized.** No shipped or stress workload approached the ~100-system threshold the split was hedging against; the five-way partition bought nothing measurable, only per-genre subscriber tables to keep in step.
+- **The partition silently dropped deliveries.** Genre-keyed routing meant an event published on one bus was invisible to a subscriber on another — a correctness footgun for mods, which carry no genre affiliation.
 
-The five-bus list is canonical per `src/DualFrontier.Contracts/Bus/IGameServices.cs` (the historical sixth `IPowerBus` was deleted with the Power subsystems at К8.3+К8.4). Benefits: locks of unrelated domains never overlap, per-bus logging, and `[SystemAccess(bus: nameof(IGameServices.Combat))]` states where a system may publish at all.
+Today there is **one `DomainEventBus`** (`src/DualFrontier.Core/Bus/GameServices.cs`). `IGameServices` and its five getters survive as **cosmetic source-compatibility bridges**: every getter returns the same underlying bus, so an event subscribed via any getter is delivered when published via any other (proven by `UnifiedBusParityTests`). The interfaces relocated out of `DualFrontier.Contracts` into `DualFrontier.Core.Bus` at BD-3a — the 2.0.0 MAJOR bump (CONTRACTS.md §2). The `[SystemAccess(bus: …)]` form that named a publish-genre is deleted (F-54); `[SystemAccess]` now carries reads/writes only. (The historical sixth `IPowerBus` was deleted with the Power subsystems at К8.3+К8.4, before the collapse.)
 
 ## §2 Managed delivery: synchronous, `[Deferred]`, `[Immediate]`
 
@@ -85,7 +80,7 @@ Every subscriber record carries a `mod_id` (`0` for Core/vanilla), enabling per-
 
 What actually routes where, verified on disk:
 
-- **Managed events take the managed path.** Systems publish through `SystemBase.Services` → domain bus; mods publish/subscribe through `IModApi`, routed by `ModBusRouter` (reflects `IGameServices` properties against each event's `[EventBus]` attribute, `ModBusRouter.cs`) to the correct bus after a capability check in `RestrictedModApi.Publish`/`Subscribe` (`RestrictedModApi.cs:157-190`). Every delivery mechanic in §2 is live production behavior.
+- **Managed events take the managed path.** Systems publish through `SystemBase.Services` → the one `DomainEventBus` (§1); mods publish/subscribe through `IModApi`, which routes **by event type** to that same unified dispatch after a capability check in `RestrictedModApi.EnforceCapability` (MOD_OS_ARCHITECTURE.md §3.6). The former `ModBusRouter` (which reflected `IGameServices` properties against each event's `[EventBus]` attribute) and the `[EventBus]` attribute itself were **deleted with the genre taxonomy at W2/BD-3b** — with one bus to route to, there is no genre to resolve. Every delivery mechanic in §2 is live production behavior.
 - **The managed→native routing facade exists but is dormant.** `BusFacade` (`src/DualFrontier.Application/Bus/BusFacade.cs`) maps event types to FNV-1a type ids (`Fnv1a32`, `:176-187`), reads the tier, and publishes through `ManagedBusBridge` — but only when `UseNativeBusForDispatch` is set, and it **defaults `false`** (`:49`). No production code constructs a `BusFacade`; the native dispatch path is exercised only by the scheduler stress/extreme test suites (e.g. S10, §3).
 - **Three native-bus touchpoints are live in production.** (1) `GameLoop` drains the Background tier after every fixed step with whatever tick budget remains (`ManagedBusBridge.DrainBackgroundBatch`, called at `GameLoop.cs:118-128`). (2) The mod-unload chain invokes the native unload primitive: `ModIntegrationPipeline.cs:668` calls `ModUnloadInterop.UnloadModNativeState`, which wraps native `df_scheduler_unload_mod_native_state` (`mod_unload.cpp:45-121`) — its T1/T2/T3 steps call the three per-tier `_by_mod` unsubscribes (`:83,87-89,93`), vacuously today since production registers no native subscribers. (3) `EngineSession.Dispose` (the EQ_A2 shutdown transaction) clears the native bus via `ManagedBusBridge.Shutdown` → `df_bus_clear` (promoted out of test-only) as teardown step S5 — the first production caller of the clear.
 

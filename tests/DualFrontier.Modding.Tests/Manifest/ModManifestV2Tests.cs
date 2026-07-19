@@ -155,11 +155,13 @@ public sealed class ModManifestV2Tests
     }
 
     [Fact]
-    public void Default_manifest_EffectiveApiVersion_floor_is_1_0_0()
+    public void Default_manifest_EffectiveApiVersion_floor_is_2_0_0()
     {
+        // W2/BD-3: the default RequiresContractsVersion tracks the current contract
+        // major, so an omitted-version manifest floors at 2.0.0 (bumped from 1.0.0).
         ModManifest manifest = new();
 
-        manifest.EffectiveApiVersion.Floor.Should().Be(new ContractsVersion(1, 0, 0));
+        manifest.EffectiveApiVersion.Floor.Should().Be(new ContractsVersion(2, 0, 0));
     }
 
     // --- BridgeImplementationAttribute --------------------------------------

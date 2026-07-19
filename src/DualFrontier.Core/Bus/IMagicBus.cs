@@ -1,6 +1,7 @@
 using System;
+using DualFrontier.Contracts.Bus;
 
-namespace DualFrontier.Contracts.Bus;
+namespace DualFrontier.Core.Bus;
 
 /// <summary>
 /// Magic-domain bus. Events: mana request, spell cast, golem activation,

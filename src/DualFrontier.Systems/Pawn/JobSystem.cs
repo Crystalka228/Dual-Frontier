@@ -14,8 +14,7 @@ namespace DualFrontier.Systems.Pawn;
 [SystemAccess(
     reads:  new[] { typeof(NeedsComponent), typeof(SkillsComponent),
                     typeof(PositionComponent) },
-    writes: new[] { typeof(JobComponent) },
-    bus:    nameof(IGameServices.Pawns)
+    writes: new[] { typeof(JobComponent) }
 )]
 [TickRate(TickRates.NORMAL)]
 public sealed class JobSystem : SystemBase

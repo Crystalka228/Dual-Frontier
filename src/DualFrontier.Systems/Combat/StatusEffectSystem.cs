@@ -16,8 +16,7 @@ namespace DualFrontier.Systems.Combat;
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
-    writes: new[] { typeof(MindComponent), typeof(HealthComponent) },
-    bus:    nameof(IGameServices.Combat)
+    writes: new[] { typeof(MindComponent), typeof(HealthComponent) }
 )]
 [TickRate(TickRates.FAST)]
 [BridgeImplementation(Phase = 5, Replaceable = true)]

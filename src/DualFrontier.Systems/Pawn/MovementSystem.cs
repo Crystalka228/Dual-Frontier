@@ -21,8 +21,7 @@ namespace DualFrontier.Systems.Pawn;
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
-    writes: new[] { typeof(PositionComponent), typeof(MovementComponent) },
-    bus:    nameof(IGameServices.Pawns)
+    writes: new[] { typeof(PositionComponent), typeof(MovementComponent) }
 )]
 [TickRate(TickRates.NORMAL)]
 public sealed class MovementSystem : SystemBase

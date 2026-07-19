@@ -22,8 +22,8 @@ public sealed class ContractValidatorTests
     public void Validator_rejects_mod_requiring_newer_contracts_version()
     {
         var validator = new ContractValidator();
-        // The required version bumps the major component — current 1.0.0 is incompatible.
-        LoadedMod mod = MakeMod("com.example.future", "2.0.0", Array.Empty<Type>());
+        // The required version bumps the major component — current 2.0.0 is incompatible.
+        LoadedMod mod = MakeMod("com.example.future", "3.0.0", Array.Empty<Type>());
 
         ValidationReport report = validator.Validate(new[] { mod }, Array.Empty<SystemBase>());
 
@@ -37,8 +37,8 @@ public sealed class ContractValidatorTests
     public void Validator_detects_write_conflict_between_two_mods()
     {
         var validator = new ContractValidator();
-        LoadedMod modA = MakeMod("com.example.a", "1.0.0", new[] { typeof(WriteASystem) });
-        LoadedMod modB = MakeMod("com.example.b", "1.0.0", new[] { typeof(WriteASystemAlt) });
+        LoadedMod modA = MakeMod("com.example.a", "2.0.0", new[] { typeof(WriteASystem) });
+        LoadedMod modB = MakeMod("com.example.b", "2.0.0", new[] { typeof(WriteASystemAlt) });
 
         ValidationReport report = validator.Validate(new[] { modA, modB }, Array.Empty<SystemBase>());
 
@@ -55,7 +55,7 @@ public sealed class ContractValidatorTests
     public void Validator_detects_write_conflict_between_mod_and_core()
     {
         var validator = new ContractValidator();
-        LoadedMod mod = MakeMod("com.example.bad", "1.0.0", new[] { typeof(WriteASystem) });
+        LoadedMod mod = MakeMod("com.example.bad", "2.0.0", new[] { typeof(WriteASystem) });
         var core = new CoreWriteASystem();
 
         ValidationReport report = validator.Validate(new[] { mod }, new SystemBase[] { core });
@@ -73,8 +73,8 @@ public sealed class ContractValidatorTests
     public void Validator_valid_mods_return_empty_errors()
     {
         var validator = new ContractValidator();
-        LoadedMod modA = MakeMod("com.example.a", "1.0.0", new[] { typeof(WriteASystem) });
-        LoadedMod modB = MakeMod("com.example.b", "1.0.0", new[] { typeof(WriteBSystem) });
+        LoadedMod modA = MakeMod("com.example.a", "2.0.0", new[] { typeof(WriteASystem) });
+        LoadedMod modB = MakeMod("com.example.b", "2.0.0", new[] { typeof(WriteBSystem) });
 
         ValidationReport report = validator.Validate(new[] { modA, modB }, Array.Empty<SystemBase>());
 
@@ -86,8 +86,8 @@ public sealed class ContractValidatorTests
     public void Validator_reports_precise_component_in_conflict_message()
     {
         var validator = new ContractValidator();
-        LoadedMod modA = MakeMod("com.example.a", "1.0.0", new[] { typeof(WriteASystem) });
-        LoadedMod modB = MakeMod("com.example.b", "1.0.0", new[] { typeof(WriteASystemAlt) });
+        LoadedMod modA = MakeMod("com.example.a", "2.0.0", new[] { typeof(WriteASystem) });
+        LoadedMod modB = MakeMod("com.example.b", "2.0.0", new[] { typeof(WriteASystemAlt) });
 
         ValidationReport report = validator.Validate(new[] { modA, modB }, Array.Empty<SystemBase>());
 
@@ -102,8 +102,8 @@ public sealed class ContractValidatorTests
     public void Validator_ok_for_compatible_older_patch_version()
     {
         var validator = new ContractValidator();
-        // Current = 1.0.0. The mod requires 1.0.0 — matches → valid.
-        LoadedMod mod = MakeMod("com.example.compat", "1.0.0", Array.Empty<Type>());
+        // Current = 2.0.0. The mod requires 2.0.0 — matches → valid.
+        LoadedMod mod = MakeMod("com.example.compat", "2.0.0", Array.Empty<Type>());
 
         ValidationReport report = validator.Validate(new[] { mod }, Array.Empty<SystemBase>());
 
@@ -137,28 +137,28 @@ public sealed class ContractValidatorTests
         public int Value { get; init; }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentA) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentA) })]
     [TickRate(TickRates.NORMAL)]
     public sealed class WriteASystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentA) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentA) })]
     [TickRate(TickRates.NORMAL)]
     public sealed class WriteASystemAlt : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentB) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentB) })]
     [TickRate(TickRates.NORMAL)]
     public sealed class WriteBSystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentA) }, bus: nameof(IGameServices.World))]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ComponentA) })]
     [TickRate(TickRates.NORMAL)]
     public sealed class CoreWriteASystem : SystemBase
     {

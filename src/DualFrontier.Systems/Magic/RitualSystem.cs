@@ -16,8 +16,7 @@ namespace DualFrontier.Systems.Magic;
 /// </summary>
 [SystemAccess(
     reads:  new System.Type[0],
-    writes: new[] { typeof(ManaComponent) },
-    bus:    nameof(IGameServices.Magic)
+    writes: new[] { typeof(ManaComponent) }
 )]
 [TickRate(TickRates.RARE)]
 [BridgeImplementation(Phase = 6)]

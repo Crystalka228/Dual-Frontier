@@ -1,6 +1,7 @@
 using System;
+using DualFrontier.Contracts.Bus;
 
-namespace DualFrontier.Contracts.Bus;
+namespace DualFrontier.Core.Bus;
 
 /// <summary>
 /// World-domain bus. Events: ether-node changes, weather changes, incoming

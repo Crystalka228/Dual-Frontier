@@ -24,8 +24,7 @@ namespace DualFrontier.Systems.Combat;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(AmmoGranted), typeof(AmmoRefused), typeof(ManaGranted), typeof(ManaRefused) },
-    writes: new[] { typeof(ShootGranted), typeof(ShootRefused) },
-    buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Inventory), nameof(IGameServices.Magic) }
+    writes: new[] { typeof(ShootGranted), typeof(ShootRefused) }
 )]
 [TickRate(TickRates.FAST)]
 [BridgeImplementation(Phase = 5, Replaceable = true)]
