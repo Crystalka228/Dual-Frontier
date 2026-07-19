@@ -3376,7 +3376,7 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Volodymyr (Crystalka)
   version: 1.0
   first_authored: 2026-07-19
@@ -4816,6 +4816,21 @@ documents:
   review_cadence: none-historical-record
   title: 'W1_SDK_UNLOCK closure report -- Wave 1 of the vanilla-separation program: the ratified BD-1 SDK system contract (ISimulationSystem + capability-scoped ISystemContext) + BD-2 unified factory registration landed in Contracts, engine adapter wired, proven by a Contracts-only example mod through the full register->tick->D2-fault->dispose->ALC-unload lifecycle, with the empirical BD-1 gap-proof fixture leak killed; F5 code-truth correction recorded (events route through the live manifest-capability gate)'
   special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W1_SDK_UNLOCK cascade evidence per the brief section 7 closure schema. Historical record, no review cadence.'
+- register_id: DOC-E-W2_BUS_CAPABILITY_CLOSURE_REPORT
+  path: docs/reports/W2_BUS_CAPABILITY_CLOSURE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-19
+  last_modified: 2026-07-19
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'W2_BUS_CAPABILITY closure report -- Wave 2 of the vanilla-separation program: the genre taxonomy dies in the engine contract. The five genre bus interfaces + IGameServices leave DualFrontier.Contracts for the engine-internal Core.Bus (breaking, ContractsVersion 1->2 MAJOR); the five buses collapse to ONE generic DomainEventBus (getters now cosmetic bridges); KernelCapabilityRegistry becomes an owner-namespaced registration ledger relocated to Core with an EMPTY kernel-provided set + self-access predicate; the dead _allowedBuses fossil retired (F-54 CLOSED). MANAGED-ONLY; sovereign native switch explicitly FENCED (F-57 seeded)'
+  special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT, DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W2_BUS_CAPABILITY cascade evidence per the brief closure schema. Historical record, no review cadence.'
 - register_id: DOC-E-W2_BUS_CAPABILITY_RECON_REPORT
   path: docs/reports/W2_BUS_CAPABILITY_RECON_REPORT.md
   project: Dual Frontier
@@ -15631,3 +15646,46 @@ audit_trail:
     - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN -> Live (MINOR 1.1.0 -> 1.2.0 at C6; W1 DONE, BD-1/BD-2 RESOLVED, BD-6 criterion)
     - DOC-D-W1_SDK_UNLOCK_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
     - DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT -> EXECUTED (enrolled)
+- id: EVT-2026-07-19-W2_BUS_CAPABILITY
+  date: 2026-07-19
+  event: W2_BUS_CAPABILITY cascade execution (Wave 2 of the vanilla-separation program, type/bus/capability ownership) -- the five genre bus interfaces + IGameServices leave DualFrontier.Contracts for the engine-internal Core.Bus (breaking, ContractsVersion 1->2 MAJOR); the five buses collapse to ONE generic DomainEventBus (getters now cosmetic bridges); KernelCapabilityRegistry becomes an owner-namespaced registration ledger relocated to Core with an EMPTY kernel-provided set + self-access predicate; the dead _allowedBuses fossil retired (F-54 CLOSED). MANAGED-ONLY; sovereign native switch FENCED (F-57 seeded)
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-CONTRACTS_V2
+  - DOC-A-EVENT_BUS_V2
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-C-ROADMAP
+  - DOC-D-W2_BUS_CAPABILITY_BRIEF
+  - DOC-E-W2_BUS_CAPABILITY_RECON_REPORT
+  - DOC-E-W2_BUS_CAPABILITY_CLOSURE_REPORT
+  commits:
+    range: 61127cc..(the C8 closure-append commit following 62b281b carries this entry)
+    key_commits:
+    - hash: 61127cc
+      summary: C1 governance(enroll) - W2 brief (DOC-D) + recon report (DOC-E) enrolled
+    - hash: 691aeb2
+      summary: C2 refactor(scheduling) - retire the dead _allowedBuses fossil (F-54); SystemExecutionContext field + ctor param deleted; scheduler validates [SystemAccess] presence without binding buses
+    - hash: 9f7107d
+      summary: C3 refactor(bus) - collapse the five genre buses into one generic router (BD-3b); ModBusRouter + [EventBus] deleted; mods route by type; UnifiedGenreBus bridges 5 getters over one DomainEventBus
+    - hash: 6b0b7d6
+      summary: C4 refactor(contracts)! - genre taxonomy + IGameServices leave Contracts for Core.Bus (BD-3a); [SystemAccess] loses Bus/Buses; ContractsVersion 1.0.0 -> 2.0.0 MAJOR; manifest apiVersion ^1.0.0 -> ^2.0.0 cascade
+    - hash: 95365af
+      summary: C5 refactor(modding)! - KernelCapabilityRegistry -> owner-namespaced ledger relocated Application -> Core/Modding; BuildFromKernelAssemblies retired -> kernel set empty; RegisterOwner/Owns self-access mechanism-only
+    - hash: eb7bca8
+      summary: C6 test(bus,modding) - parity (UnifiedBusParityTests) + self-access gate (RestrictedModApiV2Tests 23/24) + owner-ledger emission coverage
+    - hash: 62b281b
+      summary: C7 governance(reconcile) - LOCKED docs to W2 code-truth + W2 DONE (CONTRACTS 2.0.0 MAJOR, EVENT_BUS/MOD_OS 1.2.0 MINOR, plan 1.3.0, ROADMAP F-54/F-57)
+  governance_impact: >
+    Wave 2 of VANILLA_SEPARATION_MIGRATION_PLAN -- type/bus/capability ownership (BD-3, BD-10) + the F-54 fossil retirement. MANAGED-ONLY (zero native; the sovereign native switch UseNativeBusForDispatch stays FENCED per EVENT_BUS section 5). BD-3b: the five genre DomainEventBus instances collapse to ONE -- GameServices holds a single bus and the five IGameServices getters (Combat/Inventory/Magic/Pawns/World) are cosmetic bridges that all return it; delivery is type-keyed, so an event subscribed via any getter is delivered when published via any other (UnifiedBusParityTests). ModBusRouter + the [EventBus] attribute (which reflected IGameServices properties per event) are DELETED; mods route by type to the one dispatch through RestrictedModApi.EnforceCapability. BD-3a: the five bus interfaces + IGameServices LEAVE DualFrontier.Contracts for the engine-internal src/DualFrontier.Core/Bus/ (namespace DualFrontier.Core.Bus) -- a breaking interface removal, so ContractsVersion.Current bumps 1.0.0 -> 2.0.0 (MAJOR); [SystemAccess] loses Bus/Buses + the two bus ctors (reads/writes only); the MAJOR cascades to every manifest pinning major 1 (the two version defaults + on-disk vanilla/fixture manifests ^1.0.0 -> ^2.0.0; BadApiVersion stays ^99.0.0; version-gate tests re-derived against Current=2.0.0). BD-10: KernelCapabilityRegistry. BuildFromKernelAssemblies() (the kernel-assembly scan republishing gameplay types as kernel.*) is RETIRED; the registry becomes an owner-namespaced registration ledger relocated Application -> src/DualFrontier.Core/ Modding/ -- RegisterOwner(owner, assembly) emits <owner>.{verb}:{FQN}, the emission rules preserved per-owner; the kernel-provided FQN set is EMPTY (the engine owns no gameplay types -- the thesis), and ownerless engine-side types ride the v1 grace path this wave. Self-access (Owns): EnforceCapability consults Owns(mod.<id>, FQN) before requiring a declared token -- a mod is auto-granted its own registered types; MECHANISM-ONLY this wave (no producer wires RegisterOwner at load -- vanilla mods define no types yet; deferred to the slice-move wave; operator-ratified C5 scope). F-54: SystemExecutionContext._allowedBuses (captured-but-unread since K8.3+K8.4) RETIRED (operator ratified retire-not-revive) -- field + ctor param deleted, scheduler validates [SystemAccess] presence without binding buses; the bus-scoping concept dissolved with the taxonomy (F-54 CLOSED). Gates at closure: build 0W/0E both configs; full-sln 1213 -> 1215 pass / 0 fail / 5 skip; native git-diff b2805ea..HEAD -- native/ EMPTY (MANAGED-ONLY, native three-tier bus + selftest unchanged); operator real-app smoke after C4 (Launcher live simulation, exit 0 -- K-L14 evidence the MAJOR break is runtime-sound); validate --armed exit 0 after every frontmatter-touching commit (C1, C7, C8). Census (docs-only C7/C8 -> src unaffected): marker family "deferred" net-unchanged 89/55 (C3 -1 EventBusAttribute deletion, C5 +1 ledger doc -- same-commit deltas recorded in CensusMetaTests); DFK-WAIVER src 2=2; BoundaryRatchet 4+1 UNMOVED (Contracts->Core is an engine-internal move, no engine->game edge). REGISTER 362 -> 363 (+1 closure report at C8; recon report + brief enrolled at C1). Doc bumps: CONTRACTS 1.1.0 -> 2.0.0 (MAJOR, stays LOCKED), EVENT_BUS 1.1.0 -> 1.2.0, MOD_OS 1.1.0 -> 1.2.0 (MINOR, stay LOCKED), plan 1.2.0 -> 1.3.0 (Live), ROADMAP Live (W2 DONE + F-54 CLOSED + F-57 seeded). F-55/F-56 stay OPEN with W2 progress notes (the mechanism landed; the end-to-end mod-event proof + the re-entrant-push verification are deferred). F-57 seeded: the sovereign native-switch precondition set (recon A4/A6/A8/A13 -- FNV1a32(FQN) type ids, tiered-token runtime parity, dead tier enforcement, unbound _by_mod exports). No KERNEL / K-L change (native untouched). No push (executor); operator pushes claude/w2-bus-capability + merges. W2 DONE; next W3 (walking vertical slice, written fresh).
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-CONTRACTS_V2 -> LOCKED (MAJOR 1.1.0 -> 2.0.0 at C7; bus-surface departure + one-router collapse, interface-removal breaking, current 1.0.0->2.0.0, bus-scoping gap dissolved)
+    - DOC-A-EVENT_BUS_V2 -> LOCKED (MINOR 1.1.0 -> 1.2.0 at C7; section 1 inverted to one router, section 4 mod path ModBusRouter/[EventBus] deleted; native FENCE + section 5 untouched)
+    - DOC-A-MOD_OS_ARCHITECTURE -> LOCKED (MINOR 1.1.0 -> 1.2.0 at C7; section 3.4 owner-namespaced ledger + empty kernel set, section 3.6 self-access Owns)
+    - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN -> Live (MINOR 1.2.0 -> 1.3.0 at C7; W2 DONE, BD-3/BD-10 RESOLVED)
+    - DOC-C-ROADMAP -> Live (W2 row DONE; F-54 CLOSED; F-55/F-56 progress notes; F-57 seeded)
+    - DOC-D-W2_BUS_CAPABILITY_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
+    - DOC-E-W2_BUS_CAPABILITY_CLOSURE_REPORT -> EXECUTED (enrolled)
