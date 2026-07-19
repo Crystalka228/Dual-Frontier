@@ -165,4 +165,23 @@ public sealed class KernelCapabilityRegistryTests
         KernelCapabilityRegistry registry = BuildFromTestAssembly();
         registry.Capabilities.Should().BeSameAs(registry.Capabilities);
     }
+
+    // --- Owner-namespacing + self-access predicate (W2/BD-10) ---
+
+    [Fact]
+    public void RegisterOwner_EmitsOwnerNamespacedTokens_AndRecordsOwnership()
+    {
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner("mod.example", TestAssembly);
+        string fqn = typeof(TestPublishEvent).FullName!;
+
+        // Tokens are namespaced to the owner, NOT to kernel.
+        ledger.Provides($"mod.example.publish:{fqn}").Should().BeTrue();
+        ledger.Provides($"mod.example.subscribe:{fqn}").Should().BeTrue();
+        ledger.Provides($"kernel.publish:{fqn}").Should().BeFalse();
+
+        // Ownership is recorded for the self-access predicate; a different owner does not own it.
+        ledger.Owns("mod.example", fqn).Should().BeTrue();
+        ledger.Owns("mod.other", fqn).Should().BeFalse();
+    }
 }

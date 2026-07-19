@@ -281,6 +281,49 @@ public sealed class RestrictedModApiV2Tests
         SystemExecutionContext.Current.Should().BeNull();
     }
 
+    // 23 — W2/BD-10 self-access: a mod is auto-granted its OWN registered types.
+    [Fact]
+    public void Publish_SelfOwnedType_IsAutoGranted_WithoutManifestDeclaration()
+    {
+        // A ledger where THIS mod owns TestCombatEvent (registered under its owner namespace).
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner($"mod.{TestModId}", typeof(TestCombatEvent).Assembly);
+
+        // A NON-empty manifest (so not the grace path) that declares only an UNRELATED token --
+        // it does NOT declare kernel.publish:TestCombatEvent.
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(new[] { "kernel.publish:Some.Other.Event" }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), ledger);
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().NotThrow(
+            "a mod is auto-granted its own registered types (self-access) without declaring them");
+    }
+
+    // 24 — W2/BD-10: a type that is neither self-owned nor declared is still gated.
+    [Fact]
+    public void Publish_NotSelfOwned_AndUndeclared_StillThrows()
+    {
+        // Empty ledger -> the mod owns nothing; non-empty manifest that does not declare the type.
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(new[] { "kernel.publish:Some.Other.Event" }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), new KernelCapabilityRegistry());
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().Throw<CapabilityViolationException>(
+            "cross-owner access without a declared capability is still gated");
+    }
+
     private static SystemExecutionContext BuildTestContext(string name = "TestSystem")
     {
         return new SystemExecutionContext(
