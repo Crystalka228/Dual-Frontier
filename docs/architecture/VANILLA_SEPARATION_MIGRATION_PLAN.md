@@ -5,7 +5,7 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.2.0
+version: 1.3.0
 first_authored: 2026-07-18
 last_modified: 2026-07-19
 content_language: en
@@ -13,7 +13,7 @@ next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 review_cadence: on-change
 last_review_date: 2026-07-19
-last_review_event: 'MINOR 1.1.0 -> 1.2.0 2026-07-19 (W1_SDK_UNLOCK, DOC-D-W1_SDK_UNLOCK_BRIEF; operator chat ratification 2026-07-19): W1 marked DONE with commit hashes; BD-1 + BD-2 rows RESOLVED with the ratified text; BD-6 operational criterion recorded; no lifecycle transition (Live). Prior: MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
+last_review_event: 'MINOR 1.2.0 -> 1.3.0 2026-07-19 (W2_BUS_CAPABILITY, DOC-D-W2_BUS_CAPABILITY_BRIEF; operator chat ratification 2026-07-19): W2 marked DONE with commit hashes; BD-3 + BD-10 rows RESOLVED (managed scope) -- the five genre buses + IGameServices collapsed to one DomainEventBus and left Contracts for Core.Bus (ContractsVersion 1 -> 2 MAJOR), KernelCapabilityRegistry became an owner-namespaced ledger relocated to Core/Modding (kernel surface empty, self-access via Owns mechanism-only); §5 map rows marked done; native (providerId,schemaId) type IDs + tier-on-contract deferred to F-57; no lifecycle transition (Live). Prior: MINOR 1.1.0 -> 1.2.0 2026-07-19 (W1_SDK_UNLOCK, DOC-D-W1_SDK_UNLOCK_BRIEF; operator chat ratification 2026-07-19): W1 marked DONE with commit hashes; BD-1 + BD-2 rows RESOLVED with the ratified text; BD-6 operational criterion recorded; no lifecycle transition (Live). Prior: MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
 reviewer: Crystalka
 ---
 
@@ -85,14 +85,14 @@ NOT ratified; each decision gets its own recon-grounded deliberation at charteri
 |---|---|---|---|---|
 | BD-1 | SDK system-contract form | A4 cycle blocks relocation; ModRegistry gates on SystemBase + [SystemAccess] + [TickRate] | W1 ✅ | **RESOLVED W1**: public `ISimulationSystem` (Initialize/Tick/OnDispose, no `float delta` -- SimTick via the context) + capability-scoped `ISystemContext` in Contracts (component access over the measured union, events via the live capability gate, SimTick; NO fields/managed-store/services -- services arrive at construction via `ISystemServices`, fields deferred per N17). Engine-internal `SystemAdapter<T>` (in Application, not Core -- the view needs RestrictedModApi + Core.Interop IVT) wraps to the executor; concrete NativeWorld stays kernel-internal behind opaque-object Contracts handles |
 | BD-2 | Construction/DI model | `Activator.CreateInstance` (ModRegistry.cs:287) forbids ctor dependencies | W1 ✅ | **RESOLVED W1**: `RegisterSystem<T>(Func<ISystemServices,T>)` + parameterless convenience; core + mod construction unified through ModRegistry (GameBootstrap stops hand-instantiating -- the bifurcation dies). Mod-facing IModApi factory overload DEFERRED (N17, no consumer yet) so ContractsVersion stays unchanged |
-| BD-3 | Generic event routing | 5 genre buses + IGameServices baked into Contracts/Core; ModBusRouter reflects over IGameServices properties; [SystemAccess] binds `nameof(IGameServices.X)` | W2 | typed event hub with namespaced channel ownership (provider mod id); tier/latency declared on the event contract; native bus type IDs from a dynamic registry |
+| BD-3 | Generic event routing | 5 genre buses + IGameServices baked into Contracts/Core; ModBusRouter reflects over IGameServices properties; [SystemAccess] binds `nameof(IGameServices.X)` | W2 ✅ | **RESOLVED W2** (managed scope): the five genre buses + `IGameServices` collapsed to ONE generic `DomainEventBus` (BD-3b), the five getters now cosmetic bridges over it (`UnifiedBusParityTests`); the interfaces relocated out of Contracts to `Core.Bus` (BD-3a — ContractsVersion 1→2 MAJOR, a breaking interface removal); mods route by event type to the one dispatch (`ModBusRouter` + the `[EventBus]` attribute deleted; `[SystemAccess]` loses its `bus:` member, F-54); namespaced channel ownership via `KernelCapabilityRegistry.RegisterOwner` (mechanism, see BD-10). The native-facing parts — tier/latency on the event contract, native bus type IDs from a dynamic registry — stay FENCED behind the sovereign native switch, tracked as F-57 |
 | BD-4 | Distribution manifest shape | no config file or loader exists (EAM R13); 6 mods off-solution | W4 | `game.manifest.json`: product id/version, root mod set + constraints, default scenario, asset roots, save namespace, min engine capabilities |
 | BD-5 | Optional modules vs vanilla vs deletion | AI: only Pathfinding consumed (BehaviourTree/Jobs dormant); Persistence + Crypto.Future production-orphaned | W5 | Pathfinding -> L3 module; BehaviourTree/Jobs -> ride their first consumer; Crypto.Future -> deletion candidate; Persistence -> engine-generic core after DTO extraction |
 | BD-6 | Position/Health boundary test | kernel scans HealthComponent as capability marker; GameBootstrap uses PositionComponent generically | W5 (criterion recorded W1) | law from the assessment: if the kernel only stores bytes, the type is game/shared-mod-owned; if the kernel interprets it, it is a versioned L3 contract. Expect Position -> L3 spatial contract, Health -> vanilla. **Operational criterion (recorded W1)**: per component type, the boundary test asserts whether any engine (`src/`) code reads a specific field of the type as a capability marker or control input (INTERPRETS -> versioned L3 contract) versus only storing/relaying its bytes (game/shared-mod-owned); the executable Position/Health test lands at W5 when the slice moves |
 | BD-7 | Persistence ownership | EAM R12 vacant; 4 game DTO families engine-side; PSC held AUTHORED | W7 | engine snapshot = tick/time/RNG + identity + mod set + schema table + namespaced sections; mods own codecs/migrations; requires PSC ratification first |
 | BD-8 | Config ownership | ScenarioDef.StartingPawnCount + SceneMetadata.EtherDensity ORPHAN (never read); GameBootstrap hardcodes consts :58-68 | W4 | scenario/config -> distribution manifest (L4) + owning mods (L5); orphans deleted, not migrated |
 | BD-9 | Presentation slots | 6 game command records; LayerType.CombatFeedback in Contracts | W6 | generic ordered layer/slot ids owned by engine; game layers registered by mods; engine renders primitives without knowing pawn/item semantics |
-| BD-10 | kernel.* reframing | KernelCapabilityRegistry (in Application -- A9) hard-scans Components/Events via markers, publishes vanilla types as kernel.* | W2 | registry becomes a registration ledger; engine capabilities only; mod types register dynamically as mod.<id>.*; registry relocates out of the composition layer |
+| BD-10 | kernel.* reframing | KernelCapabilityRegistry (in Application -- A9) hard-scans Components/Events via markers, publishes vanilla types as kernel.* | W2 ✅ | **RESOLVED W2**: `KernelCapabilityRegistry` became an owner-namespaced **registration ledger**, relocated out of the composition layer (Application → `Core/Modding`); `BuildFromKernelAssemblies` retired → the kernel-provided FQN set is **empty** (the engine owns no gameplay types); `RegisterOwner(owner, assembly)` emits `<owner>.{verb}:{FQN}` and records ownership for the self-access predicate `Owns`. Live per-mod registration is mechanism-only — no producer this wave (vanilla mods define no types yet); wiring deferred to the slice-move wave |
 
 ## 4. Waves (each = its own cascade family with recon, brief, gates, deletion triggers)
 
@@ -128,6 +128,19 @@ the engine contract (typed hub or channels per BD-3); capability registry -> led
 deterministic type IDs from (providerId, schemaId); manifest capability checked against
 type owner. Gate: kernel capability surface contains zero Pawn/Combat/Magic/Inventory/
 World types; [SystemAccess] no longer binds nameof(IGameServices.X).
+> **W2 DONE 2026-07-19** (W2_BUS_CAPABILITY; EVT-2026-07-19-W2_BUS_CAPABILITY): BD-3 + BD-10 RESOLVED
+> (managed scope). The five genre buses + `IGameServices` collapsed to ONE generic `DomainEventBus` (getters
+> now cosmetic bridges, `UnifiedBusParityTests`) and left Contracts for `Core.Bus` (ContractsVersion 1.0.0 ->
+> 2.0.0 MAJOR); `ModBusRouter` + the `[EventBus]` attribute + the `[SystemAccess(bus:)]` form deleted (F-54
+> CLOSED); mods route by event type to the one dispatch. `KernelCapabilityRegistry` -> owner-namespaced
+> ledger, relocated Application -> `Core/Modding`; `BuildFromKernelAssemblies` retired -> kernel surface
+> EMPTY; `RegisterOwner`/`Owns` self-access is mechanism-only (no producer this wave). Gate MET: kernel
+> capability surface holds zero Pawn/Combat/Magic/Inventory/World types; `[SystemAccess]` no longer binds
+> `nameof(IGameServices.X)`. Deferred to the sovereign native switch (F-57): deterministic type IDs from
+> (providerId, schemaId), tier/latency declared on the event contract, native bus type IDs from a dynamic
+> registry. CONTRACTS 1.1.0->2.0.0 (MAJOR), EVENT_BUS 1.1.0->1.2.0, MOD_OS 1.1.0->1.2.0 (MINOR), this plan
+> 1.2.0->1.3.0. Commits 61127cc (C1 enroll) / 691aeb2 (C2 retire _allowedBuses) / 9f7107d (C3 collapse) /
+> 6b0b7d6 (C4 contracts MAJOR) / 95365af (C5 ledger) / eb7bca8 (C6 tests) / C7 governance / C8 closure.
 **W3 -- Walking vertical slice (written fresh).** ONE small mechanic end-to-end as a real mod, WRITTEN
 FRESH (candidate: Weather -- the src/ WeatherSystem + WeatherChangedEvent are reference material, not a
 migration source; section 1.1): component, system,
@@ -169,11 +182,11 @@ source identical across all three profiles.
 | DualFrontier.Events | 53 event records | owning slice mods; engine keeps only IEvent + generic routing (BD-3) |
 | DualFrontier.Systems | 30 systems | owning slice mods after W1 SDK unlock; zero gameplay entries remain in core registration |
 | DualFrontier.AI | 20 types; Pathfinding consumed, BT/Jobs dormant | Pathfinding -> L3 candidate; BT/Jobs + behaviour leaves -> Vanilla.Pawn/Combat/Magic (BD-5) |
-| Contracts game surface | 5 genre buses, IGameServices, LayerType game members, OwnershipMode | dissolves at W2 (BD-3); OwnershipMode -> Vanilla.Magic shared contract; LayerType game members -> mod-registered slots (BD-9) |
+| Contracts game surface | 5 genre buses, IGameServices, LayerType game members, OwnershipMode | buses + IGameServices **dissolved to `Core.Bus` ✅ W2 (BD-3a/b)**; OwnershipMode -> Vanilla.Magic shared contract; LayerType game members -> mod-registered slots (BD-9, later) |
 | Application/Bridge commands | PawnSpawned/PawnState/PawnDied/ItemSpawned + 2 more (6 records) | Vanilla presentation mods (W6) |
 | Persistence DTOs | PawnSnapshot, StorageSnapshot, TileMapSnapshot (TerrainKind RLE), WorldSnapshot | mod-owned sections/codecs (W7) |
 | Scenario/config | ScenarioDef, SceneMetadata (orphan), GameBootstrap consts | manifest (L4) + owning mods; orphans deleted (BD-8, W4) |
-| KernelCapabilityRegistry | in Application (A9) | engine-side registration ledger, engine capabilities only (BD-10, W2) |
+| KernelCapabilityRegistry | in Application (A9) | engine-side registration ledger, engine capabilities only (BD-10, W2) — **✅ DONE W2: relocated to `Core/Modding`, owner-namespaced, kernel surface empty** |
 
 ## 6. Interaction with the standing queues
 

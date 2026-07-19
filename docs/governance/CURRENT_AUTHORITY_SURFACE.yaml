@@ -28,7 +28,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.1.0
+  version: 2.0.0
 - register_id: DOC-A-ECS_V2
   path: docs/architecture/ECS.md
   category: A
@@ -46,7 +46,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.1.0
+  version: 1.2.0
 - register_id: DOC-A-EXECUTION_AUTHORITY_MATRIX
   path: docs/architecture/EXECUTION_AUTHORITY_MATRIX.md
   category: A
@@ -112,7 +112,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.1.0
+  version: 1.2.0
 - register_id: DOC-A-PERFORMANCE_V2
   path: docs/architecture/PERFORMANCE.md
   category: A
@@ -166,7 +166,7 @@ documents:
   category: A
   tier: 2
   lifecycle: Live
-  version: 1.2.0
+  version: 1.3.0
 - register_id: DOC-A-VULKAN_SUBSTRATE_V2
   path: docs/architecture/VULKAN_SUBSTRATE.md
   category: A
