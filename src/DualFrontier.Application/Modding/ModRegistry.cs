@@ -202,6 +202,12 @@ internal sealed class ModRegistry : IManagedStorageResolver
             ? CreateSystemInstance(systemType)
             : CreateContractAdapter(modId, systemType);
         _modSystems.Add(new SystemRegistration(instance, SystemOrigin.Mod, modId));
+        // W1-fix (Codex review) — track the (possibly adapter-wrapped) system in the mod's
+        // sub-scheduler so the unload chain's RemoveSubScheduler.Teardown disposes it, firing
+        // SystemBase.Dispose -> OnDispose (and, for an adapter, ISimulationSystem.OnDispose).
+        // Previously the sub-scheduler was populated only in tests, so no mod system's dispose
+        // hook fired on unload.
+        GetOrCreateSubScheduler(modId).AddSystem(instance);
     }
 
     /// <summary>

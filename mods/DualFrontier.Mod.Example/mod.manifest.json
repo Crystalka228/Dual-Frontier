@@ -7,11 +7,5 @@
   "description": "Reference mod showing the IMod + IModApi pattern and the W1 SDK contract (ISimulationSystem + ISystemContext). See docs/MODDING.md.",
   "entryAssembly": "DualFrontier.Mod.Example.dll",
   "entryType": "DualFrontier.Mod.Example.ExampleMod",
-  "capabilities": {
-    "required": [
-      "kernel.publish:DualFrontier.Mod.Example.ExampleEvent",
-      "kernel.subscribe:DualFrontier.Mod.Example.ExampleEvent"
-    ]
-  },
   "dependencies": []
 }

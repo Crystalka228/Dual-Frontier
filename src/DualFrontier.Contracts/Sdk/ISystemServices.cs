@@ -10,10 +10,14 @@ namespace DualFrontier.Contracts.Sdk;
 /// per-tick world surface).
 ///
 /// <para>
-/// It unifies construction across core and mods: the same factory entry builds
-/// both, so a system that needs a service (e.g. pathfinding) is authorable as a
-/// mod exactly as vanilla authors it — boundary law B-3, "everything vanilla
-/// needs arrives through the same SDK any third-party mod has."
+/// It unifies the construction MECHANISM across core and mods (one internal
+/// <c>ModRegistry</c> factory path). Note (W1): the mod-facing <c>IModApi</c>
+/// factory overload is deferred (no consumer yet), so a mod's
+/// <see cref="Sdk.ISimulationSystem"/> is currently constructed parameterlessly;
+/// core systems inject through the factory today, and a service-dependent SDK mod
+/// system becomes authorable when the <c>IModApi</c> factory overload lands (a
+/// later wave) — the boundary-law B-3 endpoint ("everything vanilla needs arrives
+/// through the same SDK any third-party mod has").
 /// </para>
 ///
 /// <para>

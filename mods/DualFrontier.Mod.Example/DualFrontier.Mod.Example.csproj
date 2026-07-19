@@ -3,8 +3,30 @@
     <AssemblyName>DualFrontier.Mod.Example</AssemblyName>
     <RootNamespace>DualFrontier.Mod.Example</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- W1-fix (Codex review) — a mod must resolve DualFrontier.Contracts from the DEFAULT
+         ALC (shared), never a private copy in its own collectible ALC, or the same contract
+         type would load twice with distinct identities. Mirror the test-fixture mods. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="mod.manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <!-- Deploy the reference mod to the Modding.Tests fixtures dir so the SDK pipeline test
+       can load it through ModIntegrationPipeline.Apply, exactly as the test-fixture mods do. -->
+  <Target Name="DeployToTestFixtures" AfterTargets="Build">
+    <ItemGroup>
+      <FixtureFiles Include="$(TargetPath)" />
+      <FixtureFiles Include="$(MSBuildThisFileDirectory)mod.manifest.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FixtureFiles)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\..\tests\DualFrontier.Modding.Tests\bin\$(Configuration)\$(TargetFramework)\Fixtures\$(AssemblyName)\"
+          SkipUnchangedFiles="true" />
+  </Target>
 </Project>

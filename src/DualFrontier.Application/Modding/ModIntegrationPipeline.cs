@@ -398,6 +398,11 @@ internal sealed class ModIntegrationPipeline
         {
             var api = new RestrictedModApi(mod.ModId, mod.Manifest, _registry, _contractStore, _services, _kernelCapabilities);
             mod.Api = api;  // M7.2 — retain for unload chain step 1 per §9.5.
+            // W1-fix (Codex review) — register the mod's API in the registry map so an SDK
+            // ISimulationSystem's ISystemContext (and the IManagedStorageResolver) can resolve
+            // it by mod id. Previously only tests called this, so pipeline-loaded SDK systems'
+            // Publish/Subscribe threw. Cleared on unload via RemoveMod.
+            _registry.RegisterRestrictedModApi(mod.ModId, api);
             try
             {
                 mod.Instance.Initialize(api);

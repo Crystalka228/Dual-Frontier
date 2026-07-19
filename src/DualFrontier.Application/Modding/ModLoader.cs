@@ -194,7 +194,10 @@ public sealed class ModLoader
         {
             if (t is null) continue;
             if (t.IsAbstract) continue;
-            if (!typeof(SystemBase).IsAssignableFrom(t)) continue;
+            // W1-fix (Codex review) — discover SDK ISimulationSystem types alongside SystemBase
+            // so they reach the same load-time validation gates (write-conflict, manifest honesty).
+            if (!typeof(SystemBase).IsAssignableFrom(t)
+                && !typeof(DualFrontier.Contracts.Sdk.ISimulationSystem).IsAssignableFrom(t)) continue;
             result.Add(t);
         }
         return result;
