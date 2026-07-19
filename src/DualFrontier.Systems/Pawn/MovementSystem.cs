@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using DualFrontier.AI.Pathfinding;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
+using DualFrontier.Contracts.Services;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
 using DualFrontier.Events.Pawn;

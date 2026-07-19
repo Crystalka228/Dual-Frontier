@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Math;
+using DualFrontier.Contracts.Services;
 
 namespace DualFrontier.AI.Pathfinding;
 

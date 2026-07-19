@@ -3,4 +3,16 @@
     <AssemblyName>DualFrontier.Contracts</AssemblyName>
     <RootNamespace>DualFrontier.Contracts</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <!--
+      Forge discipline (W1 SDK surface, BD-1). The DualFrontier.Contracts.Sdk handle types
+      (SpanScope / WriteScope / StringHandle / CompositeHandle) and IWriteBatchCapability carry
+      internal constructors/members so a mod's AssemblyLoadContext cannot fabricate them; the
+      engine-side system-context view (DualFrontier.Application) is the sole issuer of valid
+      handles. Engine->engine grant (Contracts and Application are both boundary-law B-1 engine
+      assemblies), NOT an engine-to-game reference, so it does not move the BoundaryRatchet.
+      Contracts stays reference-free: InternalsVisibleTo is a visibility grant, not a reference.
+    -->
+    <InternalsVisibleTo Include="DualFrontier.Application" />
+  </ItemGroup>
 </Project>

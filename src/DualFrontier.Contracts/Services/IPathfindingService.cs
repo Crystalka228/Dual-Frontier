@@ -1,12 +1,23 @@
+using System.Collections.Generic;
 using DualFrontier.Contracts.Math;
 
-namespace DualFrontier.AI.Pathfinding;
+namespace DualFrontier.Contracts.Services;
 
 /// <summary>
 /// A* pathfinding service over the walkability grid.
 ///
 /// Synchronous method — async is forbidden in systems; it would break the
 /// ThreadLocal isolation guard.
+///
+/// <para>
+/// Lives in <c>DualFrontier.Contracts</c> (relocated from
+/// <c>DualFrontier.AI</c> at W1) so it can be exposed through
+/// <see cref="Sdk.ISystemServices"/>: a mod referencing Contracts alone must be
+/// able to name it (boundary law B-3). Its only types — <see cref="GridVector"/>
+/// and the BCL <see cref="IReadOnlyList{T}"/> — are already Contracts-safe, so
+/// the move added no reference. The concrete <c>AStarPathfinding</c>
+/// implementation stays engine-side in <c>DualFrontier.AI</c>.
+/// </para>
 /// </summary>
 public interface IPathfindingService
 {
