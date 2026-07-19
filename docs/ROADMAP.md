@@ -7,7 +7,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-07-15
-last_modified: 2026-07-18
+last_modified: 2026-07-19
 content_language: en
 next_review_due: 2026-Q4
 title: Roadmap
@@ -997,7 +997,7 @@ Seeded 2026-07-18 at the BOUNDARY_W0 closure (EVT-2026-07-18-BOUNDARY_W0). The p
 | Wave | Scope | Decisions | Gate | State |
 |---|---|---|---|---|
 | W0 | Law + freeze + ratchet | -- | law LOCKED; ratchet red-once-then-green; sln builds the 6 mods | **DONE** 2026-07-18 (da97308 C1 / 4aa1fa0 C2 / b973192 C3 / a26e8ac C4 / c9387c1 C5 / closure C6) |
-| W1 | SDK surface unlock | BD-1, BD-2 (BD-6 test authored) | example mod compiles Contracts-only, registers -> ticks -> faults -> disposes, never names Core | OPEN |
+| W1 | SDK surface unlock | BD-1, BD-2 (BD-6 test authored) | example mod compiles Contracts-only, registers -> ticks -> faults -> disposes, never names Core | ✅ DONE 2026-07-19 (W1_SDK_UNLOCK; d3edbdb..closure) |
 | W2 | Type/bus/capability ownership | BD-3, BD-10 | kernel capability surface contains zero Pawn/Combat/Magic/Inventory/World types | OPEN |
 | W3 | Walking vertical slice | -- | disabling the mod removes the mechanic; engine stays healthy | OPEN |
 | W4 | Composition root + scenario | BD-4, BD-8 | EngineSession compiles with zero refs to Components/Events/Systems/AI | OPEN |
@@ -1096,6 +1096,7 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 | F-51 | Smoke-F02 (post-closure GPU verification at EQ_A2): the `Runtime.SmokeTest` TileMap multi-cycle scenario trips the `VertexBufferRing` guard -- a PRE-EXISTING Runtime defect, NOT EQ_A2-caused, NOT the Defender interaction | S3 | OPEN | Seeded at EQ_A3 (operator-ruled 2026-07-18); architect-owned, its own dedicated session |
 | F-52 | Swapchain recreation does not resize `_renderFinishedPerImage[]`: the per-image render-finished semaphore array in `LauncherRenderer` is sized to the INITIAL swapchain image count and not rebuilt on `Recreate` (it is indexed by `imageIndex`) -- latent only if a recreation changes the image count (uncommon on desktop MAILBOX/FIFO min+1). Surfaced adjacent to M6 (EQ_A4), out of the 2-file M6 surface | S3 | OPEN | Resize (or reconstruct) the per-image sync array in the recreation path when `Swapchain.ImageCount` changes; add a recreation-with-changed-count test |
 | F-53 | `VulkanDevice.WaitIdle` discards non-device-lost non-success `VkResult`s: EQ_A4 M9 added VK_ERROR_DEVICE_LOST classification (`DeviceLost.ThrowIfLost`) to the previously result-discarding `vkDeviceWaitIdle` call, but other non-success results (e.g. VK_ERROR_OUT_OF_DEVICE_MEMORY) are still swallowed -- a generic throw was deliberately NOT added there (out of M9 scope; hazardous during Dispose/Shutdown unwinding) | S4 | OPEN | Decide the teardown-path non-success policy for `vkDeviceWaitIdle` (log-and-continue vs a bounded diagnostic) consistent with the ELT §4 fault taxonomy; not a device-lost gap |
+| F-54 | W1 code-truth (F5 correction): the SDK context's event gating routes through the LIVE manifest-capability gate (`RestrictedModApi.EnforceCapability`; `kernel.publish:/subscribe:<FQN>` -> `CapabilityViolationException`), NOT the `[SystemAccess]` `allowedBuses` router/validator the W1 brief's F5 assumed -- that runtime isolation guard was DELETED at K8.3+K8.4. `SystemExecutionContext._allowedBuses` remains captured-but-unread (dead after assignment); `ISOLATION.md` §178-183 still documents the check as NOT-YET-IMPLEMENTED | W2 | OPEN | Ratified at W1 (operator, 2026-07-19): route through the live gate (decision 1). W2/BD-3 decides whether to implement per-system SystemAccess bus-scoping (reviving the dead field) or retire `_allowedBuses` |
 
 ---
 

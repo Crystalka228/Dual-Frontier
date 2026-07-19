@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-19
 content_language: en
 next_review_due: 2027-Q3
 title: Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
@@ -15,10 +15,9 @@ supersedes:
 - DOC-A-MOD_OS
 - DOC-A-MOD_PIPELINE
 - DOC-A-ISOLATION
-last_modified_commit: 4a36abe
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
+last_review_date: 2026-07-19
+last_review_event: 'MINOR 1.0.2 -> 1.1.0 2026-07-19 (W1_SDK_UNLOCK C6): section 4.1 records the W1 factory-registration law -- RegisterSystem widened to accept ISimulationSystem (wrapped in the internal SystemAdapter) alongside SystemBase, and the unified RegisterSystem<T>(Func<ISystemServices,T>) construction path (SystemBase authoring a W5 bridge). Additive; no lifecycle transition. Prior: Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 ---
@@ -296,6 +295,8 @@ public interface IModApi
 ### §4.1 Registration semantics
 
 `RegisterComponent<T>` records the type in `ModRegistry` under the calling mod's id; a type already registered by another mod is an `InvalidOperationException` naming both owners. `RegisterManagedComponent<T>` first verifies `[ManagedStorage]` on `T` (violation throws with the `MissingManagedStorageAttribute` semantic), is idempotent per type, creates the per-mod `ManagedStore<T>`, and records the type in the registry for resolver dispatch (`RestrictedModApi.cs:99-123`). Path β data is runtime-only (K-L3.1 lock) — not persisted; reclaimed with the mod (§9.4 step 3). `RegisterSystem<T>` requires `[SystemAccess]` and `[TickRate]` on the type; registration order is preserved, and `ModRegistry.GetAllSystems` returns core systems first, then mod systems (`ModRegistry.cs:145-153`).
+
+**W1 (SDK unlock).** `RegisterSystem<T>` now accepts an `ISimulationSystem` implementation alongside a `SystemBase` (the widened `ModRegistry.RegisterSystem`): a contract system is constructed parameterlessly and wrapped in the internal `SystemAdapter<T>`, which registers as a `SystemBase` so the scheduler is unchanged. Construction is unified through `ModRegistry.RegisterSystem<T>(Func<ISystemServices,T>)` (+ a parameterless convenience) — core and mod systems share ONE construction mechanism, retiring the hand-instantiation bifurcation (BD-2). The mod-facing `IModApi` factory overload is deferred (no consumer yet); the parameterless `IModApi.RegisterSystem<T>()` remains the mod entry. `SystemBase` authoring is a bridge that retires at W5.
 
 ### §4.2 `Publish<T>` / `Subscribe<T>` semantics
 

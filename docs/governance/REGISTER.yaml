@@ -245,15 +245,14 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2027-Q3
   title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
   supersedes:
   - DOC-A-CONTRACTS
-  last_modified_commit: 8896d32
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
   last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
@@ -284,15 +283,14 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2027-Q3
   title: Entity Component System (authored rework; version-0 identity defect documented)
   supersedes:
   - DOC-A-ECS
-  last_modified_commit: 5e1f412
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
   last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
@@ -874,9 +872,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2027-Q3
   title: Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
@@ -884,10 +882,9 @@ documents:
   - DOC-A-MOD_OS
   - DOC-A-MOD_PIPELINE
   - DOC-A-ISOLATION
-  last_modified_commit: 4a36abe
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
+  last_review_date: 2026-07-19
+  last_review_event: 'MINOR 1.0.2 -> 1.1.0 2026-07-19 (W1_SDK_UNLOCK C6): section 4.1 records the W1 factory-registration law -- RegisterSystem widened to accept ISimulationSystem (wrapped in the internal SystemAdapter) alongside SystemBase, and the unified RegisterSystem<T>(Func<ISystemServices,T>) construction path (SystemBase authoring a W5 bridge). Additive; no lifecycle transition. Prior: Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
   reviewer: Crystalka
   special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -1163,15 +1160,15 @@ documents:
   tier: 2
   lifecycle: Live
   owner: Crystalka
-  version: 1.1.0
+  version: 1.2.0
   first_authored: 2026-07-18
-  last_modified: 2026-07-18
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2026-Q4
   title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
   review_cadence: on-change
-  last_review_date: 2026-07-18
-  last_review_event: 'MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
+  last_review_date: 2026-07-19
+  last_review_event: 'MINOR 1.1.0 -> 1.2.0 2026-07-19 (W1_SDK_UNLOCK, DOC-D-W1_SDK_UNLOCK_BRIEF; operator chat ratification 2026-07-19): W1 marked DONE with commit hashes; BD-1 + BD-2 rows RESOLVED with the ratified text; BD-6 operational criterion recorded; no lifecycle transition (Live). Prior: MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
   reviewer: Crystalka
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md
@@ -1439,7 +1436,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2026-Q4
   title: Roadmap

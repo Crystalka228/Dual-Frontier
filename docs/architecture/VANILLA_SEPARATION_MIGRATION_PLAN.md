@@ -5,15 +5,15 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.1.0
+version: 1.2.0
 first_authored: 2026-07-18
-last_modified: 2026-07-18
+last_modified: 2026-07-19
 content_language: en
 next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 review_cadence: on-change
-last_review_date: 2026-07-18
-last_review_event: 'MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
+last_review_date: 2026-07-19
+last_review_event: 'MINOR 1.1.0 -> 1.2.0 2026-07-19 (W1_SDK_UNLOCK, DOC-D-W1_SDK_UNLOCK_BRIEF; operator chat ratification 2026-07-19): W1 marked DONE with commit hashes; BD-1 + BD-2 rows RESOLVED with the ratified text; BD-6 operational criterion recorded; no lifecycle transition (Live). Prior: MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
 reviewer: Crystalka
 ---
 
@@ -83,12 +83,12 @@ NOT ratified; each decision gets its own recon-grounded deliberation at charteri
 
 | # | Fork | Measured context | Resolves at | Architect lean |
 |---|---|---|---|---|
-| BD-1 | SDK system-contract form | A4 cycle blocks relocation; ModRegistry gates on SystemBase + [SystemAccess] + [TickRate] | W1 | public `ISimulationSystem` + capability-scoped `ISystemContext` (world views, events, fields, services) in Contracts; engine-internal adapter wraps to the executor; concrete NativeWorld stays kernel-internal |
-| BD-2 | Construction/DI model | `Activator.CreateInstance` (ModRegistry.cs:287) forbids ctor dependencies | W1 | registration-time factory delegate (`RegisterSystem<T>(Func<ISystemServices,T>)`); parameterless overload remains as convenience |
+| BD-1 | SDK system-contract form | A4 cycle blocks relocation; ModRegistry gates on SystemBase + [SystemAccess] + [TickRate] | W1 ✅ | **RESOLVED W1**: public `ISimulationSystem` (Initialize/Tick/OnDispose, no `float delta` -- SimTick via the context) + capability-scoped `ISystemContext` in Contracts (component access over the measured union, events via the live capability gate, SimTick; NO fields/managed-store/services -- services arrive at construction via `ISystemServices`, fields deferred per N17). Engine-internal `SystemAdapter<T>` (in Application, not Core -- the view needs RestrictedModApi + Core.Interop IVT) wraps to the executor; concrete NativeWorld stays kernel-internal behind opaque-object Contracts handles |
+| BD-2 | Construction/DI model | `Activator.CreateInstance` (ModRegistry.cs:287) forbids ctor dependencies | W1 ✅ | **RESOLVED W1**: `RegisterSystem<T>(Func<ISystemServices,T>)` + parameterless convenience; core + mod construction unified through ModRegistry (GameBootstrap stops hand-instantiating -- the bifurcation dies). Mod-facing IModApi factory overload DEFERRED (N17, no consumer yet) so ContractsVersion stays unchanged |
 | BD-3 | Generic event routing | 5 genre buses + IGameServices baked into Contracts/Core; ModBusRouter reflects over IGameServices properties; [SystemAccess] binds `nameof(IGameServices.X)` | W2 | typed event hub with namespaced channel ownership (provider mod id); tier/latency declared on the event contract; native bus type IDs from a dynamic registry |
 | BD-4 | Distribution manifest shape | no config file or loader exists (EAM R13); 6 mods off-solution | W4 | `game.manifest.json`: product id/version, root mod set + constraints, default scenario, asset roots, save namespace, min engine capabilities |
 | BD-5 | Optional modules vs vanilla vs deletion | AI: only Pathfinding consumed (BehaviourTree/Jobs dormant); Persistence + Crypto.Future production-orphaned | W5 | Pathfinding -> L3 module; BehaviourTree/Jobs -> ride their first consumer; Crypto.Future -> deletion candidate; Persistence -> engine-generic core after DTO extraction |
-| BD-6 | Position/Health boundary test | kernel scans HealthComponent as capability marker; GameBootstrap uses PositionComponent generically | W5 (test at W1) | law from the assessment: if the kernel only stores bytes, the type is game/shared-mod-owned; if the kernel interprets it, it is a versioned L3 contract. Expect Position -> L3 spatial contract, Health -> vanilla |
+| BD-6 | Position/Health boundary test | kernel scans HealthComponent as capability marker; GameBootstrap uses PositionComponent generically | W5 (criterion recorded W1) | law from the assessment: if the kernel only stores bytes, the type is game/shared-mod-owned; if the kernel interprets it, it is a versioned L3 contract. Expect Position -> L3 spatial contract, Health -> vanilla. **Operational criterion (recorded W1)**: per component type, the boundary test asserts whether any engine (`src/`) code reads a specific field of the type as a capability marker or control input (INTERPRETS -> versioned L3 contract) versus only storing/relaying its bytes (game/shared-mod-owned); the executable Position/Health test lands at W5 when the slice moves |
 | BD-7 | Persistence ownership | EAM R12 vacant; 4 game DTO families engine-side; PSC held AUTHORED | W7 | engine snapshot = tick/time/RNG + identity + mod set + schema table + namespaced sections; mods own codecs/migrations; requires PSC ratification first |
 | BD-8 | Config ownership | ScenarioDef.StartingPawnCount + SceneMetadata.EtherDensity ORPHAN (never read); GameBootstrap hardcodes consts :58-68 | W4 | scenario/config -> distribution manifest (L4) + owning mods (L5); orphans deleted, not migrated |
 | BD-9 | Presentation slots | 6 game command records; LayerType.CombatFeedback in Contracts | W6 | generic ordered layer/slot ids owned by engine; game layers registered by mods; engine renders primitives without knowing pawn/item semantics |
@@ -113,6 +113,16 @@ deletion trigger: SystemBase path deleted when the last src/ system migrates, W5
 reference example mod with a REAL component + system + event, Contracts-only. Gate: the
 example mod compiles against Contracts alone, registers -> ticks -> faults (D2 route) ->
 disposes -> ALC collects, and never names Core.
+> **W1 DONE 2026-07-19** (W1_SDK_UNLOCK; EVT-2026-07-19-W1_SDK_UNLOCK): BD-1 (`ISimulationSystem` +
+> `ISystemContext`) + BD-2 (factory registration) LANDED; Mod.Example authored Contracts-only (real
+> component + system + event); the `Fixture.RegularMod_ReplacesCombat` retargeted off Core (the
+> empirical BD-1 gap-proof leak is dead); full SDK lifecycle proven (register -> tick -> D2
+> fault/quarantine -> dispose -> ALC unload). CONTRACTS 1.0.1->1.1.0, ECS 1.0.1->1.1.0, MOD_OS
+> 1.0.2->1.1.0 (all MINOR); ContractsVersion unchanged. Code-truth correction recorded: the F5
+> `allowedBuses` router/validator was deleted at K8.3+K8.4 -- events route through the live
+> `RestrictedModApi` manifest-capability gate instead (ROADMAP F-row). Commits d3edbdb (C1 enroll) /
+> 6449306 (C2 contract) / 2dea4fa (C3 adapter+registration) / 4d86d2d (C4 proof mod+fixture) /
+> 4264d6f (C5 tests) / C6 governance / C7 closure.
 **W2 -- Type/bus/capability ownership (BD-3, BD-10).** Genre buses and IGameServices leave
 the engine contract (typed hub or channels per BD-3); capability registry -> ledger;
 deterministic type IDs from (providerId, schemaId); manifest capability checked against
