@@ -184,4 +184,34 @@ public sealed class KernelCapabilityRegistryTests
         ledger.Owns("mod.example", fqn).Should().BeTrue();
         ledger.Owns("mod.other", fqn).Should().BeFalse();
     }
+
+    // --- Kernel/mod token isolation + owner resolution (W2/BD-10, PR #48 Codex review) ---
+
+    [Fact]
+    public void ProvidesKernel_IsTrueForKernelTokensOnly_NotModTokens()
+    {
+        string fqn = typeof(TestPublishEvent).FullName!;
+
+        var kernelReg = new KernelCapabilityRegistry();
+        kernelReg.RegisterOwner("kernel", TestAssembly);
+        kernelReg.ProvidesKernel($"kernel.publish:{fqn}").Should().BeTrue();
+
+        var modReg = new KernelCapabilityRegistry();
+        modReg.RegisterOwner("mod.example", TestAssembly);
+        // The mod token IS registered, but ProvidesKernel rejects it (the Phase-C kernel fast path
+        // must not admit a mod-owned token -- it needs a declared dependency instead).
+        modReg.Provides($"mod.example.publish:{fqn}").Should().BeTrue();
+        modReg.ProvidesKernel($"mod.example.publish:{fqn}").Should().BeFalse();
+    }
+
+    [Fact]
+    public void OwnerOf_ReturnsRegisteringOwner_OrNullWhenUnregistered()
+    {
+        string fqn = typeof(TestPublishEvent).FullName!;
+        var registry = new KernelCapabilityRegistry();
+        registry.RegisterOwner("mod.example", TestAssembly);
+
+        registry.OwnerOf(fqn).Should().Be("mod.example");
+        registry.OwnerOf("No.Such.Type.Registered.Anywhere").Should().BeNull();
+    }
 }

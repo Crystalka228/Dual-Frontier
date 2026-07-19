@@ -246,7 +246,12 @@ internal sealed class RestrictedModApi : IModApi
         if (_kernelCapabilities.Owns($"mod.{_modId}", eventType.FullName!))
             return;
 
-        string token = $"kernel.{verb}:{eventType.FullName}";
+        // Build the OWNER-namespaced token: a cross-owner event (registered under another owner)
+        // is declared as "mod.<provider>.{verb}:{FQN}", not "kernel.{verb}:{FQN}". OwnerOf resolves
+        // the registered owner; unregistered types -- every type this wave, since no producer wires
+        // RegisterOwner -- fall back to "kernel", preserving the pre-BD-10 behavior exactly.
+        string owner = _kernelCapabilities.OwnerOf(eventType.FullName!) ?? "kernel";
+        string token = $"{owner}.{verb}:{eventType.FullName}";
 
         if (_manifest.Capabilities.IsEmpty)
         {

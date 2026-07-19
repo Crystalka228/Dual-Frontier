@@ -407,7 +407,10 @@ internal sealed class ContractValidator
         {
             foreach (string token in mod.Manifest.Capabilities.Required)
             {
-                if (kernelCapabilities.Provides(token))
+                // Kernel fast path is kernel-owned ONLY (ProvidesKernel, not Provides): a
+                // mod-owned "mod.<id>.*" token must be satisfied by an explicitly-listed
+                // dependency below, never by the shared registration ledger (MOD_OS §3.5).
+                if (kernelCapabilities.ProvidesKernel(token))
                     continue;
 
                 bool satisfied = false;

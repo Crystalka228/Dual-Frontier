@@ -144,6 +144,36 @@ public sealed class CapabilityValidationTests
     }
 
     [Fact]
+    public void PhaseC_mod_owned_token_in_ledger_does_not_satisfy_kernel_path_without_dependency()
+    {
+        // W2/BD-10 (PR #48 Codex review, P2): once per-mod owner registration is wired, a mod-owned
+        // token lands in the SAME registration ledger the kernel fast path queries. It must NOT
+        // satisfy Phase C on its own -- an explicit dependency is still required (MOD_OS §3.5). The
+        // fix routes the kernel fast path through ProvidesKernel (kernel.-prefixed only), so a
+        // mod.<provider>.* token falls through to the dependency check.
+        string modToken = $"mod.com.example.provider.publish:{typeof(TestPublishEvent).FullName}";
+        var registry = new KernelCapabilityRegistry();
+        registry.RegisterOwner("mod.com.example.provider", typeof(TestPublishEvent).Assembly);
+        // Sanity: the token IS in the ledger (Provides true) but is NOT kernel-provided.
+        registry.Provides(modToken).Should().BeTrue();
+        registry.ProvidesKernel(modToken).Should().BeFalse();
+
+        var validator = new ContractValidator();
+        ManifestCapabilities caps = ManifestCapabilities.Parse(new[] { modToken }, null);
+        // Provider is NOT listed in the consumer's dependencies.
+        LoadedMod consumer = MakeMod("com.example.consumer", caps);
+
+        ValidationReport report = validator.Validate(
+            new[] { consumer }, Array.Empty<SystemBase>(), registry);
+
+        report.IsValid.Should().BeFalse(
+            "a mod-owned token in the ledger must not satisfy the kernel path without a dependency");
+        ValidationError err = report.Errors.Should().ContainSingle().Subject;
+        err.Kind.Should().Be(ValidationErrorKind.MissingCapability);
+        err.Message.Should().Contain(modToken);
+    }
+
+    [Fact]
     public void PhaseC_skipped_when_kernel_registry_is_null()
     {
         var validator = new ContractValidator();

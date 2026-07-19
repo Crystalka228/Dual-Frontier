@@ -324,6 +324,54 @@ public sealed class RestrictedModApiV2Tests
             "cross-owner access without a declared capability is still gated");
     }
 
+    // 25 — W2/BD-10 (PR #48 Codex review): a cross-owner event declared with the correct
+    // owner-namespaced token is admitted (the gate resolves the registered owner, not hard-coded kernel).
+    [Fact]
+    public void Publish_CrossOwnerEvent_WithOwnerNamespacedToken_IsAdmitted()
+    {
+        // TestCombatEvent is registered under a DIFFERENT owner (a provider mod) -- not this mod
+        // (so self-access does NOT fire) and not kernel. The consumer declares the owner token.
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner("mod.provider", typeof(TestCombatEvent).Assembly);
+        string ownerToken = $"mod.provider.publish:{typeof(TestCombatEvent).FullName}";
+
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(new[] { ownerToken }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), ledger);
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().NotThrow(
+            "the gate resolves the event's registered owner and admits the owner-namespaced token");
+    }
+
+    // 26 — the same cross-owner event with ONLY the kernel token declared is still rejected:
+    // a mod-owned event needs its owner token, and the pre-fix hard-coded kernel.* no longer masks that.
+    [Fact]
+    public void Publish_CrossOwnerEvent_WithKernelTokenOnly_StillThrows()
+    {
+        var ledger = new KernelCapabilityRegistry();
+        ledger.RegisterOwner("mod.provider", typeof(TestCombatEvent).Assembly);
+
+        var manifest = new ModManifest
+        {
+            Id = TestModId,
+            Capabilities = ManifestCapabilities.Parse(
+                new[] { $"kernel.publish:{typeof(TestCombatEvent).FullName}" }, null),
+        };
+        var api = new RestrictedModApi(
+            TestModId, manifest, new ModRegistry(), new ModContractStore(),
+            new GameServices(), ledger);
+
+        Action act = () => api.Publish(new TestCombatEvent(1));
+        act.Should().Throw<CapabilityViolationException>(
+            "a mod-owned event is gated on its owner token, not the kernel token");
+    }
+
     private static SystemExecutionContext BuildTestContext(string name = "TestSystem")
     {
         return new SystemExecutionContext(

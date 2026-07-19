@@ -50,6 +50,18 @@ internal sealed class KernelCapabilityRegistry
     public bool Provides(string token) => _capabilities.Contains(token);
 
     /// <summary>
+    /// Returns <see langword="true"/> only when <paramref name="token"/> is registered AND is a
+    /// kernel-owned token (the <c>kernel.</c> owner prefix). The Phase-C kernel fast path
+    /// (<c>ContractValidator</c>) MUST use this, NOT <see cref="Provides"/>: a mod-owned
+    /// <c>mod.&lt;id&gt;.*</c> token is satisfiable only through an explicitly-listed dependency,
+    /// never through the kernel-provided set (MOD_OS §3.5). Keeping the two apart stops a consumer
+    /// from satisfying a cross-mod capability without declaring the provider in <c>dependencies</c>
+    /// once per-mod owner registration is wired.
+    /// </summary>
+    public bool ProvidesKernel(string token)
+        => token.StartsWith("kernel.", StringComparison.Ordinal) && _capabilities.Contains(token);
+
+    /// <summary>
     /// Registers, under <paramref name="ownerNamespace"/> (e.g. <c>"kernel"</c> or
     /// <c>"mod.&lt;modId&gt;"</c>), the capability tokens for every public, concrete
     /// <see cref="IEvent"/> / <c>[ModAccessible]</c> <see cref="IComponent"/> / <c>[Layer]</c>
@@ -78,6 +90,22 @@ internal sealed class KernelCapabilityRegistry
     public bool Owns(string ownerNamespace, string fqn)
         => _ownedByOwner.TryGetValue(ownerNamespace, out HashSet<string>? owned)
            && owned.Contains(fqn);
+
+    /// <summary>
+    /// Returns the owner namespace that registered <paramref name="fqn"/> (a type has one defining
+    /// assembly, hence one owner), or <see langword="null"/> when no owner registered it. The
+    /// runtime capability gate resolves the owner to build the owner-namespaced token -- a
+    /// cross-owner event is declared as <c>mod.&lt;provider&gt;.{verb}:{FQN}</c>, not
+    /// <c>kernel.{verb}:{FQN}</c>. A null result falls back to <c>kernel</c> at the gate, the
+    /// behavior when nothing is registered (this wave, no producer wires <see cref="RegisterOwner"/>).
+    /// </summary>
+    public string? OwnerOf(string fqn)
+    {
+        foreach (KeyValuePair<string, HashSet<string>> entry in _ownedByOwner)
+            if (entry.Value.Contains(fqn))
+                return entry.Key;
+        return null;
+    }
 
     private void ScanAssembly(Assembly assembly, string owner, HashSet<string> owned)
     {
