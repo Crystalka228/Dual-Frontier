@@ -221,7 +221,13 @@ public sealed class M62IntegrationTests
         {
             foreach (SystemBase system in phase.Systems)
             {
-                if (system.GetType().FullName == fqn)
+                Type t = system.GetType();
+                if (t.FullName == fqn)
+                    return true;
+                // W1: a mod's ISimulationSystem is wrapped in SystemAdapter<T>;
+                // the replacement's identity is the wrapped system type's FQN.
+                if (t.IsGenericType && t.GetGenericArguments().Length == 1 &&
+                    t.GetGenericArguments()[0].FullName == fqn)
                     return true;
             }
         }

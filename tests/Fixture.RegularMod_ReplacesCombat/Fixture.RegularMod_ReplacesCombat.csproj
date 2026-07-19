@@ -10,9 +10,6 @@
     <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
       <Private>false</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\DualFrontier.Core\DualFrontier.Core.csproj">
-      <Private>false</Private>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.manifest.json">
