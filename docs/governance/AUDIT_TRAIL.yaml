@@ -6414,3 +6414,67 @@ audit_trail:
     - DOC-A-KERNEL_ARCHITECTURE -> LOCKED (PATCH 1.2.0 -> 1.2.1 at C6; K-L20 artifacts line, canon byte-unchanged)
     - DOC-D-EQ_A3_CHECKED_DESTROY_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
     - DOC-E-EQ_A3_CHECKED_DESTROY_CLOSURE_REPORT -> EXECUTED (enrolled)
+
+- id: EVT-2026-07-18-EQ_A4_RENDER_TAIL
+  date: 2026-07-18
+  event: EQ_A4_RENDER_TAIL cascade execution (Cascade D of the EQ-a shutdown-law family, the CLOSER) -- M6 swapchain prepare-before-reclaim (ELT section 2.5) + M9 device-lost v1 fail-fast + structured diagnostic (D1); EQ-a row CLOSED end-to-end (M1-M9); F-52/F-53 seeded
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-VULKAN_SUBSTRATE_V2
+  - DOC-D-EQ_A4_RENDER_TAIL_BRIEF
+  - DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT
+  - DOC-C-ROADMAP
+  commits:
+    range: 70b5ac8..(the C7 closure-append commit following 315191a carries this entry)
+    key_commits:
+    - hash: 70b5ac8
+      summary: C1 governance(brief) - EQ_A4 brief enrolled (Draft); REGISTER +1 doc
+    - hash: f28b3f4
+      summary: C2 feat(render) - M6 swapchain prepare-before-reclaim (PrepareBeforeReclaim.Build + VulkanSwapchain.Recreate + Runtime.RecreateFramebuffersForSwapchain)
+    - hash: ae4dc48
+      summary: C3 test(render) - M6 device-free PrepareBeforeReclaimTests (4); full-sln 1191->1195
+    - hash: 41cdef4
+      summary: C4 feat(render) - M9 device-lost v1 (DeviceLostException/Context/Diagnostic + DeviceLost.ThrowIfLost 5 sites + DeviceLossBoundary + Program.cs wiring); Environment.FailFast src 1->2
+    - hash: e40e028
+      summary: C5 test(render) - M9 device-free DeviceLostTests (10, OnDeviceLost recorder seam); full-sln 1195->1205
+    - hash: 315191a
+      summary: C6 governance(render) - ELT 1.0.2 / IAC 1.1.1 / VULKAN 1.0.4 PATCH + ROADMAP EQ-a CLOSED + F-52/F-53
+  governance_impact: >
+    Cascade D of the EQ-a shutdown-law family -- the render/device tail and the LAST two members;
+    CLOSES the EQ-a row end-to-end (M1-M9). MANAGED-ONLY (no native/ABI change). M6: swapchain
+    recreation becomes a prepare-before-reclaim transaction to the ELT section 2.5 letter --
+    VulkanSwapchain.Recreate and Runtime.RecreateFramebuffersForSwapchain PREPARE new resources into
+    locals, COMMIT in one infallible assignment, then RECLAIM the old set, both via the all-or-nothing
+    PrepareBeforeReclaim.Build primitive (a mid-prepare failure rolls back and leaves the old set intact,
+    satisfying ELT section 1.1 corollary 1). M9: device-lost v1 = fail-fast + structured diagnostic per
+    ratified D1 -- VK_ERROR_DEVICE_LOST classified at 5 wrapper sites (DeviceLost.ThrowIfLost ->
+    DeviceLostException; the 5th, vkDeviceWaitIdle, previously discarded its result) -> render-loop boundary
+    DeviceLossBoundary -> Environment.FailFast with a structured diagnostic (failed call, frame, swapchain
+    state); NO recovery in v1 (device re-creation a separate epic), mirroring EngineSession.Abort (K-L20).
+    H-SEAM pre-resolved by the ratified factor-for-device-free-tests strategy (no interfaces over concrete
+    wrappers, no production test hooks): the transaction ordering + the classifier/boundary are device-free
+    unit-tested (C3 4 cases, C5 10 cases via the OnDeviceLost recorder), real-handle leak-clean deferred to
+    the real-GPU run. Gates at closure: build 0W/0E both configs; full-sln 1191 -> 1205 pass / 0 / 5 (M6 +4,
+    M9 +10); native selftest 104 ALL PASSED both configs (no native change); validate --armed exit 0 after
+    every frontmatter-touching commit (C1, C6, C7). Census UNMOVED: Console.WriteLine src 2=2, DFK-WAIVER 2=2,
+    BoundaryRatchet 4+1, marker censuses incl. deferred 86 (one C4 in-branch amend reworded a redundant
+    "deferred" -> "future work" to keep the pin); Environment.FailFast src calls 1 -> 2 (the M9 boundary,
+    expected, not a pinned census). REGISTER net +2 docs (brief + report; 355 -> 357). Doc bumps: ELT/IAC/VULKAN
+    all PATCH (align to landed truth; section 2.5 / section 4 class 6 / OQ-3 and section 2.3 / section 6.3 /
+    OQ-V1 / OQ-V3 marked Realized/CLOSED; IAC section 4/7 device-lost mapping resolved); ROADMAP Live; no KERNEL
+    change. last_modified_commit dropped from VULKAN/ROADMAP (real-hashes-only, pre-commit hash unknowable;
+    EQ_A3 precedent). New F-rows F-52 (_renderFinishedPerImage recreation sizing) + F-53 (vkDeviceWaitIdle
+    non-device-lost discard); F-51 untouched. Real-GPU: Launcher launch-and-close clean exit 0 on RX 7600S
+    (swapchain creation + loop + shutdown); recreation-under-validation + visual render remain an operator
+    touchpoint. No push (executor); operator pushes claude/eq-a4-render-tail + merges.
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS -> LOCKED (PATCH 1.0.1 -> 1.0.2 at C6; section 2.5 Realized + section 4 class 6 / section 6 OQ-3 CLOSED)
+    - DOC-A-IDENTITY_AND_ABI_CONTRACT -> LOCKED (PATCH 1.1.0 -> 1.1.1 at C6; section 4 + section 7 item 7 device-lost mapping RESOLVED)
+    - DOC-A-VULKAN_SUBSTRATE_V2 -> LOCKED (PATCH 1.0.3 -> 1.0.4 at C6; section 2.3 + section 6.3 unfenced to current truth, section 8 OQ-V1/OQ-V3 CLOSED)
+    - DOC-D-EQ_A4_RENDER_TAIL_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
+    - DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT -> EXECUTED (enrolled)
