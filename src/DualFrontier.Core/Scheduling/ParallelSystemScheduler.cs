@@ -281,9 +281,13 @@ internal sealed class ParallelSystemScheduler
         Type systemType = system.GetType();
         // Read via the SystemBase hook (not systemType directly) so a wrapped
         // SDK system (SystemAdapter<T>) forwards its inner [SystemAccess] (W1 BD-1).
-        SystemAccessAttribute attr =
-            system.AccessDeclaration
-            ?? throw new InvalidOperationException(
+        // F-54 (W2): [SystemAccess] presence is still required -- the scheduler cannot build a
+        // context without it, and DependencyGraph consumes its Reads/Writes for edge-building.
+        // The bus leg formerly read here (attr.Buses -> the retired _allowedBuses) is gone, so the
+        // declaration is validated for presence but no longer bound into the execution context.
+        SystemAccessAttribute? attr = system.AccessDeclaration;
+        if (attr is null)
+            throw new InvalidOperationException(
                 $"System '{systemType.FullName}' is missing [SystemAccess]. " +
                 "The scheduler cannot build an execution context without a declaration.");
 
@@ -305,7 +309,6 @@ internal sealed class ParallelSystemScheduler
 
         return new SystemExecutionContext(
             systemType.FullName ?? systemType.Name,
-            attr.Buses,
             origin,
             modId,
             _faultSink,

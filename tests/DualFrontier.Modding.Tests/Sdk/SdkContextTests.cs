@@ -97,7 +97,7 @@ public sealed class SdkContextTests
 
         var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
         var ctx = new SystemExecutionContext(
-            "T", new[] { "World" }, SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
+            "T", SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
 
         SystemExecutionContext.PushContext(ctx);
         try

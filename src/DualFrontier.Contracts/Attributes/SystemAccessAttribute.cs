@@ -5,13 +5,13 @@ namespace DualFrontier.Contracts.Attributes;
 /// <summary>
 /// Declares the system's access boundaries: which component types it reads,
 /// which it writes, and which domain bus it publishes events on. The managed
-/// <c>DependencyGraph</c> consumes the declaration for edge-building (the
-/// native <c>system_graph</c> mirrors the same edge semantics), and
-/// <c>ParallelSystemScheduler</c> reads the bus list when constructing each
-/// system's execution context. The К8.3+К8.4 runtime isolation guard that
-/// consumed it for per-access checks is deleted — enforcement is
-/// compile-time. See <c>docs/architecture/THREADING.md</c> and
-/// <c>docs/architecture/ISOLATION.md</c> (TechArch sections 11.6 and 11.7).
+/// <c>DependencyGraph</c> consumes the Reads/Writes for edge-building (the
+/// native <c>system_graph</c> mirrors the same edge semantics). The К8.3+К8.4
+/// runtime isolation guard that consumed it for per-access checks is deleted,
+/// and F-54 (W2) retired the dead bus-scoping list the scheduler formerly
+/// copied into each execution context — enforcement is compile-time. See
+/// <c>docs/architecture/THREADING.md</c> and
+/// <c>docs/architecture/MOD_OS_ARCHITECTURE.md</c>.
 ///
 /// The attribute is not inheritable — every system must declare its
 /// contract explicitly.

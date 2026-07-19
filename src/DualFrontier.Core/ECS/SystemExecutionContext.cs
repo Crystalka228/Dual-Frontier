@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
@@ -35,7 +34,10 @@ public sealed class SystemExecutionContext
     private static readonly ThreadLocal<SystemExecutionContext?> _current = new();
 
     private readonly string _systemName;
-    private readonly IReadOnlyList<string> _allowedBuses;
+    // F-54 (W2): the former `_allowedBuses` field is retired -- it was 1 write / 0 reads
+    // (ParallelSystemScheduler fed [SystemAccess].Buses in; nothing ever read it back). Per-system
+    // bus-publish scoping, if ever wanted, is future design on the FQN capability gate
+    // (RestrictedModApi.EnforceCapability), not a revival of this dead field.
     private readonly SystemOrigin _origin;
     private readonly string? _modId;
     private readonly IModFaultSink _faultSink;
@@ -48,14 +50,12 @@ public sealed class SystemExecutionContext
     private readonly IManagedStorageResolver? _managedStorageResolver;
 
     /// <summary>
-    /// Creates a context for the given system. The scheduler reads the
-    /// system's <c>[SystemAccess]</c> declaration and supplies the bus
-    /// list and metadata (origin, modId). <paramref name="nativeWorld"/>
-    /// is required — production systems read and write component storage
-    /// through it.
+    /// Creates a context for the given system. The scheduler supplies the
+    /// system metadata (origin, modId) and the native world handle.
+    /// <paramref name="nativeWorld"/> is required — production systems read
+    /// and write component storage through it.
     /// </summary>
     /// <param name="systemName">Display name for diagnostics.</param>
-    /// <param name="allowedBuses">Bus names the system may publish to.</param>
     /// <param name="origin">Core vs Mod provenance of the system.</param>
     /// <param name="modId">Mod identifier when <paramref name="origin"/> is Mod; otherwise null.</param>
     /// <param name="faultSink">Destination for mod-origin fault reports (e.g. surfaced via <c>ModLoader.HandleModFault</c>).</param>
@@ -64,7 +64,6 @@ public sealed class SystemExecutionContext
     /// <param name="managedStorageResolver">K8.3+K8.4 — optional Path β resolver. Production passes the ModRegistry; null in tests and core-only builds.</param>
     internal SystemExecutionContext(
         string systemName,
-        IEnumerable<string> allowedBuses,
         SystemOrigin origin,
         string? modId,
         IModFaultSink faultSink,
@@ -73,14 +72,8 @@ public sealed class SystemExecutionContext
         IManagedStorageResolver? managedStorageResolver = null)
     {
         _systemName = systemName ?? throw new ArgumentNullException(nameof(systemName));
-        if (allowedBuses is null) throw new ArgumentNullException(nameof(allowedBuses));
         _faultSink = faultSink ?? throw new ArgumentNullException(nameof(faultSink));
         _nativeWorld = nativeWorld ?? throw new ArgumentNullException(nameof(nativeWorld));
-
-        var buses = new List<string>();
-        foreach (string bus in allowedBuses)
-            buses.Add(bus);
-        _allowedBuses = buses;
 
         _origin = origin;
         _modId = modId;

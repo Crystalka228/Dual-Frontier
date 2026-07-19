@@ -318,7 +318,6 @@ public sealed class RestrictedModApiV2Tests
     {
         return new SystemExecutionContext(
             name,
-            new[] { "TestBus" },
             SystemOrigin.Core,
             modId: null,
             faultSink: new NullModFaultSink(),
