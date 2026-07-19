@@ -5,15 +5,14 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-19
 content_language: en
 next_review_due: 2027-Q3
 title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
 supersedes:
 - DOC-A-CONTRACTS
-last_modified_commit: 8896d32
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
@@ -111,6 +110,18 @@ Every change is breaking or non-breaking. Two predecessor classifications were o
 **Non-breaking (verified safe).** A new `IEvent`/`IQuery`/`ICommand`/`IComponent` type — no existing consumer references a type that doesn't exist yet. A new **optional** `init` property on a property-body `record` (no positional constructor), via object-initializer syntax — every production event record verified here uses this shape (`PawnSpawnedEvent.cs:10-20`: `PawnId`/`X`/`Y` are `{ get; init; }`, not positional). Safe only while the record stays property-body (a positional record's constructor signature changing breaks binary compat for old callers) and the new property is not `required` (that forces every site, including existing ones, to set it). An interface method with a C# 8+ default implementation.
 
 **Breaking (major bump required).** Removing/renaming an `IEvent`/`IQuery`/`ICommand`/`IComponent` field. Removing an interface method or changing a parameter type. **Adding a property to `IGameServices`** (or any contract interface without a default implementation) — the predecessor called a new bus non-breaking; it is not. `IGameServices`'s five properties have no default bodies; its one production implementer, `GameServices` (`src/DualFrontier.Core/Bus/GameServices.cs:14`), would fail to compile without the match, and so would any mod-side test double implementing the interface directly. Minor-safe only if the new member ships a default implementation from day one — and even then a silently-inherited default is the correctness risk the version bump exists to flag. Changing phase semantics (`[Deferred]` ⇄ synchronous): [EVENT_BUS.md](./EVENT_BUS.md) owns phase-semantics truth; land the change there first.
+
+### §4.1 W1 SDK system-authoring surface (added 2026-07-19, MINOR)
+
+W1 (VANILLA_SEPARATION_MIGRATION_PLAN BD-1) added the SDK system-authoring surface to `DualFrontier.Contracts` — new TYPES only, so non-breaking (MINOR); `ContractsVersion.Current` is unchanged:
+
+- `Sdk/ISimulationSystem` — the mod/vanilla system contract (`Initialize`/`Tick`/`OnDispose` over `ISystemContext`; no `float delta` — SimTick arrives via the context).
+- `Sdk/ISystemContext` — the per-tick capability surface (component access over the measured span/batch/try-has-get/intern/composite union, `Publish`/`Subscribe` routed through the live capability gate, `CurrentTick`). NO fields/managed-store/services — a deliberate day-one omission (audience-driven deferral, N17).
+- `Sdk/ISystemServices` — the construction-time DI surface (`Pathfinding` only, extensible).
+- `Sdk/SpanScope<T>` / `Sdk/WriteScope<T>` — allocation-free `ref struct` scopes over the read lease / write batch; `Sdk/StringHandle` / `Sdk/CompositeHandle<T>` — unmanaged value handles. All forge-proof (internal ctors; a mod cannot fabricate one — `InternalsVisibleTo` to `DualFrontier.Application`, an engine→engine grant that does not move the BoundaryRatchet).
+- `Services/IPathfindingService` — RELOCATED from `DualFrontier.AI` (its only types, `GridVector` + BCL, were already Contracts-safe) so `ISystemServices` can name it (boundary law B-3, SDK sufficiency). The concrete `AStarPathfinding` stays engine-side.
+
+`SystemBase`'s authoring path remains as the recorded bridge (retires at W5, when the last `src/` harness system migrates); engine-side `SystemAdapter<T>` (in `DualFrontier.Application`) wraps an `ISimulationSystem` onto the executor.
 
 ## §5 Versioning and the version gate
 

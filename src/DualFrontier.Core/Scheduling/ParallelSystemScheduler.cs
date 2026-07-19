@@ -279,8 +279,10 @@ internal sealed class ParallelSystemScheduler
     private SystemExecutionContext BuildContext(SystemBase system)
     {
         Type systemType = system.GetType();
+        // Read via the SystemBase hook (not systemType directly) so a wrapped
+        // SDK system (SystemAdapter<T>) forwards its inner [SystemAccess] (W1 BD-1).
         SystemAccessAttribute attr =
-            systemType.GetCustomAttribute<SystemAccessAttribute>(inherit: false)
+            system.AccessDeclaration
             ?? throw new InvalidOperationException(
                 $"System '{systemType.FullName}' is missing [SystemAccess]. " +
                 "The scheduler cannot build an execution context without a declaration.");

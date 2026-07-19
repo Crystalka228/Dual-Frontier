@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 86, 52)]
+    [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
     [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -122,6 +122,12 @@ public sealed class CensusMetaTests
         // EQ_A2 (Cascade B): deferred 82->86 / 51->52 -- the S3 shutdown-transaction
         // deferred-drop primitive (DomainEventBus.DropDeferred, GameServices.DropDeferred,
         // EngineSession.Dispose; EngineSession.cs is the +1 file).
+        // W1 (SDK unlock): deferred 86->88 / 52->54 -- the C2 Contracts SDK docs
+        // (Sdk/ISystemContext.cs deliberate-deferral note + Sdk/SpanScope.cs K7-deferred
+        // caveat; both new files). Recorded here in C3 as the census-delta: C2 introduced
+        // the two documentation sites and shipped before this census (Analyzers.Tests) ran.
+        // W1-fix (Codex review): deferred 88->89 / 54->55 -- Sdk/ISystemServices.cs now
+        // records that the mod-facing IModApi factory overload is deferred (N17).
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 

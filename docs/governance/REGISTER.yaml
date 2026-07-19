@@ -245,15 +245,14 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2027-Q3
   title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
   supersedes:
   - DOC-A-CONTRACTS
-  last_modified_commit: 8896d32
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
   last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
@@ -284,15 +283,14 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2027-Q3
   title: Entity Component System (authored rework; version-0 identity defect documented)
   supersedes:
   - DOC-A-ECS
-  last_modified_commit: 5e1f412
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
   last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
@@ -874,9 +872,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2027-Q3
   title: Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
@@ -884,10 +882,9 @@ documents:
   - DOC-A-MOD_OS
   - DOC-A-MOD_PIPELINE
   - DOC-A-ISOLATION
-  last_modified_commit: 4a36abe
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
+  last_review_date: 2026-07-19
+  last_review_event: 'MINOR 1.0.2 -> 1.1.0 2026-07-19 (W1_SDK_UNLOCK C6): section 4.1 records the W1 factory-registration law -- RegisterSystem widened to accept ISimulationSystem (wrapped in the internal SystemAdapter) alongside SystemBase, and the unified RegisterSystem<T>(Func<ISystemServices,T>) construction path (SystemBase authoring a W5 bridge). Additive; no lifecycle transition. Prior: Post-merge Codex-review PATCH (operator-sanctioned): the section-9.1 FENCED state-machine fence no longer gates adoption on a "ratification question" - ENGINE_LIFECYCLE_AND_TRANSACTIONS is ratified law (EVT-2026-07-17-DRAFTS_RATIFICATION); only the deferred 9.1 amendment remains. PATCH 1.0.1 to 1.0.2.'
   reviewer: Crystalka
   special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -1163,15 +1160,15 @@ documents:
   tier: 2
   lifecycle: Live
   owner: Crystalka
-  version: 1.1.0
+  version: 1.2.0
   first_authored: 2026-07-18
-  last_modified: 2026-07-18
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2026-Q4
   title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
   review_cadence: on-change
-  last_review_date: 2026-07-18
-  last_review_event: 'MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
+  last_review_date: 2026-07-19
+  last_review_event: 'MINOR 1.1.0 -> 1.2.0 2026-07-19 (W1_SDK_UNLOCK, DOC-D-W1_SDK_UNLOCK_BRIEF; operator chat ratification 2026-07-19): W1 marked DONE with commit hashes; BD-1 + BD-2 rows RESOLVED with the ratified text; BD-6 operational criterion recorded; no lifecycle transition (Live). Prior: MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
   reviewer: Crystalka
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md
@@ -1439,7 +1436,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-07-19
   content_language: en
   next_review_due: 2026-Q4
   title: Roadmap
@@ -3361,6 +3358,19 @@ documents:
   risks_referenced:
   - RISK-013
   special_case_rationale: "V1+V2 combined deliberation execution brief — fifth + sixth sub-milestones of V substrate stream (V0.A → V0.B → V0.C.1 → V0.C.2 → V1 → V2). Authored 2026-05-19 post-V0.C.2 closure (PR #39 merged) per Crystalka substrate authoring stream protocol. Implements V substrate primitives per VULKAN_SUBSTRATE.md v1.0 §1.2 (V1 isotropic + anisotropic diffusion shader) + §1.3 (V2 wave shader baseline + direction extraction) + §1.4 (V substrate close acceptance — multi-field coexistence). V2 closure = V substrate FULL close per §1.4 — unlocks M-V demonstration mod paths (M-V1 Vanilla.Magic, M-V2 Vanilla.Electricity, M-V7 Vanilla.Movement) + Phase B M-cycle vanilla content mass migration (also gated on Roslyn analyzer A'.9). К10.3 brief restart pathway independent — runs parallel в V substrate stream; V1+V2 не gates К10.3. Q1-Q8 ratification 2026-05-19 (Crystalka): hybrid sub-milestone structure (Q1c — V1 monolithic + V2.A wave/distance + V2.B direction extraction split); minimal CPU reference scope (Q2a — single-iteration small grid synthetic tests); direct K9 consumption (Q3a — no new C ABI extensions); extend Directory.Build.props CompileShaders target (Q4a — substrate-side compilation); standard smoke test scenes (Q5b — minimal + multi-field coexistence); combined deliberation + sequential execution (Q6c — V1 PR #40 → V2 PR #41); diffusion baseline для V2 (Q7a — eikonal upgrade deferred TBD per spec); Phase A' naming А'.10 V1 + А'.11 V2 (Q8 — sequential post-V0 sub-milestones). 11 S-LOCKs enumerate scope: S-LOCK-1 (V1+V2 combined scope = scalar field substrate primitives per VULKAN_SUBSTRATE §1.2 + §1.3 + §1.4); S-LOCK-2 (compute shader sourcing = substrate-side compilation per Q4a — extends Directory.Build.props CompileShaders target); S-LOCK-3 (CPU/GPU equivalence test mandatory per §11 — every compute shader has CPU reference, tolerance-bounded comparison gates correctness); S-LOCK-4 (direct K9 consumption — no new C ABI extensions per Q3a; consumes existing FieldHandle<T> + FieldRegistry + V0.B compute pipeline surface verbatim); S-LOCK-5 (ping-pong buffer management via FieldHandle<T>.SwapBuffers — K9 contract preserved); S-LOCK-6 (V0 substrate inheritance preserved — K-L19, validation layer ALWAYS-ON, per-image semaphore, framebuffer recreation, mixed [LibraryImport]/[DllImport]); S-LOCK-7 (alignment audit mandatory per Lesson #7 strengthening — V0.A 1 + V0.B 5 + V0.C.1 0 + V0.C.2 1 maturity curve continues; new push constant structs DiffusionPushConstants/WavePushConstants/DirectionExtractPushConstants get Marshal.SizeOf test gates); S-LOCK-8 (atomic cascade discipline preserves V substrate stream pattern с V1→V2 pause point); S-LOCK-9 (validation layer ALWAYS-ON DEBUG preserved — zero validation messages tolerated as commit gate); S-LOCK-10 (REGISTER.yaml governance discipline preserved — EVT-V1-CLOSURE + EVT-V2-CLOSURE + EVT-V-SUBSTRATE-CLOSE audit_trail events); S-LOCK-11 (CPU reference inheritance + extension per Lesson #11 redundancy check — IsotropicDiffusionKernel inherited verbatim, AnisotropicDiffusionKernel + WaveKernel + DirectionExtractKernel new CPU references follow same pattern). Per Lesson #22 (read existing code first) + Lesson #11 (redundancy check) + Lesson #25 (consumer materialization): V1+V2 inherits substantial existing infrastructure — K9 FieldHandle<T> production-ready, V0.B compute pipeline registration round-trip verified, IsotropicDiffusionKernel CPU reference existing K9-era code consumed verbatim. К-L14 thesis fifth + sixth verification window: V0.A + V0.B + V0.C.1 + V0.C.2 closed с four consecutive zero-hard-gate-halt cascades; V1 + V2 = fifth + sixth verifications; V substrate full close per §1.4 = pattern reliability empirically validated across 6 consecutive substrate sub-milestones."
+- register_id: DOC-D-W1_SDK_UNLOCK_BRIEF
+  path: tools/briefs/W1_SDK_UNLOCK_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-19
+  last_modified: 2026-07-19
+  content_language: en
+  next_review_due: 
+  title: W1_SDK_UNLOCK execution brief (Wave 1 of the vanilla-separation program -- ISimulationSystem + ISystemContext + unified factory registration under ratified BD-1/BD-2, with the Contracts-only example-mod lifecycle proof as the wave gate)
 - register_id: DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION
   path: docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md
   project: Dual Frontier
@@ -4763,6 +4773,36 @@ documents:
   last_modified_commit: 817921d
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-W1_SDK_SURFACE_RECON_REPORT
+  path: docs/reports/W1_SDK_SURFACE_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-19
+  last_modified: 2026-07-19
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'W1 SDK-SURFACE RECON REPORT — 2026-07-19 (R1–R7) — SDK usage-closure measurement at HEAD df1541d for BD-1/BD-2 chartering: 28 production SystemBase systems (10 REAL / 18 [BridgeImplementation] STUB), the 7-member SystemBase surface, the ~8-of-40 NativeWorld consumed subset (4 interop-leaking), 5 buses (only Pawns+Inventory live), construction bifurcation (27 parameterless + MovementSystem(IPathfindingService)), attribute census 28/28/0, zero field/compute usage, mods hollow, fixture→Core leak = SystemBase-naming; decision-inputs D1–D9 + anomalies A1–A10; extends DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT, no kickoff↔law conflict'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT, DOC-E-EQ_A_SHUTDOWN_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT). Wave-1 pre-deliberation SDK usage-closure measurement — the empirical basis for the BD-1 (ISystemContext) + BD-2 (construction/DI) chartering deliberation. Produced read-only at HEAD df1541d (post-EQ_A4_RENDER_TAIL). UNTRACKED at authoring — enrolled at the next cascade C1.'
+- register_id: DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT
+  path: docs/reports/W1_SDK_UNLOCK_CLOSURE_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-19
+  last_modified: 2026-07-19
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'W1_SDK_UNLOCK closure report -- Wave 1 of the vanilla-separation program: the ratified BD-1 SDK system contract (ISimulationSystem + capability-scoped ISystemContext) + BD-2 unified factory registration landed in Contracts, engine adapter wired, proven by a Contracts-only example mod through the full register->tick->D2-fault->dispose->ALC-unload lifecycle, with the empirical BD-1 gap-proof fixture leak killed; F5 code-truth correction recorded (events route through the live manifest-capability gate)'
+  special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W1_SDK_UNLOCK cascade evidence per the brief section 7 closure schema. Historical record, no review cadence.'
 - register_id: DOC-F-ASSETS-SCENES
   path: assets/scenes/README.md
   project: Dual Frontier
@@ -15523,3 +15563,43 @@ audit_trail:
     - DOC-A-VULKAN_SUBSTRATE_V2 -> LOCKED (PATCH 1.0.3 -> 1.0.4 at C6; section 2.3 + section 6.3 unfenced to current truth, section 8 OQ-V1/OQ-V3 CLOSED)
     - DOC-D-EQ_A4_RENDER_TAIL_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
     - DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT -> EXECUTED (enrolled)
+- id: EVT-2026-07-19-W1_SDK_UNLOCK
+  date: 2026-07-19
+  event: W1_SDK_UNLOCK cascade execution (Wave 1 of the vanilla-separation program, SDK surface unlock) -- BD-1 SDK system contract (ISimulationSystem + capability-scoped ISystemContext) + BD-2 unified factory registration landed in reference-free Contracts + engine adapter; proven by a Contracts-only example mod through register -> tick -> D2 fault/quarantine -> dispose -> ALC unload; the empirical BD-1 gap-proof fixture leak killed; F5 code-truth correction recorded (F-54)
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-CONTRACTS_V2
+  - DOC-A-ECS_V2
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-C-ROADMAP
+  - DOC-D-W1_SDK_UNLOCK_BRIEF
+  - DOC-E-W1_SDK_SURFACE_RECON_REPORT
+  - DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT
+  commits:
+    range: d3edbdb..(the C7 closure-append commit following dce18d6 carries this entry)
+    key_commits:
+    - hash: d3edbdb
+      summary: C1 governance(w1) - enroll recon report + brief; REGISTER 361 -> 363
+    - hash: 6449306
+      summary: C2 feat(sdk) - Contracts SDK surface (ISimulationSystem/ISystemContext/ISystemServices + Sdk handle structs + IWriteBatchCapability) + IPathfindingService relocation + Contracts->Application IVT
+    - hash: 2dea4fa
+      summary: C3 feat(sdk) - SystemAdapter<T> + SystemContextView + unified ModRegistry factory path + widened RegisterSystem + GameBootstrap re-registration + SystemBase attribute hooks; deferred marker census 86 -> 88
+    - hash: 4d86d2d
+      summary: C4 feat(mods) - Mod.Example SDK content (component/system/event, Contracts-only) + Fixture.RegularMod_ReplacesCombat retargeted off Core (leak dead) + reference ratchet
+    - hash: 4264d6f
+      summary: C5 test(sdk) - 7 SDK context behavioural proofs (freshness/access-forms/factory/capability/fault-parity)
+    - hash: dce18d6
+      summary: C6 governance(w1) - CONTRACTS/ECS/MOD_OS MINOR + plan W1 DONE / BD-1/BD-2 RESOLVED / BD-6 criterion + ROADMAP W1 DONE + F-54
+  governance_impact: >
+    Wave 1 of VANILLA_SEPARATION_MIGRATION_PLAN -- the SDK surface unlock. MANAGED-ONLY (zero native). Lands the ratified BD-1 (public ISimulationSystem + capability-scoped ISystemContext in reference-free Contracts: component access over the measured span/batch/try-has-get/intern/composite union via forge-proof opaque-object handles, Publish/Subscribe via the live capability gate, SimTick; NO fields/managed-store/services on the day-one context per the N17 audience-driven deferral) + BD-2 (RegisterSystem<T>(Func<ISystemServices,T>) + parameterless convenience; core + mod construction unified through ModRegistry so the hand-instantiation bifurcation is dead; the mod-facing IModApi factory overload deferred so ContractsVersion is unchanged). The engine-internal SystemAdapter<T> (in Application, NOT Core -- the context view needs RestrictedModApi + Core.Interop's IVT, reachable only from Application) wraps ISimulationSystem onto the executor by BEING a SystemBase, inheriting the scheduler's D2 fault catch for free (mod-origin faulted Tick -> RouteFault -> ModQuarantine, contained; core-origin -> rethrow). The four scheduler/graph attribute read-sites route through new SystemBase.AccessDeclaration/TickRateDeclaration hooks so the generic adapter is transparent to the executor's reflection (a [TickRate] placeholder satisfies DFK013 K-L13, read by nobody at runtime). IPathfindingService relocated AI -> Contracts (B-3 SDK sufficiency; its only types GridVector + BCL were already Contracts-safe). Proven by Mod.Example authored Contracts-only (real component + system + event) through the FULL lifecycle (register-via-adapter -> tick with all access forms -> deliberate D2 fault + quarantine -> dispose -> collectible ALC unload) + the retargeted ReplacesCombat fixture (the recon's named empirical BD-1 gap proof, now Core-free -- the leak is dead; the _Alt sibling was ALREADY Contracts-only, a recon correction). Code-truth corrections recorded: F5's allowedBuses router/validator was DELETED at K8.3+K8.4 (events route through the live RestrictedModApi manifest-capability gate instead -- ROADMAP F-54; _allowedBuses stays captured-but-unread, W2/BD-3 decides its fate); SystemExecutionContext seed is 8 fields, not the recon's 7. Gates at closure: build 0W/0E both configs; full-sln 1205 -> 1213 pass / 0 / 5 (C4 +1 reference ratchet, C5 +7 SDK context); native selftest 104 both configs UNCHANGED (native untouched, git-diff df1541d..HEAD -- native/ empty); validate --armed exit 0 after every frontmatter-touching commit (C1, C6, C7). Census: Console.WriteLine src 2=2, DFK-WAIVER src 2=2, BoundaryRatchet 4+1 UNMOVED (the fixture's Core edge is a test-fixture edge, uncounted); marker family "deferred" 86 -> 88 sites / 52 -> 54 files (the two C2 SDK-doc sites; pin updated + census-delta recorded at C3); all other marker families UNMOVED; ContractsVersion.Current unchanged; no KERNEL / K-L change. REGISTER 361 -> 364 (+3: recon report + brief at C1, closure report at C7). Doc bumps: CONTRACTS 1.0.1 -> 1.1.0, ECS 1.0.1 -> 1.1.0, MOD_OS 1.0.2 -> 1.1.0 (all MINOR, stay LOCKED; last_modified_commit dropped -- real-hashes-only, pre-commit hash unknowable, EQ_A4 precedent); plan 1.1.0 -> 1.2.0 (Live; W1 DONE, BD-1/BD-2 RESOLVED, BD-6 operational criterion recorded); ROADMAP Live (W1 DONE + F-54). SystemBase + SystemAdapter are a recorded bridge retiring at W5 (GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY section 4 deletion trigger). No push (executor); operator pushes claude/w1-sdk-unlock + merges. W1 DONE; next W2 (bus/capability taxonomy, BD-3/BD-10).
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-CONTRACTS_V2 -> LOCKED (MINOR 1.0.1 -> 1.1.0 at C6; section 4.1 W1 SDK system-authoring surface)
+    - DOC-A-ECS_V2 -> LOCKED (MINOR 1.0.1 -> 1.1.0 at C6; section 7.1 SDK contract + SystemBase/adapter bridge)
+    - DOC-A-MOD_OS_ARCHITECTURE -> LOCKED (MINOR 1.0.2 -> 1.1.0 at C6; section 4.1 factory-registration law)
+    - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN -> Live (MINOR 1.1.0 -> 1.2.0 at C6; W1 DONE, BD-1/BD-2 RESOLVED, BD-6 criterion)
+    - DOC-D-W1_SDK_UNLOCK_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
+    - DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT -> EXECUTED (enrolled)

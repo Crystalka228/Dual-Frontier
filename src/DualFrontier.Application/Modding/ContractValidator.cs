@@ -296,7 +296,9 @@ internal sealed class ContractValidator
         foreach (Type t in mod.DeclaredSystemTypes)
         {
             if (t is null) continue;
-            if (!typeof(SystemBase).IsAssignableFrom(t)) continue;
+            // W1-fix (Codex review) — validate SDK ISimulationSystem types alongside SystemBase.
+            if (!typeof(SystemBase).IsAssignableFrom(t)
+                && !typeof(DualFrontier.Contracts.Sdk.ISimulationSystem).IsAssignableFrom(t)) continue;
             if (t.IsAbstract) continue;
             yield return t;
         }

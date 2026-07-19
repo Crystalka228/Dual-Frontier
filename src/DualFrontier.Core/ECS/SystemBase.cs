@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
@@ -56,6 +58,26 @@ public abstract class SystemBase
     /// Internal method called by the scheduler to dispose of the system's resources and logic.
     /// </summary>
     internal void Dispose() => OnDispose();
+
+    /// <summary>
+    /// The <c>[SystemAccess]</c> declaration the scheduler and dependency graph
+    /// read for context construction and edge building. Defaults to this
+    /// instance's own type attribute — unchanged behaviour for every ordinary
+    /// system. The W1 SDK adapter (<c>SystemAdapter&lt;T&gt;</c>, W1 BD-1)
+    /// overrides it to FORWARD the wrapped <c>ISimulationSystem</c>'s
+    /// declaration, so a generic adapter is transparent to the executor's
+    /// reflection (a generic adapter type carries no such attribute of its own).
+    /// </summary>
+    internal virtual SystemAccessAttribute? AccessDeclaration
+        => GetType().GetCustomAttribute<SystemAccessAttribute>(inherit: false);
+
+    /// <summary>
+    /// The <c>[TickRate]</c> declaration the tick scheduler reads for cadence.
+    /// Defaults to this instance's own type attribute; forwarded by the SDK
+    /// adapter exactly as <see cref="AccessDeclaration"/>.
+    /// </summary>
+    internal virtual TickRateAttribute? TickRateDeclaration
+        => GetType().GetCustomAttribute<TickRateAttribute>(inherit: false);
 
     /// <summary>
     /// Domain-bus aggregator supplied by the scheduler. Use for publishing

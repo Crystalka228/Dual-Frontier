@@ -5,15 +5,14 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-07-19
 content_language: en
 next_review_due: 2027-Q3
 title: Entity Component System (authored rework; version-0 identity defect documented)
 supersedes:
 - DOC-A-ECS
-last_modified_commit: 5e1f412
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
@@ -146,6 +145,10 @@ protected ManagedStore<T>? ManagedStore<T>() // :126 — Path β; null for Core 
 ```
 
 `Services` and `NativeWorld` route through the active `SystemExecutionContext` and throw `InvalidOperationException` outside a scheduler context (`:74-76`, `:97-99`) — e.g. from the renderer main thread, or after an illegal `async` resumption ([THREADING.md](./THREADING.md), async-ban section). An access declaration is mandatory: `[SystemAccess(reads: […], writes: […], bus: nameof(IGameServices.X))]`, read once at registration for graph building ([THREADING.md](./THREADING.md)).
+
+### §7.1 The SDK system contract (W1)
+
+W1 (VANILLA_SEPARATION_MIGRATION_PLAN BD-1) added `DualFrontier.Contracts.Sdk.ISimulationSystem` — the durable, Contracts-only system-authoring surface (`Initialize(ISystemContext)` / `Tick(ISystemContext)` / `OnDispose()`; no `float delta` — SimTick arrives via `ISystemContext.CurrentTick`). A mod (and, after the W5 slice move, vanilla) implements it instead of deriving `SystemBase`, which cannot relocate to Contracts (audit A4 `Contracts → Core.Interop → Contracts` cycle). The engine wraps an implementation onto the executor through the internal `SystemAdapter<T>` (`DualFrontier.Application`), reading the wrapped system's `[SystemAccess]`/`[TickRate]` via the `SystemBase.AccessDeclaration`/`TickRateDeclaration` hooks so the adapter is transparent to the executor's reflection. `SystemBase` and the adapter are a BRIDGE: both retire at W5 when the last `src/` harness system migrates (GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY §4 deletion trigger). The §8 "no cached world reference" anti-pattern binds `ISystemContext` identically — the context is per-tick, and neither it nor any value obtained from it may be held across ticks.
 
 ## §8 Anti-patterns
 

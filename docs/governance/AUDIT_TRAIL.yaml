@@ -6478,3 +6478,78 @@ audit_trail:
     - DOC-A-VULKAN_SUBSTRATE_V2 -> LOCKED (PATCH 1.0.3 -> 1.0.4 at C6; section 2.3 + section 6.3 unfenced to current truth, section 8 OQ-V1/OQ-V3 CLOSED)
     - DOC-D-EQ_A4_RENDER_TAIL_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
     - DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT -> EXECUTED (enrolled)
+- id: EVT-2026-07-19-W1_SDK_UNLOCK
+  date: 2026-07-19
+  event: W1_SDK_UNLOCK cascade execution (Wave 1 of the vanilla-separation program, SDK surface unlock) -- BD-1 SDK system contract (ISimulationSystem + capability-scoped ISystemContext) + BD-2 unified factory registration landed in reference-free Contracts + engine adapter; proven by a Contracts-only example mod through register -> tick -> D2 fault/quarantine -> dispose -> ALC unload; the empirical BD-1 gap-proof fixture leak killed; F5 code-truth correction recorded (F-54)
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-CONTRACTS_V2
+  - DOC-A-ECS_V2
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-C-ROADMAP
+  - DOC-D-W1_SDK_UNLOCK_BRIEF
+  - DOC-E-W1_SDK_SURFACE_RECON_REPORT
+  - DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT
+  commits:
+    range: d3edbdb..(the C7 closure-append commit following dce18d6 carries this entry)
+    key_commits:
+    - hash: d3edbdb
+      summary: C1 governance(w1) - enroll recon report + brief; REGISTER 361 -> 363
+    - hash: '6449306'
+      summary: C2 feat(sdk) - Contracts SDK surface (ISimulationSystem/ISystemContext/ISystemServices + Sdk handle structs + IWriteBatchCapability) + IPathfindingService relocation + Contracts->Application IVT
+    - hash: 2dea4fa
+      summary: C3 feat(sdk) - SystemAdapter<T> + SystemContextView + unified ModRegistry factory path + widened RegisterSystem + GameBootstrap re-registration + SystemBase attribute hooks; deferred marker census 86 -> 88
+    - hash: 4d86d2d
+      summary: C4 feat(mods) - Mod.Example SDK content (component/system/event, Contracts-only) + Fixture.RegularMod_ReplacesCombat retargeted off Core (leak dead) + reference ratchet
+    - hash: 4264d6f
+      summary: C5 test(sdk) - 7 SDK context behavioural proofs (freshness/access-forms/factory/capability/fault-parity)
+    - hash: dce18d6
+      summary: C6 governance(w1) - CONTRACTS/ECS/MOD_OS MINOR + plan W1 DONE / BD-1/BD-2 RESOLVED / BD-6 criterion + ROADMAP W1 DONE + F-54
+  governance_impact: >
+    Wave 1 of VANILLA_SEPARATION_MIGRATION_PLAN -- the SDK surface unlock. MANAGED-ONLY (zero native).
+    Lands the ratified BD-1 (public ISimulationSystem + capability-scoped ISystemContext in reference-free
+    Contracts: component access over the measured span/batch/try-has-get/intern/composite union via
+    forge-proof opaque-object handles, Publish/Subscribe via the live capability gate, SimTick; NO
+    fields/managed-store/services on the day-one context per the N17 audience-driven deferral) + BD-2
+    (RegisterSystem<T>(Func<ISystemServices,T>) + parameterless convenience; core + mod construction
+    unified through ModRegistry so the hand-instantiation bifurcation is dead; the mod-facing IModApi
+    factory overload deferred so ContractsVersion is unchanged). The engine-internal SystemAdapter<T>
+    (in Application, NOT Core -- the context view needs RestrictedModApi + Core.Interop's IVT, reachable
+    only from Application) wraps ISimulationSystem onto the executor by BEING a SystemBase, inheriting the
+    scheduler's D2 fault catch for free (mod-origin faulted Tick -> RouteFault -> ModQuarantine, contained;
+    core-origin -> rethrow). The four scheduler/graph attribute read-sites route through new
+    SystemBase.AccessDeclaration/TickRateDeclaration hooks so the generic adapter is transparent to the
+    executor's reflection (a [TickRate] placeholder satisfies DFK013 K-L13, read by nobody at runtime).
+    IPathfindingService relocated AI -> Contracts (B-3 SDK sufficiency; its only types GridVector + BCL
+    were already Contracts-safe). Proven by Mod.Example authored Contracts-only (real component + system +
+    event) through the FULL lifecycle (register-via-adapter -> tick with all access forms -> deliberate D2
+    fault + quarantine -> dispose -> collectible ALC unload) + the retargeted ReplacesCombat fixture (the
+    recon's named empirical BD-1 gap proof, now Core-free -- the leak is dead; the _Alt sibling was ALREADY
+    Contracts-only, a recon correction). Code-truth corrections recorded: F5's allowedBuses router/validator
+    was DELETED at K8.3+K8.4 (events route through the live RestrictedModApi manifest-capability gate instead
+    -- ROADMAP F-54; _allowedBuses stays captured-but-unread, W2/BD-3 decides its fate); SystemExecutionContext
+    seed is 8 fields, not the recon's 7. Gates at closure: build 0W/0E both configs; full-sln 1205 -> 1213
+    pass / 0 / 5 (C4 +1 reference ratchet, C5 +7 SDK context); native selftest 104 both configs UNCHANGED
+    (native untouched, git-diff df1541d..HEAD -- native/ empty); validate --armed exit 0 after every
+    frontmatter-touching commit (C1, C6, C7). Census: Console.WriteLine src 2=2, DFK-WAIVER src 2=2,
+    BoundaryRatchet 4+1 UNMOVED (the fixture's Core edge is a test-fixture edge, uncounted); marker family
+    "deferred" 86 -> 88 sites / 52 -> 54 files (the two C2 SDK-doc sites; pin updated + census-delta recorded
+    at C3); all other marker families UNMOVED; ContractsVersion.Current unchanged; no KERNEL / K-L change.
+    REGISTER 361 -> 364 (+3: recon report + brief at C1, closure report at C7). Doc bumps: CONTRACTS
+    1.0.1 -> 1.1.0, ECS 1.0.1 -> 1.1.0, MOD_OS 1.0.2 -> 1.1.0 (all MINOR, stay LOCKED; last_modified_commit
+    dropped -- real-hashes-only, pre-commit hash unknowable, EQ_A4 precedent); plan 1.1.0 -> 1.2.0 (Live;
+    W1 DONE, BD-1/BD-2 RESOLVED, BD-6 operational criterion recorded); ROADMAP Live (W1 DONE + F-54).
+    SystemBase + SystemAdapter are a recorded bridge retiring at W5 (GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
+    section 4 deletion trigger). No push (executor); operator pushes claude/w1-sdk-unlock + merges. W1 DONE;
+    next W2 (bus/capability taxonomy, BD-3/BD-10).
+  cross_references:
+    capa_entries: []
+    risks: []
+    lifecycle_transitions:
+    - DOC-A-CONTRACTS_V2 -> LOCKED (MINOR 1.0.1 -> 1.1.0 at C6; section 4.1 W1 SDK system-authoring surface)
+    - DOC-A-ECS_V2 -> LOCKED (MINOR 1.0.1 -> 1.1.0 at C6; section 7.1 SDK contract + SystemBase/adapter bridge)
+    - DOC-A-MOD_OS_ARCHITECTURE -> LOCKED (MINOR 1.0.2 -> 1.1.0 at C6; section 4.1 factory-registration law)
+    - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN -> Live (MINOR 1.1.0 -> 1.2.0 at C6; W1 DONE, BD-1/BD-2 RESOLVED, BD-6 criterion)
+    - DOC-D-W1_SDK_UNLOCK_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
+    - DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT -> EXECUTED (enrolled)

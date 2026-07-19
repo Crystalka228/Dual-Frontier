@@ -4,6 +4,7 @@ using System.Reflection;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Application.Modding;
@@ -48,6 +49,13 @@ internal sealed class ModRegistry : IManagedStorageResolver
     // (per S3-Q1 L3 layering).
     private readonly Dictionary<string, ModSubScheduler> _modSubSchedulers = new();
 
+    // W1 BD-2 — the unified factory path resolves construction-time services
+    // (day-one: pathfinding); the SimTick source is stamped onto SDK adapters so
+    // an ISimulationSystem can read ISystemContext.CurrentTick. The tick source
+    // defaults to zero until SetTickSource (tests, core-only builds).
+    private ISystemServices? _systemServices;
+    private Func<long> _tickSource = static () => 0L;
+
     /// <summary>
     /// Sets the list of core systems once at start-up. Subsequent calls
     /// overwrite the core list but leave mod systems untouched — this
@@ -67,6 +75,58 @@ internal sealed class ModRegistry : IManagedStorageResolver
             _coreSystems.Add(new SystemRegistration(system, SystemOrigin.Core, ModId: null));
         }
     }
+
+    /// <summary>
+    /// W1 BD-2 — supplies the construction-time service surface the factory
+    /// registration path passes to system factories. Set once at bootstrap.
+    /// </summary>
+    internal void SetSystemServices(ISystemServices services)
+        => _systemServices = services ?? throw new ArgumentNullException(nameof(services));
+
+    /// <summary>
+    /// W1 BD-1 — supplies the SimTick accessor stamped onto SDK adapters so an
+    /// <c>ISimulationSystem</c> reads <c>ISystemContext.CurrentTick</c>.
+    /// </summary>
+    internal void SetTickSource(Func<long> tickSource)
+        => _tickSource = tickSource ?? throw new ArgumentNullException(nameof(tickSource));
+
+    /// <summary>
+    /// W1 BD-2 — the unified registration path. Constructs a CORE system through
+    /// <paramref name="factory"/> (resolving construction-time services), so core
+    /// and mod construction share ONE mechanism and the hand-instantiation
+    /// bifurcation dies. The parameterless overload is the convenience form.
+    /// </summary>
+    public void RegisterSystem<T>(Func<ISystemServices, T> factory) where T : class
+    {
+        if (factory is null) throw new ArgumentNullException(nameof(factory));
+        T instance = factory(RequireSystemServices());
+        SystemBase asBase = instance as SystemBase
+            ?? throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] The core factory produced '{instance.GetType().FullName}', " +
+                "which is not a SystemBase. Core ISimulationSystem registration is a later-wave capability.");
+        _coreSystems.Add(new SystemRegistration(asBase, SystemOrigin.Core, ModId: null));
+    }
+
+    /// <summary>Parameterless convenience overload of the factory path.</summary>
+    public void RegisterSystem<T>() where T : class, new()
+        => RegisterSystem<T>(static _ => new T());
+
+    /// <summary>
+    /// Returns the core system instances in registration order — for the bootstrap
+    /// to feed the dependency graph and native scheduler interop after factory
+    /// registration.
+    /// </summary>
+    public IReadOnlyList<SystemBase> GetCoreSystemInstances()
+    {
+        var list = new List<SystemBase>(_coreSystems.Count);
+        foreach (SystemRegistration reg in _coreSystems)
+            list.Add(reg.Instance);
+        return list;
+    }
+
+    private ISystemServices RequireSystemServices()
+        => _systemServices ?? throw new InvalidOperationException(
+            "RegisterSystem<T>(factory) requires ISystemServices — call SetSystemServices first.");
 
     /// <summary>
     /// Registers a component type as belonging to the given mod. Throws
@@ -105,12 +165,17 @@ internal sealed class ModRegistry : IManagedStorageResolver
         if (modId is null) throw new ArgumentNullException(nameof(modId));
         if (systemType is null) throw new ArgumentNullException(nameof(systemType));
 
-        if (!typeof(SystemBase).IsAssignableFrom(systemType))
+        // W1 BD-1 — accept the SDK contract (ISimulationSystem) alongside the
+        // SystemBase bridge. SystemBase authoring is the transitional path,
+        // retiring at W5; ISimulationSystem is the durable SDK surface.
+        bool isSystemBase = typeof(SystemBase).IsAssignableFrom(systemType);
+        bool isContract = typeof(ISimulationSystem).IsAssignableFrom(systemType);
+        if (!isSystemBase && !isContract)
         {
             throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] Type '{systemType.FullName}' " +
-                "does not derive from SystemBase. " +
-                "Use 'public sealed class MySystem : SystemBase' for mod systems.");
+                "does not derive from SystemBase and does not implement ISimulationSystem. " +
+                "Use 'public sealed class MySystem : ISimulationSystem' for SDK mod systems.");
         }
 
         SystemAccessAttribute? access =
@@ -133,8 +198,16 @@ internal sealed class ModRegistry : IManagedStorageResolver
                 "Add: [TickRate(TickRates.NORMAL)] or another TickRates.* constant.");
         }
 
-        SystemBase instance = CreateSystemInstance(systemType);
+        SystemBase instance = isSystemBase
+            ? CreateSystemInstance(systemType)
+            : CreateContractAdapter(modId, systemType);
         _modSystems.Add(new SystemRegistration(instance, SystemOrigin.Mod, modId));
+        // W1-fix (Codex review) — track the (possibly adapter-wrapped) system in the mod's
+        // sub-scheduler so the unload chain's RemoveSubScheduler.Teardown disposes it, firing
+        // SystemBase.Dispose -> OnDispose (and, for an adapter, ISimulationSystem.OnDispose).
+        // Previously the sub-scheduler was populated only in tests, so no mod system's dispose
+        // hook fired on unload.
+        GetOrCreateSubScheduler(modId).AddSystem(instance);
     }
 
     /// <summary>
@@ -278,6 +351,48 @@ internal sealed class ModRegistry : IManagedStorageResolver
         return _restrictedModApis.TryGetValue(modId, out RestrictedModApi? api)
             ? api.GetManagedStore<T>()
             : null;
+    }
+
+    /// <summary>
+    /// W1 — the owning mod's <see cref="RestrictedModApi"/> for a mod id, used by
+    /// <see cref="SystemContextView"/> to route an SDK system's gated
+    /// Publish/Subscribe through the existing capability gate. Null if unknown.
+    /// </summary>
+    internal RestrictedModApi? GetModApi(string modId)
+        => modId is not null && _restrictedModApis.TryGetValue(modId, out RestrictedModApi? api)
+            ? api
+            : null;
+
+    /// <summary>
+    /// W1 BD-1 — constructs an SDK <see cref="ISimulationSystem"/> (parameterless)
+    /// and wraps it in a distinct <c>SystemAdapter&lt;systemType&gt;</c> so the
+    /// executor's type-keyed logic stays correct. Reflection is acceptable here —
+    /// registration is cold (menu-thread, simulation stopped).
+    /// </summary>
+    private SystemBase CreateContractAdapter(string modId, Type systemType)
+    {
+        object? sim;
+        try
+        {
+            sim = Activator.CreateInstance(systemType);
+        }
+        catch (MissingMethodException ex)
+        {
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
+                "requires a public parameterless constructor.",
+                ex);
+        }
+
+        if (sim is not ISimulationSystem)
+        {
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] Activator.CreateInstance('{systemType.FullName}') " +
+                "returned null or a non-ISimulationSystem instance.");
+        }
+
+        Type adapterType = typeof(SystemAdapter<>).MakeGenericType(systemType);
+        return (SystemBase)Activator.CreateInstance(adapterType, sim, this, modId, _tickSource)!;
     }
 
     private static SystemBase CreateSystemInstance(Type systemType)

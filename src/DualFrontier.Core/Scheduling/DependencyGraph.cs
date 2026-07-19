@@ -49,8 +49,9 @@ internal sealed class DependencyGraph
                     $"duplicate system: {systemType.FullName}");
         }
 
-        SystemAccessAttribute? access =
-            systemType.GetCustomAttribute<SystemAccessAttribute>(inherit: false);
+        // Via the SystemBase hook so a wrapped SDK system (SystemAdapter<T>)
+        // forwards its inner [SystemAccess] (W1 BD-1).
+        SystemAccessAttribute? access = system.AccessDeclaration;
         if (access is null)
         {
             throw new InvalidOperationException(
@@ -80,8 +81,7 @@ internal sealed class DependencyGraph
         var writes = new Dictionary<SystemBase, HashSet<Type>>(_systems.Count);
         foreach (SystemBase system in _systems)
         {
-            SystemAccessAttribute access = system.GetType()
-                .GetCustomAttribute<SystemAccessAttribute>(inherit: false)!;
+            SystemAccessAttribute access = system.AccessDeclaration!;
 
             var readSet = new HashSet<Type>();
             foreach (Type t in access.Reads)
