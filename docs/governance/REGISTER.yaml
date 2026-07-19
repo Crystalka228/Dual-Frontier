@@ -3371,6 +3371,19 @@ documents:
   content_language: en
   next_review_due: 
   title: W1_SDK_UNLOCK execution brief (Wave 1 of the vanilla-separation program -- ISimulationSystem + ISystemContext + unified factory registration under ratified BD-1/BD-2, with the Contracts-only example-mod lifecycle proof as the wave gate)
+- register_id: DOC-D-W2_BUS_CAPABILITY_BRIEF
+  path: tools/briefs/W2_BUS_CAPABILITY_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-19
+  last_modified: 2026-07-19
+  content_language: en
+  next_review_due: 
+  title: W2_BUS_CAPABILITY execution brief (Wave 2 -- genre-taxonomy death in the engine contract + generic managed router + capability ledger, under ratified BD-3/BD-10/F-54-retire; sovereign native switch explicitly fenced)
 - register_id: DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION
   path: docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md
   project: Dual Frontier
@@ -4803,6 +4816,21 @@ documents:
   review_cadence: none-historical-record
   title: 'W1_SDK_UNLOCK closure report -- Wave 1 of the vanilla-separation program: the ratified BD-1 SDK system contract (ISimulationSystem + capability-scoped ISystemContext) + BD-2 unified factory registration landed in Contracts, engine adapter wired, proven by a Contracts-only example mod through the full register->tick->D2-fault->dispose->ALC-unload lifecycle, with the empirical BD-1 gap-proof fixture leak killed; F5 code-truth correction recorded (events route through the live manifest-capability gate)'
   special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W1_SDK_UNLOCK cascade evidence per the brief section 7 closure schema. Historical record, no review cadence.'
+- register_id: DOC-E-W2_BUS_CAPABILITY_RECON_REPORT
+  path: docs/reports/W2_BUS_CAPABILITY_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-07-19
+  last_modified: 2026-07-19
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'W2 BUS/CAPABILITY RECON REPORT — 2026-07-19 (R1–R5) — bus/capability/native-channel plumbing measurement at HEAD b2805ea for BD-3/BD-10/F-54 chartering: TWO parallel bus systems (5 managed genre buses keyed by System.Type, authoritative production dispatch; native 3-tier bus keyed by FNV1a32(FQN), DORMANT UseNativeBusForDispatch=false — corroborated EVENT_BUS §4/§5-FENCED + TCM row 9); native channels REGISTERED not FIXED (only 3 tiers fixed, channels auto-created per type_id); 15 df_bus_* exports, no "create channel"; ~30 BD-3 coupling points; KernelCapabilityRegistry 12-pattern kernel.* grammar over Contracts/Components/Events; census = 0 on-disk manifest entries / 4 inline / EXACTLY 208 implicit tokens (42 IEvent×4 + 40 component) 100% genre-FQN (BD-10 root); 0 events carry [EventTier] so Fast/Background tiers have zero shipped producer; genre-bus consumer closure = ModBusRouter reflective SHAPE + per-FQN SDK gate (bus resolved AFTER gate); _allowedBuses CONFIRMED DEAD (1 write/0 reads, wired to dead end); ISOLATION 178–183 orphaned (doc SUPERSEDED); bus-scoping unenforced at BOTH build (CONTRACTS §6) and runtime; decision-inputs + anomalies A1–A13; extends DOC-E-W1_SDK_SURFACE_RECON_REPORT R4; kickoff↔law conflict = stale ISOLATION pin only'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-W1_SDK_SURFACE_RECON_REPORT, DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT, DOC-E-EQ_A_SHUTDOWN_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT). Wave-2 pre-deliberation bus/capability/native-channel plumbing measurement — the empirical basis for the BD-3 (generic event routing) + BD-10 (kernel.* reframing) chartering deliberation and the F-54 fork (revive vs retire _allowedBuses). Produced read-only at HEAD b2805ea (post-W1 merge, PR #47). Load-bearing chains re-verified first-hand at this HEAD; broader inventory measured via a read-only recon sweep. UNTRACKED at authoring — enrolled at the next cascade C1.'
 - register_id: DOC-F-ASSETS-SCENES
   path: assets/scenes/README.md
   project: Dual Frontier
