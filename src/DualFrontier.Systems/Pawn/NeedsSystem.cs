@@ -23,8 +23,7 @@ namespace DualFrontier.Systems.Pawn
     /// </summary>
     [SystemAccess(
         reads:  new Type[0],
-        writes: new[] { typeof(NeedsComponent) },
-        bus:    nameof(IGameServices.Pawns)
+        writes: new[] { typeof(NeedsComponent) }
     )]
     [TickRate(TickRates.SLOW)]
     public sealed class NeedsSystem : SystemBase

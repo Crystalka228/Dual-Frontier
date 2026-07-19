@@ -174,7 +174,7 @@ public sealed class SchedulerFaultDispatchTests : IDisposable
     public struct EmitMarker : IComponent { }
     public struct ListenMarker : IComponent { }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(FaultMarker) }, bus: "Pawns")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(FaultMarker) })]
     internal sealed class FaultingSystem : SystemBase
     {
         public int Runs;
@@ -186,7 +186,7 @@ public sealed class SchedulerFaultDispatchTests : IDisposable
         }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(NormalMarker) }, bus: "Pawns")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(NormalMarker) })]
     internal sealed class CountingSystem : SystemBase
     {
         public int Runs;
@@ -197,13 +197,13 @@ public sealed class SchedulerFaultDispatchTests : IDisposable
     [Deferred]
     internal sealed record ProbeEvent : IEvent;
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(EmitMarker) }, bus: "Pawns")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(EmitMarker) })]
     internal sealed class ProbeEmitterSystem : SystemBase
     {
         public override void Update(float delta) => Services.Pawns.Publish(new ProbeEvent());
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ListenMarker) }, bus: "Pawns")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(ListenMarker) })]
     internal sealed class ProbeListenerSystem : SystemBase
     {
         public int Received;

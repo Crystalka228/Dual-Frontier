@@ -22,8 +22,7 @@ namespace DualFrontier.Systems.Combat;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(DamageIntent) },
-    writes: new[] { typeof(DamageEvent) },
-    buses:  new[] { nameof(IGameServices.Combat), nameof(IGameServices.Magic) }
+    writes: new[] { typeof(DamageEvent) }
 )]
 [TickRate(TickRates.NORMAL)]
 [BridgeImplementation(Phase = 5, Replaceable = true)]

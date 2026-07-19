@@ -185,7 +185,7 @@ internal sealed class ModRegistry : IManagedStorageResolver
             throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
                 "has no [SystemAccess] attribute. " +
-                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)}, bus: nameof(IGameServices.X))]");
+                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)})]");
         }
 
         TickRateAttribute? tickRate =

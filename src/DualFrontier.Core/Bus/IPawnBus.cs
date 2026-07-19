@@ -1,6 +1,7 @@
 using System;
+using DualFrontier.Contracts.Bus;
 
-namespace DualFrontier.Contracts.Bus;
+namespace DualFrontier.Core.Bus;
 
 /// <summary>
 /// Pawn-domain bus. Events: mood break, death reaction, skill gain.

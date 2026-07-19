@@ -160,43 +160,43 @@ public sealed class DependencyGraphTests
 
     // ── Test systems ────────────────────────────────────────────────────────
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CompA) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CompA) })]
     internal sealed class WriterASystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new[] { typeof(CompA) }, writes: new[] { typeof(CompB) }, bus: "TestBus")]
+    [SystemAccess(reads: new[] { typeof(CompA) }, writes: new[] { typeof(CompB) })]
     internal sealed class ReadAWriteBSystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new[] { typeof(CompB) }, writes: new Type[0], bus: "TestBus")]
+    [SystemAccess(reads: new[] { typeof(CompB) }, writes: new Type[0])]
     internal sealed class ReaderBSystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CompC) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CompC) })]
     internal sealed class WriterCSystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CompA) }, bus: "TestBus")]
+    [SystemAccess(reads: new Type[0], writes: new[] { typeof(CompA) })]
     internal sealed class WriterAConflictSystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new[] { typeof(CompB) }, writes: new[] { typeof(CompA) }, bus: "TestBus")]
+    [SystemAccess(reads: new[] { typeof(CompB) }, writes: new[] { typeof(CompA) })]
     internal sealed class CycleASystem : SystemBase
     {
         public override void Update(float delta) { }
     }
 
-    [SystemAccess(reads: new[] { typeof(CompA) }, writes: new[] { typeof(CompB) }, bus: "TestBus")]
+    [SystemAccess(reads: new[] { typeof(CompA) }, writes: new[] { typeof(CompB) })]
     internal sealed class CycleBSystem : SystemBase
     {
         public override void Update(float delta) { }

@@ -5,6 +5,7 @@ using System.Threading;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
 using DualFrontier.Core.Scheduling;

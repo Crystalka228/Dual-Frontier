@@ -14,8 +14,7 @@ namespace DualFrontier.Systems.Faction;
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
-    writes: new Type[0],
-    bus:    nameof(IGameServices.World)
+    writes: new Type[0]
 )]
 [TickRate(TickRates.RARE)]
 [BridgeImplementation(Phase = 7)]

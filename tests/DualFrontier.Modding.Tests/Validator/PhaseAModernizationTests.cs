@@ -22,9 +22,9 @@ public sealed class PhaseAModernizationTests
     public void V1Manifest_WithCompatibleRequiresContractsVersion_NoError()
     {
         // ApiVersion = null marks the manifest as v1; RequiresContractsVersion
-        // matches the current Contracts (1.0.0) so the legacy compat check
+        // matches the current Contracts (2.0.0) so the legacy compat check
         // passes and Phase A produces no error.
-        LoadedMod mod = MakeV1Mod("com.example.v1ok", "1.0.0");
+        LoadedMod mod = MakeV1Mod("com.example.v1ok", "2.0.0");
 
         ValidationReport report = new ContractValidator().Validate(
             new[] { mod }, Array.Empty<SystemBase>());
@@ -36,11 +36,11 @@ public sealed class PhaseAModernizationTests
     [Fact]
     public void V1Manifest_WithIncompatibleRequiresContractsVersion_ProducesIncompatibleContractsVersionError()
     {
-        // ApiVersion = null → legacy path. Required 2.0.0 vs current 1.0.0
+        // ApiVersion = null → legacy path. Required 1.0.0 vs current 2.0.0
         // — major mismatch; legacy path must surface the historical
         // IncompatibleContractsVersion kind so v1 callers and tests
         // continue to observe the same behavior.
-        LoadedMod mod = MakeV1Mod("com.example.v1bad", "2.0.0");
+        LoadedMod mod = MakeV1Mod("com.example.v1bad", "1.0.0");
 
         ValidationReport report = new ContractValidator().Validate(
             new[] { mod }, Array.Empty<SystemBase>());
@@ -54,10 +54,10 @@ public sealed class PhaseAModernizationTests
     [Fact]
     public void V2Manifest_WithCompatibleApiVersion_NoError()
     {
-        // ApiVersion = ^1.0.0 — caret accepts 1.0.0 → no error.
+        // ApiVersion = ^2.0.0 — caret accepts 2.0.0 → no error.
         LoadedMod mod = MakeV2Mod(
             "com.example.v2ok",
-            VersionConstraint.Parse("^1.0.0"));
+            VersionConstraint.Parse("^2.0.0"));
 
         ValidationReport report = new ContractValidator().Validate(
             new[] { mod }, Array.Empty<SystemBase>());
@@ -91,18 +91,17 @@ public sealed class PhaseAModernizationTests
     public void V2Manifest_WithCaretAcceptsCompatibleMinorBump_NoError()
     {
         // Caret accepts higher minor/patch within same major. Current is
-        // pinned at 1.0.0 so we cannot test against 1.5.3 directly here,
-        // but we can test the satisfaction at the constraint level:
-        // ^1.0.0 must be satisfied by 1.5.3. The validator-level test
+        // pinned at 2.0.0; the constraint-level check is major-agnostic:
+        // ^2.0.0 must be satisfied by 2.5.3. The validator-level test
         // mirrors §8.1 caret semantics on the available current.
-        VersionConstraint constraint = VersionConstraint.Parse("^1.0.0");
-        constraint.IsSatisfiedBy(new ContractsVersion(1, 5, 3))
+        VersionConstraint constraint = VersionConstraint.Parse("^2.0.0");
+        constraint.IsSatisfiedBy(new ContractsVersion(2, 5, 3))
             .Should().BeTrue("caret pins major and accepts higher minor/patch");
 
-        // Validator-level: ApiVersion=^1.0.0, current=1.0.0 → satisfied.
+        // Validator-level: ApiVersion=^2.0.0, current=2.0.0 → satisfied.
         LoadedMod mod = MakeV2Mod(
             "com.example.caret",
-            VersionConstraint.Parse("^1.0.0"));
+            VersionConstraint.Parse("^2.0.0"));
 
         ValidationReport report = new ContractValidator().Validate(
             new[] { mod }, Array.Empty<SystemBase>());
@@ -113,21 +112,21 @@ public sealed class PhaseAModernizationTests
     [Fact]
     public void V2Manifest_WithExactConstraintRequiresExactMatch()
     {
-        // Exact constraint = 1.0.0 against current = 1.0.0 → satisfied.
+        // Exact constraint = 2.0.0 against current = 2.0.0 → satisfied.
         LoadedMod ok = MakeV2Mod(
             "com.example.exactok",
-            VersionConstraint.Parse("1.0.0"));
+            VersionConstraint.Parse("2.0.0"));
 
         ValidationReport okReport = new ContractValidator().Validate(
             new[] { ok }, Array.Empty<SystemBase>());
 
-        okReport.IsValid.Should().BeTrue("exact 1.0.0 == current 1.0.0");
+        okReport.IsValid.Should().BeTrue("exact 2.0.0 == current 2.0.0");
 
-        // Exact constraint = 1.0.1 against current = 1.0.0 → NOT
+        // Exact constraint = 2.0.1 against current = 2.0.0 → NOT
         // satisfied (exact requires equality, not >=).
         LoadedMod bad = MakeV2Mod(
             "com.example.exactbad",
-            VersionConstraint.Parse("1.0.1"));
+            VersionConstraint.Parse("2.0.1"));
 
         ValidationReport badReport = new ContractValidator().Validate(
             new[] { bad }, Array.Empty<SystemBase>());

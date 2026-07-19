@@ -1,6 +1,7 @@
 using System;
+using DualFrontier.Contracts.Bus;
 
-namespace DualFrontier.Contracts.Bus;
+namespace DualFrontier.Core.Bus;
 
 /// <summary>
 /// Combat-domain bus. Events: shoot attempt, damage dealt, death, status

@@ -27,8 +27,7 @@ namespace DualFrontier.Systems.Pawn;
         typeof(JobComponent),
         typeof(PositionComponent),
     },
-    writes: new[] { typeof(BedComponent) },
-    bus:    nameof(IGameServices.Pawns)
+    writes: new[] { typeof(BedComponent) }
 )]
 [TickRate(TickRates.NORMAL)]
 public sealed class SleepSystem : SystemBase

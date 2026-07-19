@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
-using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Core.Bus;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Interop;
 

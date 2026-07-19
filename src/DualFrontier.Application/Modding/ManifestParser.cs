@@ -63,7 +63,7 @@ internal static class ManifestParser
             string version = ReadRequiredString(root, "version", sourcePath);
 
             string author = ReadOptionalString(root, "author", "", sourcePath);
-            string requiresVersion = ReadOptionalString(root, "requiresContractsVersion", "1.0.0", sourcePath);
+            string requiresVersion = ReadOptionalString(root, "requiresContractsVersion", "2.0.0", sourcePath);
             string entryAssembly = ReadOptionalString(root, "entryAssembly", "", sourcePath);
             string entryType = ReadOptionalString(root, "entryType", "", sourcePath);
 

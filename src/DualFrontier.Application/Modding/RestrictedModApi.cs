@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
 // IManagedStore + ManagedStore<T> live in DualFrontier.Contracts.Modding

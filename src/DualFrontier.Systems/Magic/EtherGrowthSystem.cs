@@ -15,8 +15,7 @@ namespace DualFrontier.Systems.Magic;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(EtherComponent) },
-    writes: new[] { typeof(EtherComponent) },
-    bus:    nameof(IGameServices.Magic)
+    writes: new[] { typeof(EtherComponent) }
 )]
 [TickRate(TickRates.SLOW)]
 [BridgeImplementation(Phase = 6)]

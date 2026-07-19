@@ -21,8 +21,7 @@ namespace DualFrontier.Systems.Magic;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(ManaLeaseOpenRequest) },
-    writes: new[] { typeof(ManaComponent) },
-    bus:    nameof(IGameServices.Magic)
+    writes: new[] { typeof(ManaComponent) }
 )]
 [TickRate(TickRates.NORMAL)]
 [BridgeImplementation(Phase = 6)]

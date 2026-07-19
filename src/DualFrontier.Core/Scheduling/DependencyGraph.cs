@@ -56,7 +56,7 @@ internal sealed class DependencyGraph
         {
             throw new InvalidOperationException(
                 $"[SCHEDULER ERROR] System '{systemType.FullName}' has no [SystemAccess] attribute.{Environment.NewLine}" +
-                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)}, bus: nameof(IGameServices.X))]");
+                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)})]");
         }
 
         _systems.Add(system);

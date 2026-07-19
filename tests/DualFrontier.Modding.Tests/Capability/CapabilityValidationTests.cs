@@ -258,7 +258,7 @@ public sealed class CapabilityValidationTests
             Name = modId,
             Version = "1.0.0",
             Author = "Test",
-            RequiresContractsVersion = "1.0.0",
+            RequiresContractsVersion = "2.0.0",
             Capabilities = capabilities,
             Dependencies = dependencies ?? Array.Empty<ModDependency>(),
         };

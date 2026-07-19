@@ -16,8 +16,7 @@ namespace DualFrontier.Systems.Combat;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(PositionComponent) },
-    writes: new[] { typeof(PositionComponent) },
-    bus:    nameof(IGameServices.Combat)
+    writes: new[] { typeof(PositionComponent) }
 )]
 [TickRate(TickRates.REALTIME)]
 [BridgeImplementation(Phase = 5, Replaceable = true)]

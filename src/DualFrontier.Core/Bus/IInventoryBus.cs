@@ -1,6 +1,7 @@
 using System;
+using DualFrontier.Contracts.Bus;
 
-namespace DualFrontier.Contracts.Bus;
+namespace DualFrontier.Core.Bus;
 
 /// <summary>
 /// Inventory-domain bus. Events: ammo request/grant, item add and remove,

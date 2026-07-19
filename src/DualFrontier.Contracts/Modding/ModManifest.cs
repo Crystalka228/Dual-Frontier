@@ -76,9 +76,11 @@ public sealed class ModManifest
     /// <c>MAJOR.MINOR.PATCH</c> format. Kept for backward compatibility; v2
     /// manifests should populate <see cref="ApiVersion"/> instead. Read by
     /// <see cref="EffectiveApiVersion"/> as a fallback when
-    /// <see cref="ApiVersion"/> is <see langword="null"/>.
+    /// <see cref="ApiVersion"/> is <see langword="null"/>. The default tracks the
+    /// current contract major, so a manifest that omits a version targets the
+    /// shipped contract (W2/BD-3 bumped it 1.0.0 -> 2.0.0 alongside ContractsVersion).
     /// </summary>
-    public string RequiresContractsVersion { get; init; } = "1.0.0";
+    public string RequiresContractsVersion { get; init; } = "2.0.0";
 
     /// <summary>
     /// File name of the entry assembly inside the mod package (e.g.

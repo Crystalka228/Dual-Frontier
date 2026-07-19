@@ -20,8 +20,7 @@ namespace DualFrontier.Systems.Magic;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(GolemBondComponent), typeof(ManaComponent) },
-    writes: new[] { typeof(GolemBondComponent) },
-    bus:    nameof(IGameServices.Magic)
+    writes: new[] { typeof(GolemBondComponent) }
 )]
 [TickRate(TickRates.NORMAL)]
 [BridgeImplementation(Phase = 6)]

@@ -25,8 +25,7 @@ namespace DualFrontier.Mod.Example;
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
-    writes: new[] { typeof(ExampleComponent) },
-    bus:    nameof(IGameServices.World))]
+    writes: new[] { typeof(ExampleComponent) })]
 [TickRate(TickRates.NORMAL)]
 public sealed class ExampleSystem : ISimulationSystem
 {

@@ -16,8 +16,7 @@ namespace DualFrontier.Systems.Inventory;
 /// </summary>
 [SystemAccess(
     reads:  new[] { typeof(WorkbenchComponent), typeof(SkillsComponent) },
-    writes: new Type[0],
-    bus:    nameof(IGameServices.Inventory)
+    writes: new Type[0]
 )]
 [TickRate(TickRates.NORMAL)]
 [BridgeImplementation(Phase = 6)]

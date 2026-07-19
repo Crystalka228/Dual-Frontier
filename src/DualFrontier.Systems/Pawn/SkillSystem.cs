@@ -14,8 +14,7 @@ namespace DualFrontier.Systems.Pawn;
 /// </summary>
 [SystemAccess(
     reads:  new Type[0],
-    writes: new[] { typeof(SkillsComponent) },
-    bus:    nameof(IGameServices.Pawns)
+    writes: new[] { typeof(SkillsComponent) }
 )]
 [TickRate(TickRates.NORMAL)]
 [BridgeImplementation(Phase = 3)]

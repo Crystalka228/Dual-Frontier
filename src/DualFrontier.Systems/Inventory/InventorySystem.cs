@@ -18,8 +18,7 @@ namespace DualFrontier.Systems.Inventory
     /// </summary>
     [SystemAccess(
         reads:  new Type[0],
-        writes: new[] { typeof(StorageComponent) },
-        bus:    nameof(IGameServices.Inventory)
+        writes: new[] { typeof(StorageComponent) }
     )]
     [TickRate(TickRates.FAST)]
     public sealed class InventorySystem : SystemBase

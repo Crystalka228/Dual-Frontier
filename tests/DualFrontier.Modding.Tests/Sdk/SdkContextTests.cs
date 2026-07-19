@@ -29,7 +29,7 @@ internal struct SdkTestComponent : IComponent
 
 public sealed record SdkTestEvent(int Value) : IEvent;
 
-[SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new Type[0], writes: new Type[0])]
 [TickRate(TickRates.REALTIME)]
 public sealed class FaultingSdkSystem : ISimulationSystem
 {
@@ -38,14 +38,14 @@ public sealed class FaultingSdkSystem : ISimulationSystem
     public void OnDispose() { }
 }
 
-[SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new Type[0], writes: new Type[0])]
 [TickRate(TickRates.NORMAL)]
 public sealed class SdkStubSystemA : SystemBase
 {
     public override void Update(float delta) { }
 }
 
-[SystemAccess(reads: new Type[0], writes: new Type[0], bus: nameof(IGameServices.World))]
+[SystemAccess(reads: new Type[0], writes: new Type[0])]
 [TickRate(TickRates.NORMAL)]
 public sealed class SdkStubSystemB : SystemBase
 {

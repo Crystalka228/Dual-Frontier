@@ -12,8 +12,7 @@ namespace DualFrontier.Systems.Pawn
 {
     [SystemAccess(
         reads:  new[] { typeof(NeedsComponent) },
-        writes: new[] { typeof(MindComponent) },
-        bus:    nameof(IGameServices.Pawns)
+        writes: new[] { typeof(MindComponent) }
     )]
     [TickRate(TickRates.SLOW)]
     public sealed class MoodSystem : SystemBase
