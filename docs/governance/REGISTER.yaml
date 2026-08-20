@@ -3389,7 +3389,7 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Crystalka
   version: 1.0
   first_authored: 2026-07-19
@@ -15704,3 +15704,52 @@ audit_trail:
     - DOC-C-ROADMAP -> Live (W2 row DONE; F-54 CLOSED; F-55/F-56 progress notes; F-57 seeded)
     - DOC-D-W2_BUS_CAPABILITY_BRIEF -> EXECUTED (Draft at C1 -> EXECUTED at closure)
     - DOC-E-W2_BUS_CAPABILITY_CLOSURE_REPORT -> EXECUTED (enrolled)
+- id: EVT-2026-08-20-W3_WEATHER_SLICE
+  date: 2026-08-20
+  event: W3_WEATHER_SLICE cascade execution (Wave 3 of the vanilla-separation program, walking vertical slice) -- Weather ships end-to-end as a mod PAIR written fresh (shared contracts vendor + regular mechanic); SDK gaps G1 entity lifecycle + G2 presentation closed by four additive ISystemContext members (ContractsVersion 2.0.0 -> 2.1.0 MINOR, ZERO native change); G4 Phase-C shared-provider satisfiability closed; the owner ledger goes LIVE in both Apply passes with RemoveOwner symmetry; the two src/ Weather stubs deleted build-green. The wave gate found and fixed THREE pre-existing engine defects and ledgered G3. MANAGED-ONLY
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-A-CONTRACTS_V2
+  - DOC-A-ECS_V2
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-A-MODDING_V2
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-C-ROADMAP
+  - DOC-D-W3_WEATHER_SLICE_BRIEF
+  commits:
+    range: fad66c8..(the C9 closure commit following 1c3b8de carries this entry)
+    key_commits:
+    - hash: fad66c8
+      summary: C1 governance(w3) - W3 brief enrolled (DOC-D, category D tier 3 Draft)
+    - hash: 3557f81
+      summary: C2 feat(sdk) - ISystemContext entity lifecycle (CreateEntity/DestroyEntity/IsEntityAlive); ContractsVersion 2.0.0 -> 2.1.0 MINOR; G1 closed
+    - hash: 7d7c8b8
+      summary: C3 feat(presentation) - SetAmbientTint SDK primitive + AmbientTintCommand + IPresentationSink + Launcher whole-scene modulation; G2 closed
+    - hash: 6f23418
+      summary: C4 feat(modding) - owner ledger LIVE (RegisterOwner both passes), RemoveOwner symmetry on rollback + unload, Phase C shared/ledger satisfiability arm; G4 closed
+    - hash: 9ee722a
+      summary: C5 feat(mods) - Weather mod pair (shared contracts vendor + regular mechanic), first strict-gate manifests, sln-enrolled + fixture/Launcher deployed
+    - hash: 3d525cd
+      summary: C5a fix(modding) - sync mod events published inside a system tick were silently DROPPED (nested PushContext swallowed by DeliverSync containment); F-56 CLOSED
+    - hash: 9699aa8
+      summary: C5b fix(interop,sdk) - span pair-iterators fabricated Version=1 so batched writes keyed on a span id vanished at flush; aligned on 0; F-59 seeded
+    - hash: ede3bda
+      summary: C5c fix(modding) - a regular mod depending on a shared mod could never be reloaded (both directions closed); shared mods now REUSED via TryGetLoadedShared
+    - hash: 1d8c300
+      summary: C6 test(modding) - the W3 wave gate through the REAL pipeline (10 tests) + the negative gate fixture; F-55/F-56 proofs
+    - hash: 351d623
+      summary: C7 chore(scaffolding) - delete the two src Weather stubs + doc-comment/README mentions; build-green-as-inertness-proof
+    - hash: 1c3b8de
+      summary: C8 docs(w3) - CONTRACTS 2.1.0 / ECS 1.2.0 / MOD_OS 1.3.0 / MODDING 1.1.0 / plan 1.4.0 amendments
+  governance_impact: >
+    Wave 3 of VANILLA_SEPARATION_MIGRATION_PLAN -- the walking vertical slice, and the first REAL mechanic the engine does not own. Weather ships as a PAIR because Phase E forces it: a regular mod may not export an IEvent (cross-ALC invisibility), so mods/DualFrontier.Mod.Weather.Contracts (kind=shared) vends WeatherKind + WeatherChangedEvent and mods/DualFrontier.Mod.Weather (kind=regular) implements the mechanic. It is the first on-disk mod to DECLARE capabilities, therefore the first to leave the v1 grace path and be strictly gated.
+
+    SDK gaps, measured then closed. G1 (no way to mint an entity) and G2 (no presentation surface) closed by four additive ISystemContext members with ContractsVersion 2.0.0 -> 2.1.0 (MINOR -- the interface is engine-implemented, so adding members is additive for every consuming mod, and ^2.0.0 pins stay satisfied). ZERO native change: all four promote primitives the engine already had. G4 (ContractValidator Phase C could not see a SHARED provider, so a mod requiring its own vendor's event was rejected outright) closed by a third satisfiability arm resolving ownership FROM THE LEDGER by equality -- never by parsing the token, because owner ids nest. G3 (a mod cannot reclaim its world state at unload) SURFACED and LEDGERED as F-58, pinned by a positive residue assertion rather than resolved.
+
+    THREE PRE-EXISTING DEFECTS, all found by the end-to-end gate and none reachable by unit doubles. (1) F-56, ledgered at W1 with its fix direction already named: RestrictedModApi.Subscribe re-pushed a captured SystemExecutionContext unconditionally, PushContext throws on nesting, and DeliverSync's correct D2 mod-fault containment swallowed the throw -- so every synchronous cross-system mod event was silently dropped. Fixed at C5a by the second option the row proposed. (2) The span pair-iterators fabricated Version=1, a version no entity carries, so the canonical read-span-then-write-batch loop wrote NOTHING (Mod.Example's increment had never mutated anything); C5b aligned them on 0 and seeded F-59, the narrowing being explicit -- the shared C10/N-22 defect is untouched and grew MORE urgent because DestroyEntity is now reachable from mod code. (3) A regular mod depending on a shared mod could never be reloaded: re-applying with the vendor threw "already loaded", without it failed dependency presence. Fixed at C5c by wiring ModLoader.TryGetLoadedShared, which existed with zero callers.
+
+    Operator ruling 2026-08-20 (in-chat), answering the C6 halt raised under brief section 13 H2: fix the defects inside W3 as dedicated commits rather than halting the wave. The third defect was found after that ruling, is the same class, and blocked a required gate item; it was announced in chat and folded in under the same authority rather than re-asked.
+
+    Gate MET: unload removes the mechanic entirely (no ticks, no events, subscription released, owner removed) with the engine healthy; reload ADOPTS the surviving singleton so world weather resumes rather than resetting. Closure gates: build Release 0W/0E; full solution 1257 passed / 0 failed / 5 skipped against a 1220/0/5 baseline (+37, every one added by this cascade); validate --armed exit 0; census pins moved twice with in-commit deltas (deferred 89 -> 90 -> 89, TODO 136/53 -> 132/51) and the seven other families UNMOVED; Console.WriteLine in src .cs 2 -> 2; DFK-WAIVER 2 -> 2. Native untouched.
+  cross_references:
+    capa_entries: []
