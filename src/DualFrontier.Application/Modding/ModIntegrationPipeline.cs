@@ -333,7 +333,17 @@ internal sealed class ModIntegrationPipeline
             string path = pathByModId[m.Id];
             try
             {
-                LoadedSharedMod loadedShared = _loader.LoadSharedMod(path, _sharedAlc);
+                // W3 defect fix (D-3) -- a shared mod already resident in the session is REUSED,
+                // not reloaded. The shared ALC is non-collectible (MOD_OS §5.1), so a shared mod
+                // never leaves once loaded; calling LoadSharedMod again throws "already loaded".
+                // Without this, a regular mod that depends on a shared vendor could never be
+                // hot-reloaded: re-applying WITH the vendor hit that throw, and re-applying
+                // WITHOUT it failed dependency presence. Both directions were closed, so
+                // `hotReload: true` was unachievable for exactly the mods the shared-mod design
+                // exists to support. ModLoader.TryGetLoadedShared was already present for this
+                // and had no caller.
+                LoadedSharedMod loadedShared =
+                    _loader.TryGetLoadedShared(m.Id) ?? _loader.LoadSharedMod(path, _sharedAlc);
                 sharedLoaded.Add(loadedShared);
 
                 // W3/D3 — owner registration goes live. A shared mod's ownership PERSISTS for
@@ -978,6 +988,14 @@ internal sealed class ModIntegrationPipeline
     /// <c>InternalsVisibleTo("DualFrontier.Modding.Tests")</c>.
     /// </summary>
     internal ModFaultHandler GetFaultHandlerForTests() => _faultHandler;
+
+    /// <summary>
+    /// W3/D3 test seam — the live capability ledger. The wave gate asserts owner-registration
+    /// SYMMETRY (registered on load, gone after a regular mod's unload or rollback, retained for
+    /// shared mods), which is otherwise invisible from outside the pipeline. Exposed through
+    /// <c>InternalsVisibleTo("DualFrontier.Modding.Tests")</c>, same as the helpers above.
+    /// </summary>
+    internal KernelCapabilityRegistry GetKernelCapabilitiesForTests() => _kernelCapabilities;
 
     /// <summary>
     /// Test seam — returns the <see cref="LoadedMod"/> currently in
