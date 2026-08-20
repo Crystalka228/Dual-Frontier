@@ -216,9 +216,11 @@ public sealed unsafe class WriteBatch<T> : IDisposable where T : unmanaged
             get
             {
                 int entityIndex = _lease.Indices[_index];
-                // Version=1 simplification — see WriteBatch.GetEnumerator
-                // remarks. Production-grade version reconstruction is K7 work.
-                return (new EntityId(entityIndex, 1), _lease.Span[_index]);
+                // Version=0 — the reconstruction every span consumer uses, and the version a
+                // never-recycled entity actually carries. W3 corrected this from 1, which no
+                // fresh entity ever has and which made batched writes keyed on it silently
+                // fail the flush-time version check. See SpanLease{T}.Pairs remarks.
+                return (new EntityId(entityIndex, 0), _lease.Span[_index]);
             }
         }
 

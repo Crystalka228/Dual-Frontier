@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 90, 55)]
+    [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
     [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -145,6 +145,11 @@ public sealed class CensusMetaTests
         // now explains that the subscriber wrapper re-pushes a context ONLY for the
         // deferred-dispatch case. Again a MECHANISM name, not a deferral marker, and
         // RestrictedModApi.cs had no prior deferred site, so the file pin moves with it.
+        // W3/D-2 fix (C5b): deferred 90->89 / 55 unchanged -- Core.Interop/SpanLease.cs loses its
+        // "deferred to K7 once a measurement shows correctness pressure" caveat, because W3 WAS
+        // that measurement: the Version=1 reconstruction it excused is now corrected. The file
+        // keeps a deferred site elsewhere, so only the site pin moves. A marker retired by the
+        // work it was waiting for.
         // W3/D3 (C4): deferred 90->89 / 55->54 -- Core/Modding/KernelCapabilityRegistry.cs loses
         // the W2 sentence deferring live per-mod owner registration, because C4 IS that wiring.
         // It was the file's only deferred site, so the file pin drops too. The marker retired by
