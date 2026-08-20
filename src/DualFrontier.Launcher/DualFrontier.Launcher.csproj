@@ -9,6 +9,14 @@
     <ProjectReference Include="..\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
   </ItemGroup>
 
+  <!-- W3/G2 — RenderCommandDispatcher is internal (S-LOCK-10 composition, no singletons),
+       so the ambient-tint dispatch arm is covered from DualFrontier.Runtime.Tests, which
+       already carries the Runtime reference and the native DLL copy this project needs.
+       Same csproj-level grant pattern DualFrontier.Application uses for its test assembly. -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="DualFrontier.Runtime.Tests" />
+  </ItemGroup>
+
   <!-- Native DLL copy step — same pattern as test projects. Required for
        GameBootstrap.CreateLoop's NativeWorld bootstrap call (df_engine_bootstrap).
        Cascade #3 γ0 fix per discovered cascade #2 omission. -->

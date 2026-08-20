@@ -36,6 +36,13 @@ internal sealed class LauncherRenderer : IRenderer, IDisposable
     private const float AssumedMapWidthTiles = 200f;
     private const float AssumedMapHeightTiles = 200f;
 
+    /// <summary>
+    /// The scene's untinted clear colour. W3/G2 modulates this and every sprite tint by the
+    /// dispatcher's ambient multiplier, so at strength 0 the frame is byte-identical to the
+    /// pre-W3 frame.
+    /// </summary>
+    private static readonly Vector4 BaseClearColor = new(0.05f, 0.10f, 0.20f, 1.0f);
+
     private readonly Runtime.Runtime _runtime;
     private readonly PresentationBridge _bridge;
     private readonly RenderCommandDispatcher _dispatcher;
@@ -140,6 +147,14 @@ internal sealed class LauncherRenderer : IRenderer, IDisposable
         }
 
         // 3. Build sprite list from SceneState и record frame.
+        //    W3/G2 — whole-scene ambient modulation. One multiplier drives BOTH the sprite
+        //    tints and the clear colour, so the tint reads as light over the whole scene
+        //    rather than a filter on the pawns alone. At strength 0 the multiplier is exactly
+        //    (1,1,1): white tint, base clear colour, frame unchanged.
+        Vector3 ambient = _dispatcher.AmbientModulation;
+        uint ambientTint = SpriteVertex.PackTintRgba(
+            (byte)(ambient.X * 255f), (byte)(ambient.Y * 255f), (byte)(ambient.Z * 255f), 255);
+
         var sprites = new List<Sprite>(_sceneState.ActivePawnCount);
         foreach (PawnSpriteEntry entry in _sceneState.EnumerateActiveSprites())
         {
@@ -150,14 +165,18 @@ internal sealed class LauncherRenderer : IRenderer, IDisposable
                     Position: entry.Position,
                     Scale: entry.Scale,
                     Rotation: 0f,
-                    TintRgba: SpriteVertex.WhiteTint)));
+                    TintRgba: ambientTint)));
         }
 
         _commandBuffer!.Reset();
         _commandBuffer.Begin(VkCommandBufferUsageFlagsPublic.OneTimeSubmit);
         _runtime.RecordSpritesFrame(
             _commandBuffer, (int)imageIndex, sprites, _runtime.Camera,
-            clearColor: new Vector4(0.05f, 0.10f, 0.20f, 1.0f));
+            clearColor: new Vector4(
+                BaseClearColor.X * ambient.X,
+                BaseClearColor.Y * ambient.Y,
+                BaseClearColor.Z * ambient.Z,
+                BaseClearColor.W));
         _commandBuffer.End();
 
         // 4. Submit + present.

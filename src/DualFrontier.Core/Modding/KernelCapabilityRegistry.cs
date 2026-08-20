@@ -23,10 +23,12 @@ namespace DualFrontier.Core.Modding;
 /// capabilities for the types it registered (<see cref="Owns"/>, consulted by the capability
 /// gate before requiring a declared token); declared capabilities gate CROSS-owner access.
 ///
-/// W2 note (mechanism, not live): <see cref="RegisterOwner"/> is exercised by tests. The
-/// per-mod scan is NOT wired into the load pipeline this wave -- vanilla mods define no types
-/// yet, so it would be a no-op; wiring it is deferred to the wave that moves gameplay types
-/// into the vanilla mods (owner-registration then has a producer).
+/// W3 note (LIVE): <see cref="RegisterOwner"/> is wired into
+/// <c>ModIntegrationPipeline.Apply</c> -- pass [1] registers each loaded shared mod's assembly,
+/// pass [2] each regular mod's own assemblies. <see cref="RemoveOwner"/> keeps the ledger
+/// symmetric on every regular-mod exit (rollback and unload). Shared registrations PERSIST for
+/// the session, mirroring the non-collectible shared ALC (MOD_OS §5.1): the types stay resolvable,
+/// so their ownership must stay recorded.
 /// </summary>
 internal sealed class KernelCapabilityRegistry
 {
@@ -36,6 +38,13 @@ internal sealed class KernelCapabilityRegistry
     // Backs Owns(), the self-access predicate. An owner never needs a declared token for a
     // type it registered here.
     private readonly Dictionary<string, HashSet<string>> _ownedByOwner =
+        new(StringComparer.Ordinal);
+
+    // Owner namespace -> the exact capability TOKENS that owner's registration added.
+    // RemoveOwner subtracts precisely this set. It is NOT re-derived by prefix matching on
+    // _capabilities: owner ids nest ("mod.a" is a string prefix of "mod.ab"), so a prefix sweep
+    // is a latent cross-owner deletion bug. Exact bookkeeping is the only safe removal.
+    private readonly Dictionary<string, HashSet<string>> _tokensByOwner =
         new(StringComparer.Ordinal);
 
     /// <summary>
@@ -79,7 +88,42 @@ internal sealed class KernelCapabilityRegistry
             ? set
             : _ownedByOwner[ownerNamespace] = new HashSet<string>(StringComparer.Ordinal);
 
-        ScanAssembly(assembly, ownerNamespace, owned);
+        HashSet<string> tokens = _tokensByOwner.TryGetValue(ownerNamespace, out HashSet<string>? tset)
+            ? tset
+            : _tokensByOwner[ownerNamespace] = new HashSet<string>(StringComparer.Ordinal);
+
+        ScanAssembly(assembly, ownerNamespace, owned, tokens);
+    }
+
+    /// <summary>
+    /// Removes every capability token and every ownership record registered under
+    /// <paramref name="ownerNamespace"/>, restoring the ledger to its pre-registration state for
+    /// that owner. Idempotent: removing an owner that never registered is a no-op.
+    ///
+    /// <para>
+    /// Subtracts exactly the token set that owner's <see cref="RegisterOwner"/> calls added --
+    /// never a prefix sweep over the flat token set, because owner ids nest and a sweep for
+    /// <c>mod.a</c> would take <c>mod.ab</c>'s tokens with it.
+    /// </para>
+    ///
+    /// <para>
+    /// Called for REGULAR mods only. A shared mod's registration persists for the session because
+    /// its assembly does too (the shared ALC is non-collectible, MOD_OS §5.1); revoking ownership
+    /// of types that are still loaded and resolvable would make the ledger lie.
+    /// </para>
+    /// </summary>
+    public void RemoveOwner(string ownerNamespace)
+    {
+        if (ownerNamespace is null) throw new ArgumentNullException(nameof(ownerNamespace));
+
+        if (_tokensByOwner.TryGetValue(ownerNamespace, out HashSet<string>? tokens))
+        {
+            foreach (string token in tokens)
+                _capabilities.Remove(token);
+            _tokensByOwner.Remove(ownerNamespace);
+        }
+
+        _ownedByOwner.Remove(ownerNamespace);
     }
 
     /// <summary>
@@ -107,7 +151,18 @@ internal sealed class KernelCapabilityRegistry
         return null;
     }
 
-    private void ScanAssembly(Assembly assembly, string owner, HashSet<string> owned)
+    /// <summary>
+    /// Records one capability token in BOTH the flat set the gate queries and the per-owner set
+    /// <see cref="RemoveOwner"/> subtracts. Keeping the two in lockstep here is what makes removal
+    /// exact -- there is no second place a token can enter the ledger.
+    /// </summary>
+    private void AddToken(HashSet<string> tokens, string token)
+    {
+        _capabilities.Add(token);
+        tokens.Add(token);
+    }
+
+    private void ScanAssembly(Assembly assembly, string owner, HashSet<string> owned, HashSet<string> tokens)
     {
         foreach (Type type in assembly.GetTypes())
         {
@@ -132,18 +187,18 @@ internal sealed class KernelCapabilityRegistry
                 switch (tier)
                 {
                     case BusTier.Fast:
-                        _capabilities.Add($"{owner}.fast.publish:{fqn}");
-                        _capabilities.Add($"{owner}.fast.subscribe:{fqn}");
+                        AddToken(tokens, $"{owner}.fast.publish:{fqn}");
+                        AddToken(tokens, $"{owner}.fast.subscribe:{fqn}");
                         break;
                     case BusTier.Normal:
-                        _capabilities.Add($"{owner}.normal.publish:{fqn}");
-                        _capabilities.Add($"{owner}.normal.subscribe:{fqn}");
-                        _capabilities.Add($"{owner}.publish:{fqn}");
-                        _capabilities.Add($"{owner}.subscribe:{fqn}");
+                        AddToken(tokens, $"{owner}.normal.publish:{fqn}");
+                        AddToken(tokens, $"{owner}.normal.subscribe:{fqn}");
+                        AddToken(tokens, $"{owner}.publish:{fqn}");
+                        AddToken(tokens, $"{owner}.subscribe:{fqn}");
                         break;
                     case BusTier.Background:
-                        _capabilities.Add($"{owner}.background.publish:{fqn}");
-                        _capabilities.Add($"{owner}.background.subscribe:{fqn}");
+                        AddToken(tokens, $"{owner}.background.publish:{fqn}");
+                        AddToken(tokens, $"{owner}.background.subscribe:{fqn}");
                         break;
                 }
 
@@ -157,8 +212,8 @@ internal sealed class KernelCapabilityRegistry
                     type.GetCustomAttribute<ModAccessibleAttribute>();
                 if (attr is not null)
                 {
-                    if (attr.Read) { _capabilities.Add($"{owner}.read:{fqn}"); registered = true; }
-                    if (attr.Write) { _capabilities.Add($"{owner}.write:{fqn}"); registered = true; }
+                    if (attr.Read) { AddToken(tokens, $"{owner}.read:{fqn}"); registered = true; }
+                    if (attr.Write) { AddToken(tokens, $"{owner}.write:{fqn}"); registered = true; }
                 }
             }
 
@@ -170,11 +225,11 @@ internal sealed class KernelCapabilityRegistry
                 switch (layerAttr.LayerType)
                 {
                     case LayerType.Intent:
-                        _capabilities.Add($"{owner}.layer.intent:{fqn}");
+                        AddToken(tokens, $"{owner}.layer.intent:{fqn}");
                         registered = true;
                         break;
                     case LayerType.CombatFeedback:
-                        _capabilities.Add($"{owner}.layer.combat_feedback:{fqn}");
+                        AddToken(tokens, $"{owner}.layer.combat_feedback:{fqn}");
                         registered = true;
                         break;
                     case LayerType.SimState:

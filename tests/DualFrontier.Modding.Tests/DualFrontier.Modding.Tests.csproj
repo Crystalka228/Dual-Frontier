@@ -37,6 +37,23 @@
     need to load each fixture into a freshly created context.
   -->
   <ItemGroup>
+    <!-- W3 (PR #49 Codex review). The Weather pair and the gate-negative fixture deploy their
+         artifacts into this project's Fixtures/ via their own AfterTargets="Build" copies. Without
+         these references a clean targeted `dotnet test tests/DualFrontier.Modding.Tests` cannot
+         produce those directories at all, and a solution-wide parallel build races test execution
+         against them. Same non-compiling form as the fixtures below. -->
+    <ProjectReference Include="..\..\mods\DualFrontier.Mod.Weather.Contracts\DualFrontier.Mod.Weather.Contracts.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\mods\DualFrontier.Mod.Weather\DualFrontier.Mod.Weather.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Fixture.WeatherGateNegative\Fixture.WeatherGateNegative.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Fixture.SharedEvents\Fixture.SharedEvents.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <Private>false</Private>

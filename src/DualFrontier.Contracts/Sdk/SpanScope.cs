@@ -101,6 +101,11 @@ public readonly ref struct SpanScope<T> where T : unmanaged
         public bool MoveNext() => ++_index < _components.Length;
 
         public (EntityId Entity, T Component) Current
-            => (new EntityId(_indices[_index], 1), _components[_index]);
+            // Version=0 — the version a never-recycled entity carries, and the same
+            // reconstruction the engine-side span consumers use. W3 corrected this from 1:
+            // an id with a version no entity has is recorded by a write batch and then
+            // silently dropped by the flush-time version check, so a mod's
+            // read-span-then-write-batch loop wrote nothing.
+            => (new EntityId(_indices[_index], 0), _components[_index]);
     }
 }

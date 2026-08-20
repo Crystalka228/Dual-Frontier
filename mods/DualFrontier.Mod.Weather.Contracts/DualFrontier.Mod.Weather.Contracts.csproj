@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- AssemblyName IS the mod id: a shared mod's manifest must leave entryAssembly EMPTY
+         (ContractValidator Phase F), so ModLoader falls back to "<id>.dll". -->
+    <AssemblyName>dualfrontier.weather.contracts</AssemblyName>
+    <RootNamespace>DualFrontier.Mod.Weather.Contracts</RootNamespace>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- Resolve DualFrontier.Contracts from the DEFAULT ALC, never a private copy, or the
+         contract types would load twice with distinct identities. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mod.manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <!-- Deploy into the Modding.Tests fixtures dir so the W3 wave gate loads this mod through
+       the REAL ModIntegrationPipeline, exactly as a player's install would. -->
+  <Target Name="DeployToTestFixtures" AfterTargets="Build">
+    <ItemGroup>
+      <FixtureFiles Include="$(TargetPath)" />
+      <FixtureFiles Include="$(MSBuildThisFileDirectory)mod.manifest.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(FixtureFiles)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\..\tests\DualFrontier.Modding.Tests\bin\$(Configuration)\$(TargetFramework)\Fixtures\$(AssemblyName)\"
+          SkipUnchangedFiles="true" />
+  </Target>
+  <!-- Deploy into the Launcher's runtime mods root so the mod menu can discover and load the
+       pair. DefaultModDiscoverer scans "<cwd>/mods/*/mod.manifest.json" and ModLoader then
+       needs the assembly beside it; the source directory holds the manifest but never the
+       build output. Output-tree only — nothing lands in the source tree. -->
+  <Target Name="DeployToLauncherMods" AfterTargets="Build">
+    <ItemGroup>
+      <LauncherModFiles Include="$(TargetPath)" />
+      <LauncherModFiles Include="$(MSBuildThisFileDirectory)mod.manifest.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LauncherModFiles)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\..\src\DualFrontier.Launcher\bin\$(Configuration)\$(TargetFramework)\mods\$(AssemblyName)\"
+          SkipUnchangedFiles="true" />
+  </Target>
+</Project>

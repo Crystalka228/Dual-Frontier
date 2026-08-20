@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.0.2
+version: 2.1.0
 first_authored: 2026-06-29
-last_modified: 2026-07-17
+last_modified: '2026-08-20'
 content_language: en
 next_review_due: 2027-06-11
 title: Development hygiene
 last_modified_commit: 27807f7
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase E — v2.0.1 → v2.0.2 PATCH: §6 .NET bullet updated to the landed stack truth (projects target net10.0; repo-root global.json added pinning SDK 10.0.204 with rollForward latestFeature per the Q1-beta operator ruling of 2026-07-17) and the «do not add global.json pinning without deliberation» prohibition replaced by the record that the deliberation occurred (EVT-2026-07-17-STACK_UPDATE). Single-bullet amendment; §1-§5/§7 untouched. Prior context: Standing-Law cascade C5 (9da4760) — full rewrite v1.0 → v2.0.0 MAJOR to post-Godot operational truth (repo map, project-set truth, verified-only build commands, tooling reality, branch/push policy, Skarlet environment, Godot status; closes F-6); DRAFTS_RATIFICATION-era PATCH v2.0.0 → v2.0.1.'
+last_review_event: 'MINOR 2.0.2 -> 2.1.0 2026-08-20 (push-policy inversion propagated from CODING_STANDARDS 3.0.0 section 8.4, per section 10.1 rule 5; operator direction 2026-08-20): section 5 branch/push policy replaced -- the executor pushes its work branch and opens a PR against main, never pushes main and never merges its own PR; ratification moves from the push to the merge. Rationale: the prior never-push rule could not hold in a remote/cloud session where an unpushed branch is lost work. Also backfilled the missing v2.0.2 change-history row (STACK_UPDATE Phase E), which had existed only in this field. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-011
@@ -187,8 +187,12 @@ powershell -NoProfile -File tools\governance\sync_register.ps1 -Validate
 
 ## §5 — Branch and push policy
 
-- **The executor NEVER pushes.** Pushes to origin are Crystalka's act, with expected auto-mode re-confirmation.
-  An execution session ends with local commits and a closure report; the push is a separate human step.
+- **The executor pushes its BRANCH and opens a PR; the architect merges** (`CODING_STANDARDS.md` §8.4, v3.0.0).
+  An execution session ends with local commits, a closure report, a pushed work branch and an open pull request
+  against `main`. The executor never pushes to `main` and never merges its own PR — the merge is Crystalka's act,
+  and it is where ratification happens. Expect an auto-mode re-confirmation on the push.
+  Superseded 2026-08-20: the previous "the executor NEVER pushes" could not hold in a remote/cloud session, where
+  an unpushed branch is lost work.
 - **Fast-forward-only merges** for linear cascades (`git merge --ff-only`).
   A cascade branch that cannot fast-forward onto `main` halts for adjudication instead of generating a merge commit.
 - **Atomic commits** per `CODING_STANDARDS.md` §8 — one conceptual change per commit, structured body, no squash, no history rewrite.
@@ -235,6 +239,16 @@ Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_A
 
 ## Change history
 
+- **v2.1.0 (2026-08-20)** — Push-policy inversion propagated from `CODING_STANDARDS.md` §8.4 v3.0.0 (§10.1 rule 5).
+  §5's "the executor NEVER pushes" replaced with "the executor pushes its BRANCH and opens a PR; the architect merges."
+  The executor still never pushes `main` and never merges its own PR — ratification moved from the push to the merge.
+  Operator direction 2026-08-20: the old rule could not hold in a remote/cloud session, where an unpushed branch is
+  lost work. **MINOR** (new rule content, not an inversion originating here). Backfill in the same commit: the
+  **v2.0.2** row below, which landed in `last_review_event` at STACK_UPDATE Phase E but was never written into this list.
+- **v2.0.2 (2026-07-17)** — STACK_UPDATE Phase E **PATCH** (backfilled 2026-08-20): §6 .NET bullet updated to the
+  landed stack truth — projects target `net10.0`, repo-root `global.json` pins SDK `10.0.204` with
+  `rollForward: latestFeature` per the Q1-beta operator ruling of 2026-07-17 — and the "do not add global" guidance
+  adjusted accordingly. See this document's `last_review_event` for the full record.
 - **v2.0.1 (2026-06-29)** — Godot Eradication Cascade (F-5 closed). §7 flipped from "tails remain, gated by F-5" to "fully eradicated": `project.godot`, `icon.svg` / `icon.svg.import`, the 11 `assets/**/*.import` + 204 `.cs.uid` sidecars deleted (build stayed green — inertness proven); the Godot-specific `.gitignore` block + `.godot/**` / `.gdignore` SCOPE_EXCLUSIONS exclusions removed. §1 repo-map `project.godot` line retired (the file is gone). PATCH per §8 (corrections within sections).
 - **v2.0.0 (2026-06-11)** — Full rewrite to post-Godot operational truth per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` §7-W3 (Standing-Law Cascade).
   v1.0's Godot-era engine/game project table, phantom `tools/build-all.sh|.ps1` wrappers, and `DualFrontier.Presentation` projects (none of which exist on disk) purged.

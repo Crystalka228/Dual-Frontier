@@ -1,0 +1,27 @@
+{
+  "manifestVersion": "3",
+  "id": "dualfrontier.weather",
+  "name": "Weather",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "description": "Deterministic world weather: transitions on a fixed cadence, announces each change, and tints the scene to match.",
+  "kind": "regular",
+  "apiVersion": "^2.0.0",
+  "entryAssembly": "DualFrontier.Mod.Weather.dll",
+  "entryType": "DualFrontier.Mod.Weather.WeatherMod",
+  "hotReload": true,
+
+  "dependencies": [
+    { "id": "dualfrontier.weather.contracts", "version": "^0.1.0" }
+  ],
+
+  "replaces": [],
+
+  "capabilities": {
+    "required": [
+      "mod.dualfrontier.weather.contracts.publish:DualFrontier.Mod.Weather.Contracts.WeatherChangedEvent",
+      "mod.dualfrontier.weather.contracts.subscribe:DualFrontier.Mod.Weather.Contracts.WeatherChangedEvent"
+    ],
+    "provided": []
+  }
+}

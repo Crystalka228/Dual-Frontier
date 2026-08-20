@@ -43,6 +43,61 @@ public interface ISystemContext
     /// </summary>
     long CurrentTick { get; }
 
+    // ---- Entity lifecycle ----
+
+    /// <summary>
+    /// Mints a live entity in the simulation world and returns its identity.
+    /// Engine-generic: the new entity carries no components until the system
+    /// attaches them (<see cref="BeginBatch{T}"/> then <c>Add</c>), and this
+    /// surface vends no notion of what the entity "is" — that is mod data.
+    ///
+    /// <para>
+    /// <b>Ids outlive the tick.</b> An <see cref="EntityId"/> MAY be held by a
+    /// mod across ticks. It is WORLD IDENTITY — a generational handle the world
+    /// resolves — not an engine reference. The freshness law above forbids
+    /// caching the CONTEXT and the engine objects reached through it; the
+    /// ECS.md §8 "no engine references across ticks" anti-pattern binds engine
+    /// OBJECT references, not identities. A held id may of course name an
+    /// entity that has since died — probe it with <see cref="IsEntityAlive"/>.
+    /// </para>
+    /// </summary>
+    EntityId CreateEntity();
+
+    /// <summary>
+    /// Destroys <paramref name="id"/>. Liveness ends at once —
+    /// <see cref="IsEntityAlive"/> reads <see langword="false"/> on the very next
+    /// call — while the entity's COMPONENT STORAGE is reclaimed later, on the
+    /// engine's native deferred-destroy flush at a tick boundary it owns. A bulk
+    /// read taken between the two may still see the dead entity's component row;
+    /// gate such reads on <see cref="IsEntityAlive"/> when it matters.
+    ///
+    /// <para>
+    /// <b>Precondition: no live borrow.</b> Release every <see cref="SpanScope{T}"/> and
+    /// <see cref="WriteScope{T}"/> before calling. The engine rejects a destroy while
+    /// the world is borrowed, so the natural-looking "iterate a span and destroy as
+    /// you go" shape does not work: read first, close the scope, then destroy. A live
+    /// SPAN is detected and reported loudly; a live write BATCH is not currently
+    /// detectable, so that case is a contract you keep, not one the engine checks.
+    /// </para>
+    ///
+    /// <para>
+    /// There is deliberately NO flush member on this surface. Flushing has
+    /// whole-world ordering consequences, and a mod able to force one could tear
+    /// component storage out from under a concurrently-running system. A mod
+    /// states the intent; the engine schedules the reclamation.
+    /// </para>
+    /// </summary>
+    void DestroyEntity(EntityId id);
+
+    /// <summary>
+    /// Liveness probe for <paramref name="id"/>. Reads <see langword="false"/>
+    /// as soon as <see cref="DestroyEntity"/> is called — liveness flips
+    /// immediately, it does not wait for the flush — and for any id whose
+    /// generation is stale, so a recycled slot never reads as the entity that
+    /// previously held it.
+    /// </summary>
+    bool IsEntityAlive(EntityId id);
+
     // ---- Component access: per-id ----
 
     /// <summary>Reads the component of type <typeparamref name="T"/> on <paramref name="id"/>, if present.</summary>
@@ -94,6 +149,36 @@ public interface ISystemContext
 
     /// <summary>Clears <paramref name="entity"/>'s list in the composite.</summary>
     bool CompositeClearFor<T>(CompositeHandle<T> composite, EntityId entity) where T : unmanaged;
+
+    // ---- Presentation ----
+
+    /// <summary>
+    /// Modulates the whole rendered scene toward the colour
+    /// (<paramref name="r"/>, <paramref name="g"/>, <paramref name="b"/>) by
+    /// <paramref name="strength"/>. Channels and strength are 0..1;
+    /// <paramref name="strength"/> 0 means no tint and restores the untinted
+    /// scene exactly.
+    ///
+    /// <para>
+    /// Engine-generic: this carries a COLOUR, not a meaning. The engine has no
+    /// idea whether the mod is painting a storm, a nightfall, or a damage flash —
+    /// that interpretation lives entirely in the mod.
+    /// </para>
+    ///
+    /// <para>
+    /// The call crosses to the renderer through the engine's presentation bridge,
+    /// so it is safe from a system Tick and from an event handler alike; it needs
+    /// no world access. If the host installed no presentation sink, the call
+    /// throws rather than silently doing nothing (K-L19 fail-fast) — a mod whose
+    /// visuals vanish without a diagnostic is the shape being prevented.
+    /// </para>
+    ///
+    /// <para>
+    /// <b>Planned</b> — the full layer/slot presentation model (BD-9) supersedes
+    /// this single primitive and ABSORBS this member; see ROADMAP.md.
+    /// </para>
+    /// </summary>
+    void SetAmbientTint(float r, float g, float b, float strength);
 
     // ---- Events ----
 

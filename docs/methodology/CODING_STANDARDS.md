@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.4
+version: 3.0.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-08-20
 content_language: en
 next_review_due: 2027-06-11
 title: Coding standards
 last_modified_commit: 673f815
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase H doc census — v2.1.3 → v2.1.4 PATCH: §1 scope bullet + §3 heading C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0); §4.2 Directory.Build.props hand-mirror net8.0 → net10.0 + LangVersion 12.0 → 14.0, and the new repo-root global.json SDK pin stated (10.0.204, rollForward latestFeature); §4.3 CPM hand-mirror rows Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit 2.9.2 → 2.9.3, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial) (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C3 (4e584b3) — full rewrite v1.0 → v2.0.0 MAJOR to code-truth…'
+last_review_event: 'MAJOR 2.1.4 -> 3.0.0 2026-08-20 (operator direction 2026-08-20, post-closure rider on the W3_WEATHER_SLICE branch): section 8.4 INVERTED -- Executor never pushes becomes Executor opens the PR; the architect merges. The executor pushes its work branch to origin and opens a PR against main at the closure boundary; pushing to main and merging its own PR remain forbidden, and ratification moves from the push to the merge. Rationale: the prior rule could not hold in a remote/cloud session where an unpushed branch is lost work, so it was noise that forced an argument rather than a safeguard; main stays untouched by an agent, human ratification is preserved, and the PR adds a per-commit review surface a local branch never had. Section 8.3 gains the consequence note that its no-rewrite prohibitions now attach routinely, so commit atomicity must be settled before the push. MAJOR per section 10.1 rule 3 (inverting an existing rule). Propagated same-commit to DEVELOPMENT_HYGIENE 2.1.0 section 5 and METHODOLOGY 1.14.3 section 4.4 per section 10.1 rule 5. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 ---
 
@@ -631,16 +631,44 @@ descriptive, not mandated.
 - **No force-push** (`--force` or `--force-with-lease`) — once a branch is
   pushed, its history is append-only.
 - **No history rewrite on pushed branches** — interactive rebase, amend, or
-  filter only on local, never-pushed commits.
+  filter only on local, never-pushed commits. Under §8.4 a work branch is pushed
+  at closure as a matter of course, so this prohibition attaches routinely:
+  settle commit boundaries before the push, and correct anything after it with a
+  further commit.
 - **No squash** — if the work is fifteen commits, fifteen commits ship; the
   reviewer's view of the reasoning is exactly the sequence as authored.
 
-### §8.4 — Executor never pushes
+### §8.4 — Executor opens the PR; the architect merges
 
-Pushes to `origin` are the **architect's** act (Crystalka). An execution session
-authors commits locally and stops at the closure boundary; the push to the
-remote is a deliberate human ratification step, never an automated tail of a
-cascade.
+At the closure boundary an execution session **pushes its work branch to
+`origin` and opens a pull request against `main`**. The executor **never pushes
+to `main`** and **never merges its own PR**. The merge is the architect's act
+(Crystalka) — that is where ratification happens.
+
+**Why this replaced "the executor never pushes" (v3.0.0).** The old rule made
+the push itself the ratification step. That was unenforceable in a remote or
+cloud session, where an unpushed branch is simply lost work — so the rule could
+not hold in a case the project actually runs, and a law that cannot hold is not
+a safeguard, it is an argument the agent has to have every time. The protective
+intent is fully preserved and strengthened:
+
+| Concern | Old rule | This rule |
+|---|---|---|
+| `main` mutated by an agent | prevented | prevented — pushing to `main` is still forbidden |
+| Human ratification of a cascade | the push | the merge |
+| Work survives a session ending | not addressed (lost in cloud sessions) | the branch is on `origin` |
+| Review surface | none — a purely local branch | the PR diff, per-commit |
+
+**Consequence — get atomicity right BEFORE pushing.** §8.3's no-force-push and
+no-history-rewrite prohibitions attach the moment a branch reaches `origin`, and
+under this rule that moment is routine rather than exceptional. A commit split
+or re-scope is therefore permitted only while the branch has never been pushed;
+after the push, a mistake is corrected by a further commit, never by rewriting.
+
+A PR that has been opened is not a claim that the work is finished to the
+architect's satisfaction — it is the handoff. Anything the executor could not
+verify itself (a live smoke, a visual check, hardware-dependent behaviour) is
+stated in the PR body as owed, not implied to be done.
 
 ## §9 — Verification Gates
 
@@ -713,6 +741,7 @@ here **before** the brief locks.
 
 | Version | Date | Change |
 |---|---|---|
+| **3.0.0** | 2026-08-20 | **§8.4 INVERTED — "Executor never pushes" → "Executor opens the PR; the architect merges."** The executor now pushes its work branch and opens a PR against `main` at the closure boundary; pushing to `main` and merging its own PR stay forbidden, and ratification moves from the push to the merge. Operator direction 2026-08-20: the old rule could not hold in a remote/cloud session, where an unpushed branch is lost work — a law that fails in a case the project actually runs is noise that forces the agent into an argument rather than a safeguard. `main` stays untouched by an agent, human ratification is preserved, and the PR adds a per-commit review surface a purely local branch never had. §8.4 also records the consequence that §8.3's no-rewrite prohibitions now attach routinely, so commit atomicity must be settled BEFORE the push. Propagated to `DEVELOPMENT_HYGIENE.md` §5 (2.1.0) and `METHODOLOGY.md` §4.4 (1.14.3) in the same commit per §10.1 rule 5. **MAJOR** per §10.1 rule 3 (inverting an existing rule). |
 | **2.1.4** | 2026-07-17 | STACK_UPDATE Phase H doc census (EVT-2026-07-17-STACK_UPDATE) — toolchain facts to the landed state: §1 scope bullet + §3 heading C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0); §4.2 props hand-mirror net8.0 → net10.0, LangVersion 12.0 → 14.0, plus the new repo-root `global.json` SDK pin stated (`10.0.204`, `rollForward: latestFeature`); §4.3 CPM hand-mirror rows Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit 2.9.2 → 2.9.3, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions id is never used again — its 8.x line is paid-commercial). Hand-mirror refresh only; no rule change. **PATCH.** |
 | **2.1.3** | 2026-07-15 | CODEX_CLOSURE cascade census-pin refresh (§5.2): `not yet` 8/7 → 10/9 — the CX-06 + CX-21 fix-comment markers landed at Codex `61f08ef` without a same-commit census-delta; recorded here + as ROADMAP F-33 (operator-ruled FOLD of the Skarlet-gate H2b). CensusMetaTests green post-refresh. **PATCH.** |
 | **2.1.2** | 2026-07-02 | A'.9.1 Phase δ rider — commit-vocabulary historical reconciliation: §8.1 historical-prefix note extended with the full pre-law observed scope-token census (16 tokens over 53 commits, all predating the 2026-06-11 codification) + the unprefixed-era note (81 subjects: 42 merges + 39 plain). Descriptive correction of the incomplete observation — no normative change; post-codification history is 100% in-vocabulary (no live violation). **PATCH.** |

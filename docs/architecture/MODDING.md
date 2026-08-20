@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: '2026-08-20'
 content_language: en
 next_review_due: 2027-Q3
 title: Writing mods (authored rework; guide, non-normative — every example passes the real v3 schema)
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: 6a67da5
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §10 quickstart external copy-paste commands, both steps, -f net8.0 → -f net10.0 (the two only stale TFM sites in this guide; solution TFM moved at EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
+last_review_event: 'MINOR 1.0.2 -> 1.1.0 2026-08-20 (W3_WEATHER_SLICE C8): NEW section 3.1 documents ISystemContext for authors (per-tick surface, W3 entity lifecycle + SetAmbientTint, hold-the-id vs do-not-hold-the-context); section 7 gains the strict-gate opt-in rule (declaring any token enforces all) and the owner-namespaced token rule with dependency-vs-capability doing different jobs; section 9 records the shipped Weather pair as the copyable reference plus the three shape mistakes (assembly name = mod id, Private=false, shared-mod session lifetime). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 ---
@@ -90,6 +90,25 @@ Two members need a current-truth correction against the old guide:
 
 `Publish`/`Subscribe` are capability-gated: `RestrictedModApi.EnforceCapability` (`RestrictedModApi.cs:230-247`) builds the token `kernel.{publish|subscribe}:{EventType.FullName}` and requires it in `capabilities.required` — *unless* the manifest's capability set is empty entirely, in which case the call is allowed with a console warning ("v1 manifests are accepted in a grace period"). Don't rely on the grace period; declare your tokens (§7).
 
+### 3.1 `ISystemContext` — what a SYSTEM may do per tick
+
+`IModApi` is what your `IMod` gets ONCE, at `Initialize`. A system you register gets something different every tick: `ISystemContext` (`src/DualFrontier.Contracts/Sdk/ISystemContext.cs`), handed to `ISimulationSystem.Initialize` / `Tick` / and available to handlers you subscribe from them. It carries `CurrentTick`, the component surface (`AcquireSpan` / `BeginBatch` / `TryGetComponent` / …), string interning, composites, `Publish`/`Subscribe`, and — since W3 — the entity lifecycle and one presentation primitive:
+
+```csharp
+EntityId CreateEntity();                 // mint an entity you own
+void     DestroyEntity(EntityId id);     // liveness ends at once; storage is reclaimed on the engine's flush
+bool     IsEntityAlive(EntityId id);     // probe before trusting a held id
+
+void     SetAmbientTint(float r, float g, float b, float strength);   // whole-scene colour, 0..1, strength 0 = untinted
+```
+
+`SetAmbientTint` is engine-generic: it carries a COLOUR, not a meaning. The engine has no idea whether you are painting a storm, a nightfall, or a damage flash. It needs no world access, so it is safe to call from an event handler as well as from `Tick`. If the host has no renderer attached, it THROWS rather than quietly doing nothing — a mod whose visuals vanish with no diagnostic is the failure being prevented.
+
+Two rules about the context itself, and they differ:
+
+- **Do NOT hold the context, or anything you reach through it, across ticks.** It is a per-tick view; a cached one survives graph rebuilds and hot-reloads that invalidate it.
+- **DO feel free to hold an `EntityId` across ticks.** An id is world IDENTITY, not an engine reference — the W3 Weather mod keeps its singleton id for the life of the world. Just probe it with `IsEntityAlive` before use, because the entity may be gone.
+
 ## 4. Allowed and forbidden actions
 
 | Action | Allowed | Reason |
@@ -159,7 +178,18 @@ Capability tokens are validated by `ManifestCapabilities.Parse` against one comp
 
 Plain terms: `<provider>.<verb>:<FullyQualifiedTypeName>`, `<provider>` is `kernel` or `mod.<lowercase-dotted-id>`, `<verb>` is `publish`/`subscribe`/`read`/`write`, a tier-prefixed `fast.`/`normal.`/`background.` + `publish`/`subscribe`, a `field.*` verb, or `pipeline.register`. `ManifestCapabilitiesTests.cs` pins the edge cases: uppercase providers reject, a bare verb with no `:FQN` rejects, `mod.` with no id segment rejects, an FQN starting with a digit rejects.
 
-A manifest with an empty (or absent) `capabilities` block bypasses the gate at runtime with a console warning, not a hard failure (`RestrictedModApi.cs:234-241`) — a grace period, not a recommendation; declare the tokens for every event type you publish or subscribe.
+A manifest with an empty (or absent) `capabilities` block bypasses the gate at runtime with a console warning, not a hard failure (`RestrictedModApi.cs`) — a grace period, not a recommendation; declare the tokens for every event type you publish or subscribe.
+
+**Declaring anything opts you into STRICT enforcement — all of it.** The grace path keys on the whole `capabilities` block being empty, so the moment you declare one token, EVERY publish and subscribe you make is checked against your declared set. Declaring `subscribe` and forgetting `publish` fails harder than declaring nothing at all. `mods/DualFrontier.Mod.Weather` is the first shipped mod in that position and is worth copying from.
+
+**Name the OWNER, not `kernel`.** The runtime token is `{owner-of-the-type}.{verb}:{FQN}`, and the owner of a type vended by a shared mod is `mod.<that-shared-mod-id>` — not `kernel`. So a mod publishing an event from its own contracts mod declares:
+
+```
+mod.dualfrontier.weather.contracts.publish:DualFrontier.Mod.Weather.Contracts.WeatherChangedEvent
+mod.dualfrontier.weather.contracts.subscribe:DualFrontier.Mod.Weather.Contracts.WeatherChangedEvent
+```
+
+and lists `dualfrontier.weather.contracts` in `dependencies`. Both are required and they check different things: the DEPENDENCY is verified at load time (a token owned by a mod you did not list is rejected before your code runs, however real the token is), and the CAPABILITY is verified at the moment you publish or subscribe. You never declare capabilities for types your OWN mod registered — an owner is auto-granted its own types.
 
 The full grammar, tier-capability/bus interaction, and how the kernel's own provided-capability set is built are MOD_OS_ARCHITECTURE.md's domain (manifest-grammar and capability-model sections); this section only pins the validator's actual regex so your manifest passes on the first try.
 
@@ -173,7 +203,14 @@ Mods do not reference each other's assemblies. A mod that wants to expose an API
 
 This is the fix for the old guide's broken quickstart: `DualFrontier.Events`/`Components` are not in a mod's reference surface (§1), and `DualFrontier.Contracts` defines only the `IEvent` marker interface and bus-routing attributes — no concrete event type lives there to subscribe to (verified: the only `*Event*` files in `DualFrontier.Contracts` are the `IEvent` marker, the `IEventBus` interface, and the two bus-routing attributes `EventBusAttribute.cs`/`EventTierAttribute.cs`). A mod cannot `Subscribe<DeathEvent>` any core event, and cannot `Subscribe<T>` another mod's event type unless that type comes from somewhere both ALCs agree on.
 
-That somewhere is a **shared mod** — `"kind": "shared"`, no `IMod`, no entry point, loaded once into a singleton `SharedModLoadContext` that every regular mod's `ModLoadContext` delegates to for names it recognizes (`ModLoadContext.cs:45-54`). Tested and working (`tests/Fixture.SharedEvents` + `Fixture.PublisherMod` + `Fixture.SubscriberMod`), not a hypothetical:
+That somewhere is a **shared mod** — `"kind": "shared"`, no `IMod`, no entry point, loaded once into a singleton `SharedModLoadContext` that every regular mod's `ModLoadContext` delegates to for names it recognizes (`ModLoadContext.cs:45-54`). Tested and working (`tests/Fixture.SharedEvents` + `Fixture.PublisherMod` + `Fixture.SubscriberMod`), and SHIPPED as of W3 — `mods/DualFrontier.Mod.Weather.Contracts` + `mods/DualFrontier.Mod.Weather` is a complete working pair to copy from, exercised end to end through the real pipeline by `WeatherWaveGateTests`.
+
+Three things that trip up a first attempt, all learned from building that pair:
+
+- **The shared project's `AssemblyName` must equal its mod id.** Phase F requires a shared manifest to leave `entryAssembly` empty, and the loader then looks for `<id>.dll`. Your ROOT NAMESPACE is unaffected — it stays whatever your types need to be called.
+- **Reference the shared project with `<Private>false</Private>` and `CopyLocalLockFileAssemblies=false`.** A private copy of the shared assembly beside your regular mod loads a SECOND `Type` with the same name, and your subscription silently never matches — the exact failure the shared ALC exists to prevent.
+- **The shared mod stays loaded for the session.** The shared ALC is non-collectible, so unloading your regular mod does not unload its vendor, and reloading re-uses the resident copy. That is why a reloaded mod still sees the same event types.
+
 
 ```json
 // MyFirstMod.Events/mod.manifest.json — the shared mod. No entryAssembly/entryType.
@@ -243,6 +280,7 @@ This guide changes freely under normal review — it carries no independent law,
 
 | Version | Date | Change |
 |---|---|---|
+| **1.1.0** | 2026-08-20 | **MINOR — W3_WEATHER_SLICE C8.** NEW §3.1 documents `ISystemContext` for mod AUTHORS (the per-tick surface, the W3 entity lifecycle and `SetAmbientTint`, and the hold-the-id / do-not-hold-the-context split). §7 gains the two capability rules W3 made real: declaring ANY token opts a mod into strict enforcement of all of them, and cross-owner tokens name the OWNING shared mod rather than `kernel`, with dependency and capability doing different jobs. §9 records the shipped Weather pair as the copyable reference and the three shape mistakes that break a first attempt (assembly name, `Private=false`, shared-mod session lifetime). EVT-2026-08-20-W3_WEATHER_SLICE. |
 | 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R2-9..R2-14): apiVersion census corrected 7→6-of-7 (Example omits it); v1-field characterization corrected to code truth (parser strips `^`/`~`, gate is floor-within-major — no exact pin); `*Event*` census gains `IEventBus.cs`; fixture anchor `:9`→`:11`; TechArch 11.8 naming anchor `:16-20`→`:10`; §7 regex restored verbatim (both `?:` non-capturing markers). |
 | 0.1.0 (this doc) | 2026-07-15 | Corpus rework: reclassified guide/non-normative; manifest examples corrected to the real v3 schema (`apiVersion`/`requiresContractsVersion` dual path, `dependencies[].optional`, no `optionalDependencies`); quickstart replaced with the verified shared-mod pattern; ALC "refusal list" corrected to the actual compile-time-reference-surface model; unload/reload deferred to MOD_OS_ARCHITECTURE.md. |
 | 1.1 | pre-rework | Last state of predecessor `DOC-A-MODDING` (see historical/). |

@@ -73,14 +73,29 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
     /// Iterate (EntityId, T) pairs over the span. Resolves K1 skeleton's
     /// deferred paired-iteration helper.
     ///
-    /// Caveat: <see cref="EntityId"/> is reconstructed with <c>Version=1</c>
-    /// because <see cref="SpanLease{T}"/> does not currently track per-entity
-    /// versions. Suitable for fresh entities (test scenarios) and for
-    /// snapshot-then-record flows (the recorded command is validated by
-    /// version at flush time, so stale ids are rejected). Production-grade
-    /// version reconstruction would require either a per-pair P/Invoke or
-    /// extending the span ABI to return parallel version arrays — deferred
-    /// to K7 once a measurement shows correctness pressure.
+    /// Version reconstruction: the span ABI returns entity INDICES only
+    /// (<c>df_world_acquire_span</c> hands back <c>const int32_t** out_indices_ptr</c>,
+    /// no parallel version array), so the pair must supply a version itself. It
+    /// uses <c>Version=0</c> — the same reconstruction every span consumer in
+    /// <c>src/DualFrontier.Systems</c> already performs, and the version a
+    /// never-recycled entity actually carries (versions start at 0 and only grow;
+    /// see <c>EntityIdPacking</c>).
+    ///
+    /// <para>
+    /// W3 correction: this previously reconstructed <c>Version=1</c>, which is the
+    /// version NO freshly created entity has. A batched write keyed on such an id is
+    /// recorded and then rejected by the version check at flush — silently — so the
+    /// canonical read-span-then-write-batch loop wrote nothing at all. See the D-2
+    /// regression tests.
+    /// </para>
+    ///
+    /// <para>
+    /// Still open: an entity whose index has been RECYCLED carries a version above 0
+    /// and is not reconstructible from the span alone. That needs a parallel version
+    /// array across the span ABI (a native change) and is tracked as its own ROADMAP
+    /// finding; it is the identical limitation every engine-side span consumer already
+    /// has, not a new one introduced here.
+    /// </para>
     /// </summary>
     public PairsEnumerable Pairs => new PairsEnumerable(this);
 
@@ -109,7 +124,7 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
             get
             {
                 int entityIndex = _lease.Indices[_index];
-                return (new EntityId(entityIndex, 1), _lease.Span[_index]);
+                return (new EntityId(entityIndex, 0), _lease.Span[_index]);
             }
         }
     }

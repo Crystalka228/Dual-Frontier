@@ -102,7 +102,8 @@ public sealed class ContractValidatorTests
     public void Validator_ok_for_compatible_older_patch_version()
     {
         var validator = new ContractValidator();
-        // Current = 2.0.0. The mod requires 2.0.0 — matches → valid.
+        // The mod requires 2.0.0; the current build is same-MAJOR and >= it → valid
+        // (IsCompatible is >=-within-major, not equality).
         LoadedMod mod = MakeMod("com.example.compat", "2.0.0", Array.Empty<Type>());
 
         ValidationReport report = validator.Validate(new[] { mod }, Array.Empty<SystemBase>());

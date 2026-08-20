@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.14.2
+version: 1.14.3
 first_authored: 2026-07-17
-last_modified: 2026-07-17
+last_modified: '2026-08-20'
 content_language: mixed
 next_review_due: 2027-06-11
 title: Dual Frontier development methodology
 last_modified_commit: 717641b
 review_cadence: on-change+annual
 last_review_date: 2026-07-02
-last_review_event: "A'.9.1 Phase δ C2 (5a5bf75) — METHODOLOGY v1.13.0 → v1.14.0 MINOR (the v1.10 12-lesson-batch precedent class): five H4 entries landed in the formalized-lessons area per PHASE_DELTA_BRIEF Appendix A — Lesson #N14 PROMOTED (Phase 0 empirical assumed-state coverage; 4-application criterion met; pool text TRANSCRIBED per Lesson #7, PROMOTION-MET tail → Status block) + Lesson #N17 FORMALIZED (audience-driven tooling deferral; transcribed; dotted DFK019.A/.B → DFK019_A/_B per F-27(e)) + Lesson #N18 NEW (pre-flight empirical scope verification; five-instance track record) + Lesson #N19 NEW (analyzer detection via canonical FQN strings — the Phase β W2 writer law) + Lesson #N20 NEW (eradication class derived from the repository's own classification — the F-26 mandate); lesson-number registry note (F-7 adjudication: #N1/#N11 free; #N4/#N15/#N16 reserved-with-semantics; #Nxx form mandatory) in the Provisional-Lessons preamble; pool bullets #N14/#N17 → one-line promotion markers; changelog v1.14.0 + frontmatter bump. §1-§11 substance unchanged; LOCKED lifecycle unchanged (amendment under §10's own law). Prior context: Standing-Law cascade C7 (b58eed4) — METHODOLOGY v1.12.1 → v1.13.0 MINOR: NEW §12.8 «Brief-integration boundary rule» (briefs cite standing documents by §-anchor instead of restating; carries-vs-cites split mirrors TESTING_STRATEGY §6; anti-pattern rule — a brief contradicting a standing document is wrong by default, corrected or the doc amended BEFORE the brief locks) + NEW §12.9 «Session closure protocol — governance/documentation cascades» (tracker write-back → REGISTER+validate with report folded into the commit → render or recorded staleness deferral → findings → F-ledger never chat-only → closure report) + §12.7 step 9 SYNTH-2 cascade-impact propagation check + v1.12.1 changelog line backfilled (finding F-3). Two new sections + one checklist item; no existing rule inverted; §1–§11 substance unchanged. Prior context: К-extensions cascade #3 δ2 (v1.11 → v1.12 — Lesson #N12 semantic refined); A'.9.1 Phase 0 (v1.12 → v1.12.1 PATCH — Lesson #N17 Provisional + #N14 4th application); А'.7.x δ5 (v1.8 → v1.9 — §12.7 Modding suite mandatory)."
+last_review_event: 'PATCH 1.14.2 -> 1.14.3 2026-08-20 (push-policy propagation from CODING_STANDARDS 3.0.0 section 8.4, per section 10.1 rule 5): the extended phase-review cycle diagram direction-owner step corrected from push the commits to review the PR, merge it -- the executor now pushes its branch and opens the PR at closure. Descriptive correction only; no methodology rule changed. No lifecycle transition.'
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A07-6
@@ -173,7 +173,7 @@ Architect-mode session: diagnose contradictions and debt across the
   explicitly rejected alternatives; implement the decisions in code,
   write tests, debug, update documentation
   ↓
-Direction owner: review the result, push the commits
+Direction owner: review the PR, merge it
   ↓
 Self-teaching ritual (§4.5): systematize understanding
                              of the built system
@@ -457,6 +457,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.8 | 2026-05-17 | К10 deliberation S6 lock — Lesson #11 (architectural reduction methodology, 6 strong applications + Q-G-2 composite namespace precedent) + Lesson #20 (tactical heuristics in research framework are category error) + Lesson #22 (read existing code + ask operational context before surfacing architectural concerns) added to «Phase A' lessons» sub-section. NEW «Provisional Lessons» section captures 9 candidates (#9, #10, #14, #15, #16, #17, #18, #19, #21) pending promotion at К-closure report (А'.8) per accumulated evidence. Frontmatter version bumped к 1.8 in this commit (back-fills A'.5 row above). |
 | 1.9 | 2026-05-21 | A'.7.x К-extensions cascade #0 closure — §12.7 closure protocol step 1 expanded с explicit per-test-suite checklist (Core + Modding suite both mandatory) per CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c). К10.3 v2 verification #7 soft-halt root cause closure-protocol gap, retroactively closed by А'.7.x. Lessons batch deferred к A'.8 closure (v1.9 → v1.10). К-extensions cascade #0 designation (А'.7.x) does not change §1-§11 substance. |
 | 1.10 | 2026-05-23 | A'.8 К-series formal closure — Lessons promotion batch per K_CLOSURE_REPORT.md §6. 12 FORMALIZE (10 carried Session 1 LOCKED Q4 + #14 PROMOTED + #27 PROMOTED at A'.8 per Q-N-8-5 LOCKED). 9 DEFER candidates Provisional pool (3 carried + 5 А'.7.x surfaced + 1 Godot removal surfaced). 1 SUNSET (Lesson #15 subsumed by Lesson #20). К-L14 falsifiability criterion 6 (soft-halt rate) added as Provisional per Q-N-8-7 LOCKED. К-closure report K_CLOSURE_REPORT.md authored Tier 1 AUTHORED per Q-N-8-4 amendment к Meta-Q1. §1-§11 substance unchanged. |
+| **1.14.3** | 2026-08-20 | **PATCH** — push-policy propagation from `CODING_STANDARDS.md` §8.4 v3.0.0 (§10.1 rule 5). The extended phase-review cycle's direction-owner step read "review the result, push the commits"; under the inverted rule the executor has already pushed its branch and opened the PR, so the owner's step is "review the PR, merge it". Descriptive correction to keep the cycle diagram from contradicting the standing law — no methodology rule changed. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 

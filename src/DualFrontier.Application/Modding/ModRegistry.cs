@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
@@ -55,6 +56,34 @@ internal sealed class ModRegistry : IManagedStorageResolver
     // defaults to zero until SetTickSource (tests, core-only builds).
     private ISystemServices? _systemServices;
     private Func<long> _tickSource = static () => 0L;
+
+    // W3/G2 -- the engine-side presentation seam an SDK ISystemContext presentation
+    // call lands on. Installed once by the composition root; null in tests and
+    // headless builds that never render, where a presentation call is a loud error
+    // rather than a silent no-op (see RequirePresentationSink).
+    private IPresentationSink? _presentationSink;
+
+    /// <summary>
+    /// Installs the presentation sink SDK presentation calls route to. Called once
+    /// by the composition root (<c>GameBootstrap.CreateSession</c>) with a sink that
+    /// enqueues render commands onto the <c>PresentationBridge</c>; tests install a
+    /// recording double. Passing a new sink replaces the previous one.
+    /// </summary>
+    internal void SetPresentationSink(IPresentationSink sink)
+        => _presentationSink = sink ?? throw new ArgumentNullException(nameof(sink));
+
+    /// <summary>
+    /// Returns the installed presentation sink, or throws when none was installed.
+    /// The loud throw is the point (K-L19 fail-fast): a mod calling a presentation
+    /// member on a host with no renderer must get a diagnostic, never a silent
+    /// no-op that leaves the author hunting for visuals that never had a path.
+    /// </summary>
+    internal IPresentationSink RequirePresentationSink()
+        => _presentationSink
+           ?? throw new InvalidOperationException(
+               "ISystemContext presentation call with no presentation sink installed. " +
+               "The composition root installs one via ModRegistry.SetPresentationSink; " +
+               "a test exercising presentation must install a recording sink.");
 
     /// <summary>
     /// Sets the list of core systems once at start-up. Subsequent calls
