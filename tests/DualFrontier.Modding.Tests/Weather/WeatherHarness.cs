@@ -49,7 +49,13 @@ internal sealed class WeatherHarness : IDisposable
 
     internal WeatherHarness()
     {
-        World = new NativeWorld();
+        // PR #49 Codex review (P1). PRODUCTION-FAITHFUL: GameBootstrap.CreateSession builds its
+        // world through Bootstrap.Run(useRegistry: true), so component type ids come from the
+        // explicit ComponentTypeRegistry (K-L4), keyed on the Type OBJECT. A bare `new NativeWorld()`
+        // falls back to the legacy FNV1a(AssemblyQualifiedName) path, whose ids are stable across
+        // ALCs -- which silently masked the reload defect this harness exists to catch.
+        // Fully qualified: the test assembly has its own DualFrontier.Modding.Tests.Bootstrap namespace.
+        World = DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true);
         Registry = new ModRegistry();
         Registry.SetCoreSystems(Array.Empty<SystemBase>());
 

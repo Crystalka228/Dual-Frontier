@@ -153,8 +153,24 @@ public sealed class WeatherWaveGateTests
         last.B.Should().Be(1f);
     }
 
+    /// <summary>
+    /// F-60 (PR #49 Codex review, P1). Reload SUCCEEDS at the pipeline level -- the C5c shared-mod
+    /// reuse fix holds -- but the mechanic does NOT resume: it mints a SECOND singleton and world
+    /// weather resets. Cause: component type ids come from the explicit ComponentTypeRegistry
+    /// (K-L4), keyed on the Type OBJECT. The reloaded mod's collectible ALC produces a DIFFERENT
+    /// WeatherStateComponent Type, which is assigned a NEW id, so the span over it is empty and the
+    /// ensure-singleton path seeds again.
+    ///
+    /// <para>
+    /// This test asserts the DEFECT, deliberately, so the gap is a measured fact with a test
+    /// attached instead of a claim nobody re-checks. It flips to the adopt-assertion when F-60 is
+    /// resolved. The original W3 version of this test PASSED only because the harness built a bare
+    /// `new NativeWorld()`, whose legacy FNV1a(AssemblyQualifiedName) ids are stable across ALCs --
+    /// a harness that was not production-faithful, which is the real lesson here.
+    /// </para>
+    /// </summary>
     [Fact]
-    public void Reload_AdoptsTheSurvivingSingleton_AndResumesTransitions()
+    public void Reload_DoesNotYetAdoptTheSurvivingSingleton_BecauseComponentIdentityIsPerAlc()
     {
         using var h = new WeatherHarness();
         h.ApplyWeatherPair().Success.Should().BeTrue();
@@ -164,18 +180,44 @@ public sealed class WeatherWaveGateTests
 
         // Reload the PAIR, exactly as a player toggling the mod back on would: the menu applies
         // the whole selected set. The shared vendor is still resident in the non-collectible
-        // shared ALC and is REUSED rather than reloaded (D-3 fix); passing it is also required,
+        // shared ALC and is REUSED rather than reloaded (C5c); passing it is also required,
         // because dependency presence is checked against the batch.
         PipelineResult again = h.ApplyWeatherPair();
-        again.Success.Should().BeTrue("reload must succeed; errors: " + WeatherHarness.Describe(again));
+        again.Success.Should().BeTrue(
+            "the pipeline half of reload works -- C5c's shared-mod reuse is what makes even this " +
+            "much possible; errors: " + WeatherHarness.Describe(again));
 
         int before = h.Sink.Calls.Count;
         h.Tick(TicksPastFirstTransition);
 
-        h.World.EntityCount.Should().Be(1,
-            "the reloaded mechanic ADOPTS the surviving singleton instead of minting a second one, " +
-            "so world weather resumes rather than resetting");
-        h.Sink.Calls.Count.Should().BeGreaterThan(before, "transitions resume after reload");
+        h.World.EntityCount.Should().Be(2,
+            "EXPECTED DEFECT (F-60): the reloaded ALC's component Type gets a NEW registry id, so " +
+            "the singleton span reads empty and a SECOND weather entity is minted. Adoption is what " +
+            "this should do; flip this assertion to 1 when F-60 is fixed");
+        h.Sink.Calls.Count.Should().BeGreaterThan(before,
+            "the reloaded mechanic does run -- it just runs against fresh state instead of the survivor");
+    }
+
+    /// <summary>
+    /// F-60 (PR #49 Codex review, P1), the other half: the mod's ALC is never reclaimed, because
+    /// ComponentTypeRegistry holds a STRONG reference to the mod's component Type and nothing
+    /// removes it at unload. Unload therefore spends the full §9.4 step-7 timeout and reports
+    /// "restart the game to fully reclaim memory". Pinned so the leak cannot be rediscovered as a
+    /// surprise; the assertion inverts when F-60 is resolved.
+    /// </summary>
+    [Fact]
+    public void Unload_LeaksTheModAlc_BecauseTheTypeRegistryStillHoldsItsComponentType()
+    {
+        using var h = new WeatherHarness();
+        h.ApplyWeatherPair().Success.Should().BeTrue();
+        h.Tick(TicksPastFirstTransition);
+
+        IReadOnlyList<ValidationWarning> warnings = h.Pipeline.UnloadMod(RegularId);
+
+        warnings.Should().Contain(w => w.Message.Contains("ModUnloadTimeout"),
+            "EXPECTED DEFECT (F-60): the ComponentTypeRegistry roots the collectible ALC, so the " +
+            "step-7 WeakReference spin runs its full 10 s and advises a restart. A clean unload " +
+            "would return NO warnings -- flip this to BeEmpty when F-60 is fixed");
     }
 
     [Fact]
