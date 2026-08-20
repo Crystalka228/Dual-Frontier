@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.0.0
+version: 2.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-19
+last_modified: '2026-08-20'
 content_language: en
 next_review_due: 2027-Q3
 title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
@@ -15,7 +15,7 @@ supersedes:
 - DOC-A-CONTRACTS
 review_cadence: on-change+annual
 last_review_date: 2026-07-19
-last_review_event: 'W2_BUS_CAPABILITY C7 (BD-3a): the five genre bus interfaces (ICombatBus/IInventoryBus/IMagicBus/IPawnBus/IWorldBus) and IGameServices left DualFrontier.Contracts for the engine-internal DualFrontier.Core.Bus -- a breaking interface removal, ContractsVersion.Current 1.0.0 -> 2.0.0 (MAJOR). §2 rewritten to record the departure + the BD-3b five-genre -> one-router collapse (the getters are now cosmetic bridges over one DomainEventBus); §4 generalizes the members-bearing-interface breaking rule off the departed IGameServices example; §5 current-version corrected 1.0.0 -> 2.0.0 (:20); §6 bus-publish-scoping gap dissolved with [SystemAccess(bus:)] (F-54). MAJOR 1.1.0 -> 2.0.0. EVT-2026-07-19-W2_BUS_CAPABILITY.'
+last_review_event: 'MINOR 2.0.0 -> 2.1.0 2026-08-20 (W3_WEATHER_SLICE C8, DOC-D-W3_WEATHER_SLICE_BRIEF; operator ratification 2026-08-20): NEW section 4.2 records the four additive Sdk/ISystemContext members -- entity lifecycle (CreateEntity/DestroyEntity/IsEntityAlive, gap G1) and SetAmbientTint (gap G2) -- with ContractsVersion.Current 2.0.0 -> 2.1.0; additive for mods because the interface is engine-implemented, so ^2.0.0 pins stay satisfied; zero native change (all four promote existing engine primitives); IPresentationSink deliberately kept out of Contracts; BD-9/W6 absorption trigger recorded; section 5 current version corrected. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
 ---
@@ -104,9 +104,26 @@ W1 (VANILLA_SEPARATION_MIGRATION_PLAN BD-1) added the SDK system-authoring surfa
 
 `SystemBase`'s authoring path remains as the recorded bridge (retires at W5, when the last `src/` harness system migrates); engine-side `SystemAdapter<T>` (in `DualFrontier.Application`) wraps an `ISimulationSystem` onto the executor.
 
+### §4.2 W3 SDK entity lifecycle + presentation primitive (added 2026-08-20, MINOR — `ContractsVersion.Current` 2.0.0 → 2.1.0)
+
+W3 (VANILLA_SEPARATION_MIGRATION_PLAN W3) added four MEMBERS to the existing `Sdk/ISystemContext`. Adding members to an interface is breaking for third-party IMPLEMENTERS, but `ISystemContext` is engine-implemented (`SystemContextView`, `DualFrontier.Application`) and mods only ever CONSUME it — so this is additive for every mod and carries a MINOR bump, not a MAJOR one. Existing manifests pinning `apiVersion: "^2.0.0"` stay satisfied (`VersionConstraint`: same MAJOR, required MINOR ≤ available), asserted by `SdkContextTests.ContractsVersion_IsMinorBumped_AndStillSatisfiesCaret2_0_0_Manifests`.
+
+| Member | Meaning |
+|---|---|
+| `EntityId CreateEntity()` | Mints a live entity. Closes the W3 G1 gap: before it, `WriteScope<T>.Add` could attach a component to an id a mod already had, but a mod had no way to OBTAIN one. |
+| `void DestroyEntity(EntityId)` | Ends liveness IMMEDIATELY (`IsEntityAlive` reads `false` on the next call); the entity's COMPONENT STORAGE is reclaimed later, on the engine's native deferred-destroy flush. No flush member is promoted to the SDK — flushing has whole-world ordering consequences (see ECS.md §8.1). |
+| `bool IsEntityAlive(EntityId)` | Liveness probe. |
+| `void SetAmbientTint(float r, float g, float b, float strength)` | Whole-scene colour modulation, channels and strength 0..1, strength 0 = untinted. Engine-generic: it carries a COLOUR, never a game concept. |
+
+All four are pure promotions of primitives the engine already had (`NativeWorld.CreateEntity`/`DestroyEntity`/`IsAlive`; `PresentationBridge`), so W3 needed ZERO native change.
+
+`SetAmbientTint` reaches the renderer through an Application-internal `IPresentationSink` installed by the composition root (`GameBootstrap.CreateSession` → `BridgePresentationSink` → `PresentationBridge`). The sink is deliberately NOT contract surface, so the render path can be reshaped without touching the mod-facing contract. A presentation call with no sink installed THROWS (`ModRegistry.RequirePresentationSink`) rather than silently doing nothing — К-L19 fail-fast; a mod whose visuals vanish without a diagnostic is the shape being prevented.
+
+**Planned** — the BD-9 layer/slot presentation model supersedes and ABSORBS `SetAmbientTint`; see [ROADMAP.md](../ROADMAP.md).
+
 ## §5 Versioning and the version gate
 
-`DualFrontier.Contracts` versions as `MAJOR.MINOR.PATCH` (`Modding/ContractsVersion.cs`); the running build is the hardcoded `ContractsVersion.Current` (`:20`, presently `2.0.0` after the W2/BD-3a bus-interface removal — §2, §4), bumped manually per breaking release.
+`DualFrontier.Contracts` versions as `MAJOR.MINOR.PATCH` (`Modding/ContractsVersion.cs`); the running build is the hardcoded `ContractsVersion.Current` (`:20`, presently `2.1.0` after the W3 SDK additions — §4.2; `2.0.0` came from the W2/BD-3a bus-interface removal — §2, §4), bumped manually per breaking release.
 
 Two declaration paths, both wired into production (not test-only):
 
@@ -148,6 +165,7 @@ Tier 1, LOCKED — amendments via FRAMEWORK.md §7.2 protocol. Amendment: surfac
 
 | Version | Date | Change |
 |---|---|---|
+| **2.1.0** | 2026-08-20 | **MINOR — W3_WEATHER_SLICE C2/C3.** NEW §4.2 records four additive `Sdk/ISystemContext` members — the entity lifecycle (`CreateEntity`/`DestroyEntity`/`IsEntityAlive`, closing gap G1) and the `SetAmbientTint` presentation primitive (gap G2) — with `ContractsVersion.Current` 2.0.0 → 2.1.0 (`:20`); §5 current version corrected 2.0.0 → 2.1.0. Additive for mods (engine-implemented interface, mods consume only), so `^2.0.0` pins stay satisfied. Zero native change: all four promote primitives the engine already had. `SetAmbientTint` absorption trigger recorded (BD-9/W6). EVT-2026-08-20-W3_WEATHER_SLICE. |
 | **2.0.0** | 2026-07-19 | **MAJOR — W2_BUS_CAPABILITY C7 (BD-3a/BD-3b).** The five bus interfaces + `IGameServices` left `DualFrontier.Contracts` for `DualFrontier.Core.Bus` (breaking interface removal); `ContractsVersion.Current` 1.0.0 → 2.0.0 (`:20`). §2 rewritten from the five-bus canon to the departure record + the one-router collapse (getters now cosmetic bridges); §4 generalizes the members-bearing-interface breaking rule off the departed `IGameServices`, and names interface *removal* as breaking; §5 current version corrected 1.0.0 → 2.0.0; §6 bus-publish-scoping gap dissolved with `[SystemAccess(bus:)]` (F-54). Scope row updated. EVT-2026-07-19-W2_BUS_CAPABILITY. |
 | 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R2-1/R2-2/R2-3): SEED-2 cross-reference row reworded to the refusal-list-retirement truth ("ALC resolution truth (no refusal list) + author guide", matching ARCHITECTURE.md's row); §5 floor claim gains the v2 exact-pin exception; §5 JSON illustration upgraded to a valid v3 manifest fragment (`manifestVersion` + `apiVersion`). |
 | **0.1.0** (AUTHORED, pending ratification) | 2026-07-15 | Reclassified `IGameServices`-property and record-field evolution as breaking/caveated (§4); stated the version gate's true exact-major-both-directions behavior, fixed the stale JSON key (§5); replaced the stale "future A'.9 analyzer" pointer with verified enforcement reality (§6); real `HealthComponent` struct example (§1). |

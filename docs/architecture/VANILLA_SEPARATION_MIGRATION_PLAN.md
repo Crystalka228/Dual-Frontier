@@ -5,15 +5,15 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.3.0
+version: 1.4.0
 first_authored: 2026-07-18
-last_modified: 2026-07-19
+last_modified: '2026-08-20'
 content_language: en
 next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 review_cadence: on-change
 last_review_date: 2026-07-19
-last_review_event: 'MINOR 1.2.0 -> 1.3.0 2026-07-19 (W2_BUS_CAPABILITY, DOC-D-W2_BUS_CAPABILITY_BRIEF; operator chat ratification 2026-07-19): W2 marked DONE with commit hashes; BD-3 + BD-10 rows RESOLVED (managed scope) -- the five genre buses + IGameServices collapsed to one DomainEventBus and left Contracts for Core.Bus (ContractsVersion 1 -> 2 MAJOR), KernelCapabilityRegistry became an owner-namespaced ledger relocated to Core/Modding (kernel surface empty, self-access via Owns mechanism-only); §5 map rows marked done; native (providerId,schemaId) type IDs + tier-on-contract deferred to F-57; no lifecycle transition (Live). Prior: MINOR 1.1.0 -> 1.2.0 2026-07-19 (W1_SDK_UNLOCK, DOC-D-W1_SDK_UNLOCK_BRIEF; operator chat ratification 2026-07-19): W1 marked DONE with commit hashes; BD-1 + BD-2 rows RESOLVED with the ratified text; BD-6 operational criterion recorded; no lifecycle transition (Live). Prior: MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
+last_review_event: 'MINOR 1.3.0 -> 1.4.0 2026-08-20 (W3_WEATHER_SLICE C8; operator ratification 2026-08-20): W3 marked DONE with commit hashes; gaps G1/G2/G4 CLOSED and G3 SURFACED-and-LEDGERED recorded inline; the three pre-existing defects the wave gate found (silent sync event drop, fabricated span-id version, shared-dependent reload) recorded as wave findings; section 2 stock deltas Events 53 -> 52 and Systems 30 -> 29 after the src Weather stub deletion. No lifecycle transition (Live).'
 reviewer: Crystalka
 ---
 
@@ -48,7 +48,7 @@ CLEAN inside mods, not rescued out of src/. The law (Definition of Done section 
 unchanged -- only the migration MECHANICS get cheaper.
 
 Wave consequences:
-- **W3 (vertical slice)** is WRITTEN FRESH in the mod: the src/ Weather code is reference material,
+- **W3 (vertical slice)** was WRITTEN FRESH in the mod (DONE 2026-08-20): the src/ Weather code was reference material,
   not a migration source.
 - **W5 (slice replacement)**: implement each slice clean in its owning mod, then DELETE the src/
   originals in the same closure -- no equivalence proof against harness gameplay behavior; the ratchet
@@ -62,7 +62,7 @@ Wave consequences:
   `DualFrontier.Application.csproj`), 1 IVT (`Core.csproj` -> Systems), 1 test-fixture
   leak (Fixture.RegularMod_ReplacesCombat -> Core). Native tree + df_capi.h: CLEAN (0
   game-semantic exports of 154).
-- Stock to migrate: Components 28 types / Events 53 / Systems 30 / AI 20; Contracts
+- Stock to migrate: Components 28 types / Events 52 / Systems 29 / AI 20; Contracts
   game-binding surface ~8 types (ICombatBus, IInventoryBus, IMagicBus, IPawnBus,
   IWorldBus, IGameServices, LayerType game members, OwnershipMode); 6 presentation
   command records; 4 persistence DTO families; ScenarioDef/SceneMetadata (orphan) +
@@ -141,12 +141,27 @@ World types; [SystemAccess] no longer binds nameof(IGameServices.X).
 > registry. CONTRACTS 1.1.0->2.0.0 (MAJOR), EVENT_BUS 1.1.0->1.2.0, MOD_OS 1.1.0->1.2.0 (MINOR), this plan
 > 1.2.0->1.3.0. Commits 61127cc (C1 enroll) / 691aeb2 (C2 retire _allowedBuses) / 9f7107d (C3 collapse) /
 > 6b0b7d6 (C4 contracts MAJOR) / 95365af (C5 ledger) / eb7bca8 (C6 tests) / C7 governance / C8 closure.
-**W3 -- Walking vertical slice (written fresh).** ONE small mechanic end-to-end as a real mod, WRITTEN
-FRESH (candidate: Weather -- the src/ WeatherSystem + WeatherChangedEvent are reference material, not a
-migration source; section 1.1): component, system,
-event, initial data, presentation reaction, unload/reload. Purpose: surface every missing
-world/service/asset/input/lifecycle SDK gap BEFORE mass migration. Gate: disabling the mod
-removes the mechanic entirely; engine stays healthy.
+**W3 -- Walking vertical slice (written fresh). DONE 2026-08-20.** Weather shipped end-to-end as a
+mod PAIR, written fresh: `mods/DualFrontier.Mod.Weather.Contracts` (kind=shared, vends `WeatherKind` +
+`WeatherChangedEvent`) + `mods/DualFrontier.Mod.Weather` (kind=regular: component, two systems,
+deterministic transitions, presentation reaction). The two-project shape is FORCED by Phase E, not
+chosen. The `src/` Weather stubs were deleted (C7), build-green proving they were inert.
+> **Gaps.** G1 (entity lifecycle) and G2 (presentation) CLOSED by four additive `ISystemContext`
+> members, `ContractsVersion` 2.0.0 -> 2.1.0 MINOR, zero native change. G4 (Phase C could not see a
+> shared provider) CLOSED by a third satisfiability arm. G3 (a mod cannot reclaim its world state at
+> unload -- `OnDispose` is parameterless, so the singleton survives as inert residue) SURFACED and
+> LEDGERED, pinned by an explicit residue assertion rather than resolved.
+> **Three defects the wave gate found, all pre-existing, all fixed:** a synchronous mod event
+> published inside a system tick was silently DROPPED (nested `PushContext` throwing into a
+> fault-containing catch); the span pair-iterators fabricated `Version=1`, so every batched write
+> keyed on a span id was dropped at flush in silence; and a regular mod depending on a shared mod
+> could never be RELOADED (both directions closed). None was reachable by unit doubles -- each
+> needed the real artifact through the real pipeline.
+> CONTRACTS 2.0.0->2.1.0, ECS 1.1.0->1.2.0, MOD_OS 1.2.0->1.3.0, MODDING 1.0.2->1.1.0, this plan
+> 1.3.0->1.4.0. Commits fad66c8 (C1 enroll) / 3557f81 (C2 entity lifecycle) / 7d7c8b8 (C3
+> presentation) / 6f23418 (C4 owner ledger live) / 9ee722a (C5 mod pair) / 3d525cd (C5a event-drop
+> fix) / 9699aa8 (C5b span-id fix) / ede3bda (C5c reload fix) / 1d8c300 (C6 wave gate) / 351d623
+> (C7 stub deletion) / C8 docs / C9 closure.
 **W4 -- Composition root + scenario (BD-4, BD-8).** GameBootstrap dissolves into an
 EngineSession composition root knowing only kernel/SDK/manifest/pipeline (INTERSECTS EQ-a
 Cascade B decision D3 -- EngineSession is designed ONCE, under this law); component
@@ -179,8 +194,8 @@ source identical across all three profiles.
 | Current location | Members (measured) | Target owner |
 |---|---|---|
 | DualFrontier.Components | 28 types: Pawn/Needs cluster, Health, Position, items/storage/workbench, combat (weapon/armor/faction), magic (mana/ether/golem bond), terrain/weather | Vanilla.Pawn / Vanilla.Inventory / Vanilla.Combat / Vanilla.Magic / Vanilla.World; genuinely cross-slice types -> Vanilla.Core shared mod; Position per BD-6 (expected L3 spatial contract); Health per BD-6 (expected vanilla) |
-| DualFrontier.Events | 53 event records | owning slice mods; engine keeps only IEvent + generic routing (BD-3) |
-| DualFrontier.Systems | 30 systems | owning slice mods after W1 SDK unlock; zero gameplay entries remain in core registration |
+| DualFrontier.Events | 52 event records (W3 deleted the Weather stub) | owning slice mods; engine keeps only IEvent + generic routing (BD-3) |
+| DualFrontier.Systems | 29 systems (W3 deleted the Weather stub) | owning slice mods after W1 SDK unlock; zero gameplay entries remain in core registration |
 | DualFrontier.AI | 20 types; Pathfinding consumed, BT/Jobs dormant | Pathfinding -> L3 candidate; BT/Jobs + behaviour leaves -> Vanilla.Pawn/Combat/Magic (BD-5) |
 | Contracts game surface | 5 genre buses, IGameServices, LayerType game members, OwnershipMode | buses + IGameServices **dissolved to `Core.Bus` ✅ W2 (BD-3a/b)**; OwnershipMode -> Vanilla.Magic shared contract; LayerType game members -> mod-registered slots (BD-9, later) |
 | Application/Bridge commands | PawnSpawned/PawnState/PawnDied/ItemSpawned + 2 more (6 records) | Vanilla presentation mods (W6) |

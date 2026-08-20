@@ -245,9 +245,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.0.0
+  version: 2.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-19
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
@@ -255,7 +255,7 @@ documents:
   - DOC-A-CONTRACTS
   review_cadence: on-change+annual
   last_review_date: 2026-07-19
-  last_review_event: 'W2_BUS_CAPABILITY C7 (BD-3a): the five genre bus interfaces (ICombatBus/IInventoryBus/IMagicBus/IPawnBus/IWorldBus) and IGameServices left DualFrontier.Contracts for the engine-internal DualFrontier.Core.Bus -- a breaking interface removal, ContractsVersion.Current 1.0.0 -> 2.0.0 (MAJOR). §2 rewritten to record the departure + the BD-3b five-genre -> one-router collapse (the getters are now cosmetic bridges over one DomainEventBus); §4 generalizes the members-bearing-interface breaking rule off the departed IGameServices example; §5 current-version corrected 1.0.0 -> 2.0.0 (:20); §6 bus-publish-scoping gap dissolved with [SystemAccess(bus:)] (F-54). MAJOR 1.1.0 -> 2.0.0. EVT-2026-07-19-W2_BUS_CAPABILITY.'
+  last_review_event: 'MINOR 2.0.0 -> 2.1.0 2026-08-20 (W3_WEATHER_SLICE C8, DOC-D-W3_WEATHER_SLICE_BRIEF; operator ratification 2026-08-20): NEW section 4.2 records the four additive Sdk/ISystemContext members -- entity lifecycle (CreateEntity/DestroyEntity/IsEntityAlive, gap G1) and SetAmbientTint (gap G2) -- with ContractsVersion.Current 2.0.0 -> 2.1.0; additive for mods because the interface is engine-implemented, so ^2.0.0 pins stay satisfied; zero native change (all four promote existing engine primitives); IPresentationSink deliberately kept out of Contracts; BD-9/W6 absorption trigger recorded; section 5 current version corrected. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
 - register_id: DOC-A-ECS
@@ -283,9 +283,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.0
+  version: 1.2.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-19
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: Entity Component System (authored rework; version-0 identity defect documented)
@@ -293,7 +293,7 @@ documents:
   - DOC-A-ECS
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'MINOR 1.1.0 -> 1.2.0 2026-08-20 (W3_WEATHER_SLICE C8): section 5 records the C5b correction -- SpanLease.Pairs, the WriteBatch enumerator and Sdk/SpanScope.Pairs fabricated Version=1, a version no entity carries, so batched writes keyed on a span id were dropped at flush silently; all three now fabricate 0 like every other site, narrowing but NOT resolving the C10/N-22 defect. Section 5 also records that ISystemContext.DestroyEntity puts destruction in MOD hands, so the creation-only latency argument no longer rests on engine call sites. Section 6 gains the SDK entity-lifecycle surface (liveness immediate, storage reclamation deferred, no flush member promoted). Section 8 adds the id-is-not-an-engine-reference clarification. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ECS per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; session C10 teaching defect fixed (no EntityId(index,0) fabrication in examples).
 - register_id: DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
@@ -824,9 +824,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: Writing mods (authored rework; guide, non-normative — every example passes the real v3 schema)
@@ -835,7 +835,7 @@ documents:
   last_modified_commit: 6a67da5
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §10 quickstart external copy-paste commands, both steps, -f net8.0 → -f net10.0 (the two only stale TFM sites in this guide; solution TFM moved at EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
+  last_review_event: 'MINOR 1.0.2 -> 1.1.0 2026-08-20 (W3_WEATHER_SLICE C8): NEW section 3.1 documents ISystemContext for authors (per-tick surface, W3 entity lifecycle + SetAmbientTint, hold-the-id vs do-not-hold-the-context); section 7 gains the strict-gate opt-in rule (declaring any token enforces all) and the owner-namespaced token rule with dependency-vs-capability doing different jobs; section 9 records the shipped Weather pair as the copyable reference plus the three shape mistakes (assembly name = mod id, Private=false, shared-mod session lifetime). No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 - register_id: DOC-A-MOD_OS
@@ -872,9 +872,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.2.0
+  version: 1.3.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-19
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
@@ -884,7 +884,7 @@ documents:
   - DOC-A-ISOLATION
   review_cadence: on-change+annual
   last_review_date: 2026-07-19
-  last_review_event: 'MINOR 1.1.0 -> 1.2.0 2026-07-19 (W2_BUS_CAPABILITY C7, BD-10): §3.4 rewritten -- KernelCapabilityRegistry.BuildFromKernelAssemblies() retired; the registry is now an owner-namespaced registration ledger (relocated to src/DualFrontier.Core/Modding/KernelCapabilityRegistry.cs; RegisterOwner(owner, assembly) emits <owner>.{verb}:{FQN}), and the kernel-provided FQN set is EMPTY -- the engine owns no gameplay types post-BD-3, and ownerless engine-side types ride the v1 grace path this wave. §3.4/§3.6 add the self-access predicate Owns(owner, fqn): a registered owner is auto-granted its OWN types (EnforceCapability short-circuit, RestrictedModApi.cs:246). Per-mod registration is mechanism-only, not live-wired this wave (no producer yet). §3.2 layer-emission + §3.5 pass-into-validation refs re-anchored to the relocated file. Additive/relocation, no lifecycle transition. EVT-2026-07-19-W2_BUS_CAPABILITY. Prior: MINOR 1.0.2 -> 1.1.0 (W1_SDK_UNLOCK C6, §4.1 factory-registration law).'
+  last_review_event: 'MINOR 1.2.0 -> 1.3.0 2026-08-20 (W3_WEATHER_SLICE C8): section 3.4 per-mod owner registration LIVE in both Apply passes + RemoveOwner regular-mod symmetry with the nested-owner-id hazard and the shared-persists asymmetry; section 3.5 NEW third Phase-C arm for owner-namespaced tokens (ledger-resolved ownership by equality; dependency mandatory; provider `provided` deliberately not required) closing G4; section 4 publish/subscribe tokens documented owner-namespaced + first strictly-gated on-disk mod named; section 5.7 Weather pair as the live D-4 reference with the two author-biting shape details; section 9.4 NEW unload step 2.5 (owner removal) + shared-mod REUSE rule enabling reload of a shared-dependent mod. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -1160,15 +1160,15 @@ documents:
   tier: 2
   lifecycle: Live
   owner: Crystalka
-  version: 1.3.0
+  version: 1.4.0
   first_authored: 2026-07-18
-  last_modified: 2026-07-19
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2026-Q4
   title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
   review_cadence: on-change
   last_review_date: 2026-07-19
-  last_review_event: 'MINOR 1.2.0 -> 1.3.0 2026-07-19 (W2_BUS_CAPABILITY, DOC-D-W2_BUS_CAPABILITY_BRIEF; operator chat ratification 2026-07-19): W2 marked DONE with commit hashes; BD-3 + BD-10 rows RESOLVED (managed scope) -- the five genre buses + IGameServices collapsed to one DomainEventBus and left Contracts for Core.Bus (ContractsVersion 1 -> 2 MAJOR), KernelCapabilityRegistry became an owner-namespaced ledger relocated to Core/Modding (kernel surface empty, self-access via Owns mechanism-only); §5 map rows marked done; native (providerId,schemaId) type IDs + tier-on-contract deferred to F-57; no lifecycle transition (Live). Prior: MINOR 1.1.0 -> 1.2.0 2026-07-19 (W1_SDK_UNLOCK, DOC-D-W1_SDK_UNLOCK_BRIEF; operator chat ratification 2026-07-19): W1 marked DONE with commit hashes; BD-1 + BD-2 rows RESOLVED with the ratified text; BD-6 operational criterion recorded; no lifecycle transition (Live). Prior: MINOR 1.0.1 -> 1.1.0 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): banner updated to the Live-program form + NEW section 1.1 records the operator scaffolding ruling (delete-and-reimplement over migrate-preserve; equivalence binds engine behavior only) with W3/W5/W7 consequences; no lifecycle transition. Prior: ratified Live v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (C3), W0 DONE + PATCH 1.0.1 at C6; ends SUPERSEDED into ROADMAP at W8.'
+  last_review_event: 'MINOR 1.3.0 -> 1.4.0 2026-08-20 (W3_WEATHER_SLICE C8; operator ratification 2026-08-20): W3 marked DONE with commit hashes; gaps G1/G2/G4 CLOSED and G3 SURFACED-and-LEDGERED recorded inline; the three pre-existing defects the wave gate found (silent sync event drop, fabricated span-id version, shared-dependent reload) recorded as wave findings; section 2 stock deltas Events 53 -> 52 and Systems 30 -> 29 after the src Weather stub deletion. No lifecycle transition (Live).'
   reviewer: Crystalka
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md
