@@ -6747,3 +6747,54 @@ audit_trail:
     last_review_event field since STACK_UPDATE Phase E.
   cross_references:
     capa_entries: []
+- id: EVT-2026-08-20-W3_CODEX_REVIEW
+  date: 2026-08-20
+  event: PR #49 Codex review round -- five findings (2 P1, 3 P2) verified against code; three fixed (DestroyEntity silently rejected under a live span; synchronous subscribers running under the publisher's context; the weather mod leaving the scene painted after unload), one build-ordering gap closed, and one P1 PROVEN and ledgered as F-60 after correcting a wave-gate harness that was not production-faithful. Two W3 claims withdrawn
+  event_type: amendment_landing
+  documents_affected:
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-C-ROADMAP
+  commits:
+    range: 6f27c05..(the governance commit following 1614fcc carries this entry)
+    key_commits:
+    - hash: 6f27c05
+      summary: P1 fix - DestroyEntity probes ActiveSpanCount and throws instead of being silently rejected under a live borrow
+    - hash: '731948d'
+      summary: P2 fix - synchronous subscribers run under their OWN captured context (swap and restore), correcting the C5a fix
+    - hash: 8df56ca
+      summary: P2 fix - the weather mod un-paints on OnDispose so unload does not leave the scene tinted
+    - hash: 1614fcc
+      summary: P1+P2 - production-faithful harness (Bootstrap.Run registry mode) exposes F-60; fixture build-ordering ProjectReferences added
+  governance_impact: >
+    The review earned its keep twice over. Three defects were real and fixed; one was a build-ordering
+    gap that had been masked because every recorded green run followed a full solution build. The
+    fifth is the one that matters.
+
+    THE WAVE GATE HAD BEEN MEASURING THE WRONG WORLD. WeatherHarness built a bare new NativeWorld(),
+    which falls back to legacy FNV1a(AssemblyQualifiedName) component type ids -- STABLE across
+    AssemblyLoadContexts. Production builds its world through Bootstrap.Run(useRegistry: true), whose
+    ComponentTypeRegistry (K-L4) keys ids on the Type OBJECT, which is not. Switching the harness to
+    the production path turned the reload gate red on the first run and measurement confirmed both
+    halves: unload took 10,668 ms and returned ModUnloadTimeout ("restart the game to fully reclaim
+    memory") because the registry holds a strong reference to the mod's component Type; reload minted
+    a SECOND singleton (EntityCount 2) and world weather reset rather than resumed.
+
+    Consequence for the record: two W3 closure claims are WITHDRAWN rather than softened -- "unload
+    ... engine stays healthy" and "reload adopts the surviving singleton". What survives is exact and
+    smaller: unload removes the mechanic (systems out of the graph, subscription released, owner
+    removed, tint cleared) and the engine keeps ticking; the ALC leaks and the state does not resume.
+    ROADMAP W3 row, MOD_OS section 9.4 and the migration plan W3 section were corrected to the
+    measured behaviour, and F-60 (S1, OPEN) records the mechanism, the measurements, the flip
+    conditions written into the pinning assertions, and why it was not fixed here: ComponentTypeRegistry
+    is K-L4's implementation artifact, so re-keying it or adding per-mod deregistration changes
+    component-identity semantics and reaches past this wave's MANAGED-ONLY fence. It affects EVERY mod
+    that defines a component, not only Weather.
+
+    Methodological lesson, recorded because it generalises: an end-to-end gate is only as honest as
+    the composition it builds. This harness was end-to-end in every other respect -- real loader, real
+    validator, real ledger, real scheduler -- and one constructor call away from production was enough
+    to make two false claims look proven. A gate must build its world the way the composition root
+    does, or say plainly which fidelity it gave up.
+  cross_references:
+    capa_entries: []

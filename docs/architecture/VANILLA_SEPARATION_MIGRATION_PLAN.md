@@ -5,7 +5,7 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.4.0
+version: 1.4.1
 first_authored: 2026-07-18
 last_modified: '2026-08-20'
 content_language: en
@@ -13,7 +13,7 @@ next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 review_cadence: on-change
 last_review_date: 2026-07-19
-last_review_event: 'MINOR 1.3.0 -> 1.4.0 2026-08-20 (W3_WEATHER_SLICE C8; operator ratification 2026-08-20): W3 marked DONE with commit hashes; gaps G1/G2/G4 CLOSED and G3 SURFACED-and-LEDGERED recorded inline; the three pre-existing defects the wave gate found (silent sync event drop, fabricated span-id version, shared-dependent reload) recorded as wave findings; section 2 stock deltas Events 53 -> 52 and Systems 30 -> 29 after the src Weather stub deletion. No lifecycle transition (Live).'
+last_review_event: 'PATCH 1.4.0 -> 1.4.1 2026-08-20 (PR #49 Codex review correction): the W3 section records that the wave gate measured an unfaithful harness -- unload leaks the mod ALC and reload does not adopt the surviving singleton against the production component-type registry (F-60, S1, OPEN). The two affected W3 claims are withdrawn to the measured behaviour. Correction of a false claim, no plan change. Prior: MINOR 1.3.0 -> 1.4.0 2026-08-20 (W3_WEATHER_SLICE C8) -- W3 DONE with commit hashes, G1/G2/G4 closed and G3 ledgered, the three wave-gate defects recorded, section 2 stock deltas Events 52 / Systems 29. No lifecycle transition (Live).'
 reviewer: Crystalka
 ---
 
@@ -146,6 +146,14 @@ mod PAIR, written fresh: `mods/DualFrontier.Mod.Weather.Contracts` (kind=shared,
 `WeatherChangedEvent`) + `mods/DualFrontier.Mod.Weather` (kind=regular: component, two systems,
 deterministic transitions, presentation reaction). The two-project shape is FORCED by Phase E, not
 chosen. The `src/` Weather stubs were deleted (C7), build-green proving they were inert.
+> **Post-review correction (PR #49).** Codex review found the wave gate had been measuring an
+> UNFAITHFUL harness: it built a bare `new NativeWorld()`, whose legacy name-hashed component ids are
+> stable across ALCs, while production uses the `ComponentTypeRegistry`, whose ids are keyed on the
+> per-ALC `Type`. Against the production path, unload LEAKS the mod ALC (full step-7 timeout +
+> `ModUnloadTimeout`) and reload does NOT adopt the surviving singleton (it mints a second one and
+> weather resets) — F-60, S1, OPEN, affecting every mod that defines a component. The W3 claims
+> "engine stays healthy" and "reload adopts the surviving singleton" are WITHDRAWN to what is
+> measured; the harness and the assertions were corrected to match reality.
 > **Gaps.** G1 (entity lifecycle) and G2 (presentation) CLOSED by four additive `ISystemContext`
 > members, `ContractsVersion` 2.0.0 -> 2.1.0 MINOR, zero native change. G4 (Phase C could not see a
 > shared provider) CLOSED by a third satisfiability arm. G3 (a mod cannot reclaim its world state at
