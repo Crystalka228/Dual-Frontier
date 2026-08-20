@@ -94,7 +94,7 @@ internal sealed class ContractValidator
 
         if (kernelCapabilities is not null)
         {
-            ValidateCapabilitySatisfiability(mods, kernelCapabilities, errors);
+            ValidateCapabilitySatisfiability(mods, kernelCapabilities, sharedMods, errors);
             ValidateModCapabilitiesAttributes(mods, errors);
         }
 
@@ -397,10 +397,31 @@ internal sealed class ContractValidator
     /// <c>dependencies</c>. Implicit satisfaction (a loaded mod that happens
     /// to provide the token but is not listed) is rejected per
     /// MOD_OS_ARCHITECTURE §3.4.
+    ///
+    /// <para>
+    /// Three satisfying arms, OR'd (W3/D3 added the third):
+    /// (1) the kernel fast path — <see cref="KernelCapabilityRegistry.ProvidesKernel"/>, kernel-owned
+    /// tokens only;
+    /// (2) a listed REGULAR dependency whose manifest declares the token in
+    /// <c>capabilities.provided</c>;
+    /// (3) an owner-namespaced token whose LEDGER-RESOLVED owner equals a listed dependency
+    /// present in this batch — regular OR SHARED — and which the ledger actually holds.
+    /// </para>
+    ///
+    /// <para>
+    /// Arm (3) exists because a shared mod is invisible to arm (2): shared mods never appear in the
+    /// <paramref name="mods"/> list, so before W3 a mod requiring an event vended by its own shared
+    /// contracts mod was rejected outright (the G4 defect-in-waiting). It also does not ask the
+    /// provider's manifest to re-declare what its assembly exports: for owner-scanned types the
+    /// LEDGER is the single source of truth, so a <c>provided</c> list would be a second, driftable
+    /// copy of the assembly scan. Declaring the DEPENDENCY is still mandatory — §3.4's rejection of
+    /// implicit satisfaction is what arm (3)'s ownership test preserves.
+    /// </para>
     /// </summary>
     private static void ValidateCapabilitySatisfiability(
         IReadOnlyList<LoadedMod> mods,
         KernelCapabilityRegistry kernelCapabilities,
+        IReadOnlyList<LoadedSharedMod>? sharedMods,
         List<ValidationError> errors)
     {
         foreach (LoadedMod mod in mods)
@@ -413,13 +434,33 @@ internal sealed class ContractValidator
                 if (kernelCapabilities.ProvidesKernel(token))
                     continue;
 
+                // Arm (3) prep — resolve the token's owner FROM THE LEDGER, never by parsing the
+                // token string. Owner ids contain dots, so no prefix test can separate them: a
+                // token owned by "df.weather.contracts" begins with "mod.df.weather." too, and a
+                // prefix match would let a dependency on "df.weather" satisfy it. The ledger
+                // records exactly which owner registered the type, so ownership is an EQUALITY
+                // test on owner ids.
+                int colon = token.IndexOf(':');
+                string? tokenOwner = colon > 0
+                    ? kernelCapabilities.OwnerOf(token.Substring(colon + 1))
+                    : null;
+
                 bool satisfied = false;
                 foreach (ModDependency dep in mod.Manifest.Dependencies)
                 {
+                    // Arm (2) — a listed regular dependency declaring the token in `provided`.
                     LoadedMod? provider = FindMod(mods, dep.ModId);
-                    if (provider is null)
-                        continue;
-                    if (provider.Manifest.Capabilities.ProvidesCapability(token))
+                    if (provider is not null && provider.Manifest.Capabilities.ProvidesCapability(token))
+                    {
+                        satisfied = true;
+                        break;
+                    }
+
+                    // Arm (3) — a listed dependency (regular or shared) that OWNS the token.
+                    if (tokenOwner is not null
+                        && string.Equals(tokenOwner, "mod." + dep.ModId, StringComparison.Ordinal)
+                        && (provider is not null || FindSharedMod(sharedMods, dep.ModId) is not null)
+                        && kernelCapabilities.Provides(token))
                     {
                         satisfied = true;
                         break;
@@ -472,6 +513,19 @@ internal sealed class ContractValidator
                 }
             }
         }
+    }
+
+    private static LoadedSharedMod? FindSharedMod(IReadOnlyList<LoadedSharedMod>? sharedMods, string modId)
+    {
+        if (sharedMods is null)
+            return null;
+
+        foreach (LoadedSharedMod m in sharedMods)
+        {
+            if (m.ModId == modId)
+                return m;
+        }
+        return null;
     }
 
     private static LoadedMod? FindMod(IReadOnlyList<LoadedMod> mods, string modId)

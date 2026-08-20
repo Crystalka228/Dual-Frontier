@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using System.Threading;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Bus;
@@ -331,7 +333,15 @@ internal sealed class ModIntegrationPipeline
             string path = pathByModId[m.Id];
             try
             {
-                sharedLoaded.Add(_loader.LoadSharedMod(path, _sharedAlc));
+                LoadedSharedMod loadedShared = _loader.LoadSharedMod(path, _sharedAlc);
+                sharedLoaded.Add(loadedShared);
+
+                // W3/D3 — owner registration goes live. A shared mod's ownership PERSISTS for
+                // the session, including across a failed batch: its assembly went into the
+                // non-collectible shared ALC (MOD_OS §5.1) and stays resolvable, so revoking
+                // ownership of types that are still loaded would make the ledger lie. There is
+                // deliberately no RemoveOwner counterpart on this path.
+                _kernelCapabilities.RegisterOwner("mod." + loadedShared.Manifest.Id, loadedShared.Assembly);
             }
             catch (Exception ex)
             {
@@ -354,7 +364,9 @@ internal sealed class ModIntegrationPipeline
             string path = pathByModId[m.Id];
             try
             {
-                loaded.Add(_loader.LoadRegularMod(path, _sharedAlc));
+                LoadedMod loadedRegular = _loader.LoadRegularMod(path, _sharedAlc);
+                loaded.Add(loadedRegular);
+                RegisterRegularOwner(loadedRegular);
             }
             catch (Exception ex)
             {
@@ -647,6 +659,16 @@ internal sealed class ModIntegrationPipeline
         TryUnloadStep(2, modId, warnings, () =>
         {
             _contractStore.RevokeAll(modId);
+        });
+
+        // Step 2.5 (W3/D3) — drop the mod's owner registration from the capability ledger.
+        // Sits with the other revocations (steps 2/3) because it revokes the same class of
+        // thing: an authority the mod held while loaded. Best-effort per §9.5.1, so a throw
+        // here becomes a warning and the chain continues. Idempotent, so re-running it (or
+        // running it after a rollback already removed the owner) is a no-op.
+        TryUnloadStep(25, modId, warnings, () =>
+        {
+            _kernelCapabilities.RemoveOwner("mod." + modId);
         });
 
         // Step 3 — drop system instances. ModRegistry.RemoveMod is the
@@ -996,8 +1018,33 @@ internal sealed class ModIntegrationPipeline
         // Physically unload any mod assemblies that already made it into memory.
         foreach (LoadedMod mod in loaded)
         {
+            // W3/D3 — ledger symmetry. Every path that registered a REGULAR mod as an owner
+            // must un-register it on the way out, or a failed batch leaves phantom ownership
+            // that would silently satisfy a later mod's capability token. Shared owners are
+            // never rolled back (see pass [1]). RollbackLoaded is the single funnel every
+            // failure path (validation, Initialize, graph build) already goes through, so the
+            // symmetry lives here rather than being re-stated at each call site.
+            _kernelCapabilities.RemoveOwner("mod." + mod.ModId);
+
             try { _loader.UnloadMod(mod.ModId); }
             catch { /* swallowed during rollback — what matters is the rollback itself, not further precision */ }
+        }
+    }
+
+    /// <summary>
+    /// W3/D3 — registers a freshly loaded REGULAR mod's own assemblies under its owner namespace.
+    /// Assemblies the mod's ALC merely delegated to the shared ALC are skipped: they belong to the
+    /// shared mod that vended them and are already registered under ITS owner id (same ownership
+    /// test Phase E uses to decide which assemblies a regular mod actually owns).
+    /// </summary>
+    private void RegisterRegularOwner(LoadedMod mod)
+    {
+        string owner = "mod." + mod.ModId;
+        foreach (Assembly asm in mod.Context.Assemblies)
+        {
+            if (AssemblyLoadContext.GetLoadContext(asm) != mod.Context)
+                continue;
+            _kernelCapabilities.RegisterOwner(owner, asm);
         }
     }
 
