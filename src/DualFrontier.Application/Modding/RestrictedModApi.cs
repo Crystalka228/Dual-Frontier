@@ -189,6 +189,24 @@ internal sealed class RestrictedModApi : IModApi
             ? handler
             : evt =>
             {
+                // W3 defect fix (D-1). SystemExecutionContext.PushContext THROWS on a nested
+                // push, and a SYNCHRONOUS delivery runs on the publisher's thread with the
+                // PUBLISHER's context already active. Pushing unconditionally therefore threw
+                // on every cross-system publish -- and DomainEventBus.DeliverSync catches a
+                // mod-origin subscriber fault and continues, so the handler was silently never
+                // invoked and nothing was reported. Any mod event published from inside another
+                // system's Tick vanished.
+                //
+                // Re-push ONLY when this thread has no context: that is the deferred-dispatch
+                // case, where the handler genuinely needs its own context restored. When a
+                // context is already active the delivery is synchronous and already inside a
+                // scheduler context, so the handler runs directly.
+                if (SystemExecutionContext.Current is not null)
+                {
+                    handler(evt);
+                    return;
+                }
+
                 SystemExecutionContext.PushContext(captured);
                 try { handler(evt); }
                 finally { SystemExecutionContext.PopContext(); }
