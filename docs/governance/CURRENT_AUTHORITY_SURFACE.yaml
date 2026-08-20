@@ -178,13 +178,13 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.1.4
+  version: 3.0.0
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.0.2
+  version: 2.1.0
 - register_id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
   path: docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md
   category: B
@@ -196,7 +196,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 1.14.2
+  version: 1.14.3
 - register_id: DOC-B-PIPELINE_METRICS
   path: docs/methodology/PIPELINE_METRICS.md
   category: B

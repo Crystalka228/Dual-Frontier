@@ -6712,3 +6712,38 @@ audit_trail:
     UNMOVED; Console.WriteLine in src .cs 2 -> 2; DFK-WAIVER 2 -> 2. Native untouched.
   cross_references:
     capa_entries: []
+- id: EVT-2026-08-20-PUSH_POLICY_INVERSION
+  date: 2026-08-20
+  event: Standing-law amendment -- CODING_STANDARDS section 8.4 inverted from "Executor never pushes" to "Executor opens the PR; the architect merges". The executor pushes its work branch and opens a PR against main at the closure boundary; pushing to main and merging its own PR stay forbidden. Ratification moves from the push to the merge. MAJOR (section 10.1 rule 3, inverting an existing rule), propagated to DEVELOPMENT_HYGIENE and METHODOLOGY in the same commit
+  event_type: amendment_landing
+  documents_affected:
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-DEVELOPMENT_HYGIENE
+  - DOC-B-METHODOLOGY
+  commits:
+    range: (the post-closure rider commit following 92a03e7 on claude/w3-weather-slice carries this entry)
+    key_commits: []
+  governance_impact: >
+    Operator direction 2026-08-20, delivered while reviewing PR #49: the old rule made the PUSH the ratification
+    step, which cannot hold in a remote or cloud session -- there an unpushed branch is simply lost work, so the
+    agent is forced to push anyway and the law becomes an argument rather than a safeguard. A rule that fails in a
+    case the project actually runs is noise.
+
+    The protective intent is preserved and strengthened rather than relaxed. What the old rule actually protected --
+    that no agent mutates main, and that a cascade is ratified by a human -- is untouched: pushing to main stays
+    forbidden, merging one's own PR stays forbidden, and the ratification act simply moves from the push to the
+    merge, where it additionally gains a per-commit review surface that a purely local branch never had. The work
+    also survives the session ending, which the old rule did not address at all.
+
+    Recorded consequence: CODING_STANDARDS section 8.3's no-force-push and no-history-rewrite prohibitions now
+    attach routinely rather than exceptionally, because a work branch reaches origin at every closure. Commit
+    atomicity must therefore be settled BEFORE the push; after it, a mistake is corrected by a further commit. The
+    W3 cascade is the worked example -- its C5a commit was re-split locally for atomicity precisely because the
+    branch had not yet been pushed.
+
+    Landed as a post-closure rider on claude/w3-weather-slice (PR #49) at the operator's direction rather than as
+    its own branch, so the amendment and the cascade whose review produced it ratify together. Backfilled in the
+    same commit: the DEVELOPMENT_HYGIENE v2.0.2 change-history row, which had existed only in that document's
+    last_review_event field since STACK_UPDATE Phase E.
+  cross_references:
+    capa_entries: []
