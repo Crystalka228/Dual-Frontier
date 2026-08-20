@@ -488,13 +488,21 @@ public sealed class GameBootstrapIntegrationTests
         // 1 shared (Vanilla.Core), alongside the preserved ExampleMod.
         // Test resolves the production mods/ directory via repo-root
         // walk so the result is independent of the test runner cwd.
+        //
+        // W3 (C5): 7 -> 9. The Weather mod PAIR joined the production root —
+        // dualfrontier.weather.contracts (shared vendor) + dualfrontier.weather
+        // (regular mechanic). This count is a deliberate pin on what ships in
+        // mods/, so the wave that adds mods moves it and says why. The 6-vanilla
+        // invariant itself is untouched: the per-id assertions below still name
+        // exactly the same six skeletons plus ExampleMod.
         string modsRoot = Path.Combine(FindRepoRoot(), "mods");
         var discoverer = new DefaultModDiscoverer(modsRoot);
 
         IReadOnlyList<DiscoveredModInfo> discovered = discoverer.Discover();
 
-        discovered.Should().HaveCount(7,
-            "ExampleMod + 6 vanilla skeletons (5 regular + 1 shared) per §1.3");
+        discovered.Should().HaveCount(9,
+            "ExampleMod + 6 vanilla skeletons (5 regular + 1 shared) per §1.3, " +
+            "+ the W3 Weather pair (1 shared vendor + 1 regular mechanic)");
 
         List<string> ids = discovered.Select(d => d.Manifest.Id).ToList();
         ids.Should().Contain("dualfrontier.example");
@@ -504,6 +512,23 @@ public sealed class GameBootstrapIntegrationTests
         ids.Should().Contain("dualfrontier.vanilla.inventory");
         ids.Should().Contain("dualfrontier.vanilla.pawn");
         ids.Should().Contain("dualfrontier.vanilla.world");
+        ids.Should().Contain("dualfrontier.weather.contracts");
+        ids.Should().Contain("dualfrontier.weather");
+
+        // W3 — the Weather pair is shaped exactly as the shared/regular split requires:
+        // the vendor is kind=shared with no entry point, the mechanic is kind=regular
+        // and declares the vendor as a dependency.
+        DiscoveredModInfo weatherContracts = discovered.Single(
+            d => d.Manifest.Id == "dualfrontier.weather.contracts");
+        weatherContracts.Manifest.Kind.Should().Be(ModKind.Shared);
+        weatherContracts.Manifest.EntryAssembly.Should().BeEmpty();
+        weatherContracts.Manifest.EntryType.Should().BeEmpty();
+
+        DiscoveredModInfo weather = discovered.Single(d => d.Manifest.Id == "dualfrontier.weather");
+        weather.Manifest.Kind.Should().Be(ModKind.Regular);
+        weather.Manifest.Dependencies.Select(d => d.ModId)
+            .Should().Contain("dualfrontier.weather.contracts",
+                "a regular mod must LIST the shared vendor whose event type it uses");
 
         // Vanilla.Core is the shared mod with no IMod entry point.
         DiscoveredModInfo core = discovered.Single(

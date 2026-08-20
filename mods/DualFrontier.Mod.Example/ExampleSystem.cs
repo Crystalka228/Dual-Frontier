@@ -14,13 +14,16 @@ namespace DualFrontier.Mod.Example;
 /// executor through an internal adapter; this mod never names an engine assembly.
 ///
 /// <para>
-/// <b>Events (W1 note).</b> A regular mod cannot publish its OWN event type — an
-/// event type defined in a regular mod's collectible ALC is invisible to other
-/// mods, so it must be vended by a shared mod (<c>ContractValidator</c> Phase E;
-/// MOD_OS_ARCHITECTURE §5 / §6.5 D-4). The <see cref="ISystemContext"/>
-/// Publish/Subscribe surface exists and is unit-tested, but the mod-authored event
-/// story (shared-event ownership) lands at W2 (BD-3). So this reference system
-/// demonstrates component access + the lifecycle, not events.
+/// <b>Events.</b> A regular mod cannot publish its OWN event type — an event type
+/// defined in a regular mod's collectible ALC is invisible to other mods, so it
+/// must be vended by a shared mod (<c>ContractValidator</c> Phase E;
+/// MOD_OS_ARCHITECTURE §5 / §6.5 D-4). That story is LIVE as of W3: see the
+/// <c>mods/DualFrontier.Mod.Weather.Contracts</c> + <c>mods/DualFrontier.Mod.Weather</c>
+/// pair for the reference shape — a shared mod vending the event type, a regular
+/// mod declaring <c>mod.&lt;shared-id&gt;.{publish|subscribe}:&lt;FQN&gt;</c> in its
+/// manifest and listing the shared mod in <c>dependencies</c>. This reference system
+/// stays deliberately event-free so it demonstrates ONE thing: component access and
+/// the system lifecycle.
 /// </para>
 /// </summary>
 [SystemAccess(

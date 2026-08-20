@@ -1,0 +1,15 @@
+{
+  "manifestVersion": "3",
+  "id": "dualfrontier.weather.contracts",
+  "name": "Weather Contracts",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "description": "Shared vendor for the weather vocabulary: WeatherKind and WeatherChangedEvent. Carries no code that runs — it exists so every mod reacting to weather resolves the same Type through the shared ALC.",
+  "kind": "shared",
+  "apiVersion": "^2.0.0",
+  "dependencies": [],
+  "capabilities": {
+    "required": [],
+    "provided": []
+  }
+}
