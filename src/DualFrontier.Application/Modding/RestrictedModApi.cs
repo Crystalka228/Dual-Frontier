@@ -197,19 +197,31 @@ internal sealed class RestrictedModApi : IModApi
                 // invoked and nothing was reported. Any mod event published from inside another
                 // system's Tick vanished.
                 //
-                // Re-push ONLY when this thread has no context: that is the deferred-dispatch
-                // case, where the handler genuinely needs its own context restored. When a
-                // context is already active the delivery is synchronous and already inside a
-                // scheduler context, so the handler runs directly.
-                if (SystemExecutionContext.Current is not null)
-                {
-                    handler(evt);
-                    return;
-                }
+                // The handler ALWAYS runs under the context it captured at Subscribe time -- its
+                // own -- never the publisher's. PR #49 Codex review (P2) caught the first draft of
+                // this fix running synchronous subscribers under whoever happened to publish: a
+                // handler that subscribes again would then capture the PUBLISHER's identity, so
+                // later deferred dispatch and fault routing could quarantine the wrong mod. Same
+                // hazard for anything else that reads Current during delivery.
+                //
+                // Deferred dispatch arrives with no context (push), synchronous delivery arrives
+                // with the publisher's (swap and restore). PushContext refuses to nest by design,
+                // so the swap is an explicit pop-push-pop-push rather than a nested push.
+                SystemExecutionContext? publisher = SystemExecutionContext.Current;
+                if (publisher is not null)
+                    SystemExecutionContext.PopContext();
 
                 SystemExecutionContext.PushContext(captured);
-                try { handler(evt); }
-                finally { SystemExecutionContext.PopContext(); }
+                try
+                {
+                    handler(evt);
+                }
+                finally
+                {
+                    SystemExecutionContext.PopContext();
+                    if (publisher is not null)
+                        SystemExecutionContext.PushContext(publisher);
+                }
             };
 
         bus.Subscribe(wrapped);

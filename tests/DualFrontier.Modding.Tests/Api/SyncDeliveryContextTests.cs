@@ -29,24 +29,24 @@ public sealed record SyncDeliveryProbeEvent(int Value) : IEvent;
 [Collection("GameLoopSerial")]
 public sealed class SyncDeliveryContextTests
 {
-    private static RestrictedModApi BuildApi(ModRegistry registry, GameServices services)
+    private static RestrictedModApi BuildApi(ModRegistry registry, GameServices services, string modId = "probe.mod")
     {
         string fqn = typeof(SyncDeliveryProbeEvent).FullName!;
         var manifest = new ModManifest
         {
-            Id = "probe.mod",
+            Id = modId,
             Capabilities = ManifestCapabilities.Parse(
                 new[] { "kernel.publish:" + fqn, "kernel.subscribe:" + fqn }, null),
         };
         var api = new RestrictedModApi(
-            "probe.mod", manifest, registry, new ModContractStore(), services,
+            modId, manifest, registry, new ModContractStore(), services,
             new KernelCapabilityRegistry());
-        registry.RegisterRestrictedModApi("probe.mod", api);
+        registry.RegisterRestrictedModApi(modId, api);
         return api;
     }
 
-    private static SystemExecutionContext Ctx(string name, NativeWorld world)
-        => new(name, SystemOrigin.Mod, "probe.mod", new NullModFaultSink(), world);
+    private static SystemExecutionContext Ctx(string name, NativeWorld world, string modId = "probe.mod")
+        => new(name, SystemOrigin.Mod, modId, new NullModFaultSink(), world);
 
     [Fact]
     public void PublishFromInsideASystemTick_ReachesASubscriberThatCapturedItsOwnContext()
@@ -77,6 +77,38 @@ public sealed class SyncDeliveryContextTests
         handled.Should().Be(2,
             "a synchronous publish from inside a system tick must still reach the subscriber; " +
             "before the D-1 fix the nested PushContext threw and DeliverSync swallowed it");
+    }
+
+    [Fact]
+    public void Subscriber_RunsUnderItsOwnContext_NotThePublishers()
+    {
+        // PR #49 Codex review (P2). The first draft of the D-1 fix ran a synchronous subscriber
+        // under whoever happened to publish. Both mods share a bus here but are DIFFERENT mods --
+        // the original regression tests used one id for both and could not have seen this.
+        using var world = new NativeWorld();
+        var registry = new ModRegistry();
+        var services = new GameServices();
+
+        RestrictedModApi subscriberApi = BuildApi(registry, services, "subscriber.mod");
+        RestrictedModApi publisherApi = BuildApi(registry, services, "publisher.mod");
+
+        SystemExecutionContext subscriberCtx = Ctx("Subscriber", world, "subscriber.mod");
+        SystemExecutionContext publisherCtx = Ctx("Publisher", world, "publisher.mod");
+
+        SystemExecutionContext? seenDuringDelivery = null;
+
+        SystemExecutionContext.PushContext(subscriberCtx);
+        try { subscriberApi.Subscribe<SyncDeliveryProbeEvent>(_ => seenDuringDelivery = SystemExecutionContext.Current); }
+        finally { SystemExecutionContext.PopContext(); }
+
+        SystemExecutionContext.PushContext(publisherCtx);
+        try { publisherApi.Publish(new SyncDeliveryProbeEvent(1)); }
+        finally { SystemExecutionContext.PopContext(); }
+
+        seenDuringDelivery.Should().BeSameAs(subscriberCtx,
+            "a handler must run under the context it captured at Subscribe time; running it under " +
+            "the publisher's would misattribute anything the handler does -- a nested Subscribe " +
+            "would capture the WRONG mod, and fault routing could quarantine it");
     }
 
     [Fact]
