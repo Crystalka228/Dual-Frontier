@@ -204,9 +204,10 @@ internal sealed class RestrictedModApi : IModApi
                 // later deferred dispatch and fault routing could quarantine the wrong mod. Same
                 // hazard for anything else that reads Current during delivery.
                 //
-                // Deferred dispatch arrives with no context (push), synchronous delivery arrives
-                // with the publisher's (swap and restore). PushContext refuses to nest by design,
-                // so the swap is an explicit pop-push-pop-push rather than a nested push.
+                // A handler dispatched at a phase boundary arrives with no context (push); a
+                // synchronous delivery arrives with the publisher's (swap and restore).
+                // PushContext refuses to nest by design, so the swap is an explicit
+                // pop-push / pop-push rather than a nested push.
                 SystemExecutionContext? publisher = SystemExecutionContext.Current;
                 if (publisher is not null)
                     SystemExecutionContext.PopContext();
