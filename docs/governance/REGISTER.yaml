@@ -3384,6 +3384,21 @@ documents:
   content_language: en
   next_review_due: 
   title: W2_BUS_CAPABILITY execution brief (Wave 2 -- genre-taxonomy death in the engine contract + generic managed router + capability ledger, under ratified BD-3/BD-10/F-54-retire; sovereign native switch explicitly fenced)
+- register_id: DOC-D-W3_WEATHER_SLICE_BRIEF
+  path: tools/briefs/W3_WEATHER_SLICE_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Crystalka
+  version: 1.0
+  first_authored: 2026-07-19
+  last_modified: 2026-08-20
+  content_language: en
+  next_review_due: 
+  title: W3 Weather vertical slice -- first real mechanic as a mod pair (shared contracts + regular), SDK gaps G1/G2 closed, RegisterOwner live wiring, src stub deletion
+  authored_by: Claude Opus (architect session, W3 chartering)
+  basis: Architect grounding line-reads 2026-07-19 at main 8c2ec2e (ratified direct-brief deviation -- no separate recon session; W1/W2 recon corpus + live reads substitute)
 - register_id: DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION
   path: docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md
   project: Dual Frontier
