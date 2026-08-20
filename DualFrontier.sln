@@ -139,6 +139,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Mod.Weather.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Mod.Weather", "mods\DualFrontier.Mod.Weather\DualFrontier.Mod.Weather.csproj", "{8C904128-6275-4A27-B26A-0EEDC1C373D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fixture.WeatherGateNegative", "tests\Fixture.WeatherGateNegative\Fixture.WeatherGateNegative.csproj", "{8A062FFA-1AC3-4068-B08C-5C6848550D75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -785,6 +787,18 @@ Global
 		{8C904128-6275-4A27-B26A-0EEDC1C373D2}.Release|x64.Build.0 = Release|Any CPU
 		{8C904128-6275-4A27-B26A-0EEDC1C373D2}.Release|x86.ActiveCfg = Release|Any CPU
 		{8C904128-6275-4A27-B26A-0EEDC1C373D2}.Release|x86.Build.0 = Release|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Debug|x64.Build.0 = Debug|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Debug|x86.Build.0 = Debug|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|x64.ActiveCfg = Release|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|x64.Build.0 = Release|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|x86.ActiveCfg = Release|Any CPU
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -845,5 +859,6 @@ Global
 		{6737463C-6992-4E58-B790-CADB271E3E04} = {33333333-3333-3333-3333-333333333333}
 		{3ABC7A90-7DDA-481F-9A66-BFBC574A81D2} = {33333333-3333-3333-3333-333333333333}
 		{8C904128-6275-4A27-B26A-0EEDC1C373D2} = {33333333-3333-3333-3333-333333333333}
+		{8A062FFA-1AC3-4068-B08C-5C6848550D75} = {22222222-2222-2222-2222-222222222222}
 	EndGlobalSection
 EndGlobal
