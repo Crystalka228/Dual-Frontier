@@ -51,9 +51,19 @@ public sealed class WeatherPresentationSystem : ISimulationSystem
     // twice. Engine-side behaviour, mod-side defence.
     private bool _subscribed;
 
+    // Held so OnDispose can un-paint. ISimulationSystem.OnDispose() is parameterless -- it receives
+    // no context -- so a mod that leaves presentation state behind has no way to clean it up unless
+    // it keeps the reference itself. Safe for the same reason the subscriber closure is safe:
+    // SetAmbientTint touches no world state, so nothing reachable through this field can go stale.
+    // Do NOT copy this pattern for component access. (The parameterless OnDispose is the G3 shape;
+    // see the ROADMAP finding.)
+    private ISystemContext? _presentation;
+
     /// <inheritdoc />
     public void Initialize(ISystemContext context)
     {
+        _presentation = context;
+
         if (_subscribed)
             return;
         _subscribed = true;
@@ -75,12 +85,23 @@ public sealed class WeatherPresentationSystem : ISimulationSystem
 
     /// <summary>
     /// Teardown. The engine unload chain releases the subscription itself
-    /// (<c>RestrictedModApi.UnsubscribeAll</c>, MOD_OS §9.5 step 1); clearing the guard here
+    /// (<c>RestrictedModApi.UnsubscribeAll</c>, MOD_OS §9.4 step 1); clearing the guard here
     /// keeps a re-initialised instance able to subscribe again.
+    ///
+    /// <para>
+    /// It also UN-PAINTS. Dropping the subscription only stops FUTURE tinting; the last tint this
+    /// mod applied would otherwise sit on the scene forever, so unloading during a storm would
+    /// leave the world permanently dark with nothing left to explain it. "Unload removes the
+    /// mechanic entirely" has to include what the mechanic drew.
+    /// </para>
     /// </summary>
     public void OnDispose()
     {
         _subscribed = false;
+
+        // Strength 0 is the identity modulation, so this restores the untinted scene exactly.
+        _presentation?.SetAmbientTint(1f, 1f, 1f, 0f);
+        _presentation = null;
     }
 
     /// <summary>Looks up the base tint for a kind, falling back to no-tint for an unknown value.</summary>

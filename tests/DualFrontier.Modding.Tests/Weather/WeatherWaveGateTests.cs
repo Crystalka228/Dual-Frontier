@@ -131,6 +131,29 @@ public sealed class WeatherWaveGateTests
     }
 
     [Fact]
+    public void Unload_ClearsTheAmbientTint_SoTheSceneDoesNotStayPainted()
+    {
+        // PR #49 Codex review (P2). Dropping the subscription only stops FUTURE tinting. Unloading
+        // mid-storm would otherwise leave the scene permanently dark with nothing left to explain
+        // it -- "removes the mechanic entirely" has to include what the mechanic drew.
+        using var h = new WeatherHarness();
+        h.ApplyWeatherPair().Success.Should().BeTrue();
+        h.Tick(TicksPastFirstTransition);
+
+        h.Sink.Calls.Should().NotBeEmpty("precondition: the mechanic painted something");
+
+        h.Pipeline.UnloadMod(RegularId);
+
+        (float R, float G, float B, float Strength) last = h.Sink.Calls[^1];
+        last.Strength.Should().Be(0f,
+            "the LAST thing an unloading weather mod does is un-paint: strength 0 is the identity " +
+            "modulation, so the scene returns to exactly its untinted state");
+        last.R.Should().Be(1f);
+        last.G.Should().Be(1f);
+        last.B.Should().Be(1f);
+    }
+
+    [Fact]
     public void Reload_AdoptsTheSurvivingSingleton_AndResumesTransitions()
     {
         using var h = new WeatherHarness();
