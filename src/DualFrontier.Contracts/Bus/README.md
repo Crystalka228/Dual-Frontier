@@ -20,7 +20,7 @@ with the power subsystem; future electricity routes to V substrate per
 - `IInventoryBus.cs` — inventory bus: AmmoRequest/Result, ItemAdded/Removed.
 - `IMagicBus.cs` — magic bus: ManaRequest/Result, SpellCast, EtherSurge.
 - `IPawnBus.cs` — pawn bus: MoodBreak, DeathReaction, SkillGain.
-- `IWorldBus.cs` — world bus: EtherNodeChanged, WeatherChanged, RaidIncoming.
+- `IWorldBus.cs` — world bus: EtherNodeChanged, RaidIncoming.
 
 ## Rules
 - Each domain bus is a separate instance with its own subscription set.
@@ -56,7 +56,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: '2026-08-20'
 content_language: en
 next_review_due: null
 title: Contracts Bus submodule

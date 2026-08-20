@@ -16,7 +16,7 @@ namespace DualFrontier.Systems.Magic;
 /// active lease each tick, and publishes <see cref="ManaLeaseClosed"/>
 /// once the duration or resource is exhausted.
 ///
-/// Phase: 1 (parallel with CombatSystem, WeatherSystem).
+/// Phase: 1 (parallel with CombatSystem).
 /// Tick: NORMAL (15 frames).
 /// </summary>
 [SystemAccess(

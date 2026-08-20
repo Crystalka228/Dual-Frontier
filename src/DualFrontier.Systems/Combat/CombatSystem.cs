@@ -19,7 +19,7 @@ namespace DualFrontier.Systems.Combat;
 /// Operates simultaneously on the Combat and Magic buses (the shooter's
 /// mana is part of the compound shot).
 ///
-/// Phase: 1 (parallel with ManaSystem, WeatherSystem).
+/// Phase: 1 (parallel with ManaSystem).
 /// Tick: FAST (3 frames) — combat responsiveness.
 /// </summary>
 [SystemAccess(

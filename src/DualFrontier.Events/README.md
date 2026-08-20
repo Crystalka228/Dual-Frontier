@@ -25,7 +25,7 @@ left as TODO).
 - `Inventory/` — ItemAdded, ItemRemoved, ItemReserved, CraftRequest.
 - `Power/` — PowerRequest, PowerGranted, GridOverload.
 - `Pawn/` — MoodBreak, DeathReaction, SkillGain.
-- `World/` — EtherNodeChanged, WeatherChanged, RaidIncoming.
+- `World/` — EtherNodeChanged, RaidIncoming.
 
 ## Rules
 - `public sealed record XxxEvent : IEvent` only — no classes.
@@ -60,7 +60,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: '2026-08-20'
 content_language: en
 next_review_due: null
 title: DualFrontier.Events module

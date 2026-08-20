@@ -111,7 +111,7 @@ public sealed class CensusMetaTests
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
     [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
-    [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
+    [InlineData("TODO", @"\bTODO\b", false, 132, 51)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
     {
@@ -141,6 +141,10 @@ public sealed class CensusMetaTests
         // that member documents. ISystemContext.cs already carried a deferred site, so the file
         // pin does not move. This is a MODEL NAME, not a deferral marker; the regex cannot tell
         // them apart, so the pin moves and the delta is recorded here rather than reworded away.
+        // W3/D6 (C7): TODO 136->132 / 53->51 -- the two src Weather stubs are deleted. They were
+        // the wave's eradication target and carried 4 TODO markers between them
+        // (WeatherChangedEvent.cs 3, WeatherSystem.cs 1) and no markers of any other family, so
+        // this is the only pin the deletion moves. Both files leave, hence -2 files.
         // W3/D-1 fix (C5a): deferred 89->90 / 54->55 -- Application/Modding/RestrictedModApi.cs
         // now explains that the subscriber wrapper re-pushes a context ONLY for the
         // deferred-dispatch case. Again a MECHANISM name, not a deferral marker, and
