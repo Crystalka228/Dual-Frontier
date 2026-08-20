@@ -72,6 +72,15 @@ public interface ISystemContext
     /// gate such reads on <see cref="IsEntityAlive"/> when it matters.
     ///
     /// <para>
+    /// <b>Precondition: no live borrow.</b> Release every <see cref="SpanScope{T}"/> and
+    /// <see cref="WriteScope{T}"/> before calling. The engine rejects a destroy while
+    /// the world is borrowed, so the natural-looking "iterate a span and destroy as
+    /// you go" shape does not work: read first, close the scope, then destroy. A live
+    /// SPAN is detected and reported loudly; a live write BATCH is not currently
+    /// detectable, so that case is a contract you keep, not one the engine checks.
+    /// </para>
+    ///
+    /// <para>
     /// There is deliberately NO flush member on this surface. Flushing has
     /// whole-world ordering consequences, and a mod able to force one could tear
     /// component storage out from under a concurrently-running system. A mod

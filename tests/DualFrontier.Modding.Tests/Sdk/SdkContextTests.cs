@@ -311,6 +311,41 @@ public sealed class SdkContextTests
     }
 
     [Fact]
+    public void DestroyEntity_WhileASpanIsLive_FailsLoudly_InsteadOfBeingSilentlyRejected()
+    {
+        // PR #49 Codex review (P1). The native side silently rejects a destroy while the world is
+        // borrowed. Silent rejection against a contract that promises immediate liveness loss is
+        // the fail-open shape; the SDK turns it into a diagnostic.
+        using var world = new NativeWorld();
+        var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
+        var ctx = new SystemExecutionContext(
+            "T", SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            EntityId doomed = view.CreateEntity();
+
+            using (SpanScope<SdkTestComponent> span = view.AcquireSpan<SdkTestComponent>())
+            {
+                Action act = () => view.DestroyEntity(doomed);
+
+                act.Should().Throw<InvalidOperationException>(
+                        "a destroy under a live span would be silently dropped by the native side")
+                    .Which.Message.Should().Contain("span");
+            }
+
+            // With the borrow released, the same call works and liveness ends at once.
+            view.DestroyEntity(doomed);
+            view.IsEntityAlive(doomed).Should().BeFalse();
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+    }
+
+    [Fact]
     public void EntityLifecycle_OutsideAContext_FailsLoudly()
     {
         var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);

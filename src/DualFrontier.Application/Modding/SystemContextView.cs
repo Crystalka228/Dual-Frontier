@@ -50,7 +50,29 @@ internal sealed class SystemContextView : ISystemContext, IWriteBatchCapability
 
     public EntityId CreateEntity() => World.CreateEntity();
 
-    public void DestroyEntity(EntityId id) => World.DestroyEntity(id);
+    public void DestroyEntity(EntityId id)
+    {
+        // PR #49 Codex review (P1). The native side SILENTLY REJECTS a destroy while any span or
+        // write batch is live on the world, but ISystemContext.DestroyEntity promises that liveness
+        // ends at once. A mod iterating its own SpanScope and destroying as it goes would therefore
+        // get a no-op and no diagnostic -- the exact fail-open shape K-L19 exists to prevent.
+        //
+        // The span counter is probeable (df_world_active_span_count), so that case fails LOUDLY
+        // here. Live write BATCHES are not probeable without a new native export, and this wave is
+        // MANAGED-ONLY, so that half stays a documented precondition rather than a guard; the gap
+        // is ledgered rather than papered over.
+        NativeWorld world = World;
+        int activeSpans = world.ActiveSpanCount();
+        if (activeSpans > 0)
+        {
+            throw new InvalidOperationException(
+                $"DestroyEntity({id}) called while {activeSpans} span(s) are live on the world. " +
+                "The native side would silently reject the destroy and the entity would stay alive. " +
+                "Release every SpanScope (and WriteScope) before destroying — read first, then mutate.");
+        }
+
+        world.DestroyEntity(id);
+    }
 
     public bool IsEntityAlive(EntityId id) => World.IsAlive(id);
 
