@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DualFrontier.Application.Bridge;
+using DualFrontier.Application.Bridge.Commands;
 using DualFrontier.Application.Modding;
 using DualFrontier.Core.Modding;
 using DualFrontier.Contracts.Attributes;
@@ -51,6 +53,18 @@ public sealed class SdkStubSystemA : SystemBase
 public sealed class SdkStubSystemB : SystemBase
 {
     public override void Update(float delta) { }
+}
+
+/// <summary>
+/// W3/G2 test double for the engine-internal presentation seam: records what a mod asked
+/// for so a test can assert presentation WITHOUT standing up a Vulkan renderer.
+/// </summary>
+internal sealed class RecordingPresentationSink : IPresentationSink
+{
+    public List<(float R, float G, float B, float Strength)> Calls { get; } = new();
+
+    public void SetAmbientTint(float r, float g, float b, float strength)
+        => Calls.Add((r, g, b, strength));
 }
 
 internal sealed class StubPathfinding : IPathfindingService
@@ -316,6 +330,70 @@ public sealed class SdkContextTests
 
         VersionConstraint.Parse("^2.0.0").IsSatisfiedBy(ContractsVersion.Current).Should().BeTrue(
             "every on-disk manifest pins apiVersion ^2.0.0; a MINOR bump must not strand them");
+    }
+
+    // ---- W3 C3: the presentation primitive (SDK 2.1.0) ----
+
+    [Fact]
+    public void SetAmbientTint_RoutesToTheInstalledPresentationSink()
+    {
+        var registry = new ModRegistry();
+        var sink = new RecordingPresentationSink();
+        registry.SetPresentationSink(sink);
+        var view = new SystemContextView(registry, "test.mod", () => 0L);
+
+        view.SetAmbientTint(0.2f, 0.3f, 0.9f, 0.5f);
+
+        sink.Calls.Should().ContainSingle().Which.Should().Be((0.2f, 0.3f, 0.9f, 0.5f));
+    }
+
+    [Fact]
+    public void SetAmbientTint_WithNoSinkInstalled_ThrowsLoudly_NeverSilentlyNoOps()
+    {
+        var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
+
+        Action act = () => view.SetAmbientTint(1f, 0f, 0f, 1f);
+
+        act.Should().Throw<InvalidOperationException>(
+                "fail-open is the forbidden shape here (K-L19): a presentation call on a host with " +
+                "no sink must diagnose, never vanish and leave the author hunting for missing visuals")
+            .Which.Message.Should().Contain("presentation sink");
+    }
+
+    [Fact]
+    public void SetAmbientTint_NeedsNoWorldContext_SoItIsSafeFromAnEventHandler()
+    {
+        // The sink route never touches SystemExecutionContext.Current — unlike every
+        // component member — so presentation is callable from a subscriber handler
+        // regardless of whether the handler was wrapped in a captured scheduler context.
+        var registry = new ModRegistry();
+        var sink = new RecordingPresentationSink();
+        registry.SetPresentationSink(sink);
+        var view = new SystemContextView(registry, "test.mod", () => 0L);
+
+        SystemExecutionContext.Current.Should().BeNull("no context is pushed in this test");
+        Action act = () => view.SetAmbientTint(0f, 0f, 1f, 1f);
+
+        act.Should().NotThrow();
+        sink.Calls.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void BridgePresentationSink_TranslatesTheCallIntoAnEnqueuedRenderCommand()
+    {
+        var bridge = new PresentationBridge();
+        var sink = new BridgePresentationSink(bridge);
+
+        sink.SetAmbientTint(0.1f, 0.2f, 0.3f, 0.4f);
+
+        bridge.QueueDepth.Should().Be(1);
+
+        var drained = new List<IRenderCommand>();
+        bridge.DrainCommands(drained.Add);
+
+        drained.Should().ContainSingle().Which.Should()
+            .BeOfType<AmbientTintCommand>()
+            .Which.Should().Be(new AmbientTintCommand(0.1f, 0.2f, 0.3f, 0.4f));
     }
 
     private static void RegisterModApi(ModRegistry registry, bool subscribeOnly)

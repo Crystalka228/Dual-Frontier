@@ -14,6 +14,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
+    <!-- W3/G2 — covers the Launcher's RenderCommandDispatcher ambient-tint arm. The
+         Launcher is an Exe; referencing it as a library imports no entry point. -->
+    <ProjectReference Include="..\..\src\DualFrontier.Launcher\DualFrontier.Launcher.csproj" />
   </ItemGroup>
 
   <!--

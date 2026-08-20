@@ -31,6 +31,33 @@ internal sealed class RenderCommandDispatcher
 
     private readonly SceneState _sceneState;
 
+    /// <summary>
+    /// Current whole-scene ambient tint: colour in XYZ, strength in W. Written here by
+    /// <see cref="AmbientTintCommand"/> dispatch, read by <see cref="LauncherRenderer"/>
+    /// when it records the frame. Same single-thread discipline as <see cref="SceneState"/>
+    /// (commands drain on the render thread only), so no locking. Default (1,1,1,0) is
+    /// strength 0 -- untinted.
+    /// </summary>
+    public Vector4 AmbientTint { get; private set; } = new Vector4(1f, 1f, 1f, 0f);
+
+    /// <summary>
+    /// The per-channel multiplier the ambient tint applies to the whole scene:
+    /// lerp(white, tint colour, strength). At strength 0 this is exactly (1,1,1), so every
+    /// sprite keeps its white tint and the clear colour is untouched -- that identity IS the
+    /// "strength 0 restores the untinted scene" contract, not an approximation of it.
+    /// </summary>
+    public Vector3 AmbientModulation
+    {
+        get
+        {
+            float s = Math.Clamp(AmbientTint.W, 0f, 1f);
+            return new Vector3(
+                1f + ((AmbientTint.X - 1f) * s),
+                1f + ((AmbientTint.Y - 1f) * s),
+                1f + ((AmbientTint.Z - 1f) * s));
+        }
+    }
+
     public RenderCommandDispatcher(SceneState sceneState)
     {
         _sceneState = sceneState ?? throw new ArgumentNullException(nameof(sceneState));
@@ -47,6 +74,7 @@ internal sealed class RenderCommandDispatcher
             case PawnStateCommand cmd: HandlePawnState(cmd); break;
             case ItemSpawnedCommand cmd: HandleItemSpawned(cmd); break;
             case TickAdvancedCommand cmd: HandleTickAdvanced(cmd); break;
+            case AmbientTintCommand cmd: HandleAmbientTint(cmd); break;
             default:
                 throw new NotSupportedException(
                     $"Unknown IRenderCommand type '{command.GetType().FullName}'. " +
@@ -75,6 +103,22 @@ internal sealed class RenderCommandDispatcher
     {
         // Silent miss tolerated — same race tolerance as Moved.
         _sceneState.DespawnPawn(cmd.PawnId);
+    }
+
+    /// <summary>
+    /// W3/G2 — store the whole-scene tint the renderer applies next frame. Unlike the three
+    /// silent-accept handlers below, this arm has real observable behavior: the command is
+    /// engine-generic (a colour, no game meaning) and the renderer consumes
+    /// <see cref="AmbientModulation"/> every frame. Channels and strength are clamped here so
+    /// a mod cannot drive the renderer out of range.
+    /// </summary>
+    private void HandleAmbientTint(AmbientTintCommand cmd)
+    {
+        AmbientTint = new Vector4(
+            Math.Clamp(cmd.R, 0f, 1f),
+            Math.Clamp(cmd.G, 0f, 1f),
+            Math.Clamp(cmd.B, 0f, 1f),
+            Math.Clamp(cmd.Strength, 0f, 1f));
     }
 
     // ===========================================================================

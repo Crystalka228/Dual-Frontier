@@ -1,4 +1,5 @@
 using System;
+using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.ECS;
@@ -102,6 +103,11 @@ internal sealed class SystemContextView : ISystemContext, IWriteBatchCapability
 
     public bool CompositeClearFor<T>(CompositeHandle<T> composite, EntityId entity) where T : unmanaged
         => World.GetComposite<T>(composite.CompositeId).ClearFor(entity);
+
+    // ---- Presentation (routed through the engine's presentation sink) ----
+
+    public void SetAmbientTint(float r, float g, float b, float strength)
+        => _registry.RequirePresentationSink().SetAmbientTint(r, g, b, strength);
 
     // ---- Events (routed through the live capability gate) ----
 

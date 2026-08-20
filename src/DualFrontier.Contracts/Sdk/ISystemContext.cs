@@ -141,6 +141,36 @@ public interface ISystemContext
     /// <summary>Clears <paramref name="entity"/>'s list in the composite.</summary>
     bool CompositeClearFor<T>(CompositeHandle<T> composite, EntityId entity) where T : unmanaged;
 
+    // ---- Presentation ----
+
+    /// <summary>
+    /// Modulates the whole rendered scene toward the colour
+    /// (<paramref name="r"/>, <paramref name="g"/>, <paramref name="b"/>) by
+    /// <paramref name="strength"/>. Channels and strength are 0..1;
+    /// <paramref name="strength"/> 0 means no tint and restores the untinted
+    /// scene exactly.
+    ///
+    /// <para>
+    /// Engine-generic: this carries a COLOUR, not a meaning. The engine has no
+    /// idea whether the mod is painting a storm, a nightfall, or a damage flash —
+    /// that interpretation lives entirely in the mod.
+    /// </para>
+    ///
+    /// <para>
+    /// The call crosses to the renderer through the engine's presentation bridge,
+    /// so it is safe from a system Tick and from an event handler alike; it needs
+    /// no world access. If the host installed no presentation sink, the call
+    /// throws rather than silently doing nothing (K-L19 fail-fast) — a mod whose
+    /// visuals vanish without a diagnostic is the shape being prevented.
+    /// </para>
+    ///
+    /// <para>
+    /// <b>Planned</b> — the full layer/slot presentation model (BD-9) supersedes
+    /// this single primitive and ABSORBS this member; see ROADMAP.md.
+    /// </para>
+    /// </summary>
+    void SetAmbientTint(float r, float g, float b, float strength);
+
     // ---- Events ----
 
     /// <summary>

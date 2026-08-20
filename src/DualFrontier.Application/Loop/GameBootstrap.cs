@@ -145,6 +145,12 @@ internal static class GameBootstrap
         modRegistry.SetSystemServices(new SystemServices(pathfinding));
         modRegistry.SetTickSource(() => ticks.CurrentTick);
 
+        // W3/G2 -- install the presentation sink so an SDK system's
+        // ISystemContext.SetAmbientTint reaches the renderer through the same
+        // one-way PresentationBridge the engine's own commands use. Without this
+        // the SDK member throws loudly rather than silently doing nothing.
+        modRegistry.SetPresentationSink(new BridgePresentationSink(bridge));
+
         modRegistry.RegisterSystem<NeedsSystem>(_ => new NeedsSystem());
         modRegistry.RegisterSystem<MoodSystem>(_ => new MoodSystem());
         modRegistry.RegisterSystem<JobSystem>(_ => new JobSystem());
