@@ -230,6 +230,94 @@ public sealed class SdkContextTests
             "existing D2 catch exactly as a SystemBase mod system — the mod is quarantined, not fatal");
     }
 
+    // ---- W3 C2: entity lifecycle on the SDK surface (Contracts 2.1.0) ----
+
+    [Fact]
+    public void EntityLifecycle_MintAttachRead_RoundTripsEntirelyThroughTheSdk()
+    {
+        using var world = new NativeWorld();
+        var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
+        var ctx = new SystemExecutionContext(
+            "T", SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            EntityId minted = view.CreateEntity();
+            view.IsEntityAlive(minted).Should().BeTrue("a freshly minted entity is live");
+
+            using (WriteScope<SdkTestComponent> batch = view.BeginBatch<SdkTestComponent>())
+            {
+                batch.Add(minted, new SdkTestComponent { Value = 5 }).Should().BeTrue();
+            }
+
+            view.GetComponent<SdkTestComponent>(minted).Value.Should().Be(5,
+                "G1 closed: a mod can mint an entity AND attach its own component without " +
+                "ever naming an engine assembly — before W3 there was no way to obtain an id");
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+    }
+
+    [Fact]
+    public void DestroyEntity_EndsLivenessAtOnce_AndReclaimsStorageOnTheEngineFlush()
+    {
+        using var world = new NativeWorld();
+        var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
+        var ctx = new SystemExecutionContext(
+            "T", SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
+
+        EntityId doomed;
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            doomed = view.CreateEntity();
+            using (WriteScope<SdkTestComponent> batch = view.BeginBatch<SdkTestComponent>())
+            {
+                batch.Add(doomed, new SdkTestComponent { Value = 7 }).Should().BeTrue();
+            }
+
+            view.DestroyEntity(doomed);
+
+            view.IsEntityAlive(doomed).Should().BeFalse(
+                "liveness flips immediately — it is the component STORAGE reclamation that the " +
+                "engine defers to its flush (NativeWorldTests pins the same split)");
+            world.GetComponentCount<SdkTestComponent>().Should().Be(1, "pre-flush: the row survives");
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+
+        // The flush is the engine's to schedule; the SDK deliberately vends no flush member.
+        world.FlushDestroyedEntities();
+        world.GetComponentCount<SdkTestComponent>().Should().Be(0, "post-flush: the row is reclaimed");
+    }
+
+    [Fact]
+    public void EntityLifecycle_OutsideAContext_FailsLoudly()
+    {
+        var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
+        var stale = new EntityId(1, 1);
+
+        ((Action)(() => view.CreateEntity())).Should()
+            .Throw<InvalidOperationException>("minting is world access, and world access outside a scheduler context is loud");
+        ((Action)(() => view.DestroyEntity(stale))).Should().Throw<InvalidOperationException>();
+        ((Action)(() => view.IsEntityAlive(stale))).Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void ContractsVersion_IsMinorBumped_AndStillSatisfiesCaret2_0_0_Manifests()
+    {
+        ContractsVersion.Current.Should().Be(new ContractsVersion(2, 1, 0),
+            "W3 adds SDK members without removing or reshaping any — a MINOR bump");
+
+        VersionConstraint.Parse("^2.0.0").IsSatisfiedBy(ContractsVersion.Current).Should().BeTrue(
+            "every on-disk manifest pins apiVersion ^2.0.0; a MINOR bump must not strand them");
+    }
+
     private static void RegisterModApi(ModRegistry registry, bool subscribeOnly)
     {
         string fqn = typeof(SdkTestEvent).FullName!;

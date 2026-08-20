@@ -22,7 +22,7 @@ public sealed class PhaseAModernizationTests
     public void V1Manifest_WithCompatibleRequiresContractsVersion_NoError()
     {
         // ApiVersion = null marks the manifest as v1; RequiresContractsVersion
-        // matches the current Contracts (2.0.0) so the legacy compat check
+        // 2.0.0 is <= the current Contracts (2.1.0 at W3) so the legacy compat check
         // passes and Phase A produces no error.
         LoadedMod mod = MakeV1Mod("com.example.v1ok", "2.0.0");
 
@@ -36,7 +36,7 @@ public sealed class PhaseAModernizationTests
     [Fact]
     public void V1Manifest_WithIncompatibleRequiresContractsVersion_ProducesIncompatibleContractsVersionError()
     {
-        // ApiVersion = null → legacy path. Required 1.0.0 vs current 2.0.0
+        // ApiVersion = null → legacy path. Required 1.0.0 vs the current MAJOR 2
         // — major mismatch; legacy path must surface the historical
         // IncompatibleContractsVersion kind so v1 callers and tests
         // continue to observe the same behavior.
@@ -91,7 +91,7 @@ public sealed class PhaseAModernizationTests
     public void V2Manifest_WithCaretAcceptsCompatibleMinorBump_NoError()
     {
         // Caret accepts higher minor/patch within same major. Current is
-        // pinned at 2.0.0; the constraint-level check is major-agnostic:
+        // pinned at the current build's version; the constraint-level check is major-agnostic:
         // ^2.0.0 must be satisfied by 2.5.3. The validator-level test
         // mirrors §8.1 caret semantics on the available current.
         VersionConstraint constraint = VersionConstraint.Parse("^2.0.0");
@@ -112,21 +112,27 @@ public sealed class PhaseAModernizationTests
     [Fact]
     public void V2Manifest_WithExactConstraintRequiresExactMatch()
     {
-        // Exact constraint = 2.0.0 against current = 2.0.0 → satisfied.
+        // Derived from ContractsVersion.Current, not a literal: this test asserts the
+        // SEMANTICS of an exact constraint (equality, not >=), and a hard-coded version
+        // rots on every additive SDK bump (it did, at W3's 2.0.0 -> 2.1.0).
+        ContractsVersion current = ContractsVersion.Current;
+
+        // Exact constraint == current → satisfied.
         LoadedMod ok = MakeV2Mod(
             "com.example.exactok",
-            VersionConstraint.Parse("2.0.0"));
+            VersionConstraint.Parse(current.ToString()));
 
         ValidationReport okReport = new ContractValidator().Validate(
             new[] { ok }, Array.Empty<SystemBase>());
 
-        okReport.IsValid.Should().BeTrue("exact 2.0.0 == current 2.0.0");
+        okReport.IsValid.Should().BeTrue($"exact {current} == current {current}");
 
-        // Exact constraint = 2.0.1 against current = 2.0.0 → NOT
-        // satisfied (exact requires equality, not >=).
+        // Exact constraint one patch ABOVE current → NOT satisfied
+        // (exact requires equality, not >=).
+        var aboveCurrent = new ContractsVersion(current.Major, current.Minor, current.Patch + 1);
         LoadedMod bad = MakeV2Mod(
             "com.example.exactbad",
-            VersionConstraint.Parse("2.0.1"));
+            VersionConstraint.Parse(aboveCurrent.ToString()));
 
         ValidationReport badReport = new ContractValidator().Validate(
             new[] { bad }, Array.Empty<SystemBase>());

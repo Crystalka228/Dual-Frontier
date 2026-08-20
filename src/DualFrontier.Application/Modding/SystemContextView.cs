@@ -45,6 +45,14 @@ internal sealed class SystemContextView : ISystemContext, IWriteBatchCapability
 
     public long CurrentTick => _currentTick();
 
+    // ---- Entity lifecycle (promotes the NativeWorld primitives) ----
+
+    public EntityId CreateEntity() => World.CreateEntity();
+
+    public void DestroyEntity(EntityId id) => World.DestroyEntity(id);
+
+    public bool IsEntityAlive(EntityId id) => World.IsAlive(id);
+
     // ---- Component access: per-id ----
 
     public bool TryGetComponent<T>(EntityId id, out T value) where T : unmanaged, IComponent

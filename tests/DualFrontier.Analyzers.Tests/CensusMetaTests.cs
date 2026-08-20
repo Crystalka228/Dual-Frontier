@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
+    [InlineData("deferred", @"\bdeferred\b", true, 90, 55)]
     [InlineData("TODO", @"\bTODO\b", false, 136, 53)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -136,6 +136,11 @@ public sealed class CensusMetaTests
         // Core/Modding/KernelCapabilityRegistry.cs documents that live per-mod owner-registration
         // is DEFERRED to the wave that moves gameplay types into the vanilla mods; that one
         // sentence is the +1 deferred site in the new ledger file.
+        // W3/G1 (C2): deferred 89->90 / 55 unchanged -- Sdk/ISystemContext.cs DestroyEntity now
+        // names the engine's native deferred-destroy flush, the model whose storage reclamation
+        // that member documents. ISystemContext.cs already carried a deferred site, so the file
+        // pin does not move. This is a MODEL NAME, not a deferral marker; the regex cannot tell
+        // them apart, so the pin moves and the delta is recorded here rather than reworded away.
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 

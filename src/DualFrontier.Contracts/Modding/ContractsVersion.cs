@@ -16,8 +16,12 @@ public readonly struct ContractsVersion : IEquatable<ContractsVersion>
     /// (MAJOR): the five genre bus interfaces (ICombatBus/IInventoryBus/IMagicBus/IPawnBus/
     /// IWorldBus) and IGameServices left DualFrontier.Contracts for the engine-internal
     /// harness bridge -- a breaking interface removal per CONTRACTS.md §4.
+    /// W3 bumped 2.0.0 -> 2.1.0 (MINOR, purely additive): ISystemContext gained the entity
+    /// lifecycle (CreateEntity/DestroyEntity/IsEntityAlive) and the SetAmbientTint
+    /// presentation primitive. Nothing was removed or reshaped, so every manifest pinning
+    /// apiVersion ^2.0.0 stays satisfied (IsCompatible: same MAJOR, required MINOR ≤ available).
     /// </summary>
-    public static readonly ContractsVersion Current = new(2, 0, 0);
+    public static readonly ContractsVersion Current = new(2, 1, 0);
 
     /// <summary>
     /// Major component: bumped on breaking changes.
