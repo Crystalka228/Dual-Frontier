@@ -10,6 +10,7 @@ using DualFrontier.Contracts.Modding;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
+using DualFrontier.Core.Interop.Marshalling;
 using DualFrontier.Core.Modding;
 using DualFrontier.Core.Scheduling;
 
@@ -119,6 +120,15 @@ internal sealed class ModIntegrationPipeline
     /// </summary>
     private bool _isRunning;
 
+    /// <summary>
+    /// The world's component type registry, for the ID-A eager per-mod id
+    /// allocation at <see cref="Apply"/>. Null is tolerated at construction --
+    /// a rig may build a pipeline against a world with no registry bound -- but
+    /// it is not a silent skip: a mod that claims a Path α component against a
+    /// null registry fails to load, loudly. See <see cref="RegisterModComponents"/>.
+    /// </summary>
+    private readonly ComponentTypeRegistry? _componentRegistry;
+
     // M7.3 step 7 (MOD_OS_ARCHITECTURE §9.5 step 7) — default cadence
     // for the WeakReference spin loop after ALC.Unload. 100 iterations of
     // 100 ms = 10 s timeout, the value the spec calls out verbatim.
@@ -149,7 +159,8 @@ internal sealed class ModIntegrationPipeline
         IModContractStore contractStore,
         IGameServices services,
         ParallelSystemScheduler scheduler,
-        ModFaultHandler faultHandler)
+        ModFaultHandler faultHandler,
+        ComponentTypeRegistry? componentRegistry = null)
     {
         _loader = loader ?? throw new ArgumentNullException(nameof(loader));
         _registry = registry ?? throw new ArgumentNullException(nameof(registry));
@@ -158,6 +169,7 @@ internal sealed class ModIntegrationPipeline
         _services = services ?? throw new ArgumentNullException(nameof(services));
         _scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
         _faultHandler = faultHandler ?? throw new ArgumentNullException(nameof(faultHandler));
+        _componentRegistry = componentRegistry;
     }
 
     /// <summary>
@@ -421,6 +433,11 @@ internal sealed class ModIntegrationPipeline
         // [4] IMod.Initialize — the mod registers components/systems through IModApi.
         var initFailed = new List<LoadedMod>();
         var initErrors = new List<ValidationError>();
+
+        // ID-A / Codex P2 — component ids allocated by THIS batch. Apply is documented
+        // all-or-nothing (MOD_OS_ARCHITECTURE §8.3), so rows created before the commit
+        // point must not outlive a batch that never committed.
+        var newComponentRows = new List<KeyValuePair<string, Type>>();
         foreach (LoadedMod mod in loaded)
         {
             var api = new RestrictedModApi(mod.ModId, mod.Manifest, _registry, _contractStore, _services, _kernelCapabilities);
@@ -441,12 +458,34 @@ internal sealed class ModIntegrationPipeline
                     mod.ModId,
                     ValidationErrorKind.MissingDependency,
                     $"Mod '{mod.ModId}' threw during Initialize: {ex.Message}"));
+                continue;
+            }
+
+            // ID-A / D2 — the mod has now declared everything it owns, and modId is
+            // in scope, so its Path α components get their native ids HERE rather
+            // than lazily on first span use inside a tick. That is what makes К-L4's
+            // "explicit per-mod registration" literally true: the lazy site sits in
+            // Core.Interop, which knows no mod, so it could only ever have allocated
+            // under the kernel's own namespace.
+            try
+            {
+                RegisterModComponents(mod.ModId, newComponentRows);
+            }
+            catch (Exception ex)
+            {
+                initFailed.Add(mod);
+                initErrors.Add(new ValidationError(
+                    mod.ModId,
+                    ValidationErrorKind.ComponentRegistrationFailed,
+                    $"Mod '{mod.ModId}' failed component registration: {ex.Message}"));
             }
         }
 
         if (initFailed.Count > 0)
         {
-            // Rollback — undo every step that had succeeded: registry, contracts, loaded mods.
+            // Rollback — undo every step that had succeeded: component ids, registry,
+            // contracts, loaded mods.
+            RollbackComponentRegistrations(newComponentRows);
             _registry.ResetModSystems();
             foreach (LoadedMod mod in loaded)
                 _contractStore.RevokeAll(mod.ModId);
@@ -491,6 +530,7 @@ internal sealed class ModIntegrationPipeline
         catch (Exception ex)
         {
             // Build() failed — the current scheduler is left untouched.
+            RollbackComponentRegistrations(newComponentRows);
             _registry.ResetModSystems();
             foreach (LoadedMod mod in loaded)
                 _contractStore.RevokeAll(mod.ModId);
@@ -926,6 +966,96 @@ internal sealed class ModIntegrationPipeline
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static WeakReference CaptureAlcWeakReference(LoadedMod mod)
         => new WeakReference(mod.Context);
+
+    /// <summary>
+    /// ID-A / D2 — allocates native component type ids for every Path α component
+    /// <paramref name="modId"/> claimed during <c>Initialize</c>, under the mod's own
+    /// owner namespace <c>mod.&lt;modId&gt;</c> (the ledger convention,
+    /// MOD_OS_ARCHITECTURE §3.3 (owner strings)).
+    ///
+    /// <para>
+    /// Owner-scoping is the point. Component identity is (owner, type FullName), so
+    /// two mods that both define a type called <c>Weather.StateComponent</c> receive
+    /// two distinct ids — the cross-mod isolation clause of К-L4, enforced by
+    /// construction rather than by hoping the names differ.
+    /// </para>
+    ///
+    /// <para>
+    /// Path β managed components are skipped: they live in per-mod
+    /// <c>ManagedStore</c> instances and consume no native id. Both registration
+    /// paths record ownership in the same map, so the selection happens here.
+    /// </para>
+    ///
+    /// <para>
+    /// A null registry is NOT a silent skip. A composition that loads a
+    /// component-defining mod against a world with no registry bound is measuring
+    /// something production never runs — precisely the harness gap that let F-60
+    /// hide through W3 — so it fails the mod's load with a typed error instead.
+    /// Throws are caught by the caller and routed into the existing
+    /// validation-failure funnel, which rolls back the whole batch.
+    /// </para>
+    /// </summary>
+    private void RegisterModComponents(string modId, List<KeyValuePair<string, Type>> newRows)
+    {
+        IReadOnlyList<Type> claimed = _registry.ComponentTypesOf(modId);
+        string owner = "mod." + modId;
+
+        foreach (Type componentType in claimed)
+        {
+            // Path β components are reference types and hold no native storage.
+            if (!componentType.IsValueType)
+                continue;
+
+            if (_componentRegistry is null)
+            {
+                throw new InvalidOperationException(
+                    $"Mod '{modId}' claims Path α component '{componentType.FullName}', but this " +
+                    "pipeline was built with no ComponentTypeRegistry. Construct the world through " +
+                    "Bootstrap.Run(useRegistry: true) and pass NativeWorld.Registry to the pipeline, " +
+                    "as the composition root does.");
+            }
+
+            // Asked BEFORE registering, so a re-adopted row — one that belongs to an
+            // earlier successful load of this same mod — is never mistaken for a row
+            // this batch created and is never unwound by a later failure.
+            string? fullName = componentType.FullName;
+            bool alreadyRegistered =
+                fullName is not null && _componentRegistry.IsIdentityRegistered(owner, fullName);
+
+            _componentRegistry.Register(componentType, owner);
+
+            if (!alreadyRegistered)
+                newRows.Add(new KeyValuePair<string, Type>(owner, componentType));
+        }
+    }
+
+    /// <summary>
+    /// Withdraws the component identities this <see cref="Apply"/> created, when the
+    /// batch fails before its commit point. MOD_OS_ARCHITECTURE §8.3 makes the regular-mod
+    /// batch all-or-nothing, and component registration was the one step that had been
+    /// escaping that guarantee: a mod could register its component, a LATER mod's
+    /// Initialize or the graph build could fail, and the row would survive a load that
+    /// never happened — after which a corrected retry whose layout had also changed was
+    /// refused as a layout mismatch against a version that was never active.
+    ///
+    /// <para>
+    /// This is emphatically NOT the unload path. A mod that loaded successfully and was
+    /// then unloaded keeps its identity row on purpose: that survival is what lets a
+    /// reload re-adopt its store. Only rows from a batch that never committed are
+    /// withdrawn here.
+    /// </para>
+    /// </summary>
+    private void RollbackComponentRegistrations(List<KeyValuePair<string, Type>> newRows)
+    {
+        if (_componentRegistry is null || newRows.Count == 0)
+            return;
+
+        // Reverse order: withdraw the most recent allocations first.
+        for (int i = newRows.Count - 1; i >= 0; i--)
+            _componentRegistry.RollbackRegistration(newRows[i].Value, newRows[i].Key);
+
+        newRows.Clear();
+    }
 
     /// <summary>
     /// MOD_OS_ARCHITECTURE §9.5 step 7 — spins on

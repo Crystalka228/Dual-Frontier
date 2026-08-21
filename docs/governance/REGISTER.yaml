@@ -539,15 +539,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.1
+  version: 1.1.2
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
   review_cadence: on-change+annual
-  last_review_date: 2026-07-18
-  last_review_event: 'EQ_A4_RENDER_TAIL Cascade D -- v1.1.0 -> v1.1.1 PATCH (sections 4 + 7 aligned to landed truth): the Vulkan result mapping (section 4) + section 7 item 7 device-lost/VkResult question RESOLVED by D1 -- VK_ERROR_DEVICE_LOST is now mapped to fail-fast v1 (managed DeviceLossBoundary -> Environment.FailFast, no recovery), owned by ELT section 4 class 6 / OQ-3 (CLOSED) and VULKAN section 6.3; a MANAGED mapping, not a native df_status code. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A3_CHECKED_DESTROY Cascade C (v1.0.0 -> v1.1.0 MINOR).'
+  last_review_date: 2026-08-20
+  last_review_event: "ID_A_COMPONENT_IDENTITY -- v1.1.1 -> v1.1.2 PATCH (section 1 row 2 to code-truth + one stale cross-reference): component TypeId is now allocated against an owner-scoped identity (owner + type FullName; owner is kernel or mod.<modId>), so the collision-policy and generation cells state cross-owner distinctness and survival-across-mod-reload rather than bare sequentiality; note 2 (ids never cross the save boundary) is unchanged and still governs. Section 2's DFK-entity-identity pointer said K-L20 is already reserved, which went stale at EQ_A2 when K-L20 was seated as shutdown-quiescence and the Mod-API reservation moved to K-L21 -- corrected to K-L22 as the next free row (identity recon anomaly A5). EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: EQ_A4_RENDER_TAIL Cascade D -- v1.1.0 -> v1.1.1 PATCH (sections 4 + 7 aligned to landed truth): the Vulkan result mapping (section 4) + section 7 item 7 device-lost/VkResult question RESOLVED by D1 -- VK_ERROR_DEVICE_LOST is now mapped to fail-fast v1 (managed DeviceLossBoundary -> Environment.FailFast, no recovery), owned by ELT section 4 class 6 / OQ-3 (CLOSED) and VULKAN section 6.3; a MANAGED mapping, not a native df_status code. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A3_CHECKED_DESTROY Cascade C (v1.0.0 -> v1.1.0 MINOR)."
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.
 - register_id: DOC-A-ISOLATION
@@ -606,17 +606,17 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.2.1
+  version: 1.3.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)
   supersedes:
   - DOC-A-KERNEL
   review_cadence: on-change+annual
-  last_review_date: 2026-07-18
-  last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.2.0 -> v1.2.1 PATCH (K-L20 artifacts-line ONLY; canon text byte-unchanged): the checked-destroy pair df_world_active_span_count / df_world_destroy_checked (capi.cpp/df_capi.h) + NativeWorld.DisposeChecked + the EngineSession S7 checked switch join the K-L20 implementation artifacts line. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
+  last_review_date: 2026-08-20
+  last_review_event: "ID_A_COMPONENT_IDENTITY -- v1.2.1 -> v1.3.0 MINOR (Part 0 amendment record + section 3 rewrite; K-L4 canonical text BYTE-UNCHANGED and all four pinned properties preserved): component identity is re-keyed on the owner-scoped stable NAME (owner + type FullName) instead of the CLR Type object. The Type-keyed side becomes a ConditionalWeakTable resolution cache holding no authoritative state; implicit first-use registration is confined to NON-collectible surface under owner kernel, and a collectible-context type without a registration is a loud refusal; the mod pipeline allocates a mod's Path alpha ids eagerly at Apply under owner mod.<modId>, which makes the canon's \"explicit per-mod registration\" literally true rather than aspirational (recon anomaly A3 resolved). F-60's reload half is CLOSED by this; its ALC-reclamation half was re-attributed to a tick-path root and stays OPEN. EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: EQ_A3_CHECKED_DESTROY Cascade C -- v1.2.0 -> v1.2.1 PATCH (K-L20 artifacts-line ONLY; canon text byte-unchanged): the checked-destroy pair df_world_active_span_count / df_world_destroy_checked (capi.cpp/df_capi.h) + NativeWorld.DisposeChecked + the EngineSession S7 checked switch join the K-L20 implementation artifacts line. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 \"К-L20 cascade\" DF-rule pointers re-pointed to \"К-L21 cascade\" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23)."
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1
@@ -872,7 +872,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.3.1
+  version: 1.4.0
   first_authored: 2026-07-15
   last_modified: 2026-08-20
   content_language: en
@@ -884,7 +884,7 @@ documents:
   - DOC-A-ISOLATION
   review_cadence: on-change+annual
   last_review_date: 2026-07-19
-  last_review_event: 'PATCH 1.3.0 -> 1.3.1 2026-08-20 (PR #49 Codex review correction): the section 9.4 reload paragraph claimed a reloaded mod resumes its state; measurement against a production-faithful world shows it does not -- component type ids are keyed on the per-ALC Type object with no per-mod removal at unload, so a reloaded mod re-seeds and the stale registry entry leaks the old ALC (ModUnloadTimeout). Corrected to the measured behaviour and cross-referenced to ROADMAP F-60. Correction of a false claim, no rule change. Prior: MINOR 1.2.0 -> 1.3.0 2026-08-20 (W3_WEATHER_SLICE C8) -- owner registration live both passes + RemoveOwner symmetry (3.4), third Phase-C satisfiability arm closing G4 (3.5), owner-namespaced gate tokens (4), Weather pair as the live D-4 reference (5.7), unload step 2.5 + shared-mod reuse (9.4). No lifecycle transition (LOCKED).'
+  last_review_event: "ID_A_COMPONENT_IDENTITY post-review correction (PR #50, Codex P2) -- v1.3.1 -> v1.4.0 MINOR: section 12 ValidationErrorKind registry FIFTEEN -> SIXTEEN members. NEW ComponentRegistrationFailed, produced when a mod claims a Path alpha component that cannot be given a native type id at load -- a layout change while a store for its identity is live, or a composition that loads component-defining mods against a world with no component registry bound. Section 12's closing paragraph is narrowed accordingly: manifest-parse and field registration still surface as InvalidOperationException, but COMPONENT-TYPE registration at Apply is now a typed ValidationErrorKind routed through PipelineResult.Errors and the existing rollback funnel. MINOR (new member in a documented registry, no member removed or repurposed). EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: PATCH 1.3.0 -> 1.3.1 2026-08-20 (PR #49 Codex review correction): the section 9.4 reload paragraph claimed a reloaded mod resumes its state; measurement against a production-faithful world shows it does not -- component type ids are keyed on the per-ALC Type object with no per-mod removal at unload, so a reloaded mod re-seeds and the stale registry entry leaks the old ALC (ModUnloadTimeout). Corrected to the measured behaviour and cross-referenced to ROADMAP F-60. Correction of a false claim, no rule change. Prior: MINOR 1.2.0 -> 1.3.0 2026-08-20 (W3_WEATHER_SLICE C8) -- owner registration live both passes + RemoveOwner symmetry (3.4), third Phase-C satisfiability arm closing G4 (3.5), owner-namespaced gate tokens (4), Weather pair as the live D-4 reference (5.7), unload step 2.5 + shared-mod reuse (9.4). No lifecycle transition (LOCKED)."
   reviewer: Crystalka
   special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -2329,6 +2329,21 @@ documents:
   risks_referenced: []
   capa_entries_referenced: []
   special_case_rationale: First-class brief-refresh delta artifact (patch precedent DOC-D-K9_BRIEF_REFRESH_PATCH / DOC-D-K8_3_BRIEF_REFRESH_PATCH); patches DOC-D-GODOT_ERADICATION_BRIEF v1.0 and folds into it at ratification, both transitioning to EXECUTED together at closure. DOC-D Category D Tier 4 per the empirical execution-brief convention (matches the patched brief's tier).
+- register_id: DOC-D-ID_A_COMPONENT_IDENTITY_BRIEF
+  path: tools/briefs/ID_A_COMPONENT_IDENTITY_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Crystalka
+  version: 1.0
+  first_authored: 2026-08-20
+  last_modified: 2026-08-20
+  content_language: en
+  next_review_due: 
+  title: 'ID-A component identity -- F-60 closure by owner-scoped registry re-key (identity family cascade A, MANAGED-ONLY): ComponentTypeRegistry keyed on (owner, type FullName) instead of the Type object, weak Type cache, eager mod registration at Apply, collectible-ALC loud guard, Weather gate flips, K-L4 amendment record'
+  authored_by: Claude Fable (architect session, identity-family charter)
+  basis: DOC-E-F59_F60_IDENTITY_RECON_REPORT (architect-seat recon at main ad4e353, 2026-08-20) + ratified lean set L1-L5 + the operator's OS-model refinement (same-name components are distinct types under distinct owners, like same-named programs are distinct processes under an OS)
 - register_id: DOC-D-K0
   path: tools/briefs/K0_CHERRY_PICK_BRIEF.md
   project: Dual Frontier
@@ -4133,6 +4148,21 @@ documents:
   last_review_event: Read-only measurement recon 2026-07-04 (executor session, flagship model, LOCAL Skarlet). Its scheduler-surface map, the lock-free-singleton audit (bus excluded -- per-tier std::mutex, concurrent-publish by design), and the N -> time scale curves were the load-bearing brief inputs; consumed by the F-29 cascade execution 2026-07-04. Enrolled at the F-29 REGISTER closure.
   reviewer: Crystalka
   special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line.'
+- register_id: DOC-E-F59_F60_IDENTITY_RECON_REPORT
+  path: docs/reports/F59_F60_IDENTITY_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-20
+  last_modified: 2026-08-20
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'F-59+F-60 IDENTITY RECON REPORT — 2026-08-20 (R1–R5) — component-type + entity-version identity measurement at HEAD ad4e353 for the identity-family charter: ComponentTypeRegistry = 2 strong Dictionaries (Type→id, id→Type) + sequential _nextId, NO deregistration API, reverse map production-dead (0 consumers); native stores_ = unordered_map<u32,RawComponentStore> accepts ARBITRARY u32 (sequentiality is managed-side doc-law only, FNV legacy path proves it), NO store-removal export; К-L4 explicit-registration path (IModApi.RegisterComponent) records OWNERSHIP ONLY (ModRegistry._componentOwners, cleaned at RemoveMod) — the native id is allocated LAZILY by NativeWorld.ResolveTypeId auto-register on first span use, no owner context at that site; leak = Dictionary key roots collectible ALC → §9.5 step-7 spin 100×100 ms full 10 s (measured 10,668 ms, ledger F-60), 5 UnloadMod sites in Weather gate suite pay it; reset = reloaded ALC mints new Type → new id → empty span → re-seed (EntityCount 2), both halves pinned with flip-condition test names; F-59: versions_ per-slot table, ABA law honest native-side (create returns versions_[idx], destroy ++version, recycled slot reuses stored version), WriteBatch flush + destructor auto-flush SILENTLY skip is_alive-failed commands (destructor discards even the count), SpanScope.Pairs code fabricates 0 (C5b) but the :62 property doc still says Version = 1 (stale), EntityId.IsValid and entity_id.h is_valid both carry the flawed index>0||version>0 disjunction (unfixed, IAC §2 pending); IAC §2 is a RATIFIED design fund: option 1 df_world_acquire_versions RECOMMENDED with normative-target signatures, DFK-entity-identity rule sketch, EntityEncoder waiver — but its К-L20-reserved pointer is STALE (К-L20 seated shutdown-quiescence at EQ_A2, К-L21 reserved Mod-API; next free row = К-L22); registry Dictionaries are NOT thread-safe while dispatch runs Parallel.ForEach and first-use registration is reachable from system bodies; BeginModScope/EndModScope/ClearModScope = string-pool co-ownership ONLY (F-58 pointer falsified); anomalies A1–A10'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-W1_SDK_SURFACE_RECON_REPORT, DOC-E-W2_BUS_CAPABILITY_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, DOC-E-F10_TEST_ISOLATION_RECON_REPORT). Pre-deliberation grounding for the ratified F-59+F-60 identity-family charter (one charter, operator-ratified 2026-08-20). Measured by the architect seat directly in the Claude Code environment (live line-reads at HEAD; the operator-ratified grounding step of the cascade rhythm — recon-session dispatch subsumed, W3 direct-brief precedent). Read-only: zero repository mutations besides this file, sync never run, zero builds/tests. UNTRACKED at authoring — enrolled at the charter cascade C1.'
 - register_id: DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT
   path: docs/reports/GAME_ENGINE_BOUNDARY_AUDIT_REPORT.md
   project: Dual Frontier
@@ -15801,5 +15831,40 @@ audit_trail:
     Consequence for the record: two W3 closure claims are WITHDRAWN rather than softened -- "unload ... engine stays healthy" and "reload adopts the surviving singleton". What survives is exact and smaller: unload removes the mechanic (systems out of the graph, subscription released, owner removed, tint cleared) and the engine keeps ticking; the ALC leaks and the state does not resume. ROADMAP W3 row, MOD_OS section 9.4 and the migration plan W3 section were corrected to the measured behaviour, and F-60 (S1, OPEN) records the mechanism, the measurements, the flip conditions written into the pinning assertions, and why it was not fixed here: ComponentTypeRegistry is K-L4's implementation artifact, so re-keying it or adding per-mod deregistration changes component-identity semantics and reaches past this wave's MANAGED-ONLY fence. It affects EVERY mod that defines a component, not only Weather.
 
     Methodological lesson, recorded because it generalises: an end-to-end gate is only as honest as the composition it builds. This harness was end-to-end in every other respect -- real loader, real validator, real ledger, real scheduler -- and one constructor call away from production was enough to make two false claims look proven. A gate must build its world the way the composition root does, or say plainly which fidelity it gave up.
+  cross_references:
+    capa_entries: []
+- id: EVT-2026-08-20-ID_A_COMPONENT_IDENTITY
+  date: 2026-08-20
+  event: ID_A_COMPONENT_IDENTITY cascade (identity family, Cascade A) -- component identity re-keyed from the CLR Type object onto the owner-scoped stable name (owner + type FullName). K-L4 canonical text byte-unchanged, amendment record added. F-60 RE-SCOPED rather than closed - its reload/adoption half is closed, its ALC-leak half was re-attributed to a tick-path root by bisection and stays OPEN. MANAGED-ONLY, zero native diffs
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-ID_A_COMPONENT_IDENTITY_BRIEF
+  - DOC-E-F59_F60_IDENTITY_RECON_REPORT
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-C-ROADMAP
+  commits:
+    range: cb17058..(the closure commit carries this entry)
+    key_commits:
+    - cb17058
+    - 90aca59
+    - c92d7d3
+    - bd07dd1
+    - c0b0fb3
+    - 855739c
+  governance_impact: >
+    WHAT WAS BUILT. Component identity is now the owner-scoped stable NAME - (owner, type FullName), owner being kernel or mod.<modId> per the ledger convention - and no longer the CLR Type object. The operating-system framing is the substance, not decoration: a type name is a file name, an owner is the directory it sits in, and two mods that both ship a Weather.StateComponent hold two distinct component types with distinct ids, exactly as two same-named programs are two processes. Cross-mod isolation, which K-L4 has always asserted, stops depending on mod authors choosing distinct names and becomes structural.
+
+    The authoritative maps hold no Type reference at all; Type-keyed resolution is demoted to a ConditionalWeakTable cache whose keys are held weakly. Implicit first-use registration is fenced to NON-collectible surface under owner kernel, and a collectible-context type with no registration is a loud refusal naming the IModApi.RegisterComponent remedy - because the alternative, silently filing a mod's component under kernel, is the isolation clause inverted. The mod pipeline allocates a mod's Path alpha ids EAGERLY at Apply under mod.<modId>, which is what makes K-L4's "explicit per-mod registration" literally true: the previous lazy site sits in Core.Interop and knows nothing about mods, so the canon's letter and the shipped mechanism had drifted apart (identity recon anomaly A3, resolved). Re-registering an identity that already holds an id re-adopts it, and a component whose layout changed between mod versions is refused by native at the same id and surfaces as a typed load failure through the pipeline's existing rollback funnel.
+
+    THE FINDING THE CASCADE DID NOT CLOSE, AND WHY THAT IS THE MAIN RESULT. The brief predicted that re-keying the registry would close both halves of F-60, and named the alternative as halt condition H8. H8 fired. The reload half closed exactly as designed - reload now adopts the surviving singleton, EntityCount stays 1, weather RESUMES. The ALC-leak half did not, so it was bisected on the production composition rather than reasoned about: holding everything fixed and varying only the tick count between load and unload gave 0 ticks -> 3 ms and no warnings; 1 tick -> 10,459 ms and ModUnloadTimeout; 16, 100 and 340 ticks all -> ~10.5 s. A SINGLE ExecuteTick is sufficient to root the ALC. After the re-key the registry provably holds no strong Type reference anywhere, and at one tick the component HAS been resolved through it, so the registry was never the binding root. The Weather-suite wall time corroborates it independently: 44.027 s before, 43.818 s after, where the brief had projected roughly 53 s of recovered spin.
+
+    The operator ruled (2026-08-20) that F-60 stays OPEN and is re-scoped in place rather than split into a new number, so the mis-attribution stays attached to the finding that carried it. The W3-era attribution was an inference, not a bisect; the identity recon report's R2.1 is a historical record and is left byte-unchanged, with the correction carried here and in the ledger. Two false leads are recorded so they are not re-walked: useRegistry:false also leaks but is not a valid control, because the legacy path stores typeof(T) in the static NativeComponentTypeRegistry dictionary - its own root; and the other multi-second unload tests hold a LoadedMod local live across the spin, which is test-harness rooting rather than an engine defect.
+
+    Methodological lesson, recorded because it generalises. A defect can be measured perfectly and attributed wrongly. W3 measured 10,668 ms and a ModUnloadTimeout correctly, then named the strong Type reference it could see as the cause - a plausible root that was genuinely present, and genuinely not the one holding the context. The cheapest instrument that would have caught it is the one that eventually did: vary ONE input and watch the symptom, rather than inspect the code for something that looks capable of causing it. The clean 0-tick case is now pinned as a test in its own right, so the discarded explanation cannot be re-derived without a test contradicting it.
+
+    ALSO LANDED. Two test rigs that loaded component-defining mods against a registry-less world were made production-faithful, which is the W3 gate-harness-fidelity lesson applied where it bites; one of them had been disposing its native world before any test ran. Sdk/SpanScope<T>.Pairs's property doc, which still taught Version = 1 after W3's C5b corrected the code beneath it, now states the Version = 0 truth with the K7 deferral preserved and repointed at F-59 / ID-B. IAC section 2's DFK-entity-identity pointer, stale since EQ_A2 seated K-L20 as shutdown-quiescence, is corrected to K-L22 as the next free row (recon anomaly A5). KERNEL_ARCHITECTURE 1.2.1 -> 1.3.0 MINOR, IDENTITY_AND_ABI_CONTRACT 1.1.1 -> 1.1.2 PATCH. MODDING.md needed no change - the Phase 0 grep found it stating neither the lazy-id nor the restart-to-reclaim behaviour.
+
+    GATES. Release build 0 warnings / 0 errors. Full solution 1269 passed / 0 failed / 5 skipped against a Phase 0 baseline of 1260 passed / 1 failed / 5 skipped; the baseline failure was Governance.Tests Validate_AgainstLiveTree_Succeeds, red because the dispatched brief's own title was unparseable YAML, repaired at C1. validate --armed exit 0 at C1, C6 and C7. Census UNMOVED on all seven families, including the deferred SOFT pin the SpanScope comment edit touched - stub 51/20, deferred 89/55, TODO 132/51, Phase 6 23/11, not yet 10/9, Console.WriteLine in src 2/1, [ReservedStub 34/13. Native untouched: zero diffs under native/ at every commit.
   cross_references:
     capa_entries: []

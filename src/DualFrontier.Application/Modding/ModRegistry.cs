@@ -181,6 +181,39 @@ internal sealed class ModRegistry : IManagedStorageResolver
     }
 
     /// <summary>
+    /// The component types <paramref name="modId"/> has claimed through
+    /// <see cref="RegisterComponent"/>, ordered by <see cref="Type.FullName"/>.
+    ///
+    /// <para>
+    /// The ordering is load-bearing, not cosmetic: the pipeline allocates native
+    /// component ids from this sequence, and К-L4 requires the assignment to be
+    /// deterministic. Dictionary enumeration order carries no such guarantee, so
+    /// the order is imposed here rather than inherited from the storage.
+    /// </para>
+    ///
+    /// <para>
+    /// Both registration paths land in the same ownership map, so the result mixes
+    /// Path α (unmanaged struct) and Path β (managed class) component types. Only
+    /// Path α consumes a native id; the caller selects.
+    /// </para>
+    /// </summary>
+    /// <param name="modId">Identifier of the owning mod.</param>
+    public IReadOnlyList<Type> ComponentTypesOf(string modId)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+
+        var claimed = new List<Type>();
+        foreach (KeyValuePair<Type, string> pair in _componentOwners)
+        {
+            if (pair.Value == modId)
+                claimed.Add(pair.Key);
+        }
+
+        claimed.Sort(static (a, b) => string.CompareOrdinal(a.FullName, b.FullName));
+        return claimed;
+    }
+
+    /// <summary>
     /// Registers a system type as belonging to the given mod. The type must
     /// carry both <see cref="SystemAccessAttribute"/> and
     /// <see cref="TickRateAttribute"/>; otherwise an
