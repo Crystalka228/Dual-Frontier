@@ -60,13 +60,17 @@ public sealed class SdkPipelineTests
         var validator = new ContractValidator();
         var contractStore = new ModContractStore();
         IGameServices services = new GameServices();
-        using var world = new NativeWorld();
+        // Production-faithful world: the Example mod claims a Path α component, and a
+        // component-defining mod loaded against a registry-less world is a composition
+        // the game never runs (ID-A / D2).
+        using var world = DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true);
         var ticks = new TickScheduler();
         var graph = new DependencyGraph();
         graph.Build();
         ParallelSystemScheduler scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, world);
         var pipeline = new ModIntegrationPipeline(
-            loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler());
+            loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler(),
+            world.Registry);
 
         string modPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "DualFrontier.Mod.Example");
         PipelineResult result = pipeline.Apply(new[] { modPath });

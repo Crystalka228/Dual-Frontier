@@ -15,6 +15,15 @@ public enum ValidationErrorKind
     IncompatibleContractsVersion,
 
     /// <summary>
+    /// The mod claimed a Path α component type that could not be given a native
+    /// type id at load. Two causes reach here: the component's layout changed
+    /// while a store for its identity is already live (native rejects the same id
+    /// at a different size), and a composition that loads component-defining mods
+    /// against a world with no component registry bound.
+    /// </summary>
+    ComponentRegistrationFailed,
+
+    /// <summary>
     /// Two systems (both from mods, or a mod and core) declare writes to the
     /// same component type, which <see cref="DualFrontier.Core.Scheduling.DependencyGraph"/>
     /// would reject during <c>Build</c>.

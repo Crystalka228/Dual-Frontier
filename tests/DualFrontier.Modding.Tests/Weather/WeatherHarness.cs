@@ -78,9 +78,13 @@ internal sealed class WeatherHarness : IDisposable
         Scheduler = SchedulerTestFixture.BuildIsolated(
             graph.GetPhases(), Ticks, World, services: Services);
 
+        // Mirrors GameBootstrap.CreateSession: the pipeline receives the world's component
+        // registry, so the mod's component takes an owner-scoped id at Apply exactly as it
+        // does in production. A harness that omitted it would be measuring a composition
+        // the game never runs -- the fidelity gap that hid F-60 through W3.
         Pipeline = new ModIntegrationPipeline(
             new ModLoader(), Registry, new ContractValidator(), new ModContractStore(),
-            Services, Scheduler, new ModFaultHandler());
+            Services, Scheduler, new ModFaultHandler(), World.Registry);
     }
 
     internal PipelineResult ApplyWeatherPair()

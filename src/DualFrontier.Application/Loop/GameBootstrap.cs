@@ -220,8 +220,11 @@ internal static class GameBootstrap
 
         var modValidator = new ContractValidator();
         var modContractStore = new ModContractStore();
+        // ID-A / D2 -- the composition root hands the pipeline the world's component
+        // registry, so a mod's Path α components get owner-scoped native ids at Apply.
         var pipeline = new ModIntegrationPipeline(
-            modLoader, modRegistry, modValidator, modContractStore, services, scheduler, faultHandler);
+            modLoader, modRegistry, modValidator, modContractStore, services, scheduler, faultHandler,
+            nativeWorld.Registry);
         var discoverer = new DefaultModDiscoverer(modsRoot);
         var controller = new ModMenuController(pipeline, discoverer);
 

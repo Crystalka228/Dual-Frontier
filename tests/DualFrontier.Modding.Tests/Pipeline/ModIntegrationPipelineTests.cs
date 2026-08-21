@@ -135,6 +135,10 @@ public sealed class ModIntegrationPipelineTests
         public ParallelSystemScheduler Scheduler { get; }
         public ModIntegrationPipeline Pipeline { get; }
 
+        // Keeps the native world -- and therefore the component registry bound to its
+        // handle -- alive for as long as the harness is in use.
+        public NativeWorld World { get; }
+
         private Harness(
             ModLoader loader,
             ModRegistry registry,
@@ -142,7 +146,8 @@ public sealed class ModIntegrationPipelineTests
             ModContractStore contractStore,
             IGameServices services,
             ParallelSystemScheduler scheduler,
-            ModIntegrationPipeline pipeline)
+            ModIntegrationPipeline pipeline,
+            NativeWorld world)
         {
             Loader = loader;
             Registry = registry;
@@ -151,6 +156,7 @@ public sealed class ModIntegrationPipelineTests
             Services = services;
             Scheduler = scheduler;
             Pipeline = pipeline;
+            World = world;
         }
 
         public static Harness WithCore(params SystemBase[] coreSystems)
@@ -163,7 +169,12 @@ public sealed class ModIntegrationPipelineTests
             var services = new GameServices();
 
             // Initial scheduler — core only. The pipeline will call Rebuild later.
-            using var nativeWorld = new NativeWorld();
+            // Production-faithful world (ID-A / D2): the mods this harness injects claim Path α
+            // components, so they need a real ComponentTypeRegistry to take ids from. The world is
+            // held by the returned Harness rather than disposed here -- the previous `using` freed
+            // it before any test had run, leaving the scheduler and the pipeline pointing at a
+            // destroyed world, which was harmless only for as long as nothing called into it.
+            NativeWorld nativeWorld = DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true);
             var ticks = new TickScheduler();
             var graph = new DependencyGraph();
             foreach (SystemBase s in coreSystems)
@@ -172,9 +183,10 @@ public sealed class ModIntegrationPipelineTests
             var scheduler = SchedulerTestFixture.BuildIsolated(graph.GetPhases(), ticks, nativeWorld);
 
             var pipeline = new ModIntegrationPipeline(
-                loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler());
+                loader, registry, validator, contractStore, services, scheduler, new ModFaultHandler(),
+                nativeWorld.Registry);
 
-            return new Harness(loader, registry, validator, contractStore, services, scheduler, pipeline);
+            return new Harness(loader, registry, validator, contractStore, services, scheduler, pipeline, nativeWorld);
         }
     }
 

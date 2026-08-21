@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Interop.Marshalling;
 
@@ -581,14 +582,43 @@ public sealed class NativeWorld : IDisposable
     /// Resolves the type id for <typeparamref name="T"/> using the registry if
     /// one is bound, else falling back to FNV-1a. Centralizes the
     /// registry-vs-fallback decision so component methods stay terse.
+    ///
+    /// <para>
+    /// ID-A / D3 — implicit registration is available to NON-collectible surface
+    /// only. Engine and test types resolve under the kernel owner on first use,
+    /// which keeps the ergonomics they have always had. A type from a collectible
+    /// AssemblyLoadContext — that is, a mod's type — is a loud failure instead:
+    /// this site lives in Core.Interop, which knows nothing about mods, so the
+    /// only identity it could invent is a kernel-owned one, and silently filing a
+    /// mod's component under the kernel would merge identities across owners and
+    /// reopen the isolation hole owner-scoping exists to close. The mod pipeline
+    /// registers a mod's components under <c>mod.&lt;modId&gt;</c> at Apply, before
+    /// any tick, so a correctly-loaded mod never reaches this branch.
+    /// </para>
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private uint ResolveTypeId<T>() where T : unmanaged
     {
         if (_registry != null)
         {
-            // Auto-register on first use in registry mode. Idempotent — a
-            // re-call returns the existing id.
+            // Owner-agnostic cache probe: whoever owns this type, a bound id answers.
+            if (_registry.TryGetCachedId(typeof(T), out uint bound))
+            {
+                return bound;
+            }
+
+            if (AssemblyLoadContext.GetLoadContext(typeof(T).Assembly)?.IsCollectible == true)
+            {
+                throw new InvalidOperationException(
+                    $"Component type {typeof(T).FullName} comes from a collectible load context " +
+                    $"('{AssemblyLoadContext.GetLoadContext(typeof(T).Assembly)?.Name}') and has no " +
+                    "registered component identity. A mod must declare its components explicitly: " +
+                    "call IModApi.RegisterComponent<T>() from the mod's Initialize, and the pipeline " +
+                    "allocates the id under the mod's own owner namespace at load.");
+            }
+
+            // Implicit registration for non-collectible surface, under the kernel
+            // owner. Idempotent — a re-call returns the existing id.
             return _registry.Register<T>();
         }
 #pragma warning disable CS0618 // NativeComponentType<T> is obsolete (legacy fallback path).
