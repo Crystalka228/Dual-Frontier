@@ -539,15 +539,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.1
+  version: 1.1.2
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
   review_cadence: on-change+annual
-  last_review_date: 2026-07-18
-  last_review_event: 'EQ_A4_RENDER_TAIL Cascade D -- v1.1.0 -> v1.1.1 PATCH (sections 4 + 7 aligned to landed truth): the Vulkan result mapping (section 4) + section 7 item 7 device-lost/VkResult question RESOLVED by D1 -- VK_ERROR_DEVICE_LOST is now mapped to fail-fast v1 (managed DeviceLossBoundary -> Environment.FailFast, no recovery), owned by ELT section 4 class 6 / OQ-3 (CLOSED) and VULKAN section 6.3; a MANAGED mapping, not a native df_status code. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A3_CHECKED_DESTROY Cascade C (v1.0.0 -> v1.1.0 MINOR).'
+  last_review_date: 2026-08-20
+  last_review_event: "ID_A_COMPONENT_IDENTITY -- v1.1.1 -> v1.1.2 PATCH (section 1 row 2 to code-truth + one stale cross-reference): component TypeId is now allocated against an owner-scoped identity (owner + type FullName; owner is kernel or mod.<modId>), so the collision-policy and generation cells state cross-owner distinctness and survival-across-mod-reload rather than bare sequentiality; note 2 (ids never cross the save boundary) is unchanged and still governs. Section 2's DFK-entity-identity pointer said K-L20 is already reserved, which went stale at EQ_A2 when K-L20 was seated as shutdown-quiescence and the Mod-API reservation moved to K-L21 -- corrected to K-L22 as the next free row (identity recon anomaly A5). EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: EQ_A4_RENDER_TAIL Cascade D -- v1.1.0 -> v1.1.1 PATCH (sections 4 + 7 aligned to landed truth): the Vulkan result mapping (section 4) + section 7 item 7 device-lost/VkResult question RESOLVED by D1 -- VK_ERROR_DEVICE_LOST is now mapped to fail-fast v1 (managed DeviceLossBoundary -> Environment.FailFast, no recovery), owned by ELT section 4 class 6 / OQ-3 (CLOSED) and VULKAN section 6.3; a MANAGED mapping, not a native df_status code. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A3_CHECKED_DESTROY Cascade C (v1.0.0 -> v1.1.0 MINOR)."
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.
 - register_id: DOC-A-ISOLATION
@@ -606,17 +606,17 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.2.1
+  version: 1.3.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-20
   content_language: en
   next_review_due: 2027-Q3
   title: DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)
   supersedes:
   - DOC-A-KERNEL
   review_cadence: on-change+annual
-  last_review_date: 2026-07-18
-  last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.2.0 -> v1.2.1 PATCH (K-L20 artifacts-line ONLY; canon text byte-unchanged): the checked-destroy pair df_world_active_span_count / df_world_destroy_checked (capi.cpp/df_capi.h) + NativeWorld.DisposeChecked + the EngineSession S7 checked switch join the K-L20 implementation artifacts line. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 "К-L20 cascade" DF-rule pointers re-pointed to "К-L21 cascade" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23).'
+  last_review_date: 2026-08-20
+  last_review_event: "ID_A_COMPONENT_IDENTITY -- v1.2.1 -> v1.3.0 MINOR (Part 0 amendment record + section 3 rewrite; K-L4 canonical text BYTE-UNCHANGED and all four pinned properties preserved): component identity is re-keyed on the owner-scoped stable NAME (owner + type FullName) instead of the CLR Type object. The Type-keyed side becomes a ConditionalWeakTable resolution cache holding no authoritative state; implicit first-use registration is confined to NON-collectible surface under owner kernel, and a collectible-context type without a registration is a loud refusal; the mod pipeline allocates a mod's Path alpha ids eagerly at Apply under owner mod.<modId>, which makes the canon's \"explicit per-mod registration\" literally true rather than aspirational (recon anomaly A3 resolved). F-60's reload half is CLOSED by this; its ALC-reclamation half was re-attributed to a tick-path root and stays OPEN. EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: EQ_A3_CHECKED_DESTROY Cascade C -- v1.2.0 -> v1.2.1 PATCH (K-L20 artifacts-line ONLY; canon text byte-unchanged): the checked-destroy pair df_world_active_span_count / df_world_destroy_checked (capi.cpp/df_capi.h) + NativeWorld.DisposeChecked + the EngineSession S7 checked switch join the K-L20 implementation artifacts line. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 \"К-L20 cascade\" DF-rule pointers re-pointed to \"К-L21 cascade\" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23)."
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1
