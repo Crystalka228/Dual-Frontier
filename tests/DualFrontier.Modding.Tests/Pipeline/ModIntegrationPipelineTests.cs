@@ -190,6 +190,42 @@ public sealed class ModIntegrationPipelineTests
         }
     }
 
+    /// <summary>
+    /// ID-A / Codex P2 on PR #50 — a batch that fails after a mod registered its component
+    /// must withdraw that component's identity. MOD_OS_ARCHITECTURE §8.3 makes the
+    /// regular-mod batch all-or-nothing, and component registration had been escaping it:
+    /// the row outlived a load that never committed.
+    ///
+    /// <para>
+    /// The good mod initializes first and claims its component; the second mod then throws
+    /// from Initialize, which fails the whole batch at stage [4]. The assertion is on the
+    /// identity space, not on the error list — the error was already reported correctly
+    /// before this fix; what leaked was state.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void FailedApply_WithdrawsComponentIdentitiesTheBatchCreated()
+    {
+        Harness h = Harness.WithCore();
+        LoadedMod good = InjectMod(h, "com.example.good", new GoodMod(), new[] { typeof(GoodSystem) });
+        LoadedMod thrower = InjectMod(h, "com.example.thrower", new ThrowingInitMod(), Array.Empty<Type>());
+
+        PipelineResult result = h.Pipeline.Apply(new[] { good.ModId, thrower.ModId });
+
+        result.Success.Should().BeFalse("the second mod throws from Initialize");
+        h.World.Registry!.IsIdentityRegistered("mod." + good.ModId, typeof(GoodComponent).FullName!)
+            .Should().BeFalse(
+                "the batch never committed, so the component id it allocated must be withdrawn");
+    }
+
+    private sealed class ThrowingInitMod : IMod
+    {
+        public void Initialize(IModApi api)
+            => throw new InvalidOperationException("deliberate Initialize failure");
+
+        public void Unload() { }
+    }
+
     private static LoadedMod InjectMod(
         Harness h,
         string modId,

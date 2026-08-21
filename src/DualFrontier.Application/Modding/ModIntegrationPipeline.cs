@@ -433,6 +433,11 @@ internal sealed class ModIntegrationPipeline
         // [4] IMod.Initialize — the mod registers components/systems through IModApi.
         var initFailed = new List<LoadedMod>();
         var initErrors = new List<ValidationError>();
+
+        // ID-A / Codex P2 — component ids allocated by THIS batch. Apply is documented
+        // all-or-nothing (MOD_OS_ARCHITECTURE §8.3), so rows created before the commit
+        // point must not outlive a batch that never committed.
+        var newComponentRows = new List<KeyValuePair<string, Type>>();
         foreach (LoadedMod mod in loaded)
         {
             var api = new RestrictedModApi(mod.ModId, mod.Manifest, _registry, _contractStore, _services, _kernelCapabilities);
@@ -464,7 +469,7 @@ internal sealed class ModIntegrationPipeline
             // under the kernel's own namespace.
             try
             {
-                RegisterModComponents(mod.ModId);
+                RegisterModComponents(mod.ModId, newComponentRows);
             }
             catch (Exception ex)
             {
@@ -478,7 +483,9 @@ internal sealed class ModIntegrationPipeline
 
         if (initFailed.Count > 0)
         {
-            // Rollback — undo every step that had succeeded: registry, contracts, loaded mods.
+            // Rollback — undo every step that had succeeded: component ids, registry,
+            // contracts, loaded mods.
+            RollbackComponentRegistrations(newComponentRows);
             _registry.ResetModSystems();
             foreach (LoadedMod mod in loaded)
                 _contractStore.RevokeAll(mod.ModId);
@@ -523,6 +530,7 @@ internal sealed class ModIntegrationPipeline
         catch (Exception ex)
         {
             // Build() failed — the current scheduler is left untouched.
+            RollbackComponentRegistrations(newComponentRows);
             _registry.ResetModSystems();
             foreach (LoadedMod mod in loaded)
                 _contractStore.RevokeAll(mod.ModId);
@@ -987,7 +995,7 @@ internal sealed class ModIntegrationPipeline
     /// validation-failure funnel, which rolls back the whole batch.
     /// </para>
     /// </summary>
-    private void RegisterModComponents(string modId)
+    private void RegisterModComponents(string modId, List<KeyValuePair<string, Type>> newRows)
     {
         IReadOnlyList<Type> claimed = _registry.ComponentTypesOf(modId);
         string owner = "mod." + modId;
@@ -1007,8 +1015,46 @@ internal sealed class ModIntegrationPipeline
                     "as the composition root does.");
             }
 
+            // Asked BEFORE registering, so a re-adopted row — one that belongs to an
+            // earlier successful load of this same mod — is never mistaken for a row
+            // this batch created and is never unwound by a later failure.
+            string? fullName = componentType.FullName;
+            bool alreadyRegistered =
+                fullName is not null && _componentRegistry.IsIdentityRegistered(owner, fullName);
+
             _componentRegistry.Register(componentType, owner);
+
+            if (!alreadyRegistered)
+                newRows.Add(new KeyValuePair<string, Type>(owner, componentType));
         }
+    }
+
+    /// <summary>
+    /// Withdraws the component identities this <see cref="Apply"/> created, when the
+    /// batch fails before its commit point. MOD_OS_ARCHITECTURE §8.3 makes the regular-mod
+    /// batch all-or-nothing, and component registration was the one step that had been
+    /// escaping that guarantee: a mod could register its component, a LATER mod's
+    /// Initialize or the graph build could fail, and the row would survive a load that
+    /// never happened — after which a corrected retry whose layout had also changed was
+    /// refused as a layout mismatch against a version that was never active.
+    ///
+    /// <para>
+    /// This is emphatically NOT the unload path. A mod that loaded successfully and was
+    /// then unloaded keeps its identity row on purpose: that survival is what lets a
+    /// reload re-adopt its store. Only rows from a batch that never committed are
+    /// withdrawn here.
+    /// </para>
+    /// </summary>
+    private void RollbackComponentRegistrations(List<KeyValuePair<string, Type>> newRows)
+    {
+        if (_componentRegistry is null || newRows.Count == 0)
+            return;
+
+        // Reverse order: withdraw the most recent allocations first.
+        for (int i = newRows.Count - 1; i >= 0; i--)
+            _componentRegistry.RollbackRegistration(newRows[i].Value, newRows[i].Key);
+
+        newRows.Clear();
     }
 
     /// <summary>

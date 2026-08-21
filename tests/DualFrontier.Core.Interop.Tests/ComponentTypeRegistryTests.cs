@@ -328,6 +328,35 @@ public class ComponentTypeRegistryTests
     }
 
     [Fact]
+    public void RollbackRegistration_WithdrawsTheRow_ButDoesNotReissueTheId()
+    {
+        // Codex P2 on PR #50. A batch that fails after registering a component must not
+        // leave its identity behind, or a corrected retry whose layout also changed is
+        // refused as a mismatch against a version that was never active.
+        using var world = new NativeWorld();
+        var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
+
+        const string Name = "Withdrawn.StateComponent";
+        Type attempt = EmitComponentType("IdA.Withdrawn.V1", Name, typeof(int));
+        uint firstId = registry.Register(attempt, "mod.withdrawn");
+        registry.Count.Should().Be(1);
+
+        registry.RollbackRegistration(attempt, "mod.withdrawn");
+
+        registry.Count.Should().Be(0, "the withdrawn row must leave no trace in the identity space");
+        registry.IsIdentityRegistered("mod.withdrawn", Name).Should().BeFalse();
+
+        // The retry carries a CHANGED layout -- the case that used to be refused.
+        Type retry = EmitComponentType("IdA.Withdrawn.V2", Name, typeof(int), typeof(int));
+        uint retryId = registry.Register(retry, "mod.withdrawn");
+
+        retryId.Should().NotBe(firstId,
+            "the id is NOT reissued: no native store-removal export exists, so handing the " +
+            "withdrawn id to a different component would hand it the failed attempt's bytes");
+        registry.Count.Should().Be(1);
+    }
+
+    [Fact]
     public void ConcurrentRegistration_IsThreadSafe()
     {
         // Dispatch runs system bodies through Parallel.ForEach and resolution is reachable

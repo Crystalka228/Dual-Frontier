@@ -335,6 +335,64 @@ public sealed class ComponentTypeRegistry
     public bool IsRegistered<T>() where T : unmanaged => TryGetId<T>(out _);
 
     /// <summary>
+    /// Returns true if an identity is already registered for
+    /// <paramref name="owner"/> + <paramref name="typeFullName"/>. The mod pipeline
+    /// asks BEFORE registering so it knows which rows a failed load must unwind and
+    /// which predate it — a re-adopted row belongs to an earlier, successful load and
+    /// must survive.
+    /// </summary>
+    public bool IsIdentityRegistered(string owner, string typeFullName)
+    {
+        if (owner is null) throw new ArgumentNullException(nameof(owner));
+        if (typeFullName is null) throw new ArgumentNullException(nameof(typeFullName));
+
+        lock (_gate)
+        {
+            return _byIdentity.ContainsKey(new ComponentIdentity(owner, typeFullName));
+        }
+    }
+
+    /// <summary>
+    /// Removes the identity row created for <paramref name="componentType"/> under
+    /// <paramref name="owner"/>, together with its cache binding. Used by the mod
+    /// pipeline to unwind component ids allocated during an <c>Apply</c> that then
+    /// failed, so a batch that never committed leaves no trace in the identity space.
+    /// Rows the caller did not create must not be passed here.
+    ///
+    /// <para>
+    /// <b><c>_nextId</c> is deliberately NOT rewound.</b> There is no native
+    /// store-removal export, so the store allocated under the withdrawn id outlives it.
+    /// Reissuing that id to a DIFFERENT component would hand the newcomer the failed
+    /// mod's bytes — at an equal size native registration is idempotent and would accept
+    /// it silently, which is a corruption, not a leak. Letting the counter advance costs
+    /// only id density within a run, and run-local ids are never persisted
+    /// (IDENTITY_AND_ABI_CONTRACT §1 note 2). The store itself remains as inert residue,
+    /// which is the F-58 reclamation gap, not this method's to close.
+    /// </para>
+    /// </summary>
+    public void RollbackRegistration(Type componentType, string owner)
+    {
+        if (componentType is null) throw new ArgumentNullException(nameof(componentType));
+        if (owner is null) throw new ArgumentNullException(nameof(owner));
+
+        string? fullName = componentType.FullName;
+        if (fullName is null) return;
+
+        lock (_gate)
+        {
+            var identity = new ComponentIdentity(owner, fullName);
+            if (!_byIdentity.TryGetValue(identity, out Registration registration))
+            {
+                return;
+            }
+
+            _byIdentity.Remove(identity);
+            _identityById.Remove(registration.Id);
+            _bindings.Remove(componentType);
+        }
+    }
+
+    /// <summary>
     /// Returns true if <paramref name="type"/> currently resolves through the
     /// cache, i.e. this exact <see cref="Type"/> object is bound to an id.
     /// The mod pipeline uses it to report what a mod's registration actually
