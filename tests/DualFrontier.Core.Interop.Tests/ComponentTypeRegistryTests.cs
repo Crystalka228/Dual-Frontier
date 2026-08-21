@@ -82,15 +82,19 @@ public class ComponentTypeRegistryTests
     }
 
     [Fact]
-    public void Lookup_returns_type_for_registered_id()
+    public void Lookup_returns_identity_for_registered_id()
     {
         using var world = new NativeWorld();
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
 
         uint id = registry.Register<TypeA>();
-        Type? type = registry.Lookup(id);
+        ComponentIdentity? identity = registry.Lookup(id);
 
-        type.Should().Be(typeof(TypeA));
+        // The reverse map answers with the owner-scoped identity, not a Type: holding a
+        // Type here is exactly what rooted a mod's collectible ALC before ID-A.
+        identity.Should().NotBeNull();
+        identity!.Value.Owner.Should().Be(ComponentTypeRegistry.KernelOwner);
+        identity.Value.TypeFullName.Should().Be(typeof(TypeA).FullName);
     }
 
     [Fact]
@@ -99,9 +103,9 @@ public class ComponentTypeRegistryTests
         using var world = new NativeWorld();
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
 
-        Type? type = registry.Lookup(999);
+        ComponentIdentity? identity = registry.Lookup(999);
 
-        type.Should().BeNull();
+        identity.Should().BeNull();
     }
 
     [Fact]

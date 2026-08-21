@@ -154,23 +154,22 @@ public sealed class WeatherWaveGateTests
     }
 
     /// <summary>
-    /// F-60 (PR #49 Codex review, P1). Reload SUCCEEDS at the pipeline level -- the C5c shared-mod
-    /// reuse fix holds -- but the mechanic does NOT resume: it mints a SECOND singleton and world
-    /// weather resets. Cause: component type ids come from the explicit ComponentTypeRegistry
-    /// (K-L4), keyed on the Type OBJECT. The reloaded mod's collectible ALC produces a DIFFERENT
-    /// WeatherStateComponent Type, which is assigned a NEW id, so the span over it is empty and the
-    /// ensure-singleton path seeds again.
+    /// F-60 CLOSED (ID-A). Reload ADOPTS the surviving singleton: the mechanic resumes against the
+    /// state its previous incarnation left behind instead of minting a second entity and resetting
+    /// world weather. Component identity is the owner-scoped stable NAME, not the Type OBJECT
+    /// (K-L4 as amended), so the reloaded collectible ALC's fresh WeatherStateComponent Type
+    /// re-adopts the same identity, hence the same id, hence the same native store.
     ///
     /// <para>
-    /// This test asserts the DEFECT, deliberately, so the gap is a measured fact with a test
-    /// attached instead of a claim nobody re-checks. It flips to the adopt-assertion when F-60 is
-    /// resolved. The original W3 version of this test PASSED only because the harness built a bare
-    /// `new NativeWorld()`, whose legacy FNV1a(AssemblyQualifiedName) ids are stable across ALCs --
-    /// a harness that was not production-faithful, which is the real lesson here.
+    /// This assertion was pinned in its inverted form through W3 -- EntityCount 2, the defect as a
+    /// measured fact with a test attached -- and flips here, in the commit that makes it true. The
+    /// original W3 version passed for the wrong reason: the harness built a bare `new NativeWorld()`,
+    /// whose legacy FNV1a(AssemblyQualifiedName) ids are stable across ALCs. The harness is
+    /// production-faithful now, so this is the real behaviour of the real composition.
     /// </para>
     /// </summary>
     [Fact]
-    public void Reload_DoesNotYetAdoptTheSurvivingSingleton_BecauseComponentIdentityIsPerAlc()
+    public void Reload_AdoptsTheSurvivingSingleton_ComponentIdentitySurvivesAlcReload()
     {
         using var h = new WeatherHarness();
         h.ApplyWeatherPair().Success.Should().BeTrue();
@@ -190,23 +189,37 @@ public sealed class WeatherWaveGateTests
         int before = h.Sink.Calls.Count;
         h.Tick(TicksPastFirstTransition);
 
-        h.World.EntityCount.Should().Be(2,
-            "EXPECTED DEFECT (F-60): the reloaded ALC's component Type gets a NEW registry id, so " +
-            "the singleton span reads empty and a SECOND weather entity is minted. Adoption is what " +
-            "this should do; flip this assertion to 1 when F-60 is fixed");
+        h.World.EntityCount.Should().Be(1,
+            "the reloaded ALC's component Type re-adopts the surviving identity, so its id is the " +
+            "same id, the singleton span reads the survivor, and no second weather entity is minted");
         h.Sink.Calls.Count.Should().BeGreaterThan(before,
-            "the reloaded mechanic does run -- it just runs against fresh state instead of the survivor");
+            "the reloaded mechanic runs -- and it runs against the survivor, so weather RESUMES");
     }
 
     /// <summary>
-    /// F-60 (PR #49 Codex review, P1), the other half: the mod's ALC is never reclaimed, because
-    /// ComponentTypeRegistry holds a STRONG reference to the mod's component Type and nothing
-    /// removes it at unload. Unload therefore spends the full §9.4 step-7 timeout and reports
-    /// "restart the game to fully reclaim memory". Pinned so the leak cannot be rediscovered as a
-    /// surprise; the assertion inverts when F-60 is resolved.
+    /// F-60 leak half, RE-ATTRIBUTED (ID-A). The mod's ALC is still not reclaimed -- but the cause
+    /// is NOT the component type registry, which is what W3 and the identity recon both concluded.
+    /// ID-A re-keyed ComponentTypeRegistry so its authoritative state holds no Type reference at
+    /// all and its Type-keyed resolution is a ConditionalWeakTable whose keys are held weakly; the
+    /// ALC still fails to release, so the registry was never the binding root.
+    ///
+    /// <para>
+    /// Measured by bisection on the production composition at ID-A, holding everything else fixed
+    /// and varying only how many ticks elapse between load and unload:
+    /// 0 ticks -> 3 ms, no warnings; 1 tick -> 10,459 ms + ModUnloadTimeout; 16 -> 10,518 ms;
+    /// 100 -> 10,456 ms; 340 -> 10,565 ms. A SINGLE ExecuteTick is sufficient to root the ALC, and
+    /// the companion test below pins the clean 0-tick release so the pair cannot drift apart.
+    /// The root therefore lives on the tick path, not in component identity, and locating it is
+    /// chartered work rather than something to chase from here.
+    /// </para>
+    ///
+    /// <para>
+    /// Kept as an EXPECTED-DEFECT assertion, deliberately, so the gap stays a measured fact with a
+    /// test attached. Flip it to BeEmpty when the tick-path root is closed.
+    /// </para>
     /// </summary>
     [Fact]
-    public void Unload_LeaksTheModAlc_BecauseTheTypeRegistryStillHoldsItsComponentType()
+    public void Unload_LeaksTheModAlc_RootIsOnTheTickPath_NotTheTypeRegistry()
     {
         using var h = new WeatherHarness();
         h.ApplyWeatherPair().Success.Should().BeTrue();
@@ -215,9 +228,36 @@ public sealed class WeatherWaveGateTests
         IReadOnlyList<ValidationWarning> warnings = h.Pipeline.UnloadMod(RegularId);
 
         warnings.Should().Contain(w => w.Message.Contains("ModUnloadTimeout"),
-            "EXPECTED DEFECT (F-60): the ComponentTypeRegistry roots the collectible ALC, so the " +
-            "step-7 WeakReference spin runs its full 10 s and advises a restart. A clean unload " +
-            "would return NO warnings -- flip this to BeEmpty when F-60 is fixed");
+            "EXPECTED DEFECT (F-60, leak half): something on the tick path roots the collectible " +
+            "ALC, so the step-7 WeakReference spin runs its full 10 s and advises a restart. The " +
+            "registry is NOT that something -- ID-A removed its every Type reference and this " +
+            "still fails. Flip to BeEmpty when the real root is closed");
+    }
+
+    /// <summary>
+    /// The control that turns the assertion above from a complaint into a measurement: the SAME mod
+    /// pair, loaded through the SAME production composition, released cleanly when it is unloaded
+    /// without ever being ticked. Initialize has run, the mod has claimed its component, ownership
+    /// is recorded -- and unload still completes in milliseconds with no warning.
+    ///
+    /// <para>
+    /// This is what proves the leak is not caused by loading a component-defining mod, and not by
+    /// the registry's registration bookkeeping. Pinning it here means a future fix cannot quietly
+    /// regress the clean case while chasing the dirty one, and a future reader cannot re-derive the
+    /// discarded "the type registry roots it" explanation without this test contradicting them.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void Unload_WithoutTicking_ReleasesTheModAlc_Immediately()
+    {
+        using var h = new WeatherHarness();
+        h.ApplyWeatherPair().Success.Should().BeTrue();
+
+        IReadOnlyList<ValidationWarning> warnings = h.Pipeline.UnloadMod(RegularId);
+
+        warnings.Should().BeEmpty(
+            "with no tick between load and unload nothing has rooted the ALC, so the step-7 spin " +
+            "observes the release on its first GC pump pass");
     }
 
     [Fact]
