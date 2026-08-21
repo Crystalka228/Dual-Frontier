@@ -2334,7 +2334,7 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Crystalka
   version: 1.0
   first_authored: 2026-08-20
@@ -15831,5 +15831,40 @@ audit_trail:
     Consequence for the record: two W3 closure claims are WITHDRAWN rather than softened -- "unload ... engine stays healthy" and "reload adopts the surviving singleton". What survives is exact and smaller: unload removes the mechanic (systems out of the graph, subscription released, owner removed, tint cleared) and the engine keeps ticking; the ALC leaks and the state does not resume. ROADMAP W3 row, MOD_OS section 9.4 and the migration plan W3 section were corrected to the measured behaviour, and F-60 (S1, OPEN) records the mechanism, the measurements, the flip conditions written into the pinning assertions, and why it was not fixed here: ComponentTypeRegistry is K-L4's implementation artifact, so re-keying it or adding per-mod deregistration changes component-identity semantics and reaches past this wave's MANAGED-ONLY fence. It affects EVERY mod that defines a component, not only Weather.
 
     Methodological lesson, recorded because it generalises: an end-to-end gate is only as honest as the composition it builds. This harness was end-to-end in every other respect -- real loader, real validator, real ledger, real scheduler -- and one constructor call away from production was enough to make two false claims look proven. A gate must build its world the way the composition root does, or say plainly which fidelity it gave up.
+  cross_references:
+    capa_entries: []
+- id: EVT-2026-08-20-ID_A_COMPONENT_IDENTITY
+  date: 2026-08-20
+  event: ID_A_COMPONENT_IDENTITY cascade (identity family, Cascade A) -- component identity re-keyed from the CLR Type object onto the owner-scoped stable name (owner + type FullName). K-L4 canonical text byte-unchanged, amendment record added. F-60 RE-SCOPED rather than closed - its reload/adoption half is closed, its ALC-leak half was re-attributed to a tick-path root by bisection and stays OPEN. MANAGED-ONLY, zero native diffs
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-ID_A_COMPONENT_IDENTITY_BRIEF
+  - DOC-E-F59_F60_IDENTITY_RECON_REPORT
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-C-ROADMAP
+  commits:
+    range: cb17058..(the closure commit carries this entry)
+    key_commits:
+    - cb17058
+    - 90aca59
+    - c92d7d3
+    - bd07dd1
+    - c0b0fb3
+    - 855739c
+  governance_impact: >
+    WHAT WAS BUILT. Component identity is now the owner-scoped stable NAME - (owner, type FullName), owner being kernel or mod.<modId> per the ledger convention - and no longer the CLR Type object. The operating-system framing is the substance, not decoration: a type name is a file name, an owner is the directory it sits in, and two mods that both ship a Weather.StateComponent hold two distinct component types with distinct ids, exactly as two same-named programs are two processes. Cross-mod isolation, which K-L4 has always asserted, stops depending on mod authors choosing distinct names and becomes structural.
+
+    The authoritative maps hold no Type reference at all; Type-keyed resolution is demoted to a ConditionalWeakTable cache whose keys are held weakly. Implicit first-use registration is fenced to NON-collectible surface under owner kernel, and a collectible-context type with no registration is a loud refusal naming the IModApi.RegisterComponent remedy - because the alternative, silently filing a mod's component under kernel, is the isolation clause inverted. The mod pipeline allocates a mod's Path alpha ids EAGERLY at Apply under mod.<modId>, which is what makes K-L4's "explicit per-mod registration" literally true: the previous lazy site sits in Core.Interop and knows nothing about mods, so the canon's letter and the shipped mechanism had drifted apart (identity recon anomaly A3, resolved). Re-registering an identity that already holds an id re-adopts it, and a component whose layout changed between mod versions is refused by native at the same id and surfaces as a typed load failure through the pipeline's existing rollback funnel.
+
+    THE FINDING THE CASCADE DID NOT CLOSE, AND WHY THAT IS THE MAIN RESULT. The brief predicted that re-keying the registry would close both halves of F-60, and named the alternative as halt condition H8. H8 fired. The reload half closed exactly as designed - reload now adopts the surviving singleton, EntityCount stays 1, weather RESUMES. The ALC-leak half did not, so it was bisected on the production composition rather than reasoned about: holding everything fixed and varying only the tick count between load and unload gave 0 ticks -> 3 ms and no warnings; 1 tick -> 10,459 ms and ModUnloadTimeout; 16, 100 and 340 ticks all -> ~10.5 s. A SINGLE ExecuteTick is sufficient to root the ALC. After the re-key the registry provably holds no strong Type reference anywhere, and at one tick the component HAS been resolved through it, so the registry was never the binding root. The Weather-suite wall time corroborates it independently: 44.027 s before, 43.818 s after, where the brief had projected roughly 53 s of recovered spin.
+
+    The operator ruled (2026-08-20) that F-60 stays OPEN and is re-scoped in place rather than split into a new number, so the mis-attribution stays attached to the finding that carried it. The W3-era attribution was an inference, not a bisect; the identity recon report's R2.1 is a historical record and is left byte-unchanged, with the correction carried here and in the ledger. Two false leads are recorded so they are not re-walked: useRegistry:false also leaks but is not a valid control, because the legacy path stores typeof(T) in the static NativeComponentTypeRegistry dictionary - its own root; and the other multi-second unload tests hold a LoadedMod local live across the spin, which is test-harness rooting rather than an engine defect.
+
+    Methodological lesson, recorded because it generalises. A defect can be measured perfectly and attributed wrongly. W3 measured 10,668 ms and a ModUnloadTimeout correctly, then named the strong Type reference it could see as the cause - a plausible root that was genuinely present, and genuinely not the one holding the context. The cheapest instrument that would have caught it is the one that eventually did: vary ONE input and watch the symptom, rather than inspect the code for something that looks capable of causing it. The clean 0-tick case is now pinned as a test in its own right, so the discarded explanation cannot be re-derived without a test contradicting it.
+
+    ALSO LANDED. Two test rigs that loaded component-defining mods against a registry-less world were made production-faithful, which is the W3 gate-harness-fidelity lesson applied where it bites; one of them had been disposing its native world before any test ran. Sdk/SpanScope<T>.Pairs's property doc, which still taught Version = 1 after W3's C5b corrected the code beneath it, now states the Version = 0 truth with the K7 deferral preserved and repointed at F-59 / ID-B. IAC section 2's DFK-entity-identity pointer, stale since EQ_A2 seated K-L20 as shutdown-quiescence, is corrected to K-L22 as the next free row (recon anomaly A5). KERNEL_ARCHITECTURE 1.2.1 -> 1.3.0 MINOR, IDENTITY_AND_ABI_CONTRACT 1.1.1 -> 1.1.2 PATCH. MODDING.md needed no change - the Phase 0 grep found it stating neither the lazy-id nor the restart-to-reclaim behaviour.
+
+    GATES. Release build 0 warnings / 0 errors. Full solution 1269 passed / 0 failed / 5 skipped against a Phase 0 baseline of 1260 passed / 1 failed / 5 skipped; the baseline failure was Governance.Tests Validate_AgainstLiveTree_Succeeds, red because the dispatched brief's own title was unparseable YAML, repaired at C1. validate --armed exit 0 at C1, C6 and C7. Census UNMOVED on all seven families, including the deferred SOFT pin the SpanScope comment edit touched - stub 51/20, deferred 89/55, TODO 132/51, Phase 6 23/11, not yet 10/9, Console.WriteLine in src 2/1, [ReservedStub 34/13. Native untouched: zero diffs under native/ at every commit.
   cross_references:
     capa_entries: []
