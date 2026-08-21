@@ -286,6 +286,32 @@ public class ComponentTypeRegistryTests
             ids.Should().Contain(expected);
     }
 
+    // A value type that is NOT unmanaged. The C# `unmanaged` constraint would reject it
+    // at compile time; the reflective path cannot, which is what this pins.
+#pragma warning disable CS0649
+    private struct ReferenceCarryingStruct { public string Value; }
+#pragma warning restore CS0649
+
+    [Fact]
+    public void Register_RuntimeForm_RefusesValueTypesContainingManagedReferences()
+    {
+        // Codex P1/P2 on PR #50, verified by probe before the fix: this exact type was
+        // ACCEPTED and given native raw storage (id=1). Type.IsValueType is true for it,
+        // and the CLR's constraint check behind MakeGenericMethod does not reproduce the
+        // compiler's recursive `unmanaged` rule -- so the overload has to ask the runtime
+        // itself rather than trust the constraint it declares.
+        using var world = new NativeWorld();
+        var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
+
+        typeof(ReferenceCarryingStruct).IsValueType.Should().BeTrue(
+            "precondition: the weaker IsValueType test passes, which is why it was insufficient");
+
+        Action act = () => registry.Register(typeof(ReferenceCarryingStruct), "mod.sneaky");
+
+        act.Should().Throw<ArgumentException>().WithMessage("*contains managed references*");
+        registry.Count.Should().Be(0, "a refused type must not consume an id or create a store");
+    }
+
     [Fact]
     public void Register_RuntimeForm_RefusesManagedComponentTypes()
     {

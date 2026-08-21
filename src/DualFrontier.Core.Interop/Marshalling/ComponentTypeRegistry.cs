@@ -111,6 +111,17 @@ public sealed class ComponentTypeRegistry
         ?? throw new InvalidOperationException(
             "ComponentTypeRegistry.Register<T>(string) not found by reflection.");
 
+    // The runtime's own recursive unmanagedness answer. The C# `unmanaged`
+    // constraint is enforced by the COMPILER; the CLR's constraint check behind
+    // MakeGenericMethod does not reproduce it, so a reflective caller can reach
+    // Register<T> with a struct that holds managed references. Measured, not
+    // assumed: `struct Bad { public string Value; }` was accepted and given a
+    // native raw store before this probe was added.
+    private static readonly MethodInfo ContainsReferencesProbe =
+        typeof(RuntimeHelpers).GetMethod(nameof(RuntimeHelpers.IsReferenceOrContainsReferences))
+        ?? throw new InvalidOperationException(
+            "RuntimeHelpers.IsReferenceOrContainsReferences<T>() not found by reflection.");
+
     /// <summary>
     /// Creates a registry bound to the specified native world. The handle is
     /// captured for the registry's lifetime — caller must ensure the world is
@@ -192,6 +203,19 @@ public sealed class ComponentTypeRegistry
                 $"Component type {componentType.FullName} is not a value type. Only Path α " +
                 "(unmanaged struct) components consume a native type id; Path β managed " +
                 "components are held in per-mod managed stores.",
+                nameof(componentType));
+        }
+
+        // IsValueType alone does NOT establish the unmanaged invariant this overload
+        // promises: a struct holding a managed reference is a value type, and native
+        // raw storage would copy its bytes as if they were plain data. The generic
+        // path gets this from the compiler; the reflective path has to ask the runtime.
+        if ((bool)ContainsReferencesProbe.MakeGenericMethod(componentType).Invoke(null, null)!)
+        {
+            throw new ArgumentException(
+                $"Component type {componentType.FullName} is a value type but contains managed " +
+                "references, so it has no native memory layout and cannot back a raw component " +
+                "store. Path α components must be unmanaged all the way down.",
                 nameof(componentType));
         }
 
