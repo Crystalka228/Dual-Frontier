@@ -1,7 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
 using DualFrontier.Application.Modding;
+using DualFrontier.Contracts.Core;
+using DualFrontier.Core.Interop;
+using DualFrontier.Core.Interop.Marshalling;
 using DualFrontier.Core.Modding;
 using AwesomeAssertions;
 using Xunit;
@@ -258,6 +264,95 @@ public sealed class WeatherWaveGateTests
         warnings.Should().BeEmpty(
             "with no tick between load and unload nothing has rooted the ALC, so the step-7 spin " +
             "observes the release on its first GC pump pass");
+    }
+
+    /// <summary>
+    /// ID-A / D2 -- the mod's component carries the MOD's identity, not the kernel's.
+    /// Before this cascade the id was allocated lazily inside a tick, at a site in
+    /// Core.Interop that knows nothing about mods, so the only namespace available to it
+    /// was the kernel's own. Registering at Apply is what puts modId in scope, and this
+    /// asserts the consequence: the reverse map answers with owner "mod.dualfrontier.weather".
+    ///
+    /// <para>
+    /// This is the cross-mod isolation clause of К-L4 made observable. If the owner here
+    /// were ever "kernel", two mods shipping the same component FullName would silently
+    /// share one id and therefore one store.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void ModComponent_TakesAnOwnerScopedId_AtApply_NotAKernelOne()
+    {
+        using var h = new WeatherHarness();
+        h.ApplyWeatherPair().Success.Should().BeTrue();
+
+        ComponentTypeRegistry registry = h.World.Registry!;
+        registry.TryGetCachedId(ResolveWeatherComponentType(h), out uint id).Should().BeTrue(
+            "the pipeline allocates the id at Apply, before any tick runs");
+
+        ComponentIdentity identity = registry.Lookup(id)!.Value;
+        identity.Owner.Should().Be("mod." + RegularId,
+            "the component belongs to the mod that declared it, not to the engine");
+        identity.TypeFullName.Should().Be(ComponentFqn);
+    }
+
+    /// <summary>
+    /// ID-A / D3 -- a component type from a collectible load context that was never
+    /// registered is a loud failure at resolution, naming the remedy. The alternative --
+    /// quietly adopting it under the kernel owner -- would merge identities across owners
+    /// and undo the isolation the re-key exists to provide, so the guard refuses instead
+    /// of guessing.
+    ///
+    /// <para>
+    /// The probe deliberately loads the mod's assembly into its OWN collectible context,
+    /// bypassing the pipeline, because bypassing the pipeline is exactly the situation the
+    /// guard exists for: a mod component that never went through IModApi.RegisterComponent.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void UnregisteredCollectibleType_Throws_NamingTheRemedy()
+    {
+        var probe = new AssemblyLoadContext("id-a-guard-probe", isCollectible: true);
+        Assembly modAssembly = probe.LoadFromAssemblyPath(
+            Path.Combine(WeatherHarness.WeatherPath, "DualFrontier.Mod.Weather.dll"));
+        Type componentType = modAssembly.GetType(ComponentFqn)!;
+        componentType.Should().NotBeNull();
+        AssemblyLoadContext.GetLoadContext(modAssembly)!.IsCollectible.Should().BeTrue(
+            "precondition: the probe context must be collectible for the guard to apply");
+
+        using NativeWorld world = DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true);
+        EntityId entity = world.CreateEntity();
+        MethodInfo add = typeof(NativeWorld)
+            .GetMethod(nameof(NativeWorld.AddComponent))!
+            .MakeGenericMethod(componentType);
+
+        Action act = () => add.Invoke(world, new[] { (object)entity, Activator.CreateInstance(componentType)! });
+
+        act.Should().Throw<TargetInvocationException>()
+            .WithInnerException<InvalidOperationException>()
+            .WithMessage("*IModApi.RegisterComponent*",
+                "the diagnostic must hand the mod author the fix, not just report a refusal");
+    }
+
+    /// <summary>
+    /// Resolves the loaded mod's component Type through the registry's own cache, which is
+    /// the only place the reloaded ALC's Type object is reachable from the test side.
+    /// </summary>
+    private static Type ResolveWeatherComponentType(WeatherHarness h)
+    {
+        foreach (ActiveModInfo info in h.Pipeline.GetActiveMods())
+        {
+            if (info.ModId != RegularId)
+                continue;
+
+            foreach (Type claimed in h.Registry.ComponentTypesOf(RegularId))
+            {
+                if (claimed.FullName == ComponentFqn)
+                    return claimed;
+            }
+        }
+
+        throw new InvalidOperationException(
+            $"The loaded weather mod did not claim {ComponentFqn}; the harness precondition is broken.");
     }
 
     [Fact]
