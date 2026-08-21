@@ -156,6 +156,20 @@ public class ComponentTypeRegistryTests
     /// </summary>
     private static Type EmitComponentType(string assemblyName, string typeFullName, int intFields)
     {
+        var fields = new Type[intFields];
+        for (int i = 0; i < intFields; i++)
+            fields[i] = typeof(int);
+        return EmitComponentType(assemblyName, typeFullName, fields);
+    }
+
+    /// <summary>
+    /// Emit form taking explicit field types, so a test can hold the FullName and the
+    /// total size fixed while changing only the field ORDER or the field TYPES — the
+    /// two mutations that keep `Unsafe.SizeOf` constant and still change what the
+    /// stored bytes mean.
+    /// </summary>
+    private static Type EmitComponentType(string assemblyName, string typeFullName, params Type[] fieldTypes)
+    {
         AssemblyBuilder assembly = AssemblyBuilder.DefineDynamicAssembly(
             new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
         ModuleBuilder module = assembly.DefineDynamicModule(assemblyName);
@@ -164,8 +178,8 @@ public class ComponentTypeRegistryTests
             TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.SequentialLayout,
             typeof(ValueType));
 
-        for (int i = 0; i < intFields; i++)
-            type.DefineField("Field" + i, typeof(int), FieldAttributes.Public);
+        for (int i = 0; i < fieldTypes.Length; i++)
+            type.DefineField("Field" + i, fieldTypes[i], FieldAttributes.Public);
 
         return type.CreateType()!;
     }
@@ -247,6 +261,70 @@ public class ComponentTypeRegistryTests
             .WithMessage("*different layout*",
                 "the diagnostic must say what went wrong, not merely that native returned 0");
         registry.Count.Should().Be(1, "the refused registration leaves no partial row behind");
+    }
+
+    [Fact]
+    public void SameSizeDifferentFieldOrder_OnReload_IsRefused()
+    {
+        // Codex P1 on PR #50. Re-adoption hands a reloaded mod the SURVIVING native store,
+        // so equal byte size is not proof that the bytes still mean the same thing.
+        // Swapping an int and a float keeps Unsafe.SizeOf at 8 and inverts every stored
+        // value's interpretation -- the native size check cannot see it, and before the
+        // layout fingerprint this reload succeeded silently.
+        using var world = new NativeWorld();
+        var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
+
+        const string Name = "Reordered.StateComponent";
+        Type v1 = EmitComponentType("IdA.Reordered.V1", Name, typeof(int), typeof(float));
+        Type v2 = EmitComponentType("IdA.Reordered.V2", Name, typeof(float), typeof(int));
+
+        registry.Register(v1, "mod.reordered");
+
+        Action reload = () => registry.Register(v2, "mod.reordered");
+
+        reload.Should().Throw<InvalidOperationException>()
+            .WithMessage("*different layout*",
+                "the sizes are identical, so only a layout comparison can catch this");
+        registry.Count.Should().Be(1, "the refused re-adoption leaves no second row");
+    }
+
+    [Fact]
+    public void SameSizeDifferentFieldType_OnReload_IsRefused()
+    {
+        // The other same-size mutation: int -> float in place. Same width, different
+        // meaning for every byte already in the store.
+        using var world = new NativeWorld();
+        var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
+
+        const string Name = "Retyped.StateComponent";
+        Type v1 = EmitComponentType("IdA.Retyped.V1", Name, typeof(int));
+        Type v2 = EmitComponentType("IdA.Retyped.V2", Name, typeof(float));
+
+        registry.Register(v1, "mod.retyped");
+
+        Action reload = () => registry.Register(v2, "mod.retyped");
+
+        reload.Should().Throw<InvalidOperationException>().WithMessage("*different layout*");
+    }
+
+    [Fact]
+    public void IdenticalLayout_OnReload_StillReAdopts()
+    {
+        // The control. The fingerprint must not become a reason that legitimate reloads
+        // start failing: an unchanged component re-adopts its id exactly as before, which
+        // is the whole resume mechanism.
+        using var world = new NativeWorld();
+        var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
+
+        const string Name = "Stable.StateComponent";
+        Type v1 = EmitComponentType("IdA.Stable.V1", Name, typeof(int), typeof(float));
+        Type v2 = EmitComponentType("IdA.Stable.V2", Name, typeof(int), typeof(float));
+
+        uint original = registry.Register(v1, "mod.stable");
+        uint afterReload = registry.Register(v2, "mod.stable");
+
+        afterReload.Should().Be(original, "an unchanged layout re-adopts, as it must");
+        registry.Count.Should().Be(1);
     }
 
     [Fact]

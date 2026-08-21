@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Text;
 
 namespace DualFrontier.Core.Interop.Marshalling;
 
@@ -82,8 +83,25 @@ public sealed class ComponentTypeRegistry
         internal ComponentIdentity Identity { get; }
     }
 
+    /// <summary>
+    /// What an identity owns: its id, and a fingerprint of the memory layout the
+    /// type had when the id was allocated. The fingerprint is the re-adoption
+    /// gate — see <see cref="ComputeLayoutFingerprint"/>.
+    /// </summary>
+    private readonly struct Registration
+    {
+        internal Registration(uint id, string layout)
+        {
+            Id = id;
+            Layout = layout;
+        }
+
+        internal uint Id { get; }
+        internal string Layout { get; }
+    }
+
     // Authoritative state — no Type references, so nothing here roots an ALC.
-    private readonly Dictionary<ComponentIdentity, uint> _idByIdentity = new();
+    private readonly Dictionary<ComponentIdentity, Registration> _byIdentity = new();
     private readonly Dictionary<uint, ComponentIdentity> _identityById = new();
 
     // Resolution cache. ConditionalWeakTable holds its KEYS weakly: a mod ALC's
@@ -276,7 +294,14 @@ public sealed class ComponentTypeRegistry
 
         lock (_gate)
         {
-            return _idByIdentity.TryGetValue(new ComponentIdentity(KernelOwner, fullName), out id);
+            if (_byIdentity.TryGetValue(new ComponentIdentity(KernelOwner, fullName), out Registration reg))
+            {
+                id = reg.Id;
+                return true;
+            }
+
+            id = 0;
+            return false;
         }
     }
 
@@ -301,7 +326,7 @@ public sealed class ComponentTypeRegistry
         {
             lock (_gate)
             {
-                return _idByIdentity.Count;
+                return _byIdentity.Count;
             }
         }
     }
@@ -334,6 +359,7 @@ public sealed class ComponentTypeRegistry
                 $"Component type {type} has no FullName and cannot carry a stable identity.");
 
         var identity = new ComponentIdentity(owner, fullName);
+        string layout = ComputeLayoutFingerprint(type, size);
 
         lock (_gate)
         {
@@ -344,21 +370,35 @@ public sealed class ComponentTypeRegistry
                 return raced.Id;
             }
 
-            if (_idByIdentity.TryGetValue(identity, out uint existing))
+            if (_byIdentity.TryGetValue(identity, out Registration existing))
             {
                 // Re-adoption. The identity row outlived the Type object that first
-                // claimed it — a reloaded mod. Re-assert against native: idempotent
-                // at the same size, rejected at a different one.
-                if (NativeMethods.df_world_register_component_type(_worldHandle, existing, size) == 0)
+                // claimed it — a reloaded mod — so the surviving native store is about
+                // to be reinterpreted through the incoming type. Equal byte size is NOT
+                // proof that this is safe: swapping two int fields, or replacing an int
+                // with a float, leaves the size untouched and would silently reinterpret
+                // every stored value. The layout fingerprint is what actually gates it.
+                if (!string.Equals(existing.Layout, layout, StringComparison.Ordinal))
                 {
                     throw new InvalidOperationException(
-                        $"Component identity {identity} is already registered as id {existing} " +
-                        $"with a different layout; native registration rejected size {size}. " +
-                        "A component type's layout must not change while its store is live.");
+                        $"Component identity {identity} is already registered as id {existing.Id} " +
+                        "with a different layout, so its surviving store cannot be re-adopted. " +
+                        $"Registered layout: {existing.Layout}; incoming layout: {layout}. " +
+                        "A component type's memory layout must not change while its store is live.");
                 }
 
-                _bindings.AddOrUpdate(type, new Binding(existing, identity));
-                return existing;
+                // Re-assert against native as well. The fingerprint already implies the
+                // size matches, so this is the ABI-level second opinion, not the primary
+                // check — and it is what re-attaches this id on the native side.
+                if (NativeMethods.df_world_register_component_type(_worldHandle, existing.Id, size) == 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Native registration rejected re-adoption of component identity {identity} " +
+                        $"as id {existing.Id} at size {size}.");
+                }
+
+                _bindings.AddOrUpdate(type, new Binding(existing.Id, identity));
+                return existing.Id;
             }
 
             uint id = _nextId++;
@@ -372,11 +412,78 @@ public sealed class ComponentTypeRegistry
                     $"(id={id}, size={size}, identity={identity}).");
             }
 
-            _idByIdentity[identity] = id;
+            _byIdentity[identity] = new Registration(id, layout);
             _identityById[id] = identity;
             _bindings.AddOrUpdate(type, new Binding(id, identity));
             return id;
         }
+    }
+
+    /// <summary>
+    /// A structural fingerprint of <paramref name="type"/>'s memory layout: its total
+    /// size, then its instance field TYPES in declaration order, recursing through
+    /// nested structs. Two different <see cref="Type"/> objects — a mod's component
+    /// before and after a reload — produce equal fingerprints exactly when their bytes
+    /// mean the same thing.
+    ///
+    /// <para>
+    /// Field NAMES are deliberately excluded. This gates re-adoption of a surviving
+    /// native store, and a rename does not move a byte; refusing it would fail loads
+    /// that are perfectly safe. What it does catch is what actually corrupts data:
+    /// reordering (<c>int,float</c> becoming <c>float,int</c>), retyping
+    /// (<c>int</c> becoming <c>float</c>), and any size change. Enum fields reduce to
+    /// their underlying type for the same reason — the storage is what matters.
+    /// </para>
+    ///
+    /// <para>
+    /// Comparison is by string rather than by hash, so there is no collision to reason
+    /// about: a false match here would silently reinterpret live data, which is exactly
+    /// the class of failure this exists to prevent, and the registry holds few enough
+    /// rows that the strings are free. The fingerprint does not model
+    /// <c>StructLayout</c>/<c>FieldOffset</c> attributes; explicit-layout components
+    /// are outside what it claims to verify.
+    /// </para>
+    /// </summary>
+    private static string ComputeLayoutFingerprint(Type type, int size)
+    {
+        var builder = new StringBuilder();
+        builder.Append(size).Append(':');
+        AppendLayout(builder, type, depth: 0);
+        return builder.ToString();
+    }
+
+    private const int MaxLayoutDepth = 16;
+
+    private static void AppendLayout(StringBuilder builder, Type type, int depth)
+    {
+        if (depth > MaxLayoutDepth)
+        {
+            throw new InvalidOperationException(
+                $"Component type {type.FullName} nests structs deeper than {MaxLayoutDepth} " +
+                "levels; its layout cannot be fingerprinted.");
+        }
+
+        builder.Append('(');
+        foreach (FieldInfo field in type.GetFields(
+                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
+        {
+            Type fieldType = field.FieldType;
+            if (fieldType.IsEnum)
+            {
+                fieldType = Enum.GetUnderlyingType(fieldType);
+            }
+
+            builder.Append(fieldType.FullName ?? fieldType.Name);
+
+            // Recurse into nested structs; primitives and pointers are leaves.
+            if (fieldType.IsValueType && !fieldType.IsPrimitive && !fieldType.IsPointer && !fieldType.IsEnum)
+            {
+                AppendLayout(builder, fieldType, depth + 1);
+            }
+
+            builder.Append(',');
+        }
+        builder.Append(')');
     }
 
     private static void RequireSameOwner(Type type, Binding bound, string owner)
