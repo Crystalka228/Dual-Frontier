@@ -2329,6 +2329,21 @@ documents:
   risks_referenced: []
   capa_entries_referenced: []
   special_case_rationale: First-class brief-refresh delta artifact (patch precedent DOC-D-K9_BRIEF_REFRESH_PATCH / DOC-D-K8_3_BRIEF_REFRESH_PATCH); patches DOC-D-GODOT_ERADICATION_BRIEF v1.0 and folds into it at ratification, both transitioning to EXECUTED together at closure. DOC-D Category D Tier 4 per the empirical execution-brief convention (matches the patched brief's tier).
+- register_id: DOC-D-ID_A_COMPONENT_IDENTITY_BRIEF
+  path: tools/briefs/ID_A_COMPONENT_IDENTITY_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Crystalka
+  version: 1.0
+  first_authored: 2026-08-20
+  last_modified: 2026-08-20
+  content_language: en
+  next_review_due: 
+  title: 'ID-A component identity -- F-60 closure by owner-scoped registry re-key (identity family cascade A, MANAGED-ONLY): ComponentTypeRegistry keyed on (owner, type FullName) instead of the Type object, weak Type cache, eager mod registration at Apply, collectible-ALC loud guard, Weather gate flips, K-L4 amendment record'
+  authored_by: Claude Fable (architect session, identity-family charter)
+  basis: DOC-E-F59_F60_IDENTITY_RECON_REPORT (architect-seat recon at main ad4e353, 2026-08-20) + ratified lean set L1-L5 + the operator's OS-model refinement (same-name components are distinct types under distinct owners, like same-named programs are distinct processes under an OS)
 - register_id: DOC-D-K0
   path: tools/briefs/K0_CHERRY_PICK_BRIEF.md
   project: Dual Frontier
@@ -4133,6 +4148,21 @@ documents:
   last_review_event: Read-only measurement recon 2026-07-04 (executor session, flagship model, LOCAL Skarlet). Its scheduler-surface map, the lock-free-singleton audit (bus excluded -- per-tier std::mutex, concurrent-publish by design), and the N -> time scale curves were the load-bearing brief inputs; consumed by the F-29 cascade execution 2026-07-04. Enrolled at the F-29 REGISTER closure.
   reviewer: Crystalka
   special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line.'
+- register_id: DOC-E-F59_F60_IDENTITY_RECON_REPORT
+  path: docs/reports/F59_F60_IDENTITY_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-20
+  last_modified: 2026-08-20
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'F-59+F-60 IDENTITY RECON REPORT — 2026-08-20 (R1–R5) — component-type + entity-version identity measurement at HEAD ad4e353 for the identity-family charter: ComponentTypeRegistry = 2 strong Dictionaries (Type→id, id→Type) + sequential _nextId, NO deregistration API, reverse map production-dead (0 consumers); native stores_ = unordered_map<u32,RawComponentStore> accepts ARBITRARY u32 (sequentiality is managed-side doc-law only, FNV legacy path proves it), NO store-removal export; К-L4 explicit-registration path (IModApi.RegisterComponent) records OWNERSHIP ONLY (ModRegistry._componentOwners, cleaned at RemoveMod) — the native id is allocated LAZILY by NativeWorld.ResolveTypeId auto-register on first span use, no owner context at that site; leak = Dictionary key roots collectible ALC → §9.5 step-7 spin 100×100 ms full 10 s (measured 10,668 ms, ledger F-60), 5 UnloadMod sites in Weather gate suite pay it; reset = reloaded ALC mints new Type → new id → empty span → re-seed (EntityCount 2), both halves pinned with flip-condition test names; F-59: versions_ per-slot table, ABA law honest native-side (create returns versions_[idx], destroy ++version, recycled slot reuses stored version), WriteBatch flush + destructor auto-flush SILENTLY skip is_alive-failed commands (destructor discards even the count), SpanScope.Pairs code fabricates 0 (C5b) but the :62 property doc still says Version = 1 (stale), EntityId.IsValid and entity_id.h is_valid both carry the flawed index>0||version>0 disjunction (unfixed, IAC §2 pending); IAC §2 is a RATIFIED design fund: option 1 df_world_acquire_versions RECOMMENDED with normative-target signatures, DFK-entity-identity rule sketch, EntityEncoder waiver — but its К-L20-reserved pointer is STALE (К-L20 seated shutdown-quiescence at EQ_A2, К-L21 reserved Mod-API; next free row = К-L22); registry Dictionaries are NOT thread-safe while dispatch runs Parallel.ForEach and first-use registration is reachable from system bodies; BeginModScope/EndModScope/ClearModScope = string-pool co-ownership ONLY (F-58 pointer falsified); anomalies A1–A10'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-W1_SDK_SURFACE_RECON_REPORT, DOC-E-W2_BUS_CAPABILITY_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, DOC-E-F10_TEST_ISOLATION_RECON_REPORT). Pre-deliberation grounding for the ratified F-59+F-60 identity-family charter (one charter, operator-ratified 2026-08-20). Measured by the architect seat directly in the Claude Code environment (live line-reads at HEAD; the operator-ratified grounding step of the cascade rhythm — recon-session dispatch subsumed, W3 direct-brief precedent). Read-only: zero repository mutations besides this file, sync never run, zero builds/tests. UNTRACKED at authoring — enrolled at the charter cascade C1.'
 - register_id: DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT
   path: docs/reports/GAME_ENGINE_BOUNDARY_AUDIT_REPORT.md
   project: Dual Frontier
