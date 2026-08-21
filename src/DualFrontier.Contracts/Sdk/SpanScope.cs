@@ -59,10 +59,16 @@ public readonly ref struct SpanScope<T> where T : unmanaged
     /// Iterate <c>(EntityId, T)</c> pairs over the span.
     ///
     /// Caveat (preserved from the engine lease, K7-deferred): the
-    /// <see cref="EntityId"/> is reconstructed with <c>Version = 1</c> because
-    /// the span ABI does not carry per-entity versions. Safe for fresh entities
-    /// and snapshot-then-record flows (the recorded command is version-checked
-    /// at flush, so a stale id is rejected).
+    /// <see cref="EntityId"/> is reconstructed with <c>Version = 0</c> — the
+    /// version a never-recycled entity carries, matching the enumerator below —
+    /// because the span ABI does not carry per-entity versions, so no truer value
+    /// is available at this seam. Safe for fresh entities and snapshot-then-record
+    /// flows (the recorded command is version-checked at flush, so a stale id is
+    /// rejected); for a RECYCLED index the reconstruction names an id no live
+    /// entity holds, and a write batch keyed on it is dropped by that same
+    /// flush-time check. True per-entity versions arrive with the versions view of
+    /// IDENTITY_AND_ABI_CONTRACT §2 (the version-0 resolution) — finding F-59,
+    /// cascade ID-B.
     /// </summary>
     public PairsEnumerable Pairs => new PairsEnumerable(_components, _indices);
 
