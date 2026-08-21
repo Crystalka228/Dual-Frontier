@@ -584,16 +584,25 @@ public sealed class NativeWorld : IDisposable
     /// registry-vs-fallback decision so component methods stay terse.
     ///
     /// <para>
-    /// ID-A / D3 — implicit registration is available to NON-collectible surface
-    /// only. Engine and test types resolve under the kernel owner on first use,
-    /// which keeps the ergonomics they have always had. A type from a collectible
-    /// AssemblyLoadContext — that is, a mod's type — is a loud failure instead:
-    /// this site lives in Core.Interop, which knows nothing about mods, so the
-    /// only identity it could invent is a kernel-owned one, and silently filing a
-    /// mod's component under the kernel would merge identities across owners and
-    /// reopen the isolation hole owner-scoping exists to close. The mod pipeline
-    /// registers a mod's components under <c>mod.&lt;modId&gt;</c> at Apply, before
-    /// any tick, so a correctly-loaded mod never reaches this branch.
+    /// ID-A / D3 — implicit registration is available to types from the DEFAULT
+    /// load context only. Engine and test types live there, so they resolve under
+    /// the kernel owner on first use and keep the ergonomics they have always had.
+    /// Anything else is a loud failure: this site lives in Core.Interop, which
+    /// knows nothing about mods, so the only identity it could invent is a
+    /// kernel-owned one, and silently filing a mod's component under the kernel
+    /// would merge identities across owners and reopen the isolation hole
+    /// owner-scoping exists to close. The mod pipeline registers a mod's
+    /// components under <c>mod.&lt;modId&gt;</c> at Apply, before any tick, so a
+    /// correctly-loaded mod never reaches this branch.
+    /// </para>
+    ///
+    /// <para>
+    /// The test is DEFAULT-context membership rather than non-collectibility,
+    /// because those are not the same set. The shared-mod context is deliberately
+    /// non-collectible — shared assemblies must never unload mid-session — yet it
+    /// holds MOD-authored types, so a collectibility test would have waved shared
+    /// components through into the kernel namespace, and two shared mods defining
+    /// one FullName would have landed on a single identity and a single store.
     /// </para>
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -607,12 +616,13 @@ public sealed class NativeWorld : IDisposable
                 return bound;
             }
 
-            if (AssemblyLoadContext.GetLoadContext(typeof(T).Assembly)?.IsCollectible == true)
+            AssemblyLoadContext? context = AssemblyLoadContext.GetLoadContext(typeof(T).Assembly);
+            if (!ReferenceEquals(context, AssemblyLoadContext.Default))
             {
                 throw new InvalidOperationException(
-                    $"Component type {typeof(T).FullName} comes from a collectible load context " +
-                    $"('{AssemblyLoadContext.GetLoadContext(typeof(T).Assembly)?.Name}') and has no " +
-                    "registered component identity. A mod must declare its components explicitly: " +
+                    $"Component type {typeof(T).FullName} comes from the '{context?.Name ?? "<none>"}' " +
+                    "load context and has no registered component identity. Implicit registration is " +
+                    "available to kernel surface only. A mod must declare its components explicitly: " +
                     "call IModApi.RegisterComponent<T>() from the mod's Initialize, and the pipeline " +
                     "allocates the id under the mod's own owner namespace at load.");
             }

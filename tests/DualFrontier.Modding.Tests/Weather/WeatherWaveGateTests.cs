@@ -334,6 +334,48 @@ public sealed class WeatherWaveGateTests
     }
 
     /// <summary>
+    /// ID-A / D3, the case a collectibility test would have missed (Codex P1 on PR #50). The
+    /// shared-mod load context is deliberately NON-collectible -- shared assemblies must never
+    /// unload mid-session -- yet it holds MOD-authored types. A guard keyed on collectibility
+    /// therefore waved shared components straight into the kernel namespace, and two shared mods
+    /// defining one component FullName would have landed on a single identity and a single native
+    /// store: precisely the isolation this cascade exists to make structural.
+    ///
+    /// <para>
+    /// The probe builds a NON-collectible context of its own, which is what the shared ALC is, and
+    /// asserts the refusal still fires. The precondition is asserted first so the test cannot
+    /// quietly start passing for the wrong reason.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void UnregisteredNonCollectibleModType_IsAlsoRefused_NotAdoptedByTheKernel()
+    {
+        var sharedLike = new AssemblyLoadContext("shared-like-probe", isCollectible: false);
+        Assembly modAssembly = sharedLike.LoadFromAssemblyPath(
+            Path.Combine(WeatherHarness.WeatherPath, "DualFrontier.Mod.Weather.dll"));
+        Type componentType = modAssembly.GetType(ComponentFqn)!;
+
+        AssemblyLoadContext probeContext = AssemblyLoadContext.GetLoadContext(modAssembly)!;
+        probeContext.IsCollectible.Should().BeFalse(
+            "precondition: this probe stands in for the shared-mod ALC, which is non-collectible");
+        probeContext.Should().NotBeSameAs(AssemblyLoadContext.Default,
+            "precondition: it is still not the kernel's own context");
+
+        using NativeWorld world = DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true);
+        EntityId entity = world.CreateEntity();
+        MethodInfo add = typeof(NativeWorld)
+            .GetMethod(nameof(NativeWorld.AddComponent))!
+            .MakeGenericMethod(componentType);
+
+        Action act = () => add.Invoke(world, new[] { (object)entity, Activator.CreateInstance(componentType)! });
+
+        act.Should().Throw<TargetInvocationException>()
+            .WithInnerException<InvalidOperationException>()
+            .WithMessage("*IModApi.RegisterComponent*",
+                "a mod type must be refused whether or not its context happens to be collectible");
+    }
+
+    /// <summary>
     /// Resolves the loaded mod's component Type through the registry's own cache, which is
     /// the only place the reloaded ALC's Type object is reachable from the test side.
     /// </summary>
