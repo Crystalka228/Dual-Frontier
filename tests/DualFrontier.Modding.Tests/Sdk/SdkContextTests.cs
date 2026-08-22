@@ -360,11 +360,13 @@ public sealed class SdkContextTests
     [Fact]
     public void ContractsVersion_IsMinorBumped_AndStillSatisfiesCaret2_0_0_Manifests()
     {
-        ContractsVersion.Current.Should().Be(new ContractsVersion(2, 1, 0),
-            "W3 adds SDK members without removing or reshaping any — a MINOR bump");
+        ContractsVersion.Current.Should().Be(new ContractsVersion(2, 1, 1),
+            "W3's 2.1.0 added SDK members without removing or reshaping any (MINOR); ID-B " +
+            "then corrected what flows THROUGH those members — SpanScope.Pairs yields true " +
+            "versions and EntityId.IsValid is Index > 0 — with no surface change at all (PATCH)");
 
         VersionConstraint.Parse("^2.0.0").IsSatisfiedBy(ContractsVersion.Current).Should().BeTrue(
-            "every on-disk manifest pins apiVersion ^2.0.0; a MINOR bump must not strand them");
+            "every on-disk manifest pins apiVersion ^2.0.0; neither bump must strand them");
     }
 
     // ---- W3 C3: the presentation primitive (SDK 2.1.0) ----

@@ -77,18 +77,37 @@ public sealed class EntityIdTests
     }
 
     [Fact]
-    public void Zero_index_nonzero_version_is_valid()
+    public void Zero_index_nonzero_version_is_NOT_valid()
     {
-        // Index=0 is allowed for real entities; only (0,0) is the sentinel
+        // ID-B / К-L22: index 0 is the reserved Invalid slot and the world mints
+        // from 1 upward, so (0, v>0) names an entity that cannot exist. Before the
+        // IsValid alignment this asserted the opposite, on the belief that
+        // "index 0 is allowed for real entities" — which the native world has
+        // never permitted (next_index_ = 1; is_alive rejects index <= 0).
         var id = new EntityId(0, 1);
-        id.IsValid.Should().BeTrue();
+        id.IsValid.Should().BeFalse();
     }
 
     [Fact]
     public void Nonzero_index_zero_version_is_valid()
     {
+        // A freshly minted, never-recycled entity: version 0 is its real version.
         var id = new EntityId(1, 0);
         id.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Recycled_slot_id_is_valid()
+    {
+        var id = new EntityId(7, 3);
+        id.IsValid.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Negative_index_is_not_valid()
+    {
+        var id = new EntityId(-1, 0);
+        id.IsValid.Should().BeFalse();
     }
 
     // ── Versioning invariant ─────────────────────────────────────────────

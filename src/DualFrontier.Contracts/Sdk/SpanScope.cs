@@ -38,12 +38,15 @@ public readonly ref struct SpanScope<T> where T : unmanaged
     private readonly object? _lease;
     private readonly ReadOnlySpan<T> _components;
     private readonly ReadOnlySpan<int> _indices;
+    private readonly ReadOnlySpan<int> _versions;
 
-    internal SpanScope(object lease, ReadOnlySpan<T> components, ReadOnlySpan<int> indices)
+    internal SpanScope(object lease, ReadOnlySpan<T> components, ReadOnlySpan<int> indices,
+                       ReadOnlySpan<int> versions)
     {
         _lease = lease;
         _components = components;
         _indices = indices;
+        _versions = versions;
     }
 
     /// <summary>Number of components in the span.</summary>
@@ -58,19 +61,24 @@ public readonly ref struct SpanScope<T> where T : unmanaged
     /// <summary>
     /// Iterate <c>(EntityId, T)</c> pairs over the span.
     ///
-    /// Caveat (preserved from the engine lease, K7-deferred): the
-    /// <see cref="EntityId"/> is reconstructed with <c>Version = 0</c> — the
-    /// version a never-recycled entity carries, matching the enumerator below —
-    /// because the span ABI does not carry per-entity versions, so no truer value
-    /// is available at this seam. Safe for fresh entities and snapshot-then-record
-    /// flows (the recorded command is version-checked at flush, so a stale id is
-    /// rejected); for a RECYCLED index the reconstruction names an id no live
-    /// entity holds, and a write batch keyed on it is dropped by that same
-    /// flush-time check. True per-entity versions arrive with the versions view of
-    /// IDENTITY_AND_ABI_CONTRACT §2 (the version-0 resolution) — finding F-59,
-    /// cascade ID-B.
+    /// The <see cref="EntityId"/> carries the entity's TRUE version, read from the
+    /// world's own per-slot version table through the engine lease's versions view
+    /// (ID-B / К-L22; IDENTITY_AND_ABI_CONTRACT §2, the version-0 resolution —
+    /// finding F-59). An id this enumerator yields is therefore a valid write key
+    /// even when its index has been recycled: <c>BeginBatch</c> writes keyed on it
+    /// pass the flush-time version check, which is the mod-facing loop this SDK
+    /// exists to make work.
+    ///
+    /// <para>
+    /// Earlier revisions fabricated the version here — <c>1</c> until W3, then
+    /// <c>0</c> — because the span ABI carried entity indices only. Version 1
+    /// matched no entity at all, so batched writes vanished silently; version 0
+    /// matched a never-recycled slot and nothing else. Neither is fabricated any
+    /// more: managed code no longer invents a version it did not receive from the
+    /// world.
+    /// </para>
     /// </summary>
-    public PairsEnumerable Pairs => new PairsEnumerable(_components, _indices);
+    public PairsEnumerable Pairs => new PairsEnumerable(_components, _indices, _versions);
 
     /// <summary>Releases the underlying span-lock. Idempotent.</summary>
     public void Dispose() => (_lease as IDisposable)?.Dispose();
@@ -80,14 +88,18 @@ public readonly ref struct SpanScope<T> where T : unmanaged
     {
         private readonly ReadOnlySpan<T> _components;
         private readonly ReadOnlySpan<int> _indices;
+        private readonly ReadOnlySpan<int> _versions;
 
-        internal PairsEnumerable(ReadOnlySpan<T> components, ReadOnlySpan<int> indices)
+        internal PairsEnumerable(ReadOnlySpan<T> components, ReadOnlySpan<int> indices,
+                                 ReadOnlySpan<int> versions)
         {
             _components = components;
             _indices = indices;
+            _versions = versions;
         }
 
-        public PairsEnumerator GetEnumerator() => new PairsEnumerator(_components, _indices);
+        public PairsEnumerator GetEnumerator()
+            => new PairsEnumerator(_components, _indices, _versions);
     }
 
     /// <summary>Allocation-free enumerator over (entity, component) pairs.</summary>
@@ -95,23 +107,25 @@ public readonly ref struct SpanScope<T> where T : unmanaged
     {
         private readonly ReadOnlySpan<T> _components;
         private readonly ReadOnlySpan<int> _indices;
+        private readonly ReadOnlySpan<int> _versions;
         private int _index;
 
-        internal PairsEnumerator(ReadOnlySpan<T> components, ReadOnlySpan<int> indices)
+        internal PairsEnumerator(ReadOnlySpan<T> components, ReadOnlySpan<int> indices,
+                                 ReadOnlySpan<int> versions)
         {
             _components = components;
             _indices = indices;
+            _versions = versions;
             _index = -1;
         }
 
         public bool MoveNext() => ++_index < _components.Length;
 
         public (EntityId Entity, T Component) Current
-            // Version=0 — the version a never-recycled entity carries, and the same
-            // reconstruction the engine-side span consumers use. W3 corrected this from 1:
-            // an id with a version no entity has is recorded by a write batch and then
-            // silently dropped by the flush-time version check, so a mod's
-            // read-span-then-write-batch loop wrote nothing.
-            => (new EntityId(_indices[_index], 0), _components[_index]);
+            // TRUE version from the world's version table. _versions is keyed by
+            // ENTITY INDEX, _components/_indices by dense position — hence the
+            // double indirection.
+            => (new EntityId(_indices[_index], _versions[_indices[_index]]),
+                _components[_index]);
     }
 }

@@ -340,8 +340,13 @@ public sealed class NativeWorld : IDisposable
     /// resuming mutations. Multiple concurrent leases are allowed.
     ///
     /// Provides <see cref="SpanLease{T}.Span"/>, <see cref="SpanLease{T}.Indices"/>,
-    /// and <see cref="SpanLease{T}.Pairs"/> (added in K5). Lease pooling
+    /// <see cref="SpanLease{T}.Versions"/> (added at ID-B) and
+    /// <see cref="SpanLease{T}.Pairs"/> (added in K5). Lease pooling
     /// remains deferred — K7 measurements determine if it is needed.
+    ///
+    /// Since ID-B the lease also holds a versions view, so <see cref="CreateEntity"/>
+    /// is rejected for the lease's lifetime as well: the version table can resize.
+    /// Dispose the lease before minting entities.
     /// </summary>
     public unsafe SpanLease<T> AcquireSpan<T>() where T : unmanaged
     {
@@ -361,7 +366,24 @@ public sealed class NativeWorld : IDisposable
                 $"Failed to acquire span for component type {typeof(T).Name}");
         }
 
-        return new SpanLease<T>(this, typeId, densePtr, indicesPtr, count);
+        // ID-B (К-L22): the versions view is acquired AFTER the component span,
+        // so the lease can hand out true generations instead of fabricating
+        // them. If it fails the span must not leak — the world would refuse
+        // mutation forever with no lease left to dispose.
+        int* versionsPtr;
+        int versionsCount;
+        int versionsResult = NativeMethods.df_world_acquire_versions(
+            _handle, &versionsPtr, &versionsCount);
+
+        if (versionsResult == 0)
+        {
+            NativeMethods.df_world_release_span(_handle, typeId);
+            throw new InvalidOperationException(
+                $"Failed to acquire the versions view for component type {typeof(T).Name}");
+        }
+
+        return new SpanLease<T>(this, typeId, densePtr, indicesPtr, count,
+                                versionsPtr, versionsCount);
     }
 
     /// <summary>

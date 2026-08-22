@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
+    [InlineData("deferred", @"\bdeferred\b", true, 87, 54)]
     [InlineData("TODO", @"\bTODO\b", false, 132, 51)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -158,6 +158,15 @@ public sealed class CensusMetaTests
         // the W2 sentence deferring live per-mod owner registration, because C4 IS that wiring.
         // It was the file's only deferred site, so the file pin drops too. The marker retired by
         // the work being done, which is the census behaving exactly as intended.
+        // ID-B (C4): deferred 89->87 / 55->54 -- the K7-era deferral that excused version
+        // fabrication is retired at BOTH surviving sites, because the versions view IS the
+        // thing it was waiting for. Sdk/SpanScope.cs loses its "K7-deferred" Pairs caveat
+        // ("the span ABI does not carry per-entity versions" stopped being true), and it was
+        // that file's only deferred site, so the file pin drops. Core.Interop/WriteBatch.cs
+        // loses the "deferred to K7 if measurement shows correctness issues" note on its
+        // snapshot enumerator; the file keeps a deferred site elsewhere, so only the site pin
+        // moves for it. Pre-declared in ID_B_ENTITY_VERSIONS_BRIEF section 10 as expected
+        // movement, not drift.
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 

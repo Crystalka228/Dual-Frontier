@@ -148,11 +148,12 @@ public sealed unsafe class WriteBatch<T> : IDisposable where T : unmanaged
     /// Iteration sees a snapshot — recorded commands are NOT visible until
     /// after <see cref="Flush"/>.
     ///
-    /// Caveat: returned EntityId reconstructs version=1 (see
-    /// <see cref="SpanLease{T}.Pairs"/>). Production accuracy via per-pair
-    /// version lookup is deferred to K7 if measurement shows correctness
-    /// issues. For systems that immediately re-record an Update, this is
-    /// safe — flush rejects stale entities by version-mismatch.
+    /// The yielded <see cref="EntityId"/> carries the entity's TRUE version,
+    /// read through the backing lease's <see cref="SpanLease{T}.Versions"/> view
+    /// (ID-B / К-L22), so an id obtained here is a valid write key even when its
+    /// index has been recycled. The enumerator holds a
+    /// <see cref="SpanLease{T}"/> for the iteration's lifetime, so entity
+    /// creation is rejected while a foreach over this batch is in flight.
     /// </summary>
     public BatchEnumerator GetEnumerator()
     {
@@ -215,12 +216,12 @@ public sealed unsafe class WriteBatch<T> : IDisposable where T : unmanaged
         {
             get
             {
+                // TRUE version, read from the world's own table (ID-B / К-L22).
+                // Versions is entity-index-keyed while Span/Indices are dense-keyed,
+                // hence the double indirection. See SpanLease{T}.Versions.
                 int entityIndex = _lease.Indices[_index];
-                // Version=0 — the reconstruction every span consumer uses, and the version a
-                // never-recycled entity actually carries. W3 corrected this from 1, which no
-                // fresh entity ever has and which made batched writes keyed on it silently
-                // fail the flush-time version check. See SpanLease{T}.Pairs remarks.
-                return (new EntityId(entityIndex, 0), _lease.Span[_index]);
+                return (new EntityId(entityIndex, _lease.Versions[entityIndex]),
+                        _lease.Span[_index]);
             }
         }
 
