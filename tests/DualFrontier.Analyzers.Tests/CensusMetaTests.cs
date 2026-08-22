@@ -186,15 +186,21 @@ public sealed class CensusMetaTests
     [Fact]
     public void DfkWaiverCensus_MatchesPin()
     {
-        // TESTING_STRATEGY §4.3 — DFK-WAIVER census. Pin 2 as of A'.9.1 Phase β C9:
+        // TESTING_STRATEGY §4.3 — DFK-WAIVER census. Pin was 2 from A'.9.1 Phase β C9:
         // the two DFK001 waivers in ValidationLayer.cs (VK_EXT_debug_utils Vulkan
         // interop, К-L19), each carrying its CODING_STANDARDS §5.3 authority citation.
         // §4.4: every `// DFK-WAIVER(` marker pairs with a `#pragma warning disable`;
         // every future increase updates this pin + adds a citation.
+        // ID-B (C6): 2 -> 3, the one HARD-pin movement that cascade ratifies. The third
+        // is DFK022 in Persistence/Compression/EntityEncoder.cs, which decodes persisted
+        // INDEX ranges — the encoded form carries no versions and there is no world to
+        // ask, since the entities those ids name do not exist yet. How generations cross
+        // the save boundary is the A7 persistence contract's call, and the waiver comment
+        // names A7 as its retirement trigger; the pin returns to 2 at that cascade.
         var (disables, _) = Census(text => RegexCount(text, @"#pragma warning disable (DFK|DFL|DF9)", RegexOptions.None));
         var (markers, _) = Census(text => LiteralCount(text, "// DFK-WAIVER("));
 
-        disables.Should().Be(2, "DFK-WAIVER census pin (TESTING_STRATEGY §4.3) — 2 DFK001 Vulkan-interop waivers");
+        disables.Should().Be(3, "DFK-WAIVER census pin (TESTING_STRATEGY §4.3) — 2 DFK001 Vulkan-interop waivers + 1 DFK022 persistence-decode waiver");
         markers.Should().Be(disables, "every '#pragma warning disable DFK/DFL/DF9' pairs with a '// DFK-WAIVER(' marker");
     }
 
