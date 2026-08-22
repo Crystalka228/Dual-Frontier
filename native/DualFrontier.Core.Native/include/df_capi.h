@@ -161,6 +161,44 @@ DF_API void            df_world_release_span(
                            uint32_t type_id);
 
 /*
+ * ID-B versions view (added 2026-08-22; К-L22 entity-identity honesty,
+ * IDENTITY_AND_ABI_CONTRACT §2 option 1). ADDITIVE — no shipped signature or
+ * semantics changes.
+ *
+ * Read-only view over the world's per-slot versions_ table, under the same
+ * acquire/release discipline as component spans. It exists so managed code can
+ * stop FABRICATING the Version half of an EntityId: a span hands back entity
+ * INDICES only, and a reconstruction that supplies its own version collapses
+ * generation validation to "this index was never recycled" (the C10/N-22
+ * defect). With this view a pair iterator reconstructs
+ * (index, versions[index]) — the TRUE generation.
+ *
+ * INDEXING: out_versions_ptr is indexed by ENTITY INDEX, not by dense span
+ * position. It is NOT parallel to df_world_acquire_span's out_dense_ptr /
+ * out_indices_ptr arrays. The correct read is versions[indices[i]].
+ * out_count is the TABLE SIZE (versions_.size()), not df_world_entity_count.
+ *
+ * Lifetime contract:
+ *   1. Caller calls df_world_acquire_versions -> receives versions ptr + count.
+ *   2. Pointer is valid until df_world_release_versions.
+ *   3. Multiple concurrent views are allowed; releases must match acquires
+ *      (a surplus release is tolerated and clamps the counter at 0).
+ *   4. While ANY view is held, df_world_create_entity is REFUSED (returns the
+ *      0 sentinel) — creation can grow and therefore REALLOCATE the table,
+ *      which would dangle the pointer. df_world_destroy_entity and
+ *      df_world_flush_destroyed are refused for the same window because they
+ *      mutate table content and slot recyclability. This guard is carried by
+ *      the view's OWN counter: creation under a plain component span remains
+ *      legal, unchanged.
+ */
+DF_API int32_t         df_world_acquire_versions(
+                           df_world_handle world,
+                           const int32_t** out_versions_ptr,
+                           int32_t* out_count);
+
+DF_API void            df_world_release_versions(df_world_handle world);
+
+/*
  * K2 explicit type registration (added 2026-05-07).
  *
  * Replaces implicit FNV-1a hash-based type identification (K0 inheritance)

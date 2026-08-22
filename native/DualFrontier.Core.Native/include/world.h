@@ -68,6 +68,27 @@ public:
 
     void release_span(uint32_t type_id) noexcept;
 
+    // ID-B versions view (К-L22; IDENTITY_AND_ABI_CONTRACT §2 option 1).
+    // Read-only view over versions_, indexed by ENTITY INDEX — NOT by dense
+    // position, and NOT parallel to a component span's dense array. out_count
+    // is versions_.size() (the table size), not entity_count().
+    //
+    // The view carries its OWN counter, deliberately not active_spans_:
+    // a component span guards versions_ CONTENT against mutation, but the
+    // hazard here is REALLOCATION — create_entity doubles versions_ in place
+    // (see create_entity), which would dangle this pointer. Component spans
+    // do not block creation today and must continue not to, so a second
+    // counter is the only way to fence creation without changing shipped
+    // span semantics.
+    bool acquire_versions(const int32_t** out_versions_ptr,
+                          int32_t* out_count) noexcept;
+
+    void release_versions() noexcept;
+
+    [[nodiscard]] int32_t active_version_views_count() const noexcept {
+        return active_version_views_.load(std::memory_order_acquire);
+    }
+
     // K2 explicit type registration. Pre-creates an empty store for the
     // (type_id, component_size) pair. Idempotent for matching size; throws
     // std::invalid_argument on size mismatch or type_id == 0.
@@ -166,6 +187,7 @@ private:
     std::unordered_map<uint32_t, std::unique_ptr<RawComponentStore>> stores_;
     std::atomic<int32_t> active_spans_{0};
     std::atomic<int32_t> active_batches_{0};
+    std::atomic<int32_t> active_version_views_{0};
     std::atomic<bool> bootstrapped_{false};
 
     // K8.1 — primitives owned by this World. string_pool_ is value-typed

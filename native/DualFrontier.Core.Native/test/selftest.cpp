@@ -28,6 +28,7 @@
 #include "bootstrap_graph.h"
 #include "bus_native.h"
 #include "df_capi.h"
+#include "entity_id.h"
 #include "event_type_registry.h"
 #include "mod_unload.h"
 #include "phase_compute.h"
@@ -249,6 +250,218 @@ void scenario_span_lifetime() {
              "mutation succeeds after span released");
 
     df_world_destroy(w);
+}
+
+// ── ID-B versions view (К-L22; IAC §2 option 1) ──────────────────────────────
+//
+// The view exists so managed pair-iterators can stop fabricating the Version
+// half of an EntityId. These scenarios pin the three properties the managed
+// side relies on: the table is indexed by ENTITY INDEX and sized by the table
+// (not by entity count); a held view REFUSES the mutations that could
+// reallocate or retitle it; and a recycled index reads its TRUE, bumped
+// generation rather than 0.
+
+// Entity packing per df_capi.h:20-27 — low 32 = Index, high 32 = Version.
+int32_t entity_index_of(uint64_t packed) {
+    return static_cast<int32_t>(packed & 0xFFFFFFFFu);
+}
+
+int32_t entity_version_of(uint64_t packed) {
+    return static_cast<int32_t>((packed >> 32) & 0xFFFFFFFFu);
+}
+
+void scenario_versions_view_round_trip() {
+    std::printf("scenario_versions_view_round_trip\n");
+    df_world_handle w = df_world_create();
+
+    uint64_t a = df_world_create_entity(w);
+    uint64_t b = df_world_create_entity(w);
+
+    const int32_t* versions = nullptr;
+    int32_t count = 0;
+    int32_t acq = df_world_acquire_versions(w, &versions, &count);
+
+    DF_CHECK(acq == 1, "versions view acquisition succeeded");
+    DF_CHECK(versions != nullptr, "versions pointer is non-null");
+    // out_count is the TABLE size, not entity_count — it must comfortably
+    // exceed the two live entities and cover every index handed out.
+    DF_CHECK(count > df_world_entity_count(w),
+             "versions count is the table size, not the entity count");
+    DF_CHECK(entity_index_of(a) < count && entity_index_of(b) < count,
+             "every live entity index is addressable in the view");
+
+    // A never-recycled slot carries version 0 — which is exactly why
+    // fabricating 0 looked correct for so long.
+    DF_CHECK(versions[entity_index_of(a)] == 0, "fresh slot reads version 0");
+    DF_CHECK(versions[entity_index_of(a)] == entity_version_of(a),
+             "view agrees with the version create_entity handed back");
+
+    df_world_release_versions(w);
+
+    // Destroy bumps the slot version; a re-acquired view must observe it.
+    df_world_destroy_entity(w, a);
+
+    const int32_t* versions2 = nullptr;
+    int32_t count2 = 0;
+    DF_CHECK(df_world_acquire_versions(w, &versions2, &count2) == 1,
+             "versions view re-acquired after release");
+    DF_CHECK(versions2[entity_index_of(a)] == 1,
+             "destroyed slot reads its incremented version");
+    DF_CHECK(versions2[entity_index_of(b)] == 0,
+             "an untouched slot is unaffected by another slot's destroy");
+    df_world_release_versions(w);
+
+    df_world_destroy(w);
+}
+
+void scenario_versions_view_refuses_mutation() {
+    std::printf("scenario_versions_view_refuses_mutation\n");
+    df_world_handle w = df_world_create();
+
+    uint64_t a = df_world_create_entity(w);
+    const int32_t before = df_world_entity_count(w);
+
+    const int32_t* versions = nullptr;
+    int32_t count = 0;
+    DF_CHECK(df_world_acquire_versions(w, &versions, &count) == 1,
+             "versions view acquired");
+
+    // REFUSE-NOT-FORCE: the create is rejected and the world is untouched. The
+    // C ABI reports the refusal as the 0 sentinel (df_capi.h return codes).
+    uint64_t refused = df_world_create_entity(w);
+    DF_CHECK(refused == 0, "create refused while a versions view is held");
+    DF_CHECK(df_world_entity_count(w) == before,
+             "refused create left the entity count untouched");
+
+    // destroy/flush mutate table content and slot recyclability — same window.
+    df_world_destroy_entity(w, a);
+    DF_CHECK(df_world_is_alive(w, a) == 1,
+             "destroy refused while a versions view is held");
+    DF_CHECK(versions[entity_index_of(a)] == 0,
+             "refused destroy did not bump the slot version");
+
+    df_world_release_versions(w);
+
+    // Released — the world accepts mutation again.
+    uint64_t allowed = df_world_create_entity(w);
+    DF_CHECK(allowed != 0, "create succeeds once the view is released");
+    df_world_destroy_entity(w, a);
+    DF_CHECK(df_world_is_alive(w, a) == 0,
+             "destroy succeeds once the view is released");
+
+    df_world_destroy(w);
+}
+
+void scenario_versions_view_release_is_tolerant() {
+    std::printf("scenario_versions_view_release_is_tolerant\n");
+    df_world_handle w = df_world_create();
+
+    const int32_t* versions = nullptr;
+    int32_t count = 0;
+    DF_CHECK(df_world_acquire_versions(w, &versions, &count) == 1,
+             "versions view acquired");
+    df_world_release_versions(w);
+    // A surplus release must clamp at 0, never go negative — a negative counter
+    // would silently re-open the create guard for the NEXT legitimate view.
+    df_world_release_versions(w);
+    df_world_release_versions(w);
+
+    DF_CHECK(df_world_create_entity(w) != 0,
+             "create still legal after surplus releases (counter clamped at 0)");
+
+    // And the guard still arms correctly on the next acquire.
+    DF_CHECK(df_world_acquire_versions(w, &versions, &count) == 1,
+             "versions view re-acquired after surplus releases");
+    DF_CHECK(df_world_create_entity(w) == 0,
+             "guard re-arms — create refused under the new view");
+    df_world_release_versions(w);
+
+    // Two concurrent views: the guard must survive the first release.
+    const int32_t* v1 = nullptr;
+    const int32_t* v2 = nullptr;
+    int32_t c1 = 0;
+    int32_t c2 = 0;
+    DF_CHECK(df_world_acquire_versions(w, &v1, &c1) == 1, "first view acquired");
+    DF_CHECK(df_world_acquire_versions(w, &v2, &c2) == 1, "second view acquired");
+    df_world_release_versions(w);
+    DF_CHECK(df_world_create_entity(w) == 0,
+             "create still refused while the second view is outstanding");
+    df_world_release_versions(w);
+    DF_CHECK(df_world_create_entity(w) != 0,
+             "create legal once both views are released");
+
+    df_world_destroy(w);
+}
+
+void scenario_versions_view_recycled_index_true_generation() {
+    std::printf("scenario_versions_view_recycled_index_true_generation\n");
+    df_world_handle w = df_world_create();
+
+    // Mint, destroy, flush — the flush is what returns the index to the free
+    // list and makes the next create recycle it.
+    uint64_t stale = df_world_create_entity(w);
+    df_world_destroy_entity(w, stale);
+    df_world_flush_destroyed(w);
+
+    uint64_t live = df_world_create_entity(w);
+    DF_CHECK(entity_index_of(live) == entity_index_of(stale),
+             "the new entity recycled the destroyed entity's index");
+    DF_CHECK(entity_version_of(live) > entity_version_of(stale),
+             "the recycled slot carries a strictly higher version (ABA law)");
+
+    const int32_t* versions = nullptr;
+    int32_t count = 0;
+    DF_CHECK(df_world_acquire_versions(w, &versions, &count) == 1,
+             "versions view acquired over the recycled table");
+
+    const int32_t idx = entity_index_of(live);
+    // THE POINT OF THE CASCADE: reconstructing (idx, 0) here — what every
+    // pair-iterator did before ID-B — names the stale entity, not the live one.
+    DF_CHECK(versions[idx] == entity_version_of(live),
+             "the view reports the LIVE generation for a recycled index");
+    DF_CHECK(versions[idx] != entity_version_of(stale),
+             "the view does NOT report the stale generation");
+    DF_CHECK(versions[idx] != 0,
+             "a recycled slot is exactly the case Version=0 fabrication got wrong");
+
+    df_world_release_versions(w);
+
+    // And the world agrees: the stale id is dead, the reconstructed one alive.
+    const uint64_t reconstructed =
+        (static_cast<uint64_t>(static_cast<uint32_t>(versions[idx])) << 32) |
+        static_cast<uint64_t>(static_cast<uint32_t>(idx));
+    DF_CHECK(df_world_is_alive(w, reconstructed) == 1,
+             "an id reconstructed from the view is alive");
+    DF_CHECK(df_world_is_alive(w, stale) == 0, "the stale id stays dead");
+
+    df_world_destroy(w);
+}
+
+void scenario_entity_id_is_valid_is_index_only() {
+    std::printf("scenario_entity_id_is_valid_is_index_only\n");
+    using namespace dualfrontier;
+
+    // ID-B alignment: is_valid is the syntactic projection of the world's
+    // aliveness rule, which rejects index <= 0 unconditionally.
+    // (Locals rather than inline braced-inits: a brace-comma inside a
+    // function-like macro argument splits it — DF_CHECK is a macro.)
+    const EntityId sentinel{0, 0};
+    const EntityId zero_index_versioned{0, 5};
+    const EntityId fresh{1, 0};
+    const EntityId recycled{7, 3};
+    const EntityId negative{-1, 0};
+
+    DF_CHECK(sentinel.is_valid() == false, "(0,0) invalid - the sentinel");
+    DF_CHECK(zero_index_versioned.is_valid() == false,
+             "(0,v>0) invalid - index 0 is permanently dead, not 'valid'");
+    DF_CHECK(fresh.is_valid() == true, "(1,0) valid - a fresh entity");
+    DF_CHECK(recycled.is_valid() == true, "(7,3) valid - a recycled slot");
+    DF_CHECK(negative.is_valid() == false, "negative index invalid");
+
+    // Pack/unpack stays honest across the corner (entity_id.h:19-30).
+    const EntityId round = unpack_entity(pack_entity(recycled));
+    DF_CHECK(round.index == 7 && round.version == 3,
+             "pack/unpack preserves a recycled-slot pair");
 }
 
 void scenario_explicit_registration() {
@@ -3086,6 +3299,11 @@ int main() {
     scenario_sparse_set_swap_remove();
     scenario_bulk_operations();
     scenario_span_lifetime();
+    scenario_versions_view_round_trip();
+    scenario_versions_view_refuses_mutation();
+    scenario_versions_view_release_is_tolerant();
+    scenario_versions_view_recycled_index_true_generation();
+    scenario_entity_id_is_valid_is_index_only();
     scenario_explicit_registration();
     scenario_throughput();
     scenario_bootstrap_basic();

@@ -55,6 +55,18 @@ const VulkanAttachment& World::vulkan_attachment() const noexcept {
 }
 
 EntityId World::create_entity() {
+    // ID-B (К-L22): a versions view hands out a raw pointer into versions_, and
+    // the growth path below reallocates that vector. REFUSE-NOT-FORCE (the EQ_A3
+    // precedent): the world stays intact and the caller sees the request rejected
+    // (the C ABI wrapper turns this into the 0 sentinel). Component spans are
+    // deliberately NOT consulted here — creation under a plain component span
+    // stays legal, exactly as it has always been.
+    if (active_version_views_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error(
+            "Cannot create entities while a versions view is held — "
+            "the versions table could resize");
+    }
+
     if (!free_slots_.empty()) {
         const int32_t recycled = free_slots_.back();
         free_slots_.pop_back();
@@ -86,6 +98,12 @@ void World::destroy_entity(EntityId id) {
         active_batches_.load(std::memory_order_acquire) > 0) {
         throw std::logic_error("Cannot mutate while spans or batches are active");
     }
+    // ID-B (К-L22): a destroy bumps versions_[index], which is CONTENT a live
+    // versions view is reading. Refuse rather than let a reader observe a torn
+    // generation mid-iteration.
+    if (active_version_views_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while a versions view is held");
+    }
     if (!is_alive(id)) return;
     ++versions_[id.index];
     --live_count_;
@@ -96,6 +114,12 @@ void World::flush_destroyed() {
     if (active_spans_.load(std::memory_order_acquire) > 0 ||
         active_batches_.load(std::memory_order_acquire) > 0) {
         throw std::logic_error("Cannot mutate while spans or batches are active");
+    }
+    // ID-B (К-L22): the flush returns indices to the free list, which is the
+    // step that makes a slot recyclable by the next create_entity. A view held
+    // across it would be reading a table whose slots are about to be reissued.
+    if (active_version_views_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while a versions view is held");
     }
     for (const EntityId id : pending_destroy_) {
         for (auto& [type_id, store] : stores_) {
@@ -258,6 +282,30 @@ void World::release_span(uint32_t type_id) noexcept {
     // Underflow guard: clamp to 0 if released more than acquired.
     if (prev <= 0) {
         active_spans_.store(0, std::memory_order_release);
+    }
+}
+
+bool World::acquire_versions(const int32_t** out_versions_ptr,
+                             int32_t* out_count) noexcept {
+    if (!out_versions_ptr || !out_count) return false;
+
+    // versions_ is never empty (the ctor assigns kInitialCapacity zeroes), so
+    // unlike acquire_span there is no empty-store branch: data() is always a
+    // real pointer and the count is always the table size.
+    *out_versions_ptr = versions_.data();
+    *out_count = static_cast<int32_t>(versions_.size());
+
+    active_version_views_.fetch_add(1, std::memory_order_acquire);
+    return true;
+}
+
+void World::release_versions() noexcept {
+    int32_t prev = active_version_views_.fetch_sub(1, std::memory_order_release);
+    // Underflow guard, mirroring release_span: a double release is tolerated
+    // and clamps to 0 rather than leaving the counter negative — a negative
+    // counter would silently re-open the create_entity guard.
+    if (prev <= 0) {
+        active_version_views_.store(0, std::memory_order_release);
     }
 }
 

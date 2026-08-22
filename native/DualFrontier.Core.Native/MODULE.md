@@ -7,7 +7,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-05-11
-last_modified: 2026-07-17
+last_modified: 2026-08-22
 content_language: en
 next_review_due: null
 title: Native Core module
@@ -27,8 +27,11 @@ reviewer: Crystalka
 - `df_world_*` — entity/component lifecycle
 - `df_engine_bootstrap` — startup entry point (K3)
 - `df_world_acquire_span` / `df_world_release_span` — span lifetime (K5)
+- `df_world_acquire_versions` / `df_world_release_versions` — read-only view over the per-slot `versions_` table, indexed by ENTITY INDEX, so managed pair-iterators reconstruct TRUE generations instead of fabricating `Version = 0` (ID-B; К-L22; `IDENTITY_AND_ABI_CONTRACT.md` §2). While a view is held, `df_world_create_entity` / `df_world_destroy_entity` / `df_world_flush_destroyed` are REFUSED — creation can reallocate the table, destroy/flush retitle its content
 - `df_world_flush_write_batch` — mutation flush (K5)
 - `df_world_register_component_type` — type registration (K2)
+
+**`DF_API` export census**: 209 — `df_capi.h` 155 · `pipeline_slot.h` 18 · `bus_native.h` 15 · `background_queue.h` 8 · `event_type_registry.h` 5 · `phase_compute.h` 5 · `mod_unload.h` 3. Measured by `grep -c "^DF_API" native/DualFrontier.Core.Native/include/*.h` (sum). Was 207 before the ID-B versions-view pair.
 
 **Dependencies**:
 - C++23 stdlib only (`<vector>`, `<unordered_map>`, `<thread>`, `<atomic>`)
