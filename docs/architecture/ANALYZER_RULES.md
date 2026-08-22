@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-08-22
 content_language: en
 next_review_due: 2027-Q3
 title: Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)
@@ -18,7 +18,7 @@ supersedes:
 last_modified_commit: edb267a
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §1.2 wiring-truth inherit list net8.0 → net10.0; one sentence added at §1.2 closing the recon gap — the analyzer project TFM (netstandard2.0, Roslyn host load compat, deliberately unmoved by the solution-wide net10.0 move) was nowhere asserted on this LOCKED surface, now stated together with LangVersion pinned explicit 14.0 (was floating latest; STACK_UPDATE D2); §6 kernel-boundary parenthetical C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0) (EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
+last_review_event: 'ID_B_ENTITY_VERSIONS C7 — v1.0.2 → v1.1.0 MINOR (a rule joins the shipped surface): DFK022 (К-L22 entity identity honesty) added Error-enforcing — it flags an integer literal in the Version position of new EntityId(...), by parameter NAME rather than ordinal, exempting DualFrontier.Core.Interop internals and Test namespaces. Census 17 → 18 rules, NativeBoundary 5 → 6, build-breaking 16 → 17, Error 11 → 12; §1.3 test tree 20 → 21 files with the 9-case DFK022EntityIdentityTests; §1.4 waiver pin 2 → 3, the third being the DFK022 waiver on EntityEncoder.DecodeRanges whose retirement trigger is the A7 persistence contract. The rule is tracked in AnalyzerReleases.Unshipped.md pending its release transition. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior review: STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §1.2 wiring-truth inherit list net8.0 → net10.0; one sentence added at §1.2 closing the recon gap — the analyzer project TFM (netstandard2.0, Roslyn host load compat, deliberately unmoved by the solution-wide net10.0 move) was nowhere asserted on this LOCKED surface, now stated together with LangVersion pinned explicit 14.0 (was floating latest; STACK_UPDATE D2); §6 kernel-boundary parenthetical C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0) (EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 ---
@@ -44,13 +44,14 @@ Specifies the shipped Roslyn analyzer rule surface — IDs, namespaces, severiti
 
 ## §1 — Shipped surface census (verified on disk)
 
-Ground truth at HEAD `35364c2`, re-verified rule-by-rule this rework by opening every file under `tools/DualFrontier.Analyzers/Rules/`: **17 rules carry real detection logic and are enforced at their Release 1.0 severities** — 11 Error + 5 Warning + `DFL025_B` at descriptor Info (`.editorconfig` `suggestion`, IDE-only). 16 of the 17 are build-breaking under `TreatWarningsAsErrors`. On-disk layout (matches the predecessor's census exactly, re-confirmed by directory listing):
+Ground truth at HEAD `35364c2`, re-verified rule-by-rule this rework by opening every file under `tools/DualFrontier.Analyzers/Rules/`, plus one rule added since: **18 rules carry real detection logic and are enforced** — the 17 at their Release 1.0 severities (11 Error + 5 Warning + `DFL025_B` at descriptor Info, `.editorconfig` `suggestion`, IDE-only) and **DFK022**, added Error-enforcing by ID_B_ENTITY_VERSIONS (2026-08-22) and recorded in `AnalyzerReleases.Unshipped.md` pending its release-tracking transition. 17 of the 18 are build-breaking under `TreatWarningsAsErrors`. On-disk layout:
 
 ```
 tools/DualFrontier.Analyzers/Rules/
 ├── Architecture/    (9) DFK003 · DFK003_1 · DFK004 · DFK005 · DFK007 · DFK011 ·
 │                        DFK013 · DFK016 · DFK017
-├── NativeBoundary/  (5) DFK001 · DFK002 · DFK007_1 · DFK015_1 · DFK019_A
+├── NativeBoundary/  (6) DFK001 · DFK002 · DFK007_1 · DFK015_1 · DFK019_A ·
+│                        DFK022
 └── Discipline/      (3) DF999 · DFL025_A · DFL025_B
 ```
 
@@ -74,11 +75,12 @@ This document, not scattered mentions elsewhere, is the current-truth surface fo
 | DFK007_1 | К-L7.1 | GPU pipeline slot. Flags a call to `PipelineSlotInterop.GetSlot` (the raw slot pointer) from outside `DualFrontier.Core.Interop` — `ReadSlotTail` is the sanctioned managed read. | Error | enforcing |
 | DFK015_1 | К-L15.1 | Three-tier mutex managed facade. Flags `new Mutex(...)` / `new Semaphore(...)` — raw OS synchronization primitives bypassing the three-tier facade. | Error | enforcing |
 | DFK019_A | К-L19 (static API surface half of the Q-L-8 split) | Static Vulkan API surface. Flags a `using` directive rooted at an alternate-graphics namespace (`OpenGL`/`OpenTK`/`DirectX`/`Direct3D`/`SharpDX`/`Vortice`/`Metal`); the 871-occurrence `Runtime.Native.Vulkan` interop surface is silent by construction. Hardware-tier runtime capability probing is DFK019_B — deferred (§4). | Warning | enforcing |
+| DFK022 | К-L22 | Entity identity honesty. Flags an integer LITERAL in the `Version` position of `new EntityId(...)` — any literal, not only 0 — outside `DualFrontier.Core.Interop` internals and namespaces containing `Test`. Detection is by parameter NAME, so a named out-of-order `Version:` argument is caught while a literal `Index` with a real version is not. `EntityId.Invalid` / `default` are unreachable by the rule (no constructor call). | Error | enforcing (unshipped-tracked) |
 | DFL025_A | Lesson #25 (refined 3rd extension) | `[ReservedStub]` behavior-invocation discipline. Flags a `[Fact]`/`[Theory]` test method that touches a `[ReservedStub]`-tagged type without `[Trait("Category","ReservedStub")]` on the method or its class. | Warning | enforcing |
 | DFL025_B | Lesson #25 (refined 3rd extension) | Standalone-test Skip discipline. Flags the same touch pattern on a `[Fact]`/`[Theory]` lacking a non-empty `Skip` argument — edge-case discipline, informational only. | Info (`.editorconfig` `suggestion`) | detecting, IDE-only |
 | DF999 | self-policing (Q-L-18 default) | Solution-wide suppression ban. Flags `[assembly: SuppressMessage]` and any file named `GlobalSuppressions.cs`. | Warning | enforcing |
 
-Composition: 9 Architecture + 5 NativeBoundary + 3 Discipline = 17, matching the on-disk tree above exactly. Naming: descriptor ID strings, file names, and class names all use the underscore form for sub-rules and variants — see §2.
+Composition: 9 Architecture + 6 NativeBoundary + 3 Discipline = 18, matching the on-disk tree above exactly. Naming: descriptor ID strings, file names, and class names all use the underscore form for sub-rules and variants — see §2.
 
 ### §1.2 — Wiring truth
 
@@ -97,11 +99,11 @@ This `src/`-scoped file explicitly imports the repo-root `Directory.Build.props`
 
 ### §1.3 — Tests
 
-`tests/DualFrontier.Analyzers.Tests` carries 20 `.cs` files: 17 per-rule test classes (one per shipped rule, mirrored under `Rules/{Architecture,Discipline,NativeBoundary}/`), `CensusMetaTests.cs` (repo-discipline meta-tests, §1.4), `HarnessTests.cs` (verifier-scaffolding smoke tests), and the `CSharpAnalyzerVerifier<T>` harness itself (no test methods). A precise re-count at HEAD `35364c2`, counting only genuine attribute lines (a naive grep over-counts by matching `[Theory]` inside an XML-doc comment) finds **57 test methods** — 55 bare `[Fact]`, 1 `[Fact(Skip=...)]`, and 1 `[Theory]` carrying 4 `InlineData` rows (`CensusMetaTests.MarkerFamilyCensus_MatchesPin`) — which xUnit's test explorer expands to **60 executed test cases**. This is close to, but does not exactly reproduce, the predecessor's flat "54 tests" figure; carried forward here as order-of-magnitude verified rather than re-pinned to a number the source doesn't unambiguously yield on its own (the predecessor's count did not specify whether it meant source-level methods or Theory-expanded cases, and the two now differ by several).
+`tests/DualFrontier.Analyzers.Tests` carries 21 `.cs` files: 18 per-rule test classes (one per rule, mirrored under `Rules/{Architecture,Discipline,NativeBoundary}/` — `DFK022EntityIdentityTests` added at ID_B with 9 cases), `CensusMetaTests.cs` (repo-discipline meta-tests, §1.4), `HarnessTests.cs` (verifier-scaffolding smoke tests), and the `CSharpAnalyzerVerifier<T>` harness itself (no test methods). A precise re-count at HEAD `35364c2`, counting only genuine attribute lines (a naive grep over-counts by matching `[Theory]` inside an XML-doc comment) finds **57 test methods** — 55 bare `[Fact]`, 1 `[Fact(Skip=...)]`, and 1 `[Theory]` carrying 4 `InlineData` rows (`CensusMetaTests.MarkerFamilyCensus_MatchesPin`) — which xUnit's test explorer expands to **60 executed test cases**. This is close to, but does not exactly reproduce, the predecessor's flat "54 tests" figure; carried forward here as order-of-magnitude verified rather than re-pinned to a number the source doesn't unambiguously yield on its own (the predecessor's count did not specify whether it meant source-level methods or Theory-expanded cases, and the two now differ by several).
 
 ### §1.4 — Waiver census
 
-Exactly 2 `DFK-WAIVER`s exist in the tree, both `DFK001`, both in `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs` (lines 90/93/95 and 137/140/142), both citing the same К-L19-sanctioned rationale — VK_EXT_debug_utils Vulkan debug-messenger interop:
+**Pin: 3** (was 2 until ID_B_ENTITY_VERSIONS, 2026-08-22). Two are `DFK001`, both in `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs`, citing the same К-L19-sanctioned rationale — VK_EXT_debug_utils Vulkan debug-messenger interop. The third is `DFK022` in `src/DualFrontier.Persistence/Compression/EntityEncoder.cs`, around the `DecodeRanges` loop: it decodes persisted INDEX ranges, the encoded form carries no versions, and there is no world to ask because the entities those ids name do not exist yet. How generations cross the save boundary is the A7 persistence contract's call, which the waiver comment names as its retirement trigger — the pin returns to 2 at that cascade. Waiver form, identical in all three:
 
 ```csharp
 // DFK-WAIVER(DFK001): sanctioned Vulkan debug-messenger interop
@@ -110,7 +112,7 @@ Exactly 2 `DFK-WAIVER`s exist in the tree, both `DFK001`, both in `src/DualFront
 #pragma warning restore DFK001
 ```
 
-`CensusMetaTests.DfkWaiverCensus_MatchesPin` hard-pins this count (asserts exactly 2 `#pragma warning disable (DFK|DFL|DF9)` sites, each paired with a `// DFK-WAIVER(` marker) and `CensusMetaTests.SuppressMessageCensus_IsZero` independently confirms zero `[SuppressMessage]` occurrences anywhere in `src/` — the DF999 baseline holds structurally, enforced by a compiled test, not merely by convention. Provenance: the KERNEL_ARCHITECTURE.md chronicle records the Phase β triage's first run at 23 diagnostics across the newly-detecting 17 rules (Q-L-1 adaptive gate: ≤80 → continue in one cascade), resolved into these 2 sanctioned waivers plus a further relocation cluster — see §6.
+`CensusMetaTests.DfkWaiverCensus_MatchesPin` hard-pins this count (asserts exactly 3 `#pragma warning disable (DFK|DFL|DF9)` sites, each paired with a `// DFK-WAIVER(` marker) and `CensusMetaTests.SuppressMessageCensus_IsZero` independently confirms zero `[SuppressMessage]` occurrences anywhere in `src/` — the DF999 baseline holds structurally, enforced by a compiled test, not merely by convention. Provenance: the KERNEL_ARCHITECTURE.md chronicle records the Phase β triage's first run at 23 diagnostics across the newly-detecting 17 rules (Q-L-1 adaptive gate: ≤80 → continue in one cascade), resolved into the 2 sanctioned DFK001 waivers plus a further relocation cluster — see §6. The DFK022 waiver joined later, at ID_B.
 
 ---
 
@@ -131,7 +133,7 @@ Three-tier rule-ID namespace, forward-locked at Brief A'.9.1 batch 1 deliberatio
 
 ## §3 — Severity & suppression law, as shipped
 
-**Three severity tiers exist**, not one. Of the 17 shipped rules: 11 ship `Error` (the correctness-class К-L invariants — storage ownership, span protocol, native-boundary discipline), 5 ship `Warning` (the efficiency-class invariants — К-L13 wake discipline, К-L16 pipeline-depth literals, К-L19's static-surface half — plus `DFL025_A` and the `DF999` self-policing rule), and 1 (`DFL025_B`) ships descriptor `Info`, restated by `.editorconfig` as `suggestion` — IDE-only, not build-breaking. `TreatWarningsAsErrors=true` at the repo-root `Directory.Build.props` (inherited by the `src/`-scoped file, §1.2) makes both `Error` and `Warning` diagnostics fail the build: **16 of the 17 rules are build-breaking; only `DFL025_B` is not.**
+**Three severity tiers exist**, not one. Of the 18 rules: 12 ship `Error` (the correctness-class К-L invariants — storage ownership, span protocol, native-boundary discipline, and К-L22 entity identity), 5 ship `Warning` (the efficiency-class invariants — К-L13 wake discipline, К-L16 pipeline-depth literals, К-L19's static-surface half — plus `DFL025_A` and the `DF999` self-policing rule), and 1 (`DFL025_B`) ships descriptor `Info`, restated by `.editorconfig` as `suggestion` — IDE-only, not build-breaking. `TreatWarningsAsErrors=true` at the repo-root `Directory.Build.props` (inherited by the `src/`-scoped file, §1.2) makes both `Error` and `Warning` diagnostics fail the build: **17 of the 18 rules are build-breaking; only `DFL025_B` is not.** DFK022 shipped enforcing rather than detecting-then-promoting: the rule exists because the tree HAD been fabricating versions, and a grace period would have let the census re-grow behind it.
 
 **Suppression is sanctioned, not banned.** [CODING_STANDARDS.md](../methodology/CODING_STANDARDS.md) §5.3, "`DFK-WAIVER` — the suppression law," is the standing law this document defers to and does not restate; the operative shape:
 
@@ -214,5 +216,6 @@ Non-semantic v0.x corrections (registry additions, severity corrections already 
 
 | Version | Date | Change |
 |---|---|---|
+| 1.1.0 | 2026-08-22 | **MINOR — ID_B_ENTITY_VERSIONS C7.** `DFK022` (К-L22 entity identity honesty) joins the shipped surface, Error-enforcing from the moment it lands: it flags an integer literal in the `Version` position of `new EntityId(...)`, detected by parameter NAME so a named out-of-order argument cannot evade it, with `DualFrontier.Core.Interop` internals and `Test` namespaces exempt and `EntityId.Invalid`/`default` unreachable by construction. §1 census 17 → 18 rules (NativeBoundary 5 → 6; build-breaking 16 → 17); §1.1 registry row added; §1.3 test tree 20 → 21 files (`DFK022EntityIdentityTests`, 9 cases); §1.4 waiver pin **2 → 3** — the third waiver is DFK022 on `EntityEncoder.DecodeRanges`, which decodes persisted index ranges with no world to ask, retiring when the A7 persistence contract decides how generations cross the save boundary; §3 severity tally restated and the ship-enforcing-immediately rationale recorded. Release-tracked in `AnalyzerReleases.Unshipped.md` pending the next release roll. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. |
 | 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R2-15..R2-19): §1.3 test-tree census 19→20 `.cs` files (matches the section's own itemization); §1 stale-lens paragraph corrected — the THREADING successor already fixed its analyzer references, only `historical/` copies retain the pre-Phase-β snapshot; §5 dangling-reference list re-anchored to `historical/` paths with the CONTRACTS repair acknowledged (sole live carrier = `SystemExecutionContext.cs:29`); "§11.1 M3.4" pointers → "§3.7 (D-2, historically 'M3.4')" ×2; §4 header split 13 → 12 deferred + 1 scope-exclusion (DFL025-C, per its own row). Register version 0.1.0 → 0.1.1; the row below's "1.0.0-draft" is the authoring session's in-doc label for that same 0.1.0 enrollment. |
 | 1.0.0-draft | 2026-07-15 | Initial authored-rework superseding DOC-A-ANALYZER_RULES + DOC-A-ARCHITECTURE_TYPE_SYSTEM + DOC-A-MAX_ENG_REFACTOR_TRACK_B. Re-verified the 17-rule shipped surface, wiring, test census, and waiver census against code at HEAD `35364c2`; formally retired the DF_TS analyzer program (session finding N-13) and re-registered its one surviving idea as a DEFERRED, unassigned-ID candidate (§5). |
