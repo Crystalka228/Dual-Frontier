@@ -118,11 +118,41 @@ public sealed class NativeWorld : IDisposable
     /// </summary>
     public FieldRegistry Fields { get; }
 
+    /// <summary>
+    /// Mints a live entity.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// The native side refused the request. Today that means one thing: the
+    /// entity table would have had to GROW while a versions view was held (a
+    /// <see cref="SpanLease{T}"/> holds one for its lifetime), and the resize
+    /// would have invalidated the view's pointer — so the world refused rather
+    /// than corrupt a live reader.
+    /// </exception>
+    /// <remarks>
+    /// The C ABI reports the refusal as the packed-zero sentinel, which unpacks
+    /// to <see cref="EntityId.Invalid"/>. Returning that silently is the
+    /// fail-open shape this project keeps having to hunt down: a caller would
+    /// attach components to the sentinel, every add would be dropped by the
+    /// liveness check, and the spawn would vanish without a word. The refusal is
+    /// therefore raised here, at the managed boundary — REFUSE-NOT-FORCE below,
+    /// fail-loud above, the same split <c>DisposeChecked</c> uses for
+    /// <c>WORLD_BUSY</c> (EQ_A3).
+    /// </remarks>
     public EntityId CreateEntity()
     {
         ThrowIfDisposed();
         ulong packed = NativeMethods.df_world_create_entity(_handle);
-        return EntityIdPacking.Unpack(packed);
+        EntityId id = EntityIdPacking.Unpack(packed);
+
+        if (!id.IsValid)
+        {
+            throw new InvalidOperationException(
+                "CreateEntity was refused by the native world. The entity table needed to " +
+                "grow while a versions view was held — dispose any outstanding SpanLease " +
+                "(each holds a versions view) before minting entities.");
+        }
+
+        return id;
     }
 
     public void DestroyEntity(EntityId id)

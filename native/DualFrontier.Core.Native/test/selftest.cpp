@@ -298,56 +298,141 @@ void scenario_versions_view_round_trip() {
 
     df_world_release_versions(w);
 
-    // Destroy bumps the slot version; a re-acquired view must observe it.
+    // Destroy TOMBSTONES the slot for the pending window (PR #51 review R1);
+    // a re-acquired view must observe the sentinel, NOT the successor version.
     df_world_destroy_entity(w, a);
 
     const int32_t* versions2 = nullptr;
     int32_t count2 = 0;
     DF_CHECK(df_world_acquire_versions(w, &versions2, &count2) == 1,
              "versions view re-acquired after release");
-    DF_CHECK(versions2[entity_index_of(a)] == 1,
-             "destroyed slot reads its incremented version");
+    DF_CHECK(versions2[entity_index_of(a)] < 0,
+             "destroyed-but-unflushed slot reads the negative tombstone");
     DF_CHECK(versions2[entity_index_of(b)] == 0,
              "an untouched slot is unaffected by another slot's destroy");
+    df_world_release_versions(w);
+
+    // The flush lifts the tombstone to the real successor version.
+    df_world_flush_destroyed(w);
+    const int32_t* versions3 = nullptr;
+    int32_t count3 = 0;
+    DF_CHECK(df_world_acquire_versions(w, &versions3, &count3) == 1,
+             "versions view acquired after flush");
+    DF_CHECK(versions3[entity_index_of(a)] == 1,
+             "flushed slot reads the destroyed entity successor version");
     df_world_release_versions(w);
 
     df_world_destroy(w);
 }
 
-void scenario_versions_view_refuses_mutation() {
-    std::printf("scenario_versions_view_refuses_mutation\n");
+void scenario_versions_view_refuses_only_table_growth() {
+    std::printf("scenario_versions_view_refuses_only_table_growth\n");
     df_world_handle w = df_world_create();
 
     uint64_t a = df_world_create_entity(w);
-    const int32_t before = df_world_entity_count(w);
 
     const int32_t* versions = nullptr;
     int32_t count = 0;
     DF_CHECK(df_world_acquire_versions(w, &versions, &count) == 1,
              "versions view acquired");
 
-    // REFUSE-NOT-FORCE: the create is rejected and the world is untouched. The
-    // C ABI reports the refusal as the 0 sentinel (df_capi.h return codes).
-    uint64_t refused = df_world_create_entity(w);
-    DF_CHECK(refused == 0, "create refused while a versions view is held");
-    DF_CHECK(df_world_entity_count(w) == before,
-             "refused create left the entity count untouched");
+    // PR #51 review R2: the guard is narrowed to the path that can actually
+    // dangle the pointer. Creating while spare capacity remains writes nothing
+    // to versions_ and cannot reallocate it, so it must SUCCEED.
+    const int32_t before = df_world_entity_count(w);
+    uint64_t allowed = df_world_create_entity(w);
+    DF_CHECK(allowed != 0,
+             "create succeeds under a view while the table has spare capacity");
+    DF_CHECK(df_world_entity_count(w) == before + 1,
+             "the permitted create actually landed");
 
-    // destroy/flush mutate table content and slot recyclability — same window.
+    // Exhaust the remaining capacity; the create that would GROW the table is
+    // the one refused, REFUSE-NOT-FORCE, reported as the 0 sentinel.
+    int32_t refusals = 0;
+    for (int i = 0; i < count + 8; ++i) {
+        if (df_world_create_entity(w) == 0) { ++refusals; break; }
+    }
+    DF_CHECK(refusals == 1,
+             "the create that would grow the table is refused while a view is held");
+
+    // destroy/flush mutate table content and slot recyclability, so both stay
+    // refused for the whole window.
     df_world_destroy_entity(w, a);
     DF_CHECK(df_world_is_alive(w, a) == 1,
              "destroy refused while a versions view is held");
     DF_CHECK(versions[entity_index_of(a)] == 0,
-             "refused destroy did not bump the slot version");
+             "refused destroy did not tombstone the slot");
+    df_world_flush_destroyed(w);
+    DF_CHECK(df_world_is_alive(w, a) == 1,
+             "flush refused while a versions view is held");
 
     df_world_release_versions(w);
 
-    // Released — the world accepts mutation again.
-    uint64_t allowed = df_world_create_entity(w);
-    DF_CHECK(allowed != 0, "create succeeds once the view is released");
+    // Released: growth is legal again, and so is destruction.
+    DF_CHECK(df_world_create_entity(w) != 0,
+             "the growing create succeeds once the view is released");
     df_world_destroy_entity(w, a);
     DF_CHECK(df_world_is_alive(w, a) == 0,
              "destroy succeeds once the view is released");
+
+    df_world_destroy(w);
+}
+
+void scenario_versions_view_tombstones_pending_destroy() {
+    std::printf("scenario_versions_view_tombstones_pending_destroy\n");
+    df_world_handle w = df_world_create();
+
+    // The component row outlives destroy_entity and is dropped only at flush,
+    // so a span acquired in this window still contains the dead entity. This is
+    // the window PR #51 review R1 caught: before the tombstone the view handed
+    // back (idx, v+1), the exact pair create_entity mints on recycle, and
+    // is_alive ACCEPTED it, so a dead row looked live and the ABA law broke.
+    uint64_t doomed = df_world_create_entity(w);
+    BenchHealth h{7, 100};
+    df_world_add_component(w, doomed, kHealthTypeId, &h, sizeof(h));
+    const int32_t idx = entity_index_of(doomed);
+
+    df_world_destroy_entity(w, doomed);
+    DF_CHECK(df_world_component_count(w, kHealthTypeId) == 1,
+             "the component row survives destroy until flush (deferred removal)");
+    DF_CHECK(df_world_is_alive(w, doomed) == 0, "the destroyed id is dead at once");
+
+    const int32_t* versions = nullptr;
+    int32_t count = 0;
+    DF_CHECK(df_world_acquire_versions(w, &versions, &count) == 1,
+             "versions view acquired over a pending-destroy table");
+
+    DF_CHECK(versions[idx] < 0, "the pending slot reads the negative tombstone");
+
+    // The id a span would reconstruct from this slot must be DEAD. That is the
+    // whole point: fail closed, exactly as the pre-ID-B fabricated id did by
+    // accident, but now by construction.
+    const uint64_t reconstructed =
+        (static_cast<uint64_t>(static_cast<uint32_t>(versions[idx])) << 32) |
+        static_cast<uint64_t>(static_cast<uint32_t>(idx));
+    DF_CHECK(df_world_is_alive(w, reconstructed) == 0,
+             "an id reconstructed from a tombstoned slot is NOT alive");
+
+    // The successor version must not be mintable in this window either.
+    const uint64_t successor =
+        (static_cast<uint64_t>(static_cast<uint32_t>(1)) << 32) |
+        static_cast<uint64_t>(static_cast<uint32_t>(idx));
+    DF_CHECK(df_world_is_alive(w, successor) == 0,
+             "the not-yet-issued successor pair is not alive during the window");
+
+    df_world_release_versions(w);
+
+    // After flush + recycle the slot carries a version nothing in the window
+    // could have named, and the recycled entity is genuinely alive.
+    df_world_flush_destroyed(w);
+    uint64_t recycled = df_world_create_entity(w);
+    DF_CHECK(entity_index_of(recycled) == idx, "the slot recycled as expected");
+    DF_CHECK(entity_version_of(recycled) == 1,
+             "the recycled entity carries the destroyed entity successor version");
+    DF_CHECK(df_world_is_alive(w, recycled) == 1, "the recycled entity is alive");
+    DF_CHECK(df_world_is_alive(w, reconstructed) == 0,
+             "the tombstone-derived id stays dead forever");
+    DF_CHECK(df_world_is_alive(w, doomed) == 0, "the original stale id stays dead");
 
     df_world_destroy(w);
 }
@@ -369,11 +454,19 @@ void scenario_versions_view_release_is_tolerant() {
     DF_CHECK(df_world_create_entity(w) != 0,
              "create still legal after surplus releases (counter clamped at 0)");
 
-    // And the guard still arms correctly on the next acquire.
+    // Drive the table to its growth boundary and prove the guard re-armed, in
+    // one move: with a view held, creates succeed until one would GROW the
+    // table (review R2 narrowed the guard to exactly that path), and that one
+    // is refused. The refusal is the boundary marker, so the test needs no
+    // arithmetic about capacity.
     DF_CHECK(df_world_acquire_versions(w, &versions, &count) == 1,
              "versions view re-acquired after surplus releases");
-    DF_CHECK(df_world_create_entity(w) == 0,
-             "guard re-arms — create refused under the new view");
+    int32_t refused = 0;
+    for (int i = 0; i < count + 8; ++i) {
+        if (df_world_create_entity(w) == 0) { refused = 1; break; }
+    }
+    DF_CHECK(refused == 1,
+             "guard re-arms — the growing create is refused under the new view");
     df_world_release_versions(w);
 
     // Two concurrent views: the guard must survive the first release.
@@ -385,10 +478,10 @@ void scenario_versions_view_release_is_tolerant() {
     DF_CHECK(df_world_acquire_versions(w, &v2, &c2) == 1, "second view acquired");
     df_world_release_versions(w);
     DF_CHECK(df_world_create_entity(w) == 0,
-             "create still refused while the second view is outstanding");
+             "growth still refused while the second view is outstanding");
     df_world_release_versions(w);
     DF_CHECK(df_world_create_entity(w) != 0,
-             "create legal once both views are released");
+             "growth legal once both views are released");
 
     df_world_destroy(w);
 }
@@ -3300,7 +3393,8 @@ int main() {
     scenario_bulk_operations();
     scenario_span_lifetime();
     scenario_versions_view_round_trip();
-    scenario_versions_view_refuses_mutation();
+    scenario_versions_view_refuses_only_table_growth();
+    scenario_versions_view_tombstones_pending_destroy();
     scenario_versions_view_release_is_tolerant();
     scenario_versions_view_recycled_index_true_generation();
     scenario_entity_id_is_valid_is_index_only();

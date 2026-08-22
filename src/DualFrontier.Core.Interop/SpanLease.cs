@@ -94,6 +94,17 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
     /// caller writes into an <see cref="EntityId"/> now comes from the world
     /// rather than from a guess.
     /// </para>
+    ///
+    /// <para>
+    /// <b>A NEGATIVE entry is a tombstone.</b> The slot's entity has been
+    /// destroyed but its component row has not been reclaimed yet, so the row is
+    /// still in this span. The id reconstructed from such a slot is deliberately
+    /// dead — <c>IsAlive</c> rejects it and a batched write keyed on it is
+    /// dropped at flush — which is the correct answer for an entity the caller
+    /// already destroyed. Callers that want to skip those rows outright can test
+    /// <c>Versions[Indices[i]] &lt; 0</c>; callers that just use the id get the
+    /// safe behaviour for free.
+    /// </para>
     /// </summary>
     public ReadOnlySpan<int> Versions
     {

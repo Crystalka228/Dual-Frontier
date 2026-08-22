@@ -84,16 +84,15 @@ public class SpanLeaseTests
 
         using var lease = world.AcquireSpan<HealthComponent>();
 
-        // Since ID-B a lease holds a versions view as well as the component span,
-        // so CreateEntity is refused too — creating can grow and therefore
-        // REALLOCATE the version table the lease is pointing into. The refusal
-        // surfaces as the C ABI's 0 sentinel, i.e. EntityId.Invalid.
-        // (Native-side the two guards stay independent: creation under a PLAIN
-        // component span is still legal — see scenario_span_lifetime.)
+        // A lease holds a versions view, but the guard is narrowed to the path
+        // that can actually dangle its pointer: growing the entity table
+        // (PR #51 review R2). With spare capacity this create writes nothing to
+        // the version table and cannot reallocate it, so it SUCCEEDS.
         EntityId e2 = world.CreateEntity();
-        e2.Should().Be(EntityId.Invalid, "CreateEntity is refused while a lease is held");
+        e2.Should().NotBe(EntityId.Invalid,
+            "creating under a lease is legal while the table has spare capacity");
 
-        // And adding a component while a span is active is rejected as it always was.
+        // Adding a component while a span is active is rejected as it always was.
         world.AddComponent(e2, new HealthComponent { Current = 999, Maximum = 100 });
 
         world.GetComponentCount<HealthComponent>().Should().Be(1);
@@ -156,27 +155,71 @@ public class SpanLeaseTests
             id.Should().Be(live, "Pairs must yield the live id, not a stale look-alike");
     }
 
+    /// <summary>
+    /// Drives the world to its entity-table growth boundary under a held lease
+    /// and RETURNS the refusal. The refusal is the boundary marker, so no test
+    /// needs to know the table's capacity; on return the world is parked at the
+    /// boundary (a refused create advances nothing) and the caller still holds
+    /// its lease. Fails loudly if the guard never arms, so a test can never pass
+    /// by silently never reaching the boundary.
+    /// </summary>
+    private static InvalidOperationException CreateUntilGrowthIsRefused(
+        NativeWorld world, int ceiling = 4096)
+    {
+        for (int i = 0; i < ceiling; i++)
+        {
+            try
+            {
+                world.CreateEntity();
+            }
+            catch (InvalidOperationException refusal)
+            {
+                return refusal;
+            }
+        }
+
+        throw new InvalidOperationException(
+            $"growth was never refused within {ceiling} creates — the guard is not arming");
+    }
+
     [Fact]
-    public void Dispose_releases_the_versions_view_so_creation_is_legal_again()
+    public void Growing_the_entity_table_is_refused_while_a_lease_is_held()
+    {
+        using var world = new NativeWorld();
+        EntityId e = world.CreateEntity();
+        world.AddComponent(e, new HealthComponent { Current = 1, Maximum = 100 });
+
+        using var lease = world.AcquireSpan<HealthComponent>();
+
+        // Loud, not silent (PR #51 review R2): a refused mint used to unpack to
+        // EntityId.Invalid and return, so a caller would attach components to the
+        // sentinel and lose the spawn without a word.
+        InvalidOperationException refusal = CreateUntilGrowthIsRefused(world);
+
+        refusal.Message.Should().Contain("versions view",
+            "the refusal must name the window that caused it");
+    }
+
+    [Fact]
+    public void Dispose_releases_the_versions_view_so_growth_is_legal_again()
     {
         using var world = new NativeWorld();
         EntityId e = world.CreateEntity();
         world.AddComponent(e, new HealthComponent { Current = 1, Maximum = 100 });
 
         var lease = world.AcquireSpan<HealthComponent>();
-        world.CreateEntity().Should().Be(EntityId.Invalid, "refused while the lease is held");
-
+        CreateUntilGrowthIsRefused(world);
         lease.Dispose();
 
         EntityId after = world.CreateEntity();
-        after.Should().NotBe(EntityId.Invalid, "creation is legal once the lease is disposed");
+        after.Should().NotBe(EntityId.Invalid, "growth is legal once the lease is disposed");
         world.IsAlive(after).Should().BeTrue();
 
         // Dispose is idempotent — a second call must not release the underlying
         // view a second time and re-open the guard for the NEXT lease.
         lease.Dispose();
         using var second = world.AcquireSpan<HealthComponent>();
-        world.CreateEntity().Should().Be(EntityId.Invalid,
+        CreateUntilGrowthIsRefused(world).Message.Should().Contain("versions view",
             "the guard must re-arm cleanly for a fresh lease after a double Dispose");
     }
 
@@ -205,13 +248,104 @@ public class SpanLeaseTests
         var first = world.AcquireSpan<HealthComponent>();
         var second = world.AcquireSpan<HealthComponent>();
 
+        // Park the world at its growth boundary so every create below is a
+        // growth attempt, which is the only thing the guard fences.
+        CreateUntilGrowthIsRefused(world);
+
         first.Dispose();
-        world.CreateEntity().Should().Be(EntityId.Invalid,
+        ((Action)(() => world.CreateEntity())).Should().Throw<InvalidOperationException>(
             "the second lease still holds a view — the counter must not have hit zero");
 
         second.Dispose();
         world.CreateEntity().Should().NotBe(EntityId.Invalid,
-            "both views released — creation is legal again");
+            "both views released — growth is legal again");
+    }
+
+    // ── PR #51 review R1: the pending-destroy window ─────────────────────────
+
+    [Fact]
+    public void Pending_destroy_slot_reads_a_tombstone_and_its_id_is_not_alive()
+    {
+        using var world = new NativeWorld();
+        EntityId doomed = world.CreateEntity();
+        world.AddComponent(doomed, new HealthComponent { Current = 7, Maximum = 100 });
+
+        world.DestroyEntity(doomed);   // deliberately NOT flushed
+
+        using var lease = world.AcquireSpan<HealthComponent>();
+
+        lease.Count.Should().Be(1,
+            "component storage is reclaimed at flush, so the dead row is still in the span");
+
+        int index = lease.Indices[0];
+        lease.Versions[index].Should().BeNegative(
+            "a destroyed-but-unflushed slot is tombstoned — it holds no entity at all");
+
+        foreach ((EntityId id, HealthComponent _) in lease.Pairs)
+        {
+            world.IsAlive(id).Should().BeFalse(
+                "the id a span reconstructs for a pending-destroy row must FAIL CLOSED. " +
+                "Before the tombstone it was (index, v+1) — the exact pair CreateEntity " +
+                "mints on recycle — which IsAlive accepted, so a destroyed entity read " +
+                "as alive and the ABA law was void");
+        }
+    }
+
+    [Fact]
+    public void Pending_destroy_id_cannot_be_used_as_a_write_key()
+    {
+        using var world = new NativeWorld();
+        EntityId doomed = world.CreateEntity();
+        world.AddComponent(doomed, new HealthComponent { Current = 7, Maximum = 100 });
+        world.DestroyEntity(doomed);
+
+        EntityId fromSpan = default;
+        using (var lease = world.AcquireSpan<HealthComponent>())
+        {
+            foreach ((EntityId id, HealthComponent _) in lease.Pairs)
+                fromSpan = id;
+        }
+
+        int applied;
+        using (WriteBatch<HealthComponent> batch = world.BeginBatch<HealthComponent>())
+        {
+            batch.Update(fromSpan, new HealthComponent { Current = 999, Maximum = 100 })
+                 .Should().BeTrue("recording is not applying");
+            applied = batch.Flush();
+        }
+
+        applied.Should().Be(0,
+            "a write keyed on a pending-destroy row must be dropped at flush — the entity " +
+            "is dead and the caller is the one who killed it");
+    }
+
+    [Fact]
+    public void Recycled_slot_never_reuses_a_pair_observable_during_the_pending_window()
+    {
+        using var world = new NativeWorld();
+        EntityId doomed = world.CreateEntity();
+        world.AddComponent(doomed, new HealthComponent { Current = 7, Maximum = 100 });
+        world.DestroyEntity(doomed);
+
+        EntityId observedWhilePending = default;
+        using (var lease = world.AcquireSpan<HealthComponent>())
+        {
+            foreach ((EntityId id, HealthComponent _) in lease.Pairs)
+                observedWhilePending = id;
+        }
+
+        world.FlushDestroyedEntities();
+        EntityId recycled = world.CreateEntity();
+
+        recycled.Index.Should().Be(doomed.Index, "the slot recycled");
+        recycled.Should().NotBe(observedWhilePending,
+            "the ABA law (IAC §1 note 1) says a pair is issued at most once per world " +
+            "lifetime; an id observable BEFORE its entity exists breaks it just as badly " +
+            "as one reissued after");
+        recycled.Should().NotBe(doomed);
+        world.IsAlive(recycled).Should().BeTrue();
+        world.IsAlive(observedWhilePending).Should().BeFalse();
+        world.IsAlive(doomed).Should().BeFalse();
     }
 
     [Fact]

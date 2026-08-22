@@ -265,7 +265,13 @@ DF_API int32_t df_world_acquire_versions(df_world_handle world,
 
 DF_API void df_world_release_versions(df_world_handle world) {
     if (!world) return;
-    as_world(world)->release_versions();
+    try {
+        as_world(world)->release_versions();
+    } catch (...) {
+        // release_versions takes mutation_mutex_ and is therefore no longer
+        // noexcept (PR #51 review R3). Swallow per the no-exception law
+        // (IAC §3.4) — release is tolerant by contract.
+    }
 }
 
 DF_API int32_t df_world_register_component_type(df_world_handle world,
