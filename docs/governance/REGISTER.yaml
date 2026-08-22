@@ -2344,6 +2344,21 @@ documents:
   title: 'ID-A component identity -- F-60 closure by owner-scoped registry re-key (identity family cascade A, MANAGED-ONLY): ComponentTypeRegistry keyed on (owner, type FullName) instead of the Type object, weak Type cache, eager mod registration at Apply, collectible-ALC loud guard, Weather gate flips, K-L4 amendment record'
   authored_by: Claude Fable (architect session, identity-family charter)
   basis: DOC-E-F59_F60_IDENTITY_RECON_REPORT (architect-seat recon at main ad4e353, 2026-08-20) + ratified lean set L1-L5 + the operator's OS-model refinement (same-name components are distinct types under distinct owners, like same-named programs are distinct processes under an OS)
+- register_id: DOC-D-ID_B_ENTITY_VERSIONS_BRIEF
+  path: tools/briefs/ID_B_ENTITY_VERSIONS_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Crystalka
+  version: 1.0
+  first_authored: 2026-08-20
+  last_modified: 2026-08-20
+  content_language: en
+  next_review_due: 
+  title: 'ID-B entity versions -- F-59 closure by the IAC section-2 versions view (identity family cascade B, NATIVE-ADDITIVE): df_world_acquire_versions/release pair over the native versions_ table, SpanLease/WriteBatch/SpanScope reconstruct TRUE versions, fabrication-site migration, EntityId.IsValid alignment both sides, DFK022 rule + K-L22 seated AUTHORED, governance housekeeping rider (templates + Special/ perimeter)'
+  authored_by: Claude Fable (architect session, identity-family charter)
+  basis: DOC-E-F59_F60_IDENTITY_RECON_REPORT R3 (architect-seat recon at ad4e353) + IDENTITY_AND_ABI_CONTRACT section 2 (the ratified design fund -- option 1 RECOMMENDED with normative-target signatures) + the ID-A closure (PR
 - register_id: DOC-D-K0
   path: tools/briefs/K0_CHERRY_PICK_BRIEF.md
   project: Dual Frontier
