@@ -74,6 +74,57 @@ public sealed class DFK022EntityIdentityTests
     }
 
     [Fact]
+    public async Task DFK022_Fires_On_Constants_That_Are_Not_Literals()
+    {
+        // PR #51 review R4. A literal-only check let these through: -1 is a unary
+        // operation wrapping a literal, and a named const is a field reference.
+        // Both are compile-time constants, so both are fabrications by
+        // definition — the world cannot have handed back a value fixed at build
+        // time. Detection is on the constant VALUE, not the operation kind.
+        const string test = """
+
+
+            namespace DualFrontier.Systems
+            {
+                internal static class Caller
+                {
+                    private const int CachedVersion = 0;
+
+                    public static object Negated(int index)
+                        => new DualFrontier.Contracts.Core.EntityId(index, {|DFK022:-1|});
+
+                    public static object NamedConstant(int index)
+                        => new DualFrontier.Contracts.Core.EntityId(index, {|DFK022:CachedVersion|});
+                }
+            }
+            """;
+        await Verify.VerifyAnalyzerAsync(Contracts + test);
+    }
+
+    [Fact]
+    public async Task DFK022_Silent_On_A_Foreign_Type_Named_EntityId()
+    {
+        // PR #51 review R5. The invariant governs Contracts' EntityId. Matching
+        // on the short type name would hand an unrelated type carrying a Version
+        // parameter a build-breaking Error it has no way to satisfy — it does not
+        // even have a world to ask.
+        const string test = """
+
+
+            namespace ThirdParty.Physics
+            {
+                public readonly record struct EntityId(int Index, int Version);
+
+                internal static class Caller
+                {
+                    public static object Go(int index) => new EntityId(index, 0);
+                }
+            }
+            """;
+        await Verify.VerifyAnalyzerAsync(Contracts + test);
+    }
+
+    [Fact]
     public async Task DFK022_Fires_On_Named_Argument_Out_Of_Order()
     {
         // Detection is by PARAMETER NAME, so reordering the arguments does not

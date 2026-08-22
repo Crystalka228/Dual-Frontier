@@ -13,10 +13,21 @@ namespace DualFrontier.Analyzers.Rules.NativeBoundary;
 /// <remarks>
 /// <para>
 /// Detection: an object creation of <c>DualFrontier.Contracts.Core.EntityId</c>
-/// whose <c>Version</c> argument is an integer LITERAL — any literal, not just
-/// 0 or 1. A literal in that position is a fabrication by construction: the
-/// world is the only thing that knows a slot's current generation, so a value
-/// the author typed cannot be one the world handed back.
+/// whose <c>Version</c> argument is a COMPILE-TIME CONSTANT — any constant, not
+/// just the literal 0 or 1. A constant in that position is a fabrication by
+/// construction: the world is the only thing that knows a slot's current
+/// generation, so a value fixed at compile time cannot be one the world handed
+/// back. The check is on the argument's constant VALUE rather than on its
+/// operation kind (PR #51 review R4): <c>-1</c> is a unary operation wrapping a
+/// literal, a named <c>const</c> is a local/field reference, and a widened
+/// literal is a conversion — all three are unquestionably fabricated, and all
+/// three would have slipped past a literal-only test.
+/// </para>
+/// <para>
+/// The created type is resolved by metadata name and compared with
+/// <c>SymbolEqualityComparer</c> rather than matched on the short type name
+/// (review R5), so an unrelated <c>EntityId</c> defined elsewhere cannot collect
+/// a build-breaking diagnostic it has no way to satisfy.
 /// </para>
 /// <para>
 /// Why fabrication is a correctness defect rather than a style issue: native
@@ -104,17 +115,33 @@ public sealed class DFK022EntityIdentityAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        context.RegisterOperationAction(AnalyzeObjectCreation, OperationKind.ObjectCreation);
+        context.RegisterCompilationStartAction(static compilationStart =>
+        {
+            // Resolve the ONE type this invariant governs. A compilation that
+            // does not reference Contracts registers no action at all, so the
+            // rule is silent by construction rather than by luck.
+            INamedTypeSymbol? entityId =
+                compilationStart.Compilation.GetTypeByMetadataName(EntityIdMetadataName);
+            if (entityId is null)
+            {
+                return;
+            }
+
+            compilationStart.RegisterOperationAction(
+                operationContext => AnalyzeObjectCreation(operationContext, entityId),
+                OperationKind.ObjectCreation);
+        });
     }
 
-    private const string EntityIdTypeName = "EntityId";
+    private const string EntityIdMetadataName = "DualFrontier.Contracts.Core.EntityId";
     private const string VersionParameterName = "Version";
     private const string InteropRoot = "DualFrontier.Core.Interop";
 
-    private static void AnalyzeObjectCreation(OperationAnalysisContext context)
+    private static void AnalyzeObjectCreation(OperationAnalysisContext context,
+                                              INamedTypeSymbol entityId)
     {
         var creation = (IObjectCreationOperation)context.Operation;
-        if (creation.Type?.Name != EntityIdTypeName)
+        if (!SymbolEqualityComparer.Default.Equals(creation.Type, entityId))
         {
             return;
         }
@@ -139,9 +166,14 @@ public sealed class DFK022EntityIdentityAnalyzer : DiagnosticAnalyzer
                 continue;
             }
 
-            if (argument.Value is ILiteralOperation literal
-                && literal.ConstantValue.HasValue
-                && literal.ConstantValue.Value is int version)
+            // Constant VALUE, not operation kind. A literal, a negated literal,
+            // a named const and a widened literal are all fabrications; only the
+            // literal spelling would have been caught by an ILiteralOperation
+            // test. An omitted optional parameter surfaces as a synthesized
+            // constant too, but EntityId's parameters are required, so there is
+            // no defaulted-argument false positive to exclude here.
+            if (argument.Value.ConstantValue.HasValue
+                && argument.Value.ConstantValue.Value is int version)
             {
                 context.ReportDiagnostic(Diagnostic.Create(
                     Rule,
