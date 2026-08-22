@@ -6980,3 +6980,92 @@ audit_trail:
     stub 51/20, TODO 132/51, Phase 6 23/11, not yet 10/9 unmoved.
   cross_references:
     capa_entries: []
+- id: EVT-2026-08-22-ID_B_ENTITY_VERSIONS-REVIEW-AMENDMENT
+  date: 2026-08-22
+  event: ID_B_ENTITY_VERSIONS review amendment (PR #51 Codex round, architect-triaged) -- two ID-B-introduced P1 regressions fixed on the branch before merge, one pre-existing concurrency gap ledgered as F-61, two analyzer precision defects corrected. Amends EVT-2026-08-22-ID_B_ENTITY_VERSIONS; does not supersede it
+  event_type: amendment_landing
+  documents_affected:
+  - DOC-D-ID_B_ENTITY_VERSIONS_BRIEF
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-ECS
+  - DOC-F-NATIVE-CORE
+  - DOC-C-ROADMAP
+  commits:
+    range: afc2391..(the closure commit carries this entry)
+    key_commits:
+    - afc2391
+    - 69c9c97
+  governance_impact: >
+    WHY THIS ENTRY EXISTS. The prior entry recorded the cascade as closed with gates green. An
+    automated review then found five defects in it, an architect triage confirmed all five against
+    live code, and two of them were regressions ID-B itself introduced. Recording that plainly is
+    the point of an append-only trail: the first entry was accurate about what was built and green,
+    and incomplete about what was correct. Both regressions were fixed on the branch before merge,
+    so no defect reached main -- but the review, not the cascade's own gates, is what caught them.
+
+    REGRESSION 1 -- THE PENDING-DESTROY WINDOW (P1). destroy_entity incremented the slot version
+    immediately while the component row survived until flush_destroyed, so a span acquired in that
+    window still contained the dead row. After ID-B the versions view reconstructed (index, v+1)
+    for it -- the exact pair create_entity mints when the slot recycles -- and is_alive accepted it,
+    being bare equality against the table. A destroyed entity therefore read as ALIVE, a write keyed
+    on it landed in a doomed row, and the ABA law was void for an id nobody had been issued yet.
+    The instructive part: the fabricated Version = 0 that ID-B removed had been DEAD in that same
+    window by accident, so the cascade replaced an accidental fail-closed with a deliberate
+    fail-open. The fix tombstones the slot for the pending window (negative sentinel; is_alive
+    rejects the slot outright, which is what makes the sentinel never-matching; flush_destroyed
+    lifts it to the real v+1 immediately before free-listing, so the increment is unchanged in
+    effect and only its timing moved). Moving the increment to the flush was explicitly rejected --
+    it would make a destroyed id read alive until someone flushed, a change to shipped
+    is_alive-after-destroy semantics and an H8 violation.
+
+    REGRESSION 2 -- SILENT REFUSAL, AND A GUARD TOO WIDE (P1). The create guard fenced EVERY
+    creation while a view was held, when only the table-growth path reallocates versions_; recycling
+    and creating into spare capacity write nothing to the table and can dangle nothing. Worse, the
+    refusal was silent: the C ABI reports it as packed zero, which unpacks to EntityId.Invalid, and
+    the managed wrapper returned it. A caller would attach components to the sentinel, every add
+    would be dropped by the liveness check, and the spawn would vanish without a word -- the same
+    fail-open shape as the version fabrication this cascade exists to close, reintroduced by the
+    fix for it. The guard is narrowed to the growth path and the refusal is now an
+    InvalidOperationException naming the window. REFUSE-NOT-FORCE below, fail-loud above.
+
+    THE PRE-EXISTING GAP, LEDGERED NOT PATCHED (F-61). acquire_versions published versions_.data()
+    and then raised its counter -- a check-then-act pair against a concurrent create, which could
+    resize the table after the pointer was handed out. Confirmed. A mutex now serializes the
+    mutation + view family and the counter is raised before the pointer is published. But
+    create_entity was never thread-safe in the first place: free_slots_, next_index_, live_count_
+    and pending_destroy_ are all unguarded, world.h says so in as many words, and
+    IDENTITY_AND_ABI_CONTRACT section 3.6 classifies the family sim-thread-only while
+    ParallelSystemScheduler dispatches sibling systems concurrently with no [SystemAccess]
+    declaration covering entity-table access. ID-B did not cause that; it made it VISIBLE, by
+    turning a race that used to corrupt silently into a refusal a caller can see. F-61 carries it,
+    with barrier-deferred creation (the K5 command-buffer pattern) and non-relocating versions
+    storage named as the structural candidates -- deliberately NOT a wider lock.
+
+    ANALYZER PRECISION (P2 x2). DFK022 tested for ILiteralOperation, so it caught only the literal
+    SPELLING of a fabrication: new EntityId(index, -1) is a unary operation, a named const is a
+    field reference, and a widened literal is a conversion -- all unquestionably fabricated, all
+    walking past an Error-severity rule that promises a structural prohibition. It now tests the
+    argument's constant VALUE regardless of operation kind, which is what the invariant was always
+    about. Separately it matched on the short type name, so any unrelated type named EntityId with
+    a Version parameter would have collected an unsatisfiable build-breaking Error; the type is now
+    resolved by metadata name and compared by symbol.
+
+    METHODOLOGICAL NOTE, recorded because it generalises. Every one of these five was reachable
+    from artifacts the cascade itself produced -- the guard's own selftest asserted the too-wide
+    behaviour as if it were correct, and the managed test suite pinned the silent Invalid as an
+    expected value. Gates that a cascade writes for itself certify that the code does what the
+    author intended; they cannot certify that the intent was right. The pending-destroy window in
+    particular was invisible to every test written for the feature, because no test destroyed an
+    entity and then read a span before flushing -- the exact sequence a mod does by default, since
+    nothing in production calls FlushDestroyedEntities at all.
+
+    GATES AFTER THE FIXES. Managed build 0 warnings / 0 errors. Full solution 1301 passed /
+    0 failed / 5 skipped (was 1295 at the first closure; +6 = 4 interop pending-destroy and
+    growth-refusal tests, 2 analyzer precision tests). Native build green, selftest 109 -> 110
+    scenarios ALL PASSED exit 0. DFK022 enforcement RE-PROVED after its detection was rewritten:
+    with the EntityEncoder pragma removed the build fails at EntityEncoder.cs(96,52), restored it
+    passes. DF_API export census UNCHANGED at 209 -- the fixes change behaviour behind the existing
+    surface and add no entry point. Census unmoved on all eight families, waiver pin still 3.
+  cross_references:
+    capa_entries: []

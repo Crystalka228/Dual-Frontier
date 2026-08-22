@@ -27,7 +27,7 @@ reviewer: Crystalka
 - `df_world_*` — entity/component lifecycle
 - `df_engine_bootstrap` — startup entry point (K3)
 - `df_world_acquire_span` / `df_world_release_span` — span lifetime (K5)
-- `df_world_acquire_versions` / `df_world_release_versions` — read-only view over the per-slot `versions_` table, indexed by ENTITY INDEX, so managed pair-iterators reconstruct TRUE generations instead of fabricating `Version = 0` (ID-B; К-L22; `IDENTITY_AND_ABI_CONTRACT.md` §2). While a view is held, `df_world_create_entity` / `df_world_destroy_entity` / `df_world_flush_destroyed` are REFUSED — creation can reallocate the table, destroy/flush retitle its content
+- `df_world_acquire_versions` / `df_world_release_versions` — read-only view over the per-slot `versions_` table, indexed by ENTITY INDEX, so managed pair-iterators reconstruct TRUE generations instead of fabricating `Version = 0` (ID-B; К-L22; `IDENTITY_AND_ABI_CONTRACT.md` §2). While a view is held, a `df_world_create_entity` that would GROW the table is REFUSED (the resize would dangle the view's pointer; creating from the free list or into spare capacity is permitted), and `df_world_destroy_entity` / `df_world_flush_destroyed` are refused for the whole window. A NEGATIVE table entry is a tombstone: the slot's entity is destroyed but its component row awaits the flush, and `df_world_is_alive` rejects such a slot so ids reconstructed from it fail closed
 - `df_world_flush_write_batch` — mutation flush (K5)
 - `df_world_register_component_type` — type registration (K2)
 
