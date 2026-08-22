@@ -110,7 +110,7 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 89, 55)]
+    [InlineData("deferred", @"\bdeferred\b", true, 87, 54)]
     [InlineData("TODO", @"\bTODO\b", false, 132, 51)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
@@ -158,6 +158,15 @@ public sealed class CensusMetaTests
         // the W2 sentence deferring live per-mod owner registration, because C4 IS that wiring.
         // It was the file's only deferred site, so the file pin drops too. The marker retired by
         // the work being done, which is the census behaving exactly as intended.
+        // ID-B (C4): deferred 89->87 / 55->54 -- the K7-era deferral that excused version
+        // fabrication is retired at BOTH surviving sites, because the versions view IS the
+        // thing it was waiting for. Sdk/SpanScope.cs loses its "K7-deferred" Pairs caveat
+        // ("the span ABI does not carry per-entity versions" stopped being true), and it was
+        // that file's only deferred site, so the file pin drops. Core.Interop/WriteBatch.cs
+        // loses the "deferred to K7 if measurement shows correctness issues" note on its
+        // snapshot enumerator; the file keeps a deferred site elsewhere, so only the site pin
+        // moves for it. Pre-declared in ID_B_ENTITY_VERSIONS_BRIEF section 10 as expected
+        // movement, not drift.
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 
@@ -177,15 +186,21 @@ public sealed class CensusMetaTests
     [Fact]
     public void DfkWaiverCensus_MatchesPin()
     {
-        // TESTING_STRATEGY §4.3 — DFK-WAIVER census. Pin 2 as of A'.9.1 Phase β C9:
+        // TESTING_STRATEGY §4.3 — DFK-WAIVER census. Pin was 2 from A'.9.1 Phase β C9:
         // the two DFK001 waivers in ValidationLayer.cs (VK_EXT_debug_utils Vulkan
         // interop, К-L19), each carrying its CODING_STANDARDS §5.3 authority citation.
         // §4.4: every `// DFK-WAIVER(` marker pairs with a `#pragma warning disable`;
         // every future increase updates this pin + adds a citation.
+        // ID-B (C6): 2 -> 3, the one HARD-pin movement that cascade ratifies. The third
+        // is DFK022 in Persistence/Compression/EntityEncoder.cs, which decodes persisted
+        // INDEX ranges — the encoded form carries no versions and there is no world to
+        // ask, since the entities those ids name do not exist yet. How generations cross
+        // the save boundary is the A7 persistence contract's call, and the waiver comment
+        // names A7 as its retirement trigger; the pin returns to 2 at that cascade.
         var (disables, _) = Census(text => RegexCount(text, @"#pragma warning disable (DFK|DFL|DF9)", RegexOptions.None));
         var (markers, _) = Census(text => LiteralCount(text, "// DFK-WAIVER("));
 
-        disables.Should().Be(2, "DFK-WAIVER census pin (TESTING_STRATEGY §4.3) — 2 DFK001 Vulkan-interop waivers");
+        disables.Should().Be(3, "DFK-WAIVER census pin (TESTING_STRATEGY §4.3) — 2 DFK001 Vulkan-interop waivers + 1 DFK022 persistence-decode waiver");
         markers.Should().Be(disables, "every '#pragma warning disable DFK/DFL/DF9' pairs with a '// DFK-WAIVER(' marker");
     }
 

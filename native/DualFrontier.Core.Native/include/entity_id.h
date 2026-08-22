@@ -11,8 +11,16 @@ struct EntityId {
     int32_t index = 0;
     int32_t version = 0;
 
+    // ID-B (К-L22; IDENTITY_AND_ABI_CONTRACT §2 "IsValid alignment"): the
+    // syntactic projection of the native aliveness rule, which rejects
+    // index <= 0 unconditionally (World::is_alive). The prior disjunction
+    // (index > 0 || version > 0) called (0, v>0) valid while the world holds
+    // it permanently dead — index 0 is the reserved Invalid slot and
+    // next_index_ starts at 1, so no entity is ever minted there. Mirrors
+    // EntityId.IsValid on the managed side; aliveness stays answerable only
+    // by the world.
     [[nodiscard]] bool is_valid() const noexcept {
-        return index > 0 || version > 0;
+        return index > 0;
     }
 };
 

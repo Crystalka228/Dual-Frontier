@@ -114,6 +114,22 @@ internal static partial class NativeMethods
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     internal static extern void df_world_release_span(IntPtr world, uint typeId);
 
+    /// <summary>
+    /// ID-B versions view (К-L22). Read-only view over the world's per-slot
+    /// versions table, indexed by ENTITY INDEX — <b>not</b> parallel to
+    /// <c>df_world_acquire_span</c>'s dense arrays. <c>outCount</c> is the table
+    /// size, not the entity count. While a view is held the world refuses
+    /// create/destroy/flush (see <c>df_capi.h</c>).
+    /// </summary>
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern unsafe int df_world_acquire_versions(
+        IntPtr world,
+        int** outVersionsPtr,
+        int* outCount);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    internal static extern void df_world_release_versions(IntPtr world);
+
     // K2 explicit type registration.
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]

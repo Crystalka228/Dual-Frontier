@@ -56,10 +56,11 @@ public sealed class PawnStateReporterSystem : SystemBase
         using SpanLease<NeedsComponent> needs = NativeWorld.AcquireSpan<NeedsComponent>();
         ReadOnlySpan<NeedsComponent> needsSpan = needs.Span;
         ReadOnlySpan<int> needsIndices = needs.Indices;
+        ReadOnlySpan<int> needsVersions = needs.Versions;
 
         for (int i = 0; i < needs.Count; i++)
         {
-            var pawn = new EntityId(needsIndices[i], 0);
+            var pawn = new EntityId(needsIndices[i], needsVersions[needsIndices[i]]);
             if (!NativeWorld.HasComponent<JobComponent>(pawn)) continue;
 
             NeedsComponent n = needsSpan[i];

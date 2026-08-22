@@ -9,14 +9,17 @@ namespace DualFrontier.Core.Interop;
 /// mutation again.
 ///
 /// Provides ReadOnlySpan&lt;T&gt; over the dense data, ReadOnlySpan&lt;int&gt;
-/// over the parallel entity-index array, and (since K5)
-/// <see cref="Pairs"/> for (EntityId, T) iteration. Lease pooling remains
-/// deferred — K7 will measure first.
+/// over the parallel entity-index array, <see cref="Versions"/> over the world's
+/// per-slot version table, and (since K5) <see cref="Pairs"/> for (EntityId, T)
+/// iteration. Lease pooling remains deferred — K7 will measure first.
 ///
 /// Lifetime contract (mirrors df_capi.h):
 ///   * While ANY SpanLease is active on the owning <see cref="NativeWorld"/>,
 ///     mutation calls (Add/Remove/Destroy/Flush) are silently rejected by the
 ///     native side — the throw is caught at the C ABI boundary.
+///   * Since ID-B a lease also holds a versions view, so entity CREATION is
+///     rejected for the lease's lifetime too — the versions table can resize.
+///     Dispose the lease before minting entities.
 ///   * Caller MUST <see cref="Dispose"/> the lease before issuing mutations.
 ///   * Multiple concurrent leases are allowed (different OR same type).
 /// </summary>
@@ -27,16 +30,21 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
     private readonly void* _densePtr;
     private readonly int* _indicesPtr;
     private readonly int _count;
+    private readonly int* _versionsPtr;
+    private readonly int _versionsCount;
     private bool _released;
 
     internal SpanLease(NativeWorld world, uint typeId,
-                       void* densePtr, int* indicesPtr, int count)
+                       void* densePtr, int* indicesPtr, int count,
+                       int* versionsPtr, int versionsCount)
     {
         _world = world;
         _typeId = typeId;
         _densePtr = densePtr;
         _indicesPtr = indicesPtr;
         _count = count;
+        _versionsPtr = versionsPtr;
+        _versionsCount = versionsCount;
         _released = false;
     }
 
@@ -70,31 +78,67 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
     }
 
     /// <summary>
-    /// Iterate (EntityId, T) pairs over the span. Resolves K1 skeleton's
-    /// deferred paired-iteration helper.
-    ///
-    /// Version reconstruction: the span ABI returns entity INDICES only
-    /// (<c>df_world_acquire_span</c> hands back <c>const int32_t** out_indices_ptr</c>,
-    /// no parallel version array), so the pair must supply a version itself. It
-    /// uses <c>Version=0</c> — the same reconstruction every span consumer in
-    /// <c>src/DualFrontier.Systems</c> already performs, and the version a
-    /// never-recycled entity actually carries (versions start at 0 and only grow;
-    /// see <c>EntityIdPacking</c>).
+    /// Read-only view over the world's per-slot version table, acquired
+    /// alongside the component span and released with it.
     ///
     /// <para>
-    /// W3 correction: this previously reconstructed <c>Version=1</c>, which is the
-    /// version NO freshly created entity has. A batched write keyed on such an id is
-    /// recorded and then rejected by the version check at flush — silently — so the
-    /// canonical read-span-then-write-batch loop wrote nothing at all. See the D-2
-    /// regression tests.
+    /// <b>Indexed by ENTITY INDEX, not by dense position.</b> This span is NOT
+    /// parallel to <see cref="Span"/> or <see cref="Indices"/>: its length is the
+    /// world's version-table size, not <see cref="Count"/>. The correct read for
+    /// dense position <c>i</c> is <c>Versions[Indices[i]]</c>. Indexing it with a
+    /// dense position instead reads some unrelated slot's generation.
     /// </para>
     ///
     /// <para>
-    /// Still open: an entity whose index has been RECYCLED carries a version above 0
-    /// and is not reconstructible from the span alone. That needs a parallel version
-    /// array across the span ABI (a native change) and is tracked as its own ROADMAP
-    /// finding; it is the identical limitation every engine-side span consumer already
-    /// has, not a new one introduced here.
+    /// This is the surface that ends version fabrication (К-L22): the version a
+    /// caller writes into an <see cref="EntityId"/> now comes from the world
+    /// rather than from a guess.
+    /// </para>
+    ///
+    /// <para>
+    /// <b>A NEGATIVE entry is a tombstone.</b> The slot's entity has been
+    /// destroyed but its component row has not been reclaimed yet, so the row is
+    /// still in this span. The id reconstructed from such a slot is deliberately
+    /// dead — <c>IsAlive</c> rejects it and a batched write keyed on it is
+    /// dropped at flush — which is the correct answer for an entity the caller
+    /// already destroyed. Callers that want to skip those rows outright can test
+    /// <c>Versions[Indices[i]] &lt; 0</c>; callers that just use the id get the
+    /// safe behaviour for free.
+    /// </para>
+    /// </summary>
+    public ReadOnlySpan<int> Versions
+    {
+        get
+        {
+            if (_released) throw new ObjectDisposedException(nameof(SpanLease<T>));
+            return new ReadOnlySpan<int>(_versionsPtr, _versionsCount);
+        }
+    }
+
+    /// <summary>
+    /// Iterate (EntityId, T) pairs over the span. Resolves K1 skeleton's
+    /// deferred paired-iteration helper.
+    ///
+    /// <para>
+    /// Since ID-B the version is TRUE, not reconstructed: the pair reads
+    /// <c>Versions[entityIndex]</c> from the world's own version table
+    /// (<c>df_world_acquire_versions</c>), so the id names the entity that
+    /// actually occupies the slot — including a slot whose index has been
+    /// RECYCLED, which is precisely the case every fabricated version got wrong.
+    /// A write batch keyed on an id this enumerator yields therefore survives
+    /// the flush-time version check.
+    /// </para>
+    ///
+    /// <para>
+    /// History, because the shape of the bug is instructive. K5 reconstructed
+    /// <c>Version = 1</c> — a version NO entity ever carries, since versions
+    /// start at 0 and only grow — so every batched write keyed on a span id was
+    /// recorded and then silently dropped at flush, and the canonical
+    /// read-span-then-write-batch loop wrote nothing at all. W3 corrected that to
+    /// <c>Version = 0</c>, which is right for a never-recycled index and wrong
+    /// for a recycled one; the K7-era note here excused the gap on the grounds
+    /// that "the span ABI does not carry per-entity versions". That is no longer
+    /// true, and the deferral ends here (finding F-59).
     /// </para>
     /// </summary>
     public PairsEnumerable Pairs => new PairsEnumerable(this);
@@ -123,8 +167,11 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
         {
             get
             {
+                // Versions is entity-index-keyed, Span/Indices are dense-keyed —
+                // hence the double indirection. See SpanLease{T}.Versions.
                 int entityIndex = _lease.Indices[_index];
-                return (new EntityId(entityIndex, 0), _lease.Span[_index]);
+                return (new EntityId(entityIndex, _lease.Versions[entityIndex]),
+                        _lease.Span[_index]);
             }
         }
     }
@@ -132,6 +179,9 @@ public sealed unsafe class SpanLease<T> : IDisposable where T : unmanaged
     public void Dispose()
     {
         if (_released) return;
+        // Reverse acquisition order: the versions view was taken after the
+        // component span, so it is released first.
+        NativeMethods.df_world_release_versions(_world.HandleForInternalUse);
         NativeMethods.df_world_release_span(_world.HandleForInternalUse, _typeId);
         _released = true;
     }

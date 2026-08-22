@@ -117,4 +117,143 @@ public sealed class SpanWriteRoundTripTests
         seen.Should().Be(created,
             "WriteBatch's own snapshot enumerator reconstructs ids the same way and must agree");
     }
+
+    // ── ID-B: the recycled-index round trip (F-59) ───────────────────────────
+    //
+    // W3 narrowed the defect from "no entity has this version" to "no RECYCLED
+    // entity has this version" by aligning the pair iterators on Version = 0.
+    // The tests above pin the narrowed case; these pin the case W3 could not
+    // express, because expressing it needs a slot that has actually been reused.
+
+    [Fact]
+    public void RecycledIndex_SpanYieldsTheLiveGeneration_NotTheStaleOne()
+    {
+        using var world = new NativeWorld();
+
+        // Mint, destroy, flush — the flush is what returns the index to the
+        // free list, so the next create recycles it.
+        EntityId stale = world.CreateEntity();
+        world.AddComponent(stale, new RoundTripComponent { Kind = 1, Stamp = 1 });
+        world.DestroyEntity(stale);
+        world.FlushDestroyedEntities();
+
+        EntityId live = world.CreateEntity();
+        world.AddComponent(live, new RoundTripComponent { Kind = 2, Stamp = 2 });
+
+        live.Index.Should().Be(stale.Index, "the new entity must have recycled the slot");
+        live.Version.Should().BeGreaterThan(stale.Version,
+            "the ABA law bumps the slot version before it can be reissued");
+
+        EntityId fromSpan = default;
+        using (SpanLease<RoundTripComponent> lease = world.AcquireSpan<RoundTripComponent>())
+        {
+            foreach ((EntityId id, RoundTripComponent _) in lease.Pairs)
+                fromSpan = id;
+        }
+
+        fromSpan.Should().Be(live,
+            "the span must name the entity that occupies the slot NOW — reconstructing " +
+            "Version = 0 here names the destroyed entity instead");
+        fromSpan.Should().NotBe(stale);
+        world.IsAlive(fromSpan).Should().BeTrue();
+        world.IsAlive(stale).Should().BeFalse("the stale id must stay dead forever");
+    }
+
+    [Fact]
+    public void RecycledIndex_StaleKeyIsDropped_WhileTheSpanKeyLands()
+    {
+        using var world = new NativeWorld();
+
+        EntityId stale = world.CreateEntity();
+        world.AddComponent(stale, new RoundTripComponent { Kind = 1, Stamp = 1 });
+        world.DestroyEntity(stale);
+        world.FlushDestroyedEntities();
+
+        EntityId live = world.CreateEntity();
+        world.AddComponent(live, new RoundTripComponent { Kind = 2, Stamp = 2 });
+
+        EntityId fromSpan = default;
+        using (SpanLease<RoundTripComponent> lease = world.AcquireSpan<RoundTripComponent>())
+        {
+            foreach ((EntityId id, RoundTripComponent _) in lease.Pairs)
+                fromSpan = id;
+        }
+
+        // Two writes, one batch: one keyed on the id the span handed back, one
+        // keyed on the stale id that shares its index. Exactly one must land,
+        // and the flush count says which.
+        int applied;
+        using (WriteBatch<RoundTripComponent> batch = world.BeginBatch<RoundTripComponent>())
+        {
+            batch.Update(fromSpan, new RoundTripComponent { Kind = 9, Stamp = 900 })
+                 .Should().BeTrue("recording is not applying — this only means the command was queued");
+            batch.Update(stale, new RoundTripComponent { Kind = 4, Stamp = 400 })
+                 .Should().BeTrue("the stale command records too; the flush is where it dies");
+            applied = batch.Flush();
+        }
+
+        applied.Should().Be(1,
+            "the flush-time version check must apply the span-keyed write and drop the stale one");
+
+        world.TryGetComponent(live, out RoundTripComponent after).Should().BeTrue();
+        after.Stamp.Should().Be(900,
+            "the write keyed on the span's id must PERSIST — this is the write that used to " +
+            "vanish whenever an index had been recycled");
+        after.Kind.Should().Be(9);
+    }
+
+    [Fact]
+    public void SdkRecycledIndex_ModLoopStillPersists_ThroughSpanScope()
+    {
+        using var world = new NativeWorld();
+        var view = new SystemContextView(new ModRegistry(), "test.mod", () => 0L);
+        var ctx = new SystemExecutionContext(
+            "T", SystemOrigin.Mod, "test.mod", new NullModFaultSink(), world);
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            EntityId doomed = view.CreateEntity();
+            using (WriteScope<RoundTripComponent> add = view.BeginBatch<RoundTripComponent>())
+            {
+                add.Add(doomed, new RoundTripComponent { Kind = 1, Stamp = 1 });
+            }
+            view.DestroyEntity(doomed);
+            world.FlushDestroyedEntities();
+
+            EntityId minted = view.CreateEntity();
+            minted.Index.Should().Be(doomed.Index, "the SDK mint must recycle the slot");
+            using (WriteScope<RoundTripComponent> add = view.BeginBatch<RoundTripComponent>())
+            {
+                add.Add(minted, new RoundTripComponent { Kind = 2, Stamp = 2 });
+            }
+
+            // The mod-facing loop, over a recycled slot.
+            EntityId fromSpan = default;
+            using (SpanScope<RoundTripComponent> span = view.AcquireSpan<RoundTripComponent>())
+            {
+                foreach ((EntityId id, RoundTripComponent _) in span.Pairs)
+                    fromSpan = id;
+            }
+            fromSpan.Should().Be(minted);
+
+            using (WriteScope<RoundTripComponent> upd = view.BeginBatch<RoundTripComponent>())
+            {
+                upd.Update(fromSpan, new RoundTripComponent { Kind = 7, Stamp = 700 });
+            }
+
+            RoundTripComponent after = default;
+            using (SpanScope<RoundTripComponent> span = view.AcquireSpan<RoundTripComponent>())
+            {
+                foreach ((EntityId _, RoundTripComponent c) in span.Pairs)
+                    after = c;
+            }
+            after.Stamp.Should().Be(700,
+                "a mod's read-span-then-write-batch loop must persist over a recycled index too");
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+    }
 }

@@ -267,9 +267,10 @@ internal static class GameBootstrap
     {
         using SpanLease<T> lease = nativeWorld.AcquireSpan<T>();
         ReadOnlySpan<int> indices = lease.Indices;
+        ReadOnlySpan<int> versions = lease.Versions;
         for (int i = 0; i < lease.Count; i++)
         {
-            var id = new EntityId(indices[i], 0);
+            var id = new EntityId(indices[i], versions[indices[i]]);
             if (!nativeWorld.TryGetComponent<PositionComponent>(id, out PositionComponent pos)) continue;
             services.Pawns.Publish(new ItemSpawnedEvent
             {

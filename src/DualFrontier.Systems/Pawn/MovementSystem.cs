@@ -102,9 +102,10 @@ public sealed class MovementSystem : SystemBase
         {
             ReadOnlySpan<MovementComponent> moveSpan = moves.Span;
             ReadOnlySpan<int> moveIndices = moves.Indices;
+            ReadOnlySpan<int> moveVersions = moves.Versions;
             for (int i = 0; i < moves.Count; i++)
             {
-                var entity = new EntityId(moveIndices[i], 0);
+                var entity = new EntityId(moveIndices[i], moveVersions[moveIndices[i]]);
                 if (!NativeWorld.TryGetComponent<PositionComponent>(entity, out PositionComponent pos)) continue;
                 snapshot.Add((entity, moveSpan[i], pos));
             }

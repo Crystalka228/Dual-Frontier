@@ -20,8 +20,14 @@ public readonly struct ContractsVersion : IEquatable<ContractsVersion>
     /// lifecycle (CreateEntity/DestroyEntity/IsEntityAlive) and the SetAmbientTint
     /// presentation primitive. Nothing was removed or reshaped, so every manifest pinning
     /// apiVersion ^2.0.0 stays satisfied (IsCompatible: same MAJOR, required MINOR ≤ available).
+    /// ID-B bumps 2.1.0 -> 2.1.1 (PATCH, behavioural truth-fix, no surface change):
+    /// SpanScope&lt;T&gt;.Pairs now yields TRUE entity versions instead of a fabricated 0, and
+    /// EntityId.IsValid became Index &gt; 0 (dropping the `|| Version &gt; 0` arm that called
+    /// the permanently-dead (0, v&gt;0) corner valid). No member was added, removed or
+    /// reshaped -- the mod-visible signatures are identical; what changed is that the values
+    /// flowing through them are now correct for a recycled index (К-L22, F-59).
     /// </summary>
-    public static readonly ContractsVersion Current = new(2, 1, 0);
+    public static readonly ContractsVersion Current = new(2, 1, 1);
 
     /// <summary>
     /// Major component: bumped on breaking changes.

@@ -93,10 +93,11 @@ public sealed class JobSystem : SystemBase
         {
             ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
             ReadOnlySpan<int> jobIndices = jobs.Indices;
+            ReadOnlySpan<int> jobVersions = jobs.Versions;
 
             for (int i = 0; i < jobs.Count; i++)
             {
-                var entity = new EntityId(jobIndices[i], 0);
+                var entity = new EntityId(jobIndices[i], jobVersions[jobIndices[i]]);
                 if (!NativeWorld.TryGetComponent<NeedsComponent>(entity, out NeedsComponent needs))
                     continue;
 

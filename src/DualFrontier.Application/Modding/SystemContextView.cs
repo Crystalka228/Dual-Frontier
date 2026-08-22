@@ -92,7 +92,9 @@ internal sealed class SystemContextView : ISystemContext, IWriteBatchCapability
     public SpanScope<T> AcquireSpan<T>() where T : unmanaged, IComponent
     {
         SpanLease<T> lease = World.AcquireSpan<T>();
-        return new SpanScope<T>(lease, lease.Span, lease.Indices);
+        // lease.Versions is entity-index-keyed and NOT parallel to Span/Indices;
+        // SpanScope's enumerator does the double indirection (ID-B / К-L22).
+        return new SpanScope<T>(lease, lease.Span, lease.Indices, lease.Versions);
     }
 
     public WriteScope<T> BeginBatch<T>() where T : unmanaged, IComponent

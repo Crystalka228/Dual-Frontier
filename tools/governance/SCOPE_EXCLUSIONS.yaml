@@ -48,6 +48,8 @@ excluded_paths:
     rationale: "Architect authoring scaffold (execution-brief template) — meta-tooling, non-governed (DRAFTS_RATIFICATION H3 exclusion-rider, operator-ruled 2026-07-17: exclude; exact-file form)"
   - pattern: "docs/methodology/RECON_KICKOFF_TEMPLATE.md"
     rationale: "Architect authoring scaffold (recon-kickoff template) — meta-tooling, non-governed (DRAFTS_RATIFICATION H3 exclusion-rider, operator-ruled 2026-07-17: exclude; exact-file form)"
+  - pattern: "Special/**"
+    rationale: "Operator's un-governed design-reference stash (kept zipped; charters cite it, never enroll it) — gitignored AND scanner-excluded because sync/validate walk the filesystem, not git (operator-ruled 2026-08-20)."
 
 # Allow-list inverse: only .md extensions registered.
 # All other extensions excluded by default (tooling scripts like .ps1, configs like
