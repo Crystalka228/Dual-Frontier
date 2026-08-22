@@ -82,6 +82,7 @@ namespace DualFrontier.Systems.Pawn
             {
                 ReadOnlySpan<NeedsComponent> needsSpan = needs.Span;
                 ReadOnlySpan<int> indices = needs.Indices;
+                ReadOnlySpan<int> versions = needs.Versions;
                 for (int i = 0; i < needs.Count; i++)
                 {
                     NeedsComponent n = needsSpan[i];
@@ -89,7 +90,7 @@ namespace DualFrontier.Systems.Pawn
                     n.Hydration = Math.Clamp(n.Hydration - HydrationDepletionPerTick, 0f, 1f);
                     n.Sleep     = Math.Clamp(n.Sleep     - SleepDepletionPerTick,     0f, 1f);
                     n.Comfort   = Math.Clamp(n.Comfort   - ComfortDepletionPerTick,   0f, 1f);
-                    entities.Add(new EntityId(indices[i], 0));
+                    entities.Add(new EntityId(indices[i], versions[indices[i]]));
                     updated.Add(n);
                 }
             }

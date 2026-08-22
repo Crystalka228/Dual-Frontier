@@ -51,9 +51,10 @@ public sealed class SleepSystem : SystemBase
         {
             ReadOnlySpan<BedComponent> bedSpan = beds.Span;
             ReadOnlySpan<int> bedIndices = beds.Indices;
+            ReadOnlySpan<int> bedVersions = beds.Versions;
             for (int i = 0; i < beds.Count; i++)
             {
-                bedsSnapshot.Add((new EntityId(bedIndices[i], 0), bedSpan[i]));
+                bedsSnapshot.Add((new EntityId(bedIndices[i], bedVersions[bedIndices[i]]), bedSpan[i]));
             }
         }
 
@@ -95,9 +96,10 @@ public sealed class SleepSystem : SystemBase
         {
             ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
             ReadOnlySpan<int> jobIndices = jobs.Indices;
+            ReadOnlySpan<int> jobVersions = jobs.Versions;
             for (int i = 0; i < jobs.Count; i++)
             {
-                jobSnapshot.Add((new EntityId(jobIndices[i], 0), jobSpan[i]));
+                jobSnapshot.Add((new EntityId(jobIndices[i], jobVersions[jobIndices[i]]), jobSpan[i]));
             }
         }
 
@@ -176,12 +178,13 @@ public sealed class SleepSystem : SystemBase
         using SpanLease<BedComponent> beds = NativeWorld.AcquireSpan<BedComponent>();
         ReadOnlySpan<BedComponent> bedSpan = beds.Span;
         ReadOnlySpan<int> bedIndices = beds.Indices;
+        ReadOnlySpan<int> bedVersions = beds.Versions;
         for (int i = 0; i < beds.Count; i++)
         {
             BedComponent bedComp = bedSpan[i];
             if (bedComp.Occupant.HasValue) continue;
 
-            var bed = new EntityId(bedIndices[i], 0);
+            var bed = new EntityId(bedIndices[i], bedVersions[bedIndices[i]]);
             if (!NativeWorld.TryGetComponent<PositionComponent>(bed, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDistance)

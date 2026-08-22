@@ -33,10 +33,11 @@ namespace DualFrontier.Systems.Pawn
             {
                 ReadOnlySpan<MindComponent> mindSpan = minds.Span;
                 ReadOnlySpan<int> mindIndices = minds.Indices;
+                ReadOnlySpan<int> mindVersions = minds.Versions;
 
                 for (int i = 0; i < minds.Count; i++)
                 {
-                    var entity = new EntityId(mindIndices[i], 0);
+                    var entity = new EntityId(mindIndices[i], mindVersions[mindIndices[i]]);
                     if (!NativeWorld.TryGetComponent<NeedsComponent>(entity, out NeedsComponent needs))
                         continue;
 
