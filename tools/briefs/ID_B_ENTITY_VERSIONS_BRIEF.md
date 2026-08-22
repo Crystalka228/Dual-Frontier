@@ -3,11 +3,11 @@ register_id: DOC-D-ID_B_ENTITY_VERSIONS_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Crystalka
 version: '1.0'
 first_authored: '2026-08-20'
-last_modified: '2026-08-20'
+last_modified: '2026-08-22'
 content_language: en
 next_review_due: null
 title: 'ID-B entity versions -- F-59 closure by the IAC section-2 versions view (identity family cascade B, NATIVE-ADDITIVE): df_world_acquire_versions/release pair over the native versions_ table, SpanLease/WriteBatch/SpanScope reconstruct TRUE versions, fabrication-site migration, EntityId.IsValid alignment both sides, DFK022 rule + K-L22 seated AUTHORED, governance housekeeping rider (templates + Special/ perimeter)'

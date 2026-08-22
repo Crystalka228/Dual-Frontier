@@ -1436,7 +1436,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-07-15
-  last_modified: 2026-07-19
+  last_modified: 2026-08-22
   content_language: en
   next_review_due: 2026-Q4
   title: Roadmap
@@ -1444,7 +1444,7 @@ documents:
   - DOC-A-MIGRATION_PLAN
   review_cadence: on-closure+quarterly
   last_review_date: 2026-07-17
-  last_review_event: "STACK_UPDATE closure write-back (2026-07-17) — Update-block stack re-sync sentence appended (net10.0 / C# 14 / SDK 10.0.204 global.json pin / test triad 2.9.3+3.1.5+18.8.1 / AwesomeAssertions 9.4.0 / К-L1 C++23 with the MSVC preview caveat; ENGINEERING QUEUE unblocked, EQ-a next) + Findings ledger rows F-44 (stable /std:c++23 migration), F-45 (xunit v3 own cascade), F-46 (Roslyn/BDN/YamlDotNet hygiene bundle + §4.3 mirror-count nit), F-47 (LINQ convention documentary-not-enforced, SpatialGrid.cs:3), F-48 (M74 nodeReuse test-infra hang class, session finding). F-48 carries the setup-session finding instead of the brief's reserved AA-escape slot — Phase G landed without escape. EVT-2026-07-17-STACK_UPDATE. Prior context: Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — Analyzer track + Findings ledger sections received; DD-2 spec/roadmap separation increment 1."
+  last_review_event: "ID_B_ENTITY_VERSIONS closure write-back (2026-08-22) — F-59 CLOSED: the version-0 resolution shipped as the IAC §2 versions view (df_world_acquire_versions / df_world_release_versions, exports 207 → 209), all three pair-iterators reconstruct true generations, ~18 engine fabrication sites migrated, EntityId.IsValid aligned both sides, DFK022 Error-enforcing and К-L22 seated AUTHORED. The identity family (ID-A + ID-B) is complete; its only remaining open item is F-60 half (a), the tick-path ALC root, whose charter is the family's successor. F-58 keeps its core — a mod still cannot RECLAIM its world state — with its EQ-b identity/versions half recorded as settled. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior context: STACK_UPDATE closure write-back (2026-07-17) — Update-block stack re-sync sentence appended (net10.0 / C# 14 / SDK 10.0.204 global.json pin / test triad 2.9.3+3.1.5+18.8.1 / AwesomeAssertions 9.4.0 / К-L1 C++23 with the MSVC preview caveat; ENGINEERING QUEUE unblocked, EQ-a next) + Findings ledger rows F-44 (stable /std:c++23 migration), F-45 (xunit v3 own cascade), F-46 (Roslyn/BDN/YamlDotNet hygiene bundle + §4.3 mirror-count nit), F-47 (LINQ convention documentary-not-enforced, SpatialGrid.cs:3), F-48 (M74 nodeReuse test-infra hang class, session finding). F-48 carries the setup-session finding instead of the brief's reserved AA-escape slot — Phase G landed without escape. EVT-2026-07-17-STACK_UPDATE. Prior context: Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — Analyzer track + Findings ledger sections received; DD-2 spec/roadmap separation increment 1."
   reviewer: Crystalka
 - register_id: DOC-D-ARCHITECTURE_RECON_BRIEF
   path: tools/briefs/ARCHITECTURE_RECON_BRIEF.md
@@ -2349,11 +2349,11 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Crystalka
   version: 1.0
   first_authored: 2026-08-20
-  last_modified: 2026-08-20
+  last_modified: 2026-08-22
   content_language: en
   next_review_due: 
   title: 'ID-B entity versions -- F-59 closure by the IAC section-2 versions view (identity family cascade B, NATIVE-ADDITIVE): df_world_acquire_versions/release pair over the native versions_ table, SpanLease/WriteBatch/SpanScope reconstruct TRUE versions, fabrication-site migration, EntityId.IsValid alignment both sides, DFK022 rule + K-L22 seated AUTHORED, governance housekeeping rider (templates + Special/ perimeter)'
@@ -15881,5 +15881,46 @@ audit_trail:
     ALSO LANDED. Two test rigs that loaded component-defining mods against a registry-less world were made production-faithful, which is the W3 gate-harness-fidelity lesson applied where it bites; one of them had been disposing its native world before any test ran. Sdk/SpanScope<T>.Pairs's property doc, which still taught Version = 1 after W3's C5b corrected the code beneath it, now states the Version = 0 truth with the K7 deferral preserved and repointed at F-59 / ID-B. IAC section 2's DFK-entity-identity pointer, stale since EQ_A2 seated K-L20 as shutdown-quiescence, is corrected to K-L22 as the next free row (recon anomaly A5). KERNEL_ARCHITECTURE 1.2.1 -> 1.3.0 MINOR, IDENTITY_AND_ABI_CONTRACT 1.1.1 -> 1.1.2 PATCH. MODDING.md needed no change - the Phase 0 grep found it stating neither the lazy-id nor the restart-to-reclaim behaviour.
 
     GATES. Release build 0 warnings / 0 errors. Full solution 1269 passed / 0 failed / 5 skipped against a Phase 0 baseline of 1260 passed / 1 failed / 5 skipped; the baseline failure was Governance.Tests Validate_AgainstLiveTree_Succeeds, red because the dispatched brief's own title was unparseable YAML, repaired at C1. validate --armed exit 0 at C1, C6 and C7. Census UNMOVED on all seven families, including the deferred SOFT pin the SpanScope comment edit touched - stub 51/20, deferred 89/55, TODO 132/51, Phase 6 23/11, not yet 10/9, Console.WriteLine in src 2/1, [ReservedStub 34/13. Native untouched: zero diffs under native/ at every commit.
+  cross_references:
+    capa_entries: []
+- id: EVT-2026-08-22-ID_B_ENTITY_VERSIONS
+  date: 2026-08-22
+  event: ID_B_ENTITY_VERSIONS cascade (identity family, Cascade B) -- the version-0 resolution shipped. An additive native versions view lets managed pair-iterators read TRUE entity generations instead of fabricating them; K-L22 seated AUTHORED and enforced by DFK022. F-59 CLOSED; the identity family is complete. NATIVE-ADDITIVE, exports 207 -> 209
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-ID_B_ENTITY_VERSIONS_BRIEF
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-ECS
+  - DOC-A-ANALYZER_RULES
+  - DOC-M-TESTING_STRATEGY
+  - DOC-F-NATIVE-CORE
+  - DOC-C-ROADMAP
+  commits:
+    range: b0fd277..(the closure commit carries this entry)
+    key_commits:
+    - b0fd277
+    - b79be3a
+    - 0ad7271
+    - 8f9ad4a
+    - 10ce2f1
+    - c51d801
+    - 93ca74d
+  governance_impact: >
+    WHAT WAS BUILT. Managed code no longer invents the Version half of an EntityId. Two additive C ABI entry points, df_world_acquire_versions / df_world_release_versions, expose the world's per-slot versions_ table read-only under the same acquire/release discipline component spans already use; SpanLease<T> takes the view alongside the span, and SpanLease.Pairs, the WriteBatch<T> enumerator and the SDK-facing Sdk/SpanScope<T>.Pairs all reconstruct new EntityId(idx, versions[idx]) -- the generation the slot actually holds. The eighteen engine fabrication sites across nine systems plus GameBootstrap were migrated to the same idiom; EntityId.IsValid and its native mirror entity_id.h::is_valid dropped the arm that called the permanently-dead (0, v>0) corner valid.
+
+    WHY IT MATTERS, stated without inflation. Nothing changes for an entity whose index has never been recycled: versions[idx] is 0 there, which is exactly what the sites were fabricating. What changes is the recycled case, which stops being wrong. Native is_alive is exact version equality, so an id with the right index and a fabricated version is indistinguishable from a dead one -- reads return false, batched writes are dropped at flush, both in silence. Before this cascade a stale id circulating after a recycle could not be told apart from the live entity occupying its slot, which is the C10 / N-22 defect and a direct nullification of the ABA law. W3 made it urgent rather than theoretical by putting DestroyEntity, and therefore recycling, into MOD hands through ISystemContext.
+
+    THE DESIGN FUND HAD A FACTUAL ERROR IN IT, AND FINDING IT IS PART OF THE RESULT. IDENTITY_AND_ABI_CONTRACT section 2 specified that the view could ride the existing component-span counter, "the mutation-rejection counter already guarantees the table cannot resize while any span is active". Measured against world.cpp that is false: create_entity has never consulted active_spans_ -- creation under a live component span is legal and the native selftest asserts it -- and create_entity is precisely what grows versions_, reallocating the buffer a view points into. The two guards protect different hazards: a component span guards table CONTENT, a versions view guards against REALLOCATION. Sharing the counter would have meant changing shipped span semantics, which the ABI evolution law forbids, so the view carries its own active_version_views_ counter and refuses create/destroy/flush REFUSE-NOT-FORCE for its lifetime. The contract's sentence is corrected in place rather than quietly worked around.
+
+    THE PROOF. SpanWriteRoundTripTests.RecycledIndex_StaleKeyIsDropped_WhileTheSpanKeyLands is the test W3 could not write, because writing it needs a slot that has actually been reused: after create -> destroy -> flush -> create, one batch records two updates -- one keyed on the id the span handed back, one on the stale id sharing its index -- and Flush() returns exactly 1, with the span-keyed value persisted. A single-key test would have passed under the old behaviour too, for the wrong reason. Five native selftest scenarios pin the ABI side (104 -> 109 scenarios), including that a view reports the LIVE generation for a recycled index and that a surplus release clamps at 0 rather than silently re-opening the create guard.
+
+    ENFORCEMENT WAS PROVED, NOT ASSUMED. DFK022 flags an integer literal in the Version position of new EntityId(...), by parameter NAME rather than ordinal, exempting Core.Interop internals and Test namespaces; EntityId.Invalid and default are unreachable by construction. A green build with a new Error-severity rule is ambiguous evidence -- it is equally consistent with a clean tree and with a rule that never fires -- so the pragma pair on the one waived site was temporarily removed, the build was confirmed to fail with error DFK022 at EntityEncoder.cs(96,52), and the pragma was restored. The rule ships enforcing rather than detecting-then-promoting, because the tree HAD been fabricating and a grace period would let the census re-grow behind it.
+
+    THE ONE WAIVER. EntityEncoder.DecodeRanges decodes persisted INDEX ranges: the encoded form carries no versions and there is no world to ask, since the entities those ids name do not exist yet. How generations cross the save boundary is the A7 persistence contract's call, so fabricating a fix here would have been inventing the persistence format by accident. The waiver census moves 2 -> 3, the single HARD-pin movement this cascade ratified, and A7 is named in the waiver comment as its retirement trigger.
+
+    GOVERNANCE HOUSEKEEPING (the ratified rider). The two authoring templates finally sit at the SCOPE_EXCLUSIONS paths that have carried prophylactic exclusion rows since DRAFTS_RATIFICATION, body-only and deliberately un-enrolled; the sync scan count going 377 -> 379 while in-scope stayed 367 is the proof they are EXCLUDED rather than orphaned. One ratified content edit landed with them: the template's stale "the executor NEVER pushes" rail is replaced by CODING_STANDARDS section 8.4 v3.0.0. Three further stale push mentions survive in the template's section 14 and 15 guidance blockquotes; they were left because widening a ratified edit is the failure mode ratification exists to prevent, and they are reported for the architect to rule on. Special/ is now fenced on both sides -- gitignored and scanner-excluded -- which is not redundant, because sync and validate walk the filesystem rather than git, so a gitignored .md inside Special/ would still be scanned and orphan-flagged.
+
+    GATES. Managed build 0 warnings / 0 errors at every commit. Full solution 1295 passed / 0 failed / 5 skipped against a Phase 0 baseline of 1276 / 0 / 5; the +19 is exactly the tests this cascade adds (10 at C4, 9 at C6) and the 5 skips are the unchanged F-10 family. Native build green, selftest 104 -> 109 scenarios ALL PASSED exit 0. validate --armed exit 0 at C1, C2, C3, C7 and C8. Census HARD: Console.WriteLine src 2/1 and [ReservedStub 34/13 UNMOVED; waiver pin 2 -> 3 as ratified; native exports 207 -> 209 as scoped. Census SOFT: deferred 89/55 -> 87/54, pre-declared in the brief -- the K7 deferral retired at both surviving sites because the versions view IS the thing it was waiting for; stub 51/20, TODO 132/51, Phase 6 23/11, not yet 10/9 unmoved.
   cross_references:
     capa_entries: []
