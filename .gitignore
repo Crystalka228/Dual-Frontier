@@ -15,6 +15,18 @@ native/DualFrontier.Core.Native/out/
 # BenchmarkDotNet artifacts
 BenchmarkDotNet.Artifacts/
 
+# dotnet test --results-directory litter (TRX + attachment folders). The
+# authoritative run verdict lives in the closure commit body, not on disk.
+TestResults/
+
+# The operator's un-governed design-reference stash. Charters cite it; nothing
+# in it is ever enrolled. Kept zipped (the *.zip line below already covers the
+# archives themselves) — this line additionally keeps any local extraction out
+# of history. Paired with the "Special/**" row in
+# tools/governance/SCOPE_EXCLUSIONS.yaml, because sync/validate walk the
+# filesystem rather than git and would otherwise orphan-flag an extraction.
+Special/
+
 # Stray native DLL copies next to projects (the .csproj <None Include> places
 # the canonical copy under bin/ at build time; these are leftovers from
 # manual post-build copies and must not be versioned)

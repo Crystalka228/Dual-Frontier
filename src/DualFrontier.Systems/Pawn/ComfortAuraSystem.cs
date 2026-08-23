@@ -53,11 +53,13 @@ public sealed class ComfortAuraSystem : SystemBase
 
         ReadOnlySpan<DecorativeAuraComponent> auraSpan = auras.Span;
         ReadOnlySpan<int> auraIndices = auras.Indices;
+        ReadOnlySpan<int> auraVersions = auras.Versions;
         ReadOnlySpan<int> needsIndices = needs.Indices;
+        ReadOnlySpan<int> needsVersions = needs.Versions;
 
         for (int a = 0; a < auras.Count; a++)
         {
-            var auraEntity = new EntityId(auraIndices[a], 0);
+            var auraEntity = new EntityId(auraIndices[a], auraVersions[auraIndices[a]]);
             if (!NativeWorld.HasComponent<PositionComponent>(auraEntity)) continue;
 
             DecorativeAuraComponent aura = auraSpan[a];
@@ -65,7 +67,7 @@ public sealed class ComfortAuraSystem : SystemBase
 
             for (int p = 0; p < needs.Count; p++)
             {
-                var pawnEntity = new EntityId(needsIndices[p], 0);
+                var pawnEntity = new EntityId(needsIndices[p], needsVersions[needsIndices[p]]);
                 if (!NativeWorld.HasComponent<PositionComponent>(pawnEntity)) continue;
 
                 PositionComponent pawnPos = NativeWorld.GetComponent<PositionComponent>(pawnEntity);

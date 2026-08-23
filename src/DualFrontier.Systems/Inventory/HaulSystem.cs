@@ -45,12 +45,13 @@ public sealed class HaulSystem : SystemBase
         using SpanLease<JobComponent> jobs = NativeWorld.AcquireSpan<JobComponent>();
         ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
         ReadOnlySpan<int> jobIndices = jobs.Indices;
+        ReadOnlySpan<int> jobVersions = jobs.Versions;
 
         for (int i = 0; i < jobs.Count; i++)
         {
             JobComponent job = jobSpan[i];
             if (job.Current != JobKind.Idle) continue;
-            var pawn = new EntityId(jobIndices[i], 0);
+            var pawn = new EntityId(jobIndices[i], jobVersions[jobIndices[i]]);
 
             if (!TryFindHaul(out var sourceId, out var destId, out var itemId, out var quantity))
                 continue;
@@ -101,12 +102,13 @@ public sealed class HaulSystem : SystemBase
         {
             ReadOnlySpan<StorageComponent> storageSpan = storages.Span;
             ReadOnlySpan<int> storageIndices = storages.Indices;
+            ReadOnlySpan<int> storageVersions = storages.Versions;
 
             for (int s = 0; s < storages.Count; s++)
             {
                 StorageComponent storage = storageSpan[s];
                 if (!storage.Items.IsValid || storage.Items.Count == 0) continue;
-                var storageId = new EntityId(storageIndices[s], 0);
+                var storageId = new EntityId(storageIndices[s], storageVersions[storageIndices[s]]);
 
                 int count = storage.Items.Count;
                 var keysBuf = new InternedString[count];
@@ -137,10 +139,11 @@ public sealed class HaulSystem : SystemBase
         {
             ReadOnlySpan<StorageComponent> storageSpan = storages.Span;
             ReadOnlySpan<int> storageIndices = storages.Indices;
+            ReadOnlySpan<int> storageVersions = storages.Versions;
 
             for (int s = 0; s < storages.Count; s++)
             {
-                var storageId = new EntityId(storageIndices[s], 0);
+                var storageId = new EntityId(storageIndices[s], storageVersions[storageIndices[s]]);
                 if (storageId.Equals(src)) continue;
                 StorageComponent storage = storageSpan[s];
                 if (!storage.Items.IsValid || storage.IsFull) continue;

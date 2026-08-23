@@ -60,7 +60,19 @@ public interface ISystemContext
     /// OBJECT references, not identities. A held id may of course name an
     /// entity that has since died — probe it with <see cref="IsEntityAlive"/>.
     /// </para>
+    ///
+    /// <para>
+    /// <b>Precondition: no live span.</b> A <see cref="SpanScope{T}"/> holds a
+    /// view over the world's entity-version table, and growing that table would
+    /// invalidate it. Minting while a scope is open therefore throws
+    /// <see cref="InvalidOperationException"/> once the table is full — loudly,
+    /// never as a silent <c>EntityId.Invalid</c>. Dispose the scope first; the
+    /// Weather mod's read-then-mint pattern is the shape to copy.
+    /// </para>
     /// </summary>
+    /// <exception cref="InvalidOperationException">
+    /// The world refused the mint — see the precondition above.
+    /// </exception>
     EntityId CreateEntity();
 
     /// <summary>

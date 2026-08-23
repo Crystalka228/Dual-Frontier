@@ -28,12 +28,26 @@ public readonly record struct EntityId(int Index, int Version)
     public static readonly EntityId Invalid = default;
 
     /// <summary>
-    /// Returns <c>true</c> when this id was produced by <c>World.CreateEntity</c>
-    /// and has not been explicitly set to <see cref="Invalid"/>.
+    /// Returns <c>true</c> when this id could have been produced by
+    /// <c>World.CreateEntity</c> — that is, when it names a real slot.
     ///
-    /// NOTE: <c>IsValid</c> only means the id is structurally non-default.
+    /// <para>
+    /// NOTE: <c>IsValid</c> only means the id is structurally addressable.
     /// It does NOT guarantee the entity is still alive — use
     /// <c>World.IsAlive(id)</c> for that check, which also compares versions.
+    /// Current-generation knowledge is unknowable without a world call, so this
+    /// stays a <i>syntactic</i> check by design.
+    /// </para>
+    ///
+    /// <para>
+    /// The check is the syntactic projection of the world's own rule, which
+    /// rejects <c>index &lt;= 0</c> unconditionally: index 0 is the reserved
+    /// <see cref="Invalid"/> slot and the world mints from 1 upward. It
+    /// previously read <c>Index &gt; 0 || Version &gt; 0</c>, which called
+    /// <c>(0, 5)</c> valid while the world held it permanently dead
+    /// (ID-B / К-L22; IDENTITY_AND_ABI_CONTRACT §2 "IsValid alignment").
+    /// The native mirror <c>entity_id.h::is_valid</c> carries the same rule.
+    /// </para>
     /// </summary>
-    public bool IsValid => Index > 0 || Version > 0;
+    public bool IsValid => Index > 0;
 }

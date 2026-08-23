@@ -55,6 +55,12 @@ const VulkanAttachment& World::vulkan_attachment() const noexcept {
 }
 
 EntityId World::create_entity() {
+    std::lock_guard<std::mutex> guard(mutation_mutex_);
+
+    // Recycling touches free_slots_/live_count_ only — it neither writes
+    // versions_ nor reallocates it — so it is SAFE under a held versions view
+    // and is deliberately not fenced (PR #51 review R2: the guard was too wide
+    // and refused creations that could never have invalidated a view).
     if (!free_slots_.empty()) {
         const int32_t recycled = free_slots_.back();
         free_slots_.pop_back();
@@ -63,6 +69,19 @@ EntityId World::create_entity() {
     }
 
     if (static_cast<std::size_t>(next_index_) >= versions_.size()) {
+        // GROWTH IS REQUIRED, and only here. resize reallocates the buffer a
+        // versions view hands out as a raw pointer, so this is the one path a
+        // live view must fence. REFUSE-NOT-FORCE (the EQ_A3 precedent): the
+        // world stays intact and the caller sees the request rejected (the C ABI
+        // wrapper turns this into the 0 sentinel; the managed wrapper raises it
+        // to an exception rather than returning a silent Invalid). Component
+        // spans are deliberately NOT consulted — creation under a plain
+        // component span stays legal, exactly as it always has been.
+        if (active_version_views_.load(std::memory_order_acquire) > 0) {
+            throw std::logic_error(
+                "Cannot grow the entity table while a versions view is held — "
+                "the resize would invalidate the view's pointer");
+        }
         versions_.resize(versions_.size() * 2, 0);
     }
 
@@ -74,6 +93,12 @@ EntityId World::create_entity() {
 bool World::is_alive(EntityId id) const noexcept {
     if (id.index <= 0) return false;
     if (static_cast<std::size_t>(id.index) >= versions_.size()) return false;
+    // A tombstoned slot holds no entity at all: the row is awaiting
+    // flush_destroyed and the version it will carry on recycle has not been
+    // issued to anyone. Rejecting the whole slot is what makes the tombstone
+    // "never-matching" — otherwise an id reconstructed from the versions view
+    // during the pending window would equal the sentinel and read ALIVE.
+    if (versions_[id.index] < 0) return false;
     return id.version == versions_[id.index];
 }
 
@@ -82,26 +107,60 @@ int32_t World::entity_count() const noexcept {
 }
 
 void World::destroy_entity(EntityId id) {
+    std::lock_guard<std::mutex> guard(mutation_mutex_);
+
     if (active_spans_.load(std::memory_order_acquire) > 0 ||
         active_batches_.load(std::memory_order_acquire) > 0) {
         throw std::logic_error("Cannot mutate while spans or batches are active");
     }
+    // ID-B (К-L22): a destroy rewrites versions_[index], which is CONTENT a live
+    // versions view is reading. Refuse rather than let a reader observe a torn
+    // generation mid-iteration.
+    if (active_version_views_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while a versions view is held");
+    }
     if (!is_alive(id)) return;
-    ++versions_[id.index];
-    --live_count_;
+
+    // TOMBSTONE, not an increment (PR #51 review R1). The component row survives
+    // until flush_destroyed, so a span acquired in this window still contains it.
+    // Writing v+1 here would make the versions view hand back the very pair that
+    // create_entity will later mint for the recycled slot: is_alive would accept
+    // it, and the ABA law (IDENTITY_AND_ABI_CONTRACT section 1 note 1 -- a pair is
+    // issued at most once per world lifetime) would be broken by an id nobody had
+    // been issued yet. A negative sentinel is issuable by nothing (versions start
+    // at 0 and only grow) and is_alive rejects the whole slot while it is
+    // negative. flush_destroyed lifts it to the real v+1 immediately before the
+    // slot becomes recyclable, so the increment is unchanged in effect -- only its
+    // timing moved, and only across a window in which no id was ever legitimately
+    // live.
     pending_destroy_.push_back(id);
+    versions_[id.index] = kTombstoneVersion;
+    --live_count_;
 }
 
 void World::flush_destroyed() {
+    std::lock_guard<std::mutex> guard(mutation_mutex_);
+
     if (active_spans_.load(std::memory_order_acquire) > 0 ||
         active_batches_.load(std::memory_order_acquire) > 0) {
         throw std::logic_error("Cannot mutate while spans or batches are active");
+    }
+    // ID-B (К-L22): the flush returns indices to the free list, which is the
+    // step that makes a slot recyclable by the next create_entity. A view held
+    // across it would be reading a table whose slots are about to be reissued.
+    if (active_version_views_.load(std::memory_order_acquire) > 0) {
+        throw std::logic_error("Cannot mutate while a versions view is held");
     }
     for (const EntityId id : pending_destroy_) {
         for (auto& [type_id, store] : stores_) {
             (void)type_id;
             store->remove(id.index);
         }
+        // Lift the tombstone to the destroyed entity's successor version BEFORE
+        // free-listing, so the slot is recyclable and create_entity mints
+        // (index, v+1) -- a pair that was never observable while the row was
+        // pending. pending_destroy_ carries the ORIGINAL id, so v is exact.
+        versions_[id.index] = id.version + 1;
         free_slots_.push_back(id.index);
     }
     pending_destroy_.clear();
@@ -258,6 +317,38 @@ void World::release_span(uint32_t type_id) noexcept {
     // Underflow guard: clamp to 0 if released more than acquired.
     if (prev <= 0) {
         active_spans_.store(0, std::memory_order_release);
+    }
+}
+
+bool World::acquire_versions(const int32_t** out_versions_ptr,
+                             int32_t* out_count) {
+    if (!out_versions_ptr || !out_count) return false;
+
+    // The SAME mutex create_entity / destroy_entity / flush_destroyed take
+    // (PR #51 review R3). Publishing the pointer and raising the counter must
+    // not be a check-then-act pair against a concurrent create: a create that
+    // observed zero could otherwise resize versions_ after this function had
+    // already handed out data(), leaving every managed ReadOnlySpan<int> backed
+    // by freed storage. Increment FIRST, then publish, both inside the section.
+    std::lock_guard<std::mutex> guard(mutation_mutex_);
+    active_version_views_.fetch_add(1, std::memory_order_acq_rel);
+
+    // versions_ is never empty (the ctor assigns kInitialCapacity zeroes), so
+    // unlike acquire_span there is no empty-store branch: data() is always a
+    // real pointer and the count is always the table size.
+    *out_versions_ptr = versions_.data();
+    *out_count = static_cast<int32_t>(versions_.size());
+    return true;
+}
+
+void World::release_versions() {
+    std::lock_guard<std::mutex> guard(mutation_mutex_);
+    int32_t prev = active_version_views_.fetch_sub(1, std::memory_order_acq_rel);
+    // Underflow guard, mirroring release_span: a double release is tolerated
+    // and clamps to 0 rather than leaving the counter negative -- a negative
+    // counter would silently re-open the create_entity guard.
+    if (prev <= 0) {
+        active_version_views_.store(0, std::memory_order_release);
     }
 }
 

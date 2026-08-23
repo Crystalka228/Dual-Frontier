@@ -3,6 +3,7 @@
 #include <atomic>
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -67,6 +68,29 @@ public:
                       const int32_t** out_indices_ptr, int32_t* out_count) noexcept;
 
     void release_span(uint32_t type_id) noexcept;
+
+    // ID-B versions view (К-L22; IDENTITY_AND_ABI_CONTRACT §2 option 1).
+    // Read-only view over versions_, indexed by ENTITY INDEX — NOT by dense
+    // position, and NOT parallel to a component span's dense array. out_count
+    // is versions_.size() (the table size), not entity_count().
+    //
+    // The view carries its OWN counter, deliberately not active_spans_:
+    // a component span guards versions_ CONTENT against mutation, but the
+    // hazard here is REALLOCATION — create_entity's growth path reallocates
+    // versions_, which would dangle this pointer. Component spans do not block
+    // creation today and must continue not to, so a second counter is the only
+    // way to fence growth without changing shipped span semantics.
+    //
+    // NOT noexcept: both take mutation_mutex_, and locking can throw. The C ABI
+    // wrappers absorb it per the no-exception law (IAC §3.4).
+    bool acquire_versions(const int32_t** out_versions_ptr,
+                          int32_t* out_count);
+
+    void release_versions();
+
+    [[nodiscard]] int32_t active_version_views_count() const noexcept {
+        return active_version_views_.load(std::memory_order_acquire);
+    }
 
     // K2 explicit type registration. Pre-creates an empty store for the
     // (type_id, component_size) pair. Idempotent for matching size; throws
@@ -158,6 +182,26 @@ private:
                                   const void* data, int32_t size);
     void remove_component_unchecked(EntityId id, uint32_t type_id);
 
+    // ID-B (К-L22, PR #51 review R1). While an entity is destroyed but not yet
+    // flushed its component row still exists, so a span acquired in that window
+    // still contains it. The slot's version is set to this sentinel for exactly
+    // that window: negative is issuable by nothing (versions start at 0 and only
+    // grow), is_alive rejects the slot outright while it holds this value, and
+    // flush_destroyed lifts it to the real successor version immediately before
+    // the slot becomes recyclable. Without it the view would hand back the very
+    // pair create_entity mints on recycle — an id alive before its entity exists.
+    static constexpr int32_t kTombstoneVersion = -1;
+
+    // ID-B (PR #51 review R3). Serializes the mutation + view family:
+    // create_entity / destroy_entity / flush_destroyed / acquire_versions /
+    // release_versions. Publishing the view pointer and raising its counter is
+    // otherwise a check-then-act pair against a concurrent create, which could
+    // resize versions_ out from under a pointer already handed out. Deliberately
+    // scoped to that family: component add/remove/bulk paths remain unguarded
+    // and sim-thread-only per IAC §3.6 — widening the lock is a separate,
+    // ledgered decision (ROADMAP F-61), not a side effect of this fix.
+    std::mutex mutation_mutex_;
+
     std::vector<int32_t> versions_;
     int32_t next_index_ = 1; // Index 0 reserved for Invalid.
     int32_t live_count_ = 0;
@@ -166,6 +210,7 @@ private:
     std::unordered_map<uint32_t, std::unique_ptr<RawComponentStore>> stores_;
     std::atomic<int32_t> active_spans_{0};
     std::atomic<int32_t> active_batches_{0};
+    std::atomic<int32_t> active_version_views_{0};
     std::atomic<bool> bootstrapped_{false};
 
     // K8.1 — primitives owned by this World. string_pool_ is value-typed

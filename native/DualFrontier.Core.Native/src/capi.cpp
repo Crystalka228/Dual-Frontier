@@ -250,6 +250,30 @@ DF_API void df_world_release_span(df_world_handle world, uint32_t type_id) {
     as_world(world)->release_span(type_id);
 }
 
+DF_API int32_t df_world_acquire_versions(df_world_handle world,
+                                         const int32_t** out_versions_ptr,
+                                         int32_t* out_count) {
+    if (!world) return 0;
+    try {
+        return as_world(world)->acquire_versions(out_versions_ptr, out_count)
+                   ? 1
+                   : 0;
+    } catch (...) {
+        return 0;
+    }
+}
+
+DF_API void df_world_release_versions(df_world_handle world) {
+    if (!world) return;
+    try {
+        as_world(world)->release_versions();
+    } catch (...) {
+        // release_versions takes mutation_mutex_ and is therefore no longer
+        // noexcept (PR #51 review R3). Swallow per the no-exception law
+        // (IAC §3.4) — release is tolerant by contract.
+    }
+}
+
 DF_API int32_t df_world_register_component_type(df_world_handle world,
                                                 uint32_t type_id,
                                                 int32_t component_size) {

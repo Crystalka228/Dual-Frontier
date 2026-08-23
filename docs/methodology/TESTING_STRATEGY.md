@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.2.2
+version: 2.2.3
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-08-22
 content_language: en
 next_review_due: 2027-06-11
 title: Testing strategy
 last_modified_commit: 673f815
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase H doc census — v2.2.1 → v2.2.2 PATCH: §1.3 stack-truth mirror sentence updated to the landed test triad — xUnit 2.9.2 → 2.9.3, Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial); sole live site, v1.0 changelog stack mention left as historical record (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR…'
+last_review_date: 2026-08-22
+last_review_event: 'ID_B_ENTITY_VERSIONS C7 — v2.2.2 → v2.2.3 PATCH (census pins only, per this document''s own §9.1 mutability clause): §4.3 DFK-WAIVER pin 2 → 3, the third being the DFK022 waiver on EntityEncoder.DecodeRanges, whose retirement trigger is the A7 persistence contract; §4.2 dated baselines refreshed to what the compiled meta-tests already carry — TODO 136/53 → 132/51 and deferred 82/51 → 87/54, ID_B''s own deferred delta being 89/55 → 87/54 as the K7 deferral retires at both surviving sites. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior review: STACK_UPDATE Phase H doc census — v2.2.1 → v2.2.2 PATCH: §1.3 stack-truth mirror sentence updated to the landed test triad — xUnit 2.9.2 → 2.9.3, Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial); sole live site, v1.0 changelog stack mention left as historical record (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR…'
 reviewer: Crystalka
 ---
 
@@ -304,13 +304,13 @@ public void ReservedSurfaceCensus_MatchesExactPin()
 
 ### §4.2 — Marker-family censuses
 
-One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Patterns verbatim; baselines registered 2026-06-11, `stub`/`deferred` refreshed 2026-07-01 (the F-25 owed fold — drift from the 2026-06-12 comment-citation pass; the compiled meta-tests have carried the live values since Phase β):
+One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Patterns verbatim; baselines registered 2026-06-11, `stub`/`deferred` refreshed 2026-07-01 (the F-25 owed fold — drift from the 2026-06-12 comment-citation pass), `TODO` and `deferred` refreshed 2026-08-22 to the values the compiled meta-tests have been carrying (`TODO` 136/53 → 132/51 at W3's stub deletion; `deferred` 82/51 → 87/54 across EQ_A2, W1, W2, W3 and ID_B). The compiled meta-tests remain the live carrier; this table is the registered expression plus its last audited value:
 
 | Family | Census expression | Baseline (matches / files) |
 |---|---|---|
 | `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 51 / 20 |
-| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 82 / 51 |
-| `TODO` (case-sensitive) | `rg --count-matches '\bTODO\b' src/ --type cs` | 136 / 53 |
+| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 87 / 54 |
+| `TODO` (case-sensitive) | `rg --count-matches '\bTODO\b' src/ --type cs` | 132 / 51 |
 | `Phase 6` (literal) | `rg --count-matches 'Phase 6' src/ --type cs` | 23 / 11 |
 | `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 10 / 9 |
 
@@ -318,7 +318,7 @@ Same exactness-pin contract as §4.1: a commit that moves a family's count recor
 
 ### §4.3 — DFK-WAIVER census
 
-**Baseline: 0** (2026-06-11). **Current pin: 2** since the A'.9.1 Phase β triage — the two DFK001 waivers in `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs` (К-L19-sanctioned Vulkan debug-messenger interop), asserted by `CensusMetaTests.DfkWaiverCensus_MatchesPin`. The 2026-06-11 verification record:
+**Baseline: 0** (2026-06-11). **Current pin: 3** since ID_B_ENTITY_VERSIONS (2026-08-22); it was 2 from the A'.9.1 Phase β triage — the two DFK001 waivers in `src/DualFrontier.Runtime/Graphics/ValidationLayer.cs` (К-L19-sanctioned Vulkan debug-messenger interop) — and ID_B added the third, a DFK022 waiver on `src/DualFrontier.Persistence/Compression/EntityEncoder.cs`'s `DecodeRanges` loop, which decodes persisted INDEX ranges where no world exists to supply a generation; the waiver names the A7 persistence contract as its retirement trigger, so the pin is expected to return to 2. All three are asserted by `CensusMetaTests.DfkWaiverCensus_MatchesPin`. The 2026-06-11 verification record:
 
 - `rg '#pragma warning disable (DFK|DFL|DF9)'` over `.cs` → 0 matches;
 - `[SuppressMessage]` over `src/` and `tests/` → 0 matches;
@@ -326,7 +326,7 @@ Same exactness-pin contract as §4.1: a commit that moves a family's count recor
 
 (Since Phase β the `tests/` tree contains `SuppressMessage` as string literals inside analyzer-test fixtures; attribute usage in `src/` remains 0 and no `GlobalSuppressions.cs` exists — the compiled meta-tests assert both.)
 
-Every increase requires the full waiver form and authority citation of `CODING_STANDARDS.md §5.3` (waiver comment with a resolvable authority — Q-L-#, К-L#, F-#, or refinement reference — immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β surfaced real diagnostics and moved the census exactly as designed — 0 → 2, both waivers carrying their §5.3 citations (the recorded-decision discipline held).
+Every increase requires the full waiver form and authority citation of `CODING_STANDARDS.md §5.3` (waiver comment with a resolvable authority — Q-L-#, К-L#, F-#, or refinement reference — immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β surfaced real diagnostics and moved the census exactly as designed — 0 → 2, both waivers carrying their §5.3 citations (the recorded-decision discipline held). ID_B moved it 2 → 3 the same way, with one difference worth noting: that waiver was ratified in the brief BEFORE the rule shipped, so the movement was a planned pin change rather than a triage discovery.
 
 ### §4.4 — S-LOCK → verification obligation
 
@@ -515,6 +515,16 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.2.3 -- 2026-08-22 -- ID_B_ENTITY_VERSIONS C7 (PATCH).** Per tools/briefs/ID_B_ENTITY_VERSIONS_BRIEF.md,
+under this document's own §9.1 census-pin mutability clause. §4.3 waiver pin 2 -> 3: the third waiver is
+DFK022 on src/DualFrontier.Persistence/Compression/EntityEncoder.cs's DecodeRanges loop, which decodes
+persisted INDEX ranges with no world available to supply a generation; the A7 persistence contract is named
+in the waiver as its retirement trigger, so the pin is expected to return to 2. §4.2 dated baselines
+refreshed to the values the compiled meta-tests have been carrying: TODO 136/53 -> 132/51 (W3's stub
+deletion) and deferred 82/51 -> 87/54 (EQ_A2, W1, W2, W3 and ID_B cumulatively; ID_B's own delta is 89/55 ->
+87/54, retiring the K7 deferral at both surviving sites because the versions view IS the thing it waited
+for). Pin/baseline refresh only; no taxonomy, contract, or pin-semantics change.
 
 **v2.2.2 -- 2026-07-17 -- STACK_UPDATE Phase H doc census (PATCH).** Per the STACK_UPDATE cascade
 (EVT-2026-07-17-STACK_UPDATE). §1.3 stack-truth mirror sentence updated to the landed test triad:

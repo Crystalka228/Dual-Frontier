@@ -81,8 +81,21 @@ public static class EntityEncoder
         {
             int    start = br.ReadInt32();
             ushort count = br.ReadUInt16();
+            // DFK-WAIVER(DFK022): the ONE sanctioned version fabrication in the tree
+            // (К-L22; IDENTITY_AND_ABI_CONTRACT §2 "consequential amendments"). This
+            // decodes an INDEX range out of a save; the encoded form carries no
+            // versions, and there is no world to ask — the entities these ids name do
+            // not exist yet. How generations cross the save boundary is the A7
+            // persistence contract's jurisdiction (PERSISTENCE_SNAPSHOT_CONTRACT.md),
+            // not this cascade's. RETIREMENT TRIGGER: when A7 decides the persisted
+            // identity format, this site adopts it and the waiver goes away — the
+            // waiver census pin (TESTING_STRATEGY §4.3) drops 3 -> 2 at that cascade.
+            // Callers are already told (see the DecodeRanges summary) that they must
+            // reassign versions when re-creating live entities through their world.
+#pragma warning disable DFK022
             for (int j = 0; j < count; j++)
                 result.Add(new EntityId(start + j, 0));
+#pragma warning restore DFK022
         }
 
         return result.ToArray();

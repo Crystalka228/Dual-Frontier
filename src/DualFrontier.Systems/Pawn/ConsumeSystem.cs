@@ -49,11 +49,12 @@ public sealed class ConsumeSystem : SystemBase
         {
             ReadOnlySpan<JobComponent> jobSpan = jobs.Span;
             ReadOnlySpan<int> jobIndices = jobs.Indices;
+            ReadOnlySpan<int> jobVersions = jobs.Versions;
             for (int i = 0; i < jobs.Count; i++)
             {
                 JobComponent job = jobSpan[i];
                 if (job.Current != JobKind.Eat) continue;
-                var pawn = new EntityId(jobIndices[i], 0);
+                var pawn = new EntityId(jobIndices[i], jobVersions[jobIndices[i]]);
                 if (!NativeWorld.TryGetComponent<NeedsComponent>(pawn, out NeedsComponent needs)) continue;
                 if (!NativeWorld.TryGetComponent<PositionComponent>(pawn, out PositionComponent pos)) continue;
                 if (!NativeWorld.TryGetComponent<MovementComponent>(pawn, out MovementComponent move)) continue;
@@ -122,13 +123,14 @@ public sealed class ConsumeSystem : SystemBase
         using SpanLease<ConsumableComponent> consumables = NativeWorld.AcquireSpan<ConsumableComponent>();
         ReadOnlySpan<ConsumableComponent> consumableSpan = consumables.Span;
         ReadOnlySpan<int> consumableIndices = consumables.Indices;
+        ReadOnlySpan<int> consumableVersions = consumables.Versions;
         for (int i = 0; i < consumables.Count; i++)
         {
             ConsumableComponent c = consumableSpan[i];
             if (c.RestoresKind != NeedKind.Satiety) continue;
             if (c.Charges <= 0) continue;
 
-            var candidate = new EntityId(consumableIndices[i], 0);
+            var candidate = new EntityId(consumableIndices[i], consumableVersions[consumableIndices[i]]);
             if (!NativeWorld.TryGetComponent<PositionComponent>(candidate, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDist)
@@ -146,9 +148,10 @@ public sealed class ConsumeSystem : SystemBase
         int bestDist = int.MaxValue;
         using SpanLease<WaterSourceComponent> waters = NativeWorld.AcquireSpan<WaterSourceComponent>();
         ReadOnlySpan<int> waterIndices = waters.Indices;
+        ReadOnlySpan<int> waterVersions = waters.Versions;
         for (int i = 0; i < waters.Count; i++)
         {
-            var candidate = new EntityId(waterIndices[i], 0);
+            var candidate = new EntityId(waterIndices[i], waterVersions[waterIndices[i]]);
             if (!NativeWorld.TryGetComponent<PositionComponent>(candidate, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDist)
@@ -167,13 +170,14 @@ public sealed class ConsumeSystem : SystemBase
         using SpanLease<ConsumableComponent> consumables = NativeWorld.AcquireSpan<ConsumableComponent>();
         ReadOnlySpan<ConsumableComponent> consumableSpan = consumables.Span;
         ReadOnlySpan<int> consumableIndices = consumables.Indices;
+        ReadOnlySpan<int> consumableVersions = consumables.Versions;
         for (int i = 0; i < consumables.Count; i++)
         {
             ConsumableComponent c = consumableSpan[i];
             if (c.RestoresKind != NeedKind.Hydration) continue;
             if (c.Charges <= 0) continue;
 
-            var candidate = new EntityId(consumableIndices[i], 0);
+            var candidate = new EntityId(consumableIndices[i], consumableVersions[consumableIndices[i]]);
             if (!NativeWorld.TryGetComponent<PositionComponent>(candidate, out PositionComponent pos)) continue;
             int dist = ChebyshevDistance(pawnPos, pos.Position);
             if (dist < bestDist)

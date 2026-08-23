@@ -5,7 +5,8 @@ charset = utf-8
 
 [*.cs]
 # DualFrontier analyzer shipped severities — Release 1.0 (A'.9.1 Phase γ; F-12
-# ratified 2026-07-01). Explicit restatement of the 17 descriptor defaultSeverity
+# ratified 2026-07-01) plus DFK022 (unshipped; ID_B_ENTITY_VERSIONS, 2026-08-22).
+# Explicit restatement of the 18 descriptor defaultSeverity
 # values (descriptor-as-truth; no override semantics — a key differing from its
 # descriptor is a defect). Registry: ANALYZER_RULES §4.1 (rule registry); release
 # record: tools/DualFrontier.Analyzers/AnalyzerReleases.Shipped.md.
@@ -26,6 +27,7 @@ dotnet_diagnostic.DFK002.severity = error
 dotnet_diagnostic.DFK007_1.severity = error
 dotnet_diagnostic.DFK015_1.severity = error
 dotnet_diagnostic.DFK019_A.severity = warning
+dotnet_diagnostic.DFK022.severity = error
 # DualFrontier.Discipline
 dotnet_diagnostic.DFL025_A.severity = warning
 dotnet_diagnostic.DFL025_B.severity = suggestion
