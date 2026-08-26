@@ -2115,6 +2115,21 @@ documents:
   risks_referenced: []
   capa_entries_referenced: []
   special_case_rationale: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series + F-10 DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §2.8 shared-native-singleton isolation law), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id.
+- register_id: DOC-D-F60A_TICK_PATH_BRIEF
+  path: tools/briefs/F60A_TICK_PATH_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: en
+  next_review_due: 
+  title: 'F60A_TICK_PATH -- F-60(a) closure: the tick-path ALC root is the lazy Type-keyed tick-rate cache; resolve the rate at load time, eliminate the cache class, flip the pinned leak test on the production composition; riders: cross-platform (Linux) native test wiring, bus-side Type-key eviction, BRIEF_TEMPLATE 8.4-v3.0.0 alignment, ledger seeding for the unreachable class members'
+  authored_by: Claude Fable (architect session, F-60(a) charter)
+  basis: 'DOC-E-F60A_TICK_PATH_RECON_REPORT (architect-seat recon 2026-08-25 at 3173d2b, R1-R5) + DOC-E-F60A_TICK_PATH_VERIFICATION_RECON (independent Opus subagent re-measurement 2026-08-26 at the same HEAD, A1-D3 + 11 discrepancies) + ratified lean set 2026-08-25 (fix shape (a): eliminate the lazy cache; class scope: fix the whole class; riders) + operator environment ruling 2026-08-26 (Linux is the PERMANENT development environment)'
 - register_id: DOC-D-G0
   path: tools/briefs/historical/G0_VULKAN_COMPUTE_PLUMBING_BRIEF.md
   project: Dual Frontier
@@ -4178,6 +4193,36 @@ documents:
   review_cadence: none-historical-record
   title: 'F-59+F-60 IDENTITY RECON REPORT — 2026-08-20 (R1–R5) — component-type + entity-version identity measurement at HEAD ad4e353 for the identity-family charter: ComponentTypeRegistry = 2 strong Dictionaries (Type→id, id→Type) + sequential _nextId, NO deregistration API, reverse map production-dead (0 consumers); native stores_ = unordered_map<u32,RawComponentStore> accepts ARBITRARY u32 (sequentiality is managed-side doc-law only, FNV legacy path proves it), NO store-removal export; К-L4 explicit-registration path (IModApi.RegisterComponent) records OWNERSHIP ONLY (ModRegistry._componentOwners, cleaned at RemoveMod) — the native id is allocated LAZILY by NativeWorld.ResolveTypeId auto-register on first span use, no owner context at that site; leak = Dictionary key roots collectible ALC → §9.5 step-7 spin 100×100 ms full 10 s (measured 10,668 ms, ledger F-60), 5 UnloadMod sites in Weather gate suite pay it; reset = reloaded ALC mints new Type → new id → empty span → re-seed (EntityCount 2), both halves pinned with flip-condition test names; F-59: versions_ per-slot table, ABA law honest native-side (create returns versions_[idx], destroy ++version, recycled slot reuses stored version), WriteBatch flush + destructor auto-flush SILENTLY skip is_alive-failed commands (destructor discards even the count), SpanScope.Pairs code fabricates 0 (C5b) but the :62 property doc still says Version = 1 (stale), EntityId.IsValid and entity_id.h is_valid both carry the flawed index>0||version>0 disjunction (unfixed, IAC §2 pending); IAC §2 is a RATIFIED design fund: option 1 df_world_acquire_versions RECOMMENDED with normative-target signatures, DFK-entity-identity rule sketch, EntityEncoder waiver — but its К-L20-reserved pointer is STALE (К-L20 seated shutdown-quiescence at EQ_A2, К-L21 reserved Mod-API; next free row = К-L22); registry Dictionaries are NOT thread-safe while dispatch runs Parallel.ForEach and first-use registration is reachable from system bodies; BeginModScope/EndModScope/ClearModScope = string-pool co-ownership ONLY (F-58 pointer falsified); anomalies A1–A10'
   special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-W1_SDK_SURFACE_RECON_REPORT, DOC-E-W2_BUS_CAPABILITY_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, DOC-E-F10_TEST_ISOLATION_RECON_REPORT). Pre-deliberation grounding for the ratified F-59+F-60 identity-family charter (one charter, operator-ratified 2026-08-20). Measured by the architect seat directly in the Claude Code environment (live line-reads at HEAD; the operator-ratified grounding step of the cascade rhythm — recon-session dispatch subsumed, W3 direct-brief precedent). Read-only: zero repository mutations besides this file, sync never run, zero builds/tests. UNTRACKED at authoring — enrolled at the charter cascade C1.'
+- register_id: DOC-E-F60A_TICK_PATH_RECON_REPORT
+  path: docs/reports/F60A_TICK_PATH_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-25
+  last_modified: 2026-08-25
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'F-60(a) TICK-PATH RECON REPORT — 2026-08-25 (R1–R5) — tick-path ALC-root measurement at HEAD 3173d2b for the F-60(a) charter: the bisect lens (0 ticks clean / 1 tick leaks) exonerates every load-time-populated container and demands a lazily-populated one; the tick path (ExecuteTick -> ExecutePhase -> ShouldRun -> Push/Update/Pop -> FlushDeferred) contains exactly ONE container lazily keyed by a regular-mod-ALC type: TickScheduler._tickRateCache (ConcurrentDictionary<Type,int>, first-ShouldRun GetOrAdd, key includes each SystemAdapter<T> closed generic by documented design, ZERO evictions — Reset() has no production caller and the TickScheduler instance survives every ModIntegrationPipeline Rebuild via the readonly _ticks field); adjacent same-class members keyed by SHARED-ALC event types (DomainEventBus.ModeCache STATIC, BusFacade._typeIdCache/_tierCache, DomainEventBus._handlers key retention after full unsubscribe, IntentBatcher._pending) are invisible to the F-60(a) pin but form the same defect class (lazy Type-keyed tick-path containers with no unload eviction); SystemExecutionContext/ModQuarantine/scheduler _contextCache/CWT bindings read clean; anomalies A1–A3'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F59_F60_IDENTITY_RECON_REPORT, DOC-E-W2_BUS_CAPABILITY_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT). Pre-deliberation grounding for the F-60(a) tick-path charter (program order operator-ratified 2026-08-25: F-60(a) next, LINUX_PRESENT_1 second). Measured by the architect seat directly (live line-reads at HEAD; ID-A precedent). Read-only: zero repository mutations besides this file, sync never run, zero builds/tests beyond the session-restore verification already recorded. UNTRACKED at authoring — enrolls at the charter cascade C1.'
+- register_id: DOC-E-F60A_TICK_PATH_VERIFICATION_RECON
+  path: docs/reports/F60A_TICK_PATH_VERIFICATION_RECON.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'F-60(a) VERIFICATION RECON — 2026-08-26 — independent read-only re-measurement of DOC-E-F60A_TICK_PATH_RECON_REPORT at the same HEAD 3173d2b by a fresh Opus subagent (operator-requested second instrument): every structural claim on TickScheduler._tickRateCache CONFIRMED (Type-keyed :30, GetOrAdd on first ShouldRun :63-64, Reset() zero production callers — sole caller is the thread-safety test that USES it to reopen its race window, _ticks readonly and untouched by Rebuild, GameBootstrap session lifetime with three long-lived referents); design-target measured (SystemMetadata positional record with ONE production construction site in SystemMetadataBuilder rebuilt at exactly the four load boundaries; ModRegistry.cs:253-254 already reads [TickRate] at load time; ShouldRun has ONE production caller; 25 new TickScheduler() sites = 1 prod + 24 test); adjacent class RE-CLASSIFIED: ModeCache/_handlers key shared-ALC event types in this repro (SharedModLoadContext isCollectible: false BY INVARIANT §1.4 — a shared-ALC release assertion is impossible-by-design), BusFacade has ZERO production construction sites (K10.4 gate), IntentBatcher is DEAD CODE (1 hit = its own declaration), NativeComponentTypeRegistry._byId (NOT NativeComponentType — owning-type correction) is legacy-arm-only and write-only (Lookup has 0 callers); NO test pins the 1-tick minimal repro (pinned pair is 340-ticks-fails / 0-ticks-passes); 11 discrepancies/refinements enumerated'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F60A_TICK_PATH_RECON_REPORT, DOC-E-F59_F60_IDENTITY_RECON_REPORT). Operator-requested INDEPENDENT verification pass (2026-08-26, "для точности авторинга брифа проведи разведку субагентом") executed by a fresh read-only Opus subagent against the same HEAD — the census-needs-two-instruments discipline applied to recon itself. Read-only: zero repository mutations besides this file, sync never run, zero builds/tests by the subagent. UNTRACKED at authoring — enrolls at the charter cascade C1 alongside the primary recon.'
 - register_id: DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT
   path: docs/reports/GAME_ENGINE_BOUNDARY_AUDIT_REPORT.md
   project: Dual Frontier
