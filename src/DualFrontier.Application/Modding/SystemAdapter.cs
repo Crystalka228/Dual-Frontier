@@ -17,9 +17,12 @@ namespace DualFrontier.Application.Modding;
 ///
 /// <para>
 /// Generic in the wrapped type so each distinct mod system yields a distinct
-/// <see cref="SystemBase"/> type — keeping the executor's type-keyed logic
-/// correct (duplicate detection in <c>DependencyGraph</c>, the per-type
-/// tick-rate cache). The adapter carries no <c>[SystemAccess]</c>/<c>[TickRate]</c>
+/// <see cref="SystemBase"/> type — keeping the executor's duplicate detection in
+/// <c>DependencyGraph</c> correct. (It once also served a per-type tick-rate
+/// cache on <c>TickScheduler</c>; that cache was the F-60(a) ALC root and is
+/// gone — the cadence is resolved at load time into the scheduler's per-system
+/// metadata table, which holds no <see cref="Type"/> at all.)
+/// The adapter carries no <c>[SystemAccess]</c>/<c>[TickRate]</c>
 /// of its own; it FORWARDS the wrapped system's declarations via the
 /// <see cref="SystemBase.AccessDeclaration"/>/<see cref="SystemBase.TickRateDeclaration"/>
 /// hooks, so it is transparent to the executor's reflection.

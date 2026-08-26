@@ -203,29 +203,37 @@ public sealed class WeatherWaveGateTests
     }
 
     /// <summary>
-    /// F-60 leak half, RE-ATTRIBUTED (ID-A). The mod's ALC is still not reclaimed -- but the cause
-    /// is NOT the component type registry, which is what W3 and the identity recon both concluded.
-    /// ID-A re-keyed ComponentTypeRegistry so its authoritative state holds no Type reference at
-    /// all and its Type-keyed resolution is a ConditionalWeakTable whose keys are held weakly; the
-    /// ALC still fails to release, so the registry was never the binding root.
+    /// F-60(a) CLOSED. The mod's ALC is reclaimed after it has ticked. This assertion was an
+    /// EXPECTED-DEFECT pin for two cascades: W3 and the identity recon both concluded the root was
+    /// the component type registry, ID-A disproved that by re-keying the registry so it holds no
+    /// Type reference at all (and the leak survived), and this cascade found and removed the actual
+    /// root.
     ///
     /// <para>
     /// Measured by bisection on the production composition at ID-A, holding everything else fixed
     /// and varying only how many ticks elapse between load and unload:
     /// 0 ticks -> 3 ms, no warnings; 1 tick -> 10,459 ms + ModUnloadTimeout; 16 -> 10,518 ms;
-    /// 100 -> 10,456 ms; 340 -> 10,565 ms. A SINGLE ExecuteTick is sufficient to root the ALC, and
-    /// the companion test below pins the clean 0-tick release so the pair cannot drift apart.
-    /// The root therefore lives on the tick path, not in component identity, and locating it is
-    /// chartered work rather than something to chase from here.
+    /// 100 -> 10,456 ms; 340 -> 10,565 ms. A SINGLE ExecuteTick was sufficient to root the ALC, and
+    /// more ticks changed nothing -- the signature of a memoising GetOrAdd, not of an accumulating
+    /// queue. That table is kept because it is what located the root; the companion tests below and
+    /// above pin its two ends (0 ticks and 1 tick) so the shape cannot silently drift.
     /// </para>
     ///
     /// <para>
-    /// Kept as an EXPECTED-DEFECT assertion, deliberately, so the gap stays a measured fact with a
-    /// test attached. Flip it to BeEmpty when the tick-path root is closed.
+    /// THE ROOT (F60A_TICK_PATH): <c>TickScheduler._tickRateCache</c>, a session-lived
+    /// <c>ConcurrentDictionary&lt;Type,int&gt;</c> populated by <c>GetOrAdd(system.GetType(), ...)</c>
+    /// on the FIRST <c>ShouldRun</c> call and evicted by nothing -- its only clearing method,
+    /// <c>Reset()</c>, had zero production callers, and the TickScheduler instance survives every
+    /// pipeline Rebuild as the scheduler's readonly field. For an SDK mod system the key is
+    /// <c>SystemAdapter&lt;TSystem&gt;</c> closed over a type from the mod's collectible ALC, so a
+    /// single tick planted a strong Type key that kept the whole ALC alive for the session.
+    /// THE FIX: the tick rate is resolved at LOAD time into the scheduler's per-system
+    /// <c>SystemMetadata</c> table -- which is keyed by instance and swapped wholesale at every load
+    /// boundary, so it is evicted at unload for free -- and the lazy cache is deleted outright.
     /// </para>
     /// </summary>
     [Fact]
-    public void Unload_LeaksTheModAlc_RootIsOnTheTickPath_NotTheTypeRegistry()
+    public void Unload_AfterTicking_ReleasesTheModAlc_TickPathHoldsNoTypeKey()
     {
         using var h = new WeatherHarness();
         h.ApplyWeatherPair().Success.Should().BeTrue();
@@ -233,11 +241,36 @@ public sealed class WeatherWaveGateTests
 
         IReadOnlyList<ValidationWarning> warnings = h.Pipeline.UnloadMod(RegularId);
 
-        warnings.Should().Contain(w => w.Message.Contains("ModUnloadTimeout"),
-            "EXPECTED DEFECT (F-60, leak half): something on the tick path roots the collectible " +
-            "ALC, so the step-7 WeakReference spin runs its full 10 s and advises a restart. The " +
-            "registry is NOT that something -- ID-A removed its every Type reference and this " +
-            "still fails. Flip to BeEmpty when the real root is closed");
+        warnings.Should().BeEmpty(
+            "F-60(a) is closed: nothing on the tick path holds a Type key that outlives unload, so " +
+            "the step-7 WeakReference spin observes the release on its first GC pump pass instead " +
+            "of running its full 10 s and advising a restart");
+    }
+
+    /// <summary>
+    /// The minimal repro, pinned for the first time by F60A_TICK_PATH. The bisection recorded above
+    /// established that ONE tick was enough to root the ALC, but no test pinned that datum -- the
+    /// pair was 340-ticks-fails and 0-ticks-passes, which leaves the actual boundary untested.
+    ///
+    /// <para>
+    /// This matters beyond tidiness: the defect was a first-call memoisation, so the single tick is
+    /// exactly where it was created. A regression that reintroduced lazy per-type population on the
+    /// tick path would fail HERE first and most cheaply, and a 340-tick pin passing while this one
+    /// failed would be a contradiction worth stopping for.
+    /// </para>
+    /// </summary>
+    [Fact]
+    public void Unload_AfterSingleTick_ReleasesTheModAlc_Immediately()
+    {
+        using var h = new WeatherHarness();
+        h.ApplyWeatherPair().Success.Should().BeTrue();
+        h.Tick(1);
+
+        IReadOnlyList<ValidationWarning> warnings = h.Pipeline.UnloadMod(RegularId);
+
+        warnings.Should().BeEmpty(
+            "one tick is the exact point at which the old per-type cache was populated; with the " +
+            "rate resolved at load time there is nothing for that first tick to plant");
     }
 
     /// <summary>
