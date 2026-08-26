@@ -52,6 +52,16 @@ public sealed class XcbWindow : IWindow
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(inputQueue);
 
+        // The X11 CreateWindow request carries width/height as 16-bit unsigned values, so an
+        // out-of-range dimension would WRAP rather than fail: 65536 narrows to 0 and 70000 to
+        // 4464. The request is unchecked and X reports protocol errors asynchronously, so the
+        // constructor would go on to set IsOpen and keep the original ints while the server had
+        // rejected the window or built it at a different size. Reject it here instead.
+        ArgumentOutOfRangeException.ThrowIfLessThan(options.Width, 1);
+        ArgumentOutOfRangeException.ThrowIfLessThan(options.Height, 1);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(options.Width, ushort.MaxValue);
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(options.Height, ushort.MaxValue);
+
         _options = options;
         _currentWidth = options.Width;
         _currentHeight = options.Height;

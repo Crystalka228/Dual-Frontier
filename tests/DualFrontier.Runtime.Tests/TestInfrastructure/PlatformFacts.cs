@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using DualFrontier.Runtime.Graphics;
+using DualFrontier.Runtime.Native.Xcb;
 using Xunit;
 
 namespace DualFrontier.Runtime.Tests;
@@ -19,8 +20,19 @@ internal static class HostCapability
     private const string LinuxVulkanLoader = "libvulkan.so.1";
     private const string LinuxXcb = "libxcb.so.1";
 
-    /// <summary>True when the platform's Vulkan loader can be loaded in this process.</summary>
-    internal static bool HasVulkanLoader()
+    /// <summary>
+    /// True when this host can actually build the Vulkan objects the gated tests build.
+    ///
+    /// <para>Loading the loader is NOT sufficient evidence. A headless CI image can ship
+    /// <c>libvulkan.so.1</c> with no working ICD, no GPU and no render-node access, and
+    /// <c>TryLoad</c> would happily succeed — enabling every gated test, which would then fail
+    /// inside fixture construction instead of skipping. The gate is documented as "loader plus
+    /// GPU", so it probes for exactly that: a real instance and a real device, once per test
+    /// process.</para>
+    /// </summary>
+    internal static bool HasVulkanLoader() => VulkanDeviceProbe.Value;
+
+    private static readonly Lazy<bool> VulkanDeviceProbe = new(() =>
     {
         string loader = OperatingSystem.IsWindows() ? WindowsVulkanLoader : LinuxVulkanLoader;
         if (!NativeLibrary.TryLoad(loader, out IntPtr handle))
@@ -31,8 +43,23 @@ internal static class HostCapability
         // unloading it out from under a live VkInstance would be worse than leaking a handle
         // for the lifetime of a test run.
         _ = handle;
-        return true;
-    }
+
+        try
+        {
+            using var instance = new VulkanInstance(enableValidation: false);
+            using var device = new VulkanDevice(instance);
+            return device.Handle != IntPtr.Zero;
+        }
+        catch (InvalidOperationException)
+        {
+            // No usable ICD, no К-L19-tier device, or no render node.
+            return false;
+        }
+        catch (DllNotFoundException)
+        {
+            return false;
+        }
+    });
 
     /// <summary>
     /// True when a window can actually be opened here: the Vulkan loader plus a reachable
@@ -45,14 +72,44 @@ internal static class HostCapability
         {
             return false;
         }
-        if (OperatingSystem.IsWindows())
-        {
-            return true;
-        }
-        bool hasSession = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DISPLAY"))
-            || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY"));
-        return hasSession && NativeLibrary.TryLoad(LinuxXcb, out _);
+        return OperatingSystem.IsWindows() || HasXcbDisplay();
     }
+
+    /// <summary>
+    /// True when an xcb connection can actually be opened here.
+    ///
+    /// <para>Probed by opening one, not inferred from environment variables. <c>WAYLAND_DISPLAY</c>
+    /// being set proves a Wayland session and nothing about X: on a pure Wayland box WITHOUT
+    /// XWayland there is no <c>DISPLAY</c>, and <c>xcb_connect(null, ...)</c> — which is what
+    /// <c>XcbWindow</c> calls — reads <c>DISPLAY</c> and cannot use the Wayland socket. Treating
+    /// a Wayland session as a display would enable every windowing test on such a host and fail
+    /// them all in window construction instead of skipping them.</para>
+    /// </summary>
+    internal static bool HasXcbDisplay() => XcbConnectionProbe.Value;
+
+    private static readonly Lazy<bool> XcbConnectionProbe = new(() =>
+    {
+        if (!OperatingSystem.IsLinux() || !NativeLibrary.TryLoad(LinuxXcb, out _))
+        {
+            return false;
+        }
+
+        IntPtr connection = XcbApi.xcb_connect(null, out _);
+        if (connection == IntPtr.Zero)
+        {
+            return false;
+        }
+        try
+        {
+            return XcbApi.xcb_connection_has_error(connection) == 0;
+        }
+        finally
+        {
+            // xcb_connect returns a connection object even on failure; it must be released
+            // either way.
+            XcbApi.xcb_disconnect(connection);
+        }
+    });
 
     internal const string NoVulkanReason =
         "Requires a working platform Vulkan loader (vulkan-1.dll / libvulkan.so.1); skipped on this host.";
@@ -89,8 +146,12 @@ internal static class HostCapability
         "skipped on this host.";
 
     internal const string NoDisplayReason =
-        "Requires a Vulkan loader AND a display server (Windows desktop, or DISPLAY/WAYLAND_DISPLAY " +
-        "with libxcb.so.1); skipped on this host.";
+        "Requires a usable Vulkan device AND a display server (Windows desktop, or a reachable " +
+        "X/XWayland display via libxcb.so.1); skipped on this host.";
+
+    internal const string NoXcbReason =
+        "Requires Linux with a reachable X/XWayland display (probed by opening an xcb " +
+        "connection); skipped on this host.";
 }
 
 /// <summary>
@@ -159,6 +220,30 @@ public sealed class RequiresVulkanValidationFactAttribute : FactAttribute
         else if (!HostCapability.HasVulkanValidationLayer())
         {
             Skip = HostCapability.NoValidationLayerReason;
+        }
+    }
+}
+
+/// <summary>
+/// A <see cref="FactAttribute"/> skipped unless this host is Linux WITH a reachable X display.
+///
+/// <para>Distinct from <see cref="RequiresDisplayFactAttribute"/>, which asks the
+/// platform-neutral question "can a window be opened here" and is therefore true on Windows.
+/// A test that names <c>XcbWindow</c> is not platform-neutral: on a Windows runner it would
+/// fail loading <c>libxcb.so.1</c>, and a factory assertion would receive <c>Win32Window</c>.
+/// This gate is for suites that exercise the XCB backend specifically.</para>
+/// </summary>
+public sealed class RequiresXcbFactAttribute : FactAttribute
+{
+    public RequiresXcbFactAttribute()
+    {
+        if (!HostCapability.HasVulkanLoader())
+        {
+            Skip = HostCapability.NoVulkanReason;
+        }
+        else if (!HostCapability.HasXcbDisplay())
+        {
+            Skip = HostCapability.NoXcbReason;
         }
     }
 }

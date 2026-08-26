@@ -9,8 +9,9 @@ using Xunit;
 namespace DualFrontier.Runtime.Tests.Window;
 
 /// <summary>
-/// Behavioural pins for the XCB backend against a live X server. Display-gated: these need a
-/// reachable display, which is exactly what <c>RequiresDisplayFact</c> probes for.
+/// Behavioural pins for the XCB backend against a live X server. Gated on
+/// <c>RequiresXcbFact</c>, not the platform-neutral display gate: this suite names XcbWindow
+/// directly, so it must be skipped on Windows rather than merely "where a window can open".
 ///
 /// <para>The two load-bearing pins are the close protocol and the resize path. Both are driven
 /// by synthesising the real protocol traffic — a WM_DELETE_WINDOW client message and an
@@ -41,7 +42,7 @@ public sealed class XcbWindowTests
         return condition();
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Window_opens_with_the_requested_dimensions()
     {
         var opts = new WindowOptions { Title = "XCB open", Width = 640, Height = 480 };
@@ -55,7 +56,7 @@ public sealed class XcbWindowTests
         window.Connection.Should().NotBe(IntPtr.Zero);
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Window_is_created_through_the_platform_factory_on_this_host()
     {
         var opts = new WindowOptions { Title = "XCB factory", Width = 320, Height = 240 };
@@ -66,7 +67,7 @@ public sealed class XcbWindowTests
         window.IsOpen.Should().BeTrue();
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Show_and_hide_map_and_unmap_without_error()
     {
         var opts = new WindowOptions { Title = "XCB map", Width = 320, Height = 240 };
@@ -84,7 +85,7 @@ public sealed class XcbWindowTests
         window.IsOpen.Should().BeTrue();
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Delete_window_client_message_closes_the_window()
     {
         var opts = new WindowOptions { Title = "XCB close", Width = 320, Height = 240 };
@@ -99,7 +100,7 @@ public sealed class XcbWindowTests
         window.IsOpen.Should().BeFalse();
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Configure_notify_updates_width_and_height()
     {
         var opts = new WindowOptions { Title = "XCB resize", Width = 320, Height = 240 };
@@ -119,7 +120,7 @@ public sealed class XcbWindowTests
         window.Height.Should().Be(400);
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Configure_notify_publishes_a_resize_event()
     {
         var opts = new WindowOptions { Title = "XCB resize event", Width = 320, Height = 240 };
@@ -135,7 +136,7 @@ public sealed class XcbWindowTests
         resize.NewHeight.Should().Be(384);
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Configure_notify_at_unchanged_size_publishes_nothing()
     {
         var opts = new WindowOptions { Title = "XCB resize noop", Width = 320, Height = 240 };
@@ -152,7 +153,7 @@ public sealed class XcbWindowTests
         DequeueFirst<WindowResizeEvent>(queue).Should().BeNull();
     }
 
-    [RequiresDisplayFact]
+    [RequiresXcbFact]
     public void Window_creates_a_vulkan_surface()
     {
         var opts = new WindowOptions { Title = "XCB surface", Width = 320, Height = 240 };
@@ -163,6 +164,36 @@ public sealed class XcbWindowTests
         using var surface = new VulkanSurface(instance, window);
 
         surface.Handle.Should().NotBe(IntPtr.Zero);
+    }
+
+    [RequiresXcbFact]
+    public void Dimensions_outside_the_x11_ushort_range_are_rejected()
+    {
+        var queue = new InputEventQueue();
+
+        // 65536 would narrow to 0 and 70000 to 4464 — silently, because the CreateWindow
+        // request is unchecked and X reports protocol errors asynchronously.
+        Action tooWide = () => new XcbWindow(
+            new WindowOptions { Title = "XCB wide", Width = 65536, Height = 240 }, queue);
+        Action tooTall = () => new XcbWindow(
+            new WindowOptions { Title = "XCB tall", Width = 320, Height = 70000 }, queue);
+
+        tooWide.Should().Throw<ArgumentOutOfRangeException>();
+        tooTall.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [RequiresXcbFact]
+    public void Non_positive_dimensions_are_rejected()
+    {
+        var queue = new InputEventQueue();
+
+        Action zeroWidth = () => new XcbWindow(
+            new WindowOptions { Title = "XCB zero", Width = 0, Height = 240 }, queue);
+        Action negativeHeight = () => new XcbWindow(
+            new WindowOptions { Title = "XCB negative", Width = 320, Height = -1 }, queue);
+
+        zeroWidth.Should().Throw<ArgumentOutOfRangeException>();
+        negativeHeight.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     // --- protocol helpers -------------------------------------------------------------------
