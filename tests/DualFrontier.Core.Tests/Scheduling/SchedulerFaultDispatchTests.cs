@@ -158,7 +158,7 @@ public sealed class SchedulerFaultDispatchTests : IDisposable
     }
 
     private static Dictionary<SystemBase, SystemMetadata> Mod(SystemBase system, string modId)
-        => new() { [system] = new SystemMetadata(SystemOrigin.Mod, modId) };
+        => new() { [system] = new SystemMetadata(SystemOrigin.Mod, modId, DualFrontier.Core.Scheduling.TickRates.REALTIME) };
 
     private sealed class RecordingFaultSink : IModFaultSink
     {

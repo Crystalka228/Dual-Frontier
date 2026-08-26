@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.0
+version: 2.2.0
 first_authored: 2026-06-29
-last_modified: '2026-08-20'
+last_modified: '2026-08-26'
 content_language: en
 next_review_due: 2027-06-11
 title: Development hygiene
 last_modified_commit: 27807f7
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'MINOR 2.0.2 -> 2.1.0 2026-08-20 (push-policy inversion propagated from CODING_STANDARDS 3.0.0 section 8.4, per section 10.1 rule 5; operator direction 2026-08-20): section 5 branch/push policy replaced -- the executor pushes its work branch and opens a PR against main, never pushes main and never merges its own PR; ratification moves from the push to the merge. Rationale: the prior never-push rule could not hold in a remote/cloud session where an unpushed branch is lost work. Also backfilled the missing v2.0.2 change-history row (STACK_UPDATE Phase E), which had existed only in this field. No lifecycle transition (LOCKED).'
+last_review_date: 2026-08-26
+last_review_event: 'MINOR 2.1.0 -> 2.2.0 2026-08-26 (F60A_TICK_PATH cascade, brief section 7.1 D3): section 3 gains the canonical LINUX native-kernel build commands alongside the existing Windows invocation, plus a new subsection recording how the native library reaches managed TEST output on both hosts. Rationale: the operator ruled Linux the PERMANENT development environment on 2026-08-26, and section 3 documented only the VS-bundled MSVC invocation, so the operative build law was unwritten for the environment development actually runs in. Records the three facts that cost time to rediscover: Ninja is single-config so outputs land at the build root with no Release/ subdirectory, a Windows-era build/ tree must be deleted rather than reconfigured, and the paired Exists-guarded None items make the DllImport bare name resolve on either host. MINOR per CODING_STANDARDS 10.1 rule 3 (a new rule or family, nothing inverted). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-011
@@ -126,6 +126,25 @@ dotnet build DualFrontier.sln -c Release
 - cmake 4.2.3-msvc3 is **VS-bundled, NOT on PATH** — the absolute path above is the verified invocation; the install root is discoverable via `vswhere.exe` (`${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe`).
 - Outputs land at `native\DualFrontier.Core.Native\build\Release\`: `DualFrontier.Core.Native.dll` plus `df_native_selftest.exe`.
 - The sibling `native\DualFrontier.Core.Native\out\` directory is the **VS-IDE CMake-preset Debug tree — it is NOT the canonical build tree.** The canonical tree is `build\`.
+
+**Native kernel — Linux (the permanent development environment, operator ruling 2026-08-26):**
+
+```
+cmake -S native/DualFrontier.Core.Native -B native/DualFrontier.Core.Native/build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build native/DualFrontier.Core.Native/build
+```
+
+- cmake **is** on `PATH` here (4.2.3), with ninja 1.13.2 and gcc/g++ 15.2; the MSVC `/std:c++23preview` pin (К-L1) is Windows-arm-only and the CMake GNU arm needed no change.
+- **Ninja is single-config: outputs land at the build ROOT `native/DualFrontier.Core.Native/build/`, with NO `Release/` subdirectory** — `DualFrontier.Core.Native.so` plus `df_native_selftest`. This is the single most load-bearing difference from the Windows layout above, and it is what the test-project `.so` copy items point at.
+- The build tree is **generator-specific and not portable**: a `build/` directory configured by one generator refuses reconfiguration by another (`CMakeCache.txt directory ... is different`). A tree carried over from the Windows era must be deleted, not reconfigured — `rm -rf native/DualFrontier.Core.Native/build`. The directory is git-ignored (`.gitignore`), so deleting it touches no tracked file.
+- Selftest: `./native/DualFrontier.Core.Native/build/df_native_selftest` → `ALL PASSED` (110 scenarios at this writing).
+
+**How the native library reaches managed TEST output (both hosts):**
+
+- Each native-dependent test project carries **two sibling `<None>` items** with `CopyToOutputDirectory=PreserveNewest`: the Windows one pointing at `build\Release\DualFrontier.Core.Native.dll`, the Linux one at `build\DualFrontier.Core.Native.so`. Both are `Exists(...)`-guarded, so exactly one applies on any given host and no OS condition is needed (MSBuild normalises the backslash separators on Linux).
+- The 8 projects carrying this pair: `DualFrontier.Modding.Tests`, `DualFrontier.Runtime.Tests`, `DualFrontier.Core.Tests`, `DualFrontier.Core.Interop.Tests`, `DualFrontier.Application.Tests`, `DualFrontier.Systems.Tests`, `DualFrontier.Core.Benchmarks`, `DualFrontier.Runtime.SmokeTest`.
+- `DllImport` uses the bare name `"DualFrontier.Core.Native"` (`NativeMethods.cs`), which default .NET probing resolves to `<name>.so` on Linux and `<name>.dll` on Windows — **no managed rename is needed for either host.**
+- Build the native tree BEFORE the managed solution: the `Exists` guard means a missing library makes the copy silently skip, and the failure then surfaces as `DllNotFoundException` at test time rather than as a build error.
 
 **Single project:**
 
@@ -239,6 +258,15 @@ Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_A
 
 ## Change history
 
+- **v2.2.0 (2026-08-26)** — F60A_TICK_PATH cascade (brief §7.1, D3). §3 gains the canonical **Linux** native-kernel
+  build commands beside the existing Windows invocation, and a new subsection records how the native library reaches
+  managed **test** output on both hosts. The operator ruled Linux the PERMANENT development environment on 2026-08-26,
+  and §3 documented only the VS-bundled MSVC path — the operative build law was unwritten for the environment
+  development actually runs in. Three facts are pinned because each cost time to rediscover: Ninja is single-config so
+  outputs land at the build ROOT with no `Release\` subdirectory; a Windows-era `build/` tree must be **deleted**, not
+  reconfigured (CMake refuses a generator change in place); and the paired `Exists`-guarded `<None>` items let the bare
+  `DllImport` name resolve on either host with no managed rename. **MINOR** per `CODING_STANDARDS.md` §10.1 rule 3
+  (a new rule or family; nothing inverted).
 - **v2.1.0 (2026-08-20)** — Push-policy inversion propagated from `CODING_STANDARDS.md` §8.4 v3.0.0 (§10.1 rule 5).
   §5's "the executor NEVER pushes" replaced with "the executor pushes its BRANCH and opens a PR; the architect merges."
   The executor still never pushes `main` and never merges its own PR — ratification moved from the push to the merge.

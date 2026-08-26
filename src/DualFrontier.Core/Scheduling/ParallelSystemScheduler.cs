@@ -20,7 +20,8 @@ namespace DualFrontier.Core.Scheduling;
 ///
 /// Per-system lifecycle inside a phase:
 ///   1. <see cref="TickScheduler.ShouldRun"/> filters out systems not due on
-///      this tick according to their <c>[TickRate]</c>.
+///      this tick, using the cadence resolved at load time and carried in the
+///      per-system <see cref="SystemMetadata"/> table (F-60(a)).
 ///   2. <c>SystemExecutionContext.PushContext</c> establishes the isolation
 ///      guard on the current thread.
 ///   3. <c>SystemBase.Update</c> runs.
@@ -169,13 +170,20 @@ internal sealed class ParallelSystemScheduler
 
         Parallel.ForEach(phase.Systems, _parallelOptions, system =>
         {
-            if (!_ticks.ShouldRun(system))
+            // F-60(a) — ONE metadata consult per system per tick serves BOTH the
+            // cadence check and the quarantine consult; they used to be two
+            // separate lookups. Systems absent from the table fall through to
+            // Core/null/REALTIME (see the systemMetadata parameter doc), which is
+            // what keeps the empty-table test path working.
+            _systemMetadata.TryGetValue(system, out SystemMetadata? meta);
+
+            if (!_ticks.ShouldRun(meta?.TicksPerUpdate ?? TickRates.REALTIME))
                 return;
 
             // EQ_A1 / M1 — ELT §2.3 immediate quarantine: a mod whose system
             // already faulted this session is skipped (its unload is queued for the
             // next menu open). Consulted here, before the context push.
-            if (IsQuarantined(system))
+            if (meta?.ModId is not null && _quarantine.IsQuarantined(meta.ModId))
                 return;
 
             SystemExecutionContext ctx = _contextCache[system];
@@ -267,14 +275,6 @@ internal sealed class ParallelSystemScheduler
     /// remain referentially identical.
     /// </summary>
     internal IReadOnlyList<SystemPhase> Phases => _phases;
-
-    // EQ_A1 / M1 — quarantine consult for ExecutePhase: a system is skipped when
-    // its owning mod (per the metadata table BuildContext reads) is in the
-    // ModQuarantine set. Core systems (no modId) are never quarantined.
-    private bool IsQuarantined(SystemBase system)
-        => _systemMetadata.TryGetValue(system, out SystemMetadata? meta)
-           && meta.ModId is not null
-           && _quarantine.IsQuarantined(meta.ModId);
 
     private SystemExecutionContext BuildContext(SystemBase system)
     {

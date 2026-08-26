@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DualFrontier.Contracts.Attributes;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Scheduling;
 
@@ -35,8 +36,39 @@ internal static class SystemMetadataBuilder
         var lookup = new Dictionary<SystemBase, SystemMetadata>();
         foreach (SystemRegistration reg in registry.GetAllSystems())
         {
-            lookup[reg.Instance] = new SystemMetadata(reg.Origin, reg.ModId);
+            lookup[reg.Instance] = new SystemMetadata(
+                reg.Origin, reg.ModId, ResolveTicksPerUpdate(reg.Instance));
         }
         return lookup;
+    }
+
+    /// <summary>
+    /// Resolves a system's tick cadence from its <c>[TickRate]</c> declaration,
+    /// normalising a missing or non-positive rate to
+    /// <see cref="DualFrontier.Core.Scheduling.TickRates.REALTIME"/>. Reads the
+    /// <see cref="SystemBase"/> hook
+    /// rather than the concrete type so an SDK system wrapped in
+    /// <c>SystemAdapter&lt;T&gt;</c> forwards its INNER rate (W1 BD-1) -- the
+    /// adapter's own <c>[TickRate]</c> is a DFK013 bridge placeholder.
+    ///
+    /// <para>
+    /// F-60(a): this runs at LOAD time, once per system per rebuild, and its
+    /// result is carried in the metadata table. It previously ran lazily on the
+    /// tick path and was memoised into a <c>ConcurrentDictionary&lt;Type,int&gt;</c>
+    /// on <c>TickScheduler</c>, whose strong <see cref="System.Type"/> keys
+    /// (for an SDK mod system, <c>SystemAdapter&lt;TSystem&gt;</c> closed over a
+    /// collectible-ALC type) had no eviction and rooted the mod's ALC for the
+    /// remaining session -- so a mod that ticked even once could never be
+    /// reclaimed.
+    /// </para>
+    /// </summary>
+    private static int ResolveTicksPerUpdate(SystemBase system)
+    {
+        TickRateAttribute? attribute = system.TickRateDeclaration;
+        if (attribute is null)
+            return DualFrontier.Core.Scheduling.TickRates.REALTIME;
+
+        int value = attribute.TicksPerUpdate;
+        return value > 0 ? value : DualFrontier.Core.Scheduling.TickRates.REALTIME;
     }
 }

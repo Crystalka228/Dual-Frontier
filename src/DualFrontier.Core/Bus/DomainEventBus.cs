@@ -19,10 +19,41 @@ namespace DualFrontier.Core.Bus;
 /// <see cref="SystemExecutionContext"/> active at <see cref="Subscribe"/> time;
 /// that context is re-pushed during deferred dispatch so handlers may mutate
 /// components within their own declared <c>[SystemAccess]</c> rights.
+///
+/// <para>
+/// <b>Type-key lifetime (F-60(a) sibling).</b> Both maps here are keyed by
+/// <see cref="Type"/>, and a strong <see cref="Type"/> key roots the
+/// <c>AssemblyLoadContext</c> that produced it — for a mod that declares event
+/// types in its own regular (collectible) assembly, an unevicted key means the mod
+/// can never be reclaimed. The subscription map now holds the invariant that
+/// <b>no Type key outlives its last subscriber</b>: <see cref="Unsubscribe"/> drops
+/// the key when its list empties. Combined with unload step 1
+/// (<c>RestrictedModApi.UnsubscribeAll</c>, which removes every subscription a mod
+/// owns), a mod's event-type keys are gone by the time its ALC is checked.
+/// </para>
+///
+/// <para>
+/// The delivery-mode cache is bounded differently and the difference is
+/// deliberate: its keys are the event types that have been PUBLISHED, and the bus
+/// holds no owner index for those, so there is nothing to evict them BY at unload.
+/// Building one would mean an owner-indexed mode cache, which is К10.4-adjacent
+/// design and out of scope here. What bounds it today is the supported topology:
+/// mod-authored event types are vended by shared-kind contracts assemblies
+/// (MOD_OS §1.4), and <c>SharedModLoadContext</c> is non-collectible BY INVARIANT,
+/// so those keys root nothing that was ever going to be unloaded. A regular-ALC
+/// event type reaching <see cref="Publish"/> would escape that bound; it is
+/// carried as a findings-ledger row (analyzer candidate), not silently assumed
+/// impossible. Making the cache an instance field at least ends it with the
+/// session rather than the process.
+/// </para>
 /// </summary>
 internal sealed class DomainEventBus
 {
-    private static readonly ConcurrentDictionary<Type, DeliveryMode> ModeCache = new();
+    // F-60(a) sibling: INSTANCE, not static. There is exactly one DomainEventBus
+    // per session (GameServices owns it; there is no production `new` site), so a
+    // static bought nothing and cost the ability to ever release its keys -- a
+    // process-lived Type-keyed map that outlived the session that filled it.
+    private readonly ConcurrentDictionary<Type, DeliveryMode> _modeCache = new();
 
     private readonly ConcurrentDictionary<Type, List<Subscription>> _handlers = new();
     private readonly ConcurrentQueue<DeferredItem> _deferred = new();
@@ -38,22 +69,36 @@ internal sealed class DomainEventBus
         if (handler is null) throw new ArgumentNullException(nameof(handler));
         Type eventType = typeof(TEvent);
 
-        List<Subscription> list = _handlers.GetOrAdd(eventType, _ => new List<Subscription>());
         SystemExecutionContext? captured = SystemExecutionContext.Current;
         Action<IEvent> invoker = e => handler((TEvent)e);
         var sub = new Subscription(handler, invoker, captured);
 
-        lock (list)
+        while (true)
         {
-            for (int i = 0; i < list.Count; i++)
+            List<Subscription> list = _handlers.GetOrAdd(eventType, _ => new List<Subscription>());
+
+            lock (list)
             {
-                // Delegate value equality (Target + Method), not ReferenceEquals: a method-group
-                // handler (e.g. OnFoo) allocates a fresh delegate instance on every conversion, so
-                // reference identity would never match and duplicates would accumulate (F19).
-                if (list[i].Original.Equals(handler))
-                    return;
+                // Unsubscribe now drops the Type key when its list empties, so the list
+                // we just fetched may have been evicted while we waited for its lock.
+                // Adding to an evicted list would silently lose the subscription --
+                // nothing would ever read it again. Re-check identity under the lock and
+                // retry against whatever list is mapped now.
+                if (!_handlers.TryGetValue(eventType, out List<Subscription>? current)
+                    || !ReferenceEquals(current, list))
+                    continue;
+
+                for (int i = 0; i < list.Count; i++)
+                {
+                    // Delegate value equality (Target + Method), not ReferenceEquals: a method-group
+                    // handler (e.g. OnFoo) allocates a fresh delegate instance on every conversion, so
+                    // reference identity would never match and duplicates would accumulate (F19).
+                    if (list[i].Original.Equals(handler))
+                        return;
+                }
+                list.Add(sub);
+                return;
             }
-            list.Add(sub);
         }
     }
 
@@ -65,7 +110,8 @@ internal sealed class DomainEventBus
     public void Unsubscribe<TEvent>(Action<TEvent> handler) where TEvent : IEvent
     {
         if (handler is null) throw new ArgumentNullException(nameof(handler));
-        if (!_handlers.TryGetValue(typeof(TEvent), out List<Subscription>? list))
+        Type eventType = typeof(TEvent);
+        if (!_handlers.TryGetValue(eventType, out List<Subscription>? list))
             return;
 
         lock (list)
@@ -76,8 +122,20 @@ internal sealed class DomainEventBus
                 if (list[i].Original.Equals(handler))
                 {
                     list.RemoveAt(i);
-                    return;
+                    break;
                 }
+            }
+
+            if (list.Count == 0)
+            {
+                // F-60(a) sibling: the Type key dies with its last subscriber. Previously
+                // the key and its empty list persisted for the session, which roots a
+                // collectible ALC for any mod that declares its event types in its own
+                // regular assembly. Compare-and-remove (the ICollection overload) drops the
+                // entry ONLY while it still maps to THIS list, so a concurrent Subscribe
+                // that already installed a replacement is never clobbered.
+                ((ICollection<KeyValuePair<Type, List<Subscription>>>)_handlers)
+                    .Remove(new KeyValuePair<Type, List<Subscription>>(eventType, list));
             }
         }
     }
@@ -225,8 +283,8 @@ internal sealed class DomainEventBus
         }
     }
 
-    private static DeliveryMode GetDeliveryMode(Type eventType) =>
-        ModeCache.GetOrAdd(eventType, ResolveDeliveryMode);
+    private DeliveryMode GetDeliveryMode(Type eventType) =>
+        _modeCache.GetOrAdd(eventType, ResolveDeliveryMode);
 
     private static DeliveryMode ResolveDeliveryMode(Type eventType)
     {
