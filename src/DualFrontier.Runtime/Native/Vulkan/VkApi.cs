@@ -4,7 +4,19 @@ namespace DualFrontier.Runtime.Native.Vulkan;
 
 internal static unsafe partial class VkApi
 {
-    private const string VulkanLib = "vulkan-1.dll";
+    /// <summary>
+    /// The Vulkan loader library name. Deliberately the Windows trampoline name on every
+    /// platform: <see cref="VulkanLibraryResolver"/> maps it to the host loader where it
+    /// differs, so the Windows arm keeps working on untouched default probing.
+    /// </summary>
+    internal const string VulkanLib = "vulkan-1.dll";
+
+    /// <summary>
+    /// Installs the per-platform Vulkan loader mapping. Declaring this constructor removes the
+    /// type's <c>beforefieldinit</c> flag, which is what guarantees the resolver is registered
+    /// before the first P/Invoke below is ever entered.
+    /// </summary>
+    static VkApi() => VulkanLibraryResolver.Register();
 
     [LibraryImport(VulkanLib, EntryPoint = "vkCreateInstance")]
     internal static partial VkResult vkCreateInstance(
