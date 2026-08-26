@@ -15,7 +15,7 @@ namespace DualFrontier.Runtime.Tests.Sprite;
 /// </summary>
 public sealed class TileMapTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly MemoryAllocator _allocator;
@@ -28,7 +28,7 @@ public sealed class TileMapTests : IDisposable
     {
         var opts = new WindowOptions { Title = "TileMap", Width = 400, Height = 300 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _allocator = new MemoryAllocator(_device);

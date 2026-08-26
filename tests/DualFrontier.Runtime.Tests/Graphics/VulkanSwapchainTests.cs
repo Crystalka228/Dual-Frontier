@@ -12,7 +12,7 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class VulkanSwapchainTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly VulkanSurface _surface;
@@ -21,7 +21,7 @@ public sealed class VulkanSwapchainTests : IDisposable
     {
         var opts = new WindowOptions { Title = "Swapchain", Width = 640, Height = 480 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _surface = new VulkanSurface(_instance, _window);

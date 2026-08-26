@@ -26,7 +26,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
     private const float IsotropicTolerance = 0.001f;
     private const float AnisotropicTolerance = 0.001f;
 
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly NativeWorld _cpuWorld;
@@ -36,7 +36,7 @@ public sealed class V1DiffusionEquivalenceTests : IDisposable
     {
         var opts = new WindowOptions { Title = "V1Equiv", Width = 320, Height = 240 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _cpuWorld = new NativeWorld();

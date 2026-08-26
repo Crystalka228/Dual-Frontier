@@ -69,7 +69,8 @@ public sealed class Runtime : IDisposable
         {
             // V0.A primitives.
             runtime.InputQueue = new InputEventQueue();
-            runtime.Window = new Window.Window(options.Window, runtime.InputQueue);
+            runtime.Window = global::DualFrontier.Runtime.Window.PlatformWindow.Create(
+                options.Window, runtime.InputQueue);
             runtime.VulkanInstance = new VulkanInstance(options.EnableValidationLayer);
 
             if (options.EnableValidationLayer)

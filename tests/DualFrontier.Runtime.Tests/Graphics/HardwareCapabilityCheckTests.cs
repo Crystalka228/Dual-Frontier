@@ -49,7 +49,7 @@ public sealed class HardwareCapabilityCheckTests
         // К-L19 baseline integration: Crystalka «Skarlet» AMD RX 7600S satisfies hardware tier.
         var winOpts = new WindowOptions { Title = "HW Check", Width = 400, Height = 300 };
         var queue = new InputEventQueue();
-        using var window = new global::DualFrontier.Runtime.Window.Window(winOpts, queue);
+        using IWindow window = PlatformWindow.Create(winOpts, queue);
         using var instance = new VulkanInstance(enableValidation: false);
         using var device = new VulkanDevice(instance);
 

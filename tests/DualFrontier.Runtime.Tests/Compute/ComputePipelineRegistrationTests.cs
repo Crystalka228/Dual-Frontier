@@ -12,7 +12,7 @@ namespace DualFrontier.Runtime.Tests.Compute;
 /// </summary>
 public sealed class ComputePipelineRegistrationTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly VulkanCommandPool _computePool;
@@ -21,7 +21,7 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
     {
         var opts = new WindowOptions { Title = "Compute", Width = 320, Height = 240 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         // Pool bound к async compute queue family (V0.B Commit 4 selected this).

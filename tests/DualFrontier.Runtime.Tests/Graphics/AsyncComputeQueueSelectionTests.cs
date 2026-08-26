@@ -64,7 +64,7 @@ public sealed class AsyncComputeQueueSelectionTests
         // (NVIDIA Turing+, Intel Arc Alchemist+) regardless of specific QF index.
         var winOpts = new WindowOptions { Title = "AsyncCompute Integration", Width = 400, Height = 300 };
         var queue = new InputEventQueue();
-        using var window = new global::DualFrontier.Runtime.Window.Window(winOpts, queue);
+        using IWindow window = PlatformWindow.Create(winOpts, queue);
         using var instance = new VulkanInstance(enableValidation: false);
         using var device = new VulkanDevice(instance);
 

@@ -12,10 +12,15 @@ public sealed class RuntimeCompositionTests
     {
         var winOpts = new WindowOptions { Title = "Compose A", Width = 400, Height = 300 };
         var queue = new InputEventQueue();
-        using var window = new global::DualFrontier.Runtime.Window.Window(winOpts, queue);
+        using IWindow window = PlatformWindow.Create(winOpts, queue);
         using var instance = new VulkanInstance(enableValidation: false);
-        window.Handle.Should().NotBe(IntPtr.Zero);
         instance.Handle.Should().NotBe(IntPtr.Zero);
+        window.IsOpen.Should().BeTrue();
+
+        // IWindow.Handle retired: the window's platform binding is now proven by the thing that
+        // handle existed for — it can produce a real VkSurfaceKHR against this instance.
+        using var surface = new VulkanSurface(instance, window);
+        surface.Handle.Should().NotBe(IntPtr.Zero);
     }
 
     [WindowsOnlyFact]
@@ -23,7 +28,7 @@ public sealed class RuntimeCompositionTests
     {
         var winOpts = new WindowOptions { Title = "Compose B", Width = 400, Height = 300 };
         var queue = new InputEventQueue();
-        using var window = new global::DualFrontier.Runtime.Window.Window(winOpts, queue);
+        using IWindow window = PlatformWindow.Create(winOpts, queue);
         using var instance = new VulkanInstance(enableValidation: false);
         using var device = new VulkanDevice(instance);
         device.Handle.Should().NotBe(IntPtr.Zero);
