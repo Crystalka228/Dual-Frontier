@@ -3175,6 +3175,21 @@ documents:
   reviewer: Crystalka
   risks_referenced:
   - RISK-009
+- register_id: DOC-D-LINUX_PRESENT_1_BRIEF
+  path: tools/briefs/LINUX_PRESENT_1_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: en
+  next_review_due: 
+  title: 'LINUX_PRESENT_1 -- the Launcher opens, renders, and closes on the permanent Linux environment: per-platform Vulkan loader resolution, platform-selected instance surface extension, a platform-neutral windowing seam (surface creation behind the window) with an XCB backend over XWayland, capability-probing test gates replacing the 111 WindowsOnly skips (71 loader-only + 40 display), the Launcher native .so arm, and the live Launcher smoke that pays the debt owed since W3/PR #51'
+  authored_by: Claude Fable (architect session, LINUX_PRESENT_1 charter)
+  basis: DOC-E-LINUX_PRESENT_1_RECON_REPORT (Opus subagent, read-only, 2026-08-26 at 683b343, sections A-H + 6 discrepancies + 7 surprises) + the architect-seat scope measurement 2026-08-26 (Launcher DllNotFoundException repro at Window.cs:46) + ratified lean set 2026-08-26 (Q1 XCB-first; Q2 surface-behind-window + runtime factory; Q3 loader resolver + platform extension pick; Q4 two capability attributes; Q5 Launcher smoke as closure gate; Q6 scope fences) + operator environment ruling 2026-08-26 (Linux PERMANENT)
 - register_id: DOC-D-MOD_OS_V16_AMENDMENT
   path: tools/briefs/MOD_OS_V16_AMENDMENT_BRIEF.md
   project: Dual Frontier
@@ -4374,6 +4389,21 @@ documents:
   title: Self-teaching ritual artifact — Phase 1 (Самообучение фаза 1)
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-LINUX_PRESENT_1_RECON_REPORT
+  path: docs/reports/LINUX_PRESENT_1_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'LINUX_PRESENT_1 RECON REPORT — 2026-08-26 (A-H) — Linux presentation-path measurement at HEAD 683b343 by a read-only Opus subagent: FOUR blockers firing in order (kernel32 GetModuleHandle at Window.cs:46 PLUS an independent second site VulkanSurface.cs:25; VkApi.VulkanLib hard-coded "vulkan-1.dll" feeding ~100 LibraryImports with NO SetDllImportResolver anywhere while the host loader is libvulkan.so.1; VK_KHR_win32_surface asserted unconditionally at VulkanInstance.cs:51 with no enumeration; the Launcher csproj never received the Linux .so copy arm the 8 test projects got at e30375c); coupling set is FIVE production files (Native/Win32 leaf, Window.cs, VulkanSurface.cs, VulkanInstance.cs, Input/VirtualKeyMapper.cs — the last pinned by the UNGATED VirtualKeyMapperTests green on Linux today); production consumes exactly 6 IWindow members and Handle has ONE reader; device/queue selection is surface-independent; resize truth = WindowResizeEvent is decorative, Width/Height are the load-bearing pump outputs read by the out-of-date recreate path, and the currentExtent clamp would mask a missing update; the 111-skip gate is a pure IsOSPlatform(Windows) check splitting 71 loader-only / 40 display-needing tests; SendMessage P/Invoke is test-only and non-portable; DFK002 (Error) requires new P/Invokes under DualFrontier.Runtime.Native.*; host session is Wayland + XWayland + DISPLAY=:0 with libxcb.so.1 and libxkbcommon-x11 present and libxcb-keysyms/icccm ABSENT; dead surface enumerated (RECT, WM_CREATE, WindowOptions.Resizable, IWindow.Hide); doc drift (MODULE.md 14 vs VULKAN_SUBSTRATE 15 LibraryImports vs actual 14 LI + 1 DllImport)'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F60A_TICK_PATH_RECON_REPORT, DOC-E-F60A_TICK_PATH_VERIFICATION_RECON). Operator-requested subagent recon (2026-08-26) for the LINUX_PRESENT_1 charter, executed by a fresh read-only Opus subagent at HEAD 683b343; complements the architect-seat scope measurement of 2026-08-26 (the Launcher DllNotFoundException repro, recorded in the ledger and the charter memory). Read-only: zero repository mutations besides this file, sync never run, zero builds/tests by the subagent. UNTRACKED at authoring — enrolls at the charter cascade C1.'
 - register_id: DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT
   path: docs/reports/LINUX_SANDBOX_ENV_BASELINE_REPORT.md
   project: Dual Frontier
