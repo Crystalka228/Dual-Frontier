@@ -15,16 +15,12 @@ namespace DualFrontier.Runtime.Tests.Sprite;
 /// </summary>
 public sealed class VertexBufferRingTests : IDisposable
 {
-    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly MemoryAllocator _allocator;
 
     public VertexBufferRingTests()
     {
-        var opts = new WindowOptions { Title = "VertexBufferRing", Width = 400, Height = 300 };
-        var queue = new InputEventQueue();
-        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _allocator = new MemoryAllocator(_device);
@@ -36,10 +32,9 @@ public sealed class VertexBufferRingTests : IDisposable
         _allocator.Dispose();
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Valid_Args_Computes_ChunkSize_Correctly()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -50,21 +45,21 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Zero_FrameCount_Throws()
     {
         Action act = () => new VertexBufferRing(_device, _allocator, frameCount: 0, maxSpritesPerFrame: 100);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Zero_MaxSpritesPerFrame_Throws()
     {
         Action act = () => new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 0);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void WriteSprite_Without_BeginFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -73,7 +68,7 @@ public sealed class VertexBufferRingTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void EndFrame_Without_BeginFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -81,7 +76,7 @@ public sealed class VertexBufferRingTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void BeginFrame_Twice_Without_EndFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -97,7 +92,7 @@ public sealed class VertexBufferRingTests : IDisposable
         }
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void WriteSprite_Within_Capacity_Succeeds()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);
@@ -111,7 +106,7 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.EndFrame();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void WriteSprite_Beyond_Capacity_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 5);
@@ -132,7 +127,7 @@ public sealed class VertexBufferRingTests : IDisposable
         }
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void EndFrame_Returns_Correct_Chunk_Offset_For_Each_Frame()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);
@@ -151,7 +146,7 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.EndFrame().Should().Be(0UL);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Use_After_Dispose_Throws()
     {
         var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);

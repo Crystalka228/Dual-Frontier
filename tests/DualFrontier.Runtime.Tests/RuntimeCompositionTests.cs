@@ -7,7 +7,7 @@ namespace DualFrontier.Runtime.Tests;
 
 public sealed class RuntimeCompositionTests
 {
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Window_plus_VulkanInstance_compose_without_crash()
     {
         var winOpts = new WindowOptions { Title = "Compose A", Width = 400, Height = 300 };
@@ -23,7 +23,7 @@ public sealed class RuntimeCompositionTests
         surface.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Window_plus_VulkanInstance_plus_VulkanDevice_compose_without_crash()
     {
         var winOpts = new WindowOptions { Title = "Compose B", Width = 400, Height = 300 };
@@ -35,7 +35,7 @@ public sealed class RuntimeCompositionTests
         device.GraphicsQueue.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Create_with_validation_disabled_composes_without_validation_layer()
     {
         var options = new RuntimeOptions
@@ -63,7 +63,7 @@ public sealed class RuntimeCompositionTests
         runtime.InputQueue.Should().NotBeNull();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanValidationFact]
     public void Create_with_validation_enabled_composes_validation_layer()
     {
         var options = new RuntimeOptions
@@ -80,7 +80,7 @@ public sealed class RuntimeCompositionTests
         runtime.ValidationLayer!.Log.ErrorCount.Should().Be(0);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Dispose_idempotent_safe_to_call_twice()
     {
         var options = new RuntimeOptions

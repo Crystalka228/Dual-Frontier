@@ -11,15 +11,11 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class VulkanCommandBufferTests : IDisposable
 {
-    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
 
     public VulkanCommandBufferTests()
     {
-        var opts = new WindowOptions { Title = "CmdBuf", Width = 320, Height = 240 };
-        var queue = new InputEventQueue();
-        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
     }
@@ -28,10 +24,9 @@ public sealed class VulkanCommandBufferTests : IDisposable
     {
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void CommandPool_construct_returns_non_zero_handle()
     {
         using var pool = new VulkanCommandPool(_device, _device.GraphicsQueueFamilyIndex);
@@ -39,7 +34,7 @@ public sealed class VulkanCommandBufferTests : IDisposable
         pool.QueueFamilyIndex.Should().Be(_device.GraphicsQueueFamilyIndex);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void CommandBuffer_allocate_begin_end_round_trip()
     {
         using var pool = new VulkanCommandPool(_device, _device.GraphicsQueueFamilyIndex);
@@ -50,7 +45,7 @@ public sealed class VulkanCommandBufferTests : IDisposable
         buffer.End();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Fence_create_wait_with_signaled_start_returns_immediately()
     {
         using var fence = new VulkanFence(_device, startSignaled: true);
@@ -59,14 +54,14 @@ public sealed class VulkanCommandBufferTests : IDisposable
         fence.Reset();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Semaphore_create_returns_non_zero_handle()
     {
         using var semaphore = new VulkanSemaphore(_device);
         semaphore.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Submit_empty_command_buffer_to_graphics_queue_with_fence_signals_fence()
     {
         using var pool = new VulkanCommandPool(_device, _device.GraphicsQueueFamilyIndex);

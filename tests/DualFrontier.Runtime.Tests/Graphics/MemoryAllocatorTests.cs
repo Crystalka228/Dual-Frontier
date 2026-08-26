@@ -12,15 +12,11 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class MemoryAllocatorTests : IDisposable
 {
-    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
 
     public MemoryAllocatorTests()
     {
-        var opts = new WindowOptions { Title = "MemAlloc", Width = 400, Height = 300 };
-        var queue = new InputEventQueue();
-        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
     }
@@ -29,10 +25,9 @@ public sealed class MemoryAllocatorTests : IDisposable
     {
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Allocate_returns_allocation_with_aligned_offset_zero_on_first_call()
     {
         using var allocator = new MemoryAllocator(_device);
@@ -48,7 +43,7 @@ public sealed class MemoryAllocatorTests : IDisposable
         alloc.DeviceMemory.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Allocate_bumps_offset_aligned_to_requested_alignment()
     {
         using var allocator = new MemoryAllocator(_device);
@@ -61,7 +56,7 @@ public sealed class MemoryAllocatorTests : IDisposable
         b.Offset.Should().Be(256UL, "bumper aligns next allocation к requested alignment from previous end (100)");
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Reset_rewinds_offset_to_zero()
     {
         using var allocator = new MemoryAllocator(_device);
@@ -74,7 +69,7 @@ public sealed class MemoryAllocatorTests : IDisposable
         after.Offset.Should().Be(0UL);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Dispose_does_not_throw()
     {
         var allocator = new MemoryAllocator(_device);
@@ -83,7 +78,7 @@ public sealed class MemoryAllocatorTests : IDisposable
         act.Should().NotThrow();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Use_after_dispose_throws_object_disposed()
     {
         var allocator = new MemoryAllocator(_device);
@@ -92,7 +87,7 @@ public sealed class MemoryAllocatorTests : IDisposable
         act.Should().Throw<ObjectDisposedException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void VulkanBuffer_with_storage_buffer_usage_constructs_and_binds_memory()
     {
         using var allocator = new MemoryAllocator(_device);

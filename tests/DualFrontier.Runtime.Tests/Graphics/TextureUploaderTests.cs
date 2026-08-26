@@ -12,7 +12,6 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class TextureUploaderTests : IDisposable
 {
-    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly MemoryAllocator _allocator;
@@ -20,9 +19,6 @@ public sealed class TextureUploaderTests : IDisposable
 
     public TextureUploaderTests()
     {
-        var opts = new WindowOptions { Title = "TexUpload", Width = 400, Height = 300 };
-        var queue = new InputEventQueue();
-        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _allocator = new MemoryAllocator(_device);
@@ -36,10 +32,9 @@ public sealed class TextureUploaderTests : IDisposable
         _allocator.Dispose();
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Upload_2x2Rgba_completes_without_error()
     {
         using var image = new VulkanImage(
@@ -64,7 +59,7 @@ public sealed class TextureUploaderTests : IDisposable
         image.ViewHandle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Upload_NullImage_Throws()
     {
         var uploader = new TextureUploader(_device, _allocator, _commandPool);
@@ -72,7 +67,7 @@ public sealed class TextureUploaderTests : IDisposable
         act.Should().Throw<ArgumentNullException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Upload_EmptyPixels_Throws()
     {
         using var image = new VulkanImage(
@@ -86,7 +81,7 @@ public sealed class TextureUploaderTests : IDisposable
         act.Should().Throw<ArgumentException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void CreateFromPngImage_4x4_works()
     {
         // Synthetic decoded PNG with known RGBA pattern.

@@ -48,7 +48,7 @@ public sealed class VulkanSpritePipelineTests : IDisposable
         _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Pipeline_creates_successfully_with_vertex_input_and_blending()
     {
         using var descLayout = new SpriteDescriptorSetLayout(_device);
@@ -65,7 +65,7 @@ public sealed class VulkanSpritePipelineTests : IDisposable
         pipeline.DescriptorSetLayout.Should().BeSameAs(descLayout);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void DescriptorSetLayout_creates_successfully()
     {
         using var descLayout = new SpriteDescriptorSetLayout(_device);
