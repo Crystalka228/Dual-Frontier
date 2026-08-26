@@ -1268,16 +1268,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.0
+  version: 2.2.0
   first_authored: 2026-06-29
-  last_modified: 2026-08-20
+  last_modified: 2026-08-26
   content_language: en
   next_review_due: 2027-06-11
   title: Development hygiene
   last_modified_commit: 27807f7
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'MINOR 2.0.2 -> 2.1.0 2026-08-20 (push-policy inversion propagated from CODING_STANDARDS 3.0.0 section 8.4, per section 10.1 rule 5; operator direction 2026-08-20): section 5 branch/push policy replaced -- the executor pushes its work branch and opens a PR against main, never pushes main and never merges its own PR; ratification moves from the push to the merge. Rationale: the prior never-push rule could not hold in a remote/cloud session where an unpushed branch is lost work. Also backfilled the missing v2.0.2 change-history row (STACK_UPDATE Phase E), which had existed only in this field. No lifecycle transition (LOCKED).'
+  last_review_date: 2026-08-26
+  last_review_event: 'MINOR 2.1.0 -> 2.2.0 2026-08-26 (F60A_TICK_PATH cascade, brief section 7.1 D3): section 3 gains the canonical LINUX native-kernel build commands alongside the existing Windows invocation, plus a new subsection recording how the native library reaches managed TEST output on both hosts. Rationale: the operator ruled Linux the PERMANENT development environment on 2026-08-26, and section 3 documented only the VS-bundled MSVC invocation, so the operative build law was unwritten for the environment development actually runs in. Records the three facts that cost time to rediscover: Ninja is single-config so outputs land at the build root with no Release/ subdirectory, a Windows-era build/ tree must be deleted rather than reconfigured, and the paired Exists-guarded None items make the DllImport bare name resolve on either host. MINOR per CODING_STANDARDS 10.1 rule 3 (a new rule or family, nothing inverted). No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   risks_referenced:
   - RISK-011
