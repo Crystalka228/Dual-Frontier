@@ -1,3 +1,4 @@
+using System.Numerics;
 using DualFrontier.Runtime.Graphics;
 using DualFrontier.Runtime.Window;
 using AwesomeAssertions;
@@ -93,5 +94,69 @@ public sealed class RuntimeCompositionTests
         runtime.Dispose();
         var act = () => runtime.Dispose();
         act.Should().NotThrow();
+    }
+
+    [RequiresDisplayFact]
+    public void Consecutive_frames_may_record_the_same_swapchain_image_index()
+    {
+        // F-51 wiring pin, in the production shape. Acquire indices repeat legitimately -- a
+        // swapchain recreate restarts the sequence, and MAILBOX present can release an image
+        // immediately so the next acquire returns the index just used. Both are safe (a submit
+        // and a fence wait separate the batches) and both used to kill the Launcher on the
+        // VertexBufferRing reuse guard. Recording twice on one index is exactly that case.
+        var options = new RuntimeOptions
+        {
+            Window = new WindowOptions { Title = "Ring reuse", Width = 400, Height = 300 },
+            EnableValidationLayer = false,
+        };
+        using var runtime = Runtime.Create(options);
+
+        VulkanCommandBuffer commandBuffer = runtime.GraphicsCommandPool.AllocateBuffer();
+        var noSprites = new List<global::DualFrontier.Runtime.Sprite.Sprite>();
+        var clearColor = new Vector4(0f, 0f, 0f, 1f);
+
+        RecordOneFrame(runtime, commandBuffer, noSprites, clearColor);
+
+        Action act = () => RecordOneFrame(runtime, commandBuffer, noSprites, clearColor);
+        act.Should().NotThrow(
+            "the same swapchain image index may be acquired on consecutive frames, and each " +
+            "recording is a complete batch the caller submits");
+    }
+
+    [RequiresDisplayFact]
+    public void Recreating_the_swapchain_does_not_break_sprite_recording()
+    {
+        // The other index-repeat route: a recreate restarts the acquire sequence at 0.
+        var options = new RuntimeOptions
+        {
+            Window = new WindowOptions { Title = "Ring recreate", Width = 400, Height = 300 },
+            EnableValidationLayer = false,
+        };
+        using var runtime = Runtime.Create(options);
+
+        VulkanCommandBuffer commandBuffer = runtime.GraphicsCommandPool.AllocateBuffer();
+        var noSprites = new List<global::DualFrontier.Runtime.Sprite.Sprite>();
+        var clearColor = new Vector4(0f, 0f, 0f, 1f);
+
+        RecordOneFrame(runtime, commandBuffer, noSprites, clearColor);
+
+        runtime.VulkanDevice.WaitIdle();
+        runtime.Swapchain.Recreate(320, 240);
+        runtime.RecreateFramebuffersForSwapchain();
+
+        Action act = () => RecordOneFrame(runtime, commandBuffer, noSprites, clearColor);
+        act.Should().NotThrow("a swapchain recreate restarts acquire at image 0");
+    }
+
+    private static void RecordOneFrame(
+        Runtime runtime,
+        VulkanCommandBuffer commandBuffer,
+        List<global::DualFrontier.Runtime.Sprite.Sprite> sprites,
+        Vector4 clearColor)
+    {
+        commandBuffer.Reset();
+        commandBuffer.Begin();
+        runtime.RecordSpritesFrame(commandBuffer, imageIndex: 0, sprites, Matrix4x4.Identity, clearColor);
+        commandBuffer.End();
     }
 }

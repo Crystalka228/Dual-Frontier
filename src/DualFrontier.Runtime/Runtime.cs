@@ -215,6 +215,7 @@ public sealed class Runtime : IDisposable
         {
             fb.Dispose();
         }
+
     }
 
     /// <summary>
@@ -380,6 +381,22 @@ public sealed class Runtime : IDisposable
         };
         VkApi.vkCmdSetScissor(commandBuffer.Handle, 0, 1, &scissor);
 
+        // F-51: this method records exactly ONE complete sprite batch into commandBuffer, and
+        // the caller submits it. That makes the recording the frame boundary, so the ring's
+        // reuse guard starts fresh here.
+        //
+        // The guard compares against the last index begun, which is only a valid proxy for
+        // "unsubmitted batch pending" while acquire indices never repeat. They do repeat,
+        // legitimately and for two independent reasons: a swapchain recreate restarts the
+        // sequence, and MAILBOX present (preferred by VulkanSwapchain) can release a presented
+        // image immediately, so the very next acquire may hand back the index just used. Both
+        // are safe -- a submit and a fence wait separate the two batches -- and both used to
+        // trip the guard and kill the Launcher.
+        //
+        // The guard itself is unchanged and still live one level down: a caller driving
+        // SpriteRenderer.BeginFrame/EndFrame directly for a multi-batch frame still gets the
+        // fail-fast. That multi-batch capacity path is F-32's redesign, not this fix.
+        SpriteRenderer.ResetFrameTracking();
         SpriteRenderer.BeginFrame((uint)imageIndex);
         foreach (var sprite in sprites)
         {

@@ -154,4 +154,52 @@ public sealed class VertexBufferRingTests : IDisposable
         Action act = () => ring.BeginFrame(0);
         act.Should().Throw<ObjectDisposedException>();
     }
+
+    [RequiresVulkanFact]
+    public void ResetFrameTracking_Allows_The_Same_Frame_Index_Across_A_Swapchain_Generation()
+    {
+        // F-51: a swapchain recreate restarts the acquire sequence, so the index the old
+        // generation ended on is legitimately the first index of the new one. That is NOT a
+        // second batch in one frame and must be accepted.
+        using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 16);
+
+        ring.BeginFrame(0);
+        ring.EndFrame();
+
+        ring.ResetFrameTracking();
+
+        Action act = () => ring.BeginFrame(0);
+        act.Should().NotThrow(
+            "a swapchain generation boundary makes the previous generation's last index reusable");
+        ring.EndFrame();
+    }
+
+    [RequiresVulkanFact]
+    public void Without_Reset_The_Same_Frame_Index_Twice_Still_Throws()
+    {
+        // The F02 guard itself is UNCHANGED. Within one generation, beginning the same slot
+        // twice would overwrite the first batch's vertices before its draw is submitted, and
+        // must still fail fast. This pin is what keeps the F-51 fix from becoming a hole.
+        using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 16);
+
+        ring.BeginFrame(0);
+        ring.EndFrame();
+
+        Action act = () => ring.BeginFrame(0);
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*reused ring slot 0*");
+    }
+
+    [RequiresVulkanFact]
+    public void ResetFrameTracking_Rejects_A_Reset_While_A_Frame_Is_Open()
+    {
+        using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 16);
+
+        ring.BeginFrame(0);
+
+        Action act = ring.ResetFrameTracking;
+        act.Should().Throw<InvalidOperationException>().WithMessage("*while a frame is open*");
+
+        ring.EndFrame();
+    }
 }
