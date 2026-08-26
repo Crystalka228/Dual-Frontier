@@ -255,15 +255,16 @@ block is expected, not a fault).
 > recorded (HARD exact, SOFT deltas); the F-ledger final-state table; the
 > consolidated `Skeleton revisions` list (every deviation from this brief's
 > intended forms); the gates table (baseline vs closure -- must match-or-better);
-> self-attestation (no pushes; `sync` run in every frontmatter-touching commit;
+> self-attestation (work branch pushed + PR opened, main untouched, no self-merge
+> (CODING_STANDARDS 8.4 v3.0.0); `sync` run in every frontmatter-touching commit;
 > single AUDIT_TRAIL append, prior entries byte-unchanged; no history rewrites;
 > HISTORICAL / reference trees untouched); and the operator manual checklist
-> (push; the standing F-queue items that remain operator-owned).
+> (merge the PR; the standing F-queue items that remain operator-owned).
 
 ## 15. Out of scope [CORE]
 
 > Guidance: what is explicitly excluded, named so the executor does not wander into
-> it -- adjacent cascades, architect-owned findings, the reference tree, pushes,
+> it -- adjacent cascades, architect-owned findings, the reference tree, pushes to main,
 > snapshots / EXECUTED-doc content beyond any sanctioned banner.
 
 ## Appendix A -- <embedded document> [KIND: governance with a new/amended doc]
