@@ -21,9 +21,15 @@ public static class PlatformWindow
         {
             return new Win32Window(options, inputQueue);
         }
+        if (OperatingSystem.IsLinux())
+        {
+            // XCB, which on a Wayland session runs through XWayland. A Wayland-native backend
+            // is future work; XCB reaches both session types with one connection object.
+            return new XcbWindow(options, inputQueue);
+        }
 
         throw new PlatformNotSupportedException(
             $"No windowing backend for this platform ({Environment.OSVersion.Platform}). " +
-            "Supported: Windows (Win32).");
+            "Supported: Windows (Win32), Linux (XCB).");
     }
 }

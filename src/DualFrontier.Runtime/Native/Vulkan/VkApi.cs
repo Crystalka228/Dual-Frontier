@@ -162,8 +162,9 @@ internal static unsafe partial class VkApi
     // =======================================================================
     // V0.B Commit 7 — Surface + swapchain
     //
-    // KHR functions exported by vulkan-1.dll loader trampoline on Windows; use [LibraryImport]
-    // directly. Function pointers acquired при first call would also work via vkGetInstanceProcAddr
+    // KHR functions are exported by the Vulkan loader itself on every platform (the
+    // vulkan-1.dll trampoline on Windows, libvulkan.so.1 on Linux — see VulkanLibraryResolver),
+    // so bind them with [LibraryImport] directly. Function pointers acquired при first call would also work via vkGetInstanceProcAddr
     // / vkGetDeviceProcAddr per Vulkan loader contract, but direct binding matches V0.A core
     // function approach (simpler + statically verifiable).
     // =======================================================================
@@ -172,6 +173,13 @@ internal static unsafe partial class VkApi
     internal static partial VkResult vkCreateWin32SurfaceKHR(
         IntPtr instance,
         in VkWin32SurfaceCreateInfoKHR pCreateInfo,
+        IntPtr pAllocator,
+        out IntPtr pSurface);
+
+    [LibraryImport(VulkanLib, EntryPoint = "vkCreateXcbSurfaceKHR")]
+    internal static partial VkResult vkCreateXcbSurfaceKHR(
+        IntPtr instance,
+        in VkXcbSurfaceCreateInfoKHR pCreateInfo,
         IntPtr pAllocator,
         out IntPtr pSurface);
 

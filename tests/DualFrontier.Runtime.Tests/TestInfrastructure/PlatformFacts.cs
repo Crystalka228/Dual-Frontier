@@ -36,3 +36,122 @@ public sealed class WindowsOnlyTheoryAttribute : TheoryAttribute
         }
     }
 }
+
+
+// ===========================================================================
+// Capability gates. These ask what the HOST can do rather than which OS it is,
+// which is the distinction that matters: a Vulkan-only test needs the loader and
+// a GPU, while a windowing test additionally needs a display server. Both skip at
+// DISCOVERY time (constructor-set Skip), so xunit reports a clean skip and never
+// constructs the class -- the same F09 rationale the OS gate carried.
+// ===========================================================================
+
+/// <summary>Probes for the capabilities the capability gates below are named after.</summary>
+internal static class HostCapability
+{
+    private const string WindowsVulkanLoader = "vulkan-1.dll";
+    private const string LinuxVulkanLoader = "libvulkan.so.1";
+    private const string LinuxXcb = "libxcb.so.1";
+
+    /// <summary>True when the platform's Vulkan loader can be loaded in this process.</summary>
+    internal static bool HasVulkanLoader()
+    {
+        string loader = OperatingSystem.IsWindows() ? WindowsVulkanLoader : LinuxVulkanLoader;
+        if (!NativeLibrary.TryLoad(loader, out IntPtr handle))
+        {
+            return false;
+        }
+        // Deliberately NOT freed: the loader stays resident for the tests that follow, and
+        // unloading it out from under a live VkInstance would be worse than leaking a handle
+        // for the lifetime of a test run.
+        _ = handle;
+        return true;
+    }
+
+    /// <summary>
+    /// True when a window can actually be opened here: the Vulkan loader plus a reachable
+    /// display server. On Windows the desktop is always present. On Linux it takes a session
+    /// (DISPLAY for X11/XWayland, or WAYLAND_DISPLAY) and the xcb client library.
+    /// </summary>
+    internal static bool HasDisplay()
+    {
+        if (!HasVulkanLoader())
+        {
+            return false;
+        }
+        if (OperatingSystem.IsWindows())
+        {
+            return true;
+        }
+        bool hasSession = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DISPLAY"))
+            || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WAYLAND_DISPLAY"));
+        return hasSession && NativeLibrary.TryLoad(LinuxXcb, out _);
+    }
+
+    internal const string NoVulkanReason =
+        "Requires a working platform Vulkan loader (vulkan-1.dll / libvulkan.so.1); skipped on this host.";
+
+    internal const string NoDisplayReason =
+        "Requires a Vulkan loader AND a display server (Windows desktop, or DISPLAY/WAYLAND_DISPLAY " +
+        "with libxcb.so.1); skipped on this host.";
+}
+
+/// <summary>
+/// A <see cref="FactAttribute"/> skipped unless the platform Vulkan loader is present. For tests
+/// that build a VkInstance/VkDevice and never need a window or a surface.
+/// </summary>
+public sealed class RequiresVulkanFactAttribute : FactAttribute
+{
+    public RequiresVulkanFactAttribute()
+    {
+        if (!HostCapability.HasVulkanLoader())
+        {
+            Skip = HostCapability.NoVulkanReason;
+        }
+    }
+}
+
+/// <summary>
+/// A <see cref="TheoryAttribute"/> skipped unless the platform Vulkan loader is present. See
+/// <see cref="RequiresVulkanFactAttribute"/>.
+/// </summary>
+public sealed class RequiresVulkanTheoryAttribute : TheoryAttribute
+{
+    public RequiresVulkanTheoryAttribute()
+    {
+        if (!HostCapability.HasVulkanLoader())
+        {
+            Skip = HostCapability.NoVulkanReason;
+        }
+    }
+}
+
+/// <summary>
+/// A <see cref="FactAttribute"/> skipped unless a window can be opened on this host. For tests
+/// that construct a real window, a VkSurfaceKHR, or a full <c>Runtime</c>.
+/// </summary>
+public sealed class RequiresDisplayFactAttribute : FactAttribute
+{
+    public RequiresDisplayFactAttribute()
+    {
+        if (!HostCapability.HasDisplay())
+        {
+            Skip = HostCapability.NoDisplayReason;
+        }
+    }
+}
+
+/// <summary>
+/// A <see cref="TheoryAttribute"/> skipped unless a window can be opened on this host. See
+/// <see cref="RequiresDisplayFactAttribute"/>.
+/// </summary>
+public sealed class RequiresDisplayTheoryAttribute : TheoryAttribute
+{
+    public RequiresDisplayTheoryAttribute()
+    {
+        if (!HostCapability.HasDisplay())
+        {
+            Skip = HostCapability.NoDisplayReason;
+        }
+    }
+}
