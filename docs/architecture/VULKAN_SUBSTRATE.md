@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.4
+version: 1.0.5
 first_authored: 2026-07-15
-last_modified: 2026-07-18
+last_modified: 2026-08-26
 content_language: en
 next_review_due: 2027-Q3
 title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
@@ -57,17 +57,17 @@ The following decisions are committed foundation. Departure requires an explicit
 | # | Decision | Choice | Status note (2026-07-15) |
 |---|---|---|---|
 | L1 | GPU API | Vulkan 1.3 + async-compute queue family mandate (К-L19; consumed by К-L16 pipeline depth) | Enforced at two sites — §0.1 |
-| L2 | Vulkan bindings | Pure P/Invoke to `vulkan-1.dll` (`[LibraryImport]`), no third-party C# binding library | Shipped — 86 `LibraryImport` declarations in `Native/Vulkan/VkApi.cs` |
-| L3 | Window/OS surface | Pure Win32 P/Invoke (`user32.dll`, `kernel32.dll`) | Shipped — 15 `LibraryImport` declarations in `Native/Win32/Win32Api.cs` |
+| L2 | Vulkan bindings | Pure P/Invoke to the platform Vulkan loader (`[LibraryImport]`), no third-party C# binding library | Shipped — 86 `LibraryImport` declarations in `Native/Vulkan/VkApi.cs`. The declared library name stays `vulkan-1.dll` on every platform; `Native/Vulkan/VulkanLibraryResolver.cs` maps it to `libvulkan.so.1` on Linux, so the Windows arm keeps working on untouched default probing (LINUX_PRESENT_1, 2026-08-26) |
+| L3 | Window/OS surface | Pure P/Invoke, one backend per windowing system, no windowing library | Shipped — Windows: **14** declarations (13 `[LibraryImport]` + 1 `[DllImport]`; 12 `user32.dll` + 2 `kernel32.dll`) in `Native/Win32/Win32Api.cs`. Linux: **29** declarations in `Native/Xcb/` (18 `libxcb.so.1`, 1 `libc.so.6`, 6 `libxkbcommon.so.0`, 4 `libxkbcommon-x11.so.0`). Selected at `Window/PlatformWindow.cs` (LINUX_PRESENT_1, 2026-08-26) |
 | L4 | Math | `System.Numerics` (BCL only) | Shipped |
 | L5 | PNG loading | Manual decoder + `System.IO.Compression.DeflateStream` (BCL) | Shipped — `Assets/PngDecoder.cs` |
 | L6 | Shader strategy | Build-time GLSL → SPIR-V via committed `tools/glslangValidator.exe`, both graphics and compute | Shipped — §1.4 |
-| L7 | Initial platform | Windows-only (matches the К-L19 tier baseline) | In force; cross-platform is an open decision (§8) |
+| L7 | Initial platform | Windows first (matches the К-L19 tier baseline); Linux shipped 2026-08-26 | **Superseded in part.** LINUX_PRESENT_1 shipped the Linux arm by the manual route — XCB over XWayland, no SDL2 — so the Launcher opens, renders and shuts down on both platforms. macOS remains unaddressed. OQ-V14 narrowed accordingly |
 | L8 | Threading | Window+render thread merged; simulation thread preserved | In force — §2.4 |
 | L9 | Migration approach | Parallel dual-backend until rendering cutover | **Completed and fully retired**: cutover 2026-05-23 (К-extensions cascade #2); the remaining inert Godot file surface (including the root `project.godot`) was deleted in the Godot Eradication Cascade, 2026-06-29/30 (F-5 CLOSED). No Godot artifact exists at HEAD. |
 | L10 | Domain layer treatment | Preserved verbatim — zero modification by substrate work | Held; §1.3 Rule 1 is the mechanical check |
 
-**Philosophy.** The substrate is total-ownership («без компромиссов»): every line above the OS API surface is project code. The production binary depends on `vulkan-1.dll` (GPU driver) and pre-compiled `.spv` files — no shader compiler, no binding library, no windowing library. The counterweight discipline is *features only on demand*: the Vulkan API surface is enormous, and every substrate feature must trace to a specific Domain requirement or gameplay mechanic; the substrate is not an engine-building exercise.
+**Philosophy.** The substrate is total-ownership («без компромиссов»): every line above the OS API surface is project code. The production binary depends on the platform Vulkan loader (`vulkan-1.dll` on Windows, `libvulkan.so.1` on Linux) plus that platform's windowing client libraries (`user32`/`kernel32`, or `libxcb` + `libxkbcommon`), and on pre-compiled `.spv` files — no shader compiler, no binding library, no windowing library. The counterweight discipline is *features only on demand*: the Vulkan API surface is enormous, and every substrate feature must trace to a specific Domain requirement or gameplay mechanic; the substrate is not an engine-building exercise.
 
 **Consolidation rationale (carried).** Rendering and compute share one physical Vulkan device; treating them as two substrates was documentation drift, resolved by the Q-G-1/Q-G-2 ratifications that produced the predecessor. The compute side reduces to three primitives — V0 plumbing, V1 diffusion, V2 wave — once gameplay mechanics are recognized as *configurations* of physical primitives rather than primitives in their own right. That reduction remains the load-bearing insight of this layer: distribution networks, navigation, and crowd behavior are all V1/V2 configurations (§4), so the substrate stays small while the gameplay surface stays expressive.
 
@@ -282,9 +282,9 @@ Direct-`LibraryImport` dispatch (rather than `vkGetInstanceProcAddr` procedure-a
 
 ### 2.2 Window and input truth
 
-**Window.** Pure Win32: `Window` registers the class, creates the window, and pumps messages (`Window.PumpMessages`) on the thread that owns it — in production, the Launcher main thread. Window lifecycle events (close, resize, focus) and raw input messages are translated in the window procedure into typed events and enqueued.
+**Window.** One backend per windowing system behind `IWindow`, selected at `Window/PlatformWindow.cs`. On Windows `Win32Window` registers the class, creates the window, and pumps messages; on Linux `XcbWindow` opens an xcb connection, creates the window, registers WM_DELETE_WINDOW, and drains `xcb_poll_for_event`. Either way the pump runs on the thread that owns the window — in production, the Launcher main thread — and lifecycle events (close, resize, focus) and raw input are translated into typed events and enqueued. `IWindow` carries no platform-tagged handle: surface creation lives behind the window (`IWindow.CreateVulkanSurface`), because Win32 needs an HINSTANCE plus an HWND while XCB needs a connection plus a window id. The resize decode — skip 0×0, skip unchanged — is stated once in `Window/WindowEventDecode.cs` and obeyed by both (LINUX_PRESENT_1, 2026-08-26).
 
-**Input event surface (shipped).** `InputEventQueue` is an **unbounded `ConcurrentQueue<IInputEvent>`** channel (`src/DualFrontier.Runtime/Window/InputEventQueue.cs:13`) with `Enqueue`/`TryDequeue`/`Count`. Event types cover keyboard, mouse button/move/wheel, window resize, and window focus; `WM_SETFOCUS`/`WM_KILLFOCUS` are translated and enqueued as `WindowFocusEvent(Focused: true/false)` (`Window/Window.cs:253-257`).
+**Input event surface (shipped).** `InputEventQueue` is an **unbounded `ConcurrentQueue<IInputEvent>`** channel (`src/DualFrontier.Runtime/Window/InputEventQueue.cs:13`) with `Enqueue`/`TryDequeue`/`Count`. Event types cover keyboard, mouse button/move/wheel, window resize, and window focus; `WM_SETFOCUS`/`WM_KILLFOCUS` are translated and enqueued as `WindowFocusEvent(Focused: true/false)` (`Window/Win32Window.cs`; the XCB arm mirrors it on FOCUS_IN/FOCUS_OUT).
 
 **Input consumption truth (stated plainly).** The input → simulation path **does not exist**. The production Launcher drains the queue every frame and discards every event:
 
@@ -678,7 +678,7 @@ The «stop, escalate, lock» rule applies: when implementation meets a design qu
 | OQ-V11 | Font system (bitmap vs TrueType) and UI architecture (retained vs immediate) — §1.6 | Text/UI brief authoring |
 | OQ-V12 | Vulkan dispatch mechanism (`LibraryImport` vs `vkGetInstanceProcAddr`) — §2.1 | Post-foundation, if profiling demands |
 | OQ-V13 | Atlas metadata format (code vs JSON/TOML) — §2.7 | When the atlas outgrows the procedural generator |
-| OQ-V14 | Cross-platform support (SDL2 compromise vs manual X11/Cocoa) — §0.2 L7 | If/when an explicit cross-platform milestone opens |
+| OQ-V14 | Cross-platform support — §0.2 L7. **Narrowed 2026-08-26 (LINUX_PRESENT_1):** the SDL2-vs-manual question is answered for Linux — manual XCB shipped, over XWayland on a Wayland session. What remains open is a Wayland-NATIVE backend (ledgered) and macOS/Cocoa | Wayland-native and macOS each need their own milestone |
 | OQ-V15 | Editor scope | Post-rendering-completeness evaluation |
 
 ---

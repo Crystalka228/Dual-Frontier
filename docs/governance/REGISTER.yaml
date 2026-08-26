@@ -1230,9 +1230,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.4
+  version: 1.0.5
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-26
   content_language: en
   next_review_due: 2027-Q3
   title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
@@ -6002,6 +6002,22 @@ documents:
   review_cadence: phase-led
   reviewer: Crystalka
   special_case_rationale: Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance.
+- register_id: DOC-F-SRC-RUNTIME-NATIVE-XCB
+  path: src/DualFrontier.Runtime/Native/Xcb/MODULE.md
+  project: Dual Frontier
+  category: F
+  tier: 4
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: mixed
+  next_review_due: 2026-Q4
+  title: DualFrontier.Runtime.Native.Xcb — module doc
+  review_cadence: phase-led
+  reviewer: Crystalka
+  special_case_rationale: Module doc for the Linux windowing leaf authored at LINUX_PRESENT_1 (2026-08-26), mirroring the enrolled DOC-F-SRC-RUNTIME-NATIVE-WIN32 form for its sibling backend (enroll F/4 per the CORPUS_CLOSURE_INVERSION_B CD2 orphan-triage convention).
 - register_id: DOC-F-SRC-RUNTIME-SPRITE
   path: src/DualFrontier.Runtime/Sprite/MODULE.md
   project: Dual Frontier

@@ -38,8 +38,8 @@ validation log — Commit 7).
 
 ## V0.B surface (deferred)
 
-- `VulkanSurface` (VkSurfaceKHR Win32)
-- `VulkanSwapchain` + WM_SIZE-triggered recreation
+- `VulkanSurface` (VkSurfaceKHR; platform-neutral — creation delegated to `IWindow`)
+- `VulkanSwapchain` + out-of-date-triggered recreation (reads `IWindow.Width/Height`)
 - `VulkanCommandPool`, `VulkanRenderPass`, `VulkanPipeline`
 - `VulkanBuffer`, `VulkanImage`, `MemoryAllocator` (bumper)
 - Async compute queue family selection (К10.3 brief Item 43 — К-L19 hardware tier)

@@ -2,8 +2,9 @@ namespace DualFrontier.Runtime.Input;
 
 /// <summary>
 /// Keyboard key enum per S-LOCK-10. V0.C.1 covers commonly-used keys (arrows, modifiers,
-/// special keys, function keys F1-F12, letters A-Z, digits 0-9). Mapping from Win32 virtual
-/// key codes happens в <see cref="VirtualKeyMapper"/>. Keys not в this enum produce
+/// special keys, function keys F1-F12, letters A-Z, digits 0-9). Each windowing backend maps
+/// its own input domain к this enum: <see cref="VirtualKeyMapper"/> from Win32 virtual-key
+/// codes, <see cref="XkbKeysymMapper"/> from X11 keysyms. Keys not в this enum produce
 /// <see cref="Key.Unknown"/> events.
 /// </summary>
 public enum Key
