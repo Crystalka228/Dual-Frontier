@@ -13,7 +13,7 @@ namespace DualFrontier.Runtime.Tests.Sprite;
 /// </summary>
 public sealed class SpriteRendererTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly VulkanSurface _surface;
@@ -33,7 +33,7 @@ public sealed class SpriteRendererTests : IDisposable
     {
         var opts = new WindowOptions { Title = "SpriteRenderer", Width = 400, Height = 300 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _surface = new VulkanSurface(_instance, _window);
@@ -73,7 +73,7 @@ public sealed class SpriteRendererTests : IDisposable
         _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Renderer_constructs_with_descriptor_pool_and_vertex_buffer()
     {
         using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -82,7 +82,7 @@ public sealed class SpriteRendererTests : IDisposable
         renderer.MaxSpritesPerFrame.Should().Be(100);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Disposed_renderer_throws_on_use()
     {
         var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -92,7 +92,7 @@ public sealed class SpriteRendererTests : IDisposable
         act.Should().Throw<ObjectDisposedException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Submit_Without_BeginFrame_Throws()
     {
         using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -101,7 +101,7 @@ public sealed class SpriteRendererTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void BeginFrame_Twice_Without_EndFrame_Throws()
     {
         using var renderer = new SpriteRenderer(_device, _allocator, _pipeline,
@@ -119,7 +119,7 @@ public sealed class SpriteRendererTests : IDisposable
         }
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Constructor_With_MaxSpritesPerFrame_Over_MaxUint16_Throws()
     {
         Action act = () => new SpriteRenderer(_device, _allocator, _pipeline,

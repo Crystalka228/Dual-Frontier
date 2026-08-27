@@ -139,6 +139,21 @@ internal struct VkWin32SurfaceCreateInfoKHR
     internal IntPtr hwnd;
 }
 
+// VkXcbSurfaceCreateInfoKHR (VK_KHR_xcb_surface extension)
+// Per Vulkan spec on the x86-64 SysV ABI: 40 bytes total — the same shape as the Win32 one,
+// two native words of window-system identity after the common header.
+// Layout: sType (4) + pad (4) + pNext (8) + flags (4) + pad (4) + connection (8) + window (4)
+//         + tail pad (4) = 40
+[StructLayout(LayoutKind.Sequential)]
+internal struct VkXcbSurfaceCreateInfoKHR
+{
+    internal VkStructureType sType;
+    internal IntPtr pNext;
+    internal uint flags;
+    internal IntPtr connection;
+    internal uint window;
+}
+
 // ===========================================================================
 // V0.B Commit 6 — Memory allocator + buffer/image primitives
 // ===========================================================================

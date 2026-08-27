@@ -15,16 +15,12 @@ namespace DualFrontier.Runtime.Tests.Sprite;
 /// </summary>
 public sealed class VertexBufferRingTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly MemoryAllocator _allocator;
 
     public VertexBufferRingTests()
     {
-        var opts = new WindowOptions { Title = "VertexBufferRing", Width = 400, Height = 300 };
-        var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _allocator = new MemoryAllocator(_device);
@@ -36,10 +32,9 @@ public sealed class VertexBufferRingTests : IDisposable
         _allocator.Dispose();
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Valid_Args_Computes_ChunkSize_Correctly()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -50,21 +45,21 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Zero_FrameCount_Throws()
     {
         Action act = () => new VertexBufferRing(_device, _allocator, frameCount: 0, maxSpritesPerFrame: 100);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Zero_MaxSpritesPerFrame_Throws()
     {
         Action act = () => new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 0);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void WriteSprite_Without_BeginFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -73,7 +68,7 @@ public sealed class VertexBufferRingTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void EndFrame_Without_BeginFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -81,7 +76,7 @@ public sealed class VertexBufferRingTests : IDisposable
         act.Should().Throw<InvalidOperationException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void BeginFrame_Twice_Without_EndFrame_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 100);
@@ -97,7 +92,7 @@ public sealed class VertexBufferRingTests : IDisposable
         }
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void WriteSprite_Within_Capacity_Succeeds()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);
@@ -111,7 +106,7 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.EndFrame();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void WriteSprite_Beyond_Capacity_Throws()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 5);
@@ -132,7 +127,7 @@ public sealed class VertexBufferRingTests : IDisposable
         }
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void EndFrame_Returns_Correct_Chunk_Offset_For_Each_Frame()
     {
         using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);
@@ -151,12 +146,60 @@ public sealed class VertexBufferRingTests : IDisposable
         ring.EndFrame().Should().Be(0UL);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Use_After_Dispose_Throws()
     {
         var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 10);
         ring.Dispose();
         Action act = () => ring.BeginFrame(0);
         act.Should().Throw<ObjectDisposedException>();
+    }
+
+    [RequiresVulkanFact]
+    public void ResetFrameTracking_Allows_The_Same_Frame_Index_Across_A_Swapchain_Generation()
+    {
+        // F-51: a swapchain recreate restarts the acquire sequence, so the index the old
+        // generation ended on is legitimately the first index of the new one. That is NOT a
+        // second batch in one frame and must be accepted.
+        using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 16);
+
+        ring.BeginFrame(0);
+        ring.EndFrame();
+
+        ring.ResetFrameTracking();
+
+        Action act = () => ring.BeginFrame(0);
+        act.Should().NotThrow(
+            "a swapchain generation boundary makes the previous generation's last index reusable");
+        ring.EndFrame();
+    }
+
+    [RequiresVulkanFact]
+    public void Without_Reset_The_Same_Frame_Index_Twice_Still_Throws()
+    {
+        // The F02 guard itself is UNCHANGED. Within one generation, beginning the same slot
+        // twice would overwrite the first batch's vertices before its draw is submitted, and
+        // must still fail fast. This pin is what keeps the F-51 fix from becoming a hole.
+        using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 16);
+
+        ring.BeginFrame(0);
+        ring.EndFrame();
+
+        Action act = () => ring.BeginFrame(0);
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage("*reused ring slot 0*");
+    }
+
+    [RequiresVulkanFact]
+    public void ResetFrameTracking_Rejects_A_Reset_While_A_Frame_Is_Open()
+    {
+        using var ring = new VertexBufferRing(_device, _allocator, frameCount: 3, maxSpritesPerFrame: 16);
+
+        ring.BeginFrame(0);
+
+        Action act = ring.ResetFrameTracking;
+        act.Should().Throw<InvalidOperationException>().WithMessage("*while a frame is open*");
+
+        ring.EndFrame();
     }
 }

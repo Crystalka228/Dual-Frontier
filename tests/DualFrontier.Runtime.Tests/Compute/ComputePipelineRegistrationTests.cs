@@ -12,16 +12,12 @@ namespace DualFrontier.Runtime.Tests.Compute;
 /// </summary>
 public sealed class ComputePipelineRegistrationTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly VulkanCommandPool _computePool;
 
     public ComputePipelineRegistrationTests()
     {
-        var opts = new WindowOptions { Title = "Compute", Width = 320, Height = 240 };
-        var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         // Pool bound к async compute queue family (V0.B Commit 4 selected this).
@@ -33,7 +29,6 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
         _computePool.Dispose();
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
     private static string FindShaderPath(string name)
@@ -51,7 +46,7 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
         return Path.Combine(dir.FullName, "assets", "shaders", name);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Noop_pipeline_register_and_dispatch_round_trip()
     {
         using var registry = new ComputePipelineRegistry(_device);
@@ -67,7 +62,7 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
         // No exception = success (fence signaled + queue idle for synchronous dispatch).
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Duplicate_registration_throws()
     {
         using var registry = new ComputePipelineRegistry(_device);
@@ -78,7 +73,7 @@ public sealed class ComputePipelineRegistrationTests : IDisposable
         act.Should().Throw<InvalidOperationException>().WithMessage("*already registered*");
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Unknown_pipeline_lookup_returns_null()
     {
         using var registry = new ComputePipelineRegistry(_device);

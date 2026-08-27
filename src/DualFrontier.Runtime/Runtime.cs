@@ -69,7 +69,8 @@ public sealed class Runtime : IDisposable
         {
             // V0.A primitives.
             runtime.InputQueue = new InputEventQueue();
-            runtime.Window = new Window.Window(options.Window, runtime.InputQueue);
+            runtime.Window = global::DualFrontier.Runtime.Window.PlatformWindow.Create(
+                options.Window, runtime.InputQueue);
             runtime.VulkanInstance = new VulkanInstance(options.EnableValidationLayer);
 
             if (options.EnableValidationLayer)
@@ -214,6 +215,7 @@ public sealed class Runtime : IDisposable
         {
             fb.Dispose();
         }
+
     }
 
     /// <summary>
@@ -379,6 +381,32 @@ public sealed class Runtime : IDisposable
         };
         VkApi.vkCmdSetScissor(commandBuffer.Handle, 0, 1, &scissor);
 
+        // F-51: this method records exactly ONE complete sprite batch into commandBuffer, and
+        // the caller submits it. That makes the recording the frame boundary, so the ring's
+        // reuse guard starts fresh here.
+        //
+        // The guard compares against the last index begun, which is only a valid proxy for
+        // "unsubmitted batch pending" while acquire indices never repeat. They do repeat,
+        // legitimately and for two independent reasons: a swapchain recreate restarts the
+        // sequence, and MAILBOX present (preferred by VulkanSwapchain) can release a presented
+        // image immediately, so the very next acquire may hand back the index just used. Both
+        // are safe -- a submit and a fence wait separate the two batches -- and both used to
+        // trip the guard and kill the Launcher.
+        //
+        // The guard itself is unchanged and still live one level down: a caller driving
+        // SpriteRenderer.BeginFrame/EndFrame directly for a multi-batch frame still gets the
+        // fail-fast. That multi-batch capacity path is F-32's redesign, not this fix.
+        //
+        // WHAT THIS TRADE COSTS, stated plainly (F-69). Resetting here means two RecordSpritesFrame
+        // calls on the SAME image index into DIFFERENT command buffers, both recorded before
+        // either is submitted, would no longer be caught -- the second would overwrite vertices
+        // the first still references. No caller does that today (the Launcher and the SmokeTest
+        // both Begin -> Record -> End -> Submit in strict sequence), and the index-equality guard
+        // could not have been kept: it rejected legal acquire-index repeats and killed the
+        // Launcher outright. The invariant neither form expresses is the real one -- a chunk must
+        // not be re-begun until the batch already recorded into it has been SUBMITTED -- and only
+        // the submit path knows that. F-69 carries it.
+        SpriteRenderer.ResetFrameTracking();
         SpriteRenderer.BeginFrame((uint)imageIndex);
         foreach (var sprite in sprites)
         {

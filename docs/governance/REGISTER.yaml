@@ -1230,9 +1230,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.4
+  version: 1.0.5
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-26
   content_language: en
   next_review_due: 2027-Q3
   title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
@@ -1444,7 +1444,7 @@ documents:
   - DOC-A-MIGRATION_PLAN
   review_cadence: on-closure+quarterly
   last_review_date: 2026-08-26
-  last_review_event: "F60A_TICK_PATH closure write-back (2026-08-26) — F-60 CLOSED, the identity family is complete. The tick-path ALC root was TickScheduler._tickRateCache, a session-lived ConcurrentDictionary<Type,int> populated by GetOrAdd(system.GetType(), ...) on the first ShouldRun call with zero evictions (Reset() had no production caller). The tick rate now resolves at LOAD time into the scheduler instance-keyed SystemMetadata table, which is swapped at every load boundary, and the lazy cache is deleted. Falsification honoured: the pinned leak test flipped to BeEmpty and passes, the 0-tick control is byte-unchanged and still passes, and a new 1-tick pin covers the exact bisection datum no test pinned before — the Weather gate fell from 42.290 s with four full 10 s step-7 spins to 0.432 s. Bus-side siblings fixed in the same cascade (DomainEventBus mode cache static -> instance; handler Type keys evicted with their last subscriber). New ledger rows F-62 (BusFacade caches, K10.4 precondition), F-63 (IntentBatcher dead code), F-64 (NativeComponentTypeRegistry._byId write-only static), F-65 (tick-path Type-retention analyzer candidate, Planned — the tests are the lock until a rule exists). Riders: the test csproj native-copy wiring gained its Linux arm across all 8 native-dependent projects and DEVELOPMENT_HYGIENE 2.2.0 records the canonical Linux native build, so the suite is runnable on the permanent Linux environment; BRIEF_TEMPLATE closure guidance aligned to CODING_STANDARDS 8.4 v3.0.0. Forward queue per the ratified program order: LINUX_PRESENT_1 next. EVT-2026-08-26-F60A_TICK_PATH. Prior context: ID_B_ENTITY_VERSIONS closure write-back (2026-08-22) — F-59 CLOSED: the version-0 resolution shipped as the IAC §2 versions view (df_world_acquire_versions / df_world_release_versions, exports 207 → 209), all three pair-iterators reconstruct true generations, ~18 engine fabrication sites migrated, EntityId.IsValid aligned both sides, DFK022 Error-enforcing and К-L22 seated AUTHORED. The identity family (ID-A + ID-B) is complete; its only remaining open item is F-60 half (a), the tick-path ALC root, whose charter is the family's successor. F-58 keeps its core — a mod still cannot RECLAIM its world state — with its EQ-b identity/versions half recorded as settled. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior context: STACK_UPDATE closure write-back (2026-07-17) — Update-block stack re-sync sentence appended (net10.0 / C# 14 / SDK 10.0.204 global.json pin / test triad 2.9.3+3.1.5+18.8.1 / AwesomeAssertions 9.4.0 / К-L1 C++23 with the MSVC preview caveat; ENGINEERING QUEUE unblocked, EQ-a next) + Findings ledger rows F-44 (stable /std:c++23 migration), F-45 (xunit v3 own cascade), F-46 (Roslyn/BDN/YamlDotNet hygiene bundle + §4.3 mirror-count nit), F-47 (LINQ convention documentary-not-enforced, SpatialGrid.cs:3), F-48 (M74 nodeReuse test-infra hang class, session finding). F-48 carries the setup-session finding instead of the brief's reserved AA-escape slot — Phase G landed without escape. EVT-2026-07-17-STACK_UPDATE. Prior context: Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — Analyzer track + Findings ledger sections received; DD-2 spec/roadmap separation increment 1."
+  last_review_event: "LINUX_PRESENT_1 closure write-back (2026-08-26) — the Launcher opens, renders and shuts down on the permanent Linux environment, and the LIVE LAUNCHER SMOKE owed since W3/PR #51 is PAID (15 runs, 15 PASS / 0 FAIL; window confirmed by the X server on every run and visually by the operator). FOUR measured blockers removed in firing order: the hard-coded vulkan-1.dll library name now resolves per platform via VulkanLibraryResolver registered from a VkApi static constructor (a [ModuleInitializer] is CA2255 in a class library, and the DFK-WAIVER law covers DFK/DFL only, so a static cctor supplies the same guarantee without setting a CA-suppression precedent); the instance surface extension is selected per platform (VK_KHR_win32_surface <-> VK_KHR_xcb_surface, still asserted not negotiated, symmetric with the Windows arm); the windowing seam was re-contracted so surface creation lives BEHIND the window (IWindow.Handle retired, CreateVulkanSurface added, Window -> Win32Window, PlatformWindow factory, resize decode extracted pure and its tests ungated); and the Launcher csproj gained the Linux .so copy arm the 8 test projects got at e30375c. XCB backend shipped over XWayland — 29 P/Invokes under Runtime.Native.Xcb (18 libxcb + 1 libc free + 6 libxkbcommon + 4 libxkbcommon-x11), core libxcb only because libxcb-icccm and libxcb-keysyms are absent on the host, plus a NEW XkbKeysymMapper leaving VirtualKeyMapper untouched. The 111 WindowsOnly skips are GONE: two capability-probing gates replaced them along a measured 80 loader-only / 28 display split — NOT the 71/40 the recon prose claimed, whose own per-file rows sum to 80 and 31; and all 14 loader-only fixtures were found building a real Window they never used, which was removed so the gate is true of the code rather than merely green on a box with a display. A THIRD gate was forced into view by the host (RequiresVulkanValidationFact — this box ships no VK_LAYER_KHRONOS_validation, only Mesa/Intel layers). Suite 1194/0/116 -> 1371/0/6; the 6 skips are 5 F-10 plus that one validation test, each named. F-51 CLOSED — its fence was lifted by operator ruling after the cascade HALTED on it at H8; the ring guard was scoped to acquire order rather than to a recording, and BOTH index-repeat routes (swapchain recreate AND MAILBOX present) are now covered, with the F02 guard itself left live one level down. F-32 CX-02 untouched. New rows F-66 (Wayland-native backend), F-67 (headless/offscreen path), F-68 (WindowOptions.Resizable dead but test-pinned). VULKAN_SUBSTRATE 1.0.4 -> 1.0.5 PATCH: L2/L3 counts re-measured (Win32 15 -> 14 by design; Xcb 29 new), L7 Windows-only superseded in part, OQ-V14 narrowed rather than closed. PR #53 Codex review round, architect-triaged 2026-08-26: four findings FIXED on the branch before merge — the XCB suite was gated on the platform-neutral display gate and would have run and failed on every Windows runner (P1, cascade-introduced), the display gate accepted WAYLAND_DISPLAY as evidence of an X display when xcb_connect reads DISPLAY, the Vulkan gate skipped on NativeLibrary.TryLoad when its own documentation promised loader-plus-GPU, and XcbWindow narrowed WindowOptions dimensions into 16-bit X11 fields unchecked (65536 wrapped to 0). Both gates now PROBE rather than infer, and the XCB suite has its own RequiresXcbFact. A fifth was fixed under ruling: X11 key identity was resolved through the ACTIVE modifier state, so Shift+1 and Shift+Tab folded to Key.Unknown while the Win32 arm reported them — now resolved at shift level 0 of the effective layout, pinned layout-agnostically and proved by deliberate break (keycode 10: Digit1 unshifted, Unknown shifted). The sixth is ledgered as F-69 rather than fixed, by ruling: the F-51 reset narrows the ring guard for a pattern no caller uses, and the real invariant is submission-keyed, which is F-32's territory. Suite 1371 -> 1374 / 0 / 6 (+4 gate/dimension pins, +1 key-identity pin; the two new pins from the F-51 round are already in the 1371). EVT-2026-08-26-LINUX_PRESENT_1. Prior context: F60A_TICK_PATH closure write-back (2026-08-26) — F-60 CLOSED, the identity family is complete. The tick-path ALC root was TickScheduler._tickRateCache, a session-lived ConcurrentDictionary<Type,int> populated by GetOrAdd(system.GetType(), ...) on the first ShouldRun call with zero evictions (Reset() had no production caller). The tick rate now resolves at LOAD time into the scheduler instance-keyed SystemMetadata table, which is swapped at every load boundary, and the lazy cache is deleted. Falsification honoured: the pinned leak test flipped to BeEmpty and passes, the 0-tick control is byte-unchanged and still passes, and a new 1-tick pin covers the exact bisection datum no test pinned before — the Weather gate fell from 42.290 s with four full 10 s step-7 spins to 0.432 s. Bus-side siblings fixed in the same cascade (DomainEventBus mode cache static -> instance; handler Type keys evicted with their last subscriber). New ledger rows F-62 (BusFacade caches, K10.4 precondition), F-63 (IntentBatcher dead code), F-64 (NativeComponentTypeRegistry._byId write-only static), F-65 (tick-path Type-retention analyzer candidate, Planned — the tests are the lock until a rule exists). Riders: the test csproj native-copy wiring gained its Linux arm across all 8 native-dependent projects and DEVELOPMENT_HYGIENE 2.2.0 records the canonical Linux native build, so the suite is runnable on the permanent Linux environment; BRIEF_TEMPLATE closure guidance aligned to CODING_STANDARDS 8.4 v3.0.0. Forward queue per the ratified program order: LINUX_PRESENT_1 next. EVT-2026-08-26-F60A_TICK_PATH. Prior context: ID_B_ENTITY_VERSIONS closure write-back (2026-08-22) — F-59 CLOSED: the version-0 resolution shipped as the IAC §2 versions view (df_world_acquire_versions / df_world_release_versions, exports 207 → 209), all three pair-iterators reconstruct true generations, ~18 engine fabrication sites migrated, EntityId.IsValid aligned both sides, DFK022 Error-enforcing and К-L22 seated AUTHORED. The identity family (ID-A + ID-B) is complete; its only remaining open item is F-60 half (a), the tick-path ALC root, whose charter is the family's successor. F-58 keeps its core — a mod still cannot RECLAIM its world state — with its EQ-b identity/versions half recorded as settled. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior context: STACK_UPDATE closure write-back (2026-07-17) — Update-block stack re-sync sentence appended (net10.0 / C# 14 / SDK 10.0.204 global.json pin / test triad 2.9.3+3.1.5+18.8.1 / AwesomeAssertions 9.4.0 / К-L1 C++23 with the MSVC preview caveat; ENGINEERING QUEUE unblocked, EQ-a next) + Findings ledger rows F-44 (stable /std:c++23 migration), F-45 (xunit v3 own cascade), F-46 (Roslyn/BDN/YamlDotNet hygiene bundle + §4.3 mirror-count nit), F-47 (LINQ convention documentary-not-enforced, SpatialGrid.cs:3), F-48 (M74 nodeReuse test-infra hang class, session finding). F-48 carries the setup-session finding instead of the brief's reserved AA-escape slot — Phase G landed without escape. EVT-2026-07-17-STACK_UPDATE. Prior context: Standing-Law cascade C6+C8 (4a67a22 + 5ebc24b) — Analyzer track + Findings ledger sections received; DD-2 spec/roadmap separation increment 1."
   reviewer: Crystalka
 - register_id: DOC-D-ARCHITECTURE_RECON_BRIEF
   path: tools/briefs/ARCHITECTURE_RECON_BRIEF.md
@@ -3175,6 +3175,21 @@ documents:
   reviewer: Crystalka
   risks_referenced:
   - RISK-009
+- register_id: DOC-D-LINUX_PRESENT_1_BRIEF
+  path: tools/briefs/LINUX_PRESENT_1_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: en
+  next_review_due: 
+  title: 'LINUX_PRESENT_1 -- the Launcher opens, renders, and closes on the permanent Linux environment: per-platform Vulkan loader resolution, platform-selected instance surface extension, a platform-neutral windowing seam (surface creation behind the window) with an XCB backend over XWayland, capability-probing test gates replacing the 111 WindowsOnly skips (71 loader-only + 40 display), the Launcher native .so arm, and the live Launcher smoke that pays the debt owed since W3/PR #51'
+  authored_by: Claude Fable (architect session, LINUX_PRESENT_1 charter)
+  basis: DOC-E-LINUX_PRESENT_1_RECON_REPORT (Opus subagent, read-only, 2026-08-26 at 683b343, sections A-H + 6 discrepancies + 7 surprises) + the architect-seat scope measurement 2026-08-26 (Launcher DllNotFoundException repro at Window.cs:46) + ratified lean set 2026-08-26 (Q1 XCB-first; Q2 surface-behind-window + runtime factory; Q3 loader resolver + platform extension pick; Q4 two capability attributes; Q5 Launcher smoke as closure gate; Q6 scope fences) + operator environment ruling 2026-08-26 (Linux PERMANENT)
 - register_id: DOC-D-MOD_OS_V16_AMENDMENT
   path: tools/briefs/MOD_OS_V16_AMENDMENT_BRIEF.md
   project: Dual Frontier
@@ -4374,6 +4389,21 @@ documents:
   title: Self-teaching ritual artifact — Phase 1 (Самообучение фаза 1)
   review_cadence: on-status-transition
   reviewer: Crystalka
+- register_id: DOC-E-LINUX_PRESENT_1_RECON_REPORT
+  path: docs/reports/LINUX_PRESENT_1_RECON_REPORT.md
+  project: Dual Frontier
+  category: E
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: en
+  next_review_due: 
+  review_cadence: none-historical-record
+  title: 'LINUX_PRESENT_1 RECON REPORT — 2026-08-26 (A-H) — Linux presentation-path measurement at HEAD 683b343 by a read-only Opus subagent: FOUR blockers firing in order (kernel32 GetModuleHandle at Window.cs:46 PLUS an independent second site VulkanSurface.cs:25; VkApi.VulkanLib hard-coded "vulkan-1.dll" feeding ~100 LibraryImports with NO SetDllImportResolver anywhere while the host loader is libvulkan.so.1; VK_KHR_win32_surface asserted unconditionally at VulkanInstance.cs:51 with no enumeration; the Launcher csproj never received the Linux .so copy arm the 8 test projects got at e30375c); coupling set is FIVE production files (Native/Win32 leaf, Window.cs, VulkanSurface.cs, VulkanInstance.cs, Input/VirtualKeyMapper.cs — the last pinned by the UNGATED VirtualKeyMapperTests green on Linux today); production consumes exactly 6 IWindow members and Handle has ONE reader; device/queue selection is surface-independent; resize truth = WindowResizeEvent is decorative, Width/Height are the load-bearing pump outputs read by the out-of-date recreate path, and the currentExtent clamp would mask a missing update; the 111-skip gate is a pure IsOSPlatform(Windows) check splitting 71 loader-only / 40 display-needing tests; SendMessage P/Invoke is test-only and non-portable; DFK002 (Error) requires new P/Invokes under DualFrontier.Runtime.Native.*; host session is Wayland + XWayland + DISPLAY=:0 with libxcb.so.1 and libxkbcommon-x11 present and libxcb-keysyms/icccm ABSENT; dead surface enumerated (RECT, WM_CREATE, WindowOptions.Resizable, IWindow.Hide); doc drift (MODULE.md 14 vs VULKAN_SUBSTRATE 15 LibraryImports vs actual 14 LI + 1 DllImport)'
+  special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F60A_TICK_PATH_RECON_REPORT, DOC-E-F60A_TICK_PATH_VERIFICATION_RECON). Operator-requested subagent recon (2026-08-26) for the LINUX_PRESENT_1 charter, executed by a fresh read-only Opus subagent at HEAD 683b343; complements the architect-seat scope measurement of 2026-08-26 (the Launcher DllNotFoundException repro, recorded in the ledger and the charter memory). Read-only: zero repository mutations besides this file, sync never run, zero builds/tests by the subagent. UNTRACKED at authoring — enrolls at the charter cascade C1.'
 - register_id: DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT
   path: docs/reports/LINUX_SANDBOX_ENV_BASELINE_REPORT.md
   project: Dual Frontier
@@ -5972,6 +6002,22 @@ documents:
   review_cadence: phase-led
   reviewer: Crystalka
   special_case_rationale: Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance.
+- register_id: DOC-F-SRC-RUNTIME-NATIVE-XCB
+  path: src/DualFrontier.Runtime/Native/Xcb/MODULE.md
+  project: Dual Frontier
+  category: F
+  tier: 4
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  first_authored: 2026-08-26
+  last_modified: 2026-08-26
+  content_language: mixed
+  next_review_due: 2026-Q4
+  title: DualFrontier.Runtime.Native.Xcb — module doc
+  review_cadence: phase-led
+  reviewer: Crystalka
+  special_case_rationale: Module doc for the Linux windowing leaf authored at LINUX_PRESENT_1 (2026-08-26), mirroring the enrolled DOC-F-SRC-RUNTIME-NATIVE-WIN32 form for its sibling backend (enroll F/4 per the CORPUS_CLOSURE_INVERSION_B CD2 orphan-triage convention).
 - register_id: DOC-F-SRC-RUNTIME-SPRITE
   path: src/DualFrontier.Runtime/Sprite/MODULE.md
   project: Dual Frontier
@@ -16041,5 +16087,46 @@ audit_trail:
     THE ONE TEST RETIRED, AND WHY THAT IS NOT A COVERAGE LOSS. TickSchedulerThreadSafetyTests guarded the concurrent population of the lazy cache: it called Reset() on each of 500 iterations specifically to re-empty the cache and reopen the race, then raced 32 distinct SystemBase types through ShouldRun to force dictionary resizes. With no lazy population left, that race is structurally impossible rather than merely untested -- the metadata table is written only at load boundaries and read-only during ticks, and TickScheduler's remaining state is a single long with its single-writer pattern unchanged. A migrated version would assert against a mechanism that no longer exists.
 
     A NOTE ON THE BRIEF ITSELF, recorded because it generalises. The brief arrived with two defects in its own frontmatter: an unquoted basis scalar carrying interior ': ' sequences, which made the file unparseable and was the single failure in the Phase 0 baseline sweep, and a missing last_modified, which FRAMEWORK 14.3 requires and which the parse error had masked. Phase 0 established that the failure was in the incoming artifact rather than the repository by holding the three untracked files aside and re-running validate --armed, which exited 0 on the tracked corpus. Both were corrected as shape-conformance at C1. A governance gate that fails is doing its job; what mattered was determining WHICH artifact it was failing on before touching anything.
+  cross_references:
+    capa_entries: []
+- id: EVT-2026-08-26-LINUX_PRESENT_1
+  date: 2026-08-26
+  event: LINUX_PRESENT_1 cascade executed -- the Launcher opens, renders and shuts down on the permanent Linux environment; the live Launcher smoke owed since W3/PR
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-LINUX_PRESENT_1_BRIEF
+  - DOC-E-LINUX_PRESENT_1_RECON_REPORT
+  - DOC-A-VULKAN_SUBSTRATE
+  - DOC-F-SRC-RUNTIME-NATIVE-WIN32
+  - DOC-F-SRC-RUNTIME-NATIVE-XCB
+  - DOC-F-SRC-RUNTIME-WINDOW
+  - DOC-F-SRC-RUNTIME-GRAPHICS
+  - DOC-C-ROADMAP
+  commits:
+    range: 47b25df..(the closure commit carries this entry)
+    key_commits:
+    - 47b25df
+    - d0bc1f9
+    - 6f2c322
+    - 6a7274e
+    - e38e14e
+    - ecc81da
+    - 5e8df0a
+    - 6e12a8e
+    - c412da8
+  governance_impact: >
+    FOUR BLOCKERS, AND WHY THE ORDER MATTERED. The Launcher died at Window.cs:46 on kernel32, and the obvious reading -- "the blocker is windowing" -- was wrong by three. Behind that death sat the hard-coded vulkan-1.dll library name with no resolver anywhere in the repository (the host loader is libvulkan.so.1, which .NET's Unix probing of that name never matches), an unconditional VK_KHR_win32_surface assertion that fails vkCreateInstance before a surface is ever requested, and a Launcher csproj that never received the Linux .so copy arm all eight test projects got at e30375c -- silent at build time under Condition="Exists", fatal at runtime. Each fix was provable only after the one before it, and each was proved that way: the death moved from DllNotFoundException to VK_ERROR_EXTENSION_NOT_PRESENT at C2, and to a constructed VkInstance plus VkDevice at C3. Fixing only the windowing would have moved the death forty lines, not removed it.
+
+    THE SEAM. IWindow.Handle was a single IntPtr, and a Vulkan surface needs different inputs per window system -- Win32 an HINSTANCE plus an HWND, XCB a connection pointer plus a window id. One handle could only ever carry one of them, so every additional backend would have had to widen the contract or smuggle a platform-tagged pair through it. Surface creation moved BEHIND the window instead: the implementation already holds whatever its platform needs, and the interface now carries no platform-bound member at all. That inversion cost less than it looks -- Handle had exactly ONE production reader -- and it is what let the XCB backend be additive rather than invasive. VulkanSurface keeps ownership of the handle and its destruction; only creation delegates.
+
+    WHAT THE GATES WERE ACTUALLY ASKING. The 111 skips were gated on RuntimeInformation. IsOSPlatform(Windows) -- the OS, and nothing else. The replacement asks what the HOST CAN DO, which is the question that governs, and the suite went from 116 skips to 6. Two corrections are worth recording because neither was in the brief. First, the split is 80 loader-only / 28 display, not the 71/40 the recon's prose asserted with a reconciliation tick; its own per-file rows sum to 80 and 31, so the data was right and the addition was wrong, and the wrong subtotals had already propagated into the brief as a census pin. Second, and worse: all fourteen "loader-only" fixtures constructed a real Window they never referenced. The classification described what those tests ASSERT, not what they SET UP -- as written every one of them needed a display, and tagging them by the recon's label would have produced a gate that was true of the assertions and false of the code, passing here only because this box happens to have a display. The dead window was removed so the label became true. A third gate then forced itself into view: one test needs VK_LAYER_KHRONOS_validation, which this host does not ship, and which is neither the loader nor the display -- so it got its own predicate rather than a mis-tag or a red suite.
+
+    THE HALT, AND THE RULING. C7 landed the Launcher's native arm and the live smoke failed: two passes in six runs, every failure the VertexBufferRing F02 guard. That defect was already ledgered as F-51, ruled PRE-EXISTING at EQ_A3 and fenced "architect-owned, its own dedicated session" by operator ruling of 2026-07-18. The wave-gate rule says a pre-existing defect blocking the gate's proof is fixed in the wave AFTER checking the ledger; the ledger carried an explicit fence, standing law outranks the brief, and the cascade HALTED at H8 rather than improvise around it. The operator lifted the fence for this cascade, and only then was it fixed. Blast radius was verified before the report went up: VertexBufferRing, VulkanSwapchain, SpriteRenderer and LauncherRenderer are byte-untouched across C1-C7, and Runtime.cs's entire delta was the two-line factory call.
+
+    F-51, AND A LESSON ABOUT MEASURED CAUSES. The guard compared frameIndex against the last index begun -- a proxy for "a batch is pending submission" that holds only while acquire indices never repeat. Instrumentation caught the first route immediately: a present returns out-of-date, the swapchain is recreated after render, and the new swapchain's first acquire hands back the index just used. Scoping the reset to the swapchain generation took the smoke from 2/6 to 9/10 -- and the residual one-in-ten was a SECOND route, because VulkanSwapchain prefers MAILBOX present, which may release a presented image immediately so the very next acquire returns the index just used with no recreate anywhere. Re-instrumenting did not reproduce it; the added console output slowed the loop enough to close the race, so the second route was identified from the code's own constraints instead. The generalisable point: a cause can be measured, real, and still incomplete, and a partial fix that improves the failure rate is the easiest kind to mistake for a complete one. The boundary is neither the swapchain nor the acquire order but the RECORDING -- RecordSpritesFrame emits exactly one batch and its caller submits it -- and the F02 guard is left live one level down for the multi-batch caller it was written for. F-32's capacity redesign is untouched and stays architect-owned.
+
+    DELIBERATE-BREAK DISCIPLINE. Four pins were broken once each, observed failing, and restored byte-identical with zero residue: the CONFIGURE_NOTIFY Width/Height update (two resize pins fail -- the one the recon warned about, since VulkanSwapchain's caps.currentExtent preference would have masked a missing update in production, so the pin reads window.Width/Height directly rather than trusting the swapchain to notice), the WM_DELETE_WINDOW arm (the close pin fails), and the F-51 reset call site at both the interim and final boundaries (the wiring pins fail and the ring pins do not, which is what proves the pins cover the wiring rather than the method). The guard-still-fires pin passed throughout, which is what keeps the F-51 fix from being a hole.
+
+    SCOPE HELD. native/ is byte-untouched (MANAGED-ONLY), selftest 110 ALL PASSED and exports unchanged at 209. The waiver pin is still 3 -- the CA2255 question was answered structurally, by a static constructor that strips beforefieldinit, rather than by setting a CA-suppression precedent the codebase does not have. VirtualKeyMapper and its ungated tests are untouched per the brief's fence, and the XCB arm got its own keysym mapper; WindowOptionsTests is untouched. WindowOptions.Resizable and IWindow.Hide were left alive deliberately and ledgered instead. The LINUX_PRESENT_1 recon report keeps its anchors to Window.cs and window.Handle: it is a historical record measured at 683b343, and retro-editing it would falsify the measurement it exists to preserve.
   cross_references:
     capa_entries: []

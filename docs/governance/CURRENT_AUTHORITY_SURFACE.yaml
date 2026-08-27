@@ -172,7 +172,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.4
+  version: 1.0.5
 - register_id: DOC-B-CODING_STANDARDS
   path: docs/methodology/CODING_STANDARDS.md
   category: B
@@ -661,6 +661,12 @@ documents:
   version: Live
 - register_id: DOC-F-SRC-RUNTIME-NATIVE-WIN32
   path: src/DualFrontier.Runtime/Native/Win32/MODULE.md
+  category: F
+  tier: 4
+  lifecycle: Live
+  version: Live
+- register_id: DOC-F-SRC-RUNTIME-NATIVE-XCB
+  path: src/DualFrontier.Runtime/Native/Xcb/MODULE.md
   category: F
   tier: 4
   lifecycle: Live

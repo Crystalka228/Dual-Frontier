@@ -125,6 +125,23 @@ public sealed class SpriteRenderer : IDisposable
         _frameActive = true;
     }
 
+    /// <summary>
+    /// Marks a swapchain-generation boundary so the next <see cref="BeginFrame"/> may reuse the
+    /// frame index the previous generation ended on (F-51). Call after the swapchain is
+    /// replaced; <c>Runtime.RecreateFramebuffersForSwapchain</c> does this.
+    /// </summary>
+    public void ResetFrameTracking()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_frameActive)
+        {
+            throw new InvalidOperationException(
+                "SpriteRenderer.ResetFrameTracking called with a frame active; call EndFrame first.");
+        }
+
+        _vertexRing.ResetFrameTracking();
+    }
+
     /// <summary>Submit sprite для batched rendering. Sprites grouped by SpriteTexture key.</summary>
     public void Submit(Sprite sprite)
     {

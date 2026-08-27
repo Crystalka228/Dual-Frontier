@@ -26,5 +26,17 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Link>DualFrontier.Core.Native.dll</Link>
     </None>
+    <!-- Linux arm (permanent development environment, operator ruling 2026-08-26).
+         The CMake/Ninja build is SINGLE-CONFIG, so the shared object lands at the
+         build ROOT; there is no Release/ subdirectory to mirror the Windows path
+         above. Sibling to the Windows item, not a replacement: the two Exists
+         guards are mutually exclusive in practice, so exactly one arm applies on
+         any given host and neither needs an OS condition. Canonical native build
+         commands: DEVELOPMENT_HYGIENE.md section 3. -->
+    <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\DualFrontier.Core.Native.so"
+          Condition="Exists('$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\DualFrontier.Core.Native.so')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>DualFrontier.Core.Native.so</Link>
+    </None>
   </ItemGroup>
 </Project>

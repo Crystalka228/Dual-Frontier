@@ -10,15 +10,11 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class VulkanSamplerTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
 
     public VulkanSamplerTests()
     {
-        var opts = new WindowOptions { Title = "Sampler", Width = 400, Height = 300 };
-        var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
     }
@@ -27,10 +23,9 @@ public sealed class VulkanSamplerTests : IDisposable
     {
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Default_options_create_sampler_with_nearest_repeat()
     {
         using var sampler = new VulkanSampler(_device);
@@ -42,7 +37,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Options.EnableAnisotropy.Should().BeFalse();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Linear_filter_creates_sampler()
     {
         var options = new SamplerOptions
@@ -54,7 +49,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void ClampToEdge_wrap_creates_sampler()
     {
         var options = new SamplerOptions
@@ -66,7 +61,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void MirroredRepeat_wrap_creates_sampler()
     {
         var options = new SamplerOptions
@@ -78,7 +73,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Dispose_zeros_handle_and_idempotent()
     {
         var sampler = new VulkanSampler(_device);
@@ -86,7 +81,7 @@ public sealed class VulkanSamplerTests : IDisposable
         sampler.Dispose();    // idempotent
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Null_device_throws()
     {
         Action act = () => new VulkanSampler(null!);

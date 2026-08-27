@@ -14,16 +14,12 @@ namespace DualFrontier.Runtime.Tests.Compute;
 /// </summary>
 public sealed class V1DiffusionIntegrationTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly NativeWorld _world;
 
     public V1DiffusionIntegrationTests()
     {
-        var opts = new WindowOptions { Title = "V1Diffusion", Width = 320, Height = 240 };
-        var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _world = new NativeWorld();
@@ -34,10 +30,9 @@ public sealed class V1DiffusionIntegrationTests : IDisposable
         _world.Dispose();
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Single_iteration_spreads_source_spike_к_neighbours()
     {
         var binding = new FieldStorageBinding(_world);
@@ -92,7 +87,7 @@ public sealed class V1DiffusionIntegrationTests : IDisposable
         total.Should().BeApproximately(100f, 0.001f, "no decay = mass conserved");
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Dispatch_on_unregistered_field_returns_false()
     {
         var binding = new FieldStorageBinding(_world);

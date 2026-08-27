@@ -12,15 +12,11 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class ShaderCompilationTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
 
     public ShaderCompilationTests()
     {
-        var opts = new WindowOptions { Title = "ShaderCompile", Width = 320, Height = 240 };
-        var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
     }
@@ -29,7 +25,6 @@ public sealed class ShaderCompilationTests : IDisposable
     {
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
     private static string FindShaderPath(string name)
@@ -50,7 +45,7 @@ public sealed class ShaderCompilationTests : IDisposable
         return Path.Combine(dir.FullName, "assets", "shaders", name);
     }
 
-    [WindowsOnlyTheory]
+    [RequiresVulkanTheory]
     [InlineData("clearcolor.vert.spv")]
     [InlineData("clearcolor.frag.spv")]
     [InlineData("noop.comp.spv")]
@@ -63,7 +58,7 @@ public sealed class ShaderCompilationTests : IDisposable
         (len % 4).Should().Be(0L, "SPIR-V bytecode is uint32 aligned");
     }
 
-    [WindowsOnlyTheory]
+    [RequiresVulkanTheory]
     [InlineData("clearcolor.vert.spv")]
     [InlineData("clearcolor.frag.spv")]
     [InlineData("noop.comp.spv")]

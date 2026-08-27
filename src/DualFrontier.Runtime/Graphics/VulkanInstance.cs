@@ -45,10 +45,20 @@ public sealed class VulkanInstance : IDisposable
         IntPtr appNamePtr = Marshal.StringToCoTaskMemUTF8("Dual Frontier");
         IntPtr engineNamePtr = Marshal.StringToCoTaskMemUTF8("Dual Frontier V Substrate");
 
+        // VK_KHR_surface is the platform-neutral half and is always required; the second
+        // extension is the platform's window-system integration and MUST match the surface
+        // the window will later create (VK_KHR_win32_surface pairs with
+        // vkCreateWin32SurfaceKHR, VK_KHR_xcb_surface with vkCreateXcbSurfaceKHR). Asking for
+        // the wrong one fails vkCreateInstance with VK_ERROR_EXTENSION_NOT_PRESENT before any
+        // surface is ever requested. As on the Windows arm this is asserted rather than
+        // negotiated: no vkEnumerateInstanceExtensionProperties query, so a host that cannot
+        // present fails fast and loudly here instead of degrading silently.
         var extensionNames = new List<string>
         {
             VkConstants.VK_KHR_SURFACE_EXTENSION_NAME,
-            VkConstants.VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+            OperatingSystem.IsWindows()
+                ? VkConstants.VK_KHR_WIN32_SURFACE_EXTENSION_NAME
+                : VkConstants.VK_KHR_XCB_SURFACE_EXTENSION_NAME,
         };
         var layerNames = new List<string>();
 

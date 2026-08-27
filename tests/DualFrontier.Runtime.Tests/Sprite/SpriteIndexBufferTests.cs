@@ -12,16 +12,12 @@ namespace DualFrontier.Runtime.Tests.Sprite;
 /// </summary>
 public sealed class SpriteIndexBufferTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly MemoryAllocator _allocator;
 
     public SpriteIndexBufferTests()
     {
-        var opts = new WindowOptions { Title = "SpriteIndexBuffer", Width = 400, Height = 300 };
-        var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _allocator = new MemoryAllocator(_device);
@@ -33,17 +29,16 @@ public sealed class SpriteIndexBufferTests : IDisposable
         _allocator.Dispose();
         _device.Dispose();
         _instance.Dispose();
-        _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constants_Are_Expected_Values()
     {
         SpriteIndexBuffer.IndicesPerQuad.Should().Be(6);
         SpriteIndexBuffer.MaxUint16Quads.Should().Be(10_000);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Valid_Capacity_Succeeds()
     {
         using var idx = new SpriteIndexBuffer(_device, _allocator, quadCapacity: 100);
@@ -52,21 +47,21 @@ public sealed class SpriteIndexBufferTests : IDisposable
         idx.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Zero_Capacity_Throws()
     {
         Action act = () => new SpriteIndexBuffer(_device, _allocator, quadCapacity: 0);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_With_Negative_Capacity_Throws()
     {
         Action act = () => new SpriteIndexBuffer(_device, _allocator, quadCapacity: -1);
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_Beyond_MaxUint16Quads_Throws()
     {
         Action act = () => new SpriteIndexBuffer(_device, _allocator,
@@ -74,7 +69,7 @@ public sealed class SpriteIndexBufferTests : IDisposable
         act.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Constructor_At_MaxUint16Quads_Succeeds()
     {
         using var idx = new SpriteIndexBuffer(_device, _allocator,
@@ -83,7 +78,7 @@ public sealed class SpriteIndexBufferTests : IDisposable
         idx.IndexCount.Should().Be(60_000);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void IndexCount_Equals_QuadCapacity_Times_Six()
     {
         using var idx = new SpriteIndexBuffer(_device, _allocator, quadCapacity: 1234);

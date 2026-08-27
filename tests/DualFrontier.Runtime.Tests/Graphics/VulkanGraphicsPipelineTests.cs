@@ -12,7 +12,7 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class VulkanGraphicsPipelineTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly VulkanSurface _surface;
@@ -23,7 +23,7 @@ public sealed class VulkanGraphicsPipelineTests : IDisposable
     {
         var opts = new WindowOptions { Title = "GfxPipeline", Width = 640, Height = 480 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _surface = new VulkanSurface(_instance, _window);
@@ -56,14 +56,14 @@ public sealed class VulkanGraphicsPipelineTests : IDisposable
         return Path.Combine(dir.FullName, "assets", "shaders", name);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void PipelineLayout_empty_constructs_non_zero()
     {
         using var layout = new VulkanPipelineLayout(_device);
         layout.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void GraphicsPipeline_clearcolor_constructs_successfully()
     {
         using var layout = new VulkanPipelineLayout(_device);

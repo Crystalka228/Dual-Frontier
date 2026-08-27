@@ -1,16 +1,21 @@
 using System.Runtime.InteropServices;
 using DualFrontier.Runtime.Input;
+using DualFrontier.Runtime.Native.Vulkan;
 using DualFrontier.Runtime.Native.Win32;
 
 namespace DualFrontier.Runtime.Window;
 
 /// <summary>
-/// Win32 window implementation. Lifecycle owns: class registration, HWND, WindowProc delegate
-/// pinning, message pump. V0.A scope: lifecycle + close handling. V0.B adds WM_SIZE handler
-/// emitting WindowResizeEvent for swapchain recreation. V0.C extends с input event
-/// dispatch from WM_KEYDOWN/WM_MOUSEMOVE/etc.
+/// Win32 windowing backend. Lifecycle owns: class registration, HWND, WindowProc delegate
+/// pinning, message pump, and the VK_KHR_win32_surface creation for its own HWND. V0.A scope:
+/// lifecycle + close handling. V0.B adds the WM_SIZE handler emitting WindowResizeEvent for
+/// swapchain recreation. V0.C extends с input event dispatch from WM_KEYDOWN/WM_MOUSEMOVE/etc.
+///
+/// <para>Thread contract: the HWND and its message queue belong to the creating thread; Show,
+/// Hide and PumpMessages must be called from it. Construct through
+/// <see cref="PlatformWindow.Create"/> rather than directly, so the host picks the backend.</para>
 /// </summary>
-public sealed class Window : IWindow
+public sealed class Win32Window : IWindow
 {
     private readonly WindowOptions _options;
     private IntPtr _hwnd;
@@ -22,14 +27,13 @@ public sealed class Window : IWindow
     private int _currentWidth;
     private int _currentHeight;
 
-    public IntPtr Handle => _hwnd;
     public int Width => _currentWidth;
     public int Height => _currentHeight;
     public bool IsOpen => _isOpen;
 
     internal InputEventQueue InputQueue { get; }
 
-    public Window(WindowOptions options, InputEventQueue inputQueue)
+    public Win32Window(WindowOptions options, InputEventQueue inputQueue)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(inputQueue);
@@ -151,13 +155,13 @@ public sealed class Window : IWindow
                 _isOpen = false;
                 return IntPtr.Zero;
             case Win32Constants.WM_SIZE:
-                // LOWORD = new client width, HIWORD = new client height (Win32 docs).
-                long packed = lParam.ToInt64();
-                int newWidth = (int)(packed & 0xFFFF);
-                int newHeight = (int)((packed >> 16) & 0xFFFF);
-                // Skip 0×0 (WM_SIZE during minimize) + skip unchanged dimensions.
-                if (newWidth > 0 && newHeight > 0
-                    && (newWidth != _currentWidth || newHeight != _currentHeight))
+                WindowEventDecode.UnpackSizeLParam(
+                    lParam.ToInt64(), out int reportedWidth, out int reportedHeight);
+                // Skip-0×0 and skip-unchanged live in WindowEventDecode so the XCB
+                // CONFIGURE_NOTIFY arm obeys the identical law (and both are pinned ungated).
+                if (WindowEventDecode.TrySize(
+                        reportedWidth, reportedHeight, _currentWidth, _currentHeight,
+                        out int newWidth, out int newHeight))
                 {
                     _currentWidth = newWidth;
                     _currentHeight = newHeight;
@@ -260,6 +264,52 @@ public sealed class Window : IWindow
             default:
                 return Win32Api.DefWindowProc(hWnd, msg, wParam, lParam);
         }
+    }
+
+    /// <summary>
+    /// Creates a VkSurfaceKHR for this HWND through VK_KHR_win32_surface. The hinstance is the
+    /// process module handle, exactly as at class-registration time — the surface belongs to
+    /// this window, so the call that needs both values lives where both are already known.
+    /// </summary>
+    public IntPtr CreateVulkanSurface(IntPtr instanceHandle)
+    {
+        if (instanceHandle == IntPtr.Zero)
+        {
+            throw new ArgumentException("VkInstance handle must be non-zero.", nameof(instanceHandle));
+        }
+        if (_hwnd == IntPtr.Zero)
+        {
+            throw new InvalidOperationException(
+                "Cannot create a Vulkan surface for a window that is not open.");
+        }
+
+        IntPtr hinstance = Win32Api.GetModuleHandle(null);
+        if (hinstance == IntPtr.Zero)
+        {
+            throw new InvalidOperationException(
+                $"GetModuleHandle (Win32 surface foundation) failed: error {Win32Api.GetLastError()}");
+        }
+
+        var createInfo = new VkWin32SurfaceCreateInfoKHR
+        {
+            sType = VkStructureType.VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+            pNext = IntPtr.Zero,
+            flags = 0,
+            hinstance = hinstance,
+            hwnd = _hwnd,
+        };
+
+        VkResult result = VkApi.vkCreateWin32SurfaceKHR(
+            instanceHandle, in createInfo, IntPtr.Zero, out IntPtr surface);
+        if (result != VkResult.VK_SUCCESS)
+        {
+            throw new InvalidOperationException(
+                $"vkCreateWin32SurfaceKHR failed: {result}. Verify VK_KHR_win32_surface instance " +
+                "extension was activated by VulkanInstance (it selects the surface extension by " +
+                "platform).");
+        }
+
+        return surface;
     }
 
     public void Show() => Win32Api.ShowWindow(_hwnd, Win32Constants.SW_SHOW);

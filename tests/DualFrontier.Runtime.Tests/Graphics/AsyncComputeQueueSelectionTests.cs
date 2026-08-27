@@ -13,7 +13,7 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class AsyncComputeQueueSelectionTests
 {
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Dedicated_compute_only_queue_family_preferred_over_graphics_with_compute_bit()
     {
         var qfs = new List<QueueFamilyInfo>
@@ -25,7 +25,7 @@ public sealed class AsyncComputeQueueSelectionTests
         VulkanDevice.FindAsyncComputeQueueFamilyIndex(qfs).Should().Be(1u);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Graphics_with_compute_bit_used_when_no_dedicated_compute_exists()
     {
         var qfs = new List<QueueFamilyInfo>
@@ -37,7 +37,7 @@ public sealed class AsyncComputeQueueSelectionTests
         VulkanDevice.FindAsyncComputeQueueFamilyIndex(qfs).Should().Be(0u);
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Null_returned_when_no_compute_queue_family_exists()
     {
         // К-L19 fail-fast condition: HardwareCapabilityCheck throws if this returns null.
@@ -50,21 +50,18 @@ public sealed class AsyncComputeQueueSelectionTests
         VulkanDevice.FindAsyncComputeQueueFamilyIndex(qfs).Should().BeNull();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Empty_queue_family_list_returns_null()
     {
         VulkanDevice.FindAsyncComputeQueueFamilyIndex(Array.Empty<QueueFamilyInfo>()).Should().BeNull();
     }
 
-    [WindowsOnlyFact]
+    [RequiresVulkanFact]
     public void Real_VulkanDevice_exposes_async_compute_queue_on_test_hardware()
     {
         // Integration: К-L19 hardware tier check on Crystalka «Skarlet» (AMD RX 7600S) —
         // expects QF 1 (dedicated compute) selected. Test also passes на other К-L19 hardware
         // (NVIDIA Turing+, Intel Arc Alchemist+) regardless of specific QF index.
-        var winOpts = new WindowOptions { Title = "AsyncCompute Integration", Width = 400, Height = 300 };
-        var queue = new InputEventQueue();
-        using var window = new global::DualFrontier.Runtime.Window.Window(winOpts, queue);
         using var instance = new VulkanInstance(enableValidation: false);
         using var device = new VulkanDevice(instance);
 

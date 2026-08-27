@@ -39,12 +39,3 @@ internal struct POINT
     internal int x;
     internal int y;
 }
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct RECT
-{
-    internal int left;
-    internal int top;
-    internal int right;
-    internal int bottom;
-}

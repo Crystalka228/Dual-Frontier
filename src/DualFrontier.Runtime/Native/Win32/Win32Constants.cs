@@ -3,7 +3,6 @@ namespace DualFrontier.Runtime.Native.Win32;
 internal static class Win32Constants
 {
     // Window messages — see Microsoft Win32 docs
-    internal const uint WM_CREATE = 0x0001;
     internal const uint WM_DESTROY = 0x0002;
     internal const uint WM_SIZE = 0x0005;
     internal const uint WM_SETFOCUS = 0x0007;

@@ -12,7 +12,7 @@ namespace DualFrontier.Runtime.Tests.Graphics;
 /// </summary>
 public sealed class VulkanSwapchainTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly VulkanSurface _surface;
@@ -21,7 +21,7 @@ public sealed class VulkanSwapchainTests : IDisposable
     {
         var opts = new WindowOptions { Title = "Swapchain", Width = 640, Height = 480 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _surface = new VulkanSurface(_instance, _window);
@@ -35,13 +35,13 @@ public sealed class VulkanSwapchainTests : IDisposable
         _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Surface_construct_returns_non_zero_handle()
     {
         _surface.Handle.Should().NotBe(IntPtr.Zero);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Swapchain_construct_enumerates_images_with_views()
     {
         using var swapchain = new VulkanSwapchain(_device, _surface, 640, 480);
@@ -57,7 +57,7 @@ public sealed class VulkanSwapchainTests : IDisposable
         swapchain.Height.Should().BeGreaterThan(0u);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Swapchain_recreate_succeeds_with_new_extent()
     {
         using var swapchain = new VulkanSwapchain(_device, _surface, 640, 480);
@@ -72,7 +72,7 @@ public sealed class VulkanSwapchainTests : IDisposable
         swapchain.ImageCount.Should().BeGreaterThan(0);
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Swapchain_dispose_idempotent()
     {
         var swapchain = new VulkanSwapchain(_device, _surface, 640, 480);

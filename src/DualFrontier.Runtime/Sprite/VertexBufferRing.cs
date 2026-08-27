@@ -90,6 +90,11 @@ public sealed class VertexBufferRing : IDisposable
         // prior batch's vertices before its draw is submitted. Fail fast instead of corrupting:
         // the caller must raise maxSpritesPerFrame to fit the scene in one batch, or submit +
         // present (advancing the swapchain image) between batches.
+        //
+        // The invariant is scoped to one SWAPCHAIN GENERATION (F-51). Acquire indices restart
+        // when the swapchain is replaced, so the index just used can legitimately be handed
+        // back as the first index of the new swapchain — which is not a second batch and must
+        // not trip this guard. ResetFrameTracking() marks that boundary.
         if (frameIndex == _lastBegunFrameIndex)
         {
             throw new InvalidOperationException(
@@ -117,6 +122,30 @@ public sealed class VertexBufferRing : IDisposable
         _writeOffset = 0;
         _spritesSubmittedThisFrame = 0;
         _lastBegunFrameIndex = frameIndex;
+    }
+
+    /// <summary>
+    /// Marks a swapchain-generation boundary: the next <see cref="BeginFrame"/> may reuse the
+    /// frame index the previous generation ended on.
+    ///
+    /// <para>Call this whenever the swapchain is replaced. <see cref="BeginFrame"/>'s F02 guard
+    /// compares against the last index begun, which is only meaningful while the acquire
+    /// sequence is continuous; a recreate restarts that sequence, and without this reset the
+    /// legitimate "same index, new swapchain" case is indistinguishable from the "second batch
+    /// in one frame" case the guard exists to catch (F-51). The guard itself is unchanged — it
+    /// still fires for two BeginFrame calls on one index within a generation.</para>
+    /// </summary>
+    public void ResetFrameTracking()
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        if (_mappedPtr != IntPtr.Zero)
+        {
+            throw new InvalidOperationException(
+                "VertexBufferRing.ResetFrameTracking called while a frame is open; end the frame " +
+                "before replacing the swapchain.");
+        }
+
+        _lastBegunFrameIndex = uint.MaxValue;
     }
 
     /// <summary>

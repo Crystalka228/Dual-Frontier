@@ -15,7 +15,7 @@ namespace DualFrontier.Runtime.Tests.Compute;
 /// </summary>
 public sealed class FieldStorageBindingTests : IDisposable
 {
-    private readonly global::DualFrontier.Runtime.Window.Window _window;
+    private readonly IWindow _window;
     private readonly VulkanInstance _instance;
     private readonly VulkanDevice _device;
     private readonly NativeWorld _world;
@@ -24,7 +24,7 @@ public sealed class FieldStorageBindingTests : IDisposable
     {
         var opts = new WindowOptions { Title = "FieldBind", Width = 320, Height = 240 };
         var queue = new InputEventQueue();
-        _window = new global::DualFrontier.Runtime.Window.Window(opts, queue);
+        _window = PlatformWindow.Create(opts, queue);
         _instance = new VulkanInstance(enableValidation: false);
         _device = new VulkanDevice(_instance);
         _world = new NativeWorld();
@@ -38,7 +38,7 @@ public sealed class FieldStorageBindingTests : IDisposable
         _window.Dispose();
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Attach_then_register_then_dispatch_round_trip()
     {
         var binding = new FieldStorageBinding(_world);
@@ -63,7 +63,7 @@ public sealed class FieldStorageBindingTests : IDisposable
         dispatched.Should().BeTrue("V1+ dispatch through async compute queue + fence wait completes");
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Attach_without_async_compute_throws()
     {
         // Defense-in-depth: if AsyncComputeQueueFamilyIndex is null (К-L19 hardware tier
@@ -79,7 +79,7 @@ public sealed class FieldStorageBindingTests : IDisposable
         act.Should().NotThrow("К-L19 hardware satisfies the precondition");
     }
 
-    [WindowsOnlyFact]
+    [RequiresDisplayFact]
     public void Register_without_attach_returns_zero()
     {
         var binding = new FieldStorageBinding(_world);
