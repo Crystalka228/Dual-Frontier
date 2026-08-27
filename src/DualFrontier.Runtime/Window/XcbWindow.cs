@@ -47,6 +47,9 @@ public sealed class XcbWindow : IWindow
     /// <summary>The interned WM_DELETE_WINDOW atom, so a pin can synthesise the close protocol.</summary>
     internal uint WmDeleteWindowAtom => _wmDeleteWindowAtom;
 
+    /// <summary>The live xkb state. Test-visible so a pin can hold a modifier and re-resolve.</summary>
+    internal IntPtr XkbState => _xkbState;
+
     public XcbWindow(WindowOptions options, InputEventQueue inputQueue)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -499,12 +502,38 @@ public sealed class XcbWindow : IWindow
         }
     }
 
-    private Key MapKeycode(byte keycode)
+    /// <summary>
+    /// Resolves a keycode к the key's IDENTITY, independent of the modifiers currently held.
+    ///
+    /// <para>Deliberately NOT <c>xkb_state_key_get_one_sym</c>, which returns what the key
+    /// currently PRODUCES: with Shift held the digit-1 key yields <c>exclam</c> and Tab yields
+    /// <c>ISO_Left_Tab</c>, neither of which is a <see cref="Key"/>, so those presses would be
+    /// silently dropped — while the Win32 arm, whose virtual-key codes are modifier-independent,
+    /// reports them. Reading shift level 0 of the key's effective layout restores parity.</para>
+    ///
+    /// <para>Modifier STATE is still tracked (see the KEY_PRESS/KEY_RELEASE arms), because it
+    /// remains correct bookkeeping for any consumer that later needs it; it is simply not what
+    /// decides key identity. The layout limitation documented on
+    /// <see cref="XkbKeysymMapper"/> is unaffected: level 0 of a non-Latin layout is still a
+    /// non-Latin keysym.</para>
+    /// </summary>
+    internal Key MapKeycode(byte keycode)
     {
-        if (_xkbState == IntPtr.Zero)
+        if (_xkbState == IntPtr.Zero || _xkbKeymap == IntPtr.Zero)
         {
             return Key.Unknown;
         }
+
+        uint layout = XkbApi.xkb_state_key_get_layout(_xkbState, keycode);
+        int count = XkbApi.xkb_keymap_key_get_syms_by_level(
+            _xkbKeymap, keycode, layout, level: 0, out IntPtr syms);
+        if (count > 0 && syms != IntPtr.Zero)
+        {
+            // Keymap-owned memory; read the first keysym and do not free.
+            return XkbKeysymMapper.Map((uint)Marshal.ReadInt32(syms));
+        }
+
+        // Level 0 unmapped for this key: fall back rather than drop the event outright.
         return XkbKeysymMapper.Map(XkbApi.xkb_state_key_get_one_sym(_xkbState, keycode));
     }
 

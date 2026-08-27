@@ -34,7 +34,7 @@ references the other, and the platform choice is made once in `Window/PlatformWi
 - `XcbConstants.cs` — event codes, event masks, CW/config value bits, predefined atoms
 - `XcbStructs.cs` — X11 wire layouts (screen, iterator, cookies, reply, event structs)
 
-## Surface — 29 P/Invokes
+## Surface — 31 P/Invokes
 
 Measured at LINUX_PRESENT_1 (2026-08-26):
 
@@ -42,7 +42,7 @@ Measured at LINUX_PRESENT_1 (2026-08-26):
 |---|---|---|
 | `libxcb.so.1` | 18 | connection, setup/screen, window lifecycle, atoms, properties, events |
 | `libc.so.6` | 1 | `free` — libxcb hands back malloc'd event and reply buffers |
-| `libxkbcommon.so.0` | 6 | context/keymap/state lifetime, keysym lookup, modifier state |
+| `libxkbcommon.so.0` | 8 | context/keymap/state lifetime, keysym lookup, modifier state, layout + level-0 identity |
 | `libxkbcommon-x11.so.0` | 4 | XKB extension setup, core keyboard device, keymap/state from device |
 
 ## Deliberately core libxcb only

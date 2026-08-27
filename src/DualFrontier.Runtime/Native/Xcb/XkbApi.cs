@@ -50,6 +50,20 @@ internal static partial class XkbApi
     [LibraryImport(XkbLib, EntryPoint = "xkb_state_update_key")]
     internal static partial uint xkb_state_update_key(IntPtr state, uint key, int direction);
 
+    /// <summary>The layout index currently effective for this key (a keymap may carry several).</summary>
+    [LibraryImport(XkbLib, EntryPoint = "xkb_state_key_get_layout")]
+    internal static partial uint xkb_state_key_get_layout(IntPtr state, uint key);
+
+    /// <summary>
+    /// Keysyms for one key at an explicit shift LEVEL, bypassing the active modifier state.
+    /// Level 0 is the unmodified symbol — the key's identity rather than what it currently
+    /// produces. <paramref name="syms_out"/> receives a pointer into keymap-owned memory; the
+    /// caller does not free it. Returns the number of keysyms (0 when the level is unmapped).
+    /// </summary>
+    [LibraryImport(XkbLib, EntryPoint = "xkb_keymap_key_get_syms_by_level")]
+    internal static partial int xkb_keymap_key_get_syms_by_level(
+        IntPtr keymap, uint key, uint layout, uint level, out IntPtr syms_out);
+
     /// <summary>Negotiates the XKB extension on the connection. Non-zero on success.</summary>
     [LibraryImport(XkbX11Lib, EntryPoint = "xkb_x11_setup_xkb_extension")]
     internal static partial int xkb_x11_setup_xkb_extension(

@@ -196,6 +196,61 @@ public sealed class XcbWindowTests
         negativeHeight.Should().Throw<ArgumentOutOfRangeException>();
     }
 
+    [RequiresXcbFact]
+    public void Key_identity_does_not_change_when_a_modifier_is_held()
+    {
+        // The invariant: a keycode names the same Key whether or not Shift is down. Resolving
+        // through the ACTIVE modifier state breaks it -- Shift+1 yields `exclam` and Shift+Tab
+        // yields `ISO_Left_Tab`, neither of which is a Key, so those presses would be dropped
+        // while the Win32 arm (modifier-independent virtual keys) reports them.
+        //
+        // Written layout-agnostically: it asserts that resolution is UNCHANGED under Shift,
+        // whatever this host's layout happens to produce, plus a non-vacuity floor so a keymap
+        // that mapped nothing could not pass it silently.
+        var opts = new WindowOptions { Title = "XCB key identity", Width = 320, Height = 240 };
+        var queue = new InputEventQueue();
+        using var window = new XcbWindow(opts, queue);
+
+        const int FirstKeycode = 8;      // X11 keycodes start at 8 (evdev code + 8)
+        const int LastKeycode = 128;
+
+        byte shiftKeycode = 0;
+        var unmodified = new Dictionary<byte, Key>();
+        int mappedCount = 0;
+        for (int keycode = FirstKeycode; keycode <= LastKeycode; keycode++)
+        {
+            Key key = window.MapKeycode((byte)keycode);
+            unmodified[(byte)keycode] = key;
+            if (key != Key.Unknown)
+            {
+                mappedCount++;
+            }
+            if (key == Key.Shift && shiftKeycode == 0)
+            {
+                shiftKeycode = (byte)keycode;
+            }
+        }
+
+        shiftKeycode.Should().NotBe((byte)0, "the keymap must carry a Shift key to hold");
+        mappedCount.Should().BeGreaterThan(20,
+            "a standard keymap maps letters and digits -- a near-empty result would make the " +
+            "comparison below vacuous");
+
+        XkbApi.xkb_state_update_key(window.XkbState, shiftKeycode, XkbApi.XKB_KEY_DOWN);
+        try
+        {
+            foreach (KeyValuePair<byte, Key> entry in unmodified)
+            {
+                window.MapKeycode(entry.Key).Should().Be(entry.Value,
+                    "keycode {0} must resolve to the same Key with Shift held", entry.Key);
+            }
+        }
+        finally
+        {
+            XkbApi.xkb_state_update_key(window.XkbState, shiftKeycode, XkbApi.XKB_KEY_UP);
+        }
+    }
+
     // --- protocol helpers -------------------------------------------------------------------
 
     private static void ConfigureSize(XcbWindow window, uint width, uint height)

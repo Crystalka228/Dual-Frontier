@@ -11,12 +11,17 @@ namespace DualFrontier.Runtime.Input;
 /// layout-independent and identifies a physical key; an X11 keysym is the character the key
 /// produces under the active layout and modifier level, so <c>a</c> and <c>A</c> are distinct
 /// keysyms for one physical key and both must fold к <see cref="Key.A"/>.</para>
+/// <para>The caller decides WHICH keysym к hand over, and that choice is load-bearing.
+/// <c>XcbWindow</c> resolves shift level 0 of the key's effective layout — the key's identity —
+/// rather than what the key currently produces, because the latter is modifier-dependent: with
+/// Shift held the digit-1 key yields <c>exclam</c> and Tab yields <c>ISO_Left_Tab</c>, neither
+/// of which is a <see cref="Key"/>, so those presses would be dropped while the Win32 arm
+/// reports them. Pinned by <c>Key_identity_does_not_change_when_a_modifier_is_held</c>.</para>
 ///
-/// <para>Consequence worth stating plainly: under a non-Latin layout the letter keysyms are not
-/// Latin and fold к <see cref="Key.Unknown"/>. That is a property of resolving through the
-/// layout, not a gap in this table. It is inert today — the Launcher drains and discards input —
-/// and the fix (resolving letters through the keymap's Latin level) belongs with the cascade
-/// that gives input a consumer.</para>
+/// <para>One consequence remains, stated plainly: under a non-Latin layout even level 0 is not a
+/// Latin keysym, so letters fold к <see cref="Key.Unknown"/>. That is a property of resolving
+/// through the layout at all, not a gap in this table. It is inert today — the Launcher drains
+/// and discards input — and belongs with the cascade that gives input a consumer.</para>
 /// </summary>
 public static class XkbKeysymMapper
 {

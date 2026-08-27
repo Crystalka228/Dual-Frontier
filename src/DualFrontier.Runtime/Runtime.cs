@@ -396,6 +396,16 @@ public sealed class Runtime : IDisposable
         // The guard itself is unchanged and still live one level down: a caller driving
         // SpriteRenderer.BeginFrame/EndFrame directly for a multi-batch frame still gets the
         // fail-fast. That multi-batch capacity path is F-32's redesign, not this fix.
+        //
+        // WHAT THIS TRADE COSTS, stated plainly (F-69). Resetting here means two RecordSpritesFrame
+        // calls on the SAME image index into DIFFERENT command buffers, both recorded before
+        // either is submitted, would no longer be caught -- the second would overwrite vertices
+        // the first still references. No caller does that today (the Launcher and the SmokeTest
+        // both Begin -> Record -> End -> Submit in strict sequence), and the index-equality guard
+        // could not have been kept: it rejected legal acquire-index repeats and killed the
+        // Launcher outright. The invariant neither form expresses is the real one -- a chunk must
+        // not be re-begun until the batch already recorded into it has been SUBMITTED -- and only
+        // the submit path knows that. F-69 carries it.
         SpriteRenderer.ResetFrameTracking();
         SpriteRenderer.BeginFrame((uint)imageIndex);
         foreach (var sprite in sprites)
