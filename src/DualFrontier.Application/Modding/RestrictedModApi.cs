@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Distribution;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.Bus;
@@ -250,6 +251,9 @@ internal sealed class RestrictedModApi : IModApi
 
     /// <inheritdoc />
     public ModManifest GetOwnManifest() => _manifest;
+
+    /// <inheritdoc />
+    public ScenarioConfig? Scenario => _registry.Scenario;
 
     /// <inheritdoc />
     public void Log(ModLogLevel level, string message)

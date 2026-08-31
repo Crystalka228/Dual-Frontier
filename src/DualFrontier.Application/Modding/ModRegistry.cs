@@ -4,6 +4,7 @@ using System.Reflection;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Distribution;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.ECS;
@@ -111,6 +112,18 @@ internal sealed class ModRegistry : IManagedStorageResolver
     /// </summary>
     internal void SetSystemServices(ISystemServices services)
         => _systemServices = services ?? throw new ArgumentNullException(nameof(services));
+
+    /// <summary>
+    /// W4 — supplies the distribution's scenario description, which reaches a mod through
+    /// <c>IModApi.Scenario</c>. Installed here rather than threaded through the pipeline's
+    /// constructor because this is where every other host-provided value already lives
+    /// (services, tick source, presentation sink), and a mod api is built per-mod from this
+    /// registry. Null is legitimate: a harness without a distribution has no scenario.
+    /// </summary>
+    internal void SetScenario(ScenarioConfig? scenario) => Scenario = scenario;
+
+    /// <summary>The distribution's scenario description, or null when the host has none.</summary>
+    internal ScenarioConfig? Scenario { get; private set; }
 
     /// <summary>
     /// W1 BD-1 — supplies the SimTick accessor stamped onto SDK adapters so an

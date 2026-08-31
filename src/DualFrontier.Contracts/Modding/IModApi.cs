@@ -127,6 +127,20 @@ public interface IModApi
     ModManifest GetOwnManifest();
 
     /// <summary>
+    /// The starting-state description the host's distribution declares, or <c>null</c> when the
+    /// host has none.
+    ///
+    /// <para>
+    /// Null is the ordinary case for a test harness or a tool that stands the pipeline up without
+    /// a distribution, so a mod that wants it must check. A mod whose whole purpose is to seed a
+    /// scenario should refuse loudly on null rather than substituting numbers of its own: a
+    /// fabricated default would look like a working colony while silently ignoring what the
+    /// distribution asked for.
+    /// </para>
+    /// </summary>
+    Distribution.ScenarioConfig? Scenario { get; }
+
+    /// <summary>
     /// Logs a structured message prefixed with the mod's id.
     /// </summary>
     void Log(ModLogLevel level, string message);
