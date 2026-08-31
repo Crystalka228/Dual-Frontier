@@ -127,12 +127,17 @@ internal sealed class ParallelSystemScheduler
     }
 
     /// <summary>
-    /// Invokes <see cref="SystemBase.Initialize"/> on every registered system
-    /// exactly once, with the isolation guard active. This is where systems
-    /// subscribe to domain buses via <c>Services</c>, so the execution context
-    /// must be pushed for each call — otherwise <c>SystemBase.Services</c>
-    /// would throw. Called at the end of the constructor and
+    /// Invokes <see cref="SystemBase.Initialize"/> on every system in the CURRENT phase set,
+    /// with the isolation guard active. This is where systems subscribe to domain buses via
+    /// <c>Services</c>, so the execution context must be pushed for each call — otherwise
+    /// <c>SystemBase.Services</c> would throw. Called at the end of the constructor and of
     /// <see cref="Rebuild"/>.
+    ///
+    /// This method is NOT "exactly once" and never was: it is called again on every
+    /// <see cref="Rebuild"/>, and a rebuild happens on every mod-set change, so a system that
+    /// survives a rebuild is visited again. The once-per-instance guarantee lives on
+    /// <see cref="SystemBase.Initialize"/> itself, which latches per instance. The earlier
+    /// wording here claimed the guarantee this method does not provide.
     /// </summary>
     private void InitializeAllSystems()
     {
