@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
@@ -155,6 +156,10 @@ internal sealed class RestrictedModApi : IModApi
     /// <inheritdoc />
     public void RegisterSystem<T>() where T : class
         => _registry.RegisterSystem(_modId, typeof(T));
+
+    /// <inheritdoc />
+    public void RegisterSystem<T>(Func<ISystemServices, T> factory) where T : class
+        => _registry.RegisterSystem(_modId, factory);
 
     /// <summary>
     /// The single managed event dispatch. W2/BD-3 collapsed the five genre buses into

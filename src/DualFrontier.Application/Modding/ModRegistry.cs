@@ -230,39 +230,13 @@ internal sealed class ModRegistry : IManagedStorageResolver
         // W1 BD-1 — accept the SDK contract (ISimulationSystem) alongside the
         // SystemBase bridge. SystemBase authoring is the transitional path,
         // retiring at W5; ISimulationSystem is the durable SDK surface.
-        bool isSystemBase = typeof(SystemBase).IsAssignableFrom(systemType);
-        bool isContract = typeof(ISimulationSystem).IsAssignableFrom(systemType);
-        if (!isSystemBase && !isContract)
-        {
-            throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] Type '{systemType.FullName}' " +
-                "does not derive from SystemBase and does not implement ISimulationSystem. " +
-                "Use 'public sealed class MySystem : ISimulationSystem' for SDK mod systems.");
-        }
+        bool isSystemBase = RequireSystemShape(systemType);
 
-        SystemAccessAttribute? access =
-            systemType.GetCustomAttribute<SystemAccessAttribute>(inherit: false);
-        if (access is null)
-        {
-            throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "has no [SystemAccess] attribute. " +
-                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)})]");
-        }
-
-        TickRateAttribute? tickRate =
-            systemType.GetCustomAttribute<TickRateAttribute>(inherit: false);
-        if (tickRate is null)
-        {
-            throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "has no [TickRate] attribute. " +
-                "Add: [TickRate(TickRates.NORMAL)] or another TickRates.* constant.");
-        }
+        RequireSystemDeclarations(systemType);
 
         SystemBase instance = isSystemBase
             ? CreateSystemInstance(systemType)
-            : CreateContractAdapter(modId, systemType);
+            : CreateContractAdapter(modId, WrapNewInstance(systemType), systemType);
         _modSystems.Add(new SystemRegistration(instance, SystemOrigin.Mod, modId));
         // W1-fix (Codex review) — track the (possibly adapter-wrapped) system in the mod's
         // sub-scheduler so the unload chain's RemoveSubScheduler.Teardown disposes it, firing
@@ -431,30 +405,121 @@ internal sealed class ModRegistry : IManagedStorageResolver
     /// executor's type-keyed logic stays correct. Reflection is acceptable here —
     /// registration is cold (menu-thread, simulation stopped).
     /// </summary>
-    private SystemBase CreateContractAdapter(string modId, Type systemType)
+    /// <summary>
+    /// W4 — the mod-facing FACTORY registration path. W1 held it back for want of a consumer
+    /// (<c>ISystemServices</c>'s own doc records that); W4 is that consumer.
+    ///
+    /// <para>
+    /// Without it a mod could only register types with a public parameterless constructor,
+    /// because both construction arms end in a bare <c>Activator.CreateInstance</c>. That is not
+    /// a niche limitation: it is what made <c>MovementSystem</c>, which takes an
+    /// <c>IPathfindingService</c>, impossible to register from a mod at all -- and because a
+    /// throw out of <c>IMod.Initialize</c> rolls back the entire batch, one unconstructible
+    /// system took every other system in the mod down with it.
+    /// </para>
+    ///
+    /// <para>
+    /// It also closes the second half of the same gap. <c>_systemServices</c> was previously
+    /// read at exactly one site, inside the CORE overload, so a service provided for mods
+    /// reached nothing no matter when it was provided -- a wiring gap, not a timing one. This
+    /// overload is the first mod-path reader of that field.
+    /// </para>
+    /// </summary>
+    internal void RegisterSystem<T>(string modId, Func<ISystemServices, T> factory) where T : class
     {
-        object? sim;
-        try
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (factory is null) throw new ArgumentNullException(nameof(factory));
+
+        Type systemType = typeof(T);
+        bool isSystemBase = RequireSystemShape(systemType);
+        RequireSystemDeclarations(systemType);
+
+        T built = factory(RequireSystemServices());
+        SystemBase instance = isSystemBase
+            ? built as SystemBase ?? throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] The factory for '{systemType.FullName}' returned null.")
+            : CreateContractAdapter(modId, built, systemType);
+
+        _modSystems.Add(new SystemRegistration(instance, SystemOrigin.Mod, modId));
+        GetOrCreateSubScheduler(modId).AddSystem(instance);
+    }
+
+    /// <summary>
+    /// The shape gate shared by both mod registration paths. Returns true when the type is a
+    /// <c>SystemBase</c> (the transitional authoring path, retiring at W5) and false when it is
+    /// an <c>ISimulationSystem</c> (the durable SDK surface).
+    /// </summary>
+    private static bool RequireSystemShape(Type systemType)
+    {
+        bool isSystemBase = typeof(SystemBase).IsAssignableFrom(systemType);
+        bool isContract = typeof(ISimulationSystem).IsAssignableFrom(systemType);
+        if (!isSystemBase && !isContract)
         {
-            sim = Activator.CreateInstance(systemType);
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] Type '{systemType.FullName}' " +
+                "does not derive from SystemBase and does not implement ISimulationSystem. " +
+                "Use 'public sealed class MySystem : ISimulationSystem' for SDK mod systems.");
         }
-        catch (MissingMethodException ex)
+        return isSystemBase;
+    }
+
+    /// <summary>
+    /// The declaration gate shared by both mod registration paths: the scheduler needs
+    /// <c>[SystemAccess]</c> to build a context and <c>[TickRate]</c> to resolve cadence, and a
+    /// system missing either is rejected at registration rather than at first tick.
+    /// </summary>
+    private static void RequireSystemDeclarations(Type systemType)
+    {
+        if (systemType.GetCustomAttribute<SystemAccessAttribute>(inherit: false) is null)
         {
             throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "requires a public parameterless constructor.",
-                ex);
+                "has no [SystemAccess] attribute. " +
+                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)})]");
         }
 
+        if (systemType.GetCustomAttribute<TickRateAttribute>(inherit: false) is null)
+        {
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
+                "has no [TickRate] attribute. " +
+                "Add: [TickRate(TickRates.NORMAL)] or another TickRates.* constant.");
+        }
+    }
+
+    private SystemBase CreateContractAdapter(string modId, object? sim, Type systemType)
+    {
         if (sim is not ISimulationSystem)
         {
             throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] Activator.CreateInstance('{systemType.FullName}') " +
+                $"[MOD REGISTRY ERROR] Construction of '{systemType.FullName}' " +
                 "returned null or a non-ISimulationSystem instance.");
         }
 
         Type adapterType = typeof(SystemAdapter<>).MakeGenericType(systemType);
         return (SystemBase)Activator.CreateInstance(adapterType, sim, this, modId, _tickSource)!;
+    }
+
+    /// <summary>
+    /// Constructs <paramref name="systemType"/> parameterlessly, translating the reflection
+    /// failure into the diagnostic a mod author can act on. Split out of
+    /// <see cref="CreateContractAdapter"/> at W4 so the adapter wrap is reachable with an
+    /// instance the CALLER built -- which is what the factory registration path needs.
+    /// </summary>
+    private static object? WrapNewInstance(Type systemType)
+    {
+        try
+        {
+            return Activator.CreateInstance(systemType);
+        }
+        catch (MissingMethodException ex)
+        {
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
+                "requires a public parameterless constructor, or registration through the " +
+                "IModApi.RegisterSystem<T>(Func<ISystemServices, T>) factory overload.",
+                ex);
+        }
     }
 
     private static SystemBase CreateSystemInstance(Type systemType)
@@ -473,7 +538,8 @@ internal sealed class ModRegistry : IManagedStorageResolver
         {
             throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "requires a public parameterless constructor.",
+                "requires a public parameterless constructor, or registration through the " +
+                "IModApi.RegisterSystem<T>(Func<ISystemServices, T>) factory overload.",
                 ex);
         }
     }

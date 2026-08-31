@@ -66,6 +66,27 @@ public interface IModApi
     void RegisterSystem<T>() where T : class;
 
     /// <summary>
+    /// Registers a simulation system the engine constructs through <paramref name="factory"/>,
+    /// handing it the construction-time service surface (<see cref="Sdk.ISystemServices"/>).
+    ///
+    /// <para>
+    /// Use this whenever the system needs a service at construction. The parameterless overload
+    /// builds the type with <c>Activator.CreateInstance</c> and therefore requires a public
+    /// parameterless constructor; a system taking, say, a pathfinding service cannot be
+    /// registered through it at all, and because a throw out of <see cref="IMod.Initialize"/>
+    /// rolls back the whole load batch, one such system takes every other system in the mod
+    /// down with it.
+    /// </para>
+    ///
+    /// <para>
+    /// The factory runs at registration time, on the menu thread with the simulation stopped.
+    /// It must not touch the world: <see cref="Sdk.ISystemServices"/> carries services only, and
+    /// world access arrives later through <c>ISystemContext</c>.
+    /// </para>
+    /// </summary>
+    void RegisterSystem<T>(Func<Sdk.ISystemServices, T> factory) where T : class;
+
+    /// <summary>
     /// Publishes an event on the single managed event dispatch. W2/BD-3 removed the
     /// genre taxonomy, so events route by type -- no <c>[EventBus]</c> marker or bus
     /// resolution. Gated first by the mod's declared capabilities (kernel.publish:&lt;FQN&gt;).

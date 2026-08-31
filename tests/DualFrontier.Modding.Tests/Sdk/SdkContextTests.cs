@@ -77,6 +77,25 @@ internal sealed class StubPathfinding : IPathfindingService
 }
 
 /// <summary>
+/// An all-passable grid double. These tests exercise registration, not terrain, so the grid only
+/// has to exist -- but it has to exist, because ISystemServices carries it from W4 onward.
+/// </summary>
+internal sealed class StubNavGrid : INavGridService
+{
+    public int Width => 1;
+
+    public int Height => 1;
+
+    public bool IsPassable(int x, int y) => x == 0 && y == 0;
+
+    public byte GetCost(int x, int y) => x == 0 && y == 0 ? (byte)1 : byte.MaxValue;
+
+    public void SetTile(int x, int y, bool passable, byte cost = 1)
+    {
+    }
+}
+
+/// <summary>
 /// W1 C5 — behavioural proofs of the SDK surface: per-tick freshness, the
 /// Contracts-safe access forms against a live world, both factory registration
 /// paths, capability-gated events routed through the live gate, and adapter
@@ -176,7 +195,7 @@ public sealed class SdkContextTests
     public void RegisterSystem_FactoryAndParameterless_BothRegisterCore()
     {
         var registry = new ModRegistry();
-        registry.SetSystemServices(new SystemServices(new StubPathfinding()));
+        registry.SetSystemServices(new SystemServices(new StubPathfinding(), new StubNavGrid()));
 
         registry.RegisterSystem<SdkStubSystemA>(_ => new SdkStubSystemA());  // factory delegate
         registry.RegisterSystem<SdkStubSystemB>();                            // parameterless convenience
@@ -360,10 +379,14 @@ public sealed class SdkContextTests
     [Fact]
     public void ContractsVersion_IsMinorBumped_AndStillSatisfiesCaret2_0_0_Manifests()
     {
-        ContractsVersion.Current.Should().Be(new ContractsVersion(2, 1, 1),
+        ContractsVersion.Current.Should().Be(new ContractsVersion(2, 2, 0),
             "W3's 2.1.0 added SDK members without removing or reshaping any (MINOR); ID-B " +
             "then corrected what flows THROUGH those members — SpanScope.Pairs yields true " +
-            "versions and EntityId.IsValid is Index > 0 — with no surface change at all (PATCH)");
+            "versions and EntityId.IsValid is Index > 0 — with no surface change at all (PATCH); " +
+            "W4's 2.2.0 added the IModApi factory registration overload and the ISystemServices " +
+            "walkability grid, plus a new INavGridService type. Members were added to interfaces " +
+            "that are engine-implemented and mod-consumed, which is the CONTRACTS.md §4.2 shape " +
+            "that keeps such additions MINOR; a new type is non-breaking outright per §4");
 
         VersionConstraint.Parse("^2.0.0").IsSatisfiedBy(ContractsVersion.Current).Should().BeTrue(
             "every on-disk manifest pins apiVersion ^2.0.0; neither bump must strand them");

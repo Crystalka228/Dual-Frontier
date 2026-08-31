@@ -31,4 +31,17 @@ public interface ISystemServices
 {
     /// <summary>The A* pathfinding service over the walkability grid.</summary>
     IPathfindingService Pathfinding { get; }
+
+    /// <summary>
+    /// The walkability grid itself: what a scenario authors terrain into and what a placement
+    /// routine consults before putting an entity on a tile.
+    ///
+    /// <para>
+    /// Added at W4 under the same rule the day-one surface was drawn by — a measured consumer
+    /// appeared. After the engine sheds its game references the grid can only be built game-side,
+    /// and both vanilla placement routines read passability, so without this the vanilla scenario
+    /// could not be authored through the SDK at all.
+    /// </para>
+    /// </summary>
+    INavGridService NavGrid { get; }
 }

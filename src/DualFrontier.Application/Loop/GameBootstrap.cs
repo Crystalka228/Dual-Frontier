@@ -142,7 +142,7 @@ internal static class GameBootstrap
         // through the SAME unified factory path as mods (killing the hand-new
         // bifurcation); MovementSystem resolves pathfinding from ISystemServices.
         var modRegistry = new ModRegistry();
-        modRegistry.SetSystemServices(new SystemServices(pathfinding));
+        modRegistry.SetSystemServices(new SystemServices(pathfinding, navGrid));
         modRegistry.SetTickSource(() => ticks.CurrentTick);
 
         // W3/G2 -- install the presentation sink so an SDK system's
