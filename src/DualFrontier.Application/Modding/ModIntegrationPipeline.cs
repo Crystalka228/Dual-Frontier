@@ -1206,11 +1206,26 @@ internal sealed class ModIntegrationPipeline
     }
 
     /// <summary>
-    /// Invokes each pending world seeder with a live context. A seeder throw is contained and
-    /// reported as its mod's fault rather than aborting the apply: the mod set is already
-    /// installed and the scheduler already rebuilt by this point, so tearing the batch down here
-    /// would leave a half-applied world behind. The mod is quarantined instead, which is the same
-    /// disposition a throw from inside its tick would receive.
+    /// Invokes each pending world seeder with a live context, after the scheduler rebuild.
+    ///
+    /// <para>
+    /// <b>A seeder throw is NOT contained.</b> This comment previously claimed the opposite --
+    /// that a fault here was routed to the mod and the mod quarantined, as a tick fault would be.
+    /// It is not: <c>RunOutsideGraph</c> pushes and pops the execution context in a
+    /// <c>finally</c> and catches nothing, so the exception leaves <c>Apply</c> with the mod set
+    /// already installed and the scheduler already rebuilt. The pipeline's rollback blocks are
+    /// above this point and do not run.
+    /// </para>
+    ///
+    /// <para>
+    /// That is the behaviour the tests actually pin: a scenario asking for more colonists than
+    /// its map can hold refuses loudly out of <c>Apply</c> rather than degrading to a quarantined
+    /// mod. Loud refusal is the right disposition for a seeder, whose whole job runs once before
+    /// the first tick -- a half-seeded world is not a degraded game, it is a broken one. What was
+    /// wrong was the description, so the description is what changed here. Whether the boundary
+    /// should ALSO roll back the installed set is a real question and is ledgered, not answered
+    /// by a comment.
+    /// </para>
     /// </summary>
     private void RunPendingWorldSeeders()
     {

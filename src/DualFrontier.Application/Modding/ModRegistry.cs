@@ -329,14 +329,26 @@ internal sealed class ModRegistry : IManagedStorageResolver
     }
 
     /// <summary>
-    /// Clears mod systems and mod-owned components, preserving core
-    /// registrations. Called when the pipeline unloads all mods or rolls
-    /// back a failed apply.
+    /// Clears mod systems, mod-owned components and any queued world seeders, preserving core
+    /// registrations. Its only callers are the pipeline's two rollback blocks, each of which
+    /// undoes a failed apply.
+    ///
+    /// <para>
+    /// <b>The seeder queue is part of the rollback, and was missed when the queue was added.</b>
+    /// A mod registers its seeder during <c>Initialize</c>, which runs BEFORE the graph build and
+    /// the validation that can still reject the batch. Rolling back without clearing the queue
+    /// leaves a rejected mod's delegate sitting in the registry, and the next successful apply
+    /// drains it: the world would then be authored by code the host had already refused, holding
+    /// its unloaded collectible context alive to do it. The list is drained exactly once by
+    /// <see cref="TakePendingSeeders"/> on the success path, and nothing on that path runs
+    /// between registration and the drain, so clearing here cannot suppress a legitimate seed.
+    /// </para>
     /// </summary>
     public void ResetModSystems()
     {
         _modSystems.Clear();
         _componentOwners.Clear();
+        _pendingSeeders.Clear();
     }
 
     /// <summary>
@@ -373,6 +385,14 @@ internal sealed class ModRegistry : IManagedStorageResolver
         }
         foreach (Type t in toRemove)
             _componentOwners.Remove(t);
+
+        // Symmetry with ResetModSystems: a single-mod removal must not leave that mod's queued
+        // seeder behind for someone else's apply to run. Reverse pass -- indices do not shift.
+        for (int i = _pendingSeeders.Count - 1; i >= 0; i--)
+        {
+            if (_pendingSeeders[i].ModId == modId)
+                _pendingSeeders.RemoveAt(i);
+        }
     }
 
     /// <summary>
