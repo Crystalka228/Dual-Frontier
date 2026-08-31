@@ -4,8 +4,19 @@
     <RootNamespace>DualFrontier.Mod.Vanilla.Pawn</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <IsVanillaMod>true</IsVanillaMod>
+    <!-- Both references resolve from an ALC this mod does NOT own: DualFrontier.Contracts from
+         the default ALC, the vanilla core vocabulary from the SHARED ALC. Suppressing copy-local
+         is hygiene matching DualFrontier.Mod.Weather, not the mechanism that prevents a double
+         identity: ModLoadContext.Load never probes the mod directory, and the deploy carries
+         only the mod assembly and its manifest. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\DualFrontier.Mod.Vanilla.Core\DualFrontier.Mod.Vanilla.Core.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

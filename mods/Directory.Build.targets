@@ -12,6 +12,11 @@
   -->
   <PropertyGroup>
     <IsVanillaMod Condition="'$(IsVanillaMod)' == ''">false</IsVanillaMod>
+    <!-- Opt-out for projects that set IsVanillaMod to exercise the manifest rewrite but are NOT
+         shipping mods. tests/Fixture.VanillaMod_HotReloadOverride imports this file explicitly
+         and would otherwise be deployed into the Launcher's runtime mods root, where the
+         discoverer would find a test fixture at boot. -->
+    <DeployVanillaMod Condition="'$(DeployVanillaMod)' == ''">true</DeployVanillaMod>
   </PropertyGroup>
 
   <!--
@@ -42,5 +47,34 @@
     </PropertyGroup>
     <Exec Command="dotnet &quot;$(ManifestRewriterDll)&quot; --path &quot;$(OutputManifestPath)&quot;"
           ConsoleToMSBuild="true" />
+  </Target>
+
+  <!--
+    W4 — deploy every vanilla slice mod to the two roots that load mods, so the slices are real
+    loadable mods rather than inert source directories. Before W4 none of the six had any deploy
+    arm at all, which is why three load-blocking defects in them went unnoticed for so long.
+
+    Declared AFTER RewriteHotReloadForRelease and copying $(OutDir)mod.manifest.json rather than
+    the SOURCE manifest: two targets hooking AfterTargets="Build" in one file run in declaration
+    order, so by the time this runs the Release rewrite has already flipped hotReload to false in
+    the output copy. Deploying the source manifest instead would silently undo that rewrite and
+    ship a slice advertising hot-reload it does not support.
+
+    Centralised here rather than repeated in six csprojs precisely so that ordering fact is
+    stated once. Output trees only — nothing lands in the source tree, which has no .gitignore
+    rule for assemblies and would dirty git status on every build.
+  -->
+  <Target Name="DeployVanillaMod" AfterTargets="Build"
+          Condition="'$(IsVanillaMod)' == 'true' AND '$(DeployVanillaMod)' == 'true'">
+    <ItemGroup>
+      <VanillaModFiles Include="$(TargetPath)" />
+      <VanillaModFiles Include="$(OutDir)mod.manifest.json" />
+    </ItemGroup>
+    <Copy SourceFiles="@(VanillaModFiles)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\tests\DualFrontier.Modding.Tests\bin\$(Configuration)\$(TargetFramework)\Fixtures\$(AssemblyName)\"
+          SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(VanillaModFiles)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\src\DualFrontier.Launcher\bin\$(Configuration)\$(TargetFramework)\mods\$(AssemblyName)\"
+          SkipUnchangedFiles="true" />
   </Target>
 </Project>
