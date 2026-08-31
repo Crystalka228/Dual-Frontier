@@ -70,7 +70,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 2.0.1
+  version: 2.0.2
 - register_id: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
   path: docs/architecture/GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md
   category: A
@@ -281,12 +281,6 @@ documents:
   tier: 3
   lifecycle: Live
   version: 1.0
-- register_id: DOC-F-ASSETS-SCENES
-  path: assets/scenes/README.md
-  category: F
-  tier: 4
-  lifecycle: Live
-  version: Live
 - register_id: DOC-F-MODS
   path: mods/README.md
   category: F
@@ -427,18 +421,6 @@ documents:
   version: Live
 - register_id: DOC-F-SRC-APPLICATION-SAVE
   path: src/DualFrontier.Application/Save/README.md
-  category: F
-  tier: 4
-  lifecycle: Live
-  version: Live
-- register_id: DOC-F-SRC-APPLICATION-SCENARIO
-  path: src/DualFrontier.Application/Scenario/README.md
-  category: F
-  tier: 4
-  lifecycle: Live
-  version: Live
-- register_id: DOC-F-SRC-APPLICATION-SCENE
-  path: src/DualFrontier.Application/Scene/README.md
   category: F
   tier: 4
   lifecycle: Live

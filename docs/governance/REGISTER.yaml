@@ -480,9 +480,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.0.1
+  version: 2.0.2
   first_authored: 2026-05-12
-  last_modified: 2026-07-17
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-05-25
   title: Document Control Register — Governance Framework
@@ -491,7 +491,7 @@ documents:
   last_modified_commit: 7449ba8
   review_cadence: on-change+annual
   last_review_date: 2026-05-25
-  last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 9 — FRAMEWORK v1.1 → v1.1.1 PATCH bump для §13 «See also» PROJECT_AXIOMS.md cross-reference addition (Axiom Option (VII) completion per Brief A'.9.1 batch 2 deliberation 2026-05-24; PROJECT_AXIOMS.md v1.0 LOCKED at Phase α Commit 8). Three-document governance trio now mutually discoverable. No schema change."
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- FRAMEWORK v2.0.1 -> v2.0.2 PATCH. Section 3.2.4 tier-4 document classes drop assets/scenes/README.md: the W4 boundary cascade deleted the BD-8 orphan cluster (the whole Scene/ DTO folder, ScenarioDef, the never-called ScenarioLoader, the .dfscene fixture and its README), so no governed document remains under assets/. Three DOC-F rows (DOC-F-ASSETS-SCENES, DOC-F-SRC-APPLICATION-SCENE, DOC-F-SRC-APPLICATION-SCENARIO) leave the register by sync, since a README carries its frontmatter at end of file and the file is gone. No schema change.'
   reviewer: Crystalka
   requirements_authored:
   - REQ-Q-A45-X5
@@ -5011,22 +5011,6 @@ documents:
   review_cadence: none-historical-record
   title: 'W4 COMPOSITION ROOT + SCENARIO RECON REPORT — 2026-08-30 (A-H) — measurement at HEAD 34bc221 by a read-only Opus subagent for the W4 charter (BD-4 + BD-8): PRODUCTION LOADS ZERO MODS (CreateSession never calls Apply; the sole Apply site sits behind the mod menu the Launcher never opens — the boot-time mod-load path must be CREATED); the W4 gate as the plan words it is ALREADY GREEN at class level (EngineSession.cs has zero game-namespace references since EQ_A2/B-5) so the falsifiable gate is ASSEMBLY-scoped — the 4 ProjectReference edges at DualFrontier.Application.csproj:11,14,15,16; the forbidden-namespace footprint in Application is SURGICAL (6 files / 24 usings / 0 fully-qualified: GameBootstrap, VanillaComponentRegistration, RandomPawnFactory, ItemFactory, PawnStateCommand needing SkillKind only, ItemSpawnedCommand needing ItemKind only) so cutting the 4 edges is compiler-enforceable with NO new csproj and the W0 ratchet baseline shrinks 4->0 by its own ratified protocol; ISimulationSystem.Initialize is a live-world hook that fires PER GRAPH BUILD (ctor + every Apply-driven Rebuild) not once per session — the Weather lazy read-then-mint Tick seed is the re-entry-safe precedent; ModRegistry ALREADY supports mod registration of SystemBase types (the F60A-measured bridge path) so the 10 real systems can be mod-registered without moving files (W5 territory); IModApi exposes NO world access; the BD-8 orphan cluster is ~295 lines / 11 files (the whole Scene/ folder + ScenarioDef + the never-called ScenarioLoader) — 4x the named scope; 11 consts at GameBootstrap.cs:65-75 (the BD-8 :58-68 anchor is stale by 7); ScenarioDef.WorldSeed is the only modelled world seed (F-42 coordination); ManifestParser silently ignores unknown keys; DefaultModDiscoverer has NO ordering semantics; dead edge Systems->AI; GameServices genre nouns live in engine Core.Bus (invisible to a namespace gate — vocabulary clause is future scope); MOD_OS_ARCHITECTURE.md:570 stale (claims F-60 open, cites two renamed tests); EAM/plan anchor drift at 8+ sites; blast radius = 18 GameBootstrap integration tests + 8 EngineSession transaction tests; 9 discrepancies + 10 surprises enumerated'
   special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-LINUX_PRESENT_1_RECON_REPORT, DOC-E-F60A_TICK_PATH_RECON_REPORT). Operator-requested subagent recon (2026-08-30) for the W4_COMPOSITION_ROOT charter, executed by a fresh read-only Opus subagent at HEAD 34bc221. Read-only: zero repository mutations besides this file, sync never run, zero builds/tests by the subagent. UNTRACKED at authoring — enrolls at the charter cascade C1.'
-- register_id: DOC-F-ASSETS-SCENES
-  path: assets/scenes/README.md
-  project: Dual Frontier
-  category: F
-  tier: 4
-  lifecycle: Live
-  owner: Crystalka
-  version: Live
-  first_authored: 2026-06-29
-  last_modified: 2026-06-29
-  content_language: en
-  next_review_due: 
-  title: Assets scenes
-  last_modified_commit: 192a4e3
-  review_cadence: on-source-commit+quarterly
-  reviewer: Crystalka
 - register_id: DOC-F-MODS
   path: mods/README.md
   project: Dual Frontier
@@ -5390,36 +5374,6 @@ documents:
   content_language: en
   next_review_due: 
   title: Application Save submodule
-  review_cadence: on-source-commit+quarterly
-  reviewer: Crystalka
-- register_id: DOC-F-SRC-APPLICATION-SCENARIO
-  path: src/DualFrontier.Application/Scenario/README.md
-  project: Dual Frontier
-  category: F
-  tier: 4
-  lifecycle: Live
-  owner: Crystalka
-  version: Live
-  first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
-  content_language: en
-  next_review_due: 
-  title: Application Scenario submodule
-  review_cadence: on-source-commit+quarterly
-  reviewer: Crystalka
-- register_id: DOC-F-SRC-APPLICATION-SCENE
-  path: src/DualFrontier.Application/Scene/README.md
-  project: Dual Frontier
-  category: F
-  tier: 4
-  lifecycle: Live
-  owner: Crystalka
-  version: Live
-  first_authored: 2026-04-XX
-  last_modified: 2026-04-XX
-  content_language: en
-  next_review_due: 
-  title: Application Scene submodule
   review_cadence: on-source-commit+quarterly
   reviewer: Crystalka
 - register_id: DOC-F-SRC-COMPONENTS
