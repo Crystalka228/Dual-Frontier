@@ -378,10 +378,11 @@ public sealed class SdkContextTests
             "W3's 2.1.0 added SDK members without removing or reshaping any (MINOR); ID-B " +
             "then corrected what flows THROUGH those members — SpanScope.Pairs yields true " +
             "versions and EntityId.IsValid is Index > 0 — with no surface change at all (PATCH); " +
-            "W4's 2.2.0 added the IModApi factory registration overload and the ISystemServices " +
-            "walkability grid, plus a new INavGridService type. Members were added to interfaces " +
-            "that are engine-implemented and mod-consumed, which is the CONTRACTS.md §4.2 shape " +
-            "that keeps such additions MINOR; a new type is non-breaking outright per §4");
+            "W4's 2.2.0 added the IModApi factory registration overload, RegisterWorldSeeder and " +
+            "Scenario, three ISystemContext sprite effects, and the Contracts.Distribution " +
+            "family. Members were added to interfaces that are engine-implemented and " +
+            "mod-consumed, which is the CONTRACTS.md §4.2 shape that keeps such additions MINOR; " +
+            "new types are non-breaking outright per §4");
 
         VersionConstraint.Parse("^2.0.0").IsSatisfiedBy(ContractsVersion.Current).Should().BeTrue(
             "every on-disk manifest pins apiVersion ^2.0.0; neither bump must strand them");

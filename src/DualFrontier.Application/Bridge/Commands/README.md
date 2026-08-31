@@ -1,3 +1,9 @@
+> **W4_COMPOSITION_ROOT (2026-08-31) — STALE, CORRECTED IN PLACE.** `PawnSpawnedCommand`,
+> `PawnMovedCommand` and `PawnDiedCommand` were DELETED by this wave and replaced with
+> `EntityAppearedCommand`, `EntityMovedCommand` and `EntityVanishedCommand`, so the engine's
+> presentation vocabulary carries no game noun (boundary law B-2). The folder index and the usage
+> example below still name the deleted records. Full re-anchoring is F-85.
+
 # Commands — Render commands
 
 ## Purpose

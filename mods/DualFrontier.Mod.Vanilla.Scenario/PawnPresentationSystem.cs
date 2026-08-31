@@ -50,6 +50,13 @@ public sealed class PawnPresentationSystem : ISimulationSystem
     private readonly List<EntityId> _seen = new();
     private readonly List<EntityId> _gone = new();
 
+    // Pooled for the same reason _seen and _gone are: this runs every tick and replaced
+    // zero-allocation event subscriptions, so allocating a fresh list per tick would have made
+    // the presentation rewrite quietly more expensive than what it replaced. The first pass
+    // pooled two of the three collections and allocated the third; an independent review noticed.
+    private readonly List<(EntityId Entity, GridVector Position)> _current = new();
+    private readonly HashSet<EntityId> _live = new();
+
     // Held so OnDispose can retract. ISimulationSystem.OnDispose() is parameterless, so a system
     // that leaves presentation state behind has no way to clean it up unless it keeps the
     // reference itself. Safe for the same reason it is safe in the weather mod: the presentation
@@ -71,7 +78,7 @@ public sealed class PawnPresentationSystem : ISimulationSystem
         // Both spans are released before any presentation call: the sink enqueues onto a
         // concurrent queue and touches no world state, but holding a read lease across work that
         // does not need it is the habit that turns into a mutation-while-live defect later.
-        var current = new List<(EntityId Entity, GridVector Position)>();
+        _current.Clear();
         using (SpanScope<IdentityComponent> identities = context.AcquireSpan<IdentityComponent>())
         {
             foreach ((EntityId entity, IdentityComponent _) in identities.Pairs)
@@ -81,12 +88,12 @@ public sealed class PawnPresentationSystem : ISimulationSystem
         for (int i = 0; i < _seen.Count; i++)
         {
             if (context.TryGetComponent(_seen[i], out PositionComponent position))
-                current.Add((_seen[i], position.Position));
+                _current.Add((_seen[i], position.Position));
         }
 
-        for (int i = 0; i < current.Count; i++)
+        for (int i = 0; i < _current.Count; i++)
         {
-            (EntityId entity, GridVector position) = current[i];
+            (EntityId entity, GridVector position) = _current[i];
             if (!_reported.TryGetValue(entity, out GridVector last))
             {
                 context.ShowEntitySprite(entity, position.X, position.Y);
@@ -99,17 +106,17 @@ public sealed class PawnPresentationSystem : ISimulationSystem
             }
         }
 
-        if (_reported.Count == current.Count) return;
+        if (_reported.Count == _current.Count) return;
 
         // Something left. Rebuilding the live set costs one pass and only runs on the ticks where
         // the counts actually disagree, which for a colony is rare.
-        var live = new HashSet<EntityId>();
-        for (int i = 0; i < current.Count; i++) live.Add(current[i].Entity);
+        _live.Clear();
+        for (int i = 0; i < _current.Count; i++) _live.Add(_current[i].Entity);
 
         _gone.Clear();
         foreach (EntityId reported in _reported.Keys)
         {
-            if (!live.Contains(reported)) _gone.Add(reported);
+            if (!_live.Contains(reported)) _gone.Add(reported);
         }
 
         for (int i = 0; i < _gone.Count; i++)

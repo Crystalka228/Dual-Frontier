@@ -1,3 +1,9 @@
+> **W4_COMPOSITION_ROOT (2026-08-31) — STALE, CORRECTED IN PLACE.** The claim that "GameBootstrap
+> [is] implemented; NavGrid and MovementSystem are wired in" is FALSE at HEAD. This directory now
+> holds `EngineComposer`, which registers no system and names no game type; the nav grid, the
+> pathfinding service and the ten gameplay systems belong to the `dualfrontier.vanilla.scenario`
+> mod. Full re-anchoring is F-85.
+
 # Loop — Main game loop
 
 ## Purpose

@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: f5c5e97
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. The Application layer row, the two reference-inventory rows and the scheduling paragraph are re-measured after the boundary cut: GameBootstrap anchors move to EngineComposer, and the scheduling paragraph records that the managed graph is now built EMPTY and rebuilt by the mod pipeline while the native dual-registration loop is fed nothing.'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR, amended post-review. The Application layer row, the reference-inventory rows and the scheduling paragraph are re-measured after the boundary cut: GameBootstrap anchors move to EngineComposer, and the scheduling paragraph records that the managed graph is now built EMPTY and rebuilt by the mod pipeline while the native dual-registration loop is fed nothing. The first pass MISSED the section 2 Application row and left the four cut edges standing under the section 2 verification stamp; an independent review found it and it is corrected. This event does NOT certify that every anchor to the deleted composition root is re-homed corpus-wide -- see F-84.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 ---
@@ -52,7 +52,13 @@ Twelve managed `src/` projects (verified: `src/*/*.csproj` at HEAD, 12 files) pl
 
 ## §2 Dependency rules
 
-Verified against every `ProjectReference` in `src/*/*.csproj` at HEAD — all twelve rows hold unchanged.
+Verified against every `ProjectReference` in `src/*/*.csproj` at HEAD.
+
+The Application row is the one W4 changed, and it is the wave's headline result: the four
+engine→game edges are CUT, and `BoundaryRatchetTests` now measures an EMPTY set of such edges. The
+previous version of this table listed those four edges under this same stamp after the cut had
+landed, which made the corpus assert the exact opposite of the result — corrected here rather than
+ledgered, because a stale row under a verification stamp is a false certification, not a residue.
 
 | Assembly | References |
 |---|---|
@@ -64,7 +70,7 @@ Verified against every `ProjectReference` in `src/*/*.csproj` at HEAD — all tw
 | Persistence | Contracts, Components |
 | Core | Contracts, Core.Interop |
 | Systems | Contracts, Core, Components, Events, AI (Core internals via `InternalsVisibleTo`) |
-| Application | Contracts, Core, Core.Interop, Components, Events, Systems, AI |
+| Application | Contracts, Core, Core.Interop (W4: the Components / Events / Systems / AI edges are cut; ratchet baseline 0) |
 | Runtime | Core.Interop |
 | Launcher | Application, Runtime (Application internals via `InternalsVisibleTo`) |
 | Crypto.Future | nothing (reserved surface) |

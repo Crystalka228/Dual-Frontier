@@ -43,8 +43,9 @@
     <InternalsVisibleTo Include="DualFrontier.Runtime.Tests" />
   </ItemGroup>
 
-  <!-- Native DLL copy step — same pattern as test projects. Required for
-       GameBootstrap.CreateLoop's NativeWorld bootstrap call (df_engine_bootstrap).
+  <!-- Native DLL copy step — same pattern as test projects. Required because composition
+       bootstraps a NativeWorld (df_engine_bootstrap); the call now lives in
+       EngineComposer.CreateSession, the composition root having been dissolved at W4.
        Cascade #3 γ0 fix per discovered cascade #2 omission. -->
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"

@@ -71,6 +71,16 @@
          these references a clean targeted `dotnet test tests/DualFrontier.Modding.Tests` cannot
          produce those directories at all, and a solution-wide parallel build races test execution
          against them. Same non-compiling form as the fixtures below. -->
+    <!-- W4 post-review. The vanilla suites load the scenario mod from this project's Fixtures/,
+         which only its own AfterTargets="Build" copy populates, so without a build edge a
+         targeted `dotnet test tests/DualFrontier.Modding.Tests` could run the whole wave gate
+         against a STALE deployed mod and pass. Same non-compiling form as the Weather pair: the
+         types stay out of this compilation so the fixture is loaded into a fresh context, not the
+         default one. The five slice mods ride the same reasoning for VanillaSliceLoadTests. -->
+    <ProjectReference Include="..\..\mods\DualFrontier.Mod.Vanilla.Scenario\DualFrontier.Mod.Vanilla.Scenario.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\mods\DualFrontier.Mod.Weather.Contracts\DualFrontier.Mod.Weather.Contracts.csproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <Private>false</Private>

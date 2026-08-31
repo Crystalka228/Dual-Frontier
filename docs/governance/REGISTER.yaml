@@ -102,7 +102,7 @@ documents:
   last_modified_commit: f5c5e97
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. The Application layer row, the two reference-inventory rows and the scheduling paragraph are re-measured after the boundary cut: GameBootstrap anchors move to EngineComposer, and the scheduling paragraph records that the managed graph is now built EMPTY and rebuilt by the mod pipeline while the native dual-registration loop is fed nothing.'
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR, amended post-review. The Application layer row, the reference-inventory rows and the scheduling paragraph are re-measured after the boundary cut: GameBootstrap anchors move to EngineComposer, and the scheduling paragraph records that the managed graph is now built EMPTY and rebuilt by the mod pipeline while the native dual-registration loop is fed nothing. The first pass MISSED the section 2 Application row and left the four cut edges standing under the section 2 verification stamp; an independent review found it and it is corrected. This event does NOT certify that every anchor to the deleted composition root is re-homed corpus-wide -- see F-84.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 - register_id: DOC-A-A_PRIME_0_7_AMENDMENT_PLAN
@@ -368,7 +368,7 @@ documents:
   last_modified_commit: b4bcfa4
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. R13 (configuration constants) moves from ownerless to SETTLED: the scenario tunables are declared in game.manifest.json and reach the seeding mod as ScenarioConfig. Every GameBootstrap anchor re-homed to EngineComposer. R2/GATE-S1/GATE-S4 re-read: the composer passes an EMPTY core set, so no production system reaches the native graph at all, and the interim rule that dual registration stays mandatory is marked FAILING rather than restated.'
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. R13 (configuration constants) moves from ownerless to SETTLED: the scenario tunables are declared in game.manifest.json and reach the seeding mod as ScenarioConfig. The GameBootstrap anchors this pass OPENED are re-homed to EngineComposer; the claim that EVERY anchor corpus-wide was re-homed is WITHDRAWN as false -- an independent review measured anchors surviving in this file and elsewhere, and a false completeness certification is worse than the residue it certifies because it tells the next cascade the sweep is finished. Residue tracked at F-84. R2/GATE-S1/GATE-S4 re-read: the composer passes an EMPTY core set, so no production system reaches the native graph at all, and the interim rule that dual registration stays mandatory is marked FAILING rather than restated.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A0 cross-cutting contract — sole-authority matrix, cutover gates GATE-S1..S4/GATE-B1..B4, deletion triggers; ratified standalone with the fold path recorded as a forward amendment queue (ARCHITECTURE §2-fold, KERNEL Part 0 §3-annotations, FRAMEWORK §14.7 §4-amendment).
 - register_id: DOC-A-FEEDBACK_LOOPS
