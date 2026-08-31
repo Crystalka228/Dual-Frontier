@@ -31,16 +31,19 @@ internal sealed class ItemFactory
     private readonly NavGrid _navGrid;
     private readonly int _mapWidth;
     private readonly int _mapHeight;
-    private readonly NativeWorld _nativeWorld;
 
-    public ItemFactory(int seed, NavGrid navGrid, int mapWidth, int mapHeight,
-                       NativeWorld nativeWorld)
+    /// <summary>
+    /// The world is NOT a constructor dependency: <see cref="Spawn"/> receives the world it
+    /// writes to. A fifth <c>NativeWorld</c> parameter was stored here and never read once —
+    /// dropped at W4, which shrinks by one the set of engine-internal types this factory names
+    /// in its signature and therefore has to shed when it relocates into a mod.
+    /// </summary>
+    public ItemFactory(int seed, NavGrid navGrid, int mapWidth, int mapHeight)
     {
         _rng = new Random(seed);
         _navGrid = navGrid ?? throw new ArgumentNullException(nameof(navGrid));
         _mapWidth = mapWidth;
         _mapHeight = mapHeight;
-        _nativeWorld = nativeWorld ?? throw new ArgumentNullException(nameof(nativeWorld));
     }
 
     /// <summary>

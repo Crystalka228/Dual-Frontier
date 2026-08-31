@@ -125,7 +125,7 @@ internal static class GameBootstrap
                 excludedPositions.Add(pawnPos.Position);
         }
 
-        var itemFactory = new ItemFactory(ItemFactorySeed, navGrid, MapWidth, MapHeight, nativeWorld);
+        var itemFactory = new ItemFactory(ItemFactorySeed, navGrid, MapWidth, MapHeight);
         itemFactory.Spawn(
             nativeWorld,
             excludedPositions,
