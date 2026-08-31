@@ -5,6 +5,23 @@
     <RootNamespace>DualFrontier.Launcher</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <!--
+      The output directory IS the distribution root: the executable, the manifest that defines
+      the product, and the mods/ tree the slice projects deploy into all sit together, which is
+      the layout a published build has. The repo-root file is the SOURCE and this is the shipped
+      copy, exactly as each mod keeps a source mod.manifest.json and a copy in its output.
+
+      This is what lets the loader's upward walk stop immediately here rather than climbing to
+      the repository root and then deriving a mods/ directory that holds manifests but no
+      assemblies.
+    -->
+    <None Include="$(MSBuildThisFileDirectory)..\..\game.manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>game.manifest.json</Link>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Application\DualFrontier.Application.csproj" />
     <ProjectReference Include="..\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
   </ItemGroup>

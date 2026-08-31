@@ -1,5 +1,6 @@
 using System;
 using DualFrontier.Application.Bridge;
+using DualFrontier.Application.Distribution;
 using DualFrontier.Application.Loop;
 using DualFrontier.Runtime;
 using DualFrontier.Runtime.Assets;
@@ -12,8 +13,9 @@ namespace DualFrontier.Launcher;
 
 /// <summary>
 /// Production launcher entry point for Dual Frontier. Composes Vulkan
-/// substrate (<see cref="Runtime.Runtime"/>) + Domain layer
-/// (<see cref="EngineSession"/> via <see cref="GameBootstrap"/>) +
+/// substrate (<see cref="Runtime.Runtime"/>) + the engine session
+/// (<see cref="EngineSession"/> via <see cref="EngineComposer"/>, whose content
+/// arrives from the distribution manifest's root mods) +
 /// <see cref="LauncherRenderer"/> bridge between them. Drives main loop
 /// per Q-G-7 (d) hybrid orchestration (cascade #2 amendment Crystalka
 /// Option A — GameLoop self-ticks on background thread).
@@ -27,6 +29,17 @@ internal static class Program
 {
     public static int Main(string[] args)
     {
+        // === Distribution ===
+        // The manifest is read BEFORE the runtime is composed, so a malformed one fails before
+        // a Vulkan device exists rather than after. It is located by walking upward from the
+        // directory holding this binary, never from the working directory: in a published
+        // layout the walk stops immediately because the manifest sits beside the executable,
+        // and in the repository it climbs to the root. The directory it was FOUND in is the
+        // distribution root, and the composer derives the mods root from it.
+        string manifestPath = DistributionManifestLoader.Locate();
+        DistributionManifest manifest = DistributionManifestLoader.Load(manifestPath);
+        string distributionRoot = DistributionManifestLoader.RootFor(manifestPath);
+
         // === Composition ===
         var runtimeOptions = new RuntimeOptions
         {
@@ -52,7 +65,11 @@ internal static class Program
         using var atlasTexture = new SpriteTexture(atlasVkImage, atlasSampler);
 
         var bridge = new PresentationBridge();
-        using EngineSession session = GameBootstrap.CreateSession(bridge);
+        // The composer builds ENGINE parts only and then loads the manifest's root mod set. It
+        // throws if any root mod is missing or refuses: a distribution without its root set is
+        // not a degraded product, it is a broken one.
+        using EngineSession session =
+            EngineComposer.CreateSession(bridge, manifest, distributionRoot);
 
         // S-LOCK-10 composition root: SceneState constructed here, passed к
         // both dispatcher (writes) и renderer (reads) via constructor injection.
