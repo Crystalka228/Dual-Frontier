@@ -271,6 +271,34 @@ public sealed class ScenarioSeedingTests
             "standing on an obstacle means the second grid was left wholly passable");
     }
 
+    [Fact]
+    public void AColonistLessScenarioIsStillSeededOnlyOnce()
+    {
+        // The guard used to ask "is there a colonist?", which answers the real question only for
+        // scenarios that have colonists. A distribution may declare none -- the loader accepts a
+        // zero count deliberately, pinned by DistributionManifestLoaderTests -- and that world
+        // seeds its items, then reads as unseeded on the next reload and mints the whole set
+        // again. Every reload would add another full larder to a world that already had one.
+        ScenarioConfig scenario = Scenario(
+            pawns: 0, food: 6, water: 4, beds: 3, decorations: 2);
+
+        using var h = new ScenarioHarness(scenario);
+        h.Apply().Success.Should().BeTrue();
+
+        int foodAfterFirst = ScenarioHarness.Ids<ConsumableComponent>(h.World).Count;
+        foodAfterFirst.Should().Be(6, "the first apply seeds exactly what was asked for");
+
+        h.Pipeline.UnloadMod("dualfrontier.vanilla.scenario");
+        h.Apply().Success.Should().BeTrue();
+
+        ScenarioHarness.Ids<ConsumableComponent>(h.World).Should().HaveCount(6,
+            "a reload resumes a world, it does not stock it again -- and it must reach that " +
+            "conclusion without a colonist to read it from");
+        ScenarioHarness.Ids<WaterSourceComponent>(h.World).Should().HaveCount(4);
+        ScenarioHarness.Ids<BedComponent>(h.World).Should().HaveCount(3);
+        ScenarioHarness.Ids<DecorativeAuraComponent>(h.World).Should().HaveCount(2);
+    }
+
     private static (List<GridVector> Tiles, List<string> Names) SeedAndDescribe(ScenarioConfig scenario)
     {
         using var h = new ScenarioHarness(scenario);

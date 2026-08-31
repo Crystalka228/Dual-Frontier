@@ -51,6 +51,11 @@ public sealed class ScenarioMod : IMod
 
         VanillaComponents.RegisterAll(api);
 
+        // Registered apart from the vanilla set on purpose: this is not vanilla CONTENT, it is
+        // this seeder's own bookkeeping, and folding it into VanillaComponents would make the
+        // count of vanilla component types a number that no longer means what it says.
+        api.RegisterComponent<ScenarioSeededComponent>();
+
         // The grid and the pathfinding over it are GAME content, built and owned here. The engine
         // cannot build them -- they live in a game assembly it no longer references -- and it does
         // not need to: the factory registration overload lets this mod close over what it built,
@@ -89,8 +94,8 @@ public sealed class ScenarioMod : IMod
 
         api.Log(ModLogLevel.Info,
             $"vanilla scenario '{scenario.Id}' armed: {VanillaComponents.Count} component types, " +
-            $"11 systems, {scenario.MapWidth}x{scenario.MapHeight} map, " +
-            $"{scenario.ObstacleCount} obstacles.");
+            $"plus a seeding mark, 11 systems, " +
+            $"{scenario.MapWidth}x{scenario.MapHeight} map, {scenario.ObstacleCount} obstacles.");
     }
 
     /// <summary>

@@ -113,17 +113,64 @@ public sealed class ScenarioSeeder
 
         IReadOnlyList<GridVector> pawnTiles = SeedPawns(context);
         SeedItems(context, pawnTiles);
+        MarkSeeded(context);
         _seeded = true;
     }
 
     /// <summary>
-    /// True when the world already holds a colonist. The lease is released before returning,
-    /// because the caller mints entities next and the world refuses mutation while a span is live.
+    /// Leaves this mod's private mark on the world, LAST, so a seeding that throws part way
+    /// through does not claim to have finished.
+    /// </summary>
+    private void MarkSeeded(ISystemContext context)
+    {
+        EntityId mark = context.CreateEntity();
+        Write(context, new[] { mark }, new[]
+        {
+            new ScenarioSeededComponent
+            {
+                ScenarioId = StableHash(_scenario.Id),
+                WorldSeed = _scenario.WorldSeed,
+            },
+        });
+    }
+
+    /// <summary>
+    /// A hash that does not change between runs. <c>string.GetHashCode</c> is randomised per
+    /// process by default, so a mark written in one session would not match the same id read back
+    /// in the next -- which is precisely the comparison this field exists to allow.
+    /// </summary>
+    private static int StableHash(string value)
+    {
+        unchecked
+        {
+            int hash = 17;
+            for (int i = 0; i < value.Length; i++)
+                hash = (hash * 31) + value[i];
+            return hash;
+        }
+    }
+
+    /// <summary>
+    /// True when this seeder has already run against this world.
+    ///
+    /// <para>
+    /// It probes this mod's own mark, not a colonist. Probing for a colonist answered the question
+    /// only for scenarios that ask for colonists: a distribution may legitimately declare none --
+    /// the loader accepts a zero count on purpose -- and such a world seeds its items, then reads
+    /// as unseeded on reload and mints the entire item set a second time. Probing for a POSITION
+    /// instead would trade that for a worse fault, mistaking anyone else's entity for this mod's
+    /// work and suppressing the real seeding.
+    /// </para>
+    ///
+    /// <para>
+    /// The lease is released before returning, because the caller mints entities next and the
+    /// world refuses mutation while a span is live.
+    /// </para>
     /// </summary>
     private static bool AlreadySeeded(ISystemContext context)
     {
-        using SpanScope<IdentityComponent> span = context.AcquireSpan<IdentityComponent>();
-        foreach ((EntityId _, IdentityComponent _) in span.Pairs)
+        using SpanScope<ScenarioSeededComponent> span = context.AcquireSpan<ScenarioSeededComponent>();
+        foreach ((EntityId _, ScenarioSeededComponent _) in span.Pairs)
             return true;
         return false;
     }

@@ -76,15 +76,21 @@ public sealed class ScenarioWaveGateTests : IDisposable
     {
         // Relocated from the engine's own round-trip suite, which asserted this against a
         // registration helper the engine owned. The set is content, so the claim belongs to the
-        // mod that ships it: 21 types, registered through IModApi during the mod's initialisation,
-        // into a registry the world hands over EMPTY.
+        // mod that ships it, registered through IModApi during the mod's initialisation, into a
+        // registry the world hands over EMPTY.
         _h.World.Registry!.Count.Should().Be(0, "the engine registers no component type of its own");
 
         Apply().Success.Should().BeTrue();
 
-        _h.World.Registry!.Count.Should().Be(21,
-            "the vanilla component set is 21 types; FactionComponent and WorkbenchComponent are " +
-            "deliberately absent because nothing constructs or reads either");
+        // 22 = the 21 vanilla content types + ScenarioSeededComponent. The mark is registered
+        // apart from VanillaComponents and counted apart from it here, because it is not content:
+        // it is how the seeder recognises a world it has already written. Rolling it into the
+        // vanilla figure would make "the vanilla component set" a number that no longer means
+        // what it says.
+        _h.World.Registry!.Count.Should().Be(22,
+            "the vanilla component set is 21 types -- FactionComponent and WorkbenchComponent are " +
+            "deliberately absent because nothing constructs or reads either -- plus the scenario " +
+            "mod's own seeding mark");
     }
 
     [Fact]
