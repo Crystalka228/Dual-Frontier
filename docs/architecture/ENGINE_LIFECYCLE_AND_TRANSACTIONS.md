@@ -5,15 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.0.3
 first_authored: 2026-07-15
-last_modified: 2026-07-18
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.1 → v1.0.2 PATCH: §2.5 swapchain recreation marked Realized (prepare-before-reclaim — VulkanSwapchain.Recreate + Runtime.RecreateFramebuffersForSwapchain + PrepareBeforeReclaim, C2 f28b3f4; device-free ordering test C3 ae4dc48); §4 class-6 device-lost row + §6 OQ-3 CLOSED by D1 (fail-fast v1 — DeviceLossBoundary → Environment.FailFast, no recovery in v1; M9 C4 41cdef4); §5 swapchain commit-atomicity coverage noted. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B (v1.0.0 → v1.0.1 PATCH).'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The implicit-state-machine sentence re-anchors from GameBootstrap.CreateLoop to EngineComposer.CreateSession.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.'
 ---
@@ -194,7 +194,7 @@ Rules: the desired axis never waits for the reclamation axis ("removed from the 
 
 ### 3.2 Engine session lifecycle
 
-Today this machine is implicit in `Program.Main` + `GameBootstrap.CreateLoop` — no type represents it. Proposed:
+Today this machine is implicit in `Program.Main` + `EngineComposer.CreateSession` — no type represents it. Proposed:
 
 ```
   Boot ──ok──► Running ◄──────► Paused ──shutdown request──► ShuttingDown ──► Terminated

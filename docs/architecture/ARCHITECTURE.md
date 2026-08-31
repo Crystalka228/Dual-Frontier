@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Dual Frontier architecture (umbrella; authored rework)
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: f5c5e97
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.0.2 PATCH: layer-table kernel row C++20 → C++23, mirroring the К-L1 amendment (KERNEL_ARCHITECTURE v1.1.0, FRAMEWORK §7.2; EVT-2026-07-17-STACK_UPDATE). Single-cell change. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. The Application layer row, the two reference-inventory rows and the scheduling paragraph are re-measured after the boundary cut: GameBootstrap anchors move to EngineComposer, and the scheduling paragraph records that the managed graph is now built EMPTY and rebuilt by the mod pipeline while the native dual-registration loop is fed nothing.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 ---
@@ -43,7 +43,7 @@ Twelve managed `src/` projects (verified: `src/*/*.csproj` at HEAD, 12 files) pl
 | Layer | Projects |
 |---|---|
 | Presentation | `Launcher` — window + render loop, single production renderer; `Runtime` — Vulkan substrate (`vulkan-1.dll` via pure P/Invoke) |
-| Application | `Application` — GameBootstrap/GameLoop, Mod OS (loader, registry, capability model, fault handling), PresentationBridge command queue, display composition |
+| Application | `Application` — EngineComposer/GameLoop, the distribution manifest and its loader, Mod OS (loader, registry, capability model, fault handling), PresentationBridge command queue, display composition. Since W4 it names no component, event, system or AI type: the game arrives through the mod pipeline |
 | Domain | `Systems` · `Components` · `Events` · `AI` · `Persistence` — game rules; multithreaded; renderer-agnostic |
 | Infrastructure | `Core` — domain buses, scheduling dispatch facade; `Core.Interop` — P/Invoke bridge, NativeWorld handle, span/batch protocol; `Crypto.Future` — reserved FHE surface |
 | Native kernel (C++23) | `Core.Native` — NativeWorld storage SSoT (К-L11), scheduler graph + wake registry (К-L12/К-L13), three-tier event bus (К-L15), GPU pipeline slots (К-L16) |
@@ -81,9 +81,9 @@ Four `InternalsVisibleTo` grants cross project boundaries in production code (`*
 | Grant | Declared at | Representative consumer | Load-bearing? |
 |---|---|---|---|
 | Core → Systems | `Core.csproj:16` | none beyond `nameof` on public interfaces + one doc comment | **Unused — removable now** |
-| Core → Application | `Core.csproj:17` | `GameServices` (`GameBootstrap.cs:79`, ~24), `SystemMetadata` (`GameBootstrap.cs:189`, ~14), `ParallelSystemScheduler` (`GameLoop.cs:38`, ~11), `DependencyGraph` (`GameBootstrap.cs:145`, ~8) | Heavily load-bearing |
+| Core → Application | `Core.csproj:17` | `GameServices` (`EngineComposer.cs:84`), `SystemMetadata` (`EngineComposer.cs:125`), `ParallelSystemScheduler` (`GameLoop.cs:38`, ~11), `DependencyGraph` (`EngineComposer.cs:95`) | Heavily load-bearing |
 | Core.Interop → Application | `Core.Interop.csproj:23` | internal `NativeMethods`, used by `ManagedBusBridge` + `SchedulerAdapter` (`SchedulerAdapter.cs:27`) | Load-bearing (one type) |
-| Application → Launcher | `Application.csproj:20` | `GameLoop` (~9), `GameBootstrap` (~8) | Load-bearing |
+| Application → Launcher | `Application.csproj:20` | `GameLoop` (~9), `EngineComposer`, `DistributionManifestLoader` | Load-bearing |
 
 `Core → Systems` is the one free cleanup here: nothing would stop compiling if it were deleted today.
 
@@ -93,7 +93,7 @@ Per К-L12 (KERNEL_ARCHITECTURE.md Part 0): native kernel scheduling is sovereig
 
 Scheduling and event routing have not cut over. Today, in production:
 
-- **Scheduling.** Phases are planned by the managed `DependencyGraph` (`GameBootstrap.cs:145-148`) and executed via `Parallel.ForEach` (`ParallelSystemScheduler.cs:149`, MaxDegreeOfParallelism = ProcessorCount − 2, `:90`). Every Core system is *also* registered with the native `SystemGraph` (`GameBootstrap.cs:162-181`), with empty read/write component-id sets (`:173-174`) and a blanket Timer wake at rate 1 for every system (`:179`) — the native graph holds the systems but has no edges to decide with. The reverse-P/Invoke bridge that would let native dispatch drive managed execution (`ManagedSystemDispatcher.OnBatch`, `[UnmanagedCallersOnly]`, `ManagedSystemDispatcher.cs:75`; registered via `SchedulerAdapter.Register`, `SchedulerAdapter.cs:22`) is on disk and exercised only by `BatchedCallbackTests.cs` — zero production call sites, verified.
+- **Scheduling.** Phases are planned by the managed `DependencyGraph` — built EMPTY at composition (`EngineComposer.cs:95-98`) and rebuilt with the real system set by `ModIntegrationPipeline.Apply` since W4 — and executed via `Parallel.ForEach` (`ParallelSystemScheduler.cs:149`, MaxDegreeOfParallelism = ProcessorCount − 2, `:90`). The dual-registration loop that also installs systems in the native `SystemGraph` (`EngineComposer.cs:107-119`) survives but is fed an empty core set, so the native graph holds nothing in production; it registers empty read/write component-id sets (`:113-114`) and a blanket Timer wake at rate 1 for every system (`:179`) — the native graph holds the systems but has no edges to decide with. The reverse-P/Invoke bridge that would let native dispatch drive managed execution (`ManagedSystemDispatcher.OnBatch`, `[UnmanagedCallersOnly]`, `ManagedSystemDispatcher.cs:75`; registered via `SchedulerAdapter.Register`, `SchedulerAdapter.cs:22`) is on disk and exercised only by `BatchedCallbackTests.cs` — zero production call sites, verified.
 - **Event routing.** Every production event travels one of five managed `DomainEventBus` instances behind `IGameServices` (`GameServices.cs:14-113`, constructed `GameBootstrap.cs:79`). `BusFacade.UseNativeBusForDispatch` defaults `false` (`BusFacade.cs:49`); no production code constructs a `BusFacade`. The only live native-bus touchpoint in production is the Background-tier idle-slot drain each tick (`GameLoop.cs:120-128`, via `ManagedBusBridge.DrainBackgroundBatch`).
 
 > **FENCED (target / planned — not current truth):** the cutover to native sovereignty is gated, not scheduled — no date, only conditions. Gate conditions, the equivalence-proof obligation, and the deletion triggers for the managed `DependencyGraph` and the per-bus `DomainEventBus` internals are specified in [EXECUTION_AUTHORITY_MATRIX.md](./EXECUTION_AUTHORITY_MATRIX.md) §3. Until those gates close, dual registration — every system in both graphs, every event representable on both bus vocabularies — is mandatory per that document's §3.3; a system or event visible to only one plane would make the equivalence gates untestable.

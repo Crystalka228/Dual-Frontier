@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.5
+version: 1.0.6
 first_authored: 2026-07-15
-last_modified: 2026-08-26
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
@@ -15,7 +15,7 @@ supersedes:
 - DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.3 → v1.0.4 PATCH: section 2.3 swapchain recreation unfenced to current truth (prepare-before-reclaim Realized, M6) + section 6.3 device-lost unfenced (fail-fast v1 Realized, M9) + section 8 OQ-V1/OQ-V3 CLOSED; owned by ELT section 2.5 / section 4 class 6 / OQ-3 and IAC section 4/7 (EVT-2026-07-18-EQ_A4_RENDER_TAIL). Prior review: STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Two Launcher composition anchors re-homed from GameBootstrap to EngineComposer, with the note that the Launcher composes a session whose content arrives from the distribution manifest rather than from the composer itself.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
@@ -145,7 +145,7 @@ src/
 
   // ====== Presentation host ======
   DualFrontier.Launcher/
-    Program.cs                         // Main(): Runtime.Create + GameBootstrap + main loop (§2.2, §2.4)
+    Program.cs                         // Main(): Runtime.Create + EngineComposer + main loop (§2.2, §2.4)
     LauncherRenderer.cs                // IRenderer impl: bridge drain → dispatch → RecordSpritesFrame (§2.3, §5.3)
     RenderCommandDispatcher.cs / SceneState.cs / LauncherProceduralAtlas.cs / PawnSpriteEntry.cs
 
@@ -198,7 +198,7 @@ The scaffolding generator `tools/scaffold-runtime.ps1` remains committed and ide
 - `Sprite` — atlas-based batched 2D rendering; `SpriteRenderer` (`BeginFrame`/`Submit`/`EndFrame`), `TileMap`, `Camera2D`.
 - `Assets` — manual PNG decoder + asset path resolution (§2.7).
 - `Diagnostic` — `ValidationLog` only: a thread-safe ring buffer (1024-message cap) receiving validation-layer callbacks from any driver thread; its `ErrorCount == 0` is the smoke-test exit criterion (`Diagnostic/ValidationLog.cs:1-16`).
-- `DualFrontier.Launcher` — production presentation host; composes Domain (via `GameBootstrap`) with Runtime; owns "what to draw" (`SceneState` + `RenderCommandDispatcher`); §2.2–§2.4.
+- `DualFrontier.Launcher` — production presentation host; composes the engine session (via `EngineComposer`, whose content arrives from the distribution manifest's root mods) with Runtime; owns "what to draw" (`SceneState` + `RenderCommandDispatcher`); §2.2–§2.4.
 
 **Dependency rules (locked invariants, mechanically verifiable via the project-reference graph):**
 

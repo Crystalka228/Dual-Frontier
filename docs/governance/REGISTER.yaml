@@ -32,9 +32,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.0
+  version: 1.1.1
   first_authored: 2026-07-15
-  last_modified: 2026-08-22
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)
@@ -45,7 +45,7 @@ documents:
   last_modified_commit: edb267a
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'ID_B_ENTITY_VERSIONS C7 — v1.0.2 → v1.1.0 MINOR (a rule joins the shipped surface): DFK022 (К-L22 entity identity honesty) added Error-enforcing — it flags an integer literal in the Version position of new EntityId(...), by parameter NAME rather than ordinal, exempting DualFrontier.Core.Interop internals and Test namespaces. Census 17 → 18 rules, NativeBoundary 5 → 6, build-breaking 16 → 17, Error 11 → 12; §1.3 test tree 20 → 21 files with the 9-case DFK022EntityIdentityTests; §1.4 waiver pin 2 → 3, the third being the DFK022 waiver on EntityEncoder.DecodeRanges whose retirement trigger is the A7 persistence contract. The rule is tracked in AnalyzerReleases.Unshipped.md pending its release transition. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior review: STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §1.2 wiring-truth inherit list net8.0 → net10.0; one sentence added at §1.2 closing the recon gap — the analyzer project TFM (netstandard2.0, Roslyn host load compat, deliberately unmoved by the solution-wide net10.0 move) was nowhere asserted on this LOCKED surface, now stated together with LangVersion pinned explicit 14.0 (was floating latest; STACK_UPDATE D2); §6 kernel-boundary parenthetical C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0) (EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The DFK005 row drops the GameBootstrap carve-out the rule no longer carries: the composition root that held it is deleted, and the successor (EngineComposer) is deliberately unsuffixed so it needs no exemption.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 - register_id: DOC-A-ARCHITECTURE
@@ -91,9 +91,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Dual Frontier architecture (umbrella; authored rework)
@@ -102,7 +102,7 @@ documents:
   last_modified_commit: f5c5e97
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'STACK_UPDATE Phase F — v1.0.1 → v1.0.2 PATCH: layer-table kernel row C++20 → C++23, mirroring the К-L1 amendment (KERNEL_ARCHITECTURE v1.1.0, FRAMEWORK §7.2; EVT-2026-07-17-STACK_UPDATE). Single-cell change. Prior context: DRAFTS_RATIFICATION MC-1 (C5) candidate-banner retirement, PATCH 1.0.0 → 1.0.1.'
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. The Application layer row, the two reference-inventory rows and the scheduling paragraph are re-measured after the boundary cut: GameBootstrap anchors move to EngineComposer, and the scheduling paragraph records that the managed graph is now built EMPTY and rebuilt by the mod pipeline while the native dual-registration loop is fed nothing.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 - register_id: DOC-A-A_PRIME_0_7_AMENDMENT_PLAN
@@ -207,15 +207,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.0.3
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.1 → v1.0.2 PATCH: §6.2 gains a cross-reference to the abnormal-exit (fence-abort) contract now owned by ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.6 (D10). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior: EQ_A1 D2 fault-symmetry (v1.0.0 → v1.0.1); DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
+  last_review_event: W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Menu-path, phase-list and bootstrap-publication anchors re-homed to EngineComposer; the boot-time Apply is recorded as a third T1 context, earlier than the menu path and free of concurrency; a stale gameContext identifier corrected to session (EQ_A2 drift).
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.
 - register_id: DOC-A-CONTRACTS
@@ -245,9 +245,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.0
+  version: 2.2.0
   first_authored: 2026-07-15
-  last_modified: 2026-08-20
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
@@ -303,15 +303,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.0.3
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Engine Lifecycle & Transactions — prepare/validate/quiesce/commit/reclaim/recover vocabulary, transition inventory, fault taxonomy (the A3+A8 contract)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.1 → v1.0.2 PATCH: §2.5 swapchain recreation marked Realized (prepare-before-reclaim — VulkanSwapchain.Recreate + Runtime.RecreateFramebuffersForSwapchain + PrepareBeforeReclaim, C2 f28b3f4; device-free ordering test C3 ae4dc48); §4 class-6 device-lost row + §6 OQ-3 CLOSED by D1 (fail-fast v1 — DeviceLossBoundary → Environment.FailFast, no recovery in v1; M9 C4 41cdef4); §5 swapchain commit-atomicity coverage noted. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B (v1.0.0 → v1.0.1 PATCH).'
+  last_review_event: W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The implicit-state-machine sentence re-anchors from GameBootstrap.CreateLoop to EngineComposer.CreateSession.
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.
 - register_id: DOC-A-EVENT_BUS
@@ -359,16 +359,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Execution Authority Matrix — sole-authority map, cutover gates, deletion triggers (the A0 contract)
   last_modified_commit: b4bcfa4
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'Post-merge Codex-review PATCH (operator-sanctioned): R9/R11 rows + reading rule + section-2.2 aligned with the ratified reality - the doc-space owners (ELT+ROL; IAC) are LOCKED law, code-side implementation pending per ROADMAP EQ-a/EQ-b; vacant set narrowed to R12/R13. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. R13 (configuration constants) moves from ownerless to SETTLED: the scenario tunables are declared in game.manifest.json and reach the seeding mod as ScenarioConfig. Every GameBootstrap anchor re-homed to EngineComposer. R2/GATE-S1/GATE-S4 re-read: the composer passes an EMPTY core set, so no production system reaches the native graph at all, and the interim rule that dual registration stays mandatory is marked FAILING rather than restated.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A0 cross-cutting contract — sole-authority matrix, cutover gates GATE-S1..S4/GATE-B1..B4, deletion triggers; ratified standalone with the fold path recorded as a forward amendment queue (ARCHITECTURE §2-fold, KERNEL Part 0 §3-annotations, FRAMEWORK §14.7 §4-amendment).
 - register_id: DOC-A-FEEDBACK_LOOPS
@@ -505,15 +505,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-18
-  last_modified: 2026-07-18
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'Banner PATCH 1.0.0 -> 1.0.1 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): the stale body banner (AUTHORED target-axis law, pending ratification) updated to the ratified-successor LOCKED form; no lifecycle transition. Prior: ratified LOCKED v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (BOUNDARY_W0 C3), opening the game-vs-engine composition axis grounded in DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT (HEAD 4c58942); AUTHORED 0.1.0 enrolled at C1.'
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
   reviewer: Crystalka
 - register_id: DOC-A-GODOT_INTEGRATION
   path: docs/architecture/historical/GODOT_INTEGRATION.md
@@ -606,9 +606,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.4.1
+  version: 1.4.2
   first_authored: 2026-07-15
-  last_modified: 2026-08-22
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: DualFrontier Kernel — Architecture (authored rework; sole К-L canon carrier)
@@ -616,7 +616,7 @@ documents:
   - DOC-A-KERNEL
   review_cadence: on-change+annual
   last_review_date: 2026-08-20
-  last_review_event: "PR #51 review fixes (2026-08-22, architect-triaged): the ID-B versions view TOMBSTONES a destroyed-but-unflushed slot (negative sentinel; is_alive rejects the slot; flush lifts it to the successor version before free-listing) so a span reconstructing an id for the surviving component row fails closed instead of handing back the not-yet-issued pair a recycle will mint -- an ID-B-introduced fail-open, caught in review. The create guard is NARROWED to the table-growth path, the only one that can reallocate a view's buffer, and the refusal is now an exception rather than a silent EntityId.Invalid. The mutation + view family is serialized by one mutex (acquire published its pointer before raising its counter). New F-61 ledgers the wider World-mutation concurrency gap. K-L22 artifacts line and section 2 read protocol restated to the corrected mechanism; v1.4.0 -> v1.4.1 PATCH. Prior review: ID_B_ENTITY_VERSIONS -- v1.3.0 -> v1.4.0 MINOR (Part 0 gains a NEW invariant row; series state 22 -> 23 active and 23 -> 24 canonical-text rows; section 2 teaching example rewritten to the versions-view idiom): K-L22 Entity identity honesty SEATED AUTHORED -- span and batch surfaces must surface true entity versions, and managed code must not construct an EntityId whose Version it did not receive from the world. Enforced by DFK022 (Error), which exists on disk before this row cites it. Section 2 read protocol records that a lease now also holds a versions view, so entity creation is refused for its lifetime while creation under a plain component span stays legal. Closes F-59. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior review: ID_A_COMPONENT_IDENTITY -- v1.2.1 -> v1.3.0 MINOR (Part 0 amendment record + section 3 rewrite; K-L4 canonical text BYTE-UNCHANGED and all four pinned properties preserved): component identity is re-keyed on the owner-scoped stable NAME (owner + type FullName) instead of the CLR Type object. The Type-keyed side becomes a ConditionalWeakTable resolution cache holding no authoritative state; implicit first-use registration is confined to NON-collectible surface under owner kernel, and a collectible-context type without a registration is a loud refusal; the mod pipeline allocates a mod's Path alpha ids eagerly at Apply under owner mod.<modId>, which makes the canon's \"explicit per-mod registration\" literally true rather than aspirational (recon anomaly A3 resolved). F-60's reload half is CLOSED by this; its ALC-reclamation half was re-attributed to a tick-path root and stays OPEN. EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: EQ_A3_CHECKED_DESTROY Cascade C -- v1.2.0 -> v1.2.1 PATCH (K-L20 artifacts-line ONLY; canon text byte-unchanged): the checked-destroy pair df_world_active_span_count / df_world_destroy_checked (capi.cpp/df_capi.h) + NativeWorld.DisposeChecked + the EngineSession S7 checked switch join the K-L20 implementation artifacts line. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.1.0 → v1.2.0 MINOR (Part 0 canon addition): К-L20 SEATED as Shutdown-transaction quiescence (D5 governance act, option B, operator-ratified 2026-07-18 after the Phase-0 H-LAW finding that the К-L20 slot was pre-reserved for Mod-API-forward-compatibility). The Mod-API reservation RELOCATED verbatim to a new К-L21 (DFK020 family → DFK021); the DFK009/DFK012/DFK015/DFK018 \"К-L20 cascade\" DF-rule pointers re-pointed to \"К-L21 cascade\" (DF-rule surface only — the four LOCKED canons are byte-unchanged). Count headline 21 → 22 active / 22 → 23 canonical-text rows (mechanical). Artifacts: EngineSession.Dispose + the C5 order/abort tests. EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior review: STACK_UPDATE Phase F (v1.0.1 → v1.1.0, К-L1 C++23)."
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. K-L5 implementation artifacts name EngineComposer.cs instead of the deleted GameBootstrap.cs, and record why the successor deliberately does not carry the Bootstrap suffix: DFK005 permitted exactly one such name outside Core.Interop, and W4 retired that permission. Invariant text UNCHANGED. Also re-anchors the Phase M managed-composition entry point to EngineComposer.CreateSession, whose mods root is derived from the distribution root rather than passed as a string.'
   reviewer: Crystalka
   requirements_authored:
   - REQ-K-L1
@@ -872,9 +872,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.4.0
+  version: 1.4.1
   first_authored: 2026-07-15
-  last_modified: 2026-08-20
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
@@ -884,7 +884,7 @@ documents:
   - DOC-A-ISOLATION
   review_cadence: on-change+annual
   last_review_date: 2026-07-19
-  last_review_event: "ID_A_COMPONENT_IDENTITY post-review correction (PR #50, Codex P2) -- v1.3.1 -> v1.4.0 MINOR: section 12 ValidationErrorKind registry FIFTEEN -> SIXTEEN members. NEW ComponentRegistrationFailed, produced when a mod claims a Path alpha component that cannot be given a native type id at load -- a layout change while a store for its identity is live, or a composition that loads component-defining mods against a world with no component registry bound. Section 12's closing paragraph is narrowed accordingly: manifest-parse and field registration still surface as InvalidOperationException, but COMPONENT-TYPE registration at Apply is now a typed ValidationErrorKind routed through PipelineResult.Errors and the existing rollback funnel. MINOR (new member in a documented registry, no member removed or repurposed). EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: PATCH 1.3.0 -> 1.3.1 2026-08-20 (PR #49 Codex review correction): the section 9.4 reload paragraph claimed a reloaded mod resumes its state; measurement against a production-faithful world shows it does not -- component type ids are keyed on the per-ALC Type object with no per-mod removal at unload, so a reloaded mod re-seeds and the stale registry entry leaks the old ALC (ModUnloadTimeout). Corrected to the measured behaviour and cross-referenced to ROADMAP F-60. Correction of a false claim, no rule change. Prior: MINOR 1.2.0 -> 1.3.0 2026-08-20 (W3_WEATHER_SLICE C8) -- owner registration live both passes + RemoveOwner symmetry (3.4), third Phase-C satisfiability arm closing G4 (3.5), owner-namespaced gate tokens (4), Weather pair as the live D-4 reference (5.7), unload step 2.5 + shared-mod reuse (9.4). No lifecycle transition (LOCKED)."
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The section 9.5 F-60 paragraph is corrected to CLOSED: reload adopts the surviving singleton (ID-A) and the mod ALC is reclaimed (F60A, whose bisection re-attributed the leak from the component registry to a tick-path cache). The two test names it cited were renamed by those cascades and are replaced with the ones that exist. Also re-anchors the section 8 ModFaultHandler construction note from GameBootstrap to EngineComposer.'
   reviewer: Crystalka
   special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -1044,15 +1044,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
-  last_modified: 2026-07-18
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (the A2 contract)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.0.1 PATCH (section 6.2 Realized note): the status-returning destroy ROL section 6.2 called for now exists on disk (df_world_destroy_checked / df_world_active_span_count; NativeWorld.DisposeChecked; EngineSession S7 fail-fast route on a post-fence WORLD_BUSY). Body byte-change is the one Realized note + version. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
+  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Section 1.1 gains a dated STALE banner. The section and the section-2 table describe the pre-EQ_A2 world: EngineSession was built at EQ_A2 and GameBootstrap deleted at W4, so both the premise and every code anchor are false. The anchors are deliberately NOT re-homed one at a time -- doing so inside a false premise would make the document read as current -- and the rewrite is ledgered instead.'
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.
 - register_id: DOC-A-SCHEDULER_ARCHITECTURE
@@ -1062,9 +1062,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.1.0
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Scheduler Architecture — К10 substrate model and current/target wiring (authored rework)
@@ -1120,9 +1120,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-07-15
-  last_modified: 2026-07-17
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Multithreading (authored rework; absorbs the FEEDBACK_LOOPS engine cycle/snapshot rule)
@@ -1131,7 +1131,7 @@ documents:
   last_modified_commit: ff24980
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+  last_review_event: W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Section 3's dual-registration paragraph re-anchors from GameBootstrap to EngineComposer and states that the loop survives with an EMPTY core set, so no production system reaches the native plane.
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
 - register_id: DOC-A-TIME_AND_CONSISTENCY_MODEL
@@ -1160,15 +1160,15 @@ documents:
   tier: 2
   lifecycle: Live
   owner: Crystalka
-  version: 1.4.1
+  version: 1.5.0
   first_authored: 2026-07-18
-  last_modified: 2026-08-20
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2026-Q4
   title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
   review_cadence: on-change
   last_review_date: 2026-07-19
-  last_review_event: 'PATCH 1.4.0 -> 1.4.1 2026-08-20 (PR #49 Codex review correction): the W3 section records that the wave gate measured an unfaithful harness -- unload leaks the mod ALC and reload does not adopt the surviving singleton against the production component-type registry (F-60, S1, OPEN). The two affected W3 claims are withdrawn to the measured behaviour. Correction of a false claim, no plan change. Prior: MINOR 1.3.0 -> 1.4.0 2026-08-20 (W3_WEATHER_SLICE C8) -- W3 DONE with commit hashes, G1/G2/G4 closed and G3 ledgered, the three wave-gate defects recorded, section 2 stock deltas Events 52 / Systems 29. No lifecycle transition (Live).'
+  last_review_event: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. W4 closes. BD-4 and BD-8 rows and the W4 narrative record what shipped, including the two things the wave had to CREATE rather than move (the boot-time mod-load path, which production never had, and the SDK surface vanilla needed) and the gate re-scoping from class level to assembly level.
   reviewer: Crystalka
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md
@@ -1230,9 +1230,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.5
+  version: 1.0.6
   first_authored: 2026-07-15
-  last_modified: 2026-08-26
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2027-Q3
   title: Vulkan Substrate (V) (authored rework; string-id ABI corrected, device-lost fenced open)
@@ -1240,7 +1240,7 @@ documents:
   - DOC-A-VULKAN_SUBSTRATE
   review_cadence: on-change+annual
   last_review_date: 2026-07-17
-  last_review_event: 'EQ_A4_RENDER_TAIL Cascade D — v1.0.3 → v1.0.4 PATCH: section 2.3 swapchain recreation unfenced to current truth (prepare-before-reclaim Realized, M6) + section 6.3 device-lost unfenced (fail-fast v1 Realized, M9) + section 8 OQ-V1/OQ-V3 CLOSED; owned by ELT section 2.5 / section 4 class 6 / OQ-3 and IAC section 4/7 (EVT-2026-07-18-EQ_A4_RENDER_TAIL). Prior review: STACK_UPDATE Phase H doc census — v1.0.2 → v1.0.3 PATCH: section-6.4 required-tooling line, the sole live VS-floor statement, VS 2022 17.8+ → Visual Studio 2026 (18.0)+ (EVT-2026-07-17-STACK_UPDATE); nothing else touched — all Vulkan 1.3 requirement sites deliberately unmoved. Prior context: Post-merge Codex-review PATCH (operator-sanctioned): the section-2.3 swapchain-transaction fence and…'
+  last_review_event: W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Two Launcher composition anchors re-homed from GameBootstrap to EngineComposer, with the note that the Launcher composes a session whose content arrives from the distribution manifest rather than from the composer itself.
   reviewer: Crystalka
   special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 - register_id: DOC-B-CODING_STANDARDS
@@ -1436,7 +1436,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-07-15
-  last_modified: 2026-08-26
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 2026-Q4
   title: Roadmap

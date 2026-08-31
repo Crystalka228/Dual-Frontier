@@ -65,14 +65,20 @@ public sealed class DFK005DeclarativeBootstrapAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        // К-L5: managed bootstrap composes through the single canonical GameBootstrap.
-        // An additional managed class named *Bootstrap fragments the entry surface.
-        // Sanctioned exclusions: GameBootstrap itself, and the native-runtime bootstrap
-        // boundary in DualFrontier.Core.Interop (the kernel-interop entry, like DFK002).
+        // К-L5: managed bootstrap composes through a single entry. An additional managed
+        // class named *Bootstrap fragments that surface.
+        //
+        // W4 (2026-08-31) removed the one name-based exclusion this rule carried. It exempted
+        // a class literally called GameBootstrap, which was the composition root until the
+        // boundary cascade dissolved it; the successor is EngineComposer, named so precisely
+        // because it must not claim the exemption. Keeping a carve-out for a deleted type would
+        // have left the rule quietly unable to see a second bootstrap that reused the old name.
+        //
+        // One sanctioned exclusion remains: the native-runtime bootstrap boundary in
+        // DualFrontier.Core.Interop (the kernel-interop entry, like DFK002).
         context.RegisterSymbolAction(AnalyzeType, SymbolKind.NamedType);
     }
 
-    private const string CanonicalBootstrap = "GameBootstrap";
     private const string SanctionedBootstrapNamespaceRoot = "DualFrontier.Core.Interop";
     private const string BootstrapSuffix = "Bootstrap";
 
@@ -81,8 +87,7 @@ public sealed class DFK005DeclarativeBootstrapAnalyzer : DiagnosticAnalyzer
         var type = (INamedTypeSymbol)context.Symbol;
 
         if (type.TypeKind != TypeKind.Class
-            || !type.Name.EndsWith(BootstrapSuffix, StringComparison.Ordinal)
-            || type.Name == CanonicalBootstrap)
+            || !type.Name.EndsWith(BootstrapSuffix, StringComparison.Ordinal))
         {
             return;
         }
@@ -102,6 +107,8 @@ public sealed class DFK005DeclarativeBootstrapAnalyzer : DiagnosticAnalyzer
         context.ReportDiagnostic(Diagnostic.Create(
             Rule,
             location,
-            $"'{type.Name}' is an additional managed bootstrap entry — compose through GameBootstrap"));
+            $"'{type.Name}' is an additional managed bootstrap entry — compose through the single "
+            + "composition root (EngineComposer), or move the type under DualFrontier.Core.Interop "
+            + "if it is a native-runtime boundary"));
     }
 }

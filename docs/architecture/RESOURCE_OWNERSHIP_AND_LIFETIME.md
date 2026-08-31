@@ -5,15 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
-last_modified: 2026-07-18
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Resource Ownership & Lifetime — ownership tree, per-resource lifetime table, dispose law (the A2 contract)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'EQ_A3_CHECKED_DESTROY Cascade C -- v1.0.0 -> v1.0.1 PATCH (section 6.2 Realized note): the status-returning destroy ROL section 6.2 called for now exists on disk (df_world_destroy_checked / df_world_active_span_count; NativeWorld.DisposeChecked; EngineSession S7 fail-fast route on a post-fence WORLD_BUSY). Body byte-change is the one Realized note + version. EVT-2026-07-18-EQ_A3_CHECKED_DESTROY. Prior review: DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (G1–G6 shutdown-gap inventory fully TRUE; zero honesty slips) + HALT-1-ratified retargets ROL-1..ROL-4 at d6f1e9a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). Forward queue (ownership tree + dispose/destruction laws → shutdown-law doc; §2 rows → ECS/FIELDS/MOD_OS/VULKAN amendments) recorded in ROADMAP.'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Section 1.1 gains a dated STALE banner. The section and the section-2 table describe the pre-EQ_A2 world: EngineSession was built at EQ_A2 and GameBootstrap deleted at W4, so both the premise and every code anchor are false. The anchors are deliberately NOT re-homed one at a time -- doing so inside a false premise would make the document read as current -- and the rewrite is ledgered instead.'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.'
 ---
@@ -79,6 +79,25 @@ Four laws define the tree:
 4. **Dispose is an idempotent state machine.** `Created → Live → Disposed`. Double-dispose is a no-op; use-after-dispose throws `ObjectDisposedException`; there is no resurrection state. Existing precedents to standardize on: `NativeWorld.Dispose` zeroes its handle and suppresses finalization (`NativeWorld.cs:486-494`); `ManagedSystemDispatcher.Release` is documented «Idempotent» (`ManagedSystemDispatcher.cs:93`); `LauncherRenderer` gates entry points with `ObjectDisposedException.ThrowIf` (`LauncherRenderer.cs:74`).
 
 ### §1.1 Where the tree lives today (current truth)
+
+> **STALE — superseded twice, correction dated 2026-08-31 (W4_COMPOSITION_ROOT).** This section
+> and the §2 table below describe the composition root as it stood before EQ_A2. Two cascades
+> have overtaken them and neither rewrote this document:
+>
+> - **EQ_A2 (2026-07-18) BUILT `EngineSession`.** Every sentence below beginning "EngineSession
+>   does not exist", and every "→ EngineSession" target in the §2 table, describes a proposal
+>   that shipped. The shutdown transaction (§4) is likewise implemented, seated as К-L20, and
+>   covered by `EngineSessionTransactionTests`.
+> - **W4 (2026-08-31) DELETED `GameBootstrap`.** Every `GameBootstrap.cs:NN` anchor below points
+>   at a file that no longer exists. The successor is `EngineComposer.CreateSession`, which
+>   composes ENGINE parts only; `VanillaComponentRegistration` (row R4) is gone with it, and
+>   component registration now happens through `IModApi` during a mod's initialisation.
+>
+> The anchors are deliberately NOT re-homed one by one: re-pointing them inside a narrative whose
+> premise ("the proposal is unbuilt") is false would produce a document that reads as current and
+> is not. The section is left legible as the record of what the proposal argued against, and the
+> rewrite is ledgered. What is safe to read here today is the ARGUMENT — which resource belongs
+> to which subtree, and why — not the anchors or the "today" column.
 
 **EngineSession does not exist.** The composition root is split between `Program.Main` (`src/DualFrontier.Launcher/Program.cs:28-98`) and `GameBootstrap.CreateLoop` (`src/DualFrontier.Application/Loop/GameBootstrap.cs:70-220`):
 
