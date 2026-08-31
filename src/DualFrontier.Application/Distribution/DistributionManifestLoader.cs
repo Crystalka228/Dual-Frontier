@@ -60,8 +60,17 @@ internal static class DistributionManifestLoader
 
     /// <summary>
     /// The directory the manifest was found in — the DISTRIBUTION ROOT. The composer derives the
-    /// mods root and the asset roots from it, so the manifest and the content it names cannot
-    /// disagree about where they live.
+    /// MODS root from it, so the manifest and the mods it names cannot disagree about where they
+    /// live.
+    ///
+    /// <para>
+    /// It does NOT anchor the asset root, and this summary used to claim it did. Assets are
+    /// resolved by the asset manager's own contract — an absolute path is used as given, a
+    /// relative one is looked for beside the working directory and then up the ancestors of the
+    /// binary — and no build step places an assets tree in the distribution root for an anchored
+    /// path to find. Anchoring the declared root here would name a directory that does not exist
+    /// and refuse to start.
+    /// </para>
     /// </summary>
     internal static string RootFor(string manifestPath)
         => Path.GetDirectoryName(Path.GetFullPath(manifestPath))
@@ -123,12 +132,28 @@ internal static class DistributionManifestLoader
                     $"'{version}'; this build supports '{DistributionManifest.SupportedVersion}'.");
             }
 
+            IReadOnlyList<string> assetRoots = RequiredStringArray(root, "assetRoots", sourcePath, "");
+            if (assetRoots.Count != 1)
+            {
+                // The engine resolves assets from ONE root: the asset manager is built over a
+                // single directory and enforces containment within it. Accepting a longer list
+                // would mean silently honouring the first entry and discarding the rest, which is
+                // the kind of quiet half-obedience this loader exists to refuse. The field stays
+                // an array because a future multi-root asset manager is a real possibility and
+                // widening a scalar later is a manifest-version break; refusing a count the engine
+                // cannot honour is not.
+                throw new InvalidOperationException(
+                    $"Distribution manifest at '{sourcePath}' declares {assetRoots.Count} " +
+                    "assetRoots; exactly one is required. The engine resolves assets from a " +
+                    "single root, so declare the one it should use.");
+            }
+
             return new DistributionManifest(
                 version,
                 ReadProduct(RequiredObject(root, "product", sourcePath, ""), sourcePath),
                 RequiredStringArray(root, "rootMods", sourcePath, ""),
                 ReadScenario(RequiredObject(root, "scenario", sourcePath, ""), sourcePath),
-                RequiredStringArray(root, "assetRoots", sourcePath, ""),
+                assetRoots,
                 RequiredString(root, "saveNamespace", sourcePath, ""),
                 RequiredStringArray(root, "minEngineCapabilities", sourcePath, ""));
         }

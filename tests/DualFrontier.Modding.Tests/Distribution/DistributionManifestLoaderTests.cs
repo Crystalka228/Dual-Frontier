@@ -282,6 +282,23 @@ public sealed class DistributionManifestLoaderTests
         m.Scenario.FactorySeed.Should().Be(-42);
     }
 
+    [Theory]
+    [InlineData("[]", 0)]
+    [InlineData("[\"assets\", \"dlc-assets\"]", 2)]
+    public void AnAssetRootCountTheEngineCannotHonourIsRefused(string roots, int count)
+    {
+        // The asset manager is built over ONE directory and enforces containment within it, so a
+        // longer list could only be honoured by taking the first entry and dropping the rest.
+        // Silent half-obedience is exactly what this loader exists to refuse, and the refusal is
+        // what makes the Launcher's AssetRoots[0] safe to write without a bounds check.
+        string json = Valid.Replace("\"assetRoots\": [\"assets\"]", $"\"assetRoots\": {roots}");
+
+        Action act = () => DistributionManifestLoader.Parse(json, "test.json");
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"*declares {count} assetRoots*exactly one*");
+    }
+
     private static string RemoveKey(string json, string key)
     {
         int start = json.IndexOf($"\"{key}\"", StringComparison.Ordinal);

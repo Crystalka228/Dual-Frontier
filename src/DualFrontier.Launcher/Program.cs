@@ -47,15 +47,34 @@ internal static class Program
         DistributionAssemblyProbe.Install(distributionRoot);
 
         // === Composition ===
+        // The manifest is the product's definition, so the product's NAME and its asset root come
+        // from it rather than from literals here. Both were parsed and then ignored, which made
+        // the loader's strictness theatre: it refused an unknown key and an absent field while the
+        // values it accepted changed nothing.
+        //
+        // The asset root is handed to the runtime UNRESOLVED, not combined with the distribution
+        // root. That is deliberate and it is the difference between a fix and an outage: no build
+        // step places an assets tree beside the executable, so an anchored path would name a
+        // directory that does not exist, and the asset manager's rooted branch is an existence
+        // check that throws before the window is ever shown. Passing the string through preserves
+        // the manager's own contract -- absolute used as given, relative looked for beside the
+        // working directory and then up the ancestors of the binary -- so the shipped manifest
+        // resolves to exactly the directory it resolved to before, while editing the manifest now
+        // genuinely changes which directory is loaded.
+        //
+        // Anchoring assets to the distribution root, as mods already are, is defensible and is a
+        // PACKAGING change: it needs a step that copies the asset tree into the output first, and
+        // must not land before that step exists.
         var runtimeOptions = new RuntimeOptions
         {
             Window = new WindowOptions
             {
-                Title = "Dual Frontier",
+                Title = manifest.Product.Name,
                 Width = 1280,
                 Height = 720,
             },
-            AssetsDirectory = "assets",
+            // Exactly one root: the loader refuses any other count, so this cannot be empty.
+            AssetsDirectory = manifest.AssetRoots[0],
             // EnableValidationLayer: omitted к use RuntimeOptions DEBUG/Release
             // conditional default (#if DEBUG = true, else = false).
         };
