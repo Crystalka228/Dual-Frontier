@@ -162,6 +162,27 @@ public sealed class ScenarioWaveGateTests : IDisposable
     }
 
     [Fact]
+    public void UnloadingTheScenarioRetractsEverySpriteItDrew()
+    {
+        // The renderer holds its own registration per entity, so forgetting the ids mod-side
+        // retracts nothing. Unloading the scenario used to leave the whole colony drawn on a scene
+        // the simulation had stopped maintaining, with nothing left running that could ever notice
+        // those entities gone -- "unload removes the mechanic" has to include what the mechanic
+        // drew. The entities themselves deliberately survive an unload; the SPRITES must not.
+        Apply().Success.Should().BeTrue();
+        _h.Scheduler.ExecuteTick(1f / 30f);
+
+        _h.Sink.Shown.Should().HaveCount(Scenario.Counts.Pawns, "precondition: the colony is drawn");
+        _h.Sink.Hidden.Should().BeEmpty("nothing has been retracted yet");
+
+        _h.Pipeline.UnloadMod("dualfrontier.vanilla.scenario");
+
+        _h.Sink.Hidden.Should().BeEquivalentTo(
+            _h.Sink.Shown.ConvertAll(s => s.Entity),
+            "every sprite this mod announced must be retracted when the mod goes away");
+    }
+
+    [Fact]
     public void MovingColonistsAreReportedOnceEach()
     {
         Apply().Success.Should().BeTrue();

@@ -50,8 +50,18 @@ public sealed class PawnPresentationSystem : ISimulationSystem
     private readonly List<EntityId> _seen = new();
     private readonly List<EntityId> _gone = new();
 
+    // Held so OnDispose can retract. ISimulationSystem.OnDispose() is parameterless, so a system
+    // that leaves presentation state behind has no way to clean it up unless it keeps the
+    // reference itself. Safe for the same reason it is safe in the weather mod: the presentation
+    // members touch no world state -- they hand a command to the engine's sink -- so nothing
+    // reachable through this field can go stale. Do NOT copy this pattern for component access.
+    private ISystemContext? _presentation;
+
     public void Initialize(ISystemContext context)
     {
+        // Assigned on every graph REBUILD, not once per instance. Re-assignment is harmless here:
+        // unlike the weather mod this system subscribes to nothing, so it needs no guard latch.
+        _presentation = context;
     }
 
     public void Tick(ISystemContext context)
@@ -110,9 +120,33 @@ public sealed class PawnPresentationSystem : ISimulationSystem
     }
 
     /// <summary>
-    /// Releases every sprite this system reported. Without it, unloading the scenario would leave
-    /// the renderer drawing a colony the world no longer has — the mod cannot reach the world at
-    /// dispose time, but it can and must retract what it told the renderer.
+    /// Releases every sprite this system reported.
+    ///
+    /// <para>
+    /// This used to clear the dictionary and nothing else, while its own summary said what it
+    /// ought to do — the comment stated the obligation and the body did not carry it out. Forgetting
+    /// the ids locally does not retract anything: the renderer holds its own registration per
+    /// entity, so unloading the scenario left the whole colony drawn on a scene the simulation had
+    /// stopped maintaining, with nothing left running that could ever notice them gone.
+    /// </para>
+    ///
+    /// <para>
+    /// The mod cannot reach the world at dispose time, but it does not need to: it knows exactly
+    /// what it told the renderer, because that is what the dictionary is. The null check is
+    /// load-bearing rather than defensive — the sink accessor throws when no sink is installed,
+    /// and although the unload chain swallows a throw here best-effort, one escaping mid-loop
+    /// would skip every remaining retraction.
+    /// </para>
     /// </summary>
-    public void OnDispose() => _reported.Clear();
+    public void OnDispose()
+    {
+        if (_presentation is not null)
+        {
+            foreach (EntityId reported in _reported.Keys)
+                _presentation.HideEntitySprite(reported);
+            _presentation = null;
+        }
+
+        _reported.Clear();
+    }
 }
