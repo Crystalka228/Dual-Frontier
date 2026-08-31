@@ -3,15 +3,16 @@ register_id: DOC-D-W4_COMPOSITION_ROOT_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.1'
 first_authored: '2026-08-30'
-last_modified: '2026-08-30'
+last_modified: '2026-08-31'
 content_language: en
 next_review_due: null
 title: 'W4_COMPOSITION_ROOT -- wave W4 (BD-4 + BD-8): the distribution manifest ships and the boot-time mod-load path is CREATED (production loads zero mods today); GameBootstrap dissolves into a neutral engine composer + a new vanilla.scenario mod that owns component registration, factories, seeds, pathfinding provision, and the 10 real system registrations in place; the presentation bridge goes mod-side over a neutralized G2-widened command channel; the 4 engine->game ProjectReference edges are CUT so the gate is compiler-enforced (ratchet baseline 4->0); the extended BD-8 orphan cluster (344 lines / 11 files re-measured) dies; executor runs a mandated Wave R subagent survey before writing. v1.1 (operator ratification 2026-08-30, post-Wave-R H4/H6 halt): section 2.7 REFUTED five ways, so the wave additionally GROWS THE SDK -- an IModApi factory registration overload (closing both the parameterised-ctor and the unreachable-provision blockers), INavGridService, typed presentation effects, ContractsVersion 2.1.1->2.2.0 MINOR; identity/movement/skills RE-TYPE onto Contracts-side storage (managed-only, native byte-untouched); SystemBase.Initialize gains a once-guard; the runtime mods root anchors at AppContext.BaseDirectory; ItemFactory gains the test floor it never had; the gameplay fault-policy inversion to quarantine is ACCEPTED; the vanilla skeletons are ledgered rather than repaired'
 authored_by: Claude Fable (architect session, W4 charter)
+last_review_event: 'W4_COMPOSITION_ROOT EXECUTED 2026-08-31 (EVT-2026-08-31-W4_COMPOSITION_ROOT), 14 commits eae698e..closure on claude/w4-composition-root. Lifecycle Draft -> EXECUTED. Gate MET and re-scoped from class level to assembly level: the four engine->game ProjectReference edges are cut and the ratchet baseline is 0, proven red-once-then-green. Section 16 (the ratified amendment set) governed execution and WON wherever it contradicted an earlier section, as it declares. Three of the brief measurements were superseded by execution: the orphan cluster is 530 lines / 15 files rather than ~295 or 344; the test blast radius was 46 distinct tests rather than 26; and the doc rider touched 14 living documents rather than 5. Two things the brief scoped as moves turned out to be creations -- the boot-time mod-load path and the SDK surface vanilla needed. One brief-sanctioned surface (INavGridService) was WITHDRAWN mid-wave once its consumer proved it unnecessary.'
 basis: 'DOC-E-W4_COMPOSITION_ROOT_RECON_REPORT (Opus subagent, read-only, 2026-08-30 at 34bc221, sections A-H + 9 discrepancies + 10 surprises) + ratified lean set 2026-08-30 (L1 assembly-scoped gate + typed strict manifest + boot Apply fail-fast; L2 vanilla.scenario mod as content receiver + SystemBase-path registration in place; L3 presentation-command neutralization + G2-widened mod-side channel; L4 extended BD-8 deletion + doc riders + fences) + operator additions 2026-08-30 (Wave R subagent survey mandated in-session; the UI design handoff MAY be unpacked OUTSIDE the repo for consultation) + VANILLA_SEPARATION_MIGRATION_PLAN.md W4 law (:173-177) + boundary law B-5 (GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md:75-77)'
 ---
 

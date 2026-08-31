@@ -3464,15 +3464,16 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Volodymyr (Crystalka)
   version: 1.1
   first_authored: 2026-08-30
-  last_modified: 2026-08-30
+  last_modified: 2026-08-31
   content_language: en
   next_review_due: 
   title: 'W4_COMPOSITION_ROOT -- wave W4 (BD-4 + BD-8): the distribution manifest ships and the boot-time mod-load path is CREATED (production loads zero mods today); GameBootstrap dissolves into a neutral engine composer + a new vanilla.scenario mod that owns component registration, factories, seeds, pathfinding provision, and the 10 real system registrations in place; the presentation bridge goes mod-side over a neutralized G2-widened command channel; the 4 engine->game ProjectReference edges are CUT so the gate is compiler-enforced (ratchet baseline 4->0); the extended BD-8 orphan cluster (344 lines / 11 files re-measured) dies; executor runs a mandated Wave R subagent survey before writing. v1.1 (operator ratification 2026-08-30, post-Wave-R H4/H6 halt): section 2.7 REFUTED five ways, so the wave additionally GROWS THE SDK -- an IModApi factory registration overload (closing both the parameterised-ctor and the unreachable-provision blockers), INavGridService, typed presentation effects, ContractsVersion 2.1.1->2.2.0 MINOR; identity/movement/skills RE-TYPE onto Contracts-side storage (managed-only, native byte-untouched); SystemBase.Initialize gains a once-guard; the runtime mods root anchors at AppContext.BaseDirectory; ItemFactory gains the test floor it never had; the gameplay fault-policy inversion to quarantine is ACCEPTED; the vanilla skeletons are ledgered rather than repaired'
   authored_by: Claude Fable (architect session, W4 charter)
+  last_review_event: 'W4_COMPOSITION_ROOT EXECUTED 2026-08-31 (EVT-2026-08-31-W4_COMPOSITION_ROOT), 14 commits eae698e..closure on claude/w4-composition-root. Lifecycle Draft -> EXECUTED. Gate MET and re-scoped from class level to assembly level: the four engine->game ProjectReference edges are cut and the ratchet baseline is 0, proven red-once-then-green. Section 16 (the ratified amendment set) governed execution and WON wherever it contradicted an earlier section, as it declares. Three of the brief measurements were superseded by execution: the orphan cluster is 530 lines / 15 files rather than ~295 or 344; the test blast radius was 46 distinct tests rather than 26; and the doc rider touched 14 living documents rather than 5. Two things the brief scoped as moves turned out to be creations -- the boot-time mod-load path and the SDK surface vanilla needed. One brief-sanctioned surface (INavGridService) was WITHDRAWN mid-wave once its consumer proved it unnecessary.'
   basis: DOC-E-W4_COMPOSITION_ROOT_RECON_REPORT (Opus subagent, read-only, 2026-08-30 at 34bc221, sections A-H + 9 discrepancies + 10 surprises) + ratified lean set 2026-08-30 (L1 assembly-scoped gate + typed strict manifest + boot Apply fail-fast; L2 vanilla.scenario mod as content receiver + SystemBase-path registration in place; L3 presentation-command neutralization + G2-widened mod-side channel; L4 extended BD-8 deletion + doc riders + fences) + operator additions 2026-08-30 (Wave R subagent survey mandated in-session; the UI design handoff MAY be unpacked OUTSIDE the repo for consultation) + VANILLA_SEPARATION_MIGRATION_PLAN.md W4 law (:173-177) + boundary law B-5 (GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md:75-77)
 - register_id: DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION
   path: docs/reports/ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION_20260715.md
@@ -16112,5 +16113,75 @@ audit_trail:
     DELIBERATE-BREAK DISCIPLINE. Four pins were broken once each, observed failing, and restored byte-identical with zero residue: the CONFIGURE_NOTIFY Width/Height update (two resize pins fail -- the one the recon warned about, since VulkanSwapchain's caps.currentExtent preference would have masked a missing update in production, so the pin reads window.Width/Height directly rather than trusting the swapchain to notice), the WM_DELETE_WINDOW arm (the close pin fails), and the F-51 reset call site at both the interim and final boundaries (the wiring pins fail and the ring pins do not, which is what proves the pins cover the wiring rather than the method). The guard-still-fires pin passed throughout, which is what keeps the F-51 fix from being a hole.
 
     SCOPE HELD. native/ is byte-untouched (MANAGED-ONLY), selftest 110 ALL PASSED and exports unchanged at 209. The waiver pin is still 3 -- the CA2255 question was answered structurally, by a static constructor that strips beforefieldinit, rather than by setting a CA-suppression precedent the codebase does not have. VirtualKeyMapper and its ungated tests are untouched per the brief's fence, and the XCB arm got its own keysym mapper; WindowOptionsTests is untouched. WindowOptions.Resizable and IWindow.Hide were left alive deliberately and ledgered instead. The LINUX_PRESENT_1 recon report keeps its anchors to Window.cs and window.Handle: it is a historical record measured at 683b343, and retro-editing it would falsify the measurement it exists to preserve.
+  cross_references:
+    capa_entries: []
+- id: EVT-2026-08-31-W4_COMPOSITION_ROOT
+  date: 2026-08-31
+  event: W4_COMPOSITION_ROOT cascade executed -- the engine stops referencing the game. GameBootstrap dissolves into a neutral EngineComposer; a new dualfrontier.vanilla.scenario mod owns the 21 component registrations, both spawn factories, the walkability grid, the pathfinding service, world seeding and the ten gameplay system registrations; game.manifest.json ships with a strict typed loader; the boot-time mod-load path is CREATED; the four engine->game ProjectReference edges are CUT and the boundary ratchet baseline moves 4 -> 0; the BD-8 orphan cluster dies.
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-W4_COMPOSITION_ROOT_BRIEF
+  - DOC-E-W4_COMPOSITION_ROOT_RECON_REPORT
+  - DOC-A-FRAMEWORK
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-CONTRACTS
+  - DOC-A-SCHEDULER_ARCHITECTURE
+  - DOC-A-EXECUTION_AUTHORITY_MATRIX
+  - DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-A-ARCHITECTURE
+  - DOC-A-ANALYZER_RULES
+  - DOC-A-THREADING_V2
+  - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+  - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+  - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+  - DOC-A-VULKAN_SUBSTRATE
+  - DOC-C-ROADMAP
+  commits:
+    range: eae698e..(the closure commit carries this entry)
+    key_commits:
+    - eae698e
+    - 6534df8
+    - 0647d6f
+    - e14c627
+    - e3628d2
+    - a6ea630
+    - ed38428
+    - 9320e51
+    - c97fc88
+    - 17345c7
+    - 69ed79c
+    - 87eb0a8
+    - d986c7c
+  governance_impact: >
+    THE GATE, RE-SCOPED AND MET. The migration plan asked that EngineSession compile with zero references to Components/Events/Systems/AI. Wave R measured that this was ALREADY TRUE at class level before the wave began -- EQ_A2 had made EngineSession game-vocabulary-free -- so the gate as worded could not fail and was re-scoped to the ASSEMBLY: the four ProjectReference edges at DualFrontier.Application.csproj. They are cut, BoundaryRatchetTests. ProjectReferenceBaseline is EMPTY, and an empty baseline was proven to be a terminal state rather than a disabled test by deliberate break -- re-adding Application -> Components reddened the fact, naming the edge; reverting greened it.
+
+
+    TWO THINGS THE WAVE HAD TO CREATE RATHER THAN MOVE. Production had never loaded a mod: the pipeline was fully constructed and its only Apply site sat behind a menu the Launcher never opened, so the boot-time load path is new code, not relocated code. And the SDK could not express what vanilla needed -- a system taking a constructor dependency, and a seeder that runs outside the system graph -- so IModApi grew a factory overload and a world-seeder hook (ContractsVersion 2.1.1 -> 2.2.0 MINOR, zero native change). Both are boundary law B-3 in action: a capability vanilla needs that the SDK cannot express is a gap to fix, never a privileged loader branch.
+
+
+    TWO ARCHITECTURAL WALLS WERE RESPECTED, NOT ROUTED AROUND. The scheduler enforces one writer per component type GLOBALLY, not per phase, so world seeding cannot be a system -- hence the seeder hook and ParallelSystemScheduler.RunOutsideGraph. And the capability gate makes a mod's subscription to an ENGINE-owned event unsatisfiable (the token resolves to owner "kernel" and the kernel-provided set has been empty since W2), so the presentation translation became a span diff rather than five event subscriptions -- which is the better shape regardless: a diff cannot miss an event, cannot double-count one, and needs no ordering guarantee.
+
+
+    ONE SURFACE WITHDRAWN MID-WAVE. INavGridService and ISystemServices.NavGrid were added early, reasoning that once the engine shed its game references only game-side code could build a walkability grid. The first half was true and the second did not follow: a mod is not in the ratchet's engine set, so it references the AI assembly directly and builds the grid itself. Writing the consumer revealed there was no host grid to carry. Withdrawn in its own commit before anything depended on it. ISystemServices' own doc had already forbidden exactly this ("no speculative members"), and the rule was broken by reasoning that felt like measurement.
+
+
+    FOUR DEFECTS FOUND AND FIXED IN-WAVE, each with a red-then-green proof. Two directories declared the same mod id and discovery returns filesystem order, so the composer refuses and names both paths. SystemBase.Initialize fired per graph build rather than once per session. EngineSession.Dispose threw after a mod-menu edit, because ModMenuController resumes the pipeline on Commit and Cancel and UnloadAll refuses while the running flag is set -- shutdown depended on which menus the player had opened. And the product would not start: the cut removed the game assemblies from the host's deps.json, and the default load context resolves from that file rather than by scanning its own directory, so files shipping beside the executable were unloadable. That one was caught by the LIVE SMOKE and not by the suite, because a test project's own deps.json lists them.
+
+
+    EAM R13 MOVES FROM OWNERLESS TO SETTLED. The eleven scenario tunables that were constants in the composition root are declared in game.manifest.json, read by a loader that refuses an unknown key, a missing field, a negative count or a map with no area, and handed to the seeding mod as ScenarioConfig. The engine reads none of them; it carries them.
+
+
+    ONE REGRESSION RECORDED RATHER THAN HIDDEN (F-70). The composer's core set is empty and the pipeline's rebuild does not mirror mod systems into the native graph, so the native scheduler graph is EMPTY in production where it previously held ten edge-free systems. That is movement AWAY from К-L12, SCHEDULER_ARCHITECTURE 1.1.0 says so in those words, and the interim rule "dual registration stays mandatory" is marked FAILING rather than restated.
+
+
+    CENSUS AND CORPUS. No census pin moved across the whole cascade: the deleted files contributed ZERO to every marker family, and when rewriting two reserved-stub handlers dropped "stub" from 51 to 46, the WORD was restored rather than the pin lowered -- the handlers are still reserved surfaces and only their reachability changed. Three tier-4 DOC-F rows left the register by sync when their READMEs were deleted (a README carries its frontmatter at end of file), and FRAMEWORK 2.0.1 -> 2.0.2 stops naming assets/scenes/README.md as a document class. Corpus 375 -> 372 documents, validate --armed exit 0.
+
+
+    DFK005 LOST ITS CARVE-OUT. The rule exempted a class literally named GameBootstrap; that class is deleted and its successor is deliberately unsuffixed, so the exemption was removed rather than transferred. The test that asserted silence on the name now asserts the diagnostic fires.
+
+
+    GATES. Build 0W/0E. Suite 1433/0/6 (baseline 1424/0/6). validate --armed exit 0. native/ byte-untouched throughout (MANAGED-ONLY). Live Launcher smoke: seven root mods loaded, scenario armed with 21 component types, 11 systems, 200x200 map, zero unhandled exceptions -- and OPERATOR VISUAL CONFIRMATION on the post-cut composition: the simulation runs and the colonists move.
   cross_references:
     capa_entries: []
