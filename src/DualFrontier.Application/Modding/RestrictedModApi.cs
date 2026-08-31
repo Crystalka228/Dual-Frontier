@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Distribution;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
@@ -156,6 +158,14 @@ internal sealed class RestrictedModApi : IModApi
     public void RegisterSystem<T>() where T : class
         => _registry.RegisterSystem(_modId, typeof(T));
 
+    /// <inheritdoc />
+    public void RegisterSystem<T>(Func<ISystemServices, T> factory) where T : class
+        => _registry.RegisterSystem(_modId, factory);
+
+    /// <inheritdoc />
+    public void RegisterWorldSeeder(Action<ISystemContext> seed)
+        => _registry.RegisterWorldSeeder(_modId, seed);
+
     /// <summary>
     /// The single managed event dispatch. W2/BD-3 collapsed the five genre buses into
     /// one type-keyed <c>DomainEventBus</c> behind <see cref="IGameServices"/>, so every
@@ -245,6 +255,9 @@ internal sealed class RestrictedModApi : IModApi
 
     /// <inheritdoc />
     public ModManifest GetOwnManifest() => _manifest;
+
+    /// <inheritdoc />
+    public ScenarioConfig? Scenario => _registry.Scenario;
 
     /// <inheritdoc />
     public void Log(ModLogLevel level, string message)

@@ -1,11 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>DualFrontier.Mod.Vanilla.Core</AssemblyName>
+    <!-- AssemblyName IS the mod id: a shared mod's manifest must leave entryAssembly EMPTY
+         (ContractValidator Phase F), so ModLoader falls back to "<id>.dll". Before W4 this
+         built DualFrontier.Mod.Vanilla.Core.dll while the manifest resolved to
+         dualfrontier.vanilla.core.dll — a mismatch by the ".Mod" segment, so the mod could
+         never load on ANY filesystem. Mirrors DualFrontier.Mod.Weather.Contracts. -->
+    <AssemblyName>dualfrontier.vanilla.core</AssemblyName>
     <RootNamespace>DualFrontier.Mod.Vanilla.Core</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <IsVanillaMod>true</IsVanillaMod>
+    <!-- Hygiene, matching DualFrontier.Mod.Weather: keep engine assemblies out of the mod's
+         output. It is NOT what prevents a double identity today: ModLoadContext.Load returns
+         the shared assembly or null and never probes the mod directory (there is no
+         AssemblyDependencyResolver anywhere in src/), and the deploy copies only the mod
+         assembly and its manifest. Both facts are measured; this setting is what keeps them
+         from being the only thing standing in the way. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
 </Project>

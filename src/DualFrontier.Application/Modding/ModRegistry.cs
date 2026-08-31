@@ -4,8 +4,10 @@ using System.Reflection;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Distribution;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Contracts.Sdk;
+using DualFrontier.Contracts.Services;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Application.Modding;
@@ -65,7 +67,7 @@ internal sealed class ModRegistry : IManagedStorageResolver
 
     /// <summary>
     /// Installs the presentation sink SDK presentation calls route to. Called once
-    /// by the composition root (<c>GameBootstrap.CreateSession</c>) with a sink that
+    /// by the composition root (<c>EngineComposer.CreateSession</c>) with a sink that
     /// enqueues render commands onto the <c>PresentationBridge</c>; tests install a
     /// recording double. Passing a new sink replaces the previous one.
     /// </summary>
@@ -112,6 +114,53 @@ internal sealed class ModRegistry : IManagedStorageResolver
     internal void SetSystemServices(ISystemServices services)
         => _systemServices = services ?? throw new ArgumentNullException(nameof(services));
 
+    private readonly List<(string ModId, Action<ISystemContext> Seed)> _pendingSeeders = new();
+
+    /// <summary>
+    /// Records a one-shot world initializer for <paramref name="modId"/>, to be run once after
+    /// the graph is rebuilt. See <c>ParallelSystemScheduler.RunOutsideGraph</c> for why seeding
+    /// cannot be a system.
+    /// </summary>
+    internal void RegisterWorldSeeder(string modId, Action<ISystemContext> seed)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (seed is null) throw new ArgumentNullException(nameof(seed));
+        _pendingSeeders.Add((modId, seed));
+    }
+
+    /// <summary>
+    /// Hands over every seeder registered since the last call and clears the list, so a seeder
+    /// runs exactly once no matter how many rebuilds follow.
+    /// </summary>
+    internal IReadOnlyList<(string ModId, Action<ISystemContext> Seed)> TakePendingSeeders()
+    {
+        if (_pendingSeeders.Count == 0)
+            return Array.Empty<(string, Action<ISystemContext>)>();
+
+        var taken = _pendingSeeders.ToArray();
+        _pendingSeeders.Clear();
+        return taken;
+    }
+
+    /// <summary>
+    /// The mod-facing world view for <paramref name="modId"/>. Only valid while an execution
+    /// context is pushed; outside one every world member throws, by design.
+    /// </summary>
+    internal ISystemContext CreateContextView(string modId)
+        => new SystemContextView(this, modId, _tickSource);
+
+    /// <summary>
+    /// W4 — supplies the distribution's scenario description, which reaches a mod through
+    /// <c>IModApi.Scenario</c>. Installed here rather than threaded through the pipeline's
+    /// constructor because this is where every other host-provided value already lives
+    /// (services, tick source, presentation sink), and a mod api is built per-mod from this
+    /// registry. Null is legitimate: a harness without a distribution has no scenario.
+    /// </summary>
+    internal void SetScenario(ScenarioConfig? scenario) => Scenario = scenario;
+
+    /// <summary>The distribution's scenario description, or null when the host has none.</summary>
+    internal ScenarioConfig? Scenario { get; private set; }
+
     /// <summary>
     /// W1 BD-1 — supplies the SimTick accessor stamped onto SDK adapters so an
     /// <c>ISimulationSystem</c> reads <c>ISystemContext.CurrentTick</c>.
@@ -151,6 +200,24 @@ internal sealed class ModRegistry : IManagedStorageResolver
         foreach (SystemRegistration reg in _coreSystems)
             list.Add(reg.Instance);
         return list;
+    }
+
+    /// <summary>
+    /// What a mod's factory receives when the host installed no services. Every member refuses
+    /// with a sentence rather than handing back a null to dereference. This is fail-closed at the
+    /// point of USE rather than the point of registration: after the boundary cut the engine
+    /// composes no gameplay system and has no game service to give, so requiring one up front
+    /// would block every mod for a dependency most of them do not have.
+    /// </summary>
+    private sealed class UnprovidedSystemServices : ISystemServices
+    {
+        internal static readonly UnprovidedSystemServices Instance = new();
+
+        public IPathfindingService Pathfinding
+            => throw new InvalidOperationException(
+                "[MOD REGISTRY ERROR] The host provides no pathfinding service. Pathfinding is " +
+                "game content: build it in your mod and close over it in the " +
+                "RegisterSystem<T>(Func<ISystemServices, T>) factory.");
     }
 
     private ISystemServices RequireSystemServices()
@@ -230,39 +297,13 @@ internal sealed class ModRegistry : IManagedStorageResolver
         // W1 BD-1 — accept the SDK contract (ISimulationSystem) alongside the
         // SystemBase bridge. SystemBase authoring is the transitional path,
         // retiring at W5; ISimulationSystem is the durable SDK surface.
-        bool isSystemBase = typeof(SystemBase).IsAssignableFrom(systemType);
-        bool isContract = typeof(ISimulationSystem).IsAssignableFrom(systemType);
-        if (!isSystemBase && !isContract)
-        {
-            throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] Type '{systemType.FullName}' " +
-                "does not derive from SystemBase and does not implement ISimulationSystem. " +
-                "Use 'public sealed class MySystem : ISimulationSystem' for SDK mod systems.");
-        }
+        bool isSystemBase = RequireSystemShape(systemType);
 
-        SystemAccessAttribute? access =
-            systemType.GetCustomAttribute<SystemAccessAttribute>(inherit: false);
-        if (access is null)
-        {
-            throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "has no [SystemAccess] attribute. " +
-                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)})]");
-        }
-
-        TickRateAttribute? tickRate =
-            systemType.GetCustomAttribute<TickRateAttribute>(inherit: false);
-        if (tickRate is null)
-        {
-            throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "has no [TickRate] attribute. " +
-                "Add: [TickRate(TickRates.NORMAL)] or another TickRates.* constant.");
-        }
+        RequireSystemDeclarations(systemType);
 
         SystemBase instance = isSystemBase
             ? CreateSystemInstance(systemType)
-            : CreateContractAdapter(modId, systemType);
+            : CreateContractAdapter(modId, WrapNewInstance(systemType), systemType);
         _modSystems.Add(new SystemRegistration(instance, SystemOrigin.Mod, modId));
         // W1-fix (Codex review) — track the (possibly adapter-wrapped) system in the mod's
         // sub-scheduler so the unload chain's RemoveSubScheduler.Teardown disposes it, firing
@@ -288,14 +329,26 @@ internal sealed class ModRegistry : IManagedStorageResolver
     }
 
     /// <summary>
-    /// Clears mod systems and mod-owned components, preserving core
-    /// registrations. Called when the pipeline unloads all mods or rolls
-    /// back a failed apply.
+    /// Clears mod systems, mod-owned components and any queued world seeders, preserving core
+    /// registrations. Its only callers are the pipeline's two rollback blocks, each of which
+    /// undoes a failed apply.
+    ///
+    /// <para>
+    /// <b>The seeder queue is part of the rollback, and was missed when the queue was added.</b>
+    /// A mod registers its seeder during <c>Initialize</c>, which runs BEFORE the graph build and
+    /// the validation that can still reject the batch. Rolling back without clearing the queue
+    /// leaves a rejected mod's delegate sitting in the registry, and the next successful apply
+    /// drains it: the world would then be authored by code the host had already refused, holding
+    /// its unloaded collectible context alive to do it. The list is drained exactly once by
+    /// <see cref="TakePendingSeeders"/> on the success path, and nothing on that path runs
+    /// between registration and the drain, so clearing here cannot suppress a legitimate seed.
+    /// </para>
     /// </summary>
     public void ResetModSystems()
     {
         _modSystems.Clear();
         _componentOwners.Clear();
+        _pendingSeeders.Clear();
     }
 
     /// <summary>
@@ -332,6 +385,14 @@ internal sealed class ModRegistry : IManagedStorageResolver
         }
         foreach (Type t in toRemove)
             _componentOwners.Remove(t);
+
+        // Symmetry with ResetModSystems: a single-mod removal must not leave that mod's queued
+        // seeder behind for someone else's apply to run. Reverse pass -- indices do not shift.
+        for (int i = _pendingSeeders.Count - 1; i >= 0; i--)
+        {
+            if (_pendingSeeders[i].ModId == modId)
+                _pendingSeeders.RemoveAt(i);
+        }
     }
 
     /// <summary>
@@ -431,30 +492,127 @@ internal sealed class ModRegistry : IManagedStorageResolver
     /// executor's type-keyed logic stays correct. Reflection is acceptable here —
     /// registration is cold (menu-thread, simulation stopped).
     /// </summary>
-    private SystemBase CreateContractAdapter(string modId, Type systemType)
+    /// <summary>
+    /// W4 — the mod-facing FACTORY registration path. W1 held it back for want of a consumer
+    /// (<c>ISystemServices</c>'s own doc records that); W4 is that consumer.
+    ///
+    /// <para>
+    /// Without it a mod could only register types with a public parameterless constructor,
+    /// because both construction arms end in a bare <c>Activator.CreateInstance</c>. That is not
+    /// a niche limitation: it is what made <c>MovementSystem</c>, which takes an
+    /// <c>IPathfindingService</c>, impossible to register from a mod at all -- and because a
+    /// throw out of <c>IMod.Initialize</c> rolls back the entire batch, one unconstructible
+    /// system took every other system in the mod down with it.
+    /// </para>
+    ///
+    /// <para>
+    /// It also closes the second half of the same gap. <c>_systemServices</c> was previously
+    /// read at exactly one site, inside the CORE overload, so a service provided for mods
+    /// reached nothing no matter when it was provided -- a wiring gap, not a timing one. This
+    /// overload is the first mod-path reader of that field.
+    /// </para>
+    /// </summary>
+    internal void RegisterSystem<T>(string modId, Func<ISystemServices, T> factory) where T : class
     {
-        object? sim;
-        try
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (factory is null) throw new ArgumentNullException(nameof(factory));
+
+        Type systemType = typeof(T);
+        bool isSystemBase = RequireSystemShape(systemType);
+        RequireSystemDeclarations(systemType);
+
+        // The MOD path does not demand that services were installed. A mod that needs one closes
+        // over what it built itself -- which is the ordinary case now that services like
+        // pathfinding are game content -- and blocking its registration because the ENGINE had
+        // nothing to offer would be the host's misconfiguration surfacing as the mod's failure.
+        // A mod that does read a member gets a named refusal at that point, the same shape
+        // RequirePresentationSink uses.
+        T built = factory(_systemServices ?? UnprovidedSystemServices.Instance);
+        SystemBase instance = isSystemBase
+            ? built as SystemBase ?? throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] The factory for '{systemType.FullName}' returned null.")
+            : CreateContractAdapter(modId, built, systemType);
+
+        _modSystems.Add(new SystemRegistration(instance, SystemOrigin.Mod, modId));
+        GetOrCreateSubScheduler(modId).AddSystem(instance);
+    }
+
+    /// <summary>
+    /// The shape gate shared by both mod registration paths. Returns true when the type is a
+    /// <c>SystemBase</c> (the transitional authoring path, retiring at W5) and false when it is
+    /// an <c>ISimulationSystem</c> (the durable SDK surface).
+    /// </summary>
+    private static bool RequireSystemShape(Type systemType)
+    {
+        bool isSystemBase = typeof(SystemBase).IsAssignableFrom(systemType);
+        bool isContract = typeof(ISimulationSystem).IsAssignableFrom(systemType);
+        if (!isSystemBase && !isContract)
         {
-            sim = Activator.CreateInstance(systemType);
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] Type '{systemType.FullName}' " +
+                "does not derive from SystemBase and does not implement ISimulationSystem. " +
+                "Use 'public sealed class MySystem : ISimulationSystem' for SDK mod systems.");
         }
-        catch (MissingMethodException ex)
+        return isSystemBase;
+    }
+
+    /// <summary>
+    /// The declaration gate shared by both mod registration paths: the scheduler needs
+    /// <c>[SystemAccess]</c> to build a context and <c>[TickRate]</c> to resolve cadence, and a
+    /// system missing either is rejected at registration rather than at first tick.
+    /// </summary>
+    private static void RequireSystemDeclarations(Type systemType)
+    {
+        if (systemType.GetCustomAttribute<SystemAccessAttribute>(inherit: false) is null)
         {
             throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "requires a public parameterless constructor.",
-                ex);
+                "has no [SystemAccess] attribute. " +
+                "Add: [SystemAccess(reads: new[]{typeof(...)}, writes: new[]{typeof(...)})]");
         }
 
+        if (systemType.GetCustomAttribute<TickRateAttribute>(inherit: false) is null)
+        {
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
+                "has no [TickRate] attribute. " +
+                "Add: [TickRate(TickRates.NORMAL)] or another TickRates.* constant.");
+        }
+    }
+
+    private SystemBase CreateContractAdapter(string modId, object? sim, Type systemType)
+    {
         if (sim is not ISimulationSystem)
         {
             throw new InvalidOperationException(
-                $"[MOD REGISTRY ERROR] Activator.CreateInstance('{systemType.FullName}') " +
+                $"[MOD REGISTRY ERROR] Construction of '{systemType.FullName}' " +
                 "returned null or a non-ISimulationSystem instance.");
         }
 
         Type adapterType = typeof(SystemAdapter<>).MakeGenericType(systemType);
         return (SystemBase)Activator.CreateInstance(adapterType, sim, this, modId, _tickSource)!;
+    }
+
+    /// <summary>
+    /// Constructs <paramref name="systemType"/> parameterlessly, translating the reflection
+    /// failure into the diagnostic a mod author can act on. Split out of
+    /// <see cref="CreateContractAdapter"/> at W4 so the adapter wrap is reachable with an
+    /// instance the CALLER built -- which is what the factory registration path needs.
+    /// </summary>
+    private static object? WrapNewInstance(Type systemType)
+    {
+        try
+        {
+            return Activator.CreateInstance(systemType);
+        }
+        catch (MissingMethodException ex)
+        {
+            throw new InvalidOperationException(
+                $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
+                "requires a public parameterless constructor, or registration through the " +
+                "IModApi.RegisterSystem<T>(Func<ISystemServices, T>) factory overload.",
+                ex);
+        }
     }
 
     private static SystemBase CreateSystemInstance(Type systemType)
@@ -473,7 +631,8 @@ internal sealed class ModRegistry : IManagedStorageResolver
         {
             throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] System '{systemType.FullName}' " +
-                "requires a public parameterless constructor.",
+                "requires a public parameterless constructor, or registration through the " +
+                "IModApi.RegisterSystem<T>(Func<ISystemServices, T>) factory overload.",
                 ex);
         }
     }

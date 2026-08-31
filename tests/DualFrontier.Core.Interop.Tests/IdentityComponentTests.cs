@@ -1,4 +1,5 @@
 using DualFrontier.Components.Pawn;
+using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.Interop;
 using AwesomeAssertions;
 using Xunit;
@@ -18,7 +19,9 @@ public sealed class IdentityComponentTests
     {
         IdentityComponent component = default;
         component.Name.IsEmpty.Should().BeTrue();
-        component.Name.Should().Be(InternedString.Empty);
+        component.Name.Should().Be(StringHandle.Empty,
+            "W4 re-typed the field onto the Contracts-side handle; the payload is the same " +
+            "(Id, Generation) pair, so default is still the empty sentinel");
     }
 
     [Fact]
@@ -34,11 +37,11 @@ public sealed class IdentityComponentTests
         using var world = new NativeWorld();
         var component = new IdentityComponent
         {
-            Name = world.InternString("Aelin Ashford"),
+            Name = world.InternHandle("Aelin Ashford"),
         };
 
         component.Name.IsEmpty.Should().BeFalse();
-        component.Name.Resolve(world).Should().Be("Aelin Ashford");
+        world.Resolve(component.Name).Should().Be("Aelin Ashford");
     }
 
     [Fact]
@@ -47,11 +50,11 @@ public sealed class IdentityComponentTests
         using var world = new NativeWorld();
         var component = new IdentityComponent
         {
-            Name = world.InternString(string.Empty),
+            Name = world.InternHandle(string.Empty),
         };
 
         component.Name.IsEmpty.Should().BeTrue();
-        component.Name.Resolve(world).Should().BeNull();
+        world.Resolve(component.Name).Should().BeNull();
     }
 
     [Fact]
@@ -65,13 +68,13 @@ public sealed class IdentityComponentTests
         IdentityComponent component;
 
         world.BeginModScope("ModX");
-        component = new IdentityComponent { Name = world.InternString("Mod-only Pawn") };
+        component = new IdentityComponent { Name = world.InternHandle("Mod-only Pawn") };
         component.Name.IsEmpty.Should().BeFalse();
         world.EndModScope("ModX");
 
         world.ClearModScope("ModX");
 
-        component.Name.Resolve(world).Should().BeNull(
+        world.Resolve(component.Name).Should().BeNull(
             "post-clear re-intern advances the generation; the captured handle is stale");
     }
 }

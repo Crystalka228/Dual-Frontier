@@ -1,3 +1,13 @@
+> **W4_COMPOSITION_ROOT (2026-08-31) — THIS DOCUMENT IS STALE AND IS BEING CORRECTED IN PLACE.**
+> The wave dissolved the composition root, cut the four engine→game `ProjectReference` edges and
+> deleted the `Scenario/` folder. Statements below about depending on `Components` / `Events` /
+> `Systems` / `AI`, about Application "knowing Systems", and about `Scenario/` or `ScenarioLoader`
+> are FALSE at HEAD. The csproj is the truth: `Contracts`, `Core`, `Core.Interop` only, and
+> `BoundaryRatchetTests` holds the engine→game edge count at ZERO.
+> Nothing here sanctions adding such a reference; a tier-4 module README cannot license a
+> boundary-law violation, and the law is `GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY` B-1.
+> Full re-anchoring is F-85.
+
 # DualFrontier.Application
 
 ## Purpose

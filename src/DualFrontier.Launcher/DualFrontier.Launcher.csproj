@@ -5,6 +5,32 @@
     <RootNamespace>DualFrontier.Launcher</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <!--
+      The output directory IS the distribution root for a DEVELOPMENT build: the executable, the
+      manifest that defines the product, and the mods/ tree the slice projects deploy into all sit
+      together. The repo-root file is the SOURCE and this is the shipped copy, exactly as each mod
+      keeps a source mod.manifest.json and a copy in its output.
+
+      This comment used to claim the layout was "what a published build has". It is not, and
+      saying so hid a real gap. The mods and the game assemblies arrive here through
+      AfterTargets="Build" copies in mods/Directory.Build.targets that fire when each MOD project
+      builds, and whose destination is this hardcoded bin path, so they follow a solution build and
+      nothing else. Building or publishing this project alone yields a manifest with no
+      content beside it, and the process then refuses to start on the first missing root mod.
+      Assembling a distribution is a job for a distribution project, which does not exist yet:
+      F-81.
+
+      This is what lets the loader's upward walk stop immediately here rather than climbing to
+      the repository root and then deriving a mods/ directory that holds manifests but no
+      assemblies.
+    -->
+    <None Include="$(MSBuildThisFileDirectory)..\..\game.manifest.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>game.manifest.json</Link>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Application\DualFrontier.Application.csproj" />
     <ProjectReference Include="..\DualFrontier.Runtime\DualFrontier.Runtime.csproj" />
   </ItemGroup>
@@ -17,8 +43,9 @@
     <InternalsVisibleTo Include="DualFrontier.Runtime.Tests" />
   </ItemGroup>
 
-  <!-- Native DLL copy step — same pattern as test projects. Required for
-       GameBootstrap.CreateLoop's NativeWorld bootstrap call (df_engine_bootstrap).
+  <!-- Native DLL copy step — same pattern as test projects. Required because composition
+       bootstraps a NativeWorld (df_engine_bootstrap); the call now lives in
+       EngineComposer.CreateSession, the composition root having been dissolved at W4.
        Cascade #3 γ0 fix per discovered cascade #2 omission. -->
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"

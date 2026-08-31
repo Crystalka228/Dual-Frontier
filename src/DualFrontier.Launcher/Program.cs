@@ -1,5 +1,6 @@
 using System;
 using DualFrontier.Application.Bridge;
+using DualFrontier.Application.Distribution;
 using DualFrontier.Application.Loop;
 using DualFrontier.Runtime;
 using DualFrontier.Runtime.Assets;
@@ -12,8 +13,9 @@ namespace DualFrontier.Launcher;
 
 /// <summary>
 /// Production launcher entry point for Dual Frontier. Composes Vulkan
-/// substrate (<see cref="Runtime.Runtime"/>) + Domain layer
-/// (<see cref="EngineSession"/> via <see cref="GameBootstrap"/>) +
+/// substrate (<see cref="Runtime.Runtime"/>) + the engine session
+/// (<see cref="EngineSession"/> via <see cref="EngineComposer"/>, whose content
+/// arrives from the distribution manifest's root mods) +
 /// <see cref="LauncherRenderer"/> bridge between them. Drives main loop
 /// per Q-G-7 (d) hybrid orchestration (cascade #2 amendment Crystalka
 /// Option A — GameLoop self-ticks on background thread).
@@ -27,16 +29,52 @@ internal static class Program
 {
     public static int Main(string[] args)
     {
+        // === Distribution ===
+        // The manifest is read BEFORE the runtime is composed, so a malformed one fails before
+        // a Vulkan device exists rather than after. It is located by walking upward from the
+        // directory holding this binary, never from the working directory: in a published
+        // layout the walk stops immediately because the manifest sits beside the executable,
+        // and in the repository it climbs to the root. The directory it was FOUND in is the
+        // distribution root, and the composer derives the mods root from it.
+        string manifestPath = DistributionManifestLoader.Locate();
+        DistributionManifest manifest = DistributionManifestLoader.Load(manifestPath);
+        string distributionRoot = DistributionManifestLoader.RootFor(manifestPath);
+
+        // The distribution's content assemblies ship beside this executable but are absent from
+        // its dependency file, because the engine no longer references them -- which is the whole
+        // point of the boundary cut. Teach the default context to find them before anything tries
+        // to load a mod.
+        DistributionAssemblyProbe.Install(distributionRoot);
+
         // === Composition ===
+        // The manifest is the product's definition, so the product's NAME and its asset root come
+        // from it rather than from literals here. Both were parsed and then ignored, which made
+        // the loader's strictness theatre: it refused an unknown key and an absent field while the
+        // values it accepted changed nothing.
+        //
+        // The asset root is handed to the runtime UNRESOLVED, not combined with the distribution
+        // root. That is deliberate and it is the difference between a fix and an outage: no build
+        // step places an assets tree beside the executable, so an anchored path would name a
+        // directory that does not exist, and the asset manager's rooted branch is an existence
+        // check that throws before the window is ever shown. Passing the string through preserves
+        // the manager's own contract -- absolute used as given, relative looked for beside the
+        // working directory and then up the ancestors of the binary -- so the shipped manifest
+        // resolves to exactly the directory it resolved to before, while editing the manifest now
+        // genuinely changes which directory is loaded.
+        //
+        // Anchoring assets to the distribution root, as mods already are, is defensible and is a
+        // PACKAGING change: it needs a step that copies the asset tree into the output first, and
+        // must not land before that step exists.
         var runtimeOptions = new RuntimeOptions
         {
             Window = new WindowOptions
             {
-                Title = "Dual Frontier",
+                Title = manifest.Product.Name,
                 Width = 1280,
                 Height = 720,
             },
-            AssetsDirectory = "assets",
+            // Exactly one root: the loader refuses any other count, so this cannot be empty.
+            AssetsDirectory = manifest.AssetRoots[0],
             // EnableValidationLayer: omitted к use RuntimeOptions DEBUG/Release
             // conditional default (#if DEBUG = true, else = false).
         };
@@ -52,7 +90,11 @@ internal static class Program
         using var atlasTexture = new SpriteTexture(atlasVkImage, atlasSampler);
 
         var bridge = new PresentationBridge();
-        using EngineSession session = GameBootstrap.CreateSession(bridge);
+        // The composer builds ENGINE parts only and then loads the manifest's root mod set. It
+        // throws if any root mod is missing or refuses: a distribution without its root set is
+        // not a degraded product, it is a broken one.
+        using EngineSession session =
+            EngineComposer.CreateSession(bridge, manifest, distributionRoot);
 
         // S-LOCK-10 composition root: SceneState constructed here, passed к
         // both dispatcher (writes) и renderer (reads) via constructor injection.

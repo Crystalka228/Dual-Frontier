@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.0
+version: 2.2.0
 first_authored: 2026-07-15
-last_modified: '2026-08-20'
+last_modified: '2026-08-31'
 content_language: en
 next_review_due: 2027-Q3
 title: Contract system (authored rework; evolution rules tightened, version-gate truth corrected)
@@ -117,13 +117,30 @@ W3 (VANILLA_SEPARATION_MIGRATION_PLAN W3) added four MEMBERS to the existing `Sd
 
 All four are pure promotions of primitives the engine already had (`NativeWorld.CreateEntity`/`DestroyEntity`/`IsAlive`; `PresentationBridge`), so W3 needed ZERO native change.
 
-`SetAmbientTint` reaches the renderer through an Application-internal `IPresentationSink` installed by the composition root (`GameBootstrap.CreateSession` → `BridgePresentationSink` → `PresentationBridge`). The sink is deliberately NOT contract surface, so the render path can be reshaped without touching the mod-facing contract. A presentation call with no sink installed THROWS (`ModRegistry.RequirePresentationSink`) rather than silently doing nothing — К-L19 fail-fast; a mod whose visuals vanish without a diagnostic is the shape being prevented.
+`SetAmbientTint` reaches the renderer through an Application-internal `IPresentationSink` installed by the composition root (`EngineComposer.CreateSession` → `BridgePresentationSink` → `PresentationBridge`). The sink is deliberately NOT contract surface, so the render path can be reshaped without touching the mod-facing contract. A presentation call with no sink installed THROWS (`ModRegistry.RequirePresentationSink`) rather than silently doing nothing — К-L19 fail-fast; a mod whose visuals vanish without a diagnostic is the shape being prevented.
 
 **Planned** — the BD-9 layer/slot presentation model supersedes and ABSORBS `SetAmbientTint`; see [ROADMAP.md](../ROADMAP.md).
 
+### §4.3 W4 SDK factory registration, world seeding and typed presentation (added 2026-08-31, MINOR — `ContractsVersion.Current` 2.1.0 → 2.2.0)
+
+W4 (VANILLA_SEPARATION_MIGRATION_PLAN W4) added members to `IModApi` and `Sdk/ISystemContext`, plus one new type family under `Contracts/Distribution`. Same reasoning as §4.2: both interfaces are engine-implemented and mods only CONSUME them, so this is additive for every mod and carries a MINOR bump. Manifests pinning `^2.0.0` stay satisfied.
+
+| Member | Meaning |
+|---|---|
+| `IModApi.RegisterSystem<T>(Func<ISystemServices, T>)` | Registers a system built by a FACTORY rather than a parameterless constructor. Without it a mod could not register a system that takes a dependency, which is every interesting one: the vanilla movement system takes a pathfinding service. The refusal for an unprovided service moved to the point of USE, so registration never demands services the host has not installed yet. |
+| `IModApi.RegisterWorldSeeder(Action<ISystemContext>)` | Runs once, OUTSIDE the system graph, after the scheduler rebuild that follows `Apply`. Seeding cannot be a system: the scheduler enforces one writer per component type GLOBALLY, so a seeder that honestly declares what it writes collides with every gameplay system that owns one of those types. The engine-side factories never met that rule because they ran at composition time, outside the graph entirely; this hook is where they now stand. |
+| `IModApi.Scenario` | The `ScenarioConfig` the distribution declared, or null. A mod reads the scenario; it never reads the manifest. |
+| `ISystemContext.ShowEntitySprite` / `MoveEntitySprite` / `HideEntitySprite` | Engine-vocabulary presentation effects (B-2): an entity and a position, with no game meaning attached. They replaced three pawn-named render commands so the presentation translation could move mod-side. |
+
+New type family: `Contracts/Distribution/ScenarioConfig.cs` (`ScenarioConfig` + `ScenarioCounts`). It lives in Contracts because the mod that seeds the world is its consumer — the values travel from `game.manifest.json` through the host to `IModApi.Scenario`. The engine reads none of them; it carries them.
+
+Withdrawn during the same wave: an `ISystemServices.NavGrid` member and its `INavGridService` interface, added early on the reasoning that only game-side code could build a walkability grid once the engine shed its game references. The first half was true and the second did not follow — a mod is not in the boundary ratchet's engine set, so it references the AI assembly directly and builds the grid itself. Writing the consumer is what revealed there was no host grid to carry. The member was removed in its own commit before anything could depend on it, so it never reached a released contract surface.
+
+**Planned** — the BD-9 layer/slot presentation model supersedes and ABSORBS the three sprite effects along with `SetAmbientTint`; see [ROADMAP.md](../ROADMAP.md).
+
 ## §5 Versioning and the version gate
 
-`DualFrontier.Contracts` versions as `MAJOR.MINOR.PATCH` (`Modding/ContractsVersion.cs`); the running build is the hardcoded `ContractsVersion.Current` (`:20`, presently `2.1.0` after the W3 SDK additions — §4.2; `2.0.0` came from the W2/BD-3a bus-interface removal — §2, §4), bumped manually per breaking release.
+`DualFrontier.Contracts` versions as `MAJOR.MINOR.PATCH` (`Modding/ContractsVersion.cs`); the running build is the hardcoded `ContractsVersion.Current` (`:20`, presently `2.2.0` after the W4 SDK additions — §4.3; `2.1.0` came from W3 — §4.2; `2.0.0` from the W2/BD-3a bus-interface removal — §2, §4), bumped manually per breaking release.
 
 Two declaration paths, both wired into production (not test-only):
 
@@ -165,6 +182,7 @@ Tier 1, LOCKED — amendments via FRAMEWORK.md §7.2 protocol. Amendment: surfac
 
 | Version | Date | Change |
 |---|---|---|
+| **2.2.0** | 2026-08-31 | **MINOR — W4_COMPOSITION_ROOT.** NEW §4.3 records the additive `IModApi` members (`RegisterSystem<T>` by factory, `RegisterWorldSeeder`, `Scenario`), the three engine-vocabulary sprite effects on `Sdk/ISystemContext`, and the new `Contracts/Distribution` type family (`ScenarioConfig` + `ScenarioCounts`) — with `ContractsVersion.Current` 2.1.0 → 2.2.0 (`:20`); §5 current version corrected 2.1.0 → 2.2.0; §4.2's sink anchor re-pointed from the dissolved `GameBootstrap` to `EngineComposer`. Additive for mods, so `^2.0.0` pins stay satisfied. Zero native change. Records the withdrawal of `INavGridService`/`ISystemServices.NavGrid`, added and removed inside the wave once the consumer proved it unnecessary. |
 | **2.1.0** | 2026-08-20 | **MINOR — W3_WEATHER_SLICE C2/C3.** NEW §4.2 records four additive `Sdk/ISystemContext` members — the entity lifecycle (`CreateEntity`/`DestroyEntity`/`IsEntityAlive`, closing gap G1) and the `SetAmbientTint` presentation primitive (gap G2) — with `ContractsVersion.Current` 2.0.0 → 2.1.0 (`:20`); §5 current version corrected 2.0.0 → 2.1.0. Additive for mods (engine-implemented interface, mods consume only), so `^2.0.0` pins stay satisfied. Zero native change: all four promote primitives the engine already had. `SetAmbientTint` absorption trigger recorded (BD-9/W6). EVT-2026-08-20-W3_WEATHER_SLICE. |
 | **2.0.0** | 2026-07-19 | **MAJOR — W2_BUS_CAPABILITY C7 (BD-3a/BD-3b).** The five bus interfaces + `IGameServices` left `DualFrontier.Contracts` for `DualFrontier.Core.Bus` (breaking interface removal); `ContractsVersion.Current` 1.0.0 → 2.0.0 (`:20`). §2 rewritten from the five-bus canon to the departure record + the one-router collapse (getters now cosmetic bridges); §4 generalizes the members-bearing-interface breaking rule off the departed `IGameServices`, and names interface *removal* as breaking; §5 current version corrected 1.0.0 → 2.0.0; §6 bus-publish-scoping gap dissolved with `[SystemAccess(bus:)]` (F-54). Scope row updated. EVT-2026-07-19-W2_BUS_CAPABILITY. |
 | 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R2-1/R2-2/R2-3): SEED-2 cross-reference row reworded to the refusal-list-retirement truth ("ALC resolution truth (no refusal list) + author guide", matching ARCHITECTURE.md's row); §5 floor claim gains the v2 exact-pin exception; §5 JSON illustration upgraded to a valid v3 manifest fragment (`manifestVersion` + `apiVersion`). |

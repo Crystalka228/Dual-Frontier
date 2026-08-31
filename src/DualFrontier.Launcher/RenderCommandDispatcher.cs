@@ -68,9 +68,9 @@ internal sealed class RenderCommandDispatcher
         ArgumentNullException.ThrowIfNull(command);
         switch (command)
         {
-            case PawnSpawnedCommand cmd: HandlePawnSpawned(cmd); break;
-            case PawnMovedCommand cmd: HandlePawnMoved(cmd); break;
-            case PawnDiedCommand cmd: HandlePawnDied(cmd); break;
+            case EntityAppearedCommand cmd: HandlePawnSpawned(cmd); break;
+            case EntityMovedCommand cmd: HandlePawnMoved(cmd); break;
+            case EntityVanishedCommand cmd: HandlePawnDied(cmd); break;
             case PawnStateCommand cmd: HandlePawnState(cmd); break;
             case ItemSpawnedCommand cmd: HandleItemSpawned(cmd); break;
             case TickAdvancedCommand cmd: HandleTickAdvanced(cmd); break;
@@ -82,27 +82,27 @@ internal sealed class RenderCommandDispatcher
         }
     }
 
-    private void HandlePawnSpawned(PawnSpawnedCommand cmd)
+    private void HandlePawnSpawned(EntityAppearedCommand cmd)
     {
-        int tileIndex = Math.Abs(cmd.PawnId.GetHashCode()) % LauncherProceduralAtlas.TotalTiles;
+        int tileIndex = Math.Abs(cmd.Entity.GetHashCode()) % LauncherProceduralAtlas.TotalTiles;
         AtlasRegion region = LauncherProceduralAtlas.GetTileRegion(tileIndex);
         _sceneState.RegisterPawn(
-            pawnId: cmd.PawnId,
+            pawnId: cmd.Entity,
             region: region,
             position: new Vector2(cmd.X, cmd.Y) * WorldUnitsPerTile,
             scale: new Vector2(WorldUnitsPerTile, WorldUnitsPerTile));
     }
 
-    private void HandlePawnMoved(PawnMovedCommand cmd)
+    private void HandlePawnMoved(EntityMovedCommand cmd)
     {
         // Silent miss tolerated — domain may emit Moved before Spawned в edge races.
-        _sceneState.MovePawn(cmd.PawnId, new Vector2(cmd.X, cmd.Y) * WorldUnitsPerTile);
+        _sceneState.MovePawn(cmd.Entity, new Vector2(cmd.X, cmd.Y) * WorldUnitsPerTile);
     }
 
-    private void HandlePawnDied(PawnDiedCommand cmd)
+    private void HandlePawnDied(EntityVanishedCommand cmd)
     {
         // Silent miss tolerated — same race tolerance as Moved.
-        _sceneState.DespawnPawn(cmd.PawnId);
+        _sceneState.DespawnPawn(cmd.Entity);
     }
 
     /// <summary>
@@ -129,36 +129,29 @@ internal sealed class RenderCommandDispatcher
 
     [ReservedStub(
         ReservedStubPurpose.BuildComposition,
-        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — pending post-Vanilla-mods cascade. " +
-        "HUD pawn detail panel (name, needs, mood, job label, top skills) requires Vanilla mods к " +
-        "define pawn structure first. Silent accept в production composition per S-LOCK-4 amendment " +
-        "(Crystalka mid-cascade ratification 2026-05-23); defensive throw would crash Launcher on " +
-        "first tick from PawnStateReporterSystem. " +
-        "Activation: HUD pawn detail consumer materialization (M-series migration).")]
+        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — the HUD pawn detail panel (name, " +
+        "needs, mood, job label, top skills) has no consumer yet. Since W4 nothing enqueues this " +
+        "command either: the engine's composition root was the only producer and it is gone, so " +
+        "the arm is unreachable rather than merely inert. It stays because the command type stays, " +
+        "and the dispatcher's default arm throws. " +
+        "Activation: HUD pawn detail consumer materialization (UI program).")]
     private void HandlePawnState(PawnStateCommand cmd)
     {
-        // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
-        // HUD pawn detail panel (name, needs, mood, job label, top skills) requires
-        // Vanilla mods к define pawn structure first. Silent accept в production
-        // composition (PawnStateReporterSystem emits these periodically; defensive
-        // throw would crash Launcher on first tick). DO NOT TEST — stub has no
-        // observable behavior; tests would lie by passing trivially (Q-H-6 discipline).
+        // CASCADE #3 STUB, unreachable since W4 -- no producer remains. DO NOT TEST: the stub has
+        // no observable behavior, so a test would lie by passing trivially (Q-H-6 discipline).
     }
 
     [ReservedStub(
         ReservedStubPurpose.BuildComposition,
-        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — pending post-Vanilla-mods cascade. " +
-        "Item visuals require Vanilla mods к define item registry first. Silent accept в production " +
-        "composition per S-LOCK-4 amendment (Crystalka mid-cascade ratification 2026-05-23); " +
-        "defensive throw would crash Launcher at startup from ~255 GameBootstrap-emitted commands. " +
+        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — item visuals need an item registry " +
+        "no mod defines yet. The engine's composition root used to emit around 255 of these at " +
+        "startup into this empty handler, so no item has ever been drawn; W4 removed the producer, " +
+        "and the mod that seeds items now reports none. The arm is unreachable and preserves " +
+        "exactly the visual that shipped. " +
         "Activation: Item visual consumer materialization (Vanilla-mods cascade).")]
     private void HandleItemSpawned(ItemSpawnedCommand cmd)
     {
-        // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
-        // Item visuals require Vanilla mods к define item registry first. Silent
-        // accept в production composition (GameBootstrap emits ~255 ItemSpawnedCommand
-        // at startup для initial food/water/bed/decoration; defensive throw would
-        // crash Launcher on first frame). DO NOT TEST.
+        // CASCADE #3 STUB, unreachable since W4 -- no producer remains. DO NOT TEST.
     }
 
     [ReservedStub(

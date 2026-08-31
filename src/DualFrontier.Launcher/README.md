@@ -1,3 +1,11 @@
+> **W4_COMPOSITION_ROOT (2026-08-31) — STALE, CORRECTED IN PLACE.** The composition root this
+> document calls `GameBootstrap` no longer exists; the Launcher composes through
+> `EngineComposer.CreateSession`, which builds ENGINE parts only and loads the distribution's root
+> mods. Descriptions below of Application as "contracts + GameBootstrap + bridge + commands", and
+> of the Launcher reaching `GameBootstrap` through `InternalsVisibleTo`, are FALSE at HEAD. This
+> matters more here than elsewhere: the Launcher is the B-5 surface, and B-5 says it has no
+> compile-time knowledge of any game pack. Full re-anchoring is F-85.
+
 # DualFrontier.Launcher — Production Launch Entry Point
 
 ## Purpose

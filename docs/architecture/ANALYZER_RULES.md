@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.1.0
+version: 1.1.1
 first_authored: 2026-07-15
-last_modified: 2026-08-22
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)
@@ -18,7 +18,7 @@ supersedes:
 last_modified_commit: edb267a
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'ID_B_ENTITY_VERSIONS C7 — v1.0.2 → v1.1.0 MINOR (a rule joins the shipped surface): DFK022 (К-L22 entity identity honesty) added Error-enforcing — it flags an integer literal in the Version position of new EntityId(...), by parameter NAME rather than ordinal, exempting DualFrontier.Core.Interop internals and Test namespaces. Census 17 → 18 rules, NativeBoundary 5 → 6, build-breaking 16 → 17, Error 11 → 12; §1.3 test tree 20 → 21 files with the 9-case DFK022EntityIdentityTests; §1.4 waiver pin 2 → 3, the third being the DFK022 waiver on EntityEncoder.DecodeRanges whose retirement trigger is the A7 persistence contract. The rule is tracked in AnalyzerReleases.Unshipped.md pending its release transition. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior review: STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §1.2 wiring-truth inherit list net8.0 → net10.0; one sentence added at §1.2 closing the recon gap — the analyzer project TFM (netstandard2.0, Roslyn host load compat, deliberately unmoved by the solution-wide net10.0 move) was nowhere asserted on this LOCKED surface, now stated together with LangVersion pinned explicit 14.0 (was floating latest; STACK_UPDATE D2); §6 kernel-boundary parenthetical C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0) (EVT-2026-07-17-STACK_UPDATE). Prior context: DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to…'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The DFK005 row drops the GameBootstrap carve-out the rule no longer carries: the composition root that held it is deleted, and the successor (EngineComposer) is deliberately unsuffixed so it needs no exemption.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 ---
@@ -66,7 +66,7 @@ This document, not scattered mentions elsewhere, is the current-truth surface fo
 | DFK003 | К-L3 | Storage ownership. A class implementing `IComponent` (Path β, managed store) without `[ManagedStorage]` is flagged; a struct `IComponent` is Path α by construction (`[ManagedStorage]` is class-only, CS0592-prevented — the violation is compile-unreachable on that side). | Error | enforcing |
 | DFK003_1 | К-L3.1 | Storage bridge. Flags `new ManagedStore<T>(...)` anywhere outside the `DualFrontier.Application.Modding` provider namespace — `SystemBase.ManagedStore<T>()` is the sanctioned path. | Error | enforcing |
 | DFK004 | К-L4 | Type ID registry. Flags a hash taken over a `typeof(...)` expression (`typeof(X).GetHashCode()` / `.FullName.GetHashCode()` / `.Name.GetHashCode()`); plain `typeof(X)` (137 legitimate sites at Phase β) stays silent by construction. | Error | enforcing |
-| DFK005 | К-L5 | Declarative bootstrap. Flags an additional managed class named `*Bootstrap` other than `GameBootstrap` itself or a type under the `DualFrontier.Core.Interop` boundary. | Error | enforcing |
+| DFK005 | К-L5 | Declarative bootstrap. Flags any managed class named `*Bootstrap` outside the `DualFrontier.Core.Interop` boundary. W4 removed the rule's one name-based carve-out, for a class called `GameBootstrap`: that was the composition root until the boundary cascade dissolved it, and the successor (`EngineComposer`) carries no suffix and needs no exemption. | Error | enforcing |
 | DFK007 | К-L7 | Span protocol. Flags a class field or property typed `SpanLease<T>` — spans are transient per-tick leases, not storage state; struct enumerators holding a lease for iteration lifetime are exempt (their lifetime is bounded by the lease). | Error | enforcing |
 | DFK011 | К-L11 | NativeWorld SSoT. Flags `new ManagedWorld(...)` in any namespace not containing `Test` — `ManagedWorld` is the retired managed backbone, test-fixture-only since the A'.5 K8.3+K8.4 cutover. | Error | enforcing |
 | DFK013 | К-L13 | Wake-type discipline (efficiency, not correctness). Flags a concrete, non-abstract `SystemBase` subclass carrying none of `[TickRate]` / `[WakeOnEvent]` / `[WakeOnState]` / `[WakeOnInit]` / `[WakeOnExplicit]` / `[WakeOnSlotTransition]`. | Warning | enforcing |

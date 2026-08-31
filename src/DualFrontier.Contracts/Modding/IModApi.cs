@@ -66,6 +66,48 @@ public interface IModApi
     void RegisterSystem<T>() where T : class;
 
     /// <summary>
+    /// Registers a simulation system the engine constructs through <paramref name="factory"/>,
+    /// handing it the construction-time service surface (<see cref="Sdk.ISystemServices"/>).
+    ///
+    /// <para>
+    /// Use this whenever the system needs a service at construction. The parameterless overload
+    /// builds the type with <c>Activator.CreateInstance</c> and therefore requires a public
+    /// parameterless constructor; a system taking, say, a pathfinding service cannot be
+    /// registered through it at all, and because a throw out of <see cref="IMod.Initialize"/>
+    /// rolls back the whole load batch, one such system takes every other system in the mod
+    /// down with it.
+    /// </para>
+    ///
+    /// <para>
+    /// The factory runs at registration time, on the menu thread with the simulation stopped.
+    /// It must not touch the world: <see cref="Sdk.ISystemServices"/> carries services only, and
+    /// world access arrives later through <c>ISystemContext</c>.
+    /// </para>
+    /// </summary>
+    void RegisterSystem<T>(Func<Sdk.ISystemServices, T> factory) where T : class;
+
+    /// <summary>
+    /// Registers a one-shot world initializer, run once after the mod set is installed and
+    /// BEFORE the first tick, with a live world context.
+    ///
+    /// <para>
+    /// This is the seam for seeding a starting world. It exists because seeding cannot be a
+    /// system: the scheduler enforces one writer per component type across the whole graph, so a
+    /// seeder that honestly declares the components it writes collides with every gameplay
+    /// system that owns one, and declaring fewer would undermine the guarantee that makes
+    /// parallel dispatch safe.
+    /// </para>
+    ///
+    /// <para>
+    /// The action runs exactly once per registration, outside the graph. Register it from
+    /// <see cref="IMod.Initialize"/>; a re-registration after a reload seeds again, so a mod
+    /// whose content must survive a reload should check the world first and return — the same
+    /// read-then-mint discipline a self-seeding system uses.
+    /// </para>
+    /// </summary>
+    void RegisterWorldSeeder(Action<Sdk.ISystemContext> seed);
+
+    /// <summary>
     /// Publishes an event on the single managed event dispatch. W2/BD-3 removed the
     /// genre taxonomy, so events route by type -- no <c>[EventBus]</c> marker or bus
     /// resolution. Gated first by the mod's declared capabilities (kernel.publish:&lt;FQN&gt;).
@@ -104,6 +146,20 @@ public interface IModApi
     /// Returns the manifest of the mod making this call.
     /// </summary>
     ModManifest GetOwnManifest();
+
+    /// <summary>
+    /// The starting-state description the host's distribution declares, or <c>null</c> when the
+    /// host has none.
+    ///
+    /// <para>
+    /// Null is the ordinary case for a test harness or a tool that stands the pipeline up without
+    /// a distribution, so a mod that wants it must check. A mod whose whole purpose is to seed a
+    /// scenario should refuse loudly on null rather than substituting numbers of its own: a
+    /// fabricated default would look like a working colony while silently ignoring what the
+    /// distribution asked for.
+    /// </para>
+    /// </summary>
+    Distribution.ScenarioConfig? Scenario { get; }
 
     /// <summary>
     /// Logs a structured message prefixed with the mod's id.

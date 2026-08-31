@@ -1,0 +1,43 @@
+{
+  "manifestVersion": "1",
+
+  "product": {
+    "id": "dualfrontier.vanilla",
+    "name": "Dual Frontier",
+    "version": "0.1.0"
+  },
+
+  "rootMods": [
+    "dualfrontier.vanilla.core",
+    "dualfrontier.vanilla.world",
+    "dualfrontier.vanilla.pawn",
+    "dualfrontier.vanilla.inventory",
+    "dualfrontier.vanilla.combat",
+    "dualfrontier.vanilla.magic",
+    "dualfrontier.vanilla.scenario"
+  ],
+
+  "scenario": {
+    "id": "default",
+    "worldSeed": 0,
+    "mapWidth": 200,
+    "mapHeight": 200,
+    "obstacleCount": 800,
+    "obstacleSeed": 42,
+    "factorySeed": 42,
+    "itemFactorySeed": 43,
+    "counts": {
+      "pawns": 50,
+      "food": 150,
+      "water": 50,
+      "beds": 30,
+      "decorations": 25
+    }
+  },
+
+  "assetRoots": ["assets"],
+
+  "saveNamespace": "dualfrontier.vanilla",
+
+  "minEngineCapabilities": []
+}

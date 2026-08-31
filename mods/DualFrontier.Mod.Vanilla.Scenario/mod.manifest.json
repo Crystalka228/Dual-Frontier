@@ -1,0 +1,21 @@
+{
+  "manifestVersion": "3",
+  "id": "dualfrontier.vanilla.scenario",
+  "name": "Vanilla Scenario",
+  "version": "0.1.0",
+  "author": "Dual Frontier Team",
+  "kind": "regular",
+  "apiVersion": "^2.0.0",
+  "entryAssembly": "DualFrontier.Mod.Vanilla.Scenario.dll",
+  "entryType": "DualFrontier.Mod.Vanilla.Scenario.ScenarioMod",
+  "hotReload": true,
+
+  "dependencies": [],
+
+  "replaces": [],
+
+  "capabilities": {
+    "required": [],
+    "provided": []
+  }
+}

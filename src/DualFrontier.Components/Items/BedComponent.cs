@@ -27,7 +27,7 @@ public struct BedComponent : IComponent
     /// <summary>
     /// Fraction of <see cref="DualFrontier.Components.Pawn.NeedKind.Sleep"/>
     /// restored per simulation tick while occupied ([0..1]). Calibrated by
-    /// M8.4 ItemFactory per bed quality tier.
+    /// the seeding mod per bed quality tier.
     /// </summary>
     public float SleepRestorationPerTick;
 }

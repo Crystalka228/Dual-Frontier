@@ -18,7 +18,10 @@
     <ProjectReference Include="..\..\src\DualFrontier.Components\DualFrontier.Components.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Events\DualFrontier.Events.csproj" />
     <ProjectReference Include="..\..\src\DualFrontier.Systems\DualFrontier.Systems.csproj" />
-    <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
+    <!-- W4 - the DualFrontier.Application reference is gone. It existed for one line: the world
+         fixture called the engine's vanilla component-registration helper. That helper was
+         content knowledge living in the engine, which is what this wave removed, and a systems
+         test suite has no other business with the application layer. -->
   </ItemGroup>
   <!--
     K8.2 v2 — native DLL must ride along: integration tests now construct

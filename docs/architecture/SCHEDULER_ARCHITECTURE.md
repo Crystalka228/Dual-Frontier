@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.1.0
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Scheduler Architecture — К10 substrate model and current/target wiring (authored rework)
@@ -159,31 +159,32 @@ This trampoline is the **single sanctioned reverse path** of §1. Its production
 
 This is the honesty core of the document. The predecessor's self-status («К10.1–К10.3 shipped, native scheduler live») described **installation**; this section describes **decision authority**. Installed is not deciding.
 
-### §3.1 CURRENT (2026-07-15, HEAD `35364c2`)
+### §3.1 CURRENT (2026-08-31, W4 boundary cascade)
 
-**Every Core system is registered twice** at startup (`src/DualFrontier.Application/Loop/GameBootstrap.cs:145-181`):
+**The dual-registration loop still exists and now runs zero times.** W4 dissolved the composition root that held the ten-system Core set; `EngineComposer` composes engine parts only and passes an **empty** core set (`src/DualFrontier.Application/Loop/EngineComposer.cs:91`). The systems that actually run are registered by the vanilla scenario mod and reach the managed plane through the pipeline's `Rebuild` at `Apply`. What that does to each plane is asymmetric, and the asymmetry is the current truth of this section:
 
-1. **Managed plane — the one that decides.** The 10-system Core set is added to the managed `DependencyGraph`, which reflects over `[SystemAccess]`, builds write-to-read edges, and emits ordered `SystemPhase` lists (`GameBootstrap.cs:145-148`).
-2. **Native plane — installed, not deciding.** The same systems register with the native graph via `SystemGraphInterop.RegisterSystem` — passing **empty read/write component-id sets** (`GameBootstrap.cs:173-174`), constant priority class Normal and wake type Timer (`GameBootstrap.cs:175-176`) — followed by a blanket `WakeRegistryInterop.SubscribeTimer(i, 1)` (`GameBootstrap.cs:179`) and one `SystemGraphInterop.ComputeStaticGraph()` (`GameBootstrap.cs:181`).
+1. **Managed plane — the one that decides.** The graph is built empty at composition (`EngineComposer.cs:95-98`) and rebuilt with the real system set by `ModIntegrationPipeline.Apply`, which reflects over `[SystemAccess]`, builds write-to-read edges, and emits ordered `SystemPhase` lists. Production planning is unchanged in substance: the same reflection, over the same declarations, on the same eleven systems — they simply arrive from a mod.
+2. **Native plane — no longer even installed.** The registration loop at `EngineComposer.cs:107-118` iterates the core set, which is empty, so `SystemGraphInterop.RegisterSystem` is never called and `SystemGraphInterop.ComputeStaticGraph()` (`:119`) runs over nothing. The pipeline's rebuild does not mirror mod systems into the native graph. **The native scheduler graph is empty in production.** The composer says so in its own comment (`EngineComposer.cs:100-104`); the gap is ledgered rather than papered over.
 
 Consequences, stated plainly:
 
-- With empty access sets the native graph **has no edges**, so its phase composition carries no dependency information.
-- Timer-rate-1 for every system reduces К-L13's five wake types to "wake everything every tick"; the wake attributes of §2.2 exist in Contracts but **no production reader marshals them** to the native registry (`GameBootstrap.cs:177-178` names them as future overrides; repo-wide, their only mention outside Contracts is that comment).
-- The per-tick machinery is production-idle: `ComputePerTickGraph` and `DrainRunqueue` have **zero production call sites** (registration in `GameBootstrap` is the only production consumer of the scheduler interop; the per-tick paths are exercised by stress/extreme suites and `df_native_selftest`).
+- The native graph has **no systems at all**, so it composes no phases. Before W4 it had ten systems and no edges, which was already decision-free; the direction of travel since is away from К-L12, and calling it anything else would be dishonest.
+- The loop that would register real access sets is intact and correct; only its input became empty. GATE-S1 below therefore reads on the mod-registration path now, not on this loop.
+- The blanket `WakeRegistryInterop.SubscribeTimer(i, 1)` (`EngineComposer.cs:117`) reduced К-L13's five wake types to "wake everything every tick" while it ran; it now subscribes nobody. The wake attributes of §2.2 exist in Contracts and **no production reader marshals them** to the native registry.
+- The per-tick machinery is production-idle: `ComputePerTickGraph` and `DrainRunqueue` have **zero production call sites** (the composer's registration loop is the only production consumer of the scheduler interop, and it is now fed an empty set; the per-tick paths are exercised by stress/extreme suites and `df_native_selftest`).
 - The StateChange write-through hook is not wired into the production write path: `df_native_world_commit_hook`'s only callers are selftest scenarios (`native/DualFrontier.Core.Native/test/selftest.cpp:1445`).
 
 **Production dispatch is managed end-to-end.** `GameLoop` drives `ExecuteTick` on the dedicated simulation thread at a fixed 30 Hz step (`src/DualFrontier.Application/Loop/GameLoop.cs:115`); per phase, `ParallelSystemScheduler.ExecutePhase` runs due systems via `Parallel.ForEach` with `MaxDegreeOfParallelism = max(1, ProcessorCount − 2)` (`ParallelSystemScheduler.cs:149`, `:90`); the runnable filter is the managed `TickScheduler.ShouldRun` `[TickRate]` check consulted inside the loop (`ParallelSystemScheduler.cs:151`; `src/DualFrontier.Core/Scheduling/TickScheduler.cs`); the blocking join of `Parallel.ForEach` forms the phase barrier; deferred events flush after it (`ParallelSystemScheduler.cs:166-167`; semantics in EVENT_BUS.md). THREADING.md names `ParallelSystemScheduler` the **managed dispatch facade** — with the honest caveat (recorded in EXECUTION_AUTHORITY_MATRIX.md, row notes) that a facade selecting the runnable subset is performing a К-L13 scheduling decision, which is precisely what the cutover retires.
 
 **The batched callback ABI is on disk and test-exercised only.** The sole call site of `SchedulerAdapter.Register` in the repository is the test fixture (`tests/DualFrontier.Core.Tests/Scheduler/BatchedCallbackTests.cs:30`). Production per-phase dispatch does not route through `OnBatch`; the switch is forward-scheduled (docs/ROADMAP.md, «Native foundation tracks»).
 
-**Where the cutover condition lived until this rework**: a code comment (`GameBootstrap.cs:150-159` — "К10.2 mechanical dispatch switch routes through the batched callback ABI … once mod ALC lifecycle context surrounds the call sites"). A comment is not a gate; the named gates are §3.3.
+**Where the cutover condition lived until this rework**: a code comment in the composition root ("К10.2 mechanical dispatch switch routes through the batched callback ABI … once mod ALC lifecycle context surrounds the call sites"), which went with `GameBootstrap` at W4. A comment was never a gate; the named gates are §3.3, which is why losing it costs nothing.
 
 Summary table (mirrors the scheduling rows of EXECUTION_AUTHORITY_MATRIX.md §2):
 
 | Decision | К-L12 target owner | De-facto owner today |
 |---|---|---|
-| Dependency edges / phase composition | Native `SystemGraph` | Managed `DependencyGraph` (`GameBootstrap.cs:145-148`) |
+| Dependency edges / phase composition | Native `SystemGraph` | Managed `DependencyGraph`, built empty at `EngineComposer.cs:95-98` and rebuilt by `ModIntegrationPipeline.Apply` |
 | Runnable-subset selection (wakes) | Native wake registry | Managed `TickScheduler.ShouldRun` (`ParallelSystemScheduler.cs:151`) |
 | Parallelism + phase barrier | Native pool `submit_batch` / `wait_phase_barrier` | `Parallel.ForEach`, MaxDoP N−2 (`ParallelSystemScheduler.cs:149`, `:90`) |
 | Priority arbitration / quota enforcement | Native policy table | Nobody (constants registered; native accounting unconsumed — §2.4) |
@@ -191,22 +192,22 @@ Summary table (mirrors the scheduling rows of EXECUTION_AUTHORITY_MATRIX.md §2)
 
 ### §3.2 TARGET
 
-> **FENCED (target / planned — not current truth):** Native sovereign dispatch per К-L12 (KERNEL_ARCHITECTURE.md Part 0). The native `SystemGraph` receives real `[SystemAccess]`-derived component-type ids and owns phase composition; the wake registry receives the real `[TickRate]` census plus `[WakeOn*]` declarations and selects the per-tick runnable subset; per-tick Kahn on that subset composes phases; the native pool dispatches them, invoking managed system bodies in batches through `SchedulerAdapter`/`ManagedSystemDispatcher.OnBatch` (§2.7) with mod-ALC lifecycle context surrounding the call sites; priority arbitration and quota accounting act on declared `[Priority]`/`[CpuQuota]` values. The managed `DependencyGraph` leaves production planning and `ParallelSystemScheduler` either reduces to a pure batch executor (no `ShouldRun` consultation, no phase-list ownership) or is deleted — per its own К10.1 retention clause ("may remain as managed scheduler adapter facade or be deleted", `GameBootstrap.cs:49-52`). Sequencing is ROADMAP territory; this document never says *when*.
+> **FENCED (target / planned — not current truth):** Native sovereign dispatch per К-L12 (KERNEL_ARCHITECTURE.md Part 0). The native `SystemGraph` receives real `[SystemAccess]`-derived component-type ids and owns phase composition; the wake registry receives the real `[TickRate]` census plus `[WakeOn*]` declarations and selects the per-tick runnable subset; per-tick Kahn on that subset composes phases; the native pool dispatches them, invoking managed system bodies in batches through `SchedulerAdapter`/`ManagedSystemDispatcher.OnBatch` (§2.7) with mod-ALC lifecycle context surrounding the call sites; priority arbitration and quota accounting act on declared `[Priority]`/`[CpuQuota]` values. The managed `DependencyGraph` leaves production planning and `ParallelSystemScheduler` either reduces to a pure batch executor (no `ShouldRun` consultation, no phase-list ownership) or is deleted — per its own К10.1 retention clause ("may remain as managed scheduler adapter facade or be deleted", recorded in the К10.1 brief; the composition-root comment that carried it went with `GameBootstrap` at W4). Sequencing is ROADMAP territory; this document never says *when*.
 
 ### §3.3 Cutover gates and the deletion trigger
 
 The gate set is specified per EXECUTION_AUTHORITY_MATRIX.md §3, cited here because it is the only named cutover contract in the corpus. A split scheduling plane is tolerable only under three elements: named falsifiable gate conditions, an equivalence-proof obligation on the production workload, and a deletion trigger named in advance. Condensed:
 
-- **GATE-S1 — real access sets.** Native registration receives `[SystemAccess]`-derived ids instead of `ReadOnlySpan<uint>.Empty`. Open while any production `RegisterSystem` call passes empty spans (`GameBootstrap.cs:173-174`).
+- **GATE-S1 — real access sets.** Native registration receives `[SystemAccess]`-derived ids instead of `ReadOnlySpan<uint>.Empty`. Open, and since W4 open twice over: the composer's registration loop passes empty spans (`EngineComposer.cs:113-114`) AND is fed an empty system set, so no production system reaches the native graph at all.
 - **GATE-S2 — phase-composition equivalence on the production set.** Managed `GetPhases()` and native static + per-tick graphs produce equivalent partitions for the real Core set over N ≥ 1000 ticks. Open while no test under `tests/` compares the two planes on the production system set (today's only native-graph exercise is `df_native_selftest` with synthetic systems).
 - **GATE-S3 — dispatch switch.** Production per-phase dispatch routes through `ManagedSystemDispatcher.OnBatch` via `SchedulerAdapter`. Open while `SchedulerAdapter` has zero production call sites.
-- **GATE-S4 — wake surface used beyond Timer-1.** The `[TickRate]` census maps to real TimerWake rates and at least one non-Timer wake type carries a production system — otherwise К-L13 is dead law. Open while every production wake subscription is `SubscribeTimer(i, 1)` (`GameBootstrap.cs:179`).
+- **GATE-S4 — wake surface used beyond Timer-1.** The `[TickRate]` census maps to real TimerWake rates and at least one non-Timer wake type carries a production system — otherwise К-L13 is dead law. Open: the only production wake subscription is the blanket `SubscribeTimer(i, 1)` at `EngineComposer.cs:117`, which since W4 subscribes nobody.
 
 **Equivalence-proof obligation:** an N-tick lockstep harness asserting equal phase partitions and equal per-tick runnable subsets, recorded as К-L14 evidence rows (the evidence dashboard today carries bus-cutover rows and zero scheduler-cutover rows — the asymmetry is the measurable gap).
 
-**DELETION TRIGGER:** when S1–S4 have held for one full release cycle, the managed `DependencyGraph` leaves production planning — removed from `GameBootstrap.cs:145-148`, demoted to test oracle or deleted — and `ParallelSystemScheduler` reduces or is deleted per §3.2. The equivalence tests then retire in the same cascade (a zombie oracle comparing against a deleted implementation is its own debt).
+**DELETION TRIGGER:** when S1–S4 have held for one full release cycle, the managed `DependencyGraph` leaves production planning — removed from the composer and from the pipeline's rebuild, demoted to test oracle or deleted — and `ParallelSystemScheduler` reduces or is deleted per §3.2. The equivalence tests then retire in the same cascade (a zombie oracle comparing against a deleted implementation is its own debt).
 
-**Interim coexistence rules** (in force while the rows stay split, per EXECUTION_AUTHORITY_MATRIX.md §3): dual registration stays mandatory for every production system; `[SystemAccess]`/`[TickRate]`/`[WakeOn*]`/`[Priority]` remain the single declarer set both planes derive from — neither plane may grow a private side-channel declaration; no new consumers of the losing plane's internals (`DependencyGraph` phase lists); semantics changes land on both planes in one commit or not at all.
+**Interim coexistence rules** (in force while the rows stay split, per EXECUTION_AUTHORITY_MATRIX.md §3): dual registration stays mandatory for every production system — a rule W4 left FAILING, since mod-registered systems reach only the managed plane and every production system is now mod-registered; `[SystemAccess]`/`[TickRate]`/`[WakeOn*]`/`[Priority]` remain the single declarer set both planes derive from — neither plane may grow a private side-channel declaration; no new consumers of the losing plane's internals (`DependencyGraph` phase lists); semantics changes land on both planes in one commit or not at all.
 
 ## §4 Mod ↔ scheduler interaction
 
@@ -276,5 +277,6 @@ PATCH for anchor refresh and wiring-truth corrections (every `file:line` claim r
 
 | Version | Date | Change |
 |---|---|---|
+| 1.1.0 | 2026-08-31 | W4_COMPOSITION_ROOT | MINOR — §3.1 re-measured after the boundary cascade. `GameBootstrap` is deleted; every anchor moves to `EngineComposer.cs`. The substantive change is not the rename: the composer passes an EMPTY core set, mod systems reach only the managed plane, and the native scheduler graph is therefore empty in production where it previously held ten edge-free systems. §3.1 says so, GATE-S1 and GATE-S4 are re-read against that, and the interim coexistence rule on dual registration is marked FAILING rather than quietly restated. |
 | 0.1.1 | 2026-07-17 | HALT-1-ratified review correction (CORPUS_CLOSURE_INVERSION_B, D1 R1-11): three anchor nano-drifts — `NativeManagedBatch.cs:11-19`→`:11-21` (UserData at :20); `SimulationStateController.cs:71,82,95`→`:71,110,82` (WaitForQuiescenceAsync at :110, narrative order); sub-scheduler teardown `:692`→`:690`. |
 | 0.1.0 | 2026-07-15 | Initial authored rework: law/model/wiring successor of KERNEL_FULL_NATIVE_SCHEDULER.md; deliberation record (46 items, Q-N surface, predictions, risk register) retired to `historical/`; §3 corrects the predecessor's "native scheduler live" self-status to installed-not-deciding |

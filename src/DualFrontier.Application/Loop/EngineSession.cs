@@ -110,10 +110,10 @@ internal sealed class ShutdownTransactionHooks
 /// fence is self-contained (it proves quiescence before any teardown), world
 /// disposal is safe irrespective of renderer-teardown timing.
 ///
-/// Game-vocabulary-free by discipline (B-5): this class names only engine types.
-/// The vanilla-content knowledge lives solely in <see cref="GameBootstrap"/>, the
-/// sacrificial harness that constructs a session; the engine-to-game assembly edge
-/// stays frozen by the boundary ratchet.
+/// Game-vocabulary-free by discipline (B-5): this class names only engine types. So does
+/// <see cref="EngineComposer"/>, which constructs it. W4 dissolved the sacrificial harness that
+/// used to hold the vanilla-content knowledge, and the engine-to-game assembly edges the ratchet
+/// once froze are now measured at zero.
 /// </summary>
 internal sealed class EngineSession : IDisposable
 {
@@ -291,6 +291,16 @@ internal sealed class EngineSession : IDisposable
         Step(ShutdownStep.DeferredDropped);
 
         // S4: unload mods -- UnloadAll's first production caller (EQ_A2 / M2).
+        //
+        // Pause first. UnloadAll refuses while the pipeline's running flag is set, and that flag
+        // belongs to the MOD-EDITING protocol, not to the simulation: ModMenuController sets it
+        // back to running on every Commit and every Cancel. By S4 it can only be stale, because
+        // the fence above has already stopped the sim thread and proven the pipeline quiescent --
+        // so honouring the refusal here would mean refusing to shut down because a player once
+        // opened the mod menu and closed it again. W4 found this by disposing a session after a
+        // menu flow, which nothing had done before: the transaction is recent, and its first
+        // production caller is the only one that reaches this line.
+        _pipeline.Pause();
         _pipeline.UnloadAll();
         Step(ShutdownStep.ModsUnloaded);
 

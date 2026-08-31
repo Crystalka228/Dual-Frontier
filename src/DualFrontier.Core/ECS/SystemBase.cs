@@ -50,9 +50,32 @@ public abstract class SystemBase
     protected virtual void OnDispose() { }
 
     /// <summary>
-    /// Internal method called by the scheduler to initialize the system's lifecycle hooks.
+    /// Whether <see cref="Initialize"/> has already run for this instance. The guard is a
+    /// ONE-WAY latch and is deliberately not cleared by <see cref="Dispose"/>: the defect it
+    /// exists to prevent is re-initialization producing duplicate work, so a torn-down
+    /// instance must never be able to re-arm. Mod reload constructs a fresh instance
+    /// (<c>ModRegistry.CreateSystemInstance</c>), so nothing legitimate needs the reset.
     /// </summary>
-    internal void Initialize() => OnInitialize();
+    private bool _initialized;
+
+    /// <summary>
+    /// Internal method called by the scheduler to initialize the system's lifecycle hooks.
+    /// Idempotent per instance: the scheduler calls this from its constructor AND from every
+    /// <c>Rebuild</c>, and a rebuild happens on every mod-set change, so without this guard a
+    /// system whose <see cref="OnInitialize"/> subscribes would re-subscribe on each rebuild.
+    /// That was survivable only because <c>DomainEventBus.Subscribe</c> happens to de-duplicate
+    /// by delegate value equality — an unrelated invariant in another class holding this one up,
+    /// and one that does not cover a handler written as a lambda, nor any non-subscription work
+    /// (counters, allocations, native handles). It also did not cover
+    /// <c>SystemAdapter&lt;T&gt;.OnInitialize</c>, which forwards to arbitrary third-party
+    /// <c>ISimulationSystem.Initialize</c> code the engine cannot reason about at all.
+    /// </summary>
+    internal void Initialize()
+    {
+        if (_initialized) return;
+        _initialized = true;
+        OnInitialize();
+    }
 
     /// <summary>
     /// Internal method called by the scheduler to dispose of the system's resources and logic.

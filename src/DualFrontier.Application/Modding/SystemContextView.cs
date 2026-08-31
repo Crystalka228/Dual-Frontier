@@ -133,6 +133,18 @@ internal sealed class SystemContextView : ISystemContext, IWriteBatchCapability
     public void SetAmbientTint(float r, float g, float b, float strength)
         => _registry.RequirePresentationSink().SetAmbientTint(r, g, b, strength);
 
+    /// <inheritdoc />
+    public void ShowEntitySprite(EntityId entity, float x, float y)
+        => _registry.RequirePresentationSink().ShowEntitySprite(entity, x, y);
+
+    /// <inheritdoc />
+    public void MoveEntitySprite(EntityId entity, float x, float y)
+        => _registry.RequirePresentationSink().MoveEntitySprite(entity, x, y);
+
+    /// <inheritdoc />
+    public void HideEntitySprite(EntityId entity)
+        => _registry.RequirePresentationSink().HideEntitySprite(entity);
+
     // ---- Events (routed through the live capability gate) ----
 
     public void Publish<T>(T evt) where T : IEvent => RequireApi().Publish(evt);

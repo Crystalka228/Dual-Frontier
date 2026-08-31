@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>DualFrontier.Mod.Vanilla.Scenario</AssemblyName>
+    <RootNamespace>DualFrontier.Mod.Vanilla.Scenario</RootNamespace>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <IsVanillaMod>true</IsVanillaMod>
+    <!-- Every reference resolves from an ALC this mod does NOT own: DualFrontier.Contracts and
+         the three game assemblies all come from the default ALC, where the host already loaded
+         them. ModLoadContext.Load returns the shared assembly or null and never probes the mod
+         directory, so a private copy would not even be reachable, but keeping the output clean
+         is the shape DualFrontier.Mod.Weather established. -->
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--
+      This is the first mod to reference anything beyond DualFrontier.Contracts, and that is the
+      point of the wave rather than an exception to it. These are GAME assemblies, so every edge
+      here is game->game: legal, and outside the boundary ratchet entirely, whose EngineAssemblies
+      set contains no mod. The engine's OWN references to the same three assemblies are what this
+      wave removes.
+
+      DualFrontier.Events is deliberately absent. The presentation translation reads component
+      spans rather than subscribing to domain events, so no event type is ever named here: see
+      PawnPresentationSystem for why the span is the honest source.
+    -->
+    <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DualFrontier.Components\DualFrontier.Components.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DualFrontier.Systems\DualFrontier.Systems.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\DualFrontier.AI\DualFrontier.AI.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

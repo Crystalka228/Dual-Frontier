@@ -31,4 +31,5 @@ public interface ISystemServices
 {
     /// <summary>The A* pathfinding service over the walkability grid.</summary>
     IPathfindingService Pathfinding { get; }
+
 }

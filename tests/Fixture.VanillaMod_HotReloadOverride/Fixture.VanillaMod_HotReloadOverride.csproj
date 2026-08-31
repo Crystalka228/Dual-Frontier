@@ -10,6 +10,10 @@
       in `mods/Directory.Build.targets` keys on this property.
     -->
     <IsVanillaMod>true</IsVanillaMod>
+    <!-- This project sets IsVanillaMod to exercise the Release manifest rewrite; it is a TEST
+         FIXTURE, not a shipping mod, so it must not be deployed into the Launcher's runtime
+         mods root where the discoverer would find it at boot. -->
+    <DeployVanillaMod>false</DeployVanillaMod>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Contracts\DualFrontier.Contracts.csproj">

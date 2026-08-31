@@ -7331,3 +7331,133 @@ audit_trail:
     exists to preserve.
   cross_references:
     capa_entries: []
+- id: EVT-2026-08-31-W4_COMPOSITION_ROOT
+  date: 2026-08-31
+  event: >-
+    W4_COMPOSITION_ROOT cascade executed -- the engine stops referencing the game. GameBootstrap
+    dissolves into a neutral EngineComposer; a new dualfrontier.vanilla.scenario mod owns the 21
+    component registrations, both spawn factories, the walkability grid, the pathfinding service,
+    world seeding and the ten gameplay system registrations; game.manifest.json ships with a strict
+    typed loader; the boot-time mod-load path is CREATED; the four engine->game ProjectReference
+    edges are CUT and the boundary ratchet baseline moves 4 -> 0; the BD-8 orphan cluster dies.
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-W4_COMPOSITION_ROOT_BRIEF
+  - DOC-E-W4_COMPOSITION_ROOT_RECON_REPORT
+  - DOC-A-FRAMEWORK
+  - DOC-A-KERNEL_ARCHITECTURE
+  - DOC-A-CONTRACTS
+  - DOC-A-SCHEDULER_ARCHITECTURE
+  - DOC-A-EXECUTION_AUTHORITY_MATRIX
+  - DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-A-ARCHITECTURE
+  - DOC-A-ANALYZER_RULES
+  - DOC-A-THREADING_V2
+  - DOC-A-CONCURRENCY_AND_MEMORY_MODEL
+  - DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
+  - DOC-A-RESOURCE_OWNERSHIP_AND_LIFETIME
+  - DOC-A-VULKAN_SUBSTRATE
+  - DOC-C-ROADMAP
+  commits:
+    range: eae698e..(the closure commit carries this entry)
+    key_commits:
+    - eae698e
+    - 6534df8
+    - 0647d6f
+    - e14c627
+    - e3628d2
+    - a6ea630
+    - ed38428
+    - 9320e51
+    - c97fc88
+    - 17345c7
+    - 69ed79c
+    - 87eb0a8
+    - d986c7c
+  governance_impact: >
+    THE GATE, RE-SCOPED AND MET. The migration plan asked that EngineSession compile with zero
+    references to Components/Events/Systems/AI. Wave R measured that this was ALREADY TRUE at class
+    level before the wave began -- EQ_A2 had made EngineSession game-vocabulary-free -- so the
+    gate as worded could not fail and was re-scoped to the ASSEMBLY: the four ProjectReference
+    edges at DualFrontier.Application.csproj. They are cut, BoundaryRatchetTests.
+    ProjectReferenceBaseline is EMPTY, and an empty baseline was proven to be a terminal state
+    rather than a disabled test by deliberate break -- re-adding Application -> Components reddened
+    the fact, naming the edge; reverting greened it.
+
+
+    TWO THINGS THE WAVE HAD TO CREATE RATHER THAN MOVE. Production had never loaded a mod: the
+    pipeline was fully constructed and its only Apply site sat behind a menu the Launcher never
+    opened, so the boot-time load path is new code, not relocated code. And the SDK could not
+    express what vanilla needed -- a system taking a constructor dependency, and a seeder that runs
+    outside the system graph -- so IModApi grew a factory overload and a world-seeder hook
+    (ContractsVersion 2.1.1 -> 2.2.0 MINOR, zero native change). Both are boundary law B-3 in
+    action: a capability vanilla needs that the SDK cannot express is a gap to fix, never a
+    privileged loader branch.
+
+
+    TWO ARCHITECTURAL WALLS WERE RESPECTED, NOT ROUTED AROUND. The scheduler enforces one writer
+    per component type GLOBALLY, not per phase, so world seeding cannot be a system -- hence the
+    seeder hook and ParallelSystemScheduler.RunOutsideGraph. And the capability gate makes a mod's
+    subscription to an ENGINE-owned event unsatisfiable (the token resolves to owner "kernel" and
+    the kernel-provided set has been empty since W2), so the presentation translation became a span
+    diff rather than five event subscriptions -- which is the better shape regardless: a diff
+    cannot miss an event, cannot double-count one, and needs no ordering guarantee.
+
+
+    ONE SURFACE WITHDRAWN MID-WAVE. INavGridService and ISystemServices.NavGrid were added early,
+    reasoning that once the engine shed its game references only game-side code could build a
+    walkability grid. The first half was true and the second did not follow: a mod is not in the
+    ratchet's engine set, so it references the AI assembly directly and builds the grid itself.
+    Writing the consumer revealed there was no host grid to carry. Withdrawn in its own commit
+    before anything depended on it. ISystemServices' own doc had already forbidden exactly this
+    ("no speculative members"), and the rule was broken by reasoning that felt like measurement.
+
+
+    FOUR DEFECTS FOUND AND FIXED IN-WAVE, each with a red-then-green proof. Two directories
+    declared the same mod id and discovery returns filesystem order, so the composer refuses and
+    names both paths. SystemBase.Initialize fired per graph build rather than once per session.
+    EngineSession.Dispose threw after a mod-menu edit, because ModMenuController resumes the
+    pipeline on Commit and Cancel and UnloadAll refuses while the running flag is set -- shutdown
+    depended on which menus the player had opened. And the product would not start: the cut removed
+    the game assemblies from the host's deps.json, and the default load context resolves from that
+    file rather than by scanning its own directory, so files shipping beside the executable were
+    unloadable. That one was caught by the LIVE SMOKE and not by the suite, because a test
+    project's own deps.json lists them.
+
+
+    EAM R13 MOVES FROM OWNERLESS TO SETTLED. The eleven scenario tunables that were constants in
+    the composition root are declared in game.manifest.json, read by a loader that refuses an
+    unknown key, a missing field, a negative count or a map with no area, and handed to the seeding
+    mod as ScenarioConfig. The engine reads none of them; it carries them.
+
+
+    ONE REGRESSION RECORDED RATHER THAN HIDDEN (F-70). The composer's core set is empty and the
+    pipeline's rebuild does not mirror mod systems into the native graph, so the native scheduler
+    graph is EMPTY in production where it previously held ten edge-free systems. That is movement
+    AWAY from К-L12, SCHEDULER_ARCHITECTURE 1.1.0 says so in those words, and the interim rule
+    "dual registration stays mandatory" is marked FAILING rather than restated.
+
+
+    CENSUS AND CORPUS. No census pin moved across the whole cascade: the deleted files contributed
+    ZERO to every marker family, and when rewriting two reserved-stub handlers dropped "stub" from
+    51 to 46, the WORD was restored rather than the pin lowered -- the handlers are still reserved
+    surfaces and only their reachability changed. Three tier-4 DOC-F rows left the register by sync
+    when their READMEs were deleted (a README carries its frontmatter at end of file), and FRAMEWORK
+    2.0.1 -> 2.0.2 stops naming assets/scenes/README.md as a document class. Corpus 375 -> 372
+    documents, validate --armed exit 0.
+
+
+    DFK005 LOST ITS CARVE-OUT. The rule exempted a class literally named GameBootstrap; that class
+    is deleted and its successor is deliberately unsuffixed, so the exemption was removed rather
+    than transferred. The test that asserted silence on the name now asserts the diagnostic fires.
+
+
+    GATES. Build 0W/0E. Suite 1433/0/6 (baseline 1424/0/6). validate --armed exit 0. native/
+    byte-untouched throughout (MANAGED-ONLY). Live Launcher smoke: seven root mods loaded, scenario
+    armed with 21 component types, 11 systems, 200x200 map, zero unhandled exceptions -- and
+    OPERATOR VISUAL CONFIRMATION on the post-cut composition: the simulation runs and the colonists
+    move.
+  cross_references:
+    capa_entries: []

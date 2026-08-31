@@ -5,15 +5,15 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.4.1
+version: 1.5.0
 first_authored: 2026-07-18
-last_modified: '2026-08-20'
+last_modified: '2026-08-31'
 content_language: en
 next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 review_cadence: on-change
 last_review_date: 2026-07-19
-last_review_event: 'PATCH 1.4.0 -> 1.4.1 2026-08-20 (PR #49 Codex review correction): the W3 section records that the wave gate measured an unfaithful harness -- unload leaks the mod ALC and reload does not adopt the surviving singleton against the production component-type registry (F-60, S1, OPEN). The two affected W3 claims are withdrawn to the measured behaviour. Correction of a false claim, no plan change. Prior: MINOR 1.3.0 -> 1.4.0 2026-08-20 (W3_WEATHER_SLICE C8) -- W3 DONE with commit hashes, G1/G2/G4 closed and G3 ledgered, the three wave-gate defects recorded, section 2 stock deltas Events 52 / Systems 29. No lifecycle transition (Live).'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. W4 closes. BD-4 and BD-8 rows and the W4 narrative record what shipped, including the two things the wave had to CREATE rather than move (the boot-time mod-load path, which production never had, and the SDK surface vanilla needed) and the gate re-scoping from class level to assembly level.'
 reviewer: Crystalka
 ---
 
@@ -90,7 +90,7 @@ NOT ratified; each decision gets its own recon-grounded deliberation at charteri
 | BD-5 | Optional modules vs vanilla vs deletion | AI: only Pathfinding consumed (BehaviourTree/Jobs dormant); Persistence + Crypto.Future production-orphaned | W5 | Pathfinding -> L3 module; BehaviourTree/Jobs -> ride their first consumer; Crypto.Future -> deletion candidate; Persistence -> engine-generic core after DTO extraction |
 | BD-6 | Position/Health boundary test | kernel scans HealthComponent as capability marker; GameBootstrap uses PositionComponent generically | W5 (criterion recorded W1) | law from the assessment: if the kernel only stores bytes, the type is game/shared-mod-owned; if the kernel interprets it, it is a versioned L3 contract. Expect Position -> L3 spatial contract, Health -> vanilla. **Operational criterion (recorded W1)**: per component type, the boundary test asserts whether any engine (`src/`) code reads a specific field of the type as a capability marker or control input (INTERPRETS -> versioned L3 contract) versus only storing/relaying its bytes (game/shared-mod-owned); the executable Position/Health test lands at W5 when the slice moves |
 | BD-7 | Persistence ownership | EAM R12 vacant; 4 game DTO families engine-side; PSC held AUTHORED | W7 | engine snapshot = tick/time/RNG + identity + mod set + schema table + namespaced sections; mods own codecs/migrations; requires PSC ratification first |
-| BD-8 | Config ownership | ScenarioDef.StartingPawnCount + SceneMetadata.EtherDensity ORPHAN (never read); GameBootstrap hardcodes consts :58-68 | W4 | scenario/config -> distribution manifest (L4) + owning mods (L5); orphans deleted, not migrated |
+| BD-8 | Config ownership | DONE at W4: the eleven hardcoded scenario consts became `game.manifest.json`; the orphan DTO cluster (`Scene/` + `ScenarioDef` + `ScenarioLoader`, 530 lines / 15 files) was deleted, not migrated | W4 | scenario/config -> distribution manifest (L4) + owning mods (L5); orphans deleted, not migrated |
 | BD-9 | Presentation slots | 6 game command records; LayerType.CombatFeedback in Contracts | W6 | generic ordered layer/slot ids owned by engine; game layers registered by mods; engine renders primitives without knowing pawn/item semantics |
 | BD-10 | kernel.* reframing | KernelCapabilityRegistry (in Application -- A9) hard-scans Components/Events via markers, publishes vanilla types as kernel.* | W2 ✅ | **RESOLVED W2**: `KernelCapabilityRegistry` became an owner-namespaced **registration ledger**, relocated out of the composition layer (Application → `Core/Modding`); `BuildFromKernelAssemblies` retired → the kernel-provided FQN set is **empty** (the engine owns no gameplay types); `RegisterOwner(owner, assembly)` emits `<owner>.{verb}:{FQN}` and records ownership for the self-access predicate `Owns`. Live per-mod registration is mechanism-only — no producer this wave (vanilla mods define no types yet); wiring deferred to the slice-move wave |
 
@@ -170,12 +170,23 @@ chosen. The `src/` Weather stubs were deleted (C7), build-green proving they wer
 > presentation) / 6f23418 (C4 owner ledger live) / 9ee722a (C5 mod pair) / 3d525cd (C5a event-drop
 > fix) / 9699aa8 (C5b span-id fix) / ede3bda (C5c reload fix) / 1d8c300 (C6 wave gate) / 351d623
 > (C7 stub deletion) / C8 docs / C9 closure.
-**W4 -- Composition root + scenario (BD-4, BD-8).** GameBootstrap dissolves into an
-EngineSession composition root knowing only kernel/SDK/manifest/pipeline (INTERSECTS EQ-a
-Cascade B decision D3 -- EngineSession is designed ONCE, under this law); component
-registration, factories, seeds, initial spawn move to vanilla lifecycle stages; distribution
-manifest ships; orphan config deleted. Gate: EngineSession compiles with zero references to
-Components/Events/Systems/AI.
+**W4 -- Composition root + scenario (BD-4, BD-8). DONE 2026-08-31.** `GameBootstrap` dissolved
+into `EngineComposer`, which knows only kernel/SDK/manifest/pipeline; component registration,
+the two spawn factories, world seeding, pathfinding provision and the ten gameplay system
+registrations moved into a new `dualfrontier.vanilla.scenario` mod; `game.manifest.json` ships
+with a strict typed loader; the orphan DTO cluster was deleted. Gate MET and strengthened: the
+plan asked that `EngineSession` compile with zero references to Components/Events/Systems/AI,
+which was already true at class level before the wave began (EQ_A2 had made `EngineSession`
+game-vocabulary-free), so the falsifiable gate was re-scoped to the ASSEMBLY -- the four
+`ProjectReference` edges are gone and the boundary ratchet's baseline is ZERO.
+
+Two things the wave had to create rather than move. Production had never loaded a mod: the
+pipeline was fully built and never asked to apply anything, because its only call site sat
+behind a menu the Launcher never opened, so the boot-time load path is new. And the SDK could
+not express what vanilla needed -- a system taking a constructor dependency, and a seeder that
+runs outside the system graph -- so `IModApi` grew a factory overload and a world-seeder hook
+(ContractsVersion 2.1.1 -> 2.2.0 MINOR). Both are B-3 in action: an SDK gap vanilla hits is a
+gap to fix, never a privileged path.
 **W5 -- Slice replacement (clean rebuild + delete) (BD-5, BD-6).** Dependency-aware order: Vanilla.Core
 shared contracts -> World -> Pawn -> Inventory -> Combat -> Magic. Per slice, one closure: implement the
 slice CLEAN in its owning mod (register schemas -> systems -> tests -> presentation -> unload proof),
@@ -208,7 +219,7 @@ source identical across all three profiles.
 | Contracts game surface | 5 genre buses, IGameServices, LayerType game members, OwnershipMode | buses + IGameServices **dissolved to `Core.Bus` ✅ W2 (BD-3a/b)**; OwnershipMode -> Vanilla.Magic shared contract; LayerType game members -> mod-registered slots (BD-9, later) |
 | Application/Bridge commands | PawnSpawned/PawnState/PawnDied/ItemSpawned + 2 more (6 records) | Vanilla presentation mods (W6) |
 | Persistence DTOs | PawnSnapshot, StorageSnapshot, TileMapSnapshot (TerrainKind RLE), WorldSnapshot | mod-owned sections/codecs (W7) |
-| Scenario/config | ScenarioDef, SceneMetadata (orphan), GameBootstrap consts | manifest (L4) + owning mods; orphans deleted (BD-8, W4) |
+| Scenario/config | DONE at W4 | `game.manifest.json` -> `ScenarioConfig` -> the seeding mod (L4); the orphan DTOs were deleted (BD-8) |
 | KernelCapabilityRegistry | in Application (A9) | engine-side registration ledger, engine capabilities only (BD-10, W2) — **✅ DONE W2: relocated to `Core/Modding`, owner-namespaced, kernel surface empty** |
 
 ## 6. Interaction with the standing queues

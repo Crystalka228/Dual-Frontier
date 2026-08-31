@@ -3,10 +3,13 @@ using DualFrontier.Contracts.Core;
 namespace DualFrontier.Events.Pawn;
 
 /// <summary>
-/// Published from GameBootstrap after the ItemFactory.Spawn iteration. Carries
-/// the spawned item's EntityId, position and kind (presentation hint).
-/// Subscribed by GameBootstrap's bridge wiring, converted to
-/// <c>ItemSpawnedCommand</c> and dispatched to <c>ItemLayer</c>.
+/// Carries a spawned item's EntityId, position and kind (presentation hint).
+///
+/// NOTHING PUBLISHES THIS. The engine's composition root did, once per starting item, so that
+/// its own subscription could turn each one into an <c>ItemSpawnedCommand</c> whose handler was
+/// empty. W4 moved seeding into the vanilla scenario mod, which reports colonists through the
+/// generic presentation surface and does not raise this event; both ends of the round trip are
+/// gone rather than one. The type is left standing for whoever revives item visuals.
 ///
 /// Bus: published on the Pawns bus initially. Semantic naming limitation —
 /// PawnSpawnedEvent and ItemSpawnedEvent both flow on the same channel.

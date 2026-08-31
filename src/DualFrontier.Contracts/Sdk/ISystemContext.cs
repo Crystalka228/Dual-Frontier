@@ -192,6 +192,26 @@ public interface ISystemContext
     /// </summary>
     void SetAmbientTint(float r, float g, float b, float strength);
 
+    /// <summary>
+    /// Makes <paramref name="entity"/> visible at the given tile-grid position. The renderer
+    /// owns what it looks like; a mod says only that something is there and where.
+    ///
+    /// <para>
+    /// W4. Deliberately phrased in ENGINE vocabulary — an entity and a position — rather than in
+    /// the game's. Boundary law B-2 keeps gameplay nouns out of engine assemblies, and a member
+    /// called "spawn a pawn" would put one in Contracts, which is the most load-bearing assembly
+    /// of all. Like <see cref="SetAmbientTint"/>, these three are single primitives that the
+    /// full layer and slot model (BD-9) supersedes and absorbs.
+    /// </para>
+    /// </summary>
+    void ShowEntitySprite(EntityId entity, float x, float y);
+
+    /// <summary>Moves the entity's sprite. A no-op for an entity that was never shown.</summary>
+    void MoveEntitySprite(EntityId entity, float x, float y);
+
+    /// <summary>Releases the entity's sprite. A no-op for an entity that was never shown.</summary>
+    void HideEntitySprite(EntityId entity);
+
     // ---- Events ----
 
     /// <summary>

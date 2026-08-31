@@ -1,7 +1,7 @@
 using DualFrontier.Contracts.Attributes;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Math;
-using DualFrontier.Core.Interop;
+using DualFrontier.Contracts.Sdk;
 
 namespace DualFrontier.Components.Pawn;
 
@@ -24,17 +24,28 @@ public struct MovementComponent : IComponent
 
     /// <summary>
     /// Pathfinding waypoints to <see cref="Target"/>. Walked sequentially via
-    /// <see cref="PathStepIndex"/> rather than via RemoveAt because
-    /// <see cref="NativeComposite{T}.RemoveAt"/> uses swap-with-last semantics
+    /// <see cref="PathStepIndex"/> rather than via RemoveAt because the composite's
+    /// <c>RemoveAt</c> uses swap-with-last semantics
     /// that would break the FIFO walk order. Path is fully populated at
     /// pathfinding time; <see cref="PathStepIndex"/> advances from 0 toward
     /// CountFor(entity); when index == count the path is done.
     ///
     /// Default is the invalid sentinel (<c>IsValid == false</c>) — must be
-    /// constructed via <c>NativeWorld.CreateComposite&lt;GridVector&gt;()</c>
+    /// constructed via <c>NativeWorld.CreateCompositeHandle&lt;GridVector&gt;()</c>
     /// at factory time before MovementSystem can populate steps.
+    ///
+    /// <para>
+    /// W4 re-typed this from the <c>Core.Interop</c> wrapper to the Contracts-side handle, for
+    /// the same reason as <c>IdentityComponent.Name</c> — a mod must be able to name the field's
+    /// type. It also removes a raw pointer from the entity store: the wrapper carried
+    /// <c>(id, IntPtr)</c> and the handle carries the id alone, with
+    /// <c>NativeWorld.GetComposite&lt;T&gt;(id)</c> re-binding a working wrapper on demand. The
+    /// pointer was always recoverable from the id — the kernel mints it FROM the id — so nothing
+    /// is lost, and the component shrinks by 16 bytes. Managed-only: the kernel stores these
+    /// bytes and never reads them.
+    /// </para>
     /// </summary>
-    public NativeComposite<GridVector> Path;
+    public CompositeHandle<GridVector> Path;
 
     /// <summary>0-based index into <see cref="Path"/>: the next waypoint to walk.</summary>
     public int PathStepIndex;

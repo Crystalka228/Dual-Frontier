@@ -26,8 +26,23 @@ public readonly struct ContractsVersion : IEquatable<ContractsVersion>
     /// the permanently-dead (0, v&gt;0) corner valid). No member was added, removed or
     /// reshaped -- the mod-visible signatures are identical; what changed is that the values
     /// flowing through them are now correct for a recycled index (К-L22, F-59).
+    /// W4 bumps 2.1.1 -> 2.2.0 (MINOR, purely additive). What actually shipped: IModApi gained
+    /// the factory registration overload W1 held back for want of a consumer, plus
+    /// RegisterWorldSeeder and the Scenario accessor; ISystemContext gained three
+    /// engine-vocabulary sprite effects; and the Contracts.Distribution family (ScenarioConfig,
+    /// ScenarioCounts) is new. IModApi and ISystemContext are engine-implemented and
+    /// mod-CONSUMED, which is the CONTRACTS.md §4.2 shape that makes member additions MINOR
+    /// rather than MAJOR; new types are non-breaking outright per §4.
+    ///
+    /// This rationale previously advertised an ISystemServices walkability-grid member and a new
+    /// INavGridService type. Both were added and WITHDRAWN inside this same wave, in commit
+    /// 9320e51, once writing the composer proved a mod builds its own grid and closes over it --
+    /// so the surface had no consumer. Neither exists at any commit that shipped, and the text
+    /// naming them survived the withdrawal by describing a plan rather than a result. An
+    /// independent review measured it. The version number was never in doubt: the surviving
+    /// additions justify MINOR on their own.
     /// </summary>
-    public static readonly ContractsVersion Current = new(2, 1, 1);
+    public static readonly ContractsVersion Current = new(2, 2, 0);
 
     /// <summary>
     /// Major component: bumped on breaking changes.

@@ -12,7 +12,7 @@ namespace DualFrontier.Launcher;
 /// </summary>
 /// <param name="PawnId">Pawn entity identifier from domain.</param>
 /// <param name="Region">UV region within atlas texture (deterministic per <paramref name="PawnId"/>).</param>
-/// <param name="Position">World-space position в tile-grid units (from PawnSpawnedCommand/PawnMovedCommand).</param>
+/// <param name="Position">World-space position в tile-grid units (from EntityAppearedCommand/EntityMovedCommand).</param>
 /// <param name="Scale">Sprite size в pixels (16×16 default per ProceduralAtlas tile dimensions).</param>
 public sealed record PawnSpriteEntry(
     EntityId PawnId,

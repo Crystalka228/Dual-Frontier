@@ -54,7 +54,7 @@ internal sealed class ParallelSystemScheduler
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
     private readonly NativeWorld _nativeWorld;
-    // K8.3+K8.4 — Path β resolver passed by GameBootstrap (ModRegistry
+    // K8.3+K8.4 — Path β resolver passed by the composition root (ModRegistry
     // implements IManagedStorageResolver). Null in tests + builds without
     // mod loading; system-side SystemBase.ManagedStore<T>() returns null
     // when this is null.
@@ -127,12 +127,17 @@ internal sealed class ParallelSystemScheduler
     }
 
     /// <summary>
-    /// Invokes <see cref="SystemBase.Initialize"/> on every registered system
-    /// exactly once, with the isolation guard active. This is where systems
-    /// subscribe to domain buses via <c>Services</c>, so the execution context
-    /// must be pushed for each call — otherwise <c>SystemBase.Services</c>
-    /// would throw. Called at the end of the constructor and
+    /// Invokes <see cref="SystemBase.Initialize"/> on every system in the CURRENT phase set,
+    /// with the isolation guard active. This is where systems subscribe to domain buses via
+    /// <c>Services</c>, so the execution context must be pushed for each call — otherwise
+    /// <c>SystemBase.Services</c> would throw. Called at the end of the constructor and of
     /// <see cref="Rebuild"/>.
+    ///
+    /// This method is NOT "exactly once" and never was: it is called again on every
+    /// <see cref="Rebuild"/>, and a rebuild happens on every mod-set change, so a system that
+    /// survives a rebuild is visited again. The once-per-instance guarantee lives on
+    /// <see cref="SystemBase.Initialize"/> itself, which latches per instance. The earlier
+    /// wording here claimed the guarantee this method does not provide.
     /// </summary>
     private void InitializeAllSystems()
     {
@@ -275,6 +280,45 @@ internal sealed class ParallelSystemScheduler
     /// remain referentially identical.
     /// </summary>
     internal IReadOnlyList<SystemPhase> Phases => _phases;
+
+    /// <summary>
+    /// Runs <paramref name="body"/> once with a live execution context, OUTSIDE the system graph.
+    ///
+    /// <para>
+    /// W4. The graph enforces one writer per component type, globally rather than per phase, and
+    /// that is the right law: it is what makes parallel phase dispatch safe without a lock. It
+    /// also means world SEEDING cannot be a system. A seeder writes the same components the
+    /// gameplay systems own, so declaring those writes honestly collides with every one of them,
+    /// and declaring fewer would be lying to the very structure the law depends on.
+    /// </para>
+    ///
+    /// <para>
+    /// Before this wave the seeding ran in the engine's composition root, outside the graph by
+    /// construction, which is why the question never arose. Once the scenario moved into a mod
+    /// there was no way to reach the world outside the graph at all: the mod api has no world
+    /// access and a system context only exists inside a tick. This is that seam, and it is
+    /// deliberately narrow — a name for diagnostics, an origin so a throw is routed to the right
+    /// owner, and one invocation.
+    /// </para>
+    /// </summary>
+    internal void RunOutsideGraph(string name, SystemOrigin origin, string? modId, Action body)
+    {
+        if (name is null) throw new ArgumentNullException(nameof(name));
+        if (body is null) throw new ArgumentNullException(nameof(body));
+
+        var ctx = new SystemExecutionContext(
+            name, origin, modId, _faultSink, _nativeWorld, _services, _managedStorageResolver);
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            body();
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+    }
 
     private SystemExecutionContext BuildContext(SystemBase system)
     {

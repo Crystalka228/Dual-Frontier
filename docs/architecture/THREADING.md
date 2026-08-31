@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-07-15
-last_modified: 2026-07-17
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Multithreading (authored rework; absorbs the FEEDBACK_LOOPS engine cycle/snapshot rule)
@@ -16,7 +16,7 @@ supersedes:
 last_modified_commit: ff24980
 review_cadence: on-change+annual
 last_review_date: 2026-07-17
-last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Section 3''s dual-registration paragraph re-anchors from GameBootstrap to EngineComposer and states that the loop survives with an EMPTY core set, so no production system reaches the native plane.'
 reviewer: Crystalka
 special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
 ---
@@ -60,7 +60,7 @@ Pipeline-slot transitions (`pipeline_slot.cpp`, К-L16) feed the wake machinery 
 
 ## §3 The managed layer — dispatch facade
 
-`GameBootstrap` (`src/DualFrontier.Application/Loop/GameBootstrap.cs`) registers every Core system **twice** at startup:
+`EngineComposer` (`src/DualFrontier.Application/Loop/EngineComposer.cs`) still contains the loop that registers every Core system **twice** at startup, but since W4 its core set is EMPTY and every production system is registered by a mod, reaching only the managed plane. What the loop would do, for the record:
 
 1. With the **native graph**, via `SystemGraphInterop.RegisterSystem` + `WakeRegistryInterop.SubscribeTimer(id, 1)`, then `ComputeStaticGraph()` (`:160-181`) — empty read/write id sets (`:173-174`), priority class Normal (`2`), TimerWake rate 1 (`:179`): every system wakes every tick. This is the empty-set registration §2 describes.
 2. With the **managed `DependencyGraph`** (`src/DualFrontier.Core/Scheduling/DependencyGraph.cs`), which reads `[SystemAccess]` via reflection once at registration (`AddSystem`, `:36-63`), builds write-to-read edges over exact `System.Type` identity (`Build`, `:73-176`), rejects write-write conflicts and cycles, and groups systems into ordered `SystemPhase` lists.

@@ -6,9 +6,8 @@ namespace DualFrontier.Application.Modding;
 
 /// <summary>
 /// Concrete <see cref="ISystemServices"/> — the construction-time dependency
-/// surface handed to system factories (W1 BD-2). Day-one surface is exactly the
-/// measured injection: pathfinding (the sole service the harness injects, into
-/// <c>MovementSystem</c>). No speculative members.
+/// surface handed to system factories (W1 BD-2). Every member is a measured injection, never a
+/// speculative one: pathfinding, which <c>MovementSystem</c> takes at construction.
 /// </summary>
 internal sealed class SystemServices : ISystemServices
 {

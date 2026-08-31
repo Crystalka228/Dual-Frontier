@@ -31,7 +31,7 @@ public struct DecorativeAuraComponent : IComponent
     /// <summary>
     /// Fraction of <see cref="DualFrontier.Components.Pawn.NeedKind.Comfort"/>
     /// restored per simulation tick для each pawn within
-    /// <see cref="Radius"/> ([0..1]). Calibrated by M8.4 ItemFactory per
+    /// <see cref="Radius"/> ([0..1]). Calibrated by the seeding mod per
     /// decoration tier (rug = small, statue = large).
     /// </summary>
     public float ComfortPerTick;

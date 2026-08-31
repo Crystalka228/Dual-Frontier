@@ -7,6 +7,7 @@ using System.Threading;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
@@ -144,7 +145,7 @@ internal sealed class ModIntegrationPipeline
     /// MOD_OS_ARCHITECTURE §5.1.
     ///
     /// K6.1 — <paramref name="faultHandler"/> is provided by the orchestrator
-    /// (<see cref="DualFrontier.Application.Loop.GameBootstrap"/>) which
+    /// (<see cref="DualFrontier.Application.Loop.EngineComposer"/>) which
     /// constructs the handler before the scheduler so the scheduler ctor
     /// can take it as an immutable sink. The pipeline does NOT own the
     /// handler; it holds a reference to query <see cref="ModFaultHandler.GetFaultedMods"/>
@@ -563,6 +564,14 @@ internal sealed class ModIntegrationPipeline
         IReadOnlyDictionary<SystemBase, SystemMetadata> newMetadata =
             SystemMetadataBuilder.Build(_registry);
         _scheduler.Rebuild(localGraph.GetPhases(), newMetadata);
+
+        // W4 — run any world seeders the batch registered, ONCE, outside the graph and before
+        // the first tick. Seeding cannot be a system: the graph enforces one writer per component
+        // type globally, so a seeder declaring what it writes collides with every gameplay system
+        // that owns one. TakePendingSeeders clears the list, so a later rebuild does not re-run
+        // them; a mod that re-registers on reload has asked to seed again and is responsible for
+        // checking the world first.
+        RunPendingWorldSeeders();
 
         return new PipelineResult(
             Success: true,
@@ -1193,6 +1202,42 @@ internal sealed class ModIntegrationPipeline
             if (AssemblyLoadContext.GetLoadContext(asm) != mod.Context)
                 continue;
             _kernelCapabilities.RegisterOwner(owner, asm);
+        }
+    }
+
+    /// <summary>
+    /// Invokes each pending world seeder with a live context, after the scheduler rebuild.
+    ///
+    /// <para>
+    /// <b>A seeder throw is NOT contained.</b> This comment previously claimed the opposite --
+    /// that a fault here was routed to the mod and the mod quarantined, as a tick fault would be.
+    /// It is not: <c>RunOutsideGraph</c> pushes and pops the execution context in a
+    /// <c>finally</c> and catches nothing, so the exception leaves <c>Apply</c> with the mod set
+    /// already installed and the scheduler already rebuilt. The pipeline's rollback blocks are
+    /// above this point and do not run.
+    /// </para>
+    ///
+    /// <para>
+    /// That is the behaviour the tests actually pin: a scenario asking for more colonists than
+    /// its map can hold refuses loudly out of <c>Apply</c> rather than degrading to a quarantined
+    /// mod. Loud refusal is the right disposition for a seeder, whose whole job runs once before
+    /// the first tick -- a half-seeded world is not a degraded game, it is a broken one. What was
+    /// wrong was the description, so the description is what changed here. Whether the boundary
+    /// should ALSO roll back the installed set is a real question and is ledgered, not answered
+    /// by a comment.
+    /// </para>
+    /// </summary>
+    private void RunPendingWorldSeeders()
+    {
+        IReadOnlyList<(string ModId, Action<ISystemContext> Seed)> seeders =
+            _registry.TakePendingSeeders();
+        if (seeders.Count == 0) return;
+
+        foreach ((string modId, Action<ISystemContext> seed) in seeders)
+        {
+            ISystemContext view = _registry.CreateContextView(modId);
+            _scheduler.RunOutsideGraph($"{modId}.worldSeeder", SystemOrigin.Mod, modId,
+                () => seed(view));
         }
     }
 

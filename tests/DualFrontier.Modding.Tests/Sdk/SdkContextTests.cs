@@ -65,6 +65,20 @@ internal sealed class RecordingPresentationSink : IPresentationSink
 
     public void SetAmbientTint(float r, float g, float b, float strength)
         => Calls.Add((r, g, b, strength));
+
+    /// <summary>Entity sprite calls, recorded in order: (entity, x, y) for show and move.</summary>
+    public List<(EntityId Entity, float X, float Y)> Shown { get; } = new();
+
+    public List<(EntityId Entity, float X, float Y)> Moved { get; } = new();
+
+    public List<EntityId> Hidden { get; } = new();
+
+    public void ShowEntitySprite(EntityId entity, float x, float y) => Shown.Add((entity, x, y));
+
+    public void MoveEntitySprite(EntityId entity, float x, float y) => Moved.Add((entity, x, y));
+
+    public void HideEntitySprite(EntityId entity) => Hidden.Add(entity);
+
 }
 
 internal sealed class StubPathfinding : IPathfindingService
@@ -360,10 +374,15 @@ public sealed class SdkContextTests
     [Fact]
     public void ContractsVersion_IsMinorBumped_AndStillSatisfiesCaret2_0_0_Manifests()
     {
-        ContractsVersion.Current.Should().Be(new ContractsVersion(2, 1, 1),
+        ContractsVersion.Current.Should().Be(new ContractsVersion(2, 2, 0),
             "W3's 2.1.0 added SDK members without removing or reshaping any (MINOR); ID-B " +
             "then corrected what flows THROUGH those members — SpanScope.Pairs yields true " +
-            "versions and EntityId.IsValid is Index > 0 — with no surface change at all (PATCH)");
+            "versions and EntityId.IsValid is Index > 0 — with no surface change at all (PATCH); " +
+            "W4's 2.2.0 added the IModApi factory registration overload, RegisterWorldSeeder and " +
+            "Scenario, three ISystemContext sprite effects, and the Contracts.Distribution " +
+            "family. Members were added to interfaces that are engine-implemented and " +
+            "mod-consumed, which is the CONTRACTS.md §4.2 shape that keeps such additions MINOR; " +
+            "new types are non-breaking outright per §4");
 
         VersionConstraint.Parse("^2.0.0").IsSatisfiedBy(ContractsVersion.Current).Should().BeTrue(
             "every on-disk manifest pins apiVersion ^2.0.0; neither bump must strand them");

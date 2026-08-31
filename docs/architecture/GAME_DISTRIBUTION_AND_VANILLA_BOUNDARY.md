@@ -5,15 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.1.0
 first_authored: 2026-07-18
-last_modified: 2026-07-18
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'Banner PATCH 1.0.0 -> 1.0.1 2026-07-18 (BOUNDARY_BANNER_PATCH, DOC-D-BOUNDARY_BANNER_PATCH_BRIEF; operator chat ratification 2026-07-18): the stale body banner (AUTHORED target-axis law, pending ratification) updated to the ratified-successor LOCKED form; no lifecycle transition. Prior: ratified LOCKED v1.0.0 2026-07-18 per EVT-2026-07-18-BOUNDARY_W0 (BOUNDARY_W0 C3), opening the game-vs-engine composition axis grounded in DOC-E-GAME_ENGINE_BOUNDARY_AUDIT_REPORT (HEAD 4c58942); AUTHORED 0.1.0 enrolled at C1.'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
 reviewer: Crystalka
 ---
 
@@ -56,11 +56,13 @@ L3 libraries, not L1 syscalls.
 
 - **B-1 Zero engine-to-game references.** No engine assembly (Contracts, Core, Core.Interop,
   Runtime, Application, Launcher) may reference a game assembly or game type, by
-  ProjectReference, InternalsVisibleTo, or reflection-by-name. Measured baseline at HEAD
-  4c58942: exactly 4 ProjectReference edges (all `DualFrontier.Application.csproj` ->
+  ProjectReference, InternalsVisibleTo, or reflection-by-name. The baseline measured at HEAD
+  4c58942 was 4 ProjectReference edges (all `DualFrontier.Application.csproj` ->
   Components/Events/Systems/AI), 1 IVT (`Core.csproj` -> Systems, already documented
-  removable), 1 test-fixture leak (Fixture.RegularMod_ReplacesCombat -> Core). The
-  migration drives these to zero; this rule then holds them there.
+  removable), 1 test-fixture leak (Fixture.RegularMod_ReplacesCombat -> Core).
+  **W4 (2026-08-31) cut the ProjectReference edges to ZERO** by dissolving the composition
+  root that was their only reason to exist; the IVT and the fixture leak remain. The
+  migration drives what is left to zero; this rule then holds them there.
 - **B-2 No new gameplay nouns in src/ (effective at ratification).** New game mechanics,
   components, events, systems, and configuration are born in `mods/`, never in engine
   assemblies. The existing inventory (28 component types, 53 events, 30 systems, 20 AI
@@ -93,7 +95,7 @@ L3 libraries, not L1 syscalls.
 | DualFrontier.Components (28), Events (53), Systems (30) | L5 | per-slice owners: Vanilla.Core/World/Pawn/Inventory/Combat/Magic; PositionComponent + HealthComponent pass the BD-6 boundary test first |
 | Presentation commands (6 records) + game render subscriptions | L5 | engine keeps primitives/layers/slots; BD-9 |
 | Persistence DTOs (PawnSnapshot, StorageSnapshot, TerrainKind RLE, WorldSnapshot) | L5 | mod-owned sections/codecs; gated on PSC ratification; BD-7 |
-| ScenarioDef / SceneMetadata (orphan today) + GameBootstrap consts | L4/L5 | scenario is distribution+mod configuration; BD-8 |
+| Scenario configuration | L4 | DONE at W4: `game.manifest.json` -> `ScenarioConfig` -> the seeding mod. `ScenarioDef` and the whole `Scene/` DTO family were deleted rather than migrated -- measured orphans with no consumer (BD-8) |
 
 ## 4. Cutover discipline (inherited, cited)
 

@@ -8,10 +8,10 @@ namespace DualFrontier.Events.Pawn;
 /// item-spawn time.
 ///
 /// Lives in DualFrontier.Events because it is part of <see cref="ItemSpawnedEvent"/>'s
-/// payload. Application's <c>ItemSpawnedCommand</c> reuses the same enum via
-/// the existing Application → Events reference; placing the enum in
-/// Application would create a circular dependency since Events cannot
-/// reference Application.
+/// payload. The engine's render command carried this same enum until W4, through an
+/// Application → Events reference that no longer exists; it carries an opaque int now,
+/// because a game enum cannot appear in an engine assembly (boundary law B-2). Whoever
+/// revives item visuals owns the mapping between the two.
 /// </summary>
 public enum ItemKind
 {

@@ -5,15 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.0.3
 first_authored: 2026-07-15
-last_modified: 2026-07-18
+last_modified: 2026-08-31
 content_language: en
 next_review_due: 2027-Q3
 title: Concurrency & Memory Model — owner threads, happens-before catalog, lock order, shutdown semantics (the A1 contract)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'EQ_A2_SHUTDOWN_TRANSACTION Cascade B — v1.0.1 → v1.0.2 PATCH: §6.2 gains a cross-reference to the abnormal-exit (fence-abort) contract now owned by ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.6 (D10). EVT-2026-07-18-EQ_A2_SHUTDOWN_TRANSACTION. Prior: EQ_A1 D2 fault-symmetry (v1.0.0 → v1.0.1); DRAFTS_RATIFICATION Phase C (AUTHORED → LOCKED v1.0.0).'
+last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Menu-path, phase-list and bootstrap-publication anchors re-homed to EngineComposer; the boot-time Apply is recorded as a third T1 context, earlier than the menu path and free of concurrency; a stale gameContext identifier corrected to session (EQ_A2 drift).'
 reviewer: Crystalka
 special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.'
 ---
@@ -63,7 +63,7 @@ The tables below use *contexts*, not raw thread ids, because T3 workers are fung
 
 - **Phase-legal context** — a T3 worker executing a system whose `[SystemAccess]` declaration covers the touched component/field/bus (THREADING §4 (SystemAccess declaration law)), with its `SystemExecutionContext` pushed. The declaration graph, not a lock, is what makes two simultaneous phase-legal writers safe (K-L11: they can never target the same component type).
 - **Driver context** — T2 between phases and between ticks: the only context allowed to run `FlushDeferred`, `TickScheduler.Advance`, the Background drain, and slot acquisition.
-- **Menu path** — T1 while the loop is paused via the `ModMenuController` hooks (`GameBootstrap.cs:216-217`): the only context allowed to run mod load/unload and `Rebuild`.
+- **Menu path** — T1 while the loop is paused via the `ModMenuController` hooks (`EngineComposer.cs:154-155`): the only context allowed to run mod load/unload and `Rebuild`. Since W4 the BOOT path also runs `Apply` once, on T1, before the loop thread is started — earlier than any of these, and with no concurrency to reason about.
 - **Render context** — T1 inside the frame loop: bridge drain, `SceneState`, all graphics-queue Vulkan calls.
 
 ## §2 Owner-thread table
@@ -87,7 +87,7 @@ The tables below use *contexts*, not raw thread ids, because T3 workers are fung
 |---|---|---|
 | `SpanLease<T>` | The acquiring system's T3 worker | Nobody. The pointer is valid only until `Dispose`; the lease must not escape its phase (KERNEL_ARCHITECTURE §1.7; FIELDS §5 states the same window for field spans). ⚠ Pair iteration synthesizes `Version = 1` (`SpanLease.cs:76-84,112`) — §9.5 |
 | `WriteBatch<T>` | The opening system's T3 worker | Nobody; record and `Flush` on the owner thread only. Managed guards throw on misuse (`WriteBatch.cs:185-189`) |
-| `DependencyGraph` / installed phase list | T1 at bootstrap (`GameBootstrap.cs:145-148`); menu path for `Rebuild` | T2 reads `_phases` every tick (`ParallelSystemScheduler.cs:177`). `Rebuild` (`:191-222`) is legal **only** while the loop is paused (`ModMenuController` hooks — `GameBootstrap.cs:216-217`). ⚠ Convention only; no runtime check |
+| `DependencyGraph` / installed phase list | T1 at composition (`EngineComposer.cs:95-98`, empty since W4) and at the boot `Apply`; menu path for later `Rebuild` | T2 reads `_phases` every tick (`ParallelSystemScheduler.cs:177`). `Rebuild` (`:191-222`) is legal **only** while the loop is paused (`ModMenuController` hooks — `EngineComposer.cs:154-155`) or before it starts. ⚠ Convention only; no runtime check |
 | `TickScheduler` | T2 (`Advance` after the last phase, `:180`) | T3 workers call `ShouldRun` inside phases (read-only, memoised lookup, `:151`) |
 | `GameServices` + five `DomainEventBus` instances | Constructed on T1; no single runtime owner | Subscriber lists guarded by `lock (list)` (`DomainEventBus.cs:46,71,129,153`); `Publish` from any in-phase T3 worker; `FlushDeferred` from T2 only, at the phase boundary (`ParallelSystemScheduler.cs:166-167` → `GameServices.cs:55-62`) |
 | Deferred queues (one per bus) | — (MPSC by convention) | `ConcurrentQueue<DeferredItem>` (`DomainEventBus.cs:28`): many T3 producers, single T2 consumer. ⚠ Unbounded |
@@ -178,7 +178,7 @@ Notation: *A ➜hb B, established by M*. If an edge is not in this catalog, cros
 7. **Subscription add → next publish (snapshot semantics).** `Subscribe` ➜hb the first `Publish`/`FlushDeferred` whose subscriber snapshot is taken after the subscribe — established by `lock (list)` in both `Subscribe` and the snapshot copies (`DomainEventBus.cs:46,129,153`). A publish racing a subscribe may legitimately miss the new subscriber. **No stronger guarantee is offered, and none may be assumed.**
 8. **ALC unload → finalization.** All per-mod detachment — recorded managed unsubscribes, `ModSubScheduler` removal, native per-mod teardown (T0-T7 single critical section) — ➜hb `AssemblyLoadContext.Unload` ➜hb collection/finalization of mod state — established by the §9.4 chain order (`ModIntegrationPipeline.cs:60-72`; MOD_OS_ARCHITECTURE §9.4) executing under the K-L18 precondition `sim_state == Paused && pipeline_slots_quiescent()` (`historical/KERNEL_FULL_NATIVE_SCHEDULER.md` Item 41), with step 7's `WeakReference` poll as the finalization observation (`ModIntegrationPipeline.cs:115-120`).
 9. **Native tier publish → drain callback.** A tier publish ➜hb its subscriber callback — established by the tier mutex around enqueue and the drain's locked queue swap (EVENT_BUS §3; `background_queue.cpp:145-152`).
-10. **Bootstrap publication.** Everything constructed in `GameBootstrap.CreateLoop` on T1 — world population, graph, subscriptions made in `InitializeAllSystems` (`ParallelSystemScheduler.cs:104,115-133`) — ➜hb T2's first tick — established by `Thread.Start` (`GameLoop.cs:69`), which is a full publication edge in the .NET memory model. Corollary: post-`Start` construction on T1 has **no** edge to T2; the composition root must not mutate simulation state after `Loop.Start()` (`Program.cs:66`).
+10. **Bootstrap publication.** Everything constructed in `EngineComposer.CreateSession` on T1 — including, since W4, everything the boot-time `Apply` registers — — world population, graph, subscriptions made in `InitializeAllSystems` (`ParallelSystemScheduler.cs:104,115-133`) — ➜hb T2's first tick — established by `Thread.Start` (`GameLoop.cs:69`), which is a full publication edge in the .NET memory model. Corollary: post-`Start` construction on T1 has **no** edge to T2; the composition root must not mutate simulation state after `Loop.Start()` (`Program.cs:66`).
 11. **Tick counter.** `TickScheduler.Advance` on T2 after the last phase (`ParallelSystemScheduler.cs:180`) ➜hb every `ShouldRun` in the next tick's phases — established by the `Parallel.ForEach` fork. The counter needs no interlocking *because* this is its only writer and the fork/join brackets every reader.
 12. **Control flags (visibility-only, no ordering).** `SetPaused`/`SetSpeed` writes ➜visible-to T2's next loop-head read via `volatile` (`GameLoop.cs:44-45,80,91-92`) — but this is *not* a happens-before with the tick body: a pause request during `ExecuteTick` takes effect only at the next iteration. Anything needing tick-boundary certainty must use the K-L18 quiescence wait, not the flag (`SimulationStateController.WaitForQuiescenceAsync`).
 
@@ -208,7 +208,7 @@ Lock-free primitives sit **outside** the order and may be touched at any level: 
 
 ### 6.1 What `Stop` guarantees today (current truth — documented as violation)
 
-`GameLoop.Stop` = `_cts.Cancel()` then `_thread?.Join(2000)` (`GameLoop.cs:73-77`). The `Join` return value is ignored. On timeout, T2 is **abandoned** — possibly inside `ExecuteTick` with live spans, mid `WriteBatch`, or mid Background drain, all touching `NativeWorld`. `Program.Main` then continues: `gameContext.Loop.Stop(); renderer.Shutdown();` (`Program.cs:94-97`). No production code disposes `NativeWorld` (no `Dispose` call in GameBootstrap or the Launcher); destruction runs only in the finalizer (`NativeWorld.cs:496-503`). Consequence: T5 can execute `df_world_destroy` **concurrently with an abandoned T2 inside `df_world_*`** — undefined behavior; `is_alive`'s generation gate (`world.cpp:74-78`) does not protect against a freed `World`. There is no sim/native quiesce fence at shutdown, no native graph/wake teardown, and `df_bus_clear` is reachable only via `ManagedBusBridge.ClearForTesting` (`ManagedBusBridge.cs:129-131`). The full observed exit sequence, for the record:
+`GameLoop.Stop` = `_cts.Cancel()` then `_thread?.Join(2000)` (`GameLoop.cs:73-77`). The `Join` return value is ignored. On timeout, T2 is **abandoned** — possibly inside `ExecuteTick` with live spans, mid `WriteBatch`, or mid Background drain, all touching `NativeWorld`. `Program.Main` then continues: `session.Loop.Stop(); renderer.Shutdown();` (`Program.cs:94-97`). No production code disposes `NativeWorld` (no `Dispose` call in GameBootstrap or the Launcher); destruction runs only in the finalizer (`NativeWorld.cs:496-503`). Consequence: T5 can execute `df_world_destroy` **concurrently with an abandoned T2 inside `df_world_*`** — undefined behavior; `is_alive`'s generation gate (`world.cpp:74-78`) does not protect against a freed `World`. There is no sim/native quiesce fence at shutdown, no native graph/wake teardown, and `df_bus_clear` is reachable only via `ManagedBusBridge.ClearForTesting` (`ManagedBusBridge.cs:129-131`). The full observed exit sequence, for the record:
 
 1. `runtime.Window.IsOpen` turns false → T1 leaves the frame loop (`Program.cs:70`).
 2. `gameContext.Loop.Stop()` → cancel + bounded join, result ignored (`GameLoop.cs:73-77`).

@@ -46,7 +46,7 @@ public sealed class MovementComponentTests
 
         var component = new MovementComponent
         {
-            Path = world.CreateComposite<GridVector>(),
+            Path = world.CreateCompositeHandle<GridVector>(),
         };
 
         var waypoints = new[]
@@ -56,14 +56,14 @@ public sealed class MovementComponentTests
             new GridVector(3, 0),
         };
         foreach (GridVector wp in waypoints)
-            component.Path.Add(entity, wp);
+            world.GetComposite<GridVector>(component.Path.CompositeId).Add(entity, wp);
 
-        component.Path.CountFor(entity).Should().Be(3);
+        world.GetComposite<GridVector>(component.Path.CompositeId).CountFor(entity).Should().Be(3);
 
         // Walk via index advancement — preserves insertion order.
         for (int i = 0; i < waypoints.Length; i++)
         {
-            component.Path.TryGetAt(entity, component.PathStepIndex, out GridVector next).Should().BeTrue();
+            world.GetComposite<GridVector>(component.Path.CompositeId).TryGetAt(entity, component.PathStepIndex, out GridVector next).Should().BeTrue();
             next.X.Should().Be(waypoints[i].X);
             next.Y.Should().Be(waypoints[i].Y);
             component.PathStepIndex++;
@@ -80,14 +80,14 @@ public sealed class MovementComponentTests
 
         var component = new MovementComponent
         {
-            Path = world.CreateComposite<GridVector>(),
+            Path = world.CreateCompositeHandle<GridVector>(),
         };
-        component.Path.Add(entity, new GridVector(0, 0));
-        component.Path.Add(entity, new GridVector(1, 0));
-        component.Path.CountFor(entity).Should().Be(2);
+        world.GetComposite<GridVector>(component.Path.CompositeId).Add(entity, new GridVector(0, 0));
+        world.GetComposite<GridVector>(component.Path.CompositeId).Add(entity, new GridVector(1, 0));
+        world.GetComposite<GridVector>(component.Path.CompositeId).CountFor(entity).Should().Be(2);
 
-        component.Path.ClearFor(entity).Should().BeTrue();
-        component.Path.CountFor(entity).Should().Be(0);
+        world.GetComposite<GridVector>(component.Path.CompositeId).ClearFor(entity).Should().BeTrue();
+        world.GetComposite<GridVector>(component.Path.CompositeId).CountFor(entity).Should().Be(0);
     }
 
     [Fact]

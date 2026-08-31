@@ -31,8 +31,7 @@ public struct ConsumableComponent : IComponent
     /// <summary>
     /// Fraction of the target need restored per consume action ([0..1]).
     /// E.g., 0.4 means a single consume restores 40% of the need from
-    /// current value, clamped to 1.0. Calibrated per content commit
-    /// (M8.4 ItemFactory).
+    /// current value, clamped to 1.0. Calibrated by the seeding mod.
     /// </summary>
     public float RestorationAmount;
 
