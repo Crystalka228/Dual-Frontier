@@ -232,7 +232,14 @@ internal static class EngineComposer
                     "A root mod is part of the product's definition, so a missing one is fatal " +
                     "rather than a warning. Note the discoverer swallows a malformed manifest " +
                     "silently, so an id listed here and absent above may be present on disk but " +
-                    "unreadable.");
+                    "unreadable." +
+                    (discovered.Count == 0
+                        ? " NOTHING was discovered at all, which usually means the distribution " +
+                          "was never assembled rather than that a mod is missing: the mods " +
+                          "deploy into this directory from their own build, so building or " +
+                          "publishing the launcher alone leaves it empty. Build the solution " +
+                          "(dotnet build DualFrontier.sln) and run again."
+                        : string.Empty));
             }
             paths.Add(info.Path);
             kinds[id] = info.Manifest.Kind;
