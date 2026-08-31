@@ -40,13 +40,12 @@ public sealed class ModFactoryRegistrationTests
     {
         var registry = new ModRegistry();
         var pathfinding = new StubPathfinding();
-        var grid = new StubNavGrid();
-        registry.SetSystemServices(new SystemServices(pathfinding, grid));
+        registry.SetSystemServices(new SystemServices(pathfinding));
 
         ServiceTakingSystem? built = null;
         registry.RegisterSystem<ServiceTakingSystem>("test.mod.factory", s =>
         {
-            built = new ServiceTakingSystem(s.Pathfinding, s.NavGrid);
+            built = new ServiceTakingSystem(s.Pathfinding);
             return built;
         });
 
@@ -54,17 +53,16 @@ public sealed class ModFactoryRegistrationTests
         built!.Pathfinding.Should().BeSameAs(pathfinding,
             "the value must be the one the HOST provided, not a fresh instance — this is the " +
             "half that was previously unreachable from the mod path at any time");
-        built.NavGrid.Should().BeSameAs(grid);
     }
 
     [Fact]
     public void AFactoryRegisteredSystemLandsInTheGraphAsAModSystem()
     {
         var registry = new ModRegistry();
-        registry.SetSystemServices(new SystemServices(new StubPathfinding(), new StubNavGrid()));
+        registry.SetSystemServices(new SystemServices(new StubPathfinding()));
 
         registry.RegisterSystem<ServiceTakingSystem>(
-            "test.mod.factory", s => new ServiceTakingSystem(s.Pathfinding, s.NavGrid));
+            "test.mod.factory", s => new ServiceTakingSystem(s.Pathfinding));
 
         IReadOnlyList<SystemRegistration> all = registry.GetAllSystems();
 
@@ -80,7 +78,7 @@ public sealed class ModFactoryRegistrationTests
     public void TheParameterlessModPathStillRefusesASystemNeedingAService()
     {
         var registry = new ModRegistry();
-        registry.SetSystemServices(new SystemServices(new StubPathfinding(), new StubNavGrid()));
+        registry.SetSystemServices(new SystemServices(new StubPathfinding()));
 
         Action act = () => registry.RegisterSystem("test.mod.factory", typeof(ServiceTakingSystem));
 
@@ -95,7 +93,7 @@ public sealed class ModFactoryRegistrationTests
     public void TheFactoryPathEnforcesTheSameDeclarationsAsTheTypePath()
     {
         var registry = new ModRegistry();
-        registry.SetSystemServices(new SystemServices(new StubPathfinding(), new StubNavGrid()));
+        registry.SetSystemServices(new SystemServices(new StubPathfinding()));
 
         Action act = () => registry.RegisterSystem<UndeclaredSystem>(
             "test.mod.factory", _ => new UndeclaredSystem());
@@ -113,7 +111,7 @@ public sealed class ModFactoryRegistrationTests
         // SetSystemServices deliberately NOT called.
 
         Action act = () => registry.RegisterSystem<ServiceTakingSystem>(
-            "test.mod.factory", s => new ServiceTakingSystem(s.Pathfinding, s.NavGrid));
+            "test.mod.factory", s => new ServiceTakingSystem(s.Pathfinding));
 
         act.Should().Throw<InvalidOperationException>()
             .WithMessage("*ISystemServices*",
@@ -130,15 +128,10 @@ public sealed class ModFactoryRegistrationTests
     [SystemAccess(reads: new Type[0], writes: new[] { typeof(FactoryMarker) })]
     internal sealed class ServiceTakingSystem : SystemBase
     {
-        public ServiceTakingSystem(IPathfindingService pathfinding, INavGridService navGrid)
-        {
-            Pathfinding = pathfinding;
-            NavGrid = navGrid;
-        }
+        public ServiceTakingSystem(IPathfindingService pathfinding)
+            => Pathfinding = pathfinding;
 
         public IPathfindingService Pathfinding { get; }
-
-        public INavGridService NavGrid { get; }
 
         public override void Update(float delta) { }
     }

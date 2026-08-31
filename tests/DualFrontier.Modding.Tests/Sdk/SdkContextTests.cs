@@ -77,25 +77,6 @@ internal sealed class StubPathfinding : IPathfindingService
 }
 
 /// <summary>
-/// An all-passable grid double. These tests exercise registration, not terrain, so the grid only
-/// has to exist -- but it has to exist, because ISystemServices carries it from W4 onward.
-/// </summary>
-internal sealed class StubNavGrid : INavGridService
-{
-    public int Width => 1;
-
-    public int Height => 1;
-
-    public bool IsPassable(int x, int y) => x == 0 && y == 0;
-
-    public byte GetCost(int x, int y) => x == 0 && y == 0 ? (byte)1 : byte.MaxValue;
-
-    public void SetTile(int x, int y, bool passable, byte cost = 1)
-    {
-    }
-}
-
-/// <summary>
 /// W1 C5 — behavioural proofs of the SDK surface: per-tick freshness, the
 /// Contracts-safe access forms against a live world, both factory registration
 /// paths, capability-gated events routed through the live gate, and adapter
@@ -195,7 +176,7 @@ public sealed class SdkContextTests
     public void RegisterSystem_FactoryAndParameterless_BothRegisterCore()
     {
         var registry = new ModRegistry();
-        registry.SetSystemServices(new SystemServices(new StubPathfinding(), new StubNavGrid()));
+        registry.SetSystemServices(new SystemServices(new StubPathfinding()));
 
         registry.RegisterSystem<SdkStubSystemA>(_ => new SdkStubSystemA());  // factory delegate
         registry.RegisterSystem<SdkStubSystemB>();                            // parameterless convenience
