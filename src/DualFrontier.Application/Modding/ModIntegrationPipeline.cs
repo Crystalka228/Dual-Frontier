@@ -145,7 +145,7 @@ internal sealed class ModIntegrationPipeline
     /// MOD_OS_ARCHITECTURE §5.1.
     ///
     /// K6.1 — <paramref name="faultHandler"/> is provided by the orchestrator
-    /// (<see cref="DualFrontier.Application.Loop.GameBootstrap"/>) which
+    /// (<see cref="DualFrontier.Application.Loop.EngineComposer"/>) which
     /// constructs the handler before the scheduler so the scheduler ctor
     /// can take it as an immutable sink. The pipeline does NOT own the
     /// handler; it holds a reference to query <see cref="ModFaultHandler.GetFaultedMods"/>

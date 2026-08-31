@@ -40,6 +40,12 @@ internal static class Program
         DistributionManifest manifest = DistributionManifestLoader.Load(manifestPath);
         string distributionRoot = DistributionManifestLoader.RootFor(manifestPath);
 
+        // The distribution's content assemblies ship beside this executable but are absent from
+        // its dependency file, because the engine no longer references them -- which is the whole
+        // point of the boundary cut. Teach the default context to find them before anything tries
+        // to load a mod.
+        DistributionAssemblyProbe.Install(distributionRoot);
+
         // === Composition ===
         var runtimeOptions = new RuntimeOptions
         {

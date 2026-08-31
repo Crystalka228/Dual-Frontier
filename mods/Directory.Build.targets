@@ -77,4 +77,40 @@
           DestinationFolder="$(MSBuildThisFileDirectory)..\src\DualFrontier.Launcher\bin\$(Configuration)\$(TargetFramework)\mods\$(AssemblyName)\"
           SkipUnchangedFiles="true" />
   </Target>
+
+  <!--
+    W4 — a vanilla mod that references game assemblies must put them where the host can load them.
+
+    A mod assembly is loaded into its own collectible context, but that context resolves nothing
+    itself: ModLoadContext.Load returns the shared assembly or null, there is no
+    AssemblyDependencyResolver anywhere in the tree, and the mod directory is never probed. Every
+    dependency therefore comes from the DEFAULT context, which probes the executable's directory.
+    A private copy next to the mod would be unreachable; a copy beside the executable is the only
+    place that works.
+
+    This is deliberately conservative rather than clever. Those assemblies sat beside the
+    executable before this wave too, dragged in by the engine's own references to them; removing
+    the references without replacing the copy would change WHERE the game code loads from at the
+    same moment it changes WHO composes it, and only one of those belongs in this wave. Teaching
+    the mod context to resolve from the mod directory is the real fix and is ledgered as its own
+    piece of work.
+
+    The paths come from @(ReferencePath), which resolution has already filled in by the time an
+    AfterTargets="Build" target runs, so nothing here hardcodes another project's output layout.
+    Mods with no game references contribute no items and the copy is a no-op, which is every
+    vanilla slice but the scenario mod.
+  -->
+  <Target Name="DeployHostGameAssemblies" AfterTargets="Build"
+          Condition="'$(IsVanillaMod)' == 'true' AND '$(DeployVanillaMod)' == 'true'">
+    <ItemGroup>
+      <HostGameAssembly Include="@(ReferencePath)"
+                        Condition="'%(FileName)' == 'DualFrontier.Components'
+                                OR '%(FileName)' == 'DualFrontier.Events'
+                                OR '%(FileName)' == 'DualFrontier.Systems'
+                                OR '%(FileName)' == 'DualFrontier.AI'" />
+    </ItemGroup>
+    <Copy SourceFiles="@(HostGameAssembly)"
+          DestinationFolder="$(MSBuildThisFileDirectory)..\src\DualFrontier.Launcher\bin\$(Configuration)\$(TargetFramework)\"
+          SkipUnchangedFiles="true" />
+  </Target>
 </Project>

@@ -48,10 +48,10 @@ public static class Bootstrap
     /// <returns>
     /// Ready-to-use <see cref="NativeWorld"/> with an active World handle, fully
     /// bootstrapped. When <paramref name="useRegistry"/> is true,
-    /// <see cref="NativeWorld.Registry"/> is non-null and ready for
-    /// <c>VanillaComponentRegistration.RegisterAll</c> (defined in
-    /// DualFrontier.Application — cannot be linked here as Core.Interop sits
-    /// below Application in the assembly graph).
+    /// <see cref="NativeWorld.Registry"/> is non-null and EMPTY: every component
+    /// type is registered afterwards, by whichever mod owns it, through
+    /// <c>IModApi.RegisterComponent</c> during that mod's initialisation. The engine
+    /// registers none of its own, and knows the name of no component type.
     /// </returns>
     /// <exception cref="BootstrapFailedException">
     /// If native bootstrap fails (memory allocation, thread spawn, or any

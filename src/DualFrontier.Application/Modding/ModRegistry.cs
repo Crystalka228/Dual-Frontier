@@ -67,7 +67,7 @@ internal sealed class ModRegistry : IManagedStorageResolver
 
     /// <summary>
     /// Installs the presentation sink SDK presentation calls route to. Called once
-    /// by the composition root (<c>GameBootstrap.CreateSession</c>) with a sink that
+    /// by the composition root (<c>EngineComposer.CreateSession</c>) with a sink that
     /// enqueues render commands onto the <c>PresentationBridge</c>; tests install a
     /// recording double. Passing a new sink replaces the previous one.
     /// </summary>

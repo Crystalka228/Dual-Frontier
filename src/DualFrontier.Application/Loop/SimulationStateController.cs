@@ -49,7 +49,7 @@ public sealed class SimulationStateController
 
     /// <summary>
     /// Constructs the controller. Pass <paramref name="onPausedChanged"/>
-    /// к receive pause/resume notifications (e.g. GameBootstrap wires this
+    /// к receive pause/resume notifications (e.g. the composer wires this
     /// к <see cref="GameLoop.SetPaused"/>); pass
     /// <paramref name="isPipelineQuiescentOverride"/> = <see langword="null"/>
     /// к use <see cref="PipelineSlotInterop.IsQuiescent"/> (default; production

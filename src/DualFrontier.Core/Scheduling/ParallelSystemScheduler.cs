@@ -54,7 +54,7 @@ internal sealed class ParallelSystemScheduler
     private readonly IModFaultSink _faultSink;
     private readonly IGameServices? _services;
     private readonly NativeWorld _nativeWorld;
-    // K8.3+K8.4 — Path β resolver passed by GameBootstrap (ModRegistry
+    // K8.3+K8.4 — Path β resolver passed by the composition root (ModRegistry
     // implements IManagedStorageResolver). Null in tests + builds without
     // mod loading; system-side SystemBase.ManagedStore<T>() returns null
     // when this is null.

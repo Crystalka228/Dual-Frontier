@@ -6,22 +6,34 @@
          delegate types к bind the [UnmanagedCallersOnly] callback. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <!--
+    W4 / boundary law B-1 — this project references ENGINE assemblies only.
+
+    Four edges stood here until this wave: Components, Events, Systems and AI. They existed for
+    one reason, the composition root, which registered the vanilla component types, built the
+    walkability grid, spawned the starting colony and named the ten gameplay systems. All of that
+    now arrives through the ordinary mod pipeline from dualfrontier.vanilla.scenario, so the
+    engine no longer needs a word of game vocabulary and the edges are gone.
+
+    The mod still needs those assemblies at runtime, and gets them from the host's default load
+    context: the vanilla deploy target copies them beside the executable, which is exactly where
+    they sat before this wave. See mods/Directory.Build.targets.
+  -->
   <ItemGroup>
     <ProjectReference Include="..\DualFrontier.Contracts\DualFrontier.Contracts.csproj" />
     <ProjectReference Include="..\DualFrontier.Core\DualFrontier.Core.csproj" />
-    <ProjectReference Include="..\DualFrontier.Components\DualFrontier.Components.csproj" />
     <ProjectReference Include="..\DualFrontier.Core.Interop\DualFrontier.Core.Interop.csproj" />
-    <ProjectReference Include="..\DualFrontier.Events\DualFrontier.Events.csproj" />
-    <ProjectReference Include="..\DualFrontier.Systems\DualFrontier.Systems.csproj" />
-    <ProjectReference Include="..\DualFrontier.AI\DualFrontier.AI.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="DualFrontier.Modding.Tests" />
     <InternalsVisibleTo Include="DualFrontier.Launcher" />
-    <!-- K7 — benchmark project re-uses RandomPawnFactory + ItemFactory to
-         spawn the same workload as production GameBootstrap. The factories
-         stay internal to the Application layer; the benchmark project is the
-         only external consumer and is bench-only (not shipped). -->
+    <!-- The benchmark project measures two internal ModIntegrationPipeline statics
+         (TopoSortRegularMods, CheckDependencyPresence) as BDN companions to the xUnit
+         scheduler-stress suite. It is bench-only and is not shipped.
+
+         This grant used to be documented as covering the K7 spawn factories; that had stopped
+         being true well before W4 (the benchmark mirrors their workload SHAPE by hand and never
+         called them), and the factories themselves are gone with the composition root. -->
     <InternalsVisibleTo Include="DualFrontier.Core.Benchmarks" />
   </ItemGroup>
 </Project>

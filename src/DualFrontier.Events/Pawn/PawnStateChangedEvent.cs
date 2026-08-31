@@ -6,8 +6,10 @@ namespace DualFrontier.Events.Pawn;
 
 /// <summary>
 /// Periodic snapshot of one pawn's HUD-relevant state. Emitted by
-/// PawnStateReporterSystem on its SLOW tick; GameBootstrap subscribes and
-/// forwards as PawnStateCommand to the presentation bridge.
+/// PawnStateReporterSystem on its SLOW tick. Nothing subscribes: the engine used to forward it
+/// to the presentation bridge as a PawnStateCommand whose handler read none of its fields, and
+/// that forwarding went with the composition root. The event is still published every SLOW tick
+/// and is the surface a HUD will read.
 /// All need values are wellness 0..1 (1 = best), passed through directly
 /// from NeedsComponent.
 /// </summary>

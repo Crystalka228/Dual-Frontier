@@ -30,7 +30,7 @@ internal interface IModFaultSink
 /// <summary>
 /// Default no-op {IModFaultSink} used when no Application-layer handler is
 /// wired in — keeps {SystemExecutionContext} functional in tests and Core-only
-/// scenarios. Production wiring (GameBootstrap) passes the real
+/// scenarios. Production wiring (the composition root) passes the real
 /// {ModFaultHandler} instead.
 /// </summary>
 internal sealed class NullModFaultSink : IModFaultSink

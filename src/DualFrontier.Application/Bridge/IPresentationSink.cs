@@ -4,7 +4,7 @@ namespace DualFrontier.Application.Bridge;
 
 /// <summary>
 /// The engine-internal seam a mod's presentation call lands on. The composition
-/// root (<c>GameBootstrap.CreateSession</c>) installs an implementation that
+/// root (<c>EngineComposer.CreateSession</c>) installs an implementation that
 /// enqueues the matching <see cref="IRenderCommand"/> onto the
 /// <see cref="PresentationBridge"/>; tests install a recording double and assert
 /// what a mod asked for without standing up a renderer.

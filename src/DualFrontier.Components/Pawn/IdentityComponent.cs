@@ -6,8 +6,8 @@ using DualFrontier.Contracts.Sdk;
 
 /// <summary>
 /// Pure POCO carrying a pawn's identity data. Currently a single field —
-/// <see cref="Name"/> — populated by <c>RandomPawnFactory</c> (or any
-/// future scenario loader). Pawns lacking this component carry no name;
+/// <see cref="Name"/> — populated by whichever mod seeds the entity (the
+/// vanilla scenario slice does). Pawns lacking this component carry no name;
 /// <c>PawnStateReporterSystem</c> publishes empty <c>Name</c> in that
 /// case. The UI displays empty name verbatim — no fabricated fallback.
 /// </summary>

@@ -1,4 +1,3 @@
-using DualFrontier.Application.Bootstrap;
 using DualFrontier.Components.Combat;
 using DualFrontier.Components.Magic;
 using DualFrontier.Components.Pawn;
@@ -14,55 +13,38 @@ using Xunit;
 namespace DualFrontier.Core.Interop.Tests;
 
 /// <summary>
-/// K4 verification: Категория A components survive native bulk roundtrip.
+/// K4 verification: Категория A components survive the native bulk roundtrip.
 ///
-/// Smoke test verifies all 24 registered components support add → get
-/// roundtrip without data corruption. Tricky-case tests verify specific
-/// patterns that posed risk during conversion:
+/// Each test verifies a pattern that posed risk during the conversion to type-erased native
+/// storage:
 ///   - EntityId? nullable fields (JobComponent, BedComponent)
 ///   - Computed properties (NeedsComponent, RaceComponent)
 ///   - init-only fields (RaceComponent, GolemBondComponent)
+///
+/// <para>
+/// W4: each test now registers only the component type it exercises. It used to call the engine's
+/// vanilla-registration helper, which registered all 21 at once; that helper is gone, because the
+/// vanilla component set belongs to the mod that owns the content and is registered through
+/// <c>IModApi</c> at load. The set's completeness is asserted where it now lives, in the scenario
+/// mod's wave gate. What these tests are actually about is the marshalling of one struct shape,
+/// and naming the single type each one needs says that more plainly than a bulk call did.
+/// </para>
+///
+/// <para>
+/// <c>useRegistry: false</c> throughout: these tests construct their own
+/// <see cref="ComponentTypeRegistry"/> against the native handle, and
+/// <c>Bootstrap.Run(useRegistry: true)</c> would create a second one on the same handle, racing
+/// on id allocation.
+/// </para>
 /// </summary>
 public class VanillaComponentRoundTripTests
 {
     [Fact]
-    public void Smoke_AllVanillaComponents_RegisterSuccessfully()
-    {
-        // useRegistry: false — this test constructs its own ComponentTypeRegistry
-        // and registers all Vanilla components against the native handle directly.
-        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
-        // world.Registry; two registries on one handle would race on id
-        // allocation. Tests that exercise the registry class in isolation pass
-        // useRegistry: false; production code uses the default (true).
-        using var world = Bootstrap.Run(useRegistry: false);
-        var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
-
-        // Should not throw — all production components must register
-        var act = () => VanillaComponentRegistration.RegisterAll(registry);
-        act.Should().NotThrow();
-
-        // Verify count: 17 K4-era (PowerConsumer/PowerProducer removed in
-        // K8.3+K8.4 cutover §2) + 4 K8.3+K8.4 appended (Identity, Skills,
-        // Movement, Storage) = 21. K4-era ids 1-17 preserved; the K8.3+K8.4
-        // extension block now occupies ids 18-21 (shifted down from 20-23 by
-        // the Power-component deletion — acceptable per brief v2.0 §2.3
-        // because registry ids are deterministic per-run, not persisted
-        // across versions).
-        registry.Count.Should().Be(21);
-    }
-
-    [Fact]
     public void HealthComponent_RoundTrip_PreservesData()
     {
-        // useRegistry: false — this test constructs its own ComponentTypeRegistry
-        // and registers all Vanilla components against the native handle directly.
-        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
-        // world.Registry; two registries on one handle would race on id
-        // allocation. Tests that exercise the registry class in isolation pass
-        // useRegistry: false; production code uses the default (true).
         using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
-        VanillaComponentRegistration.RegisterAll(registry);
+        registry.Register<HealthComponent>();
 
         EntityId entity = world.CreateEntity();
         var original = new HealthComponent { Current = 75f, Maximum = 100f };
@@ -78,15 +60,9 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void NeedsComponent_RoundTrip_PreservesComputedProperties()
     {
-        // useRegistry: false — this test constructs its own ComponentTypeRegistry
-        // and registers all Vanilla components against the native handle directly.
-        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
-        // world.Registry; two registries on one handle would race on id
-        // allocation. Tests that exercise the registry class in isolation pass
-        // useRegistry: false; production code uses the default (true).
         using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
-        VanillaComponentRegistration.RegisterAll(registry);
+        registry.Register<NeedsComponent>();
 
         EntityId entity = world.CreateEntity();
         var original = new NeedsComponent
@@ -115,15 +91,9 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void JobComponent_RoundTrip_PreservesNullableEntityId()
     {
-        // useRegistry: false — this test constructs its own ComponentTypeRegistry
-        // and registers all Vanilla components against the native handle directly.
-        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
-        // world.Registry; two registries on one handle would race on id
-        // allocation. Tests that exercise the registry class in isolation pass
-        // useRegistry: false; production code uses the default (true).
         using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
-        VanillaComponentRegistration.RegisterAll(registry);
+        registry.Register<JobComponent>();
 
         EntityId pawn         = world.CreateEntity();
         EntityId targetEntity = world.CreateEntity();
@@ -163,15 +133,9 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void RaceComponent_RoundTrip_PreservesInitOnlyFields()
     {
-        // useRegistry: false — this test constructs its own ComponentTypeRegistry
-        // and registers all Vanilla components against the native handle directly.
-        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
-        // world.Registry; two registries on one handle would race on id
-        // allocation. Tests that exercise the registry class in isolation pass
-        // useRegistry: false; production code uses the default (true).
         using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
-        VanillaComponentRegistration.RegisterAll(registry);
+        registry.Register<RaceComponent>();
 
         EntityId entity = world.CreateEntity();
         var original = new RaceComponent
@@ -204,15 +168,9 @@ public class VanillaComponentRoundTripTests
     [Fact]
     public void GolemBondComponent_RoundTrip_PreservesInitOnlyEntityId()
     {
-        // useRegistry: false — this test constructs its own ComponentTypeRegistry
-        // and registers all Vanilla components against the native handle directly.
-        // Post-K8.3+K8.4 Bootstrap.Run(useRegistry: true) would create a parallel
-        // world.Registry; two registries on one handle would race on id
-        // allocation. Tests that exercise the registry class in isolation pass
-        // useRegistry: false; production code uses the default (true).
         using var world = Bootstrap.Run(useRegistry: false);
         var registry = new ComponentTypeRegistry(world.HandleForInternalUseTest);
-        VanillaComponentRegistration.RegisterAll(registry);
+        registry.Register<GolemBondComponent>();
 
         EntityId golem = world.CreateEntity();
         EntityId mage  = world.CreateEntity();

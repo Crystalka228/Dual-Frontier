@@ -219,6 +219,69 @@ public sealed class DistributionManifestLoaderTests
             .WithMessage($"*{Path.GetFileName(absent)}*");
     }
 
+    // ── the numbers a scenario declares ───────────────────────────────────────
+
+    [Theory]
+    [InlineData("\"pawns\": 50", "\"pawns\": -1", "scenario.counts.pawns")]
+    [InlineData("\"food\": 150", "\"food\": -7", "scenario.counts.food")]
+    [InlineData("\"water\": 50", "\"water\": -1", "scenario.counts.water")]
+    [InlineData("\"beds\": 30", "\"beds\": -1", "scenario.counts.beds")]
+    [InlineData("\"decorations\": 25", "\"decorations\": -1", "scenario.counts.decorations")]
+    [InlineData("\"obstacleCount\": 800", "\"obstacleCount\": -800", "scenario.obstacleCount")]
+    public void ANegativeCountIsRefusedByName(string from, string to, string field)
+    {
+        // The engine-side spawn factories used to reject a negative count at their own argument
+        // boundary. They are gone with the composition root, and the numbers now enter through
+        // this file, so the refusal moved here — one level earlier, where the value can still be
+        // blamed on the distribution that wrote it.
+        Action act = () => DistributionManifestLoader.Parse(Valid.Replace(from, to), "test.json");
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"*{field}*")
+            .WithMessage("*cannot be negative*");
+    }
+
+    [Theory]
+    [InlineData("\"mapWidth\": 200", "\"mapWidth\": 0", "scenario.mapWidth")]
+    [InlineData("\"mapHeight\": 200", "\"mapHeight\": -200", "scenario.mapHeight")]
+    public void AMapWithNoAreaIsRefusedByName(string from, string to, string field)
+    {
+        Action act = () => DistributionManifestLoader.Parse(Valid.Replace(from, to), "test.json");
+
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage($"*{field}*")
+            .WithMessage("*at least one tile*");
+    }
+
+    [Fact]
+    public void ZeroCountsAreLegal()
+    {
+        // The falsifying companion: a scenario that asks for an empty colony is a legal scenario,
+        // so the guard must reject negatives WITHOUT rejecting zero.
+        string json = Valid.Replace(
+            "\"counts\": { \"pawns\": 50, \"food\": 150, \"water\": 50, \"beds\": 30, \"decorations\": 25 }",
+            "\"counts\": { \"pawns\": 0, \"food\": 0, \"water\": 0, \"beds\": 0, \"decorations\": 0 }");
+
+        DistributionManifest m = DistributionManifestLoader.Parse(json, "test.json");
+
+        m.Scenario.Counts.Should().Be(new ScenarioCounts(0, 0, 0, 0, 0));
+    }
+
+    [Fact]
+    public void ANegativeSeedIsLegal()
+    {
+        // Seeds are unconstrained: any int names a reproducible sequence. Guarding them would be
+        // guarding the wrong thing, and this pins that the guard was applied deliberately rather
+        // than to every integer in reach.
+        string json = Valid.Replace("\"worldSeed\": 7", "\"worldSeed\": -7")
+                           .Replace("\"factorySeed\": 42", "\"factorySeed\": -42");
+
+        DistributionManifest m = DistributionManifestLoader.Parse(json, "test.json");
+
+        m.Scenario.WorldSeed.Should().Be(-7);
+        m.Scenario.FactorySeed.Should().Be(-42);
+    }
+
     private static string RemoveKey(string json, string key)
     {
         int start = json.IndexOf($"\"{key}\"", StringComparison.Ordinal);

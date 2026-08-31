@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using DualFrontier.Application.Bridge;
+using DualFrontier.Application.Distribution;
 using DualFrontier.Application.Loop;
+using DualFrontier.Contracts.Distribution;
 using DualFrontier.Core.Interop;
 using AwesomeAssertions;
 using Xunit;
@@ -12,7 +14,7 @@ namespace DualFrontier.Modding.Tests.Loop;
 /// EQ_A2 C5 — behavioral coverage of the EngineSession world-shutdown transaction
 /// (RESOURCE_OWNERSHIP_AND_LIFETIME §4.4 / CONCURRENCY_AND_MEMORY_MODEL §6.2 /
 /// ENGINE_LIFECYCLE_AND_TRANSACTIONS §2.6; seats К-L20). Constructs a real session via
-/// <see cref="GameBootstrap.CreateSession"/> and drives Dispose through the
+/// <see cref="EngineComposer.CreateSession"/> and drives Dispose through the
 /// <see cref="ShutdownTransactionHooks"/> injection seam (deadline / sim-fence /
 /// quiescence / abort / step recorder), so the teardown ORDER and the
 /// abort-not-teardown path are asserted deterministically WITHOUT starting the sim
@@ -25,8 +27,16 @@ namespace DualFrontier.Modding.Tests.Loop;
 [Collection("GameLoopSerial")]
 public sealed class EngineSessionTransactionTests
 {
-    private static EngineSession NewSession(ShutdownTransactionHooks hooks)
-        => GameBootstrap.CreateSession(new PresentationBridge(), modsRoot: "mods", shutdownHooks: hooks);
+    /// <summary>
+    /// Composes a session over an EMPTY root-mod set. The shutdown transaction is an engine
+    /// concern -- the fence, the teardown order, the abort path -- and none of it depends on
+    /// content, so declaring no mods keeps these tests about the transaction rather than about
+    /// whatever a scenario happens to seed. The distribution root is the test binary's own
+    /// directory; with no root mods declared the composer never reads from it.
+    /// </summary>
+    private static EngineSession NewSession(ShutdownTransactionHooks? hooks = null)
+        => EngineComposer.CreateSession(
+            new PresentationBridge(), EmptyDistribution.Manifest, AppContext.BaseDirectory, hooks);
 
     [Fact]
     public void Dispose_RunsTeardownStepsInReverseAcquisitionOrder()
@@ -104,6 +114,26 @@ public sealed class EngineSessionTransactionTests
     }
 
     [Fact]
+    public void Dispose_AfterAMenuEditLeftThePipelineRunning_StillUnloads()
+    {
+        // A player who opens the mod menu and closes it again leaves the pipeline's running flag
+        // set: ModMenuController resumes on both Commit and Cancel. UnloadAll refuses to run
+        // while that flag is set, so before W4 disposing such a session threw out of S4 and the
+        // world was never torn down. The fence above has already stopped the sim thread by then,
+        // which is what makes the flag stale rather than meaningful.
+        var steps = new List<ShutdownStep>();
+        EngineSession session = NewSession(new ShutdownTransactionHooks { OnStep = steps.Add });
+        session.Controller.BeginEditing();
+        session.Controller.Cancel();
+
+        Action dispose = () => session.Dispose();
+
+        dispose.Should().NotThrow("shutdown does not depend on which menus the player opened");
+        steps.Should().Contain(ShutdownStep.ModsUnloaded);
+        steps.Should().Contain(ShutdownStep.WorldDisposed);
+    }
+
+    [Fact]
     public void Dispose_WhenCheckedDestroyReportsBusy_AbortsAfterFence()
     {
         // EQ_A3 / К-L20: a WORLD_BUSY refusal AFTER a passed fence is an invariant
@@ -142,10 +172,14 @@ public sealed class EngineSessionTransactionTests
 [Collection("GameLoopSerial")]
 public sealed class EngineHealthTests
 {
+    private static EngineSession NewSession()
+        => EngineComposer.CreateSession(
+            new PresentationBridge(), EmptyDistribution.Manifest, AppContext.BaseDirectory);
+
     [Fact]
     public void Health_StartsNormal_ReportDegraded_EntersDegraded_AndEmitsEnteredEvent()
     {
-        using EngineSession session = GameBootstrap.CreateSession(new PresentationBridge());
+        using EngineSession session = NewSession();
         var events = new List<EngineHealthChanged>();
         session.HealthChanged += events.Add;
 
@@ -164,7 +198,7 @@ public sealed class EngineHealthTests
     [Fact]
     public void ReportDegraded_DedupesByModId()
     {
-        using EngineSession session = GameBootstrap.CreateSession(new PresentationBridge());
+        using EngineSession session = NewSession();
 
         session.ReportDegraded(DegradedReason.ForQuarantinedMod("mod.a", 1));
         session.ReportDegraded(DegradedReason.ForQuarantinedMod("mod.a", 2));
@@ -176,7 +210,7 @@ public sealed class EngineHealthTests
     [Fact]
     public void ClearDegradedForMod_ExitsToNormal_AndEmitsExitEvent()
     {
-        using EngineSession session = GameBootstrap.CreateSession(new PresentationBridge());
+        using EngineSession session = NewSession();
         session.ReportDegraded(DegradedReason.ForQuarantinedMod("mod.a", 1));
         var events = new List<EngineHealthChanged>();
         session.HealthChanged += events.Add;
@@ -188,4 +222,30 @@ public sealed class EngineHealthTests
         events[0].Entered.Should().BeFalse();
         events[0].ResultingKind.Should().Be(EngineHealthKind.Normal);
     }
+}
+
+/// <summary>
+/// The smallest distribution that composes: a valid manifest declaring NO root mods. It exists so
+/// engine-lifecycle tests can build a real session without dragging content in -- which is what
+/// the sacrificial GameBootstrap harness used to hand them for free by hardcoding a colony.
+/// </summary>
+internal static class EmptyDistribution
+{
+    internal static readonly DistributionManifest Manifest = new(
+        ManifestVersion: DistributionManifest.SupportedVersion,
+        Product: new ProductInfo("tests.lifecycle", "Lifecycle Tests", "1.0.0"),
+        RootMods: Array.Empty<string>(),
+        Scenario: new ScenarioConfig(
+            Id: "empty",
+            WorldSeed: 0,
+            MapWidth: 8,
+            MapHeight: 8,
+            ObstacleCount: 0,
+            ObstacleSeed: 0,
+            FactorySeed: 0,
+            ItemFactorySeed: 0,
+            Counts: new ScenarioCounts(0, 0, 0, 0, 0)),
+        AssetRoots: Array.Empty<string>(),
+        SaveNamespace: "tests.lifecycle",
+        MinEngineCapabilities: Array.Empty<string>());
 }

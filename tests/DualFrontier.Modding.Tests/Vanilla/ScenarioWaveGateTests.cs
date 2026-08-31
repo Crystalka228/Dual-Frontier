@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using AwesomeAssertions;
 using DualFrontier.Application.Modding;
 using DualFrontier.Components.Items;
 using DualFrontier.Components.Pawn;
 using DualFrontier.Components.Shared;
 using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Distribution;
-using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
-using DualFrontier.Core.Interop;
-using DualFrontier.Core.Scheduling;
-using DualFrontier.Modding.Tests.Fixtures;
-using DualFrontier.Modding.Tests.Sdk;
-using AwesomeAssertions;
+using DualFrontier.Events.Pawn;
 using Xunit;
 
 namespace DualFrontier.Modding.Tests.Vanilla;
@@ -27,21 +22,19 @@ namespace DualFrontier.Modding.Tests.Vanilla;
 /// anything to the session: 21 component registrations, two spawn factories, a walkability grid,
 /// a pathfinding service and ten system registrations. The engine referenced the game's four
 /// assemblies for exactly that. These facts prove the same colony now arrives through the
-/// ordinary mod pipeline instead, which is what makes cutting those references possible rather
+/// ordinary mod pipeline instead, which is what made cutting those references possible rather
 /// than merely desirable.
 /// </para>
 ///
 /// <para>
-/// Nothing here is a double except the presentation sink. The loader, the validator, the
-/// capability ledger, the scheduler and a registry-backed world are all production objects, and
-/// the mod is loaded from its deployed output exactly as an install would load it.
+/// The placement RULES the seeding obeys are pinned next door, in ScenarioSeedingTests. This
+/// class is about the colony existing at all, and about the ten gameplay systems the mod
+/// registered actually running.
 /// </para>
 /// </summary>
+[Collection("GameLoopSerial")]
 public sealed class ScenarioWaveGateTests : IDisposable
 {
-    private static string FixturesRoot => Path.Combine(AppContext.BaseDirectory, "Fixtures");
-    private static string ScenarioPath => Path.Combine(FixturesRoot, "DualFrontier.Mod.Vanilla.Scenario");
-
     private static readonly ScenarioConfig Scenario = new(
         Id: "gate",
         WorldSeed: 0,
@@ -53,38 +46,11 @@ public sealed class ScenarioWaveGateTests : IDisposable
         ItemFactorySeed: 43,
         Counts: new ScenarioCounts(Pawns: 12, Food: 9, Water: 5, Beds: 4, Decorations: 3));
 
-    private readonly NativeWorld _world;
-    private readonly ModRegistry _registry;
-    private readonly TickScheduler _ticks;
-    private readonly ParallelSystemScheduler _scheduler;
-    private readonly ModIntegrationPipeline _pipeline;
-    private readonly RecordingPresentationSink _sink = new();
+    private readonly ScenarioHarness _h = new(Scenario);
 
-    public ScenarioWaveGateTests()
-    {
-        _world = DualFrontier.Core.Interop.Bootstrap.Run(useRegistry: true);
-        _registry = new ModRegistry();
-        _registry.SetCoreSystems(Array.Empty<SystemBase>());
-        _ticks = new TickScheduler();
-        _registry.SetTickSource(() => _ticks.CurrentTick);
-        _registry.SetPresentationSink(_sink);
-        _registry.SetScenario(Scenario);
+    public void Dispose() => _h.Dispose();
 
-        var graph = new DependencyGraph();
-        graph.Build();
-
-        var services = new GameServices();
-        _scheduler = SchedulerTestFixture.BuildIsolated(
-            graph.GetPhases(), _ticks, _world, services: services);
-
-        _pipeline = new ModIntegrationPipeline(
-            new ModLoader(), _registry, new ContractValidator(), new ModContractStore(),
-            services, _scheduler, new ModFaultHandler(), _world.Registry);
-    }
-
-    public void Dispose() => _world.Dispose();
-
-    private PipelineResult Apply() => _pipeline.Apply(new[] { ScenarioPath });
+    private PipelineResult Apply() => _h.Apply();
 
     [Fact]
     public void TheScenarioModLoadsAndSeedsTheColonyTheDistributionAskedFor()
@@ -96,13 +62,29 @@ public sealed class ScenarioWaveGateTests : IDisposable
             string.Join("; ", result.Errors.Select(e => e.Kind + ":" + e.Message)));
 
         // Colonists carry an identity; items do not. Counting identities counts the colony.
-        Ids<IdentityComponent>(_world).Should().HaveCount(Scenario.Counts.Pawns,
+        ScenarioHarness.Ids<IdentityComponent>(_h.World).Should().HaveCount(Scenario.Counts.Pawns,
             "the count comes from the distribution manifest, not from a constant in the engine");
 
-        Ids<ConsumableComponent>(_world).Should().HaveCount(Scenario.Counts.Food);
-        Ids<WaterSourceComponent>(_world).Should().HaveCount(Scenario.Counts.Water);
-        Ids<BedComponent>(_world).Should().HaveCount(Scenario.Counts.Beds);
-        Ids<DecorativeAuraComponent>(_world).Should().HaveCount(Scenario.Counts.Decorations);
+        ScenarioHarness.Ids<ConsumableComponent>(_h.World).Should().HaveCount(Scenario.Counts.Food);
+        ScenarioHarness.Ids<WaterSourceComponent>(_h.World).Should().HaveCount(Scenario.Counts.Water);
+        ScenarioHarness.Ids<BedComponent>(_h.World).Should().HaveCount(Scenario.Counts.Beds);
+        ScenarioHarness.Ids<DecorativeAuraComponent>(_h.World).Should().HaveCount(Scenario.Counts.Decorations);
+    }
+
+    [Fact]
+    public void TheModRegistersTheWholeVanillaComponentSet()
+    {
+        // Relocated from the engine's own round-trip suite, which asserted this against a
+        // registration helper the engine owned. The set is content, so the claim belongs to the
+        // mod that ships it: 21 types, registered through IModApi during the mod's initialisation,
+        // into a registry the world hands over EMPTY.
+        _h.World.Registry!.Count.Should().Be(0, "the engine registers no component type of its own");
+
+        Apply().Success.Should().BeTrue();
+
+        _h.World.Registry!.Count.Should().Be(21,
+            "the vanilla component set is 21 types; FactionComponent and WorkbenchComponent are " +
+            "deliberately absent because nothing constructs or reads either");
     }
 
     [Fact]
@@ -110,18 +92,17 @@ public sealed class ScenarioWaveGateTests : IDisposable
     {
         Apply().Success.Should().BeTrue();
 
-        List<EntityId> pawns = Ids<IdentityComponent>(_world);
-        foreach (EntityId pawn in pawns)
+        foreach (EntityId pawn in ScenarioHarness.Ids<IdentityComponent>(_h.World))
         {
-            _world.TryGetComponent(pawn, out IdentityComponent identity).Should().BeTrue();
-            string? name = _world.Resolve(identity.Name);
+            _h.World.TryGetComponent(pawn, out IdentityComponent identity).Should().BeTrue();
+            string? name = _h.World.Resolve(identity.Name);
             name.Should().NotBeNullOrWhiteSpace("a colonist has a name");
             name!.Should().Contain(" ", "forename and surname");
 
-            _world.TryGetComponent(pawn, out PositionComponent _).Should().BeTrue("placed on a tile");
-            _world.TryGetComponent(pawn, out SkillsComponent skills).Should().BeTrue();
+            _h.World.TryGetComponent(pawn, out PositionComponent _).Should().BeTrue("placed on a tile");
+            _h.World.TryGetComponent(pawn, out SkillsComponent skills).Should().BeTrue();
             skills.IsInitialized.Should().BeTrue("skills were rolled, not left at the default");
-            _world.TryGetComponent(pawn, out MovementComponent movement).Should().BeTrue();
+            _h.World.TryGetComponent(pawn, out MovementComponent movement).Should().BeTrue();
             movement.Path.IsValid.Should().BeTrue("the path composite is minted at spawn");
         }
     }
@@ -132,9 +113,9 @@ public sealed class ScenarioWaveGateTests : IDisposable
         Apply().Success.Should().BeTrue();
 
         var occupied = new List<(int X, int Y)>();
-        foreach (EntityId id in AllStartingEntities(_world))
+        foreach (EntityId id in ScenarioHarness.AllStartingEntities(_h.World))
         {
-            _world.TryGetComponent(id, out PositionComponent p).Should().BeTrue();
+            _h.World.TryGetComponent(id, out PositionComponent p).Should().BeTrue();
             occupied.Add((p.Position.X, p.Position.Y));
         }
 
@@ -147,15 +128,15 @@ public sealed class ScenarioWaveGateTests : IDisposable
     public void SeedingIsIdempotent_ASecondApplyDoesNotDoubleTheColony()
     {
         Apply().Success.Should().BeTrue();
-        int afterFirst = Ids<IdentityComponent>(_world).Count;
+        int afterFirst = ScenarioHarness.Ids<IdentityComponent>(_h.World).Count;
 
         // Unload and re-apply: the seeder is registered again and must find the colony already
         // there. Without the read-then-mint check this doubles the population rather than
         // resuming it, which is the failure mode a lazily-seeding system exists to avoid.
-        _pipeline.UnloadMod("dualfrontier.vanilla.scenario");
+        _h.Pipeline.UnloadMod("dualfrontier.vanilla.scenario");
         Apply().Success.Should().BeTrue();
 
-        Ids<IdentityComponent>(_world).Should().HaveCount(afterFirst,
+        ScenarioHarness.Ids<IdentityComponent>(_h.World).Should().HaveCount(afterFirst,
             "a reload resumes the world, it does not re-seed it");
     }
 
@@ -163,30 +144,30 @@ public sealed class ScenarioWaveGateTests : IDisposable
     public void TheColonyRendersItselfThroughThePresentationSurface()
     {
         Apply().Success.Should().BeTrue();
-        _sink.Shown.Should().BeEmpty("nothing is drawn until a tick runs");
+        _h.Sink.Shown.Should().BeEmpty("nothing is drawn until a tick runs");
 
-        _scheduler.ExecuteTick(1f / 30f);
+        _h.Scheduler.ExecuteTick(1f / 30f);
 
-        _sink.Shown.Should().HaveCount(Scenario.Counts.Pawns,
+        _h.Sink.Shown.Should().HaveCount(Scenario.Counts.Pawns,
             "the presentation system reports every colonist on its first tick. It reads the " +
             "identity span rather than subscribing to spawn events, so items are deliberately " +
             "not drawn — which is exactly what shipped before this wave, where the renderer's " +
-            "item handler was an empty stub");
+            "item handler was empty");
     }
 
     [Fact]
     public void MovingColonistsAreReportedOnceEach()
     {
         Apply().Success.Should().BeTrue();
-        _scheduler.ExecuteTick(1f / 30f);
-        _sink.Moved.Clear();
+        _h.Scheduler.ExecuteTick(1f / 30f);
+        _h.Sink.Moved.Clear();
 
         for (int i = 0; i < 30; i++)
-            _scheduler.ExecuteTick(1f / 30f);
+            _h.Scheduler.ExecuteTick(1f / 30f);
 
-        _sink.Shown.Should().HaveCount(Scenario.Counts.Pawns,
+        _h.Sink.Shown.Should().HaveCount(Scenario.Counts.Pawns,
             "no colonist is announced twice — the diff reports a change, not a state");
-        _sink.Moved.Should().NotBeEmpty(
+        _h.Sink.Moved.Should().NotBeEmpty(
             "the colony is alive: movement runs, and the presentation diff notices");
     }
 
@@ -195,37 +176,51 @@ public sealed class ScenarioWaveGateTests : IDisposable
     {
         Apply().Success.Should().BeTrue();
 
-        IReadOnlyList<SystemRegistration> all = _registry.GetAllSystems();
+        IReadOnlyList<SystemRegistration> all = _h.Registry.GetAllSystems();
 
         all.Should().OnlyContain(r => r.Origin == SystemOrigin.Mod,
             "the engine registers nothing — the core set is empty by construction");
         all.Select(r => r.Instance.GetType().Name).Should().Contain("MovementSystem",
             "movement takes a pathfinding service at construction, so it is the one system the " +
             "parameterless registration path could never have expressed");
-        _registry.GetCoreSystemInstances().Should().BeEmpty();
+        _h.Registry.GetCoreSystemInstances().Should().BeEmpty();
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────
-
-    private static List<EntityId> Ids<T>(NativeWorld world) where T : unmanaged, IComponent
+    [Fact]
+    [Trait("Category", "Integration")]
+    public void TheReporterSystemDescribesEveryColonistOnItsSlowTick()
     {
-        var ids = new List<EntityId>();
-        using SpanLease<T> lease = world.AcquireSpan<T>();
-        ReadOnlySpan<int> indices = lease.Indices;
-        ReadOnlySpan<int> versions = lease.Versions;
-        for (int i = 0; i < lease.Count; i++)
-            ids.Add(new EntityId(indices[i], versions[indices[i]]));
-        return ids;
-    }
+        // Relocated, and moved DOWN a level. Two engine-side tests used to assert this on the
+        // PawnStateCommand the composition root produced by subscribing to this very event; the
+        // command's handler read none of its fields, so the assertion travelled through a
+        // translation that existed only to be asserted on. The event is where the data is, and
+        // the mod is what registers the system that publishes it.
+        Apply().Success.Should().BeTrue();
 
-    private static List<EntityId> AllStartingEntities(NativeWorld world)
-    {
-        var ids = new List<EntityId>();
-        ids.AddRange(Ids<IdentityComponent>(world));
-        ids.AddRange(Ids<ConsumableComponent>(world));
-        ids.AddRange(Ids<WaterSourceComponent>(world));
-        ids.AddRange(Ids<BedComponent>(world));
-        ids.AddRange(Ids<DecorativeAuraComponent>(world));
-        return ids;
+        var reported = new List<PawnStateChangedEvent>();
+        _h.Services.Pawns.Subscribe<PawnStateChangedEvent>(reported.Add);
+
+        // The reporter is a SLOW system: one wake every 60 ticks.
+        for (int i = 0; i < 65; i++)
+            _h.Scheduler.ExecuteTick(1f / 30f);
+
+        reported.Should().NotBeEmpty("the reporter must have woken at least once in 65 ticks");
+        reported.Should().HaveCountGreaterThanOrEqualTo(Scenario.Counts.Pawns,
+            "every colonist is described on each wake");
+
+        foreach (PawnStateChangedEvent e in reported)
+        {
+            e.Name.Should().NotBeNullOrWhiteSpace(
+                "the reporter carries IdentityComponent.Name through; an empty one means the " +
+                "identity was not wired");
+            e.Name.Should().Contain(" ", "the seeder gives forename and surname");
+
+            e.TopSkills.Should().HaveCount(3, "the reporter reduces the roll to a top three");
+            for (int i = 0; i < e.TopSkills.Count - 1; i++)
+            {
+                e.TopSkills[i].Level.Should().BeGreaterThanOrEqualTo(e.TopSkills[i + 1].Level,
+                    "top skills are sorted descending by level");
+            }
+        }
     }
 }

@@ -129,36 +129,29 @@ internal sealed class RenderCommandDispatcher
 
     [ReservedStub(
         ReservedStubPurpose.BuildComposition,
-        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — pending post-Vanilla-mods cascade. " +
-        "HUD pawn detail panel (name, needs, mood, job label, top skills) requires Vanilla mods к " +
-        "define pawn structure first. Silent accept в production composition per S-LOCK-4 amendment " +
-        "(Crystalka mid-cascade ratification 2026-05-23); defensive throw would crash Launcher on " +
-        "first tick from PawnStateReporterSystem. " +
-        "Activation: HUD pawn detail consumer materialization (M-series migration).")]
+        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — the HUD pawn detail panel (name, " +
+        "needs, mood, job label, top skills) has no consumer yet. Since W4 nothing enqueues this " +
+        "command either: the engine's composition root was the only producer and it is gone, so " +
+        "the arm is unreachable rather than merely inert. It stays because the command type stays, " +
+        "and the dispatcher's default arm throws. " +
+        "Activation: HUD pawn detail consumer materialization (UI program).")]
     private void HandlePawnState(PawnStateCommand cmd)
     {
-        // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
-        // HUD pawn detail panel (name, needs, mood, job label, top skills) requires
-        // Vanilla mods к define pawn structure first. Silent accept в production
-        // composition (PawnStateReporterSystem emits these periodically; defensive
-        // throw would crash Launcher on first tick). DO NOT TEST — stub has no
-        // observable behavior; tests would lie by passing trivially (Q-H-6 discipline).
+        // CASCADE #3 STUB, unreachable since W4 -- no producer remains. DO NOT TEST: the stub has
+        // no observable behavior, so a test would lie by passing trivially (Q-H-6 discipline).
     }
 
     [ReservedStub(
         ReservedStubPurpose.BuildComposition,
-        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — pending post-Vanilla-mods cascade. " +
-        "Item visuals require Vanilla mods к define item registry first. Silent accept в production " +
-        "composition per S-LOCK-4 amendment (Crystalka mid-cascade ratification 2026-05-23); " +
-        "defensive throw would crash Launcher at startup from ~255 GameBootstrap-emitted commands. " +
+        "Cascade #3 silent stub (Lesson #N12 sub-pattern B) — item visuals need an item registry " +
+        "no mod defines yet. The engine's composition root used to emit around 255 of these at " +
+        "startup into this empty handler, so no item has ever been drawn; W4 removed the producer, " +
+        "and the mod that seeds items now reports none. The arm is unreachable and preserves " +
+        "exactly the visual that shipped. " +
         "Activation: Item visual consumer materialization (Vanilla-mods cascade).")]
     private void HandleItemSpawned(ItemSpawnedCommand cmd)
     {
-        // CASCADE #3 STUB — pending post-Vanilla-mods cascade.
-        // Item visuals require Vanilla mods к define item registry first. Silent
-        // accept в production composition (GameBootstrap emits ~255 ItemSpawnedCommand
-        // at startup для initial food/water/bed/decoration; defensive throw would
-        // crash Launcher on first frame). DO NOT TEST.
+        // CASCADE #3 STUB, unreachable since W4 -- no producer remains. DO NOT TEST.
     }
 
     [ReservedStub(

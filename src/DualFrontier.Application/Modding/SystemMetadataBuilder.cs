@@ -8,7 +8,7 @@ namespace DualFrontier.Application.Modding;
 /// <summary>
 /// Projects <see cref="ModRegistry"/>'s current registration list into the
 /// per-system metadata dictionary the scheduler needs for fault-routing
-/// origin propagation. Called by <see cref="DualFrontier.Application.Loop.GameBootstrap"/>
+/// origin propagation. Called by <see cref="DualFrontier.Application.Loop.EngineComposer"/>
 /// at startup (initial core-only state) and by <see cref="ModIntegrationPipeline"/>
 /// at every successful Apply / UnloadMod / UnloadAll boundary so the
 /// scheduler's metadata stays in sync with the active mod set.

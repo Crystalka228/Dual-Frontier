@@ -153,21 +153,28 @@ internal static class DistributionManifestLoader
         RejectUnknownKeys(counts, sourcePath, "scenario.counts.",
             "pawns", "food", "water", "beds", "decorations");
 
+        // Seeds are unconstrained -- any int is a legal seed, including a negative one. Extents
+        // and populations are not: a map with no area and a colony of minus five are not
+        // scenarios the seeder can decline gracefully, they are numbers that turn into an
+        // overflow the moment an array is sized from them. The engine-side spawn factories
+        // guarded their own arguments; those factories are gone, and this is the boundary the
+        // numbers now enter through, so the guard belongs here. A distribution is fixable before
+        // release -- refusing it by name is more useful than any runtime recovery.
         return new ScenarioConfig(
             RequiredString(scenario, "id", sourcePath, "scenario."),
             RequiredInt(scenario, "worldSeed", sourcePath, "scenario."),
-            RequiredInt(scenario, "mapWidth", sourcePath, "scenario."),
-            RequiredInt(scenario, "mapHeight", sourcePath, "scenario."),
-            RequiredInt(scenario, "obstacleCount", sourcePath, "scenario."),
+            PositiveInt(scenario, "mapWidth", sourcePath, "scenario."),
+            PositiveInt(scenario, "mapHeight", sourcePath, "scenario."),
+            NonNegativeInt(scenario, "obstacleCount", sourcePath, "scenario."),
             RequiredInt(scenario, "obstacleSeed", sourcePath, "scenario."),
             RequiredInt(scenario, "factorySeed", sourcePath, "scenario."),
             RequiredInt(scenario, "itemFactorySeed", sourcePath, "scenario."),
             new ScenarioCounts(
-                RequiredInt(counts, "pawns", sourcePath, "scenario.counts."),
-                RequiredInt(counts, "food", sourcePath, "scenario.counts."),
-                RequiredInt(counts, "water", sourcePath, "scenario.counts."),
-                RequiredInt(counts, "beds", sourcePath, "scenario.counts."),
-                RequiredInt(counts, "decorations", sourcePath, "scenario.counts.")));
+                NonNegativeInt(counts, "pawns", sourcePath, "scenario.counts."),
+                NonNegativeInt(counts, "food", sourcePath, "scenario.counts."),
+                NonNegativeInt(counts, "water", sourcePath, "scenario.counts."),
+                NonNegativeInt(counts, "beds", sourcePath, "scenario.counts."),
+                NonNegativeInt(counts, "decorations", sourcePath, "scenario.counts.")));
     }
 
     /// <summary>
@@ -224,6 +231,28 @@ internal static class DistributionManifestLoader
             ? i
             : throw new InvalidOperationException(
                 $"Distribution manifest field '{prefix}{key}' at '{sourcePath}' must be a 32-bit integer.");
+    }
+
+    /// <summary>A count: zero is legal, negative is not.</summary>
+    private static int NonNegativeInt(JsonElement obj, string key, string sourcePath, string prefix)
+    {
+        int value = RequiredInt(obj, key, sourcePath, prefix);
+        return value >= 0
+            ? value
+            : throw new InvalidOperationException(
+                $"Distribution manifest field '{prefix}{key}' at '{sourcePath}' is {value}; " +
+                "a count cannot be negative.");
+    }
+
+    /// <summary>An extent: zero leaves nowhere to stand, so it must be at least one.</summary>
+    private static int PositiveInt(JsonElement obj, string key, string sourcePath, string prefix)
+    {
+        int value = RequiredInt(obj, key, sourcePath, prefix);
+        return value >= 1
+            ? value
+            : throw new InvalidOperationException(
+                $"Distribution manifest field '{prefix}{key}' at '{sourcePath}' is {value}; " +
+                "a map extent must be at least one tile.");
     }
 
     private static JsonElement RequiredObject(JsonElement obj, string key, string sourcePath, string prefix)

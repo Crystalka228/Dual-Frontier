@@ -11,11 +11,13 @@ using DualFrontier.Events.Pawn;
 namespace DualFrontier.Systems.Pawn;
 
 /// <summary>
-/// HUD bridge: each SLOW tick, emits a PawnStateChangedEvent per pawn so
-/// GameBootstrap can forward the data as a PawnStateCommand to the
-/// presentation HUD. Read-only on pawn components; only publishes on
-/// the Pawns bus. Need values pass through directly from NeedsComponent
-/// (already wellness 0..1, 1 = best) — no translation layer.
+/// HUD source: each SLOW tick, emits a PawnStateChangedEvent per pawn. Read-only on pawn
+/// components; only publishes on the Pawns bus. Need values pass through directly from
+/// NeedsComponent (already wellness 0..1, 1 = best) — no translation layer.
+///
+/// The engine used to subscribe and forward each event to the presentation bridge, where the
+/// handler read none of it; that forwarding went with the composition root in W4. This system
+/// keeps publishing because the event, not the render command, is the honest HUD surface.
 ///
 /// Operating principle "data exists or it doesn't": Name comes from
 /// IdentityComponent (empty string if absent), TopSkills from

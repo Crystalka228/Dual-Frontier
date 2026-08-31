@@ -17,7 +17,7 @@ namespace DualFrontier.Application.Loop
     /// render thread drains the bridge per frame (the TickAdvanced dispatch arm
     /// is currently a reserved silent stub pending HUD primitives — see
     /// <c>RenderCommandDispatcher.HandleTickAdvanced</c>).
-    /// Internal — created by GameBootstrap, not exposed to the presentation tier.
+    /// Internal — created by the composer, not exposed to the presentation tier.
     ///
     /// After each fixed step the loop also drains the native Background-tier
     /// event queue (К-L15 §3.8 Item 30 idle-slot dispatch) within the

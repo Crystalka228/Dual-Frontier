@@ -11,15 +11,32 @@
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="AwesomeAssertions" />
   </ItemGroup>
+  <!--
+    W4 — the four game references are EXPLICIT here now.
+
+    They used to arrive transitively through DualFrontier.Application, which referenced all four
+    for its composition root. That root is gone and the engine references none of them, so a test
+    project that names a component, an event or a system has to say so itself. Test projects are
+    outside the boundary ratchet's engine set by construction, so these edges are free: the law
+    they enforce is about what SHIPS, and a test assembly ships with nothing.
+
+    Naming them is also more honest than the transitive arrangement was. Modding.Tests exercises
+    the vanilla scenario slice end to end, so it genuinely depends on the game's vocabulary; that
+    dependency was previously invisible and would have vanished silently the moment the engine
+    stopped supplying it.
+  -->
   <ItemGroup>
     <ProjectReference Include="..\..\src\DualFrontier.Application\DualFrontier.Application.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Components\DualFrontier.Components.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Events\DualFrontier.Events.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.Systems\DualFrontier.Systems.csproj" />
+    <ProjectReference Include="..\..\src\DualFrontier.AI\DualFrontier.AI.csproj" />
   </ItemGroup>
   <!--
-    K8.2 v2 — native DLL must ride along into test output: tests now exercise
-    GameBootstrap.CreateLoop and RandomPawnFactory, both of which construct a
-    NativeWorld for InternedString interning on struct components. Without
-    this, P/Invoke fails with DllNotFoundException. Mirrors the
-    DualFrontier.Core.Interop.Tests + DualFrontier.Core.Benchmarks pattern.
+    K8.2 v2 — native DLL must ride along into test output: these tests construct a real
+    NativeWorld (the composer, the mod pipeline and the scenario slice all do) for InternedString
+    interning on struct components. Without this, P/Invoke fails with DllNotFoundException.
+    Mirrors the DualFrontier.Core.Interop.Tests + DualFrontier.Core.Benchmarks pattern.
   -->
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)..\..\native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll"

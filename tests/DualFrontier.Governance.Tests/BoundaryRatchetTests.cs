@@ -15,9 +15,10 @@ namespace DualFrontier.Governance.Tests;
 ///
 ///  1. NAMED GATE -- the set of engine-to-game <c>ProjectReference</c> edges and engine-to-game
 ///     <c>InternalsVisibleTo</c> grants, measured from the six engine csprojs, must EQUAL the
-///     frozen baseline captured at HEAD 4c58942 (audit R3: exactly the four DualFrontier.Application
-///     edges + the single Core -> Systems IVT). Independently falsifiable: a stray engine-to-game
-///     edge makes the measured set unequal and reddens the test.
+///     current baseline: NO ProjectReference edges (W4 removed the last four, all of them
+///     DualFrontier.Application's) and the single Core -> Systems IVT that audit R3 froze.
+///     Independently falsifiable: a stray engine-to-game edge makes the measured set unequal and
+///     reddens the test.
 ///  2. EQUIVALENCE EVIDENCE -- the red-once-then-green proof recorded in this test's introducing
 ///     commit body: a transient engine-to-game ProjectReference reddened it; reverting greened it.
 ///  3. DELETION TRIGGER -- superseded by the B-6 boundary analyzer rule when one ships. This class is
@@ -51,14 +52,16 @@ public sealed class BoundaryRatchetTests
         "DualFrontier.AI",
     };
 
-    // FROZEN at HEAD 4c58942 (audit R3). Edge string form: "<engine> -> <game>".
-    private static readonly HashSet<string> ProjectReferenceBaseline = new(StringComparer.Ordinal)
-    {
-        "DualFrontier.Application -> DualFrontier.Components",
-        "DualFrontier.Application -> DualFrontier.Events",
-        "DualFrontier.Application -> DualFrontier.Systems",
-        "DualFrontier.Application -> DualFrontier.AI",
-    };
+    // Frozen at HEAD 4c58942 (audit R3) with four DualFrontier.Application edges; EMPTIED by W4,
+    // which dissolved the composition root that was their only reason to exist. Edge string form:
+    // "<engine> -> <game>".
+    //
+    // An empty baseline is the migration's terminal state for this half of the ratchet, not a
+    // disabled test: the measurement still runs over all six engine csprojs, and any engine->game
+    // ProjectReference that reappears makes the measured set non-empty and reddens the test. The
+    // deletion trigger in the class summary is unchanged -- the B-6 analyzer supersedes this class
+    // whole, including the IVT half below, which is still non-empty.
+    private static readonly HashSet<string> ProjectReferenceBaseline = new(StringComparer.Ordinal);
 
     private static readonly HashSet<string> InternalsVisibleToBaseline = new(StringComparer.Ordinal)
     {
