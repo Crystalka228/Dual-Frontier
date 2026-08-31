@@ -1,6 +1,8 @@
 using System;
 using DualFrontier.Application.Bridge.Commands;
 
+using DualFrontier.Contracts.Core;
+
 namespace DualFrontier.Application.Bridge;
 
 /// <summary>
@@ -24,4 +26,16 @@ internal sealed class BridgePresentationSink : IPresentationSink
     /// <inheritdoc />
     public void SetAmbientTint(float r, float g, float b, float strength)
         => _bridge.Enqueue(new AmbientTintCommand(r, g, b, strength));
+
+    /// <inheritdoc />
+    public void ShowEntitySprite(EntityId entity, float x, float y)
+        => _bridge.Enqueue(new EntityAppearedCommand(entity, x, y));
+
+    /// <inheritdoc />
+    public void MoveEntitySprite(EntityId entity, float x, float y)
+        => _bridge.Enqueue(new EntityMovedCommand(entity, x, y));
+
+    /// <inheritdoc />
+    public void HideEntitySprite(EntityId entity)
+        => _bridge.Enqueue(new EntityVanishedCommand(entity));
 }

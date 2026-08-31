@@ -87,6 +87,27 @@ public interface IModApi
     void RegisterSystem<T>(Func<Sdk.ISystemServices, T> factory) where T : class;
 
     /// <summary>
+    /// Registers a one-shot world initializer, run once after the mod set is installed and
+    /// BEFORE the first tick, with a live world context.
+    ///
+    /// <para>
+    /// This is the seam for seeding a starting world. It exists because seeding cannot be a
+    /// system: the scheduler enforces one writer per component type across the whole graph, so a
+    /// seeder that honestly declares the components it writes collides with every gameplay
+    /// system that owns one, and declaring fewer would undermine the guarantee that makes
+    /// parallel dispatch safe.
+    /// </para>
+    ///
+    /// <para>
+    /// The action runs exactly once per registration, outside the graph. Register it from
+    /// <see cref="IMod.Initialize"/>; a re-registration after a reload seeds again, so a mod
+    /// whose content must survive a reload should check the world first and return — the same
+    /// read-then-mint discipline a self-seeding system uses.
+    /// </para>
+    /// </summary>
+    void RegisterWorldSeeder(Action<Sdk.ISystemContext> seed);
+
+    /// <summary>
     /// Publishes an event on the single managed event dispatch. W2/BD-3 removed the
     /// genre taxonomy, so events route by type -- no <c>[EventBus]</c> marker or bus
     /// resolution. Gated first by the mod's declared capabilities (kernel.publish:&lt;FQN&gt;).

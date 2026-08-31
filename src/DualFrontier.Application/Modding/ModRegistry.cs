@@ -7,6 +7,7 @@ using DualFrontier.Contracts.Core;
 using DualFrontier.Contracts.Distribution;
 using DualFrontier.Contracts.Modding;
 using DualFrontier.Contracts.Sdk;
+using DualFrontier.Contracts.Services;
 using DualFrontier.Core.ECS;
 
 namespace DualFrontier.Application.Modding;
@@ -113,6 +114,41 @@ internal sealed class ModRegistry : IManagedStorageResolver
     internal void SetSystemServices(ISystemServices services)
         => _systemServices = services ?? throw new ArgumentNullException(nameof(services));
 
+    private readonly List<(string ModId, Action<ISystemContext> Seed)> _pendingSeeders = new();
+
+    /// <summary>
+    /// Records a one-shot world initializer for <paramref name="modId"/>, to be run once after
+    /// the graph is rebuilt. See <c>ParallelSystemScheduler.RunOutsideGraph</c> for why seeding
+    /// cannot be a system.
+    /// </summary>
+    internal void RegisterWorldSeeder(string modId, Action<ISystemContext> seed)
+    {
+        if (modId is null) throw new ArgumentNullException(nameof(modId));
+        if (seed is null) throw new ArgumentNullException(nameof(seed));
+        _pendingSeeders.Add((modId, seed));
+    }
+
+    /// <summary>
+    /// Hands over every seeder registered since the last call and clears the list, so a seeder
+    /// runs exactly once no matter how many rebuilds follow.
+    /// </summary>
+    internal IReadOnlyList<(string ModId, Action<ISystemContext> Seed)> TakePendingSeeders()
+    {
+        if (_pendingSeeders.Count == 0)
+            return Array.Empty<(string, Action<ISystemContext>)>();
+
+        var taken = _pendingSeeders.ToArray();
+        _pendingSeeders.Clear();
+        return taken;
+    }
+
+    /// <summary>
+    /// The mod-facing world view for <paramref name="modId"/>. Only valid while an execution
+    /// context is pushed; outside one every world member throws, by design.
+    /// </summary>
+    internal ISystemContext CreateContextView(string modId)
+        => new SystemContextView(this, modId, _tickSource);
+
     /// <summary>
     /// W4 — supplies the distribution's scenario description, which reaches a mod through
     /// <c>IModApi.Scenario</c>. Installed here rather than threaded through the pipeline's
@@ -164,6 +200,24 @@ internal sealed class ModRegistry : IManagedStorageResolver
         foreach (SystemRegistration reg in _coreSystems)
             list.Add(reg.Instance);
         return list;
+    }
+
+    /// <summary>
+    /// What a mod's factory receives when the host installed no services. Every member refuses
+    /// with a sentence rather than handing back a null to dereference. This is fail-closed at the
+    /// point of USE rather than the point of registration: after the boundary cut the engine
+    /// composes no gameplay system and has no game service to give, so requiring one up front
+    /// would block every mod for a dependency most of them do not have.
+    /// </summary>
+    private sealed class UnprovidedSystemServices : ISystemServices
+    {
+        internal static readonly UnprovidedSystemServices Instance = new();
+
+        public IPathfindingService Pathfinding
+            => throw new InvalidOperationException(
+                "[MOD REGISTRY ERROR] The host provides no pathfinding service. Pathfinding is " +
+                "game content: build it in your mod and close over it in the " +
+                "RegisterSystem<T>(Func<ISystemServices, T>) factory.");
     }
 
     private ISystemServices RequireSystemServices()
@@ -447,7 +501,13 @@ internal sealed class ModRegistry : IManagedStorageResolver
         bool isSystemBase = RequireSystemShape(systemType);
         RequireSystemDeclarations(systemType);
 
-        T built = factory(RequireSystemServices());
+        // The MOD path does not demand that services were installed. A mod that needs one closes
+        // over what it built itself -- which is the ordinary case now that services like
+        // pathfinding are game content -- and blocking its registration because the ENGINE had
+        // nothing to offer would be the host's misconfiguration surfacing as the mod's failure.
+        // A mod that does read a member gets a named refusal at that point, the same shape
+        // RequirePresentationSink uses.
+        T built = factory(_systemServices ?? UnprovidedSystemServices.Instance);
         SystemBase instance = isSystemBase
             ? built as SystemBase ?? throw new InvalidOperationException(
                 $"[MOD REGISTRY ERROR] The factory for '{systemType.FullName}' returned null.")

@@ -198,18 +198,18 @@ public sealed class GameBootstrapIntegrationTests
     [Fact]
     public void CreateSession_Spawns50PawnsByDefault()
     {
-        // M8.2 — production factory emits a PawnSpawnedCommand per
+        // M8.2 — production factory emits a EntityAppearedCommand per
         // colonist via the Pawns bus → bridge subscription wired in
         // CreateSession. Locks the 50-pawn baseline (scaled from 10 to
         // stress-test the scheduler under bigger pawn counts on the
         // 200×200 map per AD-6) at the bridge surface.
         var bridge = new PresentationBridge();
-        var observedSpawns = new List<PawnSpawnedCommand>();
+        var observedSpawns = new List<EntityAppearedCommand>();
 
         EngineSession context = GameBootstrap.CreateSession(bridge);
         bridge.DrainCommands(c =>
         {
-            if (c is PawnSpawnedCommand sp) observedSpawns.Add(sp);
+            if (c is EntityAppearedCommand sp) observedSpawns.Add(sp);
         });
 
         observedSpawns.Should().HaveCount(50);
@@ -479,7 +479,7 @@ public sealed class GameBootstrapIntegrationTests
     }
 
     [Fact]
-    public void DefaultModDiscoverer_FindsAll6VanillaSkeletonsInProductionModsRoot()
+    public void DefaultModDiscoverer_FindsEveryShippedModInTheProductionModsRoot()
     {
         // M8.1 — vanilla mod skeletons are discoverable from the
         // production mods/ directory. Locks the 6-mod set as an
@@ -495,14 +495,22 @@ public sealed class GameBootstrapIntegrationTests
         // mods/, so the wave that adds mods moves it and says why. The 6-vanilla
         // invariant itself is untouched: the per-id assertions below still name
         // exactly the same six skeletons plus ExampleMod.
+        //
+        // W4: 9 -> 10. dualfrontier.vanilla.scenario joined the production root. It is the mod
+        // the composition root dissolved INTO -- it owns the 21 component registrations, the
+        // walkability grid, the pathfinding service, the world seeding and the ten gameplay
+        // system registrations that the engine used to hold. Its arrival is the reason the
+        // engine can stop referencing the game's assemblies at all, so this is the one count
+        // movement in this wave that is the point rather than a side effect.
         string modsRoot = Path.Combine(FindRepoRoot(), "mods");
         var discoverer = new DefaultModDiscoverer(modsRoot);
 
         IReadOnlyList<DiscoveredModInfo> discovered = discoverer.Discover();
 
-        discovered.Should().HaveCount(9,
+        discovered.Should().HaveCount(10,
             "ExampleMod + 6 vanilla skeletons (5 regular + 1 shared) per §1.3, " +
-            "+ the W3 Weather pair (1 shared vendor + 1 regular mechanic)");
+            "+ the W3 Weather pair (1 shared vendor + 1 regular mechanic), " +
+            "+ the W4 vanilla scenario mod");
 
         List<string> ids = discovered.Select(d => d.Manifest.Id).ToList();
         ids.Should().Contain("dualfrontier.example");
@@ -514,6 +522,7 @@ public sealed class GameBootstrapIntegrationTests
         ids.Should().Contain("dualfrontier.vanilla.world");
         ids.Should().Contain("dualfrontier.weather.contracts");
         ids.Should().Contain("dualfrontier.weather");
+        ids.Should().Contain("dualfrontier.vanilla.scenario");
 
         // W3 — the Weather pair is shaped exactly as the shared/regular split requires:
         // the vendor is kind=shared with no entry point, the mechanic is kind=regular

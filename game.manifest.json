@@ -13,7 +13,8 @@
     "dualfrontier.vanilla.pawn",
     "dualfrontier.vanilla.inventory",
     "dualfrontier.vanilla.combat",
-    "dualfrontier.vanilla.magic"
+    "dualfrontier.vanilla.magic",
+    "dualfrontier.vanilla.scenario"
   ],
 
   "scenario": {

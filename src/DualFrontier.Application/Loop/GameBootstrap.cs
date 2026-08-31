@@ -90,13 +90,13 @@ internal static class GameBootstrap
         var ticks    = new TickScheduler();
 
         services.Pawns.Subscribe<PawnSpawnedEvent>(e =>
-            bridge.Enqueue(new PawnSpawnedCommand(e.PawnId, e.X, e.Y)));
+            bridge.Enqueue(new EntityAppearedCommand(e.PawnId, e.X, e.Y)));
         services.Pawns.Subscribe<ItemSpawnedEvent>(e =>
             bridge.Enqueue(new ItemSpawnedCommand(e.ItemId, e.X, e.Y, e.Kind)));
         services.Pawns.Subscribe<PawnMovedEvent>(e =>
-            bridge.Enqueue(new PawnMovedCommand(e.PawnId, e.X, e.Y)));
+            bridge.Enqueue(new EntityMovedCommand(e.PawnId, e.X, e.Y)));
         services.Combat.Subscribe<DeathEvent>(e =>
-            bridge.Enqueue(new PawnDiedCommand(e.Who)));
+            bridge.Enqueue(new EntityVanishedCommand(e.Who)));
         services.Pawns.Subscribe<PawnStateChangedEvent>(e =>
             bridge.Enqueue(new PawnStateCommand(
                 e.PawnId, e.Name, e.Satiety, e.Hydration, e.Sleep, e.Comfort,

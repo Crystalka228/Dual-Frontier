@@ -68,9 +68,9 @@ internal sealed class RenderCommandDispatcher
         ArgumentNullException.ThrowIfNull(command);
         switch (command)
         {
-            case PawnSpawnedCommand cmd: HandlePawnSpawned(cmd); break;
-            case PawnMovedCommand cmd: HandlePawnMoved(cmd); break;
-            case PawnDiedCommand cmd: HandlePawnDied(cmd); break;
+            case EntityAppearedCommand cmd: HandlePawnSpawned(cmd); break;
+            case EntityMovedCommand cmd: HandlePawnMoved(cmd); break;
+            case EntityVanishedCommand cmd: HandlePawnDied(cmd); break;
             case PawnStateCommand cmd: HandlePawnState(cmd); break;
             case ItemSpawnedCommand cmd: HandleItemSpawned(cmd); break;
             case TickAdvancedCommand cmd: HandleTickAdvanced(cmd); break;
@@ -82,27 +82,27 @@ internal sealed class RenderCommandDispatcher
         }
     }
 
-    private void HandlePawnSpawned(PawnSpawnedCommand cmd)
+    private void HandlePawnSpawned(EntityAppearedCommand cmd)
     {
-        int tileIndex = Math.Abs(cmd.PawnId.GetHashCode()) % LauncherProceduralAtlas.TotalTiles;
+        int tileIndex = Math.Abs(cmd.Entity.GetHashCode()) % LauncherProceduralAtlas.TotalTiles;
         AtlasRegion region = LauncherProceduralAtlas.GetTileRegion(tileIndex);
         _sceneState.RegisterPawn(
-            pawnId: cmd.PawnId,
+            pawnId: cmd.Entity,
             region: region,
             position: new Vector2(cmd.X, cmd.Y) * WorldUnitsPerTile,
             scale: new Vector2(WorldUnitsPerTile, WorldUnitsPerTile));
     }
 
-    private void HandlePawnMoved(PawnMovedCommand cmd)
+    private void HandlePawnMoved(EntityMovedCommand cmd)
     {
         // Silent miss tolerated — domain may emit Moved before Spawned в edge races.
-        _sceneState.MovePawn(cmd.PawnId, new Vector2(cmd.X, cmd.Y) * WorldUnitsPerTile);
+        _sceneState.MovePawn(cmd.Entity, new Vector2(cmd.X, cmd.Y) * WorldUnitsPerTile);
     }
 
-    private void HandlePawnDied(PawnDiedCommand cmd)
+    private void HandlePawnDied(EntityVanishedCommand cmd)
     {
         // Silent miss tolerated — same race tolerance as Moved.
-        _sceneState.DespawnPawn(cmd.PawnId);
+        _sceneState.DespawnPawn(cmd.Entity);
     }
 
     /// <summary>

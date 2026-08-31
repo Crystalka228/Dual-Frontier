@@ -281,6 +281,45 @@ internal sealed class ParallelSystemScheduler
     /// </summary>
     internal IReadOnlyList<SystemPhase> Phases => _phases;
 
+    /// <summary>
+    /// Runs <paramref name="body"/> once with a live execution context, OUTSIDE the system graph.
+    ///
+    /// <para>
+    /// W4. The graph enforces one writer per component type, globally rather than per phase, and
+    /// that is the right law: it is what makes parallel phase dispatch safe without a lock. It
+    /// also means world SEEDING cannot be a system. A seeder writes the same components the
+    /// gameplay systems own, so declaring those writes honestly collides with every one of them,
+    /// and declaring fewer would be lying to the very structure the law depends on.
+    /// </para>
+    ///
+    /// <para>
+    /// Before this wave the seeding ran in the engine's composition root, outside the graph by
+    /// construction, which is why the question never arose. Once the scenario moved into a mod
+    /// there was no way to reach the world outside the graph at all: the mod api has no world
+    /// access and a system context only exists inside a tick. This is that seam, and it is
+    /// deliberately narrow — a name for diagnostics, an origin so a throw is routed to the right
+    /// owner, and one invocation.
+    /// </para>
+    /// </summary>
+    internal void RunOutsideGraph(string name, SystemOrigin origin, string? modId, Action body)
+    {
+        if (name is null) throw new ArgumentNullException(nameof(name));
+        if (body is null) throw new ArgumentNullException(nameof(body));
+
+        var ctx = new SystemExecutionContext(
+            name, origin, modId, _faultSink, _nativeWorld, _services, _managedStorageResolver);
+
+        SystemExecutionContext.PushContext(ctx);
+        try
+        {
+            body();
+        }
+        finally
+        {
+            SystemExecutionContext.PopContext();
+        }
+    }
+
     private SystemExecutionContext BuildContext(SystemBase system)
     {
         Type systemType = system.GetType();

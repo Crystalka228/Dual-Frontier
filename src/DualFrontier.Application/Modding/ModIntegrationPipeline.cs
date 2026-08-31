@@ -7,6 +7,7 @@ using System.Threading;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Contracts.Bus;
 using DualFrontier.Contracts.Modding;
+using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
@@ -563,6 +564,14 @@ internal sealed class ModIntegrationPipeline
         IReadOnlyDictionary<SystemBase, SystemMetadata> newMetadata =
             SystemMetadataBuilder.Build(_registry);
         _scheduler.Rebuild(localGraph.GetPhases(), newMetadata);
+
+        // W4 — run any world seeders the batch registered, ONCE, outside the graph and before
+        // the first tick. Seeding cannot be a system: the graph enforces one writer per component
+        // type globally, so a seeder declaring what it writes collides with every gameplay system
+        // that owns one. TakePendingSeeders clears the list, so a later rebuild does not re-run
+        // them; a mod that re-registers on reload has asked to seed again and is responsible for
+        // checking the world first.
+        RunPendingWorldSeeders();
 
         return new PipelineResult(
             Success: true,
@@ -1193,6 +1202,27 @@ internal sealed class ModIntegrationPipeline
             if (AssemblyLoadContext.GetLoadContext(asm) != mod.Context)
                 continue;
             _kernelCapabilities.RegisterOwner(owner, asm);
+        }
+    }
+
+    /// <summary>
+    /// Invokes each pending world seeder with a live context. A seeder throw is contained and
+    /// reported as its mod's fault rather than aborting the apply: the mod set is already
+    /// installed and the scheduler already rebuilt by this point, so tearing the batch down here
+    /// would leave a half-applied world behind. The mod is quarantined instead, which is the same
+    /// disposition a throw from inside its tick would receive.
+    /// </summary>
+    private void RunPendingWorldSeeders()
+    {
+        IReadOnlyList<(string ModId, Action<ISystemContext> Seed)> seeders =
+            _registry.TakePendingSeeders();
+        if (seeders.Count == 0) return;
+
+        foreach ((string modId, Action<ISystemContext> seed) in seeders)
+        {
+            ISystemContext view = _registry.CreateContextView(modId);
+            _scheduler.RunOutsideGraph($"{modId}.worldSeeder", SystemOrigin.Mod, modId,
+                () => seed(view));
         }
     }
 

@@ -23,7 +23,8 @@
       "Bash(gcc --version)",
       "Bash(g++ --version)",
       "Bash(clang++ --version)",
-      "Bash(apt-cache policy *)"
+      "Bash(apt-cache policy *)",
+      "Bash(git stash *)"
     ]
   }
 }

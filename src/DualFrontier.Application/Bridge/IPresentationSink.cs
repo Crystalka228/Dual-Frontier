@@ -1,3 +1,5 @@
+using DualFrontier.Contracts.Core;
+
 namespace DualFrontier.Application.Bridge;
 
 /// <summary>
@@ -28,4 +30,16 @@ internal interface IPresentationSink
     /// strength 0 restores the untinted scene.
     /// </summary>
     void SetAmbientTint(float r, float g, float b, float strength);
+
+    /// <summary>
+    /// The entity has become visible at the given tile-grid position; the renderer creates a
+    /// sprite for it.
+    /// </summary>
+    void ShowEntitySprite(EntityId entity, float x, float y);
+
+    /// <summary>The entity's sprite moves to the given tile-grid position.</summary>
+    void MoveEntitySprite(EntityId entity, float x, float y);
+
+    /// <summary>The entity is no longer visible; the renderer releases its sprite.</summary>
+    void HideEntitySprite(EntityId entity);
 }

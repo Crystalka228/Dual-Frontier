@@ -135,6 +135,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Mod.Vanilla.Ma
 		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31} = {B721C8B3-D6E1-4313-AA33-F0324A5E8D31}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Mod.Vanilla.Scenario", "mods\\DualFrontier.Mod.Vanilla.Scenario\\DualFrontier.Mod.Vanilla.Scenario.csproj", "{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B721C8B3-D6E1-4313-AA33-F0324A5E8D31} = {B721C8B3-D6E1-4313-AA33-F0324A5E8D31}
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Mod.Weather.Contracts", "mods\DualFrontier.Mod.Weather.Contracts\DualFrontier.Mod.Weather.Contracts.csproj", "{3ABC7A90-7DDA-481F-9A66-BFBC574A81D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DualFrontier.Mod.Weather", "mods\DualFrontier.Mod.Weather\DualFrontier.Mod.Weather.csproj", "{8C904128-6275-4A27-B26A-0EEDC1C373D2}"
@@ -799,11 +804,24 @@ Global
 		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|x64.Build.0 = Release|Any CPU
 		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|x86.ActiveCfg = Release|Any CPU
 		{8A062FFA-1AC3-4068-B08C-5C6848550D75}.Release|x86.Build.0 = Release|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Debug|x64.Build.0 = Debug|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Debug|x86.Build.0 = Debug|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Release|x64.ActiveCfg = Release|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Release|x64.Build.0 = Release|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Release|x86.ActiveCfg = Release|Any CPU
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{A7C41E92-5B3D-4F18-9C6A-2D8E7B4F1A03} = {33333333-3333-3333-3333-333333333333}
 		{D8C63C47-618E-4504-89B2-F84EDDE1E0BF} = {11111111-1111-1111-1111-111111111111}
 		{CDF5B69E-95A3-4B11-9472-B77E13401FAA} = {11111111-1111-1111-1111-111111111111}
 		{7BA4F3BC-DC89-431A-89E5-507F8CF9C0F7} = {11111111-1111-1111-1111-111111111111}

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using DualFrontier.Application.Bridge;
 using DualFrontier.Application.Modding;
+using DualFrontier.Contracts.Core;
 using DualFrontier.Core.Bus;
 using DualFrontier.Core.ECS;
 using DualFrontier.Core.Interop;
@@ -23,6 +24,20 @@ internal sealed class RecordingSink : IPresentationSink
 
     public void SetAmbientTint(float r, float g, float b, float strength)
         => Calls.Add((r, g, b, strength));
+
+    /// <summary>Entity sprite calls, recorded in order: (entity, x, y) for show and move.</summary>
+    public List<(EntityId Entity, float X, float Y)> Shown { get; } = new();
+
+    public List<(EntityId Entity, float X, float Y)> Moved { get; } = new();
+
+    public List<EntityId> Hidden { get; } = new();
+
+    public void ShowEntitySprite(EntityId entity, float x, float y) => Shown.Add((entity, x, y));
+
+    public void MoveEntitySprite(EntityId entity, float x, float y) => Moved.Add((entity, x, y));
+
+    public void HideEntitySprite(EntityId entity) => Hidden.Add(entity);
+
 }
 
 /// <summary>

@@ -88,7 +88,6 @@ internal static class EngineComposer
         modRegistry.SetTickSource(() => ticks.CurrentTick);
         modRegistry.SetPresentationSink(new BridgePresentationSink(bridge));
         modRegistry.SetScenario(manifest.Scenario);
-        modRegistry.SetSystemServices(new UnprovidedSystemServices());
         modRegistry.SetCoreSystems(Array.Empty<SystemBase>());
 
         IReadOnlyList<SystemBase> coreSystems = modRegistry.GetCoreSystemInstances();
@@ -288,29 +287,4 @@ internal static class EngineComposer
         return false;
     }
 
-    /// <summary>
-    /// The construction-time service surface a NEUTRAL engine can offer: none.
-    ///
-    /// <para>
-    /// <c>ISystemServices</c> exists so the engine can inject services into systems it
-    /// constructs. After the cut the engine constructs no gameplay system, and every service it
-    /// used to supply — pathfinding over a walkability grid — is game content a mod builds and
-    /// closes over itself. Rather than hand a mod null, or invent a provision API nothing asked
-    /// for, the composer installs a surface that refuses loudly and says what to do instead.
-    /// </para>
-    ///
-    /// <para>
-    /// A mod using the factory overload receives this object and is free to ignore it, which is
-    /// what the vanilla scenario does. Only a mod that actually reads a member sees the refusal,
-    /// and then it sees a sentence rather than a null-reference.
-    /// </para>
-    /// </summary>
-    private sealed class UnprovidedSystemServices : ISystemServices
-    {
-        public IPathfindingService Pathfinding
-            => throw new InvalidOperationException(
-                "The engine provides no pathfinding service. Pathfinding is game content: build " +
-                "it in your mod and close over it in the RegisterSystem<T>(Func<ISystemServices, T>) " +
-                "factory, as the vanilla scenario mod does.");
-    }
 }
