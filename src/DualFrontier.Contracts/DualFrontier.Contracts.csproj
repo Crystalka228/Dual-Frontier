@@ -14,5 +14,15 @@
       Contracts stays reference-free: InternalsVisibleTo is a visibility grant, not a reference.
     -->
     <InternalsVisibleTo Include="DualFrontier.Application" />
+    <!--
+      W4 adds Core.Interop as a SECOND issuer, on the same terms. Two game components carried
+      Core.Interop types in their fields (an interned-string wrapper and a native composite
+      wrapper) and re-typed onto the Contracts-side handles, which needs NativeWorld to be able
+      to MINT one. Resolution never needed this grant, since the handle's payload is public;
+      only minting did. Also engine->engine, so likewise invisible to the BoundaryRatchet, whose
+      EngineAssemblies set contains both projects. The alternative was public constructors, which
+      would have dissolved the forge discipline this block exists to state.
+    -->
+    <InternalsVisibleTo Include="DualFrontier.Core.Interop" />
   </ItemGroup>
 </Project>

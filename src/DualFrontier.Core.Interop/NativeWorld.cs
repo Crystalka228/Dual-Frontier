@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 using DualFrontier.Contracts.Core;
+using DualFrontier.Contracts.Sdk;
 using DualFrontier.Core.Interop.Marshalling;
 
 namespace DualFrontier.Core.Interop;
@@ -894,6 +895,47 @@ public sealed class NativeWorld : IDisposable
     /// <summary>
     /// K8.2 v2 — factory: allocates a fresh composite id and returns the wrapper.
     /// </summary>
+    /// <summary>
+    /// Interns <paramref name="content"/> and returns the CONTRACTS-side handle, for storing in
+    /// a component field that a mod must also be able to read.
+    ///
+    /// <para>
+    /// W4. <see cref="InternString"/> returns the <c>Core.Interop</c> wrapper, which cannot
+    /// appear in a field a mod reads: no <c>Core.Interop</c> type crosses the SDK surface. The
+    /// two carry an identical <c>(Id, Generation)</c> payload, so this is a re-wrapping, not a
+    /// conversion, and costs nothing beyond the intern itself.
+    /// </para>
+    /// </summary>
+    public StringHandle InternHandle(string content)
+    {
+        InternedString interned = InternString(content);
+        return new StringHandle(interned.Id, interned.Generation);
+    }
+
+    /// <summary>
+    /// Resolves a Contracts-side <see cref="StringHandle"/> back to its content, or null for the
+    /// empty sentinel and for a handle whose generation has moved on. Null is deliberate: the
+    /// project forbids a fabricated fallback, so a caller converts to an empty string at the
+    /// display boundary rather than being handed one silently.
+    /// </summary>
+    public string? Resolve(StringHandle handle)
+        => ResolveInternedString(new InternedString(handle.Id, handle.Generation));
+
+    /// <summary>
+    /// Allocates a composite and returns the CONTRACTS-side handle, for storing in a component
+    /// field a mod must also be able to operate.
+    ///
+    /// <para>
+    /// W4. <see cref="CreateComposite{T}"/> returns the <c>Core.Interop</c> wrapper, which
+    /// additionally carries a raw pointer — a pointer that would then live inside a component in
+    /// the entity store. The handle carries only the id, and <see cref="GetComposite{T}(uint)"/>
+    /// re-binds a working wrapper from it on demand, which is how the SDK's own composite
+    /// members already operate.
+    /// </para>
+    /// </summary>
+    public CompositeHandle<T> CreateCompositeHandle<T>() where T : unmanaged
+        => new(AllocateCompositeId());
+
     public NativeComposite<T> CreateComposite<T>() where T : unmanaged
     {
         return GetComposite<T>(AllocateCompositeId());

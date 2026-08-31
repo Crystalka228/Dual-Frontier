@@ -68,7 +68,7 @@ public sealed class PawnStateReporterSystem : SystemBase
             JobComponent job = NativeWorld.GetComponent<JobComponent>(pawn);
 
             string name = identitySet.Contains(pawn.Index)
-                ? NativeWorld.GetComponent<IdentityComponent>(pawn).Name.Resolve(NativeWorld) ?? string.Empty
+                ? NativeWorld.Resolve(NativeWorld.GetComponent<IdentityComponent>(pawn).Name) ?? string.Empty
                 : string.Empty;
 
             IReadOnlyList<(SkillKind Kind, int Level)> topSkills =
@@ -94,17 +94,13 @@ public sealed class PawnStateReporterSystem : SystemBase
 
     private static IReadOnlyList<(SkillKind Kind, int Level)> ComputeTopSkills(SkillsComponent skills)
     {
-        if (!skills.Levels.IsValid || skills.Levels.Count == 0)
+        if (!skills.IsInitialized)
             return Array.Empty<(SkillKind, int)>();
 
-        int count = skills.Levels.Count;
-        var keysBuf = new SkillKind[count];
-        var valuesBuf = new int[count];
-        skills.Levels.Iterate(keysBuf, valuesBuf);
-
+        const int count = SkillsComponent.SkillCount;
         var pairs = new (SkillKind Kind, int Level)[count];
         for (int i = 0; i < count; i++)
-            pairs[i] = (keysBuf[i], valuesBuf[i]);
+            pairs[i] = ((SkillKind)i, skills.Levels[i]);
 
         for (int a = 1; a < pairs.Length; a++)
         {

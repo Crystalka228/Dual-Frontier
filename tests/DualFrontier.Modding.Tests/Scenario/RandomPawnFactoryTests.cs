@@ -51,9 +51,9 @@ public sealed class RandomPawnFactoryTests
         var idsB = fxB.factory.Spawn(fxB.nativeWorld, fxB.services, 10);
 
         var namesA = idsA.Select(id =>
-            GetComponent<IdentityComponent>(fxA.nativeWorld, id).Name.Resolve(fxA.nativeWorld)).ToList();
+            fxA.nativeWorld.Resolve(GetComponent<IdentityComponent>(fxA.nativeWorld, id).Name)).ToList();
         var namesB = idsB.Select(id =>
-            GetComponent<IdentityComponent>(fxB.nativeWorld, id).Name.Resolve(fxB.nativeWorld)).ToList();
+            fxB.nativeWorld.Resolve(GetComponent<IdentityComponent>(fxB.nativeWorld, id).Name)).ToList();
         namesA.Should().Equal(namesB);
         fxA.nativeWorld.Dispose();
         fxB.nativeWorld.Dispose();
@@ -69,7 +69,7 @@ public sealed class RandomPawnFactoryTests
         {
             var ident = GetComponent<IdentityComponent>(fx.nativeWorld, id);
             ident.Name.IsEmpty.Should().BeFalse();
-            string? resolved = ident.Name.Resolve(fx.nativeWorld);
+            string? resolved = fx.nativeWorld.Resolve(ident.Name);
             resolved.Should().NotBeNullOrWhiteSpace();
             resolved!.Should().Contain(" ", "names follow forename + surname pattern");
         }
@@ -118,12 +118,10 @@ public sealed class RandomPawnFactoryTests
         foreach (var id in ids)
         {
             var skills = GetComponent<SkillsComponent>(fx.nativeWorld, id);
-            skills.Levels.IsValid.Should().BeTrue();
+            skills.IsInitialized.Should().BeTrue(
+                "inline skill storage is always present, so the factory must SAY it populated it");
             foreach (var kind in allKinds)
-            {
-                skills.Levels.TryGet(kind, out int level).Should().BeTrue($"skill {kind} must be populated");
-                level.Should().BeInRange(0, SkillsComponent.MaxLevel);
-            }
+                skills.LevelOf(kind).Should().BeInRange(0, SkillsComponent.MaxLevel, $"skill {kind}");
         }
         fx.nativeWorld.Dispose();
     }

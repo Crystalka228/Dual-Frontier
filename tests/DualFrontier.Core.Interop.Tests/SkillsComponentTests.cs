@@ -1,103 +1,104 @@
 using System;
 using DualFrontier.Components.Pawn;
-using DualFrontier.Core.Interop;
 using AwesomeAssertions;
 using Xunit;
 
 namespace DualFrontier.Core.Interop.Tests;
 
 /// <summary>
-/// K8.2 v2 Phase 2.B.4 — round-trip and IsInitialized state semantics for
-/// the post-conversion <see cref="SkillsComponent"/> struct + NativeMap×2
-/// shape. Verifies the wrapper handles default to invalid sentinel and
-/// must be explicitly created via <c>NativeWorld.CreateMap</c> before use.
+/// State semantics of <see cref="SkillsComponent"/> after W4 changed its storage from two
+/// native maps to two inline arrays.
+///
+/// <para>
+/// The predecessor file (K8.2 v2 Phase 2.B.4) pinned the map-handle shape: default is the
+/// invalid sentinel, a handle must be minted through <c>NativeWorld.CreateMap</c> before use,
+/// and two mints do not share storage. None of that survives the change, and none of it should:
+/// inline storage has no handle, no mint and no sharing. What DOES survive is the behaviour
+/// those tests existed to protect — a pawn whose skills were never rolled must be
+/// distinguishable from one whose skills are all zero, and every declared skill must be
+/// addressable. Those are re-expressed here against the new shape.
+/// </para>
+///
+/// <para>
+/// The distinction is now carried by an explicit flag rather than inferred from handle validity,
+/// because inline storage is always present: without the flag, "never populated" and "populated
+/// to all zeroes" would be the same bytes.
+/// </para>
 /// </summary>
 public sealed class SkillsComponentTests
 {
     [Fact]
-    public void Default_LevelsAreInvalidAndNotInitialized()
+    public void Default_IsNotInitialised()
     {
         SkillsComponent component = default;
-        component.Levels.IsValid.Should().BeFalse();
-        component.Experience.IsValid.Should().BeFalse();
-        component.IsInitialized.Should().BeFalse();
-    }
 
-    [Fact]
-    public void NewStruct_NotInitialized()
-    {
-        var component = new SkillsComponent();
-        component.IsInitialized.Should().BeFalse();
-    }
-
-    [Fact]
-    public void CreatedButEmptyMaps_NotInitialized()
-    {
-        using var world = new NativeWorld();
-        var component = new SkillsComponent
-        {
-            Levels = world.CreateMap<SkillKind, int>(),
-            Experience = world.CreateMap<SkillKind, float>(),
-        };
-
-        component.Levels.IsValid.Should().BeTrue();
         component.IsInitialized.Should().BeFalse(
-            "Levels is valid but empty; IsInitialized requires Count > 0");
+            "a default component has never been populated, and inline storage cannot say so on " +
+            "its own — the flag is what carries it");
     }
 
     [Fact]
-    public void RoundTrip_PopulatedMapsAreInitialized()
+    public void PopulatedToAllZeroes_IsStillInitialised()
     {
-        using var world = new NativeWorld();
-        var component = new SkillsComponent
-        {
-            Levels = world.CreateMap<SkillKind, int>(),
-            Experience = world.CreateMap<SkillKind, float>(),
-        };
-        component.Levels.Set(SkillKind.Cooking, 5);
-        component.Experience.Set(SkillKind.Cooking, 250f);
+        var component = new SkillsComponent { Populated = true };
+        foreach (SkillKind kind in Enum.GetValues<SkillKind>())
+            component.SetLevel(kind, 0);
 
-        component.IsInitialized.Should().BeTrue();
-        component.Levels.TryGet(SkillKind.Cooking, out int level).Should().BeTrue();
-        level.Should().Be(5);
-        component.Experience.TryGet(SkillKind.Cooking, out float xp).Should().BeTrue();
-        xp.Should().Be(250f);
+        component.IsInitialized.Should().BeTrue(
+            "this is the case the flag exists for: all-zero skills are populated skills, and a " +
+            "handle-validity check could not have told them apart from an unrolled pawn");
     }
 
     [Fact]
-    public void AllSkillKinds_PopulatedAndIterable()
+    public void EverySkillKindIsAddressableAndRoundTrips()
     {
-        using var world = new NativeWorld();
-        var component = new SkillsComponent
-        {
-            Levels = world.CreateMap<SkillKind, int>(),
-            Experience = world.CreateMap<SkillKind, float>(),
-        };
+        var component = new SkillsComponent { Populated = true };
 
-        var allKinds = (SkillKind[])Enum.GetValues(typeof(SkillKind));
-        for (int i = 0; i < allKinds.Length; i++)
+        foreach (SkillKind kind in Enum.GetValues<SkillKind>())
         {
-            component.Levels.Set(allKinds[i], i);
+            component.SetLevel(kind, (int)kind + 1);
+            component.SetExperience(kind, (int)kind * 10f);
         }
 
-        component.Levels.Count.Should().Be(allKinds.Length);
-
-        foreach (SkillKind kind in allKinds)
+        foreach (SkillKind kind in Enum.GetValues<SkillKind>())
         {
-            component.Levels.TryGet(kind, out int found).Should().BeTrue();
-            found.Should().Be((int)Array.IndexOf(allKinds, kind));
+            component.LevelOf(kind).Should().Be((int)kind + 1);
+            component.ExperienceOf(kind).Should().Be((int)kind * 10f);
         }
     }
 
     [Fact]
-    public void DistinctMaps_PerCreate_DoNotShareStorage()
+    public void TheDeclaredSkillCountMatchesTheEnum()
     {
-        using var world = new NativeWorld();
-        var componentA = new SkillsComponent { Levels = world.CreateMap<SkillKind, int>() };
-        var componentB = new SkillsComponent { Levels = world.CreateMap<SkillKind, int>() };
+        Enum.GetValues<SkillKind>().Length.Should().Be(SkillsComponent.SkillCount,
+            "the inline arrays are sized by SkillCount, so adding a SkillKind without widening " +
+            "the constant would silently make the new skill unaddressable");
+    }
 
-        componentA.Levels.Set(SkillKind.Cooking, 10);
-        componentB.Levels.TryGet(SkillKind.Cooking, out _).Should().BeFalse(
-            "each CreateMap returns a distinct backing storage");
+    [Fact]
+    public void CopiesDoNotShareStorage()
+    {
+        var original = new SkillsComponent { Populated = true };
+        original.SetLevel(SkillKind.Mining, 7);
+
+        SkillsComponent copy = original;
+        copy.SetLevel(SkillKind.Mining, 19);
+
+        original.LevelOf(SkillKind.Mining).Should().Be(7,
+            "inline storage travels BY VALUE with the struct. The map shape this replaced shared " +
+            "storage through a handle, so a copy aliased the original — the opposite behaviour, " +
+            "and worth pinning rather than assuming");
+        copy.LevelOf(SkillKind.Mining).Should().Be(19);
+    }
+
+    [Fact]
+    public void AnUndeclaredSkillIsRefusedRatherThanReadingAdjacentStorage()
+    {
+        var component = new SkillsComponent { Populated = true };
+        var undeclared = (SkillKind)SkillsComponent.SkillCount;
+
+        ((Action)(() => component.LevelOf(undeclared))).Should().Throw<ArgumentOutOfRangeException>(
+            "an inline array indexed by a cast enum would otherwise read whatever sits after it");
+        ((Action)(() => component.SetLevel(undeclared, 1))).Should().Throw<ArgumentOutOfRangeException>();
     }
 }

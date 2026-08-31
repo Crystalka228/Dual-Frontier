@@ -123,7 +123,13 @@ public sealed class MovementSystem : SystemBase
                 continue;
             }
 
-            int pathCount = move.Path.IsValid ? move.Path.CountFor(entity) : 0;
+            // W4 -- the component now carries a composite HANDLE (an id) rather than the
+            // engine wrapper (an id plus a raw pointer). The wrapper is re-bound from the id on
+            // demand, which is what the kernel does anyway: df_world_get_composite mints the
+            // pointer FROM the id, so nothing is recomputed that was previously cached.
+            int pathCount = move.Path.IsValid
+                ? NativeWorld.GetComposite<GridVector>(move.Path.CompositeId).CountFor(entity)
+                : 0;
             if (move.PathStepIndex >= pathCount)
             {
                 GridVector target;
@@ -154,11 +160,12 @@ public sealed class MovementSystem : SystemBase
                     move.Target = target;
                     move.HasTarget = true;
                     if (!move.Path.IsValid)
-                        move.Path = NativeWorld.CreateComposite<GridVector>();
-                    else
-                        move.Path.ClearFor(entity);
+                        move.Path = NativeWorld.CreateCompositeHandle<GridVector>();
+                    NativeComposite<GridVector> steps =
+                        NativeWorld.GetComposite<GridVector>(move.Path.CompositeId);
+                    steps.ClearFor(entity);
                     foreach (GridVector step in path)
-                        move.Path.Add(entity, step);
+                        steps.Add(entity, step);
                     move.PathStepIndex = 0;
                 }
                 else if (isExternalTarget)
@@ -171,7 +178,8 @@ public sealed class MovementSystem : SystemBase
                 continue;
             }
 
-            move.Path.TryGetAt(entity, move.PathStepIndex, out GridVector next);
+            NativeWorld.GetComposite<GridVector>(move.Path.CompositeId)
+                .TryGetAt(entity, move.PathStepIndex, out GridVector next);
             move.PathStepIndex++;
             pos.Position = next;
             move.StepCooldown = StepCooldownTicks;
@@ -202,9 +210,10 @@ public sealed class MovementSystem : SystemBase
             Services.Pawns.Publish(evt);
     }
 
-    private static void ResetPath(ref MovementComponent move, EntityId entity)
+    private void ResetPath(ref MovementComponent move, EntityId entity)
     {
-        if (move.Path.IsValid) move.Path.ClearFor(entity);
+        if (move.Path.IsValid)
+            NativeWorld.GetComposite<GridVector>(move.Path.CompositeId).ClearFor(entity);
         move.PathStepIndex = 0;
     }
 }

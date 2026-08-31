@@ -117,17 +117,16 @@ internal sealed class RandomPawnFactory
                               $"{Surnames[_rng.Next(Surnames.Length)]}";
             identities[i] = new IdentityComponent
             {
-                Name = nativeWorld.InternString(fullName),
+                Name = nativeWorld.InternHandle(fullName),
             };
 
-            NativeMap<SkillKind, int> levels = nativeWorld.CreateMap<SkillKind, int>();
-            NativeMap<SkillKind, float> experience = nativeWorld.CreateMap<SkillKind, float>();
+            var rolled = new SkillsComponent { Populated = true };
             foreach (SkillKind kind in (SkillKind[])Enum.GetValues(typeof(SkillKind)))
             {
-                levels.Set(kind, _rng.Next(0, SkillsComponent.MaxLevel + 1));
-                experience.Set(kind, 0f);
+                rolled.SetLevel(kind, _rng.Next(0, SkillsComponent.MaxLevel + 1));
+                rolled.SetExperience(kind, 0f);
             }
-            skills[i] = new SkillsComponent { Levels = levels, Experience = experience };
+            skills[i] = rolled;
 
             needs[i] = new NeedsComponent
             {
@@ -140,7 +139,7 @@ internal sealed class RandomPawnFactory
             jobs[i] = new JobComponent { Current = JobKind.Idle };
             movements[i] = new MovementComponent
             {
-                Path = nativeWorld.CreateComposite<GridVector>(),
+                Path = nativeWorld.CreateCompositeHandle<GridVector>(),
             };
         }
 
