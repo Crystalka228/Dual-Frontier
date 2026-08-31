@@ -13,7 +13,14 @@ using DualFrontier.Contracts.Sdk;
 namespace DualFrontier.Mod.Vanilla.Scenario;
 
 /// <summary>
-/// Seeds the starting colony the distribution manifest describes: terrain, colonists, and items.
+/// Seeds the starting colony the distribution manifest describes: colonists and items.
+///
+/// <para>
+/// Terrain is NOT seeded here. It belongs to the grid and is scattered when the grid is built
+/// (<see cref="ScenarioTerrain"/>), because a grid is constructed on every initialisation while
+/// the colony is minted only once, and putting both behind the once-only guard cost the second
+/// grid its walls.
+/// </para>
 ///
 /// <para>
 /// This replaces two engine-side factories that took a concrete world and an engine bus. They
@@ -123,8 +130,6 @@ public sealed class ScenarioSeeder
 
     private IReadOnlyList<GridVector> SeedPawns(ISystemContext context)
     {
-        ScatterObstacles();
-
         var rng = new Random(_scenario.FactorySeed);
         List<GridVector> pool = PassableTiles(excluded: null);
         int count = _scenario.Counts.Pawns;
@@ -252,17 +257,6 @@ public sealed class ScenarioSeeder
         for (int i = 0; i < entities.Length; i++)
             batch.Add(entities[i], values[i]);
         batch.Flush();
-    }
-
-    private void ScatterObstacles()
-    {
-        var rng = new Random(_scenario.ObstacleSeed);
-        for (int i = 0; i < _scenario.ObstacleCount; i++)
-        {
-            int x = rng.Next(0, _scenario.MapWidth);
-            int y = rng.Next(0, _scenario.MapHeight);
-            _navGrid.SetTile(x, y, passable: false);
-        }
     }
 
     private List<GridVector> PassableTiles(HashSet<GridVector>? excluded)

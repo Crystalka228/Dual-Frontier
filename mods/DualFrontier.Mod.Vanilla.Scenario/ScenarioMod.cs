@@ -56,6 +56,10 @@ public sealed class ScenarioMod : IMod
         // not need to: the factory registration overload lets this mod close over what it built,
         // so nothing has to travel through the engine's construction-time service surface.
         var navGrid = new NavGrid(scenario.MapWidth, scenario.MapHeight);
+        // Terrain belongs to the grid, not to the colony. A fresh grid is wholly passable and one
+        // is built on EVERY initialisation, so the scatter has to happen here rather than behind
+        // the seeder's once-only guard -- see ScenarioTerrain for what that cost.
+        ScenarioTerrain.Scatter(navGrid, scenario);
         var pathfinding = new AStarPathfinding(navGrid);
         _navGrid = navGrid;
 
@@ -85,7 +89,8 @@ public sealed class ScenarioMod : IMod
 
         api.Log(ModLogLevel.Info,
             $"vanilla scenario '{scenario.Id}' armed: {VanillaComponents.Count} component types, " +
-            $"11 systems, {scenario.MapWidth}x{scenario.MapHeight} map.");
+            $"11 systems, {scenario.MapWidth}x{scenario.MapHeight} map, " +
+            $"{scenario.ObstacleCount} obstacles.");
     }
 
     /// <summary>

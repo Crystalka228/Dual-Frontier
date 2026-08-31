@@ -234,6 +234,43 @@ public sealed class ScenarioSeedingTests
 
     // ── helpers ───────────────────────────────────────────────────────────────
 
+    [Fact]
+    public void AReloadKeepsTheTerrain()
+    {
+        // The grid is rebuilt from scratch on every initialisation and a fresh one is wholly
+        // passable, so terrain has to be scattered on every registration. It used to be scattered
+        // inside the seeding path, behind the read-then-mint guard that exists to stop a reload
+        // re-populating the colony -- so a reload took the early return, and the movement system
+        // it had just been handed pathfound over a world with no walls in it.
+        //
+        // The colony cannot reveal this on its own: it is seeded on the FIRST apply, when the
+        // obstacles were still correct, so its starting tiles are legal either way. Movement is
+        // what reveals it, which is why this ticks. Obstacle density is deliberately high so a
+        // pathfinder let loose on an empty grid crosses a blocked tile almost immediately; with
+        // the terrain intact the count is exactly zero, always, because A* never routes onto an
+        // impassable tile.
+        ScenarioConfig scenario = Scenario(
+            pawns: 12, food: 4, water: 3, beds: 2, decorations: 1,
+            width: 40, height: 40, obstacles: 900);
+
+        using var h = new ScenarioHarness(scenario);
+        h.Apply().Success.Should().BeTrue();
+
+        h.Pipeline.UnloadMod("dualfrontier.vanilla.scenario");
+        h.Apply().Success.Should().BeTrue();
+
+        for (int i = 0; i < 60; i++)
+            h.Scheduler.ExecuteTick(1f / 30f);
+
+        HashSet<GridVector> blocked = ScenarioHarness.ObstacleTiles(scenario);
+        List<GridVector> occupied = ScenarioHarness.TilesOf<IdentityComponent>(h.World);
+
+        occupied.Should().NotBeEmpty("the colony survives the reload");
+        occupied.Should().OnlyContain(t => !blocked.Contains(t),
+            "a reload rebuilds the grid, so it must re-scatter the terrain too -- a colonist " +
+            "standing on an obstacle means the second grid was left wholly passable");
+    }
+
     private static (List<GridVector> Tiles, List<string> Names) SeedAndDescribe(ScenarioConfig scenario)
     {
         using var h = new ScenarioHarness(scenario);
