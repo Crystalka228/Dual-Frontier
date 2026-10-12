@@ -1,0 +1,4 @@
+# Verified governance CAPA identifiers, not credentials. Restrict exceptions
+# to these two findings in the historical REGISTER_RENDER.md diff.
+53697da13352f28da6caad571ac21b4e1e8c7d35:docs/governance/REGISTER_RENDER.md:generic-api-key:748
+53697da13352f28da6caad571ac21b4e1e8c7d35:docs/governance/REGISTER_RENDER.md:generic-api-key:766
