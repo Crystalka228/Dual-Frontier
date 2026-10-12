@@ -8,9 +8,7 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: gitleaks-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# Keep every event's scan: newer pushes must not cancel earlier revisions.
 
 jobs:
   gitleaks:
@@ -21,6 +19,7 @@ jobs:
       - name: Check out full history
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
+          ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -39,4 +38,4 @@ jobs:
 
       - name: Scan full reachable history
         shell: bash
-        run: gitleaks git . --log-opts=HEAD --redact --no-banner --exit-code=1
+        run: gitleaks git . --log-opts="--diff-merges=separate HEAD" --redact --no-banner --exit-code=1

@@ -2,7 +2,10 @@
 
 The `Gitleaks` GitHub Actions workflow runs on every push, pull request and
 manual dispatch. `Gitleaks secret scan` scans the complete history reachable
-from the checked-out commit, including both parents of a pull request merge.
+from the checked-out event SHA, including both parents of a pull request merge.
+Merge patches are scanned separately against each parent, so secrets introduced
+only while resolving a merge conflict are included. Runs have no concurrency
+cancellation group; a later push does not cancel an earlier event's scan.
 Findings fail the job; secret values are redacted in logs. Scan errors also
 fail the job. No scan reports are uploaded.
 
@@ -14,7 +17,7 @@ Gitleaks Action license are required.
 Run the same check locally with Gitleaks 8.30.1:
 
 ```sh
-gitleaks git . --log-opts=HEAD --redact --no-banner --exit-code=1
+gitleaks git . --log-opts="--diff-merges=separate HEAD" --redact --no-banner --exit-code=1
 ```
 
 CI runs after a push has reached GitHub. Preventing a push locally requires a
