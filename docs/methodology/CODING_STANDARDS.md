@@ -91,7 +91,7 @@ says it does.
 ### §2.2 — File-scoped namespaces
 
 New code uses only the file-scoped form (`namespace X;`). The convention is the
-prevailing norm of the tree (~250 files). Less indentation, more code on screen.
+prevailing norm of the tree. Less indentation, more code on screen.
 
 ```csharp
 // Convention
@@ -102,8 +102,8 @@ public sealed class World { /* ... */ }
 
 This is a **convention**, not a machine-checked rule: `.editorconfig` is
 charset-only (no IDE0161 severity), so the build does not reject a block-braced
-namespace. One historical exception survives (`GameLoop.cs`, see §2.8); new code
-does not add a second.
+namespace. Block-braced files survive in the tree (`GameLoop.cs` among them,
+see §2.8); new code does not add one.
 
 ### §2.3 — One class per file
 
@@ -165,8 +165,9 @@ These are baseline observations of the tree as it stands, recorded so a future
 reader does not mistake them for sanctioned patterns or for hidden rules. They
 impose **no** retroactive obligation and are normalized opportunistically:
 
-- `src/DualFrontier.Application/Loop/GameLoop.cs` is the **sole** block-braced
-  namespace among ~250 file-scoped files.
+- A minority of `src/` files still use the block-braced namespace form,
+  `src/DualFrontier.Application/Loop/GameLoop.cs` among them;
+  `rg -l --type cs '^namespace [A-Za-z0-9_.]+\s*$' src` lists them.
 - `src/DualFrontier.Core/Math/SpatialGrid.cs` carries the **sole**
   `using System.Linq;` in `src/`.
 - `SimulationStateController.WaitForQuiescenceAsync`
