@@ -3343,6 +3343,21 @@ documents:
   authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
   last_review_event: 'REV_2 EXECUTED 2026-11-22 (EVT-2026-11-22-REV_2) on claude/rev-2, C1-C6, 15 review-repair commits, 3 repair-over-repair commits and the C7 closure. Operator-ratified inputs: G-RATIO option A, REV_2 on Sonnet; the architect rulings A-1..A-10 are PENDING OPERATOR REVIEW at the PR. Lifecycle Draft -> EXECUTED. Wording corrected at closure: the displaced ledger row is F-13 (sections 2 and 7.3), halt H7 concerns code files (section 13).'
   basis: REV_2 recon (/mnt/Work/Temporal/rev2-run/recon/R1.md, Sonnet, read-only at 3fa781c) + operator rulings 2026-11-21 (G-RATIO option A; REV_2 on Sonnet; self-merge grant through REV_3) + architect rulings A-1..A-10 (/mnt/Work/Temporal/rev2-run/RULINGS.md, pending operator review) + the revision synthesis
+- register_id: DOC-D-REV_3_BRIEF
+  path: tools/briefs/REV_3_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-11-22
+  last_modified: 2026-11-22
+  content_language: en
+  next_review_due: 
+  title: 'REV_3 -- the F-ledger leaves ROADMAP: docs/LEDGER.md holds the live rows and docs/LEDGER_ARCHIVE.md the closed ones, byte-identical; one legend (S4 latent joins it); G-ROWFORM guards both files with the live vocabulary armed; every live pointer re-pointed -- the fourth cascade of CORPUS_REVISION_1'
+  authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+  basis: operator ruling 2026-11-21 (LEDGER + LEDGER_ARCHIVE, both at once) + the Community Hub precedent LEDGER_SPLIT_1 (CH docs/LEDGER.md, docs/LEDGER_ARCHIVE.md headers) + architect rulings B-1..B-9 (/mnt/Work/Temporal/rev3-run/RULINGS.md, pending operator review) + the ledger census R-D (/mnt/Work/Temporal/corpus-revision-1/R-D.md) + the REV_2 G-ROWFORM gate (tools/DualFrontier.Governance/LedgerRowForm.cs, tools/governance/LEDGER_FORM.yaml)
 - register_id: DOC-D-STACK_UPDATE_BRIEF
   path: tools/briefs/STACK_UPDATE_BRIEF.md
   project: Dual Frontier
