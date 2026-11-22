@@ -7563,3 +7563,118 @@ audit_trail:
     exit 124 with a clean log.
   cross_references:
     capa_entries: []
+- id: EVT-2026-11-21-REV_1
+  date: 2026-11-21
+  event: >-
+    REV_1 cascade executed -- the second cascade of CORPUS_REVISION_1. The four tier-1 methodology
+    documents that every session loads as authority now state how the project works: the Linux box,
+    the .NET governance tool, merge commits, the comment law, the debt-marker form, the scopes, the
+    roles and the CI truth. CODING_STANDARDS 3.0.0 -> 4.0.0, DEVELOPMENT_HYGIENE 2.2.0 -> 3.0.0,
+    TESTING_STRATEGY 2.2.3 -> 2.3.0, PIPELINE_METRICS 0.2.2 -> 0.2.3; F-94 is seeded.
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-REV_1_BRIEF
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-DEVELOPMENT_HYGIENE
+  - DOC-B-TESTING_STRATEGY
+  - DOC-B-PIPELINE_METRICS
+  - DOC-C-ROADMAP
+  commits:
+    range: 54a9577..(the closure commit carries this entry)
+    key_commits:
+    - 6eca878
+    - 15f5212
+    - 3ea5d4e
+    - 1881034
+    - d422d21
+    - 839a38d
+    - 49d3ec4
+    - a98a31b
+    - 18c0a93
+    - 2fcef9f
+    - f6f5967
+    - 4cc55a2
+    - 9152097
+    - 907cf1a
+    - e124184
+    - 457ca21
+    - 42a2663
+    - 55a903a
+    - 1533c42
+    - 8fb2848
+    - 8c328d6
+    - 8e69bc0
+    - 1ae7434
+    - 4aeb4a1
+    - f0000d5
+    - 1ceadda
+    - 4de2417
+    - d285473
+  governance_impact: >
+    RATIFICATION. The brief (DOC-D-REV_1_BRIEF v1.0) and the rulings L1-L8 with their canonical
+    wording K1-K10 were ratified by the operator in chat on 2026-11-21. Per the operator ruling of
+    that date a Category D tier 3 brief stays Draft in frontmatter while it executes and the closure
+    EVT records the ratification; this entry is that record. Lifecycle Draft -> EXECUTED.
+
+
+    VERSIONS. CODING_STANDARDS 3.0.0 -> 4.0.0 (MAJOR: the comment rule is inverted, the debt-marker
+    and waiver-authority forms are closed, the merge rule is inverted). DEVELOPMENT_HYGIENE 2.2.0 ->
+    3.0.0 (MAJOR: operational-model change -- Linux only, the .NET governance tool replaces the
+    retired PowerShell suite, the merge law and the roles). TESTING_STRATEGY 2.2.3 -> 2.3.0 (MINOR:
+    the Linux invocation law, the live pins, the failability convention, all additive).
+    PIPELINE_METRICS 0.2.2 -> 0.2.3 (PATCH: era annotations only), with the one ff-only line of
+    BRIEF_TEMPLATE replaced by the merge-commit form. Each class follows the document's own
+    amendment rule.
+
+
+    COMMITS. C1 6eca878 (enrollment), C2 15f5212 (CODING_STANDARDS), C3 3ea5d4e (DEVELOPMENT_HYGIENE),
+    C4 1881034 (TESTING_STRATEGY), C5 d422d21 (PIPELINE_METRICS and the template line). Review
+    repairs, round 1: 839a38d, 49d3ec4, a98a31b, 18c0a93, 2fcef9f, f6f5967, 4cc55a2, 9152097, 907cf1a,
+    e124184, 457ca21, 42a2663, 55a903a, 1533c42, 8fb2848, 8c328d6, 8e69bc0, 1ae7434. Round 2 (the lens
+    over the repairs): 4aeb4a1, f0000d5, 1ceadda, 4de2417. Ruling R-3: d285473. C6 carries this entry.
+
+
+    ORCHESTRATION. Executed by the architect-orchestrator through subagents: one integrator as the
+    only committer on claude/rev-1; four units in their own worktrees returning patches over disjoint
+    file sets (U-CS, U-DH, U-TS, U-PM, one document each); two review lenses on disjoint axes (A: the
+    documents against the tree and by reproduction; B: the record, the law and the form); then a
+    lens over the repairs. Every lens finding was reproduced on the live tree before its
+    disposition.
+
+
+    RULINGS. Three orchestrator rulings supplemented the brief and governed where they differ from
+    it. R-1: a contract sentence that was an instruction about the documents, copied verbatim into
+    the comment-law section as a self-reference with a provenance tag, is replaced by a sentence the
+    section can carry; the rule content stays verbatim. R-2: one further targeted repair round over
+    the five findings of the lens over the repairs, with TESTING_STRATEGY section 8 stating the
+    measured truth that a run stopped by a timeout or a kill is complete only at one TRX per test
+    assembly and is otherwise inconclusive. R-3 (operator, 2026-11-21): the per-commit local duty is
+    tiered and the whole chain runs once per stage; DEVELOPMENT_HYGIENE section 3 gains the
+    paragraph "Per-commit duty by tier" and TESTING_STRATEGY section 8 one pointer sentence, inside
+    the 3.0.0 and 2.3.0 amendments, with no further version bump.
+
+
+    LEDGER. F-94 seeded OPEN (S3, owner architect): the comment law's provenance half and the
+    debt-marker form have no machine gate; the candidate is a Roslyn trivia rule over src/ comments
+    plus a meta-test for test-name literals and an exact census of TODO(F-) sites resolving to OPEN
+    rows, landing with a negative fixture; seeded, not built. Ledger ids run F-1..F-94 with no gap.
+
+
+    RESIDUE ROUTED FORWARD. Outside this cascade's file set and recorded, not repaired: the
+    TESTING_STRATEGY section 4.3 sentence that a compiled meta-test asserts the absence of
+    GlobalSuppressions.cs (only the src/ SuppressMessage count is asserted); the ANALYZER_RULES
+    statements that 17 of the 18 rules break the build and the unscoped DF999 enforcement claim (the
+    analyzer is wired to src/ only). Both are routed to REV-2.
+
+
+    CODE PLANE. None: no file under src/, tests/, mods/ or native/ changed; no census pin moved.
+
+
+    GATES. The stage gate, run once over the closure tree as DEVELOPMENT_HYGIENE section 3 now says. Native
+    selftest ALL PASSED. Build 0W/0E. Suite 1441/0/6 (baseline 1441/0/6 at 54a9577; the six skips are
+    SchedulerExtremeTests S2/S3/S4/S5a/S5b and
+    RuntimeCompositionTests.Create_with_validation_enabled_composes_validation_layer), read from 10 TRX
+    files for 10 test assemblies. validate --armed exit 0 (375 documents parsed). Dev smoke exit 124
+    with a clean six-line log. native/ byte-untouched (consumed, never rebuilt).
+  cross_references:
+    capa_entries: []

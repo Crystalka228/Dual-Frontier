@@ -5,16 +5,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.2.0
+version: 3.0.0
 first_authored: 2026-06-29
-last_modified: '2026-08-26'
+last_modified: '2026-11-21'
 content_language: en
 next_review_due: 2027-06-11
 title: Development hygiene
-last_modified_commit: 27807f7
 review_cadence: on-change+annual
-last_review_date: 2026-08-26
-last_review_event: 'MINOR 2.1.0 -> 2.2.0 2026-08-26 (F60A_TICK_PATH cascade, brief section 7.1 D3): section 3 gains the canonical LINUX native-kernel build commands alongside the existing Windows invocation, plus a new subsection recording how the native library reaches managed TEST output on both hosts. Rationale: the operator ruled Linux the PERMANENT development environment on 2026-08-26, and section 3 documented only the VS-bundled MSVC invocation, so the operative build law was unwritten for the environment development actually runs in. Records the three facts that cost time to rediscover: Ninja is single-config so outputs land at the build root with no Release/ subdirectory, a Windows-era build/ tree must be deleted rather than reconfigured, and the paired Exists-guarded None items make the DllImport bare name resolve on either host. MINOR per CODING_STANDARDS 10.1 rule 3 (a new rule or family, nothing inverted). No lifecycle transition (LOCKED).'
+last_review_date: 2026-11-21
+last_review_event: 'MAJOR 2.2.0 -> 3.0.0 2026-11-21 (REV_1 (CORPUS_REVISION_1)): the document describes the operational model as it runs. Sections 1-2 are re-measured against the tree (57 projects, every one a solution member); section 3 is Linux-only and gains the Launcher dev smoke, the worktree rule and the local acceptance chain (no CI job runs the build, the suite or validate); section 4 describes tools/DualFrontier.Governance and drops the retired PowerShell suite; section 5 states the merge law (a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges are forbidden, the fast-forward requirement is dropped) and the roles (the operator ratifies and merges, the architect orchestrates through subagents, the integrator is the only committer and opens the PR); section 6 is the Linux environment. MAJOR per section 8 rule 3 (operational-model change) and CODING_STANDARDS section 10.1 rule 3 (an existing rule inverted). section 3 also states the per-commit duty by tier (a document-tier commit runs validate --armed and the governance test project, a code-tier commit the build and the test projects it reaches; the whole chain runs once per stage). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-011
@@ -23,55 +22,81 @@ risks_referenced:
 
 # Development hygiene
 
-Operational truth for working in this repository: what is on disk, which commands actually build it, which scripts have which side effects, and which policies bind the executor.
+Operational truth for working in this repository: what is on disk, which commands actually build it, which tools have which side effects, and which policies bind the agents that work in it.
 Every claim below names its on-disk artifact or its verified invocation.
-Architecture lives in `docs/architecture/`; code law lives in `CODING_STANDARDS.md`; test law lives in `TESTING_STRATEGY.md`; this document is the layer between them and the keyboard.
+Architecture lives in `docs/architecture/`; code law lives in `CODING_STANDARDS.md` (what a code comment may say is its section 6.2, which this document does not restate); test law lives in `TESTING_STRATEGY.md`; this document is the layer between them and the keyboard.
 
 ## §1 — Repository map
 
-Top two levels, one phrase each (verified 2026-06-11):
+Top two levels, one phrase each (verified 2026-11-21 at `54a9577`; project counts live in section 2, not here):
 
 ```
-.claude/ .vs/ .vscode/        IDE + session configuration (machine-local state)
-assets/                       Kenney art packs, Cinzel font, scenes/, shaders/
-BenchmarkDotNet.Artifacts/    gitignored benchmark outputs
+.claude/ .vscode/             tracked session hook and editor settings (.vs/ is git-ignored IDE state)
+.github/workflows/            gitleaks.yml, the only workflow: a secret scan (no build or test CI, section 3)
+assets/                       shaders/ (committed SPIR-V), sprites/, kenney/ (committed UI sprites and a
+                              terrain sheet); the extracted Kenney packs and the Cinzel font are git-ignored
+                              local state
+BenchmarkDotNet.Artifacts/    git-ignored benchmark outputs (absent until a benchmark runs)
 docs/
   architecture/               substrate specs (KERNEL, MOD_OS, VULKAN, ...) + historical/ quarantine
   audit/                      closure reviews
   benchmarks/                 performance measurement records
-  governance/                 REGISTER.yaml + FRAMEWORK + PROJECT_AXIOMS + validation/render outputs
+  governance/                 FRAMEWORK + PROJECT_AXIOMS + SYNTHESIS_RATIONALE; REGISTER.yaml and
+                              CURRENT_AUTHORITY_SURFACE.yaml are DERIVED (never hand-edited, section 4);
+                              AUDIT_TRAIL / CAPA / RISKS / REQUIREMENTS yaml are hand-edited sources, and
+                              so is REGISTER_SUPPLEMENT.yaml (the non-.md enrolled artifacts; sync reads it)
   ideas/ learning/ mechanics/ design + study material
-  methodology/                this document + CODING_STANDARDS + TESTING_STRATEGY + METHODOLOGY
-                              + RESERVED_SURFACE_MUTABILITY
+  methodology/                the standing-law corpus (this document, CODING_STANDARDS, TESTING_STRATEGY,
+                              METHODOLOGY, PIPELINE_METRICS, RESERVED_SURFACE_MUTABILITY,
+                              MAXIMUM_ENGINEERING_REFACTOR) + BRIEF_TEMPLATE and RECON_KICKOFF_TEMPLATE
   prompts/                    execution prompts (e.g. PHASE_BETA_PREP_EXECUTION_PROMPT.md)
   reports/                    reconnaissance + drift reports
   research/ scratch/          study material; working notes
-  ROADMAP.md                  the single roadmap target for all future-work content
-mods/                         DualFrontier.Mod.Example (sln) + 6 Vanilla.* mods (disk-only)
-                              + Directory.Build.targets
+  ROADMAP.md                  the single roadmap target for all future-work content (and the Findings ledger)
+  README IDEAS_RESERVOIR MIGRATION_PROGRESS SECRET_SCANNING TRANSLATION_GLOSSARY TRANSLATION_PLAN (.md)
+                              the other docs-root documents
+mods/                         the mod projects (Example, Vanilla.*, Weather, Weather.Contracts), all solution
+                              members + Directory.Build.targets
 native/
-  DualFrontier.Core.Native/   C++ kernel: CMakeLists.txt, src/, include/,
-                              build/ (canonical MSVC tree), out/ (VS-IDE preset tree — non-canonical)
-src/                          12 managed projects + src/Directory.Build.props (analyzer wiring)
-tests/                        11 test/benchmark projects + 19 fixture projects
+  DualFrontier.Core.Native/   C++ kernel: CMakeLists.txt, src/, include/, test/;
+                              build/ (canonical Ninja tree, git-ignored); out/ (git-ignored residue, not a build tree)
+scripts/                      setup-linux-sandbox.sh (provisions a fresh Ubuntu host)
+src/                          managed projects + src/Directory.Build.props (analyzer wiring)
+tests/                        test projects, executables and fixture projects (section 2)
 tools/
-  governance/                 sync_register.ps1, render_register.ps1, query_register.ps1,
-                              SCOPE_EXCLUSIONS.yaml
-  DualFrontier.Analyzers/     Roslyn analyzer project (17 rule stubs under Rules/)
+  DualFrontier.Governance/    the governance tool (validate, sync, migrate; section 4)
+  governance/                 SCOPE_EXCLUSIONS.yaml (the tool's exclusion list), MODULE.md,
+                              query_register.ps1 (legacy)
+  DualFrontier.Analyzers/     Roslyn analyzer project (rules under Rules/)
   DualFrontier.Mod.ManifestRewriter/   mod-manifest tooling
   briefs/                     Category D cascade briefs + closure reports
-  shaders/                    shader sources for the CompileShaders target
-  glslangValidator.exe        committed shader-compiler binary
-  scaffold-runtime.ps1        idempotent runtime-directory materializer
+  shaders/                    shader sources for the Windows-only CompileShaders target
+  glslangValidator.exe        committed Windows shader-compiler binary (section 4)
+  scaffold-runtime.ps1        idempotent runtime-directory materializer (PowerShell)
   scratch/                    working notes
-DualFrontier.sln              the managed solution (§2)
+DualFrontier.sln              the managed solution (section 2)
+global.json                   SDK pin (section 6)
 Directory.Build.props         root MSBuild props (TreatWarningsAsErrors=true; CompileShaders target)
-Directory.Packages.props      Central Package Management (single version source, A'.9.1 Phase α Commit 3)
+Directory.Packages.props      Central Package Management (single version source)
+game.manifest.json            the product manifest (root mods); the Launcher csproj copies it to its output
+launcher-smoke*.log tests-run-*.log   tracked logs of a 2026-05-24 Windows run: dated residue, not output
+                              of any current command
+README.md LICENSE .editorconfig .gitattributes .gitignore .gitleaksignore CppProperties.json
+                              the remaining root files (.editorconfig restates the analyzer severities)
 ```
 
 ## §2 — Project set truth (sln vs disk)
 
-`DualFrontier.sln` contains **32 projects** plus 4 solution folders (`src`, `tests`, `tools`, `mods`) — counted from `Project(` entries with the solution-folder GUID `{2150E333-…}` excluded. Composition:
+`DualFrontier.sln` contains **57 projects** plus 4 solution folders (`src`, `tests`, `tools`, `mods`), and every tracked `.csproj` is a member. Measured at `54a9577`:
+
+```
+grep '^Project(' DualFrontier.sln | grep -vc '{2150E333-8FDC-42A3-9474-1A3956D46DE8}'   # 57 projects
+grep '^Project(' DualFrontier.sln | grep -c '{2150E333-8FDC-42A3-9474-1A3956D46DE8}'    # 4 solution folders
+git ls-files '*.csproj' | wc -l                                                         # 57 tracked projects
+for p in $(git ls-files '*.csproj'); do grep -q "\"$(basename "$p" .csproj)\"" DualFrontier.sln || echo "missing $p"; done   # prints nothing
+```
+
+Composition by directory (`git ls-files '<dir>/*.csproj' | wc -l`: src 12, tests 32, tools 3, mods 10):
 
 **12 src projects** (all wired to the analyzer via `src/Directory.Build.props`):
 
@@ -88,25 +113,21 @@ Directory.Packages.props      Central Package Management (single version source,
 - `DualFrontier.Runtime`
 - `DualFrontier.Systems`
 
-**17 projects under `tests/`**:
+**32 projects under `tests/`**:
 
-- 9 test projects: `DualFrontier.Analyzers.Tests`, `DualFrontier.Application.Tests`, `DualFrontier.Core.Interop.Tests`, `DualFrontier.Core.Tests`, `DualFrontier.Mod.ManifestRewriter.Tests`, `DualFrontier.Modding.Tests`, `DualFrontier.Persistence.Tests`, `DualFrontier.Runtime.Tests`, `DualFrontier.Systems.Tests`;
-- 2 executables: `DualFrontier.Core.Benchmarks` (BenchmarkDotNet) and `DualFrontier.Runtime.SmokeTest`;
-- 6 fixture projects: `Fixture.BadRegularMod`, `Fixture.BadSharedMod_WithIMod`, `Fixture.PublisherMod`, `Fixture.SharedEvents`, `Fixture.SubscriberMod`, `Fixture.VanillaMod_HotReloadOverride`.
+- 10 test projects (`grep -l Microsoft.NET.Test.Sdk tests/*/*.csproj`): `DualFrontier.Analyzers.Tests`, `DualFrontier.Application.Tests`, `DualFrontier.Core.Interop.Tests`, `DualFrontier.Core.Tests`, `DualFrontier.Governance.Tests`, `DualFrontier.Mod.ManifestRewriter.Tests`, `DualFrontier.Modding.Tests`, `DualFrontier.Persistence.Tests`, `DualFrontier.Runtime.Tests`, `DualFrontier.Systems.Tests`;
+- 2 executables (`grep -l '<OutputType>Exe' tests/*/*.csproj`): `DualFrontier.Core.Benchmarks` (BenchmarkDotNet) and `DualFrontier.Runtime.SmokeTest`;
+- 20 fixture projects (`ls -d tests/Fixture.*`): `Fixture.BadRegularMod`, `Fixture.BadSharedMod_WithIMod`, `Fixture.PublisherMod`, `Fixture.SharedEvents`, `Fixture.SubscriberMod`, `Fixture.VanillaMod_HotReloadOverride`, `Fixture.WeatherGateNegative` and the 13 `Fixture.RegularMod_*` projects.
 
-**2 tools projects**: `DualFrontier.Analyzers`, `DualFrontier.Mod.ManifestRewriter`.
+**3 tools projects**: `DualFrontier.Analyzers`, `DualFrontier.Governance`, `DualFrontier.Mod.ManifestRewriter`.
 
-**1 mods project**: `DualFrontier.Mod.Example`.
+**10 mods projects**: `DualFrontier.Mod.Example`, the seven `DualFrontier.Mod.Vanilla.*` mods (`Combat`, `Core`, `Inventory`, `Magic`, `Pawn`, `Scenario`, `World`), `DualFrontier.Mod.Weather` and `DualFrontier.Mod.Weather.Contracts`.
 
-**Disk-only by design — do not "fix" by enrolling into the sln:**
-
-- **6 Vanilla mods** (`mods/DualFrontier.Mod.Vanilla.{Combat,Core,Inventory,Magic,Pawn,World}`) — runtime-loaded through the mod pipeline like any third-party mod (К-L9 «Vanilla = mods»); they are deliberately not solution members.
-- **13 `Fixture.RegularMod_*` projects** under `tests/` — transitively built via 13 `ProjectReference` entries in `tests/DualFrontier.Modding.Tests/DualFrontier.Modding.Tests.csproj` (verified count), then consumed as runtime fixture artifacts by the Modding suite. Solution membership would add nothing and bloat the build matrix.
-- **`native/DualFrontier.Core.Native`** — C++ CMake project, not representable in the managed sln; built per §3.
-
-Disk total under `tests/` is therefore 11 + 19 = 30 project directories, of which 17 are sln members.
+**Solution membership is complete.** Every project above is a solution member; the six original vanilla mods joined at `4aa1fa0` and the 13 `Fixture.RegularMod_*` projects at `ff51dca`. The vanilla mods stay runtime-loaded through the mod pipeline like any third-party mod (К-L9, "Vanilla = mods"); solution membership makes them build participants and creates no engine-to-game reference (the boundary ratchet in `tests/DualFrontier.Governance.Tests/BoundaryRatchetTests.cs` pins that). The 13 `Fixture.RegularMod_*` projects are additionally referenced by `tests/DualFrontier.Modding.Tests/DualFrontier.Modding.Tests.csproj` with `ReferenceOutputAssembly=false` (the cross-ALC projection pattern, `TESTING_STRATEGY.md` section 2.3). **`native/DualFrontier.Core.Native`** is the one build target outside the sln -- a C++ CMake project built per section 3.
 
 ## §3 — Build commands (verified invocations only)
+
+Every command below assumes the shell setup of section 6 (`DOTNET_ROOT` and `PATH` pointing at `~/.dotnet`, `MSBUILDDISABLENODEREUSE=1`) and runs from the repository root.
 
 **Managed solution:**
 
@@ -114,131 +135,114 @@ Disk total under `tests/` is therefore 11 + 19 = 30 project directories, of whic
 dotnet build DualFrontier.sln -c Release
 ```
 
-- Compile-clean: 0 warnings, 0 errors (`TreatWarningsAsErrors=true` in root `Directory.Build.props` — any warning is a build break).
-- Known caveat: **MSB3026/MSB3027 copy-step failures occur when stale `testhost.exe` processes hold test output binaries.** Close test runners first, or wait out MSBuild's retry loop. This is environmental (RISK-011, §6), not a code defect.
+- Compile-clean: 0 warnings, 0 errors (`TreatWarningsAsErrors=true` in root `Directory.Build.props` -- any warning is a build break).
+- The environmental hazards are MSBuild node reuse (a persistent node inherits redirected pipes and hangs a run that spawns child builds) and a testhost lingering in shutdown (RISK-011, section 6). Neither is a code defect; both are handled by section 6 and `TESTING_STRATEGY.md` section 8.
 
-**Native kernel:**
-
-```
-"D:\Visual Studio\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" --build native\DualFrontier.Core.Native\build --config Release
-```
-
-- cmake 4.2.3-msvc3 is **VS-bundled, NOT on PATH** — the absolute path above is the verified invocation; the install root is discoverable via `vswhere.exe` (`${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe`).
-- Outputs land at `native\DualFrontier.Core.Native\build\Release\`: `DualFrontier.Core.Native.dll` plus `df_native_selftest.exe`.
-- The sibling `native\DualFrontier.Core.Native\out\` directory is the **VS-IDE CMake-preset Debug tree — it is NOT the canonical build tree.** The canonical tree is `build\`.
-
-**Native kernel — Linux (the permanent development environment, operator ruling 2026-08-26):**
+**Native kernel (Linux, the permanent development environment, operator ruling 2026-08-26):**
 
 ```
 cmake -S native/DualFrontier.Core.Native -B native/DualFrontier.Core.Native/build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build native/DualFrontier.Core.Native/build
 ```
 
-- cmake **is** on `PATH` here (4.2.3), with ninja 1.13.2 and gcc/g++ 15.2; the MSVC `/std:c++23preview` pin (К-L1) is Windows-arm-only and the CMake GNU arm needed no change.
-- **Ninja is single-config: outputs land at the build ROOT `native/DualFrontier.Core.Native/build/`, with NO `Release/` subdirectory** — `DualFrontier.Core.Native.so` plus `df_native_selftest`. This is the single most load-bearing difference from the Windows layout above, and it is what the test-project `.so` copy items point at.
-- The build tree is **generator-specific and not portable**: a `build/` directory configured by one generator refuses reconfiguration by another (`CMakeCache.txt directory ... is different`). A tree carried over from the Windows era must be deleted, not reconfigured — `rm -rf native/DualFrontier.Core.Native/build`. The directory is git-ignored (`.gitignore`), so deleting it touches no tracked file.
-- Selftest: `./native/DualFrontier.Core.Native/build/df_native_selftest` → `ALL PASSED` (110 scenarios at this writing).
+- cmake, ninja and gcc/g++ are on `PATH`. The MSVC `/std:c++23preview` pin (К-L1) lives under `if(MSVC)` in `CMakeLists.txt` and is not exercised here.
+- **Ninja is single-config: outputs land at the build ROOT `native/DualFrontier.Core.Native/build/`, with NO `Release/` subdirectory** -- `DualFrontier.Core.Native.so` plus `df_native_selftest`. This is the path the `.so` copy items below point at.
+- The build tree is **generator-specific and not portable**: a `build/` directory configured by one generator refuses reconfiguration by another (`CMakeCache.txt directory ... is different`). A tree from another generator must be deleted, not reconfigured: `rm -rf native/DualFrontier.Core.Native/build`. The directory is git-ignored, so deleting it touches no tracked file. `native/DualFrontier.Core.Native/out/` is git-ignored residue of a Windows-era IDE preset and is not a build tree.
+- Selftest: `./native/DualFrontier.Core.Native/build/df_native_selftest` prints `ALL PASSED` as its last line and exits 0.
+- The Windows arm (the MSVC branch of `CMakeLists.txt`, the `build\Release\*.dll` items of the csproj files) stays in those files; it is neither exercised nor supported on the reference host, and no Windows invocation is law here.
 
-**How the native library reaches managed TEST output (both hosts):**
+**How the native library reaches managed output (Launcher and tests):**
 
-- Each native-dependent test project carries **two sibling `<None>` items** with `CopyToOutputDirectory=PreserveNewest`: the Windows one pointing at `build\Release\DualFrontier.Core.Native.dll`, the Linux one at `build\DualFrontier.Core.Native.so`. Both are `Exists(...)`-guarded, so exactly one applies on any given host and no OS condition is needed (MSBuild normalises the backslash separators on Linux).
-- The 8 projects carrying this pair: `DualFrontier.Modding.Tests`, `DualFrontier.Runtime.Tests`, `DualFrontier.Core.Tests`, `DualFrontier.Core.Interop.Tests`, `DualFrontier.Application.Tests`, `DualFrontier.Systems.Tests`, `DualFrontier.Core.Benchmarks`, `DualFrontier.Runtime.SmokeTest`.
-- `DllImport` uses the bare name `"DualFrontier.Core.Native"` (`NativeMethods.cs`), which default .NET probing resolves to `<name>.so` on Linux and `<name>.dll` on Windows — **no managed rename is needed for either host.**
-- Build the native tree BEFORE the managed solution: the `Exists` guard means a missing library makes the copy silently skip, and the failure then surfaces as `DllNotFoundException` at test time rather than as a build error.
+- The Launcher (`src/DualFrontier.Launcher/DualFrontier.Launcher.csproj`) and each native-dependent test project carry **two sibling `<None>` items** with `CopyToOutputDirectory=PreserveNewest`: the Windows one at `build\Release\DualFrontier.Core.Native.dll`, the Linux one at `build\DualFrontier.Core.Native.so`. Both are `Exists(...)`-guarded, so exactly one applies on a given host and no OS condition is needed (MSBuild normalises the backslash separators on Linux).
+- The 8 test projects carrying this pair: `DualFrontier.Modding.Tests`, `DualFrontier.Runtime.Tests`, `DualFrontier.Core.Tests`, `DualFrontier.Core.Interop.Tests`, `DualFrontier.Application.Tests`, `DualFrontier.Systems.Tests`, `DualFrontier.Core.Benchmarks`, `DualFrontier.Runtime.SmokeTest`.
+- `DllImport` uses the bare name `"DualFrontier.Core.Native"` (`NativeMethods.cs`), which default .NET probing resolves to `<name>.so` on Linux -- no managed rename is needed.
+- Build the native tree BEFORE the managed solution: a missing library makes the `Exists` guard skip the copy silently, and the failure surfaces as `DllNotFoundException` at test time, not as a build error.
+- A git worktree carries none of the git-ignored build outputs. When the worktree's native inputs are identical to the donor checkout's (`git diff --quiet <donor-commit> <worktree-commit> -- native/` exits 0), copy the donor's built `DualFrontier.Core.Native.so` (and `df_native_selftest` where the selftest is to run) into the same relative path of the worktree instead of rebuilding. When they differ -- the work under review changes `native/` -- build the worktree's own native tree with the canonical commands above: a copied library would exercise the donor's code, not the change, and the suite and selftest would pass without testing it. A count taken in a worktree without the library is not a measurement.
 
 **Single project:**
 
 ```
-dotnet build src\DualFrontier.Launcher\DualFrontier.Launcher.csproj -c Release
+dotnet build src/DualFrontier.Launcher/DualFrontier.Launcher.csproj -c Release
 ```
 
-**How Native.dll reaches managed output:**
+**Launcher dev smoke** (needs a reachable X display, section 6):
 
-- `src/DualFrontier.Launcher/DualFrontier.Launcher.csproj` carries a `<None>` item with `CopyToOutputDirectory=PreserveNewest` pointing at `native\DualFrontier.Core.Native\build\Release\DualFrontier.Core.Native.dll` (the К-extensions cascade #3 γ0 fix).
-- The item has an `Exists(...)` `Condition` guard — **if only the `out\` tree was built, the copy silently skips** and the Launcher starts without its kernel. Build the canonical `build\` tree first.
+```
+DISPLAY=:0 timeout --signal=TERM 15 dotnet run --project src/DualFrontier.Launcher -c Release > <log outside the tree> 2>&1
+```
 
-**Observed durations** (R3 survey, 2026-06-11, this machine — calibration data, not contract):
+PASS = exit code 124 (the timeout killed a live process) AND the log holds no unhandled exception AND a window was observed (the operator confirms the visual; the agent states what the log shows). An exception, or an exit before the timeout, is a failure.
 
-- full sln ≈ 36 s when fighting testhost lock contention; faster on a clean process table;
-- native kernel ≈ 7 s;
-- Launcher single-project ≈ 5 s, 0 warnings / 0 errors.
+**Tests:** invocation law lives in `TESTING_STRATEGY.md` section 8 -- cited, not restated here.
 
-**Tests:** invocation law lives in `TESTING_STRATEGY.md` §8 — cited, not restated here.
+**Local acceptance chain.** CI truth: the repository's only workflow is `.github/workflows/gitleaks.yml` (secret scan); no CI job runs the build, the suite or `validate --armed` -- the ledger row F-92 owns that gap. Acceptance is the local chain. In order, over the tree being accepted:
+
+1. native selftest `ALL PASSED` (the built or copied library, above);
+2. `dotnet build DualFrontier.sln -c Release` -- 0 warnings, 0 errors;
+3. the full suite per `TESTING_STRATEGY.md` section 8, its verdict read from the TRX files;
+4. the Launcher dev smoke above -- exit 124 and a clean log;
+5. `dotnet run --project tools/DualFrontier.Governance -- validate --armed` -- exit 0 (section 4).
+
+The gates and their pass criteria are `CODING_STANDARDS.md` section 9; this list is their invocation order on the reference host.
+
+**Per-commit duty by tier.** The chain above is the duty of a STAGE, not of every
+commit. A DOCUMENT-tier commit -- its file set (`git diff --name-only <base>`) is only
+Markdown documents, governance YAML under `docs/governance/` and the derived registers --
+runs `validate --armed` (exit 0; `sync` first when a frontmatter block changed) and the
+governance test project (`tests/DualFrontier.Governance.Tests`), nothing more. A
+CODE-tier commit -- any other file -- runs the build (0W/0E), the test projects whose
+assemblies the file set reaches, and `validate --armed`. A commit that touches
+`native/`, MSBuild or CMake wiring (`*.csproj`, `*.props`, `*.targets`, `CMakeLists.txt`),
+`global.json` or `Directory.Packages.props` is CODE tier and runs the FULL suite. The
+whole chain above (selftest, build, full suite, dev smoke, validate) runs once per
+stage: after a wave's last landing and before the push at closure. A red stage gate is
+bisected over that stage's commits.
 
 ## §4 — Tooling reality
 
 **Shell substrate:**
 
-- Windows PowerShell **5.1** (5.1.26100.8655). `pwsh` (PowerShell 7+) is **absent** on this machine — scripts and invocation forms must be 5.1-compatible.
-- Module `powershell-yaml` **0.4.12** is installed and required by the governance scripts.
+- The reference host is Linux with bash. .NET tooling runs from the user-local SDK (section 6). `pwsh` 7 exists but the `powershell-yaml` module is not installed, so no PowerShell governance script is a working command here, and no gate needs one.
 
-**Governance suite** (`tools/governance/`; `SCOPE_EXCLUSIONS.yaml` is consumed by sync and render):
+**Governance tool** (`tools/DualFrontier.Governance`; `tools/governance/SCOPE_EXCLUSIONS.yaml` is its exclusion list):
 
-- **`sync_register.ps1 -Validate`** — validates REGISTER consistency **and unconditionally rewrites `docs/governance/VALIDATION_REPORT.md`** (`Set-Content -Path $REPORT_PATH …` at line 380 — it runs on every invocation, pass or fail).
-  Consequence: **every validate run is folded into a commit** — run validate, then stage the refreshed report with the governance commit it verifies.
-  A validate run that leaves a dirty report in the tree is a protocol violation.
-- **`sync_register.ps1 -Sync`** — strips and rewrites the frontmatter mirrors **in place across all registered `.md` files**.
-  **FORBIDDEN outside ratified register cascades.** It only runs when validation is clean, but its blast radius is every registered document — never run it casually.
-- **Default no-switch mode runs both** validate and sync. **Never use it.** Always pass an explicit switch.
-- **`render_register.ps1`** — writes `docs/governance/REGISTER_RENDER.md` from REGISTER.yaml.
-  Run **only at register-cascade closure**; between closures the render is allowed to go stale, and the staleness is recorded explicitly (Findings ledger) rather than silently re-rendered.
-- **`query_register.ps1`** — read-only register queries (`-Tier`/`-Lifecycle`/`-Category`/`-Stale`/`-CapaOpen` filters). Safe at any time.
-
-**Working invocation forms** (PowerShell 5.1, this machine):
-
-```
-& .\tools\governance\sync_register.ps1 -Validate
-```
-
-— in-session form: proven, complies with machine policy. Subprocess form:
-
-```
-powershell -NoProfile -File tools\governance\sync_register.ps1 -Validate
-```
-
-— policy-dependent. Note: `-ExecutionPolicy Bypass` is **declined by the auto-mode permission classifier on this machine** — use the in-session form.
+- `dotnet run --project tools/DualFrontier.Governance -- validate --armed` -- reads the corpus and **writes nothing**. Armed, the semantic gates of `FRAMEWORK.md` section 14.5 are exit-affecting; exit 0 is the closure gate. Without `--armed` the semantic gates are report-only (`FRAMEWORK.md` section 14.8).
+- `dotnet run --project tools/DualFrontier.Governance -- sync` -- validates, then regenerates the two DERIVED files `docs/governance/REGISTER.yaml` and `docs/governance/CURRENT_AUTHORITY_SURFACE.yaml`, writing only when content changed; a blocking finding stops it before any write. Run it after any frontmatter change and stage the regenerated files in the same commit; never hand-edit them.
+- `-- migrate --target <scratch copy>` is the corpus-migration dry run; it is not part of routine work.
+- No validate run leaves a tracked change behind, so there is no commit-folding obligation: `docs/governance/VALIDATION_REPORT.md` and `docs/governance/REGISTER_RENDER.md` are no longer written by anything.
+- The walk is the FILESYSTEM, not the git index: every `*.md` under the repository root outside `.git`, `bin`, `obj`, `node_modules`, `.vs`, `.pnpm-store` and the exclusion list is in scope, and an in-scope `.md` with no frontmatter is a G-PATH error. Run artifacts, patches and reports that are `.md` files therefore live OUTSIDE the tree, or carry frontmatter if they are tracked.
+- `tools/governance/query_register.ps1` -- legacy read-only register query; needs `pwsh` and the `powershell-yaml` module (absent on the reference host). Not a gate.
 
 **Other tools:**
 
-- `tools/scaffold-runtime.ps1` — idempotent runtime-directory materializer.
-- `tools/glslangValidator.exe` + `tools/shaders/` — shader compilation; wired through the `CompileShaders` target in root `Directory.Build.props` (runs `BeforeTargets="Build"` using the in-repo committed binary).
-- `tools/briefs/` — Category D cascade briefs and closure reports (governance artifacts, not scripts).
+- `tools/scaffold-runtime.ps1` -- idempotent runtime-directory materializer (PowerShell).
+- `tools/glslangValidator.exe` + `tools/shaders/` -- shader compilation through the `CompileShaders` target in root `Directory.Build.props`, which runs only on Windows (`'$(OS)' == 'Windows_NT'`); elsewhere the committed `assets/shaders/*.spv` are the artifacts and are not regenerated.
+- `tools/briefs/` -- Category D cascade briefs and closure reports (governance artifacts, not scripts).
 
 ## §5 — Branch and push policy
 
-- **The executor pushes its BRANCH and opens a PR; the architect merges** (`CODING_STANDARDS.md` §8.4, v3.0.0).
-  An execution session ends with local commits, a closure report, a pushed work branch and an open pull request
-  against `main`. The executor never pushes to `main` and never merges its own PR — the merge is Crystalka's act,
-  and it is where ratification happens. Expect an auto-mode re-confirmation on the push.
-  Superseded 2026-08-20: the previous "the executor NEVER pushes" could not hold in a remote/cloud session, where
-  an unpushed branch is lost work.
-- **Fast-forward-only merges** for linear cascades (`git merge --ff-only`).
-  A cascade branch that cannot fast-forward onto `main` halts for adjudication instead of generating a merge commit.
-- **Atomic commits** per `CODING_STANDARDS.md` §8 — one conceptual change per commit, structured body, no squash, no history rewrite.
-  Surface revisions ride inside commits as `Skeleton revisions:` records per `RESERVED_SURFACE_MUTABILITY.md` §5.
-- **Branch census (2026-06-11):** 44 local branches besides `main`; **41 are fully merged into `main`** and are pruning candidates — tracked as a ROADMAP Findings-ledger entry, **NOT pruned in this cascade.**
-  The 3 unmerged branches, by name:
-  - `claude/cpp-core-experiment-cEsyH` — the original C++ kernel experiment; **К-L source-of-truth reference** (cited by KERNEL_ARCHITECTURE.md) — keep;
-  - `claude/godot-removal-deliberation-Vfg2R` — deliberation record branch;
-  - `feat/m0-m3-mod-os-migration` — historical migration branch.
+- **Roles:** the OPERATOR ratifies and merges; the ARCHITECT authors briefs and orchestrates the cascade through subagents; the INTEGRATOR (a subagent) is the only committer on the work branch, pushes it once at closure and opens the PR.
+- **Push** (`CODING_STANDARDS.md` section 8.4): at closure the integrator runs `git push -u origin <branch>`, then `gh pr create --base main`. It never pushes to `main` and never merges the PR -- the merge is Crystalka's act, and it is where ratification happens. Expect an auto-mode re-confirmation on the push.
+- **Merge** (`CODING_STANDARDS.md` section 8.3): A pull request lands on `main` as a two-parent merge commit made by the operator. Squash-merge and rebase-merge are forbidden: each replaces the authored sequence with commits nobody authored. Fast-forward-only is not required. Recorded exceptions, not precedent: PRs #55 and #56 reached `main` squash-merged (`17b3719`, `3000285`); history is not rewritten to repair them.
+  The measure is `git log --first-parent main --format='%h %p %s'`: a landed PR shows two parent hashes.
+- **Atomic commits** per `CODING_STANDARDS.md` section 8 -- one conceptual change per commit, structured body, no squash, no history rewrite. Surface revisions ride inside commits as `Skeleton revisions:` records per `RESERVED_SURFACE_MUTABILITY.md` section 5.
+- **Branches kept unmerged:** `claude/cpp-core-experiment-cEsyH` (the original C++ kernel experiment; К-L source-of-truth reference, cited by KERNEL_ARCHITECTURE.md), `claude/godot-removal-deliberation-Vfg2R` (deliberation record) and `feat/m0-m3-mod-os-migration` (historical migration). Every other local branch is merged into `main` and is a pruning candidate tracked in the Findings ledger (F-11); `git branch --no-merged main` is the measure.
 
-## §6 — Environment notes (Skarlet)
+## §6 — Environment notes
 
-- **OS:** Windows 11 Home 10.0.26200.
-- **.NET:** dotnet SDK **10.0.204** — the single installed SDK, now pinned by the repo-root `global.json` (`"rollForward": "latestFeature"`).
-  Projects target `net10.0` (STACK_UPDATE cascade, 2026-07-17). The former «do not add `global.json` pinning without deliberation» prohibition was discharged by exactly that deliberation: the Q1-beta operator ruling (ADD with pin — the commit history is the research dataset; reproducibility wins) is recorded in `EVT-2026-07-17-STACK_UPDATE` (AUDIT_TRAIL.yaml).
-- **MSVC toolchain:** Visual Studio at `D:\Visual Studio` (MSBuild 18.5.4).
-  cmake is VS-bundled, not on PATH — see §3 for the exact invocation path.
-- **Known failure pattern — testhost.exe locks (RISK-011):** stale `testhost.exe` processes from previous `dotnet test` runs hold test-bin files and break the solution build's copy steps (MSB3026/MSB3027).
-  Mitigation: close test runners / kill stale testhosts, or let MSBuild's retry window expire and rebuild.
-  Treat as environmental noise, not regression, unless it reproduces with a clean process table.
+- **OS:** Linux with bash -- the permanent development environment (operator ruling 2026-08-26).
+- **.NET:** the SDK is user-local at `~/.dotnet` (10.0.400 on the reference host). The repo-root `global.json` pins `10.0.204` with `"rollForward": "latestFeature"`, which 10.0.400 satisfies. Before any `dotnet` command: `export DOTNET_ROOT="$HOME/.dotnet"; export PATH="$HOME/.dotnet:$PATH"`. Do not rely on a system or snap `dotnet` (on the reference host `/snap/bin/dotnet` is an installer stub). Projects target `net10.0` (LangVersion 14.0, root `Directory.Build.props`). The pin is the Q1-beta ruling recorded in `EVT-2026-07-17-STACK_UPDATE` (AUDIT_TRAIL.yaml).
+- **Native toolchain:** cmake, ninja and gcc/g++ on `PATH` (section 3).
+- **MSBuild node reuse:** `export MSBUILDDISABLENODEREUSE=1` in every shell that runs `dotnet build` or `dotnet test`. Persistent node-reuse MSBuild nodes inherit redirected pipes and hang tests that spawn child builds (M74BuildPipelineTests, F-48). The default shell does not set it; `scripts/setup-linux-sandbox.sh` sets it only on a provisioned sandbox. `dotnet build-server shutdown` releases the servers after a run.
+- **Display:** the Launcher smoke and the display-gated tests need a reachable X display (the reference host runs XWayland, `DISPLAY=:0`). Without one the gated tests skip at discovery (`tests/DualFrontier.Runtime.Tests/TestInfrastructure/PlatformFacts.cs`), so the suite totals change; see `TESTING_STRATEGY.md` sections 2.6 and 8.
+- **Known failure pattern (RISK-011):** a testhost lingering in shutdown holds an inherited stdout pipe, so a piped `dotnet test` blocks forever -- never pipe it (`TESTING_STRATEGY.md` section 8). Treat environmental noise as noise only if it does not reproduce with a clean process table.
 
 ## §7 — Godot status
 
 Godot is **fully eradicated** — deprecated and physically purged at К-extensions cascade #2 (2026-05-23), with the residual inert file surface deleted at the Godot Eradication Cascade (2026-06-29; F-5 authorized + closed). Current state, verified against disk:
 
 - **Zero Godot package or SDK references** in any `.csproj` or `Directory.Build.props` (repo-wide grep clean).
-- Remaining `Godot` mentions in `src/**/*.cs` are the **9 retirement-notice / historical-context comments only** on the reserved seams (e.g., the deprecation note in `src/DualFrontier.Application/Bridge/PresentationBridge.cs`) — no code references.
+- Remaining `Godot` mentions in `src/**/*.cs` are retirement-notice / historical-context comments only on the reserved seams (e.g., the deprecation note in `src/DualFrontier.Application/Bridge/PresentationBridge.cs`) -- no code references (`rg --count-matches -i godot src --type cs`: 7 matches in 6 files at `54a9577`). They predate the comment law of `CODING_STANDARDS.md` section 6.2 and are brought to it when a landing edits their file (section 6.3 there).
 - Historical Godot documentation is quarantined under `docs/architecture/historical/`.
 - **The Godot file surface is gone.** `project.godot`, `icon.svg` / `icon.svg.import`, the 11 `assets/**/*.import` image sidecars, and the 204 `.cs.uid` resource-UID sidecars were deleted (the build stayed green, proving inertness); the Godot-specific `.gitignore` block and the `.godot/**` / `.gdignore` SCOPE_EXCLUSIONS entries were removed with them.
 
@@ -251,13 +255,27 @@ This document is Category B, **Tier 1, LOCKED**. It states operational truth, so
 1. **Trigger** — a verified change in repository layout, project set, build invocation, tooling behavior, branch policy, or environment.
 2. **Rationale** — the commit (or cascade) that changed the underlying reality is named in the change-history entry.
 3. **Semver** — PATCH for corrections within a section (counts, paths); MINOR for new sections or new tooling; MAJOR for a rewrite or an operational-model change.
-4. **Register update** — per `METHODOLOGY.md` §12.5 post-session update protocol; closure-grade changes per §12.7.
-5. **Cross-document propagation** — `CODING_STANDARDS.md` §9 (verification gates) and `TESTING_STRATEGY.md` §8 (invocations) are re-checked whenever §3/§4 here change.
+4. **Register update** -- bump `version`, `last_modified` and the review fields in this document's own frontmatter, which is the source of truth (`FRAMEWORK.md` section 14.1); regenerate the derived register with `dotnet run --project tools/DualFrontier.Governance -- sync` and run `-- validate --armed` (exit 0); the cascade's closure record carries the audit-trail event.
+5. **Cross-document propagation** -- `CODING_STANDARDS.md` section 9 (verification gates) and `TESTING_STRATEGY.md` section 8 (invocations) are re-checked whenever section 3, 4 or 6 here change.
 
 Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_AXIOMS.md` §5 chain).
 
 ## Change history
 
+- **v3.0.0 (2026-11-21)** -- REV_1 (CORPUS_REVISION_1). Sections 1-2 are re-measured against the tree: a 57-project
+  solution in which every project is a member (the six original vanilla mods and the 13 `Fixture.RegularMod_*`
+  projects are no longer "disk-only"), with the counting commands stated. Section 3 is Linux-only and gains the
+  Launcher dev smoke, the worktree rule for the native library and the local acceptance chain (no CI job runs the
+  build, the suite or `validate --armed`; F-92). Section 4 describes `tools/DualFrontier.Governance` (validate reads
+  only, sync regenerates the two derived files) and drops the retired PowerShell suite, the `VALIDATION_REPORT.md`
+  rewrite and the commit-folding protocol. Section 5 states the roles and the merge law: a PR lands as a two-parent
+  merge commit made by the operator, squash- and rebase-merge are forbidden, PRs #55 and #56 are the recorded squash
+  exceptions, and the earlier fast-forward-only rule is inverted. Section 6 is the Linux environment; section 7
+  recounts the Godot mentions and points at the comment law; section 8 rule 4 follows the schema-2.0 register
+  protocol. **MAJOR** per section 8 rule 3 (operational-model change) and `CODING_STANDARDS.md` section 10.1 rule 3
+  (an existing rule inverted). Section 3 also states the per-commit duty by tier: a document-tier commit runs
+  `validate --armed` and the governance test project, a code-tier commit the build and the test projects it
+  reaches, and the whole local chain runs once per stage.
 - **v2.2.0 (2026-08-26)** — F60A_TICK_PATH cascade (brief §7.1, D3). §3 gains the canonical **Linux** native-kernel
   build commands beside the existing Windows invocation, and a new subsection records how the native library reaches
   managed **test** output on both hosts. The operator ruled Linux the PERMANENT development environment on 2026-08-26,
