@@ -561,9 +561,10 @@ Internal citations — from code comments, XML docs, and living documents — us
    snapshots and records (change-history rows, EXECUTED briefs, closure
    reports), where they describe a moment in time.
 2. **URL-fragment anchors** (`…/ANALYZER_RULES.md#4--…`) — heading slugs break
-   under restructure. Cite by section number + topic instead. The auto-generated
-   `register_view_url` frontmatter line is the sanctioned exception
-   (machine-maintained, regenerated with the render).
+   under restructure. Cite by section number + topic instead. The
+   `register_view_url` frontmatter line that some dated schema-1 records still
+   carry is a legacy field, not an exception: the schema-2.0 migration drops it
+   and nothing regenerates it.
 
 Enforcement: review-bound -- no analyzer rule detects citation form; any future
 detection appears first as `Planned — see docs/ROADMAP.md §Analyzer track`.
