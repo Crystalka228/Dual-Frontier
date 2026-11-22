@@ -18,7 +18,8 @@ reviewer: Crystalka
 # Findings ledger -- live rows
 
 The LIVE rows of the F-series findings ledger: every row whose State does not
-begin `CLOSED`. Category C, Live -- continuously mutable; its integrity is the
+begin `CLOSED`, the State read by its leading member as the legend below defines
+it. Category C, Live -- continuously mutable; its integrity is the
 register's two-plane law ([FRAMEWORK](/docs/governance/FRAMEWORK.md) section 14)
 and not a version number. The ledger was seeded on 2026-06-11 and lived in
 [ROADMAP](/docs/ROADMAP.md) until 2026-11-22, when its rows moved here and to

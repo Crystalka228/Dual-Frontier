@@ -1060,7 +1060,8 @@ The single exception is FHE: because its contract is already ratified, [FHE_INTE
 ## Findings ledger (F-series)
 
 The F-series findings ledger no longer lives in this document. Its live rows
-(every row whose State does not begin `CLOSED`) are in
+(every row whose State does not begin `CLOSED`, the State read by its leading
+member) are in
 [LEDGER](/docs/LEDGER.md), together with the one legend and the row form; its
 closed rows are in [LEDGER_ARCHIVE](/docs/LEDGER_ARCHIVE.md). Both documents are
 Category C, Live, and a finding lands in the ledger at the closure that surfaces
