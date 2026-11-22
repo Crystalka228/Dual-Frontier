@@ -4,7 +4,7 @@ using Xunit;
 
 namespace DualFrontier.Governance.Tests;
 
-/// <summary>G-GLOBALS (the four collection enums) and the G-RATIO monitor -- red and green.</summary>
+/// <summary>G-GLOBALS (the four collection enums) and the G-RATIO gate -- red and green.</summary>
 public sealed class GlobalsAndMonitorTests
 {
     [Fact]
@@ -59,19 +59,82 @@ public sealed class GlobalsAndMonitorTests
         globals.Validate().Should().Contain(f => f.Message.Contains("duplicate capa id"));
     }
 
+    private static IReadOnlyList<Frontmatter> RationaleCorpus(int total, int withRationale)
+    {
+        var docs = new List<Frontmatter>();
+        for (int i = 0; i < total; i++)
+        {
+            docs.Add(i < withRationale
+                ? Fixture.Doc(("register_id", $"DOC-D-N{i}"), ("special_case_rationale", "sanctioned"))
+                : Fixture.Doc(("register_id", $"DOC-D-N{i}")));
+        }
+
+        return docs;
+    }
+
+    [Theory]
+    [InlineData(0, 0, Severity.Monitor)]
+    [InlineData(100, 0, Severity.Monitor)]
+    [InlineData(100, 19, Severity.Monitor)]
+    [InlineData(6, 1, Severity.Monitor)]
+    [InlineData(100, 20, Severity.Report)]
+    [InlineData(5, 1, Severity.Report)]
+    [InlineData(100, 21, Severity.Report)]
+    [InlineData(1, 1, Severity.Report)]
+    public void Ratio_ReportsAtTheThreshold_AndMonitorsBelowIt(int total, int overrides, Severity expected)
+    {
+        Finding finding = Validators.RationaleRatio(RationaleCorpus(total, overrides));
+
+        finding.Gate.Should().Be(GateCatalog.Ratio);
+        finding.Severity.Should().Be(expected);
+        finding.Message.Should().Contain($"{overrides}/{total}");
+    }
+
     [Fact]
-    public void Ratio_IsMonitorSeverity_AndComputesTheOverrideShare()
+    public void Ratio_RunAll_CarriesTheThresholdVerdict()
+    {
+        Validators.RunAll(RationaleCorpus(5, 1))
+            .Should().ContainSingle(f => f.Gate == GateCatalog.Ratio && f.Severity == Severity.Report);
+        Validators.RunAll(RationaleCorpus(6, 1))
+            .Should().ContainSingle(f => f.Gate == GateCatalog.Ratio && f.Severity == Severity.Monitor);
+    }
+
+    [Fact]
+    public void Ratio_CountsOnlySpecialCaseRationale_NotProvenanceNote()
     {
         var docs = new[]
         {
-            Fixture.Doc(("special_case_rationale", "sanctioned")),
-            Fixture.Doc(("register_id", "DOC-A-2"), ("category", "A")),
+            Fixture.Doc(("register_id", "DOC-D-A1"), ("provenance_note", "carried from an earlier register")),
+            Fixture.Doc(("register_id", "DOC-D-A2"), ("provenance_note", "carried from an earlier register")),
         };
 
         Finding finding = Validators.RationaleRatio(docs);
 
         finding.Severity.Should().Be(Severity.Monitor);
-        finding.Gate.Should().Be("G-RATIO");
-        finding.Message.Should().Contain("1/2");
+        finding.Message.Should().Contain("0/2");
+    }
+
+    [Fact]
+    public void ProvenanceNote_IsParsed_ButNeverExemptsAForbiddenCombination()
+    {
+        Frontmatter doc = Fixture.Doc(
+            ("category", "D"), ("tier", 1), ("lifecycle", "EXECUTED"),
+            ("provenance_note", "classification carried over"));
+
+        doc.ProvenanceNote.Should().Be("classification carried over");
+        doc.HasSanctionedDeviation.Should().BeFalse();
+        Validators.Gate1CategoryLifecycle(doc).Should().ContainSingle(f => f.Gate == GateCatalog.CatLife);
+    }
+
+    [Fact]
+    public void ProvenanceNote_IsAccepted_ByTheSchemaGate_AndCarriedIntoTheArchive()
+    {
+        Frontmatter doc = Fixture.Doc(
+            ("register_id", "DOC-A-NOTED"), ("category", "A"),
+            ("provenance_note", "classification carried over"));
+
+        Validators.ValidateSchema(doc).Should().BeEmpty();
+        Validators.RenderArchive(new[] { doc }, new GlobalsCollections(), "2.1")
+            .Should().Contain("provenance_note: classification carried over");
     }
 }

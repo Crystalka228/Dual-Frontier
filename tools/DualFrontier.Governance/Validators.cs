@@ -14,6 +14,12 @@ public static class Validators
 {
     // --- Schema v2 (FRAMEWORK 14.3) ---
 
+    /// <summary>The schema version both derived artifacts declare (FRAMEWORK 7.1: a new optional field is MINOR).</summary>
+    public const string SchemaVersion = "2.1";
+
+    /// <summary>The G-RATIO threshold: the share of documents carrying a special_case_rationale at which the gate reports (FRAMEWORK 10 #5).</summary>
+    public const int RationaleThresholdPercent = 20;
+
     public static readonly IReadOnlyList<string> RequiredFields = new[]
     {
         "register_id", "project", "category", "tier", "lifecycle", "owner",
@@ -81,7 +87,7 @@ public static class Validators
     };
 
     // DF ids are path-flattened with hyphens (FRAMEWORK 5: DOC-F-SRC-CORE,
-    // DOC-J-COMBAT-RESOLUTION), unlike NIH's underscore-only ids -- hyphens allowed.
+    // DOC-J-COMBAT-RESOLUTION), so hyphens are allowed in the name part.
     private static readonly Regex RegisterIdPattern = new(@"^DOC-[A-J]-[A-Z0-9_-]+$", RegexOptions.Compiled);
     private static readonly Regex IsoDate = new(@"^\d{4}-\d{2}-\d{2}$", RegexOptions.Compiled);
     private static readonly Regex Quarter = new(@"^\d{4}-Q[1-4]$", RegexOptions.Compiled);
@@ -103,38 +109,38 @@ public static class Validators
         {
             if (!fm.ContainsKey(field))
             {
-                yield return Error("G-SCHEMA", fm, $"missing required field \"{field}\"");
+                yield return Error(GateCatalog.Schema, fm, $"missing required field \"{field}\"");
             }
         }
 
         if (fm.Category is { } cat && !ValidCategories.Contains(cat))
         {
-            yield return Error("G-SCHEMA", fm, $"invalid category \"{cat}\" (expected A..J)");
+            yield return Error(GateCatalog.Schema, fm, $"invalid category \"{cat}\" (expected A..J)");
         }
 
         if (fm.Tier is { } tier && !ValidTiers.Contains(tier))
         {
-            yield return Error("G-SCHEMA", fm, $"invalid tier {tier} (expected 1..5)");
+            yield return Error(GateCatalog.Schema, fm, $"invalid tier {tier} (expected 1..5)");
         }
 
         if (fm.Lifecycle is { } lifecycle && !ValidLifecycles.Contains(lifecycle))
         {
-            yield return Error("G-SCHEMA", fm, $"invalid lifecycle \"{lifecycle}\"");
+            yield return Error(GateCatalog.Schema, fm, $"invalid lifecycle \"{lifecycle}\"");
         }
 
         if (fm.ContentLanguage is { } lang && !ValidContentLanguages.Contains(lang))
         {
-            yield return Error("G-SCHEMA", fm, $"invalid content_language \"{lang}\" (expected en|ru|mixed)");
+            yield return Error(GateCatalog.Schema, fm, $"invalid content_language \"{lang}\" (expected en|ru|mixed)");
         }
 
         if (fm.RegisterId is { } id && !RegisterIdPattern.IsMatch(id))
         {
-            yield return Error("G-SCHEMA", fm, $"register_id \"{id}\" does not match DOC-<A..J>-<NAME>");
+            yield return Error(GateCatalog.Schema, fm, $"register_id \"{id}\" does not match DOC-<A..J>-<NAME>");
         }
 
         if (fm.LastModifiedCommit is { } commit && PendingCommit.IsMatch(commit))
         {
-            yield return Error("G-SCHEMA", fm,
+            yield return Error(GateCatalog.Schema, fm,
                 $"last_modified_commit \"{commit}\" uses the outlawed PENDING-* placeholder (FRAMEWORK 14.3)");
         }
     }
@@ -152,13 +158,13 @@ public static class Validators
         if (fm.Category is { } cat && fm.Tier is { } tier &&
             ForbiddenCategoryTier.TryGetValue(cat, out int[]? tiers) && tiers.Contains(tier))
         {
-            yield return Report("G-CATLIFE", fm,
+            yield return Report(GateCatalog.CatLife, fm,
                 $"forbidden category={cat} + tier={tier} without special_case_rationale (FRAMEWORK 3.4.1)");
         }
 
         if (fm.Tier is { } t && fm.Lifecycle is { } lc && ForbiddenTierLifecycle.Contains($"{t}+{lc}"))
         {
-            yield return Report("G-CATLIFE", fm,
+            yield return Report(GateCatalog.CatLife, fm,
                 $"forbidden tier={t} + lifecycle={lc} without special_case_rationale (FRAMEWORK 3.4.1)");
         }
     }
@@ -169,7 +175,7 @@ public static class Validators
         if (fm.RegisterId is { } id && fm.Category is { } cat &&
             !id.StartsWith($"DOC-{cat}-", StringComparison.Ordinal))
         {
-            yield return Report("G-NAMESPACE", fm, $"register_id does not start with DOC-{cat}- (category {cat})");
+            yield return Report(GateCatalog.Namespace, fm, $"register_id does not start with DOC-{cat}- (category {cat})");
         }
     }
 
@@ -178,7 +184,7 @@ public static class Validators
     {
         if (fm.Lifecycle is { } lc && TerminalLifecycles.Contains(lc) && fm.NextReviewDue != "null")
         {
-            yield return Report("G-TERMINAL", fm,
+            yield return Report(GateCatalog.Terminal, fm,
                 $"terminal lifecycle {lc} must carry next_review_due 'null' (got '{fm.NextReviewDue}') (FRAMEWORK 14.4)");
         }
     }
@@ -190,7 +196,7 @@ public static class Validators
         bool ok = v == "null" || IsoDate.IsMatch(v) || Quarter.IsMatch(v) || PostClosure.IsMatch(v);
         if (!ok)
         {
-            yield return Report("G-SENTINEL", fm,
+            yield return Report(GateCatalog.Sentinel, fm,
                 $"next_review_due '{v}' is not in the sanctioned set ('null'|YYYY-MM-DD|YYYY-QN|'post-<event> closure') (FRAMEWORK 14.4)");
         }
     }
@@ -212,7 +218,7 @@ public static class Validators
         {
             if (doc.RegisterId is { } id && !seen.Add(id))
             {
-                yield return new Finding("G-UNIQUE", Severity.Error, id, $"duplicate register_id \"{id}\"");
+                yield return new Finding(GateCatalog.Unique, Severity.Error, id, $"duplicate register_id \"{id}\"");
             }
         }
     }
@@ -240,49 +246,60 @@ public static class Validators
             {
                 if (!byId.TryGetValue(target, out Frontmatter? other))
                 {
-                    yield return Report("G-XREF", doc, $"supersedes \"{target}\" which is not enrolled");
+                    yield return Report(GateCatalog.Xref, doc, $"supersedes \"{target}\" which is not enrolled");
                     continue;
                 }
 
                 if (other.SupersededBy is not { } sb || !byId.ContainsKey(sb))
                 {
-                    yield return Report("G-XREF", doc,
+                    yield return Report(GateCatalog.Xref, doc,
                         $"supersedes \"{target}\" but \"{target}\" has no resolving superseded_by pointer (FRAMEWORK 3.3.2)");
                 }
             }
 
             if (doc.SupersededBy is { } supersededBy && !byId.ContainsKey(supersededBy))
             {
-                yield return Report("G-XREF", doc, $"superseded_by \"{supersededBy}\" which is not enrolled");
+                yield return Report(GateCatalog.Xref, doc, $"superseded_by \"{supersededBy}\" which is not enrolled");
             }
 
             if (doc.DeprecatedBy is { } deprecatedBy && !byId.ContainsKey(deprecatedBy))
             {
-                yield return Report("G-XREF", doc, $"deprecated_by \"{deprecatedBy}\" which is not enrolled");
+                yield return Report(GateCatalog.Xref, doc, $"deprecated_by \"{deprecatedBy}\" which is not enrolled");
             }
 
             if (doc.Lifecycle == "SUPERSEDED" && (doc.SupersededBy is not { } s || !byId.ContainsKey(s)))
             {
-                yield return Report("G-TERMINAL", doc,
+                yield return Report(GateCatalog.Terminal, doc,
                     "lifecycle SUPERSEDED requires superseded_by to resolve to an enrolled id (FRAMEWORK 3.3.2, 14.4)");
             }
 
             if (doc.Lifecycle == "DEPRECATED" && (doc.DeprecatedBy is not { } d || !byId.ContainsKey(d)))
             {
-                yield return Report("G-TERMINAL", doc,
+                yield return Report(GateCatalog.Terminal, doc,
                     "lifecycle DEPRECATED requires deprecated_by to resolve to an enrolled id (FRAMEWORK 3.3.2, 14.4)");
             }
         }
     }
 
-    /// <summary>G-RATIO -- the special_case_rationale override share (Monitor; FRAMEWORK 10 #5).</summary>
+    /// <summary>
+    /// G-RATIO -- the special_case_rationale share of the corpus (FRAMEWORK 10 #5).
+    /// Reports (exit-affecting under --armed) when the share reaches
+    /// <see cref="RationaleThresholdPercent"/>, otherwise a Monitor line printing
+    /// the share. Only special_case_rationale counts; a provenance_note never does.
+    /// </summary>
     public static Finding RationaleRatio(IReadOnlyList<Frontmatter> docs)
     {
         int overrides = docs.Count(d => d.HasSanctionedDeviation);
         int total = docs.Count;
         double pct = total == 0 ? 0 : 100.0 * overrides / total;
-        return new Finding("G-RATIO", Severity.Monitor, "(corpus)",
-            $"special_case_rationale overrides: {overrides}/{total} ({pct:F1}%); FRAMEWORK 10 #5 threshold is 20%");
+        bool reached = total > 0 && overrides * 100 >= RationaleThresholdPercent * total;
+        string share = $"special_case_rationale overrides: {overrides}/{total} ({pct:F1}%)";
+
+        return reached
+            ? new Finding(GateCatalog.Ratio, Severity.Report, "(corpus)",
+                $"{share} reaches the FRAMEWORK 10 #5 threshold of {RationaleThresholdPercent}% -- the allowed-combinations matrix is wrong, not edge-case-tolerant")
+            : new Finding(GateCatalog.Ratio, Severity.Monitor, "(corpus)",
+                $"{share}; FRAMEWORK 10 #5 threshold is {RationaleThresholdPercent}%");
     }
 
     /// <summary>Schema + all gates over a whole corpus (does not include the no-frontmatter / parse errors, which the walker emits).</summary>
@@ -381,8 +398,7 @@ public static class Validators
             entries.Add(entry);
         }
 
-        // Non-.md enrolled entries carried forward from the provisional supplement
-        // (FRAMEWORK 14.9 -- architect-ruling for Cascade B).
+        // Non-.md enrolled entries come from the standing REGISTER_SUPPLEMENT.yaml.
         if (supplementDocs is not null)
         {
             foreach (Dictionary<string, object?> supplement in supplementDocs)
@@ -396,7 +412,7 @@ public static class Validators
 
         var archive = new Dictionary<string, object?>
         {
-            ["schema_version"] = "2.0",
+            ["schema_version"] = SchemaVersion,
             ["register_version"] = registerVersion,
             ["documents"] = entries,
             ["requirements"] = globals.Requirements,
@@ -411,7 +427,7 @@ public static class Validators
 
     /// <summary>
     /// The DOC-G-REGISTER self-entry, emitted deterministically every sync
-    /// (FRAMEWORK 8.3 / 14.9). No volatile field, so the archive stays
+    /// (FRAMEWORK 14.1). No volatile field, so the archive stays
     /// byte-reproducible; the meta_role reflects the inverted derived-archive role.
     /// </summary>
     private static Dictionary<string, object?> RegisterSelfEntry() => new()
@@ -434,7 +450,7 @@ public static class Validators
 
     private sealed class AuthoritySurfaceFile
     {
-        public string schema_version { get; set; } = "2.0";
+        public string schema_version { get; set; } = SchemaVersion;
         public List<AuthorityDoc> documents { get; set; } = new();
     }
 

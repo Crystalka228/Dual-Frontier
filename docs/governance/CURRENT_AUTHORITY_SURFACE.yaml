@@ -3,7 +3,7 @@
 # every sync from the corpus, per FRAMEWORK 14.7. The boot subset: Live documents
 # plus LOCKED tier-1/2 masters. The full docs/governance/REGISTER.yaml remains the
 # audit corpus.
-schema_version: 2.0
+schema_version: 2.1
 documents:
 - register_id: DOC-A-ANALYZER_RULES_V2
   path: docs/architecture/ANALYZER_RULES.md

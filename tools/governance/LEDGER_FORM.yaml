@@ -1,0 +1,13 @@
+# Ledger form config for the G-ROWFORM gate (FRAMEWORK 14.5).
+# ledger_path is the one value that locates the F-ledger table; moving the
+# ledger is a one-line edit here. The table is read from the header row whose
+# first cell equals id_header. The severity and state sets restate the legend
+# printed above the table; a governance test asserts the legend names every
+# member listed here.
+schema_version: "1.0"
+ledger_path: "docs/ROADMAP.md"
+id_header: "F-#"
+severity_header: "Severity"
+state_header: "State"
+severity_set: ["S0", "S1", "S2", "S3", "N"]
+state_set: ["OPEN", "CLOSED", "ACCEPTED-NO-ACTION"]

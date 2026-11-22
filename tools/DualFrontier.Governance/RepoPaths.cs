@@ -44,4 +44,8 @@ public static class RepoPaths
     /// <summary>The exclusion config seed (<c>tools/governance/SCOPE_EXCLUSIONS.yaml</c>).</summary>
     public static string ExclusionsPath(string repoRoot) =>
         Path.Combine(repoRoot, "tools", "governance", "SCOPE_EXCLUSIONS.yaml");
+
+    /// <summary>The ledger-form config (<c>tools/governance/LEDGER_FORM.yaml</c>): where G-ROWFORM finds the ledger.</summary>
+    public static string LedgerFormPath(string repoRoot) =>
+        Path.Combine(repoRoot, "tools", "governance", "LEDGER_FORM.yaml");
 }
