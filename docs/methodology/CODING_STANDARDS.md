@@ -244,7 +244,8 @@ language-idiomatic style, distinct from the managed layer.
 - **Trailing-underscore private members** (`registry_`, `entities_`).
 - **`namespace dualfrontier`** wraps the implementation.
 - **Header guards**: the public C API header (`include/df_capi.h`) uses an
-  include guard; internal headers use `#pragma once`.
+  include guard; internal headers use `#pragma once`. Observed exception:
+  `include/tile_field.h` carries an `#ifndef DF_TILE_FIELD_H` include guard.
 
 ### §3.1 — The `extern "C"` ABI boundary
 
