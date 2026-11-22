@@ -513,7 +513,7 @@ documents:
   title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
   review_cadence: on-change+annual
   last_review_date: 2026-07-18
-  last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 3 ownership matrix: the Systems family stock is re-counted to 27 (classes deriving SystemBase under src/DualFrontier.Systems/), replacing the 30 that matched no stated predicate; the migration plan section 5 map carries the same figure and the predicate. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
+  last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 3 ownership matrix: the Systems family stock is re-counted to 27 (classes deriving SystemBase under src/DualFrontier.Systems/), replacing 30, which counted every class under that folder (the two ManaLease helpers included) and was not decremented when W3 deleted the Weather stub; the migration plan section 5 map carries the same figure and the predicate. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
   reviewer: Crystalka
 - register_id: DOC-A-GODOT_INTEGRATION
   path: docs/architecture/historical/GODOT_INTEGRATION.md
@@ -1168,7 +1168,7 @@ documents:
   title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
   review_cadence: on-change
   last_review_date: 2026-07-19
-  last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 5 map: the DualFrontier.Systems stock is re-counted to 27 (classes deriving SystemBase), replacing the 29 that matched no stated predicate; the boundary law section 3 carries the same figure. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. W4 closes. BD-4 and BD-8 rows and the W4 narrative record what shipped, including the two things the wave had to CREATE rather than move (the boot-time mod-load path, which production never had, and the SDK surface vanilla needed) and the gate re-scoping from class level to assembly level.'
+  last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 5 map: the DualFrontier.Systems stock is re-counted to 27 (classes deriving SystemBase); the earlier 29 counted every class under src/DualFrontier.Systems/, the two ManaLease helpers included; the boundary law section 3 carries the same figure. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. W4 closes. BD-4 and BD-8 rows and the W4 narrative record what shipped, including the two things the wave had to CREATE rather than move (the boot-time mod-load path, which production never had, and the SDK surface vanilla needed) and the gate re-scoping from class level to assembly level.'
   reviewer: Crystalka
 - register_id: DOC-A-VISUAL_ENGINE
   path: docs/architecture/historical/VISUAL_ENGINE.md

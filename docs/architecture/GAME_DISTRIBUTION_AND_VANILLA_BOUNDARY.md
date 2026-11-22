@@ -13,7 +13,7 @@ next_review_due: 2027-Q3
 title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 3 ownership matrix: the Systems family stock is re-counted to 27 (classes deriving SystemBase under src/DualFrontier.Systems/), replacing the 30 that matched no stated predicate; the migration plan section 5 map carries the same figure and the predicate. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
+last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 3 ownership matrix: the Systems family stock is re-counted to 27 (classes deriving SystemBase under src/DualFrontier.Systems/), replacing 30, which counted every class under that folder (the two ManaLease helpers included) and was not decremented when W3 deleted the Weather stub; the migration plan section 5 map carries the same figure and the predicate. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
 reviewer: Crystalka
 ---
 
