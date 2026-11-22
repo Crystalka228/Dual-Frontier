@@ -1269,12 +1269,12 @@ documents:
   owner: Crystalka
   version: 3.0.1
   first_authored: 2026-06-29
-  last_modified: 2026-11-21
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2027-06-11
   title: Development hygiene
   review_cadence: on-change+annual
-  last_review_date: 2026-11-21
+  last_review_date: 2026-11-22
   last_review_event: 'PATCH 3.0.0 -> 3.0.1 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the repository map and the governance-tool section no longer describe tools/governance/query_register.ps1, which REV_2 retired (it needed the powershell-yaml module and read a key the schema no longer carries); the map names LEDGER_FORM.yaml, the G-ROWFORM configuration. PATCH per section 8 rule 3 (a path correction). No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   risks_referenced:
