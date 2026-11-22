@@ -6378,7 +6378,7 @@ documents:
   tier: 4
   lifecycle: Live
   owner: Crystalka
-  version: 2.1
+  version: 2.2
   first_authored: 2026-05-12
   last_modified: 2026-11-22
   content_language: en
@@ -6387,7 +6387,7 @@ documents:
   last_modified_commit: 8ee27fe
   review_cadence: on-source-commit+quarterly
   last_review_date: 2026-11-22
-  last_review_event: 'MINOR 2.0 -> 2.1 2026-11-22 (REV_2, the review repairs): the artifact index gains LEDGER_FORM.yaml, the configuration of the G-ROWFORM gate, which the index of the configuration the tool reads had omitted.'
+  last_review_event: 'MINOR 2.1 -> 2.2 2026-11-22 (REV_3): the LEDGER_FORM.yaml entry describes the two-file ledger configuration -- the live file and the closed-rows archive, each with the severity of its vocabulary findings -- in place of the single ledger path.'
   reviewer: Crystalka
 - register_id: DOC-G-BYPASS_LOG
   path: docs/governance/BYPASS_LOG.md

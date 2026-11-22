@@ -778,7 +778,7 @@ documents:
   category: F
   tier: 4
   lifecycle: Live
-  version: 2.1
+  version: 2.2
 - register_id: DOC-G-BYPASS_LOG
   path: docs/governance/BYPASS_LOG.md
   category: G

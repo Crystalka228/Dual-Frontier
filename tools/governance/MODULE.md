@@ -5,7 +5,7 @@ category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: '2.1'
+version: '2.2'
 first_authored: 2026-05-12
 last_modified: 2026-11-22
 content_language: en
@@ -14,7 +14,7 @@ title: Tools governance module (register tooling)
 last_modified_commit: 8ee27fe
 review_cadence: on-source-commit+quarterly
 last_review_date: 2026-11-22
-last_review_event: 'MINOR 2.0 -> 2.1 2026-11-22 (REV_2, the review repairs): the artifact index gains LEDGER_FORM.yaml, the configuration of the G-ROWFORM gate, which the index of the configuration the tool reads had omitted.'
+last_review_event: 'MINOR 2.1 -> 2.2 2026-11-22 (REV_3): the LEDGER_FORM.yaml entry describes the two-file ledger configuration -- the live file and the closed-rows archive, each with the severity of its vocabulary findings -- in place of the single ledger path.'
 reviewer: Crystalka
 ---
 
@@ -47,11 +47,17 @@ under the repository root must carry frontmatter, or the walk reports a G-PATH e
 ### `LEDGER_FORM.yaml`
 
 The configuration of the G-ROWFORM gate, read by the tool's `LedgerFormConfig` at
-`tools/governance/LEDGER_FORM.yaml`: the one `ledger_path` that locates the F-series findings ledger (a
-move of the ledger is a one-line edit here), the `id_header` that opens its table, the `severity_header`
-and `state_header` column names, and the `severity_set` and `state_set` restating the ledger legend. The
-gate is inert when this file or the ledger file it names is absent; the rules are FRAMEWORK section 14.5.
-The file is configuration, not a register entry.
+`tools/governance/LEDGER_FORM.yaml`. The F-series findings ledger is two files, and the config lists both
+under `ledgers`, each entry a `path` and a `vocabulary`: the live file (`docs/LEDGER.md`, `report`) and the
+closed-rows archive (`docs/LEDGER_ARCHIVE.md`, `monitor`). `vocabulary` is the severity a legend violation
+carries in that file -- `report` holds the file to the legend and reddens `validate --armed`, `monitor`
+only prints it; the structural checks are armed in every listed file, ids are unique across the files and
+ascending within each. The rest of the file is shared by both: the `id_header` that opens each table, the
+`severity_header` and `state_header` column names, and the `severity_set` and `state_set` restating the
+legend, which is declared once in the live file. A move or a split of the ledger is an edit of the
+`ledgers` list. The gate is inert when this file is absent and skips a listed file that is absent; a
+config that cannot be read (no `ledgers`, an entry without a `path`, an unknown `vocabulary`, a path listed twice)
+is a Report. The rules are FRAMEWORK section 14.5. The file is configuration, not a register entry.
 
 ### `MODULE.md`
 
