@@ -41,6 +41,18 @@ public sealed class SemanticGateTests
             ("special_case_rationale", "sanctioned deviation, ratified"))).Should().BeEmpty();
     }
 
+    [Fact]
+    public void CatLife_NotExempt_WhenTheRationaleIsOnlyWhitespace()
+    {
+        Frontmatter doc = Fixture.Doc(
+            ("category", "D"), ("tier", 1), ("lifecycle", "EXECUTED"),
+            ("special_case_rationale", "   "));
+
+        doc.HasSanctionedDeviation.Should().BeFalse();
+        Validators.Gate1CategoryLifecycle(doc).Should().ContainSingle(f => f.Gate == GateCatalog.CatLife);
+        Validators.RationaleRatio(new[] { doc }).Message.Should().Contain("0/1");
+    }
+
     // --- G-NAMESPACE ---
 
     [Fact]
