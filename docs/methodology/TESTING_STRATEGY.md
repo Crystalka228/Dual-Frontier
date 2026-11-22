@@ -488,9 +488,13 @@ the per-assembly `Passed!`/`Failed!` lines of the log, and the TRX. Verified-wor
     RESULTS=<a directory outside the repository tree>
     timeout --kill-after=30s <duration> \
         dotnet test <project-or-sln> -c Release --no-build \
-            --logger "trx;LogFileName=<label>.trx" --results-directory "$RESULTS" \
+            --logger "trx;LogFilePrefix=<label>" --results-directory "$RESULTS" \
         > "$RESULTS/<label>.out.log" 2>&1
     rc=$?    # 0 green; 124 timed out (the verdict is then in the TRX); anything else red
+
+`LogFilePrefix` writes one TRX per test assembly (`<label>_<tfm>_<timestamp>.trx`). `LogFileName` names a
+single file, so over a solution every assembly overwrites it ("WARNING: Overwriting results file") and the
+surviving TRX holds the last assembly only; it is lawful only for a run over one test project.
 
 On a timeout, `pgrep -af testhost` names what was left behind; terminate only processes this run
 started, by PID. After the run, `dotnet build-server shutdown`. This is invocation law: briefs cite section 8,
@@ -502,7 +506,7 @@ shell reports a larger skip count; closure reports name the skipped tests, not o
 
 **Full solution:**
 
-    timeout --kill-after=30s <duration> dotnet test DualFrontier.sln -c Release --no-build --logger "trx;LogFileName=full.trx" --results-directory "$RESULTS" > "$RESULTS/full.out.log" 2>&1
+    timeout --kill-after=30s <duration> dotnet test DualFrontier.sln -c Release --no-build --logger "trx;LogFilePrefix=full" --results-directory "$RESULTS" > "$RESULTS/full.out.log" 2>&1
 
 **Per-suite** (the closure-protocol route, per `METHODOLOGY.md` section 12.7 step 1) -- the same shape with
 one project path per section 2.1 project as the closure scope requires, e.g.
