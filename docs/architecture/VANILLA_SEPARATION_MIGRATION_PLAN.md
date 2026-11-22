@@ -5,15 +5,15 @@ category: A
 tier: 2
 lifecycle: Live
 owner: Crystalka
-version: 1.5.0
+version: 1.5.1
 first_authored: 2026-07-18
-last_modified: '2026-08-31'
+last_modified: '2026-11-21'
 content_language: en
 next_review_due: 2026-Q4
 title: Vanilla Separation Migration Plan -- waves, gates, decision catalog, and the ownership map for dissolving the game-in-engine Domain layer (successor to historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md)
 review_cadence: on-change
 last_review_date: 2026-07-19
-last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. W4 closes. BD-4 and BD-8 rows and the W4 narrative record what shipped, including the two things the wave had to CREATE rather than move (the boot-time mod-load path, which production never had, and the SDK surface vanilla needed) and the gate re-scoping from class level to assembly level.'
+last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 5 map: the DualFrontier.Systems stock is re-counted to 27 (classes deriving SystemBase); the earlier 29 counted every class under src/DualFrontier.Systems/, the two ManaLease helpers included; the boundary law section 3 carries the same figure. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. W4 closes. BD-4 and BD-8 rows and the W4 narrative record what shipped, including the two things the wave had to CREATE rather than move (the boot-time mod-load path, which production never had, and the SDK surface vanilla needed) and the gate re-scoping from class level to assembly level.'
 reviewer: Crystalka
 ---
 
@@ -214,7 +214,7 @@ source identical across all three profiles.
 |---|---|---|
 | DualFrontier.Components | 28 types: Pawn/Needs cluster, Health, Position, items/storage/workbench, combat (weapon/armor/faction), magic (mana/ether/golem bond), terrain/weather | Vanilla.Pawn / Vanilla.Inventory / Vanilla.Combat / Vanilla.Magic / Vanilla.World; genuinely cross-slice types -> Vanilla.Core shared mod; Position per BD-6 (expected L3 spatial contract); Health per BD-6 (expected vanilla) |
 | DualFrontier.Events | 52 event records (W3 deleted the Weather stub) | owning slice mods; engine keeps only IEvent + generic routing (BD-3) |
-| DualFrontier.Systems | 29 systems (W3 deleted the Weather stub) | owning slice mods after W1 SDK unlock; zero gameplay entries remain in core registration |
+| DualFrontier.Systems | 27 systems (classes deriving `SystemBase` under `src/DualFrontier.Systems/`, re-counted 2026-11-21; the earlier 29 counted every class under that folder, the two `ManaLease` helpers included) | owning slice mods after W1 SDK unlock; zero gameplay entries remain in core registration |
 | DualFrontier.AI | 20 types; Pathfinding consumed, BT/Jobs dormant | Pathfinding -> L3 candidate; BT/Jobs + behaviour leaves -> Vanilla.Pawn/Combat/Magic (BD-5) |
 | Contracts game surface | 5 genre buses, IGameServices, LayerType game members, OwnershipMode | buses + IGameServices **dissolved to `Core.Bus` ✅ W2 (BD-3a/b)**; OwnershipMode -> Vanilla.Magic shared contract; LayerType game members -> mod-registered slots (BD-9, later) |
 | Application/Bridge commands | PawnSpawned/PawnState/PawnDied/ItemSpawned + 2 more (6 records) | Vanilla presentation mods (W6) |

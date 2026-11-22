@@ -7461,3 +7461,105 @@ audit_trail:
     move.
   cross_references:
     capa_entries: []
+- id: EVT-2026-11-21-REV_0
+  date: 2026-11-21
+  event: >-
+    REV_0 cascade executed -- the first cascade of CORPUS_REVISION_1. main is governance-green
+    again: docs/SECRET_SCANNING.md, merged by PR #55 without frontmatter, joins the register as
+    DOC-C-SECRET_SCANNING (C/2/Live, body byte-untouched), so validate --armed exits 0 and the
+    suite reads 1441/0/6. The 16-item W4 governance residue work-order is paid (14 items executed,
+    items 12 and 16 confirmed no-action); F-42/F-57/F-85/F-89 are settled, F-84 is widened, and
+    F-90..F-93 are seeded.
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-REV_0_BRIEF
+  - DOC-C-SECRET_SCANNING
+  - DOC-C-ROADMAP
+  - DOC-A-EXECUTION_AUTHORITY_MATRIX
+  - DOC-A-VANILLA_SEPARATION_MIGRATION_PLAN
+  - DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-F-SRC-APPLICATION
+  - DOC-F-SRC-LAUNCHER
+  - DOC-F-SRC-APPLICATION-BRIDGE-COMMANDS
+  - DOC-F-SRC-APPLICATION-LOOP
+  commits:
+    range: 55949b4..(the closure commit carries this entry)
+    key_commits:
+    - 55949b4
+    - bff0aa2
+    - dc8346c
+    - a7621ae
+    - 39ae77e
+    - 3f93607
+    - fe68114
+    - 2cf9466
+    - c253300
+    - 788c57b
+    - 7d50bb1
+    - aaea895
+    - f039d79
+    - 6bce213
+    - b690566
+    - f24434c
+    - 190fb26
+    - 032c587
+  governance_impact: >
+    RATIFICATION. The brief (DOC-D-REV_0_BRIEF v1.0) was ratified by the operator in chat on
+    2026-11-21. Per the operator ruling of that date a Category D tier 3 brief stays Draft in
+    frontmatter while it executes and the closure EVT records the ratification; this entry is that
+    record. Lifecycle Draft -> EXECUTED.
+
+
+    COMMITS. C1 55949b4 (enrollment), C2 bff0aa2 (document residue), C3 dc8346c (code-plane
+    residue); review repairs a7621ae, 39ae77e, 3f93607, fe68114, 2cf9466 (lens A), c253300, 788c57b,
+    7d50bb1, aaea895, f039d79, 6bce213, b690566, f24434c (lens B), 190fb26, 032c587 (the lens over
+    the repairs); C4 carries this entry.
+
+
+    ORCHESTRATION. Executed by the architect-orchestrator through subagents: one integrator as the
+    only committer on claude/rev-0; two units in their own worktrees returning patches over disjoint
+    file sets (U-DOC the record, U-CODE the code plane); two review lenses on disjoint axes (A: code
+    and its tests; B: the record, the law and the form); then a lens over the repairs.
+
+
+    RULINGS. Four orchestrator rulings supplemented the brief and governed where they differ from it.
+    R-1: the pre-flight driver text referred to a brief v1.1 and to carried artifacts that belonged
+    to DIST_1; void, non-material. R-2: the deferred census pin moved by U-CODE's ISystemServices
+    rewrite lives outside U-CODE's file set; it landed as an integrator seam in C3 with its
+    census-delta in the body, together with a comment-law pass over CensusMetaTests.cs. R-3: lens B
+    findings LB-1..LB-8 repaired -- F-84 widened to carry the four STALE module READMEs and their
+    banners repointed from F-85, the touched-file comment pass completed, the closing hash
+    backfilled into F-85 and F-89, the system-count and 46-tests records reworded, F-91 S4 -> S3,
+    F-92 stated as a fact rather than a sequencing plan, F-93 seeded. R-4: the lens over the repairs
+    found no P1 or P2; its two P3 rows were repaired before this closure (190fb26, 032c587).
+
+
+    LEDGER. F-42 re-anchored on the live seed sites and game.manifest.json (OPEN). F-57 severity
+    native-switch -> S2 (OPEN). F-84 widened (OPEN). F-85 CLOSED in bff0aa2 on the four STALE
+    banners, which now point at F-84. F-89 CLOSED in bff0aa2 by the EAM R13 note. F-90 seeded CLOSED
+    (N): DFK005's GameBootstrap carve-out was removed at W4 rather than transferred. F-91 seeded OPEN
+    (S3): the genre-noun GameServices vocabulary survives as bridges over one DomainEventBus. F-92
+    seeded OPEN (S2): no CI job runs validate --armed, the build or the suite, which is how main went
+    governance-red unseen. F-93 seeded OPEN (S3): MOD_OS_ARCHITECTURE sections 9.5 and 10.3 and the
+    section 11.1 threat-table row still state the pre-W4 fault wiring beside the note that corrects
+    it. Ledger ids run F-1..F-93 with no gap.
+
+
+    MEASUREMENTS CORRECTED. The system stock is 27 classes deriving SystemBase; the earlier 29 and 30
+    counted every class under src/DualFrontier.Systems/, the two ManaLease helpers included. The W4
+    brief's "46 distinct tests" is underivable from its own enumeration, which sums to 42. Both are
+    recorded where readers live; the EXECUTED W4 brief keeps its bytes.
+
+
+    CODE PLANE. One dead ProjectReference (Systems -> AI) cut after zero uses were proven; stale
+    comments rewritten under the comment law adopted by the operator on 2026-11-21, every comment in
+    each touched file brought to it. The deferred census pin moved 87/54 -> 86/53 in dc8346c; no
+    other pin moved. No test added or removed.
+
+
+    GATES. Build 0W/0E. Suite 1440/1/6 -> 1441/0/6. validate --armed exit 1 -> 0 (374 documents
+    parsed). Native selftest ALL PASSED; native/ byte-untouched (consumed, never rebuilt). Dev smoke
+    exit 124 with a clean log.
+  cross_references:
+    capa_entries: []

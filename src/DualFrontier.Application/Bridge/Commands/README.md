@@ -2,7 +2,7 @@
 > `PawnMovedCommand` and `PawnDiedCommand` were DELETED by this wave and replaced with
 > `EntityAppearedCommand`, `EntityMovedCommand` and `EntityVanishedCommand`, so the engine's
 > presentation vocabulary carries no game noun (boundary law B-2). The folder index and the usage
-> example below still name the deleted records. Full re-anchoring is F-85.
+> example below still name the deleted records. Full re-anchoring is F-84.
 
 # Commands — Render commands
 
@@ -59,7 +59,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: 2026-11-21
 content_language: en
 next_review_due: null
 title: Application Bridge Commands submodule

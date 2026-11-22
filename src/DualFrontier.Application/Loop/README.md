@@ -2,7 +2,7 @@
 > [is] implemented; NavGrid and MovementSystem are wired in" is FALSE at HEAD. This directory now
 > holds `EngineComposer`, which registers no system and names no game type; the nav grid, the
 > pathfinding service and the ten gameplay systems belong to the `dualfrontier.vanilla.scenario`
-> mod. Full re-anchoring is F-85.
+> mod. Full re-anchoring is F-84.
 
 # Loop — Main game loop
 
@@ -51,7 +51,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: 2026-11-21
 content_language: en
 next_review_due: null
 title: Application Loop submodule

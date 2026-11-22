@@ -4,7 +4,7 @@
 > mods. Descriptions below of Application as "contracts + GameBootstrap + bridge + commands", and
 > of the Launcher reaching `GameBootstrap` through `InternalsVisibleTo`, are FALSE at HEAD. This
 > matters more here than elsewhere: the Launcher is the B-5 surface, and B-5 says it has no
-> compile-time knowledge of any game pack. Full re-anchoring is F-85.
+> compile-time knowledge of any game pack. Full re-anchoring is F-84.
 
 # DualFrontier.Launcher — Production Launch Entry Point
 
@@ -97,7 +97,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-05-23
-last_modified: 2026-07-17
+last_modified: 2026-11-21
 content_language: en
 next_review_due: post-Vanilla-mods-consumer-materialization closure
 title: DualFrontier.Launcher — Production Launch Entry Point

@@ -5,15 +5,15 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.1.0
+version: 1.1.1
 first_authored: 2026-07-18
-last_modified: 2026-08-31
+last_modified: 2026-11-21
 content_language: en
 next_review_due: 2027-Q3
 title: Game Distribution & Vanilla Boundary -- the composition law (engine = simulation OS; the game = its first distribution; game code exists only as mods)
 review_cadence: on-change+annual
 last_review_date: 2026-07-18
-last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
+last_review_event: 'REV_0 2026-11-21 -- PATCH. Section 3 ownership matrix: the Systems family stock is re-counted to 27 (classes deriving SystemBase under src/DualFrontier.Systems/), replacing 30, which counted every class under that folder (the two ManaLease helpers included) and was not decremented when W3 deleted the Weather stub; the migration plan section 5 map carries the same figure and the predicate. Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- MINOR. B-1 records that the four engine->game ProjectReference edges are CUT (baseline 4 -> 0); the IVT and the test-fixture leak remain. Section 3 ownership row for scenario configuration flips to DONE: the manifest owns it and the orphan DTOs were deleted rather than migrated.'
 reviewer: Crystalka
 ---
 
@@ -92,7 +92,7 @@ L3 libraries, not L1 syscalls.
 | Contracts minus game types | L2 | sheds: 5 genre bus interfaces, IGameServices, LayerType game members, OwnershipMode |
 | DualFrontier.AI: Pathfinding | L3 candidate | only consumed member today; BD-5 decides |
 | DualFrontier.AI: BehaviourTree/Jobs, Persistence, Crypto.Future | BD-5 gated | dormant/orphaned -- L3, L5, or deletion |
-| DualFrontier.Components (28), Events (53), Systems (30) | L5 | per-slice owners: Vanilla.Core/World/Pawn/Inventory/Combat/Magic; PositionComponent + HealthComponent pass the BD-6 boundary test first |
+| DualFrontier.Components (28), Events (53), Systems (27) | L5 | per-slice owners: Vanilla.Core/World/Pawn/Inventory/Combat/Magic; PositionComponent + HealthComponent pass the BD-6 boundary test first |
 | Presentation commands (6 records) + game render subscriptions | L5 | engine keeps primitives/layers/slots; BD-9 |
 | Persistence DTOs (PawnSnapshot, StorageSnapshot, TerrainKind RLE, WorldSnapshot) | L5 | mod-owned sections/codecs; gated on PSC ratification; BD-7 |
 | Scenario configuration | L4 | DONE at W4: `game.manifest.json` -> `ScenarioConfig` -> the seeding mod. `ScenarioDef` and the whole `Scene/` DTO family were deleted rather than migrated -- measured orphans with no consumer (BD-8) |

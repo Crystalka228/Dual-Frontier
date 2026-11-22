@@ -6,7 +6,7 @@
 > `BoundaryRatchetTests` holds the engine→game edge count at ZERO.
 > Nothing here sanctions adding such a reference; a tier-4 module README cannot license a
 > boundary-law violation, and the law is `GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY` B-1.
-> Full re-anchoring is F-85.
+> Full re-anchoring is F-84.
 
 # DualFrontier.Application
 
@@ -82,7 +82,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-04-XX
-last_modified: 2026-04-XX
+last_modified: 2026-11-21
 content_language: en
 next_review_due: null
 title: DualFrontier.Application module

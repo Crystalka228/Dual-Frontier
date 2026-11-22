@@ -31,9 +31,10 @@
           SkipUnchangedFiles="true" />
   </Target>
   <!-- Deploy into the Launcher runtime mods root so the mod menu can discover and load the pair.
-       DefaultModDiscoverer scans "<cwd>/mods/*/mod.manifest.json" and ModLoader then needs the
-       assembly beside it; the source directory holds the manifest but never the build output.
-       Output-tree only; nothing lands in the source tree. -->
+       DefaultModDiscoverer scans "<root>/*/mod.manifest.json" for the explicit root it is
+       constructed with (the distribution root's mods directory, never the working directory),
+       and ModLoader then needs the assembly beside the manifest; the source directory holds the
+       manifest but never the build output. Output-tree only; nothing lands in the source tree. -->
   <Target Name="DeployToLauncherMods" AfterTargets="Build">
     <ItemGroup>
       <LauncherModFiles Include="$(TargetPath)" />

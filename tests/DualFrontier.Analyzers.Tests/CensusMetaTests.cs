@@ -9,10 +9,11 @@ using Xunit;
 namespace DualFrontier.Analyzers.Tests;
 
 /// <summary>
-/// §3.8 repo-discipline meta-tests: read the src tree and assert census shape.
-/// Materializes the TESTING_STRATEGY §4 census contracts as compiled tests — until
-/// Phase β these were executed only by rg at closure (§7). File enumeration is
-/// git-tracked (git ls-files) to mirror rg's .gitignore semantics.
+/// Repo-discipline meta-tests (TESTING_STRATEGY section 3.8): they read the src tree
+/// and assert the section 4 census pins from inside the suite at every run; the
+/// registered rg expressions stay the closure-audit cross-check (section 7). Files
+/// are enumerated with git ls-files: the census counts tracked files only, so an
+/// untracked file under src/ never moves a pin even where rg would count it.
 /// </summary>
 public sealed class CensusMetaTests
 {
@@ -97,9 +98,11 @@ public sealed class CensusMetaTests
     [Fact]
     public void ReservedSurfaceCensus_MatchesExactPin()
     {
-        // TESTING_STRATEGY §4.1 — EXACT pin (HARD): [ReservedStub application sites in
-        // src, excluding the attribute definition file. 34 / 13. Phase β adds none;
-        // any movement here is a defect.
+        // TESTING_STRATEGY section 4.1: [ReservedStub application sites in src, the
+        // attribute definition file excluded. The pin is EXACT, not a bound, and no
+        // direction is asserted: reserved surface may close or grow, but a commit that
+        // moves the count updates this pin in the same commit and records the delta
+        // (Skeleton revisions, RESERVED_SURFACE_MUTABILITY; CODING_STANDARDS section 8).
         var (sites, files) = Census(
             text => LiteralCount(text, "[ReservedStub"),
             file => !file.EndsWith("ReservedStubAttribute.cs", StringComparison.Ordinal));
@@ -110,63 +113,18 @@ public sealed class CensusMetaTests
 
     [Theory]
     [InlineData("stub", @"\bstub\b", true, 51, 20)]
-    [InlineData("deferred", @"\bdeferred\b", true, 87, 54)]
+    [InlineData("deferred", @"\bdeferred\b", true, 86, 53)]
     [InlineData("TODO", @"\bTODO\b", false, 132, 51)]
     [InlineData("not yet", "not yet", true, 10, 9)]
     public void MarkerFamilyCensus_MatchesPin(string name, string pattern, bool ignoreCase, int sitePin, int filePin)
     {
-        // TESTING_STRATEGY §4.2 — marker-family census. Live pins as of Phase β. The
-        // stub (48→51) / deferred (79→82) drift from the 2026-06-11 dated snapshot is
-        // the F-25 owed refresh, materialized here. A future move updates the pin AND
-        // records a census-delta (CODING_STANDARDS §8 / RESERVED_SURFACE §5).
-        // EQ_A2 (Cascade B): deferred 82->86 / 51->52 -- the S3 shutdown-transaction
-        // deferred-drop primitive (DomainEventBus.DropDeferred, GameServices.DropDeferred,
-        // EngineSession.Dispose; EngineSession.cs is the +1 file).
-        // W1 (SDK unlock): deferred 86->88 / 52->54 -- the C2 Contracts SDK docs
-        // (Sdk/ISystemContext.cs deliberate-deferral note + Sdk/SpanScope.cs K7-deferred
-        // caveat; both new files). Recorded here in C3 as the census-delta: C2 introduced
-        // the two documentation sites and shipped before this census (Analyzers.Tests) ran.
-        // W1-fix (Codex review): deferred 88->89 / 54->55 -- Sdk/ISystemServices.cs now
-        // records that the mod-facing IModApi factory overload is deferred (N17).
-        // W2/BD-3 (C3): deferred 89->88 / 55->54 -- EventBusAttribute.cs deleted with the
-        // genre taxonomy; its /// [Deferred] doc-example line (line 15) was the file's only
-        // deferred site. ModBusRouter.cs was also deleted this commit but carried no census
-        // markers, so no other pin moves.
-        // W2/BD-10 (C5): deferred 88->89 / 54->55 -- the capability ledger relocated to
-        // Core/Modding/KernelCapabilityRegistry.cs documents that live per-mod owner-registration
-        // is DEFERRED to the wave that moves gameplay types into the vanilla mods; that one
-        // sentence is the +1 deferred site in the new ledger file.
-        // W3/G1 (C2): deferred 89->90 / 55 unchanged -- Sdk/ISystemContext.cs DestroyEntity now
-        // names the engine's native deferred-destroy flush, the model whose storage reclamation
-        // that member documents. ISystemContext.cs already carried a deferred site, so the file
-        // pin does not move. This is a MODEL NAME, not a deferral marker; the regex cannot tell
-        // them apart, so the pin moves and the delta is recorded here rather than reworded away.
-        // W3/D6 (C7): TODO 136->132 / 53->51 -- the two src Weather stubs are deleted. They were
-        // the wave's eradication target and carried 4 TODO markers between them
-        // (WeatherChangedEvent.cs 3, WeatherSystem.cs 1) and no markers of any other family, so
-        // this is the only pin the deletion moves. Both files leave, hence -2 files.
-        // W3/D-1 fix (C5a): deferred 89->90 / 54->55 -- Application/Modding/RestrictedModApi.cs
-        // now explains that the subscriber wrapper re-pushes a context ONLY for the
-        // deferred-dispatch case. Again a MECHANISM name, not a deferral marker, and
-        // RestrictedModApi.cs had no prior deferred site, so the file pin moves with it.
-        // W3/D-2 fix (C5b): deferred 90->89 / 55 unchanged -- Core.Interop/SpanLease.cs loses its
-        // "deferred to K7 once a measurement shows correctness pressure" caveat, because W3 WAS
-        // that measurement: the Version=1 reconstruction it excused is now corrected. The file
-        // keeps a deferred site elsewhere, so only the site pin moves. A marker retired by the
-        // work it was waiting for.
-        // W3/D3 (C4): deferred 90->89 / 55->54 -- Core/Modding/KernelCapabilityRegistry.cs loses
-        // the W2 sentence deferring live per-mod owner registration, because C4 IS that wiring.
-        // It was the file's only deferred site, so the file pin drops too. The marker retired by
-        // the work being done, which is the census behaving exactly as intended.
-        // ID-B (C4): deferred 89->87 / 55->54 -- the K7-era deferral that excused version
-        // fabrication is retired at BOTH surviving sites, because the versions view IS the
-        // thing it was waiting for. Sdk/SpanScope.cs loses its "K7-deferred" Pairs caveat
-        // ("the span ABI does not carry per-entity versions" stopped being true), and it was
-        // that file's only deferred site, so the file pin drops. Core.Interop/WriteBatch.cs
-        // loses the "deferred to K7 if measurement shows correctness issues" note on its
-        // snapshot enumerator; the file keeps a deferred site elsewhere, so only the site pin
-        // moves for it. Pre-declared in ID_B_ENTITY_VERSIONS_BRIEF section 10 as expected
-        // movement, not drift.
+        // TESTING_STRATEGY section 4.2: one census per doc-tag family registered in
+        // CODING_STANDARDS section 5.2, pattern and case-sensitivity as registered. Both
+        // pins are EXACT. The regex counts words, not intent: a mechanism or model name
+        // (a deferred-dispatch path, a deferred-destroy flush) moves the deferred pin
+        // exactly as a deferral note does, so a moved pin is updated here in the same
+        // commit and its census-delta recorded in the commit body (CODING_STANDARDS
+        // section 8.2), never reworded away. The pins impose no retroactive cleanup.
         var options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
         var (sites, files) = Census(text => RegexCount(text, pattern, options));
 
@@ -177,6 +135,8 @@ public sealed class CensusMetaTests
     [Fact]
     public void PhaseSixMarkerCensus_MatchesPin()
     {
+        // TESTING_STRATEGY section 4.2: the literal family, matched as an ordinal
+        // substring rather than a word regex; same exact-pin contract as the theory above.
         var (sites, files) = Census(text => LiteralCount(text, "Phase 6"));
 
         sites.Should().Be(23, "Phase 6 marker-family census sites (TESTING_STRATEGY §4.2)");
@@ -186,17 +146,11 @@ public sealed class CensusMetaTests
     [Fact]
     public void DfkWaiverCensus_MatchesPin()
     {
-        // TESTING_STRATEGY §4.3 — DFK-WAIVER census. Pin was 2 from A'.9.1 Phase β C9:
-        // the two DFK001 waivers in ValidationLayer.cs (VK_EXT_debug_utils Vulkan
-        // interop, К-L19), each carrying its CODING_STANDARDS §5.3 authority citation.
-        // §4.4: every `// DFK-WAIVER(` marker pairs with a `#pragma warning disable`;
-        // every future increase updates this pin + adds a citation.
-        // ID-B (C6): 2 -> 3, the one HARD-pin movement that cascade ratifies. The third
-        // is DFK022 in Persistence/Compression/EntityEncoder.cs, which decodes persisted
-        // INDEX ranges — the encoded form carries no versions and there is no world to
-        // ask, since the entities those ids name do not exist yet. How generations cross
-        // the save boundary is the A7 persistence contract's call, and the waiver comment
-        // names A7 as its retirement trigger; the pin returns to 2 at that cascade.
+        // TESTING_STRATEGY section 4.3: the DFK-WAIVER census. The pin is EXACT; the
+        // waivers it counts are enumerated in that section. Every
+        // '#pragma warning disable DFK/DFL/DF9' pairs with a '// DFK-WAIVER(' marker
+        // carrying its CODING_STANDARDS section 5.3 authority citation, so an increase
+        // updates this pin and lands with its citation in the same commit.
         var (disables, _) = Census(text => RegexCount(text, @"#pragma warning disable (DFK|DFL|DF9)", RegexOptions.None));
         var (markers, _) = Census(text => LiteralCount(text, "// DFK-WAIVER("));
 
@@ -207,6 +161,9 @@ public sealed class CensusMetaTests
     [Fact]
     public void SuppressMessageCensus_IsZero()
     {
+        // TESTING_STRATEGY section 4.3: [SuppressMessage] in src stays at zero; the
+        // paired DFK-WAIVER form above is the only lawful suppression of a DFK/DFL
+        // diagnostic (CODING_STANDARDS section 5.3).
         var (sites, _) = Census(text => LiteralCount(text, "SuppressMessage"));
 
         sites.Should().Be(0, "no [SuppressMessage] in src (DF999 baseline)");

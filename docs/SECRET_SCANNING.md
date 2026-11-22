@@ -1,3 +1,22 @@
+---
+register_id: DOC-C-SECRET_SCANNING
+project: Dual Frontier
+category: C
+tier: 2
+lifecycle: Live
+owner: Crystalka
+version: Live
+first_authored: 2026-10-12
+last_modified: 2026-11-21
+content_language: en
+next_review_due: 2026-Q4
+title: 'Secret scanning'
+review_cadence: on-closure+quarterly
+last_review_date: 2026-11-21
+last_review_event: 'REV_0 C1 enrollment (2026-11-21): frontmatter prepended so the document joins the register; body unchanged since PR #56'
+reviewer: Crystalka
+---
+
 # Secret scanning
 
 The `Gitleaks` GitHub Actions workflow runs on every push, pull request and
