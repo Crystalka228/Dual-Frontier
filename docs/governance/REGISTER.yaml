@@ -1405,6 +1405,36 @@ documents:
   last_review_event: 'DRAFTS_RATIFICATION C8 (F-39 rider): three dangling "METHODOLOGY §7.1 determinism" citations re-anchored to TIME_AND_CONSISTENCY_MODEL §5 (ratified LOCKED this cascade). PATCH 0.1 → 0.1.1.'
   reviewer: Crystalka
   provenance_note: Post-A'.4.5 functions as index for Category I docs/ideas/ folder; existing content preserved verbatim; individual ideas grow as separate files in docs/ideas/ over time
+- register_id: DOC-C-LEDGER
+  path: docs/LEDGER.md
+  project: Dual Frontier
+  category: C
+  tier: 2
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  first_authored: 2026-11-22
+  last_modified: 2026-11-22
+  content_language: en
+  next_review_due: 2026-Q4
+  title: Findings ledger -- live rows
+  review_cadence: on-closure+quarterly
+  reviewer: Crystalka
+- register_id: DOC-C-LEDGER-ARCHIVE
+  path: docs/LEDGER_ARCHIVE.md
+  project: Dual Frontier
+  category: C
+  tier: 2
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  first_authored: 2026-11-22
+  last_modified: 2026-11-22
+  content_language: en
+  next_review_due: 2026-Q4
+  title: Findings ledger -- archive
+  review_cadence: on-closure+quarterly
+  reviewer: Crystalka
 - register_id: DOC-C-MIGRATION_PROGRESS
   path: docs/MIGRATION_PROGRESS.md
   project: Dual Frontier

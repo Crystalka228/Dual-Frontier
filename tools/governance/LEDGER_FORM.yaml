@@ -5,7 +5,7 @@
 # printed above the table; a governance test asserts the legend names every
 # member listed here.
 schema_version: "1.0"
-ledger_path: "docs/ROADMAP.md"
+ledger_path: "docs/LEDGER.md"
 id_header: "F-#"
 severity_header: "Severity"
 state_header: "State"

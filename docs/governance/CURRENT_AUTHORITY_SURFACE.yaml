@@ -221,6 +221,18 @@ documents:
   tier: 2
   lifecycle: Live
   version: 0.1.1
+- register_id: DOC-C-LEDGER
+  path: docs/LEDGER.md
+  category: C
+  tier: 2
+  lifecycle: Live
+  version: Live
+- register_id: DOC-C-LEDGER-ARCHIVE
+  path: docs/LEDGER_ARCHIVE.md
+  category: C
+  tier: 2
+  lifecycle: Live
+  version: Live
 - register_id: DOC-C-MIGRATION_PROGRESS
   path: docs/MIGRATION_PROGRESS.md
   category: C
