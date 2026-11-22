@@ -43,7 +43,8 @@ docs/
   benchmarks/                 performance measurement records
   governance/                 FRAMEWORK + PROJECT_AXIOMS + SYNTHESIS_RATIONALE; REGISTER.yaml and
                               CURRENT_AUTHORITY_SURFACE.yaml are DERIVED (never hand-edited, section 4);
-                              AUDIT_TRAIL / CAPA / RISKS / REQUIREMENTS yaml are hand-edited sources
+                              AUDIT_TRAIL / CAPA / RISKS / REQUIREMENTS yaml are hand-edited sources, and
+                              so is REGISTER_SUPPLEMENT.yaml (the non-.md enrolled artifacts; sync reads it)
   ideas/ learning/ mechanics/ design + study material
   methodology/                the standing-law corpus (this document, CODING_STANDARDS, TESTING_STRATEGY,
                               METHODOLOGY, PIPELINE_METRICS, RESERVED_SURFACE_MUTABILITY,
@@ -52,6 +53,8 @@ docs/
   reports/                    reconnaissance + drift reports
   research/ scratch/          study material; working notes
   ROADMAP.md                  the single roadmap target for all future-work content (and the Findings ledger)
+  README IDEAS_RESERVOIR MIGRATION_PROGRESS SECRET_SCANNING TRANSLATION_GLOSSARY TRANSLATION_PLAN (.md)
+                              the other docs-root documents
 mods/                         the mod projects (Example, Vanilla.*, Weather, Weather.Contracts), all solution
                               members + Directory.Build.targets
 native/
@@ -75,6 +78,11 @@ DualFrontier.sln              the managed solution (section 2)
 global.json                   SDK pin (section 6)
 Directory.Build.props         root MSBuild props (TreatWarningsAsErrors=true; CompileShaders target)
 Directory.Packages.props      Central Package Management (single version source)
+game.manifest.json            the product manifest (root mods); the Launcher csproj copies it to its output
+launcher-smoke*.log tests-run-*.log   tracked logs of a 2026-05-24 Windows run: dated residue, not output
+                              of any current command
+README.md LICENSE .editorconfig .gitattributes .gitignore .gitleaksignore CppProperties.json
+                              the remaining root files (.editorconfig restates the analyzer severities)
 ```
 
 ## §2 — Project set truth (sln vs disk)
