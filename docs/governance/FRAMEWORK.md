@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.0
+version: 2.1.1
 first_authored: 2026-05-12
 last_modified: 2026-11-22
 content_language: en
@@ -16,7 +16,7 @@ meta_role: register_specification
 last_modified_commit: 7449ba8
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: "MINOR 2.0.2 -> 2.1.0 2026-11-22 (REV_2 (CORPUS_REVISION_1), operator ruling 2026-11-21 on the rationale field and the architect rulings of REV_2): schema 2.0 -> 2.1. The framework describes what the tool does. Section 3.4.2 -- special_case_rationale is required only for a 3.4.1 forbidden combination; the new optional provenance_note (14.3) carries the reason for any other placement and is never an exemption. G-RATIO becomes a threshold gate; G-ROWFORM guards the findings ledger; the gate catalog (14.5) is pinned to the tool by a test. The retired 1.x regime (the PowerShell suite, the hand-edited register, the bypass log) leaves the normative text: sections 6, 7.3 and 8 are replaced by the live form, the record collapses into one paragraph of section 12, and the checks the tool does not run are named in 14.10. The 1.1.1 and 2.0.1 change rows are restored. No lifecycle transition (LOCKED)."
+last_review_event: "PATCH 2.1.0 -> 2.1.1 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the G-ROWFORM row of 14.5 states every condition the tool acts on -- the configuration file absent is inert, an unreadable configuration file is a Report, a ledger without the configured table header is a Report. No lifecycle transition (LOCKED)."
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A45-X5
@@ -597,6 +597,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 | 2.0.1 | 2026-07-17 | CORPUS_CLOSURE_INVERSION_B Phase D | PATCH -- section 14.9 records the completion of the corpus switch (the corpus on frontmatter as source of truth, the gates armed, the PowerShell writers retired) and labels the forward-regime sections superseded in fact. State-recording, no new law, no schema change. |
 | 2.0.2 | 2026-08-31 | W4_COMPOSITION_ROOT | PATCH — §3.2.4 tier-4 document classes no longer name `assets/scenes/README.md`. W4 deleted the BD-8 orphan cluster, and that README went with the `.dfscene` fixture it described; `assets/` keeps no governed document. The class list is a factual enumeration, so leaving it would have made the framework name an artifact the repository does not have. No schema change, no other class touched. |
 | 2.1.0 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | MINOR -- schema 2.0 -> 2.1; the framework describes what the tool does. Optional `provenance_note` joins 14.3; `special_case_rationale` is required only for a 3.4.1 forbidden combination, and a non-forbidden combination outside the matrix is legal (3.4.2). The retired 1.x regime leaves the normative text: sections 6, 7.3 and 8 are replaced by the live form, every pre-2.0 instrument reference is replaced or narrowed, and the regime is recorded once below. Clauses that named a check the tool does not run are narrowed to the tool and listed in 14.10. 14.5 gains G-ROWFORM, states G-RATIO as a threshold gate and pins the gate catalog to the tool's gate registry by a test. The 1.1.1 and 2.0.1 rows are restored and the header version blocks collapse into this table. |
+| 2.1.1 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the G-ROWFORM row of 14.5 gains the three conditions the tool already acted on and the law did not state: the configuration file `tools/governance/LEDGER_FORM.yaml` absent (inert), an unreadable configuration file (Report), a ledger file with no table header opening with the configured id header (Report). |
 
 The rows above record each version as authored; where the 2.0.0 row or the 7.4 table calls sections 6 and 8 operative until the corpus switch, that held until 2026-07-17 and does not hold now.
 
@@ -678,7 +679,7 @@ Every machine gate is law **here** and is mirrored -- never owned -- by the gove
 | **G-NAMESPACE** | `register_id` begins `DOC-<category>-` with the prefix letter equal to the document's `category` | §5, §3.1 |
 | **G-GLOBALS** | globals enums hold — `requirements.verification_status` ∈ {PENDING, PARTIAL, VERIFIED, FAILED}; `risks.{likelihood, impact, risk_type, status}` in their §4.4 sets; `capa_entries.closure_status` ∈ {OPEN, CLOSED}; `audit_trail.event_type` ∈ {deliberation_milestone, execution_milestone, amendment_landing, lifecycle_transition, governance_event}; ids are unique within each collection | §4.3–4.7 |
 | **G-RATIO** | the share of documents carrying a `special_case_rationale` (since 2.1 only the 3.4.1 forbidden combinations carry one) is compared with the 20% threshold of section 10 item 5, the falsification instrument for the allowed-combinations matrix: below the threshold the gate is a Monitor that prints the share, at or above it a Report | §3.4.2, §10 |
-| **G-ROWFORM** | the findings ledger (the F-series table; its file is one configuration value of the tool, `docs/ROADMAP.md` at 2.1.0) keeps its form. Structural checks -- each row has as many cells as the header, counted on unescaped pipes, and ends with a trailing pipe; the id has the form `F-<n>`; ids are unique and strictly increasing -- are Reports. Vocabulary checks -- the severity is in the ledger legend's severity set and the leading member of the state is in the legend's state set -- are Monitors until the ledger vocabulary is normalised. The gate is inert (no finding) when the configured file is absent | §14.2, §14.8 |
+| **G-ROWFORM** | the findings ledger (the F-series table; its file is one configuration value of the tool, `docs/ROADMAP.md` at 2.1.0) keeps its form. Structural checks -- each row has as many cells as the header, counted on unescaped pipes, and ends with a trailing pipe; the id has the form `F-<n>`; ids are unique and strictly increasing -- are Reports. Vocabulary checks -- the severity is in the ledger legend's severity set and the leading member of the state is in the legend's state set -- are Monitors until the ledger vocabulary is normalised. The gate is inert (no finding) when its configuration file `tools/governance/LEDGER_FORM.yaml` (the ledger path, the id header, the severity and state column headers and the two vocabulary sets) is absent, or when the ledger file it names is absent. Two conditions are Reports: a configuration file that cannot be read, and a ledger file with no table header opening with the configured id header (the gate cannot read the ledger) | §14.2, §14.8 |
 
 No gate constrains a combination this framework leaves unconstrained (§14.2): the tool holds no rule without an anchor in this section.
 
