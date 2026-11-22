@@ -12,8 +12,8 @@ namespace DualFrontier.Analyzers.Tests;
 /// Repo-discipline meta-tests (TESTING_STRATEGY section 3.8): they read the src tree
 /// and assert the section 4 census pins from inside the suite at every run; the
 /// registered rg expressions stay the closure-audit cross-check (section 7). Files
-/// are enumerated with git ls-files so the census sees what rg sees under
-/// .gitignore: an untracked file under src/ is never counted.
+/// are enumerated with git ls-files: the census counts tracked files only, so an
+/// untracked file under src/ never moves a pin even where rg would count it.
 /// </summary>
 public sealed class CensusMetaTests
 {
