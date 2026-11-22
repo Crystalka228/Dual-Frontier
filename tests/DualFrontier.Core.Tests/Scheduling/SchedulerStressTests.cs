@@ -501,7 +501,7 @@ public sealed class SchedulerStressTests : IDisposable
     private delegate void SubscriberDelegate(uint typeId, IntPtr payload, uint payloadSize, IntPtr userData);
 
     // Native registry rejects Background-tier registration without coalesce_fn
-    // (event_type_registry.cpp:56, K-L15 / Q-N-34). Test provides
+    // (event_type_registry.cpp:56, K-L15). Test provides
     // latest-wins coalesce: payload is 4-byte int, newest overwrites old.
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void CoalesceDelegate(IntPtr dst, IntPtr src);
