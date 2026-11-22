@@ -144,6 +144,11 @@ declared here so no cascade silently absorbs them (F-ledger: docs/ROADMAP.md Fin
    the display-gated tests also skip, so the baseline of section 2.7 is only comparable from a session that
    has one.
 
+The `Skip = "F-<n>: ..."` reasons of items 1 and 2 are a legacy form: an F-# id appears in code only in the
+forms `CODING_STANDARDS.md` section 5.2 admits, and a Skip reason is not one of them. A new quarantine names
+its ledger row in a `TODO(F-<n>): <what remains>` marker on the skipped test and states the cause in its
+Skip reason without the id.
+
 RESOLVED at the F-29 cascade (both were recorded here at 2.1.0). (a) The F-29(b) scale non-completers S1
 (50k x 3k) and S7 (250k) now complete and are un-quarantined -- the O(N^2) graph rebuild is O(N+E)
 index-keyed (system_graph.cpp); the "native mutex above ~90k" hypothesis was REFUTED (there is no lock
