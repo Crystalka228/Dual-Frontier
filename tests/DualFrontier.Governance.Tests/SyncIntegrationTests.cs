@@ -52,6 +52,18 @@ public sealed class SyncIntegrationTests
     }
 
     [Fact]
+    public void RegisterSelfEntry_CarriesTheNullSentinel_NotAnEventThatCanNeverFire()
+    {
+        var docs = new[] { Fixture.Doc(("register_id", "DOC-A-X"), ("category", "A"), ("lifecycle", "Live"), ("tier", 2)) };
+
+        string archive = Validators.RenderArchive(docs, new GlobalsCollections(), GovernanceCli.DefaultRegisterVersion);
+
+        var entry = System.Text.RegularExpressions.Regex.Match(archive, @"register_id: DOC-G-REGISTER\n(?:  .*\n)*?  next_review_due: (\S+)\n");
+        entry.Success.Should().BeTrue("the archive carries its own self-entry");
+        entry.Groups[1].Value.Should().Be("null", "a derived, regenerated archive schedules no review");
+    }
+
+    [Fact]
     public void WriteIfChanged_SkipsWhenContentIsIdentical()
     {
         string path = Path.Combine(Path.GetTempPath(), $"df-gov-write-{Guid.NewGuid():N}.txt");

@@ -445,7 +445,7 @@ public static class Validators
         ["first_authored"] = "2026-05-12",
         ["last_modified"] = "2026-07-15",
         ["content_language"] = "en",
-        ["next_review_due"] = "post-Cascade B closure",
+        ["next_review_due"] = "null",
     };
 
     private sealed class AuthoritySurfaceFile
