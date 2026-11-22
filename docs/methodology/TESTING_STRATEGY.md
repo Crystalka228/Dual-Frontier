@@ -270,8 +270,9 @@ Heavy tests are partitioned by xUnit traits so default runs stay fast and closur
 | `Stress` | 2 | `SchedulerStressTests.cs` (class), `ModDependencyGraphStressTests.cs` (class) |
 | `Extreme` | 1 | `SchedulerExtremeTests.cs` (class) |
 | `Integration` | 4 | `M74BuildPipelineTests.cs` (x2), `ScenarioWaveGateTests.cs` (x1), `EngineComposerIntegrationTests.cs` (x1) |
+| `ReservedStub` | 1 | `DFL025_AReservedStubInvocationTests.cs` (x1) -- inside a verifier-test source string, not a live trait; no real test carries it (section 5.3 item 2) |
 
-These three are the only `[Trait("Category", …)]` values in the repository. Inclusion/exclusion is via `--filter` (§8). New heavy tests MUST carry `Stress` or `Extreme`; untagged heavy tests that slow the default sweep are review defects. New trait values are introduced only by amending this table (§9.1).
+These four are the only `[Trait("Category", …)]` values in the repository: `Stress`, `Extreme` and `Integration` partition heavy tests, and `ReservedStub` declares contact with reserved surface (section 5.3 item 2). Inclusion/exclusion is via `--filter` (§8). New heavy tests MUST carry `Stress` or `Extreme`; untagged heavy tests that slow the default sweep are review defects. New trait values are introduced only by amending this table (§9.1).
 
 ### §3.8 -- Meta (repo-discipline)
 
