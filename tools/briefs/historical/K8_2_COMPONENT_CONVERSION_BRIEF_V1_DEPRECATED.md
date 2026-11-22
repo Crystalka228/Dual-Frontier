@@ -15,7 +15,7 @@ deprecated_by: DOC-D-K8_2_V2
 superseded_by: DOC-D-K8_2_V2
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Already register-DEPRECATED (deprecated_by DOC-D-K8_2_V2). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts (Crystalka lock 2026-05-16).
+provenance_note: Already register-DEPRECATED (deprecated_by DOC-D-K8_2_V2). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts (Crystalka lock 2026-05-16).
 ---
 
 > **HISTORICAL DOCUMENT**: Register-DEPRECATED before 2026-05-16 (deprecated_by DOC-D-K8_2_V2). Moved to `tools/briefs/historical/` per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts.

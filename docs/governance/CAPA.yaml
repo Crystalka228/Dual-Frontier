@@ -1051,3 +1051,68 @@ capa_entries:
     verification_commit: 0998bb1
     verification_outcome: Effectiveness verified at δ6 closure full-suite run (Modding 395/395 PASS — Group B passes in full suite alongside the other 393 non-stress tests).
   lessons_learned_reference: DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT
+- id: CAPA-2026-11-22-REV_2-SCHEMA-2.1-AMENDMENT
+  opened_date: 2026-11-22
+  closure_status: CLOSED
+  closed_date: 2026-11-22
+  closed_commit: f3a5ebf
+  closure_outcome: >
+    Schema 2.0 -> 2.1 (MINOR, FRAMEWORK 7.1) landed with the tool and the law together. The tool
+    writes schema_version 2.1 into both derived files; the optional frontmatter field
+    provenance_note is parsed, carried to the archive and never an exemption;
+    special_case_rationale is kept only on the 16 documents whose combination FRAMEWORK 3.4.1
+    forbids (151 tracked documents and REGISTER_SUPPLEMENT.yaml migrated, value byte-identical,
+    frontmatter only). G-RATIO is a real threshold gate and reads 16/376 (4.3%). FRAMEWORK 7.4
+    carries the 2.1 row. The audit-trail event is EVT-2026-11-22-REV_2.
+  trigger: >
+    The REV_2 recon measured G-RATIO at 169/378 (44.7%) against the 20% threshold FRAMEWORK 10
+    item 5 states, with only 16 documents carrying a genuine exemption. The gate printed the share
+    and never compared it: the field special_case_rationale served two meanings, an exemption
+    from the 3.4.1 forbidden combinations and a provenance sentence that explains a document's
+    category, tier or lifecycle, and the second use inflated the count tenfold.
+  affected_documents:
+  - DOC-A-FRAMEWORK
+  - DOC-D-REV_2_BRIEF
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-TESTING_STRATEGY
+  - DOC-A-ANALYZER_RULES_V2
+  root_cause: >
+    The schema had one free-text field for two jobs. The 2.0 inversion made frontmatter the source
+    of truth and migrated every explanatory sentence the retired register carried into
+    special_case_rationale, because that was the only free-text slot; the gate that was meant to
+    watch the share of exemptions then counted provenance as exemption, and no code compared the
+    share to its threshold, so the over-count had no consequence and no one saw it.
+  immediate_action: >
+    Operator ruling 2026-11-21 (option A, the field split) at the REV-2 deliberation; the REV_2
+    recon measured the 16 genuine and the 151 movable rationales before any file was edited.
+  corrective_action: >
+    Add the optional field provenance_note (FRAMEWORK 3.4.2, 14.3); narrow special_case_rationale to
+    the 3.4.1 forbidden combinations; migrate the corpus by a scripted frontmatter-only key rename
+    proved per file (one key line changed, the 16 genuine files and the two body hazards
+    untouched); make G-RATIO compare the share with the 20% threshold (Report at it, Monitor below
+    it); bump schema_version to 2.1 in every writer and pin it in the tests; record the amendment in
+    FRAMEWORK 7.4 and the audit trail.
+  preventive_action: >
+    The gate catalog is registered once in the tool and a test asserts the registry equals the
+    FRAMEWORK 14.5 table, so a gate or a clause cannot be added on one side only; a threshold gate
+    is a Report, not a printed number; the unbuilt checks the law once named are listed in
+    FRAMEWORK 14.10 and the ledger row F-95. The placement of special_case_rationale is not
+    enforced (a rationale on a combination 3.4.1 does not forbid is not rejected); it is listed
+    there, not hidden.
+  effectiveness_verification:
+    method: >
+      validate --armed over the closure tree reads G-RATIO as a Monitor at 4.3% and exits 0; the
+      Governance tests pin the threshold on both sides of 20%, the schema string and the registry
+      parity; the migration proof script shows one key line changed per migrated file.
+    date_verified: 2026-11-22
+    verification_commit: f718f7b
+    verification_outcome: >
+      Verified at f718f7b: validate --armed exit 0 over 376 documents with G-RATIO a Monitor
+      at 16/376 (4.3%) (169/378, 44.7%, before); the migration proof holds at C4 (149
+      documents and the supplement changed by exactly one key line each, REGISTER_RENDER.md
+      collapsed to one provenance_note, the 16 genuine files and the two body hazards
+      untouched; ANALYZER_RULES migrated at C5); Governance.Tests 118 of 118, among them the
+      G-RATIO threshold test on both sides of 20%, the schema-string pin and the gate-
+      registry parity test, each watched red once on a deliberate break (the C6 commit body
+      records the ten red proofs); full suite 1493/0/6 with 10 TRX for 10 assemblies.
+  lessons_learned_reference: DOC-A-FRAMEWORK

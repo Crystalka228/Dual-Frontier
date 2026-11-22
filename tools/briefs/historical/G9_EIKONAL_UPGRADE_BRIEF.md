@@ -14,7 +14,7 @@ title: G9 — Eikonal Upgrade (historical; deferred — V2 tunable or V3)
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Q-G-2 LOCK: G9 eikonal upgrade deferred — possibly folded into V2 tunable parameter (Option A vs Option B), or becomes separate V-N primitive — evidence-gated at amendment authoring. Brief content cross-referenced from VULKAN_SUBSTRATE.md §1.3 + §1.3.1 + §5.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G9 eikonal upgrade deferred — possibly folded into V2 tunable parameter (Option A vs Option B), or becomes separate V-N primitive — evidence-gated at amendment authoring. Brief content cross-referenced from VULKAN_SUBSTRATE.md §1.3 + §1.3.1 + §5.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

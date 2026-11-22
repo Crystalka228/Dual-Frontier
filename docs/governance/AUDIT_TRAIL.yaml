@@ -7678,3 +7678,196 @@ audit_trail:
     with a clean six-line log. native/ byte-untouched (consumed, never rebuilt).
   cross_references:
     capa_entries: []
+- id: EVT-2026-11-22-REV_2
+  date: 2026-11-22
+  event: >-
+    REV_2 cascade executed -- the third cascade of CORPUS_REVISION_1. The governance FRAMEWORK
+    describes exactly what the .NET tool does: the retired PowerShell regime leaves its normative
+    text, the clauses that named instruments the tool does not have are narrowed to the tool, and
+    the unbuilt checks are seeded as one ledger row. Schema 2.0 -> 2.1 (MINOR, FRAMEWORK 7.1): the
+    new optional frontmatter field provenance_note takes every provenance sentence out of
+    special_case_rationale, which now marks only a 3.4.1 forbidden combination; G-RATIO becomes a
+    real threshold gate and reads 16/376 (4.3%) instead of 169/378 (44.7%); the gate catalog is
+    pinned to the tool's gate registry by a test; the new G-ROWFORM gate guards the F-ledger's row
+    form. FRAMEWORK 2.0.2 -> 2.1.5; F-95 is seeded.
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-REV_2_BRIEF
+  - DOC-A-FRAMEWORK
+  - DOC-C-ROADMAP
+  - DOC-A-ANALYZER_RULES_V2
+  - DOC-A-SYNTHESIS_RATIONALE
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-DEVELOPMENT_HYGIENE
+  - DOC-B-TESTING_STRATEGY
+  - DOC-G-BYPASS_LOG
+  - DOC-G-REGISTER_RENDER
+  - DOC-G-VALIDATION_REPORT
+  - DOC-F-TOOLS-GOVERNANCE
+  commits:
+    range: 3fa781c..(the closure commit carries this entry)
+    key_commits:
+    - 9cd8f67
+    - c832fee
+    - f2c2db5
+    - a340b0b
+    - ed62341
+    - f3a5ebf
+    - 4d59d3e
+    - bc257ad
+    - 945e2f1
+    - 189d701
+    - 666682c
+    - 66fb5b6
+    - 3b34db8
+    - 8ccdce1
+    - 1fae803
+    - a890509
+    - 8b4127e
+    - ab6f2df
+    - 526fce7
+    - 0c070e8
+    - f77cb53
+    - 4aa05af
+    - 167c653
+    - f718f7b
+  governance_impact: >
+    RATIFICATION. Operator-ratified inputs (chat, 2026-11-21): G-RATIO option A (the field split),
+    REV_2 executed by Sonnet writers, the REV_1 law as the standing law. The rulings A-1..A-10 below
+    apply those decisions to the measured facts of the recon and are ARCHITECT rulings,
+    PENDING OPERATOR REVIEW: the operator's review of the PR and its merge is the ratification act.
+    Per the operator ruling of 2026-11-21 a Category D tier 3 brief stays Draft in frontmatter
+    while it executes and the closure EVT records the ratification state; this entry is that
+    record. Lifecycle Draft -> EXECUTED.
+
+
+    SCHEMA AMENDMENT (FRAMEWORK 7.2). Schema 2.0 -> 2.1, MINOR under 7.1: one new optional field
+    (provenance_note), no field renamed or removed from the schema, no required field added. The
+    tool writes schema_version 2.1 into both derived files; the tests pin it. The CAPA entry
+    CAPA-2026-11-22-REV_2-SCHEMA-2.1-AMENDMENT records the trigger, the rationale and the
+    effectiveness verification. register_version stays 2.0 (7.5: the tool never bumps it; the repair
+    1fae803 returned the tool to that law after the first landing had coupled it to the schema
+    version). FRAMEWORK 7.4 gains the 2.1 row.
+
+
+    VERSIONS. FRAMEWORK 2.0.2 -> 2.1.0 (MINOR) at C2, then PATCH 2.1.1..2.1.5 at the review repairs
+    (66fb5b6, 3b34db8, a890509, 8b4127e, ab6f2df; the 2.0.1 change row restored). ANALYZER_RULES
+    1.1.1 -> 1.1.2, TESTING_STRATEGY 2.3.0 -> 2.3.1, CODING_STANDARDS 4.0.0 -> 4.0.1,
+    SYNTHESIS_RATIONALE 1.0.1 -> 1.0.2, tools/governance MODULE.md 1.0 -> 2.1. DEVELOPMENT_HYGIENE
+    3.0.0 -> 3.0.1 is a Tier 1 LOCKED PATCH (a path correction under its section 8 rule 3, made at
+    the review repairs, f77cb53, because the retired query script left the repository map and the
+    tool list; its frontmatter dates were completed at 4aa05af). Tier 1 LOCKED amendments of this
+    cascade: FRAMEWORK 2.1.0..2.1.5, CODING_STANDARDS 4.0.1, DEVELOPMENT_HYGIENE 3.0.1,
+    TESTING_STRATEGY 2.3.1, ANALYZER_RULES 1.1.2. BYPASS_LOG next_review_due 2026-Q3 -> 2027-Q1.
+    The register hosts 376 documents; no document enrolled or removed except the brief at C1.
+
+
+    COMMITS. C1 9cd8f67 (enrollment), C2 c832fee (FRAMEWORK 2.1.0), C3 f2c2db5 (ledger row form and
+    F-95), C4 a340b0b (the provenance_note migration), C5 ed62341 (the REV_1 text residue), C6
+    f3a5ebf (schema 2.1 in the tool). Review repairs, round 1 (15): 4d59d3e, bc257ad, 945e2f1,
+    189d701, 666682c, 66fb5b6, 3b34db8, 8ccdce1, 1fae803, a890509, 8b4127e, ab6f2df, 526fce7,
+    0c070e8, f77cb53. Round 2 (the lens over the repairs, 3 document-tier commits): 4aa05af,
+    167c653, f718f7b. C7 carries this entry.
+
+
+    RULINGS (architect, PENDING OPERATOR REVIEW; source /mnt/Work/Temporal/rev2-run/RULINGS.md).
+    A-1 G-RATIO split: special_case_rationale stays only on the 16 documents whose category x tier x
+    lifecycle combination FRAMEWORK 3.4.1 forbids; every other value (151 tracked documents and
+    REGISTER_SUPPLEMENT.yaml) moved to provenance_note, byte-identical, in the frontmatter only;
+    REGISTER_RENDER.md's duplicate key collapsed to one provenance_note carrying the value the
+    archive showed. A-2 FRAMEWORK 3.4.2: a rationale is required only for a 3.4.1 forbidden
+    combination; an off-matrix but legal combination may carry a provenance_note. A-3 G-RATIO is a
+    real gate (Report at the 20% threshold, Monitor printing the share otherwise). A-4 schema
+    2.0 -> 2.1 and FRAMEWORK 2.1.0 with the missing 2.0.1 row restored. A-5 the retired regime
+    leaves FRAMEWORK's normative text (superseded sections become pointers to section 14); clauses
+    that named an instrument the tool lacks are narrowed to what the tool does and the unbuilt
+    checks are seeded as one row, F-95. A-6 the gate catalog is registered once in the tool and a
+    test asserts registry == the FRAMEWORK 14.5 table. A-7 G-ROWFORM: structural checks are
+    Report, vocabulary checks are Monitor until the ledger revision cascade normalizes; inert when
+    the configured file is absent; the four structural defects were repaired so the armed half is
+    green. A-8 tools/governance: query_register.ps1 retired, MODULE.md rewritten, SCOPE_EXCLUSIONS
+    corrected and .claude/** excluded. A-9 inbound pointers into retired sections re-pointed
+    (METHODOLOGY left to its own revision). A-10 text residue of REV_1 paid: RISK-011, RISK-012
+    (CLOSED), ANALYZER_RULES scope, TESTING_STRATEGY census claim, CODING_STANDARDS 10.1 rule 4.
+    Readings the operator should check: A-4 says "GovernanceCli strings"; the three "2.0" literals
+    of GovernanceCli.cs at 3fa781c were the register-label default, not schema-version constants,
+    so the ruling's phrase does not license a register_version bump (repair 1fae803). The brief and
+    A-7 name F-2 as the out-of-order row; the displaced row was F-13 (at :1072 before F-2) and F-13
+    was moved, its text byte-identical.
+
+
+    LEDGER. F-95 seeded OPEN (S3, owner architect): the nine checks the FRAMEWORK law named and the
+    tool never had are listed in FRAMEWORK 14.10 and in the row (transition validation, reverse
+    supersession, the allowed-combinations matrix, the STALE scan, the advisories, the
+    diff-against-register check, schema-version compatibility and history-table monotonicity, the
+    meta-entry rules, the supplement-path existence check and the rationale-placement check), with
+    three candidate first slices named; seeded, not built. Rows F-55, F-56, F-59 take the ledger's
+    row form (the closing pipe; F-59 also has its stray pipe escaped) and F-13 moves to its numeric
+    place; F-41 item (a) gains a resolution note (the register self-entry now carries the sentinel
+    null, 8ccdce1; the row stays OPEN for items (b) and (c)). Ledger ids run F-1..F-95 with no gap.
+    Vocabulary normalization stays with the ledger revision cascade.
+
+
+    GATE MOVES. G-RATIO: 169/378 (44.7%) printed, never compared -> 16/376 (4.3%), a Monitor below
+    20% and a Report at it. G-ROWFORM (new): on the ledger at 3fa781c the structural half reports 5
+    findings on 4 rows (F-13 before F-2; F-55, F-56, F-59 without a closing pipe; F-59 with one
+    unescaped pipe too); at closure 0, with 15 vocabulary monitors (14 severity values outside the
+    legend, 1 state leading outside it). Gate-catalog parity: a test, no longer a convention.
+    Governance tests 66 -> 118.
+
+
+    ORCHESTRATION. Executed by the architect-orchestrator through subagents: one integrator as the
+    only committer on claude/rev-2; four Sonnet units in their own worktrees returning patches over
+    disjoint file sets (U-FW, U-MIG, U-TEXT, U-TOOL); two review lenses on disjoint axes (A: code
+    and its tests by mutation; B: the record, the law and the form), then a lens over the repairs.
+    Every lens finding was reproduced on the live tree before its disposition; test holes were
+    reproduced by the lens's own mutation and the repair shown red under it.
+
+
+    RECORD CORRECTIONS. (1) Commit a340b0b (C4) says "no src/, mods/ or native/ file touched". It
+    touched 13 Markdown files there (12 src/DualFrontier.Runtime MODULE.md files and
+    native/DualFrontier.Core.Native/build.md, each a one-line frontmatter key rename required by
+    brief 7.4); no code file under src/, mods/ or native/ changed in the range. The brief's halt
+    H7 is read, and now worded, as code files. (2) The commit bodies of C2, C4, C5 and C6 lack some
+    or all of the labelled sections CODING_STANDARDS 8.2 asks for (C2 lacks Scope boundaries; C4, C5
+    and C6 carry none of Authority, Scope, Scope boundaries, References); history is not rewritten
+    and the waiver is the operator's to give; the repair commits carry the full structure. (3)
+    Commit bc257ad's body says the test file moved +3/-2; the numstat is +3/-1.
+
+
+    RESIDUE ROUTED FORWARD. (a) OV-1, a test hole in the repair 3b34db8: the G-ROWFORM detached-row
+    locator and its two-digit-id capture are not pinned by a test (mutating the capture to one
+    digit or the line number to its zero-based form leaves the suite green; the code is correct).
+    Recorded, not repaired; the next landing that edits LedgerRowForm.cs pins both. (b) R2B-05,
+    DECISION PENDING: live text outside this cascade's file set still presents the retired
+    PowerShell regime as current -- docs/governance/PROJECT_AXIOMS.md line 37 (Tier 1 LOCKED),
+    docs/ideas/README.md line 30, src/DualFrontier.Launcher/README.md line 87 (a src/ file),
+    docs/governance/VALIDATION_REPORT.md line 22, and comments in CorpusWalker.cs,
+    ExclusionConfig.cs, FrontmatterExtractor.cs and Migrator.cs. No ruling names them and none
+    was created by this cascade; they are left, by the no-backlog-sweep ruling, to the revision
+    cascade that edits each file (METHODOLOGY at REV_4, the ledger split at REV_3) unless the
+    operator names a landing. (c) The two untracked DIST_1 reports migrate their rationale to
+    provenance_note at DIST_1 C1 (noted in its PAUSE file). (d) The ledger split and the
+    state and severity normalization (REV_3) and METHODOLOGY (REV_4) are out of scope as briefed.
+
+
+    CODE PLANE. tools/DualFrontier.Governance/** and tests/DualFrontier.Governance.Tests/** only
+    (outside the census scope). No code file under src/, mods/ or native/; no census pin moved; no
+    S-LOCK touched.
+
+
+    GATES. The stage gate, run once over the closure tree as DEVELOPMENT_HYGIENE section 3 says,
+    head f718f7b (C7 changes documents only). Native selftest ALL PASSED (the library and the selftest binary are the checkout's, byte-
+    identical; native/ carries no non-Markdown change against 3fa781c). Build 0W/0E. Suite 1493
+    passed, 0 failed, 6 skipped, 1499 total (baseline 1441/0/6 at 3fa781c, 1447 total; +52 is
+    the Governance.Tests growth 66 -> 118: 44 cases at the stage gate of the six landings, 8 at
+    the review repairs), read from 10 TRX files for 10 test assemblies; the six skips are
+    SchedulerExtremeTests S2/S3/S4/S5a/S5b and
+    RuntimeCompositionTests.Create_with_validation_enabled_composes_validation_layer. validate
+    --armed exit 0 (376 documents parsed, 0 errors, 0 gate findings; G-RATIO monitor 16/376
+    (4.3%); G-ROWFORM structural 0 with 15 vocabulary monitors). Dev smoke exit 124 with a clean
+    six-line log. The project's local chain holds one smoke, the Launcher dev smoke. Sync after
+    the closure edits: no-op.
+  cross_references:
+    capa_entries:
+    - CAPA-2026-11-22-REV_2-SCHEMA-2.1-AMENDMENT

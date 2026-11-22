@@ -16,7 +16,7 @@ review_cadence: on-closure+quarterly
 last_review_date: 2026-05-09
 last_review_event: K7 closure
 reviewer: Crystalka
-special_case_rationale: E default Tier 3 EXECUTED; Tier 2 Live override because K-series still open (K8.3/K8.4/K8.5 pending) and report mutates with subsequent measurement updates per Pass 2 §2.2
+provenance_note: E default Tier 3 EXECUTED; Tier 2 Live override because K-series still open (K8.3/K8.4/K8.5 pending) and report mutates with subsequent measurement updates per Pass 2 §2.2
 ---
 
 # K7 Performance Report — Tick-loop measurements

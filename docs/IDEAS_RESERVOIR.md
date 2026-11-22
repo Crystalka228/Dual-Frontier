@@ -15,7 +15,7 @@ review_cadence: on-closure+quarterly
 last_review_date: 2026-07-17
 last_review_event: 'DRAFTS_RATIFICATION C8 (F-39 rider): three dangling "METHODOLOGY §7.1 determinism" citations re-anchored to TIME_AND_CONSISTENCY_MODEL §5 (ratified LOCKED this cascade). PATCH 0.1 → 0.1.1.'
 reviewer: Crystalka
-special_case_rationale: Post-A'.4.5 functions as index for Category I docs/ideas/ folder; existing content preserved verbatim; individual ideas grow as separate files in docs/ideas/ over time
+provenance_note: Post-A'.4.5 functions as index for Category I docs/ideas/ folder; existing content preserved verbatim; individual ideas grow as separate files in docs/ideas/ over time
 ---
 
 # Ideas Reservoir

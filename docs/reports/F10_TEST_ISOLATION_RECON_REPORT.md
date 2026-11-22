@@ -16,7 +16,7 @@ review_cadence: none-historical-record
 last_review_date: 2026-07-03
 last_review_event: Read-only measurement recon 2026-07-02 (executor session, flagship model, LOCAL Skarlet; validate deliberately NOT run -- the known write-trap; REGISTER.yaml read directly; every census/harness expression recorded verbatim). Its R2/R3 failure censuses, R6 stdout-pipe A/B, and R7 fixture-copy root-cause were the load-bearing brief inputs; the §2 [RV] re-verify set confirmed at Phase 0 of the execution session (HEAD e44c27b = origin/main, register 2.21 / 282 DOC / 44 EVT -- H1 clear). Enrolled at the F-10 REGISTER closure.
 reviewer: Crystalka
-special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT). Basis of DOC-D-F10_TEST_ISOLATION_BRIEF; substituted for a survey wave per the brief basis line.'
+provenance_note: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_DELTA_RECON_REPORT). Basis of DOC-D-F10_TEST_ISOLATION_BRIEF; substituted for a survey wave per the brief basis line.'
 ---
 
 # F10_TEST_ISOLATION RECON REPORT — 2026-07-02

@@ -18,7 +18,7 @@ last_review_event: 'F-10 isolation brief authored by Claude Opus (deliberation s
 reviewer: Crystalka
 risks_referenced: []
 capa_entries_referenced: []
-special_case_rationale: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §8 invocation-safety convention), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id.
+provenance_note: Category D Tier 3 -- the clean (non-forbidden) Category-D combo, per the design/decision-tier brief precedent (the K-series DOC-D Tier-3 briefs). This brief authors standing law (the TESTING_STRATEGY §8 invocation-safety convention), so it enrolls at the authoritative design tier rather than the Tier-4 execution-brief convention of the A'.9.1 phase briefs. Entry id follows the brief's own frontmatter register_id.
 ---
 
 ---

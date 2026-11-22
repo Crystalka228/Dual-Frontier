@@ -1,15 +1,16 @@
 namespace DualFrontier.Governance;
 
 /// <summary>
-/// Severity of a validation <see cref="Finding"/>, encoding the measure → align →
+/// Severity of a validation <see cref="Finding"/>, encoding the measure -> align ->
 /// arm deployment discipline (FRAMEWORK 14.8):
 /// <list type="bullet">
-/// <item><see cref="Error"/> — schema / parse / structural integrity. ALWAYS
+/// <item><see cref="Error"/> -- schema / parse / structural integrity. ALWAYS
 ///   exit-affecting; nothing downstream is meaningful if these fail.</item>
-/// <item><see cref="Report"/> — a semantic gate. Printed but exit-neutral until
+/// <item><see cref="Report"/> -- a semantic gate. Printed but exit-neutral until
 ///   the gates are armed (<c>--armed</c>); the unaligned corpus is expected to
-///   carry these, and the measure report counts them.</item>
-/// <item><see cref="Monitor"/> — a never-blocking instrument (G-RATIO).</item>
+///   carry these.</item>
+/// <item><see cref="Monitor"/> -- a never-blocking instrument: printed, exit-neutral
+///   even under <c>--armed</c> (G-RATIO below its threshold, the G-ROWFORM vocabulary checks).</item>
 /// </list>
 /// </summary>
 public enum Severity

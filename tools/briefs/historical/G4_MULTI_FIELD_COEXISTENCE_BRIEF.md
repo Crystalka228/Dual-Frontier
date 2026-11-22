@@ -14,7 +14,7 @@ title: G4 — Multi-Field Coexistence (historical; reframed as V substrate close
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Q-G-2 LOCK: G4 multi-field coexistence reframed as V substrate close acceptance criterion (not separate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §1.4 (V substrate close acceptance criteria). Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G4 multi-field coexistence reframed as V substrate close acceptance criterion (not separate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §1.4 (V substrate close acceptance criteria). Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

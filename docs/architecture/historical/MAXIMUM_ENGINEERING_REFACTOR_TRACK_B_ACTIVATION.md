@@ -15,7 +15,7 @@ superseded_by: DOC-A-ANALYZER_RULES_V2
 last_modified_commit: 6888246
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: "Track B activation brief retired with the DF_TS program per session finding N-13 (pre-activation invariant falsified by A'.9.1; trigger event stale after Option-c reordering). Superseded by DOC-A-ANALYZER_RULES_V2 §5 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Full text preserved at docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md. Prior rationale: Draft — Track B activation pending Phase A'.9 analyzer milestone; v0.1 conceptual draft"
+provenance_note: "Track B activation brief retired with the DF_TS program per session finding N-13 (pre-activation invariant falsified by A'.9.1; trigger event stale after Option-c reordering). Superseded by DOC-A-ANALYZER_RULES_V2 §5 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Full text preserved at docs/architecture/historical/MAXIMUM_ENGINEERING_REFACTOR_TRACK_B_ACTIVATION.md. Prior rationale: Draft — Track B activation pending Phase A'.9 analyzer milestone; v0.1 conceptual draft"
 ---
 
 ---

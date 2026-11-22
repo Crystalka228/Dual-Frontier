@@ -14,7 +14,7 @@ title: G7 — Vanilla Movement (historical; demonstrated by M-V7 on V2)
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Q-G-2 LOCK: G7 reframed as M-V7 demonstration (Vanilla.Movement routed flow field pathfinding) on V2 substrate primitive (wave shader). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3 + §5.5 + §6.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G7 reframed as M-V7 demonstration (Vanilla.Movement routed flow field pathfinding) on V2 substrate primitive (wave shader). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3 + §5.5 + §6.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

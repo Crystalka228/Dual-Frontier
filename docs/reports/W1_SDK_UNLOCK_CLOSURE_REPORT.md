@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: 'W1_SDK_UNLOCK closure report -- Wave 1 of the vanilla-separation program: the ratified BD-1 SDK system contract (ISimulationSystem + capability-scoped ISystemContext) + BD-2 unified factory registration landed in Contracts, engine adapter wired, proven by a Contracts-only example mod through the full register->tick->D2-fault->dispose->ALC-unload lifecycle, with the empirical BD-1 gap-proof fixture leak killed; F5 code-truth correction recorded (events route through the live manifest-capability gate)'
-special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W1_SDK_UNLOCK cascade evidence per the brief section 7 closure schema. Historical record, no review cadence.'
+provenance_note: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W1_SDK_UNLOCK cascade evidence per the brief section 7 closure schema. Historical record, no review cadence.'
 ---
 
 # W1_SDK_UNLOCK -- Closure Report (2026-07-19)

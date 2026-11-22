@@ -14,7 +14,7 @@ title: K9 — Brief Refresh Patch
 last_modified_commit: 80c9ba6
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Patch brief for stale K9 brief — precedent for staleness density mitigation per RISK-007
+provenance_note: Patch brief for stale K9 brief — precedent for staleness density mitigation per RISK-007
 ---
 
 # K9 Brief Refresh Patch — Companion to K9_FIELD_STORAGE_BRIEF.md

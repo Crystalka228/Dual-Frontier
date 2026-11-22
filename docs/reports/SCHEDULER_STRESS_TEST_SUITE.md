@@ -16,7 +16,7 @@ review_cadence: none-historical-record
 last_review_date: 2026-05-21
 last_review_event: Stress test suite scaffold + 2026-05-21 prog баseline + investigation outcome documented; retroactively enrolled at А'.7.x δ5 governance commit. β7 commit (d179631) extended +173 LOC with investigation findings + refactor outcome + Group A/B reports.
 reviewer: Crystalka
-special_case_rationale: Crystalka-authored 2026-05-21 stress test suite reference document — 8 xUnit scenarios (4 Core stress + 4 mod-graph stress) + BDN benchmarks (5 methods × 3 sizes); Trait Category=Stress for CI opt-out. Baseline numbers Win11 .NET 8.0.27 AVX2 GC Concurrent Workstation. Input artifact + ongoing reference; retroactively enrolled. β7 commit extends с investigation findings + refactor outcome + Group A/B reports + BDN tables (cumulative ~400 LOC at А'.7.x closure).
+provenance_note: Crystalka-authored 2026-05-21 stress test suite reference document — 8 xUnit scenarios (4 Core stress + 4 mod-graph stress) + BDN benchmarks (5 methods × 3 sizes); Trait Category=Stress for CI opt-out. Baseline numbers Win11 .NET 8.0.27 AVX2 GC Concurrent Workstation. Input artifact + ongoing reference; retroactively enrolled. β7 commit extends с investigation findings + refactor outcome + Group A/B reports + BDN tables (cumulative ~400 LOC at А'.7.x closure).
 ---
 
 # Scheduler & Bus Stress Test Suite — 8c/16t Audit Pack

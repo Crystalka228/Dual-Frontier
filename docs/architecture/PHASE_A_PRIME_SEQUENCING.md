@@ -16,7 +16,7 @@ review_cadence: on-closure+quarterly
 last_review_date: 2026-05-24
 last_review_event: "A'.9.0 Reconnaissance / К-extensions cascade #4 β1+β2 (bundled per brief Q-J-8 squashing allowance) — A'.9.0 RECONNAISSANCE entry added with full cascade narrative (designation, execution branch main per Crystalka ratification, scope, 7 reconnaissance domains covered, Phase 0 anomalies surfaced — pre-existing ANALYZER_RULES.md + A_PRIME_9_ROSLYN_ANALYZER_BRIEF.md AUTHORED-SKELETONs, Lessons surfaced including #N14 third application HIGH promotion now + #N13 second application + observational reconnaissance evidence type formalized, К-L14 verification #13 first observational reconnaissance evidence, 8 atomic commits enumeration). Phase A'.9 milestone block expanded к multi-cascade decomposition (A'.9.0 reconnaissance + A'.9.1 analyzer infrastructure + A'.9.2 severity promotion + A'.9.3+ DC###/DL### rules + M3.4 deferred per report §10 prerequisite 7). Phase post-A'.9 К-L20 Mod API lock cascade entry added (forward sequencing с DF020 family activation reference). Prior context: A'.8 К-series formal closure (Commit 4) — А'.8 entry expanded recording Q-N deliberation Session 2 Day 2 outcomes (10/10 Q-N LOCKED)."
 reviewer: Crystalka
-special_case_rationale: 'Category A + Tier 2 + Live override: document is mutable per phase closure, subordinate to MIGRATION_PLAN_KERNEL_TO_VANILLA — not LOCKED architecture per Pass 2 §1.3'
+provenance_note: 'Category A + Tier 2 + Live override: document is mutable per phase closure, subordinate to MIGRATION_PLAN_KERNEL_TO_VANILLA — not LOCKED architecture per Pass 2 §1.3'
 ---
 
 # Phase A' sequencing — K-L3.1 to M-series begins

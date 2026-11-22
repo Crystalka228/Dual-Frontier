@@ -20,7 +20,7 @@ risks_referenced:
 - RISK-008
 capa_entries_referenced:
 - CAPA-2026-05-13-K8.3-PREMISE-MISS
-special_case_rationale: Patch brief for K8.3 v2.0 brief authoring premise miss (storage location vs struct shape conflation); K9_BRIEF_REFRESH_PATCH precedent. Parent K8_3 brief absorbed into K8_34_COMBINED_V2 (EXECUTED at A'.5 closure 2026-05-14 commit 54c6658), so this patch becomes vestigial. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 (Crystalka lock 2026-05-16).
+provenance_note: Patch brief for K8.3 v2.0 brief authoring premise miss (storage location vs struct shape conflation); K9_BRIEF_REFRESH_PATCH precedent. Parent K8_3 brief absorbed into K8_34_COMBINED_V2 (EXECUTED at A'.5 closure 2026-05-14 commit 54c6658), so this patch becomes vestigial. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 (Crystalka lock 2026-05-16).
 ---
 
 # K8.3 v2 Brief Refresh Patch — Companion to K8_3_PRODUCTION_SYSTEM_MIGRATION_BRIEF.md v2.0

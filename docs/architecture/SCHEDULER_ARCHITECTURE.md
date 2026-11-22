@@ -18,7 +18,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'DRAFTS_RATIFICATION MC-1 (C5): candidate-banner class retired - banner to ratified-successor note (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION carried), checklist line removed, Role to normative (ratified successor) where the candidate token was present, pending-amendment sentence to LOCKED form (ARCHITECTURE, CONTRACTS). Changelog status cells left as authored-session history per HALT-1 OD-2. PATCH 1.0.0 to 1.0.1.'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-KERNEL_FULL_NATIVE_SCHEDULER per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE — law/model/wiring distilled; the deliberation record (46 items, Q-N-1..56, predictions, risks) is preserved verbatim in the historical original.
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-KERNEL_FULL_NATIVE_SCHEDULER per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE — law/model/wiring distilled; the deliberation record (46 items, Q-N-1..56, predictions, risks) is preserved verbatim in the historical original.
 ---
 
 # Scheduler Architecture (К10 substrate)

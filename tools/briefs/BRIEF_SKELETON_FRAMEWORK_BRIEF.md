@@ -14,7 +14,7 @@ title: Brief Skeleton Framework — Execution Brief
 last_modified_commit: bfb1227
 review_cadence: on-cascade-execution
 reviewer: Crystalka
-special_case_rationale: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): briefs D/3/EXECUTED; real git provenance.'
+provenance_note: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): briefs D/3/EXECUTED; real git provenance.'
 ---
 
 # Brief Skeleton Framework — Execution Brief

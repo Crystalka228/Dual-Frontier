@@ -15,7 +15,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-18
 last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Menu-path, phase-list and bootstrap-publication anchors re-homed to EngineComposer; the boot-time Apply is recorded as a third T1 context, earlier than the menu path and free of concurrency; a stale gameContext identifier corrected to session (EQ_A2 drift).'
 reviewer: Crystalka
-special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.'
+provenance_note: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A1 concurrency/memory model — thread census, owner-thread table, resource×operation matrix, 12-edge happens-before catalog, lock-order law, shutdown quiesce law, fault-crossing symmetry; §9.1/§9.3 conflicts already resolved in-corpus; the deferred-catch asymmetry and shutdown-fence items are the seeded engineering work orders.'
 ---
 
 # Concurrency and Memory Model (the A1 contract)

@@ -18,7 +18,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Section 3''s dual-registration paragraph re-anchors from GameBootstrap to EngineComposer and states that the loop survives with an EMPTY core set, so no production system reaches the native plane.'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-THREADING per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; sole normative home of the engine cycle/snapshot rule (§7; gameplay residue in DOC-J-FEEDBACK_LOOPS).
 ---
 
 # Multithreading

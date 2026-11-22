@@ -10,9 +10,6 @@ namespace DualFrontier.Governance;
 /// </summary>
 public static class RegisterSync
 {
-    /// <summary>Cascade A ships gates report-only; Cascade B flips this by passing armed:true.</summary>
-    public const bool SemanticGatesEnforcingDefault = false;
-
     public sealed record CorpusLoad(List<Frontmatter> Docs, List<Finding> WalkFindings, int Scanned, int InScope);
 
     /// <summary>Walks the Markdown corpus and parses frontmatter into documents + walk-time errors.</summary>
@@ -37,7 +34,7 @@ public static class RegisterSync
 
             if (fmText is null)
             {
-                findings.Add(new Finding("G-PATH", Severity.Error, rel,
+                findings.Add(new Finding(GateCatalog.EnrolledPath, Severity.Error, rel,
                     "no frontmatter block and not on the exclusion list (fail-closed, FRAMEWORK 14.2)"));
                 continue;
             }
@@ -45,7 +42,7 @@ public static class RegisterSync
             var (doc, error) = Frontmatter.TryParse(fmText, rel);
             if (doc is null)
             {
-                findings.Add(new Finding("G-SCHEMA", Severity.Error, rel, error ?? "frontmatter parse error"));
+                findings.Add(new Finding(GateCatalog.Schema, Severity.Error, rel, error ?? "frontmatter parse error"));
                 continue;
             }
 
@@ -125,6 +122,7 @@ public static class RegisterSync
         var findings = new List<Finding>(load.WalkFindings);
         findings.AddRange(Validators.RunAll(load.Docs));
         findings.AddRange((globals ?? GlobalsCollections.Load(RepoPaths.GovernanceDir(repoRoot))).Validate());
+        findings.AddRange(LedgerRowForm.Validate(repoRoot));
         return findings;
     }
 

@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: 'EQ_A1_FAULT_SYMMETRY CLOSURE REPORT — 2026-07-18 — M4 bus + M1 scheduler fault-crossing parity under the ratified D2 origin-asymmetric policy; ModQuarantine skip-set (ELT 2.3 immediate quarantine); CMM section 7 PATCH recording D2; all gates green, full-sln 1166 -> 1177/0/5'
-special_case_rationale: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-STACK_UPDATE_CLOSURE_REPORT, DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT). Companion of DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF section 9; the recon ground truth lives in DOC-E-EQ_A_SHUTDOWN_RECON_REPORT.'
+provenance_note: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-STACK_UPDATE_CLOSURE_REPORT, DOC-E-A_PRIME_9_1_ARC_CLOSURE_REPORT). Companion of DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF section 9; the recon ground truth lives in DOC-E-EQ_A_SHUTDOWN_RECON_REPORT.'
 ---
 
 # EQ_A1_FAULT_SYMMETRY — Closure Report (2026-07-18)

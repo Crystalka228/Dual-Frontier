@@ -17,7 +17,7 @@ last_review_event: "A'.8 К-series formal closure (cascade EXECUTED 2026-05-23) 
 reviewer: Crystalka
 risks_referenced: []
 capa_entries_referenced: []
-special_case_rationale: "K_CLOSURE_AUTHORING_BRIEF authored 2026-05-22 by Claude Opus 4.7 post-A'.7.5 closure deliberation session. Q-N ratified Session 2 Day 2 (2026-05-23 Crystalka deliberation) с 10/10 Q-N LOCKED including Q-N-8-4 AUTHORED amendment к Meta-Q1 Session 1 LOCKED commitment. Brief executes К-series formal closure cascade (6-commit atomic per Q-N-8-9 LOCKED). К-extensions designation operationalized per Q-N-8-10 LOCKED — cascade #0 (А'.7.x) + #1 (А'.7.5) closed pre-closure architecturally as К-extensions; cascade #2 (Godot removal) deferred к post-closure for clean event boundary preservation. К-L14 evidence baseline 9 verifications с #7 honest soft-halt annotation preserves falsifiability commitment per Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2."
+provenance_note: "K_CLOSURE_AUTHORING_BRIEF authored 2026-05-22 by Claude Opus 4.7 post-A'.7.5 closure deliberation session. Q-N ratified Session 2 Day 2 (2026-05-23 Crystalka deliberation) с 10/10 Q-N LOCKED including Q-N-8-4 AUTHORED amendment к Meta-Q1 Session 1 LOCKED commitment. Brief executes К-series formal closure cascade (6-commit atomic per Q-N-8-9 LOCKED). К-extensions designation operationalized per Q-N-8-10 LOCKED — cascade #0 (А'.7.x) + #1 (А'.7.5) closed pre-closure architecturally as К-extensions; cascade #2 (Godot removal) deferred к post-closure for clean event boundary preservation. К-L14 evidence baseline 9 verifications с #7 honest soft-halt annotation preserves falsifiability commitment per Q9 LOCKED Session 1 + Q-N-8-3 LOCKED Session 2."
 ---
 
 ---

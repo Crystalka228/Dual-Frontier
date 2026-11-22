@@ -19,7 +19,7 @@ reviewer: Crystalka
 risks_referenced:
 - RISK-014
 capa_entries_referenced: []
-special_case_rationale: Skeleton brief for К-series formal closure report. Substantial scope (~3-6 weeks). 8-part structure (chronology, К-L invariants, empirical results, lessons, pipeline metrics, Roslyn analyzer prep, K→M transition, open work). Awaits full brief authoring at К10 execution closure (А'.7) timing.
+provenance_note: Skeleton brief for К-series formal closure report. Substantial scope (~3-6 weeks). 8-part structure (chronology, К-L invariants, empirical results, lessons, pipeline metrics, Roslyn analyzer prep, K→M transition, open work). Awaits full brief authoring at К10 execution closure (А'.7) timing.
 ---
 
 # А'.8 K-Series Closure Report — Execution Brief (SKELETON)

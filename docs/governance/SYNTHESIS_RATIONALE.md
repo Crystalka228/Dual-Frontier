@@ -5,17 +5,17 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.1
+version: 1.0.2
 first_authored: 2026-05-12
-last_modified: 2026-05-25
+last_modified: 2026-11-22
 content_language: en
-next_review_due: 2027-05-25
+next_review_due: 2027-11-22
 title: Document Control Register — Synthesis Rationale
 is_meta_entry: true
 meta_role: register_provenance
 review_cadence: on-change+annual
-last_review_date: 2026-05-25
-last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 9 — SYNTHESIS_RATIONALE v1.0 → v1.0.1 PATCH bump для §7 «Cross-references» PROJECT_AXIOMS.md cross-reference addition (Axiom Option (VII) completion). No schema change."
+last_review_date: 2026-11-22
+last_review_event: 'PATCH 1.0.1 -> 1.0.2 2026-11-22 (REV_2): the section 6 pointer into the retired FRAMEWORK section 8 meta-entry rules is re-pointed to FRAMEWORK section 14.1 and section 7; a rejected-element rationale that named the retired validation script now names the governance tool. No schema change.'
 reviewer: Crystalka
 ---
 
@@ -26,6 +26,8 @@ reviewer: Crystalka
 *Version: 1.0 (2026-05-12). Authored at A'.4.5 closure subordinate to [FRAMEWORK.md](./FRAMEWORK.md) v1.0. Status: AUTHORITATIVE LOCKED.*
 
 *Version: 1.0.1 (2026-05-25). Patch bump — §7 «Cross-references» entry для [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) added (Axiom Option (VII) completion per A'.9.1 / К-extensions cascade #5 Phase α Commit 9). No schema change.*
+
+*Version: 1.0.2 (2026-11-22). Patch bump -- the section 6 pointer into the retired FRAMEWORK section 8 meta-entry rules is re-pointed to FRAMEWORK section 14.1 (the derived archive carries `schema_version`) and section 7 (schema change amends this document in lockstep). A rejected-element rationale that named the retired validation script now names the governance tool's `validate --armed`. No schema change.*
 
 *Audience: agent-primary (Q-A07-6 inheritance — codified at [PROJECT_AXIOMS.md](./PROJECT_AXIOMS.md) §1 as PA-001 PERMANENT). Secondary: human reader interested in provenance / marketing signaling of «engineered selection from 5 sources».*
 
@@ -265,7 +267,7 @@ reviewer: Crystalka
 #### 3.5.3 System Validation
 
 - Formal validated-change-control procedures
-- **Why rejected**: covered by methodology §closure-protocol + atomic commit discipline + register `sync_register.ps1 --validate` gate. Adding FDA-style System Validation = ceremony duplication
+- **Why rejected**: covered by methodology §closure-protocol + atomic commit discipline + register validation gate (the governance tool's `validate --armed`). Adding FDA-style System Validation = ceremony duplication
 
 #### 3.5.4 Record Retention
 
@@ -328,7 +330,7 @@ When schema evolves (per FRAMEWORK §7), source-standard provenance is preserved
 - **Deselecting previously-selected element**: move from §2 to §3 with retroactive rationale («at v1.X we used this; at v1.Y we removed because Z»). Migration step preserves audit trail
 - **Bumping schema version**: §0 provenance summary updated to reflect new selection counts; FRAMEWORK schema version history table tracks the change
 
-This document is **subordinate to FRAMEWORK**: amendments must follow Tier 1 LOCKED amendment protocol (deliberation milestone + amendment plan + landing). Per FRAMEWORK §8 meta-entry rule 4, schema version coupling enforced — this document's `schema_version` reference must match REGISTER.yaml top-level `schema_version`.
+This document is **subordinate to FRAMEWORK**: amendments must follow Tier 1 LOCKED amendment protocol (deliberation milestone + amendment plan + landing). The register `schema_version` is carried by the derived archive REGISTER.yaml (FRAMEWORK section 14.1); a schema change (FRAMEWORK section 7) amends this document in lockstep, as stated at the head of this section.
 
 ---
 

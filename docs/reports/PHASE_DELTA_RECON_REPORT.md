@@ -16,7 +16,7 @@ review_cadence: none-historical-record
 last_review_date: 2026-07-02
 last_review_event: Read-only durable recon 2026-07-01 (validate deliberately NOT run — the known write-trap; REGISTER.yaml read directly; every census expression recorded verbatim). Its R2.4 per-lesson source tables and R4.3 phase-hash table were load-bearing brief inputs (brief preamble names them); the §2 re-verify set confirmed at Phase 0 of the execution session (HEAD 4cc5e7e = origin/main, register 2.20 / 279 DOC / 43 EVT — H1 clear). Enrolled at the arc-closure REGISTER cascade.
 reviewer: Crystalka
-special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedent: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT — the first durable-report recon; this is the second). Basis of DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF; substituted for a survey wave per the brief preamble.'
+provenance_note: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedent: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT — the first durable-report recon; this is the second). Basis of DOC-D-A_PRIME_9_1_PHASE_DELTA_BRIEF; substituted for a survey wave per the brief preamble.'
 ---
 
 # PHASE DELTA RECON REPORT -- 2026-07-01

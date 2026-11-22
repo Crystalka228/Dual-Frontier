@@ -15,7 +15,7 @@ review_cadence: on-status-transition
 last_review_date: 2026-05-15
 last_review_event: Deliberation closed 2026-05-15 — 9 of 10 Q explicitly locked, Q-K-1 instruction-only with retroactive lock mechanism; ratified ratification proposal brief execution
 reviewer: Crystalka
-special_case_rationale: Deliberation state document behaves like amendment plan (EXECUTED post-deliberation, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3 precedent (cf. DOC-A-K_L3_1_AMENDMENT_PLAN, DOC-A-A_PRIME_0_7_AMENDMENT_PLAN)
+provenance_note: Deliberation state document behaves like amendment plan (EXECUTED post-deliberation, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3 precedent (cf. DOC-A-K_L3_1_AMENDMENT_PLAN, DOC-A-A_PRIME_0_7_AMENDMENT_PLAN)
 ---
 
 # Composite Milestone Namespace — Deliberation Final State

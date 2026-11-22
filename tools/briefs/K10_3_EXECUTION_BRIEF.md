@@ -14,7 +14,7 @@ title: K10.3 — Pipeline depth + display composition + mod lifecycle quiescent 
 last_modified_commit: 1982351
 review_cadence: on-cascade-execution
 reviewer: Crystalka
-special_case_rationale: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance. Note: the file head carries a relict mirror block naming DOC-D-K10_3 (the sibling brief's id) — the schema-2.0 migration strips it and injects this entry's own frontmatter."
+provenance_note: "Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance. Note: the file head carries a relict mirror block naming DOC-D-K10_3 (the sibling brief's id) — the schema-2.0 migration strips it and injects this entry's own frontmatter."
 ---
 
 ---

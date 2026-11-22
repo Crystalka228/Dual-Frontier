@@ -5,15 +5,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 4.0.0
+version: 4.0.1
 first_authored: 2026-07-15
-last_modified: 2026-11-21
+last_modified: 2026-11-22
 content_language: en
-next_review_due: 2027-11-21
+next_review_due: 2027-11-22
 title: Coding standards
 review_cadence: on-change+annual
-last_review_date: 2026-11-21
-last_review_event: 'MAJOR 3.0.0 -> 4.0.0 2026-11-21 (REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21): section 6 comment law INVERTED -- a comment states what the code cannot express and cites only law in force, never provenance (new section 6.2); transition by touched file, no backlog sweep (new section 6.3). Section 5 reconciled -- a deferral names the OPEN ledger row that owns the debt in the closed form TODO(F-<n>), a ledger row is never waiver authority, Phase 6 is a counted legacy backlog, the census pins restated to the live CensusMetaTests values. Section 8.1 gains the ci and build scopes and the ! breaking-change suffix; section 8.3 a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges forbidden, fast-forward-only not required; section 8.4 names the operator, the architect and the integrator; section 9 states the Linux gates, the .NET governance tool and Gitleaks as the only CI. MAJOR per section 10.1 rule 3 (inverting existing rules). No lifecycle transition (LOCKED).'
+last_review_date: 2026-11-22
+last_review_event: 'PATCH 4.0.0 -> 4.0.1 2026-11-22 (REV_2): section 10.1 rule 4 follows practice -- an amendment rides a docs(<document>) commit, the enrollment and closure commits of its cascade ride governance(...). Correction of the rule to the observed commits (every REV_1 amendment used docs(...)); no new rule. PATCH per section 10.1 rule 3. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 ---
 
@@ -845,7 +845,9 @@ This document is Tier 1 LOCKED. An amendment proceeds:
 4. **REGISTER update** — bump `version`, `last_modified` and `next_review_due`
    in this document's frontmatter, which is the source of truth (`FRAMEWORK.md`
    section 14.1); run `sync` in the same commit and `validate --armed` green
-   (section 9). The change rides a `governance(...)` commit (section 8).
+   (section 9). The amendment rides a `docs(<document>)` commit (section 8),
+   for example `docs(coding-standards)` or `docs(testing)`; the enrollment and
+   closure commits of the cascade that carries it ride `governance(...)`.
 5. **Cross-doc propagation** — when an amendment touches a rule cited elsewhere,
    update those citations in the same cascade. Documents that cite this one:
    `TESTING_STRATEGY.md` (census contracts and the waiver citation rule,
@@ -866,6 +868,7 @@ here **before** the brief locks.
 
 | Version | Date | Change |
 |---|---|---|
+| **4.0.1** | 2026-11-22 | REV_2 (CORPUS_REVISION_1). **Section 10.1 rule 4** said an amendment rides a `governance(...)` commit; practice, measured over the amendments of the standing documents, is `docs(<document>)` for the amendment (REV_1 landed 4.0.0 as `docs(coding-standards)`, and the testing, hygiene and metrics amendments the same way) and `governance(...)` for a cascade's enrollment and closure commits. The rule now states the practice, with the vocabulary of section 8.1 unchanged. Correction of a rule to the commits it governs; no new rule. **PATCH** per section 10.1 rule 3. |
 | **4.0.0** | 2026-11-21 | REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21. **Section 6 comment law INVERTED** (new section 6.2): a comment states what the code cannot express and may cite only law in force (К-L#, PA-00#, a section of an enrolled LOCKED or Live document, an analyzer rule id, a named test lock); provenance is forbidden -- cascade, wave, pass and phase names, PR numbers, hashes, Category D documents, Q-L-# ids, Lesson #N, ledger row ids outside a debt pointer, repair and history narratives, counts; the ban reaches a string literal that names a test; what a test cannot distinguish stays, in the present tense. Section 6 and 6.1 no longer require F-#, Q-L-# or Lesson #N citations; the 6.1 citation form stands. Transition by touched file, no backlog sweep (new section 6.3). **Sections 5.1-5.3 reconciled**: a deferral names the OPEN ledger row that owns the debt in the closed form `TODO(F-<n>)`, and the landing that closes the row removes its markers; an F-# id appears in code only in that form, in a `[ReservedStub]` reason or as a waiver's `retires with F-<n>` clause; a waiver's authority is law, never a ledger row; `Phase 6` re-registered as a counted legacy backlog; the restated `deferred` (82/51 -> 86/53), `TODO` (136/53 -> 132/51) and waiver (2 -> 3) pins corrected to the live `CensusMetaTests` values, which the document now names as their carrier; the section 5.3 supersession paragraph about a Category D brief deleted; the section 5.3 cross-reference to ANALYZER_RULES corrected to section 2. **Section 8.1** `ci` and `build` join the vocabulary, the `!` breaking-change suffix and the GitHub merge subject are named; the "100% in-vocabulary" claim corrected. **Section 8.3** a PR lands as a two-parent merge commit made by the operator; squash-merge and rebase-merge forbidden; fast-forward-only not required; PRs #55/#56 recorded as exceptions. **Section 8.4** roles: the operator ratifies and merges, the architect authors and orchestrates, the integrator commits, pushes once and opens the PR. **Section 9** Linux native build and selftest paths, the .NET governance tool in place of the retired PowerShell suite, 18 rules (12 Error / 5 Warning / 1 Info), Gitleaks as the only CI (F-92). Also: the section 3.1 example rewritten to section 6.2; the section 4.2 shader-target host condition and SDK roll-forward stated truly; the section 6 example cites К-L8 (component lifetime), not К-L1. Correction to the 3.0.0 row: its METHODOLOGY propagation landed in section 2.3 (verification cycle), not section 4.4. **MAJOR** per section 10.1 rule 3 (inverting existing rules). |
 | **3.0.0** | 2026-08-20 | **§8.4 INVERTED — "Executor never pushes" → "Executor opens the PR; the architect merges."** The executor now pushes its work branch and opens a PR against `main` at the closure boundary; pushing to `main` and merging its own PR stay forbidden, and ratification moves from the push to the merge. Operator direction 2026-08-20: the old rule could not hold in a remote/cloud session, where an unpushed branch is lost work — a law that fails in a case the project actually runs is noise that forces the agent into an argument rather than a safeguard. `main` stays untouched by an agent, human ratification is preserved, and the PR adds a per-commit review surface a purely local branch never had. §8.4 also records the consequence that §8.3's no-rewrite prohibitions now attach routinely, so commit atomicity must be settled BEFORE the push. Propagated to `DEVELOPMENT_HYGIENE.md` §5 (2.1.0) and `METHODOLOGY.md` §4.4 (1.14.3) in the same commit per §10.1 rule 5. **MAJOR** per §10.1 rule 3 (inverting an existing rule). |
 | **2.1.4** | 2026-07-17 | STACK_UPDATE Phase H doc census (EVT-2026-07-17-STACK_UPDATE) — toolchain facts to the landed state: §1 scope bullet + §3 heading C++20 → C++23 (К-L1 amended, KERNEL_ARCHITECTURE v1.1.0); §4.2 props hand-mirror net8.0 → net10.0, LangVersion 12.0 → 14.0, plus the new repo-root `global.json` SDK pin stated (`10.0.204`, `rollForward: latestFeature`); §4.3 CPM hand-mirror rows Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit 2.9.2 → 2.9.3, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions id is never used again — its 8.x line is paid-commercial). Hand-mirror refresh only; no rule change. **PATCH.** |

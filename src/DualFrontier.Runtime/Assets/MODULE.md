@@ -14,7 +14,7 @@ title: DualFrontier.Runtime.Assets — module doc
 last_modified_commit: 76e027a
 review_cadence: phase-led
 reviewer: Crystalka
-special_case_rationale: Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance.
+provenance_note: Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (enroll F/4); real git provenance.
 ---
 
 # DualFrontier.Runtime.Assets

@@ -18,7 +18,7 @@ last_review_event: Skeleton authored per К10 forward planning skeleton framewor
 reviewer: Crystalka
 risks_referenced:
 - RISK-004
-special_case_rationale: Skeleton brief for К10 architectural propagation across 8 dependent documents per KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 Part 7. Awaits full brief authoring at К10 execution closure (А'.7) timing or earlier per Crystalka prioritization.
+provenance_note: Skeleton brief for К10 architectural propagation across 8 dependent documents per KERNEL_FULL_NATIVE_SCHEDULER.md v2.0 Part 7. Awaits full brief authoring at К10 execution closure (А'.7) timing or earlier per Crystalka prioritization.
 ---
 
 # К10 Cross-Document Amendments Cascade — Execution Brief (SKELETON)

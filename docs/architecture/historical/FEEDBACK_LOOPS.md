@@ -17,7 +17,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-05-12
 last_review_event: Relocated docs/ root → docs/architecture/ to align with Category A default location (post-A'.4.5 cleanup)
 reviewer: Crystalka
-special_case_rationale: 'Split per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS: the engine cycle/snapshot rule is normative in DOC-A-THREADING_V2 §7 (absorbed at cascade R1); the gameplay residue is DOC-J-FEEDBACK_LOOPS in docs/mechanics/. Scalar superseded_by points to the J residue; the THREADING absorption is recorded in both EVTs. Full text preserved at docs/architecture/historical/FEEDBACK_LOOPS.md.'
+provenance_note: 'Split per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS: the engine cycle/snapshot rule is normative in DOC-A-THREADING_V2 §7 (absorbed at cascade R1); the gameplay residue is DOC-J-FEEDBACK_LOOPS in docs/mechanics/. Scalar superseded_by points to the J residue; the THREADING absorption is recorded in both EVTs. Full text preserved at docs/architecture/historical/FEEDBACK_LOOPS.md.'
 ---
 
 # Feedback-loop resolution

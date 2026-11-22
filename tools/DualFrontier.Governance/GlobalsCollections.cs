@@ -86,14 +86,14 @@ public sealed class GlobalsCollections
             string id = entry.GetValueOrDefault("id")?.ToString() ?? "(no id)";
             if (id != "(no id)" && !seen.Add(id))
             {
-                yield return new Finding("G-GLOBALS", Severity.Report, id, $"duplicate {kind} id \"{id}\"");
+                yield return new Finding(GateCatalog.Globals, Severity.Report, id, $"duplicate {kind} id \"{id}\"");
             }
 
             foreach (var (field, allowed) in enums)
             {
                 if (entry.GetValueOrDefault(field)?.ToString() is { } value && !allowed.Contains(value))
                 {
-                    yield return new Finding("G-GLOBALS", Severity.Report, id,
+                    yield return new Finding(GateCatalog.Globals, Severity.Report, id,
                         $"{kind} {field} \"{value}\" is not in the sanctioned set");
                 }
             }

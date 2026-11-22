@@ -13,7 +13,7 @@ next_review_due: null
 title: K6 — Verification Log
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Verification log is closure-style artifact but housed in briefs/ — classified D Tier 3 per location
+provenance_note: Verification log is closure-style artifact but housed in briefs/ — classified D Tier 3 per location
 ---
 
 # K6 verification log

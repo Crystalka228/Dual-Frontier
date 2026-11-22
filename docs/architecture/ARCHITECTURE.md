@@ -18,7 +18,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- MINOR, amended post-review. The Application layer row, the reference-inventory rows and the scheduling paragraph are re-measured after the boundary cut: GameBootstrap anchors move to EngineComposer, and the scheduling paragraph records that the managed graph is now built EMPTY and rebuilt by the mod pipeline while the native dual-registration loop is fed nothing. The first pass MISSED the section 2 Application row and left the four cut edges standing under the section 2 verification stamp; an independent review found it and it is corrected. This event does NOT certify that every anchor to the deleted composition root is re-homed corpus-wide -- see F-84.'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ARCHITECTURE per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/ as historical reference.
 ---
 
 # Dual Frontier architecture

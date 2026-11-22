@@ -15,7 +15,7 @@ review_cadence: none-historical-record
 last_review_date: 2026-05-21
 last_review_event: А'.7.x closure report authored at δ6 closure ratification.
 reviewer: Crystalka
-special_case_rationale: "Closure report для А'.7.x К-extensions cascade #0. Records: 13-commit cascade hash range, cascade metrics (test deltas, throughput delta, native selftest count), К-L14 verification #8 evidence (clean cascade + retroactive correction of verification #7 framing), 5 CAPAs closed within cascade, source split deferral к А'.7.5, sequencing impact (А'.7.5 inserted before A'.8 К-closure). Companion к brief DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT (brief EXECUTED + closure report archives execution outcome)."
+provenance_note: "Closure report для А'.7.x К-extensions cascade #0. Records: 13-commit cascade hash range, cascade metrics (test deltas, throughput delta, native selftest count), К-L14 verification #8 evidence (clean cascade + retroactive correction of verification #7 framing), 5 CAPAs closed within cascade, source split deferral к А'.7.5, sequencing impact (А'.7.5 inserted before A'.8 К-closure). Companion к brief DOC-D-A_PRIME_7_X_BUS_ARCHITECTURE_AMENDMENT (brief EXECUTED + closure report archives execution outcome)."
 ---
 
 # А'.7.x BUS_ARCHITECTURE_AMENDMENT — Closure Report

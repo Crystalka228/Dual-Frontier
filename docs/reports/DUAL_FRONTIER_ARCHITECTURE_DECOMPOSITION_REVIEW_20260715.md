@@ -14,7 +14,7 @@ title: Dual Frontier — анализ архитектурной декомпо�
 last_modified_commit: 8960085
 review_cadence: none-historical-record
 reviewer: Crystalka
-special_case_rationale: External-origin review artifact (authored by an external agent against the same HEAD 6f39903) committed verbatim as the claims source for DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION — the session report's verdict tables are unreadable without the claims in-repo. Enrolled per the docs/reports Category E convention; content_language ru preserved as received (first ru entry in docs/reports/).
+provenance_note: External-origin review artifact (authored by an external agent against the same HEAD 6f39903) committed verbatim as the claims source for DOC-E-ARCHITECTURE_DECOMPOSITION_CONTRACTS_SESSION — the session report's verdict tables are unreadable without the claims in-repo. Enrolled per the docs/reports Category E convention; content_language ru preserved as received (first ru entry in docs/reports/).
 ---
 
 # Dual Frontier — анализ архитектурной декомпозиции по Tier 1–2

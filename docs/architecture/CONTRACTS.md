@@ -17,7 +17,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-19
 last_review_event: 'MINOR 2.0.0 -> 2.1.0 2026-08-20 (W3_WEATHER_SLICE C8, DOC-D-W3_WEATHER_SLICE_BRIEF; operator ratification 2026-08-20): NEW section 4.2 records the four additive Sdk/ISystemContext members -- entity lifecycle (CreateEntity/DestroyEntity/IsEntityAlive, gap G1) and SetAmbientTint (gap G2) -- with ContractsVersion.Current 2.0.0 -> 2.1.0; additive for mods because the interface is engine-implemented, so ^2.0.0 pins stay satisfied; zero native change (all four promote existing engine primitives); IPresentationSink deliberately kept out of Contracts; BD-9/W6 absorption trigger recorded; section 5 current version corrected. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-CONTRACTS per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; evolution rules tightened, version-gate truth corrected against code.
 ---
 
 # Contract system

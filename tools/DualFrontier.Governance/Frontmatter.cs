@@ -88,6 +88,12 @@ public sealed class Frontmatter
     public string? Version => Str("version");
     public string? ContentLanguage => Str("content_language");
     public string? SpecialCaseRationale => Str("special_case_rationale");
+
+    /// <summary>
+    /// Free-text provenance of a classification (schema 2.1, optional). Parsed and
+    /// carried into the derived archive; never an exemption and never counted by G-RATIO.
+    /// </summary>
+    public string? ProvenanceNote => Str("provenance_note");
     public string? LastModifiedCommit => Str("last_modified_commit");
     public string? SupersededBy => Str("superseded_by");
     public string? DeprecatedBy => Str("deprecated_by");
@@ -96,7 +102,7 @@ public sealed class Frontmatter
     /// <summary>The next_review_due value coerced to its sentinel string ('null' when YAML-null/absent).</summary>
     public string NextReviewDue => Str("next_review_due") ?? "null";
 
-    /// <summary>A non-empty special_case_rationale is a FRAMEWORK 3.4.2 sanctioned deviation (exempts G-CATLIFE).</summary>
+    /// <summary>A non-empty special_case_rationale is the only exemption from G-CATLIFE and the only count G-RATIO reads (FRAMEWORK 3.4.2).</summary>
     public bool HasSanctionedDeviation => !string.IsNullOrWhiteSpace(SpecialCaseRationale);
 
     /// <summary>Identifier used as the subject of a finding (id when present, else the path).</summary>

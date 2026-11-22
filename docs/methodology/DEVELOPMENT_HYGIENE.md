@@ -5,15 +5,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 3.0.0
+version: 3.0.1
 first_authored: 2026-06-29
-last_modified: '2026-11-21'
+last_modified: '2026-11-22'
 content_language: en
 next_review_due: 2027-06-11
 title: Development hygiene
 review_cadence: on-change+annual
-last_review_date: 2026-11-21
-last_review_event: 'MAJOR 2.2.0 -> 3.0.0 2026-11-21 (REV_1 (CORPUS_REVISION_1)): the document describes the operational model as it runs. Sections 1-2 are re-measured against the tree (57 projects, every one a solution member); section 3 is Linux-only and gains the Launcher dev smoke, the worktree rule and the local acceptance chain (no CI job runs the build, the suite or validate); section 4 describes tools/DualFrontier.Governance and drops the retired PowerShell suite; section 5 states the merge law (a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges are forbidden, the fast-forward requirement is dropped) and the roles (the operator ratifies and merges, the architect orchestrates through subagents, the integrator is the only committer and opens the PR); section 6 is the Linux environment. MAJOR per section 8 rule 3 (operational-model change) and CODING_STANDARDS section 10.1 rule 3 (an existing rule inverted). section 3 also states the per-commit duty by tier (a document-tier commit runs validate --armed and the governance test project, a code-tier commit the build and the test projects it reaches; the whole chain runs once per stage). No lifecycle transition (LOCKED).'
+last_review_date: 2026-11-22
+last_review_event: 'PATCH 3.0.0 -> 3.0.1 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the repository map and the governance-tool section no longer describe tools/governance/query_register.ps1, which REV_2 retired (it needed the powershell-yaml module and read a key the schema no longer carries); the map names LEDGER_FORM.yaml, the G-ROWFORM configuration. PATCH per section 8 rule 3 (a path correction). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-011
@@ -65,8 +65,8 @@ src/                          managed projects + src/Directory.Build.props (anal
 tests/                        test projects, executables and fixture projects (section 2)
 tools/
   DualFrontier.Governance/    the governance tool (validate, sync, migrate; section 4)
-  governance/                 SCOPE_EXCLUSIONS.yaml (the tool's exclusion list), MODULE.md,
-                              query_register.ps1 (legacy)
+  governance/                 SCOPE_EXCLUSIONS.yaml (the tool's exclusion list), LEDGER_FORM.yaml (the
+                              G-ROWFORM configuration), MODULE.md
   DualFrontier.Analyzers/     Roslyn analyzer project (rules under Rules/)
   DualFrontier.Mod.ManifestRewriter/   mod-manifest tooling
   briefs/                     Category D cascade briefs + closure reports
@@ -211,7 +211,6 @@ bisected over that stage's commits.
 - `-- migrate --target <scratch copy>` is the corpus-migration dry run; it is not part of routine work.
 - No validate run leaves a tracked change behind, so there is no commit-folding obligation: `docs/governance/VALIDATION_REPORT.md` and `docs/governance/REGISTER_RENDER.md` are no longer written by anything.
 - The walk is the FILESYSTEM, not the git index: every `*.md` under the repository root outside `.git`, `bin`, `obj`, `node_modules`, `.vs`, `.pnpm-store` and the exclusion list is in scope, and an in-scope `.md` with no frontmatter is a G-PATH error. Run artifacts, patches and reports that are `.md` files therefore live OUTSIDE the tree, or carry frontmatter if they are tracked.
-- `tools/governance/query_register.ps1` -- legacy read-only register query; needs `pwsh` and the `powershell-yaml` module (absent on the reference host). Not a gate.
 
 **Other tools:**
 
@@ -262,6 +261,12 @@ Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_A
 
 ## Change history
 
+- **v3.0.1 (2026-11-22)** -- REV_2 (CORPUS_REVISION_1), the review repairs. `tools/governance/query_register.ps1` was
+  retired in REV_2 (`git rm`; it needed the `powershell-yaml` module, absent on the reference host, and read a key
+  the schema no longer carries). The repository map no longer lists it and names `LEDGER_FORM.yaml`, the
+  G-ROWFORM configuration; the governance-tool list of section 4 drops its bullet. **PATCH** per section 8 rule 3
+  (a path correction). `CODING_STANDARDS.md` section 9 and `TESTING_STRATEGY.md` section 8 were re-checked per
+  section 8 rule 5 and name no retired script.
 - **v3.0.0 (2026-11-21)** -- REV_1 (CORPUS_REVISION_1). Sections 1-2 are re-measured against the tree: a 57-project
   solution in which every project is a member (the six original vanilla mods and the 13 `Fixture.RegularMod_*`
   projects are no longer "disk-only"), with the counting commands stated. Section 3 is Linux-only and gains the

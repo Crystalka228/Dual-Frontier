@@ -3,14 +3,14 @@
 # every sync from the corpus, per FRAMEWORK 14.7. The boot subset: Live documents
 # plus LOCKED tier-1/2 masters. The full docs/governance/REGISTER.yaml remains the
 # audit corpus.
-schema_version: 2.0
+schema_version: 2.1
 documents:
 - register_id: DOC-A-ANALYZER_RULES_V2
   path: docs/architecture/ANALYZER_RULES.md
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.1.1
+  version: 1.1.2
 - register_id: DOC-A-ARCHITECTURE_V2
   path: docs/architecture/ARCHITECTURE.md
   category: A
@@ -70,7 +70,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 2.0.2
+  version: 2.1.5
 - register_id: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
   path: docs/architecture/GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md
   category: A
@@ -148,7 +148,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.0.1
+  version: 1.0.2
 - register_id: DOC-A-THREADING_V2
   path: docs/architecture/THREADING.md
   category: A
@@ -178,13 +178,13 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 4.0.0
+  version: 4.0.1
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 3.0.0
+  version: 3.0.1
 - register_id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
   path: docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md
   category: B
@@ -214,7 +214,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.3.0
+  version: 2.3.1
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md
   category: C
@@ -766,7 +766,7 @@ documents:
   category: F
   tier: 4
   lifecycle: Live
-  version: 1.0
+  version: 2.1
 - register_id: DOC-G-BYPASS_LOG
   path: docs/governance/BYPASS_LOG.md
   category: G

@@ -5,15 +5,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.3.0
+version: 2.3.1
 first_authored: 2026-07-15
-last_modified: 2026-11-21
+last_modified: 2026-11-22
 content_language: en
 next_review_due: 2027-06-11
 title: Testing strategy
 review_cadence: on-change+annual
-last_review_date: 2026-11-21
-last_review_event: 'MINOR 2.2.3 -> 2.3.0 2026-11-21 (REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21): section 8 invocation law restated for the Linux host (bash redirect-to-file harness under timeout, MSBUILDDISABLENODEREUSE, the TRX set as the verdict, complete only at one TRX per test assembly, the native selftest path, host-capability skips); section 1.3 states the CI truth (the Gitleaks workflow is the only one; acceptance is the local chain); section 2 landscape brought to the tree; section 4 names CensusMetaTests as the carrier of the live pins and refreshes deferred 87/54 -> 86/53; section 3.8 gains the gate-failability convention. MINOR per section 9.1 rule 3 (new invocation convention, additive; the pin refresh is PATCH-class under the section 9.1 mutability clause). section 8 also points at the per-commit duty by tier of DEVELOPMENT_HYGIENE section 3 (which commits run the full suite). No lifecycle transition (LOCKED).'
+last_review_date: 2026-11-22
+last_review_event: 'PATCH 2.3.0 -> 2.3.1 2026-11-22 (REV_2): section 4.3 states what CensusMetaTests.SuppressMessageCensus_IsZero actually asserts (the SuppressMessage literal 0 times across tracked src/ .cs files; no GlobalSuppressions.cs check, nothing outside src/) and where the GlobalSuppressions ban is held (DF999 in src/, review elsewhere). Clarification only, PATCH per section 9.1 rule 3. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 ---
 
@@ -362,7 +362,7 @@ The meta-test still asserts the exact pin (no direction, as in section 4.1 rule 
 - `[SuppressMessage]` over `src/` and `tests/` → 0 matches;
 - no `GlobalSuppressions.cs` exists anywhere in the repository.
 
-(Since Phase β the `tests/` tree contains `SuppressMessage` as string literals inside analyzer-test fixtures; attribute usage in `src/` remains 0 and no `GlobalSuppressions.cs` exists — the compiled meta-tests assert both.)
+(Since Phase β the `tests/` tree contains `SuppressMessage` as string literals inside analyzer-test fixtures, so the `tests/` half of the second bullet no longer holds. What the compiled meta-test asserts is narrower than this record: `CensusMetaTests.SuppressMessageCensus_IsZero` requires the literal `SuppressMessage` to occur 0 times across the tracked `.cs` files under `src/` -- it looks nowhere else and does not check for a file named `GlobalSuppressions.cs`. The ban on that file is held by `DF999` in the `src/` projects (`ANALYZER_RULES.md` section 3) and by review elsewhere.)
 
 Every increase requires the full waiver form and authority citation of `CODING_STANDARDS.md` section 5.3 (the waiver comment with that authority citation, immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β surfaced real diagnostics and moved the census exactly as designed — 0 → 2, both waivers carrying their §5.3 citations (the recorded-decision discipline held). ID_B moved it 2 → 3 the same way, with one difference worth noting: that waiver was ratified in the brief BEFORE the rule shipped, so the movement was a planned pin change rather than a triage discovery.
 
@@ -567,6 +567,8 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.3.1 -- 2026-11-22 -- REV_2 (PATCH).** Section 4.3 told the reader that the compiled meta-tests assert both zero `SuppressMessage` attribute usage in `src/` and the absence of a `GlobalSuppressions.cs` file. The meta-test asserts only the first, and as a literal count over the tracked `.cs` files under `src/`; it does not look for the file and does not look outside `src/`. The sentence now says exactly that, notes that the `tests/` tree carries the literal in analyzer-test fixtures, and names the other holders of the ban (`DF999` in the `src/` projects, review elsewhere). Clarification only; no pin, taxonomy or contract changes.
 
 **v2.3.0 -- 2026-11-21 -- REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21 (MINOR).** Section 8 is restated for the
 Linux host: the no-pipe harness becomes a bash redirect-to-file shape under `timeout` with

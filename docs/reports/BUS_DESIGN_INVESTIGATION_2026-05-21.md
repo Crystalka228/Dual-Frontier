@@ -15,7 +15,7 @@ review_cadence: none-historical-record
 last_review_date: 2026-05-21
 last_review_event: Investigation authored 2026-05-21 by Crystalka post-stress-suite surface; retroactively enrolled at А'.7.x δ5 governance commit. Source artifact для cascade authoring.
 reviewer: Crystalka
-special_case_rationale: "Crystalka-authored 2026-05-21 investigation surface artifact — 5 bus bugs documented (Bug #1 BusFacade.Publish coalesce_key drop; Bug #2 df_background_queue_dispatch_idle_slot orphan in src/; Bug #3 O(N²) coalesce; Bug #4 single-mutex contention; Bug #5 Fast tier P50→Max ratio explanation). Bus refactor recommendation surface (per-tier state + per-tier mutex + O(N) coalesce). Input artifact для А'.7.x brief authoring; retroactively enrolled при closure to preserve provenance chain."
+provenance_note: "Crystalka-authored 2026-05-21 investigation surface artifact — 5 bus bugs documented (Bug #1 BusFacade.Publish coalesce_key drop; Bug #2 df_background_queue_dispatch_idle_slot orphan in src/; Bug #3 O(N²) coalesce; Bug #4 single-mutex contention; Bug #5 Fast tier P50→Max ratio explanation). Bus refactor recommendation surface (per-tier state + per-tier mutex + O(N) coalesce). Input artifact для А'.7.x brief authoring; retroactively enrolled при closure to preserve provenance chain."
 ---
 
 # Three-Tier Bus Design Investigation — 2026-05-21 @ 8c/16t

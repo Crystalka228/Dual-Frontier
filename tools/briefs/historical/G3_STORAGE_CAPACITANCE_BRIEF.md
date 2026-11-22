@@ -14,7 +14,7 @@ title: G3 — Storage Capacitance (historical; reduced to gameplay node config)
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Q-G-2 LOCK: G3 storage cells / capacitance reduced to gameplay-level node config (not shader feature, not substrate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §5.1 + Lesson #12 candidate. Retained as historical record of reduction rationale. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G3 storage cells / capacitance reduced to gameplay-level node config (not shader feature, not substrate primitive). Brief content superseded by VULKAN_SUBSTRATE.md §5.1 + Lesson #12 candidate. Retained as historical record of reduction rationale. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

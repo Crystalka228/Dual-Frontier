@@ -19,7 +19,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-19
 last_review_event: 'REV_0 2026-11-21 -- PATCH. A note in section 10.3 records the fault-policy inversion W4 ratified: the ten gameplay systems now load through the scenario mod with Mod origin, so a fault in one quarantines that mod instead of crashing the process (W4 brief section 16.2, ruling R2). Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The section 9.5 F-60 paragraph is corrected to CLOSED: reload adopts the surviving singleton (ID-A) and the mod ALC is reclaimed (F60A, whose bisection re-attributed the leak from the component registry to a tick-path cache). The two test names it cited were renamed by those cascades and are replaced with the ones that exist. Also re-anchors the section 8 ModFaultHandler construction note from GameBootstrap to EngineComposer.'
 reviewer: Crystalka
-special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
+provenance_note: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 ---
 
 # Mod OS Architecture

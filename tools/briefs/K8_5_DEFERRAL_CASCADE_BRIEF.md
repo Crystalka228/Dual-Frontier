@@ -14,7 +14,7 @@ title: K8.5 Deferral Cascade — Execution Brief
 last_modified_commit: a145548
 review_cadence: on-cascade-execution
 reviewer: Crystalka
-special_case_rationale: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance.'
+provenance_note: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b): briefs D/3/EXECUTED; real git provenance.'
 ---
 
 # K8.5 Deferral Cascade — Execution Brief

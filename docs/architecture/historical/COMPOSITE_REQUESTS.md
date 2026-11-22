@@ -15,7 +15,7 @@ superseded_by: DOC-J-COMPOSITE_REQUESTS
 last_modified_commit: 0145f1b
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: "Superseded by DOC-J-COMPOSITE_REQUESTS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMPOSITE_REQUESTS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — engine-level composite request resolution pattern; design intent minimal"
+provenance_note: "Superseded by DOC-J-COMPOSITE_REQUESTS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMPOSITE_REQUESTS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — engine-level composite request resolution pattern; design intent minimal"
 ---
 
 # Composite requests

@@ -15,7 +15,7 @@ superseded_by: DOC-A-EVENT_BUS_V2
 last_modified_commit: fcbfe5b
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: Superseded by DOC-A-EVENT_BUS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/EVENT_BUS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
+provenance_note: Superseded by DOC-A-EVENT_BUS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/EVENT_BUS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
 
 # Event buses

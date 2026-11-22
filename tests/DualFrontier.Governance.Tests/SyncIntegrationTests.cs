@@ -6,9 +6,9 @@ namespace DualFrontier.Governance.Tests;
 
 /// <summary>
 /// Sync + globals + fail-closed behaviour, exercised end-to-end on a temp corpus
-/// and against the live tree. Covers the C4 checkpoint items the pure-gate suite
-/// does not: globals merge, idempotency (byte-stable render + skip-identical
-/// write), no-frontmatter-is-ERROR, and validate-against-live-fails-loudly.
+/// and against the live tree: globals merge, idempotency (byte-stable render and
+/// skip-identical write), no-frontmatter-is-ERROR, validate on the live tree, and
+/// the schema version both derived artifacts declare.
 /// </summary>
 public sealed class SyncIntegrationTests
 {
@@ -36,6 +36,31 @@ public sealed class SyncIntegrationTests
         archive.Should().Contain("DOC-G-REGISTER");     // deterministic self-entry
         archive.Should().Contain("requirements:").And.Contain("REQ-X-1");
         archive.Should().Contain("register_version: 2.0");
+    }
+
+    [Fact]
+    public void SchemaVersion_IsTwoPointOne_InBothDerivedArtifacts_WhileTheRegisterVersionLabelStaysItsOwn()
+    {
+        var docs = new[] { Fixture.Doc(("register_id", "DOC-A-X"), ("category", "A"), ("lifecycle", "Live"), ("tier", 2)) };
+
+        Validators.SchemaVersion.Should().Be("2.1");
+        Validators.RenderArchive(docs, new GlobalsCollections(), GovernanceCli.DefaultRegisterVersion)
+            .Should().Contain("schema_version: 2.1").And.Contain("register_version: 2.0").And.NotContain("schema_version: 2.0");
+        Validators.RenderAuthoritySurface(docs)
+            .Should().Contain("schema_version: 2.1").And.NotContain("schema_version: 2.0");
+        GovernanceCli.DefaultRegisterVersion.Should().Be("2.0", "FRAMEWORK 7.5: the register version is a content label, never derived from the schema version");
+    }
+
+    [Fact]
+    public void RegisterSelfEntry_CarriesTheNullSentinel_NotAnEventThatCanNeverFire()
+    {
+        var docs = new[] { Fixture.Doc(("register_id", "DOC-A-X"), ("category", "A"), ("lifecycle", "Live"), ("tier", 2)) };
+
+        string archive = Validators.RenderArchive(docs, new GlobalsCollections(), GovernanceCli.DefaultRegisterVersion);
+
+        var entry = System.Text.RegularExpressions.Regex.Match(archive, @"register_id: DOC-G-REGISTER\n(?:  .*\n)*?  next_review_due: (\S+)\n");
+        entry.Success.Should().BeTrue("the archive carries its own self-entry");
+        entry.Groups[1].Value.Should().Be("null", "a derived, regenerated archive schedules no review");
     }
 
     [Fact]
@@ -92,15 +117,12 @@ public sealed class SyncIntegrationTests
     [Fact]
     public void Validate_AgainstLiveTree_Succeeds()
     {
-        // Post-Cascade-B steady state: the live corpus is migrated (frontmatter
-        // is the SoT, CORPUS_CLOSURE_INVERSION_B CD3), so validate against the
-        // live tree must be green. The pre-migration inverse of this test
-        // ("FailsLoudly", Cascade A brief 7.2) was correct until the CD3 flip;
-        // the fail-closed proof it carried lives on in
-        // LoadCorpus_InScopeDocWithoutFrontmatter_IsAnError (synthetic fixture).
+        // Frontmatter is the source of truth (FRAMEWORK 14.1), so the live corpus
+        // validates green unarmed. The fail-closed half is pinned on a synthetic
+        // fixture by LoadCorpus_InScopeDocWithoutFrontmatter_IsAnError.
         int exit = RegisterSync.Validate(RepoPaths.RepoRoot(), armed: false, TextWriter.Null);
 
-        exit.Should().Be(0, "the migrated live corpus carries schema-2.0 frontmatter throughout");
+        exit.Should().Be(0, "the live corpus carries schema-2 frontmatter throughout");
     }
 
     private sealed class TempCorpus : IDisposable

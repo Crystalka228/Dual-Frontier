@@ -24,7 +24,7 @@ risks_referenced:
 - RISK-006
 capa_entries_referenced:
 - CAPA-2026-05-09-K8.2-V2-REFRAMING
-special_case_rationale: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_OS_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
+provenance_note: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_OS_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
 
 ---

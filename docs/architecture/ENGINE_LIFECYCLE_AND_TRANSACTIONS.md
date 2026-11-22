@@ -15,7 +15,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-18
 last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The implicit-state-machine sentence re-anchors from GameBootstrap.CreateLoop to EngineComposer.CreateSession.'
 reviewer: Crystalka
-special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.'
+provenance_note: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A3+A8 transition/fault contract — seven-stage vocabulary, atomic-commit/best-effort-reclaim law, transition inventory, fault taxonomy; MOD_OS §9.1/§9.5 already carry its reconciliations (was N-8/N-9); the shutdown-transaction and Degraded-surface work orders are seeded in the ROADMAP engineering queue.'
 ---
 
 # Engine Lifecycle and Transactions

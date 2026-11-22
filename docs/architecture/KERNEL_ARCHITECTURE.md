@@ -39,7 +39,7 @@ requirements_authored:
 - REQ-K-L17
 - REQ-K-L18
 - REQ-K-L19
-special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist items [1]+[2]: Annex A approved; REQ-K-L1..K-L19 carried over from DOC-A-KERNEL at this cascade). Part 0 is the sole К-L canon carrier (consolidated verbatim from K_CLOSURE_REPORT §2, resolves session finding N-1; ratified К-L14 exception: full thesis stays in K_CLOSURE_REPORT §1.2 per Q-N-8-2). Successor of DOC-A-KERNEL per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/.'
+provenance_note: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist items [1]+[2]: Annex A approved; REQ-K-L1..K-L19 carried over from DOC-A-KERNEL at this cascade). Part 0 is the sole К-L canon carrier (consolidated verbatim from K_CLOSURE_REPORT §2, resolves session finding N-1; ratified К-L14 exception: full thesis stays in K_CLOSURE_REPORT §1.2 per Q-N-8-2). Successor of DOC-A-KERNEL per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; predecessor preserved at docs/architecture/historical/.'
 ---
 
 # DualFrontier Kernel — Architecture

@@ -16,7 +16,7 @@ review_cadence: on-status-transition
 reviewer: Crystalka
 risks_referenced:
 - RISK-013
-special_case_rationale: 'Q-G-2 LOCK: G0 consolidated into V0 (Vulkan substrate foundation, covers rendering + compute use cases). Brief content superseded by VULKAN_SUBSTRATE.md §1.1 + §3.4. Retained as historical record of pre-Q-G-1/Q-G-2 architectural intent. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G0 consolidated into V0 (Vulkan substrate foundation, covers rendering + compute use cases). Brief content superseded by VULKAN_SUBSTRATE.md §1.1 + §3.4. Retained as historical record of pre-Q-G-1/Q-G-2 architectural intent. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

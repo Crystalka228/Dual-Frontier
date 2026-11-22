@@ -18,7 +18,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'MINOR 1.0.2 -> 1.1.0 2026-08-20 (W3_WEATHER_SLICE C8): NEW section 3.1 documents ISystemContext for authors (per-tick surface, W3 entity lifecycle + SetAmbientTint, hold-the-id vs do-not-hold-the-context); section 7 gains the strict-gate opt-in rule (declaring any token enforces all) and the owner-namespaced token rule with dependency-vs-capability doing different jobs; section 9 records the shipped Weather pair as the copyable reference plus the three shape mistakes (assembly name = mod id, Private=false, shared-mod session lifetime). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Guide successor of DOC-A-MODDING per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM (normative law lives in DOC-A-MOD_OS_ARCHITECTURE); the refusal-list fiction stays retired.
 ---
 
 # Writing Mods

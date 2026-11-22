@@ -16,7 +16,7 @@ review_cadence: on-closure+quarterly
 last_review_date: 2026-07-17
 last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §6 delta-1 row framework-compatibility clause netstandard2.0-cannot-reference-net8.0 → net10.0, tracking the landed solution TFM (the clause follows the live Contracts target, as the analyzer csproj comment now does); sole stale token in this document, all other §6 historical delta records untouched (EVT-2026-07-17-STACK_UPDATE). Prior context: Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3…'
 reviewer: Crystalka
-special_case_rationale: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
+provenance_note: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 ---
 
 # Reserved Surface Mutability

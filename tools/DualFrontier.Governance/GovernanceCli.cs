@@ -3,9 +3,9 @@ namespace DualFrontier.Governance;
 /// <summary>
 /// DualFrontier.Governance command dispatch. <c>validate</c> and <c>sync</c> run
 /// the full schema + gate catalog over the corpus (RegisterSync); semantic gates
-/// are report-only unless <c>--armed</c> (FRAMEWORK 14.8). The corpus <c>migrate</c>
-/// (dry-run) is wired next in the cascade. Exit codes follow FRAMEWORK 6: 0 = green,
-/// 1 = blocking validation error, 2 = tooling failure / unknown command.
+/// are report-only unless <c>--armed</c> (FRAMEWORK 14.8). <c>migrate</c> is a
+/// dry-run corpus migration into schema-v2 frontmatter. Exit codes: 0 = green,
+/// 1 = blocking validation finding, 2 = tooling failure or unknown command.
 /// </summary>
 public static class GovernanceCli
 {
@@ -23,6 +23,12 @@ public static class GovernanceCli
             _ => Unknown(command),
         };
     }
+
+    /// <summary>
+    /// The register_version stamped into the derived archive when --register-version is absent.
+    /// It is the content label of the archive, independent of the schema version (FRAMEWORK 7.5).
+    /// </summary>
+    public const string DefaultRegisterVersion = "2.0";
 
     private static int Migrate(string[] args, bool armed)
     {
@@ -57,9 +63,9 @@ public static class GovernanceCli
             return 2;
         }
 
-        int syncExit = RegisterSync.Sync(target, armed: false, "2.0", TextWriter.Null);
+        int syncExit = RegisterSync.Sync(target, armed: false, DefaultRegisterVersion, TextWriter.Null);
         string derived1 = File.ReadAllText(registerPath);
-        RegisterSync.Sync(target, armed: false, "2.0", TextWriter.Null);
+        RegisterSync.Sync(target, armed: false, DefaultRegisterVersion, TextWriter.Null);
         string derived2 = File.ReadAllText(registerPath);
         bool idempotent = derived1 == derived2;
 
@@ -72,7 +78,7 @@ public static class GovernanceCli
         Console.WriteLine($"  non-.md carried to supplement        : {report.NonMarkdownSupplemented}");
         Console.WriteLine($"  globals REQ/RISK/CAPA/EVT             : {report.RequirementsExtracted}/{report.RisksExtracted}/{report.CapaExtracted}/{report.AuditTrailExtracted}");
         Console.WriteLine($"  backfills project/first_authored     : {report.ProjectBackfilled}/{report.FirstAuthoredBackfilled}");
-        Console.WriteLine($"  orphans excluded (Cascade B triage)  : {report.OrphansExcluded}");
+        Console.WriteLine($"  orphans excluded (not enrolled)      : {report.OrphansExcluded}");
         Console.WriteLine($"  derived documents                    : {derivedDocs.Count}");
         Console.WriteLine($"  sync exit                            : {syncExit}");
         Console.WriteLine($"  idempotent (2nd sync byte-identical) : {idempotent}");
@@ -139,7 +145,7 @@ public static class GovernanceCli
             }
         }
 
-        return "2.0";
+        return DefaultRegisterVersion;
     }
 
     private static int NotWiredInThisBuild(string command, string what)
@@ -169,8 +175,8 @@ public static class GovernanceCli
         Console.WriteLine();
         Console.WriteLine("Options:");
         Console.WriteLine("  --repo <path>              operate on an explicit root (default: the repo containing DualFrontier.sln)");
-        Console.WriteLine("  --armed                    make semantic gate findings exit-affecting (Cascade B; default report-only)");
-        Console.WriteLine("  --register-version <ver>   register_version stamped into the derived archive (sync; default 2.0)");
+        Console.WriteLine("  --armed                    make semantic gate findings exit-affecting (default report-only)");
+        Console.WriteLine($"  --register-version <ver>   register_version stamped into the derived archive (sync; default {DefaultRegisterVersion})");
         return 0;
     }
 }

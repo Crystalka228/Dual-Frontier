@@ -190,7 +190,7 @@ risks:
   - DOC-A-FRAMEWORK
   - DOC-B-METHODOLOGY
   mitigation:
-    strategy: Q-A45-X5 post-session update protocol mandatory; sync_register.ps1 --validate gate; BYPASS_LOG.md tracks bypasses; A'.4.5.bis upgrades to pre-commit hook
+    strategy: Q-A45-X5 post-session update protocol mandatory; the register is derived from document frontmatter by the governance tool's sync (FRAMEWORK 14.1) and the tool's validate --armed run is the closure gate (FRAMEWORK 14.8); BYPASS_LOG.md tracks bypasses. No commit hook is installed, so the gate is run by the committer, not by git
     mitigation_artifact: DOC-A-FRAMEWORK
     mitigation_status: PARTIAL
   history:
@@ -198,38 +198,44 @@ risks:
     event: Risk identified during A'.4.5 deliberation Q-A45-X5 lock
   - date: Active
     event: Mitigation ships at A'.4.5 closure; effectiveness measured at A'.5 K8.3 first post-register milestone closure
+  - date: 2026-11-22
+    event: Mitigation restated to the live regime (REV_2) -- the PowerShell validation script and the planned pre-commit hook are gone; the .NET tool's validate --armed is the gate
 - id: RISK-011
-  title: Environmental incidents (testhost.exe file lock, dotnet test verbosity gotcha, tooling drift)
+  title: Environmental incidents (a testhost lingering in shutdown with an inherited pipe, MSBuild node reuse, tooling drift)
   likelihood: Medium-High
   impact: Low
   risk_type: Operational
   status: ACTIVE
   affected_documents:
-  - DOC-B-METHODOLOGY
+  - DOC-B-TESTING_STRATEGY
   - DOC-B-DEVELOPMENT_HYGIENE
   mitigation:
-    strategy: Operational reminders in every execution brief Phase 0 (testhost cleanup pattern, --logger console verbosity); pattern documented in METHODOLOGY
-    mitigation_artifact: DOC-B-METHODOLOGY
+    strategy: The no-pipe test invocation is standing law -- dotnet test is redirected to a file under timeout, never piped, with MSBUILDDISABLENODEREUSE=1 and the TRX set as the verdict (TESTING_STRATEGY section 8); the environment notes and the known failure pattern live in DEVELOPMENT_HYGIENE sections 3 and 6; dispatches and briefs point at both instead of restating them
+    mitigation_artifact: DOC-B-TESTING_STRATEGY
     mitigation_status: APPLIED
   history:
   - date: 2026-05-XX
     event: Recurring pattern across K-series execution sessions
+  - date: 2026-11-22
+    event: Restated to the Linux truth (REV_2) -- the pattern is documented in TESTING_STRATEGY section 8 and DEVELOPMENT_HYGIENE, not in METHODOLOGY; the testhost.exe file-lock form is Windows history
 - id: RISK-012
-  title: Cross-platform tooling debt (PowerShell-only governance tooling locks Windows-only ops)
+  title: Cross-platform tooling debt (governance tooling tied to one operating system)
   likelihood: Medium
   impact: Low
   risk_type: Operational
-  status: ACCEPTED
+  status: CLOSED
   affected_documents:
   - DOC-G-REGISTER
   - DOC-A-FRAMEWORK
   mitigation:
-    strategy: Schema is language-agnostic YAML; future Python port tracked as candidate work; current solo-Windows context makes PowerShell adequate
-    mitigation_artifact: 
-    mitigation_status: ACCEPTED
+    strategy: The governance tooling is the .NET project tools/DualFrontier.Governance (net10.0), which runs on the Linux reference host; the PowerShell scripts that tied it to Windows are retired and Linux is the permanent environment
+    mitigation_artifact: DOC-A-FRAMEWORK
+    mitigation_status: APPLIED
   history:
   - date: 2026-05-12
     event: Risk identified at A'.4.5 Q10 tooling design
+  - date: 2026-11-22
+    event: Risk closed (REV_2) -- the governance tool is cross-platform .NET and validate --armed runs on the Linux host; the PowerShell suite is retired
 - id: RISK-013
   title: Vulkan driver compatibility on weak hardware (compute pipeline rollout G-series)
   likelihood: Medium

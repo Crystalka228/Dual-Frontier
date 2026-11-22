@@ -14,7 +14,7 @@ title: K4 — Struct Refactor (alternative draft)
 superseded_by: DOC-D-K4
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Already register-SUPERSEDED (superseded_by DOC-D-K4). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts (Crystalka lock 2026-05-16).
+provenance_note: Already register-SUPERSEDED (superseded_by DOC-D-K4). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts (Crystalka lock 2026-05-16).
 ---
 
 > **HISTORICAL DOCUMENT**: Register-SUPERSEDED before 2026-05-16 (superseded_by DOC-D-K4). Moved to `tools/briefs/historical/` per CLEANUP_CASCADE_BRIEF §1.2 to consolidate superseded artifacts.
