@@ -3,7 +3,7 @@ register_id: DOC-D-REV_2_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.0'
 first_authored: '2026-11-22'
@@ -12,6 +12,7 @@ content_language: en
 next_review_due: null
 title: 'REV_2 -- the governance FRAMEWORK says what the tool does: the rationale field splits (G-RATIO counts only real exemptions), the retired PowerShell regime leaves the law, the gate catalog is test-pinned to the tool, the F-ledger gets a row-form gate, schema 2.1 -- the third cascade of CORPUS_REVISION_1'
 authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+last_review_event: 'REV_2 EXECUTED 2026-11-22 (EVT-2026-11-22-REV_2) on claude/rev-2, C1-C6, 15 review-repair commits, 3 repair-over-repair commits and the C7 closure. Operator-ratified inputs: G-RATIO option A, REV_2 on Sonnet; the architect rulings A-1..A-10 are PENDING OPERATOR REVIEW at the PR. Lifecycle Draft -> EXECUTED. Wording corrected at closure: the displaced ledger row is F-13 (sections 2 and 7.3), halt H7 concerns code files (section 13).'
 basis: 'REV_2 recon (/mnt/Work/Temporal/rev2-run/recon/R1.md, Sonnet, read-only at 3fa781c) + operator rulings 2026-11-21 (G-RATIO option A; REV_2 on Sonnet; self-merge grant through REV_3) + architect rulings A-1..A-10 (/mnt/Work/Temporal/rev2-run/RULINGS.md, pending operator review) + the revision synthesis'
 ---
 
@@ -64,7 +65,7 @@ live code -> the code is the truth, recorded.
 4. (RV) Gate names match 10:10 between FRAMEWORK 14.5 and the tool; no registry, no
    parity test (R1 item 15); clause-level gaps R1 item 16.
 5. (RV) Ledger `docs/ROADMAP.md:1069-1164`, 94 rows F-1..F-94; structural defects F-55,
-   F-56, F-59 (:1125, :1126, :1129) and F-2 out of order (:1073); vocabulary defects 14
+   F-56, F-59 (:1125, :1126, :1129) and F-13 out of order (it sat at :1072, before F-2); vocabulary defects 14
    severity + 8 strict-state (R1 item 22). Only `Monitor` is exit-neutral under
    `--armed` (`RegisterSync.cs:131-132`).
 6. The rulings A-1..A-10 (`/mnt/Work/Temporal/rev2-run/RULINGS.md`) are binding; R1's
@@ -110,7 +111,7 @@ F-95's text into the report (the integrator seeds it).
 
 **7.3 C3 (integrator seam).** In `docs/ROADMAP.md`: repair F-55 and F-56 (add the
 trailing pipe), F-59 (escape the stray pipe at its char ~2909, add the trailing pipe),
-move F-2 to its numeric place; seed F-95 (U-FW's text: the FRAMEWORK clauses narrowed to
+move F-13 (the displaced row; F-2 stays) to its numeric place; seed F-95 (U-FW's text: the FRAMEWORK clauses narrowed to
 the tool -- the unbuilt checks listed; S3, OPEN, owner architect; F-93 row form). Change
 nothing else in the ledger (vocabulary is REV_3).
 
@@ -179,8 +180,8 @@ still reads the old field -- after C4 the G-RATIO monitor drops to 16/375) and C
 ## 13. Halts [CORE]
 
 H1 Phase 0 mismatch; H2 gate regression; H3 validate nonzero; H5 vocabulary gap; H6 a
-change needs semantics beyond A-1..A-10 and the operator rulings; H7 any `src/`,
-`mods/`, `native/` file. Standing rails as REV_1.
+change needs semantics beyond A-1..A-10 and the operator rulings; H7 any code file under `src/`,
+`mods/`, `native/` (the frontmatter-only edits of `*.md` files that 7.4 requires there are not one). Standing rails as REV_1.
 
 ## 14. Closure [CORE]
 
