@@ -409,8 +409,12 @@ git-tracked files only, so an untracked file under `src/` moves the first and no
 the second.
 
 Compile-time enforcement: rule **DFL025_A** (behavior invocation against tagged
-members requires the declaring `[Trait]`) enforces at Warning, build-breaking
-under `TreatWarningsAsErrors` (`ANALYZER_RULES.md` section 1.1, rule registry).
+members requires the declaring `[Trait]`) ships at Warning (`ANALYZER_RULES.md`
+section 1.1, rule registry), but its subject is a test method and `tests/` does
+not inherit the analyzer wiring (section 4.2). The build therefore checks no
+real test against it: DFL025_A and DFL025_B run only inside their verifier tests
+in `tests/DualFrontier.Analyzers.Tests`, and the declared-contact trait on a
+real test is held by review.
 
 ### §5.2 — Doc-tag families
 
@@ -806,9 +810,10 @@ DFL025_B at descriptor Info (`.editorconfig` `suggestion`, IDE-only).
 `AnalyzerReleases.Shipped.md` and `AnalyzerReleases.Unshipped.md` record the
 releases, RS release tracking cross-checks them against the descriptors, and the
 root `.editorconfig` restates all 18 severities as
-`dotnet_diagnostic.<ID>.severity` keys. A DFK/DFL/DF999 violation therefore
-fails the build; suppression only per the section 5.3 DFK-WAIVER law (census
-pin: 3). The rule inventory authority is `ANALYZER_RULES.md` section 1.1 (rule
+`dotnet_diagnostic.<ID>.severity` keys. A DFK/DFL/DF999 violation in `src/`
+therefore fails the build; the rules whose subject is a test method (DFL025_A,
+DFL025_B) reach no real test, because `tests/` is not analyzed (section 5.1).
+Suppression only per the section 5.3 DFK-WAIVER law (census pin: 3). The rule inventory authority is `ANALYZER_RULES.md` section 1.1 (rule
 registry).
 
 **CI truth:** the repository's only workflow is `.github/workflows/gitleaks.yml` (secret scan); no CI job runs the build, the suite or `validate --armed` -- the ledger row F-92 owns that gap. Acceptance is the local chain.
