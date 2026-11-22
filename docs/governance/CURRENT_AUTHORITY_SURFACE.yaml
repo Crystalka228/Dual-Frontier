@@ -233,6 +233,12 @@ documents:
   tier: 2
   lifecycle: Live
   version: Live
+- register_id: DOC-C-SECRET_SCANNING
+  path: docs/SECRET_SCANNING.md
+  category: C
+  tier: 2
+  lifecycle: Live
+  version: Live
 - register_id: DOC-E-ARCHITECTURE_RECON_REPORT
   path: docs/reports/ARCHITECTURE_RECON_REPORT.md
   category: E
