@@ -27,15 +27,14 @@ namespace DualFrontier.Core.Tests;
 /// above MUST join this collection.
 ///
 /// <para><c>DisableParallelization = true</c>: these are the heaviest suites in
-/// the project — the scheduler/bus ceiling probes oversubscribe the thread pool
-/// (S4 alone fans out to 64 threads on a 16-core host) and churn the native heap
-/// under multi-million-event load. Left parallel with other collections, that
-/// concurrent load intermittently corrupts the native heap and crashes the test
-/// host (F-29 investigation, 2026-07-04: the heavy tests pass in isolation but
-/// the full suite crashes 3/3; isolating this collection makes it green). The
-/// flag runs the collection in isolation from every other collection. It also
-/// removes the thread-pool contention that failed ManagedScheduler's fan-out
-/// assertion under a saturated pool.</para>
+/// the project. The scheduler and bus ceiling probes oversubscribe the thread
+/// pool and churn the native heap under multi-million-event load; run in
+/// parallel with other collections, that load intermittently corrupts the
+/// native heap and crashes the test host, while the same tests pass in
+/// isolation. The flag runs the collection in isolation from every other
+/// collection, which also removes the thread-pool contention that fails
+/// ManagedScheduler's fan-out assertion under a saturated pool
+/// (TESTING_STRATEGY section 2.8).</para>
 /// </summary>
 [CollectionDefinition("SharedNativeSingleton", DisableParallelization = true)]
 public sealed class SharedNativeSingletonCollection

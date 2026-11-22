@@ -54,20 +54,16 @@ public sealed class SchedulerStressTests : IDisposable
         ResetNativeGlobals();
     }
 
-    // А'.7.x δ4 — Group B cross-test pollution fix per BRIEF §9.
-    // SchedulerStressTests.Dispose was missing managed bus bridge cleanup +
-    // native bus state reset, so stress-test subscriber registrations + pending
-    // events leaked into the next test in the suite (tests that pass in
-    // isolation failed only in the full Modding-tests run per Crystalka
-    // 2026-05-21 investigation). Defence layers, top к bottom:
-    //   1. Drain Normal + Background pending queues (last-chance dispatch).
-    //   2. ManagedBusBridge.ClearForTesting releases any held GCHandles +
+    // Resets every process-global native singleton this suite touches, so
+    // subscriber registrations, pending events and graph state cannot leak into
+    // the next test in the same test host. Layers, top to bottom:
+    //   1. Drain the Normal and Background pending queues (last-chance dispatch).
+    //   2. ManagedBusBridge.ClearForTesting releases any held GCHandles and
     //      calls df_bus_clear() on the bridge instance.
-    //   3. Belt-and-suspenders direct df_bus_clear() to wipe subscriber maps,
-    //      next_seq counters, pending queues for any other bridge instance
-    //      that the test forgot к clean.
-    //   4. Existing 4-singleton reset (SystemGraph / WakeRegistry /
-    //      SchedulingPolicies / EventTypeRegistry).
+    //   3. A direct df_bus_clear() wipes subscriber maps, next_seq counters and
+    //      pending queues left by any other bridge instance a test did not clean.
+    //   4. Reset the SystemGraph, WakeRegistry, SchedulingPolicies and
+    //      EventTypeRegistry singletons.
     private static void ResetNativeGlobals()
     {
         var bridge = new ManagedBusBridge();
