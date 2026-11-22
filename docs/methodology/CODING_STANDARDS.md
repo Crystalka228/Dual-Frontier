@@ -546,8 +546,9 @@ Internal citations — from code comments, XML docs, and living documents — us
 **stable identifiers and section topics**:
 
 - an invariant, axiom or rule ID alone where one exists: `К-L13`, `PA-002`,
-  `DFK022`; a living document may also cite a ledger row (`F-5`) or a decision
-  record (`Q-L-10`), but a code comment cites only what section 6.2 admits;
+  `DFK022`; a living document may also cite a ledger row (`F-5`), a decision
+  record (`Q-L-10`) or a lesson (`Lesson #N12`), but a code comment cites only
+  what section 6.2 admits;
 - a document name plus section anchor *with the section's topic in words*:
   `MOD_OS_ARCHITECTURE §3.2 (capability verbs)`, `ANALYZER_RULES §1.1 (rule
   registry)`, `TESTING_STRATEGY §4.1 (reserved-surface census pin)`. The topic
