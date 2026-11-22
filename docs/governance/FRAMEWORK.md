@@ -16,7 +16,7 @@ meta_role: register_specification
 last_modified_commit: 7449ba8
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: "PATCH 2.1.4 -> 2.1.5 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the 14.3 optional field list names title, requirements_authored and risks_referenced, which section 4.1 already counts among the control keys and the corpus carries; the tool carries them verbatim and no gate reads them. No lifecycle transition (LOCKED)."
+last_review_event: "PATCH 2.1.4 -> 2.1.5 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the 14.3 optional field list gains title, requirements_authored and risks_referenced, which the corpus carries and 14.3 did not list (section 4.1 names title as a control key); the tool carries them verbatim and no gate reads them. No lifecycle transition (LOCKED)."
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A45-X5
