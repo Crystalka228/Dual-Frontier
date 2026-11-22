@@ -1,4 +1,5 @@
 using DualFrontier.Governance;
+using System.Text.RegularExpressions;
 using AwesomeAssertions;
 using Xunit;
 
@@ -303,9 +304,10 @@ public sealed class LedgerRowFormTests
         header.Should().BeGreaterThan(0, "the configured ledger carries its table header");
 
         string legend = string.Join(" ", lines.Skip(Math.Max(0, header - 12)).Take(Math.Min(12, header)));
+        var legendTokens = new HashSet<string>(Regex.Split(legend, "[^A-Za-z0-9-]+"), StringComparer.Ordinal);
         foreach (string member in config.SeveritySet.Concat(config.StateSet))
         {
-            legend.Should().Contain(member, "the legend above the table names every configured member");
+            legendTokens.Should().Contain(member, "the legend above the table names every configured member as a whole word");
         }
     }
 }
