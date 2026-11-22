@@ -178,7 +178,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 3.0.0
+  version: 4.0.0
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
   category: B

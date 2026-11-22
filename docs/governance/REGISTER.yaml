@@ -1250,16 +1250,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 3.0.0
+  version: 4.0.0
   first_authored: 2026-07-15
-  last_modified: 2026-08-20
+  last_modified: 2026-11-21
   content_language: en
-  next_review_due: 2027-06-11
+  next_review_due: 2027-11-21
   title: Coding standards
-  last_modified_commit: 673f815
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'MAJOR 2.1.4 -> 3.0.0 2026-08-20 (operator direction 2026-08-20, post-closure rider on the W3_WEATHER_SLICE branch): section 8.4 INVERTED -- Executor never pushes becomes Executor opens the PR; the architect merges. The executor pushes its work branch to origin and opens a PR against main at the closure boundary; pushing to main and merging its own PR remain forbidden, and ratification moves from the push to the merge. Rationale: the prior rule could not hold in a remote/cloud session where an unpushed branch is lost work, so it was noise that forced an argument rather than a safeguard; main stays untouched by an agent, human ratification is preserved, and the PR adds a per-commit review surface a local branch never had. Section 8.3 gains the consequence note that its no-rewrite prohibitions now attach routinely, so commit atomicity must be settled before the push. MAJOR per section 10.1 rule 3 (inverting an existing rule). Propagated same-commit to DEVELOPMENT_HYGIENE 2.1.0 section 5 and METHODOLOGY 1.14.3 section 4.4 per section 10.1 rule 5. No lifecycle transition (LOCKED).'
+  last_review_date: 2026-11-21
+  last_review_event: 'MAJOR 3.0.0 -> 4.0.0 2026-11-21 (operator rulings 2026-11-21, REV_1): section 6 comment law INVERTED -- a comment states what the code cannot express and cites only law in force, never provenance (new section 6.2); transition by touched file, no backlog sweep (new section 6.3). Section 5 reconciled -- a deferral names the OPEN ledger row that owns the debt in the closed form TODO(F-<n>), a ledger row is never waiver authority, Phase 6 is a counted legacy backlog, the census pins restated to the live CensusMetaTests values. Section 8.1 gains the ci and build scopes and the ! breaking-change suffix; section 8.3 a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges forbidden, fast-forward-only not required; section 8.4 names the operator, the architect and the integrator; section 9 states the Linux gates, the .NET governance tool and Gitleaks as the only CI. MAJOR per section 10.1 rule 3 (inverting existing rules). No lifecycle transition (LOCKED).'
   reviewer: Crystalka
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
