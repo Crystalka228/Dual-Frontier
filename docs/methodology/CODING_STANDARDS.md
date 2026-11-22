@@ -521,7 +521,11 @@ nothing.
 `[assembly: SuppressMessage]`) is **forbidden** — it is the file-scope blanket of
 rule 4 at assembly granularity. The ban holds: no `GlobalSuppressions.cs` exists
 in the tree. The self-policing rule DF999 enforces it at Warning, build-breaking
-under `TreatWarningsAsErrors` (`ANALYZER_RULES.md` section 1.1, rule registry).
+under `TreatWarningsAsErrors` (`ANALYZER_RULES.md` section 1.1, rule registry),
+in the `src/` projects only: the analyzer is wired by the `src/`-scoped
+`Directory.Build.props` (section 4.2), so the build checks no file under
+`tests/`, `mods/` or `tools/` against DF999 (it runs there only inside its own
+verifier tests), and the ban there is held by review.
 
 ## §6 — Comments & Documentation
 
