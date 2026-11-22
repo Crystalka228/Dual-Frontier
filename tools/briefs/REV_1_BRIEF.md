@@ -3,7 +3,7 @@ register_id: DOC-D-REV_1_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.0'
 first_authored: '2026-11-21'
@@ -12,6 +12,7 @@ content_language: en
 next_review_due: null
 title: 'REV_1 -- the operational-truth law says how the project works now: CODING_STANDARDS 4.0.0 (comment law, debt markers, merge policy, scopes, roles, CI truth), DEVELOPMENT_HYGIENE 3.0.0 (Linux, the .NET governance tool, merge commits), TESTING_STRATEGY 2.3.0 (Linux invocation, live pins, failability), PIPELINE_METRICS 0.2.3 (era annotations) -- the second cascade of CORPUS_REVISION_1'
 authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+last_review_event: 'REV_1 EXECUTED 2026-11-21 (EVT-2026-11-21-REV_1) on claude/rev-1, C1-C5 plus 22 review-repair commits, the R-3 tiered-duty commit and the C6 closure. Ratified by the operator in chat on 2026-11-21 together with rulings L1-L8; lifecycle Draft -> EXECUTED. Orchestrator rulings R-1..R-3 supplemented the brief: R-1 replaced a contract sentence copied into the comment-law section as a self-reference; R-2 ruled one further repair round over the findings of the lens over the repairs; R-3 (operator) made the per-commit duty tiered and the whole chain a once-per-stage duty. Versions: CODING_STANDARDS 4.0.0, DEVELOPMENT_HYGIENE 3.0.0, TESTING_STRATEGY 2.3.0, PIPELINE_METRICS 0.2.3. F-94 seeded. Gates: see the closure EVT.'
 basis: 'REV_1 recon pair (/mnt/Work/Temporal/rev1-run/recon/R1.md -- Sonnet, DEVELOPMENT_HYGIENE/TESTING_STRATEGY/PIPELINE_METRICS; R2.md -- Opus, CODING_STANDARDS; read-only at 54a9577) + operator rulings L1-L8 ratified 2026-11-21 with their canonical wording K1-K10 (/mnt/Work/Temporal/rev1-run/CONTRACT.md) + the revision synthesis (/mnt/Work/Temporal/corpus-revision-1/REVISION_SYNTHESIS.md) + the current operating model (/mnt/Work/Temporal/skills-revision/OPERATING_MODEL_2026-11-21.md)'
 ---
 
