@@ -13,7 +13,7 @@ next_review_due: 2027-06-11
 title: Testing strategy
 review_cadence: on-change+annual
 last_review_date: 2026-11-21
-last_review_event: 'MINOR 2.2.3 -> 2.3.0 2026-11-21 (REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21): section 8 invocation law restated for the Linux host (bash redirect-to-file harness under timeout, MSBUILDDISABLENODEREUSE, the TRX set as the verdict, complete only at one TRX per test assembly, the native selftest path, host-capability skips); section 1.3 states the CI truth (the Gitleaks workflow is the only one; acceptance is the local chain); section 2 landscape brought to the tree; section 4 names CensusMetaTests as the carrier of the live pins and refreshes deferred 87/54 -> 86/53; section 3.8 gains the gate-failability convention. MINOR per section 9.1 rule 3 (new invocation convention, additive; the pin refresh is PATCH-class under the section 9.1 mutability clause). No lifecycle transition (LOCKED).'
+last_review_event: 'MINOR 2.2.3 -> 2.3.0 2026-11-21 (REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21): section 8 invocation law restated for the Linux host (bash redirect-to-file harness under timeout, MSBUILDDISABLENODEREUSE, the TRX set as the verdict, complete only at one TRX per test assembly, the native selftest path, host-capability skips); section 1.3 states the CI truth (the Gitleaks workflow is the only one; acceptance is the local chain); section 2 landscape brought to the tree; section 4 names CensusMetaTests as the carrier of the live pins and refreshes deferred 87/54 -> 86/53; section 3.8 gains the gate-failability convention. MINOR per section 9.1 rule 3 (new invocation convention, additive; the pin refresh is PATCH-class under the section 9.1 mutability clause). section 8 also points at the per-commit duty by tier of DEVELOPMENT_HYGIENE section 3 (which commits run the full suite). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 ---
 
@@ -477,6 +477,8 @@ Commands verified working on the reference host (Linux, bash). These exact strin
 
 Build first (native before managed, `DEVELOPMENT_HYGIENE.md` section 3, build commands: `dotnet build DualFrontier.sln -c Release`); the test commands below use `--no-build`.
 
+Which commits run the full suite is the per-commit duty by tier of `DEVELOPMENT_HYGIENE.md` section 3; this section is how it is invoked.
+
 **Invocation safety -- never pipe dotnet test; redirect it to a file.**
 
 Under load a testhost can linger in shutdown holding the write end of an inherited stdout pipe; a
@@ -583,7 +585,7 @@ section 3.8 names the governance suite and gains the gate-failability convention
 and states that a touched-file comment rewrite moves pins like any other edit; section 4.3 points at
 `CODING_STANDARDS.md` section 5.3 for the waiver authority form. Section 9.1 item 4 follows the schema-2.0
 inversion (frontmatter is the source, the register is derived). MINOR per section 9.1 rule 3 (new
-invocation convention, additive).
+invocation convention, additive). Section 8 also points at the per-commit duty by tier of `DEVELOPMENT_HYGIENE.md` section 3, which says which commits run the full suite.
 
 **v2.2.3 -- 2026-08-22 -- ID_B_ENTITY_VERSIONS C7 (PATCH).** Per tools/briefs/ID_B_ENTITY_VERSIONS_BRIEF.md,
 under this document's own §9.1 census-pin mutability clause. §4.3 waiver pin 2 -> 3: the third waiver is

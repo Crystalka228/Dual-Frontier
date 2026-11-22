@@ -13,7 +13,7 @@ next_review_due: 2027-06-11
 title: Development hygiene
 review_cadence: on-change+annual
 last_review_date: 2026-11-21
-last_review_event: 'MAJOR 2.2.0 -> 3.0.0 2026-11-21 (REV_1 (CORPUS_REVISION_1)): the document describes the operational model as it runs. Sections 1-2 are re-measured against the tree (57 projects, every one a solution member); section 3 is Linux-only and gains the Launcher dev smoke, the worktree rule and the local acceptance chain (no CI job runs the build, the suite or validate); section 4 describes tools/DualFrontier.Governance and drops the retired PowerShell suite; section 5 states the merge law (a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges are forbidden, the fast-forward requirement is dropped) and the roles (the operator ratifies and merges, the architect orchestrates through subagents, the integrator is the only committer and opens the PR); section 6 is the Linux environment. MAJOR per section 8 rule 3 (operational-model change) and CODING_STANDARDS section 10.1 rule 3 (an existing rule inverted). No lifecycle transition (LOCKED).'
+last_review_event: 'MAJOR 2.2.0 -> 3.0.0 2026-11-21 (REV_1 (CORPUS_REVISION_1)): the document describes the operational model as it runs. Sections 1-2 are re-measured against the tree (57 projects, every one a solution member); section 3 is Linux-only and gains the Launcher dev smoke, the worktree rule and the local acceptance chain (no CI job runs the build, the suite or validate); section 4 describes tools/DualFrontier.Governance and drops the retired PowerShell suite; section 5 states the merge law (a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges are forbidden, the fast-forward requirement is dropped) and the roles (the operator ratifies and merges, the architect orchestrates through subagents, the integrator is the only committer and opens the PR); section 6 is the Linux environment. MAJOR per section 8 rule 3 (operational-model change) and CODING_STANDARDS section 10.1 rule 3 (an existing rule inverted). section 3 also states the per-commit duty by tier (a document-tier commit runs validate --armed and the governance test project, a code-tier commit the build and the test projects it reaches; the whole chain runs once per stage). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-011
@@ -185,6 +185,19 @@ PASS = exit code 124 (the timeout killed a live process) AND the log holds no un
 
 The gates and their pass criteria are `CODING_STANDARDS.md` section 9; this list is their invocation order on the reference host.
 
+**Per-commit duty by tier.** The chain above is the duty of a STAGE, not of every
+commit. A DOCUMENT-tier commit -- its file set (`git diff --name-only <base>`) is only
+Markdown documents, governance YAML under `docs/governance/` and the derived registers --
+runs `validate --armed` (exit 0; `sync` first when a frontmatter block changed) and the
+governance test project (`tests/DualFrontier.Governance.Tests`), nothing more. A
+CODE-tier commit -- any other file -- runs the build (0W/0E), the test projects whose
+assemblies the file set reaches, and `validate --armed`. A commit that touches
+`native/`, MSBuild or CMake wiring (`*.csproj`, `*.props`, `*.targets`, `CMakeLists.txt`),
+`global.json` or `Directory.Packages.props` is CODE tier and runs the FULL suite. The
+whole chain above (selftest, build, full suite, dev smoke, validate) runs once per
+stage: after a wave's last landing and before the push at closure. A red stage gate is
+bisected over that stage's commits.
+
 ## §4 — Tooling reality
 
 **Shell substrate:**
@@ -260,7 +273,9 @@ Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_A
   exceptions, and the earlier fast-forward-only rule is inverted. Section 6 is the Linux environment; section 7
   recounts the Godot mentions and points at the comment law; section 8 rule 4 follows the schema-2.0 register
   protocol. **MAJOR** per section 8 rule 3 (operational-model change) and `CODING_STANDARDS.md` section 10.1 rule 3
-  (an existing rule inverted).
+  (an existing rule inverted). Section 3 also states the per-commit duty by tier: a document-tier commit runs
+  `validate --armed` and the governance test project, a code-tier commit the build and the test projects it
+  reaches, and the whole local chain runs once per stage.
 - **v2.2.0 (2026-08-26)** — F60A_TICK_PATH cascade (brief §7.1, D3). §3 gains the canonical **Linux** native-kernel
   build commands beside the existing Windows invocation, and a new subsection records how the native library reaches
   managed **test** output on both hosts. The operator ruled Linux the PERMANENT development environment on 2026-08-26,
