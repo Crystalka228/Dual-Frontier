@@ -1345,7 +1345,7 @@ documents:
   title: Pipeline metrics — empirical record
   review_cadence: on-change+annual
   last_review_date: 2026-11-21
-  last_review_event: 'CORPUS_REVISION_1 REV-1 -- v0.2.2 -> v0.2.3 PATCH: annotation-layer truth only -- the stale "survive" claims at the section 1.3, 1.4 and 6 annotations get dated supersession notes, an orchestrated-era paragraph joins the era annotation, the section 6 plan gets a status note, and the status line and see-also links are corrected; frozen v1.x metrics bodies byte-identical per the era charter. No lifecycle transition (LOCKED).'
+  last_review_event: 'CORPUS_REVISION_1 REV-1 -- v0.2.2 -> v0.2.3 PATCH: annotation-layer truth only -- the stale "survive" claims at the section 1.3, 1.4 and 6 annotations get dated supersession notes, an orchestrated-era paragraph joins the era annotation, the section 6 plan gets a status note, and the status line and see-also links are corrected; the stray second YAML block after the frontmatter is deleted; frozen v1.x metrics bodies byte-identical per the era charter. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   risks_referenced:
   - RISK-014
