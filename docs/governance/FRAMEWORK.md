@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.4
+version: 2.1.5
 first_authored: 2026-05-12
 last_modified: 2026-11-22
 content_language: en
@@ -16,7 +16,7 @@ meta_role: register_specification
 last_modified_commit: 7449ba8
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: "PATCH 2.1.3 -> 2.1.4 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the closing pointer of section 6 names CODING_STANDARDS section 9 (gates and pass criteria) and DEVELOPMENT_HYGIENE section 3 (the order they run in) instead of CODING_STANDARDS section 10.1, which is that document's own amendment protocol. No lifecycle transition (LOCKED)."
+last_review_event: "PATCH 2.1.4 -> 2.1.5 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the 14.3 optional field list names title, requirements_authored and risks_referenced, which section 4.1 already counts among the control keys and the corpus carries; the tool carries them verbatim and no gate reads them. No lifecycle transition (LOCKED)."
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A45-X5
@@ -601,6 +601,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 | 2.1.2 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the G-ROWFORM row of 14.5 gains a structural check: a row-shaped line (`| F-<n> |`) after the end of the ledger table is a Report. The gate reads rows up to the first line that does not start with a pipe; a blank line mid-table had left every row behind it unread. |
 | 2.1.3 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- section 10 item 5 and the 14.5 G-RATIO row state what the tool counts (every populated `special_case_rationale`); that the corpus carries one only on 3.4.1 forbidden combinations is a fact of the corpus, not a rule a gate enforces, and is listed as item 9 of 14.10 and noted in 3.4.2. |
 | 2.1.4 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the pointer closing section 6 cites CODING_STANDARDS section 9 (the gates and their pass criteria) and DEVELOPMENT_HYGIENE section 3 (the local chain); it had named CODING_STANDARDS section 10.1, which is that document's amendment protocol. |
+| 2.1.5 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the 14.3 optional list gains `title`, `requirements_authored` and `risks_referenced`: section 4.1 names `title` as a control key and the corpus carries the three, but 14.3 ("a key is law only when this section lists it") listed none of them. The tool carries them verbatim; no gate reads them. |
 
 The rows above record each version as authored; where the 2.0.0 row or the 7.4 table calls sections 6 and 8 operative until the corpus switch, that held until 2026-07-17 and does not hold now.
 
@@ -654,7 +655,7 @@ The governance tool MIRRORS this framework's law and cites the governing section
 
 Enum sets are unchanged from schema 1.0: `category` ∈ {A…J} (§3.1); `tier` ∈ {1…5} (§3.2); `lifecycle` ∈ the nine states (§3.3); `content_language` ∈ {en, ru, mixed} (§9.2). `register_id` matches `DOC-<category>-<NAME>` with `<category>` equal to the document's own `category` (§5; G-NAMESPACE §14.5).
 
-**Optional**: `special_case_rationale` (3.4.2 — required only for a 3.4.1 forbidden combination; a populated rationale is a sanctioned deviation that exempts the document from G-CATLIFE and is the only thing G-RATIO counts); `provenance_note` (3.4.2 — free text saying why a document sits where it does; never an exemption, never counted, read by no gate, carried verbatim to the derived archive); `is_meta_entry` / `meta_role` (§8.1); `supersedes` / `superseded_by` / `deprecated_by` (§3.3.2, resolved by G-XREF); `last_modified_commit` (a real commit hash only — the `PENDING-*` placeholder vocabulary is outlawed as of 2.0 and rejected by G-SCHEMA when present); the review fields (`review_cadence`, `last_review_date`, `last_review_event`, `reviewer`).
+**Optional**: `special_case_rationale` (3.4.2 — required only for a 3.4.1 forbidden combination; a populated rationale is a sanctioned deviation that exempts the document from G-CATLIFE and is the only thing G-RATIO counts); `provenance_note` (3.4.2 — free text saying why a document sits where it does; never an exemption, never counted, read by no gate, carried verbatim to the derived archive); `title` (the document's display title, free text); `requirements_authored` and `risks_referenced` (lists of REQ and RISK ids a document authored or cites; carried verbatim, resolved by no gate); `is_meta_entry` / `meta_role` (§8.1); `supersedes` / `superseded_by` / `deprecated_by` (§3.3.2, resolved by G-XREF); `last_modified_commit` (a real commit hash only — the `PENDING-*` placeholder vocabulary is outlawed as of 2.0 and rejected by G-SCHEMA when present); the review fields (`review_cadence`, `last_review_date`, `last_review_event`, `reviewer`).
 
 `last_modified_commit` is deliberately **not** required: the inversion dissolves the `PENDING-*` placeholder class structurally — a document's frontmatter is edited by the same commit that changes the document, so its own hash is knowable only after the fact and is not load-bearing for governance. Real curated hashes MAY be retained where they exist and are real; the globals-record commit fields (`verification_commit`, `closed_commit`) are kept. `review_cadence` is likewise not required and is NOT a closed enum (the 1.x corpus drifted it into free text).
 
