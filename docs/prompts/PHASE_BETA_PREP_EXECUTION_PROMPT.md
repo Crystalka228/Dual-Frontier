@@ -14,7 +14,7 @@ title: Phase β-prep Execution Prompt — A'.9.1 Analyzer Infrastructure Cascade
 last_modified_commit: f94bb84
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): the prompt E/3/EXECUTED; real git provenance.'
+provenance_note: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per operator ruling (b) of the five UNCLEAR orphans (2026-07-15): the prompt E/3/EXECUTED; real git provenance.'
 ---
 
 # Phase β-prep Execution Prompt — A'.9.1 Analyzer Infrastructure Cascade

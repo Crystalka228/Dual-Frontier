@@ -14,7 +14,7 @@ title: G8 — Local Avoidance (historical; demonstrated by M-V8, mod-level)
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Q-G-2 LOCK: G8 local avoidance reframed as M-V8 demonstration — mod-level concern, NOT V substrate primitive. Brief content superseded by VULKAN_SUBSTRATE.md §5.5 (local avoidance separate concern) + §6.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G8 local avoidance reframed as M-V8 demonstration — mod-level concern, NOT V substrate primitive. Brief content superseded by VULKAN_SUBSTRATE.md §5.5 (local avoidance separate concern) + §6.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

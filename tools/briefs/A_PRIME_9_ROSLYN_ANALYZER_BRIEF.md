@@ -18,7 +18,7 @@ last_review_event: Skeleton authored per К10 forward planning skeleton framewor
 reviewer: Crystalka
 risks_referenced:
 - RISK-004
-special_case_rationale: Skeleton brief for Roslyn architectural analyzer encoding К-Lxx invariants. Dual purpose (M-series migration verifier + К-Lxx compile-time enforcement). 17-18 expected analyzer rules. Awaits full brief authoring at К-closure report (А'.8) landed timing.
+provenance_note: Skeleton brief for Roslyn architectural analyzer encoding К-Lxx invariants. Dual purpose (M-series migration verifier + К-Lxx compile-time enforcement). 17-18 expected analyzer rules. Awaits full brief authoring at К-closure report (А'.8) landed timing.
 ---
 
 # А'.9 Roslyn Architectural Analyzer — Execution Brief (SKELETON)

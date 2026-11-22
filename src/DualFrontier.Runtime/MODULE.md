@@ -14,7 +14,7 @@ title: DualFrontier.Runtime — module doc
 last_modified_commit: 5c6a064
 review_cadence: phase-led
 reviewer: Crystalka
-special_case_rationale: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (REGISTER_INVERSION_A_MEASURE_REPORT §4, verdict: enroll F/4); real git provenance.'
+provenance_note: 'Enrolled at CORPUS_CLOSURE_INVERSION_B CD2 per the ratified Cascade-B orphan triage (REGISTER_INVERSION_A_MEASURE_REPORT §4, verdict: enroll F/4); real git provenance.'
 ---
 
 # DualFrontier.Runtime

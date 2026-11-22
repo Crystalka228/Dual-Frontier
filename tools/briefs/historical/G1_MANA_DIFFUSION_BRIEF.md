@@ -14,7 +14,7 @@ title: G1 — Mana Diffusion (historical; demonstrated by M-V1 on V1)
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Q-G-2 LOCK: G1 reframed as M-V1 demonstration (Vanilla.Magic mana field) on V1 substrate primitive (isotropic diffusion). Brief content superseded by VULKAN_SUBSTRATE.md §1.2 + §6.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G1 reframed as M-V1 demonstration (Vanilla.Magic mana field) on V1 substrate primitive (isotropic diffusion). Brief content superseded by VULKAN_SUBSTRATE.md §1.2 + §6.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

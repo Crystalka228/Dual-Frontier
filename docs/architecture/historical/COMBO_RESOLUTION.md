@@ -15,7 +15,7 @@ superseded_by: DOC-J-COMBO_RESOLUTION
 last_modified_commit: 0145f1b
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: "Superseded by DOC-J-COMBO_RESOLUTION per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMBO_RESOLUTION.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — predominantly architectural pattern (deterministic ordering via ComboResolutionSystem); mechanic-design intent minimal. Cross-referenced from docs/mechanics/ index when future J-category combat-design doc authored"
+provenance_note: "Superseded by DOC-J-COMBO_RESOLUTION per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/COMBO_RESOLUTION.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — predominantly architectural pattern (deterministic ordering via ComboResolutionSystem); mechanic-design intent minimal. Cross-referenced from docs/mechanics/ index when future J-category combat-design doc authored"
 ---
 
 # Combo damage resolution

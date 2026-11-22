@@ -13,7 +13,7 @@ next_review_due: null
 title: Mod OS v1.6 — Amendment Closure
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Closure artifact lives in tools/briefs/ alongside its parent brief; classified E (closure) Tier 3 EXECUTED
+provenance_note: Closure artifact lives in tools/briefs/ alongside its parent brief; classified E (closure) Tier 3 EXECUTED
 ---
 
 # Brief: MOD_OS_ARCHITECTURE.md v1.6 amendment + Tier 1 documentation alignment

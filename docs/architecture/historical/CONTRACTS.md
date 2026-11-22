@@ -17,7 +17,7 @@ review_cadence: on-change+annual
 reviewer: Crystalka
 risks_referenced:
 - RISK-003
-special_case_rationale: Superseded by DOC-A-CONTRACTS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/CONTRACTS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
+provenance_note: Superseded by DOC-A-CONTRACTS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/CONTRACTS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
 
 # Contract system

@@ -16,7 +16,7 @@ review_cadence: none-historical-record
 last_review_date: 2026-07-04
 last_review_event: Read-only measurement recon 2026-07-04 (executor session, flagship model, LOCAL Skarlet). Its scheduler-surface map, the lock-free-singleton audit (bus excluded -- per-tier std::mutex, concurrent-publish by design), and the N -> time scale curves were the load-bearing brief inputs; consumed by the F-29 cascade execution 2026-07-04. Enrolled at the F-29 REGISTER closure.
 reviewer: Crystalka
-special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line.'
+provenance_note: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F10_TEST_ISOLATION_RECON_REPORT, DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT). Basis of DOC-D-F29_NATIVE_SCHEDULER_BRIEF; substituted for a survey wave per the brief basis line.'
 ---
 
 # F29_NATIVE_SCHEDULER RECON REPORT -- 2026-07-04

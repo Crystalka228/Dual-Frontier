@@ -15,7 +15,7 @@ review_cadence: on-status-transition
 last_review_date: 2026-05-16
 last_review_event: Brief authored + executed 2026-05-16 on branch claude/cleanup-cascade. 16 atomic commits e68d799..7bd7b4e closed 17 of 19 audit findings (DRIFT-001..018 except DRIFT-016 HALTED per SC-4); 5 CAPAs opened+closed within EVT-2026-05-16-CLEANUP-CASCADE; register_version 1.2→1.4; sync_register --validate exit 0; dotnet build clean (0 warnings, 0 errors); dotnet test 620 passed 0 failed.
 reviewer: Crystalka
-special_case_rationale: "Execution-mode brief addressing 18 of 19 findings from DOC-E-DOCUMENTATION_DRIFT_AUDIT_REPORT (DRIFT-019 historical residue no-action per audit; DRIFT-016 HALTED per CLEANUP_CASCADE_BRIEF §4 SC-4 — Q-K-1 A'-cycle renumbering deferral surfaced to Crystalka for K8.5-brief-time decision). Authority chain: audit findings + Crystalka 4 cleanup locks (§1.1-1.4) + VULKAN_SUBSTRATE.md v1.0 LOCKED + SystemExecutionContext.cs/IGameServices.cs/IModApi.cs canonical statements."
+provenance_note: "Execution-mode brief addressing 18 of 19 findings from DOC-E-DOCUMENTATION_DRIFT_AUDIT_REPORT (DRIFT-019 historical residue no-action per audit; DRIFT-016 HALTED per CLEANUP_CASCADE_BRIEF §4 SC-4 — Q-K-1 A'-cycle renumbering deferral surfaced to Crystalka for K8.5-brief-time decision). Authority chain: audit findings + Crystalka 4 cleanup locks (§1.1-1.4) + VULKAN_SUBSTRATE.md v1.0 LOCKED + SystemExecutionContext.cs/IGameServices.cs/IModApi.cs canonical statements."
 ---
 
 ---

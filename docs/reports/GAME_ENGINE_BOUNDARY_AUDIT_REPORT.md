@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: 'GAME/ENGINE BOUNDARY AUDIT REPORT — 2026-07-18 (R1–R7) — full mechanical verification of the game/engine composition boundary at HEAD 4c58942: ten coupling-claims C-1..C-10 all SUPPORTED (none WRONG); 4 engine→game ProjectReference edges (all in DualFrontier.Application) + 1 engine→game IVT (Core→Systems) + 1 test-fixture leak; native tree + C ABI CLEAN; T3 type inventory (Components 28 / Events 53 / Systems 30 / AI 20); Contracts 65 public types (game-binding subset ≈ 8); decision list D1–D10 + anomalies A1–A9; framing = current→target distance, no kickoff↔law conflict'
-special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A_SHUTDOWN_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT). Basis for the forthcoming game/engine boundary-law document + migration plan; produced read-only at HEAD 4c58942 (post-EQ_A1_FAULT_SYMMETRY).'
+provenance_note: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A_SHUTDOWN_RECON_REPORT, DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT). Basis for the forthcoming game/engine boundary-law document + migration plan; produced read-only at HEAD 4c58942 (post-EQ_A1_FAULT_SYMMETRY).'
 ---
 
 # GAME/ENGINE BOUNDARY AUDIT REPORT — 2026-07-18

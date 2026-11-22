@@ -15,7 +15,7 @@ superseded_by: DOC-J-GOLEM_OWNERSHIP
 last_modified_commit: 0145f1b
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: Reclassified Category A → J per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS (gameplay golem-bond protocol; session finding N-6 title collision with architecture vocabulary — successor renamed GOLEM_OWNERSHIP). Category change requires a new ID per FRAMEWORK §5 immutability + G-NAMESPACE; sanctioned path = supersession (I→A promotion precedent §3.1.1). Full text preserved at docs/architecture/historical/OWNERSHIP_TRANSITION.md.
+provenance_note: Reclassified Category A → J per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS (gameplay golem-bond protocol; session finding N-6 title collision with architecture vocabulary — successor renamed GOLEM_OWNERSHIP). Category change requires a new ID per FRAMEWORK §5 immutability + G-NAMESPACE; sanctioned path = supersession (I→A promotion precedent §3.1.1). Full text preserved at docs/architecture/historical/OWNERSHIP_TRANSITION.md.
 ---
 
 # Golem ownership transitions

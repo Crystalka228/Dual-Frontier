@@ -28,7 +28,7 @@ capa_entries_referenced:
 - CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-KEY-LOST
 - CAPA-2026-05-21-A_PRIME_7_X-BUS-DISPATCH-ORPHAN
 - CAPA-2026-05-21-A_PRIME_7_X-BUS-COALESCE-ONSQUARED
-special_case_rationale: Superseded by DOC-A-KERNEL_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed; REQ-K-L1..K-L19 authorship carried over to DOC-A-KERNEL_ARCHITECTURE at the same cascade (checklist item [2]).
+provenance_note: Superseded by DOC-A-KERNEL_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/KERNEL_ARCHITECTURE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed; REQ-K-L1..K-L19 authorship carried over to DOC-A-KERNEL_ARCHITECTURE at the same cascade (checklist item [2]).
 ---
 
 # DualFrontier Kernel — Architecture

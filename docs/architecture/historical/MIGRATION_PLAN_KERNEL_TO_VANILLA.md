@@ -21,7 +21,7 @@ risks_referenced:
 - RISK-004
 capa_entries_referenced:
 - CAPA-2026-05-09-K8.2-V2-REFRAMING
-special_case_rationale: 'Partially executed migration plan retired per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: executed K8.x portions are historical record; unexecuted forward state already lives in docs/ROADMAP.md «Native foundation tracks» (DD-2 precedent). superseded_by: DOC-C-ROADMAP — scalar target ACKNOWLEDGED by Crystalka at CORPUS_CLOSURE_INVERSION_B HALT-1 (checklist item [4]; EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION). Full text preserved at docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md.'
+provenance_note: 'Partially executed migration plan retired per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: executed K8.x portions are historical record; unexecuted forward state already lives in docs/ROADMAP.md «Native foundation tracks» (DD-2 precedent). superseded_by: DOC-C-ROADMAP — scalar target ACKNOWLEDGED by Crystalka at CORPUS_CLOSURE_INVERSION_B HALT-1 (checklist item [4]; EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION). Full text preserved at docs/architecture/historical/MIGRATION_PLAN_KERNEL_TO_VANILLA.md.'
 ---
 
 # MIGRATION PLAN — Kernel-to-Vanilla (K-series → M-series)

@@ -13,7 +13,7 @@ next_review_due: null
 title: Native Build Notes
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Closure-style notes housed in native/ source tree; tracked as Category E rather than F because content is build/closure narrative not module-local README
+provenance_note: Closure-style notes housed in native/ source tree; tracked as Category E rather than F because content is build/closure narrative not module-local README
 ---
 
 # DualFrontier.Core.Native — Build Instructions

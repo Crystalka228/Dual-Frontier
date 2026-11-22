@@ -13,7 +13,7 @@ next_review_due: 2026-Q4
 title: DualFrontier.Runtime.Native.Xcb — module doc
 review_cadence: phase-led
 reviewer: Crystalka
-special_case_rationale: Module doc for the Linux windowing leaf authored at LINUX_PRESENT_1 (2026-08-26), mirroring the enrolled DOC-F-SRC-RUNTIME-NATIVE-WIN32 form for its sibling backend (enroll F/4 per the CORPUS_CLOSURE_INVERSION_B CD2 orphan-triage convention).
+provenance_note: Module doc for the Linux windowing leaf authored at LINUX_PRESENT_1 (2026-08-26), mirroring the enrolled DOC-F-SRC-RUNTIME-NATIVE-WIN32 form for its sibling backend (enroll F/4 per the CORPUS_CLOSURE_INVERSION_B CD2 orphan-triage convention).
 ---
 
 # DualFrontier.Runtime.Native.Xcb

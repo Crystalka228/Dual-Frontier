@@ -14,7 +14,7 @@ title: G6 — Flow Field Infrastructure (historical; folded into V2)
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: 'Q-G-2 LOCK: G6 flow field infrastructure folded into V2 wave shader side products (distance/direction fields). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
+provenance_note: 'Q-G-2 LOCK: G6 flow field infrastructure folded into V2 wave shader side products (distance/direction fields). Brief content superseded by VULKAN_SUBSTRATE.md §1.3 + §5.3. Retained as historical record. Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.1 (Crystalka lock 2026-05-16).'
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16. See `docs/architecture/VULKAN_SUBSTRATE.md` (current authority).

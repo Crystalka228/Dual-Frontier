@@ -14,7 +14,7 @@ title: Translation Glossary — Dual Frontier
 last_modified_commit: b655d4b
 review_cadence: on-closure+quarterly
 reviewer: Crystalka
-special_case_rationale: Content LOCKED v1.0 (lexical commitments final); lifecycle Live because H category allows Live/EXECUTED only — content-stability tracked via version pinning rather than LOCKED lifecycle
+provenance_note: Content LOCKED v1.0 (lexical commitments final); lifecycle Live because H category allows Live/EXECUTED only — content-stability tracked via version pinning rather than LOCKED lifecycle
 ---
 
 ---

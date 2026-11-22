@@ -13,7 +13,7 @@ next_review_due: null
 title: A'.0.5 — Inventory (point-in-time baseline 2026-05-10)
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Inventory baseline; superseded by REGISTER.yaml as living inventory at A'.4.5; legacy artifact retained for historical reference
+provenance_note: Inventory baseline; superseded by REGISTER.yaml as living inventory at A'.4.5; legacy artifact retained for historical reference
 capa_entries_referenced:
 - CAPA-2026-05-12-A_PRIME_0_5-COUNT-DRIFT
 ---

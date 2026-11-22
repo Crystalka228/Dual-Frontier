@@ -13,7 +13,7 @@ next_review_due: null
 title: REGISTER_INVERSION Cascade B — Measure Report (CD1; supersedes the 288-era counts)
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Authored at CD1 with hand-authored schema-2.0 frontmatter (the 2.0 enrollment discipline); this pre-migration SoT entry mirrors that frontmatter so the migrator carries the file through the live flip (the control dry-run showed frontmatter-only enrollees would be auto-excluded by the migrator's orphan branch).
+provenance_note: Authored at CD1 with hand-authored schema-2.0 frontmatter (the 2.0 enrollment discipline); this pre-migration SoT entry mirrors that frontmatter so the migrator carries the file through the live flip (the control dry-run showed frontmatter-only enrollees would be auto-excluded by the migrator's orphan branch).
 ---
 
 # REGISTER_INVERSION Cascade B — Measure Report

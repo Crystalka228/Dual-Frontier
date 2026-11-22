@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: LINUX SANDBOX ENV BASELINE REPORT — 2026-07-17 — cloud Linux sandbox provisioned for the STACK_UPDATE cascade; deviation register vs the Windows reference environment (D1-D8) + measured full baseline (build/tests/native selftest/armed validate)
-special_case_rationale: 'Durable environment-baseline report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-BUS_INVESTIGATION_2026_05_21). Records the operator-sanctioned (2026-07-17 ruling) environment shift: the STACK_UPDATE cascade executes in the cloud Linux sandbox, not the LOCAL Windows machine the brief was authored against; the operator re-runs the gates on the home Windows machine post-merge.'
+provenance_note: 'Durable environment-baseline report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-BUS_INVESTIGATION_2026_05_21). Records the operator-sanctioned (2026-07-17 ruling) environment shift: the STACK_UPDATE cascade executes in the cloud Linux sandbox, not the LOCAL Windows machine the brief was authored against; the operator re-runs the gates on the home Windows machine post-merge.'
 ---
 
 # Linux Sandbox Environment Baseline — 2026-07-17

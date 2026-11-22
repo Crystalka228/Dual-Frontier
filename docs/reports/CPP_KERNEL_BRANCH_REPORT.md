@@ -13,7 +13,7 @@ next_review_due: 2026-Q3
 title: C++ Kernel Branch Report
 review_cadence: on-closure+quarterly
 reviewer: Crystalka
-special_case_rationale: E + Tier 2 Live override per Pass 2 §2.2
+provenance_note: E + Tier 2 Live override per Pass 2 §2.2
 ---
 
 # C++ Kernel Experimental Branch — Discovery Report

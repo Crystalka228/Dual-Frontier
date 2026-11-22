@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: 'BOUNDARY_W0 CLOSURE REPORT -- 2026-07-18 -- Wave 0 of the vanilla-separation program: boundary axis enrolled (law LOCKED 1.0.0, plan Live 1.0.1, audit report DOC-E), six vanilla mods enrolled into DualFrontier.sln, engine-to-game reference ratchet (B-1/B-6 interim enforcer) red-once-then-green, stale net8.0 comment fixed; 6-commit cascade da97308..closure; gates build 0W/0E both configs + full-sln 1179/0/5 + validate --armed exit 0 + DFK-WAIVER 2=2; register 349 -> 354, EVT 58 -> 59, surface 134 -> 136'
-special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT, DOC-E-CODEX_CLOSURE_REPORT). Records the BOUNDARY_W0 (Wave 0, vanilla-separation) execution against the brief DOC-D-BOUNDARY_W0_BRIEF.'
+provenance_note: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-EQ_A1_FAULT_SYMMETRY_CLOSURE_REPORT, DOC-E-CODEX_CLOSURE_REPORT). Records the BOUNDARY_W0 (Wave 0, vanilla-separation) execution against the brief DOC-D-BOUNDARY_W0_BRIEF.'
 ---
 
 # BOUNDARY_W0 Closure Report -- 2026-07-18

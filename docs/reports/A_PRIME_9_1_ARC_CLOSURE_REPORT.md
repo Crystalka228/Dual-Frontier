@@ -16,7 +16,7 @@ review_cadence: none-historical-record
 last_review_date: 2026-07-02
 last_review_event: Authored at Phase δ C8 (the D7 deliverable per PHASE_DELTA_BRIEF §9) and enrolled in the same REGISTER cascade; its last_modified_commit shares the single sanctioned Option-B self-reference (the report ships in the register-closure commit, whose hash is backfilled at C9 render together with the header). Facts cited from the phase EVTs, the durable recon reports, and the execution session's git-verified measurements.
 reviewer: Crystalka
-special_case_rationale: Durable arc-closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (the γ-recon precedent class). The arc's citable closure record — replaces the chat-only closure-report precedent of the β/γ phase closures for the arc-level record per the delta brief §3 ratified decision 8.
+provenance_note: Durable arc-closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (the γ-recon precedent class). The arc's citable closure record — replaces the chat-only closure-report precedent of the β/γ phase closures for the arc-level record per the delta brief §3 ratified decision 8.
 ---
 
 # A'.9.1 ARC CLOSURE REPORT — Analyzer Infrastructure (К-extensions cascade #5) — 2026-07-02

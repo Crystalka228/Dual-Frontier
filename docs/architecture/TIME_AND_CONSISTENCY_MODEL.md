@@ -16,7 +16,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'DRAFTS_RATIFICATION: Wave-R re-verification at 48983c4 (code anchors EXACT; R4-10 RNG census corrected to four fixed-seed sites) + HALT-1-ratified retargets TCM-1..TCM-4 at b38d95a; ratified AUTHORED → LOCKED v1.0.0 at Phase C (EVT-2026-07-17-DRAFTS_RATIFICATION, item [6]). §7.1/§7.5 resolved by the rework; §5.2 Option A/B decision owned here; RNG-service work order seeded in ROADMAP.'
 reviewer: Crystalka
-special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A4 time/consistency contract — canonical time vocabulary, visibility table, cross-boundary consistency rules, pause/save/load boundaries, determinism classes D0/D1/D2, RNG law; VULKAN §7.2 and the COMBO/FEEDBACK successors already defer to its vocabulary; the RNG service (four fixed-seed sites) is the seeded engineering work order.'
+provenance_note: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A4 time/consistency contract — canonical time vocabulary, visibility table, cross-boundary consistency rules, pause/save/load boundaries, determinism classes D0/D1/D2, RNG law; VULKAN §7.2 and the COMBO/FEEDBACK successors already defer to its vocabulary; the RNG service (four fixed-seed sites) is the seeded engineering work order.'
 ---
 
 # Time and Consistency Model (the A4 contract)

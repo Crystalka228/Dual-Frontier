@@ -16,7 +16,7 @@ review_cadence: on-status-transition
 last_review_date: 2026-05-10
 last_review_event: K-L3.1 amendment landing
 reviewer: Crystalka
-special_case_rationale: Amendment plans behave like briefs (EXECUTED post-landing, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3
+provenance_note: Amendment plans behave like briefs (EXECUTED post-landing, not LOCKED); Category A + Tier 3 + EXECUTED override per Pass 2 §1.3
 risks_referenced:
 - RISK-004
 - RISK-008

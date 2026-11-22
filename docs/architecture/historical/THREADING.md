@@ -15,7 +15,7 @@ superseded_by: DOC-A-THREADING_V2
 last_modified_commit: fe27fbe
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: Superseded by DOC-A-THREADING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/THREADING.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
+provenance_note: Superseded by DOC-A-THREADING_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE. Last-ratified reference preserved at docs/architecture/historical/THREADING.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
 
 # Multithreading

@@ -15,7 +15,7 @@ superseded_by: DOC-A-ANALYZER_RULES_V2
 last_modified_commit: 6888246
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: 'DF_TS analyzer program retired per session finding N-13 (anchored on the runtime guard deleted 2026-05-14; zero DF_TS rules ever built; shipped DFK regime structurally incompatible). Superseded by DOC-A-ANALYZER_RULES_V2 §5 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Full text preserved at docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md. Prior rationale: Draft (not LOCKED) — Track B verification activation pending; v0.1 sketch authoring stage'
+provenance_note: 'DF_TS analyzer program retired per session finding N-13 (anchored on the runtime guard deleted 2026-05-14; zero DF_TS rules ever built; shipped DFK regime structurally incompatible). Superseded by DOC-A-ANALYZER_RULES_V2 §5 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Full text preserved at docs/architecture/historical/ARCHITECTURE_TYPE_SYSTEM.md. Prior rationale: Draft (not LOCKED) — Track B verification activation pending; v0.1 sketch authoring stage'
 ---
 
 ---

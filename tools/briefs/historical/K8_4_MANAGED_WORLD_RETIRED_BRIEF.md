@@ -17,7 +17,7 @@ reviewer: Crystalka
 risks_referenced:
 - RISK-005
 - RISK-007
-special_case_rationale: Absorbed into K8_34_COMBINED_V2 (EXECUTED at A'.5 closure 2026-05-14 commit 54c6658). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 (Crystalka lock 2026-05-16).
+provenance_note: Absorbed into K8_34_COMBINED_V2 (EXECUTED at A'.5 closure 2026-05-14 commit 54c6658). Moved to tools/briefs/historical/ per CLEANUP_CASCADE_BRIEF §1.2 (Crystalka lock 2026-05-16).
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded as of 2026-05-16 by `K8_34_COMBINED_KERNEL_CUTOVER_BRIEF_V2.md` (EXECUTED at A'.5 closure 2026-05-14).

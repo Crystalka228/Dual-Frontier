@@ -13,7 +13,7 @@ next_review_due: null
 title: G-RATIO Per-Rule Breakdown (D5; ruling-(e) deliberation input)
 review_cadence: on-status-transition
 reviewer: Crystalka
-special_case_rationale: Authored at CD1 with hand-authored schema-2.0 frontmatter (the 2.0 enrollment discipline); this pre-migration SoT entry mirrors that frontmatter so the migrator carries the file through the live flip.
+provenance_note: Authored at CD1 with hand-authored schema-2.0 frontmatter (the 2.0 enrollment discipline); this pre-migration SoT entry mirrors that frontmatter so the migrator carries the file through the live flip.
 ---
 
 # G-RATIO Per-Rule Breakdown (D5)

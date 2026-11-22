@@ -14,7 +14,7 @@ title: Visual engine — DevKit and Native (historical; superseded by V substrat
 superseded_by: DOC-A-VULKAN_SUBSTRATE
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: Superseded by VULKAN_SUBSTRATE.md v1.0 LOCKED per Q-G-1 LOCK (composite namespace deliberation 2026-05-15). Pre-V-substrate authority preserved at docs/architecture/historical/ for historical record. Moved per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16).
+provenance_note: Superseded by VULKAN_SUBSTRATE.md v1.0 LOCKED per Q-G-1 LOCK (composite namespace deliberation 2026-05-15). Pre-V-substrate authority preserved at docs/architecture/historical/ for historical record. Moved per CLEANUP_CASCADE_BRIEF §1.3 (Crystalka lock 2026-05-16).
 ---
 
 > **HISTORICAL DOCUMENT**: Superseded by `docs/architecture/VULKAN_SUBSTRATE.md` v1.0 LOCKED 2026-05-16 per Q-G-1 LOCK. Pre-V-substrate authority preserved for historical record.

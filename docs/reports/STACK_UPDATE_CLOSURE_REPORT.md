@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: STACK_UPDATE CLOSURE REPORT — 2026-07-17 — net10.0 + C# 14 + C++23 (К-L1 v1.1.0) + triad hygiene + global.json pin + AwesomeAssertions 9.4.0 landed (no escape) + doc census; executed in the cloud Linux sandbox; all gates green, F-40 carve-out exercised once
-special_case_rationale: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT). Companion of DOC-D-STACK_UPDATE_BRIEF section 9; the environment-shift ground truth lives in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT.'
+provenance_note: 'Closure report enrolled DOC-E Tier 3 per the docs/reports/ durable-report convention (precedents: DOC-E-A_PRIME_9_1_PHASE_GAMMA_RECON_REPORT, DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT). Companion of DOC-D-STACK_UPDATE_BRIEF section 9; the environment-shift ground truth lives in DOC-E-LINUX_SANDBOX_ENV_BASELINE_REPORT.'
 ---
 
 # STACK_UPDATE — Closure Report (2026-07-17)

@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: 'EQ_A_SHUTDOWN RECON REPORT — 2026-07-18 (R1–R8) — pre-brief measurement recon for the EQ-a shutdown-law family: managed fault-path census (ExecutePhase no-catch; deferred/sync bus asymmetry), shutdown-path S1–S8 verdicts, ABI export inventory + landing zones, render/device teardown, test-surface placement law, anomalies A1–A9, per-member M1–M9 work-class estimate, cascade split A/B/C/D + the D1–D10 decisions halt'
-special_case_rationale: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, DOC-E-F10_TEST_ISOLATION_RECON_REPORT). Basis of DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF; its R2/R6/R7 measurements (the managed fault-path census, the test-placement law, and the cascade split) were the load-bearing brief inputs.'
+provenance_note: 'Durable-report recon enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-F29_NATIVE_SCHEDULER_RECON_REPORT, DOC-E-F10_TEST_ISOLATION_RECON_REPORT). Basis of DOC-D-EQ_A1_FAULT_SYMMETRY_BRIEF; its R2/R6/R7 measurements (the managed fault-path census, the test-placement law, and the cascade split) were the load-bearing brief inputs.'
 ---
 
 # EQ_A_SHUTDOWN RECON REPORT -- 2026-07-18

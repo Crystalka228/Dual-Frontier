@@ -15,7 +15,7 @@ superseded_by: DOC-A-MOD_OS_ARCHITECTURE
 last_modified_commit: 6888246
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_PIPELINE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
+provenance_note: Superseded by DOC-A-MOD_OS_ARCHITECTURE per corpus rework EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM. Last-ratified reference preserved at docs/architecture/historical/MOD_PIPELINE.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed.
 ---
 
 # Dual Frontier — MOD_PIPELINE

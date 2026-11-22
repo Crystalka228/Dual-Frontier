@@ -17,7 +17,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-17
 last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Two Launcher composition anchors re-homed from GameBootstrap to EngineComposer, with the note that the Launcher composes a session whose content arrives from the distribution manifest rather than from the composer itself.'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-VULKAN_SUBSTRATE per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; predecessor supersession chain (G-series/GODOT/VISUAL_ENGINE) untouched on the historical entry.
 ---
 
 # Vulkan Substrate (V)

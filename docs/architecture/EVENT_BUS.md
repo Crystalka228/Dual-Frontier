@@ -17,7 +17,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-19
 last_review_event: 'W2_BUS_CAPABILITY C7 (BD-3b) — v1.1.0 → v1.2.0 MINOR: the five-genre managed split collapsed to one generic router. §1 inverted from "why domain buses, not a global one" to "one router" — the contention rationale never materialized and genre-keyed routing silently dropped cross-genre mod deliveries; the five IGameServices getters survive as cosmetic bridges over one DomainEventBus (relocated to Core.Bus at BD-3a, CONTRACTS.md §2 2.0.0). §4 mod path: ModBusRouter + the [EventBus] attribute deleted — mods route by event type to the one dispatch. Delivery SEMANTICS (§2 sync/[Deferred]/[Immediate]) unchanged; the native FENCE (:92) and §5 untouched. EVT-2026-07-19-W2_BUS_CAPABILITY. Prior review: EQ_A2_SHUTDOWN_TRANSACTION (MINOR 1.0.1 → 1.1.0).'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-EVENT_BUS per EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE; code-truth body with the session capacity/fault-isolation facts pinned.
 ---
 
 # Event Buses

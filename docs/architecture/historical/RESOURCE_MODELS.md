@@ -15,7 +15,7 @@ superseded_by: DOC-J-RESOURCE_MODELS
 last_modified_commit: 0145f1b
 review_cadence: on-change+annual
 reviewer: Crystalka
-special_case_rationale: "Superseded by DOC-J-RESOURCE_MODELS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/RESOURCE_MODELS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored"
+provenance_note: "Superseded by DOC-J-RESOURCE_MODELS per corpus rework EVT-2026-07-15-CORPUS_REWORK_R4_MECHANICS. Last-ratified reference preserved at docs/architecture/historical/RESOURCE_MODELS.md until successor ratification (deliberate authority-gap window; FRAMEWORK §7). Prior rationale: A vs J borderline classified as A by A'.4.5 execution agent — architectural data structure approach for resource modeling; gameplay-design layer captured separately if/when J-category resource-balance doc authored"
 ---
 
 # Resource models

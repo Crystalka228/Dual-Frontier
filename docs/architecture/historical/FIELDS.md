@@ -17,7 +17,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-05-11
 last_review_event: K9 closure populated FIELDS storage contract
 reviewer: Crystalka
-special_case_rationale: 'Superseded by DOC-A-FIELDS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FIELDS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone'
+provenance_note: 'Superseded by DOC-A-FIELDS_V2 per corpus rework EVT-2026-07-15-CORPUS_REWORK_R3_SUBSTRATE. Last-ratified reference preserved at docs/architecture/historical/FIELDS.md; successor ratified LOCKED v1.0.0 2026-07-17 (EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION) — authority-gap window closed. Prior rationale: Live (not LOCKED) — populated by K9 closure 2026-05-11; contract concrete but Save/load section TBD until persistence-integration milestone'
 risks_referenced:
 - RISK-003
 ---

@@ -15,7 +15,7 @@ review_cadence: on-change+annual
 last_review_date: 2026-07-18
 last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. Section 1.1 gains a dated STALE banner. The section and the section-2 table describe the pre-EQ_A2 world: EngineSession was built at EQ_A2 and GameBootstrap deleted at W4, so both the premise and every code anchor are false. The anchors are deliberately NOT re-homed one at a time -- doing so inside a false premise would make the document read as current -- and the rewrite is ledgered instead.'
 reviewer: Crystalka
-special_case_rationale: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.'
+provenance_note: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A2 ownership/lifetime/dispose contract — the ownership tree, per-resource lifetime table, lease law, shutdown law S1–S8, deferred-reclamation split; §7.1-1 already resolved in-corpus (MOD_OS §9.1 adopted the logical/physical split); the G1–G6 shutdown-gap family is the seeded engineering work order.'
 ---
 
 # Resource Ownership and Lifetime (A2)

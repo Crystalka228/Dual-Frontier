@@ -20,7 +20,7 @@ risks_referenced:
 - RISK-003
 - RISK-004
 - RISK-013
-special_case_rationale: Skeleton brief awaiting full brief authoring at Opus deliberation session post-К8.5 closure. Captures 10 expected sub-milestones (K10.A through K10.J), 4 halt classes, 5 Q-N seeds. К10 specification authority at DOC-A-KERNEL_FULL_NATIVE_SCHEDULER v2.0 LOCKED.
+provenance_note: Skeleton brief awaiting full brief authoring at Opus deliberation session post-К8.5 closure. Captures 10 expected sub-milestones (K10.A through K10.J), 4 halt classes, 5 Q-N seeds. К10 specification authority at DOC-A-KERNEL_FULL_NATIVE_SCHEDULER v2.0 LOCKED.
 ---
 
 # К10 Native Kernel Scheduler — Execution Brief (SKELETON)

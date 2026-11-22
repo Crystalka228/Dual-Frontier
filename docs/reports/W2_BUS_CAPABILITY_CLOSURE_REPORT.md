@@ -12,7 +12,7 @@ content_language: en
 next_review_due: null
 review_cadence: none-historical-record
 title: 'W2_BUS_CAPABILITY closure report -- Wave 2 of the vanilla-separation program: the genre taxonomy dies in the engine contract. The five genre bus interfaces + IGameServices leave DualFrontier.Contracts for the engine-internal Core.Bus (breaking, ContractsVersion 1->2 MAJOR); the five buses collapse to ONE generic DomainEventBus (getters now cosmetic bridges); KernelCapabilityRegistry becomes an owner-namespaced registration ledger relocated to Core with an EMPTY kernel-provided set + self-access predicate; the dead _allowedBuses fossil retired (F-54 CLOSED). MANAGED-ONLY; sovereign native switch explicitly FENCED (F-57 seeded)'
-special_case_rationale: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT, DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W2_BUS_CAPABILITY cascade evidence per the brief closure schema. Historical record, no review cadence.'
+provenance_note: 'Durable closure report enrolled DOC-E Tier 3 per the docs/reports/ convention (precedents: DOC-E-W1_SDK_UNLOCK_CLOSURE_REPORT, DOC-E-EQ_A4_RENDER_TAIL_CLOSURE_REPORT, DOC-E-BOUNDARY_W0_CLOSURE_REPORT). Records the W2_BUS_CAPABILITY cascade evidence per the brief closure schema. Historical record, no review cadence.'
 ---
 
 # W2_BUS_CAPABILITY -- Closure Report (2026-07-19)
