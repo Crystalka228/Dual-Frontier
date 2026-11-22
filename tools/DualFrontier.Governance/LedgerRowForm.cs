@@ -58,6 +58,9 @@ public static class LedgerRowForm
         return ValidateTable(lines, config);
     }
 
+    /// <summary>A Markdown table separator row: pipe-delimited cells of dashes, optionally colon-aligned.</summary>
+    private static readonly Regex SeparatorRow = new(@"^\|(\s*:?-{3,}:?\s*\|)+\s*$", RegexOptions.CultureInvariant);
+
     /// <summary>The pure check over the lines of the ledger file (no I/O).</summary>
     public static IReadOnlyList<Finding> ValidateTable(IReadOnlyList<string> lines, LedgerFormConfig config)
     {
@@ -78,8 +81,19 @@ public static class LedgerRowForm
         int previousNumber = -1;
         var seenIds = new HashSet<string>(StringComparer.Ordinal);
 
-        // header + separator, then the contiguous rows that start with a pipe
-        int i = headerIndex + 2;
+        // The line after the header must be the table's separator row. When it is not,
+        // that line is read as a data row, so no row escapes the checks below.
+        int i = headerIndex + 1;
+        if (i < lines.Count && SeparatorRow.IsMatch(lines[i]))
+        {
+            i++;
+        }
+        else
+        {
+            findings.Add(Structural($"{config.LedgerPath}:{headerIndex + 2}",
+                "the ledger table has no separator row after its header"));
+        }
+
         for (; i < lines.Count && lines[i].StartsWith('|'); i++)
         {
             string line = lines[i];

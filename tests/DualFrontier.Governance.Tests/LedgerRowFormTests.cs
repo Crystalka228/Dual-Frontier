@@ -102,6 +102,20 @@ public sealed class LedgerRowFormTests
     // --- structural: red (Report) ---
 
     [Fact]
+    public void RowForm_Red_MissingSeparator_ReadsTheFirstRowInsteadOfSkippingIt()
+    {
+        // Without its separator, the line after the header is the first data row; a duplicate
+        // id there must still be caught, and the missing separator is itself a finding.
+        string ledger = Table(RowAt(1), RowAt(1)).Replace("|---|---|---|---|---|\n", string.Empty);
+
+        IReadOnlyList<Finding> findings = LedgerRowForm.ValidateTable(ledger.Split('\n'), Config);
+
+        Structural(findings).Select(f => f.Message).Should()
+            .Contain(m => m.Contains("no separator row"))
+            .And.Contain(m => m.Contains("F-1: duplicate ledger id"));
+    }
+
+    [Fact]
     public void RowForm_Red_MissingClosingPipe()
     {
         IReadOnlyList<Finding> findings = Check(RowPlain, RowNoClosingPipeA, RowNoClosingPipeB);
