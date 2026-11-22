@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.2
+version: 2.1.3
 first_authored: 2026-05-12
 last_modified: 2026-11-22
 content_language: en
@@ -16,7 +16,7 @@ meta_role: register_specification
 last_modified_commit: 7449ba8
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: "PATCH 2.1.1 -> 2.1.2 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the G-ROWFORM row of 14.5 gains a structural check -- a row-shaped line after the end of the ledger table is a Report, because the gate reads rows only up to the first line that does not start with a pipe. No lifecycle transition (LOCKED)."
+last_review_event: "PATCH 2.1.2 -> 2.1.3 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): section 10 item 5 and the 14.5 G-RATIO row no longer claim that G-RATIO counts only the 3.4.1 forbidden combinations; the tool counts every populated special_case_rationale, and the unenforced placement rule is item 9 of 14.10 and is noted in 3.4.2. No lifecycle transition (LOCKED)."
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A45-X5
@@ -304,7 +304,7 @@ G-CATLIFE rejects each of these combinations unless `special_case_rationale` is 
 
 #### 3.4.2 Special-case rationale and provenance note
 
-`special_case_rationale` is required for a Category x Tier x Lifecycle combination that 3.4.1 forbids, and only for those. A populated rationale is a sanctioned deviation: G-CATLIFE accepts the combination and G-RATIO counts the document (14.5). A combination outside the default matrix (3.4) that 3.4.1 does not forbid is legal without a rationale; the document MAY carry a `provenance_note` saying why it sits there. A `provenance_note` is free text, never an exemption, and no gate reads it.
+`special_case_rationale` is required for a Category x Tier x Lifecycle combination that 3.4.1 forbids, and only for those. A populated rationale is a sanctioned deviation: G-CATLIFE accepts the combination and G-RATIO counts the document (14.5). A combination outside the default matrix (3.4) that 3.4.1 does not forbid is legal without a rationale; the document MAY carry a `provenance_note` saying why it sits there. A `provenance_note` is free text, never an exemption, and no gate reads it. No gate rejects a `special_case_rationale` on a combination 3.4.1 does not forbid; the tool honours and counts any populated one (14.10 item 9).
 
 Examples:
 - `K_CLOSURE_REPORT.md` -- Category A + Tier 1 + AUTHORED: a forbidden pair (Tier 1 + AUTHORED), so the rationale is required
@@ -560,7 +560,7 @@ This framework is falsified if any of:
 2. **Decade-horizon scalability fails**: register schema doesn't accommodate genuine evolution needs without disruptive MAJOR bumps every 6 months (vs anticipated 1-2 MINOR amendments + occasional MAJOR within first year, then stabilization)
 3. **Construction-by-rationale fails**: tooling validation produces false positives or false negatives at a rate that requires constant exceptions -- rationale overrides or gate waivers accumulating without follow-up cleanup
 4. **Post-session protocol staleness**: register itself becomes stale despite Q-A45-X5 enforcement; a sampled review finds more than 10% of Tier 1 documents `STALE` or past `next_review_due`. The tool has no STALE scan, so this is measured by a query over the derived archive until the instrument is built (14.10)
-5. **Cross-tier transitions blocked**: real workflows require combinations that the allowed-combinations matrix forbids, accumulating `special_case_rationale` overrides into 20%+ of register entries (signaling the matrix is wrong, not just edge-case-tolerant) -- measured by G-RATIO (14.5), which counts only the 3.4.1 forbidden combinations and reddens `validate --armed` at 20%
+5. **Cross-tier transitions blocked**: real workflows require combinations that the allowed-combinations matrix forbids, accumulating `special_case_rationale` overrides into 20%+ of register entries (signaling the matrix is wrong, not just edge-case-tolerant) -- measured by G-RATIO (14.5), which counts every populated `special_case_rationale` (since 2.1 the corpus carries one only on 3.4.1 forbidden combinations; no gate enforces that, 14.10 item 9) and reddens `validate --armed` at 20%
 
 Falsification mechanism: PIPELINE_METRICS records per-milestone metrics; quarterly audit reviews register efficiency. If falsified, A'.4.5.X micro-milestones or A'.9 analyzer milestone re-deliberates governance shape.
 
@@ -599,6 +599,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 | 2.1.0 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | MINOR -- schema 2.0 -> 2.1; the framework describes what the tool does. Optional `provenance_note` joins 14.3; `special_case_rationale` is required only for a 3.4.1 forbidden combination, and a non-forbidden combination outside the matrix is legal (3.4.2). The retired 1.x regime leaves the normative text: sections 6, 7.3 and 8 are replaced by the live form, every pre-2.0 instrument reference is replaced or narrowed, and the regime is recorded once below. Clauses that named a check the tool does not run are narrowed to the tool and listed in 14.10. 14.5 gains G-ROWFORM, states G-RATIO as a threshold gate and pins the gate catalog to the tool's gate registry by a test. The 1.1.1 and 2.0.1 rows are restored and the header version blocks collapse into this table. |
 | 2.1.1 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the G-ROWFORM row of 14.5 gains the three conditions the tool already acted on and the law did not state: the configuration file `tools/governance/LEDGER_FORM.yaml` absent (inert), an unreadable configuration file (Report), a ledger file with no table header opening with the configured id header (Report). |
 | 2.1.2 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the G-ROWFORM row of 14.5 gains a structural check: a row-shaped line (`| F-<n> |`) after the end of the ledger table is a Report. The gate reads rows up to the first line that does not start with a pipe; a blank line mid-table had left every row behind it unread. |
+| 2.1.3 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- section 10 item 5 and the 14.5 G-RATIO row state what the tool counts (every populated `special_case_rationale`); that the corpus carries one only on 3.4.1 forbidden combinations is a fact of the corpus, not a rule a gate enforces, and is listed as item 9 of 14.10 and noted in 3.4.2. |
 
 The rows above record each version as authored; where the 2.0.0 row or the 7.4 table calls sections 6 and 8 operative until the corpus switch, that held until 2026-07-17 and does not hold now.
 
@@ -679,7 +680,7 @@ Every machine gate is law **here** and is mirrored -- never owned -- by the gove
 | **G-PATH** | a governed-scope `.md` with no frontmatter and not on the exclusion list is an ERROR (fail-closed — the DF hardening over the 1.x warn-and-skip) | §14.1, §14.2 |
 | **G-NAMESPACE** | `register_id` begins `DOC-<category>-` with the prefix letter equal to the document's `category` | §5, §3.1 |
 | **G-GLOBALS** | globals enums hold — `requirements.verification_status` ∈ {PENDING, PARTIAL, VERIFIED, FAILED}; `risks.{likelihood, impact, risk_type, status}` in their §4.4 sets; `capa_entries.closure_status` ∈ {OPEN, CLOSED}; `audit_trail.event_type` ∈ {deliberation_milestone, execution_milestone, amendment_landing, lifecycle_transition, governance_event}; ids are unique within each collection | §4.3–4.7 |
-| **G-RATIO** | the share of documents carrying a `special_case_rationale` (since 2.1 only the 3.4.1 forbidden combinations carry one) is compared with the 20% threshold of section 10 item 5, the falsification instrument for the allowed-combinations matrix: below the threshold the gate is a Monitor that prints the share, at or above it a Report | §3.4.2, §10 |
+| **G-RATIO** | the share of documents carrying a `special_case_rationale` (every populated one is counted; since 2.1 the corpus carries one only on 3.4.1 forbidden combinations, which no gate enforces, 14.10 item 9) is compared with the 20% threshold of section 10 item 5, the falsification instrument for the allowed-combinations matrix: below the threshold the gate is a Monitor that prints the share, at or above it a Report | §3.4.2, §10 |
 | **G-ROWFORM** | the findings ledger (the F-series table; its file is one configuration value of the tool, `docs/ROADMAP.md` at 2.1.0) keeps its form. Structural checks -- each row has as many cells as the header, counted on unescaped pipes, and ends with a trailing pipe; the id has the form `F-<n>`; ids are unique and strictly increasing; no line shaped like a row (`| F-<n> |`) follows the end of the table, which the first line that does not start with a pipe closes -- are Reports. Vocabulary checks -- the severity is in the ledger legend's severity set and the leading member of the state is in the legend's state set -- are Monitors until the ledger vocabulary is normalised. The gate is inert (no finding) when its configuration file `tools/governance/LEDGER_FORM.yaml` (the ledger path, the id header, the severity and state column headers and the two vocabulary sets) is absent, or when the ledger file it names is absent. Two conditions are Reports: a configuration file that cannot be read, and a ledger file with no table header opening with the configured id header (the gate cannot read the ledger) | §14.2, §14.8 |
 
 No gate constrains a combination this framework leaves unconstrained (§14.2): the tool holds no rule without an anchor in this section.
@@ -718,3 +719,4 @@ Where this framework and the tool differ in substance, the tool's behavior is wh
 6. Schema-version behavior -- a compatibility check between a schema version and the tool (7.3) and a monotonic-progression check of the 7.4 history table.
 7. Meta-entry rules -- the path constraint, schema-version coupling and cadence constraint of 8.2.
 8. Supplement checks -- G-PATH does not check that the paths in `REGISTER_SUPPLEMENT.yaml` exist, and no gate reads its entries.
+9. Rationale placement -- a `special_case_rationale` on a combination that 3.4.1 does not forbid is not rejected: G-CATLIFE honours it as an exemption (a no-op there) and G-RATIO counts it.
