@@ -566,7 +566,7 @@ detection appears first as `Planned — see docs/ROADMAP.md §Analyzer track`.
 
 ### 6.2 -- Comment law: purpose and constraint, never provenance
 
-CODING_STANDARDS section 6.2 (new) is the single home; other documents POINT at it and do not restate it.
+This section is the single home of the comment law; other documents point here and do not restate it.
 
 Citable in a comment: К-L#, PA-00#, a section of an enrolled LOCKED or Live document, an analyzer rule id (DFK###, DFL###, DF999), a named test lock. Never: cascade/wave/pass/phase names, PR numbers, hashes, Category D documents, Q-L-# ids, Lesson #N, repair or history narratives, counts. The ban also covers a string literal that NAMES a test (display name / theory label).
 
@@ -627,7 +627,7 @@ citation and refuses a forbidden one.
 
 ### 6.3 -- Transition: the touched file
 
-CODING_STANDARDS section 6.3 (new): there is no backlog sweep; a landing that edits a file brings every comment in that file to section 6.2; the review lens checks the touched files.
+There is no backlog sweep; a landing that edits a file brings every comment in that file to section 6.2; the review lens checks the touched files.
 
 Section 6.2 binds every comment written or rewritten from its enrollment onward.
 The tree enrolled before it carries a backlog, and that backlog is NOT discharged
