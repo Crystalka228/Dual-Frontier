@@ -113,10 +113,10 @@ public sealed class LedgerRowFormTests
     [Fact]
     public void RowForm_Green_CrlfLedger()
     {
-        string crlf = Table(RowPlain, RowBoldClosed).Replace("\n", "\r\n");
         using var root = new TempRoot();
         root.Write("tools/governance/LEDGER_FORM.yaml", ConfigYaml);
-        root.Write(LivePath, crlf);
+        root.Write(LivePath, Table(RowPlain).Replace("\n", "\r\n"));
+        root.Write(ArchivePath, Table(RowBoldClosed).Replace("\n", "\r\n"));
 
         LedgerRowForm.Validate(root.Path).Should().BeEmpty();
     }
@@ -446,16 +446,21 @@ public sealed class LedgerRowFormTests
     }
 
     [Fact]
-    public void RowForm_Inert_WhenNoConfiguredLedgerFileIsPresent()
+    public void RowForm_Red_AConfiguredFileThatIsAbsent_IsAStructuralFinding_NamingThePath()
     {
         using var root = new TempRoot();
         root.Write("tools/governance/LEDGER_FORM.yaml", ConfigYaml);
 
-        LedgerRowForm.Validate(root.Path).Should().BeEmpty();
+        IReadOnlyList<Finding> findings = LedgerRowForm.Validate(root.Path);
+
+        findings.Should().HaveCount(2);
+        findings.Should().OnlyContain(f => f.Severity == Severity.Report && f.Gate == GateCatalog.RowForm);
+        findings.Select(f => f.Subject).Should().Equal(LivePath, ArchivePath);
+        findings.Should().OnlyContain(f => f.Message.Contains("absent", StringComparison.Ordinal));
     }
 
     [Fact]
-    public void RowForm_Red_AConfiguredFileThatIsAbsent_IsSkipped_TheOtherIsStillRead()
+    public void RowForm_Red_AConfiguredFileThatIsAbsent_IsReported_TheOtherIsStillRead()
     {
         using var onlyLive = new TempRoot();
         onlyLive.Write("tools/governance/LEDGER_FORM.yaml", ConfigYaml);
@@ -465,8 +470,26 @@ public sealed class LedgerRowFormTests
         onlyArchive.Write("tools/governance/LEDGER_FORM.yaml", ConfigYaml);
         onlyArchive.Write(ArchivePath, Table(RowNoClosingPipeA));
 
-        LedgerRowForm.Validate(onlyLive.Path).Should().ContainSingle(f => f.Subject.StartsWith(LivePath + ":", StringComparison.Ordinal));
-        LedgerRowForm.Validate(onlyArchive.Path).Should().ContainSingle(f => f.Subject.StartsWith(ArchivePath + ":", StringComparison.Ordinal));
+        IReadOnlyList<Finding> liveOnly = LedgerRowForm.Validate(onlyLive.Path);
+        liveOnly.Should().Contain(f => f.Subject == ArchivePath && f.Severity == Severity.Report);
+        liveOnly.Should().Contain(f => f.Subject.StartsWith(LivePath + ":", StringComparison.Ordinal));
+
+        IReadOnlyList<Finding> archiveOnly = LedgerRowForm.Validate(onlyArchive.Path);
+        archiveOnly.Should().Contain(f => f.Subject == LivePath && f.Severity == Severity.Report);
+        archiveOnly.Should().Contain(f => f.Subject.StartsWith(ArchivePath + ":", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void RowForm_Red_AConfiguredFileThatIsAbsent_ReddensTheArmedRun()
+    {
+        using var root = new TempRoot();
+        WriteTwoFileRoot(root, Table(RowPlain), Table(RowPlain));
+        File.Delete(System.IO.Path.Combine(root.Path, "docs", "LEDGER_ARCHIVE.md"));
+
+        var output = new StringWriter();
+
+        RegisterSync.Validate(root.Path, armed: true, output).Should().Be(1);
+        output.ToString().Should().Contain(ArchivePath);
     }
 
     [Fact]

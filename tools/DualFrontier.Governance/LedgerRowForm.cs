@@ -17,9 +17,10 @@ namespace DualFrontier.Governance;
 /// state cell's leading member is in the legend set -- carry the severity the
 /// config sets for that file: <see cref="Severity.Report"/> holds a file to the
 /// legend, <see cref="Severity.Monitor"/> (printed, exit-neutral) watches a file
-/// that keeps legacy values. The gate is inert when the config is absent, and a
-/// configured file that is absent is skipped, so a scratch root without a ledger
-/// stays clean.
+/// that keeps legacy values. The gate is inert when the config is absent, so a
+/// scratch root without a ledger stays clean; a file the config lists but the root
+/// does not hold is a structural finding naming its path, because a ledger that
+/// loses a file would otherwise lose its rows unseen.
 /// </summary>
 public static class LedgerRowForm
 {
@@ -28,7 +29,7 @@ public static class LedgerRowForm
     private static readonly Regex DetachedRow = new(@"^\s*\|\s*(F-\d+)\s*\|", RegexOptions.Compiled);
     private static readonly Regex LeadingMember = new(@"^[^A-Za-z0-9]*([A-Za-z][A-Za-z0-9-]*)", RegexOptions.Compiled);
 
-    /// <summary>Runs the gate over the ledger files a root's config names; empty when the config is absent, and a configured file that is absent is skipped.</summary>
+    /// <summary>Runs the gate over the ledger files a root's config names; empty when the config is absent, and a configured file that is absent is a structural finding.</summary>
     public static IReadOnlyList<Finding> Validate(string repoRoot)
     {
         string configPath = RepoPaths.LedgerFormPath(repoRoot);
@@ -59,6 +60,8 @@ public static class LedgerRowForm
             string ledgerFile = Path.Combine(repoRoot, ledger.Path.Replace('/', Path.DirectorySeparatorChar));
             if (!File.Exists(ledgerFile))
             {
+                findings.Add(Structural(ledger.Path,
+                    "the ledger file is listed in tools/governance/LEDGER_FORM.yaml but is absent from the root"));
                 continue;
             }
 

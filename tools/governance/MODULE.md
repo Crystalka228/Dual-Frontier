@@ -55,8 +55,8 @@ only prints it; the structural checks are armed in every listed file, ids are un
 ascending within each. The rest of the file is shared by both: the `id_header` that opens each table, the
 `severity_header` and `state_header` column names, and the `severity_set` and `state_set` restating the
 legend, which is declared once in the live file. A move or a split of the ledger is an edit of the
-`ledgers` list. The gate is inert when this file is absent and skips a listed file that is absent; a
-config that cannot be read (no `ledgers`, an entry without a `path`, an unknown `vocabulary`, a path listed twice)
+`ledgers` list. The gate is inert when this file is absent; a listed file that is absent from the root is a
+Report naming its path; a config that cannot be read (no `ledgers`, an entry without a `path`, an unknown `vocabulary`, a path listed twice)
 is a Report. The rules are FRAMEWORK section 14.5. The file is configuration, not a register entry.
 
 ### `MODULE.md`

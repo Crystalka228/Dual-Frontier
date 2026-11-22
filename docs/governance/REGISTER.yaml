@@ -480,7 +480,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.7
+  version: 2.1.8
   first_authored: 2026-05-12
   last_modified: 2026-11-22
   content_language: en
@@ -491,7 +491,7 @@ documents:
   last_modified_commit: 7449ba8
   review_cadence: on-change+annual
   last_review_date: 2026-11-22
-  last_review_event: 'PATCH 2.1.6 -> 2.1.7 2026-11-22 (REV_3 (CORPUS_REVISION_1), review repair): the G-ROWFORM row of 14.5 states the gate as the tool runs it over the two ledger files -- the `ledgers` configuration key, structural checks in every file, id uniqueness across the files and ordering within each, vocabulary severity per file (the live file Report, the archive Monitor). No lifecycle transition (LOCKED).'
+  last_review_event: 'PATCH 2.1.7 -> 2.1.8 2026-11-22 (REV_3 (CORPUS_REVISION_1), review repair): the G-ROWFORM row of 14.5 states that a ledger file the configuration lists but the root does not hold is a Report naming its path; a root with no configuration file stays inert. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-Q-A45-X5

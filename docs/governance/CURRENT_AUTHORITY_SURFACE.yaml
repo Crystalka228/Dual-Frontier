@@ -70,7 +70,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 2.1.7
+  version: 2.1.8
 - register_id: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
   path: docs/architecture/GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md
   category: A
