@@ -11,13 +11,13 @@ namespace DualFrontier.Contracts.Sdk;
 ///
 /// <para>
 /// It unifies the construction MECHANISM across core and mods (one internal
-/// <c>ModRegistry</c> factory path). Note (W1): the mod-facing <c>IModApi</c>
-/// factory overload is deferred (no consumer yet), so a mod's
-/// <see cref="Sdk.ISimulationSystem"/> is currently constructed parameterlessly;
-/// core systems inject through the factory today, and a service-dependent SDK mod
-/// system becomes authorable when the <c>IModApi</c> factory overload lands (a
-/// later wave) — the boundary-law B-3 endpoint ("everything vanilla needs arrives
-/// through the same SDK any third-party mod has").
+/// <c>ModRegistry</c> factory path). A mod reaches it through
+/// <c>IModApi.RegisterSystem&lt;T&gt;(Func&lt;ISystemServices, T&gt;)</c>, so a
+/// service-dependent <see cref="Sdk.ISimulationSystem"/> is authored with the same
+/// surface a core system is built with; the parameterless
+/// <c>IModApi.RegisterSystem&lt;T&gt;()</c> remains for a system that needs no
+/// service at construction. This is the boundary-law B-3 endpoint ("everything
+/// vanilla needs arrives through the same SDK any third-party mod has").
 /// </para>
 ///
 /// <para>

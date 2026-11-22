@@ -33,10 +33,9 @@ namespace DualFrontier.Core.Tests;
 /// concurrent load intermittently corrupts the native heap and crashes the test
 /// host (F-29 investigation, 2026-07-04: the heavy tests pass in isolation but
 /// the full suite crashes 3/3; isolating this collection makes it green). The
-/// flag runs the collection in isolation from every other collection — the same
-/// device GameBootstrapIntegrationTests uses for its GameLoopSerial collection.
-/// It also removes the thread-pool contention that failed
-/// ManagedScheduler's fan-out assertion under a saturated pool.</para>
+/// flag runs the collection in isolation from every other collection. It also
+/// removes the thread-pool contention that failed ManagedScheduler's fan-out
+/// assertion under a saturated pool.</para>
 /// </summary>
 [CollectionDefinition("SharedNativeSingleton", DisableParallelization = true)]
 public sealed class SharedNativeSingletonCollection
