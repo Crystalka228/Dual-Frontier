@@ -39,7 +39,7 @@ Orchestrated era (v2, from 2026-11-21): the architect runs cascades as an orches
 | `[uncertain — needs v1.6 measurement]` | Metric category exists в v1.6 reality but no measurement yet collected |
 | `[v1.x historical record]` | Pure archaeological data; transferability not applicable |
 
-v1.6 era data collection is forward-looking; first v1.6 data points emerge from A'.0.5 closure (`27523ac..4e332bb`, commit `4e332bb` on main 2026-05-10) and onward Phase A' milestones. See METHODOLOGY section 3.2 (Current configuration economics) + METHODOLOGY section 4.4 (Session wall-clock performance -- case studies) for v1.6-era references located in the methodology corpus. See [§6 Forward measurement plan](#6-forward-measurement-plan-v16-era-data-collection) below for v1.6 era data collection backlog tracked в this document.
+v1.6 era data collection is forward-looking; first v1.6 data points emerge from A'.0.5 closure (`27523ac..4e332bb`, commit `4e332bb` on main 2026-05-10) and onward Phase A' milestones. See METHODOLOGY section 3.2 (Current configuration economics) + METHODOLOGY section 4.4 (Session wall-clock performance -- case studies) for v1.6-era references located in the methodology corpus. See section 6 (Forward measurement plan) below for v1.6 era data collection backlog tracked в this document.
 
 Cross-reference: this document accompanies [METHODOLOGY.md](./METHODOLOGY.md) (v1.6 era, post-A'.0.7). METHODOLOGY documents the methodology в pipeline-agnostic form; PIPELINE_METRICS preserves per-era empirical record.
 
@@ -47,7 +47,7 @@ Cross-reference: this document accompanies [METHODOLOGY.md](./METHODOLOGY.md) (v
 
 *Empirical configuration, throughput data, and reproducibility requirements for the LLM pipeline used in this project, gathered per-era with transferability annotations. The companion document METHODOLOGY.md describes the methodology as designed; this document records the operational data measured while running it.*
 
-**Status:** per-metric annotations added per the A'.0.7 amendment; v1.x era measurements preserved verbatim; the current version is the frontmatter `version`. Updated as further phases close. See [§«Version history»](#version-history) for the change log; [§6 Forward measurement plan](#6-forward-measurement-plan-v16-era-data-collection) for the v1.6 data-collection backlog.
+**Status:** per-metric annotations added per the A'.0.7 amendment; v1.x era measurements preserved verbatim; the current version is the frontmatter `version`. Updated as further phases close. See the Version history section for the change log; section 6 (Forward measurement plan) for the v1.6 data-collection backlog.
 
 ## §1. Pipeline configuration
 
