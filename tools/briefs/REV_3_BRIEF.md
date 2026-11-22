@@ -3,7 +3,7 @@ register_id: DOC-D-REV_3_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.0'
 first_authored: '2026-11-22'
@@ -12,6 +12,7 @@ content_language: en
 next_review_due: null
 title: 'REV_3 -- the F-ledger leaves ROADMAP: docs/LEDGER.md holds the live rows and docs/LEDGER_ARCHIVE.md the closed ones, byte-identical; one legend (S4 latent joins it); G-ROWFORM guards both files with the live vocabulary armed; every live pointer re-pointed -- the fourth cascade of CORPUS_REVISION_1'
 authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+last_review_event: 'REV_3 EXECUTED 2026-11-22 (EVT-2026-11-22-REV_3) on claude/rev-3, C1-C4, four review-repair commits and the C5 closure. Operator-ratified input: the F-ledger leaves ROADMAP into docs/LEDGER.md and docs/LEDGER_ARCHIVE.md, both at once; the architect rulings B-1..B-10 (B-10 added at the review of the repairs) are PENDING OPERATOR REVIEW at the PR. Lifecycle Draft -> EXECUTED. Wording note: the brief says B-1..B-9 and calls the severity monitors 14; the S4 rows are 13 and the 14th monitor is F-54 W2.'
 basis: 'operator ruling 2026-11-21 (LEDGER + LEDGER_ARCHIVE, both at once) + the Community Hub precedent LEDGER_SPLIT_1 (CH docs/LEDGER.md, docs/LEDGER_ARCHIVE.md headers) + architect rulings B-1..B-9 (/mnt/Work/Temporal/rev3-run/RULINGS.md, pending operator review) + the ledger census R-D (/mnt/Work/Temporal/corpus-revision-1/R-D.md) + the REV_2 G-ROWFORM gate (tools/DualFrontier.Governance/LedgerRowForm.cs, tools/governance/LEDGER_FORM.yaml)'
 ---
 

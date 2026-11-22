@@ -3378,7 +3378,7 @@ documents:
   project: Dual Frontier
   category: D
   tier: 3
-  lifecycle: Draft
+  lifecycle: EXECUTED
   owner: Volodymyr (Crystalka)
   version: 1.0
   first_authored: 2026-11-22
@@ -3387,6 +3387,7 @@ documents:
   next_review_due: 
   title: 'REV_3 -- the F-ledger leaves ROADMAP: docs/LEDGER.md holds the live rows and docs/LEDGER_ARCHIVE.md the closed ones, byte-identical; one legend (S4 latent joins it); G-ROWFORM guards both files with the live vocabulary armed; every live pointer re-pointed -- the fourth cascade of CORPUS_REVISION_1'
   authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+  last_review_event: 'REV_3 EXECUTED 2026-11-22 (EVT-2026-11-22-REV_3) on claude/rev-3, C1-C4, four review-repair commits and the C5 closure. Operator-ratified input: the F-ledger leaves ROADMAP into docs/LEDGER.md and docs/LEDGER_ARCHIVE.md, both at once; the architect rulings B-1..B-10 (B-10 added at the review of the repairs) are PENDING OPERATOR REVIEW at the PR. Lifecycle Draft -> EXECUTED. Wording note: the brief says B-1..B-9 and calls the severity monitors 14; the S4 rows are 13 and the 14th monitor is F-54 W2.'
   basis: operator ruling 2026-11-21 (LEDGER + LEDGER_ARCHIVE, both at once) + the Community Hub precedent LEDGER_SPLIT_1 (CH docs/LEDGER.md, docs/LEDGER_ARCHIVE.md headers) + architect rulings B-1..B-9 (/mnt/Work/Temporal/rev3-run/RULINGS.md, pending operator review) + the ledger census R-D (/mnt/Work/Temporal/corpus-revision-1/R-D.md) + the REV_2 G-ROWFORM gate (tools/DualFrontier.Governance/LedgerRowForm.cs, tools/governance/LEDGER_FORM.yaml)
 - register_id: DOC-D-STACK_UPDATE_BRIEF
   path: tools/briefs/STACK_UPDATE_BRIEF.md
@@ -16542,3 +16543,68 @@ audit_trail:
   cross_references:
     capa_entries:
     - CAPA-2026-11-22-REV_2-SCHEMA-2.1-AMENDMENT
+- id: EVT-2026-11-22-REV_3
+  date: 2026-11-22
+  event: 'REV_3 cascade executed -- the fourth cascade of CORPUS_REVISION_1. The F-ledger leaves ROADMAP: its 95 rows are split byte-identically into docs/LEDGER.md (59 live rows) and docs/LEDGER_ARCHIVE.md (36 closed rows), both enrolled Category C, tier 2, Live. One legend, declared once in LEDGER.md, gains S4 (latent); the one non-legend live state (F-65, Planned) becomes OPEN (planned). G-ROWFORM guards both files (structure armed in each, an id unique across both and ascending within each, the vocabulary armed on the live file and watched on the archive), so its vocabulary monitors on the live ledger go 15 -> 0. Every live pointer to the ROADMAP ledger names the new home; the LOCKED documents re-pointed took PATCH bumps. ROADMAP keeps a short pointer section.'
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-REV_3_BRIEF
+  - DOC-C-LEDGER
+  - DOC-C-LEDGER-ARCHIVE
+  - DOC-C-ROADMAP
+  - DOC-A-FRAMEWORK
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-DEVELOPMENT_HYGIENE
+  - DOC-B-METHODOLOGY
+  - DOC-B-RESERVED_SURFACE_MUTABILITY
+  - DOC-B-TESTING_STRATEGY
+  - DOC-A-ECS_V2
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-F-TOOLS-GOVERNANCE
+  commits:
+    range: 8032e01..(the closure commit carries this entry)
+    key_commits:
+    - 9cf9a29
+    - 4de2092
+    - c3b0efd
+    - 7557079
+    - 1a3d99e
+    - 50b44f3
+    - f95052b
+    - 9e18d4d
+  governance_impact: >
+    RATIFICATION. Operator-ratified inputs (chat, 2026-11-21): the F-ledger leaves ROADMAP into docs/LEDGER.md and docs/LEDGER_ARCHIVE.md, both at once; the Community Hub precedent of the same split as the model of the two headers. The rulings B-1..B-10 below apply those decisions to the measured facts and are ARCHITECT rulings, PENDING OPERATOR REVIEW: the operator's review of the PR and its merge is the ratification act. Per the operator ruling of 2026-11-21 a Category D tier 3 brief stays Draft in frontmatter while it executes and the closure EVT records the ratification state; this entry is that record. Lifecycle Draft -> EXECUTED.
+
+
+    RULINGS (all PENDING OPERATOR REVIEW). B-1 split rule: docs/LEDGER.md holds every row whose State, read by its leading member, is not CLOSED; docs/LEDGER_ARCHIVE.md holds the CLOSED rows; rows move byte-identically in ascending id order, never re-sorted, re-numbered or re-wrapped; archive rows change only by dated appends inside the row. B-2 one legend, declared once in LEDGER.md and carried by no other file: severity S0 critical, S1 high, S2 medium, S3 low, S4 latent (a measured defect with no live instance), N note; state OPEN, CLOSED, ACCEPTED-NO-ACTION, read by its leading member with emphasis and a leading glyph stripped. S4 joins the legend because 13 rows use it (10 in LEDGER.md, 3 in LEDGER_ARCHIVE.md); the 14th severity monitor of the base was F-54, whose value W2 is a legacy reading the archive keeps untouched. No row's severity is rewritten. B-3 F-65, state Planned, open in substance, becomes OPEN (planned), the one row edited in the split. B-4 lifecycle of a row: a finding is minted in LEDGER.md with the maximum id over BOTH files plus one; closing is the State transition plus the move to the archive in the SAME commit, with the closing commit hash in the resolution cell. B-5 ROADMAP keeps a short "Findings ledger" section that points to the two files and states the mint rule; nothing else of ROADMAP moves. B-6 G-ROWFORM covers both files through tools/governance/LEDGER_FORM.yaml: structure armed in both, ids unique across both and ascending within each, vocabulary armed on LEDGER.md and a Monitor on the archive; the detached-row locator and two-digit id capture hole routed forward by REV_2 is pinned. B-7 every pointer to the ROADMAP ledger in the LIVE documents of the recon set is re-pointed; frozen records keep their bytes; a LOCKED document re-pointed takes a PATCH bump. B-8 LEDGER_FORM.yaml is an integrator seam. B-9 REV_3 runs on Sonnet. B-10 (review, 2026-11-22): the count in B-2 is 13, not 14; a ledger file listed in LEDGER_FORM.yaml but absent from the root is a structural Report, a root with no LEDGER_FORM.yaml stays inert; the placement rule (a CLOSED row lives in the archive, an open row in LEDGER.md) has no machine check and is held by the LEDGER.md header and review.
+
+
+    THE SPLIT. At base 8032e01 the ROADMAP table held 95 rows, F-1..F-95, ids contiguous. The split script (kept outside the tree) and its proof script, re-run on the closure tree, give 95 = 59 in LEDGER.md + 36 in LEDGER_ARCHIVE.md, ids unique across the files and ascending within each, the multiset of row lines equal to the old table's except the one F-65 cell. Six archived rows lead with bold or a glyph (three bold CLOSED, three with a glyph before CLOSED); the leading-member reading of the legend places them, and the LEDGER.md opening sentence and the ROADMAP pointer say so (50b44f3). ROADMAP lost its ledger section to the pointer section.
+
+
+    LEGEND AND GATE. Before: the legend named S0..S3 and N, the gate read one path (ledger_path docs/ROADMAP.md) and printed 15 vocabulary monitors (13 rows with severity S4, F-54 with W2, F-65 with the state Planned). After: the legend names S4; the configuration lists both files under `ledgers`, each with its own vocabulary severity; the gate prints one monitor, the archive's F-54 W2. The live file reads 0 vocabulary findings, so the live vocabulary is armed (a violation there reddens validate --armed; shown by a deliberate S9 in the live file, exit 1, and restored). Structural findings: 0 in both files. A ledger file the configuration lists but the root lacks is a structural Report naming its path (9e18d4d; before it, removing the archive left validate --armed at exit 0 with 36 rows gone). Governance tests 119 -> 140: 20 at the tool landing (each new rule watched red once, eleven mutants and three end-to-end breaks) and one net at the absent-file repair (two tests out, three in; the three red against the unfixed tool, 3 failed of 55 in the test class).
+
+
+    VERSIONS. FRAMEWORK 2.1.5 -> 2.1.8 (2.1.6 the pointer correction at C4; 2.1.7 the review repair that restates the G-ROWFORM row of 14.5 as the tool runs it over two files, the tool-wins rule of 14.2; 2.1.8 the absent-ledger-file Report). Tier 1 LOCKED PATCH bumps at C4, each with a change-history row in the document's own format: CODING_STANDARDS 4.0.1 -> 4.0.2, DEVELOPMENT_HYGIENE 3.0.1 -> 3.0.2, METHODOLOGY 1.14.3 -> 1.14.4, RESERVED_SURFACE_MUTABILITY 1.0.2 -> 1.0.3, TESTING_STRATEGY 2.3.1 -> 2.3.2, ECS 1.3.1 -> 1.3.2, IDENTITY_AND_ABI_CONTRACT 1.2.1 -> 1.2.2 (the frontmatter record only; the document has no change-history section), MOD_OS_ARCHITECTURE 1.4.2 -> 1.4.3. tools/governance MODULE.md 2.1 -> 2.2. BRIEF_TEMPLATE and RECON_KICKOFF_TEMPLATE (register-excluded, no frontmatter) carry one pointer each. Two documents enrolled (DOC-C-LEDGER, DOC-C-LEDGER-ARCHIVE) and the brief (DOC-D-REV_3_BRIEF); the register hosts 379 documents.
+
+
+    POINTERS. 31 pointer sites were classified one by one in the C4 landing: 20 re-pointed, the rest kept because they name no location, are records of what an earlier release wrote, or mean the capability-registration ledger. The pointer check over the 12 files read 19 hits at the base and 5 after, all five deliberate records or distance false positives. docs/MIGRATION_PROGRESS.md carries no live ledger pointer and was not edited. Frozen records (EXECUTED briefs, reports, AUDIT_TRAIL, historical documents) and the code comment in SchedulerExtremeTests.cs keep their bytes (the touched-file rule).
+
+
+    COMMITS. C1 9cf9a29 (enrollment), C2 4de2092 (the split; LEDGER_FORM.yaml path to docs/LEDGER.md), C3 c3b0efd (the two-file gate; LEDGER_FORM.yaml two-file form), C4 7557079 (pointers). Review repairs: 1a3d99e (FRAMEWORK 2.1.7), 50b44f3 (the first-paragraph split rule reads the State by its leading member), f95052b (the Severity.Monitor summary), and after the review of the repairs 9e18d4d (the absent ledger file). C5 carries this entry.
+
+
+    ORCHESTRATION. Executed by the architect-orchestrator through Sonnet subagents: one integrator as the only committer on claude/rev-3; three units in their own worktrees returning patches over disjoint file sets (U-SPLIT, U-TOOL, U-PTR); two review lenses on disjoint axes (A: code and its tests by mutation; B: the record, the law and the form), then a lens over the repairs. Every lens finding was reproduced on the live tree before its disposition.
+
+
+    RECORD CORRECTIONS. (1) Ruling B-2 as first written said 14 rows use S4; the rows are 13, and the 14th severity monitor of the base is F-54 W2 (corrected in the rulings file; the brief's own "14 severity, 1 state" monitors is right). No document of the base tree carried the wrong number. (2) The 14.5 row of FRAMEWORK was left naming one ledger file by the C4 pointer pass (which licensed pointers only); the review found it, 2.1.7 restated it. (3) The attribution trailer of C1-C4 names Claude Opus 5.5 and that of the four repair commits Claude Sonnet 5.5; the trailer records the committing session and states no ruling on the writers.
+
+
+    RESIDUE ROUTED FORWARD. (a) The placement rule is not machine-held. The LEDGER.md header says a row that changes state without moving leaves the two documents disagreeing, and no gate sees it: validate --armed stays at exit 0 with a CLOSED row in LEDGER.md or an OPEN row in the archive; one real-file test goes red, and review is the only other guard. It is recorded here as an ADDITION to the unbuilt checks of ledger row F-95 (no ledger row is edited by this cascade; the builder of F-95's checks takes the placement check with them: a live-file row whose State leads with CLOSED, an archive row whose State leads with anything else). (b) METHODOLOGY's 1.13.0 version note still quotes step 12.9 (d) as that release wrote it (ROADMAP findings ledger); kept as the record of that release and stated in its 1.14.4 row; METHODOLOGY's text beyond the pointer is REV_4. (c) RESERVED_SURFACE_ MUTABILITY 1 (a) still says in the present tense that the numbering gap is tracked as F-7, a CLOSED row; only its link was re-pointed. (d) docs/MIGRATION_PROGRESS.md lines that recount what past commits wrote into ROADMAP are a chronicle and stay. (e) The code comment that cites a ROADMAP ledger row in SchedulerExtremeTests.cs is rewritten by the cascade that next edits that file. (f) The ROADMAP history archive is REV-6; the F-94 and F-95 gates are not built here. (g) The retired-regime text listed in the REV_2 entry (R2B-05) is still not named by any landing; REV_3 did not touch those files.
+
+
+    CODE PLANE. tools/DualFrontier.Governance/** and tests/DualFrontier.Governance.Tests/** only (outside the census scope). No file under src/, mods/ or native/ in the range (git diff --name-only 8032e01..9e18d4d shows none); no census pin moved; no S-LOCK touched.
+
+
+    GATES. The stage gate, run once over the closure tree as DEVELOPMENT_HYGIENE section 3 says, head 9e18d4d (C5 changes documents only). Native selftest ALL PASSED (the library and the selftest binary are the checkout's, byte-identical; native/ carries no change against 8032e01). Build 0 warnings, 0 errors. Full suite in the section 8 form: rc 0, 10 TRX files for 10 test assemblies, 1521 total = 1515 passed + 0 failed + 6 skipped (baseline 1494 passed, 6 skipped at 8032e01: +21 is the Governance.Tests growth 119 -> 140); the six skips are SchedulerExtremeTests S2/S3/S4/S5a/S5b and RuntimeCompositionTests.Create_with_validation_enabled_composes_validation_layer. validate --armed exit 0 (379 documents parsed, 0 errors, 0 gate findings; G-RATIO monitor 16/379 (4.2%); G-ROWFORM structural 0 in both files, vocabulary 0 on the live file, one archive monitor F-54 W2). Split proof PROOF OK, 95 = 59 + 36. Dev smoke exit 124 with a clean six-line log. The project's local chain holds one smoke, the Launcher dev smoke. Sync after the closure edits: no-op.
