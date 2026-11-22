@@ -32,9 +32,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.1.1
+  version: 1.1.2
   first_authored: 2026-07-15
-  last_modified: 2026-08-31
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2027-Q3
   title: Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)
@@ -44,10 +44,10 @@ documents:
   - DOC-A-MAX_ENG_REFACTOR_TRACK_B
   last_modified_commit: edb267a
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The DFK005 row drops the GameBootstrap carve-out the rule no longer carries: the composition root that held it is deleted, and the successor (EngineComposer) is deliberately unsuffixed so it needs no exemption.'
+  last_review_date: 2026-11-22
+  last_review_event: 'REV_2 2026-11-22 -- PATCH 1.1.1 -> 1.1.2. The build-breaking claims (section 1, section 3) and the DF999 ban are scoped to the src/ projects, the only ones the analyzer is wired into; the section 3 waiver-census sentence states the live pin (3). The special_case_rationale key is renamed provenance_note (REV_2 schema 2.1: the value is provenance, not an exemption).'
   reviewer: Crystalka
-  special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
+  provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 - register_id: DOC-A-ARCHITECTURE
   path: docs/architecture/historical/ARCHITECTURE.md
   project: Dual Frontier
@@ -1083,17 +1083,17 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.1
+  version: 1.0.2
   first_authored: 2026-05-12
-  last_modified: 2026-05-25
+  last_modified: 2026-11-22
   content_language: en
-  next_review_due: 2027-05-25
+  next_review_due: 2027-11-22
   title: Document Control Register — Synthesis Rationale
   is_meta_entry: true
   meta_role: register_provenance
   review_cadence: on-change+annual
-  last_review_date: 2026-05-25
-  last_review_event: "A'.9.1 / К-extensions cascade #5 Phase α Commit 9 — SYNTHESIS_RATIONALE v1.0 → v1.0.1 PATCH bump для §7 «Cross-references» PROJECT_AXIOMS.md cross-reference addition (Axiom Option (VII) completion). No schema change."
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 1.0.1 -> 1.0.2 2026-11-22 (REV_2): the section 6 pointer into the retired FRAMEWORK section 8 meta-entry rules is re-pointed to FRAMEWORK section 14.1 and section 7; a rejected-element rationale that named the retired validation script now names the governance tool. No schema change.'
   reviewer: Crystalka
 - register_id: DOC-A-THREADING
   path: docs/architecture/historical/THREADING.md
@@ -1250,15 +1250,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 4.0.0
+  version: 4.0.1
   first_authored: 2026-07-15
-  last_modified: 2026-11-21
+  last_modified: 2026-11-22
   content_language: en
-  next_review_due: 2027-11-21
+  next_review_due: 2027-11-22
   title: Coding standards
   review_cadence: on-change+annual
-  last_review_date: 2026-11-21
-  last_review_event: 'MAJOR 3.0.0 -> 4.0.0 2026-11-21 (REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21): section 6 comment law INVERTED -- a comment states what the code cannot express and cites only law in force, never provenance (new section 6.2); transition by touched file, no backlog sweep (new section 6.3). Section 5 reconciled -- a deferral names the OPEN ledger row that owns the debt in the closed form TODO(F-<n>), a ledger row is never waiver authority, Phase 6 is a counted legacy backlog, the census pins restated to the live CensusMetaTests values. Section 8.1 gains the ci and build scopes and the ! breaking-change suffix; section 8.3 a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges forbidden, fast-forward-only not required; section 8.4 names the operator, the architect and the integrator; section 9 states the Linux gates, the .NET governance tool and Gitleaks as the only CI. MAJOR per section 10.1 rule 3 (inverting existing rules). No lifecycle transition (LOCKED).'
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 4.0.0 -> 4.0.1 2026-11-22 (REV_2): section 10.1 rule 4 follows practice -- an amendment rides a docs(<document>) commit, the enrollment and closure commits of its cascade ride governance(...). Correction of the rule to the observed commits (every REV_1 amendment used docs(...)); no new rule. PATCH per section 10.1 rule 3. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
@@ -1377,15 +1377,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.3.0
+  version: 2.3.1
   first_authored: 2026-07-15
-  last_modified: 2026-11-21
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2027-06-11
   title: Testing strategy
   review_cadence: on-change+annual
-  last_review_date: 2026-11-21
-  last_review_event: 'MINOR 2.2.3 -> 2.3.0 2026-11-21 (REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21): section 8 invocation law restated for the Linux host (bash redirect-to-file harness under timeout, MSBUILDDISABLENODEREUSE, the TRX set as the verdict, complete only at one TRX per test assembly, the native selftest path, host-capability skips); section 1.3 states the CI truth (the Gitleaks workflow is the only one; acceptance is the local chain); section 2 landscape brought to the tree; section 4 names CensusMetaTests as the carrier of the live pins and refreshes deferred 87/54 -> 86/53; section 3.8 gains the gate-failability convention. MINOR per section 9.1 rule 3 (new invocation convention, additive; the pin refresh is PATCH-class under the section 9.1 mutability clause). section 8 also points at the per-commit duty by tier of DEVELOPMENT_HYGIENE section 3 (which commits run the full suite). No lifecycle transition (LOCKED).'
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 2.3.0 -> 2.3.1 2026-11-22 (REV_2): section 4.3 states what CensusMetaTests.SuppressMessageCensus_IsZero actually asserts (the SuppressMessage literal 0 times across tracked src/ .cs files; no GlobalSuppressions.cs check, nothing outside src/) and where the GlobalSuppressions ban is held (DF999 in src/, review elsewhere). Clarification only, PATCH per section 9.1 rule 3. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md
@@ -6332,16 +6332,16 @@ documents:
   tier: 4
   lifecycle: Live
   owner: Crystalka
-  version: 1.0
+  version: 2.0
   first_authored: 2026-05-12
-  last_modified: 2026-05-12
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 
   title: Tools governance module (register tooling)
   last_modified_commit: 8ee27fe
   review_cadence: on-source-commit+quarterly
-  last_review_date: 2026-05-12
-  last_review_event: A'.4.5 closure (initial creation)
+  last_review_date: 2026-11-22
+  last_review_event: 'MAJOR 1.0 -> 2.0 2026-11-22 (REV_2): the module index describes the .NET governance tool and the config it reads; the three PowerShell scripts it described are gone from the tree and from the law.'
   reviewer: Crystalka
 - register_id: DOC-G-BYPASS_LOG
   path: docs/governance/BYPASS_LOG.md
@@ -6352,7 +6352,7 @@ documents:
   owner: Crystalka
   version: Live
   first_authored: 2026-05-12
-  last_modified: 2026-05-12
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2026-Q3
   title: Register Validation Bypass Tracking
@@ -6864,16 +6864,16 @@ requirements:
 - id: REQ-Q-A45-X5
   title: Post-session update protocol mandatory
   source_document: DOC-A-FRAMEWORK
-  source_section: Q-A45-X5 lock / FRAMEWORK §6
+  source_section: Q-A45-X5 lock / FRAMEWORK section 14
   requirement_text: >
     Every agent execution session closing a milestone OR modifying any document
 
     in register scope must execute post-session update protocol before commit closure.
 
-    Validation gate via sync_register.ps1 --validate. Bypass logged in BYPASS_LOG.md.
+    Validation gate via the governance tool (validate --armed). Bypass logged in BYPASS_LOG.md.
   verified_by:
-  - file: tools/governance/sync_register.ps1
-    test_method: validation invocation in closure protocol
+  - file: tools/DualFrontier.Governance/RegisterSync.cs
+    test_method: validate --armed invocation in closure protocol
     verification_type: tooling_evidence
   - file: docs/methodology/METHODOLOGY.md
     test_method: §12.7 closure protocol integration
@@ -8396,7 +8396,7 @@ risks:
   - DOC-A-FRAMEWORK
   - DOC-B-METHODOLOGY
   mitigation:
-    strategy: Q-A45-X5 post-session update protocol mandatory; sync_register.ps1 --validate gate; BYPASS_LOG.md tracks bypasses; A'.4.5.bis upgrades to pre-commit hook
+    strategy: Q-A45-X5 post-session update protocol mandatory; the register is derived from document frontmatter by the governance tool's sync (FRAMEWORK 14.1) and the tool's validate --armed run is the closure gate (FRAMEWORK 14.8); BYPASS_LOG.md tracks bypasses. No commit hook is installed, so the gate is run by the committer, not by git
     mitigation_artifact: DOC-A-FRAMEWORK
     mitigation_status: PARTIAL
   history:
@@ -8404,38 +8404,44 @@ risks:
     event: Risk identified during A'.4.5 deliberation Q-A45-X5 lock
   - date: Active
     event: Mitigation ships at A'.4.5 closure; effectiveness measured at A'.5 K8.3 first post-register milestone closure
+  - date: 2026-11-22
+    event: Mitigation restated to the live regime (REV_2) -- the PowerShell validation script and the planned pre-commit hook are gone; the .NET tool's validate --armed is the gate
 - id: RISK-011
-  title: Environmental incidents (testhost.exe file lock, dotnet test verbosity gotcha, tooling drift)
+  title: Environmental incidents (a testhost lingering in shutdown with an inherited pipe, MSBuild node reuse, tooling drift)
   likelihood: Medium-High
   impact: Low
   risk_type: Operational
   status: ACTIVE
   affected_documents:
-  - DOC-B-METHODOLOGY
+  - DOC-B-TESTING_STRATEGY
   - DOC-B-DEVELOPMENT_HYGIENE
   mitigation:
-    strategy: Operational reminders in every execution brief Phase 0 (testhost cleanup pattern, --logger console verbosity); pattern documented in METHODOLOGY
-    mitigation_artifact: DOC-B-METHODOLOGY
+    strategy: The no-pipe test invocation is standing law -- dotnet test is redirected to a file under timeout, never piped, with MSBUILDDISABLENODEREUSE=1 and the TRX set as the verdict (TESTING_STRATEGY section 8); the environment notes and the known failure pattern live in DEVELOPMENT_HYGIENE sections 3 and 6; dispatches and briefs point at both instead of restating them
+    mitigation_artifact: DOC-B-TESTING_STRATEGY
     mitigation_status: APPLIED
   history:
   - date: 2026-05-XX
     event: Recurring pattern across K-series execution sessions
+  - date: 2026-11-22
+    event: Restated to the Linux truth (REV_2) -- the pattern is documented in TESTING_STRATEGY section 8 and DEVELOPMENT_HYGIENE, not in METHODOLOGY; the testhost.exe file-lock form is Windows history
 - id: RISK-012
-  title: Cross-platform tooling debt (PowerShell-only governance tooling locks Windows-only ops)
+  title: Cross-platform tooling debt (governance tooling tied to one operating system)
   likelihood: Medium
   impact: Low
   risk_type: Operational
-  status: ACCEPTED
+  status: CLOSED
   affected_documents:
   - DOC-G-REGISTER
   - DOC-A-FRAMEWORK
   mitigation:
-    strategy: Schema is language-agnostic YAML; future Python port tracked as candidate work; current solo-Windows context makes PowerShell adequate
-    mitigation_artifact: 
-    mitigation_status: ACCEPTED
+    strategy: The governance tooling is the .NET project tools/DualFrontier.Governance (net10.0), which runs on the Linux reference host; the PowerShell scripts that tied it to Windows are retired and Linux is the permanent environment
+    mitigation_artifact: DOC-A-FRAMEWORK
+    mitigation_status: APPLIED
   history:
   - date: 2026-05-12
     event: Risk identified at A'.4.5 Q10 tooling design
+  - date: 2026-11-22
+    event: Risk closed (REV_2) -- the governance tool is cross-platform .NET and validate --armed runs on the Linux host; the PowerShell suite is retired
 - id: RISK-013
   title: Vulkan driver compatibility on weak hardware (compute pipeline rollout G-series)
   likelihood: Medium

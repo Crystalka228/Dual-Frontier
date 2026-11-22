@@ -1,8 +1,11 @@
 # tools/governance/SCOPE_EXCLUSIONS.yaml
-# Paths excluded from register enrollment; not flagged as orphans by sync_register.ps1 --validate.
-# This file is itself a Tier 1 LOCKED governance artifact (DOC-G-SCOPE_EXCLUSIONS).
+# Paths excluded from governed scope: a Markdown file matching a pattern below is out of scope, so it
+# needs no frontmatter and raises no G-PATH finding. Read by the governance tool (ExclusionConfig).
+# This file is configuration, not a register entry: only .md documents are enrolled; it is described
+# by tools/governance/MODULE.md.
 #
-# Schema version aligns with REGISTER.yaml schema_version.
+# schema_version is this file's own config version, independent of the register schema_version; the
+# loader does not read it.
 
 schema_version: "1.0"
 
@@ -28,6 +31,8 @@ excluded_paths:
     rationale: "If npm dependencies introduced in future"
   - pattern: ".vs/**"
     rationale: "Visual Studio user-local cache"
+  - pattern: ".claude/**"
+    rationale: "Claude Code harness state and local worktrees (a worktree holds a full copy of the corpus) -- tool state, not project documentation"
   - pattern: "tools/DualFrontier.Analyzers/AnalyzerReleases.Shipped.md"
     rationale: "Roslyn analyzer release-tracking ceremony file (RS2000 family) — owned by the analyzer toolchain, not project documentation (CORPUS_CLOSURE_INVERSION_B CD2, ratified orphan triage: exclude)"
   - pattern: "tools/DualFrontier.Analyzers/AnalyzerReleases.Unshipped.md"
@@ -52,7 +57,7 @@ excluded_paths:
     rationale: "Operator's un-governed design-reference stash (kept zipped; charters cite it, never enroll it) — gitignored AND scanner-excluded because sync/validate walk the filesystem, not git (operator-ruled 2026-08-20)."
 
 # Allow-list inverse: only .md extensions registered.
-# All other extensions excluded by default (tooling scripts like .ps1, configs like
-# SCOPE_EXCLUSIONS.yaml itself are tracked through their parent module README).
+# All other extensions excluded by default (scripts, configs like SCOPE_EXCLUSIONS.yaml itself
+# are described by their parent module index, tools/governance/MODULE.md).
 included_extensions:
   - ".md"

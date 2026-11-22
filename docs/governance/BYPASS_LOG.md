@@ -7,7 +7,7 @@ lifecycle: Live
 owner: Crystalka
 version: Live
 first_authored: 2026-05-12
-last_modified: 2026-05-12
+last_modified: 2026-11-22
 content_language: en
 next_review_due: 2026-Q3
 title: Register Validation Bypass Tracking
@@ -18,11 +18,11 @@ reviewer: Crystalka
 
 # BYPASS_LOG — Register Validation Bypass Tracking
 
-*Tier 2 Live document per A'.4.5 governance framework. Tracks instances where `sync_register.ps1 --validate` was bypassed via `git commit --no-verify`.*
+*Tier 2 Live document. Tracks instances where the governance gate (`dotnet run --project tools/DualFrontier.Governance -- validate --armed`, FRAMEWORK section 14) was knowingly skipped or overridden for a commit.*
 
 *Each bypass creates an entry below: timestamp + commit hash + bypassing-author + rationale + follow-up plan.*
 
-*`sync_register.ps1 --validate` includes advisory check: «if BYPASS_LOG.md has entries since last validation, flag for follow-up review». Bypasses do not block subsequent work, but accumulated unresolved bypasses surface as governance hygiene debt.*
+*No commit hook exists to bypass and the governance tool does not read this log: an entry is a hand-kept record. Bypasses do not block subsequent work, but accumulated unresolved bypasses are governance hygiene debt.*
 
 ---
 
@@ -48,6 +48,6 @@ reviewer: Crystalka
 
 ## See also
 
-- [docs/governance/FRAMEWORK.md](./FRAMEWORK.md) §6.3 — bypass mechanism specification
-- [docs/governance/REGISTER.yaml](./REGISTER.yaml) — register entry for this document (DOC-G-BYPASS_LOG, Tier 2 Live)
-- [tools/governance/sync_register.ps1](../../tools/governance/sync_register.ps1) — validation tooling that creates bypass-detection signals
+- [docs/governance/FRAMEWORK.md](./FRAMEWORK.md) section 14 -- the governance law: gates, deployment discipline (14.8)
+- [docs/governance/REGISTER.yaml](./REGISTER.yaml) -- derived archive register (entry for this document: DOC-G-BYPASS_LOG, Tier 2 Live)
+- [tools/DualFrontier.Governance](../../tools/DualFrontier.Governance) -- the governance tool whose gate a bypass skips

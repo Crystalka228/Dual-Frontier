@@ -237,16 +237,16 @@ requirements:
 - id: REQ-Q-A45-X5
   title: Post-session update protocol mandatory
   source_document: DOC-A-FRAMEWORK
-  source_section: Q-A45-X5 lock / FRAMEWORK §6
+  source_section: Q-A45-X5 lock / FRAMEWORK section 14
   requirement_text: >
     Every agent execution session closing a milestone OR modifying any document
 
     in register scope must execute post-session update protocol before commit closure.
 
-    Validation gate via sync_register.ps1 --validate. Bypass logged in BYPASS_LOG.md.
+    Validation gate via the governance tool (validate --armed). Bypass logged in BYPASS_LOG.md.
   verified_by:
-  - file: tools/governance/sync_register.ps1
-    test_method: validation invocation in closure protocol
+  - file: tools/DualFrontier.Governance/RegisterSync.cs
+    test_method: validate --armed invocation in closure protocol
     verification_type: tooling_evidence
   - file: docs/methodology/METHODOLOGY.md
     test_method: §12.7 closure protocol integration

@@ -5,9 +5,9 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.1.1
+version: 1.1.2
 first_authored: 2026-07-15
-last_modified: 2026-08-31
+last_modified: 2026-11-22
 content_language: en
 next_review_due: 2027-Q3
 title: Analyzer rules (authored rework; single family authority as shipped — retires the DF_TS program, resolves schism N-13)
@@ -17,10 +17,10 @@ supersedes:
 - DOC-A-MAX_ENG_REFACTOR_TRACK_B
 last_modified_commit: edb267a
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The DFK005 row drops the GameBootstrap carve-out the rule no longer carries: the composition root that held it is deleted, and the successor (EngineComposer) is deliberately unsuffixed so it needs no exemption.'
+last_review_date: 2026-11-22
+last_review_event: 'REV_2 2026-11-22 -- PATCH 1.1.1 -> 1.1.2. The build-breaking claims (section 1, section 3) and the DF999 ban are scoped to the src/ projects, the only ones the analyzer is wired into; the section 3 waiver-census sentence states the live pin (3). The special_case_rationale key is renamed provenance_note (REV_2 schema 2.1: the value is provenance, not an exemption).'
 reviewer: Crystalka
-special_case_rationale: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
+provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ANALYZER_RULES and retirement carrier for the DF_TS program (N-13 resolved) per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM; family authority as shipped (17 rules; 12 deferred + 1 scope-exclusion; [SystemAccess]-completeness = unassigned-ID DEFERRED candidate, К-L20 scope).
 ---
 
 # DualFrontier Roslyn Analyzer Rule Specifications
@@ -44,7 +44,7 @@ Specifies the shipped Roslyn analyzer rule surface — IDs, namespaces, severiti
 
 ## §1 — Shipped surface census (verified on disk)
 
-Ground truth at HEAD `35364c2`, re-verified rule-by-rule this rework by opening every file under `tools/DualFrontier.Analyzers/Rules/`, plus one rule added since: **18 rules carry real detection logic and are enforced** — the 17 at their Release 1.0 severities (11 Error + 5 Warning + `DFL025_B` at descriptor Info, `.editorconfig` `suggestion`, IDE-only) and **DFK022**, added Error-enforcing by ID_B_ENTITY_VERSIONS (2026-08-22) and recorded in `AnalyzerReleases.Unshipped.md` pending its release-tracking transition. 17 of the 18 are build-breaking under `TreatWarningsAsErrors`. On-disk layout:
+Ground truth at HEAD `35364c2`, re-verified rule-by-rule this rework by opening every file under `tools/DualFrontier.Analyzers/Rules/`, plus one rule added since: **18 rules carry real detection logic and are enforced** — the 17 at their Release 1.0 severities (11 Error + 5 Warning + `DFL025_B` at descriptor Info, `.editorconfig` `suggestion`, IDE-only) and **DFK022**, added Error-enforcing by ID_B_ENTITY_VERSIONS (2026-08-22) and recorded in `AnalyzerReleases.Unshipped.md` pending its release-tracking transition. 17 of the 18 are build-breaking under `TreatWarningsAsErrors` in the `src/` projects, where the analyzer is wired (§1.2). On-disk layout:
 
 ```
 tools/DualFrontier.Analyzers/Rules/
@@ -133,15 +133,15 @@ Three-tier rule-ID namespace, forward-locked at Brief A'.9.1 batch 1 deliberatio
 
 ## §3 — Severity & suppression law, as shipped
 
-**Three severity tiers exist**, not one. Of the 18 rules: 12 ship `Error` (the correctness-class К-L invariants — storage ownership, span protocol, native-boundary discipline, and К-L22 entity identity), 5 ship `Warning` (the efficiency-class invariants — К-L13 wake discipline, К-L16 pipeline-depth literals, К-L19's static-surface half — plus `DFL025_A` and the `DF999` self-policing rule), and 1 (`DFL025_B`) ships descriptor `Info`, restated by `.editorconfig` as `suggestion` — IDE-only, not build-breaking. `TreatWarningsAsErrors=true` at the repo-root `Directory.Build.props` (inherited by the `src/`-scoped file, §1.2) makes both `Error` and `Warning` diagnostics fail the build: **17 of the 18 rules are build-breaking; only `DFL025_B` is not.** DFK022 shipped enforcing rather than detecting-then-promoting: the rule exists because the tree HAD been fabricating versions, and a grace period would have let the census re-grow behind it.
+**Three severity tiers exist**, not one. Of the 18 rules: 12 ship `Error` (the correctness-class К-L invariants — storage ownership, span protocol, native-boundary discipline, and К-L22 entity identity), 5 ship `Warning` (the efficiency-class invariants — К-L13 wake discipline, К-L16 pipeline-depth literals, К-L19's static-surface half — plus `DFL025_A` and the `DF999` self-policing rule), and 1 (`DFL025_B`) ships descriptor `Info`, restated by `.editorconfig` as `suggestion` — IDE-only, not build-breaking. `TreatWarningsAsErrors=true` at the repo-root `Directory.Build.props` (inherited by the `src/`-scoped file, §1.2) makes both `Error` and `Warning` diagnostics fail the build of the `src/` projects, the only projects the analyzer is wired into (§1.2): **17 of the 18 rules are build-breaking in the `src/` projects; only `DFL025_B` is not.** DFK022 shipped enforcing rather than detecting-then-promoting: the rule exists because the tree HAD been fabricating versions, and a grace period would have let the census re-grow behind it.
 
 **Suppression is sanctioned, not banned.** [CODING_STANDARDS.md](../methodology/CODING_STANDARDS.md) §5.3, "`DFK-WAIVER` — the suppression law," is the standing law this document defers to and does not restate; the operative shape:
 
 - **Form** — a `// DFK-WAIVER(<id>): <reason>` comment immediately precedes a narrowly-scoped `#pragma warning disable <id>` / `#pragma warning restore <id>` pair, never a file- or project-wide disable.
 - **Three allowed reason classes** — false-positive pending a named ROADMAP refinement entry; a sanctioned architectural exception citing a locked decision ID (Q-L-#, К-L#); or generated/interop-mandated code the rule does not meaningfully apply to.
 - **No blanket suppression** — file- or project-scope `<NoWarn>` for any `DFK`/`DFL` diagnostic is forbidden outright (the one root-props `NoWarn` entry, `CS1591`, is an unrelated compiler documentation warning).
-- **Census-tracked** — every waiver is counted by the compiled `CensusMetaTests.DfkWaiverCensus_MatchesPin` meta-test (§1.4); the current pin is 2, both `DFK001`, both cited to the same К-L19 exception. No orphan waivers: a citation that doesn't resolve fails review.
-- **`GlobalSuppressions.cs` is banned outright** — `DF999` (§2) detects and enforces the ban itself, at `Warning` (build-breaking) since Release 1.0.
+- **Census-tracked** — every waiver is counted by the compiled `CensusMetaTests.DfkWaiverCensus_MatchesPin` meta-test (§1.4); the current pin is 3 (§1.4 lists the sites). No orphan waivers: a citation that doesn't resolve fails review.
+- **`GlobalSuppressions.cs` is banned outright** — `DF999` (§2) detects the ban and enforces it at `Warning` (build-breaking) in the `src/` projects since Release 1.0; outside `src/` the analyzer is not wired and the ban is held by review (`CODING_STANDARDS.md` §5.3).
 
 **RS release-tracking ceremony.** `AnalyzerReleases.Shipped.md` carries a single "Release 1.0" block listing all 17 rules at their shipped severity; `AnalyzerReleases.Unshipped.md` is empty-with-header. Roslyn's release-tracking analyzer family cross-checks descriptor severity against the `Shipped.md` table mechanically at build time — any future severity change requires a "Changed Rules" ceremony entry in `Shipped.md`, landing in the same commit as the descriptor and `.editorconfig` edits. This is what makes severity drift structurally visible rather than a silent one-line diff.
 
@@ -216,6 +216,8 @@ Non-semantic v0.x corrections (registry additions, severity corrections already 
 
 | Version | Date | Change |
 |---|---|---|
+| 1.1.2 | 2026-11-22 | **PATCH -- REV_2.** The build-breaking claims are scoped to where the analyzer runs: section 1 and section 3 now say 17 of the 18 rules break the build in the `src/` projects (the analyzer is wired by `src/Directory.Build.props` only, section 1.2), and the section 3 `GlobalSuppressions.cs` bullet says `DF999` enforces the ban at `Warning` in `src/` while outside `src/` the ban is held by review. The section 3 waiver-census bullet states the live pin, 3, instead of 2 (it contradicted section 1.4). Frontmatter: the `special_case_rationale` key is renamed `provenance_note` (the text is provenance for the LOCKED enrollment, not an exemption from any gate). No rule, severity or ID changes. |
+| 1.1.1 | 2026-08-31 | **PATCH -- W4_COMPOSITION_ROOT.** The `DFK005` registry row drops the `GameBootstrap` carve-out the rule no longer carries: the composition root that held it is deleted, and its successor (`EngineComposer`) is deliberately unsuffixed so it needs no exemption. No severity or ID change. |
 | 1.1.0 | 2026-08-22 | **MINOR — ID_B_ENTITY_VERSIONS C7.** `DFK022` (К-L22 entity identity honesty) joins the shipped surface, Error-enforcing from the moment it lands: it flags an integer literal in the `Version` position of `new EntityId(...)`, detected by parameter NAME so a named out-of-order argument cannot evade it, with `DualFrontier.Core.Interop` internals and `Test` namespaces exempt and `EntityId.Invalid`/`default` unreachable by construction. §1 census 17 → 18 rules (NativeBoundary 5 → 6; build-breaking 16 → 17); §1.1 registry row added; §1.3 test tree 20 → 21 files (`DFK022EntityIdentityTests`, 9 cases); §1.4 waiver pin **2 → 3** — the third waiver is DFK022 on `EntityEncoder.DecodeRanges`, which decodes persisted index ranges with no world to ask, retiring when the A7 persistence contract decides how generations cross the save boundary; §3 severity tally restated and the ship-enforcing-immediately rationale recorded. Release-tracked in `AnalyzerReleases.Unshipped.md` pending the next release roll. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. |
 | 0.1.1 | 2026-07-17 | HALT-1-ratified review corrections (CORPUS_CLOSURE_INVERSION_B, D1 R2-15..R2-19): §1.3 test-tree census 19→20 `.cs` files (matches the section's own itemization); §1 stale-lens paragraph corrected — the THREADING successor already fixed its analyzer references, only `historical/` copies retain the pre-Phase-β snapshot; §5 dangling-reference list re-anchored to `historical/` paths with the CONTRACTS repair acknowledged (sole live carrier = `SystemExecutionContext.cs:29`); "§11.1 M3.4" pointers → "§3.7 (D-2, historically 'M3.4')" ×2; §4 header split 13 → 12 deferred + 1 scope-exclusion (DFL025-C, per its own row). Register version 0.1.0 → 0.1.1; the row below's "1.0.0-draft" is the authoring session's in-doc label for that same 0.1.0 enrollment. |
 | 1.0.0-draft | 2026-07-15 | Initial authored-rework superseding DOC-A-ANALYZER_RULES + DOC-A-ARCHITECTURE_TYPE_SYSTEM + DOC-A-MAX_ENG_REFACTOR_TRACK_B. Re-verified the 17-rule shipped surface, wiring, test census, and waiver census against code at HEAD `35364c2`; formally retired the DF_TS analyzer program (session finding N-13) and re-registered its one surviving idea as a DEFERRED, unassigned-ID candidate (§5). |

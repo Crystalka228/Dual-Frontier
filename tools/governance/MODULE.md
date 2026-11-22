@@ -5,83 +5,80 @@ category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: 1.0
+version: '2.0'
 first_authored: 2026-05-12
-last_modified: 2026-05-12
+last_modified: 2026-11-22
 content_language: en
 next_review_due: null
 title: Tools governance module (register tooling)
 last_modified_commit: 8ee27fe
 review_cadence: on-source-commit+quarterly
-last_review_date: 2026-05-12
-last_review_event: A'.4.5 closure (initial creation)
+last_review_date: 2026-11-22
+last_review_event: 'MAJOR 1.0 -> 2.0 2026-11-22 (REV_2): the module index describes the .NET governance tool and the config it reads; the three PowerShell scripts it described are gone from the tree and from the law.'
 reviewer: Crystalka
 ---
 
-# tools/governance — Register tooling module
+# tools/governance -- governance tool configuration module
 
-*Module-local index for governance tooling artifacts. Tier 4 Category F per A'.4.5 governance framework.*
+*Module-local index for `tools/governance/`. Tier 4 Category F.*
 
 ---
 
 ## Purpose
 
-This module houses operational tooling for the Document Control Register defined by [`docs/governance/FRAMEWORK.md`](../../docs/governance/FRAMEWORK.md). Three PowerShell scripts + two YAML/MD support files.
+`tools/governance/` holds the configuration the governance tool reads, plus this index. The tool
+itself is the .NET project `tools/DualFrontier.Governance` (its tests are
+`tests/DualFrontier.Governance.Tests`). The law the tool mirrors is
+[`docs/governance/FRAMEWORK.md`](../../docs/governance/FRAMEWORK.md) section 14: the YAML frontmatter
+of each document is the source of truth; `docs/governance/REGISTER.yaml` and
+`docs/governance/CURRENT_AUTHORITY_SURFACE.yaml` are DERIVED by the tool and never hand-edited. This
+module restates neither the gate catalog nor the schema -- section 14 owns them.
 
 ## Artifacts
 
-### `sync_register.ps1` — write-side sync + validation
-
-Synchronizes [`docs/governance/REGISTER.yaml`](../../docs/governance/REGISTER.yaml) with per-document frontmatter mirrors; validates schema and cross-reference integrity. Primary closure-gate per Q-A45-X5 post-session protocol.
-
-```powershell
-./tools/governance/sync_register.ps1 --validate    # validate only (no writes)
-./tools/governance/sync_register.ps1 --sync        # sync REGISTER.yaml → frontmatter mirrors
-./tools/governance/sync_register.ps1               # default: sync + validate
-```
-
-Exit codes: `0` all green / `1` validation errors / `2` tooling failure.
-
-### `query_register.ps1` — read-side queries
-
-Agent and human query interface; returns structured results without manual YAML parsing.
-
-```powershell
-./tools/governance/query_register.ps1 --tier 1 --lifecycle LOCKED
-./tools/governance/query_register.ps1 --requirement REQ-K-L11
-./tools/governance/query_register.ps1 --risks-affecting DOC-A-KERNEL
-./tools/governance/query_register.ps1 --stale
-./tools/governance/query_register.ps1 --capa-open
-./tools/governance/query_register.ps1 --content-language ru
-```
-
-Output formats: default table / `--json` / `--paths-only`.
-
-### `render_register.ps1` — human-readable derivative
-
-Generates `docs/governance/REGISTER_RENDER.md` from REGISTER.yaml — browsable view, indexed by category, with statistics + global collection summaries.
-
-```powershell
-./tools/governance/render_register.ps1
-```
-
 ### `SCOPE_EXCLUSIONS.yaml`
 
-Glob patterns for paths excluded from register enrollment (build outputs, Godot internals, BenchmarkDotNet artifacts). Sync_register reads this to suppress orphan-flagging on out-of-scope `.md` files.
+The exclusion list and the extension allow-list, read by the tool's `ExclusionConfig` at
+`tools/governance/SCOPE_EXCLUSIONS.yaml`. A Markdown file matching an `excluded_paths` pattern is out of
+the governed scope (build outputs, tool state, scratch notes, authoring scaffolds); every other `.md`
+under the repository root must carry frontmatter, or the walk reports a G-PATH error (FRAMEWORK section
+14.2). The file is configuration, not a register entry: only `.md` documents are enrolled.
 
 ### `MODULE.md`
 
-This file. Tier 4 Category F module-local README. Enrolled in register as `DOC-F-TOOLS-GOVERNANCE`.
+This file. Enrolled in the register as `DOC-F-TOOLS-GOVERNANCE`.
 
-## Dependencies
+## Running the tool
 
-PowerShell 5.1 or PowerShell Core (`pwsh`). YAML parsing via [`powershell-yaml`](https://github.com/cloudbase/powershell-yaml) module (`Install-Module powershell-yaml -Scope CurrentUser`). Bundled fallback parser used if module unavailable.
+```bash
+dotnet run --project tools/DualFrontier.Governance -- validate --armed   # read-only; exit 0 is the gate
+dotnet run --project tools/DualFrontier.Governance -- sync               # validate, then regenerate the derived files
+dotnet run --project tools/DualFrontier.Governance -- migrate --target <scratch copy>   # migration dry run
+```
 
-UTF-8 file encoding for YAML and Markdown (BOM stripped on write).
+| Option | Effect |
+|---|---|
+| `--armed` | semantic gate findings that carry `Report` severity become exit-affecting; without it they are report-only (FRAMEWORK section 14.8) |
+| `--repo <path>` | operate on an explicit root instead of the repository that holds `DualFrontier.sln` |
+| `--register-version <ver>` | `register_version` stamped into the derived archive (`sync`) |
+
+Exit codes: `0` green, `1` a blocking finding, `2` tooling failure or unknown command. `validate` writes
+nothing; `sync` writes a derived file only when its content changed, and a blocking finding stops it
+before any write. The environment (the user-local SDK, `DOTNET_ROOT`) and the per-commit duty by tier are
+in [`DEVELOPMENT_HYGIENE.md`](../../docs/methodology/DEVELOPMENT_HYGIENE.md) sections 3 and 4.
+
+The walk is the filesystem, not the git index, so a `.md` file anywhere under the root is in scope
+unless excluded: run artifacts, patches and reports that are `.md` files live outside the tree.
+
+## Retired
+
+The PowerShell scripts that once lived here (`sync_register.ps1`, `render_register.ps1`,
+`query_register.ps1`) are retired. The register is plain YAML: read `REGISTER.yaml` or
+`CURRENT_AUTHORITY_SURFACE.yaml` directly, or filter them with any YAML tool.
 
 ## See also
 
-- [docs/governance/FRAMEWORK.md](../../docs/governance/FRAMEWORK.md) — governance framework specification
-- [docs/governance/REGISTER.yaml](../../docs/governance/REGISTER.yaml) — operational SoT
-- [docs/governance/SYNTHESIS_RATIONALE.md](../../docs/governance/SYNTHESIS_RATIONALE.md) — source-standards provenance
-- [docs/methodology/METHODOLOGY.md](../../docs/methodology/METHODOLOGY.md) §12 — register integration into closure protocol
+- [docs/governance/FRAMEWORK.md](../../docs/governance/FRAMEWORK.md) -- governance framework (section 14: the inverted register)
+- [docs/governance/REGISTER.yaml](../../docs/governance/REGISTER.yaml) -- derived archive register
+- [docs/governance/SYNTHESIS_RATIONALE.md](../../docs/governance/SYNTHESIS_RATIONALE.md) -- source-standards provenance
+- [docs/methodology/DEVELOPMENT_HYGIENE.md](../../docs/methodology/DEVELOPMENT_HYGIENE.md) -- tooling reality and the gates of each commit tier
