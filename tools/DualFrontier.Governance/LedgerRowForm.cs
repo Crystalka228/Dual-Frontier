@@ -9,7 +9,9 @@ namespace DualFrontier.Governance;
 /// STRUCTURAL checks are <see cref="Severity.Report"/> (exit-affecting under
 /// <c>--armed</c>): every data row carries the header's cell count counted on
 /// unescaped pipes, ends with a pipe, has an id of the form <c>F-&lt;n&gt;</c>,
-/// and the ids are unique and strictly increasing. VOCABULARY checks are
+/// and the ids are unique and strictly increasing, and no line shaped like a
+/// row follows the end of the table (a line that does not start with a pipe
+/// ends it, so a later row would be read by nothing). VOCABULARY checks are
 /// <see cref="Severity.Monitor"/> (printed, exit-neutral): the severity cell is
 /// in the legend set and the state cell's leading member is in the legend set.
 /// The gate reads one file named by <see cref="LedgerFormConfig"/> and is inert
@@ -20,6 +22,7 @@ public static class LedgerRowForm
 {
     private static readonly Regex UnescapedPipe = new(@"(?<!\\)\|", RegexOptions.Compiled);
     private static readonly Regex IdForm = new(@"^F-(\d+)$", RegexOptions.Compiled);
+    private static readonly Regex DetachedRow = new(@"^\s*\|\s*(F-\d+)\s*\|", RegexOptions.Compiled);
     private static readonly Regex LeadingMember = new(@"^[^A-Za-z0-9]*([A-Za-z][A-Za-z0-9-]*)", RegexOptions.Compiled);
 
     /// <summary>Runs the gate over the ledger a root's config names; empty when the config or the file is absent.</summary>
@@ -76,7 +79,8 @@ public static class LedgerRowForm
         var seenIds = new HashSet<string>(StringComparer.Ordinal);
 
         // header + separator, then the contiguous rows that start with a pipe
-        for (int i = headerIndex + 2; i < lines.Count && lines[i].StartsWith('|'); i++)
+        int i = headerIndex + 2;
+        for (; i < lines.Count && lines[i].StartsWith('|'); i++)
         {
             string line = lines[i];
             string subject = $"{config.LedgerPath}:{i + 1}";
@@ -131,6 +135,15 @@ public static class LedgerRowForm
                     findings.Add(Vocabulary(subject,
                         $"{label}: state leads with \"{member ?? cells[stateColumn]}\", outside the legend set {{{string.Join(", ", config.StateSet)}}}"));
                 }
+            }
+        }
+
+        for (int j = i; j < lines.Count; j++)
+        {
+            if (DetachedRow.Match(lines[j]) is { Success: true } detached)
+            {
+                findings.Add(Structural($"{config.LedgerPath}:{j + 1}",
+                    $"{detached.Groups[1].Value}: a row-shaped line follows the end of the table, so the gate does not check it"));
             }
         }
 

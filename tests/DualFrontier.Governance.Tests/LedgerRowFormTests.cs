@@ -152,6 +152,34 @@ public sealed class LedgerRowFormTests
     }
 
     [Fact]
+    public void RowForm_Red_RowsAfterABlankLine_AreFlaggedNotSilentlyUnread()
+    {
+        // a blank line ends the table; the rows behind it (one without a closing pipe, one a duplicate) are read by nothing
+        IReadOnlyList<Finding> findings = Check(RowAt(1), RowAt(2), "", "| F-3 | no closing pipe | S2 | OPEN | r", RowAt(3));
+
+        Structural(findings).Should().HaveCount(2);
+        Structural(findings).Should().OnlyContain(f => f.Message.Contains("follows the end of the table"));
+        Structural(findings).Select(f => f.Message).Should().OnlyContain(m => m.StartsWith("F-3"));
+    }
+
+    [Fact]
+    public void RowForm_Red_AnIndentedRow_EndsTheTableAndIsFlagged()
+    {
+        IReadOnlyList<Finding> findings = Check(RowAt(1), " " + RowAt(2));
+
+        Structural(findings).Should().ContainSingle(f => f.Message.StartsWith("F-2") && f.Message.Contains("follows the end of the table"));
+    }
+
+    [Fact]
+    public void RowForm_Green_RealLedger_HasNoStructuralFinding()
+    {
+        string root = RepoPaths.RepoRoot();
+
+        Structural(LedgerRowForm.Validate(root)).Should().BeEmpty("the ledger the repository names keeps its row form");
+        File.Exists(Path.Combine(root, "tools", "governance", "LEDGER_FORM.yaml")).Should().BeTrue("the gate is armed on this repository");
+    }
+
+    [Fact]
     public void RowForm_Red_TooFewCells()
     {
         IReadOnlyList<Finding> findings = Check("| F-3 | a finding | S2 | OPEN |");

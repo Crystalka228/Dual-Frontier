@@ -480,7 +480,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.1
+  version: 2.1.2
   first_authored: 2026-05-12
   last_modified: 2026-11-22
   content_language: en
@@ -491,7 +491,7 @@ documents:
   last_modified_commit: 7449ba8
   review_cadence: on-change+annual
   last_review_date: 2026-11-22
-  last_review_event: 'PATCH 2.1.0 -> 2.1.1 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the G-ROWFORM row of 14.5 states every condition the tool acts on -- the configuration file absent is inert, an unreadable configuration file is a Report, a ledger without the configured table header is a Report. No lifecycle transition (LOCKED).'
+  last_review_event: 'PATCH 2.1.1 -> 2.1.2 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the G-ROWFORM row of 14.5 gains a structural check -- a row-shaped line after the end of the ledger table is a Report, because the gate reads rows only up to the first line that does not start with a pipe. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-Q-A45-X5
