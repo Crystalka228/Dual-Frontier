@@ -5,7 +5,7 @@ category: F
 tier: 4
 lifecycle: Live
 owner: Crystalka
-version: '2.0'
+version: '2.1'
 first_authored: 2026-05-12
 last_modified: 2026-11-22
 content_language: en
@@ -14,7 +14,7 @@ title: Tools governance module (register tooling)
 last_modified_commit: 8ee27fe
 review_cadence: on-source-commit+quarterly
 last_review_date: 2026-11-22
-last_review_event: 'MAJOR 1.0 -> 2.0 2026-11-22 (REV_2): the module index describes the .NET governance tool and the config it reads; the three PowerShell scripts it described are gone from the tree and from the law.'
+last_review_event: 'MINOR 2.0 -> 2.1 2026-11-22 (REV_2, the review repairs): the artifact index gains LEDGER_FORM.yaml, the configuration of the G-ROWFORM gate, which the index of the configuration the tool reads had omitted.'
 reviewer: Crystalka
 ---
 
@@ -43,6 +43,15 @@ The exclusion list and the extension allow-list, read by the tool's `ExclusionCo
 the governed scope (build outputs, tool state, scratch notes, authoring scaffolds); every other `.md`
 under the repository root must carry frontmatter, or the walk reports a G-PATH error (FRAMEWORK section
 14.2). The file is configuration, not a register entry: only `.md` documents are enrolled.
+
+### `LEDGER_FORM.yaml`
+
+The configuration of the G-ROWFORM gate, read by the tool's `LedgerFormConfig` at
+`tools/governance/LEDGER_FORM.yaml`: the one `ledger_path` that locates the F-series findings ledger (a
+move of the ledger is a one-line edit here), the `id_header` that opens its table, the `severity_header`
+and `state_header` column names, and the `severity_set` and `state_set` restating the ledger legend. The
+gate is inert when this file or the ledger file it names is absent; the rules are FRAMEWORK section 14.5.
+The file is configuration, not a register entry.
 
 ### `MODULE.md`
 

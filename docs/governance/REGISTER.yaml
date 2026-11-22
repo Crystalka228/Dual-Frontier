@@ -6332,7 +6332,7 @@ documents:
   tier: 4
   lifecycle: Live
   owner: Crystalka
-  version: 2.0
+  version: 2.1
   first_authored: 2026-05-12
   last_modified: 2026-11-22
   content_language: en
@@ -6341,7 +6341,7 @@ documents:
   last_modified_commit: 8ee27fe
   review_cadence: on-source-commit+quarterly
   last_review_date: 2026-11-22
-  last_review_event: 'MAJOR 1.0 -> 2.0 2026-11-22 (REV_2): the module index describes the .NET governance tool and the config it reads; the three PowerShell scripts it described are gone from the tree and from the law.'
+  last_review_event: 'MINOR 2.0 -> 2.1 2026-11-22 (REV_2, the review repairs): the artifact index gains LEDGER_FORM.yaml, the configuration of the G-ROWFORM gate, which the index of the configuration the tool reads had omitted.'
   reviewer: Crystalka
 - register_id: DOC-G-BYPASS_LOG
   path: docs/governance/BYPASS_LOG.md
