@@ -1267,16 +1267,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.2.0
+  version: 3.0.0
   first_authored: 2026-06-29
-  last_modified: 2026-08-26
+  last_modified: 2026-11-21
   content_language: en
   next_review_due: 2027-06-11
   title: Development hygiene
-  last_modified_commit: 27807f7
   review_cadence: on-change+annual
-  last_review_date: 2026-08-26
-  last_review_event: 'MINOR 2.1.0 -> 2.2.0 2026-08-26 (F60A_TICK_PATH cascade, brief section 7.1 D3): section 3 gains the canonical LINUX native-kernel build commands alongside the existing Windows invocation, plus a new subsection recording how the native library reaches managed TEST output on both hosts. Rationale: the operator ruled Linux the PERMANENT development environment on 2026-08-26, and section 3 documented only the VS-bundled MSVC invocation, so the operative build law was unwritten for the environment development actually runs in. Records the three facts that cost time to rediscover: Ninja is single-config so outputs land at the build root with no Release/ subdirectory, a Windows-era build/ tree must be deleted rather than reconfigured, and the paired Exists-guarded None items make the DllImport bare name resolve on either host. MINOR per CODING_STANDARDS 10.1 rule 3 (a new rule or family, nothing inverted). No lifecycle transition (LOCKED).'
+  last_review_date: 2026-11-21
+  last_review_event: 'MAJOR 2.2.0 -> 3.0.0 2026-11-21 (CORPUS_REVISION_1, REV-1): the document describes the operational model as it runs. Sections 1-2 are re-measured against the tree (57 projects, every one a solution member); section 3 is Linux-only and gains the Launcher dev smoke, the worktree rule and the local acceptance chain (no CI job runs the build, the suite or validate); section 4 describes tools/DualFrontier.Governance and drops the retired PowerShell suite; section 5 states the merge law (a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges are forbidden, the fast-forward requirement is dropped) and the roles (the operator ratifies and merges, the architect orchestrates through subagents, the integrator is the only committer and opens the PR); section 6 is the Linux environment. MAJOR per section 8 rule 3 (operational-model change) and CODING_STANDARDS section 10.1 rule 3 (an existing rule inverted). No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   risks_referenced:
   - RISK-011
