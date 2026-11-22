@@ -5,16 +5,16 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.14.3
+version: 1.14.4
 first_authored: 2026-07-17
-last_modified: '2026-08-20'
+last_modified: '2026-11-22'
 content_language: mixed
 next_review_due: 2027-06-11
 title: Dual Frontier development methodology
 last_modified_commit: 717641b
 review_cadence: on-change+annual
-last_review_date: 2026-07-02
-last_review_event: 'PATCH 1.14.2 -> 1.14.3 2026-08-20 (push-policy propagation from CODING_STANDARDS 3.0.0 section 8.4, per section 10.1 rule 5): the extended phase-review cycle diagram direction-owner step corrected from push the commits to review the PR, merge it -- the executor now pushes its branch and opens the PR at closure. Descriptive correction only; no methodology rule changed. No lifecycle transition.'
+last_review_date: 2026-11-22
+last_review_event: 'PATCH 1.14.3 -> 1.14.4 2026-11-22 (REV_3 (CORPUS_REVISION_1)): section 12.8 anti-pattern rule and section 12.9 step (d) name docs/LEDGER.md where they named the ROADMAP Findings ledger section; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A07-6
@@ -458,6 +458,7 @@ The methodology has been tested on a 5-day horizon with one formalized phase-rev
 | 1.9 | 2026-05-21 | A'.7.x К-extensions cascade #0 closure — §12.7 closure protocol step 1 expanded с explicit per-test-suite checklist (Core + Modding suite both mandatory) per CAPA-2026-05-21-A_PRIME_7_X-K10_3-V2-SOFT-HALT corrective action (c). К10.3 v2 verification #7 soft-halt root cause closure-protocol gap, retroactively closed by А'.7.x. Lessons batch deferred к A'.8 closure (v1.9 → v1.10). К-extensions cascade #0 designation (А'.7.x) does not change §1-§11 substance. |
 | 1.10 | 2026-05-23 | A'.8 К-series formal closure — Lessons promotion batch per K_CLOSURE_REPORT.md §6. 12 FORMALIZE (10 carried Session 1 LOCKED Q4 + #14 PROMOTED + #27 PROMOTED at A'.8 per Q-N-8-5 LOCKED). 9 DEFER candidates Provisional pool (3 carried + 5 А'.7.x surfaced + 1 Godot removal surfaced). 1 SUNSET (Lesson #15 subsumed by Lesson #20). К-L14 falsifiability criterion 6 (soft-halt rate) added as Provisional per Q-N-8-7 LOCKED. К-closure report K_CLOSURE_REPORT.md authored Tier 1 AUTHORED per Q-N-8-4 amendment к Meta-Q1. §1-§11 substance unchanged. |
 | **1.14.3** | 2026-08-20 | **PATCH** — push-policy propagation from `CODING_STANDARDS.md` §8.4 v3.0.0 (§10.1 rule 5). The extended phase-review cycle's direction-owner step read "review the result, push the commits"; under the inverted rule the executor has already pushed its branch and opened the PR, so the owner's step is "review the PR, merge it". Descriptive correction to keep the cycle diagram from contradicting the standing law — no methodology rule changed. |
+| **1.14.4** | 2026-11-22 | **PATCH** -- REV_3 (CORPUS_REVISION_1). The F-ledger left `docs/ROADMAP.md` for `docs/LEDGER.md` (live rows) and `docs/LEDGER_ARCHIVE.md` (CLOSED rows). Section 12.8 (the anti-pattern rule) and section 12.9 step (d) name `docs/LEDGER.md` where they named the ROADMAP section Findings ledger (F-series). The version note of 1.13.0 at the head of the document records that release's text and keeps its wording. Pointer correction; no rule changes. |
 
 The document is updated after each substantial phase closes. Substantial methodological shifts (changes to pipeline configuration, changes to role distribution, additions or removals of methodological devices) are recorded as major versions.
 
@@ -614,7 +615,7 @@ What a brief **carries**: the phase-specific surface — named deliverables (tes
 
 **Boundary rule**: reusable-across-phases → standing document; phase-specific → brief; doubt → refactor into the standing document (then cite it).
 
-**Anti-pattern rule**: a brief contradicting a standing document is **wrong by default** — either the brief is corrected, or the standing document is amended through its own amendment protocol, BEFORE the brief locks. A locked brief executing a known contradiction is a halt condition, not a precedent. An already-EXECUTED brief later found to contradict standing law stays immutable (execution-context tier, historical snapshot); the standing document wins, and the discrepancy is recorded in the ROADMAP «Findings ledger (F-series)».
+**Anti-pattern rule**: a brief contradicting a standing document is **wrong by default** — either the brief is corrected, or the standing document is amended through its own amendment protocol, BEFORE the brief locks. A locked brief executing a known contradiction is a halt condition, not a precedent. An already-EXECUTED brief later found to contradict standing law stays immutable (execution-context tier, historical snapshot); the standing document wins, and the discrepancy is recorded in the findings ledger (`docs/LEDGER.md`).
 
 ### 12.9 Session closure protocol — governance/documentation cascades (v1.13.0)
 
@@ -628,7 +629,7 @@ What a brief **carries**: the phase-specific surface — named deliverables (tes
     commit (commit-folding protocol per DEVELOPMENT_HYGIENE §4).
 (c) Render regeneration (render_register.ps1) — or an explicit recorded
     staleness deferral (F-ledger entry / commit-body note), never silent.
-(d) Findings → ROADMAP «Findings ledger (F-series)» entries — never chat-only.
+(d) Findings → findings-ledger entries in `docs/LEDGER.md` — never chat-only.
 (e) Closure report per the active brief's schema: commits table, versions table,
     census pins re-measured (TESTING_STRATEGY §7), F-ledger final states,
     Skeleton-revisions consolidated list (RESERVED_SURFACE_MUTABILITY §5),

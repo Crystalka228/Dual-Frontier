@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.5
+version: 2.1.6
 first_authored: 2026-05-12
 last_modified: 2026-11-22
 content_language: en
@@ -16,7 +16,7 @@ meta_role: register_specification
 last_modified_commit: 7449ba8
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: "PATCH 2.1.4 -> 2.1.5 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the 14.3 optional field list gains title, requirements_authored and risks_referenced, which the corpus carries and 14.3 did not list (section 4.1 names title as a control key); the tool carries them verbatim and no gate reads them. No lifecycle transition (LOCKED)."
+last_review_event: 'PATCH 2.1.5 -> 2.1.6 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the G-ROWFORM row of 14.5 names the ledger files docs/LEDGER.md and docs/LEDGER_ARCHIVE.md where it named docs/ROADMAP.md; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A45-X5
@@ -602,6 +602,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 | 2.1.3 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- section 10 item 5 and the 14.5 G-RATIO row state what the tool counts (every populated `special_case_rationale`); that the corpus carries one only on 3.4.1 forbidden combinations is a fact of the corpus, not a rule a gate enforces, and is listed as item 9 of 14.10 and noted in 3.4.2. |
 | 2.1.4 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the pointer closing section 6 cites CODING_STANDARDS section 9 (the gates and their pass criteria) and DEVELOPMENT_HYGIENE section 3 (the local chain); it had named CODING_STANDARDS section 10.1, which is that document's amendment protocol. |
 | 2.1.5 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the 14.3 optional list gains `title`, `requirements_authored` and `risks_referenced`: section 4.1 names `title` as a control key and the corpus carries the three, but 14.3 ("a key is law only when this section lists it") listed none of them. The tool carries them verbatim; no gate reads them. |
+| 2.1.6 | 2026-11-22 | REV_3 (CORPUS_REVISION_1) | PATCH -- the G-ROWFORM row of 14.5 names the files of the findings ledger, `docs/LEDGER.md` and `docs/LEDGER_ARCHIVE.md`, where it named `docs/ROADMAP.md` (the F-ledger left ROADMAP at REV_3). A pointer correction; the gate's behaviour is not restated by this row. |
 
 The rows above record each version as authored; where the 2.0.0 row or the 7.4 table calls sections 6 and 8 operative until the corpus switch, that held until 2026-07-17 and does not hold now.
 
@@ -683,7 +684,7 @@ Every machine gate is law **here** and is mirrored -- never owned -- by the gove
 | **G-NAMESPACE** | `register_id` begins `DOC-<category>-` with the prefix letter equal to the document's `category` | §5, §3.1 |
 | **G-GLOBALS** | globals enums hold — `requirements.verification_status` ∈ {PENDING, PARTIAL, VERIFIED, FAILED}; `risks.{likelihood, impact, risk_type, status}` in their §4.4 sets; `capa_entries.closure_status` ∈ {OPEN, CLOSED}; `audit_trail.event_type` ∈ {deliberation_milestone, execution_milestone, amendment_landing, lifecycle_transition, governance_event}; ids are unique within each collection | §4.3–4.7 |
 | **G-RATIO** | the share of documents carrying a `special_case_rationale` (every populated one is counted; since 2.1 the corpus carries one only on 3.4.1 forbidden combinations, which no gate enforces, 14.10 item 9) is compared with the 20% threshold of section 10 item 5, the falsification instrument for the allowed-combinations matrix: below the threshold the gate is a Monitor that prints the share, at or above it a Report | §3.4.2, §10 |
-| **G-ROWFORM** | the findings ledger (the F-series table; its file is one configuration value of the tool, `docs/ROADMAP.md` at 2.1.0) keeps its form. Structural checks -- each row has as many cells as the header, counted on unescaped pipes, and ends with a trailing pipe; the id has the form `F-<n>`; ids are unique and strictly increasing; no line shaped like a row (`| F-<n> |`) follows the end of the table, which the first line that does not start with a pipe closes -- are Reports. Vocabulary checks -- the severity is in the ledger legend's severity set and the leading member of the state is in the legend's state set -- are Monitors until the ledger vocabulary is normalised. The gate is inert (no finding) when its configuration file `tools/governance/LEDGER_FORM.yaml` (the ledger path, the id header, the severity and state column headers and the two vocabulary sets) is absent, or when the ledger file it names is absent. Two conditions are Reports: a configuration file that cannot be read, and a ledger file with no table header opening with the configured id header (the gate cannot read the ledger) | §14.2, §14.8 |
+| **G-ROWFORM** | the findings ledger (the F-series tables; their files are configuration values of the tool, `docs/LEDGER.md` and `docs/LEDGER_ARCHIVE.md`) keeps its form. Structural checks -- each row has as many cells as the header, counted on unescaped pipes, and ends with a trailing pipe; the id has the form `F-<n>`; ids are unique and strictly increasing; no line shaped like a row (`| F-<n> |`) follows the end of the table, which the first line that does not start with a pipe closes -- are Reports. Vocabulary checks -- the severity is in the ledger legend's severity set and the leading member of the state is in the legend's state set -- are Monitors until the ledger vocabulary is normalised. The gate is inert (no finding) when its configuration file `tools/governance/LEDGER_FORM.yaml` (the ledger path, the id header, the severity and state column headers and the two vocabulary sets) is absent, or when the ledger file it names is absent. Two conditions are Reports: a configuration file that cannot be read, and a ledger file with no table header opening with the configured id header (the gate cannot read the ledger) | §14.2, §14.8 |
 
 No gate constrains a combination this framework leaves unconstrained (§14.2): the tool holds no rule without an anchor in this section.
 

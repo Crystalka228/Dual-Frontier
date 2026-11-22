@@ -5,7 +5,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.3.1
+version: 2.3.2
 first_authored: 2026-07-15
 last_modified: 2026-11-22
 content_language: en
@@ -13,7 +13,7 @@ next_review_due: 2027-06-11
 title: Testing strategy
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: 'PATCH 2.3.0 -> 2.3.1 2026-11-22 (REV_2): section 4.3 states what CensusMetaTests.SuppressMessageCensus_IsZero actually asserts (the SuppressMessage literal 0 times across tracked src/ .cs files; no GlobalSuppressions.cs check, nothing outside src/) and where the GlobalSuppressions ban is held (DF999 in src/, review elsewhere). Clarification only, PATCH per section 9.1 rule 3. No lifecycle transition (LOCKED).'
+last_review_event: 'PATCH 2.3.1 -> 2.3.2 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the pointers to the findings ledger (sections 1.4 list, 2.6, 4.4, 9.1 rule 5, and the 2.2.1 and 2.0.2 history records) name docs/LEDGER.md or docs/LEDGER_ARCHIVE.md; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 ---
 
@@ -57,7 +57,8 @@ This document derives from and interlocks with:
 - `docs/methodology/CODING_STANDARDS.md` — §5 «Marker family registry» (census expressions registered there), §5.3 DFK-WAIVER law, §8 atomic commit discipline.
 - `docs/methodology/RESERVED_SURFACE_MUTABILITY.md` — the census-delta / `Skeleton revisions` commit-body law that makes §4 pin updates auditable.
 - `docs/architecture/ANALYZER_RULES.md` — rule specifications the §3.5 analyzer-test convention will verify.
-- `docs/ROADMAP.md` — §«Analyzer track» (Phase β scope pointers) and §«Findings ledger (F-series)» (open defects, including §2.6).
+- `docs/ROADMAP.md` — §«Analyzer track» (Phase β scope pointers).
+- `docs/LEDGER.md` -- the findings ledger (open defects, including section 2.6); its CLOSED rows are in `docs/LEDGER_ARCHIVE.md`.
 
 ## §2 — Test landscape truth
 
@@ -113,7 +114,7 @@ The wiring is the **cross-ALC projection pattern**: `DualFrontier.Modding.Tests.
 As of the F-29 native-scheduler cascade (2026-07-04) the F-29 defects are resolved and this register
 states the current honest state. No test fails deterministically in per-project isolation, and the full
 Core.Tests run is green + stable. Two quarantine categories and one host-capability class remain,
-declared here so no cascade silently absorbs them (F-ledger: docs/ROADMAP.md Findings ledger).
+declared here so no cascade silently absorbs them (F-ledger: docs/LEDGER.md).
 
 1. Quarantined -- do not run (managed marathon, F-30). One SchedulerExtremeTests scenario: S2
    (S2_ParallelSystemScheduler_..., 200,000-tick TPL steady-state over a pre-built 80-system phase
@@ -368,7 +369,7 @@ Every increase requires the full waiver form and authority citation of `CODING_S
 
 ### §4.4 — S-LOCK → verification obligation
 
-Every S-LOCK declared by an active brief names its **verifying artifact**: a test, a grep-gate (registered expression), or a build property. An S-LOCK whose verifying artifact does not exist on disk is a gap; gaps become F-ledger entries (`docs/ROADMAP.md §Findings ledger (F-series)`) at the closure that detects them — never silent debt.
+Every S-LOCK declared by an active brief names its **verifying artifact**: a test, a grep-gate (registered expression), or a build property. An S-LOCK whose verifying artifact does not exist on disk is a gap; gaps become F-ledger entries (`docs/LEDGER.md`) at the closure that detects them — never silent debt.
 
 **2026-06-11 audit result (recorded):** the A'.9.1 S-LOCK set was audited against disk. All artifact-checkable locks verified: S-LOCK-4 — 17 rule files present under `tools/DualFrontier.Analyzers/Rules/`; S-LOCK-10 — no DFK010 file exists; S-LOCK-6/7/8/9/11/12 — required absences/presences confirmed on disk. No hard gaps. The `DualFrontier.Analyzers.Tests` gate is placeholder-level pending Phase β — **by design** (Phase α scoped it to assembly identity; §3.5 governs its population), so it is recorded here as known state, not as a gap.
 
@@ -562,11 +563,13 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 2. **Rationale** — the driving decision, citing its authority (Q-series, К-L, F-entry, lesson, brief).
 3. **Semver** — PATCH (pin/baseline refresh, cross-reference fix), MINOR (new layer, new census family, new convention — additive), MAJOR (contract change: pin semantics, boundary rule, closure obligations).
 4. **Register update** -- bump `version`, `last_modified` and the review fields in this document's own frontmatter (the source of truth, `FRAMEWORK.md` section 14.1); regenerate the derived register with `dotnet run --project tools/DualFrontier.Governance -- sync` and run `-- validate --armed`; the cascade's closure record carries the audit-trail event.
-5. **Propagation** — citing documents checked and updated. Known citers to check on amendment: active briefs (§6 consumers), `CODING_STANDARDS.md` (§5 census expression registry), `RESERVED_SURFACE_MUTABILITY.md` (census-delta law), `METHODOLOGY.md` (§12.7/§12.8 interlock), `ANALYZER_RULES.md` (§3.5 convention consumer), `docs/ROADMAP.md` (Analyzer track + F-ledger).
+5. **Propagation** — citing documents checked and updated. Known citers to check on amendment: active briefs (§6 consumers), `CODING_STANDARDS.md` (§5 census expression registry), `RESERVED_SURFACE_MUTABILITY.md` (census-delta law), `METHODOLOGY.md` (§12.7/§12.8 interlock), `ANALYZER_RULES.md` (§3.5 convention consumer), `docs/ROADMAP.md` (Analyzer track), `docs/LEDGER.md` (F-ledger).
 
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.3.2 -- 2026-11-22 -- REV_3 (PATCH).** The F-ledger left `docs/ROADMAP.md` for `docs/LEDGER.md` (live rows) and `docs/LEDGER_ARCHIVE.md` (CLOSED rows). The section 1.4 reference list names `docs/LEDGER.md` beside the ROADMAP Analyzer track; section 2.6 and section 4.4 name `docs/LEDGER.md` as the place a finding is recorded; the section 9.1 rule 5 citer list names it as the F-ledger's home; the 2.2.1 and 2.0.2 history records name the file that holds the row they cite (F-33 in the archive, F-28 in the live ledger). Pointer correction; no rule, pin or contract changes. PATCH per section 9.1 rule 3.
 
 **v2.3.1 -- 2026-11-22 -- REV_2 (PATCH).** Section 4.3 told the reader that the compiled meta-tests assert both zero `SuppressMessage` attribute usage in `src/` and the absence of a `GlobalSuppressions.cs` file. The meta-test asserts only the first, and as a literal count over the tracked `.cs` files under `src/`; it does not look for the file and does not look outside `src/`. The sentence now says exactly that, notes that the `tests/` tree carries the literal in analyzer-test fixtures, and names the other holders of the ban (`DF999` in the `src/` projects, review elsewhere). Clarification only; no pin, taxonomy or contract changes.
 
@@ -611,7 +614,7 @@ contract, or pin-semantics change.
 Census-pin refresh (§4.2): `not yet` 8/7 -> 10/9. The two new markers are the CX-06
 (`Runtime.cs` present-family "not yet selected") and CX-21 (`TerrainKind.cs` "not yet
 set") fix comments that landed at Codex `61f08ef` without a same-commit census-delta record
-(operator-ruled FOLD of the Skarlet-gate H2b; recorded as ROADMAP F-33). CensusMetaTests
+(operator-ruled FOLD of the Skarlet-gate H2b; recorded as ledger row F-33, now in `docs/LEDGER_ARCHIVE.md`). CensusMetaTests
 green post-refresh. Pin-baseline refresh only; no taxonomy, contract, or semantics change.
 
 **v2.2.0 -- 2026-07-04 -- F-29 native-scheduler cascade (MINOR).** Per tools/briefs/F29_NATIVE_SCHEDULER_BRIEF.md.
@@ -637,7 +640,7 @@ S1/S2/S7 Skip-quarantined under F-29(b). §3.8 corrected from "NONE exist" to th
 (CensusMetaTests since Phase beta + the new FixtureDeploymentTests) -- closes F-28(a). No taxonomy,
 contract, or pin-semantics change.
 
-**v2.0.2 — 2026-07-02 — A'.9.1 Phase δ rider (F-27(b) PATCH).** §5.3 item 2's stale forward-claim («analyzer detection is Phase β scope — today the convention binds by review») replaced with the realized tail: DFL025_A detection landed at Phase β and binds at Warning (build-breaking under `TreatWarningsAsErrors`) since Phase γ Release 1.0; rule-ID tokens underscore-normalized on the touched sentence; the zero-trait census re-verified 2026-07-02 (sole textual occurrence = DFL025_A verifier fixture source). The §3.8-consistency parenthetical dropped — §3.8's own «NONE exist» claim is superseded by the Phase β census meta-tests and is ledgered separately at this cascade's F-sweep (ROADMAP Findings ledger). No taxonomy, contract, or pin-semantics change.
+**v2.0.2 — 2026-07-02 — A'.9.1 Phase δ rider (F-27(b) PATCH).** §5.3 item 2's stale forward-claim («analyzer detection is Phase β scope — today the convention binds by review») replaced with the realized tail: DFL025_A detection landed at Phase β and binds at Warning (build-breaking under `TreatWarningsAsErrors`) since Phase γ Release 1.0; rule-ID tokens underscore-normalized on the touched sentence; the zero-trait census re-verified 2026-07-02 (sole textual occurrence = DFL025_A verifier fixture source). The §3.8-consistency parenthetical dropped — §3.8's own «NONE exist» claim is superseded by the Phase β census meta-tests and is ledgered separately at this cascade's F-sweep (ledger row F-28, `docs/LEDGER.md`). No taxonomy, contract, or pin-semantics change.
 
 **v2.0.1 — 2026-07-01 — A'.9.1 Phase γ propagation PATCH.** METHODOLOGY §12.7 step 9 (SYNTH-2) + the F-25 owed fold, per §9.1 PATCH class (pin/baseline refresh + cross-reference truth): §5.2 machine-checkable channel «non-detecting stubs / zero enforcement» → live Release 1.0 enforcement (11 Error + 5 Warning build-breaking under `TreatWarningsAsErrors`, DFL025_B IDE-only; `Shipped.md` + `.editorconfig` agreeing severity surfaces); §4.1/§4.2 «Planned — Phase β» compiled-meta-test wording → realized (`CensusMetaTests`, Phase β); §3.5 analyzer-test layer «placeholder / no such test exists» state claims → the realized 54-test suite (severity-transparent verifiers), sub-case ID examples → underscore forms per the Phase β adjudication; §4.2 `stub`/`deferred` baselines 48/18 → 51/20, 79/48 → 82/51 (F-25 — the ledger's 81/51 was the 2026-06-12 measure, 82/51 is the Phase β meta-test value); §4.3 waiver census current pin 2 (0-baseline kept as dated history; `SuppressMessage` string-literal precision note). No taxonomy, contract, or pin-semantics change.
 

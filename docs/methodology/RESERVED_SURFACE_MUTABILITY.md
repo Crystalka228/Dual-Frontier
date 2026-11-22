@@ -5,16 +5,16 @@ category: B
 tier: 2
 lifecycle: LOCKED
 owner: Crystalka
-version: 1.0.2
+version: 1.0.3
 first_authored: 2026-07-02
-last_modified: 2026-07-17
+last_modified: 2026-11-22
 content_language: en
 next_review_due: 2026-Q3
 title: Reserved-surface mutability license
 last_modified_commit: 0411bb0
 review_cadence: on-closure+quarterly
-last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §6 delta-1 row framework-compatibility clause netstandard2.0-cannot-reference-net8.0 → net10.0, tracking the landed solution TFM (the clause follows the live Contracts target, as the analyzer csproj comment now does); sole stale token in this document, all other §6 historical delta records untouched (EVT-2026-07-17-STACK_UPDATE). Prior context: Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3…'
+last_review_date: 2026-11-22
+last_review_event: 'PATCH 1.0.2 -> 1.0.3 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the honesty note of section 1 (a) links the findings ledger at its new file (F-7 is a CLOSED row, so docs/LEDGER_ARCHIVE.md); the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 provenance_note: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 ---
@@ -28,7 +28,7 @@ At least three were surface-naming/surface-count class, yet each consumed halt-o
 
 Without a governing principle, every subsequent brief must choose between two bad options:
 
-- **(a) defensive literal transcription** — the brief copies Phase-state literals (names, counts, paths) verbatim so the executor cannot diverge. This is the brief-bloat root flagged as Lesson #N18-class. Honesty note: Lesson #N18 («pre-flight empirical scope verification») is referenced by cascade brief artifacts — `tools/briefs/DOCUMENTATION_DUAL_LOAD_DRIFT_RECONNAISSANCE_BRIEF.md` — but is **not yet codified** in `METHODOLOGY.md`, whose lessons top out at #N17. The numbering gap is tracked in the [ROADMAP Findings ledger](../ROADMAP.md) as F-7, architect-owned.
+- **(a) defensive literal transcription** — the brief copies Phase-state literals (names, counts, paths) verbatim so the executor cannot diverge. This is the brief-bloat root flagged as Lesson #N18-class. Honesty note: Lesson #N18 («pre-flight empirical scope verification») is referenced by cascade brief artifacts — `tools/briefs/DOCUMENTATION_DUAL_LOAD_DRIFT_RECONNAISSANCE_BRIEF.md` — but is **not yet codified** in `METHODOLOGY.md`, whose lessons top out at #N17. The numbering gap is tracked in the [findings ledger archive](../LEDGER_ARCHIVE.md) as F-7, architect-owned.
 - **(b) refactor reality to match the brief** — the executor renames on-disk artifacts back to the brief's stale forms, producing rippling diffs that obscure the actual work.
 
 This document declares the third path, adapting a proven external skeleton-mutability governance mechanism onto Dual Frontier's substrate.
@@ -174,6 +174,7 @@ Principle changes (§2) additionally require Crystalka ratification.
 
 ## Change history
 
+- **v1.0.3 (2026-11-22)** -- REV_3 (CORPUS_REVISION_1) PATCH: the section 1 (a) honesty note links the findings ledger at its new file (F-7 is a CLOSED row, so `docs/LEDGER_ARCHIVE.md`) where it linked the ROADMAP Findings ledger; the F-ledger left ROADMAP. Pointer correction; no rule changes.
 - **v1.0.2 (2026-07-17)** — STACK_UPDATE Phase H doc census PATCH (EVT-2026-07-17-STACK_UPDATE): §6 delta-1 row's framework-compatibility clause updated to the landed solution TFM — «netstandard2.0 cannot reference net8.0» → «…net10.0» (the clause tracks the live Contracts target, matching the analyzer csproj's own updated comment); the delta narrative, classification, and every other §6 row unchanged. Catalog clarification per the amendment protocol's PATCH class.
 - **v1.0.1 (2026-07-02)** — F-27(a) PATCH at the A'.9.1 Phase δ rider: §3 item 1's on-disk-proof bullets updated from the superseded dot/hyphen descriptor duality to the underscore truth (Phase β descriptor-ID adjudication, Crystalka-ratified 2026-07-01); the item's principle (descriptor ID = contract, file/class name = surface) unchanged. Catalog clarification per the amendment protocol's PATCH class.
 - **v1.0 (2026-06-11)** — Initial authoring at the Standing-Law Cascade, per `tools/briefs/STANDING_LAW_CASCADE_BRIEF.md` §7-W3. Mechanism adapted from a proven external skeleton-mutability governance document (read-only reference corpus) onto Dual Frontier's substrate; §6 retrospective classifies the A'.9.1 Phase α deltas from on-disk commit-body evidence.
