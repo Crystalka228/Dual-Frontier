@@ -138,6 +138,18 @@ public sealed class LedgerRowFormTests
     }
 
     [Fact]
+    public void RowForm_Red_FindingSubject_NamesThePathAndTheOneBasedLineOfTheRow()
+    {
+        string[] lines = Table(RowPlain, RowNoClosingPipeA).Split('\n');
+        int headerLine = Array.FindIndex(lines, l => l.StartsWith("| F-# |", StringComparison.Ordinal)) + 1;
+
+        IReadOnlyList<Finding> findings = LedgerRowForm.ValidateTable(lines, Config);
+
+        // the header, then the separator, then the first row; the faulty row is the second data row
+        Structural(findings).Should().ContainSingle().Which.Subject.Should().Be($"docs/ROADMAP.md:{headerLine + 3}");
+    }
+
+    [Fact]
     public void RowForm_Red_TooFewCells()
     {
         IReadOnlyList<Finding> findings = Check("| F-3 | a finding | S2 | OPEN |");
