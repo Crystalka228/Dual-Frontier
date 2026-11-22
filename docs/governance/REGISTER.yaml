@@ -3315,6 +3315,21 @@ documents:
   authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
   last_review_event: 'REV_0 EXECUTED 2026-11-21 (EVT-2026-11-21-REV_0) on claude/rev-0, C1-C3 plus 15 review-repair commits and the C4 closure. Ratified by the operator in chat on 2026-11-21; lifecycle Draft -> EXECUTED. Orchestrator rulings R-1..R-4 supplemented the brief: R-1 voided a driver reference to a non-existent v1.1; R-2 landed the moved deferred census pin (87/54 -> 86/53) as a C3 integrator seam; R-3 ruled the lens-B repairs, including F-84 widened and F-93 seeded; R-4 ruled the two P3 repairs of the lens over the repairs. Gates: validate --armed exit 0, suite 1441/0/6, dev smoke exit 124.'
   basis: CORPUS_REVISION_1 recon deposits R-A/R-B/R-C/R-D + REVISION_SYNTHESIS (/mnt/Work/Temporal/corpus-revision-1/, read-only, 2026-11-21 at 3000285) + the DIST_1 Wave R residue re-verification R2 (/mnt/Work/Temporal/dist1-run/recon/R2.journal.md, Haiku, 2026-11-21 at 3000285) + the W4 residue work-order (/mnt/Work/Temporal/recon-2026-09-01/H0_RESIDUE_WORKORDER.md) + operator rulings 2026-11-21 (documents first; DIST_1 paused; its document part moves here; comment law adopted from Community Hub)
+- register_id: DOC-D-REV_1_BRIEF
+  path: tools/briefs/REV_1_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: Draft
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-11-21
+  last_modified: 2026-11-21
+  content_language: en
+  next_review_due: 
+  title: 'REV_1 -- the operational-truth law says how the project works now: CODING_STANDARDS 4.0.0 (comment law, debt markers, merge policy, scopes, roles, CI truth), DEVELOPMENT_HYGIENE 3.0.0 (Linux, the .NET governance tool, merge commits), TESTING_STRATEGY 2.3.0 (Linux invocation, live pins, failability), PIPELINE_METRICS 0.2.3 (era annotations) -- the second cascade of CORPUS_REVISION_1'
+  authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+  basis: REV_1 recon pair (/mnt/Work/Temporal/rev1-run/recon/R1.md -- Sonnet, DEVELOPMENT_HYGIENE/TESTING_STRATEGY/PIPELINE_METRICS; R2.md -- Opus, CODING_STANDARDS; read-only at 54a9577) + operator rulings L1-L8 ratified 2026-11-21 with their canonical wording K1-K10 (/mnt/Work/Temporal/rev1-run/CONTRACT.md) + the revision synthesis (/mnt/Work/Temporal/corpus-revision-1/REVISION_SYNTHESIS.md) + the current operating model (/mnt/Work/Temporal/skills-revision/OPERATING_MODEL_2026-11-21.md)
 - register_id: DOC-D-STACK_UPDATE_BRIEF
   path: tools/briefs/STACK_UPDATE_BRIEF.md
   project: Dual Frontier
