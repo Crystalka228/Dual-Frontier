@@ -528,8 +528,9 @@ are **English**. English is the lowest-friction shared encoding for the
 agent-primary reader (PA-001) and for `git diff`, search, and string equality.
 
 **Bi-script citation reality.** Invariant IDs appear in both scripts -- Cyrillic
-"К-L" and Latin "K-L" (KERNEL_ARCHITECTURE Part 0 table rows are Latin, its
-prose Cyrillic). Any census or grep over invariant citations **must match both
+"К-L" and Latin "K-L" (KERNEL_ARCHITECTURE writes the Cyrillic form in its Part 0
+table and its prose; the Latin form appears in its frontmatter requirement ids,
+`REQ-K-L#`, and in part of the code). Any census or grep over invariant citations **must match both
 scripts**. Either script is acceptable in new text, but the numeric ID must be
 exact (`К-L14` and `K-L14` denote the same invariant; `K-L4` is a different
 one).
