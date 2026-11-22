@@ -5,16 +5,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.2.3
+version: 2.3.0
 first_authored: 2026-07-15
-last_modified: 2026-08-22
+last_modified: 2026-11-21
 content_language: en
 next_review_due: 2027-06-11
 title: Testing strategy
-last_modified_commit: 673f815
 review_cadence: on-change+annual
-last_review_date: 2026-08-22
-last_review_event: 'ID_B_ENTITY_VERSIONS C7 — v2.2.2 → v2.2.3 PATCH (census pins only, per this document''s own §9.1 mutability clause): §4.3 DFK-WAIVER pin 2 → 3, the third being the DFK022 waiver on EntityEncoder.DecodeRanges, whose retirement trigger is the A7 persistence contract; §4.2 dated baselines refreshed to what the compiled meta-tests already carry — TODO 136/53 → 132/51 and deferred 82/51 → 87/54, ID_B''s own deferred delta being 89/55 → 87/54 as the K7 deferral retires at both surviving sites. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior review: STACK_UPDATE Phase H doc census — v2.2.1 → v2.2.2 PATCH: §1.3 stack-truth mirror sentence updated to the landed test triad — xUnit 2.9.2 → 2.9.3, Microsoft.NET.Test.Sdk 17.11.1 → 18.8.1, xunit.runner.visualstudio 2.8.2 → 3.1.5, FluentAssertions 6.12.1 → AwesomeAssertions 9.4.0 (Apache-2.0 community fork; the FluentAssertions package id is never used again — 8.x is paid-commercial); sole live site, v1.0 changelog stack mention left as historical record (EVT-2026-07-17-STACK_UPDATE). Prior context: Standing-Law cascade C4 (fcce199) — full rewrite v1.0 → v2.0.0 MAJOR…'
+last_review_date: 2026-11-21
+last_review_event: 'MINOR 2.2.3 -> 2.3.0 2026-11-21 (operator rulings 2026-11-21, REV_1): section 8 invocation law restated for the Linux host (bash redirect-to-file harness under timeout, MSBUILDDISABLENODEREUSE, the TRX as the verdict, the native selftest path, host-capability skips); section 1.3 states the CI truth (the Gitleaks workflow is the only one; acceptance is the local chain); section 2 landscape brought to the tree; section 4 names CensusMetaTests as the carrier of the live pins and refreshes deferred 87/54 -> 86/53; section 3.8 gains the gate-failability convention. MINOR per section 9.1 rule 3 (new invocation convention, additive; the pin refresh is PATCH-class under the section 9.1 mutability clause). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 ---
 
@@ -48,7 +47,7 @@ When execution encounters a testing question this document does not answer, the 
 
 The managed test stack is **xUnit 2.9.3 + AwesomeAssertions 9.4.0 + Microsoft.NET.Test.Sdk 18.8.1 + xunit.runner.visualstudio 3.1.5** (AwesomeAssertions is the Apache-2.0 community fork that replaced FluentAssertions 6.12.1 at the 2026-07-17 STACK_UPDATE cascade — the FluentAssertions package id is never used again; its 8.x line is paid-commercial), all version-resolved through Central Package Management (`Directory.Packages.props` at repo root). The analyzer-test project additionally references **Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit 1.1.2** plus an explicit **Microsoft.CodeAnalysis.CSharp.Workspaces 5.3.0** override (the override forces the CPM-pinned Workspaces to win over the testing package's transitive 1.0.1 — without it MEF composition fails at first run; recorded in `tests/DualFrontier.Analyzers.Tests/DualFrontier.Analyzers.Tests.csproj`). The native test stack is a standalone C++ selftest executable built by CMake (§2.5).
 
-There is **no CI pipeline**. Every gate named in this document is executed locally — by the executing agent during a cascade and at closure per §7. Any future CI claim must name its on-disk workflow artifact before it may appear here.
+CI truth: the repository's only workflow is `.github/workflows/gitleaks.yml` (secret scan); no CI job runs the build, the suite or `validate --armed` -- the ledger row F-92 owns that gap. Acceptance is the local chain. The Gitleaks workflow scans the full reachable history for secrets on push, pull request and manual dispatch (`docs/SECRET_SCANNING.md`); it gates neither build nor tests. Every build and test gate named in this document is executed locally -- by the agents executing a cascade and at closure per section 7. Any future CI claim for build or tests must name its on-disk workflow artifact before it may appear here.
 
 ### §1.4 — Authority chain
 
@@ -62,25 +61,26 @@ This document derives from and interlocks with:
 
 ## §2 — Test landscape truth
 
-Surveyed 2026-06-11 against `main` at `d90b522`. Every count below was measured by `rg`/`dotnet test` against the working tree; this section states what exists, not what is intended.
+Re-surveyed 2026-11-21 against `main` at `54a9577`. Every fact below was measured against the working tree; the measuring command is named where a count appears. This section states what exists, not what is intended.
 
-### §2.1 — dotnet-test-invocable projects (9)
+### §2.1 — dotnet-test-invocable projects
 
-All nine live under `tests/`, are members of `DualFrontier.sln`, and target the §1.3 stack.
+All live under `tests/`, are members of `DualFrontier.sln`, and target the section 1.3 stack. The set is measured, not remembered: `grep -l 'Microsoft.NET.Test.Sdk' tests/*/*.csproj` lists it. A run's counts are read from that run (section 2.7, section 8), not pinned here.
 
-| Project | .cs files | `[Fact]`/`[Theory]` sites | 2026-06-11 Release run | Verdict |
-|---|---:|---:|---|---|
-| `DualFrontier.Core.Tests` | 18 | 96 | 83 passed / 1 failed / 84 reported | Real. Managed ECS, bus, scheduler, math. Run truncated by testhost crash after `SchedulerStressTests` (§2.6). |
-| `DualFrontier.Core.Interop.Tests` | 26 | 199 | 202 / 202 | Real. P/Invoke boundary suite (§3.2). |
-| `DualFrontier.Modding.Tests` | 45 | 382 | 398 / 399 | Real. Largest suite; ALC isolation + fixture projection (§3.4). 1 timing-sensitive failure (§2.6). |
-| `DualFrontier.Runtime.Tests` | 36 | 251 | 292 / 292 | Real. Runtime substrate suite. |
-| `DualFrontier.Application.Tests` | 5 | 45 | 45 / 45 | Real. Bootstrap/loop application layer. |
-| `DualFrontier.Mod.ManifestRewriter.Tests` | 1 | 7 | 7 / 7 | Real. Tooling suite for the manifest rewriter. |
-| `DualFrontier.Persistence.Tests` | 4 | 4 | 4 / 4 | Nascent. Real but thin; persistence scaffold scale. |
-| `DualFrontier.Systems.Tests` | 2 | 2 | 2 / 2 | Thin real. `SmokeTests` + `NativeWorldTestFixture`. |
-| `DualFrontier.Analyzers.Tests` | 1 | 1 | 1 / 1 | **PLACEHOLDER.** Single assembly-identity `[Fact]` in `PlaceholderTests.cs` confirming `DualFrontier.Analyzers` loads in the Roslyn test host. Per A'.9.1 Phase α design; per-rule verifier tests land at Phase β (its own XML doc says so). |
+| Project | Role | Layer (section 3) |
+|---|---|---|
+| `DualFrontier.Core.Tests` | Managed ECS, bus, scheduler, math; carries the scheduler Stress/Extreme traits (section 3.7) and the F-30/F-31 quarantines (section 2.6) | section 3.1, section 3.7 |
+| `DualFrontier.Core.Interop.Tests` | P/Invoke boundary suite | section 3.2 |
+| `DualFrontier.Modding.Tests` | ALC isolation, fixture projection, mod pipeline, EngineComposer integration, Weather and scenario gates | section 3.3, section 3.4 |
+| `DualFrontier.Runtime.Tests` | Runtime and presentation substrate; carries the host-capability-gated tests (section 2.6 item 3) | section 3.1, section 3.3 |
+| `DualFrontier.Application.Tests` | Application layer: bridge, loop, display | section 3.3 |
+| `DualFrontier.Mod.ManifestRewriter.Tests` | Tooling suite for the manifest rewriter | section 3.1 |
+| `DualFrontier.Persistence.Tests` | Persistence encoders; thin | section 3.1 |
+| `DualFrontier.Systems.Tests` | Systems smoke and the native-world fixture; thin | section 3.1 |
+| `DualFrontier.Analyzers.Tests` | Per-rule analyzer verifiers plus the census meta-tests | section 3.5, section 3.8 |
+| `DualFrontier.Governance.Tests` | The governance tool: gate failability fixtures, schema and cross-reference gates, authority surface, boundary ratchet | section 3.8 |
 
-Run-reported totals exceed attribute-site counts where `[Theory]` rows expand (Modding, Runtime, Core.Interop); `Core.Tests` reports fewer than its 96 sites because the 2026-06-11 run crashed before full reporting (§2.6).
+Run-reported totals exceed attribute-site counts where `[Theory]` rows expand and where host-gated attributes (section 2.6 item 3) replace `[Fact]`.
 
 ### §2.2 — Non-test executables under tests/ (2)
 
@@ -89,31 +89,31 @@ Two projects live under `tests/` but are **not dotnet-test-invocable** (`OutputT
 - `tests/DualFrontier.Core.Benchmarks` — BenchmarkDotNet 0.13.12 console executable. Run via `dotnet run -c Release`, never via `dotnet test`. Benchmarks measure; they do not gate — no regression-gate artifact exists (any future gate appears first as `Planned — see docs/ROADMAP.md`).
 - `tests/DualFrontier.Runtime.SmokeTest` — standalone smoke executable for manual runtime verification.
 
-A closure report that says «all tests pass» refers to the nine §2.1 projects plus the native selftest (§2.5); it makes no claim about these two executables unless it ran them and says so.
+A closure report that says "all tests pass" refers to the section 2.1 projects plus the native selftest (section 2.5); it makes no claim about these two executables unless it ran them and says so.
 
-### §2.3 — Fixture mod projects (19)
+### §2.3 — Fixture mod projects
 
-Nineteen `tests/Fixture.*` projects feed the Modding suite:
+The `tests/Fixture.*` projects feed the Modding suite. All are members of `DualFrontier.sln` (`ls -d tests/Fixture.*` is the measure):
 
-- **6 in the solution**: `Fixture.SharedEvents`, `Fixture.PublisherMod`, `Fixture.SubscriberMod`, `Fixture.BadRegularMod`, `Fixture.BadSharedMod_WithIMod`, `Fixture.VanillaMod_HotReloadOverride`.
-- **13 disk-only** (`Fixture.RegularMod_*`, pulled transitively when `DualFrontier.Modding.Tests` builds): `BadApiVersion`, `CyclicA`, `CyclicB`, `DependedOn`, `DependsOnAnother`, `DependsOnBadApi`, `DepsBadVersion`, `MissingOptional`, `MissingRequired`, `ReplacesCombat`, `ReplacesCombat_Alt`, `ReplacesProtected`, `ReplacesUnknown`.
+- the named fixtures: `Fixture.SharedEvents`, `Fixture.PublisherMod`, `Fixture.SubscriberMod`, `Fixture.BadRegularMod`, `Fixture.BadSharedMod_WithIMod`, `Fixture.VanillaMod_HotReloadOverride`, `Fixture.WeatherGateNegative`;
+- the `Fixture.RegularMod_*` family (pulled when `DualFrontier.Modding.Tests` builds): `BadApiVersion`, `CyclicA`, `CyclicB`, `DependedOn`, `DependsOnAnother`, `DependsOnBadApi`, `DepsBadVersion`, `MissingOptional`, `MissingRequired`, `ReplacesCombat`, `ReplacesCombat_Alt`, `ReplacesProtected`, `ReplacesUnknown`.
 
 The wiring is the **cross-ALC projection pattern**: `DualFrontier.Modding.Tests.csproj` references fixtures with `<ReferenceOutputAssembly>false</ReferenceOutputAssembly>`, so fixture binaries are built and copied for the suite to load through real `AssemblyLoadContext` machinery while their types stay out of the test assembly's compile-time graph. This is what makes the isolation tests honest — the test project cannot accidentally hold compile-time references to what the ALC boundary is supposed to block.
 
-### §2.4 — Mod projects (7)
+### §2.4 — Mod projects
 
-`mods/` holds 7 mod projects: `DualFrontier.Mod.Example` (in solution) and 6 disk-only `DualFrontier.Mod.Vanilla.*` (Combat, Core, Inventory, Magic, Pawn, World). They are production mod surface, not test fixtures; they appear here because Phase β analyzer sweeps include them (brief A'.9.1 §7.2 violation inventory counts `mod_violations` separately).
+`mods/` holds the mod projects: `DualFrontier.Mod.Example`, the `DualFrontier.Mod.Vanilla.*` family (Combat, Core, Inventory, Magic, Pawn, Scenario, World), `DualFrontier.Mod.Weather` and `DualFrontier.Mod.Weather.Contracts`; all are solution members. They are production mod surface, not test fixtures; they appear here because analyzer sweeps include them (brief A'.9.1 §7.2 violation inventory counts `mod_violations` separately).
 
 ### §2.5 — Native selftest
 
-`df_native_selftest.exe` — a CMake target in `native/DualFrontier.Core.Native`, source `native/DualFrontier.Core.Native/test/selftest.cpp`. It is a standalone executable running `DF_CHECK`-macro scenario functions; it prints `ALL PASSED` and exits 0 on success, or prints the failure count and exits 1. It is **not under `dotnet test`** and is invoked as an exe (§8). Binaries exist on disk for both configurations: `native/DualFrontier.Core.Native/build/Debug/df_native_selftest.exe` and `.../build/Release/df_native_selftest.exe`.
+`df_native_selftest` -- a CMake target in `native/DualFrontier.Core.Native`, source `native/DualFrontier.Core.Native/test/selftest.cpp`. It is a standalone executable running `DF_CHECK`-macro scenario functions; it prints `ALL PASSED` and exits 0 on success, or prints the failure count and exits 1. It is **not under `dotnet test`** and is invoked as a binary (section 8). The Linux build tree is single-config (Ninja): the binary is `native/DualFrontier.Core.Native/build/df_native_selftest`, with no per-configuration subdirectories.
 
 ### §2.6 -- Honesty register: known-failing and quarantined tests
 
 As of the F-29 native-scheduler cascade (2026-07-04) the F-29 defects are resolved and this register
 states the current honest state. No test fails deterministically in per-project isolation, and the full
-Core.Tests run is green + stable. Two quarantine categories remain, declared here so no cascade silently
-absorbs them (F-ledger: docs/ROADMAP.md Findings ledger).
+Core.Tests run is green + stable. Two quarantine categories and one host-capability class remain,
+declared here so no cascade silently absorbs them (F-ledger: docs/ROADMAP.md Findings ledger).
 
 1. Quarantined -- do not run (managed marathon, F-30). One SchedulerExtremeTests scenario: S2
    (S2_ParallelSystemScheduler_..., 200,000-tick TPL steady-state over a pre-built 80-system phase
@@ -132,6 +132,18 @@ absorbs them (F-ledger: docs/ROADMAP.md Findings ledger).
    the lighter bus tests). Carry [Fact(Skip = "F-31: ...")]; re-tuning (down-scale, or a process-isolated
    harness) is architect-owned. Recorded, not absorbed.
 
+3. Host-capability skips -- skipped by design where the host lacks the capability, never failed. Tests
+   carrying the capability-probing attributes of
+   `tests/DualFrontier.Runtime.Tests/TestInfrastructure/PlatformFacts.cs` (`RequiresVulkanFact`,
+   `RequiresVulkanTheory`, `RequiresDisplayFact`, `RequiresXcbFact`, `RequiresVulkanValidationFact`)
+   probe the host -- a Vulkan loader, a reachable X display (an xcb connection is actually opened), the
+   Khronos validation layer -- and skip with a stated reason when it is absent. On the reference host
+   exactly one such test skips, because the validation layer is not installed:
+   `RuntimeCompositionTests.Create_with_validation_enabled_composes_validation_layer`. A skip of this
+   class is a host fact, not a defect, and the closure report names it. Without a reachable `DISPLAY`
+   the display-gated tests also skip, so the baseline of section 2.7 is only comparable from a session that
+   has one.
+
 RESOLVED at the F-29 cascade (both were recorded here at 2.1.0). (a) The F-29(b) scale non-completers S1
 (50k x 3k) and S7 (250k) now complete and are un-quarantined -- the O(N^2) graph rebuild is O(N+E)
 index-keyed (system_graph.cpp); the "native mutex above ~90k" hypothesis was REFUTED (there is no lock
@@ -142,14 +154,15 @@ singleton-touching test classes) plus a native fail-loud concurrency detector on
 SchedulerStressTests.NativeGraph_FiveThousandSystems_RandomDag_... passes.
 
 The now-resolved F-10 members are in git history and the F-ledger (F-10 CLOSED): the three
-GameBootstrapIntegrationTests.CreateLoop_RunningLoop_* tests were flaky under xUnit intra-suite
+CreateLoop_RunningLoop_* tests of the former GameBootstrapIntegrationTests (now
+EngineComposerIntegrationTests) were flaky under xUnit intra-suite
 parallelism and are fixed (serial GameLoopSerial collection + poll-until-condition, replacing fixed
 Thread.Sleep windows); the shutdown "wedge" was root-caused as a stdout-pipe deadlock -- an invocation
 hazard, not a test hang -- and is codified in §8.
 
 ### §2.7 — Grand total at survey
 
-**1036 tests reported / 1034 passing** across the nine §2.1 projects (2026-06-11, Release, per-project invocations). This number is a survey snapshot, not a pin: test counts move with every cascade and are tracked per-brief via the §6.1 count delta.
+Suite baseline 1441 passed / 0 failed / 6 skipped. Measured across the section 2.1 projects (Release, `dotnet test DualFrontier.sln`, at the REV_0 closure on `032c587`; `src/`, `tests/` and `native/` are identical at the later `54a9577`). The six skips are the five section 2.6 quarantines (items 1-2) and the one host-gated validation-layer test (item 3). This number is a survey snapshot, not a pin: test counts move with every cascade and are tracked per-brief via the section 6.1 count delta.
 
 ### §2.8 — Shared-native-singleton test isolation
 
@@ -179,8 +192,8 @@ The native event bus is already internally synchronised (per-tier mutexes) and i
 multi-producer publish, so it is not detector-guarded (an acquire-or-fail detector there would reject
 legitimate publishers); its cross-test disruption was a semantic issue fully closed by the shared
 collection. The scheduling-policies and event-type registries are covered by the collection requirement;
-extending the native detector to them is a candidate future hardening (the K-L20 analyzer-rule family —
-see docs/ROADMAP.md).
+extending the native detector to them is a candidate future hardening (an Analyzer-track candidate; see
+`docs/ROADMAP.md` section Analyzer track).
 
 ## §3 — Layer taxonomy (DF-adapted)
 
@@ -194,19 +207,19 @@ Forbidden in managed unit: P/Invoke or native handle acquisition (that is §3.2)
 
 ### §3.2 — Interop boundary
 
-Tests that exercise the P/Invoke surface against the real native DLL: marshalling shape, handle lifetime, error-code propagation, span protocol. The suite is `DualFrontier.Core.Interop.Tests` (199 attribute sites across 26 files) — the canonical pattern for any new `[DllImport]` surface. A new interop entry point without a boundary test in this suite is a review defect.
+Tests that exercise the P/Invoke surface against the real native DLL: marshalling shape, handle lifetime, error-code propagation, span protocol. The suite is `DualFrontier.Core.Interop.Tests` -- the canonical pattern for any new `[DllImport]` surface. A new interop entry point without a boundary test in this suite is a review defect.
 
 ### §3.3 — Integration
 
-Several real components composed through the real bus/bootstrap, no mocks of project-owned surfaces. Exemplar: `GameBootstrapIntegrationTests` (`tests/DualFrontier.Modding.Tests/Bootstrap/`) — boots the real `GameBootstrap` composition and asserts cross-component behavior. Integration tests carry `[Trait("Category", "Integration")]` (§3.7 lists the measured trait census). The composition under test must be the production composition; a test passing against a wiring that production does not use verifies nothing.
+Several real components composed through the real bus/bootstrap, no mocks of project-owned surfaces. Exemplar: `EngineComposerIntegrationTests` (`tests/DualFrontier.Modding.Tests/Loop/`) -- builds the real `EngineComposer` session through the production constructor chain and asserts cross-component behavior. Integration tests carry `[Trait("Category", "Integration")]` (§3.7 lists the measured trait census). The composition under test must be the production composition; a test passing against a wiring that production does not use verifies nothing.
 
 ### §3.4 — Modding-ALC isolation
 
-The project's strongest suite: `DualFrontier.Modding.Tests` (382 attribute sites across 45 files) plus the 19-fixture projection of §2.3. Verifies that `AssemblyLoadContext` boundaries actually hold: load/unload lifecycles, capability enforcement, dependency-graph resolution, hot reload, manifest validation, shared-ALC semantics. Internal harness: `tests/DualFrontier.Modding.Tests/Fixtures/SchedulerTestFixture.cs` (an internal static helper — note for history: the public builder-style `SchedulerFixture` API described by v1.0 of this document never existed). New mod-facing surface gets its isolation tests here, against real fixture mods, never against in-assembly stand-ins.
+The project's strongest suite: `DualFrontier.Modding.Tests` plus the fixture projection of §2.3. Verifies that `AssemblyLoadContext` boundaries actually hold: load/unload lifecycles, capability enforcement, dependency-graph resolution, hot reload, manifest validation, shared-ALC semantics. Internal harness: `tests/DualFrontier.Modding.Tests/Fixtures/SchedulerTestFixture.cs` (an internal static helper — note for history: the public builder-style `SchedulerFixture` API described by v1.0 of this document never existed). New mod-facing surface gets its isolation tests here, against real fixture mods, never against in-assembly stand-ins.
 
 ### §3.5 — Analyzer tests
 
-**The convention is standing law; its population landed at A'.9.1 Phase β (the 54-test suite — §2.1's one-Fact placeholder row is the dated 2026-06-11 survey record).**
+**The convention is standing law and is realized in `DualFrontier.Analyzers.Tests`.**
 
 Convention: every active analyzer rule (`DFK###`/`DFL###`/`DF999`, specified in `docs/architecture/ANALYZER_RULES.md`) receives, at the cascade that lands its detection logic, a per-rule verifier class in `DualFrontier.Analyzers.Tests` built on the `Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit` harness, with at minimum:
 
@@ -215,7 +228,7 @@ Convention: every active analyzer rule (`DFK###`/`DFL###`/`DF999`, specified in 
 
 Rules with sub-cases (the underscore descriptor variants `DFK003_1`, `DFL025_A` — the dotted/hyphen forms were superseded by the Phase β descriptor-ID adjudication) get positive+negative pairs per sub-case. A Phase β commit that lands detection logic without the paired verifier tests is incomplete by definition of this section.
 
-Convention shape (realized at Phase β across the 17-rule suite; illustrative sample):
+Convention shape (realized at Phase β across the rule suite; illustrative sample):
 
 ```csharp
 // tests/DualFrontier.Analyzers.Tests/Rules/Architecture/Dfk003StorageOwnershipVerifierTests.cs
@@ -237,21 +250,21 @@ public sealed class Dfk003StorageOwnershipVerifierTests
 }
 ```
 
-Current truth: all 17 rules under `tools/DualFrontier.Analyzers/Rules/` carry detection logic (§5.2), enforced at their shipped severities since Phase γ, and `DualFrontier.Analyzers.Tests` carries the 54-test Phase β suite — per-rule positive/negative verifiers + harness + census meta-tests. The verifier classes are severity-transparent: expected severities derive from the descriptors, so a severity promotion is test-neutral by construction.
+Current truth: every rule in the `ANALYZER_RULES.md` section 1.1 registry carries detection logic (§5.2), enforced at its shipped severity, and `DualFrontier.Analyzers.Tests` carries the per-rule positive/negative verifiers + harness + census meta-tests. The verifier classes are severity-transparent: expected severities derive from the descriptors, so a severity promotion is test-neutral by construction.
 
 ### §3.6 — Native selftest
 
-`DF_CHECK` scenario functions in `native/DualFrontier.Core.Native/test/selftest.cpp`, compiled into the standalone `df_native_selftest.exe` (§2.5). Native kernel invariants (storage ownership, pipeline state machine, mod-unload quiescence, etc.) are tested here, at the layer that owns them. A native-touching cascade adds its scenarios here and runs the exe in both configurations at closure (METHODOLOGY §12.7 step 1).
+`DF_CHECK` scenario functions in `native/DualFrontier.Core.Native/test/selftest.cpp`, compiled into the standalone `df_native_selftest` (§2.5). Native kernel invariants (storage ownership, pipeline state machine, mod-unload quiescence, etc.) are tested here, at the layer that owns them. A native-touching cascade adds its scenarios here and runs the binary at closure (METHODOLOGY §12.7 step 1).
 
 ### §3.7 — Stress and extreme
 
-Heavy tests are partitioned by xUnit traits so default runs stay fast and closure runs stay complete. Measured trait census (2026-06-11):
+Heavy tests are partitioned by xUnit traits so default runs stay fast and closure runs stay complete. Measured trait census (54a9577; instrument: attribute applications, `rg -n '^\s*\[(.*, *)?Trait\("Category", ?"<v>"\)' tests --type cs`):
 
-| Trait value | Sites | Files |
+| Trait value | Applications | Where |
 |---|---:|---|
-| `Stress` | 4 | `SchedulerStressTests.cs` (×2), `ModDependencyGraphStressTests.cs` (×2) |
-| `Extreme` | 1 | `SchedulerExtremeTests.cs` |
-| `Integration` | 6 | `GameBootstrapIntegrationTests.cs` (×3), `M74BuildPipelineTests.cs` (×3) |
+| `Stress` | 2 | `SchedulerStressTests.cs` (class), `ModDependencyGraphStressTests.cs` (class) |
+| `Extreme` | 1 | `SchedulerExtremeTests.cs` (class) |
+| `Integration` | 4 | `M74BuildPipelineTests.cs` (x2), `ScenarioWaveGateTests.cs` (x1), `EngineComposerIntegrationTests.cs` (x1) |
 
 These three are the only `[Trait("Category", …)]` values in the repository. Inclusion/exclusion is via `--filter` (§8). New heavy tests MUST carry `Stress` or `Extreme`; untagged heavy tests that slow the default sweep are review defects. New trait values are introduced only by amending this table (§9.1).
 
@@ -269,10 +282,26 @@ registered rg expressions remain the closure-audit cross-check (§7). The fixtur
 fixture the Modding suite consumes is staged under Fixtures/ -- a fail-fast structural check that turns
 a missing-fixture deployment gap into one clear failure instead of many cryptic assembly-load errors
 (§2.3). (Supersedes the dated "NONE exist" record -- the pre-beta survey state, closed as F-28(a).)
+The governance suite (`tests/DualFrontier.Governance.Tests`) is meta layer too: its subject is the
+governance tool, and it carries the gate-failability fixtures and the engine-to-game boundary ratchet
+(`BoundaryRatchetTests`).
+
+Gate failability. The law is `FRAMEWORK.md` section 14.2 (the tool-law relation) and section 14.8 (the
+deployment discipline): a machine gate of the governance tool is trusted only after a red result on a
+synthetic violating fixture and a green result on a clean one, kept as tests; a gate that has never been
+red is presumed vacuous. The test-layer home is this meta layer: `tests/DualFrontier.Governance.Tests`
+holds the fixtures (a shared green baseline plus `_Red_`/`_Green_` pairs) for the governance gates.
+
+Failability convention (additive; it is not a section 7 closure obligation):
+a new gate, pin, ratchet or guard is watched red once by a deliberate break that reproduces the pre-fix state, then restored; both readings go in the commit body or report.
+A green build under a newly added Error rule, or a green census test
+under a newly set pin, is ambiguous until that break has been watched.
 
 ## §4 — Meta-test and census patterns
 
 The core graft of v2.0.0. Each census below is a CONTRACT: an exact pin, a registered measuring expression, and a same-commit update obligation. Censuses keep the repository's declared debt honest — the point is not to prevent reserved surface, but to make its every change deliberate and recorded.
+
+This section owns the census pins; `CODING_STANDARDS.md` section 5 registers the families and their expressions and points here for the values. The compiled meta-test `tests/DualFrontier.Analyzers.Tests/CensusMetaTests.cs` is the carrier of the live values: a value written in this section is the last audited reading, and where the two differ the meta-test is the truth and this section is corrected. Live pins (CensusMetaTests at 54a9577): ReservedStub 34/13, stub 51/20, deferred 86/53, TODO 132/51, not yet 10/9, Phase 6 23/11, waiver disables 3, SuppressMessage 0.
 
 ### §4.1 — Reserved-surface census pin
 
@@ -304,17 +333,20 @@ public void ReservedSurfaceCensus_MatchesExactPin()
 
 ### §4.2 — Marker-family censuses
 
-One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Patterns verbatim; baselines registered 2026-06-11, `stub`/`deferred` refreshed 2026-07-01 (the F-25 owed fold — drift from the 2026-06-12 comment-citation pass), `TODO` and `deferred` refreshed 2026-08-22 to the values the compiled meta-tests have been carrying (`TODO` 136/53 → 132/51 at W3's stub deletion; `deferred` 82/51 → 87/54 across EQ_A2, W1, W2, W3 and ID_B). The compiled meta-tests remain the live carrier; this table is the registered expression plus its last audited value:
+One census per doc-tag family registered in `CODING_STANDARDS.md §5.2`. Patterns verbatim; baselines registered 2026-06-11, `stub`/`deferred` refreshed 2026-07-01 (the F-25 owed fold — drift from the 2026-06-12 comment-citation pass), `TODO` and `deferred` refreshed 2026-08-22 to the values the compiled meta-tests have been carrying (`TODO` 136/53 → 132/51 at W3's stub deletion; `deferred` 82/51 → 87/54 across EQ_A2, W1, W2, W3 and ID_B); `deferred` refreshed 2026-11-21 to the value the compiled meta-test carries (87/54 -> 86/53). The compiled meta-tests remain the live carrier; this table is the registered expression plus its last audited value:
 
 | Family | Census expression | Baseline (matches / files) |
 |---|---|---|
 | `stub` | `rg --count-matches -i '\bstub\b' src/ --type cs` | 51 / 20 |
-| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 87 / 54 |
+| `deferred` | `rg --count-matches -i '\bdeferred\b' src/ --type cs` | 86 / 53 |
 | `TODO` (case-sensitive) | `rg --count-matches '\bTODO\b' src/ --type cs` | 132 / 51 |
 | `Phase 6` (literal) | `rg --count-matches 'Phase 6' src/ --type cs` | 23 / 11 |
 | `not yet` | `rg --count-matches -i 'not yet' src/ --type cs` | 10 / 9 |
 
-Same exactness-pin contract as §4.1: a commit that moves a family's count records the delta in its commit body (`CODING_STANDARDS.md §8`); the closure audit re-measures all five (§7). The baselines impose **no retroactive cleanup obligation** — existing sites are baseline-registered and normalized opportunistically; the census exists so that drift is visible, not to manufacture work. Implementation state: compiled meta-tests assert all five families since Phase β; the rg expressions remain the closure-audit cross-check (§7).
+Same exactness-pin contract as §4.1: a commit that moves a family's count records the delta in its commit body (`CODING_STANDARDS.md §8`); the closure audit re-measures all five (§7). The baselines impose **no retroactive cleanup obligation** — existing sites are baseline-registered and normalized opportunistically; the census exists so that drift is visible, not to manufacture work. Implementation state: compiled meta-tests assert all five families since Phase β; the rg expressions remain the closure-audit cross-check (§7). A comment rewritten in a touched file (`CODING_STANDARDS.md` section 6.3, touched-file rule) may move a family's count; the commit moves the pin and records the delta (section 4.1 rule 2) -- the pins track the tree, they do not protect the words.
+
+Under `CODING_STANDARDS.md` section 5.2, the census family "Phase 6" is a counted LEGACY backlog: no new site; the pin only falls, through touched-file conversions, each with its census-delta.
+The meta-test still asserts the exact pin (no direction, as in section 4.1 rule 3); "no new site" is held by review.
 
 ### §4.3 — DFK-WAIVER census
 
@@ -326,7 +358,7 @@ Same exactness-pin contract as §4.1: a commit that moves a family's count recor
 
 (Since Phase β the `tests/` tree contains `SuppressMessage` as string literals inside analyzer-test fixtures; attribute usage in `src/` remains 0 and no `GlobalSuppressions.cs` exists — the compiled meta-tests assert both.)
 
-Every increase requires the full waiver form and authority citation of `CODING_STANDARDS.md §5.3` (waiver comment with a resolvable authority — Q-L-#, К-L#, F-#, or refinement reference — immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β surfaced real diagnostics and moved the census exactly as designed — 0 → 2, both waivers carrying their §5.3 citations (the recorded-decision discipline held). ID_B moved it 2 → 3 the same way, with one difference worth noting: that waiver was ratified in the brief BEFORE the rule shipped, so the movement was a planned pin change rather than a triage discovery.
+Every increase requires the full waiver form and authority citation of `CODING_STANDARDS.md §5.3` (waiver comment carrying the authority citation that `CODING_STANDARDS.md` section 5.3 requires, immediately preceding a minimally-scoped disable/restore pair). The census runs at every cascade closure (§7); a waiver appearing without its §5.3 citation fails the closure audit. Phase β surfaced real diagnostics and moved the census exactly as designed — 0 → 2, both waivers carrying their §5.3 citations (the recorded-decision discipline held). ID_B moved it 2 → 3 the same way, with one difference worth noting: that waiver was ratified in the brief BEFORE the rule shipped, so the movement was a planned pin change rather than a triage discovery.
 
 ### §4.4 — S-LOCK → verification obligation
 
@@ -340,19 +372,19 @@ Every S-LOCK declared by an active brief names its **verifying artifact**: a tes
 
 Every testable validation criterion a brief declares maps to **one named test** (a `Fact`/`Theory` whose name appears in the brief's §6.1 test list, or a named native selftest scenario). The mapping is mechanical: the closure audit can walk criterion → test name → green run. A criterion mapped to «covered by the suite generally» is not mapped.
 
-Worked examples from the surveyed tree (real artifacts, both verified on disk 2026-06-11):
+Worked examples from the surveyed tree (real artifacts, all verified on disk 2026-11-21):
 
 | Criterion | Named test | Layer (§3) |
 |---|---|---|
 | К-L18 — mod unload refused while pipeline holds a dispatched slot | `scenario_mod_unload_fails_when_pipeline_has_dispatched_slot` (`native/DualFrontier.Core.Native/test/selftest.cpp`) | §3.6 native selftest |
 | К-L18 — unload succeeds once pipeline is quiescent after tail transition | `scenario_mod_unload_succeeds_when_pipeline_quiescent_after_tail_transition` (same file) | §3.6 native selftest |
-| Bootstrap pawn naming reaches the render command stream | `GameBootstrapIntegrationTests.CreateLoop_RunningLoop_PawnStateCommandCarriesRealName` | §3.3 integration — currently an F-ledger known failure (§2.6); the mapping stands, the criterion is honestly OPEN |
+| The running loop publishes tick-advanced commands through the presentation bridge | `EngineComposerIntegrationTests.CreateSession_RunningLoop_PublishesTickAdvancedCommandsThroughBridge` (`tests/DualFrontier.Modding.Tests/Loop/EngineComposerIntegrationTests.cs`) | section 3.3 integration -- locks the GameLoop -> PresentationBridge publishing path in the production composition |
 
 ### §5.2 — К-L invariants: machine-checkable vs architect-audited
 
 К-Lxx invariants split by verification mode, and the split is stated explicitly — no fake coverage claims:
 
-- **Machine-checkable (live since A'.9.1 Phase β/γ):** invariants with a specified analyzer rule in `docs/architecture/ANALYZER_RULES.md` §4.1 (rule registry). Current truth: the 17 rules detect (Phase β) and are **enforced at their shipped severities** (Phase γ, Release 1.0) — 11 Error + 5 Warning fail the build under `TreatWarningsAsErrors`; DFL025_B is IDE-only (descriptor Info / `.editorconfig` `suggestion`). `AnalyzerReleases.Shipped.md` records Release 1.0; the root `.editorconfig` restates the same severities; per-rule positive/negative verifier tests run in `tests/DualFrontier.Analyzers.Tests` (§3.5, severity-transparent). Meta-test census contracts (§4) are the second machine-checkable channel — the compiled census meta-tests assert the pins from inside the suite.
+- **Machine-checkable (live since A'.9.1 Phase β/γ):** invariants with a specified analyzer rule in `docs/architecture/ANALYZER_RULES.md` §4.1 (rule registry). Current truth: every rule in the `ANALYZER_RULES.md` section 1.1 registry detects and is **enforced at its shipped severity** -- Error and Warning fail the build under `TreatWarningsAsErrors`; DFL025_B is IDE-only (descriptor Info / `.editorconfig` `suggestion`). `AnalyzerReleases.Shipped.md` and `AnalyzerReleases.Unshipped.md` record the releases; the root `.editorconfig` restates the same severities; per-rule positive/negative verifier tests run in `tests/DualFrontier.Analyzers.Tests` (§3.5, severity-transparent). Meta-test census contracts (§4) are the second machine-checkable channel — the compiled census meta-tests assert the pins from inside the suite.
 - **Architect-audited (now):** invariants not machine-checkable are verified by explicit architect audit with recorded evidence. The exemplar is `docs/architecture/K_L14_EVIDENCE_DASHBOARD.md` — К-L14 holds because each verification event is individually recorded with its outcome (including honest soft-halts), not because a test claims it. A document that says an invariant «is enforced» must name either the artifact (rule + verifier test, meta-test, build property) or the audit record; otherwise the claim is removed.
 
 ### §5.3 — The lying-stub law (Lesson #25 / Lesson #N12)
@@ -375,7 +407,7 @@ For each commit that adds or modifies tests, the owning brief specifies:
 2. **Named test list** — every test as the `Fact`/`Theory` method name it will bear, one line each (native scenarios likewise by function name).
 3. **Layer assignment per §3** — explicit, e.g. «4 interop boundary + 2 modding-ALC + 1 native selftest scenario». A test whose name implies one layer but is listed under another is a halt-grade brief defect.
 4. **Coverage anchors** — which validation criteria, К-L invariants, S-LOCKs, or F-ledger entries the commit's tests cover (§5.1 mapping, stated per test or per group).
-5. **1–2 representative test bodies** — full code for the trickiest case(s) only; the executor expands the rest from the named list using this document's layer patterns.
+5. **1–2 representative test bodies** — full code for the trickiest case(s) only; the writing agent expands the rest from the named list using this document's layer patterns.
 6. **Count delta** — «+N tests this commit; suite total before → after», making the closure count audit mechanical.
 
 Mandatory carry format (per-commit, inside the brief's test section):
@@ -390,7 +422,7 @@ Mandatory carry format (per-commit, inside the brief's test section):
 Representative test body — <name of the one critical test>:
 
 ```csharp
-// full code of the trickiest case only; the executor expands the rest
+// full code of the trickiest case only; the writing agent expands the rest
 // from the named list using the §3 layer patterns.
 ```
 
@@ -432,56 +464,55 @@ Every cascade closure includes, in its closure report, in addition to — extend
 
 ## §8 — Test invocation truth
 
-Commands verified working as of 2026-06-11. These exact strings are the law of invocation; briefs cite, sessions copy-paste.
+Commands verified working on the reference host (Linux, bash). These exact strings are the law of invocation; briefs cite, sessions copy-paste. They assume the shell setup of `DEVELOPMENT_HYGIENE.md` section 6 (environment notes):
 
-**Full solution:**
+    export DOTNET_ROOT="$HOME/.dotnet"; export PATH="$HOME/.dotnet:$PATH"
+    export MSBUILDDISABLENODEREUSE=1
 
-```
-dotnet test DualFrontier.sln -c Release --logger "console;verbosity=minimal"
-```
+Build first (native before managed, `DEVELOPMENT_HYGIENE.md` section 3, build commands: `dotnet build DualFrontier.sln -c Release`); the test commands below use `--no-build`.
 
-Testhost file-lock caveat: a stale `testhost.exe` (left by an IDE test runner or a concurrent run) holds `DualFrontier.Modding.Tests` bin files and produces MSB3026/MSB3027 retry warnings or copy failures — close other runners before solution-wide runs.
-
-Invocation safety -- never pipe dotnet test (the shutdown-pipe-deadlock law).
+**Invocation safety -- never pipe dotnet test; redirect it to a file.**
 
 Under load a testhost can linger in shutdown holding the write end of an inherited stdout pipe; a
 `dotnet test ... | <consumer>` pipeline then blocks forever on an EOF that never arrives (observed as
 a ~50-minute shell wedge on an all-passing suite -- no crash or hang required, F-10 recon 2026-07-02).
-The durable result is the TRX, written independently of stdout: on a killed run the pass/fail verdict
-is in the TRX, not the lost piped console.
+Persistent MSBuild node-reuse nodes inherit redirected pipes the same way and hang tests that spawn
+child builds (`M74BuildPipelineTests`, F-48); `MSBUILDDISABLENODEREUSE=1` prevents that. The durable
+result is the TRX, written independently of stdout: on a killed run the pass/fail verdict is in the
+TRX, not in a lost console.
 
-Standing rule: never pipe dotnet test into a shell consumer (| Add-Content, | Tee-Object, | Out-File
-via pipe). Run it under a process launcher with file redirection and a watchdog that snapshots and
-kills lingering testhosts on timeout, and read results from --logger "trx". Verified-working harness
-shape (PowerShell 5.1):
+Standing rule: never pipe `dotnet test` into a consumer (`| tee`, `| grep`, `| tail`, `| head`). Run it
+under `timeout` with stdout and stderr redirected to a file, and read the verdict from the exit code,
+the per-assembly `Passed!`/`Failed!` lines of the log, and the TRX. Verified-working shape (bash):
 
-    $p = Start-Process dotnet -ArgumentList @('test', <proj>, '-c', <cfg>, '--no-build',
-             '--logger', 'trx;LogFileName=<label>.trx', '--results-directory', <dir>) `
-             -RedirectStandardOutput <out.log> -RedirectStandardError <err.log> `
-             -NoNewWindow -PassThru
-    if (-not $p.WaitForExit(<timeoutMs>)) {
-        # timeout: kill the tree, then sweep orphans
-        Stop-Process -Id $p.Id -Force
-        Get-Process testhost*, vstest* -ErrorAction SilentlyContinue | Stop-Process -Force
-    }
-    # verdict comes from <dir>\<label>.trx, not from the console
+    RESULTS=<a directory outside the repository tree>
+    timeout --kill-after=30s <duration> \
+        dotnet test <project-or-sln> -c Release --no-build \
+            --logger "trx;LogFileName=<label>.trx" --results-directory "$RESULTS" \
+        > "$RESULTS/<label>.out.log" 2>&1
+    rc=$?    # 0 green; 124 timed out (the verdict is then in the TRX); anything else red
 
-This is invocation law: briefs cite §8, sessions copy the harness. It composes with the file-lock
-caveat above (close other runners before solution-wide runs).
+On a timeout, `pgrep -af testhost` names what was left behind; terminate only processes this run
+started, by PID. After the run, `dotnet build-server shutdown`. This is invocation law: briefs cite section 8,
+sessions copy the shape.
 
-**Per-suite** (the closure-protocol route, per `METHODOLOGY.md §12.7` step 1):
+**Host dependence.** The baseline of section 2.7 needs a reachable X display and a Vulkan loader (`DISPLAY=:0`
+on the reference host). Display-gated tests (section 2.6 item 3) skip, not fail, without one, so a headless
+shell reports a larger skip count; closure reports name the skipped tests, not only the count.
 
-```
-dotnet test tests/DualFrontier.Core.Tests/ -c Release
-dotnet test tests/DualFrontier.Modding.Tests/ -c Release
-# ... one invocation per §2.1 project as the closure scope requires
-```
+**Full solution:**
 
-Heavy-test exclusion (fast default sweep) and inclusion:
+    timeout --kill-after=30s <duration> dotnet test DualFrontier.sln -c Release --no-build --logger "trx;LogFileName=full.trx" --results-directory "$RESULTS" > "$RESULTS/full.out.log" 2>&1
 
-    dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category!=Stress&Category!=Extreme"
-    dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Stress"
-    dotnet test tests/DualFrontier.Core.Tests/ -c Release --filter "Category=Extreme"
+**Per-suite** (the closure-protocol route, per `METHODOLOGY.md` section 12.7 step 1) -- the same shape with
+one project path per section 2.1 project as the closure scope requires, e.g.
+`dotnet test tests/DualFrontier.Core.Tests/ -c Release --no-build ...`.
+
+Heavy-test exclusion (fast default sweep) and inclusion -- append to the shape above:
+
+    --filter "Category!=Stress&Category!=Extreme"
+    --filter "Category=Stress"
+    --filter "Category=Extreme"
 
 The fast default sweep excludes both Stress and Extreme (both are heavy). Five Extreme scenarios are
 additionally Skip-guarded (§2.6) -- S2 under F-30 (managed marathon) and the S3/S4/S5 bus ceiling-probes
@@ -489,14 +520,14 @@ under F-31 (runtime-stress artifact) -- so even an explicit Category=Extreme run
 5 skipped) rather than hanging or crashing the host. Trait values available for filtering are exactly
 those of §3.7: Stress, Extreme, Integration.
 
-**Native selftest** (standalone exe, not dotnet test):
+**Native selftest** (standalone binary, not dotnet test):
 
-```
-native/DualFrontier.Core.Native/build/Release/df_native_selftest.exe
-native/DualFrontier.Core.Native/build/Debug/df_native_selftest.exe
-```
+    ./native/DualFrontier.Core.Native/build/df_native_selftest
 
 Success criterion: prints `ALL PASSED`, exit code 0 (§2.5).
+
+**Launcher dev smoke** is a closure gate but not a test run: the command and its pass criteria live in
+`DEVELOPMENT_HYGIENE.md` section 3 (build commands).
 
 **Benchmarks** (not a test run; §2.2): `dotnet run -c Release --project tests/DualFrontier.Core.Benchmarks`.
 
@@ -509,12 +540,31 @@ Same shape as `CODING_STANDARDS.md §10`. Every amendment states:
 1. **Surface** — which §/pin/table changes (census pin updates under their same-commit contract of §4 are the routine case; taxonomy or contract changes are the deliberative case).
 2. **Rationale** — the driving decision, citing its authority (Q-series, К-L, F-entry, lesson, brief).
 3. **Semver** — PATCH (pin/baseline refresh, cross-reference fix), MINOR (new layer, new census family, new convention — additive), MAJOR (contract change: pin semantics, boundary rule, closure obligations).
-4. **REGISTER update** — `docs/governance/REGISTER.yaml` version bump + audit-trail event; frontmatter here follows by sync.
+4. **Register update** -- bump `version`, `last_modified` and the review fields in this document's own frontmatter (the source of truth, `FRAMEWORK.md` section 14.1); regenerate the derived register with `dotnet run --project tools/DualFrontier.Governance -- sync` and run `-- validate --armed`; the cascade's closure record carries the audit-trail event.
 5. **Propagation** — citing documents checked and updated. Known citers to check on amendment: active briefs (§6 consumers), `CODING_STANDARDS.md` (§5 census expression registry), `RESERVED_SURFACE_MUTABILITY.md` (census-delta law), `METHODOLOGY.md` (§12.7/§12.8 interlock), `ANALYZER_RULES.md` (§3.5 convention consumer), `docs/ROADMAP.md` (Analyzer track + F-ledger).
 
 Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_MUTABILITY.md`: any cascade commit may update them with the same-commit census-delta record, PATCH-level, no separate ratification. Everything else in §4's contracts is immutable-or-adjudicate.
 
 ### §9.2 — Change history
+
+**v2.3.0 -- 2026-11-21 -- REV_1, operator rulings 2026-11-21 (MINOR).** Section 8 is restated for the
+Linux host: the no-pipe harness becomes a bash redirect-to-file shape under `timeout` with
+`MSBUILDDISABLENODEREUSE=1` and the TRX as the verdict, the native selftest path is the single-config
+Ninja path, the host-dependence of the skip count (display, Vulkan loader, validation layer) is stated,
+and the Launcher smoke is pointed at `DEVELOPMENT_HYGIENE.md` section 3. Section 1.3 states the CI truth:
+the Gitleaks workflow is the only one, no CI job runs the build, the suite or `validate --armed` (F-92),
+acceptance is the local chain. Section 2 (landscape -- ten test projects including
+`DualFrontier.Governance.Tests`, fixtures and mods all solution members, selftest, honesty register item 3
+host-capability skips, the 1441 / 0 / 6 baseline) is brought to the tree; the section 3 exemplars and
+counts that named deleted artifacts are corrected (`EngineComposerIntegrationTests` replaces the deleted
+`GameBootstrapIntegrationTests`); the section 3.7 trait census is re-measured by attribute applications;
+section 3.8 names the governance suite and gains the gate-failability convention (additive, not a section
+7 closure obligation). Section 4 names `CensusMetaTests` as the carrier of the live pins, refreshes
+`deferred` 87/54 -> 86/53 (PATCH-class under section 9.1), records `Phase 6` as a counted legacy backlog
+and states that a touched-file comment rewrite moves pins like any other edit; section 4.3 points at
+`CODING_STANDARDS.md` section 5.3 for the waiver authority form. Section 9.1 item 4 follows the schema-2.0
+inversion (frontmatter is the source, the register is derived). MINOR per section 9.1 rule 3 (new
+invocation convention, additive).
 
 **v2.2.3 -- 2026-08-22 -- ID_B_ENTITY_VERSIONS C7 (PATCH).** Per tools/briefs/ID_B_ENTITY_VERSIONS_BRIEF.md,
 under this document's own §9.1 census-pin mutability clause. §4.3 waiver pin 2 -> 3: the third waiver is

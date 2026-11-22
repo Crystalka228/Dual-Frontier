@@ -214,7 +214,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.2.3
+  version: 2.3.0
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md
   category: C
