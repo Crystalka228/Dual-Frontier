@@ -480,18 +480,18 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.0.2
+  version: 2.1.0
   first_authored: 2026-05-12
-  last_modified: 2026-08-31
+  last_modified: 2026-11-22
   content_language: en
-  next_review_due: 2027-05-25
+  next_review_due: 2027-11-22
   title: Document Control Register — Governance Framework
   is_meta_entry: true
   meta_role: register_specification
   last_modified_commit: 7449ba8
   review_cadence: on-change+annual
-  last_review_date: 2026-05-25
-  last_review_event: 'W4_COMPOSITION_ROOT 2026-08-31 -- FRAMEWORK v2.0.1 -> v2.0.2 PATCH. Section 3.2.4 tier-4 document classes drop assets/scenes/README.md: the W4 boundary cascade deleted the BD-8 orphan cluster (the whole Scene/ DTO folder, ScenarioDef, the never-called ScenarioLoader, the .dfscene fixture and its README), so no governed document remains under assets/. Three DOC-F rows (DOC-F-ASSETS-SCENES, DOC-F-SRC-APPLICATION-SCENE, DOC-F-SRC-APPLICATION-SCENARIO) leave the register by sync, since a README carries its frontmatter at end of file and the file is gone. No schema change.'
+  last_review_date: 2026-11-22
+  last_review_event: 'MINOR 2.0.2 -> 2.1.0 2026-11-22 (REV_2 (CORPUS_REVISION_1), operator ruling 2026-11-21 on the rationale field and the architect rulings of REV_2): schema 2.0 -> 2.1. The framework describes what the tool does. Section 3.4.2 -- special_case_rationale is required only for a 3.4.1 forbidden combination; the new optional provenance_note (14.3) carries the reason for any other placement and is never an exemption. G-RATIO becomes a threshold gate; G-ROWFORM guards the findings ledger; the gate catalog (14.5) is pinned to the tool by a test. The retired 1.x regime (the PowerShell suite, the hand-edited register, the bypass log) leaves the normative text: sections 6, 7.3 and 8 are replaced by the live form, the record collapses into one paragraph of section 12, and the checks the tool does not run are named in 14.10. The 1.1.1 and 2.0.1 change rows are restored. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-Q-A45-X5
