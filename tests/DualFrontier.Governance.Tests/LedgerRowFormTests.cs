@@ -56,6 +56,8 @@ public sealed class LedgerRowFormTests
         string.Join("\n", rows) +
         "\n\nA paragraph after the table | with a pipe | is not a row.\n";
 
+    private static string RowAt(int number) => $"| F-{number} | a finding | S2 | OPEN | r |";
+
     private static IReadOnlyList<Finding> Check(params string[] rows) =>
         LedgerRowForm.ValidateTable(Table(rows).Split('\n'), Config);
 
@@ -163,6 +165,16 @@ public sealed class LedgerRowFormTests
         IReadOnlyList<Finding> findings = Check(RowPlain, RowLargerId, RowBoldClosed, RowGlyphlessClosed);
 
         Structural(findings).Should().ContainSingle(f => f.Message.StartsWith("F-2") && f.Message.Contains("F-13 comes before"));
+    }
+
+    [Fact]
+    public void RowForm_Red_OneDisplacedLargeId_IsOneFinding_NotOneForEachRowBehindIt()
+    {
+        // F-13 sits ahead of three rows that follow each other in order: only the first of them is out of order
+        IReadOnlyList<Finding> findings = Check(RowPlain, RowLargerId, RowAt(2), RowAt(3), RowAt(4));
+
+        Structural(findings).Should().ContainSingle();
+        Structural(findings).Single().Message.Should().StartWith("F-2").And.Contain("F-13 comes before");
     }
 
     [Fact]
