@@ -3,7 +3,7 @@
 # (FRAMEWORK 14.1). Source of truth: the frontmatter in each document file.
 # Re-run `sync` after editing any document's frontmatter. Never hand-edited.
 schema_version: 2.1
-register_version: 2.1
+register_version: 2.0
 documents:
 - register_id: DOC-A-ANALYZER_RULES
   path: docs/architecture/historical/ANALYZER_RULES.md

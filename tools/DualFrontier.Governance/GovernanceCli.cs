@@ -24,8 +24,11 @@ public static class GovernanceCli
         };
     }
 
-    /// <summary>The register_version stamped into the derived archive when --register-version is absent.</summary>
-    public const string DefaultRegisterVersion = Validators.SchemaVersion;
+    /// <summary>
+    /// The register_version stamped into the derived archive when --register-version is absent.
+    /// It is the content label of the archive, independent of the schema version (FRAMEWORK 7.5).
+    /// </summary>
+    public const string DefaultRegisterVersion = "2.0";
 
     private static int Migrate(string[] args, bool armed)
     {

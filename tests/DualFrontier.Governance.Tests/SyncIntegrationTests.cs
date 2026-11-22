@@ -39,16 +39,16 @@ public sealed class SyncIntegrationTests
     }
 
     [Fact]
-    public void SchemaVersion_IsTwoPointOne_InBothDerivedArtifacts_AndTheCliDefault()
+    public void SchemaVersion_IsTwoPointOne_InBothDerivedArtifacts_WhileTheRegisterVersionLabelStaysItsOwn()
     {
         var docs = new[] { Fixture.Doc(("register_id", "DOC-A-X"), ("category", "A"), ("lifecycle", "Live"), ("tier", 2)) };
 
         Validators.SchemaVersion.Should().Be("2.1");
         Validators.RenderArchive(docs, new GlobalsCollections(), GovernanceCli.DefaultRegisterVersion)
-            .Should().Contain("schema_version: 2.1").And.Contain("register_version: 2.1").And.NotContain("schema_version: 2.0");
+            .Should().Contain("schema_version: 2.1").And.Contain("register_version: 2.0").And.NotContain("schema_version: 2.0");
         Validators.RenderAuthoritySurface(docs)
             .Should().Contain("schema_version: 2.1").And.NotContain("schema_version: 2.0");
-        GovernanceCli.DefaultRegisterVersion.Should().Be(Validators.SchemaVersion);
+        GovernanceCli.DefaultRegisterVersion.Should().Be("2.0", "FRAMEWORK 7.5: the register version is a content label, never derived from the schema version");
     }
 
     [Fact]
