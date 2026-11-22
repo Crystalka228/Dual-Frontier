@@ -127,6 +127,16 @@ public sealed class LedgerRowFormTests
     }
 
     [Fact]
+    public void RowForm_Red_RowEndingInAnEscapedPipe_HasNoClosingPipe()
+    {
+        // the last cell ends in an escaped pipe: five cells are counted, yet no unescaped pipe closes the row
+        IReadOnlyList<Finding> findings = Check("| F-2 | a finding | S2 | OPEN | the dual form `a \\|");
+
+        Structural(findings).Should().ContainSingle();
+        Structural(findings).Should().ContainSingle(f => f.Message.StartsWith("F-2") && f.Message.Contains("closing pipe"));
+    }
+
+    [Fact]
     public void RowForm_Red_TooFewCells()
     {
         IReadOnlyList<Finding> findings = Check("| F-3 | a finding | S2 | OPEN |");
