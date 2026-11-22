@@ -3,7 +3,7 @@ register_id: DOC-D-REV_0_BRIEF
 project: Dual Frontier
 category: D
 tier: 3
-lifecycle: Draft
+lifecycle: EXECUTED
 owner: Volodymyr (Crystalka)
 version: '1.0'
 first_authored: '2026-11-21'
@@ -12,6 +12,7 @@ content_language: en
 next_review_due: null
 title: 'REV_0 -- main is green again and the W4 governance residue is paid: docs/SECRET_SCANNING.md joins the register, the 16-item W4 residue work-order is executed, F-57/F-85/F-89/F-42 are settled, and F-90/F-91/F-92 are seeded -- the first cascade of CORPUS_REVISION_1'
 authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+last_review_event: 'REV_0 EXECUTED 2026-11-21 (EVT-2026-11-21-REV_0) on claude/rev-0, C1-C3 plus 15 review-repair commits and the C4 closure. Ratified by the operator in chat on 2026-11-21; lifecycle Draft -> EXECUTED. Orchestrator rulings R-1..R-4 supplemented the brief: R-1 voided a driver reference to a non-existent v1.1; R-2 landed the moved deferred census pin (87/54 -> 86/53) as a C3 integrator seam; R-3 ruled the lens-B repairs, including F-84 widened and F-93 seeded; R-4 ruled the two P3 repairs of the lens over the repairs. Gates: validate --armed exit 0, suite 1441/0/6, dev smoke exit 124.'
 basis: 'CORPUS_REVISION_1 recon deposits R-A/R-B/R-C/R-D + REVISION_SYNTHESIS (/mnt/Work/Temporal/corpus-revision-1/, read-only, 2026-11-21 at 3000285) + the DIST_1 Wave R residue re-verification R2 (/mnt/Work/Temporal/dist1-run/recon/R2.journal.md, Haiku, 2026-11-21 at 3000285) + the W4 residue work-order (/mnt/Work/Temporal/recon-2026-09-01/H0_RESIDUE_WORKORDER.md) + operator rulings 2026-11-21 (documents first; DIST_1 paused; its document part moves here; comment law adopted from Community Hub)'
 ---
 
