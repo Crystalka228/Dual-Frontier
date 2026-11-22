@@ -4,23 +4,21 @@ namespace DualFrontier.Core.Tests;
 
 /// <summary>
 /// Shared xUnit collection for every test class that mutates a process-global
-/// native singleton — the scheduler graph, the wake registry, the scheduling
+/// native singleton: the scheduler graph, the wake registry, the scheduling
 /// policies registry, the event-type registry, or the native event bus. All
 /// such classes carry <c>[Collection("SharedNativeSingleton")]</c>, which
 /// serialises them so that no two ever run in parallel.
 ///
-/// This closes the F-29(a) cross-class data race. An xUnit <c>[Collection]</c>
-/// serialises only its own members; the race arose because
-/// <see cref="Scheduling.SchedulerStressTests"/> (default collection) and
-/// <see cref="Scheduling.SchedulerExtremeTests"/> (formerly
-/// <c>[Collection("ExtremeSerial")]</c>) sat in DIFFERENT collections and thus
-/// ran concurrently, so one class's <c>Clear()</c>/<c>df_bus_clear()</c> raced
-/// the other's tick/publish loop over the same lock-free singleton. One shared
-/// collection is the structural fix; the native fail-loud concurrency detector
-/// (system_graph / wake_registry) is the durable net that makes an incomplete
-/// membership fail loud instead of corrupting memory.
+/// An xUnit <c>[Collection]</c> serialises only its own members. Two classes
+/// that touch the same singleton from DIFFERENT collections run concurrently,
+/// and one class's <c>Clear()</c>/<c>df_bus_clear()</c> then races the other's
+/// tick/publish loop over the same lock-free singleton. One shared collection
+/// removes that cross-class race structurally; the native fail-loud concurrency
+/// detector (system_graph / wake_registry) makes an incomplete membership fail
+/// loud instead of corrupting memory.
 ///
-/// See TESTING_STRATEGY.md — shared-native-singleton test-isolation law.
+/// See TESTING_STRATEGY.md section 2.8, the shared-native-singleton
+/// test-isolation law.
 ///
 /// Current membership: SchedulerStressTests, SchedulerExtremeTests,
 /// ManagedBusBridgeTests. A new test class that mutates any of the singletons
@@ -39,7 +37,7 @@ namespace DualFrontier.Core.Tests;
 [CollectionDefinition("SharedNativeSingleton", DisableParallelization = true)]
 public sealed class SharedNativeSingletonCollection
 {
-    // Marker only — no ICollectionFixture. Each member class performs its own
+    // Marker only: no ICollectionFixture. Each member class performs its own
     // singleton reset in its ctor/Dispose; the collection provides serialisation,
     // not shared setup state.
 }

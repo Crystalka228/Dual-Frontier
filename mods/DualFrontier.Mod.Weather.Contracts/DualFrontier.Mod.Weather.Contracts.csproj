@@ -19,7 +19,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <!-- Deploy into the Modding.Tests fixtures dir so the W3 wave gate loads this mod through
+  <!-- Deploy into the Modding.Tests fixtures dir so the Weather harness loads this mod through
        the REAL ModIntegrationPipeline, exactly as a player's install would. -->
   <Target Name="DeployToTestFixtures" AfterTargets="Build">
     <ItemGroup>

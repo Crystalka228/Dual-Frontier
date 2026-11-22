@@ -37,11 +37,11 @@ namespace DualFrontier.Core.Tests.Scheduling;
 ///
 /// Shared fixture types (TickCounter, WideBase/ChainBase, WC00..WC63 /
 /// CC00..CC15 components, W00..W63 / C00..C15 systems) live in
-/// <c>Fixtures/ParallelSystemFixtures.cs</c> — extracted 2026-05-21 so the
-/// extreme ceiling-probe suite (<c>SchedulerExtremeTests</c>) can share them.
+/// <c>Fixtures/ParallelSystemFixtures.cs</c>, so the extreme ceiling-probe
+/// suite (<c>SchedulerExtremeTests</c>) shares them.
 /// </summary>
 [Trait("Category", "Stress")]
-[Collection("SharedNativeSingleton")]  // F-29(a): serialise with every shared-native-singleton class (see SharedNativeSingletonCollection)
+[Collection("SharedNativeSingleton")]  // serialised with every shared-native-singleton class (SharedNativeSingletonCollection; TESTING_STRATEGY section 2.8)
 public sealed class SchedulerStressTests : IDisposable
 {
     public SchedulerStressTests()
@@ -56,7 +56,8 @@ public sealed class SchedulerStressTests : IDisposable
 
     // Resets every process-global native singleton this suite touches, so
     // subscriber registrations, pending events and graph state cannot leak into
-    // the next test in the same test host. Layers, top to bottom:
+    // the next test in the same test host (TESTING_STRATEGY section 2.8).
+    // Layers, top to bottom:
     //   1. Drain the Normal and Background pending queues (last-chance dispatch).
     //   2. ManagedBusBridge.ClearForTesting releases any held GCHandles and
     //      calls df_bus_clear() on the bridge instance.
@@ -81,13 +82,13 @@ public sealed class SchedulerStressTests : IDisposable
     [DllImport("DualFrontier.Core.Native", CallingConvention = CallingConvention.Cdecl)]
     private static extern void df_bus_clear();
 
-    // ════════════════════════════════════════════════════════════════════════
-    // Scenario 1 — Native scheduler + native dependency graph.
+    // ========================================================================
+    // Scenario 1 -- Native scheduler + native dependency graph.
     // Registers a 5000-system random DAG, hammers ComputePerTickGraph +
     // TickBegin in a tight loop. Validates correctness of the topology
     // builder under the heaviest single-thread compute load it will see in
     // production (registration is single-threaded by interop contract).
-    // ════════════════════════════════════════════════════════════════════════
+    // ========================================================================
 
     [Fact]
     public void NativeGraph_FiveThousandSystems_RandomDag_ComputesAndTicksWithoutError()
@@ -142,7 +143,7 @@ public sealed class SchedulerStressTests : IDisposable
         staticResult.Should().Be(SystemGraphInterop.ComputeResult.Success);
         SystemGraphInterop.StaticPhaseCount.Should().BeGreaterThan(0);
 
-        // Tick loop — the per-tick recompute + dispatch is the hot path the
+        // Tick loop -- the per-tick recompute + dispatch is the hot path the
         // native scheduler is going to live in. Failing returns from any of
         // FireTimer / ComputePerTickGraph / TickBegin would surface a
         // regression in the C++ graph or the wake registry.
@@ -169,12 +170,12 @@ public sealed class SchedulerStressTests : IDisposable
         }
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    // Scenario 2 — Managed ParallelSystemScheduler under 16-thread contention.
+    // ========================================================================
+    // Scenario 2 -- Managed ParallelSystemScheduler under 16-thread contention.
     // Builds a graph with a wide independent layer (64 systems in one phase)
     // plus a deep dependency chain. Wide layer maxes out N-2 worker
     // parallelism; deep chain validates phase-barrier sequencing under load.
-    // ════════════════════════════════════════════════════════════════════════
+    // ========================================================================
 
     [Fact]
     public void ManagedScheduler_WideLayerPlusDeepChain_DoesNotDeadlockAndExecutesAllSystems()
@@ -184,7 +185,7 @@ public sealed class SchedulerStressTests : IDisposable
         using var nativeWorld = new NativeWorld();
         var counter = new TickCounter();
 
-        // Wide layer — every fixture writes a unique component, reads nothing.
+        // Wide layer -- every fixture writes a unique component, reads nothing.
         // All wide fixtures land in phase 0 => Parallel.ForEach dispatches
         // them concurrently across the worker pool.
         SystemBase[] wide =
@@ -207,7 +208,7 @@ public sealed class SchedulerStressTests : IDisposable
             new W60(counter), new W61(counter), new W62(counter), new W63(counter),
         };
 
-        // Deep chain — each Ck reads Ck-1's write component, so the graph
+        // Deep chain -- each Ck reads Ck-1's write component, so the graph
         // builder must place them in strictly increasing phase indices.
         SystemBase[] chain =
         {
@@ -242,7 +243,7 @@ public sealed class SchedulerStressTests : IDisposable
         int expected = (wide.Length + chain.Length) * TickIterations;
         counter.Total.Should().Be(expected, "no system may be skipped or run twice per tick");
 
-        // Thread fan-out — independent systems must distribute across the
+        // Thread fan-out -- independent systems must distribute across the
         // worker pool. We don't demand exactly N-2 distinct ids (TPL is
         // allowed to under-subscribe on short tasks), but observed parallelism
         // must be meaningful.
@@ -252,12 +253,12 @@ public sealed class SchedulerStressTests : IDisposable
             "wide independent layer must fan out across the thread pool");
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    // Scenario 4 — Three-tier bus under 16-thread publish contention.
+    // ========================================================================
+    // Scenario 4 -- Three-tier bus under 16-thread publish contention.
     // Validates: Fast is synchronously dispatched (count exact), Normal is
     // batched (count exact after final drain), Background may coalesce
     // (count bounded but at least one per distinct coalesce key).
-    // ════════════════════════════════════════════════════════════════════════
+    // ========================================================================
 
     [Fact]
     public void BusTiers_AllThreeTiers_HighContentionPublish_RespectsTierContract()
@@ -299,10 +300,10 @@ public sealed class SchedulerStressTests : IDisposable
             s_normalCount = 0;
             s_backgroundCount = 0;
 
-            // Conservative per-thread counts — the native Normal-tier batch
+            // Conservative per-thread counts -- the native Normal-tier batch
             // queue has an unknown capacity at the managed boundary; over-
             // publishing risks silently dropping events and breaking the
-            // "delivered == published" invariant. 1000 × 16 = 16k per tier
+            // "delivered == published" invariant. 1000 x 16 = 16k per tier
             // = 48k total events; still enough to surface contention while
             // staying within typical queue bounds.
             const int ProducerThreads = 16;
@@ -310,7 +311,7 @@ public sealed class SchedulerStressTests : IDisposable
             const int PerThreadNormal = 1_000;
             const int PerThreadBackground = 1_000;
 
-            // 16 producer threads — each publishes the same mix. Parallel.For
+            // 16 producer threads -- each publishes the same mix. Parallel.For
             // body holds no shared state besides the native publish path, so
             // contention lives inside the C++ bus implementation, which is
             // exactly where we want it.
@@ -341,7 +342,7 @@ public sealed class SchedulerStressTests : IDisposable
                 }
             });
 
-            // Fast tier is synchronously dispatched — once Publish returns,
+            // Fast tier is synchronously dispatched -- once Publish returns,
             // the callback must have already fired. Total invocations == total
             // published.
             int expectedFast = ProducerThreads * PerThreadFast;
@@ -368,12 +369,12 @@ public sealed class SchedulerStressTests : IDisposable
                 safetyDrainIters);
 
             // Background tier dispatches on idle-slot via the native scheduler
-            // (multi-tick acceptable per К-L15). Without driving the native
+            // (multi-tick acceptable per K-L15). Without driving the native
             // scheduler in this test, queued Background events may not have
-            // dispatched yet — and coalescence at key=0 may merge them all.
+            // dispatched yet -- and coalescence at key=0 may merge them all.
             // Assert only that we did not exceed the published ceiling (no
             // ghost deliveries) and that publishing did not throw. Lower
-            // bound is intentionally 0 — a strict lower bound requires
+            // bound is intentionally 0 -- a strict lower bound requires
             // hooking the native idle-dispatch path which is out of scope
             // for a managed-only stress test.
             int expectedBackgroundCeiling = ProducerThreads * PerThreadBackground;
@@ -392,12 +393,12 @@ public sealed class SchedulerStressTests : IDisposable
         }
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    // Scenario 5 — SchedulingPolicies.OrderByPriority under 16-thread access.
+    // ========================================================================
+    // Scenario 5 -- SchedulingPolicies.OrderByPriority under 16-thread access.
     // The 5-class priority order is documented to be deterministic and pure;
     // hammering it from 16 threads simultaneously with random permutations of
     // the same input must produce identical (and correctly sorted) outputs.
-    // ════════════════════════════════════════════════════════════════════════
+    // ========================================================================
 
     [Fact]
     public void SchedulingPolicies_OrderByPriority_ParallelCalls_DeterministicAndCorrectlyOrdered()
@@ -476,7 +477,7 @@ public sealed class SchedulerStressTests : IDisposable
         return arr;
     }
 
-    // ─── Bus tier fixture events + callbacks ────────────────────────────────
+    // --- Bus tier fixture events + callbacks --------------------------------
 
     [EventTier(BusTier.Fast)]
     private struct StressFastEvent : IEvent
@@ -499,8 +500,8 @@ public sealed class SchedulerStressTests : IDisposable
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void SubscriberDelegate(uint typeId, IntPtr payload, uint payloadSize, IntPtr userData);
 
-    // Native registry rejects Background-tier registration без coalesce_fn
-    // (event_type_registry.cpp:56, К-L15 / Q-N-34). Test provides
+    // Native registry rejects Background-tier registration without coalesce_fn
+    // (event_type_registry.cpp:56, K-L15 / Q-N-34). Test provides
     // latest-wins coalesce: payload is 4-byte int, newest overwrites old.
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     private delegate void CoalesceDelegate(IntPtr dst, IntPtr src);
