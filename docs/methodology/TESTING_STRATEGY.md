@@ -233,12 +233,12 @@ Convention: every active analyzer rule (`DFK###`/`DFL###`/`DF999`, specified in 
 
 Rules with sub-cases (the underscore descriptor variants `DFK003_1`, `DFL025_A` — the dotted/hyphen forms were superseded by the Phase β descriptor-ID adjudication) get positive+negative pairs per sub-case. A Phase β commit that lands detection logic without the paired verifier tests is incomplete by definition of this section.
 
-Convention shape (realized at Phase β across the rule suite; illustrative sample):
+Convention shape (realized at Phase β across the rule suite; illustrative sample, modelled on the live `tests/DualFrontier.Analyzers.Tests/Rules/Architecture/DFK003StorageOwnershipTests.cs`, whose method names differ):
 
 ```csharp
-// tests/DualFrontier.Analyzers.Tests/Rules/Architecture/Dfk003StorageOwnershipVerifierTests.cs
+// tests/DualFrontier.Analyzers.Tests/Rules/Architecture/DFK003StorageOwnershipTests.cs
 // Harness: Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit 1.1.2 (§1.3).
-public sealed class Dfk003StorageOwnershipVerifierTests
+public sealed class DFK003StorageOwnershipTests
 {
     [Fact]
     public async Task Positive_MinimalViolatingSample_ReportsDfk003()
