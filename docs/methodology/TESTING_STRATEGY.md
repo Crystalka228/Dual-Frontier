@@ -13,7 +13,7 @@ next_review_due: 2027-06-11
 title: Testing strategy
 review_cadence: on-change+annual
 last_review_date: 2026-11-21
-last_review_event: 'MINOR 2.2.3 -> 2.3.0 2026-11-21 (operator rulings 2026-11-21, REV_1): section 8 invocation law restated for the Linux host (bash redirect-to-file harness under timeout, MSBUILDDISABLENODEREUSE, the TRX as the verdict, the native selftest path, host-capability skips); section 1.3 states the CI truth (the Gitleaks workflow is the only one; acceptance is the local chain); section 2 landscape brought to the tree; section 4 names CensusMetaTests as the carrier of the live pins and refreshes deferred 87/54 -> 86/53; section 3.8 gains the gate-failability convention. MINOR per section 9.1 rule 3 (new invocation convention, additive; the pin refresh is PATCH-class under the section 9.1 mutability clause). No lifecycle transition (LOCKED).'
+last_review_event: 'MINOR 2.2.3 -> 2.3.0 2026-11-21 (REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21): section 8 invocation law restated for the Linux host (bash redirect-to-file harness under timeout, MSBUILDDISABLENODEREUSE, the TRX as the verdict, the native selftest path, host-capability skips); section 1.3 states the CI truth (the Gitleaks workflow is the only one; acceptance is the local chain); section 2 landscape brought to the tree; section 4 names CensusMetaTests as the carrier of the live pins and refreshes deferred 87/54 -> 86/53; section 3.8 gains the gate-failability convention. MINOR per section 9.1 rule 3 (new invocation convention, additive; the pin refresh is PATCH-class under the section 9.1 mutability clause). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 ---
 
@@ -557,7 +557,7 @@ Census pins (§4.1–§4.3 values) are mutable surface under `RESERVED_SURFACE_M
 
 ### §9.2 — Change history
 
-**v2.3.0 -- 2026-11-21 -- REV_1, operator rulings 2026-11-21 (MINOR).** Section 8 is restated for the
+**v2.3.0 -- 2026-11-21 -- REV_1 (CORPUS_REVISION_1), operator rulings 2026-11-21 (MINOR).** Section 8 is restated for the
 Linux host: the no-pipe harness becomes a bash redirect-to-file shape under `timeout` with
 `MSBUILDDISABLENODEREUSE=1` and the TRX as the verdict, the native selftest path is the single-config
 Ninja path, the host-dependence of the skip count (display, Vulkan loader, validation layer) is stated,

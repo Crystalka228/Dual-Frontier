@@ -13,7 +13,7 @@ next_review_due: 2027-06-11
 title: Development hygiene
 review_cadence: on-change+annual
 last_review_date: 2026-11-21
-last_review_event: 'MAJOR 2.2.0 -> 3.0.0 2026-11-21 (CORPUS_REVISION_1, REV-1): the document describes the operational model as it runs. Sections 1-2 are re-measured against the tree (57 projects, every one a solution member); section 3 is Linux-only and gains the Launcher dev smoke, the worktree rule and the local acceptance chain (no CI job runs the build, the suite or validate); section 4 describes tools/DualFrontier.Governance and drops the retired PowerShell suite; section 5 states the merge law (a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges are forbidden, the fast-forward requirement is dropped) and the roles (the operator ratifies and merges, the architect orchestrates through subagents, the integrator is the only committer and opens the PR); section 6 is the Linux environment. MAJOR per section 8 rule 3 (operational-model change) and CODING_STANDARDS section 10.1 rule 3 (an existing rule inverted). No lifecycle transition (LOCKED).'
+last_review_event: 'MAJOR 2.2.0 -> 3.0.0 2026-11-21 (REV_1 (CORPUS_REVISION_1)): the document describes the operational model as it runs. Sections 1-2 are re-measured against the tree (57 projects, every one a solution member); section 3 is Linux-only and gains the Launcher dev smoke, the worktree rule and the local acceptance chain (no CI job runs the build, the suite or validate); section 4 describes tools/DualFrontier.Governance and drops the retired PowerShell suite; section 5 states the merge law (a pull request lands as a two-parent merge commit made by the operator, squash and rebase merges are forbidden, the fast-forward requirement is dropped) and the roles (the operator ratifies and merges, the architect orchestrates through subagents, the integrator is the only committer and opens the PR); section 6 is the Linux environment. MAJOR per section 8 rule 3 (operational-model change) and CODING_STANDARDS section 10.1 rule 3 (an existing rule inverted). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-011
@@ -249,7 +249,7 @@ Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_A
 
 ## Change history
 
-- **v3.0.0 (2026-11-21)** -- CORPUS_REVISION_1 REV-1. Sections 1-2 are re-measured against the tree: a 57-project
+- **v3.0.0 (2026-11-21)** -- REV_1 (CORPUS_REVISION_1). Sections 1-2 are re-measured against the tree: a 57-project
   solution in which every project is a member (the six original vanilla mods and the 13 `Fixture.RegularMod_*`
   projects are no longer "disk-only"), with the counting commands stated. Section 3 is Linux-only and gains the
   Launcher dev smoke, the worktree rule for the native library and the local acceptance chain (no CI job runs the
