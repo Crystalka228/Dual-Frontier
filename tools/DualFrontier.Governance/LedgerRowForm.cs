@@ -5,18 +5,22 @@ using YamlDotNet.Core;
 namespace DualFrontier.Governance;
 
 /// <summary>
-/// G-ROWFORM -- the F-ledger table keeps its own row form (FRAMEWORK 14.5).
-/// STRUCTURAL checks are <see cref="Severity.Report"/> (exit-affecting under
-/// <c>--armed</c>): every data row carries the header's cell count counted on
-/// unescaped pipes, ends with a pipe, has an id of the form <c>F-&lt;n&gt;</c>,
-/// and the ids are unique and strictly increasing, and no line shaped like a
-/// row follows the end of the table (a line that does not start with a pipe
-/// ends it, so a later row would be read by nothing). VOCABULARY checks are
-/// <see cref="Severity.Monitor"/> (printed, exit-neutral): the severity cell is
-/// in the legend set and the state cell's leading member is in the legend set.
-/// The gate reads one file named by <see cref="LedgerFormConfig"/> and is inert
-/// when the config or the file is absent, so a scratch root without a ledger
-/// stays clean.
+/// G-ROWFORM -- the F-ledger tables keep their row form (FRAMEWORK 14.5).
+/// The ledger is the files <see cref="LedgerFormConfig.Ledgers"/> names, read in
+/// config order. STRUCTURAL checks are <see cref="Severity.Report"/> (exit-affecting
+/// under <c>--armed</c>) in every file: every data row carries the header's cell
+/// count counted on unescaped pipes, ends with a pipe, has an id of the form
+/// <c>F-&lt;n&gt;</c>, the ids are strictly increasing within a file and unique
+/// across all of them, and no line shaped like a row follows the end of a table (a
+/// line that does not start with a pipe ends it, so a later row would be read by
+/// nothing). VOCABULARY checks -- the severity cell is in the legend set and the
+/// state cell's leading member is in the legend set -- carry the severity the
+/// config sets for that file: <see cref="Severity.Report"/> holds a file to the
+/// legend, <see cref="Severity.Monitor"/> (printed, exit-neutral) watches a file
+/// that keeps legacy values. The gate is inert when the config is absent, so a
+/// scratch root without a ledger stays clean; a file the config lists but the root
+/// does not hold is a structural finding naming its path, because a ledger that
+/// loses a file would otherwise lose its rows unseen.
 /// </summary>
 public static class LedgerRowForm
 {
@@ -25,7 +29,7 @@ public static class LedgerRowForm
     private static readonly Regex DetachedRow = new(@"^\s*\|\s*(F-\d+)\s*\|", RegexOptions.Compiled);
     private static readonly Regex LeadingMember = new(@"^[^A-Za-z0-9]*([A-Za-z][A-Za-z0-9-]*)", RegexOptions.Compiled);
 
-    /// <summary>Runs the gate over the ledger a root's config names; empty when the config or the file is absent.</summary>
+    /// <summary>Runs the gate over the ledger files a root's config names; empty when the config is absent, and a configured file that is absent is a structural finding.</summary>
     public static IReadOnlyList<Finding> Validate(string repoRoot)
     {
         string configPath = RepoPaths.LedgerFormPath(repoRoot);
@@ -48,27 +52,46 @@ public static class LedgerRowForm
             return Array.Empty<Finding>();
         }
 
-        string ledgerFile = Path.Combine(repoRoot, config.LedgerPath.Replace('/', Path.DirectorySeparatorChar));
-        if (!File.Exists(ledgerFile))
+        // The first file to hold an id answers for it, so a repeat in a later file names that home.
+        var idHome = new Dictionary<string, string>(StringComparer.Ordinal);
+        var findings = new List<Finding>();
+        foreach (LedgerFileConfig ledger in config.Ledgers)
         {
-            return Array.Empty<Finding>();
+            string ledgerFile = Path.Combine(repoRoot, ledger.Path.Replace('/', Path.DirectorySeparatorChar));
+            if (!File.Exists(ledgerFile))
+            {
+                findings.Add(Structural(ledger.Path,
+                    "the ledger file is listed in tools/governance/LEDGER_FORM.yaml but is absent from the root"));
+                continue;
+            }
+
+            string[] lines = File.ReadAllText(ledgerFile).Replace("\r\n", "\n").Split('\n');
+            findings.AddRange(ValidateTable(lines, config, ledger, idHome));
         }
 
-        string[] lines = File.ReadAllText(ledgerFile).Replace("\r\n", "\n").Split('\n');
-        return ValidateTable(lines, config);
+        return findings;
     }
 
     /// <summary>A Markdown table separator row: pipe-delimited cells of dashes, optionally colon-aligned.</summary>
     private static readonly Regex SeparatorRow = new(@"^\|(\s*:?-{3,}:?\s*\|)+\s*$", RegexOptions.CultureInvariant);
 
-    /// <summary>The pure check over the lines of the ledger file (no I/O).</summary>
-    public static IReadOnlyList<Finding> ValidateTable(IReadOnlyList<string> lines, LedgerFormConfig config)
+    /// <summary>
+    /// The pure check over the lines of one ledger file (no I/O). <paramref name="idHome"/> maps each id to
+    /// the path of the file that first held it and is filled as the rows are read, so passing the same map
+    /// for every file of a ledger finds an id that two files hold; null checks the one file alone.
+    /// </summary>
+    public static IReadOnlyList<Finding> ValidateTable(
+        IReadOnlyList<string> lines,
+        LedgerFormConfig config,
+        LedgerFileConfig ledger,
+        IDictionary<string, string>? idHome = null)
     {
+        idHome ??= new Dictionary<string, string>(StringComparer.Ordinal);
         var findings = new List<Finding>();
         int headerIndex = FindHeader(lines, config.IdHeader);
         if (headerIndex < 0)
         {
-            findings.Add(new Finding(GateCatalog.RowForm, Severity.Report, config.LedgerPath,
+            findings.Add(new Finding(GateCatalog.RowForm, Severity.Report, ledger.Path,
                 $"no ledger table header opening with the \"{config.IdHeader}\" column; the gate cannot read the ledger"));
             return findings;
         }
@@ -79,7 +102,6 @@ public static class LedgerRowForm
         int expectedCells = headerCells.Count;
 
         int previousNumber = -1;
-        var seenIds = new HashSet<string>(StringComparer.Ordinal);
 
         // The line after the header must be the table's separator row. When it is not,
         // that line is read as a data row, so no row escapes the checks below.
@@ -90,14 +112,14 @@ public static class LedgerRowForm
         }
         else
         {
-            findings.Add(Structural($"{config.LedgerPath}:{headerIndex + 2}",
+            findings.Add(Structural($"{ledger.Path}:{headerIndex + 2}",
                 "the ledger table has no separator row after its header"));
         }
 
         for (; i < lines.Count && lines[i].StartsWith('|'); i++)
         {
             string line = lines[i];
-            string subject = $"{config.LedgerPath}:{i + 1}";
+            string subject = $"{ledger.Path}:{i + 1}";
             List<string> cells = Cells(line);
             string id = cells.Count > 0 ? cells[0] : string.Empty;
             string label = id.Length > 0 ? id : "(row)";
@@ -121,9 +143,11 @@ public static class LedgerRowForm
             else
             {
                 int number = int.Parse(idMatch.Groups[1].Value, CultureInfo.InvariantCulture);
-                if (!seenIds.Add(id))
+                if (idHome.TryGetValue(id, out string? home))
                 {
-                    findings.Add(Structural(subject, $"{id}: duplicate ledger id"));
+                    findings.Add(Structural(subject, home == ledger.Path
+                        ? $"{id}: duplicate ledger id"
+                        : $"{id}: duplicate ledger id (also in {home})"));
                 }
                 else if (number <= previousNumber)
                 {
@@ -131,13 +155,14 @@ public static class LedgerRowForm
                         $"{id}: ids are not strictly increasing (F-{previousNumber} comes before it)"));
                 }
 
+                idHome.TryAdd(id, ledger.Path);
                 previousNumber = number;
             }
 
             if (severityColumn >= 0 && severityColumn < cells.Count &&
                 !config.SeveritySet.Contains(cells[severityColumn]))
             {
-                findings.Add(Vocabulary(subject,
+                findings.Add(Vocabulary(subject, ledger.VocabularySeverity,
                     $"{label}: severity \"{cells[severityColumn]}\" is outside the legend set {{{string.Join(", ", config.SeveritySet)}}}"));
             }
 
@@ -146,7 +171,7 @@ public static class LedgerRowForm
                 string? member = LeadingMember.Match(cells[stateColumn]) is { Success: true } m ? m.Groups[1].Value : null;
                 if (member is null || !config.StateSet.Contains(member))
                 {
-                    findings.Add(Vocabulary(subject,
+                    findings.Add(Vocabulary(subject, ledger.VocabularySeverity,
                         $"{label}: state leads with \"{member ?? cells[stateColumn]}\", outside the legend set {{{string.Join(", ", config.StateSet)}}}"));
                 }
             }
@@ -156,7 +181,7 @@ public static class LedgerRowForm
         {
             if (DetachedRow.Match(lines[j]) is { Success: true } detached)
             {
-                findings.Add(Structural($"{config.LedgerPath}:{j + 1}",
+                findings.Add(Structural($"{ledger.Path}:{j + 1}",
                     $"{detached.Groups[1].Value}: a row-shaped line follows the end of the table, so the gate does not check it"));
             }
         }
@@ -202,6 +227,6 @@ public static class LedgerRowForm
     private static Finding Structural(string subject, string message) =>
         new(GateCatalog.RowForm, Severity.Report, subject, message);
 
-    private static Finding Vocabulary(string subject, string message) =>
-        new(GateCatalog.RowForm, Severity.Monitor, subject, message);
+    private static Finding Vocabulary(string subject, Severity severity, string message) =>
+        new(GateCatalog.RowForm, severity, subject, message);
 }

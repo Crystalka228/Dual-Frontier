@@ -251,7 +251,8 @@ block is expected, not a fault).
 
 > Guidance: execute the `METHODOLOGY` session closure protocol -- (a) tracker
 > write-back; (b) REGISTER + validate folded; (c) render + backfill; (d) findings
-> -> F-ledger entries (never chat-only); (e) the closure report. The report
+> -> F-ledger entries (`docs/LEDGER.md`; never chat-only); (e) the closure
+> report. The report
 > (chat) carries: the commits table (hash | subject); the versions table
 > (before -> after, including the derived register state); the census pins
 > recorded (HARD exact, SOFT deltas); the F-ledger final-state table; the

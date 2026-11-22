@@ -34,7 +34,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.3.1
+  version: 1.3.2
 - register_id: DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
   path: docs/architecture/ENGINE_LIFECYCLE_AND_TRANSACTIONS.md
   category: A
@@ -70,7 +70,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 2.1.5
+  version: 2.1.8
 - register_id: DOC-A-GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY
   path: docs/architecture/GAME_DISTRIBUTION_AND_VANILLA_BOUNDARY.md
   category: A
@@ -82,7 +82,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.2.1
+  version: 1.2.2
 - register_id: DOC-A-KERNEL_ARCHITECTURE
   path: docs/architecture/KERNEL_ARCHITECTURE.md
   category: A
@@ -112,7 +112,7 @@ documents:
   category: A
   tier: 1
   lifecycle: LOCKED
-  version: 1.4.2
+  version: 1.4.3
 - register_id: DOC-A-PERFORMANCE_V2
   path: docs/architecture/PERFORMANCE.md
   category: A
@@ -178,13 +178,13 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 4.0.1
+  version: 4.0.2
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 3.0.1
+  version: 3.0.2
 - register_id: DOC-B-MAXIMUM_ENGINEERING_REFACTOR
   path: docs/methodology/MAXIMUM_ENGINEERING_REFACTOR.md
   category: B
@@ -196,7 +196,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 1.14.3
+  version: 1.14.4
 - register_id: DOC-B-PIPELINE_METRICS
   path: docs/methodology/PIPELINE_METRICS.md
   category: B
@@ -208,19 +208,31 @@ documents:
   category: B
   tier: 2
   lifecycle: LOCKED
-  version: 1.0.2
+  version: 1.0.3
 - register_id: DOC-B-TESTING_STRATEGY
   path: docs/methodology/TESTING_STRATEGY.md
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 2.3.1
+  version: 2.3.2
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md
   category: C
   tier: 2
   lifecycle: Live
   version: 0.1.1
+- register_id: DOC-C-LEDGER
+  path: docs/LEDGER.md
+  category: C
+  tier: 2
+  lifecycle: Live
+  version: Live
+- register_id: DOC-C-LEDGER-ARCHIVE
+  path: docs/LEDGER_ARCHIVE.md
+  category: C
+  tier: 2
+  lifecycle: Live
+  version: Live
 - register_id: DOC-C-MIGRATION_PROGRESS
   path: docs/MIGRATION_PROGRESS.md
   category: C
@@ -766,7 +778,7 @@ documents:
   category: F
   tier: 4
   lifecycle: Live
-  version: 2.1
+  version: 2.2
 - register_id: DOC-G-BYPASS_LOG
   path: docs/governance/BYPASS_LOG.md
   category: G

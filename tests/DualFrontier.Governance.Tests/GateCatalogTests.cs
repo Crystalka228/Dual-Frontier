@@ -85,7 +85,7 @@ public sealed class GateCatalogTests
         using var root = new TempRoot();
         root.Write("docs/governance/ORPHAN.md", "# no frontmatter\n");
         root.Write("tools/governance/LEDGER_FORM.yaml", LedgerRowFormTests.ConfigYaml);
-        root.Write("docs/ROADMAP.md", LedgerRowFormTests.Table("| F-2 | f | S9 | OPEN | r |"));
+        root.Write("docs/LEDGER.md", LedgerRowFormTests.Table("| F-2 | f | S9 | OPEN | r |"));
         root.Write("docs/governance/RISKS.yaml", "risks:\n  - id: RISK-1\n    impact: Catastrophic\n");
 
         var emitted = new HashSet<string>(StringComparer.Ordinal);

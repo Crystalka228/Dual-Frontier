@@ -5,7 +5,7 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 3.0.1
+version: 3.0.2
 first_authored: 2026-06-29
 last_modified: '2026-11-22'
 content_language: en
@@ -13,7 +13,7 @@ next_review_due: 2027-06-11
 title: Development hygiene
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: 'PATCH 3.0.0 -> 3.0.1 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the repository map and the governance-tool section no longer describe tools/governance/query_register.ps1, which REV_2 retired (it needed the powershell-yaml module and read a key the schema no longer carries); the map names LEDGER_FORM.yaml, the G-ROWFORM configuration. PATCH per section 8 rule 3 (a path correction). No lifecycle transition (LOCKED).'
+last_review_event: 'PATCH 3.0.1 -> 3.0.2 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the repository map lists docs/LEDGER.md and docs/LEDGER_ARCHIVE.md and no longer says ROADMAP carries the Findings ledger; the section 5 note on the unmerged branches names the file that holds F-11. PATCH per section 8 rule 3 (a path correction). No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-011
@@ -52,7 +52,9 @@ docs/
   prompts/                    execution prompts (e.g. PHASE_BETA_PREP_EXECUTION_PROMPT.md)
   reports/                    reconnaissance + drift reports
   research/ scratch/          study material; working notes
-  ROADMAP.md                  the single roadmap target for all future-work content (and the Findings ledger)
+  ROADMAP.md                  the single roadmap target for all future-work content
+  LEDGER.md                   the findings ledger: the live (not CLOSED) F-rows and the legend
+  LEDGER_ARCHIVE.md           the findings ledger: the CLOSED F-rows
   README IDEAS_RESERVOIR MIGRATION_PROGRESS SECRET_SCANNING TRANSLATION_GLOSSARY TRANSLATION_PLAN (.md)
                               the other docs-root documents
 mods/                         the mod projects (Example, Vanilla.*, Weather, Weather.Contracts), all solution
@@ -225,7 +227,7 @@ bisected over that stage's commits.
 - **Merge** (`CODING_STANDARDS.md` section 8.3): A pull request lands on `main` as a two-parent merge commit made by the operator. Squash-merge and rebase-merge are forbidden: each replaces the authored sequence with commits nobody authored. Fast-forward-only is not required. Recorded exceptions, not precedent: PRs #55 and #56 reached `main` squash-merged (`17b3719`, `3000285`); history is not rewritten to repair them.
   The measure is `git log --first-parent main --format='%h %p %s'`: a landed PR shows two parent hashes.
 - **Atomic commits** per `CODING_STANDARDS.md` section 8 -- one conceptual change per commit, structured body, no squash, no history rewrite. Surface revisions ride inside commits as `Skeleton revisions:` records per `RESERVED_SURFACE_MUTABILITY.md` section 5.
-- **Branches kept unmerged:** `claude/cpp-core-experiment-cEsyH` (the original C++ kernel experiment; К-L source-of-truth reference, cited by KERNEL_ARCHITECTURE.md), `claude/godot-removal-deliberation-Vfg2R` (deliberation record) and `feat/m0-m3-mod-os-migration` (historical migration). Every other local branch is merged into `main` and is a pruning candidate tracked in the Findings ledger (F-11); `git branch --no-merged main` is the measure.
+- **Branches kept unmerged:** `claude/cpp-core-experiment-cEsyH` (the original C++ kernel experiment; К-L source-of-truth reference, cited by KERNEL_ARCHITECTURE.md), `claude/godot-removal-deliberation-Vfg2R` (deliberation record) and `feat/m0-m3-mod-os-migration` (historical migration). Every other local branch is merged into `main` and is a pruning candidate tracked in the findings ledger (`docs/LEDGER.md`, F-11); `git branch --no-merged main` is the measure.
 
 ## §6 — Environment notes
 
@@ -261,6 +263,10 @@ Tier 1 LOCKED amendment ratification follows FRAMEWORK §7.2 (via the `PROJECT_A
 
 ## Change history
 
+- **v3.0.2 (2026-11-22)** -- REV_3 (CORPUS_REVISION_1). The F-ledger left `docs/ROADMAP.md` for `docs/LEDGER.md` (the live
+  rows) and `docs/LEDGER_ARCHIVE.md` (the CLOSED rows). The repository map lists the two files and no longer says
+  ROADMAP carries the Findings ledger; section 5 names `docs/LEDGER.md` as the file that holds F-11. **PATCH** per
+  section 8 rule 3 (a path correction).
 - **v3.0.1 (2026-11-22)** -- REV_2 (CORPUS_REVISION_1), the review repairs. `tools/governance/query_register.ps1` was
   retired in REV_2 (`git rm`; it needed the `powershell-yaml` module, absent on the reference host, and read a key
   the schema no longer carries). The repository map no longer lists it and names `LEDGER_FORM.yaml`, the

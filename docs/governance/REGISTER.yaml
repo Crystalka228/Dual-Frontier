@@ -283,17 +283,17 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.3.1
+  version: 1.3.2
   first_authored: 2026-07-15
-  last_modified: 2026-08-22
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2027-Q3
   title: Entity Component System (authored rework; version-0 identity defect documented)
   supersedes:
   - DOC-A-ECS
   review_cadence: on-change+annual
-  last_review_date: 2026-07-17
-  last_review_event: "PATCH 1.3.0 -> 1.3.1 2026-08-22 (ID_B_ENTITY_VERSIONS, PR #51 review fixes): section 6 records the pending-destroy TOMBSTONE and that the create refusal is an exception rather than a silent EntityId.Invalid; section 5 gains the hazard the fix nearly created -- reading TRUE versions is not automatically safe, because between DestroyEntity and the flush the component row survives and the naive reconstruction named the pair a recycle would mint, which is_alive accepted. Caught in review of the cascade that introduced it. Prior review: MINOR 1.2.0 -> 1.3.0 2026-08-22 (ID_B_ENTITY_VERSIONS C7): section 5 flips from KNOWN DEFECT to RESOLVED -- the span ABI now carries versions via SpanLease.Versions over the native df_world_acquire_versions view, all three pair-iterators reconstruct true generations, every production fabrication site is migrated, and DFK022 (Error) makes the prohibition structural; the two-stage history (Version=1, then Version=0) is retained because the shape of the mistake is the lesson, and one silent trap is documented in its place -- Versions is ENTITY-INDEX-keyed while Span/Indices are dense-keyed, so versions[i] compiles and is wrong. Section 4's canonical example gains the versions-view idiom with that trap called out inline. Section 6 records that creation is refused while a versions view is held and that EntityId.IsValid is now Index > 0. Section 8's anti-pattern points at the analyzer rather than at an inventory. F-59 CLOSED. No lifecycle transition (LOCKED). Prior review: MINOR 1.1.0 -> 1.2.0 2026-08-20 (W3_WEATHER_SLICE C8): section 5 records the C5b correction -- SpanLease.Pairs, the WriteBatch enumerator and Sdk/SpanScope.Pairs fabricated Version=1, a version no entity carries, so batched writes keyed on a span id were dropped at flush silently; all three now fabricate 0 like every other site, narrowing but NOT resolving the C10/N-22 defect. Section 5 also records that ISystemContext.DestroyEntity puts destruction in MOD hands, so the creation-only latency argument no longer rests on engine call sites. Section 6 gains the SDK entity-lifecycle surface (liveness immediate, storage reclamation deferred, no flush member promoted). Section 8 adds the id-is-not-an-engine-reference clarification. No lifecycle transition (LOCKED)."
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 1.3.1 -> 1.3.2 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the section 5 citation of F-59 names the file that holds the row, docs/LEDGER_ARCHIVE.md; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Successor of DOC-A-ECS per EVT-2026-07-15-CORPUS_REWORK_R1_KERNEL_CORE; session C10 teaching defect fixed (no EntityId(index,0) fabrication in examples).
 - register_id: DOC-A-ENGINE_LIFECYCLE_AND_TRANSACTIONS
@@ -480,7 +480,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.5
+  version: 2.1.8
   first_authored: 2026-05-12
   last_modified: 2026-11-22
   content_language: en
@@ -491,7 +491,7 @@ documents:
   last_modified_commit: 7449ba8
   review_cadence: on-change+annual
   last_review_date: 2026-11-22
-  last_review_event: 'PATCH 2.1.4 -> 2.1.5 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the 14.3 optional field list gains title, requirements_authored and risks_referenced, which the corpus carries and 14.3 did not list (section 4.1 names title as a control key); the tool carries them verbatim and no gate reads them. No lifecycle transition (LOCKED).'
+  last_review_event: 'PATCH 2.1.7 -> 2.1.8 2026-11-22 (REV_3 (CORPUS_REVISION_1), review repair): the G-ROWFORM row of 14.5 states that a ledger file the configuration lists but the root does not hold is a Report naming its path; a root with no configuration file stays inert. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-Q-A45-X5
@@ -539,15 +539,15 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.2.1
+  version: 1.2.2
   first_authored: 2026-07-15
-  last_modified: 2026-08-22
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2027-Q3
   title: Identity & ABI Contract — identity registry table, version-0 resolution, C ABI protocol, error taxonomy (the A5+A6+A8 contract)
   review_cadence: on-change+annual
-  last_review_date: 2026-08-22
-  last_review_event: "PR #51 review fixes (2026-08-22, architect-triaged): the ID-B versions view TOMBSTONES a destroyed-but-unflushed slot (negative sentinel; is_alive rejects the slot; flush lifts it to the successor version before free-listing) so a span reconstructing an id for the surviving component row fails closed instead of handing back the not-yet-issued pair a recycle will mint -- an ID-B-introduced fail-open, caught in review. The create guard is NARROWED to the table-growth path, the only one that can reallocate a view's buffer, and the refusal is now an exception rather than a silent EntityId.Invalid. The mutation + view family is serialized by one mutex (acquire published its pointer before raising its counter). New F-61 ledgers the wider World-mutation concurrency gap. Section 2 option 1 and the section 3.5 pointer-table row restated to the corrected mechanism; section 1 note 1 records the tombstone as what keeps the ABA law true across the pending-destroy window; v1.2.0 -> v1.2.1 PATCH. Prior review: ID_B_ENTITY_VERSIONS -- v1.1.2 -> v1.2.0 MINOR (section 2 transitions from PROPOSAL to SHIPPED LAW, with one factual correction inside it): the version-0 resolution shipped as option 1 -- the additive df_world_acquire_versions / df_world_release_versions pair, SpanLease.Versions, true generations in all three pair-iterators, every production fabrication site migrated or waived, EntityId.IsValid and entity_id.h::is_valid aligned on Index > 0, the law seated as K-L22 AUTHORED and enforced by DFK022 at Error. Option 1's parenthetical claiming the component-span counter already prevents the versions table resizing is CORRECTED: create_entity has never consulted active_spans_, so the shipped view carries its own active_version_views_ counter -- a component span guards CONTENT, the view guards against REALLOCATION. Section 3.5 pointer-table row filled with the shipped window; section 1 row 1 and note 1 record that fabrication no longer voids the ABA law; section 7 items 2, 3 and 10 closed, item 4's waiver named. F-59 CLOSED. EVT-2026-08-22-ID_B_ENTITY_VERSIONS. Prior review: ID_A_COMPONENT_IDENTITY -- v1.1.1 -> v1.1.2 PATCH (section 1 row 2 to code-truth + one stale cross-reference): component TypeId is now allocated against an owner-scoped identity (owner + type FullName; owner is kernel or mod.<modId>), so the collision-policy and generation cells state cross-owner distinctness and survival-across-mod-reload rather than bare sequentiality; note 2 (ids never cross the save boundary) is unchanged and still governs. Section 2's DFK-entity-identity pointer said K-L20 is already reserved, which went stale at EQ_A2 when K-L20 was seated as shutdown-quiescence and the Mod-API reservation moved to K-L21 -- corrected to K-L22 as the next free row (identity recon anomaly A5). EVT-2026-08-20-ID_A_COMPONENT_IDENTITY. Prior review: EQ_A4_RENDER_TAIL Cascade D -- v1.1.0 -> v1.1.1 PATCH (sections 4 + 7 aligned to landed truth): the Vulkan result mapping (section 4) + section 7 item 7 device-lost/VkResult question RESOLVED by D1 -- VK_ERROR_DEVICE_LOST is now mapped to fail-fast v1 (managed DeviceLossBoundary -> Environment.FailFast, no recovery), owned by ELT section 4 class 6 / OQ-3 (CLOSED) and VULKAN section 6.3; a MANAGED mapping, not a native df_status code. EVT-2026-07-18-EQ_A4_RENDER_TAIL. Prior review: EQ_A3_CHECKED_DESTROY Cascade C (v1.0.0 -> v1.1.0 MINOR)."
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 1.2.1 -> 1.2.2 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the two citations of F-59 (sections 2 and 7) name the file that holds the row, docs/LEDGER_ARCHIVE.md; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   provenance_note: Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-DRAFTS_RATIFICATION (item [6]). The A5+A6+A8 identity/ABI contract — identity registry (12 id spaces with per-row law), the version-0 resolution (highest-value single fix; ECS §5 defers here), C ABI protocol (negotiation, type/ownership/no-exception laws, pointer windows, thread affinity), df_status error taxonomy; the identity-versions surface and DFK-entity-identity rule are the seeded engineering work orders.
 - register_id: DOC-A-ISOLATION
@@ -872,9 +872,9 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.4.2
+  version: 1.4.3
   first_authored: 2026-07-15
-  last_modified: 2026-11-21
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2027-Q3
   title: Mod OS Architecture (authored rework; merges MOD_PIPELINE + ISOLATION — one unload chain, one fault timing, one capability grammar)
@@ -883,8 +883,8 @@ documents:
   - DOC-A-MOD_PIPELINE
   - DOC-A-ISOLATION
   review_cadence: on-change+annual
-  last_review_date: 2026-07-19
-  last_review_event: 'REV_0 2026-11-21 -- PATCH. A note in section 10.3 records the fault-policy inversion W4 ratified: the ten gameplay systems now load through the scenario mod with Mod origin, so a fault in one quarantines that mod instead of crashing the process (W4 brief section 16.2, ruling R2). Prior context: W4_COMPOSITION_ROOT 2026-08-31 -- PATCH. The section 9.5 F-60 paragraph is corrected to CLOSED: reload adopts the surviving singleton (ID-A) and the mod ALC is reclaimed (F60A, whose bisection re-attributed the leak from the component registry to a tick-path cache). The two test names it cited were renamed by those cascades and are replaced with the ones that exist. Also re-anchors the section 8 ModFaultHandler construction note from GameBootstrap to EngineComposer.'
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 1.4.2 -> 1.4.3 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the 1.3.1 history row cross-references F-60 at the file that holds it, docs/LEDGER_ARCHIVE.md; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   provenance_note: 'Ratified LOCKED v1.0.0 2026-07-17 per EVT-2026-07-17-CORPUS_CLOSURE_RATIFICATION (checklist item [1]). Merged successor of DOC-A-MOD_OS + DOC-A-MOD_PIPELINE + DOC-A-ISOLATION per EVT-2026-07-15-CORPUS_REWORK_R2_PLATFORM: one unload chain, one fault timing, one capability grammar, 15-member ValidationErrorKind; commit/reclaim split per the ENGINE_LIFECYCLE draft.'
 - register_id: DOC-A-MOD_PIPELINE
@@ -1250,7 +1250,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 4.0.1
+  version: 4.0.2
   first_authored: 2026-07-15
   last_modified: 2026-11-22
   content_language: en
@@ -1258,7 +1258,7 @@ documents:
   title: Coding standards
   review_cadence: on-change+annual
   last_review_date: 2026-11-22
-  last_review_event: 'PATCH 4.0.0 -> 4.0.1 2026-11-22 (REV_2): section 10.1 rule 4 follows practice -- an amendment rides a docs(<document>) commit, the enrollment and closure commits of its cascade ride governance(...). Correction of the rule to the observed commits (every REV_1 amendment used docs(...)); no new rule. PATCH per section 10.1 rule 3. No lifecycle transition (LOCKED).'
+  last_review_event: 'PATCH 4.0.1 -> 4.0.2 2026-11-22 (REV_3 (CORPUS_REVISION_1)): section 5.2 names docs/LEDGER.md as the file whose row a TODO(F-n) marker names, and the 2.1.3 history row names the file that holds F-33 now; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
 - register_id: DOC-B-DEVELOPMENT_HYGIENE
   path: docs/methodology/DEVELOPMENT_HYGIENE.md
@@ -1267,7 +1267,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 3.0.1
+  version: 3.0.2
   first_authored: 2026-06-29
   last_modified: 2026-11-22
   content_language: en
@@ -1275,7 +1275,7 @@ documents:
   title: Development hygiene
   review_cadence: on-change+annual
   last_review_date: 2026-11-22
-  last_review_event: 'PATCH 3.0.0 -> 3.0.1 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the repository map and the governance-tool section no longer describe tools/governance/query_register.ps1, which REV_2 retired (it needed the powershell-yaml module and read a key the schema no longer carries); the map names LEDGER_FORM.yaml, the G-ROWFORM configuration. PATCH per section 8 rule 3 (a path correction). No lifecycle transition (LOCKED).'
+  last_review_event: 'PATCH 3.0.1 -> 3.0.2 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the repository map lists docs/LEDGER.md and docs/LEDGER_ARCHIVE.md and no longer says ROADMAP carries the Findings ledger; the section 5 note on the unmerged branches names the file that holds F-11. PATCH per section 8 rule 3 (a path correction). No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   risks_referenced:
   - RISK-011
@@ -1307,16 +1307,16 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.14.3
+  version: 1.14.4
   first_authored: 2026-07-17
-  last_modified: 2026-08-20
+  last_modified: 2026-11-22
   content_language: mixed
   next_review_due: 2027-06-11
   title: Dual Frontier development methodology
   last_modified_commit: 717641b
   review_cadence: on-change+annual
-  last_review_date: 2026-07-02
-  last_review_event: 'PATCH 1.14.2 -> 1.14.3 2026-08-20 (push-policy propagation from CODING_STANDARDS 3.0.0 section 8.4, per section 10.1 rule 5): the extended phase-review cycle diagram direction-owner step corrected from push the commits to review the PR, merge it -- the executor now pushes its branch and opens the PR at closure. Descriptive correction only; no methodology rule changed. No lifecycle transition.'
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 1.14.3 -> 1.14.4 2026-11-22 (REV_3 (CORPUS_REVISION_1)): section 12.8 anti-pattern rule and section 12.9 step (d) name docs/LEDGER.md where they named the ROADMAP Findings ledger section; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-Q-A07-6
@@ -1358,16 +1358,16 @@ documents:
   tier: 2
   lifecycle: LOCKED
   owner: Crystalka
-  version: 1.0.2
+  version: 1.0.3
   first_authored: 2026-07-02
-  last_modified: 2026-07-17
+  last_modified: 2026-11-22
   content_language: en
   next_review_due: 2026-Q3
   title: Reserved-surface mutability license
   last_modified_commit: 0411bb0
   review_cadence: on-closure+quarterly
-  last_review_date: 2026-07-17
-  last_review_event: 'STACK_UPDATE Phase H doc census — v1.0.1 → v1.0.2 PATCH: §6 delta-1 row framework-compatibility clause netstandard2.0-cannot-reference-net8.0 → net10.0, tracking the landed solution TFM (the clause follows the live Contracts target, as the analyzer csproj comment now does); sole stale token in this document, all other §6 historical delta records untouched (EVT-2026-07-17-STACK_UPDATE). Prior context: Authored at Standing-Law cascade C2 (f576eb7) per STANDING_LAW_CASCADE_BRIEF §7-W3…'
+  last_review_date: 2026-11-22
+  last_review_event: 'PATCH 1.0.2 -> 1.0.3 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the honesty note of section 1 (a) links the findings ledger at its new file (F-7 is a CLOSED row, so docs/LEDGER_ARCHIVE.md); the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   provenance_note: Category B methodology at Tier 2 (vs Category B standard Tier 1) per STANDING_LAW_CASCADE_BRIEF §1 D1 spec — the mutability license is operational law consulted per-cascade and reviewed on the Tier 2 quarterly calendar; it pins HOW Tier-1 authorities are cited and how trivial-surface deviations are recorded, without itself being a Tier-1 authority surface (anything not cataloged mutable remains immutable-or-adjudicate).
 - register_id: DOC-B-TESTING_STRATEGY
@@ -1377,7 +1377,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.3.1
+  version: 2.3.2
   first_authored: 2026-07-15
   last_modified: 2026-11-22
   content_language: en
@@ -1385,7 +1385,7 @@ documents:
   title: Testing strategy
   review_cadence: on-change+annual
   last_review_date: 2026-11-22
-  last_review_event: 'PATCH 2.3.0 -> 2.3.1 2026-11-22 (REV_2): section 4.3 states what CensusMetaTests.SuppressMessageCensus_IsZero actually asserts (the SuppressMessage literal 0 times across tracked src/ .cs files; no GlobalSuppressions.cs check, nothing outside src/) and where the GlobalSuppressions ban is held (DF999 in src/, review elsewhere). Clarification only, PATCH per section 9.1 rule 3. No lifecycle transition (LOCKED).'
+  last_review_event: 'PATCH 2.3.1 -> 2.3.2 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the pointers to the findings ledger (sections 1.4 list, 2.6, 4.4, 9.1 rule 5, and the 2.2.1 and 2.0.2 history records) name docs/LEDGER.md or docs/LEDGER_ARCHIVE.md; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
   reviewer: Crystalka
 - register_id: DOC-C-IDEAS_RESERVOIR
   path: docs/IDEAS_RESERVOIR.md
@@ -1405,6 +1405,36 @@ documents:
   last_review_event: 'DRAFTS_RATIFICATION C8 (F-39 rider): three dangling "METHODOLOGY §7.1 determinism" citations re-anchored to TIME_AND_CONSISTENCY_MODEL §5 (ratified LOCKED this cascade). PATCH 0.1 → 0.1.1.'
   reviewer: Crystalka
   provenance_note: Post-A'.4.5 functions as index for Category I docs/ideas/ folder; existing content preserved verbatim; individual ideas grow as separate files in docs/ideas/ over time
+- register_id: DOC-C-LEDGER
+  path: docs/LEDGER.md
+  project: Dual Frontier
+  category: C
+  tier: 2
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  first_authored: 2026-11-22
+  last_modified: 2026-11-22
+  content_language: en
+  next_review_due: 2026-Q4
+  title: Findings ledger -- live rows
+  review_cadence: on-closure+quarterly
+  reviewer: Crystalka
+- register_id: DOC-C-LEDGER-ARCHIVE
+  path: docs/LEDGER_ARCHIVE.md
+  project: Dual Frontier
+  category: C
+  tier: 2
+  lifecycle: Live
+  owner: Crystalka
+  version: Live
+  first_authored: 2026-11-22
+  last_modified: 2026-11-22
+  content_language: en
+  next_review_due: 2026-Q4
+  title: Findings ledger -- archive
+  review_cadence: on-closure+quarterly
+  reviewer: Crystalka
 - register_id: DOC-C-MIGRATION_PROGRESS
   path: docs/MIGRATION_PROGRESS.md
   project: Dual Frontier
@@ -3343,6 +3373,22 @@ documents:
   authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
   last_review_event: 'REV_2 EXECUTED 2026-11-22 (EVT-2026-11-22-REV_2) on claude/rev-2, C1-C6, 15 review-repair commits, 3 repair-over-repair commits and the C7 closure. Operator-ratified inputs: G-RATIO option A, REV_2 on Sonnet; the architect rulings A-1..A-10 are PENDING OPERATOR REVIEW at the PR. Lifecycle Draft -> EXECUTED. Wording corrected at closure: the displaced ledger row is F-13 (sections 2 and 7.3), halt H7 concerns code files (section 13).'
   basis: REV_2 recon (/mnt/Work/Temporal/rev2-run/recon/R1.md, Sonnet, read-only at 3fa781c) + operator rulings 2026-11-21 (G-RATIO option A; REV_2 on Sonnet; self-merge grant through REV_3) + architect rulings A-1..A-10 (/mnt/Work/Temporal/rev2-run/RULINGS.md, pending operator review) + the revision synthesis
+- register_id: DOC-D-REV_3_BRIEF
+  path: tools/briefs/REV_3_BRIEF.md
+  project: Dual Frontier
+  category: D
+  tier: 3
+  lifecycle: EXECUTED
+  owner: Volodymyr (Crystalka)
+  version: 1.0
+  first_authored: 2026-11-22
+  last_modified: 2026-11-22
+  content_language: en
+  next_review_due: 
+  title: 'REV_3 -- the F-ledger leaves ROADMAP: docs/LEDGER.md holds the live rows and docs/LEDGER_ARCHIVE.md the closed ones, byte-identical; one legend (S4 latent joins it); G-ROWFORM guards both files with the live vocabulary armed; every live pointer re-pointed -- the fourth cascade of CORPUS_REVISION_1'
+  authored_by: Claude Opus (architect-orchestrator session, CORPUS_REVISION_1)
+  last_review_event: 'REV_3 EXECUTED 2026-11-22 (EVT-2026-11-22-REV_3) on claude/rev-3, C1-C4, four review-repair commits and the C5 closure. Operator-ratified input: the F-ledger leaves ROADMAP into docs/LEDGER.md and docs/LEDGER_ARCHIVE.md, both at once; the architect rulings B-1..B-10 (B-10 added at the review of the repairs) are PENDING OPERATOR REVIEW at the PR. Lifecycle Draft -> EXECUTED. Wording note: the brief says B-1..B-9 and calls the severity monitors 14; the S4 rows are 13 and the 14th monitor is F-54 W2.'
+  basis: operator ruling 2026-11-21 (LEDGER + LEDGER_ARCHIVE, both at once) + the Community Hub precedent LEDGER_SPLIT_1 (CH docs/LEDGER.md, docs/LEDGER_ARCHIVE.md headers) + architect rulings B-1..B-9 (/mnt/Work/Temporal/rev3-run/RULINGS.md, pending operator review) + the ledger census R-D (/mnt/Work/Temporal/corpus-revision-1/R-D.md) + the REV_2 G-ROWFORM gate (tools/DualFrontier.Governance/LedgerRowForm.cs, tools/governance/LEDGER_FORM.yaml)
 - register_id: DOC-D-STACK_UPDATE_BRIEF
   path: tools/briefs/STACK_UPDATE_BRIEF.md
   project: Dual Frontier
@@ -6333,7 +6379,7 @@ documents:
   tier: 4
   lifecycle: Live
   owner: Crystalka
-  version: 2.1
+  version: 2.2
   first_authored: 2026-05-12
   last_modified: 2026-11-22
   content_language: en
@@ -6342,7 +6388,7 @@ documents:
   last_modified_commit: 8ee27fe
   review_cadence: on-source-commit+quarterly
   last_review_date: 2026-11-22
-  last_review_event: 'MINOR 2.0 -> 2.1 2026-11-22 (REV_2, the review repairs): the artifact index gains LEDGER_FORM.yaml, the configuration of the G-ROWFORM gate, which the index of the configuration the tool reads had omitted.'
+  last_review_event: 'MINOR 2.1 -> 2.2 2026-11-22 (REV_3): the LEDGER_FORM.yaml entry describes the two-file ledger configuration -- the live file and the closed-rows archive, each with the severity of its vocabulary findings -- in place of the single ledger path.'
   reviewer: Crystalka
 - register_id: DOC-G-BYPASS_LOG
   path: docs/governance/BYPASS_LOG.md
@@ -16497,3 +16543,68 @@ audit_trail:
   cross_references:
     capa_entries:
     - CAPA-2026-11-22-REV_2-SCHEMA-2.1-AMENDMENT
+- id: EVT-2026-11-22-REV_3
+  date: 2026-11-22
+  event: 'REV_3 cascade executed -- the fourth cascade of CORPUS_REVISION_1. The F-ledger leaves ROADMAP: its 95 rows are split byte-identically into docs/LEDGER.md (59 live rows) and docs/LEDGER_ARCHIVE.md (36 closed rows), both enrolled Category C, tier 2, Live. One legend, declared once in LEDGER.md, gains S4 (latent); the one non-legend live state (F-65, Planned) becomes OPEN (planned). G-ROWFORM guards both files (structure armed in each, an id unique across both and ascending within each, the vocabulary armed on the live file and watched on the archive), so its vocabulary monitors on the live ledger go 15 -> 0. Every live pointer to the ROADMAP ledger names the new home; the LOCKED documents re-pointed took PATCH bumps. ROADMAP keeps a short pointer section.'
+  event_type: execution_milestone
+  documents_affected:
+  - DOC-D-REV_3_BRIEF
+  - DOC-C-LEDGER
+  - DOC-C-LEDGER-ARCHIVE
+  - DOC-C-ROADMAP
+  - DOC-A-FRAMEWORK
+  - DOC-B-CODING_STANDARDS
+  - DOC-B-DEVELOPMENT_HYGIENE
+  - DOC-B-METHODOLOGY
+  - DOC-B-RESERVED_SURFACE_MUTABILITY
+  - DOC-B-TESTING_STRATEGY
+  - DOC-A-ECS_V2
+  - DOC-A-IDENTITY_AND_ABI_CONTRACT
+  - DOC-A-MOD_OS_ARCHITECTURE
+  - DOC-F-TOOLS-GOVERNANCE
+  commits:
+    range: 8032e01..(the closure commit carries this entry)
+    key_commits:
+    - 9cf9a29
+    - 4de2092
+    - c3b0efd
+    - 7557079
+    - 1a3d99e
+    - 50b44f3
+    - f95052b
+    - 9e18d4d
+  governance_impact: >
+    RATIFICATION. Operator-ratified inputs (chat, 2026-11-21): the F-ledger leaves ROADMAP into docs/LEDGER.md and docs/LEDGER_ARCHIVE.md, both at once; the Community Hub precedent of the same split as the model of the two headers. The rulings B-1..B-10 below apply those decisions to the measured facts and are ARCHITECT rulings, PENDING OPERATOR REVIEW: the operator's review of the PR and its merge is the ratification act. Per the operator ruling of 2026-11-21 a Category D tier 3 brief stays Draft in frontmatter while it executes and the closure EVT records the ratification state; this entry is that record. Lifecycle Draft -> EXECUTED.
+
+
+    RULINGS (all PENDING OPERATOR REVIEW). B-1 split rule: docs/LEDGER.md holds every row whose State, read by its leading member, is not CLOSED; docs/LEDGER_ARCHIVE.md holds the CLOSED rows; rows move byte-identically in ascending id order, never re-sorted, re-numbered or re-wrapped; archive rows change only by dated appends inside the row. B-2 one legend, declared once in LEDGER.md and carried by no other file: severity S0 critical, S1 high, S2 medium, S3 low, S4 latent (a measured defect with no live instance), N note; state OPEN, CLOSED, ACCEPTED-NO-ACTION, read by its leading member with emphasis and a leading glyph stripped. S4 joins the legend because 13 rows use it (10 in LEDGER.md, 3 in LEDGER_ARCHIVE.md); the 14th severity monitor of the base was F-54, whose value W2 is a legacy reading the archive keeps untouched. No row's severity is rewritten. B-3 F-65, state Planned, open in substance, becomes OPEN (planned), the one row edited in the split. B-4 lifecycle of a row: a finding is minted in LEDGER.md with the maximum id over BOTH files plus one; closing is the State transition plus the move to the archive in the SAME commit, with the closing commit hash in the resolution cell. B-5 ROADMAP keeps a short "Findings ledger" section that points to the two files and states the mint rule; nothing else of ROADMAP moves. B-6 G-ROWFORM covers both files through tools/governance/LEDGER_FORM.yaml: structure armed in both, ids unique across both and ascending within each, vocabulary armed on LEDGER.md and a Monitor on the archive; the detached-row locator and two-digit id capture hole routed forward by REV_2 is pinned. B-7 every pointer to the ROADMAP ledger in the LIVE documents of the recon set is re-pointed; frozen records keep their bytes; a LOCKED document re-pointed takes a PATCH bump. B-8 LEDGER_FORM.yaml is an integrator seam. B-9 REV_3 runs on Sonnet. B-10 (review, 2026-11-22): the count in B-2 is 13, not 14; a ledger file listed in LEDGER_FORM.yaml but absent from the root is a structural Report, a root with no LEDGER_FORM.yaml stays inert; the placement rule (a CLOSED row lives in the archive, an open row in LEDGER.md) has no machine check and is held by the LEDGER.md header and review.
+
+
+    THE SPLIT. At base 8032e01 the ROADMAP table held 95 rows, F-1..F-95, ids contiguous. The split script (kept outside the tree) and its proof script, re-run on the closure tree, give 95 = 59 in LEDGER.md + 36 in LEDGER_ARCHIVE.md, ids unique across the files and ascending within each, the multiset of row lines equal to the old table's except the one F-65 cell. Six archived rows lead with bold or a glyph (three bold CLOSED, three with a glyph before CLOSED); the leading-member reading of the legend places them, and the LEDGER.md opening sentence and the ROADMAP pointer say so (50b44f3). ROADMAP lost its ledger section to the pointer section.
+
+
+    LEGEND AND GATE. Before: the legend named S0..S3 and N, the gate read one path (ledger_path docs/ROADMAP.md) and printed 15 vocabulary monitors (13 rows with severity S4, F-54 with W2, F-65 with the state Planned). After: the legend names S4; the configuration lists both files under `ledgers`, each with its own vocabulary severity; the gate prints one monitor, the archive's F-54 W2. The live file reads 0 vocabulary findings, so the live vocabulary is armed (a violation there reddens validate --armed; shown by a deliberate S9 in the live file, exit 1, and restored). Structural findings: 0 in both files. A ledger file the configuration lists but the root lacks is a structural Report naming its path (9e18d4d; before it, removing the archive left validate --armed at exit 0 with 36 rows gone). Governance tests 119 -> 140: 20 at the tool landing (each new rule watched red once, eleven mutants and three end-to-end breaks) and one net at the absent-file repair (two tests out, three in; the three red against the unfixed tool, 3 failed of 55 in the test class).
+
+
+    VERSIONS. FRAMEWORK 2.1.5 -> 2.1.8 (2.1.6 the pointer correction at C4; 2.1.7 the review repair that restates the G-ROWFORM row of 14.5 as the tool runs it over two files, the tool-wins rule of 14.2; 2.1.8 the absent-ledger-file Report). Tier 1 LOCKED PATCH bumps at C4, each with a change-history row in the document's own format: CODING_STANDARDS 4.0.1 -> 4.0.2, DEVELOPMENT_HYGIENE 3.0.1 -> 3.0.2, METHODOLOGY 1.14.3 -> 1.14.4, RESERVED_SURFACE_MUTABILITY 1.0.2 -> 1.0.3, TESTING_STRATEGY 2.3.1 -> 2.3.2, ECS 1.3.1 -> 1.3.2, IDENTITY_AND_ABI_CONTRACT 1.2.1 -> 1.2.2 (the frontmatter record only; the document has no change-history section), MOD_OS_ARCHITECTURE 1.4.2 -> 1.4.3. tools/governance MODULE.md 2.1 -> 2.2. BRIEF_TEMPLATE and RECON_KICKOFF_TEMPLATE (register-excluded, no frontmatter) carry one pointer each. Two documents enrolled (DOC-C-LEDGER, DOC-C-LEDGER-ARCHIVE) and the brief (DOC-D-REV_3_BRIEF); the register hosts 379 documents.
+
+
+    POINTERS. 31 pointer sites were classified one by one in the C4 landing: 20 re-pointed, the rest kept because they name no location, are records of what an earlier release wrote, or mean the capability-registration ledger. The pointer check over the 12 files read 19 hits at the base and 5 after, all five deliberate records or distance false positives. docs/MIGRATION_PROGRESS.md carries no live ledger pointer and was not edited. Frozen records (EXECUTED briefs, reports, AUDIT_TRAIL, historical documents) and the code comment in SchedulerExtremeTests.cs keep their bytes (the touched-file rule).
+
+
+    COMMITS. C1 9cf9a29 (enrollment), C2 4de2092 (the split; LEDGER_FORM.yaml path to docs/LEDGER.md), C3 c3b0efd (the two-file gate; LEDGER_FORM.yaml two-file form), C4 7557079 (pointers). Review repairs: 1a3d99e (FRAMEWORK 2.1.7), 50b44f3 (the first-paragraph split rule reads the State by its leading member), f95052b (the Severity.Monitor summary), and after the review of the repairs 9e18d4d (the absent ledger file). C5 carries this entry.
+
+
+    ORCHESTRATION. Executed by the architect-orchestrator through Sonnet subagents: one integrator as the only committer on claude/rev-3; three units in their own worktrees returning patches over disjoint file sets (U-SPLIT, U-TOOL, U-PTR); two review lenses on disjoint axes (A: code and its tests by mutation; B: the record, the law and the form), then a lens over the repairs. Every lens finding was reproduced on the live tree before its disposition.
+
+
+    RECORD CORRECTIONS. (1) Ruling B-2 as first written said 14 rows use S4; the rows are 13, and the 14th severity monitor of the base is F-54 W2 (corrected in the rulings file; the brief's own "14 severity, 1 state" monitors is right). No document of the base tree carried the wrong number. (2) The 14.5 row of FRAMEWORK was left naming one ledger file by the C4 pointer pass (which licensed pointers only); the review found it, 2.1.7 restated it. (3) The attribution trailer of C1-C4 names Claude Opus 5.5 and that of the four repair commits Claude Sonnet 5.5; the trailer records the committing session and states no ruling on the writers.
+
+
+    RESIDUE ROUTED FORWARD. (a) The placement rule is not machine-held. The LEDGER.md header says a row that changes state without moving leaves the two documents disagreeing, and no gate sees it: validate --armed stays at exit 0 with a CLOSED row in LEDGER.md or an OPEN row in the archive; one real-file test goes red, and review is the only other guard. It is recorded here as an ADDITION to the unbuilt checks of ledger row F-95 (no ledger row is edited by this cascade; the builder of F-95's checks takes the placement check with them: a live-file row whose State leads with CLOSED, an archive row whose State leads with anything else). (b) METHODOLOGY's 1.13.0 version note still quotes step 12.9 (d) as that release wrote it (ROADMAP findings ledger); kept as the record of that release and stated in its 1.14.4 row; METHODOLOGY's text beyond the pointer is REV_4. (c) RESERVED_SURFACE_ MUTABILITY 1 (a) still says in the present tense that the numbering gap is tracked as F-7, a CLOSED row; only its link was re-pointed. (d) docs/MIGRATION_PROGRESS.md lines that recount what past commits wrote into ROADMAP are a chronicle and stay. (e) The code comment that cites a ROADMAP ledger row in SchedulerExtremeTests.cs is rewritten by the cascade that next edits that file. (f) The ROADMAP history archive is REV-6; the F-94 and F-95 gates are not built here. (g) The retired-regime text listed in the REV_2 entry (R2B-05) is still not named by any landing; REV_3 did not touch those files.
+
+
+    CODE PLANE. tools/DualFrontier.Governance/** and tests/DualFrontier.Governance.Tests/** only (outside the census scope). No file under src/, mods/ or native/ in the range (git diff --name-only 8032e01..9e18d4d shows none); no census pin moved; no S-LOCK touched.
+
+
+    GATES. The stage gate, run once over the closure tree as DEVELOPMENT_HYGIENE section 3 says, head 9e18d4d (C5 changes documents only). Native selftest ALL PASSED (the library and the selftest binary are the checkout's, byte-identical; native/ carries no change against 8032e01). Build 0 warnings, 0 errors. Full suite in the section 8 form: rc 0, 10 TRX files for 10 test assemblies, 1521 total = 1515 passed + 0 failed + 6 skipped (baseline 1494 passed, 6 skipped at 8032e01: +21 is the Governance.Tests growth 119 -> 140); the six skips are SchedulerExtremeTests S2/S3/S4/S5a/S5b and RuntimeCompositionTests.Create_with_validation_enabled_composes_validation_layer. validate --armed exit 0 (379 documents parsed, 0 errors, 0 gate findings; G-RATIO monitor 16/379 (4.2%); G-ROWFORM structural 0 in both files, vocabulary 0 on the live file, one archive monitor F-54 W2). Split proof PROOF OK, 95 = 59 + 36. Dev smoke exit 124 with a clean six-line log. The project's local chain holds one smoke, the Launcher dev smoke. Sync after the closure edits: no-op.

@@ -1,13 +1,20 @@
 # Ledger form config for the G-ROWFORM gate (FRAMEWORK 14.5).
-# ledger_path is the one value that locates the F-ledger table; moving the
-# ledger is a one-line edit here. The table is read from the header row whose
-# first cell equals id_header. The severity and state sets restate the legend
-# printed above the table; a governance test asserts the legend names every
-# member listed here.
-schema_version: "1.0"
-ledger_path: "docs/ROADMAP.md"
+# ledgers lists the files that hold the F-ledger table, in order: the live
+# rows, then the closed rows. vocabulary is the severity a legend violation
+# carries in that file: report holds the file to the legend (exit-affecting
+# under --armed), monitor prints it and never blocks. Structure is armed in
+# every listed file, and an id is unique across all of them. The table of each
+# file is read from the header row whose first cell equals id_header. The
+# severity and state sets restate the legend printed above the live table; a
+# governance test asserts the legend names every member listed here.
+schema_version: "2.0"
+ledgers:
+  - path: "docs/LEDGER.md"
+    vocabulary: report
+  - path: "docs/LEDGER_ARCHIVE.md"
+    vocabulary: monitor
 id_header: "F-#"
 severity_header: "Severity"
 state_header: "State"
-severity_set: ["S0", "S1", "S2", "S3", "N"]
+severity_set: ["S0", "S1", "S2", "S3", "S4", "N"]
 state_set: ["OPEN", "CLOSED", "ACCEPTED-NO-ACTION"]

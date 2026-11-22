@@ -111,7 +111,8 @@ authority-surface count read directly from the DERIVED `REGISTER.yaml` and
 >   every-Nth, not cherry-picked) with per-site verdict
 >   (VALID / STALE-TARGET / STALE-CLAIM / DANGLING) and an extrapolated rate.
 > - **ROADMAP-vs-reality delta**: per track -- claimed state vs git/code evidence
->   vs verdict; unrepresented realized work; F-ledger cross-check.
+>   vs verdict; unrepresented realized work; F-ledger cross-check
+>   (`docs/LEDGER.md` and `docs/LEDGER_ARCHIVE.md`).
 > - **Classification census** (eradication kind): every target site classified by
 >   the cascade's instrument (e.g. LIVE / DEAD / HISTORICAL) with the evidence that
 >   decides it; a bare count without a verdict is an incomplete measurement.

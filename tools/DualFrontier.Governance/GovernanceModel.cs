@@ -10,7 +10,7 @@ namespace DualFrontier.Governance;
 ///   the gates are armed (<c>--armed</c>); the unaligned corpus is expected to
 ///   carry these.</item>
 /// <item><see cref="Monitor"/> -- a never-blocking instrument: printed, exit-neutral
-///   even under <c>--armed</c> (G-RATIO below its threshold, the G-ROWFORM vocabulary checks).</item>
+///   even under <c>--armed</c> (G-RATIO below its threshold, the G-ROWFORM vocabulary checks of a ledger file configured <c>monitor</c>).</item>
 /// </list>
 /// </summary>
 public enum Severity
