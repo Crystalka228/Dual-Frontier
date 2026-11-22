@@ -480,7 +480,7 @@ documents:
   tier: 1
   lifecycle: LOCKED
   owner: Crystalka
-  version: 2.1.6
+  version: 2.1.7
   first_authored: 2026-05-12
   last_modified: 2026-11-22
   content_language: en
@@ -491,7 +491,7 @@ documents:
   last_modified_commit: 7449ba8
   review_cadence: on-change+annual
   last_review_date: 2026-11-22
-  last_review_event: 'PATCH 2.1.5 -> 2.1.6 2026-11-22 (REV_3 (CORPUS_REVISION_1)): the G-ROWFORM row of 14.5 names the ledger files docs/LEDGER.md and docs/LEDGER_ARCHIVE.md where it named docs/ROADMAP.md; the F-ledger left ROADMAP. Pointer correction only. No lifecycle transition (LOCKED).'
+  last_review_event: 'PATCH 2.1.6 -> 2.1.7 2026-11-22 (REV_3 (CORPUS_REVISION_1), review repair): the G-ROWFORM row of 14.5 states the gate as the tool runs it over the two ledger files -- the `ledgers` configuration key, structural checks in every file, id uniqueness across the files and ordering within each, vocabulary severity per file (the live file Report, the archive Monitor). No lifecycle transition (LOCKED).'
   reviewer: Crystalka
   requirements_authored:
   - REQ-Q-A45-X5
