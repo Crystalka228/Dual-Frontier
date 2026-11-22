@@ -202,7 +202,7 @@ documents:
   category: B
   tier: 1
   lifecycle: LOCKED
-  version: 0.2.2
+  version: 0.2.3
 - register_id: DOC-B-RESERVED_SURFACE_MUTABILITY
   path: docs/methodology/RESERVED_SURFACE_MUTABILITY.md
   category: B

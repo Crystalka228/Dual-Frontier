@@ -5,16 +5,15 @@ category: B
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 0.2.2
+version: 0.2.3
 first_authored: 2026-07-02
-last_modified: 2026-07-17
+last_modified: 2026-11-21
 content_language: mixed
 next_review_due: 2027-05-10
 title: Pipeline metrics — empirical record
-last_modified_commit: 0411bb0
 review_cadence: on-change+annual
-last_review_date: 2026-07-17
-last_review_event: 'STACK_UPDATE Phase H doc census — v0.2.1 → v0.2.2 PATCH: era-annotation supersession note appended at the §5.2 annotation paragraph only (the ratified edit surface) — surviving v1.6+ stack .NET 8.0 SDK (C# 12) → .NET 10.0 (SDK 10.0.204 via repo-root global.json, C# 14) (EVT-2026-07-17-STACK_UPDATE); frozen v1.x metrics bodies byte-identical per the era charter. Prior context: A''.0.7 methodology rewrite…'
+last_review_date: 2026-11-21
+last_review_event: 'CORPUS_REVISION_1 REV-1 -- v0.2.2 -> v0.2.3 PATCH: annotation-layer truth only -- the stale "survive" claims at the section 1.3, 1.4 and 6 annotations get dated supersession notes, an orchestrated-era paragraph joins the era annotation, the section 6 plan gets a status note, and the status line and see-also links are corrected; frozen v1.x metrics bodies byte-identical per the era charter. No lifecycle transition (LOCKED).'
 reviewer: Crystalka
 risks_referenced:
 - RISK-014
@@ -22,16 +21,13 @@ capa_entries_referenced:
 - CAPA-2026-05-10-A_PRIME_0_7-AUDIENCE-INVERSION
 ---
 
----
-title: Pipeline Metrics
-nav_order: 27
----
-
 ## Document era annotation (added 2026-05-10 per A'.0.7 amendment)
 
 This document was authored at v0.1 (2026-04-28) under the v1.x era pipeline configuration (4-agent model-tier boundary: human + local quantized Gemma executor + cloud Sonnet prompt-generator + cloud Opus architect). Empirical data in §2–§4 are v1.x era measurements.
 
 A'.0.7 amendment (2026-05-10) restructured the pipeline к v1.6 era (2-agent session-mode boundary: Crystalka + unified Claude Desktop session switching between deliberation and execution modes). v1.x era measurements are preserved verbatim as historical record; each section/sub-section receives a per-metric annotation declaring transferability к v1.6 reality.
+
+Orchestrated era (v2, from 2026-11-21): the architect runs cascades as an orchestrator in Claude Code -- read-only recon agents, writers that return patches from their own worktrees, one integrator that is the only committer on the cascade worktree, and two lens agents on disjoint axes, with model and effort chosen per task tier; the operator ratifies in chat and merges. No measurement in this document was taken under that configuration, and no annotation below claims that a metric transfers to it until it has been measured there.
 
 **Annotation labels** (used throughout §1–§5 below):
 
@@ -43,7 +39,7 @@ A'.0.7 amendment (2026-05-10) restructured the pipeline к v1.6 era (2-agent ses
 | `[uncertain — needs v1.6 measurement]` | Metric category exists в v1.6 reality but no measurement yet collected |
 | `[v1.x historical record]` | Pure archaeological data; transferability not applicable |
 
-v1.6 era data collection is forward-looking; first v1.6 data points emerge from A'.0.5 closure (`27523ac..4e332bb`, commit `4e332bb` on main 2026-05-10) and onward Phase A' milestones. See [METHODOLOGY §3.2 Current configuration economics](./METHODOLOGY.md#32-current-configuration-economics) + [METHODOLOGY §4.4 Session wall-clock performance — case studies](./METHODOLOGY.md#44-session-wall-clock-performance--case-studies) for v1.6-era references located in the methodology corpus. See [§6 Forward measurement plan](#6-forward-measurement-plan-v16-era-data-collection) below for v1.6 era data collection backlog tracked в this document.
+v1.6 era data collection is forward-looking; first v1.6 data points emerge from A'.0.5 closure (`27523ac..4e332bb`, commit `4e332bb` on main 2026-05-10) and onward Phase A' milestones. See METHODOLOGY section 3.2 (Current configuration economics) + METHODOLOGY section 4.4 (Session wall-clock performance -- case studies) for v1.6-era references located in the methodology corpus. See [§6 Forward measurement plan](#6-forward-measurement-plan-v16-era-data-collection) below for v1.6 era data collection backlog tracked в this document.
 
 Cross-reference: this document accompanies [METHODOLOGY.md](./METHODOLOGY.md) (v1.6 era, post-A'.0.7). METHODOLOGY documents the methodology в pipeline-agnostic form; PIPELINE_METRICS preserves per-era empirical record.
 
@@ -51,7 +47,7 @@ Cross-reference: this document accompanies [METHODOLOGY.md](./METHODOLOGY.md) (v
 
 *Empirical configuration, throughput data, and reproducibility requirements for the LLM pipeline used in this project, gathered per-era with transferability annotations. The companion document METHODOLOGY.md describes the methodology as designed; this document records the operational data measured while running it.*
 
-**Status:** v0.2 (2026-05-10). Per-metric annotations added per A'.0.7 amendment; v1.x era measurements preserved verbatim. Updated as further phases close. See [§«Version history»](#version-history) for change log; [§6 Forward measurement plan](#6-forward-measurement-plan-v16-era-data-collection) for v1.6 era data collection backlog.
+**Status:** per-metric annotations added per the A'.0.7 amendment; v1.x era measurements preserved verbatim; the current version is the frontmatter `version`. Updated as further phases close. See [§«Version history»](#version-history) for the change log; [§6 Forward measurement plan](#6-forward-measurement-plan-v16-era-data-collection) for the v1.6 data-collection backlog.
 
 ## §1. Pipeline configuration
 
@@ -68,7 +64,7 @@ Agents do not communicate directly. The repository (LOCKED documents, tests) and
 
 **Annotation** (A'.0.7, 2026-05-10): `[v1.x era specific]`
 
-The 4-agent role distribution table describes the model-tier boundary configuration with N=4 agents (Gemma 4 E4B Q4_K_M executor, Sonnet 4.6 prompt generator, Opus 4.7 architect, human direction owner). Under v1.6 session-mode boundary (N=2: Crystalka + unified Claude Desktop session), this table doesn't transfer. Replaced functionally by [METHODOLOGY §2.1.1 Current configuration table](./METHODOLOGY.md#211-current-configuration-v16-2026-05-10).
+The 4-agent role distribution table describes the model-tier boundary configuration with N=4 agents (Gemma 4 E4B Q4_K_M executor, Sonnet 4.6 prompt generator, Opus 4.7 architect, human direction owner). Under v1.6 session-mode boundary (N=2: Crystalka + unified Claude Desktop session), this table doesn't transfer. Replaced functionally by METHODOLOGY section 2.1.1 (Current configuration table).
 
 ### §1.2 Workflow per task
 
@@ -86,7 +82,7 @@ Tests and simulations verify behavior
 
 **Annotation** (A'.0.7, 2026-05-10): `[v1.x era specific]`
 
-The workflow diagram («Sonnet turns it into a self-contained prompt for Gemma...») describes v1.x 4-tier base cycle. Under v1.6, base cycle is reframed in [METHODOLOGY §2.3 Verification cycle](./METHODOLOGY.md#23-verification-cycle) с architect-mode + executor-mode sessions instead of tier-specific agents.
+The workflow diagram («Sonnet turns it into a self-contained prompt for Gemma...») describes v1.x 4-tier base cycle. Under v1.6, base cycle is reframed in METHODOLOGY section 2.3 (Verification cycle) с architect-mode + executor-mode sessions instead of tier-specific agents.
 
 ### §1.3 Hardware reference
 
@@ -98,7 +94,7 @@ The experiment is conducted on an ASUS TUF A16 (Ryzen 7 7435HS, RX 7600S 8 GB VR
 
 **Annotation** (A'.0.7, 2026-05-10): `[transfers с reframing]`
 
-ASUS TUF A16 hardware unchanged across era boundary; the «local model host» framing is v1.x-specific (RX 7600S 8 GB VRAM hosted Gemma 4 E4B Q4_K_M locally). Under v1.6, the same hardware runs the Claude Desktop client but doesn't host local inference; the hardware capability survives, but the v1.x-specific GPU-VRAM-for-quantized-inference requirement does not. See §6 Forward measurement plan for v1.6 reformulation task.
+ASUS TUF A16 hardware unchanged across era boundary; the «local model host» framing is v1.x-specific (RX 7600S 8 GB VRAM hosted Gemma 4 E4B Q4_K_M locally). Under v1.6, the same hardware runs the Claude Desktop client but doesn't host local inference; the hardware capability survives, but the v1.x-specific GPU-VRAM-for-quantized-inference requirement does not. See §6 Forward measurement plan for v1.6 reformulation task. [Superseded 2026-05-23 / 2026-06-30: the "Godot dev environment" bullet of this section is retired -- Godot was fully deprecated at K-extensions cascade #2 and eradicated at the Godot Eradication Cascade (F-5 CLOSED `be7d4c2`); the rendering stack is the in-house Vulkan substrate consumed by DualFrontier.Launcher. Historical text preserved verbatim per the era charter.]
 
 ### §1.4 Software stack
 
@@ -109,7 +105,7 @@ ASUS TUF A16 hardware unchanged across era boundary; the «local model host» fr
 
 **Annotation** (A'.0.7, 2026-05-10): `[v1.x era specific]`
 
-VS Code+Cline orchestration, LM Studio+Gemma local backend are v1.x-tier-specific tooling. Under v1.6, software stack collapses к Claude Desktop client + Godot 4.3+ + .NET 8.0 (the latter two survive). See §6 Forward measurement plan for v1.6 reformulation task.
+VS Code+Cline orchestration, LM Studio+Gemma local backend are v1.x-tier-specific tooling. Under v1.6, software stack collapses к Claude Desktop client + Godot 4.3+ + .NET 8.0 (the latter two survive). See §6 Forward measurement plan for v1.6 reformulation task. [Superseded 2026-05-23 / 2026-06-30 / 2026-07-17: Godot was deprecated and eradicated (F-5 CLOSED `be7d4c2`) and the .NET tier moved to .NET 10.0 (SDK 10.0.204 pinned by repo-root `global.json`, C# 14); the surviving v1.6+ stack is .NET 10.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.]
 
 ---
 
@@ -161,7 +157,7 @@ All Gemma execution at the syntax-tier runs locally on the developer's machine; 
 
 **Annotation** (A'.0.7, 2026-05-10): `[v1.x era specific]`
 
-«All Gemma execution at the syntax-tier runs locally; cost-per-commit at the executor tier is $0.00» describes v1.x free-local + paid-cloud divide. Under v1.6 single-tier Claude Desktop subscription, executor tier doesn't have separate cost profile from architect tier. Replaced by [METHODOLOGY §3.1 Economic invariant](./METHODOLOGY.md#31-economic-invariant) (cost asymmetry between deliberation-context-intensive and execution-scope-bounded work).
+«All Gemma execution at the syntax-tier runs locally; cost-per-commit at the executor tier is $0.00» describes v1.x free-local + paid-cloud divide. Under v1.6 single-tier Claude Desktop subscription, executor tier doesn't have separate cost profile from architect tier. Replaced by METHODOLOGY section 3.1 (Economic invariant) (cost asymmetry between deliberation-context-intensive and execution-scope-bounded work).
 
 ---
 
@@ -194,7 +190,7 @@ The token economics observed here are consistent with the architectural-dividend
 
 **Annotation** (A'.0.7, 2026-05-10): `[transfers as-is]`
 
-Hypothesis is invariant: «when architecture is fixed as LOCKED specifications с §-level addressability, the architecture-tier agent operates predominantly in implementor mode rather than discovery mode, which avoids reasoning-from-ambiguity overhead». Survives boundary-type change. Supports [METHODOLOGY §3.1 Economic invariant](./METHODOLOGY.md#31-economic-invariant) (context-intensive deliberation work vs scope-bounded execution work).
+Hypothesis is invariant: «when architecture is fixed as LOCKED specifications с §-level addressability, the architecture-tier agent operates predominantly in implementor mode rather than discovery mode, which avoids reasoning-from-ambiguity overhead». Survives boundary-type change. Supports METHODOLOGY section 3.1 (Economic invariant) (context-intensive deliberation work vs scope-bounded execution work).
 
 ---
 
@@ -284,8 +280,10 @@ Per Q10.a annotations (A'.0.7 amendment, 2026-05-10), the following sections req
 | §1.3 Hardware reference | Reframe «local model host» к v1.6 reality (cloud-tier model via Claude Desktop client; no local inference; minimum hardware reduces к Claude Desktop runtime + project IDE) | Post-A'.0.7 amendment landing |
 | §3.2 Subscription headroom | Collect v1.6 era subscription utilization data — first data points: A'.0.5 closure (2026-05-10, single execution session), A'.0.7 deliberation session (2026-05-10, single deliberation session), subsequent Phase A' milestones | Phase A' execution cadence |
 | §5.1 Minimum hardware | Reframe — Claude Desktop client minimum hardware (modest), no GPU/VRAM-for-local-inference requirement | Post-A'.0.7 amendment landing |
-| §5.2 Software dependencies | Reframe tool stack — Claude Desktop client primary; VS Code+Cline + LM Studio v1.x-specific (removed for v1.6); Godot 4.3+ + .NET 8.0 survive [Superseded 2026-05-23 / 2026-06-30: Godot fully deprecated at K-extensions cascade #2 and eradicated at the Godot Eradication Cascade (F-5 CLOSED `be7d4c2`); surviving v1.6+ stack = .NET 8.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.] | Post-A'.0.7 amendment landing |
+| §5.2 Software dependencies | Reframe tool stack — Claude Desktop client primary; VS Code+Cline + LM Studio v1.x-specific (removed for v1.6); Godot 4.3+ + .NET 8.0 survive [Superseded 2026-05-23 / 2026-06-30: Godot fully deprecated at K-extensions cascade #2 and eradicated at the Godot Eradication Cascade (F-5 CLOSED `be7d4c2`); surviving v1.6+ stack = .NET 8.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.] [Superseded 2026-07-17: the .NET tier of the surviving stack moved at the STACK_UPDATE cascade (EVT-2026-07-17-STACK_UPDATE) -- .NET 8.0 SDK (C# 12) -> .NET 10.0 (SDK 10.0.204 pinned by repo-root `global.json`, C# 14); surviving v1.6+ stack = .NET 10.0 + Vulkan substrate + DualFrontier.Launcher. Historical text preserved verbatim per the era charter.] | Post-A'.0.7 amendment landing |
 | §5.3 Subscription tier | Verify «API access not required» under v1.6 Claude Desktop subscription; update subscription tier guidance with v1.6-era practical experience | Post-A'.0.7 amendment landing |
+
+Status note (2026-11-21): the rows above plan the v1.6 reframing around a Claude Desktop client. The pipeline now runs as an orchestrated cascade (Claude Code; the architect orchestrates tiered subagents), so the premise of rows of sections 1.3, 5.1, 5.2 and 5.3 is superseded, and their reframing is carried out against the orchestrated era when that era receives its measurement instrument. Row of section 3.2 stays open as a measurement category. The rows are kept verbatim as the dated record of the A'.0.7-era plan.
 
 Task completion lifts content from this backlog к main document body; this section itself stays present с completed rows marked or condensed format as historical record of A'.0.7-era forward-measurement plan.
 
@@ -299,7 +297,8 @@ Task completion lifts content from this backlog к main document body; this sect
 | 0.2 | 2026-05-10 | Per-metric annotations added per A'.0.7 amendment (Q10.a-with-standardized-labels): 5 standardized transferability labels applied к each section; top-of-document era frame note; new §6 Forward measurement plan tracks v1.6 era data collection backlog. v1.x era measurements preserved verbatim. |
 | 0.2.1 | 2026-07-02 | A'.9.1 Phase δ rider — era annotations appended at the §5.2 annotation paragraph and the §6 forward-plan §5.2 row: the «Godot 4.3+ survives across era boundary» forward-claims superseded (Godot deprecated at К-extensions cascade #2 2026-05-23; eradicated at the Godot Eradication Cascade 2026-06-30, F-5 CLOSED `be7d4c2`). Annotation-only under the document's own era charter; §1–§5 historical bodies untouched. |
 | 0.2.2 | 2026-07-17 | STACK_UPDATE Phase H doc census (EVT-2026-07-17-STACK_UPDATE) — supersession note appended at the §5.2 annotation paragraph (the ratified edit surface): the .NET tier of the surviving v1.6+ stack moved, .NET 8.0 SDK (C# 12) → .NET 10.0 (SDK 10.0.204 pinned by repo-root `global.json`, C# 14). Annotation-only under the document's own era charter; §1–§5 historical bodies and the §6 forward-plan row's dated record untouched. |
+| 0.2.3 | 2026-11-21 | CORPUS_REVISION_1 REV-1 -- annotation-layer truth: dated supersession notes at the section 1.3 and 1.4 annotations and the section 6 section-5.2 row (Godot, .NET 8.0 -> .NET 10.0); an orchestrated-era paragraph in the era annotation; a status note under the section 6 plan; the status line and see-also links corrected; the cross-document fragment links reduced to section citations. Annotation-only under the document's own era charter; section 1-5 historical bodies untouched. |
 
 ---
 
-**See also:** [METHODOLOGY](./METHODOLOGY.md), [METHODOLOGY_OBSERVATIONS](./METHODOLOGY_OBSERVATIONS.md), [ROADMAP](./ROADMAP.md).
+**See also:** [METHODOLOGY](./METHODOLOGY.md), [ROADMAP](../ROADMAP.md).

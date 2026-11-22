@@ -100,8 +100,10 @@ basis: <CASCADE_NAME> RECON REPORT <date> (R1-Rn)
    `DEVELOPMENT_HYGIENE`). Record the result as the regression anchor (state the
    expected pre-existing-failure shape so it is not mistaken for a halt). Closure
    must match-or-improve -> HALT H2 on regression.
-3. **Merge / branch prep** (if applicable): state the exact sanctioned form (e.g.
-   `git merge --ff-only <branch>`); a non-fast-forward -> HALT.
+3. **Merge / branch prep** (if applicable): A pull request lands on `main` as a
+   two-parent merge commit made by the operator. Squash-merge and rebase-merge are
+   forbidden: each replaces the authored sequence with commits nobody authored.
+   Fast-forward-only is not required.
 4. **Validation checkpoint** (schema 2.0):
    `dotnet run --project tools/DualFrontier.Governance -- validate --armed`.
    Exit code != 0 -> HALT H3. Governance test suite green.
