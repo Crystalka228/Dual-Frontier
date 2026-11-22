@@ -5,7 +5,7 @@ category: A
 tier: 1
 lifecycle: LOCKED
 owner: Crystalka
-version: 2.1.3
+version: 2.1.4
 first_authored: 2026-05-12
 last_modified: 2026-11-22
 content_language: en
@@ -16,7 +16,7 @@ meta_role: register_specification
 last_modified_commit: 7449ba8
 review_cadence: on-change+annual
 last_review_date: 2026-11-22
-last_review_event: "PATCH 2.1.2 -> 2.1.3 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): section 10 item 5 and the 14.5 G-RATIO row no longer claim that G-RATIO counts only the 3.4.1 forbidden combinations; the tool counts every populated special_case_rationale, and the unenforced placement rule is item 9 of 14.10 and is noted in 3.4.2. No lifecycle transition (LOCKED)."
+last_review_event: "PATCH 2.1.3 -> 2.1.4 2026-11-22 (REV_2 (CORPUS_REVISION_1), the review repairs): the closing pointer of section 6 names CODING_STANDARDS section 9 (gates and pass criteria) and DEVELOPMENT_HYGIENE section 3 (the order they run in) instead of CODING_STANDARDS section 10.1, which is that document's own amendment protocol. No lifecycle transition (LOCKED)."
 reviewer: Crystalka
 requirements_authored:
 - REQ-Q-A45-X5
@@ -445,7 +445,7 @@ EVT-{date}-{symbolic-event}
 
 ## 6. Post-session update protocol
 
-Superseded by sections 14.1 and 14.8; the 1.x protocol is recorded in the change history (section 12). In force today: a session that closes a milestone, makes an architectural decision or modifies an enrolled document edits each changed document's own frontmatter (the source of truth, 14.1), appends its governance-event, CAPA, risk and requirement entries to their files (14.6), runs `sync`, and passes `validate --armed` before the closure commit. The executing session runs the gate: no commit hook runs it, so there is nothing to bypass and no bypass mechanism is specified (`BYPASS_LOG.md` is an enrolled Tier 2 document and holds no bypass entry). The invocation is DEVELOPMENT_HYGIENE section 4; the closure law is CODING_STANDARDS section 10.1.
+Superseded by sections 14.1 and 14.8; the 1.x protocol is recorded in the change history (section 12). In force today: a session that closes a milestone, makes an architectural decision or modifies an enrolled document edits each changed document's own frontmatter (the source of truth, 14.1), appends its governance-event, CAPA, risk and requirement entries to their files (14.6), runs `sync`, and passes `validate --armed` before the closure commit. The executing session runs the gate: no commit hook runs it, so there is nothing to bypass and no bypass mechanism is specified (`BYPASS_LOG.md` is an enrolled Tier 2 document and holds no bypass entry). The invocation is DEVELOPMENT_HYGIENE section 4; the gates and their pass criteria are CODING_STANDARDS section 9, and the order they run in is DEVELOPMENT_HYGIENE section 3.
 
 ---
 
@@ -600,6 +600,7 @@ If project scope or pipeline configuration changes substantially, framework adap
 | 2.1.1 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the G-ROWFORM row of 14.5 gains the three conditions the tool already acted on and the law did not state: the configuration file `tools/governance/LEDGER_FORM.yaml` absent (inert), an unreadable configuration file (Report), a ledger file with no table header opening with the configured id header (Report). |
 | 2.1.2 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the G-ROWFORM row of 14.5 gains a structural check: a row-shaped line (`| F-<n> |`) after the end of the ledger table is a Report. The gate reads rows up to the first line that does not start with a pipe; a blank line mid-table had left every row behind it unread. |
 | 2.1.3 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- section 10 item 5 and the 14.5 G-RATIO row state what the tool counts (every populated `special_case_rationale`); that the corpus carries one only on 3.4.1 forbidden combinations is a fact of the corpus, not a rule a gate enforces, and is listed as item 9 of 14.10 and noted in 3.4.2. |
+| 2.1.4 | 2026-11-22 | REV_2 (CORPUS_REVISION_1) | PATCH -- the pointer closing section 6 cites CODING_STANDARDS section 9 (the gates and their pass criteria) and DEVELOPMENT_HYGIENE section 3 (the local chain); it had named CODING_STANDARDS section 10.1, which is that document's amendment protocol. |
 
 The rows above record each version as authored; where the 2.0.0 row or the 7.4 table calls sections 6 and 8 operative until the corpus switch, that held until 2026-07-17 and does not hold now.
 
