@@ -535,8 +535,9 @@ Heavy-test exclusion (fast default sweep) and inclusion -- append to the shape a
 The fast default sweep excludes both Stress and Extreme (both are heavy). Five Extreme scenarios are
 additionally Skip-guarded (§2.6) -- S2 under F-30 (managed marathon) and the S3/S4/S5 bus ceiling-probes
 under F-31 (runtime-stress artifact) -- so even an explicit Category=Extreme run completes (6 pass /
-5 skipped) rather than hanging or crashing the host. Trait values available for filtering are exactly
-those of §3.7: Stress, Extreme, Integration.
+5 skipped) rather than hanging or crashing the host. Trait values available for filtering are those
+of section 3.7: `Stress`, `Extreme` and `Integration` are carried by real tests; `ReservedStub`, the
+fourth value there, is carried by no real test (it occurs only inside a verifier-test source string).
 
 **Native selftest** (standalone binary, not dotnet test):
 
