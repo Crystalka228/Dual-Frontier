@@ -162,7 +162,8 @@ public sealed class CensusMetaTests
     public void SuppressMessageCensus_IsZero()
     {
         // TESTING_STRATEGY section 4.3: [SuppressMessage] in src stays at zero; the
-        // paired DFK-WAIVER form above is the only lawful suppression.
+        // paired DFK-WAIVER form above is the only lawful suppression of a DFK/DFL
+        // diagnostic (CODING_STANDARDS section 5.3).
         var (sites, _) = Census(text => LiteralCount(text, "SuppressMessage"));
 
         sites.Should().Be(0, "no [SuppressMessage] in src (DF999 baseline)");
